@@ -10,7 +10,11 @@ describe('server configuration', () => {
     });
   });
 
-  it('rejects an invalid port instead of silently recovering', () => {
-    expect(() => loadServerConfig({ PORT: '70000' })).toThrow('PORT must be a valid TCP port');
+  it('rejects invalid ports instead of partially parsing or silently recovering', () => {
+    for (const port of ['70000', '3000junk', '3.5', '-1', '']) {
+      expect(() => loadServerConfig({ PORT: port })).toThrow(
+        'PORT must be a valid TCP port',
+      );
+    }
   });
 });
