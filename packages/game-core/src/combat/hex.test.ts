@@ -27,4 +27,16 @@ describe('axial hex algorithms', () => {
     expect(first?.some((value) => hexKey(value) === '0,0')).toBe(false);
     expect(first?.at(-1)).toEqual({ q: 2, r: 0 });
   });
+
+  it('rejects blocked or off-map path boundaries', () => {
+    const map = {
+      hexes: createHexagon(2),
+      blocked: [{ q: 0, r: 0 }],
+    };
+
+    expect(findPath(map, { q: 0, r: 0 }, { q: 1, r: 0 })).toBeUndefined();
+    expect(findPath(map, { q: -3, r: 0 }, { q: 1, r: 0 })).toBeUndefined();
+    expect(findPath(map, { q: -1, r: 0 }, { q: 0, r: 0 })).toBeUndefined();
+    expect(findPath(map, { q: -1, r: 0 }, { q: 3, r: 0 })).toBeUndefined();
+  });
 });
