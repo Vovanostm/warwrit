@@ -18,14 +18,15 @@ payload = ''.join(
 if not payload:
     raise RuntimeError('WP-01 bootstrap payload is missing')
 
-archive_bytes = lzma.decompress(base64.b64decode(payload, validate=True))
-archive_digest = hashlib.sha256(archive_bytes).hexdigest()
+compressed_archive = base64.b64decode(payload, validate=True)
+archive_digest = hashlib.sha256(compressed_archive).hexdigest()
 expected_digest = 'e31607dba70f00a8f63fdb9a583117f1efb8c4315036e333e6dd03b126b2ddee'
 if archive_digest != expected_digest:
     raise RuntimeError(
         f'WP-01 bootstrap payload digest mismatch: expected {expected_digest}, got {archive_digest}'
     )
 
+archive_bytes = lzma.decompress(compressed_archive)
 with tarfile.open(fileobj=io.BytesIO(archive_bytes), mode='r:') as archive:
     members = archive.getmembers()
     archive.extractall(repository_root, members=members, filter='data')
