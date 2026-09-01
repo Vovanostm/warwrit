@@ -7,8 +7,12 @@ export interface ServerConfig {
 }
 
 export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): ServerConfig {
-  const port = Number.parseInt(environment['PORT'] ?? '3000', 10);
-  invariant(Number.isInteger(port) && port > 0 && port <= 65_535, 'PORT must be a valid TCP port');
+  const portValue = environment['PORT']?.trim() ?? '3000';
+  const port = Number(portValue);
+  invariant(
+    /^\d+$/u.test(portValue) && Number.isInteger(port) && port > 0 && port <= 65_535,
+    'PORT must be a valid TCP port',
+  );
 
   const databaseUrl = environment['DATABASE_URL']?.trim();
   return {
