@@ -1,9 +1,10 @@
 import { createHash } from 'node:crypto';
 import { readdir, readFile, stat } from 'node:fs/promises';
-import { extname, join, normalize, relative, resolve, sep } from 'node:path';
+import { extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
+const assetsRoot = resolve(root, 'assets');
 const failures = [];
 
 async function walk(directory, extension) {
@@ -31,11 +32,27 @@ async function fileExists(path) {
 }
 
 function safeAssetPath(path) {
-  const normalized = normalize(path);
-  const absolute = resolve(root, normalized);
+  const absolute = resolve(root, path);
+  const pathWithinAssets = relative(assetsRoot, absolute);
   return (
-    (absolute === root || absolute.startsWith(`${root}${sep}`)) && !normalized.startsWith('..')
+    pathWithinAssets !== '' &&
+    pathWithinAssets !== '..' &&
+    !pathWithinAssets.startsWith(`..${sep}`) &&
+    !isAbsolute(pathWithinAssets)
   );
+}
+
+const pathSafetyProbes = [
+  ['assets/example.glb', true],
+  ['assets/nested/example.glb', true],
+  ['assets/../package.json', false],
+  ['assets/nested/../../package.json', false],
+  ['../outside.glb', false],
+];
+for (const [candidate, expected] of pathSafetyProbes) {
+  if (safeAssetPath(candidate) !== expected) {
+    failures.push(`Asset path validator contract failed for ${candidate}.`);
+  }
 }
 
 const manifestPath = join(root, 'assets', 'manifest.json');
@@ -62,13 +79,14 @@ for (const asset of manifest.assets ?? []) {
   if (
     typeof asset.path !== 'string' ||
     !asset.path.startsWith('assets/') ||
+    asset.path.includes('\\') ||
     !safeAssetPath(asset.path)
   ) {
     failures.push(`Invalid asset path for ${asset.id}: ${String(asset.path)}`);
     continue;
   }
 
-  const absolute = join(root, asset.path);
+  const absolute = resolve(root, asset.path);
   if (!(await fileExists(absolute))) {
     failures.push(`Missing asset file for ${asset.id}: ${asset.path}`);
     continue;
