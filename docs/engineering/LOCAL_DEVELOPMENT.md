@@ -5,6 +5,7 @@
 - Node.js `24.20.0` LTS line;
 - pnpm `11.25.0` through Corepack;
 - ESLint `10.x` with the exact dependency graph committed in the lockfile;
+- Vitest `4.x` and fast-check `4.9.0` for example- and property-based verification;
 - PostgreSQL `17` for the first persistence contract;
 - Linux CI on `ubuntu-24.04`.
 
@@ -16,7 +17,7 @@ The exact package graph is committed in `pnpm-lock.yaml`.
 ./scripts/bootstrap.sh
 ```
 
-The script fails closed if the Node.js line or Docker is unavailable. Set `KEEP_INFRA=1` to leave PostgreSQL running after validation.
+The script fails closed if the Node.js line or Docker is unavailable. It performs the repository verification suite, the 10,000-battle combat stress gate, and migration up/down. Set `KEEP_INFRA=1` to leave PostgreSQL running after validation.
 
 ## Environment contract
 
@@ -51,13 +52,33 @@ The Vite development server proxies `/api/*` to the server and removes the `/api
 4. content/asset validation;
 5. package builds in dependency order;
 6. strict TypeScript checks against built workspace contracts;
-7. unit tests.
+7. unit and property tests.
 
-Migration smoke runs separately because it requires PostgreSQL:
+The M0 combat acceptance gate runs separately:
+
+```bash
+pnpm test:combat:stress
+```
+
+It generates 10,000 deterministic battles with 4–12 fighters, runs both sides through server-style AI, asserts terminal resolution and state invariants, samples replay reconstruction and exact reruns, and emits a SHA-256 digest plus aggregate evidence. A failure aborts clean bootstrap and CI.
+
+Migration smoke also runs separately because it requires PostgreSQL:
 
 ```bash
 pnpm test:migrations
 ```
+
+## Combat implementation rules
+
+- `packages/game-core/src/combat/rules.ts` owns all provisional M0 numeric parameters.
+- RNG state records the algorithm name and draw count; changing its sequence requires a new algorithm/ruleset version.
+- Hex coordinates are axial and paths use deterministic breadth-first search with stable neighbor ordering.
+- Commands are immutable intents. The kernel computes paths, hit rolls, damage, initiative, and outcomes.
+- Rejected commands return the original state object and no events.
+- Replays contain the setup, seed, ruleset ID, and accepted command stream; they are JSON-serializable.
+- `packages/testkit` may generate scenarios, but production code may not import it.
+
+The kernel is not an untrusted network boundary. A later server/API work package must validate transport payloads before constructing typed combat commands.
 
 ## Migrations
 
