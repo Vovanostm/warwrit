@@ -1,0 +1,24 @@
+{
+  "name": "@warwrit/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@warwrit/game-core": "workspace:*",
+    "@warwrit/protocol": "workspace:*",
+    "fastify": "^5.0.0",
+    "kysely": "^0.28.0",
+    "pg": "^8.0.0",
+    "pino": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "node ../../scripts/clean.mjs",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

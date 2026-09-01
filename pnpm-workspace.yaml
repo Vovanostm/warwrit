@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+
+minimumReleaseAge: 1440
+blockExoticSubdeps: true
+disallowWorkspaceCycles: true
+
+allowBuilds:
+  esbuild: true

@@ -1,0 +1,45 @@
+{
+  "name": "warwrit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": "24.20.x",
+    "pnpm": "11.25.x"
+  },
+  "scripts": {
+    "bootstrap": "pnpm install --frozen-lockfile && pnpm verify",
+    "build": "pnpm -r --if-present run build",
+    "check:architecture": "node scripts/check-architecture.mjs",
+    "clean": "node scripts/clean.mjs",
+    "db:down": "docker compose down --remove-orphans",
+    "db:migrate:down": "tsx apps/server/src/db/migrate.ts down",
+    "db:migrate:status": "tsx apps/server/src/db/migrate.ts status",
+    "db:migrate:up": "tsx apps/server/src/db/migrate.ts up",
+    "db:up": "docker compose up -d --wait postgres",
+    "dev": "pnpm --parallel --filter @warwrit/server --filter @warwrit/web run dev",
+    "format": "prettier . --check",
+    "format:write": "prettier . --write",
+    "lint": "eslint .",
+    "test": "pnpm test:unit",
+    "test:migrations": "tsx scripts/migration-smoke.ts",
+    "test:unit": "vitest run",
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "validate:content": "node scripts/validate-content.mjs",
+    "verify": "pnpm format && pnpm lint && pnpm check:architecture && pnpm validate:content && pnpm build && pnpm typecheck && pnpm test:unit"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^24.0.0",
+    "eslint": "^9.0.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.9.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^4.0.0",
+    "pg": "^8.0.0",
+    "@types/pg": "^8.0.0"
+  }
+}
