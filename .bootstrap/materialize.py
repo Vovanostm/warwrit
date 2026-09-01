@@ -24,14 +24,22 @@ with tarfile.open(fileobj=io.BytesIO(archive_bytes), mode='r:') as archive:
 
 web_app_path = repository_root / 'apps' / 'web' / 'src' / 'App.tsx'
 web_app_source = web_app_path.read_text(encoding='utf-8')
-web_app_source, replacements = re.subn(
+web_app_source, catch_replacements = re.subn(
     r'} catch \(error\) \{',
     '} catch {',
     web_app_source,
     count=1,
 )
-if replacements != 1:
-    raise RuntimeError('Expected exactly one unused web-shell catch binding')
+web_app_source, env_replacements = re.subn(
+    r'import\.meta\.env\.VITE_API_BASE_URL',
+    "import.meta.env['VITE_API_BASE_URL']",
+    web_app_source,
+    count=1,
+)
+if catch_replacements != 1 or env_replacements != 1:
+    raise RuntimeError(
+        'Expected exactly one catch binding and one Vite environment access to patch'
+    )
 web_app_path.write_text(web_app_source, encoding='utf-8')
 
 for chunk in bootstrap_directory.glob('payload-*.txt'):
