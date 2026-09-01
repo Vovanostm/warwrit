@@ -1,0 +1,35 @@
+name: Work package
+about: Create an evidence-gated implementation contract
+labels: []
+body:
+  - type: input
+    id: code
+    attributes:
+      label: Work-package code
+      placeholder: WP-00
+    validations:
+      required: true
+  - type: textarea
+    id: mission
+    attributes:
+      label: Mission
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List included behavior and explicit non-scope.
+    validations:
+      required: true
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of done
+      description: Every criterion must have observable evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and blockers

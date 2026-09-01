@@ -1,0 +1,24 @@
+{
+  "name": "@warwrit/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@warwrit/protocol": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "vite": "^7.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "clean": "node ../../scripts/clean.mjs",
+    "dev": "vite",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}
