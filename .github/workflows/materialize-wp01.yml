@@ -5,6 +5,7 @@ on:
     branches: [feat/wp-01-deterministic-combat-kernel]
     paths:
       - .github/workflows/materialize-wp01.yml
+      - .wp01-bootstrap/materialize.py
 
 concurrency:
   group: materialize-wp01-${{ github.ref }}
