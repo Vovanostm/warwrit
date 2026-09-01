@@ -72,7 +72,12 @@ export function findPath(
   const startKey = hexKey(start);
   const goalKey = hexKey(goal);
 
-  if (!validHexes.has(startKey) || !validHexes.has(goalKey) || blocked.has(goalKey)) {
+  if (
+    !validHexes.has(startKey) ||
+    !validHexes.has(goalKey) ||
+    blocked.has(startKey) ||
+    blocked.has(goalKey)
+  ) {
     return undefined;
   }
   if (startKey === goalKey) {
