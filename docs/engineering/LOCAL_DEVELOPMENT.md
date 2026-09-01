@@ -4,6 +4,7 @@
 
 - Node.js `24.20.0` LTS line;
 - pnpm `11.25.0` through Corepack;
+- ESLint `10.x` with the exact dependency graph committed in the lockfile;
 - PostgreSQL `17` for the first persistence contract;
 - Linux CI on `ubuntu-24.04`.
 
@@ -16,6 +17,15 @@ The exact package graph is committed in `pnpm-lock.yaml`.
 ```
 
 The script fails closed if the Node.js line or Docker is unavailable. Set `KEEP_INFRA=1` to leave PostgreSQL running after validation.
+
+## Environment contract
+
+Local overrides live in one root `.env` file, normally created from `.env.example`.
+
+- the server watch process loads `../../.env` through Node's `--env-file-if-exists` flag;
+- Vite uses the repository root as its `envDir`;
+- only variables prefixed with `VITE_` may be exposed to browser code;
+- production processes receive environment variables from their deployment environment and do not load developer files implicitly.
 
 ## Development processes
 
@@ -36,7 +46,7 @@ The Vite development server proxies `/api/*` to the server and removes the `/api
 `pnpm verify` runs in this order:
 
 1. formatting check;
-2. ESLint;
+2. ESLint, including deterministic-core restrictions on ambient time, randomness, process, storage, network, browser, and concurrency APIs;
 3. dependency-boundary and cycle checks;
 4. content/asset validation;
 5. package builds in dependency order;
