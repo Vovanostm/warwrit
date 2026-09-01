@@ -1,6 +1,8 @@
 import { invariant } from '@warwrit/game-core';
 import { PROTOCOL_VERSION } from '@warwrit/protocol';
 
+export * from './combat.js';
+
 export interface FixedClock {
   readonly now: () => Date;
 }

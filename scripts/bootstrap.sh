@@ -30,6 +30,7 @@ trap cleanup EXIT
 
 docker compose up -d --wait postgres
 pnpm verify
+pnpm test:combat:stress
 pnpm test:migrations
 
-printf 'Warwrit WP-00 bootstrap verification passed.\n'
+printf 'Warwrit clean-checkout verification passed.\n'

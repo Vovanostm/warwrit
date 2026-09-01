@@ -16,9 +16,14 @@ When sources conflict, use this order:
 
 Do not silently convert a proposal into an approved product decision. Record unresolved design choices as blockers or provisional parameters.
 
-## 2. WP-00 scope guard
+## 2. Current combat scope
 
-WP-00 contains engineering foundation only. Do not introduce combat formulas, progression, economy, content, balance constants, or other gameplay behavior in this work package.
+WP-01 is the headless M0 combat proof. It may implement only deterministic combat behavior required by its work-package contract.
+
+- `COMBAT_RULES_V1` is the single source of truth for provisional M0 numbers.
+- Prototype parameters remain `provisional`; passing simulations does not make them final balance.
+- Do not introduce world movement, campaign consequences, economy, persistence, realtime rooms, authentication, rendering, or UI into `game-core`.
+- Height, cover, reactions, zones of control, surrender, captivity, multiplayer, and three-side combat require a later work package or an approved scope change.
 
 ## 3. Dependency boundaries
 
@@ -30,13 +35,14 @@ WP-00 contains engineering foundation only. Do not introduce combat formulas, pr
 - Cross-package imports use `@warwrit/*`; never reach into another package's private path.
 - Circular file or workspace dependencies are forbidden.
 
-## 4. Determinism rules for future game-core work
+## 4. Determinism rules
 
-- Randomness enters through an explicit seeded port.
+- Randomness enters through explicit versioned state or a seeded port.
 - Time enters through an explicit clock or command value.
-- Commands and state transitions are serializable.
+- Commands, events, rulesets, replays, and canonical state are serializable.
 - Domain functions do not read environment variables, global process state, storage, or network resources.
 - Invalid commands fail closed and must not partially mutate canonical state.
+- A change to RNG semantics, canonical serialization, command semantics, or combat rules requires versioning and replay compatibility analysis.
 
 ## 5. Persistence and migrations
 
@@ -58,10 +64,11 @@ Before opening or updating a pull request, run:
 
 ```bash
 pnpm verify
+pnpm test:combat:stress
 pnpm test:migrations
 ```
 
-A change is not complete while CI is red, the lockfile is stale, formatting differs, or architecture/content checks fail.
+A change is not complete while CI is red, the lockfile is stale, formatting differs, architecture/content checks fail, or the combat stress gate does not reach a terminal state for all generated battles.
 
 ## 8. Change discipline
 
