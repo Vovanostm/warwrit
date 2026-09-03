@@ -30,21 +30,19 @@ Before changing infrastructure or adding a framework dependency:
 
 ## Current decisions
 
-| Area | Decision | State | Agent action |
-|---|---|---|---|
-| Runtime | Node.js 24 LTS | ACCEPTED | Use repository-pinned Node. |
-| Package manager | pnpm | ACCEPTED | Use frozen `pnpm-lock.yaml`; do not replace with Bun/npm/yarn. |
-| Language | strict TypeScript | ACCEPTED | Shared domain/protocol types stay TypeScript. |
-| HTTP/control plane | Fastify 5 + Pino | ACCEPTED | Keep existing health/control APIs; do not migrate for aesthetics. |
-| Realtime | Colyseus 0.18.x | ACCEPTED FOR M1 ADAPTER | Introduce only in the realtime work package; keep Rooms non-canonical. |
-| Persistence | PostgreSQL | ACCEPTED | Canonical durable state. |
-| SQL layer | Kysely + `pg` | ACCEPTED | Prefer explicit SQL-shaped queries and transactions. |
-| Browser shell | React 19 + Vite 7 | ACCEPTED | React owns UI composition, not canonical simulation. |
-| Renderer | Babylon.js 9.x vs current PlayCanvas | PROVISIONAL | Run the required comparative spike before production renderer lock. |
-| Alternate runtime | Bun 1.4 | EXPERIMENTAL | Benchmark/compatibility lane only; no Bun-only production APIs. |
-| High-throughput WS | uWebSockets.js | DEFERRED | Add only after default transport fails measured budgets. |
-| Redis / distributed topology | none | DEFERRED | Add only after multi-process/multi-machine requirement exists. |
-| Go/Rust/Nakama rewrite | none | REJECTED FOR M0-M1 | Do not reopen without a measured blocker. |
+- **Runtime — ACCEPTED:** Node.js 24 LTS. Use the repository-pinned Node line.
+- **Package manager — ACCEPTED:** pnpm. Use the frozen `pnpm-lock.yaml`; do not replace it with Bun/npm/yarn.
+- **Language — ACCEPTED:** strict TypeScript. Shared domain/protocol types stay TypeScript.
+- **HTTP/control plane — ACCEPTED:** Fastify 5 + Pino. Keep existing health/control APIs; do not migrate for aesthetics.
+- **Realtime — ACCEPTED FOR M1 ADAPTER:** Colyseus 0.18.x. Introduce only in the realtime work package; keep Rooms non-canonical.
+- **Persistence — ACCEPTED:** PostgreSQL. It is canonical durable state.
+- **SQL layer — ACCEPTED:** Kysely + `pg`. Prefer explicit SQL-shaped queries and transactions.
+- **Browser shell — ACCEPTED:** React 19 + Vite 7. React owns UI composition, not canonical simulation.
+- **Renderer — PROVISIONAL:** Babylon.js 9.x versus current PlayCanvas. Run the required comparative spike before production renderer lock.
+- **Alternate runtime — EXPERIMENTAL:** Bun 1.4. Benchmark/compatibility lane only; no Bun-only production APIs.
+- **High-throughput WebSocket — DEFERRED:** uWebSockets.js. Add only after the default transport fails measured budgets.
+- **Redis/distributed topology — DEFERRED:** none for M0/M1. Add only after a multi-process or multi-machine requirement exists.
+- **Go/Rust/Nakama rewrite — REJECTED FOR M0/M1:** do not reopen without a measured blocker.
 
 ## Architecture invariant
 
