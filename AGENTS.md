@@ -16,14 +16,17 @@ When sources conflict, use this order:
 
 Do not silently convert a proposal into an approved product decision. Record unresolved design choices as blockers or provisional parameters.
 
-## 2. Current combat scope
+## 2. Current delivery state
 
-WP-01 is the headless M0 combat proof. It may implement only deterministic combat behavior required by its work-package contract.
+M0 is complete as a headless technical proof. WP-00 and WP-01 are merged and green. Passing M0 proves correctness, determinism, termination and replay; it does **not** prove player-facing combat feel, human battle duration or the final multiplayer turn timer.
 
-- `COMBAT_RULES_V1` is the single source of truth for provisional M0 numbers.
-- Prototype parameters remain `provisional`; passing simulations does not make them final balance.
-- Do not introduce world movement, campaign consequences, economy, persistence, realtime rooms, authentication, rendering, or UI into `game-core`.
-- Height, cover, reactions, zones of control, surrender, captivity, multiplayer, and three-side combat require a later work package or an approved scope change.
+Current product/design focus is `S-02 — Company & Characters`. `WP-02` remains `Design Blocked` until the six active P0 questions `Q-CHAR-13A/B/C` and `Q-CHAR-14A/B/C` close. Do not implement policy for those questions from model assumptions.
+
+Accepted WP-02 boundaries are recorded in `docs/architecture/0004-company-identity-succession-boundary.md`, including persistent company identity, pre-existing family/household characters, succession/regency and deterministic hard game-over with no emergency successor generation.
+
+After S-02 closes, the default single-threaded delivery sequence is WP-02 → WP-03 → Q-T03 renderer spike → WP-04. Read `docs/engineering/CURRENT_PLAN.md` for the current operational mirror before starting a new work package.
+
+`COMBAT_RULES_V1` remains the source of truth for provisional M0 combat numbers. Prototype values remain provisional; do not relabel simulation correctness as final balance.
 
 ## 3. Dependency boundaries
 
@@ -78,6 +81,8 @@ A change is not complete while CI is red, the lockfile is stale, formatting diff
 - Prefer small modular-monolith boundaries over premature services.
 - Do not add Kubernetes, distributed messaging, event sourcing infrastructure, or independent deployables without an accepted ADR and measured need.
 - Do not weaken a check to make a failure disappear; fix the underlying violation or document an explicit exception.
+- Do not mark a package Ready only because code dependencies are complete; linked blocking product decisions must also be closed or explicitly provisionalized.
+- Do not infer current project priority from issue numbers or old closed issue bodies; use `docs/engineering/CURRENT_PLAN.md` plus the canonical Airtable planning ledger.
 
 ## 9. Technology baseline and AI API safety
 
