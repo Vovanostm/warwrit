@@ -79,7 +79,29 @@ A change is not complete while CI is red, the lockfile is stale, formatting diff
 - Do not add Kubernetes, distributed messaging, event sourcing infrastructure, or independent deployables without an accepted ADR and measured need.
 - Do not weaken a check to make a failure disappear; fix the underlying violation or document an explicit exception.
 
-## 9. Pull-request evidence
+## 9. Technology baseline and AI API safety
+
+ADR-0003 is authoritative for M0/M1 technology choices. Read `docs/engineering/AI_TECHNOLOGY_HANDOFF.md` before adding or replacing infrastructure/framework dependencies.
+
+- Production/CI runtime remains the repository-pinned Node.js 24 line. Bun 1.4 is an experimental compatibility/benchmark lane only until a superseding ADR is accepted.
+- pnpm remains the package manager. Do not introduce a second production lockfile or migrate package management incidentally.
+- Keep the existing Fastify HTTP/control plane. Do not replace working Fastify endpoints with Colyseus/Hono/Elysia routes as cleanup.
+- When realtime is introduced, use Colyseus 0.18.x as an adapter for transport, room/session lifecycle, reconnect, and client projections. Colyseus Room memory is not canonical domain state.
+- Keep PostgreSQL + Kysely + `pg` as canonical persistence/application SQL. Do not adopt a framework database/ORM as a second source of truth.
+- The renderer is not frozen yet. Babylon.js 9.x is the working default, but the required Babylon-vs-PlayCanvas representative spike must close before a permanent production renderer dependency is accepted.
+- Do not add `uWebSockets.js`, Redis presence, Go/Rust services, Nakama, or distributed topology without the measured trigger and ADR required by ADR-0003.
+
+For fast-moving framework APIs, never rely on model memory alone. Before coding:
+
+1. inspect the exact installed package version and lockfile;
+2. inspect local typings/source and current repository guidance;
+3. use current official Skills, `llms.txt`, or official documentation where available;
+4. implement behind the existing adapter boundary;
+5. typecheck and run focused/integration evidence.
+
+When Colyseus is added, install/use the official `colyseus/skill`; older model examples frequently target pre-0.18 APIs. Renderer-specific Skills/MCP setup is added only after the renderer decision closes.
+
+## 10. Pull-request evidence
 
 A PR description must state:
 
