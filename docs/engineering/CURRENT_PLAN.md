@@ -1,134 +1,76 @@
 # Warwrit current delivery plan
 
 - Status: operational mirror for coding agents
-- As of: 2026-09-03
-- Product/planning authority: Warwrit Airtable decision/work-package ledger
-- Architecture authority: accepted ADRs in `docs/architecture/`
-
-This file exists to prevent an agent from inferring current project state from old issues or historical planning documents. If this file conflicts with a newer explicit owner decision or the canonical Airtable decision ledger, update this mirror in the same change.
+- As of: 2026-09-07
+- Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
+- Active contract: [WP-02.1](../work-packages/WP-02.1.md), GitHub issue #9, parent #8
 
 ## Current state
 
 ```yaml
-milestone:
-  M0: done
-  M1: planned
-  M2: planned
-current_design_session: S-02-company-and-characters
-current_implementation_package: none
-next_implementation_package: WP-02-after-S-02-closes
-renderer_decision: Q-T03-ready-before-WP-04
-production_runtime: node-24
-http_control_plane: fastify-5-pino
-realtime_target: colyseus-0.18-bounded-adapter
+M0: done
+S-02: done
+WP-00: done
+WP-01: done
+WP-02: in-progress
+current_slice: WP-02.1
+merge_authorized: false
+deploy_authorized: false
+production_runtime: repository-pinned-node-24
+package_manager: repository-pinned-pnpm
 persistence: postgresql-kysely-pg
-experimental_runtime: bun-1.4-benchmark-only
+renderer: Q-T03-evidence-pending
 ```
 
-## Why M0 is Done
+The owner authorized implementation, tests and a PR. This is not permission to merge, enable auto-merge, deploy, buy cloud resources or expand gameplay. Completion of a slice on a branch is not delivery of the entire WP-02 on main.
 
-M0 is the **headless technical combat proof**. WP-01 is complete and merged with green clean-checkout evidence.
+## Authority and source order
 
-M0 proves:
+Read full Notes and Purpose in Airtable Artifacts `tblwAxG5Ek1FyWpiW`:
 
-- deterministic commands/state/RNG;
-- termination under 10,000 generated battles;
-- fail-closed invalid commands;
-- no double activation;
-- deterministic AI using the public command path;
-- exact replay/final-state digest;
-- dependency-free/platform-neutral `game-core`.
+1. `rec5bphVYSZUTqavX`: agent launch; owner authorization `comlmb1eSiASlOH30` on WP-02 `rec6JCF929ViGc2MX`.
+2. `rechIKj0hsvfXIvFU`: explicit RC-P1=A, RC-P2=AAAA, RC-P3=A.
+3. `recuCnhrb6OJMIvak`: development readiness v1.2; delta `recuq6OOuKnmc1yJL`, lore `recQNKqYfwoJpCXVu`, QA `recwglYVX3nGfu2Xh`.
+4. `rec822ZmnjlU0kcaR`: independent semantic corrections.
+5. `recdUjdne68biQYoE` and its twelve substantive baseline Notes.
 
-M0 does **not** claim that combat is fun, readable, correctly paced for humans, or that the 30-second multiplayer timer is final. ADR-0002 explicitly treats those as later player-facing evidence.
-
-The old milestone wording that made human playtest a headless-M0 completion requirement has been corrected. Battle duration, decision density, turn-flow readability and timer validation are M1 evidence gates.
-
-## Current blocking design work — S-02
-
-WP-02 remains `Design Blocked` until the current Company & Characters packet closes.
-
-Already accepted and safe to rely on:
-
-- persistent `Company` identity with a replaceable `CurrentLeader`;
-- company name/banner are mutable without changing technical company identity;
-- origin-based opening flow and six provisional M1 origins;
-- origin-compatible family story creates 0–2 persistent relatives at run start;
-- designated heir is optional;
-- existing eligible characters form the successor pool;
-- acting leader / limited regency for a minor heir;
-- deterministic hard game-over from the persistent company graph;
-- **no** retroactive emergency successor at defeat;
-- category/custody-based inheritance rather than one random loss percentage.
-
-Still blocking WP-02 implementation:
-
-- `Q-CHAR-13A` — immutable/mutable character-state taxonomy;
-- `Q-CHAR-13B` — roster/location/assignment state machine;
-- `Q-CHAR-13C` — battle outcome versus player knowledge of outcome;
-- `Q-CHAR-14A` — earned nickname policy;
-- `Q-CHAR-14B` — derived combat role + slow retraining;
-- `Q-CHAR-14C` — permanent injury/scar + rare-treatment policy.
-
-Do not invent defaults for these six questions in implementation code.
+The former Q-CHAR-13A..14C and Q-CHAR-15A blocking lists describe historical state. Do not reopen those decisions. See the [dated ADR-0004 addendum](../architecture/0004-company-identity-succession-2026-09-07.md). Keep the original accepted history intact.
 
 ## Delivery sequence
 
-Default single-threaded sequence for one developer + coding agents:
-
 ```text
-DONE  WP-00 Repository & Engineering Foundation
-DONE  WP-01 Deterministic Combat Kernel
-  ->  close S-02 / Q-CHAR-13A..14C
-  ->  WP-02 Character, Company & Inventory Domain
-  ->  WP-03 Encounter Authority, Persistence & Timers
-  ->  Q-T03 renderer comparison
-  ->  WP-04 Tactical Battle Client & V3 art-pipeline spike
-  ->  WP-05 World Authority & Movement
-  ->  WP-06 Fog, Maps, Rumors & Light Clock
-  ->  WP-07 Core Contracts & Narrative Engine
-  ->  WP-08 Physical Joinable PvE Battle
+DONE WP-00 -> DONE WP-01
+  -> WP-02.1 source/type/catalogue/command foundation
+  -> WP-02.2 identity, opening, membership, party, succession
+  -> WP-02.3 exact money, F1, knowledge-safe accounting
+  -> WP-02.4 items, custody, care, outcomes
+  -> WP-02.5 practice R, books, perks, memory
+  -> WP-02.6 V2 bridge, unchanged V1 replay
+  -> WP-02.7 actual PostgreSQL and integrated acceptance
+  -> WP-03 encounter authority/reconnect/timers
+  -> Q-T03 renderer comparison -> WP-04 tactical client
+  -> WP-05 movement -> WP-06 fog/light
+  -> WP-07 narrative -> WP-08 physical cooperative PvE
 ```
 
-WP-09..WP-15 remain later M1/M2/alpha work according to their Airtable dependencies. Do not pull them forward merely because they are technically interesting.
+Use one code writer/integrator per slice and a separate review pass. Until merge is authorized, continue on reviewed feature commits or explicitly stacked branches rather than silently merging prerequisites. WP-09..15 retain their later scope and dependencies.
 
-## M1 evidence gates that were intentionally moved out of M0
+## Source and evidence boundaries
 
-### Combat feel / duration
+G0 permits an explicitly labelled independent reconstruction of machine contracts from canonical Notes. Neither the missing original v1 ZIP nor the independently regenerated v1.2 ZIP is claimed byte-verified by this implementation. `RC-GAP-MACHINE-01` remains a named source-concordance gap, not a new product interview. Use the source manifest in the active WP contract; do not infer 117 executed tests from a catalogue count.
 
-`Q-C01` is resolved only by interactive playtest after the tactical client exists. Measure small/normal battle duration and decision density; do not treat generated AI simulation duration as human playtest evidence.
+M0 proves deterministic combat, termination and replay, not player enjoyment. Q-C01/Q-C10/R-01 require interactive M1 evidence. The 30-second activation limit remains a versioned parameter for player validation. Q-T03 / issue #6 compares Babylon and PlayCanvas with the same scene and workflow; no permanent renderer dependency is installed by WP-02.1.
 
-### 30-second activation timer
+## Resources
 
-`Q-C10` requires WP-03 deadline semantics plus an interactive client. Measure think time, timeout/AFK rate and battle duration, then revalidate at WP-11 reinforcement scale.
+One owner plus ChatGPT agents. Server target: Yandex Cloud, 2 cores / 4 GB RAM. Account conservatively for OS, application and database within the total until topology is specified. Do not presume a paid external database, use the game VM as a coding/CI runner, or promise 50-100 CCU without measurements.
 
-### Combat-interest risk
+Primary available test client: MacBook + Chrome. Record actual model/chip/RAM/OS/browser/resolution at benchmark time; do not guess Apple Silicon. Other compatibility profiles are not silently removed. Unspecified spending/time budgets do not authorize purchases or block headless type work.
 
-`R-01` remains a real M1 product risk even though M0 technical correctness passed. Before M1 release/content scale, two measured interactive iterations must justify keeping the combat loop or trigger a simplify/pivot decision.
+## Validation and change control
 
-## Renderer gate
+Retain the pinned toolchain, zero-runtime-dependency core, Fastify control plane and PostgreSQL/Kysely persistence. Realtime and rendering remain adapters. Run repository validation without weakening it, report exact commits/commands/outcomes, and distinguish source, implementation, database, renderer and player evidence. Update Airtable and Empirical with readback after each actual delivery.
 
-No permanent renderer dependency is accepted yet.
+## Owner-directed quality correction — 2026-09-07
 
-`Q-T03` / GitHub issue #6 compares Babylon.js 9.x and current PlayCanvas using the same Warwrit scene, assets, hardware/browser profile and agent workflow.
-
-WP-04 may use spike-only isolated dependencies to collect evidence, but the production renderer lock requires a recorded ADR result.
-
-## Architecture baseline
-
-Read, in order:
-
-1. `AGENTS.md`;
-2. `docs/authority/PROJECT_AUTHORITY.md`;
-3. `docs/architecture/0001-modular-monolith.md`;
-4. `docs/architecture/0002-deterministic-combat-kernel.md`;
-5. `docs/architecture/0003-m0-m1-technology-baseline.md`;
-6. `docs/architecture/0004-company-identity-succession-boundary.md` when working on WP-02;
-7. `docs/engineering/AI_TECHNOLOGY_HANDOFF.md` for framework/runtime work;
-8. this current-plan mirror;
-9. the active work-package contract.
-
-## Change-control rule
-
-Do not mark a work package Ready merely because its code dependencies are complete. A package is Ready only when its linked P0 design questions required by its DoD are closed or explicitly converted to versioned provisional evidence gates.
-
-Do not mark a milestone Blocked merely because later player-facing validation remains. Milestone scope and evidence must match the kind of artifact being produced: headless technical proof, playable, alpha, or release.
+PR #10 review R1–R3 is addressed by foundation-2; see the active contract and actual PR evidence. The owner requests fewer durable, behavior-level specifications instead of a parallel command catalogue or pinned provisional values. AGENTS.md is updated accordingly. Read the latest test policy, not the superseded fixture-count requirement. Final PR CI runs the complete gate once per update; an extra feature-push run is not required. No merge/deployment is implied.

@@ -1,0 +1,93 @@
+{
+  "edition": "WP-02.1-foundation-2",
+  "baseCommit": "d6d67a4c07b3062e282c1e1480769a8e7a1f899f",
+  "canonicalBaseId": "apph3bj1NyVrfJeLM",
+  "sourceReadDate": "2026-09-07",
+  "representation": "Independent finite reconstruction from live canonical Notes, not either original ZIP",
+  "sources": [
+    {
+      "recordId": "rec5bphVYSZUTqavX",
+      "scope": "WP-02.1 boundaries and implementation permission"
+    },
+    {
+      "recordId": "rechIKj0hsvfXIvFU",
+      "scope": "RC-P1=A, RC-P2=AAAA, RC-P3=A; numbers provisional"
+    },
+    {
+      "recordId": "recuq6OOuKnmc1yJL",
+      "scope": "actor/reason, public revision, signed birth, source references, care profile0.2"
+    },
+    {
+      "recordId": "rec3eMARPK5nj4pMD",
+      "scope": "43 command names, field names, nested shapes, source categories"
+    },
+    {
+      "recordId": "reci8qK8KmIhPzasI",
+      "scope": "finite definitions, skill/perk/item/work/condition/origin values; D09 supersedes medical times"
+    },
+    {
+      "recordId": "recv6d4GVHYW7Q0i4",
+      "scope": "identity, membership, assignment, physical location and observed knowledge separation"
+    },
+    {
+      "recordId": "recCY2DY1MUMKSUtB",
+      "scope": "equipment slots, unique items, care and custody boundary"
+    },
+    {
+      "recordId": "recFnrl0ZTBsIlNV5",
+      "scope": "headless domain and later slice ownership"
+    },
+    {
+      "recordId": "recdjcOypF0tvRHJC",
+      "scope": "R1 schema parity, R2 immutable value-preserving normalization, R3 immutable metadata, semantic ownership and KISS review"
+    }
+  ],
+  "testMapping": {
+    "file": "packages/testkit/src/company.spec.test.ts",
+    "exactValues": "conserves exact money across arithmetic and serialization without silent coercion",
+    "normalization": "returns a detached, immutable, value-preserving command that validates again; rejects executable or malformed data and leaves state unchanged",
+    "authority": "requires authenticated tenant, principal and an unchanged source-bound request; systemic causes remain systemic; private revisions stay invisible",
+    "R1": "agrees with the standard schema on primitive limits, Unicode and canonical encodings",
+    "R3": "keeps catalogue validation deterministic despite attempted external metadata changes",
+    "admission": "rejects unknown versions/definitions, incompatible timed learning, missing critical deadline, premature outcomes and DEFAULT claim subsets"
+  },
+  "technicalDecisions": [
+    "Latest owner instruction replaces duplicated implementation-shaped tests with stable executable core principles; no blanket test per command/field/helper.",
+    "Strict canonical decimal encodings and Unicode-code-point lengths share one primitive descriptor with generated JSON Schema.",
+    "One frozen snapshot admits data; no input array methods/getters are used. One helper freezes owned registry data.",
+    "Payload shape and required actor policy are registered together. Adding a command requires an explicit actor policy.",
+    "Command schemaVersion=2 and catalogue foundation-2 supersede unreleased foundation-1; source policy profile remains 0.2. Raw transport version remains untrusted.",
+    "Ajv is development-only; the already-transitive pinned version is explicitly declared for independent schema checks. Core has zero runtime dependencies.",
+    "Context-free admission is separate from future gameplay and durable transaction effects; ownership matrix is in WP-02.1.md."
+  ],
+  "remainingGaps": [
+    "RC-GAP-MACHINE-01: original v1 and v1.2 ZIP bytes not available for byte-level concordance",
+    "Culture/location/provider/service-content registries and canonical entity access are later trusted-context work",
+    "117 complete-domain acceptance obligations are not claimed mapped or implemented by this 43-shape foundation"
+  ],
+  "archiveConcordance": "NOT_RUN",
+  "gameplayHandlers": "NOT_IMPLEMENTED_IN_WP02_1",
+  "fullDomainEvidence": "NOT_RUN",
+  "supersedesUnreleased": "WP-02.1-foundation-1 at 3d90bfa496b15123097344a6de1d9b89231d7ebd",
+  "sourceIntegrity": "Git blob/commit hashes identify the exact delivered files. Original source ZIP concordance remains NOT_RUN; no self-generated hash test claims source correctness.",
+  "reviewEvidence": {
+    "reviewedUnfixedCommit": "3d90bfa496b15123097344a6de1d9b89231d7ebd",
+    "correctedCodeCommit": "e69d1e01c8934b4d1540b3232afb82bfb6327a20",
+    "correctedChecksRun": 34148054388,
+    "retainedCoreSpecifications": 12,
+    "originalHardProbes": {
+      "passed": 17,
+      "failed": 0,
+      "assertingCases": 16,
+      "observations": 1,
+      "adaptation": "Only schemaVersion 1 to 2; assertions unchanged. Ajv uses the repository-pinned 8.20.0."
+    },
+    "oneTimeAuthoredDataComparison": "exactly unchanged except catalogue edition",
+    "sourceBlobParity": "every delivered modified file equals the locally tested Git blob; deleted files verified absent"
+  },
+  "testingPolicyBasis": [
+    "Latest owner request: test stable core postulates, not every changing command, field, count or helper.",
+    "Robert Martin: https://blog.cleancoder.com/uncle-bob/2017/10/03/TestContravariance.html",
+    "Robert Martin: https://blog.cleancoder.com/uncle-bob/2016/03/19/GivingUpOnTDD.html"
+  ]
+}

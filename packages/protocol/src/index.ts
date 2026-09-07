@@ -18,3 +18,5 @@ export function envelope<Data>(data: Data): ApiEnvelope<Data> {
     protocolVersion: PROTOCOL_VERSION,
   };
 }
+
+export type { PlayerCompanyCommandDto, CompanyCommandRejectionDto } from './company.js';

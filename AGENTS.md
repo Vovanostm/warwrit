@@ -1,69 +1,52 @@
 # AGENTS.md — Warwrit engineering contract
 
-These instructions apply to every human or automated contributor unless a deeper directory contains a stricter `AGENTS.md`.
+Applies repository-wide; read stricter directory instructions before editing.
 
-## 1. Authority order
+## Authority and scope
 
-When sources conflict, use this order:
+Latest explicit owner decision > canonical Airtable decisions/GDD > accepted ADRs > active work-package contract > executable specifications > implementation > historical drafts. Preserve accepted history with dated amendments; never turn a proposal or a test plan into an approved decision or a passed check.
 
-1. explicit, latest owner decision;
-2. canonical Warwrit decision records and Master GDD;
-3. accepted ADRs;
-4. the active work-package contract;
-5. executable tests and schemas;
-6. implementation details;
-7. chat suggestions and historical drafts.
+S-02 is Done. WP-00/01 are delivered; WP-02 is In Progress. Work on WP-02.1 / issue #9 / PR #10 before advancing to WP-02.2. Read `docs/engineering/CURRENT_PLAN.md` and `docs/work-packages/WP-02.1.md`. Historical Q-CHAR-13/14 blockers are superseded, not a new interview.
 
-Do not silently convert a proposal into an approved product decision. Record unresolved design choices as blockers or provisional parameters.
+Canonical base: `apph3bj1NyVrfJeLM`; launch `rec5bphVYSZUTqavX`, approval `rechIKj0hsvfXIvFU`, v1.2 delta `recuq6OOuKnmc1yJL`, review `recdjcOypF0tvRHJC`. Read full Notes and dated Purpose updates. Source-archive concordance and unimplemented gameplay remain explicit limitations.
 
-## 2. Current delivery state
+Implementation, tests and PR updates are authorized. Merge, auto-merge, deployment and paid provisioning require separate permission. One owner plus ChatGPT agents; one writer per slice. Server target: Yandex Cloud 2 cores / 4 GB; available client: MacBook + Chrome. These are constraints, not measured capacity.
 
-M0 is complete as a headless technical proof. WP-00 and WP-01 are merged and green. Passing M0 proves correctness, determinism, termination and replay; it does **not** prove player-facing combat feel, human battle duration or the final multiplayer turn timer.
+## Simple design
 
-Current product/design focus is `S-02 — Company & Characters`. `WP-02` remains `Design Blocked` until the six active P0 questions `Q-CHAR-13A/B/C` and `Q-CHAR-14A/B/C` close. Do not implement policy for those questions from model assumptions.
+Use intention-revealing names, cohesive functions and modules with one reason to change. Separate policy from transport/storage and prefer explicit data over hidden side effects. Share a rule when it is genuinely the same rule; do not compress code into clever expressions merely to reduce lines.
 
-Accepted WP-02 boundaries are recorded in `docs/architecture/0004-company-identity-succession-boundary.md`, including persistent company identity, pre-existing family/household characters, succession/regency and deterministic hard game-over with no emergency successor generation.
+Keep the functional modular monolith. No class per command, generic framework, DI container, event bus, service or abstraction without a present requirement. Remove dead code and duplicated work. Catalogue data is not duplicate business logic; independent test expectations are not a second implementation.
 
-After S-02 closes, the default single-threaded delivery sequence is WP-02 → WP-03 → Q-T03 renderer spike → WP-04. Read `docs/engineering/CURRENT_PLAN.md` for the current operational mirror before starting a new work package.
+## Dependency and state boundaries
 
-`COMBAT_RULES_V1` remains the source of truth for provisional M0 combat numbers. Prototype values remain provisional; do not relabel simulation correctness as final balance.
+- `game-core`: pure, deterministic, serializable, zero runtime dependencies and no Node/browser I/O. Time and randomness are explicit inputs.
+- `protocol`: versioned transport contracts, no domain behavior or private canonical state.
+- `testkit`: test-only infrastructure and fixtures; never imported by production.
+- `server`: authenticated adapters and process composition. Realtime rooms are projections, not canonical state.
+- `web`: no server internals. Cross-package imports use public `@warwrit/*` exports; no cycles.
 
-## 3. Dependency boundaries
+Reject invalid commands without partial mutation. Preserve exact money, unique ownership, source/command idempotency and public/private knowledge separation. A revision token, actor string or receipt ID supplied by a client is not authority. New command policies must be exhaustive and fail closed. Version changes to canonical serialization, command semantics, RNG or combat require compatibility analysis; never rewrite released V1 replay history.
 
-- `packages/game-core` is pure and deterministic. It has no runtime dependencies and no Node.js or browser I/O imports.
-- `packages/protocol` contains versioned contracts, not domain behavior.
-- `packages/testkit` is test-only. It must never be imported by production source files.
-- `apps/server` owns infrastructure adapters and server process composition.
-- `apps/web` may depend on protocol contracts, not server internals.
-- Cross-package imports use `@warwrit/*`; never reach into another package's private path.
-- Circular file or workspace dependencies are forbidden.
+## Tests are executable specifications
 
-## 4. Determinism rules
+Owner policy, 2026-09-07: test important, durable software principles rather than mirror changing implementation. This supersedes blanket demands for a new test per behavior edit, command, field or helper.
 
-- Randomness enters through explicit versioned state or a seeded port.
-- Time enters through an explicit clock or command value.
-- Commands, events, rulesets, replays, and canonical state are serializable.
-- Domain functions do not read environment variables, global process state, storage, or network resources.
-- Invalid commands fail closed and must not partially mutate canonical state.
-- A change to RNG semantics, canonical serialization, command semantics, or combat rules requires versioning and replay compatibility analysis.
+Each retained test states an observable invariant through a stable public boundary. Priorities: determinism/replay, conservation and exact arithmetic, authorization/tenant isolation, privacy, atomic rejection, source idempotency, valid value-preserving serialization, and actual transaction/migration integrity. Add a small regression when a discovered defect violates one of these principles.
 
-## 5. Persistence and migrations
+Do not snapshot entire catalogues, pin provisional balance values/counts/hashes as behavior, inspect private call order, mock every collaborator, or copy every command payload into a parallel test catalogue. Prefer a small set of readable examples and property/table-driven specifications. Use an independent schema validator only in test tooling, never as a second production rules engine. Compilation and content validation should handle structural checks already guaranteed there.
 
-- Every schema change requires ordered `*.up.sql` and `*.down.sql` files.
-- A migration must be transaction-safe or explicitly document why it cannot be.
-- Never edit an already released migration; add a new one.
-- `pnpm test:migrations` must pass before merge.
+Refactoring or balance/content tuning should not require editing behavioral expectations. Change expectations only when the underlying contract changes, with its source recorded. Removing redundant tests must preserve their meaningful invariant in a named remaining specification; never delete the only regression for an unfixed bug. No test-count or blanket coverage targets. Do not replace many useful tests with one opaque giant test just to lower the count.
 
-## 6. Logging and health
+Test the layer that owns the rule. Admission is not execution. Do not fake future gameplay handlers or database transactions to make a test pass. Test doubles are for external boundaries, not for reimplementing the domain. Keep a small real PostgreSQL migration/transaction check where applicable and the deterministic combat stress/replay gate.
 
-- Server logs are structured JSON.
-- Never log credentials, session tokens, raw authorization headers, or personal data.
-- `/health/live` proves process liveness only.
-- `/health/ready` proves required dependencies are usable and returns `503` when they are not.
+This is a project-specific risk-based policy, not a claim that Robert Martin recommends fewer tests indiscriminately. Relevant basis: his Test Contra-variance and Giving Up on TDD essays emphasize decoupling tests from implementation structure.
 
-## 7. Required validation
+## Verification without duplicate work
 
-Before opening or updating a pull request, run:
+During edits run focused specifications, formatting and typechecks for affected modules. Reuse completed evidence for an unchanged SHA; do not repeatedly run the full suite for wording-only progress updates.
+
+Before requesting acceptance, the exact final code must pass the existing full gate once in a clean environment:
 
 ```bash
 pnpm verify
@@ -71,47 +54,18 @@ pnpm test:combat:stress
 pnpm test:migrations
 ```
 
-A change is not complete while CI is red, the lockfile is stale, formatting differs, architecture/content checks fail, or the combat stress gate does not reach a terminal state for all generated battles.
+Record SHA, commands, outcomes and limitations. A tool/runner failure is not a pass; do not weaken checks to obtain green CI. A passed stress test proves technical invariants, not fun, balance, browser FPS or production load capacity.
 
-## 8. Change discipline
+## Persistence and operations
 
-- Keep commits coherent and reviewable.
-- Update authority documentation when changing architecture or process.
-- Add or update tests for every behavior change.
-- Prefer small modular-monolith boundaries over premature services.
-- Do not add Kubernetes, distributed messaging, event sourcing infrastructure, or independent deployables without an accepted ADR and measured need.
-- Do not weaken a check to make a failure disappear; fix the underlying violation or document an explicit exception.
-- Do not mark a package Ready only because code dependencies are complete; linked blocking product decisions must also be closed or explicitly provisionalized.
-- Do not infer current project priority from issue numbers or old closed issue bodies; use `docs/engineering/CURRENT_PLAN.md` plus the canonical Airtable planning ledger.
+Schema changes need ordered up/down migrations; never edit a released migration. Canonical writes and receipts must be atomic. Publish only after commit. Preserve existing data and rollback compatibility.
 
-## 9. Technology baseline and AI API safety
+Logs are structured and exclude credentials, session tokens and personal data. `/health/live` proves process liveness; `/health/ready` returns 503 when required dependencies are unavailable.
 
-ADR-0003 is authoritative for M0/M1 technology choices. Read `docs/engineering/AI_TECHNOLOGY_HANDOFF.md` before adding or replacing infrastructure/framework dependencies.
+## Technology and delivery
 
-- Production/CI runtime remains the repository-pinned Node.js 24 line. Bun 1.4 is an experimental compatibility/benchmark lane only until a superseding ADR is accepted.
-- pnpm remains the package manager. Do not introduce a second production lockfile or migrate package management incidentally.
-- Keep the existing Fastify HTTP/control plane. Do not replace working Fastify endpoints with Colyseus/Hono/Elysia routes as cleanup.
-- When realtime is introduced, use Colyseus 0.18.x as an adapter for transport, room/session lifecycle, reconnect, and client projections. Colyseus Room memory is not canonical domain state.
-- Keep PostgreSQL + Kysely + `pg` as canonical persistence/application SQL. Do not adopt a framework database/ORM as a second source of truth.
-- The renderer is not frozen yet. Babylon.js 9.x is the working default, but the required Babylon-vs-PlayCanvas representative spike must close before a permanent production renderer dependency is accepted.
-- Do not add `uWebSockets.js`, Redis presence, Go/Rust services, Nakama, or distributed topology without the measured trigger and ADR required by ADR-0003.
+Read ADR-0003 and `docs/engineering/AI_TECHNOLOGY_HANDOFF.md`. Keep repository-pinned Node 24/pnpm, Fastify, PostgreSQL/Kysely/pg. Bun is experimental only. Colyseus is an adapter when introduced. The renderer is not frozen until the representative comparison; no incidental framework migration, second lockfile, Redis, distributed topology or Go/Rust service.
 
-For fast-moving framework APIs, never rely on model memory alone. Before coding:
+Before using changing library APIs inspect the exact lockfile/typings and official documentation. Add new technology only with an accepted decision and measured need. Do not deploy coding agents or load generators on the target game VM.
 
-1. inspect the exact installed package version and lockfile;
-2. inspect local typings/source and current repository guidance;
-3. use current official Skills, `llms.txt`, or official documentation where available;
-4. implement behind the existing adapter boundary;
-5. typecheck and run focused/integration evidence.
-
-When Colyseus is added, install/use the official `colyseus/skill`; older model examples frequently target pre-0.18 APIs. Renderer-specific Skills/MCP setup is added only after the renderer decision closes.
-
-## 10. Pull-request evidence
-
-A PR description must state:
-
-- work-package or requirement IDs;
-- material architecture decisions;
-- verification commands and outcomes;
-- migration impact;
-- known limitations and deferred scope.
+Keep commits reviewable. PR reports state scope, actual verification, migration impact and remaining risks. Update the canonical project checkpoint with readback after meaningful delivery; do not duplicate the full specification in every status comment. Report briefly to the owner.
