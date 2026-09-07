@@ -1,0 +1,82 @@
+name: Transfer verified WP021 fixes
+on:
+  push:
+    branches: [workbench/wp021-core-fixes]
+permissions:
+  contents: write
+jobs:
+  transfer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          path: tooling
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          path: work
+          ref: feat/wp-02-domain-foundation
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: work/.node-version
+      - name: Apply exact locally reviewed patch to unchanged base
+        working-directory: work
+        run: |
+          test "$(git rev-parse HEAD)" = f42e236c037b0bb979b2decb60b0501d96243d49
+          cat ../tooling/.maintenance/wp021/part* | base64 --decode > "$RUNNER_TEMP/fixes.gz"
+          echo "0d9c4d32e7218f9029ef08af2538067dffa46e8cba5a64bc06afdc389c398514  $RUNNER_TEMP/fixes.gz" | sha256sum --check
+          gzip -dc "$RUNNER_TEMP/fixes.gz" > "$RUNNER_TEMP/fixes.patch"
+          git apply --check "$RUNNER_TEMP/fixes.patch"
+          git apply "$RUNNER_TEMP/fixes.patch"
+          python3 - <<'PY'
+          import json, pathlib, subprocess
+          expected=json.loads(pathlib.Path('../tooling/.maintenance/wp021/expected.json').read_text())
+          for filename, sha in expected.items():
+              path=pathlib.Path(filename)
+              if sha is None:
+                  path.unlink()
+              else:
+                  actual=subprocess.check_output(['git','hash-object',filename],text=True).strip()
+                  assert actual == sha, (filename,actual,sha)
+          print('All delivered source blobs match the locally tested files.')
+          PY
+      - name: Focused checks on the actual patched source
+        working-directory: work
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm typecheck
+          pnpm format
+          pnpm lint
+          pnpm check:architecture
+          pnpm exec vitest run packages/testkit/src/company.spec.test.ts
+      - name: Re-run original hard probes with only the new wire version selected
+        working-directory: work
+        run: |
+          git fetch --depth=1 origin 052c96968a92c63819b942f9f849c5cca7f28131
+          git show 052c96968a92c63819b942f9f849c5cca7f28131:scripts/wp021-hard-review.mjs | sed 's/schemaVersion: 1,/schemaVersion: 2,/' > scripts/wp021-recheck.mjs
+          REVIEW_DEPS="$PWD" node --test scripts/wp021-recheck.mjs
+          rm scripts/wp021-recheck.mjs
+      - name: Commit only verified source changes to the authorized feature branch
+        working-directory: work
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, subprocess
+          expected=json.loads(pathlib.Path('../tooling/.maintenance/wp021/expected.json').read_text())
+          for filename, sha in expected.items():
+              if sha is None:
+                  assert not pathlib.Path(filename).exists(), filename
+              else:
+                  assert subprocess.check_output(['git','hash-object',filename],text=True).strip() == sha, filename
+          subprocess.run(['git','add','--',*expected],check=True)
+          changed=subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
+          assert sorted(changed)==sorted(expected), changed
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(domain): unify contracts and replace duplicated tests with core specifications'
+          git push origin HEAD:refs/heads/feat/wp-02-domain-foundation
+          printf 'DELIVERED_HEAD=%s\n' "$(git rev-parse HEAD)"
