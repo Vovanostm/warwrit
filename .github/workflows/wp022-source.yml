@@ -1,21 +1,60 @@
-name: Export WP022 source
+name: Materialize reviewed WP022 corrections
 on:
   push:
     branches: [workbench/wp022-source]
 permissions:
-  contents: read
+  contents: write
 jobs:
   source:
     runs-on: ubuntu-24.04
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           ref: dc1b8e97bc3dacd804811e6351804f5e4c66ec1e
           persist-credentials: false
-      - run: git archive --format=tar.gz HEAD > "$RUNNER_TEMP/pr12-review-source.tar.gz"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: pr12-review-source
-          path: ${{ runner.temp }}/pr12-review-source.tar.gz
-          retention-days: 2
+      - name: Verify patch, files and tree; create commit object only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, subprocess, urllib.request
+          base = 'dc1b8e97bc3dacd804811e6351804f5e4c66ec1e'
+          expected_tree = 'a5b878caa87c286d1a34d7b8862b267eb7e4bcf8'
+          files = {
+              'docs/work-packages/WP-02.2.md': 'ff33c64c9d351bb47cb421e09c01e386326a6341',
+              'packages/game-core/src/company/lifecycle.ts': '573c33b9b31c99221d7a1fb8a4efb2b258b38690',
+              'packages/game-core/src/company/succession.ts': 'f8a4d3fc4b8d5d383ac994db0cf1e879bcd427cd',
+              'packages/testkit/src/company-lifecycle.spec.test.ts': 'be0db1e6512c6475285cce872f4b8479ee4d0349',
+          }
+          def api(path, payload=None):
+              raw = None if payload is None else json.dumps(payload).encode()
+              req = urllib.request.Request('https://api.github.com/repos/Vovanostm/warwrit' + path, data=raw, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'})
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          assert git('rev-parse', 'HEAD') == base
+          raw = base64.b64decode(api('/git/blobs/4a350474ac6c567b46798a10289cfc64e8546621')['content'])
+          assert hashlib.sha256(raw).hexdigest() == '50e5b7feacf968080e90fb37fba712a7cef7d0d6d13edf3b4c5ec477c099b917'
+          patch = pathlib.Path(os.environ['RUNNER_TEMP']) / 'review.patch'
+          patch.write_bytes(raw)
+          subprocess.run(['git', 'apply', '--check', str(patch)], check=True)
+          subprocess.run(['git', 'apply', '--index', str(patch)], check=True)
+          assert set(git('diff', '--cached', '--name-only').splitlines()) == set(files)
+          assert git('write-tree') == expected_tree
+          entries = []
+          for path, expected_blob in files.items():
+              assert git('hash-object', path) == expected_blob
+              content = base64.b64encode(pathlib.Path(path).read_bytes()).decode()
+              blob = api('/git/blobs', {'content': content, 'encoding': 'base64'})
+              assert blob['sha'] == expected_blob
+              entries.append({'path': path, 'mode': '100644', 'type': 'blob', 'sha': expected_blob})
+          base_tree = api('/git/commits/' + base)['tree']['sha']
+          tree = api('/git/trees', {'base_tree': base_tree, 'tree': entries})
+          assert tree['sha'] == expected_tree
+          commit = api('/git/commits', {'message': 'fix(domain): preserve lifecycle continuity, source isolation and private snapshots', 'tree': tree['sha'], 'parents': [base]})
+          print('REVIEWED_COMMIT=' + commit['sha'])
+          print('VERIFIED_TREE=' + expected_tree)
+          print('No branch ref, merge or deployment changed by this job.')
+          PY
