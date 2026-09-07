@@ -1,0 +1,15 @@
+{
+  "docs/work-packages/WP-02.2.md": "b64b592b4903360e934921fe0b6d58c83f3ed457",
+  "packages/game-core/src/company/lifecycle-state.ts": "0507927e9e470887f556937c3a62364f789ab84a",
+  "packages/game-core/src/company/lifecycle-types.ts": "d4fc8c5ad896da8fd71e47cbfc296c0b920b1c4d",
+  "packages/game-core/src/company/lifecycle.ts": "1d73f4792d64f81178462b884e64096f82c6f573",
+  "packages/game-core/src/company/membership.ts": "f1fcfd04a34eb17a9370403121bab6d0b6585346",
+  "packages/game-core/src/company/opening.ts": "5ff5da1ec1f8d4e3574efe8bd5ed693a37f6c79d",
+  "packages/game-core/src/company/succession.ts": "41e8a9360c8828913a9c198d28ed68f0e6a600d7",
+  "packages/testkit/src/company-lifecycle.spec.test.ts": "e24b519798ad40b3d463fc40734d4bfef143b8f0",
+  "AGENTS.md": "a1b7d02f0d51c75d60da57327f1f643e282aa223",
+  "docs/engineering/CURRENT_PLAN.md": "a3ba2ccc864d3639d5aa8761265a208a337e37cf",
+  "packages/game-core/src/company/definitions.ts": "ad92a2a273768248b519a63b00ed75dc129724d6",
+  "packages/game-core/src/company/index.ts": "163a45bb41de789366aa38d73af00d7a7eaba205",
+  "packages/game-core/src/company/model.ts": "7c2508bf5f6e386c96af101a4f4598e251f29cb8"
+}

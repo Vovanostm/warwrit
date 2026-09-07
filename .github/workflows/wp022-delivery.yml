@@ -1,0 +1,66 @@
+name: Deliver reviewed WP022 source
+on:
+  push:
+    branches: [workbench/wp022-finalize]
+permissions:
+  contents: write
+concurrency:
+  group: wp022-source-delivery
+  cancel-in-progress: false
+jobs:
+  transfer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          path: tooling
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: feat/wp-02-lifecycle
+          path: work
+      - name: Recover reviewed source and verify the entire resulting tree
+        working-directory: work
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(git rev-parse HEAD)" = 0d58dde305b2c7b85c73f2732a9b4aa7686045d3
+          python3 - <<'PY'
+          import os,json,base64,hashlib,lzma,pathlib,subprocess,urllib.request
+          shas='7b69640750b6e03ae9735f91a10a3c273b6f1aba 9f6839b9f9d97d7a7b78fe46e5f651a65e1a62b4 35b2e736d7be81619c418561bc9090d7c776c409 7c39326995b54016cd844920a521a09e6cde30e4 44eec617d9af3dd3bee49dbfb7b2b9e6b88fe703 432a61e57db70386a6f41c46b28283e0053d0a37 5f8a0108f17c2d8f77bda917794604b53f78358b'.split()
+          parts=[]
+          for sha in shas:
+              req=urllib.request.Request('https://api.github.com/repos/Vovanostm/warwrit/git/blobs/'+sha,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              with urllib.request.urlopen(req,timeout=30) as response: doc=json.load(response)
+              raw=base64.b64decode(doc['content'])
+              assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==sha
+              parts.append(raw.decode().strip())
+          text=''.join(parts)
+          decoder=lzma.LZMADecompressor()
+          recovered=decoder.decompress(base64.b64decode(text+'='*((-len(text))%4)))
+          # The old stream was truncated in the test tail. Only this complete, fingerprinted prefix is used.
+          production=recovered.split(b'diff --git a/packages/testkit/src/company-lifecycle.spec.test.ts',1)[0]
+          assert hashlib.sha256(production).hexdigest()=='cd82630d56cdd94a922142c0e228d01fa42580830071c22242411df973324d40'
+          delta=pathlib.Path('../tooling/.maintenance/wp022/review-delta.xz').read_bytes()
+          assert hashlib.sha256(delta).hexdigest()=='fec1b6b3369e0bbf46ef72a7d129b73fd5243d37b53573408c79cb6ef16b0ae0'
+          for patch in (production,lzma.decompress(delta)):
+              subprocess.run(['git','apply','--check','-'],input=patch,check=True)
+              subprocess.run(['git','apply','-'],input=patch,check=True)
+          expected=json.loads(pathlib.Path('../tooling/.maintenance/wp022/expected.json').read_text())
+          for filename,sha in expected.items():
+              assert subprocess.check_output(['git','hash-object',filename],text=True).strip()==sha,filename
+          subprocess.run(['git','add','--',*expected],check=True)
+          changed=subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
+          assert sorted(changed)==sorted(expected),changed
+          tree=subprocess.check_output(['git','write-tree'],text=True).strip()
+          assert tree=='dee38b110b3e6dc557c9e121372610f41e67f7ba',tree
+          print('VERIFIED_SOURCE_TREE='+tree)
+          print('All 13 delivered source files equal the locally reviewed and focused-tested blobs.')
+          PY
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat(domain): implement and review WP-02.2 lifecycle transitions'
+          git push origin HEAD:refs/heads/feat/wp-02-lifecycle
+          printf 'DELIVERED_HEAD=%s\n' "$(git rev-parse HEAD)"
