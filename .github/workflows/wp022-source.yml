@@ -1,0 +1,21 @@
+name: Export WP022 source
+on:
+  push:
+    branches: [workbench/wp022-source]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: 0d58dde305b2c7b85c73f2732a9b4aa7686045d3
+          persist-credentials: false
+      - run: git archive --format=tar.gz HEAD > "$RUNNER_TEMP/warwrit-source.tar.gz"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp022-source
+          path: ${{ runner.temp }}/warwrit-source.tar.gz
+          retention-days: 1
