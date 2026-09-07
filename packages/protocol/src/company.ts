@@ -1,6 +1,6 @@
 /** Transport-only boundary. The authenticated server must validate unknown payloads in game-core. */
 export interface PlayerCompanyCommandDto {
-  readonly schemaVersion: 1;
+  readonly schemaVersion: number;
   readonly commandId: string;
   readonly worldId: string;
   readonly companyId: string;

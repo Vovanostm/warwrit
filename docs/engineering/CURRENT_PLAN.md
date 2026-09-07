@@ -12,7 +12,7 @@ M0: done
 S-02: done
 WP-00: done
 WP-01: done
-WP-02: implementation-authorized
+WP-02: in-progress
 current_slice: WP-02.1
 merge_authorized: false
 deploy_authorized: false
@@ -70,3 +70,7 @@ Primary available test client: MacBook + Chrome. Record actual model/chip/RAM/OS
 ## Validation and change control
 
 Retain the pinned toolchain, zero-runtime-dependency core, Fastify control plane and PostgreSQL/Kysely persistence. Realtime and rendering remain adapters. Run repository validation without weakening it, report exact commits/commands/outcomes, and distinguish source, implementation, database, renderer and player evidence. Update Airtable and Empirical with readback after each actual delivery.
+
+## Owner-directed quality correction — 2026-09-07
+
+PR #10 review R1–R3 is addressed by foundation-2; see the active contract and actual PR evidence. The owner requests fewer durable, behavior-level specifications instead of a parallel command catalogue or pinned provisional values. AGENTS.md is updated accordingly. Read the latest test policy, not the superseded fixture-count requirement. Final PR CI runs the complete gate once per update; an extra feature-push run is not required. No merge/deployment is implied.

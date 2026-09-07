@@ -12,27 +12,29 @@ export type BirthTick = ExactInteger<'BirthTick'>;
 export type PublicRevision = ExactInteger<'PublicRevision'>;
 export type CanonicalRevision = ExactInteger<'CanonicalRevision'>;
 
-// Representation limits, not gameplay caps; version the command boundary if these change.
+// Wire limits are shared with JSON Schema; lengths count Unicode code points.
 export const MAX_EXACT_DIGITS = 128;
 export const MAX_ID_LENGTH = 256;
-export function isEntityId(value: unknown): value is string {
-  return (
-    typeof value === 'string' &&
-    value.length > 0 &&
-    value.length <= MAX_ID_LENGTH &&
-    value.trim() === value &&
-    [...value].every(
-      (character) => character.charCodeAt(0) >= 32 && character.charCodeAt(0) !== 127,
-    )
-  );
+export const MAX_TEXT_LENGTH = 4096;
+function stringInput(maxLength: number, pattern: string) {
+  pattern = `^(?:${pattern})(?![\\s\\S])`;
+  const schema = Object.freeze({ type: 'string', minLength: 1, maxLength, pattern });
+  const expression = new RegExp(pattern, 'u');
+  return Object.freeze({
+    schema,
+    read: (value: unknown): value is string =>
+      typeof value === 'string' && [...value].length <= maxLength && expression.test(value),
+  });
 }
+export const STRING_INPUTS = Object.freeze({
+  text: stringInput(MAX_TEXT_LENGTH, '[\\s\\S]+'),
+  id: stringInput(MAX_ID_LENGTH, '(?!\\s)(?![\\s\\S]*[\\u0000-\\u001f\\u007f])[\\s\\S]*\\S'),
+  unsigned: stringInput(MAX_EXACT_DIGITS, `0|[1-9][0-9]{0,${MAX_EXACT_DIGITS - 1}}`),
+  signed: stringInput(MAX_EXACT_DIGITS + 1, `0|-?[1-9][0-9]{0,${MAX_EXACT_DIGITS - 1}}`),
+});
+export const isEntityId = STRING_INPUTS.id.read;
 export function isExactInteger(value: unknown, signed = false): value is string {
-  return (
-    typeof value === 'string' &&
-    value.length <= MAX_EXACT_DIGITS + (signed ? 1 : 0) &&
-    (signed ? /^(?:0|-?[1-9][0-9]*)$/u : /^(?:0|[1-9][0-9]*)$/u).test(value) &&
-    value.replace('-', '').length <= MAX_EXACT_DIGITS
-  );
+  return (signed ? STRING_INPUTS.signed : STRING_INPUTS.unsigned).read(value);
 }
 export function entityId<K extends string>(value: unknown): EntityId<K> {
   if (!isEntityId(value)) throw new RangeError('Invalid entity ID');

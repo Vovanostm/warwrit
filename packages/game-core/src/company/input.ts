@@ -1,4 +1,4 @@
-import { isEntityId, isExactInteger, MAX_EXACT_DIGITS, MAX_ID_LENGTH } from './values.js';
+import { MAX_TEXT_LENGTH, STRING_INPUTS } from './values.js';
 
 export type JsonValue =
   null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
@@ -17,66 +17,67 @@ export type ObjectOf<F extends Fields> = { readonly [K in RequiredKeys<F>]: Valu
   readonly [K in OptionalKeys<F>]?: ValueOf<F[K]>;
 };
 
+export const JSON_LIMITS = Object.freeze({ depth: 20, nodes: 10000, entries: 1000 });
 export function plainObject(value: unknown): value is Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
   const prototype: unknown = Object.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
 }
-/** Accept data, not classes/accessors/cyclic graphs. Bound work before any schema traversal. */
-export function isJsonData(value: unknown): value is JsonValue {
-  let remaining = 10000;
+/** One detached data snapshot: never call a method or getter supplied by the caller. */
+export function snapshotJson(value: unknown): JsonValue | undefined {
+  let remaining = JSON_LIMITS.nodes;
   const ancestors = new Set<object>();
-  function visit(item: unknown, depth: number): boolean {
-    remaining -= 1;
-    if (remaining < 0 || depth > 20) return false;
-    if (item === null || typeof item === 'boolean') return true;
-    if (typeof item === 'string') return item.length <= 4096;
-    if (typeof item === 'number')
-      return (
-        Number.isFinite(item) &&
-        !Object.is(item, -0) &&
-        (!Number.isInteger(item) || Number.isSafeInteger(item))
-      );
-    if (typeof item !== 'object' || (!Array.isArray(item) && !plainObject(item))) return false;
-    if (ancestors.has(item)) return false;
+  function copy(item: unknown, depth: number): JsonValue {
+    if (--remaining < 0 || depth > JSON_LIMITS.depth) throw new TypeError('JSON budget exceeded');
+    if (item === null || typeof item === 'boolean') return item;
+    if (typeof item === 'string' && [...item].length <= MAX_TEXT_LENGTH) return item;
+    if (
+      typeof item === 'number' &&
+      Number.isFinite(item) &&
+      !Object.is(item, -0) &&
+      (!Number.isInteger(item) || Number.isSafeInteger(item))
+    )
+      return item;
+    if (typeof item !== 'object' || item === null || ancestors.has(item))
+      throw new TypeError('Not JSON data');
+    const array = Array.isArray(item);
+    if (array ? Object.getPrototypeOf(item) !== Array.prototype : !plainObject(item))
+      throw new TypeError('Not a data container');
+    const descriptors = Object.getOwnPropertyDescriptors(item);
+    const keys = Reflect.ownKeys(descriptors).filter((key) => !array || key !== 'length');
+    const length: unknown = descriptors['length']?.value;
+    if (keys.length > JSON_LIMITS.entries || (array && length !== keys.length))
+      throw new TypeError('Invalid container size');
     ancestors.add(item);
-    const keys = Reflect.ownKeys(item);
-    if (keys.length > 1001) return false;
-    if (Array.isArray(item) && (item.length > 1000 || keys.length !== item.length + 1))
-      return false;
-    for (const key of keys) {
-      if (typeof key !== 'string') return false;
-      if (Array.isArray(item) && key === 'length') continue;
-      if (Array.isArray(item) && !/^(0|[1-9][0-9]*)$/u.test(key)) return false;
-      const descriptor = Object.getOwnPropertyDescriptor(item, key);
-      if (!descriptor || !('value' in descriptor) || !descriptor.enumerable) return false;
-      if (!visit(descriptor.value, depth + 1)) return false;
+    const result: Record<string, JsonValue> = {};
+    for (const [index, key] of keys.entries()) {
+      if (
+        typeof key !== 'string' ||
+        [...key].length > MAX_TEXT_LENGTH ||
+        (array && key !== String(index))
+      )
+        throw new TypeError('Invalid data key');
+      const descriptor = descriptors[key]!;
+      if (!('value' in descriptor) || !descriptor.enumerable)
+        throw new TypeError('Not a data property');
+      Object.defineProperty(result, key, {
+        value: copy(descriptor.value, depth + 1),
+        enumerable: true,
+      });
     }
     ancestors.delete(item);
-    return true;
+    return Object.freeze(array ? Object.values(result) : result);
   }
   try {
-    return visit(value, 0);
+    return copy(value, 0);
   } catch {
-    return false;
+    return undefined;
   }
 }
-export const text: Input<string> = {
-  schema: { type: 'string', minLength: 1, maxLength: 4096 },
-  read: (v): v is string => typeof v === 'string' && v.length > 0 && v.length <= 4096,
-};
-export const id: Input<string> = {
-  schema: { type: 'string', minLength: 1, maxLength: MAX_ID_LENGTH },
-  read: isEntityId,
-};
-export const unsigned: Input<string> = {
-  schema: { type: 'string', pattern: '^(0|[1-9][0-9]*)$', maxLength: MAX_EXACT_DIGITS },
-  read: (v): v is string => isExactInteger(v),
-};
-export const signed: Input<string> = {
-  schema: { type: 'string', pattern: '^(0|-?[1-9][0-9]*)$', maxLength: MAX_EXACT_DIGITS + 1 },
-  read: (v): v is string => isExactInteger(v, true),
-};
+export function isJsonData(value: unknown): value is JsonValue {
+  return snapshotJson(value) !== undefined;
+}
+export const { text, id, unsigned, signed } = STRING_INPUTS;
 export const bool: Input<boolean> = {
   schema: { type: 'boolean' },
   read: (v): v is boolean => typeof v === 'boolean',
@@ -106,7 +107,7 @@ export function optional<T>(input: Input<T>): Input<T> & { readonly optional: tr
 export function array<T>(
   input: Input<T>,
   minimum = 0,
-  maximum = 1000,
+  maximum: number = JSON_LIMITS.entries,
   unique = false,
 ): Input<readonly T[]> {
   return {
@@ -122,7 +123,7 @@ export function array<T>(
       v.length >= minimum &&
       v.length <= maximum &&
       v.every((item: unknown) => input.read(item)) &&
-      (!unique || new Set(v).size === v.length),
+      (!unique || new Set(v.map((item: unknown) => canonicalJson(item))).size === v.length),
   };
 }
 export function object<const F extends Fields>(fields: F): Input<ObjectOf<F>> {
@@ -153,13 +154,32 @@ export function either<A, B>(first: Input<A>, second: Input<B>): Input<A | B> {
     read: (v): v is A | B => first.read(v) || second.read(v),
   };
 }
+const JSON_OBJECT_SCHEMA = freezeRegistry({
+  type: 'object',
+  maxProperties: JSON_LIMITS.entries,
+  propertyNames: { maxLength: MAX_TEXT_LENGTH },
+  additionalProperties: { $ref: '#/$defs/jsonData' },
+});
+// Recursive wire shape. Depth/node work budgets remain a separate admission limit.
+export const JSON_DATA_SCHEMA = freezeRegistry({
+  anyOf: [
+    { type: 'null' },
+    { type: 'boolean' },
+    { type: 'number', minimum: -Number.MAX_SAFE_INTEGER, maximum: Number.MAX_SAFE_INTEGER },
+    { type: 'string', maxLength: MAX_TEXT_LENGTH },
+    { type: 'array', maxItems: JSON_LIMITS.entries, items: { $ref: '#/$defs/jsonData' } },
+    JSON_OBJECT_SCHEMA,
+  ],
+});
 export const jsonObject: Input<{ readonly [key: string]: JsonValue }> = {
-  schema: { type: 'object', additionalProperties: true, maxProperties: 1000 },
-  read: (v): v is { readonly [key: string]: JsonValue } => plainObject(v) && isJsonData(v),
+  schema: JSON_OBJECT_SCHEMA,
+  read: (v): v is { readonly [key: string]: JsonValue } =>
+    plainObject(v) && Object.keys(v).length <= JSON_LIMITS.entries,
 };
-/** Locale-independent identity material, not a cryptographic digest or a public receipt. */
+/** Locale-independent request identity; not a cryptographic digest or public receipt. */
 export function canonicalJson(value: unknown): string {
-  if (!isJsonData(value)) throw new TypeError('Expected bounded JSON data');
+  const snapshot = snapshotJson(value);
+  if (snapshot === undefined) throw new TypeError('Expected bounded JSON data');
   function encode(item: JsonValue): string {
     if (item === null || typeof item !== 'object') return JSON.stringify(item);
     if (Array.isArray(item)) return `[${item.map(encode).join(',')}]`;
@@ -169,12 +189,11 @@ export function canonicalJson(value: unknown): string {
       .map((key) => `${JSON.stringify(key)}:${encode(record[key]!)}`)
       .join(',')}}`;
   }
-  return encode(value);
+  return encode(snapshot);
 }
-
-/** Freeze internal finite registries so exported schemas cannot change validation. */
+/** Only for owned, acyclic registries; untrusted inputs use snapshotJson instead. */
 export function freezeRegistry<T>(value: T): T {
-  if (value !== null && typeof value === 'object' && !Object.isFrozen(value)) {
+  if (value !== null && typeof value === 'object') {
     for (const child of Object.values(value)) freezeRegistry(child);
     Object.freeze(value);
   }

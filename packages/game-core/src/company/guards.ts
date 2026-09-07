@@ -1,12 +1,6 @@
 import { canonicalJson } from './input.js';
-import { parseCompanyCommand } from './commands.js';
-import type {
-  ActorKind,
-  CompanyCommand,
-  CompanyCommandType,
-  CompanyInputError,
-  InternalActor,
-} from './commands.js';
+import { COMPANY_COMMAND_INPUTS, parseCompanyCommand } from './commands.js';
+import type { ActorKind, CompanyCommand, CompanyInputError, InternalActor } from './commands.js';
 import type { CanonicalRevision, PublicRevision } from './values.js';
 
 /** Construct ONLY inside an authenticated adapter, never from the command payload. */
@@ -25,26 +19,6 @@ export type TrustedCompanyContext = {
     readonly canonicalRequest: string;
   };
 };
-const systemTypes: readonly CompanyCommandType[] = [
-  'ExecuteDeparture',
-  'AdvanceCampaign',
-  'BeginEncounterBinding',
-];
-const receiptActors: Partial<Record<CompanyCommandType, ActorKind>> = {
-  Arrive: 'WORLD_RECEIPT',
-  ResolveMissing: 'WORLD_RECEIPT',
-  ApplyContainerLifecycle: 'WORLD_RECEIPT',
-  CreditPractice: 'DOMAIN_RECEIPT',
-  ApplyCondition: 'DOMAIN_RECEIPT',
-  Observe: 'DOMAIN_RECEIPT',
-  ProposeNickname: 'DOMAIN_RECEIPT',
-  Capture: 'OUTCOME_RECEIPT',
-  ReleaseCaptive: 'OUTCOME_RECEIPT',
-  TransferCaptive: 'OUTCOME_RECEIPT',
-  RecordDeath: 'OUTCOME_RECEIPT',
-  ConsumeCombatReceipt: 'COMBAT_RECEIPT',
-  FinalizeEncounter: 'COMBAT_RECEIPT',
-};
 export function requiredActor(command: CompanyCommand): readonly ActorKind[] {
   switch (command.type) {
     case 'RequestDeparture':
@@ -58,9 +32,7 @@ export function requiredActor(command: CompanyCommand): readonly ActorKind[] {
         ? ['PLAYER', 'SYSTEM']
         : ['PLAYER'];
     default:
-      return [
-        receiptActors[command.type] ?? (systemTypes.includes(command.type) ? 'SYSTEM' : 'PLAYER'),
-      ];
+      return COMPANY_COMMAND_INPUTS[command.type].actors;
   }
 }
 export type CompanyGuardError = CompanyInputError | 'AUTHORIZATION' | 'INVALID_SOURCE';

@@ -1,12 +1,12 @@
 import {
   array,
   bool,
-  canonicalJson,
   choice,
   either,
   freezeRegistry,
   id,
-  isJsonData,
+  snapshotJson,
+  JSON_DATA_SCHEMA,
   jsonObject,
   natural,
   object,
@@ -15,18 +15,18 @@ import {
   text,
   unsigned,
 } from './input.js';
-import type { ValueOf } from './input.js';
+import type { Input, ValueOf } from './input.js';
 import { ASSIGNMENTS, COMPANY_COMMAND_SCHEMA_VERSION, COMPANY_RULESET_ID } from './model.js';
 import { catalogueHas, COMPANY_CATALOGUE, EQUIPMENT_SLOTS } from './definitions.js';
 import type { CanonicalRevision, PublicRevision } from './values.js';
 
-export const INTERNAL_ACTORS = [
+export const INTERNAL_ACTORS = Object.freeze([
   'SYSTEM',
   'WORLD_RECEIPT',
   'DOMAIN_RECEIPT',
   'OUTCOME_RECEIPT',
   'COMBAT_RECEIPT',
-] as const;
+] as const);
 export type InternalActor = (typeof INTERNAL_ACTORS)[number];
 export type ActorKind = 'PLAYER' | InternalActor;
 const actor = object({ kind: choice('PLAYER', ...INTERNAL_ACTORS), id });
@@ -59,9 +59,17 @@ const quantity = object({ itemId: id, quantity: natural(1) });
 const seizure = object({ itemId: id, toContainerId: id, authorizationId: id });
 const ids = array(id, 0, 1000, true);
 
+/** Registration requires an explicit policy: adding a command cannot default to PLAYER. */
+function command<const F extends Readonly<Record<string, Input<unknown>>>>(
+  actors: ActorKind | readonly ActorKind[],
+  fields: F,
+) {
+  return { ...object(fields), actors: typeof actors === 'string' ? [actors] : actors };
+}
+
 /** The only wire-shape registry. Gameplay predicates/handlers are later slices. */
 export const COMPANY_COMMAND_INPUTS = freezeRegistry({
-  CreateCompany: object({
+  CreateCompany: command('PLAYER', {
     companyId: id,
     worldId: id,
     originId: id,
@@ -74,7 +82,7 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     name: text,
     bannerId: id,
   }),
-  Recruit: object({
+  Recruit: command('PLAYER', {
     offerId: id,
     characterId: id,
     companyId: id,
@@ -82,61 +90,66 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     offerRevision: unsigned,
     poolId: id,
   }),
-  JoinFieldParty: object({ characterId: id, partyId: id, coLocationEvidenceId: id }),
-  SetAssignment: object({
+  JoinFieldParty: command('PLAYER', { characterId: id, partyId: id, coLocationEvidenceId: id }),
+  SetAssignment: command('PLAYER', {
     characterId: id,
     assignment: choice(...ASSIGNMENTS),
     locationId: id,
     dutyEvidenceId: id,
     fundingPoolId: id,
   }),
-  Arrive: object({ characterId: id, segmentId: id, arrivalEvidenceId: id }),
-  RequestDeparture: object({
+  Arrive: command('WORLD_RECEIPT', { characterId: id, segmentId: id, arrivalEvidenceId: id }),
+  RequestDeparture: command(['PLAYER', 'SYSTEM'], {
     membershipId: id,
     reason: choice('DISMISSED', 'WAGE_BREACH', 'CANONICAL_EVENT'),
     causeId: id,
     acknowledgedQuoteRevision: unsigned,
   }),
-  ExecuteDeparture: object({
+  ExecuteDeparture: command('SYSTEM', {
     membershipId: id,
     intentId: id,
     returnContainerId: id,
     careHandoverId: optional(id),
   }),
-  PayClaims: object({
+  PayClaims: command('PLAYER', {
     poolId: id,
     amountQ: unsigned,
     claimIds: ids,
     mode: choice('DEFAULT', 'TARGETED'),
     payeeId: optional(id),
   }),
-  GrantFarewell: object({
+  GrantFarewell: command('PLAYER', {
     membershipId: id,
     quoteRevision: unsigned,
     amountQ: unsigned,
     poolId: id,
   }),
-  TransferFunds: object({ fromPoolId: id, toPoolId: id, amountQ: unsigned, accessEvidenceId: id }),
+  TransferFunds: command('PLAYER', {
+    fromPoolId: id,
+    toPoolId: id,
+    amountQ: unsigned,
+    accessEvidenceId: id,
+  }),
   // Opaque IDs resolve in a trusted adapter; raw outcome/XP/death objects are not inputs.
-  AdvanceCampaign: object({ toTick: unsigned, authoritativeInputs: ids }),
-  BeginFieldCamp: object({ partyId: id, siteEligibilityId: id }),
-  EndMaintenance: object({
+  AdvanceCampaign: command('SYSTEM', { toTick: unsigned, authoritativeInputs: ids }),
+  BeginFieldCamp: command('PLAYER', { partyId: id, siteEligibilityId: id }),
+  EndMaintenance: command(['PLAYER', 'SYSTEM'], {
     agreementOrCampId: id,
     reason: choice('LEAVE', 'MOVE', 'ENCOUNTER', 'INCOMPATIBLE_DUTY'),
   }),
-  AcceptSafeService: object({
+  AcceptSafeService: command('PLAYER', {
     partyId: id,
     offerId: id,
     beneficiaryIds: array(id, 1, 6, true),
     fundingPoolId: id,
     quoteRevision: unsigned,
   }),
-  AmendSafeService: object({
+  AmendSafeService: command('PLAYER', {
     agreementId: id,
     beneficiaryIds: array(id, 1, 6, true),
     quoteRevision: unsigned,
   }),
-  StartLearning: object({
+  StartLearning: command('PLAYER', {
     characterId: id,
     methodId: id,
     goal,
@@ -144,8 +157,11 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     budgetPoolId: id,
     maxBudgetQ: unsigned,
   }),
-  StopLearning: object({ taskId: id, reason: choice('PLAYER', 'GOAL', 'FUNDS', 'PREREQUISITES') }),
-  CreditPractice: object({
+  StopLearning: command(['PLAYER', 'SYSTEM'], {
+    taskId: id,
+    reason: choice('PLAYER', 'GOAL', 'FUNDS', 'PREREQUISITES'),
+  }),
+  CreditPractice: command('DOMAIN_RECEIPT', {
     receiptId: id,
     characterId: id,
     skillId: id,
@@ -154,50 +170,50 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     outcome: choice('SUCCESS', 'MEANINGFUL_FAILURE'),
     effortTicks: unsigned,
   }),
-  ChoosePerk: object({ characterId: id, perkId: id, milestone: choice(25, 60) }),
-  StartRetraining: object({
+  ChoosePerk: command('PLAYER', { characterId: id, perkId: id, milestone: choice(25, 60) }),
+  StartRetraining: command('PLAYER', {
     characterId: id,
     oldPerkId: id,
     newPerkId: id,
     mentorEvidenceId: id,
     budgetPoolId: id,
   }),
-  ApplyCare: object({
+  ApplyCare: command('PLAYER', {
     characterId: id,
     conditionId: id,
     careDefinitionId: id,
     resourceOrProviderReceiptId: id,
     budgetPoolId: optional(id),
   }),
-  ApplyCondition: object({
+  ApplyCondition: command('DOMAIN_RECEIPT', {
     receiptId: id,
     characterId: id,
     conditionDefinitionId: id,
     causeId: id,
     deadlineTick: optional(unsigned),
   }),
-  Observe: object({
+  Observe: command('DOMAIN_RECEIPT', {
     observationId: id,
     observerRef: ref,
     subjectRef: ref,
     factId: id,
     sourceId: id,
   }),
-  Capture: object({
+  Capture: command('OUTCOME_RECEIPT', {
     receiptId: id,
     characterId: id,
     captorRef: ownerRef,
     locationRef: location,
     seizedItems: array(seizure),
   }),
-  ReleaseCaptive: object({
+  ReleaseCaptive: command('OUTCOME_RECEIPT', {
     receiptId: id,
     characterId: id,
     route: choice('RANSOM', 'RESCUE', 'SELF_ESCAPE'),
     locationRef: location,
     proofId: id,
   }),
-  TransferCaptive: object({
+  TransferCaptive: command('OUTCOME_RECEIPT', {
     receiptId: id,
     characterId: id,
     fromCustodianId: id,
@@ -205,42 +221,47 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     locationRef: location,
     exchangeProofId: id,
   }),
-  ResolveMissing: object({
+  ResolveMissing: command('WORLD_RECEIPT', {
     resolutionId: id,
     characterId: id,
     notBefore: unsigned,
     outcomeReceiptId: id,
   }),
-  RecordDeath: object({
+  RecordDeath: command('OUTCOME_RECEIPT', {
     receiptId: id,
     characterId: id,
     actualDeathTick: unsigned,
     causeId: id,
     custodyOutcomeId: id,
   }),
-  ReturnToService: object({
+  ReturnToService: command('PLAYER', {
     characterId: id,
     arrivalEvidenceId: id,
     assignment: choice('HOME_RESERVE', 'FIELD', 'RECOVERY'),
   }),
-  DesignateHeir: object({ companyId: id, characterId: id }),
-  ResolveLeadership: object({
+  DesignateHeir: command('PLAYER', { companyId: id, characterId: id }),
+  ResolveLeadership: command(['PLAYER', 'SYSTEM'], {
     companyId: id,
     crisisId: id,
     candidateId: optional(id),
     mode: choice('PERMANENT', 'ACTING', 'REGENCY', 'CONFIRM_ACTING', 'RESTORE_HEIR'),
   }),
-  ProposeNickname: object({ proposalId: id, characterId: id, sourceEventId: id, textKey: id }),
-  ResolveNickname: object({ proposalId: id, accept: bool }),
+  ProposeNickname: command('DOMAIN_RECEIPT', {
+    proposalId: id,
+    characterId: id,
+    sourceEventId: id,
+    textKey: id,
+  }),
+  ResolveNickname: command('PLAYER', { proposalId: id, accept: bool }),
   // Service-specific cosmetic keys are not specified by the source Notes. Kept raw,
   // never asserted to be an executable appearance change in this foundation.
-  ChangePresentation: object({
+  ChangePresentation: command('PLAYER', {
     characterId: id,
     serviceEvidenceId: id,
     appearancePatch: jsonObject,
   }),
-  RenameCompany: object({ companyId: id, name: text, bannerId: id }),
-  TransferItem: object({
+  RenameCompany: command('PLAYER', { companyId: id, name: text, bannerId: id }),
+  TransferItem: command('PLAYER', {
     itemId: id,
     quantity: natural(1),
     fromContainerId: id,
@@ -248,26 +269,26 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     accessEvidenceId: id,
     ownershipReceiptId: optional(id),
   }),
-  EquipItem: object({
+  EquipItem: command('PLAYER', {
     characterId: id,
     itemId: id,
     slotId: choice(...EQUIPMENT_SLOTS),
     accessEvidenceId: id,
   }),
-  RepairItem: object({
+  RepairItem: command('PLAYER', {
     itemId: id,
     repairUnits: natural(1),
     materialsContainerId: id,
     serviceReceiptId: optional(id),
   }),
-  ClaimLoot: object({
+  ClaimLoot: command('PLAYER', {
     outcomeId: id,
     itemQuantities: array(quantity, 1),
     toContainerId: id,
     accessEvidenceId: id,
     claimAuthorizationId: id,
   }),
-  ApplyContainerLifecycle: object({
+  ApplyContainerLifecycle: command('WORLD_RECEIPT', {
     receiptId: id,
     containerId: id,
     causeId: id,
@@ -275,7 +296,7 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     disposition: choice('TRANSFER', 'DESTROY_WITH_CAUSE'),
     destinationId: optional(id),
   }),
-  BeginEncounterBinding: object({
+  BeginEncounterBinding: command('SYSTEM', {
     bindingId: id,
     partyIds: array(id, 1, 1000, true),
     setupId: id,
@@ -284,13 +305,13 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
   }),
   // Bounded raw event data is not cast to CombatEvent. The V2 bridge will validate
   // kernel event semantics; today both receipt authorization and fail-closed dispatch apply.
-  ConsumeCombatReceipt: object({
+  ConsumeCombatReceipt: command('COMBAT_RECEIPT', {
     bindingId: id,
     receiptId: id,
     revision: unsigned,
     orderedEvents: array(jsonObject),
   }),
-  FinalizeEncounter: object({
+  FinalizeEncounter: command('COMBAT_RECEIPT', {
     bindingId: id,
     terminalReceiptId: id,
     finalStateDigest: id,
@@ -314,17 +335,11 @@ type AuthorityEnvelope =
       readonly expectedRevision: CanonicalRevision;
     };
 export type CompanyCommand = {
-  [K in CompanyCommandType]: AuthorityEnvelope & {
-    readonly schemaVersion: typeof COMPANY_COMMAND_SCHEMA_VERSION;
-    readonly commandId: string;
-    readonly worldId: string;
-    readonly companyId: string;
-    readonly campaignTick: string;
-    readonly rulesetId: typeof COMPANY_RULESET_ID;
-    readonly sourceEventId?: string;
-    readonly type: K;
-    readonly payload: CompanyCommandPayload<K>;
-  };
+  [K in CompanyCommandType]: AuthorityEnvelope &
+    Omit<ValueOf<typeof envelopeInput>, 'actorRef' | 'expectedRevision' | 'type' | 'payload'> & {
+      readonly type: K;
+      readonly payload: CompanyCommandPayload<K>;
+    };
 }[CompanyCommandType];
 const envelopeInput = object({
   schemaVersion: choice(COMPANY_COMMAND_SCHEMA_VERSION),
@@ -398,22 +413,35 @@ function argumentsValid(command: CompanyCommand): boolean {
     case 'PayClaims':
       return command.payload.mode === 'TARGETED'
         ? command.payload.payeeId !== undefined
-        : command.payload.payeeId === undefined;
+        : command.payload.payeeId === undefined && command.payload.claimIds.length === 0;
     case 'StartLearning': {
       const method = COMPANY_CATALOGUE.methods.find((m) => m.id === command.payload.methodId);
       return (
         BigInt(command.payload.goal.maxTicks) > 0n &&
         method !== undefined &&
-        (method.interval === 'FINITE_SECTION') === 'workId' in command.payload.goal
+        (method.interval === 'FINITE_SECTION'
+          ? 'workId' in command.payload.goal
+          : method.interval === 'CAMPAIGN_DAY' && 'skillId' in command.payload.goal)
       );
     }
     case 'CreditPractice': {
       const method = COMPANY_CATALOGUE.methods.find((m) => m.id === command.payload.methodId);
       if (!method || method.interval === 'FINITE_SECTION') return false;
       if (method.target === 'mapped-weapon')
-        return ['blades', 'polearms', 'heavy', 'archery'].includes(command.payload.skillId);
+        return COMPANY_CATALOGUE.items.some(
+          (item) =>
+            item.enabled && item.kind === 'weapon' && item.skillId === command.payload.skillId,
+        );
       return method.target === 'task-skill' || method.target === command.payload.skillId;
     }
+    case 'ApplyCondition':
+      return (
+        COMPANY_CATALOGUE.conditions.find(
+          (condition) => condition.id === command.payload.conditionDefinitionId,
+        )?.category !== 'CRITICAL' || command.payload.deadlineTick !== undefined
+      );
+    case 'ResolveMissing':
+      return BigInt(command.payload.notBefore) <= BigInt(command.campaignTick);
     case 'AdvanceCampaign':
       return BigInt(command.payload.toTick) >= BigInt(command.campaignTick);
     case 'RecordDeath':
@@ -447,6 +475,7 @@ function argumentsValid(command: CompanyCommand): boolean {
         command.payload.itemQuantities.length
       );
     case 'ApplyContainerLifecycle':
+      if (BigInt(command.payload.notBefore) > BigInt(command.campaignTick)) return false;
       return command.payload.disposition === 'TRANSFER'
         ? command.payload.destinationId !== undefined &&
             command.payload.destinationId !== command.payload.containerId
@@ -470,9 +499,9 @@ function argumentsValid(command: CompanyCommand): boolean {
   }
 }
 /** Syntax/finite references only. This success does NOT authorize or execute a command. */
-export function parseCompanyCommand(value: unknown): CompanyParseResult {
-  if (!isJsonData(value) || !envelopeInput.read(value))
-    return { ok: false, error: 'INVALID_COMMAND' };
+export function parseCompanyCommand(input: unknown): CompanyParseResult {
+  const value = snapshotJson(input);
+  if (!envelopeInput.read(value)) return { ok: false, error: 'INVALID_COMMAND' };
   if (!Object.hasOwn(COMPANY_COMMAND_INPUTS, value.type))
     return { ok: false, error: 'UNKNOWN_COMMAND' };
   const type = value.type as CompanyCommandType;
@@ -482,21 +511,14 @@ export function parseCompanyCommand(value: unknown): CompanyParseResult {
   const command = value as unknown as CompanyCommand;
   if (!referencesValid(command)) return { ok: false, error: 'UNKNOWN_DEFINITION' };
   if (!argumentsValid(command)) return { ok: false, error: 'INVALID_ARGUMENT' };
-  const copy = JSON.parse(canonicalJson(command)) as CompanyCommand;
-  function freeze(item: unknown): void {
-    if (item !== null && typeof item === 'object') {
-      for (const child of Object.values(item)) freeze(child);
-      Object.freeze(item);
-    }
-  }
-  freeze(copy);
-  return { ok: true, command: copy };
+  return { ok: true, command };
 }
 
 /** Exported from the same registry as runtime validation. Cross-record predicates are code. */
 export const COMPANY_COMMAND_JSON_SCHEMA = freezeRegistry({
   $schema: 'https://json-schema.org/draft/2020-12/schema',
-  $id: 'urn:warwrit:company-command:foundation-1',
+  $id: 'urn:warwrit:company-command:foundation-2',
+  $defs: { jsonData: JSON_DATA_SCHEMA },
   title: 'Company command transport shape (not authorization or gameplay execution)',
   oneOf: COMPANY_COMMAND_TYPES.map((type) => ({
     ...envelopeInput.schema,

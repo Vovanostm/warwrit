@@ -4,7 +4,7 @@ import {
   choice,
   freezeRegistry,
   id,
-  isJsonData,
+  snapshotJson,
   natural,
   object,
   optional,
@@ -110,51 +110,33 @@ const origin = object({
   familyStoryIds: array(id, 1, 3, true),
 });
 const family = object({ id, relativeCount: natural(0, 2), ageDays: optional(natural()) });
+const catalogueSections = {
+  skills: array(skill, 1),
+  perks: array(perk),
+  items: array(item),
+  works: array(work),
+  methods: array(method),
+  cares: array(care),
+  conditions: array(condition),
+  bodies: array(body),
+  species: array(species),
+  origins: array(origin),
+  familyStories: array(family),
+};
 export const catalogueInput = freezeRegistry(
   object({
     schemaVersion: choice(1),
     version: id,
     rulesetId: id,
     productionBalanceApproved: choice(false),
-    skills: array(skill, 1),
-    perks: array(perk),
-    items: array(item),
-    works: array(work),
-    methods: array(method),
-    cares: array(care),
-    conditions: array(condition),
-    bodies: array(body),
-    species: array(species),
-    origins: array(origin),
-    familyStories: array(family),
+    ...catalogueSections,
   }),
 );
 export type CompanyCatalogue = ValueOf<typeof catalogueInput>;
-export type CatalogueSection =
-  | 'skills'
-  | 'perks'
-  | 'items'
-  | 'works'
-  | 'methods'
-  | 'cares'
-  | 'conditions'
-  | 'bodies'
-  | 'species'
-  | 'origins'
-  | 'familyStories';
-export const CATALOGUE_SECTIONS: readonly CatalogueSection[] = [
-  'skills',
-  'perks',
-  'items',
-  'works',
-  'methods',
-  'cares',
-  'conditions',
-  'bodies',
-  'species',
-  'origins',
-  'familyStories',
-];
+export type CatalogueSection = keyof typeof catalogueSections;
+export const CATALOGUE_SECTIONS = Object.freeze(
+  Object.keys(catalogueSections) as CatalogueSection[],
+);
 
 const skillIds = [
   'blades',
@@ -178,15 +160,8 @@ const perkEffects = {
 } as const;
 const familyIds = ['no-present-kin', 'adult-sibling-home', 'younger-sibling-home'];
 
-function deepFreeze<T>(value: T): T {
-  if (value !== null && typeof value === 'object') {
-    for (const child of Object.values(value)) deepFreeze(child);
-    Object.freeze(value);
-  }
-  return value;
-}
 /** Finite data reconstructed from reci8qK8KmIhPzasI, with recuq6OOuKnmc1yJL D09. */
-export const COMPANY_CATALOGUE: CompanyCatalogue = deepFreeze({
+export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
   schemaVersion: 1,
   version: COMPANY_CATALOGUE_VERSION,
   rulesetId: COMPANY_RULESET_ID,
@@ -212,157 +187,133 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = deepFreeze({
       }));
     }),
   ),
-  items: [
-    {
-      id: 'sword',
-      kind: 'weapon',
-      weightG: 1600,
-      stackMax: 1,
-      enabled: true,
-      slot: 'MAIN_HAND',
-      hands: 1,
-      skillId: 'blades',
-      weaponProfile: 'sword-shield',
-      requiresOffHand: 'shield',
-    },
-    { id: 'shield', kind: 'shield', weightG: 3500, stackMax: 1, enabled: true, slot: 'OFF_HAND' },
-    {
-      id: 'spear',
-      kind: 'weapon',
-      weightG: 2600,
-      stackMax: 1,
-      enabled: true,
-      slot: 'MAIN_HAND',
-      hands: 2,
-      skillId: 'polearms',
-      weaponProfile: 'spear',
-    },
-    {
-      id: 'great-weapon',
-      kind: 'weapon',
-      weightG: 3800,
-      stackMax: 1,
-      enabled: true,
-      slot: 'MAIN_HAND',
-      hands: 2,
-      skillId: 'heavy',
-      weaponProfile: 'great-weapon',
-    },
-    {
-      id: 'bow',
-      kind: 'weapon',
-      weightG: 1500,
-      stackMax: 1,
-      enabled: true,
-      slot: 'MAIN_HAND',
-      hands: 2,
-      skillId: 'archery',
-      weaponProfile: 'bow',
-    },
-    {
-      id: 'raider-weapon',
-      kind: 'weapon',
-      weightG: 1500,
-      stackMax: 1,
-      enabled: true,
-      slot: 'MAIN_HAND',
-      hands: 1,
-      skillId: 'blades',
-      weaponProfile: 'raider',
-    },
-    {
-      id: 'simple-helmet',
-      kind: 'armor',
-      weightG: 2000,
-      stackMax: 1,
-      enabled: true,
-      slot: 'HEAD',
-      maxArmor: 20,
-    },
-    {
-      id: 'padded-coat',
-      kind: 'armor',
-      weightG: 5000,
-      stackMax: 1,
-      enabled: true,
-      slot: 'BODY',
-      maxArmor: 40,
-    },
-    { id: 'ration', kind: 'consumable', weightG: 500, stackMax: 100, enabled: true, foodUnits: 1 },
-    {
-      id: 'medical-unit',
-      kind: 'consumable',
-      weightG: 200,
-      stackMax: 100,
-      enabled: true,
-      careIds: ['stabilize', 'wound-care'],
-    },
-    {
-      id: 'repair-unit',
-      kind: 'consumable',
-      weightG: 250,
-      stackMax: 100,
-      enabled: true,
-      repairArmorPoints: 5,
-    },
-    {
-      id: 'study-book-medicine',
-      kind: 'book',
-      weightG: 800,
-      stackMax: 1,
-      enabled: true,
-      workId: 'wound-care-basics',
-    },
-    {
-      id: 'study-book-command',
-      kind: 'book',
-      weightG: 800,
-      stackMax: 1,
-      enabled: true,
-      workId: 'small-unit-service',
-    },
-    {
-      id: 'study-book-knowledge',
-      kind: 'book',
-      weightG: 800,
-      stackMax: 1,
-      enabled: true,
-      workId: 'local-knowledge',
-    },
-    { id: 'rare-treatment-token', kind: 'permission', weightG: 0, stackMax: 1, enabled: false },
-  ],
-  works: [
-    {
-      id: 'wound-care-basics',
-      version: 1,
-      sectionId: 'wound-care-basics-1',
-      durationTicks: '1000',
-      skillId: 'medicine',
-      finiteXp: 100,
-      requiresLevel: 0,
-      factId: 'care-method-known',
-    },
-    {
-      id: 'small-unit-service',
-      version: 1,
-      sectionId: 'small-unit-service-1',
-      durationTicks: '1000',
-      skillId: 'leadership',
-      finiteXp: 100,
-      requiresLevel: 0,
-      factId: 'watch-organization-known',
-    },
-    {
-      id: 'local-knowledge',
-      version: 1,
-      sectionId: 'local-knowledge-1',
-      durationTicks: '1000',
-      skillId: 'scholarship',
-      finiteXp: 100,
-      requiresLevel: 0,
-      factId: 'local-geography-known',
-    },
-  ],
+  items: (
+    [
+      {
+        id: 'sword',
+        kind: 'weapon',
+        weightG: 1600,
+        slot: 'MAIN_HAND',
+        hands: 1,
+        skillId: 'blades',
+        weaponProfile: 'sword-shield',
+        requiresOffHand: 'shield',
+      },
+      { id: 'shield', kind: 'shield', weightG: 3500, slot: 'OFF_HAND' },
+      {
+        id: 'spear',
+        kind: 'weapon',
+        weightG: 2600,
+        slot: 'MAIN_HAND',
+        hands: 2,
+        skillId: 'polearms',
+        weaponProfile: 'spear',
+      },
+      {
+        id: 'great-weapon',
+        kind: 'weapon',
+        weightG: 3800,
+        slot: 'MAIN_HAND',
+        hands: 2,
+        skillId: 'heavy',
+        weaponProfile: 'great-weapon',
+      },
+      {
+        id: 'bow',
+        kind: 'weapon',
+        weightG: 1500,
+        slot: 'MAIN_HAND',
+        hands: 2,
+        skillId: 'archery',
+        weaponProfile: 'bow',
+      },
+      {
+        id: 'raider-weapon',
+        kind: 'weapon',
+        weightG: 1500,
+        slot: 'MAIN_HAND',
+        hands: 1,
+        skillId: 'blades',
+        weaponProfile: 'raider',
+      },
+      {
+        id: 'simple-helmet',
+        kind: 'armor',
+        weightG: 2000,
+        slot: 'HEAD',
+        maxArmor: 20,
+      },
+      {
+        id: 'padded-coat',
+        kind: 'armor',
+        weightG: 5000,
+        slot: 'BODY',
+        maxArmor: 40,
+      },
+      { id: 'ration', kind: 'consumable', weightG: 500, stackMax: 100, foodUnits: 1 },
+      {
+        id: 'medical-unit',
+        kind: 'consumable',
+        weightG: 200,
+        stackMax: 100,
+        careIds: ['stabilize', 'wound-care'],
+      },
+      {
+        id: 'repair-unit',
+        kind: 'consumable',
+        weightG: 250,
+        stackMax: 100,
+        repairArmorPoints: 5,
+      },
+      {
+        id: 'study-book-medicine',
+        kind: 'book',
+        weightG: 800,
+        workId: 'wound-care-basics',
+      },
+      {
+        id: 'study-book-command',
+        kind: 'book',
+        weightG: 800,
+        workId: 'small-unit-service',
+      },
+      {
+        id: 'study-book-knowledge',
+        kind: 'book',
+        weightG: 800,
+        workId: 'local-knowledge',
+      },
+      { id: 'rare-treatment-token', kind: 'permission', weightG: 0, enabled: false },
+    ] as const
+  ).map((item) => ({ stackMax: 1, enabled: true, ...item })),
+  works: (
+    [
+      {
+        id: 'wound-care-basics',
+        sectionId: 'wound-care-basics-1',
+        skillId: 'medicine',
+        factId: 'care-method-known',
+      },
+      {
+        id: 'small-unit-service',
+        sectionId: 'small-unit-service-1',
+        skillId: 'leadership',
+        factId: 'watch-organization-known',
+      },
+      {
+        id: 'local-knowledge',
+        sectionId: 'local-knowledge-1',
+        skillId: 'scholarship',
+        factId: 'local-geography-known',
+      },
+    ] as const
+  ).map((work) => ({
+    version: 1,
+    durationTicks: '1000',
+    finiteXp: 100,
+    requiresLevel: 0,
+    ...work,
+  })),
   methods: [
     { id: 'weapon-attack', enabled: true, target: 'mapped-weapon', xp: 20, interval: 'EVENT' },
     { id: 'guard-interaction', enabled: true, target: 'defense', xp: 10, interval: 'EVENT' },
@@ -486,7 +437,7 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = deepFreeze({
     { id: 'younger-sibling-home', relativeCount: 1, ageDays: 5475 },
   ],
 });
-export const COMPANY_RULES = deepFreeze({
+export const COMPANY_RULES = freezeRegistry({
   id: COMPANY_RULESET_ID,
   productionBalanceApproved: false,
   ticksPerDay: '1000',
@@ -519,8 +470,9 @@ export function catalogueHas(
   );
 }
 /** Validates structural references, not playability, world facts, or learned prerequisites. */
-export function validateCompanyCatalogue(value: unknown): readonly string[] {
-  if (!isJsonData(value) || !catalogueInput.read(value)) return ['INVALID_CATALOGUE_SHAPE'];
+export function validateCompanyCatalogue(input: unknown): readonly string[] {
+  const value = snapshotJson(input);
+  if (!catalogueInput.read(value)) return ['INVALID_CATALOGUE_SHAPE'];
   const errors: string[] = [];
   if (value.version !== COMPANY_CATALOGUE_VERSION || value.rulesetId !== COMPANY_RULESET_ID)
     errors.push('UNSUPPORTED_CATALOGUE_VERSION');
