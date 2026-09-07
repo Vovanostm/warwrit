@@ -9,25 +9,13 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     steps:
-      - name: Recover exact previously uploaded source objects
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p "$RUNNER_TEMP/wp022-recovered"
-          python3 - <<'PY'
-          import os,json,base64,hashlib,pathlib,urllib.request
-          shas='79a277afe748faacac8cf9be2c4555c093234cf7 7b69640750b6e03ae9735f91a10a3c273b6f1aba 9f6839b9f9d97d7a7b78fe46e5f651a65e1a62b4 35b2e736d7be81619c418561bc9090d7c776c409 7c39326995b54016cd844920a521a09e6cde30e4 44eec617d9af3dd3bee49dbfb7b2b9e6b88fe703 432a61e57db70386a6f41c46b28283e0053d0a37 5f8a0108f17c2d8f77bda917794604b53f78358b'.split()
-          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'wp022-recovered'
-          for sha in shas:
-              req=urllib.request.Request('https://api.github.com/repos/Vovanostm/warwrit/git/blobs/'+sha,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
-              with urllib.request.urlopen(req,timeout=30) as response: doc=json.load(response)
-              raw=base64.b64decode(doc['content'])
-              assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==sha
-              (root/(sha+'.txt')).write_bytes(raw)
-              print(sha,len(raw))
-          PY
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: dc1b8e97bc3dacd804811e6351804f5e4c66ec1e
+          persist-credentials: false
+      - run: git archive --format=tar.gz HEAD > "$RUNNER_TEMP/pr12-review-source.tar.gz"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: wp022-recovered-blobs
-          path: ${{ runner.temp }}/wp022-recovered
+          name: pr12-review-source
+          path: ${{ runner.temp }}/pr12-review-source.tar.gz
           retention-days: 2
