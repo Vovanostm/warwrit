@@ -102,6 +102,8 @@ const body = object({
 const species = object({ id, enabled: bool, bodyId: id, adultAtDays: natural(1) });
 const origin = object({
   id,
+  contactRespect: natural(0, 100),
+  contactRivalry: natural(0, 100),
   cashCrowns: natural(),
   skillId: id,
   skillBonus: natural(),
@@ -110,6 +112,23 @@ const origin = object({
   familyStoryIds: array(id, 1, 3, true),
 });
 const family = object({ id, relativeCount: natural(0, 2), ageDays: optional(natural()) });
+const candidateTemplate = object({
+  id,
+  skills: array(object({ skillId: id, level: natural(0, 100) }), 1),
+  gearIds: array(id, 1, 6, true),
+});
+const openingProfile = object({
+  id,
+  leaderBaseLevel: natural(0, 100),
+  defaultAptitudeBps: natural(1),
+  candidateAgeMinDays: natural(1),
+  candidateAgeMaxDays: natural(1),
+  variation: natural(),
+  signingCrowns: natural(),
+  dailyWageMilli: unsigned,
+  leaderGearIds: array(id, 1, 6, true),
+  sharedItems: array(object({ definitionId: id, quantity: natural(1) })),
+});
 const catalogueSections = {
   skills: array(skill, 1),
   perks: array(perk),
@@ -122,6 +141,8 @@ const catalogueSections = {
   species: array(species),
   origins: array(origin),
   familyStories: array(family),
+  candidateTemplates: array(candidateTemplate),
+  openingProfiles: array(openingProfile),
 };
 export const catalogueInput = freezeRegistry(
   object({
@@ -378,6 +399,8 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
   origins: [
     {
       id: 'broken-company',
+      contactRespect: 5,
+      contactRivalry: 0,
       cashCrowns: 900,
       skillId: 'blades',
       skillBonus: 2,
@@ -387,6 +410,8 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
     },
     {
       id: 'disgraced-banner',
+      contactRespect: 0,
+      contactRivalry: 10,
       cashCrowns: 1000,
       skillId: 'leadership',
       skillBonus: 2,
@@ -396,6 +421,8 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
     },
     {
       id: 'community-debt',
+      contactRespect: 5,
+      contactRivalry: 0,
       cashCrowns: 1200,
       skillId: 'defense',
       skillBonus: 2,
@@ -405,6 +432,8 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
     },
     {
       id: 'escaped-captive',
+      contactRespect: 5,
+      contactRivalry: 0,
       cashCrowns: 700,
       skillId: 'defense',
       skillBonus: 3,
@@ -414,6 +443,8 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
     },
     {
       id: 'hunter-apprentice',
+      contactRespect: 5,
+      contactRivalry: 0,
       cashCrowns: 900,
       skillId: 'archery',
       skillBonus: 3,
@@ -423,12 +454,58 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
     },
     {
       id: 'ruined-caravan',
+      contactRespect: 5,
+      contactRivalry: 0,
       cashCrowns: 1100,
       skillId: 'scholarship',
       skillBonus: 2,
       debtCrowns: 100,
       hookId: 'recover-cargo',
       familyStoryIds: familyIds,
+    },
+  ],
+  candidateTemplates: [
+    {
+      id: 'front',
+      skills: [
+        { skillId: 'blades', level: 5 },
+        { skillId: 'defense', level: 5 },
+      ],
+      gearIds: ['sword', 'shield', 'padded-coat'],
+    },
+    {
+      id: 'reach',
+      skills: [
+        { skillId: 'polearms', level: 5 },
+        { skillId: 'defense', level: 3 },
+      ],
+      gearIds: ['spear', 'padded-coat'],
+    },
+    {
+      id: 'support',
+      skills: [
+        { skillId: 'medicine', level: 5 },
+        { skillId: 'blades', level: 3 },
+      ],
+      gearIds: ['raider-weapon', 'padded-coat'],
+    },
+  ],
+  openingProfiles: [
+    {
+      id: 'm1-company-start',
+      leaderBaseLevel: 3,
+      defaultAptitudeBps: 10000,
+      candidateAgeMinDays: 6570,
+      candidateAgeMaxDays: 16425,
+      variation: 2,
+      signingCrowns: 50,
+      dailyWageMilli: '10000',
+      leaderGearIds: ['sword', 'shield', 'simple-helmet', 'padded-coat'],
+      sharedItems: [
+        { definitionId: 'ration', quantity: 6 },
+        { definitionId: 'medical-unit', quantity: 2 },
+        { definitionId: 'repair-unit', quantity: 2 },
+      ],
     },
   ],
   familyStories: [
@@ -452,6 +529,8 @@ export const COMPANY_RULES = freezeRegistry({
     { level: 50, capacity: 5 },
     { level: 75, capacity: 6 },
   ],
+  overflowPenalty: { perExcess: 5, maximum: 15 },
+  successionStandingRetentionBps: 8000,
   maxF1Groups: 1,
   restHealthTicks: '100',
   restStaminaTicks: '10',
@@ -543,6 +622,18 @@ export function validateCompanyCatalogue(input: unknown): readonly string[] {
   for (const entry of value.origins) {
     ref('skills', entry.skillId, entry.id, true);
     for (const familyId of entry.familyStoryIds) ref('familyStories', familyId, entry.id);
+  }
+  for (const entry of value.candidateTemplates) {
+    for (const grant of entry.skills) ref('skills', grant.skillId, entry.id, true);
+    for (const itemId of entry.gearIds) ref('items', itemId, entry.id, true);
+    if (new Set(entry.skills.map((s) => s.skillId)).size !== entry.skills.length)
+      errors.push(`DUPLICATE_SKILL:${entry.id}`);
+  }
+  for (const entry of value.openingProfiles) {
+    for (const itemId of entry.leaderGearIds) ref('items', itemId, entry.id, true);
+    for (const item of entry.sharedItems) ref('items', item.definitionId, entry.id, true);
+    if (entry.candidateAgeMaxDays < entry.candidateAgeMinDays)
+      errors.push(`INVALID_AGE_RANGE:${entry.id}`);
   }
   return errors;
 }

@@ -1,9 +1,9 @@
 # Warwrit current delivery plan
 
 - Status: operational mirror for coding agents
-- As of: 2026-09-07
+- As of: 2026-09-08
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
-- Active contract: [WP-02.1](../work-packages/WP-02.1.md), GitHub issue #9, parent #8
+- Active contract: [WP-02.2](../work-packages/WP-02.2.md), GitHub issue #11, parent #8
 
 ## Current state
 
@@ -13,7 +13,7 @@ S-02: done
 WP-00: done
 WP-01: done
 WP-02: in-progress
-current_slice: WP-02.1
+current_slice: WP-02.2
 merge_authorized: false
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
@@ -22,11 +22,11 @@ persistence: postgresql-kysely-pg
 renderer: Q-T03-evidence-pending
 ```
 
-The owner authorized implementation, tests and a PR. This is not permission to merge, enable auto-merge, deploy, buy cloud resources or expand gameplay. Completion of a slice on a branch is not delivery of the entire WP-02 on main.
+The owner explicitly authorized and completed PR #10 merge. Implementation, tests and the WP-02.2 PR are authorized; that is not permission to merge the next PR, enable auto-merge, deploy, buy cloud resources or expand gameplay. Completion of a slice on a branch is not delivery of the entire WP-02 on main.
 
 ## Authority and source order
 
-Read full Notes and Purpose in Airtable Artifacts `tblwAxG5Ek1FyWpiW`:
+Read the active WP-02.2 contract `rec39pw7h0ycTk4r7` and full Notes/Purpose in Airtable Artifacts `tblwAxG5Ek1FyWpiW`:
 
 1. `rec5bphVYSZUTqavX`: agent launch; owner authorization `comlmb1eSiASlOH30` on WP-02 `rec6JCF929ViGc2MX`.
 2. `rechIKj0hsvfXIvFU`: explicit RC-P1=A, RC-P2=AAAA, RC-P3=A.
@@ -40,7 +40,7 @@ The former Q-CHAR-13A..14C and Q-CHAR-15A blocking lists describe historical sta
 
 ```text
 DONE WP-00 -> DONE WP-01
-  -> WP-02.1 source/type/catalogue/command foundation
+  -> DONE WP-02.1 source/type/catalogue/command foundation
   -> WP-02.2 identity, opening, membership, party, succession
   -> WP-02.3 exact money, F1, knowledge-safe accounting
   -> WP-02.4 items, custody, care, outcomes
@@ -74,3 +74,10 @@ Retain the pinned toolchain, zero-runtime-dependency core, Fastify control plane
 ## Owner-directed quality correction — 2026-09-07
 
 PR #10 review R1–R3 is addressed by foundation-2; see the active contract and actual PR evidence. The owner requests fewer durable, behavior-level specifications instead of a parallel command catalogue or pinned provisional values. AGENTS.md is updated accordingly. Read the latest test policy, not the superseded fixture-count requirement. Final PR CI runs the complete gate once per update; an extra feature-push run is not required. No merge/deployment is implied.
+
+## 2026-09-07 delivery transition
+
+Owner authorized and completed PR #10 squash merge at `0d58dde305b2c7b85c73f2732a9b4aa7686045d3`.
+WP-02.2 starts from that main revision, not a stacked unmerged foundation.
+The merge permission applied to #10 only; the next PR and deployment need separate authorization.
+See WP-02.2 for the PREPARED component boundary and source-to-postulate mapping.
