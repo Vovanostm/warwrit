@@ -1,21 +1,18 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+
 import {
   canonicalJson,
   COMPANY_CATALOGUE,
   COMPANY_COMMAND_JSON_SCHEMA,
   COMPANY_RULES,
-} from './index.js';
+} from '@warwrit/game-core';
 
 describe('WP-02.1 reconstructed source fingerprint', () => {
   it('pins semantic exports without pretending to possess the original archive', () => {
-    const manifest = JSON.parse(
-      readFileSync(
-        new URL('../../../../docs/work-packages/WP-02.1-SOURCES.json', import.meta.url),
-        'utf8',
-      ),
-    ) as {
+    const path = new URL('../../../docs/work-packages/WP-02.1-SOURCES.json', import.meta.url);
+    const manifest = JSON.parse(readFileSync(path, 'utf8')) as {
       semanticSha256: { catalogue: string; rules: string; commandSchema: string };
       archiveConcordance: string;
     };
