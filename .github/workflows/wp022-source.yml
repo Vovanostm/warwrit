@@ -1,4 +1,4 @@
-name: Materialize reviewed WP022 corrections
+name: Materialize world consistency corrections
 on:
   push:
     branches: [workbench/wp022-source]
@@ -11,49 +11,60 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
-          ref: dc1b8e97bc3dacd804811e6351804f5e4c66ec1e
+          ref: a81260f62d020e1ca8e78098d846d0416941e6ab
           persist-credentials: false
-      - name: Verify patch, files and tree; create commit object only
+      - name: Verify transport, patch and tree; create commit without updating refs
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          import base64, hashlib, json, os, pathlib, subprocess, urllib.request
-          base = 'dc1b8e97bc3dacd804811e6351804f5e4c66ec1e'
-          expected_tree = 'a5b878caa87c286d1a34d7b8862b267eb7e4bcf8'
+          import base64, gzip, hashlib, json, os, pathlib, subprocess, urllib.request
+          base = 'a81260f62d020e1ca8e78098d846d0416941e6ab'
+          expected_tree = 'b8f8c6faf8c2483a8df3fcec0f948a1ff0d94cb2'
+          parts = ['ac3c817c93bbe3349b7420dc7886ac4bf0903bc5', '389d1888a53ddba05574627708c00495ecaccf9f', '32b693c05c7f96dda5874e8bd5eeaf6ff6d06a40', 'cb71b73a2450667244eec6b06e76c3c075707ce7']
           files = {
-              'docs/work-packages/WP-02.2.md': 'ff33c64c9d351bb47cb421e09c01e386326a6341',
-              'packages/game-core/src/company/lifecycle.ts': '573c33b9b31c99221d7a1fb8a4efb2b258b38690',
-              'packages/game-core/src/company/succession.ts': 'f8a4d3fc4b8d5d383ac994db0cf1e879bcd427cd',
-              'packages/testkit/src/company-lifecycle.spec.test.ts': 'be0db1e6512c6475285cce872f4b8479ee4d0349',
+              'AGENTS.md': '5a1229f9a17f36448da5dc60c41e412d29e1de38',
+              'docs/work-packages/WP-02.2-WORLD-REVIEW.md': '15c22552344703c2ba5f7c713e444b978503a90c',
+              'docs/work-packages/WP-02.2.md': '7248dc7e62a30b6b088c9f7d62d3dd8c6801bfd2',
+              'packages/game-core/src/company/lifecycle-state.ts': '140766e9c74d77933d2cd76cdbe81479d273bf90',
+              'packages/game-core/src/company/membership.ts': '2406855d86f13c3ec36278a70c3267fb9d64c97e',
+              'packages/game-core/src/company/opening.ts': 'ac06a5983d69f8e98f03ae4383fc56c9362e8ac4',
+              'packages/testkit/src/company-lifecycle.spec.test.ts': 'a31c97540c80e14c7c4a8be267f14ac88b0f548a',
           }
           def api(path, payload=None):
-              raw = None if payload is None else json.dumps(payload).encode()
-              req = urllib.request.Request('https://api.github.com/repos/Vovanostm/warwrit' + path, data=raw, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'})
+              data = None if payload is None else json.dumps(payload).encode()
+              req = urllib.request.Request('https://api.github.com/repos/Vovanostm/warwrit' + path, data=data, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'})
               with urllib.request.urlopen(req, timeout=30) as response:
                   return json.load(response)
           def git(*args):
               return subprocess.check_output(['git', *args], text=True).strip()
           assert git('rev-parse', 'HEAD') == base
-          raw = base64.b64decode(api('/git/blobs/4a350474ac6c567b46798a10289cfc64e8546621')['content'])
-          assert hashlib.sha256(raw).hexdigest() == '50e5b7feacf968080e90fb37fba712a7cef7d0d6d13edf3b4c5ec477c099b917'
-          patch = pathlib.Path(os.environ['RUNNER_TEMP']) / 'review.patch'
+          chunks = []
+          for sha in parts:
+              raw = base64.b64decode(api('/git/blobs/' + sha)['content'])
+              assert hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest() == sha
+              chunks.append(raw)
+          encoded = b''.join(chunks)
+          assert len(encoded) == 10608
+          raw = gzip.decompress(base64.b64decode(encoded, validate=True))
+          assert len(raw) == 21236
+          assert hashlib.sha256(raw).hexdigest() == 'e89f865a19ea4e47a7cb5b269cb051e231d24973b9152373b9669aba09538454'
+          patch = pathlib.Path(os.environ['RUNNER_TEMP']) / 'world-review.patch'
           patch.write_bytes(raw)
           subprocess.run(['git', 'apply', '--check', str(patch)], check=True)
           subprocess.run(['git', 'apply', '--index', str(patch)], check=True)
           assert set(git('diff', '--cached', '--name-only').splitlines()) == set(files)
           assert git('write-tree') == expected_tree
           entries = []
-          for path, expected_blob in files.items():
-              assert git('hash-object', path) == expected_blob
-              content = base64.b64encode(pathlib.Path(path).read_bytes()).decode()
-              blob = api('/git/blobs', {'content': content, 'encoding': 'base64'})
-              assert blob['sha'] == expected_blob
-              entries.append({'path': path, 'mode': '100644', 'type': 'blob', 'sha': expected_blob})
+          for path, sha in files.items():
+              assert git('hash-object', path) == sha
+              blob = api('/git/blobs', {'content': base64.b64encode(pathlib.Path(path).read_bytes()).decode(), 'encoding': 'base64'})
+              assert blob['sha'] == sha
+              entries.append({'path': path, 'mode': '100644', 'type': 'blob', 'sha': sha})
           base_tree = api('/git/commits/' + base)['tree']['sha']
           tree = api('/git/trees', {'base_tree': base_tree, 'tree': entries})
           assert tree['sha'] == expected_tree
-          commit = api('/git/commits', {'message': 'fix(domain): preserve lifecycle continuity, source isolation and private snapshots', 'tree': tree['sha'], 'parents': [base]})
+          commit = api('/git/commits', {'message': 'fix(domain): enforce capable care handover and owned world evidence', 'tree': tree['sha'], 'parents': [base]})
           print('REVIEWED_COMMIT=' + commit['sha'])
           print('VERIFIED_TREE=' + expected_tree)
           print('No branch ref, merge or deployment changed by this job.')
