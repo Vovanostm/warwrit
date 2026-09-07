@@ -18,7 +18,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          import base64, gzip, hashlib, json, os, pathlib, subprocess, urllib.request
+          import base64, gzip, hashlib, http.client, json, os, pathlib, subprocess, time, urllib.request, urllib.error
           base = 'a81260f62d020e1ca8e78098d846d0416941e6ab'
           expected_tree = 'b8f8c6faf8c2483a8df3fcec0f948a1ff0d94cb2'
           parts = ['ac3c817c93bbe3349b7420dc7886ac4bf0903bc5', '389d1888a53ddba05574627708c00495ecaccf9f', '32b693c05c7f96dda5874e8bd5eeaf6ff6d06a40', 'cb71b73a2450667244eec6b06e76c3c075707ce7']
@@ -33,9 +33,18 @@ jobs:
           }
           def api(path, payload=None):
               data = None if payload is None else json.dumps(payload).encode()
-              req = urllib.request.Request('https://api.github.com/repos/Vovanostm/warwrit' + path, data=data, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'})
-              with urllib.request.urlopen(req, timeout=30) as response:
-                  return json.load(response)
+              for attempt in range(4):
+                  req = urllib.request.Request('https://api.github.com/repos/Vovanostm/warwrit' + path, data=data, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'})
+                  try:
+                      with urllib.request.urlopen(req, timeout=30) as response:
+                          return json.load(response)
+                  except urllib.error.HTTPError as error:
+                      if error.code not in (500, 502, 503, 504) or attempt == 3:
+                          raise
+                  except (urllib.error.URLError, http.client.RemoteDisconnected):
+                      if attempt == 3:
+                          raise
+                  time.sleep(attempt + 1)
           def git(*args):
               return subprocess.check_output(['git', *args], text=True).strip()
           assert git('rev-parse', 'HEAD') == base
@@ -60,6 +69,7 @@ jobs:
               assert git('hash-object', path) == sha
               blob = api('/git/blobs', {'content': base64.b64encode(pathlib.Path(path).read_bytes()).decode(), 'encoding': 'base64'})
               assert blob['sha'] == sha
+              print('VERIFIED_BLOB=' + path + ':' + sha, flush=True)
               entries.append({'path': path, 'mode': '100644', 'type': 'blob', 'sha': sha})
           base_tree = api('/git/commits/' + base)['tree']['sha']
           tree = api('/git/trees', {'base_tree': base_tree, 'tree': entries})
