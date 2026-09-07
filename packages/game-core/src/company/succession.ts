@@ -168,7 +168,6 @@ export function prepareSuccession(
     'INCOMPATIBLE_ACTIVITY',
   );
   const candidate = person(state, p.candidateId);
-  let nextCompany = company;
   const permanent = ['PERMANENT', 'CONFIRM_ACTING', 'RESTORE_HEIR'].includes(p.mode);
   switch (p.mode) {
     case 'PERMANENT':
@@ -176,19 +175,14 @@ export function prepareSuccession(
         crisis.reason === 'LEADER_DIED' && crisis.leaderId === company.currentLeaderId,
         'INCOMPATIBLE_ACTIVITY',
       );
-      nextCompany = {
-        ...company,
-        currentLeaderId: candidate.identity.characterId,
-        actingLeaderId: null,
-        regencyHeirId: null,
-      };
       break;
     case 'ACTING':
       requireLifecycle(
-        crisis.reason === 'LEADER_UNAVAILABLE' && company.regencyHeirId === null,
+        company.regencyHeirId === null &&
+          (crisis.reason === 'LEADER_UNAVAILABLE' ||
+            (crisis.reason === 'LEADER_DIED' && crisis.leaderId === company.actingLeaderId)),
         'INCOMPATIBLE_ACTIVITY',
       );
-      nextCompany = { ...company, actingLeaderId: candidate.identity.characterId };
       break;
     case 'REGENCY':
       requireLifecycle(
@@ -198,38 +192,33 @@ export function prepareSuccession(
           options.regentIds.includes(candidate.identity.characterId),
         'INCOMPATIBLE_ACTIVITY',
       );
-      nextCompany = {
-        ...company,
-        currentLeaderId: options.minorHeirId,
-        actingLeaderId: candidate.identity.characterId,
-        regencyHeirId: options.minorHeirId,
-      };
       break;
     case 'CONFIRM_ACTING':
       requireLifecycle(
         majority && company.actingLeaderId === candidate.identity.characterId,
         'INCOMPATIBLE_ACTIVITY',
       );
-      nextCompany = {
-        ...company,
-        currentLeaderId: candidate.identity.characterId,
-        actingLeaderId: null,
-        regencyHeirId: null,
-      };
       break;
     case 'RESTORE_HEIR':
       requireLifecycle(
         majority && company.regencyHeirId === candidate.identity.characterId,
         'INCOMPATIBLE_ACTIVITY',
       );
-      nextCompany = {
+      break;
+  }
+  const nextCompany = permanent
+    ? {
         ...company,
         currentLeaderId: candidate.identity.characterId,
         actingLeaderId: null,
         regencyHeirId: null,
+      }
+    : {
+        ...company,
+        currentLeaderId: p.mode === 'REGENCY' ? options.minorHeirId! : company.currentLeaderId,
+        actingLeaderId: candidate.identity.characterId,
+        regencyHeirId: p.mode === 'REGENCY' ? options.minorHeirId! : company.regencyHeirId,
       };
-      break;
-  }
   const events = [
     event(command.commandId, 'LeadershipResolved', context.atTick, [
       candidate.identity.characterId,

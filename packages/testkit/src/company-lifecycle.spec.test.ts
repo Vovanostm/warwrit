@@ -787,3 +787,123 @@ describe('WP-02.2 lifecycle postulates', () => {
     ).toMatchObject({ kind: 'REJECTED', state: captive });
   });
 });
+
+describe('lifecycle continuity and source scope', () => {
+  it('replaces a deceased acting leader without usurping the unavailable nominal leader', () => {
+    let state = unavailable(opening().result.next, 'leader', 'CAPTIVE');
+    state = prepared(resolve(state, 'ACTING', 'front', 'LEADER_UNAVAILABLE').result).next;
+    state = unavailable(state, 'front', 'DEAD');
+    const cmd = input(state, 'ResolveLeadership', {
+      companyId: state.companyId,
+      crisisId: 'acting-lost',
+      mode: 'ACTING',
+      candidateId: 'sibling',
+    });
+    const fact: CrisisEvidence = {
+      ...source(state, 'acting-lost'),
+      kind: 'CRISIS',
+      reason: 'LEADER_DIED',
+      leaderId: 'front',
+    };
+    const result = prepared(prepareCompanyLifecycle(state, cmd, context(state, cmd, [fact])));
+    expect(result.next.company).toMatchObject({
+      currentLeaderId: 'leader',
+      actingLeaderId: 'sibling',
+      runStatus: 'ACTIVE',
+    });
+    expect(result.next.characters).toEqual(state.characters);
+  });
+
+  it('delivers one world event to distinct subjects without duplicating any one observation', () => {
+    let state = opening().result.next;
+    const observe = (s: LifecycleState, subjectId: string, commandId: string) => {
+      const observationId = `seen-${subjectId}`;
+      const cmd = {
+        ...input(
+          s,
+          'Observe',
+          {
+            observationId,
+            observerRef: { kind: 'COMPANY', id: s.companyId },
+            subjectRef: { kind: 'CHARACTER', id: subjectId },
+            factId: observationId,
+            sourceId: 'shared-report',
+          },
+          'DOMAIN_RECEIPT',
+          commandId,
+        ),
+        sourceEventId: 'shared-report',
+      };
+      const fact: LifecycleEvidence = {
+        ...source(s, observationId),
+        sourceEventId: 'shared-report',
+        kind: 'COMPANY_OBSERVATION',
+        subject: { kind: 'CHARACTER', id: subjectId },
+      };
+      return prepareCompanyLifecycle(s, cmd, context(s, cmd, [fact]));
+    };
+    state = prepared(observe(state, 'front', 'report-front')).next;
+    state = prepared(observe(state, 'sibling', 'report-sibling')).next;
+    expect(projectCompanyLifecycle(state, 'company')?.characters.map((p) => p.characterId)).toEqual(
+      ['front', 'sibling'],
+    );
+    expect(observe(state, 'front', 'report-sibling')).toMatchObject({
+      kind: 'REJECTED',
+      state,
+      error: 'IDEMPOTENCY_CONFLICT',
+    });
+    const again = prepared(observe(state, 'front', 'same-report-new-command'));
+    expect(again.replayed).toBe(true);
+    expect(again.next).toBe(state);
+  });
+
+  it('allows a legitimate final observation without reopening a terminal campaign', () => {
+    let state = opening().result.next;
+    state = { ...state, knowledge: { ...state.knowledge, runStatus: 'ACTIVE' } };
+    for (const id of ['leader', 'front', 'sibling']) state = unavailable(state, id, 'DEAD');
+    state = prepared(resolve(state, 'PERMANENT').result).next;
+    expect(projectCompanyLifecycle(state, 'company')?.runStatus).toBe('ACTIVE');
+    const cmd = input(
+      state,
+      'Observe',
+      {
+        observationId: 'final-news',
+        observerRef: { kind: 'COMPANY', id: 'company' },
+        subjectRef: { kind: 'COMPANY', id: 'company' },
+        factId: 'final-news',
+        sourceId: 'source-final-news',
+      },
+      'DOMAIN_RECEIPT',
+      'final-news',
+    );
+    const fact: LifecycleEvidence = {
+      ...source(state, 'final-news'),
+      kind: 'COMPANY_OBSERVATION',
+      subject: { kind: 'COMPANY', id: 'company' },
+    };
+    const observed = prepared(
+      prepareCompanyLifecycle(state, cmd, context(state, cmd, [fact])),
+    ).next;
+    expect(projectCompanyLifecycle(observed, 'company')?.runStatus).toBe('GAME_OVER');
+    const rename = input(observed, 'RenameCompany', {
+      companyId: 'company',
+      name: 'Resurrected',
+      bannerId: 'banner',
+    });
+    expect(prepareCompanyLifecycle(observed, rename, context(observed, rename))).toMatchObject({
+      kind: 'REJECTED',
+      state: observed,
+      error: 'TERMINAL',
+    });
+  });
+
+  it('does not let a public projection mutate stored observation snapshots', () => {
+    const base = opening().result.next;
+    const state = { ...base, knowledge: { ...base.knowledge, characters: base.characters } };
+    const before = canonicalJson(state);
+    const view = projectCompanyLifecycle(state, 'company')!;
+    const location = view.characters[0]!.location as { siteId: string };
+    location.siteId = 'elsewhere';
+    expect(canonicalJson(state)).toBe(before);
+  });
+});

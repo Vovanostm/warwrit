@@ -141,6 +141,19 @@ function plan(
       throw new LifecycleViolation('UNSUPPORTED_ACTION');
   }
 }
+/** An event may concern several people; each subject receives its own effect once. */
+function lifecycleSourceKey(command: CompanyCommand): string | null {
+  if (command.type === 'ResolveLeadership')
+    return canonicalJson(['crisis', command.payload.crisisId]);
+  if (command.actorRef.kind === 'PLAYER') return null;
+  const subject =
+    command.type === 'Observe'
+      ? [command.payload.observerRef, command.payload.subjectRef]
+      : 'characterId' in command.payload
+        ? command.payload.characterId
+        : null;
+  return canonicalJson([command.type, command.sourceEventId, subject]);
+}
 /** A pure component transition. PREPARED is never permission to commit the whole command. */
 export function prepareCompanyLifecycle(
   state: LifecycleState,
@@ -157,15 +170,11 @@ export function prepareCompanyLifecycle(
     );
     const requestKey = canonicalJson(command);
     const semanticKey = canonicalJson({ type: command.type, payload: command.payload });
-    const sourceKey =
-      command.type === 'ResolveLeadership'
-        ? canonicalJson(['crisis', command.payload.crisisId])
-        : command.actorRef.kind !== 'PLAYER'
-          ? canonicalJson([command.type, command.sourceEventId])
-          : null;
-    const previous = state.applied.find(
-      (r) => r.commandId === command.commandId || (sourceKey !== null && r.sourceKey === sourceKey),
-    );
+    const sourceKey = lifecycleSourceKey(command);
+    // A command ID conflict takes precedence over a matching earlier source receipt.
+    const previous =
+      state.applied.find((r) => r.commandId === command.commandId) ??
+      (sourceKey === null ? undefined : state.applied.find((r) => r.sourceKey === sourceKey));
     if (previous) {
       requireLifecycle(
         previous.commandId === command.commandId
@@ -189,7 +198,16 @@ export function prepareCompanyLifecycle(
       'STALE_REVISION',
     );
     validateLifecycleGraph(state, context);
-    requireLifecycle(state.company?.runStatus !== 'GAME_OVER', 'TERMINAL');
+    // Terminal gameplay does not suppress the legitimate report of its own outcome.
+    requireLifecycle(
+      state.company?.runStatus !== 'GAME_OVER' ||
+        (command.type === 'Observe' &&
+          context.facts.some(
+            (fact) =>
+              fact.id === command.payload.observationId && fact.kind === 'COMPANY_OBSERVATION',
+          )),
+      'TERMINAL',
+    );
     requireLifecycle(state.company !== null || command.type === 'CreateCompany', 'INVALID_STATE');
     const change = plan(state, command, context);
     const receipt: LifecycleReceipt = {
@@ -243,7 +261,7 @@ export function projectCompanyLifecycle(state: LifecycleState, observerCompanyId
         characterId: p.identity.characterId,
         name: p.identity.birthName,
         knownStatus: p.presence.availability,
-        location: p.presence.location,
+        location: { ...p.presence.location },
         assignment: p.presence.assignment,
         fieldPartyId: p.presence.fieldPartyId,
       })),
