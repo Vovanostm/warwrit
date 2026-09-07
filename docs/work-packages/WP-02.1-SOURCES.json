@@ -1,0 +1,47 @@
+{
+  "edition": "WP-02.1-foundation-1",
+  "baseCommit": "d6d67a4c07b3062e282c1e1480769a8e7a1f899f",
+  "canonicalBaseId": "apph3bj1NyVrfJeLM",
+  "sourceReadDate": "2026-09-07",
+  "representation": "Independent finite reconstruction from live canonical Notes, not either original ZIP",
+  "sources": [
+    {"recordId":"rec5bphVYSZUTqavX","scope":"WP-02.1 boundaries and implementation permission"},
+    {"recordId":"rechIKj0hsvfXIvFU","scope":"RC-P1=A, RC-P2=AAAA, RC-P3=A; numbers provisional"},
+    {"recordId":"recuq6OOuKnmc1yJL","scope":"actor/reason, public revision, signed birth, source references, care profile0.2"},
+    {"recordId":"rec3eMARPK5nj4pMD","scope":"43 command names, field names, nested shapes, source categories"},
+    {"recordId":"reci8qK8KmIhPzasI","scope":"finite definitions, skill/perk/item/work/condition/origin values; D09 supersedes medical times"},
+    {"recordId":"recv6d4GVHYW7Q0i4","scope":"identity, membership, assignment, physical location and observed knowledge separation"},
+    {"recordId":"recCY2DY1MUMKSUtB","scope":"equipment slots, unique items, care and custody boundary"},
+    {"recordId":"recFnrl0ZTBsIlNV5","scope":"headless domain and later slice ownership"}
+  ],
+  "semanticSha256": {
+    "algorithm": "SHA256 of UTF-8 canonicalJson(export), object keys sorted, array order retained",
+    "catalogue": "db0b03ff1b4752b778b938552697c09903156df9dfc82ba84508ebcaaf044100",
+    "rules": "d2a1e8d229adeaa1368c79dd15cf8918a4c9992cf3d2362f602d610ee63bdad4",
+    "commandSchema": "5a179a021bb2b464af506fb35009e948db2dc5ca8675b7a49dde9d77768d5c19"
+  },
+  "testMapping": {
+    "commandBoundary": "fixtures.test.ts: one independent explicit fixture per each of the 43 COMPANY_COMMAND_TYPES, required/extra/tenant/actor/state cases",
+    "exactValues": "fixtures.test.ts: beyond-safe-integer addition/subtraction, 1000 roundtrips, signed birth, malformed values",
+    "trustBoundary": "fixtures.test.ts: forged actors/reasons, full-request source grant, public-versus-private revision and frozen snapshots",
+    "catalogue": "fixtures.test.ts: 8 enabled skills, 32 perks, 6 origins, 15 items, 3 works, 4 conditions; invalid refs/versions/disabled fixtures",
+    "sourceFingerprints": "sources.test.ts: fingerprints of the actual executable catalogue, partial rules and derived command schema"
+  },
+  "technicalDecisions": [
+    "Optional wire fields are omitted rather than null; independent command schema foundation-1",
+    "128 decimal digits, 256 ID characters, 4096 text characters, bounded JSON depth/node count are representation limits",
+    "SYSTEM_OR_PLAYER is a source permission shorthand, never a wire actor",
+    "AdvanceCampaign accepts authenticated receipt IDs; no raw fabricated outcome facts",
+    "Cosmetic service-specific keys and kernel event semantics remain bounded raw data, never executable by this slice",
+    "The exported rules are a foundation subset of provisional profile0.2, not the entire domain ruleset implementation"
+  ],
+  "remainingGaps": [
+    "RC-GAP-MACHINE-01: original v1 and v1.2 ZIP bytes not available for byte-level concordance",
+    "Culture/location/provider/service-content registries and canonical entity access are later trusted-context work",
+    "117 complete-domain acceptance obligations are not claimed mapped or implemented by this 43-shape foundation",
+    "AGENTS.md update was blocked by the tool; that file is untouched. CURRENT_PLAN and dated ADR addendum provide current pointers"
+  ],
+  "archiveConcordance": "NOT_RUN",
+  "gameplayHandlers": "NOT_IMPLEMENTED_IN_WP02_1",
+  "fullDomainEvidence": "NOT_RUN"
+}

@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, feat/wp-02-domain-foundation]
   workflow_dispatch:
 
 concurrency:

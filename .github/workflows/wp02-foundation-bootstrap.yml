@@ -1,0 +1,67 @@
+name: WP02 one-time formatting and verification
+
+on:
+  push:
+    branches: [feat/wp-02-domain-foundation]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wp02-foundation-format
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.repository == 'Vovanostm/warwrit'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout the authorized feature branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: feat/wp-02-domain-foundation
+
+      - name: Set up the pinned Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+
+      - name: Install pinned development tools
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+          pnpm install --frozen-lockfile
+
+      - name: Format only the new foundation and its documentation
+        run: |
+          pnpm exec prettier --write \
+            packages/game-core/src/company \
+            packages/game-core/src/index.ts \
+            packages/protocol/src/company.ts \
+            packages/protocol/src/index.ts \
+            docs/engineering/CURRENT_PLAN.md \
+            docs/architecture/0004-company-identity-succession-2026-09-07.md \
+            docs/work-packages/WP-02.1.md \
+            docs/work-packages/WP-02.1-SOURCES.json
+          git add -- \
+            packages/game-core/src/company \
+            packages/game-core/src/index.ts \
+            packages/protocol/src/company.ts \
+            packages/protocol/src/index.ts \
+            docs/engineering/CURRENT_PLAN.md \
+            docs/architecture/0004-company-identity-succession-2026-09-07.md \
+            docs/work-packages/WP-02.1.md \
+            docs/work-packages/WP-02.1-SOURCES.json
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'style(domain): format WP-02.1 with the pinned formatter'
+            git push origin HEAD:refs/heads/feat/wp-02-domain-foundation
+          fi
+
+      - name: Verify the exact resulting commit
+        run: |
+          printf 'WP021_TESTED_HEAD=%s\n' "$(git rev-parse HEAD)"
+          test -z "$(git status --porcelain)"
+          ./scripts/bootstrap.sh
