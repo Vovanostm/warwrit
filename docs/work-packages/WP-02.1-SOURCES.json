@@ -69,5 +69,25 @@
   "gameplayHandlers": "NOT_IMPLEMENTED_IN_WP02_1",
   "fullDomainEvidence": "NOT_RUN",
   "supersedesUnreleased": "WP-02.1-foundation-1 at 3d90bfa496b15123097344a6de1d9b89231d7ebd",
-  "sourceIntegrity": "Git blob/commit hashes identify the exact delivered files. Original source ZIP concordance remains NOT_RUN; no self-generated hash test claims source correctness."
+  "sourceIntegrity": "Git blob/commit hashes identify the exact delivered files. Original source ZIP concordance remains NOT_RUN; no self-generated hash test claims source correctness.",
+  "reviewEvidence": {
+    "reviewedUnfixedCommit": "3d90bfa496b15123097344a6de1d9b89231d7ebd",
+    "correctedCodeCommit": "e69d1e01c8934b4d1540b3232afb82bfb6327a20",
+    "correctedChecksRun": 34148054388,
+    "retainedCoreSpecifications": 12,
+    "originalHardProbes": {
+      "passed": 17,
+      "failed": 0,
+      "assertingCases": 16,
+      "observations": 1,
+      "adaptation": "Only schemaVersion 1 to 2; assertions unchanged. Ajv uses the repository-pinned 8.20.0."
+    },
+    "oneTimeAuthoredDataComparison": "exactly unchanged except catalogue edition",
+    "sourceBlobParity": "every delivered modified file equals the locally tested Git blob; deleted files verified absent"
+  },
+  "testingPolicyBasis": [
+    "Latest owner request: test stable core postulates, not every changing command, field, count or helper.",
+    "Robert Martin: https://blog.cleancoder.com/uncle-bob/2017/10/03/TestContravariance.html",
+    "Robert Martin: https://blog.cleancoder.com/uncle-bob/2016/03/19/GivingUpOnTDD.html"
+  ]
 }
