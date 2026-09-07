@@ -1,0 +1,51 @@
+name: WP021 independent hard checks
+
+on:
+  push:
+    branches: [review/wp-02.1-hard-quality]
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    name: Unchanged PR head - original full checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: 3d90bfa496b15123097344a6de1d9b89231d7ebd
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .node-version
+      - run: ./scripts/bootstrap.sh
+
+  adversarial:
+    name: Added independent contract and schema probes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Verify reviewed production source is unchanged
+        run: |
+          git diff --exit-code 3d90bfa496b15123097344a6de1d9b89231d7ebd -- packages package.json pnpm-lock.yaml tsconfig.base.json
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .node-version
+      - name: Build the unchanged source with pinned tools
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+          pnpm install --frozen-lockfile
+          pnpm build
+      - name: Install independent schema checker outside the project
+        run: npm install --prefix "$RUNNER_TEMP/wp021-review-deps" --ignore-scripts --no-audit --no-fund ajv@8.17.1
+      - name: Run adversarial review assertions without masking failures
+        env:
+          REVIEW_DEPS: ${{ runner.temp }}/wp021-review-deps
+        run: node --test scripts/wp021-hard-review.mjs
