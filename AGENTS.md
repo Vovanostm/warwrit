@@ -28,6 +28,10 @@ Keep the functional modular monolith. No class per command, generic framework, D
 
 Reject invalid commands without partial mutation. Preserve exact money, unique ownership, source/command idempotency and public/private knowledge separation. A revision token, actor string or receipt ID supplied by a client is not authority. New command policies must be exhaustive and fail closed. Version changes to canonical serialization, command semantics, RNG or combat require compatibility analysis; never rewrite released V1 replay history.
 
+## World and narrative consistency
+
+Apply the same canonical condition capabilities to actual tasks; presence, duty and ability are not interchangeable. Own retained values from external evidence instead of aliasing mutable adapter records. Narrative is an observer-appropriate rendering of established facts, never a second source of truth: no invented witness, fate, biography or teleport to make a story work. Keep new prose/content proposals separate from approved rules and code evidence.
+
 ## Tests are executable specifications
 
 Owner policy, 2026-09-07: test important, durable software principles rather than mirror changing implementation. This supersedes blanket demands for a new test per behavior edit, command, field or helper.

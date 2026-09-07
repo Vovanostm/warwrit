@@ -1,8 +1,9 @@
-import { COMPANY_CATALOGUE, COMPANY_RULES } from './definitions.js';
+import { COMPANY_RULES } from './definitions.js';
 import { entityId, isExactInteger } from './values.js';
 import {
   activeMembership,
   canLead,
+  canPerform,
   companyMember,
   commandCapacity,
   contact,
@@ -177,7 +178,7 @@ export function prepareRecruit(
         poolId: p.poolId,
         signingQ: offer.signingQ,
         dailyWageMilli: offer.dailyWageMilli,
-        itemIds: offer.itemIds,
+        itemIds: [...offer.itemIds],
       },
     ],
   };
@@ -216,7 +217,7 @@ export function prepareArrival(
   return {
     next: replacePerson(state, {
       ...character,
-      presence: { ...character.presence, location: fact.location },
+      presence: { ...character.presence, location: { ...fact.location } },
     }),
     events: [event(command.commandId, 'Arrived', context.atTick, [p.characterId])],
     requirements: [],
@@ -246,15 +247,7 @@ export function prepareAssignment(
     'INCOMPATIBLE_ACTIVITY',
   );
   if (p.assignment === 'GARRISON')
-    requireLifecycle(
-      character.conditionIds.every(
-        (id) =>
-          !COMPANY_CATALOGUE.conditions
-            .find((c) => c.id === id)!
-            .deniedCapabilities.includes('localDuty'),
-      ),
-      'INCOMPATIBLE_ACTIVITY',
-    );
+    requireLifecycle(canPerform(character, 'localDuty'), 'INCOMPATIBLE_ACTIVITY');
   let next: LifecycleState;
   if (p.assignment === 'FIELD' && !character.presence.fieldPartyId) {
     requireLifecycle(fact.partyId, 'INVALID_SOURCE');
@@ -270,7 +263,7 @@ export function prepareAssignment(
       );
       const receiver = person(state, fact.handoverToId);
       requireLifecycle(
-        receiver.presence.availability === 'AVAILABLE' &&
+        canPerform(receiver, 'basicWork') &&
           sameLocation(receiver.presence.location, fact.location),
         'CONTACT_OR_ACCESS_REQUIRED',
       );

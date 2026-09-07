@@ -1,4 +1,5 @@
 import { COMPANY_CATALOGUE, COMPANY_RULES, catalogueHas } from './definitions.js';
+import type { CompanyCatalogue } from './definitions.js';
 import { canonicalJson } from './input.js';
 import { ASSIGNMENTS, AVAILABILITIES } from './model.js';
 import { entityId, isEntityId, isExactInteger } from './values.js';
@@ -50,16 +51,21 @@ export function isAdult(character: LifecycleCharacter, tick: CampaignTick): bool
     BigInt(species.adultAtDays) * BigInt(COMPANY_RULES.ticksPerDay)
   );
 }
-export function canLead(character: LifecycleCharacter): boolean {
+type Capability = CompanyCatalogue['conditions'][number]['deniedCapabilities'][number];
+/** Presence alone is not ability: injuries constrain the actual task, not the duty label. */
+export function canPerform(character: LifecycleCharacter, capability: Capability): boolean {
   return (
     character.presence.availability === 'AVAILABLE' &&
     !character.presence.encounterBindingId &&
     character.conditionIds.every((id) => {
       const condition = COMPANY_CATALOGUE.conditions.find((c) => c.id === id);
       requireLifecycle(condition, 'INVALID_STATE');
-      return !condition.deniedCapabilities.includes('lead');
+      return !condition.deniedCapabilities.includes(capability);
     })
   );
+}
+export function canLead(character: LifecycleCharacter): boolean {
+  return canPerform(character, 'lead');
 }
 export function commandCapacity(leadership: number): number {
   return COMPANY_RULES.leadershipBands.reduce(

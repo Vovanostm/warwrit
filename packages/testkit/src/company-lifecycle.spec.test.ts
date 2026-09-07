@@ -740,6 +740,17 @@ describe('WP-02.2 lifecycle postulates', () => {
         context(away, cmd, [{ ...fact, handoverToId: 'provider' }]),
       ),
     ).toMatchObject({ kind: 'REJECTED', state: away });
+    // A valid place is not a capable caregiver: another critical casualty cannot take over.
+    const helplessProvider = changePerson(state, 'provider', {
+      conditionIds: ['critical-bleed'],
+    });
+    expect(
+      prepareCompanyLifecycle(
+        helplessProvider,
+        cmd,
+        context(helplessProvider, cmd, [{ ...fact, handoverToId: 'provider' }]),
+      ),
+    ).toMatchObject({ kind: 'REJECTED', state: helplessProvider });
     const handed = prepared(
       prepareCompanyLifecycle(
         state,
@@ -905,5 +916,85 @@ describe('lifecycle continuity and source scope', () => {
     const location = view.characters[0]!.location as { siteId: string };
     location.siteId = 'elsewhere';
     expect(canonicalJson(state)).toBe(before);
+  });
+  it('does not let reused world evidence move people or rewrite a prepared transfer', () => {
+    const original = opening();
+    const location = { ...home };
+    const fact = { ...original.fact, location };
+    const started = prepared(
+      prepareCompanyLifecycle(original.state, original.cmd, { ...original.ctx, facts: [fact] }),
+    );
+    location.areaId = 'reused-world-record';
+    expect.soft(personIn(started.next, 'leader').presence.location).toEqual(home);
+    expect.soft(started.next.parties[0]?.location).toEqual(home);
+
+    const state = opening().result.next;
+    const route = {
+      kind: 'TRANSIT' as const,
+      segmentId: 'road',
+      from: 'inn',
+      to: home.siteId,
+      startedAt: campaignTick('0'),
+      arrivalNotBefore: state.campaignTick,
+    };
+    const travelling = changePerson(state, 'reach', {
+      presence: { ...personIn(state, 'reach').presence, location: route },
+    });
+    const cmd = input(
+      travelling,
+      'Arrive',
+      {
+        characterId: 'reach',
+        segmentId: route.segmentId,
+        arrivalEvidenceId: 'arrival-owned',
+      },
+      'WORLD_RECEIPT',
+    );
+    const destination = { ...home };
+    const arrival: LifecycleEvidence = {
+      ...source(travelling, 'arrival-owned'),
+      kind: 'ARRIVAL',
+      sourceEventId: cmd.sourceEventId,
+      characterId: 'reach',
+      segmentId: route.segmentId,
+      from: route.from,
+      location: destination,
+    };
+    const result = prepared(
+      prepareCompanyLifecycle(travelling, cmd, context(travelling, cmd, [arrival])),
+    );
+    destination.siteId = 'unrelated-village';
+    expect.soft(personIn(result.next, 'reach').presence.location).toEqual(home);
+
+    const itemIds = ['existing-sword'];
+    const offer: LifecycleEvidence = {
+      ...source(state, 'offer-owned'),
+      kind: 'RECRUIT',
+      characterId: 'reach',
+      basis: 'PAID',
+      offerRevision: '1',
+      expiresAt: campaignTick('2000'),
+      signingQ: moneyQ('1'),
+      dailyWageMilli: '1',
+      itemIds,
+    };
+    const recruit = input(state, 'Recruit', {
+      offerId: offer.id,
+      characterId: 'reach',
+      companyId: state.companyId,
+      basis: 'PAID',
+      offerRevision: offer.offerRevision,
+      poolId: 'cash',
+    });
+    const planned = prepared(
+      prepareCompanyLifecycle(state, recruit, context(state, recruit, [offer])),
+    );
+    itemIds.push('not-in-the-offer');
+    expect.soft(planned.receipt.requirements).toContainEqual(
+      expect.objectContaining({
+        kind: 'RECRUIT_SETTLEMENT',
+        itemIds: ['existing-sword'],
+      }),
+    );
   });
 });

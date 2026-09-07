@@ -101,7 +101,7 @@ export function prepareOpening(
       conditionIds: [],
       presence: {
         characterId: identity.characterId,
-        location: source.location,
+        location: { ...source.location },
         availability: 'AVAILABLE',
         assignment: basis ? 'FIELD' : 'NONE',
         fieldPartyId: basis ? partyId : null,
@@ -242,7 +242,7 @@ export function prepareOpening(
       },
       characters: [...state.characters, ...identities],
       memberships: [...state.memberships, ...memberships],
-      parties: [...state.parties, { partyId, location: source.location }],
+      parties: [...state.parties, { partyId, location: { ...source.location } }],
       kinship: [
         ...state.kinship,
         ...source.relatives.map((r) => ({
