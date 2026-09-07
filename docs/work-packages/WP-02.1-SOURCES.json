@@ -5,14 +5,35 @@
   "sourceReadDate": "2026-09-07",
   "representation": "Independent finite reconstruction from live canonical Notes, not either original ZIP",
   "sources": [
-    {"recordId":"rec5bphVYSZUTqavX","scope":"WP-02.1 boundaries and implementation permission"},
-    {"recordId":"rechIKj0hsvfXIvFU","scope":"RC-P1=A, RC-P2=AAAA, RC-P3=A; numbers provisional"},
-    {"recordId":"recuq6OOuKnmc1yJL","scope":"actor/reason, public revision, signed birth, source references, care profile0.2"},
-    {"recordId":"rec3eMARPK5nj4pMD","scope":"43 command names, field names, nested shapes, source categories"},
-    {"recordId":"reci8qK8KmIhPzasI","scope":"finite definitions, skill/perk/item/work/condition/origin values; D09 supersedes medical times"},
-    {"recordId":"recv6d4GVHYW7Q0i4","scope":"identity, membership, assignment, physical location and observed knowledge separation"},
-    {"recordId":"recCY2DY1MUMKSUtB","scope":"equipment slots, unique items, care and custody boundary"},
-    {"recordId":"recFnrl0ZTBsIlNV5","scope":"headless domain and later slice ownership"}
+    {
+      "recordId": "rec5bphVYSZUTqavX",
+      "scope": "WP-02.1 boundaries and implementation permission"
+    },
+    {
+      "recordId": "rechIKj0hsvfXIvFU",
+      "scope": "RC-P1=A, RC-P2=AAAA, RC-P3=A; numbers provisional"
+    },
+    {
+      "recordId": "recuq6OOuKnmc1yJL",
+      "scope": "actor/reason, public revision, signed birth, source references, care profile0.2"
+    },
+    {
+      "recordId": "rec3eMARPK5nj4pMD",
+      "scope": "43 command names, field names, nested shapes, source categories"
+    },
+    {
+      "recordId": "reci8qK8KmIhPzasI",
+      "scope": "finite definitions, skill/perk/item/work/condition/origin values; D09 supersedes medical times"
+    },
+    {
+      "recordId": "recv6d4GVHYW7Q0i4",
+      "scope": "identity, membership, assignment, physical location and observed knowledge separation"
+    },
+    {
+      "recordId": "recCY2DY1MUMKSUtB",
+      "scope": "equipment slots, unique items, care and custody boundary"
+    },
+    { "recordId": "recFnrl0ZTBsIlNV5", "scope": "headless domain and later slice ownership" }
   ],
   "semanticSha256": {
     "algorithm": "SHA256 of UTF-8 canonicalJson(export), object keys sorted, array order retained",

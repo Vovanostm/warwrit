@@ -18,5 +18,6 @@ export interface CompanyCommandRejectionDto {
   readonly commandId: string;
   readonly ok: false;
   readonly publicRevision: string;
-  readonly code: 'INVALID_COMMAND' | 'NOT_AUTHORIZED' | 'CONTACT_OR_ACCESS_REQUIRED' | 'UNSUPPORTED_ACTION';
+  readonly code:
+    'INVALID_COMMAND' | 'NOT_AUTHORIZED' | 'CONTACT_OR_ACCESS_REQUIRED' | 'UNSUPPORTED_ACTION';
 }

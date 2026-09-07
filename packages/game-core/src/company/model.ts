@@ -1,12 +1,28 @@
-import type { BirthTick, CampaignTick, CanonicalRevision, CharacterId, CompanyId, EntityId, PublicRevision, WorldId } from './values.js';
+import type {
+  BirthTick,
+  CampaignTick,
+  CanonicalRevision,
+  CharacterId,
+  CompanyId,
+  EntityId,
+  PublicRevision,
+  WorldId,
+} from './values.js';
 
 export const COMPANY_SCHEMA_VERSION = 1 as const;
 // A new reconstruction edition: not a byte-identical copy of either unavailable ZIP.
 export const COMPANY_CATALOGUE_VERSION = 's02-foundation-catalogue-1' as const;
 export const COMPANY_RULESET_ID = 's02-domain-provisional-0.2' as const;
 export const COMPANY_COMMAND_SCHEMA_VERSION = 1 as const;
-export const ASSIGNMENTS = ['FIELD', 'HOME_RESERVE', 'RECOVERY', 'GARRISON', 'REMOTE_TASK', 'NONE'] as const;
-export type Assignment = typeof ASSIGNMENTS[number];
+export const ASSIGNMENTS = [
+  'FIELD',
+  'HOME_RESERVE',
+  'RECOVERY',
+  'GARRISON',
+  'REMOTE_TASK',
+  'NONE',
+] as const;
+export type Assignment = (typeof ASSIGNMENTS)[number];
 export type Availability = 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
 export interface CharacterIdentity {
   readonly characterId: CharacterId;
@@ -20,8 +36,18 @@ export interface CharacterIdentity {
 }
 export type LocationRef =
   | { readonly kind: 'AT'; readonly siteId: string; readonly areaId: string }
-  | { readonly kind: 'TRANSIT'; readonly segmentId: string; readonly from: string; readonly to: string; readonly startedAt: CampaignTick; readonly arrivalNotBefore: CampaignTick };
-export type OwnerRef = { readonly kind: 'CHARACTER' | 'COMPANY' | 'ESTATE' | 'WORLD'; readonly id: string };
+  | {
+      readonly kind: 'TRANSIT';
+      readonly segmentId: string;
+      readonly from: string;
+      readonly to: string;
+      readonly startedAt: CampaignTick;
+      readonly arrivalNotBefore: CampaignTick;
+    };
+export type OwnerRef = {
+  readonly kind: 'CHARACTER' | 'COMPANY' | 'ESTATE' | 'WORLD';
+  readonly id: string;
+};
 export interface Membership {
   readonly membershipId: EntityId<'Membership'>;
   readonly companyId: CompanyId;
