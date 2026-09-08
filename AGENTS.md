@@ -6,9 +6,14 @@ Applies repository-wide; read stricter directory instructions before editing.
 
 Latest explicit owner decision > canonical Airtable decisions/GDD > accepted ADRs > active work-package contract > executable specifications > implementation > historical drafts. Preserve accepted history with dated amendments; never turn a proposal or a test plan into an approved decision or a passed check.
 
-S-02 is Done. WP-00/01 are delivered; WP-02 is In Progress. WP-02.1 / PR #10 and WP-02.2 / PR #12 are merged; the active slice is WP-02.3 / issue #13. Read `docs/engineering/CURRENT_PLAN.md` and `docs/work-packages/WP-02.3.md`. Historical Q-CHAR-13/14 blockers are superseded, not a new interview.
-
-Canonical base: `apph3bj1NyVrfJeLM`; launch `rec5bphVYSZUTqavX`, approval `rechIKj0hsvfXIvFU`, v1.2 delta `recuq6OOuKnmc1yJL`, review `recdjcOypF0tvRHJC`. Read full Notes and dated Purpose updates. Source-archive concordance and unimplemented gameplay remain explicit limitations.
+The single operational entry is `docs/engineering/CURRENT_PLAN.md`: active slice,
+activation prerequisite, issue/contract and source records. Read it and the full
+active work-package contract before editing. GitHub is authoritative for live
+refs, comments, merge status and CI; a document saying “ready” is not proof.
+Canonical product memory: Airtable base `apph3bj1NyVrfJeLM` and Empirical tag
+`Warwrit`. Read full Notes plus dated Purpose amendments. Preserve the named
+original source-archive limitation; do not reconstruct the catalogue again or
+reopen superseded interview blockers.
 
 Implementation, tests and PR updates are authorized. Merge, auto-merge, deployment and paid provisioning require separate permission. One owner plus ChatGPT agents; one writer per slice. Server target: Yandex Cloud 2 cores / 4 GB; available client: MacBook + Chrome. These are constraints, not measured capacity.
 
@@ -17,6 +22,42 @@ Implementation, tests and PR updates are authorized. Merge, auto-merge, deployme
 Use intention-revealing names, cohesive functions and modules with one reason to change. Separate policy from transport/storage and prefer explicit data over hidden side effects. Share a rule when it is genuinely the same rule; do not compress code into clever expressions merely to reduce lines.
 
 Keep the functional modular monolith. No class per command, generic framework, DI container, event bus, service or abstraction without a present requirement. Remove dead code and duplicated work. Catalogue data is not duplicate business logic; independent test expectations are not a second implementation.
+
+## Working skills
+
+Load the matching repository skill on demand, not all references on every task.
+These are workflows, not another GDD or a source of authorization. Hosts without
+skill discovery can read the same `SKILL.md` files directly.
+
+| Task                                                                 | Skill                                                                                |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Start/resume a slice, resolve source or status conflict              | [.agents/skills/warwrit-context/SKILL.md](.agents/skills/warwrit-context/SKILL.md)   |
+| Implement a pure domain change or cross-component effect             | [.agents/skills/warwrit-domain/SKILL.md](.agents/skills/warwrit-domain/SKILL.md)     |
+| Review/refactor, reproduce an exploit or verify an invariant         | [.agents/skills/warwrit-review/SKILL.md](.agents/skills/warwrit-review/SKILL.md)     |
+| Validate, publish, authorized merge, checkpoint or next-task handoff | [.agents/skills/warwrit-delivery/SKILL.md](.agents/skills/warwrit-delivery/SKILL.md) |
+
+## Code Review Rules
+
+Review observable failures before cosmetic rearrangement. Give each finding its
+violated source/postulate, concrete counterexample, affected boundary and smallest
+fix. Distinguish reproduced defects from risks, balance hypotheses and style
+preferences. A green test suite does not prove absence of defects.
+
+SSOT means one owner for each rule or mutable fact, not merely fewer repeated
+strings. Derived views, immutable observations and independent test oracles are
+not competing truth when their inputs and refresh boundary are explicit. Check
+all consumers before extracting a rule; similar-looking policies can differ.
+SRP follows reasons to change (e.g. cash movement vs departure eligibility), not
+one file per command. KISS/YAGNI favor a finite current contract over speculative
+frameworks; they do not justify leaving proven defects or unsafe coupling.
+
+Flag person-wide obligations accidentally narrowed to the latest membership;
+coverage continued by somebody who already left; `basicWork` substituted for
+`localDuty`; eligibility used as proof that an effect occurred; and resetting an
+allocation epoch without changing its claims. Automatic local settlement may
+leave distant debt, but must never swallow an invalid supplied access capability.
+For hidden-fate changes, compare command sequences and colleagues' actual payouts,
+not only two initial projection objects.
 
 ## Dependency and state boundaries
 
