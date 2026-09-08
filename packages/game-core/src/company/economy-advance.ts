@@ -8,7 +8,7 @@ import {
   requireEconomy,
   validateFinanceFact,
 } from './economy-state.js';
-import { campaignTick } from './values.js';
+import { campaignTick, isExactInteger } from './values.js';
 import type { CommandOf } from './lifecycle-types.js';
 import type {
   CompanyEconomyState,
@@ -31,6 +31,7 @@ export function advanceEconomy(
       const matches = context.financeFacts.filter((f) => f.id === id);
       requireEconomy(matches.length === 1, 'INVALID_SOURCE');
       const fact = matches[0]!;
+      requireEconomy(isExactInteger(fact.atTick), 'INVALID_TIME');
       requireEconomy(
         ['QUALIFICATION_NOTICE', 'WAGE_COMMUNICATION', 'MAINTENANCE_BOUNDARY'].includes(fact.kind),
         'UNSUPPORTED_ACTION',

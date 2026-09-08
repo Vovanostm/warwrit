@@ -3,7 +3,7 @@ import { canonicalJson } from './input.js';
 import { LifecycleViolation } from './lifecycle-state.js';
 import { prepareCompanyLifecycle, projectCompanyLifecycle } from './lifecycle.js';
 import { campaignTick, canonicalRevision, isExactInteger, publicRevision } from './values.js';
-import { accrueFinance } from './economy-accrual.js';
+import { accrueFinance, wageAt } from './economy-accrual.js';
 import { advanceEconomy } from './economy-advance.js';
 import {
   grantFarewell,
@@ -22,6 +22,7 @@ import {
 import { payClaims, transferFunds } from './economy-payments.js';
 import {
   accountFor,
+  own,
   committedQ,
   EconomyViolation,
   q,
@@ -85,6 +86,7 @@ export function prepareCompanyEconomy(
         BigInt(context.atTick) >= BigInt(state.finance.processedTick),
       'INVALID_TIME',
     );
+    context = { ...context, financeFacts: context.financeFacts.map((f) => own(f)) };
     validateEconomy(state, context);
     requireEconomy(
       state.lifecycle.company?.runStatus !== 'GAME_OVER' ||
@@ -163,7 +165,7 @@ export function prepareCompanyEconomy(
             change.finance,
             state.lifecycle,
             lifecycle,
-            context.atTick,
+            context,
           ),
         };
         if (command.type === 'Observe') {
@@ -270,6 +272,22 @@ export function projectCompanyEconomy(state: CompanyEconomyState, observerCompan
           };
         })
         .sort((a, b) => (a.poolId < b.poolId ? -1 : 1)),
+      services: f.accounts
+        .filter((a) => a.known)
+        .map((a) => ({
+          membershipId: a.membershipId,
+          poolId: a.poolId,
+          currentAgreedRateMilli: wageAt(a, f.processedTick).dailyWageMilli,
+          materialSupportOnly: a.schedule === null,
+          tariff: a.schedule?.rates.map((r) => ({ ...r })) ?? [],
+          notices:
+            a.schedule?.notices.map((n) => ({
+              version: n.version,
+              notifiedAt: n.notifiedAt,
+              effectiveAt: n.effectiveAt,
+              dailyWageMilli: n.dailyWageMilli,
+            })) ?? [],
+        })),
       claims: f.claims
         .filter((c) => accountFor(f, c.membershipId).known && BigInt(c.reportedQ) > 0n)
         .map((c) => {
@@ -301,6 +319,9 @@ export function projectCompanyEconomy(state: CompanyEconomyState, observerCompan
         kind: m.kind,
         partyId: m.partyId,
         beneficiaryIds: [...m.beneficiaryIds],
+        beneficiaryEnds: m.beneficiaryEnds
+          .filter((d) => d.knownAtTick !== null)
+          .map((d) => ({ characterId: d.characterId, atTick: d.knownAtTick })),
         startedAt: m.startedAt,
         endedAt: m.knownEndedAt,
         termsVersion: m.termsVersion,

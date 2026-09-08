@@ -10,6 +10,7 @@ import {
   economy,
   pay,
   prepared,
+  observation,
   tick,
 } from './company-economy-fixture.js';
 
@@ -35,11 +36,60 @@ describe('WP02.3 — exact local finance postulates', () => {
           expect(split.finance.claims.map((c) => c.paidQ)).toEqual(
             whole.finance.claims.map((c) => c.paidQ),
           );
+          // Independent tiny oracle: sort each rational k/a_i, not the production floor algorithm.
+          const marks = weights
+            .flatMap((denominator, owner) =>
+              Array.from({ length: Number(denominator) }, (_, k) => ({
+                owner,
+                numerator: BigInt(k + 1),
+                denominator,
+              })),
+            )
+            .sort((a, b) =>
+              a.numerator * b.denominator < b.numerator * a.denominator
+                ? -1
+                : a.numerator * b.denominator > b.numerator * a.denominator
+                  ? 1
+                  : a.owner - b.owner,
+            );
+          const expected = weights.map((_, owner) =>
+            marks
+              .slice(0, Number(amount))
+              .filter((m) => m.owner === owner)
+              .length.toString(),
+          );
+          expect(whole.finance.claims.map((c) => c.paidQ)).toEqual(expected);
           expect(split.finance.wallets.reduce((s, w) => s + BigInt(w.cashQ), 0n)).toBe(total);
         },
       ),
       { numRuns: 40, seed: 23 },
     );
+    const first = pay(claims(economy([3n, 5n]), [3n, 5n]), 1n).next;
+    const confirmed = observation(first, 'worker-0').result.next;
+    expect(pay(confirmed, 1n).next.finance.claims.map((c) => c.paidQ)).toEqual(['1', '1']);
+    const unconfirmed = claims(economy([3n, 5n]), [3n, 5n]);
+    const stale = {
+      ...unconfirmed,
+      finance: {
+        ...unconfirmed.finance,
+        accounts: unconfirmed.finance.accounts.map((a) => ({ ...a, confirmedAt: tick(0) })),
+      },
+    };
+    const heldPrefix = pay(stale, 1n).next;
+    const delivered = observation(heldPrefix, 'worker-1', [access(heldPrefix)]).result.next;
+    const informed = observation(delivered, 'worker-0').result.next;
+    expect(pay(informed, 1n).next.finance.claims.map((c) => c.paidQ)).toEqual(['1', '1']);
+    const targeted = pay(first, 1n, 'TARGETED').next;
+    expect(pay(targeted, 1n).next.finance.claims.map((c) => c.paidQ)).toEqual(['1', '2']);
+    const dates = claims(economy([3n, 5n]), [3n, 5n]);
+    const oldFirst = {
+      ...dates,
+      finance: {
+        ...dates.finance,
+        claims: dates.finance.claims.map((c, i) => (i === 1 ? { ...c, dueAt: tick(999) } : c)),
+      },
+    };
+    expect(pay(oldFirst, 4n).next.finance.claims.map((c) => c.paidQ)).toEqual(['0', '4']);
     const huge = 10n ** 60n;
     const large = pay(claims(economy([huge, huge], huge), [huge, huge]), huge).next;
     expect(large.finance.claims.map((c) => BigInt(c.paidQ))).toEqual([huge / 2n, huge / 2n]);

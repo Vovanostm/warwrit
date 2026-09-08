@@ -248,7 +248,8 @@ export function payClaims(
   const allocations: EconomyReceipt['allocations'][number][] = [];
   let remaining = amount;
   if (p.mode === 'TARGETED') {
-    finance = closeEpochs(finance, context.atTick, p.poolId);
+    for (const dueAt of new Set(eligible.map((c) => c.dueAt)))
+      finance = closeEpochs(finance, context.atTick, p.poolId, dueAt);
     for (const claim of eligible) {
       const share = min(remaining, reportedOwedQ(finance, claim));
       if (share === 0n) continue;
@@ -335,7 +336,6 @@ export function reservePreEntry(
   if (amount === 0n) return finance;
   const wallet = poolWallet(finance, claim.poolId);
   requireEconomy(spendableQ(finance, wallet.walletId) >= amount, 'INSUFFICIENT_FUNDS');
-  finance = closeEpochs(finance, tick, claim.poolId);
   return {
     ...finance,
     reservations: [
@@ -358,18 +358,15 @@ export function reconcileClaim(
 ): CompanyFinance {
   const claim = finance.claims.find((c) => c.claimId === claimId)!;
   let keep = min(committedQ(finance, claimId), actualOwedQ(claim));
-  finance = closeEpochs(finance, tick, claim.poolId);
-  return {
-    ...finance,
-    reservations: finance.reservations.flatMap((r) => {
-      if (r.claimId !== claimId) return [r];
-      const amount = min(keep, BigInt(r.amountQ));
-      keep -= amount;
-      return amount === 0n ? [] : [{ ...r, amountQ: q(amount) }];
-    }),
-  };
+  const reservations = finance.reservations.flatMap((r) => {
+    if (r.claimId !== claimId) return [r];
+    const amount = min(keep, BigInt(r.amountQ));
+    keep -= amount;
+    return amount === 0n ? [] : [{ ...r, amountQ: q(amount) }];
+  });
+  if (JSON.stringify(reservations) === JSON.stringify(finance.reservations)) return finance;
+  return closeEpochs({ ...finance, reservations }, tick, claim.poolId, claim.dueAt);
 }
-
 /** An informed, locally verified recipient can collect a backed hold without spending it twice. */
 export function settleReservations(
   state: CompanyEconomyState,
@@ -393,6 +390,7 @@ export function settleReservations(
     if (!destination) continue;
     const amount = committedQ(finance, claim.claimId);
     requireEconomy(amount <= actualOwedQ(claim), 'INVALID_SOURCE');
+    // A funded hold becoming cash does not change the unpaid prefix or reset C04.
     finance = {
       ...finance,
       reservations: finance.reservations.filter((r) => r.claimId !== claim.claimId),

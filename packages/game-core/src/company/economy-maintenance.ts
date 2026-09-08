@@ -9,7 +9,6 @@ import {
 import {
   accountFor,
   actualOwedQ,
-  closeEpochs,
   economyId,
   financeFact,
   own,
@@ -54,17 +53,18 @@ function endMode(
   atTick: EconomyContext['atTick'],
   known: boolean,
 ): CompanyFinance {
-  return closeEpochs(
-    {
-      ...finance,
-      maintenance: finance.maintenance.map((m) =>
-        m.agreementId === agreementId
-          ? { ...m, endedAt: m.endedAt ?? atTick, knownEndedAt: known ? atTick : m.knownEndedAt }
-          : m,
-      ),
-    },
-    atTick,
-  );
+  return {
+    ...finance,
+    maintenance: finance.maintenance.map((m) =>
+      m.agreementId === agreementId
+        ? {
+            ...m,
+            endedAt: m.endedAt ?? atTick,
+            knownEndedAt: known ? (m.endedAt ?? atTick) : m.knownEndedAt,
+          }
+        : m,
+    ),
+  };
 }
 export function beginFieldCamp(
   state: CompanyEconomyState,
@@ -94,6 +94,7 @@ export function beginFieldCamp(
     partyId: party.partyId,
     location: own(site.location),
     beneficiaryIds: people.map((p) => p.identity.characterId).sort(),
+    beneficiaryEnds: [],
     startedAt: context.atTick,
     endedAt: null,
     knownEndedAt: null,
@@ -145,15 +146,16 @@ function verifyOffer(
       people.some((p) => canPerform(p, 'basicWork')),
       'INCOMPATIBLE_ACTIVITY',
     );
-  requireEconomy(
-    people.every(
-      (p) =>
-        !p.conditionIds.some(
-          (id) => COMPANY_CATALOGUE.conditions.find((c) => c.id === id)?.category === 'CRITICAL',
-        ),
-    ),
-    'INCOMPATIBLE_ACTIVITY',
-  );
+  if (!continuing)
+    requireEconomy(
+      people.every(
+        (p) =>
+          !p.conditionIds.some(
+            (id) => COMPANY_CATALOGUE.conditions.find((c) => c.id === id)?.category === 'CRITICAL',
+          ),
+      ),
+      'INCOMPATIBLE_ACTIVITY',
+    );
   return { party, people };
 }
 function preEntry(
@@ -222,6 +224,7 @@ export function acceptSafeService(
     partyId: party.partyId,
     location: own(offer.location),
     beneficiaryIds: [...p.beneficiaryIds].sort(),
+    beneficiaryEnds: [],
     startedAt: context.atTick,
     endedAt: null,
     knownEndedAt: null,
@@ -250,10 +253,13 @@ export function amendSafeService(
     offer.partyId === old.partyId && offer.providerId === old.providerId,
     'INVALID_SOURCE',
   );
-  const sameCohort = p.beneficiaryIds.every((id) => old.beneficiaryIds.includes(id));
+  const currentBeneficiaries = old.beneficiaryIds.filter(
+    (id) => !old.beneficiaryEnds.some((d) => d.characterId === id),
+  );
+  const sameCohort = p.beneficiaryIds.every((id) => currentBeneficiaries.includes(id));
   verifyOffer(state, offer, p.beneficiaryIds, context, sameCohort);
   let finance = state.finance;
-  const additions = p.beneficiaryIds.filter((id) => !old.beneficiaryIds.includes(id));
+  const additions = p.beneficiaryIds.filter((id) => !currentBeneficiaries.includes(id));
   if (additions.length) {
     const member = activeMembership(state.lifecycle, additions[0]!)!;
     finance = preEntry(
@@ -269,6 +275,7 @@ export function amendSafeService(
     ...old,
     agreementId: economyId(command.commandId, 'safe-service'),
     beneficiaryIds: [...p.beneficiaryIds].sort(),
+    beneficiaryEnds: [],
     startedAt: context.atTick,
     endedAt: null,
     knownEndedAt: null,

@@ -4,6 +4,7 @@ import {
   COMPANY_RULES,
   createCompanyEconomyState,
   prepareCompanyEconomy,
+  projectCompanyEconomy,
   prepareCompanyLifecycle,
   quoteCompanyFarewell,
   publicRevision,
@@ -224,7 +225,12 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
       lifetimeLevel: 25,
       noticeVersion: 'qualified-v2',
     };
-    const changed = advance(initial, 1500, [notice]).next;
+    const notified = advance(initial, 333, [notice]).next;
+    expect(projectCompanyEconomy(notified, 'company')?.finance.services[1]).toMatchObject({
+      currentAgreedRateMilli: '3',
+      notices: [{ dailyWageMilli: '6', effectiveAt: '1000', notifiedAt: '333' }],
+    });
+    const changed = advance(notified, 1500).next;
     expect(changed.finance.claims.reduce((n, c) => n + BigInt(c.reportedQ), 0n)).toBe(6000n);
     expect(changed.finance.accounts[1]?.schedule?.notices[0]?.effectiveAt).toBe('1000');
     const owing = claims(economy([1n], 100000n), [100n]);
@@ -297,7 +303,8 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
     const paid = pay(available, 1000n).next;
     const relation: FinanceEvidence = {
       ...scope(paid, 'farewell-relation'),
-      kind: 'FAREWELL_RELATION',
+      kind: 'FAREWELL_CONTEXT',
+      departureIntentId: intent.intentId,
       membershipId: 'service-worker-0',
       leaderId: 'leader',
       friendship: 40,
@@ -331,5 +338,129 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
     ).toMatchObject({ kind: 'REJECTED', error: 'INVALID_ARGUMENT' });
     expect(prepared(prepareCompanyEconomy(later, gift, context(later, gift))).replayed).toBe(true);
     expect(later.lifecycle.knowledge.revision).not.toBe(publicRevision('0'));
+  });
+
+  it('P5/P8: final settlement consumes existing backed reservations once before spending the remainder', () => {
+    const base = claims(economy([1n], 400n), [300n]);
+    const unknown = {
+      ...base,
+      finance: {
+        ...base.finance,
+        accounts: base.finance.accounts.map((a) => ({ ...a, confirmedAt: tick(0) })),
+      },
+    };
+    let state = observation(pay(unknown, 100n).next, 'worker-0').result.next;
+    expect(state.finance.reservations[0]?.amountQ).toBe('100');
+    const ask = command(state, 'RequestDeparture', {
+      membershipId: 'service-worker-0',
+      reason: 'DISMISSED',
+      causeId: 'choice',
+      acknowledgedQuoteRevision: state.lifecycle.knowledge.revision,
+    });
+    state = prepared(prepareCompanyEconomy(state, ask, context(state, ask))).next;
+    const leave = command(
+      state,
+      'ExecuteDeparture',
+      {
+        membershipId: 'service-worker-0',
+        intentId: state.finance.departures[0]!.intentId,
+        returnContainerId: 'local-container',
+      },
+      'final-held',
+      'SYSTEM',
+    );
+    const result = prepared(
+      prepareCompanyEconomy(state, leave, context(state, leave, [access(state)])),
+    );
+    expect(result.next.finance.claims[0]?.paidQ).toBe('300');
+    expect(result.next.finance.reservations).toEqual([]);
+    expect(result.next.finance.wallets.find((w) => w.walletId === 'purse')?.cashQ).toBe('100');
+    expect(result.next.finance.wallets.find((w) => w.walletId === 'wallet-worker-0')?.cashQ).toBe(
+      '300',
+    );
+    expect(result.receipt.allocations.reduce((sum, a) => sum + BigInt(a.amountQ), 0n)).toBe(300n);
+    expect(
+      prepared(prepareCompanyEconomy(result.next, leave, context(result.next, leave))).next,
+    ).toBe(result.next);
+  });
+  it('P1/P3: real acting-leader transitions preserve old claims and restore the original paid basis prospectively', () => {
+    let state = advance(economy([2n], 10000n, 0), 500).next;
+    function acting(unavailableId: string, candidateId: string, id: string) {
+      state = {
+        ...state,
+        lifecycle: {
+          ...state.lifecycle,
+          characters: state.lifecycle.characters.map((p) => ({
+            ...p,
+            conditionIds: p.identity.characterId === unavailableId ? ['critical-bleed'] : [],
+          })),
+        },
+      };
+      const cmd = command(
+        state,
+        'ResolveLeadership',
+        { companyId: 'company', crisisId: id, candidateId, mode: 'ACTING' },
+        id,
+      );
+      state = prepared(
+        prepareCompanyEconomy(
+          state,
+          cmd,
+          context(
+            state,
+            cmd,
+            [],
+            [
+              {
+                ...scope(state, id),
+                kind: 'CRISIS',
+                leaderId: unavailableId,
+                reason: 'LEADER_UNAVAILABLE',
+              },
+            ],
+          ),
+        ),
+      ).next;
+      const seen = command(
+        state,
+        'Observe',
+        {
+          observationId: `see-${id}`,
+          observerRef: { kind: 'COMPANY', id: 'company' },
+          subjectRef: { kind: 'COMPANY', id: 'company' },
+          factId: `see-${id}`,
+          sourceId: `source-see-${id}`,
+        },
+        `see-${id}`,
+        'DOMAIN_RECEIPT',
+      );
+      state = prepared(
+        prepareCompanyEconomy(
+          state,
+          seen,
+          context(
+            state,
+            seen,
+            [],
+            [
+              {
+                ...scope(state, `see-${id}`),
+                kind: 'COMPANY_OBSERVATION',
+                subject: { kind: 'COMPANY', id: 'company' },
+              },
+            ],
+          ),
+        ),
+      ).next;
+    }
+    const schedule = state.finance.accounts[1]!.schedule;
+    acting('leader', 'worker-0', 'crisis-one');
+    state = advance(state, 1000).next;
+    expect(state.finance.claims.reduce((sum, c) => sum + BigInt(c.reportedQ), 0n)).toBe(1000n);
+    acting('worker-0', 'leader', 'crisis-two');
+    state = advance(state, 1500).next;
+    expect(state.finance.claims.reduce((sum, c) => sum + BigInt(c.reportedQ), 0n)).toBe(2000n);
+    expect(state.lifecycle.memberships[1]?.basis).toBe('PAID');
+    expect(state.finance.accounts[1]?.schedule).toEqual(schedule);
   });
 });

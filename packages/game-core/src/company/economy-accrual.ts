@@ -23,17 +23,28 @@ export function wageAt(account: ServiceAccount, tick: CampaignTick) {
     ? { version: notice.version, dailyWageMilli: notice.dailyWageMilli }
     : { version: schedule.scheduleId, dailyWageMilli: schedule.agreedDailyWageMilli };
 }
+export function beneficiaryCoveredAt(
+  mode: MaintenanceAgreement,
+  characterId: string,
+  tick: CampaignTick,
+  known = false,
+): boolean {
+  const end = known ? mode.knownEndedAt : mode.endedAt;
+  const departure = mode.beneficiaryEnds.find((d) => d.characterId === characterId);
+  const departureAt = departure && (known ? departure.knownAtTick : departure.atTick);
+  return (
+    mode.beneficiaryIds.includes(characterId) &&
+    BigInt(mode.startedAt) <= BigInt(tick) &&
+    (end === null || BigInt(tick) < BigInt(end)) &&
+    (departureAt == null || BigInt(tick) < BigInt(departureAt))
+  );
+}
 export function maintenanceAt(
   finance: CompanyFinance,
   characterId: string,
   tick: CampaignTick,
 ): MaintenanceAgreement | undefined {
-  return finance.maintenance.find(
-    (m) =>
-      m.beneficiaryIds.includes(characterId) &&
-      BigInt(m.startedAt) <= BigInt(tick) &&
-      (m.endedAt === null || BigInt(tick) < BigInt(m.endedAt)),
-  );
+  return finance.maintenance.find((m) => beneficiaryCoveredAt(m, characterId, tick));
 }
 function appendPeriod(
   periods: readonly EarnedPeriod[],
@@ -95,7 +106,14 @@ export function accrueFinance(
     for (const mode of finance.maintenance.filter((m) =>
       m.beneficiaryIds.includes(membership.characterId),
     )) {
-      for (const value of [mode.startedAt, mode.endedAt, mode.knownEndedAt])
+      const departure = mode.beneficiaryEnds.find((d) => d.characterId === membership.characterId);
+      for (const value of [
+        mode.startedAt,
+        mode.endedAt,
+        mode.knownEndedAt,
+        departure?.atTick ?? null,
+        departure?.knownAtTick ?? null,
+      ])
         if (value !== null) {
           const boundary = BigInt(value);
           if (boundary > begin && boundary < finish) boundaries.add(boundary);
@@ -109,11 +127,8 @@ export function accrueFinance(
         until = t(end);
       const rate = wageAt(account, fromTick);
       const mode = maintenanceAt(finance, membership.characterId, fromTick);
-      const reportedMode = finance.maintenance.find(
-        (m) =>
-          m.beneficiaryIds.includes(membership.characterId) &&
-          BigInt(m.startedAt) <= start &&
-          (m.knownEndedAt === null || start < BigInt(m.knownEndedAt)),
+      const reportedMode = finance.maintenance.find((m) =>
+        beneficiaryCoveredAt(m, membership.characterId, fromTick, true),
       );
       const wageCovered = mode?.kind === 'SAFE_SERVICE';
       const reportCovered = reportedMode?.kind === 'SAFE_SERVICE';
@@ -188,14 +203,19 @@ export function accrueFinance(
       const demand = receivesFood
         ? liveTicks * BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay)
         : 0n;
-      const covered = mode ? demand : 0n;
       if (demand > 0n) {
         const old = food.find((f) => f.membershipId === membership.membershipId);
-        const row = {
-          membershipId: membership.membershipId,
-          demandedTickUnits: ((old ? BigInt(old.demandedTickUnits) : 0n) + demand).toString(),
-          coveredTickUnits: ((old ? BigInt(old.coveredTickUnits) : 0n) + covered).toString(),
+        const interval = {
+          fromTick,
+          toTick: t(start + liveTicks),
+          agreementId: mode?.agreementId ?? null,
         };
+        const previous = old?.intervals.at(-1);
+        const intervals =
+          previous && previous.toTick === fromTick && previous.agreementId === interval.agreementId
+            ? [...old!.intervals.slice(0, -1), { ...previous, toTick: interval.toTick }]
+            : [...(old?.intervals ?? []), interval];
+        const row = { membershipId: membership.membershipId, intervals };
         food = old ? food.map((f) => (f === old ? row : f)) : [...food, row];
         if (mode)
           receipts = appendMaintenance(receipts, {

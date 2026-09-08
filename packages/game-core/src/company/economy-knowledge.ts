@@ -1,5 +1,5 @@
 import { COMPANY_RULES } from './definitions.js';
-import { person } from './lifecycle-state.js';
+import { canPerform, person } from './lifecycle-state.js';
 import {
   day,
   accountFor,
@@ -23,6 +23,7 @@ import type {
   CompanyFinance,
   EconomyContext,
   FinanceChange,
+  EconomyRequirement,
   QualificationNoticeEvidence,
 } from './economy-types.js';
 
@@ -52,7 +53,17 @@ export function recordQualification(
     'INVALID_SOURCE',
   );
   const rate = [...schedule.rates].reverse().find((r) => r.minimumLevel <= fact.lifetimeLevel);
-  requireEconomy(rate, 'INVALID_SOURCE');
+  requireEconomy(
+    rate &&
+      BigInt(rate.dailyWageMilli) >=
+        BigInt(schedule.notices.at(-1)?.dailyWageMilli ?? schedule.agreedDailyWageMilli),
+    'INVALID_SOURCE',
+  );
+  if (
+    rate.dailyWageMilli ===
+    (schedule.notices.at(-1)?.dailyWageMilli ?? schedule.agreedDailyWageMilli)
+  )
+    return recorded.finance;
   const notice = {
     sourceId: fact.sourceEventId,
     version: fact.noticeVersion,
@@ -137,13 +148,100 @@ export function recordFinancialDeath(
       'INVALID_SOURCE',
     );
   }
+  finance = {
+    ...finance,
+    food: finance.food.map((f) =>
+      !members.some((m) => m.membershipId === f.membershipId)
+        ? f
+        : {
+            ...f,
+            intervals: f.intervals.flatMap((i) =>
+              BigInt(i.fromTick) >= BigInt(fact.actualDeathTick)
+                ? []
+                : [
+                    {
+                      ...i,
+                      toTick:
+                        BigInt(i.toTick) > BigInt(fact.actualDeathTick)
+                          ? fact.actualDeathTick
+                          : i.toTick,
+                    },
+                  ],
+            ),
+          },
+    ),
+    maintenanceReceipts: finance.maintenanceReceipts.flatMap((r) =>
+      r.beneficiaryId !== fact.characterId
+        ? [r]
+        : BigInt(r.fromTick) >= BigInt(fact.actualDeathTick)
+          ? []
+          : [
+              {
+                ...r,
+                toTick:
+                  BigInt(r.toTick) > BigInt(fact.actualDeathTick) ? fact.actualDeathTick : r.toTick,
+              },
+            ],
+    ),
+    maintenance: finance.maintenance.map((m) =>
+      m.kind === 'FIELD_CAMP' &&
+      m.endedAt === null &&
+      m.beneficiaryIds.includes(fact.characterId) &&
+      !m.beneficiaryIds.some(
+        (id) => id !== fact.characterId && canPerform(person(state.lifecycle, id), 'basicWork'),
+      )
+        ? { ...m, endedAt: fact.actualDeathTick }
+        : m,
+    ),
+  };
+  // A delayed private outcome also corrects actual camp support, never its public estimate.
+  const foodCorrections: EconomyRequirement[] = [];
+  finance = {
+    ...finance,
+    food: finance.food.map((row) => ({
+      ...row,
+      intervals: row.intervals.flatMap((interval) => {
+        const mode = finance.maintenance.find((m) => m.agreementId === interval.agreementId);
+        if (
+          !mode ||
+          mode.kind !== 'FIELD_CAMP' ||
+          mode.endedAt === null ||
+          BigInt(interval.toTick) <= BigInt(mode.endedAt)
+        )
+          return [interval];
+        const from =
+          BigInt(interval.fromTick) > BigInt(mode.endedAt) ? interval.fromTick : mode.endedAt;
+        foodCorrections.push({
+          kind: 'FOOD_CONSUMPTION',
+          membershipId: row.membershipId,
+          fromTick: from,
+          toTick: interval.toTick,
+          tickUnits: (
+            (BigInt(interval.toTick) - BigInt(from)) *
+            BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay)
+          ).toString(),
+        });
+        return [
+          ...(from === interval.fromTick ? [] : [{ ...interval, toTick: from }]),
+          { ...interval, fromTick: from, agreementId: null },
+        ];
+      }),
+    })),
+    maintenanceReceipts: finance.maintenanceReceipts.flatMap((r) => {
+      const mode = finance.maintenance.find((m) => m.agreementId === r.agreementId);
+      if (!mode || mode.endedAt === null || BigInt(r.toTick) <= BigInt(mode.endedAt)) return [r];
+      return BigInt(r.fromTick) >= BigInt(mode.endedAt) ? [] : [{ ...r, toTick: mode.endedAt }];
+    }),
+  };
   // Estimated liabilities, allocation epochs, reservations and publicly spendable cash do NOT change.
   return {
     finance,
     requirements: [
+      ...foodCorrections,
       {
         kind: 'OUTCOME_APPLICATION',
         characterId: fact.characterId,
+        actualDeathTick: fact.actualDeathTick,
         sourceEventId: fact.sourceEventId,
         custodyOutcomeId: fact.custodyOutcomeId,
       },
@@ -159,8 +257,35 @@ export function observeFinance(
   context: EconomyContext,
 ): FinanceChange {
   const fact = context.facts.find((f) => f.id === command.payload.observationId);
-  if (fact?.kind !== 'COMPANY_OBSERVATION' || fact.subject.kind !== 'CHARACTER')
-    return { finance, requirements: [], allocations: [] };
+  if (fact?.kind !== 'COMPANY_OBSERVATION') return { finance, requirements: [], allocations: [] };
+  if (fact.subject.kind === 'COMPANY') {
+    const leader = lifecycle.knowledge.leaderId;
+    return {
+      finance: {
+        ...finance,
+        maintenance: finance.maintenance.map((m) =>
+          m.kind === 'SAFE_SERVICE' &&
+          m.endedAt !== null &&
+          (!leader ||
+            !m.beneficiaryIds.includes(leader) ||
+            m.beneficiaryEnds.some((d) => d.characterId === leader))
+            ? { ...m, knownEndedAt: m.endedAt }
+            : m,
+        ),
+      },
+      requirements: [],
+      allocations: [],
+    };
+  }
+  finance = {
+    ...finance,
+    maintenance: finance.maintenance.map((m) => ({
+      ...m,
+      beneficiaryEnds: m.beneficiaryEnds.map((d) =>
+        d.characterId === fact.subject.id ? { ...d, knownAtTick: d.atTick } : d,
+      ),
+    })),
+  };
   const character = person(lifecycle, fact.subject.id);
   const accounts = finance.accounts.filter(
     (a) =>
@@ -174,6 +299,16 @@ export function observeFinance(
       (character.presence.availability === 'DEAD') === (account.death !== null),
       'INVALID_SOURCE',
     );
+    const oldAccount = account;
+    for (const claim of finance.claims.filter((c) => c.membershipId === account.membershipId)) {
+      if (
+        !oldAccount.known ||
+        oldAccount.knownDeath !== (character.presence.availability === 'DEAD') ||
+        BigInt(claim.reportedQ) !== claimEarnedQ(claim) ||
+        BigInt(claim.reportedCoveredQ) !== claimCoveredQ(claim)
+      )
+        finance = closeEpochs(finance, context.atTick, claim.poolId, claim.dueAt);
+    }
     account = {
       ...account,
       known: true,
@@ -203,5 +338,14 @@ export function observeFinance(
       allocations.push(...settled.allocations);
     }
   }
-  return { finance: closeEpochs(finance, context.atTick), requirements: [], allocations };
+  if (character.presence.availability === 'DEAD')
+    finance = {
+      ...finance,
+      maintenance: finance.maintenance.map((m) =>
+        m.kind === 'FIELD_CAMP' && m.beneficiaryIds.includes(fact.subject.id) && m.endedAt !== null
+          ? { ...m, knownEndedAt: m.endedAt }
+          : m,
+      ),
+    };
+  return { finance, requirements: [], allocations };
 }

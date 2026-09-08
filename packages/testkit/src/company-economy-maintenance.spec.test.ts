@@ -24,7 +24,9 @@ function offer(state: CompanyEconomyState): FinanceEvidence {
     offerRevision: state.lifecycle.knowledge.revision,
     termsVersion: 'terms-v1',
     expiresAt: tick(BigInt(state.finance.processedTick) + 1000n),
-    permittedBeneficiaryIds: ['leader', 'worker-0'],
+    permittedBeneficiaryIds: state.lifecycle.characters
+      .filter((p) => p.presence.fieldPartyId === 'party')
+      .map((p) => p.identity.characterId),
     safe: true,
     inhabited: true,
     accessible: true,
@@ -34,7 +36,9 @@ function admit(state: CompanyEconomyState) {
   const cmd = command(state, 'AcceptSafeService', {
     partyId: 'party',
     offerId: 'standing-service-offer',
-    beneficiaryIds: ['worker-0', 'leader'],
+    beneficiaryIds: state.lifecycle.characters
+      .filter((p) => p.presence.fieldPartyId === 'party')
+      .map((p) => p.identity.characterId),
     fundingPoolId: 'local',
     quoteRevision: state.lifecycle.knowledge.revision,
   });
@@ -144,5 +148,67 @@ describe('WP02.3 — physical maintenance intervals', () => {
       '500',
     );
     expect(ended.next.lifecycle.characters).toEqual(fresh.lifecycle.characters); // No movement/combat/XP producer is smuggled in.
+  });
+
+  it('P6/P3: detaching a paid companion ends only that interval; the accepted remainder keeps F1 until its leader leaves', () => {
+    let state = prepared(admit(economy([1n, 2n], 10000n, 0))).next;
+    state = advance(state, 500).next;
+    function detach(characterId: string) {
+      const cmd = command(state, 'SetAssignment', {
+        characterId,
+        assignment: 'GARRISON',
+        locationId: 'village',
+        dutyEvidenceId: `duty-${characterId}`,
+        fundingPoolId: 'local',
+      });
+      const result = prepared(
+        prepareCompanyEconomy(
+          state,
+          cmd,
+          context(
+            state,
+            cmd,
+            [],
+            [
+              {
+                ...scope(state, `duty-${characterId}`),
+                kind: 'DUTY',
+                characterId,
+                assignment: 'GARRISON',
+                location: place,
+                fundingPoolId: 'local',
+                handoverToId: 'provider',
+                partyId: null,
+              },
+            ],
+          ),
+        ),
+      );
+      expect(result.receipt.requirements).toContainEqual(
+        expect.objectContaining({ kind: 'CARE_HANDOVER', characterId }),
+      );
+      state = result.next;
+    }
+    detach('worker-0');
+    state = advance(state, 1000).next;
+    expect(
+      state.finance.claims
+        .filter((c) => c.membershipId === 'service-worker-0')
+        .reduce((n, c) => n + BigInt(c.reportedQ) - BigInt(c.reportedCoveredQ), 0n),
+    ).toBe(500n);
+    expect(
+      state.finance.claims
+        .filter((c) => c.membershipId === 'service-worker-1')
+        .reduce((n, c) => n + BigInt(c.reportedQ) - BigInt(c.reportedCoveredQ), 0n),
+    ).toBe(0n);
+    expect(state.finance.maintenance[0]?.endedAt).toBeNull();
+    detach('leader');
+    state = advance(state, 1500).next;
+    expect(
+      state.finance.claims
+        .filter((c) => c.membershipId === 'service-worker-1')
+        .reduce((n, c) => n + BigInt(c.reportedQ) - BigInt(c.reportedCoveredQ), 0n),
+    ).toBe(1000n);
+    expect(state.finance.maintenance[0]?.endedAt).toBe('1000');
   });
 });

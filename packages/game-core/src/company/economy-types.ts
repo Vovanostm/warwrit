@@ -129,6 +129,12 @@ export interface MaintenanceAgreement {
   readonly partyId: string;
   readonly location: AtLocation;
   readonly beneficiaryIds: readonly string[];
+  /** Leaving ends only this person's coverage; a later return needs an accepted amendment. */
+  readonly beneficiaryEnds: readonly {
+    readonly characterId: string;
+    readonly atTick: CampaignTick;
+    readonly knownAtTick: CampaignTick | null;
+  }[];
   readonly startedAt: CampaignTick;
   readonly endedAt: CampaignTick | null;
   /** Observation of the end can lag the private causal boundary. */
@@ -139,9 +145,12 @@ export interface MaintenanceAgreement {
 }
 export interface FoodAccount {
   readonly membershipId: string;
-  /** Exact person-ticks; ticksPerDay is the denominator, never rounded each call. */
-  readonly demandedTickUnits: string;
-  readonly coveredTickUnits: string;
+  /** Sole record of actual demand, in person-ticks; not an inventory balance or an invoice paid. */
+  readonly intervals: readonly {
+    readonly fromTick: CampaignTick;
+    readonly toTick: CampaignTick;
+    readonly agreementId: string | null;
+  }[];
 }
 export interface MaintenanceReceipt {
   readonly agreementId: string;
@@ -212,7 +221,7 @@ export interface ServiceTermsEvidence extends FinanceScope {
   readonly characterId: string;
   readonly poolId: string;
   readonly recipient: OwnerRef;
-  readonly signingWalletId: string;
+  readonly signingWalletId: string | null;
   readonly rates: readonly WageRate[];
 }
 export interface OpeningFundsEvidence extends FinanceScope {
@@ -280,14 +289,22 @@ export interface MaintenanceBoundaryEvidence extends FinanceScope {
   readonly agreementId: string;
   readonly reason: 'MOVE' | 'ENCOUNTER' | 'INCOMPATIBLE_DUTY' | 'LAST_FIELD_WORKER_LOST';
 }
-export interface FarewellRelationEvidence extends FinanceScope {
-  readonly kind: 'FAREWELL_RELATION';
+export interface FarewellContextEvidence extends FinanceScope {
+  readonly kind: 'FAREWELL_CONTEXT';
+  readonly departureIntentId: string;
   readonly membershipId: string;
   readonly leaderId: string;
   readonly friendship: number;
 }
+/** Resolves a missing pool in an existing lifecycle duty requirement without inventing a purse. */
+export interface PayrollBindingEvidence extends FinanceScope {
+  readonly kind: 'PAYROLL_BINDING';
+  readonly membershipId: string;
+  readonly poolId: string;
+}
 export type FinanceEvidence =
   | ServiceTermsEvidence
+  | PayrollBindingEvidence
   | OpeningFundsEvidence
   | LocalMoneyAccess
   | CampSiteEvidence
@@ -296,7 +313,7 @@ export type FinanceEvidence =
   | WageCommunicationEvidence
   | FinancialDeathEvidence
   | MaintenanceBoundaryEvidence
-  | FarewellRelationEvidence;
+  | FarewellContextEvidence;
 /** Internal adapter data only. Authenticated command envelopes do not manufacture these facts. */
 export interface EconomyContext extends LifecycleContext {
   readonly financeFacts: readonly FinanceEvidence[];
@@ -339,6 +356,7 @@ export type EconomyRequirement =
   | {
       readonly kind: 'OUTCOME_APPLICATION';
       readonly characterId: string;
+      readonly actualDeathTick: CampaignTick;
       readonly sourceEventId: string;
       readonly custodyOutcomeId: string;
     }

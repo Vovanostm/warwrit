@@ -7,7 +7,7 @@ import {
   sameLocation,
   validateLifecycleGraph,
 } from './lifecycle-state.js';
-import { isExactInteger, moneyQ, campaignTick } from './values.js';
+import { isExactInteger, isEntityId, moneyQ, campaignTick } from './values.js';
 import type { CampaignTick, MoneyQ } from './values.js';
 import type { LifecycleState } from './lifecycle-types.js';
 import type {
@@ -55,7 +55,11 @@ export function financeFact<K extends FinanceEvidence['kind']>(
 }
 export function validateFinanceFact(fact: FinanceEvidence, context: EconomyContext): void {
   requireEconomy(
-    fact.worldId === context.worldId &&
+    isEntityId(fact.id) &&
+      isEntityId(fact.sourceEventId) &&
+      isExactInteger(fact.atTick) &&
+      isExactInteger(fact.revision) &&
+      fact.worldId === context.worldId &&
       fact.companyId === context.companyId &&
       fact.revision === context.canonicalRevision &&
       fact.atTick === context.atTick,
@@ -124,12 +128,13 @@ export function replaceAccount(finance: CompanyFinance, account: ServiceAccount)
 export function closeEpochs(
   finance: CompanyFinance,
   tick: CampaignTick,
-  poolId?: string,
+  poolId: string,
+  dueAt: CampaignTick,
 ): CompanyFinance {
   return {
     ...finance,
     epochs: finance.epochs.map((e) =>
-      e.closedAt === null && (poolId === undefined || e.poolId === poolId)
+      e.closedAt === null && e.poolId === poolId && e.dueAt === dueAt
         ? { ...e, closedAt: tick }
         : e,
     ),
@@ -260,7 +265,9 @@ export function validateEconomy(state: CompanyEconomyState, context: EconomyCont
       isExactInteger(r.amountQ) &&
         BigInt(r.amountQ) > 0n &&
         f.claims.some((c) => c.claimId === r.claimId) &&
-        f.wallets.some((w) => w.walletId === r.walletId),
+        f.wallets.some((w) => w.walletId === r.walletId) &&
+        r.walletId ===
+          poolWallet(f, f.claims.find((c) => c.claimId === r.claimId)!.poolId).walletId,
       'INVALID_STATE',
     );
   for (const e of f.epochs) {
@@ -274,13 +281,26 @@ export function validateEconomy(state: CompanyEconomyState, context: EconomyCont
       'INVALID_STATE',
     );
   }
-  for (const food of f.food)
-    requireEconomy(
-      isExactInteger(food.demandedTickUnits) &&
-        isExactInteger(food.coveredTickUnits) &&
-        BigInt(food.coveredTickUnits) <= BigInt(food.demandedTickUnits),
-      'INVALID_STATE',
-    );
+  for (const food of f.food) {
+    accountFor(f, food.membershipId);
+    let until = 0n;
+    for (const interval of food.intervals) {
+      requireEconomy(
+        isExactInteger(interval.fromTick) &&
+          isExactInteger(interval.toTick) &&
+          BigInt(interval.fromTick) >= until &&
+          BigInt(interval.toTick) > BigInt(interval.fromTick) &&
+          BigInt(interval.toTick) <= BigInt(f.processedTick),
+        'INVALID_STATE',
+      );
+      if (interval.agreementId !== null)
+        requireEconomy(
+          f.maintenance.some((m) => m.agreementId === interval.agreementId),
+          'INVALID_STATE',
+        );
+      until = BigInt(interval.toTick);
+    }
+  }
 }
 /** Access evidence is an authenticated adapter capability, not a player-controlled location. */
 export function requirePoolAccess(

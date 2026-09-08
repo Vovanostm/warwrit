@@ -1,10 +1,12 @@
 import { COMPANY_RULES } from './definitions.js';
 import { canPerform, effectiveLeaderId, person } from './lifecycle-state.js';
 import { wageAt } from './economy-accrual.js';
-import { moveCash, recipientWallet } from './economy-payments.js';
+import { moveCash, recipientWallet, settleReservations } from './economy-payments.js';
 import {
   accountFor,
   actualOwedQ,
+  closeEpochs,
+  recordSource,
   day,
   economyId,
   financeFact,
@@ -58,7 +60,7 @@ export function updateArrears(
     if (outstanding.length === 0 || account.knownDeath || member.endedAt !== null) {
       if (episode)
         episodes = episodes.map((e) => (e === episode ? { ...e, resolvedAt: context.atTick } : e));
-      if (outstanding.length === 0)
+      if (outstanding.length === 0 && member.endedAt === null)
         intents = intents.map((d) =>
           d.membershipId === account.membershipId &&
           d.reason === 'WAGE_BREACH' &&
@@ -93,6 +95,9 @@ export function updateArrears(
     const communication = communications[0];
     if (communication?.kind === 'WAGE_COMMUNICATION') {
       validateFinanceFact(communication, context);
+      const recorded = recordSource(finance, communication);
+      if (recorded.replayed) continue;
+      finance = recorded.finance;
       requireEconomy(
         communication.leaderId === effectiveLeaderId(lifecycle) &&
           context.contactIds.includes(member.characterId) &&
@@ -238,14 +243,33 @@ export function prepareDepartureSettlement(
         : c,
     ),
   };
+  const allocations: FinanceChange['allocations'][number][] = [];
+  for (const claim of finance.claims.filter((c) => c.membershipId === p.membershipId))
+    finance = closeEpochs(finance, context.atTick, claim.poolId, claim.dueAt);
   const accesses = context.financeFacts.filter((f) => f.kind === 'LOCAL_MONEY_ACCESS');
   if (accesses.length > 0) {
     const access = requirePoolAccess({ ...state, finance }, account.poolId, context);
     const destination = recipientWallet(finance, account.recipient, access);
     if (destination && account.confirmedAt === context.atTick) {
+      const settled = settleReservations(
+        { ...state, finance },
+        p.membershipId,
+        context,
+        command.commandId,
+      );
+      finance = settled.finance;
+      allocations.push(...settled.allocations);
       for (const claim of finance.claims
         .filter((c) => c.membershipId === p.membershipId)
-        .sort((a, b) => (a.claimId < b.claimId ? -1 : 1))) {
+        .sort((a, b) =>
+          BigInt(a.dueAt) < BigInt(b.dueAt)
+            ? -1
+            : BigInt(a.dueAt) > BigInt(b.dueAt)
+              ? 1
+              : a.claimId < b.claimId
+                ? -1
+                : 1,
+        )) {
         const amount = min(
           actualOwedQ(claim),
           spendableQ(finance, poolWallet(finance, claim.poolId).walletId),
@@ -261,6 +285,7 @@ export function prepareDepartureSettlement(
           economyId(command.commandId, claim.claimId, 'final'),
           'WAGE',
         );
+        allocations.push({ claimId: claim.claimId, amountQ: q(amount), channel: 'CASH' });
         finance = {
           ...finance,
           claims: finance.claims.map((c) =>
@@ -272,7 +297,7 @@ export function prepareDepartureSettlement(
   }
   return {
     finance,
-    allocations: [],
+    allocations,
     requirements: [
       {
         kind: 'PHYSICAL_DEPARTURE',
@@ -299,7 +324,11 @@ export function quoteCompanyFarewell(
       context.publicRevision === state.lifecycle.knowledge.revision,
     'STALE_REVISION',
   );
-  const relation = financeFact(context, 'FAREWELL_RELATION');
+  requireEconomy(
+    account.confirmedAt === context.atTick && !account.knownDeath,
+    'CONTACT_OR_ACCESS_REQUIRED',
+  );
+  const relation = financeFact(context, 'FAREWELL_CONTEXT');
   requireEconomy(
     relation.membershipId === membershipId &&
       relation.leaderId === effectiveLeaderId(state.lifecycle) &&
@@ -309,11 +338,11 @@ export function quoteCompanyFarewell(
       relation.friendship <= 100,
     'INVALID_SOURCE',
   );
+  const intent = state.finance.departures.find(
+    (d) => d.intentId === relation.departureIntentId && d.membershipId === membershipId,
+  );
   requireEconomy(
-    member.endedAt !== null ||
-      state.finance.departures.some(
-        (d) => d.membershipId === membershipId && d.cancelledAt === null,
-      ),
+    intent && (member.endedAt !== null || intent.cancelledAt === null),
     'INCOMPATIBLE_ACTIVITY',
   );
   const until = member.endedAt ?? context.atTick;
@@ -340,6 +369,8 @@ export function quoteCompanyFarewell(
     .reduce((s, c) => s + actualOwedQ(c), 0n);
   return {
     membershipId,
+    intentId: intent.intentId,
+    reason: intent.reason,
     quoteRevision: state.lifecycle.knowledge.revision,
     atTick: context.atTick,
     maximumAdditionalQ: q(ceiling > given ? ceiling - given : 0n),

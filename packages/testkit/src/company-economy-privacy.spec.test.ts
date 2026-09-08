@@ -13,6 +13,7 @@ import {
   context,
   economy,
   observation,
+  place,
   prepared,
   scope,
 } from './company-economy-fixture.js';
@@ -222,5 +223,49 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
       kind: 'REJECTED',
       error: 'INVALID_COMMAND',
     });
+  });
+
+  it('P6/P7: loss of the last field worker stops actual support without disclosing hidden death', () => {
+    const initial = economy([1n], 10000n, 0);
+    const resting = {
+      ...initial,
+      lifecycle: {
+        ...initial.lifecycle,
+        characters: initial.lifecycle.characters.map((p) =>
+          p.identity.characterId === 'leader' ? { ...p, conditionIds: ['critical-bleed'] } : p,
+        ),
+      },
+    };
+    const camp = command(resting, 'BeginFieldCamp', {
+      partyId: 'party',
+      siteEligibilityId: 'site',
+    });
+    const begun = prepared(
+      prepareCompanyEconomy(
+        resting,
+        camp,
+        context(resting, camp, [
+          {
+            ...scope(resting, 'site'),
+            kind: 'CAMP_SITE',
+            partyId: 'party',
+            location: place,
+            stationary: true,
+            conflict: false,
+          },
+        ]),
+      ),
+    ).next;
+    const shared = advance(begun, 500).next;
+    const alive = advance(shared, 1000).next;
+    const hidden = advance(death(shared, 'worker-0').result.next, 1000).next;
+    expect(view(hidden)).toEqual(view(alive));
+    expect(
+      hidden.finance.food.find((f) => f.membershipId === 'service-leader')?.intervals.at(-1),
+    ).toMatchObject({ fromTick: '500', toTick: '1000', agreementId: null });
+    expect(hidden.finance.maintenance[0]?.endedAt).toBe('500');
+    expect(view(hidden)?.finance.maintenance[0]?.endedAt).toBeNull();
+    const learned = observation(hidden, 'worker-0').result.next;
+    expect(view(learned)?.finance.maintenance[0]?.endedAt).toBe('500');
   });
 });

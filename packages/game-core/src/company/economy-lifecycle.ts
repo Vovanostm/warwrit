@@ -1,20 +1,19 @@
 import { COMPANY_RULES } from './definitions.js';
-import { activeMembership, person, sameLocation } from './lifecycle-state.js';
+import { activeMembership, canPerform, person, sameLocation } from './lifecycle-state.js';
 import { isExactInteger } from './values.js';
 import {
   accountFor,
-  closeEpochs,
   economyId,
   own,
   poolWallet,
   q,
   replaceAccount,
   requireEconomy,
+  requirePoolAccess,
   validateFinanceFact,
   walletFor,
 } from './economy-state.js';
 import { moveCash } from './economy-payments.js';
-import type { CampaignTick } from './values.js';
 import type { LifecycleReceipt, LifecycleState } from './lifecycle-types.js';
 import type {
   CompanyFinance,
@@ -86,7 +85,7 @@ function addAccount(
     poolId: terms.poolId,
     recipient: own(terms.recipient),
     schedule,
-    known: true,
+    known: context.principal.kind === 'PLAYER',
     confirmedAt: context.atTick,
     knownPaused: false,
     knownDeath: false,
@@ -106,6 +105,7 @@ function signing(
   if (amountQ === '0') return finance;
   const terms = termsFor(context, characterId);
   requireEconomy(terms.poolId === poolId, 'INVALID_SOURCE');
+  requireEconomy(terms.signingWalletId !== null, 'INVALID_SOURCE');
   const recipient = walletFor(finance, terms.signingWalletId);
   requireEconomy(
     recipient.owner.kind === 'CHARACTER' &&
@@ -252,13 +252,32 @@ export function settleLifecycleRequirements(
         const member = activeMembership(next, requirement.characterId);
         requireEconomy(member, 'INVALID_STATE');
         let account = accountFor(finance, member.membershipId);
-        if (requirement.fundingPoolId) {
-          const wallet = poolWallet(finance, requirement.fundingPoolId);
+        let nextPool = requirement.fundingPoolId;
+        if (
+          nextPool === null &&
+          !sameLocation(
+            poolWallet(finance, account.poolId).location,
+            person(next, requirement.characterId).presence.location,
+          )
+        ) {
+          const bindings = context.financeFacts.filter(
+            (f) => f.kind === 'PAYROLL_BINDING' && f.membershipId === member.membershipId,
+          );
+          requireEconomy(bindings.length === 1, 'INVALID_SOURCE');
+          const binding = bindings[0]!;
+          requireEconomy(binding.kind === 'PAYROLL_BINDING', 'INVALID_SOURCE');
+          validateFinanceFact(binding, context);
+          nextPool = binding.poolId;
+        }
+        if (nextPool !== null) {
+          const wallet = poolWallet(finance, nextPool);
           requireEconomy(
             sameLocation(wallet.location, person(next, requirement.characterId).presence.location),
             'CONTACT_OR_ACCESS_REQUIRED',
           );
-          account = { ...account, poolId: requirement.fundingPoolId };
+          if (nextPool !== account.poolId)
+            requirePoolAccess({ lifecycle: next, finance }, nextPool, context);
+          account = { ...account, poolId: nextPool };
         }
         // Return is a real lifecycle transition. Remote assignment and socket state are not contact loss.
         if (receipt.events.some((e) => e.type === 'ReturnedToService'))
@@ -297,36 +316,48 @@ export function closeMaintenanceForLifecycle(
   finance: CompanyFinance,
   before: LifecycleState,
   next: LifecycleState,
-  atTick: CampaignTick,
+  context: EconomyContext,
 ): CompanyFinance {
+  const atTick = context.atTick;
+  const known = context.principal.kind === 'PLAYER';
   const nextLeader = next.company?.actingLeaderId ?? next.company?.currentLeaderId;
-  for (const mode of finance.maintenance.filter((m) => m.endedAt === null)) {
-    const changedMembers = mode.beneficiaryIds.some((id) => {
-      const old = person(before, id).presence,
-        now = person(next, id).presence;
-      return (
-        old.fieldPartyId !== now.fieldPartyId ||
-        !sameLocation(old.location, now.location) ||
-        (old.encounterBindingId !== now.encounterBindingId && now.encounterBindingId !== null) ||
-        (old.assignment !== now.assignment && !['FIELD', 'RECOVERY'].includes(now.assignment))
+  return {
+    ...finance,
+    maintenance: finance.maintenance.map((mode) => {
+      if (mode.endedAt !== null) return mode;
+      const departing = mode.beneficiaryIds.filter((id) => {
+        if (mode.beneficiaryEnds.some((d) => d.characterId === id)) return false;
+        const old = person(before, id).presence,
+          now = person(next, id).presence;
+        return (
+          old.fieldPartyId !== now.fieldPartyId ||
+          !sameLocation(old.location, now.location) ||
+          (old.encounterBindingId !== now.encounterBindingId && now.encounterBindingId !== null) ||
+          (old.assignment !== now.assignment && !['FIELD', 'RECOVERY'].includes(now.assignment))
+        );
+      });
+      const beneficiaryEnds = [
+        ...mode.beneficiaryEnds,
+        ...departing.map((characterId) => ({
+          characterId,
+          atTick,
+          knownAtTick: known ? atTick : null,
+        })),
+      ];
+      const remaining = mode.beneficiaryIds.filter(
+        (id) => !beneficiaryEnds.some((d) => d.characterId === id),
       );
-    });
-    if (
-      changedMembers ||
-      (mode.kind === 'SAFE_SERVICE' && (!nextLeader || !mode.beneficiaryIds.includes(nextLeader)))
-    ) {
-      finance = closeEpochs(
-        {
-          ...finance,
-          maintenance: finance.maintenance.map((m) =>
-            m.agreementId === mode.agreementId
-              ? { ...m, endedAt: atTick, knownEndedAt: atTick }
-              : m,
-          ),
-        },
-        atTick,
-      );
-    }
-  }
-  return finance;
+      const ends =
+        mode.kind === 'SAFE_SERVICE'
+          ? !nextLeader || !remaining.includes(nextLeader)
+          : remaining.length === 0 ||
+            !remaining.some((id) => canPerform(person(next, id), 'basicWork'));
+      return {
+        ...mode,
+        beneficiaryEnds,
+        endedAt: ends ? atTick : mode.endedAt,
+        knownEndedAt: ends && known ? atTick : mode.knownEndedAt,
+      };
+    }),
+  };
 }
