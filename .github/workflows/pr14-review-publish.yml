@@ -1,0 +1,75 @@
+name: Materialize PR14 review objects
+on:
+  push:
+    branches: [workbench/wp023-publish]
+    paths: [.github/workflows/pr14-review-publish.yml]
+permissions:
+  contents: write
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          fetch-depth: 1
+      - name: Materialize exact reviewed trees without moving the implementation ref
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, bz2, hashlib, json, os, pathlib, subprocess
+          base = '0ef8e894f7a753cf42864ac97254a2926f3ebd52'
+          previous = 'a6d649beb580dc20dc1cbb80a12db168ce10b9a8'
+          feature = 'feat/wp-02-economy'
+          objects = 'workbench/pr14-reviewed-objects'
+          final_tree = '2e756c8ff9942138943a1800f82b3be095195114'
+          staged = pathlib.Path('.workbench/pr14-review')
+          parts = [(staged / f'part-{i}.b64').read_text().strip() for i in range(5)]
+          # Restore a detected truncated transport substring, then verify the complete original bytes.
+          old = 'EixiRYsYv8lDo'
+          restored = 'EixiRYsUWCokUBEFkVQWQUF+7/fTBkdEBlEZFRVVVBhERVgqKisUREWKqiiKiMUZQn9vemaVSKqLGIqqKIiqiiIxFgX0y5XIYMjPP+a+CIMVVFiixSKCiyKq4Lii4L31K86/d8G8HFXBRTfLereDmB/oj/XWtjmQiH8N1mcW/9PD8q9f47Hq9/v7LFfvwK6qvR9HY+EiQYHmtAaVRKWA2lEgKCwWsrFUWEUR9rJkhirPZZbSAsUKkbQLaBS2WMVoilraqqtqNY221G2UZG2oiosUarRFK1iltq0qtUbaW0o1tVqFaDaNbZbS0bYiqNjKpyNn+7Sf9/xz6s/1ls1w/SF6frDYMQNNRwCjttEP1/AHysH2kCdOsWNhZWH5mWjZbRipHBcQWIWkBQIWmU8/5zC4D/p2nMsjDygPDv/nmVqvtcwDZMhAyrby1Kvdg6yv/AAFtuWJGYnP8PmhPoIT0DpBXy8yxYv8lDo'
+          assert parts[0].count(old) == 1
+          parts[0] = parts[0].replace(old, restored)
+          encoded = ''.join(parts)
+          print('transport_chars', len(encoded))
+          packed = base64.b64decode(encoded, validate=True)
+          digest = hashlib.sha256(packed).hexdigest()
+          print('transport_sha256', digest)
+          assert digest == 'adc24a8a59f8733bf95314bf191b6b46f1a55d65cca2c7d045edd2ec9721def2', 'Transport mismatch: nothing applied or published'
+          series = json.loads(bz2.decompress(packed))
+          assert len(series) == 2 and series[-1]['tree'] == final_tree
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          def run(*args):
+              subprocess.run(['git', *args], check=True)
+          run('fetch', '--no-tags', 'origin', 'refs/heads/main:refs/remotes/origin/main', f'refs/heads/{feature}:refs/remotes/origin/{feature}')
+          assert git('rev-parse', 'origin/main') == base, 'Main moved; stop'
+          assert git('rev-parse', f'origin/{feature}') == previous, 'Another writer moved feature; stop'
+          assert not git('ls-remote', 'origin', f'refs/heads/{objects}'), 'Do not overwrite existing object branch'
+          run('switch', '--detach', previous)
+          run('config', 'user.name', 'ChatGPT')
+          run('config', 'user.email', 'chatgpt@users.noreply.github.com')
+          report = {'base': base, 'previous': previous, 'branch': feature, 'objectsBranch': objects, 'commits': [], 'transportSha256': digest, 'featureRefMoved': False}
+          for row in series:
+              subprocess.run(['git', 'apply', '--index', '--whitespace=error'], input=row['patch'].encode(), check=True)
+              assert git('write-tree') == row['tree'], 'Source tree mismatch'
+              run('commit', '-m', row['message'])
+              report['commits'].append({'sha': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'), 'message': row['message']})
+          assert git('rev-parse', 'HEAD^{tree}') == final_tree
+          assert git('status', '--porcelain') == ''
+          run('push', 'origin', f'HEAD:refs/heads/{objects}')
+          report['head'] = git('rev-parse', 'HEAD')
+          report['tree'] = final_tree
+          text = json.dumps(report, indent=2) + '\n'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'pr14-review-publication.json').write_text(text)
+          print(text)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: pr14-review-publication
+          path: |
+            ${{ runner.temp }}/pr14-review-publication.json
+            .workbench/pr14-review/*.b64
+          retention-days: 2
