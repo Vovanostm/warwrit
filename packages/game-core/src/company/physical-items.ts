@@ -1,18 +1,32 @@
 import { COMPANY_CATALOGUE } from './definitions.js';
 import { canonicalJson } from './input.js';
 import { activeMembership, person, sameLocation } from './lifecycle-state.js';
-import { physicalId, itemDefinition, physicalContainer, physicalFact, physicalItem, recordPhysicalSource, replaceContainer, replaceItem, requireItemAccess, requirePhysical, uniquePhysicalFact, availableContainerG, ownPhysical } from './physical-state.js';
+import {
+  availableContainerG,
+  itemDefinition,
+  ownPhysical,
+  physicalContainer,
+  physicalFact,
+  physicalId,
+  physicalItem,
+  recordPhysicalSource,
+  replaceContainer,
+  replaceItem,
+  requireItemAccess,
+  requirePhysical,
+  uniquePhysicalFact,
+} from './physical-state.js';
 import { payPhysicalProvider } from './physical-payments.js';
 import type { CommandOf } from './lifecycle-types.js';
 import type { EconomyContext, EconomyRequirement } from './economy-types.js';
 import type {
   CompanyPhysicalState,
+  EquipmentSlot,
   ItemInstance,
   MaterializedCompanyState,
   OwnershipAuthorizationEvidence,
   PhysicalChange,
   PhysicalContainer,
-  EquipmentSlot,
 } from './physical-types.js';
 import { PHYSICAL_RULES } from './physical-types.js';
 
@@ -55,15 +69,27 @@ function splitOrMove(
   commandId: string,
   authorization?: OwnershipAuthorizationEvidence,
 ): CompanyPhysicalState {
-  requirePhysical(quantity > 0 && quantity <= item.quantity && item.containerId !== null, 'INVALID_ARGUMENT');
+  requirePhysical(
+    quantity > 0 && quantity <= item.quantity && item.containerId !== null,
+    'INVALID_ARGUMENT',
+  );
   const destination = physicalContainer(state, destinationId);
-  requirePhysical(availableContainerG(state, destinationId) >= itemWeight(item, quantity), 'CAPACITY');
+  requirePhysical(
+    availableContainerG(state, destinationId) >= itemWeight(item, quantity),
+    'CAPACITY',
+  );
   if (quantity === item.quantity) {
-    const moved = changeOwner({ ...item, containerId: destination.containerId, equipped: null }, authorization);
+    const moved = changeOwner(
+      { ...item, containerId: destination.containerId, equipped: null },
+      authorization,
+    );
     return replaceItem(state, moved);
   }
   const childId = physicalId(commandId, item.itemId, 'split');
-  requirePhysical(!state.items.some((entry) => entry.itemId === childId), 'IDEMPOTENCY_CONFLICT');
+  requirePhysical(
+    !state.items.some((entry) => entry.itemId === childId),
+    'IDEMPOTENCY_CONFLICT',
+  );
   const remainder = { ...item, quantity: item.quantity - quantity };
   const child = changeOwner(
     {
@@ -78,13 +104,13 @@ function splitOrMove(
         ordinal: item.provenance.ordinal + 1,
       },
     },
-    authorization
-      ? { ...authorization, itemId: childId, fromOwner: item.owner }
-      : undefined,
+    authorization ? { ...authorization, itemId: childId, fromOwner: item.owner } : undefined,
   );
   return {
     ...state,
-    items: state.items.map((entry) => (entry.itemId === item.itemId ? remainder : entry)).concat(child),
+    items: state.items
+      .map((entry) => (entry.itemId === item.itemId ? remainder : entry))
+      .concat(child),
   };
 }
 function knownItemMutation(
@@ -95,7 +121,9 @@ function knownItemMutation(
   const itemSet = new Set(itemIds);
   const containerSet = new Set(containerIds);
   const items = physical.items.filter((item) => itemSet.has(item.itemId));
-  const containers = physical.containers.filter((container) => containerSet.has(container.containerId));
+  const containers = physical.containers.filter((container) =>
+    containerSet.has(container.containerId),
+  );
   return {
     ...physical,
     knowledge: {
@@ -105,7 +133,9 @@ function knownItemMutation(
         ...ownPhysical(items),
       ],
       containerSnapshots: [
-        ...physical.knowledge.containerSnapshots.filter((container) => !containerSet.has(container.containerId)),
+        ...physical.knowledge.containerSnapshots.filter(
+          (container) => !containerSet.has(container.containerId),
+        ),
         ...ownPhysical(containers),
       ],
     },
@@ -119,11 +149,28 @@ export function transferItem(
   const p = command.payload;
   const item = physicalItem(root.physical, p.itemId);
   requirePhysical(item.containerId === p.fromContainerId, 'CONTACT_OR_ACCESS_REQUIRED');
-  requireItemAccess(root, context, p.accessEvidenceId, 'TRANSFER', [p.fromContainerId, p.toContainerId], [p.itemId]);
+  requireItemAccess(
+    root,
+    context,
+    p.accessEvidenceId,
+    'TRANSFER',
+    [p.fromContainerId, p.toContainerId],
+    [p.itemId],
+  );
   const authorization = ownershipAuthorization(context, p.ownershipReceiptId, item);
-  let physical = splitOrMove(root.physical, item, p.quantity, p.toContainerId, command.commandId, authorization);
+  let physical = splitOrMove(
+    root.physical,
+    item,
+    p.quantity,
+    p.toContainerId,
+    command.commandId,
+    authorization,
+  );
   if (authorization) physical = recordPhysicalSource(physical, authorization).state;
-  const affected = [p.itemId, ...(p.quantity < item.quantity ? [physicalId(command.commandId, p.itemId, 'split')] : [])];
+  const affected = [
+    p.itemId,
+    ...(p.quantity < item.quantity ? [physicalId(command.commandId, p.itemId, 'split')] : []),
+  ];
   physical = knownItemMutation(physical, affected, [p.fromContainerId, p.toContainerId]);
   return { ...root, physical, requirements: [] };
 }
@@ -151,7 +198,14 @@ export function equipItem(
   );
   const item = physicalItem(root.physical, p.itemId);
   requirePhysical(item.containerId !== null, 'CONTACT_OR_ACCESS_REQUIRED');
-  requireItemAccess(root, context, p.accessEvidenceId, 'EQUIP', [item.containerId], [item.itemId]);
+  requireItemAccess(
+    root,
+    context,
+    p.accessEvidenceId,
+    'EQUIP',
+    [item.containerId],
+    [item.itemId],
+  );
   const container = physicalContainer(root.physical, item.containerId);
   requirePhysical(
     container.carrier?.kind === 'CHARACTER' && container.carrier.id === p.characterId,
@@ -160,7 +214,10 @@ export function equipItem(
   const definition = itemDefinition(item);
   const body = bodyFor(root, p.characterId);
   requirePhysical(body.slots.includes(p.slotId), 'INVALID_ARGUMENT');
-  requirePhysical(definition.slot !== undefined && definition.slot === p.slotId, 'INVALID_ARGUMENT');
+  requirePhysical(
+    definition.slot !== undefined && definition.slot === p.slotId,
+    'INVALID_ARGUMENT',
+  );
   const slots: readonly EquipmentSlot[] =
     definition.hands === 2 ? ['MAIN_HAND', 'OFF_HAND'] : [p.slotId];
   if (p.slotId === 'BELT')
@@ -222,7 +279,11 @@ function repairWithMaterials(
   root: MaterializedCompanyState,
   command: CommandOf<'RepairItem'>,
   context: EconomyContext,
-): { readonly physical: CompanyPhysicalState; readonly points: number; readonly consumedItemIds: readonly string[] } {
+): {
+  readonly physical: CompanyPhysicalState;
+  readonly points: number;
+  readonly consumedItemIds: readonly string[];
+} {
   const target = physicalItem(root.physical, command.payload.itemId);
   requirePhysical(target.containerId !== null, 'CONTACT_OR_ACCESS_REQUIRED');
   const access = uniquePhysicalFact(
@@ -280,8 +341,15 @@ export function repairItem(
 ): PhysicalChange {
   const target = physicalItem(root.physical, command.payload.itemId);
   const definition = itemDefinition(target);
-  requirePhysical(definition.maxArmor !== undefined && target.currentCondition < target.maximumCondition, 'INVALID_ARGUMENT');
-  requirePhysical(target.equipped === null || person(root.lifecycle, target.equipped.characterId).presence.encounterBindingId === null, 'INCOMPATIBLE_ACTIVITY');
+  requirePhysical(
+    definition.maxArmor !== undefined && target.currentCondition < target.maximumCondition,
+    'INVALID_ARGUMENT',
+  );
+  requirePhysical(
+    target.equipped === null ||
+      person(root.lifecycle, target.equipped.characterId).presence.encounterBindingId === null,
+    'INCOMPATIBLE_ACTIVITY',
+  );
   let physical = root.physical;
   let finance = root.finance;
   let points: number;
@@ -342,11 +410,21 @@ export function claimLoot(
       p.itemQuantities.every((entry) => authorization.itemIds.includes(entry.itemId)),
     'INVALID_SOURCE',
   );
-  requireItemAccess(root, context, p.accessEvidenceId, 'LOOT', [p.toContainerId, ...authorization.fromContainerIds], p.itemQuantities.map((entry) => entry.itemId));
+  requireItemAccess(
+    root,
+    context,
+    p.accessEvidenceId,
+    'LOOT',
+    [p.toContainerId, ...authorization.fromContainerIds],
+    p.itemQuantities.map((entry) => entry.itemId),
+  );
   let physical = recordPhysicalSource(root.physical, authorization).state;
   const totalWeight = p.itemQuantities.reduce((sum, entry) => {
     const item = physicalItem(physical, entry.itemId);
-    requirePhysical(item.containerId !== null && authorization.fromContainerIds.includes(item.containerId), 'INVALID_SOURCE');
+    requirePhysical(
+      item.containerId !== null && authorization.fromContainerIds.includes(item.containerId),
+      'INVALID_SOURCE',
+    );
     return sum + itemWeight(item, entry.quantity);
   }, 0);
   requirePhysical(availableContainerG(physical, p.toContainerId) >= totalWeight, 'CAPACITY');
@@ -362,11 +440,22 @@ export function claimLoot(
       toOwner: authorization.ownerAfter,
       operation: 'LOOT',
     };
-    physical = splitOrMove(physical, item, entry.quantity, p.toContainerId, command.commandId, ownerFact);
+    physical = splitOrMove(
+      physical,
+      item,
+      entry.quantity,
+      p.toContainerId,
+      command.commandId,
+      ownerFact,
+    );
     affected.push(entry.itemId);
-    if (entry.quantity < item.quantity) affected.push(physicalId(command.commandId, entry.itemId, 'split'));
+    if (entry.quantity < item.quantity)
+      affected.push(physicalId(command.commandId, entry.itemId, 'split'));
   }
-  physical = knownItemMutation(physical, affected, [p.toContainerId, ...authorization.fromContainerIds]);
+  physical = knownItemMutation(physical, affected, [
+    p.toContainerId,
+    ...authorization.fromContainerIds,
+  ]);
   return { ...root, physical, requirements: [] };
 }
 export function applyContainerLifecycle(
@@ -387,7 +476,9 @@ export function applyContainerLifecycle(
   );
   let physical = recordPhysicalSource(root.physical, fact).state;
   const container = physicalContainer(physical, p.containerId);
-  const items = physical.items.filter((item) => item.containerId === container.containerId && item.tombstone === null);
+  const items = physical.items.filter(
+    (item) => item.containerId === container.containerId && item.tombstone === null,
+  );
   if (p.disposition === 'TRANSFER') {
     requirePhysical(p.destinationId !== undefined, 'INVALID_ARGUMENT');
     const destination = physicalContainer(physical, p.destinationId);
@@ -399,7 +490,9 @@ export function applyContainerLifecycle(
     physical = {
       ...physical,
       items: physical.items.map((item) =>
-        item.containerId === container.containerId ? { ...item, containerId: destination.containerId, equipped: null } : item,
+        item.containerId === container.containerId
+          ? { ...item, containerId: destination.containerId, equipped: null }
+          : item,
       ),
     };
   } else {
@@ -411,7 +504,11 @@ export function applyContainerLifecycle(
               ...item,
               containerId: null,
               equipped: null,
-              tombstone: { sourceId: fact.sourceEventId, causeId: fact.causeId, atTick: context.atTick },
+              tombstone: {
+                sourceId: fact.sourceEventId,
+                causeId: fact.causeId,
+                atTick: context.atTick,
+              },
             }
           : item,
       ),
@@ -424,7 +521,9 @@ export function applyContainerLifecycle(
   return { ...root, physical, requirements: [] };
 }
 function itemMaximumCondition(definitionId: string): number {
-  const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === definitionId && entry.enabled);
+  const definition = COMPANY_CATALOGUE.items.find(
+    (entry) => entry.id === definitionId && entry.enabled,
+  );
   requirePhysical(definition, 'INVALID_SOURCE');
   return definition.maxArmor ?? PHYSICAL_RULES.defaultConditionMaximum;
 }
@@ -433,7 +532,9 @@ function carriedContainer(
   holderId: string,
   sourceId: string,
 ): PhysicalContainer {
-  const character = root.lifecycle.characters.find((entry) => entry.identity.characterId === holderId);
+  const character = root.lifecycle.characters.find(
+    (entry) => entry.identity.characterId === holderId,
+  );
   if (character) {
     const body = bodyFor(root, holderId);
     return {
@@ -449,8 +550,13 @@ function carriedContainer(
   }
   const party = root.lifecycle.parties.find((entry) => entry.partyId === holderId);
   requirePhysical(party, 'INVALID_SOURCE');
-  const members = root.lifecycle.characters.filter((entry) => entry.presence.fieldPartyId === party.partyId);
-  const capacityG = members.reduce((sum, member) => sum + bodyFor(root, member.identity.characterId).capacityG, 0);
+  const members = root.lifecycle.characters.filter(
+    (entry) => entry.presence.fieldPartyId === party.partyId,
+  );
+  const capacityG = members.reduce(
+    (sum, member) => sum + bodyFor(root, member.identity.characterId).capacityG,
+    0,
+  );
   return {
     containerId: physicalId(sourceId, holderId, 'party-supply'),
     kind: 'PARTY_SUPPLY',
@@ -475,7 +581,10 @@ export function materializeOpeningItems(
       physical = { ...physical, containers: [...physical.containers, container] };
   }
   for (const item of requirement.items) {
-    requirePhysical(!physical.items.some((entry) => entry.itemId === item.id), 'IDEMPOTENCY_CONFLICT');
+    requirePhysical(
+      !physical.items.some((entry) => entry.itemId === item.id),
+      'IDEMPOTENCY_CONFLICT',
+    );
     const container = carriedContainer({ ...root, physical }, item.holderId, sourceId);
     const instance: ItemInstance = {
       itemId: item.id,
@@ -490,7 +599,10 @@ export function materializeOpeningItems(
       equipped: null,
       tombstone: null,
     };
-    requirePhysical(availableContainerG(physical, container.containerId) >= itemWeight(instance), 'CAPACITY');
+    requirePhysical(
+      availableContainerG(physical, container.containerId) >= itemWeight(instance),
+      'CAPACITY',
+    );
     physical = { ...physical, items: [...physical.items, instance] };
   }
   const holderContainerIds = holderIds.map(
@@ -519,11 +631,13 @@ export function settleRecruitItems(
     const fact = uniquePhysicalFact(
       context,
       'RECRUIT_ITEM',
-      (candidate) => candidate.membershipId === requirement.membershipId && candidate.itemId === itemId,
+      (candidate) =>
+        candidate.membershipId === requirement.membershipId && candidate.itemId === itemId,
     );
     const item = physicalItem(physical, itemId);
     requirePhysical(
-      item.containerId === fact.fromContainerId && canonicalJson(item.owner) === canonicalJson(fact.offeredOwner),
+      item.containerId === fact.fromContainerId &&
+        canonicalJson(item.owner) === canonicalJson(fact.offeredOwner),
       'INVALID_SOURCE',
     );
     physicalContainer(physical, fact.toContainerId);
@@ -552,7 +666,8 @@ export function returnCompanyItemsForDeparture(
     'CONTACT_OR_ACCESS_REQUIRED',
   );
   const carried = root.physical.containers.filter(
-    (container) => container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
+    (container) =>
+      container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
   );
   const returns = root.physical.items.filter(
     (item) =>
@@ -567,7 +682,10 @@ export function returnCompanyItemsForDeparture(
   let physical = root.physical;
   if (availableContainerG(physical, returnContainerId) < totalWeight) {
     targetId = physicalId(sourceId, characterId, 'overflow-bundle');
-    requirePhysical(!physical.containers.some((container) => container.containerId === targetId), 'IDEMPOTENCY_CONFLICT');
+    requirePhysical(
+      !physical.containers.some((container) => container.containerId === targetId),
+      'IDEMPOTENCY_CONFLICT',
+    );
     physical = {
       ...physical,
       containers: [
@@ -593,5 +711,9 @@ export function returnCompanyItemsForDeparture(
         : item,
     ),
   };
-  return knownItemMutation(physical, returns.map((item) => item.itemId), [returnContainerId, targetId]);
+  return knownItemMutation(
+    physical,
+    returns.map((item) => item.itemId),
+    [returnContainerId, targetId],
+  );
 }

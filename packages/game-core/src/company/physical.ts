@@ -11,8 +11,8 @@ import type {
   PhysicalChange,
 } from './physical-types.js';
 import {
-  applyCondition,
   applyCare,
+  applyCondition,
   advancePhysicalRecovery,
   ensureNewMembershipVitals,
   settleCareHandover,
@@ -88,7 +88,10 @@ export function settleClosedPhysicalRequirements(
   root: MaterializedCompanyState,
   requirements: readonly EconomyRequirement[],
   context: EconomyContext,
-): { readonly root: MaterializedCompanyState; readonly residuals: readonly EconomyRequirement[] } {
+): {
+  readonly root: MaterializedCompanyState;
+  readonly residuals: readonly EconomyRequirement[];
+} {
   let next = root;
   const residuals: EconomyRequirement[] = [];
   for (const requirement of requirements) {
@@ -111,7 +114,9 @@ export function reconcileClosedFoodRequirements(
     if (requirement.kind !== 'FOOD_CONSUMPTION') return [requirement];
     const from = BigInt(requirement.fromTick);
     const to = BigInt(requirement.toTick);
-    const row = root.finance.food.find((entry) => entry.membershipId === requirement.membershipId);
+    const row = root.finance.food.find(
+      (entry) => entry.membershipId === requirement.membershipId,
+    );
     if (!row) return [];
     return row.intervals.flatMap((interval) => {
       if (interval.agreementId !== null) return [];
@@ -195,7 +200,10 @@ export function settlePhysicalRequirements(
   context: EconomyContext,
   sourceId: string,
   alignProcessedTick = true,
-): { readonly root: MaterializedCompanyState; readonly residuals: readonly EconomyRequirement[] } {
+): {
+  readonly root: MaterializedCompanyState;
+  readonly residuals: readonly EconomyRequirement[];
+} {
   let next = root;
   const residuals: EconomyRequirement[] = [];
   for (const requirement of requirements) {
@@ -222,7 +230,11 @@ export function settlePhysicalRequirements(
         break;
       case 'OUTCOME_APPLICATION': {
         const applied = settleOutcomeApplication(next, requirement, context);
-        next = { lifecycle: applied.lifecycle, finance: applied.finance, physical: applied.physical };
+        next = {
+          lifecycle: applied.lifecycle,
+          finance: applied.finance,
+          physical: applied.physical,
+        };
         residuals.push(...applied.requirements);
         break;
       }
@@ -235,7 +247,12 @@ export function settlePhysicalRequirements(
       }
     }
   }
-  let physical = ensureNewMembershipVitals(beforeLifecycle, next.lifecycle, next.physical, sourceId);
+  let physical = ensureNewMembershipVitals(
+    beforeLifecycle,
+    next.lifecycle,
+    next.physical,
+    sourceId,
+  );
   const lifecycle = syncLifecycleConditions(next.lifecycle, physical);
   if (alignProcessedTick) physical = { ...physical, processedTick: lifecycle.campaignTick };
   next = { ...next, lifecycle, physical };
@@ -248,7 +265,8 @@ export function observePhysical(
   context: EconomyContext,
 ): MaterializedCompanyState {
   const candidate = (context.physicalFacts ?? []).find(
-    (fact) => fact.id === command.payload.observationId && fact.kind === 'PHYSICAL_OBSERVATION',
+    (fact) =>
+      fact.id === command.payload.observationId && fact.kind === 'PHYSICAL_OBSERVATION',
   );
   if (!candidate || candidate.kind !== 'PHYSICAL_OBSERVATION') return root;
   const fact = physicalFact(context, candidate.id, 'PHYSICAL_OBSERVATION');
@@ -265,7 +283,10 @@ export function observePhysical(
   const itemSet = new Set(fact.itemIds);
   const containerSet = new Set(fact.containerIds);
   for (const itemId of itemSet)
-    requirePhysical(physical.items.some((item) => item.itemId === itemId), 'INVALID_SOURCE');
+    requirePhysical(
+      physical.items.some((item) => item.itemId === itemId),
+      'INVALID_SOURCE',
+    );
   for (const containerId of containerSet)
     requirePhysical(
       physical.containers.some((container) => container.containerId === containerId),
@@ -294,7 +315,9 @@ export function observePhysical(
                 (condition) => condition.characterId !== fact.subject.id,
               ),
               ...ownPhysical(
-                physical.conditions.filter((condition) => condition.characterId === fact.subject.id),
+                physical.conditions.filter(
+                  (condition) => condition.characterId === fact.subject.id,
+                ),
               ),
             ]
           : physical.knowledge.conditionSnapshots,
@@ -319,7 +342,9 @@ export function projectCompanyPhysical(
 ) {
   if (observerCompanyId !== root.lifecycle.companyId) return null;
   if (!root.physical) {
-    if (root.lifecycle.knowledge.characters.some((character) => character.conditionIds.length > 0))
+    if (
+      root.lifecycle.knowledge.characters.some((character) => character.conditionIds.length > 0)
+    )
       return null;
     return {
       revision: root.lifecycle.knowledge.revision,
@@ -368,7 +393,8 @@ export function projectCompanyPhysical(
           conditions: p.conditionSnapshots
             .filter(
               (condition) =>
-                condition.characterId === character.identity.characterId && condition.resolvedAt === null,
+                condition.characterId === character.identity.characterId &&
+                condition.resolvedAt === null,
             )
             .map((condition) => ({
               conditionId: condition.conditionId,

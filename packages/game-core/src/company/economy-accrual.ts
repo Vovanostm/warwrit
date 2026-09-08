@@ -186,7 +186,8 @@ export function accrueFinance(
         (p) => p.identity.characterId === membership.characterId,
       )!;
       const receivesFood =
-        !actualPaused && !['CAPTIVE', 'OUT_OF_CONTACT'].includes(character.presence.availability);
+        !actualPaused &&
+        !['CAPTIVE', 'OUT_OF_CONTACT'].includes(character.presence.availability);
       const demand = receivesFood
         ? liveTicks * BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay)
         : 0n;

@@ -186,7 +186,8 @@ export function prepareCompanyEconomy(
   const command = guarded.command;
   try {
     requireEconomy(
-      state.lifecycle.companyId === context.companyId && state.lifecycle.worldId === context.worldId,
+      state.lifecycle.companyId === context.companyId &&
+        state.lifecycle.worldId === context.worldId,
       'AUTHORIZATION',
     );
     const requestKey = canonicalJson(command);
@@ -249,7 +250,8 @@ export function prepareCompanyEconomy(
         : accrueFinance(base.finance, base.lifecycle, target);
     base = { ...base, finance: closed.finance };
 
-    const retroactiveOutcome = command.type === 'RecordDeath' || command.type === 'ResolveMissing';
+    const retroactiveOutcome =
+      command.type === 'RecordDeath' || command.type === 'ResolveMissing';
     let draft: CommandDraft;
     let lifecycleBeforeCommand: LifecycleState;
     let residuals: readonly FinanceChange['requirements'][number][];
@@ -257,7 +259,10 @@ export function prepareCompanyEconomy(
       lifecycleBeforeCommand = base.lifecycle;
       draft = applyCommandAtTarget(base, command, targetContext);
       const correctedClosed = reconcileClosedFoodRequirements(draft.root, closed.requirements);
-      const lifecycleAtTarget: LifecycleState = { ...draft.root.lifecycle, campaignTick: target };
+      const lifecycleAtTarget: LifecycleState = {
+        ...draft.root.lifecycle,
+        campaignTick: target,
+      };
       const settled = settlePhysicalRequirements(
         { ...draft.root, lifecycle: lifecycleAtTarget },
         base.lifecycle,
@@ -267,7 +272,12 @@ export function prepareCompanyEconomy(
         false,
       );
       const recovered = advancePhysicalTime(settled.root, target);
-      draft = { ...draft, root: recovered, requirements: [], allocations: draft.allocations };
+      draft = {
+        ...draft,
+        root: recovered,
+        requirements: [],
+        allocations: draft.allocations,
+      };
       residuals = settled.residuals;
     } else {
       const closedPhysical = settleClosedPhysicalRequirements(
@@ -278,7 +288,10 @@ export function prepareCompanyEconomy(
       const timed = advancePhysicalTime(closedPhysical.root, target);
       lifecycleBeforeCommand = timed.lifecycle;
       draft = applyCommandAtTarget(timed, command, targetContext);
-      const lifecycleAtTarget: LifecycleState = { ...draft.root.lifecycle, campaignTick: target };
+      const lifecycleAtTarget: LifecycleState = {
+        ...draft.root.lifecycle,
+        campaignTick: target,
+      };
       const settled = settlePhysicalRequirements(
         { ...draft.root, lifecycle: lifecycleAtTarget },
         timed.lifecycle,
@@ -286,12 +299,18 @@ export function prepareCompanyEconomy(
         targetContext,
         command.commandId,
       );
-      draft = { ...draft, root: settled.root, requirements: [], allocations: draft.allocations };
+      draft = {
+        ...draft,
+        root: settled.root,
+        requirements: [],
+        allocations: draft.allocations,
+      };
       residuals = [...closedPhysical.residuals, ...settled.residuals];
     }
 
     let composed = draft.root;
-    if (command.type === 'Observe') composed = observePhysical(composed, command, targetContext);
+    if (command.type === 'Observe')
+      composed = observePhysical(composed, command, targetContext);
     composed = {
       ...composed,
       finance: closeMaintenanceForLifecycle(

@@ -96,7 +96,11 @@ export function executeCompanyCommand<State>(
 function playerSource(command: CompanyCommand) {
   switch (command.type) {
     case 'ApplyCare':
-      return [command.payload.resourceOrProviderReceiptId, command.payload.characterId, command.payload.conditionId];
+      return [
+        command.payload.resourceOrProviderReceiptId,
+        command.payload.characterId,
+        command.payload.conditionId,
+      ];
     case 'RepairItem':
       return command.payload.serviceReceiptId
         ? [command.payload.serviceReceiptId, command.payload.itemId]

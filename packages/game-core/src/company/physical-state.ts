@@ -5,10 +5,7 @@ import type { LifecycleCharacter, LifecycleState } from './lifecycle-types.js';
 import type { LocationRef, OwnerRef } from './model.js';
 import { isEntityId, isExactInteger } from './values.js';
 import type { CampaignTick } from './values.js';
-import {
-  PHYSICAL_POLICY_VERSION,
-  PHYSICAL_SCHEMA_VERSION,
-} from './physical-types.js';
+import { PHYSICAL_POLICY_VERSION, PHYSICAL_SCHEMA_VERSION } from './physical-types.js';
 import type {
   CompanyPhysicalState,
   ConditionInstance,
@@ -48,7 +45,9 @@ export function itemDefinition(item: ItemInstance) {
   return definition;
 }
 export function conditionDefinition(instance: ConditionInstance) {
-  const definition = COMPANY_CATALOGUE.conditions.find((entry) => entry.id === instance.definitionId);
+  const definition = COMPANY_CATALOGUE.conditions.find(
+    (entry) => entry.id === instance.definitionId,
+  );
   requirePhysical(definition, 'INVALID_STATE');
   return definition;
 }
@@ -110,7 +109,9 @@ export function activeConditionDefinitionIds(
   state: CompanyPhysicalState,
   characterId: string,
 ): readonly string[] {
-  return [...new Set(activeConditions(state, characterId).map((entry) => entry.definitionId))].sort();
+  return [
+    ...new Set(activeConditions(state, characterId).map((entry) => entry.definitionId)),
+  ].sort();
 }
 export function syncLifecycleConditions(
   lifecycle: LifecycleState,
@@ -170,7 +171,8 @@ function occurrenceBindings(
       );
     requirePhysical(
       actual.length === expected.length &&
-        actual.map((binding) => binding.definitionId).sort().join('\u0000') === expected.join('\u0000'),
+        actual.map((binding) => binding.definitionId).sort().join('\u0000') ===
+          expected.join('\u0000'),
       'INVALID_STATE',
     );
     for (const binding of actual) {
@@ -205,7 +207,10 @@ function occurrenceBindings(
     }
   }
   const allowed = new Set(characters.map((character) => character.identity.characterId));
-  requirePhysical(bindings.every((binding) => allowed.has(binding.characterId)), 'INVALID_STATE');
+  requirePhysical(
+    bindings.every((binding) => allowed.has(binding.characterId)),
+    'INVALID_STATE',
+  );
   return result;
 }
 /**
@@ -216,7 +221,10 @@ export function createCompanyPhysicalState(
   lifecycle: LifecycleState,
   initialization: PhysicalInitialization = {},
 ): CompanyPhysicalState {
-  const conditions = occurrenceBindings(lifecycle.characters, initialization.conditionBindings ?? []);
+  const conditions = occurrenceBindings(
+    lifecycle.characters,
+    initialization.conditionBindings ?? [],
+  );
   const knownConditions = occurrenceBindings(
     lifecycle.knowledge.characters,
     initialization.knownConditionBindings ?? [],
@@ -397,7 +405,10 @@ export function validatePhysicalState(
         lifecycle.parties.some((party) => party.partyId === container.carrier!.id),
         'INVALID_STATE',
       );
-    requirePhysical(containerWeightG(physical, container.containerId) <= container.capacityG, 'CAPACITY');
+    requirePhysical(
+      containerWeightG(physical, container.containerId) <= container.capacityG,
+      'CAPACITY',
+    );
   }
   for (const item of physical.items) {
     const definition = itemDefinition(item);
@@ -416,7 +427,10 @@ export function validatePhysicalState(
         item.provenance.ordinal >= 0,
       'INVALID_STATE',
     );
-    requirePhysical((item.containerId === null) === (item.tombstone !== null), 'INVALID_STATE');
+    requirePhysical(
+      (item.containerId === null) === (item.tombstone !== null),
+      'INVALID_STATE',
+    );
     if (item.containerId !== null)
       requirePhysical(
         physical.containers.some((container) => container.containerId === item.containerId),
@@ -446,7 +460,8 @@ export function validatePhysicalState(
     const body = species && COMPANY_CATALOGUE.bodies.find((entry) => entry.id === species.bodyId);
     requirePhysical(body, 'INVALID_STATE');
     const equipped = physical.items.filter(
-      (item) => item.equipped?.characterId === character.identity.characterId && item.tombstone === null,
+      (item) =>
+        item.equipped?.characterId === character.identity.characterId && item.tombstone === null,
     );
     for (const slot of ['HEAD', 'BODY', 'MAIN_HAND', 'OFF_HAND'] as const)
       requirePhysical(
@@ -494,7 +509,9 @@ export function validatePhysicalState(
     );
   for (const entry of physical.foodCarry)
     requirePhysical(
-      lifecycle.memberships.some((membership) => membership.membershipId === entry.membershipId) &&
+      lifecycle.memberships.some(
+        (membership) => membership.membershipId === entry.membershipId,
+      ) &&
         isExactInteger(entry.tickUnits) &&
         BigInt(entry.tickUnits) >= 0n,
       'INVALID_STATE',
@@ -515,5 +532,6 @@ export function validatePhysicalState(
     physical.knowledge.vitalSnapshots.map((entry) => entry.characterId),
     physical.knowledge.containerSnapshots.map((entry) => entry.containerId),
   ];
-  for (const ids of snapshotSets) requirePhysical(new Set(ids).size === ids.length, 'INVALID_STATE');
+  for (const ids of snapshotSets)
+    requirePhysical(new Set(ids).size === ids.length, 'INVALID_STATE');
 }

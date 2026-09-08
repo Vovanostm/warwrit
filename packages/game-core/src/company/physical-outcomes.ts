@@ -62,7 +62,8 @@ function movePresence(
 }
 function carrierContainers(physical: CompanyPhysicalState, characterId: string) {
   return physical.containers.filter(
-    (container) => container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
+    (container) =>
+      container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
   );
 }
 export function captureCharacter(
@@ -114,7 +115,10 @@ export function captureCharacter(
     );
   for (const [containerId, movedWeight] of byDestination) {
     const destination = physicalContainer(physical, containerId);
-    requirePhysical(containerWeightG(physical, containerId) + movedWeight <= destination.capacityG, 'CAPACITY');
+    requirePhysical(
+      containerWeightG(physical, containerId) + movedWeight <= destination.capacityG,
+      'CAPACITY',
+    );
   }
   for (const entry of seized) {
     const recorded = recordPhysicalSource(physical, entry.authorization);
@@ -203,7 +207,12 @@ export function transferCaptive(
         : entry,
     ),
   };
-  return { lifecycle, finance: setActualFinancePaused({ ...root, lifecycle, physical }, p.characterId, true), physical, requirements: [] };
+  return {
+    lifecycle,
+    finance: setActualFinancePaused({ ...root, lifecycle, physical }, p.characterId, true),
+    physical,
+    requirements: [],
+  };
 }
 function makeCorpseContainer(
   root: MaterializedCompanyState,
@@ -213,7 +222,11 @@ function makeCorpseContainer(
 ): PhysicalContainer {
   const carried = carrierContainers(root.physical, characterId);
   const weight = root.physical.items
-    .filter((item) => item.containerId !== null && carried.some((container) => container.containerId === item.containerId))
+    .filter(
+      (item) =>
+        item.containerId !== null &&
+        carried.some((container) => container.containerId === item.containerId),
+    )
     .reduce((sum, item) => sum + itemDefinition(item).weightG * item.quantity, 0);
   return {
     containerId,
@@ -249,9 +262,20 @@ export function applyDeath(
   const character = person(root.lifecycle, input.characterId);
   requirePhysical(character.presence.availability !== 'DEAD', 'INCOMPATIBLE_ACTIVITY');
   let physical = recordPhysicalSource(root.physical, fact).state;
-  const carriedIds = new Set(carrierContainers(physical, input.characterId).map((container) => container.containerId));
-  const existingCorpse = physical.containers.find((container) => container.containerId === fact.corpseContainerId);
-  const corpse = existingCorpse ?? makeCorpseContainer({ ...root, physical }, input.characterId, fact.corpseContainerId, fact.location);
+  const carriedIds = new Set(
+    carrierContainers(physical, input.characterId).map((container) => container.containerId),
+  );
+  const existingCorpse = physical.containers.find(
+    (container) => container.containerId === fact.corpseContainerId,
+  );
+  const corpse =
+    existingCorpse ??
+    makeCorpseContainer(
+      { ...root, physical },
+      input.characterId,
+      fact.corpseContainerId,
+      fact.location,
+    );
   requirePhysical(existingCorpse === undefined || existingCorpse.kind === 'CORPSE', 'INVALID_SOURCE');
   if (!existingCorpse) physical = { ...physical, containers: [...physical.containers, corpse] };
   const itemIds = physical.items
@@ -260,7 +284,9 @@ export function applyDeath(
   physical = {
     ...physical,
     items: physical.items.map((item) =>
-      itemIds.includes(item.itemId) ? { ...item, containerId: corpse.containerId, equipped: null } : item,
+      itemIds.includes(item.itemId)
+        ? { ...item, containerId: corpse.containerId, equipped: null }
+        : item,
     ),
     conditions: physical.conditions.map((condition) =>
       condition.characterId === input.characterId && condition.resolvedAt === null
@@ -365,7 +391,11 @@ export function resolveMissing(
         },
       ],
     };
-  } else physical = { ...physical, custody: physical.custody.filter((entry) => entry.characterId !== p.characterId) };
+  } else
+    physical = {
+      ...physical,
+      custody: physical.custody.filter((entry) => entry.characterId !== p.characterId),
+    };
   const finance = setActualFinancePaused({ ...root, lifecycle, physical }, p.characterId, true);
   return { lifecycle, finance, physical, requirements: [] };
 }

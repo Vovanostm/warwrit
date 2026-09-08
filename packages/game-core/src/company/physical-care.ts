@@ -57,11 +57,15 @@ function cloneKnownCharacter(
     knowledge: {
       ...physical.knowledge,
       conditionSnapshots: [
-        ...physical.knowledge.conditionSnapshots.filter((entry) => entry.characterId !== characterId),
+        ...physical.knowledge.conditionSnapshots.filter(
+          (entry) => entry.characterId !== characterId,
+        ),
         ...ownPhysical(conditions),
       ],
       vitalSnapshots: [
-        ...physical.knowledge.vitalSnapshots.filter((entry) => entry.characterId !== characterId),
+        ...physical.knowledge.vitalSnapshots.filter(
+          (entry) => entry.characterId !== characterId,
+        ),
         ...ownPhysical(vitals),
       ],
     },
@@ -101,7 +105,9 @@ export function applyCondition(
   );
   const character = person(root.lifecycle, p.characterId);
   requirePhysical(character.presence.availability !== 'DEAD', 'INCOMPATIBLE_ACTIVITY');
-  const definition = COMPANY_CATALOGUE.conditions.find((entry) => entry.id === p.conditionDefinitionId);
+  const definition = COMPANY_CATALOGUE.conditions.find(
+    (entry) => entry.id === p.conditionDefinitionId,
+  );
   requirePhysical(definition, 'INVALID_SOURCE');
   if (definition.category === 'CRITICAL')
     requirePhysical(
@@ -138,20 +144,33 @@ export function applyCondition(
 }
 function consumeCareMaterial(
   physical: CompanyPhysicalState,
-  fact: Extract<NonNullable<EconomyContext['physicalFacts']>[number], { kind: 'CARE_FULFILLMENT' }>,
+  fact: Extract<
+    NonNullable<EconomyContext['physicalFacts']>[number],
+    { kind: 'CARE_FULFILLMENT' }
+  >,
   careId: string,
   atTick: typeof physical.processedTick,
 ): CompanyPhysicalState {
-  requirePhysical(fact.resourceItemId !== undefined && fact.resourceContainerId !== undefined, 'INVALID_SOURCE');
+  requirePhysical(
+    fact.resourceItemId !== undefined && fact.resourceContainerId !== undefined,
+    'INVALID_SOURCE',
+  );
   const resource = physicalItem(physical, fact.resourceItemId);
   requirePhysical(resource.containerId === fact.resourceContainerId, 'INVALID_SOURCE');
-  const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === resource.definitionId);
+  const definition = COMPANY_CATALOGUE.items.find(
+    (entry) => entry.id === resource.definitionId,
+  );
   requirePhysical(
-    definition?.enabled && definition.kind === 'consumable' && definition.careIds?.includes(careId),
+    definition?.enabled &&
+      definition.kind === 'consumable' &&
+      definition.careIds?.includes(careId),
     'INVALID_SOURCE',
   );
   const container = physicalContainer(physical, fact.resourceContainerId);
-  requirePhysical(container.location.kind === 'AT' && sameLocation(container.location, fact.location), 'INVALID_SOURCE');
+  requirePhysical(
+    container.location.kind === 'AT' && sameLocation(container.location, fact.location),
+    'INVALID_SOURCE',
+  );
   return consumePhysicalQuantity(
     physical,
     resource.itemId,
@@ -172,7 +191,10 @@ export function applyCare(
   );
   requirePhysical(condition && condition.resolvedAt === null, 'CONTACT_OR_ACCESS_REQUIRED');
   const definition = conditionDefinition(condition);
-  requirePhysical(definition.careId === p.careDefinitionId && condition.care === null, 'INVALID_ARGUMENT');
+  requirePhysical(
+    definition.careId === p.careDefinitionId && condition.care === null,
+    'INVALID_ARGUMENT',
+  );
   if (definition.category === 'CRITICAL')
     requirePhysical(
       condition.deadlineTick !== null && BigInt(context.atTick) <= BigInt(condition.deadlineTick),
@@ -190,7 +212,10 @@ export function applyCare(
   let physical = recordPhysicalSource(root.physical, fact).state;
   let finance = root.finance;
   if (fact.channel === 'MATERIAL') {
-    requirePhysical(p.budgetPoolId === undefined && fact.amountQ === undefined && fact.poolId === undefined, 'INVALID_SOURCE');
+    requirePhysical(
+      p.budgetPoolId === undefined && fact.amountQ === undefined && fact.poolId === undefined,
+      'INVALID_SOURCE',
+    );
     physical = consumeCareMaterial(physical, fact, p.careDefinitionId, context.atTick);
     const resource = physical.items.find((entry) => entry.itemId === fact.resourceItemId)!;
     physical = {
@@ -198,7 +223,9 @@ export function applyCare(
       knowledge: {
         ...physical.knowledge,
         itemSnapshots: [
-          ...physical.knowledge.itemSnapshots.filter((entry) => entry.itemId !== resource.itemId),
+          ...physical.knowledge.itemSnapshots.filter(
+            (entry) => entry.itemId !== resource.itemId,
+          ),
           ownPhysical(resource),
         ],
       },
@@ -232,11 +259,15 @@ export function applyCare(
   } as const;
   if (definition.category === 'CRITICAL') {
     const stableDefinition = COMPANY_CATALOGUE.conditions.find(
-      (entry) => entry.id === 'severe-stable-wound' && entry.category === 'TREATMENT_REQUIRED_STABLE',
+      (entry) =>
+        entry.id === 'severe-stable-wound' && entry.category === 'TREATMENT_REQUIRED_STABLE',
     );
     requirePhysical(stableDefinition, 'INVALID_STATE');
     const stableId = physicalId(condition.conditionId, fact.id, 'post-stabilization');
-    requirePhysical(!physical.conditions.some((entry) => entry.conditionId === stableId), 'IDEMPOTENCY_CONFLICT');
+    requirePhysical(
+      !physical.conditions.some((entry) => entry.conditionId === stableId),
+      'IDEMPOTENCY_CONFLICT',
+    );
     physical = {
       ...physical,
       conditions: [
@@ -302,7 +333,8 @@ function consumeRations(
       (entry) =>
         entry.containerId === containerId &&
         entry.tombstone === null &&
-        COMPANY_CATALOGUE.items.find((definition) => definition.id === entry.definitionId)?.foodUnits === 1,
+        COMPANY_CATALOGUE.items.find((definition) => definition.id === entry.definitionId)
+          ?.foodUnits === 1,
     )
     .sort((a, b) => (a.itemId < b.itemId ? -1 : 1))) {
     if (remaining === 0n) break;
@@ -340,7 +372,8 @@ export function settleFoodConsumption(
     context.atTick,
   );
   requirePhysical(
-    subject.presence.location.kind === 'AT' && sameLocation(subject.presence.location, fact.location),
+    subject.presence.location.kind === 'AT' &&
+      sameLocation(subject.presence.location, fact.location),
     'CONTACT_OR_ACCESS_REQUIRED',
   );
   const recorded = recordPhysicalSource(root.physical, fact);
@@ -365,7 +398,13 @@ export function settleFoodConsumption(
       container.location.kind === 'AT' && sameLocation(container.location, fact.location),
       'INVALID_SOURCE',
     );
-    physical = consumeRations(physical, container.containerId, units, fact.sourceEventId, context.atTick);
+    physical = consumeRations(
+      physical,
+      container.containerId,
+      units,
+      fact.sourceEventId,
+      context.atTick,
+    );
   } else {
     requirePhysical(
       fact.providerId !== undefined &&
@@ -451,7 +490,10 @@ function restore(
   const numerator = BigInt(carryText) + elapsed * BigInt(maximum);
   const gain = numerator / fullTicks;
   const next = Math.min(maximum, current + Number(gain));
-  return { current: next, carry: next === maximum ? '0' : (numerator % fullTicks).toString() };
+  return {
+    current: next,
+    carry: next === maximum ? '0' : (numerator % fullTicks).toString(),
+  };
 }
 export function advancePhysicalRecovery(
   root: MaterializedCompanyState,
@@ -466,7 +508,8 @@ export function advancePhysicalRecovery(
     (membership) => membership.endedAt === null || BigInt(membership.endedAt) > from,
   )) {
     const character = person(root.lifecycle, member.characterId);
-    const finish = member.endedAt === null || BigInt(member.endedAt) > to ? to : BigInt(member.endedAt);
+    const finish =
+      member.endedAt === null || BigInt(member.endedAt) > to ? to : BigInt(member.endedAt);
     if (finish <= from) continue;
     const recoverable =
       character.presence.assignment === 'RECOVERY' &&
@@ -475,12 +518,19 @@ export function advancePhysicalRecovery(
       foodCovered({ ...root, physical }, member.membershipId, from, finish);
     if (!recoverable) continue;
     const duration = finish - from;
-    const existingVitals = physical.vitals.find((entry) => entry.characterId === member.characterId);
+    const existingVitals = physical.vitals.find(
+      (entry) => entry.characterId === member.characterId,
+    );
     const conditions = activeConditions(physical, member.characterId);
-    if (conditions.some((instance) => {
-      const definition = conditionDefinition(instance);
-      return definition.category === 'REST_RECOVERABLE' || definition.category === 'TREATMENT_REQUIRED_STABLE';
-    }))
+    if (
+      conditions.some((instance) => {
+        const definition = conditionDefinition(instance);
+        return (
+          definition.category === 'REST_RECOVERABLE' ||
+          definition.category === 'TREATMENT_REQUIRED_STABLE'
+        );
+      })
+    )
       requirePhysical(existingVitals, 'INVALID_STATE');
     if (existingVitals) {
       const health = restore(
@@ -508,7 +558,8 @@ export function advancePhysicalRecovery(
     physical = {
       ...physical,
       conditions: physical.conditions.map((instance) => {
-        if (instance.characterId !== member.characterId || instance.resolvedAt !== null) return instance;
+        if (instance.characterId !== member.characterId || instance.resolvedAt !== null)
+          return instance;
         const definition = conditionDefinition(instance);
         const allowed =
           definition.category === 'REST_RECOVERABLE' ||
@@ -517,7 +568,9 @@ export function advancePhysicalRecovery(
         const total = BigInt(instance.recoveryTicks) + duration;
         const required = BigInt(definition.recoveryTicks);
         if (total < required) return { ...instance, recoveryTicks: total.toString() };
-        const completedAt = campaignTick((from + (required - BigInt(instance.recoveryTicks))).toString());
+        const completedAt = campaignTick(
+          (from + (required - BigInt(instance.recoveryTicks))).toString(),
+        );
         return {
           ...instance,
           recoveryTicks: required.toString(),
@@ -539,7 +592,9 @@ export function ensureNewMembershipVitals(
 ): CompanyPhysicalState {
   let result = physical;
   for (const membership of next.memberships.filter((entry) => entry.endedAt === null)) {
-    const hadMembership = before.memberships.some((entry) => entry.characterId === membership.characterId);
+    const hadMembership = before.memberships.some(
+      (entry) => entry.characterId === membership.characterId,
+    );
     const hasVitals = result.vitals.some((entry) => entry.characterId === membership.characterId);
     if (hasVitals) continue;
     requirePhysical(!hadMembership, 'INVALID_STATE');
@@ -589,7 +644,8 @@ export function settleCareHandover(
   providerAt(root, fact.receiverId, fact.characterId);
   const subject = person(root.lifecycle, fact.characterId);
   requirePhysical(
-    subject.presence.location.kind === 'AT' && sameLocation(subject.presence.location, fact.location),
+    subject.presence.location.kind === 'AT' &&
+      sameLocation(subject.presence.location, fact.location),
     'CONTACT_OR_ACCESS_REQUIRED',
   );
   const recorded = recordPhysicalSource(root.physical, fact);

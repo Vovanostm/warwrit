@@ -396,7 +396,11 @@ export interface EconomyReceipt {
 }
 export type EconomyError = LifecycleError | PhysicalError | 'UNPAID_OBLIGATIONS';
 export type EconomyResult =
-  | { readonly kind: 'REJECTED'; readonly state: CompanyEconomyState; readonly error: EconomyError }
+  | {
+      readonly kind: 'REJECTED';
+      readonly state: CompanyEconomyState;
+      readonly error: EconomyError;
+    }
   | {
       readonly kind: 'PREPARED';
       readonly state: CompanyEconomyState;
