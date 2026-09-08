@@ -9,6 +9,7 @@ import {
 import {
   accountFor,
   actualOwedQ,
+  claimsForCharacter,
   economyId,
   financeFact,
   own,
@@ -143,7 +144,7 @@ function verifyOffer(
   // This is the admission rule, not a recurring ability check of an already accepted group.
   if (!continuing)
     requireEconomy(
-      people.some((p) => canPerform(p, 'basicWork')),
+      people.some((p) => canPerform(p, 'localDuty')),
       'INCOMPATIBLE_ACTIVITY',
     );
   if (!continuing)
@@ -178,7 +179,8 @@ function preEntry(
         !account.knownPaused,
       'CONTACT_OR_ACCESS_REQUIRED',
     );
-    for (const claim of finance.claims.filter((c) => c.membershipId === member.membershipId)) {
+    for (const claim of claimsForCharacter(finance, state.lifecycle, id)) {
+      if (actualOwedQ(claim) === 0n) continue;
       if (BigInt(claim.dueAt) <= BigInt(context.atTick))
         requireEconomy(actualOwedQ(claim) === 0n, 'UNPAID_OBLIGATIONS');
       else {

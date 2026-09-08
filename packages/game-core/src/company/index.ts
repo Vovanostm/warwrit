@@ -14,10 +14,7 @@ export { fieldPartyStatus } from './membership.js';
 export type * from './economy-types.js';
 export { ECONOMY_SCHEMA_VERSION, ECONOMY_POLICY_VERSION } from './economy-types.js';
 export { createCompanyEconomyState } from './economy-state.js';
-export {
-  prepareCompanyEconomy,
-  projectCompanyEconomy,
-  projectEconomyRejection,
-} from './economy.js';
+export { prepareCompanyEconomy } from './economy.js';
+export { projectCompanyEconomy, projectEconomyRejection } from './economy-view.js';
 
 export { quoteCompanyFarewell } from './economy-departure.js';

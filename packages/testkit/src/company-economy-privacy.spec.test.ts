@@ -226,7 +226,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
   });
 
   it('P6/P7: loss of the last field worker stops actual support without disclosing hidden death', () => {
-    const initial = economy([1n], 10000n, 0);
+    const initial = economy([1n, 1n], 10000n, 0);
     const resting = {
       ...initial,
       lifecycle: {
@@ -256,7 +256,38 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
         ]),
       ),
     ).next;
-    const shared = advance(begun, 500).next;
+    const atDeparture = advance(begun, 250).next;
+    const detach = command(atDeparture, 'SetAssignment', {
+      characterId: 'worker-1',
+      assignment: 'GARRISON',
+      locationId: 'village',
+      dutyEvidenceId: 'detached-worker',
+      fundingPoolId: 'local',
+    });
+    const detached = prepared(
+      prepareCompanyEconomy(
+        atDeparture,
+        detach,
+        context(
+          atDeparture,
+          detach,
+          [],
+          [
+            {
+              ...scope(atDeparture, 'detached-worker'),
+              kind: 'DUTY',
+              characterId: 'worker-1',
+              assignment: 'GARRISON',
+              location: place,
+              fundingPoolId: 'local',
+              handoverToId: 'provider',
+              partyId: null,
+            },
+          ],
+        ),
+      ),
+    ).next;
+    const shared = advance(detached, 500).next;
     const alive = advance(shared, 1000).next;
     const hidden = advance(death(shared, 'worker-0').result.next, 1000).next;
     expect(view(hidden)).toEqual(view(alive));

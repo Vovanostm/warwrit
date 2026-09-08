@@ -6,6 +6,8 @@ import {
   closeEpochs,
   committedQ,
   economyId,
+  findPoolAccess,
+  oldestClaimFirst,
   min,
   poolWallet,
   q,
@@ -228,15 +230,7 @@ export function payClaims(
           (p.payeeId === payeeId && (p.claimIds.length === 0 || p.claimIds.includes(c.claimId))))
       );
     })
-    .sort((a, b) =>
-      BigInt(a.dueAt) < BigInt(b.dueAt)
-        ? -1
-        : BigInt(a.dueAt) > BigInt(b.dueAt)
-          ? 1
-          : a.claimId < b.claimId
-            ? -1
-            : 1,
-    );
+    .sort(oldestClaimFirst);
   requireEconomy(
     p.claimIds.every((id) => eligible.some((c) => c.claimId === id)),
     'INVALID_ARGUMENT',
@@ -248,11 +242,10 @@ export function payClaims(
   const allocations: EconomyReceipt['allocations'][number][] = [];
   let remaining = amount;
   if (p.mode === 'TARGETED') {
-    for (const dueAt of new Set(eligible.map((c) => c.dueAt)))
-      finance = closeEpochs(finance, context.atTick, p.poolId, dueAt);
     for (const claim of eligible) {
       const share = min(remaining, reportedOwedQ(finance, claim));
       if (share === 0n) continue;
+      finance = closeEpochs(finance, context.atTick, p.poolId, claim.dueAt);
       const change = applyShare(
         finance,
         claim.claimId,
@@ -384,7 +377,8 @@ export function settleReservations(
   for (const claim of finance.claims.filter(
     (c) => c.membershipId === membershipId && committedQ(finance, c.claimId) > 0n,
   )) {
-    const access = requirePoolAccess({ ...state, finance }, claim.poolId, context);
+    const access = findPoolAccess({ ...state, finance }, claim.poolId, context);
+    if (!access) continue;
     const recipient = account.knownDeath ? account.death!.recipient : account.recipient;
     const destination = recipientWallet(finance, recipient, access);
     if (!destination) continue;
@@ -413,4 +407,49 @@ export function settleReservations(
     allocations.push({ claimId: claim.claimId, amountQ: q(amount), channel: 'CASH' });
   }
   return { finance, requirements: [], allocations };
+}
+
+/** Pay only actually accessible money at departure. Unfunded or distant earned debt survives. */
+export function settleAvailableFinalClaims(
+  state: CompanyEconomyState,
+  membershipId: string,
+  context: EconomyContext,
+  commandId: string,
+): FinanceChange {
+  const account = accountFor(state.finance, membershipId);
+  if (account.confirmedAt !== context.atTick)
+    return { finance: state.finance, requirements: [], allocations: [] };
+  const held = settleReservations(state, membershipId, context, commandId);
+  let finance = held.finance;
+  const allocations = [...held.allocations];
+  for (const claim of finance.claims
+    .filter((c) => c.membershipId === membershipId)
+    .sort(oldestClaimFirst)) {
+    const access = findPoolAccess({ ...state, finance }, claim.poolId, context);
+    if (!access) continue;
+    const destination = recipientWallet(finance, account.recipient, access);
+    if (!destination) continue;
+    const amount = min(
+      actualOwedQ(claim),
+      spendableQ(finance, poolWallet(finance, claim.poolId).walletId),
+    );
+    if (amount === 0n) continue;
+    finance = moveCash(
+      finance,
+      poolWallet(finance, claim.poolId).walletId,
+      destination.walletId,
+      amount,
+      context.atTick,
+      economyId(commandId, claim.claimId, 'final'),
+      'WAGE',
+    );
+    allocations.push({ claimId: claim.claimId, amountQ: q(amount), channel: 'CASH' });
+    finance = {
+      ...finance,
+      claims: finance.claims.map((c) =>
+        c.claimId === claim.claimId ? { ...c, paidQ: q(BigInt(c.paidQ) + amount) } : c,
+      ),
+    };
+  }
+  return { finance, allocations, requirements: [] };
 }

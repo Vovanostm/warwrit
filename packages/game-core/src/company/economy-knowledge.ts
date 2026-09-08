@@ -1,5 +1,6 @@
+import { beneficiaryCoveredAt, fieldCampHasWorker } from './economy-coverage.js';
 import { COMPANY_RULES } from './definitions.js';
-import { canPerform, person } from './lifecycle-state.js';
+import { person } from './lifecycle-state.js';
 import {
   day,
   accountFor,
@@ -186,10 +187,8 @@ export function recordFinancialDeath(
     maintenance: finance.maintenance.map((m) =>
       m.kind === 'FIELD_CAMP' &&
       m.endedAt === null &&
-      m.beneficiaryIds.includes(fact.characterId) &&
-      !m.beneficiaryIds.some(
-        (id) => id !== fact.characterId && canPerform(person(state.lifecycle, id), 'basicWork'),
-      )
+      beneficiaryCoveredAt(m, fact.characterId, fact.actualDeathTick) &&
+      !fieldCampHasWorker(finance, state.lifecycle, m, fact.actualDeathTick)
         ? { ...m, endedAt: fact.actualDeathTick }
         : m,
     ),

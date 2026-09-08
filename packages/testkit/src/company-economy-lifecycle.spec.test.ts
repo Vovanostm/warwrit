@@ -463,4 +463,114 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
     expect(state.lifecycle.memberships[1]?.basis).toBe('PAID');
     expect(state.finance.accounts[1]?.schedule).toEqual(schedule);
   });
+
+  it('P3/P4/P8: a local report and departure retain distant debt rather than demand a remote purse', () => {
+    const fresh = claims(economy([3n], 100n), [17n]);
+    const distantClaim = {
+      ...fresh.finance.claims[0]!,
+      poolId: 'distant',
+      fromTick: tick(499),
+      toTick: tick(500),
+      dueAt: tick(500),
+      earned: [
+        { fromTick: tick(499), toTick: tick(500), dailyWageMilli: '17', maintenanceId: null },
+      ],
+    };
+    const state: CompanyEconomyState = {
+      ...fresh,
+      finance: {
+        ...fresh.finance,
+        wallets: [
+          ...fresh.finance.wallets,
+          {
+            walletId: 'distant-purse',
+            owner: { kind: 'COMPANY', id: 'company' },
+            location: { ...place, siteId: 'outpost' },
+            cashQ: cash(30),
+          },
+        ],
+        pools: [...fresh.finance.pools, { poolId: 'distant', walletId: 'distant-purse' }],
+        claims: [
+          distantClaim,
+          {
+            ...fresh.finance.claims[0]!,
+            claimId: 'local-claim',
+            dailyWageMilli: '3',
+            reportedQ: cash(3),
+            earned: [
+              { fromTick: tick(999), toTick: tick(1000), dailyWageMilli: '3', maintenanceId: null },
+            ],
+          },
+        ],
+        reservations: [
+          {
+            reservationId: 'old-hold',
+            claimId: distantClaim.claimId,
+            walletId: 'distant-purse',
+            amountQ: cash(5),
+            purpose: 'PENDING_CONFIRMATION',
+          },
+        ],
+      },
+    };
+    const noCashReport = observation(state, 'worker-0').result;
+    const localReport = observation(state, 'worker-0', [access(state)]).result;
+    expect(projectCompanyEconomy(localReport.next, 'company')).toEqual(
+      projectCompanyEconomy(noCashReport.next, 'company'),
+    );
+    let next = localReport.next;
+    const request = command(next, 'RequestDeparture', {
+      membershipId: 'service-worker-0',
+      reason: 'DISMISSED',
+      causeId: 'owner-choice',
+      acknowledgedQuoteRevision: next.lifecycle.knowledge.revision,
+    });
+    next = prepared(prepareCompanyEconomy(next, request, context(next, request))).next;
+    const execute = command(
+      next,
+      'ExecuteDeparture',
+      {
+        membershipId: 'service-worker-0',
+        intentId: next.finance.departures[0]!.intentId,
+        returnContainerId: 'local-return-container',
+      },
+      'local-departure',
+      'SYSTEM',
+    );
+    const departure = prepared(
+      prepareCompanyEconomy(next, execute, context(next, execute, [access(next)])),
+    );
+    expect(
+      departure.next.finance.wallets.find((w) => w.walletId === 'wallet-worker-0')?.cashQ,
+    ).toBe('3');
+    expect(departure.next.finance.wallets.find((w) => w.walletId === 'distant-purse')?.cashQ).toBe(
+      '30',
+    );
+    expect(departure.next.finance.reservations).toEqual(state.finance.reservations);
+    expect(
+      departure.next.finance.claims.find((c) => c.claimId === distantClaim.claimId)?.paidQ,
+    ).toBe('0');
+    expect(departure.receipt.requirements).toContainEqual(
+      expect.objectContaining({ kind: 'PHYSICAL_DEPARTURE' }),
+    );
+    const retry = prepared(
+      prepareCompanyEconomy(departure.next, execute, context(departure.next, execute)),
+    );
+    expect(retry.next).toBe(departure.next);
+    // A forged capability for that distant purse still fails instead of silently bypassing authorization.
+    const forged = { ...access(state), poolIds: ['local', 'distant'] };
+    const payDistant = command(state, 'PayClaims', {
+      poolId: 'distant',
+      mode: 'DEFAULT',
+      claimIds: [],
+      amountQ: '1',
+    });
+    const rejection = prepareCompanyEconomy(
+      state,
+      payDistant,
+      context(state, payDistant, [forged]),
+    );
+    expect(rejection.kind).toBe('REJECTED');
+    expect(rejection.state).toBe(state);
+  });
 });

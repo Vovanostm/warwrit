@@ -17,6 +17,7 @@ import type {
   EconomyError,
   FinanceEvidence,
   FundingPool,
+  LocalMoneyAccess,
   ServiceAccount,
   WageClaim,
   Wallet,
@@ -118,6 +119,21 @@ export function reportedOwedQ(finance: CompanyFinance, claim: WageClaim): bigint
     BigInt(claim.paidQ) -
     committedQ(finance, claim.claimId)
   );
+}
+/** Earned liabilities belong to the same persistent person across successive service periods. */
+export function claimsForCharacter(
+  finance: CompanyFinance,
+  lifecycle: LifecycleState,
+  characterId: string,
+): readonly WageClaim[] {
+  const memberships = new Set<string>(
+    lifecycle.memberships.filter((m) => m.characterId === characterId).map((m) => m.membershipId),
+  );
+  return finance.claims.filter((c) => memberships.has(c.membershipId));
+}
+export function oldestClaimFirst(a: WageClaim, b: WageClaim): number {
+  if (a.dueAt !== b.dueAt) return BigInt(a.dueAt) < BigInt(b.dueAt) ? -1 : 1;
+  return a.claimId === b.claimId ? 0 : a.claimId < b.claimId ? -1 : 1;
 }
 export function replaceAccount(finance: CompanyFinance, account: ServiceAccount): CompanyFinance {
   return {
@@ -302,14 +318,22 @@ export function validateEconomy(state: CompanyEconomyState, context: EconomyCont
     }
   }
 }
-/** Access evidence is an authenticated adapter capability, not a player-controlled location. */
-export function requirePoolAccess(
+/** Missing access means no automatic settlement; a supplied invalid capability still fails closed. */
+export function findPoolAccess(
   state: CompanyEconomyState,
   poolId: string,
   context: EconomyContext,
   evidenceId?: string,
-) {
-  const access = financeFact(context, 'LOCAL_MONEY_ACCESS', evidenceId);
+): LocalMoneyAccess | undefined {
+  const matches = context.financeFacts.filter(
+    (f): f is LocalMoneyAccess =>
+      f.kind === 'LOCAL_MONEY_ACCESS' &&
+      (evidenceId === undefined ? f.poolIds.includes(poolId) : f.id === evidenceId),
+  );
+  requireEconomy(matches.length <= 1, 'INVALID_SOURCE');
+  const access = matches[0];
+  if (!access) return undefined;
+  validateFinanceFact(access, context);
   const operator = person(state.lifecycle, access.operatorId);
   const wallet = poolWallet(state.finance, poolId);
   requireEconomy(
@@ -322,6 +346,17 @@ export function requirePoolAccess(
       sameLocation(wallet.location, access.location),
     'CONTACT_OR_ACCESS_REQUIRED',
   );
+  return access;
+}
+/** Explicit financial commands require access; observation never requires access to every old purse. */
+export function requirePoolAccess(
+  state: CompanyEconomyState,
+  poolId: string,
+  context: EconomyContext,
+  evidenceId?: string,
+): LocalMoneyAccess {
+  const access = findPoolAccess(state, poolId, context, evidenceId);
+  requireEconomy(access, 'CONTACT_OR_ACCESS_REQUIRED');
   return access;
 }
 export function financeEffectKey(fact: FinanceEvidence): string {

@@ -1,10 +1,11 @@
 import { COMPANY_RULES } from './definitions.js';
 import { canPerform, effectiveLeaderId, person } from './lifecycle-state.js';
 import { wageAt } from './economy-accrual.js';
-import { moveCash, recipientWallet, settleReservations } from './economy-payments.js';
+import { moveCash, recipientWallet, settleAvailableFinalClaims } from './economy-payments.js';
 import {
   accountFor,
   actualOwedQ,
+  claimsForCharacter,
   closeEpochs,
   recordSource,
   day,
@@ -16,7 +17,6 @@ import {
   q,
   requireEconomy,
   requirePoolAccess,
-  spendableQ,
   t,
   validateFinanceFact,
 } from './economy-state.js';
@@ -218,7 +218,7 @@ export function prepareDepartureSettlement(
   context: EconomyContext,
 ): FinanceChange {
   const p = command.payload;
-  const { member, account } = service(state, p.membershipId);
+  const { member } = service(state, p.membershipId);
   const intent = state.finance.departures.find(
     (d) => d.intentId === p.intentId && d.membershipId === p.membershipId && d.cancelledAt === null,
   );
@@ -243,61 +243,17 @@ export function prepareDepartureSettlement(
         : c,
     ),
   };
-  const allocations: FinanceChange['allocations'][number][] = [];
   for (const claim of finance.claims.filter((c) => c.membershipId === p.membershipId))
     finance = closeEpochs(finance, context.atTick, claim.poolId, claim.dueAt);
-  const accesses = context.financeFacts.filter((f) => f.kind === 'LOCAL_MONEY_ACCESS');
-  if (accesses.length > 0) {
-    const access = requirePoolAccess({ ...state, finance }, account.poolId, context);
-    const destination = recipientWallet(finance, account.recipient, access);
-    if (destination && account.confirmedAt === context.atTick) {
-      const settled = settleReservations(
-        { ...state, finance },
-        p.membershipId,
-        context,
-        command.commandId,
-      );
-      finance = settled.finance;
-      allocations.push(...settled.allocations);
-      for (const claim of finance.claims
-        .filter((c) => c.membershipId === p.membershipId)
-        .sort((a, b) =>
-          BigInt(a.dueAt) < BigInt(b.dueAt)
-            ? -1
-            : BigInt(a.dueAt) > BigInt(b.dueAt)
-              ? 1
-              : a.claimId < b.claimId
-                ? -1
-                : 1,
-        )) {
-        const amount = min(
-          actualOwedQ(claim),
-          spendableQ(finance, poolWallet(finance, claim.poolId).walletId),
-        );
-        if (amount === 0n) continue;
-        requirePoolAccess({ ...state, finance }, claim.poolId, context);
-        finance = moveCash(
-          finance,
-          poolWallet(finance, claim.poolId).walletId,
-          destination.walletId,
-          amount,
-          context.atTick,
-          economyId(command.commandId, claim.claimId, 'final'),
-          'WAGE',
-        );
-        allocations.push({ claimId: claim.claimId, amountQ: q(amount), channel: 'CASH' });
-        finance = {
-          ...finance,
-          claims: finance.claims.map((c) =>
-            c.claimId === claim.claimId ? { ...c, paidQ: q(BigInt(c.paidQ) + amount) } : c,
-          ),
-        };
-      }
-    }
-  }
+  const settled = settleAvailableFinalClaims(
+    { ...state, finance },
+    p.membershipId,
+    context,
+    command.commandId,
+  );
   return {
-    finance,
-    allocations,
+    finance: settled.finance,
+    allocations: settled.allocations,
     requirements: [
       {
         kind: 'PHYSICAL_DEPARTURE',
@@ -360,13 +316,11 @@ export function quoteCompanyFarewell(
   const given = state.finance.farewells
     .filter((g) => g.membershipId === membershipId)
     .reduce((s, g) => s + BigInt(g.amountQ), 0n);
-  const outstandingQ = state.finance.claims
-    .filter(
-      (c) =>
-        state.lifecycle.memberships.find((m) => m.membershipId === c.membershipId)?.characterId ===
-        member.characterId,
-    )
-    .reduce((s, c) => s + actualOwedQ(c), 0n);
+  const outstandingQ = claimsForCharacter(
+    state.finance,
+    state.lifecycle,
+    member.characterId,
+  ).reduce((s, c) => s + actualOwedQ(c), 0n);
   return {
     membershipId,
     intentId: intent.intentId,

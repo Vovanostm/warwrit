@@ -1,5 +1,6 @@
+import { beneficiaryCoveredAt, fieldCampHasWorker } from './economy-coverage.js';
 import { COMPANY_RULES } from './definitions.js';
-import { activeMembership, canPerform, person, sameLocation } from './lifecycle-state.js';
+import { activeMembership, effectiveLeaderId, person, sameLocation } from './lifecycle-state.js';
 import { isExactInteger } from './values.js';
 import {
   accountFor,
@@ -320,7 +321,7 @@ export function closeMaintenanceForLifecycle(
 ): CompanyFinance {
   const atTick = context.atTick;
   const known = context.principal.kind === 'PLAYER';
-  const nextLeader = next.company?.actingLeaderId ?? next.company?.currentLeaderId;
+  const nextLeader = effectiveLeaderId(next);
   return {
     ...finance,
     maintenance: finance.maintenance.map((mode) => {
@@ -344,14 +345,11 @@ export function closeMaintenanceForLifecycle(
           knownAtTick: known ? atTick : null,
         })),
       ];
-      const remaining = mode.beneficiaryIds.filter(
-        (id) => !beneficiaryEnds.some((d) => d.characterId === id),
-      );
+      const updated = { ...mode, beneficiaryEnds };
       const ends =
         mode.kind === 'SAFE_SERVICE'
-          ? !nextLeader || !remaining.includes(nextLeader)
-          : remaining.length === 0 ||
-            !remaining.some((id) => canPerform(person(next, id), 'basicWork'));
+          ? !nextLeader || !beneficiaryCoveredAt(updated, nextLeader, atTick)
+          : !fieldCampHasWorker(finance, next, updated, atTick);
       return {
         ...mode,
         beneficiaryEnds,

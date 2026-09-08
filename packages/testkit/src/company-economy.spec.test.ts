@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
-import { prepareCompanyEconomy, projectCompanyEconomy } from '@warwrit/game-core';
+import { entityId, prepareCompanyEconomy, projectCompanyEconomy } from '@warwrit/game-core';
 import {
   access,
   cash,
@@ -90,6 +90,60 @@ describe('WP02.3 — exact local finance postulates', () => {
       },
     };
     expect(pay(oldFirst, 4n).next.finance.claims.map((c) => c.paidQ)).toEqual(['0', '4']);
+    // Lawful disclosure of an older service debt must not reset an untouched later due epoch.
+    const history = claims(economy([3n, 5n]), [3n, 5n]);
+    const previousMember = history.lifecycle.memberships[2]!;
+    const previousAccount = history.finance.accounts[2]!;
+    const undisclosed = {
+      ...history,
+      lifecycle: {
+        ...history.lifecycle,
+        memberships: [
+          ...history.lifecycle.memberships.map((m) =>
+            m === previousMember ? { ...m, startedAt: tick(500) } : m,
+          ),
+          {
+            ...previousMember,
+            membershipId: entityId<'Membership'>('earlier-service'),
+            wageScheduleId: entityId<'WageSchedule'>('earlier-schedule'),
+            endedAt: tick(500),
+          },
+        ],
+      },
+      finance: {
+        ...history.finance,
+        accounts: [
+          ...history.finance.accounts,
+          {
+            ...previousAccount,
+            membershipId: entityId<'Membership'>('earlier-service'),
+            known: false,
+            schedule: { ...previousAccount.schedule!, scheduleId: 'earlier-schedule' },
+          },
+        ],
+        claims: [
+          ...history.finance.claims,
+          {
+            ...history.finance.claims[1]!,
+            claimId: 'earlier-claim',
+            membershipId: entityId<'Membership'>('earlier-service'),
+            fromTick: tick(499),
+            toTick: tick(500),
+            dueAt: tick(500),
+            dailyWageMilli: '1',
+            reportedQ: cash(1),
+            earned: [
+              { fromTick: tick(499), toTick: tick(500), dailyWageMilli: '1', maintenanceId: null },
+            ],
+          },
+        ],
+      },
+    };
+    const laterPrefix = pay(undisclosed, 1n).next;
+    const revealed = observation(laterPrefix, 'worker-1').result.next;
+    const earlierPaid = pay(revealed, 1n, 'TARGETED', 'worker-1').next;
+    const laterContinued = pay(earlierPaid, 1n).next;
+    expect(laterContinued.finance.claims.map((c) => c.paidQ)).toEqual(['1', '1', '1']);
     const huge = 10n ** 60n;
     const large = pay(claims(economy([huge, huge], huge), [huge, huge]), huge).next;
     expect(large.finance.claims.map((c) => BigInt(c.paidQ))).toEqual([huge / 2n, huge / 2n]);

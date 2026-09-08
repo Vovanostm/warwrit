@@ -1,3 +1,4 @@
+import { beneficiaryCoveredAt } from './economy-coverage.js';
 import { COMPANY_RULES } from './definitions.js';
 import { effectiveLeaderId } from './lifecycle-state.js';
 import { day, economyId, min, q, requireEconomy, t } from './economy-state.js';
@@ -22,22 +23,6 @@ export function wageAt(account: ServiceAccount, tick: CampaignTick) {
   return notice
     ? { version: notice.version, dailyWageMilli: notice.dailyWageMilli }
     : { version: schedule.scheduleId, dailyWageMilli: schedule.agreedDailyWageMilli };
-}
-export function beneficiaryCoveredAt(
-  mode: MaintenanceAgreement,
-  characterId: string,
-  tick: CampaignTick,
-  known = false,
-): boolean {
-  const end = known ? mode.knownEndedAt : mode.endedAt;
-  const departure = mode.beneficiaryEnds.find((d) => d.characterId === characterId);
-  const departureAt = departure && (known ? departure.knownAtTick : departure.atTick);
-  return (
-    mode.beneficiaryIds.includes(characterId) &&
-    BigInt(mode.startedAt) <= BigInt(tick) &&
-    (end === null || BigInt(tick) < BigInt(end)) &&
-    (departureAt == null || BigInt(tick) < BigInt(departureAt))
-  );
 }
 export function maintenanceAt(
   finance: CompanyFinance,

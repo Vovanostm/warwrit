@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { prepareCompanyEconomy, projectCompanyEconomy } from '@warwrit/game-core';
+import { entityId, prepareCompanyEconomy, projectCompanyEconomy } from '@warwrit/game-core';
 import type { CompanyEconomyState, FinanceEvidence } from '@warwrit/game-core';
 import {
   access,
   advance,
+  claims,
+  pay,
   command,
   context,
   economy,
@@ -210,5 +212,69 @@ describe('WP02.3 — physical maintenance intervals', () => {
         .reduce((n, c) => n + BigInt(c.reportedQ) - BigInt(c.reportedCoveredQ), 0n),
     ).toBe(1000n);
     expect(state.finance.maintenance[0]?.endedAt).toBe('1000');
+  });
+
+  it('P6: F1 admission needs local-duty capacity, not merely the ability to forage', () => {
+    const fresh = economy([1n], 10000n);
+    const wounded = (s: CompanyEconomyState): CompanyEconomyState => ({
+      ...s,
+      lifecycle: {
+        ...s.lifecycle,
+        characters: s.lifecycle.characters.map((p) =>
+          p.presence.fieldPartyId ? { ...p, conditionIds: ['severe-stable-wound'] } : p,
+        ),
+      },
+    });
+    const newcomers = wounded(fresh);
+    const refused = admit(newcomers);
+    expect(refused).toMatchObject({ kind: 'REJECTED', error: 'INCOMPATIBLE_ACTIVITY' });
+    expect(refused.state).toBe(newcomers);
+    // Previously admitted beneficiaries keep ordinary support; this is not a recurring fitness test.
+    const resting = advance(wounded(prepared(admit(fresh)).next), 1500).next;
+    expect(resting.finance.claims.every((c) => c.reportedQ === c.reportedCoveredQ)).toBe(true);
+  });
+
+  it('P4/P6: rehire cannot hide a beneficiary’s previous earned debt from F1 admission', () => {
+    const start = claims(economy([1n], 10000n), [13n]);
+    const member = start.lifecycle.memberships[1]!;
+    const account = start.finance.accounts[1]!;
+    // A reloaded service history: physical departure belongs to 02.4, not a test double here.
+    const state: CompanyEconomyState = {
+      ...start,
+      lifecycle: {
+        ...start.lifecycle,
+        memberships: [
+          start.lifecycle.memberships[0]!,
+          { ...member, startedAt: tick(1000) },
+          {
+            ...member,
+            membershipId: entityId<'Membership'>('previous-service'),
+            wageScheduleId: entityId<'WageSchedule'>('previous-terms'),
+            endedAt: tick(1000),
+          },
+        ],
+      },
+      finance: {
+        ...start.finance,
+        accounts: [
+          ...start.finance.accounts,
+          {
+            ...account,
+            membershipId: entityId<'Membership'>('previous-service'),
+            schedule: { ...account.schedule!, scheduleId: 'previous-terms' },
+          },
+        ],
+        claims: start.finance.claims.map((c) => ({
+          ...c,
+          membershipId: entityId<'Membership'>('previous-service'),
+        })),
+      },
+    };
+    const refused = admit(state);
+    expect(refused).toMatchObject({ kind: 'REJECTED', error: 'UNPAID_OBLIGATIONS' });
+    expect(refused.state).toBe(state);
+    const settled = pay(state, 13n, 'TARGETED', 'worker-0').next;
+    expect(admit(settled).kind).toBe('PREPARED');
+    expect(settled.finance.claims[0]?.paidQ).toBe('13');
   });
 });
