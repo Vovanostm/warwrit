@@ -3,7 +3,7 @@
 - Status: operational mirror for coding agents
 - As of: 2026-09-08
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
-- Active contract: [WP-02.2](../work-packages/WP-02.2.md), GitHub issue #11, parent #8
+- Active contract: [WP-02.3](../work-packages/WP-02.3.md), GitHub issue #13, parent #8
 
 ## Current state
 
@@ -13,7 +13,7 @@ S-02: done
 WP-00: done
 WP-01: done
 WP-02: in-progress
-current_slice: WP-02.2
+current_slice: WP-02.3
 merge_authorized: false
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
@@ -22,11 +22,11 @@ persistence: postgresql-kysely-pg
 renderer: Q-T03-evidence-pending
 ```
 
-The owner explicitly authorized and completed PR #10 merge. Implementation, tests and the WP-02.2 PR are authorized; that is not permission to merge the next PR, enable auto-merge, deploy, buy cloud resources or expand gameplay. Completion of a slice on a branch is not delivery of the entire WP-02 on main.
+The owner explicitly authorized and completed PR #10 and PR #12 merges. Implementation, tests and the WP-02.3 PR are authorized; that is not permission to merge the next PR, enable auto-merge, deploy, buy cloud resources or expand gameplay. Completion of a slice on a branch is not delivery of the entire WP-02 on main.
 
 ## Authority and source order
 
-Read the active WP-02.2 contract `rec39pw7h0ycTk4r7` and full Notes/Purpose in Airtable Artifacts `tblwAxG5Ek1FyWpiW`:
+Read the active WP-02.3 contract `recveXOcVDyTz6dAZ` and full Notes/Purpose in Airtable Artifacts `tblwAxG5Ek1FyWpiW`:
 
 1. `rec5bphVYSZUTqavX`: agent launch; owner authorization `comlmb1eSiASlOH30` on WP-02 `rec6JCF929ViGc2MX`.
 2. `rechIKj0hsvfXIvFU`: explicit RC-P1=A, RC-P2=AAAA, RC-P3=A.
@@ -41,7 +41,7 @@ The former Q-CHAR-13A..14C and Q-CHAR-15A blocking lists describe historical sta
 ```text
 DONE WP-00 -> DONE WP-01
   -> DONE WP-02.1 source/type/catalogue/command foundation
-  -> WP-02.2 identity, opening, membership, party, succession
+  -> DONE WP-02.2 identity, opening, membership, party, succession
   -> WP-02.3 exact money, F1, knowledge-safe accounting
   -> WP-02.4 items, custody, care, outcomes
   -> WP-02.5 practice R, books, perks, memory
@@ -81,3 +81,12 @@ Owner authorized and completed PR #10 squash merge at `0d58dde305b2c7b85c73f2732
 WP-02.2 starts from that main revision, not a stacked unmerged foundation.
 The merge permission applied to #10 only; the next PR and deployment need separate authorization.
 See WP-02.2 for the PREPARED component boundary and source-to-postulate mapping.
+
+## 2026-09-08 delivery transition
+
+PR #12 is merged at `0ef8e894f7a753cf42864ac97254a2926f3ebd52`,
+tree `b8f8c6faf8c2483a8df3fcec0f948a1ff0d94cb2`. WP-02.3 / issue #13
+starts here on `feat/wp-02-economy`; no WP-02.4 implementation is included.
+PREPARED lifecycle/finance changes are one draft, not independent commits or aggregate
+acceptance. Original source ZIP concordance remains NOT_RUN. Next-PR merge, auto-merge
+and deployment are not authorized.

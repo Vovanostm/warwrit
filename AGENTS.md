@@ -6,7 +6,7 @@ Applies repository-wide; read stricter directory instructions before editing.
 
 Latest explicit owner decision > canonical Airtable decisions/GDD > accepted ADRs > active work-package contract > executable specifications > implementation > historical drafts. Preserve accepted history with dated amendments; never turn a proposal or a test plan into an approved decision or a passed check.
 
-S-02 is Done. WP-00/01 are delivered; WP-02 is In Progress. WP-02.1 / PR #10 is merged; the active slice is WP-02.2 / issue #11. Read `docs/engineering/CURRENT_PLAN.md` and `docs/work-packages/WP-02.2.md`. Historical Q-CHAR-13/14 blockers are superseded, not a new interview.
+S-02 is Done. WP-00/01 are delivered; WP-02 is In Progress. WP-02.1 / PR #10 and WP-02.2 / PR #12 are merged; the active slice is WP-02.3 / issue #13. Read `docs/engineering/CURRENT_PLAN.md` and `docs/work-packages/WP-02.3.md`. Historical Q-CHAR-13/14 blockers are superseded, not a new interview.
 
 Canonical base: `apph3bj1NyVrfJeLM`; launch `rec5bphVYSZUTqavX`, approval `rechIKj0hsvfXIvFU`, v1.2 delta `recuq6OOuKnmc1yJL`, review `recdjcOypF0tvRHJC`. Read full Notes and dated Purpose updates. Source-archive concordance and unimplemented gameplay remain explicit limitations.
 
