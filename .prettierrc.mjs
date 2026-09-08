@@ -56,6 +56,7 @@ const config = {
 export default config;
 `,
   );
+  writeFileSync('.prettierrc.mjs', "export { default } from './prettier.config.mjs';\n");
 }
 
 export default loaded.default;
