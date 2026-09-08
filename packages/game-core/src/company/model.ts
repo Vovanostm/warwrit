@@ -11,7 +11,7 @@ import type {
 
 export const COMPANY_SCHEMA_VERSION = 1 as const;
 // A new reconstruction edition: not a byte-identical copy of either unavailable ZIP.
-export const COMPANY_CATALOGUE_VERSION = 's02-foundation-catalogue-2' as const;
+export const COMPANY_CATALOGUE_VERSION = 's02-lifecycle-catalogue-1' as const;
 export const COMPANY_RULESET_ID = 's02-domain-provisional-0.2' as const;
 export const COMPANY_COMMAND_SCHEMA_VERSION = 2 as const;
 export const ASSIGNMENTS = Object.freeze([
@@ -23,7 +23,14 @@ export const ASSIGNMENTS = Object.freeze([
   'NONE',
 ] as const);
 export type Assignment = (typeof ASSIGNMENTS)[number];
-export type Availability = 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
+export const AVAILABILITIES = Object.freeze([
+  'AVAILABLE',
+  'IN_ENCOUNTER',
+  'OUT_OF_CONTACT',
+  'CAPTIVE',
+  'DEAD',
+] as const);
+export type Availability = (typeof AVAILABILITIES)[number];
 export interface CharacterIdentity {
   readonly characterId: CharacterId;
   readonly birthName: string;

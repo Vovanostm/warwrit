@@ -6,7 +6,7 @@ Applies repository-wide; read stricter directory instructions before editing.
 
 Latest explicit owner decision > canonical Airtable decisions/GDD > accepted ADRs > active work-package contract > executable specifications > implementation > historical drafts. Preserve accepted history with dated amendments; never turn a proposal or a test plan into an approved decision or a passed check.
 
-S-02 is Done. WP-00/01 are delivered; WP-02 is In Progress. Work on WP-02.1 / issue #9 / PR #10 before advancing to WP-02.2. Read `docs/engineering/CURRENT_PLAN.md` and `docs/work-packages/WP-02.1.md`. Historical Q-CHAR-13/14 blockers are superseded, not a new interview.
+S-02 is Done. WP-00/01 are delivered; WP-02 is In Progress. WP-02.1 / PR #10 is merged; the active slice is WP-02.2 / issue #11. Read `docs/engineering/CURRENT_PLAN.md` and `docs/work-packages/WP-02.2.md`. Historical Q-CHAR-13/14 blockers are superseded, not a new interview.
 
 Canonical base: `apph3bj1NyVrfJeLM`; launch `rec5bphVYSZUTqavX`, approval `rechIKj0hsvfXIvFU`, v1.2 delta `recuq6OOuKnmc1yJL`, review `recdjcOypF0tvRHJC`. Read full Notes and dated Purpose updates. Source-archive concordance and unimplemented gameplay remain explicit limitations.
 
@@ -27,6 +27,10 @@ Keep the functional modular monolith. No class per command, generic framework, D
 - `web`: no server internals. Cross-package imports use public `@warwrit/*` exports; no cycles.
 
 Reject invalid commands without partial mutation. Preserve exact money, unique ownership, source/command idempotency and public/private knowledge separation. A revision token, actor string or receipt ID supplied by a client is not authority. New command policies must be exhaustive and fail closed. Version changes to canonical serialization, command semantics, RNG or combat require compatibility analysis; never rewrite released V1 replay history.
+
+## World and narrative consistency
+
+Apply the same canonical condition capabilities to actual tasks; presence, duty and ability are not interchangeable. Own retained values from external evidence instead of aliasing mutable adapter records. Narrative is an observer-appropriate rendering of established facts, never a second source of truth: no invented witness, fate, biography or teleport to make a story work. Keep new prose/content proposals separate from approved rules and code evidence.
 
 ## Tests are executable specifications
 
