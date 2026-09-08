@@ -1,0 +1,63 @@
+name: Materialize reviewed WP023 commits
+on:
+  push:
+    branches: [workbench/wp023-publish]
+    paths: [.github/workflows/wp023-publish.yml]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          fetch-depth: 1
+      - name: Publish exact authored patch series, not a verification run
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, bz2, hashlib, json, os, pathlib, subprocess
+          base = '0ef8e894f7a753cf42864ac97254a2926f3ebd52'
+          branch = 'feat/wp-02-economy'
+          final_tree = '635b8b1d58e635cf58071b7787e1551a20ddd951'
+          staged = pathlib.Path('.workbench/wp023')
+          encoded = ''.join((staged / f'part-{i}.b64').read_text().strip() for i in range(4))
+          packed = base64.b64decode(encoded, validate=True)
+          assert hashlib.sha256(packed).hexdigest() == '97e4a0f3828c5618a2f3d8039ee225ac13ae6fc16202f52e8c823d9fe8866211', 'Transport checksum mismatch; nothing published'
+          series = json.loads(bz2.decompress(packed))
+          assert len(series) == 6 and series[-1]['tree'] == final_tree
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          def run(*args):
+              subprocess.run(['git', *args], check=True)
+          run('fetch', '--no-tags', 'origin', 'refs/heads/main:refs/remotes/origin/main', f'refs/heads/{branch}:refs/remotes/origin/{branch}')
+          assert git('rev-parse', 'origin/main') == base, 'main advanced; stop rather than silently rebase'
+          assert git('rev-parse', f'origin/{branch}') == base, 'feature branch has another writer; stop'
+          run('switch', '--detach', base)
+          run('config', 'user.name', 'ChatGPT')
+          run('config', 'user.email', 'chatgpt@users.noreply.github.com')
+          identities = {'base': base, 'branch': branch, 'commits': []}
+          for row in series:
+              subprocess.run(['git', 'apply', '--index', '--whitespace=error'], input=row['patch'].encode(), check=True)
+              assert git('write-tree') == row['tree'], 'Staged source tree mismatch'
+              run('commit', '-m', row['message'])
+              identities['commits'].append({'head': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'), 'message': row['message']})
+          assert git('rev-parse', 'HEAD^{tree}') == final_tree
+          assert git('status', '--porcelain') == '', 'Working tree not clean'
+          remote = git('ls-remote', 'origin', 'refs/heads/main', f'refs/heads/{branch}')
+          assert all(line.split()[0] == base for line in remote.splitlines()) and len(remote.splitlines()) == 2, 'Remote moved before publication'
+          run('push', 'origin', f'HEAD:refs/heads/{branch}')
+          identities['head'] = git('rev-parse', 'HEAD')
+          identities['tree'] = final_tree
+          identities['transport_sha256'] = hashlib.sha256(packed).hexdigest()
+          report = json.dumps(identities, indent=2) + '\n'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'wp023-publication.json').write_text(report)
+          print(report)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp023-publication
+          path: ${{ runner.temp }}/wp023-publication.json
+          retention-days: 2
