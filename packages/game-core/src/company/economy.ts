@@ -11,7 +11,7 @@ import {
   requestDeparture,
   updateArrears,
 } from './economy-departure.js';
-import { observeFinance } from './economy-knowledge.js';
+import { observeFinance, recordFinancialDeath } from './economy-knowledge.js';
 import { closeMaintenanceForLifecycle, settleLifecycleRequirements } from './economy-lifecycle.js';
 import {
   acceptSafeService,
@@ -110,6 +110,9 @@ export function prepareCompanyEconomy(
     let lifecycleReceipt: LifecycleReceipt | null = null;
     let change: FinanceChange;
     switch (command.type) {
+      case 'RecordDeath':
+        change = recordFinancialDeath(atTarget, command, context);
+        break;
       case 'PayClaims':
         change = payClaims(atTarget, command, context);
         break;
@@ -218,8 +221,8 @@ export function prepareCompanyEconomy(
       finance: { ...warned.finance, applied: [...warned.finance.applied, receipt] },
     };
     if (
-      canonicalJson(projectCompanyEconomy(next, context.companyId)) !==
-      canonicalJson(projectCompanyEconomy(state, context.companyId))
+      JSON.stringify(projectCompanyEconomy(next, context.companyId)) !==
+      JSON.stringify(projectCompanyEconomy(state, context.companyId))
     )
       next = {
         ...next,

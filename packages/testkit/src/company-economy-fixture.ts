@@ -305,7 +305,7 @@ export function observation(
   characterId: string,
   financeFacts: readonly FinanceEvidence[] = [],
 ) {
-  const id = `see-${characterId}-${state.lifecycle.revision}`;
+  const id = `see-${characterId}-${state.lifecycle.knowledge.revision}`;
   const cmd = command(
     state,
     'Observe',

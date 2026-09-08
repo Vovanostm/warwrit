@@ -1,5 +1,5 @@
 import { COMPANY_RULES } from './definitions.js';
-import { canPerform, effectiveLeaderId, person, sameLocation } from './lifecycle-state.js';
+import { canPerform, effectiveLeaderId, person } from './lifecycle-state.js';
 import { wageAt } from './economy-accrual.js';
 import { moveCash, recipientWallet } from './economy-payments.js';
 import {

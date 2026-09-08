@@ -66,6 +66,91 @@ export function recordQualification(
     schedule: { ...schedule, notices: [...schedule.notices, notice] },
   });
 }
+export function recordFinancialDeath(
+  state: CompanyEconomyState,
+  command: CommandOf<'RecordDeath'>,
+  context: EconomyContext,
+): FinanceChange {
+  const p = command.payload,
+    fact = financeFact(context, 'FINANCIAL_DEATH', p.receiptId);
+  requireEconomy(
+    fact.sourceEventId === command.sourceEventId &&
+      fact.characterId === p.characterId &&
+      fact.actualDeathTick === p.actualDeathTick &&
+      fact.causeId === p.causeId &&
+      fact.custodyOutcomeId === p.custodyOutcomeId,
+    'INVALID_SOURCE',
+  );
+  person(state.lifecycle, fact.characterId);
+  if (fact.recipient.kind === 'CHARACTER') person(state.lifecycle, fact.recipient.id);
+  else
+    requireEconomy(
+      fact.recipient.kind === 'ESTATE' && fact.recipient.id === fact.characterId,
+      'INVALID_SOURCE',
+    );
+  const recorded = recordSource(state.finance, fact);
+  if (recorded.replayed) return { finance: state.finance, requirements: [], allocations: [] };
+  let finance = recorded.finance;
+  const members = state.lifecycle.memberships.filter((m) => m.characterId === fact.characterId);
+  requireEconomy(members.length > 0, 'INVALID_SOURCE');
+  for (const member of members) {
+    const account = accountFor(finance, member.membershipId);
+    requireEconomy(
+      !account.death && BigInt(account.confirmedAt) <= BigInt(fact.actualDeathTick),
+      'INVALID_SOURCE',
+    );
+    finance = replaceAccount(finance, {
+      ...account,
+      death: {
+        sourceId: fact.sourceEventId,
+        atTick: fact.actualDeathTick,
+        recipient: own(fact.recipient),
+      },
+    });
+    finance = {
+      ...finance,
+      claims: finance.claims.map((c) =>
+        c.membershipId !== member.membershipId
+          ? c
+          : {
+              ...c,
+              earned: c.earned.flatMap((e) =>
+                BigInt(e.fromTick) >= BigInt(fact.actualDeathTick)
+                  ? []
+                  : [
+                      {
+                        ...e,
+                        toTick:
+                          BigInt(e.toTick) > BigInt(fact.actualDeathTick)
+                            ? fact.actualDeathTick
+                            : e.toTick,
+                      },
+                    ],
+              ),
+            },
+      ),
+    };
+    requireEconomy(
+      finance.claims
+        .filter((c) => c.membershipId === member.membershipId)
+        .every((c) => actualOwedQ(c) >= 0n),
+      'INVALID_SOURCE',
+    );
+  }
+  // Estimated liabilities, allocation epochs, reservations and publicly spendable cash do NOT change.
+  return {
+    finance,
+    requirements: [
+      {
+        kind: 'OUTCOME_APPLICATION',
+        characterId: fact.characterId,
+        sourceEventId: fact.sourceEventId,
+        custodyOutcomeId: fact.custodyOutcomeId,
+      },
+    ],
+    allocations: [],
+  };
+}
 /** Only the actual lifecycle disclosure authorizes changing the financial observation. */
 export function observeFinance(
   finance: CompanyFinance,
