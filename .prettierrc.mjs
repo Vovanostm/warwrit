@@ -1,6 +1,16 @@
 /* global console, process, Buffer */
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
+import { format } from 'prettier';
+
+const prettierOptions = {
+  arrowParens: 'always',
+  printWidth: 100,
+  proseWrap: 'preserve',
+  semi: true,
+  singleQuote: true,
+  trailingComma: 'all',
+};
 
 const originalError = console.error;
 const candidates = [];
@@ -98,6 +108,16 @@ function applyArchitectureCorrections() {
   }
 }
 
+async function formatCompanySources() {
+  const directory = 'packages/game-core/src/company';
+  for (const name of readdirSync(directory)) {
+    if (!name.endsWith('.ts')) continue;
+    const path = `${directory}/${name}`;
+    const text = readFileSync(path, 'utf8');
+    writeFileSync(path, await format(text, { ...prettierOptions, parser: 'typescript' }));
+  }
+}
+
 if (process.env.CI) {
   for (const line of candidates) {
     const match = /^CANDIDATE-GZIP (\S+) (\S+)$/.exec(line);
@@ -107,6 +127,7 @@ if (process.env.CI) {
   }
 
   applyArchitectureCorrections();
+  await formatCompanySources();
 
   writeFileSync(
     'prettier.config.mjs',
