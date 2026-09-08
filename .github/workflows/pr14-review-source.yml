@@ -1,0 +1,25 @@
+name: Export PR14 review source
+on:
+  push:
+    branches: [workbench/wp023-source]
+    paths: [.github/workflows/pr14-review-source.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: a6d649beb580dc20dc1cbb80a12db168ce10b9a8
+          fetch-depth: 0
+          persist-credentials: false
+      - run: |
+          git branch review-base HEAD
+          git bundle create "$RUNNER_TEMP/pr14-source.bundle" review-base
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pr14-review-source
+          path: ${{ runner.temp }}/pr14-source.bundle
+          retention-days: 2
