@@ -535,6 +535,26 @@ export const COMPANY_RULES = freezeRegistry({
   restHealthTicks: '100',
   restStaminaTicks: '10',
   farewellMaxDays: 7,
+  economy: {
+    version: 's02-economy-parameters-1',
+    baseDailyWageMilli: '10000',
+    qualificationBands: [
+      { level: 0, multiplierBps: 10000 },
+      { level: 25, multiplierBps: 12500 },
+      { level: 50, multiplierBps: 15000 },
+      { level: 75, multiplierBps: 20000 },
+    ],
+    warningAfterTicks: '2000',
+    warningBaseWindowTicks: '2000',
+    warningMinimumWindowTicks: '1000',
+    warningMaximumWindowTicks: '3000',
+    warningRelationThreshold: 40,
+    warningRelationAdjustmentTicks: '1000',
+    significantServiceTicks: '30000',
+    significantFriendship: 40,
+    farewellServiceDaysPerExtraDay: 30,
+    foodUnitsPerPersonDay: 1,
+  },
   heirBypass: { respectDelta: -6, rivalryDelta: 8, respectAtMost: 20, rivalryAtLeast: 60 },
 });
 

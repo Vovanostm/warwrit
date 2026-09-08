@@ -92,3 +92,23 @@ export function executeCompanyCommand<State>(
   const guarded = guardCompanyCommand(value, context);
   return { ok: false, state, error: guarded.ok ? 'UNSUPPORTED_ACTION' : guarded.error };
 }
+
+/** Shared causal scope; fan-out affects each subject once, not only the first person. */
+export function companySourceKey(command: CompanyCommand): string | null {
+  if (command.type === 'ResolveLeadership')
+    return canonicalJson(['crisis', command.payload.crisisId]);
+  if (command.actorRef.kind === 'PLAYER') return null;
+  const subject =
+    command.type === 'Observe'
+      ? [command.payload.observerRef, command.payload.subjectRef]
+      : 'characterId' in command.payload
+        ? command.payload.characterId
+        : 'membershipId' in command.payload
+          ? command.payload.membershipId
+          : 'agreementOrCampId' in command.payload
+            ? command.payload.agreementOrCampId
+            : command.type === 'AdvanceCampaign'
+              ? command.payload.toTick
+              : null;
+  return canonicalJson([command.type, command.sourceEventId, subject]);
+}

@@ -1,4 +1,4 @@
-import { guardCompanyCommand, checkFreshCompanyRevision } from './guards.js';
+import { guardCompanyCommand, checkFreshCompanyRevision, companySourceKey } from './guards.js';
 import { canonicalJson, snapshotJson } from './input.js';
 import { canonicalRevision, publicRevision, isExactInteger } from './values.js';
 import { prepareOpening } from './opening.js';
@@ -141,19 +141,6 @@ function plan(
       throw new LifecycleViolation('UNSUPPORTED_ACTION');
   }
 }
-/** An event may concern several people; each subject receives its own effect once. */
-function lifecycleSourceKey(command: CompanyCommand): string | null {
-  if (command.type === 'ResolveLeadership')
-    return canonicalJson(['crisis', command.payload.crisisId]);
-  if (command.actorRef.kind === 'PLAYER') return null;
-  const subject =
-    command.type === 'Observe'
-      ? [command.payload.observerRef, command.payload.subjectRef]
-      : 'characterId' in command.payload
-        ? command.payload.characterId
-        : null;
-  return canonicalJson([command.type, command.sourceEventId, subject]);
-}
 /** A pure component transition. PREPARED is never permission to commit the whole command. */
 export function prepareCompanyLifecycle(
   state: LifecycleState,
@@ -170,7 +157,7 @@ export function prepareCompanyLifecycle(
     );
     const requestKey = canonicalJson(command);
     const semanticKey = canonicalJson({ type: command.type, payload: command.payload });
-    const sourceKey = lifecycleSourceKey(command);
+    const sourceKey = companySourceKey(command);
     // A command ID conflict takes precedence over a matching earlier source receipt.
     const previous =
       state.applied.find((r) => r.commandId === command.commandId) ??
