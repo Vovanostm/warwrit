@@ -79,7 +79,12 @@ function moveRootTypeImports(path) {
 function applyArchitectureCorrections() {
   const physicalTypes = 'packages/game-core/src/company/physical-types.ts';
   let text = readFileSync(physicalTypes, 'utf8');
-  text = text.replace("import type { EconomyRequirement, CompanyFinance } from './economy-types.js';\n", '');
+  text = text
+    .replace("import type { EconomyRequirement, CompanyFinance } from './economy-types.js';\n", '')
+    .replace(
+      "import type { AtLocation, LifecycleState } from './lifecycle-types.js';",
+      "import type { AtLocation } from './lifecycle-types.js';",
+    );
   text = text.replace(
     `\nexport type MaterializedCompanyState = {\n  readonly lifecycle: LifecycleState;\n  readonly finance: CompanyFinance;\n  readonly physical: CompanyPhysicalState;\n};\nexport type PhysicalChange = {\n  readonly lifecycle: LifecycleState;\n  readonly finance: CompanyFinance;\n  readonly physical: CompanyPhysicalState;\n  readonly requirements: readonly EconomyRequirement[];\n};\n`,
     '\n',
