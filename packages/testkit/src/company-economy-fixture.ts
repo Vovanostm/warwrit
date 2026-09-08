@@ -278,3 +278,53 @@ export function pay(
   });
   return prepared(prepareCompanyEconomy(state, cmd, context(state, cmd, [access(state)])));
 }
+
+export function advance(
+  state: CompanyEconomyState,
+  to: number,
+  financeFacts: readonly FinanceEvidence[] = [],
+) {
+  const cmd = command(
+    state,
+    'AdvanceCampaign',
+    {
+      toTick: String(to),
+      authoritativeInputs: financeFacts
+        .filter((f) =>
+          ['QUALIFICATION_NOTICE', 'WAGE_COMMUNICATION', 'MAINTENANCE_BOUNDARY'].includes(f.kind),
+        )
+        .map((f) => f.id),
+    },
+    `advance-${to}-${state.lifecycle.revision}`,
+    'SYSTEM',
+  );
+  return prepared(prepareCompanyEconomy(state, cmd, context(state, cmd, financeFacts)));
+}
+export function observation(
+  state: CompanyEconomyState,
+  characterId: string,
+  financeFacts: readonly FinanceEvidence[] = [],
+) {
+  const id = `see-${characterId}-${state.lifecycle.revision}`;
+  const cmd = command(
+    state,
+    'Observe',
+    {
+      observationId: id,
+      observerRef: { kind: 'COMPANY', id: state.lifecycle.companyId },
+      subjectRef: { kind: 'CHARACTER', id: characterId },
+      factId: id,
+      sourceId: `source-${id}`,
+    },
+    id,
+    'DOMAIN_RECEIPT',
+  );
+  const fact: LifecycleEvidence = {
+    ...scope(state, id),
+    sourceEventId: cmd.sourceEventId,
+    kind: 'COMPANY_OBSERVATION',
+    subject: { kind: 'CHARACTER', id: characterId },
+  };
+  const ctx = context(state, cmd, financeFacts, [fact]);
+  return { cmd, ctx, result: prepared(prepareCompanyEconomy(state, cmd, ctx)) };
+}

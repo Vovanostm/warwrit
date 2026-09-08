@@ -19,3 +19,5 @@ export {
   projectCompanyEconomy,
   projectEconomyRejection,
 } from './economy.js';
+
+export { quoteCompanyFarewell } from './economy-departure.js';

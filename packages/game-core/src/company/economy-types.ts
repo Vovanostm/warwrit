@@ -5,7 +5,7 @@ import type {
   LifecycleError,
   LifecycleEvent,
   LifecycleReceipt,
-  LifecycleRequirement,
+  OpeningAssets,
   LifecycleState,
 } from './lifecycle-types.js';
 import type { OwnerRef } from './model.js';
@@ -131,6 +131,8 @@ export interface MaintenanceAgreement {
   readonly beneficiaryIds: readonly string[];
   readonly startedAt: CampaignTick;
   readonly endedAt: CampaignTick | null;
+  /** Observation of the end can lag the private causal boundary. */
+  readonly knownEndedAt: CampaignTick | null;
   readonly sourceId: string;
   readonly providerId: string | null;
   readonly termsVersion: string | null;
@@ -278,6 +280,12 @@ export interface MaintenanceBoundaryEvidence extends FinanceScope {
   readonly agreementId: string;
   readonly reason: 'MOVE' | 'ENCOUNTER' | 'INCOMPATIBLE_DUTY' | 'LAST_FIELD_WORKER_LOST';
 }
+export interface FarewellRelationEvidence extends FinanceScope {
+  readonly kind: 'FAREWELL_RELATION';
+  readonly membershipId: string;
+  readonly leaderId: string;
+  readonly friendship: number;
+}
 export type FinanceEvidence =
   | ServiceTermsEvidence
   | OpeningFundsEvidence
@@ -287,7 +295,8 @@ export type FinanceEvidence =
   | QualificationNoticeEvidence
   | WageCommunicationEvidence
   | FinancialDeathEvidence
-  | MaintenanceBoundaryEvidence;
+  | MaintenanceBoundaryEvidence
+  | FarewellRelationEvidence;
 /** Internal adapter data only. Authenticated command envelopes do not manufacture these facts. */
 export interface EconomyContext extends LifecycleContext {
   readonly financeFacts: readonly FinanceEvidence[];
@@ -297,7 +306,9 @@ export interface EconomyContext extends LifecycleContext {
 export type EconomyRequirement =
   | {
       readonly kind: 'OPENING_NONFINANCIAL';
-      readonly requirement: Extract<LifecycleRequirement, { kind: 'OPENING_ASSETS' }>;
+      readonly items: OpeningAssets['items'];
+      readonly contactReaction: OpeningAssets['contactReaction'];
+      readonly hookId: string;
     }
   | {
       readonly kind: 'RECRUIT_ITEMS';

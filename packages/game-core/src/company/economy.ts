@@ -1,9 +1,18 @@
 import { checkFreshCompanyRevision, companySourceKey, guardCompanyCommand } from './guards.js';
 import { canonicalJson } from './input.js';
 import { LifecycleViolation } from './lifecycle-state.js';
-import { projectCompanyLifecycle } from './lifecycle.js';
+import { prepareCompanyLifecycle, projectCompanyLifecycle } from './lifecycle.js';
 import { campaignTick, canonicalRevision, isExactInteger, publicRevision } from './values.js';
 import { accrueFinance } from './economy-accrual.js';
+import { advanceEconomy } from './economy-advance.js';
+import {
+  grantFarewell,
+  prepareDepartureSettlement,
+  requestDeparture,
+  updateArrears,
+} from './economy-departure.js';
+import { observeFinance } from './economy-knowledge.js';
+import { settleLifecycleRequirements } from './economy-lifecycle.js';
 import { payClaims, transferFunds } from './economy-payments.js';
 import {
   accountFor,
@@ -16,6 +25,7 @@ import {
   spendableQ,
   validateEconomy,
 } from './economy-state.js';
+import type { LifecycleReceipt } from './lifecycle-types.js';
 import type {
   CompanyEconomyState,
   EconomyContext,
@@ -70,12 +80,28 @@ export function prepareCompanyEconomy(
       'INVALID_TIME',
     );
     validateEconomy(state, context);
+    requireEconomy(
+      state.lifecycle.company?.runStatus !== 'GAME_OVER' ||
+        ['Observe', 'RecordDeath', 'AdvanceCampaign', 'PayClaims', 'TransferFunds'].includes(
+          command.type,
+        ),
+      'TERMINAL',
+    );
+    if (
+      ['GrantFarewell', 'RequestDeparture', 'AcceptSafeService', 'AmendSafeService'].includes(
+        command.type,
+      )
+    )
+      requireEconomy(context.atTick === state.finance.processedTick, 'STALE_REVISION');
     const target =
       command.type === 'AdvanceCampaign' ? campaignTick(command.payload.toTick) : context.atTick;
-    if (command.type === 'AdvanceCampaign')
-      requireEconomy(command.payload.authoritativeInputs.length === 0, 'UNSUPPORTED_ACTION');
-    const closed = accrueFinance(state.finance, state.lifecycle, target);
+    const closed =
+      command.type === 'AdvanceCampaign'
+        ? advanceEconomy(state, command, context)
+        : accrueFinance(state.finance, state.lifecycle, target);
     const atTarget = { ...state, finance: closed.finance };
+    let lifecycle = state.lifecycle;
+    let lifecycleReceipt: LifecycleReceipt | null = null;
     let change: FinanceChange;
     switch (command.type) {
       case 'PayClaims':
@@ -87,30 +113,86 @@ export function prepareCompanyEconomy(
       case 'AdvanceCampaign':
         change = { finance: closed.finance, requirements: [], allocations: [] };
         break;
-      default:
-        throw new EconomyViolation('UNSUPPORTED_ACTION');
+      case 'RequestDeparture':
+        change = requestDeparture(atTarget, command, context);
+        break;
+      case 'ExecuteDeparture':
+        change = prepareDepartureSettlement(atTarget, command, context);
+        break;
+      case 'GrantFarewell':
+        change = grantFarewell(atTarget, command, context);
+        break;
+      default: {
+        const prepared = prepareCompanyLifecycle(state.lifecycle, command, context);
+        if (prepared.kind === 'REJECTED') throw new EconomyViolation(prepared.error);
+        // A lifecycle receipt without its finance receipt indicates a forbidden partial write.
+        requireEconomy(!prepared.replayed, 'INVALID_STATE');
+        lifecycle = prepared.next;
+        lifecycleReceipt = prepared.receipt;
+        change = settleLifecycleRequirements(
+          closed.finance,
+          state.lifecycle,
+          lifecycle,
+          prepared.receipt,
+          context,
+        );
+        if (command.type === 'Observe') {
+          const observed = observeFinance(change.finance, lifecycle, command, context);
+          change = {
+            finance: observed.finance,
+            requirements: [...change.requirements, ...observed.requirements],
+            allocations: observed.allocations,
+          };
+        }
+        for (const bypass of lifecycle.bypasses) {
+          const intent = bypass.notification?.departureIntent;
+          if (intent && !change.finance.departures.some((d) => d.intentId === intent.id))
+            change = {
+              ...change,
+              finance: {
+                ...change.finance,
+                departures: [
+                  ...change.finance.departures,
+                  {
+                    intentId: intent.id,
+                    membershipId: intent.membershipId,
+                    reason: 'CANONICAL_EVENT',
+                    causeId: bypass.eventId,
+                    requestedAt: bypass.notification!.learnedAt,
+                    cancelledAt: null,
+                  },
+                ],
+              },
+            };
+        }
+      }
     }
+    const warned = updateArrears(change.finance, lifecycle, {
+      ...context,
+      atTick: target,
+      financeFacts: command.type === 'AdvanceCampaign' ? [] : context.financeFacts,
+    });
     const receipt: EconomyReceipt = {
       commandId: command.commandId,
       requestKey,
       semanticKey,
       sourceKey,
-      lifecycleReceipt: null,
-      events: [],
-      requirements: [...closed.requirements, ...change.requirements],
-      allocations: change.allocations,
+      lifecycleReceipt,
+      events: lifecycleReceipt?.events ?? [],
+      requirements: [...closed.requirements, ...change.requirements, ...warned.requirements],
+      allocations: [...closed.allocations, ...change.allocations],
     };
     let next: CompanyEconomyState = {
       lifecycle: {
-        ...state.lifecycle,
+        ...lifecycle,
         campaignTick: target,
         revision: canonicalRevision((BigInt(state.lifecycle.revision) + 1n).toString()),
       },
-      finance: { ...change.finance, applied: [...change.finance.applied, receipt] },
+      finance: { ...warned.finance, applied: [...warned.finance.applied, receipt] },
     };
     if (
-      JSON.stringify(projectCompanyEconomy(next, context.companyId)) !==
-      JSON.stringify(projectCompanyEconomy(state, context.companyId))
+      canonicalJson(projectCompanyEconomy(next, context.companyId)) !==
+      canonicalJson(projectCompanyEconomy(state, context.companyId))
     )
       next = {
         ...next,
@@ -176,8 +258,12 @@ export function projectCompanyEconomy(state: CompanyEconomyState, observerCompan
         })
         .sort((a, b) => (a.claimId < b.claimId ? -1 : 1)),
       arrears: f.arrears.map((a) => ({
-        ...a,
-        warning: a.warning ? { ...a.warning, relation: { ...a.warning.relation } } : null,
+        episodeId: a.episodeId,
+        membershipId: a.membershipId,
+        firstDueAt: a.firstDueAt,
+        complaintAt: a.complaintAt,
+        warning: a.warning ? { atTick: a.warning.atTick, deadline: a.warning.deadline } : null,
+        resolvedAt: a.resolvedAt,
       })),
       departures: f.departures.map((d) => ({ ...d })),
       maintenance: f.maintenance.map((m) => ({
@@ -186,7 +272,7 @@ export function projectCompanyEconomy(state: CompanyEconomyState, observerCompan
         partyId: m.partyId,
         beneficiaryIds: [...m.beneficiaryIds],
         startedAt: m.startedAt,
-        endedAt: m.endedAt,
+        endedAt: m.knownEndedAt,
         termsVersion: m.termsVersion,
       })),
     },

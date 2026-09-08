@@ -369,3 +369,50 @@ export function reconcileClaim(
     }),
   };
 }
+
+/** An informed, locally verified recipient can collect a backed hold without spending it twice. */
+export function settleReservations(
+  state: CompanyEconomyState,
+  membershipId: string,
+  context: EconomyContext,
+  commandId: string,
+): FinanceChange {
+  let finance = state.finance;
+  const account = accountFor(finance, membershipId);
+  requireEconomy(
+    account.confirmedAt === context.atTick && account.known,
+    'CONTACT_OR_ACCESS_REQUIRED',
+  );
+  const allocations: EconomyReceipt['allocations'][number][] = [];
+  for (const claim of finance.claims.filter(
+    (c) => c.membershipId === membershipId && committedQ(finance, c.claimId) > 0n,
+  )) {
+    const access = requirePoolAccess({ ...state, finance }, claim.poolId, context);
+    const recipient = account.knownDeath ? account.death!.recipient : account.recipient;
+    const destination = recipientWallet(finance, recipient, access);
+    if (!destination) continue;
+    const amount = committedQ(finance, claim.claimId);
+    requireEconomy(amount <= actualOwedQ(claim), 'INVALID_SOURCE');
+    finance = {
+      ...finance,
+      reservations: finance.reservations.filter((r) => r.claimId !== claim.claimId),
+    };
+    finance = moveCash(
+      finance,
+      poolWallet(finance, claim.poolId).walletId,
+      destination.walletId,
+      amount,
+      context.atTick,
+      economyId(commandId, claim.claimId, 'release-to-payee'),
+      'WAGE',
+    );
+    finance = {
+      ...finance,
+      claims: finance.claims.map((c) =>
+        c.claimId === claim.claimId ? { ...c, paidQ: q(BigInt(c.paidQ) + amount) } : c,
+      ),
+    };
+    allocations.push({ claimId: claim.claimId, amountQ: q(amount), channel: 'CASH' });
+  }
+  return { finance, requirements: [], allocations };
+}

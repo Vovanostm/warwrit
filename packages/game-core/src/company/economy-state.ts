@@ -200,6 +200,13 @@ export function validateEconomy(state: CompanyEconomyState, context: EconomyCont
       'INVALID_STATE',
     );
   }
+  requireEconomy(
+    f.accounts.length === state.lifecycle.memberships.length &&
+      state.lifecycle.memberships.every((m) =>
+        f.accounts.some((a) => a.membershipId === m.membershipId),
+      ),
+    'INVALID_STATE',
+  );
   for (const a of f.accounts) {
     const m = state.lifecycle.memberships.find((m) => m.membershipId === a.membershipId);
     requireEconomy(m && m.companyId === state.lifecycle.companyId, 'INVALID_STATE');
@@ -308,7 +315,7 @@ export function financeEffectKey(fact: FinanceEvidence): string {
           : 'partyId' in fact
             ? fact.partyId
             : null;
-  return canonicalJson([fact.kind, fact.sourceEventId, subject, fact.atTick]);
+  return canonicalJson([fact.kind, fact.sourceEventId, subject]);
 }
 export function recordSource(
   finance: CompanyFinance,
