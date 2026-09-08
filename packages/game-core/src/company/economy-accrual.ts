@@ -119,9 +119,10 @@ export function accrueFinance(
       const reportCovered = reportedMode?.kind === 'SAFE_SERVICE';
       const actualEnd = account.death ? min(end, BigInt(account.death.atTick)) : end;
       const liveTicks = actualEnd > start ? actualEnd - start : 0n;
+      const actualPaused = account.actualPaused ?? account.knownPaused;
       const earns =
         membership.basis === 'PAID' &&
-        !account.knownPaused &&
+        !actualPaused &&
         effectiveLeaderId(lifecycle) !== membership.characterId;
       const reports =
         account.known &&
@@ -156,7 +157,9 @@ export function accrueFinance(
                   toTick: until,
                   earned: appendPeriod(c.earned, earned),
                   reportedQ: q(BigInt(c.reportedQ) + reported),
-                  reportedCoveredQ: q(BigInt(c.reportedCoveredQ) + (reportCovered ? reported : 0n)),
+                  reportedCoveredQ: q(
+                    BigInt(c.reportedCoveredQ) + (reportCovered ? reported : 0n),
+                  ),
                 }
               : c,
           );
@@ -183,8 +186,7 @@ export function accrueFinance(
         (p) => p.identity.characterId === membership.characterId,
       )!;
       const receivesFood =
-        !account.knownPaused &&
-        !['CAPTIVE', 'OUT_OF_CONTACT'].includes(character.presence.availability);
+        !actualPaused && !['CAPTIVE', 'OUT_OF_CONTACT'].includes(character.presence.availability);
       const demand = receivesFood
         ? liveTicks * BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay)
         : 0n;

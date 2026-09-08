@@ -93,22 +93,51 @@ export function executeCompanyCommand<State>(
   return { ok: false, state, error: guarded.ok ? 'UNSUPPORTED_ACTION' : guarded.error };
 }
 
+function playerSource(command: CompanyCommand) {
+  switch (command.type) {
+    case 'ApplyCare':
+      return [command.payload.resourceOrProviderReceiptId, command.payload.characterId, command.payload.conditionId];
+    case 'RepairItem':
+      return command.payload.serviceReceiptId
+        ? [command.payload.serviceReceiptId, command.payload.itemId]
+        : null;
+    case 'ClaimLoot':
+      return [
+        command.payload.claimAuthorizationId,
+        ...command.payload.itemQuantities.map((entry) => entry.itemId).sort(),
+      ];
+    case 'TransferItem':
+      return command.payload.ownershipReceiptId
+        ? [command.payload.ownershipReceiptId, command.payload.itemId]
+        : null;
+    default:
+      return null;
+  }
+}
+
 /** Shared causal scope; fan-out affects each subject once, not only the first person. */
 export function companySourceKey(command: CompanyCommand): string | null {
   if (command.type === 'ResolveLeadership')
     return canonicalJson(['crisis', command.payload.crisisId]);
-  if (command.actorRef.kind === 'PLAYER') return null;
+  if (command.actorRef.kind === 'PLAYER') {
+    const source = playerSource(command);
+    return source === null ? null : canonicalJson([command.type, ...source]);
+  }
   const subject =
     command.type === 'Observe'
       ? [command.payload.observerRef, command.payload.subjectRef]
       : 'characterId' in command.payload
         ? command.payload.characterId
-        : 'membershipId' in command.payload
-          ? command.payload.membershipId
-          : 'agreementOrCampId' in command.payload
-            ? command.payload.agreementOrCampId
-            : command.type === 'AdvanceCampaign'
-              ? command.payload.toTick
-              : null;
+        : 'itemId' in command.payload
+          ? command.payload.itemId
+          : 'containerId' in command.payload
+            ? command.payload.containerId
+            : 'membershipId' in command.payload
+              ? command.payload.membershipId
+              : 'agreementOrCampId' in command.payload
+                ? command.payload.agreementOrCampId
+                : command.type === 'AdvanceCampaign'
+                  ? command.payload.toTick
+                  : null;
   return canonicalJson([command.type, command.sourceEventId, subject]);
 }
