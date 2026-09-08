@@ -293,3 +293,40 @@ export function settleLifecycleRequirements(
   // Stable accrued debts keep their original funding location. Reassignment never teleports a purse.
   return { finance, requirements: remaining, allocations: [] };
 }
+export function closeMaintenanceForLifecycle(
+  finance: CompanyFinance,
+  before: LifecycleState,
+  next: LifecycleState,
+  atTick: CampaignTick,
+): CompanyFinance {
+  const nextLeader = next.company?.actingLeaderId ?? next.company?.currentLeaderId;
+  for (const mode of finance.maintenance.filter((m) => m.endedAt === null)) {
+    const changedMembers = mode.beneficiaryIds.some((id) => {
+      const old = person(before, id).presence,
+        now = person(next, id).presence;
+      return (
+        old.fieldPartyId !== now.fieldPartyId ||
+        !sameLocation(old.location, now.location) ||
+        (old.encounterBindingId !== now.encounterBindingId && now.encounterBindingId !== null) ||
+        (old.assignment !== now.assignment && !['FIELD', 'RECOVERY'].includes(now.assignment))
+      );
+    });
+    if (
+      changedMembers ||
+      (mode.kind === 'SAFE_SERVICE' && (!nextLeader || !mode.beneficiaryIds.includes(nextLeader)))
+    ) {
+      finance = closeEpochs(
+        {
+          ...finance,
+          maintenance: finance.maintenance.map((m) =>
+            m.agreementId === mode.agreementId
+              ? { ...m, endedAt: atTick, knownEndedAt: atTick }
+              : m,
+          ),
+        },
+        atTick,
+      );
+    }
+  }
+  return finance;
+}

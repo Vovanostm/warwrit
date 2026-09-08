@@ -12,7 +12,13 @@ import {
   updateArrears,
 } from './economy-departure.js';
 import { observeFinance } from './economy-knowledge.js';
-import { settleLifecycleRequirements } from './economy-lifecycle.js';
+import { closeMaintenanceForLifecycle, settleLifecycleRequirements } from './economy-lifecycle.js';
+import {
+  acceptSafeService,
+  amendSafeService,
+  beginFieldCamp,
+  endMaintenance,
+} from './economy-maintenance.js';
 import { payClaims, transferFunds } from './economy-payments.js';
 import {
   accountFor,
@@ -122,6 +128,18 @@ export function prepareCompanyEconomy(
       case 'GrantFarewell':
         change = grantFarewell(atTarget, command, context);
         break;
+      case 'BeginFieldCamp':
+        change = beginFieldCamp(atTarget, command, context);
+        break;
+      case 'AcceptSafeService':
+        change = acceptSafeService(atTarget, command, context);
+        break;
+      case 'AmendSafeService':
+        change = amendSafeService(atTarget, command, context);
+        break;
+      case 'EndMaintenance':
+        change = endMaintenance(atTarget, command, context);
+        break;
       default: {
         const prepared = prepareCompanyLifecycle(state.lifecycle, command, context);
         if (prepared.kind === 'REJECTED') throw new EconomyViolation(prepared.error);
@@ -136,6 +154,15 @@ export function prepareCompanyEconomy(
           prepared.receipt,
           context,
         );
+        change = {
+          ...change,
+          finance: closeMaintenanceForLifecycle(
+            change.finance,
+            state.lifecycle,
+            lifecycle,
+            context.atTick,
+          ),
+        };
         if (command.type === 'Observe') {
           const observed = observeFinance(change.finance, lifecycle, command, context);
           change = {

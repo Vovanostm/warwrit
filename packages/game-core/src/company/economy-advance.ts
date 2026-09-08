@@ -1,6 +1,7 @@
 import { accrueFinance } from './economy-accrual.js';
 import { updateArrears } from './economy-departure.js';
 import { recordQualification } from './economy-knowledge.js';
+import { closeMaintenance } from './economy-maintenance.js';
 import {
   financeEffectKey,
   recordSource,
@@ -31,7 +32,7 @@ export function advanceEconomy(
       requireEconomy(matches.length === 1, 'INVALID_SOURCE');
       const fact = matches[0]!;
       requireEconomy(
-        ['QUALIFICATION_NOTICE', 'WAGE_COMMUNICATION'].includes(fact.kind),
+        ['QUALIFICATION_NOTICE', 'WAGE_COMMUNICATION', 'MAINTENANCE_BOUNDARY'].includes(fact.kind),
         'UNSUPPORTED_ACTION',
       );
       return fact;
@@ -65,6 +66,22 @@ export function advanceEconomy(
     for (const fact of fresh) {
       if (fact.kind === 'QUALIFICATION_NOTICE')
         finance = recordQualification(finance, fact, atContext);
+      else if (fact.kind === 'MAINTENANCE_BOUNDARY') {
+        const mode = finance.maintenance.find(
+          (m) => m.agreementId === fact.agreementId && m.endedAt === null,
+        );
+        requireEconomy(mode, 'INVALID_SOURCE');
+        requireEconomy(
+          fact.reason !== 'LAST_FIELD_WORKER_LOST' || mode.kind === 'FIELD_CAMP',
+          'INVALID_SOURCE',
+        );
+        finance = closeMaintenance(
+          recordSource(finance, fact).finance,
+          fact.agreementId,
+          atTick,
+          true,
+        );
+      }
     }
     const warned = updateArrears(finance, state.lifecycle, { ...atContext, financeFacts: fresh });
     finance = warned.finance;

@@ -95,7 +95,7 @@ export function accrueFinance(
     for (const mode of finance.maintenance.filter((m) =>
       m.beneficiaryIds.includes(membership.characterId),
     )) {
-      for (const value of [mode.startedAt, mode.endedAt])
+      for (const value of [mode.startedAt, mode.endedAt, mode.knownEndedAt])
         if (value !== null) {
           const boundary = BigInt(value);
           if (boundary > begin && boundary < finish) boundaries.add(boundary);
@@ -109,7 +109,14 @@ export function accrueFinance(
         until = t(end);
       const rate = wageAt(account, fromTick);
       const mode = maintenanceAt(finance, membership.characterId, fromTick);
+      const reportedMode = finance.maintenance.find(
+        (m) =>
+          m.beneficiaryIds.includes(membership.characterId) &&
+          BigInt(m.startedAt) <= start &&
+          (m.knownEndedAt === null || start < BigInt(m.knownEndedAt)),
+      );
       const wageCovered = mode?.kind === 'SAFE_SERVICE';
+      const reportCovered = reportedMode?.kind === 'SAFE_SERVICE';
       const actualEnd = account.death ? min(end, BigInt(account.death.atTick)) : end;
       const liveTicks = actualEnd > start ? actualEnd - start : 0n;
       const earns =
@@ -138,7 +145,7 @@ export function accrueFinance(
             c.poolId === account.poolId &&
             c.dueAt === dueAt &&
             c.rateVersion === rate.version &&
-            c.maintenanceId === earned.maintenanceId &&
+            c.maintenanceId === (reportCovered ? reportedMode.agreementId : null) &&
             c.toTick === fromTick,
         );
         if (previous) {
@@ -149,7 +156,7 @@ export function accrueFinance(
                   toTick: until,
                   earned: appendPeriod(c.earned, earned),
                   reportedQ: q(BigInt(c.reportedQ) + reported),
-                  reportedCoveredQ: q(BigInt(c.reportedCoveredQ) + (wageCovered ? reported : 0n)),
+                  reportedCoveredQ: q(BigInt(c.reportedCoveredQ) + (reportCovered ? reported : 0n)),
                 }
               : c,
           );
@@ -163,11 +170,11 @@ export function accrueFinance(
             fromTick,
             toTick: until,
             dailyWageMilli: rate.dailyWageMilli,
-            maintenanceId: earned.maintenanceId,
+            maintenanceId: reportCovered ? reportedMode.agreementId : null,
             earned: appendPeriod([], earned),
             paidQ: q(0n),
             reportedQ: q(reported),
-            reportedCoveredQ: q(wageCovered ? reported : 0n),
+            reportedCoveredQ: q(reportCovered ? reported : 0n),
           };
           claims = [...claims, claim];
         }
