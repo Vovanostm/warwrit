@@ -28,7 +28,7 @@ jobs:
           git archive --format=tar.gz HEAD > "$RUNNER_TEMP/export/source.tar.gz"
           tar -czf "$RUNNER_TEMP/export/dependencies.tar.gz" node_modules apps/*/node_modules packages/*/node_modules
           cp "$(command -v node)" "$RUNNER_TEMP/export/tools/node"
-          pnpm_cli="$(find "$HOME/.cache/node/corepack" -path '*/pnpm/bin/pnpm.cjs' -print -quit)"
+          pnpm_cli="$(find "$HOME/.cache/node/corepack" -name pnpm.cjs -print -quit)"
           test -n "$pnpm_cli"
           cp -a "$(dirname "$(dirname "$pnpm_cli")")" "$RUNNER_TEMP/export/tools/pnpm"
           tar -czf "$RUNNER_TEMP/export/tools.tar.gz" -C "$RUNNER_TEMP/export" tools
