@@ -3,7 +3,9 @@
 - Status: operational mirror for coding agents
 - As of: 2026-09-08
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
-- Active contract: [WP-02.2](../work-packages/WP-02.2.md), GitHub issue #11, parent #8
+- Next implementation contract: [WP-02.4](../work-packages/WP-02.4.md), parent #8
+- Activation: PR #14 actually merged; the published successor issue records its verified main SHA/tree
+- Live predecessor / review / merge evidence: GitHub PR #14 and issue #13
 
 ## Current state
 
@@ -13,8 +15,10 @@ S-02: done
 WP-00: done
 WP-01: done
 WP-02: in-progress
-current_slice: WP-02.2
-merge_authorized: false
+current_slice: WP-02.4
+activation_pr: 14
+activation_requires: verified-merged
+merge_authorized: PR-14-only-by-owner-2026-09-08
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
 package_manager: repository-pinned-pnpm
@@ -22,11 +26,16 @@ persistence: postgresql-kysely-pg
 renderer: Q-T03-evidence-pending
 ```
 
-The owner explicitly authorized and completed PR #10 merge. Implementation, tests and the WP-02.2 PR are authorized; that is not permission to merge the next PR, enable auto-merge, deploy, buy cloud resources or expand gameplay. Completion of a slice on a branch is not delivery of the entire WP-02 on main.
+The owner requested review/corrections and merge of PR #14, then a prepared
+WP-02.4 task. This plan travels in PR #14: a feature checkout is not evidence
+that it has merged. Verify live merged status/main before activating WP-02.4;
+its task records the actual merge receipt. No 02.4 implementation is delivered
+by this transition. Merge of its future PR, auto-merge, deploy and purchases
+remain separately authorized. S-02 is Done; full WP-02 and M1 remain incomplete.
 
 ## Authority and source order
 
-Read the active WP-02.2 contract `rec39pw7h0ycTk4r7` and full Notes/Purpose in Airtable Artifacts `tblwAxG5Ek1FyWpiW`:
+Read the [WP-02.4 contract](../work-packages/WP-02.4.md), its source table and full Notes/Purpose in Airtable Artifacts `tblwAxG5Ek1FyWpiW`:
 
 1. `rec5bphVYSZUTqavX`: agent launch; owner authorization `comlmb1eSiASlOH30` on WP-02 `rec6JCF929ViGc2MX`.
 2. `rechIKj0hsvfXIvFU`: explicit RC-P1=A, RC-P2=AAAA, RC-P3=A.
@@ -41,8 +50,8 @@ The former Q-CHAR-13A..14C and Q-CHAR-15A blocking lists describe historical sta
 ```text
 DONE WP-00 -> DONE WP-01
   -> DONE WP-02.1 source/type/catalogue/command foundation
-  -> WP-02.2 identity, opening, membership, party, succession
-  -> WP-02.3 exact money, F1, knowledge-safe accounting
+  -> DONE WP-02.2 identity, opening, membership, party, succession
+  -> WP-02.3 exact money, F1, knowledge-safe accounting (PR #14 prerequisite)
   -> WP-02.4 items, custody, care, outcomes
   -> WP-02.5 practice R, books, perks, memory
   -> WP-02.6 V2 bridge, unchanged V1 replay
@@ -81,3 +90,22 @@ Owner authorized and completed PR #10 squash merge at `0d58dde305b2c7b85c73f2732
 WP-02.2 starts from that main revision, not a stacked unmerged foundation.
 The merge permission applied to #10 only; the next PR and deployment need separate authorization.
 See WP-02.2 for the PREPARED component boundary and source-to-postulate mapping.
+
+## 2026-09-08 delivery transition
+
+PR #12 is merged at `0ef8e894f7a753cf42864ac97254a2926f3ebd52`,
+tree `b8f8c6faf8c2483a8df3fcec0f948a1ff0d94cb2`. WP-02.3 / issue #13
+starts here on `feat/wp-02-economy`; no WP-02.4 implementation is included.
+PREPARED lifecycle/finance changes are one draft, not independent commits or aggregate
+acceptance. Original source ZIP concordance remains NOT_RUN. Next-PR merge, auto-merge
+and deployment are not authorized.
+
+## 2026-09-08 review-to-next-slice transition
+
+PR #14 contains the economy quality review and repository skills. Use the
+[review record](../work-packages/WP-02.3-QUALITY-REVIEW.md), not the older initial
+“no merge” handoff, for this owner's PR-specific merge mandate. After verified
+merge, continue only [WP-02.4](../work-packages/WP-02.4.md). Exact successor issue,
+merge SHA/tree and final CI live in the PR/issue and canonical checkpoint; they
+are deliberately not copied into reusable skills. Update this operational pointer
+in the next implementation PR rather than rewriting historical ADRs.
