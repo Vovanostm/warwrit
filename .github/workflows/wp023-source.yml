@@ -1,0 +1,43 @@
+name: Export WP023 development source
+on:
+  push:
+    branches: [workbench/wp023-source]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: 0ef8e894f7a753cf42864ac97254a2926f3ebd52
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .node-version
+      - name: Export exact source and installed tools (no verification rerun)
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+          pnpm install --frozen-lockfile
+          mkdir -p "$RUNNER_TEMP/export/tools"
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/export/identity.txt"
+          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/export/source.tar.gz"
+          tar -czf "$RUNNER_TEMP/export/dependencies.tar.gz" node_modules apps/*/node_modules packages/*/node_modules
+          cp "$(command -v node)" "$RUNNER_TEMP/export/tools/node"
+          pnpm_cli="$(find "$HOME/.cache/node/corepack" -path '*/pnpm/bin/pnpm.cjs' -print -quit)"
+          test -n "$pnpm_cli"
+          cp -a "$(dirname "$(dirname "$pnpm_cli")")" "$RUNNER_TEMP/export/tools/pnpm"
+          tar -czf "$RUNNER_TEMP/export/tools.tar.gz" -C "$RUNNER_TEMP/export" tools
+          rm -rf "$RUNNER_TEMP/export/tools"
+          cd "$RUNNER_TEMP/export"
+          sha256sum *.tar.gz > SHA256SUMS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp023-development
+          path: ${{ runner.temp }}/export/*
+          retention-days: 2
+          compression-level: 0
