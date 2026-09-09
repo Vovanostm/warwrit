@@ -22,10 +22,9 @@ import type { CampaignTick } from './values.js';
 import type { EconomyContext, EconomyRequirement } from './economy-types.js';
 import type {
   CompanyPhysicalState,
-  MaterializedCompanyState,
-  PhysicalChange,
   PhysicalContainer,
 } from './physical-types.js';
+import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
 
 export function setActualFinancePaused(
   root: MaterializedCompanyState,
@@ -100,8 +99,8 @@ export function captureCharacter(
     );
     const destination = physicalContainer(physical, entry.toContainerId);
     requirePhysical(
-      destination.location.kind === p.locationRef.kind &&
-        sameLocation(destination.location, p.locationRef),
+      destination.location.kind === fact.location.kind &&
+        sameLocation(destination.location, fact.location),
       'INVALID_SOURCE',
     );
     return { authorization, item, destination };
@@ -129,7 +128,7 @@ export function captureCharacter(
       equipped: null,
     });
   }
-  const lifecycle = movePresence(root.lifecycle, p.characterId, 'CAPTIVE', p.locationRef);
+  const lifecycle = movePresence(root.lifecycle, p.characterId, 'CAPTIVE', fact.location);
   const finance = setActualFinancePaused({ ...root, lifecycle, physical }, p.characterId, true);
   physical = {
     ...physical,
@@ -137,8 +136,8 @@ export function captureCharacter(
       ...physical.custody.filter((entry) => entry.characterId !== p.characterId),
       {
         characterId: p.characterId,
-        custodian: ownPhysical(p.captorRef),
-        location: ownPhysical(p.locationRef),
+        custodian: ownPhysical(fact.captor),
+        location: ownPhysical(fact.location),
         sourceId: fact.sourceEventId,
         sinceTick: context.atTick,
       },
@@ -164,12 +163,11 @@ export function releaseCaptive(
   );
   const recorded = recordPhysicalSource(root.physical, fact);
   requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
-  const lifecycle = movePresence(root.lifecycle, p.characterId, 'AVAILABLE', p.locationRef);
+  const lifecycle = movePresence(root.lifecycle, p.characterId, 'AVAILABLE', fact.location);
   const physical = {
     ...recorded.state,
     custody: recorded.state.custody.filter((entry) => entry.characterId !== p.characterId),
   };
-  // Release is not ReturnToService: earnings/duty stay paused until explicit re-entry.
   const finance = setActualFinancePaused({ ...root, lifecycle, physical }, p.characterId, true);
   return { lifecycle, finance, physical, requirements: [] };
 }
@@ -192,7 +190,7 @@ export function transferCaptive(
   );
   const recorded = recordPhysicalSource(root.physical, fact);
   requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
-  const lifecycle = movePresence(root.lifecycle, p.characterId, 'CAPTIVE', p.locationRef);
+  const lifecycle = movePresence(root.lifecycle, p.characterId, 'CAPTIVE', fact.location);
   const physical = {
     ...recorded.state,
     custody: recorded.state.custody.map((entry) =>
@@ -375,7 +373,7 @@ export function resolveMissing(
     };
   }
   const availability = fact.outcome === 'CAPTIVE' ? 'CAPTIVE' : 'AVAILABLE';
-  let lifecycle = movePresence(root.lifecycle, p.characterId, availability, fact.location);
+  const lifecycle = movePresence(root.lifecycle, p.characterId, availability, fact.location);
   if (availability === 'CAPTIVE') {
     requirePhysical(fact.custodian !== undefined, 'INVALID_SOURCE');
     physical = {
