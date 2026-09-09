@@ -35,6 +35,19 @@ jobs:
         if: github.event_name == 'pull_request' && github.head_ref == 'feat/wp-02-inventory-care'
         run: |
           node scripts/wp024-normalize.mjs
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('packages/game-core/src/company/physical-items.ts')
+          s = p.read_text()
+          s = s.replace("export function returnCompanyItemsForDeparture(\n  root: MaterializedCompanyState,\n  characterId: string,\n  returnContainerId: string,\n  sourceId: string,\n  context: EconomyContext,", "export function returnCompanyItemsForDeparture(\n  root: MaterializedCompanyState,\n  characterId: string,\n  returnContainerId: string,\n  sourceId: string,\n  _context: EconomyContext,")
+          p.write_text(s)
+          p = Path('packages/game-core/src/company/physical-outcomes.ts')
+          s = p.read_text()
+          for name in ['  activeConditions,\n', '  physicalId,\n', '  replaceContainer,\n']:
+              s = s.replace(name, '')
+          s = s.replace("  let lifecycle = movePresence(root.lifecycle, p.characterId, availability, fact.location);", "  const lifecycle = movePresence(root.lifecycle, p.characterId, availability, fact.location);")
+          p.write_text(s)
+          PY
           corepack enable
           pnpm install --frozen-lockfile
           pnpm exec prettier --write .
