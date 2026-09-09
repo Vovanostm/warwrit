@@ -1,0 +1,72 @@
+name: WP-02.4 diagnostics
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/wp024-diagnostics.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostics:
+    if: github.event.pull_request.number == 16
+    name: Diagnostic reproduction, not acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .node-version
+
+      - name: Install pinned dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Capture source, dependencies and formatter differences without editing the checkout
+        run: |
+          mkdir -p /tmp/wp024-repro/source /tmp/wp024-repro/tools
+          git rev-parse HEAD > /tmp/wp024-repro/CHECKED_SHA
+          git archive HEAD | tar -xf - -C /tmp/wp024-repro/source
+          find . -type d -name node_modules -prune -print0 | tar --null -T - -cf - | tar -xf - -C /tmp/wp024-repro/source
+          cp "$(command -v node)" /tmp/wp024-repro/tools/node
+          node --input-type=module <<'JS'
+          import fs from 'node:fs/promises';
+          import { execFileSync } from 'node:child_process';
+          import * as prettier from 'prettier';
+          const paths = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+          for (const path of paths) {
+            const info = await prettier.getFileInfo(path, { ignorePath: '.prettierignore' });
+            if (info.ignored || !info.inferredParser) continue;
+            const source = await fs.readFile(path, 'utf8');
+            const formatted = await prettier.format(source, { ...(await prettier.resolveConfig(path)), filepath: path });
+            if (formatted === source) continue;
+            await fs.writeFile('/tmp/wp024-formatted', formatted);
+            try { execFileSync('diff', ['-u', '--label', `a/${path}`, '--label', `b/${path}`, path, '/tmp/wp024-formatted'], { stdio: 'inherit' }); } catch (error) { if (error.status !== 1) throw error; }
+          }
+          JS
+          git diff --exit-code
+          tar -czf /tmp/wp024-repro.tgz -C /tmp/wp024-repro .
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp024-reproduction
+          path: /tmp/wp024-repro.tgz
+          retention-days: 1
+          compression-level: 0
+
+      - name: Diagnose build
+        run: pnpm build
+
+      - name: Diagnose types
+        if: always()
+        run: pnpm typecheck
+
+      - name: Diagnose behavioral tests
+        if: always()
+        run: pnpm test:unit
