@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   COMPANY_CATALOGUE,
   COMPANY_RULES,
+  PHYSICAL_RULES,
   createCompanyEconomyState,
   prepareCompanyEconomy,
   projectCompanyEconomy,
@@ -12,7 +13,10 @@ import {
 import type {
   CompanyEconomyState,
   FinanceEvidence,
+  ItemInstance,
   OpeningEvidence,
+  PhysicalContainer,
+  PhysicalEvidence,
   ServiceTermsEvidence,
 } from '@warwrit/game-core';
 import {
@@ -26,11 +30,13 @@ import {
   observation,
   pay,
   person,
+  physicalScope,
   place,
   prepared,
   scope,
   tick,
 } from './company-economy-fixture.js';
+import { withLoadedConditions } from './company-physical-fixture.js';
 
 function terms(state: CompanyEconomyState, id: string, wage = '1'): ServiceTermsEvidence {
   return {
@@ -155,19 +161,35 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
   });
   it('P3/P8: hiring cannot commit membership or money independently; retained tariffs own their data', () => {
     const old = economy([1n], 2n);
-    const state = {
+    const offeredContainer: PhysicalContainer = {
+      containerId: 'recruit-offer-container',
+      kind: 'STATIC',
+      location: place,
+      custodian: { kind: 'CHARACTER', id: 'provider' },
+      carrier: null,
+      capacityG: 30000,
+      access: 'OWNER',
+      closed: null,
+    };
+    const offeredItem: ItemInstance = {
+      itemId: 'real-item',
+      definitionId: 'sword',
+      owner: { kind: 'CHARACTER', id: 'provider' },
+      containerId: offeredContainer.containerId,
+      quantity: 1,
+      currentCondition: PHYSICAL_RULES.defaultConditionMaximum,
+      maximumCondition: PHYSICAL_RULES.defaultConditionMaximum,
+      contentRevision: '1',
+      provenance: { sourceId: 'recruit-property', parentItemId: null, ordinal: 0 },
+      equipped: null,
+      tombstone: null,
+    };
+    const state: CompanyEconomyState = {
       ...old,
-      finance: {
-        ...old.finance,
-        wallets: [
-          ...old.finance.wallets,
-          {
-            walletId: 'wallet-provider',
-            owner: { kind: 'CHARACTER' as const, id: 'provider' },
-            location: place,
-            cashQ: cash(0),
-          },
-        ],
+      physical: {
+        ...old.physical!,
+        containers: [...old.physical!.containers, offeredContainer],
+        items: [...old.physical!.items, offeredItem],
       },
     };
     const cmd = command(state, 'Recruit', {
@@ -202,16 +224,43 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
         ),
       },
     };
+    const missingDelivery = prepareCompanyEconomy(
+      funded,
+      cmd,
+      context(funded, cmd, [tariff], [offer]),
+    );
+    expect(missingDelivery).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(missingDelivery.state).toBe(funded);
+    const draft = prepareCompanyLifecycle(
+      funded.lifecycle,
+      cmd,
+      context(funded, cmd, [tariff], [offer]),
+    );
+    if (draft.kind !== 'PREPARED') throw new Error('recruit lifecycle fixture');
+    const membershipId = draft.next.memberships.find((m) => m.characterId === 'provider')!
+      .membershipId;
+    const delivery: PhysicalEvidence = {
+      ...physicalScope(funded, 'recruit-delivery'),
+      kind: 'RECRUIT_ITEM',
+      membershipId,
+      itemId: offeredItem.itemId,
+      fromContainerId: offeredContainer.containerId,
+      toContainerId: 'fixture-supply',
+      offeredOwner: offeredItem.owner,
+    };
     const accepted = prepared(
-      prepareCompanyEconomy(funded, cmd, context(funded, cmd, [tariff], [offer])),
+      prepareCompanyEconomy(funded, cmd, context(funded, cmd, [tariff], [offer], [delivery])),
     );
     expect(accepted.next.lifecycle.memberships.some((m) => m.characterId === 'provider')).toBe(
       true,
     );
     expect(accepted.next.finance.wallets.find((w) => w.walletId === 'purse')?.cashQ).toBe('7');
-    expect(accepted.receipt.requirements).toContainEqual(
-      expect.objectContaining({ kind: 'RECRUIT_ITEMS', itemIds: ['real-item'] }),
-    );
+    expect(accepted.receipt.requirements.filter((r) => r.kind === 'RECRUIT_ITEMS')).toEqual([]);
+    expect(accepted.next.physical!.items.find((i) => i.itemId === offeredItem.itemId)).toMatchObject({
+      containerId: 'fixture-supply',
+      owner: offeredItem.owner,
+      quantity: 1,
+    });
     const text = JSON.stringify(accepted.next);
     (tariff.rates as { minimumLevel: number; dailyWageMilli: string }[])[0]!.dailyWageMilli = '999';
     expect(JSON.stringify(accepted.next)).toBe(text);
@@ -276,16 +325,14 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
       {
         membershipId: 'service-worker-0',
         intentId: intent.intentId,
-        returnContainerId: 'real-local-container',
+        returnContainerId: 'fixture-supply',
       },
       'leave',
       'SYSTEM',
     );
     const result = prepared(prepareCompanyEconomy(state, cmd, context(state, cmd)));
-    expect(result.receipt.requirements).toContainEqual(
-      expect.objectContaining({ kind: 'PHYSICAL_DEPARTURE', atTick: '500' }),
-    );
-    expect(result.next.lifecycle.memberships[1]?.endedAt).toBeNull(); // PREPARED is not the physical exit.
+    expect(result.receipt.requirements.filter((r) => r.kind === 'PHYSICAL_DEPARTURE')).toEqual([]);
+    expect(result.next.lifecycle.memberships[1]?.endedAt).toBe('500');
     expect(result.next.finance.claims[0]).toMatchObject({
       dueAt: '500',
       reportedQ: '1000',
@@ -364,7 +411,7 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
       {
         membershipId: 'service-worker-0',
         intentId: state.finance.departures[0]!.intentId,
-        returnContainerId: 'local-container',
+        returnContainerId: 'fixture-supply',
       },
       'final-held',
       'SYSTEM',
@@ -386,16 +433,16 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
   it('P1/P3: real acting-leader transitions preserve old claims and restore the original paid basis prospectively', () => {
     let state = advance(economy([2n], 10000n, 0), 500).next;
     function acting(unavailableId: string, candidateId: string, id: string) {
-      state = {
-        ...state,
-        lifecycle: {
-          ...state.lifecycle,
-          characters: state.lifecycle.characters.map((p) => ({
-            ...p,
-            conditionIds: p.identity.characterId === unavailableId ? ['critical-bleed'] : [],
-          })),
-        },
-      };
+      state = withLoadedConditions(
+        state,
+        Object.fromEntries(
+          state.lifecycle.characters.map((p) => [
+            p.identity.characterId,
+            p.identity.characterId === unavailableId ? ['critical-bleed'] : [],
+          ]),
+        ),
+        id,
+      );
       const cmd = command(
         state,
         'ResolveLeadership',
@@ -532,7 +579,7 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
       {
         membershipId: 'service-worker-0',
         intentId: next.finance.departures[0]!.intentId,
-        returnContainerId: 'local-return-container',
+        returnContainerId: 'fixture-supply',
       },
       'local-departure',
       'SYSTEM',
@@ -550,9 +597,8 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
     expect(
       departure.next.finance.claims.find((c) => c.claimId === distantClaim.claimId)?.paidQ,
     ).toBe('0');
-    expect(departure.receipt.requirements).toContainEqual(
-      expect.objectContaining({ kind: 'PHYSICAL_DEPARTURE' }),
-    );
+    expect(departure.receipt.requirements.filter((r) => r.kind === 'PHYSICAL_DEPARTURE')).toEqual([]);
+    expect(departure.next.lifecycle.memberships[1]?.endedAt).toBe('1000');
     const retry = prepared(
       prepareCompanyEconomy(departure.next, execute, context(departure.next, execute)),
     );
