@@ -2,7 +2,7 @@ import { sameLocation } from './lifecycle-state.js';
 import { moveCash } from './economy-payments.js';
 import { poolWallet, requirePoolAccess, walletFor } from './economy-state.js';
 import type { EconomyContext, CashMovement, CompanyFinance } from './economy-types.js';
-import type { MaterializedCompanyState } from './physical-types.js';
+import type { MaterializedCompanyState } from './physical-root-types.js';
 import type { AtLocation } from './lifecycle-types.js';
 import { requirePhysical } from './physical-state.js';
 
@@ -17,7 +17,7 @@ export function payPhysicalProvider(
     readonly location: AtLocation;
     readonly amountQ: string;
     readonly movementId: string;
-    readonly purpose: Extract<CashMovement['purpose'], 'CARE' | 'FOOD' | 'REPAIR'>;
+    readonly purpose: Extract<CashMovement['purpose'], 'CARE' | 'CARE_HANDOVER' | 'FOOD' | 'REPAIR'>;
   },
 ): CompanyFinance {
   requirePoolAccess(root, input.poolId, context, input.moneyAccessEvidenceId);
