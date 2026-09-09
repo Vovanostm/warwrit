@@ -19,6 +19,7 @@ import {
   scope,
   tick,
 } from './company-economy-fixture.js';
+import { careHandover, withCareProvider } from './company-physical-fixture.js';
 
 function death(state: CompanyEconomyState, characterId: string, sourceEventId?: string) {
   const id = `death-${characterId}`;
@@ -224,7 +225,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
   });
 
   it('P6/P7: loss of the last field worker stops actual support without disclosing hidden death', () => {
-    const initial = economy([1n, 1n], 10000n, 0);
+    const initial = withCareProvider(economy([1n, 1n], 10000n, 0));
     const wound = command(
       initial,
       'ApplyCondition',
@@ -286,7 +287,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
         context(
           atDeparture,
           detach,
-          [],
+          [access(atDeparture)],
           [
             {
               ...scope(atDeparture, 'detached-worker'),
@@ -299,6 +300,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
               partyId: null,
             },
           ],
+          [careHandover(atDeparture, 'worker-1')],
         ),
       ),
     ).next;
