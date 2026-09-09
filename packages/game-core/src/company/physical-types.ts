@@ -1,5 +1,4 @@
-import type { EconomyRequirement, CompanyFinance } from './economy-types.js';
-import type { AtLocation, LifecycleState } from './lifecycle-types.js';
+import type { AtLocation } from './lifecycle-types.js';
 import type { LocationRef, OwnerRef } from './model.js';
 import type { CampaignTick, CanonicalRevision, MoneyQ } from './values.js';
 
@@ -191,6 +190,7 @@ export interface ItemAccessEvidence extends PhysicalScope {
 export interface OwnershipAuthorizationEvidence extends PhysicalScope {
   readonly kind: 'OWNERSHIP_AUTHORIZATION';
   readonly itemId: string;
+  readonly quantity: number;
   readonly fromOwner: OwnerRef;
   readonly toOwner: OwnerRef;
   readonly operation: 'GIFT' | 'SALE' | 'SEIZURE' | 'LOOT' | 'RETURN';
@@ -246,6 +246,10 @@ export interface CareHandoverEvidence extends PhysicalScope {
   readonly characterId: string;
   readonly receiverId: string;
   readonly location: AtLocation;
+  readonly poolId: string;
+  readonly providerWalletId: string;
+  readonly moneyAccessEvidenceId: string;
+  readonly amountQ: MoneyQ;
 }
 export interface RepairServiceEvidence extends PhysicalScope {
   readonly kind: 'REPAIR_SERVICE';
@@ -347,15 +351,3 @@ export type PhysicalEvidence =
   | DeathOutcomeEvidence
   | ContainerDispositionEvidence
   | PhysicalObservationEvidence;
-
-export type MaterializedCompanyState = {
-  readonly lifecycle: LifecycleState;
-  readonly finance: CompanyFinance;
-  readonly physical: CompanyPhysicalState;
-};
-export type PhysicalChange = {
-  readonly lifecycle: LifecycleState;
-  readonly finance: CompanyFinance;
-  readonly physical: CompanyPhysicalState;
-  readonly requirements: readonly EconomyRequirement[];
-};
