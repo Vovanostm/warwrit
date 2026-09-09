@@ -902,8 +902,7 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
   it('I2/P8: legacy non-empty definition lists require instance bindings, while an exact V1 retry still resolves before fresh-load validation', () => {
     const base = economy([1n], 1000n, 0);
     const legacy: CompanyEconomyState = {
-      ...base,
-      physical: undefined,
+      finance: base.finance,
       lifecycle: {
         ...base.lifecycle,
         characters: base.lifecycle.characters.map((entry) =>
@@ -930,8 +929,7 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
     });
     const applied = prepared(prepareCompanyEconomy(clean, original, context(clean, original))).next;
     const legacyRetry: CompanyEconomyState = {
-      ...applied,
-      physical: undefined,
+      finance: applied.finance,
       lifecycle: {
         ...applied.lifecycle,
         characters: applied.lifecycle.characters.map((entry) =>
