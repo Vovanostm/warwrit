@@ -1,6 +1,7 @@
 import { createCompanyPhysicalState, validatePhysicalState } from './physical-state.js';
 import type { CompanyEconomyState } from './economy-types.js';
-import type { MaterializedCompanyState, PhysicalInitialization } from './physical-types.js';
+import type { PhysicalInitialization } from './physical-types.js';
+import type { MaterializedCompanyState } from './physical-root-types.js';
 
 /**
  * Explicit compatibility boundary for schema-v1 lifecycle+finance snapshots.
