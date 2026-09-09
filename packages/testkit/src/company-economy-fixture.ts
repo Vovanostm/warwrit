@@ -295,6 +295,7 @@ function addBoundary(
 function automaticFoodFacts(
   state: CompanyEconomyState,
   cmd: ReturnType<typeof command>,
+  financeFacts: readonly FinanceEvidence[],
 ): readonly PhysicalEvidence[] {
   if (cmd.type !== 'AdvanceCampaign') return [];
   const from = BigInt(state.finance.processedTick);
@@ -303,6 +304,8 @@ function automaticFoodFacts(
   const points = new Set<bigint>([from, to]);
   for (let boundary = (from / 1000n + 1n) * 1000n; boundary < to; boundary += 1000n)
     points.add(boundary);
+  // External interval boundaries must be reflected in external food proofs too.
+  for (const fact of financeFacts) addBoundary(points, fact.atTick, from, to);
   for (const membership of state.lifecycle.memberships) {
     addBoundary(points, membership.startedAt, from, to);
     addBoundary(points, membership.endedAt, from, to);
@@ -367,7 +370,7 @@ export function context(
     contactIds: state.lifecycle.characters.map((c) => c.identity.characterId),
     facts,
     financeFacts,
-    physicalFacts: [...automaticFoodFacts(state, cmd), ...physicalFacts],
+    physicalFacts: [...automaticFoodFacts(state, cmd, financeFacts), ...physicalFacts],
     internalGrant: {
       commandId: cmd.commandId,
       sourceEventId: cmd.sourceEventId,
