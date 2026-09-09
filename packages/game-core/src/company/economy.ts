@@ -43,7 +43,7 @@ import type {
   EconomyResult,
   FinanceChange,
 } from './economy-types.js';
-import type { MaterializedCompanyState } from './physical-types.js';
+import type { MaterializedCompanyState } from './physical-root-types.js';
 
 type CommandDraft = {
   readonly root: MaterializedCompanyState;
