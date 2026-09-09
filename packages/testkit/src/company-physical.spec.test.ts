@@ -1,19 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
-  PHYSICAL_RULES,
   canonicalJson,
   entityId,
   prepareCompanyEconomy,
   projectCompanyEconomy,
   projectCompanyPhysical,
 } from '@warwrit/game-core';
-import type {
-  CompanyEconomyState,
-  ItemInstance,
-  PhysicalContainer,
-  PhysicalEvidence,
-  PhysicalVitals,
-} from '@warwrit/game-core';
+import type { CompanyEconomyState, PhysicalEvidence } from '@warwrit/game-core';
 import {
   access,
   advance,
@@ -25,199 +18,18 @@ import {
   physicalScope,
   place,
   prepared,
-  tick,
 } from './company-economy-fixture.js';
-
-function visibleCharacter(
-  state: CompanyEconomyState,
-  characterId: string,
-  patch: (
-    character: CompanyEconomyState['lifecycle']['characters'][number],
-  ) => CompanyEconomyState['lifecycle']['characters'][number],
-): CompanyEconomyState {
-  const apply = (characters: CompanyEconomyState['lifecycle']['characters']) =>
-    characters.map((character) =>
-      character.identity.characterId === characterId ? patch(character) : character,
-    );
-  return {
-    ...state,
-    lifecycle: {
-      ...state.lifecycle,
-      characters: apply(state.lifecycle.characters),
-      knowledge: {
-        ...state.lifecycle.knowledge,
-        characters: apply(state.lifecycle.knowledge.characters),
-      },
-    },
-  };
-}
-
-function addContainer(
-  state: CompanyEconomyState,
-  container: PhysicalContainer,
-  known = true,
-): CompanyEconomyState {
-  const physical = state.physical!;
-  return {
-    ...state,
-    physical: {
-      ...physical,
-      containers: [...physical.containers, container],
-      knowledge: {
-        ...physical.knowledge,
-        containerSnapshots: known
-          ? [...physical.knowledge.containerSnapshots, structuredClone(container)]
-          : physical.knowledge.containerSnapshots,
-      },
-    },
-  };
-}
-
-function addItem(
-  state: CompanyEconomyState,
-  item: ItemInstance,
-  known = true,
-): CompanyEconomyState {
-  const physical = state.physical!;
-  return {
-    ...state,
-    physical: {
-      ...physical,
-      items: [...physical.items, item],
-      knowledge: {
-        ...physical.knowledge,
-        itemSnapshots: known
-          ? [...physical.knowledge.itemSnapshots, structuredClone(item)]
-          : physical.knowledge.itemSnapshots,
-      },
-    },
-  };
-}
-
-function addVitals(
-  state: CompanyEconomyState,
-  vitals: PhysicalVitals,
-  known = true,
-): CompanyEconomyState {
-  const physical = state.physical!;
-  return {
-    ...state,
-    physical: {
-      ...physical,
-      vitals: [...physical.vitals, vitals],
-      knowledge: {
-        ...physical.knowledge,
-        vitalSnapshots: known
-          ? [...physical.knowledge.vitalSnapshots, structuredClone(vitals)]
-          : physical.knowledge.vitalSnapshots,
-      },
-    },
-  };
-}
-
-function container(
-  id: string,
-  custodian: PhysicalContainer['custodian'],
-  capacityG = 30000,
-  carrier: PhysicalContainer['carrier'] = null,
-): PhysicalContainer {
-  return {
-    containerId: id,
-    kind: carrier ? 'CARRIED' : 'STATIC',
-    location: place,
-    custodian,
-    carrier,
-    capacityG,
-    access: custodian.kind === 'COMPANY' ? 'COMPANY' : 'OWNER',
-    closed: null,
-  };
-}
-
-function item(
-  id: string,
-  definitionId: string,
-  owner: ItemInstance['owner'],
-  containerId: string,
-  quantity = 1,
-  currentCondition: number = PHYSICAL_RULES.defaultConditionMaximum,
-  maximumCondition: number = PHYSICAL_RULES.defaultConditionMaximum,
-): ItemInstance {
-  return {
-    itemId: id,
-    definitionId,
-    owner,
-    containerId,
-    quantity,
-    currentCondition,
-    maximumCondition,
-    contentRevision: '1',
-    provenance: { sourceId: 'fixture-item-source', parentItemId: null, ordinal: 0 },
-    equipped: null,
-    tombstone: null,
-  };
-}
-
-function itemAccess(
-  state: CompanyEconomyState,
-  id: string,
-  purpose: Extract<PhysicalEvidence, { kind: 'ITEM_ACCESS' }>['purpose'],
-  containerIds: readonly string[],
-  itemIds: readonly string[],
-): Extract<PhysicalEvidence, { kind: 'ITEM_ACCESS' }> {
-  return {
-    ...physicalScope(state, id),
-    kind: 'ITEM_ACCESS',
-    operatorId: 'leader',
-    location: place,
-    containerIds,
-    itemIds,
-    purpose,
-  };
-}
-
-function withMedicineProvider(state: CompanyEconomyState): CompanyEconomyState {
-  return visibleCharacter(state, 'provider', (character) => ({
-    ...character,
-    skills: { ...character.skills, medicine: 20 },
-    aptitudeBySkill: { ...character.aptitudeBySkill, medicine: 10000 },
-  }));
-}
-
-function condition(
-  state: CompanyEconomyState,
-  characterId: string,
-  definitionId: 'minor-field-wound' | 'severe-stable-wound' | 'critical-bleed' | 'old-impairment',
-  id: string,
-) {
-  const deadlineTick =
-    definitionId === 'critical-bleed'
-      ? tick(BigInt(state.finance.processedTick) + 250n)
-      : undefined;
-  const cmd = command(
-    state,
-    'ApplyCondition',
-    {
-      receiptId: id,
-      characterId,
-      conditionDefinitionId: definitionId,
-      causeId: `cause-${id}`,
-      ...(deadlineTick ? { deadlineTick } : {}),
-    },
-    id,
-    'DOMAIN_RECEIPT',
-  );
-  const fact: PhysicalEvidence = {
-    ...physicalScope(state, id),
-    sourceEventId: cmd.sourceEventId,
-    kind: 'CONDITION_SOURCE',
-    characterId,
-    definitionId,
-    causeId: `cause-${id}`,
-    onsetTick: state.finance.processedTick,
-    ...(deadlineTick ? { deadlineTick } : {}),
-  };
-  return prepared(prepareCompanyEconomy(state, cmd, context(state, cmd, [], [], [fact])));
-}
+import {
+  addContainer,
+  addItem,
+  addVitals,
+  condition,
+  container,
+  item,
+  itemAccess,
+  visibleCharacter,
+  withCareProvider as withMedicineProvider,
+} from './company-physical-fixture.js';
 
 function publicPair(state: CompanyEconomyState) {
   return {
@@ -600,7 +412,7 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       invalidCare,
       context(state, invalidCare, [], [], [invalidFact]),
     );
-    expect(rejected).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(rejected).toMatchObject({ kind: 'REJECTED', error: 'UNKNOWN_DEFINITION' });
     expect(rejected.state).toBe(state);
   });
 
