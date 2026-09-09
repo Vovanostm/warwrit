@@ -37,23 +37,41 @@ export function person(id: string, inParty = true): LifecycleCharacter {
     identity: {
       characterId: entityId(id),
       birthName: id,
-      sex: 'male',
-      birthCultureId: entityId('north'),
+      sex: 'fixture',
+      birthCultureId: entityId('culture'),
       birthplaceId: entityId('village'),
       originId: entityId('broken-company'),
       speciesId: entityId('human'),
-      bornAt: birthTick('-10000000'),
+      bornAt: birthTick('-10000'),
     },
     presence: {
       characterId: entityId(id),
-      location: place,
       assignment: inParty ? 'FIELD' : 'NONE',
       availability: 'AVAILABLE',
+      location: place,
       fieldPartyId: inParty ? entityId('party') : null,
       encounterBindingId: null,
     },
-    skills: { leadership: 25 },
-    aptitudeBySkill: { leadership: 10000 },
+    skills: {
+      blades: 10,
+      polearms: 10,
+      heavy: 10,
+      archery: 10,
+      defense: 10,
+      medicine: 0,
+      scholarship: 0,
+      leadership: id === 'leader' ? 70 : 0,
+    },
+    aptitudeBySkill: {
+      blades: 10000,
+      polearms: 10000,
+      heavy: 10000,
+      archery: 10000,
+      defense: 10000,
+      medicine: 10000,
+      scholarship: 10000,
+      leadership: 10000,
+    },
     perks: [],
     conditionIds: [],
   };
@@ -94,8 +112,8 @@ function fixturePhysical(lifecycle: LifecycleState) {
 /** A loaded, explicit local economy; small tariffs are intentional arithmetic examples. */
 export function economy(
   rates: readonly bigint[] = [1n, 3n],
-  balance = 100n,
-  at = 1000,
+  balance = 10000n,
+  at: bigint | number | string = 0,
 ): CompanyEconomyState {
   const ids = ['leader', ...rates.map((_, i) => `worker-${i}`)];
   const members = ids.map((id, i) => ({
@@ -211,14 +229,7 @@ export function claims(
         toTick: tick(1000),
         dailyWageMilli: String(weight),
         maintenanceId: null,
-        earned: [
-          {
-            fromTick: tick(999),
-            toTick: tick(1000),
-            dailyWageMilli: String(weight),
-            maintenanceId: null,
-          },
-        ],
+        earned: [{ fromTick: tick(999), toTick: tick(1000), dailyWageMilli: String(weight), maintenanceId: null }],
         paidQ: cash(0),
         reportedQ: cash(weight),
         reportedCoveredQ: cash(0),
@@ -230,23 +241,20 @@ export function claims(
 export function command(
   state: CompanyEconomyState,
   type: CompanyCommandType,
-  payload: unknown,
+  payload: Record<string, unknown>,
   id = `${type}-${state.lifecycle.revision}`,
   actor: ActorKind = 'PLAYER',
-  at = state.finance.processedTick,
 ) {
   return {
     schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
-    commandId: id,
-    type,
-    payload,
-    worldId: state.lifecycle.worldId,
-    companyId: state.lifecycle.companyId,
-    actorRef: { kind: actor, id: 'principal' },
-    campaignTick: at,
-    expectedRevision:
-      actor === 'PLAYER' ? state.lifecycle.knowledge.revision : state.lifecycle.revision,
     rulesetId: COMPANY_RULESET_ID,
+    type,
+    commandId: id,
+    actorRef: { kind: actor, id: actor === 'PLAYER' ? 'player' : 'system' },
+    campaignTick: state.finance.processedTick,
+    canonicalRevision: state.lifecycle.revision,
+    publicRevision: state.lifecycle.knowledge.revision,
+    payload,
     sourceEventId: `source-${id}`,
   };
 }
@@ -313,6 +321,7 @@ function automaticFoodFacts(
   const ordered = [...points].sort((a, b) => (a < b ? -1 : 1));
   const facts: PhysicalEvidence[] = [];
   let ordinal = 0;
+  const targetTick = tick(to);
   for (const membership of state.lifecycle.memberships) {
     for (let i = 0; i < ordered.length - 1; i++) {
       const start = ordered[i]!;
@@ -324,7 +333,7 @@ function automaticFoodFacts(
         continue;
       const id = `food-${membership.membershipId}-${start}-${end}`;
       facts.push({
-        ...physicalScope(state, id, cmd.campaignTick, ordinal++),
+        ...physicalScope(state, id, targetTick, ordinal++),
         kind: 'FOOD_FULFILLMENT',
         membershipId: membership.membershipId,
         fromTick: tick(start),
@@ -390,37 +399,24 @@ export function pay(
   state: CompanyEconomyState,
   amount: bigint,
   mode: 'DEFAULT' | 'TARGETED' = 'DEFAULT',
-  payeeId = 'worker-0',
+  payeeId?: string,
 ) {
   const cmd = command(state, 'PayClaims', {
     poolId: 'local',
-    amountQ: String(amount),
-    claimIds: [],
+    amountQ: cash(amount),
     mode,
-    ...(mode === 'TARGETED' ? { payeeId } : {}),
+    ...(payeeId ? { payeeId } : {}),
+    accessEvidenceId: 'money-access',
   });
-  return prepared(prepareCompanyEconomy(state, cmd, context(state, cmd, [access(state)])));
+  return prepareCompanyEconomy(state, cmd, context(state, cmd, [access(state)]));
 }
 
 export function advance(
   state: CompanyEconomyState,
-  to: number,
+  to: bigint | number | string,
   financeFacts: readonly FinanceEvidence[] = [],
 ) {
-  const cmd = command(
-    state,
-    'AdvanceCampaign',
-    {
-      toTick: String(to),
-      authoritativeInputs: financeFacts
-        .filter((f) =>
-          ['QUALIFICATION_NOTICE', 'WAGE_COMMUNICATION', 'MAINTENANCE_BOUNDARY'].includes(f.kind),
-        )
-        .map((f) => f.id),
-    },
-    `advance-${to}-${state.lifecycle.revision}`,
-    'SYSTEM',
-  );
+  const cmd = command(state, 'AdvanceCampaign', { toTick: tick(to) });
   return prepared(prepareCompanyEconomy(state, cmd, context(state, cmd, financeFacts)));
 }
 
@@ -437,19 +433,19 @@ export function observation(
     'Observe',
     {
       observationId: id,
+      sourceId: `source-${id}`,
+      factId: id,
       observerRef: { kind: 'COMPANY', id: state.lifecycle.companyId },
       subjectRef: { kind: 'CHARACTER', id: characterId },
-      factId: id,
-      sourceId: `source-${id}`,
     },
     id,
-    'DOMAIN_RECEIPT',
+    'SYSTEM',
   );
-  const fact: LifecycleEvidence = {
+  const fact = {
     ...scope(state, id),
     sourceEventId: cmd.sourceEventId,
-    kind: 'COMPANY_OBSERVATION',
-    subject: { kind: 'CHARACTER', id: characterId },
+    kind: 'COMPANY_OBSERVATION' as const,
+    subject: { kind: 'CHARACTER' as const, id: characterId },
   };
   const physicalFact: PhysicalEvidence = {
     ...physicalScope(state, id),
