@@ -47,6 +47,13 @@ jobs:
               s = s.replace(name, '')
           s = s.replace("  let lifecycle = movePresence(root.lifecycle, p.characterId, availability, fact.location);", "  const lifecycle = movePresence(root.lifecycle, p.characterId, availability, fact.location);")
           p.write_text(s)
+          p = Path('packages/testkit/src/company-physical.spec.test.ts')
+          s = p.read_text()
+          s = s.replace("  currentCondition = PHYSICAL_RULES.defaultConditionMaximum,\n  maximumCondition = PHYSICAL_RULES.defaultConditionMaximum,", "  currentCondition: number = PHYSICAL_RULES.defaultConditionMaximum,\n  maximumCondition: number = PHYSICAL_RULES.defaultConditionMaximum,")
+          s = s.replace("  PHYSICAL_RULES,\n  canonicalJson,", "  PHYSICAL_RULES,\n  canonicalJson,\n  entityId,")
+          s = s.replace("encounterBindingId: 'encounter'", "encounterBindingId: entityId('encounter')")
+          s = s.replace("      physical: undefined,\n", "")
+          p.write_text(s)
           PY
           corepack enable
           pnpm install --frozen-lockfile
