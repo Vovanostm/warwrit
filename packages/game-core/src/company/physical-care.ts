@@ -23,10 +23,9 @@ import type {
   CompanyPhysicalState,
   ConditionInstance,
   FoodCarry,
-  MaterializedCompanyState,
-  PhysicalChange,
   PhysicalVitals,
 } from './physical-types.js';
+import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
 import { PHYSICAL_RULES } from './physical-types.js';
 
 function cloneKnownCharacter(
@@ -592,12 +591,12 @@ export function ensureNewMembershipVitals(
 ): CompanyPhysicalState {
   let result = physical;
   for (const membership of next.memberships.filter((entry) => entry.endedAt === null)) {
-    const hadMembership = before.memberships.some(
-      (entry) => entry.characterId === membership.characterId,
+    const isNewMembership = !before.memberships.some(
+      (entry) => entry.membershipId === membership.membershipId,
     );
+    if (!isNewMembership) continue;
     const hasVitals = result.vitals.some((entry) => entry.characterId === membership.characterId);
     if (hasVitals) continue;
-    requirePhysical(!hadMembership, 'INVALID_STATE');
     const vitals: PhysicalVitals = {
       characterId: membership.characterId,
       sourceId,
