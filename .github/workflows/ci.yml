@@ -24,16 +24,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          ref: ${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version-file: .node-version
 
-      - name: Apply and format WP-02.4 source normalization
+      - name: Materialize pending fixes for review
         if: github.event_name == 'pull_request' && github.head_ref == 'feat/wp-02-inventory-care'
         run: |
+          git show 655caaf88c3e3ba87c5a0d2cab3ea89953fe2dc7:packages/testkit/src/company-economy-fixture.ts > packages/testkit/src/company-economy-fixture.ts
           node scripts/wp024-normalize.mjs
           python3 - <<'PY'
           from pathlib import Path
@@ -52,26 +54,23 @@ jobs:
           s = s.replace("  currentCondition = PHYSICAL_RULES.defaultConditionMaximum,\n  maximumCondition = PHYSICAL_RULES.defaultConditionMaximum,", "  currentCondition: number = PHYSICAL_RULES.defaultConditionMaximum,\n  maximumCondition: number = PHYSICAL_RULES.defaultConditionMaximum,")
           s = s.replace("  PHYSICAL_RULES,\n  canonicalJson,", "  PHYSICAL_RULES,\n  canonicalJson,\n  entityId,")
           s = s.replace("encounterBindingId: 'encounter'", "encounterBindingId: entityId('encounter')")
-          s = s.replace("      physical: undefined,\n", "")
+          s = s.replace("      ...state,\n      physical: undefined,", "      finance: state.finance,")
+          s = s.replace("      ...accepted.next,\n      physical: undefined,", "      finance: accepted.next.finance,")
+          p.write_text(s)
+          p = Path('packages/testkit/src/company-economy-fixture.ts')
+          s = p.read_text().replace('...physicalScope(state, id, cmd.campaignTick, ordinal++),', '...physicalScope(state, id, tick(to), ordinal++),')
           p.write_text(s)
           PY
           corepack enable
           pnpm install --frozen-lockfile
-          pnpm exec prettier --write .
+          rm scripts/wp024-normalize.mjs
+          pnpm exec prettier --write packages/game-core/src/company packages/testkit/src
+          git add packages/game-core/src/company packages/testkit/src scripts/wp024-normalize.mjs
+          git diff --cached --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "fix(wp-02.4): persist source normalization and restore fixture contracts"
+          git push origin HEAD:feat/wp-02-inventory-care
 
       - name: Bootstrap and verify
         run: ./scripts/bootstrap.sh
-
-      - name: Commit normalized WP-02.4 sources and restore CI
-        if: github.event_name == 'pull_request' && github.head_ref == 'feat/wp-02-inventory-care'
-        run: |
-          git checkout origin/main -- .github/workflows/ci.yml
-          rm scripts/wp024-normalize.mjs
-          git add -A
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "fix(wp-02.4): normalize physical domain sources"
-          git push origin HEAD:${{ github.head_ref }}
