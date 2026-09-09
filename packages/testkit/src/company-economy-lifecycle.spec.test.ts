@@ -237,8 +237,9 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
       context(funded, cmd, [tariff], [offer]),
     );
     if (draft.kind !== 'PREPARED') throw new Error('recruit lifecycle fixture');
-    const membershipId = draft.next.memberships.find((m) => m.characterId === 'provider')!
-      .membershipId;
+    const membershipId = draft.next.memberships.find(
+      (m) => m.characterId === 'provider',
+    )!.membershipId;
     const delivery: PhysicalEvidence = {
       ...physicalScope(funded, 'recruit-delivery'),
       kind: 'RECRUIT_ITEM',
@@ -248,6 +249,24 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
       toContainerId: 'fixture-supply',
       offeredOwner: offeredItem.owner,
     };
+    const remote: CompanyEconomyState = {
+      ...funded,
+      physical: {
+        ...funded.physical!,
+        containers: funded.physical!.containers.map((c) =>
+          c.containerId === offeredContainer.containerId
+            ? { ...c, location: { ...place, areaId: 'locked-vault' } }
+            : c,
+        ),
+      },
+    };
+    const inaccessible = prepareCompanyEconomy(
+      remote,
+      cmd,
+      context(remote, cmd, [tariff], [offer], [delivery]),
+    );
+    expect(inaccessible).toMatchObject({ kind: 'REJECTED', error: 'CONTACT_OR_ACCESS_REQUIRED' });
+    expect(inaccessible.state).toBe(remote);
     const accepted = prepared(
       prepareCompanyEconomy(funded, cmd, context(funded, cmd, [tariff], [offer], [delivery])),
     );
@@ -256,7 +275,9 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
     );
     expect(accepted.next.finance.wallets.find((w) => w.walletId === 'purse')?.cashQ).toBe('7');
     expect(accepted.receipt.requirements.filter((r) => r.kind === 'RECRUIT_ITEMS')).toEqual([]);
-    expect(accepted.next.physical!.items.find((i) => i.itemId === offeredItem.itemId)).toMatchObject({
+    expect(
+      accepted.next.physical!.items.find((i) => i.itemId === offeredItem.itemId),
+    ).toMatchObject({
       containerId: 'fixture-supply',
       owner: offeredItem.owner,
       quantity: 1,
@@ -597,7 +618,9 @@ describe('WP02.3 — real lifecycle requirements, debt and parting', () => {
     expect(
       departure.next.finance.claims.find((c) => c.claimId === distantClaim.claimId)?.paidQ,
     ).toBe('0');
-    expect(departure.receipt.requirements.filter((r) => r.kind === 'PHYSICAL_DEPARTURE')).toEqual([]);
+    expect(departure.receipt.requirements.filter((r) => r.kind === 'PHYSICAL_DEPARTURE')).toEqual(
+      [],
+    );
     expect(departure.next.lifecycle.memberships[1]?.endedAt).toBe('1000');
     const retry = prepared(
       prepareCompanyEconomy(departure.next, execute, context(departure.next, execute)),

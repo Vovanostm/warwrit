@@ -49,8 +49,8 @@ export function withLoadedConditions(
   );
   const loaded = createCompanyPhysicalState(lifecycle, {
     conditionBindings: bindings,
-    knownConditionBindings: state.physical!.knowledge.conditionSnapshots
-      .filter((entry) => entry.resolvedAt === null)
+    knownConditionBindings: state
+      .physical!.knowledge.conditionSnapshots.filter((entry) => entry.resolvedAt === null)
       .map(({ deadlineTick, ...binding }) => ({
         ...binding,
         ...(deadlineTick === null ? {} : { deadlineTick }),

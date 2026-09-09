@@ -192,6 +192,35 @@ function endMembershipForDeparture(
   });
   return { lifecycle, finance, physical };
 }
+/** Follow an actual admitted carrier movement; never recall property from another location. */
+function followCarrierLocations(
+  before: LifecycleState,
+  after: LifecycleState,
+  physical: CompanyPhysicalState,
+): CompanyPhysicalState {
+  return {
+    ...physical,
+    containers: physical.containers.map((container) => {
+      const carrier = container.carrier;
+      if (container.closed !== null || carrier === null) return container;
+      const locationAt = (state: LifecycleState) =>
+        carrier.kind === 'CHARACTER'
+          ? state.characters.find((p) => p.identity.characterId === carrier.id)?.presence.location
+          : state.parties.find((p) => p.partyId === carrier.id)?.location;
+      const previous = locationAt(before);
+      const current = locationAt(after);
+      if (
+        previous === undefined ||
+        current === undefined ||
+        canonicalJson(previous) === canonicalJson(current) ||
+        canonicalJson(container.location) !== canonicalJson(previous)
+      )
+        return container;
+      return { ...container, location: ownPhysical(current) };
+    }),
+  };
+}
+
 export function settlePhysicalRequirements(
   root: MaterializedCompanyState,
   beforeLifecycle: LifecycleState,
@@ -251,7 +280,7 @@ export function settlePhysicalRequirements(
   let physical = ensureNewMembershipVitals(
     beforeLifecycle,
     next.lifecycle,
-    next.physical,
+    followCarrierLocations(beforeLifecycle, next.lifecycle, next.physical),
     sourceId,
   );
   const lifecycle = syncLifecycleConditions(next.lifecycle, physical);

@@ -3,6 +3,7 @@ import { canonicalJson } from './input.js';
 import { activeMembership, person, sameLocation } from './lifecycle-state.js';
 import {
   availableContainerG,
+  containerWeightG,
   itemDefinition,
   ownPhysical,
   physicalContainer,
@@ -147,6 +148,14 @@ export function transferItem(
 ): PhysicalChange {
   const p = command.payload;
   const item = physicalItem(root.physical, p.itemId);
+  if (item.equipped !== null) {
+    const wearer = person(root.lifecycle, item.equipped.characterId);
+    requirePhysical(
+      wearer.presence.availability !== 'IN_ENCOUNTER' &&
+        wearer.presence.encounterBindingId === null,
+      'INCOMPATIBLE_ACTIVITY',
+    );
+  }
   requirePhysical(item.containerId === p.fromContainerId, 'CONTACT_OR_ACCESS_REQUIRED');
   requireItemAccess(
     root,
@@ -166,7 +175,12 @@ export function transferItem(
     command.commandId,
     authorization,
   );
-  if (authorization) physical = recordPhysicalSource(physical, authorization).state;
+  if (authorization) {
+    const recorded = recordPhysicalSource(physical, authorization);
+    requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
+    physical = recorded.state;
+  }
+  requirePartyTransportCapacity(root, physical);
   const affected = [
     p.itemId,
     ...(p.quantity < item.quantity ? [physicalId(command.commandId, p.itemId, 'split')] : []),
@@ -183,6 +197,39 @@ function bodyFor(root: MaterializedCompanyState, characterId: string) {
   requirePhysical(body, 'INVALID_STATE');
   return body;
 }
+/** Personal packs and shared supply use the same finite carriers, not two allowances. */
+function requirePartyTransportCapacity(
+  root: MaterializedCompanyState,
+  physical: CompanyPhysicalState,
+): void {
+  for (const party of root.lifecycle.parties) {
+    const carriers = root.lifecycle.characters.filter(
+      (p) => p.presence.fieldPartyId === party.partyId,
+    );
+    const ids = new Set<string>(carriers.map((p) => p.identity.characterId));
+    const capacity = carriers.reduce(
+      (sum, p) => sum + bodyFor(root, p.identity.characterId).capacityG,
+      0,
+    );
+    const weight = (state: CompanyPhysicalState) =>
+      state.containers
+        .filter(
+          (c) =>
+            c.closed === null &&
+            (c.carrier?.kind === 'PARTY'
+              ? c.carrier.id === party.partyId
+              : c.carrier?.kind === 'CHARACTER' && ids.has(c.carrier.id)),
+        )
+        .reduce((sum, c) => sum + containerWeightG(state, c.containerId), 0);
+    const next = weight(physical);
+    // Fate and departures may leave a load over capacity. Do not delete it or block unloading.
+    requirePhysical(
+      Number.isSafeInteger(next) && (next <= capacity || next <= weight(root.physical)),
+      'CAPACITY',
+    );
+  }
+}
+
 export function equipItem(
   root: MaterializedCompanyState,
   command: CommandOf<'EquipItem'>,
@@ -411,7 +458,9 @@ export function claimLoot(
     [p.toContainerId, ...authorization.fromContainerIds],
     p.itemQuantities.map((entry) => entry.itemId),
   );
-  let physical = recordPhysicalSource(root.physical, authorization).state;
+  const recorded = recordPhysicalSource(root.physical, authorization);
+  requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
+  let physical = recorded.state;
   const totalWeight = p.itemQuantities.reduce((sum, entry) => {
     const item = physicalItem(physical, entry.itemId);
     requirePhysical(
@@ -446,6 +495,7 @@ export function claimLoot(
     if (entry.quantity < item.quantity)
       affected.push(physicalId(command.commandId, entry.itemId, 'split'));
   }
+  requirePartyTransportCapacity(root, physical);
   physical = knownItemMutation(physical, affected, [
     p.toContainerId,
     ...authorization.fromContainerIds,
@@ -460,7 +510,8 @@ export function applyContainerLifecycle(
   const p = command.payload;
   const fact = physicalFact(context, p.receiptId, 'CONTAINER_DISPOSITION');
   requirePhysical(
-    fact.containerId === p.containerId &&
+    fact.sourceEventId === command.sourceEventId &&
+      fact.containerId === p.containerId &&
       fact.causeId === p.causeId &&
       fact.notBefore === p.notBefore &&
       fact.disposition === p.disposition &&
@@ -468,7 +519,9 @@ export function applyContainerLifecycle(
       BigInt(context.atTick) >= BigInt(fact.notBefore),
     'INVALID_SOURCE',
   );
-  let physical = recordPhysicalSource(root.physical, fact).state;
+  const recorded = recordPhysicalSource(root.physical, fact);
+  requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
+  let physical = recorded.state;
   const container = physicalContainer(physical, p.containerId);
   const items = physical.items.filter(
     (item) => item.containerId === container.containerId && item.tombstone === null,
@@ -476,6 +529,10 @@ export function applyContainerLifecycle(
   if (p.disposition === 'TRANSFER') {
     requirePhysical(p.destinationId !== undefined, 'INVALID_ARGUMENT');
     const destination = physicalContainer(physical, p.destinationId);
+    requirePhysical(
+      container.location.kind === 'AT' && sameLocation(container.location, destination.location),
+      'CONTACT_OR_ACCESS_REQUIRED',
+    );
     requirePhysical(
       availableContainerG(physical, destination.containerId) >=
         items.reduce((sum, item) => sum + itemWeight(item), 0),
@@ -599,6 +656,7 @@ export function materializeOpeningItems(
     );
     physical = { ...physical, items: [...physical.items, instance] };
   }
+  requirePartyTransportCapacity(root, physical);
   const holderContainerIds = holderIds.map(
     (holderId) => carriedContainer({ ...root, physical }, holderId, sourceId).containerId,
   );
@@ -634,12 +692,25 @@ export function settleRecruitItems(
         canonicalJson(item.owner) === canonicalJson(fact.offeredOwner),
       'INVALID_SOURCE',
     );
-    physicalContainer(physical, fact.toContainerId);
+    const membership = root.lifecycle.memberships.find(
+      (entry) => entry.membershipId === requirement.membershipId,
+    );
+    requirePhysical(membership, 'INVALID_STATE');
+    const recruit = person(root.lifecycle, membership.characterId);
+    const source = physicalContainer(physical, fact.fromContainerId);
+    const destination = physicalContainer(physical, fact.toContainerId);
+    requirePhysical(
+      recruit.presence.location.kind === 'AT' &&
+        sameLocation(recruit.presence.location, source.location) &&
+        sameLocation(source.location, destination.location),
+      'CONTACT_OR_ACCESS_REQUIRED',
+    );
     const recorded = recordPhysicalSource(physical, fact);
     requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
     physical = recorded.state;
     physical = splitOrMove(physical, item, item.quantity, fact.toContainerId, fact.id);
   }
+  requirePartyTransportCapacity(root, physical);
   return knownItemMutation(physical, requirement.itemIds, []);
 }
 export function returnCompanyItemsForDeparture(

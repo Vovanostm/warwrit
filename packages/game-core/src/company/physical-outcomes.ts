@@ -16,6 +16,7 @@ import {
 } from './physical-state.js';
 import type { CommandOf, LifecycleState } from './lifecycle-types.js';
 import type { CampaignTick } from './values.js';
+import type { LocationRef, OwnerRef } from './model.js';
 import type { EconomyContext, EconomyRequirement } from './economy-types.js';
 import type { CompanyPhysicalState, PhysicalContainer } from './physical-types.js';
 import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
@@ -57,6 +58,23 @@ function carrierContainers(physical: CompanyPhysicalState, characterId: string) 
   return physical.containers.filter(
     (container) => container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
   );
+}
+function moveCarriedProperty(
+  physical: CompanyPhysicalState,
+  characterId: string,
+  location: LocationRef,
+  custodian: OwnerRef,
+): CompanyPhysicalState {
+  return {
+    ...physical,
+    containers: physical.containers.map((container) =>
+      container.closed === null &&
+      container.carrier?.kind === 'CHARACTER' &&
+      container.carrier.id === characterId
+        ? { ...container, location: ownPhysical(location), custodian: ownPhysical(custodian) }
+        : container,
+    ),
+  };
 }
 export function captureCharacter(
   root: MaterializedCompanyState,
@@ -121,6 +139,7 @@ export function captureCharacter(
       equipped: null,
     });
   }
+  physical = moveCarriedProperty(physical, p.characterId, fact.location, fact.captor);
   const lifecycle = movePresence(root.lifecycle, p.characterId, 'CAPTIVE', fact.location);
   const finance = setActualFinancePaused({ ...root, lifecycle, physical }, p.characterId, true);
   physical = {
@@ -148,6 +167,8 @@ export function releaseCaptive(
   const custody = root.physical.custody.find((entry) => entry.characterId === p.characterId);
   requirePhysical(
     custody &&
+      person(root.lifecycle, p.characterId).presence.availability === 'CAPTIVE' &&
+      fact.sourceEventId === command.sourceEventId &&
       fact.characterId === p.characterId &&
       fact.route === p.route &&
       canonicalJson(fact.location) === canonicalJson(p.locationRef) &&
@@ -158,7 +179,10 @@ export function releaseCaptive(
   requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
   const lifecycle = movePresence(root.lifecycle, p.characterId, 'AVAILABLE', fact.location);
   const physical = {
-    ...recorded.state,
+    ...moveCarriedProperty(recorded.state, p.characterId, fact.location, {
+      kind: 'CHARACTER',
+      id: p.characterId,
+    }),
     custody: recorded.state.custody.filter((entry) => entry.characterId !== p.characterId),
   };
   const finance = setActualFinancePaused({ ...root, lifecycle, physical }, p.characterId, true);
@@ -174,6 +198,8 @@ export function transferCaptive(
   const custody = root.physical.custody.find((entry) => entry.characterId === p.characterId);
   requirePhysical(
     custody &&
+      person(root.lifecycle, p.characterId).presence.availability === 'CAPTIVE' &&
+      fact.sourceEventId === command.sourceEventId &&
       custody.custodian.id === p.fromCustodianId &&
       fact.characterId === p.characterId &&
       fact.fromCustodianId === p.fromCustodianId &&
@@ -185,7 +211,7 @@ export function transferCaptive(
   requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
   const lifecycle = movePresence(root.lifecycle, p.characterId, 'CAPTIVE', fact.location);
   const physical = {
-    ...recorded.state,
+    ...moveCarriedProperty(recorded.state, p.characterId, fact.location, fact.toCustodian),
     custody: recorded.state.custody.map((entry) =>
       entry.characterId === p.characterId
         ? {
@@ -268,7 +294,10 @@ export function applyDeath(
       fact.location,
     );
   requirePhysical(
-    existingCorpse === undefined || existingCorpse.kind === 'CORPSE',
+    existingCorpse === undefined ||
+      (existingCorpse.kind === 'CORPSE' &&
+        existingCorpse.closed === null &&
+        sameLocation(existingCorpse.location, fact.location)),
     'INVALID_SOURCE',
   );
   if (!existingCorpse) physical = { ...physical, containers: [...physical.containers, corpse] };
@@ -325,6 +354,8 @@ export function resolveMissing(
   requirePhysical(
     character.presence.availability === 'OUT_OF_CONTACT' &&
       fact.characterId === p.characterId &&
+      fact.sourceEventId === command.sourceEventId &&
+      ['ALIVE', 'CAPTIVE', 'DEAD'].includes(fact.outcome) &&
       fact.notBefore === p.notBefore &&
       BigInt(context.atTick) >= BigInt(fact.notBefore),
     'INVALID_SOURCE',
@@ -368,6 +399,21 @@ export function resolveMissing(
       ),
     };
   }
+  requirePhysical(
+    fact.actualDeathTick === undefined &&
+      fact.causeId === undefined &&
+      fact.custodyOutcomeId === undefined &&
+      fact.financialDeathReceiptId === undefined &&
+      (fact.outcome === 'CAPTIVE' || fact.custodian === undefined),
+    'INVALID_SOURCE',
+  );
+  if (fact.outcome === 'CAPTIVE') requirePhysical(fact.custodian !== undefined, 'INVALID_SOURCE');
+  physical = moveCarriedProperty(
+    physical,
+    p.characterId,
+    fact.location,
+    fact.custodian ?? { kind: 'CHARACTER', id: p.characterId },
+  );
   const availability = fact.outcome === 'CAPTIVE' ? 'CAPTIVE' : 'AVAILABLE';
   const lifecycle = movePresence(root.lifecycle, p.characterId, availability, fact.location);
   if (availability === 'CAPTIVE') {

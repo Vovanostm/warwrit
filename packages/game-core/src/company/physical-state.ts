@@ -1,4 +1,4 @@
-import { COMPANY_CATALOGUE } from './definitions.js';
+import { COMPANY_CATALOGUE, COMPANY_RULES } from './definitions.js';
 import { canonicalJson, snapshotJson } from './input.js';
 import { sameLocation } from './lifecycle-state.js';
 import type { LifecycleCharacter, LifecycleState } from './lifecycle-types.js';
@@ -270,7 +270,9 @@ export function physicalEffectKey(fact: PhysicalEvidence): string {
             ? ['container', fact.containerId]
             : fact.kind === 'PHYSICAL_OBSERVATION'
               ? [fact.subject.kind, fact.subject.id]
-              : ['fact', fact.id];
+              : fact.kind === 'LOOT_AUTHORIZATION'
+                ? ['outcome', fact.outcomeId]
+                : ['fact', fact.id];
   return canonicalJson([fact.kind, fact.sourceEventId, subject]);
 }
 export function recordPhysicalSource(
@@ -303,6 +305,8 @@ export function physicalFact<K extends PhysicalEvidence['kind']>(
   const fact = matches[0]!;
   requirePhysical(
     fact.kind === kind &&
+      isEntityId(fact.id) &&
+      isEntityId(fact.sourceEventId) &&
       fact.companyId === context.companyId &&
       fact.worldId === context.worldId &&
       fact.revision === context.canonicalRevision &&
@@ -458,6 +462,18 @@ export function validatePhysicalState(
     );
     const body = species && COMPANY_CATALOGUE.bodies.find((entry) => entry.id === species.bodyId);
     requirePhysical(body, 'INVALID_STATE');
+    // All carried containers share this body's allowance; equipment is already in that weight.
+    const carried = physical.containers.filter(
+      (container) =>
+        container.closed === null &&
+        container.carrier?.kind === 'CHARACTER' &&
+        container.carrier.id === character.identity.characterId,
+    );
+    const weight = carried.reduce(
+      (sum, container) => sum + containerWeightG(physical, container.containerId),
+      0,
+    );
+    requirePhysical(Number.isSafeInteger(weight) && weight <= body.capacityG, 'CAPACITY');
     const equipped = physical.items.filter(
       (item) =>
         item.equipped?.characterId === character.identity.characterId && item.tombstone === null,
@@ -523,6 +539,7 @@ export function validatePhysicalState(
         isExactInteger(custody.sinceTick),
       'INVALID_STATE',
     );
+  validateFoodHistory(lifecycle, physical);
   const snapshotSets = [
     physical.knowledge.itemSnapshots.map((entry) => entry.itemId),
     physical.knowledge.conditionSnapshots.map((entry) => entry.conditionId),
@@ -531,4 +548,52 @@ export function validatePhysicalState(
   ];
   for (const ids of snapshotSets)
     requirePhysical(new Set(ids).size === ids.length, 'INVALID_STATE');
+}
+
+/** Policy 2 carries only food already debited; loaded remainder alone is not fulfillment. */
+function validateFoodHistory(lifecycle: LifecycleState, physical: CompanyPhysicalState): void {
+  const day = BigInt(COMPANY_RULES.ticksPerDay);
+  const rate = BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay);
+  const memberships = new Set([
+    ...physical.food.map((entry) => entry.membershipId),
+    ...physical.foodCarry.map((entry) => entry.membershipId),
+  ]);
+  for (const membershipId of memberships) {
+    requirePhysical(
+      lifecycle.memberships.some((entry) => entry.membershipId === membershipId),
+      'INVALID_STATE',
+    );
+    const entries = physical.food.filter((entry) => entry.membershipId === membershipId);
+    for (const entry of entries)
+      requirePhysical(
+        isEntityId(entry.sourceId) &&
+          isExactInteger(entry.fromTick) &&
+          isExactInteger(entry.toTick) &&
+          BigInt(entry.toTick) > BigInt(entry.fromTick) &&
+          isExactInteger(entry.unitsConsumed) &&
+          ['STOCK', 'PROVIDER'].includes(entry.channel),
+        'INVALID_STATE',
+      );
+    entries.sort((a, b) => (BigInt(a.fromTick) < BigInt(b.fromTick) ? -1 : 1));
+    let end = 0n;
+    let demand = 0n;
+    let debited = 0n;
+    for (const entry of entries) {
+      const from = BigInt(entry.fromTick);
+      const to = BigInt(entry.toTick);
+      requirePhysical(from >= end, 'INVALID_STATE');
+      end = to;
+      if (entry.channel === 'STOCK') {
+        demand += (to - from) * rate;
+        debited += BigInt(entry.unitsConsumed);
+      } else requirePhysical(entry.unitsConsumed === '0', 'INVALID_STATE');
+    }
+    const carry =
+      physical.foodCarry.find((entry) => entry.membershipId === membershipId)?.tickUnits ?? '0';
+    requirePhysical(isExactInteger(carry), 'INVALID_STATE');
+    requirePhysical(
+      debited === (demand + day - 1n) / day && BigInt(carry) === demand % day,
+      'INVALID_STATE',
+    );
+  }
 }

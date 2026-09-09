@@ -61,7 +61,11 @@ function patient(): CompanyEconomyState {
     item('medicine-stock', 'medical-unit', { kind: 'COMPANY', id: 'company' }, 'fixture-supply', 2),
   );
 }
-function careInput(state: CompanyEconomyState, conditionId: string, careDefinitionId = 'wound-care') {
+function careInput(
+  state: CompanyEconomyState,
+  conditionId: string,
+  careDefinitionId = 'wound-care',
+) {
   const cmd = command(
     state,
     'ApplyCare',
@@ -120,6 +124,40 @@ function providerFood(state: CompanyEconomyState, to: number, cost: number) {
 }
 
 describe('WP-02.4 — adversarial recovery and fulfillment review', () => {
+  it('P4/P8: a loaded food remainder must be backed by an actual fulfillment history', () => {
+    const base = withStock(resting(economy([], 0n, 0), 'leader'), 0);
+    const state: CompanyEconomyState = {
+      ...base,
+      physical: {
+        ...base.physical!,
+        foodCarry: [{ membershipId: 'service-leader', tickUnits: '1' }],
+      },
+    };
+    const cmd = command(
+      state,
+      'AdvanceCampaign',
+      { toTick: '10', authoritativeInputs: [] },
+      'unbacked-carry',
+      'SYSTEM',
+    );
+    const result = prepareCompanyEconomy(state, cmd, context(state, cmd));
+    expect(result).toMatchObject({ kind: 'REJECTED', error: 'INVALID_STATE' });
+    expect(result.state).toBe(state);
+  });
+
+  it('I2/P8: an old unbacked physical policy is not silently interpreted as funded food', () => {
+    const base = economy([], 0n, 0);
+    const state = JSON.parse(JSON.stringify(base)) as CompanyEconomyState;
+    Object.assign(state.physical!, { policyVersion: 's02-physical-1' });
+    const cmd = command(state, 'RenameCompany', {
+      companyId: 'company',
+      name: 'New name',
+      bannerId: 'banner',
+    });
+    const result = prepareCompanyEconomy(state, cmd, context(state, cmd));
+    expect(result).toMatchObject({ kind: 'REJECTED', error: 'INVALID_STATE' });
+    expect(result.state).toBe(state);
+  });
   it.each(['severe-stable-wound', 'critical-bleed'] as const)(
     'P3/P4: %s cannot restore health before actual treatment',
     (definitionId) => {
@@ -186,7 +224,9 @@ describe('WP-02.4 — adversarial recovery and fulfillment review', () => {
     });
     const healed = advance(treated, 500).next;
     expect(health(healed)).toBe(100);
-    expect(healed.physical!.conditions.find((c) => c.conditionId === stable.conditionId)).toMatchObject({
+    expect(
+      healed.physical!.conditions.find((c) => c.conditionId === stable.conditionId),
+    ).toMatchObject({
       resolvedAt: '500',
     });
     expect(prepared(prepareCompanyEconomy(healed, cmd, context(healed, cmd))).next).toBe(healed);
@@ -233,7 +273,12 @@ describe('WP-02.4 — adversarial recovery and fulfillment review', () => {
   it('P4/P8: a consumed ration backs the remainder across reload and fragmented time', () => {
     const initial = withStock(resting(economy([], 0n, 0), 'leader'), 1);
     const first = advance(initial, 1).next;
-    expect(first.physical!.items[0]?.quantity).toBe(0);
+    expect(first.physical!.items.filter((i) => i.tombstone === null)).toEqual([]);
+    expect(first.physical!.items[0]).toMatchObject({
+      quantity: 1,
+      containerId: null,
+      tombstone: { causeId: 'FOOD_CONSUMPTION' },
+    });
     expect(first.physical!.foodCarry[0]?.tickUnits).toBe('1');
     const split = advance(JSON.parse(JSON.stringify(first)), 1000).next;
     const whole = advance(initial, 1000).next;
