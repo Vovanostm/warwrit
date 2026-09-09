@@ -181,6 +181,7 @@ export interface CashMovement {
     | 'TRANSFER'
     | 'FAREWELL'
     | 'CARE'
+    | 'CARE_HANDOVER'
     | 'FOOD'
     | 'REPAIR';
   readonly atTick: CampaignTick;

@@ -19,13 +19,14 @@ import {
 } from './physical-state.js';
 import type { CommandOf, LifecycleState } from './lifecycle-types.js';
 import type { CompanyFinance, EconomyContext, EconomyRequirement } from './economy-types.js';
+import type { MaterializedCompanyState } from './physical-root-types.js';
 import type {
   CompanyPhysicalState,
   ConditionInstance,
   FoodCarry,
   PhysicalVitals,
 } from './physical-types.js';
-import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
+import type { PhysicalChange } from './physical-root-types.js';
 import { PHYSICAL_RULES } from './physical-types.js';
 
 function cloneKnownCharacter(
@@ -62,9 +63,7 @@ function cloneKnownCharacter(
         ...ownPhysical(conditions),
       ],
       vitalSnapshots: [
-        ...physical.knowledge.vitalSnapshots.filter(
-          (entry) => entry.characterId !== characterId,
-        ),
+        ...physical.knowledge.vitalSnapshots.filter((entry) => entry.characterId !== characterId),
         ...ownPhysical(vitals),
       ],
     },
@@ -143,10 +142,7 @@ export function applyCondition(
 }
 function consumeCareMaterial(
   physical: CompanyPhysicalState,
-  fact: Extract<
-    NonNullable<EconomyContext['physicalFacts']>[number],
-    { kind: 'CARE_FULFILLMENT' }
-  >,
+  fact: Extract<NonNullable<EconomyContext['physicalFacts']>[number], { kind: 'CARE_FULFILLMENT' }>,
   careId: string,
   atTick: typeof physical.processedTick,
 ): CompanyPhysicalState {
@@ -156,13 +152,9 @@ function consumeCareMaterial(
   );
   const resource = physicalItem(physical, fact.resourceItemId);
   requirePhysical(resource.containerId === fact.resourceContainerId, 'INVALID_SOURCE');
-  const definition = COMPANY_CATALOGUE.items.find(
-    (entry) => entry.id === resource.definitionId,
-  );
+  const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === resource.definitionId);
   requirePhysical(
-    definition?.enabled &&
-      definition.kind === 'consumable' &&
-      definition.careIds?.includes(careId),
+    definition?.enabled && definition.kind === 'consumable' && definition.careIds?.includes(careId),
     'INVALID_SOURCE',
   );
   const container = physicalContainer(physical, fact.resourceContainerId);
@@ -222,9 +214,7 @@ export function applyCare(
       knowledge: {
         ...physical.knowledge,
         itemSnapshots: [
-          ...physical.knowledge.itemSnapshots.filter(
-            (entry) => entry.itemId !== resource.itemId,
-          ),
+          ...physical.knowledge.itemSnapshots.filter((entry) => entry.itemId !== resource.itemId),
           ownPhysical(resource),
         ],
       },
@@ -314,10 +304,12 @@ export function applyCare(
   return { lifecycle, finance, physical, requirements: [] };
 }
 function foodCarry(physical: CompanyPhysicalState, membershipId: string): FoodCarry {
-  return physical.foodCarry.find((entry) => entry.membershipId === membershipId) ?? {
-    membershipId,
-    tickUnits: '0',
-  };
+  return (
+    physical.foodCarry.find((entry) => entry.membershipId === membershipId) ?? {
+      membershipId,
+      tickUnits: '0',
+    }
+  );
 }
 function consumeRations(
   physical: CompanyPhysicalState,
@@ -623,7 +615,7 @@ export function settleCareHandover(
   requirement: Extract<EconomyRequirement, { kind: 'CARE_HANDOVER' }>,
   context: EconomyContext,
   explicitId?: string,
-): CompanyPhysicalState {
+): { readonly finance: CompanyFinance; readonly physical: CompanyPhysicalState } {
   const fact = explicitId
     ? physicalFact(context, explicitId, 'CARE_HANDOVER')
     : uniquePhysicalFact(
@@ -635,7 +627,9 @@ export function settleCareHandover(
           candidate.atTick === requirement.atTick,
       );
   requirePhysical(
-    fact.characterId === requirement.characterId &&
+    fact.handoverId === fact.id &&
+      (!explicitId || fact.handoverId === explicitId) &&
+      fact.characterId === requirement.characterId &&
       fact.receiverId === requirement.receiverId &&
       fact.atTick === requirement.atTick,
     'INVALID_SOURCE',
@@ -649,7 +643,17 @@ export function settleCareHandover(
   );
   const recorded = recordPhysicalSource(root.physical, fact);
   requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
-  return {
+  const finance = payPhysicalProvider({ ...root, physical: recorded.state }, context, {
+    poolId: fact.poolId,
+    providerWalletId: fact.providerWalletId,
+    moneyAccessEvidenceId: fact.moneyAccessEvidenceId,
+    providerId: fact.receiverId,
+    location: fact.location,
+    amountQ: fact.amountQ,
+    movementId: physicalId(fact.id, fact.characterId, 'care-handover-payment'),
+    purpose: 'CARE_HANDOVER',
+  });
+  const physical = {
     ...recorded.state,
     careHandovers: [
       ...recorded.state.careHandovers,
@@ -661,4 +665,5 @@ export function settleCareHandover(
       },
     ],
   };
+  return { finance, physical };
 }

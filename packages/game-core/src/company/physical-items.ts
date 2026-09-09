@@ -23,12 +23,11 @@ import type {
   CompanyPhysicalState,
   EquipmentSlot,
   ItemInstance,
-  MaterializedCompanyState,
   OwnershipAuthorizationEvidence,
-  PhysicalChange,
   PhysicalContainer,
 } from './physical-types.js';
 import { PHYSICAL_RULES } from './physical-types.js';
+import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
 
 function itemWeight(item: ItemInstance, quantity = item.quantity): number {
   return itemDefinition(item).weightG * quantity;
@@ -40,7 +39,8 @@ function changeOwner(
   if (!authorization) return item;
   requirePhysical(
     canonicalJson(authorization.fromOwner) === canonicalJson(item.owner) &&
-      authorization.itemId === item.itemId,
+      authorization.itemId === item.itemId &&
+      authorization.quantity === item.quantity,
     'INVALID_SOURCE',
   );
   return { ...item, owner: ownPhysical(authorization.toOwner) };
@@ -55,6 +55,8 @@ function ownershipAuthorization(
   const fact = physicalFact(context, id, 'OWNERSHIP_AUTHORIZATION');
   requirePhysical(
     fact.itemId === item.itemId &&
+      Number.isSafeInteger(fact.quantity) &&
+      fact.quantity > 0 &&
       canonicalJson(fact.fromOwner) === canonicalJson(item.owner) &&
       (!operation || fact.operation === operation),
     'INVALID_SOURCE',
@@ -86,10 +88,7 @@ function splitOrMove(
     return replaceItem(state, moved);
   }
   const childId = physicalId(commandId, item.itemId, 'split');
-  requirePhysical(
-    !state.items.some((entry) => entry.itemId === childId),
-    'IDEMPOTENCY_CONFLICT',
-  );
+  requirePhysical(!state.items.some((entry) => entry.itemId === childId), 'IDEMPOTENCY_CONFLICT');
   const remainder = { ...item, quantity: item.quantity - quantity };
   const child = changeOwner(
     {
@@ -158,6 +157,7 @@ export function transferItem(
     [p.itemId],
   );
   const authorization = ownershipAuthorization(context, p.ownershipReceiptId, item);
+  requirePhysical(!authorization || authorization.quantity === p.quantity, 'INVALID_SOURCE');
   let physical = splitOrMove(
     root.physical,
     item,
@@ -198,14 +198,7 @@ export function equipItem(
   );
   const item = physicalItem(root.physical, p.itemId);
   requirePhysical(item.containerId !== null, 'CONTACT_OR_ACCESS_REQUIRED');
-  requireItemAccess(
-    root,
-    context,
-    p.accessEvidenceId,
-    'EQUIP',
-    [item.containerId],
-    [item.itemId],
-  );
+  requireItemAccess(root, context, p.accessEvidenceId, 'EQUIP', [item.containerId], [item.itemId]);
   const container = physicalContainer(root.physical, item.containerId);
   requirePhysical(
     container.carrier?.kind === 'CHARACTER' && container.carrier.id === p.characterId,
@@ -436,6 +429,7 @@ export function claimLoot(
       kind: 'OWNERSHIP_AUTHORIZATION',
       id: physicalId(authorization.id, entry.itemId, 'loot-owner'),
       itemId: entry.itemId,
+      quantity: entry.quantity,
       fromOwner: item.owner,
       toOwner: authorization.ownerAfter,
       operation: 'LOOT',
@@ -653,7 +647,7 @@ export function returnCompanyItemsForDeparture(
   characterId: string,
   returnContainerId: string,
   sourceId: string,
-  context: EconomyContext,
+  _context: EconomyContext,
 ): CompanyPhysicalState {
   const character = person(root.lifecycle, characterId);
   const destination = physicalContainer(root.physical, returnContainerId);
@@ -666,8 +660,7 @@ export function returnCompanyItemsForDeparture(
     'CONTACT_OR_ACCESS_REQUIRED',
   );
   const carried = root.physical.containers.filter(
-    (container) =>
-      container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
+    (container) => container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
   );
   const returns = root.physical.items.filter(
     (item) =>

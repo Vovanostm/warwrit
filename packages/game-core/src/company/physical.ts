@@ -5,11 +5,8 @@ import type { CompanyCommand } from './commands.js';
 import type { EconomyContext, EconomyRequirement } from './economy-types.js';
 import type { LifecycleState } from './lifecycle-types.js';
 import { campaignTick } from './values.js';
-import type {
-  CompanyPhysicalState,
-  MaterializedCompanyState,
-  PhysicalChange,
-} from './physical-types.js';
+import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
+import type { CompanyPhysicalState } from './physical-types.js';
 import {
   applyCare,
   applyCondition,
@@ -110,32 +107,31 @@ export function reconcileClosedFoodRequirements(
   root: MaterializedCompanyState,
   requirements: readonly EconomyRequirement[],
 ): readonly EconomyRequirement[] {
-  return requirements.flatMap((requirement) => {
-    if (requirement.kind !== 'FOOD_CONSUMPTION') return [requirement];
+  const result: EconomyRequirement[] = [];
+  for (const requirement of requirements) {
+    if (requirement.kind !== 'FOOD_CONSUMPTION') {
+      result.push(requirement);
+      continue;
+    }
     const from = BigInt(requirement.fromTick);
     const to = BigInt(requirement.toTick);
-    const row = root.finance.food.find(
-      (entry) => entry.membershipId === requirement.membershipId,
-    );
-    if (!row) return [];
-    return row.intervals.flatMap((interval) => {
-      if (interval.agreementId !== null) return [];
+    const row = root.finance.food.find((entry) => entry.membershipId === requirement.membershipId);
+    if (!row) continue;
+    for (const interval of row.intervals) {
+      if (interval.agreementId !== null) continue;
       const start = BigInt(interval.fromTick) > from ? BigInt(interval.fromTick) : from;
       const end = BigInt(interval.toTick) < to ? BigInt(interval.toTick) : to;
-      if (end <= start) return [];
-      return [
-        {
-          kind: 'FOOD_CONSUMPTION' as const,
-          membershipId: requirement.membershipId,
-          fromTick: campaignTick(start.toString()),
-          toTick: campaignTick(end.toString()),
-          tickUnits: (
-            (end - start) * BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay)
-          ).toString(),
-        },
-      ];
-    });
-  });
+      if (end <= start) continue;
+      result.push({
+        kind: 'FOOD_CONSUMPTION',
+        membershipId: requirement.membershipId,
+        fromTick: campaignTick(start.toString()),
+        toTick: campaignTick(end.toString()),
+        tickUnits: ((end - start) * BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay)).toString(),
+      });
+    }
+  }
+  return result;
 }
 function endMembershipForDeparture(
   root: MaterializedCompanyState,
@@ -154,11 +150,12 @@ function endMembershipForDeparture(
     'INCOMPATIBLE_ACTIVITY',
   );
   let physical = root.physical;
+  let finance = root.finance;
   if (!canPerform(character, 'travel')) {
     requirePhysical(requirement.careHandoverId !== null, 'INCOMPATIBLE_ACTIVITY');
     const handover = physicalFact(context, requirement.careHandoverId, 'CARE_HANDOVER');
-    physical = settleCareHandover(
-      { ...root, physical },
+    const fulfilled = settleCareHandover(
+      { ...root, finance, physical },
       {
         kind: 'CARE_HANDOVER',
         characterId: member.characterId,
@@ -168,6 +165,8 @@ function endMembershipForDeparture(
       context,
       requirement.careHandoverId,
     );
+    finance = fulfilled.finance;
+    physical = fulfilled.physical;
   } else requirePhysical(requirement.careHandoverId === null, 'INVALID_SOURCE');
   physical = returnCompanyItemsForDeparture(
     { ...root, physical },
@@ -191,7 +190,7 @@ function endMembershipForDeparture(
       encounterBindingId: null,
     },
   });
-  return { lifecycle, finance: root.finance, physical };
+  return { lifecycle, finance, physical };
 }
 export function settlePhysicalRequirements(
   root: MaterializedCompanyState,
@@ -217,9 +216,11 @@ export function settlePhysicalRequirements(
       case 'RECRUIT_ITEMS':
         next = { ...next, physical: settleRecruitItems(next, requirement, context) };
         break;
-      case 'CARE_HANDOVER':
-        next = { ...next, physical: settleCareHandover(next, requirement, context) };
+      case 'CARE_HANDOVER': {
+        const fulfilled = settleCareHandover(next, requirement, context);
+        next = { ...next, finance: fulfilled.finance, physical: fulfilled.physical };
         break;
+      }
       case 'FOOD_CONSUMPTION': {
         const fulfilled = settleFoodConsumption(next, requirement, context);
         next = { ...next, finance: fulfilled.finance, physical: fulfilled.physical };
@@ -265,8 +266,7 @@ export function observePhysical(
   context: EconomyContext,
 ): MaterializedCompanyState {
   const candidate = (context.physicalFacts ?? []).find(
-    (fact) =>
-      fact.id === command.payload.observationId && fact.kind === 'PHYSICAL_OBSERVATION',
+    (fact) => fact.id === command.payload.observationId && fact.kind === 'PHYSICAL_OBSERVATION',
   );
   if (!candidate || candidate.kind !== 'PHYSICAL_OBSERVATION') return root;
   const fact = physicalFact(context, candidate.id, 'PHYSICAL_OBSERVATION');
@@ -342,9 +342,7 @@ export function projectCompanyPhysical(
 ) {
   if (observerCompanyId !== root.lifecycle.companyId) return null;
   if (!root.physical) {
-    if (
-      root.lifecycle.knowledge.characters.some((character) => character.conditionIds.length > 0)
-    )
+    if (root.lifecycle.knowledge.characters.some((character) => character.conditionIds.length > 0))
       return null;
     return {
       revision: root.lifecycle.knowledge.revision,
@@ -415,9 +413,10 @@ export function projectCompanyPhysical(
       .sort((a, b) => (a.characterId < b.characterId ? -1 : 1)),
   };
 }
-export function physicalObservableKey(
-  root: { readonly lifecycle: LifecycleState; readonly physical?: CompanyPhysicalState },
-): string {
+export function physicalObservableKey(root: {
+  readonly lifecycle: LifecycleState;
+  readonly physical?: CompanyPhysicalState;
+}): string {
   const projection = projectCompanyPhysical(root, root.lifecycle.companyId);
   return canonicalJson(projection);
 }

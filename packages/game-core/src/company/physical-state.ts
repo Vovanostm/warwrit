@@ -12,7 +12,6 @@ import type {
   ItemAccessEvidence,
   ItemInstance,
   LegacyConditionBinding,
-  MaterializedCompanyState,
   PhysicalContainer,
   PhysicalError,
   PhysicalEvidence,
@@ -20,6 +19,7 @@ import type {
   PhysicalVitals,
 } from './physical-types.js';
 import type { EconomyContext } from './economy-types.js';
+import type { MaterializedCompanyState } from './physical-root-types.js';
 
 export class PhysicalViolation extends Error {
   constructor(readonly code: PhysicalError) {
@@ -171,8 +171,10 @@ function occurrenceBindings(
       );
     requirePhysical(
       actual.length === expected.length &&
-        actual.map((binding) => binding.definitionId).sort().join('\u0000') ===
-          expected.join('\u0000'),
+        actual
+          .map((binding) => binding.definitionId)
+          .sort()
+          .join('\u0000') === expected.join('\u0000'),
       'INVALID_STATE',
     );
     for (const binding of actual) {
@@ -187,7 +189,7 @@ function occurrenceBindings(
           isEntityId(binding.causeId) &&
           isExactInteger(binding.onsetTick) &&
           (deadline === null || isExactInteger(deadline)) &&
-          ((definition.category === 'CRITICAL') === (deadline !== null)),
+          (definition.category === 'CRITICAL') === (deadline !== null),
         'INVALID_STATE',
       );
       result.push({
@@ -206,7 +208,7 @@ function occurrenceBindings(
       });
     }
   }
-  const allowed = new Set(characters.map((character) => character.identity.characterId));
+  const allowed = new Set<string>(characters.map((character) => character.identity.characterId));
   requirePhysical(
     bindings.every((binding) => allowed.has(binding.characterId)),
     'INVALID_STATE',
@@ -427,10 +429,7 @@ export function validatePhysicalState(
         item.provenance.ordinal >= 0,
       'INVALID_STATE',
     );
-    requirePhysical(
-      (item.containerId === null) === (item.tombstone !== null),
-      'INVALID_STATE',
-    );
+    requirePhysical((item.containerId === null) === (item.tombstone !== null), 'INVALID_STATE');
     if (item.containerId !== null)
       requirePhysical(
         physical.containers.some((container) => container.containerId === item.containerId),
@@ -482,7 +481,7 @@ export function validatePhysicalState(
         isExactInteger(condition.onsetTick) &&
         isExactInteger(condition.recoveryTicks) &&
         BigInt(condition.recoveryTicks) >= 0n &&
-        ((definition.category === 'CRITICAL') === (condition.deadlineTick !== null)) &&
+        (definition.category === 'CRITICAL') === (condition.deadlineTick !== null) &&
         (condition.deadlineTick === null || isExactInteger(condition.deadlineTick)) &&
         (condition.resolvedAt === null || isExactInteger(condition.resolvedAt)),
       'INVALID_STATE',
@@ -509,9 +508,7 @@ export function validatePhysicalState(
     );
   for (const entry of physical.foodCarry)
     requirePhysical(
-      lifecycle.memberships.some(
-        (membership) => membership.membershipId === entry.membershipId,
-      ) &&
+      lifecycle.memberships.some((membership) => membership.membershipId === entry.membershipId) &&
         isExactInteger(entry.tickUnits) &&
         BigInt(entry.tickUnits) >= 0n,
       'INVALID_STATE',

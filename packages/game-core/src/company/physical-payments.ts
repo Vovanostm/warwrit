@@ -17,7 +17,10 @@ export function payPhysicalProvider(
     readonly location: AtLocation;
     readonly amountQ: string;
     readonly movementId: string;
-    readonly purpose: Extract<CashMovement['purpose'], 'CARE' | 'FOOD' | 'REPAIR'>;
+    readonly purpose: Extract<
+      CashMovement['purpose'],
+      'CARE' | 'CARE_HANDOVER' | 'FOOD' | 'REPAIR'
+    >;
   },
 ): CompanyFinance {
   requirePoolAccess(root, input.poolId, context, input.moneyAccessEvidenceId);

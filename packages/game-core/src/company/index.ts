@@ -18,6 +18,7 @@ export { prepareCompanyEconomy } from './economy.js';
 export { projectCompanyEconomy, projectEconomyRejection } from './economy-view.js';
 export { quoteCompanyFarewell } from './economy-departure.js';
 export type * from './physical-types.js';
+export type * from './physical-root-types.js';
 export {
   PHYSICAL_SCHEMA_VERSION,
   PHYSICAL_POLICY_VERSION,

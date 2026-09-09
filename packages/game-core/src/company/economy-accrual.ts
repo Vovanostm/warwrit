@@ -157,9 +157,7 @@ export function accrueFinance(
                   toTick: until,
                   earned: appendPeriod(c.earned, earned),
                   reportedQ: q(BigInt(c.reportedQ) + reported),
-                  reportedCoveredQ: q(
-                    BigInt(c.reportedCoveredQ) + (reportCovered ? reported : 0n),
-                  ),
+                  reportedCoveredQ: q(BigInt(c.reportedCoveredQ) + (reportCovered ? reported : 0n)),
                 }
               : c,
           );
@@ -186,8 +184,7 @@ export function accrueFinance(
         (p) => p.identity.characterId === membership.characterId,
       )!;
       const receivesFood =
-        !actualPaused &&
-        !['CAPTIVE', 'OUT_OF_CONTACT'].includes(character.presence.availability);
+        !actualPaused && !['CAPTIVE', 'OUT_OF_CONTACT'].includes(character.presence.availability);
       const demand = receivesFood
         ? liveTicks * BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay)
         : 0n;

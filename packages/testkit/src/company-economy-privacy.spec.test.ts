@@ -5,11 +5,7 @@ import {
   projectCompanyEconomy,
   projectEconomyRejection,
 } from '@warwrit/game-core';
-import type {
-  CompanyEconomyState,
-  FinanceEvidence,
-  PhysicalEvidence,
-} from '@warwrit/game-core';
+import type { CompanyEconomyState, FinanceEvidence, PhysicalEvidence } from '@warwrit/game-core';
 import {
   access,
   advance,

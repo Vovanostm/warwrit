@@ -3,16 +3,13 @@ import { person, replacePerson, sameLocation } from './lifecycle-state.js';
 import { recordFinancialDeath } from './economy-knowledge.js';
 import { accountFor, replaceAccount } from './economy-state.js';
 import {
-  activeConditions,
   containerWeightG,
   itemDefinition,
   ownPhysical,
   physicalContainer,
   physicalFact,
-  physicalId,
   physicalItem,
   recordPhysicalSource,
-  replaceContainer,
   replaceItem,
   requirePhysical,
   syncLifecycleConditions,
@@ -20,10 +17,7 @@ import {
 import type { CommandOf, LifecycleState } from './lifecycle-types.js';
 import type { CampaignTick } from './values.js';
 import type { EconomyContext, EconomyRequirement } from './economy-types.js';
-import type {
-  CompanyPhysicalState,
-  PhysicalContainer,
-} from './physical-types.js';
+import type { CompanyPhysicalState, PhysicalContainer } from './physical-types.js';
 import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
 
 export function setActualFinancePaused(
@@ -61,8 +55,7 @@ function movePresence(
 }
 function carrierContainers(physical: CompanyPhysicalState, characterId: string) {
   return physical.containers.filter(
-    (container) =>
-      container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
+    (container) => container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
   );
 }
 export function captureCharacter(
@@ -274,7 +267,10 @@ export function applyDeath(
       fact.corpseContainerId,
       fact.location,
     );
-  requirePhysical(existingCorpse === undefined || existingCorpse.kind === 'CORPSE', 'INVALID_SOURCE');
+  requirePhysical(
+    existingCorpse === undefined || existingCorpse.kind === 'CORPSE',
+    'INVALID_SOURCE',
+  );
   if (!existingCorpse) physical = { ...physical, containers: [...physical.containers, corpse] };
   const itemIds = physical.items
     .filter((item) => item.containerId !== null && carriedIds.has(item.containerId))

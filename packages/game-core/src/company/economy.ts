@@ -250,8 +250,7 @@ export function prepareCompanyEconomy(
         : accrueFinance(base.finance, base.lifecycle, target);
     base = { ...base, finance: closed.finance };
 
-    const retroactiveOutcome =
-      command.type === 'RecordDeath' || command.type === 'ResolveMissing';
+    const retroactiveOutcome = command.type === 'RecordDeath' || command.type === 'ResolveMissing';
     let draft: CommandDraft;
     let lifecycleBeforeCommand: LifecycleState;
     let residuals: readonly FinanceChange['requirements'][number][];
@@ -309,8 +308,7 @@ export function prepareCompanyEconomy(
     }
 
     let composed = draft.root;
-    if (command.type === 'Observe')
-      composed = observePhysical(composed, command, targetContext);
+    if (command.type === 'Observe') composed = observePhysical(composed, command, targetContext);
     composed = {
       ...composed,
       finance: closeMaintenanceForLifecycle(

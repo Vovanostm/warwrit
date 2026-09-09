@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   PHYSICAL_RULES,
   canonicalJson,
+  entityId,
   prepareCompanyEconomy,
   projectCompanyEconomy,
   projectCompanyPhysical,
@@ -14,7 +15,9 @@ import type {
   PhysicalVitals,
 } from '@warwrit/game-core';
 import {
+  access,
   advance,
+  cash,
   command,
   context,
   economy,
@@ -28,7 +31,9 @@ import {
 function visibleCharacter(
   state: CompanyEconomyState,
   characterId: string,
-  patch: (character: CompanyEconomyState['lifecycle']['characters'][number]) => CompanyEconomyState['lifecycle']['characters'][number],
+  patch: (
+    character: CompanyEconomyState['lifecycle']['characters'][number],
+  ) => CompanyEconomyState['lifecycle']['characters'][number],
 ): CompanyEconomyState {
   const apply = (characters: CompanyEconomyState['lifecycle']['characters']) =>
     characters.map((character) =>
@@ -68,7 +73,11 @@ function addContainer(
   };
 }
 
-function addItem(state: CompanyEconomyState, item: ItemInstance, known = true): CompanyEconomyState {
+function addItem(
+  state: CompanyEconomyState,
+  item: ItemInstance,
+  known = true,
+): CompanyEconomyState {
   const physical = state.physical!;
   return {
     ...state,
@@ -130,8 +139,8 @@ function item(
   owner: ItemInstance['owner'],
   containerId: string,
   quantity = 1,
-  currentCondition = PHYSICAL_RULES.defaultConditionMaximum,
-  maximumCondition = PHYSICAL_RULES.defaultConditionMaximum,
+  currentCondition: number = PHYSICAL_RULES.defaultConditionMaximum,
+  maximumCondition: number = PHYSICAL_RULES.defaultConditionMaximum,
 ): ItemInstance {
   return {
     itemId: id,
@@ -180,7 +189,10 @@ function condition(
   definitionId: 'minor-field-wound' | 'severe-stable-wound' | 'critical-bleed' | 'old-impairment',
   id: string,
 ) {
-  const deadlineTick = definitionId === 'critical-bleed' ? tick(BigInt(state.finance.processedTick) + 250n) : undefined;
+  const deadlineTick =
+    definitionId === 'critical-bleed'
+      ? tick(BigInt(state.finance.processedTick) + 250n)
+      : undefined;
   const cmd = command(
     state,
     'ApplyCondition',
@@ -274,6 +286,7 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       fromContainerId: 'leader-pack',
       toContainerId: 'destination',
       accessEvidenceId: 'transfer-access-ok',
+      ownershipReceiptId: 'gift-auth',
     });
     const movedAccess = itemAccess(
       state,
@@ -282,11 +295,28 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       ['leader-pack', 'destination'],
       ['ration-stack'],
     );
+    const mismatchedGift: PhysicalEvidence = {
+      ...physicalScope(state, 'gift-auth'),
+      kind: 'OWNERSHIP_AUTHORIZATION',
+      itemId: 'ration-stack',
+      quantity: 2,
+      fromOwner: { kind: 'COMPANY', id: 'company' },
+      toOwner: { kind: 'CHARACTER', id: 'leader' },
+      operation: 'GIFT',
+    };
+    const mismatched = prepareCompanyEconomy(
+      state,
+      movedCommand,
+      context(state, movedCommand, [], [], [movedAccess, mismatchedGift]),
+    );
+    expect(mismatched).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(mismatched.state).toBe(state);
+    const matchingGift: PhysicalEvidence = { ...mismatchedGift, quantity: 1 };
     const moved = prepared(
       prepareCompanyEconomy(
         state,
         movedCommand,
-        context(state, movedCommand, [], [], [movedAccess]),
+        context(state, movedCommand, [], [], [movedAccess, matchingGift]),
       ),
     );
     const live = moved.next.physical!.items.filter(
@@ -294,10 +324,14 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
     );
     expect(live.reduce((sum, entry) => sum + entry.quantity, 0)).toBe(3);
     expect(new Set(live.map((entry) => canonicalJson(entry.owner)))).toEqual(
-      new Set([canonicalJson({ kind: 'COMPANY', id: 'company' })]),
+      new Set([
+        canonicalJson({ kind: 'COMPANY', id: 'company' }),
+        canonicalJson({ kind: 'CHARACTER', id: 'leader' }),
+      ]),
     );
     const child = live.find((entry) => entry.containerId === 'destination')!;
     expect(child.quantity).toBe(1);
+    expect(child.owner).toEqual({ kind: 'CHARACTER', id: 'leader' });
     const reloaded: CompanyEconomyState = JSON.parse(JSON.stringify(moved.next));
     const back = command(reloaded, 'TransferItem', {
       itemId: child.itemId,
@@ -332,9 +366,18 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
         id: 'leader',
       }),
     );
-    state = addItem(state, item('sword-1', 'sword', { kind: 'CHARACTER', id: 'leader' }, 'leader-pack'));
-    state = addItem(state, item('armor-1', 'padded-coat', { kind: 'CHARACTER', id: 'leader' }, 'leader-pack', 1, 10, 40));
-    state = addItem(state, item('repair-1', 'repair-unit', { kind: 'CHARACTER', id: 'leader' }, 'leader-pack'));
+    state = addItem(
+      state,
+      item('sword-1', 'sword', { kind: 'CHARACTER', id: 'leader' }, 'leader-pack'),
+    );
+    state = addItem(
+      state,
+      item('armor-1', 'padded-coat', { kind: 'CHARACTER', id: 'leader' }, 'leader-pack', 1, 10, 40),
+    );
+    state = addItem(
+      state,
+      item('repair-1', 'repair-unit', { kind: 'CHARACTER', id: 'leader' }, 'leader-pack'),
+    );
     state = addVitals(state, {
       characterId: 'leader',
       sourceId: 'fixture-vitals',
@@ -355,11 +398,21 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       prepareCompanyEconomy(
         state,
         equip,
-        context(state, equip, [], [], [itemAccess(state, 'equip-access', 'EQUIP', ['leader-pack'], ['sword-1'])]),
+        context(
+          state,
+          equip,
+          [],
+          [],
+          [itemAccess(state, 'equip-access', 'EQUIP', ['leader-pack'], ['sword-1'])],
+        ),
       ),
     ).next;
-    expect(equipped.physical!.items.find((entry) => entry.itemId === 'sword-1')?.equipped?.slots).toEqual(['MAIN_HAND']);
-    expect(equipped.physical!.vitals.find((entry) => entry.characterId === 'leader')?.currentHealth).toBe(60);
+    expect(
+      equipped.physical!.items.find((entry) => entry.itemId === 'sword-1')?.equipped?.slots,
+    ).toEqual(['MAIN_HAND']);
+    expect(
+      equipped.physical!.vitals.find((entry) => entry.characterId === 'leader')?.currentHealth,
+    ).toBe(60);
 
     const repair = command(equipped, 'RepairItem', {
       itemId: 'armor-1',
@@ -370,16 +423,32 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       prepareCompanyEconomy(
         equipped,
         repair,
-        context(equipped, repair, [], [], [itemAccess(equipped, 'repair-access', 'REPAIR', ['leader-pack'], ['armor-1'])]),
+        context(
+          equipped,
+          repair,
+          [],
+          [],
+          [itemAccess(equipped, 'repair-access', 'REPAIR', ['leader-pack'], ['armor-1'])],
+        ),
       ),
     ).next;
-    expect(repaired.physical!.items.find((entry) => entry.itemId === 'armor-1')?.currentCondition).toBe(15);
-    expect(repaired.physical!.items.find((entry) => entry.itemId === 'repair-1')?.tombstone).not.toBeNull();
-    expect(repaired.physical!.vitals.find((entry) => entry.characterId === 'leader')?.currentHealth).toBe(60);
+    expect(
+      repaired.physical!.items.find((entry) => entry.itemId === 'armor-1')?.currentCondition,
+    ).toBe(15);
+    expect(
+      repaired.physical!.items.find((entry) => entry.itemId === 'repair-1')?.tombstone,
+    ).not.toBeNull();
+    expect(
+      repaired.physical!.vitals.find((entry) => entry.characterId === 'leader')?.currentHealth,
+    ).toBe(60);
 
     const inEncounter = visibleCharacter(repaired, 'leader', (character) => ({
       ...character,
-      presence: { ...character.presence, availability: 'IN_ENCOUNTER', encounterBindingId: 'encounter' },
+      presence: {
+        ...character.presence,
+        availability: 'IN_ENCOUNTER',
+        encounterBindingId: entityId('encounter'),
+      },
     }));
     const blocked = command(inEncounter, 'EquipItem', {
       characterId: 'leader',
@@ -390,7 +459,13 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
     const blockedResult = prepareCompanyEconomy(
       inEncounter,
       blocked,
-      context(inEncounter, blocked, [], [], [itemAccess(inEncounter, 'blocked-equip', 'EQUIP', ['leader-pack'], ['armor-1'])]),
+      context(
+        inEncounter,
+        blocked,
+        [],
+        [],
+        [itemAccess(inEncounter, 'blocked-equip', 'EQUIP', ['leader-pack'], ['armor-1'])],
+      ),
     );
     expect(blockedResult).toMatchObject({ kind: 'REJECTED', error: 'INCOMPATIBLE_ACTIVITY' });
     expect(blockedResult.state).toBe(inEncounter);
@@ -441,36 +516,66 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
     const cared = prepared(
       prepareCompanyEconomy(state, care, context(state, care, [], [], [careFact])),
     );
-    expect(cared.next.physical!.vitals.find((entry) => entry.characterId === 'worker-0')?.currentHealth).toBe(40);
-    expect(cared.next.physical!.items.find((entry) => entry.itemId === 'medical-1')?.quantity).toBe(1);
+    expect(
+      cared.next.physical!.vitals.find((entry) => entry.characterId === 'worker-0')?.currentHealth,
+    ).toBe(40);
+    expect(cared.next.physical!.items.find((entry) => entry.itemId === 'medical-1')?.quantity).toBe(
+      1,
+    );
     const exactRetry = prepared(prepareCompanyEconomy(cared.next, care, context(cared.next, care)));
     expect(exactRetry.replayed).toBe(true);
     expect(exactRetry.next).toBe(cared.next);
     const sourceRetry = { ...care, commandId: 'care-redelivery' };
-    expect(prepared(prepareCompanyEconomy(cared.next, sourceRetry, context(cared.next, sourceRetry))).replayed).toBe(true);
+    expect(
+      prepared(prepareCompanyEconomy(cared.next, sourceRetry, context(cared.next, sourceRetry)))
+        .replayed,
+    ).toBe(true);
 
     state = advance(cared.next, 250).next;
-    expect(state.physical!.conditions.find((entry) => entry.conditionId === instance.conditionId)?.resolvedAt).toBe('250');
-    expect(state.physical!.vitals.find((entry) => entry.characterId === 'worker-0')?.currentHealth).toBe(100);
+    expect(
+      state.physical!.conditions.find((entry) => entry.conditionId === instance.conditionId)
+        ?.resolvedAt,
+    ).toBe('250');
+    expect(
+      state.physical!.vitals.find((entry) => entry.characterId === 'worker-0')?.currentHealth,
+    ).toBe(100);
     state = condition(state, 'worker-0', 'minor-field-wound', 'minor').next;
     const minor = state.physical!.conditions.find(
-      (entry) => entry.characterId === 'worker-0' && entry.definitionId === 'minor-field-wound' && entry.resolvedAt === null,
+      (entry) =>
+        entry.characterId === 'worker-0' &&
+        entry.definitionId === 'minor-field-wound' &&
+        entry.resolvedAt === null,
     )!;
     state = advance(state, 300).next;
-    expect(state.physical!.conditions.find((entry) => entry.conditionId === minor.conditionId)?.resolvedAt).toBe('300');
+    expect(
+      state.physical!.conditions.find((entry) => entry.conditionId === minor.conditionId)
+        ?.resolvedAt,
+    ).toBe('300');
 
     state = condition(state, 'worker-0', 'critical-bleed', 'critical').next;
     const critical = state.physical!.conditions.find(
-      (entry) => entry.characterId === 'worker-0' && entry.definitionId === 'critical-bleed' && entry.resolvedAt === null,
+      (entry) =>
+        entry.characterId === 'worker-0' &&
+        entry.definitionId === 'critical-bleed' &&
+        entry.resolvedAt === null,
     )!;
     expect(critical.deadlineTick).toBe('550');
     state = advance(state, 551).next;
-    expect(state.lifecycle.characters.find((entry) => entry.identity.characterId === 'worker-0')?.presence.availability).toBe('AVAILABLE');
-    expect(state.physical!.conditions.find((entry) => entry.conditionId === critical.conditionId)?.resolvedAt).toBeNull();
+    expect(
+      state.lifecycle.characters.find((entry) => entry.identity.characterId === 'worker-0')
+        ?.presence.availability,
+    ).toBe('AVAILABLE');
+    expect(
+      state.physical!.conditions.find((entry) => entry.conditionId === critical.conditionId)
+        ?.resolvedAt,
+    ).toBeNull();
 
     state = condition(state, 'worker-0', 'old-impairment', 'permanent').next;
     const permanent = state.physical!.conditions.find(
-      (entry) => entry.characterId === 'worker-0' && entry.definitionId === 'old-impairment' && entry.resolvedAt === null,
+      (entry) =>
+        entry.characterId === 'worker-0' &&
+        entry.definitionId === 'old-impairment' &&
+        entry.resolvedAt === null,
     )!;
     const invalidCare = command(state, 'ApplyCare', {
       characterId: 'worker-0',
@@ -509,8 +614,14 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       }),
     );
     state = addContainer(state, container('return-full', { kind: 'COMPANY', id: 'company' }, 0));
-    state = addItem(state, item('company-sword', 'sword', { kind: 'COMPANY', id: 'company' }, 'worker-pack'));
-    state = addItem(state, item('personal-shield', 'shield', { kind: 'CHARACTER', id: 'worker-0' }, 'worker-pack'));
+    state = addItem(
+      state,
+      item('company-sword', 'sword', { kind: 'COMPANY', id: 'company' }, 'worker-pack'),
+    );
+    state = addItem(
+      state,
+      item('personal-shield', 'shield', { kind: 'CHARACTER', id: 'worker-0' }, 'worker-pack'),
+    );
     const request = command(state, 'RequestDeparture', {
       membershipId: 'service-worker-0',
       reason: 'DISMISSED',
@@ -531,14 +642,27 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       'SYSTEM',
     );
     const departed = prepared(prepareCompanyEconomy(state, execute, context(state, execute))).next;
-    expect(departed.lifecycle.memberships.find((entry) => entry.membershipId === 'service-worker-0')?.endedAt).toBe('500');
-    expect(departed.finance.claims.some((entry) => entry.membershipId === 'service-worker-0' && BigInt(entry.reportedQ) > BigInt(entry.paidQ))).toBe(true);
+    expect(
+      departed.lifecycle.memberships.find((entry) => entry.membershipId === 'service-worker-0')
+        ?.endedAt,
+    ).toBe('500');
+    expect(
+      departed.finance.claims.some(
+        (entry) =>
+          entry.membershipId === 'service-worker-0' &&
+          BigInt(entry.reportedQ) > BigInt(entry.paidQ),
+      ),
+    ).toBe(true);
     const overflow = departed.physical!.containers.find((entry) => entry.kind === 'GROUND_BUNDLE')!;
     expect(overflow.location).toEqual(place);
-    expect(departed.physical!.items.find((entry) => entry.itemId === 'company-sword')?.containerId).toBe(overflow.containerId);
-    expect(departed.physical!.items.find((entry) => entry.itemId === 'personal-shield')?.containerId).toBe('worker-pack');
+    expect(
+      departed.physical!.items.find((entry) => entry.itemId === 'company-sword')?.containerId,
+    ).toBe(overflow.containerId);
+    expect(
+      departed.physical!.items.find((entry) => entry.itemId === 'personal-shield')?.containerId,
+    ).toBe('worker-pack');
 
-    let immobile = withMedicineProvider(economy([1n], 0n, 0));
+    let immobile = withMedicineProvider(economy([1n], 10n, 0));
     immobile = condition(immobile, 'worker-0', 'critical-bleed', 'departure-critical').next;
     const ask = command(immobile, 'RequestDeparture', {
       membershipId: 'service-worker-0',
@@ -559,7 +683,11 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       'immobile-no-handover',
       'SYSTEM',
     );
-    const blocked = prepareCompanyEconomy(immobile, withoutHandover, context(immobile, withoutHandover));
+    const blocked = prepareCompanyEconomy(
+      immobile,
+      withoutHandover,
+      context(immobile, withoutHandover),
+    );
     expect(blocked).toMatchObject({ kind: 'REJECTED', error: 'INCOMPATIBLE_ACTIVITY' });
     expect(blocked.state).toBe(immobile);
     const handoverId = 'real-care-handover';
@@ -582,16 +710,38 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       characterId: 'worker-0',
       receiverId: 'provider',
       location: place,
+      poolId: 'local',
+      providerWalletId: 'wallet-provider',
+      moneyAccessEvidenceId: 'money-access',
+      amountQ: cash(1),
     };
+    const underfunded: PhysicalEvidence = { ...handover, amountQ: cash(11) };
+    const fundingFailure = prepareCompanyEconomy(
+      immobile,
+      withHandover,
+      context(immobile, withHandover, [access(immobile)], [], [underfunded]),
+    );
+    expect(fundingFailure).toMatchObject({ kind: 'REJECTED', error: 'INSUFFICIENT_FUNDS' });
+    expect(fundingFailure.state).toBe(immobile);
     const handed = prepared(
       prepareCompanyEconomy(
         immobile,
         withHandover,
-        context(immobile, withHandover, [], [], [handover]),
+        context(immobile, withHandover, [access(immobile)], [], [handover]),
       ),
     ).next;
-    expect(handed.lifecycle.memberships.find((entry) => entry.membershipId === 'service-worker-0')?.endedAt).toBe('0');
-    expect(handed.physical!.careHandovers.at(-1)).toMatchObject({ characterId: 'worker-0', receiverId: 'provider' });
+    expect(
+      handed.lifecycle.memberships.find((entry) => entry.membershipId === 'service-worker-0')
+        ?.endedAt,
+    ).toBe('0');
+    expect(handed.physical!.careHandovers.at(-1)).toMatchObject({
+      characterId: 'worker-0',
+      receiverId: 'provider',
+    });
+    expect(handed.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ).toBe('9');
+    expect(
+      handed.finance.wallets.find((wallet) => wallet.walletId === 'wallet-provider')?.cashQ,
+    ).toBe('1');
   });
 
   it('P6/P7/P8: custody changes actual item/food/pay state without an oracle, disclosure reconciles once, and release does not auto-resume service', () => {
@@ -604,7 +754,10 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       }),
     );
     state = addContainer(state, container('enemy-store', { kind: 'WORLD', id: 'world' }, 30000));
-    state = addItem(state, item('captured-sword', 'sword', { kind: 'CHARACTER', id: 'worker-0' }, 'worker-pack'));
+    state = addItem(
+      state,
+      item('captured-sword', 'sword', { kind: 'CHARACTER', id: 'worker-0' }, 'worker-pack'),
+    );
     const shared = state;
     const beforePublic = publicPair(shared);
     const capture = command(
@@ -616,7 +769,11 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
         captorRef: { kind: 'WORLD', id: 'world' },
         locationRef: place,
         seizedItems: [
-          { itemId: 'captured-sword', toContainerId: 'enemy-store', authorizationId: 'seize-sword' },
+          {
+            itemId: 'captured-sword',
+            toContainerId: 'enemy-store',
+            authorizationId: 'seize-sword',
+          },
         ],
       },
       'capture-worker',
@@ -646,10 +803,21 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
         context(shared, capture, [], [], [captureFact, seizure]),
       ),
     ).next;
-    expect(hidden.lifecycle.characters.find((entry) => entry.identity.characterId === 'worker-0')?.presence.availability).toBe('CAPTIVE');
-    expect(hidden.lifecycle.memberships.find((entry) => entry.membershipId === 'service-worker-0')?.endedAt).toBeNull();
-    expect(hidden.finance.accounts.find((entry) => entry.membershipId === 'service-worker-0')?.actualPaused).toBe(true);
-    expect(hidden.physical!.items.find((entry) => entry.itemId === 'captured-sword')?.containerId).toBe('enemy-store');
+    expect(
+      hidden.lifecycle.characters.find((entry) => entry.identity.characterId === 'worker-0')
+        ?.presence.availability,
+    ).toBe('CAPTIVE');
+    expect(
+      hidden.lifecycle.memberships.find((entry) => entry.membershipId === 'service-worker-0')
+        ?.endedAt,
+    ).toBeNull();
+    expect(
+      hidden.finance.accounts.find((entry) => entry.membershipId === 'service-worker-0')
+        ?.actualPaused,
+    ).toBe(true);
+    expect(
+      hidden.physical!.items.find((entry) => entry.itemId === 'captured-sword')?.containerId,
+    ).toBe('enemy-store');
     expect(publicPair(hidden)).toEqual(beforePublic);
     expect(hidden.lifecycle.knowledge.revision).toBe(shared.lifecycle.knowledge.revision);
 
@@ -664,9 +832,17 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       ['enemy-store'],
     );
     expect(publicPair(disclosed.result.next)).not.toEqual(publicPair(aliveAdvanced));
-    expect(projectCompanyPhysical(disclosed.result.next, 'company')?.items.find((entry) => entry.itemId === 'captured-sword')?.containerId).toBe('enemy-store');
+    expect(
+      projectCompanyPhysical(disclosed.result.next, 'company')?.items.find(
+        (entry) => entry.itemId === 'captured-sword',
+      )?.containerId,
+    ).toBe('enemy-store');
     const observationRetry = prepared(
-      prepareCompanyEconomy(disclosed.result.next, disclosed.cmd, context(disclosed.result.next, disclosed.cmd)),
+      prepareCompanyEconomy(
+        disclosed.result.next,
+        disclosed.cmd,
+        context(disclosed.result.next, disclosed.cmd),
+      ),
     );
     expect(observationRetry.replayed).toBe(true);
     expect(observationRetry.next).toBe(disclosed.result.next);
@@ -700,14 +876,26 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
         context(disclosed.result.next, release, [], [], [releaseFact]),
       ),
     ).next;
-    expect(released.lifecycle.characters.find((entry) => entry.identity.characterId === 'worker-0')?.presence.availability).toBe('AVAILABLE');
-    expect(released.finance.accounts.find((entry) => entry.membershipId === 'service-worker-0')?.actualPaused).toBe(true);
-    expect(released.physical!.custody.some((entry) => entry.characterId === 'worker-0')).toBe(false);
+    expect(
+      released.lifecycle.characters.find((entry) => entry.identity.characterId === 'worker-0')
+        ?.presence.availability,
+    ).toBe('AVAILABLE');
+    expect(
+      released.finance.accounts.find((entry) => entry.membershipId === 'service-worker-0')
+        ?.actualPaused,
+    ).toBe(true);
+    expect(released.physical!.custody.some((entry) => entry.characterId === 'worker-0')).toBe(
+      false,
+    );
     const afterRelease = advance(released, 2000).next;
     const workerEarned = afterRelease.finance.claims
       .filter((entry) => entry.membershipId === 'service-worker-0')
       .flatMap((entry) => entry.earned)
-      .reduce((sum, entry) => sum + (BigInt(entry.toTick) - BigInt(entry.fromTick)) * BigInt(entry.dailyWageMilli), 0n);
+      .reduce(
+        (sum, entry) =>
+          sum + (BigInt(entry.toTick) - BigInt(entry.fromTick)) * BigInt(entry.dailyWageMilli),
+        0n,
+      );
     expect(workerEarned).toBe(0n);
   });
 
