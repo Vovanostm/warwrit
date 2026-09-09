@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  canonicalJson,
   prepareCompanyEconomy,
   projectCompanyEconomy,
   projectEconomyRejection,
-  canonicalJson,
 } from '@warwrit/game-core';
-import type { CompanyEconomyState, FinanceEvidence } from '@warwrit/game-core';
+import type { CompanyEconomyState, FinanceEvidence, PhysicalEvidence } from '@warwrit/game-core';
 import {
   access,
   advance,
@@ -13,13 +13,17 @@ import {
   context,
   economy,
   observation,
+  physicalScope,
   place,
   prepared,
   scope,
+  tick,
 } from './company-economy-fixture.js';
+import { careHandover, withCareProvider } from './company-physical-fixture.js';
 
 function death(state: CompanyEconomyState, characterId: string, sourceEventId?: string) {
   const id = `death-${characterId}`;
+  const custodyOutcomeId = `death-outcome-${characterId}`;
   const cmd = command(
     state,
     'RecordDeath',
@@ -28,7 +32,7 @@ function death(state: CompanyEconomyState, characterId: string, sourceEventId?: 
       characterId,
       actualDeathTick: state.finance.processedTick,
       causeId: 'battle-outcome',
-      custodyOutcomeId: 'custody-outcome',
+      custodyOutcomeId,
     },
     id,
     'OUTCOME_RECEIPT',
@@ -42,34 +46,26 @@ function death(state: CompanyEconomyState, characterId: string, sourceEventId?: 
     actualDeathTick: state.finance.processedTick,
     recipient: { kind: 'ESTATE', id: characterId },
     causeId: 'battle-outcome',
-    custodyOutcomeId: 'custody-outcome',
+    custodyOutcomeId,
   };
-  // Canonical producer input: physical outcome handling itself remains WP02.4.
-  const actual: CompanyEconomyState = {
-    ...state,
-    lifecycle: {
-      ...state.lifecycle,
-      characters: state.lifecycle.characters.map((p) =>
-        p.identity.characterId === characterId
-          ? {
-              ...p,
-              presence: {
-                ...p.presence,
-                availability: 'DEAD',
-                assignment: 'NONE',
-                fieldPartyId: null,
-              },
-            }
-          : p,
-      ),
-    },
+  const physicalFact: PhysicalEvidence = {
+    ...physicalScope(state, custodyOutcomeId),
+    sourceEventId: cmd.sourceEventId,
+    kind: 'DEATH_OUTCOME',
+    characterId,
+    actualDeathTick: state.finance.processedTick,
+    causeId: 'battle-outcome',
+    location: place,
+    corpseContainerId: `corpse-${characterId}`,
   };
-  const ctx = context(actual, cmd, [fact]);
-  return { cmd, ctx, input: actual, result: prepared(prepareCompanyEconomy(actual, cmd, ctx)) };
+  const ctx = context(state, cmd, [fact], [], [physicalFact]);
+  return { cmd, ctx, input: state, result: prepared(prepareCompanyEconomy(state, cmd, ctx)) };
 }
+
 function view(state: CompanyEconomyState) {
   return projectCompanyEconomy(state, 'company');
 }
+
 function earned(state: CompanyEconomyState, membershipId: string) {
   return state.finance.claims
     .filter((c) => c.membershipId === membershipId)
@@ -83,11 +79,12 @@ function earned(state: CompanyEconomyState, membershipId: string) {
       0n,
     );
 }
+
 describe('WP02.3 — financial knowledge and exact replay', () => {
   it('P7: hidden death is noninterfering over DEFAULT/TARGETED, insufficient funds and retries, until a legitimate report', () => {
     const shared = advance(economy([10n, 10n], 12000n, 0), 500).next;
-    let alive = shared,
-      hidden = death(shared, 'worker-0').result.next;
+    let alive = shared;
+    let hidden = death(shared, 'worker-0').result.next;
     expect(view(hidden)).toEqual(view(alive));
     alive = advance(alive, 1000).next;
     hidden = advance(hidden, 1000).next;
@@ -97,7 +94,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
     const operations = [
       { mode: 'DEFAULT', amountQ: '6000' },
       { mode: 'TARGETED', amountQ: '4000', payeeId: 'worker-0' },
-      { mode: 'DEFAULT', amountQ: '3000' }, // cannot spend the held 10000q
+      { mode: 'DEFAULT', amountQ: '3000' },
       { mode: 'DEFAULT', amountQ: '2000' },
     ];
     for (const [index, op] of operations.entries()) {
@@ -136,7 +133,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
     const disclosed = report.result.next;
     expect(view(disclosed)).not.toEqual(view(alive));
     expect(BigInt(view(disclosed)!.finance.wallets[0]!.spendableQ)).toBeGreaterThan(0n);
-    expect(disclosed.finance.wallets).toEqual(hidden.finance.wallets); // release is not minted or delivered cash
+    expect(disclosed.finance.wallets).toEqual(hidden.finance.wallets);
     expect(
       disclosed.finance.claims.find((c) => c.membershipId === 'service-worker-0')?.reportedQ,
     ).toBe('5000');
@@ -152,6 +149,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
       'DEAD',
     );
   });
+
   it('P7: visible colleague payouts stay identical while the unconfirmed colleague gets only a backed hold', () => {
     const shared = advance(economy([10n, 10n], 15000n, 0), 500).next;
     const worlds = [shared, death(shared, 'worker-0').result.next].map(
@@ -182,6 +180,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
     }
     expect(view(receipts[0]!.next)).toEqual(view(receipts[1]!.next));
   });
+
   it('P8: exact command conflicts precede source fallback; source fan-out remains subject-scoped and replay needs no stale fact', () => {
     const start = advance(economy([10n, 10n], 12000n, 0), 500).next;
     const first = death(start, 'worker-0', 'source-shared-battle');
@@ -226,16 +225,33 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
   });
 
   it('P6/P7: loss of the last field worker stops actual support without disclosing hidden death', () => {
-    const initial = economy([1n, 1n], 10000n, 0);
-    const resting = {
-      ...initial,
-      lifecycle: {
-        ...initial.lifecycle,
-        characters: initial.lifecycle.characters.map((p) =>
-          p.identity.characterId === 'leader' ? { ...p, conditionIds: ['critical-bleed'] } : p,
-        ),
+    const initial = withCareProvider(economy([1n, 1n], 10000n, 0));
+    const wound = command(
+      initial,
+      'ApplyCondition',
+      {
+        receiptId: 'leader-critical',
+        characterId: 'leader',
+        conditionDefinitionId: 'critical-bleed',
+        causeId: 'fixture-wound',
+        deadlineTick: '250',
       },
+      'leader-critical',
+      'DOMAIN_RECEIPT',
+    );
+    const woundFact: PhysicalEvidence = {
+      ...physicalScope(initial, 'leader-critical'),
+      sourceEventId: wound.sourceEventId,
+      kind: 'CONDITION_SOURCE',
+      characterId: 'leader',
+      definitionId: 'critical-bleed',
+      causeId: 'fixture-wound',
+      onsetTick: tick(0),
+      deadlineTick: tick(250),
     };
+    const resting = prepared(
+      prepareCompanyEconomy(initial, wound, context(initial, wound, [], [], [woundFact])),
+    ).next;
     const camp = command(resting, 'BeginFieldCamp', {
       partyId: 'party',
       siteEligibilityId: 'site',
@@ -271,7 +287,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
         context(
           atDeparture,
           detach,
-          [],
+          [access(atDeparture)],
           [
             {
               ...scope(atDeparture, 'detached-worker'),
@@ -284,6 +300,7 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
               partyId: null,
             },
           ],
+          [careHandover(atDeparture, 'worker-1')],
         ),
       ),
     ).next;

@@ -15,6 +15,11 @@ import {
   scope,
   tick,
 } from './company-economy-fixture.js';
+import {
+  careHandover,
+  withCareProvider,
+  withLoadedConditions,
+} from './company-physical-fixture.js';
 
 function offer(state: CompanyEconomyState): FinanceEvidence {
   return {
@@ -47,16 +52,15 @@ function admit(state: CompanyEconomyState) {
   return prepareCompanyEconomy(state, cmd, context(state, cmd, [access(state), offer(state)]));
 }
 function unable(state: CompanyEconomyState): CompanyEconomyState {
-  // An input snapshot supplied by the future condition producer, not a fabricated condition handler.
-  return {
-    ...state,
-    lifecycle: {
-      ...state.lifecycle,
-      characters: state.lifecycle.characters.map((p) =>
-        p.presence.fieldPartyId ? { ...p, conditionIds: ['critical-bleed'] } : p,
-      ),
-    },
-  };
+  return withLoadedConditions(
+    state,
+    Object.fromEntries(
+      state.lifecycle.characters
+        .filter((p) => p.presence.fieldPartyId)
+        .map((p) => [p.identity.characterId, ['critical-bleed']]),
+    ),
+    'loaded-critical-cohort',
+  );
 }
 describe('WP02.3 — physical maintenance intervals', () => {
   it('P6: F1 reserves pre-entry earnings, covers only named current intervals and creates no cash or practice', () => {
@@ -145,7 +149,11 @@ describe('WP02.3 — physical maintenance intervals', () => {
         (r) => r.fromTick === '0' && r.toTick === '500' && r.fulfillment === 'CURRENT_FOOD',
       ),
     ).toBe(true);
-    expect(ended.receipt.requirements.filter((r) => r.kind === 'FOOD_CONSUMPTION')).toHaveLength(2);
+    expect(ended.receipt.requirements.filter((r) => r.kind === 'FOOD_CONSUMPTION')).toEqual([]);
+    expect(ended.next.physical!.food).toHaveLength(2);
+    expect(
+      ended.next.physical!.food.every((f) => f.fromTick === '500' && f.toTick === '1000'),
+    ).toBe(true);
     expect(projectCompanyEconomy(ended.next, 'company')?.finance.maintenance[0]?.endedAt).toBe(
       '500',
     );
@@ -153,7 +161,7 @@ describe('WP02.3 — physical maintenance intervals', () => {
   });
 
   it('P6/P3: detaching a paid companion ends only that interval; the accepted remainder keeps F1 until its leader leaves', () => {
-    let state = prepared(admit(economy([1n, 2n], 10000n, 0))).next;
+    let state = prepared(admit(withCareProvider(economy([1n, 2n], 10000n, 0)))).next;
     state = advance(state, 500).next;
     function detach(characterId: string) {
       const cmd = command(state, 'SetAssignment', {
@@ -163,6 +171,7 @@ describe('WP02.3 — physical maintenance intervals', () => {
         dutyEvidenceId: `duty-${characterId}`,
         fundingPoolId: 'local',
       });
+      const handover = careHandover(state, characterId);
       const result = prepared(
         prepareCompanyEconomy(
           state,
@@ -170,7 +179,7 @@ describe('WP02.3 — physical maintenance intervals', () => {
           context(
             state,
             cmd,
-            [],
+            [access(state)],
             [
               {
                 ...scope(state, `duty-${characterId}`),
@@ -183,12 +192,16 @@ describe('WP02.3 — physical maintenance intervals', () => {
                 partyId: null,
               },
             ],
+            [handover],
           ),
         ),
       );
-      expect(result.receipt.requirements).toContainEqual(
-        expect.objectContaining({ kind: 'CARE_HANDOVER', characterId }),
-      );
+      expect(result.receipt.requirements.filter((r) => r.kind === 'CARE_HANDOVER')).toEqual([]);
+      expect(result.next.physical!.careHandovers.at(-1)).toMatchObject({
+        characterId,
+        receiverId: 'provider',
+        sourceId: handover.sourceEventId,
+      });
       state = result.next;
     }
     detach('worker-0');
@@ -212,19 +225,21 @@ describe('WP02.3 — physical maintenance intervals', () => {
         .reduce((n, c) => n + BigInt(c.reportedQ) - BigInt(c.reportedCoveredQ), 0n),
     ).toBe(1000n);
     expect(state.finance.maintenance[0]?.endedAt).toBe('1000');
+    expect(state.finance.wallets.find((w) => w.walletId === 'wallet-provider')?.cashQ).toBe('2');
   });
 
   it('P6: F1 admission needs local-duty capacity, not merely the ability to forage', () => {
     const fresh = economy([1n], 10000n);
-    const wounded = (s: CompanyEconomyState): CompanyEconomyState => ({
-      ...s,
-      lifecycle: {
-        ...s.lifecycle,
-        characters: s.lifecycle.characters.map((p) =>
-          p.presence.fieldPartyId ? { ...p, conditionIds: ['severe-stable-wound'] } : p,
+    const wounded = (s: CompanyEconomyState): CompanyEconomyState =>
+      withLoadedConditions(
+        s,
+        Object.fromEntries(
+          s.lifecycle.characters
+            .filter((p) => p.presence.fieldPartyId)
+            .map((p) => [p.identity.characterId, ['severe-stable-wound']]),
         ),
-      },
-    });
+        'loaded-stable-cohort',
+      );
     const newcomers = wounded(fresh);
     const refused = admit(newcomers);
     expect(refused).toMatchObject({ kind: 'REJECTED', error: 'INCOMPATIBLE_ACTIVITY' });
@@ -238,7 +253,7 @@ describe('WP02.3 — physical maintenance intervals', () => {
     const start = claims(economy([1n], 10000n), [13n]);
     const member = start.lifecycle.memberships[1]!;
     const account = start.finance.accounts[1]!;
-    // A reloaded service history: physical departure belongs to 02.4, not a test double here.
+    // Explicit reloaded service history; the physical exit itself has separate public-boundary coverage.
     const state: CompanyEconomyState = {
       ...start,
       lifecycle: {
