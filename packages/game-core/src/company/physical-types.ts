@@ -3,7 +3,8 @@ import type { LocationRef, OwnerRef } from './model.js';
 import type { CampaignTick, CanonicalRevision, MoneyQ } from './values.js';
 
 export const PHYSICAL_SCHEMA_VERSION = 1 as const;
-export const PHYSICAL_POLICY_VERSION = 's02-physical-1' as const;
+// Unreleased policy 1 had unbacked fractional food; never reinterpret that carry as paid food.
+export const PHYSICAL_POLICY_VERSION = 's02-physical-2' as const;
 export const PHYSICAL_RULES = Object.freeze({
   policyVersion: PHYSICAL_POLICY_VERSION,
   baseHealth: 100,
@@ -106,10 +107,12 @@ export interface FoodFulfillment {
   readonly fromTick: CampaignTick;
   readonly toTick: CampaignTick;
   readonly channel: 'STOCK' | 'PROVIDER';
+  /** Inventory rations debited. Provider fulfillment uses its paid interval, not stock units. */
   readonly unitsConsumed: string;
 }
 export interface FoodCarry {
   readonly membershipId: string;
+  /** Used tick-units in an already-debited stock ration; zero means no opened ration remains. */
   readonly tickUnits: string;
 }
 export interface CareHandoverRecord {
