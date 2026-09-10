@@ -1,5 +1,6 @@
 import type { CompanyCommand } from './commands.js';
 import type { CompanyGuardError, TrustedCompanyContext } from './guards.js';
+import type { SkillProgress } from './skill-progress.js';
 import type {
   CharacterIdentity,
   CharacterPresence,
@@ -21,7 +22,7 @@ export type AtLocation = Extract<LocationRef, { kind: 'AT' }>;
 export interface LifecycleCharacter {
   readonly identity: CharacterIdentity;
   readonly presence: CharacterPresence;
-  readonly skills: Readonly<Record<string, number>>;
+  readonly skills: Readonly<Record<string, SkillProgress>>;
   readonly aptitudeBySkill: Readonly<Record<string, number>>;
   readonly perks: readonly string[];
   readonly conditionIds: readonly string[];

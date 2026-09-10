@@ -28,3 +28,4 @@ export { createCompanyPhysicalState, validatePhysicalState } from './physical-st
 export { materializeCompanyPhysicalState } from './physical-load.js';
 export { projectCompanyPhysical } from './physical.js';
 export * from './progression.js';
+export * from './skill-progress.js';
