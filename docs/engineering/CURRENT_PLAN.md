@@ -4,7 +4,7 @@
 - As of: 2026-09-10
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
-- Current delivery: R00, documentation only; next implementation: A01 only, after verified R00 merge
+- Current delivery: [A01](../work-packages/WP-02-A01.md), [PR #20](https://github.com/Vovanostm/warwrit/pull/20); next implementation: A02 only, after verified PR20 merge
 
 ## Current state
 
@@ -15,10 +15,10 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-current_slice: R00
-next_implementation: A01
-activation_requires: R00-verified-merged
-merge_authorized: R00-only-by-owner-2026-09-10
+current_slice: A01
+next_implementation: A02
+activation_requires: PR20-verified-merged
+merge_authorized: PR20-only-by-owner-2026-09-10
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
 package_manager: repository-pinned-pnpm
@@ -26,15 +26,13 @@ persistence: postgresql-kysely-pg
 renderer: Q-T03-evidence-pending
 ```
 
-WP-02.1–02.4 are merged. [PR #16](https://github.com/Vovanostm/warwrit/pull/16)
-merged on 2026-09-09 at 20:53:37 UTC; verified main is
-`34015bc0147163bfc3255668756a9151a5c10f4e`, tree `d448dd7a0dc3ced1c8dff9e76f71c261e166c86d`.
-This is the R00 starting checkpoint, not permission to reset a newer main.
-Read live refs, comments and CI before delivery; a feature checkout is not merge evidence.
-The owner authorized implementation and merge of R00 only. Do not repeat WP-02.4,
-implement A01 in R00, or incorporate [PR #17](https://github.com/Vovanostm/warwrit/pull/17)
-(language policy, separately open at this checkpoint). Other merges, auto-merge,
-deployment and purchases require separate permission.
+WP-02.1–02.4 and R00 are merged. [PR #18](https://github.com/Vovanostm/warwrit/pull/18)
+merged R00 as `321640fb737ed22db96fb5525b4b4257b01397ab`,
+tree `c1533292f0e0ff094c67fac4cdbc51282fb18546`, after [PR #16](https://github.com/Vovanostm/warwrit/pull/16).
+This is A01's base, not permission to reset a newer main. Do not repeat R00 or WP-02.4.
+The owner requested “review, fix, merge” for PR20 on 2026-09-10. Verify its live merge
+status before A02; this feature document is not merge evidence. [PR #17](https://github.com/Vovanostm/warwrit/pull/17)
+remains separate. No successor merge, auto-merge, deployment or purchases are authorized.
 
 ## Authority and source order
 
@@ -58,7 +56,7 @@ Paths below are under `packages/game-core/src/company/`. Read actual consumers b
 - **Lifecycle (Y):** [lifecycle-types.ts](../../packages/game-core/src/company/lifecycle-types.ts) owns identity, kinship, membership, location and availability. Its existing skills/perks and bypass records are compatibility inputs, not proof that progression/social execution is finished.
 - **Finance (E):** [economy-types.ts](../../packages/game-core/src/company/economy-types.ts) owns q balances, claims, reserves and payments. A learning `maxBudget` is a spending limit, never a second wallet.
 - **Physical (P):** [physical-types.ts](../../packages/game-core/src/company/physical-types.ts) owns item identity/owner/custody, books, equipment, condition instances and current pools. Learning references these entities; it does not clone inventory. Preserve explicit legacy condition bindings.
-- **Progression/perks (L/D, planned A/B):** one XP/carry/source-credit owner and one perk selection/history owner. Level is derived/checked, not a second writable counter. A02 must bind existing level-only saves explicitly; missing fractional XP cannot be invented.
+- **Progression/perks (L/D):** [progression.ts](../../packages/game-core/src/company/progression.ts) supplies A01 arithmetic only. A02/A03 add one XP/carry/source-credit owner; B adds perk selection/history. Level is derived/checked, not a second writable counter. A02 must bind level-only saves explicitly; missing fractional XP cannot be invented.
 - **Learning (L, planned C/D):** finite task/work-section progress and occupied study intervals, with references to physical access and finance. Reuse the same bounded course model for retraining.
 - **Social (L/X/A, planned E):** base relations, source memories and chronicle have one owner; effective relations and active-memory selection are derived. E03 binds legacy bypass contributions once; clamped results cannot be inverted into invented base values.
 - **Binding (B/X, planned G):** immutable tactical snapshot and provenance, not another persistent Character, item or HP store; preserve V1 history.
@@ -84,9 +82,12 @@ intentionally short). Above 400, split a cohesive tested responsibility before d
 do not hide tests, minify, change formatting or split only commits inside a giant PR.
 Dependencies outrank letter order; refine distant G/H tasks against real predecessor APIs.
 
-Next **A01 only**: exact XP/milliXP, rational carry and level-threshold arithmetic,
-using L/D/X and the registry's full A01 launcher. No Character migration, gameplay command,
-book/task, payment, social, V2, SQL or UI integration. A01 and subsequent tasks are not delivered by R00.
+A01 supplies exact XP/milliXP, rational carry and level-threshold arithmetic only,
+not active gameplay learning or proof that practice was legitimate.
+Next **A02 only**, after verified PR20 merge: one SkillProgress owner, derived level,
+explicit legacy/initial-credit binding and preservation through existing root branches.
+Read the full registry and L/D/X; do not invent unknown fractional XP or implement A03
+practice admission, books/tasks, payments, social, V2, SQL or UI in A02.
 `StartLearning` stays disabled until C08. `BeginEncounterBinding`,
 `ConsumeCombatReceipt` and `FinalizeEncounter` stay disabled until G10.
 F02 remains `NEEDS_NARROW_SERVICE_CONTRACT` for cosmetic/service keys: it blocks itself
