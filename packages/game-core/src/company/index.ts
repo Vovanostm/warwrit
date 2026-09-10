@@ -27,3 +27,4 @@ export {
 export { createCompanyPhysicalState, validatePhysicalState } from './physical-state.js';
 export { materializeCompanyPhysicalState } from './physical-load.js';
 export { projectCompanyPhysical } from './physical.js';
+export * from './progression.js';
