@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import {
   COMPANY_CATALOGUE,
-  PROGRESSION_RULES,
   creditProgression,
   progressionChallengeBps,
   progressionLevel,
@@ -12,21 +11,23 @@ import {
 
 const zero = Object.freeze({ milliXp: '0', carry: '0' });
 const success = Object.freeze({
-  aptitudeBps: COMPANY_CATALOGUE.openingProfiles[0]!.defaultAptitudeBps,
+  aptitudeBps: 10000,
   challengeBps: 10000,
-  outcomeBps: PROGRESSION_RULES.outcomeBps.success,
+  outcomeBps: 10000,
 });
 
 describe('A01 — exact progression arithmetic, not practice admission', () => {
   it('converts catalogue XP once and applies explicit frozen coefficients', () => {
     const attack = COMPANY_CATALOGUE.methods.find((method) => method.id === 'weapon-attack')!;
-    const base = xpToMilliXp(attack.xp!);
+    expect(xpToMilliXp(attack.xp!)).toBe((BigInt(attack.xp!) * 1000n).toString());
+    // Literal arithmetic examples are independent of provisional catalogue tuning.
+    const base = xpToMilliXp(20);
     expect(base).toBe('20000');
     expect(creditProgression(zero, base, success)).toEqual({ milliXp: '20000', carry: '0' });
     const failure = Object.freeze({
       aptitudeBps: 12000,
-      challengeBps: progressionChallengeBps(10, 5),
-      outcomeBps: PROGRESSION_RULES.outcomeBps.meaningfulFailure,
+      challengeBps: 11000,
+      outcomeBps: 2500,
     });
     // 20 XP * 1.2 * 1.1 * 0.25 = 6.6 XP, not 6.6 milliXP.
     expect(creditProgression(zero, base, failure)).toEqual({ milliXp: '6600', carry: '0' });
@@ -86,6 +87,19 @@ describe('A01 — exact progression arithmetic, not practice admission', () => {
       carry: '20000000000',
     });
     expect(first).toEqual({ milliXp: '0', carry: '204000000000' });
+  });
+
+  it('crosses a level threshold only when exact credit completes the missing milliXP', () => {
+    const initial = { milliXp: '9999', carry: '800000000000' };
+    const coefficients = Object.freeze({ ...success, aptitudeBps: 8000, outcomeBps: 2500 });
+    const below = creditProgression(initial, '0', coefficients);
+    expect(below).toEqual(initial);
+    expect(progressionLevel(below.milliXp)).toBe(0);
+    const restored = JSON.parse(JSON.stringify(below));
+    // 9999.8 milliXP + (1 milliXP * 0.8 * 1 * 0.25) = 10000 milliXP exactly.
+    const crossed = creditProgression(restored, '1', coefficients);
+    expect(crossed).toEqual({ milliXp: '10000', carry: '0' });
+    expect(progressionLevel(crossed.milliXp)).toBe(1);
   });
 
   it('preserves the same factual quantity under splitting with unchanged coefficients', () => {
