@@ -4,7 +4,7 @@
 - As of: 2026-09-10
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
-- Current delivery: [A03.1 / #23](https://github.com/Vovanostm/warwrit/issues/23), admission prerequisite; A03 remains unfinished, root integration next
+- Current delivery: A03.2 / #23, stacked on PR #24; complete A03 root integration under review
 
 ## Current state
 
@@ -15,9 +15,9 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-current_slice: A03.1-admission-prerequisite
-next_implementation: A03.2-root-integration
-activation_requires: complete-A03-reviewed-tested-composition
+current_slice: A03.2-root-integration
+next_implementation: A04-after-A03-merge
+activation_requires: A03.1+A03.2-reviewed-tested-and-merged
 merge_authorized: false
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
