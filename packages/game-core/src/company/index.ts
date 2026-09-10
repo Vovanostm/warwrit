@@ -29,3 +29,5 @@ export { materializeCompanyPhysicalState } from './physical-load.js';
 export { projectCompanyPhysical } from './physical.js';
 export * from './progression.js';
 export * from './skill-progress.js';
+export { admitPractice } from './practice-admission.js';
+export type { PracticeContext, PracticeEvidence } from './practice-admission.js';
