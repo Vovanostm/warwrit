@@ -147,7 +147,13 @@ describe('A03.1 — finite trusted EVENT admission, not root activation', () => 
       ['medicine', { ...care, conditionDefinitionId: 'minor-field-wound' }],
       ['medicine', { ...care, careId: 'exceptional-care' }],
       ['leadership', { ...cycle, interactions: [cycle.interactions[0]!] }],
-      ['leadership', { ...cycle, interactions: [cycle.interactions[0]!, cycle.interactions[0]!] }],
+      [
+        'leadership',
+        {
+          ...cycle,
+          interactions: [cycle.interactions[0]!, { ...cycle.interactions[0]!, sourceEventId: 'second' }],
+        },
+      ],
     ] as const) {
       const { cmd, ctx } = fixture(proof, skill);
       expect(() => admitPractice(cmd, ctx)).toThrow();
@@ -167,8 +173,10 @@ describe('A03.1 — finite trusted EVENT admission, not root activation', () => 
   it('rejects study shortcuts and treats event effort as evidence, not an XP multiplier', () => {
     const { state, cmd, fact, ctx } = fixture();
     for (const methodId of ['funded-practice', 'book-study', 'brew-test-only']) {
-      const changed = { ...cmd, payload: { ...fact.payload, methodId } };
-      expect(() => admitPractice(changed, { ...ctx, ...context(state, changed) })).toThrow();
+      const payload = { ...fact.payload, methodId };
+      const changed = { ...cmd, payload };
+      const supplied = { ...context(state, changed), practiceFacts: [{ ...fact, payload }] };
+      expect(() => admitPractice(changed, supplied)).toThrow();
     }
     for (const effortTicks of ['0', '2', '5']) {
       const payload = { ...fact.payload, effortTicks, outcome: 'SUCCESS' as const };
