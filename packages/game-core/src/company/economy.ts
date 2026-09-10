@@ -247,14 +247,10 @@ export function prepareCompanyEconomy(
     validatePhysicalState(base);
     requireEconomy(
       base.lifecycle.company?.runStatus !== 'GAME_OVER' ||
-        [
-          'Observe',
-          'RecordDeath',
-          'AdvanceCampaign',
-          'PayClaims',
-          'TransferFunds',
-          'CreditPractice',
-        ].includes(command.type),
+        command.type === 'CreditPractice' ||
+        ['Observe', 'RecordDeath', 'AdvanceCampaign', 'PayClaims', 'TransferFunds'].includes(
+          command.type,
+        ),
       'TERMINAL',
     );
     if (
