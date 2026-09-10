@@ -94,7 +94,10 @@ describe('A03.1 — finite trusted EVENT admission, not root activation', () => 
     expect(result.source).toEqual(source);
     expect(canonicalJson(state)).toBe(before);
     expect(prepareCompanyEconomy(state, cmd, ctx)).toMatchObject({ kind: 'REJECTED', state });
-    expect(executeCompanyCommand(cmd, ctx)).toMatchObject({ error: 'UNSUPPORTED_ACTION' });
+    expect(executeCompanyCommand(state, cmd, ctx)).toMatchObject({
+      error: 'UNSUPPORTED_ACTION',
+      state,
+    });
   });
 
   it('rejects malformed evidence and mismatched request authority', () => {
