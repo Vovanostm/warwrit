@@ -202,9 +202,9 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
       const input = practice(state, ...args, shared);
       state = prepared(prepareCompanyEconomy(state, input.cmd, input.ctx)).next;
     }
-    expect(
-      new Set(state.finance.applied.slice(-3).map((receipt) => receipt.sourceKey)).size,
-    ).toBe(3);
+    expect(new Set(state.finance.applied.slice(-3).map((receipt) => receipt.sourceKey)).size).toBe(
+      3,
+    );
 
     const before = readSkillProgress(skill(state, 'worker-0', 'archery'));
     if (typeof before === 'number') throw new Error('fixture lost exact state');
