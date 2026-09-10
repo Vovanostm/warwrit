@@ -1,5 +1,10 @@
 import { projectCompanyEconomy } from './economy-view.js';
-import { checkFreshCompanyRevision, companySourceKey, guardCompanyCommand } from './guards.js';
+import {
+  checkFreshCompanyRevision,
+  companySemanticKey,
+  companySourceKey,
+  guardCompanyCommand,
+} from './guards.js';
 import { canonicalJson } from './input.js';
 import { LifecycleViolation } from './lifecycle-state.js';
 import { prepareCompanyLifecycle } from './lifecycle.js';
@@ -34,6 +39,8 @@ import {
   settlePhysicalRequirements,
 } from './physical.js';
 import { setActualFinancePaused } from './physical-outcomes.js';
+import { preparePracticeCredit } from './practice-credit.js';
+import type { PracticeContext } from './practice-admission.js';
 import type { CompanyCommand } from './commands.js';
 import type { LifecycleReceipt, LifecycleState } from './lifecycle-types.js';
 import type {
@@ -45,6 +52,8 @@ import type {
 } from './economy-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
 
+type PracticeEconomyContext = EconomyContext & Pick<PracticeContext, 'practiceFacts'>;
+
 type CommandDraft = {
   readonly root: MaterializedCompanyState;
   readonly lifecycleReceipt: LifecycleReceipt | null;
@@ -55,8 +64,16 @@ type CommandDraft = {
 function applyCommandAtTarget(
   root: MaterializedCompanyState,
   command: CompanyCommand,
-  context: EconomyContext,
+  context: PracticeEconomyContext,
 ): CommandDraft {
+  if (command.type === 'CreditPractice')
+    return {
+      root: preparePracticeCredit(root, command, context),
+      lifecycleReceipt: null,
+      requirements: [],
+      allocations: [],
+    };
+
   const physical = preparePhysicalCommand(root, command, context);
   if (physical)
     return {
@@ -179,7 +196,7 @@ function publicObservableKey(state: CompanyEconomyState, observerCompanyId: stri
 export function prepareCompanyEconomy(
   state: CompanyEconomyState,
   value: unknown,
-  context: EconomyContext,
+  context: PracticeEconomyContext,
 ): EconomyResult {
   const guarded = guardCompanyCommand(value, context);
   if (!guarded.ok) return { kind: 'REJECTED', state, error: guarded.error };
@@ -191,7 +208,7 @@ export function prepareCompanyEconomy(
       'AUTHORIZATION',
     );
     const requestKey = canonicalJson(command);
-    const semanticKey = canonicalJson({ type: command.type, payload: command.payload });
+    const semanticKey = companySemanticKey(command);
     const sourceKey = companySourceKey(command);
     const previous =
       state.finance.applied.find((receipt) => receipt.commandId === command.commandId) ??
@@ -223,6 +240,7 @@ export function prepareCompanyEconomy(
       ...context,
       financeFacts: context.financeFacts.map((fact) => own(fact)),
       physicalFacts: (context.physicalFacts ?? []).map((fact) => own(fact)),
+      practiceFacts: (context.practiceFacts ?? []).map((fact) => own(fact)),
     };
     let base = materializeCompanyPhysicalState(state);
     validateEconomy(base, context);
@@ -243,7 +261,7 @@ export function prepareCompanyEconomy(
 
     const target =
       command.type === 'AdvanceCampaign' ? campaignTick(command.payload.toTick) : context.atTick;
-    const targetContext: EconomyContext = { ...context, atTick: target };
+    const targetContext: PracticeEconomyContext = { ...context, atTick: target };
     const closed =
       command.type === 'AdvanceCampaign'
         ? advanceEconomy(base, command, context)
