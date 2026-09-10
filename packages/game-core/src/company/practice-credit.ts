@@ -27,7 +27,8 @@ export function preparePracticeCredit(
 
   const sourceKey = companySourceKey(command);
   requireEconomy(sourceKey !== null, 'INVALID_STATE');
-  requireEconomy(!root.finance.sourceEffects.some((entry) => entry.key === sourceKey), 'INVALID_STATE');
+  const duplicate = root.finance.sourceEffects.some((entry) => entry.key === sourceKey);
+  requireEconomy(!duplicate, 'INVALID_STATE');
   const nextProgress = {
     ...progress,
     amount: creditProgression(progress.amount, admitted.baseMilliXp, admitted.coefficients),
