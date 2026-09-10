@@ -16,44 +16,25 @@ import type {
 } from '@warwrit/game-core';
 import { command, context, economy, prepared } from './company-economy-fixture.js';
 
-type ExactEntry = { readonly characterId: string; readonly skillId: string };
+type ExactEntry = readonly [characterId: string, skillId: string];
 
-function withExact(state: CompanyEconomyState, entries: readonly ExactEntry[]) {
-  return {
-    ...state,
-    lifecycle: {
-      ...state.lifecycle,
-      characters: state.lifecycle.characters.map((character) => {
-        const owned = entries.filter(
-          (entry) => entry.characterId === character.identity.characterId,
-        );
-        if (owned.length === 0) return character;
-        return {
-          ...character,
-          skills: {
-            ...character.skills,
-            ...Object.fromEntries(
-              owned.map((entry) => [
-                entry.skillId,
-                initialSkillProgress(0, `fixture:${entry.characterId}:${entry.skillId}`),
-              ]),
-            ),
-          },
-          aptitudeBySkill: {
-            ...character.aptitudeBySkill,
-            ...Object.fromEntries(owned.map((entry) => [entry.skillId, 10000])),
-          },
-        };
-      }),
-    },
-  };
+function exact(state: CompanyEconomyState, entries: readonly ExactEntry[]) {
+  for (const [characterId, skillId] of entries) {
+    const character = state.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === characterId,
+    )!;
+    Object.assign(character, {
+      skills: {
+        ...character.skills,
+        [skillId]: initialSkillProgress(0, `fixture:${characterId}:${skillId}`),
+      },
+      aptitudeBySkill: { ...character.aptitudeBySkill, [skillId]: 10000 },
+    });
+  }
+  return state;
 }
 
-function skill(
-  state: CompanyEconomyState,
-  characterId: string,
-  skillId: string,
-): SkillProgress {
+function skill(state: CompanyEconomyState, characterId: string, skillId: string): SkillProgress {
   return state.lifecycle.characters.find((c) => c.identity.characterId === characterId)!.skills[
     skillId
   ]!;
@@ -106,20 +87,6 @@ function practice(
   return { cmd, fact, ctx: { ...context(state, cmd), practiceFacts: [fact] } };
 }
 
-function clone(state: CompanyEconomyState): CompanyEconomyState {
-  return JSON.parse(JSON.stringify(state)) as CompanyEconomyState;
-}
-
-function gameOver(state: CompanyEconomyState): CompanyEconomyState {
-  return {
-    ...state,
-    lifecycle: {
-      ...state.lifecycle,
-      company: { ...state.lifecycle.company!, runStatus: 'GAME_OVER' },
-    },
-  };
-}
-
 function rejectUnchanged(
   state: CompanyEconomyState,
   cmd: unknown,
@@ -136,21 +103,17 @@ function rejectUnchanged(
 }
 
 describe('A03.2 — exact practice credit through the root preparer', () => {
-  it('credits historical work, retains source metadata and replays after JSON reload', () => {
-    const state = gameOver(
-      withExact(economy([1n, 1n]), [{ characterId: 'worker-0', skillId: 'archery' }]),
-    );
+  it('credits historical work, retains its source and replays after reload', () => {
+    const state = exact(economy([1n, 1n]), [['worker-0', 'archery']]);
+    Object.assign(state.lifecycle.company!, { runStatus: 'GAME_OVER' });
     const before = readSkillProgress(skill(state, 'worker-0', 'archery'));
-    if (typeof before === 'number') throw new Error('fixture must own exact progress');
+    if (typeof before === 'number') throw new Error('fixture must be exact');
     const beforeKnowledge = canonicalJson(state.lifecycle.knowledge);
     const { cmd, fact, ctx } = practice(state);
-
     const result = prepared(prepareCompanyEconomy(state, cmd, ctx));
     const after = readSkillProgress(skill(result.next, 'worker-0', 'archery'));
-    if (typeof after === 'number') throw new Error('credit lost exact ownership');
-    const method = COMPANY_CATALOGUE.methods.find(
-      (entry) => entry.id === 'weapon-attack',
-    )!;
+    if (typeof after === 'number') throw new Error('credit lost exact state');
+    const method = COMPANY_CATALOGUE.methods.find((entry) => entry.id === 'weapon-attack')!;
     expect(after.amount).toEqual(
       creditProgression(before.amount, String(BigInt(method.xp!) * 1000n), {
         aptitudeBps: 8001,
@@ -162,7 +125,7 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     expect(canonicalJson(result.next.lifecycle.knowledge)).toBe(beforeKnowledge);
     expect(result.next.finance.sourceEffects.at(-1)?.requestKey).toBe(canonicalJson(fact));
 
-    const reloaded = clone(result.next);
+    const reloaded = JSON.parse(JSON.stringify(result.next)) as CompanyEconomyState;
     const retryBase = command(
       reloaded,
       'CreditPractice',
@@ -183,28 +146,19 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     expect(canonicalJson(replay.next)).toBe(canonicalJson(reloaded));
   });
 
-  it('orders command conflict before source replay and ignores only transport receipt identity', () => {
-    const state = withExact(economy([1n, 1n]), [
-      { characterId: 'worker-0', skillId: 'archery' },
-    ]);
+  it('orders command conflicts before source replay and ignores only receiptId', () => {
+    const state = exact(economy([1n, 1n]), [['worker-0', 'archery']]);
     const first = practice(state);
     const credited = prepared(prepareCompanyEconomy(state, first.cmd, first.ctx)).next;
+    expect(prepared(prepareCompanyEconomy(credited, first.cmd, context(credited, first.cmd))).replayed).toBe(
+      true,
+    );
 
-    expect(
-      prepared(
-        prepareCompanyEconomy(credited, first.cmd, context(credited, first.cmd)),
-      ).replayed,
-    ).toBe(true);
     const changedSameId = {
       ...first.cmd,
       payload: { ...first.cmd.payload, outcome: 'MEANINGFUL_FAILURE' as const },
     };
-    rejectUnchanged(
-      credited,
-      changedSameId,
-      context(credited, changedSameId),
-      'IDEMPOTENCY_CONFLICT',
-    );
+    rejectUnchanged(credited, changedSameId, context(credited, changedSameId), 'IDEMPOTENCY_CONFLICT');
 
     const retryBase = command(
       credited,
@@ -226,36 +180,28 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
       commandId: 'new-command-conflict',
       payload: { ...sameWork.payload, challengeLevel: 1 },
     };
-    rejectUnchanged(
-      credited,
-      changedCause,
-      context(credited, changedCause),
-      'IDEMPOTENCY_CONFLICT',
-    );
+    rejectUnchanged(credited, changedCause, context(credited, changedCause), 'IDEMPOTENCY_CONFLICT');
   });
 
-  it('keeps source fan-out by person and skill while distinct episodes earn independently', () => {
-    let state = withExact(economy([1n, 1n]), [
-      { characterId: 'worker-0', skillId: 'archery' },
-      { characterId: 'worker-0', skillId: 'defense' },
-      { characterId: 'worker-1', skillId: 'defense' },
+  it('keeps source fan-out by person and skill and credits distinct episodes', () => {
+    let state = exact(economy([1n, 1n]), [
+      ['worker-0', 'archery'],
+      ['worker-0', 'defense'],
+      ['worker-1', 'defense'],
     ]);
     const shared = 'source-shared-episode';
-    const credits = [
+    for (const args of [
       ['worker-0', 'archery', 'weapon-attack', 'fanout-attack'],
       ['worker-0', 'defense', 'guard-interaction', 'fanout-defense'],
       ['worker-1', 'defense', 'guard-interaction', 'fanout-person'],
-    ] as const;
-    for (const args of credits) {
+    ] as const) {
       const input = practice(state, ...args, shared);
       state = prepared(prepareCompanyEconomy(state, input.cmd, input.ctx)).next;
     }
-    expect(
-      new Set(state.finance.applied.slice(-3).map((receipt) => receipt.sourceKey)).size,
-    ).toBe(3);
+    expect(new Set(state.finance.applied.slice(-3).map((receipt) => receipt.sourceKey)).size).toBe(3);
 
-    const beforeSecondEpisode = readSkillProgress(skill(state, 'worker-0', 'archery'));
-    if (typeof beforeSecondEpisode === 'number') throw new Error('fixture lost exact progress');
+    const before = readSkillProgress(skill(state, 'worker-0', 'archery'));
+    if (typeof before === 'number') throw new Error('fixture lost exact state');
     const distinct = practice(
       state,
       'worker-0',
@@ -265,45 +211,29 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
       'source-distinct-episode',
       1,
     );
-    const afterDistinct = prepared(prepareCompanyEconomy(state, distinct.cmd, distinct.ctx)).next;
-    const after = readSkillProgress(skill(afterDistinct, 'worker-0', 'archery'));
-    if (typeof after === 'number') throw new Error('credit lost exact progress');
-    expect(BigInt(after.amount.milliXp)).toBeGreaterThan(
-      BigInt(beforeSecondEpisode.amount.milliXp),
-    );
+    const next = prepared(prepareCompanyEconomy(state, distinct.cmd, distinct.ctx)).next;
+    const after = readSkillProgress(skill(next, 'worker-0', 'archery'));
+    if (typeof after === 'number') throw new Error('credit lost exact state');
+    expect(BigInt(after.amount.milliXp)).toBeGreaterThan(BigInt(before.amount.milliXp));
   });
 
-  it('rejects unknown exact accumulators or missing evidence without partial root effects', () => {
+  it('rejects inexact accumulators or missing evidence without partial effects', () => {
     const base = economy([1n, 1n]);
-    const exact = withExact(base, [{ characterId: 'worker-0', skillId: 'archery' }]);
-    const legacy = {
-      ...exact,
-      lifecycle: {
-        ...exact.lifecycle,
-        characters: exact.lifecycle.characters.map((character) =>
-          character.identity.characterId === 'worker-0'
-            ? { ...character, skills: { ...character.skills, archery: 0 } }
-            : character,
-        ),
-      },
-    };
+    const owned = exact(economy([1n, 1n]), [['worker-0', 'archery']]);
+    const legacy = exact(economy([1n, 1n]), [['worker-0', 'archery']]);
+    Object.assign(legacy.lifecycle.characters[1]!, {
+      skills: { ...legacy.lifecycle.characters[1]!.skills, archery: 0 },
+    });
     for (const state of [legacy, base]) {
       const input = practice(state);
       rejectUnchanged(state, input.cmd, input.ctx, 'INVALID_STATE');
     }
-    const noEvidence = practice(exact);
-    rejectUnchanged(
-      exact,
-      noEvidence.cmd,
-      context(exact, noEvidence.cmd),
-      'INVALID_SOURCE',
-    );
+    const noEvidence = practice(owned);
+    rejectUnchanged(owned, noEvidence.cmd, context(owned, noEvidence.cmd), 'INVALID_SOURCE');
   });
 
-  it('keeps private credit observationally equivalent for the next player request', () => {
-    const control = withExact(economy([1n, 1n]), [
-      { characterId: 'worker-0', skillId: 'archery' },
-    ]);
+  it('keeps private credit equivalent for the next player request and wages', () => {
+    const control = exact(economy([1n, 1n]), [['worker-0', 'archery']]);
     const input = practice(control);
     const credited = prepared(prepareCompanyEconomy(control, input.cmd, input.ctx)).next;
     expect(projectCompanyEconomy(credited, control.lifecycle.companyId)).toEqual(
@@ -311,20 +241,12 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     );
     expect(credited.finance.accounts).toEqual(control.finance.accounts);
 
-    const payload = {
-      companyId: control.lifecycle.companyId,
-      name: 'Company II',
-      bannerId: 'banner',
-    };
+    const payload = { companyId: control.lifecycle.companyId, name: 'Company II', bannerId: 'banner' };
     const left = command(credited, 'RenameCompany', payload, 'after-private-credit');
     const right = command(control, 'RenameCompany', payload, 'after-private-credit');
     expect(left.expectedRevision).toBe(right.expectedRevision);
-    const leftResult = prepared(
-      prepareCompanyEconomy(credited, left, context(credited, left)),
-    );
-    const rightResult = prepared(
-      prepareCompanyEconomy(control, right, context(control, right)),
-    );
+    const leftResult = prepared(prepareCompanyEconomy(credited, left, context(credited, left)));
+    const rightResult = prepared(prepareCompanyEconomy(control, right, context(control, right)));
     expect(projectCompanyEconomy(leftResult.next, control.lifecycle.companyId)).toEqual(
       projectCompanyEconomy(rightResult.next, control.lifecycle.companyId),
     );
