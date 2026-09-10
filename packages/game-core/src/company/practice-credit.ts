@@ -4,7 +4,7 @@ import { admitPractice } from './practice-admission.js';
 import { creditProgression } from './progression.js';
 import { readSkillProgress } from './skill-progress.js';
 import { requireEconomy } from './economy-state.js';
-import type { CompanyEconomyState, EconomyContext } from './economy-types.js';
+import type { EconomyContext } from './economy-types.js';
 import type { CommandOf } from './lifecycle-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
 import type { PracticeContext } from './practice-admission.js';
@@ -54,7 +54,3 @@ export function preparePracticeCredit(
     },
   };
 }
-
-/** Compile-time ownership check: practice remains inside the existing root state. */
-const _rootOwnership: CompanyEconomyState | null = null;
-void _rootOwnership;
