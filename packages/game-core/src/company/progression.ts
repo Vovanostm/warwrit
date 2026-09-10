@@ -12,6 +12,11 @@ export const PROGRESSION_RULES = freezeRegistry({
 });
 const CREDIT_DENOMINATOR = 10000n ** 3n;
 const amountInput = object({ milliXp: unsigned, carry: unsigned });
+export const progressionAmountInput = Object.freeze({
+  ...amountInput,
+  read: (value: unknown): value is ProgressionAmount =>
+    amountInput.read(value) && BigInt(value.carry) < CREDIT_DENOMINATOR,
+});
 const coefficientsInput = object({
   aptitudeBps: natural(1),
   challengeBps: natural(
@@ -60,10 +65,9 @@ export function creditProgression(
 ): ProgressionAmount {
   const amount = snapshotJson(previous);
   const coefficients = snapshotJson(frozenCoefficients);
-  if (!amountInput.read(amount) || !coefficientsInput.read(coefficients))
+  if (!progressionAmountInput.read(amount) || !coefficientsInput.read(coefficients))
     throw new RangeError('Invalid progression amount or coefficients');
   const carry = BigInt(amount.carry);
-  if (carry >= CREDIT_DENOMINATOR) throw new RangeError('Invalid progression carry');
   const numerator =
     BigInt(exact(baseMilliXp)) *
       BigInt(coefficients.aptitudeBps) *

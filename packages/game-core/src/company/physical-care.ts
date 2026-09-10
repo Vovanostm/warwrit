@@ -1,5 +1,6 @@
 import { COMPANY_CATALOGUE } from './definitions.js';
 import { canPerform, person, sameLocation } from './lifecycle-state.js';
+import { skillLevel } from './skill-progress.js';
 import { consumePhysicalQuantity } from './physical-items.js';
 import { payPhysicalProvider } from './physical-payments.js';
 import {
@@ -67,8 +68,7 @@ function providerAt(root: MaterializedCompanyState, providerId: string, characte
     provider.presence.availability === 'AVAILABLE' &&
       provider.presence.encounterBindingId === null &&
       canPerform(provider, 'basicWork') &&
-      provider.skills['medicine'] !== undefined &&
-      provider.skills['medicine'] > 0 &&
+      skillLevel(provider.skills['medicine'] ?? 0) > 0 &&
       provider.presence.location.kind === 'AT' &&
       subject.presence.location.kind === 'AT' &&
       sameLocation(provider.presence.location, subject.presence.location),

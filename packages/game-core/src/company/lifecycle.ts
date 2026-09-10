@@ -1,5 +1,6 @@
 import { guardCompanyCommand, checkFreshCompanyRevision, companySourceKey } from './guards.js';
 import { canonicalJson, snapshotJson } from './input.js';
+import { skillLevels } from './skill-progress.js';
 import { canonicalRevision, publicRevision, isExactInteger } from './values.js';
 import { prepareOpening } from './opening.js';
 import {
@@ -57,7 +58,10 @@ function observeCompany(
   let knowledge = state.knowledge;
   if (fact.subject.kind === 'CHARACTER') {
     const character = person(state, fact.subject.id);
-    const snapshot = snapshotJson(character) as unknown as LifecycleCharacter;
+    const snapshot = snapshotJson({
+      ...character,
+      skills: skillLevels(character.skills),
+    }) as unknown as LifecycleCharacter;
     requireLifecycle(snapshot, 'INVALID_STATE');
     knowledge = {
       ...knowledge,
