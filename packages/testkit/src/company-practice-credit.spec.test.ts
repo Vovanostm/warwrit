@@ -150,15 +150,20 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     const state = exact(economy([1n, 1n]), [['worker-0', 'archery']]);
     const first = practice(state);
     const credited = prepared(prepareCompanyEconomy(state, first.cmd, first.ctx)).next;
-    expect(prepared(prepareCompanyEconomy(credited, first.cmd, context(credited, first.cmd))).replayed).toBe(
-      true,
-    );
+    expect(
+      prepared(prepareCompanyEconomy(credited, first.cmd, context(credited, first.cmd))).replayed,
+    ).toBe(true);
 
     const changedSameId = {
       ...first.cmd,
       payload: { ...first.cmd.payload, outcome: 'MEANINGFUL_FAILURE' as const },
     };
-    rejectUnchanged(credited, changedSameId, context(credited, changedSameId), 'IDEMPOTENCY_CONFLICT');
+    rejectUnchanged(
+      credited,
+      changedSameId,
+      context(credited, changedSameId),
+      'IDEMPOTENCY_CONFLICT',
+    );
 
     const retryBase = command(
       credited,
@@ -180,7 +185,12 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
       commandId: 'new-command-conflict',
       payload: { ...sameWork.payload, challengeLevel: 1 },
     };
-    rejectUnchanged(credited, changedCause, context(credited, changedCause), 'IDEMPOTENCY_CONFLICT');
+    rejectUnchanged(
+      credited,
+      changedCause,
+      context(credited, changedCause),
+      'IDEMPOTENCY_CONFLICT',
+    );
   });
 
   it('keeps source fan-out by person and skill and credits distinct episodes', () => {
@@ -198,7 +208,9 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
       const input = practice(state, ...args, shared);
       state = prepared(prepareCompanyEconomy(state, input.cmd, input.ctx)).next;
     }
-    expect(new Set(state.finance.applied.slice(-3).map((receipt) => receipt.sourceKey)).size).toBe(3);
+    expect(
+      new Set(state.finance.applied.slice(-3).map((receipt) => receipt.sourceKey)).size,
+    ).toBe(3);
 
     const before = readSkillProgress(skill(state, 'worker-0', 'archery'));
     if (typeof before === 'number') throw new Error('fixture lost exact state');
@@ -241,7 +253,11 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     );
     expect(credited.finance.accounts).toEqual(control.finance.accounts);
 
-    const payload = { companyId: control.lifecycle.companyId, name: 'Company II', bannerId: 'banner' };
+    const payload = {
+      companyId: control.lifecycle.companyId,
+      name: 'Company II',
+      bannerId: 'banner',
+    };
     const left = command(credited, 'RenameCompany', payload, 'after-private-credit');
     const right = command(control, 'RenameCompany', payload, 'after-private-credit');
     expect(left.expectedRevision).toBe(right.expectedRevision);
