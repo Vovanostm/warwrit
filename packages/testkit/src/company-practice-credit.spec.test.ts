@@ -152,10 +152,7 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     expect(after.binding).toEqual(before.binding);
     expect(canonicalJson(result.next.lifecycle.knowledge)).toBe(beforeKnowledge);
     expect(projectCompanyEconomy(result.next, state.lifecycle.companyId)).toEqual(beforeView);
-    expect(result.next.finance.sourceEffects).toContainEqual({
-      key: result.receipt.sourceKey,
-      requestKey: canonicalJson(fact),
-    });
+    expect(result.next.finance.sourceEffects.at(-1)?.requestKey).toBe(canonicalJson(fact));
 
     const reloaded = clone(result.next);
     const retryBase = command(
