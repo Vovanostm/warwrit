@@ -9,11 +9,7 @@ import {
   projectCompanyEconomy,
   readSkillProgress,
 } from '@warwrit/game-core';
-import type {
-  CompanyEconomyState,
-  PracticeEvidence,
-  SkillProgress,
-} from '@warwrit/game-core';
+import type { CompanyEconomyState, PracticeEvidence, SkillProgress } from '@warwrit/game-core';
 import { command, context, economy, prepared } from './company-economy-fixture.js';
 
 type ExactEntry = readonly [characterId: string, skillId: string];
@@ -138,9 +134,7 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
       sourceEventId: cmd.sourceEventId,
       expectedRevision: cmd.expectedRevision,
     };
-    const replay = prepared(
-      prepareCompanyEconomy(reloaded, retry, context(reloaded, retry)),
-    );
+    const replay = prepared(prepareCompanyEconomy(reloaded, retry, context(reloaded, retry)));
     expect(replay.replayed).toBe(true);
     expect(replay.receipt.commandId).toBe(cmd.commandId);
     expect(canonicalJson(replay.next)).toBe(canonicalJson(reloaded));
