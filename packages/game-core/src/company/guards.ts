@@ -119,10 +119,26 @@ function playerSource(command: CompanyCommand) {
   }
 }
 
+/** Source replay compares causal command semantics, not a transport receipt identifier. */
+export function companySemanticKey(command: CompanyCommand): string {
+  if (command.type === 'CreditPractice') {
+    const { receiptId: _receiptId, ...payload } = command.payload;
+    return canonicalJson({ type: command.type, payload });
+  }
+  return canonicalJson({ type: command.type, payload: command.payload });
+}
+
 /** Shared causal scope; fan-out affects each subject once, not only the first person. */
 export function companySourceKey(command: CompanyCommand): string | null {
   if (command.type === 'ResolveLeadership')
     return canonicalJson(['crisis', command.payload.crisisId]);
+  if (command.type === 'CreditPractice')
+    return canonicalJson([
+      command.type,
+      command.sourceEventId,
+      command.payload.characterId,
+      command.payload.skillId,
+    ]);
   if (command.actorRef.kind === 'PLAYER') {
     const source = playerSource(command);
     return source === null ? null : canonicalJson([command.type, ...source]);
