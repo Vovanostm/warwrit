@@ -125,7 +125,7 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     const retryBase = command(
       reloaded,
       'CreditPractice',
-      { ...cmd.payload, receiptId: 'transport-retry' },
+      { ...fact.payload, receiptId: 'transport-retry' },
       'practice-retry',
       'DOMAIN_RECEIPT',
     );
@@ -150,7 +150,7 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
 
     const changedSameId = {
       ...first.cmd,
-      payload: { ...first.cmd.payload, outcome: 'MEANINGFUL_FAILURE' as const },
+      payload: { ...first.fact.payload, outcome: 'MEANINGFUL_FAILURE' as const },
     };
     rejectUnchanged(
       credited,
@@ -162,7 +162,7 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     const retryBase = command(
       credited,
       'CreditPractice',
-      { ...first.cmd.payload, receiptId: 'different-transport' },
+      { ...first.fact.payload, receiptId: 'different-transport' },
       'new-command-same-work',
       'DOMAIN_RECEIPT',
     );
@@ -177,7 +177,7 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     const changedCause = {
       ...sameWork,
       commandId: 'new-command-conflict',
-      payload: { ...sameWork.payload, challengeLevel: 1 },
+      payload: { ...first.fact.payload, receiptId: 'different-transport', challengeLevel: 1 },
     };
     rejectUnchanged(
       credited,
