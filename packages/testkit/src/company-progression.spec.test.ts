@@ -65,8 +65,7 @@ describe('A01 — exact progression arithmetic, not practice admission', () => {
       expect(progressionThresholdMilliXp(level)).toBe(threshold);
       expect(progressionLevel(threshold)).toBe(level);
       expect(progressionLevel((BigInt(threshold) + 1n).toString())).toBe(level);
-      if (level > 0)
-        expect(progressionLevel((BigInt(threshold) - 1n).toString())).toBe(level - 1);
+      if (level > 0) expect(progressionLevel((BigInt(threshold) - 1n).toString())).toBe(level - 1);
     }
     expect(progressionLevel('9'.repeat(128))).toBe(100);
   });
@@ -104,13 +103,10 @@ describe('A01 — exact progression arithmetic, not practice admission', () => {
           const frozen = Object.freeze(coefficients);
           const quantity = parts.reduce((sum, part) => sum + part, 0n);
           const whole = creditProgression(initial, quantity.toString(), frozen);
-          const split = parts.reduce(
-            (amount, part) => {
-              const restored = JSON.parse(JSON.stringify({ amount, coefficients: frozen }));
-              return creditProgression(restored.amount, part.toString(), restored.coefficients);
-            },
-            initial,
-          );
+          const split = parts.reduce((amount, part) => {
+            const restored = JSON.parse(JSON.stringify({ amount, coefficients: frozen }));
+            return creditProgression(restored.amount, part.toString(), restored.coefficients);
+          }, initial);
           expect(split).toEqual(whole);
           expect(BigInt(split.milliXp)).toBeGreaterThanOrEqual(BigInt(initial.milliXp));
           expect(BigInt(split.carry)).toBeGreaterThanOrEqual(0n);
@@ -157,8 +153,7 @@ describe('A01 — exact progression arithmetic, not practice admission', () => {
       expect(() => creditProgression(zero, '1', { ...success, ...patch })).toThrow(RangeError);
     for (const carry of ['-1', '01', '1000000000000'])
       expect(() => creditProgression({ ...zero, carry }, '0', success)).toThrow(RangeError);
-    expect(() =>
-      creditProgression({ milliXp: '9'.repeat(128), carry: '0' }, '1', success),
-    ).toThrow(RangeError);
+    const maximum = { milliXp: '9'.repeat(128), carry: '0' };
+    expect(() => creditProgression(maximum, '1', success)).toThrow(RangeError);
   });
 });
