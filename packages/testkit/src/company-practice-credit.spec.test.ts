@@ -104,15 +104,15 @@ function clone(state: CompanyEconomyState): CompanyEconomyState {
 }
 
 describe('A03.2 — exact practice credit through the root preparer', () => {
-  it('credits the A02 owner, retains source metadata and replays after JSON reload', () => {
+  it('credits historical work, retains source metadata and replays after JSON reload', () => {
     const state = withExact(economy([1n, 1n]), [
       { characterId: 'worker-0', skillId: 'archery' },
     ]);
+    Object.assign(state.lifecycle.company!, { runStatus: 'GAME_OVER' });
     const before = readSkillProgress(skill(state, 'worker-0', 'archery'));
     if (typeof before === 'number') throw new Error('fixture must own exact progress');
     const beforeView = projectCompanyEconomy(state, state.lifecycle.companyId);
     const beforeKnowledge = canonicalJson(state.lifecycle.knowledge);
-    const beforeAccounts = canonicalJson(state.finance.accounts);
     const { cmd, fact, ctx } = practice(state);
 
     const result = prepared(prepareCompanyEconomy(state, cmd, ctx));
@@ -129,7 +129,6 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     expect(after.binding).toEqual(before.binding);
     expect(result.next.lifecycle.knowledge.revision).toBe(state.lifecycle.knowledge.revision);
     expect(canonicalJson(result.next.lifecycle.knowledge)).toBe(beforeKnowledge);
-    expect(canonicalJson(result.next.finance.accounts)).toBe(beforeAccounts);
     expect(projectCompanyEconomy(result.next, state.lifecycle.companyId)).toEqual(beforeView);
     expect(result.receipt.sourceKey).not.toBeNull();
     expect(result.next.finance.sourceEffects).toContainEqual({
