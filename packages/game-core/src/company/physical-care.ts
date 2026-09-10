@@ -256,7 +256,7 @@ export function applyCare(
     const stableId = physicalId(condition.conditionId, fact.id, 'post-stabilization');
     requirePhysical(
       !physical.conditions.some((entry) => entry.conditionId === stableId),
-      'INVALID_STATE',
+      'IDEMPOTENCY_CONFLICT',
     );
     disclosedIds.push(stableId);
     physical = {
