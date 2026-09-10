@@ -4,7 +4,7 @@
 - As of: 2026-09-10
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
-- Current delivery: [A02 / #21](https://github.com/Vovanostm/warwrit/issues/21); next implementation: A03 only, after verified A02 merge
+- Current delivery: [A03.1 / #23](https://github.com/Vovanostm/warwrit/issues/23), admission prerequisite; A03 remains unfinished, root integration next
 
 ## Current state
 
@@ -15,10 +15,10 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-current_slice: A02
-next_implementation: A03
-activation_requires: A02-verified-merged
-merge_authorized: A02-only-by-owner-2026-09-10
+current_slice: A03.1-admission-prerequisite
+next_implementation: A03.2-root-integration
+activation_requires: complete-A03-reviewed-tested-composition
+merge_authorized: false
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
 package_manager: repository-pinned-pnpm
@@ -31,8 +31,8 @@ merged R00 as `321640fb737ed22db96fb5525b4b4257b01397ab`,
 tree `c1533292f0e0ff094c67fac4cdbc51282fb18546`, after [PR #16](https://github.com/Vovanostm/warwrit/pull/16).
 A01 [PR #20](https://github.com/Vovanostm/warwrit/pull/20) merged as `b60ab8c36e5e458b08cb012a02de7eac55cae348`,
 tree `0550d28dae1683899bc7f6aba91b6d7536c7d1f2`. Do not reset newer main or repeat completed tasks.
-The owner authorized A02 implementation, review and merge on 2026-09-10. Verify A02's live
-merge before A03. [PR #17](https://github.com/Vovanostm/warwrit/pull/17) remains separate.
+A02 [PR #22](https://github.com/Vovanostm/warwrit/pull/22) merged as `88d78a710cd574efdd1375750d89ac273b14375b`,
+tree `4e1dc5fe58d762feff2dfaa66045679196176b36`. [PR #17](https://github.com/Vovanostm/warwrit/pull/17) remains separate.
 No successor merge, auto-merge, deployment or purchases are authorized.
 
 ## Authority and source order
@@ -85,10 +85,13 @@ Dependencies outrank letter order; refine distant G/H tasks against real predece
 
 A01 supplies exact XP/milliXP, rational carry and level-threshold arithmetic only,
 not active gameplay learning or proof that practice was legitimate.
-Current **A02 only**: explicit legacy/initial binding and retention through existing root branches.
-Next **A03 only**, after verified A02 merge: admit trusted practice and skill-scoped source replay.
-Read the full registry and L/D/X; do not invent unknown fractional XP. A02 does not activate
-practice admission, books/tasks, payments, social, V2, SQL or UI.
+A02's exact owner is merged. A03 uses the full launcher `rec10BFQvVMBejytx` and L/D/X.
+The size-driven responsibility split is recorded on #23: **A03.1** supplies only finite trusted
+EVENT admission and frozen A01 inputs in `practice-admission.ts`; **A03.2** must add exact credit,
+skill-scoped root replay, atomic receipts/source/revision, retention and paired privacy tests.
+A03 remains unfinished: `prepareCompanyEconomy` still rejects `CreditPractice`, and H04 stays gated.
+No missing legacy XP is invented. Concrete B04/G09 producers remain deferred; injected facts are tests.
+A04 follows completed A03, not this prerequisite. No study, social, V2, SQL or UI activation.
 `StartLearning` stays disabled until C08. `BeginEncounterBinding`,
 `ConsumeCombatReceipt` and `FinalizeEncounter` stay disabled until G10.
 F02 remains `NEEDS_NARROW_SERVICE_CONTRACT` for cosmetic/service keys: it blocks itself
@@ -100,8 +103,8 @@ remain later work, not silently completed or decomposed here.
 
 G0 permits an explicitly labelled independent reconstruction of machine contracts from canonical Notes. Neither the missing original v1 ZIP nor the independently regenerated v1.2 ZIP is claimed byte-verified by this implementation. `RC-GAP-MACHINE-01` remains a named source-concordance gap, not a new product interview. Use the source manifest in the active WP contract; do not infer 117 executed tests from a catalogue count.
 
-Original source ZIP concordance remains `NOT_RUN`. Previous PR #16/#18/#20 CI is predecessor
-evidence, not an A02 test run. Foundation migration smoke is not proof of the
+Original source ZIP concordance remains `NOT_RUN`. Previous PR #16/#18/#20/#22 CI is predecessor
+evidence, not an A03 test run. Foundation migration smoke is not proof of the
 future H transaction/race/crash guarantees. Full WP-02 and M1 remain incomplete.
 
 M0 proves deterministic combat, termination and replay, not player enjoyment. Q-C01/Q-C10/R-01 require interactive M1 evidence. The 30-second activation limit remains a versioned parameter for player validation. Q-T03 / issue #6 compares Babylon and PlayCanvas with the same scene and workflow; no permanent renderer dependency is installed by WP-02.1.
