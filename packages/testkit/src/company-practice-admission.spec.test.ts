@@ -151,7 +151,10 @@ describe('A03.1 — finite trusted EVENT admission, not root activation', () => 
         'leadership',
         {
           ...cycle,
-          interactions: [cycle.interactions[0]!, { ...cycle.interactions[0]!, sourceEventId: 'second' }],
+          interactions: [
+            cycle.interactions[0]!,
+            { ...cycle.interactions[0]!, sourceEventId: 'second' },
+          ],
         },
       ],
     ] as const) {
