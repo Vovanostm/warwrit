@@ -29,6 +29,7 @@ export function preparePracticeCredit(
   requireEconomy(sourceKey !== null, 'INVALID_STATE');
   const duplicate = root.finance.sourceEffects.some((entry) => entry.key === sourceKey);
   requireEconomy(!duplicate, 'INVALID_STATE');
+  const sourceEffect = { key: sourceKey, requestKey: canonicalJson(admitted.source) };
   const nextProgress = {
     ...progress,
     amount: creditProgression(progress.amount, admitted.baseMilliXp, admitted.coefficients),
@@ -48,10 +49,7 @@ export function preparePracticeCredit(
     },
     finance: {
       ...root.finance,
-      sourceEffects: [
-        ...root.finance.sourceEffects,
-        { key: sourceKey, requestKey: canonicalJson(admitted.source) },
-      ],
+      sourceEffects: [...root.finance.sourceEffects, sourceEffect],
     },
   };
 }
