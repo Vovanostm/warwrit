@@ -9,10 +9,18 @@ import {
   projectCompanyEconomy,
   readSkillProgress,
 } from '@warwrit/game-core';
-import type { CompanyEconomyState, PracticeEvidence, SkillProgress } from '@warwrit/game-core';
+import type {
+  CompanyEconomyState,
+  PracticeEvidence,
+  SkillProgress,
+} from '@warwrit/game-core';
 import { command, context, economy, prepared } from './company-economy-fixture.js';
 
-type ExactEntry = { readonly characterId: string; readonly skillId: string; readonly level?: number };
+type ExactEntry = {
+  readonly characterId: string;
+  readonly skillId: string;
+  readonly level?: number;
+};
 
 function withExact(state: CompanyEconomyState, entries: readonly ExactEntry[]) {
   return {
@@ -103,6 +111,21 @@ function clone(state: CompanyEconomyState): CompanyEconomyState {
   return JSON.parse(JSON.stringify(state)) as CompanyEconomyState;
 }
 
+function rejectUnchanged(
+  state: CompanyEconomyState,
+  cmd: unknown,
+  ctx: Parameters<typeof prepareCompanyEconomy>[2],
+  error: string,
+) {
+  const before = canonicalJson(state);
+  expect(prepareCompanyEconomy(state, cmd, ctx)).toMatchObject({
+    kind: 'REJECTED',
+    state,
+    error,
+  });
+  expect(canonicalJson(state)).toBe(before);
+}
+
 describe('A03.2 — exact practice credit through the root preparer', () => {
   it('credits historical work, retains source metadata and replays after JSON reload', () => {
     const state = withExact(economy([1n, 1n]), [
@@ -127,10 +150,8 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
       }),
     );
     expect(after.binding).toEqual(before.binding);
-    expect(result.next.lifecycle.knowledge.revision).toBe(state.lifecycle.knowledge.revision);
     expect(canonicalJson(result.next.lifecycle.knowledge)).toBe(beforeKnowledge);
     expect(projectCompanyEconomy(result.next, state.lifecycle.companyId)).toEqual(beforeView);
-    expect(result.receipt.sourceKey).not.toBeNull();
     expect(result.next.finance.sourceEffects).toContainEqual({
       key: result.receipt.sourceKey,
       requestKey: canonicalJson(fact),
@@ -162,18 +183,14 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     const first = practice(state);
     const credited = prepared(prepareCompanyEconomy(state, first.cmd, first.ctx)).next;
 
-    const exactRetry = prepared(
-      prepareCompanyEconomy(credited, first.cmd, context(credited, first.cmd)),
+    expect(prepared(prepareCompanyEconomy(credited, first.cmd, context(credited, first.cmd))).replayed).toBe(
+      true,
     );
-    expect(exactRetry.replayed).toBe(true);
-
     const changedSameId = {
       ...first.cmd,
       payload: { ...first.cmd.payload, outcome: 'MEANINGFUL_FAILURE' as const },
     };
-    expect(prepareCompanyEconomy(credited, changedSameId, context(credited, changedSameId))).toMatchObject(
-      { kind: 'REJECTED', state: credited, error: 'IDEMPOTENCY_CONFLICT' },
-    );
+    rejectUnchanged(credited, changedSameId, context(credited, changedSameId), 'IDEMPOTENCY_CONFLICT');
 
     const retryBase = command(
       credited,
@@ -190,15 +207,12 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
     expect(
       prepared(prepareCompanyEconomy(credited, sameWork, context(credited, sameWork))).replayed,
     ).toBe(true);
-
     const changedCause = {
       ...sameWork,
       commandId: 'new-command-conflict',
       payload: { ...sameWork.payload, challengeLevel: 1 },
     };
-    expect(prepareCompanyEconomy(credited, changedCause, context(credited, changedCause))).toMatchObject(
-      { kind: 'REJECTED', state: credited, error: 'IDEMPOTENCY_CONFLICT' },
-    );
+    rejectUnchanged(credited, changedCause, context(credited, changedCause), 'IDEMPOTENCY_CONFLICT');
   });
 
   it('keeps source fan-out by person and skill while distinct episodes earn independently', () => {
@@ -208,15 +222,17 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
       { characterId: 'worker-1', skillId: 'defense' },
     ]);
     const shared = 'source-shared-episode';
-    const first = practice(state, 'worker-0', 'archery', 'weapon-attack', 'fanout-attack', shared);
-    state = prepared(prepareCompanyEconomy(state, first.cmd, first.ctx)).next;
-    const second = practice(state, 'worker-0', 'defense', 'guard-interaction', 'fanout-defense', shared);
-    state = prepared(prepareCompanyEconomy(state, second.cmd, second.ctx)).next;
-    const third = practice(state, 'worker-1', 'defense', 'guard-interaction', 'fanout-person', shared);
-    state = prepared(prepareCompanyEconomy(state, third.cmd, third.ctx)).next;
-
-    expect(state.finance.applied.slice(-3).map((receipt) => receipt.sourceKey)).toHaveLength(3);
+    const credits = [
+      ['worker-0', 'archery', 'weapon-attack', 'fanout-attack'],
+      ['worker-0', 'defense', 'guard-interaction', 'fanout-defense'],
+      ['worker-1', 'defense', 'guard-interaction', 'fanout-person'],
+    ] as const;
+    for (const args of credits) {
+      const input = practice(state, ...args, shared);
+      state = prepared(prepareCompanyEconomy(state, input.cmd, input.ctx)).next;
+    }
     expect(new Set(state.finance.applied.slice(-3).map((receipt) => receipt.sourceKey)).size).toBe(3);
+
     const beforeSecondEpisode = readSkillProgress(skill(state, 'worker-0', 'archery'));
     if (typeof beforeSecondEpisode === 'number') throw new Error('fixture lost exact progress');
     const distinct = practice(
@@ -248,22 +264,12 @@ describe('A03.2 — exact practice credit through the root preparer', () => {
         ),
       },
     };
-    const missing = base;
-    for (const state of [legacy, missing]) {
-      const before = canonicalJson(state);
+    for (const state of [legacy, base]) {
       const input = practice(state);
-      const result = prepareCompanyEconomy(state, input.cmd, input.ctx);
-      expect(result).toMatchObject({ kind: 'REJECTED', state, error: 'INVALID_STATE' });
-      expect(canonicalJson(state)).toBe(before);
+      rejectUnchanged(state, input.cmd, input.ctx, 'INVALID_STATE');
     }
     const noEvidence = practice(exact);
-    const before = canonicalJson(exact);
-    expect(prepareCompanyEconomy(exact, noEvidence.cmd, context(exact, noEvidence.cmd))).toMatchObject({
-      kind: 'REJECTED',
-      state: exact,
-      error: 'INVALID_SOURCE',
-    });
-    expect(canonicalJson(exact)).toBe(before);
+    rejectUnchanged(exact, noEvidence.cmd, context(exact, noEvidence.cmd), 'INVALID_SOURCE');
   });
 
   it('keeps private credit observationally equivalent for the next player request', () => {
