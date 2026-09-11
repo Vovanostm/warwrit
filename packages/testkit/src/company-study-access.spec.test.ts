@@ -31,6 +31,8 @@ function setup(at = 10, copies = 1, definitionId = 'study-book-medicine') {
     state = addItem(state, item(`book-${index}`, definitionId, owner, 'books'));
   return state as CompanyEconomyState & MaterializedCompanyState;
 }
+type Root = ReturnType<typeof setup>;
+const withPhysical = (root: Root, physical: Root['physical']): Root => ({ ...root, physical });
 
 function request(
   intervalId: string,
@@ -52,11 +54,7 @@ function request(
 }
 
 type Access = Extract<PhysicalEvidence, { kind: 'ITEM_ACCESS' }>;
-function access(
-  root: ReturnType<typeof setup>,
-  input: StudyAccessRequest,
-  patch: Partial<Access> = {},
-): Access {
+function access(root: Root, input: StudyAccessRequest, patch: Partial<Access> = {}): Access {
   return {
     ...itemAccess(root, input.accessEvidenceId, 'STUDY', ['books'], [input.itemId]),
     operatorId: input.characterId,
@@ -65,7 +63,7 @@ function access(
 }
 
 function admit(
-  root: ReturnType<typeof setup>,
+  root: Root,
   occupied: StudyAccessState,
   input: StudyAccessRequest,
   fact: Access = access(root, input),
@@ -105,48 +103,48 @@ describe('C02 — actual study-book access and exclusive copy intervals', () => 
   it('rejects known-only, remote/closed, tombstoned, non-book and wrong-work items', () => {
     const input = request('bad', 'book-1', 10, 20);
 
-    const knownRoot = setup(10, 0);
+    const knownBase = setup(10, 0);
     const ghost = item('book-1', 'study-book-medicine', owner, 'books');
-    knownRoot.physical = {
-      ...knownRoot.physical,
+    const knownRoot = withPhysical(knownBase, {
+      ...knownBase.physical,
       knowledge: {
-        ...knownRoot.physical.knowledge,
-        itemSnapshots: [...knownRoot.physical.knowledge.itemSnapshots, ghost],
+        ...knownBase.physical.knowledge,
+        itemSnapshots: [...knownBase.physical.knowledge.itemSnapshots, ghost],
       },
-    };
+    });
     expect(() => admit(knownRoot, createStudyAccessState(), input, access(knownRoot, input))).toThrow();
 
-    const remote = setup();
-    remote.physical = {
-      ...remote.physical,
-      containers: remote.physical.containers.map((entry) =>
+    const remoteBase = setup();
+    const remote = withPhysical(remoteBase, {
+      ...remoteBase.physical,
+      containers: remoteBase.physical.containers.map((entry) =>
         entry.containerId === 'books'
           ? { ...entry, location: { kind: 'AT', siteId: place.siteId, areaId: 'archive' } }
           : entry,
       ),
-    };
+    });
     expect(() => admit(remote, createStudyAccessState(), input, access(remote, input))).toThrow();
 
-    const closed = setup();
-    closed.physical = {
-      ...closed.physical,
-      containers: closed.physical.containers.map((entry) =>
+    const closedBase = setup();
+    const closed = withPhysical(closedBase, {
+      ...closedBase.physical,
+      containers: closedBase.physical.containers.map((entry) =>
         entry.containerId === 'books'
           ? { ...entry, closed: { sourceId: 'close', causeId: 'locked', atTick: tick(10) } }
           : entry,
       ),
-    };
+    });
     expect(() => admit(closed, createStudyAccessState(), input, access(closed, input))).toThrow();
 
-    const tombstoned = setup();
-    tombstoned.physical = {
-      ...tombstoned.physical,
-      items: tombstoned.physical.items.map((entry) =>
+    const tombstoneBase = setup();
+    const tombstoned = withPhysical(tombstoneBase, {
+      ...tombstoneBase.physical,
+      items: tombstoneBase.physical.items.map((entry) =>
         entry.itemId === 'book-1'
           ? { ...entry, tombstone: { sourceId: 'loss', causeId: 'burned', atTick: tick(9) } }
           : entry,
       ),
-    };
+    });
     expect(() => admit(tombstoned, createStudyAccessState(), input, access(tombstoned, input))).toThrow();
 
     const wrongKind = setup(10, 1, 'sword');
@@ -166,7 +164,7 @@ describe('C02 — actual study-book access and exclusive copy intervals', () => 
       { ...good, purpose: 'TRANSFER' },
       { ...good, location: { kind: 'AT', siteId: place.siteId, areaId: 'archive' } },
       { ...good, ordinal: -1 },
-      { ...good, companyId: entityId('foreign') },
+      { ...good, companyId: entityId<'Company'>('foreign') },
     ];
     for (const fact of bad)
       expect(() => admit(root, createStudyAccessState(), input, fact)).toThrow();
