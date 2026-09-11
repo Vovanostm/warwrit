@@ -79,7 +79,7 @@ function unit(state: ReturnType<typeof startBattleV2>['state'], id: string) {
 }
 
 describe('combat V2 runtime', () => {
-  it('uses explicit current pools before first initiative and only then applies activation recovery', () => {
+  it('uses current pools before initiative, then applies activation recovery', () => {
     const started = startBattleV2(setupV2());
 
     expect(started.state.schemaVersion).toBe(COMBAT_SCHEMA_VERSION);
@@ -151,7 +151,7 @@ describe('combat V2 runtime', () => {
     expect(canonicalCombatState(replayedAgain.state)).toBe(canonicalCombatState(replayed.state));
   });
 
-  it('fails malformed V2 starts and unsupported replay versions closed without mutating input', () => {
+  it('fails malformed V2 starts and unsupported replay versions closed', () => {
     const setup = setupV2();
     const malformed = {
       ...setup,
@@ -159,7 +159,10 @@ describe('combat V2 runtime', () => {
         index === 0
           ? {
               ...candidate,
-              initialPools: { ...candidate.initialPools, stamina: candidate.attributes.stamina + 1 },
+              initialPools: {
+                ...candidate.initialPools,
+                stamina: candidate.attributes.stamina + 1,
+              },
             }
           : candidate,
       ),
