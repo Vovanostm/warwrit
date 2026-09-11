@@ -143,11 +143,7 @@ export interface RetreatCommand extends CombatCommandBase {
 }
 
 export type CombatCommand =
-  | MoveCommand
-  | AttackCommand
-  | DefendCommand
-  | WaitCommand
-  | RetreatCommand;
+  MoveCommand | AttackCommand | DefendCommand | WaitCommand | RetreatCommand;
 
 export type CombatFailureCode =
   | 'BATTLE_TERMINAL'
