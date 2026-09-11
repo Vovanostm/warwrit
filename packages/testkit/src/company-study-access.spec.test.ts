@@ -97,9 +97,7 @@ describe('C02 — actual study-book access and exclusive copy intervals', () => 
 
     expect(next.intervals).toEqual([
       {
-        schemaVersion: 1,
         ...input,
-        workVersion: work.version,
         containerId: 'books',
       },
     ]);
