@@ -1,33 +1,33 @@
 import { describe, expect, it } from 'vitest';
 import { canonicalJson, evaluatePerkEffects } from '@warwrit/game-core';
-import type { CompanyEconomyState, EquipmentSlot } from '@warwrit/game-core';
+import type { CompanyEconomyState, EquipmentSlot, PerkTaskScope } from '@warwrit/game-core';
 import { economy } from './company-economy-fixture.js';
 import { addContainer, addItem, container, item } from './company-physical-fixture.js';
-
-function character(state: CompanyEconomyState, characterId: string) {
-  return state.lifecycle.characters.find((entry) => entry.identity.characterId === characterId)!;
+function character(state: CompanyEconomyState, id: string) {
+  return state.lifecycle.characters.find((entry) => entry.identity.characterId === id)!;
 }
-
 function select(
   state: CompanyEconomyState,
-  characterId: string,
+  id: string,
   perks: readonly string[],
-): CompanyEconomyState {
-  Object.assign(character(state, characterId), { perks: [...perks] });
+  skills: Readonly<Record<string, number>> = {},
+) {
+  const target = character(state, id);
+  Object.assign(target, { perks: [...perks], skills: { ...target.skills, ...skills } });
   return state;
 }
-
 function equip(
   state: CompanyEconomyState,
   characterId: string,
   definitionId: string,
   itemId: string,
   slots: readonly EquipmentSlot[],
-): CompanyEconomyState {
+) {
   const containerId = `pack-${characterId}`;
-  if (!state.physical!.containers.some((entry) => entry.containerId === containerId)) {
-    addContainer(
-      state,
+  let next = state;
+  if (!next.physical!.containers.some((entry) => entry.containerId === containerId))
+    next = addContainer(
+      next,
       container(
         containerId,
         { kind: 'CHARACTER', id: characterId },
@@ -36,113 +36,76 @@ function equip(
       ),
       false,
     );
-  }
-  addItem(
-    state,
+  return addItem(
+    next,
     {
       ...item(itemId, definitionId, { kind: 'COMPANY', id: state.lifecycle.companyId }, containerId),
       equipped: { characterId, slots: [...slots] },
     },
     false,
   );
-  return state;
 }
-
+function effects(
+  state: CompanyEconomyState,
+  characterId = 'worker-0',
+  task: PerkTaskScope = 'NONE',
+) {
+  return evaluatePerkEffects(state as Required<CompanyEconomyState>, {
+    kind: 'CHARACTER',
+    characterId,
+    task,
+  });
+}
 const identityBps = { numerator: '10000', denominator: '1' };
-
 describe('B02 — finite perk effect evaluation', () => {
-  it('returns additive zero and exact bps identity without selected applicable perks', () => {
-    const state = economy([1n, 1n]);
+  it('returns identity values without mutation or non-contributing weapon provenance', () => {
+    let state = economy([1n, 1n]);
+    state = equip(state, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
     const before = canonicalJson(state);
-
-    expect(
-      evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-        kind: 'CHARACTER',
-        characterId: 'worker-0',
-        task: 'CARE',
-      }),
-    ).toMatchObject({
+    expect(effects(state, 'worker-0', 'CARE')).toMatchObject({
+      weapon: null,
       additive: { accuracy: 0, initiative: 0, defense: 0, maxStamina: 0 },
       task: { careRecoveryBps: identityBps, careCostBps: identityBps },
       contributingPerkIds: [],
     });
     expect(canonicalJson(state)).toBe(before);
   });
-
-  it('keeps personal defense active while mismatched and incomplete weapon disciplines stay inactive', () => {
-    const state = select(economy([1n, 1n]), 'worker-0', [
-      'polearms-25-b',
-      'heavy-25-b',
-      'defense-25-a',
-    ]);
-    equip(state, 'worker-0', 'sword', 'worker-sword', ['MAIN_HAND']);
-    equip(state, 'leader', 'spear', 'leader-spear', ['MAIN_HAND', 'OFF_HAND']);
-
-    const snapshot = evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-      kind: 'CHARACTER',
-      characterId: 'worker-0',
-      task: 'NONE',
-    });
-
-    expect(snapshot).toMatchObject({
+  it('keeps semantic scopes on the holder and the actual matching weapon only', () => {
+    let wrong = select(
+      economy([1n, 1n]),
+      'worker-0',
+      ['blades-25-a', 'heavy-25-b', 'defense-25-a'],
+      { blades: 25, heavy: 25, defense: 25 },
+    );
+    wrong = equip(wrong, 'worker-0', 'sword', 'worker-sword', ['MAIN_HAND']);
+    wrong = equip(wrong, 'leader', 'spear', 'leader-spear', ['MAIN_HAND', 'OFF_HAND']);
+    expect(effects(wrong)).toMatchObject({
       weapon: null,
       additive: { defense: 3, maxStamina: 0 },
       contributingPerkIds: ['defense-25-a'],
     });
-  });
-
-  it('uses only the holder actual matching equipped profile and preserves discipline scope', () => {
-    const state = select(economy([1n, 1n]), 'worker-0', [
-      'polearms-25-b',
-      'defense-25-a',
-      'heavy-25-b',
+    let matching = select(
+      economy([1n, 1n]),
+      'worker-0',
+      ['polearms-25-b', 'defense-25-a', 'heavy-25-b'],
+      { polearms: 25, defense: 25, heavy: 25 },
+    );
+    matching = equip(matching, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
+    select(matching, 'leader', ['heavy-25-b'], { heavy: 25 });
+    matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', [
+      'MAIN_HAND',
+      'OFF_HAND',
     ]);
-    equip(state, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
-    select(state, 'leader', ['heavy-25-b']);
-    equip(state, 'leader', 'great-weapon', 'leader-heavy', ['MAIN_HAND', 'OFF_HAND']);
-
-    expect(
-      evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-        kind: 'CHARACTER',
-        characterId: 'worker-0',
-        task: 'NONE',
-      }),
-    ).toMatchObject({
+    expect(effects(matching)).toMatchObject({
       weapon: { itemId: 'worker-spear', profileId: 'spear' },
       additive: { defense: 6, maxStamina: 0 },
       contributingPerkIds: ['defense-25-a', 'polearms-25-b'],
     });
   });
-
-  it('requires the sword off-hand profile before enabling blade perks', () => {
-    const state = select(economy([1n, 1n]), 'worker-0', ['blades-25-a']);
-    equip(state, 'worker-0', 'sword', 'worker-sword', ['MAIN_HAND']);
-    const withoutShield = evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-      kind: 'CHARACTER',
-      characterId: 'worker-0',
-      task: 'NONE',
-    });
-    expect(withoutShield).toMatchObject({ weapon: null, additive: { accuracy: 0 } });
-
-    equip(state, 'worker-0', 'shield', 'worker-shield', ['OFF_HAND']);
-    expect(
-      evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-        kind: 'CHARACTER',
-        characterId: 'worker-0',
-        task: 'NONE',
-      }),
-    ).toMatchObject({
-      weapon: { itemId: 'worker-sword', profileId: 'sword-shield' },
-      additive: { accuracy: 3 },
-      contributingPerkIds: ['blades-25-a'],
-    });
-  });
-
-  it('contributes starting morale once from the lifecycle effective leader only', () => {
-    const state = select(economy([1n, 1n]), 'leader', ['leadership-25-a']);
-    select(state, 'worker-0', ['leadership-60-a']);
+  it('uses only the lifecycle effective leader for the one group aura', () => {
+    const state = select(economy([1n, 1n]), 'leader', ['leadership-25-a'], { leadership: 25 });
+    select(state, 'worker-0', ['leadership-60-a'], { leadership: 60 });
     Object.assign(state.lifecycle.company!, { actingLeaderId: 'worker-0' });
-
     expect(
       evaluatePerkEffects(state as Required<CompanyEconomyState>, { kind: 'LEADER_GROUP' }),
     ).toMatchObject({
@@ -151,57 +114,51 @@ describe('B02 — finite perk effect evaluation', () => {
       contributingPerkIds: ['leadership-60-a'],
     });
   });
-
-  it('isolates task modifiers by holder and composes bps exactly independent of perk order', () => {
-    const state = select(economy([1n, 1n]), 'worker-0', [
+  it('isolates care/study/training and keeps exact bps order- and JSON-stable', () => {
+    const chosen = [
       'medicine-25-a',
       'medicine-60-a',
-    ]);
-    const first = evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-      kind: 'CHARACTER',
-      characterId: 'worker-0',
-      task: 'CARE',
+      'scholarship-25-a',
+      'scholarship-60-b',
+      'leadership-25-b',
+    ];
+    const state = select(economy([1n, 1n]), 'worker-0', chosen, {
+      medicine: 60,
+      scholarship: 60,
+      leadership: 25,
     });
-    expect(first).toMatchObject({
+    const care = effects(state, 'worker-0', 'CARE');
+    expect(care).toMatchObject({
       task: {
         careRecoveryBps: { numerator: '13200', denominator: '1' },
         careCostBps: identityBps,
       },
       contributingPerkIds: ['medicine-25-a', 'medicine-60-a'],
     });
-    expect(
-      evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-        kind: 'CHARACTER',
-        characterId: 'leader',
-        task: 'CARE',
-      }),
-    ).toMatchObject({
-      task: { careRecoveryBps: identityBps, careCostBps: identityBps },
+    expect(effects(state, 'worker-0', 'STUDY')).toMatchObject({
+      task: { studyDurationBps: { numerator: '9000', denominator: '1' } },
+      contributingPerkIds: ['scholarship-25-a'],
     });
-
-    Object.assign(character(state, 'worker-0'), {
-      perks: ['medicine-60-a', 'medicine-25-a'],
+    expect(effects(state, 'worker-0', 'TRAINING')).toMatchObject({
+      task: {
+        trainingCostBps: { numerator: '8000', denominator: '1' },
+        trainingDurationBps: { numerator: '9000', denominator: '1' },
+      },
+      contributingPerkIds: ['leadership-25-b', 'scholarship-60-b'],
     });
-    const reversed = evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-      kind: 'CHARACTER',
-      characterId: 'worker-0',
-      task: 'CARE',
+    expect(effects(state, 'leader', 'TRAINING')).toMatchObject({
+      task: { trainingCostBps: identityBps, trainingDurationBps: identityBps },
     });
-    expect(reversed).toEqual(first);
-    expect(JSON.parse(JSON.stringify(first))).toEqual(first);
+    Object.assign(character(state, 'worker-0'), { perks: [...chosen].reverse() });
+    expect(effects(state, 'worker-0', 'CARE')).toEqual(care);
+    expect(JSON.parse(JSON.stringify(care))).toEqual(care);
   });
-
-  it('returns a detached snapshot and leaves B01 selection/root state untouched', () => {
-    const state = select(economy([1n, 1n]), 'worker-0', ['blades-25-a']);
-    equip(state, 'worker-0', 'raider-weapon', 'worker-raider', ['MAIN_HAND']);
+  it('returns a detached snapshot and fails closed on corrupt selected data', () => {
+    let state = select(economy([1n, 1n]), 'worker-0', ['blades-25-a'], { blades: 25 });
+    state = equip(state, 'worker-0', 'raider-weapon', 'worker-raider', ['MAIN_HAND']);
     const before = canonicalJson(state);
-    const snapshot = evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-      kind: 'CHARACTER',
-      characterId: 'worker-0',
-      task: 'NONE',
-    });
+    const snapshot = effects(state);
     expect(canonicalJson(state)).toBe(before);
-
     Object.assign(character(state, 'worker-0'), { perks: [] });
     Object.assign(state.physical!.items.find((entry) => entry.itemId === 'worker-raider')!, {
       equipped: null,
@@ -211,16 +168,14 @@ describe('B02 — finite perk effect evaluation', () => {
       additive: { accuracy: 3 },
       contributingPerkIds: ['blades-25-a'],
     });
-  });
-
-  it('fails closed on corrupt selected perk definitions', () => {
-    const state = select(economy([1n, 1n]), 'worker-0', ['not-a-real-perk']);
-    expect(() =>
-      evaluatePerkEffects(state as Required<CompanyEconomyState>, {
-        kind: 'CHARACTER',
-        characterId: 'worker-0',
-        task: 'NONE',
-      }),
-    ).toThrow('INVALID_STATE');
+    const unknown = select(economy([1n, 1n]), 'worker-0', ['not-a-real-perk']);
+    expect(() => effects(unknown)).toThrow('INVALID_STATE');
+    const duplicate = select(
+      economy([1n, 1n]),
+      'worker-0',
+      ['defense-25-a', 'defense-25-b'],
+      { defense: 25 },
+    );
+    expect(() => effects(duplicate)).toThrow('INVALID_STATE');
   });
 });
