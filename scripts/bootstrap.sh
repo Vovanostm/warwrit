@@ -21,6 +21,11 @@ corepack enable
 corepack prepare pnpm@11.25.0 --activate
 pnpm install --frozen-lockfile
 
+# Temporary C01 formatting diagnostic; reverted before final verification.
+pnpm exec prettier packages/testkit/src/company-study-section.spec.test.ts --write
+git diff -- packages/testkit/src/company-study-section.spec.test.ts
+exit 1
+
 cleanup() {
   if [[ "${KEEP_INFRA:-0}" != '1' ]]; then
     docker compose down --remove-orphans >/dev/null 2>&1 || true
