@@ -150,7 +150,11 @@ describe('C02 — actual study-book access and exclusive copy intervals', () => 
       ...tombstoneBase.physical,
       items: tombstoneBase.physical.items.map((entry) =>
         entry.itemId === 'book-1'
-          ? { ...entry, tombstone: { sourceId: 'loss', causeId: 'burned', atTick: tick(9) } }
+          ? {
+              ...entry,
+              containerId: null,
+              tombstone: { sourceId: 'loss', causeId: 'burned', atTick: tick(9) },
+            }
           : entry,
       ),
     });
