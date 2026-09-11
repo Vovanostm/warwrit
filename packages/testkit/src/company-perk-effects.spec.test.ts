@@ -18,7 +18,11 @@ function select(state: CompanyEconomyState, id: string, perks: readonly string[]
   Object.assign(character(state, id), { perks: [...perks] });
   return state;
 }
-function effects(state: CompanyEconomyState, id = 'worker-0', task: PerkTaskScope = 'NONE') {
+function effects(
+  state: CompanyEconomyState,
+  id = 'worker-0',
+  task: PerkTaskScope = 'NONE',
+) {
   return evaluatePerkEffects(root(state), { kind: 'CHARACTER', characterId: id, task });
 }
 function equip(
@@ -44,7 +48,12 @@ function equip(
   return addItem(
     next,
     {
-      ...item(itemId, definitionId, { kind: 'COMPANY', id: state.lifecycle.companyId }, containerId),
+      ...item(
+        itemId,
+        definitionId,
+        { kind: 'COMPANY', id: state.lifecycle.companyId },
+        containerId,
+      ),
       equipped: { characterId, slots: [...slots] },
     },
     false,
@@ -87,9 +96,15 @@ describe('B02 — finite perk effect evaluation', () => {
       'defense-25-a',
       'heavy-25-b',
     ]);
-    state = equip(state, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
+    state = equip(state, 'worker-0', 'spear', 'worker-spear', [
+      'MAIN_HAND',
+      'OFF_HAND',
+    ]);
     select(state, 'leader', ['heavy-25-b']);
-    state = equip(state, 'leader', 'great-weapon', 'leader-heavy', ['MAIN_HAND', 'OFF_HAND']);
+    state = equip(state, 'leader', 'great-weapon', 'leader-heavy', [
+      'MAIN_HAND',
+      'OFF_HAND',
+    ]);
 
     expect(effects(state)).toMatchObject({
       weapon: {
@@ -157,7 +172,13 @@ describe('B02 — finite perk effect evaluation', () => {
     });
 
     Object.assign(character(state, 'worker-0'), {
-      perks: ['leadership-25-b', 'scholarship-60-b', 'scholarship-25-a', 'medicine-60-a', 'medicine-25-a'],
+      perks: [
+        'leadership-25-b',
+        'scholarship-60-b',
+        'scholarship-25-a',
+        'medicine-60-a',
+        'medicine-25-a',
+      ],
     });
     expect(effects(state, 'worker-0', 'CARE')).toEqual(care);
     expect(JSON.parse(JSON.stringify(care))).toEqual(care);
