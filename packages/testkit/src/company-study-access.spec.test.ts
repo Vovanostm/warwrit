@@ -32,7 +32,10 @@ function setup(at = 10, copies = 1, definitionId = 'study-book-medicine') {
   return state as CompanyEconomyState & MaterializedCompanyState;
 }
 type Root = ReturnType<typeof setup>;
-const withPhysical = (root: Root, physical: Root['physical']): Root => ({ ...root, physical });
+const withPhysical = (root: Root, physical: Root['physical']): Root => ({
+  ...root,
+  physical,
+});
 
 function request(
   intervalId: string,
@@ -54,7 +57,11 @@ function request(
 }
 
 type Access = Extract<PhysicalEvidence, { kind: 'ITEM_ACCESS' }>;
-function access(root: Root, input: StudyAccessRequest, patch: Partial<Access> = {}): Access {
+function access(
+  root: Root,
+  input: StudyAccessRequest,
+  patch: Partial<Access> = {},
+): Access {
   return {
     ...itemAccess(root, input.accessEvidenceId, 'STUDY', ['books'], [input.itemId]),
     operatorId: input.characterId,
@@ -112,7 +119,9 @@ describe('C02 — actual study-book access and exclusive copy intervals', () => 
         itemSnapshots: [...knownBase.physical.knowledge.itemSnapshots, ghost],
       },
     });
-    expect(() => admit(knownRoot, createStudyAccessState(), input, access(knownRoot, input))).toThrow();
+    expect(() =>
+      admit(knownRoot, createStudyAccessState(), input, access(knownRoot, input)),
+    ).toThrow();
 
     const remoteBase = setup();
     const remote = withPhysical(remoteBase, {
@@ -145,12 +154,18 @@ describe('C02 — actual study-book access and exclusive copy intervals', () => 
           : entry,
       ),
     });
-    expect(() => admit(tombstoned, createStudyAccessState(), input, access(tombstoned, input))).toThrow();
+    expect(() =>
+      admit(tombstoned, createStudyAccessState(), input, access(tombstoned, input)),
+    ).toThrow();
 
     const wrongKind = setup(10, 1, 'sword');
-    expect(() => admit(wrongKind, createStudyAccessState(), input, access(wrongKind, input))).toThrow();
+    expect(() =>
+      admit(wrongKind, createStudyAccessState(), input, access(wrongKind, input)),
+    ).toThrow();
     const wrongWork = setup(10, 1, 'study-book-command');
-    expect(() => admit(wrongWork, createStudyAccessState(), input, access(wrongWork, input))).toThrow();
+    expect(() =>
+      admit(wrongWork, createStudyAccessState(), input, access(wrongWork, input)),
+    ).toThrow();
   });
 
   it('rejects access evidence for another learner/item/container/purpose/location or scope', () => {
@@ -191,7 +206,9 @@ describe('C02 — actual study-book access and exclusive copy intervals', () => 
     const laterRoot = setup(30);
     const later = request('later', 'book-1', 30, 35);
     expect(admit(laterRoot, adjacentState, later).intervals).toHaveLength(3);
-    expect(() => admit(firstRoot, createStudyAccessState(), request('zero', 'book-1', 10, 10))).toThrow();
+    expect(() =>
+      admit(firstRoot, createStudyAccessState(), request('zero', 'book-1', 10, 10)),
+    ).toThrow();
   });
 
   it('allows two physical copies of one work to overlap for different learners', () => {
