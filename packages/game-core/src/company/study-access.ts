@@ -105,21 +105,20 @@ export function admitStudyInterval(
   const request = snapshotJson(requestValue);
   requirePhysical(requestInput.read(request), 'INVALID_ARGUMENT');
   const requested = bounds(request);
-  requirePhysical(request.fromTick === context.atTick, 'INVALID_TIME');
   requirePhysical(
-    root.lifecycle.characters.some(
-      (character) => character.identity.characterId === request.characterId,
-    ),
-    'CONTACT_OR_ACCESS_REQUIRED',
+    context.companyId === root.lifecycle.companyId &&
+      context.worldId === root.lifecycle.worldId &&
+      context.canonicalRevision === root.lifecycle.revision,
+    'INVALID_SOURCE',
+  );
+  requirePhysical(
+    context.atTick === root.lifecycle.campaignTick &&
+      context.atTick === root.physical.processedTick &&
+      request.fromTick === context.atTick,
+    'INVALID_TIME',
   );
 
-  const work = workFor(request.workId, request.sectionId, 'INVALID_ARGUMENT');
   const item = physicalItem(root.physical, request.itemId);
-  const definition = itemDefinition(item);
-  requirePhysical(
-    definition.kind === 'book' && definition.workId === request.workId,
-    'INVALID_ARGUMENT',
-  );
   requirePhysical(item.containerId !== null, 'CONTACT_OR_ACCESS_REQUIRED');
   const container = physicalContainer(root.physical, item.containerId);
   const access = requireItemAccess(
@@ -131,6 +130,13 @@ export function admitStudyInterval(
     [item.itemId],
   );
   requirePhysical(access.operatorId === request.characterId, 'INVALID_SOURCE');
+
+  const work = workFor(request.workId, request.sectionId, 'INVALID_ARGUMENT');
+  const definition = itemDefinition(item);
+  requirePhysical(
+    definition.kind === 'book' && definition.workId === request.workId,
+    'INVALID_ARGUMENT',
+  );
   requirePhysical(
     !state.intervals.some((interval) => interval.intervalId === request.intervalId),
     'IDEMPOTENCY_CONFLICT',
@@ -141,7 +147,7 @@ export function admitStudyInterval(
       const existing = bounds(interval);
       return existing.to <= requested.from || requested.to <= existing.from;
     }),
-    'CAPACITY',
+    'INCOMPATIBLE_ACTIVITY',
   );
 
   const interval: StudyAccessInterval = {
