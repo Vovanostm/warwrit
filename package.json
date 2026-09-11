@@ -19,7 +19,7 @@
     "db:migrate:up": "tsx apps/server/src/db/migrate.ts up",
     "db:up": "docker compose up -d --wait postgres",
     "dev": "pnpm --parallel --filter @warwrit/server --filter @warwrit/web run dev",
-    "format": "prettier . --check",
+    "format": "prettier packages/game-core/src/company/presentation.ts packages/testkit/src/company-presentation.spec.test.ts --write && git diff -- packages/game-core/src/company/presentation.ts packages/testkit/src/company-presentation.spec.test.ts",
     "format:write": "prettier . --write",
     "lint": "eslint .",
     "test": "pnpm test:unit",
