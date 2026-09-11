@@ -164,7 +164,13 @@ describe('combat V2 setup contract', () => {
       seed: v2.seed,
       map: v2.map,
       sides: v2.sides,
-      units: v2.units.map(({ initialPools: _initialPools, ...unit }) => unit),
+      units: v2.units.map((unit) => ({
+        id: unit.id,
+        sideId: unit.sideId,
+        position: unit.position,
+        weaponId: unit.weaponId,
+        attributes: unit.attributes,
+      })),
     };
 
     expect(() => startBattle(legacy)).toThrow(/M0 battle must contain 4-12 units/);
