@@ -16,7 +16,9 @@ import {
 function presentationOffer(
   state: ReturnType<typeof economy>,
   cmd: ReturnType<typeof command>,
-  overrides: Partial<Extract<FinanceEvidence, { kind: 'PRESENTATION_SERVICE' }>> = {},
+  overrides: Partial<
+    Extract<FinanceEvidence, { kind: 'PRESENTATION_SERVICE' }>
+  > = {},
 ): Extract<FinanceEvidence, { kind: 'PRESENTATION_SERVICE' }> {
   return {
     ...scope(state, 'barber-offer'),
@@ -41,7 +43,9 @@ function change(
   state: ReturnType<typeof economy>,
   patch: Record<string, unknown>,
   id = 'change-hair',
-  offerOverrides: Partial<Extract<FinanceEvidence, { kind: 'PRESENTATION_SERVICE' }>> = {},
+  offerOverrides: Partial<
+    Extract<FinanceEvidence, { kind: 'PRESENTATION_SERVICE' }>
+  > = {},
 ) {
   const cmd = command(
     state,
@@ -50,7 +54,11 @@ function change(
     id,
   );
   const offer = presentationOffer(state, cmd, offerOverrides);
-  return prepareCompanyEconomy(state, cmd, context(state, cmd, [access(state), offer]));
+  return prepareCompanyEconomy(
+    state,
+    cmd,
+    context(state, cmd, [access(state), offer]),
+  );
 }
 
 function wallet(state: ReturnType<typeof economy>, id: string) {
@@ -60,7 +68,9 @@ function wallet(state: ReturnType<typeof economy>, id: string) {
 describe('WP02 F02 — bounded paid presentation service', () => {
   it('changes only the offered hairstyle and pays the real local provider atomically', () => {
     const state = economy([1n], 100n);
-    const before = state.lifecycle.characters.find((c) => c.identity.characterId === 'leader')!;
+    const before = state.lifecycle.characters.find(
+      (c) => c.identity.characterId === 'leader',
+    )!;
     const result = prepared(change(state, { hairStyleId: 'cropped' }));
     const after = result.next.lifecycle.characters.find(
       (c) => c.identity.characterId === 'leader',
