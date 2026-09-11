@@ -39,7 +39,8 @@ function workFor(key: StudySectionKey) {
     (candidate) => candidate.id === key.workId && candidate.sectionId === key.sectionId,
   );
   if (!work) throw new RangeError('Unknown work section');
-  if (exact(work.durationTicks) === 0n) throw new RangeError('Study section duration must be positive');
+  if (exact(work.durationTicks) === 0n)
+    throw new RangeError('Study section duration must be positive');
   return work;
 }
 
