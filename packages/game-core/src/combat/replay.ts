@@ -1,14 +1,26 @@
 import { invariant } from '../primitives.js';
 import { applyCombatCommand, assertBattleState, startBattle } from './engine.js';
 import { compareHex } from './hex.js';
+import { startBattleV2 } from './runtime-v2.js';
+import { COMBAT_V2_SCHEMA_VERSION, type BattleSetupV2 } from './setup-v2.js';
 import { COMBAT_SCHEMA_VERSION } from './types.js';
 import type {
   BattleState,
+  CombatCommand,
   CombatEvent,
   CombatReplay,
+  CombatTransition,
   CombatUnitState,
   ReplayResult,
 } from './types.js';
+
+export interface CombatReplayV2 {
+  readonly schemaVersion: typeof COMBAT_V2_SCHEMA_VERSION;
+  readonly setup: BattleSetupV2;
+  readonly commands: readonly CombatCommand[];
+}
+
+export type VersionedCombatReplay = CombatReplay | CombatReplayV2;
 
 function canonicalUnit(unit: CombatUnitState) {
   return {
@@ -56,12 +68,19 @@ export function canonicalCombatState(state: BattleState): string {
   });
 }
 
-export function replayCombat(replay: CombatReplay): ReplayResult {
-  invariant(
-    replay.schemaVersion === COMBAT_SCHEMA_VERSION,
-    `Combat replay schemaVersion must be ${COMBAT_SCHEMA_VERSION}`,
-  );
-  const started = startBattle(replay.setup);
+function startReplay(replay: VersionedCombatReplay): CombatTransition {
+  if (replay.schemaVersion === COMBAT_SCHEMA_VERSION) {
+    return startBattle(replay.setup);
+  }
+  if (replay.schemaVersion === COMBAT_V2_SCHEMA_VERSION) {
+    return startBattleV2(replay.setup);
+  }
+  const version = (replay as { readonly schemaVersion: unknown }).schemaVersion;
+  invariant(false, `Unsupported combat replay schemaVersion: ${String(version)}`);
+}
+
+export function replayCombat(replay: VersionedCombatReplay): ReplayResult {
+  const started = startReplay(replay);
   let state = started.state;
   const events: CombatEvent[] = [...started.events];
   let commandsApplied = 0;
@@ -82,7 +101,7 @@ export function replayCombat(replay: CombatReplay): ReplayResult {
 }
 
 export function verifyCombatReplay(
-  replay: CombatReplay,
+  replay: VersionedCombatReplay,
   expectedState: BattleState,
 ): { readonly matches: boolean; readonly actualState: BattleState } {
   const actual = replayCombat(replay).state;
