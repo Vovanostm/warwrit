@@ -18,8 +18,8 @@ M1: incomplete
 current_slice: B02-finite-perk-effect-evaluator
 next_implementation: B03-after-B02-merge
 activation_requires: B01-merged-and-current-main-descendant
-A04: merged
-merge_authorized: B02-only
+A04: independent-not-started
+merge_authorized: false
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
 package_manager: repository-pinned-pnpm
@@ -35,7 +35,7 @@ tree `0550d28dae1683899bc7f6aba91b6d7536c7d1f2`. Do not reset newer main or repe
 A02 [PR #22](https://github.com/Vovanostm/warwrit/pull/22) merged as `88d78a710cd574efdd1375750d89ac273b14375b`,
 tree `4e1dc5fe58d762feff2dfaa66045679196176b36`. A03 [PR #25](https://github.com/Vovanostm/warwrit/pull/25)
 merged as `5d28edc1e4c9223ad3771745eab39bebe7b2d66e`, tree `80d58db2af63198108dd14811a6cbdbd536ddbc1`.
-B01 [PR #33](https://github.com/Vovanostm/warwrit/pull/33) merged as `a8168bfa7387fac44cf0fec5a04ccce418fd671a`; independent E01, G01, F02, C01 and A04 work subsequently advanced main. A04 [PR #34](https://github.com/Vovanostm/warwrit/pull/34) merged as `55a829f5d88650aed644f64bf7a39284dbd87ba3`, tree `73aa6a16ba1930090bdaf499616864fba6102ab3`; B02 starts from this current descendant. [PR #17](https://github.com/Vovanostm/warwrit/pull/17) remains separate. The owner's current instruction authorizes merge of B02 only after its reviewed exact-tree gate; auto-merge, deployment and purchases remain unauthorized.
+[PR #17](https://github.com/Vovanostm/warwrit/pull/17) remains separate. No successor merge, auto-merge, deployment or purchases are authorized.
 
 ## Authority and source order
 
@@ -90,9 +90,10 @@ not active gameplay learning or proof that practice was legitimate.
 A02's exact owner is merged. A03 is merged: `practice-admission.ts`, exact `CreditPractice`,
 skill-scoped root replay and retained source evidence are live on `main` through PR #25.
 No missing legacy XP is invented. Concrete B04/G09 producers remain deferred; injected facts are tests.
-A04 is merged through PR #34. B01 is merged through PR #33 and owns only `ChoosePerk`:
-actual target-skill mastery, one selection per skill+25/60 milestone and durable choice history.
-B02 is the active slice and owns only finite effect evaluation over those selections, actual equipped weapon profiles, one effective-leader aura and task-start modifiers. B03/B04 own care/help integration; D owns retraining. No study, social, V2, SQL or UI activation. `StartLearning` stays disabled until C08.
+A04 is still independent unfinished work and is not a prerequisite for B01. B01 owns only
+`ChoosePerk`: actual target-skill mastery, one selection per skill+25/60 milestone and durable
+choice history. B02 owns effect evaluation; B03/B04 own care/help integration; D owns retraining.
+No study, social, V2, SQL or UI activation. `StartLearning` stays disabled until C08.
 `BeginEncounterBinding`, `ConsumeCombatReceipt` and `FinalizeEncounter` stay disabled until G10.
 F02 remains `NEEDS_NARROW_SERVICE_CONTRACT` for cosmetic/service keys: it blocks itself
 and full WP-02 closure, not independent arithmetic, bridge or database preparation.
@@ -104,7 +105,7 @@ remain later work, not silently completed or decomposed here.
 G0 permits an explicitly labelled independent reconstruction of machine contracts from canonical Notes. Neither the missing original v1 ZIP nor the independently regenerated v1.2 ZIP is claimed byte-verified by this implementation. `RC-GAP-MACHINE-01` remains a named source-concordance gap, not a new product interview. Use the source manifest in the active WP contract; do not infer 117 executed tests from a catalogue count.
 
 Original source ZIP concordance remains `NOT_RUN`. Previous merged PR CI is predecessor evidence,
-not a B02 test run. Foundation migration smoke is not proof of the future H transaction/race/crash
+not a B01 test run. Foundation migration smoke is not proof of the future H transaction/race/crash
 guarantees. Full WP-02 and M1 remain incomplete.
 
 M0 proves deterministic combat, termination and replay, not player enjoyment. Q-C01/Q-C10/R-01 require interactive M1 evidence. The 30-second activation limit remains a versioned parameter for player validation. Q-T03 / issue #6 compares Babylon and PlayCanvas with the same scene and workflow; no permanent renderer dependency is installed by WP-02.1.
