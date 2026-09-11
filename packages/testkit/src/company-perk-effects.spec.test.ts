@@ -92,16 +92,16 @@ describe('B02 — finite perk effect evaluation', () => {
     let matching = select(
       economy([1n, 1n]),
       'worker-0',
-      ['polearms-25-b', 'defense-25-a', 'heavy-25-b'],
-      { polearms: 25, defense: 25, heavy: 25 },
+      ['polearms-25-b', 'polearms-60-b', 'defense-25-a', 'heavy-25-b'],
+      { polearms: 60, defense: 25, heavy: 25 },
     );
     matching = equip(matching, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
     select(matching, 'leader', ['heavy-25-b'], { heavy: 25 });
     matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', ['MAIN_HAND', 'OFF_HAND']);
     expect(effects(matching)).toMatchObject({
       weapon: { itemId: 'worker-spear', profileId: 'spear' },
-      additive: { defense: 6, maxStamina: 0 },
-      contributingPerkIds: ['defense-25-a', 'polearms-25-b'],
+      additive: { defense: 11, maxStamina: 0 },
+      contributingPerkIds: ['defense-25-a', 'polearms-25-b', 'polearms-60-b'],
     });
   });
   it('uses only the lifecycle effective leader for the one group aura', () => {
