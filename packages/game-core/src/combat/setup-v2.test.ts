@@ -96,22 +96,40 @@ describe('combat V2 setup contract', () => {
     const complete = setupV2();
     const withoutPools = replaceFirstUnit(
       complete,
+      (unit) => ({ ...unit, initialPools: undefined }) as unknown as CombatUnitSetupV2,
+    );
+    const missingHealth = replaceFirstUnit(
+      complete,
       (unit) =>
         ({
           ...unit,
-          initialPools: undefined,
+          initialPools: { ...unit.initialPools, health: undefined },
         }) as unknown as CombatUnitSetupV2,
     );
-    const overMaximum = replaceFirstUnit(complete, (unit) => ({
-      ...unit,
-      initialPools: { ...unit.initialPools, health: unit.attributes.health + 1 },
-    }));
     const negativeStamina = replaceFirstUnit(complete, (unit) => ({
       ...unit,
       initialPools: { ...unit.initialPools, stamina: -1 },
     }));
+    const overMaximums = [
+      replaceFirstUnit(complete, (unit) => ({
+        ...unit,
+        initialPools: { ...unit.initialPools, health: unit.attributes.health + 1 },
+      })),
+      replaceFirstUnit(complete, (unit) => ({
+        ...unit,
+        initialPools: { ...unit.initialPools, armor: unit.attributes.armor + 1 },
+      })),
+      replaceFirstUnit(complete, (unit) => ({
+        ...unit,
+        initialPools: { ...unit.initialPools, stamina: unit.attributes.stamina + 1 },
+      })),
+      replaceFirstUnit(complete, (unit) => ({
+        ...unit,
+        initialPools: { ...unit.initialPools, morale: unit.attributes.morale + 1 },
+      })),
+    ];
 
-    for (const malformed of [withoutPools, overMaximum, negativeStamina]) {
+    for (const malformed of [withoutPools, missingHealth, negativeStamina, ...overMaximums]) {
       const before = JSON.stringify(malformed);
       expect(() => validateBattleSetupV2(malformed)).toThrow();
       expect(JSON.stringify(malformed)).toBe(before);
