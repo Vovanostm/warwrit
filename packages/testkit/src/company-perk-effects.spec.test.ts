@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { canonicalJson, evaluatePerkEffects } from '@warwrit/game-core';
-import type { CompanyEconomyState, EquipmentSlot, PerkTaskScope } from '@warwrit/game-core';
+import type {
+  CompanyEconomyState,
+  EquipmentSlot,
+  PerkTaskScope,
+} from '@warwrit/game-core';
 import { economy } from './company-economy-fixture.js';
 import { addContainer, addItem, container, item } from './company-physical-fixture.js';
 function character(state: CompanyEconomyState, id: string) {
@@ -95,9 +99,15 @@ describe('B02 — finite perk effect evaluation', () => {
       ['polearms-25-b', 'polearms-60-b', 'defense-25-a', 'heavy-25-b'],
       { polearms: 60, defense: 25, heavy: 25 },
     );
-    matching = equip(matching, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
+    matching = equip(matching, 'worker-0', 'spear', 'worker-spear', [
+      'MAIN_HAND',
+      'OFF_HAND',
+    ]);
     select(matching, 'leader', ['heavy-25-b'], { heavy: 25 });
-    matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', ['MAIN_HAND', 'OFF_HAND']);
+    matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', [
+      'MAIN_HAND',
+      'OFF_HAND',
+    ]);
     expect(effects(matching)).toMatchObject({
       weapon: { itemId: 'worker-spear', profileId: 'spear' },
       additive: { defense: 11, maxStamina: 0 },
@@ -105,7 +115,9 @@ describe('B02 — finite perk effect evaluation', () => {
     });
   });
   it('uses only the lifecycle effective leader for the one group aura', () => {
-    const state = select(economy([1n, 1n]), 'leader', ['leadership-25-a'], { leadership: 25 });
+    const state = select(economy([1n, 1n]), 'leader', ['leadership-25-a'], {
+      leadership: 25,
+    });
     select(state, 'worker-0', ['leadership-60-a'], { leadership: 60 });
     Object.assign(state.lifecycle.company!, { actingLeaderId: 'worker-0' });
     expect(
