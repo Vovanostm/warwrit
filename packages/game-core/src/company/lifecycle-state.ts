@@ -162,12 +162,30 @@ export function validateLifecycleGraph(state: LifecycleState, context: Lifecycle
       'INVALID_STATE',
     );
   }
-  for (const character of [...state.characters, ...state.knowledge.characters])
+  for (const character of [...state.characters, ...state.knowledge.characters]) {
     for (const [id, value] of Object.entries(character.skills))
       requireLifecycle(
         catalogueHas(COMPANY_CATALOGUE, 'skills', id) && isSkillProgress(value),
         'INVALID_STATE',
       );
+    const selected = character.perks.map((perkId) =>
+      COMPANY_CATALOGUE.perks.find((perk) => perk.id === perkId),
+    );
+    requireLifecycle(
+      selected.every((perk) => perk !== undefined) &&
+        new Set(character.perks).size === character.perks.length &&
+        new Set(selected.map((perk) => `${perk!.skillId}:${perk!.milestone}`)).size ===
+          selected.length,
+      'INVALID_STATE',
+    );
+    for (const perk of selected) {
+      const mastery = character.skills[perk!.skillId];
+      requireLifecycle(
+        mastery !== undefined && skillLevel(mastery) >= perk!.milestone,
+        'INVALID_STATE',
+      );
+    }
+  }
   for (const character of state.characters) {
     requireLifecycle(
       character.identity.characterId === character.presence.characterId &&
