@@ -65,11 +65,7 @@ export interface SocialTransition<T> {
 }
 
 export type SocialViolationCode =
-  | 'INVALID_SOURCE'
-  | 'INVALID_TIME'
-  | 'RELATION_CONFLICT'
-  | 'FACT_CONFLICT'
-  | 'MEMORY_ID_CONFLICT';
+  'INVALID_SOURCE' | 'INVALID_TIME' | 'RELATION_CONFLICT' | 'FACT_CONFLICT' | 'MEMORY_ID_CONFLICT';
 
 export class SocialViolation extends Error {
   constructor(readonly code: SocialViolationCode) {
