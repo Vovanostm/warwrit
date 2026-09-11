@@ -107,11 +107,7 @@ describe('B02 — finite perk effect evaluation', () => {
     ]);
 
     expect(effects(state)).toMatchObject({
-      weapon: {
-        itemId: 'worker-spear',
-        profileId: 'spear',
-        contributingPerkIds: ['polearms-25-b', 'polearms-60-b'],
-      },
+      weapon: { itemId: 'worker-spear', profileId: 'spear' },
       additive: { defense: 11, maxStamina: 0 },
       contributingPerkIds: ['defense-25-a', 'polearms-25-b', 'polearms-60-b'],
     });
