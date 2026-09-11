@@ -25,7 +25,7 @@ function equip(
   slots: readonly EquipmentSlot[],
 ): CompanyEconomyState {
   const containerId = `pack-${characterId}`;
-  if (!state.physical!.containers.some((entry) => entry.containerId === containerId))
+  if (!state.physical!.containers.some((entry) => entry.containerId === containerId)) {
     addContainer(
       state,
       container(
@@ -36,6 +36,7 @@ function equip(
       ),
       false,
     );
+  }
   addItem(
     state,
     {
@@ -142,7 +143,9 @@ describe('B02 — finite perk effect evaluation', () => {
     select(state, 'worker-0', ['leadership-60-a']);
     Object.assign(state.lifecycle.company!, { actingLeaderId: 'worker-0' });
 
-    expect(evaluatePerkEffects(state as Required<CompanyEconomyState>, { kind: 'LEADER_GROUP' })).toMatchObject({
+    expect(
+      evaluatePerkEffects(state as Required<CompanyEconomyState>, { kind: 'LEADER_GROUP' }),
+    ).toMatchObject({
       effectiveLeaderId: 'worker-0',
       startingMorale: 5,
       contributingPerkIds: ['leadership-60-a'],
@@ -150,14 +153,20 @@ describe('B02 — finite perk effect evaluation', () => {
   });
 
   it('isolates task modifiers by holder and composes bps exactly independent of perk order', () => {
-    const state = select(economy([1n, 1n]), 'worker-0', ['medicine-25-a', 'medicine-60-a']);
+    const state = select(economy([1n, 1n]), 'worker-0', [
+      'medicine-25-a',
+      'medicine-60-a',
+    ]);
     const first = evaluatePerkEffects(state as Required<CompanyEconomyState>, {
       kind: 'CHARACTER',
       characterId: 'worker-0',
       task: 'CARE',
     });
     expect(first).toMatchObject({
-      task: { careRecoveryBps: { numerator: '13200', denominator: '1' }, careCostBps: identityBps },
+      task: {
+        careRecoveryBps: { numerator: '13200', denominator: '1' },
+        careCostBps: identityBps,
+      },
       contributingPerkIds: ['medicine-25-a', 'medicine-60-a'],
     });
     expect(
@@ -166,9 +175,13 @@ describe('B02 — finite perk effect evaluation', () => {
         characterId: 'leader',
         task: 'CARE',
       }),
-    ).toMatchObject({ task: { careRecoveryBps: identityBps, careCostBps: identityBps } });
+    ).toMatchObject({
+      task: { careRecoveryBps: identityBps, careCostBps: identityBps },
+    });
 
-    Object.assign(character(state, 'worker-0'), { perks: ['medicine-60-a', 'medicine-25-a'] });
+    Object.assign(character(state, 'worker-0'), {
+      perks: ['medicine-60-a', 'medicine-25-a'],
+    });
     const reversed = evaluatePerkEffects(state as Required<CompanyEconomyState>, {
       kind: 'CHARACTER',
       characterId: 'worker-0',
@@ -187,6 +200,7 @@ describe('B02 — finite perk effect evaluation', () => {
       characterId: 'worker-0',
       task: 'NONE',
     });
+    expect(canonicalJson(state)).toBe(before);
 
     Object.assign(character(state, 'worker-0'), { perks: [] });
     Object.assign(state.physical!.items.find((entry) => entry.itemId === 'worker-raider')!, {
@@ -197,7 +211,6 @@ describe('B02 — finite perk effect evaluation', () => {
       additive: { accuracy: 3 },
       contributingPerkIds: ['blades-25-a'],
     });
-    expect(JSON.parse(before).lifecycle.characters.find((entry: { identity: { characterId: string } }) => entry.identity.characterId === 'worker-0').perks).toEqual(['blades-25-a']);
   });
 
   it('fails closed on corrupt selected perk definitions', () => {
