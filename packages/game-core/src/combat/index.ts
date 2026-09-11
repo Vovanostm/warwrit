@@ -4,5 +4,6 @@ export * from './hex.js';
 export * from './random.js';
 export * from './replay.js';
 export * from './rules.js';
+export * from './runtime-v2.js';
 export * from './setup-v2.js';
 export * from './types.js';
