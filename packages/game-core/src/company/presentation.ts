@@ -23,10 +23,7 @@ function requestedHairStyle(command: CommandOf<'ChangePresentation'>): string {
   const keys = Object.keys(patch);
   requirePhysical(keys.length === 1 && keys[0] === 'hairStyleId', 'INVALID_ARGUMENT');
   const hairStyleId = patch['hairStyleId'];
-  requirePhysical(
-    typeof hairStyleId === 'string' && isEntityId(hairStyleId),
-    'INVALID_ARGUMENT',
-  );
+  requirePhysical(typeof hairStyleId === 'string' && isEntityId(hairStyleId), 'INVALID_ARGUMENT');
   return hairStyleId;
 }
 
