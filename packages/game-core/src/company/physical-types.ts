@@ -188,7 +188,7 @@ export interface ItemAccessEvidence extends PhysicalScope {
   readonly location: AtLocation;
   readonly containerIds: readonly string[];
   readonly itemIds: readonly string[];
-  readonly purpose: 'TRANSFER' | 'EQUIP' | 'REPAIR' | 'LOOT';
+  readonly purpose: 'TRANSFER' | 'EQUIP' | 'REPAIR' | 'LOOT' | 'STUDY';
 }
 export interface OwnershipAuthorizationEvidence extends PhysicalScope {
   readonly kind: 'OWNERSHIP_AUTHORIZATION';
