@@ -138,7 +138,13 @@ function applyCommandAtTarget(
         context,
       );
       if (command.type === 'Observe') {
-        const observed = observeFinance(change.finance, lifecycle, command, context);
+        const observed = observeFinance(
+          change.finance,
+          root.lifecycle,
+          lifecycle,
+          command,
+          context,
+        );
         change = {
           finance: observed.finance,
           requirements: [...change.requirements, ...observed.requirements],

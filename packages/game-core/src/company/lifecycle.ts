@@ -1,6 +1,5 @@
 import { guardCompanyCommand, checkFreshCompanyRevision, companySourceKey } from './guards.js';
 import { canonicalJson, snapshotJson } from './input.js';
-import { preparePerkSelection } from './perk-selection.js';
 import { skillLevels } from './skill-progress.js';
 import { canonicalRevision, publicRevision, isExactInteger } from './values.js';
 import { prepareOpening } from './opening.js';
@@ -122,8 +121,6 @@ function plan(
       return prepareDesignation(state, command, context);
     case 'ResolveLeadership':
       return prepareSuccession(state, command, context);
-    case 'ChoosePerk':
-      return preparePerkSelection(state, command, context);
     case 'Observe':
       return context.facts.find((f) => f.id === command.payload.observationId)?.kind ===
         'HEIR_NOTIFICATION'
@@ -258,6 +255,7 @@ export function projectCompanyLifecycle(state: LifecycleState, observerCompanyId
         location: { ...p.presence.location },
         assignment: p.presence.assignment,
         fieldPartyId: p.presence.fieldPartyId,
+        skills: skillLevels(p.skills),
       })),
   };
 }
