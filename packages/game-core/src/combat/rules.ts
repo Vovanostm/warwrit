@@ -73,7 +73,7 @@ export interface CombatRules {
   readonly weapons: readonly WeaponProfile[];
 }
 
-export const COMBAT_RULES_V1: CombatRules = {
+export const COMBAT_RULES_V1: CombatRules & { readonly id: typeof M0_COMBAT_RULESET_ID } = {
   id: M0_COMBAT_RULESET_ID,
   status: 'provisional',
   units: {
