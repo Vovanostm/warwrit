@@ -11,7 +11,11 @@ export interface ExactBps {
   readonly denominator: string;
 }
 export type PerkEvaluationInput =
-  | { readonly kind: 'CHARACTER'; readonly characterId: string; readonly task: PerkTaskScope }
+  | {
+      readonly kind: 'CHARACTER';
+      readonly characterId: string;
+      readonly task: PerkTaskScope;
+    }
   | { readonly kind: 'LEADER_GROUP' };
 
 type PerkRoot = Pick<MaterializedCompanyState, 'lifecycle' | 'physical'>;
@@ -75,7 +79,10 @@ function weaponContext(root: PerkRoot, characterId: string) {
     const requiredDefinition = COMPANY_CATALOGUE.items.find(
       (entry) => entry.id === definition.requiresOffHand,
     );
-    requireLifecycle(requiredDefinition?.enabled && requiredDefinition.slot === 'OFF_HAND', 'INVALID_STATE');
+    requireLifecycle(
+      requiredDefinition?.enabled && requiredDefinition.slot === 'OFF_HAND',
+      'INVALID_STATE',
+    );
     const required = root.physical.items.find(
       (item) =>
         item.tombstone === null &&
@@ -85,7 +92,11 @@ function weaponContext(root: PerkRoot, characterId: string) {
     );
     if (!required) return null;
   }
-  return { itemId: main.itemId, profileId: definition.weaponProfile, skillId: definition.skillId };
+  return {
+    itemId: main.itemId,
+    profileId: definition.weaponProfile,
+    skillId: definition.skillId,
+  };
 }
 function owned<T>(value: T): T {
   const copy = snapshotJson(value);
@@ -149,7 +160,10 @@ export function evaluatePerkEffects(root: PerkRoot, input: PerkEvaluationInput) 
         ((perk.skillId === 'scholarship' && attribute === 'trainingCostBps') ||
           (perk.skillId === 'leadership' && attribute === 'trainingDurationBps')));
     if (!activeTask || !taskAttributes.has(attribute)) continue;
-    task[attribute as keyof typeof task] = multiplyBps(task[attribute as keyof typeof task], value);
+    task[attribute as keyof typeof task] = multiplyBps(
+      task[attribute as keyof typeof task],
+      value,
+    );
     ids.push(perk.id);
   }
   return owned({
@@ -162,7 +176,11 @@ export function evaluatePerkEffects(root: PerkRoot, input: PerkEvaluationInput) 
     contributingPerkIds: ids.sort(),
     weapon:
       weapon && weaponIds.length > 0
-        ? { itemId: weapon.itemId, profileId: weapon.profileId, contributingPerkIds: weaponIds.sort() }
+        ? {
+            itemId: weapon.itemId,
+            profileId: weapon.profileId,
+            contributingPerkIds: weaponIds.sort(),
+          }
         : null,
     additive,
     task,
