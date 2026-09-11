@@ -1,5 +1,5 @@
 import { COMPANY_CATALOGUE } from './definitions.js';
-import { array, choice, id, natural, object, snapshotJson, unsigned } from './input.js';
+import { array, choice, id, object, snapshotJson, unsigned } from './input.js';
 import type { ValueOf } from './input.js';
 import type { EconomyContext } from './economy-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
@@ -13,11 +13,9 @@ import {
 import type { PhysicalError } from './physical-types.js';
 
 const intervalInput = object({
-  schemaVersion: choice(1),
   intervalId: id,
   characterId: id,
   workId: id,
-  workVersion: natural(1),
   sectionId: id,
   itemId: id,
   containerId: id,
@@ -74,8 +72,6 @@ export function readStudyAccessState(value: unknown): StudyAccessState {
   for (let index = 0; index < snapshot.intervals.length; index += 1) {
     const interval = snapshot.intervals[index]!;
     bounds(interval);
-    const work = workFor(interval.workId, interval.sectionId, 'INVALID_STATE');
-    requirePhysical(interval.workVersion === work.version, 'INVALID_STATE');
     for (let previous = 0; previous < index; previous += 1) {
       const candidate = snapshot.intervals[previous]!;
       requirePhysical(
@@ -131,7 +127,7 @@ export function admitStudyInterval(
   );
   requirePhysical(access.operatorId === request.characterId, 'INVALID_SOURCE');
 
-  const work = workFor(request.workId, request.sectionId, 'INVALID_ARGUMENT');
+  workFor(request.workId, request.sectionId, 'INVALID_ARGUMENT');
   const definition = itemDefinition(item);
   requirePhysical(
     definition.kind === 'book' && definition.workId === request.workId,
@@ -151,11 +147,9 @@ export function admitStudyInterval(
   );
 
   const interval: StudyAccessInterval = {
-    schemaVersion: 1,
     intervalId: request.intervalId,
     characterId: request.characterId,
     workId: request.workId,
-    workVersion: work.version,
     sectionId: request.sectionId,
     itemId: item.itemId,
     containerId: container.containerId,
