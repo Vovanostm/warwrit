@@ -37,7 +37,10 @@ export function preparePerkSelection(
   requireLifecycle(perk.milestone === milestone, 'INVALID_ARGUMENT');
 
   const mastery = character.skills[perk.skillId];
-  requireLifecycle(mastery !== undefined && skillLevel(mastery) >= perk.milestone, 'INVALID_ARGUMENT');
+  requireLifecycle(
+    mastery !== undefined && skillLevel(mastery) >= perk.milestone,
+    'INVALID_ARGUMENT',
+  );
 
   const slotUsed = character.perks.some((selectedId) => {
     const selected = perkDefinition(selectedId);
