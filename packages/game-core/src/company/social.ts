@@ -1,4 +1,13 @@
-import { canonicalJson, choice, id, natural, object, optional, snapshotJson, unsigned } from './input.js';
+import {
+  canonicalJson,
+  choice,
+  id,
+  natural,
+  object,
+  optional,
+  snapshotJson,
+  unsigned,
+} from './input.js';
 import type { ValueOf } from './input.js';
 
 const relationAxesInput = object({
