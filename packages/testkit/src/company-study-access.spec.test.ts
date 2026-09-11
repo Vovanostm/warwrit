@@ -18,11 +18,13 @@ import { command, context, economy, place, tick } from './company-economy-fixtur
 import { addContainer, addItem, container, item, itemAccess } from './company-physical-fixture.js';
 
 const owner = { kind: 'COMPANY' as const, id: 'company' };
-const work = COMPANY_CATALOGUE.works.find(
-  (candidate) =>
-    candidate.id === 'wound-care-basics' && candidate.sectionId === 'wound-care-basics-1',
-);
-if (!work) throw new Error('Missing C02 study fixture');
+const work = (() => {
+  const candidate = COMPANY_CATALOGUE.works.find(
+    (entry) => entry.id === 'wound-care-basics' && entry.sectionId === 'wound-care-basics-1',
+  );
+  if (!candidate) throw new Error('Missing C02 study fixture');
+  return candidate;
+})();
 
 function setup(at = 10, copies = 1, definitionId = 'study-book-medicine') {
   let state = economy([1n], 100n, at);
