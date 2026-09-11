@@ -7,7 +7,6 @@ import {
   type CombatSideSetup,
   type CombatUnitSetup,
   type SideId,
-  type UnitId,
 } from './types.js';
 
 export const COMBAT_V2_SCHEMA_VERSION = 2 as const;
@@ -70,10 +69,24 @@ function validateUnitPools(unit: CombatUnitSetupV2): void {
   invariant(attributes.morale <= 100, `${unit.id}.attributes.morale must be <= 100`);
 
   invariant(unit.initialPools !== undefined, `${unit.id}.initialPools must be provided`);
-  validateCurrentPool(unit.initialPools.health, attributes.health, `${unit.id}.initialPools.health`, 1);
+  validateCurrentPool(
+    unit.initialPools.health,
+    attributes.health,
+    `${unit.id}.initialPools.health`,
+    1,
+  );
   validateCurrentPool(unit.initialPools.armor, attributes.armor, `${unit.id}.initialPools.armor`);
-  validateCurrentPool(unit.initialPools.stamina, attributes.stamina, `${unit.id}.initialPools.stamina`);
-  validateCurrentPool(unit.initialPools.morale, attributes.morale, `${unit.id}.initialPools.morale`, 1);
+  validateCurrentPool(
+    unit.initialPools.stamina,
+    attributes.stamina,
+    `${unit.id}.initialPools.stamina`,
+  );
+  validateCurrentPool(
+    unit.initialPools.morale,
+    attributes.morale,
+    `${unit.id}.initialPools.morale`,
+    1,
+  );
 }
 
 export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
@@ -96,7 +109,10 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
   const mapKeys = new Set(setup.map.hexes.map(hexKey));
   const blockedKeys = new Set(setup.map.blocked.map(hexKey));
   invariant(mapKeys.size === setup.map.hexes.length, 'Battle map hexes must be unique');
-  invariant(blockedKeys.size === setup.map.blocked.length, 'Blocked battle map hexes must be unique');
+  invariant(
+    blockedKeys.size === setup.map.blocked.length,
+    'Blocked battle map hexes must be unique',
+  );
   invariant(setup.map.hexes.length > 0, 'Battle map must contain at least one hex');
   setup.map.hexes.forEach((value, index) => validateHex(value, `map.hexes[${index}]`));
   setup.map.blocked.forEach((value, index) => validateHex(value, `map.blocked[${index}]`));
@@ -134,7 +150,10 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
     invariant(!occupied.has(positionKey), `Multiple units occupy ${positionKey}`);
     occupied.add(positionKey);
 
-    invariant(M0_WEAPON_IDS.includes(unit.weaponId), `Unsupported V2 weapon profile: ${unit.weaponId}`);
+    invariant(
+      M0_WEAPON_IDS.includes(unit.weaponId),
+      `Unsupported V2 weapon profile: ${unit.weaponId}`,
+    );
     validateUnitPools(unit);
   }
 
