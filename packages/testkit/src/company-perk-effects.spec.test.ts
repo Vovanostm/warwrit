@@ -97,10 +97,7 @@ describe('B02 — finite perk effect evaluation', () => {
     );
     matching = equip(matching, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
     select(matching, 'leader', ['heavy-25-b'], { heavy: 25 });
-    matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', [
-      'MAIN_HAND',
-      'OFF_HAND',
-    ]);
+    matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', ['MAIN_HAND', 'OFF_HAND']);
     expect(effects(matching)).toMatchObject({
       weapon: { itemId: 'worker-spear', profileId: 'spear' },
       additive: { defense: 6, maxStamina: 0 },
