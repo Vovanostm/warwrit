@@ -49,7 +49,7 @@ function workFor(workId: string, sectionId: string, error: PhysicalError) {
   return work;
 }
 
-function bounds(interval: Pick<StudyAccessInterval, 'fromTick' | 'toTick'>) {
+function bounds(interval: { readonly fromTick: string; readonly toTick: string }) {
   const from = BigInt(interval.fromTick);
   const to = BigInt(interval.toTick);
   requirePhysical(from < to, 'INVALID_TIME');
@@ -65,9 +65,7 @@ function overlap(left: StudyAccessInterval, right: StudyAccessInterval): boolean
 /** Reads only C02's occupied-copy ledger; physical and semantic state stay externally owned. */
 export function readStudyAccessState(value: unknown): StudyAccessState {
   const snapshot = snapshotJson(value);
-  if (!stateInput.read(snapshot)) {
-    requirePhysical(false, 'INVALID_STATE');
-  }
+  requirePhysical(stateInput.read(snapshot), 'INVALID_STATE');
   requirePhysical(
     new Set(snapshot.intervals.map((interval) => interval.intervalId)).size ===
       snapshot.intervals.length,
@@ -105,10 +103,8 @@ export function admitStudyInterval(
 ): StudyAccessState {
   const state = readStudyAccessState(stateValue);
   const request = snapshotJson(requestValue);
-  if (!requestInput.read(request)) {
-    requirePhysical(false, 'INVALID_ARGUMENT');
-  }
-  const requested = bounds({ ...request, schemaVersion: 1, workVersion: 1, containerId: '' });
+  requirePhysical(requestInput.read(request), 'INVALID_ARGUMENT');
+  const requested = bounds(request);
   requirePhysical(request.fromTick === context.atTick, 'INVALID_TIME');
   requirePhysical(
     root.lifecycle.characters.some(
