@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   canonicalJson,
+  entityId,
   prepareCompanyEconomy,
   prepareCompanyLifecycle,
 } from '@warwrit/game-core';
@@ -108,7 +109,7 @@ describe('B01 — profile perk selection', () => {
           entry.membershipId === previous.membershipId ? { ...entry, endedAt: tick(1000) } : entry,
         ),
         {
-          membershipId: 'service-worker-0-rehire',
+          membershipId: entityId<'Membership'>('service-worker-0-rehire'),
           characterId: previous.characterId,
           companyId: previous.companyId,
           basis: 'FAMILY',
