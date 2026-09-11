@@ -1,4 +1,5 @@
 import { invariant } from '../primitives.js';
+import { M1_DOMAIN_BRIDGE_RULESET_ID } from './setup-v2.js';
 import { M0_COMBAT_RULESET_ID, type CombatRulesetId, type WeaponId } from './types.js';
 
 export interface WeaponProfile {
@@ -196,7 +197,10 @@ export const COMBAT_RULES_V1: CombatRules = {
 };
 
 export function combatRules(rulesetId: CombatRulesetId): CombatRules {
-  invariant(rulesetId === COMBAT_RULES_V1.id, `Unknown combat ruleset: ${rulesetId}`);
+  invariant(
+    rulesetId === COMBAT_RULES_V1.id || rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID,
+    `Unknown combat ruleset: ${rulesetId}`,
+  );
   return COMBAT_RULES_V1;
 }
 
