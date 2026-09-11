@@ -1,5 +1,11 @@
 import { financeFact, recordSource } from './economy-state.js';
-import { activeMembership, lifecycleId, person, replacePerson, sameLocation } from './lifecycle-state.js';
+import {
+  activeMembership,
+  lifecycleId,
+  person,
+  replacePerson,
+  sameLocation,
+} from './lifecycle-state.js';
 import { payPhysicalProvider } from './physical-payments.js';
 import { requirePhysical } from './physical-state.js';
 import type { EconomyContext } from './economy-types.js';
@@ -17,7 +23,10 @@ function requestedHairStyle(command: CommandOf<'ChangePresentation'>): string {
   const keys = Object.keys(patch);
   requirePhysical(keys.length === 1 && keys[0] === 'hairStyleId', 'INVALID_ARGUMENT');
   const hairStyleId = patch['hairStyleId'];
-  requirePhysical(typeof hairStyleId === 'string' && isEntityId(hairStyleId), 'INVALID_ARGUMENT');
+  requirePhysical(
+    typeof hairStyleId === 'string' && isEntityId(hairStyleId),
+    'INVALID_ARGUMENT',
+  );
   return hairStyleId;
 }
 
