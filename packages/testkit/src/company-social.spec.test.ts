@@ -53,12 +53,12 @@ describe('E01 — directed relations and genuinely learned facts', () => {
       },
     ]);
     expect(seeded.value.base.respect).toBe(20);
-    expect(
-      seeded.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice'),
-    ).toBe(false);
-    expect(
-      seeded.state.relations.some((r) => r.fromId === 'alice' && r.toId === 'carol'),
-    ).toBe(false);
+    expect(seeded.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice')).toBe(
+      false,
+    );
+    expect(seeded.state.relations.some((r) => r.fromId === 'alice' && r.toId === 'carol')).toBe(
+      false,
+    );
 
     const replay = recordDirectedRelation(seeded.state, {
       sourceEventId: 'origin-contact',
@@ -101,9 +101,7 @@ describe('E01 — directed relations and genuinely learned facts', () => {
 
   it('lets another person learn the same fact independently without automatic reciprocity', () => {
     const first = recordLearnedFact(createSocialState(), rescue);
-    expect(
-      first.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice'),
-    ).toBe(false);
+    expect(first.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice')).toBe(false);
 
     const second = recordLearnedFact(first.state, {
       ...rescue,
@@ -148,9 +146,9 @@ describe('E01 — directed relations and genuinely learned facts', () => {
         }),
       ),
     ).toBe('MEMORY_ID_CONFLICT');
-    expect(
-      code(() => recordLearnedFact(createSocialState(), { ...rescue, learnedAt: '99' })),
-    ).toBe('INVALID_TIME');
+    expect(code(() => recordLearnedFact(createSocialState(), { ...rescue, learnedAt: '99' }))).toBe(
+      'INVALID_TIME',
+    );
     expect(
       code(() =>
         recordDirectedRelation(createSocialState(), {
