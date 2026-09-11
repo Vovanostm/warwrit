@@ -112,7 +112,8 @@ describe('C01 — finite personal mastery of a work section', () => {
       { ...valid, schemaVersion: 2 },
       { ...valid, characterId: '' },
     ];
-    for (const value of invalid) expect(() => readStudySectionProgress(value)).toThrow(RangeError);
+    for (const value of invalid)
+      expect(() => readStudySectionProgress(value)).toThrow(RangeError);
 
     const otherSection: StudySectionProgress = {
       ...valid,
