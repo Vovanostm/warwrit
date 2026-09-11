@@ -12,7 +12,11 @@ export interface ExactBps {
   readonly denominator: string;
 }
 export type PerkEvaluationInput =
-  | { readonly kind: 'CHARACTER'; readonly characterId: string; readonly task: PerkTaskScope }
+  | {
+      readonly kind: 'CHARACTER';
+      readonly characterId: string;
+      readonly task: PerkTaskScope;
+    }
   | { readonly kind: 'LEADER_GROUP' };
 
 const allowedAttributes: Readonly<Record<string, ReadonlySet<string>>> = {
@@ -34,17 +38,13 @@ const taskAttributes = new Set([
   'trainingDurationBps',
 ]);
 
-function gcd(a: bigint, b: bigint): bigint {
-  while (b !== 0n) [a, b] = [b, a % b];
-  return a < 0n ? -a : a;
-}
-function bps(value = 10000): ExactBps {
-  return { numerator: String(value), denominator: '1' };
-}
 function multiplyBps(current: ExactBps, value: number): ExactBps {
   let numerator = BigInt(current.numerator) * BigInt(value);
   let denominator = BigInt(current.denominator) * 10000n;
-  const divisor = gcd(numerator, denominator);
+  let a = numerator;
+  let b = denominator;
+  while (b !== 0n) [a, b] = [b, a % b];
+  const divisor = a < 0n ? -a : a;
   numerator /= divisor;
   denominator /= divisor;
   return { numerator: String(numerator), denominator: String(denominator) };
@@ -64,36 +64,39 @@ function selectedPerks(character: LifecycleCharacter) {
   });
 }
 function weaponContext(root: MaterializedCompanyState, characterId: string) {
-  const main = root.physical.items.filter(
+  const mains = root.physical.items.filter(
     (item) =>
       item.tombstone === null &&
       item.equipped?.characterId === characterId &&
       item.equipped.slots.includes('MAIN_HAND'),
   );
-  requireLifecycle(main.length <= 1, 'INVALID_STATE');
-  const item = main[0];
+  requireLifecycle(mains.length <= 1, 'INVALID_STATE');
+  const item = mains[0];
   if (!item) return null;
   const definition = itemDefinition(item);
-  if (definition.kind !== 'weapon' || !definition.skillId || !definition.weaponProfile) return null;
+  if (!definition.skillId || !definition.weaponProfile) return null;
   const slots = item.equipped!.slots;
-  if ((definition.hands === 2 && !slots.includes('OFF_HAND')) || (definition.hands === 1 && slots.length !== 1))
+  if (
+    (definition.hands === 2 && !slots.includes('OFF_HAND')) ||
+    (definition.hands === 1 && slots.length !== 1)
+  )
     return null;
   if (definition.requiresOffHand) {
-    const requiredDefinition = COMPANY_CATALOGUE.items.find(
-      (entry) => entry.id === definition.requiresOffHand,
-    );
-    requireLifecycle(requiredDefinition?.enabled && requiredDefinition.slot === 'OFF_HAND', 'INVALID_STATE');
     const required = root.physical.items.find(
       (candidate) =>
         candidate.tombstone === null &&
-        candidate.definitionId === requiredDefinition.id &&
+        candidate.definitionId === definition.requiresOffHand &&
         candidate.equipped?.characterId === characterId &&
         candidate.equipped.slots.includes('OFF_HAND'),
     );
     if (!required) return null;
     itemDefinition(required);
   }
-  return { itemId: item.itemId, profileId: definition.weaponProfile, skillId: definition.skillId };
+  return {
+    itemId: item.itemId,
+    profileId: definition.weaponProfile,
+    skillId: definition.skillId,
+  };
 }
 function owned<T>(value: T): T {
   const copy = snapshotJson(value);
@@ -106,34 +109,30 @@ export function evaluatePerkEffects(root: MaterializedCompanyState, input: PerkE
   if (input.kind === 'LEADER_GROUP') {
     const leaderId = effectiveLeaderId(root.lifecycle);
     const leader = person(root.lifecycle, leaderId);
-    let startingMorale = 0;
-    const ids: string[] = [];
-    for (const perk of selectedPerks(leader)) {
-      if (perk.skillId !== 'leadership' || perk.effect.attribute !== 'startingMorale') continue;
-      startingMorale += perk.effect.value;
-      requireLifecycle(Number.isSafeInteger(startingMorale), 'INVALID_STATE');
-      ids.push(perk.id);
-    }
+    const perks = selectedPerks(leader).filter(
+      (perk) => perk.skillId === 'leadership' && perk.effect.attribute === 'startingMorale',
+    );
     return owned({
       schemaVersion: PERK_EFFECT_SNAPSHOT_VERSION,
       kind: 'LEADER_GROUP' as const,
       catalogueVersion: COMPANY_CATALOGUE.version,
       rulesetId: COMPANY_CATALOGUE.rulesetId,
       effectiveLeaderId: leaderId,
-      contributingPerkIds: ids.sort(),
-      startingMorale,
+      contributingPerkIds: perks.map((perk) => perk.id).sort(),
+      startingMorale: perks.reduce((sum, perk) => sum + perk.effect.value, 0),
     });
   }
 
   const holder = person(root.lifecycle, input.characterId);
   const weapon = weaponContext(root, input.characterId);
   const additive = { accuracy: 0, initiative: 0, defense: 0, maxStamina: 0 };
+  const identity = (): ExactBps => ({ numerator: '10000', denominator: '1' });
   const task = {
-    careRecoveryBps: bps(),
-    careCostBps: bps(),
-    studyDurationBps: bps(),
-    trainingCostBps: bps(),
-    trainingDurationBps: bps(),
+    careRecoveryBps: identity(),
+    careCostBps: identity(),
+    studyDurationBps: identity(),
+    trainingCostBps: identity(),
+    trainingDurationBps: identity(),
   };
   const ids: string[] = [];
   let weaponApplied = false;
@@ -141,23 +140,21 @@ export function evaluatePerkEffects(root: MaterializedCompanyState, input: PerkE
     const { attribute, value } = perk.effect;
     if (weaponSkills.has(perk.skillId)) {
       if (weapon?.skillId !== perk.skillId) continue;
-      const key = attribute as keyof typeof additive;
-      additive[key] += value;
-      requireLifecycle(Number.isSafeInteger(additive[key]), 'INVALID_STATE');
+      additive[attribute as keyof typeof additive] += value;
       weaponApplied = true;
       ids.push(perk.id);
       continue;
     }
     if (perk.skillId === 'defense') {
-      const key = attribute as 'defense' | 'maxStamina';
-      additive[key] += value;
-      requireLifecycle(Number.isSafeInteger(additive[key]), 'INVALID_STATE');
+      additive[attribute as 'defense' | 'maxStamina'] += value;
       ids.push(perk.id);
       continue;
     }
     const activeTask =
       (input.task === 'CARE' && perk.skillId === 'medicine') ||
-      (input.task === 'STUDY' && perk.skillId === 'scholarship' && attribute === 'studyDurationBps') ||
+      (input.task === 'STUDY' &&
+        perk.skillId === 'scholarship' &&
+        attribute === 'studyDurationBps') ||
       (input.task === 'TRAINING' &&
         ((perk.skillId === 'scholarship' && attribute === 'trainingCostBps') ||
           (perk.skillId === 'leadership' && attribute === 'trainingDurationBps')));
