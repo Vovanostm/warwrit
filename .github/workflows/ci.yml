@@ -29,5 +29,11 @@ jobs:
         with:
           node-version-file: .node-version
 
-      - name: Bootstrap and verify
-        run: ./scripts/bootstrap.sh
+      - name: Show canonical Prettier diff
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+          pnpm install --frozen-lockfile
+          pnpm exec prettier packages/game-core/src/company/social.ts packages/testkit/src/company-social.spec.test.ts --write
+          git diff -- packages/game-core/src/company/social.ts packages/testkit/src/company-social.spec.test.ts
+          exit 1
