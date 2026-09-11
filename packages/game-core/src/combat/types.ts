@@ -10,7 +10,8 @@ export const M0_COMBAT_RULESET_ID = 'm0-prototype-v1' as const;
 export const COMBAT_RANDOM_ALGORITHM = 'xorshift32-v1' as const;
 export const M0_WEAPON_IDS = ['bow', 'great-weapon', 'raider', 'spear', 'sword-shield'] as const;
 
-export type CombatRulesetId = typeof M0_COMBAT_RULESET_ID;
+export type LegacyCombatRulesetId = typeof M0_COMBAT_RULESET_ID;
+export type CombatRulesetId = LegacyCombatRulesetId | 'm1-domain-bridge-v1';
 export type WeaponId = (typeof M0_WEAPON_IDS)[number];
 export type UnitStatus = 'active' | 'dead' | 'retreated';
 export type WoundSeverity = 'minor' | 'severe';
@@ -53,7 +54,7 @@ export interface CombatUnitSetup {
 export interface BattleSetup {
   readonly schemaVersion: typeof COMBAT_SCHEMA_VERSION;
   readonly battleId: BattleId;
-  readonly rulesetId: CombatRulesetId;
+  readonly rulesetId: LegacyCombatRulesetId;
   readonly seed: number;
   readonly map: CombatMap;
   readonly sides: readonly [CombatSideSetup, CombatSideSetup];
@@ -142,7 +143,11 @@ export interface RetreatCommand extends CombatCommandBase {
 }
 
 export type CombatCommand =
-  MoveCommand | AttackCommand | DefendCommand | WaitCommand | RetreatCommand;
+  | MoveCommand
+  | AttackCommand
+  | DefendCommand
+  | WaitCommand
+  | RetreatCommand;
 
 export type CombatFailureCode =
   | 'BATTLE_TERMINAL'
