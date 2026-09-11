@@ -34,12 +34,14 @@ function code(work: () => unknown) {
 describe('E01 — directed relations and genuinely learned facts', () => {
   it('stores only explicitly significant directed pairs', () => {
     const initial = createSocialState();
+    const base = { ...zero, respect: 20 };
     const seeded = recordDirectedRelation(initial, {
       sourceEventId: 'origin-contact',
       fromId: 'alice',
       toId: 'bob',
-      base: { ...zero, respect: 20 },
+      base,
     });
+    base.respect = 99;
 
     expect(seeded.replayed).toBe(false);
     expect(seeded.state.relations).toEqual([
@@ -50,6 +52,7 @@ describe('E01 — directed relations and genuinely learned facts', () => {
         baseSourceEventId: 'origin-contact',
       },
     ]);
+    expect(seeded.value.base.respect).toBe(20);
     expect(
       seeded.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice'),
     ).toBe(false);
