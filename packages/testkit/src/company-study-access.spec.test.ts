@@ -32,10 +32,7 @@ function setup(at = 10, copies = 1, definitionId = 'study-book-medicine') {
   return state as CompanyEconomyState & MaterializedCompanyState;
 }
 type Root = ReturnType<typeof setup>;
-const withPhysical = (root: Root, physical: Root['physical']): Root => ({
-  ...root,
-  physical,
-});
+const withPhysical = (root: Root, physical: Root['physical']): Root => ({ ...root, physical });
 
 function request(
   intervalId: string,
@@ -57,11 +54,7 @@ function request(
 }
 
 type Access = Extract<PhysicalEvidence, { kind: 'ITEM_ACCESS' }>;
-function access(
-  root: Root,
-  input: StudyAccessRequest,
-  patch: Partial<Access> = {},
-): Access {
+function access(root: Root, input: StudyAccessRequest, patch: Partial<Access> = {}): Access {
   return {
     ...itemAccess(root, input.accessEvidenceId, 'STUDY', ['books'], [input.itemId]),
     operatorId: input.characterId,
