@@ -36,11 +36,7 @@ describe('C01 — finite personal mastery of a work section', () => {
     });
 
     // A different physical copy is deliberately absent from the content key.
-    const completed = advanceStudySection(
-      reload(first.next),
-      medicine,
-      secondInterval.toString(),
-    );
+    const completed = advanceStudySection(reload(first.next), medicine, secondInterval.toString());
     expect(completed.next.learnedTicks).toBe(duration.toString());
     expect(credit(first.creditedMilliXp) + credit(completed.creditedMilliXp)).toBe(finiteMilliXp);
     expect(completed.completion).toEqual({
@@ -115,8 +111,7 @@ describe('C01 — finite personal mastery of a work section', () => {
       { ...valid, schemaVersion: 2 },
       { ...valid, characterId: '' },
     ];
-    for (const value of invalid)
-      expect(() => readStudySectionProgress(value)).toThrow(RangeError);
+    for (const value of invalid) expect(() => readStudySectionProgress(value)).toThrow(RangeError);
 
     const otherSection: StudySectionProgress = {
       ...valid,
