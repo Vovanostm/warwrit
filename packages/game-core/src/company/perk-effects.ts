@@ -74,7 +74,7 @@ function weaponContext(root: MaterializedCompanyState, characterId: string) {
   const item = mains[0];
   if (!item) return null;
   const definition = itemDefinition(item);
-  if (!definition.skillId || !definition.weaponProfile) return null;
+  if (definition.kind !== 'weapon' || !definition.skillId || !definition.weaponProfile) return null;
   const slots = item.equipped!.slots;
   if (
     (definition.hands === 2 && !slots.includes('OFF_HAND')) ||
@@ -82,10 +82,17 @@ function weaponContext(root: MaterializedCompanyState, characterId: string) {
   )
     return null;
   if (definition.requiresOffHand) {
+    const requiredDefinition = COMPANY_CATALOGUE.items.find(
+      (candidate) => candidate.id === definition.requiresOffHand,
+    );
+    requireLifecycle(
+      requiredDefinition?.enabled && requiredDefinition.slot === 'OFF_HAND',
+      'INVALID_STATE',
+    );
     const required = root.physical.items.find(
       (candidate) =>
         candidate.tombstone === null &&
-        candidate.definitionId === definition.requiresOffHand &&
+        candidate.definitionId === requiredDefinition.id &&
         candidate.equipped?.characterId === characterId &&
         candidate.equipped.slots.includes('OFF_HAND'),
     );
