@@ -138,14 +138,12 @@ export function evaluatePerkEffects(root: PerkRoot, input: PerkEvaluationInput) 
     trainingDurationBps: identityBps(),
   };
   const ids: string[] = [];
-  const weaponIds: string[] = [];
   for (const perk of selectedPerks(holder)) {
     const { attribute, value } = perk.effect;
     if (weaponSkills.has(perk.skillId)) {
       if (weapon?.skillId !== perk.skillId) continue;
       additive[attribute as keyof typeof additive] += value;
       ids.push(perk.id);
-      weaponIds.push(perk.id);
       continue;
     }
     if (perk.skillId === 'defense') {
@@ -174,14 +172,7 @@ export function evaluatePerkEffects(root: PerkRoot, input: PerkEvaluationInput) 
     holderId: input.characterId,
     taskScope: input.task,
     contributingPerkIds: ids.sort(),
-    weapon:
-      weapon && weaponIds.length > 0
-        ? {
-            itemId: weapon.itemId,
-            profileId: weapon.profileId,
-            contributingPerkIds: weaponIds.sort(),
-          }
-        : null,
+    weapon: weapon ? { itemId: weapon.itemId, profileId: weapon.profileId } : null,
     additive,
     task,
   });
