@@ -18,7 +18,12 @@ import type {
   WorldId,
 } from './values.js';
 
+export const PRESENTATION_SCHEMA_VERSION = 1 as const;
 export type AtLocation = Extract<LocationRef, { kind: 'AT' }>;
+export interface CharacterPresentation {
+  readonly schemaVersion: typeof PRESENTATION_SCHEMA_VERSION;
+  readonly hairStyleId: string;
+}
 export interface LifecycleCharacter {
   readonly identity: CharacterIdentity;
   readonly presence: CharacterPresence;
@@ -26,6 +31,8 @@ export interface LifecycleCharacter {
   readonly aptitudeBySkill: Readonly<Record<string, number>>;
   readonly perks: readonly string[];
   readonly conditionIds: readonly string[];
+  /** Optional for legacy V1 snapshots; F02 materializes it only after a real service. */
+  readonly presentation?: CharacterPresentation;
 }
 export interface LifecycleCompany extends CompanyIdentity {
   readonly founderId: CharacterId;

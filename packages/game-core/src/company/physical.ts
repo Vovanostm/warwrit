@@ -32,6 +32,7 @@ import {
   settleOutcomeApplication,
   transferCaptive,
 } from './physical-outcomes.js';
+import { changePresentation } from './presentation.js';
 import {
   ownPhysical,
   physicalFact,
@@ -61,6 +62,8 @@ export function preparePhysicalCommand(
       return applyCondition(root, command, context);
     case 'ApplyCare':
       return applyCare(root, command, context);
+    case 'ChangePresentation':
+      return changePresentation(root, command, context);
     case 'Capture':
       return captureCharacter(root, command, context);
     case 'ReleaseCaptive':
@@ -380,6 +383,7 @@ export function projectCompanyPhysical(
       characters: root.lifecycle.knowledge.characters
         .map((character) => ({
           characterId: character.identity.characterId,
+          presentation: character.presentation ? { ...character.presentation } : null,
           conditions: [],
           vitals: null,
         }))
@@ -417,6 +421,7 @@ export function projectCompanyPhysical(
         );
         return {
           characterId: character.identity.characterId,
+          presentation: character.presentation ? { ...character.presentation } : null,
           conditions: p.conditionSnapshots
             .filter(
               (condition) =>

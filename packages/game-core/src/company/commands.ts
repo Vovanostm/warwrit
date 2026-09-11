@@ -57,6 +57,7 @@ const goal = either(
 );
 const quantity = object({ itemId: id, quantity: natural(1) });
 const seizure = object({ itemId: id, toContainerId: id, authorizationId: id });
+const presentationPatch = object({ hairStyleId: id });
 const ids = array(id, 0, 1000, true);
 
 /** Registration requires an explicit policy: adding a command cannot default to PLAYER. */
@@ -253,12 +254,11 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     textKey: id,
   }),
   ResolveNickname: command('PLAYER', { proposalId: id, accept: bool }),
-  // Service-specific cosmetic keys are not specified by the source Notes. Kept raw,
-  // never asserted to be an executable appearance change in this foundation.
+  // F02-v1: the wire surface is as narrow as the versioned barber service contract.
   ChangePresentation: command('PLAYER', {
     characterId: id,
     serviceEvidenceId: id,
-    appearancePatch: jsonObject,
+    appearancePatch: presentationPatch,
   }),
   RenameCompany: command('PLAYER', { companyId: id, name: text, bannerId: id }),
   TransferItem: command('PLAYER', {

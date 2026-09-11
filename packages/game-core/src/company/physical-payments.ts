@@ -20,7 +20,7 @@ export function payPhysicalProvider(
     readonly movementId: string;
     readonly purpose: Extract<
       CashMovement['purpose'],
-      'CARE' | 'CARE_HANDOVER' | 'FOOD' | 'REPAIR'
+      'CARE' | 'CARE_HANDOVER' | 'FOOD' | 'REPAIR' | 'PRESENTATION'
     >;
   },
 ): CompanyFinance {

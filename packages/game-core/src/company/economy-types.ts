@@ -183,7 +183,8 @@ export interface CashMovement {
     | 'CARE'
     | 'CARE_HANDOVER'
     | 'FOOD'
-    | 'REPAIR';
+    | 'REPAIR'
+    | 'PRESENTATION';
   readonly atTick: CampaignTick;
 }
 export interface FarewellGrant {
@@ -272,6 +273,21 @@ export interface SafeServiceOffer extends FinanceScope {
   readonly inhabited: boolean;
   readonly accessible: boolean;
 }
+/** F02 trusted quote: the adapter, not the player, chooses provider, local price and offered styles. */
+export interface PresentationServiceEvidence extends FinanceScope {
+  readonly kind: 'PRESENTATION_SERVICE';
+  readonly characterId: string;
+  readonly providerId: string;
+  readonly location: AtLocation;
+  readonly serviceId: string;
+  readonly serviceVersion: string;
+  readonly allowedHairStyleIds: readonly string[];
+  readonly priceQ: MoneyQ;
+  readonly poolId: string;
+  readonly providerWalletId: string;
+  readonly moneyAccessEvidenceId: string;
+  readonly expiresAt: CampaignTick;
+}
 export interface QualificationNoticeEvidence extends FinanceScope {
   readonly kind: 'QUALIFICATION_NOTICE';
   readonly membershipId: string;
@@ -323,6 +339,7 @@ export type FinanceEvidence =
   | LocalMoneyAccess
   | CampSiteEvidence
   | SafeServiceOffer
+  | PresentationServiceEvidence
   | QualificationNoticeEvidence
   | WageCommunicationEvidence
   | FinancialDeathEvidence
