@@ -50,12 +50,12 @@ describe('E01 — directed relations and genuinely learned facts', () => {
         baseSourceEventId: 'origin-contact',
       },
     ]);
-    expect(seeded.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice')).toBe(
-      false,
-    );
-    expect(seeded.state.relations.some((r) => r.fromId === 'alice' && r.toId === 'carol')).toBe(
-      false,
-    );
+    expect(
+      seeded.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice'),
+    ).toBe(false);
+    expect(
+      seeded.state.relations.some((r) => r.fromId === 'alice' && r.toId === 'carol'),
+    ).toBe(false);
 
     const replay = recordDirectedRelation(seeded.state, {
       sourceEventId: 'origin-contact',
@@ -98,7 +98,9 @@ describe('E01 — directed relations and genuinely learned facts', () => {
 
   it('lets another person learn the same fact independently without automatic reciprocity', () => {
     const first = recordLearnedFact(createSocialState(), rescue);
-    expect(first.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice')).toBe(false);
+    expect(
+      first.state.relations.some((r) => r.fromId === 'bob' && r.toId === 'alice'),
+    ).toBe(false);
 
     const second = recordLearnedFact(first.state, {
       ...rescue,
