@@ -39,7 +39,12 @@ function equip(
   return addItem(
     next,
     {
-      ...item(itemId, definitionId, { kind: 'COMPANY', id: state.lifecycle.companyId }, containerId),
+      ...item(
+        itemId,
+        definitionId,
+        { kind: 'COMPANY', id: state.lifecycle.companyId },
+        containerId,
+      ),
       equipped: { characterId, slots: [...slots] },
     },
     false,
