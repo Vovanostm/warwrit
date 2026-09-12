@@ -60,7 +60,14 @@ function stop(
   at = 14,
 ) {
   const root = economy([1n], 100n, at);
-  return command(root, 'StopLearning', { taskId: 'task', reason }, id, actor, tick(at)) as CommandOf<'StopLearning'>;
+  return command(
+    root,
+    'StopLearning',
+    { taskId: 'task', reason },
+    id,
+    actor,
+    tick(at),
+  ) as CommandOf<'StopLearning'>;
 }
 
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
