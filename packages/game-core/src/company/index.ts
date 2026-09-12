@@ -31,6 +31,7 @@ export * from './combat-projection.js';
 export * from './progression.js';
 export * from './skill-progress.js';
 export * from './study-section.js';
+export * from './study-access.js';
 export * from './learning-source.js';
 export * from './learning-quote.js';
 export { admitPractice } from './practice-admission.js';
