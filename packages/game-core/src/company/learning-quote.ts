@@ -230,7 +230,9 @@ export function quoteLearningTask(
       (entry) => entry.id === source.workId && entry.sectionId === source.sectionId,
     );
     requireEconomy(
-      work && p.goal.workId === work.id && (p.goal.sectionId ?? work.sectionId) === work.sectionId,
+      work &&
+        p.goal.workId === work.id &&
+        (p.goal.sectionId ?? work.sectionId) === work.sectionId,
       'INVALID_SOURCE',
     );
     for (const id of source.resourceIds) {
