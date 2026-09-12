@@ -40,6 +40,7 @@ export interface LearningSourceContext extends EconomyContext {
 function coveredByMaintenance(root: MaterializedCompanyState, characterId: string, at: bigint) {
   return root.finance.maintenance.some(
     (entry) =>
+      entry.kind === 'SAFE_SERVICE' &&
       BigInt(entry.startedAt) <= at &&
       (entry.endedAt === null || at < BigInt(entry.endedAt)) &&
       entry.beneficiaryIds.includes(characterId) &&
