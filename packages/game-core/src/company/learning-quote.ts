@@ -117,8 +117,7 @@ export function quoteLearningTask(
     requireEconomy(BigInt(p.maxBudgetQ) > 0n && authorized > 0n, 'UNPAID_OBLIGATIONS');
     const cost = ratio(coefficients.task.trainingCostBps);
     const rate = BigInt(source.costQPerDay) * cost.numerator;
-    const affordable =
-      (authorized * BigInt(COMPANY_RULES.ticksPerDay) * cost.denominator) / rate;
+    const affordable = (authorized * BigInt(COMPANY_RULES.ticksPerDay) * cost.denominator) / rate;
     maxTicks = min(requested, BigInt(source.maxTicks), affordable);
     requireEconomy(maxTicks > 0n, 'UNPAID_OBLIGATIONS');
     funding = {
@@ -142,9 +141,7 @@ export function quoteLearningTask(
       (entry) => entry.id === source.workId && entry.sectionId === source.sectionId,
     );
     requireEconomy(
-      work &&
-        p.goal.workId === work.id &&
-        (p.goal.sectionId ?? work.sectionId) === work.sectionId,
+      work && p.goal.workId === work.id && (p.goal.sectionId ?? work.sectionId) === work.sectionId,
       'INVALID_SOURCE',
     );
     for (const id of source.resourceIds) {
