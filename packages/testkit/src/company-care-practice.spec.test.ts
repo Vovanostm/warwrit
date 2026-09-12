@@ -14,7 +14,12 @@ import {
   place,
   prepared,
 } from './company-economy-fixture.js';
-import { addItem, condition, item, withCareProvider } from './company-physical-fixture.js';
+import {
+  addItem,
+  condition,
+  item,
+  withCareProvider,
+} from './company-physical-fixture.js';
 
 function memberMedic(state: CompanyEconomyState, characterId = 'leader') {
   const exact = initialSkillProgress(1, `b04-${characterId}-medicine`);
@@ -50,7 +55,13 @@ function injured(
 ) {
   const stocked = addItem(
     state,
-    item('medical-b04', 'medical-unit', { kind: 'COMPANY', id: 'company' }, 'fixture-supply', 2),
+    item(
+      'medical-b04',
+      'medical-unit',
+      { kind: 'COMPANY', id: 'company' },
+      'fixture-supply',
+      2,
+    ),
   );
   return condition(stocked, 'worker-0', definitionId, `b04-${definitionId}`).next;
 }
