@@ -131,7 +131,9 @@ describe('B04 — care-provided practice from actual performed care', () => {
     expect(after.amount.carry).toBe(before.amount.carry);
     expect(
       canonicalJson(
-        next.lifecycle.characters.find((entry) => entry.identity.characterId === 'worker-0')!.skills,
+        next.lifecycle.characters.find(
+          (entry) => entry.identity.characterId === 'worker-0',
+        )!.skills,
       ),
     ).toBe(patientBefore);
     expect(next.finance.sourceEffects).toHaveLength(1);
@@ -144,9 +146,9 @@ describe('B04 — care-provided practice from actual performed care', () => {
       context(next, preparedCare.cmd, [], [], [preparedCare.fact]),
     );
     expect(replay).toMatchObject({ kind: 'PREPARED', replayed: true, state: next, next });
-    expect(medicine((replay as Extract<typeof replay, { kind: 'PREPARED' }>).next, 'leader')).toEqual(
-      after,
-    );
+    expect(
+      medicine((replay as Extract<typeof replay, { kind: 'PREPARED' }>).next, 'leader'),
+    ).toEqual(after);
   });
 
   it('rolls back performed-care effects when required member practice evidence is incomplete', () => {
