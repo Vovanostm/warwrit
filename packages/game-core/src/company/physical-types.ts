@@ -231,6 +231,8 @@ export interface CareFulfillmentEvidence extends PhysicalScope {
   readonly poolId?: string;
   readonly providerWalletId?: string;
   readonly moneyAccessEvidenceId?: string;
+  /** Trusted B04 source profile; required only when the actual provider is a company member. */
+  readonly practiceChallengeLevel?: number;
   /** Base provider quote. The care reducer owns any exact perk rounding. */
   readonly amountQ?: MoneyQ;
   /** Trusted quote capability; absence/false means the quoted amount is not discountable. */

@@ -7,8 +7,8 @@ import type { LifecycleState } from './lifecycle-types.js';
 import { campaignTick } from './values.js';
 import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
 import type { CompanyPhysicalState } from './physical-types.js';
+import { applyCareWithPractice } from './care-practice.js';
 import {
-  applyCare,
   applyCondition,
   advancePhysicalRecovery,
   ensureNewMembershipVitals,
@@ -61,7 +61,7 @@ export function preparePhysicalCommand(
     case 'ApplyCondition':
       return applyCondition(root, command, context);
     case 'ApplyCare':
-      return applyCare(root, command, context);
+      return applyCareWithPractice(root, command, context);
     case 'ChangePresentation':
       return changePresentation(root, command, context);
     case 'Capture':
