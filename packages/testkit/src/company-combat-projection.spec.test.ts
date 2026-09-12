@@ -46,7 +46,11 @@ function equip(
     currentCondition,
     maximumCondition,
   );
-  return addItem(next, { ...value, equipped: { characterId: 'worker-0', slots } }, false);
+  return addItem(
+    next,
+    { ...value, equipped: { characterId: 'worker-0', slots: [...slots] } },
+    false,
+  );
 }
 function vitals(state: CompanyEconomyState, health: number, stamina: number) {
   return addVitals(
@@ -67,11 +71,11 @@ function vitals(state: CompanyEconomyState, health: number, stamina: number) {
 
 describe('G03 — character/equipment/condition combat projection', () => {
   it('projects real gear, skills/perks and an existing wound exactly once without refill', () => {
-    let state = character(
-      economy([1n]),
-      { blades: 60, defense: 25 },
-      ['blades-25-a', 'blades-60-b', 'defense-25-b'],
-    );
+    let state = character(economy([1n]), { blades: 60, defense: 25 }, [
+      'blades-25-a',
+      'blades-60-b',
+      'defense-25-b',
+    ]);
     state = equip(state, 'sword', 'real-sword', ['MAIN_HAND']);
     state = equip(state, 'shield', 'real-shield', ['OFF_HAND']);
     state = equip(state, 'simple-helmet', 'real-helmet', ['HEAD'], 12, 20);
@@ -105,11 +109,7 @@ describe('G03 — character/equipment/condition combat projection', () => {
       },
     ]);
     expect(projected.conditionIds).toEqual(['wound-worker-0-0']);
-    expect(projected.contributingPerkIds).toEqual([
-      'blades-25-a',
-      'blades-60-b',
-      'defense-25-b',
-    ]);
+    expect(projected.contributingPerkIds).toEqual(['blades-25-a', 'blades-60-b', 'defense-25-b']);
     expect(projected.attributes).toEqual({
       accuracy: 49,
       armor: 60,
