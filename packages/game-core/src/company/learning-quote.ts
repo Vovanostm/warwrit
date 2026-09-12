@@ -131,7 +131,9 @@ function inMaintenance(root: MaterializedCompanyState, characterId: string, at: 
       BigInt(entry.startedAt) <= at &&
       (entry.endedAt === null || at < BigInt(entry.endedAt)) &&
       entry.beneficiaryIds.includes(characterId) &&
-      !entry.beneficiaryEnds.some((end) => end.characterId === characterId && BigInt(end.atTick) <= at),
+      !entry.beneficiaryEnds.some(
+        (end) => end.characterId === characterId && BigInt(end.atTick) <= at,
+      ),
   );
 }
 
@@ -156,10 +158,15 @@ export function quoteLearningTask(
   );
   const requestedTicks = BigInt(p.goal.maxTicks);
   requireEconomy(requestedTicks > 0n, 'INVALID_SOURCE');
-  const method = COMPANY_CATALOGUE.methods.find((entry) => entry.id === p.methodId && entry.enabled);
+  const method = COMPANY_CATALOGUE.methods.find(
+    (entry) => entry.id === p.methodId && entry.enabled,
+  );
   requireEconomy(method, 'INVALID_SOURCE');
   const source = sourceFor(context, p);
-  requireEconomy(sameLocation(learner.presence.location, source.location), 'CONTACT_OR_ACCESS_REQUIRED');
+  requireEconomy(
+    sameLocation(learner.presence.location, source.location),
+    'CONTACT_OR_ACCESS_REQUIRED',
+  );
   usableResources(root, source);
   const coefficients = evaluatePerkEffects(root, {
     kind: 'CHARACTER',
@@ -183,7 +190,10 @@ export function quoteLearningTask(
       'INVALID_SOURCE',
     );
     const level = skillLevel(learner.skills[source.skillId] ?? 0);
-    requireEconomy(p.goal.targetLevel === undefined || p.goal.targetLevel > level, 'INCOMPATIBLE_ACTIVITY');
+    requireEconomy(
+      p.goal.targetLevel === undefined || p.goal.targetLevel > level,
+      'INCOMPATIBLE_ACTIVITY',
+    );
     for (const id of [source.providerId, source.mentorId]) {
       const provider = person(root.lifecycle, id);
       requireEconomy(
@@ -210,7 +220,8 @@ export function quoteLearningTask(
     requireEconomy(cap > 0n && authorized > 0n, 'UNPAID_OBLIGATIONS');
     const cost = ratio(coefficients.task.trainingCostBps);
     const rate = BigInt(source.costQPerDay) * cost.numerator;
-    const affordable = (authorized * BigInt(COMPANY_RULES.ticksPerDay) * cost.denominator) / rate;
+    const affordable =
+      (authorized * BigInt(COMPANY_RULES.ticksPerDay) * cost.denominator) / rate;
     maxTicks = min(requestedTicks, BigInt(source.maxTicks), affordable);
     requireEconomy(maxTicks > 0n, 'UNPAID_OBLIGATIONS');
     funding = {
@@ -219,10 +230,18 @@ export function quoteLearningTask(
       providerWalletId: source.providerWalletId,
       maxBudgetQ: moneyQ(cap.toString()),
       authorizedBudgetQ: moneyQ(authorized.toString()),
-      effectiveCostQPerDay: { numerator: rate.toString(), denominator: cost.denominator.toString() },
+      effectiveCostQPerDay: {
+        numerator: rate.toString(),
+        denominator: cost.denominator.toString(),
+      },
     };
   } else {
-    requireEconomy(method.interval === 'FINITE_SECTION' && 'workId' in p.goal && BigInt(p.maxBudgetQ) === 0n, 'INVALID_SOURCE');
+    requireEconomy(
+      method.interval === 'FINITE_SECTION' &&
+        'workId' in p.goal &&
+        BigInt(p.maxBudgetQ) === 0n,
+      'INVALID_SOURCE',
+    );
     const work = COMPANY_CATALOGUE.works.find(
       (entry) => entry.id === source.workId && entry.sectionId === source.sectionId,
     );
@@ -234,10 +253,16 @@ export function quoteLearningTask(
       const definition = COMPANY_CATALOGUE.items.find(
         (entry) => entry.id === physicalItem(root.physical, id).definitionId,
       );
-      requireEconomy(definition?.enabled && definition.kind === 'book' && definition.workId === work.id, 'INVALID_SOURCE');
+      requireEconomy(
+        definition?.enabled && definition.kind === 'book' && definition.workId === work.id,
+        'INVALID_SOURCE',
+      );
     }
     const duration = ratio(coefficients.task.studyDurationBps);
-    maxTicks = min(requestedTicks, ceilDiv(BigInt(work.durationTicks) * duration.numerator, duration.denominator));
+    maxTicks = min(
+      requestedTicks,
+      ceilDiv(BigInt(work.durationTicks) * duration.numerator, duration.denominator),
+    );
   }
 
   const quote = snapshotJson({
