@@ -119,10 +119,11 @@ describe('C04a — finite learning task state and lifecycle', () => {
       { worldId: 'other' },
       { payload: { taskId: 'task', reason: 'GOAL' as const } },
       { payload: { taskId: 'other', reason: 'FUNDS' as const } },
-    ])
-      expect(() => stopLearningTask(closed.state, { ...cmd, ...change })).toThrow(
-        'IDEMPOTENCY_CONFLICT',
-      );
+    ]) {
+      const changed = reload(cmd);
+      Object.assign(changed, change);
+      expect(() => stopLearningTask(closed.state, changed)).toThrow('IDEMPOTENCY_CONFLICT');
+    }
     const replacement = { ...cmd, commandId: 'other' };
     expect(() => stopLearningTask(closed.state, replacement)).toThrow('INCOMPATIBLE_ACTIVITY');
     expect(() => startLearningTask(closed.state, seed('other', 'stop'))).toThrow(
