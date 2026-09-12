@@ -4,7 +4,7 @@
 - As of: 2026-09-11
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
-- Current delivery: B01 / [#27](https://github.com/Vovanostm/warwrit/issues/27), profile perk selection and choice history on merged A03
+- Current delivery: B02 / [#38](https://github.com/Vovanostm/warwrit/issues/38), finite selected-perk effect evaluation on the current merged descendant
 
 ## Current state
 
@@ -15,9 +15,9 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-current_slice: B01-profile-perk-selection
-next_implementation: B02-after-B01-merge
-activation_requires: B01-reviewed-tested-and-separately-authorized-for-merge
+current_slice: B02-finite-perk-effect-evaluator
+next_implementation: B03-after-B02-merge
+activation_requires: B01-merged-and-current-main-descendant
 A04: independent-not-started
 merge_authorized: false
 deploy_authorized: false

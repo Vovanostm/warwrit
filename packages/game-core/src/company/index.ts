@@ -32,4 +32,5 @@ export * from './skill-progress.js';
 export * from './study-section.js';
 export { admitPractice } from './practice-admission.js';
 export type { PracticeContext, PracticeEvidence } from './practice-admission.js';
+export * from './perk-effects.js';
 export * from './social.js';
