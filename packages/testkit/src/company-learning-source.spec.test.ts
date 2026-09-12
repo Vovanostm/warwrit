@@ -57,7 +57,10 @@ function sourceContext(
   return { ...context(state, cmd), learningFacts: facts };
 }
 
-function maintenance(state: Root, kind: 'FIELD_CAMP' | 'SAFE_SERVICE'): Root {
+function maintenance(
+  state: Root,
+  kind: 'FIELD_CAMP' | 'SAFE_SERVICE',
+): Root {
   return {
     ...state,
     finance: {
@@ -127,7 +130,11 @@ describe('C03a — trusted learning-source admission', () => {
 
     const fieldCamp = maintenance(state, 'FIELD_CAMP');
     expect(
-      admitLearningSource(fieldCamp, cmd, sourceContext(fieldCamp, cmd, [source(fieldCamp)])),
+      admitLearningSource(
+        fieldCamp,
+        cmd,
+        sourceContext(fieldCamp, cmd, [source(fieldCamp)]),
+      ),
     ).toEqual(source(fieldCamp));
 
     const remote: Root = {
