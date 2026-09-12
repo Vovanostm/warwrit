@@ -25,7 +25,11 @@ export function applyCareWithPractice(
   context: EconomyContext,
 ): PhysicalChange {
   const change = applyCare(root, command, context);
-  const fact = physicalFact(context, command.payload.resourceOrProviderReceiptId, 'CARE_FULFILLMENT');
+  const fact = physicalFact(
+    context,
+    command.payload.resourceOrProviderReceiptId,
+    'CARE_FULFILLMENT',
+  );
   const membership = root.lifecycle.memberships.find(
     (entry) =>
       entry.companyId === root.lifecycle.companyId &&
