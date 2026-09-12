@@ -118,7 +118,7 @@ export function advancePhysicalRecovery(
           eligibleFrom = BigInt(instance.care.fulfilledAt);
         if (eligibleFrom >= finish) return instance;
         const total = BigInt(instance.recoveryTicks) + finish - eligibleFrom;
-        const required = BigInt(definition.recoveryTicks);
+        const required = BigInt(instance.care?.recoveryTicksRequired ?? definition.recoveryTicks);
         if (total < required) return { ...instance, recoveryTicks: total.toString() };
         const completedAt = campaignTick(
           (eligibleFrom + (required - BigInt(instance.recoveryTicks))).toString(),
