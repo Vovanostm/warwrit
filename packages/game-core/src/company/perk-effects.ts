@@ -96,7 +96,7 @@ function selectedPerks(character: LifecycleCharacter) {
     return perk;
   });
 }
-function weaponContext(root: MaterializedCompanyState, characterId: string) {
+export function equippedWeaponContext(root: MaterializedCompanyState, characterId: string) {
   const mains = root.physical.items.filter(
     (item) =>
       item.tombstone === null &&
@@ -134,6 +134,7 @@ function weaponContext(root: MaterializedCompanyState, characterId: string) {
   }
   return {
     itemId: item.itemId,
+    definitionId: item.definitionId,
     profileId: definition.weaponProfile,
     skillId: definition.skillId,
   };
@@ -179,7 +180,7 @@ export function evaluatePerkEffects(
   }
 
   const holder = person(root.lifecycle, input.characterId);
-  const weapon = weaponContext(root, input.characterId);
+  const weapon = equippedWeaponContext(root, input.characterId);
   const additive = { accuracy: 0, initiative: 0, defense: 0, maxStamina: 0 };
   const identity = (): ExactBps => ({ numerator: '10000', denominator: '1' });
   const task = {
