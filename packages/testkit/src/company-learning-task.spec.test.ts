@@ -7,18 +7,17 @@ import {
   startLearningTask,
   stopLearningTask,
 } from '@warwrit/game-core';
-import type { CommandOf, LearningTaskQuote, StudyAccessInterval } from '@warwrit/game-core';
+import type { CommandOf, LearningTaskQuote, LearningTaskStart } from '@warwrit/game-core';
 import { command, economy, tick } from './company-economy-fixture.js';
 
-const workId = 'wound-care-basics';
-const sectionId = 'wound-care-basics-1';
 const bps = { numerator: '10000', denominator: '1' } as const;
-const coefficientBase = {
+const coefficients = {
   schemaVersion: 1 as const,
   kind: 'CHARACTER' as const,
   catalogueVersion: COMPANY_CATALOGUE.version,
   rulesetId: COMPANY_CATALOGUE.rulesetId,
   holderId: 'leader',
+  taskScope: 'STUDY' as const,
   contributingPerkIds: [],
   weapon: null,
   additive: { accuracy: 0, initiative: 0, defense: 0, maxStamina: 0 },
@@ -30,60 +29,26 @@ const coefficientBase = {
     trainingDurationBps: bps,
   },
 };
+const quote: LearningTaskQuote = {
+  sourceId: 'book-source',
+  sourceVersion: 'source-v1',
+  maxTicks: '10',
+  mentorId: null,
+  funding: null,
+  coefficients,
+};
 
-function quote(scope: 'STUDY' | 'TRAINING', maxTicks = '10'): LearningTaskQuote {
-  const funded = scope === 'TRAINING';
+function seed(patch: Partial<LearningTaskStart> = {}): LearningTaskStart {
   return {
-    sourceId: funded ? 'course-source' : 'book-source',
-    sourceVersion: 'source-v1',
-    maxTicks,
-    mentorId: funded ? 'provider' : null,
-    funding: funded
-      ? {
-          poolId: 'local',
-          walletId: 'purse',
-          providerWalletId: 'wallet-provider',
-          authorizedBudgetQ: moneyQ('5000000'),
-          costQPerDay: { numerator: '5000000', denominator: '1' },
-        }
-      : null,
-    coefficients: { ...coefficientBase, taskScope: scope },
-  };
-}
-
-function start(scope: 'STUDY' | 'TRAINING', id = `start-${scope}`, at = 10) {
-  const book = scope === 'STUDY';
-  const root = economy([1n], 100n, at);
-  return command(
-    root,
-    'StartLearning',
-    {
-      characterId: 'leader',
-      methodId: book ? 'book-study' : 'funded-practice',
-      goal: book
-        ? { workId, sectionId, maxTicks: '10' }
-        : { skillId: 'medicine', maxTicks: '20' },
-      resourceIds: [book ? 'book-1' : 'course-kit'],
-      budgetPoolId: 'local',
-      maxBudgetQ: book ? '0' : '5000000',
-    },
-    id,
-    'PLAYER',
-    tick(at),
-  ) as CommandOf<'StartLearning'>;
-}
-
-function interval(patch: Partial<StudyAccessInterval> = {}): StudyAccessInterval {
-  return {
-    intervalId: 'study-copy',
+    taskId: 'task',
+    startCommandId: 'start',
     characterId: 'leader',
-    workId,
-    sectionId,
-    itemId: 'book-1',
-    containerId: 'books',
-    accessEvidenceId: 'study-access',
-    fromTick: '10',
-    toTick: '20',
+    methodId: 'book-study',
+    goal: { workId: 'wound-care-basics', sectionId: 'wound-care-basics-1', maxTicks: '10' },
+    resourceIds: ['book-1'],
+    quote,
+    studyIntervalId: 'study-copy',
+    startedAt: '10',
     ...patch,
   };
 }
@@ -100,81 +65,33 @@ function stop(
 
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
-describe('C04 — internal finite learning task lifecycle', () => {
-  it('binds self-study to its exact C02 interval and replays the same start once', () => {
-    const cmd = start('STUDY');
-    const first = startLearningTask(createLearningTaskState(), {
-      taskId: 'task',
-      command: cmd,
-      quote: quote('STUDY'),
-      studyInterval: interval(),
-    });
+describe('C04a — finite learning task state and lifecycle', () => {
+  it('owns, reloads and replays the same frozen start snapshot once', () => {
+    const start = seed();
+    const first = startLearningTask(createLearningTaskState(), start);
     expect(first.task).toMatchObject({
       taskId: 'task',
+      startCommandId: 'start',
       studyIntervalId: 'study-copy',
       startedAt: '10',
       completedTicks: '0',
     });
     expect(readLearningTaskState(reload(first.state))).toEqual(first.state);
-    expect(
-      startLearningTask(first.state, {
-        taskId: 'task',
-        command: cmd,
-        quote: quote('STUDY'),
-        studyInterval: interval(),
-      }).replayed,
-    ).toBe(true);
-    expect(() =>
-      startLearningTask(createLearningTaskState(), {
-        taskId: 'missing',
-        command: cmd,
-        quote: quote('STUDY'),
-      }),
-    ).toThrow('CONTACT_OR_ACCESS_REQUIRED');
-    expect(() =>
-      startLearningTask(createLearningTaskState(), {
-        taskId: 'stale',
-        command: cmd,
-        quote: quote('STUDY'),
-        studyInterval: interval({ toTick: '19' }),
-      }),
-    ).toThrow('INVALID_SOURCE');
+    expect(startLearningTask(first.state, seed()).replayed).toBe(true);
+    expect(() => startLearningTask(first.state, seed({ taskId: 'other' }))).toThrow(
+      'IDEMPOTENCY_CONFLICT',
+    );
   });
 
-  it('freezes funded-course inputs and rejects concurrent/conflicting starts', () => {
-    const first = startLearningTask(createLearningTaskState(), {
-      taskId: 'task',
-      command: start('TRAINING'),
-      quote: quote('TRAINING', '15'),
-    });
-    expect(first.task.quote).toMatchObject({
-      maxTicks: '15',
-      mentorId: 'provider',
-      funding: { authorizedBudgetQ: '5000000' },
-      coefficients: { taskScope: 'TRAINING' },
-    });
+  it('permits only one active task per learner', () => {
+    const active = startLearningTask(createLearningTaskState(), seed()).state;
     expect(() =>
-      startLearningTask(first.state, {
-        taskId: 'task-2',
-        command: start('TRAINING', 'start-other'),
-        quote: quote('TRAINING', '15'),
-      }),
+      startLearningTask(active, seed({ taskId: 'other', startCommandId: 'other-start' })),
     ).toThrow('INCOMPATIBLE_ACTIVITY');
-    expect(() =>
-      startLearningTask(first.state, {
-        taskId: 'different-id',
-        command: start('TRAINING'),
-        quote: quote('TRAINING', '15'),
-      }),
-    ).toThrow('IDEMPOTENCY_CONFLICT');
   });
 
-  it('enforces stop authority, preserves work, replays once and never auto-renews', () => {
-    const started = startLearningTask(createLearningTaskState(), {
-      taskId: 'task',
-      command: start('TRAINING'),
-      quote: quote('TRAINING', '15'),
-    }).state;
+  it('enforces stop authority, preserves completed work and replays one stop', () => {
+    const started = startLearningTask(createLearningTaskState(), seed()).state;
     const withWork = readLearningTaskState({
       ...started,
       tasks: [{ ...started.tasks[0]!, completedTicks: '7' }],
@@ -183,19 +100,34 @@ describe('C04 — internal finite learning task lifecycle', () => {
       expect(() => stopLearningTask(withWork, invalid)).toThrow('AUTHORIZATION');
 
     const stopped = stopLearningTask(withWork, stop('FUNDS', 'SYSTEM'));
-    expect(stopped.task).toMatchObject({ completedTicks: '7', endedAt: '14', stopReason: 'FUNDS' });
-    expect(stopped.state.tasks).toHaveLength(1);
+    expect(stopped.task).toMatchObject({
+      completedTicks: '7',
+      endedAt: '14',
+      stopReason: 'FUNDS',
+      stopCommandId: 'stop',
+    });
     expect(stopLearningTask(stopped.state, stop('FUNDS', 'SYSTEM')).replayed).toBe(true);
     expect(() => stopLearningTask(stopped.state, stop('GOAL', 'SYSTEM', 'other-stop'))).toThrow(
       'INCOMPATIBLE_ACTIVITY',
     );
+  });
 
-    const later = startLearningTask(stopped.state, {
-      taskId: 'later-task',
-      command: start('STUDY', 'later-start', 20),
-      quote: quote('STUDY'),
-      studyInterval: interval({ intervalId: 'later-copy', fromTick: '20', toTick: '30' }),
-    });
-    expect(later.state.tasks.map((task) => task.taskId)).toEqual(['task', 'later-task']);
+  it('does not auto-renew; a later task requires an explicit new start', () => {
+    const active = startLearningTask(createLearningTaskState(), seed()).state;
+    const stopped = stopLearningTask(active, stop('PLAYER', 'PLAYER', 'player-stop', 15)).state;
+    expect(stopped.tasks).toHaveLength(1);
+
+    const later = startLearningTask(
+      stopped,
+      seed({ taskId: 'later', startCommandId: 'later-start', startedAt: '20' }),
+    );
+    expect(later.state.tasks.map((task) => task.taskId)).toEqual(['task', 'later']);
+  });
+
+  it('rejects impossible persisted task progress', () => {
+    const state = startLearningTask(createLearningTaskState(), seed()).state;
+    expect(() =>
+      readLearningTaskState({ ...state, tasks: [{ ...state.tasks[0]!, completedTicks: '11' }] }),
+    ).toThrow('INVALID_STATE');
   });
 });
