@@ -172,8 +172,7 @@ export function startLearningTask(
   }
   requireEconomy(
     state.tasks.every(
-      (task) =>
-        task.start.command.payload.characterId !== command.payload.characterId || task.stop,
+      (task) => task.start.command.payload.characterId !== command.payload.characterId || task.stop,
     ),
     'INCOMPATIBLE_ACTIVITY',
   );
