@@ -72,19 +72,28 @@ function stop(
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
 describe('C04a — finite learning task state and lifecycle', () => {
-  it('owns, reloads and replays the same frozen start snapshot once', () => {
+  it('owns, reloads and replays the same frozen start snapshot after progress', () => {
     const start = seed();
     const first = startLearningTask(createLearningTaskState(), start);
+    (start.resourceIds as string[])[0] = 'rewritten';
     expect(first.task).toMatchObject({
       taskId: 'task',
       startCommandId: 'start',
+      resourceIds: ['book-1'],
       studyIntervalId: 'study-copy',
       startedAt: '10',
       completedTicks: '0',
     });
     expect(readLearningTaskState(reload(first.state))).toEqual(first.state);
-    expect(startLearningTask(first.state, seed()).replayed).toBe(true);
-    expect(() => startLearningTask(first.state, seed({ taskId: 'other' }))).toThrow(
+    const progressed = readLearningTaskState({
+      ...first.state,
+      tasks: [{ ...first.task, completedTicks: '3' }],
+    });
+    expect(startLearningTask(progressed, seed())).toMatchObject({
+      replayed: true,
+      task: { completedTicks: '3' },
+    });
+    expect(() => startLearningTask(progressed, seed({ taskId: 'other' }))).toThrow(
       'IDEMPOTENCY_CONFLICT',
     );
   });
