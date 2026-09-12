@@ -16,67 +16,49 @@ import type { MaterializedCompanyState } from './physical-root-types.js';
 import { physicalContainer, physicalItem } from './physical-state.js';
 import { skillLevel } from './skill-progress.js';
 import { isEntityId, isExactInteger, moneyQ } from './values.js';
-import type { CampaignTick, CanonicalRevision, CompanyId, MoneyQ, WorldId } from './values.js';
+import type { MoneyQ } from './values.js';
 
-export const LEARNING_QUOTE_SCHEMA_VERSION = 1 as const;
-type Goal = CommandOf<'StartLearning'>['payload']['goal'];
-type Scope = {
+export interface LearningSourceEvidence {
   readonly id: string;
-  readonly companyId: CompanyId;
-  readonly worldId: WorldId;
-  readonly revision: CanonicalRevision;
-  readonly sourceEventId: string;
-  readonly atTick: CampaignTick;
-  readonly expiresAt: CampaignTick;
+  readonly companyId: string;
+  readonly worldId: string;
+  readonly revision: string;
+  readonly atTick: string;
+  readonly expiresAt: string;
   readonly learnerId: string;
   readonly location: AtLocation;
   readonly resourceIds: readonly string[];
   readonly sourceVersion: string;
-};
-export type LearningSourceEvidence = Scope &
-  (
-    | {
-        readonly kind: 'COURSE';
-        readonly methodId: 'funded-practice';
-        readonly skillId: string;
-        readonly providerId: string;
-        readonly mentorId: string;
-        readonly poolId: string;
-        readonly providerWalletId: string;
-        readonly moneyAccessEvidenceId: string;
-        readonly costQPerDay: MoneyQ;
-        readonly maxTicks: string;
-      }
-    | {
-        readonly kind: 'SELF_STUDY';
-        readonly methodId: 'book-study';
-        readonly workId: string;
-        readonly sectionId: string;
-      }
-  );
+  readonly kind: 'COURSE' | 'SELF_STUDY';
+  readonly methodId: 'funded-practice' | 'book-study';
+  readonly skillId?: string;
+  readonly providerId?: string;
+  readonly mentorId?: string;
+  readonly poolId?: string;
+  readonly providerWalletId?: string;
+  readonly moneyAccessEvidenceId?: string;
+  readonly costQPerDay?: MoneyQ;
+  readonly maxTicks?: string;
+  readonly workId?: string;
+  readonly sectionId?: string;
+}
 export interface LearningQuoteContext extends EconomyContext {
   readonly learningFacts: readonly LearningSourceEvidence[];
 }
-export type LearningTaskQuote = {
-  readonly schemaVersion: typeof LEARNING_QUOTE_SCHEMA_VERSION;
+export interface LearningTaskQuote {
   readonly sourceId: string;
   readonly sourceVersion: string;
-  readonly learnerId: string;
-  readonly methodId: string;
-  readonly goal: Goal;
   readonly maxTicks: string;
-  readonly resourceIds: readonly string[];
   readonly mentorId: string | null;
   readonly funding: null | {
     readonly poolId: string;
     readonly walletId: string;
     readonly providerWalletId: string;
-    readonly maxBudgetQ: MoneyQ;
     readonly authorizedBudgetQ: MoneyQ;
-    readonly effectiveCostQPerDay: { readonly numerator: string; readonly denominator: string };
+    readonly costQPerDay: { readonly numerator: string; readonly denominator: string };
   };
   readonly coefficients: CharacterPerkEffectSnapshot;
-};
+}
 
 const min = (...values: bigint[]) => values.reduce((a, b) => (a < b ? a : b));
 const ceilDiv = (a: bigint, b: bigint) => (a + b - 1n) / b;
@@ -86,21 +68,18 @@ function ratio(value: ExactBps) {
   requireEconomy(numerator > 0n && denominator > 0n, 'INVALID_STATE');
   return { numerator, denominator };
 }
-function sameIds(a: readonly string[], b: readonly string[]) {
-  return [...a].sort().join('\u0000') === [...b].sort().join('\u0000');
-}
 function sourceFor(context: LearningQuoteContext, p: CommandOf<'StartLearning'>['payload']) {
+  const ids = (value: readonly string[]) => [...value].sort().join('\u0000');
   const matches = context.learningFacts.filter(
     (source) =>
       source.learnerId === p.characterId &&
       source.methodId === p.methodId &&
-      sameIds(source.resourceIds, p.resourceIds),
+      ids(source.resourceIds) === ids(p.resourceIds),
   );
   requireEconomy(matches.length === 1, 'INVALID_SOURCE');
   const source = matches[0]!;
   requireEconomy(
     isEntityId(source.id) &&
-      isEntityId(source.sourceEventId) &&
       isEntityId(source.sourceVersion) &&
       source.companyId === context.companyId &&
       source.worldId === context.worldId &&
@@ -115,16 +94,6 @@ function sourceFor(context: LearningQuoteContext, p: CommandOf<'StartLearning'>[
   );
   return source;
 }
-function usableResources(root: MaterializedCompanyState, source: LearningSourceEvidence) {
-  for (const id of source.resourceIds) {
-    const item = physicalItem(root.physical, id);
-    const container = physicalContainer(root.physical, item.containerId!);
-    requireEconomy(
-      container.location.kind === 'AT' && sameLocation(container.location, source.location),
-      'CONTACT_OR_ACCESS_REQUIRED',
-    );
-  }
-}
 function inMaintenance(root: MaterializedCompanyState, characterId: string, at: bigint) {
   return root.finance.maintenance.some(
     (entry) =>
@@ -136,8 +105,18 @@ function inMaintenance(root: MaterializedCompanyState, characterId: string, at: 
       ),
   );
 }
+function requireResources(root: MaterializedCompanyState, source: LearningSourceEvidence) {
+  for (const id of source.resourceIds) {
+    const item = physicalItem(root.physical, id);
+    const container = physicalContainer(root.physical, item.containerId!);
+    requireEconomy(
+      container.location.kind === 'AT' && sameLocation(container.location, source.location),
+      'CONTACT_OR_ACCESS_REQUIRED',
+    );
+  }
+}
 
-/** C03 only: quote/admission snapshot; no task state, interval, debit or StartLearning activation. */
+/** C03 only: detached finite quote; no interval, debit, task state or StartLearning activation. */
 export function quoteLearningTask(
   root: MaterializedCompanyState,
   command: CommandOf<'StartLearning'>,
@@ -156,8 +135,8 @@ export function quoteLearningTask(
       !inMaintenance(root, p.characterId, BigInt(context.atTick)),
     'INCOMPATIBLE_ACTIVITY',
   );
-  const requestedTicks = BigInt(p.goal.maxTicks);
-  requireEconomy(requestedTicks > 0n, 'INVALID_SOURCE');
+  const requested = BigInt(p.goal.maxTicks);
+  requireEconomy(requested > 0n, 'INVALID_SOURCE');
   const method = COMPANY_CATALOGUE.methods.find(
     (entry) => entry.id === p.methodId && entry.enabled,
   );
@@ -167,7 +146,7 @@ export function quoteLearningTask(
     sameLocation(learner.presence.location, source.location),
     'CONTACT_OR_ACCESS_REQUIRED',
   );
-  usableResources(root, source);
+  requireResources(root, source);
   const coefficients = evaluatePerkEffects(root, {
     kind: 'CHARACTER',
     characterId: p.characterId,
@@ -178,20 +157,27 @@ export function quoteLearningTask(
 
   if (source.kind === 'COURSE') {
     requireEconomy(
-      method.interval === 'CAMPAIGN_DAY' &&
+      source.methodId === 'funded-practice' &&
+        method.interval === 'CAMPAIGN_DAY' &&
         'skillId' in p.goal &&
         source.skillId === p.goal.skillId &&
         source.poolId === p.budgetPoolId &&
-        isExactInteger(source.maxTicks) &&
-        BigInt(source.maxTicks) > 0n &&
+        source.providerId !== undefined &&
+        source.mentorId !== undefined &&
+        source.providerWalletId !== undefined &&
+        source.moneyAccessEvidenceId !== undefined &&
+        source.costQPerDay !== undefined &&
+        source.maxTicks !== undefined &&
         isExactInteger(source.costQPerDay) &&
         BigInt(source.costQPerDay) > 0n &&
+        isExactInteger(source.maxTicks) &&
+        BigInt(source.maxTicks) > 0n &&
         COMPANY_CATALOGUE.skills.some((skill) => skill.id === source.skillId && skill.enabled),
       'INVALID_SOURCE',
     );
-    const level = skillLevel(learner.skills[source.skillId] ?? 0);
     requireEconomy(
-      p.goal.targetLevel === undefined || p.goal.targetLevel > level,
+      p.goal.targetLevel === undefined ||
+        p.goal.targetLevel > skillLevel(learner.skills[source.skillId] ?? 0),
       'INCOMPATIBLE_ACTIVITY',
     );
     for (const id of [source.providerId, source.mentorId]) {
@@ -215,31 +201,29 @@ export function quoteLearningTask(
         sameLocation(recipient.location, source.location),
       'CONTACT_OR_ACCESS_REQUIRED',
     );
-    const cap = BigInt(p.maxBudgetQ);
-    const authorized = min(cap, spendableQ(root.finance, payer.walletId));
-    requireEconomy(cap > 0n && authorized > 0n, 'UNPAID_OBLIGATIONS');
+    const authorized = min(BigInt(p.maxBudgetQ), spendableQ(root.finance, payer.walletId));
+    requireEconomy(BigInt(p.maxBudgetQ) > 0n && authorized > 0n, 'UNPAID_OBLIGATIONS');
     const cost = ratio(coefficients.task.trainingCostBps);
     const rate = BigInt(source.costQPerDay) * cost.numerator;
     const affordable =
       (authorized * BigInt(COMPANY_RULES.ticksPerDay) * cost.denominator) / rate;
-    maxTicks = min(requestedTicks, BigInt(source.maxTicks), affordable);
+    maxTicks = min(requested, BigInt(source.maxTicks), affordable);
     requireEconomy(maxTicks > 0n, 'UNPAID_OBLIGATIONS');
     funding = {
       poolId: source.poolId,
       walletId: payer.walletId,
       providerWalletId: source.providerWalletId,
-      maxBudgetQ: moneyQ(cap.toString()),
       authorizedBudgetQ: moneyQ(authorized.toString()),
-      effectiveCostQPerDay: {
-        numerator: rate.toString(),
-        denominator: cost.denominator.toString(),
-      },
+      costQPerDay: { numerator: rate.toString(), denominator: cost.denominator.toString() },
     };
   } else {
     requireEconomy(
-      method.interval === 'FINITE_SECTION' &&
+      source.methodId === 'book-study' &&
+        method.interval === 'FINITE_SECTION' &&
         'workId' in p.goal &&
-        BigInt(p.maxBudgetQ) === 0n,
+        BigInt(p.maxBudgetQ) === 0n &&
+        source.workId !== undefined &&
+        source.sectionId !== undefined,
       'INVALID_SOURCE',
     );
     const work = COMPANY_CATALOGUE.works.find(
@@ -260,24 +244,19 @@ export function quoteLearningTask(
     }
     const duration = ratio(coefficients.task.studyDurationBps);
     maxTicks = min(
-      requestedTicks,
+      requested,
       ceilDiv(BigInt(work.durationTicks) * duration.numerator, duration.denominator),
     );
   }
 
   const quote = snapshotJson({
-    schemaVersion: LEARNING_QUOTE_SCHEMA_VERSION,
     sourceId: source.id,
     sourceVersion: source.sourceVersion,
-    learnerId: p.characterId,
-    methodId: p.methodId,
-    goal: p.goal,
     maxTicks: maxTicks.toString(),
-    resourceIds: [...source.resourceIds],
     mentorId: source.kind === 'COURSE' ? source.mentorId : null,
     funding,
     coefficients,
   });
   requireEconomy(quote !== undefined, 'INVALID_SOURCE');
-  return quote as LearningTaskQuote;
+  return quote as unknown as LearningTaskQuote;
 }
