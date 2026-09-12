@@ -38,13 +38,7 @@ function injured(
   }));
   next = addItem(
     next,
-    item(
-      'medical-b03',
-      'medical-unit',
-      { kind: 'COMPANY', id: 'company' },
-      'fixture-supply',
-      2,
-    ),
+    item('medical-b03', 'medical-unit', { kind: 'COMPANY', id: 'company' }, 'fixture-supply', 2),
   );
   next = addVitals(next, {
     characterId: 'worker-0',
@@ -66,11 +60,7 @@ function activeCondition(state: CompanyEconomyState, definitionId: string) {
       entry.resolvedAt === null,
   )!;
 }
-function materialCare(
-  state: CompanyEconomyState,
-  conditionId: string,
-  careDefinitionId: string,
-) {
+function materialCare(state: CompanyEconomyState, conditionId: string, careDefinitionId: string) {
   const cmd = command(state, 'ApplyCare', {
     characterId: 'worker-0',
     conditionId,
@@ -137,9 +127,7 @@ describe('B03 — CareRecovery/CareCost in actual care', () => {
     expect(
       cared.physical!.vitals.find((entry) => entry.characterId === 'worker-0')?.currentHealth,
     ).toBe(40);
-    expect(
-      cared.physical!.items.find((entry) => entry.itemId === 'medical-b03')?.quantity,
-    ).toBe(1);
+    expect(cared.physical!.items.find((entry) => entry.itemId === 'medical-b03')?.quantity).toBe(1);
     expect(cared.finance.movements.filter((entry) => entry.purpose === 'CARE')).toHaveLength(0);
     expect(activeCondition(cared, 'severe-stable-wound').care).toMatchObject({
       providerId: 'provider',
@@ -185,9 +173,9 @@ describe('B03 — CareRecovery/CareCost in actual care', () => {
     );
     const plainId = activeCondition(plain, 'severe-stable-wound').conditionId;
     const undiscounted = prepared(providerCare(plain, plainId, false).result).next;
-    expect(
-      undiscounted.finance.movements.find((entry) => entry.purpose === 'CARE')?.amountQ,
-    ).toBe('11');
+    expect(undiscounted.finance.movements.find((entry) => entry.purpose === 'CARE')?.amountQ).toBe(
+      '11',
+    );
 
     const poor = injured(
       withMedicinePerk(economy([1n], 9n, 1000), 'medicine-25-b'),
@@ -222,6 +210,8 @@ describe('B03 — CareRecovery/CareCost in actual care', () => {
     expect(
       stabilized.physical!.items.find((entry) => entry.itemId === 'medical-b03')?.quantity,
     ).toBe(1);
-    expect(stabilized.finance.movements.filter((entry) => entry.purpose === 'CARE')).toHaveLength(0);
+    expect(stabilized.finance.movements.filter((entry) => entry.purpose === 'CARE')).toHaveLength(
+      0,
+    );
   });
 });
