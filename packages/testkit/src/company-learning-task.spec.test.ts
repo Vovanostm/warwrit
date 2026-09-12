@@ -39,7 +39,14 @@ function stop(
   actor: 'PLAYER' | 'SYSTEM' = 'PLAYER',
 ) {
   const payload = { taskId: 'task', reason };
-  return command(root, 'StopLearning', payload, 'stop', actor, tick(20)) as CommandOf<'StopLearning'>;
+  return command(
+    root,
+    'StopLearning',
+    payload,
+    'stop',
+    actor,
+    tick(20),
+  ) as CommandOf<'StopLearning'>;
 }
 const active = () => startLearningTask(createLearningTaskState(), seed());
 
@@ -155,6 +162,8 @@ describe('C04a — finite learning task state and lifecycle', () => {
     expect(() => readLearningTaskState({ schemaVersion: 2, tasks: [] })).toThrow('INVALID_STATE');
     expect(() => readLearningTaskState({ ...state, tasks: [task, task] })).toThrow('INVALID_STATE');
     const another = { ...task, start: seed('other', 'other') };
-    expect(() => readLearningTaskState({ ...state, tasks: [task, another] })).toThrow('INVALID_STATE');
+    expect(() => readLearningTaskState({ ...state, tasks: [task, another] })).toThrow(
+      'INVALID_STATE',
+    );
   });
 });
