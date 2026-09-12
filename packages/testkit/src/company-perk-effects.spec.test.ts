@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { canonicalJson, evaluatePerkEffects } from '@warwrit/game-core';
-import type {
-  CompanyEconomyState,
-  EquipmentSlot,
-  PerkTaskScope,
-} from '@warwrit/game-core';
+import type { CompanyEconomyState, EquipmentSlot, PerkTaskScope } from '@warwrit/game-core';
 import { economy } from './company-economy-fixture.js';
 import { addContainer, addItem, container, item } from './company-physical-fixture.js';
 function character(state: CompanyEconomyState, id: string) {
@@ -28,31 +24,16 @@ function equip(
   slots: readonly EquipmentSlot[],
 ) {
   const containerId = `pack-${characterId}`;
+  const carrier = { kind: 'CHARACTER' as const, id: characterId };
+  const companyOwner = { kind: 'COMPANY' as const, id: state.lifecycle.companyId };
   let next = state;
   if (!next.physical!.containers.some((entry) => entry.containerId === containerId))
-    next = addContainer(
-      next,
-      container(
-        containerId,
-        { kind: 'CHARACTER', id: characterId },
-        30000,
-        { kind: 'CHARACTER', id: characterId },
-      ),
-      false,
-    );
-  return addItem(
-    next,
-    {
-      ...item(
-        itemId,
-        definitionId,
-        { kind: 'COMPANY', id: state.lifecycle.companyId },
-        containerId,
-      ),
-      equipped: { characterId, slots: [...slots] },
-    },
-    false,
-  );
+    next = addContainer(next, container(containerId, carrier, 30000, carrier), false);
+  const equipped = {
+    ...item(itemId, definitionId, companyOwner, containerId),
+    equipped: { characterId, slots: [...slots] },
+  };
+  return addItem(next, equipped, false);
 }
 function effects(
   state: CompanyEconomyState,
@@ -99,10 +80,7 @@ describe('B02 — finite perk effect evaluation', () => {
       ['polearms-25-b', 'polearms-60-b', 'defense-25-a', 'heavy-25-b'],
       { polearms: 60, defense: 25, heavy: 25 },
     );
-    matching = equip(matching, 'worker-0', 'spear', 'worker-spear', [
-      'MAIN_HAND',
-      'OFF_HAND',
-    ]);
+    matching = equip(matching, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
     select(matching, 'leader', ['heavy-25-b'], { heavy: 25 });
     matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', [
       'MAIN_HAND',
@@ -115,9 +93,7 @@ describe('B02 — finite perk effect evaluation', () => {
     });
   });
   it('uses only the lifecycle effective leader for the one group aura', () => {
-    const state = select(economy([1n, 1n]), 'leader', ['leadership-25-a'], {
-      leadership: 25,
-    });
+    const state = select(economy([1n, 1n]), 'leader', ['leadership-25-a'], { leadership: 25 });
     select(state, 'worker-0', ['leadership-60-a'], { leadership: 60 });
     Object.assign(state.lifecycle.company!, { actingLeaderId: 'worker-0' });
     expect(
