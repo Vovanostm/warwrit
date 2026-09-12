@@ -89,11 +89,27 @@ describe('G03 — character/equipment/condition combat projection', () => {
       skillId: 'blades',
     });
     expect(projected.armor).toEqual([
-      { itemId: 'real-coat', definitionId: 'padded-coat', slot: 'BODY', maximumArmor: 40, currentArmor: 30 },
-      { itemId: 'real-helmet', definitionId: 'simple-helmet', slot: 'HEAD', maximumArmor: 20, currentArmor: 12 },
+      {
+        itemId: 'real-coat',
+        definitionId: 'padded-coat',
+        slot: 'BODY',
+        maximumArmor: 40,
+        currentArmor: 30,
+      },
+      {
+        itemId: 'real-helmet',
+        definitionId: 'simple-helmet',
+        slot: 'HEAD',
+        maximumArmor: 20,
+        currentArmor: 12,
+      },
     ]);
     expect(projected.conditionIds).toEqual(['wound-worker-0-0']);
-    expect(projected.contributingPerkIds).toEqual(['blades-25-a', 'blades-60-b', 'defense-25-b']);
+    expect(projected.contributingPerkIds).toEqual([
+      'blades-25-a',
+      'blades-60-b',
+      'defense-25-b',
+    ]);
     expect(projected.attributes).toEqual({
       accuracy: 49,
       armor: 60,
@@ -115,7 +131,14 @@ describe('G03 — character/equipment/condition combat projection', () => {
       weapon: { itemId: 'real-spear', requiredOffHandItemId: null, profileId: 'spear' },
       armor: [],
       conditionIds: ['old-worker-0-0'],
-      attributes: { accuracy: 20, armor: 0, defense: 5, health: 60, initiative: 37, stamina: 80 },
+      attributes: {
+        accuracy: 20,
+        armor: 0,
+        defense: 5,
+        health: 60,
+        initiative: 37,
+        stamina: 80,
+      },
       current: { health: 60, armor: 0, stamina: 37 },
     });
   });

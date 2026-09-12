@@ -96,7 +96,10 @@ function selectedPerks(character: LifecycleCharacter) {
     return perk;
   });
 }
-export function equippedWeaponContext(root: MaterializedCompanyState, characterId: string) {
+export function equippedWeaponContext(
+  root: MaterializedCompanyState,
+  characterId: string,
+) {
   const equipped = root.physical.items.filter(
     (item) => item.tombstone === null && item.equipped?.characterId === characterId,
   );
