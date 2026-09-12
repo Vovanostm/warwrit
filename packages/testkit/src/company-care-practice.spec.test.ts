@@ -55,13 +55,7 @@ function injured(
 ) {
   const stocked = addItem(
     state,
-    item(
-      'medical-b04',
-      'medical-unit',
-      { kind: 'COMPANY', id: 'company' },
-      'fixture-supply',
-      2,
-    ),
+    item('medical-b04', 'medical-unit', { kind: 'COMPANY', id: 'company' }, 'fixture-supply', 2),
   );
   return condition(stocked, 'worker-0', definitionId, `b04-${definitionId}`).next;
 }
