@@ -18,6 +18,39 @@ export type PerkEvaluationInput =
       readonly task: PerkTaskScope;
     }
   | { readonly kind: 'LEADER_GROUP' };
+export interface CharacterPerkEffectSnapshot {
+  readonly schemaVersion: typeof PERK_EFFECT_SNAPSHOT_VERSION;
+  readonly kind: 'CHARACTER';
+  readonly catalogueVersion: string;
+  readonly rulesetId: string;
+  readonly holderId: string;
+  readonly taskScope: PerkTaskScope;
+  readonly contributingPerkIds: readonly string[];
+  readonly weapon: null | { readonly itemId: string; readonly profileId: string };
+  readonly additive: {
+    readonly accuracy: number;
+    readonly initiative: number;
+    readonly defense: number;
+    readonly maxStamina: number;
+  };
+  readonly task: {
+    readonly careRecoveryBps: ExactBps;
+    readonly careCostBps: ExactBps;
+    readonly studyDurationBps: ExactBps;
+    readonly trainingCostBps: ExactBps;
+    readonly trainingDurationBps: ExactBps;
+  };
+}
+export interface LeaderGroupPerkEffectSnapshot {
+  readonly schemaVersion: typeof PERK_EFFECT_SNAPSHOT_VERSION;
+  readonly kind: 'LEADER_GROUP';
+  readonly catalogueVersion: string;
+  readonly rulesetId: string;
+  readonly effectiveLeaderId: string;
+  readonly contributingPerkIds: readonly string[];
+  readonly startingMorale: number;
+}
+export type PerkEffectSnapshot = CharacterPerkEffectSnapshot | LeaderGroupPerkEffectSnapshot;
 
 const allowedAttributes: Readonly<Record<string, ReadonlySet<string>>> = {
   blades: new Set(['accuracy', 'initiative']),
@@ -112,7 +145,22 @@ function owned<T>(value: T): T {
 }
 
 /** Pure finite B02 evaluation. It neither commits nor publishes the returned snapshot. */
-export function evaluatePerkEffects(root: MaterializedCompanyState, input: PerkEvaluationInput) {
+export function evaluatePerkEffects(
+  root: MaterializedCompanyState,
+  input: Extract<PerkEvaluationInput, { kind: 'CHARACTER' }>,
+): CharacterPerkEffectSnapshot;
+export function evaluatePerkEffects(
+  root: MaterializedCompanyState,
+  input: Extract<PerkEvaluationInput, { kind: 'LEADER_GROUP' }>,
+): LeaderGroupPerkEffectSnapshot;
+export function evaluatePerkEffects(
+  root: MaterializedCompanyState,
+  input: PerkEvaluationInput,
+): PerkEffectSnapshot;
+export function evaluatePerkEffects(
+  root: MaterializedCompanyState,
+  input: PerkEvaluationInput,
+): PerkEffectSnapshot {
   if (input.kind === 'LEADER_GROUP') {
     const leaderId = effectiveLeaderId(root.lifecycle);
     const leader = person(root.lifecycle, leaderId);

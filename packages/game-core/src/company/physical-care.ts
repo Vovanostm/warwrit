@@ -3,6 +3,8 @@ import { canPerform, person, sameLocation } from './lifecycle-state.js';
 import { skillLevel } from './skill-progress.js';
 import { consumePhysicalQuantity } from './physical-items.js';
 import { payPhysicalProvider } from './physical-payments.js';
+import { evaluatePerkEffects } from './perk-effects.js';
+import type { ExactBps } from './perk-effects.js';
 import {
   conditionDefinition,
   ownPhysical,
@@ -20,6 +22,8 @@ import type { CompanyFinance, EconomyContext, EconomyRequirement } from './econo
 import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
 import type { CompanyPhysicalState, ConditionInstance, PhysicalVitals } from './physical-types.js';
 import { PHYSICAL_RULES } from './physical-types.js';
+import { isExactInteger, moneyQ } from './values.js';
+import type { MoneyQ } from './values.js';
 
 export { settleFoodConsumption } from './physical-food.js';
 export { advancePhysicalRecovery } from './physical-recovery.js';
@@ -75,6 +79,27 @@ function providerAt(root: MaterializedCompanyState, providerId: string, characte
     'CONTACT_OR_ACCESS_REQUIRED',
   );
   return provider;
+}
+function positiveBps(value: ExactBps) {
+  const numerator = BigInt(value.numerator);
+  const denominator = BigInt(value.denominator) * 10000n;
+  requirePhysical(numerator > 0n && denominator > 0n, 'INVALID_STATE');
+  return { numerator, denominator };
+}
+function ceilDiv(numerator: bigint, denominator: bigint): bigint {
+  return (numerator + denominator - 1n) / denominator;
+}
+function applyQuotedCost(amountQ: MoneyQ, modifier: ExactBps): MoneyQ {
+  requirePhysical(isExactInteger(amountQ) && BigInt(amountQ) > 0n, 'INVALID_SOURCE');
+  const ratio = positiveBps(modifier);
+  const adjusted = ceilDiv(BigInt(amountQ) * ratio.numerator, ratio.denominator);
+  return moneyQ((adjusted > 0n ? adjusted : 1n).toString());
+}
+function recoveryDuration(baseTicks: string, modifier: ExactBps): string {
+  requirePhysical(isExactInteger(baseTicks) && BigInt(baseTicks) > 0n, 'INVALID_STATE');
+  const ratio = positiveBps(modifier);
+  const adjusted = ceilDiv(BigInt(baseTicks) * ratio.denominator, ratio.numerator);
+  return (adjusted > 0n ? adjusted : 1n).toString();
 }
 export function applyCondition(
   root: MaterializedCompanyState,
@@ -191,6 +216,11 @@ export function applyCare(
     'INVALID_SOURCE',
   );
   providerAt(root, fact.providerId, p.characterId);
+  const perkEffects = evaluatePerkEffects(root, {
+    kind: 'CHARACTER',
+    characterId: fact.providerId,
+    task: 'CARE',
+  });
   const recorded = recordPhysicalSource(root.physical, fact);
   requirePhysical(!recorded.replayed, 'IDEMPOTENCY_CONFLICT');
   let physical = recorded.state;
@@ -201,7 +231,8 @@ export function applyCare(
         fact.amountQ === undefined &&
         fact.poolId === undefined &&
         fact.providerWalletId === undefined &&
-        fact.moneyAccessEvidenceId === undefined,
+        fact.moneyAccessEvidenceId === undefined &&
+        fact.supportsCareCostDiscount === undefined,
       'INVALID_SOURCE',
     );
     physical = consumeCareMaterial(physical, fact, p.careDefinitionId, context.atTick);
@@ -228,13 +259,17 @@ export function applyCare(
         fact.resourceContainerId === undefined,
       'INVALID_SOURCE',
     );
+    const amountQ =
+      fact.supportsCareCostDiscount === true
+        ? applyQuotedCost(fact.amountQ, perkEffects.task.careCostBps)
+        : fact.amountQ;
     finance = payPhysicalProvider({ ...root, physical }, context, {
       poolId: fact.poolId,
       providerWalletId: fact.providerWalletId,
       moneyAccessEvidenceId: fact.moneyAccessEvidenceId,
       providerId: fact.providerId,
       location: fact.location,
-      amountQ: fact.amountQ,
+      amountQ,
       movementId: physicalId(command.commandId, p.conditionId, 'care-payment'),
       purpose: 'CARE',
     });
@@ -245,6 +280,7 @@ export function applyCare(
     sourceId: fact.sourceEventId,
     fulfilledAt: context.atTick,
     channel: fact.channel,
+    providerId: fact.providerId,
   } as const;
   const disclosedIds = [p.conditionId];
   if (definition.category === 'CRITICAL') {
@@ -252,7 +288,7 @@ export function applyCare(
       (entry) =>
         entry.id === 'severe-stable-wound' && entry.category === 'TREATMENT_REQUIRED_STABLE',
     );
-    requirePhysical(stableDefinition, 'INVALID_STATE');
+    requirePhysical(stableDefinition?.recoveryTicks, 'INVALID_STATE');
     const stableId = physicalId(condition.conditionId, fact.id, 'post-stabilization');
     requirePhysical(
       !physical.conditions.some((entry) => entry.conditionId === stableId),
@@ -280,7 +316,14 @@ export function applyCare(
           causeId: condition.causeId,
           onsetTick: context.atTick,
           deadlineTick: null,
-          care: { ...care, channel: 'INHERITED_STABILIZATION' },
+          care: {
+            ...care,
+            channel: 'INHERITED_STABILIZATION',
+            recoveryTicksRequired: recoveryDuration(
+              stableDefinition.recoveryTicks,
+              perkEffects.task.careRecoveryBps,
+            ),
+          },
           recoveryTicks: '0',
           resolvedAt: null,
           resolutionSourceId: null,
@@ -292,7 +335,22 @@ export function applyCare(
     physical = {
       ...physical,
       conditions: physical.conditions.map((entry) =>
-        entry.conditionId === condition!.conditionId ? { ...entry, care } : entry,
+        entry.conditionId === condition!.conditionId
+          ? {
+              ...entry,
+              care: {
+                ...care,
+                ...(definition.recoveryTicks
+                  ? {
+                      recoveryTicksRequired: recoveryDuration(
+                        definition.recoveryTicks,
+                        perkEffects.task.careRecoveryBps,
+                      ),
+                    }
+                  : {}),
+              },
+            }
+          : entry,
       ),
     };
   }

@@ -88,6 +88,10 @@ export interface ConditionInstance {
     readonly sourceId: string;
     readonly fulfilledAt: CampaignTick;
     readonly channel: 'MATERIAL' | 'PROVIDER' | 'INHERITED_STABILIZATION';
+    /** Present for B03 care; omitted only on compatible pre-B03 loaded snapshots. */
+    readonly providerId?: string;
+    /** Frozen concrete duration after the actual provider's CareRecovery modifier. */
+    readonly recoveryTicksRequired?: string;
   };
   readonly recoveryTicks: string;
   readonly resolvedAt: CampaignTick | null;
@@ -227,7 +231,10 @@ export interface CareFulfillmentEvidence extends PhysicalScope {
   readonly poolId?: string;
   readonly providerWalletId?: string;
   readonly moneyAccessEvidenceId?: string;
+  /** Base provider quote. The care reducer owns any exact perk rounding. */
   readonly amountQ?: MoneyQ;
+  /** Trusted quote capability; absence/false means the quoted amount is not discountable. */
+  readonly supportsCareCostDiscount?: boolean;
 }
 export interface FoodFulfillmentEvidence extends PhysicalScope {
   readonly kind: 'FOOD_FULFILLMENT';
