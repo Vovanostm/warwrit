@@ -1,4 +1,3 @@
-import { COMPANY_CATALOGUE } from './definitions.js';
 import { requireEconomy } from './economy-state.js';
 import {
   array,
@@ -14,7 +13,6 @@ import {
 import type { JsonValue, ValueOf } from './input.js';
 import type { LearningTaskQuote } from './learning-quote.js';
 import type { CommandOf } from './lifecycle-types.js';
-import type { StudyAccessInterval } from './study-access.js';
 
 const reasonInput = choice('PLAYER', 'GOAL', 'FUNDS', 'PREREQUISITES');
 const taskInput = object({
@@ -40,15 +38,13 @@ export type LearningTask = Omit<StoredTask, 'goal' | 'quote'> & {
   readonly goal: CommandOf<'StartLearning'>['payload']['goal'];
   readonly quote: LearningTaskQuote;
 };
+export type LearningTaskStart = Omit<
+  LearningTask,
+  'schemaVersion' | 'completedTicks' | 'endedAt' | 'stopReason' | 'stopCommandId'
+>;
 export interface LearningTaskState {
   readonly schemaVersion: 1;
   readonly tasks: readonly LearningTask[];
-}
-export interface LearningTaskStart {
-  readonly taskId: string;
-  readonly command: CommandOf<'StartLearning'>;
-  readonly quote: LearningTaskQuote;
-  readonly studyInterval?: StudyAccessInterval;
 }
 export interface LearningTaskTransition {
   readonly state: LearningTaskState;
@@ -106,72 +102,17 @@ function owned<T>(value: T): T {
   return snapshot as T;
 }
 
-/** C04 only: records a finite C02+C03-backed task. No elapsed XP, debit or goal settlement. */
+/** C04a only: owns one already-admitted frozen start snapshot. C04b supplies that admission. */
 export function startLearningTask(
   stateValue: LearningTaskState,
-  start: LearningTaskStart,
+  startValue: LearningTaskStart,
 ): LearningTaskTransition {
   const state = readLearningTaskState(stateValue);
-  const command = owned(start.command);
-  const quote = owned(start.quote);
-  requireEconomy(command.actorRef.kind === 'PLAYER' && id.read(start.taskId), 'AUTHORIZATION');
-  const method = COMPANY_CATALOGUE.methods.find(
-    (entry) => entry.id === command.payload.methodId && entry.enabled,
-  );
-  requireEconomy(method, 'INVALID_ARGUMENT');
-  requireEconomy(unsigned.read(quote.maxTicks), 'INVALID_SOURCE');
-  const maxTicks = BigInt(quote.maxTicks);
-  requireEconomy(
-    maxTicks > 0n &&
-      maxTicks <= BigInt(command.payload.goal.maxTicks) &&
-      quote.coefficients.holderId === command.payload.characterId,
-    'INVALID_SOURCE',
-  );
+  const start = owned(startValue);
+  const task = owned<LearningTask>({ schemaVersion: 1, ...start, completedTicks: '0' });
+  requireEconomy(taskInput.read(snapshotJson(task)), 'INVALID_ARGUMENT');
+  quoteTicks(task.quote as unknown as JsonValue);
 
-  let studyIntervalId: string | undefined;
-  if (method.interval === 'FINITE_SECTION') {
-    requireEconomy('workId' in command.payload.goal, 'INVALID_ARGUMENT');
-    requireEconomy(
-      quote.funding === null && quote.mentorId === null && quote.coefficients.taskScope === 'STUDY',
-      'INVALID_SOURCE',
-    );
-    const interval = start.studyInterval;
-    requireEconomy(interval !== undefined, 'CONTACT_OR_ACCESS_REQUIRED');
-    requireEconomy(
-      interval.characterId === command.payload.characterId &&
-        interval.workId === command.payload.goal.workId &&
-        interval.sectionId === (command.payload.goal.sectionId ?? interval.sectionId) &&
-        command.payload.resourceIds.includes(interval.itemId) &&
-        interval.fromTick === command.campaignTick &&
-        BigInt(interval.toTick) === BigInt(command.campaignTick) + maxTicks,
-      'INVALID_SOURCE',
-    );
-    studyIntervalId = interval.intervalId;
-  } else {
-    requireEconomy(method.interval === 'CAMPAIGN_DAY', 'INVALID_ARGUMENT');
-    requireEconomy(
-      'skillId' in command.payload.goal && start.studyInterval === undefined,
-      'INVALID_ARGUMENT',
-    );
-    requireEconomy(
-      quote.funding !== null && quote.mentorId !== null && quote.coefficients.taskScope === 'TRAINING',
-      'INVALID_SOURCE',
-    );
-  }
-
-  const task = owned<LearningTask>({
-    schemaVersion: 1,
-    taskId: start.taskId,
-    startCommandId: command.commandId,
-    characterId: command.payload.characterId,
-    methodId: command.payload.methodId,
-    goal: command.payload.goal,
-    resourceIds: command.payload.resourceIds,
-    quote,
-    ...(studyIntervalId ? { studyIntervalId } : {}),
-    startedAt: command.campaignTick,
-    completedTicks: '0',
-  });
   const previous = state.tasks.find(
     (entry) => entry.taskId === task.taskId || entry.startCommandId === task.startCommandId,
   );
@@ -187,7 +128,7 @@ export function startLearningTask(
   return { state: next, task, replayed: false };
 }
 
-/** C04 only: closes lifecycle and preserves completedTicks for C05. */
+/** C04a only: closes lifecycle, preserving completedTicks for C05 settlement ownership. */
 export function stopLearningTask(
   stateValue: LearningTaskState,
   commandValue: CommandOf<'StopLearning'>,
