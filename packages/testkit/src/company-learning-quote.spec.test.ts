@@ -6,7 +6,16 @@ import type {
   LearningQuoteContext,
   LearningSourceEvidence,
 } from '@warwrit/game-core';
-import { access, cash, command, context, economy, place, scope, tick } from './company-economy-fixture.js';
+import {
+  access,
+  cash,
+  command,
+  context,
+  economy,
+  place,
+  scope,
+  tick,
+} from './company-economy-fixture.js';
 import { addItem, item } from './company-physical-fixture.js';
 
 type StartCommand = ReturnType<typeof command> & CommandOf<'StartLearning'>;
