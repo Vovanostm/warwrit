@@ -96,10 +96,7 @@ function selectedPerks(character: LifecycleCharacter) {
     return perk;
   });
 }
-export function equippedWeaponContext(
-  root: MaterializedCompanyState,
-  characterId: string,
-) {
+export function equippedWeaponContext(root: MaterializedCompanyState, characterId: string) {
   const equipped = root.physical.items.filter(
     (item) => item.tombstone === null && item.equipped?.characterId === characterId,
   );
@@ -113,11 +110,7 @@ export function equippedWeaponContext(
   const slots = item.equipped!.slots;
   let requiredOffHandItemId: string | null = null;
   if (definition.hands === 2) {
-    if (
-      !slots.includes('OFF_HAND') ||
-      offHands.length !== 1 ||
-      offHands[0]!.itemId !== item.itemId
-    )
+    if (!slots.includes('OFF_HAND') || offHands.length !== 1 || offHands[0]!.itemId !== item.itemId)
       return null;
   } else if (definition.hands === 1) {
     if (slots.length !== 1) return null;
