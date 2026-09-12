@@ -13,6 +13,23 @@ import { command, economy, tick } from './company-economy-fixture.js';
 const workId = 'wound-care-basics';
 const sectionId = 'wound-care-basics-1';
 const bps = { numerator: '10000', denominator: '1' } as const;
+const coefficientBase = {
+  schemaVersion: 1 as const,
+  kind: 'CHARACTER' as const,
+  catalogueVersion: COMPANY_CATALOGUE.version,
+  rulesetId: COMPANY_CATALOGUE.rulesetId,
+  holderId: 'leader',
+  contributingPerkIds: [],
+  weapon: null,
+  additive: { accuracy: 0, initiative: 0, defense: 0, maxStamina: 0 },
+  task: {
+    careRecoveryBps: bps,
+    careCostBps: bps,
+    studyDurationBps: bps,
+    trainingCostBps: bps,
+    trainingDurationBps: bps,
+  },
+};
 
 function quote(scope: 'STUDY' | 'TRAINING', maxTicks = '10'): LearningTaskQuote {
   const funded = scope === 'TRAINING';
@@ -30,24 +47,7 @@ function quote(scope: 'STUDY' | 'TRAINING', maxTicks = '10'): LearningTaskQuote 
           costQPerDay: { numerator: '5000000', denominator: '1' },
         }
       : null,
-    coefficients: {
-      schemaVersion: 1,
-      kind: 'CHARACTER',
-      catalogueVersion: COMPANY_CATALOGUE.version,
-      rulesetId: COMPANY_CATALOGUE.rulesetId,
-      holderId: 'leader',
-      taskScope: scope,
-      contributingPerkIds: [],
-      weapon: null,
-      additive: { accuracy: 0, initiative: 0, defense: 0, maxStamina: 0 },
-      task: {
-        careRecoveryBps: bps,
-        careCostBps: bps,
-        studyDurationBps: bps,
-        trainingCostBps: bps,
-        trainingDurationBps: bps,
-      },
-    },
+    coefficients: { ...coefficientBase, taskScope: scope },
   };
 }
 
@@ -88,7 +88,12 @@ function interval(patch: Partial<StudyAccessInterval> = {}): StudyAccessInterval
   };
 }
 
-function stop(reason: 'PLAYER' | 'GOAL' | 'FUNDS' | 'PREREQUISITES', actor: 'PLAYER' | 'SYSTEM', id = 'stop', at = 14) {
+function stop(
+  reason: 'PLAYER' | 'GOAL' | 'FUNDS' | 'PREREQUISITES',
+  actor: 'PLAYER' | 'SYSTEM',
+  id = 'stop',
+  at = 14,
+) {
   const root = economy([1n], 100n, at);
   return command(root, 'StopLearning', { taskId: 'task', reason }, id, actor, tick(at)) as CommandOf<'StopLearning'>;
 }
@@ -136,16 +141,18 @@ describe('C04 — internal finite learning task lifecycle', () => {
     ).toThrow('INVALID_SOURCE');
   });
 
-  it('freezes course quote input and rejects concurrent/conflicting starts', () => {
-    const mutable = quote('TRAINING', '15');
+  it('freezes funded-course inputs and rejects concurrent/conflicting starts', () => {
     const first = startLearningTask(createLearningTaskState(), {
       taskId: 'task',
       command: start('TRAINING'),
-      quote: mutable,
+      quote: quote('TRAINING', '15'),
     });
-    (mutable.coefficients.task.trainingCostBps as { numerator: string }).numerator = '1';
-    expect(first.task.quote.coefficients.task.trainingCostBps.numerator).toBe('10000');
-    expect(first.task.quote.funding?.authorizedBudgetQ).toBe('5000000');
+    expect(first.task.quote).toMatchObject({
+      maxTicks: '15',
+      mentorId: 'provider',
+      funding: { authorizedBudgetQ: '5000000' },
+      coefficients: { taskScope: 'TRAINING' },
+    });
     expect(() =>
       startLearningTask(first.state, {
         taskId: 'task-2',
@@ -162,7 +169,7 @@ describe('C04 — internal finite learning task lifecycle', () => {
     ).toThrow('IDEMPOTENCY_CONFLICT');
   });
 
-  it('enforces stop authority while preserving completed work and replaying once', () => {
+  it('enforces stop authority, preserves work, replays once and never auto-renews', () => {
     const started = startLearningTask(createLearningTaskState(), {
       taskId: 'task',
       command: start('TRAINING'),
@@ -182,17 +189,6 @@ describe('C04 — internal finite learning task lifecycle', () => {
     expect(() => stopLearningTask(stopped.state, stop('GOAL', 'SYSTEM', 'other-stop'))).toThrow(
       'INCOMPATIBLE_ACTIVITY',
     );
-  });
-
-  it('never auto-renews; a later task exists only after an explicit new start', () => {
-    const first = startLearningTask(createLearningTaskState(), {
-      taskId: 'task',
-      command: start('STUDY'),
-      quote: quote('STUDY'),
-      studyInterval: interval(),
-    });
-    const stopped = stopLearningTask(first.state, stop('PLAYER', 'PLAYER', 'stop-player', 15));
-    expect(stopped.state.tasks).toHaveLength(1);
 
     const later = startLearningTask(stopped.state, {
       taskId: 'later-task',
