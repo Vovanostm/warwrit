@@ -82,10 +82,7 @@ describe('B02 — finite perk effect evaluation', () => {
     );
     matching = equip(matching, 'worker-0', 'spear', 'worker-spear', ['MAIN_HAND', 'OFF_HAND']);
     select(matching, 'leader', ['heavy-25-b'], { heavy: 25 });
-    matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', [
-      'MAIN_HAND',
-      'OFF_HAND',
-    ]);
+    matching = equip(matching, 'leader', 'great-weapon', 'leader-heavy', ['MAIN_HAND', 'OFF_HAND']);
     expect(effects(matching)).toMatchObject({
       weapon: { itemId: 'worker-spear', profileId: 'spear' },
       additive: { defense: 11, maxStamina: 0 },
@@ -150,9 +147,12 @@ describe('B02 — finite perk effect evaluation', () => {
     const snapshot = effects(state);
     expect(canonicalJson(state)).toBe(before);
     Object.assign(character(state, 'worker-0'), { perks: [] });
-    Object.assign(state.physical!.items.find((entry) => entry.itemId === 'worker-raider')!, {
-      equipped: null,
-    });
+    Object.assign(
+      state.physical!.items.find((entry) => entry.itemId === 'worker-raider')!,
+      {
+        equipped: null,
+      },
+    );
     expect(snapshot).toMatchObject({
       weapon: { itemId: 'worker-raider', profileId: 'raider' },
       additive: { accuracy: 3 },
@@ -160,12 +160,9 @@ describe('B02 — finite perk effect evaluation', () => {
     });
     const unknown = select(economy([1n, 1n]), 'worker-0', ['not-a-real-perk']);
     expect(() => effects(unknown)).toThrow('INVALID_STATE');
-    const duplicate = select(
-      economy([1n, 1n]),
-      'worker-0',
-      ['defense-25-a', 'defense-25-b'],
-      { defense: 25 },
-    );
+    const duplicate = select(economy([1n, 1n]), 'worker-0', ['defense-25-a', 'defense-25-b'], {
+      defense: 25,
+    });
     expect(() => effects(duplicate)).toThrow('INVALID_STATE');
   });
 });
