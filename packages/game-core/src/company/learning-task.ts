@@ -106,6 +106,20 @@ function owned<T>(value: T): T {
   return snapshot as T;
 }
 
+function startSnapshot(task: LearningTask): LearningTaskStart {
+  return {
+    taskId: task.taskId,
+    startCommandId: task.startCommandId,
+    characterId: task.characterId,
+    methodId: task.methodId,
+    goal: task.goal,
+    resourceIds: task.resourceIds,
+    quote: task.quote,
+    ...(task.studyIntervalId ? { studyIntervalId: task.studyIntervalId } : {}),
+    startedAt: task.startedAt,
+  };
+}
+
 /** C04a only: owns one already-admitted frozen start snapshot. C04b supplies that admission. */
 export function startLearningTask(
   stateValue: LearningTaskState,
@@ -121,7 +135,10 @@ export function startLearningTask(
     (entry) => entry.taskId === task.taskId || entry.startCommandId === task.startCommandId,
   );
   if (previous) {
-    requireEconomy(canonicalJson(previous) === canonicalJson(task), 'IDEMPOTENCY_CONFLICT');
+    requireEconomy(
+      canonicalJson(startSnapshot(previous)) === canonicalJson(start),
+      'IDEMPOTENCY_CONFLICT',
+    );
     return { state, task: previous, replayed: true };
   }
   requireEconomy(
