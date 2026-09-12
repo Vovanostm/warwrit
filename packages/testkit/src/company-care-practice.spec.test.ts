@@ -18,10 +18,7 @@ import { addItem, condition, item, withCareProvider } from './company-physical-f
 
 function memberMedic(state: CompanyEconomyState, characterId = 'leader') {
   const exact = initialSkillProgress(1, `b04-${characterId}-medicine`);
-  const patch = (
-    characters: CompanyEconomyState['lifecycle']['characters'],
-    known: boolean,
-  ) =>
+  const patch = (characters: CompanyEconomyState['lifecycle']['characters'], known: boolean) =>
     characters.map((character) =>
       character.identity.characterId === characterId
         ? {
@@ -131,9 +128,8 @@ describe('B04 — care-provided practice from actual performed care', () => {
     expect(after.amount.carry).toBe(before.amount.carry);
     expect(
       canonicalJson(
-        next.lifecycle.characters.find(
-          (entry) => entry.identity.characterId === 'worker-0',
-        )!.skills,
+        next.lifecycle.characters.find((entry) => entry.identity.characterId === 'worker-0')!
+          .skills,
       ),
     ).toBe(patientBefore);
     expect(next.finance.sourceEffects).toHaveLength(1);
