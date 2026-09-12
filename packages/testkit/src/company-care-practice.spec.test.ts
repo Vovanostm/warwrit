@@ -14,12 +14,7 @@ import {
   place,
   prepared,
 } from './company-economy-fixture.js';
-import {
-  addItem,
-  condition,
-  item,
-  withCareProvider,
-} from './company-physical-fixture.js';
+import { addItem, condition, item, withCareProvider } from './company-physical-fixture.js';
 
 function memberMedic(state: CompanyEconomyState, characterId = 'leader') {
   const exact = initialSkillProgress(1, `b04-${characterId}-medicine`);
