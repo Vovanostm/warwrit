@@ -1,10 +1,10 @@
 # Warwrit current delivery plan
 
 - Status: operational mirror for coding agents
-- As of: 2026-09-11
+- As of: 2026-09-12
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
-- Current delivery: B02 / [#38](https://github.com/Vovanostm/warwrit/issues/38), finite selected-perk effect evaluation on the current merged descendant
+- Current delivery: B03, CareRecovery/CareCost integration in actual care/provider quotes, on a verified current descendant after merged B02
 
 ## Current state
 
@@ -15,10 +15,10 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-current_slice: B02-finite-perk-effect-evaluator
-next_implementation: B03-after-B02-merge
-activation_requires: B01-merged-and-current-main-descendant
-A04: independent-not-started
+current_slice: B03-care-recovery-cost-quotes
+next_implementation: B04-after-B03-merge
+activation_requires: B02-merged-and-current-main-descendant
+A04: merged
 merge_authorized: false
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
@@ -35,6 +35,8 @@ tree `0550d28dae1683899bc7f6aba91b6d7536c7d1f2`. Do not reset newer main or repe
 A02 [PR #22](https://github.com/Vovanostm/warwrit/pull/22) merged as `88d78a710cd574efdd1375750d89ac273b14375b`,
 tree `4e1dc5fe58d762feff2dfaa66045679196176b36`. A03 [PR #25](https://github.com/Vovanostm/warwrit/pull/25)
 merged as `5d28edc1e4c9223ad3771745eab39bebe7b2d66e`, tree `80d58db2af63198108dd14811a6cbdbd536ddbc1`.
+B02 [PR #40](https://github.com/Vovanostm/warwrit/pull/40) is merged as
+`720ebdefc631d1fe46d8cb3b8876bc25070ae890`, tree `188e1a411dd85564efff953be069033f3ef17994`.
 [PR #17](https://github.com/Vovanostm/warwrit/pull/17) remains separate. No successor merge, auto-merge, deployment or purchases are authorized.
 
 ## Authority and source order
@@ -90,7 +92,7 @@ not active gameplay learning or proof that practice was legitimate.
 A02's exact owner is merged. A03 is merged: `practice-admission.ts`, exact `CreditPractice`,
 skill-scoped root replay and retained source evidence are live on `main` through PR #25.
 No missing legacy XP is invented. Concrete B04/G09 producers remain deferred; injected facts are tests.
-A04 is still independent unfinished work and is not a prerequisite for B01. B01 owns only
+A04 is merged independently through [PR #34](https://github.com/Vovanostm/warwrit/pull/34); do not reimplement it. B01 owns only
 `ChoosePerk`: actual target-skill mastery, one selection per skill+25/60 milestone and durable
 choice history. B02 owns effect evaluation; B03/B04 own care/help integration; D owns retraining.
 No study, social, V2, SQL or UI activation. `StartLearning` stays disabled until C08.
