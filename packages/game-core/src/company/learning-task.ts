@@ -53,15 +53,13 @@ export interface LearningTaskTransition {
 }
 
 function quoteTicks(value: JsonValue): bigint {
+  requireEconomy(typeof value === 'object' && value !== null && !Array.isArray(value), 'INVALID_STATE');
+  const maxTicks = (value as { readonly maxTicks?: JsonValue }).maxTicks;
   requireEconomy(
-    typeof value === 'object' &&
-      value !== null &&
-      !Array.isArray(value) &&
-      unsigned.read(value.maxTicks) &&
-      BigInt(value.maxTicks as string) > 0n,
+    typeof maxTicks === 'string' && unsigned.read(maxTicks) && BigInt(maxTicks) > 0n,
     'INVALID_STATE',
   );
-  return BigInt(value.maxTicks as string);
+  return BigInt(maxTicks);
 }
 
 export function readLearningTaskState(value: unknown): LearningTaskState {
