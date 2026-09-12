@@ -57,15 +57,15 @@ function sourceContext(
   return { ...context(state, cmd), learningFacts: facts };
 }
 
-function fieldCamp(state: Root): Root {
+function maintenance(state: Root, kind: 'FIELD_CAMP' | 'SAFE_SERVICE'): Root {
   return {
     ...state,
     finance: {
       ...state.finance,
       maintenance: [
         {
-          agreementId: 'f1',
-          kind: 'FIELD_CAMP',
+          agreementId: 'maintenance',
+          kind,
           partyId: 'party',
           location: place,
           beneficiaryIds: ['worker-0'],
@@ -73,9 +73,9 @@ function fieldCamp(state: Root): Root {
           startedAt: tick(0),
           endedAt: null,
           knownEndedAt: null,
-          sourceId: 'f1-source',
-          providerId: null,
-          termsVersion: null,
+          sourceId: 'maintenance-source',
+          providerId: kind === 'SAFE_SERVICE' ? 'provider' : null,
+          termsVersion: kind === 'SAFE_SERVICE' ? 'safe-v1' : null,
         },
       ],
     },
@@ -113,13 +113,22 @@ describe('C03a — trusted learning-source admission', () => {
     );
   });
 
-  it('rejects F1 overlap and resources that are not actual, usable and local', () => {
+  it('rejects F1 safe-service overlap but permits field camp and requires actual local resources', () => {
     const state = resource(economy([1n], 10_000_000n));
     const cmd = start(state);
-    const covered = fieldCamp(state);
+    const safeService = maintenance(state, 'SAFE_SERVICE');
     expect(() =>
-      admitLearningSource(covered, cmd, sourceContext(covered, cmd, [source(covered)])),
+      admitLearningSource(
+        safeService,
+        cmd,
+        sourceContext(safeService, cmd, [source(safeService)]),
+      ),
     ).toThrow('INCOMPATIBLE_ACTIVITY');
+
+    const fieldCamp = maintenance(state, 'FIELD_CAMP');
+    expect(
+      admitLearningSource(fieldCamp, cmd, sourceContext(fieldCamp, cmd, [source(fieldCamp)])),
+    ).toEqual(source(fieldCamp));
 
     const remote: Root = {
       ...state,
