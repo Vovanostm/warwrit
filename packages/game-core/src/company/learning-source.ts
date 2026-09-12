@@ -64,7 +64,8 @@ export function admitLearningSource(
     root.lifecycle.campaignTick === context.atTick &&
       root.finance.processedTick === context.atTick &&
       root.physical.processedTick === context.atTick &&
-      activeMembership(root.lifecycle, payload.characterId)?.companyId === root.lifecycle.companyId &&
+      activeMembership(root.lifecycle, payload.characterId)?.companyId ===
+        root.lifecycle.companyId &&
       context.contactIds.includes(payload.characterId) &&
       learner.presence.location.kind === 'AT' &&
       canPerform(learner, 'study') &&
