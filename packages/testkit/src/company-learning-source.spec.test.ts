@@ -11,6 +11,7 @@ import { command, context, economy, place, scope, tick } from './company-economy
 import { addItem, item } from './company-physical-fixture.js';
 
 type Root = CompanyEconomyState & MaterializedCompanyState;
+type StartCommand = ReturnType<typeof command> & CommandOf<'StartLearning'>;
 
 function resource(state: CompanyEconomyState, id = 'course-kit'): Root {
   return addItem(
@@ -24,7 +25,7 @@ function resource(state: CompanyEconomyState, id = 'course-kit'): Root {
   ) as Root;
 }
 
-function start(state: Root, resourceIds = ['course-kit']) {
+function start(state: Root, resourceIds = ['course-kit']): StartCommand {
   return command(state, 'StartLearning', {
     characterId: 'worker-0',
     methodId: 'funded-practice',
@@ -32,7 +33,7 @@ function start(state: Root, resourceIds = ['course-kit']) {
     resourceIds,
     budgetPoolId: 'local',
     maxBudgetQ: '5000000',
-  }) as CommandOf<'StartLearning'>;
+  }) as StartCommand;
 }
 
 function source(state: Root): LearningSourceEvidence {
@@ -50,7 +51,7 @@ function source(state: Root): LearningSourceEvidence {
 
 function sourceContext(
   state: Root,
-  cmd: CommandOf<'StartLearning'>,
+  cmd: ReturnType<typeof command>,
   facts: readonly LearningSourceEvidence[],
 ): LearningSourceContext {
   return { ...context(state, cmd), learningFacts: facts };
