@@ -21,6 +21,9 @@ corepack enable
 corepack prepare pnpm@11.25.0 --activate
 pnpm install --frozen-lockfile
 
+pnpm exec prettier packages/testkit/src/company-perk-effects.spec.test.ts
+exit 1
+
 cleanup() {
   if [[ "${KEEP_INFRA:-0}" != '1' ]]; then
     docker compose down --remove-orphans >/dev/null 2>&1 || true
