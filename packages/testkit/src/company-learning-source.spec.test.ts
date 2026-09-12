@@ -104,12 +104,12 @@ describe('C03a — trusted learning-source admission', () => {
     ] satisfies LearningSourceEvidence[];
 
     for (const candidate of invalid)
-      expect(() =>
-        admitLearningSource(state, cmd, sourceContext(state, cmd, [candidate])),
-      ).toThrow('INVALID_SOURCE');
-    expect(() =>
-      admitLearningSource(state, cmd, sourceContext(state, cmd, [fact, fact])),
-    ).toThrow('INVALID_SOURCE');
+      expect(() => admitLearningSource(state, cmd, sourceContext(state, cmd, [candidate]))).toThrow(
+        'INVALID_SOURCE',
+      );
+    expect(() => admitLearningSource(state, cmd, sourceContext(state, cmd, [fact, fact]))).toThrow(
+      'INVALID_SOURCE',
+    );
   });
 
   it('rejects F1 overlap and resources that are not actual, usable and local', () => {
