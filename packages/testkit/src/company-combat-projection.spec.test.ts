@@ -106,6 +106,7 @@ describe('G03 — character/equipment/condition combat projection', () => {
       characterId: 'worker-0',
       weapon: {
         itemId: 'real-sword',
+        requiredOffHandItemId: 'real-shield',
         definitionId: 'sword',
         profileId: 'sword-shield',
         skillId: 'blades',
@@ -148,7 +149,12 @@ describe('G03 — character/equipment/condition combat projection', () => {
     state = withLoadedConditions(state, { 'worker-0': ['old-impairment'] }, 'old-wound');
 
     expect(projectCharacterCombat(materialized(state), 'worker-0')).toMatchObject({
-      weapon: { itemId: 'real-spear', profileId: 'spear', skillId: 'polearms' },
+      weapon: {
+        itemId: 'real-spear',
+        requiredOffHandItemId: null,
+        profileId: 'spear',
+        skillId: 'polearms',
+      },
       armor: [],
       conditionIds: ['old-wound-worker-0-0'],
       attributes: {
@@ -173,6 +179,26 @@ describe('G03 — character/equipment/condition combat projection', () => {
     missingShield = equip(missingShield, 'worker-0', 'sword', 'lonely-sword', ['MAIN_HAND']);
     missingShield = withVitals(missingShield, 'worker-0', 60, 80);
     expect(() => projectCharacterCombat(materialized(missingShield), 'worker-0')).toThrow(
+      'INVALID_STATE',
+    );
+
+    let unexpectedOffHand = economy([1n]);
+    unexpectedOffHand = equip(
+      unexpectedOffHand,
+      'worker-0',
+      'raider-weapon',
+      'raider-main',
+      ['MAIN_HAND'],
+    );
+    unexpectedOffHand = equip(
+      unexpectedOffHand,
+      'worker-0',
+      'shield',
+      'unexpected-shield',
+      ['OFF_HAND'],
+    );
+    unexpectedOffHand = withVitals(unexpectedOffHand, 'worker-0', 60, 80);
+    expect(() => projectCharacterCombat(materialized(unexpectedOffHand), 'worker-0')).toThrow(
       'INVALID_STATE',
     );
   });

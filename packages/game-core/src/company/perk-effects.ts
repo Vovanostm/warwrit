@@ -97,46 +97,47 @@ function selectedPerks(character: LifecycleCharacter) {
   });
 }
 export function equippedWeaponContext(root: MaterializedCompanyState, characterId: string) {
-  const mains = root.physical.items.filter(
-    (item) =>
-      item.tombstone === null &&
-      item.equipped?.characterId === characterId &&
-      item.equipped.slots.includes('MAIN_HAND'),
+  const equipped = root.physical.items.filter(
+    (item) => item.tombstone === null && item.equipped?.characterId === characterId,
   );
-  requireLifecycle(mains.length <= 1, 'INVALID_STATE');
+  const mains = equipped.filter((item) => item.equipped!.slots.includes('MAIN_HAND'));
+  const offHands = equipped.filter((item) => item.equipped!.slots.includes('OFF_HAND'));
+  requireLifecycle(mains.length <= 1 && offHands.length <= 1, 'INVALID_STATE');
   const item = mains[0];
   if (!item) return null;
   const definition = itemDefinition(item);
   if (definition.kind !== 'weapon' || !definition.skillId || !definition.weaponProfile) return null;
   const slots = item.equipped!.slots;
-  if (
-    (definition.hands === 2 && !slots.includes('OFF_HAND')) ||
-    (definition.hands === 1 && slots.length !== 1)
-  )
-    return null;
-  if (definition.requiresOffHand) {
-    const requiredDefinition = COMPANY_CATALOGUE.items.find(
-      (candidate) => candidate.id === definition.requiresOffHand,
-    );
-    requireLifecycle(
-      requiredDefinition?.enabled && requiredDefinition.slot === 'OFF_HAND',
-      'INVALID_STATE',
-    );
-    const required = root.physical.items.find(
-      (candidate) =>
-        candidate.tombstone === null &&
-        candidate.definitionId === requiredDefinition.id &&
-        candidate.equipped?.characterId === characterId &&
-        candidate.equipped.slots.includes('OFF_HAND'),
-    );
-    if (!required) return null;
-    itemDefinition(required);
-  }
+  let requiredOffHandItemId: string | null = null;
+  if (definition.hands === 2) {
+    if (
+      !slots.includes('OFF_HAND') ||
+      offHands.length !== 1 ||
+      offHands[0]!.itemId !== item.itemId
+    )
+      return null;
+  } else if (definition.hands === 1) {
+    if (slots.length !== 1) return null;
+    if (definition.requiresOffHand) {
+      const requiredDefinition = COMPANY_CATALOGUE.items.find(
+        (candidate) => candidate.id === definition.requiresOffHand,
+      );
+      requireLifecycle(
+        requiredDefinition?.enabled && requiredDefinition.slot === 'OFF_HAND',
+        'INVALID_STATE',
+      );
+      const required = offHands[0];
+      if (!required || required.definitionId !== requiredDefinition.id) return null;
+      itemDefinition(required);
+      requiredOffHandItemId = required.itemId;
+    } else if (offHands.length !== 0) return null;
+  } else return null;
   return {
     itemId: item.itemId,
     definitionId: item.definitionId,
     profileId: definition.weaponProfile,
     skillId: definition.skillId,
+    requiredOffHandItemId,
   };
 }
 function owned<T>(value: T): T {

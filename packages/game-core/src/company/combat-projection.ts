@@ -34,6 +34,7 @@ export interface CharacterCombatProjection {
   readonly characterId: string;
   readonly weapon: {
     readonly itemId: string;
+    readonly requiredOffHandItemId: string | null;
     readonly definitionId: string;
     readonly profileId: WeaponId;
     readonly skillId: string;
@@ -149,6 +150,7 @@ export function projectCharacterCombat(
     characterId,
     weapon: {
       itemId: weapon.itemId,
+      requiredOffHandItemId: weapon.requiredOffHandItemId,
       definitionId: weapon.definitionId,
       profileId: weapon.profileId,
       skillId: weapon.skillId,
