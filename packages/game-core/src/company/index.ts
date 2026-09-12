@@ -34,6 +34,7 @@ export * from './study-section.js';
 export * from './study-access.js';
 export * from './learning-source.js';
 export * from './learning-quote.js';
+export * from './learning-task.js';
 export { admitPractice } from './practice-admission.js';
 export type { PracticeContext, PracticeEvidence } from './practice-admission.js';
 export * from './perk-effects.js';
