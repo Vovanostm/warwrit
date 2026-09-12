@@ -1,6 +1,6 @@
 import { COMPANY_RULES } from './definitions.js';
 import { person } from './lifecycle-state.js';
-import { campaignTick } from './values.js';
+import { campaignTick, isExactInteger } from './values.js';
 import { foodCovered } from './physical-food.js';
 import {
   activeConditions,
@@ -118,7 +118,9 @@ export function advancePhysicalRecovery(
           eligibleFrom = BigInt(instance.care.fulfilledAt);
         if (eligibleFrom >= finish) return instance;
         const total = BigInt(instance.recoveryTicks) + finish - eligibleFrom;
-        const required = BigInt(instance.care?.recoveryTicksRequired ?? definition.recoveryTicks);
+        const requiredText = instance.care?.recoveryTicksRequired ?? definition.recoveryTicks;
+        requirePhysical(isExactInteger(requiredText) && BigInt(requiredText) > 0n, 'INVALID_STATE');
+        const required = BigInt(requiredText);
         if (total < required) return { ...instance, recoveryTicks: total.toString() };
         const completedAt = campaignTick(
           (eligibleFrom + (required - BigInt(instance.recoveryTicks))).toString(),
