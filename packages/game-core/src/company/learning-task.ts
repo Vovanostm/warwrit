@@ -72,10 +72,16 @@ export function readLearningTaskState(value: unknown): LearningTaskState {
   const commandIds = new Set<string>();
   const active = new Set<string>();
   for (const task of tasks) {
-    requireEconomy(!taskIds.has(task.taskId) && !commandIds.has(task.startCommandId), 'INVALID_STATE');
+    requireEconomy(
+      !taskIds.has(task.taskId) && !commandIds.has(task.startCommandId),
+      'INVALID_STATE',
+    );
     taskIds.add(task.taskId);
     commandIds.add(task.startCommandId);
-    requireEconomy(BigInt(task.completedTicks) <= quoteTicks(task.quote as unknown as JsonValue), 'INVALID_STATE');
+    requireEconomy(
+      BigInt(task.completedTicks) <= quoteTicks(task.quote as unknown as JsonValue),
+      'INVALID_STATE',
+    );
     const ended = task.endedAt !== undefined;
     requireEconomy(
       ended === (task.stopReason !== undefined) && ended === (task.stopCommandId !== undefined),
@@ -156,7 +162,8 @@ export function stopLearningTask(
   }
   requireEconomy(
     !state.tasks.some(
-      (entry) => entry.startCommandId === command.commandId || entry.stopCommandId === command.commandId,
+      (entry) =>
+        entry.startCommandId === command.commandId || entry.stopCommandId === command.commandId,
     ),
     'IDEMPOTENCY_CONFLICT',
   );
