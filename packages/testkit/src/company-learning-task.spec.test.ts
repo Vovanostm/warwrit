@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   COMPANY_CATALOGUE,
   createLearningTaskState,
-  moneyQ,
   readLearningTaskState,
   startLearningTask,
   stopLearningTask,
