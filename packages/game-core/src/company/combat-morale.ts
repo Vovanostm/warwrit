@@ -21,8 +21,8 @@ export interface CombatMoraleSnapshot {
   readonly leader: LeaderGroupPerkEffectSnapshot;
   readonly overflowModifier: number;
 }
-export interface CharacterCombatMoraleProjection
-  extends Omit<CharacterCombatProjection, 'schemaVersion' | 'attributes' | 'current'> {
+type CombatBase = Omit<CharacterCombatProjection, 'schemaVersion' | 'attributes' | 'current'>;
+export interface CharacterCombatMoraleProjection extends CombatBase {
   readonly schemaVersion: 2;
   readonly attributes: CharacterCombatProjection['attributes'] & { readonly morale: number };
   readonly current: CharacterCombatProjection['current'] & { readonly morale: number };
