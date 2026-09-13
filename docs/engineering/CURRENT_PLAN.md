@@ -1,10 +1,11 @@
 # Warwrit current delivery plan
 
 - Status: operational mirror for coding agents
-- As of: 2026-09-12
+- As of: 2026-09-13
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
-- Current delivery: B03, CareRecovery/CareCost integration in actual care/provider quotes, on a verified current descendant after merged B02
+- Main checkpoint: C04b [PR #61](https://github.com/Vovanostm/warwrit/pull/61) merged as `806426911b9397ebadd9191275c371ebb8c978aa`
+- Current product fronts: C05 after merged C04b; E03 after merged E02; G04 after merged G03
 
 ## Current state
 
@@ -15,17 +16,27 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-current_slice: B03-care-recovery-cost-quotes
-next_implementation: B04-after-B03-merge
-activation_requires: B02-merged-and-current-main-descendant
-A04: merged
+main: 806426911b9397ebadd9191275c371ebb8c978aa
+main_post_merge_verification: passed-run-34760836785
+C_flow: C04b-merged-pr61; C05-next
+E_flow: E01-E02-merged; E03-next
+G_flow: G01-G03-merged; G04-next; G10-after-G09+C08+E05
+H_flow: after-required-domain-activation-and-G10
+I_flow: after-H-durability-executor-path
+F02: merged-pr35
+PR17: separate-docs-open-green-unmerged
+renderer: issue6-open-Q-T03-evidence-pending
 merge_authorized: false
 deploy_authorized: false
 production_runtime: repository-pinned-node-24
 package_manager: repository-pinned-pnpm
 persistence: postgresql-kysely-pg
-renderer: Q-T03-evidence-pending
 ```
+
+Status words are not interchangeable: **OPEN** means not merged; **READY FOR REVIEW** means the
+current PR has review/verification evidence suitable for a merge decision; **MERGED** means GitHub
+records the merge on `main`; **post-merge verification** means a subsequent `main` CI run passed.
+A predecessor PR's green CI is not post-merge evidence for a later main revision.
 
 WP-02.1–02.4 and R00 are merged. [PR #18](https://github.com/Vovanostm/warwrit/pull/18)
 merged R00 as `321640fb737ed22db96fb5525b4b4257b01397ab`,
@@ -35,9 +46,17 @@ tree `0550d28dae1683899bc7f6aba91b6d7536c7d1f2`. Do not reset newer main or repe
 A02 [PR #22](https://github.com/Vovanostm/warwrit/pull/22) merged as `88d78a710cd574efdd1375750d89ac273b14375b`,
 tree `4e1dc5fe58d762feff2dfaa66045679196176b36`. A03 [PR #25](https://github.com/Vovanostm/warwrit/pull/25)
 merged as `5d28edc1e4c9223ad3771745eab39bebe7b2d66e`, tree `80d58db2af63198108dd14811a6cbdbd536ddbc1`.
-B02 [PR #40](https://github.com/Vovanostm/warwrit/pull/40) is merged as
-`720ebdefc631d1fe46d8cb3b8876bc25070ae890`, tree `188e1a411dd85564efff953be069033f3ef17994`.
-[PR #17](https://github.com/Vovanostm/warwrit/pull/17) remains separate. No successor merge, auto-merge, deployment or purchases are authorized.
+B03 [PR #46](https://github.com/Vovanostm/warwrit/pull/46) and B04 [PR #50](https://github.com/Vovanostm/warwrit/pull/50)
+are merged; B04 is the completed care-practice successor, not a future pointer. F02 [PR #35](https://github.com/Vovanostm/warwrit/pull/35)
+is also merged; it is no longer blocked by a missing narrow service contract.
+C01/C03/C02/C04a/C04b are merged through PRs #29/#56/#58/#60/#61; C05 is the next C implementation slice.
+E01 [PR #32](https://github.com/Vovanostm/warwrit/pull/32) and E02 [PR #37](https://github.com/Vovanostm/warwrit/pull/37)
+are merged. G01 [PR #31](https://github.com/Vovanostm/warwrit/pull/31), G02 [PR #41](https://github.com/Vovanostm/warwrit/pull/41)
+and G03 [PR #55](https://github.com/Vovanostm/warwrit/pull/55) are merged.
+[PR #17](https://github.com/Vovanostm/warwrit/pull/17) remains a separate documentation-only language/context change,
+currently green and OPEN / UNMERGED; it does not change WP-02 product status or merge authority.
+Renderer [issue #6](https://github.com/Vovanostm/warwrit/issues/6) remains the separate Q-T03 Babylon.js-vs-PlayCanvas evidence spike for later WP-04.
+No successor merge, auto-merge, deployment or purchases are authorized by this plan.
 
 ## Authority and source order
 
@@ -81,9 +100,24 @@ MERGED WP-02.1 -> WP-02.2 -> WP-02.3 -> WP-02.4
   -> E social -> F remaining commands -> G combat V2 -> H PostgreSQL -> I acceptance
 ```
 
-One writer and one small reviewable PR per task. The target is 300–400 added+deleted
-lines across code, tests, SQL and docs after normal formatting; smaller is fine (R00 is
-intentionally short). Above 400, split a cohesive tested responsibility before delivery;
+The route is a dependency graph, not a single serial cursor. Current verified fronts are:
+
+```text
+C: C04b MERGED -> C05 -> C06 -> C07 -> C08
+E: E01 + E02 MERGED -> E03 -> E04 -> E05
+G: G01 + G02 + G03 MERGED -> G04 -> G05 -> G06 -> G07 -> G08 -> G09 -> G10
+```
+
+G10 is the combat activation point and requires G09 plus the completed C08 and E05 paths.
+H durable persistence/execution follows the required completed domain paths and G10; I acceptance
+follows H rather than substituting for H's transaction/race/crash evidence. Refine distant G/H tasks
+against real predecessor APIs instead of assuming the original sketches remain exact.
+
+One writer and one small reviewable PR per task. `CURRENT_PLAN.md` is maintained by one delivery
+coordinator; parallel implementation sessions record their own PR/Airtable/Empirical results and do
+not race-edit this file. Before finalizing a plan update, re-read live `main`, open PRs and CI.
+The target is 300–400 added+deleted lines across code, tests, SQL and docs after normal formatting;
+smaller is fine (R00 is intentionally short). Above 400, split a cohesive tested responsibility before delivery;
 do not hide tests, minify, change formatting or split only commits inside a giant PR.
 Dependencies outrank letter order; refine distant G/H tasks against real predecessor APIs.
 
@@ -91,14 +125,14 @@ A01 supplies exact XP/milliXP, rational carry and level-threshold arithmetic onl
 not active gameplay learning or proof that practice was legitimate.
 A02's exact owner is merged. A03 is merged: `practice-admission.ts`, exact `CreditPractice`,
 skill-scoped root replay and retained source evidence are live on `main` through PR #25.
-No missing legacy XP is invented. Concrete B04/G09 producers remain deferred; injected facts are tests.
+No missing legacy XP is invented. B04 now supplies the concrete `care-provided` producer; G09 remains deferred.
 A04 is merged independently through [PR #34](https://github.com/Vovanostm/warwrit/pull/34); do not reimplement it. B01 owns only
 `ChoosePerk`: actual target-skill mastery, one selection per skill+25/60 milestone and durable
 choice history. B02 owns effect evaluation; B03/B04 own care/help integration; D owns retraining.
 No study, social, V2, SQL or UI activation. `StartLearning` stays disabled until C08.
 `BeginEncounterBinding`, `ConsumeCombatReceipt` and `FinalizeEncounter` stay disabled until G10.
-F02 remains `NEEDS_NARROW_SERVICE_CONTRACT` for cosmetic/service keys: it blocks itself
-and full WP-02 closure, not independent arithmetic, bridge or database preparation.
+F02's bounded paid hair-style service is merged through PR #35; additional cosmetic categories remain deferred scope,
+not a blocker for WP-02 closure unless separately added to the canonical route.
 WP-03 authority/reconnect/timers, Q-T03 / issue #6 renderer comparison and WP-04–15
 remain later work, not silently completed or decomposed here.
 
@@ -107,8 +141,9 @@ remain later work, not silently completed or decomposed here.
 G0 permits an explicitly labelled independent reconstruction of machine contracts from canonical Notes. Neither the missing original v1 ZIP nor the independently regenerated v1.2 ZIP is claimed byte-verified by this implementation. `RC-GAP-MACHINE-01` remains a named source-concordance gap, not a new product interview. Use the source manifest in the active WP contract; do not infer 117 executed tests from a catalogue count.
 
 Original source ZIP concordance remains `NOT_RUN`. Previous merged PR CI is predecessor evidence,
-not a B01 test run. Foundation migration smoke is not proof of the future H transaction/race/crash
-guarantees. Full WP-02 and M1 remain incomplete.
+not a current-task test run. Foundation migration smoke is not proof of the future H transaction/race/crash
+guarantees. A green PR is not MERGED; a merge is not post-merge verification until the corresponding
+`main` check is observed. Full WP-02 and M1 remain incomplete.
 
 M0 proves deterministic combat, termination and replay, not player enjoyment. Q-C01/Q-C10/R-01 require interactive M1 evidence. The 30-second activation limit remains a versioned parameter for player validation. Q-T03 / issue #6 compares Babylon and PlayCanvas with the same scene and workflow; no permanent renderer dependency is installed by WP-02.1.
 
