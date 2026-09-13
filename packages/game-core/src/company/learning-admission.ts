@@ -59,7 +59,7 @@ export function admitLearningTask(
       quote: previous.start.quote,
       ...binding,
     });
-    requireEconomy(('workId' in payload.goal) === (study !== undefined), 'IDEMPOTENCY_CONFLICT');
+    requireEconomy('workId' in payload.goal === (study !== undefined), 'IDEMPOTENCY_CONFLICT');
     if (study) {
       const interval = studyAccess.intervals.find((entry) => entry.intervalId === study.intervalId);
       requireEconomy(
