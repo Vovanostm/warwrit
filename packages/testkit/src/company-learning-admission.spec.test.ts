@@ -25,6 +25,7 @@ import {
 } from './company-economy-fixture.js';
 import { addItem, item, itemAccess } from './company-physical-fixture.js';
 
+type Start = ReturnType<typeof command> & CommandOf<'StartLearning'>;
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 function setup(course = false, learner = 'leader', copy = 'book-1', tag = 'first', at = '10') {
   let loaded = economy([1n], 7_000_000n, 10);
@@ -52,9 +53,7 @@ function setup(course = false, learner = 'leader', copy = 'book-1', tag = 'first
     budgetPoolId: 'local',
     maxBudgetQ: course ? '50000000' : '0',
   };
-  const cmd = command(root, 'StartLearning', payload, `start-${tag}`) as ReturnType<
-    typeof command
-  > & CommandOf<'StartLearning'>;
+  const cmd = command(root, 'StartLearning', payload, `start-${tag}`) as Start;
   const study = { intervalId: `interval-${tag}`, itemId: copy, accessEvidenceId: `access-${tag}` };
   const fact = {
     ...itemAccess(root, study.accessEvidenceId, 'STUDY', ['fixture-supply'], [copy]),
