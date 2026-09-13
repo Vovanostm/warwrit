@@ -9,6 +9,7 @@ export const PHYSICAL_RULES = Object.freeze({
   policyVersion: PHYSICAL_POLICY_VERSION,
   baseHealth: 100,
   baseStamina: 100,
+  maximumMorale: 100,
   defaultConditionMaximum: 10000,
 } as const);
 
@@ -74,6 +75,8 @@ export interface PhysicalVitals {
   readonly maximumStamina: number;
   readonly currentStamina: number;
   readonly staminaCarry: string;
+  /** Explicit persistent morale; missing legacy data is unknown, never a default pool. */
+  readonly morale?: number;
 }
 export interface ConditionInstance {
   readonly conditionId: string;

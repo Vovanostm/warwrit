@@ -1,11 +1,15 @@
 import { COMPANY_CATALOGUE, COMPANY_RULES } from './definitions.js';
-import { canonicalJson, snapshotJson } from './input.js';
+import { canonicalJson, natural, snapshotJson } from './input.js';
 import { sameLocation } from './lifecycle-state.js';
 import type { LifecycleCharacter, LifecycleState } from './lifecycle-types.js';
 import type { LocationRef, OwnerRef } from './model.js';
 import { isEntityId, isExactInteger } from './values.js';
 import type { CampaignTick } from './values.js';
-import { PHYSICAL_POLICY_VERSION, PHYSICAL_SCHEMA_VERSION } from './physical-types.js';
+import {
+  PHYSICAL_POLICY_VERSION,
+  PHYSICAL_RULES,
+  PHYSICAL_SCHEMA_VERSION,
+} from './physical-types.js';
 import type {
   CompanyPhysicalState,
   ConditionInstance,
@@ -503,6 +507,13 @@ export function validatePhysicalState(
       'INVALID_STATE',
     );
   }
+  for (const vitals of [...physical.vitals, ...physical.knowledge.vitalSnapshots])
+    requirePhysical(
+      vitals.morale === undefined ||
+        (natural(0, PHYSICAL_RULES.maximumMorale).read(vitals.morale) &&
+          isEntityId(vitals.sourceId)),
+      'INVALID_STATE',
+    );
   for (const vitals of physical.vitals)
     requirePhysical(
       lifecycle.characters.some(
