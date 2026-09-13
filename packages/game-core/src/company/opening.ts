@@ -1,5 +1,6 @@
 import { createRandomState, drawRandomInt } from '../combat/random.js';
 import { COMPANY_CATALOGUE, COMPANY_RULES } from './definitions.js';
+import { initialSkillProgress } from './skill-progress.js';
 import { entityId, birthTick, moneyQ } from './values.js';
 import {
   evidence,
@@ -91,7 +92,9 @@ export function prepareOpening(
   ) => {
     identities.push({
       identity,
-      skills,
+      skills: Object.fromEntries(
+        Object.entries(skills).map(([id, level]) => [id, initialSkillProgress(level, source.id)]),
+      ),
       aptitudeBySkill: Object.fromEntries(
         COMPANY_CATALOGUE.skills
           .filter((s) => s.enabled)

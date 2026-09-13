@@ -2,6 +2,8 @@ import { COMPANY_CATALOGUE, COMPANY_RULES, catalogueHas } from './definitions.js
 import type { CompanyCatalogue } from './definitions.js';
 import { canonicalJson } from './input.js';
 import { ASSIGNMENTS, AVAILABILITIES } from './model.js';
+import { isSkillProgress, skillLevel } from './skill-progress.js';
+import type { SkillProgress } from './skill-progress.js';
 import { entityId, isEntityId, isExactInteger } from './values.js';
 import type { CampaignTick } from './values.js';
 import type {
@@ -67,9 +69,10 @@ export function canPerform(character: LifecycleCharacter, capability: Capability
 export function canLead(character: LifecycleCharacter): boolean {
   return canPerform(character, 'lead');
 }
-export function commandCapacity(leadership: number): number {
+export function commandCapacity(leadership: SkillProgress): number {
+  const level = skillLevel(leadership);
   return COMPANY_RULES.leadershipBands.reduce(
-    (cap, band) => (leadership >= band.level ? band.capacity : cap),
+    (cap, band) => (level >= band.level ? band.capacity : cap),
     0,
   );
 }
@@ -159,6 +162,30 @@ export function validateLifecycleGraph(state: LifecycleState, context: Lifecycle
       'INVALID_STATE',
     );
   }
+  for (const character of [...state.characters, ...state.knowledge.characters]) {
+    for (const [id, value] of Object.entries(character.skills))
+      requireLifecycle(
+        catalogueHas(COMPANY_CATALOGUE, 'skills', id) && isSkillProgress(value),
+        'INVALID_STATE',
+      );
+    const selected = character.perks.map((perkId) =>
+      COMPANY_CATALOGUE.perks.find((perk) => perk.id === perkId),
+    );
+    requireLifecycle(
+      selected.every((perk) => perk !== undefined) &&
+        new Set(character.perks).size === character.perks.length &&
+        new Set(selected.map((perk) => `${perk!.skillId}:${perk!.milestone}`)).size ===
+          selected.length,
+      'INVALID_STATE',
+    );
+    for (const perk of selected) {
+      const mastery = character.skills[perk!.skillId];
+      requireLifecycle(
+        mastery !== undefined && skillLevel(mastery) >= perk!.milestone,
+        'INVALID_STATE',
+      );
+    }
+  }
   for (const character of state.characters) {
     requireLifecycle(
       character.identity.characterId === character.presence.characterId &&
@@ -171,14 +198,6 @@ export function validateLifecycleGraph(state: LifecycleState, context: Lifecycle
     );
     for (const id of character.conditionIds)
       requireLifecycle(catalogueHas(COMPANY_CATALOGUE, 'conditions', id), 'INVALID_STATE');
-    for (const [id, value] of Object.entries(character.skills))
-      requireLifecycle(
-        catalogueHas(COMPANY_CATALOGUE, 'skills', id) &&
-          Number.isSafeInteger(value) &&
-          value >= 0 &&
-          value <= COMPANY_RULES.maxSkillLevel,
-        'INVALID_STATE',
-      );
     requireLifecycle(BigInt(character.identity.bornAt) <= BigInt(context.atTick), 'INVALID_STATE');
     for (const [skillId, aptitude] of Object.entries(character.aptitudeBySkill))
       requireLifecycle(

@@ -66,7 +66,7 @@ export function advanceEconomy(
     requirements.push(...accrued.requirements);
     for (const fact of fresh) {
       if (fact.kind === 'QUALIFICATION_NOTICE')
-        finance = recordQualification(finance, fact, atContext);
+        finance = recordQualification(finance, state.lifecycle, fact, atContext);
       else if (fact.kind === 'MAINTENANCE_BOUNDARY') {
         const mode = finance.maintenance.find(
           (m) => m.agreementId === fact.agreementId && m.endedAt === null,

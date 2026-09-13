@@ -10,6 +10,7 @@ import type {
 } from './lifecycle-types.js';
 import type { OwnerRef } from './model.js';
 import type { CampaignTick, CanonicalRevision, MoneyQ, PublicRevision } from './values.js';
+import type { CompanyPhysicalState, PhysicalError, PhysicalEvidence } from './physical-types.js';
 
 export const ECONOMY_SCHEMA_VERSION = 1 as const;
 export const ECONOMY_POLICY_VERSION = 's02-economy-1' as const;
@@ -51,6 +52,8 @@ export interface ServiceAccount {
   readonly schedule: WageSchedule | null;
   readonly known: boolean;
   readonly confirmedAt: CampaignTick;
+  /** Actual duty availability can diverge from the last observed state. Legacy rows fall back to knownPaused. */
+  readonly actualPaused?: boolean;
   readonly knownPaused: boolean;
   readonly knownDeath: boolean;
   readonly death: null | {
@@ -171,7 +174,17 @@ export interface CashMovement {
   readonly from: string;
   readonly to: string;
   readonly amountQ: MoneyQ;
-  readonly purpose: 'ORIGIN_ENDOWMENT' | 'SIGNING' | 'WAGE' | 'TRANSFER' | 'FAREWELL';
+  readonly purpose:
+    | 'ORIGIN_ENDOWMENT'
+    | 'SIGNING'
+    | 'WAGE'
+    | 'TRANSFER'
+    | 'FAREWELL'
+    | 'CARE'
+    | 'CARE_HANDOVER'
+    | 'FOOD'
+    | 'REPAIR'
+    | 'PRESENTATION';
   readonly atTick: CampaignTick;
 }
 export interface FarewellGrant {
@@ -205,6 +218,8 @@ export interface CompanyFinance {
 export interface CompanyEconomyState {
   readonly lifecycle: LifecycleState;
   readonly finance: CompanyFinance;
+  /** Optional only for V1 persisted snapshots; every successful V2 preparation materializes it. */
+  readonly physical?: CompanyPhysicalState;
 }
 
 interface FinanceScope {
@@ -258,6 +273,21 @@ export interface SafeServiceOffer extends FinanceScope {
   readonly inhabited: boolean;
   readonly accessible: boolean;
 }
+/** F02 trusted quote: the adapter, not the player, chooses provider, local price and offered styles. */
+export interface PresentationServiceEvidence extends FinanceScope {
+  readonly kind: 'PRESENTATION_SERVICE';
+  readonly characterId: string;
+  readonly providerId: string;
+  readonly location: AtLocation;
+  readonly serviceId: string;
+  readonly serviceVersion: string;
+  readonly allowedHairStyleIds: readonly string[];
+  readonly priceQ: MoneyQ;
+  readonly poolId: string;
+  readonly providerWalletId: string;
+  readonly moneyAccessEvidenceId: string;
+  readonly expiresAt: CampaignTick;
+}
 export interface QualificationNoticeEvidence extends FinanceScope {
   readonly kind: 'QUALIFICATION_NOTICE';
   readonly membershipId: string;
@@ -309,6 +339,7 @@ export type FinanceEvidence =
   | LocalMoneyAccess
   | CampSiteEvidence
   | SafeServiceOffer
+  | PresentationServiceEvidence
   | QualificationNoticeEvidence
   | WageCommunicationEvidence
   | FinancialDeathEvidence
@@ -317,6 +348,7 @@ export type FinanceEvidence =
 /** Internal adapter data only. Authenticated command envelopes do not manufacture these facts. */
 export interface EconomyContext extends LifecycleContext {
   readonly financeFacts: readonly FinanceEvidence[];
+  readonly physicalFacts?: readonly PhysicalEvidence[];
 }
 
 /** Unmet obligations are finite data in this draft, not an effect framework or queue. */
@@ -380,13 +412,17 @@ export interface EconomyReceipt {
     readonly channel: 'CASH' | 'PENDING_CONFIRMATION';
   }[];
 }
-export type EconomyError = LifecycleError | 'INSUFFICIENT_FUNDS' | 'UNPAID_OBLIGATIONS';
+export type EconomyError = LifecycleError | PhysicalError | 'UNPAID_OBLIGATIONS';
 export type EconomyResult =
-  | { readonly kind: 'REJECTED'; readonly state: CompanyEconomyState; readonly error: EconomyError }
+  | {
+      readonly kind: 'REJECTED';
+      readonly state: CompanyEconomyState;
+      readonly error: EconomyError;
+    }
   | {
       readonly kind: 'PREPARED';
       readonly state: CompanyEconomyState;
-      /** Inseparable draft; neither half is an independently committable accepted command. */
+      /** Inseparable lifecycle+finance+physical draft; there is no child commit boundary. */
       readonly next: CompanyEconomyState;
       readonly receipt: EconomyReceipt;
       readonly replayed: boolean;

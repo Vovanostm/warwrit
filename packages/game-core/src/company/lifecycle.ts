@@ -1,5 +1,7 @@
 import { guardCompanyCommand, checkFreshCompanyRevision, companySourceKey } from './guards.js';
 import { canonicalJson, snapshotJson } from './input.js';
+import { preparePerkSelection } from './perk-selection.js';
+import { skillLevels } from './skill-progress.js';
 import { canonicalRevision, publicRevision, isExactInteger } from './values.js';
 import { prepareOpening } from './opening.js';
 import {
@@ -57,7 +59,10 @@ function observeCompany(
   let knowledge = state.knowledge;
   if (fact.subject.kind === 'CHARACTER') {
     const character = person(state, fact.subject.id);
-    const snapshot = snapshotJson(character) as unknown as LifecycleCharacter;
+    const snapshot = snapshotJson({
+      ...character,
+      skills: skillLevels(character.skills),
+    }) as unknown as LifecycleCharacter;
     requireLifecycle(snapshot, 'INVALID_STATE');
     knowledge = {
       ...knowledge,
@@ -117,6 +122,8 @@ function plan(
       return prepareDesignation(state, command, context);
     case 'ResolveLeadership':
       return prepareSuccession(state, command, context);
+    case 'ChoosePerk':
+      return preparePerkSelection(state, command, context);
     case 'Observe':
       return context.facts.find((f) => f.id === command.payload.observationId)?.kind ===
         'HEIR_NOTIFICATION'
@@ -251,6 +258,7 @@ export function projectCompanyLifecycle(state: LifecycleState, observerCompanyId
         location: { ...p.presence.location },
         assignment: p.presence.assignment,
         fieldPartyId: p.presence.fieldPartyId,
+        skills: skillLevels(p.skills),
       })),
   };
 }

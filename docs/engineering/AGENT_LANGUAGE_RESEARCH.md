@@ -1,6 +1,7 @@
 # Agent language and context: research rationale
 
-Date: 2026-09-08. Scope: the owner-requested language/context addition to
+Date: 2026-09-08; reviewed 2026-09-13.
+Scope: the owner-requested language/context addition to
 [AGENTS.md](../../AGENTS.md), not a new game specification or work package.
 AGENTS owns the operating rule; this document explains its evidence and limits.
 Load it when reviewing that rule, not as mandatory context for every coding task.
@@ -94,11 +95,11 @@ choosing the shorter version. Locale-specific prose follows the requested locale
 
 Context economy starts with avoiding needless duplication. An agent still reads
 all sources mandated by the active contract, including full Notes and dated
-Purpose amendments. It requests those records directly and optional references
-only when relevant, rather than loading unrelated records or repeated full
-bilingual versions. After reading, a compact checkpoint records source versions,
-current work, remaining requirements and evidence pointers; changed material is
-re-read on resume. A summary does not acquire source authority or prove a source
+Purpose amendments and applicable dated comments. It requests those records
+directly and optional references only when relevant, rather than loading unrelated
+records or repeated full bilingual versions. After reading, a compact checkpoint
+records source versions, current work, remaining requirements and evidence
+pointers; changed material is re-read on resume. A summary does not acquire source authority or prove a source
 was read. This workflow is an engineering application, not an experimental result
 from the cited papers.
 
@@ -119,21 +120,27 @@ repository, supplied facts, tool permissions and model settings where controllab
 Observe existing behavior tests, unauthorized actions, source/translation fidelity,
 retries and total usage rather than only the final answer length. State sample size
 and limitations; a single favorable run is not universal proof. This evaluation is
-optional process research, not a new gate or prerequisite for WP-02.4 development.
+optional process research, not a new gate or prerequisite for implementation.
 
 ## Evidence actually obtained for this change
 
-The review used the indexed primary abstracts/publication records above and
-official token-count guidance; the tiktoken README was read through GitHub.
-Direct full-page retrieval repeatedly returned service errors in this environment.
-Full-paper tables and experimental code were not independently audited, and the
-published experiments were not replicated. No per-language numeric conclusion
-beyond the explicitly attributed abstract statements is inferred.
+2026-09-08: the original review used indexed primary abstracts/publication records
+and official token-count guidance; the tiktoken README was read through GitHub.
+Direct full-page retrieval returned service errors, and local `tiktoken` was
+unavailable. These describe that review, not the current integration result.
 
-Local `tiktoken` was unavailable. The Warwrit launcher's actual target-model token
-count, equivalent RU/EN token savings and agent A/B performance are **NOT_MEASURED**.
+2026-09-13: the continuation rechecked the five primary abstracts/publication
+records above, official token-count guidance and the tiktoken README. Full-paper
+tables and experimental code were not independently audited, and the published
+experiments were not replicated. No per-language numeric conclusion beyond the
+explicitly attributed abstract statements is inferred.
+
+The Warwrit launcher's actual target-model token count and equivalent RU/EN token
+savings remain **NOT_MEASURED**; matched RU/EN agent A/B evaluation is **NOT_RUN**.
 Earlier word/Unicode-character counts are not token measurements. Structural
 Markdown/diff checks and repository CI, when reported in the PR, validate this
 documentation delivery and unchanged software invariants, not language-policy
-performance. No game mechanics, source authority, test policy, runtime dependency,
-work-package status or merge/deployment permission is changed by this rationale.
+performance. Only evidence for the exact current integration tree applies; the
+2026-09-08 CI is historical, not proof of a later main integration. No game
+mechanics, source authority, test policy, runtime dependency, work-package status
+or merge/deployment permission is changed by this rationale.

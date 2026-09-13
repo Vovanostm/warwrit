@@ -1,6 +1,7 @@
 import { beneficiaryCoveredAt, fieldCampHasWorker } from './economy-coverage.js';
 import { COMPANY_RULES } from './definitions.js';
 import { person } from './lifecycle-state.js';
+import { skillLevels } from './skill-progress.js';
 import {
   day,
   accountFor,
@@ -26,10 +27,53 @@ import type {
   FinanceChange,
   EconomyRequirement,
   QualificationNoticeEvidence,
+  ServiceAccount,
 } from './economy-types.js';
+
+/** Payroll qualification is the highest lifetime skill tier, but only from lawful knowledge. */
+function observedLifetimeQualification(
+  lifecycle: LifecycleState,
+  membershipId: string,
+): number | null {
+  const membership = lifecycle.memberships.find((entry) => entry.membershipId === membershipId);
+  requireEconomy(membership, 'INVALID_SOURCE');
+  const observed = lifecycle.knowledge.characters.find(
+    (entry) => entry.identity.characterId === membership.characterId,
+  );
+  if (!observed) return null;
+  const levels = Object.values(skillLevels(observed.skills));
+  requireEconomy(
+    levels.length > 0 &&
+      levels.every(
+        (level) => Number.isInteger(level) && level >= 0 && level <= COMPANY_RULES.maxSkillLevel,
+      ),
+    'INVALID_SOURCE',
+  );
+  return Math.max(...levels);
+}
+
+function qualificationRate(account: ServiceAccount, lifetimeLevel: number) {
+  return account.schedule
+    ? [...account.schedule.rates].reverse().find((rate) => rate.minimumLevel <= lifetimeLevel)
+    : undefined;
+}
+
+function currentScheduledRate(account: ServiceAccount): string | undefined {
+  return account.schedule
+    ? (account.schedule.notices.at(-1)?.dailyWageMilli ?? account.schedule.agreedDailyWageMilli)
+    : undefined;
+}
+
+function qualificationRaisesRate(account: ServiceAccount, lifetimeLevel: number): boolean {
+  const rate = qualificationRate(account, lifetimeLevel);
+  const current = currentScheduledRate(account);
+  requireEconomy(rate && current !== undefined, 'INVALID_SOURCE');
+  return BigInt(rate.dailyWageMilli) > BigInt(current);
+}
 
 export function recordQualification(
   finance: CompanyFinance,
+  lifecycle: LifecycleState,
   fact: QualificationNoticeEvidence,
   context: EconomyContext,
 ): CompanyFinance {
@@ -44,27 +88,24 @@ export function recordQualification(
       !account.knownDeath &&
       Number.isInteger(fact.lifetimeLevel) &&
       fact.lifetimeLevel >= 0 &&
-      fact.lifetimeLevel <= COMPANY_RULES.maxSkillLevel,
+      fact.lifetimeLevel <= COMPANY_RULES.maxSkillLevel &&
+      fact.lifetimeLevel === observedLifetimeQualification(lifecycle, fact.membershipId),
     'INVALID_SOURCE',
   );
   requireEconomy(
     schedule.notices.every(
-      (n) => n.lifetimeLevel <= fact.lifetimeLevel && n.version !== fact.noticeVersion,
+      (notice) =>
+        notice.lifetimeLevel <= fact.lifetimeLevel && notice.version !== fact.noticeVersion,
     ),
     'INVALID_SOURCE',
   );
-  const rate = [...schedule.rates].reverse().find((r) => r.minimumLevel <= fact.lifetimeLevel);
+  const rate = qualificationRate(account, fact.lifetimeLevel);
+  const currentRate = currentScheduledRate(account);
   requireEconomy(
-    rate &&
-      BigInt(rate.dailyWageMilli) >=
-        BigInt(schedule.notices.at(-1)?.dailyWageMilli ?? schedule.agreedDailyWageMilli),
+    rate && currentRate !== undefined && BigInt(rate.dailyWageMilli) >= BigInt(currentRate),
     'INVALID_SOURCE',
   );
-  if (
-    rate.dailyWageMilli ===
-    (schedule.notices.at(-1)?.dailyWageMilli ?? schedule.agreedDailyWageMilli)
-  )
-    return recorded.finance;
+  if (rate.dailyWageMilli === currentRate) return recorded.finance;
   const notice = {
     sourceId: fact.sourceEventId,
     version: fact.noticeVersion,
@@ -251,13 +292,21 @@ export function recordFinancialDeath(
 /** Only the actual lifecycle disclosure authorizes changing the financial observation. */
 export function observeFinance(
   finance: CompanyFinance,
+  previousLifecycle: LifecycleState,
   lifecycle: LifecycleState,
   command: CommandOf<'Observe'>,
   context: EconomyContext,
 ): FinanceChange {
   const fact = context.facts.find((f) => f.id === command.payload.observationId);
-  if (fact?.kind !== 'COMPANY_OBSERVATION') return { finance, requirements: [], allocations: [] };
+  const qualificationFacts = context.financeFacts.filter(
+    (entry): entry is QualificationNoticeEvidence => entry.kind === 'QUALIFICATION_NOTICE',
+  );
+  if (fact?.kind !== 'COMPANY_OBSERVATION') {
+    requireEconomy(qualificationFacts.length === 0, 'INVALID_SOURCE');
+    return { finance, requirements: [], allocations: [] };
+  }
   if (fact.subject.kind === 'COMPANY') {
+    requireEconomy(qualificationFacts.length === 0, 'INVALID_SOURCE');
     const leader = lifecycle.knowledge.leaderId;
     return {
       finance: {
@@ -292,6 +341,7 @@ export function observeFinance(
       fact.subject.id,
   );
   const allocations: FinanceChange['allocations'][number][] = [];
+  const consumedQualificationIds = new Set<string>();
   for (let account of accounts) {
     // The outcome component must have supplied the death and the legitimate disclosure together.
     requireEconomy(
@@ -336,7 +386,38 @@ export function observeFinance(
       finance = settled.finance;
       allocations.push(...settled.allocations);
     }
+    const membership = lifecycle.memberships.find(
+      (entry) => entry.membershipId === account.membershipId,
+    );
+    if (membership?.endedAt === null && account.schedule) {
+      const lifetimeLevel = observedLifetimeQualification(lifecycle, account.membershipId);
+      const previousLevel = observedLifetimeQualification(previousLifecycle, account.membershipId);
+      if (
+        lifetimeLevel !== null &&
+        (previousLevel === null || lifetimeLevel > previousLevel) &&
+        qualificationRaisesRate(account, lifetimeLevel)
+      ) {
+        const matches = qualificationFacts.filter(
+          (entry) => entry.membershipId === account.membershipId,
+        );
+        requireEconomy(matches.length === 1, 'INVALID_SOURCE');
+        const qualification = matches[0]!;
+        requireEconomy(
+          qualification.sourceEventId === command.sourceEventId &&
+            qualification.lifetimeLevel === lifetimeLevel &&
+            qualification.noticeVersion === command.payload.observationId,
+          'INVALID_SOURCE',
+        );
+        finance = recordQualification(finance, lifecycle, qualification, context);
+        consumedQualificationIds.add(qualification.id);
+      }
+    }
   }
+  requireEconomy(
+    qualificationFacts.length === consumedQualificationIds.size &&
+      qualificationFacts.every((entry) => consumedQualificationIds.has(entry.id)),
+    'INVALID_SOURCE',
+  );
   if (character.presence.availability === 'DEAD')
     finance = {
       ...finance,
