@@ -17,7 +17,7 @@ WP-01: done
 WP-02: in-progress
 M1: incomplete
 main: 806426911b9397ebadd9191275c371ebb8c978aa
-main_post_merge_verification: pending-run-34760836785
+main_post_merge_verification: passed-run-34760836785
 C_flow: C04b-merged-pr61; C05-next
 E_flow: E01-E02-merged; E03-next
 G_flow: G01-G03-merged; G04-next; G10-after-G09+C08+E05
