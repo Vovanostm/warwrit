@@ -17,6 +17,44 @@ reopen superseded interview blockers.
 
 Implementation, tests and PR updates are authorized. Merge, auto-merge, deployment and paid provisioning require separate permission. One owner plus ChatGPT agents; one writer per slice. Server target: Yandex Cloud 2 cores / 4 GB; available client: MacBook + Chrome. These are constraints, not measured capacity.
 
+## Language and context budget
+
+Default to concise English for new or revised developer-facing prompts, skills
+and technical handoffs; use Russian for owner-facing explanations and reports
+unless the task explicitly requests another language. This is a working default,
+not a claim that English always yields better code. Use the required language for
+localization, language-sensitive tests and original game/narrative content.
+
+Preserve authoritative decisions and quotations in their original language,
+including names, identifiers, API terms and exact test literals. A translation is
+a source-linked derivative, not a second editable canon. Check negation, scope,
+permissions, quantities and units for semantic equivalence. Do not bulk-translate
+historical sources, transliterate them, or alter Unicode fixtures to save tokens.
+
+Use one active working version, not repeated full RU/EN copies. Retrieve scoped
+records and relevant fields; read mandatory contracts, Notes/Purpose and named
+sources fully. Do not replace required reading with a summary or silently truncate
+it. Keep optional detail in linked references loaded when needed. After initial
+reading, reuse source/version pointers and a concise progress checkpoint; check
+for changes on resume rather than repeatedly dumping unchanged documents or the
+entire memory bank. Keep critical constraints explicit; clarity outranks brevity.
+
+Measure token savings with the target model's documented tokenizer or supported
+input-count API, recording model/encoding version, text hashes and count scope.
+Words, characters, UTF-8 bytes and English character-per-token heuristics are not
+exact counts. Distinguish plain-text counts from full requests containing message
+framing, tools and retrieved sources; reserve room for output under actual model
+limits. When exact counting is unavailable, report `NOT_MEASURED`; label proxy
+counts, never present them as the target model's usage. Do not upload private
+sources to public counters or add a tokenizer to game runtime dependencies.
+
+Token efficiency and task correctness are separate evidence. Do not claim a fixed
+Russian/English ratio or better agent performance without matched task-level
+measurement, including tests, source fidelity and permission compliance. Such
+evaluation is not a new work-package gate. See the on-demand
+[research rationale](docs/engineering/AGENT_LANGUAGE_RESEARCH.md); existing scope,
+source authority and verification requirements remain unchanged.
+
 ## Simple design
 
 Use intention-revealing names, cohesive functions and modules with one reason to change. Separate policy from transport/storage and prefer explicit data over hidden side effects. Share a rule when it is genuinely the same rule; do not compress code into clever expressions merely to reduce lines.
