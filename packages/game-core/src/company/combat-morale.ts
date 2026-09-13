@@ -21,10 +21,8 @@ export interface CombatMoraleSnapshot {
   readonly leader: LeaderGroupPerkEffectSnapshot;
   readonly overflowModifier: number;
 }
-export interface CharacterCombatMoraleProjection extends Omit<
-  CharacterCombatProjection,
-  'schemaVersion' | 'attributes' | 'current'
-> {
+export interface CharacterCombatMoraleProjection
+  extends Omit<CharacterCombatProjection, 'schemaVersion' | 'attributes' | 'current'> {
   readonly schemaVersion: 2;
   readonly attributes: CharacterCombatProjection['attributes'] & { readonly morale: number };
   readonly current: CharacterCombatProjection['current'] & { readonly morale: number };
@@ -40,8 +38,7 @@ export function projectCharacterCombatWithMorale(
   const vitals = physicalVitals(root.physical, characterId);
   const persistentBefore = vitals.morale;
   requirePhysical(
-    natural(0, PHYSICAL_RULES.maximumMorale).read(persistentBefore) &&
-      isEntityId(vitals.sourceId),
+    natural(0, PHYSICAL_RULES.maximumMorale).read(persistentBefore) && isEntityId(vitals.sourceId),
     'INVALID_STATE',
   );
   const partyId = person(root.lifecycle, characterId).presence.fieldPartyId;
