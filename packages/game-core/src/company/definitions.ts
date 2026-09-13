@@ -555,6 +555,7 @@ export const COMPANY_RULES = freezeRegistry({
     farewellServiceDaysPerExtraDay: 30,
     foodUnitsPerPersonDay: 1,
   },
+  socialMemoryDecayTicks: '30000',
   heirBypass: { respectDelta: -6, rivalryDelta: 8, respectAtMost: 20, rivalryAtLeast: 60 },
 });
 

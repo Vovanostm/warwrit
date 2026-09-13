@@ -41,3 +41,4 @@ export { admitPractice } from './practice-admission.js';
 export type { PracticeContext, PracticeEvidence } from './practice-admission.js';
 export * from './perk-effects.js';
 export * from './social.js';
+export * from './social-bindings.js';
