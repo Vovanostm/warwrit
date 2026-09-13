@@ -4,8 +4,8 @@
 - As of: 2026-09-13
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
-- Main checkpoint: C04a [PR #60](https://github.com/Vovanostm/warwrit/pull/60) merged as `28bc1703e4261f0a0c078a8774e9b204d6217143`; post-merge CI `34706141062` passed
-- Current product delivery: C04b [PR #61](https://github.com/Vovanostm/warwrit/pull/61) is **OPEN / READY FOR REVIEW / UNMERGED**, with passing exact-tree CI and two author self-review passes
+- Main checkpoint: C04b [PR #61](https://github.com/Vovanostm/warwrit/pull/61) merged as `806426911b9397ebadd9191275c371ebb8c978aa`
+- Current product fronts: C05 after merged C04b; E03 after merged E02; G04 after merged G03
 
 ## Current state
 
@@ -16,9 +16,9 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-main: 28bc1703e4261f0a0c078a8774e9b204d6217143
-main_post_merge_verification: passed-run-34706141062
-C_flow: C04b-open-ready-for-review-pr61; C05-after-C04b-merge
+main: 806426911b9397ebadd9191275c371ebb8c978aa
+main_post_merge_verification: pending-run-34760836785
+C_flow: C04b-merged-pr61; C05-next
 E_flow: E01-E02-merged; E03-next
 G_flow: G01-G03-merged; G04-next; G10-after-G09+C08+E05
 H_flow: after-required-domain-activation-and-G10
@@ -49,7 +49,7 @@ merged as `5d28edc1e4c9223ad3771745eab39bebe7b2d66e`, tree `80d58db2af63198108dd
 B03 [PR #46](https://github.com/Vovanostm/warwrit/pull/46) and B04 [PR #50](https://github.com/Vovanostm/warwrit/pull/50)
 are merged; B04 is the completed care-practice successor, not a future pointer. F02 [PR #35](https://github.com/Vovanostm/warwrit/pull/35)
 is also merged; it is no longer blocked by a missing narrow service contract.
-C01/C03/C02/C04a are merged through PRs #29/#56/#58/#60. C04 is not complete until C04b PR #61 merges.
+C01/C03/C02/C04a/C04b are merged through PRs #29/#56/#58/#60/#61; C05 is the next C implementation slice.
 E01 [PR #32](https://github.com/Vovanostm/warwrit/pull/32) and E02 [PR #37](https://github.com/Vovanostm/warwrit/pull/37)
 are merged. G01 [PR #31](https://github.com/Vovanostm/warwrit/pull/31), G02 [PR #41](https://github.com/Vovanostm/warwrit/pull/41)
 and G03 [PR #55](https://github.com/Vovanostm/warwrit/pull/55) are merged.
@@ -103,7 +103,7 @@ MERGED WP-02.1 -> WP-02.2 -> WP-02.3 -> WP-02.4
 The route is a dependency graph, not a single serial cursor. Current verified fronts are:
 
 ```text
-C: C04b PR61 OPEN / READY FOR REVIEW / UNMERGED -> C05 -> C06 -> C07 -> C08
+C: C04b MERGED -> C05 -> C06 -> C07 -> C08
 E: E01 + E02 MERGED -> E03 -> E04 -> E05
 G: G01 + G02 + G03 MERGED -> G04 -> G05 -> G06 -> G07 -> G08 -> G09 -> G10
 ```
