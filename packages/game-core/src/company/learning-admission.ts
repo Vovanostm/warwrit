@@ -109,5 +109,8 @@ export function admitLearningTask(
     requireEconomy(study === undefined, 'INVALID_ARGUMENT');
   }
   // Nothing escapes if the final lifecycle admission rejects the detached copy candidate.
-  return { ...startLearningTask(state, { taskId, command, quote, inputs, ...binding }), studyAccess };
+  return {
+    ...startLearningTask(state, { taskId, command, quote, inputs, ...binding }),
+    studyAccess,
+  };
 }
