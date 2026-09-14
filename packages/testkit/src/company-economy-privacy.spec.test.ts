@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   canonicalJson,
+  bindFinancialSocialConsequences,
+  createSocialState,
   prepareCompanyEconomy,
   projectCompanyEconomy,
   projectEconomyRejection,
@@ -124,6 +126,9 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
           const retry = prepared(prepareCompanyEconomy(world, cmd, context(world, cmd)));
           expect(retry.replayed).toBe(true);
           expect(retry.next).toBe(world);
+          expect(
+            bindFinancialSocialConsequences(createSocialState(), retry, []).social.chronicle,
+          ).toEqual([]);
         }
       }
       expect(view(hidden)).toEqual(view(alive));
