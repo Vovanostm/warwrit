@@ -1,11 +1,12 @@
 # Warwrit current delivery plan
 
 - Status: operational mirror for coding agents
-- As of: 2026-09-13
+- As of: 2026-09-14
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
-- Main checkpoint: C04b [PR #61](https://github.com/Vovanostm/warwrit/pull/61) merged as `806426911b9397ebadd9191275c371ebb8c978aa`
-- Current product fronts: C05 after merged C04b; E03 after merged E02; G04 after merged G03
+- Current execution cards: [WARWRIT-PARALLEL-SESSIONS-v2](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/reccRe24oWIFAbiXo), supporting delivery guidance, not game canon
+- Main checkpoint: E03 [PR #67](https://github.com/Vovanostm/warwrit/pull/67) merged as `3c2c114a46547f06c443fb9fab55d70c4ea9d2ef`
+- Current product fronts: C05 after merged C04b; E04 after merged E03; G05 after merged G04
 
 ## Current state
 
@@ -16,15 +17,15 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-main: 806426911b9397ebadd9191275c371ebb8c978aa
-main_post_merge_verification: passed-run-34760836785
+main: 3c2c114a46547f06c443fb9fab55d70c4ea9d2ef
+main_post_merge_verification: passed-run-34765207690
 C_flow: C04b-merged-pr61; C05-next
-E_flow: E01-E02-merged; E03-next
-G_flow: G01-G03-merged; G04-next; G10-after-G09+C08+E05
+E_flow: E01-E03-merged; E04-next
+G_flow: G01-G04-merged; G05-next; G10-after-G09+C08+E05
 H_flow: after-required-domain-activation-and-G10
 I_flow: after-H-durability-executor-path
 F02: merged-pr35
-PR17: separate-docs-open-green-unmerged
+PR17: separate-docs-merged
 renderer: issue6-open-Q-T03-evidence-pending
 merge_authorized: false
 deploy_authorized: false
@@ -37,6 +38,8 @@ Status words are not interchangeable: **OPEN** means not merged; **READY FOR REV
 current PR has review/verification evidence suitable for a merge decision; **MERGED** means GitHub
 records the merge on `main`; **post-merge verification** means a subsequent `main` CI run passed.
 A predecessor PR's green CI is not post-merge evidence for a later main revision.
+The checkpoint above passed main-push [CI run 34765207690](https://github.com/Vovanostm/warwrit/actions/runs/34765207690).
+That existing run verifies the integrated main checkpoint, not this later OPS2 documentation change.
 
 WP-02.1–02.4 and R00 are merged. [PR #18](https://github.com/Vovanostm/warwrit/pull/18)
 merged R00 as `321640fb737ed22db96fb5525b4b4257b01397ab`,
@@ -50,11 +53,15 @@ B03 [PR #46](https://github.com/Vovanostm/warwrit/pull/46) and B04 [PR #50](http
 are merged; B04 is the completed care-practice successor, not a future pointer. F02 [PR #35](https://github.com/Vovanostm/warwrit/pull/35)
 is also merged; it is no longer blocked by a missing narrow service contract.
 C01/C03/C02/C04a/C04b are merged through PRs #29/#56/#58/#60/#61; C05 is the next C implementation slice.
-E01 [PR #32](https://github.com/Vovanostm/warwrit/pull/32) and E02 [PR #37](https://github.com/Vovanostm/warwrit/pull/37)
-are merged. G01 [PR #31](https://github.com/Vovanostm/warwrit/pull/31), G02 [PR #41](https://github.com/Vovanostm/warwrit/pull/41)
-and G03 [PR #55](https://github.com/Vovanostm/warwrit/pull/55) are merged.
-[PR #17](https://github.com/Vovanostm/warwrit/pull/17) remains a separate documentation-only language/context change,
-currently green and OPEN / UNMERGED; it does not change WP-02 product status or merge authority.
+E01 [PR #32](https://github.com/Vovanostm/warwrit/pull/32), E02 [PR #37](https://github.com/Vovanostm/warwrit/pull/37)
+and E03 [PR #67](https://github.com/Vovanostm/warwrit/pull/67) are merged; E04 is next.
+G01 [PR #31](https://github.com/Vovanostm/warwrit/pull/31), G02 [PR #41](https://github.com/Vovanostm/warwrit/pull/41),
+G03 [PR #55](https://github.com/Vovanostm/warwrit/pull/55) and G04 [PR #65](https://github.com/Vovanostm/warwrit/pull/65)
+are merged; G05 is next.
+[PR #17](https://github.com/Vovanostm/warwrit/pull/17) is MERGED as a separate documentation-only language/context change;
+it does not change WP-02 product status or merge authority.
+The earlier OPS [PR #62](https://github.com/Vovanostm/warwrit/pull/62) is merged; duplicate [PR #63](https://github.com/Vovanostm/warwrit/pull/63)
+is closed without merge. Do not repeat PR #62 or reopen PR #63.
 Renderer [issue #6](https://github.com/Vovanostm/warwrit/issues/6) remains the separate Q-T03 Babylon.js-vs-PlayCanvas evidence spike for later WP-04.
 No successor merge, auto-merge, deployment or purchases are authorized by this plan.
 
@@ -104,14 +111,17 @@ The route is a dependency graph, not a single serial cursor. Current verified fr
 
 ```text
 C: C04b MERGED -> C05 -> C06 -> C07 -> C08
-E: E01 + E02 MERGED -> E03 -> E04 -> E05
-G: G01 + G02 + G03 MERGED -> G04 -> G05 -> G06 -> G07 -> G08 -> G09 -> G10
+E: E01 + E02 + E03 MERGED -> E04 -> E05
+G: G01 + G02 + G03 + G04 MERGED -> G05 -> G06 -> G07 -> G08 -> G09 -> G10
 ```
 
 G10 is the combat activation point and requires G09 plus the completed C08 and E05 paths.
 H durable persistence/execution follows the required completed domain paths and G10; I acceptance
 follows H rather than substituting for H's transaction/race/crash evidence. Refine distant G/H tasks
 against real predecessor APIs instead of assuming the original sketches remain exact.
+C08 opens D01 -> D02 (B01 is merged); E05 opens F01. H01-H08 lead to I01;
+I02 additionally requires F01, D02 and the already merged F02/B04.
+The current remainder is 25 original WP-02 responsibilities, not a promised PR count or game-completion percentage.
 
 One writer and one small reviewable PR per task. `CURRENT_PLAN.md` is maintained by one delivery
 coordinator; parallel implementation sessions record their own PR/Airtable/Empirical results and do
