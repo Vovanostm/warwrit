@@ -5,8 +5,8 @@
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Active route: [WP02-SMALL-STEPS-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), parent [#8](https://github.com/Vovanostm/warwrit/issues/8)
 - Current execution cards: [WARWRIT-PARALLEL-SESSIONS-v2](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/reccRe24oWIFAbiXo), supporting delivery guidance, not game canon
-- Main checkpoint: E03 [PR #67](https://github.com/Vovanostm/warwrit/pull/67) merged as `3c2c114a46547f06c443fb9fab55d70c4ea9d2ef`
-- Current product fronts: C05 after merged C04b; E04 after merged E03; G05 after merged G04
+- Main checkpoint: E04a [PR #74](https://github.com/Vovanostm/warwrit/pull/74) merged as `6a54bbafd212af6dad6744cb87ffec33fd3b7708`; full E04 remains partial
+- Current product fronts: C05 after merged C04b; E04 remainder after merged E04a; G05 after merged G04
 
 ## Current state
 
@@ -17,11 +17,11 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-main: 3c2c114a46547f06c443fb9fab55d70c4ea9d2ef
-main_post_merge_verification: passed-run-34765207690
-C_flow: C04b-merged-pr61; C05-next
-E_flow: E01-E03-merged; E04-next
-G_flow: G01-G04-merged; G05-next; G10-after-G09+C08+E05
+main: 6a54bbafd212af6dad6744cb87ffec33fd3b7708
+main_post_merge_verification: passed-run-34875753751
+C_flow: C04b-merged-pr61; C05-in-progress-issue71; prerequisite-pr73-unmerged
+E_flow: E01-E03-merged; E04a-merged-pr74; E04-partial-issue69
+G_flow: G01-G04-merged; G05-pr72-unmerged; G10-after-G09+C08+E05
 H_flow: after-required-domain-activation-and-G10
 I_flow: after-H-durability-executor-path
 F02: merged-pr35
@@ -38,7 +38,7 @@ Status words are not interchangeable: **OPEN** means not merged; **READY FOR REV
 current PR has review/verification evidence suitable for a merge decision; **MERGED** means GitHub
 records the merge on `main`; **post-merge verification** means a subsequent `main` CI run passed.
 A predecessor PR's green CI is not post-merge evidence for a later main revision.
-The checkpoint above passed main-push [CI run 34765207690](https://github.com/Vovanostm/warwrit/actions/runs/34765207690).
+The checkpoint above passed main-push [CI run 34875753751](https://github.com/Vovanostm/warwrit/actions/runs/34875753751).
 That existing run verifies the integrated main checkpoint, not this later OPS2 documentation change.
 
 WP-02.1–02.4 and R00 are merged. [PR #18](https://github.com/Vovanostm/warwrit/pull/18)
@@ -52,12 +52,16 @@ merged as `5d28edc1e4c9223ad3771745eab39bebe7b2d66e`, tree `80d58db2af63198108dd
 B03 [PR #46](https://github.com/Vovanostm/warwrit/pull/46) and B04 [PR #50](https://github.com/Vovanostm/warwrit/pull/50)
 are merged; B04 is the completed care-practice successor, not a future pointer. F02 [PR #35](https://github.com/Vovanostm/warwrit/pull/35)
 is also merged; it is no longer blocked by a missing narrow service contract.
-C01/C03/C02/C04a/C04b are merged through PRs #29/#56/#58/#60/#61; C05 is the next C implementation slice.
+C01/C03/C02/C04a/C04b are merged through PRs #29/#56/#58/#60/#61; C05 is the active C slice.
+Existing [PR #73](https://github.com/Vovanostm/warwrit/pull/73) is an unmerged historical start-input prerequisite;
+full C05 settlement remains open in [issue #71](https://github.com/Vovanostm/warwrit/issues/71), not C06-ready.
 E01 [PR #32](https://github.com/Vovanostm/warwrit/pull/32), E02 [PR #37](https://github.com/Vovanostm/warwrit/pull/37)
-and E03 [PR #67](https://github.com/Vovanostm/warwrit/pull/67) are merged; E04 is next.
+and E03 [PR #67](https://github.com/Vovanostm/warwrit/pull/67) are merged.
+E04a [PR #74](https://github.com/Vovanostm/warwrit/pull/74) is merged, but E04 remains partial in [issue #69](https://github.com/Vovanostm/warwrit/issues/69):
+exact warning/farewell contexts and causal composition remain, plus the unresolved no-farewell fact/notification/cutoff policy. Do not advance to E05.
 G01 [PR #31](https://github.com/Vovanostm/warwrit/pull/31), G02 [PR #41](https://github.com/Vovanostm/warwrit/pull/41),
 G03 [PR #55](https://github.com/Vovanostm/warwrit/pull/55) and G04 [PR #65](https://github.com/Vovanostm/warwrit/pull/65)
-are merged; G05 is next.
+are merged; continue G05 in existing unmerged [PR #72](https://github.com/Vovanostm/warwrit/pull/72), not a duplicate. G06 waits for actual G05 merge.
 [PR #17](https://github.com/Vovanostm/warwrit/pull/17) is MERGED as a separate documentation-only language/context change;
 it does not change WP-02 product status or merge authority.
 The earlier OPS [PR #62](https://github.com/Vovanostm/warwrit/pull/62) is merged; duplicate [PR #63](https://github.com/Vovanostm/warwrit/pull/63)
@@ -93,8 +97,9 @@ Paths below are under `packages/game-core/src/company/`. Read actual consumers b
 - **Binding (B/X, planned G):** immutable tactical snapshot and provenance, not another persistent Character, item or HP store; preserve V1 history.
 - **Composition/persistence (C/B/X):** [prepareCompanyEconomy](../../packages/game-core/src/company/economy.ts) currently prepares one lifecycle+finance+physical draft. Extend that composition, not independent child commits; H adds one atomic snapshot/audit/receipt transaction and post-commit publication.
 
-`PREPARED` is not aggregate `Accepted` or durable commit. `INFORMED_SOCIAL_CONTRIBUTION`
-is still residual. Actual and known snapshots intentionally differ; do not collapse the
+`PREPARED` is not aggregate `Accepted` or durable commit. E04a consumes supported
+`INFORMED_SOCIAL_CONTRIBUTION` requirements internally; full E04 context composition and E05
+public disclosure remain unfinished. Actual and known snapshots intentionally differ; do not collapse the
 privacy boundary for DRY. Independent test expectations are not a second production owner.
 
 ## Delivery sequence and activation gates
@@ -111,7 +116,7 @@ The route is a dependency graph, not a single serial cursor. Current verified fr
 
 ```text
 C: C04b MERGED -> C05 -> C06 -> C07 -> C08
-E: E01 + E02 + E03 MERGED -> E04 -> E05
+E: E01 + E02 + E03 MERGED -> E04 (E04a MERGED; remainder #69) -> E05
 G: G01 + G02 + G03 + G04 MERGED -> G05 -> G06 -> G07 -> G08 -> G09 -> G10
 ```
 
