@@ -55,6 +55,7 @@ function company(prefix: string, rates: readonly bigint[]): EncounterCompanySour
               : (['MAIN_HAND'] as const);
       root = addItem(root, {
         ...item(`${id}-${definition}`, definition, owner, pack, 1, 5000),
+        ...(definition === 'padded-coat' ? { currentCondition: 20, maximumCondition: 40 } : {}),
         equipped: { characterId: id, slots },
       });
     }
@@ -140,6 +141,7 @@ describe('G05 — whole-candidate real participant binding', () => {
     expect(leader.projection.morale.persistentBefore).toBe(98);
     expect(leader.projection.morale.actualInitialTactical).toBe(100);
     const wounded = binding.participants[1]!;
+    expect(wounded.vitals.maximumHealth).toBe(100);
     expect(wounded.projection.conditionIds).toEqual(['old-a-worker-0-0']);
     expect(binding.initial.state.initiativeOrder.at(-1)).toBe(wounded.unitId);
     expect(binding.initial.state.units.find((u) => u.id === wounded.unitId)).toMatchObject({

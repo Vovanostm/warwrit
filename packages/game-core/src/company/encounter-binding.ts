@@ -9,6 +9,7 @@ import {
   itemDefinition,
   ownPhysical,
   physicalContainer,
+  physicalVitals,
   requirePhysical,
   validatePhysicalState,
 } from './physical-state.js';
@@ -134,7 +135,6 @@ export function prepareEncounterBinding(
           slots.length === expected.length &&
             new Set(slots).size === slots.length &&
             expected.every((slot) => slot !== undefined && slots.some((s) => s === slot)) &&
-            item.containerId !== null &&
             sameLocation(container.location, party.location),
           'INVALID_STATE',
         );
@@ -148,8 +148,9 @@ export function prepareEncounterBinding(
         sideId: entry.sideId,
         position: placement.position,
         projection,
+        vitals: physicalVitals(root.physical, characterId),
         equipment: Object.freeze(equipment.toSorted((a, b) => (a.itemId < b.itemId ? -1 : 1))),
-      };
+      } as const;
     });
   });
   requirePhysical(usedCompanies.size === companies.size, 'INVALID_SOURCE');
