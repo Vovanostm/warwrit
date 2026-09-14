@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  COMPANY_CATALOGUE,
   ENCOUNTER_BINDING_VERSION,
   M1_DOMAIN_BRIDGE_RULESET_ID,
   battleId,
@@ -11,11 +12,7 @@ import {
   sideId,
   unitId,
 } from '@warwrit/game-core';
-import type {
-  EncounterCompanySource,
-  EncounterPositionEvidence,
-  FrozenEncounterBinding,
-} from '@warwrit/game-core';
+import type { EncounterCompanySource, EncounterPositionEvidence } from '@warwrit/game-core';
 import { command, context, economy, place } from './company-economy-fixture.js';
 import {
   addContainer,
@@ -45,14 +42,8 @@ function company(prefix: string, rates: readonly bigint[]): EncounterCompanySour
     root = addContainer(root, container(pack, owner, 30000, owner), false);
     const weapons = wounded ? ['spear'] : ['sword', 'shield'];
     for (const definition of [...weapons, 'padded-coat']) {
-      const slots =
-        definition === 'padded-coat'
-          ? (['BODY'] as const)
-          : definition === 'shield'
-            ? (['OFF_HAND'] as const)
-            : definition === 'spear'
-              ? (['MAIN_HAND', 'OFF_HAND'] as const)
-              : (['MAIN_HAND'] as const);
+      const gear = COMPANY_CATALOGUE.items.find((entry) => entry.id === definition)!;
+      const slots = gear.hands === 2 ? (['MAIN_HAND', 'OFF_HAND'] as const) : [gear.slot!];
       root = addItem(root, {
         ...item(`${id}-${definition}`, definition, owner, pack, 1, 5000),
         ...(definition === 'padded-coat' ? { currentCondition: 20, maximumCondition: 40 } : {}),
@@ -157,7 +148,7 @@ describe('G05 — whole-candidate real participant binding', () => {
     Reflect.set(sources[0]!.root.lifecycle.characters[0]!, 'perks', []);
     Reflect.set(sources[0]!.root.physical.items.at(-1)!, 'equipped', null);
     expect(JSON.stringify(binding)).toBe(serialized);
-    const reloaded = JSON.parse(serialized) as FrozenEncounterBinding;
+    const reloaded = JSON.parse(serialized) as typeof binding;
     const replay = replayCombat({ schemaVersion: 2, setup: reloaded.setup, commands: [] });
     expect(canonicalCombatState(replay.state)).toBe(canonicalCombatState(binding.initial.state));
   });
@@ -201,6 +192,15 @@ describe('G05 — whole-candidate real participant binding', () => {
     const prepare = () => prepareEncounterBinding(f.sources, f.request, f.evidence);
     expect(prepare).toThrow('INCOMPATIBLE_ACTIVITY');
     expect(canonicalJson(f)).toBe(before);
+  });
+  it('rejects an immobile actual member rather than creating a mobile V2 unit', () => {
+    const f = fixture();
+    const loaded = withLoadedConditions(f.root, { 'a-worker-0': ['critical-bleed'] }, 'critical');
+    f.sources[0] = { ...f.sources[0]!, root: { ...loaded, physical: loaded.physical! } };
+    const before = canonicalJson(f.sources);
+    const prepare = () => prepareEncounterBinding(f.sources, f.request, f.evidence);
+    expect(prepare).toThrow('INCOMPATIBLE_ACTIVITY');
+    expect(canonicalJson(f.sources)).toBe(before);
   });
   it('does not generate an opponent to satisfy the V2 minimum', () => {
     const f = fixture();
