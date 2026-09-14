@@ -29,7 +29,11 @@ const fraction = (n: bigint | number, d: bigint | number) => ({
   denominator: String(d),
 });
 const neutral = { aptitudeBps: 10000, challengeBps: 10000, outcomeBps: 10000 };
-const key = { characterId: 'leader', workId: 'wound-care-basics', sectionId: 'wound-care-basics-1' };
+const key = {
+  characterId: 'leader',
+  workId: 'wound-care-basics',
+  sectionId: 'wound-care-basics-1',
+};
 const work = COMPANY_CATALOGUE.works.find((entry) => entry.id === key.workId)!;
 const fullXp = xpToMilliXp(work.finiteXp);
 function admitted() {
@@ -174,7 +178,9 @@ describe('C05 numerical owners — exact fractional study and XP', () => {
       expect(() => creditProgression({ milliXp: '0', carry: '0' }, value, neutral)).toThrow();
     }
     expect(() => readStudySectionProgress({ ...section, learnedCarry: fraction(9, 9) })).toThrow();
-    expect(() => readStudySectionProgress({ ...section, learnedTicks: work.durationTicks })).toThrow();
+    expect(() =>
+      readStudySectionProgress({ ...section, learnedTicks: work.durationTicks }),
+    ).toThrow();
     const other = { ...key, characterId: 'stranger' };
     expect(() => advanceStudySectionFraction(section, other, fraction(1, 9))).toThrow(
       'another learner',
