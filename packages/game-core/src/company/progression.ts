@@ -1,5 +1,7 @@
 import { COMPANY_RULES } from './definitions.js';
-import { freezeRegistry, natural, object, snapshotJson, unsigned } from './input.js';
+import { freezeRegistry, natural, object, optional, snapshotJson, unsigned } from './input.js';
+import { exactFraction, readExactFraction } from './exact-fraction.js';
+import type { ExactFraction } from './exact-fraction.js';
 import type { ValueOf } from './input.js';
 
 /** Missing numerical parameters from Learning/Definitions; catalogue XP remains in definitions. */
@@ -11,11 +13,16 @@ export const PROGRESSION_RULES = freezeRegistry({
   outcomeBps: { success: 10000, meaningfulFailure: 2500 },
 });
 const CREDIT_DENOMINATOR = 10000n ** 3n;
-const amountInput = object({ milliXp: unsigned, carry: unsigned });
+const amountInput = object({
+  milliXp: unsigned,
+  carry: unsigned,
+  carryDenominator: optional(unsigned),
+});
 export const progressionAmountInput = Object.freeze({
   ...amountInput,
   read: (value: unknown): value is ProgressionAmount =>
-    amountInput.read(value) && BigInt(value.carry) < CREDIT_DENOMINATOR,
+    amountInput.read(value) &&
+    BigInt(value.carry) < BigInt(value.carryDenominator ?? CREDIT_DENOMINATOR),
 });
 const coefficientsInput = object({
   aptitudeBps: natural(1),
@@ -25,7 +32,7 @@ const coefficientsInput = object({
   ),
   outcomeBps: natural(0, PROGRESSION_RULES.outcomeBps.success),
 });
-/** A numeric accumulator, not Character state. carry is a numerator over 10^12 milliXP. */
+/** Absent carryDenominator still means exactly 10^12; old stored amounts are not reinterpreted. */
 export type ProgressionAmount = ValueOf<typeof amountInput>;
 export type ProgressionCoefficients = ValueOf<typeof coefficientsInput>;
 
@@ -60,23 +67,35 @@ export function progressionChallengeBps(taskChallenge: number, levelAtActionStar
 /** Arithmetic only: the caller must separately admit factual quantity, method and source (A03). */
 export function creditProgression(
   previous: ProgressionAmount,
-  baseMilliXp: string,
+  baseMilliXp: string | ExactFraction,
   frozenCoefficients: ProgressionCoefficients,
 ): ProgressionAmount {
   const amount = snapshotJson(previous);
   const coefficients = snapshotJson(frozenCoefficients);
   if (!progressionAmountInput.read(amount) || !coefficientsInput.read(coefficients))
     throw new RangeError('Invalid progression amount or coefficients');
-  const carry = BigInt(amount.carry);
+  const base = readExactFraction(
+    typeof baseMilliXp === 'string' ? { numerator: baseMilliXp, denominator: '1' } : baseMilliXp,
+  );
+  const previousDenominator = BigInt(amount.carryDenominator ?? CREDIT_DENOMINATOR);
+  const creditDenominator = BigInt(base.denominator) * CREDIT_DENOMINATOR;
+  const denominator = previousDenominator * creditDenominator;
   const numerator =
-    BigInt(exact(baseMilliXp)) *
+    BigInt(base.numerator) *
       BigInt(coefficients.aptitudeBps) *
       BigInt(coefficients.challengeBps) *
-      BigInt(coefficients.outcomeBps) +
-    carry;
+      BigInt(coefficients.outcomeBps) *
+      previousDenominator +
+    BigInt(amount.carry) * creditDenominator;
+  const remainder = exactFraction(numerator % denominator, denominator);
+  const remainderDenominator = BigInt(remainder.denominator);
+  const legacyRepresentable = CREDIT_DENOMINATOR % remainderDenominator === 0n;
   return Object.freeze({
-    milliXp: exact((BigInt(amount.milliXp) + numerator / CREDIT_DENOMINATOR).toString()),
-    carry: (numerator % CREDIT_DENOMINATOR).toString(),
+    milliXp: exact((BigInt(amount.milliXp) + numerator / denominator).toString()),
+    carry: legacyRepresentable
+      ? (BigInt(remainder.numerator) * (CREDIT_DENOMINATOR / remainderDenominator)).toString()
+      : remainder.numerator,
+    ...(legacyRepresentable ? {} : { carryDenominator: remainder.denominator }),
   });
 }
 
