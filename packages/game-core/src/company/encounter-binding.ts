@@ -2,7 +2,7 @@ import { startBattleV2 } from '../combat/runtime-v2.js';
 import type { BattleSetupV2 } from '../combat/setup-v2.js';
 import type { BattleId, Hex, SideId, UnitId } from '../combat/types.js';
 import { projectCharacterCombatWithMorale } from './combat-morale.js';
-import { sameLocation, validateLifecycleGraph } from './lifecycle-state.js';
+import { canPerform, sameLocation, validateLifecycleGraph } from './lifecycle-state.js';
 import type { AtLocation, LifecycleContext } from './lifecycle-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
 import {
@@ -116,11 +116,8 @@ export function prepareEncounterBinding(
       requirePhysical(placements.length === 1, 'INVALID_SOURCE');
       const placement = placements[0]!;
       claim(units, placement.unitId);
-      requirePhysical(
-        character.presence.availability === 'AVAILABLE' &&
-          character.presence.encounterBindingId === null,
-        'INCOMPATIBLE_ACTIVITY',
-      );
+      // V2 has no immobile profile; retain the whole party or reject the candidate.
+      requirePhysical(canPerform(character, 'travel'), 'INCOMPATIBLE_ACTIVITY');
       const projection = projectCharacterCombatWithMorale(root, characterId);
       const equipment = root.physical.items.filter(
         (item) => item.tombstone === null && item.equipped?.characterId === characterId,
