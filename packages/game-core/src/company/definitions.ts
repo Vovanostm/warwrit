@@ -556,6 +556,7 @@ export const COMPANY_RULES = freezeRegistry({
     foodUnitsPerPersonDay: 1,
   },
   socialMemoryDecayTicks: '30000',
+  wageDelayRespectDelta: -4,
   heirBypass: { respectDelta: -6, rivalryDelta: 8, respectAtMost: 20, rivalryAtLeast: 60 },
 });
 
