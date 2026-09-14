@@ -111,6 +111,7 @@ export function updateArrears(
         requirements.push({
           kind: 'INFORMED_SOCIAL_CONTRIBUTION',
           sourceId: episode.episodeId,
+          communicationSourceId: communication.sourceEventId,
           characterId: member.characterId,
           cause: 'WAGE_COMPLAINT',
         });
@@ -145,6 +146,7 @@ export function updateArrears(
         requirements.push({
           kind: 'INFORMED_SOCIAL_CONTRIBUTION',
           sourceId: episode.episodeId,
+          communicationSourceId: communication.sourceEventId,
           characterId: member.characterId,
           cause: 'FINAL_WARNING',
         });

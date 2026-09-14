@@ -394,6 +394,7 @@ export type EconomyRequirement =
     }
   | {
       readonly kind: 'INFORMED_SOCIAL_CONTRIBUTION';
+      readonly communicationSourceId?: string;
       readonly sourceId: string;
       readonly characterId: string;
       readonly cause: 'WAGE_COMPLAINT' | 'FINAL_WARNING' | 'FAREWELL';
