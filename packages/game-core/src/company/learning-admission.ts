@@ -1,6 +1,7 @@
 import { EconomyViolation, requireEconomy } from './economy-state.js';
 import { checkFreshCompanyRevision, guardCompanyCommand } from './guards.js';
 import { id, jsonObject, object, optional, snapshotJson } from './input.js';
+import { captureLearningInputs } from './learning-inputs.js';
 import { quoteLearningTask } from './learning-quote.js';
 import type { LearningQuoteContext } from './learning-quote.js';
 import { readLearningTaskState, startLearningTask } from './learning-task.js';
@@ -57,6 +58,7 @@ export function admitLearningTask(
       taskId,
       command,
       quote: previous.start.quote,
+      ...(previous.start.inputs ? { inputs: previous.start.inputs } : {}),
       ...binding,
     });
     requireEconomy('workId' in payload.goal === (study !== undefined), 'IDEMPOTENCY_CONFLICT');
@@ -86,17 +88,15 @@ export function admitLearningTask(
   );
   requireEconomy(command.campaignTick === context.atTick, 'INVALID_TIME');
   const quote = quoteLearningTask(root, command, context);
+  const sources = context.learningFacts.filter(
+    (source) => source.id === quote.sourceId && source.sourceVersion === quote.sourceVersion,
+  );
+  const source = sources[0];
+  requireEconomy(sources.length === 1 && source, 'INVALID_SOURCE');
+  const inputs = captureLearningInputs(root, command, source);
   if ('workId' in payload.goal) {
     requireEconomy(study && payload.resourceIds.includes(study.itemId), 'INVALID_SOURCE');
-    // Dereference C03's admitted source, including its section when the goal omitted one.
-    const sources = context.learningFacts.filter(
-      (source) => source.id === quote.sourceId && source.sourceVersion === quote.sourceVersion,
-    );
-    const source = sources[0];
-    requireEconomy(
-      sources.length === 1 && source?.workId !== undefined && source.sectionId !== undefined,
-      'INVALID_SOURCE',
-    );
+    requireEconomy(source.workId !== undefined && source.sectionId !== undefined, 'INVALID_SOURCE');
     studyAccess = admitStudyInterval(studyAccess, root, context, {
       ...study,
       characterId: payload.characterId,
@@ -109,5 +109,5 @@ export function admitLearningTask(
     requireEconomy(study === undefined, 'INVALID_ARGUMENT');
   }
   // Nothing escapes if the final lifecycle admission rejects the detached copy candidate.
-  return { ...startLearningTask(state, { taskId, command, quote, ...binding }), studyAccess };
+  return { ...startLearningTask(state, { taskId, command, quote, inputs, ...binding }), studyAccess };
 }

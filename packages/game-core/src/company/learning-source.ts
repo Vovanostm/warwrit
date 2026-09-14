@@ -22,6 +22,8 @@ export interface LearningSourceEvidence {
   readonly kind: 'COURSE' | 'SELF_STUDY';
   readonly methodId: 'funded-practice' | 'book-study';
   readonly skillId?: string;
+  /** Required for new course task admission, not inferred from the learner's level. */
+  readonly challengeLevel?: number;
   readonly providerId?: string;
   readonly mentorId?: string;
   readonly poolId?: string;

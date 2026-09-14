@@ -35,6 +35,7 @@ export * from './study-section.js';
 export * from './study-access.js';
 export * from './learning-source.js';
 export * from './learning-quote.js';
+export type { LearningInputs } from './learning-inputs.js';
 export * from './learning-task.js';
 export * from './learning-admission.js';
 export { admitPractice } from './practice-admission.js';

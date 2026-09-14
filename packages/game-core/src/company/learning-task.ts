@@ -14,6 +14,7 @@ import {
   unsigned,
 } from './input.js';
 import type { ValueOf } from './input.js';
+import { learningInputsInput, validateLearningInputs } from './learning-inputs.js';
 import type { LearningTaskQuote } from './learning-quote.js';
 import type { CommandOf } from './lifecycle-types.js';
 
@@ -69,6 +70,7 @@ const startInput = object({
   command: jsonObject,
   quote: quoteInput,
   studyIntervalId: optional(id),
+  inputs: optional(learningInputsInput),
 });
 const taskInput = object({
   schemaVersion: choice(1),
@@ -116,6 +118,7 @@ export function readLearningTaskState(value: unknown): LearningTaskState {
     const parsed = parseCompanyCommand(start.command);
     requireEconomy(parsed.ok && parsed.command.type === 'StartLearning', 'INVALID_STATE');
     const command = parsed.command;
+    if (start.inputs) validateLearningInputs(start.inputs, command, start.quote);
     const previousEnd = learnerEnds.get(command.payload.characterId);
     requireEconomy(
       command.actorRef.kind === 'PLAYER' &&
@@ -151,6 +154,13 @@ export function readLearningTaskState(value: unknown): LearningTaskState {
 }
 export const createLearningTaskState = (): LearningTaskState =>
   readLearningTaskState({ schemaVersion: 1, tasks: [] });
+
+/** Legacy starts remain readable/replayable, but cannot silently acquire today's inputs. */
+export function readLearningTaskInputs(task: LearningTask) {
+  const retained = readLearningTaskState({ schemaVersion: 1, tasks: [task] }).tasks[0]!;
+  if (!retained.start.inputs) throw new RangeError('LEARNING_START_INPUTS_REQUIRED');
+  return retained.start.inputs;
+}
 
 /** C04a owns an already-admitted start; C04b alone composes physical access and the quote. */
 export function startLearningTask(
