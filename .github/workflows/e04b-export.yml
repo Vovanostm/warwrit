@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
-          ref: cf47b68ff851bbc85a4f687874011fe2493e344b
+          ref: 01c875b4432559f74ae25eb48834ba86446ba4c6
           path: source
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
@@ -40,7 +40,7 @@ jobs:
           sha256sum "$RUNNER_TEMP/e04b-checkout.tar.gz"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: e04b-pinned-checkout-cf47b68
+          name: e04b-pinned-checkout-01c875b
           path: ${{ runner.temp }}/e04b-checkout.tar.gz
           if-no-files-found: error
           retention-days: 1
