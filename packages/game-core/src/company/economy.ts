@@ -1,3 +1,11 @@
+import {
+  bindFinancialSocialConsequences,
+  prepareFinancialSocialContext,
+  type FinancialSocialContext,
+  type FinancialSocialInput,
+  type FinancialSocialKnowledge,
+} from './social-finance.js';
+import { SocialViolation, type SocialState } from './social.js';
 import { projectCompanyEconomy } from './economy-view.js';
 import {
   checkFreshCompanyRevision,
@@ -203,6 +211,7 @@ export function prepareCompanyEconomy(
   state: CompanyEconomyState,
   value: unknown,
   context: PracticeEconomyContext,
+  financialSocial?: FinancialSocialContext,
 ): EconomyResult {
   const guarded = guardCompanyCommand(value, context);
   if (!guarded.ok) return { kind: 'REJECTED', state, error: guarded.error };
@@ -248,6 +257,8 @@ export function prepareCompanyEconomy(
       physicalFacts: (context.physicalFacts ?? []).map((fact) => own(fact)),
       practiceFacts: (context.practiceFacts ?? []).map((fact) => own(fact)),
     };
+    if (financialSocial)
+      context = prepareFinancialSocialContext(state, command, context, financialSocial);
     let base = materializeCompanyPhysicalState(state);
     validateEconomy(base, context);
     validatePhysicalState(base);
@@ -396,6 +407,32 @@ export function prepareCompanyEconomy(
     )
       return { kind: 'REJECTED', state, error: error.code };
     if (error instanceof RangeError) return { kind: 'REJECTED', state, error: 'INVALID_STATE' };
+    throw error;
+  }
+}
+
+/** Internal indivisible candidate; the original receipt keeps its historical requirements. */
+export function prepareCompanyFinancialSocial(
+  state: CompanyEconomyState,
+  social: SocialState,
+  value: unknown,
+  context: PracticeEconomyContext,
+  inputs: readonly FinancialSocialInput[] = [],
+  knowledge: readonly FinancialSocialKnowledge[] = [],
+) {
+  try {
+    const result = prepareCompanyEconomy(state, value, context, { social, inputs });
+    if (result.kind === 'REJECTED') return { ...result, social };
+    const bound = bindFinancialSocialConsequences(social, result, knowledge);
+    return { ...result, social: bound.social, requirements: bound.requirements };
+  } catch (error) {
+    if (error instanceof EconomyViolation || error instanceof SocialViolation)
+      return {
+        kind: 'REJECTED' as const,
+        state,
+        social,
+        error: error instanceof EconomyViolation ? error.code : ('INVALID_SOURCE' as const),
+      };
     throw error;
   }
 }

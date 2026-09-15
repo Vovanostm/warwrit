@@ -1,3 +1,4 @@
+import type { ExactRelationAxis } from './social.js';
 import type { CompanyCommand } from './commands.js';
 import type {
   AtLocation,
@@ -109,11 +110,7 @@ export interface ArrearsEpisode {
     readonly atTick: CampaignTick;
     readonly deadline: CampaignTick;
     readonly leaderId: string;
-    readonly relation: {
-      readonly friend: number;
-      readonly respect: number;
-      readonly rivalry: number;
-    };
+    readonly relation: WageCommunicationEvidence['relation'];
     readonly sourceId: string;
   };
   readonly resolvedAt: CampaignTick | null;
@@ -299,9 +296,9 @@ export interface WageCommunicationEvidence extends FinanceScope {
   readonly membershipId: string;
   readonly leaderId: string;
   readonly relation: {
-    readonly friend: number;
-    readonly respect: number;
-    readonly rivalry: number;
+    readonly friend: number | ExactRelationAxis;
+    readonly respect: number | ExactRelationAxis;
+    readonly rivalry: number | ExactRelationAxis;
   };
 }
 export interface FinancialDeathEvidence extends FinanceScope {
@@ -324,7 +321,7 @@ export interface FarewellContextEvidence extends FinanceScope {
   readonly departureIntentId: string;
   readonly membershipId: string;
   readonly leaderId: string;
-  readonly friendship: number;
+  readonly friendship: number | ExactRelationAxis;
 }
 /** Resolves a missing pool in an existing lifecycle duty requirement without inventing a purse. */
 export interface PayrollBindingEvidence extends FinanceScope {

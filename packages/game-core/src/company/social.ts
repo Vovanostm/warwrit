@@ -69,6 +69,15 @@ export interface ExactRelationAxis {
   readonly numerator: string;
   readonly denominator: string;
 }
+/** Compatible reading only: old integer observations are never rewritten. */
+export function readRelationObservation(value: unknown): ExactRelationAxis | undefined {
+  if (natural(0, 100).read(value)) return { numerator: String(value), denominator: '1' };
+  if (!object({ numerator: unsigned, denominator: unsigned }).read(value)) return undefined;
+  const n = BigInt(value.numerator),
+    d = BigInt(value.denominator);
+  return d > 0n && n <= 100n * d ? value : undefined;
+}
+
 export interface EffectiveRelation {
   readonly fromId: string;
   readonly toId: string;

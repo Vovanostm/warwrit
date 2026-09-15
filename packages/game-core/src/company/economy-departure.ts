@@ -1,3 +1,4 @@
+import { readRelationObservation } from './social.js';
 import { COMPANY_RULES } from './definitions.js';
 import { canPerform, effectiveLeaderId, person } from './lifecycle-state.js';
 import { wageAt } from './economy-accrual.js';
@@ -100,12 +101,13 @@ export function updateArrears(
       finance = recorded.finance;
       requireEconomy(
         communication.leaderId === effectiveLeaderId(lifecycle) &&
-          context.contactIds.includes(member.characterId) &&
-          Object.values(communication.relation).every(
-            (n) => Number.isInteger(n) && n >= 0 && n <= 100,
-          ),
+          context.contactIds.includes(member.characterId),
         'INVALID_SOURCE',
       );
+      const friend = readRelationObservation(communication.relation?.friend);
+      const respect = readRelationObservation(communication.relation?.respect);
+      const rivalry = readRelationObservation(communication.relation?.rivalry);
+      requireEconomy(friend && respect && rivalry, 'INVALID_SOURCE');
       if (episode.complaintAt === null) {
         episode = { ...episode, complaintAt: context.atTick };
         requirements.push({
@@ -121,14 +123,17 @@ export function updateArrears(
         at >= BigInt(episode.firstDueAt) + BigInt(COMPANY_RULES.economy.warningAfterTicks)
       ) {
         const r = communication.relation;
-        const score = r.friend + r.respect - r.rivalry;
+        const fd = BigInt(friend.denominator),
+          rd = BigInt(respect.denominator),
+          vd = BigInt(rivalry.denominator);
+        const score =
+          BigInt(friend.numerator) * rd * vd +
+          BigInt(respect.numerator) * fd * vd -
+          BigInt(rivalry.numerator) * fd * rd;
+        const threshold = BigInt(COMPANY_RULES.economy.warningRelationThreshold) * fd * rd * vd;
         const adjustment =
           BigInt(COMPANY_RULES.economy.warningRelationAdjustmentTicks) *
-          (score >= COMPANY_RULES.economy.warningRelationThreshold
-            ? 1n
-            : score <= -COMPANY_RULES.economy.warningRelationThreshold
-              ? -1n
-              : 0n);
+          (score >= threshold ? 1n : score <= -threshold ? -1n : 0n);
         let window = BigInt(COMPANY_RULES.economy.warningBaseWindowTicks) + adjustment;
         window = min(window, BigInt(COMPANY_RULES.economy.warningMaximumWindowTicks));
         if (window < BigInt(COMPANY_RULES.economy.warningMinimumWindowTicks))
@@ -287,13 +292,12 @@ export function quoteCompanyFarewell(
     'CONTACT_OR_ACCESS_REQUIRED',
   );
   const relation = financeFact(context, 'FAREWELL_CONTEXT');
+  const friendship = readRelationObservation(relation.friendship);
   requireEconomy(
     relation.membershipId === membershipId &&
       relation.leaderId === effectiveLeaderId(state.lifecycle) &&
       context.contactIds.includes(member.characterId) &&
-      Number.isInteger(relation.friendship) &&
-      relation.friendship >= 0 &&
-      relation.friendship <= 100,
+      friendship,
     'INVALID_SOURCE',
   );
   const intent = state.finance.departures.find(
@@ -307,7 +311,8 @@ export function quoteCompanyFarewell(
   const duration = BigInt(until) - BigInt(member.startedAt);
   const significant =
     duration >= BigInt(COMPANY_RULES.economy.significantServiceTicks) ||
-    relation.friendship >= COMPANY_RULES.economy.significantFriendship;
+    BigInt(friendship.numerator) >=
+      BigInt(COMPANY_RULES.economy.significantFriendship) * BigInt(friendship.denominator);
   const days = significant
     ? min(
         BigInt(COMPANY_RULES.farewellMaxDays),
@@ -353,7 +358,7 @@ export function grantFarewell(
   const destination = recipientWallet(state.finance, account.recipient, access);
   requireEconomy(destination, 'CONTACT_OR_ACCESS_REQUIRED');
   const finance = moveCash(
-    state.finance,
+    recordSource(state.finance, financeFact(context, 'FAREWELL_CONTEXT')).finance,
     poolWallet(state.finance, p.poolId).walletId,
     destination.walletId,
     amount,
