@@ -1,0 +1,48 @@
+name: E04b isolated checkout export
+
+on:
+  push:
+    branches: [workbench/e04b-local-checkout-20260915]
+    paths: [.github/workflows/e04b-export.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      COREPACK_HOME: ${{ runner.temp }}/e04b-corepack
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: cf47b68ff851bbc85a4f687874011fe2493e344b
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: source/.node-version
+      - name: Export tracked source and repository-pinned local tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+          cd source
+          pnpm install --frozen-lockfile
+          git rev-parse HEAD HEAD^{tree} > ../source-identity.txt
+          git ls-files -s > ../source-index.txt
+          cd ..
+          mkdir -p tools/bin
+          cp "$(command -v node)" tools/bin/node
+          cp -a "$COREPACK_HOME" tools/corepack
+          tar --exclude=.git -czf "$RUNNER_TEMP/e04b-checkout.tar.gz" source tools source-identity.txt source-index.txt
+          sha256sum "$RUNNER_TEMP/e04b-checkout.tar.gz"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e04b-pinned-checkout-cf47b68
+          path: ${{ runner.temp }}/e04b-checkout.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
