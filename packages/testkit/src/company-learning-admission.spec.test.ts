@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  COMPANY_CATALOGUE,
   admitLearningTask,
+  creditProgression,
   createLearningTaskState,
   createStudyAccessState,
+  initialSkillProgress,
   prepareCompanyEconomy,
   quoteLearningTask,
+  readLearningTaskInputs,
+  startLearningTask,
   stopLearningTask,
+  xpToMilliXp,
 } from '@warwrit/game-core';
 import type {
   CommandOf,
@@ -40,7 +46,12 @@ function setup(course = false, learner = 'leader', copy = 'book-1', tag = 'first
     (person) => person.identity.characterId === learner,
   )!;
   Object.assign(member, {
-    skills: { leadership: 25, scholarship: course ? 60 : 25 },
+    skills: {
+      leadership: 25,
+      scholarship: course ? 60 : 25,
+      medicine: initialSkillProgress(0, 'learning-fixture'),
+    },
+    aptitudeBySkill: { leadership: 10000, medicine: 10000 },
     perks: [course ? 'scholarship-60-b' : 'scholarship-25-a'],
   });
   const payload = {
@@ -74,6 +85,7 @@ function setup(course = false, learner = 'leader', copy = 'book-1', tag = 'first
               kind: 'COURSE',
               methodId: 'funded-practice',
               skillId: 'medicine',
+              challengeLevel: 0,
               providerId: 'provider',
               mentorId: 'provider',
               poolId: 'local',
@@ -278,5 +290,126 @@ describe('C04b — real admission composition', () => {
         kind: 'REJECTED',
         error: 'UNSUPPORTED_ACTION',
       });
+  });
+});
+
+describe('C05 prerequisite — retained calculation inputs, not elapsed settlement', () => {
+  it('separates finite book content from accelerated elapsed duration', () => {
+    const fast = run(setup()).task;
+    const slower = setup();
+    Object.assign(slower.root.lifecycle.characters[0]!, { perks: [] });
+    const slow = run(slower).task;
+    const inputs = readLearningTaskInputs(fast);
+    const work = COMPANY_CATALOGUE.works.find((entry) => entry.id === 'wound-care-basics')!;
+    expect(inputs).toMatchObject({
+      kind: 'BOOK',
+      workId: work.id,
+      workVersion: work.version,
+      sectionId: work.sectionId,
+      skillId: work.skillId,
+      durationTicks: work.durationTicks,
+      finiteMilliXp: xpToMilliXp(work.finiteXp),
+      factId: work.factId,
+    });
+    expect(readLearningTaskInputs(slow)).toEqual(inputs);
+    expect(BigInt(fast.start.quote.maxTicks)).toBeLessThan(BigInt(slow.start.quote.maxTicks));
+  });
+
+  it('feeds retained course coefficients to A01 across fractional credit and JSON reload', () => {
+    const f = setup(true);
+    const learner = f.root.lifecycle.characters[0]!;
+    Object.assign(learner.skills, { medicine: initialSkillProgress(12, 'prior-study') });
+    Object.assign(learner.aptitudeBySkill, { medicine: 10103 });
+    Object.assign(f.ctx.learningFacts[0]!, { challengeLevel: 13 });
+    const first = run(f);
+    const inputs = readLearningTaskInputs(first.task);
+    if (inputs.kind !== 'COURSE') throw new Error('Expected admitted course');
+    expect(inputs).toMatchObject({ levelAtStart: 12, challengeLevel: 13, challengeBps: 10200 });
+    const coefficients = {
+      aptitudeBps: inputs.aptitudeAtStartBps,
+      challengeBps: inputs.challengeBps,
+      outcomeBps: inputs.outcomeBps,
+    };
+    const initial = { milliXp: '0', carry: '0' };
+    const whole = creditProgression(initial, inputs.baseMilliXpPerDay, coefficients);
+    const part = creditProgression(initial, '1', coefficients);
+    expect(part.carry).not.toBe('0');
+    const split = creditProgression(
+      reload(part),
+      (BigInt(inputs.baseMilliXpPerDay) - 1n).toString(),
+      coefficients,
+    );
+    expect(split).toEqual(whole);
+    Object.assign(learner, { skills: { medicine: 100 }, aptitudeBySkill: {}, perks: [] });
+    Object.assign(f.ctx, { learningFacts: [], atTick: tick(9000) });
+    const replay = run(f, reload(first));
+    expect(replay.replayed).toBe(true);
+    expect(readLearningTaskInputs(replay.task)).toEqual(inputs);
+    expect(Object.isFrozen(replay.task.start.inputs)).toBe(true);
+    const changed = reload(first.task.start);
+    Object.assign(changed.inputs!, { aptitudeAtStartBps: 12000 });
+    expect(() => startLearningTask(first.state, changed)).toThrow('IDEMPOTENCY_CONFLICT');
+  });
+
+  it.each([false, true])('rejects missing exact skill or aptitude atomically (%s)', (course) => {
+    const changes: ((f: Fixture) => void)[] = [
+      (f) => Reflect.deleteProperty(f.root.lifecycle.characters[0]!.skills, 'medicine'),
+      (f) => Object.assign(f.root.lifecycle.characters[0]!.skills, { medicine: 0 }),
+      (f) => Reflect.deleteProperty(f.root.lifecycle.characters[0]!.aptitudeBySkill, 'medicine'),
+      (f) => Object.assign(f.root.lifecycle.characters[0]!.aptitudeBySkill, { medicine: 0 }),
+    ];
+    for (const change of changes) {
+      const f = setup(course);
+      change(f);
+      rejects(f, empty(), 'INVALID_STATE');
+    }
+  });
+
+  it('requires authoritative course difficulty rather than choosing the learner level', () => {
+    for (const challengeLevel of [undefined, -1, 101, 1.5]) {
+      const f = setup(true);
+      if (challengeLevel === undefined)
+        Reflect.deleteProperty(f.ctx.learningFacts[0]!, 'challengeLevel');
+      else Object.assign(f.ctx.learningFacts[0]!, { challengeLevel });
+      rejects(f, empty(), 'INVALID_SOURCE');
+    }
+  });
+
+  it.each([false, true])('preserves legacy start/stop without invented inputs (%s)', (course) => {
+    const f = setup(course);
+    const first = reload(run(f));
+    Reflect.deleteProperty(first.state.tasks[0]!.start, 'inputs');
+    Object.assign(f.ctx, { learningFacts: [], atTick: tick(9000) });
+    const old = run(f, first);
+    expect(old.task.start.inputs).toBeUndefined();
+    expect(old.task).toEqual(first.state.tasks[0]);
+    expect(() => readLearningTaskInputs(old.task)).toThrow('LEARNING_START_INPUTS_REQUIRED');
+    const stop = command(f.root, 'StopLearning', { taskId: 'first', reason: 'PLAYER' }, 'old-stop');
+    const terminal = { ...stop, campaignTick: tick(20) } as CommandOf<'StopLearning'>;
+    const closed = stopLearningTask(old.state, terminal);
+    const replay = run(f, { state: reload(closed.state), studyAccess: first.studyAccess });
+    expect(replay.task).toEqual(closed.task);
+    expect(() => readLearningTaskInputs(replay.task)).toThrow('LEARNING_START_INPUTS_REQUIRED');
+  });
+
+  it.each([false, true])('validates and owns retained inputs (%s)', (course) => {
+    const first = run(setup(course));
+    const patches = [
+      { rulesVersion: 'unknown' },
+      { aptitudeAtStartBps: 0 },
+      course ? { skillId: 'scholarship' } : { workId: 'other-work' },
+      course ? { challengeBps: 9999 } : { durationTicks: '0' },
+    ];
+    for (const patch of patches) {
+      const task = reload(first.task);
+      Object.assign(task.start.inputs!, patch);
+      const before = reload(task);
+      expect(() => readLearningTaskInputs(task)).toThrow('INVALID_STATE');
+      expect(task).toEqual(before);
+    }
+    const loaded = reload(first.task);
+    const owned = readLearningTaskInputs(loaded);
+    Object.assign(loaded.start.inputs!, { aptitudeAtStartBps: 12000 });
+    expect(owned).toEqual(first.task.start.inputs);
   });
 });

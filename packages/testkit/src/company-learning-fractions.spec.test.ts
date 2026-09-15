@@ -9,9 +9,11 @@ import {
   createLearningTaskState,
   createStudyAccessState,
   initialSkillProgress,
+  readLearningTaskInputs,
   readSkillProgress,
   readStudySectionProgress,
   skillLevel,
+  startLearningTask,
   xpToMilliXp,
 } from '@warwrit/game-core';
 import type {
@@ -74,12 +76,20 @@ function admitted() {
       },
     ],
   };
-  const task = admitLearningTask(createLearningTaskState(), createStudyAccessState(), root, ctx, {
+  const request = {
     taskId: 'study',
     command: start,
     study: { intervalId: 'copy-interval', itemId: 'copy', accessEvidenceId: 'access' },
-  }).task;
-  return { root, duration: task.start.quote.coefficients.task.studyDurationBps, task };
+  };
+  const admission = admitLearningTask(
+    createLearningTaskState(),
+    createStudyAccessState(),
+    root,
+    ctx,
+    request,
+  );
+  const duration = admission.task.start.quote.coefficients.task.studyDurationBps;
+  return { root, ctx, request, ...admission, duration };
 }
 
 function sequence(parts: readonly string[], duration: ReturnType<typeof fraction>) {
@@ -99,6 +109,36 @@ function sequence(parts: readonly string[], duration: ReturnType<typeof fraction
 }
 
 describe('C05 numerical owners — exact fractional study and XP', () => {
+  it('preserves retained starts across fractional and ordinary character credit and reload', () => {
+    const f = admitted();
+    const inputs = readLearningTaskInputs(reload(f.task));
+    expect(inputs).toMatchObject({ workId: key.workId, finiteMilliXp: fullXp });
+    const learner = f.root.lifecycle.characters[0]!;
+    const initial = readSkillProgress(learner.skills[inputs.skillId]);
+    if (typeof initial === 'number') throw new Error('Expected exact admitted skill');
+    const first = advanceStudySectionTime(null, key, '1', f.duration);
+    const amount = creditProgression(initial.amount, first.creditedMilliXp, neutral);
+    expect(amount.carry).not.toBe('0');
+    const mixed = creditProgression(reload(amount), '1', neutral);
+    expect(mixed).toEqual({ ...amount, milliXp: (BigInt(amount.milliXp) + 1n).toString() });
+    const end = advanceStudySectionTime(reload(first.next), key, '999999', f.duration);
+    const skill = { ...initial, amount: creditProgression(mixed, end.creditedMilliXp, neutral) };
+    Object.assign(learner.skills, { [inputs.skillId]: readSkillProgress(reload(skill)) });
+    expect(skill.amount).toEqual({ milliXp: (BigInt(fullXp) + 1n).toString(), carry: '0' });
+    Object.assign(learner, { perks: [], aptitudeBySkill: {} });
+    const replay = admitLearningTask(
+      reload(f.state),
+      reload(f.studyAccess),
+      reload(f.root),
+      { ...f.ctx, learningFacts: [] },
+      f.request,
+    );
+    expect(replay.task).toEqual(f.task);
+    expect(replay.studyAccess).toEqual(f.studyAccess);
+    expect(replay.replayed).toBe(true);
+    expect(startLearningTask(replay.state, reload(f.task.start)).replayed).toBe(true);
+  });
+
   it('advances an admitted accelerated book identically whole/split after JSON reload', () => {
     const f = admitted();
     const original = reload(f.root);
