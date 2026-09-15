@@ -1,4 +1,4 @@
-name: E03 offline workbench export
+name: E04b read-only source export
 on:
   push:
     branches: [workbench/e03-offline-20260913]
@@ -7,34 +7,22 @@ permissions:
 jobs:
   export:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 3
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
-          ref: 28bc1703e4261f0a0c078a8774e9b204d6217143
+          ref: cf47b68ff851bbc85a4f687874011fe2493e344b
           persist-credentials: false
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
-        with:
-          node-version-file: .node-version
-      - name: Export tracked source and locked offline tooling, not credentials or Git config
+      - name: Export tracked source only, without credentials or Git config
         shell: bash
         run: |
           set -euo pipefail
-          npm install --global pnpm@11.25.0
-          pnpm install --frozen-lockfile
-          mkdir -p /tmp/e03-offline
-          git archive HEAD | gzip > /tmp/e03-offline/source.tar.gz
-          mapfile -t workspace_modules < <(find packages apps -mindepth 2 -maxdepth 2 -type d -name node_modules -print)
-          tar -czf /tmp/e03-offline/dependencies.tar.gz node_modules "${workspace_modules[@]}"
-          cp "$(command -v node)" /tmp/e03-offline/node
-          git rev-parse HEAD HEAD^{tree} > /tmp/e03-offline/source-identity.txt
-          node --version > /tmp/e03-offline/toolchain.txt
-          pnpm --version >> /tmp/e03-offline/toolchain.txt
-          pnpm exec prettier --version >> /tmp/e03-offline/toolchain.txt
-          (cd /tmp/e03-offline && sha256sum source.tar.gz dependencies.tar.gz node > SHA256SUMS)
+          mkdir -p /tmp/e04b-source
+          git archive HEAD | gzip > /tmp/e04b-source/source.tar.gz
+          git rev-parse HEAD HEAD^{tree} > /tmp/e04b-source/source-identity.txt
+          (cd /tmp/e04b-source && sha256sum source.tar.gz > SHA256SUMS)
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: e03-offline-workbench
-          path: /tmp/e03-offline/
+          name: e04b-source-cf47b68
+          path: /tmp/e04b-source/
           retention-days: 1
-          compression-level: 0
