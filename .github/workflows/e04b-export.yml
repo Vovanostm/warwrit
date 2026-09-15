@@ -12,8 +12,6 @@ jobs:
   export:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    env:
-      COREPACK_HOME: ${{ runner.temp }}/e04b-corepack
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
@@ -27,6 +25,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          export COREPACK_HOME="$RUNNER_TEMP/e04b-corepack"
           corepack enable
           corepack prepare pnpm@11.25.0 --activate
           cd source
