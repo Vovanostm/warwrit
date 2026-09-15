@@ -1,11 +1,25 @@
 import { COMPANY_RULES } from './definitions.js';
 import { canonicalJson } from './input.js';
-import { economyId, requireEconomy } from './economy-state.js';
-import { person } from './lifecycle-state.js';
-import { recordLearnedFact } from './social.js';
+import {
+  economyId,
+  requireEconomy,
+  own,
+  financeEffectKey,
+  validateFinanceFact,
+  recordSource,
+} from './economy-state.js';
+import { person, effectiveLeaderId } from './lifecycle-state.js';
+import { recordLearnedFact, deriveEffectiveRelation } from './social.js';
 import { isExactInteger } from './values.js';
 import type { LearnedFact, SocialState } from './social.js';
-import type { EconomyResult, WageCommunicationEvidence } from './economy-types.js';
+import type {
+  CompanyEconomyState,
+  EconomyContext,
+  EconomyResult,
+  WageCommunicationEvidence,
+  FarewellContextEvidence,
+} from './economy-types.js';
+import type { CompanyCommand } from './commands.js';
 
 export interface FinancialSocialKnowledge {
   readonly sourceEventId: string;
@@ -124,4 +138,73 @@ export function bindFinancialSocialConsequences(
     social: candidate,
     requirements: receipt.requirements.filter((r) => r.kind !== 'INFORMED_SOCIAL_CONTRIBUTION'),
   };
+}
+
+export type FinancialSocialInput =
+  Omit<WageCommunicationEvidence, 'relation'> | Omit<FarewellContextEvidence, 'friendship'>;
+export interface FinancialSocialContext {
+  readonly social: SocialState;
+  readonly inputs: readonly FinancialSocialInput[];
+}
+/** Fresh, already aligned boundary only. Prior command replay belongs to the economy owner. */
+export function prepareFinancialSocialContext(
+  state: CompanyEconomyState,
+  command: CompanyCommand,
+  context: EconomyContext,
+  input: FinancialSocialContext,
+): EconomyContext {
+  const { lifecycle, finance } = state;
+  requireEconomy(
+    context.financeFacts.every(
+      (f) => f.kind !== 'WAGE_COMMUNICATION' && f.kind !== 'FAREWELL_CONTEXT',
+    ),
+    'INVALID_SOURCE',
+  );
+  const facts = input.inputs.map((value) => {
+    const fact = own(value);
+    const { membershipId, leaderId, atTick } = fact;
+    requireEconomy(!('relation' in fact) && !('friendship' in fact), 'INVALID_SOURCE');
+    const wage = fact.kind === 'WAGE_COMMUNICATION';
+    requireEconomy(wage || fact.kind === 'FAREWELL_CONTEXT', 'INVALID_SOURCE');
+    requireEconomy(
+      wage
+        ? command.type === 'AdvanceCampaign' &&
+            command.payload.authoritativeInputs.includes(fact.id)
+        : command.type === 'GrantFarewell' && command.payload.membershipId === membershipId,
+      'INVALID_SOURCE',
+    );
+    const key = financeEffectKey(fact as WageCommunicationEvidence);
+    const archived = finance.sourceEffects.find((s) => s.key === key);
+    if (archived) {
+      const retained = { ...JSON.parse(archived.requestKey), ...fact };
+      recordSource(finance, retained);
+      return retained as WageCommunicationEvidence | FarewellContextEvidence;
+    }
+    validateFinanceFact(fact as WageCommunicationEvidence, context);
+    requireEconomy(
+      context.atTick === finance.processedTick &&
+        (command.type !== 'AdvanceCampaign' || command.payload.toTick === context.atTick),
+      'INVALID_TIME',
+    );
+    const member = lifecycle.memberships.find((m) => m.membershipId === membershipId);
+    requireEconomy(
+      member &&
+        leaderId === effectiveLeaderId(lifecycle) &&
+        context.contactIds.includes(member.characterId),
+      'CONTACT_OR_ACCESS_REQUIRED',
+    );
+    const relation = deriveEffectiveRelation(input.social, member.characterId, leaderId, atTick);
+    requireEconomy(relation, 'INVALID_SOURCE');
+    return wage
+      ? {
+          ...fact,
+          relation: {
+            friend: relation.friendship,
+            respect: relation.respect,
+            rivalry: relation.rivalry,
+          },
+        }
+      : { ...fact, friendship: relation.friendship };
+  });
+  return { ...context, financeFacts: [...context.financeFacts, ...facts] };
 }

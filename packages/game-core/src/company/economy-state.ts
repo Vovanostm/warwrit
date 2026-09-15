@@ -1,3 +1,4 @@
+import { readRelationObservation } from './social.js';
 import { COMPANY_RULES } from './definitions.js';
 import { canonicalJson, snapshotJson } from './input.js';
 import {
@@ -297,6 +298,11 @@ export function validateEconomy(state: CompanyEconomyState, context: EconomyCont
       'INVALID_STATE',
     );
   }
+  for (const { warning } of f.arrears)
+    if (warning) {
+      const { friend, respect, rivalry } = warning.relation ?? {};
+      requireEconomy([friend, respect, rivalry].every(readRelationObservation), 'INVALID_STATE');
+    }
   for (const food of f.food) {
     accountFor(f, food.membershipId);
     let until = 0n;
