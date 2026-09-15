@@ -3,16 +3,28 @@ import {
   COMPANY_CATALOGUE,
   ENCOUNTER_BINDING_VERSION,
   M1_DOMAIN_BRIDGE_RULESET_ID,
+  applyCombatCommand,
   battleId,
   canonicalCombatState,
   canonicalJson,
+  combatReceiptEventIds,
+  commandId,
+  createCombatReceiptJournal,
   createHexagon,
+  prepareCombatReceipt,
   prepareEncounterBinding,
   replayCombat,
   sideId,
   unitId,
 } from '@warwrit/game-core';
-import type { EncounterCompanySource, EncounterPositionEvidence } from '@warwrit/game-core';
+import type {
+  CombatCommand,
+  CombatReceiptContext,
+  CombatReceiptJournal,
+  CombatTransition,
+  EncounterCompanySource,
+  EncounterPositionEvidence,
+} from '@warwrit/game-core';
 import { command, context, economy, place } from './company-economy-fixture.js';
 import {
   addContainer,
@@ -208,5 +220,197 @@ describe('G05 — whole-candidate real participant binding', () => {
     Reflect.set(f.evidence, 'parties', f.evidence.parties.slice(0, 1));
     const prepare = () => prepareEncounterBinding(f.sources, f.request, f.evidence);
     expect(prepare).toThrow('at least one unit');
+  });
+});
+
+function receiptFixture() {
+  const f = fixture();
+  const binding = prepareEncounterBinding(f.sources, f.request, f.evidence);
+  const journal = createCombatReceiptJournal(binding, f.root.lifecycle.companyId);
+  return { ...f, binding, journal };
+}
+function receiptPacket(
+  f: ReturnType<typeof receiptFixture>,
+  transition: CombatTransition,
+  kernelCommand: CombatCommand | null = null,
+) {
+  const receiptId = `${transition.state.battleId}:${transition.state.revision}`;
+  const payload = {
+    bindingId: f.binding.bindingId,
+    receiptId,
+    revision: String(transition.state.revision),
+    orderedEvents: transition.events,
+  };
+  const request = {
+    ...command(f.root, 'ConsumeCombatReceipt', payload, receiptId, 'COMBAT_RECEIPT'),
+    payload,
+    sourceEventId: receiptId,
+  };
+  const ctx: CombatReceiptContext = {
+    ...context(f.root, request),
+    binding: f.binding,
+    kernelCommand,
+    transition,
+  };
+  return { request, context: ctx };
+}
+function nextReceipt(f: ReturnType<typeof receiptFixture>, journal: CombatReceiptJournal) {
+  const state = journal.receipts.at(-1)!.transition.state;
+  const kernelCommand: CombatCommand = {
+    type: 'defend',
+    commandId: commandId(`kernel-${state.revision + 1}`),
+    activationId: state.activation!.id,
+    actorId: state.activation!.unitId,
+  };
+  const result = applyCombatCommand(state, kernelCommand);
+  if (!result.ok) throw new Error(result.error.code);
+  return receiptPacket(f, { state: result.state, events: result.events }, kernelCommand);
+}
+function reload<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+function grant(packet: ReturnType<typeof receiptPacket>) {
+  Reflect.set(packet.context, 'internalGrant', {
+    commandId: packet.request.commandId,
+    sourceEventId: packet.request.sourceEventId,
+    canonicalRequest: canonicalJson(packet.request),
+  });
+}
+
+describe('G06 — trusted sequential receipt preparation, not applied effects', () => {
+  it('follows real G05/kernel revisions through JSON without changing the binding or companies', () => {
+    const f = receiptFixture();
+    const before = JSON.stringify(f.sources);
+    let journal: CombatReceiptJournal = f.journal;
+    let restored: CombatReceiptJournal = reload(journal);
+    expect(f.binding.initial.state).toMatchObject({ schemaVersion: 1, revision: 0 });
+    expect(f.binding.setup.schemaVersion).toBe(2);
+    expect(f.binding.initial.events).toHaveLength(3);
+    for (let index = 0; index < 5; index++) {
+      const packet = index ? nextReceipt(f, journal) : receiptPacket(f, f.binding.initial);
+      const unchanged = JSON.stringify(journal);
+      const result = prepareCombatReceipt(journal, packet.request, packet.context);
+      const wire = reload(packet);
+      restored = prepareCombatReceipt(reload(restored), wire.request, wire.context).journal;
+      expect(JSON.stringify(journal)).toBe(unchanged);
+      expect(result.receipt.status).toBe('PREPARED');
+      expect(result.receipt.sourceEventIds).toEqual(
+        packet.context.transition.events.map((_, i) => `${packet.request.sourceEventId}:${i}`),
+      );
+      journal = result.journal;
+    }
+    expect(restored).toEqual(journal);
+    expect(journal.proposedLastAppliedRevision).toBe(4);
+    expect(journal.binding.lastAppliedRevision).toBe(f.binding.initial.state.revision);
+    expect(JSON.stringify(f.sources)).toBe(before);
+    const commands = journal.receipts.flatMap((r) => (r.kernelCommand ? [r.kernelCommand] : []));
+    const replay = replayCombat({ schemaVersion: 2, setup: f.binding.setup, commands });
+    expect(replay.state).toEqual(journal.receipts.at(-1)!.transition.state);
+  });
+
+  it('returns the original authorized receipt after later preparations and owns every snapshot', () => {
+    const f = receiptFixture();
+    const packet = reload(receiptPacket(f, f.binding.initial));
+    const initial = prepareCombatReceipt(f.journal, packet.request, packet.context);
+    const next = nextReceipt(f, initial.journal);
+    const later = prepareCombatReceipt(initial.journal, next.request, next.context);
+    const exact = prepareCombatReceipt(reload(later.journal), packet.request, packet.context);
+    expect(exact.receipt).toEqual(initial.receipt);
+    expect(exact.journal).toEqual(later.journal);
+    const retry = reload(packet);
+    retry.request.commandId = 'new-transport-id';
+    Reflect.set(retry.request, 'expectedRevision', '999');
+    grant(retry);
+    const repeated = prepareCombatReceipt(reload(later.journal), retry.request, retry.context);
+    expect(repeated.receipt).toEqual(initial.receipt);
+    expect(repeated.journal).toEqual(later.journal);
+    const saved = JSON.stringify(initial);
+    Reflect.set(packet.context.transition.state.units[0]!, 'health', 1);
+    Reflect.set(packet.request, 'sourceEventId', 'changed');
+    expect(JSON.stringify(initial)).toBe(saved);
+    expect(Reflect.set(initial.receipt.transition.state, 'revision', 99)).toBe(false);
+  });
+
+  it('retains ordinal identity even for two identical-looking actual event values', () => {
+    const f = receiptFixture();
+    const event = f.binding.initial.events[0]!;
+    expect(combatReceiptEventIds('battle:0', [event, reload(event)])).toEqual([
+      'battle:0:0',
+      'battle:0:1',
+    ]);
+    expect(() => combatReceiptEventIds('x'.repeat(256), [event])).toThrow();
+  });
+
+  function failureInput() {
+    const f = receiptFixture();
+    const start = receiptPacket(f, f.binding.initial);
+    const initial = prepareCombatReceipt(f.journal, start.request, start.context);
+    return reload({ journal: initial.journal, ...nextReceipt(f, initial.journal) });
+  }
+  type FailureInput = ReturnType<typeof failureInput>;
+  const failures: readonly [string, (f: FailureInput) => object, string, unknown][] = [
+    ['no adapter grant', (f) => f.context, 'internalGrant', undefined],
+    ['player principal', (f) => f.context.principal, 'kind', 'PLAYER'],
+    ['client verification flag', (f) => f.request, 'verified', true],
+    ['foreign world', (f) => f.context.binding, 'worldId', 'foreign'],
+    ['foreign binding', (f) => f.context.binding, 'bindingId', 'foreign'],
+    ['foreign participant', (f) => f.context.binding.participants[0]!, 'unitId', 'foreign'],
+    ['unknown binding version', (f) => f.context.binding, 'version', 'unknown'],
+    ['wrong envelope binding', (f) => f.request.payload, 'bindingId', 'foreign'],
+    ['noncanonical receipt key', (f) => f.request.payload, 'receiptId', 'battle:01'],
+    ['wrong source key', (f) => f.request, 'sourceEventId', 'foreign'],
+    ['stale company revision', (f) => f.request, 'expectedRevision', '999'],
+    ['contradictory envelope revision', (f) => f.request.payload, 'revision', '2'],
+    ['V2 is not state schema', (f) => f.context.transition.state, 'schemaVersion', 2],
+    ['foreign battle', (f) => f.context.transition.state, 'battleId', 'foreign'],
+    ['wrong event revision', (f) => f.context.transition.events[0]!, 'revision', 2],
+    ['unknown event unit', (f) => f.context.transition.events[0]!, 'unitId', 'foreign'],
+    ['unknown state unit', (f) => f.context.transition.state.units[0]!, 'id', 'foreign'],
+    ['invalid kernel identity', (f) => f.context.kernelCommand!, 'commandId', ''],
+    ['invalid activation', (f) => f.context.kernelCommand!, 'activationId', 'old'],
+    ['missing historical body', (f) => f.journal.receipts[0]!.request, 'payload', {}],
+    ['contradictory offset', (f) => f.journal, 'proposedLastAppliedRevision', 9],
+  ];
+  it.each(failures)('rejects %s without touching any input', (_, target, key, value) => {
+    const f = failureInput();
+    if (value === undefined) Reflect.deleteProperty(target(f), key);
+    else Reflect.set(target(f), key, value);
+    Reflect.set(f.request.payload, 'orderedEvents', f.context.transition.events);
+    if (f.context.internalGrant) grant(f);
+    const before = JSON.stringify(f);
+    expect(() => prepareCombatReceipt(f.journal, f.request, f.context)).toThrow();
+    expect(JSON.stringify(f)).toBe(before);
+  });
+
+  it('rejects gaps and changed authorized replays, including after reload', () => {
+    const f = receiptFixture();
+    const first = receiptPacket(f, f.binding.initial);
+    const initial = prepareCombatReceipt(f.journal, first.request, first.context);
+    const next = nextReceipt(f, initial.journal);
+    expect(() => prepareCombatReceipt(f.journal, next.request, next.context)).toThrow(
+      'STALE_REVISION',
+    );
+    const changed = reload(first);
+    changed.request.commandId = 'changed-retry';
+    Reflect.set(changed.context.transition.events[0]!, 'seed', 999);
+    Reflect.set(changed.request.payload, 'orderedEvents', changed.context.transition.events);
+    grant(changed);
+    expect(() =>
+      prepareCombatReceipt(reload(initial.journal), changed.request, changed.context),
+    ).toThrow('IDEMPOTENCY_CONFLICT');
+    const reordered = reload(first);
+    const events = [...reordered.context.transition.events].reverse();
+    Reflect.set(reordered.context.transition, 'events', events);
+    Reflect.set(reordered.request.payload, 'orderedEvents', reordered.context.transition.events);
+    grant(reordered);
+    expect(() =>
+      prepareCombatReceipt(initial.journal, reordered.request, reordered.context),
+    ).toThrow('IDEMPOTENCY_CONFLICT');
+    const concealed = reload(changed);
+    Reflect.deleteProperty(concealed.context, 'internalGrant');
+    expect(() =>
+      prepareCombatReceipt(initial.journal, concealed.request, concealed.context),
+    ).toThrow('INVALID_SOURCE');
+    expect(initial.journal.binding.lastAppliedRevision).toBe(0);
   });
 });
