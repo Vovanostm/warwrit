@@ -155,6 +155,7 @@ export function prepareCombatReceipt(
       receipt: prior,
     });
   }
+  requireEconomy(request.expectedRevision === context.canonicalRevision, 'STALE_REVISION');
   const nextRevision = receipts.length ? lastRevision + 1 : binding.initial.state.revision;
   requireEconomy(transition.state.revision === nextRevision, 'STALE_REVISION');
   let expected = binding.initial;

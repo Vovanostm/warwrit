@@ -359,6 +359,7 @@ describe('G06 — trusted sequential receipt preparation, not applied effects', 
     ['wrong envelope binding', (f) => f.request.payload, 'bindingId', 'foreign'],
     ['noncanonical receipt key', (f) => f.request.payload, 'receiptId', 'battle:01'],
     ['wrong source key', (f) => f.request, 'sourceEventId', 'foreign'],
+    ['stale company revision', (f) => f.request, 'expectedRevision', '999'],
     ['contradictory envelope revision', (f) => f.request.payload, 'revision', '2'],
     ['V2 is not state schema', (f) => f.context.transition.state, 'schemaVersion', 2],
     ['foreign battle', (f) => f.context.transition.state, 'battleId', 'foreign'],
@@ -374,6 +375,7 @@ describe('G06 — trusted sequential receipt preparation, not applied effects', 
     const f = failureInput();
     if (value === undefined) Reflect.deleteProperty(target(f), key);
     else Reflect.set(target(f), key, value);
+    Reflect.set(f.request.payload, 'orderedEvents', f.context.transition.events);
     if (f.context.internalGrant) grant(f);
     const before = JSON.stringify(f);
     expect(() => prepareCombatReceipt(f.journal, f.request, f.context)).toThrow();
