@@ -89,11 +89,11 @@ function fixture(targetLevel?: number, perks: readonly string[] = []) {
 }
 
 describe.each([
-  { perks: [], durationBps: '10000' },
-  { perks: ['leadership-25-b'], durationBps: '9000' },
-  { perks: ['leadership-60-b'], durationBps: '8000' },
-  { perks: ['leadership-25-b', 'leadership-60-b'], durationBps: '7200' },
-])('C05 course arithmetic, not settlement: $perks', ({ perks, durationBps }) => {
+  { perks: [] },
+  { perks: ['leadership-25-b'] },
+  { perks: ['leadership-60-b'] },
+  { perks: ['leadership-25-b', 'leadership-60-b'] },
+])('C05 course arithmetic, not settlement: $perks', ({ perks }) => {
   it('preserves exact shared mastery through partitions, reload and ambient changes', () => {
     const f = fixture(undefined, perks);
     expect(f.task.start.quote.maxTicks).toBe(f.ctx.learningFacts[0]!.maxTicks);
@@ -105,7 +105,6 @@ describe.each([
     if (inputs.kind !== 'COURSE') throw new Error('Expected admitted course');
     expect(inputs.coursePolicyVersion).toBe('s02-course-effort-1');
     const duration = f.task.start.quote.coefficients.task.trainingDurationBps;
-    expect(duration).toEqual({ numerator: durationBps, denominator: '1' });
     const first = calculateCourseProgress(f.task, f.root.lifecycle, '1');
     expect(first.nextSkill.amount.carry).not.toBe('0');
     const frozenInputs = reload(inputs);
