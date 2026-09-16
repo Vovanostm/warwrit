@@ -1,6 +1,6 @@
 import { COMPANY_CATALOGUE, COMPANY_RULES } from './definitions.js';
 import { requireEconomy } from './economy-state.js';
-import { choice, either, id, natural, object, snapshotJson, unsigned } from './input.js';
+import { choice, either, id, natural, object, optional, snapshotJson, unsigned } from './input.js';
 import type { ValueOf } from './input.js';
 import type { LearningTaskQuote } from './learning-quote.js';
 import type { LearningSourceEvidence } from './learning-source.js';
@@ -36,6 +36,7 @@ export const learningInputsInput = either(
   object({
     ...common,
     kind: choice('COURSE'),
+    coursePolicyVersion: optional(choice('s02-course-effort-1')),
     ticksPerDay: positive,
     baseMilliXpPerDay: unsigned,
     challengeLevel: level,
@@ -87,6 +88,7 @@ export function captureLearningInputs(
     inputs = {
       ...initial,
       kind: 'COURSE',
+      coursePolicyVersion: 's02-course-effort-1',
       ticksPerDay: String(COMPANY_RULES.ticksPerDay),
       baseMilliXpPerDay: xpToMilliXp(method.xp),
       challengeLevel: source.challengeLevel,

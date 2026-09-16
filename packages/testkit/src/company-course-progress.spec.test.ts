@@ -12,6 +12,7 @@ import {
   readLearningTaskInputs,
   readLearningTaskState,
   readSkillProgress,
+  startLearningTask,
   stopLearningTask,
 } from '@warwrit/game-core';
 import type {
@@ -34,16 +35,16 @@ import {
 import { addItem, item } from './company-physical-fixture.js';
 
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
-function fixture(targetLevel?: number, accelerated = false) {
+function fixture(targetLevel?: number, perks: readonly string[] = []) {
   const state = economy([1n], 100_000_000n);
   const owner = { kind: 'COMPANY' as const, id: state.lifecycle.companyId };
   const root = reload(
     addItem(state, item('practice-bow', 'bow', owner, 'fixture-supply')),
   ) as MaterializedCompanyState;
   Object.assign(root.lifecycle.characters[0]!, {
-    skills: { leadership: 25, archery: initialSkillProgress(0, 'course-opening') },
+    skills: { leadership: 60, archery: initialSkillProgress(0, 'course-opening') },
     aptitudeBySkill: { archery: 10103 },
-    perks: accelerated ? ['leadership-25-b'] : [],
+    perks,
   });
   const start = command(root, 'StartLearning', {
     characterId: 'leader',
@@ -87,14 +88,24 @@ function fixture(targetLevel?: number, accelerated = false) {
   return { root, ctx, task: admitted.task };
 }
 
-describe('C05 course numerical candidate, not task or finance settlement', () => {
+describe.each([
+  { perks: [], durationBps: '10000' },
+  { perks: ['leadership-25-b'], durationBps: '9000' },
+  { perks: ['leadership-60-b'], durationBps: '8000' },
+  { perks: ['leadership-25-b', 'leadership-60-b'], durationBps: '7200' },
+])('C05 course arithmetic, not settlement: $perks', ({ perks, durationBps }) => {
   it('preserves exact shared mastery through partitions, reload and ambient changes', () => {
-    const f = fixture();
+    const f = fixture(undefined, perks);
+    expect(f.task.start.quote.maxTicks).toBe(f.ctx.learningFacts[0]!.maxTicks);
+    expect(f.task.start.quote.funding).toEqual(fixture().task.start.quote.funding);
     const before = reload(f);
     const whole = calculateCourseProgress(f.task, f.root.lifecycle, '1000');
     expect(f).toEqual(before);
     const inputs = readLearningTaskInputs(f.task);
     if (inputs.kind !== 'COURSE') throw new Error('Expected admitted course');
+    expect(inputs.coursePolicyVersion).toBe('s02-course-effort-1');
+    const duration = f.task.start.quote.coefficients.task.trainingDurationBps;
+    expect(duration).toEqual({ numerator: durationBps, denominator: '1' });
     const first = calculateCourseProgress(f.task, f.root.lifecycle, '1');
     expect(first.nextSkill.amount.carry).not.toBe('0');
     const frozenInputs = reload(inputs);
@@ -115,16 +126,10 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
         Object.assign(split.root.lifecycle.characters[0]!.skills, {
           archery: readSkillProgress(reload(next.nextSkill)),
         });
+        const completed = BigInt(split.task.completedTicks) + BigInt(next.appliedElapsedTicks);
         split.task = readLearningTaskState({
           schemaVersion: 1,
-          tasks: [
-            {
-              ...split.task,
-              completedTicks: String(
-                BigInt(split.task.completedTicks) + BigInt(next.appliedElapsedTicks),
-              ),
-            },
-          ],
+          tasks: [{ ...split.task, completedTicks: String(completed) }],
         }).tasks[0]!;
       }
       expect(split.root.lifecycle.characters[0]!.skills['archery']).toEqual(whole.nextSkill);
@@ -134,9 +139,11 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
     const amount = whole.nextSkill.amount;
     const denominator = BigInt(amount.carryDenominator ?? '1000000000000');
     const earned = BigInt(amount.milliXp) * denominator + BigInt(amount.carry);
-    expect(earned * BigInt(inputs.ticksPerDay) * 10000n ** 3n).toBe(
+    expect(earned * BigInt(inputs.ticksPerDay) * 10000n ** 3n * BigInt(duration.numerator)).toBe(
       BigInt(inputs.baseMilliXpPerDay) *
         1000n *
+        10000n *
+        BigInt(duration.denominator) *
         10103n *
         BigInt(inputs.challengeBps) *
         BigInt(inputs.outcomeBps) *
@@ -145,16 +152,19 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
   });
 
   it('finds the first whole goal tick or saved limit without discarding earned XP', () => {
-    const f = fixture(1);
+    const f = fixture(1, perks);
     const inputs = readLearningTaskInputs(f.task);
     if (inputs.kind !== 'COURSE') throw new Error('Expected admitted course');
     const target = BigInt(progressionThresholdMilliXp(1));
+    const duration = f.task.start.quote.coefficients.task.trainingDurationBps;
     const rateN =
       BigInt(inputs.baseMilliXpPerDay) *
       BigInt(inputs.aptitudeAtStartBps) *
       BigInt(inputs.challengeBps) *
-      BigInt(inputs.outcomeBps);
-    const rateD = BigInt(inputs.ticksPerDay) * 10000n ** 3n;
+      BigInt(inputs.outcomeBps) *
+      10000n *
+      BigInt(duration.denominator);
+    const rateD = BigInt(inputs.ticksPerDay) * 10000n ** 3n * BigInt(duration.numerator);
     const boundary = (target * rateD + rateN - 1n) / rateN;
     const before = calculateCourseProgress(f.task, f.root.lifecycle, String(boundary - 1n));
     const at = calculateCourseProgress(f.task, f.root.lifecycle, String(boundary));
@@ -169,7 +179,7 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
     const lastGoal = calculateCourseProgress(reload(partial), later, '999999');
     expect(lastGoal.appliedElapsedTicks).toBe('1');
     expect(lastGoal.nextSkill).toEqual(at.nextSkill);
-    const timed = fixture(100);
+    const timed = fixture(100, perks);
     const prefix = calculateCourseProgress(
       timed.task,
       timed.root.lifecycle,
@@ -199,7 +209,7 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
   });
 
   it('uses the actual shared skill after a separately admitted delayed practice receipt', () => {
-    const f = fixture(1, true);
+    const f = fixture(1, perks);
     const payload = {
       receiptId: 'practice',
       characterId: 'leader',
@@ -246,8 +256,8 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
     expect(credited).toEqual(before);
   });
 
-  it('rejects missing history, foreign scope and the unresolved duration equation', () => {
-    const f = fixture();
+  it('preserves legacy history and rejects invalid or unknown policy', () => {
+    const f = fixture(undefined, perks);
     const unchanged = reload(f);
     const legacy = reload(f.task);
     Reflect.deleteProperty(legacy.start, 'inputs');
@@ -273,11 +283,22 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
     Object.assign(corrupt.start.inputs!, { ticksPerDay: '0' });
     expect(() => calculateCourseProgress(corrupt, f.root.lifecycle, '1')).toThrow('INVALID_STATE');
     expect(f).toEqual(unchanged);
-    const accelerated = fixture(undefined, true);
-    const original = reload(accelerated);
-    expect(() =>
-      calculateCourseProgress(accelerated.task, accelerated.root.lifecycle, '1'),
-    ).toThrow('LEARNING_TRAINING_DURATION_POLICY_REQUIRED');
-    expect(accelerated).toEqual(original);
+    const untagged = reload(f.task);
+    Reflect.deleteProperty(untagged.start.inputs!, 'coursePolicyVersion');
+    const oldState = { schemaVersion: 1 as const, tasks: [untagged] };
+    expect(startLearningTask(oldState, untagged.start).replayed).toBe(true);
+    const oldInput = reload(untagged);
+    if (perks.length === 0)
+      expect(calculateCourseProgress(untagged, f.root.lifecycle, '1')).toEqual(
+        calculateCourseProgress(f.task, f.root.lifecycle, '1'),
+      );
+    else
+      expect(() => calculateCourseProgress(untagged, f.root.lifecycle, '1')).toThrow(
+        'LEARNING_TRAINING_DURATION_POLICY_REQUIRED',
+      );
+    expect(untagged).toEqual(oldInput);
+    Object.assign(untagged.start.inputs!, { coursePolicyVersion: 'future' });
+    expect(() => calculateCourseProgress(untagged, f.root.lifecycle, '1')).toThrow('INVALID_STATE');
+    expect(f).toEqual(unchanged);
   });
 });

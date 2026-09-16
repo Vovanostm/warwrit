@@ -1,3 +1,4 @@
+import type { FarewellOutcome } from './farewell-types.js';
 import type { ExactRelationAxis } from './social.js';
 import type { CompanyCommand } from './commands.js';
 import type {
@@ -397,6 +398,7 @@ export type EconomyRequirement =
       readonly cause: 'WAGE_COMPLAINT' | 'FINAL_WARNING' | 'FAREWELL';
     };
 export interface EconomyReceipt {
+  readonly farewellOutcome?: FarewellOutcome;
   readonly commandId: string;
   readonly requestKey: string;
   readonly semanticKey: string;

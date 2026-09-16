@@ -1,3 +1,5 @@
+import { farewellTerms, selectedFarewell } from './farewell-outcome.js';
+import { FAREWELL_POLICY } from './farewell-types.js';
 import { readRelationObservation } from './social.js';
 import { COMPANY_RULES } from './definitions.js';
 import { canPerform, effectiveLeaderId, person } from './lifecycle-state.js';
@@ -189,6 +191,13 @@ export function requestDeparture(
 ): FinanceChange {
   const p = command.payload;
   const { member } = service(state, p.membershipId);
+  if (p.farewell)
+    requireEconomy(
+      p.reason === 'DISMISSED' &&
+        command.actorRef.kind === 'PLAYER' &&
+        BigInt(p.farewell.amountQ) > 0n,
+      'INVALID_ARGUMENT',
+    );
   requireEconomy(
     member.endedAt === null &&
       p.acknowledgedQuoteRevision === state.lifecycle.knowledge.revision &&
@@ -258,10 +267,25 @@ export function prepareDepartureSettlement(
     context,
     command.commandId,
   );
+  const choice = selectedFarewell(state, intent.intentId);
+  if (choice)
+    requireEconomy(
+      financeFact(context, 'FAREWELL_CONTEXT').departureIntentId === intent.intentId,
+      'INVALID_SOURCE',
+    );
+  const extra = choice
+    ? fundFarewell(
+        { ...state, finance: settled.finance },
+        { ...choice, membershipId: member.membershipId },
+        context,
+        command.commandId,
+      )
+    : null;
   return {
-    finance: settled.finance,
+    finance: extra?.finance ?? settled.finance,
     allocations: settled.allocations,
     requirements: [
+      ...(extra?.requirements ?? []),
       {
         kind: 'PHYSICAL_DEPARTURE',
         membershipId: p.membershipId,
@@ -328,7 +352,11 @@ export function quoteCompanyFarewell(
     state.lifecycle,
     member.characterId,
   ).reduce((s, c) => s + actualOwedQ(c), 0n);
+  const terms = farewellTerms(state, membershipId, intent.intentId);
   return {
+    policy: FAREWELL_POLICY.version,
+    reactionEligible: terms.eligible,
+    recognitionQ: terms.recognitionQ,
     membershipId,
     intentId: intent.intentId,
     reason: intent.reason,
@@ -346,6 +374,17 @@ export function grantFarewell(
   const p = command.payload,
     quote = quoteCompanyFarewell(state, p.membershipId, context);
   requireEconomy(p.quoteRevision === quote.quoteRevision, 'STALE_REVISION');
+  return fundFarewell(state, p, context, command.commandId);
+}
+
+/** Same payment owner for a standalone gift and an explicitly selected exit gift. */
+function fundFarewell(
+  state: CompanyEconomyState,
+  p: { membershipId: string; amountQ: string; poolId: string },
+  context: EconomyContext,
+  commandId: string,
+): FinanceChange {
+  const quote = quoteCompanyFarewell(state, p.membershipId, context);
   requireEconomy(quote.mandatoryOutstandingQ === '0', 'UNPAID_OBLIGATIONS');
   const amount = BigInt(p.amountQ);
   requireEconomy(amount > 0n && amount <= BigInt(quote.maximumAdditionalQ), 'INVALID_ARGUMENT');
@@ -363,7 +402,7 @@ export function grantFarewell(
     destination.walletId,
     amount,
     context.atTick,
-    economyId(command.commandId, 'farewell'),
+    economyId(commandId, 'farewell'),
     'FAREWELL',
   );
   const priorGift = finance.farewells.some((g) => g.membershipId === p.membershipId);
@@ -376,7 +415,7 @@ export function grantFarewell(
           membershipId: p.membershipId,
           amountQ: p.amountQ as typeof quote.maximumAdditionalQ,
           atTick: context.atTick,
-          commandId: command.commandId,
+          commandId: commandId,
         },
       ],
     },

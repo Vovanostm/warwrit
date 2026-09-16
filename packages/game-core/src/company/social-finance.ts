@@ -1,3 +1,4 @@
+import { selectedFarewell } from './farewell-outcome.js';
 import { COMPANY_RULES } from './definitions.js';
 import { canonicalJson } from './input.js';
 import {
@@ -170,7 +171,10 @@ export function prepareFinancialSocialContext(
       wage
         ? command.type === 'AdvanceCampaign' &&
             command.payload.authoritativeInputs.includes(fact.id)
-        : command.type === 'GrantFarewell' && command.payload.membershipId === membershipId,
+        : (command.type === 'GrantFarewell' ||
+            (command.type === 'ExecuteDeparture' &&
+              selectedFarewell(state, command.payload.intentId))) &&
+            command.payload.membershipId === membershipId,
       'INVALID_SOURCE',
     );
     const key = financeEffectKey(fact as WageCommunicationEvidence);

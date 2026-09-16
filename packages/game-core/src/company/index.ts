@@ -47,3 +47,5 @@ export * from './perk-effects.js';
 export * from './social.js';
 export * from './social-bindings.js';
 export * from './social-finance.js';
+
+export { readFarewellOutcome } from './farewell-outcome.js';

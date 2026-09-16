@@ -41,6 +41,7 @@ export function calculateCourseProgress(
   let used = requested < remaining ? requested : remaining;
   if (task.stop || reached(previous.amount)) used = 0n;
 
+  const duration = quote.coefficients.task.trainingDurationBps;
   const coefficients = {
     aptitudeBps: inputs.aptitudeAtStartBps,
     challengeBps: inputs.challengeBps,
@@ -49,14 +50,18 @@ export function calculateCourseProgress(
   const at = (ticks: bigint) =>
     creditProgression(
       previous.amount,
-      exactFraction(BigInt(inputs.baseMilliXpPerDay) * ticks, BigInt(inputs.ticksPerDay)),
+      exactFraction(
+        BigInt(inputs.baseMilliXpPerDay) * ticks * 10000n * BigInt(duration.denominator),
+        BigInt(inputs.ticksPerDay) * BigInt(duration.numerator),
+      ),
       coefficients,
     );
   if (used > 0n) {
-    const duration = quote.coefficients.task.trainingDurationBps;
-    // L/D define XP/day, but no accepted non-identity duration-to-course-rate equation.
-    // V3 C05-COURSE requires a diagnostic, not a guessed inverse multiplier or ignored perk.
-    if (BigInt(duration.numerator) !== 10000n * BigInt(duration.denominator))
+    // C05-COURSE-POLICY-v1: untagged starts cannot acquire new non-neutral semantics.
+    if (
+      inputs.coursePolicyVersion === undefined &&
+      BigInt(duration.numerator) !== 10000n * BigInt(duration.denominator)
+    )
       throw new RangeError('LEARNING_TRAINING_DURATION_POLICY_REQUIRED');
     if (target !== null) {
       // Bracket the first integral goal tick without probing an arbitrarily distant credit.
