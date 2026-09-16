@@ -21,6 +21,48 @@ function originalCommand(receipt: EconomyReceipt): CompanyCommand {
   return parsed.command;
 }
 
+/** Latest successfully confirmed choice, including an explicit request with no extra. */
+export function selectedFarewell(state: CompanyEconomyState, intentId: string, through?: string) {
+  const intent = state.finance.departures.find((d) => d.intentId === intentId);
+  requireEconomy(intent, 'INVALID_SOURCE');
+  const end =
+    through === undefined
+      ? state.finance.applied.length
+      : state.finance.applied.findIndex((r) => r.commandId === through);
+  requireEconomy(end >= 0, 'INVALID_SOURCE');
+  for (const receipt of state.finance.applied.slice(0, end + 1).toReversed()) {
+    const cmd = originalCommand(receipt);
+    if (
+      cmd.type !== 'RequestDeparture' ||
+      cmd.payload.membershipId !== intent.membershipId ||
+      cmd.payload.reason !== intent.reason ||
+      cmd.payload.causeId !== intent.causeId
+    )
+      continue;
+    requireEconomy(
+      cmd.worldId === state.lifecycle.worldId && cmd.companyId === state.lifecycle.companyId,
+      'INVALID_SOURCE',
+    );
+    if (cmd.payload.farewell)
+      requireEconomy(
+        cmd.actorRef.kind === 'PLAYER' &&
+          intent.reason === 'DISMISSED' &&
+          BigInt(cmd.payload.farewell.amountQ) > 0n,
+        'INVALID_SOURCE',
+      );
+    return cmd.payload.farewell;
+  }
+  return undefined;
+}
+
+function grantChoice(state: CompanyEconomyState, cmd: CompanyCommand) {
+  return cmd.type === 'GrantFarewell'
+    ? cmd.payload
+    : cmd.type === 'ExecuteDeparture'
+      ? selectedFarewell(state, cmd.payload.intentId, cmd.commandId)
+      : undefined;
+}
+
 /** The existing payment journal is authoritative; a balance or promise is not a grant. */
 export function farewellGrants(state: CompanyEconomyState, membershipId: string, through?: string) {
   const end =
@@ -45,10 +87,11 @@ export function farewellGrants(state: CompanyEconomyState, membershipId: string,
     requireEconomy(
       command.companyId === state.lifecycle.companyId &&
         command.worldId === state.lifecycle.worldId &&
-        command.type === 'GrantFarewell' &&
+        (command.type === 'GrantFarewell' || command.type === 'ExecuteDeparture') &&
         command.payload.membershipId === membershipId &&
         command.campaignTick === grant.atTick &&
         BigInt(grant.amountQ) > 0n &&
+        grantChoice(state, command)?.amountQ === grant.amountQ &&
         state.finance.movements.some(
           (m) =>
             m.movementId === economyId(grant.commandId, 'farewell') &&
@@ -60,10 +103,15 @@ export function farewellGrants(state: CompanyEconomyState, membershipId: string,
     );
   }
   for (const command of accepted.values())
-    if (command.type === 'GrantFarewell' && command.payload.membershipId === membershipId)
+    if (
+      (command.type === 'GrantFarewell' || command.type === 'ExecuteDeparture') &&
+      command.payload.membershipId === membershipId &&
+      grantChoice(state, command)
+    )
       requireEconomy(
         grants.some(
-          (g) => g.commandId === command.commandId && g.amountQ === command.payload.amountQ,
+          (g) =>
+            g.commandId === command.commandId && g.amountQ === grantChoice(state, command)!.amountQ,
         ),
         'INVALID_SOURCE',
       );
