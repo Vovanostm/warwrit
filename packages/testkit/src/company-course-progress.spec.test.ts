@@ -127,7 +127,7 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
           ],
         }).tasks[0]!;
       }
-      expect(split.root.lifecycle.characters[0]!.skills.archery).toEqual(whole.nextSkill);
+      expect(split.root.lifecycle.characters[0]!.skills['archery']).toEqual(whole.nextSkill);
       expect(split.task.completedTicks).toBe('1000');
       expect(readLearningTaskInputs(split.task)).toEqual(frozenInputs);
     }
@@ -242,7 +242,7 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
     const before = reload(credited);
     const result = calculateCourseProgress(f.task, reload(credited.lifecycle), '1000');
     expect(result).toMatchObject({ appliedElapsedTicks: '0', goalReached: true });
-    expect(result.nextSkill).toEqual(credited.lifecycle.characters[0]!.skills.archery);
+    expect(result.nextSkill).toEqual(credited.lifecycle.characters[0]!.skills['archery']);
     expect(credited).toEqual(before);
   });
 
