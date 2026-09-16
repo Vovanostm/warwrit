@@ -98,7 +98,11 @@ describe('C05 course numerical candidate, not task or finance settlement', () =>
     const first = calculateCourseProgress(f.task, f.root.lifecycle, '1');
     expect(first.nextSkill.amount.carry).not.toBe('0');
     const frozenInputs = reload(inputs);
-    for (const parts of [['1', '999'], ['19', '31', '950'], ['0', '997', '3']]) {
+    for (const parts of [
+      ['1', '999'],
+      ['19', '31', '950'],
+      ['0', '997', '3'],
+    ]) {
       const split = reload(f);
       Object.assign(split.root.lifecycle.characters[0]!, {
         aptitudeBySkill: {},
