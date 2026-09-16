@@ -42,6 +42,8 @@ const learnedFactInput = object({
   emotionalDelta: relationDeltaInput,
   decayTicks: unsigned,
   salience: natural(),
+  /** A lawful remedy is retained outside emotional selection, never a positive reward. */
+  resolvedFarewell: optional(object({ factId: id, happenedAt: unsigned })),
 });
 
 export type RelationAxes = ValueOf<typeof relationAxesInput>;
@@ -152,7 +154,8 @@ function sameFact(left: LearnedFact, right: LearnedFact): boolean {
     left.factId === right.factId &&
     left.factType === right.factType &&
     left.happenedAt === right.happenedAt &&
-    (left.otherId ?? null) === (right.otherId ?? null)
+    (left.otherId ?? null) === (right.otherId ?? null) &&
+    canonicalJson(left.resolvedFarewell ?? null) === canonicalJson(right.resolvedFarewell ?? null)
   );
 }
 
@@ -167,6 +170,7 @@ export function recordLearnedFact(
   const evidence = snapshotJson(value);
   requireSocial(learnedFactInput.read(evidence), 'INVALID_SOURCE');
   requireSocial(BigInt(evidence.learnedAt) >= BigInt(evidence.happenedAt), 'INVALID_TIME');
+  validateFarewellResolution(state, evidence);
 
   const known = state.chronicle.find(
     (memory) => memory.personId === evidence.personId && memory.factId === evidence.factId,
@@ -203,6 +207,63 @@ export function recordLearnedFact(
   };
 }
 
+/** Internal trusted-knowledge boundary; payment/exit provenance belongs to E04's binder. */
+function validateFarewellResolution(state: SocialState, fact: LearnedFact): void {
+  const resolution = fact.resolvedFarewell;
+  if (resolution) {
+    requireSocial(
+      fact.factType === 'VeteranFarewellCompensated' &&
+        fact.otherId !== undefined &&
+        fact.otherId !== fact.personId &&
+        resolution.factId !== fact.factId &&
+        Object.values(fact.emotionalDelta).every((delta) => delta === 0) &&
+        fact.decayTicks === '0',
+      'INVALID_SOURCE',
+    );
+    requireSocial(BigInt(fact.happenedAt) >= BigInt(resolution.happenedAt), 'INVALID_TIME');
+  }
+  const matching = state.chronicle.filter(
+    (other) =>
+      other.personId === fact.personId &&
+      (resolution
+        ? other.factId === resolution.factId
+        : other.resolvedFarewell?.factId === fact.factId),
+  );
+  for (const other of matching) {
+    const grievance = resolution ? other : fact;
+    const remedy = resolution ? fact : other;
+    requireSocial(
+      grievance.factType === 'VeteranDismissedNoFarewell' &&
+        grievance.otherId === remedy.otherId &&
+        grievance.happenedAt === remedy.resolvedFarewell!.happenedAt,
+      'FACT_CONFLICT',
+    );
+  }
+}
+
+function farewellResolutionKey(factId: string, happenedAt: string, target?: string): string {
+  return canonicalJson([factId, happenedAt, target ?? null]);
+}
+
+/** Resolution is knowledge, not an active emotion subject to decay or budget eviction. */
+function knownFarewellResolutions(state: SocialState, personId: string, now: bigint) {
+  const facts = new Map(
+    state.chronicle.filter((m) => m.personId === personId).map((m) => [m.factId, m]),
+  );
+  const resolved = new Set<string>();
+  for (const remedy of facts.values()) {
+    if (!remedy.resolvedFarewell) continue;
+    requireSocial(learnedFactInput.read(remedy), 'INVALID_SOURCE');
+    requireSocial(BigInt(remedy.learnedAt) >= BigInt(remedy.happenedAt), 'INVALID_TIME');
+    const link = remedy.resolvedFarewell;
+    const original = link && facts.get(link.factId);
+    validateFarewellResolution({ ...state, chronicle: original ? [original] : [] }, remedy);
+    if (BigInt(remedy.learnedAt) <= now)
+      resolved.add(farewellResolutionKey(link!.factId, link!.happenedAt, remedy.otherId));
+  }
+  return resolved;
+}
+
 function memoryRemainingTicks(memory: LearnedFact, atTick: bigint): bigint {
   const learnedAt = BigInt(memory.learnedAt);
   const decayTicks = BigInt(memory.decayTicks);
@@ -226,8 +287,17 @@ export function selectActiveMemories(
 ): readonly LearnedFact[] {
   requireSocial(isExactInteger(atTick) && BigInt(atTick) >= 0n, 'INVALID_TIME');
   const now = BigInt(atTick);
+  const resolved = knownFarewellResolutions(state, personId, now);
   const candidates = state.chronicle
-    .filter((memory) => memory.personId === personId && memoryRemainingTicks(memory, now) > 0n)
+    .filter(
+      (memory) =>
+        memory.personId === personId &&
+        memoryRemainingTicks(memory, now) > 0n &&
+        !(
+          memory.factType === 'VeteranDismissedNoFarewell' &&
+          resolved.has(farewellResolutionKey(memory.factId, memory.happenedAt, memory.otherId))
+        ),
+    )
     .toSorted(activeOrder);
   const pairCounts = new Map<string, number>();
   const active: LearnedFact[] = [];
