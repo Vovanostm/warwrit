@@ -40,6 +40,7 @@ export * from './learning-quote.js';
 export type { LearningInputs } from './learning-inputs.js';
 export * from './learning-task.js';
 export * from './learning-admission.js';
+export * from './course-progress.js';
 export { admitPractice } from './practice-admission.js';
 export type { PracticeContext, PracticeEvidence } from './practice-admission.js';
 export * from './perk-effects.js';
