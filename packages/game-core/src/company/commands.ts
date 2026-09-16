@@ -105,6 +105,7 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     reason: choice('DISMISSED', 'WAGE_BREACH', 'CANONICAL_EVENT'),
     causeId: id,
     acknowledgedQuoteRevision: unsigned,
+    farewell: optional(object({ amountQ: unsigned, poolId: id })),
   }),
   ExecuteDeparture: command('SYSTEM', {
     membershipId: id,
