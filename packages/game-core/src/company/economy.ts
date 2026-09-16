@@ -1,3 +1,4 @@
+import { prepareFarewellOutcome, readFarewellOutcome } from './farewell-outcome.js';
 import {
   bindFinancialSocialConsequences,
   prepareFinancialSocialContext,
@@ -261,6 +262,8 @@ export function prepareCompanyEconomy(
       context = prepareFinancialSocialContext(state, command, context, financialSocial);
     let base = materializeCompanyPhysicalState(state);
     validateEconomy(base, context);
+    for (const r of base.finance.applied)
+      if (r.farewellOutcome) readFarewellOutcome(base, r.farewellOutcome.membershipId);
     validatePhysicalState(base);
     requireEconomy(
       base.lifecycle.company?.runStatus !== 'GAME_OVER' ||
@@ -360,7 +363,7 @@ export function prepareCompanyEconomy(
     });
     composed = { ...composed, finance: warned.finance };
 
-    const receipt: EconomyReceipt = {
+    let receipt: EconomyReceipt = {
       commandId: command.commandId,
       requestKey,
       semanticKey,
@@ -370,6 +373,18 @@ export function prepareCompanyEconomy(
       requirements: [...residuals, ...warned.requirements],
       allocations: [...closed.allocations, ...draft.allocations],
     };
+    if (command.type === 'ExecuteDeparture')
+      receipt = {
+        ...receipt,
+        farewellOutcome: prepareFarewellOutcome(
+          lifecycleBeforeCommand,
+          {
+            ...composed,
+            finance: { ...composed.finance, applied: [...composed.finance.applied, receipt] },
+          },
+          command,
+        ),
+      };
     let next: CompanyEconomyState = {
       lifecycle: {
         ...composed.lifecycle,
