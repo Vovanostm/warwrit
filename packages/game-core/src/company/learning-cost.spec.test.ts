@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { COMPANY_COMMAND_SCHEMA_VERSION, COMPANY_RULESET_ID } from './model.js';
 import { createCompanyEconomyState } from './economy-state.js';
+import { accrueFinance } from './economy-accrual.js';
+import { moveCash, reservePreEntry } from './economy-payments.js';
+import { canonicalJson } from './input.js';
+import { admitLearningFunding } from './learning-funding.js';
 import { exactFraction } from './exact-fraction.js';
 import { admitLearningTask } from './learning-admission.js';
 import { calculateLearningCost } from './learning-cost.js';
@@ -142,6 +146,22 @@ function setup(book = false, tariff = '1000', balance = '100', budget = '1000') 
       knownContainers: containers,
       knownItems: items,
     }),
+  };
+  root.finance = {
+    ...root.finance,
+    accounts: [
+      {
+        membershipId: 'service',
+        poolId: 'local',
+        recipient: { kind: 'CHARACTER', id: 'learner' },
+        schedule: null,
+        known: true,
+        confirmedAt: lifecycle.campaignTick,
+        knownPaused: false,
+        knownDeath: false,
+        death: null,
+      },
+    ],
   };
   const command: CommandOf<'StartLearning'> = {
     schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
@@ -359,5 +379,192 @@ describe('C05-FIN exact obligation arithmetic, not financial settlement', () => 
       expect(() => calculateLearningCost(invalid, '1')).toThrow();
       expect(invalid).toEqual(before);
     }
+  });
+});
+
+describe('C05-FIN fresh financial admission, not payment or elapsed eligibility', () => {
+  const admit = (f: ReturnType<typeof setup>, command = f.request.command) =>
+    admitLearningFunding(f.root, command, f.admitted.task, f.context);
+
+  it('owns the original quote/payee and observes actual cash without granting the requested budget', () => {
+    const f = setup();
+    const before = reload(f);
+    const result = admit(f);
+    expect(result.funding).toMatchObject({
+      spendableQ: '100',
+      recipient: { kind: 'CHARACTER', id: 'provider' },
+      quote: { authorizedBudgetQ: '100', walletId: 'purse', providerWalletId: 'payee' },
+    });
+    expect(result.source).toEqual(f.context.learningFacts[0]);
+    expect(f).toEqual(before);
+    Object.assign(f.context.learningFacts[0]!, { providerId: 'changed' });
+    expect(result.source.providerId).toBe('provider');
+    expect(Object.isFrozen(result.funding!.access.recipientWalletIds)).toBe(true);
+  });
+
+  it('uses authentic non-neutral admission, not current perks or offer expiry, on fresh stop', () => {
+    const f = setup();
+    const learner = f.root.lifecycle.characters[0]!;
+    Object.assign(learner, {
+      skills: { ...learner.skills, leadership: initialSkillProgress(60, 'qualified') },
+      perks: [...learner.perks, 'leadership-60-b'],
+    });
+    f.admitted = admitLearningTask(
+      createLearningTaskState(),
+      createStudyAccessState(),
+      f.root,
+      f.context,
+      f.request,
+    );
+    const task = f.admitted.task;
+    const cost = calculateLearningCost(task, '3');
+    expect(task.start.quote.coefficients.task.trainingDurationBps.numerator).not.toBe('10000');
+    Object.assign(learner, { perks: [] });
+    const tick = campaignTick('6000');
+    Object.assign(f.root.lifecycle, { campaignTick: tick });
+    Object.assign(f.root.finance, { processedTick: tick });
+    Object.assign(f.context, { atTick: tick });
+    Object.assign(f.context.financeFacts[0]!, { id: 'fresh-access', atTick: tick });
+    const stop: CommandOf<'StopLearning'> = {
+      ...f.request.command,
+      type: 'StopLearning',
+      commandId: 'stop',
+      campaignTick: tick,
+      payload: { taskId: task.start.taskId, reason: 'PLAYER' },
+    };
+    const result = admitLearningFunding(f.root, stop, task, f.context);
+    expect(result.funding!.quote).toEqual(task.start.quote.funding);
+    expect(calculateLearningCost(task, '3')).toEqual(cost);
+    expect(cost.accumulatedQ).toEqual(exactFraction(12n, 5n));
+    expect(f.root.finance.movements).toEqual([]);
+  });
+
+  it('excludes genuine wage backing and observes subsequent real transfers without touching either', () => {
+    const f = setup();
+    const wageMember = {
+      ...f.root.lifecycle.memberships[0]!,
+      membershipId: entityId('wage-service'),
+      characterId: entityId('provider'),
+      basis: 'PAID' as const,
+      wageScheduleId: entityId('wage-rate'),
+    };
+    Object.assign(f.root.lifecycle, { memberships: [...f.root.lifecycle.memberships, wageMember] });
+    f.root.finance = {
+      ...f.root.finance,
+      accounts: [
+        ...f.root.finance.accounts,
+        {
+          ...f.root.finance.accounts[0]!,
+          membershipId: 'wage-service',
+          recipient: { kind: 'CHARACTER', id: 'provider' },
+          schedule: {
+            scheduleId: 'wage-rate',
+            agreedAt: campaignTick('0'),
+            agreedDailyWageMilli: '75',
+            rates: [],
+            notices: [],
+          },
+        },
+      ],
+    };
+    const tick = campaignTick('11');
+    f.root.finance = accrueFinance(f.root.finance, f.root.lifecycle, tick).finance;
+    f.root.finance = reservePreEntry(f.root.finance, f.root.finance.claims[0]!, tick);
+    Object.assign(f.root.lifecycle, { campaignTick: tick });
+    Object.assign(f.context, { atTick: tick });
+    Object.assign(f.context.financeFacts[0]!, { atTick: tick });
+    const stop: CommandOf<'StopLearning'> = {
+      ...f.request.command,
+      type: 'StopLearning',
+      commandId: 'stop',
+      campaignTick: tick,
+      payload: { taskId: 'task', reason: 'PLAYER' },
+    };
+    const admitted = () => admitLearningFunding(f.root, stop, f.admitted.task, f.context);
+    expect(admitted().funding!.spendableQ).toBe('25');
+    const held = reload(f.root.finance.reservations);
+    f.root.finance = moveCash(f.root.finance, 'purse', 'payee', 25n, tick, 'transfer', 'TRANSFER');
+    const before = reload(f);
+    expect(admitted().funding!.spendableQ).toBe('0');
+    expect(f.root.finance.reservations).toEqual(held);
+    expect(f.root.finance.wallets.map((w) => w.cashQ)).toEqual(['75', '25']);
+    expect(f).toEqual(before);
+  });
+
+  it('requires authentic original source consistency and current local recipient/access, atomically', () => {
+    for (const change of [
+      (f: ReturnType<typeof setup>) => Object.assign(f.context, { learningFacts: [] }),
+      (f: ReturnType<typeof setup>) =>
+        Object.assign(f.context.learningFacts[0]!, { costQPerDay: '2000' }),
+      (f: ReturnType<typeof setup>) =>
+        Object.assign(f.context.learningFacts[0]!, { sourceVersion: 'v2' }),
+      (f: ReturnType<typeof setup>) => Object.assign(f.context.learningFacts[0]!, { atTick: '11' }),
+      (f: ReturnType<typeof setup>) =>
+        Object.assign(f.context.learningFacts[0]!, { providerId: 'learner' }),
+      (f: ReturnType<typeof setup>) =>
+        Object.assign(f.context.learningFacts[0]!, { resourceIds: [] }),
+      (f: ReturnType<typeof setup>) => Object.assign(f.context, { financeFacts: [] }),
+      (f: ReturnType<typeof setup>) =>
+        Object.assign(f.context.financeFacts[0]!, { recipientWalletIds: [] }),
+      (f: ReturnType<typeof setup>) =>
+        Object.assign(f.context.financeFacts[0]!, { location: { ...location, areaId: 'other' } }),
+      (f: ReturnType<typeof setup>) =>
+        Object.assign(f.root.finance.wallets[1]!, { owner: { kind: 'CHARACTER', id: 'learner' } }),
+      (f: ReturnType<typeof setup>) =>
+        Object.assign(f.root.finance, { wallets: f.root.finance.wallets.slice(0, 1) }),
+    ]) {
+      const f = reload(setup());
+      change(f);
+      const before = reload(f);
+      expect(() => admit(f)).toThrow();
+      expect(f).toEqual(before);
+    }
+  });
+
+  it('authenticates before private history and requires a full trusted grant for a system command', () => {
+    const f = reload(setup());
+    Reflect.deleteProperty(f.admitted.task.start, 'quote');
+    Object.assign(f.context, { principal: { kind: 'PLAYER', id: 'foreign' } });
+    expect(() => admit(f)).toThrow('AUTHORIZATION');
+    const foreign = setup();
+    Reflect.deleteProperty(foreign.admitted.task.start, 'quote');
+    Object.assign(foreign.context, { companyId: 'foreign-company' });
+    Object.assign(foreign.request.command, { companyId: 'foreign-company' });
+    expect(() => admit(foreign)).toThrow('AUTHORIZATION');
+    const stale = setup();
+    Object.assign(stale.context, { canonicalRevision: canonicalRevision('1') });
+    expect(() => admit(stale)).toThrow('STALE_REVISION');
+    const g = setup();
+    const advance: CommandOf<'AdvanceCampaign'> = {
+      ...g.request.command,
+      type: 'AdvanceCampaign',
+      commandId: 'advance',
+      actorRef: { kind: 'SYSTEM', id: 'authority' },
+      expectedRevision: canonicalRevision('0'),
+      payload: { toTick: '11', authoritativeInputs: [] },
+    };
+    Object.assign(g.context, { principal: advance.actorRef });
+    expect(() => admitLearningFunding(g.root, advance, g.admitted.task, g.context)).toThrow(
+      'INVALID_SOURCE',
+    );
+    Object.assign(g.context, {
+      internalGrant: {
+        commandId: advance.commandId,
+        sourceEventId: advance.sourceEventId!,
+        canonicalRequest: canonicalJson(advance),
+      },
+    });
+    expect(
+      admitLearningFunding(g.root, advance, g.admitted.task, g.context).funding!.spendableQ,
+    ).toBe('100');
+    expect(g.admitted.task.completedTicks).toBe('0');
+  });
+
+  it('keeps genuine free book admission free without requiring a fictitious payee or money grant', () => {
+    const f = setup(true, '1000', '0');
+    Object.assign(f.context, { financeFacts: [] });
+    const before = reload(f);
+    expect(admit(f).funding).toBeNull();
+    expect(f).toEqual(before);
   });
 });
