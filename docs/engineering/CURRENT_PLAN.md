@@ -5,8 +5,8 @@
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Execution index: [WARWRIT-M1-COMPLETE-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s); current [Sept21 batch and amendments](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe)
 - Supporting WP-02 sources: [ROUTE](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), [V3](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recFIf3eiwmpI03Qu), parent [#8](https://github.com/Vovanostm/warwrit/issues/8); dated amendments supersede old operational statuses
-- Main checkpoint: `9d6c7cbedf3681dcd8e99db0ddce57eeaea0a1eb`, tree `e6b19fba24a91e7e3a60324c4fc9edc78f096891`, after E04-BIND PR86/87 and PB01 PR84; never reset newer main to this observation
-- Batch frontier: PB01 merged, PB02/PB04 eligible; continue partial C05-FIN PR85; E04-BIND merged, E04-ACCEPT next; G07 remains eligible. No successor is launched by this plan
+- Main checkpoint: `1beeea2806ffd1737e81aa8c82f81ecc7f0a0ef3`, tree `87604d9dd891a81cf2690d6765b92cef75a805c4`, after E04-BIND PR86/87, PB01 PR84 and FIN arithmetic PR85; never reset newer main to this observation
+- Batch frontier: PB02/PB04, E04-ACCEPT and G07 eligible; C05-FIN still partial after merged arithmetic, with its identified backing writer. No successor is launched by this plan
 
 ## Current state
 
@@ -17,10 +17,10 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-main: 9d6c7cbedf3681dcd8e99db0ddce57eeaea0a1eb
-main_post_merge_verification: passed-run-35741464877
+main: 1beeea2806ffd1737e81aa8c82f81ecc7f0a0ef3
+main_post_merge_verification: passed-run-35742246741
 PB_flow: PB01-merged-pr84; PB02-PB04-eligible-not-launched
-C_flow: prerequisites-merged-pr73-pr75-pr79; FIN-arithmetic-pr85-open-partial; TIME-blocked; issue71-open
+C_flow: prerequisites-merged-pr73-pr75-pr79-pr85; FIN-partial-policy-A-accepted; TIME-blocked; issue71-open
 E_flow: E04-A-accepted; E04-BIND-merged-pr86-pr87; E04-ACCEPT-next; issue69-open
 G_flow: G01-G06-merged; G07-next; G10-after-G09+C08+E05
 H_flow: after-required-domain-activation-and-G10
@@ -38,7 +38,7 @@ persistence: postgresql-kysely-pg
 **SOURCE-READY** is not implementation. **IMPLEMENTED/PARTIAL** does not complete its parent card.
 **REVIEWED/OPEN/UNMERGED** needs actual author-review and exact-tree gate evidence; it is not a merge.
 **MERGED** requires actual GitHub/main readback; **post-merge verification** requires observed main CI.
-The checkpoint above passed main-push [CI run 35741464877](https://github.com/Vovanostm/warwrit/actions/runs/35741464877).
+The checkpoint above passed main-push [CI run 35742246741](https://github.com/Vovanostm/warwrit/actions/runs/35742246741).
 That existing run verifies the integrated main checkpoint, not this later M1-OPS documentation tree.
 
 WP-02.1–02.4 and R00 are merged. [PR #18](https://github.com/Vovanostm/warwrit/pull/18)
@@ -57,9 +57,10 @@ C05 prerequisites [PR #73](https://github.com/Vovanostm/warwrit/pull/73), [#75](
 and [#79](https://github.com/Vovanostm/warwrit/pull/79) are merged: historical inputs, fractional study/XP and accepted course efficiency.
 [COURSE approval/delivery](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recPH833vQYr6teHf) supersedes its old proposal title.
 Full C05 still needs finance, finite elapsed/terminal/replay and composition in [#71](https://github.com/Vovanostm/warwrit/issues/71); C06 is not ready.
-[PR #85](https://github.com/Vovanostm/warwrit/pull/85) is OPEN: exact cost arithmetic only, not debit/reservation/spendable-prefix or financial replay.
-Its [FIN checkpoint](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recKNcimjB4kW2V1J) contains the single terminal sub-q decision packet.
-Full FIN remains PARTIAL and that policy remains OPEN; even merging this numerical prerequisite cannot enable C05-TIME.
+[PR #85](https://github.com/Vovanostm/warwrit/pull/85) is MERGED: exact cost arithmetic only, not debit/reservation/spendable-prefix or financial replay.
+The [FIN checkpoint](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recKNcimjB4kW2V1J), dated owner receipt `comybBWCkbOgcuiJk`,
+now accepts terminal policy A; old proposal/OPEN text is historical. Real obligation/backing implementation remains unfinished.
+Full FIN is PARTIAL; policy acceptance and this merged numerical prerequisite do not enable C05-TIME.
 E01 [PR #32](https://github.com/Vovanostm/warwrit/pull/32), E02 [PR #37](https://github.com/Vovanostm/warwrit/pull/37)
 and E03 [PR #67](https://github.com/Vovanostm/warwrit/pull/67) are merged.
 E04a-e PRs #74/#78/#80/#81/[#82](https://github.com/Vovanostm/warwrit/pull/82) are merged: exact contexts, social remedy primitive,
@@ -78,7 +79,7 @@ duplicate [#63](https://github.com/Vovanostm/warwrit/pull/63) stays closed witho
 Renderer [issue #6](https://github.com/Vovanostm/warwrit/issues/6) remains the separate Q-T03 Babylon.js-vs-PlayCanvas evidence spike for later WP-04.
 This plan grants no merge, auto-merge, deployment or purchases. Existing FAREWELL_ACCEPTED permission
 covers only the necessary bounded E04 remainder, after its review/exact-tree/guarded-merge conditions.
-It does not transfer to M1-OPS, PB, C, G or E05; the repository default above remains false.
+Other task-specific owner receipts remain separate; no permission transfers between lanes or changes the repository default above.
 The owner's later `implement, merge` separately authorizes PR83 only, recorded in its [scoped receipt](https://github.com/Vovanostm/warwrit/pull/83#issuecomment-5778429913).
 
 ## Authority and source order
@@ -143,9 +144,13 @@ Only M1-OPS writes `docs/engineering/CURRENT_PLAN.md`; PB-OPS is replaced, not a
 The [ownership/handoff note](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5774396065) and [resume ACK](https://github.com/Vovanostm/warwrit/pull/83#issuecomment-5778429913)
 identify this writer on `docs/m1-ops-current-plan-20260922`, plan-only scope and its completion/handoff.
 Actual implementation handoffs now exist: PB01 on `feat/pb01-combat-lab-contract` / merged PR84;
-C05-FIN arithmetic on `feat/wp02-c05-fin-arithmetic` / open PR85; E04-BIND delivered through PR86/87.
-G07 has no published delivery in the inspected frontier. A prepared prompt or a branch does not prove an active
-reservation; no-results cannot disprove unpushed work. No game-file reservation is acquired or released by M1-OPS.
+C05-FIN arithmetic on `feat/wp02-c05-fin-arithmetic` / merged PR85; E04-BIND delivered through PR86/87.
+The actual C05-FIN writer's [request](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5778446023) has [M1-OPS ACK](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5778573163):
+`feat/wp02-c05-fin-backing` temporarily owns `company/economy-types.ts`, `company/economy-state.ts` and only a necessary
+`company/index.ts` export for exact learning obligation/backing. Its branch was proposed; the ACK does not claim creation or implementation.
+Keep that reservation until its writer's explicit completion/release and PR/head/tree handoff; M1-OPS completion does not release it.
+G07 has no published delivery in the inspected frontier. A prepared prompt or a branch does not prove another active reservation;
+no-results cannot disprove unpushed work. M1-OPS edits no game files and does not release another writer's reservation by assumption.
 PB01 owns lab DTO/scenario/projection work; C05-FIN owns finance cost/carry and its terminal sub-q policy check;
 E04-BIND owns lawful observer binding; G07 owns receipt-to-physical preparation, without combat activation.
 Only E04-BIND may narrowly edit the existing `company/economy.ts` root in this batch. C05-FIN does not
