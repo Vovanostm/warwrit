@@ -1,3 +1,4 @@
+import { bindFarewellNotices, type FarewellNotice } from './farewell-social.js';
 import { selectedFarewell } from './farewell-outcome.js';
 import { COMPANY_RULES } from './definitions.js';
 import { canonicalJson } from './input.js';
@@ -33,6 +34,7 @@ export function bindFinancialSocialConsequences(
   social: SocialState,
   prepared: Extract<EconomyResult, { kind: 'PREPARED' }>,
   knowledge: readonly FinancialSocialKnowledge[],
+  notices: readonly FarewellNotice[] = [],
 ) {
   const { next: state, receipt } = prepared;
   const saved = state.finance.applied.find((r) => r.commandId === receipt.commandId);
@@ -136,7 +138,7 @@ export function bindFinancialSocialConsequences(
   }
   return {
     economy: state,
-    social: candidate,
+    social: bindFarewellNotices(candidate, prepared, notices),
     requirements: receipt.requirements.filter((r) => r.kind !== 'INFORMED_SOCIAL_CONTRIBUTION'),
   };
 }
