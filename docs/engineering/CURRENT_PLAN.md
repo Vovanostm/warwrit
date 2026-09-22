@@ -5,8 +5,8 @@
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Execution index: [WARWRIT-M1-COMPLETE-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s); current [Sept21 batch and amendments](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe)
 - Supporting WP-02 sources: [ROUTE](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), [V3](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recFIf3eiwmpI03Qu), parent [#8](https://github.com/Vovanostm/warwrit/issues/8); dated amendments supersede old operational statuses
-- Main checkpoint: `74394870ac0397626e5a18f42d2205f637273875`, tree `01f98bc541aed0f08af336cfd4d755072f0c5d4a`; no open PRs at preflight, before this M1-OPS PR
-- Eligible implementation responsibilities: PB01 / C05-FIN / E04-BIND / G07; eligibility is not an assignment, reservation or launched agent
+- Main checkpoint: `9d6c7cbedf3681dcd8e99db0ddce57eeaea0a1eb`, tree `e6b19fba24a91e7e3a60324c4fc9edc78f096891`, after E04-BIND PR86/87 and PB01 PR84; never reset newer main to this observation
+- Batch frontier: PB01 merged, PB02/PB04 eligible; continue partial C05-FIN PR85; E04-BIND merged, E04-ACCEPT next; G07 remains eligible. No successor is launched by this plan
 
 ## Current state
 
@@ -17,10 +17,11 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-main: 74394870ac0397626e5a18f42d2205f637273875
-main_post_merge_verification: passed-run-35095951069
-C_flow: C05-prerequisites-merged-pr73-pr75-pr79; C05-FIN-next; issue71-open
-E_flow: E04-A-accepted; E04a-e-merged-pr74-pr78-pr80-pr81-pr82; E04-BIND-next; issue69-open
+main: 9d6c7cbedf3681dcd8e99db0ddce57eeaea0a1eb
+main_post_merge_verification: passed-run-35741464877
+PB_flow: PB01-merged-pr84; PB02-PB04-eligible-not-launched
+C_flow: prerequisites-merged-pr73-pr75-pr79; FIN-arithmetic-pr85-open-partial; TIME-blocked; issue71-open
+E_flow: E04-A-accepted; E04-BIND-merged-pr86-pr87; E04-ACCEPT-next; issue69-open
 G_flow: G01-G06-merged; G07-next; G10-after-G09+C08+E05
 H_flow: after-required-domain-activation-and-G10
 I_flow: after-H-durability-executor-path
@@ -37,7 +38,7 @@ persistence: postgresql-kysely-pg
 **SOURCE-READY** is not implementation. **IMPLEMENTED/PARTIAL** does not complete its parent card.
 **REVIEWED/OPEN/UNMERGED** needs actual author-review and exact-tree gate evidence; it is not a merge.
 **MERGED** requires actual GitHub/main readback; **post-merge verification** requires observed main CI.
-The checkpoint above passed main-push [CI run 35095951069](https://github.com/Vovanostm/warwrit/actions/runs/35095951069).
+The checkpoint above passed main-push [CI run 35741464877](https://github.com/Vovanostm/warwrit/actions/runs/35741464877).
 That existing run verifies the integrated main checkpoint, not this later M1-OPS documentation tree.
 
 WP-02.1–02.4 and R00 are merged. [PR #18](https://github.com/Vovanostm/warwrit/pull/18)
@@ -56,11 +57,16 @@ C05 prerequisites [PR #73](https://github.com/Vovanostm/warwrit/pull/73), [#75](
 and [#79](https://github.com/Vovanostm/warwrit/pull/79) are merged: historical inputs, fractional study/XP and accepted course efficiency.
 [COURSE approval/delivery](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recPH833vQYr6teHf) supersedes its old proposal title.
 Full C05 still needs finance, finite elapsed/terminal/replay and composition in [#71](https://github.com/Vovanostm/warwrit/issues/71); C06 is not ready.
+[PR #85](https://github.com/Vovanostm/warwrit/pull/85) is OPEN: exact cost arithmetic only, not debit/reservation/spendable-prefix or financial replay.
+Its [FIN checkpoint](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recKNcimjB4kW2V1J) contains the single terminal sub-q decision packet.
+Full FIN remains PARTIAL and that policy remains OPEN; even merging this numerical prerequisite cannot enable C05-TIME.
 E01 [PR #32](https://github.com/Vovanostm/warwrit/pull/32), E02 [PR #37](https://github.com/Vovanostm/warwrit/pull/37)
 and E03 [PR #67](https://github.com/Vovanostm/warwrit/pull/67) are merged.
 E04a-e PRs #74/#78/#80/#81/[#82](https://github.com/Vovanostm/warwrit/pull/82) are merged: exact contexts, social remedy primitive,
 final outcome and selected-gift exit composition. [FAREWELL_ACCEPTED](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/rec7kz9dUerTb0ZdL)
-accepts E04-A; lawful individual knowledge/reaction/remedy binding and full acceptance remain in [#69](https://github.com/Vovanostm/warwrit/issues/69). E05 stays gated.
+accepts E04-A. E04-BIND [#86](https://github.com/Vovanostm/warwrit/pull/86) and [#87](https://github.com/Vovanostm/warwrit/pull/87)
+are now MERGED: lawful individual notice binding and atomic composition. E04-ACCEPT remains the separate joint acceptance in
+[#69](https://github.com/Vovanostm/warwrit/issues/69); E05 stays gated. Do not reimplement BIND or equate it with full E04 acceptance.
 G01 [PR #31](https://github.com/Vovanostm/warwrit/pull/31), G02 [PR #41](https://github.com/Vovanostm/warwrit/pull/41),
 G03 [PR #55](https://github.com/Vovanostm/warwrit/pull/55) and G04 [PR #65](https://github.com/Vovanostm/warwrit/pull/65)
 are merged, as are G05 [#72](https://github.com/Vovanostm/warwrit/pull/72) and G06 [#77](https://github.com/Vovanostm/warwrit/pull/77).
@@ -72,7 +78,8 @@ duplicate [#63](https://github.com/Vovanostm/warwrit/pull/63) stays closed witho
 Renderer [issue #6](https://github.com/Vovanostm/warwrit/issues/6) remains the separate Q-T03 Babylon.js-vs-PlayCanvas evidence spike for later WP-04.
 This plan grants no merge, auto-merge, deployment or purchases. Existing FAREWELL_ACCEPTED permission
 covers only the necessary bounded E04 remainder, after its review/exact-tree/guarded-merge conditions.
-It does not transfer to M1-OPS, PB, C, G or E05; the default above remains false.
+It does not transfer to M1-OPS, PB, C, G or E05; the repository default above remains false.
+The owner's later `implement, merge` separately authorizes PR83 only, recorded in its [scoped receipt](https://github.com/Vovanostm/warwrit/pull/83#issuecomment-5778429913).
 
 ## Authority and source order
 
@@ -103,9 +110,9 @@ Paths below are under `packages/game-core/src/company/`. Read actual consumers b
 - **Composition/persistence (C/B/X):** [prepareCompanyEconomy](../../packages/game-core/src/company/economy.ts) prepares one lifecycle+finance+physical candidate with supported social preparation. Extend that composition, not independent child commits; H adds one atomic snapshot/audit/receipt transaction and post-commit publication.
 
 `PREPARED` is not aggregate `Accepted` or durable commit. E04a-b consume supported
-`INFORMED_SOCIAL_CONTRIBUTION` requirements and exact contexts internally; final E04 binding and E05
-public disclosure remain unfinished. Actual and known snapshots intentionally differ; do not collapse the
-privacy boundary for DRY. Independent test expectations are not a second production owner.
+`INFORMED_SOCIAL_CONTRIBUTION` requirements and exact contexts; merged BIND composes explicit lawful notices internally.
+Full E04 acceptance and E05 public disclosure remain unfinished. Actual and known snapshots intentionally differ;
+do not collapse the privacy boundary for DRY. Independent test expectations are not a second production owner.
 
 ## Delivery sequence and activation gates
 
@@ -121,6 +128,7 @@ G07 -> G08 -> G09; G10 additionally requires C08 + E05
 
 A complete predecessor must actually merge, unless explicitly accepted as source/evidence-only.
 A green/open or partial prerequisite cannot unlock a consumer needing its full responsibility.
+E04-BIND and PB01 are already merged; E04-ACCEPT and PB02/PB04 are eligible separate successors, not launched work.
 C08 additionally joins C07 with the already merged A04/B03. G10 requires G09 plus completed C08 and E05.
 H durable persistence/execution follows the required completed domain paths and G10; I acceptance
 follows H rather than substituting for H's transaction/race/crash evidence. Refine distant G/H tasks
@@ -132,10 +140,12 @@ The index retains parent criteria; this is neither a promised PR count nor a com
 ### Single coordinator and temporary shared-path ownership
 
 Only M1-OPS writes `docs/engineering/CURRENT_PLAN.md`; PB-OPS is replaced, not another coordinator.
-The [ownership/handoff note](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5774396065) records this writer,
-branch `docs/m1-ops-current-plan-20260922`, narrow plan-only scope and current handoff status.
-No implementation-lane writer/reservation was acknowledged in the inspected batch at this checkpoint;
-a prepared prompt or no-results search cannot establish launched work or disprove unpushed work.
+The [ownership/handoff note](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5774396065) and [resume ACK](https://github.com/Vovanostm/warwrit/pull/83#issuecomment-5778429913)
+identify this writer on `docs/m1-ops-current-plan-20260922`, plan-only scope and its completion/handoff.
+Actual implementation handoffs now exist: PB01 on `feat/pb01-combat-lab-contract` / merged PR84;
+C05-FIN arithmetic on `feat/wp02-c05-fin-arithmetic` / open PR85; E04-BIND delivered through PR86/87.
+G07 has no published delivery in the inspected frontier. A prepared prompt or a branch does not prove an active
+reservation; no-results cannot disprove unpushed work. No game-file reservation is acquired or released by M1-OPS.
 PB01 owns lab DTO/scenario/projection work; C05-FIN owns finance cost/carry and its terminal sub-q policy check;
 E04-BIND owns lawful observer binding; G07 owns receipt-to-physical preparation, without combat activation.
 Only E04-BIND may narrowly edit the existing `company/economy.ts` root in this batch. C05-FIN does not
@@ -171,7 +181,8 @@ not a blocker for WP-02 closure unless separately added to the canonical route.
 Full M1 is persistent company -> travel -> contracts -> physical two-company PvE -> proof -> consequences
 -> re-entry, with the accepted scope in the index. [PB01-PB09](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recaVmScKRBtwZqIX)
 are a separate disposable diagnostic battle, not world/co-op delivery or M1 completion.
-PB01 is eligible independently of the remaining persistent-company work; this plan does not launch it.
+[PB01 PR84](https://github.com/Vovanostm/warwrit/pull/84) is MERGED: contract/scenario/projection only, not routes, sessions or UI.
+PB02/PB04 may proceed independently under their own selected cards; no runnable battle or successor launch is claimed.
 Actual integrated PB05 + PB06 delivery is the first local-battle candidate. Browser interaction and actual
 MacBook/human evidence remain separate; authored journeys, headless CI or screenshots are not those passes.
 `pnpm dev:combat-lab` is still a proposed PB08 deliverable, absent from current root package.json.
@@ -206,5 +217,6 @@ a changed integration base requires checking the actual resulting tree. Missing 
 Perform two author passes: sources/behavior/counterexamples, then owners/time/privacy/serialization/concurrency/scope/raw size;
 these are not independent approvals. Record base/head/tree, commands/exits, run/job links, findings and limitations.
 Save the narrow result and pointers in the selected Airtable checkpoint, GitHub and Empirical, then read back.
-M1-OPS has no merge permission; leave its PR in the actual unmerged readiness state and stop at this card.
+Execute only separately authorized exact-scope merges with fresh refs, expected-head guard and actual-main post-merge evidence;
+M1-OPS stops at its documentation responsibility. No successor authority or launch follows from its completion.
 Git history and linked PRs retain older transitions. Do not rewrite ADRs or PR #17 or declare all WP-02/M1 complete.

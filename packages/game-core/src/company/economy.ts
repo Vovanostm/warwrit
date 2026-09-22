@@ -1,3 +1,4 @@
+import type { FarewellNotice } from './farewell-social.js';
 import { prepareFarewellOutcome, readFarewellOutcome } from './farewell-outcome.js';
 import {
   bindFinancialSocialConsequences,
@@ -434,11 +435,12 @@ export function prepareCompanyFinancialSocial(
   context: PracticeEconomyContext,
   inputs: readonly FinancialSocialInput[] = [],
   knowledge: readonly FinancialSocialKnowledge[] = [],
+  notices: readonly FarewellNotice[] = [],
 ) {
   try {
     const result = prepareCompanyEconomy(state, value, context, { social, inputs });
     if (result.kind === 'REJECTED') return { ...result, social };
-    const bound = bindFinancialSocialConsequences(social, result, knowledge);
+    const bound = bindFinancialSocialConsequences(social, result, knowledge, notices);
     return { ...result, social: bound.social, requirements: bound.requirements };
   } catch (error) {
     if (error instanceof EconomyViolation || error instanceof SocialViolation)
