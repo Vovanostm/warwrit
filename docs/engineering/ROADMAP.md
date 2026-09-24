@@ -65,7 +65,7 @@ G09 + C08 + E05
   -> G10
 
 required domain activation + G10
-  -> H01 -> H02 -> H03 -> H04 -> H05 -> H06 -> H07 -> H08
+  -> H01-H08 durable persistence/execution responsibilities
   -> I01
 
 I02 additionally requires F01 + D02
@@ -77,6 +77,7 @@ Activation boundaries remain strict:
 - `StartLearning` stays disabled until C08.
 - partial G07-G09 work must not advance a processed combat-receipt cursor as if G10 existed;
 - G10 is the first full persistent combat-consequence activation point;
+- H01-H08 are not forced into an artificial numeric serial chain; refine their exact internal prerequisites against live predecessor APIs, while all required H durability evidence must exist before I01;
 - H requires real PostgreSQL transaction/concurrency/crash evidence where specified;
 - I is end-to-end acceptance, not a replacement for H durability evidence.
 
