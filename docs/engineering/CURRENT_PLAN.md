@@ -5,6 +5,7 @@
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Execution index: [WARWRIT-M1-COMPLETE-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s); current [Sept21 batch and amendments](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe)
 - Supporting WP-02 sources: [ROUTE](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), [V3](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recFIf3eiwmpI03Qu), parent [#8](https://github.com/Vovanostm/warwrit/issues/8); dated amendments supersede old operational statuses
+- Continuation graph: [ROADMAP.md](ROADMAP.md) — compact dependencies and milestone sequencing, not a second product canon
 - Main checkpoint: `a5fb1c0ba42d94ce80f8dce16d04203b9827c02e`, tree `357730dbbcbe5c92c51e87f5b5c56f18d354e6e0`, after M1-OPS PR83 reconciled the already merged E04-BIND, PB01 and FIN arithmetic work; never reset newer main to this observation
 - Batch frontier: PB02/PB04, E04-ACCEPT and G07 are independently eligible. C05-FIN remains partial: PR88 funding admission is OPEN/GREEN and the acknowledged backing writer retains its shared-path reservation. No successor is launched by this plan
 
@@ -141,9 +142,9 @@ The index retains parent criteria; this is neither a promised PR count nor a com
 
 ### Single coordinator and temporary shared-path ownership
 
-Only M1-OPS writes `docs/engineering/CURRENT_PLAN.md`; PB-OPS is replaced, not another coordinator.
-The [ownership/handoff note](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5774396065) and [resume ACK](https://github.com/Vovanostm/warwrit/pull/83#issuecomment-5778429913)
-identify this writer on `docs/m1-ops-current-plan-20260922`, plan-only scope and its completion/handoff.
+`docs/engineering/CURRENT_PLAN.md` has one acknowledged documentation writer at a time; do not run competing OPS coordinators.
+M1-OPS completed and released its plan-only reservation through merged PR83. Its [ownership/handoff note](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5774396065) and [resume ACK](https://github.com/Vovanostm/warwrit/pull/83#issuecomment-5778429913) remain historical delivery evidence, not a permanent writer lock.
+Any later plan/roadmap refresh records a fresh narrow writer ACK before editing and releases it at handoff.
 Actual implementation handoffs now exist: PB01 on `feat/pb01-combat-lab-contract` / merged PR84;
 C05-FIN arithmetic on `feat/wp02-c05-fin-arithmetic` / merged PR85; C05-FIN funding admission on open/green PR88;
 E04-BIND delivered through PR86/87.
