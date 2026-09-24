@@ -1,12 +1,13 @@
 # Warwrit current delivery plan
 
 - Status: operational mirror for coding agents
-- As of: 2026-09-22
+- As of: 2026-09-24
 - Product/planning authority: canonical Airtable base `apph3bj1NyVrfJeLM`
 - Execution index: [WARWRIT-M1-COMPLETE-v1](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s); current [Sept21 batch and amendments](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe)
 - Supporting WP-02 sources: [ROUTE](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), [V3](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recFIf3eiwmpI03Qu), parent [#8](https://github.com/Vovanostm/warwrit/issues/8); dated amendments supersede old operational statuses
-- Main checkpoint: `1beeea2806ffd1737e81aa8c82f81ecc7f0a0ef3`, tree `87604d9dd891a81cf2690d6765b92cef75a805c4`, after E04-BIND PR86/87, PB01 PR84 and FIN arithmetic PR85; never reset newer main to this observation
-- Batch frontier: PB02/PB04, E04-ACCEPT and G07 eligible; C05-FIN still partial after merged arithmetic, with its identified backing writer. No successor is launched by this plan
+- Continuation graph: [ROADMAP.md](ROADMAP.md) — compact dependencies and milestone sequencing, not a second product canon
+- Main checkpoint: `a5fb1c0ba42d94ce80f8dce16d04203b9827c02e`, tree `357730dbbcbe5c92c51e87f5b5c56f18d354e6e0`, after M1-OPS PR83 reconciled the already merged E04-BIND, PB01 and FIN arithmetic work; never reset newer main to this observation
+- Batch frontier: PB02/PB04, E04-ACCEPT and G07 are independently eligible. C05-FIN remains partial: PR88 funding admission is OPEN/GREEN and the acknowledged backing writer retains its shared-path reservation. No successor is launched by this plan
 
 ## Current state
 
@@ -17,10 +18,10 @@ WP-00: done
 WP-01: done
 WP-02: in-progress
 M1: incomplete
-main: 1beeea2806ffd1737e81aa8c82f81ecc7f0a0ef3
-main_post_merge_verification: passed-run-35742246741
+main: a5fb1c0ba42d94ce80f8dce16d04203b9827c02e
+main_post_merge_verification: passed-run-35743608713
 PB_flow: PB01-merged-pr84; PB02-PB04-eligible-not-launched
-C_flow: prerequisites-merged-pr73-pr75-pr79-pr85; FIN-partial-policy-A-accepted; TIME-blocked; issue71-open
+C_flow: prerequisites-merged-pr73-pr75-pr79-pr85; FIN-funding-pr88-open-green; FIN-partial-policy-A-accepted; TIME-blocked; issue71-open
 E_flow: E04-A-accepted; E04-BIND-merged-pr86-pr87; E04-ACCEPT-next; issue69-open
 G_flow: G01-G06-merged; G07-next; G10-after-G09+C08+E05
 H_flow: after-required-domain-activation-and-G10
@@ -38,8 +39,8 @@ persistence: postgresql-kysely-pg
 **SOURCE-READY** is not implementation. **IMPLEMENTED/PARTIAL** does not complete its parent card.
 **REVIEWED/OPEN/UNMERGED** needs actual author-review and exact-tree gate evidence; it is not a merge.
 **MERGED** requires actual GitHub/main readback; **post-merge verification** requires observed main CI.
-The checkpoint above passed main-push [CI run 35742246741](https://github.com/Vovanostm/warwrit/actions/runs/35742246741).
-That existing run verifies the integrated main checkpoint, not this later M1-OPS documentation tree.
+The checkpoint above passed main-push [CI run 35743608713](https://github.com/Vovanostm/warwrit/actions/runs/35743608713).
+That run verifies the actual merged PR83 tree. Later open-PR evidence does not change `main` until an actual merge.
 
 WP-02.1–02.4 and R00 are merged. [PR #18](https://github.com/Vovanostm/warwrit/pull/18)
 merged R00 as `321640fb737ed22db96fb5525b4b4257b01397ab`,
@@ -61,6 +62,7 @@ Full C05 still needs finance, finite elapsed/terminal/replay and composition in 
 The [FIN checkpoint](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recKNcimjB4kW2V1J), dated owner receipt `comybBWCkbOgcuiJk`,
 now accepts terminal policy A; old proposal/OPEN text is historical. Real obligation/backing implementation remains unfinished.
 Full FIN is PARTIAL; policy acceptance and this merged numerical prerequisite do not enable C05-TIME.
+[PR #88](https://github.com/Vovanostm/warwrit/pull/88) is OPEN/GREEN on its published head: source-bound funding admission and current lawful local finance access only. It is not debit/reservation, retained obligation backing, a prior-obligation-aware spendable prefix or financial replay; even its eventual merge will not by itself complete FIN.
 E01 [PR #32](https://github.com/Vovanostm/warwrit/pull/32), E02 [PR #37](https://github.com/Vovanostm/warwrit/pull/37)
 and E03 [PR #67](https://github.com/Vovanostm/warwrit/pull/67) are merged.
 E04a-e PRs #74/#78/#80/#81/[#82](https://github.com/Vovanostm/warwrit/pull/82) are merged: exact contexts, social remedy primitive,
@@ -140,16 +142,17 @@ The index retains parent criteria; this is neither a promised PR count nor a com
 
 ### Single coordinator and temporary shared-path ownership
 
-Only M1-OPS writes `docs/engineering/CURRENT_PLAN.md`; PB-OPS is replaced, not another coordinator.
-The [ownership/handoff note](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5774396065) and [resume ACK](https://github.com/Vovanostm/warwrit/pull/83#issuecomment-5778429913)
-identify this writer on `docs/m1-ops-current-plan-20260922`, plan-only scope and its completion/handoff.
+`docs/engineering/CURRENT_PLAN.md` has one acknowledged documentation writer at a time; do not run competing OPS coordinators.
+M1-OPS completed and released its plan-only reservation through merged PR83. Its [ownership/handoff note](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5774396065) and [resume ACK](https://github.com/Vovanostm/warwrit/pull/83#issuecomment-5778429913) remain historical delivery evidence, not a permanent writer lock.
+Any later plan/roadmap refresh records a fresh narrow writer ACK before editing and releases it at handoff.
 Actual implementation handoffs now exist: PB01 on `feat/pb01-combat-lab-contract` / merged PR84;
-C05-FIN arithmetic on `feat/wp02-c05-fin-arithmetic` / merged PR85; E04-BIND delivered through PR86/87.
+C05-FIN arithmetic on `feat/wp02-c05-fin-arithmetic` / merged PR85; C05-FIN funding admission on open/green PR88;
+E04-BIND delivered through PR86/87.
 The actual C05-FIN writer's [request](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5778446023) has [M1-OPS ACK](https://github.com/Vovanostm/warwrit/issues/8#issuecomment-5778573163):
 `feat/wp02-c05-fin-backing` temporarily owns `company/economy-types.ts`, `company/economy-state.ts` and only a necessary
 `company/index.ts` export for exact learning obligation/backing. Its branch was proposed; the ACK does not claim creation or implementation.
 Keep that reservation until its writer's explicit completion/release and PR/head/tree handoff; M1-OPS completion does not release it.
-G07 has no published delivery in the inspected frontier. A prepared prompt or a branch does not prove another active reservation;
+G07, PB02, PB04 and E04-ACCEPT have no published delivery in the inspected frontier. A prepared prompt or a branch does not prove another active reservation;
 no-results cannot disprove unpushed work. M1-OPS edits no game files and does not release another writer's reservation by assumption.
 PB01 owns lab DTO/scenario/projection work; C05-FIN owns finance cost/carry and its terminal sub-q policy check;
 E04-BIND owns lawful observer binding; G07 owns receipt-to-physical preparation, without combat activation.
@@ -222,6 +225,6 @@ a changed integration base requires checking the actual resulting tree. Missing 
 Perform two author passes: sources/behavior/counterexamples, then owners/time/privacy/serialization/concurrency/scope/raw size;
 these are not independent approvals. Record base/head/tree, commands/exits, run/job links, findings and limitations.
 Save the narrow result and pointers in the selected Airtable checkpoint, GitHub and Empirical, then read back.
-Execute only separately authorized exact-scope merges with fresh refs, expected-head guard and actual-main post-merge evidence;
-M1-OPS stops at its documentation responsibility. No successor authority or launch follows from its completion.
+Execute only separately authorized exact-scope merges with fresh refs, expected-head guard and actual-main post-merge evidence.
+Documentation refreshes do not authorize successor implementation or merge; use [ROADMAP.md](ROADMAP.md) for the compact continuation graph.
 Git history and linked PRs retain older transitions. Do not rewrite ADRs or PR #17 or declare all WP-02/M1 complete.
