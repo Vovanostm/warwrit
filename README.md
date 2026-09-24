@@ -1,6 +1,14 @@
 # Warwrit
 
-Warwrit is a browser-first persistent tactical game project. The repository has completed **WP-01 — Deterministic Combat Kernel**: a headless M0 combat proof now exists, while rendering, persistence, networking, world simulation, and final balance remain outside this work package.
+Warwrit is a browser-first persistent tactical game project. **M0, S-02, WP-00 and WP-01 are complete; WP-02 is in progress and M1 is incomplete.** The repository now contains the deterministic combat kernel plus substantial persistent Company/Character domain work, while full learning activation, combat consequences, durable execution, production realtime/world integration and final player evidence remain ahead.
+
+## Current development
+
+- [Current delivery plan](docs/engineering/CURRENT_PLAN.md) — live repository-side status, active blockers and ownership.
+- [Development roadmap](docs/engineering/ROADMAP.md) — dependency graph, parallel frontier and milestones toward WP-02, the local playable battle and M1.
+- [Documentation map](docs/README.md) — authority, ADRs, engineering guidance and work-package records.
+
+PB01's finite local battle contract/scenario/projection is merged, but the disposable combat lab is **not yet a playable browser game**. PB02 and PB04 are the next independent lab slices. Persistent M1 remains separate from this diagnostic path.
 
 ## Bootstrap
 
@@ -59,7 +67,7 @@ The kernel still may not import filesystem, network, clock, process, ambient ran
 
 ## Project authority
 
-The source-of-truth hierarchy is defined in [`docs/authority/PROJECT_AUTHORITY.md`](docs/authority/PROJECT_AUTHORITY.md). Engineering agents must also follow [`AGENTS.md`](AGENTS.md).
+The source-of-truth hierarchy is defined in [`docs/authority/PROJECT_AUTHORITY.md`](docs/authority/PROJECT_AUTHORITY.md). Engineering agents must also follow [`AGENTS.md`](AGENTS.md), the live [delivery plan](docs/engineering/CURRENT_PLAN.md), and the [development roadmap](docs/engineering/ROADMAP.md).
 
 ## Licensing
 
