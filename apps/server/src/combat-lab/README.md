@@ -31,3 +31,9 @@ automatic session recovery. The client must show that uncertainty and require
 an explicit new start; it must not silently replace an active battle. At most
 eight sessions are retained; reads do not advance combat, and process restart
 loses all sessions. No action, AI, replay or durable save exists in PB02.
+
+PB03 adds `POST /dev/combat-lab/:sessionId/actions` with `CombatLabAction` and the
+capability header. Acknowledgements use 200 accepted, 400 malformed/core-invalid,
+403 wrong side, 404 inaccessible or 409 stale/terminal/conflict/limit. Authenticated
+retries retain their response until deletion; overflow requests are not admitted.
+Only accepted commands enter the replay and full journal.
