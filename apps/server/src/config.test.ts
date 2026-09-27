@@ -15,4 +15,21 @@ describe('server configuration', () => {
       expect(() => loadServerConfig({ PORT: port })).toThrow('PORT must be a valid TCP port');
     }
   });
+
+  it('enables the lab only with an explicit local nonproduction configuration', () => {
+    expect(loadServerConfig({ HOST: '127.0.0.1', COMBAT_LAB: '1', PORT: '3000' })).toMatchObject({
+      combatLabOrigin: 'http://127.0.0.1:5173',
+    });
+    expect(() => loadServerConfig({ COMBAT_LAB: '1' })).toThrow('loopback');
+    expect(() =>
+      loadServerConfig({ HOST: '127.0.0.1', COMBAT_LAB: '1', NODE_ENV: 'production' }),
+    ).toThrow('loopback');
+    expect(() =>
+      loadServerConfig({
+        HOST: '127.0.0.1',
+        COMBAT_LAB: '1',
+        COMBAT_LAB_ORIGIN: 'https://example.test',
+      }),
+    ).toThrow('local HTTP origin');
+  });
 });
