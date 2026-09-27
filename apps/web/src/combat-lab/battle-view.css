@@ -1,0 +1,60 @@
+.combat-lab {
+  overflow-wrap: anywhere;
+}
+.combat-lab-board {
+  width: 100%;
+}
+.combat-lab-board polygon {
+  stroke: #9babb6;
+}
+.combat-lab-cell {
+  fill: #24313c;
+}
+.combat-lab-blocked {
+  fill: #625a50;
+}
+.combat-lab-board circle {
+  fill: #195771;
+}
+.combat-lab-board rect {
+  fill: #76394a;
+}
+.combat-lab-board text {
+  fill: #fff;
+  font-size: 12px;
+  pointer-events: none;
+}
+.combat-lab-board [data-status='dead'],
+.combat-lab-board [data-status='retreated'] {
+  opacity: 0.5;
+}
+.combat-lab-board [data-active='true'] > circle,
+.combat-lab-board [data-active='true'] > rect {
+  stroke: #fff;
+  stroke-width: 3;
+}
+.combat-lab [aria-pressed='true'] {
+  outline: 3px solid #f3c969;
+}
+.combat-lab [role='button']:focus-visible,
+.combat-lab button:focus-visible {
+  outline: 3px solid #83d5ff;
+  outline-offset: 4px;
+}
+.combat-lab-initiative {
+  display: flex;
+  flex-wrap: wrap;
+}
+.combat-lab [aria-current='step'] {
+  text-decoration: underline;
+}
+.combat-lab-units {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+}
+.combat-lab dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
