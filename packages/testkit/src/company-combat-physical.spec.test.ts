@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   COMPANY_CATALOGUE,
+  COMPANY_RULES,
   ENCOUNTER_BINDING_VERSION,
   M1_DOMAIN_BRIDGE_RULESET_ID,
   applyCombatCommand,
@@ -46,48 +47,53 @@ import {
 import { addContainer, addItem, addVitals, container, item } from './company-physical-fixture.js';
 
 function source(prefix: string, health = 100): EncounterCompanySource {
-  const ids = new Set(['company', 'party', 'leader', 'provider']);
+  const ids = new Set(['company', 'party', 'leader', 'worker-0', 'worker-1', 'provider']);
   let root = JSON.parse(
-    JSON.stringify(economy([]), (_, value) => (ids.has(value) ? `${prefix}-${value}` : value)),
+    JSON.stringify(economy([1n, 1n]), (_, value) =>
+      ids.has(value) ? `${prefix}-${value}` : value,
+    ),
   ) as ReturnType<typeof economy>;
-  const characterId = `${prefix}-leader`;
-  const owner = { kind: 'CHARACTER' as const, id: characterId };
-  const packId = `${characterId}-pack`;
-  root = addContainer(root, container(packId, owner, 30000, owner), false);
-  for (const definitionId of ['sword', 'shield', 'padded-coat', 'simple-helmet']) {
-    const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === definitionId)!;
-    const slots: EquipmentSlot[] =
-      definition.hands === 2 ? ['MAIN_HAND', 'OFF_HAND'] : [definition.slot!];
-    const maximum =
-      definitionId === 'padded-coat' ? 40 : definitionId === 'simple-helmet' ? 20 : 10000;
-    const current =
-      definitionId === 'padded-coat' ? 7 : definitionId === 'simple-helmet' ? 5 : 5000;
-    const value = item(
-      `${characterId}-${definitionId}`,
-      definitionId,
-      owner,
-      packId,
-      1,
-      current,
-      maximum,
+  const members = root.lifecycle.characters.filter((person) => person.presence.fieldPartyId);
+  for (const person of members) {
+    const characterId = person.identity.characterId;
+    const owner = { kind: 'CHARACTER' as const, id: characterId };
+    const packId = `${characterId}-pack`;
+    root = addContainer(root, container(packId, owner, 30000, owner), false);
+    for (const definitionId of ['sword', 'shield', 'padded-coat', 'simple-helmet']) {
+      const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === definitionId)!;
+      const slots: EquipmentSlot[] =
+        definition.hands === 2 ? ['MAIN_HAND', 'OFF_HAND'] : [definition.slot!];
+      const maximum =
+        definitionId === 'padded-coat' ? 40 : definitionId === 'simple-helmet' ? 20 : 10000;
+      const current =
+        definitionId === 'padded-coat' ? 7 : definitionId === 'simple-helmet' ? 5 : 5000;
+      const value = item(
+        `${characterId}-${definitionId}`,
+        definitionId,
+        owner,
+        packId,
+        1,
+        current,
+        maximum,
+      );
+      root = addItem(root, { ...value, equipped: { characterId, slots } }, false);
+    }
+    root = addVitals(
+      root,
+      {
+        characterId,
+        sourceId: `${characterId}-vitals`,
+        maximumHealth: characterId.endsWith('-leader') ? health : 100,
+        currentHealth: characterId.endsWith('-leader') ? health : 100,
+        healthCarry: '0',
+        maximumStamina: 100,
+        currentStamina: 100,
+        staminaCarry: '0',
+        morale: 50,
+      },
+      false,
     );
-    root = addItem(root, { ...value, equipped: { characterId, slots } }, false);
   }
-  root = addVitals(
-    root,
-    {
-      characterId,
-      sourceId: `${characterId}-vitals`,
-      maximumHealth: health,
-      currentHealth: health,
-      healthCarry: '0',
-      maximumStamina: 100,
-      currentStamina: 100,
-      staminaCarry: '0',
-      morale: 50,
-    },
-    false,
-  );
   root = {
     ...root,
     lifecycle: {
@@ -98,11 +104,13 @@ function source(prefix: string, health = 100): EncounterCompanySource {
           ...character.skills,
           blades: initialSkillProgress(0, `${character.identity.characterId}-blades`),
           defense: initialSkillProgress(0, `${character.identity.characterId}-defense`),
+          leadership: initialSkillProgress(0, `${character.identity.characterId}-leadership`),
         },
         aptitudeBySkill: {
           ...character.aptitudeBySkill,
           blades: 10000,
           defense: 10000,
+          leadership: 10000,
         },
       })),
     },
@@ -111,8 +119,8 @@ function source(prefix: string, health = 100): EncounterCompanySource {
   return { root: { ...root, physical: root.physical! }, context: context(root, request) };
 }
 
-function fixture(health = 100) {
-  const sources = [source('a', health), source('b')];
+function fixture(health = 100, adjacentPracticeParty = false) {
+  const sources = [source('a', health), source('b', 10000)];
   const hexes = createHexagon(2);
   const request = { bindingId: 'physical-binding', battleId: battleId('physical-battle') };
   const evidence: EncounterPositionEvidence = {
@@ -139,13 +147,29 @@ function fixture(health = 100) {
       partyId: root.lifecycle.parties[0]!.partyId,
       revision: root.lifecycle.revision,
       sideId: sideId(index === 0 ? 'a-side' : 'b-side'),
-      members: [
-        {
-          characterId: root.lifecycle.characters[0]!.identity.characterId,
-          unitId: unitId(`${index === 0 ? 'a' : 'b'}-leader-unit`),
-          position: { q: index === 0 ? -1 : 1, r: 0 },
-        },
-      ],
+      members: root.lifecycle.characters
+        .filter((character) => character.presence.fieldPartyId)
+        .map((character, r) => {
+          const practicePositions =
+            index === 0
+              ? [
+                  { q: -1, r: 0 },
+                  { q: 0, r: -1 },
+                  { q: 0, r: 1 },
+                ]
+              : [
+                  { q: 0, r: 0 },
+                  { q: 1, r: -1 },
+                  { q: 1, r: 0 },
+                ];
+          return {
+            characterId: character.identity.characterId,
+            unitId: unitId(`${character.identity.characterId}-unit`),
+            position: adjacentPracticeParty
+              ? practicePositions[r]!
+              : { q: index === 0 ? -1 : 1, r: r - 1 },
+          };
+        }),
     })),
   };
   const binding = prepareEncounterBinding(sources, request, evidence);
@@ -400,12 +424,12 @@ function combatFacts(
 } {
   const financeFacts: FinanceEvidence[] = [];
   const physicalFacts: PhysicalEvidence[] = [];
-  const characterId = 'a-leader';
   for (const receipt of journal.receipts) {
     for (let ordinal = 0; ordinal < receipt.transition.events.length; ordinal += 1) {
       const event = receipt.transition.events[ordinal]!;
       if (event.type !== 'unit.wounded' && event.type !== 'unit.died') continue;
-      if (event.unitId !== unitId('a-leader-unit')) continue;
+      const characterId = characterForUnit(f, event.unitId);
+      if (!characterId) continue;
       const sourceEventId = receipt.sourceEventIds[ordinal]!;
       if (event.type === 'unit.wounded') {
         physicalFacts.push({
@@ -469,34 +493,50 @@ function combatContext(
   return context(f.root, request, facts.financeFacts, [], facts.physicalFacts);
 }
 
-function practiceJournal(f: ReturnType<typeof fixture>) {
+function practiceJournal(
+  f: ReturnType<typeof fixture>,
+  requiredAttacks: readonly { readonly characterId: string; readonly count: number }[] = [],
+) {
   let journal = accept(f, f.journal, f.binding.initial, null);
-  for (let index = 0; index < 64; index += 1) {
+  for (let index = 0; index < 512; index += 1) {
     const state = journal.receipts.at(-1)!.transition.state;
     const activation = state.activation;
     if (!activation) break;
     const actor = state.units.find((unit) => unit.id === activation.unitId)!;
     const friendly = actor.sideId === sideId('a-side');
-    const targetId = unitId(friendly ? 'b-leader-unit' : 'a-leader-unit');
-    const attack: CombatCommand = {
-      type: 'attack',
-      commandId: commandId(`practice-attack-${state.revision}`),
-      activationId: activation.id,
-      actorId: activation.unitId,
-      targetId,
-    };
+    const enemies = state.units
+      .filter((unit) => unit.sideId !== actor.sideId && unit.health > 0)
+      .sort((left, right) => {
+        const distance = (unit: typeof actor) =>
+          (Math.abs(unit.position.q - actor.position.q) +
+            Math.abs(unit.position.r - actor.position.r) +
+            Math.abs(unit.position.q + unit.position.r - actor.position.q - actor.position.r)) /
+          2;
+        return distance(left) - distance(right) || left.id.localeCompare(right.id);
+      });
+    const attack = enemies
+      .map((target) => ({
+        type: 'attack' as const,
+        commandId: commandId(`practice-attack-${state.revision}`),
+        activationId: activation.id,
+        actorId: activation.unitId,
+        targetId: target.id,
+      }))
+      .find((candidate) => applyCombatCommand(state, candidate).ok);
     let commandValue: CombatCommand;
-    if (applyCombatCommand(state, attack).ok) commandValue = attack;
+    if (attack) commandValue = attack;
     else {
-      const target = state.units.find((unit) => unit.id === targetId)!;
+      const target = enemies[0];
       const distance = (a: { q: number; r: number }, b: { q: number; r: number }) =>
         (Math.abs(a.q - b.q) + Math.abs(a.r - b.r) + Math.abs(a.q + a.r - b.q - b.r)) / 2;
       const occupied = new Set(state.units.map((unit) => `${unit.position.q},${unit.position.r}`));
-      const destination = state.map.hexes.find(
-        (hex) =>
-          !occupied.has(`${hex.q},${hex.r}`) &&
-          distance(hex, target.position) < distance(actor.position, target.position),
-      );
+      const destination =
+        target &&
+        state.map.hexes.find(
+          (hex) =>
+            !occupied.has(`${hex.q},${hex.r}`) &&
+            distance(hex, actor.position) < distance(target.position, actor.position),
+        );
       commandValue = destination
         ? {
             type: 'move',
@@ -506,23 +546,31 @@ function practiceJournal(f: ReturnType<typeof fixture>) {
             to: destination,
           }
         : {
-            type: 'defend',
-            commandId: commandId(`practice-defend-${state.revision}`),
+            type: 'wait',
+            commandId: commandId(`practice-wait-${state.revision}`),
             activationId: activation.id,
             actorId: activation.unitId,
           };
+      if (!applyCombatCommand(state, commandValue).ok)
+        commandValue = {
+          type: 'wait',
+          commandId: commandId(`practice-wait-${state.revision}`),
+          activationId: activation.id,
+          actorId: activation.unitId,
+        };
     }
     const result = applyCombatCommand(state, commandValue);
     if (!result.ok) throw new Error(result.error.message);
     journal = accept(f, journal, { state: result.state, events: result.events }, commandValue);
     if (
-      journal.receipts.some((receipt) =>
-        receipt.transition.events.some((event) => event.type === 'attack.resolved'),
-      ) &&
-      journal.receipts.some(
-        (receipt) =>
-          receipt.kernelCommand?.type === 'attack' &&
-          characterForUnit(f, receipt.kernelCommand.actorId) === 'a-leader',
+      requiredAttacks.every(
+        ({ characterId, count }) =>
+          journal.receipts.filter(
+            (receipt) =>
+              receipt.kernelCommand?.type === 'attack' &&
+              characterForUnit(f, receipt.kernelCommand.actorId) === characterId &&
+              receipt.transition.events.some((event) => event.type === 'attack.resolved'),
+          ).length >= count,
       )
     )
       return journal;
@@ -735,16 +783,54 @@ describe('G08 — verified combat consequences', () => {
 
 describe('G09 — verified combat practice', () => {
   it('credits only replayed company attacks, preserves G08 requirements and leaves the cursor pending', () => {
-    const f = fixture();
-    const journal = practiceJournal(f);
+    const f = fixture(10000, true);
+    const journal = practiceJournal(f, [
+      { characterId: 'a-leader', count: 2 },
+      { characterId: 'a-worker-0', count: 1 },
+      { characterId: 'a-worker-1', count: 1 },
+    ]);
     const companyAttacks = journal.receipts.filter(
       (receipt) =>
         receipt.kernelCommand?.type === 'attack' &&
-        characterForUnit(f, receipt.kernelCommand.actorId) === 'a-leader',
+        f.binding.participants.find((entry) => entry.unitId === receipt.kernelCommand.actorId)
+          ?.companyId === f.root.lifecycle.companyId,
     );
     expect(companyAttacks.length).toBeGreaterThan(0);
+    const subordinateAttacks = companyAttacks.filter((receipt) => {
+      const kernelCommand = receipt.kernelCommand;
+      return (
+        kernelCommand?.type === 'attack' &&
+        characterForUnit(f, kernelCommand.actorId) !== 'a-leader'
+      );
+    });
+    const firstBySubordinate = new Map<string, (typeof subordinateAttacks)[number]>();
+    for (const receipt of subordinateAttacks) {
+      const kernelCommand = receipt.kernelCommand!;
+      const characterId = characterForUnit(f, kernelCommand.actorId)!;
+      if (!firstBySubordinate.has(characterId)) firstBySubordinate.set(characterId, receipt);
+    }
+    const firstCycleAttacks = [...firstBySubordinate.values()].slice(0, 2);
+    expect(firstCycleAttacks).toHaveLength(2);
+    const cycleStartOrdinal = Math.min(
+      ...firstCycleAttacks.map((receipt) => journal.receipts.indexOf(receipt)),
+    );
+    const cycleEndOrdinal = Math.max(
+      ...firstCycleAttacks.map((receipt) => journal.receipts.indexOf(receipt)),
+    );
+    const cycle = {
+      cycleId: 'practice-cycle-1',
+      commanderId: 'a-leader',
+      startedAt: f.root.lifecycle.campaignTick,
+      completedAt: f.root.lifecycle.campaignTick,
+      startReceiptOrdinal: cycleStartOrdinal,
+      endReceiptOrdinal: cycleEndOrdinal,
+    } as const;
+    const cycleThreats = subordinateAttacks.filter((receipt) => {
+      const ordinal = journal.receipts.indexOf(receipt);
+      return ordinal >= cycleStartOrdinal && ordinal <= cycleEndOrdinal;
+    });
     const physical = prepareCombatPhysicalEffects(f.root, journal);
-    const ctx = combatContext(f, { financeFacts: [], physicalFacts: [] });
+    const ctx = combatContext(f, combatFacts(f, journal));
     const g08 = prepareCombatConsequences(f.root, physical, journal, ctx);
     const profile = {
       version: COMBAT_PRACTICE_PROFILE_VERSION,
@@ -759,12 +845,15 @@ describe('G09 — verified combat practice', () => {
                 activationId: kernelCommand.activationId,
                 unitId: kernelCommand.actorId,
                 startedAt: f.root.lifecycle.campaignTick,
+                startReceiptOrdinal: journal.receipts.indexOf(receipt),
               },
             ]
           : [];
       }),
+      leadershipCycles: [cycle],
     } as const;
-    const trustedCredits = companyAttacks.flatMap((receipt) => {
+    const xpAtReceipt = new Map<string, number>();
+    const attackCredits = companyAttacks.flatMap((receipt) => {
       const kernelCommand = receipt.kernelCommand;
       if (kernelCommand?.type !== 'attack') return [];
       const ordinal = receipt.transition.events.findIndex(
@@ -779,6 +868,14 @@ describe('G09 — verified combat practice', () => {
       );
       const event = receipt.transition.events[ordinal]!;
       if (event.type !== 'attack.resolved') throw new Error('Expected attack event');
+      const progressKey = `${participant.projection.characterId}:${participant.projection.weapon.skillId}`;
+      const xpBefore = xpAtReceipt.get(progressKey) ?? 0;
+      let levelAtStart = 0;
+      while (
+        COMPANY_RULES.maxSkillLevel > levelAtStart + 1 &&
+        xpBefore >= PROGRESSION_RULES.thresholdXpFactor * (levelAtStart + 1) * (levelAtStart + 2)
+      )
+        levelAtStart += 1;
       const payload = {
         receiptId: `${sourceEventId}-${profile.profileId}-${participant.projection.characterId}-weapon-attack`,
         characterId: participant.projection.characterId,
@@ -806,7 +903,7 @@ describe('G09 — verified combat practice', () => {
         payload,
         startedAt: f.root.lifecycle.campaignTick,
         completedAt: f.root.lifecycle.campaignTick,
-        levelAtStart: 0,
+        levelAtStart,
         aptitudeAtStartBps: 10000,
         proof: {
           kind: 'weapon-attack',
@@ -829,9 +926,85 @@ describe('G09 — verified combat practice', () => {
         },
         practiceFacts: [fact],
       };
+      xpAtReceipt.set(progressKey, xpBefore + (event.hit ? 20 : 5));
       return [{ command: practiceCommand, context: trustedContext }];
     });
-    const before = canonicalJson({ root: f.root, journal, physical, g08 });
+    const cycleSourceEventId = cycle.cycleId;
+    const leader = f.binding.participants.find(
+      (entry) => entry.projection.characterId === cycle.commanderId,
+    )!;
+    const cyclePayload = {
+      receiptId: `${cycleSourceEventId}-${profile.profileId}-${cycle.commanderId}-command-cycle`,
+      characterId: cycle.commanderId,
+      skillId: 'leadership',
+      methodId: 'command-cycle',
+      challengeLevel: profile.challengeLevel,
+      outcome: 'SUCCESS',
+      effortTicks: '0',
+    } as const;
+    const cycleBase = command(
+      f.root,
+      'CreditPractice',
+      cyclePayload,
+      'practice-leadership-cycle-1',
+      'DOMAIN_RECEIPT',
+      f.root.lifecycle.campaignTick,
+    );
+    const cycleCommand = {
+      ...cycleBase,
+      sourceEventId: cycleSourceEventId,
+    } as CommandOf<'CreditPractice'>;
+    const cycleProofInteractions = cycleThreats.flatMap((receipt) => {
+      const kernelCommand = receipt.kernelCommand;
+      if (kernelCommand?.type !== 'attack') return [];
+      const eventIndex = receipt.transition.events.findIndex(
+        (event) => event.type === 'attack.resolved',
+      );
+      const event = receipt.transition.events[eventIndex];
+      if (event?.type !== 'attack.resolved') return [];
+      const sourceEventId = receipt.sourceEventIds[eventIndex]!;
+      return [
+        {
+          sourceEventId,
+          attackerId: characterForUnit(f, kernelCommand.actorId)!,
+          defenderId: characterForUnit(f, kernelCommand.targetId)!,
+          atTick: f.root.lifecycle.campaignTick,
+          origin: 'EXTERNAL' as const,
+        },
+      ];
+    });
+    const cycleFact: PracticeEvidence = {
+      worldId: f.root.lifecycle.worldId,
+      companyId: f.root.lifecycle.companyId,
+      sourceEventId: cycleSourceEventId,
+      rulesVersion: PROGRESSION_RULES.version,
+      catalogueVersion: COMPANY_CATALOGUE.version,
+      payload: cyclePayload,
+      startedAt: cycle.startedAt,
+      completedAt: cycle.completedAt,
+      levelAtStart: 0,
+      aptitudeAtStartBps: 10000,
+      proof: {
+        kind: 'command-cycle',
+        commanderId: cycle.commanderId,
+        cycleId: cycle.cycleId,
+        subordinateIds: [
+          ...new Set(cycleProofInteractions.map((entry) => entry.attackerId)),
+        ].sort(),
+        interactions: cycleProofInteractions,
+      },
+    };
+    const cycleContext = {
+      ...context(f.root, cycleCommand as ReturnType<typeof command>),
+      internalGrant: {
+        commandId: cycleCommand.commandId,
+        sourceEventId: cycleSourceEventId,
+        canonicalRequest: canonicalJson(cycleCommand),
+      },
+      practiceFacts: [cycleFact],
+    };
+    const trustedCredits = [...attackCredits, { command: cycleCommand, context: cycleContext }];
+    const before = structuredClone({ root: f.root, journal, physical });
 
     const prepared = prepareCombatPracticeEffects(
       f.root,
@@ -855,7 +1028,24 @@ describe('G09 — verified combat practice', () => {
     expect(() =>
       prepareCombatPracticeEffects(f.root, physical, g08, journal, ctx, profile, []),
     ).toThrow();
-    expect(canonicalJson({ root: f.root, journal, physical, g08 })).toBe(before);
+    expect(() =>
+      prepareCombatPracticeEffects(f.root, physical, g08, journal, ctx, profile, [
+        ...trustedCredits,
+        trustedCredits[0]!,
+      ]),
+    ).toThrow();
+    expect(() =>
+      prepareCombatPracticeEffects(
+        f.root,
+        physical,
+        g08,
+        journal,
+        { ...ctx, companyId: 'foreign-company' },
+        profile,
+        trustedCredits,
+      ),
+    ).toThrow();
+    expect({ root: f.root, journal, physical }).toEqual(before);
 
     let empty = accept(f, f.journal, f.binding.initial, null);
     empty = nextDefend(f, empty);
@@ -878,7 +1068,7 @@ describe('G09 — verified combat practice', () => {
       emptyG08,
       empty,
       ctx,
-      { ...profile, actionStarts: [] },
+      { ...profile, actionStarts: [], leadershipCycles: [] },
       [],
     );
     expect(noPractice.credits).toBe(0);
