@@ -594,6 +594,7 @@ describe('C05-FIN exact retained learning backing', () => {
     ...f.request.command,
     type: 'StopLearning',
     commandId: effectId,
+    sourceEventId: `${effectId}-source`,
     campaignTick: f.context.atTick,
     payload: { taskId: 'task', reason: 'PLAYER' },
   });
@@ -645,6 +646,7 @@ describe('C05-FIN exact retained learning backing', () => {
         ...start,
         type: 'StopLearning',
         commandId: `stop-${ticks}`,
+        sourceEventId: `stop-source-${ticks}`,
         payload: { taskId, reason: 'PLAYER' },
       };
       tasks = stopLearningTask(tasks, stopCommand).state;
@@ -679,6 +681,153 @@ describe('C05-FIN exact retained learning backing', () => {
     expect(totalTransfer).toBe(4n);
     expect(state.finance.wallets.map((wallet) => wallet.cashQ)).toEqual(['96', '4']);
     expect(reservedQ(state.finance, 'purse')).toBe(0n);
+  });
+
+  it('replays by command and source identity even if the effect id changes', () => {
+    const f = setup(false, '1000', '100', '100');
+    const first = prepare(f, f.root, 'initial', '1', f.request.command).state;
+    const stopCommand: CommandOf<'StopLearning'> = {
+      ...f.request.command,
+      type: 'StopLearning',
+      commandId: 'stop-source',
+      sourceEventId: 'same-stop-source',
+      payload: { taskId: 'task', reason: 'PLAYER' },
+    };
+    const stoppedTasks = stopLearningTask(f.admitted.state, stopCommand).state;
+    const committed = prepare(f, first, 'effect-one', '2', stopCommand, undefined, stoppedTasks);
+    const sameCommandRetry = prepare(
+      f,
+      committed.state,
+      'effect-retry',
+      '2',
+      stopCommand,
+      undefined,
+      stoppedTasks,
+    );
+    expect(sameCommandRetry.replayed).toBe(true);
+    expect(sameCommandRetry.state).toEqual(committed.state);
+    expect(() =>
+      prepare(f, committed.state, 'effect-two', '3', stopCommand, undefined, stoppedTasks),
+    ).toThrow('IDEMPOTENCY_CONFLICT');
+
+    const sameSourceCommand: CommandOf<'StartLearning'> = {
+      ...f.request.command,
+      commandId: 'same-source-retry',
+    };
+    const sameSourceRetry = prepare(
+      f,
+      first,
+      'same-source-retry-effect',
+      '1',
+      sameSourceCommand,
+      undefined,
+      f.admitted.state,
+    );
+    expect(sameSourceRetry.replayed).toBe(true);
+    expect(sameSourceRetry.state).toEqual(first);
+
+    const changedSourceCommand: CommandOf<'StartLearning'> = {
+      ...f.request.command,
+      commandId: 'changed-command',
+      payload: { ...f.request.command.payload, maxBudgetQ: '99' },
+    };
+    expect(() =>
+      prepare(
+        f,
+        first,
+        'changed-source-command',
+        '1',
+        changedSourceCommand,
+        undefined,
+        f.admitted.state,
+      ),
+    ).toThrow('IDEMPOTENCY_CONFLICT');
+  });
+
+  it('retains replay for genuine free book study without creating a money obligation', () => {
+    const f = setup(true, '1000', '0');
+    const before = reload(f.root);
+    const startRequest = {
+      taskId: 'task',
+      effectId: 'free-study',
+      command: f.request.command,
+      acceptedTicks: '3',
+    };
+    const prepared = prepareLearningBacking(f.root, f.admitted.state, f.context, startRequest);
+    expect(prepared.acceptedTicks).toBe('3');
+    expect(prepared.fundedTicks).toBe('3');
+    expect(prepared.transferQ).toBe('0');
+    expect(prepared.state.finance.learningObligations).toBeUndefined();
+    expect(prepared.state.finance.wallets).toEqual(before.finance.wallets);
+    expect(prepared.state.finance.movements).toEqual(before.finance.movements);
+    expect(() =>
+      prepareLearningBacking(f.root, f.admitted.state, f.context, {
+        ...startRequest,
+        effectId: 'free-study-over-quote',
+        acceptedTicks: '1001',
+      }),
+    ).toThrow('INVALID_TIME');
+    expect(() =>
+      prepareLearningBacking(f.root, f.admitted.state, f.context, {
+        ...startRequest,
+        effectId: 'free-study-access',
+        accessEvidenceId: 'unknown-access',
+      }),
+    ).toThrow('INVALID_ARGUMENT');
+    const regressedStop: CommandOf<'StopLearning'> = {
+      ...f.request.command,
+      type: 'StopLearning',
+      commandId: 'free-study-regression',
+      sourceEventId: 'free-study-regression-source',
+      payload: { taskId: 'task', reason: 'PLAYER' },
+    };
+    const stoppedTasks = stopLearningTask(f.admitted.state, regressedStop).state;
+    expect(() =>
+      prepareLearningBacking(prepared.state, stoppedTasks, f.context, {
+        taskId: 'task',
+        effectId: 'free-study-regression-effect',
+        command: regressedStop,
+        acceptedTicks: '2',
+      }),
+    ).toThrow('INVALID_TIME');
+    const replay = prepareLearningBacking(
+      prepared.state,
+      f.admitted.state,
+      f.context,
+      startRequest,
+    );
+    expect(replay.replayed).toBe(true);
+    expect(replay.state).toEqual(prepared.state);
+  });
+
+  it('rejects foreign tenant state before both colliding and missing replay lookups', () => {
+    const f = setup(false, '1000', '100', '100');
+    const committed = prepare(f, f.root, 'tenant-effect', '1', f.request.command).state;
+    const foreignWithCollision = reload(committed);
+    Object.assign(foreignWithCollision.lifecycle, {
+      companyId: entityId('foreign-company'),
+      worldId: entityId('foreign-world'),
+    });
+    const foreignWithoutCollision = reload(f.root);
+    Object.assign(foreignWithoutCollision.lifecycle, {
+      companyId: entityId('foreign-company'),
+      worldId: entityId('foreign-world'),
+    });
+    const request = {
+      taskId: 'task',
+      effectId: 'tenant-effect',
+      command: f.request.command,
+      acceptedTicks: '1',
+    };
+    expect(() =>
+      prepareLearningBacking(foreignWithCollision, f.admitted.state, f.context, request),
+    ).toThrow('AUTHORIZATION');
+    expect(() =>
+      prepareLearningBacking(foreignWithoutCollision, f.admitted.state, f.context, {
+        ...request,
+        effectId: 'no-collision',
+      }),
+    ).toThrow('AUTHORIZATION');
   });
 
   it('aggregates compatible same-payee fractions while keeping another payee separately backed', () => {
@@ -752,6 +901,7 @@ describe('C05-FIN exact retained learning backing', () => {
       ...f.request.command,
       type: 'StopLearning',
       commandId: 'stop-wage-boundary',
+      sourceEventId: 'stop-wage-boundary-source',
       campaignTick: tick,
       payload: { taskId: 'task', reason: 'PLAYER' },
     };

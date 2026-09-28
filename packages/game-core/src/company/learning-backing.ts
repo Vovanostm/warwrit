@@ -26,7 +26,7 @@ import type {
   LearningBackingEffect,
 } from './economy-types.js';
 import { admitLearningFunding } from './learning-funding.js';
-import { checkFreshCompanyRevision, guardCompanyCommand } from './guards.js';
+import { checkFreshCompanyRevision, companySemanticKey, guardCompanyCommand } from './guards.js';
 import type { LearningQuoteContext } from './learning-quote.js';
 import { moveCash, recipientWallet } from './economy-payments.js';
 import type { ExactFraction } from './exact-fraction.js';
@@ -113,10 +113,13 @@ function buildObligation(
   state: CompanyEconomyState,
   context: LearningQuoteContext,
   command: CompanyCommand,
-): LearningObligation {
+): LearningObligation | null {
   const admission = admitLearningFunding(state, command, task, context);
   const quote = task.start.quote;
-  requireEconomy(quote.funding !== null, 'INVALID_ARGUMENT');
+  if (quote.funding === null) {
+    requireEconomy(admission.funding === null, 'INVALID_STATE');
+    return null;
+  }
   requireEconomy(admission.funding !== null, 'INVALID_ARGUMENT');
   const { source, funding } = admission;
   requireEconomy(source.kind === 'COURSE' && source.providerId, 'INVALID_SOURCE');
@@ -235,17 +238,49 @@ export function prepareLearningBacking(
   const guarded = guardCompanyCommand(request.command, context);
   if (!guarded.ok) throw new EconomyViolation(guarded.error);
   const state = snapshotJson(stateValue) as unknown as CompanyEconomyState;
-  const key = canonicalJson([request.taskId, request.effectId]);
+  requireEconomy(
+    state.lifecycle.companyId === context.companyId && state.lifecycle.worldId === context.worldId,
+    'AUTHORIZATION',
+  );
+  const command = guarded.command;
+  const sourceEventId = command.sourceEventId ?? null;
+  const key = canonicalJson([
+    context.companyId,
+    context.worldId,
+    request.taskId,
+    command.commandId,
+    sourceEventId,
+    request.effectId,
+  ]);
   const requestKey = canonicalJson({
     taskId: request.taskId,
-    effectId: request.effectId,
-    command: request.command,
+    command,
     acceptedTicks: request.acceptedTicks,
     accessEvidenceId: request.accessEvidenceId ?? null,
   });
-  const previous = state.finance.learningEffects?.find((entry) => entry.key === key);
+  const sourceRequestKey = canonicalJson({
+    taskId: request.taskId,
+    semanticCommand: companySemanticKey(command),
+    sourceEventId,
+    acceptedTicks: request.acceptedTicks,
+    accessEvidenceId: request.accessEvidenceId ?? null,
+  });
+  const previous = (state.finance.learningEffects ?? []).find(
+    (entry) =>
+      entry.companyId === context.companyId &&
+      entry.worldId === context.worldId &&
+      entry.taskId === request.taskId &&
+      (entry.commandId === command.commandId ||
+        (sourceEventId !== null && entry.sourceEventId === sourceEventId)),
+  );
   if (previous) {
-    requireEconomy(previous.requestKey === requestKey, 'IDEMPOTENCY_CONFLICT');
+    const sameCommand = previous.commandId === command.commandId;
+    requireEconomy(
+      sameCommand
+        ? previous.requestKey === requestKey
+        : previous.sourceRequestKey === sourceRequestKey,
+      'IDEMPOTENCY_CONFLICT',
+    );
     return {
       state,
       fundedTicks: previous.fundedTicks,
@@ -273,8 +308,19 @@ export function prepareLearningBacking(
   assertCurrentScope(state, context);
   const priorObligations = state.finance.learningObligations ?? [];
   const existing = priorObligations.find((entry) => entry.taskId === task.start.taskId);
+  const priorAcceptedTicks = (state.finance.learningEffects ?? [])
+    .filter(
+      (entry) =>
+        entry.companyId === context.companyId &&
+        entry.worldId === context.worldId &&
+        entry.taskId === task.start.taskId,
+    )
+    .reduce((maximum, entry) => {
+      const accepted = BigInt(entry.acceptedTicks);
+      return accepted > maximum ? accepted : maximum;
+    }, 0n);
   let obligation = existing ?? buildObligation(task, state, context, guarded.command);
-  if (existing) {
+  if (existing || guarded.command.type !== 'StartLearning') {
     requireEconomy(
       guarded.command.type !== 'StartLearning' &&
         checkFreshCompanyRevision(guarded.command, context) &&
@@ -285,75 +331,92 @@ export function prepareLearningBacking(
     );
   }
   requireEconomy(
-    canonicalJson(obligation.start) === canonicalJson(task.start) &&
-      obligation.companyId === state.lifecycle.companyId &&
-      obligation.worldId === state.lifecycle.worldId &&
-      (!obligation.terminal || task.stop !== undefined),
+    !obligation ||
+      (canonicalJson(obligation.start) === canonicalJson(task.start) &&
+        obligation.companyId === state.lifecycle.companyId &&
+        obligation.worldId === state.lifecycle.worldId &&
+        (!obligation.terminal || task.stop !== undefined)),
     'INVALID_STATE',
   );
   const requestedTicks = BigInt(request.acceptedTicks);
   requireEconomy(
-    requestedTicks >= BigInt(obligation.acceptedTicks) &&
-      requestedTicks <= BigInt(task.start.quote.maxTicks),
+    requestedTicks >=
+      (BigInt(existing?.acceptedTicks ?? '0') > priorAcceptedTicks
+        ? BigInt(existing?.acceptedTicks ?? '0')
+        : priorAcceptedTicks) && requestedTicks <= BigInt(task.start.quote.maxTicks),
     'INVALID_TIME',
   );
-  const maxAffordableTicks = affordablePrefix(state, task, obligation, requestedTicks);
+  const maxAffordableTicks = obligation
+    ? affordablePrefix(state, task, obligation, requestedTicks)
+    : requestedTicks;
   const acceptedTicks = maxAffordableTicks;
   const accruedQ = calculateLearningCost(task, acceptedTicks.toString()).accumulatedQ;
-  obligation = {
-    ...obligation,
-    fundedTicks: maxAffordableTicks.toString(),
-    acceptedTicks: acceptedTicks.toString(),
-    accruedQ,
-    terminal: task.stop !== undefined,
-  };
+  if (obligation) {
+    obligation = {
+      ...obligation,
+      fundedTicks: maxAffordableTicks.toString(),
+      acceptedTicks: acceptedTicks.toString(),
+      accruedQ,
+      terminal: task.stop !== undefined,
+    };
+  }
   let finance: CompanyEconomyState['finance'] = {
     ...state.finance,
-    learningObligations: replaceObligation(priorObligations, obligation),
+    ...(obligation ? { learningObligations: replaceObligation(priorObligations, obligation) } : {}),
   };
 
-  const access = findPoolAccess(state, obligation.poolId, context, request.accessEvidenceId);
-  if (request.accessEvidenceId !== undefined) requireEconomy(access, 'CONTACT_OR_ACCESS_REQUIRED');
   let transferQ = 0n;
-  if (access) {
-    const destination = recipientWallet(finance, obligation.recipient, access);
-    if (destination && destination.walletId === obligation.recipientWalletId) {
-      const compatible = (finance.learningObligations ?? []).filter(
-        (entry) => groupKey(entry) === groupKey(obligation),
-      );
-      const total = compatible.reduce(
-        (sum, entry) => add(sum, outstanding(entry)),
-        exactFraction(0n, 1n),
-      );
-      transferQ = BigInt(total.numerator) / BigInt(total.denominator);
-      if (transferQ > 0n) {
-        finance = {
-          ...finance,
-          learningObligations: dischargePrefix(
-            finance.learningObligations ?? [],
-            obligation,
-            transferQ,
-          ),
-        };
-        finance = moveCash(
-          finance,
-          obligation.payerWalletId,
-          destination.walletId,
-          transferQ,
-          context.atTick,
-          economyId('learning', task.start.taskId, request.effectId),
-          'LEARNING',
+  if (obligation) {
+    const access = findPoolAccess(state, obligation.poolId, context, request.accessEvidenceId);
+    if (request.accessEvidenceId !== undefined)
+      requireEconomy(access, 'CONTACT_OR_ACCESS_REQUIRED');
+    if (access) {
+      const destination = recipientWallet(finance, obligation.recipient, access);
+      if (destination && destination.walletId === obligation.recipientWalletId) {
+        const compatible = (finance.learningObligations ?? []).filter(
+          (entry) => groupKey(entry) === groupKey(obligation),
         );
+        const total = compatible.reduce(
+          (sum, entry) => add(sum, outstanding(entry)),
+          exactFraction(0n, 1n),
+        );
+        transferQ = BigInt(total.numerator) / BigInt(total.denominator);
+        if (transferQ > 0n) {
+          finance = {
+            ...finance,
+            learningObligations: dischargePrefix(
+              finance.learningObligations ?? [],
+              obligation,
+              transferQ,
+            ),
+          };
+          finance = moveCash(
+            finance,
+            obligation.payerWalletId,
+            destination.walletId,
+            transferQ,
+            context.atTick,
+            economyId('learning', task.start.taskId, request.effectId),
+            'LEARNING',
+          );
+        }
       }
     }
-  }
+  } else requireEconomy(request.accessEvidenceId === undefined, 'INVALID_ARGUMENT');
 
   const effect: LearningBackingEffect = {
     key,
     requestKey,
+    sourceRequestKey,
+    companyId: context.companyId,
+    worldId: context.worldId,
+    taskId: request.taskId,
+    commandId: command.commandId,
+    sourceEventId,
+    effectId: request.effectId,
     transferQ: q(transferQ),
-    fundedTicks: obligation.fundedTicks,
-    acceptedTicks: obligation.acceptedTicks,
+    fundedTicks: maxAffordableTicks.toString(),
+    acceptedTicks: acceptedTicks.toString(),
   };
   finance = {
     ...finance,
@@ -363,8 +426,8 @@ export function prepareLearningBacking(
   validateEconomy(next, context);
   return {
     state: next,
-    fundedTicks: obligation.fundedTicks,
-    acceptedTicks: obligation.acceptedTicks,
+    fundedTicks: effect.fundedTicks,
+    acceptedTicks: effect.acceptedTicks,
     transferQ: effect.transferQ,
     replayed: false,
   };

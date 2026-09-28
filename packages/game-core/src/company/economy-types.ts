@@ -118,6 +118,13 @@ export interface LearningObligation {
 export interface LearningBackingEffect {
   readonly key: string;
   readonly requestKey: string;
+  readonly sourceRequestKey: string;
+  readonly companyId: string;
+  readonly worldId: string;
+  readonly taskId: string;
+  readonly commandId: string;
+  readonly sourceEventId: string | null;
+  readonly effectId: string;
   readonly transferQ: MoneyQ;
   readonly fundedTicks: string;
   readonly acceptedTicks: string;

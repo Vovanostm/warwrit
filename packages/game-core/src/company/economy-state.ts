@@ -297,9 +297,19 @@ export function validateEconomy(state: CompanyEconomyState, context: EconomyCont
     requireEconomy(
       effect.key.length > 0 &&
         effect.requestKey.length > 0 &&
+        effect.sourceRequestKey.length > 0 &&
+        isEntityId(effect.companyId) &&
+        isEntityId(effect.worldId) &&
+        isEntityId(effect.taskId) &&
+        isEntityId(effect.commandId) &&
+        (effect.sourceEventId === null || isEntityId(effect.sourceEventId)) &&
+        isEntityId(effect.effectId) &&
+        effect.companyId === state.lifecycle.companyId &&
+        effect.worldId === state.lifecycle.worldId &&
         isExactInteger(effect.transferQ) &&
         isExactInteger(effect.fundedTicks) &&
-        isExactInteger(effect.acceptedTicks),
+        isExactInteger(effect.acceptedTicks) &&
+        BigInt(effect.fundedTicks) <= BigInt(effect.acceptedTicks),
       'INVALID_STATE',
     );
   for (const w of f.wallets) {
