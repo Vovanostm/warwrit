@@ -11,7 +11,7 @@ import { economy } from './company-economy-fixture.js';
 const at = (siteId: string, areaId: string) => ({ kind: 'AT' as const, siteId, areaId });
 
 function lifecycleAt(siteId: string, areaId: string): LifecycleState {
-  const initial = economy([1n]).lifecycle;
+  const initial = economy([1n], 100n, 0).lifecycle;
   const location = at(siteId, areaId);
   return {
     ...initial,
@@ -35,6 +35,19 @@ function transitState(
         ? { ...character, presence: { ...character.presence, location: segment } }
         : character,
     ),
+  };
+}
+
+function routeSupplyAssessment(state: LifecycleState, atTick: string, edgeIds: readonly string[]) {
+  return {
+    worldId: state.worldId,
+    companyId: state.companyId,
+    partyId: 'party',
+    canonicalRevision: state.revision,
+    atTick: campaignTick(atTick),
+    edgeIds,
+    knownShortage: false,
+    assumptions: ['fixture assessment'],
   };
 }
 
@@ -140,6 +153,27 @@ describe('world route preparation', () => {
     expect(() => prepare({ state: unavailable })).toThrowError(
       expect.objectContaining({ code: 'PARTY_MEMBER_TRAVEL_UNSUPPORTED' }),
     );
+    expect(() => prepare({ state: { ...state, campaignTick: campaignTick('500') } })).toThrowError(
+      expect.objectContaining({ code: 'STALE_ROUTE_TIME' }),
+    );
+    const unauthoredArea = {
+      ...state,
+      parties: state.parties.map((party) => ({
+        ...party,
+        location: at('kamenny-brod', 'unmapped-area'),
+      })),
+      characters: state.characters.map((character) =>
+        character.presence.fieldPartyId === 'party'
+          ? {
+              ...character,
+              presence: { ...character.presence, location: at('kamenny-brod', 'unmapped-area') },
+            }
+          : character,
+      ),
+    };
+    expect(() => prepare({ state: unauthoredArea })).toThrowError(
+      expect.objectContaining({ code: 'INVALID_ROUTE' }),
+    );
   });
 
   it('limits the shortage guard to new dangerous routes and scopes dangerous return or camp', () => {
@@ -163,13 +197,17 @@ describe('world route preparation', () => {
     expect(() =>
       preparePartyRoute({
         ...base,
-        supplyAssessment: { knownShortage: true, assumptions: ['known empty'] },
+        supplyAssessment: {
+          ...routeSupplyAssessment(state, '0', base.intent.edgeIds),
+          knownShortage: true,
+          assumptions: ['known empty'],
+        },
       }),
     ).toThrowError(expect.objectContaining({ code: 'KNOWN_DANGEROUS_SUPPLY_SHORTAGE' }));
     expect(() =>
       preparePartyRoute({
         ...base,
-        supplyAssessment: { knownShortage: false, assumptions: ['measured ration stock'] },
+        supplyAssessment: routeSupplyAssessment(state, '0', base.intent.edgeIds),
       }),
     ).not.toThrow();
     const safeRoute = {
@@ -197,6 +235,38 @@ describe('world route preparation', () => {
     );
   });
 
+  it('rejects dangerous supply assessments outside the exact route scope', () => {
+    const state = lifecycleAt('kamenny-brod', 'kamenny-brod-market');
+    const intent = {
+      kind: 'ROUTE' as const,
+      edgeIds: ['kamenny-brod-tikhaya-gat', 'tikhaya-gat-staraya-melnitsa'],
+      purpose: 'NEW' as const,
+    };
+    const base = {
+      region: SEROE_PORECHYE,
+      state,
+      partyId: 'party',
+      intent,
+      atTick: campaignTick('0'),
+      expectedRouteEpoch: '0',
+      currentRouteEpoch: '0',
+    };
+    const assessment = routeSupplyAssessment(state, '0', intent.edgeIds);
+    const invalidAssessments = [
+      { ...assessment, worldId: 'another-world' },
+      { ...assessment, companyId: 'another-company' },
+      { ...assessment, partyId: 'another-party' },
+      { ...assessment, canonicalRevision: '1' },
+      { ...assessment, atTick: campaignTick('1') },
+      { ...assessment, edgeIds: [...intent.edgeIds].reverse() },
+    ];
+    for (const supplyAssessment of invalidAssessments) {
+      expect(() => preparePartyRoute({ ...base, supplyAssessment })).toThrowError(
+        expect.objectContaining({ code: 'INVALID_DANGEROUS_SUPPLY_ASSESSMENT' }),
+      );
+    }
+  });
+
   it('validates not-before and current epoch, and derives every arrival area from the authored site', () => {
     const initial = lifecycleAt('tikhaya-gat', 'tikhaya-gat-bank');
     const route = preparePartyRoute({
@@ -207,7 +277,7 @@ describe('world route preparation', () => {
       atTick: campaignTick('50'),
       expectedRouteEpoch: '4',
       currentRouteEpoch: '4',
-      supplyAssessment: { knownShortage: false, assumptions: ['fixture assessment'] },
+      supplyAssessment: routeSupplyAssessment(initial, '50', ['tikhaya-gat-staraya-melnitsa']),
     });
     const state = transitState(initial, {
       kind: 'TRANSIT',
@@ -253,5 +323,12 @@ describe('world route preparation', () => {
     expect(arrival.memberMoves.every((move) => move.to.areaId === 'staraya-melnitsa-yard')).toBe(
       true,
     );
+    expect(() =>
+      preparePartyArrival({
+        ...input,
+        state: { ...state, campaignTick: campaignTick('500') },
+        atTick: route.segment.arrivalNotBefore,
+      }),
+    ).toThrowError(expect.objectContaining({ code: 'STALE_ROUTE_TIME' }));
   });
 });

@@ -15,10 +15,12 @@ export type RoutePreparationCode =
   | 'INCOMPLETE_PARTY'
   | 'PARTY_MEMBER_TRAVEL_UNSUPPORTED'
   | 'MISSING_DANGEROUS_SUPPLY_ASSESSMENT'
+  | 'INVALID_DANGEROUS_SUPPLY_ASSESSMENT'
   | 'KNOWN_DANGEROUS_SUPPLY_SHORTAGE'
   | 'MISSING_SCOPED_RETURN_OR_CAMP_AUTHORIZATION'
   | 'INVALID_SCOPED_RETURN_OR_CAMP_AUTHORIZATION'
-  | 'INVALID_ARRIVAL';
+  | 'INVALID_ARRIVAL'
+  | 'STALE_ROUTE_TIME';
 
 export class RoutePreparationError extends Error {
   constructor(readonly code: RoutePreparationCode) {
@@ -33,6 +35,12 @@ export interface RouteIntent {
 }
 
 export interface TrustedRouteSupplyAssessment {
+  readonly worldId: string;
+  readonly companyId: string;
+  readonly partyId: string;
+  readonly canonicalRevision: string;
+  readonly atTick: CampaignTick;
+  readonly edgeIds: readonly string[];
   readonly knownShortage: boolean;
   readonly assumptions: readonly string[];
 }
@@ -220,11 +228,14 @@ export function preparePartyRoute(input: {
         ? 'INVALID_ROUTE_EPOCH'
         : 'STALE_ROUTE_EPOCH',
     );
+  if (BigInt(input.atTick) < BigInt(state.campaignTick)) fail('STALE_ROUTE_TIME');
   const partyMatches = state.parties.filter((party) => party.partyId === partyId);
   if (partyMatches.length !== 1) fail('INCOMPLETE_PARTY');
   const party = partyMatches[0]!;
   if (party.location.kind !== 'AT') fail('INCOMPLETE_PARTY');
   const from = party.location;
+  const fromSite = region.sites.find((site) => site.siteId === from.siteId);
+  if (!fromSite?.areas.some((area) => area.areaId === from.areaId)) fail('INVALID_ROUTE');
   const members = partyMembers(state, partyId);
   if (
     members.some(
@@ -254,6 +265,15 @@ export function preparePartyRoute(input: {
     const assessment = input.supplyAssessment;
     if (!assessment || assessment.assumptions.length === 0)
       fail('MISSING_DANGEROUS_SUPPLY_ASSESSMENT');
+    if (
+      assessment.worldId !== state.worldId ||
+      assessment.companyId !== state.companyId ||
+      assessment.partyId !== partyId ||
+      assessment.canonicalRevision !== state.revision ||
+      assessment.atTick !== input.atTick ||
+      canonicalJson(assessment.edgeIds) !== canonicalJson(intent.edgeIds)
+    )
+      fail('INVALID_DANGEROUS_SUPPLY_ASSESSMENT');
     if (assessment.knownShortage) fail('KNOWN_DANGEROUS_SUPPLY_SHORTAGE');
     assumptions = Object.freeze([...assessment.assumptions]);
   }
@@ -335,11 +355,12 @@ export function preparePartyArrival(input: {
   readonly atTick: CampaignTick;
 }): PreparedPartyArrival {
   const { region, state, candidate } = input;
+  if (!isExactInteger(input.atTick)) fail('INVALID_ARRIVAL');
+  if (BigInt(input.atTick) < BigInt(state.campaignTick)) fail('STALE_ROUTE_TIME');
   if (
     region.version !== WORLD_REGION_VERSION ||
     canonicalJson(region) !== canonicalJson(SEROE_PORECHYE) ||
     !isExactInteger(input.currentRouteEpoch) ||
-    !isExactInteger(input.atTick) ||
     candidate.worldId !== state.worldId ||
     candidate.regionVersion !== region.version ||
     candidate.routeEpoch !== input.currentRouteEpoch ||
