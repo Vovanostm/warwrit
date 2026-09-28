@@ -1,3 +1,5 @@
+import type { MetricsCollector } from './metrics.js';
+
 export type SceneEvent =
   | { type: 'assets-ready' }
   | { type: 'hover'; actorId: string | null }
@@ -21,5 +23,5 @@ export type RendererController = {
 export type RendererMount = (
   canvas: HTMLCanvasElement,
   emit: (event: SceneEvent) => void,
-  metrics: import('./metrics.js').MetricsCollector,
+  metrics: MetricsCollector,
 ) => Promise<RendererController>;
