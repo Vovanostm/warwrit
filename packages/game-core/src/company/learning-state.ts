@@ -8,6 +8,7 @@ import type { StudyAccessState } from './study-access.js';
 import {
   closeStudyAccessForItems,
   readStudyAccessState,
+  studyAccessBounds,
   hasStudyAccessOwner,
 } from './study-access.js';
 import type { StudySectionProgress } from './study-section.js';
@@ -146,6 +147,31 @@ export function recordLearningDutyChange(
       'INVALID_SOURCE',
     );
   }
+  let studyAccess = learning.studyAccess;
+  if (task?.start.inputs?.kind === 'BOOK') {
+    const interval = learning.studyAccess.intervals.find(
+      (entry) => entry.intervalId === task.start.studyIntervalId,
+    );
+    requireEconomy(
+      interval &&
+        interval.characterId === command.payload.characterId &&
+        interval.workId === task.start.inputs.workId &&
+        interval.sectionId === task.start.inputs.sectionId &&
+        task.start.command.payload.resourceIds.includes(interval.itemId),
+      'INVALID_SOURCE',
+    );
+    const at = BigInt(command.campaignTick);
+    const { from, to } = studyAccessBounds(interval);
+    if (from <= at && at < to)
+      studyAccess = readStudyAccessState({
+        schemaVersion: 1,
+        intervals: learning.studyAccess.intervals.map((entry) =>
+          entry.intervalId === interval.intervalId
+            ? { ...entry, effectiveToTick: command.campaignTick }
+            : entry,
+        ),
+      });
+  }
   const tasks = task
     ? readLearningTaskState({
         schemaVersion: 1,
@@ -167,6 +193,7 @@ export function recordLearningDutyChange(
   return readCompanyLearningState({
     ...learning,
     tasks,
+    studyAccess,
     ownerTransitions: [
       ...learning.ownerTransitions,
       {

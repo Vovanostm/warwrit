@@ -383,7 +383,7 @@ function prepareEconomyCandidate(
         targetContext,
       );
       let timed = advancePhysicalTime(closedPhysical.root, target);
-      if (command.type === 'TransferItem')
+      if (command.type === 'TransferItem' || (learningInput && command.type === 'SetAssignment'))
         timed = { ...timed, lifecycle: { ...timed.lifecycle, campaignTick: target } };
       if (learningInput) {
         requireEconomy(
