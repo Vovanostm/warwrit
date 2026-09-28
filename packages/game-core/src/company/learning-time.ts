@@ -73,6 +73,15 @@ const intervalInput = object({
   courseAttendance: optional(courseAttendanceInput),
 });
 const intervalsInput = array(intervalInput, 0, 1000, true);
+const causeManifestInput = object({
+  companyId: id,
+  worldId: id,
+  commandId: id,
+  taskId: id,
+  ownerIntervalId: id,
+  targetTick: unsigned,
+  evidenceIds: array(id, 0, 2000, true),
+});
 
 /**
  * Internal adapter evidence for one fully classified campaign segment. Producers must
@@ -103,6 +112,19 @@ export interface LearningTimePreparation {
   readonly throughTick: string;
   readonly intervals: readonly LearningTimeInterval[];
   readonly eligibleTicks: string;
+}
+
+export type LearningCause = CommandOf<'AdvanceCampaign'> | CommandOf<'TransferItem'>;
+
+/** Adapter-owned timeline manifest for causes without PLAYER authoritativeInputs. */
+export interface TrustedLearningCauseManifest {
+  readonly companyId: string;
+  readonly worldId: string;
+  readonly commandId: string;
+  readonly taskId: string;
+  readonly ownerIntervalId: string;
+  readonly targetTick: string;
+  readonly evidenceIds: readonly string[];
 }
 
 export function readLearningTimeIntervals(value: unknown): readonly LearningTimeInterval[] {
@@ -253,10 +275,11 @@ function validateCourseAttendance(
 /** C05-TIME validates a trusted, complete timeline; it does not settle or mutate owners. */
 export function prepareLearningTime(
   taskValue: LearningTask,
-  command: CommandOf<'AdvanceCampaign'>,
+  command: LearningCause,
   context: LearningQuoteContext,
   intervalValues: readonly LearningTimeInterval[],
   maintenance: readonly MaintenanceAgreement[] = [],
+  manifest?: TrustedLearningCauseManifest,
 ): LearningTimePreparation {
   const task = readLearningTaskState({ schemaVersion: 1, tasks: [taskValue] }).tasks[0]!;
   requireEconomy(!task.terminal, 'INVALID_ARGUMENT');
@@ -267,17 +290,41 @@ export function prepareLearningTime(
   const fromTick = task.processedThroughTick ?? start.command.campaignTick;
   if (task.processedThroughTick === undefined && task.completedTicks !== '0')
     throw new RangeError('LEARNING_HISTORY_REQUIRED');
+  const targetTick =
+    command.type === 'AdvanceCampaign' ? command.payload.toTick : command.campaignTick;
   requireEconomy(
-    command.type === 'AdvanceCampaign' &&
-      command.companyId === context.companyId &&
+    command.companyId === context.companyId &&
       command.worldId === context.worldId &&
       command.campaignTick === context.atTick &&
-      command.payload.toTick === context.atTick &&
+      targetTick === context.atTick &&
       context.companyId === start.command.companyId &&
       context.worldId === start.command.worldId &&
       BigInt(context.atTick) >= BigInt(fromTick),
     'INVALID_TIME',
   );
+
+  let authorizedIds: Set<string>;
+  if (command.type === 'AdvanceCampaign') {
+    requireEconomy(manifest === undefined, 'INVALID_SOURCE');
+    authorizedIds = new Set(command.payload.authoritativeInputs);
+  } else {
+    requireEconomy(start.inputs?.kind === 'BOOK' && manifest !== undefined, 'INVALID_SOURCE');
+    const snapshot = snapshotJson(manifest);
+    requireEconomy(causeManifestInput.read(snapshot), 'INVALID_SOURCE');
+    const parsed = snapshot as TrustedLearningCauseManifest;
+    const unique = new Set(parsed.evidenceIds);
+    requireEconomy(
+      unique.size === parsed.evidenceIds.length &&
+        parsed.companyId === context.companyId &&
+        parsed.worldId === context.worldId &&
+        parsed.commandId === command.commandId &&
+        parsed.taskId === start.taskId &&
+        parsed.ownerIntervalId === (start.studyIntervalId ?? start.quote.sourceId) &&
+        parsed.targetTick === context.atTick,
+      'INVALID_SOURCE',
+    );
+    authorizedIds = unique;
+  }
 
   const intervals = readLearningTimeIntervals(intervalValues);
   const seen = new Set<string>();
@@ -293,20 +340,30 @@ export function prepareLearningTime(
         interval.companyId === context.companyId &&
         interval.worldId === context.worldId &&
         interval.characterId === characterId &&
-        command.payload.authoritativeInputs.includes(interval.intervalId) &&
-        command.payload.authoritativeInputs.includes(interval.ownerIntervalId) &&
+        authorizedIds.has(interval.intervalId) &&
+        authorizedIds.has(interval.ownerIntervalId) &&
         !seen.has(interval.intervalId) &&
         from === cursor &&
         from < to &&
         to <= BigInt(context.atTick),
       'INVALID_SOURCE',
     );
-    validateCourseAttendance(task, interval, context, command, maintenance);
+    if (command.type === 'AdvanceCampaign')
+      validateCourseAttendance(task, interval, context, command, maintenance);
+    else requireEconomy(interval.courseAttendance === undefined, 'INVALID_SOURCE');
     seen.add(interval.intervalId);
     if (interval.kind === 'ELIGIBLE') eligible += to - from;
     cursor = to;
   }
   if (cursor !== BigInt(context.atTick)) throw new RangeError('LEARNING_HISTORY_REQUIRED');
+  if (command.type === 'TransferItem')
+    requireEconomy(
+      sameIds(
+        [...authorizedIds],
+        [...new Set(intervals.flatMap((entry) => [entry.intervalId, entry.ownerIntervalId]))],
+      ),
+      'INVALID_SOURCE',
+    );
   const remaining = BigInt(start.quote.maxTicks) - BigInt(task.completedTicks);
   requireEconomy(remaining >= 0n, 'INVALID_TIME');
   return Object.freeze({

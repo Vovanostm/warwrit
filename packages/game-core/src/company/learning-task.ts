@@ -81,7 +81,7 @@ const taskInput = object({
   stop: optional(jsonObject),
   terminal: optional(
     object({
-      kind: choice('GOAL_REACHED', 'QUOTE_LIMIT', 'FUNDING_SHORTFALL'),
+      kind: choice('GOAL_REACHED', 'QUOTE_LIMIT', 'FUNDING_SHORTFALL', 'INTERRUPTED'),
       commandId: id,
       campaignTick: unsigned,
       processedThroughTick: unsigned,

@@ -1,5 +1,5 @@
 import { COMPANY_CATALOGUE } from './definitions.js';
-import { array, choice, id, object, snapshotJson, unsigned } from './input.js';
+import { array, choice, id, object, optional, snapshotJson, unsigned } from './input.js';
 import type { ValueOf } from './input.js';
 import type { EconomyContext } from './economy-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
@@ -22,6 +22,7 @@ const intervalInput = object({
   accessEvidenceId: id,
   fromTick: unsigned,
   toTick: unsigned,
+  effectiveToTick: optional(unsigned),
 });
 const stateInput = object({ schemaVersion: choice(1), intervals: array(intervalInput) });
 const requestInput = object({
@@ -47,16 +48,21 @@ function workFor(workId: string, sectionId: string, error: PhysicalError) {
   return work;
 }
 
-function bounds(interval: { readonly fromTick: string; readonly toTick: string }) {
+export function studyAccessBounds(interval: {
+  readonly fromTick: string;
+  readonly toTick: string;
+  readonly effectiveToTick?: string;
+}) {
   const from = BigInt(interval.fromTick);
-  const to = BigInt(interval.toTick);
-  requirePhysical(from < to, 'INVALID_TIME');
+  const admittedTo = BigInt(interval.toTick);
+  const to = interval.effectiveToTick === undefined ? admittedTo : BigInt(interval.effectiveToTick);
+  requirePhysical(from < admittedTo && from <= to && to <= admittedTo, 'INVALID_TIME');
   return { from, to };
 }
 
 function overlap(left: StudyAccessInterval, right: StudyAccessInterval): boolean {
-  const a = bounds(left);
-  const b = bounds(right);
+  const a = studyAccessBounds(left);
+  const b = studyAccessBounds(right);
   return a.from < b.to && b.from < a.to;
 }
 
@@ -71,7 +77,7 @@ export function readStudyAccessState(value: unknown): StudyAccessState {
   );
   for (let index = 0; index < snapshot.intervals.length; index += 1) {
     const interval = snapshot.intervals[index]!;
-    bounds(interval);
+    studyAccessBounds(interval);
     for (let previous = 0; previous < index; previous += 1) {
       const candidate = snapshot.intervals[previous]!;
       requirePhysical(
@@ -100,7 +106,7 @@ export function admitStudyInterval(
   const state = readStudyAccessState(stateValue);
   const request = snapshotJson(requestValue);
   requirePhysical(requestInput.read(request), 'INVALID_ARGUMENT');
-  const requested = bounds(request);
+  const requested = studyAccessBounds(request);
   requirePhysical(
     context.companyId === root.lifecycle.companyId &&
       context.worldId === root.lifecycle.worldId &&
@@ -140,7 +146,7 @@ export function admitStudyInterval(
   requirePhysical(
     state.intervals.every((interval) => {
       if (interval.itemId !== request.itemId) return true;
-      const existing = bounds(interval);
+      const existing = studyAccessBounds(interval);
       return existing.to <= requested.from || requested.to <= existing.from;
     }),
     'INCOMPATIBLE_ACTIVITY',
@@ -172,9 +178,8 @@ export function closeStudyAccessForItems(
   const intervals = state.intervals.flatMap((interval) => {
     if (!ids.has(interval.itemId)) return [interval];
     const from = BigInt(interval.fromTick);
-    const to = BigInt(interval.toTick);
-    if (from === at && at < to) return [];
-    if (from < at && at < to) return [{ ...interval, toTick: atTick }];
+    const { to } = studyAccessBounds(interval);
+    if (from <= at && at < to) return [{ ...interval, effectiveToTick: atTick }];
     return [interval];
   });
   return readStudyAccessState({

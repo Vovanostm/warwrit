@@ -297,9 +297,10 @@ function automaticFoodFacts(
   cmd: ReturnType<typeof command>,
   financeFacts: readonly FinanceEvidence[],
 ): readonly PhysicalEvidence[] {
-  if (cmd.type !== 'AdvanceCampaign') return [];
   const from = BigInt(state.finance.processedTick);
-  const to = BigInt((cmd.payload as { toTick: string }).toTick);
+  const to = BigInt(
+    cmd.type === 'AdvanceCampaign' ? (cmd.payload as { toTick: string }).toTick : cmd.campaignTick,
+  );
   if (to <= from) return [];
   const points = new Set<bigint>([from, to]);
   for (let boundary = (from / 1000n + 1n) * 1000n; boundary < to; boundary += 1000n)

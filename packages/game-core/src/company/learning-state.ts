@@ -5,7 +5,11 @@ import type { CompanyEconomyState } from './economy-types.js';
 import type { LearningTaskState } from './learning-task.js';
 import { readLearningTaskState } from './learning-task.js';
 import type { StudyAccessState } from './study-access.js';
-import { closeStudyAccessForItems, readStudyAccessState } from './study-access.js';
+import {
+  closeStudyAccessForItems,
+  readStudyAccessState,
+  studyAccessBounds,
+} from './study-access.js';
 import type { StudySectionProgress } from './study-section.js';
 import { readStudySectionProgress } from './study-section.js';
 import { COMPANY_CATALOGUE } from './definitions.js';
@@ -23,7 +27,7 @@ export interface LearningOwnerTransition {
   readonly kind: 'BOOK_TRANSFER';
   readonly commandId: string;
   readonly atTick: string;
-  readonly learnerId: string;
+  readonly learnerId: string | null;
   readonly itemId: string;
   readonly fromContainerId: string;
   readonly toContainerId: string;
@@ -34,7 +38,10 @@ const transitionInput = object({
   kind: choice('BOOK_TRANSFER'),
   commandId: id,
   atTick: unsigned,
-  learnerId: id,
+  learnerId: either(
+    { schema: { type: 'null' }, read: (value: unknown): value is null => value === null },
+    id,
+  ),
   itemId: id,
   fromContainerId: id,
   toContainerId: id,
@@ -129,30 +136,65 @@ export function recordBookTransfer(
   const task = learning.tasks.tasks.find(
     (entry) =>
       !entry.stop &&
-      !entry.terminal &&
+      (!entry.terminal || entry.terminal.commandId === command.commandId) &&
       entry.start.inputs?.kind === 'BOOK' &&
-      entry.start.command.payload.resourceIds.includes(oldItem.itemId),
+      entry.start.command.payload.resourceIds.includes(oldItem.itemId) &&
+      learning.studyAccess.intervals.some((interval) => {
+        if (
+          interval.intervalId !== entry.start.studyIntervalId ||
+          interval.itemId !== oldItem.itemId ||
+          interval.characterId !== entry.start.command.payload.characterId
+        )
+          return false;
+        const intervalBounds = studyAccessBounds(interval);
+        return (
+          BigInt(command.campaignTick) >= intervalBounds.from &&
+          BigInt(command.campaignTick) < intervalBounds.to
+        );
+      }),
   );
   if (task) {
-    const intervals = learning.studyAccess.intervals.filter(
-      (entry) =>
-        entry.itemId === oldItem.itemId &&
-        entry.characterId === task.start.command.payload.characterId &&
-        BigInt(entry.fromTick) <= BigInt(command.campaignTick) &&
-        BigInt(command.campaignTick) < BigInt(entry.toTick),
+    const effects = (after.finance.learningEffects ?? []).filter(
+      (effect) =>
+        effect.companyId === after.lifecycle.companyId &&
+        effect.worldId === after.lifecycle.worldId &&
+        effect.taskId === task.start.taskId &&
+        effect.commandId === command.commandId,
     );
-    requireEconomy(intervals.length === 1, 'INVALID_SOURCE');
+    requireEconomy(
+      effects.length === 1 && effects[0]?.acceptedTicks === task.completedTicks,
+      'INVALID_SOURCE',
+    );
   }
   const studyAccess = closeStudyAccessForItems(
     learning.studyAccess,
     [oldItem.itemId],
     command.campaignTick,
   );
+  const tasks =
+    task && !task.terminal
+      ? readLearningTaskState({
+          schemaVersion: 1,
+          tasks: learning.tasks.tasks.map((entry) =>
+            entry.start.taskId === task.start.taskId
+              ? {
+                  ...entry,
+                  terminal: {
+                    kind: 'INTERRUPTED',
+                    commandId: command.commandId,
+                    campaignTick: command.campaignTick,
+                    processedThroughTick: entry.processedThroughTick ?? command.campaignTick,
+                  },
+                }
+              : entry,
+          ),
+        })
+      : learning.tasks;
   const transition: LearningOwnerTransition = {
     kind: 'BOOK_TRANSFER',
     commandId: command.commandId,
     atTick: command.campaignTick,
-    learnerId: task?.start.command.payload.characterId ?? command.actorRef.id,
+    learnerId: task?.start.command.payload.characterId ?? null,
     itemId: oldItem.itemId,
     fromContainerId: oldItem.containerId!,
     toContainerId: nextItem.containerId!,
@@ -160,6 +202,7 @@ export function recordBookTransfer(
   };
   return readCompanyLearningState({
     ...learning,
+    tasks,
     studyAccess,
     ownerTransitions: [...learning.ownerTransitions, transition],
   });
