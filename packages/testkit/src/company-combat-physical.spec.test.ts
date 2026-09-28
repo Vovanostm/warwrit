@@ -8,8 +8,12 @@ import {
   canonicalJson,
   commandId,
   createCombatReceiptJournal,
+  initialSkillProgress,
   createHexagon,
   prepareCombatConsequences,
+  prepareCombatPracticeEffects,
+  COMBAT_PRACTICE_PROFILE_VERSION,
+  PROGRESSION_RULES,
   prepareCombatPhysicalEffects,
   prepareCombatReceipt,
   prepareEncounterBinding,
@@ -28,6 +32,8 @@ import type {
   FinanceEvidence,
   MaterializedCompanyState,
   PhysicalEvidence,
+  PracticeEvidence,
+  CommandOf,
 } from '@warwrit/game-core';
 import {
   command,
@@ -82,6 +88,25 @@ function source(prefix: string, health = 100): EncounterCompanySource {
     },
     false,
   );
+  root = {
+    ...root,
+    lifecycle: {
+      ...root.lifecycle,
+      characters: root.lifecycle.characters.map((character) => ({
+        ...character,
+        skills: {
+          ...character.skills,
+          blades: initialSkillProgress(0, `${character.identity.characterId}-blades`),
+          defense: initialSkillProgress(0, `${character.identity.characterId}-defense`),
+        },
+        aptitudeBySkill: {
+          ...character.aptitudeBySkill,
+          blades: 10000,
+          defense: 10000,
+        },
+      })),
+    },
+  };
   const request = command(root, 'BeginEncounterBinding', {}, 'placement', 'SYSTEM');
   return { root: { ...root, physical: root.physical! }, context: context(root, request) };
 }
@@ -444,6 +469,72 @@ function combatContext(
   return context(f.root, request, facts.financeFacts, [], facts.physicalFacts);
 }
 
+function practiceJournal(f: ReturnType<typeof fixture>) {
+  let journal = accept(f, f.journal, f.binding.initial, null);
+  for (let index = 0; index < 64; index += 1) {
+    const state = journal.receipts.at(-1)!.transition.state;
+    const activation = state.activation;
+    if (!activation) break;
+    const actor = state.units.find((unit) => unit.id === activation.unitId)!;
+    const friendly = actor.sideId === sideId('a-side');
+    const targetId = unitId(friendly ? 'b-leader-unit' : 'a-leader-unit');
+    const attack: CombatCommand = {
+      type: 'attack',
+      commandId: commandId(`practice-attack-${state.revision}`),
+      activationId: activation.id,
+      actorId: activation.unitId,
+      targetId,
+    };
+    let commandValue: CombatCommand;
+    if (applyCombatCommand(state, attack).ok) commandValue = attack;
+    else {
+      const target = state.units.find((unit) => unit.id === targetId)!;
+      const distance = (a: { q: number; r: number }, b: { q: number; r: number }) =>
+        (Math.abs(a.q - b.q) + Math.abs(a.r - b.r) + Math.abs(a.q + a.r - b.q - b.r)) / 2;
+      const occupied = new Set(state.units.map((unit) => `${unit.position.q},${unit.position.r}`));
+      const destination = state.map.hexes.find(
+        (hex) =>
+          !occupied.has(`${hex.q},${hex.r}`) &&
+          distance(hex, target.position) < distance(actor.position, target.position),
+      );
+      commandValue = destination
+        ? {
+            type: 'move',
+            commandId: commandId(`practice-move-${state.revision}`),
+            activationId: activation.id,
+            actorId: activation.unitId,
+            to: destination,
+          }
+        : {
+            type: 'defend',
+            commandId: commandId(`practice-defend-${state.revision}`),
+            activationId: activation.id,
+            actorId: activation.unitId,
+          };
+    }
+    const result = applyCombatCommand(state, commandValue);
+    if (!result.ok) throw new Error(result.error.message);
+    journal = accept(f, journal, { state: result.state, events: result.events }, commandValue);
+    if (
+      journal.receipts.some((receipt) =>
+        receipt.transition.events.some((event) => event.type === 'attack.resolved'),
+      ) &&
+      journal.receipts.some(
+        (receipt) =>
+          receipt.kernelCommand?.type === 'attack' &&
+          characterForUnit(f, receipt.kernelCommand.actorId) === 'a-leader',
+      )
+    )
+      return journal;
+  }
+  return journal;
+}
+
+function characterForUnit(f: ReturnType<typeof fixture>, id: string) {
+  return f.binding.participants.find((participant) => participant.unitId === id)?.projection
+    .characterId;
+}
+
 describe('G07 — prepared physical combat effects', () => {
   it('persists verified pools, including the initial clamp, and replays deterministically', () => {
     const f = fixture();
@@ -639,5 +730,158 @@ describe('G08 — verified combat consequences', () => {
     expect(prepared.proposedLastAppliedRevision).toBe(journal.proposedLastAppliedRevision);
     expect(journal.binding.lastAppliedRevision).toBe(f.binding.lastAppliedRevision);
     expect(before).toBe(canonicalJson({ root: f.root, journal, candidate }));
+  });
+});
+
+describe('G09 — verified combat practice', () => {
+  it('credits only replayed company attacks, preserves G08 requirements and leaves the cursor pending', () => {
+    const f = fixture();
+    const journal = practiceJournal(f);
+    const companyAttacks = journal.receipts.filter(
+      (receipt) =>
+        receipt.kernelCommand?.type === 'attack' &&
+        characterForUnit(f, receipt.kernelCommand.actorId) === 'a-leader',
+    );
+    expect(companyAttacks.length).toBeGreaterThan(0);
+    const physical = prepareCombatPhysicalEffects(f.root, journal);
+    const ctx = combatContext(f, { financeFacts: [], physicalFacts: [] });
+    const g08 = prepareCombatConsequences(f.root, physical, journal, ctx);
+    const profile = {
+      version: COMBAT_PRACTICE_PROFILE_VERSION,
+      profileId: 'fixture-combat-challenge-v1',
+      bindingId: f.binding.bindingId,
+      challengeLevel: 0,
+      actionStarts: companyAttacks.flatMap((receipt) => {
+        const kernelCommand = receipt.kernelCommand;
+        return kernelCommand?.type === 'attack'
+          ? [
+              {
+                activationId: kernelCommand.activationId,
+                unitId: kernelCommand.actorId,
+                startedAt: f.root.lifecycle.campaignTick,
+              },
+            ]
+          : [];
+      }),
+    } as const;
+    const trustedCredits = companyAttacks.flatMap((receipt) => {
+      const kernelCommand = receipt.kernelCommand;
+      if (kernelCommand?.type !== 'attack') return [];
+      const ordinal = receipt.transition.events.findIndex(
+        (event) => event.type === 'attack.resolved',
+      );
+      const sourceEventId = receipt.sourceEventIds[ordinal]!;
+      const participant = f.binding.participants.find(
+        (entry) => entry.unitId === kernelCommand.actorId,
+      )!;
+      const defender = f.binding.participants.find(
+        (entry) => entry.unitId === kernelCommand.targetId,
+      );
+      const event = receipt.transition.events[ordinal]!;
+      if (event.type !== 'attack.resolved') throw new Error('Expected attack event');
+      const payload = {
+        receiptId: `${sourceEventId}-${profile.profileId}-${participant.projection.characterId}-weapon-attack`,
+        characterId: participant.projection.characterId,
+        skillId: participant.projection.weapon.skillId,
+        methodId: 'weapon-attack',
+        challengeLevel: profile.challengeLevel,
+        outcome: event.hit ? 'SUCCESS' : 'MEANINGFUL_FAILURE',
+        effortTicks: '0',
+      } as const;
+      const base = command(
+        f.root,
+        'CreditPractice',
+        payload,
+        `practice-${sourceEventId}`,
+        'DOMAIN_RECEIPT',
+        f.root.lifecycle.campaignTick,
+      );
+      const practiceCommand = { ...base, sourceEventId } as CommandOf<'CreditPractice'>;
+      const fact: PracticeEvidence = {
+        worldId: f.root.lifecycle.worldId,
+        companyId: f.root.lifecycle.companyId,
+        sourceEventId,
+        rulesVersion: PROGRESSION_RULES.version,
+        catalogueVersion: COMPANY_CATALOGUE.version,
+        payload,
+        startedAt: f.root.lifecycle.campaignTick,
+        completedAt: f.root.lifecycle.campaignTick,
+        levelAtStart: 0,
+        aptitudeAtStartBps: 10000,
+        proof: {
+          kind: 'weapon-attack',
+          interaction: {
+            sourceEventId,
+            attackerId: participant.projection.characterId,
+            defenderId: defender?.projection.characterId ?? event.targetId,
+            atTick: f.root.lifecycle.campaignTick,
+            origin: 'EXTERNAL',
+          },
+          weaponProfile: participant.projection.weapon.profileId,
+        },
+      };
+      const trustedContext = {
+        ...context(f.root, practiceCommand as ReturnType<typeof command>),
+        internalGrant: {
+          commandId: practiceCommand.commandId,
+          sourceEventId,
+          canonicalRequest: canonicalJson(practiceCommand),
+        },
+        practiceFacts: [fact],
+      };
+      return [{ command: practiceCommand, context: trustedContext }];
+    });
+    const before = canonicalJson({ root: f.root, journal, physical, g08 });
+
+    const prepared = prepareCombatPracticeEffects(
+      f.root,
+      physical,
+      g08,
+      journal,
+      ctx,
+      profile,
+      trustedCredits,
+    );
+    expect(prepared.credits).toBeGreaterThan(0);
+    expect(prepared.root.finance.sourceEffects.length).toBe(
+      g08.root.finance.sourceEffects.length + prepared.credits,
+    );
+    expect(prepared.requirements).toEqual(g08.requirements);
+    expect(prepared.proposedLastAppliedRevision).toBe(journal.proposedLastAppliedRevision);
+    expect(journal.binding.lastAppliedRevision).toBe(f.binding.lastAppliedRevision);
+    expect(
+      prepareCombatPracticeEffects(f.root, physical, g08, journal, ctx, profile, trustedCredits),
+    ).toEqual(prepared);
+    expect(() =>
+      prepareCombatPracticeEffects(f.root, physical, g08, journal, ctx, profile, []),
+    ).toThrow();
+    expect(canonicalJson({ root: f.root, journal, physical, g08 })).toBe(before);
+
+    let empty = accept(f, f.journal, f.binding.initial, null);
+    empty = nextDefend(f, empty);
+    const afterDefend = empty.receipts.at(-1)!.transition.state;
+    const activation = afterDefend.activation!;
+    const waitCommand: CombatCommand = {
+      type: 'wait',
+      commandId: commandId(`practice-empty-wait-${afterDefend.revision}`),
+      activationId: activation.id,
+      actorId: activation.unitId,
+    };
+    const waited = applyCombatCommand(afterDefend, waitCommand);
+    if (!waited.ok) throw new Error(waited.error.message);
+    empty = accept(f, empty, { state: waited.state, events: waited.events }, waitCommand);
+    const emptyPhysical = prepareCombatPhysicalEffects(f.root, empty);
+    const emptyG08 = prepareCombatConsequences(f.root, emptyPhysical, empty, ctx);
+    const noPractice = prepareCombatPracticeEffects(
+      f.root,
+      emptyPhysical,
+      emptyG08,
+      empty,
+      ctx,
+      { ...profile, actionStarts: [] },
+      [],
+    );
+    expect(noPractice.credits).toBe(0);
+    expect(noPractice.root.finance.sourceEffects).toEqual(emptyG08.root.finance.sourceEffects);
   });
 });
