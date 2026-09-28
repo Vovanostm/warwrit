@@ -1,6 +1,7 @@
 import { PROTOCOL_VERSION, type HealthResponse } from '@warwrit/protocol';
 import fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 
+import { registerIdentityRoutes, type IdentityRoutesOptions } from './auth/routes.js';
 import { createLogger } from './logger.js';
 import { registerCombatLab, type CombatLabSettings } from './combat-lab/routes.js';
 
@@ -8,6 +9,7 @@ export interface BuildAppOptions {
   readonly logger?: FastifyBaseLogger | false;
   readonly readinessProbe?: () => Promise<void>;
   readonly combatLab?: CombatLabSettings;
+  readonly identity?: IdentityRoutesOptions;
 }
 
 const liveResponse: HealthResponse = {
@@ -26,6 +28,9 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
         });
 
   app.get('/health/live', async () => liveResponse);
+  if (options.identity !== undefined) {
+    registerIdentityRoutes(app, options.identity);
+  }
   if (options.combatLab !== undefined) {
     if (process.env['NODE_ENV'] === 'production') {
       throw new Error('Combat lab is unavailable in production');
