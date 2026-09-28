@@ -1,0 +1,30 @@
+.combat-lab-page {
+  box-sizing: border-box;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.combat-lab-page button {
+  min-height: 2.75rem;
+  padding: 0.55rem 0.8rem;
+  font: inherit;
+}
+
+.combat-lab-controls {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid #687078;
+  border-radius: 0.5rem;
+}
+
+.combat-lab-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.combat-lab-page [role='status'],
+.combat-lab-page [role='alert'] {
+  line-height: 1.5;
+}
