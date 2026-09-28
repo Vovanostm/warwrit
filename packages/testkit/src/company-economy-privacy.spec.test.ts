@@ -4,6 +4,7 @@ import {
   bindFinancialSocialConsequences,
   createSocialState,
   COMPANY_CATALOGUE,
+  COMPANY_RULES,
   PROGRESSION_RULES,
   initialSkillProgress,
   prepareCompanyLifecycle,
@@ -16,10 +17,12 @@ import type {
   FinanceEvidence,
   PhysicalEvidence,
   PracticeEvidence,
+  ServiceTermsEvidence,
 } from '@warwrit/game-core';
 import {
   access,
   advance,
+  cash,
   command,
   context,
   economy,
@@ -75,6 +78,21 @@ function death(state: CompanyEconomyState, characterId: string, sourceEventId?: 
 
 function view(state: CompanyEconomyState) {
   return projectCompanyEconomy(state, 'company');
+}
+
+function serviceTerms(state: CompanyEconomyState, characterId: string): ServiceTermsEvidence {
+  return {
+    ...scope(state, `terms-${characterId}`),
+    kind: 'SERVICE_TERMS',
+    characterId,
+    poolId: 'local',
+    recipient: { kind: 'CHARACTER', id: characterId },
+    signingWalletId: `wallet-${characterId}`,
+    rates: COMPANY_RULES.economy.qualificationBands.map((band) => ({
+      minimumLevel: band.level,
+      dailyWageMilli: String(band.multiplierBps),
+    })),
+  };
 }
 
 function earned(state: CompanyEconomyState, membershipId: string) {
@@ -164,7 +182,6 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
     ).next;
     let alive = unobserved;
     let hidden = death(practiced, 'worker-0').result.next;
-    expect(view(hidden)).toEqual(view(alive));
     expect(view(hidden)?.characters.some((character) => character.characterId === 'provider')).toBe(
       false,
     );
@@ -234,9 +251,70 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
       error: 'INVALID_SOURCE',
     });
     expect(projectCompanyEconomy(hidden, 'other-company')).toBeNull();
+    const unchangedView = view(hidden);
+    const observationId = (candidateReport.cmd.payload as { observationId: string }).observationId;
+    const foreignObservationContext = {
+      ...candidateReport.ctx,
+      physicalFacts: (candidateReport.ctx.physicalFacts ?? []).map((fact) =>
+        fact.id === observationId && fact.kind === 'PHYSICAL_OBSERVATION'
+          ? {
+              ...fact,
+              companyId: 'other-company',
+              worldId: 'other-world',
+              observerCompanyId: 'other-company',
+            }
+          : fact,
+      ),
+    };
+    const foreignObservation = prepareCompanyEconomy(
+      hidden,
+      candidateReport.cmd,
+      foreignObservationContext,
+    );
+    expect(foreignObservation).toMatchObject({
+      kind: 'REJECTED',
+      state: hidden,
+      error: 'INVALID_SOURCE',
+    });
+    expect(foreignObservation.state).toBe(hidden);
+    expect(view(foreignObservation.state)).toEqual(unchangedView);
 
+    expect(view(hidden)?.characters.some((character) => character.characterId === 'provider')).toBe(
+      false,
+    );
     const candidate = observation(hidden, 'provider');
-    const candidateView = projectCompanyEconomy(candidate.result.next, 'company');
+    const recruit = command(candidate.result.next, 'Recruit', {
+      companyId: 'company',
+      characterId: 'provider',
+      offerId: 'provider-offer',
+      offerRevision: '1',
+      basis: 'PAID',
+      poolId: 'local',
+    });
+    const offer = {
+      ...scope(candidate.result.next, 'provider-offer'),
+      kind: 'RECRUIT' as const,
+      characterId: 'provider',
+      basis: 'PAID' as const,
+      offerRevision: '1',
+      expiresAt: tick(2000),
+      signingQ: cash(0),
+      dailyWageMilli: '10000',
+      itemIds: [],
+    };
+    const recruited = prepared(
+      prepareCompanyEconomy(
+        candidate.result.next,
+        recruit,
+        context(
+          candidate.result.next,
+          recruit,
+          [serviceTerms(candidate.result.next, 'provider')],
+          [offer],
+        ),
+      ),
+    ).next;
+    const candidateView = view(recruited);
     const observedProvider = candidateView?.characters.find(
       (character) => character.characterId === 'provider',
     );
@@ -245,14 +323,22 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
       aptitudeBySkill: { leadership: 10000, archery: 10000 },
     });
     expect(JSON.stringify(observedProvider)).not.toContain('milliXp');
+    expect(candidateView?.finance.services).toContainEqual(
+      expect.objectContaining({ currentAgreedRateMilli: '10000', materialSupportOnly: false }),
+    );
     expect(
       projectCompanyEconomy(
-        JSON.parse(JSON.stringify(candidate.result.next)) as CompanyEconomyState,
+        JSON.parse(JSON.stringify(recruited)) as CompanyEconomyState,
         'company',
       ),
     ).toEqual(candidateView);
+    const providerRetry = prepared(
+      prepareCompanyEconomy(recruited, candidate.cmd, context(recruited, candidate.cmd)),
+    );
+    expect(providerRetry.replayed).toBe(true);
+    expect(providerRetry.next).toBe(recruited);
 
-    const report = observation(candidate.result.next, 'worker-0');
+    const report = observation(recruited, 'worker-0');
     const disclosed = report.result.next;
     expect(view(disclosed)).not.toEqual(view(alive));
     expect(BigInt(view(disclosed)!.finance.wallets[0]!.spendableQ)).toBeGreaterThan(0n);
