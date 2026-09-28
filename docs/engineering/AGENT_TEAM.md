@@ -64,6 +64,11 @@ Host/runtime overrides can take precedence. A read-only profile is not proof tha
 every connector/tool is unable to write. A prompt's no-delegation rule is behavioral,
 not a verified tool-level restriction. No model or approval setting is overridden.
 
+`.codex/rules/warwrit.rules` forbids force-push and auto/admin merge by command
+prefix (checked with `codex execpolicy check`); it loads only for a trusted project.
+Claude Code applies the equivalent `.claude/settings.json` rules and discovers the
+same skills through `.claude/skills/` symlinks. Both are best-effort guards.
+
 Example request: “Use `warwrit_explorer` to trace the assigned command's authority
 and consumers, read-only, within ten minutes. I will inspect its existing tests.
 Return file/source references and unknowns; do not edit or start services.”
@@ -80,8 +85,8 @@ Use [operational memory](AGENT_MEMORY.md) for source pointers and refresh rules.
 Children report candidate lessons; the parent reviews a small source-linked edit
 within authorized scope. There is no autonomous memory-writing agent.
 
-[Research and evaluation](AGENT_TEAM_RESEARCH.md) explain the choices and limits.
-Before adding concurrency or roles, compare representative serial and parallel tasks
+[Research and evaluation](research/AGENT_TEAM_RESEARCH.md) explain the choices and limits.
+Before adding concurrency or roles, use [the harness evaluation](HARNESS_EVAL.md) to compare representative serial and parallel tasks
 with the same acceptance, model and base: correctness, conflicts, parent rework,
 wall time and actual token/cost telemetry. Use `NOT_MEASURED` for missing metrics.
 Reject a faster run with broken scope or missing proof.

@@ -12,14 +12,10 @@ Every pull request must reference its work package or issue and include verifica
 ./scripts/bootstrap.sh
 ```
 
-For an already bootstrapped checkout:
-
-```bash
-pnpm verify
-pnpm db:up
-pnpm test:migrations
-pnpm db:down
-```
+`scripts/bootstrap.sh` owns the full verification sequence (`pnpm verify`,
+`pnpm test:combat:stress`, `pnpm test:migrations` against a disposable database).
+Focused commands for editing are in
+[LOCAL_DEVELOPMENT.md](docs/engineering/LOCAL_DEVELOPMENT.md#focused-checks).
 
 ## Commit messages
 
@@ -37,8 +33,8 @@ chore(repo): update toolchain
 
 A contribution is complete only when:
 
-- formatting, linting, architecture, content validation, type checking, build, and unit tests pass;
-- migration up/down smoke passes when persistence is touched;
+- the full gate owned by `scripts/bootstrap.sh` passes on the final tree;
+- no released migration is edited (`pnpm check:migrations`);
 - package boundaries remain valid;
 - documentation and schemas describe the implemented behavior;
 - the pull request contains reproducible evidence.

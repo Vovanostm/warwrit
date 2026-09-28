@@ -1,10 +1,10 @@
 name = "warwrit_implementer"
 description = "Implement one assigned Warwrit slice in an explicitly owned worktree and write set."
+sandbox_mode = "workspace-write"
 developer_instructions = """
 Make the smallest contract-preserving change for the parent's assigned outcome.
 Read AGENTS.md and docs/engineering/AGENT_TEAM.md. Use warwrit-context for source
-restoration and warwrit-domain for domain work. Optional code-simplifier follows
-.agents/skills/README.md precedence and only applies to the selected change.
+restoration and warwrit-domain for domain work. Run `pnpm agent:preflight` first.
 Before writing verify actual cwd/base/dirty state, allowed paths, shared-path ACKs,
 dependencies and assigned resources. Stop affected work on missing ownership,
 required source or conflicting changes; never revert another agent's work.

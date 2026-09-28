@@ -10,6 +10,15 @@ roles and responsibility boundaries. [AGENT_TEAM](AGENT_TEAM.md) adds three narr
 profiles and a source-linked memory index. This adds no orchestration framework or
 hooks and does not complete the two infrastructure repairs below.
 
+Dated amendment, 2026-09-29: PR #105 implemented the verification-database
+isolation repair. The cross-workspace relative-import repair is still open. On the
+owner's request the harness was hardened: the getsentry `code-review` and
+`code-simplifier` helpers were removed (their applicable checks moved to
+`warwrit-review`); best-effort command guards were added in `.codex/rules/` and
+`.claude/settings.json`; `pnpm check:migrations` runs in pull-request CI; and
+`pnpm agent:preflight` records checkout identity. Statements below about installed
+helpers and the absence of hooks describe the 2026-09-27 state.
+
 ## Keep the existing workflow
 
 Use `warwrit-context`, `warwrit-domain`, `warwrit-review` and `warwrit-delivery`.
@@ -88,10 +97,10 @@ another command list. Do not rename bootstrap interfaces merely for symmetry.
 
 ## Evidence and limits
 
-The local [original audit](../../artifacts/agent-readiness-2026-09-27/REPORT_RU.md)
+The local original audit (`artifacts/agent-readiness-2026-09-27/REPORT_RU.md`, Git-ignored)
 retains scripts, hashes, positive/negative fixtures and baseline execution on
 `a5fb1c0ba42d94ce80f8dce16d04203b9827c02e`. The
-[KISS review](../../artifacts/agent-readiness-review-2026-09-27/REVIEW_RU.md)
+KISS review (`artifacts/agent-readiness-review-2026-09-27/REVIEW_RU.md`, Git-ignored)
 records selection and simplification reasoning. These ignored artifacts are local
 evidence; share the accompanying archive if another checkout needs them.
 

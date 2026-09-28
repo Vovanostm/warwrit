@@ -4,8 +4,7 @@ sandbox_mode = "read-only"
 developer_instructions = """
 Review the assigned exact diff and affected consumers against the accepted contract.
 Read AGENTS.md and docs/engineering/AGENT_TEAM.md, then warwrit-review. Use
-warwrit-context if authority or revision is unclear. Optional code-review follows
-.agents/skills/README.md precedence. Establish your own evidence before adopting
+warwrit-context if authority or revision is unclear. Establish your own evidence before adopting
 the author's conclusions. Similar code is not automatically duplicate policy.
 This read-only assignment narrows warwrit-review: do not apply its suggested fixes.
 Use read-only graph/source/diff tools. Send any reproduction needing writes or

@@ -1,5 +1,10 @@
 # Evidence behind the agent setup
 
+> Research record, 2026-09-29: moved to `docs/engineering/research/`. Not task
+> context; load only when reviewing the agent setup. The `code-review` and
+> `code-simplifier` helpers named below were later removed; see
+> [skills history](../../../.agents/skills/README.md#history).
+
 Reviewed 2026-09-27. These sources justify a conservative design, not an “ideal”
 team or measured Warwrit speedup. Sources are versioned where possible.
 
@@ -22,7 +27,7 @@ over assuming that a fetched schema matches every client.
 The existing four `warwrit-*` skills retain source restoration, domain work,
 invariant review and delivery ownership. The installed pinned `code-review` and
 `code-simplifier` helpers cover general review/KISS; their
-[provenance and precedence](../../.agents/skills/README.md) are explicit.
+[provenance and precedence](../../../.agents/skills/README.md) are explicit.
 The global `ai-subagent-orchestration` skill was used to design and evaluate this
 setup; portable project roles refer to repository guidance rather than requiring
 that global skill on another developer's machine.
@@ -34,7 +39,7 @@ not a benchmark win over every available skill.
 
 No new runtime script, dependency, vector database or lifecycle hook is needed for
 these declarative roles. The two reproduced architecture/SQL isolation repairs in
-[the preparation plan](AGENT_DEVELOPMENT_PREPARATION.md) remain necessary follow-up
+[the preparation plan](../AGENT_DEVELOPMENT_PREPARATION.md) remain necessary follow-up
 work. A hook cannot solve their underlying ownership failures. Add automation only
 after a repeated concrete failure establishes its input, action and verification.
 

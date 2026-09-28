@@ -41,6 +41,49 @@ capabilities, debt vs optional gifts, or actual vs known intervals because their
 code looks similar. Move cohesive responsibility instead of wrapping every helper.
 Do not introduce extensibility for hypothetical races, magic or frameworks.
 
+## Known defect patterns
+
+Moved from AGENTS.md on 2026-09-29; check these on every domain review.
+
+Flag person-wide obligations accidentally narrowed to the latest membership;
+coverage continued by somebody who already left; `basicWork` substituted for
+`localDuty`; eligibility used as proof that an effect occurred; and resetting an
+allocation epoch without changing its claims. Automatic local settlement may
+leave distant debt, but must never swallow an invalid supplied access capability.
+For hidden-fate changes, compare command sequences and colleagues' actual payouts,
+not only two initial projection objects.
+
+## General pass
+
+After the invariant passes, check the diff for: runtime errors on absent values
+or out-of-range indices; unbounded work over whole histories or catalogues;
+unintended changes to other consumers; breaking protocol, serialization or
+migration contracts without a compatibility note; injection, missing authorization
+or secrets in code and logs. Prefer the existing module's style over generic
+preferences. Suggest a simplification only for the changed code: remove
+unnecessary nesting, indirection or abstraction while preserving behavior,
+independent test oracles and the actual/known-state separation. Label these as
+optional advice, separate from defects.
+
+## Worked example
+
+From fix `b69d881` (`prepareLearningBacking`, C05-FIN):
+
+```text
+Severity: data impact — valid long-lived companies
+Postulate: own retained values at the boundary; do not deep-copy the whole world
+  per helper (warwrit-domain); a valid canonical root must prepare deterministically
+Sequence: valid root whose finance.sourceEffects holds 1,001 entries; same
+  learning request as on a fresh root
+Expected: identical accepted/funded ticks, transfer, wallets, movements and
+  obligations; caller's root/finance/sourceEffects objects unchanged
+Observed: helper re-serialised the entire root via snapshotJson before preparing
+Owning fix: use the validated input state directly in learning-backing.ts
+Regression: learning-cost.spec.test.ts compares the large and fresh roots through
+  the public preparer and asserts identity of the caller's objects
+Limit: proves this preparer only; other helpers need their own check
+```
+
 ## Exit
 
 Run the smallest regressions that disprove the old implementation, apply the

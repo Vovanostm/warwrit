@@ -9,7 +9,7 @@ automatically updated Codex personal memory. Do not load every link into every t
 | Active slice, source IDs and writer ACKs | [CURRENT_PLAN](CURRENT_PLAN.md), linked Airtable/GitHub records               | Live readback before activation, shared writes or delivery                       |
 | Restore a task                           | [warwrit-context](../../.agents/skills/warwrit-context/SKILL.md)              | Check actual checkout/revision/dirty state and required source edition on resume |
 | Technology constraints                   | [technology handoff](AI_TECHNOLOGY_HANDOFF.md), accepted ADRs, lockfile/types | Before using changing library APIs                                               |
-| Commands/environment                     | [local development](LOCAL_DEVELOPMENT.md), package scripts                    | Before execution in another checkout/toolchain                                   |
+| Commands/environment                     | [local development](LOCAL_DEVELOPMENT.md#focused-checks), package scripts     | Before execution in another checkout/toolchain                                   |
 | Handoff/evidence fields                  | [warwrit-delivery](../../.agents/skills/warwrit-delivery/SKILL.md#handoff)    | Diff/source changes invalidate affected evidence                                 |
 | Role assignment                          | [agent team](AGENT_TEAM.md)                                                   | Verify host support and resource ownership                                       |
 
@@ -24,14 +24,14 @@ Historical observations require rechecking when their named source changes.
 - Worktrees isolate files, not shared databases or ports. Inspect
   [bootstrap](../../scripts/bootstrap.sh), [SQL smoke](../../scripts/migration-smoke.ts),
   [Compose](../../compose.yaml) and [Vite config](../../apps/web/vite.config.ts) before
-  concurrent runs. Existing isolation gaps and finite acceptance are in
-  [the repair plan](AGENT_DEVELOPMENT_PREPARATION.md#two-immediate-repairs).
+  concurrent runs. Since PR #105 the clean gate uses its own disposable Compose
+  project and port; `pnpm dev` ports and `pnpm db:up` remain shared.
 - Knowledge graphs are derived indexes. Confirm indexed repository/root/revision
   against the assigned checkout; stale or insufficient results require source
-  inspection under AGENTS.md's fallback rules, not guessed symbol ownership.
-- Imported review helpers are subordinate to project policy. Preserve independent
-  oracles and actual/known-state boundaries; see
-  [helper precedence](../../.agents/skills/README.md#project-precedence).
+  inspection under [AGENTS.md "Code discovery"](../../AGENTS.md#code-discovery),
+  not guessed symbol ownership.
+- Generic review helpers conflicted with project test and approval policy and were
+  removed on 2026-09-29; see [skills history](../../.agents/skills/README.md#history).
 
 ## Admission and maintenance
 

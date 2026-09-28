@@ -1,5 +1,10 @@
 # Warwrit game-development research and preparation task
 
+> Research record, 2026-09-29: moved to `docs/engineering/research/`. Not task
+> context; load only when reviewing the agent setup. The `code-review` and
+> `code-simplifier` helpers named below were later removed; see
+> [skills history](../../../.agents/skills/README.md#history).
+
 Status: ready-to-run assignment, 2026-09-27; the research run is not started by
 creating this document. Developer instructions are English; owner reports are Russian.
 
@@ -39,10 +44,10 @@ External research informs engineering choices; it never approves a game rule.
 
 Read these entry documents, then only relevant linked detail:
 
-1. [CURRENT_PLAN](CURRENT_PLAN.md), [ADR-0003](../architecture/0003-m0-m1-technology-baseline.md)
-   and [technology handoff](AI_TECHNOLOGY_HANDOFF.md).
-2. [Preparation plan](AGENT_DEVELOPMENT_PREPARATION.md), [agent team](AGENT_TEAM.md),
-   [memory index](AGENT_MEMORY.md), [research basis](AGENT_TEAM_RESEARCH.md).
+1. [CURRENT_PLAN](../CURRENT_PLAN.md), [ADR-0003](../../architecture/0003-m0-m1-technology-baseline.md)
+   and [technology handoff](../AI_TECHNOLOGY_HANDOFF.md).
+2. [Preparation plan](../AGENT_DEVELOPMENT_PREPARATION.md), [agent team](../AGENT_TEAM.md),
+   [memory index](../AGENT_MEMORY.md), [research basis](AGENT_TEAM_RESEARCH.md).
 3. Matching repository skills: `warwrit-context`, `warwrit-review`; inspect domain
    or delivery guidance only for the responsibility being studied. Generic
    `code-review`/`code-simplifier` follow their repository precedence note.
@@ -178,7 +183,7 @@ at the limit; continue only under a subsequent assignment. No scheduled wakeups.
 6. Verify citations, artifact identities, scope and claims. Separate source findings from
    original proposals. Deliver the report and exact next step.
 
-Use [AGENT_TEAM](AGENT_TEAM.md). At most two useful read-only children at once if the
+Use [AGENT_TEAM](../AGENT_TEAM.md). At most two useful read-only children at once if the
 host supports it: one for bounded primary/technical evidence, one for a disjoint
 community comparison or independent shortlist review. Keep intake, candidate staging,
 decisions and synthesis with the parent. Do not spawn to fill slots or duplicate searches.
