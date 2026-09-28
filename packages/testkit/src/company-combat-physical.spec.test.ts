@@ -246,6 +246,39 @@ describe('G07 — prepared physical combat effects', () => {
     const f = fixture();
     const unchanged = canonicalJson(f.root);
     let journal = accept(f, f.journal, f.binding.initial, null);
+
+    const longRoot: MaterializedCompanyState = {
+      ...f.root,
+      physical: {
+        ...f.root.physical,
+        sourceEffects: Array.from({ length: 1001 }, (_, index) => ({
+          key: `long-history-${index}`,
+          requestKey: `long-request-${index}`,
+        })),
+      },
+    };
+    const longRootBefore = {
+      lifecycle: canonicalJson(longRoot.lifecycle),
+      finance: canonicalJson(longRoot.finance),
+      sourceEffects: longRoot.physical.sourceEffects,
+      vitals: canonicalJson(longRoot.physical.vitals),
+      items: canonicalJson(longRoot.physical.items),
+    };
+    const longHistory = prepareCombatPhysicalEffects(longRoot, journal);
+    expect(longHistory.root.lifecycle).toBe(longRoot.lifecycle);
+    expect(longHistory.root.finance).toBe(longRoot.finance);
+    expect(longHistory.root.physical.sourceEffects).toBe(longRoot.physical.sourceEffects);
+    expect(longHistory.root.physical.knowledge).toBe(longRoot.physical.knowledge);
+    expect(canonicalJson(longRoot.lifecycle)).toBe(longRootBefore.lifecycle);
+    expect(canonicalJson(longRoot.finance)).toBe(longRootBefore.finance);
+    expect(longRoot.physical.sourceEffects).toBe(longRootBefore.sourceEffects);
+    expect(canonicalJson(longRoot.physical.vitals)).toBe(longRootBefore.vitals);
+    expect(canonicalJson(longRoot.physical.items)).toBe(longRootBefore.items);
+
+    const emptyJournalBefore = canonicalJson({ root: f.root, journal: f.journal });
+    expect(() => prepareCombatPhysicalEffects(f.root, f.journal)).toThrow();
+    expect(canonicalJson({ root: f.root, journal: f.journal })).toBe(emptyJournalBefore);
+
     const state = journal.receipts.at(-1)!.transition.state;
     if (state.activation?.unitId !== unitId('a-leader-unit')) journal = nextDefend(f, journal);
     journal = nextDefend(f, journal);

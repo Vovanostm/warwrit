@@ -3,12 +3,7 @@ import { projectCharacterCombatWithMorale } from './combat-morale.js';
 import { validateCombatReceiptJournal } from './combat-receipts.js';
 import type { CombatReceiptJournal } from './combat-receipts.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
-import {
-  ownPhysical,
-  physicalVitals,
-  requirePhysical,
-  validatePhysicalState,
-} from './physical-state.js';
+import { physicalVitals, requirePhysical, validatePhysicalState } from './physical-state.js';
 
 export interface PreparedCombatPhysicalEffects {
   readonly status: 'PREPARED';
@@ -109,7 +104,10 @@ export function prepareCombatPhysicalEffects(
 ): PreparedCombatPhysicalEffects {
   // This history check assumes journal provenance was authenticated by the G06 adapter/storage boundary.
   const validated = validateCombatReceiptJournal(journal);
-  const root = ownPhysical(initialRoot);
+  requirePhysical(validated.receipts.length > 0, 'INVALID_SOURCE');
+  // The canonical root is validated below; share its unaffected immutable state rather than
+  // imposing the external-evidence serializer's per-value size limit on the whole root.
+  const root = initialRoot;
   validateCompanyBinding(root, validated);
 
   const finalState = validated.receipts.at(-1)?.transition.state ?? validated.binding.initial.state;
