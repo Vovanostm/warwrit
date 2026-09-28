@@ -3,11 +3,20 @@ import {
   canonicalJson,
   bindFinancialSocialConsequences,
   createSocialState,
+  COMPANY_CATALOGUE,
+  PROGRESSION_RULES,
+  initialSkillProgress,
+  prepareCompanyLifecycle,
   prepareCompanyEconomy,
   projectCompanyEconomy,
   projectEconomyRejection,
 } from '@warwrit/game-core';
-import type { CompanyEconomyState, FinanceEvidence, PhysicalEvidence } from '@warwrit/game-core';
+import type {
+  CompanyEconomyState,
+  FinanceEvidence,
+  PhysicalEvidence,
+  PracticeEvidence,
+} from '@warwrit/game-core';
 import {
   access,
   advance,
@@ -84,9 +93,81 @@ function earned(state: CompanyEconomyState, membershipId: string) {
 
 describe('WP02.3 — financial knowledge and exact replay', () => {
   it('P7: hidden death is noninterfering over DEFAULT/TARGETED, insufficient funds and retries, until a legitimate report', () => {
-    const shared = advance(economy([10n, 10n], 12000n, 0), 500).next;
-    let alive = shared;
-    let hidden = death(shared, 'worker-0').result.next;
+    const loaded = advance(economy([10n, 10n], 12000n, 0), 500).next;
+    const unobserved: CompanyEconomyState = {
+      ...loaded,
+      lifecycle: {
+        ...loaded.lifecycle,
+        characters: loaded.lifecycle.characters.map((character) =>
+          character.identity.characterId === 'provider'
+            ? {
+                ...character,
+                skills: {
+                  ...character.skills,
+                  archery: initialSkillProgress(0, 'provider-opening-archery'),
+                },
+                aptitudeBySkill: { ...character.aptitudeBySkill, archery: 10000 },
+              }
+            : character,
+        ),
+        knowledge: {
+          ...loaded.lifecycle.knowledge,
+          characters: loaded.lifecycle.knowledge.characters.filter(
+            (character) => character.identity.characterId !== 'provider',
+          ),
+        },
+      },
+    };
+    const practice = command(
+      unobserved,
+      'CreditPractice',
+      {
+        receiptId: 'provider-practice-transport',
+        characterId: 'provider',
+        skillId: 'archery',
+        methodId: 'weapon-attack',
+        challengeLevel: 0,
+        outcome: 'SUCCESS',
+        effortTicks: '1',
+      },
+      'provider-practice',
+      'DOMAIN_RECEIPT',
+    );
+    const practiceFact: PracticeEvidence = {
+      worldId: unobserved.lifecycle.worldId,
+      companyId: unobserved.lifecycle.companyId,
+      sourceEventId: practice.sourceEventId!,
+      rulesVersion: PROGRESSION_RULES.version,
+      catalogueVersion: COMPANY_CATALOGUE.version,
+      payload: practice.payload as PracticeEvidence['payload'],
+      startedAt: '490',
+      completedAt: '495',
+      levelAtStart: 0,
+      aptitudeAtStartBps: 10000,
+      proof: {
+        kind: 'weapon-attack',
+        weaponProfile: 'bow',
+        interaction: {
+          sourceEventId: practice.sourceEventId!,
+          attackerId: 'provider',
+          defenderId: 'threat',
+          atTick: '495',
+          origin: 'EXTERNAL',
+        },
+      },
+    };
+    const practiced = prepared(
+      prepareCompanyEconomy(unobserved, practice, {
+        ...context(unobserved, practice),
+        practiceFacts: [practiceFact],
+      }),
+    ).next;
+    let alive = unobserved;
+    let hidden = death(practiced, 'worker-0').result.next;
+    expect(view(hidden)).toEqual(view(alive));
+    expect(view(hidden)?.characters.some((character) => character.characterId === 'provider')).toBe(
+      false,
+    );
     expect(view(hidden)).toEqual(view(alive));
     alive = advance(alive, 1000).next;
     hidden = advance(hidden, 1000).next;
@@ -134,7 +215,44 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
       expect(view(hidden)).toEqual(view(alive));
     }
     expect(view(hidden)?.finance.wallets[0]?.spendableQ).toBe('0');
-    const report = observation(hidden, 'worker-0');
+    const candidateReport = observation(hidden, 'provider');
+    const wrongObserver = {
+      ...candidateReport.cmd,
+      payload: {
+        ...(candidateReport.cmd.payload as Record<string, unknown>),
+        observerRef: { kind: 'COMPANY' as const, id: 'other-company' },
+      },
+    };
+    const wrongObserverResult = prepareCompanyLifecycle(
+      hidden.lifecycle,
+      wrongObserver,
+      candidateReport.ctx,
+    );
+    expect(wrongObserverResult).toMatchObject({
+      kind: 'REJECTED',
+      state: hidden.lifecycle,
+      error: 'INVALID_SOURCE',
+    });
+    expect(projectCompanyEconomy(hidden, 'other-company')).toBeNull();
+
+    const candidate = observation(hidden, 'provider');
+    const candidateView = projectCompanyEconomy(candidate.result.next, 'company');
+    const observedProvider = candidateView?.characters.find(
+      (character) => character.characterId === 'provider',
+    );
+    expect(observedProvider).toMatchObject({
+      skills: { archery: 1 },
+      aptitudeBySkill: { leadership: 10000, archery: 10000 },
+    });
+    expect(JSON.stringify(observedProvider)).not.toContain('milliXp');
+    expect(
+      projectCompanyEconomy(
+        JSON.parse(JSON.stringify(candidate.result.next)) as CompanyEconomyState,
+        'company',
+      ),
+    ).toEqual(candidateView);
+
+    const report = observation(candidate.result.next, 'worker-0');
     const disclosed = report.result.next;
     expect(view(disclosed)).not.toEqual(view(alive));
     expect(BigInt(view(disclosed)!.finance.wallets[0]!.spendableQ)).toBeGreaterThan(0n);
