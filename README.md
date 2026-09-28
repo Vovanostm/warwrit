@@ -1,14 +1,14 @@
 # Warwrit
 
-Warwrit is a browser-first persistent tactical game project. **M0, S-02, WP-00 and WP-01 are complete; WP-02 is in progress and M1 is incomplete.** The repository now contains the deterministic combat kernel plus substantial persistent Company/Character domain work, while full learning activation, combat consequences, durable execution, production realtime/world integration and final player evidence remain ahead.
+Warwrit is a browser-first persistent tactical game project. **M0, S-02, WP-00 and WP-01 are complete; WP-02 and the full M1 alpha are in progress.** The target is a persistent company → travel → contract → physical two-company PvE → proof → consequences → save/re-entry journey on the owner's Mac. Learning activation, combat consequences, durable execution, identity, world, content, production realtime, player UI and final player evidence remain ahead.
 
 ## Current development
 
 - [Current delivery plan](docs/engineering/CURRENT_PLAN.md) — live repository-side status, active blockers and ownership.
-- [Development roadmap](docs/engineering/ROADMAP.md) — dependency graph, parallel frontier and milestones toward WP-02, the local playable battle and M1.
+- [Development roadmap](docs/engineering/ROADMAP.md) — executable dependency joins and acceptance route for the full M1 alpha.
 - [Documentation map](docs/README.md) — authority, ADRs, engineering guidance and work-package records.
 
-PB01's finite local battle contract/scenario/projection is merged, but the disposable combat lab is **not yet a playable browser game**. PB02 and PB04 are the next independent lab slices. Persistent M1 remains separate from this diagnostic path.
+The diagnostic combat lab has merged PB01–PB04 protocol, server and view slices. PB06 browser integration is in progress; PB05/PB07–PB09 are optional diagnostic follow-ups. The lab is disposable and does not establish persistent M1 playability.
 
 ## Bootstrap
 
@@ -46,7 +46,7 @@ Copy `.env.example` to `.env` for local overrides. The default Docker database U
 ```text
 apps/
   server/       Server-authoritative HTTP process and persistence adapters
-  web/          Browser shell; no combat renderer exists yet
+  web/          Browser shell and protocol-only combat lab view; no selected M1 renderer yet
 packages/
   game-core/    Pure deterministic combat/domain kernel; no I/O imports
   protocol/     Versioned transport contracts and shared API types

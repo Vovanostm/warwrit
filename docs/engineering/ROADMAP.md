@@ -1,166 +1,58 @@
 # Warwrit development roadmap
 
-- Status: repository-side execution roadmap
-- As of: 2026-09-24
-- Product authority: canonical Airtable decisions and the current M1 execution
-  index
-- Operational status: [CURRENT_PLAN.md](CURRENT_PLAN.md)
-- Parent implementation issue:
-  [#8](https://github.com/Vovanostm/warwrit/issues/8)
+- Status: repository-side continuation map, as of 2026-09-28
+- Operational checkpoint: [CURRENT_PLAN.md](CURRENT_PLAN.md)
+- Product/task authority: canonical [full M1 index](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s), [current batch](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe), dated owner amendments and [issue #8](https://github.com/Vovanostm/warwrit/issues/8)
 
-This file answers **what should be implemented next and what each completion
-unlocks**. It does not replace product canon, task cards, ADRs, issue acceptance
-criteria or exact PR evidence. A task is not complete until its required
-implementation is actually merged.
+This is the delivery order for the owner's **full M1 alpha on the Mac**, not a new game rulebook or a promised PR count. M0, S-02, WP-00 and WP-01 are done; WP-02 and M1 remain incomplete. A source-ready task, a merged preparer and a green open PR do not establish an activated game path.
 
-## Milestone state
+## Current frontier
 
-- **M0 deterministic combat — DONE.** Headless deterministic combat/replay
-  foundation exists.
-- **S-02 company design — DONE.** Accepted company/character rules are not
-  reopened by delivery work.
-- **WP-00 / WP-01 — DONE.** Repository foundation and deterministic combat
-  kernel.
-- **WP-02 company/domain integration — IN PROGRESS.** Learning, social
-  acceptance, combat consequences, durability and acceptance remain.
-- **Disposable local battle PB — IN PROGRESS.** PB01 is merged; the local
-  server/browser path is not complete.
-- **M1 first persistent playable — INCOMPLETE.** It still requires the
-  persistent company-to-PvE-to-consequences-to-re-entry path.
+The parent owns coordination and serial integration. PB06 and this PR #89 planning update have named current writers; C05-FIN retains an earlier acknowledged shared-path reservation, with current backing execution unverified. Before selecting another lane, read its full card, current Notes/Purpose and amendments, existing worktree/PR/handoff, and assign one writer for shared paths.
 
-## Current parallel frontier
+| Lane                  | Observed state                                                                          | Next unlock                                                   |
+| --------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| C05 finance           | PR #88 is open, funding admission only; remaining backing/settlement is unimplemented   | Complete FIN, then TIME and COMPOSE                           |
+| E04 social            | BIND merged; E04-ACCEPT still pending                                                   | Complete joint acceptance, then E05 privacy-safe views        |
+| G combat consequences | G06 preparer merged; G07 pending                                                        | Physical effects, then G08/G09 and joined G10                 |
+| PB diagnostic         | PB01–PB04 merged; PB06 assigned to Luna; PB05 not started                               | Browser lab controller, then optional diagnostic follow-ups   |
+| Source contracts      | SPEC-WORLD, SPEC-CONTRACTS, ID01, RT01, BATTLE-PROFILES and ART01 remain to be selected | Close only the finite prerequisites needed by their consumers |
 
-These responsibilities can move independently after a fresh live-source/writer
-check:
+The prior C05-FIN shared-file reservation remains until its writer's explicit handoff. A branch or prepared prompt does not establish completion. Reviewed branches must be combined against fresh main and verified on the resulting tree.
 
-- **C05-FIN** — finish finance-owned learning settlement. PR #88 funding
-  admission is OPEN/GREEN; full FIN remains PARTIAL. Completion unlocks
-  C05-TIME.
-- **E04-ACCEPT** — joint acceptance of merged E04 binding/composition. It is
-  ELIGIBLE and unlocks E05.
-- **G07** — apply trusted combat receipts to existing physical state. It is
-  ELIGIBLE and unlocks G08.
-- **PB02** — local in-memory battle session plus guarded HTTP access. It is
-  ELIGIBLE after merged PB01 and unlocks PB03.
-- **PB04** — protocol-only hex/state presentation. It is ELIGIBLE after merged
-  PB01 and joins PB03 as a prerequisite for PB06.
-
-PR #88 is not full C05-FIN. Its funding-admission result does not by itself
-provide retained obligation backing, debit/reservation, prior-obligation-aware
-spendable boundaries or financial replay.
-
-The existing C05-FIN writer owns its acknowledged shared-path reservation for
-`company/economy-types.ts`, `company/economy-state.ts` and only a necessary
-`company/index.ts` export until that writer explicitly hands it off. Other
-sessions must remain disjoint.
-
-## WP-02 dependency graph
+## Domain and durable company
 
 ```text
-C05-FIN
-  -> C05-TIME
-  -> C05-COMPOSE
-  -> C06
-  -> C07
-  -> C08
-  -> D01 -> D02
-
-E04-ACCEPT
-  -> E05
-  -> F01
-
-G07
-  -> G08
-  -> G09
-
-G09 + C08 + E05
-  -> G10
-
-required domain activation + G10
-  -> H01-H08 durable persistence/execution responsibilities
-  -> I01
-
-I02 additionally requires F01 + D02
-(F02 and B04 are already merged)
+C05-FIN -> C05-TIME -> C05-COMPOSE -> C06 -> C07 -> C08 -> D01 -> D02
+E04-ACCEPT -> E05 -> F01
+G07 -> G08 -> G09
+G09 + C08 + E05 -> G10
+required domain + G10 -> H durable company/executor -> I01 -> I02
 ```
 
-Activation boundaries remain strict:
+C08 activates real learning only after the full finance/time/composition and interruption/casualty path. G10 activates combat binding, receipt consumption and finalization only when all required physical, life, practice and social/learning effects join one atomic candidate and cursor. H owns the complete versioned PostgreSQL root, authenticated executor, audit/receipts and real parallel-connection/process-crash proof. I owns actual durable command journeys and complete required handler coverage; I02 also needs D02 and F01, while F02/B04 are merged. Implement H responsibilities against real predecessor APIs; the indexed H01–H08 are coverage, not a forced numeric serial chain.
 
-- `StartLearning` stays disabled until C08.
-- Partial G07-G09 work must not advance a processed combat-receipt cursor as if
-  G10 existed.
-- G10 is the first full persistent combat-consequence activation point.
-- H01-H08 are not forced into an artificial numeric serial chain. Refine their
-  exact internal prerequisites against live predecessor APIs, while all
-  required H durability evidence must exist before I01.
-- H requires real PostgreSQL transaction/concurrency/crash evidence where
-  specified.
-- I is end-to-end acceptance, not a replacement for H durability evidence.
+## Persistent world and battle joins
 
-## Disposable local battle path
+The accepted playable loop is **company → travel → contract → physical two-company PvE → proof → consequences → save/re-entry**. The work can proceed in disjoint source and implementation lanes, then join at real authority boundaries:
 
-PB is a diagnostic local battle, not persistent M1 or production realtime.
+1. **Finite source contracts.** SPEC-WORLD fixes coordinates, routes, clocks, arrival, visibility, supply and camp from accepted sources. SPEC-CONTRACTS fixes eight instances, three contract types, eleven scenes, helper terms, proof and terminal cases. ID01 fixes own-site account/recovery; RT01 fixes encounter authority/deadline; BATTLE-PROFILES fixes the minimum actor profiles; ART01 establishes the same-scene renderer comparison. Unsupported material policy needs one bounded owner decision before the affected activation.
+2. **Durable foundations.** ID02–ID03 authenticate and bind an account to the same company on reconnect. W01–W03 provide source-bound topology, persistent Campaign Day and Light clocks, real routes/arrival; W04–W06 add supplies, camp, entities and one world writer. RT02–RT07 own persistent encounters, authenticated transitions, deadlines, Colyseus projections, reconnect and restart. ART02–ART07 measure Babylon.js and PlayCanvas on the actual Mac, select the renderer through the accepted decision, and provide licensed scene/actor assets. K01–K04 enforce source/time-aware map, battle and rumor knowledge.
+3. **Contracts and physical join.** CT01–CT07 own versioned instances, accessible clues/captives/hunt proof, custody, globally unique authorized claims, rewards and the complete authored content. JOIN01–JOIN03 transfer the actual world/encounter writer, bind two companies by presence and opt-in terms, and apply terminal effects plus world/proof release atomically. A second company is physical participation, not a second bounty; a prepared single-company H transaction alone does not complete this join.
+4. **Player path.** UI01 consumes PB06's controller experience but connects to persistent RT authority and the selected renderer. UI02–UI06 expose real company/services, map/travel, contracts/battle/proof, losses and re-entry without duplicating canonical state or disclosing private facts. Each advertised button needs its real command/result; do not present an ornamental quest as completion.
 
-```text
-PB01 MERGED
-  -> PB02 -> PB03 -> PB05 -> PB07
-  -> PB04 --------> PB06
-PB03 + PB04 -> PB06
-PB06 + PB07 -> PB08
-PB05 + PB08 -> PB09
-```
+The accepted region is one city, three NPC villages and one dangerous site. Content completion means all eight HUNT/INVESTIGATE/RESCUE contract instances, eleven scenes, four reusable backgrounds, six portraits, two trophy images and three enemy archetypes, with source/licensing evidence. The chain is «Когда молчит мельница». These counts are acceptance scope, not current file counts or a test-count target. Preserve the original source-archive concordance limitation.
 
-Milestone meanings:
+## Diagnostic local battle
 
-1. **PB01-PB06 integrated** — first local playable candidate: browser controls
-   use the real local server, real combat kernel and server-owned AI.
-2. **PB08 complete** — repeat/replay/import/reset and one documented local
-   launcher.
-3. **PB09 complete** — actual browser journey evidence. MacBook/Chrome evidence
-   only counts when it is really executed on the owner's device.
+PB01–PB04 are merged, providing the protocol/scenario, loopback server/session/actions and protocol-only view. PB06 is assigned to join server and view into a real browser controller. It is useful early proof of command/retry/AI/UI wiring but remains disposable server-memory gameplay, not M1 persistence, fog, timers or world join. PB06 is still a source dependency for UI01.
 
-Until PB08 exists, do not document `pnpm dev:combat-lab` as an available
-command.
+PB05 AI stepping, PB07 replay import/export, PB08 launcher/reset controls and PB09 browser/Mac lab evidence are **optional** for the full-M1 alpha and unassigned here. Select them only when they improve diagnostic evidence. The final persistent alpha has its own RT/H/QA replay and browser obligations. Do not advertise a lab launcher until one exists or wait for optional PB follow-ups to start full-M1 lanes.
 
-## After WP-02
+## Final acceptance and running it
 
-Persistent M1 still needs work outside the WP-02 domain package:
+QA00 prepares an actual browser runner, traces, ports and disposable database fixtures. QA01 then documents one working local launch only after the integrated server, database, identity, realtime, world, content and UI can start. QA02 exercises two-browser company/travel/contract/battle/proof/payment/re-entry and failure paths; QA03 tests real process crashes and competing actions/claims; QA04 measures privacy, input limits and renderer performance on the named Mac; QA05 records the owner's Mac playtest and actual player comprehension/turn evidence. M1-ACCEPT reads those results with the full indexed criteria. No runnable final launch instruction or owner playtest is currently proven.
 
-- production encounter/session authority, reconnect and deadline/timer
-  ownership;
-- measured Q-T03 Babylon.js vs PlayCanvas renderer decision;
-- tactical client/rendering after that decision;
-- world navigation, fog, travel and camp flow;
-- contracts, proof/evidence, rewards and consequences;
-- physical two-company PvE integration with persistent state;
-- re-entry/recovery after combat and company continuity;
-- interactive/browser/device acceptance and later load/operations evidence.
+Use small, nonduplicative public-invariant tests for deterministic replay, money/item conservation, authorization/privacy, atomic rejection/idempotency, serialization and real transaction/migration behavior. Do not add a test for each helper or substitute structural snapshots for gameplay evidence. The existing clean combined-tree gate remains `pnpm verify`, `pnpm test:combat:stress`, `pnpm test:migrations`; run it once for the final code tree and record actual outcomes. Browser, Mac, human, frame-rate and server-capacity evidence need their own measurements. No fixed PR line cap applies; keep changes cohesive and reviewable.
 
-Production Colyseus, renderer selection and world/co-op work must reuse the
-persistent domain rather than turning the disposable PB memory store into
-production authority.
-
-## Definition of delivery states
-
-- **SOURCE-READY** — sources are sufficient to start; no implementation claim.
-- **PARTIAL** — a bounded prerequisite is implemented, but the parent
-  responsibility is incomplete.
-- **OPEN/GREEN** — PR checks passed, but no merge occurred.
-- **MERGED** — GitHub records the change on the default branch.
-- **POST-MERGE VERIFIED** — the actual merged default-branch tree passed the
-  required check.
-
-Do not transfer merge authority between tasks. Creating this roadmap does not
-launch an agent or authorize a successor merge.
-
-## Starting a new session
-
-Every implementation session must first read:
-
-1. root `AGENTS.md`;
-2. full [CURRENT_PLAN.md](CURRENT_PLAN.md);
-3. its exact canonical Airtable card and dated amendments;
-4. applicable repository skills;
-5. live GitHub PR/issue/branch state.
-
-Then continue existing usable work rather than opening a duplicate branch or PR.
+The original source ZIP concordance remains `NOT_RUN` / `RC-GAP-MACHINE-01`. Missing archives do not permit reconstructed canon or claims that historical catalogue checks ran. Deployment, paid resources, production load and M2 scope are separate from local alpha acceptance.
