@@ -32,6 +32,10 @@ The server rejects partial configuration, a missing database, an inexact public
 origin, or any callback URI except the fixed callback on that origin. HTTP is
 accepted only when both the issuer and public origin are loopback URLs.
 
+When identity is enabled, `/health/ready` checks the required identity tables and
+columns without reading account data or applying migrations. Missing schema
+returns 503. With identity disabled, the database-only readiness probe remains.
+
 ## Isolated local fixture
 
 The fixture uses the official Dex v2.41.1 image at verified OCI index digest
@@ -90,9 +94,14 @@ across rejected callbacks, concurrent unique account creation, discovery retry,
 session expiry, logout and Origin rejection. It is not evidence of an external
 identity provider or lost-password recovery.
 
-The parent also observed real Chrome sign-in with both Dex users, distinct
-internal accounts, same-account re-entry after a Fastify process restart,
-per-session logout/revocation, and no browser-storage token. That manual run was
-performed on an earlier mutable worktree before the final discovery-retry
-change; its exact source tree was not frozen, so it does not prove the final
-commit. The final tree still needs the parent-owned browser replay after review.
+On 2026-09-28, the parent repeated the browser journey on frozen code
+`79c6b0cf4ed69c58d94d6ff5c0e5b9df1904e6f0` (tree
+`e04f84c3f78483407d028da1e7b107896223171b`) after independent Sol review.
+Both existing Chrome/Dex sessions survived a real Fastify process restart with
+the same distinct accounts. Logging out the first returned 204 and its session
+then returned 401; the second remained authenticated. Signing in through the Dex
+form restored the first account, with empty local/session storage. The opt-in
+PostgreSQL integration spec passed again. A real empty-schema probe returned 503
+with identity enabled and 200 with identity disabled; the migrated database
+returned 200 with identity enabled. These are local fixture results, not
+external-provider, lost-credential recovery or company-persistence evidence.
