@@ -51,7 +51,11 @@ export class MetricsCollector {
   private captureEndMs: number | null = null;
   private assetsReadyMs: number | null = null;
 
-  constructor(readonly candidate: string, readonly canvas: HTMLCanvasElement, assetsBytes: number) {
+  constructor(
+    readonly candidate: string,
+    readonly canvas: HTMLCanvasElement,
+    assetsBytes: number,
+  ) {
     this.metadata = {
       scenarioVersion: 'renderer-scene-1',
       candidate,
@@ -86,11 +90,14 @@ export class MetricsCollector {
 
   attachRendererContext() {
     const gl = this.canvas.getContext('webgl2');
-    this.extension = gl?.getExtension('EXT_disjoint_timer_query_webgl2') as GpuTimerExtension | null;
+    this.extension = gl?.getExtension(
+      'EXT_disjoint_timer_query_webgl2',
+    ) as GpuTimerExtension | null;
     this.metadata.webgl = gl ? 'webgl2' : 'unavailable';
     this.metadata.gpuTimer = gl && this.extension ? 'READY' : 'NOT_MEASURED';
     if (!gl) this.metadata.gpuTimerReason = 'WebGL2 unavailable';
-    else if (!this.extension) this.metadata.gpuTimerReason = 'EXT_disjoint_timer_query_webgl2 unavailable';
+    else if (!this.extension)
+      this.metadata.gpuTimerReason = 'EXT_disjoint_timer_query_webgl2 unavailable';
     else delete this.metadata.gpuTimerReason;
   }
 
@@ -127,7 +134,11 @@ export class MetricsCollector {
     this.metadata.gpuRenderer = this.readGpuRenderer();
     const resourceEntries = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
     const bundleBytes = resourceEntries
-      .filter((entry) => new URL(entry.name, location.href).origin === location.origin && /\.js(?:\?|$)/u.test(entry.name))
+      .filter(
+        (entry) =>
+          new URL(entry.name, location.href).origin === location.origin &&
+          /\.js(?:\?|$)/u.test(entry.name),
+      )
       .reduce((total, entry) => total + entry.transferSize, 0);
     this.metadata.jsBundleTransferredBytes = bundleBytes || null;
     const heap = (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory;
@@ -220,12 +231,16 @@ export class MetricsCollector {
   }
 
   summary() {
-    const elapsedMs = this.metadata.elapsedMs ?? (this.captureStartMs === null ? 0 : performance.now() - this.captureStartMs);
+    const elapsedMs =
+      this.metadata.elapsedMs ??
+      (this.captureStartMs === null ? 0 : performance.now() - this.captureStartMs);
     const completeSecondCount = Math.floor(elapsedMs / 1000);
     const rollingFps1s = Array.from({ length: completeSecondCount }, (_, second) => {
       const from = (this.captureStartMs ?? 0) + second * 1000;
       const to = from + 1000;
-      return this.metadata.frameSamples.filter((sample) => sample.timestampMs >= from && sample.timestampMs < to).length;
+      return this.metadata.frameSamples.filter(
+        (sample) => sample.timestampMs >= from && sample.timestampMs < to,
+      ).length;
     });
     const frameIntervals = this.metadata.frameSamples
       .map((sample) => sample.intervalMs)
@@ -237,7 +252,10 @@ export class MetricsCollector {
       completeSecondCount,
       omittedTrailingPartialSecondMs: elapsedMs % 1000,
       sampleCount: this.metadata.frameSamples.length,
-      rafIntervalMs: { p50: percentile(frameIntervals, 0.5), p95: percentile(frameIntervals, 0.95) },
+      rafIntervalMs: {
+        p50: percentile(frameIntervals, 0.5),
+        p95: percentile(frameIntervals, 0.95),
+      },
       cpuSubmitMs: { p50: percentile(cpuSamples, 0.5), p95: percentile(cpuSamples, 0.95) },
       gpuMs: {
         status: this.metadata.gpuTimer,

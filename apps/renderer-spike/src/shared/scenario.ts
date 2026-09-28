@@ -46,12 +46,7 @@ export const actors: Actor[] = (['red', 'blue'] as const).flatMap((team) =>
       team,
       q,
       r,
-      equipment:
-        classId === 'Knight'
-          ? 'sword-shield'
-          : classId === 'Rogue'
-            ? 'dagger'
-            : 'axe',
+      equipment: classId === 'Knight' ? 'sword-shield' : classId === 'Rogue' ? 'dagger' : 'axe',
       health: 100,
     };
   }),
@@ -68,7 +63,10 @@ export function sampleTimeline(seconds: number) {
   const t = seconds % scenario.timeline.loopSeconds;
   const { walkAtSeconds, walkDurationSeconds, attackAtSeconds, hitDurationSeconds } =
     scenario.timeline;
-  const animationByActor = new Map<string, 'Idle_A' | 'Walking_A' | 'Melee_1H_Attack_Chop' | 'Hit_A'>();
+  const animationByActor = new Map<
+    string,
+    'Idle_A' | 'Walking_A' | 'Melee_1H_Attack_Chop' | 'Hit_A'
+  >();
   for (const actor of actors) animationByActor.set(actor.id, 'Idle_A');
   if (t >= walkAtSeconds && t < walkAtSeconds + walkDurationSeconds)
     animationByActor.set(firstAttacker.id, 'Walking_A');

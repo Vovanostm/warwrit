@@ -17,9 +17,9 @@ Use the same browser, viewport, device state, scene, and capture sequence for bo
 
 ## Asset inventory
 
-The shared workload uses Kay Lousberg's free [KayKit Adventurers 2.0](https://kaylousberg.itch.io/kaykit-adventurers) and [Character Animations 1.1](https://kaylousberg.itch.io/kaykit-character-animations), acquired from the author's pages on 2026-09-28. Both packs include CC0 licenses, retained below. The source archive SHA-256 values are `abe48f4763fba0896bab486ee9e6d08ca6b5b3884b9601f235c8847ae94dc479` (Adventurers, 13,024,345 bytes) and `65882f31f905ad2e953819648a59287cdeab8f623908d5ef701971d3758be20f` (Animations, 14,858,957 bytes). Selected GLB/glTF, binary and texture bytes were copied without offline geometry conversion; adapters retarget animation by joint names at runtime. Character labels are experiment silhouettes, not approved Warwrit classes or final art.
+The shared workload uses Kay Lousberg's free [KayKit Adventurers 2.0](https://kaylousberg.itch.io/kaykit-adventurers) and [Character Animations 1.1](https://kaylousberg.itch.io/kaykit-character-animations), acquired from the author's pages on 2026-09-28. Both packs include CC0 licenses, retained below. The source archive SHA-256 values are `abe48f4763fba0896bab486ee9e6d08ca6b5b3884b9601f235c8847ae94dc479` (Adventurers, 13,024,345 bytes) and `65882f31f905ad2e953819648a59287cdeab8f623908d5ef701971d3758be20f` (Animations, 14,858,957 bytes). Selected GLB, binary and texture bytes were copied unchanged; the four accessory glTF JSON files were reformatted with repository-pinned Prettier, with parsed JSON equality verified against the originals and no geometry conversion; adapters retarget animation by joint names at runtime. Character labels are experiment silhouettes, not approved Warwrit classes or final art.
 
-All listed bytes are local copies. SHA-256 values identify the copied files. The two license texts are retained alongside them.
+All listed bytes are local copies. SHA-256 values identify the final local files, including the formatted glTF derivatives. The two license texts are retained alongside them.
 
 | File                                      | SHA-256                                                            |
 | ----------------------------------------- | ------------------------------------------------------------------ |
@@ -32,16 +32,16 @@ All listed bytes are local copies. SHA-256 values identify the copied files. The
 | `animations/Rig_Medium_General.glb`       | `5f725c0f745f36078c7238968cd5c04843cbc6260689eb6e7f5e2bbd7ffdd7ad` |
 | `animations/Rig_Medium_MovementBasic.glb` | `11422afd50abf7e8c92ea107e2e0bc94abd38023d6d15f55ad580347efbfa29e` |
 | `accessories/axe_1handed.bin`             | `909561b9e5774d2ab0dcb1cbe66e1c0ea116b6eef5fcb4780ed56fe834b07f58` |
-| `accessories/axe_1handed.gltf`            | `43796b063aa9501cc79cf11e801b98ce0c218022dea850e7b6b33387dd4b89da` |
+| `accessories/axe_1handed.gltf`            | `fc56b1e979244812294df0018805e438e00b5650eb74c8a98687a3b9bb555ad7` |
 | `accessories/barbarian_texture.png`       | `f11434d3e5e4df929dacd2c69d15734effb82babf8176a80bb040d2007f5f882` |
 | `accessories/dagger.bin`                  | `da7857e41d902cdd39e894563a544719901a9af55053f2b96b21019ed6717677` |
-| `accessories/dagger.gltf`                 | `db324dd13443d48b736fe4dba5e24090f4b476dd8d9ee53cf7c6718f00c47e1a` |
+| `accessories/dagger.gltf`                 | `057bae9c4a6486e3b438ba4d13bfff43b49e2b8317a378b6a60f91466757a417` |
 | `accessories/knight_texture.png`          | `028db4d1cd8b3471e6ba21686515abd4e36ae582f8b314b71ad2ab1fb5453b12` |
 | `accessories/rogue_texture.png`           | `2e2fc741e20e7e2c85b176c8143b49b769bca0d2ed1a1cfc1807a758a0e4d3e1` |
 | `accessories/shield_round.bin`            | `42da365328fc8804f44cd3db6becc8bc98729f11862b63e51b42820559d6e1e0` |
-| `accessories/shield_round.gltf`           | `dd052a109d5a003fa7ebe4641c31e89a5189ad8d606ee8fc969d05e2d99dab38` |
+| `accessories/shield_round.gltf`           | `c5f4209c2d268917f1cbc699fc54674045b2c26d597039289cb97600764d5948` |
 | `accessories/sword_1handed.bin`           | `c8acdc21adf19257e66b78e86d37855474a0a9fda796c39b39d6d08a5ca34bd5` |
-| `accessories/sword_1handed.gltf`          | `2a6074d46c3e337f84f0295d0ea862b116fec7d816db8d027d75a464311228b6` |
+| `accessories/sword_1handed.gltf`          | `6efd2d1007403cf1739acb43474dde63b18c186ec0bffee690987f9c89352d61` |
 
 The accessory texture files are included as `public/assets/accessories/{barbarian,knight,rogue}_texture.png`; the character GLBs embed or reference their own textures. License files are `License-Adventurers-CC0.txt` and `License-Character-Animations-CC0.txt`.
 
