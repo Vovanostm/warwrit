@@ -7,7 +7,9 @@ import { createDatabase, createDatabaseReadinessProbe } from './db/database.js';
 const config = loadServerConfig();
 const database = config.databaseUrl === undefined ? undefined : createDatabase(config.databaseUrl);
 const app = buildApp({
-  ...(database === undefined ? {} : { readinessProbe: createDatabaseReadinessProbe(database) }),
+  ...(database === undefined
+    ? {}
+    : { readinessProbe: createDatabaseReadinessProbe(database, config.identity !== undefined) }),
   ...(config.identity === undefined || database === undefined
     ? {}
     : { identity: { config: config.identity, database } }),

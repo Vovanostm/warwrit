@@ -56,8 +56,34 @@ export function createDatabase(connectionString: string): Kysely<DatabaseSchema>
 
 export function createDatabaseReadinessProbe(
   database: Kysely<DatabaseSchema>,
+  identityEnabled = false,
 ): () => Promise<void> {
   return async () => {
-    await sql`select 1`.execute(database);
+    if (!identityEnabled) {
+      await sql`select 1`.execute(database);
+    } else {
+      await sql`
+        select
+          accounts.id,
+          accounts.issuer,
+          accounts.subject,
+          accounts.created_at,
+          sessions.token_digest,
+          sessions.account_id,
+          sessions.created_at,
+          sessions.expires_at,
+          sessions.revoked_at,
+          flows.state_digest,
+          flows.browser_digest,
+          flows.code_verifier,
+          flows.nonce,
+          flows.created_at,
+          flows.expires_at
+        from identity_accounts as accounts
+        cross join identity_sessions as sessions
+        cross join identity_oidc_flows as flows
+        limit 0
+      `.execute(database);
+    }
   };
 }
