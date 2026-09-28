@@ -54,8 +54,14 @@ export function isAdult(character: LifecycleCharacter, tick: CampaignTick): bool
   );
 }
 type Capability = CompanyCatalogue['conditions'][number]['deniedCapabilities'][number];
+export type CapabilitySubject = Pick<LifecycleCharacter, 'conditionIds'> & {
+  readonly presence: {
+    readonly availability: LifecycleCharacter['presence']['availability'];
+    readonly encounterBindingId: string | null;
+  };
+};
 /** Presence alone is not ability: injuries constrain the actual task, not the duty label. */
-export function canPerform(character: LifecycleCharacter, capability: Capability): boolean {
+export function canPerform(character: CapabilitySubject, capability: Capability): boolean {
   return (
     character.presence.availability === 'AVAILABLE' &&
     !character.presence.encounterBindingId &&

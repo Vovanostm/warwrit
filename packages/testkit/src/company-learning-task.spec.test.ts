@@ -60,7 +60,11 @@ describe('C04a — finite learning task state and lifecycle', () => {
     (input.command.payload.resourceIds as string[])[0] = 'rewritten';
     expect(first.task.start).toEqual(saved);
     expect(Object.isFrozen(first.task.start.quote.coefficients.task)).toBe(true);
-    const progressed = { ...first.task, completedTicks: '3' };
+    const progressed = {
+      ...first.task,
+      completedTicks: '3',
+      processedThroughTick: String(BigInt(first.task.start.command.campaignTick) + 3n),
+    };
     const state = readLearningTaskState(reload({ ...first.state, tasks: [progressed] }));
     expect(startLearningTask(state, seed())).toEqual({ state, task: progressed, replayed: true });
     expect(readLearningTaskState(reload(state))).toEqual(state);
@@ -82,7 +86,11 @@ describe('C04a — finite learning task state and lifecycle', () => {
 
   it.each(['PLAYER', 'GOAL', 'FUNDS', 'PREREQUISITES'] as const)('closes with %s', (reason) => {
     const first = active();
-    const progressed = { ...first.task, completedTicks: '7' };
+    const progressed = {
+      ...first.task,
+      completedTicks: '7',
+      processedThroughTick: String(BigInt(first.task.start.command.campaignTick) + 7n),
+    };
     const state = readLearningTaskState({ ...first.state, tasks: [progressed] });
     const cmd = stop(reason, reason === 'PLAYER' ? 'PLAYER' : 'SYSTEM');
     const closed = stopLearningTask(state, cmd);
