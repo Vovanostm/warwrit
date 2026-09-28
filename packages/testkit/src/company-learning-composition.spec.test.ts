@@ -15,7 +15,15 @@ import type {
   LearningTimeInterval,
 } from '@warwrit/game-core';
 import { access, cash, command, context, economy, scope, tick } from './company-economy-fixture.js';
-import { addContainer, addItem, container, item, itemAccess } from './company-physical-fixture.js';
+import {
+  addContainer,
+  addItem,
+  careHandover,
+  container,
+  item,
+  itemAccess,
+  withCareProvider,
+} from './company-physical-fixture.js';
 
 type Start = ReturnType<typeof command> & CommandOf<'StartLearning'>;
 type Advance = ReturnType<typeof command> & CommandOf<'AdvanceCampaign'>;
@@ -1187,5 +1195,96 @@ describe('C05 time and atomic learning composition', () => {
     expect(restarted.tasks.tasks).toHaveLength(2);
     expect(restarted.tasks.tasks[0]?.terminal?.kind).toBe('GOAL_REACHED');
     expect(restarted.tasks.tasks[1]?.start.taskId).toBe('task-course-again-1010');
+  });
+
+  it('records an accepted duty change as the same-tick learning interruption', () => {
+    const fixture = admitted(false);
+    const state = withCareProvider(atTick(fixture.state, 20));
+    const interval = {
+      ...segment(fixture, 10, 20, 'ELIGIBLE'),
+      commandId: 'duty-change-command',
+    };
+    const duty = command(
+      state,
+      'SetAssignment',
+      {
+        characterId: 'leader',
+        assignment: 'HOME_RESERVE',
+        locationId: 'village',
+        dutyEvidenceId: 'duty-change',
+        fundingPoolId: 'local',
+      },
+      'duty-change-command',
+      'PLAYER',
+      tick(20),
+    );
+    const dutyFact = {
+      ...scope(state, 'duty-change', tick(20)),
+      kind: 'DUTY' as const,
+      characterId: 'leader',
+      assignment: 'HOME_RESERVE' as const,
+      location: { kind: 'AT' as const, siteId: 'village', areaId: 'square' },
+      fundingPoolId: 'local',
+      handoverToId: 'provider',
+      partyId: null,
+    };
+    const learning = {
+      ...createCompanyLearningState(),
+      tasks: fixture.tasks,
+      studyAccess: fixture.study,
+    };
+    const handover = careHandover(state, 'leader');
+    const input = { economy: state, learning };
+    const contextWithFacts = (includeDuty: boolean) => ({
+      ...context(state, duty, [access(state, tick(20))], includeDuty ? [dutyFact] : [], [handover]),
+      learningFacts: fixture.startContext.learningFacts,
+    });
+    const interruption = {
+      intervals: [interval],
+      effectId: 'duty-learning-effect',
+      manifest: {
+        companyId: state.lifecycle.companyId,
+        worldId: state.lifecycle.worldId,
+        commandId: duty.commandId,
+        taskId: fixture.task.start.taskId,
+        ownerIntervalId: fixture.task.start.studyIntervalId!,
+        targetTick: '20',
+        evidenceIds: [...new Set([...intervalEvidenceIds(interval), 'duty-change'])],
+      },
+    };
+    const prepared = prepareCompanyEconomyWithLearning(
+      input,
+      duty,
+      contextWithFacts(true),
+      interruption,
+    );
+    if (prepared.kind !== 'PREPARED') throw new Error(prepared.error);
+    expect(prepared.next.learning.tasks.tasks[0]?.completedTicks).toBe('10');
+    expect(
+      prepared.next.economy.finance.learningEffects?.find(
+        (effect) => effect.commandId === duty.commandId,
+      )?.acceptedTicks,
+    ).toBe('10');
+    expect(prepared.next.learning.tasks.tasks[0]?.terminal).toMatchObject({
+      kind: 'INTERRUPTED',
+      commandId: duty.commandId,
+      processedThroughTick: '20',
+    });
+    expect(prepared.next.learning.ownerTransitions.at(-1)).toMatchObject({
+      kind: 'DUTY_CHANGE',
+      commandId: duty.commandId,
+      previousAssignment: 'FIELD',
+      nextAssignment: 'HOME_RESERVE',
+      dutyEvidenceId: 'duty-change',
+    });
+
+    const rejected = prepareCompanyEconomyWithLearning(
+      input,
+      duty,
+      contextWithFacts(false),
+      interruption,
+    );
+    expect(rejected.kind).toBe('REJECTED');
+    expect(rejected.state).toEqual(input);
   });
 });

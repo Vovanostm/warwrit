@@ -114,7 +114,8 @@ export interface LearningTimePreparation {
   readonly eligibleTicks: string;
 }
 
-export type LearningCause = CommandOf<'AdvanceCampaign'> | CommandOf<'TransferItem'>;
+export type LearningCause =
+  CommandOf<'AdvanceCampaign'> | CommandOf<'TransferItem'> | CommandOf<'SetAssignment'>;
 
 /** Adapter-owned timeline manifest for causes without PLAYER authoritativeInputs. */
 export interface TrustedLearningCauseManifest {
@@ -165,7 +166,7 @@ function validateCourseAttendance(
   task: LearningTask,
   interval: LearningTimeInterval,
   context: LearningQuoteContext,
-  command: CommandOf<'AdvanceCampaign'>,
+  authorizedIds: ReadonlySet<string>,
   maintenance: readonly MaintenanceAgreement[],
 ): void {
   const inputs = task.start.inputs;
@@ -220,14 +221,13 @@ function validateCourseAttendance(
         BigInt(attendance.membership.endedAt) >= BigInt(interval.toTick)),
     'INVALID_SOURCE',
   );
-  const authoritativeInputs = new Set(command.payload.authoritativeInputs);
   const evidenceIds = [
     attendance.attendanceId,
     attendance.membership.membershipId,
     ...attendance.observations.map((entry) => entry.observationId),
   ];
   requireEconomy(
-    evidenceIds.every((evidenceId) => authoritativeInputs.has(evidenceId)),
+    evidenceIds.every((evidenceId) => authorizedIds.has(evidenceId)),
     'INVALID_SOURCE',
   );
   const observations = new Map(attendance.observations.map((entry) => [entry.characterId, entry]));
@@ -308,7 +308,10 @@ export function prepareLearningTime(
     requireEconomy(manifest === undefined, 'INVALID_SOURCE');
     authorizedIds = new Set(command.payload.authoritativeInputs);
   } else {
-    requireEconomy(start.inputs?.kind === 'BOOK' && manifest !== undefined, 'INVALID_SOURCE');
+    requireEconomy(
+      ['BOOK', 'COURSE'].includes(start.inputs?.kind ?? '') && manifest !== undefined,
+      'INVALID_SOURCE',
+    );
     const snapshot = snapshotJson(manifest);
     requireEconomy(causeManifestInput.read(snapshot), 'INVALID_SOURCE');
     const parsed = snapshot as TrustedLearningCauseManifest;
@@ -348,9 +351,7 @@ export function prepareLearningTime(
         to <= BigInt(context.atTick),
       'INVALID_SOURCE',
     );
-    if (command.type === 'AdvanceCampaign')
-      validateCourseAttendance(task, interval, context, command, maintenance);
-    else requireEconomy(interval.courseAttendance === undefined, 'INVALID_SOURCE');
+    validateCourseAttendance(task, interval, context, authorizedIds, maintenance);
     seen.add(interval.intervalId);
     if (interval.kind === 'ELIGIBLE') eligible += to - from;
     cursor = to;
@@ -364,6 +365,8 @@ export function prepareLearningTime(
       ),
       'INVALID_SOURCE',
     );
+  if (command.type === 'SetAssignment')
+    requireEconomy(authorizedIds.has(command.payload.dutyEvidenceId), 'INVALID_SOURCE');
   const remaining = BigInt(start.quote.maxTicks) - BigInt(task.completedTicks);
   requireEconomy(remaining >= 0n, 'INVALID_TIME');
   return Object.freeze({

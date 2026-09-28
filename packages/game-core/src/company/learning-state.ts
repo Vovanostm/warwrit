@@ -23,16 +23,27 @@ export interface CompanyLearningState {
   readonly ownerTransitions: readonly LearningOwnerTransition[];
 }
 
-export interface LearningOwnerTransition {
-  readonly kind: 'BOOK_TRANSFER';
-  readonly commandId: string;
-  readonly atTick: string;
-  readonly learnerId: string | null;
-  readonly itemId: string;
-  readonly fromContainerId: string;
-  readonly toContainerId: string;
-  readonly taskId: string | null;
-}
+export type LearningOwnerTransition =
+  | {
+      readonly kind: 'BOOK_TRANSFER';
+      readonly commandId: string;
+      readonly atTick: string;
+      readonly learnerId: string | null;
+      readonly itemId: string;
+      readonly fromContainerId: string;
+      readonly toContainerId: string;
+      readonly taskId: string | null;
+    }
+  | {
+      readonly kind: 'DUTY_CHANGE';
+      readonly commandId: string;
+      readonly atTick: string;
+      readonly learnerId: string;
+      readonly previousAssignment: string;
+      readonly nextAssignment: string;
+      readonly dutyEvidenceId: string;
+      readonly taskId: string | null;
+    };
 
 const transitionInput = object({
   kind: choice('BOOK_TRANSFER'),
@@ -50,6 +61,20 @@ const transitionInput = object({
     id,
   ),
 });
+const dutyTransitionInput = object({
+  kind: choice('DUTY_CHANGE'),
+  commandId: id,
+  atTick: unsigned,
+  learnerId: id,
+  previousAssignment: id,
+  nextAssignment: id,
+  dutyEvidenceId: id,
+  taskId: either(
+    { schema: { type: 'null' }, read: (value: unknown): value is null => value === null },
+    id,
+  ),
+});
+const ownerTransitionInput = either(transitionInput, dutyTransitionInput);
 
 export function readCompanyLearningState(value: unknown): CompanyLearningState {
   const snapshot = snapshotJson(value) as CompanyLearningState | undefined;
@@ -60,7 +85,7 @@ export function readCompanyLearningState(value: unknown): CompanyLearningState {
       snapshot.schemaVersion === 1 &&
       Array.isArray(snapshot.studyProgress) &&
       Array.isArray(snapshot.ownerTransitions) &&
-      snapshot.ownerTransitions.every((entry) => transitionInput.read(entry)),
+      snapshot.ownerTransitions.every((entry) => ownerTransitionInput.read(entry)),
     'INVALID_STATE',
   );
   const tasks = readLearningTaskState(snapshot.tasks);
@@ -74,6 +99,88 @@ export function readCompanyLearningState(value: unknown): CompanyLearningState {
     'INVALID_STATE',
   );
   return Object.freeze({ ...snapshot, tasks, studyAccess, studyProgress });
+}
+
+export function recordLearningDutyChange(
+  learningValue: CompanyLearningState,
+  before: CompanyEconomyState,
+  after: CompanyEconomyState,
+  commandValue: unknown,
+): CompanyLearningState {
+  const learning = readCompanyLearningState(learningValue);
+  const parsed = parseCompanyCommand(commandValue);
+  requireEconomy(parsed.ok && parsed.command.type === 'SetAssignment', 'INVALID_ARGUMENT');
+  const command = parsed.command;
+  const previous = before.lifecycle.characters.find(
+    (entry) => entry.identity.characterId === command.payload.characterId,
+  );
+  const next = after.lifecycle.characters.find(
+    (entry) => entry.identity.characterId === command.payload.characterId,
+  );
+  const receipt = after.lifecycle.applied.find((entry) => entry.commandId === command.commandId);
+  requireEconomy(
+    previous &&
+      next &&
+      previous.presence.assignment !== next.presence.assignment &&
+      next.presence.assignment === command.payload.assignment &&
+      receipt?.requestKey === canonicalJson(command) &&
+      !learning.ownerTransitions.some((entry) => entry.commandId === command.commandId),
+    'INVALID_SOURCE',
+  );
+  const task = learning.tasks.tasks.find(
+    (entry) =>
+      !entry.stop &&
+      !entry.terminal &&
+      entry.start.command.payload.characterId === command.payload.characterId,
+  );
+  if (task) {
+    const effects = (after.finance.learningEffects ?? []).filter(
+      (effect) =>
+        effect.companyId === after.lifecycle.companyId &&
+        effect.worldId === after.lifecycle.worldId &&
+        effect.taskId === task.start.taskId &&
+        effect.commandId === command.commandId,
+    );
+    requireEconomy(
+      effects.length === 1 && effects[0]?.acceptedTicks === task.completedTicks,
+      'INVALID_SOURCE',
+    );
+  }
+  const tasks = task
+    ? readLearningTaskState({
+        schemaVersion: 1,
+        tasks: learning.tasks.tasks.map((entry) =>
+          entry.start.taskId === task.start.taskId
+            ? {
+                ...entry,
+                terminal: {
+                  kind: 'INTERRUPTED',
+                  commandId: command.commandId,
+                  campaignTick: command.campaignTick,
+                  processedThroughTick: entry.processedThroughTick ?? command.campaignTick,
+                },
+              }
+            : entry,
+        ),
+      })
+    : learning.tasks;
+  return readCompanyLearningState({
+    ...learning,
+    tasks,
+    ownerTransitions: [
+      ...learning.ownerTransitions,
+      {
+        kind: 'DUTY_CHANGE',
+        commandId: command.commandId,
+        atTick: command.campaignTick,
+        learnerId: command.payload.characterId,
+        previousAssignment: previous.presence.assignment,
+        nextAssignment: next.presence.assignment,
+        dutyEvidenceId: command.payload.dutyEvidenceId,
+        taskId: task?.start.taskId ?? null,
+      },
+    ],
+  });
 }
 
 export function createCompanyLearningState(): CompanyLearningState {
