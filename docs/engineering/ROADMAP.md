@@ -12,7 +12,7 @@ The parent owns coordination and serial integration. PB06 and this PR #89 planni
 
 | Lane                  | Observed state                                                                          | Next unlock                                                   |
 | --------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| C05 finance           | PR #88 is open, funding admission only; remaining backing/settlement is unimplemented   | Complete FIN, then TIME and COMPOSE                           |
+| C05 finance           | PR #88 funding admission is merged; remaining backing/settlement is unimplemented       | Complete FIN, then TIME and COMPOSE                           |
 | E04 social            | BIND merged; E04-ACCEPT still pending                                                   | Complete joint acceptance, then E05 privacy-safe views        |
 | G combat consequences | G06 preparer merged; G07 pending                                                        | Physical effects, then G08/G09 and joined G10                 |
 | PB diagnostic         | PB01–PB04 merged; PB06 assigned to Luna; PB05 not started                               | Browser lab controller, then optional diagnostic follow-ups   |
