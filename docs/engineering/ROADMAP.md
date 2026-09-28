@@ -8,7 +8,7 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns coordination and serial integration. PB06 and this PR #89 planning update have named current writers; C05-FIN retains an earlier acknowledged shared-path reservation, with current backing execution unverified. Before selecting another lane, read its full card, current Notes/Purpose and amendments, existing worktree/PR/handoff, and assign one writer for shared paths.
+The parent owns coordination and serial integration. PB06 and this PR #89 planning update have named current writers; `fin_backing_luna` is assigned, not launched, for remaining C05-FIN backing on `codex/m1-fin-backing` under the [canonical continuation ACK](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recKNcimjB4kW2V1J), comment `comJVUquuMm4Yzl68`. Before selecting another lane, read its full card, current Notes/Purpose and amendments, existing worktree/PR/handoff, and assign one writer for shared paths.
 
 | Lane                  | Observed state                                                                          | Next unlock                                                   |
 | --------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
@@ -18,7 +18,7 @@ The parent owns coordination and serial integration. PB06 and this PR #89 planni
 | PB diagnostic         | PB01–PB04 merged; PB06 assigned to Luna; PB05 not started                               | Browser lab controller, then optional diagnostic follow-ups   |
 | Source contracts      | SPEC-WORLD, SPEC-CONTRACTS, ID01, RT01, BATTLE-PROFILES and ART01 remain to be selected | Close only the finite prerequisites needed by their consumers |
 
-The prior C05-FIN shared-file reservation remains until its writer's explicit handoff. A branch or prepared prompt does not establish completion. Reviewed branches must be combined against fresh main and verified on the resulting tree.
+The prior C05-FIN issue ACK remains historical; the canonical continuation assigns exclusive backing ownership to the new named writer without claiming the original author released work. A branch or prepared prompt does not establish completion. Reviewed branches must be combined against fresh main and verified on the resulting tree.
 
 ## Domain and durable company
 
