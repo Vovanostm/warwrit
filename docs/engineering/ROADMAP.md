@@ -1,6 +1,6 @@
 # Warwrit development roadmap
 
-- Status: repository-side continuation map, as of 2026-09-28
+- Status: repository-side continuation map, as of 2026-09-29
 - Operational checkpoint: [CURRENT_PLAN.md](CURRENT_PLAN.md)
 - Product/task authority: canonical [full M1 index](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s), [current batch](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe), dated owner amendments and [issue #8](https://github.com/Vovanostm/warwrit/issues/8)
 
@@ -8,7 +8,7 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns coordination and serial integration. Observed main `3acbe7cf`, tree `34e193ad`, includes local identity PR106 and pure route/arrival preparation PR108. The reviewed and tested trees matched actual merges. Parent-audited PR108 and actual-main CI passed the existing full gate. See [CURRENT_PLAN](CURRENT_PLAN.md) for exact identities, local identity/browser evidence and proof limits. Public learning, G10, persistent company/world execution and full M1 remain unfinished.
+The parent owns coordination and serial integration. Observed main `73af241`, tree `e34789f`, includes local identity PR106, pure route/arrival preparation PR108, C06 duty interruption PR107 and experiment-only renderer harness PR109. The reviewed and tested trees matched actual merges. Parent-audited PR109 and actual-main CI passed the existing full gate. See [CURRENT_PLAN](CURRENT_PLAN.md) for exact identities, local identity/browser evidence and proof limits. Public learning, G10, persistent company/world execution and full M1 remain unfinished.
 
 | Lane                  | Observed state                                         | Next responsibility                                                 |
 | --------------------- | ------------------------------------------------------ | ------------------------------------------------------------------- |
@@ -18,7 +18,7 @@ The parent owns coordination and serial integration. Observed main `3acbe7cf`, t
 | PB diagnostic         | PB06 merged; optional follow-ups unassigned            | Use only for useful diagnostic evidence                             |
 | World / identity      | Pure world foundation/routes and local identity merged | Movement and durable world/account/company authority                |
 
-C05 and C06 book transfer are delivered in PR100/104. Duty interruption PR107 is under Luna correction and independent Sol review; remaining location/F1/loss and causal history composition precede C08 activation. E05 and G09 are delivered in PR101/102; G10 still waits for C08. PR108 provides pure route/arrival preparation; actual movement, supply and persistence remain separate obligations. PR106 provides local OIDC/account/session identity with real Chrome/PostgreSQL evidence; ID03 company binding waits for H. The renderer experiment has a Sol-reviewed protocol and licensed KayKit source assets, but no measured renderer or production dependency is accepted. PR105 isolates the clean verification database; the full M1 launcher remains pending. Build game-core before testkit checks, and verify the combined tree.
+C05 and C06 book transfer are delivered in PR100/104. Duty interruption PR107 is delivered with earned-prefix settlement and exact book-access closure. The sole company Luna owns remaining location/F1/loss and causal history composition, then C08 activation. E05 and G09 are delivered in PR101/102; G10 still waits for C08. PR108 provides pure route/arrival preparation; actual movement, supply and persistence remain separate obligations. PR106 provides local OIDC/account/session identity with real Chrome/PostgreSQL evidence; ID03 company binding waits for H. PR109 delivers the reviewed same-scene renderer harness with licensed KayKit assets. Three alternating production captures per engine are recorded; final renderer decision/authoring and art-pipeline comparison remain open. A second Luna now implements the bounded RT02/RT03 real-PG repository/executor in its isolated worktree; migration 0003 and dedicated database are reserved. SQL/transport acceptance remains pending. PR105 isolates the clean verification database; the full M1 launcher remains pending. Build game-core before testkit checks, and verify the combined tree.
 
 ## Domain and durable company
 
