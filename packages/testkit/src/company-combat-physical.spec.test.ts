@@ -9,6 +9,7 @@ import {
   commandId,
   createCombatReceiptJournal,
   createHexagon,
+  prepareCombatConsequences,
   prepareCombatPhysicalEffects,
   prepareCombatReceipt,
   prepareEncounterBinding,
@@ -23,12 +24,22 @@ import type {
   EncounterCompanySource,
   EncounterPositionEvidence,
   EquipmentSlot,
+  EconomyContext,
+  FinanceEvidence,
   MaterializedCompanyState,
+  PhysicalEvidence,
 } from '@warwrit/game-core';
-import { command, context, economy, place } from './company-economy-fixture.js';
+import {
+  command,
+  context,
+  economy,
+  physicalScope,
+  place,
+  scope,
+} from './company-economy-fixture.js';
 import { addContainer, addItem, addVitals, container, item } from './company-physical-fixture.js';
 
-function source(prefix: string): EncounterCompanySource {
+function source(prefix: string, health = 100): EncounterCompanySource {
   const ids = new Set(['company', 'party', 'leader', 'provider']);
   let root = JSON.parse(
     JSON.stringify(economy([]), (_, value) => (ids.has(value) ? `${prefix}-${value}` : value)),
@@ -61,8 +72,8 @@ function source(prefix: string): EncounterCompanySource {
     {
       characterId,
       sourceId: `${characterId}-vitals`,
-      maximumHealth: 100,
-      currentHealth: 100,
+      maximumHealth: health,
+      currentHealth: health,
       healthCarry: '0',
       maximumStamina: 100,
       currentStamina: 100,
@@ -75,8 +86,8 @@ function source(prefix: string): EncounterCompanySource {
   return { root: { ...root, physical: root.physical! }, context: context(root, request) };
 }
 
-function fixture() {
-  const sources = [source('a'), source('b')];
+function fixture(health = 100) {
+  const sources = [source('a', health), source('b')];
   const hexes = createHexagon(2);
   const request = { bindingId: 'physical-binding', battleId: battleId('physical-battle') };
   const evidence: EncounterPositionEvidence = {
@@ -241,6 +252,198 @@ function attackUntilCompanyTakesArmorDamage(f: ReturnType<typeof fixture>) {
   throw new Error('Combat fixture did not produce armor damage to the company unit');
 }
 
+function attackUntilCompanyUnitIsWounded(f: ReturnType<typeof fixture>) {
+  let journal = accept(f, f.journal, f.binding.initial, null);
+  const targetId = unitId('a-leader-unit');
+  for (let index = 0; index < 128; index += 1) {
+    const state = journal.receipts.at(-1)!.transition.state;
+    const activation = state.activation;
+    if (!activation) break;
+    const actor = state.units.find((unit) => unit.id === activation.unitId)!;
+    let kernelCommand: CombatCommand | undefined;
+    if (actor.sideId === sideId('b-side')) {
+      kernelCommand = {
+        type: 'attack',
+        commandId: commandId(`physical-wound-attack-${state.revision}`),
+        activationId: activation.id,
+        actorId: activation.unitId,
+        targetId,
+      };
+      if (!applyCombatCommand(state, kernelCommand).ok) {
+        const target = state.units.find((unit) => unit.id === targetId)!;
+        const occupied = new Set(state.units.map(({ position }) => `${position.q},${position.r}`));
+        const distance = (a: { q: number; r: number }, b: { q: number; r: number }) =>
+          (Math.abs(a.q - b.q) + Math.abs(a.r - b.r) + Math.abs(a.q + a.r - b.q - b.r)) / 2;
+        const destination = state.map.hexes.find(
+          (hex) =>
+            !occupied.has(`${hex.q},${hex.r}`) &&
+            distance(hex, actor.position) < distance(target.position, actor.position) &&
+            distance(hex, target.position) < distance(actor.position, target.position),
+        );
+        kernelCommand = destination
+          ? {
+              type: 'move',
+              commandId: commandId(`physical-wound-move-${state.revision}`),
+              activationId: activation.id,
+              actorId: activation.unitId,
+              to: destination,
+            }
+          : undefined;
+      }
+    }
+    const attempted = kernelCommand && applyCombatCommand(state, kernelCommand);
+    const acceptedCommand: CombatCommand = attempted?.ok
+      ? kernelCommand!
+      : {
+          type: 'wait',
+          commandId: commandId(`physical-wound-wait-${state.revision}`),
+          activationId: activation.id,
+          actorId: activation.unitId,
+        };
+    const result = attempted?.ok ? attempted : applyCombatCommand(state, acceptedCommand);
+    if (!result.ok) throw new Error(result.error.message);
+    journal = accept(f, journal, { state: result.state, events: result.events }, acceptedCommand);
+    if (result.events.some((event) => event.type === 'unit.wounded' && event.unitId === targetId))
+      return journal;
+  }
+  throw new Error('Combat fixture did not wound the company unit');
+}
+
+function attackUntilCompanyUnitDies(f: ReturnType<typeof fixture>) {
+  let journal = accept(f, f.journal, f.binding.initial, null);
+  const targetId = unitId('a-leader-unit');
+  for (let index = 0; index < 128; index += 1) {
+    const state = journal.receipts.at(-1)!.transition.state;
+    const activation = state.activation;
+    if (!activation) break;
+    const actor = state.units.find((unit) => unit.id === activation.unitId)!;
+    let kernelCommand: CombatCommand | undefined;
+    if (actor.sideId === sideId('b-side')) {
+      kernelCommand = {
+        type: 'attack',
+        commandId: commandId(`physical-death-attack-${state.revision}`),
+        activationId: activation.id,
+        actorId: activation.unitId,
+        targetId,
+      };
+      if (!applyCombatCommand(state, kernelCommand).ok) {
+        const target = state.units.find((unit) => unit.id === targetId)!;
+        const occupied = new Set(state.units.map(({ position }) => `${position.q},${position.r}`));
+        const distance = (a: { q: number; r: number }, b: { q: number; r: number }) =>
+          (Math.abs(a.q - b.q) + Math.abs(a.r - b.r) + Math.abs(a.q + a.r - b.q - b.r)) / 2;
+        const destination = state.map.hexes.find(
+          (hex) =>
+            !occupied.has(`${hex.q},${hex.r}`) &&
+            distance(hex, actor.position) < distance(target.position, actor.position) &&
+            distance(hex, target.position) < distance(actor.position, target.position),
+        );
+        kernelCommand = destination
+          ? {
+              type: 'move',
+              commandId: commandId(`physical-death-move-${state.revision}`),
+              activationId: activation.id,
+              actorId: activation.unitId,
+              to: destination,
+            }
+          : undefined;
+      }
+    }
+    const attempted = kernelCommand && applyCombatCommand(state, kernelCommand);
+    const fallback: CombatCommand = {
+      type: 'wait',
+      commandId: commandId(`physical-death-wait-${state.revision}`),
+      activationId: activation.id,
+      actorId: activation.unitId,
+    };
+    const acceptedCommand = attempted?.ok ? kernelCommand! : fallback;
+    const result = attempted?.ok ? attempted : applyCombatCommand(state, fallback);
+    if (!result.ok) throw new Error(result.error.message);
+    journal = accept(f, journal, { state: result.state, events: result.events }, acceptedCommand);
+    if (result.events.some((event) => event.type === 'unit.died' && event.unitId === targetId))
+      return journal;
+  }
+  throw new Error('Combat fixture did not kill the company unit');
+}
+
+function combatFacts(
+  f: ReturnType<typeof fixture>,
+  journal: CombatReceiptJournal,
+  includeDeathFacts = true,
+): {
+  readonly financeFacts: readonly FinanceEvidence[];
+  readonly physicalFacts: readonly PhysicalEvidence[];
+} {
+  const financeFacts: FinanceEvidence[] = [];
+  const physicalFacts: PhysicalEvidence[] = [];
+  const characterId = 'a-leader';
+  for (const receipt of journal.receipts) {
+    for (let ordinal = 0; ordinal < receipt.transition.events.length; ordinal += 1) {
+      const event = receipt.transition.events[ordinal]!;
+      if (event.type !== 'unit.wounded' && event.type !== 'unit.died') continue;
+      if (event.unitId !== unitId('a-leader-unit')) continue;
+      const sourceEventId = receipt.sourceEventIds[ordinal]!;
+      if (event.type === 'unit.wounded') {
+        physicalFacts.push({
+          ...physicalScope(
+            f.root,
+            `condition-${ordinal}-${event.revision}`,
+            f.root.lifecycle.campaignTick,
+            ordinal,
+          ),
+          sourceEventId,
+          kind: 'CONDITION_SOURCE',
+          characterId,
+          definitionId: event.severity === 'minor' ? 'minor-field-wound' : 'severe-stable-wound',
+          causeId: `combat-wound-${event.revision}-${ordinal}`,
+          onsetTick: f.root.lifecycle.campaignTick,
+        });
+      } else if (includeDeathFacts) {
+        const causeId = `combat-fatal-${event.revision}-${ordinal}`;
+        const custodyOutcomeId = `death-outcome-${event.revision}-${ordinal}`;
+        const receiptId = `death-finance-${event.revision}-${ordinal}`;
+        physicalFacts.push({
+          ...physicalScope(f.root, custodyOutcomeId, f.root.lifecycle.campaignTick, ordinal),
+          sourceEventId,
+          kind: 'DEATH_OUTCOME',
+          characterId,
+          actualDeathTick: f.root.lifecycle.campaignTick,
+          causeId,
+          location: f.binding.location,
+          corpseContainerId: `corpse-${event.revision}-${ordinal}`,
+        });
+        financeFacts.push({
+          ...scope(f.root, receiptId, f.root.lifecycle.campaignTick),
+          sourceEventId,
+          kind: 'FINANCIAL_DEATH',
+          characterId,
+          actualDeathTick: f.root.lifecycle.campaignTick,
+          recipient: { kind: 'ESTATE', id: characterId },
+          causeId,
+          custodyOutcomeId,
+        });
+      }
+    }
+  }
+  return { financeFacts, physicalFacts };
+}
+
+function combatContext(
+  f: ReturnType<typeof fixture>,
+  facts: {
+    readonly financeFacts: readonly FinanceEvidence[];
+    readonly physicalFacts: readonly PhysicalEvidence[];
+  },
+): EconomyContext {
+  const request = command(
+    f.root,
+    'ConsumeCombatReceipt',
+    {},
+    'combat-consequence-context',
+    'COMBAT_RECEIPT',
+  );
+  return context(f.root, request, facts.financeFacts, [], facts.physicalFacts);
+}
+
 describe('G07 — prepared physical combat effects', () => {
   it('persists verified pools, including the initial clamp, and replays deterministically', () => {
     const f = fixture();
@@ -356,5 +559,85 @@ describe('G07 — prepared physical combat effects', () => {
     Reflect.set(armor, 'currentCondition', armor.currentCondition - 1);
     expect(() => prepareCombatPhysicalEffects(mismatched, journal)).toThrow();
     expect(canonicalJson({ root: f.root, journal })).toBe(before);
+  });
+});
+
+describe('G08 — verified combat consequences', () => {
+  it('applies only actual kernel wounds and deterministically replays the verified candidate', () => {
+    const f = fixture(40);
+    const journal = attackUntilCompanyUnitIsWounded(f);
+    const facts = combatFacts(f, journal);
+    const woundEvents = journal.receipts.flatMap((receipt) =>
+      receipt.transition.events.filter(
+        (event) => event.type === 'unit.wounded' && event.unitId === unitId('a-leader-unit'),
+      ),
+    );
+    expect(woundEvents.length).toBeGreaterThan(0);
+    const candidate = prepareCombatPhysicalEffects(f.root, journal);
+    const ctx = combatContext(f, facts);
+    const before = canonicalJson({ root: f.root, journal });
+
+    const prepared = prepareCombatConsequences(f.root, candidate, journal, ctx);
+    const woundEventIds = journal.receipts.flatMap((receipt) => receipt.sourceEventIds);
+    const conditions = prepared.root.physical.conditions.filter((condition) =>
+      woundEventIds.includes(condition.sourceEventId),
+    );
+    expect(conditions).toHaveLength(woundEvents.length);
+    expect(conditions.every((condition) => condition.resolvedAt === null)).toBe(true);
+    expect(prepared.root.finance).toBe(f.root.finance);
+    expect(prepared.root.lifecycle.knowledge).toBe(f.root.lifecycle.knowledge);
+    expect(prepared.proposedLastAppliedRevision).toBe(journal.proposedLastAppliedRevision);
+    expect(journal.binding.lastAppliedRevision).toBe(f.binding.lastAppliedRevision);
+    expect(prepareCombatConsequences(f.root, candidate, journal, ctx)).toEqual(prepared);
+    expect(before).toBe(canonicalJson({ root: f.root, journal }));
+
+    const forged = { ...candidate, root: f.root };
+    expect(() => prepareCombatConsequences(f.root, forged, journal, ctx)).toThrow();
+    expect(() =>
+      prepareCombatConsequences(
+        f.root,
+        candidate,
+        journal,
+        combatContext(f, {
+          financeFacts: [],
+          physicalFacts: [],
+        }),
+      ),
+    ).toThrow();
+  });
+
+  it('requires both an actual death event and matching private facts, rejecting late failures atomically', () => {
+    const f = fixture();
+    const journal = attackUntilCompanyUnitDies(f);
+    const deathEvents = journal.receipts.flatMap((receipt) =>
+      receipt.transition.events.filter(
+        (event) => event.type === 'unit.died' && event.unitId === unitId('a-leader-unit'),
+      ),
+    );
+    expect(deathEvents).toHaveLength(1);
+    const candidate = prepareCombatPhysicalEffects(f.root, journal);
+    const facts = combatFacts(f, journal);
+    const missingDeathEvidence = combatContext(f, combatFacts(f, journal, false));
+    const before = canonicalJson({ root: f.root, journal, candidate });
+
+    expect(() =>
+      prepareCombatConsequences(f.root, candidate, journal, missingDeathEvidence),
+    ).toThrow();
+    expect(before).toBe(canonicalJson({ root: f.root, journal, candidate }));
+
+    const prepared = prepareCombatConsequences(f.root, candidate, journal, combatContext(f, facts));
+    expect(
+      prepared.root.lifecycle.characters.find(
+        (character) => character.identity.characterId === 'a-leader',
+      )?.presence.availability,
+    ).toBe('DEAD');
+    expect(
+      prepared.root.finance.accounts.find((account) => account.recipient.id === 'a-leader'),
+    ).toMatchObject({ knownDeath: false, death: { atTick: f.root.lifecycle.campaignTick } });
+    expect(prepared.root.lifecycle.knowledge).toBe(f.root.lifecycle.knowledge);
+    expect(prepared.requirements).toEqual([]);
+    expect(prepared.proposedLastAppliedRevision).toBe(journal.proposedLastAppliedRevision);
+    expect(journal.binding.lastAppliedRevision).toBe(f.binding.lastAppliedRevision);
+    expect(before).toBe(canonicalJson({ root: f.root, journal, candidate }));
   });
 });
