@@ -230,7 +230,12 @@ describe('C04b — real admission composition', () => {
     const f = setup(course);
     const first = run(f);
     const owners = reload(first);
-    Object.assign(owners.state.tasks[0]!, { completedTicks: first.task.start.quote.maxTicks });
+    Object.assign(owners.state.tasks[0]!, {
+      completedTicks: first.task.start.quote.maxTicks,
+      processedThroughTick: String(
+        BigInt(first.task.start.command.campaignTick) + BigInt(first.task.start.quote.maxTicks),
+      ),
+    });
     Object.assign(f.ctx, {
       learningFacts: [],
       financeFacts: [],
