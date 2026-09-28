@@ -260,6 +260,42 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         });
         expect(await snapshotRows(invalidFixture.encounterId)).toEqual(before);
 
+        for (const [index, malformedGrant] of [
+          [0, `prefix-human-shield-suffix`],
+          [1, { unexpected: true }],
+        ] as const) {
+          const malformedGrantFixture = await createFixtureEncounter(firstDb, accountId);
+          ownedEncounters.push(malformedGrantFixture.encounterId);
+          const malformedGrantStateResult = await sql<{
+            readonly state: {
+              readonly activation: { readonly id: string; readonly unitId: string };
+            };
+          }>`select state from encounters where id = ${malformedGrantFixture.encounterId}`.execute(
+            firstDb,
+          );
+          const malformedGrantState = malformedGrantStateResult.rows[0]?.state;
+          if (malformedGrantState === undefined) throw new Error('fixture state missing');
+          await sql`
+            update encounter_participants set unit_ids = ${JSON.stringify(malformedGrant)}::jsonb
+            where encounter_id = ${malformedGrantFixture.encounterId} and account_id = ${accountId}
+          `.execute(firstDb);
+          const malformedGrantBefore = await snapshotRows(malformedGrantFixture.encounterId);
+          expect(
+            await executeEncounterCommand(firstDb, accountId, {
+              version: 1,
+              encounterId: malformedGrantFixture.encounterId,
+              commandId: `malformed-grant-${index}`,
+              expectedRevision: 0,
+              activationId: malformedGrantState.activation.id,
+              actorId: malformedGrantState.activation.unitId,
+              intent: { type: 'defend' },
+            }),
+          ).toMatchObject({ status: 'rejected', code: 'UNAUTHORIZED' });
+          expect(await snapshotRows(malformedGrantFixture.encounterId)).toEqual(
+            malformedGrantBefore,
+          );
+        }
+
         const malformedFixture = await createFixtureEncounter(firstDb, accountId);
         ownedEncounters.push(malformedFixture.encounterId);
         await sql`update encounters set state = 'null'::json where id = ${malformedFixture.encounterId}`.execute(

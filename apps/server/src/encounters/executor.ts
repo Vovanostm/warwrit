@@ -24,8 +24,8 @@ interface EncounterRow {
 }
 
 interface ParticipantRow {
-  readonly side_id: string;
-  readonly unit_ids: readonly string[];
+  readonly side_id: unknown;
+  readonly unit_ids: unknown;
 }
 
 interface ReceiptRow {
@@ -253,6 +253,32 @@ async function participant(
   return result.rows[0];
 }
 
+function hasValidParticipantGrant(
+  admitted: ParticipantRow,
+  units: readonly combat.BattleState['units'][number][],
+): admitted is { readonly side_id: string; readonly unit_ids: readonly string[] } {
+  if (
+    typeof admitted.side_id !== 'string' ||
+    admitted.side_id.length === 0 ||
+    !Array.isArray(admitted.unit_ids) ||
+    admitted.unit_ids.length === 0
+  )
+    return false;
+
+  const grantedUnitIds = new Set<string>();
+  for (const unitId of admitted.unit_ids) {
+    if (
+      typeof unitId !== 'string' ||
+      unitId.length === 0 ||
+      grantedUnitIds.has(unitId) ||
+      !units.some((unit) => unit.id === unitId && unit.sideId === admitted.side_id)
+    )
+      return false;
+    grantedUnitIds.add(unitId);
+  }
+  return true;
+}
+
 export async function executeEncounterCommand(
   database: Kysely<DatabaseSchema>,
   accountId: string,
@@ -339,6 +365,7 @@ export async function executeEncounterCommand(
     }
     const actor = state.units.find((unit) => unit.id === dto.actorId);
     if (
+      !hasValidParticipantGrant(admitted, state.units) ||
       actor === undefined ||
       actor.sideId !== admitted.side_id ||
       !admitted.unit_ids.includes(dto.actorId) ||
