@@ -14,7 +14,25 @@ import type { OwnerRef } from './model.js';
 import type { CampaignTick, CanonicalRevision, MoneyQ, PublicRevision } from './values.js';
 import type { CompanyPhysicalState, PhysicalError, PhysicalEvidence } from './physical-types.js';
 import type { ExactFraction } from './exact-fraction.js';
-import type { LearningTaskStart } from './learning-task.js';
+
+type LearningBackingInputs =
+  { readonly kind: 'BOOK' } | { readonly kind: 'COURSE'; readonly ticksPerDay: string };
+interface LearningBackingStart {
+  readonly taskId: string;
+  readonly quote: {
+    readonly sourceId: string;
+    readonly sourceVersion: string;
+    readonly maxTicks: string;
+    readonly funding: null | {
+      readonly poolId: string;
+      readonly walletId: string;
+      readonly providerWalletId: string;
+      readonly authorizedBudgetQ: MoneyQ;
+      readonly costQPerDay: { readonly numerator: string; readonly denominator: string };
+    };
+  };
+  readonly inputs?: LearningBackingInputs;
+}
 
 export const ECONOMY_SCHEMA_VERSION = 1 as const;
 export const ECONOMY_POLICY_VERSION = 's02-economy-1' as const;
@@ -103,7 +121,7 @@ export interface LearningObligation {
   readonly sourceVersion: string;
   readonly companyId: string;
   readonly worldId: string;
-  readonly start: LearningTaskStart;
+  readonly start: LearningBackingStart;
   readonly poolId: string;
   readonly payerWalletId: string;
   readonly recipientWalletId: string;
