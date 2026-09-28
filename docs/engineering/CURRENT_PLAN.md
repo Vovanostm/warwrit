@@ -164,9 +164,11 @@ a separately authorized, measured prerequisite changes that boundary. M1-OPS edi
 
 Before a branch and publication inspect issues, all-state PRs, retained branches and saved handoffs;
 continue usable work without reopening merged branches. Re-read live main/open PRs/CI before publication,
-especially an authorized concurrent E04 merge. Each PR is <=400 normally formatted added+deleted textual
-lines including tests, SQL, docs, fixtures and configuration; no minimum. Split complete tested responsibilities,
-not just commits; do not omit tests or minify. Independent green branches do not prove their union.
+especially an authorized concurrent E04 merge. Treat diff size as a review signal, not an acceptance limit.
+Keep each PR within one cohesive, independently reviewable responsibility, with its necessary tests and docs.
+Split only independently verifiable work; record dependencies and the remaining responsibility.
+Do not omit checks, minify code or change formatting to hit a line count. No numeric replacement threshold
+is set. Independent green branches do not prove their union.
 
 A01 supplies exact XP/milliXP, rational carry and level-threshold arithmetic only,
 not active gameplay learning or proof that practice was legitimate.
