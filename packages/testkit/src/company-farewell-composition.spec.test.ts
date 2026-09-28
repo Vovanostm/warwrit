@@ -330,6 +330,137 @@ describe('E04-BIND: one authenticated financial, physical and social preparation
     });
   });
 
+  it('keeps a late farewell remedy and rehire on the original and new memberships', () => {
+    const original = initial(),
+      exit = exitCommand(original),
+      cohort = relations();
+    const left = accepted(run(original, cohort, exit, [notice(original, exit, 'worker-1')], true));
+    const restored = reload({ state: left.next, social: left.social });
+    const originalOutcome = restored.state.finance.applied.at(-1)!.farewellOutcome!;
+    const priorClaims = restored.state.finance.claims.filter(
+      (claim) => claim.membershipId === serviceId,
+    );
+    const priorGifts = restored.state.finance.farewells.filter(
+      (gift) => gift.membershipId === serviceId,
+    );
+    expect(originalOutcome.givenQ).toBe('500');
+    expect(priorGifts.map((gift) => gift.amountQ)).toEqual(['500']);
+
+    expect(restored.social.chronicle[0]).toMatchObject({
+      factType: 'VeteranDismissedNoFarewell',
+      personId: 'worker-1',
+      otherId: 'leader',
+      happenedAt: '30500',
+    });
+    expect(
+      deriveEffectiveRelation(restored.social, 'worker-1', 'leader', '30500')!.respect,
+    ).toEqual({
+      numerator: '15',
+      denominator: '1',
+    });
+
+    const latePayment = giftCommand(restored.state);
+    const compensated = accepted(
+      run(
+        restored.state,
+        restored.social,
+        latePayment,
+        [notice(restored.state, latePayment, 'worker-1')],
+        true,
+      ),
+    );
+    expect(compensated.next.finance.farewells.map((gift) => gift.membershipId)).toEqual([
+      serviceId,
+      serviceId,
+    ]);
+    expect(compensated.social.chronicle[0]).toEqual(restored.social.chronicle[0]);
+    expect(compensated.social.chronicle[1]).toMatchObject({
+      factType: 'VeteranFarewellCompensated',
+      personId: 'worker-1',
+      happenedAt: '30500',
+    });
+    expect(
+      deriveEffectiveRelation(compensated.social, 'worker-1', 'leader', '30500')!.respect,
+    ).toEqual({
+      numerator: '20',
+      denominator: '1',
+    });
+
+    const state = compensated.next;
+    const recruit = command(state, 'Recruit', {
+      companyId: 'company',
+      characterId: 'worker-0',
+      offerId: 'rehire-offer',
+      offerRevision: '1',
+      basis: 'PAID',
+      poolId: 'local',
+    });
+    const terms = {
+      ...scope(state, 'rehire-terms'),
+      kind: 'SERVICE_TERMS' as const,
+      characterId: 'worker-0',
+      poolId: 'local',
+      recipient: { kind: 'CHARACTER' as const, id: 'worker-0' },
+      signingWalletId: 'wallet-worker-0',
+      rates: COMPANY_RULES.economy.qualificationBands.map((band) => ({
+        minimumLevel: band.level,
+        dailyWageMilli: String(band.multiplierBps),
+      })),
+    };
+    const offer = {
+      ...scope(state, 'rehire-offer'),
+      kind: 'RECRUIT' as const,
+      characterId: 'worker-0',
+      basis: 'PAID' as const,
+      offerRevision: '1',
+      expiresAt: tick(31000),
+      signingQ: cash(0),
+      dailyWageMilli: '10000',
+      itemIds: [],
+    };
+    const beforeRecruit = reload({ state, social: compensated.social });
+    const rehired = prepareCompanyEconomy(
+      state,
+      recruit,
+      context(state, recruit, [terms], [offer]),
+    );
+    expect(rehired).toMatchObject({ kind: 'PREPARED' });
+    if (rehired.kind !== 'PREPARED') throw new Error(rehired.error);
+    const newMembership = rehired.next.lifecycle.memberships.find(
+      (membership) => membership.characterId === 'worker-0' && membership.endedAt === null,
+    )!;
+    expect(newMembership.membershipId).not.toBe(serviceId);
+    expect(newMembership.startedAt).toBe('30500');
+    expect(newMembership.wageScheduleId).not.toBeNull();
+    expect(rehired.next.finance.claims.filter((claim) => claim.membershipId === serviceId)).toEqual(
+      priorClaims,
+    );
+    expect(rehired.next.finance.farewells).toEqual(compensated.next.finance.farewells);
+    expect(rehired.next.finance.farewells.every((gift) => gift.membershipId === serviceId)).toBe(
+      true,
+    );
+    expect(
+      rehired.next.finance.farewells.filter(
+        (gift) => gift.membershipId === newMembership.membershipId,
+      ),
+    ).toEqual([]);
+    expect(reload(rehired.next).finance.farewells).toEqual(rehired.next.finance.farewells);
+    expect(reload(compensated.social).chronicle).toEqual(compensated.social.chronicle);
+    const invalid = {
+      ...recruit,
+      payload: { ...(recruit.payload as object), offerId: 'missing-offer' },
+    };
+    const rejected = prepareCompanyEconomy(
+      state,
+      invalid,
+      context(state, invalid, [terms], [offer]),
+    );
+    expect(rejected).toMatchObject({ kind: 'REJECTED', state, error: 'INVALID_SOURCE' });
+    if (rejected.kind !== 'REJECTED') throw new Error('expected invalid rehire offer');
+    expect(rejected.state).toBe(state);
+    expect({ state, social: compensated.social }).toEqual(beforeRecruit);
+  });
+
   it('paired private histories stay undisclosed, and authentication precedes private receipt access', () => {
     const state = initial(),
       social = relations(),
