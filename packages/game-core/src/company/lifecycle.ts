@@ -259,6 +259,7 @@ export function projectCompanyLifecycle(state: LifecycleState, observerCompanyId
         assignment: p.presence.assignment,
         fieldPartyId: p.presence.fieldPartyId,
         skills: skillLevels(p.skills),
+        aptitudeBySkill: { ...p.aptitudeBySkill },
       })),
   };
 }
