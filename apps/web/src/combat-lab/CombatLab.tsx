@@ -7,7 +7,7 @@ import {
   type CombatLabView,
 } from '@warwrit/protocol';
 import { BattleView } from './BattleView.js';
-import { isCombatLabView, latestCombatLabView } from './controller.js';
+import { handleCombatLabActionReply, isCombatLabView, latestCombatLabView } from './controller.js';
 import './combat-lab.css';
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
@@ -299,13 +299,23 @@ export function CombatLab() {
         sessionLostRef.current = true;
         setSessionLost(true);
       }
-      if (!response.ok || (reply !== null && typeof reply === 'object' && 'code' in reply)) {
-        const code = responseCode(reply, `${response.status}`);
-        setNotice(messageFor(code));
-      } else {
-        setNotice('Ответ получен. Запрашиваю актуальное состояние…');
+      const action = JSON.parse(requestBody) as CombatLabAction;
+      const outcome = await handleCombatLabActionReply(response.status, reply, action, () =>
+        refreshLatest(current, expectedGeneration),
+      );
+      if (controller.signal.aborted || generation.current !== expectedGeneration) return;
+      if (outcome.status === 'uncertain') {
+        const uncertain = { ...flight, uncertain: true };
+        pendingRef.current = uncertain;
+        setPending(uncertain);
+        setNotice('Ответ на действие не подтвержден. Повтор отправит то же действие с тем же ID.');
+        return;
       }
-      await refreshLatest(current, expectedGeneration);
+      setNotice(
+        outcome.status === 'rejected'
+          ? messageFor(outcome.code)
+          : 'Ответ получен. Запрашиваю актуальное состояние…',
+      );
       if (generation.current === expectedGeneration) {
         pendingRef.current = null;
         setPending(null);

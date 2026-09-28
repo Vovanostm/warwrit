@@ -1,4 +1,67 @@
-import { COMBAT_LAB_VERSION, type CombatLabView } from '@warwrit/protocol';
+import {
+  COMBAT_LAB_VERSION,
+  type CombatLabAcknowledgement,
+  type CombatLabAction,
+  type CombatLabView,
+} from '@warwrit/protocol';
+
+const rejectionCodes = new Set([
+  'INVALID_REQUEST',
+  'UNAUTHORIZED',
+  'NOT_FOUND',
+  'STALE_VIEW',
+  'INVALID_ACTION',
+  'REQUEST_CONFLICT',
+  'LIMIT_REACHED',
+]);
+
+export type CombatLabActionReplyOutcome =
+  | { readonly status: 'accepted' }
+  | { readonly status: 'rejected'; readonly code: string }
+  | { readonly status: 'uncertain' };
+
+/** A response only resolves the submitted action when it matches the protocol and request. */
+export async function handleCombatLabActionReply(
+  httpStatus: number,
+  value: unknown,
+  action: CombatLabAction,
+  refreshLatest: () => Promise<void>,
+): Promise<CombatLabActionReplyOutcome> {
+  let outcome: CombatLabActionReplyOutcome = { status: 'uncertain' };
+  if (httpStatus < 500 && value !== null && typeof value === 'object') {
+    const reply = value as Partial<CombatLabAcknowledgement>;
+    if (
+      reply.version === COMBAT_LAB_VERSION &&
+      reply.requestId === action.requestId &&
+      reply.status === 'rejected' &&
+      typeof reply.code === 'string' &&
+      rejectionCodes.has(reply.code)
+    ) {
+      outcome = {
+        status: 'rejected',
+        code: reply.code,
+      };
+    } else if (
+      reply.version === COMBAT_LAB_VERSION &&
+      reply.requestId === action.requestId &&
+      reply.status === 'accepted' &&
+      reply.sessionId === action.sessionId &&
+      reply.battleId === action.battleId &&
+      Number.isSafeInteger(reply.viewRevision) &&
+      (reply.viewRevision ?? -1) >= 0
+    ) {
+      outcome = {
+        status: 'accepted',
+      };
+    }
+  }
+  try {
+    await refreshLatest();
+  } catch {
+    // A failed projection read cannot turn an unverified acknowledgement into success.
+  }
+  return outcome;
+}
 
 /** Accept only a newer projection for the same volatile session and battle. */
 export function latestCombatLabView(
