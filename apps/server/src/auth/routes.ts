@@ -20,10 +20,6 @@ interface OidcFlow {
   readonly expires_at: Date;
 }
 
-interface AccountIdRow {
-  readonly id: string;
-}
-
 interface SessionAccountRow {
   readonly account_id: string;
 }
@@ -85,8 +81,7 @@ export function registerIdentityRoutes(app: FastifyInstance, options: IdentityRo
   let oidcConfiguration: Promise<oidc.Configuration> | undefined;
   const getOidcConfiguration = () => {
     if (oidcConfiguration === undefined) {
-      let pending: Promise<oidc.Configuration>;
-      pending = createOidcConfiguration(config).catch((error: unknown) => {
+      const pending = createOidcConfiguration(config).catch((error: unknown) => {
         if (oidcConfiguration === pending) {
           oidcConfiguration = undefined;
         }
