@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { PROTOCOL_VERSION, type HealthResponse } from '@warwrit/protocol';
+import { CombatLab } from './combat-lab/CombatLab.js';
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
 
@@ -8,6 +9,8 @@ type ConnectionState = 'checking' | 'ready' | 'unavailable';
 
 export function App() {
   const [connection, setConnection] = useState<ConnectionState>('checking');
+  const combatLabEnabled = import.meta.env.DEV && import.meta.env['VITE_COMBAT_LAB'] === '1';
+  const isCombatLab = combatLabEnabled && window.location.pathname === '/combat-lab';
 
   useEffect(() => {
     const controller = new AbortController();
@@ -34,6 +37,8 @@ export function App() {
     return () => controller.abort();
   }, []);
 
+  if (isCombatLab) return <CombatLab />;
+
   return (
     <main className="shell">
       <p className="eyebrow">WP-00 · Engineering Foundation</p>
@@ -42,6 +47,11 @@ export function App() {
         The browser shell is wired to versioned protocol contracts. Gameplay is intentionally
         outside this work package.
       </p>
+      {combatLabEnabled && (
+        <p>
+          <a href="/combat-lab">Открыть локальную лабораторию боя</a>
+        </p>
+      )}
       <dl className="status-grid">
         <div>
           <dt>Protocol</dt>
