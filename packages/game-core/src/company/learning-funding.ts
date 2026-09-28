@@ -37,7 +37,9 @@ export function admitLearningFunding(
     'AUTHORIZATION',
   );
   requireEconomy(
-    ['StartLearning', 'StopLearning', 'AdvanceCampaign', 'TransferItem'].includes(command.type),
+    ['StartLearning', 'StopLearning', 'AdvanceCampaign', 'TransferItem', 'SetAssignment'].includes(
+      command.type,
+    ),
     'UNSUPPORTED_ACTION',
   );
   // Authenticate/tenant-bind before looking at the private retained start or source.
@@ -69,6 +71,11 @@ export function admitLearningFunding(
     requireEconomy(
       inputs.kind === 'BOOK' && start.command.payload.resourceIds.includes(command.payload.itemId),
       'UNSUPPORTED_ACTION',
+    );
+  if (command.type === 'SetAssignment')
+    requireEconomy(
+      command.payload.characterId === start.command.payload.characterId,
+      'INVALID_SOURCE',
     );
   const matches = context.learningFacts.filter((source) => source.id === quote.sourceId);
   requireEconomy(matches.length === 1, 'INVALID_SOURCE');

@@ -72,6 +72,7 @@ import type { LearningTimeInterval, TrustedLearningCauseManifest } from './learn
 import { hasStudyAccessOwner } from './study-access.js';
 import {
   readCompanyLearningState,
+  recordLearningDutyChange,
   recordBookTransfer,
   type CompanyLearningState,
 } from './learning-state.js';
@@ -340,6 +341,7 @@ function prepareEconomyCandidate(
     const targetContext: PracticeEconomyContext = { ...context, atTick: target };
     let nextLearning = learningInput?.state ?? null;
     let learningBeforeTransfer: CompanyEconomyState | undefined;
+    let learningBeforeDutyChange: CompanyEconomyState | undefined;
     const closed =
       command.type === 'AdvanceCampaign'
         ? advanceEconomy(base, command, context)
@@ -381,11 +383,13 @@ function prepareEconomyCandidate(
         targetContext,
       );
       let timed = advancePhysicalTime(closedPhysical.root, target);
-      if (command.type === 'TransferItem')
+      if (command.type === 'TransferItem' || (learningInput && command.type === 'SetAssignment'))
         timed = { ...timed, lifecycle: { ...timed.lifecycle, campaignTick: target } };
       if (learningInput) {
         requireEconomy(
-          command.type === 'AdvanceCampaign' || command.type === 'TransferItem',
+          command.type === 'AdvanceCampaign' ||
+            command.type === 'TransferItem' ||
+            command.type === 'SetAssignment',
           'UNSUPPORTED_ACTION',
         );
         const activeTasks = learningInput.state.tasks.tasks.filter(
@@ -394,20 +398,34 @@ function prepareEconomyCandidate(
         const tasks =
           command.type === 'AdvanceCampaign'
             ? activeTasks
-            : activeTasks.filter(
-                (task) =>
-                  task.start.inputs?.kind === 'BOOK' &&
-                  task.start.command.payload.resourceIds.includes(command.payload.itemId) &&
-                  hasStudyAccessOwner(learningInput.state.studyAccess.intervals, {
-                    intervalId: task.start.studyIntervalId,
-                    itemId: command.payload.itemId,
-                    characterId: task.start.command.payload.characterId,
-                  }),
-              );
+            : command.type === 'TransferItem'
+              ? activeTasks.filter(
+                  (task) =>
+                    task.start.inputs?.kind === 'BOOK' &&
+                    task.start.command.payload.resourceIds.includes(command.payload.itemId) &&
+                    hasStudyAccessOwner(learningInput.state.studyAccess.intervals, {
+                      intervalId: task.start.studyIntervalId,
+                      itemId: command.payload.itemId,
+                      characterId: task.start.command.payload.characterId,
+                    }),
+                )
+              : activeTasks.filter(
+                  (task) =>
+                    task.start.command.payload.characterId === command.payload.characterId &&
+                    timed.lifecycle.characters.find(
+                      (character) => character.identity.characterId === command.payload.characterId,
+                    )?.presence.assignment !== command.payload.assignment,
+                );
         if (command.type === 'TransferItem') {
           requireEconomy(tasks.length <= 1, 'INVALID_STATE');
           requireEconomy(
             tasks.length === 0 || learningInput.manifest !== undefined,
+            'INVALID_SOURCE',
+          );
+        } else if (command.type === 'SetAssignment') {
+          requireEconomy(tasks.length <= 1, 'INVALID_STATE');
+          requireEconomy(
+            tasks.length > 0 === (learningInput.manifest !== undefined),
             'INVALID_SOURCE',
           );
         } else requireEconomy(learningInput.manifest === undefined, 'INVALID_SOURCE');
@@ -477,6 +495,13 @@ function prepareEconomyCandidate(
             );
           if (itemDefinition(physicalItem(timed.physical, command.payload.itemId)).kind === 'book')
             learningBeforeTransfer = timed;
+        }
+        if (command.type === 'SetAssignment' && tasks.length > 0) {
+          requireEconomy(
+            learningInput.manifest?.evidenceIds.includes(command.payload.dutyEvidenceId),
+            'INVALID_SOURCE',
+          );
+          learningBeforeDutyChange = timed;
         }
       }
       lifecycleBeforeCommand = timed.lifecycle;
@@ -570,6 +595,13 @@ function prepareEconomyCandidate(
     validatePhysicalState({ lifecycle: next.lifecycle, physical: next.physical! });
     if (learningBeforeTransfer && nextLearning)
       nextLearning = recordBookTransfer(nextLearning, learningBeforeTransfer, next, command);
+    if (learningBeforeDutyChange && nextLearning)
+      nextLearning = recordLearningDutyChange(
+        nextLearning,
+        learningBeforeDutyChange,
+        next,
+        command,
+      );
     return {
       economy: { kind: 'PREPARED', state, next, receipt, replayed: false },
       learning: nextLearning,

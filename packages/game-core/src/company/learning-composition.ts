@@ -199,12 +199,16 @@ function validateTerminalEffects(state: CompanyEconomyState, tasks: LearningTask
     );
     const parsed = parseCompanyCommand(retained.command);
     requireEconomy(
-      parsed.ok && ['AdvanceCampaign', 'TransferItem'].includes(parsed.command.type),
+      parsed.ok &&
+        ['AdvanceCampaign', 'TransferItem', 'SetAssignment'].includes(parsed.command.type),
       'INVALID_STATE',
     );
     const advance = parsed.command;
     if (terminal.kind === 'INTERRUPTED')
-      requireEconomy(advance.type === 'TransferItem', 'INVALID_STATE');
+      requireEconomy(
+        advance.type === 'TransferItem' || advance.type === 'SetAssignment',
+        'INVALID_STATE',
+      );
     requireEconomy(
       advance.commandId === terminal.commandId &&
         advance.campaignTick === terminal.campaignTick &&

@@ -4,6 +4,7 @@ import {
   createCompanyLearningState,
   createStudyAccessState,
   initialSkillProgress,
+  prepareCompanyEconomy,
   prepareLearningComposition,
   prepareCompanyEconomyWithLearning,
 } from '@warwrit/game-core';
@@ -14,8 +15,25 @@ import type {
   LearningQuoteContext,
   LearningTimeInterval,
 } from '@warwrit/game-core';
-import { access, cash, command, context, economy, scope, tick } from './company-economy-fixture.js';
-import { addContainer, addItem, container, item, itemAccess } from './company-physical-fixture.js';
+import {
+  access,
+  cash,
+  command,
+  context,
+  economy,
+  physicalScope,
+  scope,
+  tick,
+} from './company-economy-fixture.js';
+import {
+  addContainer,
+  addItem,
+  careHandover,
+  container,
+  item,
+  itemAccess,
+  withCareProvider,
+} from './company-physical-fixture.js';
 
 type Start = ReturnType<typeof command> & CommandOf<'StartLearning'>;
 type Advance = ReturnType<typeof command> & CommandOf<'AdvanceCampaign'>;
@@ -1187,5 +1205,171 @@ describe('C05 time and atomic learning composition', () => {
     expect(restarted.tasks.tasks).toHaveLength(2);
     expect(restarted.tasks.tasks[0]?.terminal?.kind).toBe('GOAL_REACHED');
     expect(restarted.tasks.tasks[1]?.start.taskId).toBe('task-course-again-1010');
+  });
+
+  it('records an accepted duty change as the same-tick learning interruption', () => {
+    const fixture = admitted(false);
+    const state = withCareProvider(fixture.state);
+    const interval = {
+      ...segment(fixture, 10, 20, 'ELIGIBLE'),
+      commandId: 'duty-change-command',
+    };
+    const duty = command(
+      state,
+      'SetAssignment',
+      {
+        characterId: 'leader',
+        assignment: 'HOME_RESERVE',
+        locationId: 'village',
+        dutyEvidenceId: 'duty-change',
+        fundingPoolId: 'local',
+      },
+      'duty-change-command',
+      'PLAYER',
+      tick(20),
+    );
+    const dutyFact = {
+      ...scope(state, 'duty-change', tick(20)),
+      kind: 'DUTY' as const,
+      characterId: 'leader',
+      assignment: 'HOME_RESERVE' as const,
+      location: { kind: 'AT' as const, siteId: 'village', areaId: 'square' },
+      fundingPoolId: 'local',
+      handoverToId: 'provider',
+      partyId: null,
+    };
+    const learning = {
+      ...createCompanyLearningState(),
+      tasks: fixture.tasks,
+      studyAccess: fixture.study,
+    };
+    const handover = { ...careHandover(state, 'leader'), atTick: tick(20) };
+    const input = { economy: state, learning };
+    const foodFacts = state.lifecycle.memberships.map((membership, ordinal) => ({
+      ...physicalScope(state, `duty-food-${membership.membershipId}`, tick(20), ordinal),
+      kind: 'FOOD_FULFILLMENT' as const,
+      membershipId: membership.membershipId,
+      fromTick: tick(10),
+      toTick: tick(20),
+      channel: 'STOCK' as const,
+      location: { kind: 'AT' as const, siteId: 'village', areaId: 'square' },
+      containerId: 'fixture-supply',
+    }));
+    const contextWithFacts = (includeDuty: boolean) => ({
+      ...context(state, duty, [access(state, tick(20))], includeDuty ? [dutyFact] : [], [
+        handover,
+        ...foodFacts,
+      ]),
+      learningFacts: fixture.startContext.learningFacts,
+    });
+    const interruption = {
+      intervals: [interval],
+      effectId: 'duty-learning-effect',
+      manifest: {
+        companyId: state.lifecycle.companyId,
+        worldId: state.lifecycle.worldId,
+        commandId: duty.commandId,
+        taskId: fixture.task.start.taskId,
+        ownerIntervalId: fixture.task.start.studyIntervalId!,
+        targetTick: '20',
+        evidenceIds: [...new Set([...intervalEvidenceIds(interval), 'duty-change'])],
+      },
+    };
+    const control = prepareCompanyEconomy(state, duty, contextWithFacts(true));
+    expect(control.kind).toBe('PREPARED');
+    const prepared = prepareCompanyEconomyWithLearning(
+      input,
+      duty,
+      contextWithFacts(true),
+      interruption,
+    );
+    if (prepared.kind !== 'PREPARED') throw new Error(prepared.error);
+    expect(prepared.next.learning.tasks.tasks[0]?.completedTicks).toBe('10');
+    expect(
+      prepared.next.economy.finance.learningEffects?.find(
+        (effect) => effect.commandId === duty.commandId,
+      )?.acceptedTicks,
+    ).toBe('10');
+    expect(prepared.next.learning.tasks.tasks[0]?.terminal).toMatchObject({
+      kind: 'INTERRUPTED',
+      commandId: duty.commandId,
+      processedThroughTick: '20',
+    });
+    expect(prepared.next.learning.ownerTransitions.at(-1)).toMatchObject({
+      kind: 'DUTY_CHANGE',
+      commandId: duty.commandId,
+      previousAssignment: 'FIELD',
+      nextAssignment: 'HOME_RESERVE',
+      dutyEvidenceId: 'duty-change',
+    });
+    expect(prepared.next.learning.studyAccess.intervals[0]).toMatchObject({
+      intervalId: fixture.task.start.studyIntervalId,
+      fromTick: '10',
+      effectiveToTick: '20',
+    });
+
+    const reopenState = prepared.next.economy;
+    const reopen = command(
+      reopenState,
+      'StartLearning',
+      { ...fixture.task.start.command.payload, resourceIds: ['book-1'] },
+      'start-book-after-duty-change',
+      'PLAYER',
+      tick(20),
+    ) as Start;
+    const reopenSource = {
+      ...fixture.startContext.learningFacts[0]!,
+      ...scope(reopenState, 'self-study-after-duty-change', tick(20)),
+      sourceVersion: 'book-study-after-duty-change-v1',
+      atTick: tick(20),
+      expiresAt: tick(500),
+      resourceIds: ['book-1'],
+    };
+    const reopenAccess = {
+      ...itemAccess(
+        reopenState,
+        'book-access-after-duty-change',
+        'STUDY',
+        ['fixture-supply'],
+        ['book-1'],
+      ),
+      atTick: tick(20),
+      operatorId: 'leader',
+    };
+    const reopened = prepareLearningComposition(
+      reopenState,
+      prepared.next.learning.tasks,
+      prepared.next.learning.studyAccess,
+      null,
+      {
+        ...context(reopenState, reopen, [access(reopenState, tick(20))], [], [reopenAccess]),
+        learningFacts: [reopenSource],
+      },
+      [],
+      {
+        kind: 'START',
+        taskId: 'task-book-after-duty-change',
+        effectId: 'book-after-duty-change-start',
+        admission: {
+          taskId: 'task-book-after-duty-change',
+          command: reopen,
+          study: {
+            intervalId: 'access-book-after-duty-change',
+            itemId: 'book-1',
+            accessEvidenceId: 'book-access-after-duty-change',
+          },
+        },
+      },
+    );
+    expect(reopened.tasks.tasks.at(-1)?.start.taskId).toBe('task-book-after-duty-change');
+
+    const rejected = prepareCompanyEconomyWithLearning(
+      input,
+      duty,
+      contextWithFacts(false),
+      interruption,
+    );
+    expect(rejected.kind).toBe('REJECTED');
+    expect(rejected.state).toEqual(input);
   });
 });

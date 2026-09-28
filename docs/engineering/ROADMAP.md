@@ -8,17 +8,17 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns coordination and serial integration. Observed main `5a5df95d`, tree `67427ec7`, includes PR104 C06 book transfer and PR105 isolated verification. Parent-audited PR105 and actual-main CI passed the existing full gate; real Mac clean/failed/retained fixture lifecycle also passed. See [CURRENT_PLAN](CURRENT_PLAN.md) for exact identities, assignments and proof limits. Public learning, G10, persistent company/world execution and full M1 remain unfinished.
+The parent owns coordination and serial integration. Observed main `3acbe7cf`, tree `34e193ad`, includes local identity PR106 and pure route/arrival preparation PR108. The reviewed and tested trees matched actual merges. Parent-audited PR108 and actual-main CI passed the existing full gate. See [CURRENT_PLAN](CURRENT_PLAN.md) for exact identities, local identity/browser evidence and proof limits. Public learning, G10, persistent company/world execution and full M1 remain unfinished.
 
-| Lane                  | Observed state                                        | Next responsibility                                                 |
-| --------------------- | ----------------------------------------------------- | ------------------------------------------------------------------- |
-| C05 learning          | PR #100 merged; internal settlement complete          | C06/C07 actual history and causal interruption, then C08 activation |
-| E04 social            | PR #99 merged; joint acceptance complete              | E05 delivered in PR #101; F01 follows                               |
-| G combat consequences | G09 merged in PR #102; runtime producer remains RT    | G10 joins C08 and E05 before activation                             |
-| PB diagnostic         | PB06 merged; optional follow-ups unassigned           | Use only for useful diagnostic evidence                             |
-| World / identity      | PR #103 pure foundation merged; ID01/ID02 Luna active | Movement and durable world/account/company authority                |
+| Lane                  | Observed state                                         | Next responsibility                                                 |
+| --------------------- | ------------------------------------------------------ | ------------------------------------------------------------------- |
+| C05 learning          | PR #100 merged; internal settlement complete           | C06/C07 actual history and causal interruption, then C08 activation |
+| E04 social            | PR #99 merged; joint acceptance complete               | E05 delivered in PR #101; F01 follows                               |
+| G combat consequences | G09 merged in PR #102; runtime producer remains RT     | G10 joins C08 and E05 before activation                             |
+| PB diagnostic         | PB06 merged; optional follow-ups unassigned            | Use only for useful diagnostic evidence                             |
+| World / identity      | Pure world foundation/routes and local identity merged | Movement and durable world/account/company authority                |
 
-C05 is delivered; C06 book transfer is merged in PR104. A Luna in `codex/m1-learning-history` owns the remaining actual interruption/history producers, followed by C08 activation. E05 and G09 are delivered in PR101/102; G10 still waits for C08. A disjoint Luna in `codex/m1-world-routes` builds pure routes/arrival preparation from PR103 topology and clocks; real movement, supply and persistence remain separate obligations. Local OIDC/account/session implementation is under integration in PR106 with independent review and real Chrome/PostgreSQL evidence; inspect current CI/merge state. ID03 company binding waits for H. PR105 isolates the existing clean verification DB; the full M1 launcher remains pending. Build game-core before testkit checks, and verify the resulting integrated tree.
+C05 and C06 book transfer are delivered in PR100/104. Duty interruption PR107 is under Luna correction and independent Sol review; remaining location/F1/loss and causal history composition precede C08 activation. E05 and G09 are delivered in PR101/102; G10 still waits for C08. PR108 provides pure route/arrival preparation; actual movement, supply and persistence remain separate obligations. PR106 provides local OIDC/account/session identity with real Chrome/PostgreSQL evidence; ID03 company binding waits for H. The renderer experiment has a Sol-reviewed protocol and licensed KayKit source assets, but no measured renderer or production dependency is accepted. PR105 isolates the clean verification database; the full M1 launcher remains pending. Build game-core before testkit checks, and verify the combined tree.
 
 ## Domain and durable company
 
