@@ -91,11 +91,11 @@ function accepted(result: ReturnType<typeof run>) {
   if (result.kind === 'REJECTED') throw new Error(result.error);
   return result;
 }
-function giftCommand(state: CompanyEconomyState) {
+function giftCommand(state: CompanyEconomyState, amountQ = '500') {
   return command(state, 'GrantFarewell', {
     membershipId: serviceId,
     quoteRevision: state.lifecycle.knowledge.revision,
-    amountQ: '500',
+    amountQ,
     poolId: 'local',
   });
 }
@@ -331,20 +331,36 @@ describe('E04-BIND: one authenticated financial, physical and social preparation
   });
 
   it('keeps a late farewell remedy and rehire on the original and new memberships', () => {
-    const original = initial(),
-      exit = exitCommand(original),
-      cohort = relations();
-    const left = accepted(run(original, cohort, exit, [notice(original, exit, 'worker-1')], true));
+    const start = economy([1n, 1n], 0n, 30000);
+    const fundedStart = {
+      ...start,
+      finance: {
+        ...start.finance,
+        wallets: [
+          ...start.finance.wallets,
+          {
+            walletId: 'reserve-purse',
+            owner: { kind: 'COMPANY' as const, id: 'company' },
+            location: start.finance.wallets[0]!.location,
+            cashQ: cash(10000),
+          },
+        ],
+        pools: [...start.finance.pools, { poolId: 'reserve', walletId: 'reserve-purse' }],
+      },
+    };
+    const advanced = advance(fundedStart, 30500).next;
+    const original = observation(advanced, 'worker-0', [access(advanced)]).result.next;
+    const pending = requestExit(original);
+    const exit = exitCommand(pending);
+    const left = accepted(run(pending, relations(), exit, [notice(pending, exit, 'worker-1')]));
     const restored = reload({ state: left.next, social: left.social });
-    const originalOutcome = restored.state.finance.applied.at(-1)!.farewellOutcome!;
-    const priorClaims = restored.state.finance.claims.filter(
+    const originalOutcome = left.receipt.farewellOutcome!;
+    const oldClaim = restored.state.finance.claims.find(
       (claim) => claim.membershipId === serviceId,
-    );
-    const priorGifts = restored.state.finance.farewells.filter(
-      (gift) => gift.membershipId === serviceId,
-    );
-    expect(originalOutcome.givenQ).toBe('500');
-    expect(priorGifts.map((gift) => gift.amountQ)).toEqual(['500']);
+    )!;
+    expect(originalOutcome.givenQ).toBe('0');
+    expect(oldClaim).toMatchObject({ membershipId: serviceId, paidQ: '0' });
+    expect(BigInt(oldClaim.reportedQ)).toBeGreaterThan(0n);
 
     expect(restored.social.chronicle[0]).toMatchObject({
       factType: 'VeteranDismissedNoFarewell',
@@ -359,13 +375,79 @@ describe('E04-BIND: one authenticated financial, physical and social preparation
       denominator: '1',
     });
 
-    const latePayment = giftCommand(restored.state);
+    const outstanding =
+      BigInt(oldClaim.reportedQ) - BigInt(oldClaim.reportedCoveredQ) - BigInt(oldClaim.paidQ);
+    const requiredGift = BigInt(originalOutcome.recognitionQ) - BigInt(originalOutcome.givenQ);
+    const transferAmount = outstanding + requiredGift;
+    const accessToBothPools = { ...access(restored.state), poolIds: ['local', 'reserve'] };
+    const transfer = command(restored.state, 'TransferFunds', {
+      fromPoolId: 'reserve',
+      toPoolId: 'local',
+      amountQ: transferAmount.toString(),
+      accessEvidenceId: accessToBothPools.id,
+    });
+    const funded = prepared(
+      prepareCompanyEconomy(
+        restored.state,
+        transfer,
+        context(restored.state, transfer, [accessToBothPools]),
+      ),
+    );
+    const payOldClaim = command(funded.next, 'PayClaims', {
+      poolId: 'local',
+      amountQ: outstanding.toString(),
+      claimIds: [],
+      mode: 'TARGETED',
+      payeeId: 'worker-0',
+    });
+    const paid = prepared(
+      prepareCompanyEconomy(
+        funded.next,
+        payOldClaim,
+        context(funded.next, payOldClaim, [access(funded.next)]),
+      ),
+    );
+    const paidOldClaim = paid.next.finance.claims.find(
+      (claim) => claim.claimId === oldClaim.claimId,
+    )!;
+    expect(paidOldClaim).toMatchObject({ membershipId: serviceId, paidQ: oldClaim.reportedQ });
+    expect(paid.receipt.allocations).toContainEqual(
+      expect.objectContaining({ claimId: oldClaim.claimId, amountQ: outstanding.toString() }),
+    );
+    expect(
+      paid.next.finance.movements
+        .slice(funded.next.finance.movements.length)
+        .map((movement) => [movement.purpose, movement.amountQ]),
+    ).toEqual([['WAGE', outstanding.toString()]]);
+    expect(paid.next.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ).toBe(
+      requiredGift.toString(),
+    );
+    expect(
+      paid.next.finance.wallets.find((wallet) => wallet.walletId === 'wallet-worker-0')?.cashQ,
+    ).toBe(outstanding.toString());
+    const priorClaims = paid.next.finance.claims.filter(
+      (claim) => claim.membershipId === serviceId,
+    );
+
+    const firstGiftAmount = requiredGift / 2n;
+    const secondGiftAmount = requiredGift - firstGiftAmount;
+    const partialGift = giftCommand(paid.next, firstGiftAmount.toString());
+    const partial = accepted(
+      run(
+        paid.next,
+        restored.social,
+        partialGift,
+        [notice(paid.next, partialGift, 'worker-1')],
+        true,
+      ),
+    );
+    const latePayment = giftCommand(partial.next, secondGiftAmount.toString());
     const compensated = accepted(
       run(
-        restored.state,
-        restored.social,
+        partial.next,
+        partial.social,
         latePayment,
-        [notice(restored.state, latePayment, 'worker-1')],
+        [notice(partial.next, latePayment, 'worker-1')],
         true,
       ),
     );
