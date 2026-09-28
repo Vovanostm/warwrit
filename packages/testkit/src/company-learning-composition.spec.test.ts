@@ -19,7 +19,7 @@ type Start = ReturnType<typeof command> & CommandOf<'StartLearning'>;
 type Advance = ReturnType<typeof command> & CommandOf<'AdvanceCampaign'>;
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
-function admitted(course: boolean) {
+function admitted(course: boolean, maxTicks = '5000') {
   let state = economy([1n], 7_000_000n, 10);
   const owner = { kind: 'COMPANY' as const, id: state.lifecycle.companyId };
   for (const id of ['book-1', 'book-2'])
@@ -42,7 +42,7 @@ function admitted(course: boolean) {
       characterId: 'leader',
       methodId: course ? 'funded-practice' : 'book-study',
       goal: course
-        ? { skillId: 'medicine', maxTicks: '5000' }
+        ? { skillId: 'medicine', maxTicks }
         : { workId: 'wound-care-basics', maxTicks: '5000' },
       resourceIds: ['book-1', 'book-2'],
       budgetPoolId: 'local',
@@ -81,7 +81,7 @@ function admitted(course: boolean) {
             providerWalletId: 'wallet-provider',
             moneyAccessEvidenceId: 'money-access',
             costQPerDay: cash(5_000_000),
-            maxTicks: '5000',
+            maxTicks,
           }
         : {
             kind: 'SELF_STUDY' as const,
@@ -485,6 +485,28 @@ describe('C05 time and atomic learning composition', () => {
     expect(prepared.tasks.tasks[0]?.processedThroughTick).toBe('14');
     expect(() => prepare(fixture, 14, [segment(fixture, 11, 14, 'ELIGIBLE')])).toThrow();
     expect({ state: fixture.state, tasks: fixture.tasks, study: fixture.study }).toEqual(before);
+  });
+
+  it('resumes course attendance after an ineligible gap and reload', () => {
+    const fixture = admitted(true, '10');
+    const interrupted = prepare(fixture, 21, [
+      segment(fixture, 10, 20, 'INELIGIBLE'),
+      segment(fixture, 20, 21, 'ELIGIBLE'),
+    ]);
+    const resumed = prepare(
+      fixture,
+      22,
+      [segment(fixture, 21, 22, 'ELIGIBLE')],
+      atTick(reload(interrupted.state), 22),
+      reload(interrupted.tasks),
+      reload(interrupted.studyAccess),
+      reload(interrupted.studyProgress),
+    );
+
+    expect(interrupted.acceptedTicks).toBe('1');
+    expect(resumed.acceptedTicks).toBe('2');
+    expect(resumed.tasks.tasks[0]?.completedTicks).toBe('2');
+    expect(resumed.tasks.tasks[0]?.processedThroughTick).toBe('22');
   });
 
   it('uses the retained course quote and keeps finance, skill and cursor in one candidate', () => {

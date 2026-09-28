@@ -176,7 +176,6 @@ function validateCourseAttendance(
       source.learnerId === start.payload.characterId &&
       source.atTick === start.campaignTick &&
       BigInt(interval.fromTick) >= BigInt(source.atTick) &&
-      BigInt(interval.toTick) <= BigInt(source.atTick) + BigInt(task.start.quote.maxTicks) &&
       source.skillId === inputs.skillId &&
       sameIds(source.resourceIds, start.payload.resourceIds) &&
       sameIds(attendance.resourceIds, start.payload.resourceIds) &&
