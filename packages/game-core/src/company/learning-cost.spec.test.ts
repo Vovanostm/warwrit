@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { COMPANY_COMMAND_SCHEMA_VERSION, COMPANY_RULESET_ID } from './model.js';
-import { createCompanyEconomyState, reservedQ } from './economy-state.js';
+import { createCompanyEconomyState, reservedQ, validateEconomy } from './economy-state.js';
 import type { CompanyEconomyState } from './economy-types.js';
 import { accrueFinance } from './economy-accrual.js';
 import { moveCash, reservePreEntry } from './economy-payments.js';
@@ -950,6 +950,29 @@ describe('C05-FIN exact retained learning backing', () => {
       prepare(invalid, first, 'invalid', '2', invalidStop, 'bad-access', invalidTasks),
     ).toThrow('CONTACT_OR_ACCESS_REQUIRED');
     expect(first).toEqual(before);
+
+    const large = setup(false, '1000', '100', '100');
+    const sourceEffects = Array.from({ length: 1001 }, (_, index) => ({
+      key: `source-effect-${index}`,
+      requestKey: `source-request-${index}`,
+    }));
+    large.root.finance = { ...large.root.finance, sourceEffects };
+    expect(() => validateEconomy(large.root, large.context)).not.toThrow();
+    const originalRoot = large.root;
+    const originalFinance = large.root.finance;
+    const expected = prepare(f, f.root, 'large-root-expected', '1', f.request.command);
+    const actual = prepare(large, large.root, 'large-root-actual', '1', large.request.command);
+    expect(actual.acceptedTicks).toBe(expected.acceptedTicks);
+    expect(actual.fundedTicks).toBe(expected.fundedTicks);
+    expect(actual.transferQ).toBe(expected.transferQ);
+    expect(actual.state.finance.wallets).toEqual(expected.state.finance.wallets);
+    expect(actual.state.finance.movements).toEqual(expected.state.finance.movements);
+    expect(actual.state.finance.learningObligations).toEqual(
+      expected.state.finance.learningObligations,
+    );
+    expect(large.root).toBe(originalRoot);
+    expect(large.root.finance).toBe(originalFinance);
+    expect(large.root.finance.sourceEffects).toBe(sourceEffects);
   });
 
   it('keeps the original quote cap after a later cash top-up', () => {

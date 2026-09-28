@@ -237,7 +237,7 @@ export function prepareLearningBacking(
   requireEconomy(requestInput.read(request), 'INVALID_ARGUMENT');
   const guarded = guardCompanyCommand(request.command, context);
   if (!guarded.ok) throw new EconomyViolation(guarded.error);
-  const state = snapshotJson(stateValue) as unknown as CompanyEconomyState;
+  const state = stateValue;
   requireEconomy(
     state.lifecycle.companyId === context.companyId && state.lifecycle.worldId === context.worldId,
     'AUTHORIZATION',
