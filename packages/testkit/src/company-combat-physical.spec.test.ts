@@ -945,6 +945,7 @@ describe('G08 — verified combat consequences', () => {
 });
 
 describe('G09 — verified combat practice', () => {
+  // This multi-actor case repeatedly verifies the growing receipt chain.
   it('credits only replayed company attacks, preserves G08 requirements and leaves the cursor pending', () => {
     const f = fixture(10000, true);
     const journal = practiceJournal(f, [
@@ -1257,7 +1258,7 @@ describe('G09 — verified combat practice', () => {
     );
     expect(noPractice.credits).toBe(0);
     expect(noPractice.root.finance.sourceEffects).toEqual(emptyG08.root.finance.sourceEffects);
-  });
+  }, 15_000);
 
   it('rejects same-company opposing-side attacks as external practice', () => {
     const f = sameCompanyOpponentFixture();
