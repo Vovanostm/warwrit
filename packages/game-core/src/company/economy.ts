@@ -38,7 +38,12 @@ import {
 import { payClaims, transferFunds } from './economy-payments.js';
 import { own, EconomyViolation, requireEconomy, validateEconomy } from './economy-state.js';
 import { materializeCompanyPhysicalState } from './physical-load.js';
-import { PhysicalViolation, validatePhysicalState } from './physical-state.js';
+import {
+  PhysicalViolation,
+  itemDefinition,
+  physicalItem,
+  validatePhysicalState,
+} from './physical-state.js';
 import {
   advancePhysicalTime,
   observePhysical,
@@ -61,6 +66,15 @@ import type {
   FinanceChange,
 } from './economy-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
+import { prepareLearningComposition } from './learning-composition.js';
+import type { LearningSourceContext } from './learning-source.js';
+import type { LearningTimeInterval, TrustedLearningCauseManifest } from './learning-time.js';
+import { hasStudyAccessOwner } from './study-access.js';
+import {
+  readCompanyLearningState,
+  recordBookTransfer,
+  type CompanyLearningState,
+} from './learning-state.js';
 
 type PracticeEconomyContext = EconomyContext & Pick<PracticeContext, 'practiceFacts'>;
 
@@ -70,6 +84,38 @@ type CommandDraft = {
   readonly requirements: FinanceChange['requirements'];
   readonly allocations: EconomyReceipt['allocations'];
 };
+
+export interface CompanyEconomyWithLearningState {
+  readonly economy: CompanyEconomyState;
+  readonly learning: CompanyLearningState;
+}
+
+export type CompanyEconomyWithLearningResult =
+  | {
+      readonly kind: 'REJECTED';
+      readonly state: CompanyEconomyWithLearningState;
+      readonly error: Extract<EconomyResult, { kind: 'REJECTED' }>['error'];
+    }
+  | {
+      readonly kind: 'PREPARED';
+      readonly state: CompanyEconomyWithLearningState;
+      readonly next: CompanyEconomyWithLearningState;
+      readonly receipt: EconomyReceipt;
+      readonly replayed: boolean;
+    };
+
+interface LearningTransferInput {
+  readonly state: CompanyLearningState;
+  readonly intervals: readonly LearningTimeInterval[];
+  readonly manifest?: TrustedLearningCauseManifest;
+  readonly effectId: string;
+  readonly learningFacts: LearningSourceContext['learningFacts'];
+}
+
+interface EconomyCandidate {
+  readonly economy: EconomyResult;
+  readonly learning: CompanyLearningState | null;
+}
 
 function applyCommandAtTarget(
   root: MaterializedCompanyState,
@@ -209,14 +255,19 @@ function publicObservableKey(state: CompanyEconomyState, observerCompanyId: stri
 }
 
 /** A single lifecycle+finance+physical draft. There is deliberately no child commit API. */
-export function prepareCompanyEconomy(
+function prepareEconomyCandidate(
   state: CompanyEconomyState,
   value: unknown,
   context: PracticeEconomyContext,
   financialSocial?: FinancialSocialContext,
-): EconomyResult {
+  learningInput?: LearningTransferInput,
+): EconomyCandidate {
   const guarded = guardCompanyCommand(value, context);
-  if (!guarded.ok) return { kind: 'REJECTED', state, error: guarded.error };
+  if (!guarded.ok)
+    return {
+      economy: { kind: 'REJECTED', state, error: guarded.error },
+      learning: learningInput?.state ?? null,
+    };
   const command = guarded.command;
   try {
     requireEconomy(
@@ -239,7 +290,10 @@ export function prepareCompanyEconomy(
           : previous.semanticKey === semanticKey,
         'IDEMPOTENCY_CONFLICT',
       );
-      return { kind: 'PREPARED', state, next: state, receipt: previous, replayed: true };
+      return {
+        economy: { kind: 'PREPARED', state, next: state, receipt: previous, replayed: true },
+        learning: learningInput?.state ?? null,
+      };
     }
     requireEconomy(
       context.canonicalRevision === state.lifecycle.revision &&
@@ -284,6 +338,8 @@ export function prepareCompanyEconomy(
     const target =
       command.type === 'AdvanceCampaign' ? campaignTick(command.payload.toTick) : context.atTick;
     const targetContext: PracticeEconomyContext = { ...context, atTick: target };
+    let nextLearning = learningInput?.state ?? null;
+    let learningBeforeTransfer: CompanyEconomyState | undefined;
     const closed =
       command.type === 'AdvanceCampaign'
         ? advanceEconomy(base, command, context)
@@ -324,7 +380,105 @@ export function prepareCompanyEconomy(
         closed.requirements,
         targetContext,
       );
-      const timed = advancePhysicalTime(closedPhysical.root, target);
+      let timed = advancePhysicalTime(closedPhysical.root, target);
+      if (command.type === 'TransferItem')
+        timed = { ...timed, lifecycle: { ...timed.lifecycle, campaignTick: target } };
+      if (learningInput) {
+        requireEconomy(
+          command.type === 'AdvanceCampaign' || command.type === 'TransferItem',
+          'UNSUPPORTED_ACTION',
+        );
+        const activeTasks = learningInput.state.tasks.tasks.filter(
+          (task) => !task.stop && !task.terminal && task.start.inputs !== undefined,
+        );
+        const tasks =
+          command.type === 'AdvanceCampaign'
+            ? activeTasks
+            : activeTasks.filter(
+                (task) =>
+                  task.start.inputs?.kind === 'BOOK' &&
+                  task.start.command.payload.resourceIds.includes(command.payload.itemId) &&
+                  hasStudyAccessOwner(learningInput.state.studyAccess.intervals, {
+                    intervalId: task.start.studyIntervalId,
+                    itemId: command.payload.itemId,
+                    characterId: task.start.command.payload.characterId,
+                  }),
+              );
+        if (command.type === 'TransferItem') {
+          requireEconomy(tasks.length <= 1, 'INVALID_STATE');
+          requireEconomy(
+            tasks.length === 0 || learningInput.manifest !== undefined,
+            'INVALID_SOURCE',
+          );
+        } else requireEconomy(learningInput.manifest === undefined, 'INVALID_SOURCE');
+        requireEconomy(
+          learningInput.intervals.every((interval) =>
+            tasks.some((task) => task.start.taskId === interval.taskId),
+          ) &&
+            (tasks.length > 0 || learningInput.intervals.length === 0),
+          'INVALID_SOURCE',
+        );
+
+        for (const task of tasks) {
+          const inputs = task.start.inputs!;
+          const progress =
+            inputs.kind === 'BOOK'
+              ? (learningInput.state.studyProgress.find(
+                  (entry) =>
+                    entry.characterId === task.start.command.payload.characterId &&
+                    entry.workId === inputs.workId &&
+                    entry.sectionId === inputs.sectionId,
+                ) ?? null)
+              : null;
+          const taskManifest = learningInput.manifest;
+          const composed = prepareLearningComposition(
+            timed,
+            nextLearning!.tasks,
+            nextLearning!.studyAccess,
+            progress,
+            { ...targetContext, learningFacts: learningInput.learningFacts },
+            learningInput.intervals.filter((interval) => interval.taskId === task.start.taskId),
+            {
+              kind: 'ADVANCE',
+              taskId: task.start.taskId,
+              effectId: `${learningInput.effectId}-${task.start.taskId}`,
+              command,
+              ...(taskManifest ? { manifest: taskManifest } : {}),
+            },
+          );
+          const studyProgress = composed.studyProgress
+            ? [
+                ...nextLearning!.studyProgress.filter(
+                  (entry) =>
+                    entry.characterId !== composed.studyProgress!.characterId ||
+                    entry.workId !== composed.studyProgress!.workId ||
+                    entry.sectionId !== composed.studyProgress!.sectionId,
+                ),
+                composed.studyProgress,
+              ]
+            : nextLearning!.studyProgress;
+          nextLearning = readCompanyLearningState({
+            ...nextLearning!,
+            tasks: composed.tasks,
+            studyAccess: composed.studyAccess,
+            studyProgress,
+          });
+          timed = {
+            lifecycle: composed.state.lifecycle,
+            finance: composed.state.finance,
+            physical: composed.state.physical!,
+          };
+        }
+        if (command.type === 'TransferItem') {
+          if (tasks.length === 0)
+            requireEconomy(
+              learningInput.manifest === undefined && learningInput.intervals.length === 0,
+              'INVALID_SOURCE',
+            );
+          if (itemDefinition(physicalItem(timed.physical, command.payload.itemId)).kind === 'book')
+            learningBeforeTransfer = timed;
+        }
+      }
       lifecycleBeforeCommand = timed.lifecycle;
       draft = applyCommandAtTarget(timed, command, targetContext);
       const lifecycleAtTarget: LifecycleState = {
@@ -414,17 +568,66 @@ export function prepareCompanyEconomy(
       publicRevision: next.lifecycle.knowledge.revision,
     });
     validatePhysicalState({ lifecycle: next.lifecycle, physical: next.physical! });
-    return { kind: 'PREPARED', state, next, receipt, replayed: false };
+    if (learningBeforeTransfer && nextLearning)
+      nextLearning = recordBookTransfer(nextLearning, learningBeforeTransfer, next, command);
+    return {
+      economy: { kind: 'PREPARED', state, next, receipt, replayed: false },
+      learning: nextLearning,
+    };
   } catch (error) {
     if (
       error instanceof EconomyViolation ||
       error instanceof LifecycleViolation ||
       error instanceof PhysicalViolation
     )
-      return { kind: 'REJECTED', state, error: error.code };
-    if (error instanceof RangeError) return { kind: 'REJECTED', state, error: 'INVALID_STATE' };
+      return {
+        economy: { kind: 'REJECTED', state, error: error.code },
+        learning: learningInput?.state ?? null,
+      };
+    if (error instanceof RangeError)
+      return {
+        economy: { kind: 'REJECTED', state, error: 'INVALID_STATE' },
+        learning: learningInput?.state ?? null,
+      };
     throw error;
   }
+}
+
+export function prepareCompanyEconomy(
+  state: CompanyEconomyState,
+  value: unknown,
+  context: PracticeEconomyContext,
+  financialSocial?: FinancialSocialContext,
+): EconomyResult {
+  return prepareEconomyCandidate(state, value, context, financialSocial).economy;
+}
+
+/** One atomic candidate for a real book transfer and its trusted C05 learning prefix. */
+export function prepareCompanyEconomyWithLearning(
+  stateValue: CompanyEconomyWithLearningState,
+  value: unknown,
+  context: PracticeEconomyContext & LearningSourceContext,
+  interruption: {
+    readonly intervals: readonly LearningTimeInterval[];
+    readonly manifest?: TrustedLearningCauseManifest;
+    readonly effectId: string;
+  },
+): CompanyEconomyWithLearningResult {
+  const learning = readCompanyLearningState(stateValue.learning);
+  const prepared = prepareEconomyCandidate(stateValue.economy, value, context, undefined, {
+    state: learning,
+    intervals: interruption.intervals,
+    ...(interruption.manifest ? { manifest: interruption.manifest } : {}),
+    effectId: interruption.effectId,
+    learningFacts: context.learningFacts,
+  });
+  if (prepared.economy.kind === 'REJECTED') return { ...prepared.economy, state: stateValue };
+  const nextLearning = prepared.economy.replayed ? learning : (prepared.learning ?? learning);
+  return {
+    ...prepared.economy,
+    state: stateValue,
+    next: { economy: prepared.economy.next, learning: nextLearning },
+  };
 }
 
 /** Internal indivisible candidate; the original receipt keeps its historical requirements. */

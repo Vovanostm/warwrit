@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   createLearningTaskState,
+  createCompanyLearningState,
   createStudyAccessState,
   initialSkillProgress,
   prepareLearningComposition,
+  prepareCompanyEconomyWithLearning,
 } from '@warwrit/game-core';
 import type {
   CommandOf,
@@ -13,7 +15,7 @@ import type {
   LearningTimeInterval,
 } from '@warwrit/game-core';
 import { access, cash, command, context, economy, scope, tick } from './company-economy-fixture.js';
-import { addItem, item, itemAccess } from './company-physical-fixture.js';
+import { addContainer, addItem, container, item, itemAccess } from './company-physical-fixture.js';
 
 type Start = ReturnType<typeof command> & CommandOf<'StartLearning'>;
 type Advance = ReturnType<typeof command> & CommandOf<'AdvanceCampaign'>;
@@ -315,6 +317,116 @@ function intervalEvidenceIds(interval: LearningTimeInterval): readonly string[] 
 }
 
 describe('C05 time and atomic learning composition', () => {
+  it('settles an accrued book prefix when transfer arrives after admitted access ends', () => {
+    const fixture = admitted(false);
+    const state = addContainer(
+      fixture.state,
+      container('late-reader-pack', { kind: 'CHARACTER', id: 'leader' }, 30000, {
+        kind: 'CHARACTER',
+        id: 'leader',
+      }),
+    );
+    const commandTick = 5010;
+    const move = command(
+      state,
+      'TransferItem',
+      {
+        itemId: 'book-1',
+        quantity: 1,
+        fromContainerId: 'fixture-supply',
+        toContainerId: 'late-reader-pack',
+        accessEvidenceId: 'late-transfer-access',
+      },
+      'transfer-after-study-window',
+      'PLAYER',
+      tick(commandTick),
+    );
+    const admittedThrough = Number(fixture.study.intervals[0]!.toTick);
+    const timeline = [
+      { ...segment(fixture, 10, admittedThrough, 'ELIGIBLE'), commandId: move.commandId },
+      ...(admittedThrough < commandTick
+        ? [
+            {
+              ...segment(fixture, admittedThrough, commandTick, 'INELIGIBLE'),
+              commandId: move.commandId,
+            },
+          ]
+        : []),
+    ];
+    const manifest = {
+      companyId: state.lifecycle.companyId,
+      worldId: state.lifecycle.worldId,
+      commandId: move.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.task.start.studyIntervalId!,
+      targetTick: tick(commandTick),
+      evidenceIds: [...new Set(timeline.flatMap(intervalEvidenceIds))],
+    };
+    const result = prepareCompanyEconomyWithLearning(
+      {
+        economy: state,
+        learning: {
+          ...createCompanyLearningState(),
+          tasks: fixture.tasks,
+          studyAccess: fixture.study,
+        },
+      },
+      move,
+      {
+        ...context(
+          state,
+          move,
+          [],
+          [],
+          [
+            {
+              ...itemAccess(
+                state,
+                'late-transfer-access',
+                'TRANSFER',
+                ['fixture-supply', 'late-reader-pack'],
+                ['book-1'],
+              ),
+              atTick: tick(commandTick),
+            },
+          ],
+        ),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      {
+        intervals: timeline,
+        effectId: 'effect-transfer-after-study-window',
+        manifest,
+      },
+    );
+
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.next.learning.tasks.tasks[0]).toMatchObject({
+      completedTicks: fixture.task.start.quote.maxTicks,
+      terminal: {
+        kind: 'GOAL_REACHED',
+        commandId: move.commandId,
+        campaignTick: tick(commandTick),
+      },
+    });
+    expect(result.next.learning.studyProgress[0]?.learnedTicks).toBe('1000');
+    expect(result.next.economy.finance.learningEffects?.at(-1)).toMatchObject({
+      taskId: fixture.task.start.taskId,
+      commandId: move.commandId,
+      acceptedTicks: fixture.task.start.quote.maxTicks,
+    });
+    expect(result.next.learning.ownerTransitions[0]).toMatchObject({
+      commandId: move.commandId,
+      itemId: 'book-1',
+      taskId: fixture.task.start.taskId,
+      learnerId: 'leader',
+    });
+    expect(
+      result.next.economy.physical?.items.find((entry) => entry.itemId === 'book-1'),
+    ).toMatchObject({ containerId: 'late-reader-pack' });
+  });
+
   it('replays the full admitted start and a stop without changing owners', () => {
     const fixture = admitted(true);
     const startRetry = prepareLearningComposition(
@@ -399,6 +511,393 @@ describe('C05 time and atomic learning composition', () => {
     expect(second.tasks.tasks[0]?.processedThroughTick).toBe('14');
     expect(whole.task.completedTicks).toBe('0');
     expect(whole.state).not.toBe(one.state);
+  });
+
+  it('retains an earned book prefix and closes its copy interval at a real nonsplit transfer', () => {
+    const fixture = admitted(false);
+    const sameActionState = addContainer(
+      fixture.state,
+      container('new-reader-pack', { kind: 'CHARACTER', id: 'worker-0' }, 30000, {
+        kind: 'CHARACTER',
+        id: 'worker-0',
+      }),
+    );
+    const sameActionMove = command(
+      sameActionState,
+      'TransferItem',
+      {
+        itemId: 'book-1',
+        quantity: 1,
+        fromContainerId: 'fixture-supply',
+        toContainerId: 'new-reader-pack',
+        accessEvidenceId: 'transfer-same-action',
+      },
+      'transfer-same-action',
+      'PLAYER',
+      tick(14),
+    );
+    const sameActionManifest = {
+      companyId: sameActionState.lifecycle.companyId,
+      worldId: sameActionState.lifecycle.worldId,
+      commandId: sameActionMove.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.task.start.studyIntervalId!,
+      targetTick: '14',
+      evidenceIds: [`${fixture.task.start.taskId}-10-14`, fixture.task.start.studyIntervalId!],
+    };
+    const sameActionLearningContext: LearningQuoteContext = {
+      ...context(
+        sameActionState,
+        sameActionMove,
+        [],
+        [],
+        [
+          {
+            ...itemAccess(
+              sameActionState,
+              'transfer-same-action',
+              'TRANSFER',
+              ['fixture-supply', 'new-reader-pack'],
+              ['book-1'],
+            ),
+            atTick: tick(14),
+          },
+        ],
+      ),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const sameActionIntervals = [
+      {
+        ...segment(fixture, 10, 14, 'ELIGIBLE'),
+        commandId: sameActionMove.commandId,
+      },
+    ];
+    const learningBeforeTransfer = {
+      ...createCompanyLearningState(),
+      tasks: fixture.tasks,
+      studyAccess: fixture.study,
+    };
+    const sameAction = prepareCompanyEconomyWithLearning(
+      { economy: sameActionState, learning: learningBeforeTransfer },
+      sameActionMove,
+      sameActionLearningContext,
+      {
+        intervals: sameActionIntervals,
+        effectId: 'effect-transfer-same-action',
+        manifest: sameActionManifest,
+      },
+    );
+    expect(sameAction.kind).toBe('PREPARED');
+    if (sameAction.kind !== 'PREPARED') return;
+    expect(sameAction.next.learning.tasks.tasks[0]?.completedTicks).toBe('4');
+    expect(sameAction.next.learning.studyProgress[0]?.learnedTicks).toBe('4');
+    expect(sameAction.next.learning.tasks.tasks[0]?.terminal).toMatchObject({
+      kind: 'INTERRUPTED',
+      commandId: sameActionMove.commandId,
+      processedThroughTick: '14',
+    });
+    expect(sameAction.next.economy.finance.learningEffects?.at(-1)?.commandId).toBe(
+      sameActionMove.commandId,
+    );
+    expect(
+      sameAction.next.economy.physical?.items.find((entry) => entry.itemId === 'book-1'),
+    ).toMatchObject({ containerId: 'new-reader-pack' });
+    expect(sameAction.next.learning.studyAccess.intervals[0]).toMatchObject({
+      fromTick: '10',
+      effectiveToTick: '14',
+    });
+    expect(BigInt(sameAction.next.economy.lifecycle.revision)).toBe(
+      BigInt(sameActionState.lifecycle.revision) + 1n,
+    );
+    const unrelatedMove = command(
+      sameActionState,
+      'TransferItem',
+      {
+        itemId: 'book-2',
+        quantity: 1,
+        fromContainerId: 'fixture-supply',
+        toContainerId: 'new-reader-pack',
+        accessEvidenceId: 'transfer-unused-book',
+      },
+      'transfer-unused-book',
+      'PLAYER',
+      tick(14),
+    );
+    const unrelatedTransfer = prepareCompanyEconomyWithLearning(
+      { economy: sameActionState, learning: learningBeforeTransfer },
+      unrelatedMove,
+      {
+        ...context(
+          sameActionState,
+          unrelatedMove,
+          [],
+          [],
+          [
+            {
+              ...itemAccess(
+                sameActionState,
+                'transfer-unused-book',
+                'TRANSFER',
+                ['fixture-supply', 'new-reader-pack'],
+                ['book-2'],
+              ),
+              atTick: tick(14),
+            },
+          ],
+        ),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      { intervals: [], effectId: 'unused-book-transfer-effect' },
+    );
+    expect(unrelatedTransfer.kind).toBe('PREPARED');
+    if (unrelatedTransfer.kind === 'PREPARED') {
+      expect(unrelatedTransfer.next.learning.tasks.tasks[0]?.terminal).toBeUndefined();
+      expect(unrelatedTransfer.next.learning.ownerTransitions[0]).toMatchObject({
+        taskId: null,
+        learnerId: null,
+        itemId: 'book-2',
+      });
+    }
+    const replayedTransfer = prepareCompanyEconomyWithLearning(
+      reload(sameAction.next),
+      sameActionMove,
+      sameActionLearningContext,
+      {
+        intervals: sameActionIntervals,
+        effectId: 'effect-transfer-same-action',
+        manifest: sameActionManifest,
+      },
+    );
+    expect(replayedTransfer).toMatchObject({ kind: 'PREPARED', replayed: true });
+    if (replayedTransfer.kind === 'PREPARED')
+      expect(replayedTransfer.next).toEqual(reload(sameAction.next));
+
+    const historicalStartRetry = prepareLearningComposition(
+      reload(sameAction.next.economy),
+      reload(sameAction.next.learning.tasks),
+      reload(sameAction.next.learning.studyAccess),
+      sameAction.next.learning.studyProgress[0] ?? null,
+      fixture.startContext,
+      [],
+      {
+        kind: 'START',
+        taskId: fixture.task.start.taskId,
+        effectId: `start-effect-false`,
+        admission: {
+          taskId: fixture.task.start.taskId,
+          command: fixture.task.start.command,
+          study: {
+            intervalId: fixture.task.start.studyIntervalId!,
+            itemId: 'book-1',
+            accessEvidenceId: 'book-access-false',
+          },
+        },
+      },
+    );
+    expect(historicalStartRetry.replayed).toBe(true);
+    expect(historicalStartRetry.state).toEqual(sameAction.next.economy);
+    expect(historicalStartRetry.tasks).toEqual(sameAction.next.learning.tasks);
+
+    const reopen = command(
+      sameAction.next.economy,
+      'StartLearning',
+      {
+        ...fixture.task.start.command.payload,
+        resourceIds: ['book-2'],
+      },
+      'start-book-two-after-transfer',
+      'PLAYER',
+      tick(14),
+    ) as Start;
+    const reopenSource = {
+      ...fixture.startContext.learningFacts[0]!,
+      ...scope(sameAction.next.economy, 'self-study-book-two', tick(14)),
+      sourceVersion: 'book-two-v2',
+      atTick: tick(14),
+      expiresAt: tick(500),
+      resourceIds: ['book-2'],
+    };
+    const reopenContext: LearningQuoteContext = {
+      ...context(
+        sameAction.next.economy,
+        reopen,
+        [access(sameAction.next.economy, tick(14))],
+        [],
+        [
+          {
+            ...itemAccess(
+              sameAction.next.economy,
+              'study-book-two',
+              'STUDY',
+              ['fixture-supply'],
+              ['book-2'],
+            ),
+            atTick: tick(14),
+          },
+        ],
+      ),
+      learningFacts: [reopenSource],
+    };
+    const reopened = prepareLearningComposition(
+      sameAction.next.economy,
+      sameAction.next.learning.tasks,
+      sameAction.next.learning.studyAccess,
+      null,
+      reopenContext,
+      [],
+      {
+        kind: 'START',
+        taskId: 'task-book-two-after-transfer',
+        effectId: 'effect-book-two-after-transfer',
+        admission: {
+          taskId: 'task-book-two-after-transfer',
+          command: reopen,
+          study: {
+            intervalId: 'access-book-two-after-transfer',
+            itemId: 'book-2',
+            accessEvidenceId: 'study-book-two',
+          },
+        },
+      },
+    );
+    expect(reopened.tasks.tasks.map((entry) => entry.start.taskId)).toEqual([
+      fixture.task.start.taskId,
+      'task-book-two-after-transfer',
+    ]);
+    expect(
+      reopened.studyAccess.intervals.find(
+        (entry) => entry.intervalId === 'access-book-two-after-transfer',
+      ),
+    ).toMatchObject({ itemId: 'book-2', fromTick: '14' });
+
+    const blockedState = addContainer(
+      sameActionState,
+      container('full-pack', { kind: 'COMPANY', id: 'company' }, 0),
+    );
+    const blocked = command(
+      blockedState,
+      'TransferItem',
+      {
+        itemId: 'book-1',
+        quantity: 1,
+        fromContainerId: 'fixture-supply',
+        toContainerId: 'full-pack',
+        accessEvidenceId: 'transfer-to-full-pack',
+      },
+      'transfer-rejected-at-14',
+      'PLAYER',
+      tick(14),
+    );
+    const blockedContext: LearningQuoteContext = {
+      ...context(
+        blockedState,
+        blocked,
+        [],
+        [],
+        [
+          {
+            ...itemAccess(
+              blockedState,
+              'transfer-to-full-pack',
+              'TRANSFER',
+              ['fixture-supply', 'full-pack'],
+              ['book-1'],
+            ),
+            atTick: tick(14),
+          },
+        ],
+      ),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const rejected = prepareCompanyEconomyWithLearning(
+      { economy: blockedState, learning: learningBeforeTransfer },
+      blocked,
+      blockedContext,
+      {
+        intervals: [{ ...segment(fixture, 10, 14, 'ELIGIBLE'), commandId: blocked.commandId }],
+        effectId: 'effect-transfer-rejected',
+        manifest: {
+          ...sameActionManifest,
+          commandId: blocked.commandId,
+          evidenceIds: [`${fixture.task.start.taskId}-10-14`, fixture.task.start.studyIntervalId!],
+        },
+      },
+    );
+    expect(rejected).toMatchObject({ kind: 'REJECTED', error: 'CAPACITY' });
+    expect(rejected.state).toEqual({ economy: blockedState, learning: learningBeforeTransfer });
+  });
+
+  it('retains the admitted interval when a transfer interrupts at the start tick', () => {
+    const fixture = admitted(false);
+    const state = addContainer(
+      fixture.state,
+      container('same-tick-reader-pack', { kind: 'CHARACTER', id: 'worker-0' }, 30000, {
+        kind: 'CHARACTER',
+        id: 'worker-0',
+      }),
+    );
+    const move = command(state, 'TransferItem', {
+      itemId: 'book-1',
+      quantity: 1,
+      fromContainerId: 'fixture-supply',
+      toContainerId: 'same-tick-reader-pack',
+      accessEvidenceId: 'same-tick-transfer-access',
+    });
+    const result = prepareCompanyEconomyWithLearning(
+      {
+        economy: state,
+        learning: {
+          ...createCompanyLearningState(),
+          tasks: fixture.tasks,
+          studyAccess: fixture.study,
+        },
+      },
+      move,
+      {
+        ...context(
+          state,
+          move,
+          [],
+          [],
+          [
+            itemAccess(
+              state,
+              'same-tick-transfer-access',
+              'TRANSFER',
+              ['fixture-supply', 'same-tick-reader-pack'],
+              ['book-1'],
+            ),
+          ],
+        ),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      {
+        intervals: [],
+        effectId: 'same-tick-transfer-learning',
+        manifest: {
+          companyId: state.lifecycle.companyId,
+          worldId: state.lifecycle.worldId,
+          commandId: move.commandId,
+          taskId: fixture.task.start.taskId,
+          ownerIntervalId: fixture.task.start.studyIntervalId!,
+          targetTick: '10',
+          evidenceIds: [],
+        },
+      },
+    );
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.next.learning.studyAccess.intervals[0]).toMatchObject({
+      fromTick: '10',
+      toTick: (
+        BigInt(fixture.task.start.command.campaignTick) + BigInt(fixture.task.start.quote.maxTicks)
+      ).toString(),
+      effectiveToTick: '10',
+    });
+    expect(result.next.learning.tasks.tasks[0]).toMatchObject({
+      completedTicks: '0',
+      terminal: { kind: 'INTERRUPTED', commandId: move.commandId },
+    });
   });
 
   it('replays historical advances after later progress, reload, and task stop', () => {
