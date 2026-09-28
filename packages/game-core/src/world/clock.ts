@@ -2,6 +2,7 @@ import { exactFraction, exactFractionInput, readExactFraction } from '../company
 import type { ExactFraction } from '../company/exact-fraction.js';
 import { plainObject, snapshotJson } from '../company/input.js';
 import type { JsonValue } from '../company/input.js';
+import { campaignTick, elapsedTicks } from '../company/values.js';
 
 export interface CampaignRateSegment {
   readonly effectiveAtMs: string;
@@ -16,14 +17,15 @@ export interface CampaignClock {
 }
 
 export interface LightClock {
+  readonly schemaVersion: 1;
   readonly epochMs: string;
-  readonly dayMs: string;
-  readonly nightMs: string;
 }
 
 export type LightPhase = 'DAY' | 'NIGHT';
 
 const INITIAL_TICKS_PER_MS = exactFraction(1n, 21_600n);
+const LIGHT_DAY_MS = 600_000n;
+const LIGHT_NIGHT_MS = 300_000n;
 const MAX_RATE_SEGMENTS = 1000;
 const MAX_INTEGER_DIGITS = 40;
 
@@ -112,24 +114,34 @@ export function readCampaignClock(value: unknown): CampaignClock {
   });
 }
 
-function add(left: ExactFraction, right: ExactFraction): ExactFraction {
-  return exactFraction(
-    BigInt(left.numerator) * BigInt(right.denominator) +
-      BigInt(right.numerator) * BigInt(left.denominator),
-    BigInt(left.denominator) * BigInt(right.denominator),
-  );
+interface ClockFraction {
+  readonly numerator: bigint;
+  readonly denominator: bigint;
 }
 
-function multiply(value: ExactFraction, multiplier: bigint): ExactFraction {
-  return exactFraction(BigInt(value.numerator) * multiplier, BigInt(value.denominator));
+function greatestCommonDivisor(left: bigint, right: bigint): bigint {
+  let a = left;
+  let b = right;
+  while (b !== 0n) [a, b] = [b, a % b];
+  return a;
 }
 
-function campaignTickFractionAt(clockInput: CampaignClock, atMs: string): ExactFraction {
+function addClockFractions(left: ClockFraction, right: ClockFraction): ClockFraction {
+  const common = greatestCommonDivisor(left.denominator, right.denominator);
+  const leftScale = right.denominator / common;
+  const rightScale = left.denominator / common;
+  const numerator = left.numerator * leftScale + right.numerator * rightScale;
+  const denominator = left.denominator * leftScale;
+  const divisor = greatestCommonDivisor(numerator, denominator);
+  return { numerator: numerator / divisor, denominator: denominator / divisor };
+}
+
+function campaignTickFractionAt(clockInput: CampaignClock, atMs: string): ClockFraction {
   const clock = readCampaignClock(clockInput);
   if (!unsignedInteger(atMs) || BigInt(atMs) < BigInt(clock.epochMs))
     throw new RangeError('Campaign time precedes epoch');
   const endpoint = BigInt(atMs);
-  let accrued = exactFraction(0n, 1n);
+  let accrued: ClockFraction = { numerator: 0n, denominator: 1n };
   for (let index = 0; index < clock.rateSegments.length; index += 1) {
     const segment = clock.rateSegments[index]!;
     const segmentStart = BigInt(segment.effectiveAtMs);
@@ -137,22 +149,29 @@ function campaignTickFractionAt(clockInput: CampaignClock, atMs: string): ExactF
       endpoint < BigInt(clock.rateSegments[index + 1]?.effectiveAtMs ?? atMs)
         ? endpoint
         : BigInt(clock.rateSegments[index + 1]?.effectiveAtMs ?? atMs);
-    if (endMs > segmentStart)
-      accrued = add(accrued, multiply(segment.ticksPerMs, endMs - segmentStart));
+    if (endMs > segmentStart) {
+      accrued = addClockFractions(accrued, {
+        numerator: BigInt(segment.ticksPerMs.numerator) * (endMs - segmentStart),
+        denominator: BigInt(segment.ticksPerMs.denominator),
+      });
+    }
     if (endMs === endpoint) break;
   }
-  return add(exactFraction(BigInt(clock.startingTick), 1n), accrued);
+  return addClockFractions(accrued, { numerator: BigInt(clock.startingTick), denominator: 1n });
 }
 
 export function campaignTickAt(clock: CampaignClock, atMs: string): string {
   const tick = campaignTickFractionAt(clock, atMs);
-  return (BigInt(tick.numerator) / BigInt(tick.denominator)).toString();
+  return campaignTick((tick.numerator / tick.denominator).toString());
 }
 
 export function elapsedCampaignTicks(clock: CampaignClock, fromMs: string, toMs: string): string {
   if (!unsignedInteger(fromMs) || !unsignedInteger(toMs) || BigInt(toMs) < BigInt(fromMs))
     throw new RangeError('Invalid campaign interval');
-  return (BigInt(campaignTickAt(clock, toMs)) - BigInt(campaignTickAt(clock, fromMs))).toString();
+  return elapsedTicks(
+    campaignTick(campaignTickAt(clock, fromMs)),
+    campaignTick(campaignTickAt(clock, toMs)),
+  );
 }
 
 /** Append a future rate after the caller's explicit observed-through boundary. */
@@ -182,35 +201,29 @@ export function appendCampaignRate(
   });
 }
 
-export function createLightClock(
-  epochMs: string,
-  dayMs = '600000',
-  nightMs = '300000',
-): LightClock {
+export function createLightClock(epochMs: string): LightClock {
+  if (!unsignedInteger(epochMs)) throw new RangeError('Invalid light clock');
+  return Object.freeze({ schemaVersion: 1, epochMs });
+}
+
+/** Validate and own a JSON-restored light clock; accepted cycle lengths stay fixed. */
+export function readLightClock(value: unknown): LightClock {
+  const snapshot = snapshotJson(value);
   if (
-    !unsignedInteger(epochMs) ||
-    !unsignedInteger(dayMs) ||
-    dayMs === '0' ||
-    !unsignedInteger(nightMs) ||
-    nightMs === '0'
+    snapshot === undefined ||
+    !plainObject(snapshot) ||
+    snapshot['schemaVersion'] !== 1 ||
+    !unsignedInteger(snapshot['epochMs']) ||
+    Object.keys(snapshot).some((key) => !['schemaVersion', 'epochMs'].includes(key))
   )
     throw new RangeError('Invalid light clock');
-  return Object.freeze({ epochMs, dayMs, nightMs });
+  return createLightClock(snapshot['epochMs']);
 }
 
 export function lightPhaseAt(clock: LightClock, atMs: string): LightPhase {
-  if (
-    !clock ||
-    !unsignedInteger(clock.epochMs) ||
-    !unsignedInteger(clock.dayMs) ||
-    clock.dayMs === '0' ||
-    !unsignedInteger(clock.nightMs) ||
-    clock.nightMs === '0' ||
-    !unsignedInteger(atMs) ||
-    BigInt(atMs) < BigInt(clock.epochMs)
-  )
+  const validClock = readLightClock(clock);
+  if (!unsignedInteger(atMs) || BigInt(atMs) < BigInt(validClock.epochMs))
     throw new RangeError('Invalid light clock time');
-  const phaseOffset =
-    (BigInt(atMs) - BigInt(clock.epochMs)) % (BigInt(clock.dayMs) + BigInt(clock.nightMs));
-  return phaseOffset < BigInt(clock.dayMs) ? 'DAY' : 'NIGHT';
+  const phaseOffset = (BigInt(atMs) - BigInt(validClock.epochMs)) % (LIGHT_DAY_MS + LIGHT_NIGHT_MS);
+  return phaseOffset < LIGHT_DAY_MS ? 'DAY' : 'NIGHT';
 }

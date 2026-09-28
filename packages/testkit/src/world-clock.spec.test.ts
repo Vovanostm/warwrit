@@ -7,6 +7,7 @@ import {
   elapsedCampaignTicks,
   lightPhaseAt,
   readCampaignClock,
+  readLightClock,
 } from '@warwrit/game-core';
 
 const ONE_TICK_PER_MS = { numerator: '1', denominator: '1' } as const;
@@ -39,6 +40,7 @@ describe('world clocks', () => {
 
   it('keeps the accepted light cycle independent of campaign tick rates', () => {
     const light = createLightClock('0');
+    const restoredLight = readLightClock(JSON.parse(JSON.stringify(light)));
     const campaign = appendCampaignRate(
       createCampaignClock('0'),
       '299999',
@@ -53,6 +55,10 @@ describe('world clocks', () => {
     expect(lightPhaseAt(light, '600000')).toBe('NIGHT');
     expect(lightPhaseAt(light, '899999')).toBe('NIGHT');
     expect(lightPhaseAt(light, '900000')).toBe('DAY');
+    expect(lightPhaseAt(restoredLight, '900000')).toBe('DAY');
+    expect(() =>
+      readLightClock({ schemaVersion: 1, epochMs: '0', dayMs: '1', nightMs: '1' }),
+    ).toThrow();
   });
 
   it('rejects malformed and retroactive rate changes without mutating the clock', () => {
@@ -63,5 +69,18 @@ describe('world clocks', () => {
       appendCampaignRate(clock, '0', '1', { numerator: '1', denominator: '0' }),
     ).toThrow();
     expect(campaignTickAt(clock, '21600000')).toBe('1000');
+
+    const wideFraction = {
+      numerator: `1${'0'.repeat(123)}`,
+      denominator: (10n ** 127n + 3n).toString(),
+    };
+    const wideClock = appendCampaignRate(createCampaignClock('0'), '0', '1', wideFraction);
+    expect(campaignTickAt(wideClock, '2')).toBe('0');
+
+    const overflowingClock = appendCampaignRate(createCampaignClock('0'), '0', '1', {
+      numerator: `1${'0'.repeat(127)}`,
+      denominator: '1',
+    });
+    expect(() => campaignTickAt(overflowingClock, `1${'0'.repeat(39)}`)).toThrow();
   });
 });
