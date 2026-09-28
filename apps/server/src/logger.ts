@@ -10,6 +10,7 @@ export function createLogger(destination?: DestinationStream): Logger {
       paths: [
         'req.headers.authorization',
         'req.headers.cookie',
+        'req.url',
         'authorization',
         'cookie',
         'password',

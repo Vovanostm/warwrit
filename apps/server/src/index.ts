@@ -8,6 +8,9 @@ const config = loadServerConfig();
 const database = config.databaseUrl === undefined ? undefined : createDatabase(config.databaseUrl);
 const app = buildApp({
   ...(database === undefined ? {} : { readinessProbe: createDatabaseReadinessProbe(database) }),
+  ...(config.identity === undefined || database === undefined
+    ? {}
+    : { identity: { config: config.identity, database } }),
   ...(config.combatLabOrigin === undefined
     ? {}
     : {

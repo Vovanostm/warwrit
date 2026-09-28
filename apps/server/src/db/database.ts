@@ -1,4 +1,4 @@
-import { Kysely, PostgresDialect, sql } from 'kysely';
+import { Kysely, PostgresDialect, sql, type Generated } from 'kysely';
 import { Pool } from 'pg';
 
 interface SchemaMigrationsTable {
@@ -11,9 +11,36 @@ interface EngineeringSchemaProbeTable {
   readonly installed_at: Date;
 }
 
+interface IdentityAccountTable {
+  readonly id: string;
+  readonly issuer: string;
+  readonly subject: string;
+  readonly created_at: Generated<Date>;
+}
+
+interface IdentitySessionTable {
+  readonly token_digest: Buffer;
+  readonly account_id: string;
+  readonly created_at: Generated<Date>;
+  readonly expires_at: Date;
+  readonly revoked_at: Generated<Date | null>;
+}
+
+interface IdentityOidcFlowTable {
+  readonly state_digest: Buffer;
+  readonly browser_digest: Buffer;
+  readonly code_verifier: string;
+  readonly nonce: string;
+  readonly created_at: Generated<Date>;
+  readonly expires_at: Date;
+}
+
 export interface DatabaseSchema {
   readonly engineering_schema_probe: EngineeringSchemaProbeTable;
   readonly schema_migrations: SchemaMigrationsTable;
+  readonly identity_accounts: IdentityAccountTable;
+  readonly identity_sessions: IdentitySessionTable;
+  readonly identity_oidc_flows: IdentityOidcFlowTable;
 }
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {

@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: docker.io/library/postgres@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+    environment:
+      POSTGRES_DB: warwrit
+      POSTGRES_USER: warwrit
+      POSTGRES_PASSWORD: warwrit-local-only
+    ports:
+      - '127.0.0.1:55433:5432'
+    volumes:
+      - warwrit-alpha-identity-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U warwrit -d warwrit']
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  dex:
+    image: ghcr.io/dexidp/dex@sha256:bc7cfce7c17f52864e2bb2a4dc1d2f86a41e3019f6d42e81d92a301fad0c8a1d
+    command: ['dex', 'serve', '/etc/dex/config.yaml']
+    ports:
+      - '127.0.0.1:5557:5557'
+    volumes:
+      - ./fixtures/identity/dex.yaml:/etc/dex/config.yaml:ro
+      - warwrit-alpha-identity-dex:/var/dex
+
+volumes:
+  warwrit-alpha-identity-postgres:
+    name: warwrit-alpha-identity-postgres
+  warwrit-alpha-identity-dex:
+    name: warwrit-alpha-identity-dex

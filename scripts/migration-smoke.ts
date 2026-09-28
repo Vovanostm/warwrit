@@ -11,10 +11,10 @@ await client.connect();
 try {
   const initial = await runMigrations(client, 'status');
   assert.deepEqual(initial.applied, []);
-  assert.deepEqual(initial.pending, ['0001_foundation']);
+  assert.deepEqual(initial.pending, ['0001_foundation', '0002_identity']);
 
   const firstUp = await runMigrations(client, 'up');
-  assert.deepEqual(firstUp.applied, ['0001_foundation']);
+  assert.deepEqual(firstUp.applied, ['0001_foundation', '0002_identity']);
 
   const secondUp = await runMigrations(client, 'up');
   assert.deepEqual(secondUp.applied, []);
@@ -24,11 +24,26 @@ try {
   );
   assert.equal(afterUp.rows[0]?.table_name, 'engineering_schema_probe');
 
+  const identityTables = await client.query<{ table_name: string }>(
+    "select table_name from information_schema.tables where table_schema = 'public' and table_name in ('identity_accounts', 'identity_sessions', 'identity_oidc_flows') order by table_name",
+  );
+  assert.deepEqual(
+    identityTables.rows.map(({ table_name }) => table_name),
+    ['identity_accounts', 'identity_oidc_flows', 'identity_sessions'],
+  );
+
   const firstDown = await runMigrations(client, 'down');
-  assert.deepEqual(firstDown.applied, ['0001_foundation']);
+  assert.deepEqual(firstDown.applied, ['0002_identity']);
+  const afterIdentityDown = await client.query<{ table_name: string | null }>(
+    "select to_regclass('public.identity_accounts')::text as table_name",
+  );
+  assert.equal(afterIdentityDown.rows[0]?.table_name, null);
 
   const secondDown = await runMigrations(client, 'down');
-  assert.deepEqual(secondDown.applied, []);
+  assert.deepEqual(secondDown.applied, ['0001_foundation']);
+
+  const thirdDown = await runMigrations(client, 'down');
+  assert.deepEqual(thirdDown.applied, []);
 
   const afterDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.engineering_schema_probe')::text as table_name",
