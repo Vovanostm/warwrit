@@ -226,7 +226,10 @@ function dischargePrefix(
   return obligations.map((entry) => changed.get(entry.taskId) ?? entry);
 }
 
-/** A private, detached C05 finance candidate. It neither advances learning nor proves elapsed time. */
+/**
+ * Prepares C05 finance against the immutable canonical root with structural sharing.
+ * It neither advances learning nor proves elapsed time.
+ */
 export function prepareLearningBacking(
   stateValue: CompanyEconomyState,
   tasksValue: LearningTaskState,
