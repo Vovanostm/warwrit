@@ -3,3 +3,8 @@ dist/
 coverage/
 pnpm-lock.yaml
 artifacts/
+
+# Pinned upstream Colyseus skill; preserve source bytes.
+.agents/skills/colyseus/SKILL.md
+.agents/skills/colyseus/references/
+.agents/skills/colyseus/sources.json
