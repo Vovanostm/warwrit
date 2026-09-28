@@ -14,6 +14,7 @@ const allowedWorkspaceDependencies = new Map([
   ['@warwrit/testkit', new Set(['@warwrit/game-core', '@warwrit/protocol'])],
   ['@warwrit/server', new Set(['@warwrit/game-core', '@warwrit/protocol'])],
   ['@warwrit/web', new Set(['@warwrit/protocol'])],
+  ['@warwrit/renderer-spike', new Set()],
 ]);
 
 const failures = [];
