@@ -353,6 +353,7 @@ export function prepareLearningBacking(
     ? affordablePrefix(state, task, obligation, requestedTicks)
     : requestedTicks;
   const acceptedTicks = maxAffordableTicks;
+  const terminal = task.stop !== undefined || acceptedTicks < requestedTicks;
   const accruedQ = calculateLearningCost(task, acceptedTicks.toString()).accumulatedQ;
   if (obligation) {
     obligation = {
@@ -360,7 +361,7 @@ export function prepareLearningBacking(
       fundedTicks: maxAffordableTicks.toString(),
       acceptedTicks: acceptedTicks.toString(),
       accruedQ,
-      terminal: task.stop !== undefined,
+      terminal,
     };
   }
   let finance: CompanyEconomyState['finance'] = {

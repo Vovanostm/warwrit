@@ -1,4 +1,5 @@
-import { requireEconomy } from './economy-state.js';
+import { EconomyViolation, requireEconomy } from './economy-state.js';
+import { unsigned } from './input.js';
 import { prepareLearningBacking } from './learning-backing.js';
 import type { LearningBackingRequest } from './learning-backing.js';
 import { admitLearningTask } from './learning-admission.js';
@@ -219,7 +220,7 @@ function prepareLearningAdvance(
 ): LearningCompositionPreparation {
   const tasks = readLearningTaskState(tasksValue);
   const target = tasks.tasks.find((entry) => entry.start.taskId === requestValue.taskId);
-  requireEconomy(target && !target.stop, 'INVALID_ARGUMENT');
+  requireEconomy(target, 'INVALID_ARGUMENT');
   const { start } = target;
   const characterId = start.command.payload.characterId;
   requireEconomy(
@@ -253,14 +254,28 @@ function prepareLearningAdvance(
         'INVALID_SOURCE',
       );
     }
+    let originalRequest: unknown;
+    try {
+      originalRequest = JSON.parse(previousEffect.requestKey);
+    } catch {
+      throw new EconomyViolation('INVALID_STATE');
+    }
+    requireEconomy(
+      originalRequest !== null &&
+        typeof originalRequest === 'object' &&
+        'acceptedTicks' in originalRequest &&
+        typeof originalRequest.acceptedTicks === 'string' &&
+        unsigned.read(originalRequest.acceptedTicks),
+      'INVALID_STATE',
+    );
     const replay = prepareLearningBacking(stateValue, tasks, context, {
       taskId: target.start.taskId,
       effectId: requestValue.effectId,
       command: requestValue.command,
-      acceptedTicks: previousEffect.acceptedTicks,
+      acceptedTicks: originalRequest.acceptedTicks,
       ...(requestValue.accessEvidenceId ? { accessEvidenceId: requestValue.accessEvidenceId } : {}),
     });
-    requireEconomy(BigInt(target.completedTicks) === BigInt(replay.acceptedTicks), 'INVALID_STATE');
+    requireEconomy(BigInt(replay.acceptedTicks) <= BigInt(target.completedTicks), 'INVALID_STATE');
     return Object.freeze({
       state: stateValue,
       tasks,
@@ -274,6 +289,7 @@ function prepareLearningAdvance(
       replayed: true,
     });
   }
+  requireEconomy(!target.stop, 'INVALID_ARGUMENT');
   const time = prepareLearningTime(target, requestValue.command, context, intervalValues);
   const inputs = start.inputs;
   if (!inputs) throw new RangeError('LEARNING_START_INPUTS_REQUIRED');
@@ -328,23 +344,18 @@ function prepareLearningAdvance(
     }, 0n);
   requireEconomy(priorAccepted === BigInt(target.completedTicks), 'INVALID_STATE');
 
-  let financeState = stateValue;
-  let accepted = BigInt(target.completedTicks);
-  let replayed = false;
-  if (requestedTicks > 0n) {
-    const backing: LearningBackingRequest = {
-      taskId: target.start.taskId,
-      effectId: requestValue.effectId,
-      command: requestValue.command,
-      acceptedTicks: (BigInt(target.completedTicks) + requestedTicks).toString(),
-      ...(requestValue.accessEvidenceId ? { accessEvidenceId: requestValue.accessEvidenceId } : {}),
-    };
-    const prepared = prepareLearningBacking(stateValue, tasks, context, backing);
-    financeState = prepared.state;
-    accepted = BigInt(prepared.acceptedTicks);
-    replayed = prepared.replayed;
-    requireEconomy(accepted >= BigInt(target.completedTicks), 'INVALID_STATE');
-  }
+  const backing: LearningBackingRequest = {
+    taskId: target.start.taskId,
+    effectId: requestValue.effectId,
+    command: requestValue.command,
+    acceptedTicks: (BigInt(target.completedTicks) + requestedTicks).toString(),
+    ...(requestValue.accessEvidenceId ? { accessEvidenceId: requestValue.accessEvidenceId } : {}),
+  };
+  const prepared = prepareLearningBacking(stateValue, tasks, context, backing);
+  const financeState = prepared.state;
+  const accepted = BigInt(prepared.acceptedTicks);
+  const replayed = prepared.replayed;
+  requireEconomy(accepted >= BigInt(target.completedTicks), 'INVALID_STATE');
   const acceptedDelta = accepted - BigInt(target.completedTicks);
   const processedThroughTick = nextProcessedThrough(time.intervals, acceptedDelta, time.fromTick);
   const nextTask = {
