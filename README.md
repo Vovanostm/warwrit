@@ -1,6 +1,14 @@
 # Warwrit
 
-Warwrit is a browser-first persistent tactical game project. The repository has completed **WP-01 — Deterministic Combat Kernel**: a headless M0 combat proof now exists, while rendering, persistence, networking, world simulation, and final balance remain outside this work package.
+Warwrit is a browser-first persistent tactical game project. **M0, S-02, WP-00 and WP-01 are complete; WP-02 and the full M1 alpha are in progress.** The target is a persistent company → travel → contract → physical two-company PvE → proof → consequences → save/re-entry journey on the owner's Mac. Learning activation, combat consequences, durable execution, identity, world, content, production realtime, player UI and final player evidence remain ahead.
+
+## Current development
+
+- [Current delivery plan](docs/engineering/CURRENT_PLAN.md) — live repository-side status, active blockers and ownership.
+- [Development roadmap](docs/engineering/ROADMAP.md) — executable dependency joins and acceptance route for the full M1 alpha.
+- [Documentation map](docs/README.md) — authority, ADRs, engineering guidance and work-package records.
+
+The diagnostic combat lab has merged PB01–PB04 protocol, server and view slices. PB06 browser integration is in progress; PB05/PB07–PB09 are optional diagnostic follow-ups. The lab is disposable and does not establish persistent M1 playability.
 
 ## Bootstrap
 
@@ -38,7 +46,7 @@ Copy `.env.example` to `.env` for local overrides. The default Docker database U
 ```text
 apps/
   server/       Server-authoritative HTTP process and persistence adapters
-  web/          Browser shell; no combat renderer exists yet
+  web/          Browser shell and protocol-only combat lab view; no selected M1 renderer yet
 packages/
   game-core/    Pure deterministic combat/domain kernel; no I/O imports
   protocol/     Versioned transport contracts and shared API types
@@ -59,7 +67,7 @@ The kernel still may not import filesystem, network, clock, process, ambient ran
 
 ## Project authority
 
-The source-of-truth hierarchy is defined in [`docs/authority/PROJECT_AUTHORITY.md`](docs/authority/PROJECT_AUTHORITY.md). Engineering agents must also follow [`AGENTS.md`](AGENTS.md).
+The source-of-truth hierarchy is defined in [`docs/authority/PROJECT_AUTHORITY.md`](docs/authority/PROJECT_AUTHORITY.md). Engineering agents must also follow [`AGENTS.md`](AGENTS.md), the live [delivery plan](docs/engineering/CURRENT_PLAN.md), and the [development roadmap](docs/engineering/ROADMAP.md).
 
 ## Licensing
 
