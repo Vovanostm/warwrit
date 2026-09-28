@@ -35,12 +35,67 @@ interface IdentityOidcFlowTable {
   readonly expires_at: Date;
 }
 
+interface EncounterTable {
+  readonly id: string;
+  readonly world_id: string;
+  readonly schema_version: number;
+  readonly setup: unknown;
+  readonly state: unknown;
+  readonly revision: number;
+  readonly status: 'active' | 'resolved';
+  readonly activation_id: string | null;
+  readonly activation_epoch: number;
+  readonly deadline_at: Date;
+  readonly created_at: Generated<Date>;
+}
+
+interface EncounterParticipantTable {
+  readonly encounter_id: string;
+  readonly account_id: string;
+  readonly side_id: string;
+  readonly unit_ids: unknown;
+  readonly admission_source: 'fixture';
+}
+
+interface EncounterCommandTable {
+  readonly encounter_id: string;
+  readonly revision: number;
+  readonly command_id: string;
+  readonly account_id: string;
+  readonly body_digest: Buffer;
+  readonly command: unknown;
+  readonly accepted_at: Generated<Date>;
+}
+
+interface EncounterEventTable {
+  readonly encounter_id: string;
+  readonly revision: number;
+  readonly ordinal: number;
+  readonly event_id: string;
+  readonly event: unknown;
+}
+
+interface EncounterReceiptTable {
+  readonly encounter_id: string;
+  readonly command_id: string;
+  readonly receipt_id: string;
+  readonly account_id: string;
+  readonly body_digest: Buffer;
+  readonly response: unknown;
+  readonly resulting_revision: number;
+}
+
 export interface DatabaseSchema {
   readonly engineering_schema_probe: EngineeringSchemaProbeTable;
   readonly schema_migrations: SchemaMigrationsTable;
   readonly identity_accounts: IdentityAccountTable;
   readonly identity_sessions: IdentitySessionTable;
   readonly identity_oidc_flows: IdentityOidcFlowTable;
+  readonly encounters: EncounterTable;
+  readonly encounter_participants: EncounterParticipantTable;
+  readonly encounter_commands: EncounterCommandTable;
+  readonly encounter_events: EncounterEventTable;
+  readonly encounter_receipts: EncounterReceiptTable;
 }
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {
@@ -57,6 +112,7 @@ export function createDatabase(connectionString: string): Kysely<DatabaseSchema>
 export function createDatabaseReadinessProbe(
   database: Kysely<DatabaseSchema>,
   identityEnabled = false,
+  encounterFixturesEnabled = false,
 ): () => Promise<void> {
   return async () => {
     if (!identityEnabled) {
@@ -82,6 +138,24 @@ export function createDatabaseReadinessProbe(
         from identity_accounts as accounts
         cross join identity_sessions as sessions
         cross join identity_oidc_flows as flows
+        limit 0
+      `.execute(database);
+    }
+    if (encounterFixturesEnabled) {
+      await sql`
+        select
+          e.id, e.world_id, e.schema_version, e.setup, e.state, e.revision, e.status,
+          e.activation_id, e.activation_epoch, e.deadline_at,
+          p.encounter_id, p.account_id, p.side_id, p.unit_ids, p.admission_source,
+          c.revision, c.command_id, c.account_id, c.body_digest, c.command,
+          v.revision, v.ordinal, v.event_id, v.event,
+          r.command_id, r.receipt_id, r.account_id, r.body_digest, r.response,
+          r.resulting_revision
+        from encounters as e
+        cross join encounter_participants as p
+        cross join encounter_commands as c
+        cross join encounter_events as v
+        cross join encounter_receipts as r
         limit 0
       `.execute(database);
     }

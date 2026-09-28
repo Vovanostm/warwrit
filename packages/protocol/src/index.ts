@@ -20,4 +20,5 @@ export function envelope<Data>(data: Data): ApiEnvelope<Data> {
 }
 
 export type { PlayerCompanyCommandDto, CompanyCommandRejectionDto } from './company.js';
+export * from './encounter.js';
 export * from './combat-lab.js';

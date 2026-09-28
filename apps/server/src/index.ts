@@ -9,7 +9,13 @@ const database = config.databaseUrl === undefined ? undefined : createDatabase(c
 const app = buildApp({
   ...(database === undefined
     ? {}
-    : { readinessProbe: createDatabaseReadinessProbe(database, config.identity !== undefined) }),
+    : {
+        readinessProbe: createDatabaseReadinessProbe(
+          database,
+          config.identity !== undefined,
+          config.fixtureEncountersEnabled === true,
+        ),
+      }),
   ...(config.identity === undefined || database === undefined
     ? {}
     : { identity: { config: config.identity, database } }),
@@ -22,6 +28,11 @@ const app = buildApp({
           origin: config.combatLabOrigin,
         },
       }),
+  ...(database === undefined ||
+  config.identity === undefined ||
+  config.fixtureEncountersEnabled !== true
+    ? {}
+    : { encounters: { database, fixtureAdmission: true } }),
 });
 
 if (database !== undefined) {

@@ -5,6 +5,7 @@ export interface ServerConfig {
   readonly port: number;
   readonly databaseUrl?: string;
   readonly combatLabOrigin?: string;
+  readonly fixtureEncountersEnabled?: true;
   readonly identity?: IdentityConfig;
 }
 
@@ -27,6 +28,21 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
 
   const databaseUrl = environment['DATABASE_URL']?.trim();
   const host = environment['HOST']?.trim() || '0.0.0.0';
+  const fixtureEncountersEnabled = environment['ENCOUNTER_FIXTURES'] === '1';
+  invariant(
+    !fixtureEncountersEnabled ||
+      (environment['NODE_ENV'] !== 'production' &&
+        (host === '127.0.0.1' || host === '::1') &&
+        databaseUrl !== undefined &&
+        [
+          environment['OIDC_ISSUER'],
+          environment['OIDC_CLIENT_ID'],
+          environment['OIDC_CLIENT_SECRET'],
+          environment['OIDC_REDIRECT_URI'],
+          environment['PUBLIC_ORIGIN'],
+        ].every((value) => Boolean(value?.trim()))),
+    'Encounter fixtures require a nonproduction loopback server with database-backed identity',
+  );
   const labEnabled = environment['COMBAT_LAB'] === '1';
   invariant(
     !labEnabled ||
@@ -112,6 +128,7 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
     port,
     ...(databaseUrl ? { databaseUrl } : {}),
     ...(labEnabled ? { combatLabOrigin } : {}),
+    ...(fixtureEncountersEnabled ? { fixtureEncountersEnabled: true as const } : {}),
     ...(identity === undefined ? {} : { identity }),
   };
 }

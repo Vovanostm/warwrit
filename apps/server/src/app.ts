@@ -4,12 +4,14 @@ import fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 import { registerIdentityRoutes, type IdentityRoutesOptions } from './auth/routes.js';
 import { createLogger } from './logger.js';
 import { registerCombatLab, type CombatLabSettings } from './combat-lab/routes.js';
+import { registerEncounterRoutes, type EncounterRoutesOptions } from './encounters/routes.js';
 
 export interface BuildAppOptions {
   readonly logger?: FastifyBaseLogger | false;
   readonly readinessProbe?: () => Promise<void>;
   readonly combatLab?: CombatLabSettings;
   readonly identity?: IdentityRoutesOptions;
+  readonly encounters?: EncounterRoutesOptions;
 }
 
 const liveResponse: HealthResponse = {
@@ -30,6 +32,9 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   app.get('/health/live', async () => liveResponse);
   if (options.identity !== undefined) {
     registerIdentityRoutes(app, options.identity);
+  }
+  if (options.encounters !== undefined) {
+    registerEncounterRoutes(app, options.encounters);
   }
   if (options.combatLab !== undefined) {
     if (process.env['NODE_ENV'] === 'production') {

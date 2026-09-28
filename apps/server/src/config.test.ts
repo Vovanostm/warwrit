@@ -69,4 +69,22 @@ describe('server configuration', () => {
       }),
     ).toThrow('fixed callback');
   });
+
+  it('enables fixture encounter admission only with an explicit local flag and identity', () => {
+    const identity = {
+      DATABASE_URL: 'postgres://warwrit:warwrit-local-only@127.0.0.1:55433/warwrit_encounter_test',
+      OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+      OIDC_CLIENT_ID: 'warwrit-local',
+      OIDC_CLIENT_SECRET: 'local-only-secret',
+      OIDC_REDIRECT_URI: 'http://127.0.0.1:3107/auth/callback',
+      PUBLIC_ORIGIN: 'http://127.0.0.1:3107',
+      HOST: '127.0.0.1',
+      ENCOUNTER_FIXTURES: '1',
+    };
+    expect(loadServerConfig(identity).fixtureEncountersEnabled).toBe(true);
+    expect(() => loadServerConfig({ ENCOUNTER_FIXTURES: '1' })).toThrow('loopback server');
+    expect(() => loadServerConfig({ ...identity, NODE_ENV: 'production' })).toThrow(
+      'loopback server',
+    );
+  });
 });
