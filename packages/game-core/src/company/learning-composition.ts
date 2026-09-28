@@ -14,7 +14,7 @@ import type { LearningQuoteContext } from './learning-quote.js';
 import { advanceStudySectionTime } from './study-section.js';
 import type { StudySectionProgress } from './study-section.js';
 import type { StudySectionCompletion } from './study-section.js';
-import { readStudyAccessState } from './study-access.js';
+import { readStudyAccessState, studyAccessBounds } from './study-access.js';
 import type { StudyAccessState } from './study-access.js';
 import type { CompanyEconomyState } from './economy-types.js';
 import { person } from './lifecycle-state.js';
@@ -22,6 +22,7 @@ import type { CommandOf } from './lifecycle-types.js';
 import { creditProgression } from './progression.js';
 import { readSkillProgress } from './skill-progress.js';
 import { parseCompanyCommand } from './commands.js';
+import type { LearningCause, TrustedLearningCauseManifest } from './learning-time.js';
 
 export type LearningCompositionRequest =
   | {
@@ -42,8 +43,9 @@ export type LearningCompositionRequest =
       readonly kind: 'ADVANCE';
       readonly taskId: string;
       readonly effectId: string;
-      readonly command: CommandOf<'AdvanceCampaign'>;
+      readonly command: LearningCause;
       readonly accessEvidenceId?: string;
+      readonly manifest?: TrustedLearningCauseManifest;
     };
 
 /*
@@ -127,9 +129,10 @@ function prepareStop(
 
 export interface LearningAdvanceRequest {
   readonly taskId: string;
-  readonly command: CommandOf<'AdvanceCampaign'>;
+  readonly command: LearningCause;
   readonly effectId: string;
   readonly accessEvidenceId?: string;
+  readonly manifest?: TrustedLearningCauseManifest;
 }
 
 export interface LearningCompositionPreparation {
@@ -195,13 +198,18 @@ function validateTerminalEffects(state: CompanyEconomyState, tasks: LearningTask
       'INVALID_STATE',
     );
     const parsed = parseCompanyCommand(retained.command);
-    requireEconomy(parsed.ok && parsed.command.type === 'AdvanceCampaign', 'INVALID_STATE');
+    requireEconomy(
+      parsed.ok && ['AdvanceCampaign', 'TransferItem'].includes(parsed.command.type),
+      'INVALID_STATE',
+    );
     const advance = parsed.command;
+    if (terminal.kind === 'INTERRUPTED')
+      requireEconomy(advance.type === 'TransferItem', 'INVALID_STATE');
     requireEconomy(
       advance.commandId === terminal.commandId &&
         advance.campaignTick === terminal.campaignTick &&
-        advance.payload.toTick === terminal.campaignTick &&
-        BigInt(terminal.processedThroughTick) <= BigInt(advance.payload.toTick),
+        (advance.type !== 'AdvanceCampaign' || advance.payload.toTick === terminal.campaignTick) &&
+        BigInt(terminal.processedThroughTick) <= BigInt(terminal.campaignTick),
       'INVALID_STATE',
     );
     if (terminal.kind === 'FUNDING_SHORTFALL') {
@@ -277,7 +285,11 @@ function prepareLearningAdvance(
         (sourceEventId !== null && effect.sourceEventId === sourceEventId)),
   );
   if (previousEffect) {
-    const ownedIds = new Set(requestValue.command.payload.authoritativeInputs);
+    const ownedIds = new Set(
+      requestValue.command.type === 'AdvanceCampaign'
+        ? requestValue.command.payload.authoritativeInputs
+        : (requestValue.manifest?.evidenceIds ?? []),
+    );
     const replayIntervals = readLearningTimeIntervals(intervalValues);
     for (const interval of replayIntervals) {
       requireEconomy(
@@ -339,6 +351,7 @@ function prepareLearningAdvance(
     context,
     intervalValues,
     stateValue.finance.maintenance,
+    requestValue.manifest,
   );
   const inputs = start.inputs;
   if (!inputs) throw new RangeError('LEARNING_START_INPUTS_REQUIRED');
@@ -363,10 +376,11 @@ function prepareLearningAdvance(
       'CONTACT_OR_ACCESS_REQUIRED',
     );
     for (const segment of time.intervals) {
+      const accessBounds = studyAccessBounds(interval);
       if (segment.kind === 'ELIGIBLE')
         requireEconomy(
-          BigInt(segment.fromTick) >= BigInt(interval.fromTick) &&
-            BigInt(segment.toTick) <= BigInt(interval.toTick),
+          BigInt(segment.fromTick) >= accessBounds.from &&
+            BigInt(segment.toTick) <= accessBounds.to,
           'CONTACT_OR_ACCESS_REQUIRED',
         );
     }
