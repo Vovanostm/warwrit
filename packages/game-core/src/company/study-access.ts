@@ -159,3 +159,26 @@ export function admitStudyInterval(
   };
   return readStudyAccessState({ schemaVersion: 1, intervals: [...state.intervals, interval] });
 }
+
+/** Ends occupied access at a real owner transition; it never opens access for a new learner. */
+export function closeStudyAccessForItems(
+  stateValue: StudyAccessState,
+  itemIds: readonly string[],
+  atTick: string,
+): StudyAccessState {
+  const state = readStudyAccessState(stateValue);
+  const ids = new Set(itemIds);
+  const at = BigInt(atTick);
+  const intervals = state.intervals.flatMap((interval) => {
+    if (!ids.has(interval.itemId)) return [interval];
+    const from = BigInt(interval.fromTick);
+    const to = BigInt(interval.toTick);
+    if (from === at && at < to) return [];
+    if (from < at && at < to) return [{ ...interval, toTick: atTick }];
+    return [interval];
+  });
+  return readStudyAccessState({
+    schemaVersion: 1,
+    intervals,
+  });
+}

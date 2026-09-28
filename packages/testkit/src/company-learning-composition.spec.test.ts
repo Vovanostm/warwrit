@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   createLearningTaskState,
+  createCompanyLearningState,
   createStudyAccessState,
   initialSkillProgress,
   prepareLearningComposition,
+  prepareCompanyEconomy,
+  recordBookTransfer,
 } from '@warwrit/game-core';
 import type {
   CommandOf,
@@ -13,7 +16,7 @@ import type {
   LearningTimeInterval,
 } from '@warwrit/game-core';
 import { access, cash, command, context, economy, scope, tick } from './company-economy-fixture.js';
-import { addItem, item, itemAccess } from './company-physical-fixture.js';
+import { addContainer, addItem, container, item, itemAccess } from './company-physical-fixture.js';
 
 type Start = ReturnType<typeof command> & CommandOf<'StartLearning'>;
 type Advance = ReturnType<typeof command> & CommandOf<'AdvanceCampaign'>;
@@ -399,6 +402,90 @@ describe('C05 time and atomic learning composition', () => {
     expect(second.tasks.tasks[0]?.processedThroughTick).toBe('14');
     expect(whole.task.completedTicks).toBe('0');
     expect(whole.state).not.toBe(one.state);
+  });
+
+  it('retains an earned book prefix and closes its copy interval at a real nonsplit transfer', () => {
+    const fixture = admitted(false);
+    const elapsed = prepare(fixture, 14, [segment(fixture, 10, 14, 'ELIGIBLE')]);
+    expect(elapsed.appliedElapsedTicks).toBe('4');
+    expect(elapsed.studyProgress).not.toBeNull();
+
+    const state = addContainer(
+      atTick(elapsed.state, 14),
+      container('new-reader-pack', { kind: 'CHARACTER', id: 'worker-0' }, 30000, {
+        kind: 'CHARACTER',
+        id: 'worker-0',
+      }),
+    );
+    const move = command(state, 'TransferItem', {
+      itemId: 'book-1',
+      quantity: 1,
+      fromContainerId: 'fixture-supply',
+      toContainerId: 'new-reader-pack',
+      accessEvidenceId: 'transfer-after-study',
+    });
+    const accessEvidence = itemAccess(
+      state,
+      'transfer-after-study',
+      'TRANSFER',
+      ['fixture-supply', 'new-reader-pack'],
+      ['book-1'],
+    );
+    const transfer = prepareCompanyEconomy(
+      state,
+      move,
+      context(state, move, [], [], [accessEvidence]),
+    );
+    expect(transfer.kind).toBe('PREPARED');
+    if (transfer.kind !== 'PREPARED') return;
+
+    const learning = recordBookTransfer(
+      {
+        ...createCompanyLearningState(),
+        tasks: elapsed.tasks,
+        studyAccess: elapsed.studyAccess,
+        studyProgress: elapsed.studyProgress ? [elapsed.studyProgress] : [],
+      },
+      state,
+      transfer.next,
+      move,
+    );
+    expect(learning.studyProgress).toEqual([elapsed.studyProgress]);
+    expect(learning.studyAccess.intervals[0]).toMatchObject({ fromTick: '10', toTick: '14' });
+    expect(learning.ownerTransitions[0]).toMatchObject({
+      kind: 'BOOK_TRANSFER',
+      taskId: fixture.task.start.taskId,
+      learnerId: 'leader',
+      atTick: '14',
+    });
+
+    const blockedState = addContainer(
+      state,
+      container('full-pack', { kind: 'COMPANY', id: 'company' }, 0),
+    );
+    const blocked = command(blockedState, 'TransferItem', {
+      itemId: 'book-1',
+      quantity: 1,
+      fromContainerId: 'fixture-supply',
+      toContainerId: 'full-pack',
+      accessEvidenceId: 'transfer-to-full-pack',
+    });
+    const blockedAccess = itemAccess(
+      blockedState,
+      'transfer-to-full-pack',
+      'TRANSFER',
+      ['fixture-supply', 'full-pack'],
+      ['book-1'],
+    );
+    const rejected = prepareCompanyEconomy(
+      blockedState,
+      blocked,
+      context(blockedState, blocked, [], [], [blockedAccess]),
+    );
+    expect(rejected).toMatchObject({ kind: 'REJECTED', error: 'CAPACITY' });
+    expect(rejected.state).toBe(blockedState);
+    expect(learning.studyProgress).toEqual([elapsed.studyProgress]);
+    expect(learning.studyAccess.intervals[0]?.toTick).toBe('14');
   });
 
   it('replays historical advances after later progress, reload, and task stop', () => {
