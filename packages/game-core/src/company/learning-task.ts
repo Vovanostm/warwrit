@@ -76,6 +76,8 @@ const taskInput = object({
   schemaVersion: choice(1),
   start: startInput,
   completedTicks: unsigned,
+  // Older snapshots may omit chronology. TIME can infer the start only for zero history.
+  processedThroughTick: optional(unsigned),
   stop: optional(jsonObject),
 });
 const stateInput = object({ schemaVersion: choice(1), tasks: array(taskInput) });
@@ -129,6 +131,10 @@ export function readLearningTaskState(value: unknown): LearningTaskState {
           (previousEnd !== null && BigInt(command.campaignTick) >= BigInt(previousEnd))) &&
         start.quote.coefficients.holderId === command.payload.characterId &&
         BigInt(task.completedTicks) <= BigInt(start.quote.maxTicks) &&
+        (task.processedThroughTick === undefined ||
+          (BigInt(task.processedThroughTick) >= BigInt(command.campaignTick) &&
+            BigInt(task.processedThroughTick) - BigInt(command.campaignTick) >=
+              BigInt(task.completedTicks))) &&
         BigInt(start.quote.maxTicks) <= BigInt(command.payload.goal.maxTicks),
       'INVALID_STATE',
     );
@@ -143,7 +149,9 @@ export function readLearningTaskState(value: unknown): LearningTaskState {
           stop.payload.taskId === start.taskId &&
           stop.companyId === command.companyId &&
           stop.worldId === command.worldId &&
-          BigInt(stop.campaignTick) - BigInt(command.campaignTick) >= BigInt(task.completedTicks),
+          BigInt(stop.campaignTick) - BigInt(command.campaignTick) >= BigInt(task.completedTicks) &&
+          (task.processedThroughTick === undefined ||
+            BigInt(stop.campaignTick) >= BigInt(task.processedThroughTick)),
         'INVALID_STATE',
       );
       commandIds.add(stop.commandId);
@@ -188,7 +196,15 @@ export function startLearningTask(
   );
   const next = readLearningTaskState({
     schemaVersion: 1,
-    tasks: [...state.tasks, { schemaVersion: 1, start, completedTicks: '0' }],
+    tasks: [
+      ...state.tasks,
+      {
+        schemaVersion: 1,
+        start,
+        completedTicks: '0',
+        processedThroughTick: command.campaignTick,
+      },
+    ],
   });
   return { state: next, task: next.tasks.at(-1)!, replayed: false };
 }
@@ -217,6 +233,11 @@ export function stopLearningTask(
   requireEconomy(!task.stop, 'INCOMPATIBLE_ACTIVITY');
   requireEconomy(
     BigInt(command.campaignTick) >= BigInt(task.start.command.campaignTick),
+    'INVALID_TIME',
+  );
+  requireEconomy(
+    task.processedThroughTick === undefined ||
+      BigInt(command.campaignTick) >= BigInt(task.processedThroughTick),
     'INVALID_TIME',
   );
   const next = readLearningTaskState({

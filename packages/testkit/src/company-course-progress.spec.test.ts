@@ -128,7 +128,15 @@ describe.each([
         const completed = BigInt(split.task.completedTicks) + BigInt(next.appliedElapsedTicks);
         split.task = readLearningTaskState({
           schemaVersion: 1,
-          tasks: [{ ...split.task, completedTicks: String(completed) }],
+          tasks: [
+            {
+              ...split.task,
+              completedTicks: String(completed),
+              processedThroughTick: String(
+                BigInt(split.task.start.command.campaignTick) + completed,
+              ),
+            },
+          ],
         }).tasks[0]!;
       }
       expect(split.root.lifecycle.characters[0]!.skills['archery']).toEqual(whole.nextSkill);
@@ -174,7 +182,13 @@ describe.each([
     expect(BigInt(at.nextSkill.amount.milliXp)).toBeGreaterThanOrEqual(target);
     const later = reload(f.root.lifecycle);
     Object.assign(later.characters[0]!.skills, { archery: before.nextSkill });
-    const partial = { ...f.task, completedTicks: before.appliedElapsedTicks };
+    const partial = {
+      ...f.task,
+      completedTicks: before.appliedElapsedTicks,
+      processedThroughTick: String(
+        BigInt(f.task.start.command.campaignTick) + BigInt(before.appliedElapsedTicks),
+      ),
+    };
     const lastGoal = calculateCourseProgress(reload(partial), later, '999999');
     expect(lastGoal.appliedElapsedTicks).toBe('1');
     expect(lastGoal.nextSkill).toEqual(at.nextSkill);
@@ -185,7 +199,13 @@ describe.each([
       String(BigInt(timed.task.start.quote.maxTicks) - 1n),
     );
     Object.assign(timed.root.lifecycle.characters[0]!.skills, { archery: prefix.nextSkill });
-    const limited = { ...timed.task, completedTicks: prefix.appliedElapsedTicks };
+    const limited = {
+      ...timed.task,
+      completedTicks: prefix.appliedElapsedTicks,
+      processedThroughTick: String(
+        BigInt(timed.task.start.command.campaignTick) + BigInt(prefix.appliedElapsedTicks),
+      ),
+    };
     const lastTime = calculateCourseProgress(limited, timed.root.lifecycle, '999999');
     expect(lastTime).toMatchObject({
       appliedElapsedTicks: '1',
@@ -193,7 +213,13 @@ describe.each([
       quotedLimitReached: true,
     });
     Object.assign(timed.root.lifecycle.characters[0]!.skills, { archery: lastTime.nextSkill });
-    const exhausted = { ...timed.task, completedTicks: timed.task.start.quote.maxTicks };
+    const exhausted = {
+      ...timed.task,
+      completedTicks: timed.task.start.quote.maxTicks,
+      processedThroughTick: String(
+        BigInt(timed.task.start.command.campaignTick) + BigInt(timed.task.start.quote.maxTicks),
+      ),
+    };
     const afterTime = calculateCourseProgress(exhausted, timed.root.lifecycle, '1');
     expect(afterTime.appliedElapsedTicks).toBe('0');
     expect(afterTime.nextSkill).toEqual(lastTime.nextSkill);
