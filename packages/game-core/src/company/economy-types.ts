@@ -13,6 +13,26 @@ import type {
 import type { OwnerRef } from './model.js';
 import type { CampaignTick, CanonicalRevision, MoneyQ, PublicRevision } from './values.js';
 import type { CompanyPhysicalState, PhysicalError, PhysicalEvidence } from './physical-types.js';
+import type { ExactFraction } from './exact-fraction.js';
+
+type LearningBackingInputs =
+  { readonly kind: 'BOOK' } | { readonly kind: 'COURSE'; readonly ticksPerDay: string };
+interface LearningBackingStart {
+  readonly taskId: string;
+  readonly quote: {
+    readonly sourceId: string;
+    readonly sourceVersion: string;
+    readonly maxTicks: string;
+    readonly funding: null | {
+      readonly poolId: string;
+      readonly walletId: string;
+      readonly providerWalletId: string;
+      readonly authorizedBudgetQ: MoneyQ;
+      readonly costQPerDay: { readonly numerator: string; readonly denominator: string };
+    };
+  };
+  readonly inputs?: LearningBackingInputs;
+}
 
 export const ECONOMY_SCHEMA_VERSION = 1 as const;
 export const ECONOMY_POLICY_VERSION = 's02-economy-1' as const;
@@ -93,6 +113,39 @@ export interface MoneyReservation {
   readonly claimId: string;
   readonly amountQ: MoneyQ;
   readonly purpose: 'PENDING_CONFIRMATION' | 'PRE_ENTRY';
+}
+/** Exact private course backing. The quote and start stay attached to their original task. */
+export interface LearningObligation {
+  readonly taskId: string;
+  readonly sourceId: string;
+  readonly sourceVersion: string;
+  readonly companyId: string;
+  readonly worldId: string;
+  readonly start: LearningBackingStart;
+  readonly poolId: string;
+  readonly payerWalletId: string;
+  readonly recipientWalletId: string;
+  readonly recipient: OwnerRef;
+  readonly authorizedBudgetQ: MoneyQ;
+  readonly fundedTicks: string;
+  readonly acceptedTicks: string;
+  readonly accruedQ: ExactFraction;
+  readonly dischargedQ: ExactFraction;
+  readonly terminal: boolean;
+}
+export interface LearningBackingEffect {
+  readonly key: string;
+  readonly requestKey: string;
+  readonly sourceRequestKey: string;
+  readonly companyId: string;
+  readonly worldId: string;
+  readonly taskId: string;
+  readonly commandId: string;
+  readonly sourceEventId: string | null;
+  readonly effectId: string;
+  readonly transferQ: MoneyQ;
+  readonly fundedTicks: string;
+  readonly acceptedTicks: string;
 }
 export interface AllocationEpoch {
   readonly epochId: string;
@@ -182,7 +235,8 @@ export interface CashMovement {
     | 'CARE_HANDOVER'
     | 'FOOD'
     | 'REPAIR'
-    | 'PRESENTATION';
+    | 'PRESENTATION'
+    | 'LEARNING';
   readonly atTick: CampaignTick;
 }
 export interface FarewellGrant {
@@ -201,6 +255,9 @@ export interface CompanyFinance {
   readonly accounts: readonly ServiceAccount[];
   readonly claims: readonly WageClaim[];
   readonly reservations: readonly MoneyReservation[];
+  /** Optional to preserve the exact V1 persisted finance shape. */
+  readonly learningObligations?: readonly LearningObligation[];
+  readonly learningEffects?: readonly LearningBackingEffect[];
   readonly epochs: readonly AllocationEpoch[];
   readonly arrears: readonly ArrearsEpisode[];
   readonly departures: readonly DepartureIntent[];
