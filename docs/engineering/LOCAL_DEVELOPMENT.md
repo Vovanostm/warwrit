@@ -17,7 +17,9 @@ The exact package graph is committed in `pnpm-lock.yaml`.
 ./scripts/bootstrap.sh
 ```
 
-The script fails closed if the Node.js line or Docker is unavailable. It performs the repository verification suite, the 10,000-battle combat stress gate, and migration up/down. Set `KEEP_INFRA=1` to leave PostgreSQL running after validation.
+The script fails closed if the Node.js line or Docker is unavailable. It performs the repository verification suite, the 10,000-battle combat stress gate, and migration up/down against a disposable PostgreSQL container. Each run uses a unique Compose project and dynamically published loopback port, replaces any inherited `DATABASE_URL` with that container's URL, and removes only its own containers, network and volume on exit. It never prints the database URL. Set `KEEP_INFRA=1` to retain the run's PostgreSQL; the script prints its project, port and project-scoped cleanup command.
+
+Manual development keeps PostgreSQL at `127.0.0.1:5432` by default. Choose another host port when needed with `POSTGRES_PORT=55434 pnpm db:up`.
 
 ## Environment contract
 
