@@ -6,12 +6,18 @@ import { createDatabase, createDatabaseReadinessProbe } from './db/database.js';
 
 const config = loadServerConfig();
 const database = config.databaseUrl === undefined ? undefined : createDatabase(config.databaseUrl);
-const app =
-  database === undefined
-    ? buildApp()
-    : buildApp({
-        readinessProbe: createDatabaseReadinessProbe(database),
-      });
+const app = buildApp({
+  ...(database === undefined ? {} : { readinessProbe: createDatabaseReadinessProbe(database) }),
+  ...(config.combatLabOrigin === undefined
+    ? {}
+    : {
+        combatLab: {
+          host: config.host,
+          port: config.port,
+          origin: config.combatLabOrigin,
+        },
+      }),
+});
 
 if (database !== undefined) {
   app.addHook('onClose', async () => {

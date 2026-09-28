@@ -2,10 +2,12 @@ import { PROTOCOL_VERSION, type HealthResponse } from '@warwrit/protocol';
 import fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 
 import { createLogger } from './logger.js';
+import { registerCombatLab, type CombatLabSettings } from './combat-lab/routes.js';
 
 export interface BuildAppOptions {
   readonly logger?: FastifyBaseLogger | false;
   readonly readinessProbe?: () => Promise<void>;
+  readonly combatLab?: CombatLabSettings;
 }
 
 const liveResponse: HealthResponse = {
@@ -24,6 +26,12 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
         });
 
   app.get('/health/live', async () => liveResponse);
+  if (options.combatLab !== undefined) {
+    if (process.env['NODE_ENV'] === 'production') {
+      throw new Error('Combat lab is unavailable in production');
+    }
+    registerCombatLab(app, options.combatLab);
+  }
   app.get('/health/ready', async (request, reply) => {
     try {
       await options.readinessProbe?.();
