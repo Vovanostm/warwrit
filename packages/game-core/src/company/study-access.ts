@@ -204,3 +204,23 @@ export function closeStudyAccessForItems(
     intervals,
   });
 }
+
+/** Closes only the occupied copy interval owned by the task at its actual stop boundary. */
+export function closeStudyAccessInterval(
+  stateValue: StudyAccessState,
+  intervalId: string,
+  atTick: string,
+): StudyAccessState {
+  const state = readStudyAccessState(stateValue);
+  const interval = state.intervals.find((entry) => entry.intervalId === intervalId);
+  requirePhysical(interval, 'INVALID_SOURCE');
+  const { from, to } = studyAccessBounds(interval);
+  const at = BigInt(atTick);
+  requirePhysical(from <= at && at <= to, 'INVALID_TIME');
+  return readStudyAccessState({
+    schemaVersion: 1,
+    intervals: state.intervals.map((entry) =>
+      entry.intervalId === intervalId ? { ...entry, effectiveToTick: atTick } : entry,
+    ),
+  });
+}

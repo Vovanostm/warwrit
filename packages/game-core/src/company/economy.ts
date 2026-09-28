@@ -16,7 +16,7 @@ import {
   guardCompanyCommand,
 } from './guards.js';
 import { canonicalJson } from './input.js';
-import { LifecycleViolation } from './lifecycle-state.js';
+import { canPerform, LifecycleViolation } from './lifecycle-state.js';
 import { prepareCompanyLifecycle } from './lifecycle.js';
 import { campaignTick, canonicalRevision, isExactInteger, publicRevision } from './values.js';
 import { accrueFinance } from './economy-accrual.js';
@@ -66,9 +66,15 @@ import type {
   FinanceChange,
 } from './economy-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
+import type { DeathOutcomeEvidence, MissingResolutionEvidence } from './physical-types.js';
 import { prepareLearningComposition } from './learning-composition.js';
 import type { LearningSourceContext } from './learning-source.js';
-import type { LearningTimeInterval, TrustedLearningCauseManifest } from './learning-time.js';
+import type {
+  LearningCause,
+  LearningTimeInterval,
+  TrustedLearningCauseManifest,
+} from './learning-time.js';
+import { safeServiceCoversAt } from './learning-time.js';
 import { hasStudyAccessOwner } from './study-access.js';
 import {
   readCompanyLearningState,
@@ -109,13 +115,252 @@ interface LearningTransferInput {
   readonly state: CompanyLearningState;
   readonly intervals: readonly LearningTimeInterval[];
   readonly manifest?: TrustedLearningCauseManifest;
+  readonly manifests?: readonly TrustedLearningCauseManifest[];
   readonly effectId: string;
   readonly learningFacts: LearningSourceContext['learningFacts'];
+  readonly taskId?: string;
+  readonly study?: {
+    readonly intervalId: string;
+    readonly itemId: string;
+    readonly accessEvidenceId: string;
+  };
+  readonly accessEvidenceId?: string;
 }
 
 interface EconomyCandidate {
   readonly economy: EconomyResult;
   readonly learning: CompanyLearningState | null;
+}
+
+function retroactiveOutcomeTick(command: CompanyCommand, context: EconomyContext): string {
+  if (command.type === 'RecordDeath') {
+    const fact = context.physicalFacts?.find(
+      (entry) =>
+        entry.kind === 'DEATH_OUTCOME' &&
+        entry.id === command.payload.custodyOutcomeId &&
+        entry.sourceEventId === command.sourceEventId &&
+        entry.characterId === command.payload.characterId &&
+        entry.causeId === command.payload.causeId,
+    ) as DeathOutcomeEvidence | undefined;
+    requireEconomy(
+      fact && fact.actualDeathTick === command.payload.actualDeathTick,
+      'INVALID_SOURCE',
+    );
+    return fact.actualDeathTick;
+  }
+  requireEconomy(command.type === 'ResolveMissing', 'INVALID_ARGUMENT');
+  const fact = context.physicalFacts?.find(
+    (entry) =>
+      entry.kind === 'MISSING_RESOLUTION' &&
+      entry.id === command.payload.outcomeReceiptId &&
+      entry.sourceEventId === command.sourceEventId &&
+      entry.characterId === command.payload.characterId,
+  ) as MissingResolutionEvidence | undefined;
+  requireEconomy(fact, 'INVALID_SOURCE');
+  if (fact.outcome === 'DEAD') {
+    requireEconomy(fact.actualDeathTick, 'INVALID_SOURCE');
+    return fact.actualDeathTick;
+  }
+  return fact.atTick;
+}
+
+function learningSourceForTask(
+  task: CompanyLearningState['tasks']['tasks'][number],
+  learningFacts: LearningSourceContext['learningFacts'],
+) {
+  const matches = learningFacts.filter(
+    (source) =>
+      source.id === task.start.quote.sourceId &&
+      source.sourceVersion === task.start.quote.sourceVersion,
+  );
+  requireEconomy(matches.length === 1, 'INVALID_SOURCE');
+  return matches[0]!;
+}
+
+function taskParticipants(
+  task: CompanyLearningState['tasks']['tasks'][number],
+  learningFacts: LearningSourceContext['learningFacts'],
+): readonly string[] {
+  const learnerId = task.start.command.payload.characterId;
+  const source = learningSourceForTask(task, learningFacts);
+  return source.kind === 'COURSE'
+    ? [
+        ...new Set(
+          [learnerId, source.providerId, source.mentorId].filter((id): id is string => !!id),
+        ),
+      ]
+    : [learnerId];
+}
+
+function taskAvailableAt(
+  task: CompanyLearningState['tasks']['tasks'][number],
+  root: MaterializedCompanyState,
+  learning: CompanyLearningState,
+  learningFacts: LearningSourceContext['learningFacts'],
+  atTick: string,
+): boolean {
+  const source = learningSourceForTask(task, learningFacts);
+  const learnerId = task.start.command.payload.characterId;
+  const learner = root.lifecycle.characters.find(
+    (entry) => entry.identity.characterId === learnerId,
+  );
+  if (!learner) return false;
+  const membership = root.lifecycle.memberships.find(
+    (entry) =>
+      entry.characterId === learnerId &&
+      entry.companyId === root.lifecycle.companyId &&
+      BigInt(entry.startedAt) <= BigInt(atTick) &&
+      (entry.endedAt === null || BigInt(entry.endedAt) > BigInt(atTick)),
+  );
+  if (
+    !membership ||
+    learner.presence.availability !== 'AVAILABLE' ||
+    learner.presence.encounterBindingId !== null ||
+    !canPerform(learner, 'study') ||
+    canonicalJson(learner.presence.location) !== canonicalJson(source.location) ||
+    safeServiceCoversAt(root.finance.maintenance, learnerId, atTick)
+  )
+    return false;
+
+  if (source.kind === 'SELF_STUDY') {
+    if (task.start.inputs?.kind !== 'BOOK') return false;
+    const access = learning.studyAccess.intervals.find(
+      (entry) => entry.intervalId === task.start.studyIntervalId,
+    );
+    if (!access || BigInt(access.fromTick) > BigInt(atTick)) return false;
+    const end = access.effectiveToTick ?? access.toTick;
+    if (BigInt(end) < BigInt(atTick)) return false;
+    const book = root.physical.items.find((entry) => entry.itemId === access.itemId);
+    const container = book?.containerId
+      ? root.physical.containers.find((entry) => entry.containerId === book.containerId)
+      : undefined;
+    return (
+      book?.tombstone === null &&
+      !!container &&
+      container.closed === null &&
+      canonicalJson(container.location) === canonicalJson(learner.presence.location) &&
+      (container.carrier === null ||
+        (container.carrier.kind === 'CHARACTER' && container.carrier.id === learnerId) ||
+        (container.carrier.kind === 'PARTY' &&
+          container.carrier.id === learner.presence.fieldPartyId))
+    );
+  }
+
+  if (task.start.inputs?.kind !== 'COURSE') return false;
+  for (const providerId of new Set([source.providerId, source.mentorId])) {
+    if (!providerId) continue;
+    const provider = root.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === providerId,
+    );
+    if (
+      !provider ||
+      provider.presence.availability !== 'AVAILABLE' ||
+      provider.presence.encounterBindingId !== null ||
+      !canPerform(provider, 'basicWork') ||
+      canonicalJson(provider.presence.location) !== canonicalJson(source.location) ||
+      provider.presence.assignment === 'REMOTE_TASK'
+    )
+      return false;
+  }
+  return true;
+}
+
+function affectedLearningTasks(
+  command: CompanyCommand,
+  root: MaterializedCompanyState,
+  proposed: MaterializedCompanyState,
+  learning: CompanyLearningState,
+  learningFacts: LearningSourceContext['learningFacts'],
+) {
+  const active = learning.tasks.tasks.filter(
+    (task) => !task.stop && !task.terminal && task.start.inputs !== undefined,
+  );
+  if (command.type === 'AdvanceCampaign') return active;
+
+  if (command.type === 'TransferItem' || command.type === 'ApplyContainerLifecycle') {
+    const itemIds = new Set(
+      command.type === 'TransferItem'
+        ? [command.payload.itemId]
+        : root.physical.items
+            .filter((item) => item.containerId === command.payload.containerId)
+            .map((item) => item.itemId),
+    );
+    return active.filter(
+      (task) =>
+        task.start.inputs?.kind === 'BOOK' &&
+        task.start.command.payload.resourceIds.some((id) => itemIds.has(id)) &&
+        hasStudyAccessOwner(learning.studyAccess.intervals, {
+          intervalId: task.start.studyIntervalId,
+          itemId: [...itemIds].find((id) => task.start.command.payload.resourceIds.includes(id))!,
+          characterId: task.start.command.payload.characterId,
+        }) &&
+        (command.type === 'TransferItem' ||
+          (taskAvailableAt(task, root, learning, learningFacts, command.campaignTick) &&
+            !taskAvailableAt(task, proposed, learning, learningFacts, command.campaignTick))),
+    );
+  }
+
+  const characterIds = new Set<string>();
+  switch (command.type) {
+    case 'ApplyCondition':
+    case 'Arrive':
+    case 'SetAssignment':
+    case 'Capture':
+    case 'ReleaseCaptive':
+    case 'TransferCaptive':
+    case 'ResolveMissing':
+    case 'RecordDeath':
+      characterIds.add(command.payload.characterId);
+      break;
+    case 'ExecuteDeparture': {
+      const member = root.lifecycle.memberships.find(
+        (entry) => entry.membershipId === command.payload.membershipId && entry.endedAt === null,
+      );
+      requireEconomy(member, 'INVALID_SOURCE');
+      characterIds.add(member.characterId);
+      break;
+    }
+    case 'BeginFieldCamp':
+      // A camp does not itself make a learner an F1 beneficiary or alter local duty.
+      break;
+    case 'AcceptSafeService':
+      command.payload.beneficiaryIds.forEach((id) => characterIds.add(id));
+      break;
+    case 'AmendSafeService': {
+      const agreement = root.finance.maintenance.find(
+        (entry) => entry.agreementId === command.payload.agreementId,
+      );
+      requireEconomy(agreement?.kind === 'SAFE_SERVICE', 'INVALID_SOURCE');
+      const activeBeneficiaries = agreement.beneficiaryIds.filter(
+        (id) => !agreement.beneficiaryEnds.some((end) => end.characterId === id),
+      );
+      command.payload.beneficiaryIds
+        .filter((id) => !activeBeneficiaries.includes(id))
+        .forEach((id) => characterIds.add(id));
+      break;
+    }
+    default:
+      return [];
+  }
+
+  return active.filter((task) => {
+    if (!taskParticipants(task, learningFacts).some((id) => characterIds.has(id))) return false;
+    const wasAvailable = taskAvailableAt(task, root, learning, learningFacts, command.campaignTick);
+    const isAvailable = taskAvailableAt(
+      task,
+      proposed,
+      learning,
+      learningFacts,
+      command.campaignTick,
+    );
+    if (
+      ['Capture', 'ReleaseCaptive', 'TransferCaptive', 'ResolveMissing', 'RecordDeath'].includes(
+        command.type,
+      )
+    )
+      return true;
+    return (wasAvailable && !isAvailable) || (command.type === 'Arrive' && !isAvailable);
+  });
 }
 
 function applyCommandAtTarget(
@@ -339,43 +584,162 @@ function prepareEconomyCandidate(
     const target =
       command.type === 'AdvanceCampaign' ? campaignTick(command.payload.toTick) : context.atTick;
     const targetContext: PracticeEconomyContext = { ...context, atTick: target };
+    const retroactiveOutcome = command.type === 'RecordDeath' || command.type === 'ResolveMissing';
+    const factualOutcome =
+      retroactiveOutcome && learningInput ? retroactiveOutcomeTick(command, context) : target;
     let nextLearning = learningInput?.state ?? null;
     let learningBeforeTransfer: CompanyEconomyState | undefined;
     let learningBeforeDutyChange: CompanyEconomyState | undefined;
+    let learningCommandHandled = false;
     const closed =
       command.type === 'AdvanceCampaign'
         ? advanceEconomy(base, command, context)
-        : accrueFinance(base.finance, base.lifecycle, target);
+        : accrueFinance(base.finance, base.lifecycle, campaignTick(factualOutcome));
     base = { ...base, finance: closed.finance };
 
-    const retroactiveOutcome = command.type === 'RecordDeath' || command.type === 'ResolveMissing';
     let draft: CommandDraft;
     let lifecycleBeforeCommand: LifecycleState;
     let residuals: readonly FinanceChange['requirements'][number][];
     if (retroactiveOutcome) {
-      lifecycleBeforeCommand = base.lifecycle;
-      draft = applyCommandAtTarget(base, command, targetContext);
-      const correctedClosed = reconcileClosedFoodRequirements(draft.root, closed.requirements);
-      const lifecycleAtTarget: LifecycleState = {
-        ...draft.root.lifecycle,
-        campaignTick: target,
-      };
-      const settled = settlePhysicalRequirements(
-        { ...draft.root, lifecycle: lifecycleAtTarget },
-        base.lifecycle,
-        [...draft.requirements, ...correctedClosed],
-        targetContext,
-        command.commandId,
-        false,
-      );
-      const recovered = advancePhysicalTime(settled.root, target);
-      draft = {
-        ...draft,
-        root: recovered,
-        requirements: [],
-        allocations: draft.allocations,
-      };
-      residuals = settled.residuals;
+      if (learningInput) {
+        const boundary = campaignTick(factualOutcome);
+        base = { ...base, lifecycle: { ...base.lifecycle, campaignTick: boundary } };
+        const prefixFood = settleClosedPhysicalRequirements(
+          base,
+          closed.requirements,
+          targetContext,
+        );
+        const atBoundary = {
+          ...advancePhysicalTime(prefixFood.root, factualOutcome),
+          lifecycle: { ...prefixFood.root.lifecycle, campaignTick: boundary },
+        };
+        const proposed = applyCommandAtTarget(atBoundary, command, targetContext);
+        const outcome = settlePhysicalRequirements(
+          { ...proposed.root, lifecycle: { ...proposed.root.lifecycle, campaignTick: boundary } },
+          atBoundary.lifecycle,
+          proposed.requirements,
+          targetContext,
+          command.commandId,
+        );
+        const postOutcomeAccrual = accrueFinance(
+          outcome.root.finance,
+          outcome.root.lifecycle,
+          campaignTick(target),
+        );
+        const postOutcome = {
+          ...outcome.root,
+          lifecycle: { ...outcome.root.lifecycle, campaignTick: target },
+          finance: postOutcomeAccrual.finance,
+        };
+        const survivorFood = settleClosedPhysicalRequirements(
+          postOutcome,
+          postOutcomeAccrual.requirements,
+          targetContext,
+        );
+        const recovered = advancePhysicalTime(survivorFood.root, target);
+        const tasks = affectedLearningTasks(
+          command,
+          atBoundary,
+          recovered,
+          learningInput.state,
+          learningInput.learningFacts,
+        );
+        const manifests =
+          learningInput.manifests ?? (learningInput.manifest ? [learningInput.manifest] : []);
+        requireEconomy(
+          new Set(manifests.map((entry) => entry.taskId)).size === manifests.length &&
+            manifests.length === tasks.length &&
+            manifests.every((entry) => tasks.some((task) => task.start.taskId === entry.taskId)),
+          'INVALID_SOURCE',
+        );
+        requireEconomy(
+          learningInput.intervals.every((interval) =>
+            tasks.some((task) => task.start.taskId === interval.taskId),
+          ) &&
+            (tasks.length > 0 || learningInput.intervals.length === 0),
+          'INVALID_SOURCE',
+        );
+        lifecycleBeforeCommand = atBoundary.lifecycle;
+        base = materializeCompanyPhysicalState(recovered);
+        draft = {
+          ...proposed,
+          root: recovered,
+          requirements: [],
+        };
+        residuals = [...prefixFood.residuals, ...outcome.residuals, ...survivorFood.residuals];
+        for (const task of tasks) {
+          const inputs = task.start.inputs;
+          if (!inputs) throw new RangeError('LEARNING_START_INPUTS_REQUIRED');
+          const progress =
+            inputs.kind === 'BOOK'
+              ? (learningInput.state.studyProgress.find(
+                  (entry) =>
+                    entry.characterId === task.start.command.payload.characterId &&
+                    entry.workId === inputs.workId &&
+                    entry.sectionId === inputs.sectionId,
+                ) ?? null)
+              : null;
+          const manifest = manifests.find((entry) => entry.taskId === task.start.taskId)!;
+          const composed = prepareLearningComposition(
+            base,
+            nextLearning!.tasks,
+            nextLearning!.studyAccess,
+            progress,
+            { ...targetContext, learningFacts: learningInput.learningFacts },
+            learningInput.intervals.filter((interval) => interval.taskId === task.start.taskId),
+            {
+              kind: 'ADVANCE',
+              taskId: task.start.taskId,
+              effectId: `${learningInput.effectId}-${task.start.taskId}`,
+              command,
+              manifest,
+            },
+          );
+          const studyProgress = composed.studyProgress
+            ? [
+                ...nextLearning!.studyProgress.filter(
+                  (entry) =>
+                    entry.characterId !== composed.studyProgress!.characterId ||
+                    entry.workId !== composed.studyProgress!.workId ||
+                    entry.sectionId !== composed.studyProgress!.sectionId,
+                ),
+                composed.studyProgress,
+              ]
+            : nextLearning!.studyProgress;
+          nextLearning = readCompanyLearningState({
+            ...nextLearning!,
+            tasks: composed.tasks,
+            studyAccess: composed.studyAccess,
+            studyProgress,
+          });
+          base = materializeCompanyPhysicalState(composed.state);
+          draft = { ...draft, root: base };
+        }
+      } else {
+        lifecycleBeforeCommand = base.lifecycle;
+        draft = applyCommandAtTarget(base, command, targetContext);
+        const correctedClosed = reconcileClosedFoodRequirements(draft.root, closed.requirements);
+        const lifecycleAtTarget: LifecycleState = {
+          ...draft.root.lifecycle,
+          campaignTick: target,
+        };
+        const settled = settlePhysicalRequirements(
+          { ...draft.root, lifecycle: lifecycleAtTarget },
+          base.lifecycle,
+          [...draft.requirements, ...correctedClosed],
+          targetContext,
+          command.commandId,
+          false,
+        );
+        const recovered = advancePhysicalTime(settled.root, target);
+        draft = {
+          ...draft,
+          root: recovered,
+          requirements: [],
+          allocations: draft.allocations,
+        };
+        residuals = settled.residuals;
+      }
     } else {
       const closedPhysical = settleClosedPhysicalRequirements(
         base,
@@ -383,52 +747,155 @@ function prepareEconomyCandidate(
         targetContext,
       );
       let timed = advancePhysicalTime(closedPhysical.root, target);
-      if (command.type === 'TransferItem' || (learningInput && command.type === 'SetAssignment'))
+      if (
+        command.type === 'TransferItem' ||
+        (learningInput &&
+          ['AdvanceCampaign', 'SetAssignment', 'StartLearning', 'StopLearning'].includes(
+            command.type,
+          ))
+      )
         timed = { ...timed, lifecycle: { ...timed.lifecycle, campaignTick: target } };
       if (learningInput) {
+        if (command.type === 'StartLearning') {
+          requireEconomy(learningInput.taskId, 'INVALID_ARGUMENT');
+          requireEconomy(
+            learningInput.intervals.length === 0 &&
+              !learningInput.manifest &&
+              (learningInput.manifests?.length ?? 0) === 0,
+            'INVALID_SOURCE',
+          );
+          const composed = prepareLearningComposition(
+            timed,
+            nextLearning!.tasks,
+            nextLearning!.studyAccess,
+            null,
+            { ...targetContext, learningFacts: learningInput.learningFacts },
+            [],
+            {
+              kind: 'START',
+              taskId: learningInput.taskId,
+              effectId: learningInput.effectId,
+              admission: {
+                taskId: learningInput.taskId,
+                command,
+                ...(learningInput.study ? { study: learningInput.study } : {}),
+              },
+              ...(!learningInput.study && learningInput.accessEvidenceId
+                ? { accessEvidenceId: learningInput.accessEvidenceId }
+                : {}),
+            },
+          );
+          nextLearning = readCompanyLearningState({
+            ...nextLearning!,
+            tasks: composed.tasks,
+            studyAccess: composed.studyAccess,
+          });
+          timed = {
+            lifecycle: composed.state.lifecycle,
+            finance: composed.state.finance,
+            physical: composed.state.physical!,
+          };
+          learningCommandHandled = true;
+        } else if (command.type === 'StopLearning') {
+          const manifests =
+            learningInput.manifests ?? (learningInput.manifest ? [learningInput.manifest] : []);
+          const manifest = manifests.find((entry) => entry.taskId === command.payload.taskId);
+          requireEconomy(manifest && manifests.length === 1, 'INVALID_SOURCE');
+          const task = nextLearning!.tasks.tasks.find(
+            (entry) => entry.start.taskId === command.payload.taskId,
+          );
+          requireEconomy(task, 'INVALID_ARGUMENT');
+          const inputs = task.start.inputs;
+          if (!inputs) throw new RangeError('LEARNING_START_INPUTS_REQUIRED');
+          const progress =
+            inputs.kind === 'BOOK'
+              ? (nextLearning!.studyProgress.find(
+                  (entry) =>
+                    entry.characterId === task.start.command.payload.characterId &&
+                    entry.workId === inputs.workId &&
+                    entry.sectionId === inputs.sectionId,
+                ) ?? null)
+              : null;
+          const composed = prepareLearningComposition(
+            timed,
+            nextLearning!.tasks,
+            nextLearning!.studyAccess,
+            progress,
+            { ...targetContext, learningFacts: learningInput.learningFacts },
+            learningInput.intervals,
+            {
+              kind: 'STOP',
+              taskId: task.start.taskId,
+              effectId: learningInput.effectId,
+              command,
+              intervals: learningInput.intervals,
+              manifest,
+              ...(inputs.kind === 'COURSE' && learningInput.accessEvidenceId
+                ? { accessEvidenceId: learningInput.accessEvidenceId }
+                : {}),
+            },
+          );
+          const studyProgress = composed.studyProgress
+            ? [
+                ...nextLearning!.studyProgress.filter(
+                  (entry) =>
+                    entry.characterId !== composed.studyProgress!.characterId ||
+                    entry.workId !== composed.studyProgress!.workId ||
+                    entry.sectionId !== composed.studyProgress!.sectionId,
+                ),
+                composed.studyProgress,
+              ]
+            : nextLearning!.studyProgress;
+          nextLearning = readCompanyLearningState({
+            ...nextLearning!,
+            tasks: composed.tasks,
+            studyAccess: composed.studyAccess,
+            studyProgress,
+          });
+          timed = {
+            lifecycle: composed.state.lifecycle,
+            finance: composed.state.finance,
+            physical: composed.state.physical!,
+          };
+          learningCommandHandled = true;
+        }
+      }
+      if (learningInput && !learningCommandHandled) {
+        const causeCommands = [
+          'AdvanceCampaign',
+          'TransferItem',
+          'SetAssignment',
+          'Arrive',
+          'ExecuteDeparture',
+          'BeginFieldCamp',
+          'AcceptSafeService',
+          'AmendSafeService',
+          'EndMaintenance',
+          'ApplyContainerLifecycle',
+          'ApplyCondition',
+          'Capture',
+          'ReleaseCaptive',
+          'TransferCaptive',
+          'ResolveMissing',
+          'RecordDeath',
+        ];
+        requireEconomy(causeCommands.includes(command.type), 'UNSUPPORTED_ACTION');
+        const proposed = applyCommandAtTarget(timed, command, targetContext);
+        const tasks = affectedLearningTasks(
+          command,
+          timed,
+          proposed.root,
+          learningInput.state,
+          learningInput.learningFacts,
+        );
+        const manifests =
+          learningInput.manifests ?? (learningInput.manifest ? [learningInput.manifest] : []);
         requireEconomy(
-          command.type === 'AdvanceCampaign' ||
-            command.type === 'TransferItem' ||
-            command.type === 'SetAssignment',
-          'UNSUPPORTED_ACTION',
+          new Set(manifests.map((entry) => entry.taskId)).size === manifests.length &&
+            manifests.every((entry) => tasks.some((task) => task.start.taskId === entry.taskId)),
+          'INVALID_SOURCE',
         );
-        const activeTasks = learningInput.state.tasks.tasks.filter(
-          (task) => !task.stop && !task.terminal && task.start.inputs !== undefined,
-        );
-        const tasks =
-          command.type === 'AdvanceCampaign'
-            ? activeTasks
-            : command.type === 'TransferItem'
-              ? activeTasks.filter(
-                  (task) =>
-                    task.start.inputs?.kind === 'BOOK' &&
-                    task.start.command.payload.resourceIds.includes(command.payload.itemId) &&
-                    hasStudyAccessOwner(learningInput.state.studyAccess.intervals, {
-                      intervalId: task.start.studyIntervalId,
-                      itemId: command.payload.itemId,
-                      characterId: task.start.command.payload.characterId,
-                    }),
-                )
-              : activeTasks.filter(
-                  (task) =>
-                    task.start.command.payload.characterId === command.payload.characterId &&
-                    timed.lifecycle.characters.find(
-                      (character) => character.identity.characterId === command.payload.characterId,
-                    )?.presence.assignment !== command.payload.assignment,
-                );
-        if (command.type === 'TransferItem') {
-          requireEconomy(tasks.length <= 1, 'INVALID_STATE');
-          requireEconomy(
-            tasks.length === 0 || learningInput.manifest !== undefined,
-            'INVALID_SOURCE',
-          );
-        } else if (command.type === 'SetAssignment') {
-          requireEconomy(tasks.length <= 1, 'INVALID_STATE');
-          requireEconomy(
-            tasks.length > 0 === (learningInput.manifest !== undefined),
-            'INVALID_SOURCE',
-          );
-        } else requireEconomy(learningInput.manifest === undefined, 'INVALID_SOURCE');
+        requireEconomy(manifests.length === tasks.length, 'INVALID_SOURCE');
         requireEconomy(
           learningInput.intervals.every((interval) =>
             tasks.some((task) => task.start.taskId === interval.taskId),
@@ -448,7 +915,7 @@ function prepareEconomyCandidate(
                     entry.sectionId === inputs.sectionId,
                 ) ?? null)
               : null;
-          const taskManifest = learningInput.manifest;
+          const taskManifest = manifests.find((entry) => entry.taskId === task.start.taskId);
           const composed = prepareLearningComposition(
             timed,
             nextLearning!.tasks,
@@ -460,7 +927,7 @@ function prepareEconomyCandidate(
               kind: 'ADVANCE',
               taskId: task.start.taskId,
               effectId: `${learningInput.effectId}-${task.start.taskId}`,
-              command,
+              command: command as LearningCause,
               ...(taskManifest ? { manifest: taskManifest } : {}),
             },
           );
@@ -488,24 +955,21 @@ function prepareEconomyCandidate(
           };
         }
         if (command.type === 'TransferItem') {
-          if (tasks.length === 0)
-            requireEconomy(
-              learningInput.manifest === undefined && learningInput.intervals.length === 0,
-              'INVALID_SOURCE',
-            );
           if (itemDefinition(physicalItem(timed.physical, command.payload.itemId)).kind === 'book')
             learningBeforeTransfer = timed;
         }
         if (command.type === 'SetAssignment' && tasks.length > 0) {
           requireEconomy(
-            learningInput.manifest?.evidenceIds.includes(command.payload.dutyEvidenceId),
+            manifests.some((entry) => entry.evidenceIds.includes(command.payload.dutyEvidenceId)),
             'INVALID_SOURCE',
           );
           learningBeforeDutyChange = timed;
         }
       }
       lifecycleBeforeCommand = timed.lifecycle;
-      draft = applyCommandAtTarget(timed, command, targetContext);
+      draft = learningCommandHandled
+        ? { root: timed, lifecycleReceipt: null, requirements: [], allocations: [] }
+        : applyCommandAtTarget(timed, command, targetContext);
       const lifecycleAtTarget: LifecycleState = {
         ...draft.root.lifecycle,
         campaignTick: target,
@@ -642,7 +1106,11 @@ export function prepareCompanyEconomyWithLearning(
   interruption: {
     readonly intervals: readonly LearningTimeInterval[];
     readonly manifest?: TrustedLearningCauseManifest;
+    readonly manifests?: readonly TrustedLearningCauseManifest[];
     readonly effectId: string;
+    readonly taskId?: string;
+    readonly study?: LearningTransferInput['study'];
+    readonly accessEvidenceId?: string;
   },
 ): CompanyEconomyWithLearningResult {
   const learning = readCompanyLearningState(stateValue.learning);
@@ -650,8 +1118,12 @@ export function prepareCompanyEconomyWithLearning(
     state: learning,
     intervals: interruption.intervals,
     ...(interruption.manifest ? { manifest: interruption.manifest } : {}),
+    ...(interruption.manifests ? { manifests: interruption.manifests } : {}),
     effectId: interruption.effectId,
     learningFacts: context.learningFacts,
+    ...(interruption.taskId ? { taskId: interruption.taskId } : {}),
+    ...(interruption.study ? { study: interruption.study } : {}),
+    ...(interruption.accessEvidenceId ? { accessEvidenceId: interruption.accessEvidenceId } : {}),
   });
   if (prepared.economy.kind === 'REJECTED') return { ...prepared.economy, state: stateValue };
   const nextLearning = prepared.economy.replayed ? learning : (prepared.learning ?? learning);

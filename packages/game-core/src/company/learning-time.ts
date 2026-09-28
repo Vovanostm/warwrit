@@ -20,6 +20,8 @@ import type { CapabilitySubject } from './lifecycle-state.js';
 import { readLearningTaskState } from './learning-task.js';
 import type { CommandOf } from './lifecycle-types.js';
 import type { MaintenanceAgreement } from './economy-types.js';
+import type { ConditionSourceEvidence, MissingResolutionEvidence } from './physical-types.js';
+import type { DeathOutcomeEvidence } from './physical-types.js';
 
 const atLocation = object({ kind: choice('AT'), siteId: id, areaId: id });
 const nil = { schema: { type: 'null' }, read: (value: unknown): value is null => value === null };
@@ -114,8 +116,25 @@ export interface LearningTimePreparation {
   readonly eligibleTicks: string;
 }
 
-export type LearningCause =
-  CommandOf<'AdvanceCampaign'> | CommandOf<'TransferItem'> | CommandOf<'SetAssignment'>;
+export type LearningCause = CommandOf<
+  | 'AdvanceCampaign'
+  | 'TransferItem'
+  | 'SetAssignment'
+  | 'Arrive'
+  | 'ExecuteDeparture'
+  | 'BeginFieldCamp'
+  | 'AcceptSafeService'
+  | 'AmendSafeService'
+  | 'EndMaintenance'
+  | 'ApplyContainerLifecycle'
+  | 'ApplyCondition'
+  | 'Capture'
+  | 'ReleaseCaptive'
+  | 'TransferCaptive'
+  | 'ResolveMissing'
+  | 'RecordDeath'
+  | 'StopLearning'
+>;
 
 /** Adapter-owned timeline manifest for causes without PLAYER authoritativeInputs. */
 export interface TrustedLearningCauseManifest {
@@ -141,6 +160,104 @@ function sameIds(left: readonly string[], right: readonly string[]) {
   );
 }
 
+function causeEvidenceIds(command: Exclude<LearningCause, CommandOf<'AdvanceCampaign'>>) {
+  switch (command.type) {
+    case 'TransferItem':
+      return [];
+    case 'SetAssignment':
+      return [command.payload.dutyEvidenceId];
+    case 'Arrive':
+      return [command.payload.arrivalEvidenceId];
+    case 'ExecuteDeparture':
+      return [command.payload.intentId];
+    case 'BeginFieldCamp':
+      return [command.payload.siteEligibilityId];
+    case 'AcceptSafeService':
+      return [command.payload.offerId];
+    case 'AmendSafeService':
+      return [command.payload.agreementId];
+    case 'EndMaintenance':
+      return [command.payload.agreementOrCampId];
+    case 'ApplyContainerLifecycle':
+    case 'ApplyCondition':
+    case 'Capture':
+    case 'ReleaseCaptive':
+    case 'TransferCaptive':
+      return [command.payload.receiptId];
+    case 'RecordDeath':
+      return [command.payload.receiptId, command.payload.custodyOutcomeId];
+    case 'ResolveMissing':
+      return [command.payload.resolutionId, command.payload.outcomeReceiptId];
+    case 'StopLearning':
+      return [command.payload.taskId];
+  }
+}
+
+function intervalEvidenceIds(interval: LearningTimeInterval): readonly string[] {
+  const attendance = interval.courseAttendance;
+  return [
+    interval.intervalId,
+    interval.ownerIntervalId,
+    ...(attendance
+      ? [
+          attendance.attendanceId,
+          attendance.membership.membershipId,
+          ...attendance.observations.map((entry) => entry.observationId),
+        ]
+      : []),
+  ];
+}
+
+function factualBoundary(
+  command: LearningCause,
+  context: LearningQuoteContext,
+  manifest: TrustedLearningCauseManifest | undefined,
+): string {
+  if (command.type === 'AdvanceCampaign') return command.payload.toTick;
+  if (command.type === 'RecordDeath') {
+    const fact = context.physicalFacts?.find(
+      (entry) =>
+        entry.kind === 'DEATH_OUTCOME' &&
+        entry.id === command.payload.custodyOutcomeId &&
+        entry.characterId === command.payload.characterId &&
+        entry.causeId === command.payload.causeId,
+    ) as DeathOutcomeEvidence | undefined;
+    requireEconomy(
+      fact && fact.actualDeathTick === command.payload.actualDeathTick,
+      'INVALID_SOURCE',
+    );
+    return fact.actualDeathTick;
+  }
+  if (command.type === 'ApplyCondition') {
+    const fact = context.physicalFacts?.find(
+      (entry) =>
+        entry.kind === 'CONDITION_SOURCE' &&
+        entry.id === command.payload.receiptId &&
+        entry.characterId === command.payload.characterId &&
+        entry.causeId === command.payload.causeId,
+    ) as ConditionSourceEvidence | undefined;
+    requireEconomy(fact, 'INVALID_SOURCE');
+    requireEconomy(fact.onsetTick === command.campaignTick, 'INVALID_SOURCE');
+    return fact.onsetTick;
+  }
+  if (command.type === 'ResolveMissing') {
+    const fact = context.physicalFacts?.find(
+      (entry) =>
+        entry.kind === 'MISSING_RESOLUTION' &&
+        entry.id === command.payload.outcomeReceiptId &&
+        entry.sourceEventId === command.sourceEventId &&
+        entry.characterId === command.payload.characterId,
+    ) as MissingResolutionEvidence | undefined;
+    requireEconomy(fact, 'INVALID_SOURCE');
+    return fact.outcome === 'DEAD' ? fact.actualDeathTick! : fact.atTick;
+  }
+  if (manifest) {
+    requireEconomy(manifest.targetTick === command.campaignTick, 'INVALID_SOURCE');
+    return manifest.targetTick;
+  }
+  throw new EconomyViolation('INVALID_SOURCE');
+}
+
 function coveredBySafeService(
   maintenance: readonly MaintenanceAgreement[],
   characterId: string,
@@ -160,6 +277,15 @@ function coveredBySafeService(
       );
     return BigInt(agreement.startedAt) < BigInt(toTick) && coveredEnd > BigInt(fromTick);
   });
+}
+
+export function safeServiceCoversAt(
+  maintenance: readonly MaintenanceAgreement[],
+  characterId: string,
+  atTick: string,
+): boolean {
+  const throughTick = (BigInt(atTick) + 1n).toString();
+  return coveredBySafeService(maintenance, characterId, atTick, throughTick, throughTick);
 }
 
 function validateCourseAttendance(
@@ -290,29 +416,31 @@ export function prepareLearningTime(
   const fromTick = task.processedThroughTick ?? start.command.campaignTick;
   if (task.processedThroughTick === undefined && task.completedTicks !== '0')
     throw new RangeError('LEARNING_HISTORY_REQUIRED');
-  const targetTick =
-    command.type === 'AdvanceCampaign' ? command.payload.toTick : command.campaignTick;
+  const targetTick = factualBoundary(command, context, manifest);
   requireEconomy(
     command.companyId === context.companyId &&
       command.worldId === context.worldId &&
       command.campaignTick === context.atTick &&
-      targetTick === context.atTick &&
       context.companyId === start.command.companyId &&
       context.worldId === start.command.worldId &&
-      BigInt(context.atTick) >= BigInt(fromTick),
+      BigInt(context.atTick) >= BigInt(targetTick) &&
+      BigInt(targetTick) >= BigInt(fromTick),
     'INVALID_TIME',
   );
 
   let authorizedIds: Set<string>;
-  if (command.type === 'AdvanceCampaign') {
-    requireEconomy(manifest === undefined, 'INVALID_SOURCE');
+  if (command.type === 'AdvanceCampaign' && manifest === undefined) {
+    // Legacy composition callers may bind learning intervals to the command list.
+    // Economy composition supplies a separate manifest because command inputs are finance-only.
     authorizedIds = new Set(command.payload.authoritativeInputs);
   } else {
     requireEconomy(
-      ['BOOK', 'COURSE'].includes(start.inputs?.kind ?? '') && manifest !== undefined,
+      manifest !== undefined &&
+        (command.type === 'AdvanceCampaign' ||
+          ['BOOK', 'COURSE'].includes(start.inputs?.kind ?? '')),
       'INVALID_SOURCE',
     );
-    const snapshot = snapshotJson(manifest);
+    const snapshot = snapshotJson(manifest!);
     requireEconomy(causeManifestInput.read(snapshot), 'INVALID_SOURCE');
     const parsed = snapshot as TrustedLearningCauseManifest;
     const unique = new Set(parsed.evidenceIds);
@@ -323,7 +451,9 @@ export function prepareLearningTime(
         parsed.commandId === command.commandId &&
         parsed.taskId === start.taskId &&
         parsed.ownerIntervalId === (start.studyIntervalId ?? start.quote.sourceId) &&
-        parsed.targetTick === context.atTick,
+        parsed.targetTick === targetTick &&
+        (command.type === 'AdvanceCampaign' ||
+          causeEvidenceIds(command).every((evidenceId) => unique.has(evidenceId))),
       'INVALID_SOURCE',
     );
     authorizedIds = unique;
@@ -348,7 +478,7 @@ export function prepareLearningTime(
         !seen.has(interval.intervalId) &&
         from === cursor &&
         from < to &&
-        to <= BigInt(context.atTick),
+        to <= BigInt(targetTick),
       'INVALID_SOURCE',
     );
     validateCourseAttendance(task, interval, context, authorizedIds, maintenance);
@@ -356,13 +486,18 @@ export function prepareLearningTime(
     if (interval.kind === 'ELIGIBLE') eligible += to - from;
     cursor = to;
   }
-  if (cursor !== BigInt(context.atTick)) throw new RangeError('LEARNING_HISTORY_REQUIRED');
+  if (cursor !== BigInt(targetTick)) throw new RangeError('LEARNING_HISTORY_REQUIRED');
   if (command.type === 'TransferItem')
     requireEconomy(
       sameIds(
         [...authorizedIds],
         [...new Set(intervals.flatMap((entry) => [entry.intervalId, entry.ownerIntervalId]))],
       ),
+      'INVALID_SOURCE',
+    );
+  if (command.type === 'AdvanceCampaign' && manifest !== undefined)
+    requireEconomy(
+      sameIds([...authorizedIds], [...new Set(intervals.flatMap(intervalEvidenceIds))]),
       'INVALID_SOURCE',
     );
   if (command.type === 'SetAssignment')

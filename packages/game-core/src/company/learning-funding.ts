@@ -37,9 +37,25 @@ export function admitLearningFunding(
     'AUTHORIZATION',
   );
   requireEconomy(
-    ['StartLearning', 'StopLearning', 'AdvanceCampaign', 'TransferItem', 'SetAssignment'].includes(
-      command.type,
-    ),
+    [
+      'StartLearning',
+      'StopLearning',
+      'AdvanceCampaign',
+      'TransferItem',
+      'SetAssignment',
+      'Arrive',
+      'ExecuteDeparture',
+      'BeginFieldCamp',
+      'AcceptSafeService',
+      'AmendSafeService',
+      'ApplyContainerLifecycle',
+      'ApplyCondition',
+      'Capture',
+      'ReleaseCaptive',
+      'TransferCaptive',
+      'ResolveMissing',
+      'RecordDeath',
+    ].includes(command.type),
     'UNSUPPORTED_ACTION',
   );
   // Authenticate/tenant-bind before looking at the private retained start or source.

@@ -3,6 +3,8 @@ import {
   createLearningTaskState,
   createCompanyLearningState,
   createStudyAccessState,
+  advanceStudySection,
+  admitStudyInterval,
   initialSkillProgress,
   prepareCompanyEconomy,
   prepareLearningComposition,
@@ -12,8 +14,11 @@ import type {
   CommandOf,
   CompanyEconomyState,
   CourseAttendanceEvidence,
+  PhysicalEvidence,
+  MaterializedCompanyState,
   LearningQuoteContext,
   LearningTimeInterval,
+  LifecycleEvidence,
 } from '@warwrit/game-core';
 import {
   access,
@@ -22,6 +27,7 @@ import {
   context,
   economy,
   physicalScope,
+  place,
   scope,
   tick,
 } from './company-economy-fixture.js';
@@ -32,11 +38,13 @@ import {
   container,
   item,
   itemAccess,
+  visibleCharacter,
   withCareProvider,
 } from './company-physical-fixture.js';
 
 type Start = ReturnType<typeof command> & CommandOf<'StartLearning'>;
 type Advance = ReturnType<typeof command> & CommandOf<'AdvanceCampaign'>;
+type Capture = ReturnType<typeof command> & CommandOf<'Capture'>;
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
 function admitted(course: boolean, maxTicks = '5000') {
@@ -130,11 +138,121 @@ function admitted(course: boolean, maxTicks = '5000') {
     },
   );
   return {
+    root,
+    start,
+    book,
     state: result.state,
     task: result.tasks.tasks[0]!,
     tasks: result.tasks,
     study: result.studyAccess,
     startContext,
+  };
+}
+
+type ScenarioFixture = Pick<ReturnType<typeof admitted>, 'task' | 'state' | 'startContext'>;
+
+function startScenarioTask(
+  stateValue: CompanyEconomyState,
+  learning: ReturnType<typeof createCompanyLearningState>,
+  learnerId: string,
+  course: boolean,
+  bookItemId: string,
+) {
+  const state = visibleCharacter(stateValue, learnerId, (character) => ({
+    ...character,
+    skills: {
+      ...character.skills,
+      scholarship: course ? 60 : 25,
+      medicine: initialSkillProgress(0, `scenario-${learnerId}`),
+    },
+    aptitudeBySkill: { ...character.aptitudeBySkill, medicine: 10000 },
+    perks: [course ? 'scholarship-60-b' : 'scholarship-25-a'],
+  }));
+  const taskId = `scenario-task-${learnerId}`;
+  const sourceId = `scenario-source-${learnerId}`;
+  const commandId = `scenario-start-${learnerId}`;
+  const resourceIds = course ? ['book-1', 'book-2'] : [bookItemId];
+  const start = command(
+    state,
+    'StartLearning',
+    {
+      characterId: learnerId,
+      methodId: course ? 'funded-practice' : 'book-study',
+      goal: course
+        ? { skillId: 'medicine', maxTicks: '5000' }
+        : { workId: 'wound-care-basics', maxTicks: '5000' },
+      resourceIds,
+      budgetPoolId: 'local',
+      maxBudgetQ: course ? '50000000' : '0',
+    },
+    commandId,
+    'PLAYER',
+    tick(10),
+  ) as Start;
+  const source: LearningQuoteContext['learningFacts'][number] = {
+    ...scope(state, sourceId, tick(10)),
+    sourceVersion: `version-${learnerId}`,
+    expiresAt: tick(500),
+    learnerId,
+    location: place,
+    resourceIds,
+    ...(course
+      ? {
+          kind: 'COURSE' as const,
+          methodId: 'funded-practice',
+          skillId: 'medicine',
+          challengeLevel: 0,
+          providerId: 'leader',
+          mentorId: 'leader',
+          poolId: 'local',
+          providerWalletId: 'wallet-leader',
+          moneyAccessEvidenceId: 'money-access',
+          costQPerDay: cash(5_000_000),
+          maxTicks: '5000',
+        }
+      : {
+          kind: 'SELF_STUDY' as const,
+          methodId: 'book-study',
+          workId: 'wound-care-basics',
+          sectionId: 'wound-care-basics-1',
+        }),
+  };
+  const study = course
+    ? undefined
+    : {
+        intervalId: `scenario-access-${learnerId}`,
+        itemId: bookItemId,
+        accessEvidenceId: `scenario-book-access-${learnerId}`,
+      };
+  const physicalFacts = study
+    ? [
+        {
+          ...itemAccess(state, study.accessEvidenceId, 'STUDY', ['fixture-supply'], [bookItemId]),
+          operatorId: learnerId,
+        },
+      ]
+    : [];
+  const startContext = {
+    ...context(state, start, [access(state, tick(10))], [], physicalFacts),
+    learningFacts: [source],
+  };
+  const result = prepareCompanyEconomyWithLearning(
+    { economy: state, learning },
+    start,
+    startContext,
+    {
+      taskId,
+      effectId: `scenario-start-effect-${learnerId}`,
+      intervals: [],
+      ...(study ? { study } : {}),
+    },
+  );
+  if (result.kind !== 'PREPARED') throw new Error(`Scenario start ${learnerId}: ${result.error}`);
+  const task = result.next.learning.tasks.tasks.find((entry) => entry.start.taskId === taskId);
+  if (!task) throw new Error(`Scenario task missing for ${learnerId}`);
+  return {
+    result,
+    fixture: { state: result.next.economy, task, startContext } satisfies ScenarioFixture,
   };
 }
 
@@ -249,7 +367,7 @@ function startAnotherCourse(
 }
 
 function segment(
-  fixture: ReturnType<typeof admitted>,
+  fixture: ScenarioFixture,
   from: number,
   to: number,
   kind: LearningTimeInterval['kind'],
@@ -257,11 +375,12 @@ function segment(
   const source = fixture.startContext.learningFacts[0];
   let courseAttendance: CourseAttendanceEvidence | undefined;
   if (source?.kind === 'COURSE' && kind === 'ELIGIBLE') {
+    const learnerId = fixture.task.start.command.payload.characterId;
     const providerId = source.providerId!;
     const mentorId = source.mentorId!;
-    const characterIds = [...new Set(['leader', providerId, mentorId])];
+    const characterIds = [...new Set([learnerId, providerId, mentorId])];
     const membership = fixture.state.lifecycle.memberships.find(
-      (entry) => entry.characterId === 'leader' && entry.endedAt === null,
+      (entry) => entry.characterId === learnerId && entry.endedAt === null,
     )!;
     courseAttendance = {
       attendanceId: `${fixture.task.start.taskId}-attendance-${from}-${to}`,
@@ -270,7 +389,7 @@ function segment(
       taskId: fixture.task.start.taskId,
       companyId: source.companyId,
       worldId: source.worldId,
-      learnerId: 'leader',
+      learnerId,
       providerId,
       mentorId,
       skillId: source.skillId!,
@@ -311,7 +430,7 @@ function segment(
     ownerIntervalId: fixture.task.start.studyIntervalId ?? fixture.task.start.quote.sourceId,
     companyId: 'company',
     worldId: 'world',
-    characterId: 'leader',
+    characterId: fixture.task.start.command.payload.characterId,
     fromTick: String(from),
     toTick: String(to),
     kind,
@@ -335,6 +454,710 @@ function intervalEvidenceIds(interval: LearningTimeInterval): readonly string[] 
 }
 
 describe('C05 time and atomic learning composition', () => {
+  it('prepares public start and settles the exact public stop prefix in one root', () => {
+    const fixture = admitted(false);
+    const start = prepareCompanyEconomyWithLearning(
+      { economy: fixture.root, learning: createCompanyLearningState() },
+      fixture.start,
+      fixture.startContext,
+      {
+        taskId: fixture.task.start.taskId,
+        effectId: 'public-learning-start',
+        intervals: [],
+        study: fixture.book,
+        accessEvidenceId: fixture.book.accessEvidenceId,
+      },
+    );
+    expect(start.kind).toBe('PREPARED');
+    if (start.kind !== 'PREPARED') return;
+    expect(start.next.learning.tasks.tasks[0]?.start.command).toEqual(fixture.start);
+
+    const advanceState = atTick(start.next.economy, 15);
+    const advanceInterval = {
+      ...segment(fixture, 10, 15, 'ELIGIBLE'),
+      commandId: 'public-learning-advance',
+    };
+    const advance = command(
+      advanceState,
+      'AdvanceCampaign',
+      {
+        toTick: '15',
+        authoritativeInputs: [],
+      },
+      'public-learning-advance',
+      'SYSTEM',
+      tick(15),
+    ) as Advance;
+    const advanceAccessFact = access(advanceState, tick(15));
+    const foodFacts = (state: CompanyEconomyState, from: number, to: number) =>
+      state.lifecycle.memberships
+        .filter((membership) => membership.endedAt === null)
+        .map((membership, ordinal) => ({
+          ...physicalScope(state, `food-${membership.characterId}-${to}`, tick(to), ordinal),
+          kind: 'FOOD_FULFILLMENT' as const,
+          membershipId: membership.membershipId,
+          fromTick: tick(from),
+          toTick: tick(to),
+          channel: 'STOCK' as const,
+          location: place,
+          containerId: 'fixture-supply',
+        }));
+    const advanceManifest = {
+      companyId: advance.companyId,
+      worldId: advance.worldId,
+      commandId: advance.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.book.intervalId,
+      targetTick: advance.payload.toTick,
+      evidenceIds: [...intervalEvidenceIds(advanceInterval)],
+    };
+    const advanceContext = {
+      ...context(advanceState, advance, [advanceAccessFact], [], foodFacts(advanceState, 10, 15)),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const refusedAdvance = prepareCompanyEconomyWithLearning(start.next, advance, advanceContext, {
+      intervals: [advanceInterval],
+      manifests: [{ ...advanceManifest, worldId: 'another-world' }],
+      effectId: 'public-learning-advance',
+    });
+    expect(refusedAdvance).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(refusedAdvance.state).toBe(start.next);
+    const advanced = prepareCompanyEconomyWithLearning(start.next, advance, advanceContext, {
+      intervals: [advanceInterval],
+      manifests: [advanceManifest],
+      effectId: 'public-learning-advance',
+    });
+    expect(advanced.kind).toBe('PREPARED');
+    if (advanced.kind !== 'PREPARED') return;
+    expect(advanced.next.learning.tasks.tasks[0]).toMatchObject({
+      completedTicks: '5',
+      processedThroughTick: '15',
+    });
+    const advanceRetry = prepareCompanyEconomyWithLearning(
+      advanced.next,
+      advance,
+      {
+        ...context(advanced.next.economy, advance),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      {
+        intervals: [advanceInterval],
+        manifests: [advanceManifest],
+        effectId: 'public-learning-advance',
+      },
+    );
+    expect(advanceRetry.kind).toBe('PREPARED');
+    if (advanceRetry.kind !== 'PREPARED') return;
+    expect(advanceRetry.replayed).toBe(true);
+    expect(advanceRetry.receipt).toBe(advanced.receipt);
+    expect(advanceRetry.next.economy).toBe(advanced.next.economy);
+
+    const stopState = atTick(advanced.next.economy, 20);
+    const stop = command(
+      stopState,
+      'StopLearning',
+      { taskId: fixture.task.start.taskId, reason: 'PLAYER' },
+      'public-learning-stop',
+      'PLAYER',
+      tick(20),
+    ) as CommandOf<'StopLearning'>;
+    const interval = { ...segment(fixture, 15, 20, 'ELIGIBLE'), commandId: stop.commandId };
+    const manifest = {
+      companyId: stop.companyId,
+      worldId: stop.worldId,
+      commandId: stop.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.book.intervalId,
+      targetTick: stop.campaignTick,
+      evidenceIds: [interval.intervalId, interval.ownerIntervalId, fixture.task.start.taskId],
+    };
+    const accessFact = access(stopState, tick(20));
+    const stopFoodFacts = foodFacts(stopState, 15, 20);
+    const stopped = prepareCompanyEconomyWithLearning(
+      advanced.next,
+      stop,
+      {
+        ...context(stopState, stop as ReturnType<typeof command>, [accessFact], [], stopFoodFacts),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      { intervals: [interval], manifests: [manifest], effectId: 'public-learning-stop' },
+    );
+    expect(stopped.kind).toBe('PREPARED');
+    if (stopped.kind !== 'PREPARED') return;
+    expect(stopped.next.learning.tasks.tasks[0]).toMatchObject({
+      completedTicks: '10',
+      processedThroughTick: '20',
+      stop: { commandId: stop.commandId },
+    });
+    expect(stopped.next.learning.studyAccess.intervals[0]).toMatchObject({
+      intervalId: fixture.book.intervalId,
+      effectiveToTick: '20',
+    });
+    expect(stopped.next.learning.studyProgress[0]?.learnedTicks).toBe(
+      ((10n * 10_000n) / 9_000n).toString(),
+    );
+    const retry = prepareCompanyEconomyWithLearning(
+      stopped.next,
+      stop,
+      {
+        ...context(stopped.next.economy, stop as ReturnType<typeof command>, [
+          access(stopped.next.economy, tick(20)),
+        ]),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      { intervals: [interval], manifests: [manifest], effectId: 'public-learning-stop' },
+    );
+    expect(retry.kind).toBe('PREPARED');
+    if (retry.kind !== 'PREPARED') return;
+    expect(retry.replayed).toBe(true);
+    expect(retry.next).toStrictEqual(stopped.next);
+  });
+
+  it('settles learning to a trusted retroactive death boundary before applying death', () => {
+    const fixture = admitted(false);
+    const started = prepareCompanyEconomyWithLearning(
+      { economy: fixture.root, learning: createCompanyLearningState() },
+      fixture.start,
+      fixture.startContext,
+      {
+        taskId: fixture.task.start.taskId,
+        effectId: 'death-learning-start',
+        intervals: [],
+        study: fixture.book,
+      },
+    );
+    expect(started.kind).toBe('PREPARED');
+    if (started.kind !== 'PREPARED') return;
+
+    const death = command(
+      started.next.economy,
+      'RecordDeath',
+      {
+        receiptId: 'death-finance',
+        characterId: 'leader',
+        actualDeathTick: '15',
+        causeId: 'fatal-battle',
+        custodyOutcomeId: 'death-physical',
+      },
+      'late-learning-death',
+      'OUTCOME_RECEIPT',
+      tick(20),
+    );
+    const interval = { ...segment(fixture, 10, 15, 'ELIGIBLE'), commandId: death.commandId };
+    const manifest = {
+      companyId: death.companyId,
+      worldId: death.worldId,
+      commandId: death.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.book.intervalId,
+      targetTick: tick(15),
+      evidenceIds: [
+        interval.intervalId,
+        interval.ownerIntervalId,
+        fixture.task.start.taskId,
+        'death-finance',
+        'death-physical',
+      ],
+    };
+    const financeFact = {
+      ...scope(started.next.economy, 'death-finance', tick(20)),
+      sourceEventId: death.sourceEventId,
+      kind: 'FINANCIAL_DEATH' as const,
+      characterId: 'leader',
+      actualDeathTick: tick(15),
+      causeId: 'fatal-battle',
+      custodyOutcomeId: 'death-physical',
+      recipient: { kind: 'ESTATE' as const, id: 'leader' },
+    };
+    const outcomeFact = {
+      ...physicalScope(started.next.economy, 'death-physical', tick(20)),
+      sourceEventId: death.sourceEventId,
+      kind: 'DEATH_OUTCOME' as const,
+      characterId: 'leader',
+      actualDeathTick: tick(15),
+      causeId: 'fatal-battle',
+      location: place,
+      corpseContainerId: 'corpse-leader',
+    };
+    const foodFacts = started.next.economy.lifecycle.memberships
+      .filter((membership) => membership.endedAt === null)
+      .flatMap((membership, ordinal) => {
+        const fact = (fromTick: number, toTick: number, suffix: string, index: number) => ({
+          ...physicalScope(
+            started.next.economy,
+            `death-food-${membership.characterId}-${suffix}`,
+            tick(20),
+            index,
+          ),
+          kind: 'FOOD_FULFILLMENT' as const,
+          membershipId: membership.membershipId,
+          fromTick: tick(fromTick),
+          toTick: tick(toTick),
+          channel: 'STOCK' as const,
+          location: place,
+          containerId: 'fixture-supply',
+        });
+        return [
+          fact(10, 15, '10-15', ordinal * 2),
+          ...(membership.characterId === 'leader' ? [] : [fact(15, 20, '15-20', ordinal * 2 + 1)]),
+        ];
+      });
+    const result = prepareCompanyEconomyWithLearning(
+      started.next,
+      death,
+      {
+        ...context(started.next.economy, death, [financeFact], [], [outcomeFact, ...foodFacts]),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      {
+        intervals: [interval],
+        manifests: [manifest],
+        effectId: 'late-learning-death',
+      },
+    );
+    expect(result.kind, JSON.stringify(result)).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.next.learning.tasks.tasks[0]).toMatchObject({
+      completedTicks: '5',
+      processedThroughTick: '15',
+      terminal: {
+        kind: 'INTERRUPTED',
+        commandId: death.commandId,
+        processedThroughTick: '15',
+      },
+    });
+    expect(result.next.learning.studyAccess.intervals[0]?.effectiveToTick).toBe('15');
+    expect(
+      result.next.economy.lifecycle.characters.find(
+        (character) => character.identity.characterId === 'leader',
+      )?.presence.availability,
+    ).toBe('DEAD');
+  });
+
+  it('retains a StopLearning effect that reaches the book goal', () => {
+    const fixture = admitted(false);
+    const state = atTick(fixture.state, 11);
+    const stop = command(
+      state,
+      'StopLearning',
+      { taskId: fixture.task.start.taskId, reason: 'PLAYER' },
+      'stop-at-book-goal',
+      'PLAYER',
+      tick(11),
+    ) as CommandOf<'StopLearning'>;
+    const interval = { ...segment(fixture, 10, 11, 'ELIGIBLE'), commandId: stop.commandId };
+    const manifest = {
+      companyId: stop.companyId,
+      worldId: stop.worldId,
+      commandId: stop.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.book.intervalId,
+      targetTick: stop.campaignTick,
+      evidenceIds: [interval.intervalId, interval.ownerIntervalId, fixture.task.start.taskId],
+    };
+    const source = {
+      ...fixture.startContext.learningFacts[0]!,
+      ...scope(state, 'restart-after-goal', tick(11)),
+      sourceVersion: 'book-study-restart-v1',
+      atTick: tick(11),
+      expiresAt: tick(500),
+      resourceIds: ['book-2'],
+    };
+    const accessFact = {
+      ...itemAccess(state, 'restart-book-access', 'STUDY', ['fixture-supply'], ['book-2']),
+      atTick: tick(11),
+      operatorId: 'leader',
+    };
+    const learningContext = {
+      ...context(
+        state,
+        stop as ReturnType<typeof command>,
+        [access(state, tick(11))],
+        [],
+        [accessFact],
+      ),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const stopped = prepareLearningComposition(
+      state,
+      fixture.tasks,
+      fixture.study,
+      {
+        schemaVersion: 2,
+        characterId: 'leader',
+        workId: 'wound-care-basics',
+        workVersion: 1,
+        sectionId: 'wound-care-basics-1',
+        learnedTicks: '999',
+        learnedCarry: { numerator: '0', denominator: '1' },
+      },
+      learningContext,
+      [interval],
+      {
+        kind: 'STOP',
+        taskId: fixture.task.start.taskId,
+        effectId: 'stop-at-goal-effect',
+        command: stop,
+        intervals: [interval],
+        manifest,
+      },
+    );
+    expect(stopped.tasks.tasks[0]?.terminal).toMatchObject({
+      kind: 'GOAL_REACHED',
+      commandId: stop.commandId,
+      processedThroughTick: '11',
+    });
+
+    const restart = command(
+      stopped.state,
+      'StartLearning',
+      { ...fixture.task.start.command.payload, resourceIds: ['book-2'] },
+      'restart-after-book-goal',
+      'PLAYER',
+      tick(11),
+    ) as Start;
+    expect(() =>
+      prepareLearningComposition(
+        stopped.state,
+        stopped.tasks,
+        stopped.studyAccess,
+        stopped.studyProgress,
+        {
+          ...context(
+            stopped.state,
+            restart as ReturnType<typeof command>,
+            [access(stopped.state, tick(11))],
+            [],
+            [accessFact],
+          ),
+          learningFacts: [source],
+        },
+        [],
+        {
+          kind: 'START',
+          taskId: 'task-after-book-goal',
+          effectId: 'start-after-book-goal-effect',
+          admission: {
+            taskId: 'task-after-book-goal',
+            command: restart,
+            study: {
+              intervalId: 'access-after-book-goal',
+              itemId: 'book-2',
+              accessEvidenceId: 'restart-book-access',
+            },
+          },
+        },
+      ),
+    ).not.toThrow();
+  });
+
+  it('binds late missing-death learning to the real resolution fact and source', () => {
+    const fixture = admitted(false);
+    const started = prepareCompanyEconomyWithLearning(
+      { economy: fixture.root, learning: createCompanyLearningState() },
+      fixture.start,
+      fixture.startContext,
+      {
+        taskId: fixture.task.start.taskId,
+        effectId: 'missing-learning-start',
+        intervals: [],
+        study: fixture.book,
+      },
+    );
+    expect(started.kind).toBe('PREPARED');
+    if (started.kind !== 'PREPARED') return;
+    const missingState = visibleCharacter(started.next.economy, 'leader', (character) => ({
+      ...character,
+      presence: {
+        ...character.presence,
+        availability: 'OUT_OF_CONTACT',
+        assignment: 'NONE',
+        fieldPartyId: null,
+      },
+    }));
+    const resolution = command(
+      missingState,
+      'ResolveMissing',
+      {
+        resolutionId: 'missing-resolution',
+        characterId: 'leader',
+        notBefore: '10',
+        outcomeReceiptId: 'missing-proof-fact',
+      },
+      'late-missing-death',
+      'WORLD_RECEIPT',
+      tick(20),
+    );
+    const interval = {
+      ...segment(fixture, 10, 15, 'ELIGIBLE'),
+      commandId: resolution.commandId,
+    };
+    const manifest = {
+      companyId: resolution.companyId,
+      worldId: resolution.worldId,
+      commandId: resolution.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.book.intervalId,
+      targetTick: tick(15),
+      evidenceIds: [
+        interval.intervalId,
+        interval.ownerIntervalId,
+        fixture.task.start.taskId,
+        'missing-resolution',
+        'missing-proof-fact',
+      ],
+    };
+    const financeFact = {
+      ...scope(missingState, 'missing-finance-fact', tick(20)),
+      sourceEventId: resolution.sourceEventId,
+      kind: 'FINANCIAL_DEATH' as const,
+      characterId: 'leader',
+      actualDeathTick: tick(15),
+      causeId: 'missing-fatal-cause',
+      custodyOutcomeId: 'missing-body-fact',
+      recipient: { kind: 'ESTATE' as const, id: 'leader' },
+    };
+    const deathFact = {
+      ...physicalScope(missingState, 'missing-body-fact', tick(20)),
+      sourceEventId: resolution.sourceEventId,
+      kind: 'DEATH_OUTCOME' as const,
+      characterId: 'leader',
+      actualDeathTick: tick(15),
+      causeId: 'missing-fatal-cause',
+      location: place,
+      corpseContainerId: 'missing-corpse',
+    };
+    const resolutionFact = {
+      ...physicalScope(missingState, 'missing-proof-fact', tick(20)),
+      sourceEventId: resolution.sourceEventId,
+      kind: 'MISSING_RESOLUTION' as const,
+      characterId: 'leader',
+      notBefore: tick(10),
+      outcome: 'DEAD' as const,
+      actualDeathTick: tick(15),
+      causeId: 'missing-fatal-cause',
+      location: place,
+      custodyOutcomeId: 'missing-body-fact',
+      financialDeathReceiptId: 'missing-finance-fact',
+    };
+    expect(resolutionFact.id).not.toBe(resolution.sourceEventId);
+    const foodFacts = missingState.lifecycle.memberships
+      .filter((membership) => membership.endedAt === null)
+      .flatMap((membership, ordinal) => {
+        const fact = (fromTick: number, toTick: number, suffix: string, index: number) => ({
+          ...physicalScope(
+            missingState,
+            `missing-food-${membership.characterId}-${suffix}`,
+            tick(20),
+            index,
+          ),
+          kind: 'FOOD_FULFILLMENT' as const,
+          membershipId: membership.membershipId,
+          fromTick: tick(fromTick),
+          toTick: tick(toTick),
+          channel: 'STOCK' as const,
+          location: place,
+          containerId: 'fixture-supply',
+        });
+        return [
+          fact(10, 15, '10-15', ordinal * 2),
+          ...(membership.characterId === 'leader' ? [] : [fact(15, 20, '15-20', ordinal * 2 + 1)]),
+        ];
+      });
+    const result = prepareCompanyEconomyWithLearning(
+      { ...started.next, economy: missingState },
+      resolution,
+      {
+        ...context(
+          missingState,
+          resolution,
+          [financeFact],
+          [],
+          [resolutionFact, deathFact, ...foodFacts],
+        ),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      { intervals: [interval], manifests: [manifest], effectId: 'late-missing-death' },
+    );
+    expect(result.kind, JSON.stringify(result)).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.next.learning.tasks.tasks[0]).toMatchObject({
+      completedTicks: '5',
+      processedThroughTick: '15',
+      terminal: { kind: 'INTERRUPTED', commandId: resolution.commandId },
+    });
+    expect(
+      result.next.economy.lifecycle.characters.find(
+        (character) => character.identity.characterId === 'leader',
+      )?.presence.availability,
+    ).toBe('DEAD');
+  });
+
+  it('interrupts only shared-provider courses on provider death and replays the same candidate', () => {
+    let state = economy([1n, 1n, 1n], 7_000_000n, 10);
+    const owner = { kind: 'COMPANY' as const, id: state.lifecycle.companyId };
+    state = addItem(state, item('book-1', 'study-book-medicine', owner, 'fixture-supply'));
+    state = addItem(state, item('book-2', 'study-book-medicine', owner, 'fixture-supply'));
+    let learning = createCompanyLearningState();
+
+    const firstCourse = startScenarioTask(state, learning, 'worker-0', true, 'book-1');
+    state = firstCourse.result.next.economy;
+    learning = firstCourse.result.next.learning;
+    const secondCourse = startScenarioTask(state, learning, 'worker-1', true, 'book-1');
+    state = secondCourse.result.next.economy;
+    learning = secondCourse.result.next.learning;
+    const unrelatedBook = startScenarioTask(state, learning, 'worker-2', false, 'book-2');
+    state = unrelatedBook.result.next.economy;
+    learning = unrelatedBook.result.next.learning;
+
+    const bookTaskId = unrelatedBook.fixture.task.start.taskId;
+    const bookTaskBefore = learning.tasks.tasks.find((entry) => entry.start.taskId === bookTaskId);
+    const bookAccessBefore = learning.studyAccess.intervals.filter(
+      (entry) => entry.characterId === 'worker-2',
+    );
+    const progressBefore = learning.studyProgress;
+    expect(bookTaskBefore).toBeDefined();
+    expect(bookAccessBefore).toHaveLength(1);
+
+    const death = command(
+      state,
+      'RecordDeath',
+      {
+        receiptId: 'shared-provider-death-finance',
+        characterId: 'leader',
+        actualDeathTick: tick(15),
+        causeId: 'shared-provider-fatal-cause',
+        custodyOutcomeId: 'shared-provider-death-physical',
+      },
+      'shared-provider-death',
+      'OUTCOME_RECEIPT',
+      tick(20),
+    );
+    const intervals = [firstCourse.fixture, secondCourse.fixture].map((fixture) => ({
+      ...segment(fixture, 10, 15, 'ELIGIBLE'),
+      commandId: death.commandId,
+    }));
+    const deathManifest = (fixture: ScenarioFixture, interval: LearningTimeInterval) => ({
+      companyId: death.companyId,
+      worldId: death.worldId,
+      commandId: death.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.task.start.quote.sourceId,
+      targetTick: tick(15),
+      evidenceIds: [
+        ...intervalEvidenceIds(interval),
+        fixture.task.start.taskId,
+        'shared-provider-death-finance',
+        'shared-provider-death-physical',
+      ],
+    });
+    const manifests = [
+      deathManifest(firstCourse.fixture, intervals[0]!),
+      deathManifest(secondCourse.fixture, intervals[1]!),
+    ];
+    const financeFact = {
+      ...scope(state, 'shared-provider-death-finance', tick(20)),
+      sourceEventId: death.sourceEventId,
+      kind: 'FINANCIAL_DEATH' as const,
+      characterId: 'leader',
+      actualDeathTick: tick(15),
+      causeId: 'shared-provider-fatal-cause',
+      custodyOutcomeId: 'shared-provider-death-physical',
+      recipient: { kind: 'ESTATE' as const, id: 'leader' },
+    };
+    const deathFact = {
+      ...physicalScope(state, 'shared-provider-death-physical', tick(20)),
+      sourceEventId: death.sourceEventId,
+      kind: 'DEATH_OUTCOME' as const,
+      characterId: 'leader',
+      actualDeathTick: tick(15),
+      causeId: 'shared-provider-fatal-cause',
+      location: place,
+      corpseContainerId: 'shared-provider-corpse',
+    };
+    const foodFacts = state.lifecycle.memberships
+      .filter((membership) => membership.endedAt === null)
+      .flatMap((membership, ordinal) => {
+        const fact = (from: number, to: number, suffix: string, index: number) => ({
+          ...physicalScope(
+            state,
+            `shared-provider-food-${membership.characterId}-${suffix}`,
+            tick(20),
+            index,
+          ),
+          kind: 'FOOD_FULFILLMENT' as const,
+          membershipId: membership.membershipId,
+          fromTick: tick(from),
+          toTick: tick(to),
+          channel: 'STOCK' as const,
+          location: place,
+          containerId: 'fixture-supply',
+        });
+        return [
+          fact(10, 15, '10-15', ordinal * 2),
+          ...(membership.characterId === 'leader' ? [] : [fact(15, 20, '15-20', ordinal * 2 + 1)]),
+        ];
+      });
+    const learningFacts = [
+      ...firstCourse.fixture.startContext.learningFacts,
+      ...secondCourse.fixture.startContext.learningFacts,
+      ...unrelatedBook.fixture.startContext.learningFacts,
+    ];
+    const deathContext = {
+      ...context(state, death, [financeFact], [], [deathFact, ...foodFacts]),
+      learningFacts,
+    };
+    const cause = {
+      intervals,
+      manifests,
+      effectId: 'shared-provider-death-learning',
+    };
+    const result = prepareCompanyEconomyWithLearning(
+      { economy: state, learning },
+      death,
+      deathContext,
+      cause,
+    );
+
+    expect(result.kind, result.kind === 'REJECTED' ? result.error : undefined).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    const terminalTasks = result.next.learning.tasks.tasks.filter((entry) => entry.terminal);
+    expect(terminalTasks.map((entry) => entry.start.taskId).sort()).toEqual(
+      [firstCourse.fixture.task.start.taskId, secondCourse.fixture.task.start.taskId].sort(),
+    );
+    for (const task of terminalTasks)
+      expect(task).toMatchObject({
+        completedTicks: '5',
+        processedThroughTick: '15',
+        terminal: { kind: 'INTERRUPTED', commandId: death.commandId },
+      });
+    expect(
+      result.next.economy.finance.learningEffects
+        ?.filter((effect) => effect.commandId === death.commandId)
+        .map((effect) => [effect.taskId, effect.acceptedTicks])
+        .sort(([left], [right]) => left!.localeCompare(right!)),
+    ).toEqual(
+      [firstCourse.fixture.task.start.taskId, secondCourse.fixture.task.start.taskId]
+        .sort()
+        .map((taskId) => [taskId, '5']),
+    );
+    expect(
+      result.next.learning.tasks.tasks.find((entry) => entry.start.taskId === bookTaskId),
+    ).toEqual(bookTaskBefore);
+    expect(
+      result.next.learning.studyAccess.intervals.filter(
+        (entry) => entry.characterId === 'worker-2',
+      ),
+    ).toEqual(bookAccessBefore);
+    expect(result.next.learning.studyProgress).toEqual(progressBefore);
+
+    const retry = prepareCompanyEconomyWithLearning(result.next, death, deathContext, cause);
+    expect(retry.kind).toBe('PREPARED');
+    if (retry.kind !== 'PREPARED') return;
+    expect(retry.replayed).toBe(true);
+    expect(retry.next).toEqual(result.next);
+  });
+
   it('settles an accrued book prefix when transfer arrives after admitted access ends', () => {
     const fixture = admitted(false);
     const state = addContainer(
@@ -488,6 +1311,19 @@ describe('C05 time and atomic learning composition', () => {
         taskId: fixture.task.start.taskId,
         effectId: 'stop-effect',
         command: stopCommand,
+        intervals: [],
+        manifest: {
+          companyId: stopCommand.companyId,
+          worldId: stopCommand.worldId,
+          commandId: stopCommand.commandId,
+          taskId: fixture.task.start.taskId,
+          ownerIntervalId: fixture.task.start.studyIntervalId ?? fixture.task.start.quote.sourceId,
+          targetTick: stopCommand.campaignTick,
+          evidenceIds: [
+            fixture.task.start.taskId,
+            fixture.task.start.studyIntervalId ?? fixture.task.start.quote.sourceId,
+          ],
+        },
       },
     );
     expect(stopped.tasks.tasks[0]?.stop?.payload.reason).toBe('PLAYER');
@@ -504,6 +1340,16 @@ describe('C05 time and atomic learning composition', () => {
         taskId: fixture.task.start.taskId,
         effectId: 'stop-effect',
         command: stopCommand,
+        intervals: [],
+        manifest: {
+          companyId: stopCommand.companyId,
+          worldId: stopCommand.worldId,
+          commandId: stopCommand.commandId,
+          taskId: fixture.task.start.taskId,
+          ownerIntervalId: fixture.task.start.studyIntervalId!,
+          targetTick: stopCommand.campaignTick,
+          evidenceIds: [fixture.task.start.taskId, fixture.task.start.studyIntervalId!],
+        },
       },
     );
     expect(stopRetry.replayed).toBe(true);
@@ -975,6 +1821,19 @@ describe('C05 time and atomic learning composition', () => {
         taskId: fixture.task.start.taskId,
         effectId: 'stop-after-progress-effect',
         command: stopCommand,
+        intervals: [],
+        manifest: {
+          companyId: stopCommand.companyId,
+          worldId: stopCommand.worldId,
+          commandId: stopCommand.commandId,
+          taskId: fixture.task.start.taskId,
+          ownerIntervalId: fixture.task.start.studyIntervalId ?? fixture.task.start.quote.sourceId,
+          targetTick: stopCommand.campaignTick,
+          evidenceIds: [
+            fixture.task.start.taskId,
+            fixture.task.start.studyIntervalId ?? fixture.task.start.quote.sourceId,
+          ],
+        },
       },
     );
     const replayAfterStop = replayAdvance(
@@ -1207,13 +2066,71 @@ describe('C05 time and atomic learning composition', () => {
     expect(restarted.tasks.tasks[1]?.start.taskId).toBe('task-course-again-1010');
   });
 
-  it('records an accepted duty change as the same-tick learning interruption', () => {
+  it('releases a book copy when prior section progress reaches its goal', () => {
+    const fixture = admitted(false);
+    const key = {
+      characterId: 'leader',
+      workId: 'wound-care-basics',
+      sectionId: 'wound-care-basics-1',
+    };
+    const prior = advanceStudySection(null, key, '900').next;
+    const completed = prepare(
+      fixture,
+      910,
+      [segment(fixture, 10, 910, 'ELIGIBLE')],
+      atTick(fixture.state, 910),
+      fixture.tasks,
+      fixture.study,
+      prior,
+    );
+    expect(completed.tasks.tasks[0]?.terminal?.kind).toBe('GOAL_REACHED');
+    expect(completed.studyAccess.intervals[0]?.effectiveToTick).toBe(
+      completed.tasks.tasks[0]?.processedThroughTick,
+    );
+
+    const reuseCommand = command(completed.state, 'StopLearning', {
+      taskId: fixture.task.start.taskId,
+      reason: 'PLAYER',
+    });
+    const nextAccess = admitStudyInterval(
+      completed.studyAccess,
+      completed.state as MaterializedCompanyState,
+      {
+        ...context(completed.state, reuseCommand, []),
+        physicalFacts: [
+          {
+            ...itemAccess(
+              completed.state,
+              'next-reader-access',
+              'STUDY',
+              ['fixture-supply'],
+              ['book-1'],
+            ),
+            operatorId: 'worker-0',
+          },
+        ],
+        contactIds: ['worker-0'],
+      },
+      {
+        intervalId: 'next-reader-interval',
+        characterId: 'worker-0',
+        workId: 'wound-care-basics',
+        sectionId: 'wound-care-basics-1',
+        itemId: 'book-1',
+        accessEvidenceId: 'next-reader-access',
+        fromTick: '910',
+        toTick: '920',
+      },
+    );
+    expect(nextAccess.intervals.at(-1)).toMatchObject({
+      characterId: 'worker-0',
+      fromTick: '910',
+    });
+  });
+
+  it('preserves eligible study across a same-location duty change', () => {
     const fixture = admitted(false);
     const state = withCareProvider(fixture.state);
-    const interval = {
-      ...segment(fixture, 10, 20, 'ELIGIBLE'),
-      commandId: 'duty-change-command',
-    };
     const duty = command(
       state,
       'SetAssignment',
@@ -1263,17 +2180,8 @@ describe('C05 time and atomic learning composition', () => {
       learningFacts: fixture.startContext.learningFacts,
     });
     const interruption = {
-      intervals: [interval],
+      intervals: [],
       effectId: 'duty-learning-effect',
-      manifest: {
-        companyId: state.lifecycle.companyId,
-        worldId: state.lifecycle.worldId,
-        commandId: duty.commandId,
-        taskId: fixture.task.start.taskId,
-        ownerIntervalId: fixture.task.start.studyIntervalId!,
-        targetTick: '20',
-        evidenceIds: [...new Set([...intervalEvidenceIds(interval), 'duty-change'])],
-      },
     };
     const control = prepareCompanyEconomy(state, duty, contextWithFacts(true));
     expect(control.kind).toBe('PREPARED');
@@ -1284,84 +2192,14 @@ describe('C05 time and atomic learning composition', () => {
       interruption,
     );
     if (prepared.kind !== 'PREPARED') throw new Error(prepared.error);
-    expect(prepared.next.learning.tasks.tasks[0]?.completedTicks).toBe('10');
+    expect(prepared.next.learning.tasks.tasks[0]?.completedTicks).toBe('0');
+    expect(prepared.next.learning.tasks.tasks[0]?.terminal).toBeUndefined();
+    expect(prepared.next.learning.studyAccess.intervals[0]?.effectiveToTick).toBeUndefined();
     expect(
-      prepared.next.economy.finance.learningEffects?.find(
+      prepared.next.economy.finance.learningEffects?.some(
         (effect) => effect.commandId === duty.commandId,
-      )?.acceptedTicks,
-    ).toBe('10');
-    expect(prepared.next.learning.tasks.tasks[0]?.terminal).toMatchObject({
-      kind: 'INTERRUPTED',
-      commandId: duty.commandId,
-      processedThroughTick: '20',
-    });
-    expect(prepared.next.learning.ownerTransitions.at(-1)).toMatchObject({
-      kind: 'DUTY_CHANGE',
-      commandId: duty.commandId,
-      previousAssignment: 'FIELD',
-      nextAssignment: 'HOME_RESERVE',
-      dutyEvidenceId: 'duty-change',
-    });
-    expect(prepared.next.learning.studyAccess.intervals[0]).toMatchObject({
-      intervalId: fixture.task.start.studyIntervalId,
-      fromTick: '10',
-      effectiveToTick: '20',
-    });
-
-    const reopenState = prepared.next.economy;
-    const reopen = command(
-      reopenState,
-      'StartLearning',
-      { ...fixture.task.start.command.payload, resourceIds: ['book-1'] },
-      'start-book-after-duty-change',
-      'PLAYER',
-      tick(20),
-    ) as Start;
-    const reopenSource = {
-      ...fixture.startContext.learningFacts[0]!,
-      ...scope(reopenState, 'self-study-after-duty-change', tick(20)),
-      sourceVersion: 'book-study-after-duty-change-v1',
-      atTick: tick(20),
-      expiresAt: tick(500),
-      resourceIds: ['book-1'],
-    };
-    const reopenAccess = {
-      ...itemAccess(
-        reopenState,
-        'book-access-after-duty-change',
-        'STUDY',
-        ['fixture-supply'],
-        ['book-1'],
       ),
-      atTick: tick(20),
-      operatorId: 'leader',
-    };
-    const reopened = prepareLearningComposition(
-      reopenState,
-      prepared.next.learning.tasks,
-      prepared.next.learning.studyAccess,
-      null,
-      {
-        ...context(reopenState, reopen, [access(reopenState, tick(20))], [], [reopenAccess]),
-        learningFacts: [reopenSource],
-      },
-      [],
-      {
-        kind: 'START',
-        taskId: 'task-book-after-duty-change',
-        effectId: 'book-after-duty-change-start',
-        admission: {
-          taskId: 'task-book-after-duty-change',
-          command: reopen,
-          study: {
-            intervalId: 'access-book-after-duty-change',
-            itemId: 'book-1',
-            accessEvidenceId: 'book-access-after-duty-change',
-          },
-        },
-      },
-    );
-    expect(reopened.tasks.tasks.at(-1)?.start.taskId).toBe('task-book-after-duty-change');
+    ).toBe(false);
 
     const rejected = prepareCompanyEconomyWithLearning(
       input,
@@ -1371,5 +2209,501 @@ describe('C05 time and atomic learning composition', () => {
     );
     expect(rejected.kind).toBe('REJECTED');
     expect(rejected.state).toEqual(input);
+  });
+
+  it('keeps a locally accessible book through a container transfer and interrupts on destruction', () => {
+    function dispose(disposition: 'TRANSFER' | 'DESTROY_WITH_CAUSE') {
+      const fixture = admitted(false);
+      let state = fixture.state;
+      if (disposition === 'TRANSFER')
+        state = addContainer(
+          state,
+          container(
+            'other-local-container',
+            {
+              kind: 'COMPANY',
+              id: state.lifecycle.companyId,
+            },
+            200000,
+          ),
+        );
+      const commandValue = command(
+        state,
+        'ApplyContainerLifecycle',
+        {
+          receiptId: `container-${disposition}`,
+          containerId: 'fixture-supply',
+          causeId: `container-${disposition}-cause`,
+          notBefore: tick(10),
+          disposition,
+          ...(disposition === 'TRANSFER' ? { destinationId: 'other-local-container' } : {}),
+        },
+        `container-${disposition}`,
+        'WORLD_RECEIPT',
+      );
+      const fact: PhysicalEvidence = {
+        ...physicalScope(state, `container-${disposition}`),
+        sourceEventId: commandValue.sourceEventId!,
+        kind: 'CONTAINER_DISPOSITION',
+        containerId: 'fixture-supply',
+        causeId: `container-${disposition}-cause`,
+        notBefore: tick(10),
+        disposition,
+        ...(disposition === 'TRANSFER' ? { destinationId: 'other-local-container' } : {}),
+      };
+      const commandContext = {
+        ...context(state, commandValue, [], [], [fact]),
+        learningFacts: fixture.startContext.learningFacts,
+      };
+      expect(prepareCompanyEconomy(state, commandValue, commandContext).kind).toBe('PREPARED');
+      const result = prepareCompanyEconomyWithLearning(
+        {
+          economy: state,
+          learning: {
+            ...createCompanyLearningState(),
+            tasks: fixture.tasks,
+            studyAccess: fixture.study,
+          },
+        },
+        commandValue,
+        commandContext,
+        {
+          intervals: [],
+          ...(disposition === 'DESTROY_WITH_CAUSE'
+            ? {
+                manifests: [
+                  {
+                    companyId: commandValue.companyId,
+                    worldId: commandValue.worldId,
+                    commandId: commandValue.commandId,
+                    taskId: fixture.task.start.taskId,
+                    ownerIntervalId: fixture.book.intervalId,
+                    targetTick: commandValue.campaignTick,
+                    evidenceIds: [fact.id],
+                  },
+                ],
+              }
+            : {}),
+          effectId: `container-learning-${disposition}`,
+        },
+      );
+      return { fixture, result };
+    }
+    const localTransfer = dispose('TRANSFER');
+    expect(localTransfer.result.kind, JSON.stringify(localTransfer.result)).toBe('PREPARED');
+    if (localTransfer.result.kind !== 'PREPARED') return;
+    expect(localTransfer.result.next.learning.tasks.tasks[0]?.terminal).toBeUndefined();
+    expect(
+      localTransfer.result.next.learning.studyAccess.intervals[0]?.effectiveToTick,
+    ).toBeUndefined();
+
+    const destroyed = dispose('DESTROY_WITH_CAUSE');
+    expect(destroyed.result.kind).toBe('PREPARED');
+    if (destroyed.result.kind !== 'PREPARED') return;
+    expect(destroyed.result.next.learning.tasks.tasks[0]?.terminal?.kind).toBe('INTERRUPTED');
+    expect(destroyed.result.next.learning.studyAccess.intervals[0]?.effectiveToTick).toBe('10');
+  });
+
+  it('uses a solo arrival that leaves the frozen study location as an interruption boundary', () => {
+    const fixture = admitted(false);
+    const state = visibleCharacter(atTick(fixture.state, 20), 'leader', (character) => ({
+      ...character,
+      presence: {
+        ...character.presence,
+        assignment: 'NONE',
+        fieldPartyId: null,
+        location: {
+          kind: 'TRANSIT',
+          segmentId: 'solo-road',
+          from: 'village',
+          to: 'distant-village',
+          startedAt: tick(10),
+          arrivalNotBefore: tick(20),
+        },
+      },
+    }));
+    const arrived = command(
+      state,
+      'Arrive',
+      {
+        characterId: 'leader',
+        segmentId: 'solo-road',
+        arrivalEvidenceId: 'solo-arrival',
+      },
+      'solo-arrival',
+      'WORLD_RECEIPT',
+      tick(20),
+    );
+    const fact: LifecycleEvidence = {
+      ...scope(state, 'solo-arrival', tick(20)),
+      sourceEventId: arrived.sourceEventId!,
+      kind: 'ARRIVAL',
+      characterId: 'leader',
+      segmentId: 'solo-road',
+      from: 'village',
+      location: { kind: 'AT', siteId: 'distant-village', areaId: 'square' },
+    };
+    const commandContext = {
+      ...context(state, arrived, [], [fact]),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const arrivalControl = prepareCompanyEconomy(state, arrived, commandContext);
+    expect(
+      arrivalControl.kind,
+      arrivalControl.kind === 'REJECTED' ? arrivalControl.error : undefined,
+    ).toBe('PREPARED');
+    const interval = { ...segment(fixture, 10, 20, 'INELIGIBLE'), commandId: arrived.commandId };
+    const result = prepareCompanyEconomyWithLearning(
+      {
+        economy: state,
+        learning: {
+          ...createCompanyLearningState(),
+          tasks: fixture.tasks,
+          studyAccess: fixture.study,
+        },
+      },
+      arrived,
+      commandContext,
+      {
+        intervals: [interval],
+        manifests: [
+          {
+            companyId: arrived.companyId,
+            worldId: arrived.worldId,
+            commandId: arrived.commandId,
+            taskId: fixture.task.start.taskId,
+            ownerIntervalId: fixture.book.intervalId,
+            targetTick: arrived.campaignTick,
+            evidenceIds: [...intervalEvidenceIds(interval), 'solo-arrival'],
+          },
+        ],
+        effectId: 'arrival-learning',
+      },
+    );
+    expect(result.kind, JSON.stringify(result)).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.next.learning.tasks.tasks[0]?.terminal?.kind).toBe('INTERRUPTED');
+    expect(result.next.learning.studyAccess.intervals[0]?.effectiveToTick).toBe('20');
+  });
+
+  it('does not interrupt learning for a field camp, but does for a newly covered F1 beneficiary', () => {
+    const fixture = admitted(false);
+    const camp = command(fixture.state, 'BeginFieldCamp', {
+      partyId: 'party',
+      siteEligibilityId: 'camp-site',
+    });
+    const campFact = {
+      ...scope(fixture.state, 'camp-site'),
+      kind: 'CAMP_SITE' as const,
+      partyId: 'party',
+      location: place,
+      stationary: true,
+      conflict: false,
+    };
+    const campContext = {
+      ...context(fixture.state, camp, [campFact]),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    expect(prepareCompanyEconomy(fixture.state, camp, campContext).kind).toBe('PREPARED');
+    const campResult = prepareCompanyEconomyWithLearning(
+      {
+        economy: fixture.state,
+        learning: {
+          ...createCompanyLearningState(),
+          tasks: fixture.tasks,
+          studyAccess: fixture.study,
+        },
+      },
+      camp,
+      campContext,
+      { intervals: [], effectId: 'camp-learning' },
+    );
+    expect(campResult.kind).toBe('PREPARED');
+    if (campResult.kind !== 'PREPARED') return;
+    expect(campResult.next.learning.tasks.tasks[0]?.terminal).toBeUndefined();
+    expect(campResult.next.learning.studyAccess.intervals[0]?.effectiveToTick).toBeUndefined();
+
+    const campAgreementId = campResult.next.economy.finance.maintenance[0]!.agreementId;
+    const endCamp = command(
+      campResult.next.economy,
+      'EndMaintenance',
+      {
+        agreementOrCampId: campAgreementId,
+        reason: 'ENCOUNTER',
+      },
+      'end-field-camp',
+      'SYSTEM',
+    );
+    const campBoundary = {
+      ...scope(campResult.next.economy, 'camp-boundary'),
+      sourceEventId: endCamp.sourceEventId,
+      kind: 'MAINTENANCE_BOUNDARY' as const,
+      agreementId: campAgreementId,
+      reason: 'ENCOUNTER' as const,
+    };
+    const endContext = {
+      ...context(campResult.next.economy, endCamp, [campBoundary]),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const endControl = prepareCompanyEconomy(campResult.next.economy, endCamp, endContext);
+    expect(endControl.kind, endControl.kind === 'REJECTED' ? endControl.error : undefined).toBe(
+      'PREPARED',
+    );
+    const endedCamp = prepareCompanyEconomyWithLearning(campResult.next, endCamp, endContext, {
+      intervals: [],
+      effectId: 'camp-release-learning',
+    });
+    expect(endedCamp.kind).toBe('PREPARED');
+    if (endedCamp.kind !== 'PREPARED') return;
+    expect(endedCamp.next.learning.tasks.tasks[0]?.terminal).toBeUndefined();
+
+    const state: CompanyEconomyState = {
+      ...fixture.state,
+      finance: {
+        ...fixture.state.finance,
+        maintenance: [
+          {
+            agreementId: 'old-safe-service',
+            kind: 'SAFE_SERVICE',
+            partyId: 'party',
+            location: place,
+            beneficiaryIds: ['leader', 'worker-0'],
+            beneficiaryEnds: [{ characterId: 'leader', atTick: tick(9), knownAtTick: tick(9) }],
+            startedAt: tick(0),
+            endedAt: null,
+            knownEndedAt: null,
+            sourceId: 'old-safe-offer',
+            providerId: 'provider',
+            termsVersion: 'terms-v1',
+          },
+        ],
+      },
+    };
+    const amendment = command(state, 'AmendSafeService', {
+      agreementId: 'old-safe-service',
+      beneficiaryIds: ['leader', 'worker-0'],
+      quoteRevision: state.lifecycle.knowledge.revision,
+    });
+    const offer = {
+      ...scope(state, 'safe-offer'),
+      kind: 'SAFE_SERVICE_OFFER' as const,
+      partyId: 'party',
+      location: place,
+      providerId: 'provider',
+      offerRevision: state.lifecycle.knowledge.revision,
+      termsVersion: 'terms-v1',
+      expiresAt: tick(500),
+      permittedBeneficiaryIds: ['leader', 'worker-0'],
+      safe: true,
+      inhabited: true,
+      accessible: true,
+    };
+    const amendmentContext = {
+      ...context(state, amendment, [access(state), offer]),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    expect(prepareCompanyEconomy(state, amendment, amendmentContext).kind).toBe('PREPARED');
+    const amended = prepareCompanyEconomyWithLearning(
+      {
+        economy: state,
+        learning: {
+          ...createCompanyLearningState(),
+          tasks: fixture.tasks,
+          studyAccess: fixture.study,
+        },
+      },
+      amendment,
+      amendmentContext,
+      {
+        intervals: [],
+        manifests: [
+          {
+            companyId: amendment.companyId,
+            worldId: amendment.worldId,
+            commandId: amendment.commandId,
+            taskId: fixture.task.start.taskId,
+            ownerIntervalId: fixture.book.intervalId,
+            targetTick: amendment.campaignTick,
+            evidenceIds: ['old-safe-service'],
+          },
+        ],
+        effectId: 'amend-safe-learning',
+      },
+    );
+    expect(amended.kind).toBe('PREPARED');
+    if (amended.kind !== 'PREPARED') return;
+    expect(amended.next.learning.tasks.tasks[0]?.terminal?.kind).toBe('INTERRUPTED');
+    expect(amended.next.learning.studyAccess.intervals[0]?.effectiveToTick).toBe('10');
+  });
+
+  it('interrupts a course when its actual provider loses work capability', () => {
+    const fixture = admitted(true);
+    const condition = command(
+      fixture.state,
+      'ApplyCondition',
+      {
+        receiptId: 'provider-injury',
+        characterId: 'provider',
+        conditionDefinitionId: 'critical-bleed',
+        causeId: 'provider-battle-wound',
+        deadlineTick: tick(260),
+      },
+      'provider-injury',
+      'DOMAIN_RECEIPT',
+    );
+    const fact: PhysicalEvidence = {
+      ...physicalScope(fixture.state, 'provider-injury'),
+      sourceEventId: condition.sourceEventId!,
+      kind: 'CONDITION_SOURCE',
+      characterId: 'provider',
+      definitionId: 'critical-bleed',
+      causeId: 'provider-battle-wound',
+      onsetTick: tick(10),
+      deadlineTick: tick(260),
+    };
+    const injuryContext = {
+      ...context(fixture.state, condition, [], [], [fact]),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const injuryControl = prepareCompanyEconomy(fixture.state, condition, injuryContext);
+    expect(
+      injuryControl.kind,
+      injuryControl.kind === 'REJECTED' ? injuryControl.error : undefined,
+    ).toBe('PREPARED');
+    const result = prepareCompanyEconomyWithLearning(
+      {
+        economy: fixture.state,
+        learning: { ...createCompanyLearningState(), tasks: fixture.tasks },
+      },
+      condition,
+      injuryContext,
+      {
+        intervals: [],
+        manifests: [
+          {
+            companyId: condition.companyId,
+            worldId: condition.worldId,
+            commandId: condition.commandId,
+            taskId: fixture.task.start.taskId,
+            ownerIntervalId: fixture.task.start.quote.sourceId,
+            targetTick: condition.campaignTick,
+            evidenceIds: ['provider-injury'],
+          },
+        ],
+        effectId: 'provider-injury-learning',
+      },
+    );
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.next.learning.tasks.tasks[0]?.terminal?.kind).toBe('INTERRUPTED');
+
+    const courseSource = fixture.startContext.learningFacts[0]!;
+    const capture = command(
+      fixture.state,
+      'Capture',
+      {
+        receiptId: 'provider-capture',
+        characterId: 'provider',
+        captorRef: { kind: 'WORLD', id: 'world' },
+        locationRef: place,
+        seizedItems: [],
+      },
+      'provider-capture',
+      'OUTCOME_RECEIPT',
+    ) as Capture;
+    const captureFact: PhysicalEvidence = {
+      ...physicalScope(fixture.state, 'provider-capture'),
+      sourceEventId: capture.sourceEventId!,
+      kind: 'CAPTURE_OUTCOME',
+      characterId: 'provider',
+      captor: { kind: 'WORLD', id: 'world' },
+      location: place,
+    };
+    const captureContext = {
+      ...context(fixture.state, capture, [], [], [captureFact]),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const captureControl = prepareCompanyEconomy(fixture.state, capture, captureContext);
+    expect(
+      captureControl.kind,
+      captureControl.kind === 'REJECTED' ? captureControl.error : undefined,
+    ).toBe('PREPARED');
+    const capturedProvider = prepareCompanyEconomyWithLearning(
+      {
+        economy: fixture.state,
+        learning: { ...createCompanyLearningState(), tasks: fixture.tasks },
+      },
+      capture,
+      captureContext,
+      {
+        intervals: [],
+        manifests: [
+          {
+            companyId: capture.companyId,
+            worldId: capture.worldId,
+            commandId: capture.commandId,
+            taskId: fixture.task.start.taskId,
+            ownerIntervalId: courseSource.id,
+            targetTick: capture.campaignTick,
+            evidenceIds: ['provider-capture'],
+          },
+        ],
+        effectId: 'provider-capture-learning',
+      },
+    );
+    expect(capturedProvider.kind).toBe('PREPARED');
+    if (capturedProvider.kind !== 'PREPARED') return;
+    expect(capturedProvider.next.learning.tasks.tasks[0]?.terminal?.kind).toBe('INTERRUPTED');
+    expect(capturedProvider.next.learning.tasks.tasks[0]?.start.command.payload.characterId).toBe(
+      'leader',
+    );
+    expect(capture.payload.characterId).toBe(
+      courseSource.kind === 'COURSE' ? courseSource.providerId : undefined,
+    );
+  });
+
+  it('keeps a course active when a provider condition preserves work capability', () => {
+    const fixture = admitted(true);
+    const condition = command(
+      fixture.state,
+      'ApplyCondition',
+      {
+        receiptId: 'provider-minor-wound',
+        characterId: 'provider',
+        conditionDefinitionId: 'minor-field-wound',
+        causeId: 'provider-minor-wound',
+      },
+      'provider-minor-wound',
+      'DOMAIN_RECEIPT',
+    );
+    const fact: PhysicalEvidence = {
+      ...physicalScope(fixture.state, 'provider-minor-wound'),
+      sourceEventId: condition.sourceEventId!,
+      kind: 'CONDITION_SOURCE',
+      characterId: 'provider',
+      definitionId: 'minor-field-wound',
+      causeId: 'provider-minor-wound',
+      onsetTick: tick(10),
+    };
+    const causeContext = {
+      ...context(fixture.state, condition, [], [], [fact]),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    expect(prepareCompanyEconomy(fixture.state, condition, causeContext).kind).toBe('PREPARED');
+
+    const result = prepareCompanyEconomyWithLearning(
+      {
+        economy: fixture.state,
+        learning: { ...createCompanyLearningState(), tasks: fixture.tasks },
+      },
+      condition,
+      causeContext,
+      { intervals: [], manifests: [], effectId: 'provider-minor-wound-learning' },
+    );
+
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.next.learning.tasks.tasks[0]?.terminal).toBeUndefined();
+    expect(result.next.learning.tasks.tasks[0]?.stop).toBeUndefined();
   });
 });
