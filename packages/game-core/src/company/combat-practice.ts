@@ -160,7 +160,9 @@ export function prepareCombatPracticeEffects(
     requirePhysical(sourceEventId, 'INVALID_SOURCE');
     const attacker = participantByUnit.get(event.attackerId);
     const defender = participantByUnit.get(event.targetId);
-    if (attacker?.companyId === journal.companyId) {
+    const isExternalAttacker = attacker !== undefined && attacker.companyId !== journal.companyId;
+    const isExternalDefender = defender !== undefined && defender.companyId !== journal.companyId;
+    if (attacker?.companyId === journal.companyId && isExternalDefender) {
       const start = starts.get(kernelCommand.activationId);
       requirePhysical(start?.unitId === kernelCommand.actorId, 'INVALID_SOURCE');
       requirePhysical(character(initialRoot, attacker.projection.characterId), 'INVALID_SOURCE');
@@ -179,7 +181,7 @@ export function prepareCombatPracticeEffects(
         startReceiptOrdinal: start.startReceiptOrdinal,
       });
     }
-    if (defender?.companyId === journal.companyId) {
+    if (defender?.companyId === journal.companyId && isExternalAttacker) {
       const wasGuarding = before.units.find((unit) => unit.id === event.targetId)?.guarding;
       if (wasGuarding) {
         const defend = journal.receipts
