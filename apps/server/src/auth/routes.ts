@@ -7,6 +7,7 @@ import * as oidc from 'openid-client';
 
 import type { IdentityConfig } from '../config.js';
 import type { DatabaseSchema } from '../db/database.js';
+import { resolveSessionAccount } from './session.js';
 
 const sessionCookie = 'warwrit_session';
 const flowCookie = 'warwrit_oidc_flow';
@@ -18,10 +19,6 @@ interface OidcFlow {
   readonly code_verifier: string;
   readonly nonce: string;
   readonly expires_at: Date;
-}
-
-interface SessionAccountRow {
-  readonly account_id: string;
 }
 
 function digest(value: string): Buffer {
@@ -246,23 +243,12 @@ export function registerIdentityRoutes(app: FastifyInstance, options: IdentityRo
   });
 
   app.get('/auth/session', async (request, reply) => {
-    const token = request.cookies[sessionCookie];
-    if (token === undefined) {
-      return reply.code(401).send({ error: 'authentication required' });
-    }
-    const result = await sql<SessionAccountRow>`
-      select account_id
-      from identity_sessions
-      where token_digest = ${digest(token)}
-        and revoked_at is null
-        and expires_at > now()
-    `.execute(database);
-    const session = result.rows[0];
-    if (session === undefined) {
+    const accountId = await resolveSessionAccount(request, database);
+    if (accountId === undefined) {
       reply.clearCookie(sessionCookie, sessionCookieOptions(config));
       return reply.code(401).send({ error: 'authentication required' });
     }
-    return { accountId: session.account_id };
+    return { accountId };
   });
 
   app.post('/auth/logout', async (request, reply) => {
