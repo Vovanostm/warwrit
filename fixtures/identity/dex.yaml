@@ -1,0 +1,25 @@
+issuer: http://127.0.0.1:5557/dex
+storage:
+  type: sqlite3
+  config:
+    file: /var/dex/dex.db
+web:
+  http: 0.0.0.0:5557
+oauth2:
+  skipApprovalScreen: true
+enablePasswordDB: true
+staticClients:
+  - id: warwrit-local
+    name: Warwrit isolated local identity fixture
+    secret: warwrit-local-only-secret
+    redirectURIs:
+      - http://127.0.0.1:3107/auth/callback
+staticPasswords:
+  - email: player-one@example.test
+    hash: '$2a$10$G0LsncGmeTUf3IfI7Rv3TeNEZgeElIN4O.o80rpeIFtetjzWUuQ7O'
+    username: player-one
+    userID: 00000000-0000-4000-8000-000000000001
+  - email: player-two@example.test
+    hash: '$2a$10$xpNHxlllDEZVpfMMf5UD6.BBRgOkelipOekIZnmb2oO.9F8G15Q9e'
+    username: player-two
+    userID: 00000000-0000-4000-8000-000000000002

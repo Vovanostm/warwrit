@@ -4,10 +4,12 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@fastify/cookie": "^11.1.2",
     "@warwrit/game-core": "workspace:*",
     "@warwrit/protocol": "workspace:*",
     "fastify": "^5.0.0",
     "kysely": "^0.28.0",
+    "openid-client": "^6.8.8",
     "pg": "^8.0.0",
     "pino": "^9.0.0"
   },
