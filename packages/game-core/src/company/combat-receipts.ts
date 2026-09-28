@@ -72,6 +72,9 @@ function checkReceipt(receipt: PreparedCombatReceipt, binding: FrozenEncounterBi
   const revision = receipt.transition.state.revision;
   requireEconomy(
     receipt.status === 'PREPARED' &&
+      receipt.request.type === 'ConsumeCombatReceipt' &&
+      id.read(receipt.request.commandId) &&
+      receipt.request.actorRef.kind === 'COMBAT_RECEIPT' &&
       natural().read(revision) &&
       p.bindingId === binding.bindingId &&
       p.revision === String(revision) &&
@@ -89,6 +92,77 @@ function checkReceipt(receipt: PreparedCombatReceipt, binding: FrozenEncounterBi
         canonicalJson(combatReceiptEventIds(p.receiptId, receipt.transition.events)),
     'INVALID_SOURCE',
   );
+}
+
+/**
+ * Revalidates canonical G06 history, not adapter authentication. Callers must source this journal
+ * from the authenticated G06 path or trusted storage; this proves its exact kernel sequence.
+ */
+export function validateCombatReceiptJournal(value: CombatReceiptJournal): CombatReceiptJournal {
+  const binding = ownPhysical(value.binding);
+  createCombatReceiptJournal(binding, value.companyId);
+  const receipts = value.receipts.map((receipt) => ownPhysical(receipt));
+  const requests = new Map<string, string>();
+  for (let index = 0; index < receipts.length; index += 1) {
+    const receipt = receipts[index]!;
+    checkReceipt(receipt, binding);
+    requireEconomy(
+      receipt.transition.state.revision === binding.initial.state.revision + index &&
+        receipt.request.companyId === value.companyId &&
+        receipt.request.worldId === binding.worldId,
+      'INVALID_STATE',
+    );
+    const requestBody = canonicalJson(receipt.request);
+    const priorRequest = requests.get(receipt.request.commandId);
+    requireEconomy(!priorRequest || priorRequest === requestBody, 'IDEMPOTENCY_CONFLICT');
+    requests.set(receipt.request.commandId, requestBody);
+
+    if (index === 0) {
+      requireEconomy(
+        receipt.kernelCommand === null &&
+          canonicalJson(receipt.transition) === canonicalJson(binding.initial),
+        'INVALID_SOURCE',
+      );
+      continue;
+    }
+
+    const kernelCommand = receipt.kernelCommand;
+    requireEconomy(
+      kernelCommand !== null &&
+        id.read(kernelCommand.commandId) &&
+        id.read(kernelCommand.actorId) &&
+        id.read(kernelCommand.activationId) &&
+        (kernelCommand.type !== 'attack' || id.read(kernelCommand.targetId)),
+      'INVALID_SOURCE',
+    );
+    const result = applyCombatCommand(receipts[index - 1]!.transition.state, kernelCommand);
+    requireEconomy(result?.ok, 'INVALID_SOURCE');
+    requireEconomy(
+      canonicalJson(receipt.transition) ===
+        canonicalJson({ state: result.state, events: result.events }),
+      'INVALID_SOURCE',
+    );
+  }
+
+  const lastRevision = receipts.at(-1)?.transition.state.revision ?? binding.lastAppliedRevision;
+  requireEconomy(value.proposedLastAppliedRevision === lastRevision, 'INVALID_STATE');
+  const validated = Object.freeze({
+    binding,
+    companyId: value.companyId,
+    receipts: Object.freeze(receipts),
+    proposedLastAppliedRevision: lastRevision,
+  });
+  requireEconomy(
+    canonicalJson(binding) === canonicalJson(value.binding) &&
+      validated.companyId === value.companyId &&
+      validated.proposedLastAppliedRevision === value.proposedLastAppliedRevision &&
+      receipts.length === value.receipts.length &&
+      receipts.every(
+        (receipt, index) => canonicalJson(receipt) === canonicalJson(value.receipts[index]),
+      ),
+    'INVALID_STATE',
+  );
+  return validated;
 }
 
 /** G06 admission only. G07-G10 must prepare all effects with the proposed offset together.
@@ -112,19 +186,13 @@ export function prepareCombatReceipt(
     'AUTHORIZATION',
   );
   // Own each retained body separately: the journal is not one bounded wire envelope.
-  const receipts = journal.receipts.map((receipt, index) => {
-    const owned = ownPhysical(receipt);
-    checkReceipt(owned, binding);
-    requireEconomy(
-      owned.transition.state.revision === binding.initial.state.revision + index &&
-        owned.request.companyId === context.companyId &&
-        owned.request.worldId === context.worldId,
-      'INVALID_STATE',
-    );
-    return owned;
-  });
-  const lastRevision = receipts.at(-1)?.transition.state.revision ?? binding.lastAppliedRevision;
-  requireEconomy(journal.proposedLastAppliedRevision === lastRevision, 'INVALID_STATE');
+  const validatedJournal = validateCombatReceiptJournal(journal);
+  const receipts = validatedJournal.receipts;
+  requireEconomy(
+    canonicalJson(validatedJournal.binding) === canonicalJson(binding),
+    'AUTHORIZATION',
+  );
+  const lastRevision = validatedJournal.proposedLastAppliedRevision;
   const priorRequest = receipts.find((receipt) => receipt.request.commandId === request.commandId);
   requireEconomy(
     !priorRequest || canonicalJson(priorRequest.request) === canonicalJson(request),
@@ -151,7 +219,7 @@ export function prepareCombatReceipt(
       'IDEMPOTENCY_CONFLICT',
     );
     return Object.freeze({
-      journal: Object.freeze({ ...journal, binding, receipts: Object.freeze(receipts) }),
+      journal: Object.freeze({ ...validatedJournal, binding, receipts: Object.freeze(receipts) }),
       receipt: prior,
     });
   }
@@ -175,8 +243,8 @@ export function prepareCombatReceipt(
   requireEconomy(canonicalJson(transition) === canonicalJson(expected), 'INVALID_SOURCE');
   return Object.freeze({
     journal: Object.freeze({
-      binding,
-      companyId: journal.companyId,
+      binding: validatedJournal.binding,
+      companyId: validatedJournal.companyId,
       receipts: Object.freeze([...receipts, candidate]),
       proposedLastAppliedRevision: transition.state.revision,
     }),

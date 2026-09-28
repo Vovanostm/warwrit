@@ -31,6 +31,7 @@ export * from './combat-projection.js';
 export * from './combat-morale.js';
 export * from './encounter-binding.js';
 export * from './combat-receipts.js';
+export * from './combat-physical.js';
 export * from './progression.js';
 export * from './skill-progress.js';
 export * from './study-section.js';
