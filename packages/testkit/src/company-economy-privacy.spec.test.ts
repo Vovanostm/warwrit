@@ -323,8 +323,15 @@ describe('WP02.3 — financial knowledge and exact replay', () => {
       aptitudeBySkill: { leadership: 10000, archery: 10000 },
     });
     expect(JSON.stringify(observedProvider)).not.toContain('milliXp');
+    const providerMembership = recruited.lifecycle.memberships.find(
+      (membership) => membership.characterId === 'provider',
+    )!;
     expect(candidateView?.finance.services).toContainEqual(
-      expect.objectContaining({ currentAgreedRateMilli: '10000', materialSupportOnly: false }),
+      expect.objectContaining({
+        membershipId: providerMembership.membershipId,
+        currentAgreedRateMilli: '10000',
+        materialSupportOnly: false,
+      }),
     );
     expect(
       projectCompanyEconomy(
