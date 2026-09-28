@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 
+import * as combat from '@warwrit/game-core';
 import { sql } from 'kysely';
 import { afterAll, describe, expect, it } from 'vitest';
 
@@ -258,6 +259,98 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           code: 'INVALID_COMMAND',
         });
         expect(await snapshotRows(invalidFixture.encounterId)).toEqual(before);
+
+        const malformedFixture = await createFixtureEncounter(firstDb, accountId);
+        ownedEncounters.push(malformedFixture.encounterId);
+        await sql`update encounters set state = 'null'::json where id = ${malformedFixture.encounterId}`.execute(
+          firstDb,
+        );
+        await expect(verifyEncounterReplay(secondDb, malformedFixture.encounterId)).resolves.toBe(
+          false,
+        );
+
+        const terminalFixture = await createFixtureEncounter(firstDb, accountId);
+        ownedEncounters.push(terminalFixture.encounterId);
+        const setupResult = await sql<{ readonly setup: combat.BattleSetup }>`
+          select setup from encounters where id = ${terminalFixture.encounterId}
+        `.execute(firstDb);
+        const originalSetup = setupResult.rows[0]?.setup;
+        if (originalSetup === undefined) throw new Error('fixture setup missing');
+        const terminalSetup: combat.BattleSetup = {
+          ...originalSetup,
+          units: originalSetup.units
+            .filter((unit) => unit.sideId === 'human' || unit.id === 'opponent-raider')
+            .map((unit) => ({
+              ...unit,
+              ...(unit.id === 'human-shield'
+                ? { position: combat.hex(0, -1), attributes: { ...unit.attributes, accuracy: 100 } }
+                : unit.id === 'opponent-raider'
+                  ? {
+                      position: combat.hex(1, -1),
+                      attributes: { ...unit.attributes, health: 1, armor: 0, defense: 0 },
+                    }
+                  : {}),
+            })),
+        };
+        const terminalStart = combat.startBattle(terminalSetup);
+        await sql`
+          update encounters set
+            setup = ${JSON.stringify(terminalSetup)}::json,
+            state = ${JSON.stringify(terminalStart.state)}::json,
+            revision = 0, status = 'active',
+            activation_id = ${terminalStart.state.activation?.id ?? null},
+            activation_epoch = 1
+          where id = ${terminalFixture.encounterId}
+        `.execute(firstDb);
+        await sql`
+          update encounter_participants set unit_ids = ${JSON.stringify(['human-shield'])}::jsonb
+          where encounter_id = ${terminalFixture.encounterId} and account_id = ${accountId}
+        `.execute(firstDb);
+        await firstDb
+          .deleteFrom('encounter_events')
+          .where('encounter_id', '=', terminalFixture.encounterId)
+          .execute();
+        for (const [ordinal, event] of terminalStart.events.entries()) {
+          await sql`
+            insert into encounter_events (encounter_id, revision, ordinal, event_id, event)
+            values (
+              ${terminalFixture.encounterId}, 0, ${ordinal},
+              ${`${terminalFixture.encounterId}:0:${ordinal}`}, ${JSON.stringify(event)}::json
+            )
+          `.execute(firstDb);
+        }
+        const terminalActivation = terminalStart.state.activation;
+        if (terminalActivation === null) throw new Error('terminal fixture has no activation');
+        const terminalResponse = await executeEncounterCommand(firstDb, accountId, {
+          version: 1,
+          encounterId: terminalFixture.encounterId,
+          commandId: 'terminal-attack',
+          expectedRevision: 0,
+          activationId: terminalActivation.id,
+          actorId: terminalActivation.unitId,
+          intent: { type: 'attack', targetId: 'opponent-raider' },
+        });
+        expect(terminalResponse).toMatchObject({ status: 'accepted', revision: 1 });
+        const terminalReloadDb = createDatabase(connectionString!);
+        try {
+          expect(await verifyEncounterReplay(terminalReloadDb, terminalFixture.encounterId)).toBe(
+            true,
+          );
+          const terminalMetadata = await sql<{
+            readonly revision: number;
+            readonly status: string;
+            readonly state: combat.BattleState;
+          }>`select revision, status, state from encounters where id = ${terminalFixture.encounterId}`.execute(
+            terminalReloadDb,
+          );
+          expect(terminalMetadata.rows[0]).toMatchObject({
+            revision: 1,
+            status: 'resolved',
+            state: { revision: 1, status: 'resolved', activation: null },
+          });
+        } finally {
+          await terminalReloadDb.destroy();
+        }
       } finally {
         await firstDb
           .deleteFrom('identity_sessions')

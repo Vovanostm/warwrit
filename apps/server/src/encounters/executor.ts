@@ -47,21 +47,21 @@ interface StoredCommandRow {
 type SqlExecutor = Kysely<DatabaseSchema> | Transaction<DatabaseSchema>;
 
 async function replayMatches(executor: SqlExecutor, encounter: EncounterRow): Promise<boolean> {
-  if (
-    encounter.schema_version !== FIXTURE_SCHEMA_VERSION ||
-    encounter.setup.schemaVersion !== combat.COMBAT_SCHEMA_VERSION ||
-    encounter.setup.battleId !== encounter.id ||
-    encounter.setup.rulesetId !== 'm0-prototype-v1' ||
-    encounter.state.schemaVersion !== combat.COMBAT_SCHEMA_VERSION ||
-    encounter.state.battleId !== encounter.id ||
-    encounter.state.rulesetId !== encounter.setup.rulesetId ||
-    encounter.state.revision !== encounter.revision ||
-    encounter.state.status !== encounter.status ||
-    (encounter.state.activation?.id ?? null) !== encounter.activation_id
-  )
-    return false;
-
   try {
+    if (
+      encounter.schema_version !== FIXTURE_SCHEMA_VERSION ||
+      encounter.setup.schemaVersion !== combat.COMBAT_SCHEMA_VERSION ||
+      encounter.setup.battleId !== encounter.id ||
+      encounter.setup.rulesetId !== 'm0-prototype-v1' ||
+      encounter.state.schemaVersion !== combat.COMBAT_SCHEMA_VERSION ||
+      encounter.state.battleId !== encounter.id ||
+      encounter.state.rulesetId !== encounter.setup.rulesetId ||
+      encounter.state.revision !== encounter.revision ||
+      encounter.state.status !== encounter.status ||
+      (encounter.state.activation?.id ?? null) !== encounter.activation_id
+    )
+      return false;
+
     combat.assertBattleState(encounter.state);
     const commandResult = await sql<StoredCommandRow>`
       select revision, command_id, account_id, body_digest, command
@@ -355,6 +355,7 @@ export async function executeEncounterCommand(
     const acceptedResponse = accepted(result.state.revision);
     const nextActivation = result.state.activation;
     const activationChanged = nextActivation?.id !== state.activation?.id;
+    const activationStarted = result.events.some((event) => event.type === 'activation.started');
     const nextDeadline = activationChanged
       ? new Date(Date.now() + ACTIVATION_DEADLINE_MS)
       : undefined;
@@ -378,7 +379,7 @@ export async function executeEncounterCommand(
         state = ${JSON.stringify(result.state)}::json,
         revision = ${result.state.revision}, status = ${result.state.status},
         activation_id = ${nextActivation?.id ?? null},
-        activation_epoch = activation_epoch + ${activationChanged ? 1 : 0},
+        activation_epoch = activation_epoch + ${activationStarted ? 1 : 0},
         deadline_at = coalesce(${nextDeadline ?? null}, deadline_at)
       where id = ${dto.encounterId}
     `.execute(transaction);
