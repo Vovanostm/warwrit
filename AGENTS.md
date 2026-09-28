@@ -76,6 +76,9 @@ skill discovery can read the same `SKILL.md` files directly.
 
 ## Code Review Rules
 
+For delegated work, use [the Codex role/ownership guide](docs/engineering/AGENT_TEAM.md).
+Retrieve [operational memory pointers](docs/engineering/AGENT_MEMORY.md) on demand.
+
 Review observable failures before cosmetic rearrangement. Give each finding its
 violated source/postulate, concrete counterexample, affected boundary and smallest
 fix. Distinguish reproduced defects from risks, balance hypotheses and style

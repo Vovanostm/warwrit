@@ -1,0 +1,16 @@
+# max_threads is the documented legacy alias, supported by local CLI 0.144.5.
+[agents]
+max_threads = 2
+
+# Explicit registration supports hosts without standalone-agent discovery.
+[agents.warwrit_explorer]
+description = "Read-only source and code investigation for one bounded question."
+config_file = "agents/warwrit_explorer.toml"
+
+[agents.warwrit_implementer]
+description = "Implement one explicitly owned Warwrit slice."
+config_file = "agents/warwrit_implementer.toml"
+
+[agents.warwrit_reviewer]
+description = "Independent read-only diff and invariant review."
+config_file = "agents/warwrit_reviewer.toml"
