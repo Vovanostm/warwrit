@@ -40,6 +40,23 @@ export type StudyAccessInterval = ValueOf<typeof intervalInput>;
 export type StudyAccessState = ValueOf<typeof stateInput>;
 export type StudyAccessRequest = ValueOf<typeof requestInput>;
 
+/** Matches the admitted book-use owner, even after its settlement boundary. */
+export function hasStudyAccessOwner(
+  intervals: readonly StudyAccessInterval[],
+  expected: {
+    readonly intervalId: string | undefined;
+    readonly itemId: string;
+    readonly characterId: string;
+  },
+): boolean {
+  return intervals.some(
+    (interval) =>
+      interval.intervalId === expected.intervalId &&
+      interval.itemId === expected.itemId &&
+      interval.characterId === expected.characterId,
+  );
+}
+
 function workFor(workId: string, sectionId: string, error: PhysicalError) {
   const work = COMPANY_CATALOGUE.works.find(
     (candidate) => candidate.id === workId && candidate.sectionId === sectionId,

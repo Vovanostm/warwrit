@@ -297,6 +297,7 @@ function automaticFoodFacts(
   cmd: ReturnType<typeof command>,
   financeFacts: readonly FinanceEvidence[],
 ): readonly PhysicalEvidence[] {
+  if (cmd.type !== 'AdvanceCampaign' && cmd.type !== 'TransferItem') return [];
   const from = BigInt(state.finance.processedTick);
   const to = BigInt(
     cmd.type === 'AdvanceCampaign' ? (cmd.payload as { toTick: string }).toTick : cmd.campaignTick,

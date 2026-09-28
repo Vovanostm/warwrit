@@ -317,6 +317,116 @@ function intervalEvidenceIds(interval: LearningTimeInterval): readonly string[] 
 }
 
 describe('C05 time and atomic learning composition', () => {
+  it('settles an accrued book prefix when transfer arrives after admitted access ends', () => {
+    const fixture = admitted(false);
+    const state = addContainer(
+      fixture.state,
+      container('late-reader-pack', { kind: 'CHARACTER', id: 'leader' }, 30000, {
+        kind: 'CHARACTER',
+        id: 'leader',
+      }),
+    );
+    const commandTick = 5010;
+    const move = command(
+      state,
+      'TransferItem',
+      {
+        itemId: 'book-1',
+        quantity: 1,
+        fromContainerId: 'fixture-supply',
+        toContainerId: 'late-reader-pack',
+        accessEvidenceId: 'late-transfer-access',
+      },
+      'transfer-after-study-window',
+      'PLAYER',
+      tick(commandTick),
+    );
+    const admittedThrough = Number(fixture.study.intervals[0]!.toTick);
+    const timeline = [
+      { ...segment(fixture, 10, admittedThrough, 'ELIGIBLE'), commandId: move.commandId },
+      ...(admittedThrough < commandTick
+        ? [
+            {
+              ...segment(fixture, admittedThrough, commandTick, 'INELIGIBLE'),
+              commandId: move.commandId,
+            },
+          ]
+        : []),
+    ];
+    const manifest = {
+      companyId: state.lifecycle.companyId,
+      worldId: state.lifecycle.worldId,
+      commandId: move.commandId,
+      taskId: fixture.task.start.taskId,
+      ownerIntervalId: fixture.task.start.studyIntervalId!,
+      targetTick: tick(commandTick),
+      evidenceIds: [...new Set(timeline.flatMap(intervalEvidenceIds))],
+    };
+    const result = prepareCompanyEconomyWithLearning(
+      {
+        economy: state,
+        learning: {
+          ...createCompanyLearningState(),
+          tasks: fixture.tasks,
+          studyAccess: fixture.study,
+        },
+      },
+      move,
+      {
+        ...context(
+          state,
+          move,
+          [],
+          [],
+          [
+            {
+              ...itemAccess(
+                state,
+                'late-transfer-access',
+                'TRANSFER',
+                ['fixture-supply', 'late-reader-pack'],
+                ['book-1'],
+              ),
+              atTick: tick(commandTick),
+            },
+          ],
+        ),
+        learningFacts: fixture.startContext.learningFacts,
+      },
+      {
+        intervals: timeline,
+        effectId: 'effect-transfer-after-study-window',
+        manifest,
+      },
+    );
+
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.next.learning.tasks.tasks[0]).toMatchObject({
+      completedTicks: fixture.task.start.quote.maxTicks,
+      terminal: {
+        kind: 'GOAL_REACHED',
+        commandId: move.commandId,
+        campaignTick: tick(commandTick),
+      },
+    });
+    expect(result.next.learning.studyProgress[0]?.learnedTicks).toBe('1000');
+    expect(result.next.economy.finance.learningEffects?.at(-1)).toMatchObject({
+      taskId: fixture.task.start.taskId,
+      commandId: move.commandId,
+      acceptedTicks: fixture.task.start.quote.maxTicks,
+    });
+    expect(result.next.learning.ownerTransitions[0]).toMatchObject({
+      commandId: move.commandId,
+      itemId: 'book-1',
+      taskId: fixture.task.start.taskId,
+      learnerId: 'leader',
+    });
+    expect(
+      result.next.economy.physical?.items.find((entry) => entry.itemId === 'book-1'),
+    ).toMatchObject({ containerId: 'late-reader-pack' });
+  });
+
   it('replays the full admitted start and a stop without changing owners', () => {
     const fixture = admitted(true);
     const startRetry = prepareLearningComposition(

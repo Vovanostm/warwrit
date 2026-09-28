@@ -8,7 +8,7 @@ import type { StudyAccessState } from './study-access.js';
 import {
   closeStudyAccessForItems,
   readStudyAccessState,
-  studyAccessBounds,
+  hasStudyAccessOwner,
 } from './study-access.js';
 import type { StudySectionProgress } from './study-section.js';
 import { readStudySectionProgress } from './study-section.js';
@@ -139,18 +139,10 @@ export function recordBookTransfer(
       (!entry.terminal || entry.terminal.commandId === command.commandId) &&
       entry.start.inputs?.kind === 'BOOK' &&
       entry.start.command.payload.resourceIds.includes(oldItem.itemId) &&
-      learning.studyAccess.intervals.some((interval) => {
-        if (
-          interval.intervalId !== entry.start.studyIntervalId ||
-          interval.itemId !== oldItem.itemId ||
-          interval.characterId !== entry.start.command.payload.characterId
-        )
-          return false;
-        const intervalBounds = studyAccessBounds(interval);
-        return (
-          BigInt(command.campaignTick) >= intervalBounds.from &&
-          BigInt(command.campaignTick) < intervalBounds.to
-        );
+      hasStudyAccessOwner(learning.studyAccess.intervals, {
+        intervalId: entry.start.studyIntervalId,
+        itemId: oldItem.itemId,
+        characterId: entry.start.command.payload.characterId,
       }),
   );
   if (task) {

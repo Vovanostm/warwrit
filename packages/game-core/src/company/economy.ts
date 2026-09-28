@@ -69,7 +69,7 @@ import type { MaterializedCompanyState } from './physical-root-types.js';
 import { prepareLearningComposition } from './learning-composition.js';
 import type { LearningSourceContext } from './learning-source.js';
 import type { LearningTimeInterval, TrustedLearningCauseManifest } from './learning-time.js';
-import { studyAccessBounds } from './study-access.js';
+import { hasStudyAccessOwner } from './study-access.js';
 import {
   readCompanyLearningState,
   recordBookTransfer,
@@ -398,18 +398,10 @@ function prepareEconomyCandidate(
                 (task) =>
                   task.start.inputs?.kind === 'BOOK' &&
                   task.start.command.payload.resourceIds.includes(command.payload.itemId) &&
-                  learningInput.state.studyAccess.intervals.some((interval) => {
-                    if (
-                      interval.intervalId !== task.start.studyIntervalId ||
-                      interval.itemId !== command.payload.itemId ||
-                      interval.characterId !== task.start.command.payload.characterId
-                    )
-                      return false;
-                    const bounds = studyAccessBounds(interval);
-                    return (
-                      BigInt(command.campaignTick) >= bounds.from &&
-                      BigInt(command.campaignTick) < bounds.to
-                    );
+                  hasStudyAccessOwner(learningInput.state.studyAccess.intervals, {
+                    intervalId: task.start.studyIntervalId,
+                    itemId: command.payload.itemId,
+                    characterId: task.start.command.payload.characterId,
                   }),
               );
         if (command.type === 'TransferItem') {
