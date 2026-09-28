@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { COMPANY_COMMAND_SCHEMA_VERSION, COMPANY_RULESET_ID } from './model.js';
-import { createCompanyEconomyState } from './economy-state.js';
+import { createCompanyEconomyState, reservedQ } from './economy-state.js';
+import type { CompanyEconomyState } from './economy-types.js';
 import { accrueFinance } from './economy-accrual.js';
 import { moveCash, reservePreEntry } from './economy-payments.js';
 import { canonicalJson } from './input.js';
@@ -8,8 +9,9 @@ import { admitLearningFunding } from './learning-funding.js';
 import { exactFraction } from './exact-fraction.js';
 import { admitLearningTask } from './learning-admission.js';
 import { calculateLearningCost } from './learning-cost.js';
+import { prepareLearningBacking } from './learning-backing.js';
 import type { LearningQuoteContext } from './learning-quote.js';
-import { createLearningTaskState } from './learning-task.js';
+import { createLearningTaskState, stopLearningTask } from './learning-task.js';
 import type { CommandOf, LifecycleCharacter, LifecycleState } from './lifecycle-types.js';
 import { createCompanyPhysicalState } from './physical-state.js';
 import { PHYSICAL_POLICY_VERSION } from './physical-types.js';
@@ -566,5 +568,252 @@ describe('C05-FIN fresh financial admission, not payment or elapsed eligibility'
     const before = reload(f);
     expect(admit(f).funding).toBeNull();
     expect(f).toEqual(before);
+  });
+});
+
+describe('C05-FIN exact retained learning backing', () => {
+  const prepare = (
+    f: ReturnType<typeof setup>,
+    state: CompanyEconomyState,
+    effectId: string,
+    acceptedTicks: string,
+    command: CommandOf<'StartLearning'> | CommandOf<'StopLearning'> = f.request.command,
+    accessEvidenceId?: string,
+    tasksValue = f.admitted.state,
+    taskId = 'task',
+  ) =>
+    prepareLearningBacking(state, tasksValue, f.context, {
+      taskId,
+      effectId,
+      command,
+      acceptedTicks,
+      ...(accessEvidenceId ? { accessEvidenceId } : {}),
+    });
+
+  const stop = (f: ReturnType<typeof setup>, effectId: string): CommandOf<'StopLearning'> => ({
+    ...f.request.command,
+    type: 'StopLearning',
+    commandId: effectId,
+    campaignTick: f.context.atTick,
+    payload: { taskId: 'task', reason: 'PLAYER' },
+  });
+
+  it('pays whole q only, retains fractional backing across JSON restarts, and replays exactly', () => {
+    const f = setup(false, '1000', '100', '100');
+    let state: CompanyEconomyState = f.root;
+    let tasks = createLearningTaskState();
+    const studyAccess = createStudyAccessState();
+    let totalTransfer = 0n;
+    for (let ticks = 1; ticks <= 5; ticks++) {
+      const taskId = `task-${ticks}`;
+      const start = {
+        ...f.request.command,
+        commandId: `start-${ticks}`,
+        sourceEventId: `start-source-${ticks}`,
+      };
+      const admission = admitLearningTask(tasks, studyAccess, f.root, f.context, {
+        taskId,
+        command: start,
+      });
+      tasks = admission.state;
+      const startRequest = {
+        taskId,
+        effectId: `backing-start-${ticks}`,
+        command: start,
+        acceptedTicks: '1',
+        accessEvidenceId: 'money',
+      };
+      const result = prepareLearningBacking(state, tasks, f.context, startRequest);
+      state = reload(result.state);
+      Object.assign(f.root, { finance: state.finance });
+      totalTransfer += BigInt(result.transferQ);
+      expect(result.acceptedTicks).toBe('1');
+      if (ticks === 1) {
+        const replayContext = reload(f.context);
+        Object.assign(replayContext, {
+          canonicalRevision: canonicalRevision('99'),
+          atTick: campaignTick('99'),
+          learningFacts: [],
+          financeFacts: [],
+        });
+        const replay = prepareLearningBacking(state, tasks, replayContext, startRequest);
+        expect(replay.replayed).toBe(true);
+        expect(replay.transferQ).toBe(result.transferQ);
+        expect(replay.state).toEqual(state);
+      }
+      const stopCommand: CommandOf<'StopLearning'> = {
+        ...start,
+        type: 'StopLearning',
+        commandId: `stop-${ticks}`,
+        payload: { taskId, reason: 'PLAYER' },
+      };
+      tasks = stopLearningTask(tasks, stopCommand).state;
+      const settled = prepareLearningBacking(state, tasks, f.context, {
+        taskId,
+        effectId: `backing-stop-${ticks}`,
+        command: stopCommand,
+        acceptedTicks: '1',
+      });
+      state = reload(settled.state);
+      Object.assign(f.root, { finance: state.finance });
+      totalTransfer += BigInt(settled.transferQ);
+    }
+    const obligations = state.finance.learningObligations!;
+    const totalAccrued = obligations.reduce(
+      (sum, entry) =>
+        exactFraction(
+          BigInt(sum.numerator) * BigInt(entry.accruedQ.denominator) +
+            BigInt(entry.accruedQ.numerator) * BigInt(sum.denominator),
+          BigInt(sum.denominator) * BigInt(entry.accruedQ.denominator),
+        ),
+      exactFraction(0n, 1n),
+    );
+    expect(totalAccrued).toEqual(exactFraction(4n, 1n));
+    expect(
+      obligations.every(
+        (entry) =>
+          BigInt(entry.accruedQ.numerator) * BigInt(entry.dischargedQ.denominator) ===
+          BigInt(entry.dischargedQ.numerator) * BigInt(entry.accruedQ.denominator),
+      ),
+    ).toBe(true);
+    expect(totalTransfer).toBe(4n);
+    expect(state.finance.wallets.map((wallet) => wallet.cashQ)).toEqual(['96', '4']);
+    expect(reservedQ(state.finance, 'purse')).toBe(0n);
+  });
+
+  it('aggregates compatible same-payee fractions while keeping another payee separately backed', () => {
+    const f = setup(false, '1000', '100', '100');
+    const first = prepare(f, f.root, 'hold', '1', f.request.command).state;
+    const claim = first.finance.learningObligations![0]!;
+    const second = {
+      ...claim,
+      taskId: 'task-2',
+      sourceId: 'source-2',
+      start: { ...claim.start, taskId: 'task-2' },
+    };
+    const samePayee = { ...first.finance, learningObligations: [claim, second] };
+    expect(reservedQ(samePayee, 'purse')).toBe(2n);
+    const differentPayee = {
+      ...second,
+      taskId: 'task-3',
+      sourceId: 'source-3',
+      start: { ...claim.start, taskId: 'task-3' },
+      recipientWalletId: 'payee-2',
+      recipient: { kind: 'CHARACTER' as const, id: 'provider-2' },
+    };
+    expect(
+      reservedQ(
+        {
+          ...samePayee,
+          learningObligations: [claim, second, differentPayee],
+        },
+        'purse',
+      ),
+    ).toBe(3n);
+  });
+
+  it('funds only the prefix left after an existing wage reservation', () => {
+    const f = setup(false, '1000', '100', '100');
+    const wageMember = {
+      ...f.root.lifecycle.memberships[0]!,
+      membershipId: entityId('wage-service'),
+      characterId: entityId('provider'),
+      basis: 'PAID' as const,
+      wageScheduleId: entityId('wage-rate'),
+    };
+    Object.assign(f.root.lifecycle, {
+      memberships: [...f.root.lifecycle.memberships, wageMember],
+    });
+    f.root.finance = {
+      ...f.root.finance,
+      accounts: [
+        ...f.root.finance.accounts,
+        {
+          ...f.root.finance.accounts[0]!,
+          membershipId: 'wage-service',
+          recipient: { kind: 'CHARACTER', id: 'provider' },
+          schedule: {
+            scheduleId: 'wage-rate',
+            agreedAt: campaignTick('0'),
+            agreedDailyWageMilli: '75',
+            rates: [],
+            notices: [],
+          },
+        },
+      ],
+    };
+    const tick = campaignTick('11');
+    f.root.finance = accrueFinance(f.root.finance, f.root.lifecycle, tick).finance;
+    f.root.finance = reservePreEntry(f.root.finance, f.root.finance.claims[0]!, tick);
+    Object.assign(f.root.lifecycle, { campaignTick: tick });
+    Object.assign(f.context, { atTick: tick });
+    Object.assign(f.context.financeFacts[0]!, { atTick: tick });
+    const stopCommand: CommandOf<'StopLearning'> = {
+      ...f.request.command,
+      type: 'StopLearning',
+      commandId: 'stop-wage-boundary',
+      campaignTick: tick,
+      payload: { taskId: 'task', reason: 'PLAYER' },
+    };
+    const stoppedTasks = stopLearningTask(f.admitted.state, stopCommand).state;
+    const result = prepare(f, f.root, 'wage-boundary', '32', stopCommand, undefined, stoppedTasks);
+    expect(result.acceptedTicks).toBe('31');
+    expect(BigInt(result.state.finance.reservations[0]!.amountQ)).toBe(75n);
+    expect(result.transferQ).toBe('24');
+  });
+
+  it('leaves remote debt held without access and rejects changed or invalid retries atomically', () => {
+    const f = setup(false, '1000', '100', '100');
+    const first = prepare(f, f.root, 'held', '1', f.request.command).state;
+    const changed = reload(f);
+    Object.assign(changed.context, {
+      canonicalRevision: canonicalRevision('99'),
+      atTick: campaignTick('99'),
+      financeFacts: [],
+      learningFacts: [],
+    });
+    const remoteState = reload(first);
+    Object.assign(remoteState.lifecycle, {
+      revision: changed.context.canonicalRevision,
+      campaignTick: changed.context.atTick,
+    });
+    Object.assign(remoteState.finance, { processedTick: changed.context.atTick });
+    const remoteStop = stop(changed, 'remote');
+    const remoteTasks = stopLearningTask(changed.admitted.state, remoteStop).state;
+    const remote = prepare(changed, remoteState, 'remote', '2', remoteStop, undefined, remoteTasks);
+    expect(remote.transferQ).toBe('0');
+    expect(reservedQ(remote.state.finance, 'purse')).toBe(2n);
+    expect(remote.state.finance.wallets.map((wallet) => wallet.cashQ)).toEqual(['100', '0']);
+
+    const conflict = () => prepare(changed, first, 'held', '2', f.request.command);
+    expect(conflict).toThrow('IDEMPOTENCY_CONFLICT');
+
+    const invalid = reload(f);
+    Object.assign(invalid.context.financeFacts[0]!, {
+      id: 'bad-access',
+      location: { ...location, areaId: 'remote' },
+    });
+    const before = reload(first);
+    const invalidStop = stop(invalid, 'invalid');
+    const invalidTasks = stopLearningTask(invalid.admitted.state, invalidStop).state;
+    expect(() =>
+      prepare(invalid, first, 'invalid', '2', invalidStop, 'bad-access', invalidTasks),
+    ).toThrow('CONTACT_OR_ACCESS_REQUIRED');
+    expect(first).toEqual(before);
+  });
+
+  it('keeps the original quote cap after a later cash top-up', () => {
+    const f = setup(false, '1000', '1', '100');
+    const first = reload(prepare(f, f.root, 'initial', '1', f.request.command).state);
+    Object.assign(first.finance, {
+      wallets: first.finance.wallets.map((wallet) =>
+        wallet.walletId === 'purse' ? { ...wallet, cashQ: moneyQ('100') } : wallet,
+      ),
+    });
+    const stopCommand = stop(f, 'top-up');
+    const stoppedTasks = stopLearningTask(f.admitted.state, stopCommand).state;
+    expect(() => prepare(f, first, 'top-up', '2', stopCommand, undefined, stoppedTasks)).toThrow(
+      'INVALID_TIME',
+    );
   });
 });

@@ -11,6 +11,7 @@ import {
 import { isExactInteger, isEntityId, moneyQ, campaignTick } from './values.js';
 import type { CampaignTick, MoneyQ } from './values.js';
 import type { LifecycleState } from './lifecycle-types.js';
+import { exactFraction, exactFractionInput } from './exact-fraction.js';
 import type {
   CompanyEconomyState,
   CompanyFinance,
@@ -84,9 +85,39 @@ export function poolWallet(finance: CompanyFinance, poolId: string): Wallet {
   return walletFor(finance, pool.walletId);
 }
 export function reservedQ(finance: CompanyFinance, walletId: string): bigint {
-  return finance.reservations
+  const wageHolds = finance.reservations
     .filter((r) => r.walletId === walletId)
     .reduce((sum, r) => sum + BigInt(r.amountQ), 0n);
+  const groups = new Map<string, { numerator: bigint; denominator: bigint }>();
+  for (const obligation of finance.learningObligations ?? []) {
+    if (obligation.payerWalletId !== walletId) continue;
+    const key = canonicalJson([
+      obligation.companyId,
+      obligation.worldId,
+      obligation.poolId,
+      obligation.payerWalletId,
+      obligation.recipientWalletId,
+      obligation.recipient,
+    ]);
+    const accrued = obligation.accruedQ;
+    const discharged = obligation.dischargedQ;
+    const numerator =
+      BigInt(accrued.numerator) * BigInt(discharged.denominator) -
+      BigInt(discharged.numerator) * BigInt(accrued.denominator);
+    const denominator = BigInt(accrued.denominator) * BigInt(discharged.denominator);
+    requireEconomy(numerator >= 0n, 'INVALID_STATE');
+    const previous = groups.get(key) ?? { numerator: 0n, denominator: 1n };
+    const next = exactFraction(
+      previous.numerator * denominator + numerator * previous.denominator,
+      previous.denominator * denominator,
+    );
+    groups.set(key, { numerator: BigInt(next.numerator), denominator: BigInt(next.denominator) });
+  }
+  const learningHolds = [...groups.values()].reduce(
+    (sum, value) => sum + (value.numerator + value.denominator - 1n) / value.denominator,
+    0n,
+  );
+  return wageHolds + learningHolds;
 }
 export function spendableQ(finance: CompanyFinance, walletId: string): bigint {
   return BigInt(walletFor(finance, walletId).cashQ) - reservedQ(finance, walletId);
@@ -209,8 +240,68 @@ export function validateEconomy(state: CompanyEconomyState, context: EconomyCont
     f.sourceEffects.map((r) => r.key),
     f.maintenance.map((m) => m.agreementId),
     f.departures.map((d) => d.intentId),
+    (f.learningObligations ?? []).map((o) => o.taskId),
+    (f.learningEffects ?? []).map((e) => e.key),
   ])
     requireEconomy(new Set(ids).size === ids.length, 'INVALID_STATE');
+  for (const obligation of f.learningObligations ?? []) {
+    requireEconomy(
+      isEntityId(obligation.taskId) &&
+        isEntityId(obligation.sourceId) &&
+        isEntityId(obligation.sourceVersion) &&
+        obligation.companyId === state.lifecycle.companyId &&
+        obligation.worldId === state.lifecycle.worldId &&
+        obligation.start.taskId === obligation.taskId &&
+        obligation.start.quote.sourceId === obligation.sourceId &&
+        obligation.start.quote.sourceVersion === obligation.sourceVersion &&
+        obligation.start.quote.funding !== null &&
+        obligation.start.quote.funding.poolId === obligation.poolId &&
+        obligation.start.quote.funding.walletId === obligation.payerWalletId &&
+        obligation.start.quote.funding.providerWalletId === obligation.recipientWalletId &&
+        obligation.start.quote.funding.authorizedBudgetQ === obligation.authorizedBudgetQ &&
+        isExactInteger(obligation.authorizedBudgetQ) &&
+        isExactInteger(obligation.fundedTicks) &&
+        isExactInteger(obligation.acceptedTicks) &&
+        BigInt(obligation.fundedTicks) <= BigInt(obligation.start.quote.maxTicks) &&
+        BigInt(obligation.acceptedTicks) <= BigInt(obligation.fundedTicks) &&
+        exactFractionInput.read(obligation.accruedQ) &&
+        exactFractionInput.read(obligation.dischargedQ),
+      'INVALID_STATE',
+    );
+    requireEconomy(
+      obligation.start.inputs?.kind === 'COURSE' && obligation.start.quote.funding !== null,
+      'INVALID_STATE',
+    );
+    const expectedAccrual = exactFraction(
+      BigInt(obligation.start.quote.funding.costQPerDay.numerator) *
+        BigInt(obligation.acceptedTicks),
+      BigInt(obligation.start.quote.funding.costQPerDay.denominator) *
+        BigInt(obligation.start.inputs.ticksPerDay),
+    );
+    requireEconomy(
+      canonicalJson(expectedAccrual) === canonicalJson(obligation.accruedQ),
+      'INVALID_STATE',
+    );
+    const outstanding =
+      BigInt(obligation.accruedQ.numerator) * BigInt(obligation.dischargedQ.denominator) -
+      BigInt(obligation.dischargedQ.numerator) * BigInt(obligation.accruedQ.denominator);
+    requireEconomy(outstanding >= 0n, 'INVALID_STATE');
+    requireEconomy(
+      poolWallet(f, obligation.poolId).walletId === obligation.payerWalletId &&
+        walletFor(f, obligation.recipientWalletId).owner.kind === obligation.recipient.kind &&
+        walletFor(f, obligation.recipientWalletId).owner.id === obligation.recipient.id,
+      'INVALID_STATE',
+    );
+  }
+  for (const effect of f.learningEffects ?? [])
+    requireEconomy(
+      effect.key.length > 0 &&
+        effect.requestKey.length > 0 &&
+        isExactInteger(effect.transferQ) &&
+        isExactInteger(effect.fundedTicks) &&
+        isExactInteger(effect.acceptedTicks),
+      'INVALID_STATE',
+    );
   for (const w of f.wallets) {
     requireEconomy(isExactInteger(w.cashQ) && w.location.kind === 'AT', 'INVALID_STATE');
     requireEconomy(reservedQ(f, w.walletId) <= BigInt(w.cashQ), 'INVALID_STATE');
