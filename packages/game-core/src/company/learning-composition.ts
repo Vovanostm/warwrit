@@ -14,7 +14,11 @@ import type { LearningQuoteContext } from './learning-quote.js';
 import { advanceStudySectionTime } from './study-section.js';
 import type { StudySectionProgress } from './study-section.js';
 import type { StudySectionCompletion } from './study-section.js';
-import { readStudyAccessState, studyAccessBounds } from './study-access.js';
+import {
+  closeStudyAccessInterval,
+  readStudyAccessState,
+  studyAccessBounds,
+} from './study-access.js';
 import type { StudyAccessState } from './study-access.js';
 import type { CompanyEconomyState } from './economy-types.js';
 import { person } from './lifecycle-state.js';
@@ -37,6 +41,8 @@ export type LearningCompositionRequest =
       readonly taskId: string;
       readonly effectId: string;
       readonly command: CommandOf<'StopLearning'>;
+      readonly intervals: readonly LearningTimeInterval[];
+      readonly manifest: TrustedLearningCauseManifest;
       readonly accessEvidenceId?: string;
     }
   | {
@@ -98,32 +104,38 @@ function prepareStop(
   context: LearningQuoteContext,
   request: Extract<LearningCompositionRequest, { kind: 'STOP' }>,
 ): LearningCompositionPreparation {
-  const stopped = stopLearningTask(tasks, request.command);
-  if (stopped.task.start.taskId !== request.taskId) throw new RangeError('INVALID_ARGUMENT');
-  const nextTasks = readLearningTaskState({
-    schemaVersion: 1,
-    tasks: stopped.state.tasks,
-  });
-  const backing: LearningBackingRequest = {
-    taskId: request.taskId,
-    effectId: request.effectId,
-    command: request.command,
-    acceptedTicks: stopped.task.completedTicks,
-    ...(request.accessEvidenceId ? { accessEvidenceId: request.accessEvidenceId } : {}),
-  };
-  const finance = prepareLearningBacking(state, nextTasks, context, backing);
-  return Object.freeze({
-    state: finance.state,
-    tasks: nextTasks,
+  const settled = prepareLearningAdvance(
+    state,
+    tasks,
     studyAccess,
     studyProgress,
-    studyCompletion: null,
-    acceptedTicks: finance.acceptedTicks,
-    appliedElapsedTicks: '0',
-    goalReached: false,
-    quotedLimitReached:
-      BigInt(stopped.task.completedTicks) === BigInt(stopped.task.start.quote.maxTicks),
-    replayed: stopped.replayed || finance.replayed,
+    context,
+    request.intervals,
+    {
+      taskId: request.taskId,
+      effectId: request.effectId,
+      command: request.command,
+      manifest: request.manifest,
+      ...(request.accessEvidenceId ? { accessEvidenceId: request.accessEvidenceId } : {}),
+    },
+  );
+  const task = settled.tasks.tasks.find((entry) => entry.start.taskId === request.taskId);
+  requireEconomy(task, 'INVALID_ARGUMENT');
+  const stopped = task.terminal
+    ? { state: settled.tasks, replayed: settled.replayed }
+    : stopLearningTask(settled.tasks, request.command);
+  const nextAccess = task.start.studyIntervalId
+    ? closeStudyAccessInterval(
+        settled.studyAccess,
+        task.start.studyIntervalId,
+        task.terminal?.processedThroughTick ?? request.command.campaignTick,
+      )
+    : settled.studyAccess;
+  return Object.freeze({
+    ...settled,
+    tasks: readLearningTaskState(stopped.state),
+    studyAccess: nextAccess,
+    replayed: settled.replayed || stopped.replayed,
   });
 }
 
@@ -200,15 +212,29 @@ function validateTerminalEffects(state: CompanyEconomyState, tasks: LearningTask
     const parsed = parseCompanyCommand(retained.command);
     requireEconomy(
       parsed.ok &&
-        ['AdvanceCampaign', 'TransferItem', 'SetAssignment'].includes(parsed.command.type),
+        [
+          'AdvanceCampaign',
+          'TransferItem',
+          'SetAssignment',
+          'Arrive',
+          'ExecuteDeparture',
+          'BeginFieldCamp',
+          'AcceptSafeService',
+          'AmendSafeService',
+          'ApplyContainerLifecycle',
+          'ApplyCondition',
+          'Capture',
+          'ReleaseCaptive',
+          'TransferCaptive',
+          'ResolveMissing',
+          'RecordDeath',
+          'StopLearning',
+        ].includes(parsed.command.type),
       'INVALID_STATE',
     );
     const advance = parsed.command;
     if (terminal.kind === 'INTERRUPTED')
-      requireEconomy(
-        advance.type === 'TransferItem' || advance.type === 'SetAssignment',
-        'INVALID_STATE',
-      );
+      requireEconomy(advance.type !== 'AdvanceCampaign', 'INVALID_STATE');
     requireEconomy(
       advance.commandId === terminal.commandId &&
         advance.campaignTick === terminal.campaignTick &&
@@ -291,7 +317,7 @@ function prepareLearningAdvance(
   if (previousEffect) {
     const ownedIds = new Set(
       requestValue.command.type === 'AdvanceCampaign'
-        ? requestValue.command.payload.authoritativeInputs
+        ? (requestValue.manifest?.evidenceIds ?? requestValue.command.payload.authoritativeInputs)
         : (requestValue.manifest?.evidenceIds ?? []),
     );
     const replayIntervals = readLearningTimeIntervals(intervalValues);
@@ -424,8 +450,16 @@ function prepareLearningAdvance(
   const replayed = prepared.replayed;
   requireEconomy(accepted >= BigInt(target.completedTicks), 'INVALID_STATE');
   const acceptedDelta = accepted - BigInt(target.completedTicks);
-  const processedThroughTick = nextProcessedThrough(time.intervals, acceptedDelta, time.fromTick);
+  let processedThroughTick = nextProcessedThrough(time.intervals, acceptedDelta, time.fromTick);
   const quotedLimitReached = accepted === BigInt(start.quote.maxTicks);
+  if (
+    requestValue.command.type !== 'AdvanceCampaign' &&
+    requestValue.command.type !== 'StopLearning' &&
+    acceptedDelta === requestedTicks &&
+    !goalReached &&
+    !quotedLimitReached
+  )
+    processedThroughTick = time.throughTick;
   const terminalKind =
     acceptedDelta < requestedTicks
       ? 'FUNDING_SHORTFALL'
@@ -433,7 +467,10 @@ function prepareLearningAdvance(
         ? 'GOAL_REACHED'
         : quotedLimitReached
           ? 'QUOTE_LIMIT'
-          : undefined;
+          : requestValue.command.type !== 'AdvanceCampaign' &&
+              requestValue.command.type !== 'StopLearning'
+            ? 'INTERRUPTED'
+            : undefined;
   const nextTask = {
     ...target,
     completedTicks: accepted.toString(),
@@ -453,6 +490,10 @@ function prepareLearningAdvance(
     schemaVersion: 1,
     tasks: tasks.tasks.map((entry) => (entry === target ? nextTask : entry)),
   });
+  const nextStudyAccess =
+    terminalKind && target.start.studyIntervalId
+      ? closeStudyAccessInterval(studyAccess, target.start.studyIntervalId, processedThroughTick)
+      : studyAccess;
 
   let nextStudy = studyProgressValue;
   let lifecycle = financeState.lifecycle;
@@ -521,7 +562,7 @@ function prepareLearningAdvance(
   return Object.freeze({
     state: nextState,
     tasks: nextTasks,
-    studyAccess,
+    studyAccess: nextStudyAccess,
     studyProgress: nextStudy,
     studyCompletion,
     acceptedTicks: accepted.toString(),
