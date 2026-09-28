@@ -190,6 +190,44 @@ function replayAdvance(
   });
 }
 
+function startAnotherCourse(
+  fixture: ReturnType<typeof admitted>,
+  stateValue: CompanyEconomyState,
+  tasks: ReturnType<typeof admitted>['tasks'],
+  study: ReturnType<typeof admitted>['study'],
+  at: number,
+) {
+  const state = atTick(stateValue, at);
+  const start = command(
+    state,
+    'StartLearning',
+    fixture.task.start.command.payload,
+    `start-course-again-${at}`,
+    'PLAYER',
+    tick(at),
+  ) as Start;
+  const source = fixture.startContext.learningFacts[0]!;
+  const learningFacts = [
+    {
+      ...source,
+      ...scope(state, `course-again-${at}`, tick(at)),
+      sourceVersion: `v-again-${at}`,
+      atTick: tick(at),
+      expiresAt: tick(at + 5000),
+    },
+  ];
+  const startContext: LearningQuoteContext = {
+    ...context(state, start, [access(state, tick(at))]),
+    learningFacts,
+  };
+  return prepareLearningComposition(state, tasks, study, null, startContext, [], {
+    kind: 'START',
+    taskId: `task-course-again-${at}`,
+    effectId: `start-effect-course-again-${at}`,
+    admission: { taskId: `task-course-again-${at}`, command: start },
+  });
+}
+
 function segment(
   fixture: ReturnType<typeof admitted>,
   from: number,
@@ -467,6 +505,65 @@ describe('C05 time and atomic learning composition', () => {
     expect(fixture.task.completedTicks).toBe('0');
   });
 
+  it('rejects unavailable instructors and continues attendance through a frozen quote after offer expiry', () => {
+    const fixture = admitted(true);
+    const eligible = segment(fixture, 10, 14, 'ELIGIBLE');
+    const attendance = eligible.courseAttendance!;
+    const providerId = attendance.providerId;
+    const invalidDuty = {
+      ...eligible,
+      courseAttendance: {
+        ...attendance,
+        observations: attendance.observations.map((observation) =>
+          observation.characterId === providerId
+            ? { ...observation, assignment: 'REMOTE_TASK' as const }
+            : observation,
+        ),
+      },
+    };
+    expect(() => prepare(fixture, 14, [invalidDuty])).toThrow();
+
+    const providerWounded = {
+      ...eligible,
+      courseAttendance: {
+        ...attendance,
+        observations: attendance.observations.map((observation) =>
+          observation.characterId === providerId
+            ? { ...observation, conditionIds: ['critical-bleed'] }
+            : observation,
+        ),
+      },
+    };
+    expect(() => prepare(fixture, 14, [providerWounded])).toThrow();
+
+    const safeService = {
+      agreementId: 'course-f1-service',
+      kind: 'SAFE_SERVICE' as const,
+      partyId: 'provider-party',
+      location: attendance.location,
+      beneficiaryIds: ['leader'],
+      beneficiaryEnds: [],
+      startedAt: tick(12),
+      endedAt: null,
+      knownEndedAt: null,
+      sourceId: 'course-f1-source',
+      providerId: 'provider',
+      termsVersion: 'safe-v1',
+    };
+    const f1State = atTick(
+      {
+        ...fixture.state,
+        finance: { ...fixture.state.finance, maintenance: [safeService] },
+      },
+      14,
+    );
+    expect(() => prepare(fixture, 14, [eligible], f1State)).toThrow();
+
+    Object.assign(fixture.startContext.learningFacts[0]!, { expiresAt: tick(11) });
+    const continued = prepare(fixture, 14, [eligible]);
+    expect(continued.appliedElapsedTicks).toBe('4');
+  });
+
   it('does not advance task time when the real payer cannot back the next course tick', () => {
     const fixture = admitted(true);
     const current = atTick(fixture.state, 14);
@@ -522,6 +619,16 @@ describe('C05 time and atomic learning composition', () => {
     );
     expect(replay.replayed).toBe(true);
     expect(replay.acceptedTicks).toBe('0');
+    const nextTask = startAnotherCourse(
+      fixture,
+      replenished,
+      reload(prepared.tasks),
+      reload(prepared.studyAccess),
+      16,
+    );
+    expect(nextTask.tasks.tasks).toHaveLength(2);
+    expect(nextTask.tasks.tasks[0]?.terminal?.kind).toBe('FUNDING_SHORTFALL');
+    expect(nextTask.tasks.tasks[1]?.start.taskId).toBe('task-course-again-16');
   });
 
   it('stops at the retained book quote cap without consuming later time', () => {
@@ -533,6 +640,7 @@ describe('C05 time and atomic learning composition', () => {
     expect(prepared.acceptedTicks).toBe(fixture.task.start.quote.maxTicks);
     expect(prepared.quotedLimitReached).toBe(true);
     expect(prepared.tasks.tasks[0]?.processedThroughTick).toBe('910');
+    expect(prepared.tasks.tasks[0]?.terminal?.kind).toBe('GOAL_REACHED');
     const replay = prepare(
       fixture,
       1010,
@@ -546,5 +654,17 @@ describe('C05 time and atomic learning composition', () => {
     expect(replay.state).toEqual(prepared.state);
     expect(replay.tasks).toEqual(prepared.tasks);
     expect(replay.studyProgress).toEqual(prepared.studyProgress);
+
+    const courseFixture = admitted(true);
+    const restarted = startAnotherCourse(
+      courseFixture,
+      prepared.state,
+      prepared.tasks,
+      prepared.studyAccess,
+      1010,
+    );
+    expect(restarted.tasks.tasks).toHaveLength(2);
+    expect(restarted.tasks.tasks[0]?.terminal?.kind).toBe('GOAL_REACHED');
+    expect(restarted.tasks.tasks[1]?.start.taskId).toBe('task-course-again-1010');
   });
 });

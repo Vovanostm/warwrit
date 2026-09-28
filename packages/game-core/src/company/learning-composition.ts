@@ -1,4 +1,4 @@
-import { EconomyViolation, requireEconomy } from './economy-state.js';
+import { EconomyViolation, requireEconomy, validateEconomy } from './economy-state.js';
 import { unsigned } from './input.js';
 import { prepareLearningBacking } from './learning-backing.js';
 import type { LearningBackingRequest } from './learning-backing.js';
@@ -21,6 +21,7 @@ import { person } from './lifecycle-state.js';
 import type { CommandOf } from './lifecycle-types.js';
 import { creditProgression } from './progression.js';
 import { readSkillProgress } from './skill-progress.js';
+import { parseCompanyCommand } from './commands.js';
 
 export type LearningCompositionRequest =
   | {
@@ -169,6 +170,54 @@ function nextProcessedThrough(
   return cursor;
 }
 
+function validateTerminalEffects(state: CompanyEconomyState, tasks: LearningTaskState): void {
+  for (const task of tasks.tasks) {
+    const terminal = task.terminal;
+    if (!terminal) continue;
+    const effects = (state.finance.learningEffects ?? []).filter(
+      (effect) =>
+        effect.companyId === state.lifecycle.companyId &&
+        effect.worldId === state.lifecycle.worldId &&
+        effect.taskId === task.start.taskId &&
+        effect.commandId === terminal.commandId,
+    );
+    requireEconomy(effects.length === 1, 'INVALID_STATE');
+    const effect = effects[0]!;
+    requireEconomy(effect.acceptedTicks === task.completedTicks, 'INVALID_STATE');
+    let retained: unknown;
+    try {
+      retained = JSON.parse(effect.requestKey);
+    } catch {
+      throw new EconomyViolation('INVALID_STATE');
+    }
+    requireEconomy(
+      retained !== null && typeof retained === 'object' && 'command' in retained,
+      'INVALID_STATE',
+    );
+    const parsed = parseCompanyCommand(retained.command);
+    requireEconomy(parsed.ok && parsed.command.type === 'AdvanceCampaign', 'INVALID_STATE');
+    const advance = parsed.command;
+    requireEconomy(
+      advance.commandId === terminal.commandId &&
+        advance.campaignTick === terminal.campaignTick &&
+        advance.payload.toTick === terminal.campaignTick &&
+        BigInt(terminal.processedThroughTick) <= BigInt(advance.payload.toTick),
+      'INVALID_STATE',
+    );
+    if (terminal.kind === 'FUNDING_SHORTFALL') {
+      requireEconomy(
+        'acceptedTicks' in retained &&
+          typeof retained.acceptedTicks === 'string' &&
+          unsigned.read(retained.acceptedTicks) &&
+          BigInt(retained.acceptedTicks) > BigInt(effect.acceptedTicks),
+        'INVALID_STATE',
+      );
+    }
+    if (terminal.kind === 'QUOTE_LIMIT')
+      requireEconomy(effect.acceptedTicks === task.start.quote.maxTicks, 'INVALID_STATE');
+  }
+}
+
 /** One pure candidate for elapsed time, actual study/course progress and finance. */
 export function prepareLearningComposition(
   stateValue: CompanyEconomyState,
@@ -180,27 +229,15 @@ export function prepareLearningComposition(
   requestValue: LearningCompositionRequest,
 ): LearningCompositionPreparation {
   const studyAccess = readStudyAccessState(studyAccessValue);
+  const tasks = readLearningTaskState(tasksValue);
+  validateTerminalEffects(stateValue, tasks);
   if (requestValue.kind === 'START')
-    return prepareStart(
-      stateValue,
-      tasksValue,
-      studyAccess,
-      studyProgressValue,
-      context,
-      requestValue,
-    );
+    return prepareStart(stateValue, tasks, studyAccess, studyProgressValue, context, requestValue);
   if (requestValue.kind === 'STOP')
-    return prepareStop(
-      stateValue,
-      tasksValue,
-      studyAccess,
-      studyProgressValue,
-      context,
-      requestValue,
-    );
+    return prepareStop(stateValue, tasks, studyAccess, studyProgressValue, context, requestValue);
   return prepareLearningAdvance(
     stateValue,
-    tasksValue,
+    tasks,
     studyAccess,
     studyProgressValue,
     context,
@@ -284,13 +321,25 @@ function prepareLearningAdvance(
       studyCompletion: null,
       acceptedTicks: replay.acceptedTicks,
       appliedElapsedTicks: '0',
-      goalReached: false,
-      quotedLimitReached: BigInt(replay.acceptedTicks) === BigInt(target.start.quote.maxTicks),
+      goalReached:
+        target.terminal?.commandId === requestValue.command.commandId &&
+        target.terminal.kind === 'GOAL_REACHED',
+      quotedLimitReached:
+        (target.terminal?.commandId === requestValue.command.commandId &&
+          target.terminal.kind === 'QUOTE_LIMIT') ||
+        BigInt(replay.acceptedTicks) === BigInt(target.start.quote.maxTicks),
       replayed: true,
     });
   }
   requireEconomy(!target.stop, 'INVALID_ARGUMENT');
-  const time = prepareLearningTime(target, requestValue.command, context, intervalValues);
+  requireEconomy(!target.terminal, 'INVALID_ARGUMENT');
+  const time = prepareLearningTime(
+    target,
+    requestValue.command,
+    context,
+    intervalValues,
+    stateValue.finance.maintenance,
+  );
   const inputs = start.inputs;
   if (!inputs) throw new RangeError('LEARNING_START_INPUTS_REQUIRED');
 
@@ -358,10 +407,29 @@ function prepareLearningAdvance(
   requireEconomy(accepted >= BigInt(target.completedTicks), 'INVALID_STATE');
   const acceptedDelta = accepted - BigInt(target.completedTicks);
   const processedThroughTick = nextProcessedThrough(time.intervals, acceptedDelta, time.fromTick);
+  const quotedLimitReached = accepted === BigInt(start.quote.maxTicks);
+  const terminalKind =
+    acceptedDelta < requestedTicks
+      ? 'FUNDING_SHORTFALL'
+      : goalReached
+        ? 'GOAL_REACHED'
+        : quotedLimitReached
+          ? 'QUOTE_LIMIT'
+          : undefined;
   const nextTask = {
     ...target,
     completedTicks: accepted.toString(),
     processedThroughTick,
+    ...(terminalKind
+      ? {
+          terminal: {
+            kind: terminalKind,
+            commandId: requestValue.command.commandId,
+            campaignTick: requestValue.command.campaignTick,
+            processedThroughTick,
+          },
+        }
+      : {}),
   };
   const nextTasks = readLearningTaskState({
     schemaVersion: 1,
@@ -415,8 +483,23 @@ function prepareLearningAdvance(
     };
     goalReached = progress.goalReached;
   }
-  const nextState =
+  let nextState =
     lifecycle === financeState.lifecycle ? financeState : { ...financeState, lifecycle };
+  if (terminalKind) {
+    const obligations = nextState.finance.learningObligations;
+    if (obligations?.some((entry) => entry.taskId === target.start.taskId)) {
+      nextState = {
+        ...nextState,
+        finance: {
+          ...nextState.finance,
+          learningObligations: obligations.map((entry) =>
+            entry.taskId === target.start.taskId ? { ...entry, terminal: true } : entry,
+          ),
+        },
+      };
+    }
+  }
+  validateEconomy(nextState, context);
   return Object.freeze({
     state: nextState,
     tasks: nextTasks,
@@ -426,7 +509,7 @@ function prepareLearningAdvance(
     acceptedTicks: accepted.toString(),
     appliedElapsedTicks: acceptedDelta.toString(),
     goalReached,
-    quotedLimitReached: BigInt(accepted) === BigInt(start.quote.maxTicks),
+    quotedLimitReached,
     replayed,
   });
 }

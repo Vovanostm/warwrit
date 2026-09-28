@@ -16,9 +16,10 @@ import type { LearningQuoteContext } from './learning-quote.js';
 import type { LearningTask } from './learning-task.js';
 import { COMPANY_CATALOGUE } from './definitions.js';
 import { canPerform } from './lifecycle-state.js';
-import type { LifecycleCharacter } from './lifecycle-types.js';
+import type { CapabilitySubject } from './lifecycle-state.js';
 import { readLearningTaskState } from './learning-task.js';
 import type { CommandOf } from './lifecycle-types.js';
+import type { MaintenanceAgreement } from './economy-types.js';
 
 const atLocation = object({ kind: choice('AT'), siteId: id, areaId: id });
 const nil = { schema: { type: 'null' }, read: (value: unknown): value is null => value === null };
@@ -54,7 +55,7 @@ const courseAttendanceInput = object({
     companyId: id,
     characterId: id,
     startedAt: unsigned,
-    endedAt: nullableId,
+    endedAt: either(nil, unsigned),
   }),
   observations: array(coursePersonObservationInput, 2, 3, true),
 });
@@ -117,11 +118,33 @@ function sameIds(left: readonly string[], right: readonly string[]) {
   );
 }
 
+function coveredBySafeService(
+  maintenance: readonly MaintenanceAgreement[],
+  characterId: string,
+  fromTick: string,
+  toTick: string,
+  atTick: string,
+): boolean {
+  return maintenance.some((agreement) => {
+    if (agreement.kind !== 'SAFE_SERVICE' || !agreement.beneficiaryIds.includes(characterId))
+      return false;
+    const agreementEnd = agreement.endedAt === null ? BigInt(atTick) : BigInt(agreement.endedAt);
+    const coveredEnd = agreement.beneficiaryEnds
+      .filter((entry) => entry.characterId === characterId)
+      .reduce(
+        (end, entry) => (BigInt(entry.atTick) < end ? BigInt(entry.atTick) : end),
+        agreementEnd,
+      );
+    return BigInt(agreement.startedAt) < BigInt(toTick) && coveredEnd > BigInt(fromTick);
+  });
+}
+
 function validateCourseAttendance(
   task: LearningTask,
   interval: LearningTimeInterval,
   context: LearningQuoteContext,
   command: CommandOf<'AdvanceCampaign'>,
+  maintenance: readonly MaintenanceAgreement[],
 ): void {
   const inputs = task.start.inputs;
   const attendance = interval.courseAttendance;
@@ -153,7 +176,7 @@ function validateCourseAttendance(
       source.learnerId === start.payload.characterId &&
       source.atTick === start.campaignTick &&
       BigInt(interval.fromTick) >= BigInt(source.atTick) &&
-      BigInt(interval.toTick) <= BigInt(source.expiresAt) &&
+      BigInt(interval.toTick) <= BigInt(source.atTick) + BigInt(task.start.quote.maxTicks) &&
       source.skillId === inputs.skillId &&
       sameIds(source.resourceIds, start.payload.resourceIds) &&
       sameIds(attendance.resourceIds, start.payload.resourceIds) &&
@@ -195,9 +218,19 @@ function validateCourseAttendance(
   );
   for (const characterId of expectedCharacters) {
     const observation = observations.get(characterId)!;
-    const capability = characterId === attendance.learnerId ? 'study' : 'basicWork';
+    const isLearner = characterId === attendance.learnerId;
+    const capability = isLearner ? 'study' : 'basicWork';
     requireEconomy(
-      observation.fromTick === interval.fromTick &&
+      (!isLearner ||
+        !coveredBySafeService(
+          maintenance,
+          characterId,
+          interval.fromTick,
+          interval.toTick,
+          context.atTick,
+        )) &&
+        (isLearner || observation.assignment !== 'REMOTE_TASK') &&
+        observation.fromTick === interval.fromTick &&
         observation.toTick === interval.toTick &&
         canonicalJson(observation.location) === canonicalJson(location) &&
         observation.conditionIds.every((conditionId) =>
@@ -206,15 +239,11 @@ function validateCourseAttendance(
         canPerform(
           {
             presence: {
-              characterId: observation.characterId,
-              assignment: observation.assignment,
               availability: observation.availability,
-              location: observation.location,
-              fieldPartyId: null,
               encounterBindingId: observation.encounterBindingId,
             },
             conditionIds: observation.conditionIds,
-          } as unknown as LifecycleCharacter,
+          } satisfies CapabilitySubject,
           capability,
         ),
       'CONTACT_OR_ACCESS_REQUIRED',
@@ -228,8 +257,10 @@ export function prepareLearningTime(
   command: CommandOf<'AdvanceCampaign'>,
   context: LearningQuoteContext,
   intervalValues: readonly LearningTimeInterval[],
+  maintenance: readonly MaintenanceAgreement[] = [],
 ): LearningTimePreparation {
   const task = readLearningTaskState({ schemaVersion: 1, tasks: [taskValue] }).tasks[0]!;
+  requireEconomy(!task.terminal, 'INVALID_ARGUMENT');
   const { start } = task;
   const guarded = guardCompanyCommand(command, context);
   if (!guarded.ok) throw new EconomyViolation(guarded.error);
@@ -271,7 +302,7 @@ export function prepareLearningTime(
         to <= BigInt(context.atTick),
       'INVALID_SOURCE',
     );
-    validateCourseAttendance(task, interval, context, command);
+    validateCourseAttendance(task, interval, context, command, maintenance);
     seen.add(interval.intervalId);
     if (interval.kind === 'ELIGIBLE') eligible += to - from;
     cursor = to;

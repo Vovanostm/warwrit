@@ -149,7 +149,7 @@ function buildObligation(
     acceptedTicks: '0',
     accruedQ: exactFraction(0n, 1n),
     dischargedQ: exactFraction(0n, 1n),
-    terminal: task.stop !== undefined,
+    terminal: task.stop !== undefined || task.terminal !== undefined,
   };
 }
 
@@ -296,6 +296,7 @@ export function prepareLearningBacking(
   const tasks = readLearningTaskState(tasksValue);
   const task = tasks.tasks.find((entry) => entry.start.taskId === request.taskId);
   requireEconomy(task, 'INVALID_ARGUMENT');
+  requireEconomy(!task.terminal, 'INVALID_ARGUMENT');
   requireEconomy(
     task.start.command.companyId === context.companyId &&
       task.start.command.worldId === context.worldId &&
@@ -338,7 +339,7 @@ export function prepareLearningBacking(
       (canonicalJson(obligation.start) === canonicalJson(task.start) &&
         obligation.companyId === state.lifecycle.companyId &&
         obligation.worldId === state.lifecycle.worldId &&
-        (!obligation.terminal || task.stop !== undefined)),
+        (!obligation.terminal || task.stop !== undefined || task.terminal !== undefined)),
     'INVALID_STATE',
   );
   const requestedTicks = BigInt(request.acceptedTicks);

@@ -79,6 +79,14 @@ const taskInput = object({
   // Older snapshots may omit chronology. TIME can infer the start only for zero history.
   processedThroughTick: optional(unsigned),
   stop: optional(jsonObject),
+  terminal: optional(
+    object({
+      kind: choice('GOAL_REACHED', 'QUOTE_LIMIT', 'FUNDING_SHORTFALL'),
+      commandId: id,
+      campaignTick: unsigned,
+      processedThroughTick: unsigned,
+    }),
+  ),
 });
 const stateInput = object({ schemaVersion: choice(1), tasks: array(taskInput) });
 export type LearningTaskStart = Omit<ValueOf<typeof startInput>, 'command' | 'quote'> & {
@@ -105,7 +113,11 @@ function authorized(command: CommandOf<'StopLearning'>) {
     : command.actorRef.kind === 'SYSTEM' && command.payload.reason !== 'PLAYER';
 }
 function usedCommand(task: LearningTask, id: string) {
-  return task.start.command.commandId === id || task.stop?.commandId === id;
+  return (
+    task.start.command.commandId === id ||
+    task.stop?.commandId === id ||
+    task.terminal?.commandId === id
+  );
 }
 
 export function readLearningTaskState(value: unknown): LearningTaskState {
@@ -114,9 +126,10 @@ export function readLearningTaskState(value: unknown): LearningTaskState {
   const tasks = state.tasks as unknown as readonly LearningTask[];
   const taskIds = new Set<string>();
   const commandIds = new Set<string>();
+  const terminalCommandIds = new Set<string>();
   const learnerEnds = new Map<string, string | null>();
   for (const task of tasks) {
-    const { start, stop } = task;
+    const { start, stop, terminal } = task;
     const parsed = parseCompanyCommand(start.command);
     requireEconomy(parsed.ok && parsed.command.type === 'StartLearning', 'INVALID_STATE');
     const command = parsed.command;
@@ -156,8 +169,30 @@ export function readLearningTaskState(value: unknown): LearningTaskState {
       );
       commandIds.add(stop.commandId);
     }
-    learnerEnds.set(command.payload.characterId, stop?.campaignTick ?? null);
+    if (terminal) {
+      requireEconomy(
+        !stop &&
+          id.read(terminal.commandId) &&
+          terminal.commandId !== command.commandId &&
+          !commandIds.has(terminal.commandId) &&
+          task.processedThroughTick === terminal.processedThroughTick &&
+          BigInt(terminal.processedThroughTick) >= BigInt(command.campaignTick) &&
+          BigInt(terminal.campaignTick) >= BigInt(terminal.processedThroughTick) &&
+          (terminal.kind !== 'QUOTE_LIMIT' ||
+            BigInt(task.completedTicks) === BigInt(start.quote.maxTicks)),
+        'INVALID_STATE',
+      );
+      terminalCommandIds.add(terminal.commandId);
+    }
+    learnerEnds.set(
+      command.payload.characterId,
+      stop?.campaignTick ?? terminal?.processedThroughTick ?? null,
+    );
   }
+  requireEconomy(
+    [...terminalCommandIds].every((commandId) => !commandIds.has(commandId)),
+    'INVALID_STATE',
+  );
   return state as unknown as LearningTaskState;
 }
 export const createLearningTaskState = (): LearningTaskState =>
@@ -190,7 +225,10 @@ export function startLearningTask(
   }
   requireEconomy(
     state.tasks.every(
-      (task) => task.start.command.payload.characterId !== command.payload.characterId || task.stop,
+      (task) =>
+        task.start.command.payload.characterId !== command.payload.characterId ||
+        task.stop !== undefined ||
+        task.terminal !== undefined,
     ),
     'INCOMPATIBLE_ACTIVITY',
   );
@@ -231,6 +269,7 @@ export function stopLearningTask(
   requireEconomy(task, 'INVALID_ARGUMENT');
   requireEconomy(authorized(command), 'AUTHORIZATION');
   requireEconomy(!task.stop, 'INCOMPATIBLE_ACTIVITY');
+  requireEconomy(!task.terminal, 'INCOMPATIBLE_ACTIVITY');
   requireEconomy(
     BigInt(command.campaignTick) >= BigInt(task.start.command.campaignTick),
     'INVALID_TIME',
