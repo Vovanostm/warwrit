@@ -1,5 +1,5 @@
 export const scenario = {
-  version: 'renderer-scene-1',
+  version: 'renderer-scene-3',
   canvas: { width: 1600, height: 900, resolutionScale: 1 },
   camera: { eye: [0, 20, 25] as const, target: [0, 0, 0] as const, fovRadians: 0.72 },
   board: { size: 1.25, columns: 11, rows: 7, fogCells: ['-1,0', '0,0', '1,0'] },
@@ -14,10 +14,20 @@ export const scenario = {
   },
   lighting: {
     day: { ambient: 0.72, key: 2.4, fog: 0.025 },
-    night: { ambient: 0.2, key: 0.5, fog: 0.055 },
-    torch: { ambient: 0.28, key: 0.65, fog: 0.04, torch: 2.8 },
+    night: { ambient: 0.45, key: 0.9, fog: 0.015 },
+    torch: { ambient: 0.45, key: 0.9, fog: 0.015, torch: 2.8 },
   },
-  colors: { red: '#e9735b', blue: '#5aa7e8', selected: '#f4cf6f', fog: '#29364a' },
+  colors: {
+    red: '#e9735b',
+    blue: '#5aa7e8',
+    selected: '#f4cf6f',
+    fog: '#29364a',
+    dayKey: '#f7e1be',
+    nightKey: '#526c9a',
+    dayClear: [0.055, 0.072, 0.09] as const,
+    nightClear: [0.025, 0.04, 0.075] as const,
+    torch: [1, 0.69, 0.35] as const,
+  },
   quality: { antialias: true, shadows: false, particleCount: 36 },
 } as const;
 
@@ -58,6 +68,11 @@ export const firstTarget = actors.find((actor) => actor.id === 'blue-knight-1')!
 export function hexToWorld(q: number, r: number, size = scenario.board.size) {
   return { x: Math.sqrt(3) * size * (q + r / 2), z: 1.5 * size * r };
 }
+
+export const torchPosition = {
+  ...hexToWorld(firstAttacker.q, firstAttacker.r),
+  y: 2.2,
+};
 
 export function sampleTimeline(seconds: number) {
   const t = seconds % scenario.timeline.loopSeconds;

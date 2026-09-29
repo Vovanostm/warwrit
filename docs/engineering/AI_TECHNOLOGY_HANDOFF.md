@@ -14,7 +14,7 @@ realtime: colyseus-0.18-planned
 persistence: postgresql
 sql_layer: kysely-pg
 web_shell: react-19-vite-7
-renderer: provisional-babylon-9-vs-playcanvas-spike-required
+renderer: playcanvas-2.22.4-private-m1-mac-chrome
 experimental_runtime: bun-1.4
 ```
 
@@ -38,7 +38,7 @@ Before changing infrastructure or adding a framework dependency:
 - **Persistence — ACCEPTED:** PostgreSQL. It is canonical durable state.
 - **SQL layer — ACCEPTED:** Kysely + `pg`. Prefer explicit SQL-shaped queries and transactions.
 - **Browser shell — ACCEPTED:** React 19 + Vite 7. React owns UI composition, not canonical simulation.
-- **Renderer — PROVISIONAL:** Babylon.js 9.x versus current PlayCanvas. Run the required comparative spike before production renderer lock.
+- **Renderer — ACCEPTED FOR CURRENT M1 TARGET:** PlayCanvas2.22.4 under [ADR-0005](../architecture/0005-m1-renderer-playcanvas.md). The measured Mac/Chrome comparison is complete; ART05 pipeline comparison and ART06 production adapter remain open.
 - **Alternate runtime — EXPERIMENTAL:** Bun 1.4. Benchmark/compatibility lane only; no Bun-only production APIs.
 - **High-throughput WebSocket — DEFERRED:** uWebSockets.js. Add only after the default transport fails measured budgets.
 - **Redis/distributed topology — DEFERRED:** none for M0/M1. Add only after a multi-process or multi-machine requirement exists.

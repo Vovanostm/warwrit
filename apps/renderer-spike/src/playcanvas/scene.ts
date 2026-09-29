@@ -19,6 +19,7 @@ import {
   hexToWorld,
   sampleTimeline,
   scenario,
+  torchPosition,
 } from '../shared/scenario.js';
 import type { RendererMount } from '../shared/renderer.js';
 
@@ -77,14 +78,18 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
   app.resizeCanvas(scenario.canvas.width, scenario.canvas.height);
   canvas.style.width = '100%';
   canvas.style.height = 'auto';
-  app.scene.ambientLight = new Color(0.72, 0.72, 0.72);
+  app.scene.ambientLight = new Color(
+    scenario.lighting.day.ambient,
+    scenario.lighting.day.ambient,
+    scenario.lighting.day.ambient,
+  );
   app.scene.fog.type = FOG_EXP2;
   app.scene.fog.color = new Color().fromString(scenario.colors.fog);
   app.scene.fog.density = scenario.lighting.day.fog;
 
   const camera = new Entity('Tactical camera');
   camera.addComponent('camera', {
-    clearColor: new Color(0.055, 0.072, 0.09),
+    clearColor: new Color(...scenario.colors.dayClear),
     fov: (scenario.camera.fovRadians * 180) / Math.PI,
   });
   camera.camera!.aspectRatio = scenario.canvas.width / scenario.canvas.height;
@@ -95,6 +100,7 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
   light.addComponent('light', {
     type: 'directional',
     intensity: scenario.lighting.day.key,
+    color: new Color().fromString(scenario.colors.dayKey),
     castShadows: false,
   });
   light.setEulerAngles(45, 25, 0);
@@ -104,10 +110,9 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     type: 'omni',
     intensity: 0,
     range: 8,
-    color: new Color(1, 0.69, 0.35),
+    color: new Color(...scenario.colors.torch),
   });
-  const torchPosition = hexToWorld(firstAttacker.q, firstAttacker.r);
-  torch.setPosition(torchPosition.x, 2.2, torchPosition.z);
+  torch.setPosition(torchPosition.x, torchPosition.y, torchPosition.z);
   app.root.addChild(torch);
 
   const floor = new Entity('Arena floor');
@@ -283,6 +288,29 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     prop.setLocalScale(scale[0], scale[1], scale[2]);
     app.root.addChild(prop);
   }
+  const signalPosition = hexToWorld(0, 2);
+  const signalWoodMaterial = new StandardMaterial();
+  signalWoodMaterial.diffuse = new Color(0.34, 0.23, 0.13);
+  signalWoodMaterial.emissive = new Color(0.28, 0.19, 0.105);
+  signalWoodMaterial.update();
+  const signalClothMaterial = new StandardMaterial();
+  signalClothMaterial.diffuse = new Color(0.72, 0.53, 0.26);
+  signalClothMaterial.emissive = new Color(0.5, 0.36, 0.16);
+  signalClothMaterial.update();
+  const signalPole = new Entity('signal-pole');
+  signalPole.addComponent('model', { type: 'box', material: signalWoodMaterial });
+  signalPole.model!.castShadows = false;
+  signalPole.model!.receiveShadows = false;
+  signalPole.setPosition(signalPosition.x, 0.9, signalPosition.z);
+  signalPole.setLocalScale(0.07, 1.8, 0.07);
+  app.root.addChild(signalPole);
+  const signalFlag = new Entity('signal-flag');
+  signalFlag.addComponent('model', { type: 'box', material: signalClothMaterial });
+  signalFlag.model!.castShadows = false;
+  signalFlag.model!.receiveShadows = false;
+  signalFlag.setPosition(signalPosition.x + 0.285, 1.65, signalPosition.z);
+  signalFlag.setLocalScale(0.5, 0.3, 0.035);
+  app.root.addChild(signalFlag);
 
   const markers = new Map<string, Entity>();
   for (const actor of actors) {
@@ -404,10 +432,14 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     const values = scenario.lighting[preset];
     app.scene.ambientLight = new Color(values.ambient, values.ambient, values.ambient);
     light.light!.intensity = values.key;
-    torch.light!.intensity = preset === 'torch' ? scenario.lighting.torch.torch : 0;
-    app.scene.fog.color = new Color().fromString(
-      preset === 'day' ? scenario.colors.fog : '#29364a',
+    light.light!.color = new Color().fromString(
+      preset === 'day' ? scenario.colors.dayKey : scenario.colors.nightKey,
     );
+    torch.light!.intensity = preset === 'torch' ? scenario.lighting.torch.torch : 0;
+    camera.camera!.clearColor = new Color(
+      ...(preset === 'day' ? scenario.colors.dayClear : scenario.colors.nightClear),
+    );
+    app.scene.fog.color = new Color().fromString(scenario.colors.fog);
     app.scene.fog.density = values.fog;
     emit({ type: 'lighting', preset, mode });
   };
