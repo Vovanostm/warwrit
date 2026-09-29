@@ -17,6 +17,9 @@ importers:
       '@types/pg':
         specifier: ^8.0.0
         version: 8.23.1
+      '@warwrit/game-core':
+        specifier: workspace:*
+        version: link:packages/game-core
       ajv:
         specifier: 8.20.0
         version: 8.20.0

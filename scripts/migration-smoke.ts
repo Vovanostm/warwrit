@@ -197,11 +197,6 @@ try {
         values: ['future-ruleset', originalWorldId, originalCompanyId],
       },
       {
-        name: 'root world scope mismatch',
-        sql: "update company_snapshots set state = jsonb_set(state, '{economy,lifecycle,worldId}', '\"foreign-world\"'::jsonb) where world_id = $1 and company_id = $2",
-        values: [originalWorldId, originalCompanyId],
-      },
-      {
         name: 'public revision cursor mismatch',
         sql: 'update company_snapshots set public_revision = $1 where world_id = $2 and company_id = $3',
         values: ['999999', originalWorldId, originalCompanyId],
@@ -248,6 +243,41 @@ try {
         ],
       );
     }
+
+    const foreignWorldId = 'foreign-world';
+    await client.query(
+      `insert into company_snapshots
+        (world_id, company_id, schema_version, ruleset_id, catalogue_version,
+         command_schema_version, public_revision, canonical_revision, state)
+       select $1, company_id, schema_version, ruleset_id, catalogue_version,
+              command_schema_version, public_revision, canonical_revision, state
+       from company_snapshots where world_id = $2 and company_id = $3`,
+      [foreignWorldId, originalWorldId, originalCompanyId],
+    );
+    const foreignScopeBeforeRead = await client.query(
+      'select * from company_snapshots where world_id = $1 and company_id = $2',
+      [foreignWorldId, originalCompanyId],
+    );
+    await assert.rejects(
+      readbackDatabase
+        .transaction()
+        .execute((transaction) =>
+          loadCompanyAggregate(transaction, foreignWorldId, originalCompanyId),
+        ),
+      {
+        name: 'TypeError',
+        message: 'Company snapshot scope does not match its root',
+      },
+    );
+    const foreignScopeAfterRead = await client.query(
+      'select * from company_snapshots where world_id = $1 and company_id = $2',
+      [foreignWorldId, originalCompanyId],
+    );
+    assert.deepEqual(foreignScopeAfterRead.rows, foreignScopeBeforeRead.rows);
+    await client.query('delete from company_snapshots where world_id = $1 and company_id = $2', [
+      foreignWorldId,
+      originalCompanyId,
+    ]);
   } finally {
     await readbackDatabase.destroy();
   }
