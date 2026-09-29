@@ -132,6 +132,7 @@ export type LearningCause = CommandOf<
   | 'ReleaseCaptive'
   | 'TransferCaptive'
   | 'ResolveMissing'
+  | 'RecordMissing'
   | 'RecordDeath'
   | 'StopLearning'
 >;
@@ -188,6 +189,8 @@ function causeEvidenceIds(command: Exclude<LearningCause, CommandOf<'AdvanceCamp
       return [command.payload.receiptId, command.payload.custodyOutcomeId];
     case 'ResolveMissing':
       return [command.payload.resolutionId, command.payload.outcomeReceiptId];
+    case 'RecordMissing':
+      return [command.payload.receiptId];
     case 'StopLearning':
       return [command.payload.taskId];
   }
@@ -250,6 +253,17 @@ function factualBoundary(
     ) as MissingResolutionEvidence | undefined;
     requireEconomy(fact, 'INVALID_SOURCE');
     return fact.outcome === 'DEAD' ? fact.actualDeathTick! : fact.atTick;
+  }
+  if (command.type === 'RecordMissing') {
+    const fact = context.physicalFacts?.find(
+      (entry) =>
+        entry.kind === 'MISSING_ENTRY' &&
+        entry.id === command.payload.receiptId &&
+        entry.sourceEventId === command.sourceEventId &&
+        entry.characterId === command.payload.characterId,
+    );
+    requireEconomy(fact, 'INVALID_SOURCE');
+    return fact.atTick;
   }
   if (manifest) {
     requireEconomy(manifest.targetTick === command.campaignTick, 'INVALID_SOURCE');

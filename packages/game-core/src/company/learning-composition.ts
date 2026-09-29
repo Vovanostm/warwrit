@@ -227,6 +227,7 @@ function validateTerminalEffects(state: CompanyEconomyState, tasks: LearningTask
           'ReleaseCaptive',
           'TransferCaptive',
           'ResolveMissing',
+          'RecordMissing',
           'RecordDeath',
           'StopLearning',
         ].includes(parsed.command.type),

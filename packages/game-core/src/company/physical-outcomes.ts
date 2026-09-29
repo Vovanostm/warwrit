@@ -439,3 +439,50 @@ export function resolveMissing(
   const finance = setActualFinancePaused({ ...root, lifecycle, physical }, p.characterId, true);
   return { lifecycle, finance, physical, requirements: [] };
 }
+
+export function recordMissingEntry(
+  root: MaterializedCompanyState,
+  command: CommandOf<'RecordMissing'>,
+  context: EconomyContext,
+): PhysicalChange {
+  const p = command.payload;
+  const fact = physicalFact(context, p.receiptId, 'MISSING_ENTRY');
+  const character = person(root.lifecycle, p.characterId);
+  const carried = root.physical.containers.filter(
+    (container) =>
+      container.carrier?.kind === 'CHARACTER' && container.carrier.id === p.characterId,
+  );
+  const containerIds = carried.map((container) => container.containerId).toSorted();
+  const carriedIds = new Set(containerIds);
+  const itemIds = root.physical.items
+    .filter((item) => item.containerId !== null && carriedIds.has(item.containerId))
+    .map((item) => item.itemId)
+    .toSorted();
+  requirePhysical(
+    character.presence.availability === 'IN_ENCOUNTER' &&
+      fact.sourceEventId === command.sourceEventId &&
+      fact.bindingId === p.bindingId &&
+      fact.battleId === p.battleId &&
+      fact.terminalReceiptId === p.terminalReceiptId &&
+      fact.unitId === p.unitId &&
+      fact.characterId === p.characterId &&
+      fact.disposition === 'RETAIN_WITH_PERSON' &&
+      canonicalJson(fact.location) === canonicalJson(character.presence.location) &&
+      carried.every(
+        (container) => canonicalJson(container.location) === canonicalJson(fact.location),
+      ) &&
+      new Set(fact.containerIds).size === fact.containerIds.length &&
+      canonicalJson([...fact.containerIds].toSorted()) === canonicalJson(containerIds) &&
+      new Set(fact.itemIds).size === fact.itemIds.length &&
+      canonicalJson([...fact.itemIds].toSorted()) === canonicalJson(itemIds),
+    'INVALID_SOURCE',
+  );
+  const recorded = recordPhysicalSource(root.physical, fact);
+  const lifecycle = movePresence(root.lifecycle, p.characterId, 'OUT_OF_CONTACT', fact.location);
+  return {
+    lifecycle,
+    finance: setActualFinancePaused({ ...root, physical: recorded.state }, p.characterId, true),
+    physical: recorded.state,
+    requirements: [],
+  };
+}
