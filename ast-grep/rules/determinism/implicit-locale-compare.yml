@@ -1,13 +1,12 @@
 id: implicit-locale-compare
 language: TypeScript
-severity: warning
+severity: error
 message: localeCompare without a locale orders by the host's default locale and ICU data.
 note: |
   AGENTS.md "Tests are executable specifications": determinism/replay. Server,
   browser and replay hosts can order the same ids differently (under `et`,
-  'unit-z' sorts before 'unit-t'). Compare code units instead:
-  `left < right ? -1 : left > right ? 1 : 0`. Changing an existing combat or
-  replay order needs the compatibility analysis AGENTS.md requires.
+  'unit-z' sorts before 'unit-t'). Use `compareCodeUnits` from game-core
+  primitives, or `Array.prototype.sort()` without a comparator for strings.
 files:
   - packages/game-core/src/**
   - packages/protocol/src/**

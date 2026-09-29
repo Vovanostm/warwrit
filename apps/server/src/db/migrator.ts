@@ -29,7 +29,8 @@ async function loadMigrations(): Promise<readonly Migration[]> {
   const names = entries
     .filter((entry) => entry.endsWith('.up.sql'))
     .map((entry) => entry.slice(0, -'.up.sql'.length))
-    .sort((left, right) => left.localeCompare(right));
+    // Default sort compares UTF-16 code units: identical on every host locale.
+    .sort();
 
   return Promise.all(
     names.map(async (name) => ({

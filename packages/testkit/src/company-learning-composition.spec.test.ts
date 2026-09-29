@@ -2329,6 +2329,134 @@ describe('C05 time and atomic learning composition', () => {
     expect(rejected.state).toEqual(input);
   });
 
+  // Regression, 2026-09-29: after PR #113 made harmless duty changes preserve
+  // study, no specification exercised a duty change that removes access, and
+  // skipping recordLearningDutyChange left every specification green.
+  // Regression, 2026-09-29: after PR #113 made harmless duty changes preserve
+  // study, no specification exercised a duty change that removes access, and
+  // skipping recordLearningDutyChange left every specification green.
+  it('interrupts study when a duty change detaches the learner from the party carrying the book', () => {
+    const fixture = admitted(false);
+    const cared = withCareProvider(fixture.state);
+    const partyId = cared.lifecycle.characters.find(
+      (character) => character.identity.characterId === 'leader',
+    )!.presence.fieldPartyId!;
+    const owner = { kind: 'COMPANY' as const, id: cared.lifecycle.companyId };
+    const carried = addContainer(
+      cared,
+      container('party-pack', owner, 30000, { kind: 'PARTY', id: partyId }),
+    );
+    const state = {
+      ...carried,
+      physical: {
+        ...carried.physical!,
+        items: carried.physical!.items.map((entry) =>
+          entry.itemId.startsWith('book-') ? { ...entry, containerId: 'party-pack' } : entry,
+        ),
+      },
+    };
+    const interval = {
+      ...segment(fixture, 10, 20, 'ELIGIBLE'),
+      commandId: 'duty-away-command',
+    };
+    const duty = command(
+      state,
+      'SetAssignment',
+      {
+        characterId: 'leader',
+        assignment: 'HOME_RESERVE',
+        locationId: 'village',
+        dutyEvidenceId: 'duty-away',
+        fundingPoolId: 'local',
+      },
+      'duty-away-command',
+      'PLAYER',
+      tick(20),
+    );
+    const dutyFact = {
+      ...scope(state, 'duty-away', tick(20)),
+      kind: 'DUTY' as const,
+      characterId: 'leader',
+      assignment: 'HOME_RESERVE' as const,
+      location: { kind: 'AT' as const, siteId: 'village', areaId: 'square' },
+      fundingPoolId: 'local',
+      handoverToId: 'provider',
+      partyId: null,
+    };
+    const learning = {
+      ...createCompanyLearningState(),
+      tasks: fixture.tasks,
+      studyAccess: fixture.study,
+    };
+    const input = { economy: state, learning };
+    const foodFacts = state.lifecycle.memberships.map((membership, ordinal) => ({
+      ...physicalScope(state, `duty-away-food-${membership.membershipId}`, tick(20), ordinal),
+      kind: 'FOOD_FULFILLMENT' as const,
+      membershipId: membership.membershipId,
+      fromTick: tick(10),
+      toTick: tick(20),
+      channel: 'STOCK' as const,
+      location: { kind: 'AT' as const, siteId: 'village', areaId: 'square' },
+      containerId: 'fixture-supply',
+    }));
+    const commandContext = {
+      ...context(
+        state,
+        duty,
+        [access(state, tick(20))],
+        [dutyFact],
+        [{ ...careHandover(state, 'leader'), atTick: tick(20) }, ...foodFacts],
+      ),
+      learningFacts: fixture.startContext.learningFacts,
+    };
+    const interruption = {
+      intervals: [interval],
+      effectId: 'duty-away-learning-effect',
+      manifest: {
+        companyId: state.lifecycle.companyId,
+        worldId: state.lifecycle.worldId,
+        commandId: duty.commandId,
+        taskId: fixture.task.start.taskId,
+        ownerIntervalId: fixture.task.start.studyIntervalId!,
+        targetTick: '20',
+        evidenceIds: [...new Set([...intervalEvidenceIds(interval), 'duty-away'])],
+      },
+    };
+
+    const prepared = prepareCompanyEconomyWithLearning(input, duty, commandContext, interruption);
+
+    if (prepared.kind !== 'PREPARED') throw new Error(prepared.error);
+    const task = prepared.next.learning.tasks.tasks[0];
+    expect(task?.completedTicks).toBe('10');
+    expect(task?.terminal).toMatchObject({
+      kind: 'INTERRUPTED',
+      commandId: duty.commandId,
+      processedThroughTick: '20',
+    });
+    expect(
+      prepared.next.economy.finance.learningEffects?.find(
+        (effect) => effect.commandId === duty.commandId,
+      )?.acceptedTicks,
+    ).toBe('10');
+    expect(prepared.next.learning.ownerTransitions.at(-1)).toMatchObject({
+      kind: 'DUTY_CHANGE',
+      commandId: duty.commandId,
+      nextAssignment: 'HOME_RESERVE',
+      dutyEvidenceId: 'duty-away',
+    });
+    expect(prepared.next.learning.studyAccess.intervals[0]).toMatchObject({
+      intervalId: fixture.task.start.studyIntervalId,
+      effectiveToTick: '20',
+    });
+
+    const withoutSettlement = prepareCompanyEconomyWithLearning(input, duty, commandContext, {
+      intervals: [],
+      effectId: 'duty-away-learning-effect',
+    });
+    expect(withoutSettlement.kind).toBe('REJECTED');
+    expect(withoutSettlement.state).toEqual(input);
+  });
+
   it('keeps a locally accessible book through a container transfer and interrupts on destruction', () => {
     function dispose(disposition: 'TRANSFER' | 'DESTROY_WITH_CAUSE') {
       const fixture = admitted(false);

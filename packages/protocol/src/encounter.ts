@@ -23,7 +23,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isId = (value: unknown): value is string =>
   typeof value === 'string' && value.length > 0 && value.length <= 128;
 
-const isEncounterId = (value: unknown): value is string =>
+export const isEncounterId = (value: unknown): value is string =>
   typeof value === 'string' &&
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u.test(value);
 
