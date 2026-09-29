@@ -12,6 +12,17 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 - 2026-09-29, #125: fallow (`pnpm check:dead-code` in `pnpm verify`,
   `pnpm check:changes` on pull requests, `pnpm report:quality`) and ast-grep
   code-shape rules with rule tests (`pnpm check:patterns`).
+- 2026-09-29, #128: `pnpm test:coverage` (v8, no threshold) as evidence for
+  `fallow health --coverage`; specifications for encounter HTTP authorization,
+  the encounter command guard and duty-change learning settlement.
+
+### Fixed
+
+- 2026-09-29, #128: combat initiative ties, AI targets and canonical replay order
+  no longer depend on the host locale (`compareCodeUnits`); stress digest
+  unchanged for existing ids.
+- 2026-09-29, #128: CI now runs the encounter and OIDC PostgreSQL specifications
+  in `pnpm test:migrations`; they were skipped because only `DATABASE_URL` was set.
 
 ### Changed
 
@@ -19,3 +30,5 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   [LOCAL_DEVELOPMENT.md](docs/engineering/LOCAL_DEVELOPMENT.md#container-runtime-colima).
 - 2026-09-29, #125: seven internal-only game-core exports removed; `ajv` and
   `fast-check` declared by testkit, which imports them.
+- 2026-09-29, #128: encounter routes authenticate in one encapsulated Fastify
+  hook; `protocol` owns the encounter id format.
