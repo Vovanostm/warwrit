@@ -49,6 +49,7 @@ import type {
   EquipmentSlot,
   EconomyContext,
   FinanceEvidence,
+  ServiceTermsEvidence,
   MaterializedCompanyState,
   PhysicalEvidence,
   PracticeEvidence,
@@ -68,7 +69,7 @@ import {
 } from './company-economy-fixture.js';
 import { addContainer, addItem, addVitals, container, item } from './company-physical-fixture.js';
 
-function source(prefix: string, health = 100): EncounterCompanySource {
+function source(prefix: string, health = 100, familySuccessor = false): EncounterCompanySource {
   const ids = new Set(['company', 'party', 'leader', 'worker-0', 'worker-1', 'provider']);
   let root = JSON.parse(
     JSON.stringify(economy([1n, 1n]), (_, value) =>
@@ -116,6 +117,45 @@ function source(prefix: string, health = 100): EncounterCompanySource {
       false,
     );
   }
+  if (familySuccessor) {
+    const leaderId = entityId<'Character'>(`${prefix}-leader`);
+    const providerId = entityId<'Character'>(`${prefix}-provider`);
+    root = {
+      ...root,
+      lifecycle: {
+        ...root.lifecycle,
+        company: {
+          ...root.lifecycle.company!,
+          householdIds: [...root.lifecycle.company!.householdIds, providerId],
+        },
+        kinship: [...root.lifecycle.kinship, { from: leaderId, to: providerId, kind: 'SIBLING' }],
+      },
+    };
+    const owner = { kind: 'CHARACTER' as const, id: providerId };
+    const packId = `${providerId}-pack`;
+    root = addContainer(root, container(packId, owner, 30000, owner), false);
+    const sword = item(`${providerId}-sword`, 'sword', owner, packId, 1, 5000, 10000);
+    root = addItem(
+      root,
+      { ...sword, equipped: { characterId: providerId, slots: ['MAIN_HAND'] } },
+      false,
+    );
+    root = addVitals(
+      root,
+      {
+        characterId: providerId,
+        sourceId: `${providerId}-vitals`,
+        maximumHealth: 100,
+        currentHealth: 100,
+        healthCarry: '0',
+        maximumStamina: 100,
+        currentStamina: 100,
+        staminaCarry: '0',
+        morale: 50,
+      },
+      false,
+    );
+  }
   root = {
     ...root,
     lifecycle: {
@@ -141,8 +181,8 @@ function source(prefix: string, health = 100): EncounterCompanySource {
   return { root: { ...root, physical: root.physical! }, context: context(root, request) };
 }
 
-function fixture(health = 100, adjacentPracticeParty = false) {
-  const sources = [source('a', health), source('b', 10000)];
+function fixture(health = 100, adjacentPracticeParty = false, familySuccessor = false) {
+  const sources = [source('a', health, familySuccessor), source('b', 10000)];
   const hexes = createHexagon(2);
   const request = { bindingId: 'physical-binding', battleId: battleId('physical-battle') };
   const evidence: EncounterPositionEvidence = {
@@ -507,6 +547,31 @@ function attackUntilCompanyUnitDies(f: ReturnType<typeof fixture>) {
       return journal;
   }
   throw new Error('Combat fixture did not kill the company unit');
+}
+
+function resolveCombatJournal(
+  f: ReturnType<typeof fixture>,
+  journal: CombatReceiptJournal,
+): CombatReceiptJournal {
+  for (let index = 0; index < 500; index += 1) {
+    const state = journal.receipts.at(-1)!.transition.state;
+    if (state.status !== 'active') return journal;
+    const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
+    if (!actor) throw new Error('Expected active combat actor');
+    const kernelCommand = chooseAiCommand(
+      state,
+      actor.sideId === sideId('b-side') ? 'survivor' : 'aggressive',
+    );
+    const transition = applyCombatCommand(state, kernelCommand);
+    if (!transition.ok) throw new Error(transition.error.message);
+    journal = accept(
+      f,
+      journal,
+      { state: transition.state, events: transition.events },
+      kernelCommand,
+    );
+  }
+  throw new Error('Combat fixture did not resolve');
 }
 
 function combatFacts(
@@ -1623,8 +1688,8 @@ describe('G09 — verified combat practice', () => {
 });
 
 describe('G10 — atomic combat company aggregate', () => {
-  function aggregateFixture() {
-    const f = fixture(10000);
+  function aggregateFixture(familySuccessor = false, health = 10000) {
+    const f = fixture(health, false, familySuccessor);
     for (const root of new Set([f.root, f.sources[0]!.root])) {
       const worker = root.lifecycle.characters.find(
         (person) => person.identity.characterId === 'a-worker-0',
@@ -2674,5 +2739,235 @@ describe('G10 — atomic combat company aggregate', () => {
     expect(rejected.kind).toBe('REJECTED');
     if (rejected.kind === 'REJECTED') expect(rejected.error).toBe('INVALID_SOURCE');
     expect(remoteState).toEqual(remoteBefore);
+  });
+
+  it('retains a real leader death and resolves leadership before releasing the binding', () => {
+    const f = aggregateFixture(true, 1);
+    const journal = resolveCombatJournal(f.f, attackUntilCompanyUnitDies(f.f));
+    expect(journal.receipts.at(-1)?.transition.state.status).toBe('resolved');
+    const { profile, applications } = applicationsForJournal(f, journal);
+    const consumed = prepareConsumeCombatAggregate(f.begun.next, {
+      journal,
+      applications,
+      practiceProfile: profile,
+    });
+    if (consumed.kind !== 'PREPARED') throw new Error(`Consume death journal: ${consumed.error}`);
+
+    const root = consumed.next.economy as MaterializedCompanyState;
+    const finalReceipt = journal.receipts.at(-1)!;
+    const finalState = finalReceipt.transition.state;
+    const participants = f.begun.binding.participants.filter(
+      (entry) => entry.companyId === root.lifecycle.companyId,
+    );
+    const finalStateDigest = 'aggregate-leader-death-final-state';
+    const outcomeDigest = 'aggregate-leader-death-outcome';
+    const terminalCommand = command(
+      root,
+      'FinalizeEncounter',
+      {
+        bindingId: f.begun.binding.bindingId,
+        terminalReceiptId: finalReceipt.request.payload.receiptId,
+        finalStateDigest,
+        outcomeReceiptId: outcomeDigest,
+      },
+      'aggregate-finalize-leader-death',
+      'COMBAT_RECEIPT',
+      root.lifecycle.campaignTick,
+    );
+    const sourceEventId = terminalCommand.sourceEventId!;
+    const terminal = {
+      version: 's02-combat-terminal-outcome-1' as const,
+      id: finalStateDigest,
+      sourceEventId,
+      bindingId: f.begun.binding.bindingId,
+      battleId: f.f.binding.setup.battleId,
+      receiptId: finalReceipt.request.payload.receiptId,
+      revision: finalState.revision,
+      atTick: consumed.next.encounter.active!.lastAppliedTick!,
+      finalStateCanonical: canonicalCombatState(finalState),
+      outcomeDigest,
+      dispositions: participants.map((participant) => {
+        const unit = finalState.units.find((entry) => entry.id === participant.unitId)!;
+        return {
+          id: `aggregate-death-disposition-${participant.unitId}`,
+          sourceEventId,
+          unitId: participant.unitId,
+          characterId: participant.projection.characterId,
+          status: unit.health === 0 ? ('DEAD' as const) : ('PRESENT' as const),
+          location: f.begun.binding.location,
+        };
+      }),
+    };
+    const terminalContext = {
+      ...context(root, terminalCommand as ReturnType<typeof command>),
+      learningFacts: [],
+    } as CombatOwnerContext;
+    const leaderDeath = (
+      applications.find((application) =>
+        application.context.physicalFacts?.some(
+          (fact) => fact.kind === 'DEATH_OUTCOME' && fact.characterId === 'a-leader',
+        ),
+      )?.context.physicalFacts ?? []
+    ).find((fact) => fact.kind === 'DEATH_OUTCOME' && fact.characterId === 'a-leader');
+    if (leaderDeath?.kind !== 'DEATH_OUTCOME')
+      throw new Error('Expected retained leader death fact');
+    const crisis = {
+      ...scope(root, 'aggregate-leader-crisis', terminal.atTick),
+      sourceEventId: leaderDeath.sourceEventId,
+      kind: 'CRISIS' as const,
+      leaderId: 'a-leader',
+      reason: 'LEADER_DIED' as const,
+    };
+    const leadershipCommand = command(
+      root,
+      'ResolveLeadership',
+      {
+        companyId: root.lifecycle.companyId,
+        crisisId: crisis.id,
+        candidateId: 'a-provider',
+        mode: 'PERMANENT',
+      },
+      'aggregate-resolve-leadership',
+      'PLAYER',
+      terminal.atTick,
+    );
+    const providerTerms: ServiceTermsEvidence = {
+      ...scope(root, 'aggregate-provider-service-terms', terminal.atTick),
+      kind: 'SERVICE_TERMS',
+      characterId: 'a-provider',
+      poolId: 'local',
+      recipient: { kind: 'CHARACTER', id: 'a-provider' },
+      signingWalletId: null,
+      rates: COMPANY_RULES.economy.qualificationBands.map((band) => ({
+        minimumLevel: band.level,
+        dailyWageMilli: String(band.multiplierBps),
+      })),
+    };
+    const leadershipContext = {
+      ...context(root, leadershipCommand, [providerTerms], [crisis]),
+      learningFacts: [],
+    } as CombatOwnerContext;
+    const finalizeInput = {
+      command: terminalCommand,
+      journal,
+      applications,
+      terminal,
+      context: terminalContext,
+      leadership: { command: leadershipCommand, context: leadershipContext },
+    };
+
+    const before = structuredClone(consumed.next);
+    const missingLeadershipInput: Omit<typeof finalizeInput, 'leadership'> = {
+      command: terminalCommand,
+      journal,
+      applications,
+      terminal,
+      context: terminalContext,
+    };
+    const missingLeadership = prepareFinalizeCombatAggregate(consumed.next, missingLeadershipInput);
+    expect(missingLeadership.kind).toBe('REJECTED');
+    if (missingLeadership.kind === 'REJECTED')
+      expect(missingLeadership.error).toBe('INVALID_SOURCE');
+    expect(consumed.next).toEqual(before);
+
+    const missingCrisis = prepareFinalizeCombatAggregate(consumed.next, {
+      ...finalizeInput,
+      leadership: {
+        ...finalizeInput.leadership,
+        context: { ...leadershipContext, facts: [], learningFacts: [] } as CombatOwnerContext,
+      },
+    });
+    expect(missingCrisis.kind).toBe('REJECTED');
+    expect(consumed.next).toEqual(before);
+
+    const providerBefore = root.lifecycle.characters.find(
+      (character) => character.identity.characterId === 'a-provider',
+    )!;
+    const providerItemsBefore = root.physical.items.filter(
+      (entry) => entry.owner.kind === 'CHARACTER' && entry.owner.id === 'a-provider',
+    );
+    const finalized = prepareFinalizeCombatAggregate(consumed.next, finalizeInput);
+    expect(finalized.kind, finalized.kind === 'REJECTED' ? finalized.error : undefined).toBe(
+      'PREPARED',
+    );
+    if (finalized.kind !== 'PREPARED') return;
+    expect(finalized.next.encounter.active).toBeNull();
+    expect(finalized.next.economy.lifecycle.company?.currentLeaderId).toBe('a-provider');
+    const providerAfter = finalized.next.economy.lifecycle.characters.find(
+      (character) => character.identity.characterId === 'a-provider',
+    )!;
+    expect(providerAfter.identity).toEqual(providerBefore.identity);
+    expect(providerAfter.presence).toEqual(providerBefore.presence);
+    expect(
+      finalized.next.economy.physical?.items.filter(
+        (entry) => entry.owner.kind === 'CHARACTER' && entry.owner.id === 'a-provider',
+      ),
+    ).toEqual(providerItemsBefore);
+    const providerMembership = finalized.next.economy.lifecycle.memberships.find(
+      (membership) => membership.characterId === 'a-provider' && membership.endedAt === null,
+    );
+    expect(providerMembership?.basis).toBe('FAMILY');
+    expect(
+      finalized.next.economy.finance.accounts.find(
+        (account) => account.membershipId === providerMembership?.membershipId,
+      )?.confirmedAt,
+    ).toBe(terminal.atTick);
+    const corpse = finalized.next.economy.physical?.containers.find(
+      (entry) => entry.containerId === leaderDeath.corpseContainerId,
+    );
+    expect(corpse).toMatchObject({
+      kind: 'CORPSE',
+      custodian: { kind: 'WORLD', id: root.lifecycle.worldId },
+      location: leaderDeath.location,
+      closed: null,
+    });
+    expect(
+      finalized.next.economy.physical?.items.filter(
+        (entry) => entry.containerId === leaderDeath.corpseContainerId,
+      ),
+    ).not.toHaveLength(0);
+    const leaderMembershipIds: ReadonlySet<string> = new Set(
+      root.lifecycle.memberships
+        .filter((membership) => membership.characterId === 'a-leader')
+        .map((membership) => membership.membershipId),
+    );
+    expect(
+      finalized.next.economy.finance.accounts
+        .filter((account) => leaderMembershipIds.has(account.membershipId))
+        .every(
+          (account) =>
+            account.death?.sourceId === leaderDeath.sourceEventId &&
+            account.death.atTick === leaderDeath.actualDeathTick,
+        ),
+    ).toBe(true);
+    expect(
+      finalized.next.economy.finance.claims
+        .filter((claim) => leaderMembershipIds.has(claim.membershipId))
+        .every((claim) =>
+          claim.earned.every(
+            (period) => BigInt(period.toTick) <= BigInt(leaderDeath.actualDeathTick),
+          ),
+        ),
+    ).toBe(true);
+
+    const retry = prepareFinalizeCombatAggregate(finalized.next, finalizeInput);
+    expect(retry.kind).toBe('PREPARED');
+    if (retry.kind === 'PREPARED') {
+      expect(retry.replayed).toBe(true);
+      expect(retry.next).toBe(finalized.next);
+    }
+    const changedLeadershipSource = prepareFinalizeCombatAggregate(finalized.next, {
+      ...finalizeInput,
+      leadership: {
+        ...finalizeInput.leadership,
+        context: {
+          ...leadershipContext,
+          facts: [{ ...crisis, sourceEventId: 'changed-leader-death-source' }],
+        } as CombatOwnerContext,
+      },
+    });
+    expect(changedLeadershipSource.kind).toBe('REJECTED');
+    if (changedLeadershipSource.kind === 'REJECTED')
+      expect(changedLeadershipSource.error).toBe('IDEMPOTENCY_CONFLICT');
   });
 });

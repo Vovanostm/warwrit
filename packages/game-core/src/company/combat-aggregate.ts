@@ -1,11 +1,16 @@
 import type { BattleState } from '../combat/types.js';
 import { canonicalCombatState } from '../combat/replay.js';
 import { canonicalJson, id } from './input.js';
-import { EconomyViolation, validateEconomy } from './economy-state.js';
+import { EconomyViolation, recordSource, validateEconomy } from './economy-state.js';
 import { combatReceiptEventIds, validateCombatReceiptJournal } from './combat-receipts.js';
-import { prepareCompanyEconomyWithLearning, taskParticipants } from './economy.js';
+import {
+  prepareCompanyEconomy,
+  prepareCompanyEconomyWithLearning,
+  taskParticipants,
+} from './economy.js';
 import type { CompanyEconomyWithLearningState } from './economy.js';
 import type { EconomyContext } from './economy-types.js';
+import type { FinanceEvidence } from './economy-types.js';
 import type { EncounterPositionEvidence, FrozenEncounterBinding } from './encounter-binding.js';
 import { prepareEncounterBinding } from './encounter-binding.js';
 import type { CommandOf } from './lifecycle-types.js';
@@ -18,12 +23,24 @@ import type {
   CombatPracticeStartSnapshot,
   TrustedCombatPracticeCredit,
 } from './combat-practice.js';
+import type { PhysicalEvidence } from './physical-types.js';
 import { deriveCombatReceiptDomainCommands } from './combat-consequences.js';
 import { applyCombatInitialReceipt, applyCombatPhysicalReceipt } from './combat-physical.js';
 import { persistentMoraleAfterCombat } from './combat-morale.js';
+import { COMPANY_CATALOGUE } from './definitions.js';
 import type { SocialState } from './social.js';
-import { effectiveLeaderId, replacePerson, validateLifecycleGraph } from './lifecycle-state.js';
-import { PhysicalViolation, requirePhysical, validatePhysicalState } from './physical-state.js';
+import {
+  canLead,
+  effectiveLeaderId,
+  replacePerson,
+  validateLifecycleGraph,
+} from './lifecycle-state.js';
+import {
+  PhysicalViolation,
+  recordPhysicalSource,
+  requirePhysical,
+  validatePhysicalState,
+} from './physical-state.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
 import type { CompanyCommand } from './commands.js';
 import { COMPANY_COMMAND_SCHEMA_VERSION, COMPANY_RULESET_ID } from './model.js';
@@ -237,6 +254,105 @@ function semanticContext(context: CombatOwnerContext) {
     ...evidence
   } = context;
   return evidence;
+}
+
+function validateRetainedCombatDeath(
+  root: MaterializedCompanyState,
+  journal: CombatReceiptJournal,
+  applications: readonly CombatReceiptApplication[],
+  unitId: string,
+  characterId: string,
+  terminalTick: CampaignTick,
+): { readonly sourceEventId: string; readonly causeId: string } {
+  const occurrences = journal.receipts.flatMap((receipt, receiptIndex) =>
+    receipt.transition.events.flatMap((event, eventIndex) =>
+      event.type === 'unit.died' && event.unitId === unitId
+        ? [{ receiptIndex, sourceEventId: receipt.sourceEventIds[eventIndex]! }]
+        : [],
+    ),
+  );
+  requirePhysical(occurrences.length === 1, 'INVALID_SOURCE');
+  const occurrence = occurrences[0]!;
+  const application = applications[occurrence.receiptIndex]!;
+  const deathOutcomes = (application.context.physicalFacts ?? []).filter(
+    (fact): fact is Extract<PhysicalEvidence, { kind: 'DEATH_OUTCOME' }> =>
+      fact.kind === 'DEATH_OUTCOME' &&
+      fact.characterId === characterId &&
+      fact.sourceEventId === occurrence.sourceEventId,
+  );
+  const financialDeaths = application.context.financeFacts.filter(
+    (fact): fact is Extract<FinanceEvidence, { kind: 'FINANCIAL_DEATH' }> =>
+      fact.kind === 'FINANCIAL_DEATH' &&
+      fact.characterId === characterId &&
+      fact.sourceEventId === occurrence.sourceEventId,
+  );
+  requirePhysical(deathOutcomes.length === 1 && financialDeaths.length === 1, 'INVALID_SOURCE');
+  const death = deathOutcomes[0]!;
+  const financialDeath = financialDeaths[0]!;
+  requirePhysical(
+    death.actualDeathTick === application.time.atTick &&
+      BigInt(death.actualDeathTick) <= BigInt(terminalTick) &&
+      death.causeId === financialDeath.causeId &&
+      death.id === financialDeath.custodyOutcomeId &&
+      financialDeath.actualDeathTick === death.actualDeathTick,
+    'INVALID_SOURCE',
+  );
+  requirePhysical(
+    recordPhysicalSource(root.physical, death).replayed &&
+      recordSource(root.finance, financialDeath).replayed,
+    'INVALID_SOURCE',
+  );
+  const corpse = root.physical.containers.find(
+    (container) => container.containerId === death.corpseContainerId,
+  );
+  requirePhysical(
+    corpse?.kind === 'CORPSE' &&
+      corpse.custodian.kind === 'WORLD' &&
+      corpse.custodian.id === root.lifecycle.worldId &&
+      canonicalJson(corpse.location) === canonicalJson(death.location),
+    'INVALID_SOURCE',
+  );
+  const carriedContainerIds = new Set(
+    root.physical.containers
+      .filter(
+        (container) =>
+          container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
+      )
+      .map((container) => container.containerId),
+  );
+  requirePhysical(
+    !root.physical.items.some(
+      (item) => item.containerId !== null && carriedContainerIds.has(item.containerId),
+    ) &&
+      root.physical.items
+        .filter((item) => item.containerId === corpse.containerId)
+        .every((item) => item.equipped === null),
+    'INVALID_SOURCE',
+  );
+  const membershipIds: ReadonlySet<string> = new Set(
+    root.lifecycle.memberships
+      .filter((membership) => membership.characterId === characterId)
+      .map((membership) => membership.membershipId),
+  );
+  const deathAccounts = root.finance.accounts.filter((account) =>
+    membershipIds.has(account.membershipId),
+  );
+  requirePhysical(
+    membershipIds.size > 0 &&
+      deathAccounts.length === membershipIds.size &&
+      deathAccounts.every(
+        (account) =>
+          account.death?.sourceId === death.sourceEventId &&
+          account.death.atTick === death.actualDeathTick,
+      ) &&
+      root.finance.claims
+        .filter((claim) => membershipIds.has(claim.membershipId))
+        .every((claim) =>
+          claim.earned.every((period) => BigInt(period.toTick) <= BigInt(death.actualDeathTick)),
+        ),
+    'INVALID_SOURCE',
+  );
+  return { sourceEventId: death.sourceEventId, causeId: death.causeId };
 }
 
 function applicationEvidenceDigest(application: CombatReceiptApplication): string {
@@ -770,6 +886,10 @@ export interface FinalizeCombatAggregateInput {
   readonly terminal: EncounterTerminalEvidence;
   readonly context: CombatOwnerContext;
   readonly missingLearning?: Readonly<Record<string, CombatLearningBoundary>>;
+  readonly leadership?: {
+    readonly command: unknown;
+    readonly context: CombatOwnerContext;
+  };
 }
 
 export function prepareFinalizeCombatAggregate(
@@ -809,6 +929,12 @@ export function prepareFinalizeCombatAggregate(
       },
       context: semanticContext(input.context),
       missingLearning: input.missingLearning ?? null,
+      leadership: input.leadership
+        ? {
+            command: input.leadership.command,
+            context: semanticContext(input.leadership.context),
+          }
+        : null,
     })}\nB${frame([canonicalJson(journal.binding)])}\nR${frame(receiptEvidence)}\nA${frame(applicationEvidence)}\nT${input.terminal.finalStateCanonical.length}:${input.terminal.finalStateCanonical}`;
     const prior = state.encounter.completed.find(
       (entry) => entry.bindingId === request.payload.bindingId,
@@ -879,6 +1005,10 @@ export function prepareFinalizeCombatAggregate(
     requirePhysical(dispositions.size === companyParticipants.length, 'INVALID_SOURCE');
     let next = state;
     let root = materialized(next);
+    const verifiedDeaths = new Map<
+      string,
+      { readonly sourceEventId: string; readonly causeId: string }
+    >();
     for (const participant of companyParticipants) {
       const evidence = dispositions.get(participant.unitId);
       const unit = final.units.find((entry) => entry.id === participant.unitId);
@@ -900,18 +1030,23 @@ export function prepareFinalizeCombatAggregate(
         'INVALID_SOURCE',
       );
       if (evidence.status === 'CAPTIVE') throw new PhysicalViolation('UNSUPPORTED_ACTION');
-      if (evidence.status === 'DEAD')
+      if (evidence.status === 'DEAD') {
         requirePhysical(
-          unit.health === 0 &&
-            character.presence.availability === 'DEAD' &&
-            journal.receipts.some((receipt) =>
-              receipt.transition.events.some(
-                (event) => event.type === 'unit.died' && event.unitId === participant.unitId,
-              ),
-            ),
+          unit.health === 0 && character.presence.availability === 'DEAD',
           'INVALID_SOURCE',
         );
-      else if (evidence.status === 'MISSING') {
+        verifiedDeaths.set(
+          characterId,
+          validateRetainedCombatDeath(
+            root,
+            journal,
+            input.applications,
+            participant.unitId,
+            characterId,
+            input.terminal.atTick,
+          ),
+        );
+      } else if (evidence.status === 'MISSING') {
         requirePhysical(
           unit.health > 0 &&
             character.presence.availability === 'IN_ENCOUNTER' &&
@@ -1007,6 +1142,97 @@ export function prepareFinalizeCombatAggregate(
         },
       };
       next = withMaterialized(next, root);
+    }
+    const effectiveLeader = effectiveLeaderId(root.lifecycle);
+    const leader = root.lifecycle.characters.find(
+      (character) => character.identity.characterId === effectiveLeader,
+    );
+    requirePhysical(leader, 'INVALID_STATE');
+    if (!canLead(leader)) {
+      const leadership = input.leadership;
+      requirePhysical(leadership, 'INVALID_SOURCE');
+      validateAggregateContext(next, leadership.context, input.terminal.atTick);
+      const guardedLeadership = guardCompanyCommand(leadership.command, leadership.context);
+      requirePhysical(
+        guardedLeadership.ok && guardedLeadership.command.type === 'ResolveLeadership',
+        'INVALID_SOURCE',
+      );
+      const leadershipCommand = guardedLeadership.command;
+      const crisisFacts = leadership.context.facts.filter(
+        (fact) => fact.id === leadershipCommand.payload.crisisId,
+      );
+      requirePhysical(
+        crisisFacts.length === 1 && crisisFacts[0]!.kind === 'CRISIS',
+        'INVALID_SOURCE',
+      );
+      const crisis = crisisFacts[0]!;
+      const died = leader.presence.availability === 'DEAD';
+      const expectedReason = died ? 'LEADER_DIED' : 'LEADER_UNAVAILABLE';
+      let causeSourceEventId: string | undefined;
+      if (died) causeSourceEventId = verifiedDeaths.get(effectiveLeader)?.sourceEventId;
+      else if (leader.presence.availability === 'OUT_OF_CONTACT') {
+        const missingFacts = (input.context.physicalFacts ?? []).filter(
+          (fact) =>
+            fact.kind === 'MISSING_ENTRY' &&
+            fact.characterId === effectiveLeader &&
+            fact.sourceEventId === input.terminal.sourceEventId,
+        );
+        requirePhysical(missingFacts.length === 1, 'INVALID_SOURCE');
+        causeSourceEventId = missingFacts[0]!.sourceEventId;
+      } else {
+        const unavailableConditions = root.physical.conditions.filter((condition) => {
+          const definition = COMPANY_CATALOGUE.conditions.find(
+            (entry) => entry.id === condition.definitionId,
+          );
+          return (
+            condition.characterId === effectiveLeader &&
+            condition.resolvedAt === null &&
+            definition?.deniedCapabilities.includes('lead')
+          );
+        });
+        const matchingSources = input.applications.flatMap((application) =>
+          (application.context.physicalFacts ?? []).filter(
+            (fact) =>
+              fact.kind === 'CONDITION_SOURCE' &&
+              fact.sourceEventId === crisis.sourceEventId &&
+              fact.characterId === effectiveLeader &&
+              unavailableConditions.some(
+                (condition) =>
+                  condition.sourceEventId === fact.sourceEventId &&
+                  condition.causeId === fact.causeId &&
+                  condition.definitionId === fact.definitionId,
+              ),
+          ),
+        );
+        requirePhysical(
+          matchingSources.length === 1 &&
+            recordPhysicalSource(root.physical, matchingSources[0]!).replayed,
+          'INVALID_SOURCE',
+        );
+        causeSourceEventId = matchingSources[0]!.sourceEventId;
+      }
+      requirePhysical(
+        causeSourceEventId !== undefined &&
+          crisis.leaderId === effectiveLeader &&
+          crisis.reason === expectedReason &&
+          crisis.sourceEventId === causeSourceEventId,
+        'INVALID_SOURCE',
+      );
+      const preparedLeadership = prepareCompanyEconomy(
+        materialized(next),
+        leadershipCommand,
+        leadership.context,
+      );
+      if (preparedLeadership.kind === 'REJECTED')
+        throw new CombatAggregateViolation(preparedLeadership.error);
+      requirePhysical(
+        !preparedLeadership.replayed && preparedLeadership.receipt.requirements.length === 0,
+        'INCOMPATIBLE_ACTIVITY',
+      );
+      next = { ...next, economy: preparedLeadership.next };
+      root = materialized(next);
+    } else {
+      requirePhysical(input.leadership === undefined, 'INVALID_SOURCE');
     }
     validatePhysicalState(root);
     validateLifecycleGraph(root.lifecycle, input.context);
