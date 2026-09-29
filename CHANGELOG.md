@@ -16,6 +16,10 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   `fallow health --coverage`; specifications for encounter HTTP authorization,
   the encounter command guard and duty-change learning settlement.
 
+- 2026-09-29: `pnpm agent:status` prints live main, CI, open pull requests,
+  active unmerged branches with their paths and the next migration number from
+  git and gh, replacing hand-written status readback.
+
 ### Fixed
 
 - 2026-09-29, #128: combat initiative ties, AI targets and canonical replay order

@@ -118,6 +118,7 @@ Use these while editing; the full gate above runs once on the final tree.
 
 ```bash
 pnpm agent:preflight                                  # checkout identity for start/resume/handoff
+pnpm agent:status                                     # live main, CI, open PRs, active writer branches (git + gh)
 pnpm --filter @warwrit/game-core build                # refresh dist before testkit-based specs
 pnpm exec vitest run packages/game-core/src/company   # one directory or file
 pnpm exec vitest run -t "replay" packages/game-core   # tests whose name matches
