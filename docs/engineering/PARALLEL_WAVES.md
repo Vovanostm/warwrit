@@ -38,7 +38,8 @@ F01 is an opportunistic pre-H handoff, not a new H activation dependency. If it
 stalls, H starts after integrated G10 using the actually merged versioned shape;
 a later F01 change must retain explicit serialization/migration compatibility.
 
-The F01 writer may add `commands.ts`, `lifecycle-state.ts`, `model.ts` or the company
+The parent granted F01 `lifecycle-state.ts` for validation and compatibility.
+The F01 writer may add `commands.ts`, `model.ts` or the company
 barrel only after a parent ACK. G10 already changes commands/exports; separate
 worktrees do not remove integration conflict. The reviewer never edits its frozen
 candidate. Parent owns planning, integrations, ports, DB lifecycle and final gate.

@@ -16,8 +16,8 @@ verify, combat stress/replay and real PostgreSQL migration smoke passed. These
 preparers do not establish the persistent M1 journey.
 
 G10 death, succession and departure/learning/social composition are locally
-committed at `66697cf`; CAPTIVE and final integration remain before H. The bounded
-F01 trusted-deed nickname consumer is the next independent domain packet; full
+reviewed through `ab09035`, including CAPTIVE; final integration remains before H.
+The bounded F01 trusted-deed nickname consumer is the active independent domain packet; full
 F01 still needs its content mapping and genuine producer. Full
 animated sprite/normal-depth corpus and matched renderer comparison remain open.
 [Parallel waves](PARALLEL_WAVES.md) records the current packet queue and exclusive

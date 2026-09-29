@@ -15,10 +15,11 @@ passed verify, combat stress/replay and real PostgreSQL migration smoke. ART05 B
 provides explicit equipped-actor/clip/time sampling; its [evidence](evidence/ART05-B2-SCOUT-20260929.md)
 does not establish full animation consumers, renderer comparison or M1.
 
-G10 remains local at `66697cf` plus an uncommitted CAPTIVE candidate. Luna owns
-only its aggregate and physical-combat specification; Sol reviews the frozen
-result and the parent verifies/integrates it. The next independent Luna packet is
-the F01 trusted-deed nickname consumer in a separate worktree. H01/H02 requires
+G10 is locally reviewed through `ab09035`, rebased onto this main with all eight
+patches unchanged. Sol found no blocking CAPTIVE defect; parent build and joint
+combat/farewell checks passed 22/22. See [proof boundaries](evidence/G10-AGGREGATE-20260929.md).
+The parent owns its delivery; H remains gated until the actual merge. Luna now
+owns the F01 trusted-deed nickname consumer in a separate worktree. H01/H02 requires
 integrated G10; F01 may land before it if ready, but cannot delay H activation.
 H reads the actually merged versioned lifecycle shape. Full F01 still requires
 the finite content mapping and a real deed producer. H is not activated by this
