@@ -3151,6 +3151,7 @@ describe('G10 — atomic combat company aggregate', () => {
       practiceProfile: profile,
     });
     if (consumed.kind !== 'PREPARED') throw new Error(`Consume death journal: ${consumed.error}`);
+    expect(readCompanyCombatAggregateState(consumed.next)).toEqual(consumed.next);
 
     const root = consumed.next.economy as MaterializedCompanyState;
     const finalReceipt = journal.receipts.at(-1)!;

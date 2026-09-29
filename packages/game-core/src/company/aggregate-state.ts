@@ -6,7 +6,6 @@ import { assertBattleState } from '../combat/engine.js';
 import { isCompanyFinanceShape, validateEconomy } from './economy-state.js';
 import type { EconomyContext } from './economy-types.js';
 import { readCompanyLearningState } from './learning-state.js';
-import { validateLifecycleGraph } from './lifecycle-state.js';
 import { readSocialState } from './social.js';
 import { validatePhysicalState } from './physical-state.js';
 import { isCompanyPhysicalStateShape, isItemInstanceShape } from './physical-state.js';
@@ -133,15 +132,32 @@ export function readCompanyCombatAggregateState(value: unknown): CompanyCombatAg
       ))
   )
     throw new TypeError('Active encounter scope does not match company root');
+  const participants = active
+    ? active.binding.participants.filter(
+        (participant) => participant.companyId === lifecycle.companyId,
+      )
+    : [];
+  const participantIds = new Set(
+    participants.map((participant) => participant.projection.characterId),
+  );
+  for (const character of lifecycle.characters) {
+    if (character.presence.availability === 'IN_ENCOUNTER') {
+      if (
+        !active ||
+        character.presence.encounterBindingId !== active.binding.bindingId ||
+        !participantIds.has(character.identity.characterId) ||
+        !active.priorPresence.some((entry) => entry.characterId === character.identity.characterId)
+      )
+        throw new TypeError('Encounter presence does not match active binding');
+    }
+  }
   if (active) {
-    const participants = active.binding.participants.filter(
-      (participant) => participant.companyId === lifecycle.companyId,
-    );
-    const participantIds = participants.map((participant) => participant.projection.characterId);
+    const participantIdList = participants.map((participant) => participant.projection.characterId);
     const priorIds = active.priorPresence.map((entry) => entry.characterId);
     if (
-      new Set(participantIds).size !== participantIds.length ||
-      canonicalJson([...participantIds].toSorted()) !== canonicalJson([...priorIds].toSorted()) ||
+      participantIds.size !== participantIdList.length ||
+      canonicalJson([...participantIdList].toSorted()) !==
+        canonicalJson([...priorIds].toSorted()) ||
       participants.some((participant) => {
         const character = lifecycle.characters.find(
           (entry) => entry.identity.characterId === participant.projection.characterId,
@@ -153,14 +169,43 @@ export function readCompanyCombatAggregateState(value: unknown): CompanyCombatAg
           !character ||
           !prior ||
           prior.fieldPartyId !== participant.partyId ||
-          character.presence.availability !== 'IN_ENCOUNTER' ||
-          character.presence.encounterBindingId !== active.binding.bindingId
+          (character.presence.availability === 'IN_ENCOUNTER'
+            ? character.presence.encounterBindingId !== active.binding.bindingId
+            : character.presence.availability !== 'DEAD' ||
+              !deathRecordedInActiveEncounter(
+                economy,
+                lifecycle,
+                active,
+                participant.projection.characterId,
+              ))
         );
       })
     )
       throw new TypeError('Active encounter presence does not match company root');
   }
   return Object.freeze({ economy, learning, social, encounter });
+}
+
+function deathRecordedInActiveEncounter(
+  economy: CompanyCombatAggregateState['economy'],
+  lifecycle: CompanyCombatAggregateState['economy']['lifecycle'],
+  active: NonNullable<CompanyCombatAggregateState['encounter']['active']>,
+  characterId: string,
+): boolean {
+  const membershipIds = new Set<string>(
+    lifecycle.memberships
+      .filter((membership) => membership.characterId === characterId)
+      .map((membership) => membership.membershipId),
+  );
+  const receiptSourceEventIds = new Set(
+    active.appliedReceipts.flatMap((receipt) => receipt.sourceEventIds),
+  );
+  return economy.finance.accounts.some(
+    (account) =>
+      membershipIds.has(account.membershipId) &&
+      account.death !== null &&
+      receiptSourceEventIds.has(account.death.sourceId),
+  );
 }
 
 function readCombatEncounterApplication(value: unknown): CompanyCombatAggregateState['encounter'] {

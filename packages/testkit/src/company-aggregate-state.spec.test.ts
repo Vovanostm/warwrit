@@ -22,6 +22,31 @@ describe('company aggregate persisted-state reader', () => {
     expect(read.encounter.active?.appliedReceipts).toHaveLength(fixture.journal.receipts.length);
   });
 
+  it('rejects encounter presence without a valid active participant binding', () => {
+    const fixture = createCompanyCombatAggregateFixture(true);
+    const root = structuredClone(fixture.begun.next) as unknown as Record<string, unknown>;
+    const lifecycle = (root['economy'] as Record<string, unknown>)['lifecycle'] as Record<
+      string,
+      unknown
+    >;
+    const provider = (lifecycle['characters'] as Array<Record<string, unknown>>).find(
+      (character) =>
+        ((character['identity'] as Record<string, unknown>)['characterId'] as string) ===
+        'a-provider',
+    )!;
+    const presence = provider['presence'] as Record<string, unknown>;
+    presence['availability'] = 'IN_ENCOUNTER';
+    presence['encounterBindingId'] = (activeFrom(root)['binding'] as Record<string, unknown>)[
+      'bindingId'
+    ];
+
+    expect(() => readCompanyCombatAggregateState(root)).toThrow(TypeError);
+
+    const stale = structuredClone(fixture.begun.next) as unknown as Record<string, unknown>;
+    (stale['encounter'] as Record<string, unknown>)['active'] = null;
+    expect(() => readCompanyCombatAggregateState(stale)).toThrow(TypeError);
+  });
+
   it('rejects unknown, foreign-version, cross-scope and inconsistent-cursor fields without mutation', () => {
     const fixture = createCompanyCombatAggregateFixture();
     const consumed = prepareConsumeCombatAggregate(fixture.begun.next, {
