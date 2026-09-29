@@ -1,0 +1,5 @@
+id: no-skipped-tests
+valid:
+  - "test('replays', () => {});"
+invalid:
+  - "test.skip('replays', () => {});"

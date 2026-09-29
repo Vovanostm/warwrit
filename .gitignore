@@ -13,3 +13,4 @@ coverage/
 .tmp/
 artifacts/
 postgres-data/
+.fallow/

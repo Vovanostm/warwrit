@@ -1,0 +1,6 @@
+id: no-snapshot-assertions
+valid:
+  - 'expect(balance).toBe(100n);'
+invalid:
+  - 'expect(catalogue).toMatchSnapshot();'
+  - 'expect(view).toMatchInlineSnapshot(`{}`);'

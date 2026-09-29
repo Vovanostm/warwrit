@@ -109,7 +109,7 @@ export function activeConditions(
     (entry) => entry.characterId === characterId && entry.resolvedAt === null,
   );
 }
-export function activeConditionDefinitionIds(
+function activeConditionDefinitionIds(
   state: CompanyPhysicalState,
   characterId: string,
 ): readonly string[] {
@@ -262,7 +262,7 @@ function evidenceBody(fact: PhysicalEvidence): string {
   const { id: _id, revision: _revision, ...body } = fact;
   return canonicalJson(body);
 }
-export function physicalEffectKey(fact: PhysicalEvidence): string {
+function physicalEffectKey(fact: PhysicalEvidence): string {
   const subject =
     'itemId' in fact
       ? ['item', fact.itemId]

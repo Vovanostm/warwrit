@@ -24,7 +24,7 @@ export function wageAt(account: ServiceAccount, tick: CampaignTick) {
     ? { version: notice.version, dailyWageMilli: notice.dailyWageMilli }
     : { version: schedule.scheduleId, dailyWageMilli: schedule.agreedDailyWageMilli };
 }
-export function maintenanceAt(
+function maintenanceAt(
   finance: CompanyFinance,
   characterId: string,
   tick: CampaignTick,

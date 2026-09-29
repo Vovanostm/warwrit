@@ -1,0 +1,5 @@
+id: double-cast
+valid:
+  - 'const command = value as CompanyCommand;'
+invalid:
+  - 'const command = value as unknown as CompanyCommand;'
