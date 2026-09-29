@@ -4,10 +4,7 @@
   "actor": {
     "id": "red-knight-1",
     "classId": "Knight",
-    "equipment": [
-      "sword_1handed",
-      "shield_round"
-    ]
+    "equipment": ["sword_1handed", "shield_round"]
   },
   "animation": {
     "clip": "Idle_A",
@@ -17,24 +14,9 @@
   "capture": {
     "projection": "orthographic",
     "directions": 8,
-    "yawDegrees": [
-      0,
-      45,
-      90,
-      135,
-      180,
-      225,
-      270,
-      315
-    ],
-    "sourceSize": [
-      1600,
-      900
-    ],
-    "outputSize": [
-      512,
-      512
-    ],
+    "yawDegrees": [0, 45, 90, 135, 180, 225, 270, 315],
+    "sourceSize": [1600, 900],
+    "outputSize": [512, 512],
     "sourceCrop": {
       "x": 350,
       "y": 0,
@@ -52,82 +34,34 @@
       "componentPlayingAtCapture": true,
       "clip": "Idle_A",
       "sampleSeconds": 0,
-      "changedNonRootJoints": [
-        "upperarm.r",
-        "upperarm.l",
-        "upperleg.r",
-        "upperleg.l"
-      ],
-      "equippedItems": [
-        "art-bake-sword_1handed",
-        "art-bake-shield_round"
-      ]
+      "changedNonRootJoints": ["upperarm.r", "upperarm.l", "upperleg.r", "upperleg.l"],
+      "equippedItems": ["art-bake-sword_1handed", "art-bake-shield_round"]
     },
     "geometryProof": {
       "directionIndex": 0,
       "characterWorldBounds": {
-        "min": [
-          -0.679804791968346,
-          -0.07211506296398287,
-          -0.5089623505953618
-        ],
-        "max": [
-          0.6791461052086476,
-          2.3273987340569287,
-          0.7234413430584512
-        ],
+        "min": [-0.679804791968346, -0.07211506296398287, -0.5089623505953618],
+        "max": [0.6791461052086476, 2.3273987340569287, 0.7234413430584512],
         "meshCount": 9
       },
       "attachments": [
         {
           "name": "sword_1handed",
-          "localScale": [
-            0.42,
-            0.42,
-            0.42
-          ],
-          "worldPosition": [
-            -0.4604435861110687,
-            0.3727482855319977,
-            -0.08708624541759491
-          ],
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [-0.4604435861110687, 0.3727482855319977, -0.08708624541759491],
           "worldBounds": {
-            "min": [
-              -0.5577078109157175,
-              -0.1718803266969054,
-              -0.11232463665190043
-            ],
-            "max": [
-              -0.36317624303751606,
-              0.5140800235700898,
-              -0.06184779099246457
-            ],
+            "min": [-0.5577078109157175, -0.1718803266969054, -0.11232463665190043],
+            "max": [-0.36317624303751606, 0.5140800235700898, -0.06184779099246457],
             "meshCount": 1
           }
         },
         {
           "name": "shield_round",
-          "localScale": [
-            0.42,
-            0.42,
-            0.42
-          ],
-          "worldPosition": [
-            0.46168699860572815,
-            0.4952836036682129,
-            -0.08241715282201767
-          ],
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [0.46168699860572815, 0.4952836036682129, -0.08241715282201767],
           "worldBounds": {
-            "min": [
-              0.29116612304287814,
-              0.3247583235619709,
-              -0.13835553095101483
-            ],
-            "max": [
-              0.6322056818208602,
-              0.6657975951512248,
-              -0.010091747234443185
-            ],
+            "min": [0.29116612304287814, 0.3247583235619709, -0.13835553095101483],
+            "max": [0.6322056818208602, 0.6657975951512248, -0.010091747234443185],
             "meshCount": 1
           }
         }

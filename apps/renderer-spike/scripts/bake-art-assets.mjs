@@ -6,6 +6,7 @@ import { mkdtemp, mkdir, readFile, rename, rm, stat, writeFile } from 'node:fs/p
 import { dirname, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import * as prettier from 'prettier';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const outputDirectory = resolve(appRoot, 'public/art-pipeline/knight-idle-8dir');
@@ -307,9 +308,15 @@ try {
     sourceAssets: await hashFiles(sourceFiles),
     outputs,
   };
+  const manifestPath = resolve(stageDirectory, 'manifest.json');
+  const prettierOptions =
+    (await prettier.resolveConfig(resolve(outputDirectory, 'manifest.json'))) ?? {};
   await writeFile(
-    resolve(stageDirectory, 'manifest.json'),
-    `${JSON.stringify(manifest, null, 2)}\n`,
+    manifestPath,
+    await prettier.format(`${JSON.stringify(manifest, null, 2)}\n`, {
+      ...prettierOptions,
+      parser: 'json',
+    }),
   );
 
   let hadOutput = true;
