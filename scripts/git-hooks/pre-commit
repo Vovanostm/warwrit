@@ -1,0 +1,23 @@
+#!/bin/sh
+# Rejects a commit whose working tree introduces fallow findings (unused code,
+# complexity, duplication) relative to main: the pull-request CI gate
+# `pnpm check:changes`, run before the commit for every agent and terminal.
+# The audit reads the working tree, so untracked or unstaged files count too.
+# `git commit --no-verify` skips it; report the audit as NOT_RUN, not passed.
+set -eu
+
+root="$(git rev-parse --show-toplevel)"
+cd "$root"
+
+if [ ! -x node_modules/.bin/fallow ]; then
+  echo "pre-commit: fallow is not installed in $root; run pnpm install." >&2
+  exit 1
+fi
+
+# Pin the base to main as CI does. fallow's default prefers the branch
+# upstream, which after `git push -u` is the branch itself and hides its diff.
+if [ -z "${FALLOW_AUDIT_BASE:-}" ] && base="$(git merge-base origin/main HEAD 2>/dev/null)"; then
+  export FALLOW_AUDIT_BASE="$base"
+fi
+
+exec pnpm --silent check:changes

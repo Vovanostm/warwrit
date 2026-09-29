@@ -92,6 +92,18 @@ dead code, complexity or duplication that the branch introduces in changed files
 Inherited complexity and clones are listed by `pnpm report:quality` and
 `pnpm exec ast-grep scan` warnings; fixing them belongs to an owning change.
 
+The same audit runs locally as a Git `pre-commit` hook (`scripts/git-hooks/`) for
+every agent and terminal. A fresh `pnpm install` points the clone's
+`core.hooksPath` at it; pnpm skips that `prepare` step when `node_modules` is
+already current, so an existing clone runs `pnpm run prepare` once.
+`pnpm agent:preflight` prints whether the gate is active. The setting is shared by
+all worktrees, but a worktree whose base predates the hook runs none until it
+merges `main`. The hook audits the
+working tree against the merge-base with `origin/main` (override with
+`FALLOW_AUDIT_BASE`), so an untracked unused file also blocks a commit. It takes
+about 10–15 s. `git commit --no-verify` skips it; the audit is then `NOT_RUN` and
+CI remains the gate.
+
 The M0 combat acceptance gate runs separately:
 
 ```bash
