@@ -5,7 +5,6 @@ import type { PreparedCombatConsequences } from './combat-consequences.js';
 import { prepareCombatPhysicalEffects } from './combat-physical.js';
 import type { PreparedCombatPhysicalEffects } from './combat-physical.js';
 import type { CombatReceiptJournal } from './combat-receipts.js';
-import { validateCombatReceiptJournal } from './combat-receipts.js';
 import { COMPANY_RULES } from './definitions.js';
 import type { EconomyContext } from './economy-types.js';
 import type { CommandOf } from './lifecycle-types.js';
@@ -88,23 +87,25 @@ export interface CombatPracticeStartSnapshot {
   readonly aptitudeAtStartBps: number;
 }
 
-/** Validate and return only credits whose authenticated interactions end in this receipt. */
-export function validateCombatPracticeReceipt(
+/**
+ * Derive credits for one receipt from the journal already validated at the aggregate boundary.
+ * Keep this package-internal: callers must not use it to bypass whole-journal replay validation.
+ */
+export function deriveCombatPracticeReceipt(
   root: MaterializedCompanyState,
-  journal: CombatReceiptJournal,
+  validatedJournal: CombatReceiptJournal,
   receiptIndex: number,
   profile: CombatPracticeProfile,
   receiptTicks: readonly string[],
   savedStarts: readonly CombatPracticeStartSnapshot[],
   trustedCredits: readonly TrustedCombatPracticeCredit[],
 ): readonly TrustedCombatPracticeCredit[] {
-  const validated = validateCombatReceiptJournal(journal);
   requirePhysical(
     receiptIndex > 0 &&
-      receiptIndex < validated.receipts.length &&
-      receiptTicks.length === validated.receipts.length &&
+      receiptIndex < validatedJournal.receipts.length &&
+      receiptTicks.length === validatedJournal.receipts.length &&
       profile.version === COMBAT_PRACTICE_PROFILE_VERSION &&
-      profile.bindingId === validated.binding.bindingId &&
+      profile.bindingId === validatedJournal.binding.bindingId &&
       id.read(profile.profileId),
     'INVALID_SOURCE',
   );
@@ -119,7 +120,7 @@ export function validateCombatPracticeReceipt(
         Number.isSafeInteger(start.startReceiptOrdinal) &&
         start.startReceiptOrdinal > 0 &&
         start.startReceiptOrdinal <= receiptIndex &&
-        validated.receipts[start.startReceiptOrdinal]?.kernelCommand?.activationId ===
+        validatedJournal.receipts[start.startReceiptOrdinal]?.kernelCommand?.activationId ===
           start.activationId &&
         receiptTicks[start.startReceiptOrdinal] === start.startedAt,
       'INVALID_SOURCE',
@@ -127,15 +128,15 @@ export function validateCombatPracticeReceipt(
     starts.set(start.activationId, start);
   }
   const participantByUnit = new Map(
-    validated.binding.participants.map((participant) => [participant.unitId, participant]),
+    validatedJournal.binding.participants.map((participant) => [participant.unitId, participant]),
   );
   const interactions: DerivedInteraction[] = [];
   const usedStarts = new Set<string>();
   for (let ordinal = 1; ordinal <= receiptIndex; ordinal += 1) {
-    const receipt = validated.receipts[ordinal]!;
+    const receipt = validatedJournal.receipts[ordinal]!;
     const kernelCommand = receipt.kernelCommand;
     if (kernelCommand?.type !== 'attack') continue;
-    const before = validated.receipts[ordinal - 1]!.transition.state;
+    const before = validatedJournal.receipts[ordinal - 1]!.transition.state;
     const event = receipt.transition.events.find(
       (entry): entry is AttackResolvedEvent => entry.type === 'attack.resolved',
     );
@@ -150,9 +151,11 @@ export function validateCombatPracticeReceipt(
     requirePhysical(sourceEventId, 'INVALID_SOURCE');
     const attacker = participantByUnit.get(event.attackerId);
     const defender = participantByUnit.get(event.targetId);
-    const externalAttacker = attacker !== undefined && attacker.companyId !== validated.companyId;
-    const externalDefender = defender !== undefined && defender.companyId !== validated.companyId;
-    if (attacker?.companyId === validated.companyId && externalDefender) {
+    const externalAttacker =
+      attacker !== undefined && attacker.companyId !== validatedJournal.companyId;
+    const externalDefender =
+      defender !== undefined && defender.companyId !== validatedJournal.companyId;
+    if (attacker?.companyId === validatedJournal.companyId && externalDefender) {
       const start = starts.get(kernelCommand.activationId);
       requirePhysical(start?.unitId === kernelCommand.actorId, 'INVALID_SOURCE');
       usedStarts.add(kernelCommand.activationId);
@@ -172,11 +175,11 @@ export function validateCombatPracticeReceipt(
       });
     }
     if (
-      defender?.companyId === validated.companyId &&
+      defender?.companyId === validatedJournal.companyId &&
       externalAttacker &&
       before.units.find((unit) => unit.id === event.targetId)?.guarding
     ) {
-      const defend = validated.receipts
+      const defend = validatedJournal.receipts
         .slice(1, ordinal)
         .toReversed()
         .find(
@@ -205,7 +208,7 @@ export function validateCombatPracticeReceipt(
   }
   for (const start of starts.values()) {
     if (usedStarts.has(start.activationId)) continue;
-    const command = validated.receipts[start.startReceiptOrdinal]?.kernelCommand;
+    const command = validatedJournal.receipts[start.startReceiptOrdinal]?.kernelCommand;
     requirePhysical(
       command?.type === 'defend' && command.actorId === start.unitId,
       'INVALID_SOURCE',
@@ -225,11 +228,11 @@ export function validateCombatPracticeReceipt(
         cycle.startReceiptOrdinal > 0 &&
         cycle.endReceiptOrdinal >= cycle.startReceiptOrdinal &&
         cycle.endReceiptOrdinal <= receiptIndex &&
-        validated.receipts[cycle.startReceiptOrdinal]?.kernelCommand &&
-        validated.receipts[cycle.endReceiptOrdinal]?.kernelCommand &&
+        validatedJournal.receipts[cycle.startReceiptOrdinal]?.kernelCommand &&
+        validatedJournal.receipts[cycle.endReceiptOrdinal]?.kernelCommand &&
         receiptTicks[cycle.startReceiptOrdinal] === cycle.startedAt &&
         receiptTicks[cycle.endReceiptOrdinal] === cycle.completedAt &&
-        BigInt(cycle.startedAt) >= BigInt(validated.binding.atTick) &&
+        BigInt(cycle.startedAt) >= BigInt(validatedJournal.binding.atTick) &&
         BigInt(cycle.startedAt) <= BigInt(cycle.completedAt) &&
         (!index || cycles[index - 1]!.endReceiptOrdinal < cycle.startReceiptOrdinal),
       'INVALID_SOURCE',
@@ -258,7 +261,8 @@ export function validateCombatPracticeReceipt(
       startedAt: cycle.startedAt,
       attackerId: leaderId,
       defenderId: first.defenderId,
-      activationId: validated.receipts[cycle.startReceiptOrdinal]!.kernelCommand!.activationId,
+      activationId:
+        validatedJournal.receipts[cycle.startReceiptOrdinal]!.kernelCommand!.activationId,
       receiptOrdinal: cycle.endReceiptOrdinal,
       startReceiptOrdinal: cycle.startReceiptOrdinal,
       cycleProof: {
@@ -301,7 +305,7 @@ export function validateCombatPracticeReceipt(
             (entry) => entry.cycleId === interaction.cycleProof?.cycleId,
           )
         : undefined;
-    const cycleStartReceipt = cycle && validated.receipts[cycle.startReceiptOrdinal];
+    const cycleStartReceipt = cycle && validatedJournal.receipts[cycle.startReceiptOrdinal];
     const startSourceId = interaction.activationId;
     let snapshotStartOrdinal: number | undefined;
     if (interaction.methodId === 'command-cycle') {

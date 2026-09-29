@@ -44,7 +44,16 @@ export * from './encounter-binding.js';
 export * from './combat-receipts.js';
 export * from './combat-physical.js';
 export * from './combat-consequences.js';
-export * from './combat-practice.js';
+export {
+  COMBAT_PRACTICE_PROFILE_VERSION,
+  prepareCombatPracticeEffects,
+} from './combat-practice.js';
+export type {
+  CombatPracticeProfile,
+  TrustedCombatPracticeCredit,
+  PreparedCombatPracticeEffects,
+  CombatPracticeStartSnapshot,
+} from './combat-practice.js';
 export * from './combat-aggregate.js';
 export * from './progression.js';
 export * from './skill-progress.js';

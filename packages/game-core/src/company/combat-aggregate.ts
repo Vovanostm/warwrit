@@ -19,7 +19,7 @@ import type { CommandOf } from './lifecycle-types.js';
 import type { LearningSourceContext } from './learning-source.js';
 import type { LearningTimeInterval, TrustedLearningCauseManifest } from './learning-time.js';
 import { readLearningTaskState } from './learning-task.js';
-import { validateCombatPracticeReceipt } from './combat-practice.js';
+import { deriveCombatPracticeReceipt } from './combat-practice.js';
 import type {
   CombatPracticeProfile,
   CombatPracticeStartSnapshot,
@@ -624,6 +624,7 @@ export function prepareConsumeCombatAggregate(
     );
     const journal = validateCombatReceiptJournal(input.journal);
     requirePhysical(input.applications.length === journal.receipts.length, 'INVALID_SOURCE');
+    const receiptTicks = input.applications.map((application) => application.time.atTick);
     requirePhysical(
       input.practiceProfile.bindingId === active.binding.bindingId &&
         input.practiceProfile.version === 's02-combat-practice-profile-2',
@@ -798,12 +799,12 @@ export function prepareConsumeCombatAggregate(
             levelAtStart: skillLevel(commander.skills['leadership'] ?? 0),
             aptitudeAtStartBps: leadershipAptitude,
           });
-        const trustedPractice = validateCombatPracticeReceipt(
+        const trustedPractice = deriveCombatPracticeReceipt(
           beforeRoot,
           journal,
           index,
           input.practiceProfile,
-          input.applications.map((entry) => entry.time.atTick),
+          receiptTicks,
           startSnapshots,
           application.practiceCredits,
         );

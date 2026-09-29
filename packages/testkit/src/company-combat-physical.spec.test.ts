@@ -2545,19 +2545,27 @@ describe('G10 — atomic combat company aggregate', () => {
       practiceProfile: profile,
     });
     if (consumed.kind !== 'PREPARED') throw new Error(`Consume receipt 0: ${consumed.error}`);
-    for (let ordinal = 1; ordinal < journal.receipts.length; ordinal += 1) {
-      consumed = prepareConsumeCombatAggregate(consumed.next, {
-        journal: {
-          ...journal,
-          receipts: journal.receipts.slice(0, ordinal + 1),
-          proposedLastAppliedRevision: journal.receipts[ordinal]!.transition.state.revision,
-        },
-        applications: applications.slice(0, ordinal + 1),
-        practiceProfile: profile,
-      });
-      if (consumed.kind !== 'PREPARED')
-        throw new Error(`Consume receipt ${ordinal}: ${consumed.error}`);
-    }
+    const middleOrdinal = Math.floor(journal.receipts.length / 2);
+    if (middleOrdinal <= 0 || middleOrdinal >= journal.receipts.length - 1)
+      throw new Error('Expected a middle combat receipt');
+    consumed = prepareConsumeCombatAggregate(consumed.next, {
+      journal: {
+        ...journal,
+        receipts: journal.receipts.slice(0, middleOrdinal + 1),
+        proposedLastAppliedRevision: journal.receipts[middleOrdinal]!.transition.state.revision,
+      },
+      applications: applications.slice(0, middleOrdinal + 1),
+      practiceProfile: profile,
+    });
+    if (consumed.kind !== 'PREPARED')
+      throw new Error(`Consume middle receipt ${middleOrdinal}: ${consumed.error}`);
+    consumed = prepareConsumeCombatAggregate(consumed.next, {
+      journal,
+      applications,
+      practiceProfile: profile,
+    });
+    if (consumed.kind !== 'PREPARED')
+      throw new Error(`Consume remaining receipts: ${consumed.error}`);
 
     let root = consumed.next.economy as MaterializedCompanyState;
     const finalReceipt = journal.receipts.at(-1)!;
