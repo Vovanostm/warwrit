@@ -20,8 +20,9 @@ extraction. The test helper is now integrated in H's `warwrit-alpha-c06` as
 TypeScript printer (identical), and the author passed the existing 15 physical
 combat specifications. H now consumes that helper for real storage checks.
 ART B3a is committed at `9203b9a` in draft [PR129](https://github.com/Vovanostm/warwrit/pull/129)
-after parent browser proof and a corrected cancellation defect. CI36562667182 and
-independent Sol review are pending. This host refused both Sol resume and fresh
+after parent browser proof and a corrected cancellation defect. Parent audited CI36562667182: 448 tests, 10,000 battles/100 replay checks and
+real PostgreSQL migration smoke passed. Tested merge `acb3470` and head `9203b9a`
+share tree `2a839ef8c5be8253a68ba1c41045a39a69dc8150`; independent Sol review remains pending. This host refused both Sol resume and fresh
 reviewer spawn after ART completion, so completion has not freed a review slot.
 No independent consumer approval or ART merge is claimed. Preserve unrelated
 open PR125 and PR128. Integration main remains `eee8275`.

@@ -36,7 +36,9 @@ comparing all seven extracted function bodies (identical) and inspecting the
 unchanged assertions; author's original physical-combat 15/15 and testkit types
 passed. The fixture writer is completed, H's writer continues storage tests, and
 there is no duplicate suite or additional gameplay predecessor. ART B3a is draft
-PR129 at `9203b9a`; CI36562667182 and independent Sol review remain pending.
+PR129 at `9203b9a`; parent audited CI36562667182 full gate (448 tests, full
+stress/replay and real migration smoke), with identical head/tested-merge tree.
+Independent Sol review remains pending.
 
 The table below describes the initial post-PR127 allocation; this amendment owns
 current assignments.

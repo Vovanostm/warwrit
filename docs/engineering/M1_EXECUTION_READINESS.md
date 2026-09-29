@@ -15,6 +15,13 @@ producer edge. Sol identified this cycle in its bounded read-only review; the
 parent has now rechecked the unchanged relevant source index. This is dependency
 evidence, not an executed game journey.
 
+Parent static verification parsed all 89 original index cards and checked their
+references. Adding the conditional rescue-producer edge yielded exactly
+`F01 -> CT04 -> CT02 -> I02 -> F01`. Adding the I02a checkpoint and replacing
+only the two named enabling edges removed the cycle; full I02 still depends on
+`I01, F01, D02` and remains a direct M1-ACCEPT prerequisite. This is a finite
+schedule check, not another required feature or PR count.
+
 The F01 consumer is merged in PR127 at `eee8275`; its synthetic rescue fixture
 does not close the producer. An earlier mastery-60 nickname idea remains an
 unimplemented content proposal. It is not a prerequisite imposed merely to make
