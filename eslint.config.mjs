@@ -112,4 +112,13 @@ export default tseslint.config(
       'no-console': 'off',
     },
   },
+  {
+    files: ['.agents/skills/playcanvas-inspect-glb/scripts/inspect.mjs'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
 );
