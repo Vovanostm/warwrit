@@ -8,3 +8,4 @@ disallowWorkspaceCycles: true
 
 allowBuilds:
   esbuild: true
+  'msgpackr-extract@3.0.4': false
