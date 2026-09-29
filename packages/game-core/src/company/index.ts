@@ -17,9 +17,12 @@ export { createCompanyEconomyState } from './economy-state.js';
 export {
   prepareCompanyEconomy,
   prepareCompanyEconomyWithLearning,
+  prepareCompanyEconomyWithLearningAndSocial,
   prepareCompanyFinancialSocial,
 } from './economy.js';
 export type {
+  CompanyEconomyWithLearningAndSocialResult,
+  CompanyEconomyWithLearningAndSocialState,
   CompanyEconomyWithLearningState,
   CompanyEconomyWithLearningResult,
 } from './economy.js';

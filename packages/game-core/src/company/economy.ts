@@ -121,6 +121,28 @@ export type CompanyEconomyWithLearningResult =
       readonly replayed: boolean;
     };
 
+export interface CompanyEconomyWithLearningAndSocialState extends CompanyEconomyWithLearningState {
+  readonly social: SocialState;
+}
+
+export type CompanyEconomyWithLearningAndSocialResult =
+  | {
+      readonly kind: 'REJECTED';
+      readonly state: CompanyEconomyWithLearningAndSocialState;
+      readonly error: Extract<EconomyResult, { kind: 'REJECTED' }>['error'];
+    }
+  | {
+      readonly kind: 'PREPARED';
+      readonly state: CompanyEconomyWithLearningAndSocialState;
+      readonly next: CompanyEconomyWithLearningAndSocialState;
+      readonly receipt: EconomyReceipt;
+      /** Residual requirements after trusted social consequences have been bound. */
+      readonly requirements: FinanceChange['requirements'];
+      readonly replayed: boolean;
+    };
+
+type CompanyLearningInterruption = Omit<LearningTransferInput, 'state' | 'learningFacts'>;
+
 interface LearningTransferInput {
   readonly state: CompanyLearningState;
   readonly intervals: readonly LearningTimeInterval[];
@@ -394,6 +416,7 @@ function affectedLearningTasks(
         'Capture',
         'ReleaseCaptive',
         'TransferCaptive',
+        'ExecuteDeparture',
         'ResolveMissing',
         'RecordMissing',
         'RecordDeath',
@@ -1177,6 +1200,54 @@ export function prepareCompanyEconomyWithLearning(
     state: stateValue,
     next: { economy: prepared.economy.next, learning: nextLearning },
   };
+}
+
+/** One atomic economy, learning-prefix and farewell-social candidate. */
+export function prepareCompanyEconomyWithLearningAndSocial(
+  stateValue: CompanyEconomyWithLearningState,
+  social: SocialState,
+  value: unknown,
+  context: PracticeEconomyContext & LearningSourceContext,
+  financialSocialInputs: readonly FinancialSocialInput[],
+  knowledge: readonly FinancialSocialKnowledge[],
+  notices: readonly FarewellNotice[],
+  interruption: CompanyLearningInterruption,
+): CompanyEconomyWithLearningAndSocialResult {
+  const state: CompanyEconomyWithLearningAndSocialState = { ...stateValue, social };
+  const learning = readCompanyLearningState(stateValue.learning);
+  const prepared = prepareEconomyCandidate(
+    stateValue.economy,
+    value,
+    context,
+    { social, inputs: financialSocialInputs },
+    {
+      ...interruption,
+      state: learning,
+      learningFacts: context.learningFacts,
+    },
+  );
+  if (prepared.economy.kind === 'REJECTED') return { ...prepared.economy, state };
+  try {
+    const bound = bindFinancialSocialConsequences(social, prepared.economy, knowledge, notices);
+    return {
+      ...prepared.economy,
+      state,
+      next: {
+        economy: prepared.economy.next,
+        learning: prepared.economy.replayed ? learning : (prepared.learning ?? learning),
+        social: bound.social,
+      },
+      requirements: bound.requirements,
+    };
+  } catch (error) {
+    if (error instanceof EconomyViolation || error instanceof SocialViolation)
+      return {
+        kind: 'REJECTED',
+        state,
+        error: error instanceof EconomyViolation ? error.code : 'INVALID_SOURCE',
+      };
+    throw error;
+  }
 }
 
 /** Internal indivisible candidate; the original receipt keeps its historical requirements. */
