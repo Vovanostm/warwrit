@@ -8,6 +8,17 @@
 
 ## Mission and checkpoint
 
+**ART05-A / G10 B2a checkpoint, 2026-09-29:** the bounded offline Knight capture
+seam now includes corrected animation, transparent alpha, grounded pivot, packed
+depth sampling and equipped pose. See [observed evidence](evidence/ART05-A-20260929.md).
+Earlier ART05-A defect descriptions below are historical. Full ART05 consumers,
+corpus and the corrected ART04 animated comparison remain open. G10 B2a is locally
+committed at `feb093b`: full Finalize retry identity and applied journal/cursor
+checks passed 13 parent-executed focused specs and independent Sol review; G10 is
+still unmerged and B2b terminal composition remains required. Luna now owns the
+independent K01 world-knowledge packet; Sol reviews/plans frozen packets. Parent
+owns ART delivery and shared resources. No full-alpha launcher exists yet.
+
 **2026-09-29 live amendment:** PR119 is merged at
 `7a4d216ab7318336ccc24db89cbc19cefb18c7ae`, tree
 `d4bcbd442dbb51c06afe950da1882f8cf923c868`. Its PR and actual-main CI logs passed
