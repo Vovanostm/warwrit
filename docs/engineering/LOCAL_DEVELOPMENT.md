@@ -11,6 +11,35 @@
 
 The exact package graph is committed in `pnpm-lock.yaml`.
 
+## Container runtime (colima)
+
+Owner decision, 2026-09-29: local containers run on [colima](https://github.com/abiosoft/colima)
+(Docker runtime, macOS Virtualization.Framework). OrbStack and Docker Desktop are
+not used. CI keeps the Docker engine of GitHub's `ubuntu-24.04` runner.
+
+```bash
+brew install colima docker docker-compose
+colima start --vm-type=vz --cpu 2 --memory 4   # matches the 2-core/4 GB target, not a measured need
+docker context use colima                       # colima sets this on start; check with `docker context ls`
+```
+
+Homebrew's Compose is a Docker CLI plugin. Add its directory to `~/.docker/config.json`
+as Homebrew's caveat states:
+
+```json
+{ "cliPluginsExtraDirs": ["/opt/homebrew/lib/docker/cli-plugins"] }
+```
+
+`~/.docker/cli-plugins/` takes precedence over that directory. A link left there
+by a removed runtime (for example OrbStack's `docker-compose`) breaks
+`docker compose` with `unknown command` while `docker info` still works; delete the
+stale link. Verify before running the gate:
+
+```bash
+docker compose version
+docker info --format '{{.ServerVersion}}'
+```
+
 ## Clean bootstrap
 
 ```bash
