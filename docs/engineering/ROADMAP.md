@@ -8,18 +8,20 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns integration and final evidence. Live main `068196e`, tree
-`4f2e1b7f`, includes PR115 runtime/migration0004, PR116 scene3/ADR0005 and PR117
-parallel packets. PR117 actual-main CI36517328048 passed the existing full gate.
-Fixture admission is not physical JOIN. A subsequent ART05 review found disabled
-PlayCanvas component playback: historical scene3 results do not prove matched
-animated workloads. [ADR0005](../architecture/0005-m1-renderer-playcanvas.md)
-reopens animated acceptance while retaining the current implementation choice.
-G10 A is local/reviewed; B1 corrections and B2 remain required before H. Luna owns
-B1 corrections while Sol reviews frozen ART05-A; they swap implementation/review
-packets at a frozen handoff. [Parallel waves](PARALLEL_WAVES.md) records dependency
-and path boundaries. This session retains two child slots; PR117's three-child
-configuration needs a fresh trusted host and actual capacity readback.
+The parent owns integration and final evidence. Verified main `b543361` includes
+PR119 static contract content, PR121 equipped eight-direction art capture and
+PR122 source/time-bound world knowledge. Parent audited PR122 actual-main CI:
+verify, combat stress/replay and real PostgreSQL migration smoke passed. These
+preparers do not establish the persistent M1 journey.
+
+G10 terminal death and authorized succession are locally reviewed at `6bfc15d`;
+departure/social/learning and CAPTIVE composition remain before H. ART05 B1 is a
+separate diagnostic sprite consumer with source/browser review, awaiting clean CI; full
+animated sprite/normal-depth corpus and matched renderer comparison remain open.
+[Parallel waves](PARALLEL_WAVES.md) records the current packet queue and exclusive
+paths. The actual host exposes the parent plus one retained Luna writer and one
+Sol reviewer. They exchange bounded packets at frozen handoffs; extra configured
+roles do not enlarge runtime capacity. The full alpha and launcher remain incomplete.
 
 | Lane                  | Observed state                                         | Next responsibility                                  |
 | --------------------- | ------------------------------------------------------ | ---------------------------------------------------- |

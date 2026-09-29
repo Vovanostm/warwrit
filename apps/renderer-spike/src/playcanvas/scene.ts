@@ -14,6 +14,7 @@ import {
   Vec3,
 } from 'playcanvas';
 import type { AnimTrack, RenderComponent } from 'playcanvas';
+import { createArtSprite } from './art-sprite.js';
 import {
   actors,
   firstAttacker,
@@ -23,7 +24,7 @@ import {
   scenario,
   torchPosition,
 } from '../shared/scenario.js';
-import type { RendererMount } from '../shared/renderer.js';
+import type { RendererController, RendererMount } from '../shared/renderer.js';
 
 function loadContainer(app: Application, url: string) {
   return new Promise<Asset>((resolve, reject) => {
@@ -70,14 +71,41 @@ function rayAabbDistance(from: Vec3, to: Vec3, bounds: MeshInstance['aabb']) {
   return near;
 }
 
+const actorRenderScale = 0.92;
+
 export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
   const artBakeMode = new URLSearchParams(location.search).get('art-bake') === '1';
+  const artSpritePreviewMode =
+    !artBakeMode && new URLSearchParams(location.search).get('art-preview') === 'sprite';
   const app = new Application(canvas, {
     graphicsDeviceOptions: {
       antialias: scenario.quality.antialias,
       ...(artBakeMode ? { alpha: true, preserveDrawingBuffer: true } : {}),
     },
   });
+  try {
+    return await initializePlayCanvasScene(
+      canvas,
+      emit,
+      metrics,
+      app,
+      artBakeMode,
+      artSpritePreviewMode,
+    );
+  } catch (error) {
+    app.destroy();
+    throw error;
+  }
+};
+
+async function initializePlayCanvasScene(
+  canvas: Parameters<RendererMount>[0],
+  emit: Parameters<RendererMount>[1],
+  metrics: Parameters<RendererMount>[2],
+  app: Application,
+  artBakeMode: boolean,
+  artSpritePreviewMode: boolean,
+): Promise<RendererController> {
   metrics.attachRendererContext();
   app.setCanvasFillMode(FILLMODE_NONE, scenario.canvas.width, scenario.canvas.height);
   app.setCanvasResolution(RESOLUTION_FIXED, scenario.canvas.width, scenario.canvas.height);
@@ -196,6 +224,7 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
   const artBakeBindJointRotations = new Map<string, [number, number, number, number]>();
   const artBakeEquipmentEntities = new Map<string, Entity>();
   const statusMaterials = new Map<string, StandardMaterial>();
+  const statusBars = new Map<string, Entity>();
   for (const team of ['red', 'blue'] as const) {
     const status = new StandardMaterial();
     status.diffuse = team === 'red' ? new Color(0.91, 0.29, 0.22) : new Color(0.16, 0.48, 0.83);
@@ -225,13 +254,14 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     }
     const position = hexToWorld(actor.q, actor.r);
     root.setPosition(position.x, 0, position.z);
-    root.setLocalScale(0.92, 0.92, 0.92);
+    root.setLocalScale(actorRenderScale, actorRenderScale, actorRenderScale);
     app.root.addChild(root);
     const healthbar = new Entity(`status-${actor.id}`);
     healthbar.addComponent('model', { type: 'box', material: statusMaterials.get(actor.team) });
     healthbar.setLocalScale(0.95, 0.07, 0.06);
     healthbar.setPosition(position.x, 2.65, position.z);
     app.root.addChild(healthbar);
+    statusBars.set(actor.id, healthbar);
     root.addComponent('anim', { activate: false });
     root.anim!.loadStateGraph({
       layers: [
@@ -316,6 +346,17 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
         .flatMap((component) => (component as RenderComponent).meshInstances),
     ]),
   );
+  const spriteActorId = 'red-knight-1';
+  const spriteActor = actors.find((actor) => actor.id === spriteActorId)!;
+  const spriteActorPosition = hexToWorld(spriteActor.q, spriteActor.r);
+  const artSprite = artSpritePreviewMode
+    ? await createArtSprite(app, new Vec3(spriteActorPosition.x, 0, spriteActorPosition.z))
+    : null;
+  if (artSprite) {
+    roots.get(spriteActorId)!.enabled = false;
+    statusBars.get(spriteActorId)!.enabled = false;
+    artSprite.update(camera.getPosition());
+  }
 
   const artBakeActor = roots.get(firstAttacker.id)!;
   const originalArtMaterials = new Map<MeshInstance, StandardMaterial>();
@@ -467,6 +508,7 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
   app.on('update', () => {
     if (destroyed) return;
     if (artBakeMode) return;
+    artSprite?.update(camera.getPosition());
     const sample = sampleTimeline((performance.now() - timelineEpochMs) / 1000);
     for (const [actorId, clip] of sample.animationByActor) {
       const root = roots.get(actorId);
@@ -551,12 +593,20 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     if (!ray) return null;
     let closest: { actorId: string; distance: number } | null = null;
     for (const [actorId, instances] of actorMeshInstances) {
+      if (artSprite && actorId === spriteActorId) continue;
       for (const instance of instances) {
         const distance = rayAabbDistance(ray.from, ray.to, instance.aabb);
         if (distance !== null && (!closest || distance < closest.distance))
           closest = { actorId, distance };
       }
     }
+    const spriteDistance = artSprite?.pickDistance(ray.from, ray.to);
+    if (
+      spriteDistance !== null &&
+      spriteDistance !== undefined &&
+      (!closest || spriteDistance < closest.distance)
+    )
+      closest = { actorId: spriteActorId, distance: spriteDistance };
     return closest?.actorId ?? null;
   };
   const applyTileHighlight = () => {
@@ -853,4 +903,4 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
       selectedId = null;
     },
   };
-};
+}
