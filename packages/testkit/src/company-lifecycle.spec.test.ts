@@ -998,3 +998,251 @@ describe('lifecycle continuity and source scope', () => {
     );
   });
 });
+
+describe('F01 nickname consumer boundary', () => {
+  function propose(state: LifecycleState, proposalId: string, sourceEventId: string) {
+    const cmd = {
+      ...input(
+        state,
+        'ProposeNickname',
+        { proposalId, characterId: 'leader', sourceEventId, textKey: 'nickname.north.rescuer' },
+        'DOMAIN_RECEIPT',
+        `propose-${proposalId}`,
+      ),
+      sourceEventId,
+    };
+    const fact: LifecycleEvidence = {
+      id: sourceEventId,
+      companyId: state.companyId,
+      worldId: state.worldId,
+      revision: state.revision,
+      sourceEventId,
+      atTick: state.campaignTick,
+      kind: 'NICKNAME_DEED',
+      characterId: entityId('leader'),
+      cultureId: entityId('north'),
+      deedKind: 'mill-worker-personal-rescue',
+      reasonKey: 'nickname.reason.personal-rescue',
+      textKey: 'nickname.north.rescuer',
+    };
+    const result = prepared(prepareCompanyLifecycle(state, cmd, context(state, cmd, [fact])));
+    return { ...result, cmd };
+  }
+
+  function observe(
+    state: LifecycleState,
+    nicknameSourceEventIds?: readonly string[],
+    observationId = 'leader-status-observation',
+  ) {
+    const cmd = input(
+      state,
+      'Observe',
+      {
+        observationId,
+        observerRef: { kind: 'COMPANY', id: 'company' },
+        subjectRef: { kind: 'CHARACTER', id: 'leader' },
+        factId: observationId,
+        sourceId: `source-${observationId}`,
+      },
+      'DOMAIN_RECEIPT',
+      observationId,
+    );
+    const fact: LifecycleEvidence = {
+      id: observationId,
+      companyId: state.companyId,
+      worldId: state.worldId,
+      revision: state.revision,
+      sourceEventId: cmd.sourceEventId,
+      atTick: state.campaignTick,
+      kind: 'COMPANY_OBSERVATION',
+      subject: { kind: 'CHARACTER', id: entityId('leader') },
+      ...(nicknameSourceEventIds ? { nicknameSourceEventIds } : {}),
+    };
+    return prepared(prepareCompanyLifecycle(state, cmd, context(state, cmd, [fact])));
+  }
+
+  function resolve(state: LifecycleState, proposalId: string, accept: boolean) {
+    const cmd = input(
+      state,
+      'ResolveNickname',
+      { proposalId, accept },
+      'PLAYER',
+      `resolve-${proposalId}-${accept ? 'accept' : 'reject'}`,
+    );
+    return prepareCompanyLifecycle(state, cmd, context(state, cmd));
+  }
+
+  it('does not disclose hidden deeds or active nicknames through a generic character observation', () => {
+    let state = opening().result.next;
+    state = propose(state, 'private-pending', 'private-deed-pending').next;
+    const pendingView = projectCompanyLifecycle(
+      observe(state, undefined, 'observe-private-pending').next,
+      'company',
+    )!;
+    expect(pendingView).toEqual(
+      projectCompanyLifecycle(
+        observe(opening().result.next, undefined, 'observe-private-pending').next,
+        'company',
+      ),
+    );
+    expect(pendingView.nicknameProposals).toEqual([]);
+    expect(pendingView.nicknameHistory).toEqual([]);
+    expect(
+      pendingView.characters.find((entry) => entry.characterId === 'leader')?.nicknameTextKey,
+    ).toBeNull();
+
+    const deedSource = 'private-deed-accepted';
+    state = propose(state, 'private-accepted', deedSource).next;
+    const observed = observe(state, [deedSource], 'observe-authorized-private-deed').next;
+    const acceptedResult = resolve(observed, 'private-accepted', true);
+    const accepted = prepared(acceptedResult).next;
+    const hidden = {
+      ...accepted,
+      knowledge: opening().result.next.knowledge,
+    };
+    const hiddenView = projectCompanyLifecycle(
+      observe(hidden, undefined, 'observe-hidden-accepted').next,
+      'company',
+    )!;
+    expect(hiddenView).toEqual(
+      projectCompanyLifecycle(
+        observe(opening().result.next, undefined, 'observe-hidden-accepted').next,
+        'company',
+      ),
+    );
+    expect(hiddenView.nicknameProposals).toEqual([]);
+    expect(hiddenView.nicknameHistory).toEqual([]);
+    expect(hiddenView.characters.find((entry) => entry.characterId === 'leader')).toMatchObject({
+      name: 'leader',
+      nicknameTextKey: null,
+    });
+  });
+
+  it('acceptance retains source and reason and immediately closes the observed offer', () => {
+    const sourceEventId = 'accepted-deed';
+    const proposalId = 'accepted-proposal';
+    const proposal = propose(opening().result.next, proposalId, sourceEventId);
+    const pending = proposal.next;
+    const retry = prepared(
+      prepareCompanyLifecycle(pending, proposal.cmd, context(pending, proposal.cmd)),
+    );
+    expect(retry.replayed).toBe(true);
+    const duplicate = {
+      ...proposal.cmd,
+      commandId: 'duplicate-same-deed',
+      payload: { ...(proposal.cmd.payload as object), proposalId: 'duplicate-proposal' },
+    };
+    expect(prepareCompanyLifecycle(pending, duplicate, context(pending, duplicate))).toMatchObject({
+      kind: 'REJECTED',
+      state: pending,
+      error: 'IDEMPOTENCY_CONFLICT',
+    });
+    const generic = observe(pending, undefined, 'observe-generic').next;
+    expect(projectCompanyLifecycle(generic, 'company')?.nicknameProposals).toEqual([]);
+
+    const observed = observe(pending, [sourceEventId], 'observe-deed-source').next;
+    expect(projectCompanyLifecycle(observed, 'company')?.nicknameProposals).toMatchObject([
+      {
+        proposalId,
+        sourceEventId,
+        deedKind: 'mill-worker-personal-rescue',
+        reasonKey: 'nickname.reason.personal-rescue',
+      },
+    ]);
+    const accepted = prepared(resolve(observed, proposalId, true)).next;
+    const view = projectCompanyLifecycle(accepted, 'company')!;
+    expect(view.nicknameProposals).toEqual([]);
+    expect(view.nicknameHistory).toContainEqual({
+      proposalId,
+      characterId: 'leader',
+      sourceEventId,
+      cultureId: 'north',
+      deedKind: 'mill-worker-personal-rescue',
+      reasonKey: 'nickname.reason.personal-rescue',
+      textKey: 'nickname.north.rescuer',
+      acceptedAt: accepted.campaignTick,
+    });
+    expect(view.characters.find((entry) => entry.characterId === 'leader')).toMatchObject({
+      name: 'leader',
+      nicknameTextKey: 'nickname.north.rescuer',
+    });
+    const refreshed = projectCompanyLifecycle(
+      observe(accepted, [sourceEventId], 'observe-accepted-refresh').next,
+      'company',
+    )!;
+    expect(
+      refreshed.nicknameHistory.filter((entry) => entry.proposalId === proposalId),
+    ).toHaveLength(1);
+  });
+
+  it('detaches nickname records returned by the public projection', () => {
+    const sourceEventId = 'detached-deed';
+    const proposalId = 'detached-proposal';
+    const pending = propose(opening().result.next, proposalId, sourceEventId).next;
+    const observed = observe(pending, [sourceEventId]).next;
+    const pendingView = projectCompanyLifecycle(observed, 'company')!;
+    pendingView.nicknameProposals[0]!.textKey = 'nickname.tampered';
+    expect(observed.knowledge.nicknameProposals?.[0]?.textKey).toBe('nickname.north.rescuer');
+
+    const accepted = prepared(resolve(observed, proposalId, true)).next;
+    const acceptedView = projectCompanyLifecycle(accepted, 'company')!;
+    acceptedView.nicknameHistory[0]!.reasonKey = 'nickname.reason.tampered';
+    expect(accepted.knowledge.nicknameHistory?.[0]?.reasonKey).toBe(
+      'nickname.reason.personal-rescue',
+    );
+    expect(projectCompanyLifecycle(accepted, 'company')?.nicknameHistory[0]?.reasonKey).toBe(
+      'nickname.reason.personal-rescue',
+    );
+  });
+
+  it('rejection immediately closes the offer without changing identity or accepted history', () => {
+    const sourceEventId = 'rejected-deed';
+    const proposalId = 'rejected-proposal';
+    const pending = propose(opening().result.next, proposalId, sourceEventId).next;
+    const observed = observe(pending, [sourceEventId]).next;
+    const rejected = prepared(resolve(observed, proposalId, false)).next;
+    const view = projectCompanyLifecycle(rejected, 'company')!;
+    expect(view.nicknameProposals).toEqual([]);
+    expect(view.nicknameHistory).toEqual([]);
+    expect(view.characters.find((entry) => entry.characterId === 'leader')).toMatchObject({
+      name: 'leader',
+      nicknameTextKey: null,
+    });
+    expect(personIn(rejected, 'leader').identity.birthName).toBe('leader');
+  });
+
+  it('rejects a deed that does not match the character culture without partial mutation', () => {
+    const state = opening().result.next;
+    const proposalId = 'wrong-culture-proposal';
+    const sourceEventId = 'wrong-culture-deed';
+    const cmd = {
+      ...input(
+        state,
+        'ProposeNickname',
+        { proposalId, characterId: 'leader', sourceEventId, textKey: 'nickname.south.rescuer' },
+        'DOMAIN_RECEIPT',
+        'wrong-culture-propose',
+      ),
+      sourceEventId,
+    };
+    const fact: LifecycleEvidence = {
+      id: sourceEventId,
+      companyId: state.companyId,
+      worldId: state.worldId,
+      revision: state.revision,
+      sourceEventId,
+      atTick: state.campaignTick,
+      kind: 'NICKNAME_DEED',
+      characterId: entityId('leader'),
+      cultureId: entityId('south'),
+      deedKind: 'mill-worker-personal-rescue',
+      reasonKey: 'nickname.reason.personal-rescue',
+      textKey: 'nickname.south.rescuer',
+    };
+    expect(prepareCompanyLifecycle(state, cmd, context(state, cmd, [fact]))).toMatchObject({
+      kind: 'REJECTED',
+      state,
+      error: 'INVALID_SOURCE',
+    });
+  });
+});

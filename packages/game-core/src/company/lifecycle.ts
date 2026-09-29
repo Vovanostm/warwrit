@@ -2,8 +2,9 @@ import { guardCompanyCommand, checkFreshCompanyRevision, companySourceKey } from
 import { canonicalJson, snapshotJson } from './input.js';
 import { preparePerkSelection } from './perk-selection.js';
 import { skillLevels } from './skill-progress.js';
-import { canonicalRevision, publicRevision, isExactInteger } from './values.js';
+import { canonicalRevision, publicRevision, isEntityId, isExactInteger } from './values.js';
 import { prepareOpening } from './opening.js';
+import { prepareNicknameCommand } from './nickname.js';
 import {
   prepareArrival,
   prepareAssignment,
@@ -56,11 +57,46 @@ function observeCompany(
       p.factId === fact.id,
     'INVALID_SOURCE',
   );
+  const nicknameSources = fact.nicknameSourceEventIds ?? [];
+  requireLifecycle(
+    new Set(nicknameSources).size === nicknameSources.length && nicknameSources.every(isEntityId),
+    'INVALID_SOURCE',
+  );
   let knowledge = state.knowledge;
   if (fact.subject.kind === 'CHARACTER') {
     const character = person(state, fact.subject.id);
+    const priorSnapshot = knowledge.characters.find(
+      (known) => known.identity.characterId === fact.subject.id,
+    );
+    const nicknameSourceSet = new Set(nicknameSources);
+    const activeNickname = (state.nicknameProposals ?? []).find(
+      (proposal) => proposal.proposalId === character.nickname?.proposalId,
+    );
+    const observedNicknameHistory = (state.nicknameProposals ?? [])
+      .filter(
+        (proposal) =>
+          proposal.characterId === fact.subject.id &&
+          nicknameSourceSet.has(proposal.sourceEventId) &&
+          proposal.resolution === 'ACCEPTED',
+      )
+      .map((proposal) => ({
+        proposalId: proposal.proposalId,
+        characterId: proposal.characterId,
+        sourceEventId: proposal.sourceEventId,
+        cultureId: proposal.cultureId,
+        deedKind: proposal.deedKind,
+        reasonKey: proposal.reasonKey,
+        textKey: proposal.textKey,
+        acceptedAt: proposal.resolvedAt!,
+      }));
+    const observedNickname =
+      activeNickname && nicknameSourceSet.has(activeNickname.sourceEventId)
+        ? character.nickname
+        : priorSnapshot?.nickname;
+    const { nickname: _privateNickname, ...characterFields } = character;
     const snapshot = snapshotJson({
-      ...character,
+      ...characterFields,
+      ...(observedNickname ? { nickname: observedNickname } : {}),
       skills: skillLevels(character.skills),
     }) as unknown as LifecycleCharacter;
     requireLifecycle(snapshot, 'INVALID_STATE');
@@ -75,6 +111,30 @@ function observeCompany(
       characters: [
         ...knowledge.characters.filter((p) => p.identity.characterId !== fact.subject.id),
         snapshot,
+      ],
+      nicknameProposals: [
+        ...(knowledge.nicknameProposals ?? []).filter(
+          (proposal) =>
+            proposal.characterId !== fact.subject.id ||
+            !nicknameSourceSet.has(proposal.sourceEventId),
+        ),
+        ...(state.nicknameProposals ?? [])
+          .filter(
+            (proposal) =>
+              proposal.characterId === fact.subject.id &&
+              nicknameSourceSet.has(proposal.sourceEventId) &&
+              proposal.resolution === 'PENDING',
+          )
+          .map(({ resolution: _resolution, resolvedAt: _resolvedAt, ...proposal }) => proposal),
+      ],
+      nicknameHistory: [
+        ...(knowledge.nicknameHistory ?? []).filter(
+          (nickname) =>
+            !observedNicknameHistory.some(
+              (observed) => observed.proposalId === nickname.proposalId,
+            ),
+        ),
+        ...observedNicknameHistory,
       ],
     };
   } else {
@@ -124,6 +184,9 @@ function plan(
       return prepareSuccession(state, command, context);
     case 'ChoosePerk':
       return preparePerkSelection(state, command, context);
+    case 'ProposeNickname':
+    case 'ResolveNickname':
+      return prepareNicknameCommand(state, command, context);
     case 'Observe':
       return context.facts.find((f) => f.id === command.payload.observationId)?.kind ===
         'HEIR_NOTIFICATION'
@@ -249,11 +312,14 @@ export function projectCompanyLifecycle(state: LifecycleState, observerCompanyId
     commandCapacity: capacity,
     candidateIds: [...knowledge.candidateIds],
     eventIds: [...knowledge.eventIds],
+    nicknameProposals: (knowledge.nicknameProposals ?? []).map((proposal) => ({ ...proposal })),
+    nicknameHistory: (knowledge.nicknameHistory ?? []).map((nickname) => ({ ...nickname })),
     characters: [...knowledge.characters]
       .sort((a, b) => (a.identity.characterId < b.identity.characterId ? -1 : 1))
       .map((p) => ({
         characterId: p.identity.characterId,
         name: p.identity.birthName,
+        nicknameTextKey: p.nickname?.textKey ?? null,
         knownStatus: p.presence.availability,
         location: { ...p.presence.location },
         assignment: p.presence.assignment,
