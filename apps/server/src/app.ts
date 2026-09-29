@@ -42,7 +42,12 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
         : undefined;
     registerEncounterRoutes(app, {
       ...options.encounters,
-      ...(realtime === undefined ? {} : { roomTicketIssuer: realtime.issueRoomTicket }),
+      ...(realtime === undefined
+        ? {}
+        : {
+            onCommandCommitted: realtime.onCommandCommitted,
+            roomTicketIssuer: realtime.issueRoomTicket,
+          }),
     });
   }
   if (options.combatLab !== undefined) {

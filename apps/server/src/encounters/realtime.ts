@@ -9,6 +9,7 @@ import { createEncounterRoomClass, refreshEncounterRoomProjections } from './roo
 import { startEncounterAiWorker, type EncounterAiWorker } from './ai-worker.js';
 
 export interface EncounterRealtime {
+  onCommandCommitted(encounterId: string): Promise<void>;
   issueRoomTicket(
     encounterId: string,
     cookieHeader: string | undefined,
@@ -41,6 +42,7 @@ export function registerEncounterRealtime(
   });
 
   return {
+    onCommandCommitted: refreshEncounterRoomProjections,
     async issueRoomTicket(encounterId, cookieHeader, ip) {
       const headers = new Headers();
       if (cookieHeader !== undefined) headers.set('cookie', cookieHeader);

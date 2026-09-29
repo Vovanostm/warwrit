@@ -175,6 +175,7 @@ export class EncounterRoom extends Room<{
   }
 
   private applyProjection(projection: EncounterPublicProjectionDto): void {
+    if (projection.revision < this.state.revision) return;
     this.state.version = projection.version;
     this.state.encounterId = projection.encounterId;
     this.state.revision = projection.revision;

@@ -19,6 +19,7 @@ import {
 export interface EncounterRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
   readonly fixtureAdmission: true;
+  readonly onCommandCommitted?: (encounterId: string) => Promise<void>;
   readonly roomTicketIssuer?: (
     encounterId: string,
     cookieHeader: string | undefined,
@@ -129,6 +130,19 @@ export function registerEncounterRoutes(
       if (!isEncounterCommandDto(request.body))
         return reply.code(400).send({ error: 'invalid request' });
       const result = await executeEncounterCommand(database, accountId, request.body);
+      if (result.status === 'accepted') {
+        try {
+          await options.onCommandCommitted?.(request.body.encounterId);
+        } catch (error) {
+          request.log.error(
+            {
+              event: 'encounter.projection_refresh.failed',
+              errorKind: error instanceof Error ? 'error' : typeof error,
+            },
+            'Encounter projection refresh failed after command commit',
+          );
+        }
+      }
       return reply.code(responseStatus(result)).send(result);
     },
   );
