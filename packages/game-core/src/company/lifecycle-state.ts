@@ -742,7 +742,7 @@ export function isLifecycleReceiptShape(value: unknown): boolean {
     list(value['requirements'], isLifecycleRequirementShape)
   );
 }
-export function isLifecycleRequirementShape(value: unknown): boolean {
+function isLifecycleRequirementShape(value: unknown): boolean {
   if (!plainObject(value)) return false;
   switch (value['kind']) {
     case 'OPENING_ASSETS': {
