@@ -30,13 +30,6 @@ export async function resolveSessionAccount(
     ?.accountId;
 }
 
-export async function resolveSessionAccountFromCookieHeader(
-  cookieHeader: string | undefined,
-  database: Kysely<DatabaseSchema>,
-): Promise<string | undefined> {
-  return (await resolveSessionPrincipalFromCookieHeader(cookieHeader, database))?.accountId;
-}
-
 export async function resolveSessionPrincipalFromCookieHeader(
   cookieHeader: string | undefined,
   database: Kysely<DatabaseSchema>,

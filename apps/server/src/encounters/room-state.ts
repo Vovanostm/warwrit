@@ -12,8 +12,6 @@ export const EncounterUnitStateSchema = schema(
   'EncounterUnitState',
 );
 
-export type EncounterUnitState = SchemaType<typeof EncounterUnitStateSchema>;
-
 export const EncounterRoomState = schema(
   {
     version: t.number(),

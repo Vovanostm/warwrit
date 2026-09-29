@@ -1,0 +1,12 @@
+id: no-focused-tests
+language: Tsx
+severity: error
+message: A focused test silently skips the rest of the specification.
+files:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+rule:
+  pattern: $RUNNER.only($$$ARGS)
+constraints:
+  RUNNER:
+    regex: ^(describe|suite|it|test)$

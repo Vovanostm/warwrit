@@ -1,0 +1,6 @@
+id: implicit-locale-compare
+valid:
+  - 'ids.sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));'
+  - "name.localeCompare(other, 'en');"
+invalid:
+  - 'units.toSorted((left, right) => left.id.localeCompare(right.id));'
