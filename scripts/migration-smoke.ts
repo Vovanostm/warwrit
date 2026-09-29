@@ -1,13 +1,8 @@
 import assert from 'node:assert/strict';
 import { Client } from 'pg';
-import {
-  canonicalJson,
-  companySourceKey,
-  parseCompanyCommand,
-  prepareConsumeCombatAggregate,
-} from '@warwrit/game-core';
+import { canonicalJson, companySourceKey, parseCompanyCommand } from '@warwrit/game-core';
 import { command } from '../packages/testkit/src/company-economy-fixture.js';
-import { createCompanyCombatAggregateFixture } from '../packages/testkit/src/company-combat-aggregate-fixture.js';
+import { createCompanyStorageFixture } from '../packages/testkit/src/company-storage-fixture.js';
 import {
   listCompanyAuditEvents,
   loadCompanyAggregate,
@@ -59,14 +54,30 @@ try {
     ['company_audit_events', 'company_receipts', 'company_snapshots'],
   );
 
-  const aggregateFixture = createCompanyCombatAggregateFixture();
-  const active = prepareConsumeCombatAggregate(aggregateFixture.begun.next, {
-    journal: aggregateFixture.journal,
-    applications: aggregateFixture.applications,
-    practiceProfile: aggregateFixture.practiceProfile,
+  const company = createCompanyStorageFixture();
+  const studyTask = company.learning.tasks.tasks[0];
+  assert.ok(studyTask);
+  assert.equal(studyTask.start.taskId, 'storage-study-task');
+  assert.equal(studyTask.start.command.payload.goal.sectionId, 'wound-care-basics-1');
+  assert.equal(company.learning.studyAccess.intervals[0]?.itemId, 'copy');
+  assert.deepEqual(company.learning.studyProgress[0]?.learnedCarry, {
+    numerator: '1',
+    denominator: '9',
   });
-  if (active.kind !== 'PREPARED') throw new Error(active.error);
-  const company = active.next;
+  assert.equal(company.social.relations.length, 1);
+  assert.equal(company.social.chronicle[0]?.factId, 'storage-known-fact');
+  assert.equal(
+    company.economy.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ,
+    '9007199254740993123456789',
+  );
+  assert.deepEqual(
+    company.economy.finance.accounts[1] && {
+      actualPaused: company.economy.finance.accounts[1].actualPaused,
+      knownPaused: company.economy.finance.accounts[1].knownPaused,
+    },
+    { actualPaused: true, knownPaused: false },
+  );
+  assert.ok(company.encounter.active?.appliedReceipts.length);
   const commandValue = command(
     company.economy,
     'AdvanceCampaign',
