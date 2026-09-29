@@ -8,7 +8,20 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns coordination and serial integration. Observed main `b4498288`, tree `6f1ed4bf`, includes PR113 pure learning start/advance/stop and causal completion. Reviewed, tested and actual-merge trees match; parent audited PR113 full CI and repeated the 24 composition specifications. Actual-main CI is a separate pending readback. See [CURRENT_PLAN](CURRENT_PLAN.md) for source and proof limits. G10, persistent company/world execution, renderer selection and full M1 remain unfinished.
+The parent owns integration and final evidence. Verified main `b543361` includes
+PR119 static contract content, PR121 equipped eight-direction art capture and
+PR122 source/time-bound world knowledge. Parent audited PR122 actual-main CI:
+verify, combat stress/replay and real PostgreSQL migration smoke passed. These
+preparers do not establish the persistent M1 journey.
+
+G10 terminal death and authorized succession are locally reviewed at `6bfc15d`;
+departure/social/learning and CAPTIVE composition remain before H. ART05 B1 is a
+separate diagnostic sprite consumer with source/browser review, awaiting clean CI; full
+animated sprite/normal-depth corpus and matched renderer comparison remain open.
+[Parallel waves](PARALLEL_WAVES.md) records the current packet queue and exclusive
+paths. The actual host exposes the parent plus one retained Luna writer and one
+Sol reviewer. They exchange bounded packets at frozen handoffs; extra configured
+roles do not enlarge runtime capacity. The full alpha and launcher remain incomplete.
 
 | Lane                  | Observed state                                         | Next responsibility                                  |
 | --------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
@@ -18,7 +31,7 @@ The parent owns coordination and serial integration. Observed main `b4498288`, t
 | PB diagnostic         | PB06 merged; optional follow-ups unassigned            | Use only for useful diagnostic evidence              |
 | World / identity      | Pure world foundation/routes and local identity merged | Movement and durable world/account/company authority |
 
-C05 and learning composition through pure C08 are delivered in PR100/104/107/113. Existing authentic local/outcome causes are composed; the real producer entering OUT_OF_CONTACT remains G10/world/JOIN work. E05 and G09 are delivered in PR101/102; G10 is next. PR108 provides pure route/arrival preparation, while real movement and persistence remain separate. PR106 provides local OIDC identity; ID03 company binding waits for H. PR109 delivers the renderer harness; production captures exist, comparative authoring and ART04/05 remain open. PR112 holds reviewed RT02/narrow RT03 PostgreSQL fixture execution pending the final combined-tree gate. Reserve migration0004 for encounter runtime, then recheck the next H migration. The full M1 launcher remains pending. Build game-core before testkit checks; green independent branches do not prove their union.
+C05 and learning composition through pure C08 are delivered in PR100/104/107/113. Existing authentic local/outcome causes are composed; the real producer entering OUT_OF_CONTACT remains G10/world/JOIN work. E05 and G09 are delivered in PR101/102; G10 is next. PR108 provides pure route/arrival preparation, while real movement and persistence remain separate. PR106 provides local OIDC identity; ID03 company binding waits for H. PR109 delivers the renderer harness; PR116 recorded the renderer selection, but the later animation defect reopens matched animated acceptance; ART05 variants and ART06 integration remain open. PR112/115 deliver PostgreSQL fixture execution, AI, transport and scoped restart evidence; physical JOIN remains separate. Migration0004 is released; recheck the next H migration. The full M1 launcher remains pending. Build game-core before testkit checks; green independent branches do not prove their union.
 
 ## Domain and durable company
 

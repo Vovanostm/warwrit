@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "engine": "babylon",
+      "observedReadyMs": 837.3000000715256,
+      "heap": {
+        "usedSize": 62805340,
+        "totalSize": 65748992,
+        "embedderHeapUsedSize": 948976,
+        "backingStorageSize": 8884364
+      }
+    },
+    {
+      "engine": "playcanvas",
+      "observedReadyMs": 231.79999995231628,
+      "heap": {
+        "usedSize": 14840668,
+        "totalSize": 15695872,
+        "embedderHeapUsedSize": 910616,
+        "backingStorageSize": 8428284
+      }
+    }
+  ],
+  "scope": "One cache-enabled navigation per engine, observed readiness includes automation latency; post-GC V8 heap/backing/embedder data, not browser process RSS or GPU memory"
+}

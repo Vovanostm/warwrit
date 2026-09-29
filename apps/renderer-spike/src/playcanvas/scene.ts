@@ -5,13 +5,16 @@ import {
   Entity,
   FOG_EXP2,
   FILLMODE_NONE,
+  PROJECTION_ORTHOGRAPHIC,
   createCylinder,
   MeshInstance,
+  Quat,
   RESOLUTION_FIXED,
   StandardMaterial,
   Vec3,
 } from 'playcanvas';
 import type { AnimTrack, RenderComponent } from 'playcanvas';
+import { createArtSprite } from './art-sprite.js';
 import {
   actors,
   firstAttacker,
@@ -19,8 +22,9 @@ import {
   hexToWorld,
   sampleTimeline,
   scenario,
+  torchPosition,
 } from '../shared/scenario.js';
-import type { RendererMount } from '../shared/renderer.js';
+import type { RendererController, RendererMount } from '../shared/renderer.js';
 
 function loadContainer(app: Application, url: string) {
   return new Promise<Asset>((resolve, reject) => {
@@ -67,27 +71,66 @@ function rayAabbDistance(from: Vec3, to: Vec3, bounds: MeshInstance['aabb']) {
   return near;
 }
 
+const actorRenderScale = 0.92;
+
 export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
+  const artBakeMode = new URLSearchParams(location.search).get('art-bake') === '1';
+  const artSpritePreviewMode =
+    !artBakeMode && new URLSearchParams(location.search).get('art-preview') === 'sprite';
   const app = new Application(canvas, {
-    graphicsDeviceOptions: { antialias: scenario.quality.antialias },
+    graphicsDeviceOptions: {
+      antialias: scenario.quality.antialias,
+      ...(artBakeMode ? { alpha: true, preserveDrawingBuffer: true } : {}),
+    },
   });
+  try {
+    return await initializePlayCanvasScene(
+      canvas,
+      emit,
+      metrics,
+      app,
+      artBakeMode,
+      artSpritePreviewMode,
+    );
+  } catch (error) {
+    app.destroy();
+    throw error;
+  }
+};
+
+async function initializePlayCanvasScene(
+  canvas: Parameters<RendererMount>[0],
+  emit: Parameters<RendererMount>[1],
+  metrics: Parameters<RendererMount>[2],
+  app: Application,
+  artBakeMode: boolean,
+  artSpritePreviewMode: boolean,
+): Promise<RendererController> {
   metrics.attachRendererContext();
   app.setCanvasFillMode(FILLMODE_NONE, scenario.canvas.width, scenario.canvas.height);
   app.setCanvasResolution(RESOLUTION_FIXED, scenario.canvas.width, scenario.canvas.height);
   app.resizeCanvas(scenario.canvas.width, scenario.canvas.height);
   canvas.style.width = '100%';
   canvas.style.height = 'auto';
-  app.scene.ambientLight = new Color(0.72, 0.72, 0.72);
+  app.scene.ambientLight = new Color(
+    scenario.lighting.day.ambient,
+    scenario.lighting.day.ambient,
+    scenario.lighting.day.ambient,
+  );
   app.scene.fog.type = FOG_EXP2;
   app.scene.fog.color = new Color().fromString(scenario.colors.fog);
   app.scene.fog.density = scenario.lighting.day.fog;
 
   const camera = new Entity('Tactical camera');
   camera.addComponent('camera', {
-    clearColor: new Color(0.055, 0.072, 0.09),
+    clearColor: new Color(...scenario.colors.dayClear),
     fov: (scenario.camera.fovRadians * 180) / Math.PI,
   });
   camera.camera!.aspectRatio = scenario.canvas.width / scenario.canvas.height;
+  if (artBakeMode) {
+    camera.camera!.projection = PROJECTION_ORTHOGRAPHIC;
+    camera.camera!.orthoHeight = 3.3;
+  }
   camera.setPosition(scenario.camera.eye[0], scenario.camera.eye[1], scenario.camera.eye[2]);
   camera.lookAt(new Vec3(...scenario.camera.target));
   app.root.addChild(camera);
@@ -95,6 +138,7 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
   light.addComponent('light', {
     type: 'directional',
     intensity: scenario.lighting.day.key,
+    color: new Color().fromString(scenario.colors.dayKey),
     castShadows: false,
   });
   light.setEulerAngles(45, 25, 0);
@@ -104,10 +148,9 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     type: 'omni',
     intensity: 0,
     range: 8,
-    color: new Color(1, 0.69, 0.35),
+    color: new Color(...scenario.colors.torch),
   });
-  const torchPosition = hexToWorld(firstAttacker.q, firstAttacker.r);
-  torch.setPosition(torchPosition.x, 2.2, torchPosition.z);
+  torch.setPosition(torchPosition.x, torchPosition.y, torchPosition.z);
   app.root.addChild(torch);
 
   const floor = new Entity('Arena floor');
@@ -177,8 +220,37 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
   for (const clip of requiredClips) {
     if (!tracks.has(clip)) throw new Error(`PlayCanvas did not load animation ${clip}`);
   }
+  const bakeQuery = new URLSearchParams(location.search);
+  const bakeClassId = bakeQuery.get('art-actor') ?? 'Knight';
+  if (!['Knight', 'Rogue', 'Barbarian'].includes(bakeClassId))
+    throw new Error(`ART05 does not support actor ${bakeClassId}`);
+  const artBakeActorDefinition = actors.find(
+    (actor) => actor.team === 'red' && actor.classId === bakeClassId,
+  );
+  if (!artBakeActorDefinition) throw new Error(`ART05 has no red ${bakeClassId} actor`);
+  const artBakeClip = bakeQuery.get('art-clip') ?? 'Idle_A';
+  if (!requiredClips.includes(artBakeClip as (typeof requiredClips)[number]))
+    throw new Error(`ART05 does not support animation ${artBakeClip}`);
+  const artBakeTrack = tracks.get(artBakeClip);
+  if (!artBakeTrack) throw new Error(`PlayCanvas did not load animation ${artBakeClip}`);
+  const artBakeLoop = artBakeClip === 'Idle_A' || artBakeClip === 'Walking_A';
+  const sampleText = bakeQuery.get('art-sample-seconds') ?? '0';
+  const artBakeSampleSeconds = Number(sampleText);
+  if (
+    !Number.isFinite(artBakeSampleSeconds) ||
+    artBakeSampleSeconds < 0 ||
+    (artBakeLoop
+      ? artBakeSampleSeconds >= artBakeTrack.duration
+      : artBakeSampleSeconds > artBakeTrack.duration)
+  )
+    throw new Error(
+      `ART05 sample time must be finite and within [0, ${artBakeTrack.duration}${artBakeLoop ? ')' : ']'} seconds for ${artBakeClip}`,
+    );
   const currentClip = new Map<string, string>();
+  const artBakeBindJointRotations = new Map<string, [number, number, number, number]>();
+  const artBakeEquipmentEntities = new Map<string, Entity>();
   const statusMaterials = new Map<string, StandardMaterial>();
+  const statusBars = new Map<string, Entity>();
   for (const team of ['red', 'blue'] as const) {
     const status = new StandardMaterial();
     status.diffuse = team === 'red' ? new Color(0.91, 0.29, 0.22) : new Color(0.16, 0.48, 0.83);
@@ -198,15 +270,24 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
       throw new Error(`PlayCanvas did not load ${actor.classId}.glb as a container`);
     const root = (model as { instantiateRenderEntity: () => Entity }).instantiateRenderEntity();
     root.name = actor.id;
+    if (artBakeMode && actor.id === artBakeActorDefinition.id) {
+      for (const jointName of ['upperarm.r', 'upperarm.l', 'upperleg.r', 'upperleg.l']) {
+        const joint = root.findByName(jointName);
+        if (!joint) throw new Error(`ART05 could not find animated joint ${jointName}`);
+        const rotation = joint.getLocalRotation();
+        artBakeBindJointRotations.set(jointName, [rotation.x, rotation.y, rotation.z, rotation.w]);
+      }
+    }
     const position = hexToWorld(actor.q, actor.r);
     root.setPosition(position.x, 0, position.z);
-    root.setLocalScale(0.92, 0.92, 0.92);
+    root.setLocalScale(actorRenderScale, actorRenderScale, actorRenderScale);
     app.root.addChild(root);
     const healthbar = new Entity(`status-${actor.id}`);
     healthbar.addComponent('model', { type: 'box', material: statusMaterials.get(actor.team) });
     healthbar.setLocalScale(0.95, 0.07, 0.06);
     healthbar.setPosition(position.x, 2.65, position.z);
     app.root.addChild(healthbar);
+    statusBars.set(actor.id, healthbar);
     root.addComponent('anim', { activate: false });
     root.anim!.loadStateGraph({
       layers: [
@@ -253,10 +334,33 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
       if (!joint || !resource?.instantiateRenderEntity)
         throw new Error(`PlayCanvas could not attach ${assetName} to ${jointName} on ${actor.id}`);
       const item = resource.instantiateRenderEntity();
+      if (artBakeMode && actor.id === artBakeActorDefinition.id) {
+        item.name = `art-bake-${assetName}`;
+        artBakeEquipmentEntities.set(assetName!, item);
+      }
       joint.addChild(item);
       item.setLocalPosition(0, -0.15, 0.12);
       item.setLocalScale(0.42, 0.42, 0.42);
+      if (assetName === 'sword_1handed') {
+        const handRotation = joint.getRotation() as Quat;
+        const bladeDown = new Quat().setFromEulerAngles(180, 0, 0);
+        item.setLocalRotation(new Quat().mul2(new Quat().invert(handRotation), bladeDown));
+        const handPosition = joint.getPosition();
+        const actorPosition = root.getPosition();
+        const sideX = handPosition.x - actorPosition.x;
+        const sideZ = handPosition.z - actorPosition.z;
+        const sideLength = Math.hypot(sideX, sideZ);
+        const itemPosition = item.getPosition();
+        if (sideLength > 1e-6) {
+          item.setPosition(
+            itemPosition.x + (sideX / sideLength) * 0.12,
+            itemPosition.y,
+            itemPosition.z + (sideZ / sideLength) * 0.12,
+          );
+        }
+      }
     }
+    root.anim!.playing = true;
     roots.set(actor.id, root);
   }
   const actorMeshInstances = new Map(
@@ -268,6 +372,31 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
         .flatMap((component) => (component as RenderComponent).meshInstances),
     ]),
   );
+  const spriteActorId = 'red-knight-1';
+  const spriteActor = actors.find((actor) => actor.id === spriteActorId)!;
+  const spriteActorPosition = hexToWorld(spriteActor.q, spriteActor.r);
+  const artSprite = artSpritePreviewMode
+    ? await createArtSprite(app, new Vec3(spriteActorPosition.x, 0, spriteActorPosition.z))
+    : null;
+  if (artSprite) {
+    roots.get(spriteActorId)!.enabled = false;
+    statusBars.get(spriteActorId)!.enabled = false;
+    artSprite.update(camera.getPosition());
+  }
+
+  const artBakeActor = roots.get(artBakeActorDefinition.id)!;
+  const originalArtMaterials = new Map<MeshInstance, StandardMaterial>();
+  const artBakePassMaterials = new Map<MeshInstance, Map<'normal' | 'depth', StandardMaterial>>();
+  if (artBakeMode) {
+    for (const actor of actors) roots.get(actor.id)!.anim!.speed = 0;
+    artBakeActor.setPosition(0, 0, 0);
+
+    for (const mesh of actorMeshInstances.get(artBakeActorDefinition.id)!) {
+      if (!(mesh.material instanceof StandardMaterial))
+        throw new Error(`ART05 requires a standard material on ${mesh.node.name}`);
+      originalArtMaterials.set(mesh, mesh.material);
+    }
+  }
 
   const propMaterial = new StandardMaterial();
   propMaterial.diffuse = new Color(0.31, 0.34, 0.35);
@@ -283,6 +412,29 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     prop.setLocalScale(scale[0], scale[1], scale[2]);
     app.root.addChild(prop);
   }
+  const signalPosition = hexToWorld(0, 2);
+  const signalWoodMaterial = new StandardMaterial();
+  signalWoodMaterial.diffuse = new Color(0.34, 0.23, 0.13);
+  signalWoodMaterial.emissive = new Color(0.28, 0.19, 0.105);
+  signalWoodMaterial.update();
+  const signalClothMaterial = new StandardMaterial();
+  signalClothMaterial.diffuse = new Color(0.72, 0.53, 0.26);
+  signalClothMaterial.emissive = new Color(0.5, 0.36, 0.16);
+  signalClothMaterial.update();
+  const signalPole = new Entity('signal-pole');
+  signalPole.addComponent('model', { type: 'box', material: signalWoodMaterial });
+  signalPole.model!.castShadows = false;
+  signalPole.model!.receiveShadows = false;
+  signalPole.setPosition(signalPosition.x, 0.9, signalPosition.z);
+  signalPole.setLocalScale(0.07, 1.8, 0.07);
+  app.root.addChild(signalPole);
+  const signalFlag = new Entity('signal-flag');
+  signalFlag.addComponent('model', { type: 'box', material: signalClothMaterial });
+  signalFlag.model!.castShadows = false;
+  signalFlag.model!.receiveShadows = false;
+  signalFlag.setPosition(signalPosition.x + 0.285, 1.65, signalPosition.z);
+  signalFlag.setLocalScale(0.5, 0.3, 0.035);
+  app.root.addChild(signalFlag);
 
   const markers = new Map<string, Entity>();
   for (const actor of actors) {
@@ -314,6 +466,18 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     sparks.push(spark);
   }
 
+  if (artBakeMode) {
+    for (const child of app.root.children) {
+      if (child !== camera && child !== light && child !== artBakeActor) child.enabled = false;
+    }
+    torch.enabled = false;
+    camera.camera!.clearColor = new Color(0, 0, 0, 0);
+    camera.camera!.nearClip = 0.1;
+    camera.camera!.farClip = 32;
+    camera.camera!.orthoHeight = 3.3;
+    camera.lookAt(new Vec3(0, 1.2, 0));
+  }
+
   const gl = canvas.getContext('webgl2');
   if (
     !gl ||
@@ -323,6 +487,8 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     throw new Error(
       `PlayCanvas canvas has invalid drawing size ${gl?.drawingBufferWidth ?? 0}×${gl?.drawingBufferHeight ?? 0}`,
     );
+  if (artBakeMode && gl.getContextAttributes()?.alpha !== true)
+    throw new Error('ART05 requires a WebGL context with an alpha buffer.');
   emit({ type: 'assets-ready' });
   const firstFrame = new Promise<void>((resolve, reject) => {
     const timeout = window.setTimeout(
@@ -366,6 +532,8 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
   });
   app.on('update', () => {
     if (destroyed) return;
+    if (artBakeMode) return;
+    artSprite?.update(camera.getPosition());
     const sample = sampleTimeline((performance.now() - timelineEpochMs) / 1000);
     for (const [actorId, clip] of sample.animationByActor) {
       const root = roots.get(actorId);
@@ -404,10 +572,14 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     const values = scenario.lighting[preset];
     app.scene.ambientLight = new Color(values.ambient, values.ambient, values.ambient);
     light.light!.intensity = values.key;
-    torch.light!.intensity = preset === 'torch' ? scenario.lighting.torch.torch : 0;
-    app.scene.fog.color = new Color().fromString(
-      preset === 'day' ? scenario.colors.fog : '#29364a',
+    light.light!.color = new Color().fromString(
+      preset === 'day' ? scenario.colors.dayKey : scenario.colors.nightKey,
     );
+    torch.light!.intensity = preset === 'torch' ? scenario.lighting.torch.torch : 0;
+    camera.camera!.clearColor = new Color(
+      ...(preset === 'day' ? scenario.colors.dayClear : scenario.colors.nightClear),
+    );
+    app.scene.fog.color = new Color().fromString(scenario.colors.fog);
     app.scene.fog.density = values.fog;
     emit({ type: 'lighting', preset, mode });
   };
@@ -446,12 +618,20 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     if (!ray) return null;
     let closest: { actorId: string; distance: number } | null = null;
     for (const [actorId, instances] of actorMeshInstances) {
+      if (artSprite && actorId === spriteActorId) continue;
       for (const instance of instances) {
         const distance = rayAabbDistance(ray.from, ray.to, instance.aabb);
         if (distance !== null && (!closest || distance < closest.distance))
           closest = { actorId, distance };
       }
     }
+    const spriteDistance = artSprite?.pickDistance(ray.from, ray.to);
+    if (
+      spriteDistance !== null &&
+      spriteDistance !== undefined &&
+      (!closest || spriteDistance < closest.distance)
+    )
+      closest = { actorId: spriteActorId, distance: spriteDistance };
     return closest?.actorId ?? null;
   };
   const applyTileHighlight = () => {
@@ -497,6 +677,215 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
     message: 'PlayCanvas scene ready; shared timeline started at deterministic epoch zero.',
   });
   await firstFrame;
+  if (artBakeMode) {
+    const artBakeAnimation = artBakeActor.anim!;
+    const artBakeLayer = artBakeAnimation.baseLayer!;
+    const setAnimationSample = async (clip: string, sampleSeconds: number) => {
+      artBakeAnimation.playing = true;
+      artBakeAnimation.speed = 1;
+      artBakeLayer.play(clip);
+      const transitionDeadline = performance.now() + 3000;
+      while (
+        (artBakeLayer.activeState !== clip || artBakeLayer.transitioning) &&
+        performance.now() < transitionDeadline
+      ) {
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      }
+      if (artBakeLayer.activeState !== clip || artBakeLayer.transitioning)
+        throw new Error(`ART05 could not enter the requested ${clip} animation state.`);
+      artBakeAnimation.speed = 0;
+      artBakeLayer.playing = false;
+      artBakeLayer.activeStateCurrentTime = sampleSeconds;
+      artBakeLayer.playing = true;
+      await new Promise<void>((resolve) => app.once('postrender', () => resolve()));
+    };
+
+    await setAnimationSample('Idle_A', 0);
+
+    const characterRotation = artBakeActor.getRotation() as Quat;
+    const bladeDown = new Quat().setFromEulerAngles(180, 0, 0);
+    for (const [assetName, jointName] of [...artBakeEquipmentEntities.keys()].map(
+      (name) => [name, name === 'shield_round' ? 'handslot.l' : 'handslot.r'] as const,
+    )) {
+      const item = artBakeEquipmentEntities.get(assetName);
+      const joint = artBakeActor.findByName(jointName);
+      if (!item || !joint)
+        throw new Error(`ART05 could not calibrate ${assetName} against sampled ${jointName}`);
+      const localOrientation =
+        assetName === 'sword_1handed' || assetName === 'dagger' ? bladeDown : new Quat();
+      const targetWorldRotation = new Quat().mul2(characterRotation, localOrientation);
+      const sampledSocketRotation = joint.getRotation() as Quat;
+      item.setLocalRotation(
+        new Quat().mul2(new Quat().invert(sampledSocketRotation), targetWorldRotation),
+      );
+    }
+    if (artBakeClip !== 'Idle_A' || artBakeSampleSeconds !== 0)
+      await setAnimationSample(artBakeClip, artBakeSampleSeconds);
+    const changedJointNames = [...artBakeBindJointRotations].flatMap(([jointName, bind]) => {
+      const rotation = artBakeActor.findByName(jointName)!.getLocalRotation();
+      const sampled = [rotation.x, rotation.y, rotation.z, rotation.w] as const;
+      const dot = Math.abs(
+        bind[0] * sampled[0] + bind[1] * sampled[1] + bind[2] * sampled[2] + bind[3] * sampled[3],
+      );
+      return 1 - dot > 1e-6 ? [jointName] : [];
+    });
+    if (!artBakeAnimation.playing || !changedJointNames.length)
+      throw new Error(
+        `ART05 ${artBakeClip} sample did not change a non-root joint while anim.playing was enabled.`,
+      );
+
+    const setPass = (pass: 'color' | 'normal' | 'depth') => {
+      for (const [mesh, original] of originalArtMaterials) {
+        if (pass === 'color') {
+          mesh.material = original;
+          continue;
+        }
+        let materials = artBakePassMaterials.get(mesh);
+        if (!materials) {
+          materials = new Map();
+          artBakePassMaterials.set(mesh, materials);
+        }
+        let material = materials.get(pass);
+        if (!material) {
+          material = original.clone();
+          const chunks = material.getShaderChunks();
+          chunks.set(
+            'litUserDeclarationPS',
+            pass === 'depth' ? 'uniform vec3 bakeCameraPosition;' : '',
+          );
+          chunks.set(
+            'outputPS',
+            pass === 'normal'
+              ? 'gl_FragColor.rgb = normalize(vNormalW) * 0.5 + 0.5;'
+              : `float metricDepth = clamp(distance(vPositionW, bakeCameraPosition) / 64.0, 0.0, 1.0);\nint packedDepth = int(metricDepth * 16777215.0 + 0.5);\ngl_FragColor.rgb = vec3(float((packedDepth >> 16) & 255), float((packedDepth >> 8) & 255), float(packedDepth & 255)) / 255.0;`,
+          );
+          material.update();
+          materials.set(pass, material);
+        }
+        if (pass === 'depth') {
+          const position = camera.getPosition();
+          material.setParameter('bakeCameraPosition', [position.x, position.y, position.z]);
+        }
+        mesh.material = material;
+      }
+    };
+
+    const bakeController = {
+      setEquipmentVisible(name: string, visible: boolean) {
+        const item = artBakeEquipmentEntities.get(name);
+        if (!item) throw new Error(`ART05 has no equipped ${name} attachment`);
+        item.enabled = visible;
+      },
+      async render(direction: number, pass: 'color' | 'normal' | 'depth') {
+        if (!Number.isInteger(direction) || direction < 0 || direction > 7)
+          throw new Error('ART05 direction must be an integer from 0 through 7');
+        const angle = (direction * Math.PI) / 4;
+        camera.setPosition(Math.sin(angle) * 8, 3, Math.cos(angle) * 8);
+        camera.lookAt(new Vec3(0, 1.2, 0));
+        setPass(pass);
+        await new Promise<void>((resolve) => app.once('postrender', () => resolve()));
+        const dataUrl = canvas.toDataURL('image/png');
+        if (!dataUrl.startsWith('data:image/png;base64,'))
+          throw new Error('ART05 could not read the preserved WebGL canvas');
+        const rightSlot = artBakeActor.findByName('handslot.r');
+        const leftSlot = artBakeActor.findByName('handslot.l');
+        const equipment = [
+          ...(rightSlot?.children.map((child) => child.name) ?? []),
+          ...(leftSlot?.children.map((child) => child.name) ?? []),
+        ].filter((name) => name.startsWith('art-bake-'));
+        const attachmentGeometry = [...artBakeEquipmentEntities].map(([name, entity]) => {
+          const position = entity.getPosition();
+          const scale = entity.getLocalScale();
+          const meshInstances = entity
+            .findComponents('render')
+            .flatMap((component) => (component as RenderComponent).meshInstances);
+          const min = new Vec3(
+            Number.POSITIVE_INFINITY,
+            Number.POSITIVE_INFINITY,
+            Number.POSITIVE_INFINITY,
+          );
+          const max = new Vec3(
+            Number.NEGATIVE_INFINITY,
+            Number.NEGATIVE_INFINITY,
+            Number.NEGATIVE_INFINITY,
+          );
+          for (const mesh of meshInstances) {
+            const boundsMin = mesh.aabb.getMin();
+            const boundsMax = mesh.aabb.getMax();
+            min.min(boundsMin);
+            max.max(boundsMax);
+          }
+          return {
+            name,
+            localScale: [scale.x, scale.y, scale.z],
+            worldPosition: [position.x, position.y, position.z],
+            worldBounds: meshInstances.length
+              ? {
+                  min: [min.x, min.y, min.z],
+                  max: [max.x, max.y, max.z],
+                  meshCount: meshInstances.length,
+                }
+              : null,
+          };
+        });
+        const attachmentMeshes = new Set(
+          [...artBakeEquipmentEntities.values()].flatMap((entity) =>
+            entity
+              .findComponents('render')
+              .flatMap((component) => (component as RenderComponent).meshInstances),
+          ),
+        );
+        const characterMeshes = (actorMeshInstances.get(artBakeActorDefinition.id) ?? []).filter(
+          (mesh) => !attachmentMeshes.has(mesh),
+        );
+        const characterMin = new Vec3(
+          Number.POSITIVE_INFINITY,
+          Number.POSITIVE_INFINITY,
+          Number.POSITIVE_INFINITY,
+        );
+        const characterMax = new Vec3(
+          Number.NEGATIVE_INFINITY,
+          Number.NEGATIVE_INFINITY,
+          Number.NEGATIVE_INFINITY,
+        );
+        for (const mesh of characterMeshes) {
+          characterMin.min(mesh.aabb.getMin());
+          characterMax.max(mesh.aabb.getMax());
+        }
+        const characterWorldBounds = characterMeshes.length
+          ? {
+              min: [characterMin.x, characterMin.y, characterMin.z],
+              max: [characterMax.x, characterMax.y, characterMax.z],
+              meshCount: characterMeshes.length,
+            }
+          : null;
+        const origin = camera.camera!.worldToScreen(new Vec3(0, 0, 0));
+        const clientRect = app.graphicsDevice.clientRect;
+        return {
+          png: dataUrl,
+          directionIndex: direction,
+          pass,
+          originScreen: [
+            (origin.x * canvas.width) / clientRect.width,
+            (origin.y * canvas.height) / clientRect.height,
+          ] as const,
+          animation: {
+            componentPlaying: artBakeAnimation.playing,
+            clip: artBakeLayer.activeState,
+            sampleSeconds: artBakeLayer.activeStateCurrentTime,
+            durationSeconds: artBakeTrack.duration,
+            loop: artBakeClip === 'Idle_A' || artBakeClip === 'Walking_A',
+            changedJoints: changedJointNames,
+          },
+          actor: artBakeActorDefinition,
+          equipment,
+          attachmentGeometry,
+          characterWorldBounds,
+        };
+      },
+    };
+    Object.assign(window, { __warwritArtBake: bakeController });
+  }
   return {
     setLighting,
     resumeLightingScript,
@@ -551,4 +940,4 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
       selectedId = null;
     },
   };
-};
+}

@@ -49,4 +49,23 @@ The accessory texture files are included as `public/assets/accessories/{barbaria
 
 This comparison pins Babylon.js 9.28.0 and PlayCanvas 2.22.4.
 
-Both adapters load the same 18 character workload, four named animation clips, equipment, 11×7 six-sided board, team/status markers, props, lighting presets, torch and 36-spark hit cue. They use the same camera definition, fixed 1600×900 drawing buffer in a 16:9 CSS viewport, and CSS-to-world hex picking. Directional shadow maps are disabled in both candidates. Parent browser checks exercise body selection, board misses, manual lighting, visual move previews, fixed-buffer resizing and WebGL context restoration; these checks are separate from comparative measurements. Do not infer a winner or performance result from implementation or source checks; the controlled comparison remains unmeasured.
+Both adapters load the same 18 character workload, four named animation clips, equipment, 11×7 six-sided board, team/status markers, props, lighting presets, torch and 36-spark hit cue. They use the same camera definition, fixed 1600×900 drawing buffer in a 16:9 CSS viewport, and CSS-to-world hex picking. Directional shadow maps are disabled in both candidates. Parent browser checks exercise body selection, board misses, manual lighting, visual move previews, fixed-buffer resizing and WebGL context restoration; these checks are separate from comparative measurements. Do not infer a winner or performance result from implementation or source checks; measured scene3 evidence and its limits are recorded in [ADR-0005](../../docs/architecture/0005-m1-renderer-playcanvas.md).
+
+## Lighting calibration candidate
+
+Scene edition `renderer-scene-3` keeps night and torch exponential fog density at `0.015` and raises their shared ambient/key values to `0.45`/`0.9`; torch intensity remains `2.8` with range `8`. Both adapters use the shared day/night key colors, clear colors, fog color, warm torch color and one torch position at the first attacker hex and height `2.2` from `src/shared/scenario.ts`; the three independent fog-of-war cells remain unchanged. The parent and independent Sol reviewer accepted the six scene3 visual cases; [retained evidence](../../docs/engineering/evidence/renderer-scene-3/README.md) binds the actual source/build and production captures. After building, review six browser captures (Babylon and PlayCanvas in day, night and torch), including all 18 silhouettes, equipment, team markers, selected `blue-knight-1`, the flag, distinctly darker night, local warm torch light and unchanged center fog-of-war. Parent Chrome review and the final production-build pair are complete for the recorded source; ART05 and the production adapter remain separate.
+
+Source checks on this candidate passed: `pnpm --filter @warwrit/renderer-spike build`, scoped ESLint, scoped Prettier check and `git diff --check`. These checks establish compilation and source hygiene only; they do not establish that the six visual acceptance cases pass.
+
+## ART05-A offline capture seam
+
+This first bounded pipeline slice bakes the equipped `Knight` silhouette in `Idle_A` at time zero from PlayCanvas 2.22.4. It emits eight yaw directions with three aligned 512×512 PNGs per direction: lit source color, engine-skinned world-space surface normals, and linear metric camera distance. The distance map stores meters in unsigned 24-bit RGB over 0–64 m; alpha zero marks background. Each PNG is cropped from the preserved 1600×900 WebGL render and its saved bytes are checked before the deterministic manifest is written.
+
+Start the isolated baker on its assigned loopback port and run it with a locally installed Playwright CLI entrypoint:
+
+```sh
+pnpm --filter @warwrit/renderer-spike exec vite --host 127.0.0.1 --port 5181 --strictPort
+WARWRIT_PLAYWRIGHT_CLI=/path/to/playwright-cli.js pnpm --filter @warwrit/renderer-spike bake:art
+```
+
+Outputs and `manifest.json` go to `public/art-pipeline/knight-idle-8dir/`. The baker validates a complete sibling staging directory before replacing the previous output; a failed capture leaves the previous files intact. Concurrent bakes to this directory are unsupported. A crash during directory promotion is not a tested recovery guarantee. The manifest records source and license SHA-256 values, per-output SHA-256 values, sample time, directions, pivot, alpha, normal-space, and depth convention. The runtime asset selector, the Rogue/Barbarian silhouettes, Walking/Attack/Hit clips, miniature representation, relighting/occlusion consumption and the matched 3×4×8 comparison remain ART05-B work; this checkpoint does not establish a representation winner or complete ART05. Inputs were inspected with the pinned local [PlayCanvas GLB inspector](../../.agents/skills/playcanvas-inspect-glb/SKILL.md); its bounds are bind-pose evidence only and its documented rigid-node-TRS limitation remains relevant to runtime clip-extreme validation.

@@ -1,0 +1,529 @@
+{
+  "schemaVersion": 1,
+  "bake": "playcanvas-2.22.4-art05-a",
+  "actor": {
+    "id": "red-knight-1",
+    "classId": "Knight",
+    "equipment": ["sword_1handed", "shield_round"]
+  },
+  "animation": {
+    "clip": "Idle_A",
+    "sampleSeconds": 0,
+    "loop": true
+  },
+  "capture": {
+    "projection": "orthographic",
+    "directions": 8,
+    "yawDegrees": [0, 45, 90, 135, 180, 225, 270, 315],
+    "sourceSize": [1600, 900],
+    "outputSize": [512, 512],
+    "sourceCrop": {
+      "x": 350,
+      "y": 0,
+      "width": 900,
+      "height": 900
+    },
+    "pivot": {
+      "x": 0.5,
+      "y": 0.3226163983345032,
+      "origin": "projected world-space actor root at [0, 0, 0]",
+      "normalizedFrom": "bottom-left"
+    },
+    "alpha": "WebGL alpha context; transparent background; saved PNG corners and coverage verified",
+    "animationProof": {
+      "componentPlayingAtCapture": true,
+      "clip": "Idle_A",
+      "sampleSeconds": 0,
+      "changedNonRootJoints": ["upperarm.r", "upperarm.l", "upperleg.r", "upperleg.l"],
+      "equippedItems": ["art-bake-sword_1handed", "art-bake-shield_round"]
+    },
+    "geometryProof": {
+      "directionIndex": 0,
+      "characterWorldBounds": {
+        "min": [-0.679804791968346, -0.07211506296398287, -0.5089623505953618],
+        "max": [0.6791461052086476, 2.3273987340569287, 0.7234413430584512],
+        "meshCount": 9
+      },
+      "attachments": [
+        {
+          "name": "sword_1handed",
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [-0.4604435861110687, 0.3727482855319977, -0.08708624541759491],
+          "worldBounds": {
+            "min": [-0.5577078109157175, -0.1718803266969054, -0.11232463665190043],
+            "max": [-0.36317624303751606, 0.5140800235700898, -0.06184779099246457],
+            "meshCount": 1
+          }
+        },
+        {
+          "name": "shield_round",
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [0.46168699860572815, 0.4952836036682129, -0.08241715282201767],
+          "worldBounds": {
+            "min": [0.29116612304287814, 0.3247583235619709, -0.13835553095101483],
+            "max": [0.6322056818208602, 0.6657975951512248, -0.010091747234443185],
+            "meshCount": 1
+          }
+        }
+      ]
+    },
+    "normal": "world-space skinned surface normal encoded as RGB = normal * 0.5 + 0.5",
+    "depth": {
+      "convention": "linear Euclidean metric distance from camera origin in meters",
+      "maximumMeters": 64,
+      "encoding": "unsigned 24-bit big-endian RGB, scaled over [0, 64] meters",
+      "cropSampling": "nearest-neighbor to preserve packed RGB values",
+      "clearPixels": "alpha is zero"
+    }
+  },
+  "licenses": [
+    {
+      "path": "assets/License-Adventurers-CC0.txt",
+      "sha256": "d4adc31660d1db22eb60eba648e01db41577548f6fa1a3576cb4a6283dae0a58"
+    },
+    {
+      "path": "assets/License-Character-Animations-CC0.txt",
+      "sha256": "373b159044d1a886ed15f57ca5a7673ba14e2623c460283452705f2056912ed9"
+    }
+  ],
+  "sourceAssets": [
+    {
+      "path": "assets/characters/Knight.glb",
+      "sha256": "e484370733824a0740683e7f6040aae0d20e5efd4107dde1175d6a2ad7e2f199"
+    },
+    {
+      "path": "assets/animations/Rig_Medium_General.glb",
+      "sha256": "5f725c0f745f36078c7238968cd5c04843cbc6260689eb6e7f5e2bbd7ffdd7ad"
+    },
+    {
+      "path": "assets/accessories/sword_1handed.gltf",
+      "sha256": "6efd2d1007403cf1739acb43474dde63b18c186ec0bffee690987f9c89352d61"
+    },
+    {
+      "path": "assets/accessories/sword_1handed.bin",
+      "sha256": "c8acdc21adf19257e66b78e86d37855474a0a9fda796c39b39d6d08a5ca34bd5"
+    },
+    {
+      "path": "assets/accessories/shield_round.gltf",
+      "sha256": "c5f4209c2d268917f1cbc699fc54674045b2c26d597039289cb97600764d5948"
+    },
+    {
+      "path": "assets/accessories/shield_round.bin",
+      "sha256": "42da365328fc8804f44cd3db6becc8bc98729f11862b63e51b42820559d6e1e0"
+    },
+    {
+      "path": "assets/accessories/knight_texture.png",
+      "sha256": "028db4d1cd8b3471e6ba21686515abd4e36ae582f8b314b71ad2ab1fb5453b12"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "knight-idle-d00-color.png",
+      "pass": "color",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12356,
+      "partialAlphaPixels": 680,
+      "alphaBounds": {
+        "left": 212,
+        "top": 174,
+        "right": 305,
+        "bottom": 358
+      },
+      "sha256": "fa5549c4323894069825b9918d9d45c58166b59fe1d449df4fb20515558fe9a0"
+    },
+    {
+      "file": "knight-idle-d00-normal.png",
+      "pass": "normal",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12356,
+      "partialAlphaPixels": 680,
+      "alphaBounds": {
+        "left": 212,
+        "top": 174,
+        "right": 305,
+        "bottom": 358
+      },
+      "sha256": "6e73ac8f28d6637402834cd5c36dc3edb6f485c52290f70e14a2e579cf4d558f"
+    },
+    {
+      "file": "knight-idle-d00-depth.png",
+      "pass": "depth",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12122,
+      "partialAlphaPixels": 237,
+      "alphaBounds": {
+        "left": 212,
+        "top": 175,
+        "right": 304,
+        "bottom": 357
+      },
+      "sha256": "74044ce0b00c0d15773b4ad1a95254e96a3a2b00932e4474d446666214527dbe"
+    },
+    {
+      "file": "knight-idle-d01-color.png",
+      "pass": "color",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11951,
+      "partialAlphaPixels": 608,
+      "alphaBounds": {
+        "left": 205,
+        "top": 173,
+        "right": 299,
+        "bottom": 353
+      },
+      "sha256": "a6b920aeb34863defe68b681f6955099726ac0868ecd81d422c98fb42d72fc79"
+    },
+    {
+      "file": "knight-idle-d01-normal.png",
+      "pass": "normal",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11951,
+      "partialAlphaPixels": 608,
+      "alphaBounds": {
+        "left": 205,
+        "top": 173,
+        "right": 299,
+        "bottom": 353
+      },
+      "sha256": "b5371609530a376421330045582be3b95c62c6579e83cc5f55ed2d901d9636b3"
+    },
+    {
+      "file": "knight-idle-d01-depth.png",
+      "pass": "depth",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11760,
+      "partialAlphaPixels": 242,
+      "alphaBounds": {
+        "left": 205,
+        "top": 174,
+        "right": 298,
+        "bottom": 352
+      },
+      "sha256": "837d941ac068ae68f727c2d028bcef1eafd129988ace41fd98227843a9c63dfb"
+    },
+    {
+      "file": "knight-idle-d02-color.png",
+      "pass": "color",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10441,
+      "partialAlphaPixels": 612,
+      "alphaBounds": {
+        "left": 201,
+        "top": 170,
+        "right": 294,
+        "bottom": 352
+      },
+      "sha256": "6d9decfbe90208da3aaa449be00893ceb4c39c8a774e1426da11dccf3a4fb9f1"
+    },
+    {
+      "file": "knight-idle-d02-normal.png",
+      "pass": "normal",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10441,
+      "partialAlphaPixels": 612,
+      "alphaBounds": {
+        "left": 201,
+        "top": 170,
+        "right": 294,
+        "bottom": 352
+      },
+      "sha256": "0664635614178b0301b61451fdce6108ee8052c98fee0bee16cb42c62cd28cbc"
+    },
+    {
+      "file": "knight-idle-d02-depth.png",
+      "pass": "depth",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10238,
+      "partialAlphaPixels": 231,
+      "alphaBounds": {
+        "left": 201,
+        "top": 171,
+        "right": 294,
+        "bottom": 352
+      },
+      "sha256": "1eefc8bef4067f6bc48ffdfd54718dfc0d56de3d197903129858fd70b69f7707"
+    },
+    {
+      "file": "knight-idle-d03-color.png",
+      "pass": "color",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12138,
+      "partialAlphaPixels": 612,
+      "alphaBounds": {
+        "left": 205,
+        "top": 168,
+        "right": 297,
+        "bottom": 355
+      },
+      "sha256": "034dbc822500c38a828b0938776b9c138755143b6c6ed96995f83ec8ae68ea39"
+    },
+    {
+      "file": "knight-idle-d03-normal.png",
+      "pass": "normal",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12138,
+      "partialAlphaPixels": 612,
+      "alphaBounds": {
+        "left": 205,
+        "top": 168,
+        "right": 297,
+        "bottom": 355
+      },
+      "sha256": "0a638e9a68886e77d8ae8efa7b1da2e9543d5fa595db4e3a6a6c51824d3380ca"
+    },
+    {
+      "file": "knight-idle-d03-depth.png",
+      "pass": "depth",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11954,
+      "partialAlphaPixels": 264,
+      "alphaBounds": {
+        "left": 205,
+        "top": 168,
+        "right": 297,
+        "bottom": 354
+      },
+      "sha256": "1aa2c93e3a85d890016217f7497f366d151a3dbda4c346e403bfeaa7f574f929"
+    },
+    {
+      "file": "knight-idle-d04-color.png",
+      "pass": "color",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 13022,
+      "partialAlphaPixels": 635,
+      "alphaBounds": {
+        "left": 206,
+        "top": 166,
+        "right": 299,
+        "bottom": 361
+      },
+      "sha256": "9fd769189f56f193385d467a339eddf957f58da73942edd49a1f774bfe587659"
+    },
+    {
+      "file": "knight-idle-d04-normal.png",
+      "pass": "normal",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 13022,
+      "partialAlphaPixels": 635,
+      "alphaBounds": {
+        "left": 206,
+        "top": 166,
+        "right": 299,
+        "bottom": 361
+      },
+      "sha256": "2bdd8eaf1d1cb365595c9cb53e530778e24138103de30a0d4f0d1d40619b8397"
+    },
+    {
+      "file": "knight-idle-d04-depth.png",
+      "pass": "depth",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12825,
+      "partialAlphaPixels": 223,
+      "alphaBounds": {
+        "left": 207,
+        "top": 166,
+        "right": 299,
+        "bottom": 360
+      },
+      "sha256": "1b499a5dbb12feed4b77753d249dabdbc4289090afb81cfa86a58756c15853e2"
+    },
+    {
+      "file": "knight-idle-d05-color.png",
+      "pass": "color",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12213,
+      "partialAlphaPixels": 600,
+      "alphaBounds": {
+        "left": 213,
+        "top": 167,
+        "right": 306,
+        "bottom": 366
+      },
+      "sha256": "9943ddbd5ad522cfff588c01c611f1f9ccf60bdd91eb170d74c3d27d5c9f06ef"
+    },
+    {
+      "file": "knight-idle-d05-normal.png",
+      "pass": "normal",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12213,
+      "partialAlphaPixels": 600,
+      "alphaBounds": {
+        "left": 213,
+        "top": 167,
+        "right": 306,
+        "bottom": 366
+      },
+      "sha256": "2f1b9cab0f0a8055769bda64b28a2150461daca1ab0db23662a363d448fdb48a"
+    },
+    {
+      "file": "knight-idle-d05-depth.png",
+      "pass": "depth",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12037,
+      "partialAlphaPixels": 247,
+      "alphaBounds": {
+        "left": 213,
+        "top": 167,
+        "right": 306,
+        "bottom": 365
+      },
+      "sha256": "3353fa9614462c38216e308ffcbc97e24999fd13f15ef7d5905d6a4695443237"
+    },
+    {
+      "file": "knight-idle-d06-color.png",
+      "pass": "color",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10520,
+      "partialAlphaPixels": 642,
+      "alphaBounds": {
+        "left": 217,
+        "top": 170,
+        "right": 310,
+        "bottom": 367
+      },
+      "sha256": "efe5f9d8484a4b0be2c10ae07d229d7d1fbb79681eebe46bbb0757191117c390"
+    },
+    {
+      "file": "knight-idle-d06-normal.png",
+      "pass": "normal",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10520,
+      "partialAlphaPixels": 642,
+      "alphaBounds": {
+        "left": 217,
+        "top": 170,
+        "right": 310,
+        "bottom": 367
+      },
+      "sha256": "0fdd17d98013f24300eebc6a73a95e6f538e4e4959bda702e9d682b3331ba640"
+    },
+    {
+      "file": "knight-idle-d06-depth.png",
+      "pass": "depth",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10305,
+      "partialAlphaPixels": 245,
+      "alphaBounds": {
+        "left": 217,
+        "top": 171,
+        "right": 310,
+        "bottom": 367
+      },
+      "sha256": "d56b1d7cea0a6a756dbbf6cddbc62edd39d624b7d25e493f4fa539404ae47e58"
+    },
+    {
+      "file": "knight-idle-d07-color.png",
+      "pass": "color",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11957,
+      "partialAlphaPixels": 669,
+      "alphaBounds": {
+        "left": 214,
+        "top": 173,
+        "right": 306,
+        "bottom": 363
+      },
+      "sha256": "85aacc09879f8bcf6ba8867f88f91bdbd873708baffa7a6faa47616b30519b10"
+    },
+    {
+      "file": "knight-idle-d07-normal.png",
+      "pass": "normal",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11957,
+      "partialAlphaPixels": 669,
+      "alphaBounds": {
+        "left": 214,
+        "top": 173,
+        "right": 306,
+        "bottom": 363
+      },
+      "sha256": "3277d09090d9bd12ca53cc04371573d31e7684a590db8f259bc94d58e6089229"
+    },
+    {
+      "file": "knight-idle-d07-depth.png",
+      "pass": "depth",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11764,
+      "partialAlphaPixels": 280,
+      "alphaBounds": {
+        "left": 214,
+        "top": 174,
+        "right": 306,
+        "bottom": 363
+      },
+      "sha256": "e93f2ed69895a798132b56c9be9588c0a05bc1c3393ad6f56e619b1542f37b23"
+    }
+  ]
+}

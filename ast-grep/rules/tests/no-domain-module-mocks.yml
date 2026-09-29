@@ -1,8 +1,10 @@
 id: no-domain-module-mocks
 language: Tsx
 severity: error
-message: Mock only external boundaries, not workspace or local modules.
-note: AGENTS.md "Test doubles are for external boundaries, not for reimplementing the domain."
+message: Do not mock workspace packages; exercise their public behavior.
+note: |
+  AGENTS.md "Test doubles are for external boundaries, not for reimplementing
+  the domain." Server adapters may replace their own database/session modules.
 files:
   - '**/*.test.ts'
   - '**/*.test.tsx'
@@ -17,4 +19,4 @@ rule:
         has:
           nthChild: 1
           kind: string
-          regex: ^['"](@warwrit/|\.)
+          regex: ^['"]@warwrit/

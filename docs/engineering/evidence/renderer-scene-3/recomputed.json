@@ -1,0 +1,44 @@
+[
+  {
+    "candidate": "babylon",
+    "sha256": "06c5c1325303e1f7e3f48b9b5ce8b715131f03608b5091a2d481737145c63692",
+    "frames": 14401,
+    "viewportCss": [889, 500],
+    "minimum1sFps": 120,
+    "cpuSubmitMs": {
+      "p50": 3.299999952316284,
+      "p95": 4.300000071525574
+    },
+    "gpuMs": {
+      "status": "READY",
+      "p50": 1.705124,
+      "p95": 1.858833,
+      "queryCount": 14401,
+      "validSamples": 14401,
+      "disjointDiscardCount": 0,
+      "reason": null
+    },
+    "elapsedMs": 120003.0
+  },
+  {
+    "candidate": "playcanvas",
+    "sha256": "7a70c8bf77a2053ffa7c2c4561b0740a3334a6392d4c420ef19a79cb69c49d03",
+    "frames": 14400,
+    "viewportCss": [889, 500],
+    "minimum1sFps": 119,
+    "cpuSubmitMs": {
+      "p50": 0.8000000715255737,
+      "p95": 2.700000047683716
+    },
+    "gpuMs": {
+      "status": "READY",
+      "p50": 2.071874,
+      "p95": 2.351875,
+      "queryCount": 14400,
+      "validSamples": 14400,
+      "disjointDiscardCount": 0,
+      "reason": null
+    },
+    "elapsedMs": 120001.70000004768
+  }
+]

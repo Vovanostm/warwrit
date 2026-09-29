@@ -8,6 +8,21 @@
   "workspaces": {
     "patterns": ["apps/*", "packages/*"],
   },
+  // Colyseus invokes Room lifecycle hooks and the message map by name.
+  "usedClassMembers": [
+    "onCreate",
+    "onAuth",
+    "onJoin",
+    "onLeave",
+    "onDrop",
+    "onReconnect",
+    "onDispose",
+    "onBeforePatch",
+    "onBeforeShutdown",
+    "onCacheRoom",
+    "onRestoreRoom",
+    "messages",
+  ],
   // Syntactic analysis misreads members reached through inferred instance types.
   "typeAware": { "enabled": true },
   "rules": {

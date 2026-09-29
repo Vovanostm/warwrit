@@ -1,0 +1,559 @@
+{
+  "schemaVersion": 1,
+  "bake": "playcanvas-2.22.4-art05-b2-scout",
+  "actor": {
+    "id": "red-knight-1",
+    "classId": "Knight",
+    "equipment": ["sword_1handed", "shield_round"]
+  },
+  "animation": {
+    "clip": "Melee_1H_Attack_Chop",
+    "sampleSeconds": 0.5333333611488342,
+    "durationSeconds": 1.0666667222976685,
+    "loop": false
+  },
+  "capture": {
+    "projection": "orthographic",
+    "directions": 8,
+    "yawDegrees": [0, 45, 90, 135, 180, 225, 270, 315],
+    "sourceSize": [1600, 900],
+    "outputSize": [512, 512],
+    "measuredCaptureMilliseconds": 837.8603330000003,
+    "sourceCrop": {
+      "x": 350,
+      "y": 0,
+      "width": 900,
+      "height": 900
+    },
+    "pivot": {
+      "x": 0.5,
+      "y": 0.3226163983345032,
+      "origin": "projected world-space actor root at [0, 0, 0]",
+      "normalizedFrom": "bottom-left"
+    },
+    "alpha": "WebGL alpha context; transparent background; saved PNG corners and coverage verified",
+    "animationProof": {
+      "componentPlayingAtCapture": true,
+      "clip": "Melee_1H_Attack_Chop",
+      "sampleSeconds": 0.5333333611488342,
+      "changedNonRootJoints": ["upperarm.r", "upperarm.l", "upperleg.r", "upperleg.l"],
+      "equippedItems": ["art-bake-sword_1handed", "art-bake-shield_round"]
+    },
+    "geometryProof": {
+      "directionIndex": 0,
+      "characterWorldBounds": {
+        "min": [-0.7461009722196897, 0.007582474108518422, -0.8747183398573328],
+        "max": [0.7679686906514227, 2.548045673015292, 0.47873397560014924],
+        "meshCount": 9
+      },
+      "attachments": [
+        {
+          "name": "sword_1handed",
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [-0.5402137637138367, 0.8960963487625122, 0.4295235574245453],
+          "worldBounds": {
+            "min": [-0.6399411474560776, 0.8214360566566434, 0.2837892551360532],
+            "max": [-0.4399407329700812, 1.0841149922337168, 0.9622952471723787],
+            "meshCount": 1
+          }
+        },
+        {
+          "name": "shield_round",
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [0.6212369799613953, 0.6828698515892029, -0.07851089537143707],
+          "worldBounds": {
+            "min": [0.437331830245353, 0.5123445769660077, -0.21185538956187527],
+            "max": [0.7969893435524307, 0.8533838365423355, 0.06904861462864043],
+            "meshCount": 1
+          }
+        }
+      ]
+    },
+    "normal": "world-space skinned surface normal encoded as RGB = normal * 0.5 + 0.5",
+    "depth": {
+      "convention": "linear Euclidean metric distance from camera origin in meters",
+      "maximumMeters": 64,
+      "encoding": "unsigned 24-bit big-endian RGB, scaled over [0, 64] meters",
+      "cropSampling": "nearest-neighbor to preserve packed RGB values",
+      "clearPixels": "alpha is zero"
+    }
+  },
+  "licenses": [
+    {
+      "path": "assets/License-Adventurers-CC0.txt",
+      "sha256": "d4adc31660d1db22eb60eba648e01db41577548f6fa1a3576cb4a6283dae0a58"
+    },
+    {
+      "path": "assets/License-Character-Animations-CC0.txt",
+      "sha256": "373b159044d1a886ed15f57ca5a7673ba14e2623c460283452705f2056912ed9"
+    }
+  ],
+  "sourceAssets": [
+    {
+      "path": "assets/characters/Knight.glb",
+      "sha256": "e484370733824a0740683e7f6040aae0d20e5efd4107dde1175d6a2ad7e2f199"
+    },
+    {
+      "path": "assets/animations/Rig_Medium_General.glb",
+      "sha256": "5f725c0f745f36078c7238968cd5c04843cbc6260689eb6e7f5e2bbd7ffdd7ad"
+    },
+    {
+      "path": "assets/animations/Rig_Medium_CombatMelee.glb",
+      "sha256": "c55e6ec1c79e83ae21d46fe1cd921c1b64be8b9a524a24517e51c6ba99231459"
+    },
+    {
+      "path": "assets/accessories/sword_1handed.gltf",
+      "sha256": "6efd2d1007403cf1739acb43474dde63b18c186ec0bffee690987f9c89352d61"
+    },
+    {
+      "path": "assets/accessories/sword_1handed.bin",
+      "sha256": "c8acdc21adf19257e66b78e86d37855474a0a9fda796c39b39d6d08a5ca34bd5"
+    },
+    {
+      "path": "assets/accessories/shield_round.gltf",
+      "sha256": "c5f4209c2d268917f1cbc699fc54674045b2c26d597039289cb97600764d5948"
+    },
+    {
+      "path": "assets/accessories/shield_round.bin",
+      "sha256": "42da365328fc8804f44cd3db6becc8bc98729f11862b63e51b42820559d6e1e0"
+    },
+    {
+      "path": "assets/accessories/knight_texture.png",
+      "sha256": "028db4d1cd8b3471e6ba21686515abd4e36ae582f8b314b71ad2ab1fb5453b12"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d00-color.png",
+      "pass": "color",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12808,
+      "partialAlphaPixels": 708,
+      "alphaBounds": {
+        "left": 206,
+        "top": 164,
+        "right": 316,
+        "bottom": 349
+      },
+      "sha256": "7b596f261d35c7850f1c8949dcfdc07e9b1454634b820c50d63bf6d6ee066e9b",
+      "bytes": 41804
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d00-normal.png",
+      "pass": "normal",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12808,
+      "partialAlphaPixels": 708,
+      "alphaBounds": {
+        "left": 206,
+        "top": 164,
+        "right": 316,
+        "bottom": 349
+      },
+      "sha256": "2bf6719ca37f1498a988491d7438b3b32250adbe2df7c353a6e084f5090c6189",
+      "bytes": 41846
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d00-depth.png",
+      "pass": "depth",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12569,
+      "partialAlphaPixels": 236,
+      "alphaBounds": {
+        "left": 207,
+        "top": 164,
+        "right": 315,
+        "bottom": 349
+      },
+      "sha256": "8e90a72e70fc0b0c350020a40833062f50f04b0888b5cddc07ec082f5f071101",
+      "bytes": 42847
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d01-color.png",
+      "pass": "color",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12103,
+      "partialAlphaPixels": 766,
+      "alphaBounds": {
+        "left": 174,
+        "top": 166,
+        "right": 311,
+        "bottom": 350
+      },
+      "sha256": "9fa4afcd495561d8a3be0c123f796c3907753c95b94580fb13c826dca7d9bb94",
+      "bytes": 41429
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d01-normal.png",
+      "pass": "normal",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12103,
+      "partialAlphaPixels": 766,
+      "alphaBounds": {
+        "left": 174,
+        "top": 166,
+        "right": 311,
+        "bottom": 350
+      },
+      "sha256": "1621ac51536f57fdbd78f8c043d05477867727f700021e7cecf9230d3395df79",
+      "bytes": 41170
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d01-depth.png",
+      "pass": "depth",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11862,
+      "partialAlphaPixels": 300,
+      "alphaBounds": {
+        "left": 175,
+        "top": 166,
+        "right": 311,
+        "bottom": 350
+      },
+      "sha256": "160552ea5b45875291d09ecfb16c16063f487ab0fdfa60beaa216e4517a5b632",
+      "bytes": 41615
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d02-color.png",
+      "pass": "color",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11256,
+      "partialAlphaPixels": 718,
+      "alphaBounds": {
+        "left": 182,
+        "top": 169,
+        "right": 313,
+        "bottom": 350
+      },
+      "sha256": "67b912821cdd5eba1e3c3b6fc5489a99973420c54a9427f30b180f44e605c2ff",
+      "bytes": 36711
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d02-normal.png",
+      "pass": "normal",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11256,
+      "partialAlphaPixels": 718,
+      "alphaBounds": {
+        "left": 182,
+        "top": 169,
+        "right": 313,
+        "bottom": 350
+      },
+      "sha256": "9dbebfbc0c8ea5493a382dfc93bcf5afa3afb6c252893ef718872510c7d97860",
+      "bytes": 37305
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d02-depth.png",
+      "pass": "depth",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11024,
+      "partialAlphaPixels": 297,
+      "alphaBounds": {
+        "left": 182,
+        "top": 169,
+        "right": 312,
+        "bottom": 350
+      },
+      "sha256": "2e5be9b7a06362743c6e2fc649b3dc9511546ec5ad21c730bb877689eac07b23",
+      "bytes": 38987
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d03-color.png",
+      "pass": "color",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12046,
+      "partialAlphaPixels": 578,
+      "alphaBounds": {
+        "left": 214,
+        "top": 170,
+        "right": 304,
+        "bottom": 348
+      },
+      "sha256": "425b5804328f487474756743ec1e1a08d7708bd46e038f47a9ff94796e6aacdb",
+      "bytes": 31712
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d03-normal.png",
+      "pass": "normal",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12046,
+      "partialAlphaPixels": 578,
+      "alphaBounds": {
+        "left": 214,
+        "top": 170,
+        "right": 304,
+        "bottom": 348
+      },
+      "sha256": "08c8c7270ec760caaa7beee06e3bc9f976850e1f1db2c59d4c2864b725b14145",
+      "bytes": 33880
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d03-depth.png",
+      "pass": "depth",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11880,
+      "partialAlphaPixels": 203,
+      "alphaBounds": {
+        "left": 214,
+        "top": 170,
+        "right": 303,
+        "bottom": 348
+      },
+      "sha256": "1377389fc39ea93378905aec7bee8440482be793965221aa373a98cd76013a60",
+      "bytes": 37951
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d04-color.png",
+      "pass": "color",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12913,
+      "partialAlphaPixels": 663,
+      "alphaBounds": {
+        "left": 195,
+        "top": 169,
+        "right": 305,
+        "bottom": 346
+      },
+      "sha256": "d29fa54a7ae9ab298e6259b782c7bc9b15a45a872826093d5efb72fe69ab96f9",
+      "bytes": 31936
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d04-normal.png",
+      "pass": "normal",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12913,
+      "partialAlphaPixels": 663,
+      "alphaBounds": {
+        "left": 195,
+        "top": 169,
+        "right": 305,
+        "bottom": 346
+      },
+      "sha256": "ce02318f7310c955310ef52e3e838e7d17319ba6f80c177d63cc093ae664b1d3",
+      "bytes": 35112
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d04-depth.png",
+      "pass": "depth",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12701,
+      "partialAlphaPixels": 227,
+      "alphaBounds": {
+        "left": 196,
+        "top": 169,
+        "right": 304,
+        "bottom": 346
+      },
+      "sha256": "1ca6e86b9aea9e911d43844819165890a427abd9174c1c72daf1930b25f1cf84",
+      "bytes": 39747
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d05-color.png",
+      "pass": "color",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12058,
+      "partialAlphaPixels": 744,
+      "alphaBounds": {
+        "left": 200,
+        "top": 166,
+        "right": 337,
+        "bottom": 347
+      },
+      "sha256": "96762848e26956d9f5f6c832c4039be7a9972368be8769117d5e5a5446696f56",
+      "bytes": 33429
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d05-normal.png",
+      "pass": "normal",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12058,
+      "partialAlphaPixels": 744,
+      "alphaBounds": {
+        "left": 200,
+        "top": 166,
+        "right": 337,
+        "bottom": 347
+      },
+      "sha256": "1aef80c0c8b9ea3093c15a30650835f5148f4605e57d7c64d61aa6237256dff1",
+      "bytes": 37399
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d05-depth.png",
+      "pass": "depth",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11814,
+      "partialAlphaPixels": 265,
+      "alphaBounds": {
+        "left": 200,
+        "top": 167,
+        "right": 337,
+        "bottom": 347
+      },
+      "sha256": "f02db3331da4669996307a8e7811b62f0fd77b70304b64bd02485a05c851ff95",
+      "bytes": 40268
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d06-color.png",
+      "pass": "color",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11246,
+      "partialAlphaPixels": 738,
+      "alphaBounds": {
+        "left": 198,
+        "top": 164,
+        "right": 329,
+        "bottom": 350
+      },
+      "sha256": "6c718ebf21a1f67a7be1c1b777512e5418c947d1c4c1910b581a20cdb3575150",
+      "bytes": 35013
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d06-normal.png",
+      "pass": "normal",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11246,
+      "partialAlphaPixels": 738,
+      "alphaBounds": {
+        "left": 198,
+        "top": 164,
+        "right": 329,
+        "bottom": 350
+      },
+      "sha256": "ccbc5a3eeab9837e34056795e007f5e490f226d067aecc197414dde6a9597af2",
+      "bytes": 38036
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d06-depth.png",
+      "pass": "depth",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10995,
+      "partialAlphaPixels": 280,
+      "alphaBounds": {
+        "left": 199,
+        "top": 164,
+        "right": 329,
+        "bottom": 349
+      },
+      "sha256": "a00897157e630bf8b21288aec027493b8c1daac44a8648ca4523642041f1ce20",
+      "bytes": 38922
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d07-color.png",
+      "pass": "color",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12199,
+      "partialAlphaPixels": 585,
+      "alphaBounds": {
+        "left": 207,
+        "top": 162,
+        "right": 297,
+        "bottom": 351
+      },
+      "sha256": "02f87385ae36ae33c122e5ec2d7600bfa61a9150a75915cf05626651ab9ce3a6",
+      "bytes": 40300
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d07-normal.png",
+      "pass": "normal",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12199,
+      "partialAlphaPixels": 585,
+      "alphaBounds": {
+        "left": 207,
+        "top": 162,
+        "right": 297,
+        "bottom": 351
+      },
+      "sha256": "234ff1a717d1134d1e771125e105c4611a7f5f182546405fa5819dcd4f8eafa4",
+      "bytes": 40751
+    },
+    {
+      "file": "knight-melee_1h_attack_chop-t0p5333333611488342-d07-depth.png",
+      "pass": "depth",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 12032,
+      "partialAlphaPixels": 215,
+      "alphaBounds": {
+        "left": 208,
+        "top": 163,
+        "right": 297,
+        "bottom": 351
+      },
+      "sha256": "64f293ea6c9c3877ceb7b3cb67f8e8efcec90bb9426621e8494236d9b0cf6b5c",
+      "bytes": 41560
+    }
+  ]
+}

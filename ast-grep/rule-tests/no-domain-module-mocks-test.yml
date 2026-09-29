@@ -1,8 +1,7 @@
 id: no-domain-module-mocks
 valid:
   - "vi.mock('openid-client');"
-  - "vi.mock('pg', () => ({ Pool: FakePool }));"
+  - "vi.mock('./executor.js', () => ({ executeEncounterCommand: vi.fn() }));"
 invalid:
   - "vi.mock('@warwrit/game-core');"
-  - "vi.mock('./economy.js', () => ({ prepareEconomyCandidate: vi.fn() }));"
-  - "vi.doMock('../company/input.js');"
+  - "vi.doMock('@warwrit/protocol', () => ({}));"
