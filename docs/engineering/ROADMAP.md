@@ -8,7 +8,7 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns coordination and serial integration. Observed main `0973085a`, tree `fbfd0dbb`, includes PR113 pure causal learning, PR112 persistent encounter fixtures and the independently merged PR111 agent harness. Parent audited PR113/PR112 PR and main CI and their stated focused checks; this is historical evidence for those exact trees. G10, persistent company/world execution, renderer selection and full M1 remain unfinished. The [focused studio dispatch](CURRENT_PLAN.md#focused-studio-dispatch) records current ownership and the two-child runtime limit.
+The parent owns coordination and serial integration. Observed main `0973085a`, tree `fbfd0dbb`, includes PR113 pure causal learning, PR112 persistent encounter fixtures and the independently merged PR111 agent harness. Parent audited PR113/PR112 PR and main CI and their stated focused checks; this is historical evidence for those exact trees. G10, persistent company/world execution, renderer selection and full M1 remain unfinished. The [focused studio dispatch](CURRENT_PLAN.md#focused-studio-dispatch) records current ownership and the observed child-thread limit and current dispatch state.
 
 | Lane                  | Observed state                                         | Next responsibility                                  |
 | --------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
