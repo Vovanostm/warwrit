@@ -8,7 +8,18 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns integration and final evidence. Observed main `154af425`, tree `566c41ff`, includes PR115 persistent AI/Colyseus runtime, released migration0004 and PR116 measured PlayCanvas selection. PR116 clean gate passed for that tree, actual-main readback pending; fixture admission is not physical JOIN. G10 A is local and reviewed, B1 is active, B2 and durable company/world remain pending. [Parallel waves](PARALLEL_WAVES.md) assign current work and disjoint next packets. The existing session retains two child slots; configuration prepares a three-child trial for a fresh session, with actual capacity and benefit unverified.
+The parent owns integration and final evidence. Live main `068196e`, tree
+`4f2e1b7f`, includes PR115 runtime/migration0004, PR116 scene3/ADR0005 and PR117
+parallel packets. PR117 actual-main CI36517328048 passed the existing full gate.
+Fixture admission is not physical JOIN. A subsequent ART05 review found disabled
+PlayCanvas component playback: historical scene3 results do not prove matched
+animated workloads. [ADR0005](../architecture/0005-m1-renderer-playcanvas.md)
+reopens animated acceptance while retaining the current implementation choice.
+G10 A is local/reviewed; B1 corrections and B2 remain required before H. Luna owns
+B1 corrections while Sol reviews frozen ART05-A; they swap implementation/review
+packets at a frozen handoff. [Parallel waves](PARALLEL_WAVES.md) records dependency
+and path boundaries. This session retains two child slots; PR117's three-child
+configuration needs a fresh trusted host and actual capacity readback.
 
 | Lane                  | Observed state                                         | Next responsibility                                  |
 | --------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
@@ -18,7 +29,7 @@ The parent owns integration and final evidence. Observed main `154af425`, tree `
 | PB diagnostic         | PB06 merged; optional follow-ups unassigned            | Use only for useful diagnostic evidence              |
 | World / identity      | Pure world foundation/routes and local identity merged | Movement and durable world/account/company authority |
 
-C05 and learning composition through pure C08 are delivered in PR100/104/107/113. Existing authentic local/outcome causes are composed; the real producer entering OUT_OF_CONTACT remains G10/world/JOIN work. E05 and G09 are delivered in PR101/102; G10 is next. PR108 provides pure route/arrival preparation, while real movement and persistence remain separate. PR106 provides local OIDC identity; ID03 company binding waits for H. PR109 delivers the renderer harness; PR116 closes the measured renderer selection for this Mac/Chrome; ART05 variants and ART06 integration remain open. PR112/115 deliver PostgreSQL fixture execution, AI, transport and scoped restart evidence; physical JOIN remains separate. Migration0004 is released; recheck the next H migration. The full M1 launcher remains pending. Build game-core before testkit checks; green independent branches do not prove their union.
+C05 and learning composition through pure C08 are delivered in PR100/104/107/113. Existing authentic local/outcome causes are composed; the real producer entering OUT_OF_CONTACT remains G10/world/JOIN work. E05 and G09 are delivered in PR101/102; G10 is next. PR108 provides pure route/arrival preparation, while real movement and persistence remain separate. PR106 provides local OIDC identity; ID03 company binding waits for H. PR109 delivers the renderer harness; PR116 recorded the renderer selection, but the later animation defect reopens matched animated acceptance; ART05 variants and ART06 integration remain open. PR112/115 deliver PostgreSQL fixture execution, AI, transport and scoped restart evidence; physical JOIN remains separate. Migration0004 is released; recheck the next H migration. The full M1 launcher remains pending. Build game-core before testkit checks; green independent branches do not prove their union.
 
 ## Domain and durable company
 

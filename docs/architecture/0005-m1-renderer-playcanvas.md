@@ -1,11 +1,32 @@
 # ADR-0005: Use PlayCanvas for the private M1 renderer
 
-- Status: Accepted for the current Mac/Chrome M1 target
+- Status: Implementation choice retained; animated comparison acceptance reopened
 - Date: 2026-09-29
 - Supersedes: renderer-provisional portion of ADR-0003 only
 - Sources: canonical M1 ART04, Q-T03, owner full-M1 assignment
 
-## Decision
+## Evidence correction — 2026-09-29
+
+ART05 review found that the measured PlayCanvas adapter loaded the four clips but
+never enabled component playback: `activate: false` and `baseLayer.play(...)` left
+`AnimComponent.playing` false. In installed PlayCanvas 2.22.4 the animation system
+updates only playing components. This is present in PR116 HEAD `be814913`, before
+the ART05 delta. Sol traced the installed engine and parent inspected the baked
+bind-pose image; no corrected animated capture has been run yet.
+
+The historical figures below remain observations of their recorded build. They
+**do not establish equivalent animated workloads**, and their performance ranking
+must not be used as the accepted animated comparison. The earlier source/visual
+review missed this defect. Keep PlayCanvas as the current implementation choice
+while correcting and remeasuring; ART04's animated acceptance is reopened, and
+ART05/ART06 remain incomplete. No switch of engine is authorized by this finding.
+
+Before restoring acceptance: enable/evaluate real animation, verify non-root joint
+movement over clip time and visible attached equipment, then repeat the matched
+Mac/Chrome visual and CPU/GPU capture with retained raw data and source/build
+identity. Corrected evidence must be reviewed before updating this decision.
+
+## Historical decision (superseded evidence claim)
 
 Use PlayCanvas 2.22.4 for the M1 renderer adapter. Keep canonical simulation and
 state outside the engine. The production adapter remains ART06; this decision
