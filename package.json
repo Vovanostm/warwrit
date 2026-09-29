@@ -10,6 +10,7 @@
   },
   "scripts": {
     "agent:preflight": "bash scripts/agent-preflight.sh",
+    "agent:status": "bash scripts/agent-status.sh",
     "bootstrap": "pnpm install --frozen-lockfile && pnpm verify",
     "build": "pnpm -r --if-present run build",
     "check:architecture": "node scripts/check-architecture.mjs",

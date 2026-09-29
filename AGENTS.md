@@ -110,7 +110,8 @@ and reading the files when the graph is stale, missing, returns nothing, or the
 answer decides ownership of a rule. Graph results are pointers; the source is proof.
 
 Run `pnpm agent:preflight` at the start of a task or resume to record checkout
-identity. Focused commands for editing are in
+identity, and `pnpm agent:status` for the live main, CI, open PRs and active
+writer branches instead of trusting a written status. Focused commands for editing are in
 [LOCAL_DEVELOPMENT.md](docs/engineering/LOCAL_DEVELOPMENT.md#focused-checks).
 
 ## Dependency and state boundaries

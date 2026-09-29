@@ -3,15 +3,15 @@
 An on-demand navigation aid, not a second GDD, current plan, permission store or
 automatically updated Codex personal memory. Do not load every link into every task.
 
-| Need                                     | Existing owner                                                                | Refresh boundary                                                                 |
-| ---------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Authority and tests                      | [AGENTS.md](../../AGENTS.md)                                                  | Read applicable instructions when entering scope                                 |
-| Active slice, source IDs and writer ACKs | [CURRENT_PLAN](CURRENT_PLAN.md), linked Airtable/GitHub records               | Live readback before activation, shared writes or delivery                       |
-| Restore a task                           | [warwrit-context](../../.agents/skills/warwrit-context/SKILL.md)              | Check actual checkout/revision/dirty state and required source edition on resume |
-| Technology constraints                   | [technology handoff](AI_TECHNOLOGY_HANDOFF.md), accepted ADRs, lockfile/types | Before using changing library APIs                                               |
-| Commands/environment                     | [local development](LOCAL_DEVELOPMENT.md#focused-checks), package scripts     | Before execution in another checkout/toolchain                                   |
-| Handoff/evidence fields                  | [warwrit-delivery](../../.agents/skills/warwrit-delivery/SKILL.md#handoff)    | Diff/source changes invalidate affected evidence                                 |
-| Role assignment                          | [agent team](AGENT_TEAM.md)                                                   | Verify host support and resource ownership                                       |
+| Need                                     | Existing owner                                                                | Refresh boundary                                                                     |
+| ---------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Authority and tests                      | [AGENTS.md](../../AGENTS.md)                                                  | Read applicable instructions when entering scope                                     |
+| Active slice, source IDs and writer ACKs | [CURRENT_PLAN](CURRENT_PLAN.md), linked Airtable/GitHub records               | `pnpm agent:status`, then live readback before activation, shared writes or delivery |
+| Restore a task                           | [warwrit-context](../../.agents/skills/warwrit-context/SKILL.md)              | Check actual checkout/revision/dirty state and required source edition on resume     |
+| Technology constraints                   | [technology handoff](AI_TECHNOLOGY_HANDOFF.md), accepted ADRs, lockfile/types | Before using changing library APIs                                                   |
+| Commands/environment                     | [local development](LOCAL_DEVELOPMENT.md#focused-checks), package scripts     | Before execution in another checkout/toolchain                                       |
+| Handoff/evidence fields                  | [warwrit-delivery](../../.agents/skills/warwrit-delivery/SKILL.md#handoff)    | Diff/source changes invalidate affected evidence                                     |
+| Role assignment                          | [agent team](AGENT_TEAM.md)                                                   | Verify host support and resource ownership                                           |
 
 ## Source-linked operational lessons
 
