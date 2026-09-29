@@ -57,23 +57,58 @@ try {
   const company = createCompanyStorageFixture();
   const studyTask = company.learning.tasks.tasks[0];
   assert.ok(studyTask);
+  const companyId = company.economy.lifecycle.companyId;
+  const worldId = company.economy.lifecycle.worldId;
+  const characterIds = new Set(
+    company.economy.lifecycle.characters.map((character) => character.identity.characterId),
+  );
+  assert.equal(studyTask.start.command.companyId, companyId);
+  assert.equal(studyTask.start.command.worldId, worldId);
+  assert.ok(characterIds.has(studyTask.start.command.payload.characterId));
   assert.equal(studyTask.start.taskId, 'storage-study-task');
   assert.equal(studyTask.start.command.payload.goal.sectionId, 'wound-care-basics-1');
-  assert.equal(company.learning.studyAccess.intervals[0]?.itemId, 'copy');
+  const studyInterval = company.learning.studyAccess.intervals[0];
+  assert.equal(studyInterval?.itemId, 'copy');
+  assert.ok(
+    company.economy.physical?.items.some(
+      (item) =>
+        item.itemId === studyInterval?.itemId &&
+        item.owner.kind === 'CHARACTER' &&
+        item.owner.id === studyTask.start.command.payload.characterId &&
+        item.containerId === studyInterval.containerId,
+    ),
+  );
   assert.deepEqual(company.learning.studyProgress[0]?.learnedCarry, {
     numerator: '1',
     denominator: '9',
   });
   assert.equal(company.social.relations.length, 1);
   assert.equal(company.social.chronicle[0]?.factId, 'storage-known-fact');
+  assert.ok(
+    company.social.relations.every(
+      (relation) => characterIds.has(relation.fromId) && characterIds.has(relation.toId),
+    ),
+  );
+  assert.ok(
+    company.social.chronicle.every(
+      (fact) =>
+        characterIds.has(fact.personId) &&
+        (fact.otherId === undefined || characterIds.has(fact.otherId)),
+    ),
+  );
   assert.equal(
     company.economy.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ,
     '9007199254740993123456789',
   );
+  const privateAccount = company.economy.finance.accounts.find(
+    (account) =>
+      account.recipient.kind === 'CHARACTER' &&
+      account.recipient.id === company.social.relations[0]?.toId,
+  );
   assert.deepEqual(
-    company.economy.finance.accounts[1] && {
-      actualPaused: company.economy.finance.accounts[1].actualPaused,
-      knownPaused: company.economy.finance.accounts[1].knownPaused,
+    privateAccount && {
+      actualPaused: privateAccount.actualPaused,
+      knownPaused: privateAccount.knownPaused,
     },
     { actualPaused: true, knownPaused: false },
   );

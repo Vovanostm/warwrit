@@ -14,8 +14,8 @@ import {
   stopLearningTask,
 } from '@warwrit/game-core';
 import type { CommandOf, MaterializedCompanyState, StudySectionProgress } from '@warwrit/game-core';
-import { command, context, economy, place, scope } from './company-economy-fixture.js';
-import { addItem, item, itemAccess } from './company-physical-fixture.js';
+import { command, context, place, scope } from './company-economy-fixture.js';
+import { addItem, item, itemAccess, visibleCharacter } from './company-physical-fixture.js';
 import { createCompanyCombatAggregateFixture } from './company-combat-aggregate-fixture.js';
 
 const fraction = (numerator: bigint | number, denominator: bigint | number) => ({
@@ -32,33 +32,54 @@ export function createCompanyStorageFixture() {
     practiceProfile: aggregate.practiceProfile,
   });
   if (consumed.kind !== 'PREPARED') throw new Error(consumed.error);
-  const learningRoot = addItem(
-    economy([], 100000n, 0),
-    item('copy', 'study-book-medicine', { kind: 'COMPANY', id: 'company' }, 'fixture-supply'),
-  ) as MaterializedCompanyState;
-  Object.assign(learningRoot.lifecycle.characters[0]!, {
-    skills: { scholarship: 25, medicine: initialSkillProgress(0, 'storage-study-opening') },
-    aptitudeBySkill: { medicine: 10000 },
+  const leaderId = aggregate.f.root.lifecycle.company!.currentLeaderId;
+  const workerId = aggregate.f.root.lifecycle.characters.find((character) =>
+    character.identity.characterId.endsWith('worker-0'),
+  )?.identity.characterId;
+  if (!workerId) throw new Error('Expected the consumed company worker');
+  const packId = `${leaderId}-pack`;
+  const studyBook = item(
+    'copy',
+    'study-book-medicine',
+    { kind: 'CHARACTER', id: leaderId },
+    packId,
+  );
+  const enableStudy = (character: MaterializedCompanyState['lifecycle']['characters'][number]) => ({
+    ...character,
+    skills: {
+      ...character.skills,
+      scholarship: 25,
+      medicine: initialSkillProgress(0, 'storage-study-opening'),
+    },
+    aptitudeBySkill: { ...character.aptitudeBySkill, medicine: 10000 },
     perks: ['scholarship-25-a'],
   });
+  const learningRoot = visibleCharacter(
+    addItem(aggregate.f.root, studyBook),
+    leaderId,
+    enableStudy,
+  ) as MaterializedCompanyState;
 
   const work = COMPANY_CATALOGUE.works.find((entry) => entry.id === 'wound-care-basics')!;
   const start = command(learningRoot, 'StartLearning', {
-    characterId: 'leader',
+    characterId: leaderId,
     methodId: 'book-study',
     goal: { workId: work.id, sectionId: 'wound-care-basics-1', maxTicks: work.durationTicks },
     resourceIds: ['copy'],
     budgetPoolId: 'local',
     maxBudgetQ: '0',
   }) as ReturnType<typeof command> & CommandOf<'StartLearning'>;
-  const access = itemAccess(learningRoot, 'study-access', 'STUDY', ['fixture-supply'], ['copy']);
+  const access = {
+    ...itemAccess(learningRoot, 'study-access', 'STUDY', [packId], ['copy']),
+    operatorId: leaderId,
+  };
   const studyContext = {
     ...context(learningRoot, start, [], [], [access]),
     learningFacts: [
       {
         ...scope(learningRoot, 'book-source'),
         expiresAt: '10000',
-        learnerId: 'leader',
+        learnerId: leaderId,
         location: place,
         resourceIds: ['copy'],
         sourceVersion: 'v1',
@@ -92,25 +113,26 @@ export function createCompanyStorageFixture() {
     'PLAYER',
   ) as ReturnType<typeof command> & CommandOf<'StopLearning'>;
   const stopped = stopLearningTask(admitted.state, stop);
+  // This advances the section owner directly; it is persistence data, not an applied campaign command.
   const progress: StudySectionProgress = advanceStudySectionTime(
     null,
-    { characterId: 'leader', workId: work.id, sectionId: 'wound-care-basics-1' },
+    { characterId: leaderId, workId: work.id, sectionId: 'wound-care-basics-1' },
     '1',
     fraction(9000, 1),
   ).next;
 
   let social = recordDirectedRelation(createSocialState(), {
     sourceEventId: 'storage-social-contact',
-    fromId: 'leader',
-    toId: 'worker-0',
+    fromId: leaderId,
+    toId: workerId,
     base: { friendship: 12, rivalry: 1, fear: 0, respect: 20 },
   }).state;
   social = recordLearnedFact(social, {
     memoryId: 'storage-social-memory',
     factId: 'storage-known-fact',
     sourceEventId: 'storage-social-report',
-    personId: 'leader',
-    otherId: 'worker-0',
+    personId: leaderId,
+    otherId: workerId,
     happenedAt: '900',
     learnedAt: '1000',
     factType: 'ObservedHelpfulAct',
@@ -120,13 +142,21 @@ export function createCompanyStorageFixture() {
     salience: 2,
   }).state;
 
+  // Retain the book and its known snapshot with the consumed root. Learning was
+  // admitted against the same company before encounter binding; this is not a
+  // claim that a study command was applied alongside the combat receipt.
+  const persistedEconomy = visibleCharacter(
+    addItem(consumed.next.economy, studyBook),
+    leaderId,
+    enableStudy,
+  ) as MaterializedCompanyState;
   const company = {
     ...consumed.next,
     economy: {
-      ...consumed.next.economy,
+      ...persistedEconomy,
       finance: {
-        ...consumed.next.economy.finance,
-        wallets: consumed.next.economy.finance.wallets.map((wallet) =>
+        ...persistedEconomy.finance,
+        wallets: persistedEconomy.finance.wallets.map((wallet) =>
           wallet.walletId === 'purse'
             ? { ...wallet, cashQ: moneyQ('9007199254740993123456789') }
             : wallet,
@@ -142,17 +172,21 @@ export function createCompanyStorageFixture() {
     },
     social,
   };
-  // Actual pause is private; the retained last-known observation deliberately remains unchanged.
-  const actualAccount = company.economy.finance.accounts[1];
-  if (!actualAccount) throw new Error('Expected a retained worker finance account');
+  // These exact money and actual/known values are arrange-only persistence evidence.
+  const workerAccount = company.economy.finance.accounts.find(
+    (account) => account.recipient.kind === 'CHARACTER' && account.recipient.id === workerId,
+  );
+  if (!workerAccount) throw new Error('Expected a retained worker finance account');
   const result = {
     ...company,
     economy: {
       ...company.economy,
       finance: {
         ...company.economy.finance,
-        accounts: company.economy.finance.accounts.map((account, index) =>
-          index === 1 ? { ...account, actualPaused: true, knownPaused: false } : account,
+        accounts: company.economy.finance.accounts.map((account) =>
+          account === workerAccount
+            ? { ...account, actualPaused: true, knownPaused: false }
+            : account,
         ),
       },
     },
