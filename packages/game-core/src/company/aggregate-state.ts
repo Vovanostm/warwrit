@@ -121,6 +121,26 @@ export function readCompanyCombatAggregateState(value: unknown): CompanyCombatAg
   validatePhysicalState({ lifecycle, physical: economy.physical });
 
   const learning = readCompanyLearningState(owned['learning']);
+  const companyCharacterIds = new Set<string>(
+    lifecycle.characters.map((character) => character.identity.characterId),
+  );
+  if (
+    learning.tasks.tasks.some(
+      (task) =>
+        task.start.command.companyId !== lifecycle.companyId ||
+        task.start.command.worldId !== lifecycle.worldId ||
+        !companyCharacterIds.has(task.start.command.payload.characterId),
+    ) ||
+    learning.studyAccess.intervals.some(
+      (interval) => !companyCharacterIds.has(interval.characterId),
+    ) ||
+    learning.studyProgress.some((progress) => !companyCharacterIds.has(progress.characterId)) ||
+    learning.ownerTransitions.some(
+      (transition) =>
+        transition.learnerId !== null && !companyCharacterIds.has(transition.learnerId),
+    )
+  )
+    throw new TypeError('Company learning scope does not match company root');
   const social = readSocialState(owned['social']);
   const encounter = readCombatEncounterApplication(owned['encounter']);
   const active = encounter.active;
@@ -200,12 +220,23 @@ function deathRecordedInActiveEncounter(
   const receiptSourceEventIds = new Set(
     active.appliedReceipts.flatMap((receipt) => receipt.sourceEventIds),
   );
-  return economy.finance.accounts.some(
-    (account) =>
-      membershipIds.has(account.membershipId) &&
-      account.death !== null &&
-      receiptSourceEventIds.has(account.death.sourceId),
-  );
+  const financeSourceKeys = new Set(economy.finance.sourceEffects.map((effect) => effect.key));
+  const physicalSourceKeys = new Set(economy.physical!.sourceEffects.map((effect) => effect.key));
+  return economy.finance.accounts.some((account) => {
+    if (
+      !membershipIds.has(account.membershipId) ||
+      account.death === null ||
+      !receiptSourceEventIds.has(account.death.sourceId)
+    )
+      return false;
+    const sourceEventId = account.death.sourceId;
+    return (
+      financeSourceKeys.has(canonicalJson(['FINANCIAL_DEATH', sourceEventId, characterId])) &&
+      physicalSourceKeys.has(
+        canonicalJson(['DEATH_OUTCOME', sourceEventId, ['character', characterId]]),
+      )
+    );
+  });
 }
 
 function readCombatEncounterApplication(value: unknown): CompanyCombatAggregateState['encounter'] {

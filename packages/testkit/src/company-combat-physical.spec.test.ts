@@ -3151,7 +3151,65 @@ describe('G10 — atomic combat company aggregate', () => {
       practiceProfile: profile,
     });
     if (consumed.kind !== 'PREPARED') throw new Error(`Consume death journal: ${consumed.error}`);
+    const deathRoot = consumed.next.economy as MaterializedCompanyState;
+    const leaderMembershipIdsForDeath = new Set<string>(
+      deathRoot.lifecycle.memberships
+        .filter((membership) => membership.characterId === 'a-leader')
+        .map((membership) => membership.membershipId),
+    );
+    const leaderDeathSourceId = deathRoot.finance.accounts.find(
+      (account) => leaderMembershipIdsForDeath.has(account.membershipId) && account.death !== null,
+    )?.death?.sourceId;
+    if (!leaderDeathSourceId) throw new Error('Expected retained financial death source');
+    expect(deathRoot.finance.sourceEffects.map((effect) => effect.key)).toContain(
+      canonicalJson(['FINANCIAL_DEATH', leaderDeathSourceId, 'a-leader']),
+    );
+    expect(deathRoot.physical?.sourceEffects.map((effect) => effect.key)).toContain(
+      canonicalJson(['DEATH_OUTCOME', leaderDeathSourceId, ['character', 'a-leader']]),
+    );
     expect(readCompanyCombatAggregateState(consumed.next)).toEqual(consumed.next);
+    const contradictedDeath = structuredClone(consumed.next) as unknown as Record<string, unknown>;
+    const contradictedEconomy = contradictedDeath['economy'] as Record<string, unknown>;
+    const contradictedLifecycle = contradictedEconomy['lifecycle'] as Record<string, unknown>;
+    const contradictedFinance = contradictedEconomy['finance'] as Record<string, unknown>;
+    const leaderAccountMembershipIds = new Set(
+      (contradictedLifecycle['memberships'] as Array<Record<string, unknown>>)
+        .filter((membership) => membership['characterId'] === 'a-leader')
+        .map((membership) => membership['membershipId'] as string),
+    );
+    const leaderDeathAccounts = (contradictedFinance['accounts'] as Array<Record<string, unknown>>)
+      .filter((account) => leaderAccountMembershipIds.has(account['membershipId'] as string))
+      .filter((account) => account['death'] !== null);
+    expect(leaderDeathAccounts.length).toBeGreaterThan(0);
+    const active = (contradictedDeath['encounter'] as Record<string, unknown>)['active'] as Record<
+      string,
+      unknown
+    >;
+    const appliedSourceEventIds = (
+      active['appliedReceipts'] as Array<Record<string, unknown>>
+    ).flatMap((receipt) => receipt['sourceEventIds'] as string[]);
+    const originalDeathSourceId = (leaderDeathAccounts[0]!['death'] as Record<string, unknown>)[
+      'sourceId'
+    ] as string;
+    const contradictorySourceId = appliedSourceEventIds.find(
+      (sourceEventId) => sourceEventId !== originalDeathSourceId,
+    );
+    if (!contradictorySourceId) throw new Error('Expected another retained encounter source event');
+    const ownerSourcesBefore = JSON.stringify({
+      physical: (contradictedEconomy['physical'] as Record<string, unknown>)['sourceEffects'],
+      finance: contradictedFinance['sourceEffects'],
+    });
+    for (const account of leaderDeathAccounts)
+      (account['death'] as Record<string, unknown>)['sourceId'] = contradictorySourceId;
+    const contradictedBefore = JSON.stringify(contradictedDeath);
+    expect(() => readCompanyCombatAggregateState(contradictedDeath)).toThrow(TypeError);
+    expect(
+      JSON.stringify({
+        physical: (contradictedEconomy['physical'] as Record<string, unknown>)['sourceEffects'],
+        finance: contradictedFinance['sourceEffects'],
+      }),
+    ).toBe(ownerSourcesBefore);
+    expect(JSON.stringify(contradictedDeath)).toBe(contradictedBefore);
 
     const root = consumed.next.economy as MaterializedCompanyState;
     const finalReceipt = journal.receipts.at(-1)!;

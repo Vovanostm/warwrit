@@ -6,6 +6,7 @@ import {
   recordLearnedFact,
 } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from './company-combat-aggregate-fixture.js';
+import { createCompanyStorageFixture } from './company-storage-fixture.js';
 
 describe('company aggregate persisted-state reader', () => {
   it('round-trips a consumed active G10 root with its retained receipt evidence', () => {
@@ -45,6 +46,36 @@ describe('company aggregate persisted-state reader', () => {
     const stale = structuredClone(fixture.begun.next) as unknown as Record<string, unknown>;
     (stale['encounter'] as Record<string, unknown>)['active'] = null;
     expect(() => readCompanyCombatAggregateState(stale)).toThrow(TypeError);
+  });
+
+  it('keeps retained learning tasks and learner references inside the company root', () => {
+    const source = createCompanyStorageFixture();
+    const foreignTask = structuredClone(source) as unknown as Record<string, unknown>;
+    const task = (
+      ((foreignTask['learning'] as Record<string, unknown>)['tasks'] as Record<string, unknown>)[
+        'tasks'
+      ] as Array<Record<string, unknown>>
+    )[0]!;
+    const start = task['start'] as Record<string, unknown>;
+    const startCommand = start['command'] as Record<string, unknown>;
+    const startPayload = startCommand['payload'] as Record<string, unknown>;
+    const quote = start['quote'] as Record<string, unknown>;
+    const coefficients = quote['coefficients'] as Record<string, unknown>;
+    const stop = task['stop'] as Record<string, unknown>;
+    startCommand['companyId'] = 'foreign-company';
+    stop['companyId'] = 'foreign-company';
+    startPayload['characterId'] = 'foreign-learner';
+    coefficients['holderId'] = 'foreign-learner';
+    const foreignTaskBefore = JSON.stringify(foreignTask);
+    expect(() => readCompanyCombatAggregateState(foreignTask)).toThrow(TypeError);
+    expect(JSON.stringify(foreignTask)).toBe(foreignTaskBefore);
+
+    const foreignProgress = structuredClone(source) as unknown as Record<string, unknown>;
+    const studyProgress = (foreignProgress['learning'] as Record<string, unknown>)[
+      'studyProgress'
+    ] as Array<Record<string, unknown>>;
+    studyProgress[0]!['characterId'] = 'foreign-learner';
+    expect(() => readCompanyCombatAggregateState(foreignProgress)).toThrow(TypeError);
   });
 
   it('rejects unknown, foreign-version, cross-scope and inconsistent-cursor fields without mutation', () => {
