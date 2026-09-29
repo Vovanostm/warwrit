@@ -1,0 +1,20 @@
+id: no-local-mocks-in-packages
+language: Tsx
+severity: error
+message: Domain, protocol and testkit specifications must not mock their own modules.
+note: AGENTS.md "Test doubles are for external boundaries, not for reimplementing the domain."
+files:
+  - 'packages/**/*.test.ts'
+  - 'packages/**/*.test.tsx'
+rule:
+  kind: call_expression
+  all:
+    - has:
+        field: function
+        regex: ^vi\.(mock|doMock)$
+    - has:
+        field: arguments
+        has:
+          nthChild: 1
+          kind: string
+          regex: ^['"]\.

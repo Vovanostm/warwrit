@@ -1,0 +1,12 @@
+# ast-grep: syntactic code-shape rules that ESLint, TypeScript, fallow and
+# scripts/check-architecture.mjs do not already own. Each rule cites the
+# AGENTS.md principle it protects. `pnpm check:patterns` fails on `error`;
+# `warning` rules list known weak spots until an owning change fixes them.
+ruleDirs:
+  - ast-grep/rules
+testConfigs:
+  - testDir: ast-grep/rule-tests
+# Specification files use no angle-bracket assertions, so one TSX rule covers
+# both .test.ts and .test.tsx.
+languageGlobs:
+  tsx: ['*.test.ts']

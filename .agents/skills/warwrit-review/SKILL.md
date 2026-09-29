@@ -65,6 +65,11 @@ unnecessary nesting, indirection or abstraction while preserving behavior,
 independent test oracles and the actual/known-state separation. Label these as
 optional advice, separate from defects.
 
+Tool pointers, not verdicts: `pnpm exec fallow review --base <ref> --brief` for
+changed-file dead code, complexity and clones; `pnpm exec ast-grep scan <paths>`
+for code-shape warnings. A clone or warning is a lead; confirm the shared rule
+and all consumers before consolidating (see AGENTS.md "Code Review Rules").
+
 ## Worked example
 
 From fix `b69d881` (`prepareLearningBacking`, C05-FIN):

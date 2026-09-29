@@ -1,0 +1,13 @@
+id: no-snapshot-assertions
+language: Tsx
+severity: error
+message: Assert an observable invariant instead of a snapshot.
+note: AGENTS.md "Tests are executable specifications" forbids snapshotting catalogues or pinning provisional values.
+files:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+rule:
+  pattern: $SUBJECT.$MATCHER($$$ARGS)
+constraints:
+  MATCHER:
+    regex: ^(toMatchSnapshot|toMatchInlineSnapshot|toMatchFileSnapshot|toThrowErrorMatchingSnapshot|toThrowErrorMatchingInlineSnapshot)$

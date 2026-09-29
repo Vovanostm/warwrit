@@ -7,5 +7,6 @@ blockExoticSubdeps: true
 disallowWorkspaceCycles: true
 
 allowBuilds:
+  '@ast-grep/cli': false
   esbuild: true
   'msgpackr-extract@3.0.4': false

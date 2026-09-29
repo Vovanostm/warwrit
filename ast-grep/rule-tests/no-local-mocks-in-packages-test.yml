@@ -1,0 +1,6 @@
+id: no-local-mocks-in-packages
+valid:
+  - "vi.mock('pg', () => ({ Pool: FakePool }));"
+invalid:
+  - "vi.mock('./economy.js', () => ({ prepareEconomyCandidate: vi.fn() }));"
+  - "vi.doMock('../company/input.js');"

@@ -1,0 +1,22 @@
+id: no-domain-module-mocks
+language: Tsx
+severity: error
+message: Do not mock workspace packages; exercise their public behavior.
+note: |
+  AGENTS.md "Test doubles are for external boundaries, not for reimplementing
+  the domain." Server adapters may replace their own database/session modules.
+files:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+rule:
+  kind: call_expression
+  all:
+    - has:
+        field: function
+        regex: ^vi\.(mock|doMock)$
+    - has:
+        field: arguments
+        has:
+          nthChild: 1
+          kind: string
+          regex: ^['"]@warwrit/

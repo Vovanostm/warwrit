@@ -1,0 +1,42 @@
+{
+  // fallow: unused code, dependency hygiene, duplication and complexity.
+  // `pnpm check:dead-code` gates the whole tree; `pnpm check:changes` gates only
+  // findings a branch introduces. Existing complexity and clones are reported by
+  // `pnpm report:quality`, not failed, until a refactor owns them.
+  "$schema": "./node_modules/fallow/schema.json",
+  "minimumVersion": "3.30.0",
+  "workspaces": {
+    "patterns": ["apps/*", "packages/*"],
+  },
+  // Colyseus invokes Room lifecycle hooks and the message map by name.
+  "usedClassMembers": [
+    "onCreate",
+    "onAuth",
+    "onJoin",
+    "onLeave",
+    "onDrop",
+    "onReconnect",
+    "onDispose",
+    "onBeforePatch",
+    "onBeforeShutdown",
+    "onCacheRoom",
+    "onRestoreRoom",
+    "messages",
+  ],
+  // Syntactic analysis misreads members reached through inferred instance types.
+  "typeAware": { "enabled": true },
+  "rules": {
+    "unused-dependencies": "error",
+    "unlisted-dependencies": "error",
+    // Owned by scripts/check-architecture.mjs; one owner per boundary rule.
+    "boundary-violation": "off",
+    // Code-shape policies are owned by ast-grep (sgconfig.yml).
+    "policy-violation": "off",
+    // Exported signatures naming same-file types is not a current API requirement.
+    "private-type-leaks": "off",
+  },
+  "health": {
+    // Specification files are tables of scenarios inside describe callbacks.
+    "ignore": ["**/*.test.ts", "**/*.test.tsx"],
+  },
+}

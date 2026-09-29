@@ -20,5 +20,9 @@
     "build": "tsc -p tsconfig.build.json",
     "clean": "node ../../scripts/clean.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "fast-check": "4.9.0"
   }
 }

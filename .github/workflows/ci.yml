@@ -39,3 +39,9 @@ jobs:
 
       - name: Bootstrap and verify
         run: ./scripts/bootstrap.sh
+
+      - name: Reject quality regressions in changed files
+        if: github.event_name == 'pull_request'
+        env:
+          FALLOW_AUDIT_BASE: origin/${{ github.base_ref }}
+        run: pnpm check:changes

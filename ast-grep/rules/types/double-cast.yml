@@ -1,0 +1,16 @@
+id: double-cast
+language: TypeScript
+severity: warning
+message: '`as unknown as` discards the checked type; narrow or validate instead.'
+note: |
+  AGENTS.md "Dependency and state boundaries": reject invalid input without
+  trusting its shape. A cast after full validation belongs in one decoding
+  function; suppress it there with `// ast-grep-ignore: double-cast` and a reason.
+files:
+  - packages/game-core/src/**
+  - packages/protocol/src/**
+  - apps/server/src/**
+ignores:
+  - '**/*.test.ts'
+rule:
+  pattern: $VALUE as unknown as $TYPE
