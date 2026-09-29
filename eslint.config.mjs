@@ -103,4 +103,13 @@ export default tseslint.config(
       'no-console': 'off',
     },
   },
+  {
+    files: ['apps/renderer-spike/scripts/**/*.mjs'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
 );

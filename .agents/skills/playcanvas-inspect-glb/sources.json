@@ -1,0 +1,22 @@
+{
+  "repository": "https://github.com/playcanvas/skills",
+  "commit": "e58c29fbdab043863b17538f49a30bd9f391be22",
+  "license": "MIT",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "upstreamPath": "skills/inspect-glb/SKILL.md",
+      "sha256": "136da0b5d62daf56a202219a415dd7ae67eb06c3910479d6bd972cfdd3d8c9a6"
+    },
+    {
+      "path": "scripts/inspect.mjs",
+      "upstreamPath": "skills/inspect-glb/scripts/inspect.mjs",
+      "sha256": "a4facb0fb1593177fb8eeb0adeea9412a03edfd169350c81c5bc555bc1360938"
+    },
+    {
+      "path": "LICENSE",
+      "upstreamPath": "LICENSE",
+      "sha256": "42fa51ddd556be151a29f381fb97ee975825dcc454e805ea3ea9c079cca04d34"
+    }
+  ]
+}
