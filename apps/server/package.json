@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@colyseus/core": "0.18.17",
+    "@colyseus/schema": "5.0.34",
+    "@colyseus/ws-transport": "0.18.4",
     "@fastify/cookie": "^11.1.2",
     "@warwrit/game-core": "workspace:*",
     "@warwrit/protocol": "workspace:*",
@@ -14,6 +17,7 @@
     "pino": "^9.0.0"
   },
   "devDependencies": {
+    "@colyseus/sdk": "0.18.4",
     "@types/pg": "^8.0.0"
   },
   "scripts": {

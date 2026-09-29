@@ -45,7 +45,8 @@ interface EncounterTable {
   readonly status: 'active' | 'resolved';
   readonly activation_id: string | null;
   readonly activation_epoch: number;
-  readonly deadline_at: Date;
+  readonly deadline_at: Generated<Date | null>;
+  readonly ai_wake_at: Generated<Date | null>;
   readonly created_at: Generated<Date>;
 }
 
@@ -61,7 +62,8 @@ interface EncounterCommandTable {
   readonly encounter_id: string;
   readonly revision: number;
   readonly command_id: string;
-  readonly account_id: string;
+  readonly account_id: string | null;
+  readonly source_kind: Generated<'account' | 'system_ai'>;
   readonly body_digest: Buffer;
   readonly command: unknown;
   readonly accepted_at: Generated<Date>;
@@ -79,7 +81,8 @@ interface EncounterReceiptTable {
   readonly encounter_id: string;
   readonly command_id: string;
   readonly receipt_id: string;
-  readonly account_id: string;
+  readonly account_id: string | null;
+  readonly source_kind: Generated<'account' | 'system_ai'>;
   readonly body_digest: Buffer;
   readonly response: unknown;
   readonly resulting_revision: number;
@@ -96,6 +99,13 @@ export interface DatabaseSchema {
   readonly encounter_commands: EncounterCommandTable;
   readonly encounter_events: EncounterEventTable;
   readonly encounter_receipts: EncounterReceiptTable;
+  readonly encounter_ai_controllers: {
+    readonly encounter_id: string;
+    readonly unit_id: string;
+    readonly doctrine: 'aggressive' | 'survivor';
+    readonly admission_source: 'fixture';
+    readonly assigned_at: Generated<Date>;
+  };
 }
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {
@@ -146,16 +156,19 @@ export function createDatabaseReadinessProbe(
         select
           e.id, e.world_id, e.schema_version, e.setup, e.state, e.revision, e.status,
           e.activation_id, e.activation_epoch, e.deadline_at,
+          e.ai_wake_at,
           p.encounter_id, p.account_id, p.side_id, p.unit_ids, p.admission_source,
-          c.revision, c.command_id, c.account_id, c.body_digest, c.command,
+          c.revision, c.command_id, c.account_id, c.source_kind, c.body_digest, c.command,
           v.revision, v.ordinal, v.event_id, v.event,
-          r.command_id, r.receipt_id, r.account_id, r.body_digest, r.response,
-          r.resulting_revision
+          r.command_id, r.receipt_id, r.account_id, r.source_kind, r.body_digest, r.response,
+          r.resulting_revision,
+          a.encounter_id, a.unit_id, a.doctrine, a.admission_source, a.assigned_at
         from encounters as e
         cross join encounter_participants as p
         cross join encounter_commands as c
         cross join encounter_events as v
         cross join encounter_receipts as r
+        cross join encounter_ai_controllers as a
         limit 0
       `.execute(database);
     }

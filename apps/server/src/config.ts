@@ -6,6 +6,7 @@ export interface ServerConfig {
   readonly databaseUrl?: string;
   readonly combatLabOrigin?: string;
   readonly fixtureEncountersEnabled?: true;
+  readonly encounterRealtimePort: number;
   readonly identity?: IdentityConfig;
 }
 
@@ -29,9 +30,19 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
   const databaseUrl = environment['DATABASE_URL']?.trim();
   const host = environment['HOST']?.trim() || '0.0.0.0';
   const fixtureEncountersEnabled = environment['ENCOUNTER_FIXTURES'] === '1';
+  const encounterRealtimePortValue = environment['ENCOUNTER_REALTIME_PORT']?.trim() ?? '3110';
+  const encounterRealtimePort = Number(encounterRealtimePortValue);
+  invariant(
+    /^\d+$/u.test(encounterRealtimePortValue) &&
+      Number.isInteger(encounterRealtimePort) &&
+      encounterRealtimePort > 0 &&
+      encounterRealtimePort <= 65_535,
+    'ENCOUNTER_REALTIME_PORT must be a valid TCP port',
+  );
   invariant(
     !fixtureEncountersEnabled ||
       (environment['NODE_ENV'] !== 'production' &&
+        encounterRealtimePort !== port &&
         (host === '127.0.0.1' || host === '::1') &&
         databaseUrl !== undefined &&
         [
@@ -41,7 +52,7 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
           environment['OIDC_REDIRECT_URI'],
           environment['PUBLIC_ORIGIN'],
         ].every((value) => Boolean(value?.trim()))),
-    'Encounter fixtures require a nonproduction loopback server with database-backed identity',
+    'Encounter fixtures require nonproduction loopback HTTP and realtime listeners with database-backed identity',
   );
   const labEnabled = environment['COMBAT_LAB'] === '1';
   invariant(
@@ -129,6 +140,7 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
     ...(databaseUrl ? { databaseUrl } : {}),
     ...(labEnabled ? { combatLabOrigin } : {}),
     ...(fixtureEncountersEnabled ? { fixtureEncountersEnabled: true as const } : {}),
+    encounterRealtimePort,
     ...(identity === undefined ? {} : { identity }),
   };
 }

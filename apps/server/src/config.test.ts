@@ -7,7 +7,17 @@ describe('server configuration', () => {
     expect(loadServerConfig({})).toEqual({
       host: '0.0.0.0',
       port: 3000,
+      encounterRealtimePort: 3110,
     });
+  });
+
+  it('validates the dedicated encounter realtime port', () => {
+    for (const port of ['70000', '3110junk', '0']) {
+      expect(() => loadServerConfig({ ENCOUNTER_REALTIME_PORT: port })).toThrow(
+        'ENCOUNTER_REALTIME_PORT must be a valid TCP port',
+      );
+    }
+    expect(loadServerConfig({ ENCOUNTER_REALTIME_PORT: '3111' }).encounterRealtimePort).toBe(3111);
   });
 
   it('rejects invalid ports instead of partially parsing or silently recovering', () => {
@@ -82,9 +92,14 @@ describe('server configuration', () => {
       ENCOUNTER_FIXTURES: '1',
     };
     expect(loadServerConfig(identity).fixtureEncountersEnabled).toBe(true);
-    expect(() => loadServerConfig({ ENCOUNTER_FIXTURES: '1' })).toThrow('loopback server');
+    expect(() =>
+      loadServerConfig({ ...identity, PORT: '3107', ENCOUNTER_REALTIME_PORT: '3107' }),
+    ).toThrow('loopback HTTP and realtime listeners');
+    expect(() => loadServerConfig({ ENCOUNTER_FIXTURES: '1' })).toThrow(
+      'loopback HTTP and realtime listeners',
+    );
     expect(() => loadServerConfig({ ...identity, NODE_ENV: 'production' })).toThrow(
-      'loopback server',
+      'loopback HTTP and realtime listeners',
     );
   });
 });

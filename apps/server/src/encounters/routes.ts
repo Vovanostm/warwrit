@@ -1,8 +1,9 @@
 import type {
-  EncounterCommandDto,
   EncounterCommandResponse,
   EncounterFixtureCreateDto,
+  EncounterRoomTicketDto,
 } from '@warwrit/protocol';
+import { isEncounterCommandDto } from '@warwrit/protocol';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type { Kysely } from 'kysely';
 
@@ -12,17 +13,21 @@ import {
   createFixtureEncounter,
   executeEncounterCommand,
   readEncounterMetadata,
+  readEncounterProjection,
 } from './executor.js';
 
 export interface EncounterRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
   readonly fixtureAdmission: true;
+  readonly roomTicketIssuer?: (
+    encounterId: string,
+    cookieHeader: string | undefined,
+    ip: string,
+  ) => Promise<EncounterRoomTicketDto>;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
-const isId = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0 && value.length <= 128;
 const isEncounterId = (value: unknown): value is string =>
   typeof value === 'string' &&
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u.test(value);
@@ -31,39 +36,8 @@ function isFixtureCreate(value: unknown): value is EncounterFixtureCreateDto {
   return isRecord(value) && Object.keys(value).length === 1 && value['version'] === 1;
 }
 
-function isCommand(value: unknown): value is EncounterCommandDto {
-  if (
-    !isRecord(value) ||
-    Object.keys(value).length !== 7 ||
-    value['version'] !== 1 ||
-    !isEncounterId(value['encounterId']) ||
-    !isId(value['commandId']) ||
-    !Number.isSafeInteger(value['expectedRevision']) ||
-    (value['expectedRevision'] as number) < 0 ||
-    !isId(value['activationId']) ||
-    !isId(value['actorId']) ||
-    !isRecord(value['intent'])
-  )
-    return false;
-  const intent = value['intent'];
-  switch (intent['type']) {
-    case 'move':
-      return (
-        Object.keys(intent).length === 2 &&
-        isRecord(intent['to']) &&
-        Object.keys(intent['to']).length === 2 &&
-        Number.isSafeInteger(intent['to']['q']) &&
-        Number.isSafeInteger(intent['to']['r'])
-      );
-    case 'attack':
-      return Object.keys(intent).length === 2 && isId(intent['targetId']);
-    case 'defend':
-    case 'wait':
-    case 'retreat':
-      return Object.keys(intent).length === 1;
-    default:
-      return false;
-  }
+function isRoomTicketRequest(value: unknown): boolean {
+  return isRecord(value) && Object.keys(value).length === 1 && value['version'] === 1;
 }
 
 async function authenticatedAccount(
@@ -115,6 +89,36 @@ export function registerEncounterRoutes(
     },
   );
 
+  if (options.roomTicketIssuer !== undefined) {
+    const issueRoomTicket = options.roomTicketIssuer;
+    app.post<{ Params: { encounterId: string }; Body: unknown }>(
+      '/encounters/:encounterId/room-ticket',
+      { bodyLimit: 256 },
+      async (request, reply) => {
+        const accountId = await authenticatedAccount(request, database);
+        if (accountId === undefined)
+          return reply.code(401).send({ error: 'authentication required' });
+        if (!isEncounterId(request.params.encounterId) || !isRoomTicketRequest(request.body)) {
+          return reply.code(400).send({ error: 'invalid request' });
+        }
+        const projection = await readEncounterProjection(
+          database,
+          accountId,
+          request.params.encounterId,
+        );
+        if (projection === undefined)
+          return reply.code(404).send({ error: 'encounter unavailable' });
+        const cookieHeader = request.headers.cookie;
+        if (cookieHeader !== undefined && typeof cookieHeader !== 'string') {
+          return reply.code(400).send({ error: 'invalid request' });
+        }
+        const ticket = await issueRoomTicket(request.params.encounterId, cookieHeader, request.ip);
+        reply.header('cache-control', 'no-store');
+        return ticket;
+      },
+    );
+  }
+
   app.post<{ Body: unknown }>(
     '/encounters/commands',
     { bodyLimit: 4096 },
@@ -122,7 +126,8 @@ export function registerEncounterRoutes(
       const accountId = await authenticatedAccount(request, database);
       if (accountId === undefined)
         return reply.code(401).send({ error: 'authentication required' });
-      if (!isCommand(request.body)) return reply.code(400).send({ error: 'invalid request' });
+      if (!isEncounterCommandDto(request.body))
+        return reply.code(400).send({ error: 'invalid request' });
       const result = await executeEncounterCommand(database, accountId, request.body);
       return reply.code(responseStatus(result)).send(result);
     },
