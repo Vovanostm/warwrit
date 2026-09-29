@@ -31,6 +31,8 @@ export interface LifecycleCharacter {
   readonly aptitudeBySkill: Readonly<Record<string, number>>;
   readonly perks: readonly string[];
   readonly conditionIds: readonly string[];
+  /** Active system-proposed nickname; birthName remains immutable. */
+  readonly nickname?: { readonly proposalId: string; readonly textKey: string };
   /** Optional for legacy V1 snapshots; F02 materializes it only after a real service. */
   readonly presentation?: CharacterPresentation;
 }
@@ -74,6 +76,10 @@ export interface LifecycleKnowledge {
   readonly characters: readonly LifecycleCharacter[];
   readonly candidateIds: readonly CharacterId[];
   readonly eventIds: readonly string[];
+  /** Optional in legacy V1 snapshots; only observed pending proposals are public. */
+  readonly nicknameProposals?: readonly LifecycleNicknameProposalView[];
+  /** Accepted nickname source/reason history known to this observer. */
+  readonly nicknameHistory?: readonly LifecycleAcceptedNickname[];
 }
 export interface LifecycleState {
   readonly schemaVersion: 1;
@@ -93,6 +99,43 @@ export interface LifecycleState {
   readonly bypasses: readonly HeirBypass[];
   readonly knowledge: LifecycleKnowledge;
   readonly applied: readonly LifecycleReceipt[];
+  /** Optional additive V1 state; absence in an old snapshot means no nickname records. */
+  readonly nicknameProposals?: readonly LifecycleNicknameProposal[];
+}
+
+export interface LifecycleNicknameProposal {
+  readonly proposalId: string;
+  readonly characterId: CharacterId;
+  readonly sourceEventId: string;
+  readonly cultureId: string;
+  readonly deedKind: string;
+  readonly reasonKey: string;
+  readonly textKey: string;
+  readonly proposedAt: CampaignTick;
+  readonly resolution: 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  readonly resolvedAt: CampaignTick | null;
+}
+export type LifecycleNicknameProposalView = Pick<
+  LifecycleNicknameProposal,
+  | 'proposalId'
+  | 'characterId'
+  | 'sourceEventId'
+  | 'cultureId'
+  | 'deedKind'
+  | 'reasonKey'
+  | 'textKey'
+  | 'proposedAt'
+>;
+export interface LifecycleAcceptedNickname {
+  readonly proposalId: string;
+  readonly characterId: CharacterId;
+  readonly sourceEventId: string;
+  readonly cultureId: string;
+  readonly deedKind: string;
+  readonly reasonKey: string;
+  /** Source-backed localization/reason key; never player-authored nickname text. */
+  readonly textKey: string;
+  readonly acceptedAt: CampaignTick;
 }
 
 interface EvidenceScope {
@@ -177,9 +220,21 @@ export interface HeirNotificationEvidence extends EvidenceScope {
 export interface CompanyObservationEvidence extends EvidenceScope {
   readonly kind: 'COMPANY_OBSERVATION';
   readonly subject: { readonly kind: 'CHARACTER' | 'COMPANY'; readonly id: string };
+  /** Deed sources this observation is authorized to reveal; omission grants no nickname disclosure. */
+  readonly nicknameSourceEventIds?: readonly string[];
+}
+/** Internal adapter assertion for an already significant deed and its localized epithet key. */
+export interface NicknameDeedEvidence extends EvidenceScope {
+  readonly kind: 'NICKNAME_DEED';
+  readonly characterId: CharacterId;
+  readonly cultureId: string;
+  readonly deedKind: string;
+  readonly reasonKey: string;
+  readonly textKey: string;
 }
 export type LifecycleEvidence =
   | CompanyObservationEvidence
+  | NicknameDeedEvidence
   | OpeningEvidence
   | RecruitEvidence
   | MeetingEvidence
