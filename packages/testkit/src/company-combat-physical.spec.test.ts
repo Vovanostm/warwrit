@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   COMPANY_CATALOGUE,
   COMPANY_RULES,
+  COMPANY_COMMAND_SCHEMA_VERSION,
+  COMPANY_RULESET_ID,
   COMBAT_RECEIPT_TIME_VERSION,
   chooseAiCommand,
   canonicalCombatState,
@@ -26,6 +28,7 @@ import {
   prepareConsumeCombatAggregate,
   prepareFinalizeCombatAggregate,
   prepareCompanyEconomy,
+  prepareCompanyEconomyWithLearning,
   prepareCombatPracticeEffects,
   persistentMoraleAfterCombat,
   COMBAT_PRACTICE_PROFILE_VERSION,
@@ -2987,6 +2990,449 @@ describe('G10 — atomic combat company aggregate', () => {
     expect(rejected.kind).toBe('REJECTED');
     if (rejected.kind === 'REJECTED') expect(rejected.error).toBe('INVALID_SOURCE');
     expect(remoteState).toEqual(remoteBefore);
+  });
+
+  it('applies a source-bound terminal capture with exact seized-item custody and retry', () => {
+    const f = aggregateFixture(true, 10000, 'a-leader');
+    const startedJournal = accept(f.f, f.f.journal, f.f.binding.initial, null);
+    const journal = resolveCombatJournal(f.f, startedJournal);
+    const { profile, applications } = applicationsForJournal(f, journal);
+    const consumed = prepareConsumeCombatAggregate(f.begun.next, {
+      journal,
+      applications,
+      practiceProfile: profile,
+    });
+    if (consumed.kind !== 'PREPARED') throw new Error(`Consume capture journal: ${consumed.error}`);
+
+    const root = consumed.next.economy as MaterializedCompanyState;
+    const finalReceipt = journal.receipts.at(-1)!;
+    const finalState = finalReceipt.transition.state;
+    const participants = f.begun.binding.participants.filter(
+      (entry) => entry.companyId === root.lifecycle.companyId,
+    );
+    const captive = participants.find((entry) => {
+      const characterId = entry.projection.characterId;
+      const unit = finalState.units.find((candidate) => candidate.id === entry.unitId);
+      return (
+        characterId === 'a-leader' &&
+        unit !== undefined &&
+        unit.health > 0 &&
+        root.physical.containers.some(
+          (container) =>
+            container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
+        )
+      );
+    });
+    if (!captive) throw new Error('Expected the fixture captive participant');
+    const characterId = captive.projection.characterId;
+    const carriedContainerIds = new Set(
+      root.physical.containers
+        .filter(
+          (container) =>
+            container.carrier?.kind === 'CHARACTER' && container.carrier.id === characterId,
+        )
+        .map((container) => container.containerId),
+    );
+    const itemBefore = root.physical.items.find(
+      (entry) => entry.containerId !== null && carriedContainerIds.has(entry.containerId),
+    );
+    if (!itemBefore?.containerId) throw new Error('Expected a carried item to seize');
+    const itemId = itemBefore.itemId;
+    const destinationId = 'a-worker-0-pack';
+    const destination = root.physical.containers.find(
+      (entry) => entry.containerId === destinationId,
+    );
+    if (!destination) throw new Error('Expected the local destination container');
+    expect(itemBefore.containerId).not.toBe(destinationId);
+
+    const finalStateDigest = 'aggregate-captive-final-state';
+    const outcomeDigest = 'aggregate-captive-outcome';
+    const terminalCommand = command(
+      root,
+      'FinalizeEncounter',
+      {
+        bindingId: f.begun.binding.bindingId,
+        terminalReceiptId: finalReceipt.request.payload.receiptId,
+        finalStateDigest,
+        outcomeReceiptId: outcomeDigest,
+      },
+      'aggregate-finalize-captive',
+      'COMBAT_RECEIPT',
+      root.lifecycle.campaignTick,
+    );
+    const sourceEventId = terminalCommand.sourceEventId!;
+    const captureOutcomeId = 'aggregate-capture-outcome';
+    const captor = { kind: 'COMPANY' as const, id: root.lifecycle.companyId };
+    const captureFact = {
+      ...physicalScope(root, captureOutcomeId, root.lifecycle.campaignTick),
+      sourceEventId,
+      kind: 'CAPTURE_OUTCOME' as const,
+      characterId,
+      captor,
+      location: f.begun.binding.location,
+    };
+    const seizureFact = {
+      ...physicalScope(root, 'aggregate-captive-seizure', root.lifecycle.campaignTick, 1),
+      sourceEventId,
+      kind: 'SEIZURE' as const,
+      characterId,
+      itemId,
+      toContainerId: destinationId,
+      captor,
+    };
+    const terminal = {
+      version: 's02-combat-terminal-outcome-1' as const,
+      id: finalStateDigest,
+      sourceEventId,
+      bindingId: f.begun.binding.bindingId,
+      battleId: f.f.binding.setup.battleId,
+      receiptId: finalReceipt.request.payload.receiptId,
+      revision: finalState.revision,
+      atTick: consumed.next.encounter.active!.lastAppliedTick!,
+      finalStateCanonical: canonicalCombatState(finalState),
+      outcomeDigest,
+      dispositions: participants.map((participant) => {
+        const unit = finalState.units.find((entry) => entry.id === participant.unitId)!;
+        return {
+          id: `aggregate-captive-disposition-${participant.unitId}`,
+          sourceEventId,
+          unitId: participant.unitId,
+          characterId: participant.projection.characterId,
+          status:
+            participant.unitId === captive.unitId
+              ? ('CAPTIVE' as const)
+              : unit.health === 0
+                ? ('DEAD' as const)
+                : ('PRESENT' as const),
+          location: f.begun.binding.location,
+          ...(participant.unitId === captive.unitId
+            ? {
+                captureOutcomeId,
+                seizedItems: [
+                  { itemId, toContainerId: destinationId, authorizationId: seizureFact.id },
+                ],
+              }
+            : {}),
+        };
+      }),
+    };
+    const terminalContext = {
+      ...context(root, terminalCommand, [], [], [captureFact, seizureFact]),
+      learningFacts: [],
+    } as CombatOwnerContext;
+    const finalizeInput = {
+      command: terminalCommand,
+      journal,
+      applications,
+      terminal,
+      context: terminalContext,
+      captureLearning: { [captive.unitId]: { intervals: [] } },
+    };
+    const captureCommand: CommandOf<'Capture'> = {
+      schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+      commandId: captureOutcomeId,
+      worldId: root.lifecycle.worldId,
+      companyId: root.lifecycle.companyId,
+      actorRef: { kind: 'OUTCOME_RECEIPT', id: captureOutcomeId },
+      expectedRevision: root.lifecycle.revision,
+      campaignTick: terminal.atTick,
+      rulesetId: COMPANY_RULESET_ID,
+      sourceEventId,
+      type: 'Capture',
+      payload: {
+        receiptId: captureOutcomeId,
+        characterId,
+        captorRef: captor,
+        locationRef: captureFact.location,
+        seizedItems: finalizeInput.terminal.dispositions.find(
+          (entry) => entry.unitId === captive.unitId,
+        )!.seizedItems!,
+      },
+    };
+    const projectedCapture = prepareCompanyEconomyWithLearning(
+      { economy: consumed.next.economy, learning: consumed.next.learning },
+      captureCommand,
+      {
+        ...context(
+          root,
+          captureCommand as ReturnType<typeof command>,
+          [],
+          [],
+          [captureFact, seizureFact],
+        ),
+        learningFacts: [],
+      } as CombatOwnerContext,
+      { effectId: captureOutcomeId, intervals: [] },
+    );
+    if (projectedCapture.kind !== 'PREPARED')
+      throw new Error(
+        `Could not prepare leader capture for crisis context: ${projectedCapture.error}`,
+      );
+    const leadershipRoot = projectedCapture.next.economy as MaterializedCompanyState;
+    const crisis = {
+      ...scope(leadershipRoot, 'aggregate-captive-leader-crisis', terminal.atTick),
+      sourceEventId,
+      kind: 'CRISIS' as const,
+      leaderId: characterId,
+      reason: 'LEADER_UNAVAILABLE' as const,
+    };
+    const leadershipCommand = command(
+      leadershipRoot,
+      'ResolveLeadership',
+      {
+        companyId: leadershipRoot.lifecycle.companyId,
+        crisisId: crisis.id,
+        candidateId: 'a-provider',
+        mode: 'ACTING',
+      },
+      'aggregate-resolve-captive-leadership',
+      'PLAYER',
+      terminal.atTick,
+    );
+    const providerTerms: ServiceTermsEvidence = {
+      ...scope(leadershipRoot, 'aggregate-captive-provider-service-terms', terminal.atTick),
+      kind: 'SERVICE_TERMS',
+      characterId: 'a-provider',
+      poolId: 'local',
+      recipient: { kind: 'CHARACTER', id: 'a-provider' },
+      signingWalletId: null,
+      rates: COMPANY_RULES.economy.qualificationBands.map((band) => ({
+        minimumLevel: band.level,
+        dailyWageMilli: String(band.multiplierBps),
+      })),
+    };
+    const leadershipContext = {
+      ...context(leadershipRoot, leadershipCommand, [providerTerms], [crisis]),
+      learningFacts: [],
+    } as CombatOwnerContext;
+    const finalizeWithLeadership = {
+      ...finalizeInput,
+      leadership: { command: leadershipCommand, context: leadershipContext },
+    };
+    const before = structuredClone(consumed.next);
+    const foreignSourceFact = { ...seizureFact, sourceEventId: 'foreign-terminal-source' };
+    const foreignSource = prepareFinalizeCombatAggregate(consumed.next, {
+      ...finalizeInput,
+      context: {
+        ...context(root, terminalCommand, [], [], [captureFact, foreignSourceFact]),
+        learningFacts: [],
+      } as CombatOwnerContext,
+    });
+    expect(foreignSource).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(consumed.next).toEqual(before);
+
+    const missingCrisis = prepareFinalizeCombatAggregate(consumed.next, {
+      ...finalizeWithLeadership,
+      leadership: {
+        ...finalizeWithLeadership.leadership,
+        context: { ...leadershipContext, facts: [], learningFacts: [] } as CombatOwnerContext,
+      },
+    });
+    expect(missingCrisis).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(consumed.next).toEqual(before);
+
+    const mismatchedCrisis = prepareFinalizeCombatAggregate(consumed.next, {
+      ...finalizeWithLeadership,
+      leadership: {
+        ...finalizeWithLeadership.leadership,
+        context: {
+          ...leadershipContext,
+          facts: [{ ...crisis, reason: 'LEADER_DIED' }],
+          learningFacts: [],
+        } as CombatOwnerContext,
+      },
+    });
+    expect(mismatchedCrisis).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(consumed.next).toEqual(before);
+
+    const finalized = prepareFinalizeCombatAggregate(consumed.next, finalizeWithLeadership);
+    expect(finalized.kind, finalized.kind === 'REJECTED' ? finalized.error : undefined).toBe(
+      'PREPARED',
+    );
+    if (finalized.kind !== 'PREPARED') return;
+    expect(finalized.next.encounter.active).toBeNull();
+    expect(finalized.next.economy.lifecycle.company).toMatchObject({
+      currentLeaderId: 'a-leader',
+      actingLeaderId: 'a-provider',
+    });
+    expect(
+      finalized.next.economy.lifecycle.memberships.find(
+        (entry) => entry.characterId === characterId,
+      )?.endedAt,
+    ).toBeNull();
+    expect(
+      finalized.next.economy.lifecycle.characters.find(
+        (entry) => entry.identity.characterId === characterId,
+      )?.presence.availability,
+    ).toBe('CAPTIVE');
+    expect(finalized.next.economy.physical?.custody).toContainEqual({
+      characterId,
+      custodian: captor,
+      location: f.begun.binding.location,
+      sourceId: sourceEventId,
+      sinceTick: terminal.atTick,
+    });
+    expect(
+      finalized.next.economy.physical?.items.find((entry) => entry.itemId === itemId),
+    ).toMatchObject({ ...itemBefore, containerId: destinationId, equipped: null });
+
+    const retry = prepareFinalizeCombatAggregate(finalized.next, finalizeWithLeadership);
+    expect(retry.kind, retry.kind === 'REJECTED' ? retry.error : undefined).toBe('PREPARED');
+    if (retry.kind === 'PREPARED') {
+      expect(retry.replayed).toBe(true);
+      expect(retry.next).toBe(finalized.next);
+    }
+
+    const changedCaptureProof = prepareFinalizeCombatAggregate(finalized.next, {
+      ...finalizeWithLeadership,
+      terminal: {
+        ...terminal,
+        dispositions: terminal.dispositions.map((entry) =>
+          entry.unitId === captive.unitId
+            ? { ...entry, captureOutcomeId: 'changed-capture-outcome' }
+            : entry,
+        ),
+      },
+    });
+    expect(changedCaptureProof).toMatchObject({
+      kind: 'REJECTED',
+      error: 'IDEMPOTENCY_CONFLICT',
+    });
+    expect(finalized.next.encounter.active).toBeNull();
+
+    const changedLearningEvidence = prepareFinalizeCombatAggregate(finalized.next, {
+      ...finalizeWithLeadership,
+      captureLearning: {},
+    });
+    expect(changedLearningEvidence).toMatchObject({
+      kind: 'REJECTED',
+      error: 'IDEMPOTENCY_CONFLICT',
+    });
+    expect(finalized.next.encounter.active).toBeNull();
+
+    const worker = participants.find((entry) => {
+      const unit = finalState.units.find((candidate) => candidate.id === entry.unitId);
+      const workerId = entry.projection.characterId;
+      return (
+        workerId !== 'a-leader' &&
+        unit !== undefined &&
+        unit.health > 0 &&
+        root.physical.containers.some(
+          (container) =>
+            container.carrier?.kind === 'CHARACTER' && container.carrier.id === workerId,
+        )
+      );
+    });
+    if (!worker) throw new Error('Expected a living nonleader combat participant');
+    const workerId = worker.projection.characterId;
+    const workerContainers = new Set(
+      root.physical.containers
+        .filter(
+          (container) =>
+            container.carrier?.kind === 'CHARACTER' && container.carrier.id === workerId,
+        )
+        .map((container) => container.containerId),
+    );
+    const workerItem = root.physical.items.find(
+      (entry) => entry.containerId !== null && workerContainers.has(entry.containerId),
+    );
+    if (!workerItem?.containerId) throw new Error('Expected a carried nonleader item');
+    const workerDestinationId = 'a-leader-pack';
+    expect(workerItem.containerId).not.toBe(workerDestinationId);
+    const workerCaptureId = 'aggregate-worker-capture-outcome';
+    const workerTerminalCommand = command(
+      root,
+      'FinalizeEncounter',
+      {
+        bindingId: f.begun.binding.bindingId,
+        terminalReceiptId: finalReceipt.request.payload.receiptId,
+        finalStateDigest: 'aggregate-worker-captive-final-state',
+        outcomeReceiptId: 'aggregate-worker-captive-outcome',
+      },
+      'aggregate-finalize-worker-captive',
+      'COMBAT_RECEIPT',
+      root.lifecycle.campaignTick,
+    );
+    const workerSeizure = {
+      ...physicalScope(root, 'aggregate-worker-captive-seizure', root.lifecycle.campaignTick, 1),
+      sourceEventId: workerTerminalCommand.sourceEventId!,
+      kind: 'SEIZURE' as const,
+      characterId: workerId,
+      itemId: workerItem.itemId,
+      toContainerId: workerDestinationId,
+      captor,
+    };
+    const workerCapture = {
+      ...physicalScope(root, workerCaptureId, root.lifecycle.campaignTick),
+      sourceEventId: workerTerminalCommand.sourceEventId!,
+      kind: 'CAPTURE_OUTCOME' as const,
+      characterId: workerId,
+      captor,
+      location: f.begun.binding.location,
+    };
+    const workerTerminal = {
+      ...terminal,
+      id: 'aggregate-worker-captive-final-state',
+      sourceEventId: workerTerminalCommand.sourceEventId!,
+      outcomeDigest: 'aggregate-worker-captive-outcome',
+      dispositions: terminal.dispositions.map((entry) => {
+        const unit = finalState.units.find((candidate) => candidate.id === entry.unitId)!;
+        const { captureOutcomeId: _captureOutcomeId, seizedItems: _seizedItems, ...base } = entry;
+        return entry.unitId === worker.unitId
+          ? {
+              ...base,
+              sourceEventId: workerTerminalCommand.sourceEventId!,
+              status: 'CAPTIVE' as const,
+              captureOutcomeId: workerCaptureId,
+              seizedItems: [
+                {
+                  itemId: workerItem.itemId,
+                  toContainerId: workerDestinationId,
+                  authorizationId: workerSeizure.id,
+                },
+              ],
+            }
+          : {
+              ...base,
+              sourceEventId: workerTerminalCommand.sourceEventId!,
+              status: unit.health === 0 ? ('DEAD' as const) : ('PRESENT' as const),
+            };
+      }),
+    };
+    const workerFinalize = prepareFinalizeCombatAggregate(consumed.next, {
+      command: workerTerminalCommand,
+      journal,
+      applications,
+      terminal: workerTerminal,
+      context: {
+        ...context(root, workerTerminalCommand, [], [], [workerCapture, workerSeizure]),
+        learningFacts: [],
+      } as CombatOwnerContext,
+      captureLearning: { [worker.unitId]: { intervals: [] } },
+    });
+    expect(
+      workerFinalize.kind,
+      workerFinalize.kind === 'REJECTED' ? workerFinalize.error : undefined,
+    ).toBe('PREPARED');
+    if (workerFinalize.kind === 'PREPARED') {
+      expect(
+        workerFinalize.next.economy.lifecycle.characters.find(
+          (entry) => entry.identity.characterId === workerId,
+        )?.presence.availability,
+      ).toBe('CAPTIVE');
+      expect(workerFinalize.next.economy.physical?.custody).toContainEqual({
+        characterId: workerId,
+        custodian: captor,
+        location: f.begun.binding.location,
+        sourceId: workerTerminalCommand.sourceEventId,
+        sinceTick: workerTerminal.atTick,
+      });
+      expect(
+        workerFinalize.next.economy.physical?.items.find(
+          (entry) => entry.itemId === workerItem.itemId,
+        ),
+      ).toMatchObject({ containerId: workerDestinationId, equipped: null });
+    }
   });
 
   it('retains a real leader death and resolves leadership before releasing the binding', () => {

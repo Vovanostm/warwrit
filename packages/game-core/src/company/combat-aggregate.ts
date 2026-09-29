@@ -101,6 +101,8 @@ export interface EncounterDispositionEvidence {
   readonly status: 'PRESENT' | 'MISSING' | 'DEAD' | 'CAPTIVE';
   readonly location: MaterializedCompanyState['lifecycle']['characters'][number]['presence']['location'];
   readonly missingEntryId?: string;
+  readonly captureOutcomeId?: string;
+  readonly seizedItems?: CommandOf<'Capture'>['payload']['seizedItems'];
 }
 
 export interface EncounterTerminalEvidence {
@@ -890,6 +892,7 @@ export interface FinalizeCombatAggregateInput {
   readonly terminal: EncounterTerminalEvidence;
   readonly context: CombatOwnerContext;
   readonly missingLearning?: Readonly<Record<string, CombatLearningBoundary>>;
+  readonly captureLearning?: Readonly<Record<string, CombatLearningBoundary>>;
   readonly leadership?: {
     readonly command: unknown;
     readonly context: CombatOwnerContext;
@@ -941,6 +944,7 @@ export function prepareFinalizeCombatAggregate(
       },
       context: semanticContext(input.context),
       missingLearning: input.missingLearning ?? null,
+      captureLearning: input.captureLearning ?? null,
       leadership: input.leadership
         ? {
             command: input.leadership.command,
@@ -1029,6 +1033,7 @@ export function prepareFinalizeCombatAggregate(
       string,
       { readonly sourceEventId: string; readonly causeId: string }
     >();
+    const verifiedCaptures = new Map<string, string>();
     for (const participant of companyParticipants) {
       const evidence = dispositions.get(participant.unitId);
       const unit = final.units.find((entry) => entry.id === participant.unitId);
@@ -1049,8 +1054,89 @@ export function prepareFinalizeCombatAggregate(
           canonicalJson(evidence.location) === canonicalJson(active.binding.location),
         'INVALID_SOURCE',
       );
-      if (evidence.status === 'CAPTIVE') throw new PhysicalViolation('UNSUPPORTED_ACTION');
-      if (evidence.status === 'DEAD') {
+      if (evidence.status === 'CAPTIVE') {
+        requirePhysical(
+          unit.health > 0 &&
+            character.presence.availability === 'IN_ENCOUNTER' &&
+            !journal.receipts.some((receipt) =>
+              receipt.transition.events.some(
+                (event) => event.type === 'unit.died' && event.unitId === participant.unitId,
+              ),
+            ) &&
+            evidence.captureOutcomeId &&
+            id.read(evidence.captureOutcomeId) &&
+            Array.isArray(evidence.seizedItems),
+          'INVALID_SOURCE',
+        );
+        const captureFact = input.context.physicalFacts?.find(
+          (fact) => fact.kind === 'CAPTURE_OUTCOME' && fact.id === evidence.captureOutcomeId,
+        );
+        requirePhysical(
+          captureFact?.kind === 'CAPTURE_OUTCOME' &&
+            captureFact.sourceEventId === input.terminal.sourceEventId &&
+            captureFact.characterId === characterId &&
+            captureFact.atTick === input.terminal.atTick &&
+            canonicalJson(captureFact.location) === canonicalJson(evidence.location),
+          'INVALID_SOURCE',
+        );
+        for (const seized of evidence.seizedItems) {
+          const seizureFact = input.context.physicalFacts?.find(
+            (fact) => fact.kind === 'SEIZURE' && fact.id === seized.authorizationId,
+          );
+          requirePhysical(
+            seizureFact?.kind === 'SEIZURE' &&
+              seizureFact.sourceEventId === input.terminal.sourceEventId &&
+              seizureFact.characterId === characterId &&
+              seizureFact.itemId === seized.itemId &&
+              seizureFact.toContainerId === seized.toContainerId &&
+              seizureFact.atTick === input.terminal.atTick &&
+              canonicalJson(seizureFact.captor) === canonicalJson(captureFact.captor),
+            'INVALID_SOURCE',
+          );
+        }
+        const learning = input.captureLearning?.[participant.unitId];
+        requirePhysical(learning, 'INVALID_SOURCE');
+        const captureCommand: CommandOf<'Capture'> = {
+          schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+          commandId: evidence.captureOutcomeId,
+          worldId: root.lifecycle.worldId,
+          companyId: root.lifecycle.companyId,
+          actorRef: { kind: 'OUTCOME_RECEIPT', id: evidence.captureOutcomeId },
+          expectedRevision: root.lifecycle.revision,
+          campaignTick: input.terminal.atTick,
+          rulesetId: COMPANY_RULESET_ID,
+          sourceEventId: input.terminal.sourceEventId,
+          type: 'Capture',
+          payload: {
+            receiptId: evidence.captureOutcomeId,
+            characterId,
+            captorRef: captureFact.captor,
+            locationRef: captureFact.location,
+            seizedItems: evidence.seizedItems,
+          },
+        };
+        const captured = applyLearningCommand(
+          next,
+          captureCommand,
+          input.context,
+          learning,
+          input.terminal.atTick,
+          input.context.canonicalRevision,
+        );
+        requirePhysical(captured.requirements.length === 0, 'INCOMPATIBLE_ACTIVITY');
+        next = captured.next;
+        root = materialized(next);
+        const custody = root.physical.custody.find((entry) => entry.characterId === characterId);
+        requirePhysical(
+          root.lifecycle.characters.find((entry) => entry.identity.characterId === characterId)
+            ?.presence.availability === 'CAPTIVE' &&
+            custody?.sourceId === input.terminal.sourceEventId &&
+            canonicalJson(custody.custodian) === canonicalJson(captureFact.captor) &&
+            canonicalJson(custody.location) === canonicalJson(captureFact.location),
+          'INVALID_SOURCE',
+        );
+        verifiedCaptures.set(characterId, input.terminal.sourceEventId);
+      } else if (evidence.status === 'DEAD') {
         requirePhysical(
           unit.health === 0 && character.presence.availability === 'DEAD',
           'INVALID_SOURCE',
@@ -1190,7 +1276,9 @@ export function prepareFinalizeCombatAggregate(
       const expectedReason = died ? 'LEADER_DIED' : 'LEADER_UNAVAILABLE';
       let causeSourceEventId: string | undefined;
       if (died) causeSourceEventId = verifiedDeaths.get(effectiveLeader)?.sourceEventId;
-      else if (leader.presence.availability === 'OUT_OF_CONTACT') {
+      else if (leader.presence.availability === 'CAPTIVE') {
+        causeSourceEventId = verifiedCaptures.get(effectiveLeader);
+      } else if (leader.presence.availability === 'OUT_OF_CONTACT') {
         const missingFacts = (input.context.physicalFacts ?? []).filter(
           (fact) =>
             fact.kind === 'MISSING_ENTRY' &&
