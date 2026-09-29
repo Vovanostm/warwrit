@@ -22,11 +22,14 @@ The project allows three child threads, excluding the parent: up to two independ
 Luna writers and one Sol reviewer. This is a bounded capacity trial, not a measured
 optimum or an instruction to fill idle slots. Each writer needs a separate worktree,
 write set and resource allocation. Start fewer when only one packet is ready.
-The running September 29 host permits two active children alongside the parent.
-Completed children may be replaced; retained history does not occupy an active
-slot. Two Luna writers have been observed working in distinct worktrees. A third
-simultaneous child remains unavailable without fresh host readback. Changing this
-file cannot enlarge the running session. Never create user-owned tasks to evade limits.
+Two Luna writers have previously worked in distinct worktrees. In the restored
+September 29 session, however, spawning a new Luna returned `agent thread limit
+reached` after the retained Sol reviewer had completed; resuming an older archived
+Luna returned the same error. The available pair is currently one Luna and one Sol.
+Reuse these agents with explicit ownership transfers. A completed response is not
+proof that the host released its thread slot. Recheck actual host behavior before
+claiming additional capacity; changing this file cannot enlarge the running
+session. Never create user-owned tasks to evade limits.
 See [the current packet queue](PARALLEL_WAVES.md) for dependencies and exact ownership.
 
 ## Assignment and scheduling
