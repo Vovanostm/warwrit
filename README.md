@@ -36,7 +36,7 @@ The bootstrap installs the pinned package manager and dependencies, starts Postg
 | `pnpm check:changes`      | Fail on dead code, complexity or duplication introduced by this branch                 |
 | `pnpm report:quality`     | Report complexity hotspots and duplicated code (non-blocking)                          |
 | `pnpm test:combat:stress` | Run the 10,000-battle deterministic M0 stress gate                                     |
-| `pnpm test:migrations`    | Apply and roll back the current migration set against `DATABASE_URL`                   |
+| `pnpm test:migrations`    | Apply and roll back migrations, then run encounter PostgreSQL specs, against an empty `DATABASE_URL` |
 | `pnpm db:up`              | Start local PostgreSQL                                                                 |
 | `pnpm db:down`            | Stop local PostgreSQL                                                                  |
 | `pnpm clean`              | Remove generated build and coverage output                                             |

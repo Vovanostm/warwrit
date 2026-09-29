@@ -71,7 +71,12 @@ pnpm test:combat:stress
 
 It generates 10,000 deterministic battles with 4–12 fighters, runs both sides through server-style AI, asserts terminal resolution and state invariants, samples replay reconstruction and exact reruns, and emits a SHA-256 digest plus aggregate evidence. A failure aborts clean bootstrap and CI.
 
-Migration smoke also runs separately because it requires PostgreSQL:
+Migration smoke and the encounter PostgreSQL specifications run separately because
+they require an empty PostgreSQL database. The smoke starts from no schema and ends
+with every migration applied; the encounter specifications (atomic receipts,
+competing connections, replay after reload) then run on that schema through
+`WARWRIT_ENCOUNTER_DATABASE_URL`. Before 2026-09-29 CI skipped them because only
+`DATABASE_URL` was set:
 
 ```bash
 pnpm test:migrations
