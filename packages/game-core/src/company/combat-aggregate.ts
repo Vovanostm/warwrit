@@ -2,7 +2,7 @@ import type { BattleState } from '../combat/types.js';
 import { canonicalCombatState } from '../combat/replay.js';
 import { canonicalJson, id } from './input.js';
 import { EconomyViolation, validateEconomy } from './economy-state.js';
-import { validateCombatReceiptJournal } from './combat-receipts.js';
+import { combatReceiptEventIds, validateCombatReceiptJournal } from './combat-receipts.js';
 import { prepareCompanyEconomyWithLearning, taskParticipants } from './economy.js';
 import type { CompanyEconomyWithLearningState } from './economy.js';
 import type { EconomyContext } from './economy-types.js';
@@ -119,6 +119,7 @@ export interface CompletedCombatEncounter {
   readonly finalStateDigest: string;
   readonly outcomeDigest: string;
   readonly commandDigest: string;
+  readonly finalizeEvidenceKey: string;
 }
 
 export interface CombatEncounterApplication {
@@ -781,6 +782,34 @@ export function prepareFinalizeCombatAggregate(
     requirePhysical(command.command.type === 'FinalizeEncounter', 'INVALID_SOURCE');
     const request = command.command;
     const commandDigest = canonicalJson(request);
+    const journal = validateCombatReceiptJournal(input.journal);
+    requirePhysical(input.applications.length === journal.receipts.length, 'INVALID_SOURCE');
+    let priorTick: CampaignTick | null = null;
+    for (let index = 0; index < journal.receipts.length; index += 1) {
+      const receipt = journal.receipts[index]!;
+      const application = input.applications[index]!;
+      validateTimeEvidence(application.time, receipt, journal.binding, index, priorTick);
+      priorTick = application.time.atTick;
+    }
+    const receiptEvidence = journal.receipts.map(canonicalJson);
+    const applicationEvidence = input.applications.map(applicationEvidenceDigest);
+    const frame = (values: readonly string[]) =>
+      `${values.length}|${values.map((value) => `${value.length}:${value}`).join('')}`;
+    const finalizeEvidenceKey = `${canonicalJson({
+      journal: {
+        companyId: journal.companyId,
+        proposedLastAppliedRevision: journal.proposedLastAppliedRevision,
+      },
+      terminal: {
+        ...input.terminal,
+        finalStateCanonical: '',
+        dispositions: input.terminal.dispositions.map(({ missingEntryId, ...entry }) =>
+          missingEntryId === undefined ? entry : { ...entry, missingEntryId },
+        ),
+      },
+      context: semanticContext(input.context),
+      missingLearning: input.missingLearning ?? null,
+    })}\nB${frame([canonicalJson(journal.binding)])}\nR${frame(receiptEvidence)}\nA${frame(applicationEvidence)}\nT${input.terminal.finalStateCanonical.length}:${input.terminal.finalStateCanonical}`;
     const prior = state.encounter.completed.find(
       (entry) => entry.bindingId === request.payload.bindingId,
     );
@@ -789,10 +818,7 @@ export function prepareFinalizeCombatAggregate(
         prior.finalStateDigest === request.payload.finalStateDigest &&
           prior.outcomeDigest === request.payload.outcomeReceiptId &&
           prior.commandDigest === commandDigest &&
-          prior.terminalSourceEventId === input.terminal.sourceEventId &&
-          canonicalJson(prior.dispositions) === canonicalJson(input.terminal.dispositions) &&
-          input.terminal.id === request.payload.finalStateDigest &&
-          input.terminal.outcomeDigest === request.payload.outcomeReceiptId,
+          prior.finalizeEvidenceKey === finalizeEvidenceKey,
         'IDEMPOTENCY_CONFLICT',
       );
       return { kind: 'PREPARED', state, next: state, terminal: prior, replayed: true };
@@ -802,14 +828,19 @@ export function prepareFinalizeCombatAggregate(
       active && active.binding.bindingId === request.payload.bindingId,
       'INVALID_SOURCE',
     );
-    const journal = validateCombatReceiptJournal(input.journal);
     const final = journal.receipts.at(-1)?.transition.state;
     requirePhysical(
       final &&
+        journal.companyId === materialized(state).lifecycle.companyId &&
+        canonicalJson(active.binding) === active.bindingDigest &&
+        journal.binding.bindingId === active.binding.bindingId &&
+        canonicalJson(journal.binding) === active.bindingDigest &&
         final.status === 'resolved' &&
         journal.receipts.at(-1)!.request.payload.receiptId === request.payload.terminalReceiptId &&
         active.lastAppliedRevision === final.revision &&
+        active.appliedReceipts.at(-1)?.revision === final.revision &&
         active.appliedReceipts.length === journal.receipts.length &&
+        active.lastAppliedTick === input.applications.at(-1)?.time.atTick &&
         input.terminal.version === 's02-combat-terminal-outcome-1' &&
         input.terminal.bindingId === active.binding.bindingId &&
         input.terminal.battleId === active.binding.setup.battleId &&
@@ -822,6 +853,20 @@ export function prepareFinalizeCombatAggregate(
         input.terminal.finalStateCanonical === canonicalCombatState(final),
       'INVALID_SOURCE',
     );
+    for (let index = 0; index < journal.receipts.length; index += 1) {
+      const receipt = journal.receipts[index]!;
+      const applied = active.appliedReceipts[index]!;
+      requirePhysical(
+        applied.revision === receipt.transition.state.revision &&
+          applied.receiptDigest === canonicalJson(receipt) &&
+          applied.evidenceDigest === applicationEvidenceDigest(input.applications[index]!) &&
+          canonicalJson(applied.sourceEventIds) ===
+            canonicalJson(
+              combatReceiptEventIds(receipt.request.payload.receiptId, receipt.transition.events),
+            ),
+        'IDEMPOTENCY_CONFLICT',
+      );
+    }
     validateAggregateContext(state, input.context, input.terminal.atTick);
     const companyParticipants = active.binding.participants.filter(
       (entry) => entry.companyId === state.economy.lifecycle.companyId,
@@ -977,6 +1022,7 @@ export function prepareFinalizeCombatAggregate(
       finalStateDigest: request.payload.finalStateDigest,
       outcomeDigest: request.payload.outcomeReceiptId,
       commandDigest,
+      finalizeEvidenceKey,
     });
     return {
       kind: 'PREPARED',

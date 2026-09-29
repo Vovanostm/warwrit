@@ -2537,6 +2537,16 @@ describe('G10 — atomic combat company aggregate', () => {
       context: terminalContext,
       missingLearning: { [missingParticipant.unitId]: { intervals: [] } },
     };
+    expect(consumed.next.encounter.active?.bindingDigest).toBe(canonicalJson(journal.binding));
+    expect(canonicalJson(consumed.next.encounter.active?.binding)).toBe(
+      consumed.next.encounter.active?.bindingDigest,
+    );
+    expect(journal.companyId).toBe(root.lifecycle.companyId);
+    expect(journal.binding.bindingId).toBe(consumed.next.encounter.active?.binding.bindingId);
+    expect(consumed.next.encounter.active?.appliedReceipts.at(-1)?.revision).toBe(
+      finalState.revision,
+    );
+    expect(consumed.next.encounter.active?.lastAppliedTick).toBe(applications.at(-1)?.time.atTick);
     const finalized = prepareFinalizeCombatAggregate(consumed.next, finalizeInput);
     expect(finalized.kind, finalized.kind === 'REJECTED' ? finalized.error : undefined).toBe(
       'PREPARED',
@@ -2550,6 +2560,61 @@ describe('G10 — atomic combat company aggregate', () => {
         (entry) => entry.identity.characterId === characterId,
       )?.presence.availability,
     ).toBe('OUT_OF_CONTACT');
+
+    const retry = prepareFinalizeCombatAggregate(finalized.next, finalizeInput);
+    expect(retry.kind).toBe('PREPARED');
+    if (retry.kind === 'PREPARED') {
+      expect(retry.replayed).toBe(true);
+      expect(retry.next).toBe(finalized.next);
+    }
+    const changedLearning = prepareFinalizeCombatAggregate(finalized.next, {
+      ...finalizeInput,
+      missingLearning: {
+        ...finalizeInput.missingLearning,
+        unrelated: { intervals: [] },
+      },
+    });
+    expect(changedLearning.kind).toBe('REJECTED');
+    if (changedLearning.kind === 'REJECTED')
+      expect(changedLearning.error).toBe('IDEMPOTENCY_CONFLICT');
+    const changedTerminal = prepareFinalizeCombatAggregate(finalized.next, {
+      ...finalizeInput,
+      terminal: {
+        ...terminal,
+        finalStateCanonical: `${terminal.finalStateCanonical} `,
+      },
+    });
+    expect(changedTerminal.kind).toBe('REJECTED');
+    if (changedTerminal.kind === 'REJECTED')
+      expect(changedTerminal.error).toBe('IDEMPOTENCY_CONFLICT');
+
+    const cursorBefore = structuredClone(consumed.next);
+    const changedEarlierRequest = prepareFinalizeCombatAggregate(consumed.next, {
+      ...finalizeInput,
+      journal: {
+        ...journal,
+        receipts: journal.receipts.map((receipt, index) =>
+          index === 0
+            ? { ...receipt, request: { ...receipt.request, commandId: 'altered-earlier-request' } }
+            : receipt,
+        ),
+      },
+    });
+    expect(changedEarlierRequest.kind).toBe('REJECTED');
+    if (changedEarlierRequest.kind === 'REJECTED')
+      expect(changedEarlierRequest.error).toBe('IDEMPOTENCY_CONFLICT');
+    const changedEarlierTime = prepareFinalizeCombatAggregate(consumed.next, {
+      ...finalizeInput,
+      applications: applications.map((application, index) =>
+        index === 0
+          ? { ...application, time: { ...application.time, id: 'altered-earlier-time' } }
+          : application,
+      ),
+    });
+    expect(changedEarlierTime.kind).toBe('REJECTED');
+    if (changedEarlierTime.kind === 'REJECTED')
+      expect(changedEarlierTime.error).toBe('IDEMPOTENCY_CONFLICT');
+    expect(consumed.next).toEqual(cursorBefore);
 
     const remoteLocation = { kind: 'AT' as const, siteId: 'remote-site', areaId: 'remote-area' };
     expect(containerIds.length).toBeGreaterThan(0);
