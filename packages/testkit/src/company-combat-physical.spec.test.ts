@@ -1521,7 +1521,7 @@ describe('G09 — verified combat practice', () => {
     );
     expect(noPractice.credits).toBe(0);
     expect(noPractice.root.finance.sourceEffects).toEqual(emptyG08.root.finance.sourceEffects);
-  }, 15_000);
+  }, 30_000);
 
   it('rejects same-company opposing-side attacks as external practice', () => {
     const f = sameCompanyOpponentFixture();
@@ -1731,6 +1731,8 @@ describe('G09 — verified combat practice', () => {
   });
 });
 
+// These scenarios replay full journals for independent rejection/retry checks; explicit limits
+// allow the CI runner's measured cost without changing the global timeout or latency contract.
 describe('G10 — atomic combat company aggregate', () => {
   function aggregateFixture(
     familySuccessor = false,
@@ -2998,7 +3000,7 @@ describe('G10 — atomic combat company aggregate', () => {
     expect(rejected.kind).toBe('REJECTED');
     if (rejected.kind === 'REJECTED') expect(rejected.error).toBe('INVALID_SOURCE');
     expect(remoteState).toEqual(remoteBefore);
-  });
+  }, 15_000);
 
   it('applies a source-bound terminal capture with exact seized-item custody and retry', () => {
     const f = aggregateFixture(true, 10000, 'a-leader');
@@ -3441,7 +3443,7 @@ describe('G10 — atomic combat company aggregate', () => {
         ),
       ).toMatchObject({ containerId: workerDestinationId, equipped: null });
     }
-  });
+  }, 15_000);
 
   it('retains a real leader death and resolves leadership before releasing the binding', () => {
     const f = aggregateFixture(true, 1);
