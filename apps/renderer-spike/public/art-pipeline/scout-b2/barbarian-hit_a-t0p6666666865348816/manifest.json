@@ -1,0 +1,537 @@
+{
+  "schemaVersion": 1,
+  "bake": "playcanvas-2.22.4-art05-b2-scout",
+  "actor": {
+    "id": "red-barbarian-1",
+    "classId": "Barbarian",
+    "equipment": ["axe_1handed"]
+  },
+  "animation": {
+    "clip": "Hit_A",
+    "sampleSeconds": 0.6666666865348816,
+    "durationSeconds": 0.6666666865348816,
+    "loop": false
+  },
+  "capture": {
+    "projection": "orthographic",
+    "directions": 8,
+    "yawDegrees": [0, 45, 90, 135, 180, 225, 270, 315],
+    "sourceSize": [1600, 900],
+    "outputSize": [512, 512],
+    "measuredCaptureMilliseconds": 860.3993750000002,
+    "sourceCrop": {
+      "x": 350,
+      "y": 0,
+      "width": 900,
+      "height": 900
+    },
+    "pivot": {
+      "x": 0.5,
+      "y": 0.3226163983345032,
+      "origin": "projected world-space actor root at [0, 0, 0]",
+      "normalizedFrom": "bottom-left"
+    },
+    "alpha": "WebGL alpha context; transparent background; saved PNG corners and coverage verified",
+    "animationProof": {
+      "componentPlayingAtCapture": true,
+      "clip": "Hit_A",
+      "sampleSeconds": 0.6666666865348816,
+      "changedNonRootJoints": ["upperarm.r", "upperarm.l", "upperleg.r", "upperleg.l"],
+      "equippedItems": ["art-bake-axe_1handed"]
+    },
+    "geometryProof": {
+      "directionIndex": 0,
+      "characterWorldBounds": {
+        "min": [-0.7287359960144288, -0.057398602923463216, -0.49520894245732405],
+        "max": [0.7429857955974056, 2.1934410607127997, 0.6913809241057074],
+        "meshCount": 7
+      },
+      "attachments": [
+        {
+          "name": "axe_1handed",
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [-0.5402431488037109, 0.5897475481033325, -0.05492128059267998],
+          "worldBounds": {
+            "min": [-0.7703801572108184, 0.4842414842493375, -0.09600570724430445],
+            "max": [-0.4879680962314603, 0.9650858986924222, 0.006803267310516406],
+            "meshCount": 1
+          }
+        }
+      ]
+    },
+    "normal": "world-space skinned surface normal encoded as RGB = normal * 0.5 + 0.5",
+    "depth": {
+      "convention": "linear Euclidean metric distance from camera origin in meters",
+      "maximumMeters": 64,
+      "encoding": "unsigned 24-bit big-endian RGB, scaled over [0, 64] meters",
+      "cropSampling": "nearest-neighbor to preserve packed RGB values",
+      "clearPixels": "alpha is zero"
+    }
+  },
+  "licenses": [
+    {
+      "path": "assets/License-Adventurers-CC0.txt",
+      "sha256": "d4adc31660d1db22eb60eba648e01db41577548f6fa1a3576cb4a6283dae0a58"
+    },
+    {
+      "path": "assets/License-Character-Animations-CC0.txt",
+      "sha256": "373b159044d1a886ed15f57ca5a7673ba14e2623c460283452705f2056912ed9"
+    }
+  ],
+  "sourceAssets": [
+    {
+      "path": "assets/characters/Barbarian.glb",
+      "sha256": "d37824a1d6e8e8af57ef9ae4a87e9271c3986210fbc432fb44670749a577ccac"
+    },
+    {
+      "path": "assets/animations/Rig_Medium_General.glb",
+      "sha256": "5f725c0f745f36078c7238968cd5c04843cbc6260689eb6e7f5e2bbd7ffdd7ad"
+    },
+    {
+      "path": "assets/accessories/axe_1handed.gltf",
+      "sha256": "fc56b1e979244812294df0018805e438e00b5650eb74c8a98687a3b9bb555ad7"
+    },
+    {
+      "path": "assets/accessories/axe_1handed.bin",
+      "sha256": "909561b9e5774d2ab0dcb1cbe66e1c0ea116b6eef5fcb4780ed56fe834b07f58"
+    },
+    {
+      "path": "assets/accessories/barbarian_texture.png",
+      "sha256": "f11434d3e5e4df929dacd2c69d15734effb82babf8176a80bb040d2007f5f882"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d00-color.png",
+      "pass": "color",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11696,
+      "partialAlphaPixels": 716,
+      "alphaBounds": {
+        "left": 196,
+        "top": 180,
+        "right": 303,
+        "bottom": 350
+      },
+      "sha256": "b20359c071bee536b2009b00eb83def31fcd6f786ca88714f1974adb01c8f8b4",
+      "bytes": 41302
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d00-normal.png",
+      "pass": "normal",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11696,
+      "partialAlphaPixels": 716,
+      "alphaBounds": {
+        "left": 196,
+        "top": 180,
+        "right": 303,
+        "bottom": 350
+      },
+      "sha256": "b5a1bfff70394d4c0ddfa20dfb51d4eee83cdfc015fdfd7f9fe53bba88888f5f",
+      "bytes": 41704
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d00-depth.png",
+      "pass": "depth",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11481,
+      "partialAlphaPixels": 285,
+      "alphaBounds": {
+        "left": 196,
+        "top": 180,
+        "right": 303,
+        "bottom": 349
+      },
+      "sha256": "56315d0af314e79e1ebb32bdd375e144e7935803f3ce66d4565bbad0d00d92f7",
+      "bytes": 40802
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d01-color.png",
+      "pass": "color",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11078,
+      "partialAlphaPixels": 648,
+      "alphaBounds": {
+        "left": 212,
+        "top": 176,
+        "right": 295,
+        "bottom": 351
+      },
+      "sha256": "35a92e37c961de6fd3c862d6c23c82ed25d6cd2ae32b188a7690ccf19c33c742",
+      "bytes": 39322
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d01-normal.png",
+      "pass": "normal",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11078,
+      "partialAlphaPixels": 648,
+      "alphaBounds": {
+        "left": 212,
+        "top": 176,
+        "right": 295,
+        "bottom": 351
+      },
+      "sha256": "4e28b686d391ddf460ccbeadc9f9612cc5a77b100e7d4cace379ce946749dbb4",
+      "bytes": 39727
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d01-depth.png",
+      "pass": "depth",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10874,
+      "partialAlphaPixels": 230,
+      "alphaBounds": {
+        "left": 212,
+        "top": 176,
+        "right": 294,
+        "bottom": 351
+      },
+      "sha256": "4029e78ccdd53e916254c60d56168c551d4a872e03a40f95436bb7febe8302cd",
+      "bytes": 38839
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d02-color.png",
+      "pass": "color",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9562,
+      "partialAlphaPixels": 561,
+      "alphaBounds": {
+        "left": 203,
+        "top": 174,
+        "right": 293,
+        "bottom": 353
+      },
+      "sha256": "8d19eb2fc7b2165dc8c9475bce005afdca4ac4ba3fbf64131b47d30e7dde6be5",
+      "bytes": 32854
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d02-normal.png",
+      "pass": "normal",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9562,
+      "partialAlphaPixels": 561,
+      "alphaBounds": {
+        "left": 203,
+        "top": 174,
+        "right": 293,
+        "bottom": 353
+      },
+      "sha256": "f3415f333c166e092f796e175647c85e7e1dacc2d70f9e43b2059de42611fd6d",
+      "bytes": 34342
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d02-depth.png",
+      "pass": "depth",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9406,
+      "partialAlphaPixels": 228,
+      "alphaBounds": {
+        "left": 203,
+        "top": 174,
+        "right": 293,
+        "bottom": 352
+      },
+      "sha256": "752a79cf57e492667b3f3d6030ee54c22ed0b631397cd76a49d05cae7b1353ee",
+      "bytes": 34381
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d03-color.png",
+      "pass": "color",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10632,
+      "partialAlphaPixels": 683,
+      "alphaBounds": {
+        "left": 211,
+        "top": 176,
+        "right": 299,
+        "bottom": 351
+      },
+      "sha256": "290c6817a94b3e0a6a4002bccb2061ab55eb7da7705f1a54ddada8a319929887",
+      "bytes": 30878
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d03-normal.png",
+      "pass": "normal",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10632,
+      "partialAlphaPixels": 683,
+      "alphaBounds": {
+        "left": 211,
+        "top": 176,
+        "right": 299,
+        "bottom": 351
+      },
+      "sha256": "cad10a0e2cef485076e729294db287617fed595a9276e496a6487e6dfce21efd",
+      "bytes": 36098
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d03-depth.png",
+      "pass": "depth",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10421,
+      "partialAlphaPixels": 260,
+      "alphaBounds": {
+        "left": 212,
+        "top": 176,
+        "right": 299,
+        "bottom": 351
+      },
+      "sha256": "312e89a778aebff079a2c5674f5ac82e603f8f3657599b066c94875e822a7319",
+      "bytes": 36304
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d04-color.png",
+      "pass": "color",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11630,
+      "partialAlphaPixels": 720,
+      "alphaBounds": {
+        "left": 208,
+        "top": 180,
+        "right": 315,
+        "bottom": 349
+      },
+      "sha256": "21756e11018ae1a698e27be519bca8d7e59b7bad82d5b46789a3bb34e9c2cd9a",
+      "bytes": 29905
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d04-normal.png",
+      "pass": "normal",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11630,
+      "partialAlphaPixels": 720,
+      "alphaBounds": {
+        "left": 208,
+        "top": 180,
+        "right": 315,
+        "bottom": 349
+      },
+      "sha256": "1de309c8fb7c8b13f0e4d52f6098adda4f6fe0c8a4c691481035f2abe91f7378",
+      "bytes": 36874
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d04-depth.png",
+      "pass": "depth",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11429,
+      "partialAlphaPixels": 273,
+      "alphaBounds": {
+        "left": 208,
+        "top": 180,
+        "right": 315,
+        "bottom": 348
+      },
+      "sha256": "56ea089b2a6966766c82b1daa94f46afedd9052a7af1e9f51e0e001e8a30fc44",
+      "bytes": 38303
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d05-color.png",
+      "pass": "color",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10911,
+      "partialAlphaPixels": 659,
+      "alphaBounds": {
+        "left": 216,
+        "top": 176,
+        "right": 299,
+        "bottom": 350
+      },
+      "sha256": "5d259be80bcfc7bc148d7389b36f1f325433eb6d54244d1c5851af56e3d4ea4f",
+      "bytes": 28912
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d05-normal.png",
+      "pass": "normal",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10911,
+      "partialAlphaPixels": 659,
+      "alphaBounds": {
+        "left": 216,
+        "top": 176,
+        "right": 299,
+        "bottom": 350
+      },
+      "sha256": "a0c795b98ffef903978739c34b74eef05193646be2ce3c3f3cdb51252efe84e0",
+      "bytes": 36639
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d05-depth.png",
+      "pass": "depth",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10682,
+      "partialAlphaPixels": 227,
+      "alphaBounds": {
+        "left": 217,
+        "top": 176,
+        "right": 298,
+        "bottom": 350
+      },
+      "sha256": "a4e757398e0cf1c1a110cb7d0bb749fb4f958c6914ebefd210b375457cb38452",
+      "bytes": 36853
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d06-color.png",
+      "pass": "color",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9549,
+      "partialAlphaPixels": 558,
+      "alphaBounds": {
+        "left": 218,
+        "top": 174,
+        "right": 308,
+        "bottom": 351
+      },
+      "sha256": "72f7fe2c8c06aa52e2614d4129da49498c8d4a728665f01e462f02190f5496e5",
+      "bytes": 29672
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d06-normal.png",
+      "pass": "normal",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9549,
+      "partialAlphaPixels": 558,
+      "alphaBounds": {
+        "left": 218,
+        "top": 174,
+        "right": 308,
+        "bottom": 351
+      },
+      "sha256": "4d52edf996900a556410585911a55cb943d3efc5c3654e41f206eaaa451df735",
+      "bytes": 33990
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d06-depth.png",
+      "pass": "depth",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9406,
+      "partialAlphaPixels": 240,
+      "alphaBounds": {
+        "left": 218,
+        "top": 175,
+        "right": 308,
+        "bottom": 351
+      },
+      "sha256": "94ebce872d9d34825174c4816abfccc5cdd8c8bc39e6c6665f99547e1a901a04",
+      "bytes": 34338
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d07-color.png",
+      "pass": "color",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10755,
+      "partialAlphaPixels": 671,
+      "alphaBounds": {
+        "left": 212,
+        "top": 176,
+        "right": 300,
+        "bottom": 351
+      },
+      "sha256": "5a55c19e49ef9ae75e73ebbb38e07197df6d605b96ff1a4b152de3747f28d09c",
+      "bytes": 37157
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d07-normal.png",
+      "pass": "normal",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10755,
+      "partialAlphaPixels": 671,
+      "alphaBounds": {
+        "left": 212,
+        "top": 176,
+        "right": 300,
+        "bottom": 351
+      },
+      "sha256": "e293b0e3a69fddbac32020d729f94377338102f7a47192ea1e829cb9c56915a4",
+      "bytes": 38435
+    },
+    {
+      "file": "barbarian-hit_a-t0p6666666865348816-d07-depth.png",
+      "pass": "depth",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10560,
+      "partialAlphaPixels": 255,
+      "alphaBounds": {
+        "left": 212,
+        "top": 176,
+        "right": 299,
+        "bottom": 351
+      },
+      "sha256": "3e79445f254ad178f7ecb044753038784aa4332b60081cf4780db335f8be17fb",
+      "bytes": 37897
+    }
+  ]
+}

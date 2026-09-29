@@ -220,6 +220,32 @@ async function initializePlayCanvasScene(
   for (const clip of requiredClips) {
     if (!tracks.has(clip)) throw new Error(`PlayCanvas did not load animation ${clip}`);
   }
+  const bakeQuery = new URLSearchParams(location.search);
+  const bakeClassId = bakeQuery.get('art-actor') ?? 'Knight';
+  if (!['Knight', 'Rogue', 'Barbarian'].includes(bakeClassId))
+    throw new Error(`ART05 does not support actor ${bakeClassId}`);
+  const artBakeActorDefinition = actors.find(
+    (actor) => actor.team === 'red' && actor.classId === bakeClassId,
+  );
+  if (!artBakeActorDefinition) throw new Error(`ART05 has no red ${bakeClassId} actor`);
+  const artBakeClip = bakeQuery.get('art-clip') ?? 'Idle_A';
+  if (!requiredClips.includes(artBakeClip as (typeof requiredClips)[number]))
+    throw new Error(`ART05 does not support animation ${artBakeClip}`);
+  const artBakeTrack = tracks.get(artBakeClip);
+  if (!artBakeTrack) throw new Error(`PlayCanvas did not load animation ${artBakeClip}`);
+  const artBakeLoop = artBakeClip === 'Idle_A' || artBakeClip === 'Walking_A';
+  const sampleText = bakeQuery.get('art-sample-seconds') ?? '0';
+  const artBakeSampleSeconds = Number(sampleText);
+  if (
+    !Number.isFinite(artBakeSampleSeconds) ||
+    artBakeSampleSeconds < 0 ||
+    (artBakeLoop
+      ? artBakeSampleSeconds >= artBakeTrack.duration
+      : artBakeSampleSeconds > artBakeTrack.duration)
+  )
+    throw new Error(
+      `ART05 sample time must be finite and within [0, ${artBakeTrack.duration}${artBakeLoop ? ')' : ']'} seconds for ${artBakeClip}`,
+    );
   const currentClip = new Map<string, string>();
   const artBakeBindJointRotations = new Map<string, [number, number, number, number]>();
   const artBakeEquipmentEntities = new Map<string, Entity>();
@@ -244,7 +270,7 @@ async function initializePlayCanvasScene(
       throw new Error(`PlayCanvas did not load ${actor.classId}.glb as a container`);
     const root = (model as { instantiateRenderEntity: () => Entity }).instantiateRenderEntity();
     root.name = actor.id;
-    if (artBakeMode && actor.id === firstAttacker.id) {
+    if (artBakeMode && actor.id === artBakeActorDefinition.id) {
       for (const jointName of ['upperarm.r', 'upperarm.l', 'upperleg.r', 'upperleg.l']) {
         const joint = root.findByName(jointName);
         if (!joint) throw new Error(`ART05 could not find animated joint ${jointName}`);
@@ -308,7 +334,7 @@ async function initializePlayCanvasScene(
       if (!joint || !resource?.instantiateRenderEntity)
         throw new Error(`PlayCanvas could not attach ${assetName} to ${jointName} on ${actor.id}`);
       const item = resource.instantiateRenderEntity();
-      if (artBakeMode && actor.id === firstAttacker.id) {
+      if (artBakeMode && actor.id === artBakeActorDefinition.id) {
         item.name = `art-bake-${assetName}`;
         artBakeEquipmentEntities.set(assetName!, item);
       }
@@ -358,15 +384,14 @@ async function initializePlayCanvasScene(
     artSprite.update(camera.getPosition());
   }
 
-  const artBakeActor = roots.get(firstAttacker.id)!;
+  const artBakeActor = roots.get(artBakeActorDefinition.id)!;
   const originalArtMaterials = new Map<MeshInstance, StandardMaterial>();
   const artBakePassMaterials = new Map<MeshInstance, Map<'normal' | 'depth', StandardMaterial>>();
   if (artBakeMode) {
     for (const actor of actors) roots.get(actor.id)!.anim!.speed = 0;
     artBakeActor.setPosition(0, 0, 0);
-    artBakeActor.anim!.baseLayer!.activeStateCurrentTime = 0;
 
-    for (const mesh of actorMeshInstances.get(firstAttacker.id)!) {
+    for (const mesh of actorMeshInstances.get(artBakeActorDefinition.id)!) {
       if (!(mesh.material instanceof StandardMaterial))
         throw new Error(`ART05 requires a standard material on ${mesh.node.name}`);
       originalArtMaterials.set(mesh, mesh.material);
@@ -655,23 +680,47 @@ async function initializePlayCanvasScene(
   if (artBakeMode) {
     const artBakeAnimation = artBakeActor.anim!;
     const artBakeLayer = artBakeAnimation.baseLayer!;
-    artBakeAnimation.playing = true;
-    artBakeAnimation.speed = 1;
-    const transitionDeadline = performance.now() + 3000;
-    while (
-      (artBakeLayer.activeState !== 'Idle_A' || artBakeLayer.transitioning) &&
-      performance.now() < transitionDeadline
-    ) {
-      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-    }
-    if (artBakeLayer.activeState !== 'Idle_A' || artBakeLayer.transitioning)
-      throw new Error('ART05 could not enter the requested Idle_A animation state.');
-    artBakeAnimation.speed = 0;
-    artBakeLayer.playing = false;
-    artBakeLayer.activeStateCurrentTime = 0;
-    artBakeLayer.playing = true;
-    await new Promise<void>((resolve) => app.once('postrender', () => resolve()));
+    const setAnimationSample = async (clip: string, sampleSeconds: number) => {
+      artBakeAnimation.playing = true;
+      artBakeAnimation.speed = 1;
+      artBakeLayer.play(clip);
+      const transitionDeadline = performance.now() + 3000;
+      while (
+        (artBakeLayer.activeState !== clip || artBakeLayer.transitioning) &&
+        performance.now() < transitionDeadline
+      ) {
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      }
+      if (artBakeLayer.activeState !== clip || artBakeLayer.transitioning)
+        throw new Error(`ART05 could not enter the requested ${clip} animation state.`);
+      artBakeAnimation.speed = 0;
+      artBakeLayer.playing = false;
+      artBakeLayer.activeStateCurrentTime = sampleSeconds;
+      artBakeLayer.playing = true;
+      await new Promise<void>((resolve) => app.once('postrender', () => resolve()));
+    };
 
+    await setAnimationSample('Idle_A', 0);
+
+    const characterRotation = artBakeActor.getRotation() as Quat;
+    const bladeDown = new Quat().setFromEulerAngles(180, 0, 0);
+    for (const [assetName, jointName] of [...artBakeEquipmentEntities.keys()].map(
+      (name) => [name, name === 'shield_round' ? 'handslot.l' : 'handslot.r'] as const,
+    )) {
+      const item = artBakeEquipmentEntities.get(assetName);
+      const joint = artBakeActor.findByName(jointName);
+      if (!item || !joint)
+        throw new Error(`ART05 could not calibrate ${assetName} against sampled ${jointName}`);
+      const localOrientation =
+        assetName === 'sword_1handed' || assetName === 'dagger' ? bladeDown : new Quat();
+      const targetWorldRotation = new Quat().mul2(characterRotation, localOrientation);
+      const sampledSocketRotation = joint.getRotation() as Quat;
+      item.setLocalRotation(
+        new Quat().mul2(new Quat().invert(sampledSocketRotation), targetWorldRotation),
+      );
+    }
+    if (artBakeClip !== 'Idle_A' || artBakeSampleSeconds !== 0)
+      await setAnimationSample(artBakeClip, artBakeSampleSeconds);
     const changedJointNames = [...artBakeBindJointRotations].flatMap(([jointName, bind]) => {
       const rotation = artBakeActor.findByName(jointName)!.getLocalRotation();
       const sampled = [rotation.x, rotation.y, rotation.z, rotation.w] as const;
@@ -682,25 +731,8 @@ async function initializePlayCanvasScene(
     });
     if (!artBakeAnimation.playing || !changedJointNames.length)
       throw new Error(
-        'ART05 Idle_A sample did not change a non-root joint while anim.playing was enabled.',
+        `ART05 ${artBakeClip} sample did not change a non-root joint while anim.playing was enabled.`,
       );
-
-    const characterRotation = artBakeActor.getRotation() as Quat;
-    const bladeDown = new Quat().setFromEulerAngles(180, 0, 0);
-    for (const [assetName, jointName, localOrientation] of [
-      ['sword_1handed', 'handslot.r', bladeDown],
-      ['shield_round', 'handslot.l', new Quat()],
-    ] as const) {
-      const item = artBakeEquipmentEntities.get(assetName);
-      const joint = artBakeActor.findByName(jointName);
-      if (!item || !joint)
-        throw new Error(`ART05 could not calibrate ${assetName} against sampled ${jointName}`);
-      const targetWorldRotation = new Quat().mul2(characterRotation, localOrientation);
-      const sampledSocketRotation = joint.getRotation() as Quat;
-      item.setLocalRotation(
-        new Quat().mul2(new Quat().invert(sampledSocketRotation), targetWorldRotation),
-      );
-    }
 
     const setPass = (pass: 'color' | 'normal' | 'depth') => {
       for (const [mesh, original] of originalArtMaterials) {
@@ -803,7 +835,7 @@ async function initializePlayCanvasScene(
               .flatMap((component) => (component as RenderComponent).meshInstances),
           ),
         );
-        const characterMeshes = (actorMeshInstances.get(firstAttacker.id) ?? []).filter(
+        const characterMeshes = (actorMeshInstances.get(artBakeActorDefinition.id) ?? []).filter(
           (mesh) => !attachmentMeshes.has(mesh),
         );
         const characterMin = new Vec3(
@@ -831,6 +863,8 @@ async function initializePlayCanvasScene(
         const clientRect = app.graphicsDevice.clientRect;
         return {
           png: dataUrl,
+          directionIndex: direction,
+          pass,
           originScreen: [
             (origin.x * canvas.width) / clientRect.width,
             (origin.y * canvas.height) / clientRect.height,
@@ -839,8 +873,11 @@ async function initializePlayCanvasScene(
             componentPlaying: artBakeAnimation.playing,
             clip: artBakeLayer.activeState,
             sampleSeconds: artBakeLayer.activeStateCurrentTime,
+            durationSeconds: artBakeTrack.duration,
+            loop: artBakeClip === 'Idle_A' || artBakeClip === 'Walking_A',
             changedJoints: changedJointNames,
           },
+          actor: artBakeActorDefinition,
           equipment,
           attachmentGeometry,
           characterWorldBounds,

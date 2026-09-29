@@ -9,9 +9,53 @@ import { fileURLToPath } from 'node:url';
 import * as prettier from 'prettier';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const outputDirectory = resolve(appRoot, 'public/art-pipeline/knight-idle-8dir');
-const url =
-  process.env.WARWRIT_ART_BAKE_URL ?? 'http://127.0.0.1:5181/?engine=playcanvas&art-bake=1';
+const arguments_ = process.argv.slice(2);
+const optionValue = (name) => {
+  const prefix = `--${name}=`;
+  const values = arguments_.filter((argument) => argument.startsWith(prefix));
+  if (values.length > 1) throw new Error(`ART05 received ${name} more than once`);
+  return values[0]?.slice(prefix.length);
+};
+const scoutMode = arguments_.includes('--scout');
+const actorClass = optionValue('actor');
+const clip = optionValue('clip');
+const sampleSeconds = optionValue('sample-seconds');
+if (
+  arguments_.some(
+    (argument) =>
+      !['--scout', '--actor=', '--clip=', '--sample-seconds='].some(
+        (option) => argument === option || argument.startsWith(option),
+      ),
+  )
+) {
+  throw new Error('ART05 received an unknown option');
+}
+if (scoutMode && (!actorClass || !clip || sampleSeconds === undefined))
+  throw new Error('ART05 scout mode requires --actor, --clip and --sample-seconds');
+if (!scoutMode && (actorClass || clip || sampleSeconds !== undefined))
+  throw new Error('ART05 actor, clip and sample options require --scout');
+if (scoutMode && !['Knight', 'Rogue', 'Barbarian'].includes(actorClass))
+  throw new Error(`ART05 does not support actor ${actorClass}`);
+if (scoutMode && !['Idle_A', 'Walking_A', 'Melee_1H_Attack_Chop', 'Hit_A'].includes(clip))
+  throw new Error(`ART05 does not support animation ${clip}`);
+if (scoutMode && (!Number.isFinite(Number(sampleSeconds)) || Number(sampleSeconds) < 0))
+  throw new Error('ART05 sample seconds must be a finite nonnegative number');
+const sampleToken = scoutMode ? String(Number(sampleSeconds)).replace('.', 'p') : null;
+const actorToken = scoutMode ? actorClass.toLowerCase() : 'knight';
+const clipToken = scoutMode ? clip.toLowerCase() : 'idle_a';
+const outputDirectory = scoutMode
+  ? resolve(appRoot, `public/art-pipeline/scout-b2/${actorToken}-${clipToken}-t${sampleToken}`)
+  : resolve(appRoot, 'public/art-pipeline/knight-idle-8dir');
+const url = new URL(
+  process.env.WARWRIT_ART_BAKE_URL ?? 'http://127.0.0.1:5181/?engine=playcanvas&art-bake=1',
+);
+url.searchParams.set('engine', 'playcanvas');
+url.searchParams.set('art-bake', '1');
+if (scoutMode) {
+  url.searchParams.set('art-actor', actorClass);
+  url.searchParams.set('art-clip', clip);
+  url.searchParams.set('art-sample-seconds', String(Number(sampleSeconds)));
+}
 const cliPath = process.env.WARWRIT_PLAYWRIGHT_CLI;
 
 if (!cliPath) {
@@ -19,14 +63,27 @@ if (!cliPath) {
 }
 
 const { chromium } = createRequire(resolve(cliPath))('playwright');
+const actorAsset = scoutMode ? actorClass : 'Knight';
+const equipmentAssets =
+  actorAsset === 'Knight'
+    ? ['sword_1handed', 'shield_round']
+    : actorAsset === 'Rogue'
+      ? ['dagger']
+      : ['axe_1handed'];
+const animationFile =
+  scoutMode && clip === 'Walking_A'
+    ? 'public/assets/animations/Rig_Medium_MovementBasic.glb'
+    : scoutMode && clip === 'Melee_1H_Attack_Chop'
+      ? 'public/assets/animations/Rig_Medium_CombatMelee.glb'
+      : 'public/assets/animations/Rig_Medium_General.glb';
 const sourceFiles = [
-  'public/assets/characters/Knight.glb',
-  'public/assets/animations/Rig_Medium_General.glb',
-  'public/assets/accessories/sword_1handed.gltf',
-  'public/assets/accessories/sword_1handed.bin',
-  'public/assets/accessories/shield_round.gltf',
-  'public/assets/accessories/shield_round.bin',
-  'public/assets/accessories/knight_texture.png',
+  `public/assets/characters/${actorAsset}.glb`,
+  ...new Set(['public/assets/animations/Rig_Medium_General.glb', animationFile]),
+  ...equipmentAssets.flatMap((name) => [
+    `public/assets/accessories/${name}.gltf`,
+    `public/assets/accessories/${name}.bin`,
+  ]),
+  `public/assets/accessories/${actorAsset.toLowerCase()}_texture.png`,
 ];
 const licenseFiles = [
   'public/assets/License-Adventurers-CC0.txt',
@@ -73,13 +130,14 @@ try {
     )
       errors.push(message.text());
   });
-  const response = await page.goto(url, { waitUntil: 'networkidle' });
+  const response = await page.goto(url.href, { waitUntil: 'networkidle' });
   if (!response?.ok()) throw new Error(`ART05 page returned HTTP ${response?.status() ?? 'none'}`);
   await page.waitForFunction(() => Boolean(window.__warwritArtBake), null, { timeout: 30_000 });
 
   const outputs = [];
   const frameCount = 8;
   const frameSize = 512;
+  const captureStartedAt = performance.now();
   let groundedPivot = null;
   let sourceCrop = null;
   let sampledAnimation = null;
@@ -147,7 +205,10 @@ try {
             ...stats,
             originInFrame,
             sourceCrop: { x: sourceX, y: sourceY, width: side, height: side },
+            directionIndex: rendered.directionIndex,
+            pass: rendered.pass,
             animation: rendered.animation,
+            actor: rendered.actor,
             equipment: rendered.equipment,
             attachmentGeometry: rendered.attachmentGeometry,
             characterWorldBounds: rendered.characterWorldBounds,
@@ -174,18 +235,32 @@ try {
         throw new Error(`${pass} direction ${direction} has an opaque background corner`);
       if (capture.partialAlphaPixels === 0)
         throw new Error(`${pass} direction ${direction} has no antialiased alpha edge`);
+      const expectedClip = scoutMode ? clip : 'Idle_A';
+      const expectedSample = scoutMode ? Number(sampleSeconds) : 0;
+      const expectedActorId = `red-${actorToken}-1`;
+      const expectedLoop = expectedClip === 'Idle_A' || expectedClip === 'Walking_A';
       if (
+        capture.directionIndex !== direction ||
+        capture.pass !== pass ||
+        capture.actor?.id !== expectedActorId ||
+        capture.actor?.classId !== actorAsset ||
         !capture.animation.componentPlaying ||
-        capture.animation.clip !== 'Idle_A' ||
-        Math.abs(capture.animation.sampleSeconds) > 1e-6 ||
+        capture.animation.clip !== expectedClip ||
+        Math.abs(capture.animation.sampleSeconds - expectedSample) > 1e-6 ||
+        capture.animation.loop !== expectedLoop ||
         capture.animation.changedJoints.length === 0
       ) {
-        throw new Error(`Direction ${direction} did not capture the evaluated Idle_A sample`);
-      }
-      const expectedEquipment = ['art-bake-sword_1handed', 'art-bake-shield_round'];
-      if (expectedEquipment.some((name) => !capture.equipment.includes(name)))
         throw new Error(
-          `Direction ${direction} is missing equipped sword or shield attachment proof`,
+          `Direction ${direction} did not capture the evaluated ${expectedClip} sample`,
+        );
+      }
+      const expectedEquipment = equipmentAssets.map((name) => `art-bake-${name}`);
+      if (
+        expectedEquipment.length !== capture.equipment.length ||
+        expectedEquipment.some((name) => !capture.equipment.includes(name))
+      )
+        throw new Error(
+          `Direction ${direction} has an incomplete ${actorAsset} equipment attachment set`,
         );
 
       if (pass === 'color') {
@@ -205,7 +280,9 @@ try {
         }
       }
       const png = Buffer.from(capture.png.slice('data:image/png;base64,'.length), 'base64');
-      const filename = `knight-idle-d${String(direction).padStart(2, '0')}-${pass}.png`;
+      const filename = scoutMode
+        ? `${actorToken}-${clipToken}-t${sampleToken}-d${String(direction).padStart(2, '0')}-${pass}.png`
+        : `knight-idle-d${String(direction).padStart(2, '0')}-${pass}.png`;
       await writeFile(resolve(stageDirectory, filename), png);
       const savedPng = await readFile(resolve(stageDirectory, filename));
       if (sha256(savedPng) !== sha256(png))
@@ -259,6 +336,7 @@ try {
         partialAlphaPixels: capture.partialAlphaPixels,
         alphaBounds: capture.alphaBounds,
         sha256: sha256(png),
+        bytes: png.byteLength,
       });
     }
   }
@@ -266,15 +344,25 @@ try {
   if (errors.length) throw new Error(`Browser errors during bake: ${errors.join('\n')}`);
   const manifest = {
     schemaVersion: 1,
-    bake: 'playcanvas-2.22.4-art05-a',
-    actor: { id: 'red-knight-1', classId: 'Knight', equipment: ['sword_1handed', 'shield_round'] },
-    animation: { clip: 'Idle_A', sampleSeconds: 0, loop: true },
+    bake: scoutMode ? 'playcanvas-2.22.4-art05-b2-scout' : 'playcanvas-2.22.4-art05-a',
+    actor: {
+      id: scoutMode ? `red-${actorToken}-1` : 'red-knight-1',
+      classId: actorAsset,
+      equipment: equipmentAssets,
+    },
+    animation: {
+      clip: scoutMode ? clip : 'Idle_A',
+      sampleSeconds: scoutMode ? Number(sampleSeconds) : 0,
+      durationSeconds: sampledAnimation.durationSeconds,
+      loop: scoutMode ? sampledAnimation.loop : true,
+    },
     capture: {
       projection: 'orthographic',
       directions: frameCount,
       yawDegrees: Array.from({ length: frameCount }, (_, index) => index * 45),
       sourceSize: [1600, 900],
       outputSize: [frameSize, frameSize],
+      measuredCaptureMilliseconds: performance.now() - captureStartedAt,
       sourceCrop,
       pivot: {
         x: groundedPivot[0] / frameSize,
@@ -349,7 +437,9 @@ try {
       console.warn(`ART05 kept prior output backup at ${backupDirectory}: ${error.message}`);
     }
   }
-  console.log(`ART05-A baked ${outputs.length} verified PNG outputs to ${outputDirectory}`);
+  console.log(
+    `${scoutMode ? 'ART05 scout' : 'ART05-A'} baked ${outputs.length} verified PNG outputs to ${outputDirectory}`,
+  );
 } finally {
   try {
     await browser?.close();

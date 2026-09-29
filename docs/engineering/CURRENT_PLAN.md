@@ -8,6 +8,21 @@
 
 ## Mission and checkpoint
 
+**Current dispatch amendment after PR123, 2026-09-29:** actual main is
+`02b160c5275af4f5882a811db4f3326f61457282`, tree
+`afa458013b92411c6469de5e52f0776fe198b4b6`. ART05 B1 is merged; PR and actual-main
+CI passed the full gate. G10 joint departure/learning/social composition is locally
+committed at `878ecfa`; terminal exact-set handling is committed at `d9cb1bd`, selecting one lawful
+exit per executable membership. Sol review and the parent's joint 21-specification
+farewell/physical-combat run passed. G10 remains unmerged; the seven unchanged patches are now rebased onto this main
+at `66697cf51cb19ccb10e7f03b5dbee98dc8a87e90`. ART05 B2 finite sampling has Sol
+source review and parent browser evidence; see the [scout scope](evidence/ART05-B2-SCOUT-20260929.md).
+Clean delivery is pending; Luna now owns CAPTIVE, the parent delivers ART and
+Sol reviews frozen results. The [current dispatch queue](PARALLEL_WAVES.md#current-queue-after-pr123)
+rotates the retained Luna writer between domain and independent art packets while
+Sol reviews frozen results and the parent verifies/integrates. Full persistent
+M1, animated ART05 and the final launcher remain incomplete.
+
 **Current packet checkpoint, 2026-09-29:** G10 terminal death/corpse/custody
 validation and authorized leadership composition are locally committed at
 `6bfc15d`; Sol review and parent build, 14 focused specifications and core types
