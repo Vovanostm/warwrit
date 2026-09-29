@@ -15,6 +15,7 @@ import {
 } from 'playcanvas';
 import type { AnimTrack, RenderComponent } from 'playcanvas';
 import { createArtSprite } from './art-sprite.js';
+import { createAnimatedArtSprites } from './art-animated-sprite.js';
 import {
   actors,
   firstAttacker,
@@ -74,9 +75,11 @@ function rayAabbDistance(from: Vec3, to: Vec3, bounds: MeshInstance['aabb']) {
 const actorRenderScale = 0.92;
 
 export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
-  const artBakeMode = new URLSearchParams(location.search).get('art-bake') === '1';
+  const query = new URLSearchParams(location.search);
+  const artBakeMode = query.get('art-bake') === '1';
+  const artAnimatedSpriteMode = !artBakeMode && query.get('art-animated') === '1';
   const artSpritePreviewMode =
-    !artBakeMode && new URLSearchParams(location.search).get('art-preview') === 'sprite';
+    !artBakeMode && !artAnimatedSpriteMode && query.get('art-preview') === 'sprite';
   const app = new Application(canvas, {
     graphicsDeviceOptions: {
       antialias: scenario.quality.antialias,
@@ -90,6 +93,7 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
       metrics,
       app,
       artBakeMode,
+      artAnimatedSpriteMode,
       artSpritePreviewMode,
     );
   } catch (error) {
@@ -104,6 +108,7 @@ async function initializePlayCanvasScene(
   metrics: Parameters<RendererMount>[2],
   app: Application,
   artBakeMode: boolean,
+  artAnimatedSpriteMode: boolean,
   artSpritePreviewMode: boolean,
 ): Promise<RendererController> {
   metrics.attachRendererContext();
@@ -375,6 +380,27 @@ async function initializePlayCanvasScene(
   const spriteActorId = 'red-knight-1';
   const spriteActor = actors.find((actor) => actor.id === spriteActorId)!;
   const spriteActorPosition = hexToWorld(spriteActor.q, spriteActor.r);
+  const animatedKnightActors = artAnimatedSpriteMode
+    ? actors.filter((actor) => actor.classId === 'Knight')
+    : [];
+  const artAnimatedActorIds = new Set(animatedKnightActors.map((actor) => actor.id));
+  const artAnimatedSprite = artAnimatedSpriteMode
+    ? await createAnimatedArtSprites(
+        app,
+        animatedKnightActors.map((actor) => {
+          const position = hexToWorld(actor.q, actor.r);
+          return { id: actor.id, position: new Vec3(position.x, 0, position.z) };
+        }),
+      )
+    : null;
+  if (artAnimatedSprite) {
+    for (const actorId of artAnimatedActorIds) {
+      roots.get(actorId)!.anim!.playing = false;
+      roots.get(actorId)!.enabled = false;
+      statusBars.get(actorId)!.enabled = false;
+    }
+    artAnimatedSprite.update(camera.getPosition(), 0);
+  }
   const artSprite = artSpritePreviewMode
     ? await createArtSprite(app, new Vec3(spriteActorPosition.x, 0, spriteActorPosition.z))
     : null;
@@ -510,6 +536,7 @@ async function initializePlayCanvasScene(
   let selectedId: string | null = null;
   let selectedCell: string | null = null;
   let destroyed = false;
+  let artAnimatedElapsedSeconds = 0;
   let previousHitVisible = false;
   let sparkStartedAt: number | null = null;
   const startBurst = () => {
@@ -530,12 +557,17 @@ async function initializePlayCanvasScene(
     gpuQuery = null;
     metrics.cpuSubmit(frameStart, performance.now());
   });
-  app.on('update', () => {
+  app.on('update', (deltaSeconds) => {
     if (destroyed) return;
     if (artBakeMode) return;
     artSprite?.update(camera.getPosition());
+    if (artAnimatedSprite) {
+      artAnimatedElapsedSeconds += deltaSeconds;
+      artAnimatedSprite.update(camera.getPosition(), artAnimatedElapsedSeconds);
+    }
     const sample = sampleTimeline((performance.now() - timelineEpochMs) / 1000);
     for (const [actorId, clip] of sample.animationByActor) {
+      if (artAnimatedActorIds.has(actorId)) continue;
       const root = roots.get(actorId);
       if (root && currentClip.get(actorId) !== clip) {
         root.anim?.baseLayer?.play(clip);
@@ -618,7 +650,7 @@ async function initializePlayCanvasScene(
     if (!ray) return null;
     let closest: { actorId: string; distance: number } | null = null;
     for (const [actorId, instances] of actorMeshInstances) {
-      if (artSprite && actorId === spriteActorId) continue;
+      if ((artSprite && actorId === spriteActorId) || artAnimatedActorIds.has(actorId)) continue;
       for (const instance of instances) {
         const distance = rayAabbDistance(ray.from, ray.to, instance.aabb);
         if (distance !== null && (!closest || distance < closest.distance))
@@ -632,6 +664,8 @@ async function initializePlayCanvasScene(
       (!closest || spriteDistance < closest.distance)
     )
       closest = { actorId: spriteActorId, distance: spriteDistance };
+    const animatedHit = artAnimatedSprite?.pickDistance(ray.from, ray.to);
+    if (animatedHit && (!closest || animatedHit.distance < closest.distance)) closest = animatedHit;
     return closest?.actorId ?? null;
   };
   const applyTileHighlight = () => {
@@ -916,6 +950,8 @@ async function initializePlayCanvasScene(
     },
     resetTimeline: () => {
       timelineEpochMs = performance.now();
+      artAnimatedElapsedSeconds = 0;
+      artAnimatedSprite?.update(camera.getPosition(), 0);
       previousHitVisible = false;
       for (const spark of sparks) spark.enabled = false;
       sparkStartedAt = null;
@@ -935,6 +971,7 @@ async function initializePlayCanvasScene(
       destroyed = true;
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('click', onClick);
+      artAnimatedSprite?.destroy();
       app.destroy();
       for (const actorId of markers.keys()) roots.get(actorId)?.destroy();
       selectedId = null;
