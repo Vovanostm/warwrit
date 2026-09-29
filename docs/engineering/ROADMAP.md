@@ -8,19 +8,21 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns integration and final evidence. Verified main `b543361` includes
-PR119 static contract content, PR121 equipped eight-direction art capture and
-PR122 source/time-bound world knowledge. Parent audited PR122 actual-main CI:
+The parent owns integration and final evidence. Verified main `f77f126` includes
+PR119 static contract content, PR122 source/time-bound world knowledge and
+PR121/123/124 equipped capture, static sprite and explicit animation sampling.
+Parent audited PR124 and actual-main CI36548850610:
 verify, combat stress/replay and real PostgreSQL migration smoke passed. These
 preparers do not establish the persistent M1 journey.
 
-G10 terminal death and authorized succession are locally reviewed at `6bfc15d`;
-departure/social/learning and CAPTIVE composition remain before H. ART05 B1 is a
-separate diagnostic sprite consumer with source/browser review, awaiting clean CI; full
+G10 death, succession and departure/learning/social composition are locally
+committed at `66697cf`; CAPTIVE and final integration remain before H. The bounded
+F01 trusted-deed nickname consumer is the next independent domain packet; full
+F01 still needs its content mapping and genuine producer. Full
 animated sprite/normal-depth corpus and matched renderer comparison remain open.
 [Parallel waves](PARALLEL_WAVES.md) records the current packet queue and exclusive
-paths. The actual host exposes the parent plus one retained Luna writer and one
-Sol reviewer. They exchange bounded packets at frozen handoffs; extra configured
+paths. The actual host exposes the parent plus one Luna writer and one
+Sol reviewer. Fresh agents now exchange bounded packets at frozen handoffs; extra configured
 roles do not enlarge runtime capacity. The full alpha and launcher remain incomplete.
 
 | Lane                  | Observed state                                         | Next responsibility                                  |
