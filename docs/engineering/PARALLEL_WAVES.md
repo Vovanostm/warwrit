@@ -19,7 +19,58 @@ parent rework, correctness, wall time and available token/cost telemetry under
 `HARNESS_EVAL.md`; matched evaluation remains NOT_RUN and throughput gain remains
 NOT_MEASURED.
 
+## Current queue after PR127
+
+**Later scheduling amendment:** follow [I02a readiness](M1_EXECUTION_READINESS.md)
+for the explicit W04/CT02 enabling edges; retain full I02 at final acceptance.
+ART B3a is now frozen with parent browser evidence; Sol review is pending because
+both resuming Sol and spawning its replacement hit the host's thread limit after
+the author completed. The second Luna has transferred to the unchanged aggregate
+fixture extraction in `warwrit-alpha-contracts`, branch
+`codex/m1-company-storage-fixture`, base `eee8275`. Exclusive paths are
+`packages/testkit/src/company-combat-physical.spec.test.ts` and new
+`company-combat-aggregate-fixture.ts`; H's writer explicitly ACKed no edits there.
+H's production reader/storage writer stays in `warwrit-alpha-c06`.
+Parent integrated the frozen test-only extraction as `f70e805` within H after
+comparing all seven extracted function bodies (identical) and inspecting the
+unchanged assertions; author's original physical-combat 15/15 and testkit types
+passed. The fixture writer is completed, H's writer continues storage tests, and
+there is no duplicate suite or additional gameplay predecessor. ART B3a is draft
+PR129 at `9203b9a`; CI36562667182 and independent Sol review remain pending.
+
+The table below describes the initial post-PR127 allocation; this amendment owns
+current assignments.
+
+This dated queue supersedes the historical dispatch below. G10 and the F01
+consumer are merged on `eee8275`, tree `9b21f5a`; parent audited both PR and
+actual-main full gates. F01's authentic producer/content remain open.
+
+| Packet                | Current owner and boundary                                                                                                                                             | Required handoff                                                                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| H01/H02 storage       | Luna, `warwrit-alpha-c06`: strict full aggregate reader, new company repository, ordered migration, narrow owner validation exports and focused real-PG specifications | Frozen reader/storage with complete version/value preservation; Sol review and parent verification before H03/H04                             |
+| ART05 B3a pilot       | Second Luna, `warwrit-alpha-art-animated-pilot`: existing baker size flag, opt-in animated Knight color-sprite consumer and its scene integration                      | Eight real phases/directions, correct loop/picking/cleanup; Sol review and parent browser proof; full relit/all-class comparison remains open |
+| Integration and proof | Parent: shared planning, Git/PRs, service lifecycle, browser captures and canonical checkpoints                                                                        | Exact reviewed/tested tree, authorized guarded merge and actual-main readback                                                                 |
+| Independent review    | Sol, when a writer freezes and an active slot is available                                                                                                             | Concrete counterexamples and smallest owning fix; no competing code edits                                                                     |
+
+A fresh art writer successfully launched while Sol was completed, allowing two
+disjoint Luna packets to run together. Actual capacity remains parent plus two
+active children. This observation supersedes the earlier retained-pair restriction;
+it does not establish greater simultaneous capacity or a measured speedup.
+
+H uses the actually merged optional F01 fields. It does not wait for full F01
+deed production. H03/H04 follows storage; ID03 follows the real executor.
+Do not add artificial dependencies between art and storage. Keep the writer on
+an unfinished cohesive packet instead of handing half a transaction between agents.
+
+Parent-owned resources: H PostgreSQL project `warwrit-alpha-company-h`, loopback
+32778; ART Vite 5184 and the isolated `warwrit-art-b3` browser. Temporary visual
+inspection HTTP 5185 serves only generated diagnostics. Existing identity services
+55433/5557 and unrelated local services remain preserved. GPU captures and final
+verification are coordinated by the parent.
+
 ## Current queue after PR124
+
+Historical queue; superseded by the PR127 dispatch above.
 
 Sol reviewed this sequence against `f77f126` and the actual source boundaries;
 the parent refreshed full M1 authority and Q-CHAR-14A/lifecycle/acceptance records.

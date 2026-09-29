@@ -25,8 +25,18 @@ write set and resource allocation. Start fewer when only one packet is ready.
 Two Luna writers have previously worked in distinct worktrees. In the restored
 September 29 session, however, spawning a new Luna returned `agent thread limit
 reached` after the retained Sol reviewer had completed; resuming an older archived
-Luna returned the same error. The available pair is currently one Luna and one Sol.
-Reuse these agents with explicit ownership transfers. A completed response is not
+Luna returned the same error. That restored checkpoint used one Luna and one Sol.
+Later, after PR127, a fresh `art_sampling_luna` launch succeeded while Sol was
+completed and the H Luna writer was active. Two disjoint Luna packets now run
+together; Sol returns for review when a writer freezes. Actual host capacity is
+still parent plus two active children, irrespective of the configured role pool.
+The launch is evidence of this scheduling option, not measured speedup.
+A later attempt to resume Sol and to spawn a fresh reviewer after the art writer
+completed again returned `agent thread limit reached`. Completion therefore did
+not reliably release a slot. Keep the frozen review queued and use the retained
+writers only for disjoint authorized work; do not substitute author or parent
+checks for the required Sol review.
+Reuse agents with explicit ownership transfers. A completed response is not
 proof that the host released its thread slot. Recheck actual host behavior before
 claiming additional capacity; changing this file cannot enlarge the running
 session. Never create user-owned tasks to evade limits.

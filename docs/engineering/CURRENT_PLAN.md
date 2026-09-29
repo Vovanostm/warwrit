@@ -8,6 +8,61 @@
 
 ## Mission and checkpoint
 
+**Execution sequencing amendment, 2026-09-29:** the parent selected Sol's acyclic
+I02a alternative in [M1_EXECUTION_READINESS.md](M1_EXECUTION_READINESS.md).
+W04/CT02 may use their specifically verified durable-command readiness checkpoint;
+full F01/D02/I02 remain mandatory before final M1 acceptance. No gameplay policy
+or unfinished handler is approved by this scheduling change.
+
+The two Luna writers split H storage/readers from unchanged combat-fixture
+extraction. The test helper is now integrated in H's `warwrit-alpha-c06` as
+`f70e805`; the parent compared all seven extracted function bodies with the
+TypeScript printer (identical), and the author passed the existing 15 physical
+combat specifications. H now consumes that helper for real storage checks.
+ART B3a is committed at `9203b9a` in draft [PR129](https://github.com/Vovanostm/warwrit/pull/129)
+after parent browser proof and a corrected cancellation defect. CI36562667182 and
+independent Sol review are pending. This host refused both Sol resume and fresh
+reviewer spawn after ART completion, so completion has not freed a review slot.
+No independent consumer approval or ART merge is claimed. Preserve unrelated
+open PR125 and PR128. Integration main remains `eee8275`.
+
+**H storage activated after PR126, 2026-09-29:** actual merged and integrated main
+is `78f714e43338fbcadc59ad22f90d0b139810e2a9`, tree
+`467d22b1788ee1ca89c1371dcdb0654efcf98023`, identical to reviewed G10 and tested
+PR merge `10832be`. Parent audited CI36556347575: 443 tests/65 files, 10,000
+battles/100 replay checks and real PostgreSQL migration smoke passed. Five opt-in
+skips remain separately scoped. Parent also audited actual-main CI36556856201:
+the same full gate passed. Canonical checkpoint `comcRyuCy2j7wAIty` was written
+and read back on the M1 record.
+
+Luna owns H01/H02 in `warwrit-alpha-c06`, branch `codex/m1-company-storage`,
+from that integrated main: complete unknown-input aggregate reader, ordered
+company storage migration, repository and focused roundtrip/migration evidence.
+Parent owns planning documents, integration and disposable PostgreSQL project
+`warwrit-alpha-company-h` (loopback port 32778). With Sol's review completed,
+fresh `art_sampling_luna` successfully started an independent baker-argument
+packet in `warwrit-alpha-art-animated-pilot`. Its finite 256/512 scout option was
+reviewed. Parent inspected eight real front/side walking phases, compared t0
+256/512 output and verified 192 pilot PNGs/2,288,003 bytes. That writer now owns
+the opt-in animated Knight color-sprite pilot; full ART05 remains open.
+The host now runs parent plus two Luna writers; Sol reviews frozen packets when
+a slot is free. No greater simultaneous capacity or speedup is claimed.
+H03/H04 command execution, ID03 opening and world/JOIN remain subsequent
+responsibilities; storage alone is not durable gameplay acceptance.
+
+The F01 consumer is now merged in PR127 at
+`eee82753eb439c10dc098075ccfd7cb7d04d9e15`, tree
+`9b21f5a92625a838a050e3bd301bf54617872daa`. Its reviewed and tested PR tree matches;
+parent audited CI36557212863 (448 tests, full stress/replay/migration gate).
+Parent audited actual-main CI36557756507: the same full gate passed; canonical
+checkpoint `com68OtKqwTlv7mrW` was written and read back. H fast-forwarded to this merged base and
+owns strict roundtrip compatibility for its additive optional nickname fields.
+The [consumer evidence](evidence/F01-CONSUMER-20260929.md) includes the corrected
+public-projection alias. Genuine deed production and finite cultural content
+remain open; full F01 is not delivered by this consumer. Follow the
+[current packet queue](PARALLEL_WAVES.md#current-queue-after-pr127). Full M1 and its
+launcher/manual-test journey remain incomplete.
+
 **Current dispatch after PR124, 2026-09-29:** parent verified actual main
 `f77f126b09c30e9a29f5678cedfc383a95304da4`, tree
 `5099874e196d1b51204c5865c73190ce5937bb7a`. PR124 and actual-main CI36548850610
