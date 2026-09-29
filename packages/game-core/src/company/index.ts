@@ -42,6 +42,7 @@ export * from './combat-receipts.js';
 export * from './combat-physical.js';
 export * from './combat-consequences.js';
 export * from './combat-practice.js';
+export * from './combat-aggregate.js';
 export * from './progression.js';
 export * from './skill-progress.js';
 export * from './study-section.js';

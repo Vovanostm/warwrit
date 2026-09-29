@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   COMPANY_CATALOGUE,
   COMPANY_RULES,
+  COMBAT_RECEIPT_TIME_VERSION,
   ENCOUNTER_BINDING_VERSION,
   M1_DOMAIN_BRIDGE_RULESET_ID,
   applyCombatCommand,
@@ -9,10 +10,15 @@ import {
   canonicalJson,
   commandId,
   createCombatReceiptJournal,
+  createCombatEncounterApplication,
+  createCompanyLearningState,
+  createSocialState,
   entityId,
   initialSkillProgress,
   createHexagon,
   prepareCombatConsequences,
+  prepareBeginCombatAggregate,
+  prepareConsumeCombatAggregate,
   prepareCombatPracticeEffects,
   COMBAT_PRACTICE_PROFILE_VERSION,
   PROGRESSION_RULES,
@@ -36,6 +42,8 @@ import type {
   PhysicalEvidence,
   PracticeEvidence,
   CommandOf,
+  CompanyCombatAggregateState,
+  CombatOwnerContext,
 } from '@warwrit/game-core';
 import {
   command,
@@ -176,7 +184,7 @@ function fixture(health = 100, adjacentPracticeParty = false) {
   const binding = prepareEncounterBinding(sources, request, evidence);
   const root = sources[0]!.root;
   const journal = createCombatReceiptJournal(binding, root.lifecycle.companyId);
-  return { sources, root, binding, journal };
+  return { sources, root, binding, journal, request, evidence };
 }
 
 function sameCompanyOpponentFixture() {
@@ -247,6 +255,8 @@ function sameCompanyOpponentFixture() {
     root: splitRoot,
     binding,
     journal: createCombatReceiptJournal(binding, splitRoot.lifecycle.companyId),
+    request,
+    evidence,
   };
 }
 
@@ -1232,6 +1242,137 @@ describe('G09 — verified combat practice', () => {
     ).toThrow();
     expect({ root: f.root, journal, physical }).toEqual(before);
 
+    const aggregateState: CompanyCombatAggregateState = {
+      economy: f.root,
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    };
+    const aggregateBegin = prepareBeginCombatAggregate(
+      aggregateState,
+      f.sources,
+      f.request,
+      f.evidence,
+    );
+    if (aggregateBegin.kind !== 'PREPARED') throw new Error(aggregateBegin.error);
+    const ownerContext = {
+      ...combatContext(f, combatFacts(f, journal)),
+      learningFacts: [],
+    } as CombatOwnerContext;
+    const creditsByOrdinal = journal.receipts.map((receipt, ordinal) => {
+      const credits = trustedCredits.filter((credit) => {
+        if (credit.command.payload.methodId === 'command-cycle')
+          return cycle.endReceiptOrdinal === ordinal;
+        return receipt.sourceEventIds.includes(credit.command.sourceEventId!);
+      });
+      return credits;
+    });
+    const aggregateApplications = journal.receipts.map((receipt, ordinal) => ({
+      time: {
+        version: COMBAT_RECEIPT_TIME_VERSION,
+        id: `practice-aggregate-time-${ordinal}`,
+        sourceEventId: receipt.request.sourceEventId!,
+        battleId: f.binding.setup.battleId,
+        receiptId: receipt.request.payload.receiptId,
+        revision: receipt.transition.state.revision,
+        atTick: f.root.lifecycle.campaignTick,
+      },
+      context: ownerContext,
+      learning: { intervals: [] },
+      practiceCredits: creditsByOrdinal[ordinal]!.map((credit) => ({
+        ...credit,
+        context: { ...ownerContext, practiceFacts: credit.context.practiceFacts },
+      })),
+    }));
+    const aggregate = prepareConsumeCombatAggregate(aggregateBegin.next, {
+      journal,
+      applications: aggregateApplications,
+      practiceProfile: profile,
+    });
+    if (aggregate.kind !== 'PREPARED') throw new Error(aggregate.error);
+    expect(
+      journal.receipts.some(
+        (receipt) =>
+          receipt.sourceEventIds.length > 1 &&
+          receipt.transition.events.some((event) => event.type === 'unit.wounded'),
+      ),
+    ).toBe(true);
+    const aggregateLeader = aggregate.next.economy.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === 'a-leader',
+    );
+    const aggregateBlades = aggregateLeader?.skills['blades'];
+    if (!aggregateBlades || typeof aggregateBlades === 'number')
+      throw new Error('Expected aggregate leader blade progression');
+    expect(aggregateBlades.amount.milliXp).toBe('39600');
+    expect(aggregate.next.encounter.active?.lastAppliedRevision).toBe(
+      journal.receipts.at(-1)!.transition.state.revision,
+    );
+
+    const beforeChangedEvidence = structuredClone(aggregate.next);
+    const creditOrdinal = aggregateApplications.findIndex(
+      (application) => application.practiceCredits.length > 0,
+    );
+    const firstCredit = aggregateApplications[creditOrdinal]!.practiceCredits[0]!;
+    const practiceFact = firstCredit.context.practiceFacts?.[0];
+    if (!practiceFact) throw new Error('Expected a sourced combat practice fact');
+    const changedSource = aggregateApplications.map((application, index) =>
+      index === creditOrdinal
+        ? {
+            ...application,
+            practiceCredits: [
+              {
+                ...firstCredit,
+                context: {
+                  ...firstCredit.context,
+                  practiceFacts: [
+                    { ...practiceFact, sourceEventId: `${practiceFact.sourceEventId}-changed` },
+                  ],
+                },
+              },
+              ...application.practiceCredits.slice(1),
+            ],
+          }
+        : application,
+    );
+    const changedSourceReplay = prepareConsumeCombatAggregate(aggregate.next, {
+      journal,
+      applications: changedSource,
+      practiceProfile: profile,
+    });
+    expect(changedSourceReplay.kind).toBe('REJECTED');
+    expect(aggregate.next).toEqual(beforeChangedEvidence);
+
+    const creditGrant = firstCredit.context.internalGrant;
+    if (!creditGrant) throw new Error('Expected the trusted internal practice grant');
+    const changedRevision = aggregateApplications.map((application, index) =>
+      index === creditOrdinal
+        ? {
+            ...application,
+            practiceCredits: [
+              {
+                ...firstCredit,
+                context: {
+                  ...firstCredit.context,
+                  internalGrant: {
+                    ...creditGrant,
+                    evidenceRevision:
+                      `${firstCredit.context.canonicalRevision}-changed` as typeof firstCredit.context.canonicalRevision,
+                  },
+                },
+              },
+              ...application.practiceCredits.slice(1),
+            ],
+          }
+        : application,
+    );
+    const changedRevisionReplay = prepareConsumeCombatAggregate(aggregate.next, {
+      journal,
+      applications: changedRevision,
+      practiceProfile: profile,
+    });
+    expect(changedRevisionReplay.kind).toBe('REJECTED');
+    expect(aggregate.next).toEqual(beforeChangedEvidence);
+
     let empty = accept(f, f.journal, f.binding.initial, null);
     empty = nextDefend(f, empty);
     const afterDefend = empty.receipts.at(-1)!.transition.state;
@@ -1465,5 +1606,412 @@ describe('G09 — verified combat practice', () => {
     if (!defenseProgress || typeof defenseProgress === 'number')
       throw new Error('Expected exact guarded defense progression');
     expect(BigInt(defenseProgress.amount.milliXp)).toBeGreaterThan(0n);
+  });
+});
+
+describe('G10 — atomic combat company aggregate', () => {
+  function aggregateFixture() {
+    const f = fixture(10000);
+    for (const root of new Set([f.root, f.sources[0]!.root])) {
+      const worker = root.lifecycle.characters.find(
+        (person) => person.identity.characterId === 'a-worker-0',
+      );
+      if (!worker) throw new Error('Expected the fixture worker');
+      delete (worker.aptitudeBySkill as Record<string, number>)['leadership'];
+    }
+    const initialJournal = accept(f, f.journal, f.binding.initial, null);
+    const journal = nextDefend(f, initialJournal);
+    const state: CompanyCombatAggregateState = {
+      economy: f.root,
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    };
+    const begun = prepareBeginCombatAggregate(state, f.sources, f.request, f.evidence);
+    if (begun.kind !== 'PREPARED') throw new Error(`Could not begin aggregate: ${begun.error}`);
+    const practiceProfile = {
+      version: COMBAT_PRACTICE_PROFILE_VERSION,
+      profileId: 'aggregate-practice-profile',
+      bindingId: begun.binding.bindingId,
+      challengeLevel: 0,
+      actionStarts: [],
+      leadershipCycles: [],
+    } as const;
+    const applications = journal.receipts.map((receipt) => ({
+      time: {
+        version: COMBAT_RECEIPT_TIME_VERSION,
+        id: `aggregate-time-${receipt.transition.state.revision}`,
+        sourceEventId: receipt.request.sourceEventId!,
+        battleId: f.binding.setup.battleId,
+        receiptId: receipt.request.payload.receiptId,
+        revision: receipt.transition.state.revision,
+        atTick: f.root.lifecycle.campaignTick,
+      },
+      context: combatContext(f, { financeFacts: [], physicalFacts: [] }) as CombatOwnerContext,
+      learning: { intervals: [] },
+      practiceCredits: [],
+    }));
+    return { f, begun, initialJournal, journal, practiceProfile, applications };
+  }
+
+  it('ignores sparse non-commander leadership data without cycles and keeps split receipt consumption atomic', () => {
+    const f = aggregateFixture();
+    const initial = {
+      journal: f.initialJournal,
+      applications: f.applications.slice(0, 1),
+      practiceProfile: f.practiceProfile,
+    };
+    const full = {
+      journal: f.journal,
+      applications: f.applications,
+      practiceProfile: f.practiceProfile,
+    };
+    const first = prepareConsumeCombatAggregate(f.begun.next, initial);
+    if (first.kind !== 'PREPARED') throw new Error(first.error);
+    const split = prepareConsumeCombatAggregate(first.next, full);
+    const whole = prepareConsumeCombatAggregate(f.begun.next, full);
+    expect(split.kind).toBe('PREPARED');
+    expect(whole.kind).toBe('PREPARED');
+    if (split.kind !== 'PREPARED' || whole.kind !== 'PREPARED') return;
+    expect(split.next).toEqual(whole.next);
+
+    const replay = prepareConsumeCombatAggregate(whole.next, full);
+    expect(replay.kind).toBe('PREPARED');
+    if (replay.kind !== 'PREPARED') return;
+    expect(replay.replayed).toBe(true);
+    expect(replay.next).toEqual(whole.next);
+
+    const before = structuredClone(f.begun.next);
+    const invalid = {
+      ...full,
+      applications: [
+        ...f.applications.slice(0, 1),
+        { ...f.applications[1]!, time: { ...f.applications[1]!.time, revision: 99 } },
+      ],
+    };
+    const rejected = prepareConsumeCombatAggregate(f.begun.next, invalid);
+    expect(rejected.kind).toBe('REJECTED');
+    expect(f.begun.next).toEqual(before);
+
+    const forgedRevision =
+      '999' as unknown as (typeof f.applications)[number]['context']['canonicalRevision'];
+    const forgedRevisionEvidence = prepareConsumeCombatAggregate(f.begun.next, {
+      ...full,
+      applications: f.applications.map((application, index) =>
+        index === 1
+          ? {
+              ...application,
+              context: {
+                ...application.context,
+                canonicalRevision: forgedRevision,
+                financeFacts: application.context.financeFacts.map((fact) => ({
+                  ...fact,
+                  revision: forgedRevision,
+                })),
+                physicalFacts: (application.context.physicalFacts ?? []).map((fact) => ({
+                  ...fact,
+                  revision: forgedRevision,
+                })),
+              },
+            }
+          : application,
+      ),
+    });
+    expect(forgedRevisionEvidence.kind).toBe('REJECTED');
+
+    const changedTick = {
+      ...full,
+      applications: f.applications.map((application, index) =>
+        index === 1
+          ? {
+              ...application,
+              time: {
+                ...application.time,
+                atTick: (
+                  BigInt(application.time.atTick) + 1n
+                ).toString() as typeof application.time.atTick,
+              },
+            }
+          : application,
+      ),
+    };
+    const wholeBefore = structuredClone(whole.next);
+    const changedTickReplay = prepareConsumeCombatAggregate(whole.next, changedTick);
+    expect(changedTickReplay.kind).toBe('REJECTED');
+    expect(whole.next).toEqual(wholeBefore);
+  });
+
+  it('keeps an authenticated defend pending without XP and accepts a later campaign tick advance', () => {
+    const f = aggregateFixture();
+    const defendOrdinal = f.journal.receipts.findIndex(
+      (receipt) => receipt.kernelCommand?.type === 'defend',
+    );
+    const defend = f.journal.receipts[defendOrdinal]?.kernelCommand;
+    if (defend?.type !== 'defend') throw new Error('Expected a defended action');
+    const practiceProfile = {
+      ...f.practiceProfile,
+      actionStarts: [
+        {
+          activationId: defend.activationId,
+          unitId: defend.actorId,
+          startedAt: (BigInt(f.f.root.lifecycle.campaignTick) + 1n).toString(),
+          startReceiptOrdinal: defendOrdinal,
+        },
+      ],
+    } as const;
+    const targetTick = (
+      BigInt(f.f.root.lifecycle.campaignTick) + 1n
+    ).toString() as typeof f.f.root.lifecycle.campaignTick;
+    const advance = command(
+      f.f.root,
+      'AdvanceCampaign',
+      { toTick: targetTick, authoritativeInputs: [] },
+      'aggregate-practice-tick-advance',
+      'SYSTEM',
+      targetTick,
+    ) as CommandOf<'AdvanceCampaign'>;
+    const advanceContext = {
+      ...context(f.f.root, advance as ReturnType<typeof command>),
+      atTick: targetTick,
+      learningFacts: [],
+    } as CombatOwnerContext;
+    const applications = f.applications.map((application, index) => ({
+      ...application,
+      time: {
+        ...application.time,
+        atTick: index === 0 ? f.f.root.lifecycle.campaignTick : targetTick,
+      },
+      ...(index === 1
+        ? { advance: { command: advance, context: advanceContext, learning: { intervals: [] } } }
+        : {}),
+    }));
+    const { internalGrant: _advanceGrant, ...advanceWithoutGrant } = advanceContext;
+    const { internalGrant: _playerGrant, ...advanceAsPlayer } = advanceContext;
+    const invalidPlayerAdvance = prepareConsumeCombatAggregate(f.begun.next, {
+      journal: f.journal,
+      applications: applications.map((application, index) =>
+        index === 1
+          ? {
+              ...application,
+              advance: {
+                ...application.advance!,
+                context: {
+                  ...advanceAsPlayer,
+                  principal: { kind: 'PLAYER', id: 'leader' },
+                } as unknown as CombatOwnerContext,
+              },
+            }
+          : application,
+      ),
+      practiceProfile,
+    });
+    expect(invalidPlayerAdvance.kind).toBe('REJECTED');
+    const invalidMissingGrant = prepareConsumeCombatAggregate(f.begun.next, {
+      journal: f.journal,
+      applications: applications.map((application, index) =>
+        index === 1
+          ? {
+              ...application,
+              advance: {
+                ...application.advance!,
+                context: advanceWithoutGrant as CombatOwnerContext,
+              },
+            }
+          : application,
+      ),
+      practiceProfile,
+    });
+    expect(invalidMissingGrant.kind).toBe('REJECTED');
+    const prepared = prepareConsumeCombatAggregate(f.begun.next, {
+      journal: f.journal,
+      applications,
+      practiceProfile,
+    });
+    expect(prepared.kind, prepared.kind === 'REJECTED' ? prepared.error : undefined).toBe(
+      'PREPARED',
+    );
+    if (prepared.kind !== 'PREPARED') return;
+    expect(prepared.next.economy.lifecycle.campaignTick).toBe(targetTick);
+    expect(prepared.next.encounter.active?.lastAppliedRevision).toBe(
+      f.journal.receipts.at(-1)!.transition.state.revision,
+    );
+    expect(prepared.next.encounter.active?.appliedPractice).toEqual([]);
+    const leader = prepared.next.economy.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === 'a-leader',
+    )!;
+    expect(leader.skills['defense']).toEqual(
+      f.f.root.lifecycle.characters.find((entry) => entry.identity.characterId === 'a-leader')!
+        .skills['defense'],
+    );
+  });
+
+  it('credits a pending defend only when a later receipt contains a real incoming threat', () => {
+    const f = fixture(10000, true);
+    const { journal, defendReceipt, incomingReceipt } = guardedIncomingJournal(f);
+    const defend = defendReceipt.kernelCommand;
+    const incoming = incomingReceipt.kernelCommand;
+    if (defend?.type !== 'defend' || incoming?.type !== 'attack')
+      throw new Error('Expected a real defend followed by an incoming attack');
+    const defendOrdinal = journal.receipts.findIndex(
+      (receipt) => receipt.kernelCommand?.activationId === defend.activationId,
+    );
+    const incomingOrdinal = journal.receipts.findIndex(
+      (receipt) => receipt.kernelCommand?.activationId === incoming.activationId,
+    );
+    const eventIndex = incomingReceipt.transition.events.findIndex(
+      (event) => event.type === 'attack.resolved' && event.targetId === defend.actorId,
+    );
+    const event = incomingReceipt.transition.events[eventIndex];
+    if (event?.type !== 'attack.resolved') throw new Error('Expected the guarding target hit');
+    const sourceEventId = incomingReceipt.sourceEventIds[eventIndex]!;
+    const attacker = f.binding.participants.find((entry) => entry.unitId === event.attackerId)!;
+    const defender = f.binding.participants.find((entry) => entry.unitId === event.targetId)!;
+    const state: CompanyCombatAggregateState = {
+      economy: f.root,
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    };
+    const begun = prepareBeginCombatAggregate(state, f.sources, f.request, f.evidence);
+    if (begun.kind !== 'PREPARED') throw new Error(begun.error);
+    const profile = {
+      version: COMBAT_PRACTICE_PROFILE_VERSION,
+      profileId: 'aggregate-delayed-guard',
+      bindingId: begun.binding.bindingId,
+      challengeLevel: 0,
+      actionStarts: [
+        {
+          activationId: defend.activationId,
+          unitId: defend.actorId,
+          startedAt: f.root.lifecycle.campaignTick,
+          startReceiptOrdinal: defendOrdinal,
+        },
+      ],
+      leadershipCycles: [],
+    } as const;
+    const payload = {
+      receiptId: `${sourceEventId}-${profile.profileId}-a-leader-guard-interaction`,
+      characterId: defender.projection.characterId,
+      skillId: 'defense',
+      methodId: 'guard-interaction',
+      challengeLevel: profile.challengeLevel,
+      outcome: 'SUCCESS',
+      effortTicks: '0',
+    } as const;
+    const base = command(
+      f.root,
+      'CreditPractice',
+      payload,
+      'aggregate-delayed-guard-credit',
+      'DOMAIN_RECEIPT',
+      f.root.lifecycle.campaignTick,
+    );
+    const creditCommand = { ...base, sourceEventId } as CommandOf<'CreditPractice'>;
+    const fact: PracticeEvidence = {
+      worldId: f.root.lifecycle.worldId,
+      companyId: f.root.lifecycle.companyId,
+      sourceEventId,
+      rulesVersion: PROGRESSION_RULES.version,
+      catalogueVersion: COMPANY_CATALOGUE.version,
+      payload,
+      startedAt: f.root.lifecycle.campaignTick,
+      completedAt: f.root.lifecycle.campaignTick,
+      levelAtStart: 0,
+      aptitudeAtStartBps: 10000,
+      proof: {
+        kind: 'guard-interaction',
+        interaction: {
+          sourceEventId,
+          attackerId: attacker.projection.characterId,
+          defenderId: defender.projection.characterId,
+          atTick: f.root.lifecycle.campaignTick,
+          origin: 'EXTERNAL',
+        },
+      },
+    };
+    const ownerContext = {
+      ...combatContext(f, combatFacts(f, journal)),
+      learningFacts: [],
+    } as CombatOwnerContext;
+    const creditContext = {
+      ...ownerContext,
+      internalGrant: {
+        commandId: creditCommand.commandId,
+        sourceEventId,
+        canonicalRequest: canonicalJson(creditCommand),
+      },
+      practiceFacts: [fact],
+    };
+    const applications = journal.receipts.map((receipt, ordinal) => ({
+      time: {
+        version: COMBAT_RECEIPT_TIME_VERSION,
+        id: `delayed-guard-time-${ordinal}`,
+        sourceEventId: receipt.request.sourceEventId!,
+        battleId: f.binding.setup.battleId,
+        receiptId: receipt.request.payload.receiptId,
+        revision: receipt.transition.state.revision,
+        atTick: f.root.lifecycle.campaignTick,
+      },
+      context: ownerContext,
+      learning: { intervals: [] },
+      practiceCredits:
+        ordinal === incomingOrdinal ? [{ command: creditCommand, context: creditContext }] : [],
+    }));
+    const defendPrefix: CombatReceiptJournal = {
+      ...journal,
+      receipts: journal.receipts.slice(0, defendOrdinal + 1),
+      proposedLastAppliedRevision: defendReceipt.transition.state.revision,
+    };
+    expect(defendPrefix.proposedLastAppliedRevision).toBe(
+      defendPrefix.receipts.at(-1)!.transition.state.revision,
+    );
+    const initialPrefix: CombatReceiptJournal = {
+      ...journal,
+      receipts: journal.receipts.slice(0, 1),
+      proposedLastAppliedRevision: journal.receipts[0]!.transition.state.revision,
+    };
+    const initial = prepareConsumeCombatAggregate(begun.next, {
+      journal: initialPrefix,
+      applications: applications.slice(0, 1),
+      practiceProfile: { ...profile, actionStarts: [] },
+    });
+    expect(initial.kind).toBe('PREPARED');
+    if (initial.kind !== 'PREPARED') return;
+    const pending = prepareConsumeCombatAggregate(initial.next, {
+      journal: defendPrefix,
+      applications: applications.slice(0, defendOrdinal + 1),
+      practiceProfile: profile,
+    });
+    expect(pending.kind).toBe('PREPARED');
+    if (pending.kind !== 'PREPARED') return;
+    expect(pending.next.encounter.active?.appliedPractice).toEqual([]);
+
+    const changedOldDescriptor = prepareConsumeCombatAggregate(pending.next, {
+      journal,
+      applications,
+      practiceProfile: {
+        ...profile,
+        actionStarts: profile.actionStarts.map((start) => ({
+          ...start,
+          startedAt: (BigInt(start.startedAt) + 1n).toString() as typeof start.startedAt,
+        })),
+      },
+    });
+    expect(changedOldDescriptor.kind).toBe('REJECTED');
+
+    const completed = prepareConsumeCombatAggregate(pending.next, {
+      journal,
+      applications,
+      practiceProfile: profile,
+    });
+    expect(completed.kind).toBe('PREPARED');
+    if (completed.kind !== 'PREPARED') return;
+    expect(completed.next.encounter.active?.appliedPractice).toHaveLength(1);
+    const character = completed.next.economy.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === defender.projection.characterId,
+    )!;
+    const defense = character.skills['defense'];
+    if (!defense || typeof defense === 'number') throw new Error('Expected defense progress');
+    expect(BigInt(defense.amount.milliXp)).toBeGreaterThan(0n);
   });
 });

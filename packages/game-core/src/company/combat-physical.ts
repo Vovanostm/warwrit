@@ -1,7 +1,9 @@
 import { canonicalJson } from './input.js';
+import type { BattleState } from '../combat/types.js';
 import { projectCharacterCombatWithMorale } from './combat-morale.js';
 import { validateCombatReceiptJournal } from './combat-receipts.js';
 import type { CombatReceiptJournal } from './combat-receipts.js';
+import type { FrozenEncounterBinding } from './encounter-binding.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
 import { physicalVitals, requirePhysical, validatePhysicalState } from './physical-state.js';
 
@@ -14,6 +16,128 @@ export interface PreparedCombatPhysicalEffects {
   readonly sourceReceiptIds: readonly string[];
   readonly sourceEventIds: readonly string[];
   readonly proposedLastAppliedRevision: number;
+}
+
+/** Apply only the pool and armor delta between two adjacent, already-verified kernel states. */
+export function applyCombatPhysicalReceipt(
+  root: MaterializedCompanyState,
+  binding: FrozenEncounterBinding,
+  companyId: string,
+  before: BattleState,
+  after: BattleState,
+): MaterializedCompanyState {
+  requirePhysical(
+    root.lifecycle.companyId === companyId &&
+      root.lifecycle.worldId === binding.worldId &&
+      before.battleId === binding.setup.battleId &&
+      after.battleId === binding.setup.battleId &&
+      after.revision === before.revision + 1,
+    'INVALID_SOURCE',
+  );
+  let physical = root.physical;
+  const participants = binding.participants.filter((entry) => entry.companyId === companyId);
+  requirePhysical(participants.length > 0, 'INVALID_SOURCE');
+  for (const participant of participants) {
+    const unitBefore = before.units.find((entry) => entry.id === participant.unitId);
+    const unitAfter = after.units.find((entry) => entry.id === participant.unitId);
+    requirePhysical(unitBefore && unitAfter, 'INVALID_SOURCE');
+    const characterId = participant.projection.characterId;
+    const character = root.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === characterId,
+    );
+    requirePhysical(character, 'INVALID_SOURCE');
+    if (character.presence.availability === 'DEAD') {
+      requirePhysical(unitBefore.health === 0 && unitAfter.health === 0, 'INVALID_SOURCE');
+      continue;
+    }
+    const vitals = physicalVitals(physical, characterId);
+    requirePhysical(
+      vitals.currentHealth === unitBefore.health &&
+        vitals.currentStamina === unitBefore.stamina &&
+        unitAfter.health <= vitals.maximumHealth &&
+        unitAfter.stamina <= vitals.maximumStamina,
+      'INVALID_SOURCE',
+    );
+    physical = {
+      ...physical,
+      vitals: physical.vitals.map((entry) =>
+        entry.characterId === characterId
+          ? { ...entry, currentHealth: unitAfter.health, currentStamina: unitAfter.stamina }
+          : entry,
+      ),
+    };
+
+    requirePhysical(unitAfter.armor <= unitBefore.armor, 'INVALID_SOURCE');
+    const armor = participant.projection.armor
+      .filter((entry) => entry.slot === 'BODY' || entry.slot === 'HEAD')
+      .toSorted((a, b) => (a.slot === b.slot ? 0 : a.slot === 'BODY' ? -1 : 1));
+    requirePhysical(
+      armor.reduce((sum, entry) => {
+        const item = physical.items.find((candidate) => candidate.itemId === entry.itemId);
+        requirePhysical(
+          item &&
+            item.tombstone === null &&
+            item.equipped?.characterId === characterId &&
+            item.definitionId === entry.definitionId,
+          'INVALID_SOURCE',
+        );
+        return sum + item.currentCondition;
+      }, 0) === unitBefore.armor,
+      'INVALID_SOURCE',
+    );
+    let remainingLoss = unitBefore.armor - unitAfter.armor;
+    const replacements = new Map<string, number>();
+    for (const entry of armor) {
+      const item = physical.items.find((candidate) => candidate.itemId === entry.itemId)!;
+      const loss = Math.min(item.currentCondition, remainingLoss);
+      replacements.set(item.itemId, item.currentCondition - loss);
+      remainingLoss -= loss;
+    }
+    requirePhysical(remainingLoss === 0, 'INVALID_SOURCE');
+    if (replacements.size)
+      physical = {
+        ...physical,
+        items: physical.items.map((item) => {
+          const currentCondition = replacements.get(item.itemId);
+          return currentCondition === undefined ? item : { ...item, currentCondition };
+        }),
+      };
+  }
+  return { ...root, physical };
+}
+
+/** Persist the authenticated revision-zero pool clamp from the frozen binding. */
+export function applyCombatInitialReceipt(
+  root: MaterializedCompanyState,
+  binding: FrozenEncounterBinding,
+  companyId: string,
+): MaterializedCompanyState {
+  requirePhysical(
+    root.lifecycle.companyId === companyId && root.lifecycle.worldId === binding.worldId,
+    'INVALID_SOURCE',
+  );
+  let physical = root.physical;
+  for (const participant of binding.participants.filter((entry) => entry.companyId === companyId)) {
+    const unit = binding.initial.state.units.find((entry) => entry.id === participant.unitId);
+    requirePhysical(unit, 'INVALID_SOURCE');
+    const vitals = physicalVitals(physical, participant.projection.characterId);
+    requirePhysical(
+      canonicalJson(vitals) === canonicalJson(participant.vitals) &&
+        unit.health <= vitals.maximumHealth &&
+        unit.stamina <= vitals.maximumStamina,
+      'INVALID_SOURCE',
+    );
+    physical = {
+      ...physical,
+      vitals: physical.vitals.map((entry) =>
+        entry.characterId === participant.projection.characterId
+          ? { ...entry, currentHealth: unit.health, currentStamina: unit.stamina }
+          : entry,
+      ),
+    };
+  }
+  validatePhysicalState({ ...root, physical });
+  return { ...root, physical };
 }
 
 function validateCompanyBinding(root: MaterializedCompanyState, journal: CombatReceiptJournal) {
