@@ -1,0 +1,21 @@
+# Changelog
+
+Notable changes to the repository's tooling, gates and delivered behavior. The
+format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the
+project has no released versions yet, so entries stay under _Unreleased_ with
+their merge date. Earlier history is in the Git log and merged pull requests.
+
+## Unreleased
+
+### Added
+
+- 2026-09-29, #125: fallow (`pnpm check:dead-code` in `pnpm verify`,
+  `pnpm check:changes` on pull requests, `pnpm report:quality`) and ast-grep
+  code-shape rules with rule tests (`pnpm check:patterns`).
+
+### Changed
+
+- 2026-09-29: local containers run on colima; see
+  [LOCAL_DEVELOPMENT.md](docs/engineering/LOCAL_DEVELOPMENT.md#container-runtime-colima).
+- 2026-09-29, #125: seven internal-only game-core exports removed; `ajv` and
+  `fast-check` declared by testkit, which imports them.

@@ -16,7 +16,7 @@ Prerequisites:
 
 - Node.js `24.20.x`;
 - Corepack;
-- Docker with Docker Compose v2;
+- Docker Engine with the Compose v2 plugin; on macOS use [colima](docs/engineering/LOCAL_DEVELOPMENT.md#container-runtime-colima);
 - Git.
 
 From a clean checkout, run one command:
