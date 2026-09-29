@@ -55,6 +55,7 @@ export type {
   CombatPracticeStartSnapshot,
 } from './combat-practice.js';
 export * from './combat-aggregate.js';
+export { readCompanyCombatAggregateState } from './aggregate-state.js';
 export * from './progression.js';
 export * from './skill-progress.js';
 export * from './study-section.js';

@@ -1,6 +1,7 @@
 import {
   canonicalJson,
   choice,
+  either,
   id,
   natural,
   object,
@@ -60,6 +61,52 @@ export interface SocialState {
   readonly relations: readonly DirectedRelation[];
   /** Append-only facts a person actually learned. E02 derives active memories from this chronicle. */
   readonly chronicle: readonly LearnedFact[];
+}
+
+/** Read retained social knowledge through its owning schemas, rejecting unknown fields. */
+export function readSocialState(value: unknown): SocialState {
+  const snapshot = snapshotJson(value);
+  if (
+    !object({
+      relations: {
+        schema: { type: 'array' },
+        read: (entry: unknown): entry is readonly unknown[] => Array.isArray(entry),
+      },
+      chronicle: {
+        schema: { type: 'array' },
+        read: (entry: unknown): entry is readonly unknown[] => Array.isArray(entry),
+      },
+    }).read(snapshot)
+  )
+    throw new SocialViolation('INVALID_SOURCE');
+  const relationInput = object({
+    fromId: id,
+    toId: id,
+    base: relationAxesInput,
+    baseSourceEventId: either(
+      { schema: { type: 'null' }, read: (entry: unknown): entry is null => entry === null },
+      id,
+    ),
+  });
+  requireSocial(
+    snapshot['relations'].every((entry) => relationInput.read(entry)),
+    'INVALID_SOURCE',
+  );
+  requireSocial(
+    snapshot['chronicle'].every((entry) => learnedFactInput.read(entry)),
+    'INVALID_SOURCE',
+  );
+  const relations = snapshot['relations'] as unknown as readonly DirectedRelation[];
+  const chronicle = snapshot['chronicle'] as unknown as readonly LearnedFact[];
+  requireSocial(
+    new Set(relations.map((entry) => `${entry.fromId}\0${entry.toId}`)).size === relations.length &&
+      new Set(chronicle.map((entry) => entry.memoryId)).size === chronicle.length &&
+      new Set(chronicle.map((entry) => `${entry.personId}\0${entry.factId}`)).size ===
+        chronicle.length,
+    'INVALID_SOURCE',
+  );
+  for (const fact of chronicle) validateFarewellResolution({ relations, chronicle }, fact);
+  return { relations, chronicle };
 }
 export interface SocialTransition<T> {
   readonly state: SocialState;

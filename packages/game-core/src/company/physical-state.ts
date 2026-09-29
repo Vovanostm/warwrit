@@ -1,5 +1,5 @@
 import { COMPANY_CATALOGUE, COMPANY_RULES } from './definitions.js';
-import { canonicalJson, natural, snapshotJson } from './input.js';
+import { canonicalJson, natural, plainObject, snapshotJson } from './input.js';
 import { sameLocation } from './lifecycle-state.js';
 import type { LifecycleCharacter, LifecycleState } from './lifecycle-types.js';
 import type { LocationRef, OwnerRef } from './model.js';
@@ -561,6 +561,285 @@ export function validatePhysicalState(
   ];
   for (const ids of snapshotSets)
     requirePhysical(new Set(ids).size === ids.length, 'INVALID_STATE');
+}
+
+/** Complete persisted physical object-shape check, before the typed semantic validator. */
+export function isCompanyPhysicalStateShape(value: unknown): value is CompanyPhysicalState {
+  return (
+    shapeObject(value, [
+      'schemaVersion',
+      'policyVersion',
+      'processedTick',
+      'items',
+      'containers',
+      'conditions',
+      'vitals',
+      'custody',
+      'food',
+      'foodCarry',
+      'careHandovers',
+      'sourceEffects',
+      'knowledge',
+    ]) &&
+    value['schemaVersion'] === PHYSICAL_SCHEMA_VERSION &&
+    value['policyVersion'] === PHYSICAL_POLICY_VERSION &&
+    isExactInteger(value['processedTick']) &&
+    shapeList(value['items'], isItemInstanceShape) &&
+    shapeList(value['containers'], containerShape) &&
+    shapeList(value['conditions'], conditionShape) &&
+    shapeList(value['vitals'], vitalsShape) &&
+    shapeList(value['custody'], custodyShape) &&
+    shapeList(value['food'], foodShape) &&
+    shapeList(
+      value['foodCarry'],
+      (entry) =>
+        shapeObject(entry, ['membershipId', 'tickUnits']) &&
+        isEntityId(entry['membershipId']) &&
+        isExactInteger(entry['tickUnits']),
+    ) &&
+    shapeList(
+      value['careHandovers'],
+      (entry) =>
+        shapeObject(entry, ['sourceId', 'characterId', 'receiverId', 'atTick']) &&
+        [entry['sourceId'], entry['characterId'], entry['receiverId']].every(isEntityId) &&
+        isExactInteger(entry['atTick']),
+    ) &&
+    shapeList(
+      value['sourceEffects'],
+      (entry) =>
+        shapeObject(entry, ['key', 'requestKey']) &&
+        isEntityId(entry['key']) &&
+        typeof entry['requestKey'] === 'string',
+    ) &&
+    shapeObject(value['knowledge'], [
+      'itemSnapshots',
+      'conditionSnapshots',
+      'vitalSnapshots',
+      'containerSnapshots',
+    ]) &&
+    shapeList(value['knowledge']['itemSnapshots'], isItemInstanceShape) &&
+    shapeList(value['knowledge']['conditionSnapshots'], conditionShape) &&
+    shapeList(value['knowledge']['vitalSnapshots'], vitalsShape) &&
+    shapeList(value['knowledge']['containerSnapshots'], containerShape)
+  );
+}
+
+function shapeObject(
+  value: unknown,
+  keys: readonly string[],
+  optional: readonly string[] = [],
+): value is Record<string, unknown> {
+  return (
+    plainObject(value) &&
+    keys.every((key) => Object.hasOwn(value, key)) &&
+    Object.keys(value).every((key) => keys.includes(key) || optional.includes(key))
+  );
+}
+function shapeList(
+  value: unknown,
+  check: (entry: unknown) => boolean,
+): value is readonly unknown[] {
+  return Array.isArray(value) && value.every(check);
+}
+function ownerShape(value: unknown): boolean {
+  return (
+    shapeObject(value, ['kind', 'id']) &&
+    ['CHARACTER', 'COMPANY', 'ESTATE', 'WORLD'].includes(value['kind'] as string) &&
+    isEntityId(value['id'])
+  );
+}
+export function isItemInstanceShape(value: unknown): boolean {
+  return (
+    shapeObject(value, [
+      'itemId',
+      'definitionId',
+      'owner',
+      'containerId',
+      'quantity',
+      'currentCondition',
+      'maximumCondition',
+      'contentRevision',
+      'provenance',
+      'equipped',
+      'tombstone',
+    ]) &&
+    [value['itemId'], value['definitionId'], value['contentRevision']].every(isEntityId) &&
+    ownerShape(value['owner']) &&
+    (value['containerId'] === null || isEntityId(value['containerId'])) &&
+    [value['quantity'], value['currentCondition'], value['maximumCondition']].every(
+      Number.isSafeInteger,
+    ) &&
+    shapeObject(value['provenance'], ['sourceId', 'parentItemId', 'ordinal']) &&
+    isEntityId(value['provenance']['sourceId']) &&
+    (value['provenance']['parentItemId'] === null ||
+      isEntityId(value['provenance']['parentItemId'])) &&
+    Number.isSafeInteger(value['provenance']['ordinal']) &&
+    (value['equipped'] === null ||
+      (shapeObject(value['equipped'], ['characterId', 'slots']) &&
+        isEntityId(value['equipped']['characterId']) &&
+        shapeList(value['equipped']['slots'], (slot) =>
+          ['HEAD', 'BODY', 'MAIN_HAND', 'OFF_HAND', 'BELT'].includes(slot as string),
+        ))) &&
+    (value['tombstone'] === null ||
+      (shapeObject(value['tombstone'], ['sourceId', 'causeId', 'atTick']) &&
+        isEntityId(value['tombstone']['sourceId']) &&
+        isEntityId(value['tombstone']['causeId']) &&
+        isExactInteger(value['tombstone']['atTick'])))
+  );
+}
+function locationShape(value: unknown): boolean {
+  if (!plainObject(value)) return false;
+  if (value['kind'] === 'AT')
+    return (
+      shapeObject(value, ['kind', 'siteId', 'areaId']) &&
+      isEntityId(value['siteId']) &&
+      isEntityId(value['areaId'])
+    );
+  return (
+    value['kind'] === 'TRANSIT' &&
+    shapeObject(value, ['kind', 'segmentId', 'from', 'to', 'startedAt', 'arrivalNotBefore']) &&
+    [value['segmentId'], value['from'], value['to']].every(isEntityId) &&
+    isExactInteger(value['startedAt']) &&
+    isExactInteger(value['arrivalNotBefore'])
+  );
+}
+function containerShape(value: unknown): boolean {
+  return (
+    shapeObject(value, [
+      'containerId',
+      'kind',
+      'location',
+      'custodian',
+      'carrier',
+      'capacityG',
+      'access',
+      'closed',
+    ]) &&
+    isEntityId(value['containerId']) &&
+    ['CARRIED', 'PARTY_SUPPLY', 'STATIC', 'GROUND_BUNDLE', 'CORPSE', 'CUSTODY'].includes(
+      value['kind'] as string,
+    ) &&
+    locationShape(value['location']) &&
+    ownerShape(value['custodian']) &&
+    (value['carrier'] === null ||
+      (shapeObject(value['carrier'], ['kind', 'id']) &&
+        ['CHARACTER', 'PARTY'].includes(value['carrier']['kind'] as string) &&
+        isEntityId(value['carrier']['id']))) &&
+    Number.isSafeInteger(value['capacityG']) &&
+    ['COMPANY', 'OWNER', 'CUSTODIAN'].includes(value['access'] as string) &&
+    (value['closed'] === null ||
+      (shapeObject(value['closed'], ['sourceId', 'causeId', 'atTick']) &&
+        isEntityId(value['closed']['sourceId']) &&
+        isEntityId(value['closed']['causeId']) &&
+        isExactInteger(value['closed']['atTick'])))
+  );
+}
+function vitalsShape(value: unknown): boolean {
+  return (
+    shapeObject(
+      value,
+      [
+        'characterId',
+        'sourceId',
+        'maximumHealth',
+        'currentHealth',
+        'healthCarry',
+        'maximumStamina',
+        'currentStamina',
+        'staminaCarry',
+      ],
+      ['morale'],
+    ) &&
+    isEntityId(value['characterId']) &&
+    isEntityId(value['sourceId']) &&
+    [
+      value['maximumHealth'],
+      value['currentHealth'],
+      value['maximumStamina'],
+      value['currentStamina'],
+    ].every(Number.isSafeInteger) &&
+    isExactInteger(value['healthCarry']) &&
+    isExactInteger(value['staminaCarry']) &&
+    (!Object.hasOwn(value, 'morale') || Number.isSafeInteger(value['morale']))
+  );
+}
+function conditionShape(value: unknown): boolean {
+  if (
+    !shapeObject(value, [
+      'conditionId',
+      'characterId',
+      'definitionId',
+      'sourceEventId',
+      'causeId',
+      'onsetTick',
+      'deadlineTick',
+      'care',
+      'recoveryTicks',
+      'resolvedAt',
+      'resolutionSourceId',
+      'scarId',
+    ])
+  )
+    return false;
+  const care = value['care'];
+  const validCare =
+    care === null ||
+    (shapeObject(
+      care,
+      ['careDefinitionId', 'sourceId', 'fulfilledAt', 'channel'],
+      ['providerId', 'recoveryTicksRequired'],
+    ) &&
+      isEntityId(care['careDefinitionId']) &&
+      isEntityId(care['sourceId']) &&
+      isExactInteger(care['fulfilledAt']) &&
+      ['MATERIAL', 'PROVIDER', 'INHERITED_STABILIZATION'].includes(care['channel'] as string) &&
+      (!Object.hasOwn(care, 'providerId') || isEntityId(care['providerId'])) &&
+      (!Object.hasOwn(care, 'recoveryTicksRequired') ||
+        isExactInteger(care['recoveryTicksRequired'])));
+  return (
+    [
+      value['conditionId'],
+      value['characterId'],
+      value['definitionId'],
+      value['sourceEventId'],
+      value['causeId'],
+    ].every(isEntityId) &&
+    isExactInteger(value['onsetTick']) &&
+    (value['deadlineTick'] === null || isExactInteger(value['deadlineTick'])) &&
+    validCare &&
+    isExactInteger(value['recoveryTicks']) &&
+    (value['resolvedAt'] === null || isExactInteger(value['resolvedAt'])) &&
+    (value['resolutionSourceId'] === null || isEntityId(value['resolutionSourceId'])) &&
+    (value['scarId'] === null || isEntityId(value['scarId']))
+  );
+}
+function custodyShape(value: unknown): boolean {
+  return (
+    shapeObject(value, ['characterId', 'custodian', 'location', 'sourceId', 'sinceTick']) &&
+    isEntityId(value['characterId']) &&
+    ownerShape(value['custodian']) &&
+    locationShape(value['location']) &&
+    isEntityId(value['sourceId']) &&
+    isExactInteger(value['sinceTick'])
+  );
+}
+function foodShape(value: unknown): boolean {
+  return (
+    shapeObject(value, [
+      'sourceId',
+      'membershipId',
+      'fromTick',
+      'toTick',
+      'channel',
+      'unitsConsumed',
+    ]) &&
+    isEntityId(value['sourceId']) &&
+    isEntityId(value['membershipId']) &&
+    isExactInteger(value['fromTick']) &&
+    isExactInteger(value['toTick']) &&
+    ['STOCK', 'PROVIDER'].includes(value['channel'] as string) &&
+    isExactInteger(value['unitsConsumed'])
+  );
 }
 
 /** Policy 2 carries only food already debited; loaded remainder alone is not fulfillment. */

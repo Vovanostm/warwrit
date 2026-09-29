@@ -1,6 +1,6 @@
 import { COMPANY_CATALOGUE, COMPANY_RULES, catalogueHas } from './definitions.js';
 import type { CompanyCatalogue } from './definitions.js';
-import { canonicalJson } from './input.js';
+import { canonicalJson, plainObject } from './input.js';
 import { ASSIGNMENTS, AVAILABILITIES } from './model.js';
 import { isSkillProgress, skillLevel } from './skill-progress.js';
 import type { SkillProgress } from './skill-progress.js';
@@ -368,4 +368,467 @@ export function validateLifecycleGraph(state: LifecycleState, context: Lifecycle
     ])
       if (id) person(state, id);
   }
+}
+
+/** Complete structural boundary for retained lifecycle data before semantic validation. */
+export function isLifecycleStateShape(value: unknown): value is LifecycleState {
+  if (
+    !record(
+      value,
+      [
+        'schemaVersion',
+        'worldId',
+        'companyId',
+        'revision',
+        'campaignTick',
+        'company',
+        'characters',
+        'memberships',
+        'kinship',
+        'parties',
+        'bypasses',
+        'knowledge',
+        'applied',
+      ],
+      ['nicknameProposals'],
+    )
+  )
+    return false;
+  if (
+    value['schemaVersion'] !== 1 ||
+    !isEntityId(value['worldId']) ||
+    !isEntityId(value['companyId']) ||
+    !isExactInteger(value['revision']) ||
+    !isExactInteger(value['campaignTick']) ||
+    !(value['company'] === null || lifecycleCompanyShape(value['company'])) ||
+    !list(value['characters'], lifecycleCharacterShape) ||
+    !list(value['memberships'], membershipShape) ||
+    !list(
+      value['kinship'],
+      (entry) =>
+        record(entry, ['from', 'to', 'kind']) &&
+        isEntityId(entry['from']) &&
+        isEntityId(entry['to']) &&
+        entry['kind'] === 'SIBLING',
+    ) ||
+    !list(
+      value['parties'],
+      (entry) =>
+        record(entry, ['partyId', 'location']) &&
+        isEntityId(entry['partyId']) &&
+        locationShape(entry['location']),
+    ) ||
+    !list(value['bypasses'], bypassShape) ||
+    !lifecycleKnowledgeShape(value['knowledge']) ||
+    !list(value['applied'], isLifecycleReceiptShape) ||
+    (Object.hasOwn(value, 'nicknameProposals') &&
+      !list(value['nicknameProposals'], lifecycleNicknameShape))
+  )
+    return false;
+  return true;
+}
+
+function record(
+  value: unknown,
+  required: readonly string[],
+  optional: readonly string[] = [],
+): value is Record<string, unknown> {
+  return (
+    plainObject(value) &&
+    required.every((key) => Object.hasOwn(value, key)) &&
+    Object.keys(value).every((key) => required.includes(key) || optional.includes(key))
+  );
+}
+function list(value: unknown, item: (value: unknown) => boolean): value is readonly unknown[] {
+  return Array.isArray(value) && value.every(item);
+}
+function nullableId(value: unknown): boolean {
+  return value === null || isEntityId(value);
+}
+function locationShape(value: unknown): boolean {
+  if (!plainObject(value)) return false;
+  if (value['kind'] === 'AT')
+    return (
+      record(value, ['kind', 'siteId', 'areaId']) &&
+      isEntityId(value['siteId']) &&
+      isEntityId(value['areaId'])
+    );
+  return (
+    value['kind'] === 'TRANSIT' &&
+    record(value, ['kind', 'segmentId', 'from', 'to', 'startedAt', 'arrivalNotBefore']) &&
+    [value['segmentId'], value['from'], value['to']].every(isEntityId) &&
+    isExactInteger(value['startedAt']) &&
+    isExactInteger(value['arrivalNotBefore'])
+  );
+}
+function lifecycleCharacterShape(value: unknown): boolean {
+  if (
+    !record(
+      value,
+      ['identity', 'presence', 'skills', 'aptitudeBySkill', 'perks', 'conditionIds'],
+      ['nickname', 'presentation'],
+    )
+  )
+    return false;
+  const identity = value['identity'],
+    presence = value['presence'],
+    skills = value['skills'],
+    aptitude = value['aptitudeBySkill'];
+  if (
+    !record(identity, [
+      'characterId',
+      'birthName',
+      'sex',
+      'birthCultureId',
+      'birthplaceId',
+      'originId',
+      'speciesId',
+      'bornAt',
+    ]) ||
+    !isEntityId(identity['characterId']) ||
+    !text(identity['birthName']) ||
+    !text(identity['sex']) ||
+    ![
+      identity['birthCultureId'],
+      identity['birthplaceId'],
+      identity['originId'],
+      identity['speciesId'],
+    ].every(isEntityId) ||
+    !isExactInteger(identity['bornAt'], true) ||
+    !record(presence, [
+      'characterId',
+      'assignment',
+      'availability',
+      'location',
+      'fieldPartyId',
+      'encounterBindingId',
+    ]) ||
+    !isEntityId(presence['characterId']) ||
+    !ASSIGNMENTS.includes(presence['assignment'] as never) ||
+    !AVAILABILITIES.includes(presence['availability'] as never) ||
+    !locationShape(presence['location']) ||
+    !nullableId(presence['fieldPartyId']) ||
+    !nullableId(presence['encounterBindingId']) ||
+    !plainObject(skills) ||
+    !Object.values(skills).every((entry) => isSkillProgress(entry)) ||
+    !plainObject(aptitude) ||
+    !Object.values(aptitude).every(
+      (entry) => Number.isSafeInteger(entry) && (entry as number) >= 0,
+    ) ||
+    !list(value['perks'], isEntityId) ||
+    !list(value['conditionIds'], isEntityId)
+  )
+    return false;
+  if (
+    (Object.hasOwn(value, 'nickname') && !record(value['nickname'], ['proposalId', 'textKey'])) ||
+    (Object.hasOwn(value, 'nickname') &&
+      (!isEntityId((value['nickname'] as Record<string, unknown>)['proposalId']) ||
+        !isEntityId((value['nickname'] as Record<string, unknown>)['textKey'])))
+  )
+    return false;
+  if (
+    Object.hasOwn(value, 'presentation') &&
+    (!record(value['presentation'], ['schemaVersion', 'hairStyleId']) ||
+      (value['presentation'] as Record<string, unknown>)['schemaVersion'] !== 1 ||
+      !isEntityId((value['presentation'] as Record<string, unknown>)['hairStyleId']))
+  )
+    return false;
+  return true;
+}
+function lifecycleCompanyShape(value: unknown): boolean {
+  return (
+    record(value, [
+      'companyId',
+      'worldId',
+      'homeLocationId',
+      'currentLeaderId',
+      'actingLeaderId',
+      'designatedHeirId',
+      'founderId',
+      'name',
+      'bannerId',
+      'householdIds',
+      'regencyHeirId',
+      'runStatus',
+      'chronicleIds',
+    ]) &&
+    [
+      value['companyId'],
+      value['worldId'],
+      value['homeLocationId'],
+      value['currentLeaderId'],
+      value['founderId'],
+    ].every(isEntityId) &&
+    nullableId(value['actingLeaderId']) &&
+    nullableId(value['designatedHeirId']) &&
+    nullableId(value['regencyHeirId']) &&
+    text(value['name']) &&
+    isEntityId(value['bannerId']) &&
+    list(value['householdIds'], isEntityId) &&
+    (value['runStatus'] === 'ACTIVE' || value['runStatus'] === 'GAME_OVER') &&
+    list(value['chronicleIds'], isEntityId)
+  );
+}
+function membershipShape(value: unknown): boolean {
+  return (
+    record(value, [
+      'membershipId',
+      'companyId',
+      'characterId',
+      'basis',
+      'startedAt',
+      'endedAt',
+      'wageScheduleId',
+    ]) &&
+    [value['membershipId'], value['companyId'], value['characterId']].every(isEntityId) &&
+    ['PAID', 'FAMILY', 'FOUNDER'].includes(value['basis'] as string) &&
+    isExactInteger(value['startedAt']) &&
+    (value['endedAt'] === null || isExactInteger(value['endedAt'])) &&
+    nullableId(value['wageScheduleId'])
+  );
+}
+function lifecycleKnowledgeShape(value: unknown): boolean {
+  return (
+    record(
+      value,
+      [
+        'revision',
+        'leaderId',
+        'designatedHeirId',
+        'runStatus',
+        'characters',
+        'candidateIds',
+        'eventIds',
+      ],
+      ['nicknameProposals', 'nicknameHistory'],
+    ) &&
+    isExactInteger(value['revision']) &&
+    nullableId(value['leaderId']) &&
+    nullableId(value['designatedHeirId']) &&
+    ['ACTIVE', 'GAME_OVER', 'UNKNOWN'].includes(value['runStatus'] as string) &&
+    list(value['characters'], lifecycleCharacterShape) &&
+    list(value['candidateIds'], isEntityId) &&
+    list(value['eventIds'], isEntityId) &&
+    (!Object.hasOwn(value, 'nicknameProposals') ||
+      list(value['nicknameProposals'], lifecycleNicknameViewShape)) &&
+    (!Object.hasOwn(value, 'nicknameHistory') ||
+      list(value['nicknameHistory'], lifecycleNicknameHistoryShape))
+  );
+}
+function lifecycleNicknameShape(value: unknown): boolean {
+  return (
+    record(value, [
+      'proposalId',
+      'characterId',
+      'sourceEventId',
+      'cultureId',
+      'deedKind',
+      'reasonKey',
+      'textKey',
+      'proposedAt',
+      'resolution',
+      'resolvedAt',
+    ]) &&
+    [
+      'proposalId',
+      'characterId',
+      'sourceEventId',
+      'cultureId',
+      'deedKind',
+      'reasonKey',
+      'textKey',
+    ].every((key) => isEntityId(value[key])) &&
+    isExactInteger(value['proposedAt']) &&
+    ['PENDING', 'ACCEPTED', 'REJECTED'].includes(value['resolution'] as string) &&
+    (value['resolvedAt'] === null || isExactInteger(value['resolvedAt']))
+  );
+}
+function lifecycleNicknameViewShape(value: unknown): boolean {
+  return (
+    record(value, [
+      'proposalId',
+      'characterId',
+      'sourceEventId',
+      'cultureId',
+      'deedKind',
+      'reasonKey',
+      'textKey',
+      'proposedAt',
+    ]) &&
+    [
+      'proposalId',
+      'characterId',
+      'sourceEventId',
+      'cultureId',
+      'deedKind',
+      'reasonKey',
+      'textKey',
+    ].every((key) => isEntityId(value[key])) &&
+    isExactInteger(value['proposedAt'])
+  );
+}
+function lifecycleNicknameHistoryShape(value: unknown): boolean {
+  return (
+    record(value, [
+      'proposalId',
+      'characterId',
+      'sourceEventId',
+      'cultureId',
+      'deedKind',
+      'reasonKey',
+      'textKey',
+      'acceptedAt',
+    ]) &&
+    [
+      'proposalId',
+      'characterId',
+      'sourceEventId',
+      'cultureId',
+      'deedKind',
+      'reasonKey',
+      'textKey',
+    ].every((key) => isEntityId(value[key])) &&
+    isExactInteger(value['acceptedAt'])
+  );
+}
+function bypassShape(value: unknown): boolean {
+  if (!record(value, ['crisisId', 'eventId', 'heirId', 'leaderId', 'happenedAt', 'notification']))
+    return false;
+  if (
+    ![value['crisisId'], value['eventId'], value['heirId'], value['leaderId']].every(isEntityId) ||
+    !isExactInteger(value['happenedAt'])
+  )
+    return false;
+  const note = value['notification'];
+  return (
+    note === null ||
+    (record(note, ['learnedAt', 'respect', 'rivalry', 'contribution', 'departureIntent']) &&
+      isExactInteger(note['learnedAt']) &&
+      Number.isSafeInteger(note['respect']) &&
+      Number.isSafeInteger(note['rivalry']) &&
+      record(note['contribution'], ['respect', 'rivalry']) &&
+      Number.isSafeInteger(note['contribution']['respect']) &&
+      Number.isSafeInteger(note['contribution']['rivalry']) &&
+      (note['departureIntent'] === null ||
+        (record(note['departureIntent'], ['id', 'membershipId', 'reason']) &&
+          isEntityId(note['departureIntent']['id']) &&
+          isEntityId(note['departureIntent']['membershipId']) &&
+          note['departureIntent']['reason'] === 'CANONICAL_EVENT')))
+  );
+}
+export function isLifecycleReceiptShape(value: unknown): boolean {
+  return (
+    record(value, [
+      'commandId',
+      'requestKey',
+      'sourceKey',
+      'semanticKey',
+      'events',
+      'requirements',
+    ]) &&
+    isEntityId(value['commandId']) &&
+    text(value['requestKey']) &&
+    (value['sourceKey'] === null || text(value['sourceKey'])) &&
+    text(value['semanticKey']) &&
+    list(
+      value['events'],
+      (event) =>
+        record(event, ['id', 'type', 'atTick', 'subjectIds']) &&
+        isEntityId(event['id']) &&
+        isEntityId(event['type']) &&
+        isExactInteger(event['atTick']) &&
+        list(event['subjectIds'], isEntityId),
+    ) &&
+    list(value['requirements'], isLifecycleRequirementShape)
+  );
+}
+export function isLifecycleRequirementShape(value: unknown): boolean {
+  if (!plainObject(value)) return false;
+  switch (value['kind']) {
+    case 'OPENING_ASSETS': {
+      const assets = value['assets'];
+      return (
+        record(value, ['kind', 'assets']) &&
+        record(assets, [
+          'cashQ',
+          'serviceTerms',
+          'signingCharges',
+          'items',
+          'debt',
+          'contactReaction',
+          'hookId',
+        ]) &&
+        isExactInteger(assets['cashQ']) &&
+        list(
+          assets['serviceTerms'],
+          (entry) =>
+            record(entry, ['membershipId', 'dailyWageMilli']) &&
+            isEntityId(entry['membershipId']) &&
+            isExactInteger(entry['dailyWageMilli']),
+        ) &&
+        list(
+          assets['signingCharges'],
+          (entry) =>
+            record(entry, ['characterId', 'amountQ']) &&
+            isEntityId(entry['characterId']) &&
+            isExactInteger(entry['amountQ']),
+        ) &&
+        list(
+          assets['items'],
+          (entry) =>
+            record(entry, ['id', 'definitionId', 'quantity', 'holderId', 'ownerCompanyId']) &&
+            [entry['id'], entry['definitionId'], entry['holderId'], entry['ownerCompanyId']].every(
+              isEntityId,
+            ) &&
+            Number.isSafeInteger(entry['quantity']),
+        ) &&
+        (assets['debt'] === null ||
+          (record(assets['debt'], ['recipientId', 'amountQ']) &&
+            isEntityId(assets['debt']['recipientId']) &&
+            isExactInteger(assets['debt']['amountQ']))) &&
+        record(assets['contactReaction'], ['contactId', 'respect', 'rivalry']) &&
+        isEntityId(assets['contactReaction']['contactId']) &&
+        Number.isSafeInteger(assets['contactReaction']['respect']) &&
+        Number.isSafeInteger(assets['contactReaction']['rivalry']) &&
+        isEntityId(assets['hookId'])
+      );
+    }
+    case 'RECRUIT_SETTLEMENT':
+      return (
+        record(value, [
+          'kind',
+          'membershipId',
+          'poolId',
+          'signingQ',
+          'dailyWageMilli',
+          'itemIds',
+        ]) &&
+        isEntityId(value['membershipId']) &&
+        isEntityId(value['poolId']) &&
+        isExactInteger(value['signingQ']) &&
+        isExactInteger(value['dailyWageMilli']) &&
+        list(value['itemIds'], isEntityId)
+      );
+    case 'DUTY_SETTLEMENT':
+      return (
+        record(value, ['kind', 'characterId', 'atTick', 'fundingPoolId', 'handoverToId']) &&
+        isEntityId(value['characterId']) &&
+        isExactInteger(value['atTick']) &&
+        nullableId(value['fundingPoolId']) &&
+        nullableId(value['handoverToId'])
+      );
+    case 'LEADERSHIP_SETTLEMENT':
+      return (
+        record(value, ['kind', 'previousId', 'nextId', 'atTick', 'permanent']) &&
+        isEntityId(value['previousId']) &&
+        nullableId(value['nextId']) &&
+        isExactInteger(value['atTick']) &&
+        typeof value['permanent'] === 'boolean'
+      );
+    default:
+      return false;
+  }
+}
+function text(value: unknown): boolean {
+  return typeof value === 'string' && value.length <= 4096;
 }

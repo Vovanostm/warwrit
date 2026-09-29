@@ -1,10 +1,25 @@
 import assert from 'node:assert/strict';
 import { Client } from 'pg';
+import {
+  canonicalJson,
+  companySourceKey,
+  parseCompanyCommand,
+  prepareConsumeCombatAggregate,
+} from '@warwrit/game-core';
+import { command } from '../packages/testkit/src/company-economy-fixture.js';
+import { createCompanyCombatAggregateFixture } from '../packages/testkit/src/company-combat-aggregate-fixture.js';
+import {
+  listCompanyAuditEvents,
+  loadCompanyAggregate,
+  readCompanyReceipt,
+  saveCompanyAggregate,
+} from '../apps/server/src/company/repository.js';
+import { createDatabase } from '../apps/server/src/db/database.js';
 
 import { runMigrations } from '../apps/server/src/db/migrator.js';
 
 const connectionString =
-  process.env.DATABASE_URL ?? 'postgres://warwrit:warwrit@localhost:5432/warwrit';
+  process.env['DATABASE_URL'] ?? 'postgres://warwrit:warwrit@localhost:5432/warwrit';
 const client = new Client({ connectionString });
 
 await client.connect();
@@ -16,6 +31,7 @@ try {
     '0002_identity',
     '0003_encounters',
     '0004_encounter_runtime',
+    '0005_company_domain',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -24,6 +40,7 @@ try {
     '0002_identity',
     '0003_encounters',
     '0004_encounter_runtime',
+    '0005_company_domain',
   ]);
 
   const secondUp = await runMigrations(client, 'up');
@@ -33,6 +50,214 @@ try {
     "select to_regclass('public.engineering_schema_probe')::text as table_name",
   );
   assert.equal(afterUp.rows[0]?.table_name, 'engineering_schema_probe');
+
+  const companyTables = await client.query<{ table_name: string }>(
+    "select table_name from information_schema.tables where table_schema = 'public' and table_name in ('company_snapshots', 'company_receipts', 'company_audit_events') order by table_name",
+  );
+  assert.deepEqual(
+    companyTables.rows.map(({ table_name }) => table_name),
+    ['company_audit_events', 'company_receipts', 'company_snapshots'],
+  );
+
+  const aggregateFixture = createCompanyCombatAggregateFixture();
+  const active = prepareConsumeCombatAggregate(aggregateFixture.begun.next, {
+    journal: aggregateFixture.journal,
+    applications: aggregateFixture.applications,
+    practiceProfile: aggregateFixture.practiceProfile,
+  });
+  if (active.kind !== 'PREPARED') throw new Error(active.error);
+  const company = active.next;
+  const commandValue = command(
+    company.economy,
+    'AdvanceCampaign',
+    { toTick: company.economy.lifecycle.campaignTick, authoritativeInputs: [] },
+    'company-storage-roundtrip-command',
+    'SYSTEM',
+  );
+  const parsed = parseCompanyCommand(commandValue);
+  assert.equal(parsed.ok, true);
+  if (!parsed.ok) throw new Error('Expected a valid storage roundtrip command');
+  const requestKey = canonicalJson(parsed.command);
+  const receiptId = 'company-storage-roundtrip-receipt';
+  const database = createDatabase(connectionString);
+  try {
+    await database.transaction().execute(async (transaction) => {
+      const foreignCommand = { ...parsed.command, companyId: 'foreign-company' };
+      await assert.rejects(
+        saveCompanyAggregate(transaction, company, {
+          receipt: {
+            receiptId,
+            commandId: foreignCommand.commandId,
+            sourceKey: companySourceKey(foreignCommand),
+            requestKey: canonicalJson(foreignCommand),
+            response: { kind: 'PREPARED' },
+            resultingRevision: company.economy.lifecycle.revision,
+          },
+          command: foreignCommand,
+          auditEvents: [],
+        }),
+        TypeError,
+      );
+
+      const saved = await saveCompanyAggregate(transaction, company, {
+        receipt: {
+          receiptId,
+          commandId: parsed.command.commandId,
+          sourceKey: companySourceKey(parsed.command),
+          requestKey,
+          response: { kind: 'PREPARED', resultingRevision: company.economy.lifecycle.revision },
+          resultingRevision: company.economy.lifecycle.revision,
+        },
+        command: parsed.command,
+        auditEvents: [
+          {
+            eventId: 'company-storage-roundtrip-event-0',
+            revision: company.economy.lifecycle.revision,
+            event: { type: 'company.snapshot.saved' },
+          },
+          {
+            eventId: 'company-storage-roundtrip-event-1',
+            revision: company.economy.lifecycle.revision,
+            event: { type: 'company.snapshot.saved' },
+          },
+        ],
+      });
+      assert.deepEqual(saved, company);
+    });
+  } finally {
+    await database.destroy();
+  }
+
+  // Read committed storage through a new pool so this proves cross-connection durability.
+  const readbackDatabase = createDatabase(connectionString);
+  try {
+    await readbackDatabase.transaction().execute(async (transaction) => {
+      assert.deepEqual(
+        await loadCompanyAggregate(
+          transaction,
+          company.economy.lifecycle.worldId,
+          company.economy.lifecycle.companyId,
+        ),
+        company,
+      );
+      assert.deepEqual(
+        await readCompanyReceipt(
+          transaction,
+          company.economy.lifecycle.worldId,
+          company.economy.lifecycle.companyId,
+          receiptId,
+        ),
+        {
+          receiptId,
+          commandId: parsed.command.commandId,
+          sourceKey: companySourceKey(parsed.command),
+          requestKey,
+          response: { kind: 'PREPARED', resultingRevision: company.economy.lifecycle.revision },
+          resultingRevision: company.economy.lifecycle.revision,
+        },
+      );
+      assert.deepEqual(
+        await listCompanyAuditEvents(
+          transaction,
+          company.economy.lifecycle.worldId,
+          company.economy.lifecycle.companyId,
+        ),
+        [
+          {
+            eventId: 'company-storage-roundtrip-event-0',
+            revision: company.economy.lifecycle.revision,
+            event: { type: 'company.snapshot.saved' },
+          },
+          {
+            eventId: 'company-storage-roundtrip-event-1',
+            revision: company.economy.lifecycle.revision,
+            event: { type: 'company.snapshot.saved' },
+          },
+        ],
+      );
+    });
+
+    const originalWorldId = company.economy.lifecycle.worldId;
+    const originalCompanyId = company.economy.lifecycle.companyId;
+    const original = await client.query<{
+      state: unknown;
+      ruleset_id: string;
+      public_revision: string;
+      canonical_revision: string;
+    }>(
+      'select state, ruleset_id, public_revision, canonical_revision from company_snapshots where world_id = $1 and company_id = $2',
+      [originalWorldId, originalCompanyId],
+    );
+    const originalRow = original.rows[0];
+    assert.ok(originalRow);
+    const corruptedRows = [
+      {
+        name: 'unsupported ruleset version',
+        sql: 'update company_snapshots set ruleset_id = $1 where world_id = $2 and company_id = $3',
+        values: ['future-ruleset', originalWorldId, originalCompanyId],
+      },
+      {
+        name: 'root world scope mismatch',
+        sql: "update company_snapshots set state = jsonb_set(state, '{economy,lifecycle,worldId}', '\"foreign-world\"'::jsonb) where world_id = $1 and company_id = $2",
+        values: [originalWorldId, originalCompanyId],
+      },
+      {
+        name: 'public revision cursor mismatch',
+        sql: 'update company_snapshots set public_revision = $1 where world_id = $2 and company_id = $3',
+        values: ['999999', originalWorldId, originalCompanyId],
+      },
+      {
+        name: 'canonical revision cursor mismatch',
+        sql: 'update company_snapshots set canonical_revision = $1 where world_id = $2 and company_id = $3',
+        values: ['999999', originalWorldId, originalCompanyId],
+      },
+    ] as const;
+    for (const row of corruptedRows) {
+      await client.query(row.sql, [...row.values]);
+      const beforeRead = await client.query(
+        'select * from company_snapshots where world_id = $1 and company_id = $2',
+        [originalWorldId, originalCompanyId],
+      );
+      await assert.rejects(
+        readbackDatabase
+          .transaction()
+          .execute((transaction) =>
+            loadCompanyAggregate(transaction, originalWorldId, originalCompanyId),
+          ),
+        TypeError,
+        `loader must reject ${row.name}`,
+      );
+      const afterRead = await client.query(
+        'select * from company_snapshots where world_id = $1 and company_id = $2',
+        [originalWorldId, originalCompanyId],
+      );
+      assert.deepEqual(
+        afterRead.rows,
+        beforeRead.rows,
+        `${row.name} read must not rewrite the row`,
+      );
+      await client.query(
+        'update company_snapshots set state = $1::jsonb, ruleset_id = $2, public_revision = $3, canonical_revision = $4 where world_id = $5 and company_id = $6',
+        [
+          JSON.stringify(originalRow.state),
+          originalRow.ruleset_id,
+          originalRow.public_revision,
+          originalRow.canonical_revision,
+          originalWorldId,
+          originalCompanyId,
+        ],
+      );
+    }
+  } finally {
+    await readbackDatabase.destroy();
+  }
+
+  const companyDown = await runMigrations(client, 'down');
+  assert.deepEqual(companyDown.applied, ['0005_company_domain']);
+  const preservedEncounterTable = await client.query<{ table_name: string | null }>(
+    "select to_regclass('public.encounters')::text as table_name",
+  );
+  assert.equal(preservedEncounterTable.rows[0]?.table_name, 'encounters');
 
   const runtimeDown = await runMigrations(client, 'down');
   assert.deepEqual(runtimeDown.applied, ['0004_encounter_runtime']);
@@ -45,7 +270,10 @@ try {
     [legacyEncounterId],
   );
   const upgradeWithResolvedEncounter = await runMigrations(client, 'up');
-  assert.deepEqual(upgradeWithResolvedEncounter.applied, ['0004_encounter_runtime']);
+  assert.deepEqual(upgradeWithResolvedEncounter.applied, [
+    '0004_encounter_runtime',
+    '0005_company_domain',
+  ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;
     readonly deadline_at: Date;
@@ -81,29 +309,35 @@ try {
   );
 
   const firstDown = await runMigrations(client, 'down');
-  assert.deepEqual(firstDown.applied, ['0004_encounter_runtime']);
+  assert.deepEqual(firstDown.applied, ['0005_company_domain']);
+  const afterCompanyDown = await client.query<{ table_name: string | null }>(
+    "select to_regclass('public.encounters')::text as table_name",
+  );
+  assert.equal(afterCompanyDown.rows[0]?.table_name, 'encounters');
+  const secondDown = await runMigrations(client, 'down');
+  assert.deepEqual(secondDown.applied, ['0004_encounter_runtime']);
   const afterRuntimeDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.encounters')::text as table_name",
   );
   assert.equal(afterRuntimeDown.rows[0]?.table_name, 'encounters');
-  const secondDown = await runMigrations(client, 'down');
-  assert.deepEqual(secondDown.applied, ['0003_encounters']);
+  const thirdDown = await runMigrations(client, 'down');
+  assert.deepEqual(thirdDown.applied, ['0003_encounters']);
   const afterEncounterDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.encounters')::text as table_name",
   );
   assert.equal(afterEncounterDown.rows[0]?.table_name, null);
-  const thirdDown = await runMigrations(client, 'down');
-  assert.deepEqual(thirdDown.applied, ['0002_identity']);
+  const fourthDown = await runMigrations(client, 'down');
+  assert.deepEqual(fourthDown.applied, ['0002_identity']);
   const afterIdentityDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.identity_accounts')::text as table_name",
   );
   assert.equal(afterIdentityDown.rows[0]?.table_name, null);
 
-  const fourthDown = await runMigrations(client, 'down');
-  assert.deepEqual(fourthDown.applied, ['0001_foundation']);
-
   const fifthDown = await runMigrations(client, 'down');
-  assert.deepEqual(fifthDown.applied, []);
+  assert.deepEqual(fifthDown.applied, ['0001_foundation']);
+
+  const sixthDown = await runMigrations(client, 'down');
+  assert.deepEqual(sixthDown.applied, []);
 
   const afterDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.engineering_schema_probe')::text as table_name",

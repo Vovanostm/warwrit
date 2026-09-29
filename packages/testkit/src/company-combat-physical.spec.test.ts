@@ -26,6 +26,7 @@ import {
   prepareBeginCombatAggregate,
   prepareConsumeCombatAggregate,
   prepareFinalizeCombatAggregate,
+  readCompanyCombatAggregateState,
   prepareCompanyEconomy,
   prepareCompanyEconomyWithLearning,
   prepareCombatPracticeEffects,
@@ -2958,6 +2959,7 @@ describe('G10 — atomic combat company aggregate', () => {
     expect(
       finalized.next.economy.physical?.items.find((entry) => entry.itemId === itemId),
     ).toMatchObject({ ...itemBefore, containerId: destinationId, equipped: null });
+    expect(readCompanyCombatAggregateState(finalized.next)).toEqual(finalized.next);
 
     const retry = prepareFinalizeCombatAggregate(finalized.next, finalizeWithLeadership);
     expect(retry.kind, retry.kind === 'REJECTED' ? retry.error : undefined).toBe('PREPARED');

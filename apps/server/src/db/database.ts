@@ -88,6 +88,41 @@ interface EncounterReceiptTable {
   readonly resulting_revision: number;
 }
 
+interface CompanySnapshotTable {
+  readonly world_id: string;
+  readonly company_id: string;
+  readonly schema_version: number;
+  readonly ruleset_id: string;
+  readonly catalogue_version: string;
+  readonly command_schema_version: number;
+  readonly public_revision: string;
+  readonly canonical_revision: string;
+  readonly state: unknown;
+  readonly updated_at: Generated<Date>;
+}
+
+interface CompanyReceiptTable {
+  readonly world_id: string;
+  readonly company_id: string;
+  readonly receipt_id: string;
+  readonly command_id: string;
+  readonly source_key: string | null;
+  readonly request_key: string;
+  readonly response: unknown;
+  readonly resulting_revision: string;
+  readonly created_at: Generated<Date>;
+}
+
+interface CompanyAuditEventTable {
+  readonly sequence: Generated<number>;
+  readonly world_id: string;
+  readonly company_id: string;
+  readonly revision: string;
+  readonly event_id: string;
+  readonly event: unknown;
+  readonly created_at: Generated<Date>;
+}
+
 export interface DatabaseSchema {
   readonly engineering_schema_probe: EngineeringSchemaProbeTable;
   readonly schema_migrations: SchemaMigrationsTable;
@@ -106,6 +141,9 @@ export interface DatabaseSchema {
     readonly admission_source: 'fixture';
     readonly assigned_at: Generated<Date>;
   };
+  readonly company_snapshots: CompanySnapshotTable;
+  readonly company_receipts: CompanyReceiptTable;
+  readonly company_audit_events: CompanyAuditEventTable;
 }
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {
