@@ -32,7 +32,10 @@ const app = buildApp({
   config.identity === undefined ||
   config.fixtureEncountersEnabled !== true
     ? {}
-    : { encounters: { database, fixtureAdmission: true } }),
+    : {
+        encounters: { database, fixtureAdmission: true },
+        encounterRealtime: { host: config.host, port: config.encounterRealtimePort },
+      }),
 });
 
 if (database !== undefined) {

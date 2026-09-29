@@ -5,6 +5,7 @@ import { registerIdentityRoutes, type IdentityRoutesOptions } from './auth/route
 import { createLogger } from './logger.js';
 import { registerCombatLab, type CombatLabSettings } from './combat-lab/routes.js';
 import { registerEncounterRoutes, type EncounterRoutesOptions } from './encounters/routes.js';
+import { registerEncounterRealtime } from './encounters/realtime.js';
 
 export interface BuildAppOptions {
   readonly logger?: FastifyBaseLogger | false;
@@ -12,6 +13,7 @@ export interface BuildAppOptions {
   readonly combatLab?: CombatLabSettings;
   readonly identity?: IdentityRoutesOptions;
   readonly encounters?: EncounterRoutesOptions;
+  readonly encounterRealtime?: { readonly host: string; readonly port: number };
 }
 
 const liveResponse: HealthResponse = {
@@ -34,7 +36,19 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
     registerIdentityRoutes(app, options.identity);
   }
   if (options.encounters !== undefined) {
-    registerEncounterRoutes(app, options.encounters);
+    const realtime =
+      options.encounterRealtime !== undefined
+        ? registerEncounterRealtime(app, options.encounters.database, options.encounterRealtime)
+        : undefined;
+    registerEncounterRoutes(app, {
+      ...options.encounters,
+      ...(realtime === undefined
+        ? {}
+        : {
+            onCommandCommitted: realtime.onCommandCommitted,
+            roomTicketIssuer: realtime.issueRoomTicket,
+          }),
+    });
   }
   if (options.combatLab !== undefined) {
     if (process.env['NODE_ENV'] === 'production') {
