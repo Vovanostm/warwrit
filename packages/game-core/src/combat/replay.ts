@@ -1,4 +1,4 @@
-import { invariant } from '../primitives.js';
+import { compareCodeUnits, invariant } from '../primitives.js';
 import { applyCombatCommand, assertBattleState, startBattle } from './engine.js';
 import { compareHex } from './hex.js';
 import { startBattleV2 } from './runtime-v2.js';
@@ -54,7 +54,7 @@ export function canonicalCombatState(state: BattleState): string {
       retreatHexes: side.retreatHexes.toSorted(compareHex),
     })),
     units: state.units
-      .toSorted((left, right) => left.id.localeCompare(right.id))
+      .toSorted((left, right) => compareCodeUnits(left.id, right.id))
       .map(canonicalUnit),
     random: state.random,
     round: state.round,

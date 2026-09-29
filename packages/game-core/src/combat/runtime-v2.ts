@@ -1,4 +1,4 @@
-import { invariant } from '../primitives.js';
+import { compareCodeUnits, invariant } from '../primitives.js';
 import { assertBattleState, effectiveInitiative } from './engine.js';
 import { createRandomState } from './random.js';
 import { combatRules } from './rules.js';
@@ -42,7 +42,7 @@ function initialOrder(units: readonly CombatUnitState[], setup: BattleSetupV2): 
     .toSorted(
       (left, right) =>
         effectiveInitiative(right, rules) - effectiveInitiative(left, rules) ||
-        left.id.localeCompare(right.id),
+        compareCodeUnits(left.id, right.id),
     )
     .map(({ id }) => id);
 }
