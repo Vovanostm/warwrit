@@ -12,3 +12,6 @@ artifacts/
 # Pinned upstream PlayCanvas inspector; preserve source bytes.
 .agents/skills/playcanvas-inspect-glb/SKILL.md
 .agents/skills/playcanvas-inspect-glb/scripts/
+
+# Personal Claude Code settings; git-ignored per user, not repository content.
+.claude/settings.local.json
