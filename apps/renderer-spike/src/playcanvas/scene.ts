@@ -27,7 +27,12 @@ import {
 } from '../shared/scenario.js';
 import type { RendererController, RendererMount } from '../shared/renderer.js';
 
-async function loadContainer(app: Application, url: string, signal?: AbortSignal) {
+async function loadContainer(
+  app: Application,
+  url: string,
+  signal: AbortSignal | undefined,
+  trackContainerLoad: () => () => void,
+) {
   if (signal?.aborted) throw new Error('PlayCanvas scene mount cancelled.');
   const assets = app.assets;
   if (!assets) throw new Error('PlayCanvas scene mount cancelled.');
@@ -38,32 +43,39 @@ async function loadContainer(app: Application, url: string, signal?: AbortSignal
 
   const asset = new Asset(url, 'container', { url, contents });
   return new Promise<Asset>((resolve, reject) => {
+    let cleanupComplete = false;
+    let settleContainerLoad = () => {};
     const cleanup = () => {
+      if (cleanupComplete) return;
+      cleanupComplete = true;
       asset.off('load', onLoad);
       asset.off('error', onError);
-      signal?.removeEventListener('abort', onAbort);
+      settleContainerLoad();
     };
     const onLoad = () => {
       cleanup();
-      resolve(asset);
+      if (signal?.aborted) reject(new Error('PlayCanvas scene mount cancelled.'));
+      else resolve(asset);
     };
     const onError = (error: unknown) => {
       cleanup();
       reject(error);
     };
-    const onAbort = () => {
-      cleanup();
-      reject(new Error('PlayCanvas scene mount cancelled.'));
-    };
     asset.once('load', onLoad);
     asset.once('error', onError);
-    signal?.addEventListener('abort', onAbort, { once: true });
     if (signal?.aborted) {
-      onAbort();
+      cleanup();
+      reject(new Error('PlayCanvas scene mount cancelled.'));
       return;
     }
     assets.add(asset);
-    assets.load(asset);
+    settleContainerLoad = trackContainerLoad();
+    try {
+      assets.load(asset);
+    } catch (error) {
+      cleanup();
+      reject(error);
+    }
   });
 }
 
@@ -118,10 +130,26 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics, sign
     },
   });
   let appDestroyed = false;
-  const destroyApp = () => {
+  let destroyRequested = false;
+  let pendingContainerLoads = 0;
+  const destroyAppNow = () => {
     if (appDestroyed) return;
     appDestroyed = true;
     app.destroy();
+  };
+  const destroyApp = () => {
+    destroyRequested = true;
+    if (pendingContainerLoads === 0) destroyAppNow();
+  };
+  const trackContainerLoad = () => {
+    pendingContainerLoads += 1;
+    let settled = false;
+    return () => {
+      if (settled) return;
+      settled = true;
+      pendingContainerLoads -= 1;
+      if (destroyRequested && pendingContainerLoads === 0) queueMicrotask(destroyAppNow);
+    };
   };
   signal?.addEventListener('abort', destroyApp, { once: true });
   try {
@@ -134,6 +162,7 @@ export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics, sign
       artAnimatedSpriteMode,
       artSpritePreviewMode,
       signal,
+      trackContainerLoad,
       destroyApp,
       () => appDestroyed,
     );
@@ -159,6 +188,7 @@ async function initializePlayCanvasScene(
   artAnimatedSpriteMode: boolean,
   artSpritePreviewMode: boolean,
   signal: AbortSignal | undefined,
+  trackContainerLoad: () => () => void,
   destroyApp: () => void,
   isAppDestroyed: () => boolean,
 ): Promise<RendererController> {
@@ -254,7 +284,10 @@ async function initializePlayCanvasScene(
 
   const containers = new Map<string, Asset>();
   for (const classId of ['Knight', 'Rogue', 'Barbarian'] as const) {
-    containers.set(classId, await loadContainer(app, `/assets/characters/${classId}.glb`, signal));
+    containers.set(
+      classId,
+      await loadContainer(app, `/assets/characters/${classId}.glb`, signal, trackContainerLoad),
+    );
   }
   const roots = new Map<string, Entity>();
   const animationPaths = [
@@ -264,7 +297,7 @@ async function initializePlayCanvasScene(
   ];
   const tracks = new Map<string, AnimTrack>();
   for (const path of animationPaths) {
-    const containerAsset = await loadContainer(app, path, signal);
+    const containerAsset = await loadContainer(app, path, signal, trackContainerLoad);
     const resource = containerAsset.resource as {
       animations?: Array<{ resource?: AnimTrack }>;
     } | null;
@@ -318,7 +351,7 @@ async function initializePlayCanvasScene(
   for (const name of ['sword_1handed', 'shield_round', 'dagger', 'axe_1handed'])
     accessoryContainers.set(
       name,
-      await loadContainer(app, `/assets/accessories/${name}.gltf`, signal),
+      await loadContainer(app, `/assets/accessories/${name}.gltf`, signal, trackContainerLoad),
     );
   for (const actor of actors) {
     const model = containers.get(actor.classId)!.resource;
