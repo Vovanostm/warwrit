@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 1,
+  "bake": "playcanvas-2.22.4-art05-b2-scout",
+  "actor": {
+    "id": "red-rogue-1",
+    "classId": "Rogue",
+    "equipment": ["dagger"]
+  },
+  "animation": {
+    "clip": "Walking_A",
+    "sampleSeconds": 0.5333333611488342,
+    "durationSeconds": 1.0666667222976685,
+    "loop": true
+  },
+  "capture": {
+    "projection": "orthographic",
+    "directions": 8,
+    "yawDegrees": [0, 45, 90, 135, 180, 225, 270, 315],
+    "sourceSize": [1600, 900],
+    "outputSize": [512, 512],
+    "measuredCaptureMilliseconds": 870.4409580000001,
+    "sourceCrop": {
+      "x": 350,
+      "y": 0,
+      "width": 900,
+      "height": 900
+    },
+    "pivot": {
+      "x": 0.5,
+      "y": 0.3226163983345032,
+      "origin": "projected world-space actor root at [0, 0, 0]",
+      "normalizedFrom": "bottom-left"
+    },
+    "alpha": "WebGL alpha context; transparent background; saved PNG corners and coverage verified",
+    "animationProof": {
+      "componentPlayingAtCapture": true,
+      "clip": "Walking_A",
+      "sampleSeconds": 0.5333333611488342,
+      "changedNonRootJoints": ["upperarm.r", "upperarm.l", "upperleg.r", "upperleg.l"],
+      "equippedItems": ["art-bake-dagger"]
+    },
+    "geometryProof": {
+      "directionIndex": 0,
+      "characterWorldBounds": {
+        "min": [-0.7273126356782518, -0.07645860080895467, -0.534212351153338],
+        "max": [0.7181701425211, 1.9610252982930683, 0.5181390168278354],
+        "meshCount": 7
+      },
+      "attachments": [
+        {
+          "name": "dagger",
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [-0.5847069025039673, 0.6327449679374695, -0.2615649402141571],
+          "worldBounds": {
+            "min": [-0.6372123331533743, 0.2569946709253248, -0.326621947002969],
+            "max": [-0.5251306742459316, 0.7275066281466873, -0.11653908164707383],
+            "meshCount": 1
+          }
+        }
+      ]
+    },
+    "normal": "world-space skinned surface normal encoded as RGB = normal * 0.5 + 0.5",
+    "depth": {
+      "convention": "linear Euclidean metric distance from camera origin in meters",
+      "maximumMeters": 64,
+      "encoding": "unsigned 24-bit big-endian RGB, scaled over [0, 64] meters",
+      "cropSampling": "nearest-neighbor to preserve packed RGB values",
+      "clearPixels": "alpha is zero"
+    }
+  },
+  "licenses": [
+    {
+      "path": "assets/License-Adventurers-CC0.txt",
+      "sha256": "d4adc31660d1db22eb60eba648e01db41577548f6fa1a3576cb4a6283dae0a58"
+    },
+    {
+      "path": "assets/License-Character-Animations-CC0.txt",
+      "sha256": "373b159044d1a886ed15f57ca5a7673ba14e2623c460283452705f2056912ed9"
+    }
+  ],
+  "sourceAssets": [
+    {
+      "path": "assets/characters/Rogue.glb",
+      "sha256": "cae5d9b2f08d53f7b4ab2617d9f42f021c546eb10920455fdcd82a110867fae4"
+    },
+    {
+      "path": "assets/animations/Rig_Medium_General.glb",
+      "sha256": "5f725c0f745f36078c7238968cd5c04843cbc6260689eb6e7f5e2bbd7ffdd7ad"
+    },
+    {
+      "path": "assets/animations/Rig_Medium_MovementBasic.glb",
+      "sha256": "11422afd50abf7e8c92ea107e2e0bc94abd38023d6d15f55ad580347efbfa29e"
+    },
+    {
+      "path": "assets/accessories/dagger.gltf",
+      "sha256": "057bae9c4a6486e3b438ba4d13bfff43b49e2b8317a378b6a60f91466757a417"
+    },
+    {
+      "path": "assets/accessories/dagger.bin",
+      "sha256": "da7857e41d902cdd39e894563a544719901a9af55053f2b96b21019ed6717677"
+    },
+    {
+      "path": "assets/accessories/rogue_texture.png",
+      "sha256": "2e2fc741e20e7e2c85b176c8143b49b769bca0d2ed1a1cfc1807a758a0e4d3e1"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d00-color.png",
+      "pass": "color",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10866,
+      "partialAlphaPixels": 577,
+      "alphaBounds": {
+        "left": 206,
+        "top": 197,
+        "right": 304,
+        "bottom": 350
+      },
+      "sha256": "ecbe6dce54263385c5e78ea71bb3f12b79f50635fb52f6b5c16cb6a504fcfe6d",
+      "bytes": 36707
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d00-normal.png",
+      "pass": "normal",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10866,
+      "partialAlphaPixels": 577,
+      "alphaBounds": {
+        "left": 206,
+        "top": 197,
+        "right": 304,
+        "bottom": 350
+      },
+      "sha256": "a8d555a2a18f998b9f30580d3331024436c75c8acaf825cbe0d18696d241f0a9",
+      "bytes": 37181
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d00-depth.png",
+      "pass": "depth",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10676,
+      "partialAlphaPixels": 236,
+      "alphaBounds": {
+        "left": 206,
+        "top": 197,
+        "right": 303,
+        "bottom": 349
+      },
+      "sha256": "5701a72cb4ed1cb974a01187c64dabb9327dc06ee0a9522997c089231735bb77",
+      "bytes": 37559
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d01-color.png",
+      "pass": "color",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10361,
+      "partialAlphaPixels": 606,
+      "alphaBounds": {
+        "left": 210,
+        "top": 197,
+        "right": 300,
+        "bottom": 352
+      },
+      "sha256": "2d665393b6c13c4bbbf4c7b9b5e783ebaf1cb757c10ef75fe04b30ba59f82cf6",
+      "bytes": 35618
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d01-normal.png",
+      "pass": "normal",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10361,
+      "partialAlphaPixels": 606,
+      "alphaBounds": {
+        "left": 210,
+        "top": 197,
+        "right": 300,
+        "bottom": 352
+      },
+      "sha256": "2045784917574d776dbb06f1d4a8187c972125979db3570769ec65d013beec6f",
+      "bytes": 36765
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d01-depth.png",
+      "pass": "depth",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10170,
+      "partialAlphaPixels": 221,
+      "alphaBounds": {
+        "left": 210,
+        "top": 197,
+        "right": 299,
+        "bottom": 352
+      },
+      "sha256": "0226ca5af70efafa1af99a99d2f7fa9e4915f256a9947360285af0c308d57353",
+      "bytes": 37085
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d02-color.png",
+      "pass": "color",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9152,
+      "partialAlphaPixels": 693,
+      "alphaBounds": {
+        "left": 215,
+        "top": 194,
+        "right": 297,
+        "bottom": 354
+      },
+      "sha256": "36a875710cc02bbc196566c2ba43d1f1c0a83e9c51daf2862aa0f60a909559d1",
+      "bytes": 31419
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d02-normal.png",
+      "pass": "normal",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9152,
+      "partialAlphaPixels": 693,
+      "alphaBounds": {
+        "left": 215,
+        "top": 194,
+        "right": 297,
+        "bottom": 354
+      },
+      "sha256": "03e752b4a1012dcf48f00125e2888ac0c45e7945dbffd4fd317847b5deef6520",
+      "bytes": 33619
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d02-depth.png",
+      "pass": "depth",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 8947,
+      "partialAlphaPixels": 298,
+      "alphaBounds": {
+        "left": 216,
+        "top": 195,
+        "right": 297,
+        "bottom": 353
+      },
+      "sha256": "28e2d852eccdc87e86bed9fe4caa9586010500deafa7840c12490bc483f6c97e",
+      "bytes": 34390
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d03-color.png",
+      "pass": "color",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10823,
+      "partialAlphaPixels": 592,
+      "alphaBounds": {
+        "left": 201,
+        "top": 190,
+        "right": 305,
+        "bottom": 354
+      },
+      "sha256": "507daf32ee36539c0d109cd27173d9e570a5ba379652dfbfe1adcaa49fa805ac",
+      "bytes": 27335
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d03-normal.png",
+      "pass": "normal",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10823,
+      "partialAlphaPixels": 592,
+      "alphaBounds": {
+        "left": 201,
+        "top": 190,
+        "right": 305,
+        "bottom": 354
+      },
+      "sha256": "7872d3da169977c652979b88c09cd91cfbc83f72afbe8fa696c0c6ebccffeec8",
+      "bytes": 33346
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d03-depth.png",
+      "pass": "depth",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10661,
+      "partialAlphaPixels": 261,
+      "alphaBounds": {
+        "left": 201,
+        "top": 191,
+        "right": 304,
+        "bottom": 353
+      },
+      "sha256": "2ed9cc7189147fec32dd05335390693b4551f52c2e9a46d098a9d89669e5e445",
+      "bytes": 37641
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d04-color.png",
+      "pass": "color",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11444,
+      "partialAlphaPixels": 581,
+      "alphaBounds": {
+        "left": 207,
+        "top": 191,
+        "right": 305,
+        "bottom": 351
+      },
+      "sha256": "3e0d8d655ea0fe7a0c2400e8311d5c44c04b9ead1b2d8b092895a2bf15ed23ec",
+      "bytes": 22835
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d04-normal.png",
+      "pass": "normal",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11444,
+      "partialAlphaPixels": 581,
+      "alphaBounds": {
+        "left": 207,
+        "top": 191,
+        "right": 305,
+        "bottom": 351
+      },
+      "sha256": "a66532b3829d946e2edad526890db58e36ef171a61cb68cc1512755b64d2966a",
+      "bytes": 30744
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d04-depth.png",
+      "pass": "depth",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 11265,
+      "partialAlphaPixels": 227,
+      "alphaBounds": {
+        "left": 208,
+        "top": 191,
+        "right": 305,
+        "bottom": 351
+      },
+      "sha256": "f2cd6da0f9b08ad707737e1316e1e90b68df54939826c7b5d816a851ee62a673",
+      "bytes": 36072
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d05-color.png",
+      "pass": "color",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10705,
+      "partialAlphaPixels": 561,
+      "alphaBounds": {
+        "left": 211,
+        "top": 194,
+        "right": 301,
+        "bottom": 351
+      },
+      "sha256": "a2eb64e46321c1396efd2d9822339ed5f560a1ce3af4100c2b55adcace354822",
+      "bytes": 24384
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d05-normal.png",
+      "pass": "normal",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10705,
+      "partialAlphaPixels": 561,
+      "alphaBounds": {
+        "left": 211,
+        "top": 194,
+        "right": 301,
+        "bottom": 351
+      },
+      "sha256": "7057d58fb6bf964f78e547b964e27bcee1dea5419baa5c16ddb165966b835f97",
+      "bytes": 32607
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d05-depth.png",
+      "pass": "depth",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10532,
+      "partialAlphaPixels": 210,
+      "alphaBounds": {
+        "left": 212,
+        "top": 195,
+        "right": 301,
+        "bottom": 351
+      },
+      "sha256": "dfdcba244297404dd9c0c119e268613ec035977a793d2b25f4a33ffc71f3e366",
+      "bytes": 37051
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d06-color.png",
+      "pass": "color",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9129,
+      "partialAlphaPixels": 664,
+      "alphaBounds": {
+        "left": 214,
+        "top": 197,
+        "right": 296,
+        "bottom": 351
+      },
+      "sha256": "d27a2e77340576eac204dec2dc7debe69f79b5906b9040b35ab4c1cbbc17c769",
+      "bytes": 28055
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d06-normal.png",
+      "pass": "normal",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 9129,
+      "partialAlphaPixels": 664,
+      "alphaBounds": {
+        "left": 214,
+        "top": 197,
+        "right": 296,
+        "bottom": 351
+      },
+      "sha256": "04adb30938047dc3d482cbe0343676f40fcd2a722ddc92e6cd12b637c8994a4c",
+      "bytes": 33189
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d06-depth.png",
+      "pass": "depth",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 8931,
+      "partialAlphaPixels": 297,
+      "alphaBounds": {
+        "left": 214,
+        "top": 197,
+        "right": 295,
+        "bottom": 351
+      },
+      "sha256": "c2ccc6d4d88083e4422ccebf21dcaf4a0e799274d8cb82844874b7cda634b290",
+      "bytes": 34077
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d07-color.png",
+      "pass": "color",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10399,
+      "partialAlphaPixels": 563,
+      "alphaBounds": {
+        "left": 206,
+        "top": 197,
+        "right": 310,
+        "bottom": 351
+      },
+      "sha256": "174b2c39ad0d194ecc6891ede974837574c326e6d04bad933efd14161e586370",
+      "bytes": 33765
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d07-normal.png",
+      "pass": "normal",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10399,
+      "partialAlphaPixels": 563,
+      "alphaBounds": {
+        "left": 206,
+        "top": 197,
+        "right": 310,
+        "bottom": 351
+      },
+      "sha256": "9528645ec481588f15a9fe8fbbaa5601616e14f181df0caf7a78b684682565d3",
+      "bytes": 36146
+    },
+    {
+      "file": "rogue-walking_a-t0p5333333611488342-d07-depth.png",
+      "pass": "depth",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 512,
+      "height": 512,
+      "coveredPixels": 10238,
+      "partialAlphaPixels": 247,
+      "alphaBounds": {
+        "left": 207,
+        "top": 197,
+        "right": 310,
+        "bottom": 351
+      },
+      "sha256": "3ad308fff70e3238d1a3c14fdf7a1971f205b18179d358addc71a2a43956a529",
+      "bytes": 37094
+    }
+  ]
+}

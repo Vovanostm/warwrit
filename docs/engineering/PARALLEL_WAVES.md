@@ -16,7 +16,49 @@ NOT_MEASURED.
 
 ## Restored-session dispatch amendment — 2026-09-29
 
-### Current queue after PR122
+### Current queue after PR123
+
+This amendment supersedes prior dispatch assignments. Parent read back actual
+main `02b160c5275af4f5882a811db4f3326f61457282`, tree
+`afa458013b92411c6469de5e52f0776fe198b4b6`. PR123 delivered the static ART05 B1
+consumer. Its PR and actual-main CI passed the existing full gate; see the
+[bounded browser evidence](evidence/ART05-B1-20260929.md). Full ART05 and M1 remain open.
+
+The host currently exposes parent plus two retained children: Luna writes, Sol
+reviews and improves plans. Use more focused sequential assignments through this
+pair; further role definitions do not add runtime capacity. Do not repeat failed
+spawns or create user-owned tasks to bypass the host limit.
+
+| Packet                 | Writer and exclusive boundary                                                                                                                                      | Observable exit / successor                                                                                                                                                                                                                                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G10 terminal departure | Luna; aggregate and existing physical-combat spec in `warwrit-alpha-combat-aggregate`                                                                              | Joint economy/learning/social owner is committed at `878ecfa`. Terminal composition is committed at `d9cb1bd`; Sol review and parent joint 21-specification run passed. Actual same-item company return/overflow, atomic refusal and retry are covered, with one lawful exit per executable membership even when multiple intent IDs exist. |
+| ART05 B2 scout         | Luna after departure freezes; `apps/renderer-spike/src/playcanvas/scene.ts` and `apps/renderer-spike/scripts/bake-art-assets.mjs` in `warwrit-alpha-art-animation` | Three equipped actors and four real clips; explicit nonloop sampling and finite reviewable captures before large asset generation. Staged output is `apps/renderer-spike/public/art-pipeline/scout-b2`; parent owns capture resources and evidence.                                                                                         |
+| G10 CAPTIVE            | Luna after B2 scout freezes; aggregate and existing physical-combat spec                                                                                           | Actual trusted capture and matching seizure evidence; preserve item identity, membership, prefix, atomic rejection and exact retry. Never infer capture from winner or HP.                                                                                                                                                                  |
+| H01/H02                | Luna after full reviewed G10, including CAPTIVE, merges                                                                                                            | Complete unknown-input root reader, next ordered migration and actual PostgreSQL round-trip. Recheck final G10 shape and migration number; no placeholder durable executor.                                                                                                                                                                 |
+
+Sol reviews the frozen domain packet while Luna works in the independent art
+worktree. Parent independently verifies the domain union and integrates reviewed
+results. After the art scout freezes, Sol reviews it while Luna returns to capture
+composition. A blocking finding returns to the existing writer through explicit
+freeze and handoff. The reviewer never edits source. No concurrent writers share
+company modules, exports, migrations, app mounting or lockfile.
+
+Reserve CPU as well as files: real battle tests and heavy browser captures run
+serially. Code inspection and isolated source edits may overlap them. Parent owns
+ports, databases, disposable fixtures and final gates. Port 5183 is proposed for
+B2 and must be checked before startup; preserve 5177–5182, PostgreSQL55433 and
+Dex5557. A twenty-minute writer checkpoint or ten-minute review checkpoint reports
+partial results honestly; it does not relax acceptance. Final proof records exact
+HEAD/tree or frozen dirty-diff hash, commands, result and remaining dependencies.
+
+F01 source lookup confirmed accepted authentic-deed/consent/history rules in
+Q-CHAR-14A (`rec8hgsJFhQb3uqgb`) and the lifecycle/command records. A finite
+significance rule and culture-to-text catalogue were absent from the scoped live
+lookup. This is an unresolved content/producer dependency, not permission to
+invent a deed. ART05 remains independently actionable. H, world, physical JOIN,
+contracts and UI retain the source dependency order below.
+
+### Earlier queue after PR122
 
 This queue supersedes the earlier assignments below. Verified main is
 `b5433612a8fc607b4eeef68d1ac9c00aa56e5318`, tree
