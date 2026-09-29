@@ -8,6 +8,26 @@
 
 ## Mission and checkpoint
 
+**Current packet checkpoint, 2026-09-29:** G10 terminal death/corpse/custody
+validation and authorized leadership composition are locally committed at
+`6bfc15d`; Sol review and parent build, 14 focused specifications and core types
+passed. G10 remains unmerged. Luna now composes departure, learning and social
+consequences; CAPTIVE follows before H. The independent ART05 B1 static sprite
+consumer has final Sol source review and parent browser evidence after correcting
+scale, load cleanup, UV orientation, frame identity and prelit color. See
+[exact scope and receipts](evidence/ART05-B1-20260929.md). Final clean CI and delivery
+remain pending. Full ART05, the persistent alpha and its launcher remain incomplete.
+
+**Dispatch checkpoint after PR122, 2026-09-29:** merged main is
+`b5433612a8fc607b4eeef68d1ac9c00aa56e5318`; parent audited its actual-main
+CI36532083132 full verify/stress/real-migration gate. The
+[current packet queue](PARALLEL_WAVES.md#current-queue-after-pr122) assigns Luna
+G10 terminal leadership, then an independent ART05 sprite consumer while Sol
+reviews the frozen domain result. Departure/social/learning and CAPTIVE composition
+remain queued before H. Parent owns integration, planning files and shared services.
+The actual host allows two retained children; additional concurrency is unavailable.
+K01 and ART05-A are delivered; full persistent M1 and its launcher remain incomplete.
+
 **K01 checkpoint, 2026-09-29:** the finite source/time-bound world-knowledge reader
 and projection now have independent Sol review and three parent-executed public
 specifications. See [scope and evidence](K01-WORLD-KNOWLEDGE.md). Real observation
