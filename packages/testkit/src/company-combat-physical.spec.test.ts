@@ -2586,6 +2586,26 @@ describe('G10 — atomic combat company aggregate', () => {
       expect(retry.replayed).toBe(true);
       expect(retry.next).toBe(finalized.next);
     }
+    const terminalRecord = finalized.next.encounter.completed[0]!;
+    expect(readCompanyCombatAggregateState(finalized.next)).toEqual(finalized.next);
+    expect(() =>
+      readCompanyCombatAggregateState({
+        ...finalized.next,
+        encounter: {
+          ...finalized.next.encounter,
+          completed: [...finalized.next.encounter.completed, terminalRecord],
+        },
+      }),
+    ).toThrow(TypeError);
+    expect(() =>
+      readCompanyCombatAggregateState({
+        ...finalizeState,
+        encounter: {
+          ...finalizeState.encounter,
+          completed: [terminalRecord],
+        },
+      }),
+    ).toThrow(TypeError);
     const changedDepartureEvidence = prepareFinalizeCombatAggregate(finalized.next, {
       ...finalizeInput,
       departures: [
@@ -3271,6 +3291,7 @@ describe('G10 — atomic combat company aggregate', () => {
     );
     if (finalized.kind !== 'PREPARED') return;
     expect(finalized.next.encounter.active).toBeNull();
+    expect(readCompanyCombatAggregateState(finalized.next)).toEqual(finalized.next);
     expect(finalized.next.economy.lifecycle.company?.currentLeaderId).toBe('a-provider');
     const providerAfter = finalized.next.economy.lifecycle.characters.find(
       (character) => character.identity.characterId === 'a-provider',

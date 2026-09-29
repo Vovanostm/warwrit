@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { prepareConsumeCombatAggregate, readCompanyCombatAggregateState } from '@warwrit/game-core';
+import {
+  createSocialState,
+  prepareConsumeCombatAggregate,
+  readCompanyCombatAggregateState,
+  recordLearnedFact,
+} from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from './company-combat-aggregate-fixture.js';
 
 describe('company aggregate persisted-state reader', () => {
@@ -55,6 +60,42 @@ describe('company aggregate persisted-state reader', () => {
         },
       ],
       [
+        'incorrect binding digest',
+        (root) => {
+          activeFrom(root)['bindingDigest'] = 'nonempty-but-wrong';
+        },
+      ],
+      [
+        'noncontiguous earlier receipt revision',
+        (root) => {
+          const receipts = activeFrom(root)['appliedReceipts'] as Array<Record<string, unknown>>;
+          receipts[0]!['revision'] = 40;
+        },
+      ],
+      [
+        'participant bound to another encounter',
+        (root) => {
+          const lifecycle = (root['economy'] as Record<string, unknown>)['lifecycle'] as Record<
+            string,
+            unknown
+          >;
+          const characters = lifecycle['characters'] as Array<Record<string, unknown>>;
+          const leader = characters.find(
+            (character) =>
+              ((character['identity'] as Record<string, unknown>)['characterId'] as string) ===
+              'a-leader',
+          )!;
+          (leader['presence'] as Record<string, unknown>)['encounterBindingId'] = 'other-binding';
+        },
+      ],
+      [
+        'prior presence without a matching participant',
+        (root) => {
+          const prior = activeFrom(root)['priorPresence'] as Array<Record<string, unknown>>;
+          prior[0]!['characterId'] = 'unbound-character';
+        },
+      ],
+      [
         'mismatched receipt cursor',
         (root) => {
           const active = activeFrom(root);
@@ -69,6 +110,32 @@ describe('company aggregate persisted-state reader', () => {
       expect(() => readCompanyCombatAggregateState(root), label).toThrow(TypeError);
       expect(JSON.stringify(root), label).toBe(before);
     }
+  });
+
+  it('round-trips a growing social chronicle built by the public record producer', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    let social = createSocialState();
+    for (let index = 0; index < 1_001; index += 1) {
+      social = recordLearnedFact(social, {
+        memoryId: `storage-memory-${index}`,
+        personId: 'a-leader',
+        factId: `storage-fact-${index}`,
+        sourceEventId: `storage-event-${index}`,
+        happenedAt: '1000',
+        learnedAt: '1000',
+        factType: 'ObservedEncounterOutcome',
+        channel: 'EXPERIENCE',
+        emotionalDelta: { friendship: 0, rivalry: 0, fear: 0, respect: 0 },
+        decayTicks: '0',
+        salience: 1,
+      }).state;
+    }
+    const root = { ...fixture.begun.next, social };
+    const read = readCompanyCombatAggregateState(root);
+
+    expect(read).toEqual(root);
+    expect(read.social.chronicle).toHaveLength(1_001);
+    expect(read.social.chronicle[0]).not.toBe(root.social.chronicle[0]);
   });
 
   it('rejects malformed receipt digests in retained active evidence', () => {

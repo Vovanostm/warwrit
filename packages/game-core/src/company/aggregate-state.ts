@@ -133,6 +133,33 @@ export function readCompanyCombatAggregateState(value: unknown): CompanyCombatAg
       ))
   )
     throw new TypeError('Active encounter scope does not match company root');
+  if (active) {
+    const participants = active.binding.participants.filter(
+      (participant) => participant.companyId === lifecycle.companyId,
+    );
+    const participantIds = participants.map((participant) => participant.projection.characterId);
+    const priorIds = active.priorPresence.map((entry) => entry.characterId);
+    if (
+      new Set(participantIds).size !== participantIds.length ||
+      canonicalJson([...participantIds].toSorted()) !== canonicalJson([...priorIds].toSorted()) ||
+      participants.some((participant) => {
+        const character = lifecycle.characters.find(
+          (entry) => entry.identity.characterId === participant.projection.characterId,
+        );
+        const prior = active.priorPresence.find(
+          (entry) => entry.characterId === participant.projection.characterId,
+        );
+        return (
+          !character ||
+          !prior ||
+          prior.fieldPartyId !== participant.partyId ||
+          character.presence.availability !== 'IN_ENCOUNTER' ||
+          character.presence.encounterBindingId !== active.binding.bindingId
+        );
+      })
+    )
+      throw new TypeError('Active encounter presence does not match company root');
+  }
   return Object.freeze({ economy, learning, social, encounter });
 }
 
@@ -149,6 +176,21 @@ function readCombatEncounterApplication(value: unknown): CompanyCombatAggregateS
     if (value['completed'].length === 0) return blank;
   } else if (!activeEncounterShape(value['active']))
     throw new TypeError('Invalid active encounter');
+  const completedIds = (value['completed'] as readonly Record<string, unknown>[]).map(
+    (entry) => entry['bindingId'],
+  );
+  const activeBindingId =
+    value['active'] === null
+      ? null
+      : (value['active'] as Record<string, unknown>)['binding'] &&
+        ((value['active'] as Record<string, unknown>)['binding'] as Record<string, unknown>)[
+          'bindingId'
+        ];
+  if (
+    new Set(completedIds).size !== completedIds.length ||
+    (activeBindingId !== null && completedIds.includes(activeBindingId))
+  )
+    throw new TypeError('Duplicate encounter binding ID');
   return value as unknown as CompanyCombatAggregateState['encounter'];
 }
 
@@ -240,6 +282,13 @@ function activeEncounterShape(value: unknown): boolean {
   if (!bindingShape(value['binding'])) return false;
   const binding = value['binding'] as Record<string, unknown>;
   const receipts = value['appliedReceipts'] as readonly Record<string, unknown>[];
+  const initialRevision = (binding['initial'] as { state: { revision: number } }).state.revision;
+  if (
+    !Number.isSafeInteger(initialRevision) ||
+    receipts.some((receipt, index) => receipt['revision'] !== initialRevision + index) ||
+    canonicalJson(binding) !== value['bindingDigest']
+  )
+    return false;
   const lastReceipt = receipts.at(-1);
   return lastReceipt
     ? value['lastAppliedRevision'] === lastReceipt['revision'] &&
