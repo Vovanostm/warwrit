@@ -59,6 +59,7 @@ import type {
   CombatOwnerContext,
 } from '@warwrit/game-core';
 import {
+  access,
   command,
   context,
   cash,
@@ -181,8 +182,48 @@ function source(prefix: string, health = 100, familySuccessor = false): Encounte
   return { root: { ...root, physical: root.physical! }, context: context(root, request) };
 }
 
-function fixture(health = 100, adjacentPracticeParty = false, familySuccessor = false) {
+function fixture(
+  health = 100,
+  adjacentPracticeParty = false,
+  familySuccessor = false,
+  departureItemCharacterId?: string,
+) {
   const sources = [source('a', health, familySuccessor), source('b', 10000)];
+  if (departureItemCharacterId) {
+    const owner = sources[0]!;
+    const withPack = addContainer(
+      owner.root,
+      container(
+        'aggregate-departure-pack',
+        { kind: 'COMPANY', id: owner.root.lifecycle.companyId },
+        30000,
+        { kind: 'CHARACTER', id: departureItemCharacterId },
+      ),
+    );
+    const withReturn = addContainer(
+      withPack,
+      container(
+        'aggregate-departure-return',
+        {
+          kind: 'COMPANY',
+          id: owner.root.lifecycle.companyId,
+        },
+        1,
+      ),
+    );
+    sources[0] = {
+      ...owner,
+      root: addItem(
+        withReturn,
+        item(
+          'aggregate-departure-sword',
+          'sword',
+          { kind: 'COMPANY', id: owner.root.lifecycle.companyId },
+          'aggregate-departure-pack',
+        ),
+      ) as MaterializedCompanyState,
+    };
+  }
   const hexes = createHexagon(2);
   const request = { bindingId: 'physical-binding', battleId: battleId('physical-battle') };
   const evidence: EncounterPositionEvidence = {
@@ -1688,8 +1729,12 @@ describe('G09 — verified combat practice', () => {
 });
 
 describe('G10 — atomic combat company aggregate', () => {
-  function aggregateFixture(familySuccessor = false, health = 10000) {
-    const f = fixture(health, false, familySuccessor);
+  function aggregateFixture(
+    familySuccessor = false,
+    health = 10000,
+    departureItemCharacterId?: string,
+  ) {
+    const f = fixture(health, false, familySuccessor, departureItemCharacterId);
     for (const root of new Set([f.root, f.sources[0]!.root])) {
       const worker = root.lifecycle.characters.find(
         (person) => person.identity.characterId === 'a-worker-0',
@@ -2467,7 +2512,7 @@ describe('G10 — atomic combat company aggregate', () => {
   });
 
   it('finalizes a real MISSING journal with retained custody and rejects remote custody atomically', () => {
-    const f = aggregateFixture();
+    const f = aggregateFixture(false, 10000, 'a-worker-0');
     let journal = accept(f.f, f.f.journal, f.f.binding.initial, null);
     let combatState = f.f.binding.initial.state;
     for (let index = 0; combatState.status === 'active' && index < 500; index += 1) {
@@ -2511,25 +2556,29 @@ describe('G10 — atomic combat company aggregate', () => {
         throw new Error(`Consume receipt ${ordinal}: ${consumed.error}`);
     }
 
-    const root = consumed.next.economy as MaterializedCompanyState;
+    let root = consumed.next.economy as MaterializedCompanyState;
     const finalReceipt = journal.receipts.at(-1)!;
     const finalState = finalReceipt.transition.state;
     const participants = f.begun.binding.participants.filter(
       (entry) => entry.companyId === root.lifecycle.companyId,
     );
+    const leaderId =
+      root.lifecycle.company?.actingLeaderId ?? root.lifecycle.company?.currentLeaderId;
     const missingParticipantIndex = participants.findIndex((participant, index) => {
       const unit = finalState.units.find((entry) => entry.id === participant.unitId)!;
       const hasEarlierLivingParticipant = participants
         .slice(0, index)
         .some(
-          (earlier) => finalState.units.find((entry) => entry.id === earlier.unitId)!.health > 0,
+          (earlier) =>
+            earlier.projection.characterId !== leaderId &&
+            finalState.units.find((entry) => entry.id === earlier.unitId)!.health > 0,
         );
       const hasCarriedContainer = root.physical.containers.some(
         (entry) =>
           entry.carrier?.kind === 'CHARACTER' &&
           entry.carrier.id === participant.projection.characterId,
       );
-      return index > 0 && unit.health > 0 && hasEarlierLivingParticipant && hasCarriedContainer;
+      return index > 1 && unit.health > 0 && hasEarlierLivingParticipant && hasCarriedContainer;
     });
     const missingParticipant = participants[missingParticipantIndex];
     if (!missingParticipant)
@@ -2538,10 +2587,65 @@ describe('G10 — atomic combat company aggregate', () => {
       .slice(0, missingParticipantIndex)
       .find(
         (participant) =>
+          participant.projection.characterId !== leaderId &&
           finalState.units.find((entry) => entry.id === participant.unitId)!.health > 0,
       );
     if (!earlierPresentParticipant)
       throw new Error('Expected an earlier living PRESENT participant');
+    const departureMembership = root.lifecycle.memberships.find(
+      (entry) => entry.characterId === earlierPresentParticipant.projection.characterId,
+    );
+    if (!departureMembership) throw new Error('Expected the present participant membership');
+    const departureRequest = command(
+      root,
+      'RequestDeparture',
+      {
+        membershipId: departureMembership.membershipId,
+        reason: 'DISMISSED',
+        causeId: 'terminal-after-combat',
+        acknowledgedQuoteRevision: root.lifecycle.knowledge.revision,
+      },
+      'aggregate-terminal-departure-request',
+      'PLAYER',
+      root.lifecycle.campaignTick,
+    );
+    const requestedDeparture = prepareCompanyEconomy(
+      root,
+      departureRequest,
+      context(root, departureRequest),
+    );
+    if (requestedDeparture.kind !== 'PREPARED')
+      throw new Error(`Request terminal departure: ${requestedDeparture.error}`);
+    const selectedIntentId = requestedDeparture.next.finance.departures.find(
+      (entry) => entry.membershipId === departureMembership.membershipId,
+    )!.intentId;
+    const secondDepartureRequest = command(
+      requestedDeparture.next,
+      'RequestDeparture',
+      {
+        membershipId: departureMembership.membershipId,
+        reason: 'DISMISSED',
+        causeId: 'terminal-after-combat-second',
+        acknowledgedQuoteRevision: requestedDeparture.next.lifecycle.knowledge.revision,
+      },
+      'aggregate-terminal-departure-request-second',
+      'PLAYER',
+      requestedDeparture.next.lifecycle.campaignTick,
+    );
+    const secondRequestedDeparture = prepareCompanyEconomy(
+      requestedDeparture.next,
+      secondDepartureRequest,
+      context(requestedDeparture.next, secondDepartureRequest),
+    );
+    if (secondRequestedDeparture.kind !== 'PREPARED')
+      throw new Error(`Request second terminal departure: ${secondRequestedDeparture.error}`);
+    const secondIntentId = secondRequestedDeparture.next.finance.departures.find(
+      (entry) =>
+        entry.membershipId === departureMembership.membershipId &&
+        entry.intentId !== selectedIntentId,
+    )!.intentId;
+    root = secondRequestedDeparture.next as MaterializedCompanyState;
+    const finalizeState = { ...consumed.next, economy: root };
     const missingEntryId = 'aggregate-missing-entry';
     const finalStateDigest = 'aggregate-final-state';
     const outcomeReceiptId = 'aggregate-terminal-outcome';
@@ -2616,6 +2720,49 @@ describe('G10 — atomic combat company aggregate', () => {
       ...context(root, terminalCommand as ReturnType<typeof command>, [], [], [missingFact]),
       learningFacts: [],
     } as CombatOwnerContext;
+    const executeDeparture = command(
+      root,
+      'ExecuteDeparture',
+      {
+        membershipId: departureMembership.membershipId,
+        intentId: selectedIntentId,
+        returnContainerId: 'aggregate-departure-return',
+      },
+      'aggregate-terminal-departure',
+      'SYSTEM',
+      root.lifecycle.campaignTick,
+    );
+    const afterMissingRevision = (
+      BigInt(root.lifecycle.revision) + 1n
+    ).toString() as typeof root.lifecycle.revision;
+    const departureCommand = {
+      ...executeDeparture,
+      expectedRevision: afterMissingRevision,
+    } as ReturnType<typeof command>;
+    const departureContext = {
+      ...context(root, departureCommand, [access(root)]),
+      canonicalRevision: afterMissingRevision,
+    } as CombatOwnerContext;
+    const secondExecuteDeparture = command(
+      root,
+      'ExecuteDeparture',
+      {
+        membershipId: departureMembership.membershipId,
+        intentId: secondIntentId,
+        returnContainerId: 'aggregate-departure-return',
+      },
+      'aggregate-terminal-departure-second',
+      'SYSTEM',
+      root.lifecycle.campaignTick,
+    );
+    const secondDepartureCommand = {
+      ...secondExecuteDeparture,
+      expectedRevision: afterMissingRevision,
+    } as ReturnType<typeof command>;
+    const secondDepartureContext = {
+      ...context(root, secondDepartureCommand, [access(root)]),
+      canonicalRevision: afterMissingRevision,
+    } as CombatOwnerContext;
     const finalizeInput = {
       command: terminalCommand,
       journal,
@@ -2623,7 +2770,18 @@ describe('G10 — atomic combat company aggregate', () => {
       terminal,
       context: terminalContext,
       missingLearning: { [missingParticipant.unitId]: { intervals: [] } },
+      departures: [
+        {
+          command: departureCommand,
+          context: departureContext,
+          learning: { intervals: [] },
+          financialSocialInputs: [],
+          knowledge: [],
+          notices: [],
+        },
+      ],
     };
+    const beforeFinalize = structuredClone(finalizeState);
     expect(consumed.next.encounter.active?.bindingDigest).toBe(canonicalJson(journal.binding));
     expect(canonicalJson(consumed.next.encounter.active?.binding)).toBe(
       consumed.next.encounter.active?.bindingDigest,
@@ -2634,14 +2792,80 @@ describe('G10 — atomic combat company aggregate', () => {
       finalState.revision,
     );
     expect(consumed.next.encounter.active?.lastAppliedTick).toBe(applications.at(-1)?.time.atTick);
-    const finalized = prepareFinalizeCombatAggregate(consumed.next, finalizeInput);
+    const omitted = prepareFinalizeCombatAggregate(finalizeState, {
+      ...finalizeInput,
+      departures: [],
+    });
+    expect(omitted.kind).toBe('REJECTED');
+    expect(finalizeState).toEqual(beforeFinalize);
+    const duplicateMembership = prepareFinalizeCombatAggregate(finalizeState, {
+      ...finalizeInput,
+      departures: [
+        finalizeInput.departures[0]!,
+        {
+          ...finalizeInput.departures[0]!,
+          command: secondDepartureCommand,
+          context: secondDepartureContext,
+        },
+      ],
+    });
+    expect(duplicateMembership).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(finalizeState).toEqual(beforeFinalize);
+    const invalidDeparture = prepareFinalizeCombatAggregate(finalizeState, {
+      ...finalizeInput,
+      departures: [
+        {
+          ...finalizeInput.departures[0]!,
+          command: {
+            ...departureCommand,
+            payload: {
+              ...(departureCommand as CommandOf<'ExecuteDeparture'>).payload,
+              returnContainerId: 'unknown-return-container',
+            },
+          } as ReturnType<typeof command>,
+        },
+      ],
+    });
+    expect(invalidDeparture.kind).toBe('REJECTED');
+    expect(finalizeState).toEqual(beforeFinalize);
+    const finalized = prepareFinalizeCombatAggregate(finalizeState, finalizeInput);
     expect(finalized.kind, finalized.kind === 'REJECTED' ? finalized.error : undefined).toBe(
       'PREPARED',
     );
     if (finalized.kind !== 'PREPARED') return;
     expect(finalized.next.encounter.active).toBeNull();
-    expect(finalized.next.economy.physical?.containers).toEqual(root.physical.containers);
-    expect(finalized.next.economy.physical?.items).toEqual(root.physical.items);
+    expect(
+      finalized.next.economy.lifecycle.memberships.find(
+        (entry) => entry.membershipId === departureMembership.membershipId,
+      )?.endedAt,
+    ).toBe(terminal.atTick);
+    expect(finalized.next.economy.physical?.items.map((entry) => entry.itemId).toSorted()).toEqual(
+      root.physical.items.map((entry) => entry.itemId).toSorted(),
+    );
+    const returnedSword = finalized.next.economy.physical?.items.find(
+      (entry) => entry.itemId === 'aggregate-departure-sword',
+    );
+    const returnedBundle = finalized.next.economy.physical?.containers.find(
+      (entry) => entry.containerId === returnedSword?.containerId,
+    );
+    expect(returnedSword).toMatchObject({
+      itemId: 'aggregate-departure-sword',
+      owner: { kind: 'COMPANY', id: root.lifecycle.companyId },
+    });
+    expect(returnedBundle).toMatchObject({
+      kind: 'GROUND_BUNDLE',
+      custodian: { kind: 'COMPANY', id: root.lifecycle.companyId },
+      location: place,
+      carrier: null,
+    });
+    expect(
+      finalized.next.economy.physical?.containers.filter((entry) =>
+        containerIds.includes(entry.containerId),
+      ),
+    ).toEqual(root.physical.containers.filter((entry) => containerIds.includes(entry.containerId)));
+    expect(
+      finalized.next.economy.physical?.items.filter((entry) => itemIds.includes(entry.itemId)),
+    ).toEqual(root.physical.items.filter((entry) => itemIds.includes(entry.itemId)));
     expect(
       finalized.next.economy.lifecycle.characters.find(
         (entry) => entry.identity.characterId === characterId,
@@ -2659,8 +2883,8 @@ describe('G10 — atomic combat company aggregate', () => {
     )!;
     expect(earlierPriorPresence).toBeDefined();
     expect(earlierCharacter?.presence.availability).toBe(earlierPriorPresence?.availability);
-    expect(earlierCharacter?.presence.assignment).toBe(earlierPriorPresence?.assignment);
-    expect(earlierCharacter?.presence.fieldPartyId).toBe(earlierPriorPresence?.fieldPartyId);
+    expect(earlierCharacter?.presence.assignment).toBe('NONE');
+    expect(earlierCharacter?.presence.fieldPartyId).toBeNull();
     expect(
       finalized.next.economy.physical?.vitals?.find(
         (entry) => entry.characterId === earlierCharacterId,
@@ -2675,6 +2899,30 @@ describe('G10 — atomic combat company aggregate', () => {
       expect(retry.replayed).toBe(true);
       expect(retry.next).toBe(finalized.next);
     }
+    const changedDepartureEvidence = prepareFinalizeCombatAggregate(finalized.next, {
+      ...finalizeInput,
+      departures: [
+        {
+          ...finalizeInput.departures[0]!,
+          learning: {
+            intervals: [],
+            manifest: {
+              companyId: root.lifecycle.companyId,
+              worldId: root.lifecycle.worldId,
+              commandId: 'changed-terminal-departure',
+              taskId: 'no-task',
+              ownerIntervalId: 'no-interval',
+              targetTick: terminal.atTick,
+              evidenceIds: [],
+            },
+          },
+        },
+      ],
+    });
+    expect(changedDepartureEvidence).toMatchObject({
+      kind: 'REJECTED',
+      error: 'IDEMPOTENCY_CONFLICT',
+    });
     const changedLearning = prepareFinalizeCombatAggregate(finalized.next, {
       ...finalizeInput,
       missingLearning: {
@@ -2696,8 +2944,8 @@ describe('G10 — atomic combat company aggregate', () => {
     if (changedTerminal.kind === 'REJECTED')
       expect(changedTerminal.error).toBe('IDEMPOTENCY_CONFLICT');
 
-    const cursorBefore = structuredClone(consumed.next);
-    const changedEarlierRequest = prepareFinalizeCombatAggregate(consumed.next, {
+    const cursorBefore = structuredClone(finalizeState);
+    const changedEarlierRequest = prepareFinalizeCombatAggregate(finalizeState, {
       ...finalizeInput,
       journal: {
         ...journal,
@@ -2711,7 +2959,7 @@ describe('G10 — atomic combat company aggregate', () => {
     expect(changedEarlierRequest.kind).toBe('REJECTED');
     if (changedEarlierRequest.kind === 'REJECTED')
       expect(changedEarlierRequest.error).toBe('IDEMPOTENCY_CONFLICT');
-    const changedEarlierTime = prepareFinalizeCombatAggregate(consumed.next, {
+    const changedEarlierTime = prepareFinalizeCombatAggregate(finalizeState, {
       ...finalizeInput,
       applications: applications.map((application, index) =>
         index === 0
@@ -2722,11 +2970,11 @@ describe('G10 — atomic combat company aggregate', () => {
     expect(changedEarlierTime.kind).toBe('REJECTED');
     if (changedEarlierTime.kind === 'REJECTED')
       expect(changedEarlierTime.error).toBe('IDEMPOTENCY_CONFLICT');
-    expect(consumed.next).toEqual(cursorBefore);
+    expect(finalizeState).toEqual(cursorBefore);
 
     const remoteLocation = { kind: 'AT' as const, siteId: 'remote-site', areaId: 'remote-area' };
     expect(containerIds.length).toBeGreaterThan(0);
-    const remoteState = consumed.next;
+    const remoteState = finalizeState;
     const remoteBefore = structuredClone(remoteState);
     const remoteFact = { ...missingFact, location: remoteLocation };
     const rejected = prepareFinalizeCombatAggregate(remoteState, {

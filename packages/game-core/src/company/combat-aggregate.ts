@@ -6,6 +6,7 @@ import { combatReceiptEventIds, validateCombatReceiptJournal } from './combat-re
 import {
   prepareCompanyEconomy,
   prepareCompanyEconomyWithLearning,
+  prepareCompanyEconomyWithLearningAndSocial,
   taskParticipants,
 } from './economy.js';
 import type { CompanyEconomyWithLearningState } from './economy.js';
@@ -13,6 +14,7 @@ import type { EconomyContext } from './economy-types.js';
 import type { FinanceEvidence } from './economy-types.js';
 import type { EncounterPositionEvidence, FrozenEncounterBinding } from './encounter-binding.js';
 import { prepareEncounterBinding } from './encounter-binding.js';
+import { isDepartureExecutable } from './economy-departure.js';
 import type { CommandOf } from './lifecycle-types.js';
 import type { LearningSourceContext } from './learning-source.js';
 import type { LearningTimeInterval, TrustedLearningCauseManifest } from './learning-time.js';
@@ -29,6 +31,8 @@ import { applyCombatInitialReceipt, applyCombatPhysicalReceipt } from './combat-
 import { persistentMoraleAfterCombat } from './combat-morale.js';
 import { COMPANY_CATALOGUE } from './definitions.js';
 import type { SocialState } from './social.js';
+import type { FinancialSocialInput, FinancialSocialKnowledge } from './social-finance.js';
+import type { FarewellNotice } from './farewell-social.js';
 import {
   canLead,
   effectiveLeaderId,
@@ -890,6 +894,14 @@ export interface FinalizeCombatAggregateInput {
     readonly command: unknown;
     readonly context: CombatOwnerContext;
   };
+  readonly departures?: readonly {
+    readonly command: unknown;
+    readonly context: CombatOwnerContext;
+    readonly learning: CombatLearningBoundary;
+    readonly financialSocialInputs: readonly FinancialSocialInput[];
+    readonly knowledge: readonly FinancialSocialKnowledge[];
+    readonly notices: readonly FarewellNotice[];
+  }[];
 }
 
 export function prepareFinalizeCombatAggregate(
@@ -935,6 +947,14 @@ export function prepareFinalizeCombatAggregate(
             context: semanticContext(input.leadership.context),
           }
         : null,
+      departures: (input.departures ?? []).map((departure) => ({
+        command: departure.command,
+        context: semanticContext(departure.context),
+        learning: departure.learning,
+        financialSocialInputs: departure.financialSocialInputs,
+        knowledge: departure.knowledge,
+        notices: departure.notices,
+      })),
     })}\nB${frame([canonicalJson(journal.binding)])}\nR${frame(receiptEvidence)}\nA${frame(applicationEvidence)}\nT${input.terminal.finalStateCanonical.length}:${input.terminal.finalStateCanonical}`;
     const prior = state.encounter.completed.find(
       (entry) => entry.bindingId === request.payload.bindingId,
@@ -1234,6 +1254,81 @@ export function prepareFinalizeCombatAggregate(
     } else {
       requirePhysical(input.leadership === undefined, 'INVALID_SOURCE');
     }
+    const departures = input.departures ?? [];
+    const suppliedByMembership = new Map<string, CommandOf<'ExecuteDeparture'>>();
+    for (const departure of departures) {
+      const guarded = guardCompanyCommand(departure.command, departure.context);
+      requirePhysical(guarded.ok && guarded.command.type === 'ExecuteDeparture', 'INVALID_SOURCE');
+      const { membershipId, intentId } = guarded.command.payload;
+      requirePhysical(
+        materialized(next).finance.departures.some(
+          (intent) =>
+            intent.intentId === intentId &&
+            intent.membershipId === membershipId &&
+            intent.cancelledAt === null,
+        ),
+        'INVALID_SOURCE',
+      );
+      requirePhysical(!suppliedByMembership.has(membershipId), 'INVALID_SOURCE');
+      suppliedByMembership.set(membershipId, guarded.command);
+    }
+    const eligibleMembershipIds = [
+      ...new Set(
+        materialized(next)
+          .finance.departures.filter((intent) => intent.cancelledAt === null)
+          .map((intent) => intent.membershipId),
+      ),
+    ].filter((membershipId) => {
+      const supplied = suppliedByMembership.get(membershipId);
+      return isDepartureExecutable(
+        materialized(next),
+        membershipId,
+        supplied?.payload.careHandoverId,
+      );
+    });
+    requirePhysical(
+      eligibleMembershipIds.length === suppliedByMembership.size &&
+        eligibleMembershipIds.every((membershipId) => suppliedByMembership.has(membershipId)),
+      'INCOMPATIBLE_ACTIVITY',
+    );
+    for (const departure of departures) {
+      validateAggregateContext(next, departure.context, input.terminal.atTick);
+      const guardedDeparture = guardCompanyCommand(departure.command, departure.context);
+      requirePhysical(
+        guardedDeparture.ok && guardedDeparture.command.type === 'ExecuteDeparture',
+        'INVALID_SOURCE',
+      );
+      const preparedDeparture = prepareCompanyEconomyWithLearningAndSocial(
+        { economy: materialized(next), learning: next.learning },
+        next.social,
+        guardedDeparture.command,
+        departure.context,
+        departure.financialSocialInputs,
+        departure.knowledge,
+        departure.notices,
+        {
+          intervals: departure.learning.intervals,
+          ...(departure.learning.manifest ? { manifest: departure.learning.manifest } : {}),
+          ...(departure.learning.manifests ? { manifests: departure.learning.manifests } : {}),
+          effectId: `${guardedDeparture.command.commandId}-terminal-departure`,
+        },
+      );
+      if (preparedDeparture.kind === 'REJECTED')
+        throw new CombatAggregateViolation(preparedDeparture.error);
+      requirePhysical(!preparedDeparture.replayed, 'IDEMPOTENCY_CONFLICT');
+      requirePhysical(preparedDeparture.requirements.length === 0, 'INCOMPATIBLE_ACTIVITY');
+      next = {
+        ...next,
+        economy: preparedDeparture.next.economy,
+        learning: preparedDeparture.next.learning,
+        social: preparedDeparture.next.social,
+      };
+      root = materialized(next);
+    }
+    const remainingExecutable = root.finance.departures.some(
+      (intent) => intent.cancelledAt === null && isDepartureExecutable(root, intent.membershipId),
+    );
+    requirePhysical(!remainingExecutable, 'INCOMPATIBLE_ACTIVITY');
     validatePhysicalState(root);
     validateLifecycleGraph(root.lifecycle, input.context);
     next = withMaterialized(next, root);
