@@ -1,4 +1,4 @@
-import { assertNever, invariant } from '../primitives.js';
+import { assertNever, compareCodeUnits, invariant } from '../primitives.js';
 import { findPath, hexDistance, hexEquals, hexKey } from './hex.js';
 import { createRandomState, drawRandomInt } from './random.js';
 import { combatRules, type CombatRules, weaponProfile } from './rules.js';
@@ -238,7 +238,7 @@ function orderInitiative(units: readonly CombatUnitState[], rules: CombatRules):
     .toSorted(
       (left, right) =>
         effectiveInitiative(right, rules) - effectiveInitiative(left, rules) ||
-        left.id.localeCompare(right.id),
+        compareCodeUnits(left.id, right.id),
     )
     .map(({ id }) => id);
 }

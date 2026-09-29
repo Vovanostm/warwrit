@@ -30,6 +30,14 @@ Historical observations require rechecking when their named source changes.
   against the assigned checkout; stale or insufficient results require source
   inspection under [AGENTS.md "Code discovery"](../../AGENTS.md#code-discovery),
   not guessed symbol ownership.
+- Opt-in integration specs skip silently when their variable is unset. Until
+  2026-09-29 CI set only `DATABASE_URL`, so all four encounter PostgreSQL specs
+  were skipped (`4 skipped` in the main CI log), as was the OIDC session spec. Check the skip count, not only
+  the pass count; `pnpm test:migrations` now runs them on the disposable database.
+- Coverage of built exports double-counts functions (source-mapped `dist` plus
+  direct `src` tests) and hides testkit coverage from `src`. `pnpm test:coverage`
+  runs Vitest in `coverage` mode, which resolves `@warwrit/*` to source. Measured
+  coverage can contradict static CRAP estimates; measure before prioritising.
 - Generic review helpers conflicted with project test and approval policy and were
   removed on 2026-09-29; see [skills history](../../.agents/skills/README.md#history).
 
