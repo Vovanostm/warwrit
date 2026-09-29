@@ -39,6 +39,27 @@ function service(state: CompanyEconomyState, membershipId: string) {
   requireEconomy(account.known, 'CONTACT_OR_ACCESS_REQUIRED');
   return { member, account };
 }
+
+/** Owner query shared by aggregate selection and execution; a handover ID still needs proof at settlement. */
+export function isDepartureExecutable(
+  state: CompanyEconomyState,
+  membershipId: string,
+  careHandoverId?: string,
+): boolean {
+  const member = state.lifecycle.memberships.find((entry) => entry.membershipId === membershipId);
+  if (!member || member.endedAt !== null) return false;
+  const character = state.lifecycle.characters.find(
+    (entry) => entry.identity.characterId === member.characterId,
+  );
+  if (
+    !character ||
+    character.presence.encounterBindingId !== null ||
+    character.presence.availability !== 'AVAILABLE' ||
+    member.characterId === effectiveLeaderId(state.lifecycle)
+  )
+    return false;
+  return canPerform(character, 'travel') || careHandoverId !== undefined;
+}
 /** Warnings use only known debt and an actual communication; a hidden death cannot reset them. */
 export function updateArrears(
   finance: CompanyFinance,
@@ -239,15 +260,9 @@ export function prepareDepartureSettlement(
     (d) => d.intentId === p.intentId && d.membershipId === p.membershipId && d.cancelledAt === null,
   );
   requireEconomy(intent && member.endedAt === null, 'INVALID_SOURCE');
-  const character = person(state.lifecycle, member.characterId);
+  person(state.lifecycle, member.characterId);
   requireEconomy(
-    !character.presence.encounterBindingId &&
-      character.presence.availability === 'AVAILABLE' &&
-      member.characterId !== effectiveLeaderId(state.lifecycle),
-    'INCOMPATIBLE_ACTIVITY',
-  );
-  requireEconomy(
-    canPerform(character, 'travel') || p.careHandoverId !== undefined,
+    isDepartureExecutable(state, p.membershipId, p.careHandoverId),
     'INCOMPATIBLE_ACTIVITY',
   );
   // A careHandover ID still needs the actual 02.4 provider/resource checks. It is not proof of care.

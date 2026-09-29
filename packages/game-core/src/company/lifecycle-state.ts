@@ -151,6 +151,93 @@ export function validateLifecycleGraph(state: LifecycleState, context: Lifecycle
     [state.applied, state.applied.map((r) => r.commandId)],
   ] as const)
     requireLifecycle(new Set(ids).size === items.length, 'INVALID_STATE');
+  const nicknameProposals = state.nicknameProposals ?? [];
+  requireLifecycle(
+    new Set(nicknameProposals.map((proposal) => proposal.proposalId)).size ===
+      nicknameProposals.length &&
+      new Set(
+        nicknameProposals.map((proposal) =>
+          canonicalJson([proposal.characterId, proposal.sourceEventId]),
+        ),
+      ).size === nicknameProposals.length,
+    'INVALID_STATE',
+  );
+  for (const proposal of nicknameProposals) {
+    requireLifecycle(
+      isEntityId(proposal.proposalId) &&
+        isEntityId(proposal.characterId) &&
+        isEntityId(proposal.sourceEventId) &&
+        isEntityId(proposal.cultureId) &&
+        isEntityId(proposal.deedKind) &&
+        isEntityId(proposal.reasonKey) &&
+        isEntityId(proposal.textKey) &&
+        isExactInteger(proposal.proposedAt) &&
+        BigInt(proposal.proposedAt) <= BigInt(context.atTick) &&
+        ((proposal.resolution === 'PENDING' && proposal.resolvedAt === null) ||
+          ((proposal.resolution === 'ACCEPTED' || proposal.resolution === 'REJECTED') &&
+            proposal.resolvedAt !== null &&
+            isExactInteger(proposal.resolvedAt) &&
+            BigInt(proposal.resolvedAt) >= BigInt(proposal.proposedAt) &&
+            BigInt(proposal.resolvedAt) <= BigInt(context.atTick))),
+      'INVALID_STATE',
+    );
+    person(state, proposal.characterId);
+  }
+  for (const character of state.characters) {
+    if (!character.nickname) continue;
+    const active = nicknameProposals.find(
+      (proposal) => proposal.proposalId === character.nickname?.proposalId,
+    );
+    requireLifecycle(
+      active?.resolution === 'ACCEPTED' &&
+        active.characterId === character.identity.characterId &&
+        active.textKey === character.nickname.textKey,
+      'INVALID_STATE',
+    );
+  }
+  const knownNicknameProposals = state.knowledge.nicknameProposals ?? [];
+  requireLifecycle(
+    new Set(knownNicknameProposals.map((proposal) => proposal.proposalId)).size ===
+      knownNicknameProposals.length,
+    'INVALID_STATE',
+  );
+  for (const known of knownNicknameProposals) {
+    const actual = nicknameProposals.find((proposal) => proposal.proposalId === known.proposalId);
+    requireLifecycle(
+      actual !== undefined &&
+        canonicalJson({
+          proposalId: actual.proposalId,
+          characterId: actual.characterId,
+          sourceEventId: actual.sourceEventId,
+          cultureId: actual.cultureId,
+          deedKind: actual.deedKind,
+          reasonKey: actual.reasonKey,
+          textKey: actual.textKey,
+          proposedAt: actual.proposedAt,
+        }) === canonicalJson(known),
+      'INVALID_STATE',
+    );
+  }
+  const knownNicknameHistory = state.knowledge.nicknameHistory ?? [];
+  requireLifecycle(
+    new Set(knownNicknameHistory.map((nickname) => nickname.proposalId)).size ===
+      knownNicknameHistory.length,
+    'INVALID_STATE',
+  );
+  for (const known of knownNicknameHistory) {
+    const actual = nicknameProposals.find((proposal) => proposal.proposalId === known.proposalId);
+    requireLifecycle(
+      actual?.resolution === 'ACCEPTED' &&
+        actual.resolvedAt === known.acceptedAt &&
+        actual.characterId === known.characterId &&
+        actual.sourceEventId === known.sourceEventId &&
+        actual.cultureId === known.cultureId &&
+        actual.deedKind === known.deedKind &&
+        actual.reasonKey === known.reasonKey &&
+        actual.textKey === known.textKey,
+      'INVALID_STATE',
+    );
+  }
   const active = state.memberships.filter((m) => m.endedAt === null);
   requireLifecycle(
     new Set(active.map((m) => m.characterId)).size === active.length,

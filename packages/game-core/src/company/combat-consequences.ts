@@ -19,6 +19,7 @@ import type { PreparedCombatPhysicalEffects } from './combat-physical.js';
 import { validateCombatReceiptJournal } from './combat-receipts.js';
 import type { CombatReceiptJournal } from './combat-receipts.js';
 import { validateEconomy } from './economy-state.js';
+import { canonicalRevision } from './values.js';
 
 export interface PreparedCombatConsequences extends PreparedCombatPhysicalEffects {
   readonly root: MaterializedCompanyState;
@@ -119,6 +120,116 @@ function applyKernelWound(
   };
   const applied = applyCondition(root, command, context);
   return { lifecycle: applied.lifecycle, finance: applied.finance, physical: applied.physical };
+}
+
+export type CombatReceiptDomainCommand = CommandOf<'ApplyCondition'> | CommandOf<'RecordDeath'>;
+
+/** Reuse G08's event-to-owner command derivation for one verified ordinal only. */
+export function deriveCombatReceiptDomainCommands(
+  journal: CombatReceiptJournal,
+  receiptIndex: number,
+  context: EconomyContext,
+): readonly CombatReceiptDomainCommand[] {
+  const validated = validateCombatReceiptJournal(journal);
+  const receipt = validated.receipts[receiptIndex];
+  requirePhysical(receipt && receiptIndex > 0, 'INVALID_SOURCE');
+  requirePhysical(
+    context.companyId === validated.companyId &&
+      context.worldId === validated.binding.worldId &&
+      canonicalRevision(context.canonicalRevision) === context.canonicalRevision,
+    'INVALID_SOURCE',
+  );
+  const participantByUnit = new Map(
+    validated.binding.participants
+      .filter((participant) => participant.companyId === validated.companyId)
+      .map((participant) => [participant.unitId, participant.projection.characterId]),
+  );
+  const effects: CombatReceiptDomainCommand[] = [];
+  for (let ordinal = 0; ordinal < receipt.transition.events.length; ordinal += 1) {
+    const event = receipt.transition.events[ordinal]!;
+    const characterId = eventCharacterId(event, participantByUnit);
+    if (!characterId) continue;
+    const sourceEventId = receipt.sourceEventIds[ordinal];
+    requirePhysical(sourceEventId !== undefined, 'INVALID_STATE');
+    if (event.type === 'unit.wounded') {
+      const fact = oneFact(
+        (context.physicalFacts ?? []).filter(
+          (entry): entry is Extract<PhysicalEvidence, { kind: 'CONDITION_SOURCE' }> =>
+            entry.kind === 'CONDITION_SOURCE' && entry.sourceEventId === sourceEventId,
+        ),
+      );
+      validatePhysicalScope(fact, context, ordinal, sourceEventId);
+      const definition = conditionForSeverity(event.severity);
+      requirePhysical(
+        fact.characterId === characterId && fact.definitionId === definition.id,
+        'INVALID_SOURCE',
+      );
+      effects.push({
+        schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+        commandId: sourceEventId,
+        worldId: context.worldId,
+        companyId: context.companyId,
+        actorRef: { kind: 'DOMAIN_RECEIPT', id: fact.id },
+        expectedRevision: context.canonicalRevision,
+        campaignTick: context.atTick,
+        rulesetId: COMPANY_RULESET_ID,
+        sourceEventId,
+        type: 'ApplyCondition',
+        payload: {
+          receiptId: fact.id,
+          characterId,
+          conditionDefinitionId: definition.id,
+          causeId: fact.causeId,
+          ...(fact.deadlineTick === undefined ? {} : { deadlineTick: fact.deadlineTick }),
+        },
+      });
+    } else if (event.type === 'unit.died') {
+      const physicalFact = oneFact(
+        (context.physicalFacts ?? []).filter(
+          (entry): entry is DeathOutcomeEvidence =>
+            entry.kind === 'DEATH_OUTCOME' && entry.sourceEventId === sourceEventId,
+        ),
+      );
+      const financeFact = oneFact(
+        context.financeFacts.filter(
+          (entry): entry is FinancialDeathEvidence =>
+            entry.kind === 'FINANCIAL_DEATH' && entry.sourceEventId === sourceEventId,
+        ),
+      );
+      validatePhysicalScope(physicalFact, context, ordinal, sourceEventId);
+      validateFinanceScope(financeFact, context, sourceEventId);
+      requirePhysical(
+        physicalFact.characterId === characterId &&
+          financeFact.characterId === characterId &&
+          physicalFact.actualDeathTick === context.atTick &&
+          financeFact.actualDeathTick === context.atTick &&
+          physicalFact.causeId === financeFact.causeId &&
+          physicalFact.id === financeFact.custodyOutcomeId &&
+          canonicalJson(physicalFact.location) === canonicalJson(validated.binding.location),
+        'INVALID_SOURCE',
+      );
+      effects.push({
+        schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+        commandId: sourceEventId,
+        worldId: context.worldId,
+        companyId: context.companyId,
+        actorRef: { kind: 'OUTCOME_RECEIPT', id: financeFact.id },
+        expectedRevision: context.canonicalRevision,
+        campaignTick: context.atTick,
+        rulesetId: COMPANY_RULESET_ID,
+        sourceEventId,
+        type: 'RecordDeath',
+        payload: {
+          receiptId: financeFact.id,
+          characterId,
+          actualDeathTick: financeFact.actualDeathTick,
+          causeId: financeFact.causeId,
+          custodyOutcomeId: financeFact.custodyOutcomeId,
+        },
+      });
+    }
+  }
+  return Object.freeze(effects);
 }
 
 function applyKernelDeath(

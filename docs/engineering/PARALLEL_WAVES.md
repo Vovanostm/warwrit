@@ -4,6 +4,11 @@ Historical plan below: NOT_IMPLEMENTED / NOT_TESTED / NOT_MEASURED when authored
 
 ## Capacity and ownership rule
 
+Current host readback after PR124 exposes parent plus two children. Fresh
+`g10_captive_luna` and `alpha_queue_sol` were successfully launched after the
+earlier retained agents disappeared. The following limit observations remain
+historical; no larger capacity or throughput benefit has been measured.
+
 Project configuration permits three children, but actual host behavior controls
 dispatch. Two disjoint Luna writers ran earlier. In the restored September 29
 session, a new Luna spawn failed with `agent thread limit reached` even after the
@@ -13,6 +18,46 @@ create a user-owned task to evade the limit. See `AGENT_TEAM.md`. Record conflic
 parent rework, correctness, wall time and available token/cost telemetry under
 `HARNESS_EVAL.md`; matched evaluation remains NOT_RUN and throughput gain remains
 NOT_MEASURED.
+
+## Current queue after PR124
+
+Sol reviewed this sequence against `f77f126` and the actual source boundaries;
+the parent refreshed full M1 authority and Q-CHAR-14A/lifecycle/acceptance records.
+The graph points to the correct integration checkout but remains indexed at
+`a2b3b67`; direct source is used. PR124/main CI passed; the alpha is incomplete.
+
+| Packet                    | Exclusive owner and files                                                                                                                                                                        | Exit and next use                                                                                                                                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G10 CAPTIVE               | Luna in `warwrit-alpha-combat-aggregate`: `company/combat-aggregate.ts`, existing physical-combat spec                                                                                           | Real living leader/nonleader capture, same-item custody, lawful crisis resolution, atomic rejection and full retry identity; freeze for Sol review and parent verification/merge.                                                             |
+| F01 trusted-deed consumer | Luna after G10 freezes, separate `warwrit-alpha-e05` worktree on `codex/m1-nickname-consumer`: `company/lifecycle-types.ts`, `lifecycle.ts`, cohesive nickname owner and existing lifecycle spec | Internal source-bound proposal, player consent, one active nickname and accepted history, immutable birth name, lawful observation; old snapshot compatibility explicit. Full significance/content mapping and real producer remain separate. |
+| H01/H02                   | Luna after integrated G10; use the actually merged lifecycle shape: complete unknown-root reader, server company repository, next ordered migration and reserved database types                  | Real PostgreSQL value-preserving full-root roundtrip; unknown/corrupt state rejected without rewrite. Recheck next migration number, expected `0005`.                                                                                         |
+| H03/H04                   | Same H owner after reader/storage review; explicit app/protocol handoff                                                                                                                          | Auth before receipt lookup, exact retry before fresh CAS, exhaustive real dispatcher, atomic root/audit/receipt and post-commit publication. Real race/rollback and tenant evidence.                                                          |
+| ID03                      | H successor after H04, explicit opening/auth/database handoff                                                                                                                                    | Server-authored opening sources and costs; same owned company on retry/re-entry. Two accounts and real concurrent creation.                                                                                                                   |
+
+F01 is an opportunistic pre-H handoff, not a new H activation dependency. If it
+stalls, H starts after integrated G10 using the actually merged versioned shape;
+a later F01 change must retain explicit serialization/migration compatibility.
+
+The parent granted F01 `lifecycle-state.ts` for validation and compatibility.
+The F01 writer may add `commands.ts`, `model.ts` or the company
+barrel only after a parent ACK. G10 already changes commands/exports; separate
+worktrees do not remove integration conflict. The reviewer never edits its frozen
+candidate. Parent owns planning, integrations, ports, DB lifecycle and final gate.
+Use twenty-minute implementation checkpoints and ten-minute review checkpoints;
+report unfinished work honestly and keep the same writer for corrections.
+
+While Sol reviews G10, Luna can implement F01 and the parent can verify/deliver
+G10. Heavy battle tests and browser captures remain serial. H prework before G10
+merge stays read-only. Do not start a second company writer on the same files.
+F01 follows delivered E05; it is a real missing domain consumer, not permission to
+invent significant deeds or leak an unobserved proposal through the public view.
+
+Do not add a generic QA00 harness merely to occupy a slot: bootstrap already
+isolates PostgreSQL and identity/RT have actual Chrome evidence. First identify a
+missing capability for the final journey. W03 still needs physical application,
+supply/fatigue and genuine arrival/return producers; another preparer with the
+same residuals would not close travel. Full ART05 remains required, but the longer
+art corpus does not unblock H. The prepared B3 worktree remains undispatched.
 
 ## Restored-session dispatch amendment — 2026-09-29
 

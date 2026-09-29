@@ -8,6 +8,30 @@
 
 ## Mission and checkpoint
 
+**Current dispatch after PR124, 2026-09-29:** parent verified actual main
+`f77f126b09c30e9a29f5678cedfc383a95304da4`, tree
+`5099874e196d1b51204c5865c73190ce5937bb7a`. PR124 and actual-main CI36548850610
+passed verify, combat stress/replay and real PostgreSQL migration smoke. ART05 B2
+provides explicit equipped-actor/clip/time sampling; its [evidence](evidence/ART05-B2-SCOUT-20260929.md)
+does not establish full animation consumers, renderer comparison or M1.
+
+G10 is locally reviewed through `ab09035`, rebased onto this main with all eight
+patches unchanged. Sol found no blocking CAPTIVE defect; parent build and joint
+combat/farewell checks passed 22/22. See [proof boundaries](evidence/G10-AGGREGATE-20260929.md).
+The parent owns its delivery; H remains gated until the actual merge. Luna now
+owns the F01 trusted-deed nickname consumer in a separate worktree. H01/H02 requires
+integrated G10; F01 may land before it if ready, but cannot delay H activation.
+H reads the actually merged versioned lifecycle shape. Full F01 still requires
+the finite content mapping and a real deed producer. H is not activated by this
+plan. See the [current queue](PARALLEL_WAVES.md#current-queue-after-pr124).
+
+The resumed host exposes two child slots. Fresh Luna/Sol agents replaced the
+unavailable retained agents; no additional concurrency or measured speedup is
+claimed. Parent owns planning, publication and shared resources. The primary
+checkout has unrelated changes and is preserved; integration uses `warwrit-alpha`.
+Full persistent M1 and its launcher remain incomplete. Earlier dated checkpoints
+below are historical and do not override this dispatch.
+
 **Current dispatch amendment after PR123, 2026-09-29:** actual main is
 `02b160c5275af4f5882a811db4f3326f61457282`, tree
 `afa458013b92411c6469de5e52f0776fe198b4b6`. ART05 B1 is merged; PR and actual-main

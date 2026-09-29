@@ -64,7 +64,9 @@ export function validateFinanceFact(fact: FinanceEvidence, context: EconomyConte
       isExactInteger(fact.revision) &&
       fact.worldId === context.worldId &&
       fact.companyId === context.companyId &&
-      fact.revision === context.canonicalRevision &&
+      (fact.revision === context.canonicalRevision ||
+        (context.internalGrant?.evidenceRevision === fact.revision &&
+          context.internalGrant.sourceEventId === fact.sourceEventId)) &&
       fact.atTick === context.atTick,
     'INVALID_SOURCE',
   );

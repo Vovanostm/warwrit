@@ -17,6 +17,8 @@ export type TrustedCompanyContext = {
     readonly commandId: string;
     readonly sourceEventId: string;
     readonly canonicalRequest: string;
+    /** Original revision of immutable evidence carried into a newer derived command. */
+    readonly evidenceRevision?: CanonicalRevision;
   };
 };
 export function requiredActor(command: CompanyCommand): readonly ActorKind[] {

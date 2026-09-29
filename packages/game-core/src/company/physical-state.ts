@@ -313,7 +313,9 @@ export function physicalFact<K extends PhysicalEvidence['kind']>(
       isEntityId(fact.sourceEventId) &&
       fact.companyId === context.companyId &&
       fact.worldId === context.worldId &&
-      fact.revision === context.canonicalRevision &&
+      (fact.revision === context.canonicalRevision ||
+        (context.internalGrant?.evidenceRevision === fact.revision &&
+          context.internalGrant.sourceEventId === fact.sourceEventId)) &&
       fact.atTick === atTick &&
       fact.version === PHYSICAL_POLICY_VERSION &&
       Number.isSafeInteger(fact.ordinal) &&
