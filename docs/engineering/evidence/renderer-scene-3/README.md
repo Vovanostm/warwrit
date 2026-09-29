@@ -1,5 +1,11 @@
 # Renderer scene 3 evidence
 
+> 2026-09-29 correction: later ART05 review found that this measured PlayCanvas
+> adapter never enabled component animation. These files retain actual historical
+> observations, but they do not prove equivalent animated workloads. ART04 animated
+> acceptance is reopened; see the dated [ADR0005 correction](../../../architecture/0005-m1-renderer-playcanvas.md).
+> Corrected matched captures have not yet been run.
+
 Recorded 2026-09-29. Scope: the corrected representative comparison on the owner's
 Mac, not full-alpha gameplay, production capacity or cross-device performance.
 Raw captures are losslessly compressed; inventory.json binds the retained artifacts.
