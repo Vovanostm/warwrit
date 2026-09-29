@@ -8,6 +8,18 @@
 
 ## Mission and checkpoint
 
+**2026-09-29 live amendment:** PR119 is merged at
+`7a4d216ab7318336ccc24db89cbc19cefb18c7ae`, tree
+`d4bcbd442dbb51c06afe950da1882f8cf923c868`. Its PR and actual-main CI logs passed
+the existing verify/stress/real-migration gates. CT01 now supplies the static
+versioned eight-contract/three-template/eleven-scene catalogue; runtime contract
+acceptance, proof and payment remain future work. PR118 already corrected the
+renderer evidence. Historical checkpoints below retain their original scope.
+Follow the [restored-session dispatch amendment](PARALLEL_WAVES.md#restored-session-dispatch-amendment--2026-09-29)
+for current ownership. The restored host rejected additional/archived agent
+launches, so the parent reuses the retained Luna writer and Sol reviewer with
+explicit handoffs; completion does not guarantee a released thread slot.
+
 The owner's current mission is the **full persistent M1 alpha on this Mac**: create and keep a company, travel, accept a contract, join a physical two-company PvE battle, obtain and present proof, apply consequences, save and re-enter the same world. The accepted first region includes one city, three NPC villages and one dangerous site; eight contract instances across HUNT, INVESTIGATE and RESCUE; eleven scenes, four reusable backgrounds, six portraits, two trophy images and three enemy archetypes. These are delivery requirements, not claims that the content exists. The authored chain is «Когда молчит мельница». M2 public MMO, PvP, trading, conquest, ads and 50–100 CCU proof remain outside this private M1 alpha.
 
 M0, S-02, WP-00 and WP-01 are done; WP-02 and M1 remain in progress. Live main
@@ -87,14 +99,13 @@ final G10 activation or durable-company acceptance is claimed.
 
 ## Focused studio dispatch
 
-This host allows two active children; completed tasks can be replaced. Two Luna
-writers have worked concurrently in separate worktrees. CT01's static candidate
-is under correction/review, while G10 remains separately owned. The parent owns
-integration and shared resources. H still waits for reviewed, merged and integrated
-G10; ART05 corrections and K01 are independent queued packets. A free slot goes to
-a focused writer or Sol reviewer according to the next ready dependency, with an
-explicit path/resource handoff. PR117's three-child configuration does not establish
-a third simultaneous slot here. Throughput gain remains `NOT_MEASURED`.
+CT01 is delivered in PR119. The current retained Luna and Sol alternate bounded
+implementation and review packets under the dispatch amendment above. Earlier
+two-Luna concurrency does not establish replacement capacity in this restored
+host. The parent owns integration and shared resources. H still waits for
+reviewed, merged and integrated G10; ART05 and K01 remain independent lanes.
+PR117's configuration does not prove available runtime slots. Throughput gain
+remains `NOT_MEASURED`.
 
 Ports 55433/5557/3107 and preserved identity volumes belong to the parent-managed identity fixture. PR105 gives the clean gate a unique disposable Compose project and dynamic loopback port; it is not the eventual full-alpha launcher. App mounting, root composition, exports, command registry, migrations, launch scripts and lockfile still require explicit one-writer ownership. Independent green branches do not prove their union.
 

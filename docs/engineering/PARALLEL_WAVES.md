@@ -1,18 +1,59 @@
 # M1 parallel implementation waves — Sol, 2026-09-29
 
-Planning only: NOT_IMPLEMENTED / NOT_TESTED / NOT_MEASURED. The source edition is the 2026-09-28 Airtable snapshots `recZhUoTiwT7kIc8s-live.md` (M1 index and owner amendment), `rechIKj0hsvfXIvFU-live.md` (accepted RC-P2/RC-P3), `recTrujX2wy7V49qk.md` and `recQNKqYfwoJpCXVu.md` (world/knowledge), `recA4VT0YX9x0LuO1.md` (proposed content details), and `recFhxna2tbJh7qwE-live.md` (ART05). Re-read live authority before each dispatch. This is a schedule, not an activation or a replacement for the full card. Verified integration main is `22bcd91b81fda3beffd30af9ebbe08c8c0639b31`, tree `02b895174300b33f8befd262096d87905740e160` (PR118, read back 2026-09-29). PR118 preserves old renderer measurements while reopening animated workload acceptance. G10 and ART05 retain separate unmerged candidates; runtime migration `0004_encounter_runtime` is released in main. Confirm fresh HEAD, tree and dirty identity immediately before assignment.
+Historical plan below: NOT_IMPLEMENTED / NOT_TESTED / NOT_MEASURED when authored. The dated dispatch amendment records later deliveries. The source edition is the 2026-09-28 Airtable snapshots `recZhUoTiwT7kIc8s-live.md` (M1 index and owner amendment), `rechIKj0hsvfXIvFU-live.md` (accepted RC-P2/RC-P3), `recTrujX2wy7V49qk.md` and `recQNKqYfwoJpCXVu.md` (world/knowledge), `recA4VT0YX9x0LuO1.md` (proposed content details), and `recFhxna2tbJh7qwE-live.md` (ART05). Re-read live authority before each dispatch. This is a schedule, not an activation or a replacement for the full card. Verified integration main is `22bcd91b81fda3beffd30af9ebbe08c8c0639b31`, tree `02b895174300b33f8befd262096d87905740e160` (PR118, read back 2026-09-29). PR118 preserves old renderer measurements while reopening animated workload acceptance. G10 and ART05 retain separate unmerged candidates; runtime migration `0004_encounter_runtime` is released in main. Confirm fresh HEAD, tree and dirty identity immediately before assignment.
 
 ## Capacity and ownership rule
 
-Project configuration permits three children, but the running September 29 host permits two **active** children alongside the parent. Completed children can be replaced; two disjoint Luna writers have actually run concurrently. Use either two independent writers or a writer and a reviewer as the ready work requires. A third simultaneous child remains unavailable without fresh host readback; changing configuration does not enlarge this session. Never create a user-owned task to evade that limit. See `AGENT_TEAM.md` for configuration discovery and the host override boundary. Record conflicts, parent rework, correctness, wall time and available token/cost telemetry under `HARNESS_EVAL.md`; matched evaluation remains NOT_RUN and throughput gain remains NOT_MEASURED.
+Project configuration permits three children, but actual host behavior controls
+dispatch. Two disjoint Luna writers ran earlier. In the restored September 29
+session, a new Luna spawn failed with `agent thread limit reached` even after the
+retained Sol completed; resuming an older archived Luna also failed. Currently
+reuse the retained Luna and Sol. Do not equate completion with a released slot or
+create a user-owned task to evade the limit. See `AGENT_TEAM.md`. Record conflicts,
+parent rework, correctness, wall time and available token/cost telemetry under
+`HARNESS_EVAL.md`; matched evaluation remains NOT_RUN and throughput gain remains
+NOT_MEASURED.
+
+## Restored-session dispatch amendment — 2026-09-29
+
+This section supersedes the historical assignments below. PR119 is merged at
+`7a4d216ab7318336ccc24db89cbc19cefb18c7ae`, tree
+`d4bcbd442dbb51c06afe950da1882f8cf923c868`: CT01's static eight-contract catalogue
+is delivered. It supplies no runtime proof, issuer or reward producer.
+
+Use the two retained agents as a handoff queue:
+
+1. Luna corrects ART05-A equipment placement in the art-pipeline worktree while
+   Sol diagnoses the frozen G10 learning regression in the combat-aggregate
+   worktree. Parent owns Vite5181 and independent browser evidence. No parallel
+   source edits in the reviewed learning packet.
+2. After ART freezes, Luna applies the source-valid learning correction; Sol
+   reviews ART. Then Sol reviews the frozen learning change. A passing unrelated
+   economy control does not establish learning composition.
+3. G10 B2a owns retry identity for the currently supported Finalize, journal,
+   cursor and MISSING inputs. B2b owns mandatory terminal custody, departure,
+   crisis and overflow effects, extending the same retained identity and retry
+   proof for every added input. Each packet returns actual public-boundary
+   evidence; neither alone closes G10.
+4. K01 is independently ready in `warwrit-alpha-knowledge` at actual main7a4d216,
+   with dependencies installed and no code written. Its world barrel and privacy
+   spec remain exclusively reserved at dispatch. H still waits integrated G10.
+
+ART05 runtime inspection proves accessory meshes exist, but the saved equipped
+silhouette is unreadable. Sampled socket placement/orientation needs rendered
+correction; hierarchy names or AABBs alone cannot pass that acceptance. The
+current learning regression fails before its intended retained-effect assertion;
+it is a diagnostic candidate, not a passed regression. Full alpha remains open.
 
 For every writer, the parent provides the four-field brief from `AGENT_DEVELOPMENT_PREPARATION.md`: outcome and non-goals/source, exact base and merged predecessors, exclusive paths/resources plus owner ACK, and observable acceptance/focused checks/timebox. No writer touches another worktree or retained dirty changes. The parent owns `CURRENT_PLAN`, `ROADMAP`, integration, publication, final exact-tree gate and all shared bootstrap/SQL/ports. Reserve `packages/game-core/src/index.ts`, company/world barrels, app mounting, protocol exports, `apps/server/src/db/database.ts`, migration numbers, root lockfile and launch scripts by named handoff before any two packets use them. Build outputs stay in each writer's worktree; parent controls ports 55433/5557/3107, identity volumes and any real PostgreSQL lifecycle. A pure packet has no service or database resource.
 
-## Dispatch state — 2026-09-29 after PR118
+## Historical dispatch — 2026-09-29 after PR118
+
+The following assignments are archived context, superseded by the amendment above.
 
 - `g10_missing_luna`: G10 B1 in the combat-aggregate worktree; genuine terminal MISSING custody and atomic rejection proof. B2 follows frozen review.
 - `ct01_luna`: static CT01 in the contracts worktree; outcome/seed and unknown-enum corrections independently reviewed; parent integration and clean gate pending. No gameplay proof or payout producer claimed.
-- `g10_sequence_review_sol`: bounded read-only reviews between writer handoffs. A completed review frees an active slot; it does not reserve a permanent slot.
+- `g10_sequence_review_sol`: bounded read-only reviews between writer handoffs. At that checkpoint, review completion was assumed to free a slot; the restored-session observation above supersedes that assumption.
 - Parent: exact-tree integration, shared resources and executable verification; no production code generation.
 - Queued: ART05 playback/alpha/pivot/depth corrections, then full variants and matched captures; K01 is separately scoped. Queued work is not an active agent.
 - Delivered: PR115 runtime/migration0004 and PR118 renderer-evidence correction. H waits final G10 and rechecks the next migration number.
