@@ -87,13 +87,14 @@ final G10 activation or durable-company acceptance is claimed.
 
 ## Focused studio dispatch
 
-Current dispatch uses two retained child slots: Luna owns G10 B1 corrections in
-its isolated combat-aggregate worktree; Sol reviews frozen ART05-A independently.
-No writer edits both simultaneously. After B1 freezes, Sol reviews it while Luna
-fixes ART05. B2 remains the critical predecessor of H; H code starts only after
-G10 is reviewed, merged and integrated. CT01 and K01 are independent queued
-packets. PR117 prepares three child slots for a fresh trusted session, but this
-running host still exposes two; no throughput improvement is measured.
+This host allows two active children; completed tasks can be replaced. Two Luna
+writers have worked concurrently in separate worktrees. CT01's static candidate
+is under correction/review, while G10 remains separately owned. The parent owns
+integration and shared resources. H still waits for reviewed, merged and integrated
+G10; ART05 corrections and K01 are independent queued packets. A free slot goes to
+a focused writer or Sol reviewer according to the next ready dependency, with an
+explicit path/resource handoff. PR117's three-child configuration does not establish
+a third simultaneous slot here. Throughput gain remains `NOT_MEASURED`.
 
 Ports 55433/5557/3107 and preserved identity volumes belong to the parent-managed identity fixture. PR105 gives the clean gate a unique disposable Compose project and dynamic loopback port; it is not the eventual full-alpha launcher. App mounting, root composition, exports, command registry, migrations, launch scripts and lockfile still require explicit one-writer ownership. Independent green branches do not prove their union.
 
