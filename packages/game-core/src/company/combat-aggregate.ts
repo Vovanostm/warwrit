@@ -1006,6 +1006,7 @@ export function prepareFinalizeCombatAggregate(
           ),
         },
       };
+      next = withMaterialized(next, root);
     }
     validatePhysicalState(root);
     validateLifecycleGraph(root.lifecycle, input.context);

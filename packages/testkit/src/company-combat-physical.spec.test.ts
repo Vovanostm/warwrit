@@ -27,6 +27,7 @@ import {
   prepareFinalizeCombatAggregate,
   prepareCompanyEconomy,
   prepareCombatPracticeEffects,
+  persistentMoraleAfterCombat,
   COMBAT_PRACTICE_PROFILE_VERSION,
   PROGRESSION_RULES,
   evaluatePerkEffects,
@@ -2451,10 +2452,31 @@ describe('G10 — atomic combat company aggregate', () => {
     const participants = f.begun.binding.participants.filter(
       (entry) => entry.companyId === root.lifecycle.companyId,
     );
-    const missingParticipant = participants.find(
-      (participant) => finalState.units.find((unit) => unit.id === participant.unitId)!.health > 0,
-    );
-    if (!missingParticipant) throw new Error('Expected a living company participant');
+    const missingParticipantIndex = participants.findIndex((participant, index) => {
+      const unit = finalState.units.find((entry) => entry.id === participant.unitId)!;
+      const hasEarlierLivingParticipant = participants
+        .slice(0, index)
+        .some(
+          (earlier) => finalState.units.find((entry) => entry.id === earlier.unitId)!.health > 0,
+        );
+      const hasCarriedContainer = root.physical.containers.some(
+        (entry) =>
+          entry.carrier?.kind === 'CHARACTER' &&
+          entry.carrier.id === participant.projection.characterId,
+      );
+      return index > 0 && unit.health > 0 && hasEarlierLivingParticipant && hasCarriedContainer;
+    });
+    const missingParticipant = participants[missingParticipantIndex];
+    if (!missingParticipant)
+      throw new Error('Expected a later living company participant with custody');
+    const earlierPresentParticipant = participants
+      .slice(0, missingParticipantIndex)
+      .find(
+        (participant) =>
+          finalState.units.find((entry) => entry.id === participant.unitId)!.health > 0,
+      );
+    if (!earlierPresentParticipant)
+      throw new Error('Expected an earlier living PRESENT participant');
     const missingEntryId = 'aggregate-missing-entry';
     const finalStateDigest = 'aggregate-final-state';
     const outcomeReceiptId = 'aggregate-terminal-outcome';
@@ -2560,6 +2582,27 @@ describe('G10 — atomic combat company aggregate', () => {
         (entry) => entry.identity.characterId === characterId,
       )?.presence.availability,
     ).toBe('OUT_OF_CONTACT');
+    const earlierCharacterId = earlierPresentParticipant.projection.characterId;
+    const earlierCharacter = finalized.next.economy.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === earlierCharacterId,
+    );
+    const earlierPriorPresence = consumed.next.encounter.active!.priorPresence.find(
+      (entry) => entry.characterId === earlierCharacterId,
+    );
+    const earlierUnit = finalState.units.find(
+      (entry) => entry.id === earlierPresentParticipant.unitId,
+    )!;
+    expect(earlierPriorPresence).toBeDefined();
+    expect(earlierCharacter?.presence.availability).toBe(earlierPriorPresence?.availability);
+    expect(earlierCharacter?.presence.assignment).toBe(earlierPriorPresence?.assignment);
+    expect(earlierCharacter?.presence.fieldPartyId).toBe(earlierPriorPresence?.fieldPartyId);
+    expect(
+      finalized.next.economy.physical?.vitals?.find(
+        (entry) => entry.characterId === earlierCharacterId,
+      )?.morale,
+    ).toBe(
+      persistentMoraleAfterCombat(earlierPresentParticipant.projection.morale, earlierUnit.morale),
+    );
 
     const retry = prepareFinalizeCombatAggregate(finalized.next, finalizeInput);
     expect(retry.kind).toBe('PREPARED');
