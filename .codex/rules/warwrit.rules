@@ -1,0 +1,27 @@
+# Best-effort command guards for AGENTS.md "Hard rules" 1. Prefix matching only:
+# reordered flags are not caught. Loaded only when the project .codex/ layer is
+# trusted. Ordinary merges stay unguarded here because the owner may authorize
+# them per mission in CURRENT_PLAN; the parent still checks that permission.
+
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f"]],
+    decision = "forbidden",
+    justification = "AGENTS.md hard rule 1: never force-push a shared branch; ask the owner.",
+    match = ["git push --force origin main", "git push -f"],
+    not_match = ["git push origin feature"],
+)
+
+prefix_rule(
+    pattern = ["git", "push", "--force-with-lease"],
+    decision = "prompt",
+    justification = "Rewriting a pushed branch needs the owner's approval unless it is this agent's own unshared branch.",
+    match = ["git push --force-with-lease origin docs/x"],
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", "merge", ["--auto", "--admin"]],
+    decision = "forbidden",
+    justification = "AGENTS.md hard rule 1: auto-merge and admin bypass need separate owner permission.",
+    match = ["gh pr merge --auto 12", "gh pr merge --admin"],
+    not_match = ["gh pr merge 12 --squash"],
+)

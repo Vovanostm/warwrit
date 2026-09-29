@@ -144,3 +144,24 @@ performance. Only evidence for the exact current integration tree applies; the
 2026-09-08 CI is historical, not proof of a later main integration. No game
 mechanics, source authority, test policy, runtime dependency, work-package status
 or merge/deployment permission is changed by this rationale.
+
+## Operational rules
+
+Moved verbatim from AGENTS.md on 2026-09-29 to keep the always-loaded contract
+short; AGENTS.md links here. Apply these when measuring tokens or evaluating
+language policy.
+
+Measure token savings with the target model's documented tokenizer or supported
+input-count API, recording model/encoding version, text hashes and count scope.
+Words, characters, UTF-8 bytes and English character-per-token heuristics are not
+exact counts. Distinguish plain-text counts from full requests containing message
+framing, tools and retrieved sources; reserve room for output under actual model
+limits. When exact counting is unavailable, report `NOT_MEASURED`; label proxy
+counts, never present them as the target model's usage. Do not upload private
+sources to public counters or add a tokenizer to game runtime dependencies.
+
+Token efficiency and task correctness are separate evidence. Do not claim a fixed
+Russian/English ratio or better agent performance without matched task-level
+measurement, including tests, source fidelity and permission compliance. Such
+evaluation is not a new work-package gate. Existing scope,
+source authority and verification requirements remain unchanged.

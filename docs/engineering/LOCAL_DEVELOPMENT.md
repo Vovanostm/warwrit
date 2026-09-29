@@ -70,6 +70,24 @@ Migration smoke also runs separately because it requires PostgreSQL:
 pnpm test:migrations
 ```
 
+## Focused checks
+
+Use these while editing; the full gate above runs once on the final tree.
+
+```bash
+pnpm agent:preflight                                  # checkout identity for start/resume/handoff
+pnpm --filter @warwrit/game-core build                # refresh dist before testkit-based specs
+pnpm exec vitest run packages/game-core/src/company   # one directory or file
+pnpm exec vitest run -t "replay" packages/game-core   # tests whose name matches
+pnpm --filter @warwrit/game-core typecheck            # one package
+pnpm exec prettier --check <changed files>
+pnpm check:architecture
+pnpm check:migrations                                 # released migrations unchanged vs origin/main
+```
+
+Testkit and cross-package specs import built workspace exports; `typecheck` uses
+`--noEmit` and does not refresh `dist`.
+
 ## Combat implementation rules
 
 - `packages/game-core/src/combat/rules.ts` owns all provisional M0 numeric parameters.
