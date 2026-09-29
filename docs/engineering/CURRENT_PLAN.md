@@ -8,7 +8,16 @@
 
 ## Mission and checkpoint
 
-**ART05-A / G10 B2a checkpoint, 2026-09-29:** the bounded offline Knight capture
+**K01 checkpoint, 2026-09-29:** the finite source/time-bound world-knowledge reader
+and projection now have independent Sol review and three parent-executed public
+specifications. See [scope and evidence](K01-WORLD-KNOWLEDGE.md). Real observation
+producers and private-world disclosure remain K02/W06. ART05-A was delivered in
+PR121 at `d72603d`, with PR CI passing the full gate; full ART05/ART04 remain open.
+G10 B2a and the reproduced participant-state preservation fix are locally reviewed
+and committed, still unmerged. Luna owns B2b terminal leadership composition;
+parent owns integration and shared services. Full persistent M1 remains incomplete.
+
+**Prior ART05-A / G10 B2a checkpoint, 2026-09-29 (ownership superseded above):** the bounded offline Knight capture
 seam now includes corrected animation, transparent alpha, grounded pivot, packed
 depth sampling and equipped pose. See [observed evidence](evidence/ART05-A-20260929.md).
 Earlier ART05-A defect descriptions below are historical. Full ART05 consumers,
