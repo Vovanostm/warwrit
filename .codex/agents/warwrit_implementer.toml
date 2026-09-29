@@ -1,5 +1,6 @@
 name = "warwrit_implementer"
 description = "Implement one assigned Warwrit slice in an explicitly owned worktree and write set."
+model = "gpt-6-luna"
 sandbox_mode = "workspace-write"
 developer_instructions = """
 Make the smallest contract-preserving change for the parent's assigned outcome.

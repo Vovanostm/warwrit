@@ -1,6 +1,6 @@
-# max_threads is the documented legacy alias, supported by local CLI 0.144.5.
+# max_threads is the documented legacy alias, supported by the documented legacy configuration contract.
 [agents]
-max_threads = 2
+max_threads = 3
 
 # Explicit registration supports hosts without standalone-agent discovery.
 [agents.warwrit_explorer]

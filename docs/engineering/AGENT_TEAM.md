@@ -13,11 +13,20 @@ gameplay cards or introduce another workflow engine.
 | `warwrit_implementer` | One accepted slice; `warwrit-domain` for domain work                                       | Named worktree and explicit paths only        |
 | `warwrit_reviewer`    | Independent diff/counterexample review; `warwrit-review`                                   | Read-only; fixes return to the writer         |
 
-Profiles live in [`.codex/agents`](../../.codex/agents). They inherit the parent's
-model and reasoning settings. Prompts prohibit child delegation. The project
-default caps open child threads at two, excluding the parent; start only one when
-there is one useful independent assignment. This is a conservative choice,
-not a measured optimum or a requirement to keep two agents running.
+Profiles live in [`.codex/agents`](../../.codex/agents). The owner's M1 assignment
+pins `warwrit_implementer` to `gpt-6-luna` and `warwrit_reviewer` to `gpt-6-sol`.
+Use Sol for plan review as well. Reasoning settings remain inherited. Prompts
+prohibit child delegation; the parent assigns every packet.
+
+The project allows three child threads, excluding the parent: up to two independent
+Luna writers and one Sol reviewer. This is a bounded capacity trial, not a measured
+optimum or an instruction to fill idle slots. Each writer needs a separate worktree,
+write set and resource allocation. Start fewer when only one packet is ready.
+The already-running September 29 session exposes only two child slots and retains
+completed child threads: reuse its Luna/Sol pair. Changing this file cannot enlarge
+that running session; verify actual capacity in a fresh trusted session before
+claiming or dispatching a third child. Never create user-owned tasks to evade limits.
+See [the current packet queue](PARALLEL_WAVES.md) for dependencies and exact ownership.
 
 ## Assignment and scheduling
 
@@ -56,13 +65,16 @@ children do not execute its publication/checkpoint steps.
 [Official Codex documentation](https://developers.openai.com/codex/multi-agent)
 defines project discovery from `.codex/agents/*.toml`. Explicit registrations in
 `.codex/config.toml` also support the installed CLI. `max_threads` is the documented
-legacy alias: local CLI 0.144.5 rejected `max_concurrent_threads_per_session` during
-configuration readback. Start a fresh trusted project session after changes and
+legacy alias: the older CLI 0.144.5 rejected `max_concurrent_threads_per_session` during
+configuration readback. CLI 0.146.0 `codex features list` exits successfully and the TOML files parse;
+this does not prove that this untrusted worktree loaded the project settings or
+that a running session has three child slots. The primary project remains trusted;
+no global trust entry was changed. Start a fresh trusted project session after changes and
 verify the actual host exposes the named roles. Do not change global trust silently.
 
 Host/runtime overrides can take precedence. A read-only profile is not proof that
 every connector/tool is unable to write. A prompt's no-delegation rule is behavioral,
-not a verified tool-level restriction. No model or approval setting is overridden.
+not a verified tool-level restriction. The two role model choices above implement the owner request; approval settings are unchanged.
 
 `.codex/rules/warwrit.rules` forbids force-push and auto/admin merge by command
 prefix (checked with `codex execpolicy check`); it loads only for a trusted project.

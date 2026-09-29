@@ -10,7 +10,7 @@
 
 The owner's current mission is the **full persistent M1 alpha on this Mac**: create and keep a company, travel, accept a contract, join a physical two-company PvE battle, obtain and present proof, apply consequences, save and re-enter the same world. The accepted first region includes one city, three NPC villages and one dangerous site; eight contract instances across HUNT, INVESTIGATE and RESCUE; eleven scenes, four reusable backgrounds, six portraits, two trophy images and three enemy archetypes. These are delivery requirements, not claims that the content exists. The authored chain is «Когда молчит мельница». M2 public MMO, PvP, trading, conquest, ads and 50–100 CCU proof remain outside this private M1 alpha.
 
-M0, S-02, WP-00 and WP-01 are done; WP-02 and M1 remain in progress. Observed main is `0973085a80c8d6cea8e3a452507bba6f2c5195ee`, tree `fbfd0dbbe6dd60e20640cb1aec7035dfe794b71d`. PR113 delivered pure causal learning/C08; PR112 delivered persistent encounter fixtures; PR111 subsequently delivered agent-harness guidance independently. Parent audited PR113 and PR112 PR/main CI plus their stated focused evidence. PR112's checked game tree was `bcda8e291a9fe219e3e03525fd44e5030e0ba208`; those results are not a fresh gate for later code. G10, durable company/world execution, production renderer selection and full M1 remain incomplete. Recheck live refs before changing status.
+M0, S-02, WP-00 and WP-01 are done; WP-02 and M1 remain in progress. Observed main is `154af42577ca688c7f66f68d9f720a4597b95740`, tree `566c41ffa48add53ff5e2cc4fb8281f6204cbb2e`, after [PR #116](https://github.com/Vovanostm/warwrit/pull/116), which selects PlayCanvas for the current Mac/Chrome target. Parent audited PR116 CI36516144845 for the exact matching tree; actual-main CI is pending readback. Parent audited PR CI36512432787 and actual-main CI36512903232: 427 tests in 63 files, 10,000 battles/100 replay checks and real PostgreSQL migration smoke passed; five opt-in tests were skipped in that gate. Separate parent PostgreSQL and Chrome evidence is scoped below. G10 terminal composition, durable company/world execution, ART05 art-pipeline selection, production renderer integration and the full alpha remain incomplete. Recheck live refs before dispatch.
 
 The latest owner direction supersedes older **operational** text saying no assignment, no merge or a fixed 400-line PR cap for this alpha mission. It does not alter game rules or make a green branch a merge. Implementation and checked task PR merges are authorized within the owner's current full-M1 direction; inspect exact head/base, reviews, unresolved threads and CI before each merge, then read back the actual main tree and post-merge result. Deployment, auto-merge and paid provisioning remain separate decisions.
 
@@ -24,7 +24,7 @@ The latest owner direction supersedes older **operational** text saying no assig
 | C05 / [PR #100](https://github.com/Vovanostm/warwrit/pull/100) | Internal time/task/study/skill/finance composition merged; issue #71 closed       | Pure C08 delivered in PR113; G10 and real world producers next     |
 | E04 / [PR #99](https://github.com/Vovanostm/warwrit/pull/99)   | Joint acceptance merged; issue #69 closed                                         | E05 delivered in PR #101; F01 follows                              |
 | G08 / [PR #98](https://github.com/Vovanostm/warwrit/pull/98)   | Physical and causal life preparers merged                                         | G09 and pure C08 delivered; G10 composition next                   |
-| World / identity / RT / art                                    | W01/W02 and pure W03 preparation merged; local identity merged in PR #106         | Real movement, durable authority and measured renderer comparison  |
+| World / identity / RT / art                                    | W01/W02 and pure W03 preparation merged; local identity merged in PR #106         | Real movement, durable authority and ART05 pipeline comparison     |
 | H/I and final QA                                               | Foundation SQL exists; aggregate execution, crash/race proof and playtest pending | Durable execution and actual integrated journeys                   |
 
 The parent coordinates one writer per shared path, owns these two planning documents, and controls integration, database lifecycle and final gates. E05 safe observed/recruit views and G09 real combat practice are delivered in PR #101/#102; W01/W02 authored topology and pure clocks in PR #103. C06 book transfer is delivered in PR #104: the actual command settles the earned prefix, moves the item and records the interruption in one candidate; failure preserves all owners. PR107 also delivers duty-change prefix settlement and exact task-owned book-access closure, including future-tick commands. PR113 now joins existing location/F1/access and causal outcome producers with pure C08 commands; actual world/combat producers remain separate.
@@ -34,47 +34,60 @@ Current source-reviewed assignments:
 - Learning composition is delivered in PR113. Actual command candidates settle the earned prefix, close task-owned access, distinguish factual death from observation and preserve harmless changes. One public scenario proves two course learners sharing a deceased provider retain five-tick earned/accrued prefixes while an unrelated book task remains unchanged; it does not prove a separate cash payout. There is no authentic producer entering `OUT_OF_CONTACT` yet: the ResolveMissing fixture starts from a constructed missing state. That production gap belongs to G10/world/JOIN, not a fake learning handler. Pure C08 is available; G10 is the next company responsibility.
 - Pure route/arrival preparation is delivered in PR108. Backdated movement and unauthored origin were corrected; supply and return evidence is bound to its actual scope. Real party/member/carrier application, supply/fatigue, durable epochs and trusted arrival/return producers remain W04/H/W06 work. This does not close full W03.
 - ID01/ID02 local identity is delivered in PR106: Dex OIDC, durable issuer/subject accounts and opaque sessions, migration 0002 and an isolated fixture. Reproducible local commands and limits are in [ID01-IDENTITY.md](ID01-IDENTITY.md). ID03 company binding waits for H. External-provider login and lost-credential recovery are not proven by local reauthentication.
-- Renderer harness is merged in PR109. Same licensed KayKit 18-actor scene runs in Babylon 9.28.0 and PlayCanvas 2.22.4 under normal dependency-age policy. Parent verified body/hex picking, off-board misses, fog/camera/light parity, fixed-buffer resize and real WebGL loss/restoration. Sol reviewed final source and mechanical corrections; all 19 README asset hashes match. Local production build and clean CI passed. Parent recorded three alternating 120-second captures per engine at preview port 5178 after 30-second warmups, with raw-bin/percentile recomputation. Both exceed 30 FPS in this observed Mac workload; ordinary background load limits inference. Comparative authoring, ART04 decision and ART05 pipeline remain unfinished. Recorded build bytes precede mechanical formatting/type-only changes and are independently inventoried; no current-source performance equivalence is assumed from a commit name.
+- Renderer harness is merged in PR109. Same licensed KayKit 18-actor scene runs in Babylon 9.28.0 and PlayCanvas 2.22.4 under normal dependency-age policy. Parent verified body/hex picking, off-board misses, fog/camera/light parity, fixed-buffer resize and real WebGL loss/restoration. Sol reviewed final source and mechanical corrections; all 19 README asset hashes match. Local production build and clean CI passed. Parent recorded three alternating 120-second captures per engine at preview port 5178 after 30-second warmups, with raw-bin/percentile recomputation. Both exceed 30 FPS in this observed Mac workload; ordinary background load limits inference. PR116 subsequently delivered corrected scene3, measured comparison and ADR0005 PlayCanvas selection; ART05 pipeline and ART06 production adapter remain unfinished. Recorded build bytes precede mechanical formatting/type-only changes and are independently inventoried; no current-source performance equivalence is assumed from a commit name.
 
-- [PR #112](https://github.com/Vovanostm/warwrit/pull/112) is merged at `a2b3b67a215dd00bf3a3ab04976cd0df843c6bcf`, tree `bcda8e291a9fe219e3e03525fd44e5030e0ba208`: migration 0003, authenticated local fixture commands, atomic snapshot/journal/receipt writes, grant decoding and consistent replay reads. Parent audited PR CI36499938186 and actual-main CI36500401584: 425 tests across 62 files, 10,000 battles/100 replay checks and real migration smoke passed; the opt-in identity/encounter integrations are separate. Parent also passed actual encounter PostgreSQL integration on the final combined code. This proves RT02/narrow RT03 fixture execution, not physical JOIN, playable projection or process restart. Runtime Luna owns unreleased migration 0004, explicit AI authority/wakes, projection and Colyseus. H uses the next migration only after this reservation is released and live schema is rechecked. Human timeout action remains a pending bounded decision.
+- [PR #112](https://github.com/Vovanostm/warwrit/pull/112) is merged at `a2b3b67a215dd00bf3a3ab04976cd0df843c6bcf`, tree `bcda8e291a9fe219e3e03525fd44e5030e0ba208`: migration 0003, authenticated local fixture commands, atomic snapshot/journal/receipt writes, grant decoding and consistent replay reads. Parent audited PR CI36499938186 and actual-main CI36500401584: 425 tests across 62 files, 10,000 battles/100 replay checks and real migration smoke passed; the opt-in identity/encounter integrations are separate. Parent also passed actual encounter PostgreSQL integration on the final combined code. This proves RT02/narrow RT03 fixture execution, not physical JOIN, playable projection or process restart. PR115 subsequently released migration0004 with AI authority/wakes, projections and Colyseus; H rechecks the next migration against live main. Human timeout action remains a pending bounded decision.
 
 ## Runtime and G10 verification checkpoint — 2026-09-29
 
-Runtime now has an explicit persisted AI controller/wake owner, authenticated Colyseus
-rooms and Fastify lifecycle composition. Parent Chrome/SDK checks proved reconnect,
-page reload, process restart, same-ID retry, foreign-account and logout rejection.
-Separately, parent exercised persisted AI wake recovery through the real app and PostgreSQL. HTTP commits now refresh joined rooms, older asynchronous reads
-cannot regress revision, and notification failure preserves the durable accepted
-response. Sol reviewed the corrections; parent independently reproduced HTTP refresh
-and notification-failure behavior. Stale-read ordering has a controlled deferred-read
-regression, also rerun by the parent. [Exact evidence and limits](evidence/RT04-PARENT-20260929.md)
-separate the earlier source from each correction. Final clean-tree gate and GitHub
-merge readback remain delivery steps. This is still fixture admission, not physical
-JOIN or full M1; overdue-human policy remains pending. Separate loopback HTTP/WS
-listeners are proven; the local single-origin Vite proxy is queued.
+PR115 delivered persisted AI wakes, authenticated Colyseus projections, HTTP-to-room
+refresh, monotonic asynchronous reads and durable responses when notification fails.
+Parent verified real PostgreSQL execution, Chrome reconnect/reload/process restart,
+same-ID retry and foreign-account/logout rejection. The final optional dependency
+policy explicitly denies `msgpackr-extract@3.0.4` native install; a fresh empty-store
+install, server build and authenticated Chrome HTTP/room journey passed without it.
+[Runtime evidence](evidence/RT04-PARENT-20260929.md) and the PR distinguish historical
+checks from final source. Reviewed, CI and actual-main trees match. This remains
+fixture admission, not physical JOIN; human timeout policy and single-origin wiring
+remain pending. Migration0004 is released; recheck the next number before H.
 
-G10 receipt packet A passed its initial focused checks, but independent Sol review
-and parent reproductions found three remaining defects: growing practice profiles
-were rejected, supplied time advances could bypass their original grant, and arbitrary
-original evidence revisions were accepted. Luna is correcting that precise packet.
-Terminal/MISSING/custody/departure/crisis packet B still follows; G10 activation and
-H persistence are not complete. Keep one writer per worktree and freeze before review.
+G10 packet A is locally committed at `c2f8518` on the combat-aggregate branch after
+rebase onto PR115. Sol reviewed its causal/practice/evidence corrections; parent
+reproduced the sparse-aptitude fix. The two-cycle alias scenario was source-reviewed,
+not independently executed. B1 now composes learner/provider/mentor interruption
+and a sourced MISSING entry through existing owners; its candidate is frozen for
+review. Eleven focused specs pass, but terminal MISSING custody/prefix proof remains
+missing and Sol is checking concrete counterexamples.
+B2 owns terminal custody, departure, crisis/succession, overflow and immutable retry
+identity. No final G10 activation or durable-company acceptance is claimed.
 
 ## Focused studio dispatch
 
-Owner direction, 2026-09-29: improve decomposition and run more targeted subagents. Luna generates code; Sol reviews and improves plans; parent owns integration, resource lifecycle and final evidence. The current parent has two child threads, `runtime_luna` and `g10_sequence_review_sol`. Completed children have not released thread slots on this host: new Luna dispatch and follow-up to an older idle Luna both returned `agent thread limit reached`. Reuse these existing threads for bounded packets and mark later work queued until the implementer is available. Do not create extra user-owned tasks to bypass this limit.
+Use [PARALLEL_WAVES.md](PARALLEL_WAVES.md) for the Sol-reviewed packet queue, exact
+path/resource reservations, dependencies and minimal proof. The parent owns this
+plan, integration, shared resources and final verification. Luna writes production
+code; Sol reviews frozen packets and plans. The current session has two retained
+child threads: `runtime_luna` on isolated ART05 while
+`g10_sequence_review_sol` reviews frozen B1. Later assignments are queued, not running.
 
-| Packet                | One reviewable result                                                                      | Writer / boundary                                                                                      | Next handoff                                                                                               |
-| --------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| G10                   | Pure Begin/Consume/Finalize composition, one applied cursor and all supported consequences | Luna correcting receipt packet A in the isolated combat-aggregate worktree                             | Freeze candidate; Sol reviews causal sequencing and terminal invariants; corrections return to same writer |
-| RT                    | Persistent human/AI transition owner and authenticated Colyseus projection                 | Committed runtime candidate; parent owns PR/CI/merge gate, writer inactive unless a finding returns    | Sol source review and parent browser/restart complete; parent audits final clean-tree gate and merge       |
-| ART calibration       | Readable night/torch scene in both existing engines                                        | Queued Luna packet; renderer authoring worktree, shared lighting/fog and two scenes                    | Parent visual capture and current-build metrics; Sol decision review, no premature renderer freeze         |
-| H                     | Complete versioned company save and authenticated atomic executor                          | Queued Luna packet after actual G10/RT integration; exclusive company serialization/server/DB boundary | Sol reviews actual predecessor APIs before dispatch; real round-trip, race and process-crash proof         |
-| Domain completion     | Retraining completion, then nickname commands                                              | Queued focused Luna packets using existing learning/social owners                                      | Small public invariant proof and Sol review; no copied command catalogue                                   |
-| World and contracts   | Durable movement/camp/supply; finite contract/proof authority                              | Separate W and CT packets when their root/DB ownership can be disjoint                                 | Integrate through actual H APIs; shared migrations, protocol and mounting have one writer                  |
-| JOIN and player alpha | Atomic physical join/release, real UI, local launcher and re-entry                         | Bounded successor packets after actual interfaces exist                                                | Two-browser journey, restart, manual runbook and owner playtest                                            |
+The project configuration prepares three child slots for a fresh trusted session:
+two disjoint Luna writers and one Sol reviewer. Actual host capacity must be checked
+before launching a third child; current session capacity is unchanged. No throughput
+advantage is claimed before measurement. Do not create user-owned tasks as a workaround.
 
-The current Luna thread alternates frozen RT and G10 correction packets; these are sequential writer assignments in separate worktrees. Sol reviews frozen results and next-packet plans while Luna implements independent work. G10 corrections are split into receipt composition/practice/immutable evidence, then terminal owner effects and replay; neither packet alone completes G10. Each dispatch names its inputs, exclusive files and resources, acceptance, focused commands and reporting timebox. A timebox is a checkpoint, never permission to omit effects. Freeze and review a concrete failing seam before expanding its scope. Reviewers are read-only; the original writer fixes findings. Parent does not duplicate author checks or broad reviews: it integrates reviewed results and verifies cross-component behavior. Migration numbers, exports, lockfile and app mounting are reserved explicitly. Successful independent branches do not prove their union. The full indexed cards remain acceptance responsibilities, not a mandatory PR count or dozens of simultaneous agents.
+ART scene3 calibration has passed the parent's six visual checks and one fresh
+production pair with independently recomputed raw samples. Minimum one-second FPS
+was120/119 for Babylon/PlayCanvas on M3Pro/Chrome154. ART04 decision is merged in PR116/[ADR0005](../architecture/0005-m1-renderer-playcanvas.md), with actual-main CI pending; ART05
+three-representation comparison is active and remains unmeasured. CT01 and K01 pure packets can
+run independently of G10 when their named source/export ownership is ready; H
+implementation waits for final G10 serialization. Root exports, migrations, lockfile,
+app mounting and service ports always have one explicitly named writer.
+
+Each frozen packet receives a bounded read-only review; corrections return to its
+writer. The parent uses that interval for integration and browser/transaction proof,
+while the writer may move to an explicitly handed-off independent packet. Completed
+checks are reused only for unchanged source. Full indexed cards remain acceptance
+responsibilities, not a fixed PR count, test count or line limit.
 
 Ports 55433/5557/3107 and preserved identity volumes belong to the parent-managed identity fixture. PR105 gives the clean gate a unique disposable Compose project and dynamic loopback port; it is not the eventual full-alpha launcher. App mounting, root composition, exports, command registry, migrations, launch scripts and lockfile still require explicit one-writer ownership. Independent green branches do not prove their union.
 
