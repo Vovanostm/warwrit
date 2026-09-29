@@ -26,6 +26,7 @@ import {
   hexToWorld,
   sampleTimeline,
   scenario,
+  torchPosition,
 } from '../shared/scenario.js';
 import type { RendererMount, RendererController } from '../shared/renderer.js';
 
@@ -89,7 +90,7 @@ export const BabylonScene: RendererMount = async (canvas, emit, metrics) => {
   if (engine.webGLVersion < 2) throw new Error('Babylon candidate requires WebGL2');
   const scene = new Scene(engine);
   scene.useRightHandedSystem = true;
-  scene.clearColor = new Color3(0.055, 0.072, 0.09).toColor4(1);
+  scene.clearColor = new Color3(...scenario.colors.dayClear).toColor4(1);
   scene.fogMode = Scene.FOGMODE_EXP2;
   scene.fogColor = Color3.FromHexString(scenario.colors.fog);
   scene.fogDensity = scenario.lighting.day.fog;
@@ -113,8 +114,13 @@ export const BabylonScene: RendererMount = async (canvas, emit, metrics) => {
   ambient.intensity = scenario.lighting.day.ambient;
   const key = new DirectionalLight('daylight', new Vector3(-0.35, -1, -0.3), scene);
   key.intensity = scenario.lighting.day.key;
-  const torch = new PointLight('torch-light', new Vector3(1, 3, 0), scene);
+  const torch = new PointLight(
+    'torch-light',
+    new Vector3(torchPosition.x, torchPosition.y, torchPosition.z),
+    scene,
+  );
   torch.intensity = 0;
+  torch.diffuse = new Color3(...scenario.colors.torch);
   torch.range = 8;
 
   const floor = MeshBuilder.CreateGround('arena-floor', { width: 26, height: 18 }, scene);
@@ -159,6 +165,27 @@ export const BabylonScene: RendererMount = async (canvas, emit, metrics) => {
     prop.scaling.set(scale[0], scale[1], scale[2]);
     prop.material = propMat;
   }
+  const signalPosition = hexToWorld(0, 2);
+  const signalWood = material(scene, 'signal-wood', new Color3(0.34, 0.23, 0.13));
+  signalWood.emissiveColor = new Color3(0.28, 0.19, 0.105);
+  const signalCloth = material(scene, 'signal-ochre', new Color3(0.72, 0.53, 0.26));
+  signalCloth.emissiveColor = new Color3(0.5, 0.36, 0.16);
+  const signalPole = MeshBuilder.CreateBox(
+    'signal-pole',
+    { width: 0.07, height: 1.8, depth: 0.07 },
+    scene,
+  );
+  signalPole.position.set(signalPosition.x, 0.9, signalPosition.z);
+  signalPole.material = signalWood;
+  signalPole.isPickable = false;
+  const signalFlag = MeshBuilder.CreateBox(
+    'signal-flag',
+    { width: 0.5, height: 0.3, depth: 0.035 },
+    scene,
+  );
+  signalFlag.position.set(signalPosition.x + 0.285, 1.65, signalPosition.z);
+  signalFlag.material = signalCloth;
+  signalFlag.isPickable = false;
 
   const modelContainers = new Map<string, Awaited<ReturnType<typeof LoadAssetContainerAsync>>>();
   for (const classId of ['Knight', 'Rogue', 'Barbarian'] as const)
@@ -304,8 +331,6 @@ export const BabylonScene: RendererMount = async (canvas, emit, metrics) => {
     }
   }
 
-  const dayColor = Color3.FromHexString('#f7e1be');
-  const nightColor = Color3.FromHexString('#526c9a');
   let currentLight: 'day' | 'night' | 'torch' = 'day';
   let manualLight: 'day' | 'night' | 'torch' | null = null;
   const applyLighting = (preset: 'day' | 'night' | 'torch', mode: 'scripted' | 'manual') => {
@@ -313,12 +338,13 @@ export const BabylonScene: RendererMount = async (canvas, emit, metrics) => {
     const values = scenario.lighting[preset];
     ambient.intensity = values.ambient;
     key.intensity = values.key;
-    key.diffuse = preset === 'day' ? dayColor : nightColor;
+    key.diffuse = Color3.FromHexString(
+      preset === 'day' ? scenario.colors.dayKey : scenario.colors.nightKey,
+    );
     torch.intensity = preset === 'torch' ? scenario.lighting.torch.torch : 0;
     scene.fogDensity = values.fog;
-    scene.clearColor = (
-      preset === 'day' ? new Color3(0.055, 0.072, 0.09) : new Color3(0.025, 0.04, 0.075)
-    ).toColor4(1);
+    const clearColor = preset === 'day' ? scenario.colors.dayClear : scenario.colors.nightClear;
+    scene.clearColor = new Color3(...clearColor).toColor4(1);
     emit({ type: 'lighting', preset, mode });
   };
 

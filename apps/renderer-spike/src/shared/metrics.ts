@@ -1,3 +1,5 @@
+import { scenario } from './scenario.js';
+
 export type MeasurementState = 'READY' | 'NOT_MEASURED' | 'ERROR';
 export type FrameSample = { frameIndex: number; timestampMs: number; intervalMs: number | null };
 export type DurationSample = { frameIndex: number; timestampMs: number; durationMs: number };
@@ -57,7 +59,7 @@ export class MetricsCollector {
     assetsBytes: number,
   ) {
     this.metadata = {
-      scenarioVersion: 'renderer-scene-1',
+      scenarioVersion: scenario.version,
       candidate,
       startedAt: 'NOT_STARTED',
       endedAt: null,

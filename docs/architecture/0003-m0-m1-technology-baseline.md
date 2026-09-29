@@ -5,6 +5,13 @@
 - Requirements: `Q-T02`, `ENG-FND`, `ARCH-BOUNDARY`, `ENCOUNTER-AUTH`, `RECONNECT`
 - Supersedes: informal technology recommendations that are not encoded in an accepted ADR
 
+## Dated renderer amendment — 2026-09-29
+
+[ADR-0005](0005-m1-renderer-playcanvas.md) selects PlayCanvas2.22.4 for the current
+private-M1 Mac/Chrome target after the representative comparison. It supersedes
+only the provisional-renderer decision below; the historical rationale and other
+technology decisions remain intact. ART05/ART06 and broader-device QA remain open.
+
 ## Context
 
 Warwrit now has an implemented engineering foundation and deterministic combat kernel. The repository is not a blank-slate architecture exercise anymore:
