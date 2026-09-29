@@ -236,6 +236,14 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     causeId: id,
     custodyOutcomeId: id,
   }),
+  RecordMissing: command('COMBAT_RECEIPT', {
+    receiptId: id,
+    bindingId: id,
+    battleId: id,
+    terminalReceiptId: id,
+    unitId: id,
+    characterId: id,
+  }),
   ReturnToService: command('PLAYER', {
     characterId: id,
     arrivalEvidenceId: id,

@@ -325,6 +325,18 @@ export interface MissingResolutionEvidence extends PhysicalScope {
   readonly custodyOutcomeId?: string;
   readonly financialDeathReceiptId?: string;
 }
+export interface MissingEntryEvidence extends PhysicalScope {
+  readonly kind: 'MISSING_ENTRY';
+  readonly bindingId: string;
+  readonly battleId: string;
+  readonly terminalReceiptId: string;
+  readonly unitId: string;
+  readonly characterId: string;
+  readonly location: LocationRef;
+  readonly containerIds: readonly string[];
+  readonly itemIds: readonly string[];
+  readonly disposition: 'RETAIN_WITH_PERSON';
+}
 export interface DeathOutcomeEvidence extends PhysicalScope {
   readonly kind: 'DEATH_OUTCOME';
   readonly characterId: string;
@@ -363,6 +375,7 @@ export type PhysicalEvidence =
   | ReleaseOutcomeEvidence
   | CaptiveTransferEvidence
   | MissingResolutionEvidence
+  | MissingEntryEvidence
   | DeathOutcomeEvidence
   | ContainerDispositionEvidence
   | PhysicalObservationEvidence;

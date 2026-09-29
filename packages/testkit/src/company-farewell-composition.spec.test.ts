@@ -1,13 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
   COMPANY_RULES,
+  createCompanyLearningState,
   createSocialState,
   deriveEffectiveRelation,
+  initialSkillProgress,
   prepareCompanyEconomy,
+  prepareCompanyEconomyWithLearning,
+  prepareCompanyEconomyWithLearningAndSocial,
   prepareCompanyFinancialSocial,
   projectCompanyEconomy,
   recordDirectedRelation,
   type CompanyEconomyState,
+  type LearningQuoteContext,
   type SocialState,
 } from '@warwrit/game-core';
 import {
@@ -17,13 +22,14 @@ import {
   context,
   economy,
   observation,
+  place,
   prepared,
   scope,
   tick,
   cash,
 } from './company-economy-fixture.js';
 import { exitCommand, reload, requestExit, serviceId } from './company-farewell-fixture.js';
-import { withLoadedConditions } from './company-physical-fixture.js';
+import { addItem, item, itemAccess, withLoadedConditions } from './company-physical-fixture.js';
 
 type Command = ReturnType<typeof command>;
 type Notice = NonNullable<Parameters<typeof prepareCompanyFinancialSocial>[6]>[number];
@@ -101,6 +107,259 @@ function giftCommand(state: CompanyEconomyState, amountQ = '500') {
 }
 
 describe('E04-BIND: one authenticated financial, physical and social preparation', () => {
+  it('atomically closes an active study interval with the selected-farewell exit and notice', () => {
+    const stateWithBook = addItem(
+      initial(),
+      item(
+        'departure-book',
+        'study-book-medicine',
+        {
+          kind: 'COMPANY',
+          id: 'company',
+        },
+        'fixture-supply',
+      ),
+    );
+    const startState = {
+      ...stateWithBook,
+      lifecycle: {
+        ...stateWithBook.lifecycle,
+        characters: stateWithBook.lifecycle.characters.map((character) =>
+          character.identity.characterId === 'worker-0'
+            ? {
+                ...character,
+                skills: {
+                  ...character.skills,
+                  scholarship: 25,
+                  medicine: initialSkillProgress(0, 'departure-study'),
+                },
+                aptitudeBySkill: { ...character.aptitudeBySkill, medicine: 10000 },
+                perks: ['scholarship-25-a'],
+              }
+            : character,
+        ),
+      },
+    };
+    const learning = createCompanyLearningState();
+    const study = {
+      intervalId: 'departure-study-access',
+      itemId: 'departure-book',
+      accessEvidenceId: 'departure-study-access-evidence',
+    };
+    const start = command(
+      startState,
+      'StartLearning',
+      {
+        characterId: 'worker-0',
+        methodId: 'book-study',
+        goal: { workId: 'wound-care-basics', maxTicks: '5000' },
+        resourceIds: ['departure-book'],
+        budgetPoolId: 'local',
+        maxBudgetQ: '0',
+      },
+      'departure-study-start',
+      'PLAYER',
+      startState.finance.processedTick,
+    );
+    const learningSource: LearningQuoteContext['learningFacts'][number] = {
+      ...scope(startState, 'departure-study-source'),
+      sourceVersion: 'departure-study-v1',
+      expiresAt: tick(40000),
+      learnerId: 'worker-0',
+      location: place,
+      resourceIds: ['departure-book'],
+      kind: 'SELF_STUDY',
+      methodId: 'book-study',
+      workId: 'wound-care-basics',
+      sectionId: 'wound-care-basics-1',
+    };
+    const startContext = {
+      ...context(
+        startState,
+        start,
+        [access(startState)],
+        [],
+        [
+          {
+            ...itemAccess(
+              startState,
+              study.accessEvidenceId,
+              'STUDY',
+              ['fixture-supply'],
+              [study.itemId],
+            ),
+            operatorId: 'worker-0',
+          },
+        ],
+      ),
+      learningFacts: [learningSource],
+    } as LearningQuoteContext;
+    const started = prepareCompanyEconomyWithLearning(
+      { economy: startState, learning },
+      start,
+      startContext,
+      {
+        taskId: 'departure-study-task',
+        effectId: 'departure-study-start-effect',
+        intervals: [],
+        study,
+      },
+    );
+    if (started.kind !== 'PREPARED') throw new Error(`Start departure study: ${started.error}`);
+
+    const initialState = started.next.economy;
+    const sourceLearningTask = started.next.learning.tasks.tasks.find(
+      (task) => task.start.taskId === 'departure-study-task',
+    )!;
+    const advanceTick = tick(Number(initialState.finance.processedTick) + 10);
+    const advanceCommand = command(
+      initialState,
+      'AdvanceCampaign',
+      { toTick: advanceTick, authoritativeInputs: [] },
+      'departure-study-advance',
+      'SYSTEM',
+      advanceTick,
+    );
+    const advanceInterval = {
+      intervalId: 'departure-study-earned-interval',
+      taskId: sourceLearningTask.start.taskId,
+      commandId: advanceCommand.commandId,
+      ownerIntervalId: sourceLearningTask.start.studyIntervalId!,
+      companyId: initialState.lifecycle.companyId,
+      worldId: initialState.lifecycle.worldId,
+      characterId: 'worker-0',
+      fromTick: initialState.finance.processedTick,
+      toTick: advanceTick,
+      kind: 'ELIGIBLE' as const,
+    };
+    const advanced = prepareCompanyEconomyWithLearning(
+      { economy: initialState, learning: started.next.learning },
+      advanceCommand,
+      {
+        ...context(initialState, advanceCommand),
+        learningFacts: [learningSource],
+      } as LearningQuoteContext,
+      {
+        intervals: [advanceInterval],
+        manifest: {
+          companyId: initialState.lifecycle.companyId,
+          worldId: initialState.lifecycle.worldId,
+          commandId: advanceCommand.commandId,
+          taskId: sourceLearningTask.start.taskId,
+          ownerIntervalId: sourceLearningTask.start.studyIntervalId!,
+          targetTick: advanceTick,
+          evidenceIds: [advanceInterval.intervalId, advanceInterval.ownerIntervalId],
+        },
+        effectId: 'departure-study-advance-effect',
+      },
+    );
+    if (advanced.kind !== 'PREPARED') throw new Error(`Advance departure study: ${advanced.error}`);
+    const state = observation(advanced.next.economy, 'worker-0').result.next;
+    const learningAtDeparture = advanced.next.learning;
+    const social = relations();
+    const cmd = exitCommand(state);
+    const intentId = state.finance.departures.find(
+      (entry) => entry.membershipId === serviceId,
+    )!.intentId;
+    const farewellContext = {
+      ...scope(state, 'departure-farewell-context', cmd.campaignTick),
+      kind: 'FAREWELL_CONTEXT' as const,
+      membershipId: serviceId,
+      departureIntentId: intentId,
+      leaderId: 'leader',
+    };
+    const contextWithLearning = {
+      ...context(
+        state,
+        cmd,
+        [access(state, cmd.campaignTick)],
+        [],
+        [
+          {
+            ...itemAccess(
+              state,
+              study.accessEvidenceId,
+              'STUDY',
+              ['fixture-supply'],
+              [study.itemId],
+            ),
+            atTick: cmd.campaignTick,
+            operatorId: 'worker-0',
+          },
+        ],
+      ),
+      learningFacts: [learningSource],
+    } as LearningQuoteContext;
+    const result = prepareCompanyEconomyWithLearningAndSocial(
+      { economy: state, learning: learningAtDeparture },
+      social,
+      cmd,
+      contextWithLearning,
+      [farewellContext],
+      [],
+      [{ ...notice(state, cmd), learnedAt: cmd.campaignTick }],
+      {
+        intervals: [],
+        manifest: {
+          companyId: state.lifecycle.companyId,
+          worldId: state.lifecycle.worldId,
+          commandId: cmd.commandId,
+          taskId: sourceLearningTask.start.taskId,
+          ownerIntervalId:
+            sourceLearningTask.start.studyIntervalId ?? sourceLearningTask.start.quote.sourceId,
+          targetTick: cmd.campaignTick,
+          evidenceIds: [intentId],
+        },
+        effectId: 'departure-study-stop-effect',
+      },
+    );
+    expect(result.kind, result.kind === 'REJECTED' ? result.error : undefined).toBe('PREPARED');
+    if (result.kind !== 'PREPARED') return;
+    expect(result.requirements).toEqual([]);
+    expect(result.receipt.farewellOutcome).toBeDefined();
+    expect(
+      result.next.economy.lifecycle.memberships.find((entry) => entry.membershipId === serviceId)
+        ?.endedAt,
+    ).toBe(state.finance.processedTick);
+    expect(result.next.social.chronicle).toHaveLength(1);
+    expect(
+      result.next.learning.tasks.tasks.find((task) => task.start.taskId === 'departure-study-task')
+        ?.terminal,
+    ).toMatchObject({ kind: 'INTERRUPTED', commandId: cmd.commandId });
+    expect(
+      result.next.learning.tasks.tasks.find((task) => task.start.taskId === 'departure-study-task')
+        ?.completedTicks,
+    ).toBe('10');
+
+    const bad = prepareCompanyEconomyWithLearningAndSocial(
+      { economy: state, learning: learningAtDeparture },
+      social,
+      cmd,
+      contextWithLearning,
+      [farewellContext],
+      [],
+      [{ ...notice(state, cmd), personId: 'not-an-observer' }],
+      {
+        intervals: [],
+        manifest: {
+          companyId: state.lifecycle.companyId,
+          worldId: state.lifecycle.worldId,
+          commandId: cmd.commandId,
+          taskId: sourceLearningTask.start.taskId,
+          ownerIntervalId:
+            sourceLearningTask.start.studyIntervalId ?? sourceLearningTask.start.quote.sourceId,
+          targetTick: cmd.campaignTick,
+          evidenceIds: [intentId],
+        },
+        effectId: 'departure-study-stop-effect',
+      },
+    );
+    expect(bad).toMatchObject({
+      kind: 'REJECTED',
+      state: { economy: state, learning: learningAtDeparture, social },
+    });
+  });
+
   it('uses real exact social contexts, selected exit and later gift, with original command/source replay', () => {
     const state = initial(),
       social = relations(),
