@@ -51,10 +51,17 @@ The Vite development server proxies `/api/*` to the server and removes the `/api
 1. formatting check;
 2. ESLint, including deterministic-core restrictions on ambient time, randomness, process, storage, network, browser, and concurrency APIs;
 3. dependency-boundary and cycle checks;
-4. content/asset validation;
-5. package builds in dependency order;
-6. strict TypeScript checks against built workspace contracts;
-7. unit and property tests.
+4. unused files, exports and dependencies (`fallow dead-code`, configured in `.fallowrc.jsonc`);
+5. ast-grep code-shape rules and their rule tests (`sgconfig.yml`, `ast-grep/`);
+6. content/asset validation;
+7. package builds in dependency order;
+8. strict TypeScript checks against built workspace contracts;
+9. unit and property tests.
+
+Pull-request CI also runs `pnpm check:changes` (`fallow audit`): it fails only on
+dead code, complexity or duplication that the branch introduces in changed files.
+Inherited complexity and clones are listed by `pnpm report:quality` and
+`pnpm exec ast-grep scan` warnings; fixing them belongs to an owning change.
 
 The M0 combat acceptance gate runs separately:
 
@@ -83,6 +90,9 @@ pnpm --filter @warwrit/game-core typecheck            # one package
 pnpm exec prettier --check <changed files>
 pnpm check:architecture
 pnpm check:migrations                                 # released migrations unchanged vs origin/main
+pnpm check:changes                                    # new dead code/complexity/duplication vs origin/main
+pnpm exec ast-grep scan <paths>                       # code-shape rules; warnings are known weak spots
+pnpm exec fallow dupes --trace dup:<fingerprint>      # inspect one clone group before consolidating
 ```
 
 Testkit and cross-package specs import built workspace exports; `typecheck` uses

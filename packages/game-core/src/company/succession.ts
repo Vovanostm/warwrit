@@ -51,7 +51,7 @@ function freeForCompany(state: LifecycleState, character: LifecycleCharacter): b
     !character.presence.encounterBindingId
   );
 }
-export function successionOptions(state: LifecycleState, tick: LifecycleContext['atTick']) {
+function successionOptions(state: LifecycleState, tick: LifecycleContext['atTick']) {
   const circle = successionCircle(state);
   const adults = state.characters.filter(
     (p) =>

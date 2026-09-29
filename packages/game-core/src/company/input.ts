@@ -17,7 +17,7 @@ export type ObjectOf<F extends Fields> = { readonly [K in RequiredKeys<F>]: Valu
   readonly [K in OptionalKeys<F>]?: ValueOf<F[K]>;
 };
 
-export const JSON_LIMITS = Object.freeze({ depth: 20, nodes: 10000, entries: 1000 });
+const JSON_LIMITS = Object.freeze({ depth: 20, nodes: 10000, entries: 1000 });
 export function plainObject(value: unknown): value is Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
   const prototype: unknown = Object.getPrototypeOf(value);

@@ -1,0 +1,7 @@
+id: no-focused-tests
+valid:
+  - "it('keeps money exact', () => {});"
+  - 'promise.only();'
+invalid:
+  - "it.only('keeps money exact', () => {});"
+  - "describe.only('economy', () => {});"

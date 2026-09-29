@@ -15,8 +15,8 @@ import type { MaterializedCompanyState, PhysicalChange } from './physical-root-t
 import { isEntityId, isExactInteger } from './values.js';
 
 /** F02-v1 is intentionally narrow: S-02 explicitly approved hair/barber changes, not a face editor. */
-export const PRESENTATION_SERVICE_ID = 'BARBER_HAIR' as const;
-export const PRESENTATION_SERVICE_VERSION = 's02-barber-hair-1' as const;
+const PRESENTATION_SERVICE_ID = 'BARBER_HAIR' as const;
+const PRESENTATION_SERVICE_VERSION = 's02-barber-hair-1' as const;
 
 function requestedHairStyle(command: CommandOf<'ChangePresentation'>): string {
   const patch = command.payload.appearancePatch;

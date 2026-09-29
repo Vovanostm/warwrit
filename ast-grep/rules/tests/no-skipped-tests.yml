@@ -1,0 +1,13 @@
+id: no-skipped-tests
+language: Tsx
+severity: warning
+message: A skipped specification is not a pass; record it as NOT_RUN or remove it.
+note: AGENTS.md hard rule 7 and "never delete the only regression for an unfixed bug".
+files:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+rule:
+  pattern: $RUNNER.skip($$$ARGS)
+constraints:
+  RUNNER:
+    regex: ^(describe|suite|it|test)$

@@ -7,4 +7,5 @@ blockExoticSubdeps: true
 disallowWorkspaceCycles: true
 
 allowBuilds:
+  '@ast-grep/cli': false
   esbuild: true
