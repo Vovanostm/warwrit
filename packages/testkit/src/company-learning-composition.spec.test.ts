@@ -9,6 +9,7 @@ import {
   prepareCompanyEconomy,
   prepareLearningComposition,
   prepareCompanyEconomyWithLearning,
+  entityId,
 } from '@warwrit/game-core';
 import type {
   CommandOf,
@@ -1156,6 +1157,123 @@ describe('C05 time and atomic learning composition', () => {
     if (retry.kind !== 'PREPARED') return;
     expect(retry.replayed).toBe(true);
     expect(retry.next).toEqual(result.next);
+  });
+
+  it('settles shared-provider course prefixes when a combat receipt records the provider missing', () => {
+    let state = economy([1n, 1n], 7_000_000n, 10);
+    const companyOwner = { kind: 'COMPANY' as const, id: state.lifecycle.companyId };
+    state = addItem(state, item('book-1', 'study-book-medicine', companyOwner, 'fixture-supply'));
+    state = addItem(state, item('book-2', 'study-book-medicine', companyOwner, 'fixture-supply'));
+    let learning = createCompanyLearningState();
+
+    const firstCourse = startScenarioTask(state, learning, 'worker-0', true, 'book-1');
+    state = firstCourse.result.next.economy;
+    learning = firstCourse.result.next.learning;
+    const secondCourse = startScenarioTask(state, learning, 'worker-1', true, 'book-1');
+    state = secondCourse.result.next.economy;
+    learning = secondCourse.result.next.learning;
+    // The retained courses earned through tick 15; the shared provider then entered combat.
+    state = atTick(state, 20);
+    state = visibleCharacter(state, 'leader', (character) => ({
+      ...character,
+      presence: {
+        ...character.presence,
+        availability: 'IN_ENCOUNTER',
+        encounterBindingId: entityId<'EncounterBinding'>('missing-provider-binding'),
+      },
+    }));
+    const missing = command(
+      state,
+      'RecordMissing',
+      {
+        receiptId: 'shared-provider-missing-entry',
+        bindingId: entityId<'EncounterBinding'>('missing-provider-binding'),
+        battleId: 'shared-provider-missing-battle',
+        terminalReceiptId: 'shared-provider-missing-terminal',
+        unitId: 'shared-provider-unit',
+        characterId: 'leader',
+      },
+      'shared-provider-recorded-missing',
+      'COMBAT_RECEIPT',
+      tick(20),
+    ) as ReturnType<typeof command> & CommandOf<'RecordMissing'>;
+    const missingFact = {
+      ...physicalScope(state, 'shared-provider-missing-entry', tick(20)),
+      sourceEventId: missing.sourceEventId,
+      kind: 'MISSING_ENTRY' as const,
+      bindingId: missing.payload.bindingId,
+      battleId: missing.payload.battleId,
+      terminalReceiptId: missing.payload.terminalReceiptId,
+      unitId: missing.payload.unitId,
+      characterId: 'leader',
+      location: place,
+      containerIds: [],
+      itemIds: [],
+      disposition: 'RETAIN_WITH_PERSON' as const,
+    };
+    const courseFixtures = [firstCourse.fixture, secondCourse.fixture];
+    const intervals = courseFixtures.flatMap((fixture) =>
+      [segment(fixture, 10, 15, 'ELIGIBLE'), segment(fixture, 15, 20, 'INELIGIBLE')].map(
+        (interval) => ({ ...interval, commandId: missing.commandId }),
+      ),
+    );
+    const manifests = courseFixtures.map((fixture) => {
+      const taskIntervals = intervals.filter((entry) => entry.taskId === fixture.task.start.taskId);
+      return {
+        companyId: missing.companyId,
+        worldId: missing.worldId,
+        commandId: missing.commandId,
+        taskId: fixture.task.start.taskId,
+        ownerIntervalId: fixture.task.start.quote.sourceId,
+        targetTick: tick(20),
+        evidenceIds: [
+          ...new Set([
+            ...taskIntervals.flatMap(intervalEvidenceIds),
+            fixture.task.start.taskId,
+            missing.payload.receiptId,
+          ]),
+        ],
+      };
+    });
+    const learningFacts = [
+      ...firstCourse.fixture.startContext.learningFacts,
+      ...secondCourse.fixture.startContext.learningFacts,
+    ];
+    const missingContext = {
+      ...context(state, missing, [], [], [missingFact]),
+      learningFacts,
+    };
+    const input = { economy: state, learning };
+    const before = structuredClone(input);
+    const result = prepareCompanyEconomyWithLearning(input, missing, missingContext, {
+      intervals,
+      manifests,
+      effectId: 'shared-provider-missing-learning',
+    });
+
+    expect(result.kind, result.kind === 'REJECTED' ? result.error : '').toBe('PREPARED');
+    if (result.kind !== 'PREPARED') {
+      expect(input).toEqual(before);
+      return;
+    }
+    for (const fixture of courseFixtures) {
+      const task = result.next.learning.tasks.tasks.find(
+        (entry) => entry.start.taskId === fixture.task.start.taskId,
+      );
+      expect(task).toMatchObject({
+        completedTicks: '5',
+        processedThroughTick: '20',
+        terminal: { kind: 'INTERRUPTED', commandId: missing.commandId },
+      });
+    }
+    expect(
+      result.next.economy.finance.learningEffects
+        ?.filter((effect) => effect.commandId === missing.commandId)
+        .map((effect) => effect.acceptedTicks)
+        .sort(),
+    ).toEqual(['5', '5']);
+    expect(result.next.economy.physical?.containers).toEqual(state.physical?.containers);
+    expect(result.next.economy.physical?.items).toEqual(state.physical?.items);
   });
 
   it('settles an accrued book prefix when transfer arrives after admitted access ends', () => {

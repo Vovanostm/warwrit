@@ -3,7 +3,7 @@ import { canonicalCombatState } from '../combat/replay.js';
 import { canonicalJson, id } from './input.js';
 import { EconomyViolation, validateEconomy } from './economy-state.js';
 import { validateCombatReceiptJournal } from './combat-receipts.js';
-import { prepareCompanyEconomyWithLearning } from './economy.js';
+import { prepareCompanyEconomyWithLearning, taskParticipants } from './economy.js';
 import type { CompanyEconomyWithLearningState } from './economy.js';
 import type { EconomyContext } from './economy-types.js';
 import type { EncounterPositionEvidence, FrozenEncounterBinding } from './encounter-binding.js';
@@ -23,10 +23,10 @@ import { applyCombatInitialReceipt, applyCombatPhysicalReceipt } from './combat-
 import { persistentMoraleAfterCombat } from './combat-morale.js';
 import type { SocialState } from './social.js';
 import { effectiveLeaderId, replacePerson, validateLifecycleGraph } from './lifecycle-state.js';
-import { setActualFinancePaused } from './physical-outcomes.js';
 import { PhysicalViolation, requirePhysical, validatePhysicalState } from './physical-state.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
 import type { CompanyCommand } from './commands.js';
+import { COMPANY_COMMAND_SCHEMA_VERSION, COMPANY_RULESET_ID } from './model.js';
 import type { CombatReceiptJournal } from './combat-receipts.js';
 import { guardCompanyCommand } from './guards.js';
 import type { PracticeContext } from './practice-admission.js';
@@ -79,6 +79,7 @@ export interface EncounterDispositionEvidence {
   readonly characterId: string;
   readonly status: 'PRESENT' | 'MISSING' | 'DEAD' | 'CAPTIVE';
   readonly location: MaterializedCompanyState['lifecycle']['characters'][number]['presence']['location'];
+  readonly missingEntryId?: string;
 }
 
 export interface EncounterTerminalEvidence {
@@ -308,13 +309,15 @@ function applyLearningCommand(
   context: CombatOwnerContext,
   learning: CombatLearningBoundary,
   atTick: CampaignTick,
+  evidenceRevision = context.canonicalRevision,
 ): { readonly next: CompanyCombatAggregateState; readonly requirements: readonly unknown[] } {
   const root = materialized(state);
-  const evidenceRevision = context.canonicalRevision;
   const candidateCommand: CompanyCommand =
-    command.type === 'ApplyCondition' || command.type === 'RecordDeath'
+    command.type === 'ApplyCondition' ||
+    command.type === 'RecordDeath' ||
+    command.type === 'RecordMissing'
       ? ({ ...command, expectedRevision: root.lifecycle.revision } as
-          CommandOf<'ApplyCondition'> | CommandOf<'RecordDeath'>)
+          CommandOf<'ApplyCondition'> | CommandOf<'RecordDeath'> | CommandOf<'RecordMissing'>)
       : command;
   const trusted = internalContext(
     currentOwnerContext(state, context as CombatOwnerContext, atTick),
@@ -383,11 +386,13 @@ function validateAggregateContext(
 }
 
 function activeLearningFor(state: CompanyCombatAggregateState, characterIds: ReadonlySet<string>) {
+  const root = materialized(state);
   return readLearningTaskState(state.learning.tasks).tasks.some(
     (task) =>
       !task.stop &&
+      !task.terminal &&
       BigInt(task.completedTicks) < BigInt(task.start.quote.maxTicks) &&
-      characterIds.has(task.start.command.payload.characterId),
+      taskParticipants(task, undefined, root).some((id) => characterIds.has(id)),
   );
 }
 
@@ -763,6 +768,7 @@ export interface FinalizeCombatAggregateInput {
   readonly applications: readonly CombatReceiptApplication[];
   readonly terminal: EncounterTerminalEvidence;
   readonly context: CombatOwnerContext;
+  readonly missingLearning?: Readonly<Record<string, CombatLearningBoundary>>;
 }
 
 export function prepareFinalizeCombatAggregate(
@@ -871,22 +877,57 @@ export function prepareFinalizeCombatAggregate(
             ),
           'INVALID_SOURCE',
         );
-        const missing = replacePerson(root.lifecycle, {
-          ...character,
-          presence: {
-            ...character.presence,
-            availability: 'OUT_OF_CONTACT',
-            assignment: 'NONE',
-            fieldPartyId: null,
-            encounterBindingId: null,
-            location: evidence.location,
+        requirePhysical(
+          evidence.missingEntryId && id.read(evidence.missingEntryId),
+          'INVALID_SOURCE',
+        );
+        const learning = input.missingLearning?.[participant.unitId];
+        requirePhysical(learning, 'INVALID_SOURCE');
+        const missingEntry = input.context.physicalFacts?.find(
+          (fact) => fact.kind === 'MISSING_ENTRY' && fact.id === evidence.missingEntryId,
+        );
+        requirePhysical(
+          missingEntry?.kind === 'MISSING_ENTRY' &&
+            missingEntry.sourceEventId === input.terminal.sourceEventId &&
+            missingEntry.bindingId === active.binding.bindingId &&
+            missingEntry.battleId === active.binding.setup.battleId &&
+            missingEntry.terminalReceiptId === input.terminal.receiptId &&
+            missingEntry.unitId === participant.unitId &&
+            missingEntry.characterId === characterId &&
+            canonicalJson(missingEntry.location) === canonicalJson(evidence.location),
+          'INVALID_SOURCE',
+        );
+        const missingCommand: CommandOf<'RecordMissing'> = {
+          schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+          commandId: evidence.missingEntryId,
+          worldId: root.lifecycle.worldId,
+          companyId: root.lifecycle.companyId,
+          actorRef: { kind: 'COMBAT_RECEIPT', id: active.binding.bindingId },
+          expectedRevision: root.lifecycle.revision,
+          campaignTick: input.terminal.atTick,
+          rulesetId: COMPANY_RULESET_ID,
+          sourceEventId: input.terminal.sourceEventId,
+          type: 'RecordMissing',
+          payload: {
+            receiptId: evidence.missingEntryId,
+            bindingId: active.binding.bindingId,
+            battleId: active.binding.setup.battleId,
+            terminalReceiptId: input.terminal.receiptId,
+            unitId: participant.unitId,
+            characterId,
           },
-        });
-        root = {
-          ...root,
-          lifecycle: missing,
-          finance: setActualFinancePaused(root, characterId, true),
         };
+        const recorded = applyLearningCommand(
+          next,
+          missingCommand,
+          input.context,
+          learning,
+          input.terminal.atTick,
+          input.context.canonicalRevision,
+        );
+        requirePhysical(recorded.requirements.length === 0, 'INCOMPATIBLE_ACTIVITY');
+        next = recorded.next;
+        root = materialized(next);
       } else {
         requirePhysical(
           unit.health > 0 && character.presence.availability === 'IN_ENCOUNTER',

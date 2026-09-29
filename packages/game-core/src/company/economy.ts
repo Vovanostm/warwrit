@@ -36,7 +36,13 @@ import {
   endMaintenance,
 } from './economy-maintenance.js';
 import { payClaims, transferFunds } from './economy-payments.js';
-import { own, EconomyViolation, requireEconomy, validateEconomy } from './economy-state.js';
+import {
+  own,
+  EconomyViolation,
+  requireEconomy,
+  validateEconomy,
+  walletFor,
+} from './economy-state.js';
 import { materializeCompanyPhysicalState } from './physical-load.js';
 import {
   PhysicalViolation,
@@ -66,7 +72,11 @@ import type {
   FinanceChange,
 } from './economy-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
-import type { DeathOutcomeEvidence, MissingResolutionEvidence } from './physical-types.js';
+import type {
+  DeathOutcomeEvidence,
+  MissingEntryEvidence,
+  MissingResolutionEvidence,
+} from './physical-types.js';
 import { prepareLearningComposition } from './learning-composition.js';
 import type { LearningSourceContext } from './learning-source.js';
 import type {
@@ -148,6 +158,17 @@ function retroactiveOutcomeTick(command: CompanyCommand, context: EconomyContext
     );
     return fact.actualDeathTick;
   }
+  if (command.type === 'RecordMissing') {
+    const fact = context.physicalFacts?.find(
+      (entry) =>
+        entry.kind === 'MISSING_ENTRY' &&
+        entry.id === command.payload.receiptId &&
+        entry.sourceEventId === command.sourceEventId &&
+        entry.characterId === command.payload.characterId,
+    ) as MissingEntryEvidence | undefined;
+    requireEconomy(fact, 'INVALID_SOURCE');
+    return fact.atTick;
+  }
   requireEconomy(command.type === 'ResolveMissing', 'INVALID_ARGUMENT');
   const fact = context.physicalFacts?.find(
     (entry) =>
@@ -177,19 +198,32 @@ function learningSourceForTask(
   return matches[0]!;
 }
 
-function taskParticipants(
+export function taskParticipants(
   task: CompanyLearningState['tasks']['tasks'][number],
-  learningFacts: LearningSourceContext['learningFacts'],
+  learningFacts: LearningSourceContext['learningFacts'] | undefined,
+  root: MaterializedCompanyState,
 ): readonly string[] {
   const learnerId = task.start.command.payload.characterId;
-  const source = learningSourceForTask(task, learningFacts);
-  return source.kind === 'COURSE'
-    ? [
-        ...new Set(
-          [learnerId, source.providerId, source.mentorId].filter((id): id is string => !!id),
+  const source = learningFacts ? learningSourceForTask(task, learningFacts) : undefined;
+  if (source?.kind === 'COURSE')
+    return [
+      ...new Set(
+        [learnerId, source.providerId, source.mentorId].filter((id): id is string => !!id),
+      ),
+    ];
+  const funding = task.start.quote.funding;
+  if (!source && funding) {
+    const provider = walletFor(root.finance, funding.providerWalletId).owner;
+    requireEconomy(provider.kind === 'CHARACTER', 'INVALID_STATE');
+    return [
+      ...new Set(
+        [learnerId, provider.id, task.start.quote.mentorId].filter(
+          (id): id is string => id !== null,
         ),
-      ]
-    : [learnerId];
+      ),
+    ];
+  }
+  return [learnerId];
 }
 
 function taskAvailableAt(
@@ -309,6 +343,7 @@ function affectedLearningTasks(
     case 'ReleaseCaptive':
     case 'TransferCaptive':
     case 'ResolveMissing':
+    case 'RecordMissing':
     case 'RecordDeath':
       characterIds.add(command.payload.characterId);
       break;
@@ -344,7 +379,8 @@ function affectedLearningTasks(
   }
 
   return active.filter((task) => {
-    if (!taskParticipants(task, learningFacts).some((id) => characterIds.has(id))) return false;
+    if (!taskParticipants(task, learningFacts, root).some((id) => characterIds.has(id)))
+      return false;
     const wasAvailable = taskAvailableAt(task, root, learning, learningFacts, command.campaignTick);
     const isAvailable = taskAvailableAt(
       task,
@@ -354,9 +390,14 @@ function affectedLearningTasks(
       command.campaignTick,
     );
     if (
-      ['Capture', 'ReleaseCaptive', 'TransferCaptive', 'ResolveMissing', 'RecordDeath'].includes(
-        command.type,
-      )
+      [
+        'Capture',
+        'ReleaseCaptive',
+        'TransferCaptive',
+        'ResolveMissing',
+        'RecordMissing',
+        'RecordDeath',
+      ].includes(command.type)
     )
       return true;
     return (wasAvailable && !isAvailable) || (command.type === 'Arrive' && !isAvailable);
@@ -584,7 +625,10 @@ function prepareEconomyCandidate(
     const target =
       command.type === 'AdvanceCampaign' ? campaignTick(command.payload.toTick) : context.atTick;
     const targetContext: PracticeEconomyContext = { ...context, atTick: target };
-    const retroactiveOutcome = command.type === 'RecordDeath' || command.type === 'ResolveMissing';
+    const retroactiveOutcome =
+      command.type === 'RecordDeath' ||
+      command.type === 'ResolveMissing' ||
+      command.type === 'RecordMissing';
     const factualOutcome =
       retroactiveOutcome && learningInput ? retroactiveOutcomeTick(command, context) : target;
     let nextLearning = learningInput?.state ?? null;
@@ -877,6 +921,7 @@ function prepareEconomyCandidate(
           'ReleaseCaptive',
           'TransferCaptive',
           'ResolveMissing',
+          'RecordMissing',
           'RecordDeath',
         ];
         requireEconomy(causeCommands.includes(command.type), 'UNSUPPORTED_ACTION');

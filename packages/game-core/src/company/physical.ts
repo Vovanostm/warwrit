@@ -27,6 +27,7 @@ import {
 } from './physical-items.js';
 import {
   captureCharacter,
+  recordMissingEntry,
   releaseCaptive,
   resolveMissing,
   settleOutcomeApplication,
@@ -72,6 +73,8 @@ export function preparePhysicalCommand(
       return transferCaptive(root, command, context);
     case 'ResolveMissing':
       return resolveMissing(root, command, context);
+    case 'RecordMissing':
+      return recordMissingEntry(root, command, context);
     default:
       return null;
   }
