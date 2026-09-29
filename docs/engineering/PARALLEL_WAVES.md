@@ -16,7 +16,53 @@ NOT_MEASURED.
 
 ## Restored-session dispatch amendment — 2026-09-29
 
-This section supersedes the historical assignments below. PR119 is merged at
+### Current queue after PR122
+
+This queue supersedes the earlier assignments below. Verified main is
+`b5433612a8fc607b4eeef68d1ac9c00aa56e5318`, tree
+`2a51d3d5fda345c22356ddde9864fc4a8e418a4a`. ART05-A is delivered in PR121;
+K01 is delivered in PR122. Parent audited PR122 and actual-main CI36532083132:
+433 tests/65 files, 10,000 battles/100 replay checks and real PostgreSQL migration
+smoke passed; five opt-in checks remain separate. Full alpha remains incomplete.
+
+| Packet                                | Exclusive responsibility                                                                                                                       | Entry and exit boundary                                                                                                                                                                                                      |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G10 B2b1 — Luna active                | `packages/game-core/src/company/combat-aggregate.ts` and existing physical combat spec in `warwrit-alpha-combat-aggregate`                     | Start from local `28e4bed`; validate already-applied death/corpse/custody and compose authorized post-disposition leadership. Freeze with real resolved-battle evidence before review.                                       |
+| ART05 B1 — ready after writer handoff | `apps/renderer-spike/src/playcanvas/{art-sprite,scene}.ts` in `warwrit-alpha-art-consumer`                                                     | Start from merged `b543361`; consume existing Knight eight-direction color manifest in an isolated diagnostic route. Parent checks alpha/pivot/occlusion and actual sprite picking. No animated-corpus or performance claim. |
+| G10 B2b2 — queued                     | `packages/game-core/src/company/economy.ts`, aggregate caller and existing composition/terminal specs; company export only by explicit handoff | After B2b1 review, join existing economy, learning and social owners once for eligible departures, custody/overflow and residual closure. Preserve exact retry and atomic rejection.                                         |
+| G10 CAPTIVE — queued                  | Aggregate caller and existing terminal spec; expand paths only after ACK                                                                       | Compose the existing capture owner from actual trusted terminal/captor/location and seizure sources. Never infer capture from winner/HP. World producers remain separate.                                                    |
+| H01/H02 — gated                       | Complete root reader, ordered migration and real-PG round-trip                                                                                 | Final G10 must be reviewed, merged and integrated first. Read-only source preparation is ready; no speculative decoder or placeholder executor.                                                                              |
+
+The retained pair supports a pipeline: Luna freezes one packet, then takes the
+independent renderer packet while Sol reviews the frozen domain diff and the
+parent runs its focused proof. A review finding returns to the same writer after
+an explicit freeze/handoff; no reviewer edits and no simultaneous company writers.
+Use a twenty-minute implementation checkpoint and ten-minute bounded review or
+planning packet. These are reporting deadlines, not permission to omit required
+behavior or impose a line limit. Report partial work and its next action at expiry.
+
+Every assignment pins actual HEAD/tree, dirty state, paths, source contracts,
+observable acceptance, focused checks and owned resources. Parent owns planning
+files, integration, publication and full gates; children do not spawn children.
+New renderer work uses a separately assigned port; do not reuse or stop retained
+5177–5181 services. Close heavy capture browsers before real G10 battle specs.
+Preserve PostgreSQL55433, Dex5557 and their volumes; disposable SQL belongs to an
+explicit parent allocation. Builds remain inside the assigned worktree.
+
+Sol's dependency review found that CT02, K02 and W05 still lack real predecessors;
+they cannot be accelerated by fabricating successful producers. BATTLE-PROFILES
+and QA00 have no G10 dependency, but each needs its own finite source/resource
+brief before dispatch. Do not repeat already-delivered RT fixture checks merely
+to fill a slot. The host currently exposes parent plus two children; more written
+roles or completed tasks do not prove additional capacity. BATTLE-PROFILES is
+source work only: unarmed damage/range/cost/practice and carried/support battle
+entry are not approved; existing supported impairment penalties are implemented.
+Do not turn this into a speculative combat writer assignment. Throughput gain is
+`NOT_MEASURED`.
+
+### Earlier queue, retained as history
+
+The following was the active assignment before PR121/PR122. PR119 is merged at
 `7a4d216ab7318336ccc24db89cbc19cefb18c7ae`, tree
 `d4bcbd442dbb51c06afe950da1882f8cf923c868`: CT01's static eight-contract catalogue
 is delivered. It supplies no runtime proof, issuer or reward producer.
