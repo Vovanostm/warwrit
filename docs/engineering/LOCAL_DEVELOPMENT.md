@@ -75,8 +75,9 @@ Migration smoke and the encounter PostgreSQL specifications run separately becau
 they require an empty PostgreSQL database. The smoke applies and rolls back every
 migration, leaving no schema; the script then applies all migrations and runs the
 encounter specifications (atomic receipts, competing connections, replay after
-reload) through `WARWRIT_ENCOUNTER_DATABASE_URL`. Before 2026-09-29 CI skipped them because only
-`DATABASE_URL` was set:
+reload) and the OIDC session specification (in-process test issuer, no Dex)
+through `WARWRIT_ENCOUNTER_DATABASE_URL` and `IDENTITY_TEST_DATABASE_URL`. Before
+2026-09-29 CI skipped both because only `DATABASE_URL` was set:
 
 ```bash
 pnpm test:migrations

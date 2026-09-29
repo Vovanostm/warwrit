@@ -31,7 +31,7 @@
     "test": "pnpm test:unit",
     "test:combat:stress": "tsx scripts/combat-stress.ts",
     "test:coverage": "vitest run --coverage --mode coverage",
-    "test:migrations": "tsx scripts/migration-smoke.ts && tsx apps/server/src/db/migrate.ts up && WARWRIT_ENCOUNTER_DATABASE_URL=\"$DATABASE_URL\" vitest run apps/server/src/encounters/postgres.integration.test.ts",
+    "test:migrations": "tsx scripts/migration-smoke.ts && tsx apps/server/src/db/migrate.ts up && WARWRIT_ENCOUNTER_DATABASE_URL=\"$DATABASE_URL\" IDENTITY_TEST_DATABASE_URL=\"$DATABASE_URL\" vitest run apps/server/src/encounters/postgres.integration.test.ts apps/server/src/auth/oidc.integration.test.ts",
     "test:unit": "vitest run",
     "typecheck": "pnpm -r --if-present run typecheck",
     "validate:content": "node scripts/validate-content.mjs",
