@@ -12,6 +12,7 @@ automatically updated Codex personal memory. Do not load every link into every t
 | Commands/environment                     | [local development](LOCAL_DEVELOPMENT.md#focused-checks), package scripts     | Before execution in another checkout/toolchain                                       |
 | Handoff/evidence fields                  | [warwrit-delivery](../../.agents/skills/warwrit-delivery/SKILL.md#handoff)    | Diff/source changes invalidate affected evidence                                     |
 | Role assignment                          | [agent team](AGENT_TEAM.md)                                                   | Verify host support and resource ownership                                           |
+| Harness/quality lane state               | [harness handoff](HARNESS_HANDOFF.md)                                         | Refresh with `pnpm agent:status`; its facts are a dated checkpoint                   |
 
 ## Source-linked operational lessons
 

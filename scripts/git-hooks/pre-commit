@@ -6,6 +6,12 @@
 # `git commit --no-verify` skips it; report the audit as NOT_RUN, not passed.
 set -eu
 
+# Markdown cannot introduce fallow findings. Any other path, including a
+# deletion, runs the audit. An empty commit has nothing to audit.
+if ! git diff --cached --name-only | grep -qv '\.md$'; then
+  exit 0
+fi
+
 root="$(git rev-parse --show-toplevel)"
 cd "$root"
 
