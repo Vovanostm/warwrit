@@ -25,6 +25,13 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   `core.hooksPath`, and `pnpm agent:preflight` reports it. Codex rules prompt on
   `git commit --no-verify`.
 
+### Changed
+
+- 2026-09-30: the pull-request audit scores CRAP from measured unit-test coverage
+  instead of the static estimate, which missed untested functions and flagged
+  37 functions tested through their public boundary. The local hook no longer
+  gates CRAP, because fallow silently read stale `coverage/` output.
+
 ### Fixed
 
 - 2026-09-29, #128: combat initiative ties, AI targets and canonical replay order

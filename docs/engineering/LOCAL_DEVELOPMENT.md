@@ -89,6 +89,9 @@ The Vite development server proxies `/api/*` to the server and removes the `/api
 
 Pull-request CI also runs `pnpm check:changes` (`fallow audit`): it fails only on
 dead code, complexity or duplication that the branch introduces in changed files.
+CI runs `pnpm test:coverage` first and passes it as `FALLOW_COVERAGE`, so CRAP
+scores use measured unit-test coverage. Code covered only by the PostgreSQL
+specifications (`pnpm test:migrations`) counts as untested there.
 Inherited complexity and clones are listed by `pnpm report:quality` and
 `pnpm exec ast-grep scan` warnings; fixing them belongs to an owning change.
 
@@ -96,6 +99,8 @@ The same audit runs locally as Git `pre-commit` and `pre-merge-commit` hooks
 (`scripts/git-hooks/`) for every agent and terminal. It audits the working tree
 against the merge-base with `origin/main` (override with `FALLOW_AUDIT_BASE`), so
 an untracked unused file also blocks a commit; a Markdown-only commit skips it.
+The hook leaves CRAP to CI: fallow otherwise reads any `coverage/` left by an
+earlier run, which would make the local verdict depend on stale files.
 It takes about 10–15 s. Rebase and cherry-pick run no hook, and
 `git commit --no-verify` skips it (the audit is then `NOT_RUN`); CI stays the
 final gate.

@@ -40,8 +40,15 @@ jobs:
       - name: Bootstrap and verify
         run: ./scripts/bootstrap.sh
 
+      # CRAP scores need measured coverage; the static estimate flags functions
+      # that are tested through their public boundary.
+      - name: Measure unit-test coverage for the audit
+        if: github.event_name == 'pull_request'
+        run: pnpm test:coverage
+
       - name: Reject quality regressions in changed files
         if: github.event_name == 'pull_request'
         env:
           FALLOW_AUDIT_BASE: origin/${{ github.base_ref }}
+          FALLOW_COVERAGE: coverage/coverage-final.json
         run: pnpm check:changes
