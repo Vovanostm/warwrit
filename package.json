@@ -28,6 +28,7 @@
     "format": "prettier . --check",
     "format:write": "prettier . --write",
     "lint": "eslint .",
+    "prepare": "sh scripts/install-git-hooks.sh",
     "report:quality": "fallow health --hotspots --targets && fallow dupes",
     "test": "pnpm test:unit",
     "test:combat:stress": "tsx scripts/combat-stress.ts",

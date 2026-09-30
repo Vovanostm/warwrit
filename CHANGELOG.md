@@ -19,6 +19,11 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 - 2026-09-29: `pnpm agent:status` prints live main, CI, open pull requests,
   active unmerged branches with their paths and the next migration number from
   git and gh, replacing hand-written status readback.
+- 2026-09-30, #133: Git `pre-commit` and `pre-merge-commit` hooks run
+  `pnpm check:changes` for every agent and terminal, not only Claude; Markdown-only
+  commits skip. `pnpm install` (or `pnpm run prepare` in an existing clone) sets
+  `core.hooksPath`, and `pnpm agent:preflight` reports it. Codex rules prompt on
+  `git commit --no-verify`.
 
 ### Fixed
 
