@@ -14,11 +14,18 @@ import {
 } from './lifecycle-state.js';
 import type {
   CommandOf,
+  CrisisEvidence,
   LifecycleChange,
   LifecycleCharacter,
   LifecycleContext,
   LifecycleState,
 } from './lifecycle-types.js';
+
+export type SuccessionChoiceMode = CommandOf<'ResolveLeadership'>['payload']['mode'];
+export interface SuccessionChoice {
+  readonly candidateId: string;
+  readonly mode: SuccessionChoiceMode;
+}
 
 function successionCircle(state: LifecycleState): Set<string> {
   requireLifecycle(state.company, 'INVALID_STATE');
@@ -76,6 +83,37 @@ function successionOptions(state: LifecycleState, tick: LifecycleContext['atTick
     regentIds: regents.map((p) => p.identity.characterId).sort(),
     canContinue: adults.length > 0 || (minor !== null && regents.length > 0),
   };
+}
+
+/** Exact candidate/mode pairs accepted by prepareSuccession for this crisis. */
+export function successionChoices(
+  state: LifecycleState,
+  crisis: Pick<CrisisEvidence, 'leaderId' | 'reason'>,
+  tick: LifecycleContext['atTick'],
+): { readonly canContinue: boolean; readonly choices: readonly SuccessionChoice[] } {
+  requireLifecycle(state.company, 'INVALID_STATE');
+  const company = state.company;
+  const options = successionOptions(state, tick);
+  const replacingRegent =
+    company.regencyHeirId !== null && crisis.leaderId === company.actingLeaderId;
+  const mayChoosePermanent =
+    crisis.reason === 'LEADER_DIED' && crisis.leaderId === company.currentLeaderId;
+  const mayChooseActing =
+    company.regencyHeirId === null &&
+    (crisis.reason === 'LEADER_UNAVAILABLE' ||
+      (crisis.reason === 'LEADER_DIED' && crisis.leaderId === company.actingLeaderId));
+  const mayChooseRegency =
+    ((crisis.reason === 'LEADER_DIED' && crisis.leaderId === company.currentLeaderId) ||
+      replacingRegent) &&
+    options.minorHeirId !== null;
+  const choices: SuccessionChoice[] = [];
+  for (const candidateId of options.adultIds) {
+    if (mayChoosePermanent) choices.push({ candidateId, mode: 'PERMANENT' });
+    if (mayChooseActing) choices.push({ candidateId, mode: 'ACTING' });
+    if (mayChooseRegency && options.regentIds.includes(candidateId))
+      choices.push({ candidateId, mode: 'REGENCY' });
+  }
+  return { canContinue: options.canContinue, choices: Object.freeze(choices) };
 }
 export function isDesignationCandidate(
   state: LifecycleState,
@@ -162,6 +200,12 @@ export function prepareSuccession(
     };
   }
   requireLifecycle(p.candidateId, 'CANDIDATE_REQUIRED');
+  requireLifecycle(
+    successionChoices(state, crisis, context.atTick).choices.some(
+      (choice) => choice.candidateId === p.candidateId && choice.mode === p.mode,
+    ),
+    'INCOMPATIBLE_ACTIVITY',
+  );
   if (command.actorRef.kind === 'PLAYER') contact(context, p.candidateId);
   requireLifecycle(
     options.adultIds.includes(p.candidateId as typeof current.identity.characterId),

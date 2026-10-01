@@ -12,6 +12,8 @@ export {
   projectLifecycleRejection,
   observePartyMovement,
 } from './lifecycle.js';
+export { successionChoices } from './succession.js';
+export type { SuccessionChoice, SuccessionChoiceMode } from './succession.js';
 export { fieldPartyStatus } from './membership.js';
 export type * from './economy-types.js';
 export { ECONOMY_SCHEMA_VERSION, ECONOMY_POLICY_VERSION } from './economy-types.js';

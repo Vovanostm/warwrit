@@ -2976,7 +2976,7 @@ describe('G10 — atomic combat company aggregate', () => {
       );
     const leadershipRoot = projectedCapture.next.economy as MaterializedCompanyState;
     const crisis = {
-      ...scope(leadershipRoot, 'aggregate-captive-leader-crisis', terminal.atTick),
+      ...scope(leadershipRoot, terminal.sourceEventId, terminal.atTick),
       sourceEventId,
       kind: 'CRISIS' as const,
       leaderId: characterId,
@@ -2995,6 +2995,10 @@ describe('G10 — atomic combat company aggregate', () => {
       'PLAYER',
       terminal.atTick,
     );
+    const sourceBoundLeadershipCommand = {
+      ...leadershipCommand,
+      sourceEventId: crisis.sourceEventId,
+    };
     const providerTerms: ServiceTermsEvidence = {
       ...scope(leadershipRoot, 'aggregate-captive-provider-service-terms', terminal.atTick),
       kind: 'SERVICE_TERMS',
@@ -3008,12 +3012,12 @@ describe('G10 — atomic combat company aggregate', () => {
       })),
     };
     const leadershipContext = {
-      ...context(leadershipRoot, leadershipCommand, [providerTerms], [crisis]),
+      ...context(leadershipRoot, sourceBoundLeadershipCommand, [providerTerms], [crisis]),
       learningFacts: [],
     } as CombatOwnerContext;
     const finalizeWithLeadership = {
       ...finalizeInput,
-      leadership: { command: leadershipCommand, context: leadershipContext },
+      leadership: { command: sourceBoundLeadershipCommand, context: leadershipContext },
     };
     const before = structuredClone(consumed.next);
     const foreignSourceFact = { ...seizureFact, sourceEventId: 'foreign-terminal-source' };
@@ -3034,7 +3038,7 @@ describe('G10 — atomic combat company aggregate', () => {
         context: { ...leadershipContext, facts: [], learningFacts: [] } as CombatOwnerContext,
       },
     });
-    expect(missingCrisis).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(missingCrisis).toMatchObject({ kind: 'REJECTED', error: 'LEADERSHIP_CHOICE_INVALID' });
     expect(consumed.next).toEqual(before);
 
     const mismatchedCrisis = prepareFinalizeCombatAggregate(consumed.next, {
@@ -3048,7 +3052,10 @@ describe('G10 — atomic combat company aggregate', () => {
         } as CombatOwnerContext,
       },
     });
-    expect(mismatchedCrisis).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(mismatchedCrisis).toMatchObject({
+      kind: 'REJECTED',
+      error: 'LEADERSHIP_CHOICE_INVALID',
+    });
     expect(consumed.next).toEqual(before);
 
     const finalized = prepareFinalizeCombatAggregate(consumed.next, finalizeWithLeadership);
@@ -3313,7 +3320,36 @@ describe('G10 — atomic combat company aggregate', () => {
     ).toBe(ownerSourcesBefore);
     expect(JSON.stringify(contradictedDeath)).toBe(contradictedBefore);
 
-    const root = consumed.next.economy as MaterializedCompanyState;
+    const unobservedRoot = consumed.next.economy as MaterializedCompanyState;
+    const candidateObservationId = 'aggregate-provider-observation';
+    const candidateObservationCommand = command(
+      unobservedRoot,
+      'Observe',
+      {
+        observationId: candidateObservationId,
+        observerRef: { kind: 'COMPANY', id: unobservedRoot.lifecycle.companyId },
+        subjectRef: { kind: 'CHARACTER', id: 'a-provider' },
+        factId: candidateObservationId,
+        sourceId: 'source-aggregate-observe-provider',
+      },
+      'aggregate-observe-provider',
+      'DOMAIN_RECEIPT',
+      unobservedRoot.lifecycle.campaignTick,
+    );
+    const candidateObservation = {
+      ...scope(unobservedRoot, candidateObservationId),
+      sourceEventId: candidateObservationCommand.sourceEventId,
+      kind: 'COMPANY_OBSERVATION' as const,
+      subject: { kind: 'CHARACTER' as const, id: 'a-provider' },
+    };
+    const candidateKnowledge = prepareCompanyEconomy(unobservedRoot, candidateObservationCommand, {
+      ...context(unobservedRoot, candidateObservationCommand, [], [candidateObservation]),
+      learningFacts: [],
+    } as CombatOwnerContext);
+    if (candidateKnowledge.kind !== 'PREPARED')
+      throw new Error(`Could not prepare candidate observation: ${candidateKnowledge.error}`);
+    const finalizeState = { ...consumed.next, economy: candidateKnowledge.next };
+    const root = finalizeState.economy as MaterializedCompanyState;
     const finalReceipt = journal.receipts.at(-1)!;
     const finalState = finalReceipt.transition.state;
     const participants = f.begun.binding.participants.filter(
@@ -3372,7 +3408,7 @@ describe('G10 — atomic combat company aggregate', () => {
     if (leaderDeath?.kind !== 'DEATH_OUTCOME')
       throw new Error('Expected retained leader death fact');
     const crisis = {
-      ...scope(root, 'aggregate-leader-crisis', terminal.atTick),
+      ...scope(root, terminal.sourceEventId, terminal.atTick),
       sourceEventId: leaderDeath.sourceEventId,
       kind: 'CRISIS' as const,
       leaderId: 'a-leader',
@@ -3391,6 +3427,10 @@ describe('G10 — atomic combat company aggregate', () => {
       'PLAYER',
       terminal.atTick,
     );
+    const sourceBoundLeadershipCommand = {
+      ...leadershipCommand,
+      sourceEventId: crisis.sourceEventId,
+    };
     const providerTerms: ServiceTermsEvidence = {
       ...scope(root, 'aggregate-provider-service-terms', terminal.atTick),
       kind: 'SERVICE_TERMS',
@@ -3404,7 +3444,7 @@ describe('G10 — atomic combat company aggregate', () => {
       })),
     };
     const leadershipContext = {
-      ...context(root, leadershipCommand, [providerTerms], [crisis]),
+      ...context(root, sourceBoundLeadershipCommand, [providerTerms], [crisis]),
       learningFacts: [],
     } as CombatOwnerContext;
     const finalizeInput = {
@@ -3413,10 +3453,10 @@ describe('G10 — atomic combat company aggregate', () => {
       applications,
       terminal,
       context: terminalContext,
-      leadership: { command: leadershipCommand, context: leadershipContext },
+      leadership: { command: sourceBoundLeadershipCommand, context: leadershipContext },
     };
 
-    const before = structuredClone(consumed.next);
+    const before = structuredClone(finalizeState);
     const missingLeadershipInput: Omit<typeof finalizeInput, 'leadership'> = {
       command: terminalCommand,
       journal,
@@ -3424,13 +3464,25 @@ describe('G10 — atomic combat company aggregate', () => {
       terminal,
       context: terminalContext,
     };
-    const missingLeadership = prepareFinalizeCombatAggregate(consumed.next, missingLeadershipInput);
-    expect(missingLeadership.kind).toBe('REJECTED');
+    const missingLeadership = prepareFinalizeCombatAggregate(finalizeState, missingLeadershipInput);
     if (missingLeadership.kind === 'REJECTED')
-      expect(missingLeadership.error).toBe('INVALID_SOURCE');
-    expect(consumed.next).toEqual(before);
+      throw new Error(`Expected leadership challenge: ${missingLeadership.error}`);
+    expect(missingLeadership.kind).toBe('LEADERSHIP_REQUIRED');
+    if (missingLeadership.kind === 'LEADERSHIP_REQUIRED') {
+      expect(missingLeadership.crisis).toEqual(crisis);
+      expect(missingLeadership.actualChoices).toContainEqual({
+        candidateId: 'a-provider',
+        mode: 'PERMANENT',
+      });
+      expect(missingLeadership.offer.candidateIds).toEqual(
+        [...root.lifecycle.knowledge.candidateIds].sort(),
+      );
+      expect(missingLeadership.offer.status).toBe('OFFER');
+      expect(missingLeadership.offer.candidateIds).toContain('a-provider');
+    }
+    expect(finalizeState).toEqual(before);
 
-    const missingCrisis = prepareFinalizeCombatAggregate(consumed.next, {
+    const missingCrisis = prepareFinalizeCombatAggregate(finalizeState, {
       ...finalizeInput,
       leadership: {
         ...finalizeInput.leadership,
@@ -3438,7 +3490,9 @@ describe('G10 — atomic combat company aggregate', () => {
       },
     });
     expect(missingCrisis.kind).toBe('REJECTED');
-    expect(consumed.next).toEqual(before);
+    if (missingCrisis.kind === 'REJECTED')
+      expect(missingCrisis.error).toBe('LEADERSHIP_CHOICE_INVALID');
+    expect(finalizeState).toEqual(before);
 
     const providerBefore = root.lifecycle.characters.find(
       (character) => character.identity.characterId === 'a-provider',
@@ -3446,7 +3500,7 @@ describe('G10 — atomic combat company aggregate', () => {
     const providerItemsBefore = root.physical.items.filter(
       (entry) => entry.owner.kind === 'CHARACTER' && entry.owner.id === 'a-provider',
     );
-    const finalized = prepareFinalizeCombatAggregate(consumed.next, finalizeInput);
+    const finalized = prepareFinalizeCombatAggregate(finalizeState, finalizeInput);
     expect(finalized.kind, finalized.kind === 'REJECTED' ? finalized.error : undefined).toBe(
       'PREPARED',
     );

@@ -15,7 +15,7 @@ import type { FinanceEvidence } from './economy-types.js';
 import type { EncounterPositionEvidence, FrozenEncounterBinding } from './encounter-binding.js';
 import { prepareEncounterBinding } from './encounter-binding.js';
 import { isDepartureExecutable } from './economy-departure.js';
-import type { CommandOf } from './lifecycle-types.js';
+import type { CommandOf, CompanyObservationEvidence, CrisisEvidence } from './lifecycle-types.js';
 import type { LearningSourceContext } from './learning-source.js';
 import type { LearningTimeInterval, TrustedLearningCauseManifest } from './learning-time.js';
 import { readLearningTaskState } from './learning-task.js';
@@ -55,6 +55,8 @@ import { preparePracticeCredit } from './practice-credit.js';
 import { skillLevel } from './skill-progress.js';
 import { entityId } from './values.js';
 import type { CampaignTick, EntityId } from './values.js';
+import { successionChoices } from './succession.js';
+import type { SuccessionChoice, SuccessionChoiceMode } from './succession.js';
 
 export const COMBAT_RECEIPT_TIME_VERSION = 's02-combat-receipt-time-1' as const;
 
@@ -915,10 +917,98 @@ export interface FinalizeCombatAggregateInput {
   }[];
 }
 
+export interface TerminalLeadershipOffer {
+  /** Derived only from durable company knowledge; candidate availability is not refreshed here. */
+  readonly status: 'OFFER' | 'WAITING';
+  readonly candidateIds: readonly string[];
+  readonly modes: readonly SuccessionChoiceMode[];
+}
+
+export interface TerminalLeadershipRequired {
+  readonly kind: 'LEADERSHIP_REQUIRED';
+  /** This result is an internal preparation, never persisted or returned as a network DTO. */
+  readonly state: CompanyCombatAggregateState;
+  readonly crisis: CrisisEvidence;
+  /** Exact private choices from the prospective post-disposition graph. */
+  readonly actualChoices: readonly SuccessionChoice[];
+  /** Safe to project: derived from existing lawful knowledge, independent of hidden fate. */
+  readonly offer: TerminalLeadershipOffer;
+}
+
+export type FinalizeCombatAggregateResult =
+  | CombatAggregateResult<{ readonly terminal: CompletedCombatEncounter }>
+  | TerminalLeadershipRequired;
+
+function observeTerminalLeadership(
+  state: CompanyCombatAggregateState,
+  input: FinalizeCombatAggregateInput,
+): CompanyCombatAggregateState {
+  const root = materialized(state);
+  const observationId = input.terminal.id;
+  const fact: CompanyObservationEvidence = {
+    id: observationId,
+    companyId: root.lifecycle.companyId,
+    worldId: root.lifecycle.worldId,
+    revision: root.lifecycle.revision,
+    sourceEventId: input.terminal.sourceEventId,
+    atTick: input.terminal.atTick,
+    kind: 'COMPANY_OBSERVATION',
+    subject: { kind: 'COMPANY', id: root.lifecycle.companyId },
+  };
+  const command: CommandOf<'Observe'> = {
+    schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+    commandId: observationId,
+    worldId: root.lifecycle.worldId,
+    companyId: root.lifecycle.companyId,
+    actorRef: { kind: 'DOMAIN_RECEIPT', id: observationId },
+    expectedRevision: root.lifecycle.revision,
+    campaignTick: input.terminal.atTick,
+    rulesetId: COMPANY_RULESET_ID,
+    sourceEventId: input.terminal.sourceEventId,
+    type: 'Observe',
+    payload: {
+      observationId,
+      observerRef: { kind: 'COMPANY', id: root.lifecycle.companyId },
+      subjectRef: { kind: 'COMPANY', id: root.lifecycle.companyId },
+      factId: observationId,
+      sourceId: input.terminal.sourceEventId,
+    },
+  };
+  const context: CombatOwnerContext = {
+    ...input.context,
+    principal: { kind: 'DOMAIN_RECEIPT', id: observationId },
+    canonicalRevision: root.lifecycle.revision,
+    publicRevision: root.lifecycle.knowledge.revision,
+    atTick: input.terminal.atTick,
+    facts: [fact],
+    learningFacts: [],
+    internalGrant: {
+      commandId: command.commandId,
+      sourceEventId: command.sourceEventId!,
+      canonicalRequest: canonicalJson(command),
+    },
+  };
+  validateAggregateContext(state, context, input.terminal.atTick);
+  const observed = prepareCompanyEconomy(root, command, context);
+  if (observed.kind === 'REJECTED') throw new CombatAggregateViolation(observed.error);
+  requirePhysical(
+    !observed.replayed && observed.receipt.requirements.length === 0,
+    'INVALID_SOURCE',
+  );
+  const next = { ...state, economy: observed.next };
+  const after = materialized(next);
+  requirePhysical(
+    after.lifecycle.knowledge.leaderId === effectiveLeaderId(after.lifecycle) &&
+      after.lifecycle.knowledge.runStatus === after.lifecycle.company?.runStatus,
+    'INVALID_SOURCE',
+  );
+  return next;
+}
+
 export function prepareFinalizeCombatAggregate(
   state: CompanyCombatAggregateState,
   input: FinalizeCombatAggregateInput,
-): CombatAggregateResult<{ readonly terminal: CompletedCombatEncounter }> {
+): FinalizeCombatAggregateResult {
   try {
     const command = guardCompanyCommand(input.command, input.context);
     if (!command.ok) throw new CombatAggregateViolation(command.error);
@@ -1263,23 +1353,6 @@ export function prepareFinalizeCombatAggregate(
     );
     requirePhysical(leader, 'INVALID_STATE');
     if (!canLead(leader)) {
-      const leadership = input.leadership;
-      requirePhysical(leadership, 'INVALID_SOURCE');
-      validateAggregateContext(next, leadership.context, input.terminal.atTick);
-      const guardedLeadership = guardCompanyCommand(leadership.command, leadership.context);
-      requirePhysical(
-        guardedLeadership.ok && guardedLeadership.command.type === 'ResolveLeadership',
-        'INVALID_SOURCE',
-      );
-      const leadershipCommand = guardedLeadership.command;
-      const crisisFacts = leadership.context.facts.filter(
-        (fact) => fact.id === leadershipCommand.payload.crisisId,
-      );
-      requirePhysical(
-        crisisFacts.length === 1 && crisisFacts[0]!.kind === 'CRISIS',
-        'INVALID_SOURCE',
-      );
-      const crisis = crisisFacts[0]!;
       const died = leader.presence.availability === 'DEAD';
       const expectedReason = died ? 'LEADER_DIED' : 'LEADER_UNAVAILABLE';
       let causeSourceEventId: string | undefined;
@@ -1310,7 +1383,6 @@ export function prepareFinalizeCombatAggregate(
           (application.context.physicalFacts ?? []).filter(
             (fact) =>
               fact.kind === 'CONDITION_SOURCE' &&
-              fact.sourceEventId === crisis.sourceEventId &&
               fact.characterId === effectiveLeader &&
               unavailableConditions.some(
                 (condition) =>
@@ -1327,25 +1399,86 @@ export function prepareFinalizeCombatAggregate(
         );
         causeSourceEventId = matchingSources[0]!.sourceEventId;
       }
-      requirePhysical(
-        causeSourceEventId !== undefined &&
-          crisis.leaderId === effectiveLeader &&
-          crisis.reason === expectedReason &&
-          crisis.sourceEventId === causeSourceEventId,
-        'INVALID_SOURCE',
-      );
+      if (causeSourceEventId === undefined)
+        throw new CombatAggregateViolation('MISSING_CAUSE_SOURCE');
+      const crisis: CrisisEvidence = {
+        id: input.terminal.sourceEventId,
+        companyId: root.lifecycle.companyId,
+        worldId: root.lifecycle.worldId,
+        revision: root.lifecycle.revision,
+        sourceEventId: causeSourceEventId,
+        atTick: input.terminal.atTick,
+        kind: 'CRISIS',
+        leaderId: effectiveLeader,
+        reason: expectedReason,
+      };
+      validateLifecycleGraph(root.lifecycle, input.context);
+      const options = successionChoices(root.lifecycle, crisis, input.terminal.atTick);
+      if (!input.leadership) {
+        const candidateIds = Object.freeze([...root.lifecycle.knowledge.candidateIds].sort());
+        return {
+          kind: 'LEADERSHIP_REQUIRED',
+          state,
+          crisis,
+          actualChoices: options.choices,
+          offer: {
+            status: candidateIds.length > 0 ? 'OFFER' : 'WAITING',
+            candidateIds,
+            // This is intentionally fixed by the terminal-choice surface. Actual modes stay private.
+            modes: Object.freeze(['PERMANENT', 'ACTING', 'REGENCY']),
+          },
+        };
+      }
+      const leadership = input.leadership;
+      try {
+        validateAggregateContext(next, leadership.context, input.terminal.atTick);
+      } catch {
+        throw new CombatAggregateViolation('LEADERSHIP_CHOICE_INVALID');
+      }
+      const guardedLeadership = guardCompanyCommand(leadership.command, leadership.context);
+      if (!guardedLeadership.ok || guardedLeadership.command.type !== 'ResolveLeadership')
+        throw new CombatAggregateViolation('LEADERSHIP_CHOICE_INVALID');
+      const leadershipCommand = guardedLeadership.command;
+      const crisisFacts = leadership.context.facts.filter((fact) => fact.id === crisis.id);
+      if (
+        crisisFacts.length !== 1 ||
+        crisisFacts[0]!.kind !== 'CRISIS' ||
+        canonicalJson(crisisFacts[0]) !== canonicalJson(crisis) ||
+        leadershipCommand.payload.crisisId !== crisis.id ||
+        leadershipCommand.sourceEventId !== crisis.sourceEventId ||
+        leadershipCommand.campaignTick !== input.terminal.atTick
+      )
+        throw new CombatAggregateViolation('LEADERSHIP_CHOICE_INVALID');
+      const suppliedCandidate = leadershipCommand.payload.candidateId;
+      const systemNoContinuation =
+        leadershipCommand.actorRef.kind === 'SYSTEM' &&
+        suppliedCandidate === undefined &&
+        leadershipCommand.payload.mode === 'ACTING' &&
+        !options.canContinue &&
+        options.choices.length === 0;
+      const playerChoice =
+        leadershipCommand.actorRef.kind === 'PLAYER' &&
+        suppliedCandidate !== undefined &&
+        options.choices.some(
+          (choice) =>
+            choice.candidateId === suppliedCandidate &&
+            choice.mode === leadershipCommand.payload.mode,
+        );
+      if (!systemNoContinuation && !playerChoice)
+        throw new CombatAggregateViolation('LEADERSHIP_CHOICE_INVALID');
       const preparedLeadership = prepareCompanyEconomy(
         materialized(next),
         leadershipCommand,
         leadership.context,
       );
       if (preparedLeadership.kind === 'REJECTED')
-        throw new CombatAggregateViolation(preparedLeadership.error);
+        throw new CombatAggregateViolation('LEADERSHIP_CHOICE_INVALID');
       requirePhysical(
         !preparedLeadership.replayed && preparedLeadership.receipt.requirements.length === 0,
         'INCOMPATIBLE_ACTIVITY',
       );
       next = { ...next, economy: preparedLeadership.next };
+      next = observeTerminalLeadership(next, input);
       root = materialized(next);
     } else {
       requirePhysical(input.leadership === undefined, 'INVALID_SOURCE');
