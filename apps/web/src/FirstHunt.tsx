@@ -58,6 +58,11 @@ export function firstHuntCommandError(code: unknown): string {
   }
 }
 
+/** Container ids are opaque; the player sees where the item is carried. */
+function containerLabel(containerId: string): string {
+  return containerId.endsWith('"party-supply"]') ? 'в обозе отряда' : 'у бойца отряда';
+}
+
 export function FirstHunt(props: {
   readonly scope: FirstHuntScope;
   readonly location: string | null;
@@ -245,7 +250,9 @@ export function FirstHunt(props: {
     <section className="first-hunt" aria-label="Контракт городской стражи">
       <p className="eyebrow">Контракт · HUNT-03</p>
       <h2>Знамя у старой мельницы</h2>
-      {view.status === 'loading' && <p className="state-note">Загружаем условия и состояние.</p>}
+      {view.status === 'loading' && view.response === undefined && (
+        <p className="state-note">Загружаем условия и состояние.</p>
+      )}
       {view.status === 'failed' && (
         <p className="opening-error" role="alert">
           {view.error}
@@ -283,7 +290,7 @@ export function FirstHunt(props: {
           <p className="state-note">{firstHuntGuidance(contract, props.location)}</p>
           {contract.yourProof && (
             <p className="state-note">
-              Трофей находится в вашем контейнере «{contract.yourProof.containerId}» ·{' '}
+              Трофей находится {containerLabel(contract.yourProof.containerId)} ·{' '}
               {contract.yourProof.redemption === 'REDEEMED'
                 ? 'выплата получена, отметка REDEEMED'
                 : 'ещё не предъявлен'}
@@ -342,7 +349,8 @@ export function FirstHunt(props: {
                   >
                     {pickupTargets.map((target) => (
                       <option key={target.containerId} value={target.containerId}>
-                        {target.label} · свободно {target.availableWeightG} г
+                        {containerLabel(target.containerId)} · свободно{' '}
+                        {Number(target.availableWeightG) / 1000} кг
                       </option>
                     ))}
                   </select>
