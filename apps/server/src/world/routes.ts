@@ -63,6 +63,7 @@ import {
   stableCompanyRequestKey,
 } from '../company/executor.js';
 import { readWorldClock } from './clock.js';
+import { registerWorldSurroundingsRoute } from './surroundings.js';
 import {
   readRouteExecutionEnvelope,
   routeArrivalCommandId,
@@ -100,6 +101,7 @@ export function registerWorldRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyRoutesOptions,
 ): void {
+  registerWorldSurroundingsRoute(app, { database, worldId });
   app.post('/world/travel/preview', { bodyLimit: 2048 }, async (request, reply) => {
     const accountId = await resolveSessionAccount(request, database);
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });

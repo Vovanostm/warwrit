@@ -144,7 +144,10 @@ describe('protocol foundation', () => {
       isFirstHuntReadResponse({
         schemaVersion: 1,
         publicRevision: '5',
-        contract: { ...contractView, pickupTargets: [{ containerId: 'company-pack', hidden: true }] },
+        contract: {
+          ...contractView,
+          pickupTargets: [{ containerId: 'company-pack', hidden: true }],
+        },
       }),
     ).toBe(false);
     expect(

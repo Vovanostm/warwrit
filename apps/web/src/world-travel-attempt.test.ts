@@ -1,9 +1,9 @@
 import { expect, it, vi } from 'vitest';
-import { createElement, isValidElement, type ReactNode } from 'react';
+import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 
-import { WorldTravel } from './WorldTravel.js';
+import { TravelPanel } from './game/TravelPanel.js';
 import {
   attemptStorageKey,
   classifyWorldTravelPost,
@@ -29,6 +29,73 @@ import {
 } from './world-travel-attempt.js';
 
 const scope = { accountId: 'account-1', companyId: 'company-1' } as const;
+
+const site = (siteId: string, name: string, q: number, r: number) =>
+  ({ siteId, name, kind: 'VILLAGE', q, r, danger: 'SAFE' }) as const;
+const map = {
+  regionVersion: 'test',
+  regionName: 'Серое Поречье',
+  sites: [
+    site('kamenny-brod', 'Каменный Брод', 0, 0),
+    site('bereznyak', 'Березняк', -2, 1),
+    site('tikhaya-gat', 'Тихая Гать', 2, 1),
+    site('severny-dvor', 'Северный Двор', 0, 3),
+    { ...site('staraya-melnitsa', 'Старая мельница', 3, -2), danger: 'DANGEROUS' as const },
+  ],
+  edges: [
+    {
+      edgeId: 'kamenny-brod-bereznyak',
+      fromSiteId: 'kamenny-brod',
+      toSiteId: 'bereznyak',
+      travelTicks: 100,
+      danger: 'SAFE' as const,
+    },
+    {
+      edgeId: 'kamenny-brod-tikhaya-gat',
+      fromSiteId: 'kamenny-brod',
+      toSiteId: 'tikhaya-gat',
+      travelTicks: 120,
+      danger: 'SAFE' as const,
+    },
+    {
+      edgeId: 'kamenny-brod-severny-dvor',
+      fromSiteId: 'kamenny-brod',
+      toSiteId: 'severny-dvor',
+      travelTicks: 10,
+      danger: 'SAFE' as const,
+    },
+    {
+      edgeId: 'tikhaya-gat-staraya-melnitsa',
+      fromSiteId: 'tikhaya-gat',
+      toSiteId: 'staraya-melnitsa',
+      travelTicks: 240,
+      danger: 'DANGEROUS' as const,
+    },
+  ],
+};
+
+function renderTravelPanel(
+  current: Parameters<typeof TravelPanel>[0]['world'],
+  overrides: Partial<Parameters<typeof TravelPanel>[0]> = {},
+): string {
+  return renderToStaticMarkup(
+    createElement(TravelPanel, {
+      world: current,
+      map,
+      currentTick: Number(current.worldTick),
+      msPerTick: 21_600,
+      selected: null,
+      busy: false,
+      pendingAttempt: false,
+      returnWindowOpen: false,
+      onSelect: vi.fn(),
+      onTravel: vi.fn(),
+      onRetry: vi.fn(),
+      onRefresh: vi.fn(),
+      ...overrides,
+    }),
+  );
+}
 
 function partyResponse(
   input: {
@@ -168,67 +235,17 @@ function arrivalState(input: {
   )!;
 }
 
-function findButtonWithText(
-  node: ReactNode,
-  text: string,
-):
-  | {
-      readonly props: {
-        readonly disabled?: boolean;
-        readonly onClick?: () => void;
-      };
-    }
-  | undefined {
-  if (Array.isArray(node)) {
-    for (const child of node) {
-      const match = findButtonWithText(child, text);
-      if (match) return match;
-    }
-    return undefined;
-  }
-  if (!isValidElement(node)) return undefined;
-  const props = node.props as { readonly children?: ReactNode } & {
-    readonly disabled?: boolean;
-    readonly onClick?: () => void;
-  };
-  if (node.type === 'button' && renderText(props.children).includes(text)) return { props };
-  return findButtonWithText(props.children, text);
-}
-
-function renderText(node: ReactNode): string {
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(renderText).join('');
-  if (!isValidElement(node)) return '';
-  return renderText((node.props as { readonly children?: ReactNode }).children);
-}
-
-it('offers an accessible refresh until the server reports canArrive', () => {
-  const props = {
-    current: arrivalState({ tick: '1009', canArrive: false }),
-    returnWindowOpen: false,
-    busy: false,
-    pendingAttempt: false,
-    onTravel: vi.fn(),
-    onRetry: vi.fn(),
-    onRefresh: vi.fn(),
-  };
-  const waiting = renderToStaticMarkup(createElement(WorldTravel, props));
-  expect(waiting).toContain('aria-label="Путешествие компании"');
-  expect(waiting).toContain('Проверить готовность к прибытию');
-  expect(waiting).toContain(
-    '<button class="primary-action button-action" type="button" disabled="">Подтвердить прибытие',
+it('offers arrival only when the server reports canArrive', () => {
+  const waiting = renderTravelPanel(arrivalState({ tick: '1009', canArrive: false }));
+  expect(waiting).toContain('aria-label="Путешествие"');
+  expect(waiting).toMatch(
+    /<button class="action action-primary" type="button" disabled="">Подтвердить прибытие/u,
   );
 
-  const ready = renderToStaticMarkup(
-    createElement(WorldTravel, {
-      ...props,
-      current: arrivalState({ tick: '1010', canArrive: true }),
-    }),
+  const ready = renderTravelPanel(arrivalState({ tick: '1010', canArrive: true }));
+  expect(ready).toMatch(
+    /<button class="action action-primary" type="button">Подтвердить прибытие/u,
   );
-  expect(ready).toContain(
-    '<button class="primary-action button-action" type="button">Подтвердить прибытие',
-  );
-  expect(ready).not.toContain('Проверить готовность к прибытию');
 });
 
 it('uses the exact server-offered multi-edge itinerary for the player choice', () => {
@@ -269,19 +286,9 @@ it('uses the exact server-offered multi-edge itinerary for the player choice', (
     }),
   ).toThrow('Departure is not offered by the current world state');
 
-  const markup = renderToStaticMarkup(
-    createElement(WorldTravel, {
-      current,
-      returnWindowOpen: false,
-      busy: false,
-      pendingAttempt: false,
-      onTravel: vi.fn(),
-      onRetry: vi.fn(),
-      onRefresh: vi.fn(),
-    }),
-  );
-  expect(markup).toContain('Отправиться в Березняк');
-  expect(markup).toContain('2 перехода');
+  const markup = renderTravelPanel(current);
+  expect(markup).toContain('Березняк');
+  expect(markup).toContain('110 такт.');
 });
 
 it('previews and offers an authorized V2 dangerous route as a V2 departure', async () => {
@@ -289,57 +296,16 @@ it('previews and offers an authorized V2 dangerous route as a V2 departure', asy
   expect(current.schemaVersion).toBe(2);
   if (current.schemaVersion !== 2) throw new Error('Expected a V2 world offer');
   const departure = current.availableDepartures[0]!;
-  const onTravel = vi.fn();
-  const props = {
-    current,
-    returnWindowOpen: false,
-    busy: false,
-    pendingAttempt: false,
-    onTravel,
-    onRetry: vi.fn(),
-    onRefresh: vi.fn(),
-  };
-  const button = findButtonWithText(WorldTravel(props), 'Отправиться в Старая мельница');
-  expect(button).toBeDefined();
-  expect(button?.props.disabled).toBe(false);
-  const confirm = vi.fn(() => true);
-  const alert = vi.fn();
-  const fetch = vi.fn(async (_url: string, init: RequestInit) => ({
-    ok: true,
-    json: async () => ({
-      schemaVersion: 1,
-      publicRevision: '4',
-      routeEpoch: '3',
-      atTick: '900',
-      purpose: 'NEW',
-      edgeIds: departure.edgeIds,
-      knownShortage: true,
-      assumptions: ['SERVER_CLOCK', 'CURRENT_COMPANY_OWNED_PARTY_STOCK'],
-      requiredStockUnits: '2',
-      availableStockUnits: '1',
-    }),
-    request: init,
-  }));
-  vi.stubGlobal('fetch', fetch);
-  vi.stubGlobal('window', { confirm, alert });
-  try {
-    await button?.props.onClick?.();
-    expect(fetch).toHaveBeenCalledWith(
-      '/api/world/travel/preview',
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify({
-          schemaVersion: 1,
-          purpose: 'NEW',
-          edgeIds: departure.edgeIds,
-        }),
-      }),
-    );
-    expect(confirm).toHaveBeenCalledWith(expect.stringContaining('Известная нехватка'));
-    expect(onTravel).toHaveBeenCalledWith({ kind: 'DEPART', departure });
-  } finally {
-    vi.unstubAllGlobals();
-  }
+  const markup = renderTravelPanel(current);
+  expect(markup).toContain('Старая мельница');
+  expect(markup).toContain('опасно');
+  const selected = renderTravelPanel(current, { selected: departure });
+  expect(selected).toContain('Опасный путь');
+  expect(createWorldTravelPreviewRequest(departure)).toEqual({
+    schemaVersion: 1,
+    purpose: 'NEW',
+    edgeIds: departure.edgeIds,
+  });
 
   const attempt = createWorldTravelAttempt({
     scope,
@@ -406,64 +372,14 @@ it('shows and selects an authoritative RETURN offer without the legacy V1 return
     toSiteId: 'severny-dvor',
   });
   if (!departure) throw new Error('Expected the server-offered RETURN route');
-  const onTravel = vi.fn();
-  const button = findButtonWithText(
-    WorldTravel({
-      current,
-      returnWindowOpen: false,
-      busy: false,
-      pendingAttempt: false,
-      onTravel,
-      onRetry: vi.fn(),
-      onRefresh: vi.fn(),
-    }),
-    'Вернуться в Северный Двор',
-  );
-  expect(button).toBeDefined();
-  expect(button?.props.disabled).toBe(false);
-  const confirm = vi.fn(() => true);
-  const alert = vi.fn();
-  const fetch = vi.fn(async (_url: string, init: RequestInit) => ({
-    ok: true,
-    json: async () => ({
-      schemaVersion: 1,
-      publicRevision: '7',
-      routeEpoch: '0',
-      atTick: '1000',
-      purpose: 'RETURN',
-      edgeIds: departure.edgeIds,
-      knownShortage: false,
-      assumptions: [
-        'SERVER_CLOCK',
-        'CURRENT_COMPANY_OWNED_PARTY_STOCK',
-        'EXACT_FRACTIONAL_FOOD_CARRY',
-      ],
-      requiredStockUnits: '2',
-      availableStockUnits: '4',
-    }),
-    request: init,
-  }));
-  vi.stubGlobal('fetch', fetch);
-  vi.stubGlobal('window', { confirm, alert });
-  try {
-    await button?.props.onClick?.();
-    expect(fetch).toHaveBeenCalledWith(
-      '/api/world/travel/preview',
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify({
-          schemaVersion: 1,
-          purpose: 'RETURN',
-          edgeIds: departure.edgeIds,
-        }),
-      }),
-    );
-    expect(confirm).toHaveBeenCalledWith(expect.stringContaining('Требуется: 2'));
-    expect(confirm).toHaveBeenCalledWith(expect.stringContaining('Доступно: 4'));
-    expect(onTravel).toHaveBeenCalledWith({ kind: 'DEPART', departure });
-  } finally {
-    vi.unstubAllGlobals();
-  }
+  const markup = renderTravelPanel(current);
+  expect(markup).toContain('Возвращение — доступно даже при нехватке припасов');
+  expect(markup).toContain('Северный Двор');
+  expect(createWorldTravelPreviewRequest(departure)).toEqual({
+    schemaVersion: 1,
+    purpose: 'RETURN',
+    edgeIds: departure.edgeIds,
+  });
   expect(
     createWorldTravelAttempt({
       scope,
@@ -583,21 +499,10 @@ it('parses public V2 itinerary progress and renders it read-only with explicit r
     }),
   ).toThrow('Arrival requires a V1 party route');
 
-  const markup = renderToStaticMarkup(
-    createElement(WorldTravel, {
-      current,
-      returnWindowOpen: false,
-      busy: false,
-      pendingAttempt: false,
-      onTravel: vi.fn(),
-      onRetry: vi.fn(),
-      onRefresh: vi.fn(),
-    }),
-  );
-  expect(markup).toContain('завершено 1');
-  expect(markup).toContain('следующий переход выполняется сервером');
-  expect(markup).toContain('Обновить состояние маршрута');
-  expect(markup).not.toContain('Отправиться к Каменному Броду');
+  const markup = renderTravelPanel(current);
+  expect(markup).toContain('следующий участок начнёт сервер');
+  expect(markup).toContain('Обновить');
+  expect(markup).not.toContain('Куда выступить');
   expect(markup).not.toContain('Подтвердить прибытие');
 
   const idleAfterCompletion = readWorldPartyResponse(

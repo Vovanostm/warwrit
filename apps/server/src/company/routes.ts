@@ -39,6 +39,7 @@ import { createOpeningAggregate, issueOpeningOption, openingOptionView } from '.
 import type { IssuedOpeningOption } from './opening.js';
 import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
+import { projectCompanyHoldings } from './holdings.js';
 
 export interface CompanyRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
@@ -63,22 +64,31 @@ export function registerCompanyRoutes(
       const view = projectCompanyLifecycle(state.economy.lifecycle, companyId);
       if (view === null) throw new Error('Owned company projection is unavailable');
       return {
-        companyId: view.companyId,
-        revision: view.revision,
-        companyPresentation: view.companyPresentation,
-        leaderId: view.leaderId,
-        runStatus: view.runStatus,
-        characters: view.characters.map((character) => ({
-          characterId: character.characterId,
-          name: character.name,
-          nicknameTextKey: character.nicknameTextKey,
-          perkIds: [...character.perkIds],
-          knownStatus: character.knownStatus,
-        })),
+        holdings: projectCompanyHoldings(
+          state,
+          companyId,
+          view.characters.map((character) => character.characterId),
+        ),
+        summary: {
+          companyId: view.companyId,
+          revision: view.revision,
+          companyPresentation: view.companyPresentation,
+          leaderId: view.leaderId,
+          runStatus: view.runStatus,
+          characters: view.characters.map((character) => ({
+            characterId: character.characterId,
+            name: character.name,
+            nicknameTextKey: character.nicknameTextKey,
+            perkIds: [...character.perkIds],
+            knownStatus: character.knownStatus,
+          })),
+        },
       };
     });
 
-    return { schemaVersion: 1, company };
+    return company === null
+      ? { schemaVersion: 1, company: null }
+      : { schemaVersion: 1, company: company.summary, holdings: company.holdings };
   });
 
   app.post('/company/opening-options', async (request, reply) => {

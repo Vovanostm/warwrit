@@ -85,9 +85,42 @@ export interface CompanySummaryDto {
     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
   }[];
 }
+/** Owner-private physical and money view; only the owning account receives it. */
+export interface CompanyHoldingsDto {
+  /** Exact company-owned cash in q units (1 crown = 1,000,000 q); members' purses excluded. */
+  readonly cashQ: string;
+  readonly wallets: readonly {
+    readonly walletId: string;
+    readonly siteId: string;
+    /** Member who owns the purse, or null for a company wallet. */
+    readonly ownerCharacterId: string | null;
+    readonly cashQ: string;
+  }[];
+  readonly items: readonly {
+    readonly itemId: string;
+    readonly definitionId: string;
+    readonly quantity: number;
+    readonly currentCondition: number;
+    readonly maximumCondition: number;
+    /** Character carrying the item, or null for party supply / other containers. */
+    readonly carrierCharacterId: string | null;
+    readonly equippedBy: string | null;
+  }[];
+  readonly people: readonly {
+    readonly characterId: string;
+    readonly currentHealth: number | null;
+    readonly maximumHealth: number | null;
+    readonly currentStamina: number | null;
+    readonly maximumStamina: number | null;
+    /** Unresolved physical conditions (wounds, illness) by definition id. */
+    readonly conditions: readonly string[];
+  }[];
+}
 export interface CompanyReadResponseDto {
   readonly schemaVersion: 1;
   readonly company: CompanySummaryDto | null;
+  /** Present whenever company is present. */
+  readonly holdings?: CompanyHoldingsDto;
 }
 export interface CompanyCommandAcceptedDto {
   readonly commandId: string;

@@ -160,3 +160,50 @@ export interface WorldTravelV2RejectionDto extends WorldTravelRejectionFields {
 }
 
 export type WorldTravelRejectionDto = WorldTravelV1RejectionDto | WorldTravelV2RejectionDto;
+
+/**
+ * What the signed-in company can lawfully see right now: both world clocks and
+ * other companies directly observed at the same site. Nothing here comes from
+ * hidden state of parties the observer cannot see.
+ */
+export interface WorldSurroundingsDto {
+  readonly schemaVersion: 1;
+  readonly serverTimeMs: string;
+  readonly campaign: {
+    readonly tick: string;
+    readonly msPerTick: string;
+    readonly ticksPerDay: string;
+  };
+  readonly light: {
+    readonly phase: 'DAY' | 'NIGHT';
+    readonly msIntoPhase: string;
+    readonly phaseMs: string;
+  };
+  /** Public authored region map (sites, roads, danger); no entity positions. */
+  readonly map: {
+    readonly regionVersion: string;
+    readonly regionName: string;
+    readonly sites: readonly {
+      readonly siteId: string;
+      readonly name: string;
+      readonly kind: 'CITY' | 'VILLAGE' | 'LANDMARK';
+      readonly q: number;
+      readonly r: number;
+      readonly danger: 'SAFE' | 'DANGEROUS';
+    }[];
+    readonly edges: readonly {
+      readonly edgeId: string;
+      readonly fromSiteId: string;
+      readonly toSiteId: string;
+      readonly travelTicks: number;
+      readonly danger: 'SAFE' | 'DANGEROUS';
+    }[];
+  };
+  /** Site of the observer's stationary party, or null while travelling or without a party. */
+  readonly observerSiteId: string | null;
+  readonly observedCompanies: readonly {
+    readonly companyName: string;
+    readonly siteId: string;
+    readonly memberCount: number;
+  }[];
+}

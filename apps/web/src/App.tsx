@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import {
+  type CompanyHoldingsDto,
   type CompanyOpeningOptionsResponseDto,
   type CompanySummaryDto,
   type CreateCompanyPayloadDto,
@@ -10,7 +11,7 @@ import {
 import { CombatLab } from './combat-lab/CombatLab.js';
 import { CompanyOpening } from './CompanyOpening.js';
 import { getOrCreateCompanyCreateAttempt } from './company-create-attempt.js';
-import { WorldTravel } from './WorldTravel.js';
+import { GameShell } from './game/GameShell.js';
 import { FirstHunt } from './FirstHunt.js';
 import {
   clearWorldTravelAttempt,
@@ -57,6 +58,7 @@ type JourneyState =
       readonly status: 'company-ready';
       readonly session: PlayerSession;
       readonly company: CompanySummaryDto;
+      readonly holdings: CompanyHoldingsDto | undefined;
       readonly world: WorldPartyReadResponseDto;
       readonly returnWindowOpen: boolean;
       readonly travelAttemptPending: boolean;
@@ -126,6 +128,22 @@ function readCompany(value: unknown): CompanySummaryDto | null | undefined {
     runStatus: runStatus as CompanySummaryDto['runStatus'],
     characters: safeCharacters,
   };
+}
+
+/** Holdings are display-only; a malformed block is dropped rather than trusted. */
+function readHoldings(value: unknown): CompanyHoldingsDto | undefined {
+  if (!isObject(value)) return undefined;
+  const holdings = value['holdings'];
+  if (
+    !isObject(holdings) ||
+    typeof holdings['cashQ'] !== 'string' ||
+    !/^-?[0-9]+$/u.test(holdings['cashQ']) ||
+    !Array.isArray(holdings['wallets']) ||
+    !Array.isArray(holdings['items']) ||
+    !Array.isArray(holdings['people'])
+  )
+    return undefined;
+  return holdings as unknown as CompanyHoldingsDto;
 }
 
 function readOpening(value: unknown): CompanyOpeningOptionsResponseDto['opening'] | undefined {
@@ -324,7 +342,9 @@ export function App() {
         return;
       }
       if (!companyResponse.ok) throw responseError(companyResponse);
-      const company = readCompany(await companyResponse.json());
+      const companyBody: unknown = await companyResponse.json();
+      const company = readCompany(companyBody);
+      const holdings = readHoldings(companyBody);
       if (
         requestGeneration.current !== generation ||
         signingOut.current ||
@@ -401,6 +421,7 @@ export function App() {
           status: 'company-ready',
           session,
           company,
+          holdings,
           world,
           returnWindowOpen,
           travelAttemptPending: storedAttempt.kind === 'FOUND',
@@ -941,6 +962,51 @@ export function App() {
     return () => controller.abort();
   }, [restoreJourney]);
 
+  const readyScope =
+    journey.status === 'company-ready'
+      ? `${journey.session.accountId}\u0000${journey.company.companyId}`
+      : undefined;
+  const refreshWorldForShell = useCallback(() => {
+    if (!readyScope) return;
+    const [accountId, companyId] = readyScope.split('\u0000') as [string, string];
+    void refreshWorldParty({ accountId, companyId });
+  }, [readyScope, refreshWorldParty]);
+
+  // Money, items and bodies change with world events (food on the road, battle, payout).
+  const worldRevision =
+    journey.status === 'company-ready' ? journey.world.publicRevision : undefined;
+  useEffect(() => {
+    if (!readyScope || worldRevision === undefined) return;
+    const controller = new AbortController();
+    void (async () => {
+      try {
+        const response = await fetch(`${apiBaseUrl}/company`, {
+          credentials: 'same-origin',
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        if (!response.ok) return;
+        const body: unknown = await response.json();
+        const company = readCompany(body);
+        if (!company || controller.signal.aborted) return;
+        const holdings = readHoldings(body);
+        setJourney((state) =>
+          state.status === 'company-ready' && state.company.companyId === company.companyId
+            ? { ...state, company, holdings }
+            : state,
+        );
+      } catch {
+        // Keep the last company view; the next world change retries.
+      }
+    })();
+    return () => controller.abort();
+  }, [readyScope, worldRevision]);
+
+  useEffect(() => {
+    // The OIDC callback lands on /auth/session; the game lives at the root.
+    if (window.location.pathname === '/auth/session') window.history.replaceState(null, '', '/');
+  }, []);
+
   const signOut = async () => {
     if (signingOut.current) return;
     signingOut.current = true;
@@ -979,6 +1045,46 @@ export function App() {
     journey.status === 'loading-opening' ||
     journey.status === 'company-opening' ||
     journey.status === 'company-ready';
+
+  if (journey.status === 'company-ready') {
+    const scope = { accountId: journey.session.accountId, companyId: journey.company.companyId };
+    return (
+      <GameShell
+        company={journey.company}
+        holdings={journey.holdings}
+        world={journey.world}
+        travelBusy={travelBusyState}
+        travelPending={journey.travelAttemptPending}
+        returnWindowOpen={journey.returnWindowOpen}
+        {...(journey.travelMessage === undefined ? {} : { travelMessage: journey.travelMessage })}
+        onTravel={(action) => startWorldTravel(action, journey.world, scope)}
+        onRetryTravel={() => retryWorldTravel(journey.world, scope)}
+        onRefreshWorld={refreshWorldForShell}
+        onSignOut={() => void signOut()}
+        placeSlot={
+          <FirstHunt
+            scope={scope}
+            location={journey.world.party?.location ?? null}
+            onUnauthorized={() => void restoreJourney()}
+            refreshKey={contractRefreshGeneration}
+            onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
+          />
+        }
+        battleSlot={
+          <Suspense
+            key={`${scope.accountId}:${scope.companyId}:${encounterGeneration}`}
+            fallback={<p className="state-note">Открываем сводку боя…</p>}
+          >
+            <EncounterPanel
+              scope={scope}
+              onUnauthorized={() => void restoreJourney()}
+              onTerminal={() => setContractRefreshGeneration((generation) => generation + 1)}
+            />
+          </Suspense>
+        }
+      />
+    );
+  }
 
   return (
     <main className="journey-shell">
@@ -1057,94 +1163,6 @@ export function App() {
             pendingAttempt={hasPendingCreateAttempt}
           />
         )}
-        {journey.status === 'company-ready' && (
-          <>
-            <JourneyMessage
-              eyebrow="Компания восстановлена"
-              title="Ваша компания"
-              detail="Состав загружен с сервера. При следующем входе приложение снова запросит сохранённую запись."
-            />
-            <p className="company-standing">{runStatusLabel(journey.company.runStatus)}</p>
-            {journey.company.runStatus === 'GAME_OVER' ? (
-              <JourneyMessage
-                eyebrow="Путь завершён"
-                title="Компания больше не может продолжить"
-                detail="Сохранённая запись остаётся доступна при следующем входе. Новые переходы закрыты серверным состоянием."
-              />
-            ) : (
-              <>
-                <h2 className="roster-heading">Известный состав</h2>
-                <ul className="company-roster" aria-label="Известные участники компании">
-                  {journey.company.characters.map(
-                    (character: CompanySummaryDto['characters'][number]) => (
-                      <li key={character.characterId}>
-                        <span>
-                          {character.name}
-                          {character.characterId === journey.company.leaderId && (
-                            <span className="leader-mark"> · глава</span>
-                          )}
-                        </span>
-                        <span className="roster-status">{statusLabel(character.knownStatus)}</span>
-                      </li>
-                    ),
-                  )}
-                </ul>
-                <WorldTravel
-                  current={journey.world}
-                  returnWindowOpen={journey.returnWindowOpen}
-                  busy={travelBusyState}
-                  pendingAttempt={journey.travelAttemptPending}
-                  {...(journey.travelMessage === undefined
-                    ? {}
-                    : { message: journey.travelMessage })}
-                  onTravel={(action) =>
-                    startWorldTravel(action, journey.world, {
-                      accountId: journey.session.accountId,
-                      companyId: journey.company.companyId,
-                    })
-                  }
-                  onRetry={() =>
-                    retryWorldTravel(journey.world, {
-                      accountId: journey.session.accountId,
-                      companyId: journey.company.companyId,
-                    })
-                  }
-                  onRefresh={() => {
-                    void refreshWorldParty({
-                      accountId: journey.session.accountId,
-                      companyId: journey.company.companyId,
-                    });
-                  }}
-                />
-                <FirstHunt
-                  scope={{
-                    accountId: journey.session.accountId,
-                    companyId: journey.company.companyId,
-                  }}
-                  location={journey.world.party?.location ?? null}
-                  onUnauthorized={() => void restoreJourney()}
-                  refreshKey={contractRefreshGeneration}
-                  onEncounterDiscovered={() =>
-                    setEncounterGeneration((generation) => generation + 1)
-                  }
-                />
-                <Suspense
-                  key={`${journey.session.accountId}:${journey.company.companyId}:${encounterGeneration}`}
-                  fallback={<p className="state-note">Открываем сводку боя…</p>}
-                >
-                  <EncounterPanel
-                    scope={{
-                      accountId: journey.session.accountId,
-                      companyId: journey.company.companyId,
-                    }}
-                    onUnauthorized={() => void restoreJourney()}
-                    onTerminal={() => setContractRefreshGeneration((generation) => generation + 1)}
-                  />
-                </Suspense>
-              </>
-            )}
-          </>
-        )}
         {journey.status === 'error' && (
           <>
             <JourneyMessage
@@ -1174,32 +1192,6 @@ export function App() {
       )}
     </main>
   );
-}
-
-function statusLabel(status: CompanySummaryDto['characters'][number]['knownStatus']): string {
-  switch (status) {
-    case 'AVAILABLE':
-      return 'В отряде';
-    case 'IN_ENCOUNTER':
-      return 'В сражении';
-    case 'OUT_OF_CONTACT':
-      return 'Нет связи';
-    case 'CAPTIVE':
-      return 'В плену';
-    case 'DEAD':
-      return 'Погиб';
-  }
-}
-
-function runStatusLabel(status: CompanySummaryDto['runStatus']): string {
-  switch (status) {
-    case 'ACTIVE':
-      return 'Партия активна';
-    case 'GAME_OVER':
-      return 'Путь завершён';
-    case 'UNKNOWN':
-      return 'Состояние неизвестно';
-  }
 }
 
 function JourneyMessage(props: {
