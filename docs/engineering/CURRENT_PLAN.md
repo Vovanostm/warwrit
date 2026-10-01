@@ -1,5 +1,28 @@
 # Warwrit current delivery plan
 
+**Cycle 1 playable — 2026-10-01 (company and world):** on
+`codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
+How to try it: start the stack per
+[LOCAL_DEVELOPMENT](LOCAL_DEVELOPMENT.md#development-processes), sign in, create
+a company, open **Отряд** (people, health/stamina, carried items, supplies,
+company cash and purses), click Каменный Брод on the map, check the inline
+supply preview, **Выступить**, watch the token move, sign out, stop and restart
+`pnpm dev`, sign in again: the same company is on the same road and arrives on
+the server clock. Demonstration (real Chrome-engine pane, real PostgreSQL 17):
+player one created «Серые Плащи» at Северный Двор, departed at tick 63, the API
+process was killed mid-route at tick ~68 (the shell showed «нет связи» and a
+safe error), restarted; after logout/login the party was still in transit with
+the same ETA and arrived at Каменный Брод by the route worker (rations 6→3,
+stamina 100→99). Player two («Вороньи Перья», scripted login through the same
+Dex/API) travelled to Каменный Брод; each company then saw the other only while
+both stood there («Здесь же стоят», map badge). Both clocks show: Campaign day
+and tick (1000 ticks / 6 h) and Light day/night (10/5 min). Checks run: web unit
+tests 48 passed, web/server typecheck, eslint on changed files. Not done in this
+cycle (moved to Cycle 3 «Company life»): field camp and F1 commands, which need
+a trusted CAMP_SITE/SAFE_SERVICE producer in the company executor. Open owner
+question: the authored travel times make the FIRST HUNT trip ≈2 h each way
+(Каменный Брод→Тихая Гать 43 min, →Старая мельница 86 min).
+
 **Phase 0 delivered — 2026-10-01 (M1 build prompt, Claude Code lead):** all c06
 work is on branch `codex/m1-c06-rescue`, draft
 [PR #135](https://github.com/Vovanostm/warwrit/pull/135); integration worktree
