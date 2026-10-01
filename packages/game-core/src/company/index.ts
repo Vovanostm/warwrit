@@ -3,7 +3,7 @@ export * from './model.js';
 export * from './definitions.js';
 export * from './commands.js';
 export * from './guards.js';
-export { canonicalJson, isJsonData } from './input.js';
+export { canonicalJson, canonicalStateJson, isJsonData } from './input.js';
 export type * from './lifecycle-types.js';
 export { canPerform } from './lifecycle-state.js';
 export {

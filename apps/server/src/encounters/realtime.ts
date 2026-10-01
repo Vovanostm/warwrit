@@ -38,7 +38,10 @@ export function registerEncounterRealtime(
     aiWorker = startEncounterAiWorker(database, {
       onCommitted: refreshEncounterRoomProjections,
       onError: (error) => {
-        app.log.error({ error, event: 'encounter.ai_worker.failed' }, 'Encounter AI worker failed');
+        app.log.error(
+          { err: error, event: 'encounter.ai_worker.failed' },
+          'Encounter AI worker failed',
+        );
       },
     });
   });

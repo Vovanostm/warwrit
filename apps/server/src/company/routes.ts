@@ -22,7 +22,6 @@ import type {
   CompanyCommandAcceptedDto,
   CompanyOpeningOptionsResponseDto,
   CompanyReadResponseDto,
-  CreateCompanyPayloadDto,
   CreateCompanyRequestDto,
   OrdinaryPlayerCompanyCommandV2Dto,
 } from '@warwrit/protocol';
@@ -387,6 +386,15 @@ function parseOrdinaryCompanyCommandV2(
       !isEntityId(payload['characterId']) ||
       !isEntityId(payload['perkId']) ||
       (payload['milestone'] !== 25 && payload['milestone'] !== 60)
+    )
+      return undefined;
+  } else if (value['type'] === 'EquipItem') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !==
+        canonicalJson(['characterId', 'itemId', 'slotId']) ||
+      !isEntityId(payload['characterId']) ||
+      !isEntityId(payload['itemId']) ||
+      !['HEAD', 'BODY', 'MAIN_HAND', 'OFF_HAND', 'BELT'].includes(String(payload['slotId']))
     )
       return undefined;
   }

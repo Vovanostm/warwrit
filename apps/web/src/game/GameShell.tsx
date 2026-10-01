@@ -37,6 +37,9 @@ export function GameShell(props: {
   readonly onRetryTravel: () => void;
   readonly onRefreshWorld: () => void;
   readonly onSignOut: () => void;
+  readonly equipBusy: boolean;
+  readonly equipMessage?: string;
+  readonly onEquip: (characterId: string, item: CompanyHoldingsDto['items'][number]) => void;
   readonly placeSlot: ReactNode;
   readonly battleSlot: ReactNode;
 }) {
@@ -229,7 +232,13 @@ export function GameShell(props: {
             {props.placeSlot}
           </div>
           <div hidden={tab !== 'company'}>
-            <CompanyPanel company={props.company} holdings={props.holdings} />
+            <CompanyPanel
+              company={props.company}
+              holdings={props.holdings}
+              equipBusy={props.equipBusy}
+              {...(props.equipMessage === undefined ? {} : { equipMessage: props.equipMessage })}
+              onEquip={props.onEquip}
+            />
           </div>
         </aside>
       </div>

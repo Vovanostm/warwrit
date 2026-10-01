@@ -36,14 +36,15 @@ export async function readFirstHuntTerminalLockSet(
   )
     return undefined;
 
-  const companyIds = admission.binding['participants'].map((entry) =>
+  // Participants are per character; a company with several members appears several times.
+  const participantCompanyIds = admission.binding['participants'].map((entry) =>
     isRecord(entry) && typeof entry['companyId'] === 'string' ? entry['companyId'] : '',
   );
+  const companyIds = [...new Set(participantCompanyIds)];
   if (
     companyIds.length === 0 ||
     companyIds.length > 2 ||
-    companyIds.some((id) => id.length === 0) ||
-    new Set(companyIds).size !== companyIds.length
+    participantCompanyIds.some((id) => id.length === 0)
   )
     return undefined;
 

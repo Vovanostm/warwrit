@@ -374,20 +374,29 @@ export function prepareEncounterFoodFacts(
   )
     return { kind: 'REJECTED', reason: 'INVALID_STATE' };
 
-  const companyParticipants = binding.participants.filter(
+  const boundParticipants = binding.participants.filter(
     (participant) => participant.companyId === lifecycle.companyId,
   );
-  const partyIds = new Set(companyParticipants.map((participant) => participant.partyId));
-  if (companyParticipants.length === 0 || partyIds.size !== 1)
+  const partyIds = new Set(boundParticipants.map((participant) => participant.partyId));
+  if (boundParticipants.length === 0 || partyIds.size !== 1)
     return { kind: 'REJECTED', reason: 'INVALID_STATE' };
-  const partyId = companyParticipants[0]!.partyId;
+  const partyId = boundParticipants[0]!.partyId;
+  // A participant who already died in this encounter eats nothing and has left the party.
+  const isDead = (characterId: string) =>
+    lifecycle.characters.find((character) => character.identity.characterId === characterId)
+      ?.presence.availability === 'DEAD';
+  const companyParticipants = boundParticipants.filter(
+    (participant) => !isDead(participant.projection.characterId),
+  );
+  if (companyParticipants.length === 0) return { kind: 'PREPARED', facts: [] };
   const matchingParties = lifecycle.parties.filter((party) => party.partyId === partyId);
   const party = matchingParties.length === 1 ? matchingParties[0] : undefined;
   const participantIds = new Set(
     companyParticipants.map((participant) => participant.projection.characterId),
   );
   const currentPartyMembers = lifecycle.characters.filter(
-    (character) => character.presence.fieldPartyId === partyId,
+    (character) =>
+      character.presence.fieldPartyId === partyId && character.presence.availability !== 'DEAD',
   );
   if (
     participantIds.size !== companyParticipants.length ||

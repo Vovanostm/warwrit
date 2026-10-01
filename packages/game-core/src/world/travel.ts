@@ -5,7 +5,7 @@ import { TRAVEL_RULES } from '../company/physical-types.js';
 import type { TrustedTransitSegment } from '../company/physical-types.js';
 import { observePartyMovement } from '../company/lifecycle.js';
 import type { LifecycleEvent } from '../company/lifecycle-types.js';
-import { campaignTick, canonicalRevision, entityId, isExactInteger } from '../company/values.js';
+import { campaignTick, canonicalRevision, isExactInteger } from '../company/values.js';
 import type { CampaignTick } from '../company/values.js';
 import type { WorldRegion } from './region.js';
 import {

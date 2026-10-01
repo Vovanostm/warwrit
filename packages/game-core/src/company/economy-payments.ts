@@ -148,7 +148,10 @@ export function receiveExternalPayment(
 ): CompanyFinance {
   requireEconomy(input.amountQ > 0n && input.fromWalletId !== input.toWalletId, 'INVALID_ARGUMENT');
   const destination = walletFor(finance, input.toWalletId);
-  requireEconomy(canonicalJson(destination.owner) === canonicalJson(input.recipient), 'INVALID_SOURCE');
+  requireEconomy(
+    canonicalJson(destination.owner) === canonicalJson(input.recipient),
+    'INVALID_SOURCE',
+  );
   requireEconomy(
     !finance.movements.some((movement) => movement.movementId === input.movementId),
     'IDEMPOTENCY_CONFLICT',

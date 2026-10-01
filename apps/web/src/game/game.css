@@ -619,3 +619,46 @@
 .panel-subtitle-danger {
   color: #e08a7a;
 }
+
+.person-gear {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.15rem;
+  font-size: 0.8rem;
+}
+
+.person-gear li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gear-carried {
+  color: var(--muted);
+}
+
+.gear-equipped {
+  color: var(--ink);
+}
+
+.gear-action {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--bronze);
+  background: transparent;
+  color: var(--gold);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.gear-action:disabled {
+  opacity: 0.45;
+}
+
+.person-warning {
+  margin: 0.35rem 0 0;
+  color: #e8b17a;
+  font-size: 0.8rem;
+}

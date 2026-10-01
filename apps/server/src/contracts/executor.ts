@@ -4,10 +4,10 @@ import {
   campaignTick,
   canonicalRevision,
   canonicalJson,
+  canonicalStateJson,
   COMBAT_V2_SCHEMA_VERSION,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
-  FIRST_HUNT_HOSTILE_GENESIS,
   FIRST_HUNT_ENCOUNTER_LOCATION,
   FIRST_HUNT_INSTANCE_ID,
   FIRST_HUNT_PROFILE_ID,
@@ -471,15 +471,16 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
     !Array.isArray(admission.binding['participants'])
   )
     throw new TypeError('FIRST HUNT terminal admission is stale or unavailable');
-  const boundCompanyIds = admission.binding['participants'].map((participant) =>
+  // One participant per character; several members of one company share its companyId.
+  const participantCompanyIds = admission.binding['participants'].map((participant) =>
     isRecord(participant) && typeof participant['companyId'] === 'string'
       ? participant['companyId']
       : '',
   );
+  const boundCompanyIds = [...new Set(participantCompanyIds)];
   if (
     boundCompanyIds.length === 0 ||
-    boundCompanyIds.some((id) => id.length === 0) ||
-    new Set(boundCompanyIds).size !== boundCompanyIds.length ||
+    participantCompanyIds.some((id) => id.length === 0) ||
     canonicalJson([...boundCompanyIds].toSorted(compareIds)) !== canonicalJson(lockSet.companyIds)
   )
     throw new TypeError('FIRST HUNT terminal lock set does not match immutable admission');
@@ -705,7 +706,7 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
       !completed ||
       completed.finalStateDigest !== evidence.finalStateDigest ||
       completed.outcomeDigest !== evidence.outcomeDigest ||
-      canonicalJson(finalized.next) !== canonicalJson(finalState)
+      canonicalStateJson(finalized.next) !== canonicalStateJson(finalState)
     )
       throw new TypeError(
         'FIRST HUNT terminal evidence does not match the locked company transition',

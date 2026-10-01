@@ -2,9 +2,14 @@ import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
 
+type HeldItem = CompanyHoldingsDto['items'][number];
+
 export function CompanyPanel(props: {
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
+  readonly equipBusy: boolean;
+  readonly equipMessage?: string;
+  readonly onEquip: (characterId: string, item: HeldItem) => void;
 }) {
   const { company, holdings } = props;
   const supplies = holdings?.items.filter((item) => item.carrierCharacterId === null) ?? [];
@@ -14,6 +19,11 @@ export function CompanyPanel(props: {
       {company.runStatus === 'GAME_OVER' && (
         <p className="travel-error" role="alert">
           Путь компании завершён. Запись сохранена, новые приказы закрыты.
+        </p>
+      )}
+      {props.equipMessage && (
+        <p className="travel-error" role="alert">
+          {props.equipMessage}
         </p>
       )}
       <ul className="people">
@@ -60,15 +70,38 @@ export function CompanyPanel(props: {
                 </p>
               )}
               {carried.length > 0 && (
-                <p className="person-items">
-                  {carried
-                    .map(
-                      (item) =>
-                        `${itemLabel(item.definitionId)}${item.quantity > 1 ? ` ×${item.quantity}` : ''}`,
-                    )
-                    .join(' · ')}
-                </p>
+                <ul className="person-gear">
+                  {carried.map((item) => (
+                    <li key={item.itemId}>
+                      <span className={item.equippedBy ? 'gear-equipped' : 'gear-carried'}>
+                        {itemLabel(item.definitionId)}
+                        {item.quantity > 1 ? ` ×${item.quantity}` : ''}
+                        {item.equippedBy
+                          ? item.slot === 'HEAD' || item.slot === 'BODY'
+                            ? ' · надето'
+                            : ' · в руках'
+                          : ''}
+                      </span>
+                      {item.slot !== null &&
+                        item.equippedBy === null &&
+                        character.knownStatus === 'AVAILABLE' && (
+                          <button
+                            type="button"
+                            className="gear-action"
+                            disabled={props.equipBusy}
+                            onClick={() => props.onEquip(character.characterId, item)}
+                          >
+                            {item.slot === 'HEAD' || item.slot === 'BODY' ? 'надеть' : 'взять'}
+                          </button>
+                        )}
+                    </li>
+                  ))}
+                </ul>
               )}
+              {body &&
+                !carried.some((item) => item.equippedBy !== null && item.slot === 'MAIN_HAND') && (
+                  <p className="person-warning">Без оружия в руках в бой не выйти.</p>
+                )}
             </li>
           );
         })}

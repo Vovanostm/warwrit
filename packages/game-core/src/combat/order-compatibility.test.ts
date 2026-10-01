@@ -27,7 +27,6 @@ import {
   type CombatRulesetId,
   type CombatUnitSetup,
   type CombatUnitSetupV2,
-  type VersionedCombatReplay,
 } from '../index.js';
 
 const alpha = sideId('alpha');

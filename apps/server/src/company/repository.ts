@@ -13,6 +13,7 @@ import {
   availableContainerG,
   campaignTick,
   canonicalJson,
+  canonicalStateJson,
   companySourceKey,
   parseCompanyCommand,
   receiveExternalPayment,
@@ -505,7 +506,8 @@ export async function updateCompanyAggregateWithExternalReceipt(
     !locked ||
     locked.canonical_revision !== priorLife.revision ||
     locked.public_revision !== priorLife.knowledge.revision ||
-    canonicalJson(readCompanyCombatAggregateState(locked.state)) !== canonicalJson(previous)
+    canonicalStateJson(readCompanyCombatAggregateState(locked.state)) !==
+      canonicalStateJson(previous)
   )
     throw new Error('Company root changed before FIRST HUNT external transition persistence');
 
@@ -651,7 +653,7 @@ export async function persistFirstHuntTerminalCompanyTransition(
   };
 
   const locked = await lockCompanyAggregate(transaction, before.worldId, before.companyId);
-  if (!locked || canonicalJson(locked) !== canonicalJson(previous))
+  if (!locked || canonicalStateJson(locked) !== canonicalStateJson(previous))
     throw new Error('Company root changed before FIRST HUNT terminal persistence');
   const updated = await transaction
     .updateTable('company_snapshots')
@@ -1033,7 +1035,7 @@ function validProofPresentationDelta(
   } catch {
     return false;
   }
-  return canonicalJson(next.economy.finance) === canonicalJson(expectedFinance);
+  return canonicalStateJson(next.economy.finance) === canonicalStateJson(expectedFinance);
 }
 
 function isNonEmpty(value: unknown): value is string {

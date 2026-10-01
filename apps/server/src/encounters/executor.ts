@@ -4,6 +4,7 @@ import * as combat from '@warwrit/game-core';
 import type { EncounterCommandDto, EncounterCommandResponse } from '@warwrit/protocol';
 import { sql, type Kysely, type RawBuilder, type Transaction } from 'kysely';
 
+import type { FirstHuntTerminalEvidence } from '../contracts/executor.js';
 import type { DatabaseSchema } from '../db/database.js';
 import { loadCompanyAggregate } from '../company/repository.js';
 import { createCombatLabFixture } from '../combat-lab/scenario.js';
@@ -394,7 +395,7 @@ export async function prepareCompanyTerminalEvidence(
     readonly contractProfileId: string;
     readonly contractTermsDigest: string;
   },
-): Promise<import('../contracts/executor.js').FirstHuntTerminalEvidence> {
+): Promise<FirstHuntTerminalEvidence> {
   const stored = await transaction
     .selectFrom('encounters')
     .selectAll()
@@ -415,7 +416,7 @@ export async function prepareCompanyTerminalEvidence(
   const active = previous.encounter.active;
   if (
     !persisted ||
-    combat.canonicalJson(persisted) !== combat.canonicalJson(previous) ||
+    combat.canonicalStateJson(persisted) !== combat.canonicalStateJson(previous) ||
     active === null
   )
     return { status: 'NOT_READY', residuals: Object.freeze(['COMPANY_ROOT_NOT_ACTIVE']) };

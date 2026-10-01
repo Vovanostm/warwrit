@@ -1,6 +1,6 @@
 import type { BattleState } from '../combat/types.js';
 import { canonicalCombatState } from '../combat/replay.js';
-import { canonicalJson, id } from './input.js';
+import { canonicalJson, canonicalStateJson, id } from './input.js';
 import { EconomyViolation, recordSource, validateEconomy } from './economy-state.js';
 import { combatReceiptEventIds, validateCombatReceiptJournal } from './combat-receipts.js';
 import {
@@ -535,7 +535,10 @@ export function prepareBeginCombatAggregate(
     const source = sources.find(
       (entry) => entry.root.lifecycle.companyId === root.lifecycle.companyId,
     );
-    requirePhysical(source && canonicalJson(source.root) === canonicalJson(root), 'INVALID_SOURCE');
+    requirePhysical(
+      source && canonicalStateJson(source.root) === canonicalStateJson(root),
+      'INVALID_SOURCE',
+    );
     const binding = prepareEncounterBinding(sources, request, position);
     const participants = binding.participants.filter(
       (entry) => entry.companyId === root.lifecycle.companyId,
@@ -583,7 +586,7 @@ export function prepareBeginCombatAggregate(
     const active = Object.freeze({
       binding,
       bindingDigest: canonicalJson(binding),
-      initialRootDigest: canonicalJson(root),
+      initialRootDigest: canonicalStateJson(root),
       priorPresence: Object.freeze(priorPresence),
       lastAppliedRevision: null,
       lastAppliedTick: null,

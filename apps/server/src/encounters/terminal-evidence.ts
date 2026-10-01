@@ -379,8 +379,9 @@ export function prepareFirstHuntTerminalEvidence(input: {
     (entry) =>
       entry.companyId === input.companyId && entry.projection.characterId === activeLeaderId,
   );
-  if (leaderUnit && kernelState.units.find((unit) => unit.id === leaderUnit.unitId)?.health === 0)
-    return notReady('LEADERSHIP_SUCCESSION_EVIDENCE_MISSING');
+  const leaderDied =
+    leaderUnit !== undefined &&
+    kernelState.units.find((unit) => unit.id === leaderUnit.unitId)?.health === 0;
 
   const terminalSourceEventId = `encounter:${input.encounterId}:terminal`;
   const dispositions = active.binding.participants
@@ -476,16 +477,70 @@ export function prepareFirstHuntTerminalEvidence(input: {
     outcomeDigest,
     dispositions,
   };
+  let leadership: combat.FinalizeCombatAggregateInput['leadership'];
+  if (leaderDied) {
+    // The leader's own death fact is the crisis source. With nobody able to continue,
+    // the system ends the company; any lawful successor needs the owner's choice.
+    const leaderDeath = applications
+      .flatMap((application) => application.context.physicalFacts ?? [])
+      .find((fact) => fact.kind === 'DEATH_OUTCOME' && fact.characterId === activeLeaderId);
+    if (leaderDeath === undefined || activeLeaderId === undefined || activeLeaderId === null)
+      return notReady('LEADERSHIP_SUCCESSION_EVIDENCE_MISSING');
+    const lifecycle = consumed.next.economy.lifecycle;
+    const crisis: combat.CrisisEvidence = {
+      kind: 'CRISIS',
+      id: `encounter-leader-crisis-${input.encounterId}`,
+      companyId: input.companyId,
+      worldId: input.worldId,
+      revision: lifecycle.revision,
+      sourceEventId: leaderDeath.sourceEventId,
+      atTick,
+      leaderId: activeLeaderId,
+      reason: 'LEADER_DIED',
+    };
+    const leadershipParsed = combat.parseCompanyCommand({
+      schemaVersion: combat.COMPANY_COMMAND_SCHEMA_VERSION,
+      commandId: combat.entityId(`encounter-leadership-${input.encounterId}`),
+      sourceEventId: leaderDeath.sourceEventId,
+      worldId: input.worldId,
+      companyId: input.companyId,
+      actorRef: { kind: 'SYSTEM' as const, id: 'encounter-runtime' },
+      expectedRevision: lifecycle.revision,
+      campaignTick: atTick,
+      rulesetId: combat.COMPANY_RULESET_ID,
+      type: 'ResolveLeadership' as const,
+      payload: { companyId: input.companyId, crisisId: crisis.id, mode: 'ACTING' as const },
+    });
+    if (!leadershipParsed.ok || leadershipParsed.command.type !== 'ResolveLeadership')
+      return notReady('LEADERSHIP_SUCCESSION_EVIDENCE_MISSING');
+    leadership = {
+      command: leadershipParsed.command,
+      context: {
+        ...ownerContext(consumed.next, atTick),
+        facts: [crisis],
+        internalGrant: {
+          commandId: leadershipParsed.command.commandId,
+          sourceEventId: leadershipParsed.command.sourceEventId!,
+          canonicalRequest: combat.canonicalJson(leadershipParsed.command),
+        },
+      },
+    };
+  }
   const finalize: combat.FinalizeCombatAggregateInput = {
     command: finalizeParsed.command,
     journal,
     applications,
     terminal,
     context: finalizeContext,
+    ...(leadership === undefined ? {} : { leadership }),
   };
   const finalized = combat.prepareFinalizeCombatAggregate(consumed.next, finalize);
   if (finalized.kind !== 'PREPARED' || finalized.replayed)
-    return notReady('TERMINAL_DISPOSITION_EVIDENCE_MISSING');
+    return notReady(
+      leaderDied && finalized.kind === 'REJECTED' && finalized.error === 'CANDIDATE_REQUIRED'
+        ? 'LEADERSHIP_SUCCESSION_EVIDENCE_MISSING'
+        : 'TERMINAL_DISPOSITION_EVIDENCE_MISSING',
+    );
   const profileEvidence = {
     version: practiceProfile.version,
     profileId: practiceProfile.profileId,

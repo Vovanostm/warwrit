@@ -105,6 +105,8 @@ export interface CompanyHoldingsDto {
     /** Character carrying the item, or null for party supply / other containers. */
     readonly carrierCharacterId: string | null;
     readonly equippedBy: string | null;
+    /** Body slot the item can occupy, or null for supplies. */
+    readonly slot: 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT' | null;
   }[];
   readonly people: readonly {
     readonly characterId: string;
@@ -184,6 +186,12 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly characterId: string;
     readonly perkId: string;
     readonly milestone: 25 | 60;
+  };
+  /** Put an item the character already carries into a body slot; access is server-attested. */
+  readonly EquipItem: {
+    readonly characterId: string;
+    readonly itemId: string;
+    readonly slotId: 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT';
   };
 }
 

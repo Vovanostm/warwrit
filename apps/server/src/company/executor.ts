@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import {
   campaignTick,
   canonicalJson,
+  canonicalStateJson,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   checkFreshCompanyRevision,
@@ -15,11 +16,14 @@ import {
   preparePartyRouteExecutionDeparture,
   readCompanyCombatAggregateState,
   publicRevision,
+  PHYSICAL_POLICY_VERSION,
 } from '@warwrit/game-core';
 import type {
   CompanyCommand,
   CompanyCombatAggregateState,
   EconomyContext,
+  FoodFulfillmentEvidence,
+  ItemAccessEvidence,
   PracticeContext,
   TrustedTransitSegment,
   PartyRouteExecution,
@@ -194,7 +198,11 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   if (input.request.expectedPublicRevision !== lifecycle.knowledge.revision)
     return rejectRequest('STALE_REVISION', lifecycle.knowledge.revision);
 
-  if (input.request.type !== 'RenameCompany' && input.request.type !== 'ChoosePerk')
+  if (
+    input.request.type !== 'RenameCompany' &&
+    input.request.type !== 'ChoosePerk' &&
+    input.request.type !== 'EquipItem'
+  )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
   const clock = await readWorldClock(input.transaction, input.worldId, input.now, true);
@@ -205,6 +213,36 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal))
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+
+  // Equipping needs attested physical access: the server, not the client, states that the
+  // character stands where its own carried container is. game-core checks the rest.
+  const equipAccess =
+    input.request.type === 'EquipItem'
+      ? equipAccessFact(state, input.worldId, companyId, input.request.payload, clock.tick)
+      : undefined;
+  if (input.request.type === 'EquipItem' && equipAccess === undefined)
+    return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+
+  // A stationary company whose root lags the world clock settles the elapsed food
+  // from its own carried stock inside this same command; nothing is invented.
+  let foodFacts: readonly FoodFulfillmentEvidence[] = [];
+  if (BigInt(clock.tick) > BigInt(lifecycle.campaignTick)) {
+    const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+    if (party?.location.kind !== 'AT')
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    const food = prepareTravelFoodFacts(state, clock.tick, input.request.commandId, {
+      kind: 'DEPARTURE',
+      partyId: party.partyId,
+      location: party.location,
+      settledThroughTick: clock.tick,
+    });
+    if (food.kind !== 'PREPARED')
+      return rejectRequest(
+        food.reason === 'INSUFFICIENT_ITEMS' ? 'INSUFFICIENT_ITEMS' : 'UNSUPPORTED_ACTION',
+        lifecycle.knowledge.revision,
+      );
+    foodFacts = food.facts;
+  }
 
   const commandValue = {
     schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
@@ -223,11 +261,18 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
             name: input.request.payload['name'],
             bannerId: input.request.payload['bannerId'],
           }
-        : {
-            characterId: input.request.payload['characterId'],
-            perkId: input.request.payload['perkId'],
-            milestone: input.request.payload['milestone'],
-          },
+        : input.request.type === 'EquipItem'
+          ? {
+              characterId: input.request.payload['characterId'],
+              itemId: input.request.payload['itemId'],
+              slotId: input.request.payload['slotId'],
+              accessEvidenceId: equipAccess?.id,
+            }
+          : {
+              characterId: input.request.payload['characterId'],
+              perkId: input.request.payload['perkId'],
+              milestone: input.request.payload['milestone'],
+            },
   };
 
   const parsed = parseCompanyCommand(commandValue);
@@ -241,20 +286,26 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     canonicalRevision: lifecycle.revision,
     atTick: campaignTick(clock.tick),
     completeGraph: true,
-    contactIds: [],
+    contactIds: equipAccess ? [equipAccess.operatorId] : [],
     facts: [],
     financeFacts: [],
-    physicalFacts: [],
+    physicalFacts: [...foodFacts, ...(equipAccess ? [equipAccess] : [])],
     practiceFacts: [],
   };
   const prepared = prepareCompanyEconomy(state.economy, parsed.command, context);
   if (prepared.kind !== 'PREPARED')
     return rejectRequest(mapDomainError(prepared.error), lifecycle.knowledge.revision);
+  const equipRequest = input.request.type === 'EquipItem' ? input.request.payload : undefined;
+  const equipped =
+    equipRequest !== undefined &&
+    prepared.next.physical?.items.find((item) => item.itemId === equipRequest.itemId)?.equipped
+      ?.characterId === equipRequest.characterId;
   if (
     prepared.replayed ||
-    prepared.receipt.lifecycleReceipt === null ||
-    prepared.receipt.events.length === 0 ||
-    prepared.receipt.requirements.length !== 0
+    prepared.receipt.requirements.length !== 0 ||
+    (input.request.type === 'EquipItem'
+      ? !equipped
+      : prepared.receipt.lifecycleReceipt === null || prepared.receipt.events.length === 0)
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
@@ -285,14 +336,62 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
         response,
         resultingRevision: nextLifecycle.revision,
       },
-      auditEvents: prepared.receipt.events.map((event) => ({
-        eventId: event.id,
-        revision: nextLifecycle.revision,
-        event,
-      })),
+      auditEvents:
+        input.request.type === 'EquipItem'
+          ? [
+              {
+                eventId: randomUUID(),
+                revision: nextLifecycle.revision,
+                event: {
+                  type: 'ItemEquipped',
+                  commandId: parsed.command.commandId,
+                  characterId: input.request.payload['characterId'],
+                  itemId: input.request.payload['itemId'],
+                  slotId: input.request.payload['slotId'],
+                },
+              },
+            ]
+          : prepared.receipt.events.map((event) => ({
+              eventId: event.id,
+              revision: nextLifecycle.revision,
+              event,
+            })),
     },
   );
   return { kind: 'COMMITTED', response };
+}
+
+function equipAccessFact(
+  state: CompanyCombatAggregateState,
+  worldId: string,
+  companyId: string,
+  payload: { readonly characterId: string; readonly itemId: string },
+  atTick: string,
+): ItemAccessEvidence | undefined {
+  const lifecycle = state.economy.lifecycle;
+  const character = lifecycle.characters.find(
+    (entry) => entry.identity.characterId === payload.characterId,
+  );
+  const item = state.economy.physical?.items.find((entry) => entry.itemId === payload.itemId);
+  if (!character || !item || item.containerId === null) return undefined;
+  const location = character.presence.location;
+  if (location.kind !== 'AT') return undefined;
+  return {
+    kind: 'ITEM_ACCESS',
+    id: randomUUID(),
+    companyId,
+    worldId,
+    revision: lifecycle.revision,
+    sourceEventId: randomUUID(),
+    atTick: campaignTick(atTick),
+    ordinal: 0,
+    version: PHYSICAL_POLICY_VERSION,
+    operatorId: payload.characterId,
+    location,
+    containerIds: [item.containerId],
+    itemIds: [item.itemId],
+    purpose: 'EQUIP',
+  };
 }
 
 /** Persist a physical proof or settlement effect without inventing an economy command. */
@@ -333,7 +432,7 @@ export async function persistFirstHuntCompanyTransition(input: {
     lifecycle.worldId,
     lifecycle.companyId,
   );
-  if (!locked || canonicalJson(locked) !== canonicalJson(previous))
+  if (!locked || canonicalStateJson(locked) !== canonicalStateJson(previous))
     throw new Error('Company root changed before FIRST HUNT transition persistence');
 
   const response: FirstHuntCommandAcceptedDto = {
@@ -418,7 +517,7 @@ export async function prepareTrustedCompanyCommand(
     lifecycle.worldId,
     lifecycle.companyId,
   );
-  if (!lockedState || canonicalJson(lockedState) !== canonicalJson(previous))
+  if (!lockedState || canonicalStateJson(lockedState) !== canonicalStateJson(previous))
     return rejected(command.commandId, 'STALE_REVISION', lifecycle.knowledge.revision);
 
   const identity = parseStableCompanyRequestKey(stableRequestKey);
@@ -572,7 +671,7 @@ export async function persistPreparedTrustedCompanyCommand(input: {
     prepared.priorState.economy.lifecycle.worldId,
     prepared.priorState.economy.lifecycle.companyId,
   );
-  if (!prior || canonicalJson(prior) !== canonicalJson(prepared.priorState))
+  if (!prior || canonicalStateJson(prior) !== canonicalStateJson(prepared.priorState))
     throw new Error('Company root changed before command persistence');
   if (
     (await findOwnedCompanyId(

@@ -1,3 +1,4 @@
+import { COMPANY_CATALOGUE } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
 
@@ -43,6 +44,7 @@ export function projectCompanyHoldings(
       carrierCharacterId:
         item.containerId === null ? null : (carriers.get(item.containerId) ?? null),
       equippedBy: item.equipped?.characterId ?? null,
+      slot: COMPANY_CATALOGUE.items.find((entry) => entry.id === item.definitionId)?.slot ?? null,
     }));
 
   const people = [...characterIds].map((characterId) => {

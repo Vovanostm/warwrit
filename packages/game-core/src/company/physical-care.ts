@@ -382,6 +382,8 @@ export function ensureNewMembershipVitals(
       maximumStamina: PHYSICAL_RULES.baseStamina,
       currentStamina: PHYSICAL_RULES.baseStamina,
       staminaCarry: '0',
+      // Without a persistent morale pool a person cannot be admitted to combat.
+      morale: PHYSICAL_RULES.openingMorale,
     };
     result = {
       ...result,

@@ -175,7 +175,9 @@ export function observePartyMovement(
   },
 ): {
   readonly state: LifecycleState;
-  readonly events: readonly (LifecycleChange['events'][number] & { readonly sourceEventId: string })[];
+  readonly events: readonly (LifecycleChange['events'][number] & {
+    readonly sourceEventId: string;
+  })[];
 } {
   requireLifecycle(
     input.characterIds.length > 0 && new Set(input.characterIds).size === input.characterIds.length,
@@ -379,9 +381,7 @@ function prepareOwnerPerkSelection(
         ...change.next.knowledge,
         ...(publicValueChanged
           ? {
-              revision: publicRevision(
-                (BigInt(change.next.knowledge.revision) + 1n).toString(),
-              ),
+              revision: publicRevision((BigInt(change.next.knowledge.revision) + 1n).toString()),
               characters: change.next.knowledge.characters.map((character) =>
                 character.identity.characterId === command.payload.characterId
                   ? { ...character, perks: [...selected.perks] }

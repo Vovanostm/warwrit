@@ -10,6 +10,8 @@ export const PHYSICAL_RULES = Object.freeze({
   baseHealth: 100,
   baseStamina: 100,
   maximumMorale: 100,
+  /** Provisional 2026-10-01: neutral persistent morale of a newly opened company (as in fixtures). */
+  openingMorale: 50,
   defaultConditionMaximum: 10000,
 } as const);
 /** Provisional safe-alpha travel effects; source-ZIP balance remains unmeasured. */

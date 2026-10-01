@@ -163,6 +163,11 @@ export function EncounterPanel(props: {
     actorUnitId !== null &&
     scopedState?.grant?.revision === projection.revision &&
     scopedState.grant.controllableUnitIds.includes(actorUnitId);
+  // When the server hands our unit the turn, select it so its actions appear at once.
+  useEffect(() => {
+    if (actorIsOurs && actorUnitId !== null && selectedRef.current !== actorUnitId)
+      updateUnitSelection(actorUnitId);
+  }, [actorIsOurs, actorUnitId]);
   const actorUnit = projection?.units.find((unit) => unit.id === actorUnitId);
   const actorLabel = actorUnit ? neutralUnitLabel(actorUnit) : 'участник вне открытой сводки';
   const pendingCommand = scopedState?.pendingCommand;

@@ -7,6 +7,7 @@ import {
   type CreateCompanyPayloadDto,
   type CreateCompanyRequestDto,
   type WorldPartyReadResponseDto,
+  WORLD_EXPECTED_COMPANY_ID_HEADER,
 } from '@warwrit/protocol';
 import { CombatLab } from './combat-lab/CombatLab.js';
 import { CompanyOpening } from './CompanyOpening.js';
@@ -246,6 +247,8 @@ export function App() {
   const travelGeneration = useRef(0);
   const travelController = useRef<AbortController | undefined>(undefined);
   const [travelBusyState, setTravelBusyState] = useState(false);
+  const [equipBusy, setEquipBusy] = useState(false);
+  const [equipMessage, setEquipMessage] = useState<string | undefined>(undefined);
   const pendingCreateAttempt = useRef<CreateCompanyRequestDto | undefined>(undefined);
   const pendingCreateAccountId = useRef<string | undefined>(undefined);
   const combatLabEnabled = import.meta.env.DEV && import.meta.env['VITE_COMBAT_LAB'] === '1';
@@ -1007,6 +1010,63 @@ export function App() {
     if (window.location.pathname === '/auth/session') window.history.replaceState(null, '', '/');
   }, []);
 
+  const equipItem = useCallback(
+    async (
+      scope: WorldTravelScope,
+      expectedPublicRevision: string,
+      characterId: string,
+      item: CompanyHoldingsDto['items'][number],
+    ) => {
+      if (item.slot === null) return;
+      setEquipBusy(true);
+      setEquipMessage(undefined);
+      try {
+        const response = await fetch(`${apiBaseUrl}/company/commands`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: {
+            'content-type': 'application/json',
+            [WORLD_EXPECTED_COMPANY_ID_HEADER]: scope.companyId,
+          },
+          body: JSON.stringify({
+            schemaVersion: 2,
+            commandId: crypto.randomUUID(),
+            expectedPublicRevision,
+            type: 'EquipItem',
+            payload: { characterId, itemId: item.itemId, slotId: item.slot },
+          }),
+        });
+        if (response.status === 401) {
+          void restoreJourney();
+          return;
+        }
+        if (!response.ok) {
+          let code: unknown;
+          try {
+            const body: unknown = await response.json();
+            if (isObject(body)) code = body['code'];
+          } catch {
+            // A non-JSON failure keeps the generic message.
+          }
+          setEquipMessage(
+            code === 'STALE_REVISION'
+              ? 'Состояние отряда изменилось. Данные обновлены — повторите.'
+              : code === 'UNSUPPORTED_ACTION' || code === 'CONTACT_OR_ACCESS_REQUIRED'
+                ? 'Сейчас снарядиться нельзя: отряд в пути, в бою или вещь недоступна.'
+                : 'Сервер не принял снаряжение.',
+          );
+        }
+        await refreshWorldParty(scope);
+      } catch {
+        setEquipMessage('Нет связи с сервером. Проверьте снаряжение после обновления.');
+      } finally {
+        setEquipBusy(false);
+      }
+    },
+    [refreshWorldParty, restoreJourney],
+  );
+
   const signOut = async () => {
     if (signingOut.current) return;
     signingOut.current = true;
@@ -1061,6 +1121,11 @@ export function App() {
         onRetryTravel={() => retryWorldTravel(journey.world, scope)}
         onRefreshWorld={refreshWorldForShell}
         onSignOut={() => void signOut()}
+        equipBusy={equipBusy}
+        {...(equipMessage === undefined ? {} : { equipMessage })}
+        onEquip={(characterId, item) =>
+          void equipItem(scope, journey.world.publicRevision, characterId, item)
+        }
         placeSlot={
           <FirstHunt
             scope={scope}
