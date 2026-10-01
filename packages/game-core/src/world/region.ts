@@ -1,4 +1,6 @@
-export const WORLD_REGION_VERSION = 'w01-authored-fixture-2026-09-29-v2' as const;
+export const WORLD_REGION_VERSION = 'w01-authored-fixture-2026-10-01-v3' as const;
+/** Previous edition; kept only so routes accepted before 2026-10-01 still settle. */
+const WORLD_REGION_V2_VERSION = 'w01-authored-fixture-2026-09-29-v2' as const;
 
 export type WorldTerrain = 'SETTLEMENT' | 'WOODLAND' | 'RIVERBANK' | 'OPEN_GROUND' | 'MILL_RUIN';
 export type WorldDanger = 'SAFE' | 'DANGEROUS';
@@ -27,7 +29,7 @@ export interface WorldRegionEdge {
 }
 
 export interface WorldRegion {
-  readonly version: typeof WORLD_REGION_VERSION;
+  readonly version: typeof WORLD_REGION_VERSION | typeof WORLD_REGION_V2_VERSION;
   readonly regionId: string;
   readonly name: string;
   readonly provenance: 'AUTHORED_INITIAL_FIXTURE';
@@ -43,6 +45,9 @@ function freezeSite(site: WorldRegionSite): WorldRegionSite {
   });
 }
 
+// Owner decision 2026-10-01: shorten the provisional road lengths so a FIRST HUNT
+// trip from Каменный Брод to Старая мельница takes ≈9 minutes instead of ≈2 hours.
+// Campaign Day (1000 ticks / 6 h) and Light clocks are unchanged.
 const regionDraft: WorldRegion = {
   version: WORLD_REGION_VERSION,
   regionId: 'seroe-porechye',
@@ -90,7 +95,7 @@ const regionDraft: WorldRegion = {
       edgeId: 'kamenny-brod-bereznyak',
       fromSiteId: 'kamenny-brod',
       toSiteId: 'bereznyak',
-      provisionalTravelTicks: 100,
+      provisionalTravelTicks: 8,
       terrain: 'WOODLAND',
       danger: 'SAFE',
     },
@@ -98,7 +103,7 @@ const regionDraft: WorldRegion = {
       edgeId: 'kamenny-brod-tikhaya-gat',
       fromSiteId: 'kamenny-brod',
       toSiteId: 'tikhaya-gat',
-      provisionalTravelTicks: 120,
+      provisionalTravelTicks: 10,
       terrain: 'RIVERBANK',
       danger: 'SAFE',
     },
@@ -114,7 +119,7 @@ const regionDraft: WorldRegion = {
       edgeId: 'tikhaya-gat-staraya-melnitsa',
       fromSiteId: 'tikhaya-gat',
       toSiteId: 'staraya-melnitsa',
-      provisionalTravelTicks: 240,
+      provisionalTravelTicks: 16,
       terrain: 'MILL_RUIN',
       danger: 'DANGEROUS',
     },
@@ -181,7 +186,25 @@ export const SEROE_PORECHYE = Object.freeze({
 
 // Keep every edition accepted by an in-flight persisted route here when the current
 // authored region advances. Departures use SEROE_PORECHYE; arrivals resolve by version.
-const acceptedRegionEditions: readonly WorldRegion[] = Object.freeze([SEROE_PORECHYE]);
+const V2_EDGE_TICKS: Readonly<Record<string, number>> = {
+  'kamenny-brod-bereznyak': 100,
+  'kamenny-brod-tikhaya-gat': 120,
+  'kamenny-brod-severny-dvor': 10,
+  'tikhaya-gat-staraya-melnitsa': 240,
+};
+const SEROE_PORECHYE_V2: WorldRegion = Object.freeze({
+  ...SEROE_PORECHYE,
+  version: WORLD_REGION_V2_VERSION,
+  edges: Object.freeze(
+    SEROE_PORECHYE.edges.map((edge) =>
+      Object.freeze({ ...edge, provisionalTravelTicks: V2_EDGE_TICKS[edge.edgeId]! }),
+    ),
+  ),
+});
+const acceptedRegionEditions: readonly WorldRegion[] = Object.freeze([
+  SEROE_PORECHYE,
+  SEROE_PORECHYE_V2,
+]);
 
 export function acceptedWorldRegion(version: string): WorldRegion | undefined {
   return acceptedRegionEditions.find((region) => region.version === version);

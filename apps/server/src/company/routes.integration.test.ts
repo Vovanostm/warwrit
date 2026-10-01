@@ -136,6 +136,7 @@ describe('authenticated company read (PostgreSQL)', () => {
               knownStatus: character.knownStatus,
             })),
           },
+          holdings: expect.objectContaining({ cashQ: expect.stringMatching(/^[0-9]+$/u) }),
         });
         expect(JSON.stringify(ownerRead.json())).not.toContain('finance');
 

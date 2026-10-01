@@ -830,7 +830,7 @@ describe('authenticated world travel (PostgreSQL)', () => {
         expect(await inspectCompany(db, actor)).toEqual(beforePreview);
 
         await updateCompanyState(atTikhaya('tikhaya-gat'));
-        await setWorldClock(db, actor, 900);
+        await setWorldClock(db, actor, 990);
         const beforeStaticDeparture = await inspectCompany(db, actor);
         const staticPreview = await actor.app.inject({
           method: 'POST',
@@ -931,7 +931,7 @@ describe('authenticated world travel (PostgreSQL)', () => {
         const carriedPreviewTick = BigInt(carriedPreviewBody.atTick);
         const catchUpElapsedTicks = carriedPreviewTick - carriedFoodStartTick;
         const dueTick = carriedPreviewTick + routeDurationTicks;
-        expect(catchUpElapsedTicks).toBe(900n);
+        expect(catchUpElapsedTicks).toBe(990n);
         const prefixFoodUse = foodRecipients.map(({ membership, priorCarry }) => {
           const demand = foodUse(
             activeTicksWithin(membership, carriedFoodStartTick, carriedPreviewTick),
@@ -2700,7 +2700,7 @@ describe('authenticated world travel (PostgreSQL)', () => {
         expect(continuedEnvelope.execution).toMatchObject({
           phase: 'IN_TRANSIT',
           nextEdgeIndex: 1,
-          segment: { dueTick: '1111' },
+          segment: { dueTick: '1019' },
         });
         const continuedRead = await actor.app.inject({
           method: 'GET',

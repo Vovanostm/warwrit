@@ -131,7 +131,12 @@ export async function admitFirstHuntInTransaction(input: {
         worldId,
         companyId: join.companyId,
         commandId,
-        requestKey: canonicalJson({ kind: 'FIRST_HUNT_JOIN_CATCH_UP', toTick: atTick }),
+        // The stable key names the request, not its execution time: `toTick` is
+        // execution authority and is rejected inside a stable world request key.
+        requestKey: canonicalJson({
+          kind: 'FIRST_HUNT_JOIN_CATCH_UP',
+          instanceId: contract.instance_id,
+        }),
       };
       const prepared = await prepareTrustedCompanyCommand({
         transaction,

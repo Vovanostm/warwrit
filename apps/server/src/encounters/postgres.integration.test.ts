@@ -167,6 +167,8 @@ function makeFirstHuntJoinActor(worldId: string): FirstHuntJoinActor {
     [lifecycle.companyId, companyId],
     [basePartyId, partyId],
     ...members.map((id, index) => [id, memberIds[index]!] as const),
+    // Two companies built from one fixture must not share physical item identities.
+    ...(base.economy.physical?.items ?? []).map((item) => [item.itemId, randomUUID()] as const),
   ]);
   const remapped = JSON.parse(
     JSON.stringify(base, (_key, value: unknown) =>
@@ -660,7 +662,8 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           headers: helper.headers,
           payload: helperJoin,
         });
-        expect(replay.body).toBe(helperResponse.body);
+        // JSONB storage may reorder keys; the replayed receipt must be the same value.
+        expect(replay.json()).toEqual(helperResponse.json());
         const conflictingReplay = await app.inject({
           method: 'POST',
           url: '/contracts/commands',
@@ -828,6 +831,8 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
 
         const ownerCompany = owner.initial.economy.lifecycle.company;
         if (!ownerCompany) throw new Error('FIRST HUNT owner company is missing');
+        // Rename is an ordinary command at the company's own tick (no pending catch-up).
+        await setFirstHuntWorldTick(database, worldId, Number(startingTick), startingTick);
         const renamed = await app.inject({
           method: 'POST',
           url: '/company/commands',

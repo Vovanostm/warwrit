@@ -386,7 +386,7 @@ export function validateContractCatalogue(input: unknown): ContractCatalogueVali
     !exactKeys(input, ['schemaVersion', 'worldRegionVersion', 'editions']) ||
     input['schemaVersion'] !== 1 ||
     input['worldRegionVersion'] !== CONTRACT_M1_CATALOGUE.worldRegionVersion ||
-    WORLD_REGION_VERSION !== 'w01-authored-fixture-2026-09-29-v2' ||
+    WORLD_REGION_VERSION !== 'w01-authored-fixture-2026-10-01-v3' ||
     !Array.isArray(input['editions']) ||
     !input['editions'].every(editionShape)
   ) {

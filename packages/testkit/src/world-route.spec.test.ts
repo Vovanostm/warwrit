@@ -1623,7 +1623,7 @@ describe('accepted route execution cursor', () => {
         fromSiteId: 'kamenny-brod',
         toSiteId: 'bereznyak',
         startedAt: '10',
-        dueTick: '110',
+        dueTick: '18',
       },
     });
     expect(second.transitSegment.routeEpoch).toBe(first.execution.routeEpoch);
@@ -1654,7 +1654,7 @@ describe('accepted route execution cursor', () => {
         notBefore: campaignTick(second.execution.segment!.dueTick),
       },
       currentRouteEpoch: second.execution.routeEpoch,
-      trustedNow: campaignTick('110'),
+      trustedNow: campaignTick('18'),
     });
     expect(final.execution).toMatchObject({
       phase: 'COMPLETE',
@@ -1669,7 +1669,7 @@ describe('accepted route execution cursor', () => {
         root: final.root,
         execution: final.execution,
         expected: guard(final.execution),
-        atTick: campaignTick('110'),
+        atTick: campaignTick('18'),
       }),
     ).toThrowError(expect.objectContaining({ code: 'STALE_ROUTE_EXECUTION' }));
   });

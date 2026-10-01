@@ -115,7 +115,7 @@ export interface TrustedReturnOrCampAuthorization {
 export interface PreparedPartyRoute {
   readonly kind: 'PREPARED_PARTY_ROUTE';
   readonly worldId: string;
-  readonly regionVersion: typeof WORLD_REGION_VERSION;
+  readonly regionVersion: WorldRegion['version'];
   readonly partyId: string;
   /** The external monotonic route epoch advanced by this accepted proposal. */
   readonly routeEpoch: string;
@@ -154,7 +154,7 @@ export interface TrustedRouteArrivalCandidate {
   readonly worldId: string;
   readonly partyId: string;
   readonly segmentId: string;
-  readonly regionVersion: typeof WORLD_REGION_VERSION;
+  readonly regionVersion: WorldRegion['version'];
   readonly routeEpoch: string;
   readonly cause: 'ROUTE_ARRIVAL';
   readonly location: { readonly kind: 'AT'; readonly siteId: string; readonly areaId: string };
