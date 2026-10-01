@@ -14,6 +14,7 @@ import {
   readActiveEncounter,
   readEncounterAccess,
 } from './access.js';
+import { registerEncounterLeadershipRoutes } from './leadership.js';
 import {
   createFixtureEncounter,
   executeEncounterCommand,
@@ -88,6 +89,8 @@ function registerAuthenticatedRoutes(app: FastifyInstance, options: EncounterRou
       return reply.code(201).send(created);
     });
   }
+
+  registerEncounterLeadershipRoutes(app, database);
 
   app.get('/encounters/active', async (request, reply) => {
     try {

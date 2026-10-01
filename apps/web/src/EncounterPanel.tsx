@@ -13,6 +13,7 @@ import {
   type EncounterScope,
 } from './encounter/connection.js';
 import { PlayCanvasView } from './renderer/PlayCanvasView.js';
+import { LeadershipChoice } from './encounter/LeadershipChoice.js';
 import {
   canIssueEncounterIntent,
   neutralUnitLabel,
@@ -227,6 +228,9 @@ export function EncounterPanel(props: {
             {projection.status === 'active' ? 'Бой продолжается' : 'Бой завершён'} · раунд{' '}
             {projection.round} · обновление {projection.revision}
           </p>
+          {projection.status === 'resolved' && (
+            <LeadershipChoice encounterId={projection.encounterId} />
+          )}
           <p className="encounter-turn" role="status">
             {projection.status !== 'active'
               ? 'Бой завершён; команды недоступны.'

@@ -65,7 +65,16 @@ export type FirstHuntTerminalEvidenceResidual =
   | 'PRACTICE_PROFILE_INVALID'
   | 'PRACTICE_CREDIT_EVIDENCE_MISSING'
   | 'LEADERSHIP_SUCCESSION_EVIDENCE_MISSING'
+  | 'LEADERSHIP_CHOICE_REQUIRED'
+  | 'LEADERSHIP_CHOICE_REJECTED'
   | 'PROFILE_INVALID';
+
+/** Terminal consequences wait for the owner to name a successor; not a failure. */
+export class TerminalAwaitingLeadershipChoice extends Error {
+  constructor(readonly companyId: string) {
+    super(`FIRST HUNT terminal waits for the leadership choice of ${companyId}`);
+  }
+}
 
 export type FirstHuntTerminalEvidence =
   | {
@@ -657,10 +666,13 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
       contractProfileId: contract.profile_id,
       contractTermsDigest: contract.terms_digest.toString('hex'),
     });
-    if (evidence.status !== 'READY')
+    if (evidence.status !== 'READY') {
+      if (evidence.residuals.includes('LEADERSHIP_CHOICE_REQUIRED'))
+        throw new TerminalAwaitingLeadershipChoice(companyId);
       throw new TypeError(
         `FIRST HUNT terminal evidence is not ready for ${companyId}: ${evidence.residuals.join(',')}`,
       );
+    }
     const profile = evidence.consume.practiceProfile;
     const activeBinding = previous.encounter.active.binding;
     const expectedPracticeDigest = canonicalJson({

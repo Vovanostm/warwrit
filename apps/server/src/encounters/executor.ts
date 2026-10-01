@@ -437,10 +437,27 @@ export async function prepareCompanyTerminalEvidence(
     select revision, campaign_tick, command from encounter_commands
     where encounter_id = ${input.encounterId} order by revision asc
   `.execute(transaction);
+  const choice = await transaction
+    .selectFrom('encounter_leadership_choices')
+    .select(['account_id', 'command_id', 'candidate_id', 'mode'])
+    .where('world_id', '=', input.worldId)
+    .where('encounter_id', '=', input.encounterId)
+    .where('company_id', '=', input.companyId)
+    .executeTakeFirst();
   return prepareFirstHuntTerminalEvidence({
     ...input,
     stored: { ...stored, state: stored.state as combat.BattleState },
     commandRows: commandRows.rows as readonly TerminalCommandRow[],
+    ...(choice === undefined
+      ? {}
+      : {
+          leadershipChoice: {
+            accountId: choice.account_id,
+            commandId: choice.command_id,
+            candidateId: choice.candidate_id,
+            mode: choice.mode,
+          },
+        }),
   });
 }
 

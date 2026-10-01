@@ -662,3 +662,24 @@
   color: #e8b17a;
   font-size: 0.8rem;
 }
+
+.leadership-choice {
+  margin: 0.8rem 0;
+  padding: 0.9rem;
+  border: 1px solid #b04a38;
+  background: rgb(122 46 34 / 18%);
+}
+
+.leadership-choice h3 {
+  margin: 0 0 0.4rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+}
+
+.leadership-choice ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

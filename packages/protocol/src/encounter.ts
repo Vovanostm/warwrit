@@ -165,3 +165,17 @@ export interface EncounterRoomTicketDto {
   readonly reconnectionToken?: string;
   readonly devMode?: boolean;
 }
+
+/** Owner-only succession choice after the company leader died in a resolved encounter. */
+export interface EncounterLeadershipDto {
+  readonly version: 1;
+  readonly encounterId: string;
+  /** True while consequences wait for the owner to name a successor. */
+  readonly required: boolean;
+  readonly candidates: readonly { readonly characterId: string; readonly name: string }[];
+  readonly modes: readonly ('PERMANENT' | 'ACTING' | 'REGENCY')[];
+  readonly chosen: null | {
+    readonly candidateId: string;
+    readonly mode: 'PERMANENT' | 'ACTING' | 'REGENCY';
+  };
+}

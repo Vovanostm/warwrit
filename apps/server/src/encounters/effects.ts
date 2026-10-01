@@ -2,7 +2,10 @@ import { sql, type Kysely, type Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 import { lockCompanyAggregate } from '../company/repository.js';
-import { applyFirstHuntTerminalEffectsInTransaction } from '../contracts/executor.js';
+import {
+  applyFirstHuntTerminalEffectsInTransaction,
+  TerminalAwaitingLeadershipChoice,
+} from '../contracts/executor.js';
 import { readFirstHuntTerminalLockSet } from '../contracts/repository.js';
 import { readWorldClock } from '../world/clock.js';
 import { prepareCompanyTerminalEvidence } from './executor.js';
@@ -138,9 +141,16 @@ export async function applyPendingFirstHuntTerminalEffects(
   const pending = await readPendingTerminals(database, limit);
   const applied: string[] = [];
   for (const terminal of pending) {
-    const acknowledged = await database
-      .transaction()
-      .execute((transaction) => applyOne(transaction, terminal));
+    let acknowledged: boolean;
+    try {
+      acknowledged = await database
+        .transaction()
+        .execute((transaction) => applyOne(transaction, terminal));
+    } catch (error) {
+      // Rolled back unchanged; retried once the owner records a successor.
+      if (error instanceof TerminalAwaitingLeadershipChoice) continue;
+      throw error;
+    }
     if (acknowledged) applied.push(terminal.encounterId);
   }
   return applied;

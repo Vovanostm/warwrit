@@ -274,6 +274,16 @@ export interface DatabaseSchema {
   readonly encounter_admissions: EncounterAdmissionTable;
   readonly world_proof_claims: WorldProofClaimTable;
   readonly encounter_activation_policies: EncounterActivationPolicyTable;
+  readonly encounter_leadership_choices: {
+    readonly world_id: string;
+    readonly encounter_id: string;
+    readonly company_id: string;
+    readonly account_id: string;
+    readonly command_id: string;
+    readonly candidate_id: string;
+    readonly mode: 'PERMANENT' | 'ACTING' | 'REGENCY';
+    readonly chosen_at: Generated<Date>;
+  };
 }
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {

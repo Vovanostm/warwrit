@@ -192,6 +192,13 @@ export function prepareFirstHuntTerminalEvidence(input: {
     readonly status: 'active' | 'resolved';
   };
   readonly commandRows: readonly TerminalCommandRow[];
+  /** The owner's recorded successor choice when the leader died and someone can continue. */
+  readonly leadershipChoice?: {
+    readonly accountId: string;
+    readonly commandId: string;
+    readonly candidateId: string;
+    readonly mode: 'PERMANENT' | 'ACTING' | 'REGENCY';
+  };
 }): FirstHuntTerminalEvidence {
   const previous = combat.readCompanyCombatAggregateState(input.previous);
   const active = previous.encounter.active;
@@ -477,10 +484,20 @@ export function prepareFirstHuntTerminalEvidence(input: {
     outcomeDigest,
     dispositions,
   };
-  let leadership: combat.FinalizeCombatAggregateInput['leadership'];
+  const baseFinalize: combat.FinalizeCombatAggregateInput = {
+    command: finalizeParsed.command,
+    journal,
+    applications,
+    terminal,
+    context: finalizeContext,
+  };
+  let finalize = baseFinalize;
+  let finalized = leaderDied
+    ? undefined
+    : combat.prepareFinalizeCombatAggregate(consumed.next, baseFinalize);
   if (leaderDied) {
-    // The leader's own death fact is the crisis source. With nobody able to continue,
-    // the system ends the company; any lawful successor needs the owner's choice.
+    // The leader's own death fact is the crisis source. With nobody able to continue the
+    // system ends the company; otherwise the owner's recorded successor choice decides.
     const leaderDeath = applications
       .flatMap((application) => application.context.physicalFacts ?? [])
       .find((fact) => fact.kind === 'DEATH_OUTCOME' && fact.characterId === activeLeaderId);
@@ -498,49 +515,68 @@ export function prepareFirstHuntTerminalEvidence(input: {
       leaderId: activeLeaderId,
       reason: 'LEADER_DIED',
     };
-    const leadershipParsed = combat.parseCompanyCommand({
-      schemaVersion: combat.COMPANY_COMMAND_SCHEMA_VERSION,
-      commandId: combat.entityId(`encounter-leadership-${input.encounterId}`),
-      sourceEventId: leaderDeath.sourceEventId,
-      worldId: input.worldId,
-      companyId: input.companyId,
-      actorRef: { kind: 'SYSTEM' as const, id: 'encounter-runtime' },
-      expectedRevision: lifecycle.revision,
-      campaignTick: atTick,
-      rulesetId: combat.COMPANY_RULESET_ID,
-      type: 'ResolveLeadership' as const,
-      payload: { companyId: input.companyId, crisisId: crisis.id, mode: 'ACTING' as const },
-    });
-    if (!leadershipParsed.ok || leadershipParsed.command.type !== 'ResolveLeadership')
-      return notReady('LEADERSHIP_SUCCESSION_EVIDENCE_MISSING');
-    leadership = {
-      command: leadershipParsed.command,
-      context: {
-        ...ownerContext(consumed.next, atTick),
-        facts: [crisis],
-        internalGrant: {
-          commandId: leadershipParsed.command.commandId,
-          sourceEventId: leadershipParsed.command.sourceEventId!,
-          canonicalRequest: combat.canonicalJson(leadershipParsed.command),
-        },
-      },
+    const resolve = (
+      actorRef:
+        | { readonly kind: 'SYSTEM'; readonly id: string }
+        | { readonly kind: 'PLAYER'; readonly id: string },
+      commandId: string,
+      payload: { readonly candidateId?: string; readonly mode: 'PERMANENT' | 'ACTING' | 'REGENCY' },
+    ): combat.FinalizeCombatAggregateInput | undefined => {
+      const parsed = combat.parseCompanyCommand({
+        schemaVersion: combat.COMPANY_COMMAND_SCHEMA_VERSION,
+        commandId,
+        sourceEventId: leaderDeath.sourceEventId,
+        worldId: input.worldId,
+        companyId: input.companyId,
+        actorRef,
+        expectedRevision: lifecycle.revision,
+        campaignTick: atTick,
+        rulesetId: combat.COMPANY_RULESET_ID,
+        type: 'ResolveLeadership' as const,
+        payload: { companyId: input.companyId, crisisId: crisis.id, ...payload },
+      });
+      if (!parsed.ok || parsed.command.type !== 'ResolveLeadership') return undefined;
+      const base = { ...ownerContext(consumed.next, atTick), facts: [crisis] };
+      const context: CombatOwnerContext =
+        actorRef.kind === 'PLAYER'
+          ? {
+              ...base,
+              principal: actorRef,
+              contactIds: payload.candidateId === undefined ? [] : [payload.candidateId],
+            }
+          : {
+              ...base,
+              internalGrant: {
+                commandId: parsed.command.commandId,
+                sourceEventId: parsed.command.sourceEventId!,
+                canonicalRequest: combat.canonicalJson(parsed.command),
+              },
+            };
+      return { ...baseFinalize, leadership: { command: parsed.command, context } };
     };
-  }
-  const finalize: combat.FinalizeCombatAggregateInput = {
-    command: finalizeParsed.command,
-    journal,
-    applications,
-    terminal,
-    context: finalizeContext,
-    ...(leadership === undefined ? {} : { leadership }),
-  };
-  const finalized = combat.prepareFinalizeCombatAggregate(consumed.next, finalize);
-  if (finalized.kind !== 'PREPARED' || finalized.replayed)
-    return notReady(
-      leaderDied && finalized.kind === 'REJECTED' && finalized.error === 'CANDIDATE_REQUIRED'
-        ? 'LEADERSHIP_SUCCESSION_EVIDENCE_MISSING'
-        : 'TERMINAL_DISPOSITION_EVIDENCE_MISSING',
+    const systemEnd = resolve(
+      { kind: 'SYSTEM', id: 'encounter-runtime' },
+      combat.entityId(`encounter-leadership-${input.encounterId}`),
+      { mode: 'ACTING' },
     );
+    if (systemEnd === undefined) return notReady('LEADERSHIP_SUCCESSION_EVIDENCE_MISSING');
+    finalize = systemEnd;
+    finalized = combat.prepareFinalizeCombatAggregate(consumed.next, systemEnd);
+    if (finalized.kind === 'REJECTED' && finalized.error === 'CANDIDATE_REQUIRED') {
+      const choice = input.leadershipChoice;
+      if (choice === undefined) return notReady('LEADERSHIP_CHOICE_REQUIRED');
+      const chosen = resolve({ kind: 'PLAYER', id: choice.accountId }, choice.commandId, {
+        candidateId: choice.candidateId,
+        mode: choice.mode,
+      });
+      if (chosen === undefined) return notReady('LEADERSHIP_CHOICE_REQUIRED');
+      finalize = chosen;
+      finalized = combat.prepareFinalizeCombatAggregate(consumed.next, chosen);
+      if (finalized.kind === 'REJECTED') return notReady('LEADERSHIP_CHOICE_REJECTED');
+    }
+  }
+  if (finalized === undefined || finalized.kind !== 'PREPARED' || finalized.replayed)
+    return notReady('TERMINAL_DISPOSITION_EVIDENCE_MISSING');
   const profileEvidence = {
     version: practiceProfile.version,
     profileId: practiceProfile.profileId,
