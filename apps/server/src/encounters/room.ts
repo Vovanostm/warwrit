@@ -1,6 +1,14 @@
 import { CloseCode, Room, type AuthContext, type Client } from '@colyseus/core';
-import type { EncounterCommandResponse, EncounterPublicProjectionDto } from '@warwrit/protocol';
-import { isEncounterCommandDto } from '@warwrit/protocol';
+import type {
+  EncounterCommandResponse,
+  EncounterControlGrantDto,
+  EncounterPublicProjectionDto,
+} from '@warwrit/protocol';
+import {
+  isEncounterCommandDto,
+  isEncounterControlGrantRequestDto,
+  isEncounterId,
+} from '@warwrit/protocol';
 import type { Kysely } from 'kysely';
 
 import {
@@ -9,9 +17,11 @@ import {
   type ActiveSessionPrincipal,
 } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
-import { executeEncounterCommand, readEncounterProjection } from './executor.js';
+import { readEncounterAccess } from './access.js';
+import { executeEncounterCommand } from './executor.js';
 import {
   EncounterRoomState,
+  EncounterMapHexStateSchema,
   EncounterUnitStateSchema,
   type EncounterRoomState as EncounterRoomStateType,
 } from './room-state.js';
@@ -26,18 +36,17 @@ type EncounterRoomClient = Client<{
   auth: EncounterRoomAuth;
   messages: {
     'command-result': EncounterCommandResponse | { readonly code: 'INVALID_REQUEST' };
+    'control-grant':
+      EncounterControlGrantDto | { readonly code: 'INVALID_REQUEST' | 'UNAUTHORIZED' };
   };
 }>;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
 
-const isEncounterId = (value: unknown): value is string =>
-  typeof value === 'string' &&
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u.test(value);
-
 async function authenticateEncounterRoom(
   database: Kysely<DatabaseSchema>,
+  fixtureAdmission: boolean,
   options: unknown,
   context: AuthContext,
 ): Promise<EncounterRoomAuth | false> {
@@ -47,12 +56,13 @@ async function authenticateEncounterRoom(
     database,
   );
   if (principal === undefined) return false;
-  const projection = await readEncounterProjection(
+  const access = await readEncounterAccess(
     database,
     principal.accountId,
     options['encounterId'],
+    fixtureAdmission,
   );
-  return projection === undefined ? false : { ...principal, encounterId: options['encounterId'] };
+  return access === undefined ? false : { ...principal, encounterId: options['encounterId'] };
 }
 
 export class EncounterRoom extends Room<{
@@ -65,7 +75,10 @@ export class EncounterRoom extends Room<{
   private encounterId: string | undefined;
   private shuttingDown = false;
 
-  constructor(private readonly database: Kysely<DatabaseSchema>) {
+  constructor(
+    private readonly database: Kysely<DatabaseSchema>,
+    private readonly fixtureAdmission = false,
+  ) {
     super();
   }
 
@@ -110,10 +123,36 @@ export class EncounterRoom extends Room<{
       client.leave(CloseCode.CONSENTED);
       return;
     }
-    await this.refreshClientProjection(client);
+    if (!(await this.refreshClientProjection(client))) client.leave(CloseCode.CONSENTED);
   }
 
   override messages = {
+    'get-control-grant': async (
+      client: EncounterRoomClient,
+      payload: unknown,
+      ctx: {
+        reject(reason: unknown): never;
+      },
+    ): Promise<EncounterControlGrantDto | void> => {
+      if (!isEncounterControlGrantRequestDto(payload)) {
+        return ctx.reject({ code: 'INVALID_REQUEST' });
+      }
+      const principal = client.auth;
+      if (
+        principal === undefined ||
+        !(await this.isAuthorized(principal)) ||
+        this.encounterId === undefined
+      )
+        return ctx.reject({ code: 'UNAUTHORIZED' });
+      const access = await readEncounterAccess(
+        this.database,
+        principal.accountId,
+        this.encounterId,
+        this.fixtureAdmission,
+      );
+      if (access === undefined) return ctx.reject({ code: 'UNAUTHORIZED' });
+      return access.controlGrant;
+    },
     command: async (client: EncounterRoomClient, payload: unknown): Promise<void> => {
       await this.handleCommand(client, payload);
     },
@@ -128,7 +167,8 @@ export class EncounterRoom extends Room<{
     if (
       principal === undefined ||
       payload.encounterId !== this.encounterId ||
-      !(await this.isAuthorized(principal))
+      principal.encounterId !== this.encounterId ||
+      !(await isSessionTokenActive(this.database, principal))
     ) {
       client.send('command-result', {
         version: 1,
@@ -139,7 +179,18 @@ export class EncounterRoom extends Room<{
       return;
     }
 
-    const response = await executeEncounterCommand(this.database, principal.accountId, payload);
+    const access = await readEncounterAccess(
+      this.database,
+      principal.accountId,
+      principal.encounterId,
+      this.fixtureAdmission,
+    );
+    const response = await executeEncounterCommand(
+      this.database,
+      principal.accountId,
+      payload,
+      access !== undefined,
+    );
     client.send('command-result', response);
     if (response.status === 'accepted') await this.refreshRoomProjection();
   }
@@ -148,8 +199,12 @@ export class EncounterRoom extends Room<{
     return (
       principal.encounterId === this.encounterId &&
       (await isSessionTokenActive(this.database, principal)) &&
-      (await readEncounterProjection(this.database, principal.accountId, principal.encounterId)) !==
-        undefined
+      (await readEncounterAccess(
+        this.database,
+        principal.accountId,
+        principal.encounterId,
+        this.fixtureAdmission,
+      )) !== undefined
     );
   }
 
@@ -162,15 +217,16 @@ export class EncounterRoom extends Room<{
   private async refreshClientProjection(client: EncounterRoomClient): Promise<boolean> {
     const principal = client.auth;
     if (principal === undefined) return false;
-    const projection = await readEncounterProjection(
+    const access = await readEncounterAccess(
       this.database,
       principal.accountId,
       principal.encounterId,
+      this.fixtureAdmission,
     );
-    if (projection === undefined || !(await isSessionTokenActive(this.database, principal))) {
+    if (access === undefined || !(await isSessionTokenActive(this.database, principal))) {
       return false;
     }
-    this.applyProjection(projection);
+    this.applyProjection(access.projection);
     return true;
   }
 
@@ -184,6 +240,14 @@ export class EncounterRoom extends Room<{
     this.state.activationId = projection.activationId ?? '';
     this.state.actorUnitId = projection.actorUnitId ?? '';
     this.state.deadlineAt = projection.deadlineAt ?? '';
+    this.state.map.hexes.clear();
+    this.state.map.blocked.clear();
+    for (const hex of projection.map?.hexes ?? []) {
+      this.state.map.hexes.push(new EncounterMapHexStateSchema({ q: hex.q, r: hex.r }));
+    }
+    for (const hex of projection.map?.blocked ?? []) {
+      this.state.map.blocked.push(new EncounterMapHexStateSchema({ q: hex.q, r: hex.r }));
+    }
     this.state.units.clear();
     for (const unit of projection.units) {
       this.state.units.set(
@@ -209,14 +273,15 @@ export async function refreshEncounterRoomProjections(encounterId: string): Prom
 
 export function createEncounterRoomClass(
   database: Kysely<DatabaseSchema>,
+  fixtureAdmission = false,
 ): new () => EncounterRoom {
   return class PersistentEncounterRoom extends EncounterRoom {
     static override onAuth(_token: string, options: unknown, context: AuthContext) {
-      return authenticateEncounterRoom(database, options, context);
+      return authenticateEncounterRoom(database, fixtureAdmission, options, context);
     }
 
     constructor() {
-      super(database);
+      super(database, fixtureAdmission);
     }
   };
 }

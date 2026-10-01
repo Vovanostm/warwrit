@@ -416,12 +416,13 @@ function validateBoundEvidenceContext(
   binding: FrozenEncounterBinding,
   companyId: string,
   context: CombatOwnerContext,
+  receiptTick: CampaignTick,
 ): void {
   requirePhysical(
     context.companyId === companyId &&
       context.worldId === binding.worldId &&
       context.canonicalRevision === boundCompanyRevision(binding, companyId) &&
-      context.atTick === binding.atTick,
+      context.atTick === receiptTick,
     'INVALID_SOURCE',
   );
 }
@@ -689,12 +690,18 @@ export function prepareConsumeCombatAggregate(
       const receipt = journal.receipts[index]!;
       const application = input.applications[index]!;
       const revision = receipt.transition.state.revision;
-      validateBoundEvidenceContext(active.binding, journal.companyId, application.context);
+      validateBoundEvidenceContext(
+        active.binding,
+        journal.companyId,
+        application.context,
+        application.time.atTick,
+      );
       for (const credit of application.practiceCredits)
         validateBoundEvidenceContext(
           active.binding,
           journal.companyId,
           credit.context as CombatOwnerContext,
+          application.time.atTick,
         );
       if (index === 0) {
         requirePhysical(revision === initialRevision, 'INVALID_SOURCE');

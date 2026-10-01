@@ -20,11 +20,17 @@ export interface EncounterRealtime {
 export function registerEncounterRealtime(
   app: FastifyInstance,
   database: Kysely<DatabaseSchema>,
-  options: { readonly host: string; readonly port: number },
+  options: {
+    readonly host: string;
+    readonly port: number;
+    readonly fixtureAdmission?: boolean;
+  },
 ): EncounterRealtime {
   const transport = new WebSocketTransport();
   const server = new Server({ transport, gracefullyShutdown: false, greet: false });
-  server.define('encounter', createEncounterRoomClass(database)).filterBy(['encounterId']);
+  server
+    .define('encounter', createEncounterRoomClass(database, options.fixtureAdmission === true))
+    .filterBy(['encounterId']);
   let aiWorker: EncounterAiWorker | undefined;
 
   app.addHook('onReady', async () => {

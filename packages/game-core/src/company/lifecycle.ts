@@ -23,6 +23,7 @@ import {
   effectiveLeaderId,
   evidence,
   event,
+  lifecycleId,
   LifecycleViolation,
   person,
   requireLifecycle,
@@ -38,6 +39,7 @@ import type {
   LifecycleResult,
   LifecycleState,
   CommandOf,
+  CompanyObservationEvidence,
 } from './lifecycle-types.js';
 
 function observeCompany(
@@ -147,6 +149,7 @@ function observeCompany(
     };
   }
   const observed = event(command.commandId, 'CompanyObserved', context.atTick, [fact.subject.id]);
+  requireLifecycle(!knowledge.eventIds.includes(observed.id), 'IDEMPOTENCY_CONFLICT');
   return {
     next: {
       ...state,
@@ -159,6 +162,139 @@ function observeCompany(
     events: [observed],
     requirements: [],
   };
+}
+
+/** Apply one bounded owner observation boundary for the members of a moved field party. */
+export function observePartyMovement(
+  state: LifecycleState,
+  input: {
+    readonly partyId: string;
+    readonly characterIds: readonly string[];
+    readonly sourceEventId: string;
+    readonly atTick: LifecycleContext['atTick'];
+  },
+): {
+  readonly state: LifecycleState;
+  readonly events: readonly (LifecycleChange['events'][number] & { readonly sourceEventId: string })[];
+} {
+  requireLifecycle(
+    input.characterIds.length > 0 && new Set(input.characterIds).size === input.characterIds.length,
+    'INVALID_SOURCE',
+  );
+  let next = state;
+  const events: (LifecycleChange['events'][number] & { readonly sourceEventId: string })[] = [];
+  for (const [ordinal, characterId] of input.characterIds.entries()) {
+    const character = person(next, characterId);
+    requireLifecycle(character.presence.fieldPartyId === input.partyId, 'INVALID_SOURCE');
+    const known = next.knowledge.characters.find(
+      (entry) => entry.identity.characterId === characterId,
+    );
+    requireLifecycle(known, 'INCOMPLETE_GRAPH');
+    const commandId = lifecycleId<'Command'>(
+      'party-movement-observation',
+      state.revision,
+      String(ordinal),
+    );
+    const movementEvent = {
+      ...event(commandId, 'PartyMovementObserved', input.atTick, [characterId]),
+      sourceEventId: input.sourceEventId,
+    };
+    requireLifecycle(!next.knowledge.eventIds.includes(movementEvent.id), 'IDEMPOTENCY_CONFLICT');
+    next = {
+      ...next,
+      knowledge: {
+        ...next.knowledge,
+        characters: next.knowledge.characters.map((entry) =>
+          entry.identity.characterId === characterId
+            ? {
+                ...entry,
+                presence: {
+                  ...entry.presence,
+                  fieldPartyId: character.presence.fieldPartyId,
+                  location: character.presence.location,
+                },
+              }
+            : entry,
+        ),
+        eventIds: [...next.knowledge.eventIds, movementEvent.id],
+      },
+    };
+    events.push(movementEvent);
+  }
+  return {
+    state: {
+      ...next,
+      knowledge: {
+        ...next.knowledge,
+        revision: publicRevision((BigInt(state.knowledge.revision) + 1n).toString()),
+      },
+    },
+    events,
+  };
+}
+
+function observeOpeningCompany(
+  change: LifecycleChange,
+  command: CommandOf<'CreateCompany'>,
+  context: LifecycleContext,
+): LifecycleChange {
+  const started = change.events.find((entry) => entry.type === 'CompanyStarted');
+  requireLifecycle(started && change.next.company, 'INVALID_STATE');
+  const memberIds = change.next.memberships
+    .filter(
+      (membership) => membership.companyId === change.next.companyId && membership.endedAt === null,
+    )
+    .map((membership) => membership.characterId)
+    .sort();
+  const subjects: CompanyObservationEvidence['subject'][] = [
+    { kind: 'COMPANY', id: change.next.companyId },
+    ...memberIds.map((id) => ({ kind: 'CHARACTER' as const, id })),
+  ];
+
+  let next = change.next;
+  const events = [...change.events];
+  // These IDs live inside this one company root. Company creation happens only
+  // once, so a stable subject ordinal keeps them bounded even when command and
+  // character IDs are each at the wire limit.
+  for (const [ordinal, subject] of subjects.entries()) {
+    const fact: CompanyObservationEvidence = {
+      id: lifecycleId<'Observation'>('opening-owner-observation', String(ordinal)),
+      worldId: context.worldId,
+      companyId: context.companyId,
+      revision: context.canonicalRevision,
+      sourceEventId: started.id,
+      atTick: context.atTick,
+      kind: 'COMPANY_OBSERVATION',
+      subject,
+    };
+    const observation: CommandOf<'Observe'> = {
+      schemaVersion: command.schemaVersion,
+      commandId: lifecycleId<'Command'>('opening-owner-observation-command', String(ordinal)),
+      worldId: context.worldId,
+      companyId: context.companyId,
+      actorRef: { kind: 'DOMAIN_RECEIPT', id: fact.id },
+      expectedRevision: context.canonicalRevision,
+      campaignTick: context.atTick,
+      rulesetId: command.rulesetId,
+      sourceEventId: started.id,
+      type: 'Observe',
+      payload: {
+        observationId: fact.id,
+        observerRef: { kind: 'COMPANY', id: context.companyId },
+        subjectRef: { kind: subject.kind, id: subject.id },
+        factId: fact.id,
+        sourceId: started.id,
+      },
+    };
+    const observed = observeCompany(next, observation, {
+      ...context,
+      publicRevision: next.knowledge.revision,
+      facts: [...context.facts, fact],
+    });
+    next = observed.next;
+    events.push(...observed.events);
+  }
+  return { ...change, next, events };
 }
 function plan(
   state: LifecycleState,
@@ -183,7 +319,7 @@ function plan(
     case 'ResolveLeadership':
       return prepareSuccession(state, command, context);
     case 'ChoosePerk':
-      return preparePerkSelection(state, command, context);
+      return prepareOwnerPerkSelection(state, command, context);
     case 'ProposeNickname':
     case 'ResolveNickname':
       return prepareNicknameCommand(state, command, context);
@@ -194,6 +330,9 @@ function plan(
         : observeCompany(state, command, context);
     case 'RenameCompany': {
       requireLifecycle(state.company, 'INVALID_STATE');
+      const publicValueChanged =
+        state.company.name !== command.payload.name ||
+        state.company.bannerId !== command.payload.bannerId;
       return {
         next: {
           ...state,
@@ -202,6 +341,12 @@ function plan(
             name: command.payload.name,
             bannerId: command.payload.bannerId,
           },
+          knowledge: publicValueChanged
+            ? {
+                ...state.knowledge,
+                revision: publicRevision((BigInt(state.knowledge.revision) + 1n).toString()),
+              }
+            : state.knowledge,
         },
         events: [event(command.commandId, 'CompanyRenamed', context.atTick, [])],
         requirements: [],
@@ -210,6 +355,43 @@ function plan(
     default:
       throw new LifecycleViolation('UNSUPPORTED_ACTION');
   }
+}
+
+function prepareOwnerPerkSelection(
+  state: LifecycleState,
+  command: Extract<CompanyCommand, { readonly type: 'ChoosePerk' }>,
+  context: LifecycleContext,
+): LifecycleChange {
+  const change = preparePerkSelection(state, command, context);
+  const selected = change.next.characters.find(
+    (character) => character.identity.characterId === command.payload.characterId,
+  );
+  const known = state.knowledge.characters.find(
+    (character) => character.identity.characterId === command.payload.characterId,
+  );
+  requireLifecycle(selected && known, 'CONTACT_OR_ACCESS_REQUIRED');
+  const publicValueChanged = canonicalJson(known.perks) !== canonicalJson(selected.perks);
+  return {
+    ...change,
+    next: {
+      ...change.next,
+      knowledge: {
+        ...change.next.knowledge,
+        ...(publicValueChanged
+          ? {
+              revision: publicRevision(
+                (BigInt(change.next.knowledge.revision) + 1n).toString(),
+              ),
+              characters: change.next.knowledge.characters.map((character) =>
+                character.identity.characterId === command.payload.characterId
+                  ? { ...character, perks: [...selected.perks] }
+                  : character,
+              ),
+            }
+          : {}),
+      },
+    },
+  };
 }
 /** A pure component transition. PREPARED is never permission to commit the whole command. */
 export function prepareCompanyLifecycle(
@@ -266,7 +448,9 @@ export function prepareCompanyLifecycle(
       'TERMINAL',
     );
     requireLifecycle(state.company !== null || command.type === 'CreateCompany', 'INVALID_STATE');
-    const change = plan(state, command, context);
+    const planned = plan(state, command, context);
+    const change =
+      command.type === 'CreateCompany' ? observeOpeningCompany(planned, command, context) : planned;
     const receipt: LifecycleReceipt = {
       commandId: command.commandId,
       requestKey,
@@ -306,6 +490,10 @@ export function projectCompanyLifecycle(state: LifecycleState, observerCompanyId
   return {
     companyId: state.companyId,
     revision: knowledge.revision,
+    companyPresentation:
+      state.company === null
+        ? null
+        : { name: state.company.name, bannerId: state.company.bannerId },
     leaderId: knowledge.leaderId,
     designatedHeirId: knowledge.designatedHeirId,
     runStatus: knowledge.runStatus,
@@ -320,6 +508,7 @@ export function projectCompanyLifecycle(state: LifecycleState, observerCompanyId
         characterId: p.identity.characterId,
         name: p.identity.birthName,
         nicknameTextKey: p.nickname?.textKey ?? null,
+        perkIds: [...p.perks],
         knownStatus: p.presence.availability,
         location: { ...p.presence.location },
         assignment: p.presence.assignment,

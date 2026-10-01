@@ -557,11 +557,14 @@ function applyCommandAtTarget(
   };
 }
 
-function publicObservableKey(state: CompanyEconomyState, observerCompanyId: string): string {
-  return canonicalJson([
-    projectCompanyEconomy(state, observerCompanyId),
-    physicalObservableKey(state),
-  ]);
+function publicObservableKey(
+  state: CompanyEconomyState,
+  observerCompanyId: string,
+): { readonly economy: string; readonly physical: string } {
+  return {
+    economy: canonicalJson(projectCompanyEconomy(state, observerCompanyId)),
+    physical: physicalObservableKey(state),
+  };
 }
 
 /** A single lifecycle+finance+physical draft. There is deliberately no child commit API. */
@@ -677,7 +680,7 @@ function prepareEconomyCandidate(
           targetContext,
         );
         const atBoundary = {
-          ...advancePhysicalTime(prefixFood.root, factualOutcome),
+          ...advancePhysicalTime(prefixFood.root, factualOutcome, context.trustedTransitSegments),
           lifecycle: { ...prefixFood.root.lifecycle, campaignTick: boundary },
         };
         const proposed = applyCommandAtTarget(atBoundary, command, targetContext);
@@ -703,7 +706,11 @@ function prepareEconomyCandidate(
           postOutcomeAccrual.requirements,
           targetContext,
         );
-        const recovered = advancePhysicalTime(survivorFood.root, target);
+        const recovered = advancePhysicalTime(
+          survivorFood.root,
+          target,
+          context.trustedTransitSegments,
+        );
         const tasks = affectedLearningTasks(
           command,
           atBoundary,
@@ -798,7 +805,7 @@ function prepareEconomyCandidate(
           command.commandId,
           false,
         );
-        const recovered = advancePhysicalTime(settled.root, target);
+        const recovered = advancePhysicalTime(settled.root, target, context.trustedTransitSegments);
         draft = {
           ...draft,
           root: recovered,
@@ -813,7 +820,7 @@ function prepareEconomyCandidate(
         closed.requirements,
         targetContext,
       );
-      let timed = advancePhysicalTime(closedPhysical.root, target);
+      let timed = advancePhysicalTime(closedPhysical.root, target, context.trustedTransitSegments);
       if (
         command.type === 'TransferItem' ||
         (learningInput &&
@@ -1108,7 +1115,10 @@ function prepareEconomyCandidate(
     };
     const beforePublic = publicObservableKey(state, context.companyId);
     const afterPublic = publicObservableKey(next, context.companyId);
-    if (beforePublic !== afterPublic)
+    if (
+      beforePublic.economy !== afterPublic.economy ||
+      beforePublic.physical !== afterPublic.physical
+    )
       next = {
         ...next,
         lifecycle: {

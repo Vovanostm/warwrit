@@ -1,4 +1,3 @@
-import { WORLD_REGION_VERSION } from '../world/region.js';
 import type {
   ContractCatalogue,
   ContractDefinition,
@@ -13,6 +12,7 @@ import type {
 } from './types.js';
 
 export const CONTRACT_M1_EDITION = 'ct-m1-authored-v1' as const;
+const CONTRACT_M1_SOURCE_WORLD_REGION_VERSION = 'w01-authored-fixture-2026-09-28-v1' as const;
 
 const location = (siteId: string, areaId: string): ContractLocationReference => ({
   siteId,
@@ -493,6 +493,6 @@ function deepFreeze<T>(value: T): T {
 
 export const CONTRACT_M1_CATALOGUE: ContractCatalogue = deepFreeze({
   schemaVersion: 1,
-  worldRegionVersion: WORLD_REGION_VERSION,
+  worldRegionVersion: CONTRACT_M1_SOURCE_WORLD_REGION_VERSION,
   editions: [editionDraft],
 });

@@ -1,5 +1,3 @@
-import type { WORLD_REGION_VERSION } from '../world/region.js';
-
 export type ContractTemplate = 'HUNT' | 'INVESTIGATE' | 'RESCUE';
 
 export type ContractProofKind =
@@ -85,7 +83,7 @@ export interface ContractEdition {
 
 export interface ContractCatalogue {
   readonly schemaVersion: 1;
-  readonly worldRegionVersion: typeof WORLD_REGION_VERSION;
+  readonly worldRegionVersion: string;
   readonly editions: readonly ContractEdition[];
 }
 

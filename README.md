@@ -16,7 +16,7 @@ Prerequisites:
 
 - Node.js `24.20.x`;
 - Corepack;
-- Docker with Docker Compose v2;
+- Docker Engine with the Compose v2 plugin; on macOS use [colima](docs/engineering/LOCAL_DEVELOPMENT.md#container-runtime-colima);
 - Git.
 
 From a clean checkout, run one command:
@@ -29,17 +29,17 @@ The bootstrap installs the pinned package manager and dependencies, starts Postg
 
 ## Daily commands
 
-| Command                   | Purpose                                                                                |
-| ------------------------- | -------------------------------------------------------------------------------------- |
-| `pnpm dev`                | Run the web and server development processes                                           |
-| `pnpm verify`             | Format, lint, architecture, dead code, patterns, content, type, build, and unit checks |
-| `pnpm check:changes`      | Fail on dead code, complexity or duplication introduced by this branch                 |
-| `pnpm report:quality`     | Report complexity hotspots and duplicated code (non-blocking)                          |
-| `pnpm test:combat:stress` | Run the 10,000-battle deterministic M0 stress gate                                     |
-| `pnpm test:migrations`    | Apply and roll back the current migration set against `DATABASE_URL`                   |
-| `pnpm db:up`              | Start local PostgreSQL                                                                 |
-| `pnpm db:down`            | Stop local PostgreSQL                                                                  |
-| `pnpm clean`              | Remove generated build and coverage output                                             |
+| Command                   | Purpose                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                | Run the web and server development processes                                                                  |
+| `pnpm verify`             | Format, lint, architecture, dead code, patterns, content, type, build, and unit checks                        |
+| `pnpm check:changes`      | Fail on dead code, complexity or duplication introduced by this branch                                        |
+| `pnpm report:quality`     | Report complexity hotspots and duplicated code (non-blocking)                                                 |
+| `pnpm test:combat:stress` | Run the 10,000-battle deterministic M0 stress gate                                                            |
+| `pnpm test:migrations`    | Apply and roll back migrations, then run encounter and OIDC PostgreSQL specs, against an empty `DATABASE_URL` |
+| `pnpm db:up`              | Start local PostgreSQL                                                                                        |
+| `pnpm db:down`            | Stop local PostgreSQL                                                                                         |
+| `pnpm clean`              | Remove generated build and coverage output                                                                    |
 
 Copy `.env.example` to `.env` for local overrides. The default Docker database URL is already documented there.
 

@@ -1,4 +1,5 @@
 import { SEROE_PORECHYE, WORLD_REGION_VERSION } from '../world/region.js';
+import { CONTRACT_M1_CATALOGUE } from './manifest.js';
 import type {
   ContractCatalogue,
   ContractCatalogueValidation,
@@ -384,7 +385,8 @@ export function validateContractCatalogue(input: unknown): ContractCatalogueVali
     !isRecord(input) ||
     !exactKeys(input, ['schemaVersion', 'worldRegionVersion', 'editions']) ||
     input['schemaVersion'] !== 1 ||
-    input['worldRegionVersion'] !== WORLD_REGION_VERSION ||
+    input['worldRegionVersion'] !== CONTRACT_M1_CATALOGUE.worldRegionVersion ||
+    WORLD_REGION_VERSION !== 'w01-authored-fixture-2026-09-29-v2' ||
     !Array.isArray(input['editions']) ||
     !input['editions'].every(editionShape)
   ) {

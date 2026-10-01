@@ -21,6 +21,10 @@ import {
   unitId,
 } from '@warwrit/game-core';
 import type {
+  BattleId,
+  CombatAggregateResult,
+  CombatPracticeProfile,
+  CombatReceiptApplication,
   CombatCommand,
   CombatOwnerContext,
   CombatReceiptContext,
@@ -32,11 +36,26 @@ import type {
   EncounterPositionEvidence,
   EquipmentSlot,
   FinanceEvidence,
+  FrozenEncounterBinding,
   MaterializedCompanyState,
   PhysicalEvidence,
 } from '@warwrit/game-core';
 import { command, context, economy, place } from './company-economy-fixture.js';
 import { addContainer, addItem, addVitals, container, item } from './company-physical-fixture.js';
+
+type CombatAggregateFixture = {
+  sources: EncounterCompanySource[];
+  root: MaterializedCompanyState;
+  binding: FrozenEncounterBinding;
+  journal: CombatReceiptJournal;
+  request: { bindingId: string; battleId: BattleId };
+  evidence: EncounterPositionEvidence;
+};
+
+type PreparedCombatAggregateBegin = Extract<
+  CombatAggregateResult<{ readonly binding: FrozenEncounterBinding }>,
+  { readonly kind: 'PREPARED' }
+>;
 
 export function source(
   prefix: string,
@@ -51,85 +70,103 @@ export function source(
   ) as ReturnType<typeof economy>;
   const members = root.lifecycle.characters.filter((person) => person.presence.fieldPartyId);
   for (const person of members) {
-    const characterId = person.identity.characterId;
-    const owner = { kind: 'CHARACTER' as const, id: characterId };
-    const packId = `${characterId}-pack`;
-    root = addContainer(root, container(packId, owner, 30000, owner), false);
-    for (const definitionId of ['sword', 'shield', 'padded-coat', 'simple-helmet']) {
-      const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === definitionId)!;
-      const slots: EquipmentSlot[] =
-        definition.hands === 2 ? ['MAIN_HAND', 'OFF_HAND'] : [definition.slot!];
-      const maximum =
-        definitionId === 'padded-coat' ? 40 : definitionId === 'simple-helmet' ? 20 : 10000;
-      const current =
-        definitionId === 'padded-coat' ? 7 : definitionId === 'simple-helmet' ? 5 : 5000;
-      const value = item(
-        `${characterId}-${definitionId}`,
-        definitionId,
-        owner,
-        packId,
-        1,
-        current,
-        maximum,
-      );
-      root = addItem(root, { ...value, equipped: { characterId, slots } }, false);
-    }
-    root = addVitals(
-      root,
-      {
-        characterId,
-        sourceId: `${characterId}-vitals`,
-        maximumHealth: characterId.endsWith('-leader') ? health : 100,
-        currentHealth: characterId.endsWith('-leader') ? health : 100,
-        healthCarry: '0',
-        maximumStamina: 100,
-        currentStamina: 100,
-        staminaCarry: '0',
-        morale: 50,
-      },
-      false,
-    );
+    root = addMemberCombatLoadout(root, person.identity.characterId, health);
   }
-  if (familySuccessor) {
-    const leaderId = entityId<'Character'>(`${prefix}-leader`);
-    const providerId = entityId<'Character'>(`${prefix}-provider`);
-    root = {
-      ...root,
-      lifecycle: {
-        ...root.lifecycle,
-        company: {
-          ...root.lifecycle.company!,
-          householdIds: [...root.lifecycle.company!.householdIds, providerId],
-        },
-        kinship: [...root.lifecycle.kinship, { from: leaderId, to: providerId, kind: 'SIBLING' }],
-      },
-    };
-    const owner = { kind: 'CHARACTER' as const, id: providerId };
-    const packId = `${providerId}-pack`;
-    root = addContainer(root, container(packId, owner, 30000, owner), false);
-    const sword = item(`${providerId}-sword`, 'sword', owner, packId, 1, 5000, 10000);
-    root = addItem(
-      root,
-      { ...sword, equipped: { characterId: providerId, slots: ['MAIN_HAND'] } },
-      false,
+  if (familySuccessor) root = addFamilySuccessor(root, prefix);
+  root = addCombatSkills(root);
+  const request = command(root, 'BeginEncounterBinding', {}, 'placement', 'SYSTEM');
+  return { root: { ...root, physical: root.physical! }, context: context(root, request) };
+}
+
+function addMemberCombatLoadout(
+  root: ReturnType<typeof economy>,
+  characterId: string,
+  health: number,
+): ReturnType<typeof economy> {
+  const owner = { kind: 'CHARACTER' as const, id: characterId };
+  const packId = `${characterId}-pack`;
+  root = addContainer(root, container(packId, owner, 30000, owner), false);
+  for (const definitionId of ['sword', 'shield', 'padded-coat', 'simple-helmet']) {
+    const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === definitionId)!;
+    const slots: EquipmentSlot[] =
+      definition.hands === 2 ? ['MAIN_HAND', 'OFF_HAND'] : [definition.slot!];
+    const maximum =
+      definitionId === 'padded-coat' ? 40 : definitionId === 'simple-helmet' ? 20 : 10000;
+    const current =
+      definitionId === 'padded-coat' ? 7 : definitionId === 'simple-helmet' ? 5 : 5000;
+    const value = item(
+      `${characterId}-${definitionId}`,
+      definitionId,
+      owner,
+      packId,
+      1,
+      current,
+      maximum,
     );
-    root = addVitals(
-      root,
-      {
-        characterId: providerId,
-        sourceId: `${providerId}-vitals`,
-        maximumHealth: 100,
-        currentHealth: 100,
-        healthCarry: '0',
-        maximumStamina: 100,
-        currentStamina: 100,
-        staminaCarry: '0',
-        morale: 50,
-      },
-      false,
-    );
+    root = addItem(root, { ...value, equipped: { characterId, slots } }, false);
   }
+  return addVitals(
+    root,
+    {
+      characterId,
+      sourceId: `${characterId}-vitals`,
+      maximumHealth: characterId.endsWith('-leader') ? health : 100,
+      currentHealth: characterId.endsWith('-leader') ? health : 100,
+      healthCarry: '0',
+      maximumStamina: 100,
+      currentStamina: 100,
+      staminaCarry: '0',
+      morale: 50,
+    },
+    false,
+  );
+}
+
+function addFamilySuccessor(
+  root: ReturnType<typeof economy>,
+  prefix: string,
+): ReturnType<typeof economy> {
+  const leaderId = entityId<'Character'>(`${prefix}-leader`);
+  const providerId = entityId<'Character'>(`${prefix}-provider`);
   root = {
+    ...root,
+    lifecycle: {
+      ...root.lifecycle,
+      company: {
+        ...root.lifecycle.company!,
+        householdIds: [...root.lifecycle.company!.householdIds, providerId],
+      },
+      kinship: [...root.lifecycle.kinship, { from: leaderId, to: providerId, kind: 'SIBLING' }],
+    },
+  };
+  const owner = { kind: 'CHARACTER' as const, id: providerId };
+  const packId = `${providerId}-pack`;
+  root = addContainer(root, container(packId, owner, 30000, owner), false);
+  const sword = item(`${providerId}-sword`, 'sword', owner, packId, 1, 5000, 10000);
+  root = addItem(
+    root,
+    { ...sword, equipped: { characterId: providerId, slots: ['MAIN_HAND'] } },
+    false,
+  );
+  return addVitals(
+    root,
+    {
+      characterId: providerId,
+      sourceId: `${providerId}-vitals`,
+      maximumHealth: 100,
+      currentHealth: 100,
+      healthCarry: '0',
+      maximumStamina: 100,
+      currentStamina: 100,
+      staminaCarry: '0',
+      morale: 50,
+    },
+    false,
+  );
+}
+
+function addCombatSkills(root: ReturnType<typeof economy>): ReturnType<typeof economy> {
+  return {
     ...root,
     lifecycle: {
       ...root.lifecycle,
@@ -150,8 +187,6 @@ export function source(
       })),
     },
   };
-  const request = command(root, 'BeginEncounterBinding', {}, 'placement', 'SYSTEM');
-  return { root: { ...root, physical: root.physical! }, context: context(root, request) };
 }
 
 export function fixture(
@@ -159,7 +194,7 @@ export function fixture(
   adjacentPracticeParty = false,
   familySuccessor = false,
   departureItemCharacterId?: string,
-) {
+): CombatAggregateFixture {
   const sources = [source('a', health, familySuccessor), source('b', 10000)];
   if (departureItemCharacterId) {
     const owner = sources[0]!;
@@ -324,7 +359,15 @@ export function createCompanyCombatAggregateFixture(
   familySuccessor = false,
   health = 10000,
   departureItemCharacterId?: string,
-) {
+): {
+  f: CombatAggregateFixture;
+  state: CompanyCombatAggregateState;
+  begun: PreparedCombatAggregateBegin;
+  initialJournal: CombatReceiptJournal;
+  journal: CombatReceiptJournal;
+  practiceProfile: CombatPracticeProfile;
+  applications: CombatReceiptApplication[];
+} {
   const f = fixture(health, false, familySuccessor, departureItemCharacterId);
   for (const root of new Set([f.root, f.sources[0]!.root])) {
     const worker = root.lifecycle.characters.find(

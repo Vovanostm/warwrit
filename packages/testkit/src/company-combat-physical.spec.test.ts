@@ -60,6 +60,7 @@ import {
   command,
   context,
   cash,
+  tick,
   physicalScope,
   place,
   scope,
@@ -1152,10 +1153,35 @@ describe('G09 — verified combat practice', () => {
       journal.receipts.at(-1)!.transition.state.revision,
     );
 
-    const beforeChangedEvidence = structuredClone(aggregate.next);
     const creditOrdinal = aggregateApplications.findIndex(
       (application) => application.practiceCredits.length > 0,
     );
+    const creditTickBefore = structuredClone(aggregateBegin.next);
+    const mismatchedCreditTick = aggregateApplications.map((application, ordinal) =>
+      ordinal === creditOrdinal
+        ? {
+            ...application,
+            practiceCredits: application.practiceCredits.map((credit) => ({
+              ...credit,
+              context: {
+                ...credit.context,
+                atTick: (
+                  BigInt(application.time.atTick) + 1n
+                ).toString() as typeof application.time.atTick,
+              },
+            })),
+          }
+        : application,
+    );
+    const rejectedCreditTick = prepareConsumeCombatAggregate(aggregateBegin.next, {
+      journal,
+      applications: mismatchedCreditTick,
+      practiceProfile: profile,
+    });
+    expect(rejectedCreditTick.kind).toBe('REJECTED');
+    expect(aggregateBegin.next).toEqual(creditTickBefore);
+
+    const beforeChangedEvidence = structuredClone(aggregate.next);
     const firstCredit = aggregateApplications[creditOrdinal]!.practiceCredits[0]!;
     const practiceFact = firstCredit.context.practiceFacts?.[0];
     if (!practiceFact) throw new Error('Expected a sourced combat practice fact');
@@ -1660,6 +1686,81 @@ describe('G10 — atomic combat company aggregate', () => {
     return { profile, applications };
   }
 
+  it('accepts a later receipt with its campaign advance and food evidence', () => {
+    const f = aggregateFixture();
+    const initial = prepareConsumeCombatAggregate(f.begun.next, {
+      journal: f.initialJournal,
+      applications: f.applications.slice(0, 1),
+      practiceProfile: f.practiceProfile,
+    });
+    if (initial.kind !== 'PREPARED') throw new Error(initial.error);
+
+    const advanceState = initial.next.economy;
+    const toTick = tick(BigInt(advanceState.lifecycle.campaignTick) + 1n);
+    const advanceCommand = command(
+      advanceState,
+      'AdvanceCampaign',
+      { toTick, authoritativeInputs: [] },
+      'combat-receipt-time-advance',
+      'SYSTEM',
+      toTick,
+    ) as CommandOf<'AdvanceCampaign'>;
+    const advanceContextBase = {
+      ...context(advanceState, advanceCommand as ReturnType<typeof command>),
+      atTick: toTick,
+      learningFacts: [],
+    } as CombatOwnerContext;
+    const advanceContext: CombatOwnerContext = {
+      ...advanceContextBase,
+      principal: advanceCommand.actorRef,
+      internalGrant: {
+        commandId: advanceCommand.commandId,
+        sourceEventId: advanceCommand.sourceEventId!,
+        canonicalRequest: canonicalJson(advanceCommand),
+      },
+    };
+    expect(advanceContext.physicalFacts?.some((fact) => fact.kind === 'FOOD_FULFILLMENT')).toBe(
+      true,
+    );
+
+    const laterApplication = {
+      ...f.applications[1]!,
+      time: { ...f.applications[1]!.time, atTick: toTick },
+      context: { ...f.applications[1]!.context, atTick: toTick },
+      advance: {
+        command: advanceCommand,
+        context: advanceContext,
+        learning: { intervals: [] },
+      },
+    };
+    const input = {
+      journal: f.journal,
+      applications: [f.applications[0]!, laterApplication],
+      practiceProfile: f.practiceProfile,
+    };
+    const prepared = prepareConsumeCombatAggregate(f.begun.next, input);
+    expect(prepared.kind).toBe('PREPARED');
+    if (prepared.kind !== 'PREPARED') return;
+    expect(prepared.next.economy.lifecycle.campaignTick).toBe(toTick);
+
+    const before = structuredClone(f.begun.next);
+    const mismatchedEvidence = prepareConsumeCombatAggregate(f.begun.next, {
+      ...input,
+      applications: [
+        f.applications[0]!,
+        {
+          ...laterApplication,
+          context: {
+            ...laterApplication.context,
+            atTick: advanceState.lifecycle.campaignTick,
+          },
+        },
+      ],
+    });
+    expect(mismatchedEvidence.kind).toBe('REJECTED');
+    expect(f.begun.next).toEqual(before);
+  });
+
   it('ignores sparse non-commander leadership data without cycles and keeps split receipt consumption atomic', () => {
     const f = aggregateFixture();
     const initial = {
@@ -1956,6 +2057,7 @@ describe('G10 — atomic combat company aggregate', () => {
         ...application.time,
         atTick: index === 0 ? f.f.root.lifecycle.campaignTick : targetTick,
       },
+      context: index === 0 ? application.context : { ...application.context, atTick: targetTick },
       ...(index === 1
         ? { advance: { command: advance, context: advanceContext, learning: { intervals: [] } } }
         : {}),

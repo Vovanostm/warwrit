@@ -11,6 +11,35 @@
 
 The exact package graph is committed in `pnpm-lock.yaml`.
 
+## Container runtime (colima)
+
+Owner decision, 2026-09-29: local containers run on [colima](https://github.com/abiosoft/colima)
+(Docker runtime, macOS Virtualization.Framework). OrbStack and Docker Desktop are
+not used. CI keeps the Docker engine of GitHub's `ubuntu-24.04` runner.
+
+```bash
+brew install colima docker docker-compose
+colima start --vm-type=vz --cpu 2 --memory 4   # matches the 2-core/4 GB target, not a measured need
+docker context use colima                       # colima sets this on start; check with `docker context ls`
+```
+
+Homebrew's Compose is a Docker CLI plugin. Add its directory to `~/.docker/config.json`
+as Homebrew's caveat states:
+
+```json
+{ "cliPluginsExtraDirs": ["/opt/homebrew/lib/docker/cli-plugins"] }
+```
+
+`~/.docker/cli-plugins/` takes precedence over that directory. A link left there
+by a removed runtime (for example OrbStack's `docker-compose`) breaks
+`docker compose` with `unknown command` while `docker info` still works; delete the
+stale link. Verify before running the gate:
+
+```bash
+docker compose version
+docker info --format '{{.ServerVersion}}'
+```
+
 ## Clean bootstrap
 
 ```bash
@@ -63,6 +92,20 @@ dead code, complexity or duplication that the branch introduces in changed files
 Inherited complexity and clones are listed by `pnpm report:quality` and
 `pnpm exec ast-grep scan` warnings; fixing them belongs to an owning change.
 
+The same audit runs locally as Git `pre-commit` and `pre-merge-commit` hooks
+(`scripts/git-hooks/`) for every agent and terminal. It audits the working tree
+against the merge-base with `origin/main` (override with `FALLOW_AUDIT_BASE`), so
+an untracked unused file also blocks a commit; a Markdown-only commit skips it.
+It takes about 10–15 s. Rebase and cherry-pick run no hook, and
+`git commit --no-verify` skips it (the audit is then `NOT_RUN`); CI stays the
+final gate.
+
+A fresh `pnpm install` points the clone's `core.hooksPath` at the hooks. pnpm
+skips that `prepare` step when `node_modules` is already current, so an existing
+clone runs `pnpm run prepare` once; `pnpm agent:preflight` prints whether the
+gate is active. The setting is shared by all worktrees, but a worktree whose base
+predates the hooks runs none until it merges `main`.
+
 The M0 combat acceptance gate runs separately:
 
 ```bash
@@ -71,7 +114,13 @@ pnpm test:combat:stress
 
 It generates 10,000 deterministic battles with 4–12 fighters, runs both sides through server-style AI, asserts terminal resolution and state invariants, samples replay reconstruction and exact reruns, and emits a SHA-256 digest plus aggregate evidence. A failure aborts clean bootstrap and CI.
 
-Migration smoke also runs separately because it requires PostgreSQL:
+Migration smoke and the encounter PostgreSQL specifications run separately because
+they require an empty PostgreSQL database. The smoke applies and rolls back every
+migration, leaving no schema; the script then applies all migrations and runs the
+encounter specifications (atomic receipts, competing connections, replay after
+reload) and the OIDC session specification (in-process test issuer, no Dex)
+through `WARWRIT_ENCOUNTER_DATABASE_URL` and `IDENTITY_TEST_DATABASE_URL`. Before
+2026-09-29 CI skipped both because only `DATABASE_URL` was set:
 
 ```bash
 pnpm test:migrations
@@ -83,6 +132,7 @@ Use these while editing; the full gate above runs once on the final tree.
 
 ```bash
 pnpm agent:preflight                                  # checkout identity for start/resume/handoff
+pnpm agent:status                                     # live main, CI, open PRs, active writer branches (git + gh)
 pnpm --filter @warwrit/game-core build                # refresh dist before testkit-based specs
 pnpm exec vitest run packages/game-core/src/company   # one directory or file
 pnpm exec vitest run -t "replay" packages/game-core   # tests whose name matches
@@ -93,6 +143,8 @@ pnpm check:migrations                                 # released migrations unch
 pnpm check:changes                                    # new dead code/complexity/duplication vs origin/main
 pnpm exec ast-grep scan <paths>                       # code-shape rules; warnings are known weak spots
 pnpm exec fallow dupes --trace dup:<fingerprint>      # inspect one clone group before consolidating
+pnpm test:coverage                                    # v8 coverage/coverage-final.json; no threshold
+pnpm exec fallow health --coverage coverage/coverage-final.json   # measured CRAP per function
 ```
 
 Testkit and cross-package specs import built workspace exports; `typecheck` uses

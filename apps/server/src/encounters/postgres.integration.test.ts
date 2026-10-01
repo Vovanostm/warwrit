@@ -2,6 +2,19 @@ import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from 'node:net';
 
 import * as combat from '@warwrit/game-core';
+import {
+  FIRST_HUNT_ALLIED_SLOTS,
+  FIRST_HUNT_COMBAT_MAP,
+  FIRST_HUNT_HOSTILE_GENESIS,
+  FIRST_HUNT_RETREAT_HEXES,
+  M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+  battleId,
+  sideId,
+  startBattleV2,
+  unitId,
+  type BattleSetupV2,
+} from '@warwrit/game-core';
+import { ensureFirstHuntGenesis } from '../contracts/first-hunt-runtime.js';
 import { Client, type SeatReservation } from '@colyseus/sdk';
 import type { EncounterCommandResponse } from '@warwrit/protocol';
 import { sql } from 'kysely';
@@ -14,9 +27,13 @@ import {
   createFixtureEncounter,
   executeEncounterCommand,
   executeEncounterAiWake,
+  executeEncounterTimeout,
   listDueEncounterAiWakes,
+  listDueEncounterTimeouts,
+  requestEncounterResume,
   verifyEncounterReplay,
 } from './executor.js';
+import { firstHuntTimeoutCommandId } from './admission.js';
 import { startEncounterAiWorker } from './ai-worker.js';
 import { EncounterRoomState } from './room-state.js';
 
@@ -26,6 +43,227 @@ const databases =
     ? []
     : [createDatabase(connectionString), createDatabase(connectionString)];
 const apps: ReturnType<typeof buildApp>[] = [];
+
+function createHumanEncounterSetup(encounterId: string, alliedCount = 1): BattleSetupV2 {
+  const allySide = sideId('first-hunt-companies');
+  const hostileSide = sideId('first-hunt-hostiles');
+  const hostile = FIRST_HUNT_HOSTILE_GENESIS[0];
+  if (hostile === undefined) throw new Error('FIRST HUNT hostile profile is unavailable');
+  const alliedUnits = FIRST_HUNT_ALLIED_SLOTS.slice(0, alliedCount).map((position, index) => {
+    const unit = unitId(`test-company-member-${index + 1}`);
+    const initiative = 300 - index;
+    return {
+      id: unit,
+      sideId: allySide,
+      position,
+      weaponId: 'raider' as const,
+      attributes: {
+        health: 100,
+        armor: 100,
+        stamina: 100,
+        initiative,
+        accuracy: 22,
+        defense: 20,
+        morale: 100,
+      },
+      initialPools: { health: 100, armor: 100, stamina: 100, morale: 100 },
+    };
+  });
+  return {
+    schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
+    battleId: battleId(encounterId),
+    rulesetId: M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+    seed: 17,
+    map: FIRST_HUNT_COMBAT_MAP,
+    sides: [
+      { id: allySide, retreatHexes: FIRST_HUNT_RETREAT_HEXES.allied },
+      { id: hostileSide, retreatHexes: FIRST_HUNT_RETREAT_HEXES.hostile },
+    ],
+    units: [
+      ...alliedUnits,
+      {
+        id: unitId(hostile.entityId),
+        sideId: hostileSide,
+        position: hostile.position,
+        weaponId: hostile.weaponId as BattleSetupV2['units'][number]['weaponId'],
+        attributes: { ...hostile.attributes, initiative: 100 },
+        initialPools: hostile.initialPools,
+      },
+    ],
+  };
+}
+
+function createWorldHostileSetup(encounterId: string): BattleSetupV2 {
+  const allySide = sideId('first-hunt-companies');
+  const hostileSide = sideId('first-hunt-hostiles');
+  const alliedPosition = FIRST_HUNT_ALLIED_SLOTS[0];
+  if (alliedPosition === undefined) throw new Error('FIRST HUNT allied slot is unavailable');
+  return {
+    schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
+    battleId: battleId(encounterId),
+    rulesetId: M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+    seed: 17,
+    map: FIRST_HUNT_COMBAT_MAP,
+    sides: [
+      { id: allySide, retreatHexes: FIRST_HUNT_RETREAT_HEXES.allied },
+      { id: hostileSide, retreatHexes: FIRST_HUNT_RETREAT_HEXES.hostile },
+    ],
+    units: [
+      {
+        id: unitId('test-company-member'),
+        sideId: allySide,
+        position: alliedPosition,
+        weaponId: 'raider' as const,
+        attributes: {
+          health: 100,
+          armor: 100,
+          stamina: 100,
+          initiative: 1,
+          accuracy: 22,
+          defense: 20,
+          morale: 100,
+        },
+        initialPools: { health: 100, armor: 100, stamina: 100, morale: 100 },
+      },
+      ...FIRST_HUNT_HOSTILE_GENESIS.map((hostile) => ({
+        id: unitId(hostile.entityId),
+        sideId: hostileSide,
+        position: hostile.position,
+        weaponId: hostile.weaponId as BattleSetupV2['units'][number]['weaponId'],
+        attributes: hostile.attributes,
+        initialPools: hostile.initialPools,
+      })),
+    ],
+  };
+}
+
+async function seedCompanyEncounter(input: {
+  readonly database: (typeof databases)[number];
+  readonly accountId: string;
+  readonly setup: BattleSetupV2;
+  readonly initial: ReturnType<typeof startBattleV2>;
+  readonly deadlineAt: Date | null;
+  readonly policyMode?: 'HUMAN' | 'AFK';
+  readonly aiWakeAt?: Date | null;
+}): Promise<string> {
+  const { database, accountId, setup, initial, deadlineAt } = input;
+  const activation = initial.state.activation;
+  if (activation === null) throw new Error('company encounter activation is unavailable');
+  const worldId = randomUUID();
+  await sql`
+    insert into world_campaign_clocks (world_id, epoch_ms, starting_tick)
+    values (${worldId}, ${String(Date.now() - 60_000)}, '0')
+  `.execute(database);
+  await database.transaction().execute(async (transaction) => {
+    await sql`
+      insert into encounters
+        (id, world_id, schema_version, setup, state, revision, status,
+         activation_id, activation_epoch, deadline_at, ai_wake_at)
+      values
+        (${String(setup.battleId)}, ${worldId}, ${setup.schemaVersion},
+         ${JSON.stringify(setup)}::json, ${JSON.stringify(initial.state)}::json,
+         ${initial.state.revision}, ${initial.state.status}, ${activation.id}, 1,
+         ${deadlineAt}, ${input.aiWakeAt ?? null})
+    `.execute(transaction);
+    const unitIds = setup.units
+      .filter((unit) => unit.sideId === setup.sides[0]!.id)
+      .map((unit) => String(unit.id));
+    await transaction
+      .insertInto('encounter_participants')
+      .values({
+        encounter_id: String(setup.battleId),
+        account_id: accountId,
+        side_id: setup.sides[0]!.id,
+        unit_ids: JSON.stringify(unitIds),
+        admission_source: 'company_binding',
+      })
+      .execute();
+    if (input.policyMode === 'AFK') {
+      await sql`update encounter_participants set afk = true where encounter_id = ${String(setup.battleId)}
+        and account_id = ${accountId}`.execute(transaction);
+    }
+    const hostileIds = setup.units
+      .filter((unit) => unit.sideId === setup.sides[1]!.id)
+      .map((unit) => String(unit.id));
+    for (const hostileId of hostileIds) {
+      await transaction
+        .insertInto('encounter_ai_controllers')
+        .values({
+          encounter_id: String(setup.battleId),
+          unit_id: hostileId,
+          doctrine: 'aggressive',
+          admission_source: 'world_hostile',
+        })
+        .execute();
+    }
+    const policyVersion =
+      input.policyMode === 'AFK' ? 'first-hunt-afk-v1' : 'first-hunt-human-deadline-v1';
+    const timeoutCommandId = firstHuntTimeoutCommandId(
+      String(setup.battleId),
+      activation.id,
+      policyVersion,
+    );
+    if (unitIds.includes(String(activation.unitId))) {
+      if (deadlineAt === null) throw new Error('company activation deadline is unavailable');
+      await transaction
+        .insertInto('encounter_activation_policies')
+        .values({
+          encounter_id: String(setup.battleId),
+          activation_id: activation.id,
+          activation_epoch: 1,
+          account_id: accountId,
+          unit_id: activation.unitId,
+          policy_version: policyVersion,
+          mode: input.policyMode ?? 'HUMAN',
+          started_at: new Date(deadlineAt.getTime() - 30_000),
+          deadline_at: deadlineAt,
+          campaign_tick: '0',
+          timeout_command_id: timeoutCommandId,
+        })
+        .execute();
+    }
+    for (const [ordinal, event] of initial.events.entries()) {
+      await transaction
+        .insertInto('encounter_events')
+        .values({
+          encounter_id: String(setup.battleId),
+          revision: 0,
+          ordinal,
+          event_id: `${String(setup.battleId)}:0:${ordinal}`,
+          event,
+        })
+        .execute();
+    }
+  });
+  return worldId;
+}
+
+async function removeEncounterFixture(
+  database: (typeof databases)[number],
+  encounterId: string,
+): Promise<void> {
+  await database.deleteFrom('world_proof_claims').where('encounter_id', '=', encounterId).execute();
+  await database.deleteFrom('encounter_receipts').where('encounter_id', '=', encounterId).execute();
+  await database.deleteFrom('encounter_events').where('encounter_id', '=', encounterId).execute();
+  await database.deleteFrom('encounter_commands').where('encounter_id', '=', encounterId).execute();
+  await database
+    .deleteFrom('encounter_activation_policies')
+    .where('encounter_id', '=', encounterId)
+    .execute();
+  await database
+    .deleteFrom('encounter_ai_controllers')
+    .where('encounter_id', '=', encounterId)
+    .execute();
+  await database
+    .deleteFrom('encounter_participants')
+    .where('encounter_id', '=', encounterId)
+    .execute();
+  await database
+    .deleteFrom('encounter_admissions')
+    .where('encounter_id', '=', encounterId)
+    .execute();
+  await database.deleteFrom('encounters').where('id', '=', encounterId).execute();
+}
 
 async function reservePort(): Promise<number> {
   const server = createServer();
@@ -49,6 +287,523 @@ afterAll(async () => {
 });
 
 describe('persistent fixture encounters (PostgreSQL)', () => {
+  it.skipIf(connectionString === undefined)(
+    'serializes a manual command against its due timeout into one accepted transition',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const accountId = randomUUID();
+      const issuer = `encounter-command-timeout-race-${accountId}`;
+      const encounterId = randomUUID();
+      const setup = createHumanEncounterSetup(encounterId);
+      const initial = startBattleV2(setup);
+      const activation = initial.state.activation;
+      if (activation === null) throw new Error('race fixture activation is unavailable');
+      const deadlineAt = new Date(Date.now() + 5_000);
+      await database
+        .insertInto('identity_accounts')
+        .values({ id: accountId, issuer, subject: 'timeout-race-owner' })
+        .execute();
+      const worldId = await seedCompanyEncounter({
+        database,
+        accountId,
+        setup,
+        initial,
+        deadlineAt,
+      });
+      try {
+        const dueAt = new Date(deadlineAt.getTime() + 1);
+        const due = (await listDueEncounterTimeouts(database, dueAt)).find(
+          (candidate) => candidate.encounterId === encounterId,
+        );
+        if (due === undefined) throw new Error('manual-timeout race was not scheduled');
+        const manualCommand = {
+          version: 1 as const,
+          encounterId,
+          commandId: 'manual-command-before-timeout',
+          expectedRevision: 0,
+          activationId: activation.id,
+          actorId: activation.unitId,
+          intent: { type: 'wait' as const },
+        };
+        const [manual, timeout] = await Promise.all([
+          executeEncounterCommand(database, accountId, manualCommand, true),
+          executeEncounterTimeout(database, due, dueAt),
+        ]);
+        expect(
+          [manual, timeout].filter((response) => response?.status === 'accepted'),
+        ).toHaveLength(1);
+        const stored = await sql<{
+          readonly revision: number;
+          readonly command_count: number;
+          readonly receipt_count: number;
+        }>`
+          select revision,
+            (select count(*)::int from encounter_commands where encounter_id = e.id) command_count,
+            (select count(*)::int from encounter_receipts where encounter_id = e.id) receipt_count
+          from encounters e where id = ${encounterId}
+        `.execute(database);
+        expect(stored.rows).toEqual([{ revision: 1, command_count: 1, receipt_count: 1 }]);
+        expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
+      } finally {
+        await removeEncounterFixture(database, encounterId);
+        await database
+          .deleteFrom('world_campaign_clocks')
+          .where('world_id', '=', worldId)
+          .execute();
+        await database.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
+      }
+    },
+  );
+
+  it.skipIf(connectionString === undefined)(
+    'commits one deterministic V2 timeout, marks AFK and keeps replay valid after reload',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const accountId = randomUUID();
+      const encounterId = randomUUID();
+      const issuer = `encounter-timeout-test-${accountId}`;
+      const allySide = sideId('first-hunt-companies');
+      const hostileSide = sideId('first-hunt-hostiles');
+      const hostile = FIRST_HUNT_HOSTILE_GENESIS[0];
+      const alliedPosition = FIRST_HUNT_ALLIED_SLOTS[0];
+      if (hostile === undefined || alliedPosition === undefined)
+        throw new Error('FIRST HUNT profile units are unavailable');
+      const setup: BattleSetupV2 = {
+        schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
+        battleId: battleId(encounterId),
+        rulesetId: M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+        seed: 17,
+        map: FIRST_HUNT_COMBAT_MAP,
+        sides: [
+          { id: allySide, retreatHexes: FIRST_HUNT_RETREAT_HEXES.allied },
+          { id: hostileSide, retreatHexes: FIRST_HUNT_RETREAT_HEXES.hostile },
+        ],
+        units: [
+          {
+            id: unitId('test-company-member'),
+            sideId: allySide,
+            position: alliedPosition,
+            weaponId: 'raider',
+            attributes: {
+              health: 60,
+              armor: 40,
+              stamina: 80,
+              initiative: 120,
+              accuracy: 22,
+              defense: 6,
+              morale: 100,
+            },
+            initialPools: { health: 60, armor: 40, stamina: 80, morale: 100 },
+          },
+          {
+            id: unitId(hostile.entityId),
+            sideId: hostileSide,
+            position: hostile.position,
+            weaponId: hostile.weaponId,
+            attributes: hostile.attributes,
+            initialPools: hostile.initialPools,
+          },
+        ],
+      };
+      const initial = startBattleV2(setup);
+      const activation = initial.state.activation;
+      if (!activation || activation.unitId !== setup.units[0]!.id)
+        throw new Error('V2 timeout fixture must begin on its company participant');
+      const now = new Date();
+      const deadline = new Date(now.getTime() - 1_000);
+      const policyVersion = 'first-hunt-human-deadline-v1';
+      const timeoutCommandId = firstHuntTimeoutCommandId(encounterId, activation.id, policyVersion);
+      await database
+        .insertInto('identity_accounts')
+        .values({ id: accountId, issuer, subject: 'timeout-owner' })
+        .execute();
+      await sql`
+        insert into world_campaign_clocks (world_id, epoch_ms, starting_tick)
+        values ('main', ${String(now.getTime() - 60_000)}, '0')
+        on conflict (world_id) do nothing
+      `.execute(database);
+      try {
+        await database.transaction().execute(async (transaction) => {
+          await sql`
+            insert into encounters
+              (id, world_id, schema_version, setup, state, revision, status,
+               activation_id, activation_epoch, deadline_at)
+            values
+              (${encounterId}, 'main', 2, ${JSON.stringify(setup)}::json,
+               ${JSON.stringify(initial.state)}::json, 0, 'active',
+               ${activation.id}, 1, ${deadline})
+          `.execute(transaction);
+          await sql`
+            insert into encounter_participants
+              (encounter_id, account_id, side_id, unit_ids, admission_source)
+            values
+              (${encounterId}, ${accountId}, ${allySide},
+               ${JSON.stringify([activation.unitId])}::jsonb, 'company_binding')
+          `.execute(transaction);
+          await sql`
+            insert into encounter_ai_controllers
+              (encounter_id, unit_id, doctrine, admission_source)
+            values (${encounterId}, ${hostile.entityId}, 'aggressive', 'world_hostile')
+          `.execute(transaction);
+          await transaction
+            .insertInto('encounter_activation_policies')
+            .values({
+              encounter_id: encounterId,
+              activation_id: activation.id,
+              activation_epoch: 1,
+              account_id: accountId,
+              unit_id: activation.unitId,
+              policy_version: policyVersion,
+              mode: 'HUMAN',
+              started_at: new Date(deadline.getTime() - 30_000),
+              deadline_at: deadline,
+              campaign_tick: '0',
+              timeout_command_id: timeoutCommandId,
+            })
+            .execute();
+          for (const [ordinal, event] of initial.events.entries()) {
+            await sql`
+              insert into encounter_events (encounter_id, revision, ordinal, event_id, event)
+              values (${encounterId}, 0, ${ordinal}, ${`${encounterId}:0:${ordinal}`},
+                ${JSON.stringify(event)}::json)
+            `.execute(transaction);
+          }
+        });
+
+        const restartedDatabase = createDatabase(connectionString!);
+        try {
+          const due = (await listDueEncounterTimeouts(restartedDatabase, now)).find(
+            (candidate) => candidate.encounterId === encounterId,
+          );
+          expect(due).toMatchObject({ encounterId, revision: 0, activationId: activation.id });
+          if (due === undefined)
+            throw new Error('persisted timeout was not discovered after reload');
+          const raced = await Promise.all([
+            executeEncounterTimeout(database, due, now),
+            executeEncounterTimeout(restartedDatabase, due, now),
+          ]);
+          const accepted = raced.filter((response) => response?.status === 'accepted');
+          expect(accepted).toHaveLength(1);
+          expect(accepted[0]).toMatchObject({
+            status: 'accepted',
+            commandId: timeoutCommandId,
+            revision: 1,
+          });
+          expect(
+            (await listDueEncounterTimeouts(restartedDatabase, now)).some(
+              (candidate) => candidate.encounterId === encounterId,
+            ),
+          ).toBe(false);
+          const replayAfterRestart = createDatabase(connectionString!);
+          try {
+            expect(await verifyEncounterReplay(replayAfterRestart, encounterId)).toBe(true);
+          } finally {
+            await replayAfterRestart.destroy();
+          }
+          const persisted = await sql<{
+            readonly afk: boolean;
+            readonly source_kind: string;
+            readonly command_id: string;
+            readonly activation_policy_id: string | null;
+          }>`
+            select participant.afk, command.source_kind, command.command_id,
+              command.activation_policy_id
+            from encounter_participants as participant
+            join encounter_commands as command on command.encounter_id = participant.encounter_id
+            where participant.encounter_id = ${encounterId}
+          `.execute(restartedDatabase);
+          expect(persisted.rows).toEqual([
+            {
+              afk: true,
+              source_kind: 'system_timeout',
+              command_id: timeoutCommandId,
+              activation_policy_id: activation.id,
+            },
+          ]);
+        } finally {
+          await restartedDatabase.destroy();
+        }
+      } finally {
+        await removeEncounterFixture(database, encounterId);
+        await database.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
+      }
+    },
+  );
+
+  it.skipIf(connectionString === undefined)(
+    'applies an explicit resume request only when the controller receives a later activation',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const accountId = randomUUID();
+      const issuer = `encounter-resume-test-${accountId}`;
+      const encounterId = randomUUID();
+      const setup = createHumanEncounterSetup(encounterId, 2);
+      const initial = startBattleV2(setup);
+      const activation = initial.state.activation;
+      if (activation === null) throw new Error('resume fixture activation is unavailable');
+      const next = combat.applyCombatCommand(initial.state, {
+        type: 'wait',
+        commandId: combat.commandId('resume-order-check'),
+        activationId: activation.id,
+        actorId: activation.unitId,
+      });
+      if (!next.ok || next.state.activation?.unitId !== setup.units[1]?.id)
+        throw new Error('resume fixture must activate its second company member next');
+      const deadlineAt = new Date(Date.now() + 2_000);
+      await database
+        .insertInto('identity_accounts')
+        .values({ id: accountId, issuer, subject: 'resume-owner' })
+        .execute();
+      const worldId = await seedCompanyEncounter({
+        database,
+        accountId,
+        setup,
+        initial,
+        deadlineAt,
+        policyMode: 'AFK',
+      });
+      try {
+        const before = await database
+          .selectFrom('encounter_activation_policies')
+          .select(['mode', 'activation_id'])
+          .where('encounter_id', '=', encounterId)
+          .executeTakeFirstOrThrow();
+        expect(before.mode).toBe('AFK');
+        const requested = await requestEncounterResume(database, accountId, encounterId);
+        expect(requested).toEqual({ version: 1, encounterId, afterEpoch: 1 });
+        const during = await database
+          .selectFrom('encounters')
+          .select(['activation_id', 'activation_epoch', 'revision'])
+          .where('id', '=', encounterId)
+          .executeTakeFirstOrThrow();
+        const stillCurrent = await database
+          .selectFrom('encounter_activation_policies')
+          .select('mode')
+          .where('encounter_id', '=', encounterId)
+          .where('activation_id', '=', activation.id)
+          .executeTakeFirstOrThrow();
+        expect(during).toEqual({ activation_id: activation.id, activation_epoch: 1, revision: 0 });
+        expect(stillCurrent.mode).toBe('AFK');
+
+        const timeoutDueAt = new Date(deadlineAt.getTime() + 1);
+        const timeout = await executeEncounterTimeout(
+          database,
+          {
+            encounterId,
+            revision: 0,
+            activationId: activation.id,
+            activationEpoch: 1,
+            dueAt: deadlineAt,
+          },
+          timeoutDueAt,
+        );
+        expect(timeout).toMatchObject({ status: 'accepted', revision: 1 });
+        const resulting = await sql<{
+          readonly activation_id: string;
+          readonly activation_epoch: number;
+          readonly policy_mode: string;
+          readonly afk: boolean;
+          readonly resume_requested_after_epoch: number | null;
+        }>`
+          select encounter.activation_id, encounter.activation_epoch, policy.mode as policy_mode,
+            participant.afk, participant.resume_requested_after_epoch
+          from encounters as encounter
+          join encounter_activation_policies as policy
+            on policy.encounter_id = encounter.id and policy.activation_id = encounter.activation_id
+          join encounter_participants as participant on participant.encounter_id = encounter.id
+          where encounter.id = ${encounterId}
+        `.execute(database);
+        expect(resulting.rows).toEqual([
+          {
+            activation_id: next.state.activation?.id,
+            activation_epoch: 2,
+            policy_mode: 'HUMAN',
+            afk: false,
+            resume_requested_after_epoch: null,
+          },
+        ]);
+      } finally {
+        await removeEncounterFixture(database, encounterId);
+        await database
+          .deleteFrom('world_campaign_clocks')
+          .where('world_id', '=', worldId)
+          .execute();
+        await database.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
+      }
+    },
+  );
+
+  it.skipIf(connectionString === undefined)(
+    'executes one scheduled aggressive world-hostile activation and keeps its replay valid',
+    async () => {
+      const [database, restartedDatabase] = databases;
+      if (database === undefined || restartedDatabase === undefined)
+        throw new Error('database missing');
+      const accountId = randomUUID();
+      const issuer = `encounter-hostile-ai-test-${accountId}`;
+      const encounterId = randomUUID();
+      const setup = createWorldHostileSetup(encounterId);
+      const initial = startBattleV2(setup);
+      const activation = initial.state.activation;
+      if (activation === null || !String(activation.unitId).startsWith('world.raider.'))
+        throw new Error('FIRST HUNT fixture must begin on a world-hostile activation');
+      const dueAt = new Date(Date.now() - 1_000);
+      await database
+        .insertInto('identity_accounts')
+        .values({ id: accountId, issuer, subject: 'hostile-ai-owner' })
+        .execute();
+      const worldId = await seedCompanyEncounter({
+        database,
+        accountId,
+        setup,
+        initial,
+        deadlineAt: null,
+        aiWakeAt: dueAt,
+      });
+      try {
+        await ensureFirstHuntGenesis(database, worldId);
+        await database
+          .insertInto('encounter_admissions')
+          .values({
+            encounter_id: encounterId,
+            world_id: worldId,
+            instance_id: 'ci.m1.raider-standard.01',
+            binding_version: 2,
+            binding: {
+              worldId,
+              version: 's02-encounter-binding-2',
+              participants: [{ companyId: 'admitted-test-company' }],
+            },
+            terminal_revision: null,
+            effects_source_id: null,
+            effects_applied_at: null,
+          })
+          .execute();
+        const wake = (await listDueEncounterAiWakes(database, dueAt)).find(
+          (candidate) => candidate.encounterId === encounterId,
+        );
+        expect(wake).toMatchObject({ encounterId, revision: 0, activationId: activation.id });
+        if (wake === undefined) throw new Error('scheduled world-hostile wake was not discovered');
+        const response = await executeEncounterAiWake(database, wake);
+        expect(response).toMatchObject({
+          status: 'accepted',
+          commandId: expect.any(String),
+          revision: 1,
+        });
+        expect(await executeEncounterAiWake(restartedDatabase, wake)).toBeUndefined();
+        const successorWakes = (
+          await listDueEncounterAiWakes(restartedDatabase, new Date())
+        ).filter((candidate) => candidate.encounterId === encounterId);
+        expect(successorWakes).toHaveLength(1);
+        expect(successorWakes).not.toContainEqual(wake);
+        const successorWake = successorWakes[0];
+        expect(successorWake).toMatchObject({
+          encounterId,
+          revision: 1,
+          activationId: wake.activationId,
+          activationEpoch: wake.activationEpoch,
+        });
+        if (successorWake === undefined) throw new Error('successor AI wake was not scheduled');
+        expect(successorWake.dueAt.getTime()).toBeGreaterThan(wake.dueAt.getTime());
+        const persisted = await sql<{
+          readonly source_kind: string;
+          readonly doctrine: string;
+          readonly count: number;
+        }>`
+          select command.source_kind, controller.doctrine,
+            (select count(*)::int from encounter_commands
+             where encounter_id = command.encounter_id and source_kind = 'system_ai') as count
+          from encounter_commands as command
+          join encounter_ai_controllers as controller
+            on controller.encounter_id = command.encounter_id
+            and controller.unit_id = command.command #>> '{actorId}'
+          where command.encounter_id = ${encounterId} and command.source_kind = 'system_ai'
+        `.execute(restartedDatabase);
+        expect(persisted.rows).toEqual([
+          { source_kind: 'system_ai', doctrine: 'aggressive', count: 1 },
+        ]);
+        expect(await verifyEncounterReplay(restartedDatabase, encounterId)).toBe(true);
+      } finally {
+        await removeEncounterFixture(database, encounterId);
+        await database.deleteFrom('contract_instances').where('world_id', '=', worldId).execute();
+        await database
+          .deleteFrom('world_first_hunt_state')
+          .where('world_id', '=', worldId)
+          .execute();
+        await database
+          .deleteFrom('world_campaign_clocks')
+          .where('world_id', '=', worldId)
+          .execute();
+        await database.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
+      }
+    },
+  );
+
+  it.skipIf(connectionString === undefined)(
+    'replays an accepted command after binding release but rejects fresh actions',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const accountId = randomUUID();
+      const issuer = `encounter-binding-release-${accountId}`;
+      const encounterId = randomUUID();
+      const setup = createHumanEncounterSetup(encounterId);
+      const initial = startBattleV2(setup);
+      const activation = initial.state.activation;
+      if (activation === null) throw new Error('binding fixture activation is unavailable');
+      const deadlineAt = new Date(Date.now() + 30_000);
+      await database
+        .insertInto('identity_accounts')
+        .values({ id: accountId, issuer, subject: 'binding-owner' })
+        .execute();
+      const worldId = await seedCompanyEncounter({
+        database,
+        accountId,
+        setup,
+        initial,
+        deadlineAt,
+      });
+      try {
+        const acceptedCommand = {
+          version: 1 as const,
+          encounterId,
+          commandId: 'accepted-before-binding-release',
+          expectedRevision: 0,
+          activationId: activation.id,
+          actorId: activation.unitId,
+          intent: { type: 'wait' as const },
+        };
+        const accepted = await executeEncounterCommand(database, accountId, acceptedCommand, true);
+        expect(accepted).toMatchObject({ status: 'accepted', revision: 1 });
+        expect(await executeEncounterCommand(database, accountId, acceptedCommand, false)).toEqual(
+          accepted,
+        );
+        const fresh = await executeEncounterCommand(
+          database,
+          accountId,
+          {
+            ...acceptedCommand,
+            commandId: 'new-action-after-binding-release',
+            expectedRevision: 1,
+          },
+          false,
+        );
+        expect(fresh).toMatchObject({ status: 'rejected', code: 'UNAUTHORIZED' });
+        expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
+      } finally {
+        await removeEncounterFixture(database, encounterId);
+        await database
+          .deleteFrom('world_campaign_clocks')
+          .where('world_id', '=', worldId)
+          .execute();
+        await database.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
+      }
+    },
+  );
+
   it.skipIf(connectionString === undefined)(
     'serializes competing connections, returns historical receipts, rejects atomically and replays after reload',
     async () => {
@@ -314,6 +1069,9 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
               intent: { type: 'defend' },
             }),
           ).toMatchObject({ status: 'rejected', code: 'UNAUTHORIZED' });
+          expect(await verifyEncounterReplay(firstDb, malformedGrantFixture.encounterId)).toBe(
+            false,
+          );
           expect(await snapshotRows(malformedGrantFixture.encounterId)).toEqual(
             malformedGrantBefore,
           );
@@ -327,6 +1085,35 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         await expect(verifyEncounterReplay(secondDb, malformedFixture.encounterId)).resolves.toBe(
           false,
         );
+
+        const malformedUnitsFixture = await createFixtureEncounter(firstDb, accountId);
+        ownedEncounters.push(malformedUnitsFixture.encounterId);
+        const malformedUnitsResult = await sql<{ readonly state: combat.BattleState }>`
+          select state from encounters where id = ${malformedUnitsFixture.encounterId}
+        `.execute(firstDb);
+        const validStateBeforeCorruption = malformedUnitsResult.rows[0]?.state;
+        if (validStateBeforeCorruption === undefined) throw new Error('fixture state missing');
+        await sql`
+          update encounters
+          set state = jsonb_set(state::jsonb, '{units}', '[null]'::jsonb)::json
+          where id = ${malformedUnitsFixture.encounterId}
+        `.execute(firstDb);
+        const malformedUnitsBefore = await snapshotRows(malformedUnitsFixture.encounterId);
+        expect(
+          await executeEncounterCommand(firstDb, accountId, {
+            version: 1,
+            encounterId: malformedUnitsFixture.encounterId,
+            commandId: 'malformed-state-units',
+            expectedRevision: 0,
+            activationId: validStateBeforeCorruption.activation?.id ?? 'invalid-activation',
+            actorId: validStateBeforeCorruption.activation?.unitId ?? 'invalid-unit',
+            intent: { type: 'defend' },
+          }),
+        ).toMatchObject({ status: 'rejected', code: 'CONFLICT' });
+        expect(await verifyEncounterReplay(secondDb, malformedUnitsFixture.encounterId)).toBe(
+          false,
+        );
+        expect(await snapshotRows(malformedUnitsFixture.encounterId)).toEqual(malformedUnitsBefore);
 
         const terminalFixture = await createFixtureEncounter(firstDb, accountId);
         ownedEncounters.push(terminalFixture.encounterId);
@@ -361,8 +1148,19 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
             activation_epoch = 1
           where id = ${terminalFixture.encounterId}
         `.execute(firstDb);
+        await firstDb
+          .deleteFrom('encounter_ai_controllers')
+          .where('encounter_id', '=', terminalFixture.encounterId)
+          .where(
+            'unit_id',
+            'not in',
+            terminalSetup.units.filter((unit) => unit.sideId !== 'human').map((unit) => unit.id),
+          )
+          .execute();
         await sql`
-          update encounter_participants set unit_ids = ${JSON.stringify(['human-shield'])}::jsonb
+          update encounter_participants set unit_ids = ${JSON.stringify(
+            terminalSetup.units.filter((unit) => unit.sideId === 'human').map((unit) => unit.id),
+          )}::jsonb
           where encounter_id = ${terminalFixture.encounterId} and account_id = ${accountId}
         `.execute(firstDb);
         await firstDb
@@ -459,6 +1257,131 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         .values({ id: accountId, issuer, subject: 'owner' })
         .execute();
       try {
+        const hostileEncounterId = randomUUID();
+        encounterIds.push(hostileEncounterId);
+        const hexes = combat.createHexagon(2);
+        const companySide = combat.sideId('company');
+        const hostileSide = combat.sideId('hostile');
+        const hostileSetup: combat.BattleSetupV2 = {
+          schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
+          battleId: combat.battleId(hostileEncounterId),
+          rulesetId: combat.M1_DOMAIN_BRIDGE_RULESET_ID,
+          seed: 23,
+          map: { hexes, blocked: [] },
+          sides: [
+            { id: companySide, retreatHexes: hexes.filter(({ q }) => q === -2) },
+            { id: hostileSide, retreatHexes: hexes.filter(({ q }) => q === 2) },
+          ],
+          units: [
+            {
+              id: combat.unitId('company-member'),
+              sideId: companySide,
+              position: { q: -1, r: 0 },
+              weaponId: 'sword-shield',
+              attributes: {
+                health: 80,
+                armor: 30,
+                stamina: 80,
+                initiative: 40,
+                accuracy: 20,
+                defense: 10,
+                morale: 70,
+              },
+              initialPools: { health: 80, armor: 30, stamina: 80, morale: 70 },
+            },
+            {
+              id: combat.unitId('world-hostile'),
+              sideId: hostileSide,
+              position: { q: 1, r: 0 },
+              weaponId: 'raider',
+              attributes: {
+                health: 90,
+                armor: 35,
+                stamina: 90,
+                initiative: 100,
+                accuracy: 18,
+                defense: 8,
+                morale: 75,
+              },
+              initialPools: { health: 90, armor: 0, stamina: 90, morale: 75 },
+            },
+          ],
+        };
+        const hostileStart = combat.startBattleV2(hostileSetup);
+        const hostileActivation = hostileStart.state.activation;
+        expect(hostileActivation?.unitId).toBe(combat.unitId('world-hostile'));
+        if (hostileActivation === null) throw new Error('world-hostile activation missing');
+        const hostileDueAt = new Date(Date.now() - 1_000);
+        await sql`
+          insert into encounters
+            (id, world_id, schema_version, setup, state, revision, status,
+             activation_id, activation_epoch, deadline_at, ai_wake_at)
+          values
+            (${hostileEncounterId}, 'main', ${combat.COMBAT_V2_SCHEMA_VERSION},
+             ${JSON.stringify(hostileSetup)}::json, ${JSON.stringify(hostileStart.state)}::json,
+             ${hostileStart.state.revision}, ${hostileStart.state.status},
+             ${hostileActivation.id}, 1, null, ${hostileDueAt})
+        `.execute(firstDb);
+        await sql`
+          insert into encounter_participants
+            (encounter_id, account_id, side_id, unit_ids, admission_source)
+          values
+            (${hostileEncounterId}, ${accountId}, ${companySide},
+             ${JSON.stringify([combat.unitId('company-member')])}::jsonb, 'company_binding')
+        `.execute(firstDb);
+        await sql`
+          insert into encounter_ai_controllers
+            (encounter_id, unit_id, doctrine, admission_source)
+          values (${hostileEncounterId}, ${hostileActivation.unitId}, 'aggressive', 'world_hostile')
+        `.execute(firstDb);
+        for (const [ordinal, event] of hostileStart.events.entries()) {
+          await sql`
+            insert into encounter_events (encounter_id, revision, ordinal, event_id, event)
+            values (
+              ${hostileEncounterId}, 0, ${ordinal},
+              ${`${hostileEncounterId}:0:${ordinal}`}, ${JSON.stringify(event)}::json
+            )
+          `.execute(firstDb);
+        }
+        expect(await verifyEncounterReplay(firstDb, hostileEncounterId)).toBe(true);
+        const hostileSnapshot = async () => {
+          const result = await sql<{ readonly snapshot: unknown }>`
+            select json_build_object(
+              'encounter', row_to_json(e),
+              'commands', coalesce((
+                select json_agg(row_to_json(c) order by c.revision)
+                from encounter_commands c where c.encounter_id = e.id
+              ), '[]'::json),
+              'events', coalesce((
+                select json_agg(row_to_json(v) order by v.revision, v.ordinal)
+                from encounter_events v where v.encounter_id = e.id
+              ), '[]'::json),
+              'receipts', coalesce((
+                select json_agg(row_to_json(r) order by r.command_id)
+                from encounter_receipts r where r.encounter_id = e.id
+              ), '[]'::json)
+            ) as snapshot
+            from encounters e where e.id = ${hostileEncounterId}
+          `.execute(firstDb);
+          return result.rows[0]?.snapshot;
+        };
+        const hostileBefore = await hostileSnapshot();
+        expect(
+          (await listDueEncounterAiWakes(firstDb, hostileDueAt)).some(
+            ({ encounterId }) => encounterId === hostileEncounterId,
+          ),
+        ).toBe(false);
+        await expect(
+          executeEncounterAiWake(firstDb, {
+            encounterId: hostileEncounterId,
+            revision: hostileStart.state.revision,
+            activationId: hostileActivation.id,
+            activationEpoch: 1,
+            dueAt: hostileDueAt,
+          }),
+        ).resolves.toBeUndefined();
+        expect(await hostileSnapshot()).toEqual(hostileBefore);
+
         const fixture = await createFixtureEncounter(firstDb, accountId);
         encounterIds.push(fixture.encounterId);
         let stateResult = await sql<{
@@ -655,24 +1578,48 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         };
         await new Promise<void>((resolve) => room.onStateChange.once(() => resolve()));
         expect(room.state.encounterId).toBe(encounterId);
-        expect(Object.keys(room.state.toJSON()).sort()).toEqual([
+        const roomProjection = room.state.toJSON() as Record<string, unknown>;
+        const allowedPublicRoomFields = new Set([
+          'version',
+          'encounterId',
+          'revision',
+          'status',
+          'round',
           'activationId',
           'actorUnitId',
           'deadlineAt',
-          'encounterId',
-          'revision',
-          'round',
-          'status',
+          'map',
           'units',
-          'version',
         ]);
-        const stateResult = await sql<{ readonly state: combat.BattleState }>`
-          select state from encounters where id = ${encounterId}
+        for (const field of Object.keys(roomProjection))
+          expect(allowedPublicRoomFields.has(field)).toBe(true);
+        for (const privateField of [
+          'setup',
+          'seed',
+          'sides',
+          'controllableUnitIds',
+          'selfAfk',
+          'resumeRequestedAfterEpoch',
+        ])
+          expect(roomProjection).not.toHaveProperty(privateField);
+        const stateResult = await sql<{
+          readonly setup: combat.BattleSetupV2;
+          readonly state: combat.BattleState;
+        }>`
+          select setup, state from encounters where id = ${encounterId}
         `.execute(database);
         const initial = stateResult.rows[0]?.state;
         if (initial?.activation === null || initial?.activation === undefined) {
           throw new Error('fixture activation missing');
         }
+        const persistedSetup = stateResult.rows[0]?.setup;
+        if (persistedSetup === undefined) throw new Error('fixture setup missing');
+        expect(room.state.map.hexes.map(({ q, r }) => ({ q, r }))).toEqual(
+          persistedSetup.map.hexes.toSorted(combat.compareHex).map(({ q, r }) => ({ q, r })),
+        );
+        expect(room.state.map.blocked.map(({ q, r }) => ({ q, r }))).toEqual(
+          persistedSetup.map.blocked.toSorted(combat.compareHex).map(({ q, r }) => ({ q, r })),
+        );
         expect(room.state.revision).toBe(0);
         expect(room.state.units.get('human-shield')).toMatchObject({ q: -2, r: 0 });
         const revisionUpdated = new Promise<void>((resolve, reject) => {

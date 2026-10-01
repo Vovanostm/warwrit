@@ -1,9 +1,9 @@
 import { PassThrough } from 'node:stream';
 
 import { PROTOCOL_VERSION } from '@warwrit/protocol';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { buildApp } from './app.js';
+import { buildApp, listenOrClose } from './app.js';
 import { createLogger } from './logger.js';
 
 const apps: ReturnType<typeof buildApp>[] = [];
@@ -13,6 +13,25 @@ afterEach(async () => {
 });
 
 describe('server foundation', () => {
+  it('closes the app after listen fails without masking the original error', async () => {
+    const lifecycle: string[] = [];
+    const listenError = new Error('listen failed');
+    const app = buildApp({
+      logger: false,
+      closeDatabase: async () => {
+        lifecycle.push('database.close');
+        throw new Error('close failed');
+      },
+    });
+    app.addHook('onClose', async () => {
+      lifecycle.push('later.close');
+    });
+    vi.spyOn(app, 'listen').mockRejectedValue(listenError);
+
+    await expect(listenOrClose(app, { host: '127.0.0.1', port: 0 })).rejects.toBe(listenError);
+    expect(lifecycle).toEqual(['later.close', 'database.close']);
+  });
+
   it('exposes distinct liveness and readiness endpoints', async () => {
     const app = buildApp({ logger: false });
     apps.push(app);

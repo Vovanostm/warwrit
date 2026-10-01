@@ -1,6 +1,8 @@
-# max_threads is the documented legacy alias, supported by the documented legacy configuration contract.
 [agents]
-max_threads = 3
+# Maximum spawned threads per session; the primary is excluded.
+max_concurrent_threads_per_session = 12
+default_subagent_model = "gpt-6-luna"
+default_subagent_reasoning_effort = "high"
 
 # Explicit registration supports hosts without standalone-agent discovery.
 [agents.warwrit_explorer]
@@ -14,3 +16,7 @@ config_file = "agents/warwrit_implementer.toml"
 [agents.warwrit_reviewer]
 description = "Independent read-only diff and invariant review."
 config_file = "agents/warwrit_reviewer.toml"
+
+[agents.warwrit_orchestrator]
+description = "Read-only Warwrit orchestration and evidence-contract checker for a bounded batch."
+config_file = "agents/warwrit_orchestrator.toml"

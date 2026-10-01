@@ -27,6 +27,11 @@ try {
     '0003_encounters',
     '0004_encounter_runtime',
     '0005_company_domain',
+    '0006_company_account_owners',
+    '0007_company_opening_options',
+    '0008_world_travel',
+    '0009_encounter_admission_sources',
+    '0010_first_hunt_runtime',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -36,6 +41,11 @@ try {
     '0003_encounters',
     '0004_encounter_runtime',
     '0005_company_domain',
+    '0006_company_account_owners',
+    '0007_company_opening_options',
+    '0008_world_travel',
+    '0009_encounter_admission_sources',
+    '0010_first_hunt_runtime',
   ]);
 
   const secondUp = await runMigrations(client, 'up');
@@ -53,6 +63,81 @@ try {
     companyTables.rows.map(({ table_name }) => table_name),
     ['company_audit_events', 'company_receipts', 'company_snapshots'],
   );
+
+  const firstHuntTables = await client.query<{ table_name: string }>(
+    "select table_name from information_schema.tables where table_schema = 'public' and table_name in ('world_first_hunt_state', 'contract_instances', 'encounter_admissions', 'world_proof_claims', 'encounter_activation_policies') order by table_name",
+  );
+  assert.deepEqual(
+    firstHuntTables.rows.map(({ table_name }) => table_name),
+    [
+      'contract_instances',
+      'encounter_activation_policies',
+      'encounter_admissions',
+      'world_first_hunt_state',
+      'world_proof_claims',
+    ],
+  );
+
+  const firstHuntWorldId = 'migration-smoke-first-hunt';
+  await client.query(
+    `insert into world_first_hunt_state
+      (world_id, schema_version, profile_id, genesis_source_id, revision, seed,
+       issuer_id, issuer_area_id, wallet_id, wallet_q, hostiles)
+     values ($1, 1, 'migration-smoke', 'smoke-genesis', 0, 1,
+       'smoke-issuer', 'smoke-market', 'smoke-wallet', 200000000, '[]'::jsonb)`,
+    [firstHuntWorldId],
+  );
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /refusing to delete persisted FIRST HUNT runtime state/u,
+  );
+  await client.query('delete from world_first_hunt_state where world_id = $1', [firstHuntWorldId]);
+  const firstHuntGuardDown = await runMigrations(client, 'down');
+  assert.deepEqual(firstHuntGuardDown.applied, ['0010_first_hunt_runtime']);
+
+  const provenanceAccountId = '00000000-0000-4000-8000-000000000009';
+  const provenanceEncounterId = '00000000-0000-4000-8000-000000000019';
+  await client.query('insert into identity_accounts (id, issuer, subject) values ($1, $2, $3)', [
+    provenanceAccountId,
+    'migration-smoke',
+    'admission-source',
+  ]);
+  await client.query(
+    `insert into encounters
+      (id, world_id, schema_version, setup, state, revision, status,
+       activation_id, activation_epoch, deadline_at)
+     values ($1, 'migration-smoke', 1, '{}'::json, '{}'::json, 0, 'resolved', null, 0, null)`,
+    [provenanceEncounterId],
+  );
+  await client.query(
+    `insert into encounter_participants
+      (encounter_id, account_id, side_id, unit_ids, admission_source)
+     values ($1, $2, 'smoke-side', '[]'::jsonb, 'company_binding')`,
+    [provenanceEncounterId, provenanceAccountId],
+  );
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /cannot roll back encounter admission sources/u,
+  );
+  await client.query('delete from encounter_participants where encounter_id = $1', [
+    provenanceEncounterId,
+  ]);
+  await client.query(
+    `insert into encounter_ai_controllers (encounter_id, unit_id, doctrine, admission_source)
+     values ($1, 'smoke-hostile', 'aggressive', 'world_hostile')`,
+    [provenanceEncounterId],
+  );
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /cannot roll back encounter admission sources/u,
+  );
+  await client.query('delete from encounter_ai_controllers where encounter_id = $1', [
+    provenanceEncounterId,
+  ]);
+  await client.query('delete from encounters where id = $1', [provenanceEncounterId]);
+  await client.query('delete from identity_accounts where id = $1', [provenanceAccountId]);
+  const firstHuntRestored = await runMigrations(client, 'up');
+  assert.deepEqual(firstHuntRestored.applied, ['0010_first_hunt_runtime']);
 
   const company = createCompanyStorageFixture();
   const studyTask = company.learning.tasks.tasks[0];
@@ -328,6 +413,16 @@ try {
     await readbackDatabase.destroy();
   }
 
+  const firstHuntDown = await runMigrations(client, 'down');
+  assert.deepEqual(firstHuntDown.applied, ['0010_first_hunt_runtime']);
+  const admissionSourceDown = await runMigrations(client, 'down');
+  assert.deepEqual(admissionSourceDown.applied, ['0009_encounter_admission_sources']);
+  const worldTravelDown = await runMigrations(client, 'down');
+  assert.deepEqual(worldTravelDown.applied, ['0008_world_travel']);
+  const openingOptionsDown = await runMigrations(client, 'down');
+  assert.deepEqual(openingOptionsDown.applied, ['0007_company_opening_options']);
+  const accountOwnersDown = await runMigrations(client, 'down');
+  assert.deepEqual(accountOwnersDown.applied, ['0006_company_account_owners']);
   const companyDown = await runMigrations(client, 'down');
   assert.deepEqual(companyDown.applied, ['0005_company_domain']);
   const preservedEncounterTable = await client.query<{ table_name: string | null }>(
@@ -349,6 +444,11 @@ try {
   assert.deepEqual(upgradeWithResolvedEncounter.applied, [
     '0004_encounter_runtime',
     '0005_company_domain',
+    '0006_company_account_owners',
+    '0007_company_opening_options',
+    '0008_world_travel',
+    '0009_encounter_admission_sources',
+    '0010_first_hunt_runtime',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;
@@ -385,35 +485,45 @@ try {
   );
 
   const firstDown = await runMigrations(client, 'down');
-  assert.deepEqual(firstDown.applied, ['0005_company_domain']);
+  assert.deepEqual(firstDown.applied, ['0010_first_hunt_runtime']);
+  const secondDown = await runMigrations(client, 'down');
+  assert.deepEqual(secondDown.applied, ['0009_encounter_admission_sources']);
+  const thirdDown = await runMigrations(client, 'down');
+  assert.deepEqual(thirdDown.applied, ['0008_world_travel']);
+  const fourthDown = await runMigrations(client, 'down');
+  assert.deepEqual(fourthDown.applied, ['0007_company_opening_options']);
+  const fifthDown = await runMigrations(client, 'down');
+  assert.deepEqual(fifthDown.applied, ['0006_company_account_owners']);
+  const sixthDown = await runMigrations(client, 'down');
+  assert.deepEqual(sixthDown.applied, ['0005_company_domain']);
   const afterCompanyDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.encounters')::text as table_name",
   );
   assert.equal(afterCompanyDown.rows[0]?.table_name, 'encounters');
-  const secondDown = await runMigrations(client, 'down');
-  assert.deepEqual(secondDown.applied, ['0004_encounter_runtime']);
+  const seventhDown = await runMigrations(client, 'down');
+  assert.deepEqual(seventhDown.applied, ['0004_encounter_runtime']);
   const afterRuntimeDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.encounters')::text as table_name",
   );
   assert.equal(afterRuntimeDown.rows[0]?.table_name, 'encounters');
-  const thirdDown = await runMigrations(client, 'down');
-  assert.deepEqual(thirdDown.applied, ['0003_encounters']);
+  const eighthDown = await runMigrations(client, 'down');
+  assert.deepEqual(eighthDown.applied, ['0003_encounters']);
   const afterEncounterDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.encounters')::text as table_name",
   );
   assert.equal(afterEncounterDown.rows[0]?.table_name, null);
-  const fourthDown = await runMigrations(client, 'down');
-  assert.deepEqual(fourthDown.applied, ['0002_identity']);
+  const ninthDown = await runMigrations(client, 'down');
+  assert.deepEqual(ninthDown.applied, ['0002_identity']);
   const afterIdentityDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.identity_accounts')::text as table_name",
   );
   assert.equal(afterIdentityDown.rows[0]?.table_name, null);
 
-  const fifthDown = await runMigrations(client, 'down');
-  assert.deepEqual(fifthDown.applied, ['0001_foundation']);
+  const tenthDown = await runMigrations(client, 'down');
+  assert.deepEqual(tenthDown.applied, ['0001_foundation']);
 
-  const sixthDown = await runMigrations(client, 'down');
-  assert.deepEqual(sixthDown.applied, []);
+  const eleventhDown = await runMigrations(client, 'down');
+  assert.deepEqual(eleventhDown.applied, []);
 
   const afterDown = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.engineering_schema_probe')::text as table_name",

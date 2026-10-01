@@ -1,6 +1,6 @@
-import { invariant } from '../primitives.js';
-import { M1_DOMAIN_BRIDGE_RULESET_ID } from './setup-v2.js';
-import { M0_COMBAT_RULESET_ID, type CombatRulesetId, type WeaponId } from './types.js';
+import { assertNever, compareCodeUnits, invariant } from '../primitives.js';
+import { M1_DOMAIN_BRIDGE_RULESET_ID, M1_DOMAIN_BRIDGE_V2_RULESET_ID } from './setup-v2.js';
+import { M0_COMBAT_RULESET_ID, type CombatRulesetId, type UnitId, type WeaponId } from './types.js';
 
 export interface WeaponProfile {
   readonly id: WeaponId;
@@ -198,10 +198,30 @@ export const COMBAT_RULES_V1: CombatRules & { readonly id: typeof M0_COMBAT_RULE
 
 export function combatRules(rulesetId: CombatRulesetId): CombatRules {
   invariant(
-    rulesetId === COMBAT_RULES_V1.id || rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID,
+    rulesetId === COMBAT_RULES_V1.id ||
+      rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID ||
+      rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID,
     `Unknown combat ruleset: ${rulesetId}`,
   );
   return COMBAT_RULES_V1;
+}
+
+export function compareCombatUnitIds(
+  rulesetId: CombatRulesetId,
+  left: UnitId,
+  right: UnitId,
+): number {
+  switch (rulesetId) {
+    case M0_COMBAT_RULESET_ID:
+    case M1_DOMAIN_BRIDGE_RULESET_ID:
+      // Historical payload compatibility: these versions used the host's pinned locale/ICU.
+      // ast-grep-ignore: implicit-locale-compare — preserve their recorded ordering.
+      return left.localeCompare(right);
+    case M1_DOMAIN_BRIDGE_V2_RULESET_ID:
+      return compareCodeUnits(left, right);
+    default:
+      return assertNever(rulesetId);
+  }
 }
 
 export function weaponProfile(rules: CombatRules, weaponId: WeaponId): WeaponProfile {

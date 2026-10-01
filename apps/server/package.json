@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "@colyseus/sdk": "0.18.4",
-    "@types/pg": "^8.0.0"
+    "@types/pg": "^8.0.0",
+    "@warwrit/testkit": "workspace:*"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

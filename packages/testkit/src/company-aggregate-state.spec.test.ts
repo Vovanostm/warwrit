@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
   createSocialState,
+  canonicalJson,
+  M1_DOMAIN_BRIDGE_V2_RULESET_ID,
   prepareConsumeCombatAggregate,
   readCompanyCombatAggregateState,
   recordLearnedFact,
+  startBattleV2,
 } from '@warwrit/game-core';
+import type { BattleSetupV2 } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from './company-combat-aggregate-fixture.js';
 import { createCompanyStorageFixture } from './company-storage-fixture.js';
 
@@ -21,6 +25,36 @@ describe('company aggregate persisted-state reader', () => {
     const read = readCompanyCombatAggregateState(consumed.next);
     expect(read).toEqual(consumed.next);
     expect(read.encounter.active?.appliedReceipts).toHaveLength(fixture.journal.receipts.length);
+  });
+
+  it('round-trips an active bridge-v2 binding and rejects unknown ruleset identities', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    const root = structuredClone(fixture.begun.next) as unknown as Record<string, unknown>;
+    const active = activeFrom(root);
+    const binding = active['binding'] as Record<string, unknown>;
+    const setup = {
+      ...(binding['setup'] as Record<string, unknown>),
+      rulesetId: M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+    };
+    const initial = startBattleV2(setup as BattleSetupV2);
+    binding['setup'] = setup;
+    binding['initial'] = initial;
+    binding['lastAppliedRevision'] = initial.state.revision;
+    active['bindingDigest'] = canonicalJson(binding);
+
+    expect(readCompanyCombatAggregateState(root).encounter.active?.binding.setup.rulesetId).toBe(
+      M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+    );
+
+    const unknown = structuredClone(root) as unknown as Record<string, unknown>;
+    const unknownActive = activeFrom(unknown);
+    const unknownBinding = unknownActive['binding'] as Record<string, unknown>;
+    unknownBinding['setup'] = {
+      ...(unknownBinding['setup'] as Record<string, unknown>),
+      rulesetId: 'm1-domain-bridge-v3',
+    };
+    unknownActive['bindingDigest'] = canonicalJson(unknownBinding);
+    expect(() => readCompanyCombatAggregateState(unknown)).toThrow(TypeError);
   });
 
   it('rejects encounter presence without a valid active participant binding', () => {

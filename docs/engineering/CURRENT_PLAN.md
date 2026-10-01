@@ -1,29 +1,161 @@
 # Warwrit current delivery plan
 
+**Renderer decision — 2026-10-01:** the owner selected Babylon.js as the
+production M1 client renderer; [ADR-0006](../architecture/0006-m1-renderer-babylon.md)
+supersedes ADR-0005's PlayCanvas choice and the old engine-selection gate.
+This is not a benchmark victory. Exact dependency version is unselected;
+Babylon visual/device/runtime, art-pipeline and production-integration
+acceptance remain pending. Canonical decision: `recwglYVX3nGfu2Xh` comment
+`comQqbxYUO8vnskTV`; M1 pointer: `recZhUoTiwT7kIc8s` comment
+`comDtWL5Oyred7tWJ`. Keep the existing boundaries and full M1 status below.
+
+**Cycle 2 integration corrections and FIRST HUNT profile — 2026-10-01:** the
+Cycle 2A V2 receipt-decoder correction is fixed and Sol-reviewed `READY`; its
+two-file manifest SHA-256 is
+`d7bb7acab922e3cce590d8d54dc5bfcec11838984e09beda0b8d56a3e061a05d`, and its
+focused suite passed 14/14. The Cycle 2C test-typing correction is Sol-reviewed
+`READY`; its current manifest SHA-256 is
+`0316da040b38bafe006a6705c9642e99939339132589e31e7b98cac3da36008e`, its
+focused suite passed 8/8, and independent web typecheck passed. The sorted
+42-path Cycle 2A/B/C union digest is
+`5fcb686b06628621affd9c99d7791625a1e922277bdef8d5ec794798cc38ed6d`; it is
+pending live browser runtime evidence and is not accepted M1. The new bounded
+`first-hunt-runtime-profile-2026-10-01-v1` terms are recorded in
+[CONTRACTS_M1_DERIVATIVE](../content/CONTRACTS_M1_DERIVATIVE.md). Producer,
+implementation, tests and runtime evidence for those terms are `NOT_RUN`.
+Next is the large dangerous-route supply/return and authentic
+producer/contract/JOIN/battle/proof/payment/re-entry block, with its actual
+dependencies and review; the amendment itself does not make that journey
+playable.
+
+**FIRST HUNT policy checkpoint — 2026-09-30:** the parent approved the bounded
+provisional runtime amendment for one authentic
+`ci.m1.raider-standard.01` / `HUNT-03` vertical. Implementation remains gated
+on the frozen durable foundation, exact current-main reconciliation, real W05
+hostile projection plus issuer/offer/funded-wallet producers, K02, a new ordered
+migration and independent Sol review. The approval does not select a reward
+amount or ordinary payout shares, grant free equipment, permit fixture enemies
+or omitted members, or decide cancellation, reinforcement, unarmed/support
+semantics, CT03/CT04/other CT05 content or full CT06/M1 completion. Source code,
+migration, tests and runtime evidence for this amendment are `NOT_RUN`.
+The dated 2026-10-01 runtime-profile amendment below it in
+[CONTRACTS_M1_DERIVATIVE](../content/CONTRACTS_M1_DERIVATIVE.md) now supplies
+provisional issuer, funded-wallet, reward, hostile and proof-item terms for
+this one instance; it does not resolve any broader payout policy or remaining
+producer dependency.
+
+Next session: see [NEXT_SESSION_HANDOFF](/Users/vovanostm/learn/warwrit/docs/engineering/NEXT_SESSION_HANDOFF.md) before resuming.
+
+**W03 completion and cycle transfer — 2026-09-30:** the W03 adapter completed an
+isolated authenticated two-edge journey across API restart. Exact replay after
+completion returned the stored 200 response without changing measured company,
+route, receipt or audit state. Sol reviewed the frozen evidence
+`READY_WITH_EXPLICIT_UI_GAP`; visual authenticated logout/re-entry remains
+`NOT_PROVED`. Contract SHA-256:
+`50c179e80b429bfbdb86c463cfc5ac06cc6a0494c4b1450d0b98c88989ca7e71`; 16-path
+manifest SHA-256:
+`30d8bbcba136f17a569d1804154d9260281cb6385646582ca561060e81a5c21e`. See the
+[restart report](/Users/vovanostm/multica_workspaces_local/warwrit-alpha-c06/output/playwright/m1-w03-restart/w03-process-restart-evidence.md)
+and later [replay/re-entry report](/Users/vovanostm/multica_workspaces_local/warwrit-alpha-c06/output/playwright/m1-w03-restart/replay-reentry-v5/evidence.md).
+W03 executor/index/protocol/world/web ownership is released to the parent and
+reassigned. The active large block is durable company/world foundation; keep
+W04/CT02 and JOIN gated on actual H/I, ID03, W05/W06 and K02 producers and named
+consumer evidence. See the [active queue](PARALLEL_WAVES.md).
+
+Last verified integration main: `4ec0be677f4c899e726b74f011c8c2fadefbc738`;
+PR133 is merged with CI `36710889918` passed; PR134 and PR129 were open with
+failed CI at that readback. These are last-verified facts, not a live refresh.
+Preserve the c06 dirty checkout and protected local data.
+
+**Earlier session transfer — 2026-09-30:** use the primary handoff for the full M1 goal,
+37/37 safe-travel core evidence, exact source hashes and current bounded
+ownership. The official Codex workflow note is
+[CODEX_GAME_DEVELOPMENT_2026-09-30.md](/Users/vovanostm/learn/warwrit/docs/engineering/research/CODEX_GAME_DEVELOPMENT_2026-09-30.md);
+it informs workflow but does not alter product authority. Earlier parent health
+probes for 5190/5191/5192 returned 200. W03 now demonstrates changed-source
+travel execution across API restart in its isolated environment; complete local
+startup and authenticated visual UI re-entry remain unproved.
+
 Operational checkpoint, 2026-09-29. Superseded dispatches and the full previous plan are preserved [verbatim](M1_OPERATIONAL_CHECKPOINT_HISTORY_2026-09-29.md#original-current_planmd); they are not current assignments. This mirror is not product authority or acceptance evidence.
 
 ## Authority and mission
 
 - Canonical product authority: Airtable base `apph3bj1NyVrfJeLM`, full [M1 index and dated comments](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s), [WP-02 amendments](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe), [ROUTE](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recujFwLEiCeXwK6b), [V3](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recFIf3eiwmpI03Qu), and [issue #8](https://github.com/Vovanostm/warwrit/issues/8). [ROADMAP](ROADMAP.md) is a compact dependency view, not a second GDD.
-- Owner's target is the full persistent M1 alpha on this Mac: same company and account across travel, contract, physical two-company PvE, proof, consequences, save and re-entry. The first region/content and corrected renderer comparison are required by the canonical sources; authored counts or a diagnostic battle are not a completed journey. M2 public MMO/PvP/trading and 50–100 CCU proof remain out of scope.
+- Owner's target is the full persistent M1 alpha on this Mac: same company and account across travel, contract, physical two-company PvE, proof, consequences, save and re-entry, with working local launch and manual-test instructions. The first region/content and corrected renderer comparison are required by the canonical sources; authored counts or a diagnostic battle are not a completed journey. M2 public MMO/PvP/trading and 50–100 CCU proof remain out of scope.
 - The selected [I02a scheduling amendment](M1_EXECUTION_READINESS.md) (canonical readback `comfbUJMfwcjVWq2v`) is unchanged: after H01–H08 and I01, W04/CT02 may enter on an exact consumer-specific durable-command subset. Full I02, F01 and D02 remain final M1 requirements; the amendment does not approve a handler, policy, or acceptance shortcut. Cards are responsibilities, not mandatory PRs.
 - Original ZIP concordance remains `RC-GAP-MACHINE-01 / NOT_RUN`; keep authored derivatives labelled. Empirical quota limits checkpoint retrieval; do not repeat failed retries or treat absence as product approval. Preserve accepted history and dated amendments.
 
 ## Live integration and evidence
 
-- Integration base: `origin/main 307810db010913189fd855b62f91382a321e5bcd`; G10 PR126 and F01 consumer PR127 are merged. Main includes external PR125 quality tooling. This checkout: `ae509850c401b36c682b323c6ce8df6a5d1e3167`, tree `9ae95208efca8b223458632f57b6667b4dd16e3c`, on `codex/m1-company-storage`. Preserve unrelated PR128 and primary checkout. Read live GitHub refs/CI before any delivery decision.
-- H01/H02 at `ae50985`: strict whole-root reader, ordered migration `0005`, repository, consumed/terminal presence corrections and company-scoped PostgreSQL fixture. Latest targeted Sol reader/fixture review at `ae50985` and earlier SQL/repository review found no confirmed code blocker. Author's reader 6/6, physical 15/15, type/lint/format passed. Combined real-PG proof at `5e87` passed, **but the newer fixture `069a442` and reader `ae50985` have not had that PG proof**. The new Fallow changed-code gate **FAILED** on unused `isLifecycleRequirementShape` export and complexity/clone leads. H cleanup is queued with no active writer during this plan run; no H PR or H03/H04 acceptance.
-- ART05 pilot: draft [PR129](https://github.com/Vovanostm/warwrit/pull/129) at `fe4e783` in a separate worktree. Narrow Sol loader review found no blocker; author verified browser deferred-parser/manifest/GLB corrections. CI36571546753 bootstrap passed 448 tests, 10,000 battles, 100 replays and real PG; the new changed-code Fallow gate **FAILED**. New parent ACK assigns Luna only animated/static sprite files, one shared helper, and the `PlayCanvasScene` constructor/initialization and `loadContainer` lifecycle portions of `scene.ts`, in the separate checkout with dedicated browser/server 5186. Identical structural primitives may be shared in the helper; distinct manifest policies remain distinct, with no cross-engine abstraction. A nested glTF stall and static-PNG cancellation risk remain not independently reproduced. Full ART05 comparison and renderer acceptance are incomplete. Earlier PR129 lifecycle findings and corrections are retained in [history](M1_OPERATIONAL_CHECKPOINT_HISTORY_2026-09-29.md#original-current_planmd), not asserted against this head.
-- Existing company DB on loopback 32778 is empty; no worker currently owns its lifecycle. Parent owns allocation and the real committed readback. Prior-tree CI, focused tests and browser probes do not prove a changed tree, final M1, Mac performance or human playtest.
+### Safe-travel core checkpoint — 2026-09-29
 
-## Owners and next actions
+The two reviewed core corrections are complete: the travel wrapper requires a
+server-supplied segment ID of at most 64 characters, and transit-food uses a
+bounded root-local key with full route/epoch/membership identity. The maximum-ID
+`AdvanceCampaign`/strict aggregate-reader regression passes. Captured checks:
+`pnpm --filter @warwrit/game-core build` exit 0;
+`pnpm --filter @warwrit/testkit build` exit 0 (before the final test-only
+fixture correction); combined `pnpm exec vitest run
+packages/testkit/src/world-route.spec.test.ts
+packages/testkit/src/company-lifecycle.spec.test.ts
+packages/testkit/src/company-physical.spec.test.ts` exit 0, 3 files/37 tests;
+scoped `git diff --check` exit 0. Sol source-reviewed the runtime guard and
+food key; parent confirmed final hashes and the finance-account fixture repair.
+The exact current source hashes are in the [primary handoff](/Users/vovanostm/learn/warwrit/docs/engineering/NEXT_SESSION_HANDOFF.md).
+This is focused local proof, not full-union, server, PostgreSQL, or browser
+proof. The handler, receipt path, atomic route execution and worker continuation
+are implemented and covered by separate PostgreSQL and restart evidence; see
+the W03 evidence linked above. The earlier 2026-09-29 statement that no handler
+existed is superseded. Restart evidence is not a final-union gate, owner
+playtest, or visual UI re-entry proof.
 
-| Responsibility           | Owner and next boundary                                                                                                                                                                                                                                                                                                                                               |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| H01/H02                  | Cleanup queued, no active writer during this plan run. Parent assigns Luna the minimal Fallow cleanup and freezes the H diff; Sol reviews only subsequent changed cleanup and remaining proof, not redundant full reader or SQL audits. Parent allocates DB32778 and audits latest-union real PG plus final evidence before H delivery.                               |
-| ART05 pilot              | Luna simplifies only assigned sprite/helper and `scene.ts` constructor/initialization and `loadContainer` lifecycle portions in the separate checkout, then freezes PR129; Sol reviews the changed packet; parent audits CI/browser evidence and PR delivery. Preserve distinct manifest policies and no cross-engine abstraction. ART04/ART05 comparison stays open. |
-| Integration              | Parent assigns disjoint writers/resources, controls Git/PR, shared services, publication, final exact-tree gate and acceptance. Sol plans/reviews; Luna implements and executes checks. Parent audits evidence instead of personally implementing/reproducing every packet. No agent delegates.                                                                       |
-| Next gated work          | H03/H04 executor follows reviewed H storage; ID03 follows real H04; world/JOIN depend on their actual source and durable predecessors. None is accepted here. Full I02/F01/D02 and M1 acceptance remain later gates.                                                                                                                                                  |
-| QA00 local compatibility | Queued, not active: this Mac has `docker-compose` 5.5 while `docker compose` is unavailable. Repair project-local launcher compatibility under a separate writer ACK; do not change global Docker/plugins or claim a full M1 launcher.                                                                                                                                |
+### Company opening correction — 2026-09-29
+
+The c06 integration was exercised on its isolated local stack after the older
+status paragraphs below were written. `5190` Fastify, `5191` Vite, Dex `5559`,
+and PostgreSQL `32778` are live and healthy. Player two completed opening
+options (200), CreateCompany (201), persisted company read (200), refresh,
+logout (204/then session 401), and OIDC sign-in again (session/company 200).
+The same company `f74d5051-2fb2-46bf-b1d3-587bc76e658a` and known roster Lena
+plus Rell returned; see [M1_LOCAL_PLAYTEST](M1_LOCAL_PLAYTEST.md) for exact
+evidence, scoped checks, hashes, and local-only artifacts. Lifecycle correction
+review by Sol found no actionable regression; parent checked hashes and
+inspected the screenshot. The pre-fix disposable diagnostic company
+`cae82c33-ac61-4118-80b9-b62b1c33bcf2` remains in the local database; do not
+remove it without ownership verification and a private backup/transactional
+cleanup. The primary account/company and all accounts were preserved.
+
+Live remote `main` was read back as `fee0d6f5957f2619ea01f59d71dc75b2a71dd1b6`
+on 2026-09-29; it includes merged PRs #128, #130, and #131. This worktree's
+`origin/main` tracking ref and merge-base remain `307810db010913189fd855b62f91382a321e5bcd`
+and are stale. Preserve this 13-commit-ahead dirty checkout; do not rebase as
+part of the handoff. Earlier text below that calls the remote main current or
+the listener stopped is superseded by this dated readback.
+
+This is one local creation and re-entry path, not process-restart evidence or
+full M1. No full `pnpm verify`, combat stress, migration smoke, final exact-tree
+gate, owner playtest, or travel was run. The frozen code and regression checks
+are detailed in the local packet; there was no merge or publication.
+
+- Last verified integration base: `origin/main 307810db010913189fd855b62f91382a321e5bcd` (not refreshed live for this update); G10 PR126 and F01 consumer PR127 were merged, and main includes external PR125 quality tooling. This checkout: `4489db47728d1b72794436df8eafb0cfdbd97d31` on `codex/m1-company-storage`. H is uncommitted; the earlier frozen tracked diff SHA-256 `e8a4064eb97a63a781a022cce3acf67223d39f2c2b1b3c04badce7296e29cf50` and untracked `stored-shape.ts` SHA-256 `c4fc3f6f5bfc40b1fac076fd2a08736aaedc2e40c6313d5cedc4203ee4212b88` are historical, not current whole-diff identities. Preserve unrelated PR128 and primary checkout. Read live GitHub refs/CI before any delivery decision.
+- H01/H02: strict whole-root reader, ordered migration `0005`, repository and company-scoped PostgreSQL fixture. Sol's reviewed splits found no confirmed static semantic regression. Fresh rebuilt pre-alias evidence (`/private/tmp/warwrit-h-fresh-evidence-luna-result.md`) superseded stale-`dist` results: `pnpm build` passed, `pnpm test:unit` 454 passed/5 skipped, `pnpm check:changes` failed. Mixed compiled-public/direct-source imports reproduced duplicate Istanbul mappings; the test-only source alias yielded paired 26/26 coverage with one mapping. Sol found no actionable alias defect. These are historical source observations, not current whole-tree proof. The finance guard split is complete. Current opening/server/protocol work is owned by the active backend implementer; see [PARALLEL_WAVES](PARALLEL_WAVES.md) for current path ownership and API readiness. Real latest-union PostgreSQL proof, full gate and M1 remain open.
+- Visual direction correction: the old pilot is not sufficiently dark fantasy. Owner wants original grim painted/ink 2D Knight, Rogue and Barbarian figures closer in _mood_ to Battle Brothers/Darkest Dungeon, without copied franchise art. Fixed camera, minimal feedback; eight-direction baked corpus paused, no engine/gameplay migration. Luna froze INK-01/INK-02 authoring in `warwrit-alpha-contracts` (`codex/m1-ink-visual-prototype`, HEAD `307810db010913189fd855b62f91382a321e5bcd`, tracked binary diff SHA-256 `63df08ddd442ef2f5d4c6cff688c1d63451fd67989c2d06f701f2fd136f7b600`; untracked aggregate digest `de6cafa709d49757f6f8c7f1ab39eee013e581c5049f36e2908881ebf3773e71`). INK-03 then scoped ink presentation styles to explicit PlayCanvas `?ink=1`, restored default styles/labels, and verified screenshots in `warwrit-alpha-contracts/output/playwright/ink-03-default.png` (Babylon comparison default) and `ink-03-playcanvas-ink.png` (PlayCanvas ink), 1440×1000. Parent inspected and accepted this visual isolation. Three original class sprites and provenance are present. Parent accepted art direction only, **not** terrain/HUD, ART05 or gameplay. Fresh current-source INK04 mouse evidence confirms nearest valid Knight selection, transparent-margin rejection, and opaque selection; see the [report](/Users/vovanostm/multica_workspaces_local/warwrit-alpha-contracts/output/playwright/ink04-current-overlap/report.md). Keyboard/comprehension, ART04, ART05, ART06 production integration, FPS and gameplay remain unverified. The earlier `v4-day.png` is a mislabelled scripted-night capture and not day evidence. No full-gate claim.
+- Preserve old ART05 draft [PR129](https://github.com/Vovanostm/warwrit/pull/129) (remote `fe4e783` per last evidence), pilot local `09f21b0` plus unverified dirty material-cleanup patch, untracked assets and browser evidence. No current publishing assignment for that direction. Earlier CI/bootstrap and pilot limits are [historical](M1_OPERATIONAL_CHECKPOINT_HISTORY_2026-09-29.md#original-current_planmd), not evidence for the new ink prototype.
+- Company-read isolation was verified by the backend owner through Fastify against real PostgreSQL DB32778: anonymous request returned 401, the authenticated owner received the allowlisted summary, a different authenticated account received `{schemaVersion:1,company:null}`, and the probe left zero test rows. Migration `0006` is applied there. Opening options and CreateCompany routes are now implemented in the dirty c06 source; the option issues `bannerId` from its origin and the command overwrites the submitted value. H reports migration `0007` applied on the allocated verification DB. H froze an economy fix (diff SHA-256 `d787b43389c96d545165e3defc1dfcf0c4c5dd2c7ffbc373f45cf222fed2a559`) for the earlier overlong `publicObservableKey`; Sol's final review found no blocker. H reports real-Postgres route suite 2/2 passed (read isolation, rollback sentinel, CreateCompany 201, persisted GET, replay 200), plus core/server builds and types and 20 focused specs. This remains author evidence, not parent-executed union proof. Later W03 authenticated API travel/restart evidence used a separate isolated database; its API and Vite processes were stopped after capture, so no current listener availability is claimed. Full gate and final M1 acceptance are open.
+- Sol's review of the player entry packet found a logout/retry race. A delayed-response Playwright probe with mocked session/company responses confirms logout enters an exclusive state, removes retry while pending, then shows the signed-out entry after HTTP 204. An HTTP 503 mock renders “Нет связи с сервером” with retry; screenshot: `output/playwright/m1-player-entry-unavailable.png`. These are UI-only mocks. Actual authenticated loading, OIDC callback, UI `/company` response and persisted re-entry remain **NOT_RUN** because listener 5190 is not started.
+
+Local launcher compatibility was repaired in `scripts/bootstrap.sh` and `scripts/identity-local.sh` through a shared project-local selector that checks `docker compose version` and falls back to `docker-compose version`. Stubbed fallback validation covered isolated verification project naming, `POSTGRES_PORT=0`, dynamic loopback port parsing, cleanup, and the identity status command; a stubbed Compose `up` failure propagated exit 42 after cleanup. Current harmless version probes report Compose 5.5.0 for both command forms, so the earlier missing-plugin report is not reproduced here. The root package commands `pnpm db:up` and `pnpm db:down` still invoke `docker compose` directly and were not changed. No shared identity containers were touched. No daemon, service, migration smoke, full gate or owner playtest ran as part of this repair.
+
+## Next milestone and acceptance gaps
+
+The focused company creation/opening path and W03 process-restart travel have
+separate evidence packets; neither proves the complete persistent M1 journey.
+Next is the active durable company/world foundation block in
+[PARALLEL_WAVES](PARALLEL_WAVES.md), followed by one authentic
+contract/JOIN/proof/payment journey. H03–H08, ID03, W05/W06/K02 producer
+readiness, full I02/F01/D02, production UI re-entry, a fresh full local startup,
+owner playtest and final M1 acceptance remain open as applicable. Do not
+activate CT02/JOIN until their real producers and required consumer evidence
+exist.
 
 Use the [current queue](PARALLEL_WAVES.md) for handoffs and [team responsibilities](AGENT_TEAM.md) for runtime capacity. Only checked mission PR merges are authorized; merge permission is not auto-merge, deployment, paid provisioning or force-push permission. Recheck exact PR head/base/review/CI and actual-main result per delivery. The final exact-tree verification sequence is owned by [AGENTS.md](../../AGENTS.md#verification-without-duplicate-work) and `scripts/bootstrap.sh`; apply CI `check:changes` to changed code without treating it as a replacement gate. Real durable, browser, Mac and owner journey evidence remains required under the [full M1 index](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s); none is claimed complete.

@@ -1,7 +1,14 @@
 import { PROTOCOL_VERSION, type HealthResponse } from '@warwrit/protocol';
-import fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
+import fastify, {
+  type FastifyBaseLogger,
+  type FastifyInstance,
+  type FastifyListenOptions,
+} from 'fastify';
 
 import { registerIdentityRoutes, type IdentityRoutesOptions } from './auth/routes.js';
+import { registerCompanyRoutes, type CompanyRoutesOptions } from './company/routes.js';
+import { registerWorldRoutes } from './world/routes.js';
+import { registerFirstHuntRoutes } from './contracts/routes.js';
 import { createLogger } from './logger.js';
 import { registerCombatLab, type CombatLabSettings } from './combat-lab/routes.js';
 import { registerEncounterRoutes, type EncounterRoutesOptions } from './encounters/routes.js';
@@ -10,8 +17,10 @@ import { registerEncounterRealtime } from './encounters/realtime.js';
 export interface BuildAppOptions {
   readonly logger?: FastifyBaseLogger | false;
   readonly readinessProbe?: () => Promise<void>;
+  readonly closeDatabase?: () => Promise<void>;
   readonly combatLab?: CombatLabSettings;
   readonly identity?: IdentityRoutesOptions;
+  readonly company?: CompanyRoutesOptions;
   readonly encounters?: EncounterRoutesOptions;
   readonly encounterRealtime?: { readonly host: string; readonly port: number };
 }
@@ -31,14 +40,32 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
           loggerInstance: logger,
         });
 
+  if (options.closeDatabase !== undefined) {
+    app.addHook('onClose', options.closeDatabase);
+  }
+
   app.get('/health/live', async () => liveResponse);
   if (options.identity !== undefined) {
     registerIdentityRoutes(app, options.identity);
   }
+  if (options.company !== undefined) {
+    if (options.identity === undefined) {
+      throw new Error('Company routes require authenticated identity');
+    }
+    registerCompanyRoutes(app, options.company);
+    registerWorldRoutes(app, options.company);
+    registerFirstHuntRoutes(app, options.company);
+  }
   if (options.encounters !== undefined) {
+    if (process.env['NODE_ENV'] === 'production' && options.encounters.fixtureAdmission === true) {
+      throw new Error('Encounter fixtures are unavailable in production');
+    }
     const realtime =
       options.encounterRealtime !== undefined
-        ? registerEncounterRealtime(app, options.encounters.database, options.encounterRealtime)
+        ? registerEncounterRealtime(app, options.encounters.database, {
+            ...options.encounterRealtime,
+            fixtureAdmission: options.encounters.fixtureAdmission === true,
+          })
         : undefined;
     registerEncounterRoutes(app, {
       ...options.encounters,
@@ -88,4 +115,23 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   });
 
   return app;
+}
+
+export async function listenOrClose(
+  app: FastifyInstance,
+  options: FastifyListenOptions,
+): Promise<string> {
+  try {
+    return await app.listen(options);
+  } catch (listenError) {
+    try {
+      await app.close();
+    } catch (closeError) {
+      app.log.error(
+        { error: closeError, event: 'server.listen_cleanup.failed' },
+        'Failed to close Warwrit server after listen failed',
+      );
+    }
+    throw listenError;
+  }
 }

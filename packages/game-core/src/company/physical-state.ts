@@ -1,5 +1,5 @@
 import { COMPANY_CATALOGUE, COMPANY_RULES } from './definitions.js';
-import { canonicalJson, natural, plainObject, snapshotJson } from './input.js';
+import { canonicalJson, natural, snapshotJson } from './input.js';
 import { sameLocation } from './lifecycle-state.js';
 import type { LifecycleCharacter, LifecycleState } from './lifecycle-types.js';
 import type { LocationRef, OwnerRef } from './model.js';
@@ -24,6 +24,10 @@ import type {
 } from './physical-types.js';
 import type { EconomyContext } from './economy-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
+import {
+  companyLocationShape as locationShape,
+  hasExactStoredFields as shapeObject,
+} from './stored-shape.js';
 
 export class PhysicalViolation extends Error {
   constructor(readonly code: PhysicalError) {
@@ -624,17 +628,6 @@ export function isCompanyPhysicalStateShape(value: unknown): value is CompanyPhy
   );
 }
 
-function shapeObject(
-  value: unknown,
-  keys: readonly string[],
-  optional: readonly string[] = [],
-): value is Record<string, unknown> {
-  return (
-    plainObject(value) &&
-    keys.every((key) => Object.hasOwn(value, key)) &&
-    Object.keys(value).every((key) => keys.includes(key) || optional.includes(key))
-  );
-}
 function shapeList(
   value: unknown,
   check: (entry: unknown) => boolean,
@@ -685,22 +678,6 @@ export function isItemInstanceShape(value: unknown): boolean {
         isEntityId(value['tombstone']['sourceId']) &&
         isEntityId(value['tombstone']['causeId']) &&
         isExactInteger(value['tombstone']['atTick'])))
-  );
-}
-function locationShape(value: unknown): boolean {
-  if (!plainObject(value)) return false;
-  if (value['kind'] === 'AT')
-    return (
-      shapeObject(value, ['kind', 'siteId', 'areaId']) &&
-      isEntityId(value['siteId']) &&
-      isEntityId(value['areaId'])
-    );
-  return (
-    value['kind'] === 'TRANSIT' &&
-    shapeObject(value, ['kind', 'segmentId', 'from', 'to', 'startedAt', 'arrivalNotBefore']) &&
-    [value['segmentId'], value['from'], value['to']].every(isEntityId) &&
-    isExactInteger(value['startedAt']) &&
-    isExactInteger(value['arrivalNotBefore'])
   );
 }
 function containerShape(value: unknown): boolean {
@@ -781,8 +758,29 @@ function conditionShape(value: unknown): boolean {
     ])
   )
     return false;
-  const care = value['care'];
-  const validCare =
+  return conditionIdentityAndTimingShape(value) && careShape(value['care']);
+}
+
+function conditionIdentityAndTimingShape(value: Record<string, unknown>): boolean {
+  return (
+    [
+      value['conditionId'],
+      value['characterId'],
+      value['definitionId'],
+      value['sourceEventId'],
+      value['causeId'],
+    ].every(isEntityId) &&
+    isExactInteger(value['onsetTick']) &&
+    (value['deadlineTick'] === null || isExactInteger(value['deadlineTick'])) &&
+    isExactInteger(value['recoveryTicks']) &&
+    (value['resolvedAt'] === null || isExactInteger(value['resolvedAt'])) &&
+    (value['resolutionSourceId'] === null || isEntityId(value['resolutionSourceId'])) &&
+    (value['scarId'] === null || isEntityId(value['scarId']))
+  );
+}
+
+function careShape(care: unknown): boolean {
+  return (
     care === null ||
     (shapeObject(
       care,
@@ -795,22 +793,7 @@ function conditionShape(value: unknown): boolean {
       ['MATERIAL', 'PROVIDER', 'INHERITED_STABILIZATION'].includes(care['channel'] as string) &&
       (!Object.hasOwn(care, 'providerId') || isEntityId(care['providerId'])) &&
       (!Object.hasOwn(care, 'recoveryTicksRequired') ||
-        isExactInteger(care['recoveryTicksRequired'])));
-  return (
-    [
-      value['conditionId'],
-      value['characterId'],
-      value['definitionId'],
-      value['sourceEventId'],
-      value['causeId'],
-    ].every(isEntityId) &&
-    isExactInteger(value['onsetTick']) &&
-    (value['deadlineTick'] === null || isExactInteger(value['deadlineTick'])) &&
-    validCare &&
-    isExactInteger(value['recoveryTicks']) &&
-    (value['resolvedAt'] === null || isExactInteger(value['resolvedAt'])) &&
-    (value['resolutionSourceId'] === null || isEntityId(value['resolutionSourceId'])) &&
-    (value['scarId'] === null || isEntityId(value['scarId']))
+        isExactInteger(care['recoveryTicksRequired'])))
   );
 }
 function custodyShape(value: unknown): boolean {

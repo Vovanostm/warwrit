@@ -4,6 +4,50 @@ export interface EncounterFixtureCreateDto {
   readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
 }
 
+export interface EncounterActiveDto {
+  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+  readonly encounterId: string | null;
+}
+
+export interface EncounterControlGrantRequestDto {
+  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+}
+
+export interface EncounterResumeDto {
+  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+  readonly encounterId: string;
+}
+
+export function isEncounterResumeDto(value: unknown): value is EncounterResumeDto {
+  return (
+    isRecord(value) &&
+    Object.keys(value).length === 2 &&
+    value['version'] === ENCOUNTER_PROTOCOL_VERSION &&
+    isEncounterId(value['encounterId'])
+  );
+}
+
+export interface EncounterControlGrantDto {
+  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+  readonly encounterId: string;
+  readonly revision: number;
+  readonly controllableUnitIds: readonly string[];
+  /** Authenticated caller's status only; absent when served by an older runtime. */
+  readonly selfAfk?: boolean;
+  /** Activation epoch after which the caller's resume request may take effect. */
+  readonly resumeRequestedAfterEpoch?: number | null;
+}
+
+export function isEncounterControlGrantRequestDto(
+  value: unknown,
+): value is EncounterControlGrantRequestDto {
+  return (
+    isRecord(value) &&
+    Object.keys(value).length === 1 &&
+    value['version'] === ENCOUNTER_PROTOCOL_VERSION
+  );
+}
+
 export interface EncounterCommandDto {
   readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
   readonly encounterId: string;
@@ -23,7 +67,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isId = (value: unknown): value is string =>
   typeof value === 'string' && value.length > 0 && value.length <= 128;
 
-const isEncounterId = (value: unknown): value is string =>
+export const isEncounterId = (value: unknown): value is string =>
   typeof value === 'string' &&
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u.test(value);
 
@@ -104,8 +148,12 @@ export interface EncounterPublicProjectionDto {
   readonly activationId: string | null;
   readonly actorUnitId: string | null;
   readonly deadlineAt: string | null;
-  readonly controllableUnitIds: readonly string[];
   readonly units: readonly EncounterPublicUnitDto[];
+  /** Public board geometry. Optional only for compatibility with older responses. */
+  readonly map?: {
+    readonly hexes: readonly Readonly<{ q: number; r: number }>[];
+    readonly blocked: readonly Readonly<{ q: number; r: number }>[];
+  };
 }
 
 export interface EncounterRoomTicketDto {

@@ -154,10 +154,9 @@ const workspaceGraph = new Map();
 const fileGraph = new Map();
 
 for (const workspace of workspaces) {
-  const declared = new Set([
-    ...Object.keys(workspace.manifest.dependencies ?? {}),
-    ...Object.keys(workspace.manifest.devDependencies ?? {}),
-  ]);
+  const runtimeDependencies = Object.keys(workspace.manifest.dependencies ?? {});
+  const developmentDependencies = Object.keys(workspace.manifest.devDependencies ?? {});
+  const declared = new Set([...runtimeDependencies, ...developmentDependencies]);
   const declaredWorkspaceDependencies = new Set(
     [...declared].filter((dependency) => dependency.startsWith('@warwrit/')),
   );
@@ -168,14 +167,18 @@ for (const workspace of workspaces) {
     failures.push(`No dependency policy exists for ${workspace.name}.`);
   } else {
     for (const dependency of declaredWorkspaceDependencies) {
-      if (!allowed.has(dependency)) {
+      const testkitServerTestDependency =
+        workspace.name === '@warwrit/server' &&
+        dependency === '@warwrit/testkit' &&
+        developmentDependencies.includes(dependency) &&
+        !runtimeDependencies.includes(dependency);
+      if (!allowed.has(dependency) && !testkitServerTestDependency) {
         failures.push(`${workspace.name} declares forbidden workspace dependency ${dependency}.`);
       }
     }
   }
 
   if (workspace.name === '@warwrit/game-core') {
-    const runtimeDependencies = Object.keys(workspace.manifest.dependencies ?? {});
     if (runtimeDependencies.length > 0) {
       failures.push('@warwrit/game-core must have zero runtime dependencies.');
     }

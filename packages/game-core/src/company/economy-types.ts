@@ -12,7 +12,12 @@ import type {
 } from './lifecycle-types.js';
 import type { OwnerRef } from './model.js';
 import type { CampaignTick, CanonicalRevision, MoneyQ, PublicRevision } from './values.js';
-import type { CompanyPhysicalState, PhysicalError, PhysicalEvidence } from './physical-types.js';
+import type {
+  CompanyPhysicalState,
+  PhysicalError,
+  PhysicalEvidence,
+  TrustedTransitSegment,
+} from './physical-types.js';
 import type { ExactFraction } from './exact-fraction.js';
 
 type LearningBackingInputs =
@@ -404,6 +409,8 @@ export type FinanceEvidence =
 export interface EconomyContext extends LifecycleContext {
   readonly financeFacts: readonly FinanceEvidence[];
   readonly physicalFacts?: readonly PhysicalEvidence[];
+  /** Persisted accepted routes supplied by the trusted adapter for temporal settlement. */
+  readonly trustedTransitSegments?: readonly TrustedTransitSegment[];
 }
 
 /** Unmet obligations are finite data in this draft, not an effect framework or queue. */

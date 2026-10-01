@@ -2,9 +2,9 @@
 
 ```yaml
 status: authoritative-implementation-guidance
-as_of: 2026-09-03
+as_of: 2026-10-01
 scope: M0-M1
-authority: ADR-0003
+authority: ADR-0003-with-renderer-superseded-by-ADR-0006
 repository: Vovanostm/warwrit
 production_runtime: node-24
 package_manager: pnpm-11
@@ -14,7 +14,7 @@ realtime: colyseus-0.18-planned
 persistence: postgresql
 sql_layer: kysely-pg
 web_shell: react-19-vite-7
-renderer: playcanvas-2.22.4-private-m1-mac-chrome
+renderer: babylon-js-selected-m1-version-unselected
 experimental_runtime: bun-1.4
 ```
 
@@ -38,7 +38,7 @@ Before changing infrastructure or adding a framework dependency:
 - **Persistence — ACCEPTED:** PostgreSQL. It is canonical durable state.
 - **SQL layer — ACCEPTED:** Kysely + `pg`. Prefer explicit SQL-shaped queries and transactions.
 - **Browser shell — ACCEPTED:** React 19 + Vite 7. React owns UI composition, not canonical simulation.
-- **Renderer — ACCEPTED FOR CURRENT M1 TARGET:** PlayCanvas2.22.4 under [ADR-0005](../architecture/0005-m1-renderer-playcanvas.md). The measured Mac/Chrome comparison is complete; ART05 pipeline comparison and ART06 production adapter remain open.
+- **Renderer — SELECTED, ACCEPTANCE OPEN:** Babylon.js is the owner-selected M1 client renderer under [ADR-0006](../architecture/0006-m1-renderer-babylon.md). The exact dependency version remains unselected; inspect the lockfile and local types before implementation. Babylon visual/device/runtime, art-pipeline and ART06 production integration acceptance remain open. This selection is not a benchmark victory; historical PlayCanvas code and measurements remain historical evidence.
 - **Alternate runtime — EXPERIMENTAL:** Bun 1.4. Benchmark/compatibility lane only; no Bun-only production APIs.
 - **High-throughput WebSocket — DEFERRED:** uWebSockets.js. Add only after the default transport fails measured budgets.
 - **Redis/distributed topology — DEFERRED:** none for M0/M1. Add only after a multi-process or multi-machine requirement exists.
@@ -98,37 +98,16 @@ Forbidden without a superseding ADR:
 
 Runtime migration evidence must cover correctness, soak/reliability, observability, PostgreSQL/Kysely, Colyseus reconnect, and a material expected-load advantage.
 
-## Renderer spike contract
+## Renderer acceptance
 
-Do not add Babylon.js or PlayCanvas as a permanent production dependency before the renderer spike closes.
+The engine-selection comparison is superseded by ADR-0006. Validate Babylon
+visual quality, device/runtime behavior, art pipeline and production web
+integration; historical PlayCanvas measurements do not establish Babylon results.
 
-Build the same representative Warwrit scenario in both candidates:
-
-```text
-- tactical camera and hex/grid overlay
-- selectable/hoverable units
-- representative animated humanoids
-- props/terrain and fog
-- day/night lighting transition
-- particles/VFX
-- UI-to-scene interaction
-- asset import/update workflow
-- at least one AI-agent-driven scene/code change followed by visual verification
-```
-
-Measure:
-
-```text
-performance: p50/p95 CPU frame, GPU frame, memory
-startup: JS/bundle/start time
-content: animation + asset pipeline effort
-features: picking, overlays, fog, lighting, particles
-agentability: inspect/edit/verify via official tools
-reviewability: Git diff + reproducible project state
-operations: debugging/profiling workflow
-```
-
-Record the result as an ADR update or superseding renderer ADR. Do not choose by generic benchmark or preference alone.
+ART05 separately compares the required art variants and their authoring cost.
+ART06 installs the selected renderer at the web adapter boundary. Neither packet
+is waived by retaining the engine choice; use the ADR and its linked evidence for
+the current acceptance boundary rather than the superseded renderer-spike text.
 
 ## LLM/version-safety protocol
 

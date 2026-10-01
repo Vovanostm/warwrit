@@ -5,15 +5,19 @@ export * from './commands.js';
 export * from './guards.js';
 export { canonicalJson, isJsonData } from './input.js';
 export type * from './lifecycle-types.js';
+export { canPerform } from './lifecycle-state.js';
 export {
   prepareCompanyLifecycle,
   projectCompanyLifecycle,
   projectLifecycleRejection,
+  observePartyMovement,
 } from './lifecycle.js';
 export { fieldPartyStatus } from './membership.js';
 export type * from './economy-types.js';
 export { ECONOMY_SCHEMA_VERSION, ECONOMY_POLICY_VERSION } from './economy-types.js';
 export { createCompanyEconomyState } from './economy-state.js';
+export { receiveExternalPayment } from './economy-payments.js';
+export { accrueFinance } from './economy-accrual.js';
 export {
   prepareCompanyEconomy,
   prepareCompanyEconomyWithLearning,
@@ -34,8 +38,13 @@ export {
   PHYSICAL_SCHEMA_VERSION,
   PHYSICAL_POLICY_VERSION,
   PHYSICAL_RULES,
+  TRAVEL_RULES,
+  TRAVEL_PROFILES,
+  travelProfile,
 } from './physical-types.js';
 export { createCompanyPhysicalState, validatePhysicalState } from './physical-state.js';
+export { availableContainerG } from './physical-state.js';
+export { assessPhysicalFoodStock } from './physical-food.js';
 export { materializeCompanyPhysicalState } from './physical-load.js';
 export { projectCompanyPhysical } from './physical.js';
 export * from './combat-projection.js';
@@ -46,10 +55,16 @@ export * from './combat-physical.js';
 export * from './combat-consequences.js';
 export {
   COMBAT_PRACTICE_PROFILE_VERSION,
+  FIRST_HUNT_PRACTICE_PROFILE_ID,
+  deriveCombatPracticeProfile,
+  isOpposingEncounterSide,
+  prepareCombatPracticeCredits,
   prepareCombatPracticeEffects,
 } from './combat-practice.js';
 export type {
   CombatPracticeProfile,
+  CombatPracticeProfileProduction,
+  CombatPracticeProfileResidual,
   TrustedCombatPracticeCredit,
   PreparedCombatPracticeEffects,
   CombatPracticeStartSnapshot,

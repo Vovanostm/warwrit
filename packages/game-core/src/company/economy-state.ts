@@ -27,6 +27,7 @@ import type {
 import { ECONOMY_POLICY_VERSION, ECONOMY_SCHEMA_VERSION } from './economy-types.js';
 import { isLifecycleReceiptShape } from './lifecycle-state.js';
 import { farewellOutcomeInput } from './farewell-types.js';
+import { companyLocationShape, hasExactStoredFields as shape } from './stored-shape.js';
 
 export class EconomyViolation extends Error {
   constructor(readonly code: EconomyError) {
@@ -432,8 +433,21 @@ export function validateEconomy(state: CompanyEconomyState, context: EconomyCont
 
 /** Retained finance field-set guard; semantic invariants remain in validateEconomy. */
 export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
-  if (
-    !shape(
+  return (
+    financeRootShape(value) &&
+    financeWalletsAccountsAndClaimsShape(value) &&
+    financePoolsReservationsAndEpochsShape(value) &&
+    financeMaintenanceAndFoodShape(value) &&
+    financeArrearsAndDeparturesShape(value) &&
+    financeMovementsObligationsAndFarewellsShape(value) &&
+    financeReceiptsAndSourceEffectsShape(value) &&
+    financeOptionalLearningShape(value)
+  );
+}
+
+function financeRootShape(value: unknown): value is Record<string, unknown> {
+  return (
+    shape(
       value,
       [
         'schemaVersion',
@@ -457,9 +471,15 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
         'applied',
       ],
       ['learningObligations', 'learningEffects'],
-    )
-  )
-    return false;
+    ) &&
+    value['schemaVersion'] === ECONOMY_SCHEMA_VERSION &&
+    value['policyVersion'] === ECONOMY_POLICY_VERSION &&
+    isExactInteger(value['processedTick']) &&
+    financeCollectionFieldsShape(value)
+  );
+}
+
+function financeCollectionFieldsShape(value: Record<string, unknown>): boolean {
   const entries: readonly {
     field: string;
     required: readonly string[];
@@ -565,16 +585,21 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
     if (!Array.isArray(values) || !values.every((entry) => shape(entry, required, optional)))
       return false;
   }
-  for (const wallet of value['wallets'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financeWalletsAccountsAndClaimsShape(finance: Record<string, unknown>): boolean {
+  return (
+    financeWalletsShape(finance) && financeAccountsShape(finance) && financeWageClaimsShape(finance)
+  );
+}
+
+function financeWalletsShape(finance: Record<string, unknown>): boolean {
+  const wallets = finance['wallets'] as readonly Record<string, unknown>[];
+  for (const wallet of wallets)
     if (!shape(wallet['owner'], ['kind', 'id']) || !locationObjectShape(wallet['location']))
       return false;
-  if (
-    value['schemaVersion'] !== ECONOMY_SCHEMA_VERSION ||
-    value['policyVersion'] !== ECONOMY_POLICY_VERSION ||
-    !isExactInteger(value['processedTick'])
-  )
-    return false;
-  for (const wallet of value['wallets'] as readonly Record<string, unknown>[]) {
+  for (const wallet of wallets) {
     if (
       !ownerShape(wallet['owner']) ||
       !locationValueShape(wallet['location']) ||
@@ -582,7 +607,11 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
     )
       return false;
   }
-  for (const account of value['accounts'] as readonly Record<string, unknown>[]) {
+  return true;
+}
+
+function financeAccountsShape(finance: Record<string, unknown>): boolean {
+  for (const account of finance['accounts'] as readonly Record<string, unknown>[]) {
     if (
       !isEntityId(account['membershipId']) ||
       !isEntityId(account['poolId']) ||
@@ -605,7 +634,11 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
     )
       return false;
   }
-  for (const claim of value['claims'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financeWageClaimsShape(finance: Record<string, unknown>): boolean {
+  for (const claim of finance['claims'] as readonly Record<string, unknown>[])
     if (
       !['claimId', 'membershipId', 'poolId', 'rateVersion'].every((key) =>
         isEntityId(claim[key]),
@@ -629,16 +662,28 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
       )
     )
       return false;
-  for (const pool of value['pools'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financePoolsReservationsAndEpochsShape(finance: Record<string, unknown>): boolean {
+  return financePoolsAndReservationsShape(finance) && financeEpochsShape(finance);
+}
+
+function financePoolsAndReservationsShape(finance: Record<string, unknown>): boolean {
+  for (const pool of finance['pools'] as readonly Record<string, unknown>[])
     if (!isEntityId(pool['poolId']) || !isEntityId(pool['walletId'])) return false;
-  for (const reservation of value['reservations'] as readonly Record<string, unknown>[])
+  for (const reservation of finance['reservations'] as readonly Record<string, unknown>[])
     if (
       !['reservationId', 'walletId', 'claimId'].every((key) => isEntityId(reservation[key])) ||
       !isExactInteger(reservation['amountQ']) ||
       !['PENDING_CONFIRMATION', 'PRE_ENTRY'].includes(reservation['purpose'] as string)
     )
       return false;
-  for (const epoch of value['epochs'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financeEpochsShape(finance: Record<string, unknown>): boolean {
+  for (const epoch of finance['epochs'] as readonly Record<string, unknown>[])
     if (
       !isEntityId(epoch['epochId']) ||
       !isEntityId(epoch['poolId']) ||
@@ -653,26 +698,19 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
       )
     )
       return false;
-  for (const arrears of value['arrears'] as readonly Record<string, unknown>[])
-    if (
-      !isEntityId(arrears['episodeId']) ||
-      !isEntityId(arrears['membershipId']) ||
-      !isExactInteger(arrears['firstDueAt']) ||
-      !(arrears['complaintAt'] === null || isExactInteger(arrears['complaintAt'])) ||
-      !(arrears['resolvedAt'] === null || isExactInteger(arrears['resolvedAt']))
-    )
-      return false;
-  for (const departure of value['departures'] as readonly Record<string, unknown>[])
-    if (
-      !isEntityId(departure['intentId']) ||
-      !isEntityId(departure['membershipId']) ||
-      !['DISMISSED', 'WAGE_BREACH', 'CANONICAL_EVENT'].includes(departure['reason'] as string) ||
-      !isEntityId(departure['causeId']) ||
-      !isExactInteger(departure['requestedAt']) ||
-      !(departure['cancelledAt'] === null || isExactInteger(departure['cancelledAt']))
-    )
-      return false;
-  for (const agreement of value['maintenance'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financeMaintenanceAndFoodShape(finance: Record<string, unknown>): boolean {
+  return (
+    financeMaintenanceAgreementsShape(finance) &&
+    financeMaintenanceReceiptsShape(finance) &&
+    financeFoodShape(finance)
+  );
+}
+
+function financeMaintenanceAgreementsShape(finance: Record<string, unknown>): boolean {
+  for (const agreement of finance['maintenance'] as readonly Record<string, unknown>[])
     if (
       !isEntityId(agreement['agreementId']) ||
       !['FIELD_CAMP', 'SAFE_SERVICE'].includes(agreement['kind'] as string) ||
@@ -682,25 +720,12 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
       !(agreement['knownEndedAt'] === null || isExactInteger(agreement['knownEndedAt'])) ||
       !isEntityId(agreement['sourceId']) ||
       !(agreement['providerId'] === null || isEntityId(agreement['providerId'])) ||
-      !(agreement['termsVersion'] === null || isEntityId(agreement['termsVersion']))
-    )
-      return false;
-  for (const receipt of value['maintenanceReceipts'] as readonly Record<string, unknown>[])
-    if (
-      !isEntityId(receipt['agreementId']) ||
-      !isEntityId(receipt['beneficiaryId']) ||
-      !isExactInteger(receipt['fromTick']) ||
-      !isExactInteger(receipt['toTick']) ||
-      !['CURRENT_FOOD', 'CURRENT_FOOD_LODGING_WAGE'].includes(receipt['fulfillment'] as string)
-    )
-      return false;
-  for (const item of value['maintenance'] as readonly Record<string, unknown>[])
-    if (
-      !locationValueShape(item['location']) ||
-      !Array.isArray(item['beneficiaryIds']) ||
-      !item['beneficiaryIds'].every(isEntityId) ||
-      !Array.isArray(item['beneficiaryEnds']) ||
-      !item['beneficiaryEnds'].every(
+      !(agreement['termsVersion'] === null || isEntityId(agreement['termsVersion'])) ||
+      !locationValueShape(agreement['location']) ||
+      !Array.isArray(agreement['beneficiaryIds']) ||
+      !agreement['beneficiaryIds'].every(isEntityId) ||
+      !Array.isArray(agreement['beneficiaryEnds']) ||
+      !agreement['beneficiaryEnds'].every(
         (entry: unknown) =>
           shape(entry, ['characterId', 'atTick', 'knownAtTick']) &&
           isEntityId(entry['characterId']) &&
@@ -709,7 +734,24 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
       )
     )
       return false;
-  for (const account of value['food'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financeMaintenanceReceiptsShape(finance: Record<string, unknown>): boolean {
+  for (const receipt of finance['maintenanceReceipts'] as readonly Record<string, unknown>[])
+    if (
+      !isEntityId(receipt['agreementId']) ||
+      !isEntityId(receipt['beneficiaryId']) ||
+      !isExactInteger(receipt['fromTick']) ||
+      !isExactInteger(receipt['toTick']) ||
+      !['CURRENT_FOOD', 'CURRENT_FOOD_LODGING_WAGE'].includes(receipt['fulfillment'] as string)
+    )
+      return false;
+  return true;
+}
+
+function financeFoodShape(finance: Record<string, unknown>): boolean {
+  for (const account of finance['food'] as readonly Record<string, unknown>[])
     if (
       !Array.isArray(account['intervals']) ||
       !account['intervals'].every(
@@ -721,43 +763,23 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
       )
     )
       return false;
-  for (const obligation of value['obligations'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financeArrearsAndDeparturesShape(finance: Record<string, unknown>): boolean {
+  return financeArrearsShape(finance) && financeDeparturesShape(finance);
+}
+
+function financeArrearsShape(finance: Record<string, unknown>): boolean {
+  for (const arrears of finance['arrears'] as readonly Record<string, unknown>[]) {
     if (
-      !ownerShape(obligation['recipient']) ||
-      !isExactInteger(obligation['amountQ']) ||
-      obligation['dueAt'] !== null
+      !isEntityId(arrears['episodeId']) ||
+      !isEntityId(arrears['membershipId']) ||
+      !isExactInteger(arrears['firstDueAt']) ||
+      !(arrears['complaintAt'] === null || isExactInteger(arrears['complaintAt'])) ||
+      !(arrears['resolvedAt'] === null || isExactInteger(arrears['resolvedAt']))
     )
       return false;
-  for (const movement of value['movements'] as readonly Record<string, unknown>[])
-    if (
-      !isExactInteger(movement['amountQ']) ||
-      !isExactInteger(movement['atTick']) ||
-      !isEntityId(movement['movementId']) ||
-      !isEntityId(movement['from']) ||
-      !isEntityId(movement['to'])
-    )
-      return false;
-  for (const effect of value['sourceEffects'] as readonly Record<string, unknown>[])
-    if (
-      !isEntityId(effect['key']) ||
-      typeof effect['requestKey'] !== 'string' ||
-      effect['requestKey'].length === 0
-    )
-      return false;
-  for (const receipt of value['applied'] as readonly Record<string, unknown>[]) {
-    if (
-      (receipt['lifecycleReceipt'] !== null &&
-        !isLifecycleReceiptShape(receipt['lifecycleReceipt'])) ||
-      !eventListShape(receipt['events']) ||
-      !Array.isArray(receipt['requirements']) ||
-      !receipt['requirements'].every(economyRequirementShape) ||
-      !allocationListShape(receipt['allocations']) ||
-      (Object.hasOwn(receipt, 'farewellOutcome') &&
-        !farewellOutcomeInput.read(receipt['farewellOutcome']))
-    )
-      return false;
-  }
-  for (const arrears of value['arrears'] as readonly Record<string, unknown>[]) {
     const warning = arrears['warning'];
     if (
       warning !== null &&
@@ -770,8 +792,50 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
     )
       return false;
   }
-  for (const movement of value['movements'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financeDeparturesShape(finance: Record<string, unknown>): boolean {
+  for (const departure of finance['departures'] as readonly Record<string, unknown>[])
     if (
+      !isEntityId(departure['intentId']) ||
+      !isEntityId(departure['membershipId']) ||
+      !['DISMISSED', 'WAGE_BREACH', 'CANONICAL_EVENT'].includes(departure['reason'] as string) ||
+      !isEntityId(departure['causeId']) ||
+      !isExactInteger(departure['requestedAt']) ||
+      !(departure['cancelledAt'] === null || isExactInteger(departure['cancelledAt']))
+    )
+      return false;
+  return true;
+}
+
+function financeMovementsObligationsAndFarewellsShape(finance: Record<string, unknown>): boolean {
+  return (
+    financeObligationsShape(finance) &&
+    financeMovementsShape(finance) &&
+    financeFarewellsShape(finance)
+  );
+}
+
+function financeObligationsShape(finance: Record<string, unknown>): boolean {
+  for (const obligation of finance['obligations'] as readonly Record<string, unknown>[])
+    if (
+      !ownerShape(obligation['recipient']) ||
+      !isExactInteger(obligation['amountQ']) ||
+      obligation['dueAt'] !== null
+    )
+      return false;
+  return true;
+}
+
+function financeMovementsShape(finance: Record<string, unknown>): boolean {
+  for (const movement of finance['movements'] as readonly Record<string, unknown>[])
+    if (
+      !isExactInteger(movement['amountQ']) ||
+      !isExactInteger(movement['atTick']) ||
+      !isEntityId(movement['movementId']) ||
+      !isEntityId(movement['from']) ||
+      !isEntityId(movement['to']) ||
       ![
         'ORIGIN_ENDOWMENT',
         'SIGNING',
@@ -787,7 +851,11 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
       ].includes(movement['purpose'] as string)
     )
       return false;
-  for (const farewell of value['farewells'] as readonly Record<string, unknown>[])
+  return true;
+}
+
+function financeFarewellsShape(finance: Record<string, unknown>): boolean {
+  for (const farewell of finance['farewells'] as readonly Record<string, unknown>[])
     if (
       !isEntityId(farewell['membershipId']) ||
       !isExactInteger(farewell['amountQ']) ||
@@ -795,7 +863,37 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
       !isEntityId(farewell['commandId'])
     )
       return false;
-  for (const receipt of value['applied'] as readonly Record<string, unknown>[]) {
+  return true;
+}
+
+function financeReceiptsAndSourceEffectsShape(finance: Record<string, unknown>): boolean {
+  return financeSourceEffectsShape(finance) && financeAppliedReceiptsShape(finance);
+}
+
+function financeSourceEffectsShape(finance: Record<string, unknown>): boolean {
+  for (const effect of finance['sourceEffects'] as readonly Record<string, unknown>[])
+    if (
+      !isEntityId(effect['key']) ||
+      typeof effect['requestKey'] !== 'string' ||
+      effect['requestKey'].length === 0
+    )
+      return false;
+  return true;
+}
+
+function financeAppliedReceiptsShape(finance: Record<string, unknown>): boolean {
+  for (const receipt of finance['applied'] as readonly Record<string, unknown>[]) {
+    if (
+      (receipt['lifecycleReceipt'] !== null &&
+        !isLifecycleReceiptShape(receipt['lifecycleReceipt'])) ||
+      !eventListShape(receipt['events']) ||
+      !Array.isArray(receipt['requirements']) ||
+      !receipt['requirements'].every(economyRequirementShape) ||
+      !allocationListShape(receipt['allocations']) ||
+      (Object.hasOwn(receipt, 'farewellOutcome') &&
+        !farewellOutcomeInput.read(receipt['farewellOutcome']))
+    )
+      return false;
     if (
       !isEntityId(receipt['commandId']) ||
       typeof receipt['requestKey'] !== 'string' ||
@@ -813,10 +911,14 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
     )
       return false;
   }
+  return true;
+}
+
+function financeOptionalLearningShape(finance: Record<string, unknown>): boolean {
   if (
-    Object.hasOwn(value, 'learningObligations') &&
-    (!Array.isArray(value['learningObligations']) ||
-      !value['learningObligations'].every(
+    Object.hasOwn(finance, 'learningObligations') &&
+    (!Array.isArray(finance['learningObligations']) ||
+      !finance['learningObligations'].every(
         (entry: unknown) =>
           shape(entry, [
             'taskId',
@@ -843,9 +945,9 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
   )
     return false;
   if (
-    Object.hasOwn(value, 'learningEffects') &&
-    (!Array.isArray(value['learningEffects']) ||
-      !value['learningEffects'].every((entry: unknown) =>
+    Object.hasOwn(finance, 'learningEffects') &&
+    (!Array.isArray(finance['learningEffects']) ||
+      !finance['learningEffects'].every((entry: unknown) =>
         shape(entry, [
           'key',
           'requestKey',
@@ -866,35 +968,13 @@ export function isCompanyFinanceShape(value: unknown): value is CompanyFinance {
   return true;
 }
 
-function shape(
-  value: unknown,
-  required: readonly string[],
-  optional: readonly string[] = [],
-): value is Record<string, unknown> {
-  return (
-    plainObject(value) &&
-    required.every((key) => Object.hasOwn(value, key)) &&
-    Object.keys(value).every((key) => required.includes(key) || optional.includes(key))
-  );
-}
 function locationObjectShape(value: unknown): boolean {
   if (!plainObject(value)) return false;
   return value['kind'] === 'AT'
     ? shape(value, ['kind', 'siteId', 'areaId'])
     : shape(value, ['kind', 'segmentId', 'from', 'to', 'startedAt', 'arrivalNotBefore']);
 }
-function locationValueShape(value: unknown): boolean {
-  if (!plainObject(value)) return false;
-  return value['kind'] === 'AT'
-    ? shape(value, ['kind', 'siteId', 'areaId']) &&
-        isEntityId(value['siteId']) &&
-        isEntityId(value['areaId'])
-    : value['kind'] === 'TRANSIT' &&
-        shape(value, ['kind', 'segmentId', 'from', 'to', 'startedAt', 'arrivalNotBefore']) &&
-        ['segmentId', 'from', 'to'].every((key) => isEntityId(value[key])) &&
-        isExactInteger(value['startedAt']) &&
-        isExactInteger(value['arrivalNotBefore']);
-}
+const locationValueShape = companyLocationShape;
 function ownerShape(value: unknown): boolean {
   return (
     shape(value, ['kind', 'id']) &&

@@ -55,16 +55,11 @@ No new significance or retraining policy is established here.
 
 ## Dispatch and ownership
 
-H01/H02 remains the current production packet. The same company writer owns
-H03/H04 after reviewed storage, then completes its recovery/isolation checks.
-ID03 follows the real executor. At each consumer handoff, Sol reviews the finite
-readiness requirements and exact code; the parent owns activation, integration
-and final proof. No world command is activated by this planning document alone.
-
-Within H01/H02, a second Luna exclusively extracts the existing unchanged combat
-fixture into a non-spec test helper while the H Luna writes storage/readers. The
-H writer explicitly released those two test paths. This is one coordinated H
-package, not a new product predecessor or a reason for another test suite.
+Current code ownership and dispatch are maintained in [CURRENT_PLAN](CURRENT_PLAN.md)
+and [PARALLEL_WAVES](PARALLEL_WAVES.md); this amendment defines readiness, not
+live assignments. The parent owns activation, integration and final proof. Sol
+reviews finite readiness requirements and exact code at a frozen handoff. No
+world command is activated by this planning document alone.
 
 Source pointers: canonical M1 `recZhUoTiwT7kIc8s` Notes section 5; Q-CHAR-14A
 `rec8hgsJFhQb3uqgb`; [F01 consumer evidence](evidence/F01-CONSUMER-20260929.md).

@@ -1,9 +1,13 @@
 # ADR-0005: Use PlayCanvas for the private M1 renderer
 
-- Status: Implementation choice retained; animated comparison acceptance reopened
+- Status: Superseded for production renderer selection by ADR-0006; historical evidence retained
 - Date: 2026-09-29
 - Supersedes: renderer-provisional portion of ADR-0003 only
 - Sources: canonical M1 ART04, Q-T03, owner full-M1 assignment
+
+## Supersession — 2026-10-01
+
+The owner selected Babylon.js for the M1 client renderer in [ADR-0006](0006-m1-renderer-babylon.md). The PlayCanvas selection and engine-selection gate recorded below are superseded. Preserve this ADR's implementation history and measured observations as historical evidence; they do not establish a Babylon benchmark victory or waive Babylon acceptance.
 
 ## Evidence correction — 2026-09-29
 

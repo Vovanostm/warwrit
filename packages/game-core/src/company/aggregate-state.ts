@@ -1,8 +1,17 @@
 import { canonicalJson, plainObject } from './input.js';
 import type { CompanyCombatAggregateState } from './combat-aggregate.js';
 import { createCombatEncounterApplication } from './combat-aggregate.js';
-import { ENCOUNTER_BINDING_VERSION } from './encounter-binding.js';
+import {
+  ENCOUNTER_BINDING_VERSION,
+  FIRST_HUNT_WORLD_BINDING_VERSION,
+} from './encounter-binding.js';
 import { assertBattleState } from '../combat/engine.js';
+import { startBattleV2 } from '../combat/runtime-v2.js';
+import {
+  M1_DOMAIN_BRIDGE_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+  type BattleSetupV2,
+} from '../combat/setup-v2.js';
 import { isCompanyFinanceShape, validateEconomy } from './economy-state.js';
 import type { EconomyContext } from './economy-types.js';
 import { readCompanyLearningState } from './learning-state.js';
@@ -12,61 +21,81 @@ import { isCompanyPhysicalStateShape, isItemInstanceShape } from './physical-sta
 import { isLifecycleStateShape } from './lifecycle-state.js';
 import { canonicalRevision, isEntityId, isExactInteger, publicRevision } from './values.js';
 import { MAX_TEXT_LENGTH } from './values.js';
+import {
+  companyLocationShape as locationShape,
+  hasExactStoredFields as shape,
+} from './stored-shape.js';
 
 const MAX_AGGREGATE_NODES = 250_000;
 const MAX_AGGREGATE_DEPTH = 64;
 
 /** Safely own a persisted JSON value without invoking accessors supplied by a caller. */
 function ownAggregateJson(value: unknown): unknown {
-  let nodes = 0;
-  const ancestors = new Set<object>();
-  function copy(input: unknown, depth: number, path = '$'): unknown {
-    if (++nodes > MAX_AGGREGATE_NODES || depth > MAX_AGGREGATE_DEPTH)
-      throw new TypeError('Aggregate JSON budget exceeded');
-    if (input === null || typeof input === 'boolean') return input;
-    if (typeof input === 'string') {
-      if (!isRetainedCanonicalString(path) && [...input].length > MAX_TEXT_LENGTH)
-        throw new TypeError('Aggregate text too long');
-      return input;
-    }
-    if (typeof input === 'number') {
-      if (
-        !Number.isFinite(input) ||
-        Object.is(input, -0) ||
-        (Number.isInteger(input) && !Number.isSafeInteger(input))
-      )
-        throw new TypeError('Invalid aggregate number');
-      return input;
-    }
-    if (typeof input !== 'object' || ancestors.has(input))
-      throw new TypeError('Invalid aggregate JSON');
-    const array = Array.isArray(input);
-    if (array ? Object.getPrototypeOf(input) !== Array.prototype : !plainObject(input))
-      throw new TypeError('Invalid aggregate container');
-    const descriptors = Object.getOwnPropertyDescriptors(input);
-    const keys = Reflect.ownKeys(descriptors).filter((key) => !array || key !== 'length');
-    if (keys.length > 100_000 || (array && descriptors['length']?.value !== keys.length))
-      throw new TypeError('Invalid aggregate container size');
-    ancestors.add(input);
-    const result: unknown[] | Record<string, unknown> = array ? [] : {};
-    for (const [index, key] of keys.entries()) {
-      if (typeof key !== 'string' || (array && key !== String(index)))
-        throw new TypeError('Invalid aggregate key');
-      const descriptor = descriptors[key]!;
-      if (!('value' in descriptor) || !descriptor.enumerable)
-        throw new TypeError('Invalid aggregate property');
-      const child = copy(
-        descriptor.value,
-        depth + 1,
-        array ? `${path}[${index}]` : `${path}.${key}`,
-      );
-      if (array) (result as unknown[]).push(child);
-      else Object.defineProperty(result, key, { value: child, enumerable: true });
-    }
-    ancestors.delete(input);
-    return Object.freeze(result);
+  return copyAggregateJsonValue(value, 0, '$', { nodes: 0, ancestors: new Set() });
+}
+
+type AggregateCopyBudget = { nodes: number; ancestors: Set<object> };
+
+function copyAggregateJsonValue(
+  input: unknown,
+  depth: number,
+  path: string,
+  budget: AggregateCopyBudget,
+): unknown {
+  if (++budget.nodes > MAX_AGGREGATE_NODES || depth > MAX_AGGREGATE_DEPTH)
+    throw new TypeError('Aggregate JSON budget exceeded');
+  if (input === null || typeof input === 'boolean') return input;
+  if (typeof input === 'string') {
+    if (!isRetainedCanonicalString(path) && [...input].length > MAX_TEXT_LENGTH)
+      throw new TypeError('Aggregate text too long');
+    return input;
   }
-  return copy(value, 0);
+  if (typeof input === 'number') {
+    if (
+      !Number.isFinite(input) ||
+      Object.is(input, -0) ||
+      (Number.isInteger(input) && !Number.isSafeInteger(input))
+    )
+      throw new TypeError('Invalid aggregate number');
+    return input;
+  }
+  if (typeof input !== 'object' || budget.ancestors.has(input))
+    throw new TypeError('Invalid aggregate JSON');
+  return copyAggregateJsonContainer(input, depth, path, budget);
+}
+
+function copyAggregateJsonContainer(
+  input: object,
+  depth: number,
+  path: string,
+  budget: AggregateCopyBudget,
+): unknown {
+  const array = Array.isArray(input);
+  if (array ? Object.getPrototypeOf(input) !== Array.prototype : !plainObject(input))
+    throw new TypeError('Invalid aggregate container');
+  const descriptors = Object.getOwnPropertyDescriptors(input);
+  const keys = Reflect.ownKeys(descriptors).filter((key) => !array || key !== 'length');
+  if (keys.length > 100_000 || (array && descriptors['length']?.value !== keys.length))
+    throw new TypeError('Invalid aggregate container size');
+  budget.ancestors.add(input);
+  const result: unknown[] | Record<string, unknown> = array ? [] : {};
+  for (const [index, key] of keys.entries()) {
+    if (typeof key !== 'string' || (array && key !== String(index)))
+      throw new TypeError('Invalid aggregate key');
+    const descriptor = descriptors[key]!;
+    if (!('value' in descriptor) || !descriptor.enumerable)
+      throw new TypeError('Invalid aggregate property');
+    const child = copyAggregateJsonValue(
+      descriptor.value,
+      depth + 1,
+      array ? `${path}[${index}]` : `${path}.${key}`,
+      budget,
+    );
+    if (array) (result as unknown[]).push(child);
+    else Object.defineProperty(result, key, { value: child, enumerable: true });
+  }
+  budget.ancestors.delete(input);
+  return Object.freeze(result);
 }
 
 function isRetainedCanonicalString(path: string): boolean {
@@ -121,6 +150,17 @@ export function readCompanyCombatAggregateState(value: unknown): CompanyCombatAg
   validatePhysicalState({ lifecycle, physical: economy.physical });
 
   const learning = readCompanyLearningState(owned['learning']);
+  validateAggregateLearningScope(learning, lifecycle);
+  const social = readSocialState(owned['social']);
+  const encounter = readCombatEncounterApplication(owned['encounter']);
+  validateAggregateEncounterPresence(lifecycle, economy, encounter);
+  return Object.freeze({ economy, learning, social, encounter });
+}
+
+function validateAggregateLearningScope(
+  learning: CompanyCombatAggregateState['learning'],
+  lifecycle: CompanyCombatAggregateState['economy']['lifecycle'],
+): void {
   const companyCharacterIds = new Set<string>(
     lifecycle.characters.map((character) => character.identity.characterId),
   );
@@ -141,8 +181,13 @@ export function readCompanyCombatAggregateState(value: unknown): CompanyCombatAg
     )
   )
     throw new TypeError('Company learning scope does not match company root');
-  const social = readSocialState(owned['social']);
-  const encounter = readCombatEncounterApplication(owned['encounter']);
+}
+
+function validateAggregateEncounterPresence(
+  lifecycle: CompanyCombatAggregateState['economy']['lifecycle'],
+  economy: CompanyCombatAggregateState['economy'],
+  encounter: CompanyCombatAggregateState['encounter'],
+): void {
   const active = encounter.active;
   if (
     active &&
@@ -203,7 +248,6 @@ export function readCompanyCombatAggregateState(value: unknown): CompanyCombatAg
     )
       throw new TypeError('Active encounter presence does not match company root');
   }
-  return Object.freeze({ economy, learning, social, encounter });
 }
 
 function deathRecordedInActiveEncounter(
@@ -268,18 +312,6 @@ function readCombatEncounterApplication(value: unknown): CompanyCombatAggregateS
   )
     throw new TypeError('Duplicate encounter binding ID');
   return value as unknown as CompanyCombatAggregateState['encounter'];
-}
-
-function shape(
-  value: unknown,
-  keys: readonly string[],
-  optional: readonly string[] = [],
-): value is Record<string, unknown> {
-  return (
-    plainObject(value) &&
-    keys.every((key) => Object.hasOwn(value, key)) &&
-    Object.keys(value).every((key) => keys.includes(key) || optional.includes(key))
-  );
 }
 
 function activeEncounterShape(value: unknown): boolean {
@@ -374,23 +406,32 @@ function activeEncounterShape(value: unknown): boolean {
 }
 
 function bindingShape(value: unknown): boolean {
+  const baseKeys = [
+    'schemaVersion',
+    'version',
+    'bindingId',
+    'worldId',
+    'sourceId',
+    'sourceEventId',
+    'atTick',
+    'location',
+    'participants',
+    'setup',
+    'initial',
+    'lastAppliedRevision',
+  ];
+  const legacyBinding =
+    value !== null &&
+    typeof value === 'object' &&
+    (value as Record<string, unknown>)['version'] === ENCOUNTER_BINDING_VERSION;
+  const worldBinding =
+    value !== null &&
+    typeof value === 'object' &&
+    (value as Record<string, unknown>)['version'] === FIRST_HUNT_WORLD_BINDING_VERSION;
   if (
-    !shape(value, [
-      'schemaVersion',
-      'version',
-      'bindingId',
-      'worldId',
-      'sourceId',
-      'sourceEventId',
-      'atTick',
-      'location',
-      'participants',
-      'setup',
-      'initial',
-      'lastAppliedRevision',
-    ]) ||
+    !shape(value, worldBinding ? [...baseKeys, 'worldParticipants'] : baseKeys) ||
     value['schemaVersion'] !== 1 ||
-    value['version'] !== ENCOUNTER_BINDING_VERSION ||
+    (!legacyBinding && !worldBinding) ||
     !isEntityId(value['bindingId']) ||
     !isEntityId(value['worldId']) ||
     !isEntityId(value['sourceId']) ||
@@ -424,7 +465,41 @@ function bindingShape(value: unknown): boolean {
     ) ||
     !setupV2Shape(value['setup']) ||
     !transitionShape(value['initial']) ||
-    !Number.isSafeInteger(value['lastAppliedRevision'])
+    !Number.isSafeInteger(value['lastAppliedRevision']) ||
+    (worldBinding &&
+      (!Array.isArray(value['worldParticipants']) ||
+        value['worldParticipants'].length === 0 ||
+        !value['worldParticipants'].every(
+          (entry) =>
+            shape(entry, [
+              'entityId',
+              'sourceId',
+              'unitId',
+              'sideId',
+              'position',
+              'weaponId',
+              'attributes',
+              'initialPools',
+            ]) &&
+            ['entityId', 'sourceId', 'unitId', 'sideId', 'weaponId'].every((key) =>
+              isEntityId(entry[key]),
+            ) &&
+            entry['entityId'] === entry['unitId'] &&
+            hexShape(entry['position']) &&
+            shape(entry['attributes'], [
+              'accuracy',
+              'armor',
+              'defense',
+              'health',
+              'initiative',
+              'morale',
+              'stamina',
+            ]) &&
+            Object.values(entry['attributes']).every(Number.isSafeInteger) &&
+            shape(entry['initialPools'], ['health', 'armor', 'stamina', 'morale']) &&
+            Object.values(entry['initialPools']).every(Number.isSafeInteger),
+        ))) ||
+    (worldBinding && !worldBindingMembersMatch(value))
   )
     return false;
   try {
@@ -437,12 +512,89 @@ function bindingShape(value: unknown): boolean {
   return true;
 }
 
+function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
+  const participants = value['participants'];
+  const worldParticipants = value['worldParticipants'];
+  const setup = value['setup'];
+  if (
+    !Array.isArray(participants) ||
+    !Array.isArray(worldParticipants) ||
+    !plainObject(setup) ||
+    !Array.isArray(setup['units']) ||
+    participants.length + worldParticipants.length !== setup['units'].length
+  )
+    return false;
+  const setupUnits = setup['units'];
+  const companyUnitIds = participants.map((entry) =>
+    plainObject(entry) ? entry['unitId'] : undefined,
+  );
+  const worldUnitIds = worldParticipants.map((entry) =>
+    plainObject(entry) ? entry['unitId'] : undefined,
+  );
+  const allIds = [...companyUnitIds, ...worldUnitIds];
+  if (
+    !allIds.every(isEntityId) ||
+    new Set(allIds).size !== allIds.length ||
+    !setupUnits.every(
+      (unit) => plainObject(unit) && isEntityId(unit['id']) && allIds.includes(unit['id']),
+    )
+  )
+    return false;
+  const companyParticipantsMatch = participants.every((participant) => {
+    if (!plainObject(participant) || !plainObject(participant['projection'])) return false;
+    const projection = participant['projection'];
+    const weapon = projection['weapon'];
+    const setupUnit = setupUnits.find(
+      (unit) => plainObject(unit) && unit['id'] === participant['unitId'],
+    );
+    if (!plainObject(setupUnit) || !plainObject(weapon)) return false;
+    return (
+      canonicalJson({
+        id: participant['unitId'],
+        sideId: participant['sideId'],
+        position: participant['position'],
+        weaponId: weapon['profileId'],
+        attributes: projection['attributes'],
+        initialPools: projection['current'],
+      }) === canonicalJson(setupUnit)
+    );
+  });
+  if (!companyParticipantsMatch) return false;
+  const participantsMatch = worldParticipants.every((participant) => {
+    if (!plainObject(participant)) return false;
+    const setupUnit = setupUnits.find(
+      (unit) => plainObject(unit) && unit['id'] === participant['unitId'],
+    );
+    if (!plainObject(setupUnit)) return false;
+    return (
+      canonicalJson({
+        id: participant['unitId'],
+        sideId: participant['sideId'],
+        position: participant['position'],
+        weaponId: participant['weaponId'],
+        attributes: participant['attributes'],
+        initialPools: participant['initialPools'],
+      }) === canonicalJson(setupUnit)
+    );
+  });
+  if (!participantsMatch) return false;
+  try {
+    return (
+      canonicalJson(startBattleV2(setup as unknown as BattleSetupV2)) ===
+      canonicalJson(value['initial'])
+    );
+  } catch {
+    return false;
+  }
+}
+
 function setupV2Shape(value: unknown): boolean {
   if (
     !shape(value, ['schemaVersion', 'battleId', 'rulesetId', 'seed', 'map', 'sides', 'units']) ||
     value['schemaVersion'] !== 2 ||
     !isEntityId(value['battleId']) ||
-    value['rulesetId'] !== 'm1-domain-bridge-v1' ||
+    (value['rulesetId'] !== M1_DOMAIN_BRIDGE_RULESET_ID &&
+      value['rulesetId'] !== M1_DOMAIN_BRIDGE_V2_RULESET_ID) ||
     !Number.isSafeInteger(value['seed']) ||
     !mapShape(value['map']) ||
     !Array.isArray(value['sides']) ||
@@ -492,6 +644,16 @@ function transitionShape(value: unknown): boolean {
   const state = value['state'] as Record<string, unknown>;
   if (!shape(state['activation'], ['id', 'unitId', 'remainingActionPoints'])) return false;
   const stateActivation = state['activation'] as Record<string, unknown>;
+  return transitionEventsShape(started, round, activation, state, stateActivation);
+}
+
+function transitionEventsShape(
+  started: unknown,
+  round: unknown,
+  activation: unknown,
+  state: Record<string, unknown>,
+  stateActivation: Record<string, unknown>,
+): boolean {
   return (
     shape(started, ['type', 'battleId', 'revision', 'seed', 'rulesetId']) &&
     started['type'] === 'battle.started' &&
@@ -566,47 +728,7 @@ function battleStateShape(value: unknown): boolean {
         entry['retreatHexes'].every(hexShape),
     ) ||
     !Array.isArray(value['units']) ||
-    !value['units'].every(
-      (entry) =>
-        shape(entry, [
-          'id',
-          'sideId',
-          'position',
-          'weaponId',
-          'attributes',
-          'health',
-          'armor',
-          'stamina',
-          'morale',
-          'guarding',
-          'status',
-          'wounds',
-        ]) &&
-        isEntityId(entry['id']) &&
-        isEntityId(entry['sideId']) &&
-        hexShape(entry['position']) &&
-        isEntityId(entry['weaponId']) &&
-        shape(entry['attributes'], [
-          'accuracy',
-          'armor',
-          'defense',
-          'health',
-          'initiative',
-          'morale',
-          'stamina',
-        ]) &&
-        Object.values(entry['attributes']).every(Number.isSafeInteger) &&
-        ['health', 'armor', 'stamina', 'morale'].every((key) => Number.isSafeInteger(entry[key])) &&
-        typeof entry['guarding'] === 'boolean' &&
-        ['active', 'dead', 'retreated'].includes(entry['status'] as string) &&
-        Array.isArray(entry['wounds']) &&
-        entry['wounds'].every(
-          (wound) =>
-            shape(wound, ['sequence', 'severity']) &&
-            Number.isSafeInteger(wound['sequence']) &&
-            ['minor', 'severe'].includes(wound['severity'] as string),
-        ),
-    ) ||
+    !value['units'].every(battleUnitShape) ||
     !shape(value['random'], ['algorithm', 'value', 'draws']) ||
     value['random']['algorithm'] !== 'xorshift32-v1' ||
     !Number.isSafeInteger(value['random']['value']) ||
@@ -641,6 +763,49 @@ function battleStateShape(value: unknown): boolean {
     return false;
   return true;
 }
+
+function battleUnitShape(value: unknown): boolean {
+  return (
+    shape(value, [
+      'id',
+      'sideId',
+      'position',
+      'weaponId',
+      'attributes',
+      'health',
+      'armor',
+      'stamina',
+      'morale',
+      'guarding',
+      'status',
+      'wounds',
+    ]) &&
+    isEntityId(value['id']) &&
+    isEntityId(value['sideId']) &&
+    hexShape(value['position']) &&
+    isEntityId(value['weaponId']) &&
+    shape(value['attributes'], [
+      'accuracy',
+      'armor',
+      'defense',
+      'health',
+      'initiative',
+      'morale',
+      'stamina',
+    ]) &&
+    Object.values(value['attributes']).every(Number.isSafeInteger) &&
+    ['health', 'armor', 'stamina', 'morale'].every((key) => Number.isSafeInteger(value[key])) &&
+    typeof value['guarding'] === 'boolean' &&
+    ['active', 'dead', 'retreated'].includes(value['status'] as string) &&
+    Array.isArray(value['wounds']) &&
+    value['wounds'].every(
+      (wound) =>
+        shape(wound, ['sequence', 'severity']) &&
+        Number.isSafeInteger(wound['sequence']) &&
+        ['minor', 'severe'].includes(wound['severity'] as string),
+    )
+  );
+}
 function mapShape(value: unknown): boolean {
   return (
     shape(value, ['hexes', 'blocked']) &&
@@ -654,18 +819,6 @@ function hexShape(value: unknown): boolean {
   return (
     shape(value, ['q', 'r']) && Number.isSafeInteger(value['q']) && Number.isSafeInteger(value['r'])
   );
-}
-function locationShape(value: unknown): boolean {
-  if (!plainObject(value)) return false;
-  return value['kind'] === 'AT'
-    ? shape(value, ['kind', 'siteId', 'areaId']) &&
-        isEntityId(value['siteId']) &&
-        isEntityId(value['areaId'])
-    : value['kind'] === 'TRANSIT' &&
-        shape(value, ['kind', 'segmentId', 'from', 'to', 'startedAt', 'arrivalNotBefore']) &&
-        ['segmentId', 'from', 'to'].every((key) => isEntityId(value[key])) &&
-        isExactInteger(value['startedAt']) &&
-        isExactInteger(value['arrivalNotBefore']);
 }
 function completedEncounterShape(value: unknown): boolean {
   if (
@@ -708,24 +861,23 @@ function dispositionShape(value: unknown): boolean {
   if (value['status'] === 'MISSING' && !isEntityId(value['missingEntryId'])) return false;
   if (
     value['status'] === 'CAPTIVE' &&
-    (!isEntityId(value['captureOutcomeId']) ||
-      !Array.isArray(value['seizedItems']) ||
-      !value['seizedItems'].every(
-        (item: unknown) =>
-          shape(item, ['itemId', 'toContainerId', 'authorizationId']) &&
-          ['itemId', 'toContainerId', 'authorizationId'].every((key) => isEntityId(item[key])),
-      ))
+    (!isEntityId(value['captureOutcomeId']) || !seizedItemsShape(value['seizedItems']))
   )
     return false;
   return (
     !Object.hasOwn(value, 'seizedItems') ||
-    (value['status'] === 'CAPTIVE' &&
-      Array.isArray(value['seizedItems']) &&
-      value['seizedItems'].every(
-        (item: unknown) =>
-          shape(item, ['itemId', 'toContainerId', 'authorizationId']) &&
-          ['itemId', 'toContainerId', 'authorizationId'].every((key) => isEntityId(item[key])),
-      ))
+    (value['status'] === 'CAPTIVE' && seizedItemsShape(value['seizedItems']))
+  );
+}
+
+function seizedItemsShape(value: unknown): boolean {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item: unknown) =>
+        shape(item, ['itemId', 'toContainerId', 'authorizationId']) &&
+        ['itemId', 'toContainerId', 'authorizationId'].every((key) => isEntityId(item[key])),
+    )
   );
 }
 function itemShapeForEncounter(value: unknown): boolean {
@@ -783,6 +935,27 @@ function projectionShape(value: unknown): boolean {
     isEntityId(value['domainRulesetId']) &&
     value['combatRulesetId'] === 'm1-domain-bridge-v1' &&
     isEntityId(value['characterId']) &&
+    projectionEquipmentShape(value) &&
+    isEntityIdList(value['conditionIds']) &&
+    isEntityIdList(value['contributingPerkIds']) &&
+    shape(value['attributes'], [
+      'accuracy',
+      'armor',
+      'defense',
+      'health',
+      'initiative',
+      'stamina',
+      'morale',
+    ]) &&
+    Object.values(value['attributes']).every(Number.isSafeInteger) &&
+    shape(value['current'], ['health', 'armor', 'stamina', 'morale']) &&
+    Object.values(value['current']).every(Number.isSafeInteger) &&
+    moraleProjectionShape(value['morale'])
+  );
+}
+
+function projectionEquipmentShape(value: Record<string, unknown>): boolean {
+  return (
     shape(value['weapon'], [
       'itemId',
       'requiredOffHandItemId',
@@ -807,22 +980,7 @@ function projectionShape(value: unknown): boolean {
         ['HEAD', 'BODY'].includes(entry['slot'] as string) &&
         Number.isSafeInteger(entry['maximumArmor']) &&
         Number.isSafeInteger(entry['currentArmor']),
-    ) &&
-    isEntityIdList(value['conditionIds']) &&
-    isEntityIdList(value['contributingPerkIds']) &&
-    shape(value['attributes'], [
-      'accuracy',
-      'armor',
-      'defense',
-      'health',
-      'initiative',
-      'stamina',
-      'morale',
-    ]) &&
-    Object.values(value['attributes']).every(Number.isSafeInteger) &&
-    shape(value['current'], ['health', 'armor', 'stamina', 'morale']) &&
-    Object.values(value['current']).every(Number.isSafeInteger) &&
-    moraleProjectionShape(value['morale'])
+    )
   );
 }
 

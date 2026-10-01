@@ -45,4 +45,5 @@ export function bindContractInstance(
 
 export { CONTRACT_M1_CATALOGUE, CONTRACT_M1_EDITION } from './manifest.js';
 export { validateContractCatalogue } from './validate.js';
+export * from './runtime.js';
 export type * from './types.js';

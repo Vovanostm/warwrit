@@ -2,17 +2,25 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-compose=(docker compose --project-name warwrit-alpha-identity -f "$repo_root/compose.identity.yaml")
+source "$repo_root/scripts/compose-cli.sh"
+
+compose() {
+  if [[ "${#COMPOSE_CLI[@]}" -eq 0 ]]; then
+    select_compose_cli
+  fi
+  "${COMPOSE_CLI[@]}" --project-name warwrit-alpha-identity \
+    -f "$repo_root/compose.identity.yaml" "$@"
+}
 
 case "${1:-}" in
   up)
-    "${compose[@]}" up -d --wait postgres dex
+    compose up -d --wait postgres dex
     ;;
   stop)
-    "${compose[@]}" stop postgres dex
+    compose stop postgres dex
     ;;
   status)
-    "${compose[@]}" ps
+    compose ps
     ;;
   server)
     cd "$repo_root"

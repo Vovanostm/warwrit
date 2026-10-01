@@ -1,4 +1,4 @@
-export const WORLD_REGION_VERSION = 'w01-authored-fixture-2026-09-28-v1' as const;
+export const WORLD_REGION_VERSION = 'w01-authored-fixture-2026-09-29-v2' as const;
 
 export type WorldTerrain = 'SETTLEMENT' | 'WOODLAND' | 'RIVERBANK' | 'OPEN_GROUND' | 'MILL_RUIN';
 export type WorldDanger = 'SAFE' | 'DANGEROUS';
@@ -106,7 +106,7 @@ const regionDraft: WorldRegion = {
       edgeId: 'kamenny-brod-severny-dvor',
       fromSiteId: 'kamenny-brod',
       toSiteId: 'severny-dvor',
-      provisionalTravelTicks: 160,
+      provisionalTravelTicks: 10,
       terrain: 'OPEN_GROUND',
       danger: 'SAFE',
     },
@@ -178,3 +178,11 @@ export const SEROE_PORECHYE = Object.freeze({
   sites: Object.freeze(regionDraft.sites.map(freezeSite)),
   edges: Object.freeze(regionDraft.edges.map((edge) => Object.freeze({ ...edge }))),
 });
+
+// Keep every edition accepted by an in-flight persisted route here when the current
+// authored region advances. Departures use SEROE_PORECHYE; arrivals resolve by version.
+const acceptedRegionEditions: readonly WorldRegion[] = Object.freeze([SEROE_PORECHYE]);
+
+export function acceptedWorldRegion(version: string): WorldRegion | undefined {
+  return acceptedRegionEditions.find((region) => region.version === version);
+}

@@ -12,6 +12,23 @@ export const PHYSICAL_RULES = Object.freeze({
   maximumMorale: 100,
   defaultConditionMaximum: 10000,
 } as const);
+/** Provisional safe-alpha travel effects; source-ZIP balance remains unmeasured. */
+export const TRAVEL_RULES = Object.freeze({
+  profileId: 'safe-travel-alpha-v1',
+  staminaPerMember: 1,
+  staminaEveryTicks: 10,
+} as const);
+
+/** Finite immutable parameters for already accepted in-flight transit segments. */
+export const TRAVEL_PROFILES = Object.freeze({
+  [TRAVEL_RULES.profileId]: TRAVEL_RULES,
+} as const);
+
+export function travelProfile(profileId: string) {
+  return Object.hasOwn(TRAVEL_PROFILES, profileId)
+    ? TRAVEL_PROFILES[profileId as keyof typeof TRAVEL_PROFILES]
+    : undefined;
+}
 
 export type EquipmentSlot = 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT';
 export type PhysicalError =
@@ -24,6 +41,7 @@ export type PhysicalError =
   | 'INCOMPATIBLE_ACTIVITY'
   | 'CAPACITY'
   | 'INSUFFICIENT_ITEMS'
+  | 'INSUFFICIENT_STAMINA'
   | 'INSUFFICIENT_FUNDS'
   | 'UNSUPPORTED_ACTION';
 
@@ -121,6 +139,17 @@ export interface FoodCarry {
   readonly membershipId: string;
   /** Used tick-units in an already-debited stock ration; zero means no opened ration remains. */
   readonly tickUnits: string;
+}
+/** Trusted adapter projection of the accepted route row, never derived from a client request. */
+export interface TrustedTransitSegment {
+  readonly worldId: string;
+  readonly companyId: string;
+  readonly partyId: string;
+  readonly segmentId: string;
+  readonly routeEpoch: string;
+  readonly profileId: string;
+  readonly startedAt: CampaignTick;
+  readonly dueTick: CampaignTick;
 }
 export interface CareHandoverRecord {
   readonly sourceId: string;

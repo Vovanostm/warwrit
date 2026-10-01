@@ -110,7 +110,8 @@ and reading the files when the graph is stale, missing, returns nothing, or the
 answer decides ownership of a rule. Graph results are pointers; the source is proof.
 
 Run `pnpm agent:preflight` at the start of a task or resume to record checkout
-identity. Focused commands for editing are in
+identity, and `pnpm agent:status` for the live main, CI, open PRs and active
+writer branches instead of trusting a written status. Focused commands for editing are in
 [LOCAL_DEVELOPMENT.md](docs/engineering/LOCAL_DEVELOPMENT.md#focused-checks).
 
 ## Dependency and state boundaries
@@ -163,7 +164,7 @@ Logs are structured and exclude credentials, session tokens and personal data. `
 
 ## Technology and delivery
 
-Read ADR-0003 and `docs/engineering/AI_TECHNOLOGY_HANDOFF.md`. Keep repository-pinned Node 24/pnpm, Fastify, PostgreSQL/Kysely/pg. Bun is experimental only. Colyseus is an adapter when introduced. The renderer is not frozen until the representative comparison; no incidental framework migration, second lockfile, Redis, distributed topology or Go/Rust service.
+Read ADR-0003 and `docs/engineering/AI_TECHNOLOGY_HANDOFF.md`. Keep repository-pinned Node 24/pnpm, Fastify, PostgreSQL/Kysely/pg. Bun is experimental only. Colyseus is an adapter when introduced. Babylon.js is the selected M1 renderer under ADR-0006; retain its visual, device/runtime and pipeline acceptance gates. No incidental framework migration, second lockfile, Redis, distributed topology or Go/Rust service.
 
 Before using changing library APIs inspect the exact lockfile/typings and official documentation. Add new technology only with an accepted decision and measured need. Do not deploy coding agents or load generators on the target game VM.
 

@@ -3,7 +3,10 @@ import { startBattleV2 } from '../combat/runtime-v2.js';
 import type { CombatCommand, CombatEvent, CombatTransition } from '../combat/types.js';
 import type { CompanyCommand } from './commands.js';
 import { EconomyViolation, requireEconomy } from './economy-state.js';
-import { ENCOUNTER_BINDING_VERSION } from './encounter-binding.js';
+import {
+  ENCOUNTER_BINDING_VERSION,
+  FIRST_HUNT_WORLD_BINDING_VERSION,
+} from './encounter-binding.js';
 import type { FrozenEncounterBinding } from './encounter-binding.js';
 import { guardCompanyCommand } from './guards.js';
 import type { TrustedCompanyContext } from './guards.js';
@@ -46,10 +49,17 @@ export function combatReceiptEventIds(receiptId: string, events: readonly Combat
 }
 
 /** A fresh internal journal, not a bound company, an applied receipt or a durable commit. */
-export function createCombatReceiptJournal(binding: FrozenEncounterBinding, companyId: string) {
+export function createCombatReceiptJournal(
+  binding: FrozenEncounterBinding,
+  companyId: string,
+): CombatReceiptJournal {
   const frozen = ownPhysical(binding);
+  const supportedBinding =
+    (frozen.version === ENCOUNTER_BINDING_VERSION && frozen.worldParticipants === undefined) ||
+    (frozen.version === FIRST_HUNT_WORLD_BINDING_VERSION &&
+      Array.isArray(frozen.worldParticipants));
   requireEconomy(
-    frozen.version === ENCOUNTER_BINDING_VERSION &&
+    supportedBinding &&
       frozen.schemaVersion === 1 &&
       id.read(frozen.bindingId) &&
       id.read(frozen.worldId) &&

@@ -1,4 +1,4 @@
-# Best-effort command guards for AGENTS.md "Hard rules" 1. Prefix matching only:
+# Best-effort command guards for AGENTS.md "Hard rules" 1 and 7. Prefix matching only:
 # reordered flags are not caught. Loaded only when the project .codex/ layer is
 # trusted. Ordinary merges stay unguarded here because the owner may authorize
 # them per mission in CURRENT_PLAN; the parent still checks that permission.
@@ -24,4 +24,12 @@ prefix_rule(
     justification = "AGENTS.md hard rule 1: auto-merge and admin bypass need separate owner permission.",
     match = ["gh pr merge --auto 12", "gh pr merge --admin"],
     not_match = ["gh pr merge 12 --squash"],
+)
+
+prefix_rule(
+    pattern = ["git", "commit", ["--no-verify", "-n"]],
+    decision = "prompt",
+    justification = "AGENTS.md hard rule 7: skipping the fallow pre-commit gate leaves the audit NOT_RUN; ask the owner.",
+    match = ["git commit --no-verify -m x", "git commit -n -m x"],
+    not_match = ["git commit -m x"],
 )
