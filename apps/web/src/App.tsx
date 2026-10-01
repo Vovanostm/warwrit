@@ -1141,6 +1141,12 @@ export function App() {
             fallback={<p className="state-note">Открываем сводку боя…</p>}
           >
             <EncounterPanel
+              unitNames={Object.fromEntries(
+                journey.company.characters.map((character) => [
+                  character.characterId,
+                  character.name,
+                ]),
+              )}
               scope={scope}
               onUnauthorized={() => void restoreJourney()}
               onTerminal={() => setContractRefreshGeneration((generation) => generation + 1)}

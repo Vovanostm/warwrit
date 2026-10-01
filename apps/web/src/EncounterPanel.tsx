@@ -45,7 +45,28 @@ const statusLabels: Record<EncounterConnectionStatus, string> = {
   failed: 'Не удалось восстановить бой',
 };
 
+const HOSTILE_LABELS: Readonly<Record<string, string>> = {
+  'world.raider.old-mill.front.01': 'Налётчик с топором',
+  'world.raider.old-mill.bow.01': 'Налётчик-лучник',
+  'world.raider.old-mill.heavy.01': 'Налётчик с двуручником',
+};
+
+/** Our people by name, known hostiles by kind, the other company's people neutrally. */
+function unitLabel(
+  unit: { readonly id: string; readonly sideId: string },
+  ourNames: Readonly<Record<string, string>>,
+): string {
+  return (
+    ourNames[unit.id] ??
+    HOSTILE_LABELS[unit.id] ??
+    (unit.sideId === 'first-hunt-companies'
+      ? 'Боец второй компании'
+      : neutralUnitLabel(unit as never))
+  );
+}
+
 export function EncounterPanel(props: {
+  readonly unitNames?: Readonly<Record<string, string>>;
   readonly scope: EncounterScope;
   readonly onUnauthorized: () => void;
   readonly onTerminal?: () => void;
@@ -170,7 +191,8 @@ export function EncounterPanel(props: {
       updateUnitSelection(actorUnitId);
   }, [actorIsOurs, actorUnitId]);
   const actorUnit = projection?.units.find((unit) => unit.id === actorUnitId);
-  const actorLabel = actorUnit ? neutralUnitLabel(actorUnit) : 'участник вне открытой сводки';
+  const ourNames = props.unitNames ?? {};
+  const actorLabel = actorUnit ? unitLabel(actorUnit, ourNames) : 'участник вне открытой сводки';
   const pendingCommand = scopedState?.pendingCommand;
   const attackTargets =
     actorUnit && projection
@@ -271,7 +293,7 @@ export function EncounterPanel(props: {
             onSelectUnit={updateUnitSelection}
           />
           <ul className="encounter-roster" aria-label="Открытая сводка участников">
-            {projection.units.map((unit, index) => {
+            {projection.units.map((unit) => {
               const canSelect = selectable.has(unit.id);
               return (
                 <li key={unit.id}>
@@ -283,7 +305,8 @@ export function EncounterPanel(props: {
                     onClick={() => updateUnitSelection(unit.id)}
                   >
                     <span>
-                      {neutralUnitLabel(unit)} · №{index + 1}
+                      {unitLabel(unit, ourNames)}
+                      {unit.id in ourNames ? ' · ваш' : ''}
                     </span>
                     <span>
                       {unit.status === 'active'
@@ -309,9 +332,9 @@ export function EncounterPanel(props: {
                       value={selectedTargetId}
                       onChange={(event) => setSelectedTargetId(event.currentTarget.value)}
                     >
-                      {attackTargets.map((unit, index) => (
+                      {attackTargets.map((unit) => (
                         <option key={unit.id} value={unit.id}>
-                          Участник №{index + 1} · {unit.health} здоровья
+                          {unitLabel(unit, ourNames)} · {unit.health} здоровья
                         </option>
                       ))}
                     </select>
