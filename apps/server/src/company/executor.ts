@@ -677,7 +677,7 @@ export async function persistPreparedTrustedCompanyCommand(input: {
 
   const finalState = readCompanyCombatAggregateState(input.finalState);
   const composition = composePreparedTravelEffect(prepared, input.travelEffect);
-  if (canonicalJson(finalState) !== canonicalJson(composition.state))
+  if (canonicalStateJson(finalState) !== canonicalStateJson(composition.state))
     throw new TypeError('Final company root does not match the prepared travel composition');
   const movementEventIds = new Set(composition.observationEvents.map((event) => event.id));
   if ((input.additionalAuditEvents ?? []).some((entry) => movementEventIds.has(entry.eventId)))

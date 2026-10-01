@@ -247,7 +247,7 @@ export function prepareFirstHuntTerminalEvidence(input: {
   }
   if (
     kernelState.status !== 'resolved' ||
-    combat.canonicalJson(kernelState) !== combat.canonicalJson(input.stored.state)
+    combat.canonicalStateJson(kernelState) !== combat.canonicalStateJson(input.stored.state)
   )
     return notReady('ENCOUNTER_REPLAY_INVALID');
 
