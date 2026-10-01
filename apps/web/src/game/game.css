@@ -560,3 +560,45 @@
     max-height: none;
   }
 }
+
+/* Contract and battle cards rendered inside the shell. */
+.game-side .first-hunt,
+.game-battle .encounter-panel {
+  margin-top: 0.7rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.game-side .first-hunt h2 {
+  margin: 0.2rem 0 0.6rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  font-size: 1.3rem;
+}
+
+.game-side .first-hunt p {
+  line-height: 1.45;
+  font-size: 0.92rem;
+}
+
+.game-side .first-hunt dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.8rem;
+  font-size: 0.88rem;
+}
+
+.game-side .first-hunt dt {
+  color: var(--muted);
+}
+
+.game-side .first-hunt dd {
+  margin: 0;
+}
+
+.game-side .first-hunt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
