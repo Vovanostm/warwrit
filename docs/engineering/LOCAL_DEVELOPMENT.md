@@ -48,7 +48,7 @@ docker info --format '{{.ServerVersion}}'
 
 The script fails closed if the Node.js line or Docker is unavailable. It performs the repository verification suite, the 10,000-battle combat stress gate, and migration up/down against a disposable PostgreSQL container. Each run uses a unique Compose project and dynamically published loopback port, replaces any inherited `DATABASE_URL` with that container's URL, and removes only its own containers, network and volume on exit. It never prints the database URL. Set `KEEP_INFRA=1` to retain the run's PostgreSQL; the script prints its project, port and project-scoped cleanup command.
 
-Manual development keeps PostgreSQL at `127.0.0.1:5432` by default. Choose another host port when needed with `POSTGRES_PORT=55434 pnpm db:up`.
+Manual development publishes PostgreSQL on `POSTGRES_PORT` (`55432` in `.env.example`, `5432` without a `.env`) so it does not collide with another local PostgreSQL.
 
 ## Environment contract
 
@@ -61,17 +61,41 @@ Local overrides live in one root `.env` file, normally created from `.env.exampl
 
 ## Development processes
 
+One local start for the playable alpha (company, world, contracts, encounters):
+
 ```bash
-pnpm db:up
-pnpm dev
+cp .env.example .env     # once; loopback-only test values
+pnpm install --frozen-lockfile
+pnpm db:up               # PostgreSQL 17 on 127.0.0.1:55432 and Dex on 127.0.0.1:5556
+pnpm db:migrate:up       # applies every pending ordered migration
+pnpm dev                 # server :3000, realtime :3110, web :5173
 ```
 
-- web: `http://localhost:5173`;
-- server: `http://localhost:3000`;
-- liveness: `http://localhost:3000/health/live`;
-- readiness: `http://localhost:3000/health/ready`.
+Open `http://127.0.0.1:5173` (use `127.0.0.1`, not `localhost`: the session
+cookie and OIDC redirect are bound to that origin) and choose **Войти**. The
+local Dex accepts the fixture accounts below; they are public test values for
+this loopback stack only.
 
-The Vite development server proxies `/api/*` to the server and removes the `/api` prefix.
+| Account                   | Password              |
+| ------------------------- | --------------------- |
+| `player-one@example.test` | `local-only-pass-one` |
+| `player-two@example.test` | `local-only-pass-two` |
+
+Use a second browser profile (or a private window) for the second player.
+
+- web: `http://127.0.0.1:5173` (proxies `/api/*` without the prefix,
+  `/auth/callback` and the `/colyseus` realtime socket);
+- server: `http://127.0.0.1:3000`; liveness `/health/live`, readiness
+  `/health/ready` (503 while PostgreSQL is unavailable).
+
+Stop with `Ctrl+C` in the `pnpm dev` terminal and `pnpm db:down`; data stays in
+the Compose volumes, so the next `pnpm db:up` returns the same world. To restart
+only the server (persistence check), stop and rerun `pnpm dev`. `docker compose
+down --volumes` deletes the local world and identities irreversibly.
+
+The Compose project name is the checkout directory name, so two checkouts get
+separate volumes but share the published ports; stop one stack before starting
+another.
 
 ## Verification pipeline
 
