@@ -1,12 +1,23 @@
 import { createHash, randomUUID } from 'node:crypto';
 
 import * as combat from '@warwrit/game-core';
+import {
+  COMPANY_COMMAND_SCHEMA_VERSION,
+  COMPANY_RULESET_ID,
+  campaignTick,
+  canonicalRevision,
+  canonicalJson,
+  parseCompanyCommand,
+} from '@warwrit/game-core';
 import type { CompanyCombatAggregateState, EncounterCompanySource } from '@warwrit/game-core';
 import type { Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 import type { FirstHuntWorldState } from '../contracts/first-hunt-runtime.js';
 import { persistFirstHuntBinding } from '../contracts/repository.js';
+import { updateCompanyAggregateWithReceipt } from '../company/repository.js';
+import { prepareTrustedCompanyCommand, stableCompanyRequestKey } from '../company/executor.js';
+import { travelAdvanceSourceEventId } from '../company/travel-food.js';
 
 const HUMAN_DEADLINE_MS = 30_000;
 const HUMAN_DEADLINE_POLICY = 'first-hunt-human-deadline-v1';
@@ -48,6 +59,15 @@ export async function admitFirstHuntInTransaction(input: {
   )
     return undefined;
 
+  const existingAdmission = await transaction
+    .selectFrom('encounter_admissions')
+    .select('encounter_id')
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', contract.instance_id)
+    .forUpdate()
+    .executeTakeFirst();
+  if (existingAdmission) return undefined;
+
   const joinRows: JoinIntent[] = [];
   const ownerJoin = readJoinIntent(contract.owner_join, contract.owner_company_id);
   if (!ownerJoin) return undefined;
@@ -60,22 +80,109 @@ export async function admitFirstHuntInTransaction(input: {
 
   const sourceEntries: EncounterCompanySource[] = [];
   const companyAccounts = new Map<string, string>();
+  const statesAtTick = new Map<string, CompanyCombatAggregateState>();
+  const campaignAdvances: {
+    readonly previous: CompanyCombatAggregateState;
+    readonly prepared: Extract<
+      Awaited<ReturnType<typeof prepareTrustedCompanyCommand>>,
+      { readonly kind: 'PREPARED' }
+    >['prepared'];
+  }[] = [];
   const orderedCompanies = joinRows.toSorted((a, b) => compareCodeUnits(a.companyId, b.companyId));
   for (const join of orderedCompanies) {
-    const state = companyStates.get(join.companyId);
-    if (!state) return undefined;
+    const previous = companyStates.get(join.companyId);
+    if (!previous || BigInt(join.campaignTick) > BigInt(atTick)) return undefined;
+    const previousLifecycle = previous.economy.lifecycle;
+    const previousPhysical = previous.economy.physical;
+    if (
+      join.publicRevision !== previousLifecycle.knowledge.revision ||
+      !previousPhysical ||
+      previousLifecycle.worldId !== worldId ||
+      previousLifecycle.companyId !== join.companyId ||
+      BigInt(previousLifecycle.campaignTick) > BigInt(atTick) ||
+      previous.economy.finance.processedTick !== previousLifecycle.campaignTick ||
+      previousPhysical.processedTick !== previousLifecycle.campaignTick ||
+      previousLifecycle.parties.length !== 1
+    )
+      return undefined;
+
+    let state = previous;
+    if (previousLifecycle.campaignTick !== atTick) {
+      const party = previousLifecycle.parties[0]!;
+      if (party.location.kind !== 'AT') return undefined;
+      const commandId = randomUUID();
+      const sourceEventId = travelAdvanceSourceEventId(worldId, join.companyId, commandId);
+      const parsed = parseCompanyCommand({
+        schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+        commandId,
+        sourceEventId,
+        worldId,
+        companyId: join.companyId,
+        actorRef: { kind: 'SYSTEM', id: 'world-travel' },
+        expectedRevision: canonicalRevision(previousLifecycle.revision),
+        campaignTick: atTick,
+        rulesetId: COMPANY_RULESET_ID,
+        type: 'AdvanceCampaign',
+        payload: { toTick: atTick, authoritativeInputs: [] },
+      });
+      if (!parsed.ok) return undefined;
+      const identity = {
+        kind: 'WORLD_REQUEST' as const,
+        worldId,
+        companyId: join.companyId,
+        commandId,
+        requestKey: canonicalJson({ kind: 'FIRST_HUNT_JOIN_CATCH_UP', toTick: atTick }),
+      };
+      const prepared = await prepareTrustedCompanyCommand({
+        transaction,
+        accountId: join.accountId,
+        lockedPriorState: previous,
+        command: parsed.command,
+        stableRequestKey: stableCompanyRequestKey(identity),
+        expectedPublicRevision: previousLifecycle.knowledge.revision,
+        travelMode: 'DEPARTURE',
+        travelFoodRouteBoundary: {
+          kind: 'DEPARTURE',
+          partyId: party.partyId,
+          location: party.location,
+          settledThroughTick: atTick,
+        },
+        context: {
+          worldId,
+          companyId: join.companyId,
+          principal: { kind: 'SYSTEM', id: 'world-travel' },
+          publicRevision: previousLifecycle.knowledge.revision,
+          canonicalRevision: previousLifecycle.revision,
+          atTick: campaignTick(atTick),
+          completeGraph: true,
+          contactIds: [],
+          internalGrant: {
+            commandId,
+            sourceEventId,
+            canonicalRequest: canonicalJson(parsed.command),
+          },
+          facts: [],
+          financeFacts: [],
+          physicalFacts: [],
+          practiceFacts: [],
+          trustedTransitSegments: [],
+        },
+      });
+      if (prepared.kind !== 'PREPARED') return undefined;
+      state = prepared.prepared.nextState;
+      campaignAdvances.push({ previous, prepared: prepared.prepared });
+    }
+
+    // JOIN records durable player consent. Its original revision and tick identify that
+    // consent; current location, ownership and party eligibility are checked below.
+    statesAtTick.set(join.companyId, state);
     const lifecycle = state.economy.lifecycle;
     const physical = state.economy.physical;
     if (
       !physical ||
-      lifecycle.worldId !== worldId ||
-      lifecycle.companyId !== join.companyId ||
-      lifecycle.knowledge.revision !== join.publicRevision ||
       lifecycle.campaignTick !== atTick ||
       state.economy.finance.processedTick !== atTick ||
-      physical.processedTick !== atTick ||
-      join.campaignTick !== atTick ||
-      lifecycle.parties.length !== 1
+      physical.processedTick !== atTick
     )
       return undefined;
 
@@ -84,7 +191,8 @@ export async function admitFirstHuntInTransaction(input: {
     if (
       location.kind !== 'AT' ||
       location.siteId !== combat.FIRST_HUNT_ENCOUNTER_LOCATION.siteId ||
-      location.areaId !== combat.FIRST_HUNT_ENCOUNTER_LOCATION.areaId
+      location.areaId !== combat.FIRST_HUNT_ENCOUNTER_LOCATION.areaId ||
+      state.encounter.active !== null
     )
       return undefined;
     const owner = await transaction
@@ -202,7 +310,8 @@ export async function admitFirstHuntInTransaction(input: {
 
   const begun = new Map<string, ReturnType<typeof combat.prepareBeginCombatAggregate>>();
   for (const source of sourceEntries) {
-    const state = companyStates.get(source.root.lifecycle.companyId)!;
+    const state = statesAtTick.get(source.root.lifecycle.companyId);
+    if (!state) return undefined;
     const result = combat.prepareBeginCombatAggregate(
       state,
       sourceEntries,
@@ -338,8 +447,37 @@ export async function admitFirstHuntInTransaction(input: {
   for (const source of sourceEntries) {
     const result = begun.get(source.root.lifecycle.companyId);
     if (result?.kind !== 'PREPARED') throw new TypeError('FIRST HUNT company binding is missing');
+    const catchUp = campaignAdvances.find(
+      (entry) => entry.previous.economy.lifecycle.companyId === source.root.lifecycle.companyId,
+    );
+    const stateAtTick = statesAtTick.get(source.root.lifecycle.companyId);
+    if (!stateAtTick) throw new TypeError('FIRST HUNT caught-up company root is missing');
+    if (catchUp) {
+      const prepared = catchUp.prepared;
+      await updateCompanyAggregateWithReceipt(
+        transaction,
+        catchUp.previous.economy.lifecycle.revision,
+        stateAtTick.economy.lifecycle.revision,
+        stateAtTick,
+        {
+          receipt: {
+            receiptId: randomUUID(),
+            commandId: prepared.command.commandId,
+            sourceKey: prepared.sourceKey,
+            requestKey: prepared.stableRequestKey,
+            response: prepared.response,
+            resultingRevision: stateAtTick.economy.lifecycle.revision,
+          },
+          command: prepared.command,
+          auditEvents: prepared.events.map((event) => ({
+            ...event,
+            revision: stateAtTick.economy.lifecycle.revision,
+          })),
+        },
+      );
+    }
     await persistFirstHuntBinding(transaction, {
-      previous: companyStates.get(source.root.lifecycle.companyId)!,
+      previous: statesAtTick.get(source.root.lifecycle.companyId)!,
       next: result.next,
       encounterId,
       bindingId,

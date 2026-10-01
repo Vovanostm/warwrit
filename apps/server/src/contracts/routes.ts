@@ -42,7 +42,6 @@ import {
 } from './executor.js';
 import {
   ensureFirstHuntGenesis,
-  ensureFirstHuntGenesisInTransaction,
   FIRST_HUNT_TERMS,
   readFirstHuntWorldState,
 } from './first-hunt-runtime.js';
@@ -692,6 +691,13 @@ async function executeContractCommand(input: {
       throw new Error('FIRST HUNT contract revision CAS failed');
 
     const receiptId = randomUUID();
+    const receiptSnapshot = await transaction
+      .selectFrom('company_snapshots')
+      .select('canonical_revision')
+      .where('world_id', '=', worldId)
+      .where('company_id', '=', companyId)
+      .executeTakeFirst();
+    if (!receiptSnapshot) throw new Error('FIRST HUNT receipt company root is unavailable');
     const response: Extract<FirstHuntCommandResponseDto, { ok: true }> = {
       schemaVersion: 1,
       commandId: request.commandId,
@@ -706,7 +712,7 @@ async function executeContractCommand(input: {
       receiptId,
       requestKey,
       response,
-      expectedCanonicalRevision: snapshot.canonical_revision,
+      expectedCanonicalRevision: receiptSnapshot.canonical_revision,
     });
     return response;
   });

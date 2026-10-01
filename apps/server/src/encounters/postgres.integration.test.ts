@@ -17,12 +17,15 @@ import {
 import { ensureFirstHuntGenesis } from '../contracts/first-hunt-runtime.js';
 import { Client, type SeatReservation } from '@colyseus/sdk';
 import type { EncounterCommandResponse } from '@warwrit/protocol';
+import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { sql } from 'kysely';
 import { afterAll, describe, expect, it } from 'vitest';
 
 import { createDatabase, createDatabaseReadinessProbe } from '../db/database.js';
 import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
+import { loadCompanyAggregate } from '../company/repository.js';
+import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 import {
   createFixtureEncounter,
   executeEncounterCommand,
@@ -43,6 +46,15 @@ const databases =
     ? []
     : [createDatabase(connectionString), createDatabase(connectionString)];
 const apps: ReturnType<typeof buildApp>[] = [];
+
+interface FirstHuntJoinActor {
+  readonly accountId: string;
+  readonly companyId: string;
+  readonly partyId: string;
+  readonly sessionToken: string;
+  readonly headers: Record<string, string>;
+  readonly initial: ReturnType<typeof combat.readCompanyCombatAggregateState>;
+}
 
 function createHumanEncounterSetup(encounterId: string, alliedCount = 1): BattleSetupV2 {
   const allySide = sideId('first-hunt-companies');
@@ -135,6 +147,253 @@ function createWorldHostileSetup(encounterId: string): BattleSetupV2 {
       })),
     ],
   };
+}
+
+function makeFirstHuntJoinActor(worldId: string): FirstHuntJoinActor {
+  const accountId = randomUUID();
+  const companyId = randomUUID();
+  const partyId = randomUUID();
+  const sessionToken = randomUUID();
+  const base = createCompanyCombatAggregateFixture().state;
+  const lifecycle = base.economy.lifecycle;
+  const basePartyId = lifecycle.parties[0]?.partyId;
+  if (basePartyId === undefined) throw new Error('FIRST HUNT join fixture party is missing');
+  const members = lifecycle.characters
+    .filter((character) => character.presence.fieldPartyId !== null)
+    .map((character) => character.identity.characterId);
+  const memberIds = members.map(() => randomUUID());
+  const replacements = new Map<string, string>([
+    [lifecycle.worldId, worldId],
+    [lifecycle.companyId, companyId],
+    [basePartyId, partyId],
+    ...members.map((id, index) => [id, memberIds[index]!] as const),
+  ]);
+  const remapped = JSON.parse(
+    JSON.stringify(base, (_key, value: unknown) =>
+      typeof value === 'string' ? (replacements.get(value) ?? value) : value,
+    ),
+  ) as typeof base;
+  const location = {
+    kind: 'AT' as const,
+    siteId: 'staraya-melnitsa',
+    areaId: 'staraya-melnitsa-yard',
+  };
+  const physical = remapped.economy.physical;
+  if (!physical) throw new Error('FIRST HUNT join fixture physical state is missing');
+  const moveContainer = (container: (typeof physical.containers)[number]) => ({
+    ...container,
+    location,
+  });
+  const initial = combat.readCompanyCombatAggregateState({
+    ...remapped,
+    economy: {
+      ...remapped.economy,
+      lifecycle: {
+        ...remapped.economy.lifecycle,
+        parties: remapped.economy.lifecycle.parties.map((party) => ({ ...party, location })),
+        characters: remapped.economy.lifecycle.characters.map((character) =>
+          character.presence.fieldPartyId === null
+            ? character
+            : { ...character, presence: { ...character.presence, location } },
+        ),
+      },
+      physical: {
+        ...physical,
+        containers: physical.containers.map(moveContainer),
+        knowledge: {
+          ...physical.knowledge,
+          containerSnapshots: physical.knowledge.containerSnapshots.map(moveContainer),
+        },
+      },
+    },
+  });
+  return {
+    accountId,
+    companyId,
+    partyId,
+    sessionToken,
+    initial,
+    headers: {
+      cookie: `warwrit_session=${sessionToken}`,
+      origin: 'http://127.0.0.1:3108',
+      [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId,
+    },
+  };
+}
+
+async function seedFirstHuntJoinScenario(database: (typeof databases)[number]): Promise<{
+  readonly worldId: string;
+  readonly owner: FirstHuntJoinActor;
+  readonly helper: FirstHuntJoinActor;
+  readonly app: ReturnType<typeof buildApp>;
+}> {
+  const worldId = randomUUID();
+  const owner = makeFirstHuntJoinActor(worldId);
+  const helper = makeFirstHuntJoinActor(worldId);
+  for (const [actor, subject] of [
+    [owner, 'owner'],
+    [helper, 'helper'],
+  ] as const) {
+    const lifecycle = actor.initial.economy.lifecycle;
+    await database
+      .insertInto('identity_accounts')
+      .values({
+        id: actor.accountId,
+        issuer: `first-hunt-join-${actor.accountId}`,
+        subject,
+      })
+      .execute();
+    await database
+      .insertInto('identity_sessions')
+      .values({
+        token_digest: createHash('sha256').update(actor.sessionToken).digest(),
+        account_id: actor.accountId,
+        expires_at: new Date(Date.now() + 60 * 60_000),
+      })
+      .execute();
+    await database
+      .insertInto('company_snapshots')
+      .values({
+        world_id: worldId,
+        company_id: actor.companyId,
+        schema_version: combat.COMPANY_SCHEMA_VERSION,
+        ruleset_id: combat.COMPANY_RULESET_ID,
+        catalogue_version: combat.COMPANY_CATALOGUE_VERSION,
+        command_schema_version: combat.COMPANY_COMMAND_SCHEMA_VERSION,
+        public_revision: lifecycle.knowledge.revision,
+        canonical_revision: lifecycle.revision,
+        state: actor.initial,
+      })
+      .execute();
+    await database
+      .insertInto('company_account_owners')
+      .values({ world_id: worldId, company_id: actor.companyId, account_id: actor.accountId })
+      .execute();
+  }
+  await database
+    .insertInto('world_campaign_clocks')
+    .values({
+      world_id: worldId,
+      epoch_ms: String(Date.now() - 21_600 - 1_000),
+      starting_tick: owner.initial.economy.lifecycle.campaignTick,
+    })
+    .execute();
+  await ensureFirstHuntGenesis(database, worldId);
+  await database
+    .updateTable('contract_instances')
+    .set({ owner_company_id: owner.companyId, helper_company_id: helper.companyId, revision: '1' })
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', 'ci.m1.raider-standard.01')
+    .executeTakeFirstOrThrow();
+  const config = loadServerConfig({
+    DATABASE_URL: connectionString,
+    OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+    OIDC_CLIENT_ID: 'warwrit-local',
+    OIDC_CLIENT_SECRET: 'local-only-secret',
+    OIDC_REDIRECT_URI: 'http://127.0.0.1:3108/auth/callback',
+    PUBLIC_ORIGIN: 'http://127.0.0.1:3108',
+    HOST: '127.0.0.1',
+    PORT: '3108',
+  });
+  const app = buildApp({
+    identity: { config: config.identity!, database },
+    company: { database, worldId },
+  });
+  apps.push(app);
+  return { worldId, owner, helper, app };
+}
+
+async function setFirstHuntWorldTick(
+  database: (typeof databases)[number],
+  worldId: string,
+  tick: number,
+  startingTick: string,
+): Promise<void> {
+  const elapsedTicks = tick - Number(startingTick);
+  await database
+    .updateTable('world_campaign_clocks')
+    .set({ epoch_ms: String(Date.now() - elapsedTicks * 21_600 - 1_000) })
+    .where('world_id', '=', worldId)
+    .executeTakeFirstOrThrow();
+}
+
+function relocateFirstHuntJoinCompany(
+  state: ReturnType<typeof combat.readCompanyCombatAggregateState>,
+  location: { readonly kind: 'AT'; readonly siteId: string; readonly areaId: string },
+) {
+  const physical = state.economy.physical;
+  if (!physical) throw new Error('FIRST HUNT join fixture physical state is missing');
+  const moveContainer = (container: (typeof physical.containers)[number]) => ({
+    ...container,
+    location,
+  });
+  return combat.readCompanyCombatAggregateState({
+    ...state,
+    economy: {
+      ...state.economy,
+      lifecycle: {
+        ...state.economy.lifecycle,
+        parties: state.economy.lifecycle.parties.map((party) => ({ ...party, location })),
+        characters: state.economy.lifecycle.characters.map((character) =>
+          character.presence.fieldPartyId === null
+            ? character
+            : { ...character, presence: { ...character.presence, location } },
+        ),
+      },
+      physical: {
+        ...physical,
+        containers: physical.containers.map(moveContainer),
+        knowledge: {
+          ...physical.knowledge,
+          containerSnapshots: physical.knowledge.containerSnapshots.map(moveContainer),
+        },
+      },
+    },
+  });
+}
+
+async function cleanupFirstHuntJoinScenario(
+  database: (typeof databases)[number],
+  worldId: string,
+  actors: readonly FirstHuntJoinActor[],
+): Promise<void> {
+  const admissions = await database
+    .selectFrom('encounter_admissions')
+    .select('encounter_id')
+    .where('world_id', '=', worldId)
+    .execute();
+  for (const admission of admissions)
+    await removeEncounterFixture(database, admission.encounter_id);
+  await database.deleteFrom('contract_instances').where('world_id', '=', worldId).execute();
+  await database.deleteFrom('world_first_hunt_state').where('world_id', '=', worldId).execute();
+  for (const actor of actors) {
+    await database
+      .deleteFrom('company_account_owners')
+      .where('world_id', '=', worldId)
+      .where('company_id', '=', actor.companyId)
+      .execute();
+    await database
+      .deleteFrom('company_receipts')
+      .where('world_id', '=', worldId)
+      .where('company_id', '=', actor.companyId)
+      .execute();
+    await database
+      .deleteFrom('company_audit_events')
+      .where('world_id', '=', worldId)
+      .where('company_id', '=', actor.companyId)
+      .execute();
+    await database
+      .deleteFrom('company_snapshots')
+      .where('world_id', '=', worldId)
+      .where('company_id', '=', actor.companyId)
+      .execute();
+    await database
+      .deleteFrom('identity_sessions')
+      .where('account_id', '=', actor.accountId)
+      .execute();
+    await database.deleteFrom('identity_accounts').where('id', '=', actor.accountId).execute();
+  }
+  await database.deleteFrom('world_campaign_clocks').where('world_id', '=', worldId).execute();
 }
 
 async function seedCompanyEncounter(input: {
@@ -287,6 +546,420 @@ afterAll(async () => {
 });
 
 describe('persistent fixture encounters (PostgreSQL)', () => {
+  it.skipIf(connectionString === undefined)(
+    'catches both FIRST HUNT companies up and activates one encounter across separate JOIN ticks',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const scenario = await seedFirstHuntJoinScenario(database);
+      const { owner, helper, worldId, app } = scenario;
+      const startingTick = owner.initial.economy.lifecycle.campaignTick;
+      try {
+        const ownerRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: owner.headers,
+        });
+        expect(ownerRead.statusCode).toBe(200);
+        const ownerJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: ownerRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const ownerResponse = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: ownerJoin,
+        });
+        expect(ownerResponse.statusCode).toBe(200);
+        expect(ownerResponse.json()).toMatchObject({ ok: true });
+        expect(
+          await database
+            .selectFrom('encounter_admissions')
+            .select('encounter_id')
+            .where('world_id', '=', worldId)
+            .execute(),
+        ).toHaveLength(0);
+
+        await setFirstHuntWorldTick(database, worldId, Number(startingTick) + 2, startingTick);
+        const helperRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: helper.headers,
+        });
+        expect(helperRead.statusCode).toBe(200);
+        const helperJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: helperRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const helperResponse = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: helperJoin,
+        });
+        expect(helperResponse.statusCode).toBe(200);
+        expect(helperResponse.json()).toMatchObject({ ok: true });
+
+        const joinedStates = await database.transaction().execute(async (transaction) => {
+          const ownerState = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+          const helperState = await loadCompanyAggregate(transaction, worldId, helper.companyId);
+          return { ownerState, helperState };
+        });
+        expect(joinedStates.ownerState?.economy.lifecycle.campaignTick).toBe(
+          String(Number(startingTick) + 2),
+        );
+        expect(joinedStates.ownerState?.economy.finance.processedTick).toBe(
+          String(Number(startingTick) + 2),
+        );
+        expect(joinedStates.ownerState?.economy.physical?.processedTick).toBe(
+          String(Number(startingTick) + 2),
+        );
+        expect(joinedStates.helperState?.economy.lifecycle.campaignTick).toBe(
+          String(Number(startingTick) + 2),
+        );
+        expect(joinedStates.helperState?.economy.finance.processedTick).toBe(
+          String(Number(startingTick) + 2),
+        );
+        expect(joinedStates.helperState?.economy.physical?.processedTick).toBe(
+          String(Number(startingTick) + 2),
+        );
+        expect(joinedStates.ownerState?.encounter.active?.binding.participants).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ companyId: owner.companyId }),
+            expect.objectContaining({ companyId: helper.companyId }),
+          ]),
+        );
+        expect(joinedStates.helperState?.encounter.active?.binding.bindingId).toBe(
+          joinedStates.ownerState?.encounter.active?.binding.bindingId,
+        );
+        expect(
+          await database
+            .selectFrom('encounter_admissions')
+            .select('encounter_id')
+            .where('world_id', '=', worldId)
+            .execute(),
+        ).toHaveLength(1);
+        expect(
+          await database
+            .selectFrom('encounters')
+            .select('id')
+            .where('world_id', '=', worldId)
+            .execute(),
+        ).toHaveLength(1);
+
+        const replay = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: helperJoin,
+        });
+        expect(replay.body).toBe(helperResponse.body);
+        const conflictingReplay = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: {
+            ...helperJoin,
+            expectedPublicRevision: String(Number(helperJoin.expectedPublicRevision) + 1),
+          },
+        });
+        expect(conflictingReplay.statusCode).toBe(409);
+        expect(conflictingReplay.json()).toMatchObject({ ok: false, code: 'INVALID_COMMAND' });
+        expect(
+          await database
+            .selectFrom('encounter_admissions')
+            .select('encounter_id')
+            .where('world_id', '=', worldId)
+            .execute(),
+        ).toHaveLength(1);
+      } finally {
+        await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+      }
+    },
+  );
+
+  it.skipIf(connectionString === undefined)(
+    'rejects activation when an earlier FIRST HUNT JOIN consent company has left the objective',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const scenario = await seedFirstHuntJoinScenario(database);
+      const { owner, helper, worldId, app } = scenario;
+      const startingTick = owner.initial.economy.lifecycle.campaignTick;
+      try {
+        const ownerRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: owner.headers,
+        });
+        const ownerJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: ownerRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const accepted = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: ownerJoin,
+        });
+        expect(accepted.statusCode).toBe(200);
+
+        const ownerState = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, owner.companyId));
+        if (!ownerState) throw new Error('FIRST HUNT owner state is missing');
+        const movedOwnerState = relocateFirstHuntJoinCompany(ownerState, {
+          kind: 'AT',
+          siteId: 'kamenny-brod',
+          areaId: 'kamenny-brod-market',
+        });
+        await database
+          .updateTable('company_snapshots')
+          .set({ state: movedOwnerState })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', owner.companyId)
+          .executeTakeFirstOrThrow();
+
+        await setFirstHuntWorldTick(database, worldId, Number(startingTick) + 2, startingTick);
+        const helperRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: helper.headers,
+        });
+        const helperJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: helperRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const before = await database.transaction().execute(async (transaction) => {
+          const contract = await transaction
+            .selectFrom('contract_instances')
+            .select(['revision', 'owner_join', 'helper_join'])
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', 'ci.m1.raider-standard.01')
+            .executeTakeFirstOrThrow();
+          const ownerRoot = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+          const helperRoot = await loadCompanyAggregate(transaction, worldId, helper.companyId);
+          const receipts = await transaction
+            .selectFrom('company_receipts')
+            .select(['company_id', 'command_id', 'receipt_id'])
+            .where('world_id', '=', worldId)
+            .where('company_id', 'in', [owner.companyId, helper.companyId])
+            .execute();
+          return { contract, ownerRoot, helperRoot, receipts };
+        });
+        const rejected = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: helperJoin,
+        });
+        expect(rejected.statusCode).toBe(409);
+        expect(rejected.json()).toMatchObject({ ok: false, code: 'NOT_AVAILABLE' });
+        const after = await database.transaction().execute(async (transaction) => {
+          const contract = await transaction
+            .selectFrom('contract_instances')
+            .select(['revision', 'owner_join', 'helper_join'])
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', 'ci.m1.raider-standard.01')
+            .executeTakeFirstOrThrow();
+          const ownerRoot = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+          const helperRoot = await loadCompanyAggregate(transaction, worldId, helper.companyId);
+          const admissions = await transaction
+            .selectFrom('encounter_admissions')
+            .select('encounter_id')
+            .where('world_id', '=', worldId)
+            .execute();
+          const receipts = await transaction
+            .selectFrom('company_receipts')
+            .select(['company_id', 'command_id', 'receipt_id'])
+            .where('world_id', '=', worldId)
+            .where('company_id', 'in', [owner.companyId, helper.companyId])
+            .execute();
+          return { contract, ownerRoot, helperRoot, admissions, receipts };
+        });
+        expect(after).toEqual({ ...before, admissions: [] });
+      } finally {
+        await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+      }
+    },
+  );
+
+  it.skipIf(connectionString === undefined)(
+    'requires fresh FIRST HUNT JOIN consent after a company revision changes',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const scenario = await seedFirstHuntJoinScenario(database);
+      const { owner, helper, worldId, app } = scenario;
+      const startingTick = owner.initial.economy.lifecycle.campaignTick;
+      try {
+        const ownerRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: owner.headers,
+        });
+        const ownerJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: ownerRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const ownerAccepted = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: ownerJoin,
+        });
+        expect(ownerAccepted.statusCode).toBe(200);
+
+        const ownerCompany = owner.initial.economy.lifecycle.company;
+        if (!ownerCompany) throw new Error('FIRST HUNT owner company is missing');
+        const renamed = await app.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: owner.headers,
+          payload: {
+            schemaVersion: 2,
+            commandId: randomUUID(),
+            expectedPublicRevision: owner.initial.economy.lifecycle.knowledge.revision,
+            type: 'RenameCompany',
+            payload: {
+              name: 'The Revised Company',
+              bannerId: ownerCompany.bannerId,
+            },
+          },
+        });
+        expect(renamed.statusCode, renamed.body).toBe(200);
+
+        await setFirstHuntWorldTick(database, worldId, Number(startingTick) + 2, startingTick);
+        const helperRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: helper.headers,
+        });
+        const helperJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: helperRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const before = await database.transaction().execute(async (transaction) => ({
+          contract: await transaction
+            .selectFrom('contract_instances')
+            .select(['revision', 'owner_join', 'helper_join'])
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', 'ci.m1.raider-standard.01')
+            .executeTakeFirstOrThrow(),
+          ownerRoot: await loadCompanyAggregate(transaction, worldId, owner.companyId),
+          helperRoot: await loadCompanyAggregate(transaction, worldId, helper.companyId),
+          receipts: await transaction
+            .selectFrom('company_receipts')
+            .select(['company_id', 'command_id', 'receipt_id'])
+            .where('world_id', '=', worldId)
+            .where('company_id', 'in', [owner.companyId, helper.companyId])
+            .execute(),
+        }));
+        const rejected = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: helperJoin,
+        });
+        expect(rejected.statusCode).toBe(409);
+        expect(rejected.json()).toMatchObject({ ok: false, code: 'NOT_AVAILABLE' });
+        expect(
+          await database.transaction().execute(async (transaction) => ({
+            contract: await transaction
+              .selectFrom('contract_instances')
+              .select(['revision', 'owner_join', 'helper_join'])
+              .where('world_id', '=', worldId)
+              .where('instance_id', '=', 'ci.m1.raider-standard.01')
+              .executeTakeFirstOrThrow(),
+            ownerRoot: await loadCompanyAggregate(transaction, worldId, owner.companyId),
+            helperRoot: await loadCompanyAggregate(transaction, worldId, helper.companyId),
+            receipts: await transaction
+              .selectFrom('company_receipts')
+              .select(['company_id', 'command_id', 'receipt_id'])
+              .where('world_id', '=', worldId)
+              .where('company_id', 'in', [owner.companyId, helper.companyId])
+              .execute(),
+            admissions: await transaction
+              .selectFrom('encounter_admissions')
+              .select('encounter_id')
+              .where('world_id', '=', worldId)
+              .execute(),
+          })),
+        ).toEqual({ ...before, admissions: [] });
+
+        const ownerRefresh = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: owner.headers,
+        });
+        const ownerRejoin = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: {
+            schemaVersion: 1,
+            commandId: randomUUID(),
+            expectedPublicRevision: ownerRefresh.json().publicRevision,
+            type: 'JOIN',
+            payload: { instanceId: 'ci.m1.raider-standard.01' },
+          },
+        });
+        expect(ownerRejoin.statusCode, ownerRejoin.body).toBe(200);
+
+        const helperRefresh = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: helper.headers,
+        });
+        const helperRejoin = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: {
+            ...helperJoin,
+            commandId: randomUUID(),
+            expectedPublicRevision: helperRefresh.json().publicRevision,
+          },
+        });
+        expect(helperRejoin.statusCode, helperRejoin.body).toBe(200);
+        const joinedStates = await database.transaction().execute(async (transaction) => ({
+          owner: await loadCompanyAggregate(transaction, worldId, owner.companyId),
+          helper: await loadCompanyAggregate(transaction, worldId, helper.companyId),
+        }));
+        expect(joinedStates.owner?.economy.lifecycle.campaignTick).toBe(
+          String(Number(startingTick) + 2),
+        );
+        expect(joinedStates.helper?.economy.lifecycle.campaignTick).toBe(
+          String(Number(startingTick) + 2),
+        );
+        expect(joinedStates.owner?.encounter.active?.binding.bindingId).toBe(
+          joinedStates.helper?.encounter.active?.binding.bindingId,
+        );
+      } finally {
+        await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+      }
+    },
+  );
+
   it.skipIf(connectionString === undefined)(
     'serializes a manual command against its due timeout into one accepted transition',
     async () => {
