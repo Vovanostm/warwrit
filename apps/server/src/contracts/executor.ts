@@ -313,6 +313,8 @@ export function prepareFirstHuntProofPickup(input: {
   };
   const authorization: LootAuthorizationEvidence = {
     ...factScope,
+    // One claim per terminal outcome: the authorization's source is that outcome.
+    sourceEventId: sourceId,
     id: `first-hunt-loot-${hashId([input.worldId, input.encounterId, input.request.commandId])}`,
     kind: 'LOOT_AUTHORIZATION',
     outcomeId: sourceId,
@@ -339,7 +341,6 @@ export function prepareFirstHuntProofPickup(input: {
     },
   });
   if (!parsed.ok) return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
-
   const prepared = prepareCompanyEconomy(withGround.economy, parsed.command, {
     worldId: input.worldId,
     companyId: lifecycle.companyId,

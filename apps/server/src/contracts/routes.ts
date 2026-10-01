@@ -30,7 +30,10 @@ import { resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
 import { findOwnedCompanyId, loadCompanyAggregate } from '../company/repository.js';
 import { lockCompanyAggregate } from '../company/repository.js';
-import { persistFirstHuntCompanyTransition } from '../company/executor.js';
+import {
+  catchUpStationaryCompany,
+  persistFirstHuntCompanyTransition,
+} from '../company/executor.js';
 import { admitFirstHuntInTransaction } from '../encounters/admission.js';
 import { readWorldClock } from '../world/clock.js';
 import { readFirstHuntReceipt, persistFirstHuntReceipt } from './repository.js';
@@ -327,7 +330,7 @@ async function executeContractCommand(input: {
       const value = await loadCompanyAggregate(transaction, worldId, lockedCompanyId);
       if (value) companyStates.set(lockedCompanyId, value);
     }
-    const state = companyStates.get(companyId);
+    let state = companyStates.get(companyId);
     if (!state) return reject('NOT_AUTHORIZED', contract.revision);
     const commandType = request.type;
     if (commandType === 'HELP') {
@@ -439,6 +442,18 @@ async function executeContractCommand(input: {
         proof.item_id !== FIRST_HUNT_PROOF_ID
       )
         return reject('NOT_AVAILABLE', contract.revision);
+
+      // The party has stood still since the battle; settle that time first as its own
+      // persisted step so the proof transition below stays an exact delta.
+      const caughtUp = await catchUpStationaryCompany({
+        transaction,
+        accountId,
+        state: state as CompanyCombatAggregateState,
+        atTick: clock.tick,
+        requestKind: `FIRST_HUNT_${commandType}_CATCH_UP`,
+      });
+      if (caughtUp === undefined) return reject('NOT_AVAILABLE', contract.revision);
+      state = caughtUp;
 
       const nextRevision = (BigInt(contract.revision) + 1n).toString();
       const receiptId = randomUUID();

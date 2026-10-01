@@ -874,14 +874,23 @@ function validateFirstHuntExternalTransition(
     finance: null,
     physical: null,
   });
-  if (canonicalJson(beforeOther) !== canonicalJson(afterOther))
+  if (canonicalStateJson(beforeOther) !== canonicalStateJson(afterOther))
     throw new TypeError('FIRST HUNT external transition changed unrelated company state');
-  if (canonicalJson(normalized(beforeEconomy)) !== canonicalJson(normalized(afterEconomy)))
+  if (
+    canonicalStateJson(normalized(beforeEconomy)) !== canonicalStateJson(normalized(afterEconomy))
+  )
     throw new TypeError('FIRST HUNT external transition changed unrelated company economy');
 
   if (expectedType === 'PICKUP') {
+    // ClaimLoot appends exactly its own economy receipt; nothing else in finance moves.
+    const { applied: beforeApplied, ...beforeFinance } = beforeEconomy.finance;
+    const { applied: afterApplied, ...afterFinance } = afterEconomy.finance;
     if (
-      canonicalJson(beforeEconomy.finance) !== canonicalJson(afterEconomy.finance) ||
+      canonicalStateJson(beforeFinance) !== canonicalStateJson(afterFinance) ||
+      afterApplied.length !== beforeApplied.length + 1 ||
+      canonicalStateJson(afterApplied.slice(0, beforeApplied.length)) !==
+        canonicalStateJson(beforeApplied) ||
+      afterApplied.at(-1)?.commandId !== input.commandId ||
       !validProofPickupDelta(previous, next, input.transition)
     )
       throw new TypeError('FIRST HUNT pickup is not an exact proof ClaimLoot transition');
@@ -889,12 +898,18 @@ function validateFirstHuntExternalTransition(
   }
 
   if (
-    canonicalJson(beforeEconomy.physical) !== canonicalJson(afterEconomy.physical) ||
+    canonicalStateJson(beforeEconomy.physical) !== canonicalStateJson(afterEconomy.physical) ||
     input.event['rewardQ'] !== input.transition.rewardQ ||
     request['payload'] === null ||
     !validProofPresentationDelta(previous, next, input.transition, input.receiptId)
   )
     throw new TypeError('FIRST HUNT presentation is not an exact proof settlement transition');
+}
+
+function byContainerId<T extends { readonly containerId: string }>(entries: readonly T[]): T[] {
+  return entries.toSorted((left, right) =>
+    left.containerId < right.containerId ? -1 : left.containerId > right.containerId ? 1 : 0,
+  );
 }
 
 function validProofPickupDelta(
@@ -913,9 +928,11 @@ function validProofPickupDelta(
   const previousSourceEffects = before.sourceEffects;
   const addedEffects = after.sourceEffects.filter(
     (effect) =>
-      !previousSourceEffects.some((prior) => canonicalJson(prior) === canonicalJson(effect)),
+      !previousSourceEffects.some(
+        (prior) => canonicalStateJson(prior) === canonicalStateJson(effect),
+      ),
   );
-  const expectedEffectKey = canonicalJson([
+  const expectedEffectKey = canonicalStateJson([
     'LOOT_AUTHORIZATION',
     transition.sourceId,
     ['outcome', transition.sourceId],
@@ -925,7 +942,7 @@ function validProofPickupDelta(
     const requestKey = addedEffects[0]?.requestKey;
     if (requestKey !== undefined) {
       authorization = JSON.parse(requestKey) as Record<string, unknown>;
-      if (canonicalJson(authorization) !== requestKey) authorization = undefined;
+      if (canonicalStateJson(authorization) !== requestKey) authorization = undefined;
     }
   } catch {
     authorization = undefined;
@@ -955,40 +972,59 @@ function validProofPickupDelta(
     target.location.areaId === FIRST_HUNT_ENCOUNTER_LOCATION.areaId &&
     (target.kind === 'CARRIED' || target.kind === 'PARTY_SUPPLY' || target.kind === 'STATIC') &&
     availableContainerG(before, target.containerId) >= (definition?.weightG ?? Infinity) &&
-    canonicalJson(before.items) ===
-      canonicalJson(after.items.filter((item) => item.itemId !== FIRST_HUNT_PROOF_ID)) &&
-    canonicalJson(before.containers) === canonicalJson(after.containers) &&
-    canonicalJson(before.conditions) === canonicalJson(after.conditions) &&
-    canonicalJson(before.vitals) === canonicalJson(after.vitals) &&
-    canonicalJson(before.custody) === canonicalJson(after.custody) &&
-    canonicalJson(before.food) === canonicalJson(after.food) &&
-    canonicalJson(before.foodCarry) === canonicalJson(after.foodCarry) &&
-    canonicalJson(before.careHandovers) === canonicalJson(after.careHandovers) &&
+    canonicalStateJson(before.items) ===
+      canonicalStateJson(after.items.filter((item) => item.itemId !== FIRST_HUNT_PROOF_ID)) &&
+    canonicalStateJson(before.containers) === canonicalStateJson(after.containers) &&
+    canonicalStateJson(before.conditions) === canonicalStateJson(after.conditions) &&
+    canonicalStateJson(before.vitals) === canonicalStateJson(after.vitals) &&
+    canonicalStateJson(before.custody) === canonicalStateJson(after.custody) &&
+    canonicalStateJson(before.food) === canonicalStateJson(after.food) &&
+    canonicalStateJson(before.foodCarry) === canonicalStateJson(after.foodCarry) &&
+    canonicalStateJson(before.careHandovers) === canonicalStateJson(after.careHandovers) &&
     before.processedTick === after.processedTick &&
     addedEffects.length === 1 &&
     addedEffects[0]?.key === expectedEffectKey &&
     authorization?.['kind'] === 'LOOT_AUTHORIZATION' &&
     authorization?.['sourceEventId'] === transition.sourceId &&
     authorization?.['outcomeId'] === transition.sourceId &&
-    canonicalJson(authorization?.['itemIds']) === canonicalJson([FIRST_HUNT_PROOF_ID]) &&
-    canonicalJson(authorization?.['fromContainerIds']) ===
-      canonicalJson(['first-hunt-ground-proof']) &&
-    canonicalJson(authorization?.['ownerAfter']) ===
-      canonicalJson({ kind: 'COMPANY', id: previous.economy.lifecycle.companyId }) &&
+    canonicalStateJson(authorization?.['itemIds']) === canonicalStateJson([FIRST_HUNT_PROOF_ID]) &&
+    canonicalStateJson(authorization?.['fromContainerIds']) ===
+      canonicalStateJson(['first-hunt-ground-proof']) &&
+    canonicalStateJson(authorization?.['ownerAfter']) ===
+      canonicalStateJson({ kind: 'COMPANY', id: previous.economy.lifecycle.companyId }) &&
     after.sourceEffects.length === before.sourceEffects.length + 1 &&
-    canonicalJson(before.knowledge.itemSnapshots) ===
-      canonicalJson(
+    canonicalStateJson(before.knowledge.itemSnapshots) ===
+      canonicalStateJson(
         after.knowledge.itemSnapshots.filter((item) => item.itemId !== FIRST_HUNT_PROOF_ID),
       ) &&
-    canonicalJson(before.knowledge.conditionSnapshots) ===
-      canonicalJson(after.knowledge.conditionSnapshots) &&
-    canonicalJson(before.knowledge.vitalSnapshots) ===
-      canonicalJson(after.knowledge.vitalSnapshots) &&
-    canonicalJson(before.knowledge.containerSnapshots) ===
-      canonicalJson(after.knowledge.containerSnapshots) &&
-    canonicalJson(
+    canonicalStateJson(before.knowledge.conditionSnapshots) ===
+      canonicalStateJson(after.knowledge.conditionSnapshots) &&
+    canonicalStateJson(before.knowledge.vitalSnapshots) ===
+      canonicalStateJson(after.knowledge.vitalSnapshots) &&
+    // ClaimLoot re-records what the company knows about the target container; that
+    // snapshot becomes the actual container (it may have been stale after travel).
+    canonicalStateJson(
+      byContainerId(
+        before.knowledge.containerSnapshots.filter(
+          (entry) => entry.containerId !== transition.targetContainerId,
+        ),
+      ),
+    ) ===
+      canonicalStateJson(
+        byContainerId(
+          after.knowledge.containerSnapshots.filter(
+            (entry) => entry.containerId !== transition.targetContainerId,
+          ),
+        ),
+      ) &&
+    canonicalStateJson(
+      after.knowledge.containerSnapshots.find(
+        (entry) => entry.containerId === transition.targetContainerId,
+      ),
+    ) === canonicalStateJson(target) &&
+    canonicalStateJson(
       after.knowledge.itemSnapshots.find((item) => item.itemId === FIRST_HUNT_PROOF_ID),
-    ) === canonicalJson(proof)
+    ) === canonicalStateJson(proof)
   );
 }
 
@@ -1054,7 +1090,7 @@ function isRevision(value: unknown): value is string {
 function isJsonObject(value: unknown): value is Readonly<Record<string, unknown>> {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) return false;
   try {
-    canonicalJson(value);
+    canonicalStateJson(value);
     return true;
   } catch {
     return false;
@@ -1082,7 +1118,7 @@ function storageReceipt(row: {
 
 function isCanonicalJson(value: string): boolean {
   try {
-    return canonicalJson(JSON.parse(value)) === value;
+    return canonicalStateJson(JSON.parse(value)) === value;
   } catch {
     return false;
   }

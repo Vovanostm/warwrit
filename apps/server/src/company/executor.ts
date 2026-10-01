@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import {
   campaignTick,
   canonicalJson,
+  canonicalRevision,
   canonicalStateJson,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
@@ -22,7 +23,6 @@ import type {
   CompanyCommand,
   CompanyCombatAggregateState,
   EconomyContext,
-  FoodFulfillmentEvidence,
   ItemAccessEvidence,
   PracticeContext,
   TrustedTransitSegment,
@@ -46,7 +46,11 @@ import {
   updateCompanyAggregateWithReceipt,
 } from './repository.js';
 import type { FirstHuntExternalCompanyTransition } from './repository.js';
-import { prepareTravelFoodFacts } from './travel-food.js';
+import {
+  prepareStationaryFoodFacts,
+  prepareTravelFoodFacts,
+  travelAdvanceSourceEventId,
+} from './travel-food.js';
 import type { TravelFoodRouteBoundary } from './travel-food.js';
 import { readWorldClock } from '../world/clock.js';
 
@@ -225,24 +229,13 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
 
   // A stationary company whose root lags the world clock settles the elapsed food
   // from its own carried stock inside this same command; nothing is invented.
-  let foodFacts: readonly FoodFulfillmentEvidence[] = [];
-  if (BigInt(clock.tick) > BigInt(lifecycle.campaignTick)) {
-    const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
-    if (party?.location.kind !== 'AT')
-      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
-    const food = prepareTravelFoodFacts(state, clock.tick, input.request.commandId, {
-      kind: 'DEPARTURE',
-      partyId: party.partyId,
-      location: party.location,
-      settledThroughTick: clock.tick,
-    });
-    if (food.kind !== 'PREPARED')
-      return rejectRequest(
-        food.reason === 'INSUFFICIENT_ITEMS' ? 'INSUFFICIENT_ITEMS' : 'UNSUPPORTED_ACTION',
-        lifecycle.knowledge.revision,
-      );
-    foodFacts = food.facts;
-  }
+  const food = prepareStationaryFoodFacts(state, clock.tick, input.request.commandId);
+  if (food.kind !== 'PREPARED')
+    return rejectRequest(
+      food.reason === 'INSUFFICIENT_ITEMS' ? 'INSUFFICIENT_ITEMS' : 'UNSUPPORTED_ACTION',
+      lifecycle.knowledge.revision,
+    );
+  const foodFacts = food.facts;
 
   const commandValue = {
     schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
@@ -1038,4 +1031,105 @@ function isCanonicalJson(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Bring a stationary company's root up to `atTick` as its own persisted AdvanceCampaign
+ * (food from its own stock, its own receipt), so a following exact transition such as a
+ * proof pickup or presentation runs on a current root. Returns the root at `atTick`, or
+ * undefined when the company cannot be advanced (moving, short of food, inconsistent).
+ */
+export async function catchUpStationaryCompany(input: {
+  readonly transaction: Transaction<DatabaseSchema>;
+  readonly accountId: string;
+  readonly state: CompanyCombatAggregateState;
+  readonly atTick: string;
+  readonly requestKind: string;
+}): Promise<CompanyCombatAggregateState | undefined> {
+  const previous = input.state;
+  const lifecycle = previous.economy.lifecycle;
+  if (BigInt(input.atTick) <= BigInt(lifecycle.campaignTick)) return previous;
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  if (party?.location.kind !== 'AT') return undefined;
+  const commandId = randomUUID();
+  const sourceEventId = travelAdvanceSourceEventId(
+    lifecycle.worldId,
+    lifecycle.companyId,
+    commandId,
+  );
+  const parsed = parseCompanyCommand({
+    schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+    commandId,
+    sourceEventId,
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    actorRef: { kind: 'SYSTEM', id: 'world-travel' },
+    expectedRevision: canonicalRevision(lifecycle.revision),
+    campaignTick: input.atTick,
+    rulesetId: COMPANY_RULESET_ID,
+    type: 'AdvanceCampaign',
+    payload: { toTick: input.atTick, authoritativeInputs: [] },
+  });
+  if (!parsed.ok) return undefined;
+  const prepared = await prepareTrustedCompanyCommand({
+    transaction: input.transaction,
+    accountId: input.accountId,
+    lockedPriorState: previous,
+    command: parsed.command,
+    stableRequestKey: stableCompanyRequestKey({
+      kind: 'WORLD_REQUEST',
+      worldId: lifecycle.worldId,
+      companyId: lifecycle.companyId,
+      commandId,
+      requestKey: canonicalJson({ kind: input.requestKind }),
+    }),
+    expectedPublicRevision: lifecycle.knowledge.revision,
+    travelMode: 'DEPARTURE',
+    travelFoodRouteBoundary: {
+      kind: 'DEPARTURE',
+      partyId: party.partyId,
+      location: party.location,
+      settledThroughTick: input.atTick,
+    },
+    context: {
+      worldId: lifecycle.worldId,
+      companyId: lifecycle.companyId,
+      principal: { kind: 'SYSTEM', id: 'world-travel' },
+      publicRevision: lifecycle.knowledge.revision,
+      canonicalRevision: lifecycle.revision,
+      atTick: campaignTick(input.atTick),
+      completeGraph: true,
+      contactIds: [],
+      internalGrant: { commandId, sourceEventId, canonicalRequest: canonicalJson(parsed.command) },
+      facts: [],
+      financeFacts: [],
+      physicalFacts: [],
+      practiceFacts: [],
+      trustedTransitSegments: [],
+    },
+  });
+  if (prepared.kind !== 'PREPARED') return undefined;
+  const next = prepared.prepared.nextState;
+  await updateCompanyAggregateWithReceipt(
+    input.transaction,
+    lifecycle.revision,
+    next.economy.lifecycle.revision,
+    next,
+    {
+      receipt: {
+        receiptId: randomUUID(),
+        commandId: prepared.prepared.command.commandId,
+        sourceKey: prepared.prepared.sourceKey,
+        requestKey: prepared.prepared.stableRequestKey,
+        response: prepared.prepared.response,
+        resultingRevision: next.economy.lifecycle.revision,
+      },
+      command: prepared.prepared.command,
+      auditEvents: prepared.prepared.events.map((event) => ({
+        ...event,
+        revision: next.economy.lifecycle.revision,
+      })),
+    },
+  );
+  return next;
 }

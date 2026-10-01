@@ -525,3 +525,24 @@ function validFirstHuntExecution(
     execution.segment.toSiteId === toSiteId,
   );
 }
+
+/**
+ * Food a stationary party ate between its company's last settled tick and `toTick`,
+ * from its own stock. Commands executed "now" on a lagging root include these facts.
+ */
+export function prepareStationaryFoodFacts(
+  state: CompanyCombatAggregateState,
+  toTick: string,
+  commandId: string,
+): TravelFoodPreparation {
+  const lifecycle = state.economy.lifecycle;
+  if (BigInt(toTick) <= BigInt(lifecycle.campaignTick)) return { kind: 'PREPARED', facts: [] };
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  if (party?.location.kind !== 'AT') return { kind: 'REJECTED', reason: 'INVALID_STATE' };
+  return prepareTravelFoodFacts(state, toTick, commandId, {
+    kind: 'DEPARTURE',
+    partyId: party.partyId,
+    location: party.location,
+    settledThroughTick: toTick,
+  });
+}
