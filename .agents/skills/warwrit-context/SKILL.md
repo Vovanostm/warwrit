@@ -13,7 +13,8 @@ remembered PR, old attachment or cache as the current head.
 
 ## Procedure
 
-1. Read the active issue body/comments and exact PR base/head/tree/merged state.
+1. Run `pnpm agent:status` for live main/CI/PRs/active branches, then read the
+   active issue body/comments and exact PR base/head/tree/merged state.
    Inspect existing work before creating a branch; keep unrelated work intact.
 2. Read full Notes and Purpose of the active canonical Airtable contract and its
    named applicable sources. Restore the latest Empirical checkpoint tagged

@@ -114,6 +114,30 @@ describe('combat V2 runtime', () => {
     ]);
   });
 
+  it('breaks initiative ties by id code units, independent of the host locale', () => {
+    // ICU collation (any locale) puts 'unit-a' first; code units put 'Unit-b' first.
+    const base = setupV2();
+    const [template] = base.units;
+    if (template === undefined) throw new Error('fixture unit missing');
+    const tied = {
+      ...base,
+      units: base.units.map((unit, index) => ({
+        ...unit,
+        id: unitId(index === 0 ? 'unit-a' : 'Unit-b'),
+        attributes: template.attributes,
+        initialPools: template.initialPools,
+      })),
+    };
+
+    const started = startBattleV2(tied);
+
+    expect(started.state.initiativeOrder).toEqual([unitId('Unit-b'), unitId('unit-a')]);
+    const canonical = JSON.parse(canonicalCombatState(started.state)) as {
+      units: readonly { id: string }[];
+    };
+    expect(canonical.units.map(({ id }) => id)).toEqual(['Unit-b', 'unit-a']);
+  });
+
   it('replays a serialized V2 attack through the shared reducer with identical RNG state', () => {
     const setup = setupV2();
     const started = startBattleV2(setup);
