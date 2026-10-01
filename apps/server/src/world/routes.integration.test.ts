@@ -2177,6 +2177,7 @@ describe('authenticated world travel (PostgreSQL)', () => {
           '0008_world_travel',
           '0009_encounter_admission_sources',
           '0010_first_hunt_runtime',
+          '0011_encounter_leadership_choices',
         ] as const;
         const beforeDown = await runMigrations(rollback, 'status');
         expect(beforeDown.applied.slice(-migrationSuffix.length)).toEqual(migrationSuffix);
@@ -2198,9 +2199,9 @@ describe('authenticated world travel (PostgreSQL)', () => {
         ).toEqual({ live: null, backup: 'world_campaign_clocks_0008_backup' });
         const up = await runMigrations(rollback, 'up');
         expect(up.applied).toEqual(migrationSuffix);
-        expect((await runMigrations(rollback, 'status')).applied.slice(-3)).toEqual(
-          migrationSuffix,
-        );
+        expect(
+          (await runMigrations(rollback, 'status')).applied.slice(-migrationSuffix.length),
+        ).toEqual(migrationSuffix);
         restoreMigrationsNeeded = false;
         expect(await readClockRows(rollback)).toBe(clocksBefore);
         expect(
