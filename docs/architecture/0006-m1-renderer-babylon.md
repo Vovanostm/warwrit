@@ -17,6 +17,24 @@ The exact Babylon.js dependency version is not selected by this ADR. The prior
 spike used 9.28.0; inspect the installed lockfile, package metadata and local
 types before implementation or version-sensitive API use.
 
+## Visual direction — 2026-10-01
+
+The owner stated: «Спрайтовая, 2.5 D графика». The primary M1 presentation is
+sprite-based 2.5D; Babylon.js remains the selected renderer. This supersedes
+full-3D character miniatures as the required default and any competing visual
+pipeline gate before first playable. Pixel style, camera angle, normal/depth
+maps, direction count and asset recipes remain unspecified; implementation is
+pending.
+
+## World map direction — 2026-10-01
+
+The owner stated: «Карта мира - глобальная карта, на которой перемещаются npc и
+игроки по аналогии с battlebros / heroes». Primary world navigation uses a
+global map with moving NPC and player parties, consistent with the selected
+sprite-based 2.5D Babylon presentation. The analogy does not decide turns versus
+real time, scale, fog/visibility or new rules; lawful-knowledge and server-state
+boundaries remain unchanged. Implementation is pending; no ready map is claimed.
+
 ## Boundaries and acceptance
 
 Keep Babylon.js at the web rendering adapter beside React/Vite. Preserve the

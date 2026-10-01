@@ -1,5 +1,24 @@
 # Warwrit current delivery plan
 
+**Phase 0 delivered — 2026-10-01 (M1 build prompt, Claude Code lead):** all c06
+work is on branch `codex/m1-c06-rescue`, draft
+[PR #135](https://github.com/Vovanostm/warwrit/pull/135); integration worktree
+`/Users/vovanostm/learn/warwrit-m1`. c06's uncommitted `packages/` had been
+deleted (~19:27 MSK) and was recovered from the isolated copy
+`/private/tmp/warwrit-join-fix-20261001`; the c06 checkout was not modified.
+`main` (`4ec0be6`) is merged. The unaccepted leadership packet is preserved on
+`codex/m1-leadership-wip`. How to try it: `cp .env.example .env`,
+`pnpm install --frozen-lockfile`, `pnpm db:up`, `pnpm db:migrate:up`,
+`pnpm dev`, open `http://127.0.0.1:5173`, sign in with a fixture account from
+[LOCAL_DEVELOPMENT](LOCAL_DEVELOPMENT.md#development-processes), create a
+company. Checks run: clean-clone install/build/typecheck passed; unit suite with
+coverage 586 passed/34 skipped; local stack, Dex sign-in and company creation
+observed in a browser. `pnpm check:changes` FAILED on inherited complexity;
+PostgreSQL integration tests, `pnpm verify`, stress and `test:migrations` are
+`NOT_RUN`. Merge is not authorized. The M1 planning docs (wiki spec, production
+plan, handoff, build prompt) now live on this branch. Next: Cycle 1, a playable
+company and world.
+
 **Renderer decision — 2026-10-01:** the owner selected Babylon.js as the
 production M1 client renderer; [ADR-0006](../architecture/0006-m1-renderer-babylon.md)
 supersedes ADR-0005's PlayCanvas choice and the old engine-selection gate.
