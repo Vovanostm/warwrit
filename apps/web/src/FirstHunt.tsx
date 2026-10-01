@@ -21,6 +21,7 @@ import {
 } from './first-hunt-attempt.js';
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
+const CONTRACT_POLL_MS = 10_000;
 
 interface ViewState {
   readonly status: 'loading' | 'ready' | 'failed';
@@ -112,6 +113,17 @@ export function FirstHunt(props: {
     return () => {
       generation.current += 1;
     };
+  }, [refresh]);
+
+  // The other company's HELP/JOIN/PICKUP changes the contract without touching our
+  // world revision; re-read it periodically unless one of our commands is in flight.
+  const pendingRef = useRef(false);
+  pendingRef.current = view.pending === true || view.attempt !== undefined;
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!pendingRef.current) void refresh();
+    }, CONTRACT_POLL_MS);
+    return () => clearInterval(id);
   }, [refresh]);
 
   const submit = useCallback(

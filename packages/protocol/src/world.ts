@@ -206,4 +206,11 @@ export interface WorldSurroundingsDto {
     readonly siteId: string;
     readonly memberCount: number;
   }[];
+  /** Hostile world entities standing at the observer's site, as seen now. */
+  readonly observedHostiles: readonly {
+    readonly entityId: string;
+    readonly siteId: string;
+    readonly weaponItemId: string;
+    readonly wounded: boolean;
+  }[];
 }

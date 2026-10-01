@@ -602,3 +602,20 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+.map-hostiles circle {
+  fill: #7a2e22;
+  stroke: #e08a7a;
+  stroke-width: 1.5;
+}
+
+.map-hostiles text {
+  fill: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.panel-subtitle-danger {
+  color: #e08a7a;
+}

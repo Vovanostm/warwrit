@@ -29,6 +29,7 @@ export function WorldMap(props: {
   readonly party: PartyMarker | null;
   readonly moving: boolean;
   readonly observed: WorldSurroundingsDto['observedCompanies'];
+  readonly hostileSiteIds: ReadonlySet<string>;
   readonly reachableSiteIds: ReadonlySet<string>;
   readonly selectedSiteId: string | null;
   readonly plannedEdgeIds: readonly string[];
@@ -105,6 +106,7 @@ export function WorldMap(props: {
           reachable={props.reachableSiteIds.has(site.siteId)}
           selected={props.selectedSiteId === site.siteId}
           observedCount={props.observed.filter((entry) => entry.siteId === site.siteId).length}
+          hostiles={props.hostileSiteIds.has(site.siteId)}
           onSelect={props.onSelectSite}
         />
       ))}
@@ -143,6 +145,7 @@ function SiteMarker(props: {
   readonly reachable: boolean;
   readonly selected: boolean;
   readonly observedCount: number;
+  readonly hostiles: boolean;
   readonly onSelect: (siteId: string) => void;
 }) {
   const { site, point } = props;
@@ -177,6 +180,13 @@ function SiteMarker(props: {
       <text y={radius + 24} className="map-site-label">
         {site.name}
       </text>
+      {props.hostiles && (
+        <g transform={`translate(${-radius - 4} ${-radius - 2})`} className="map-hostiles">
+          <title>Здесь замечены враги</title>
+          <circle r="9" />
+          <text y="4">!</text>
+        </g>
+      )}
       {props.observedCount > 0 && (
         <g transform={`translate(${radius + 4} ${-radius - 2})`} className="map-observed">
           <title>Здесь замечены другие компании: {props.observedCount}</title>

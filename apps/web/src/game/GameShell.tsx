@@ -11,7 +11,7 @@ import type {
 
 import type { WorldTravelAction } from '../world-travel-attempt.js';
 import { CompanyPanel } from './CompanyPanel.js';
-import { formatCrowns, siteKindLabel } from './format.js';
+import { formatCrowns, itemLabel, siteKindLabel } from './format.js';
 import {
   estimatedLight,
   estimatedTick,
@@ -144,6 +144,9 @@ export function GameShell(props: {
             party={marker}
             moving={travelling}
             observed={reading.dto.observedCompanies}
+            hostileSiteIds={
+              new Set((reading.dto.observedHostiles ?? []).map((entry) => entry.siteId))
+            }
             reachableSiteIds={reachable}
             selectedSiteId={selected?.toSiteId ?? focusSiteId}
             plannedEdgeIds={plannedEdgeIds}
@@ -208,7 +211,10 @@ export function GameShell(props: {
                         }`}
                   </p>
                   {reading.dto.observerSiteId === focusSite.siteId && (
-                    <ObservedCompanies observed={reading.dto.observedCompanies} />
+                    <>
+                      <ObservedHostiles observed={reading.dto.observedHostiles ?? []} />
+                      <ObservedCompanies observed={reading.dto.observedCompanies} />
+                    </>
                   )}
                 </>
               ) : (
@@ -272,6 +278,23 @@ function ObservedCompanies(props: {
           <li key={`${entry.companyName}:${index}`}>
             <span>{entry.companyName}</span>
             <span>{entry.memberCount} чел.</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+function ObservedHostiles(props: { readonly observed: WorldSurroundingsDto['observedHostiles'] }) {
+  if (props.observed.length === 0) return null;
+  return (
+    <>
+      <h3 className="panel-subtitle panel-subtitle-danger">Враги на месте</h3>
+      <ul className="supplies hostiles">
+        {props.observed.map((entry) => (
+          <li key={entry.entityId}>
+            <span>Налётчик · {itemLabel(entry.weaponItemId).toLowerCase()}</span>
+            <span>{entry.wounded ? 'ранен' : 'цел'}</span>
           </li>
         ))}
       </ul>
