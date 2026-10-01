@@ -38,6 +38,7 @@ import {
 } from './executor.js';
 import { firstHuntTimeoutCommandId } from './admission.js';
 import { startEncounterAiWorker } from './ai-worker.js';
+import { applyPendingFirstHuntTerminalEffects } from './effects.js';
 import { EncounterRoomState } from './room-state.js';
 
 const connectionString = process.env['WARWRIT_ENCOUNTER_DATABASE_URL'];
@@ -364,8 +365,13 @@ async function cleanupFirstHuntJoinScenario(
     .select('encounter_id')
     .where('world_id', '=', worldId)
     .execute();
-  for (const admission of admissions)
+  for (const admission of admissions) {
+    await database
+      .deleteFrom('encounter_leadership_choices')
+      .where('encounter_id', '=', admission.encounter_id)
+      .execute();
     await removeEncounterFixture(database, admission.encounter_id);
+  }
   await database.deleteFrom('contract_instances').where('world_id', '=', worldId).execute();
   await database.deleteFrom('world_first_hunt_state').where('world_id', '=', worldId).execute();
   for (const actor of actors) {
@@ -548,6 +554,133 @@ afterAll(async () => {
 });
 
 describe('persistent fixture encounters (PostgreSQL)', () => {
+  it.skipIf(connectionString === undefined)(
+    'applies a lost multi-member two-company FIRST HUNT to both companies',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(database);
+      try {
+        for (const actor of [owner, helper]) {
+          const read = await app.inject({
+            method: 'GET',
+            url: '/contracts/first-hunt',
+            headers: actor.headers,
+          });
+          const joined = await app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: actor.headers,
+            payload: {
+              schemaVersion: 1,
+              commandId: randomUUID(),
+              expectedPublicRevision: read.json().publicRevision,
+              type: 'JOIN',
+              payload: { instanceId: 'ci.m1.raider-standard.01' },
+            },
+          });
+          expect(joined.statusCode, joined.body).toBe(200);
+        }
+        const { encounter_id: encounterId } = await database
+          .selectFrom('encounter_admissions')
+          .select('encounter_id')
+          .where('world_id', '=', worldId)
+          .executeTakeFirstOrThrow();
+        const bound = await database
+          .selectFrom('encounter_participants')
+          .select('unit_ids')
+          .where('encounter_id', '=', encounterId)
+          .execute();
+        // The defects this guards appeared only with several members per company.
+        expect(bound.every((row) => (row.unit_ids as string[]).length > 1)).toBe(true);
+
+        // Every human turn times out (one wait each); the world raiders act on their own.
+        // Time stays real: a due human deadline is moved to the present instead of
+        // running the worker at a future instant that the AI turns would not share.
+        for (let step = 0; step < 600; step += 1) {
+          const row = await database
+            .selectFrom('encounters')
+            .select(['status', 'deadline_at', 'activation_id'])
+            .where('id', '=', encounterId)
+            .executeTakeFirstOrThrow();
+          if (row.status === 'resolved') break;
+          if (row.deadline_at !== null && row.activation_id !== null) {
+            const now = new Date(Date.now() - 1);
+            await database
+              .updateTable('encounter_activation_policies')
+              .set({ deadline_at: now })
+              .where('encounter_id', '=', encounterId)
+              .where('activation_id', '=', row.activation_id)
+              .execute();
+            await database
+              .updateTable('encounters')
+              .set({ deadline_at: now })
+              .where('id', '=', encounterId)
+              .execute();
+          }
+          for (const wake of await listDueEncounterAiWakes(database, new Date(Date.now() + 60_000)))
+            if (wake.encounterId === encounterId) await executeEncounterAiWake(database, wake);
+          for (const timeout of await listDueEncounterTimeouts(database))
+            if (timeout.encounterId === encounterId)
+              await executeEncounterTimeout(database, timeout);
+        }
+        expect(
+          (
+            await database
+              .selectFrom('encounters')
+              .select('status')
+              .where('id', '=', encounterId)
+              .executeTakeFirstOrThrow()
+          ).status,
+        ).toBe('resolved');
+
+        let applied = await applyPendingFirstHuntTerminalEffects(database);
+        if (!applied.includes(encounterId)) {
+          // A company that can continue waits for its owner to name the successor.
+          for (const actor of [owner, helper]) {
+            const leadership = await app.inject({
+              method: 'GET',
+              url: `/encounters/${encounterId}/leadership`,
+              headers: actor.headers,
+            });
+            expect(leadership.statusCode, leadership.body).toBe(200);
+            const view = leadership.json();
+            if (!view.required) continue;
+            expect(view.candidates.length).toBeGreaterThan(0);
+            const chosen = await app.inject({
+              method: 'POST',
+              url: `/encounters/${encounterId}/leadership`,
+              headers: actor.headers,
+              payload: {
+                version: 1,
+                candidateId: view.candidates[0].characterId,
+                mode: 'PERMANENT',
+              },
+            });
+            expect(chosen.statusCode, chosen.body).toBe(202);
+          }
+          applied = await applyPendingFirstHuntTerminalEffects(database);
+        }
+        expect(applied).toContain(encounterId);
+        const admission = await database
+          .selectFrom('encounter_admissions')
+          .select('effects_applied_at')
+          .where('encounter_id', '=', encounterId)
+          .executeTakeFirstOrThrow();
+        expect(admission.effects_applied_at).not.toBeNull();
+        for (const actor of [owner, helper]) {
+          const state = await database
+            .transaction()
+            .execute((transaction) => loadCompanyAggregate(transaction, worldId, actor.companyId));
+          expect(state?.encounter.active).toBeNull();
+        }
+      } finally {
+        await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+      }
+    },
+    120_000,
+  );
+
   it.skipIf(connectionString === undefined)(
     'catches both FIRST HUNT companies up and activates one encounter across separate JOIN ticks',
     async () => {
