@@ -214,3 +214,40 @@ record was changed by this amendment.
 This profile does not select terms for any other contract, general payout
 shares, respawn or cancellation rules, reinforcements, or full M1. Producer,
 implementation, tests and runtime evidence for this profile remain `NOT_RUN`.
+
+## Owner decision — ordinary payouts, 2026-10-02
+
+The owner chose: ordinary M1 contracts pay like FIRST HUNT. Each instance has a
+fixed visible reward from its actual local issuer's already funded wallet; the
+whole reward goes once to the actual presenter of the proof (or the company that
+actually delivers the rescued person). A helper receives nothing automatically;
+any share is an arrangement between players outside the system. The provisional
+80:20 split is not used.
+
+Working amounts (provisional balance 0.1, same profile style as FIRST HUNT):
+
+| Instance                   | Template    | Reward (crowns) |
+| -------------------------- | ----------- | --------------- |
+| `ci.m1.mill-worker.01`     | RESCUE      | 80              |
+| `ci.m1.mill-beast.01`      | HUNT        | 90              |
+| `ci.m1.road-tracks.01`     | INVESTIGATE | 40              |
+| `ci.m1.missing-herbs.01`   | INVESTIGATE | 40              |
+| `ci.m1.cellar-rescue.01`   | RESCUE      | 80              |
+| `ci.m1.lost-scout.01`      | RESCUE      | 80              |
+| `ci.m1.wolf-trail.01`      | HUNT        | 80              |
+| `ci.m1.raider-standard.01` | HUNT        | 100 (unchanged) |
+
+## Owner decisions — participation, trophies and combat profiles, 2026-10-02
+
+- **Leave, cancel and term changes (all M1 contracts):** the FIRST HUNT rules
+  apply to every instance. Offered terms are immutable; the owner has no
+  cancel or leave; a helper may withdraw before encounter activation; no
+  contract `LEAVE` during an active encounter; after terminal release a helper
+  leaves prospectively with already earned rights and actual custody.
+- **Trophy after ordinary presentation:** the physical proof stays with its
+  actual bearer in durable `REDEEMED` state, as in FIRST HUNT; it cannot be
+  presented again.
+- **Unarmed and incapacitated members:** every member of a joining party is
+  admitted. A member with no weapon fights with a weak unarmed (fists) profile;
+  an incapacitated member is present but may only wait or retreat. A party is
+  no longer refused combat because one member is unarmed.
