@@ -1,130 +1,76 @@
-# M1 local company opening and re-entry
+# M1 local playtest
 
-**Status (2026-09-29): focused company opening and persisted browser re-entry
-verified on the isolated local stack. Full M1 remains active and unaccepted.**
-The company hashes and successful focused checks below are historical evidence
-for that company-opening correction only; they do not cover the current dirty
-travel candidate. Sol has two open core findings: the departure wrapper must
-require a supplied bounded segment ID, and transit-food IDs must remain bounded
-for maximum valid membership/route identities. The latest travel core build is
-`NOT_MEASURED` (its exit code was not captured), earlier travel focused tests
-are stale, and no server travel route or PostgreSQL travel integration exists.
-The corrections, maximum-ID `AdvanceCampaign`/aggregate-reader regression,
-captured final checks, hash refresh, and Sol re-review remain pending. See the
-[primary handoff](/Users/vovanostm/learn/warwrit/docs/engineering/NEXT_SESSION_HANDOFF.md)
-before continuing.
-Player two signed in through the task-local Dex service, loaded opening options,
-created company `f74d5051-2fb2-46bf-b1d3-587bc76e658a` (HTTP 201), reloaded it
-(HTTP 200), signed out (HTTP 204; the next session read returned 401), and
-signed in again. The same company and two known members returned: Lena (leader)
-and Rell. Unselected candidates were absent. This does not prove process-restart
-recovery, travel, contract, battle, consequences, or the full M1 journey.
+How the owner plays the M1 alpha on the Mac in Chrome, what to look at, and what is
+known to be missing. Start the stack per
+[LOCAL_DEVELOPMENT](LOCAL_DEVELOPMENT.md#development-processes); live status is in
+[CURRENT_PLAN](CURRENT_PLAN.md). The earlier 2026-09-29 company-opening evidence
+that lived in this file is in git history (commit `97d8480`).
 
-## Local stack and evidence
-
-The checkout is `/Users/vovanostm/multica_workspaces_local/warwrit-alpha-c06`,
-branch `codex/m1-company-storage`, HEAD
-`4489db47728d1b72794436df8eafb0cfdbd97d31`, with broad pre-existing dirty work.
-Preserve all unrelated edits and untracked files. Do not rebase or use broad
-staging. The last preflight tree was `cd54141eb88d030ebb8db8e680e828f0df1c734a`;
-it predates the narrow final correction and new screenshot.
-
-The isolated PostgreSQL container `warwrit-alpha-company-h-postgres-1` listens on
-`127.0.0.1:32778`. The isolated Dex container `warwrit-alpha-c06-dex` listens on
-`127.0.0.1:5559`; its read-only bind mount is the ignored mode-600 file
-`.tmp/c06-identity/dex.yaml`. Keep the file private. The app's task-local
-environment is retained in ignored mode-600 `.tmp/c06-identity/app.env`; it
-contains database/OIDC values and must not be printed or committed. The backend
-and Vite processes remain live in sessions `65787` and `87048` on ports 5190 and 5191.
-The last probes returned HTTP 200 from `/health/live`, `/health/ready`, and the
-web root. Reuse these services; do not restart them blindly. If the isolated Dex
-container has stopped, `docker start warwrit-alpha-c06-dex` reuses its existing
-private config and data volume. To recreate the server from the retained
-environment, run this from c06:
+## Start
 
 ```bash
-set -a
-source .tmp/c06-identity/app.env
-set +a
-pnpm --filter @warwrit/server dev
+pnpm db:up && pnpm db:migrate:up && pnpm dev
 ```
 
-Start the web shell in another terminal:
+Open `http://127.0.0.1:5173` and choose **Войти**. Fixture accounts:
+`player-one@example.test` / `local-only-pass-one` and
+`player-two@example.test` / `local-only-pass-two`. Use a second Chrome profile
+or a private window for the second player.
 
-```bash
-WEB_PORT=5191 API_PROXY_TARGET=http://127.0.0.1:5190 pnpm --filter @warwrit/web dev
-```
+A fresh world: `docker compose down --volumes` deletes the local world
+irreversibly; then repeat the start.
 
-The private env file was reconstructed from the live 5190 process for reuse;
-fresh startup from it has not been separately tested. It also sets
-`WARWRIT_COMPANY_DATABASE_URL` for the integration test below. Use Node `24.20.x`
-and pnpm `11.25.x`.
+## Time
 
-The sanitized final screenshot is
-[`c06-company-after-relogin.png`](../../output/playwright/c06-company-after-relogin.png)
-(SHA-256 `f30166cc3178d7e35c66e781e4cac9a58330dd0a9b6f81cdfb67b5c9300d4766`).
-The Playwright method/path/status list showed opening-options 200, company
-command 201, company GET 200, logout 204, post-logout session 401, and after
-re-entry session 200 plus company GET 200. Raw Playwright session files,
-callback URLs and OIDC state, cookies, and the Dex config are local-only and must
-not be included in a handoff or commit. The earlier signed-out/unavailable-state
-image `output/playwright/m1-player-entry-unavailable.png` is from UI route mocks;
-the pending-logout and HTTP 503 results remain mock evidence.
+- Campaign: 1000 ticks per day, one tick = 21.6 s. Roads take 8–16 ticks
+  (≈3–6 minutes); the city to the mill is ≈9 minutes.
+- Light: 10 minutes of day, 5 minutes of night (top bar). The mill beast shows
+  itself only at night.
 
-Manual sequence: open `http://127.0.0.1:5191`, sign in with the retained second
-fixture account in `docs/engineering/ID01-IDENTITY.md`, confirm Lena and Rell,
-reload, log out, sign in again, and confirm the same roster. For fresh creation,
-use a disposable account without a company; player one has an older diagnostic
-company and player two owns the verified company, so neither is suitable for a
-fresh create until the pre-authorized diagnostic cleanup is proven safe and
-transactionally completed.
+## Route of a session (about 1.5–2 hours)
 
-## Focused verification
+1. **Company.** Create it; open **Отряд**: people, health, gear (equip with
+   «взять»/«надеть»), rations, cash, wages owed.
+2. **Map.** Click a settlement; **Путь** shows the road, time and rations.
+   «Выступить»; the banner moves on the server clock. Sign out, stop and
+   restart `pnpm dev`, sign in: the party is still on its road.
+3. **Contracts** (tab **Место** at the issuer):
 
-Author-run checks for the final correction:
+   | Contract                             | Issuer        | Steps                                                                                                                             | Reward |
+   | ------------------------------------ | ------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------ |
+   | Знамя у старой мельницы (FIRST HUNT) | Каменный Брод | accept → mill → fight 3 raiders → pick up the standard → present                                                                  | 100    |
+   | Следы на дороге                      | Каменный Брод | inspect the bank at Тихая Гать → report                                                                                           | 40     |
+   | Пропавший разведчик                  | Каменный Брод | search the bank at Тихая Гать → bring him back                                                                                    | 80     |
+   | Пропавшие травы                      | Березняк      | ask → inspect the green by day → report                                                                                           | 40     |
+   | Волчья тропа                         | Березняк      | fight three wolves there → pick up the pelt → present                                                                             | 80     |
+   | Пленник в погребе                    | Тихая Гать    | free him at the mill once the raiders are dead → bring him                                                                        | 80     |
+   | Когда молчит мельница                | Северный Двор | inspect the mill yard, ask the keeper at Тихая Гать → (the beast hunt opens) → free the worker once the beast is dead → bring him | 80     |
+   | Ночной зверь у мельницы              | Тихая Гать    | opens after the two clues; fight the beast at night → claw → present                                                              | 90     |
 
-```bash
-pnpm --filter @warwrit/game-core build
-pnpm exec vitest run packages/testkit/src/company-lifecycle.spec.test.ts
-set -a; source .tmp/c06-identity/app.env; set +a
-pnpm exec vitest run apps/server/src/company/routes.integration.test.ts
-pnpm exec prettier --check packages/game-core/src/company/lifecycle.ts packages/testkit/src/company-lifecycle.spec.test.ts apps/server/src/company/routes.integration.test.ts
-git diff --check -- packages/game-core/src/company/lifecycle.ts packages/testkit/src/company-lifecycle.spec.test.ts apps/server/src/company/routes.integration.test.ts
-```
+4. **Battle.** 30 seconds per turn (counter in the turn line). Click an enemy
+   for the target, a free hex for the destination, then the action. Drag/WASD
+   move the camera, the wheel zooms. If the timer runs out you are marked
+   inactive; «Вернуться к управлению» returns control after the next turn.
+5. **Losses.** The fallen stay on the field and in the roster as «Погиб». If
+   the leader falls, choose a successor in the battle panel; with nobody left
+   the company's run ends.
+6. **Camp.** At a place with no living enemies: **Место → Разбить лагерь**.
+   Rations are not spent while camping; strike the camp before marching.
+7. **Two players.** The second company can help a contract («Помочь
+   владельцу»); both must stand at the objective and join. The reward goes
+   once to whoever presents the trophy or delivers the person.
 
-Outcomes: core build passed; lifecycle specs 23/23 passed; real-PostgreSQL route
-integration 2/2 passed with the local DB URL supplied; formatting and scoped
-whitespace checks passed. The route file skips both cases when the URL is unset,
-so that run is not verification. Sol reviewed the frozen correction and found no
-actionable regression; parent verified the frozen hashes and inspected the
-re-entry screenshot. These are separate author, review, and visual evidence.
+## What to report
 
-Frozen code hashes:
+For each session: what you tried, what you expected, what happened, and the
+time on the top bar. Note anything slow (map or battle frame rate, waits
+after a command), confusing texts, and any money that looks wrong.
 
-- `packages/game-core/src/company/lifecycle.ts` —
-  `6dac7e4da4df5ab65f91bf3e77f37ef7fc070f3e210084355d75f2a09ae781f4`
-- `packages/testkit/src/company-lifecycle.spec.test.ts` —
-  `7bb6060d285cca5fce690f81ca447e401b5db1c4832609067fea5e81046756fb`
-- `apps/server/src/company/routes.integration.test.ts` (pre-existing local file,
-  unchanged in this correction) —
-  `f5f70b8794045417ac44d72cae635a677fc4128975cb4d50aa1f65a69a995c6b`
+## Known gaps (2026-10-02)
 
-No full `pnpm verify`, combat stress test, migration smoke, process restart,
-owner playtest, or exact-tree delivery gate ran. The pre-fix disposable
-diagnostic company `cae82c33-ac61-4118-80b9-b62b1c33bcf2` remains in the local
-database; it was not deleted because its exact ownership/dependency backup and
-transactional cleanup were not verified. Its bounded cleanup is already
-authorized by parent, but those safety preconditions remain incomplete. The
-working player-two company and all accounts remain intact. No released root was
-backfilled.
-
-## Remaining M1 work
-
-Travel and all later journey dependencies remain unimplemented/unverified. The
-approved next travel task is `safe-travel-alpha-v1`: one bounded safe trip of 10
-ticks (3m36s at the current clock), preserving the existing 1000-tick/6-hour
-definition, carried food, and existing stamina. The approved effect direction
-is that the trusted arrival transaction settles through the stored due tick and
-a late request must not charge extra transit. This is a next-task direction, not
-the final design, implemented travel, or accepted product behavior. Do not begin
-it without the next session's source/ownership checkpoint.
+- Unarmed («кулаки») and incapacitated (wait/retreat only) combat profiles are
+  not implemented; a party with a member who holds no weapon cannot join a fight.
+- F1 (safe service at a settlement) and paying wages are not available in the
+  interface; wages accrue as debt shown in **Отряд**. There is no shop: rations
+  are only the starting stock, so use camps on long trips.
+- Mac performance and frame rate are `NOT_MEASURED`.
