@@ -84,10 +84,29 @@ export interface TrustedRouteSupplyAssessment {
   readonly assumptions: readonly string[];
 }
 
-/** Server-derived authorization for this single authored FIRST HUNT route. */
-export interface TrustedFirstHuntRouteAuthorization {
-  readonly instanceId: 'ci.m1.raider-standard.01';
-  readonly profileId: typeof FIRST_HUNT_PROFILE_ID;
+/**
+ * Contracts whose members may take the single authored dangerous road to Старая мельница:
+ * FIRST HUNT and the ordinary contracts with a step or encounter there (owner decision
+ * 2026-10-02, ordinary contract working profile).
+ */
+export const DANGEROUS_ROUTE_CONTRACTS: Readonly<Record<string, string>> = Object.freeze({
+  'ci.m1.raider-standard.01': FIRST_HUNT_PROFILE_ID,
+  'ci.m1.cellar-rescue.01': 'ct.m1.cellar-rescue.v1',
+  'ci.m1.mill-worker.01': 'ct.m1.mill-worker.v1',
+  'ci.m1.mill-beast.01': 'ct.m1.mill-beast.v1',
+});
+
+export function isDangerousRouteContract(instanceId: string, profileId: string): boolean {
+  return (
+    Object.hasOwn(DANGEROUS_ROUTE_CONTRACTS, instanceId) &&
+    DANGEROUS_ROUTE_CONTRACTS[instanceId] === profileId
+  );
+}
+
+/** Server-derived authorization for the authored dangerous route from a contract membership. */
+export interface TrustedContractRouteAuthorization {
+  readonly instanceId: string;
+  readonly profileId: string;
   readonly termsDigest: string;
   readonly purpose: 'NEW' | 'RETURN';
   readonly worldId: string;
@@ -196,7 +215,7 @@ export interface PartyRouteExecution {
   readonly edgeIds: readonly string[];
   /** Present only when the server accepted the authored dangerous FIRST HUNT edge. */
   readonly dangerousAuthorization?: Pick<
-    TrustedFirstHuntRouteAuthorization,
+    TrustedContractRouteAuthorization,
     'instanceId' | 'profileId' | 'termsDigest'
   >;
   readonly phase: RouteExecutionPhase;
@@ -274,8 +293,7 @@ function matchesFirstHuntExecutionAuthorization(
       execution.currentSiteId === toSiteId;
   return Boolean(
     authorization &&
-    authorization.instanceId === 'ci.m1.raider-standard.01' &&
-    authorization.profileId === FIRST_HUNT_PROFILE_ID &&
+    isDangerousRouteContract(authorization.instanceId, authorization.profileId) &&
     /^[0-9a-f]{64}$/.test(authorization.termsDigest) &&
     edge?.edgeId === FIRST_HUNT_EDGE_ID &&
     edge.danger === 'DANGEROUS' &&
@@ -332,7 +350,7 @@ export function preparePartyRouteExecution(input: {
   readonly segmentId: string;
   readonly supplyAssessment?: TrustedRouteSupplyAssessment;
   readonly safeTravelAuthorization?: TrustedReturnOrCampAuthorization;
-  readonly dangerousAuthorization?: TrustedFirstHuntRouteAuthorization;
+  readonly dangerousAuthorization?: TrustedContractRouteAuthorization;
 }): { readonly route: PreparedPartyRoute; readonly execution: PartyRouteExecution } {
   if (input.intent.kind !== 'ROUTE' || input.intent.purpose === 'CAMP')
     fail('UNSUPPORTED_ROUTE_CONTINUATION');
@@ -343,8 +361,7 @@ export function preparePartyRouteExecution(input: {
   if (
     isDangerous &&
     (!authorization ||
-      authorization.instanceId !== 'ci.m1.raider-standard.01' ||
-      authorization.profileId !== FIRST_HUNT_PROFILE_ID ||
+      !isDangerousRouteContract(authorization.instanceId, authorization.profileId) ||
       !/^[0-9a-f]{64}$/.test(authorization.termsDigest) ||
       authorization.purpose !== route.purpose ||
       authorization.worldId !== route.worldId ||
@@ -658,7 +675,7 @@ export function preparePartyRoute(input: {
   readonly segmentId?: string;
   readonly supplyAssessment?: TrustedRouteSupplyAssessment;
   readonly safeTravelAuthorization?: TrustedReturnOrCampAuthorization;
-  readonly dangerousAuthorization?: TrustedFirstHuntRouteAuthorization;
+  readonly dangerousAuthorization?: TrustedContractRouteAuthorization;
 }): PreparedPartyRoute {
   const { region, state, partyId, intent } = input;
   if (
@@ -810,7 +827,7 @@ export function preparePartyRoute(input: {
 }
 
 function matchesFirstHuntRouteAuthorization(input: {
-  readonly authorization: TrustedFirstHuntRouteAuthorization | undefined;
+  readonly authorization: TrustedContractRouteAuthorization | undefined;
   readonly state: LifecycleState;
   readonly partyId: string;
   readonly purpose: RouteIntent['purpose'];
@@ -829,8 +846,7 @@ function matchesFirstHuntRouteAuthorization(input: {
   return Boolean(
     authorization &&
     (purpose === 'NEW' || purpose === 'RETURN') &&
-    authorization.instanceId === 'ci.m1.raider-standard.01' &&
-    authorization.profileId === FIRST_HUNT_PROFILE_ID &&
+    isDangerousRouteContract(authorization.instanceId, authorization.profileId) &&
     /^[0-9a-f]{64}$/.test(authorization.termsDigest) &&
     authorization.purpose === purpose &&
     authorization.worldId === state.worldId &&

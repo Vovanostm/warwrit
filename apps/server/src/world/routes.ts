@@ -2,8 +2,6 @@ import {
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   SAFE_TRAVEL_ALPHA_V1,
-  FIRST_HUNT_INSTANCE_ID,
-  FIRST_HUNT_PROFILE_ID,
   accrueFinance,
   assessPhysicalFoodStock,
   acceptedWorldRegion,
@@ -51,7 +49,10 @@ import { isWorldTravelPreviewRequest } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { resolveSessionAccount } from '../auth/session.js';
-import { readFirstHuntRouteMembership } from '../contracts/repository.js';
+import {
+  readDangerousRouteMembership,
+  type DangerousRouteMembership,
+} from '../contracts/repository.js';
 import { travelAdvanceSourceEventId } from '../company/travel-food.js';
 import type { TravelFoodRouteBoundary } from '../company/travel-food.js';
 import type { CompanyRoutesOptions } from '../company/routes.js';
@@ -150,7 +151,7 @@ export function registerWorldRoutes(
       const route = matchedEdges.map((matches) => matches[0]!);
       const isDangerous = route.some((edge) => edge.danger === 'DANGEROUS');
       const membership = isDangerous
-        ? await readFirstHuntRouteMembership(transaction, worldId, companyId)
+        ? await readDangerousRouteMembership(transaction, worldId, companyId)
         : undefined;
       if (isDangerous && !membership) return undefined;
       try {
@@ -260,7 +261,7 @@ export function registerWorldRoutes(
         activeRoute ??
         (party ? await readPartyRoute(transaction, worldId, companyId, party.partyId) : undefined);
       try {
-        const contractMembership = await readFirstHuntRouteMembership(
+        const contractMembership = await readDangerousRouteMembership(
           transaction,
           worldId,
           companyId,
@@ -854,7 +855,7 @@ async function executeV2TravelDeparture(input: {
     const edges = routeEdges.map((matches) => matches[0]!);
     const isDangerous = edges.some((edge) => edge.danger === 'DANGEROUS');
     const membership = isDangerous
-      ? await readFirstHuntRouteMembership(transaction, input.worldId, companyId)
+      ? await readDangerousRouteMembership(transaction, input.worldId, companyId)
       : undefined;
     if (isDangerous && !membership)
       return v2Rejected(input.input.commandId, currentRevision, 'INVALID_ROUTE');
@@ -874,8 +875,8 @@ async function executeV2TravelDeparture(input: {
       ...(membership
         ? {
             dangerousAuthorization: {
-              instanceId: FIRST_HUNT_INSTANCE_ID,
-              profileId: FIRST_HUNT_PROFILE_ID,
+              instanceId: membership.instanceId,
+              profileId: membership.profileId,
               termsDigest: membership.termsDigest,
               purpose: input.input.purpose,
               worldId: input.worldId,
@@ -1284,7 +1285,7 @@ function projectWorldParty(
   state: CompanyCombatAggregateState,
   routeRow: StoredPartyRoute | undefined,
   clock: Awaited<ReturnType<typeof readWorldClock>>,
-  contractMembership?: { readonly termsDigest: string },
+  contractMembership?: DangerousRouteMembership,
   offerState?: CompanyCombatAggregateState,
 ): WorldPartyReadResponseDto {
   if (routeRow) {
@@ -1340,7 +1341,7 @@ function responseFor(
   routeRow: StoredPartyRoute | undefined,
   clock: Awaited<ReturnType<typeof readWorldClock>>,
   commandId = '',
-  contractMembership?: { readonly termsDigest: string },
+  contractMembership?: DangerousRouteMembership,
   offerState: CompanyCombatAggregateState | null = state,
 ): WorldTravelResponseDto {
   let activeRoute: PreparedPartyRoute | undefined;
@@ -1439,7 +1440,7 @@ function listAvailableDepartures(
   fromSiteId: string,
   routeRow: StoredPartyRoute | undefined,
   clockTick: string,
-  contractMembership?: { readonly termsDigest: string },
+  contractMembership?: DangerousRouteMembership,
 ): readonly WorldAvailableDepartureDto[] {
   const root = materializedRoot(offerState);
   const atTick = root.lifecycle.campaignTick;
@@ -1505,15 +1506,15 @@ function prepareOfferRouteDeparture(input: {
   readonly purpose: 'NEW' | 'RETURN';
   readonly atTick: string;
   readonly routeEpoch: string;
-  readonly contractMembership?: { readonly termsDigest: string };
+  readonly contractMembership?: DangerousRouteMembership;
 }) {
   const root = materializedRoot(input.state);
   const dangerous = input.edges.some((edge) => edge.danger === 'DANGEROUS');
   const dangerousAuthorization =
     dangerous && input.contractMembership
       ? {
-          instanceId: FIRST_HUNT_INSTANCE_ID,
-          profileId: FIRST_HUNT_PROFILE_ID,
+          instanceId: input.contractMembership.instanceId,
+          profileId: input.contractMembership.profileId,
           termsDigest: input.contractMembership.termsDigest,
           purpose: input.purpose,
           worldId: root.lifecycle.worldId,

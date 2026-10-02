@@ -23,7 +23,7 @@ import type {
   PreparedPartyArrival,
   PreparedPartyRoute,
   RouteIntent,
-  TrustedFirstHuntRouteAuthorization,
+  TrustedContractRouteAuthorization,
   TrustedRouteSupplyAssessment,
 } from './route.js';
 
@@ -256,7 +256,7 @@ export function preparePartyRouteExecutionDeparture(input: {
   readonly safeTravelAuthorization?: Parameters<
     typeof prepareRouteExecution
   >[0]['safeTravelAuthorization'];
-  readonly dangerousAuthorization?: TrustedFirstHuntRouteAuthorization;
+  readonly dangerousAuthorization?: TrustedContractRouteAuthorization;
 }): {
   readonly root: MaterializedCompanyState;
   readonly route: PreparedPartyRoute;

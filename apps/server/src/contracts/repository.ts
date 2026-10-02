@@ -1,8 +1,16 @@
+import { createHash } from 'node:crypto';
+
 import type { FirstHuntCommandResponseDto } from '@warwrit/protocol';
 import { sql, type Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
-import { FIRST_HUNT_INSTANCE_ID, FIRST_HUNT_PROFILE_ID } from '@warwrit/game-core';
+import {
+  FIRST_HUNT_INSTANCE_ID,
+  FIRST_HUNT_PROFILE_ID,
+  isDangerousRouteContract,
+  ORDINARY_CONTRACT_PROFILES,
+  readOrdinaryContractState,
+} from '@warwrit/game-core';
 import { canonicalJson, readCompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import { FIRST_HUNT_TERMS } from './first-hunt-runtime.js';
@@ -69,12 +77,22 @@ export async function readFirstHuntTerminalLockSet(
   };
 }
 
-export async function readFirstHuntRouteMembership(
+export interface DangerousRouteMembership {
+  readonly instanceId: string;
+  readonly profileId: string;
+  readonly termsDigest: string;
+}
+
+/**
+ * The contract that lets this company take the authored dangerous road: FIRST HUNT first,
+ * then an unfinished ordinary contract with a step at Старая мельница.
+ */
+export async function readDangerousRouteMembership(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
   companyId: string,
   lock = true,
-): Promise<{ readonly termsDigest: string } | undefined> {
+): Promise<DangerousRouteMembership | undefined> {
   let query = transaction
     .selectFrom('contract_instances')
     .select(['profile_id', 'terms', 'terms_digest', 'owner_company_id', 'helper_company_id'])
@@ -83,13 +101,39 @@ export async function readFirstHuntRouteMembership(
   if (lock) query = query.forUpdate();
   const row = await query.executeTakeFirst();
   if (
-    !row ||
-    row.profile_id !== FIRST_HUNT_PROFILE_ID ||
-    canonicalJson(row.terms) !== canonicalJson(FIRST_HUNT_TERMS) ||
-    (row.owner_company_id !== companyId && row.helper_company_id !== companyId)
+    row &&
+    row.profile_id === FIRST_HUNT_PROFILE_ID &&
+    canonicalJson(row.terms) === canonicalJson(FIRST_HUNT_TERMS) &&
+    (row.owner_company_id === companyId || row.helper_company_id === companyId)
   )
-    return undefined;
-  return { termsDigest: row.terms_digest.toString('hex') };
+    return {
+      instanceId: FIRST_HUNT_INSTANCE_ID,
+      profileId: FIRST_HUNT_PROFILE_ID,
+      termsDigest: row.terms_digest.toString('hex'),
+    };
+
+  for (const profile of ORDINARY_CONTRACT_PROFILES) {
+    if (!isDangerousRouteContract(profile.instanceId, profile.definitionId)) continue;
+    let ordinary = transaction
+      .selectFrom('ordinary_contracts')
+      .select('state')
+      .where('world_id', '=', worldId)
+      .where('instance_id', '=', profile.instanceId);
+    if (lock) ordinary = ordinary.forUpdate();
+    const stored = await ordinary.executeTakeFirst();
+    if (!stored) continue;
+    const state = readOrdinaryContractState(profile, stored.state);
+    if (
+      state.outcome === null &&
+      (state.ownerCompanyId === companyId || state.helperCompanyId === companyId)
+    )
+      return {
+        instanceId: profile.instanceId,
+        profileId: profile.definitionId,
+        termsDigest: createHash('sha256').update(canonicalJson(profile)).digest('hex'),
+      };
+  }
+  return undefined;
 }
 
 /** Exact replay reads from the shared company receipt namespace. */

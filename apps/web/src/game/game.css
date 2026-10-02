@@ -827,3 +827,12 @@
   color: var(--muted);
   font-size: 0.78rem;
 }
+
+.place-illustration {
+  display: block;
+  width: calc(100% + 2rem);
+  margin: -1rem -1rem 0.8rem;
+  aspect-ratio: 12 / 5;
+  object-fit: cover;
+  border-bottom: 1px solid var(--line);
+}

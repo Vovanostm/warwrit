@@ -22,6 +22,7 @@ import {
 import { departureKey, TravelPanel } from './TravelPanel.js';
 import { WorldMap, type PartyMarker } from './WorldMap.js';
 import { WorldMapCanvas } from './WorldMapCanvas.js';
+import { placeIllustration } from '../renderer/art.js';
 
 type Tab = 'travel' | 'place' | 'company';
 const TRANSIT_REFRESH_MS = 15_000;
@@ -212,6 +213,13 @@ export function GameShell(props: {
             <section className="panel place-panel" aria-label="Место">
               {focusSite ? (
                 <>
+                  {placeIllustration(focusSite.siteId) && (
+                    <img
+                      className="place-illustration"
+                      src={placeIllustration(focusSite.siteId)}
+                      alt=""
+                    />
+                  )}
                   <h2 className="panel-title">{focusSite.name}</h2>
                   <p className="place-kind">
                     {siteKindLabel(focusSite.kind)}

@@ -1,0 +1,10 @@
+{
+  "id": "tikhaya-gat",
+  "prompt": "Use case: stylized-concept.\nAsset type: opaque settlement-panel header illustration for an original dark-fantasy mercenary game; one separate image, 1536x640 pixels, very wide 12:5 landscape composition.\nInput images: Image 1 (site-city.png) and Image 2 (site-mill.png) are STYLE REFERENCES ONLY: weathered masonry and timber, broad-brush black ink contours and hatching, muted earthy wash, rugged hand-drawn materials. Do not reproduce their isolated map-icon composition or transparent backgrounds.\nPrimary request: Tikhaya Gat, a marsh village on stilts, with wooden jetties, dense withered reeds and a warning bell hanging from a tall simple timber pole. Show several worn timber huts raised above still marsh water, linked by rough planked walks and jetties; the unmistakable metal warning bell and its pull rope stand beside the landing. Autumn reedbeds and low marsh islands frame the settlement.\nComposition/framing: wide three-quarter elevated view across the landing and stilt houses; clearly readable bell on its pole, jetties and reeds in the middle ground. Full-bleed continuous marsh landscape and sky, no border, no isolated diorama. Keep all key features within the central wide horizontal band.\nLighting/mood: late autumn, heavy overcast daylight with low mist, bleak quiet dark fantasy grounded in practical rural medieval construction.\nStyle/medium: broad expressive black ink brush lines, irregular hand-hatched shadows, muted earthy watercolor wash; weathered brown timber, reed ochre, peat olive, cold slate-gray water. Match both references' hand-worked material character, not glossy photorealism or 3D rendering.\nConstraints: fully opaque image edge to edge. No people in the foreground, preferably no people anywhere. No text, letters, numbers, runes, logos, symbols, signatures or watermarks. Original setting; do not imitate any existing game or artist.",
+  "model": "image_gen (built-in; underlying model identifier not exposed)",
+  "date": "2026-10-02",
+  "reference": [
+    "assets/art/m1/map/site-city.png",
+    "assets/art/m1/map/site-mill.png"
+  ]
+}

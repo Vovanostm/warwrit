@@ -1,7 +1,6 @@
 import { createHash } from 'node:crypto';
 import {
-  FIRST_HUNT_INSTANCE_ID,
-  FIRST_HUNT_PROFILE_ID,
+  isDangerousRouteContract,
   TRAVEL_RULES,
   acceptedWorldRegion,
   isEntityId,
@@ -151,8 +150,9 @@ function validDangerousAuthorization(value: unknown): boolean {
   return (
     isRecord(value) &&
     hasExactKeys(value, ['instanceId', 'profileId', 'termsDigest']) &&
-    value['instanceId'] === FIRST_HUNT_INSTANCE_ID &&
-    value['profileId'] === FIRST_HUNT_PROFILE_ID &&
+    typeof value['instanceId'] === 'string' &&
+    typeof value['profileId'] === 'string' &&
+    isDangerousRouteContract(value['instanceId'], value['profileId']) &&
     typeof value['termsDigest'] === 'string' &&
     /^[0-9a-f]{64}$/.test(value['termsDigest'])
   );
