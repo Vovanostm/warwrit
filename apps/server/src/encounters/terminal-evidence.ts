@@ -529,7 +529,9 @@ export function prepareFirstHuntTerminalEvidence(input: {
         worldId: input.worldId,
         companyId: input.companyId,
         actorRef,
-        expectedRevision: lifecycle.revision,
+        // A player command is fresh against the public revision, a system one against canonical.
+        expectedRevision:
+          actorRef.kind === 'PLAYER' ? lifecycle.knowledge.revision : lifecycle.revision,
         campaignTick: atTick,
         rulesetId: combat.COMPANY_RULESET_ID,
         type: 'ResolveLeadership' as const,
