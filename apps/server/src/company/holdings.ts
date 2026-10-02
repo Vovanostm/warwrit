@@ -76,5 +76,13 @@ export function projectCompanyHoldings(
   const fieldCamp = state.economy.finance.maintenance.some(
     (mode) => mode.kind === 'FIELD_CAMP' && mode.endedAt === null,
   );
-  return { cashQ, wallets, items, people, fieldCamp };
+  const finance = state.economy.finance;
+  const owed = (claim: (typeof finance.claims)[number]) =>
+    BigInt(claim.reportedQ) - BigInt(claim.reportedCoveredQ) - BigInt(claim.paidQ);
+  const wagesOwedQ = finance.claims.reduce((sum, claim) => sum + owed(claim), 0n).toString();
+  const wagesDueQ = finance.claims
+    .filter((claim) => BigInt(claim.dueAt) <= BigInt(state.economy.lifecycle.campaignTick))
+    .reduce((sum, claim) => sum + owed(claim), 0n)
+    .toString();
+  return { cashQ, wallets, items, people, fieldCamp, wagesOwedQ, wagesDueQ };
 }

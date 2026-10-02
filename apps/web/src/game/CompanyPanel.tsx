@@ -124,6 +124,17 @@ export function CompanyPanel(props: {
               <span>Казна компании</span>
               <span>{formatCrowns(holdings.cashQ)} кр.</span>
             </li>
+            {holdings.wagesOwedQ !== '0' && (
+              <li>
+                <span>Жалованье к выплате</span>
+                <span>
+                  {formatCrowns(holdings.wagesOwedQ)} кр.
+                  {holdings.wagesDueQ !== '0'
+                    ? ` · из них просрочено ${formatCrowns(holdings.wagesDueQ)}`
+                    : ' · срок в конце дня'}
+                </span>
+              </li>
+            )}
             {holdings.wallets
               .filter((wallet) => wallet.ownerCharacterId !== null)
               .map((wallet) => (

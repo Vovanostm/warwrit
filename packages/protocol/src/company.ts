@@ -121,6 +121,9 @@ export interface CompanyHoldingsDto {
   }[];
   /** The company's party is in a field camp that covers its current food. */
   readonly fieldCamp: boolean;
+  /** Wages earned and not yet paid, and the part of them already due. */
+  readonly wagesOwedQ: string;
+  readonly wagesDueQ: string;
 }
 export interface CompanyReadResponseDto {
   readonly schemaVersion: 1;
