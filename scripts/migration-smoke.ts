@@ -17,6 +17,18 @@ const connectionString =
   process.env['DATABASE_URL'] ?? 'postgres://warwrit:warwrit@localhost:5432/warwrit';
 const client = new Client({ connectionString });
 
+/** Roll back the migrations after 0010 so the older rollback checks start from 0010. */
+async function downToFirstHunt(): Promise<void> {
+  for (const name of [
+    '0013_world_hunt_states',
+    '0012_ordinary_contracts',
+    '0011_encounter_leadership_choices',
+  ]) {
+    const down = await runMigrations(client, 'down');
+    assert.deepEqual(down.applied, [name]);
+  }
+}
+
 await client.connect();
 try {
   const initial = await runMigrations(client, 'status');
@@ -32,6 +44,9 @@ try {
     '0008_world_travel',
     '0009_encounter_admission_sources',
     '0010_first_hunt_runtime',
+    '0011_encounter_leadership_choices',
+    '0012_ordinary_contracts',
+    '0013_world_hunt_states',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -46,6 +61,9 @@ try {
     '0008_world_travel',
     '0009_encounter_admission_sources',
     '0010_first_hunt_runtime',
+    '0011_encounter_leadership_choices',
+    '0012_ordinary_contracts',
+    '0013_world_hunt_states',
   ]);
 
   const secondUp = await runMigrations(client, 'up');
@@ -78,6 +96,7 @@ try {
     ],
   );
 
+  await downToFirstHunt();
   const firstHuntWorldId = 'migration-smoke-first-hunt';
   await client.query(
     `insert into world_first_hunt_state
@@ -137,7 +156,12 @@ try {
   await client.query('delete from encounters where id = $1', [provenanceEncounterId]);
   await client.query('delete from identity_accounts where id = $1', [provenanceAccountId]);
   const firstHuntRestored = await runMigrations(client, 'up');
-  assert.deepEqual(firstHuntRestored.applied, ['0010_first_hunt_runtime']);
+  assert.deepEqual(firstHuntRestored.applied, [
+    '0010_first_hunt_runtime',
+    '0011_encounter_leadership_choices',
+    '0012_ordinary_contracts',
+    '0013_world_hunt_states',
+  ]);
 
   const company = createCompanyStorageFixture();
   const studyTask = company.learning.tasks.tasks[0];
@@ -413,6 +437,7 @@ try {
     await readbackDatabase.destroy();
   }
 
+  await downToFirstHunt();
   const firstHuntDown = await runMigrations(client, 'down');
   assert.deepEqual(firstHuntDown.applied, ['0010_first_hunt_runtime']);
   const admissionSourceDown = await runMigrations(client, 'down');
@@ -449,6 +474,9 @@ try {
     '0008_world_travel',
     '0009_encounter_admission_sources',
     '0010_first_hunt_runtime',
+    '0011_encounter_leadership_choices',
+    '0012_ordinary_contracts',
+    '0013_world_hunt_states',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;
@@ -484,6 +512,7 @@ try {
     ],
   );
 
+  await downToFirstHunt();
   const firstDown = await runMigrations(client, 'down');
   assert.deepEqual(firstDown.applied, ['0010_first_hunt_runtime']);
   const secondDown = await runMigrations(client, 'down');

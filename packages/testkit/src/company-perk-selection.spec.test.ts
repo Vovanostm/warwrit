@@ -58,9 +58,9 @@ describe('B01 — profile perk selection', () => {
     expect(character(result.next).perks).toEqual(['leadership-25-a']);
     const publicView = projectCompanyLifecycle(result.next.lifecycle, 'company')!;
     expect(publicView.revision).toBe('1');
-    expect(publicView.characters.find((entry) => entry.characterId === 'worker-0')?.perkIds).toEqual(
-      ['leadership-25-a'],
-    );
+    expect(
+      publicView.characters.find((entry) => entry.characterId === 'worker-0')?.perkIds,
+    ).toEqual(['leadership-25-a']);
     expect(result.receipt.lifecycleReceipt?.events).toEqual([
       expect.objectContaining({
         type: 'PerkChosen',
@@ -116,14 +116,15 @@ describe('B01 — profile perk selection', () => {
         },
       },
     };
-    const cmd = command(withoutOwnerObservation, 'ChoosePerk', input.cmd.payload, input.cmd.commandId);
+    const cmd = command(
+      withoutOwnerObservation,
+      'ChoosePerk',
+      input.cmd.payload,
+      input.cmd.commandId,
+    );
 
     expect(
-      prepareCompanyEconomy(
-        withoutOwnerObservation,
-        cmd,
-        context(withoutOwnerObservation, cmd),
-      ),
+      prepareCompanyEconomy(withoutOwnerObservation, cmd, context(withoutOwnerObservation, cmd)),
     ).toMatchObject({
       kind: 'REJECTED',
       state: withoutOwnerObservation,

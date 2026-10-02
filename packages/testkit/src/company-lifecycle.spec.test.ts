@@ -958,20 +958,24 @@ describe('lifecycle continuity and source scope', () => {
       name: 'Ashen Company',
       bannerId: 'ashen-banner',
     });
-    const renamed = prepared(
-      prepareCompanyLifecycle(state, rename, context(state, rename)),
-    ).next;
+    const renamed = prepared(prepareCompanyLifecycle(state, rename, context(state, rename))).next;
 
     expect(projectCompanyLifecycle(renamed, state.companyId)).toMatchObject({
       revision: (BigInt(state.knowledge.revision) + 1n).toString(),
       companyPresentation: { name: 'Ashen Company', bannerId: 'ashen-banner' },
     });
 
-    const samePresentation = input(renamed, 'RenameCompany', {
-      companyId: renamed.companyId,
-      name: 'Ashen Company',
-      bannerId: 'ashen-banner',
-    }, 'PLAYER', 'rename-same-presentation');
+    const samePresentation = input(
+      renamed,
+      'RenameCompany',
+      {
+        companyId: renamed.companyId,
+        name: 'Ashen Company',
+        bannerId: 'ashen-banner',
+      },
+      'PLAYER',
+      'rename-same-presentation',
+    );
     const repeated = prepared(
       prepareCompanyLifecycle(renamed, samePresentation, context(renamed, samePresentation)),
     ).next;

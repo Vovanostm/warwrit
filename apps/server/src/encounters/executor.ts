@@ -1295,28 +1295,6 @@ export async function executeEncounterTimeout(
   });
 }
 
-export async function readEncounterMetadata(
-  database: Kysely<DatabaseSchema>,
-  accountId: string,
-  encounterId: string,
-) {
-  return database
-    .transaction()
-    .setIsolationLevel('repeatable read')
-    .execute(async (transaction) => {
-      const result = await sql<EncounterStoredRow>`
-        select e.id, e.schema_version, e.setup, e.state, e.revision, e.status,
-          e.activation_id, e.activation_epoch, e.deadline_at, e.ai_wake_at
-        from encounters e
-        join encounter_participants p on p.encounter_id = e.id
-        where e.id = ${encounterId} and p.account_id = ${accountId}
-      `.execute(transaction);
-      const row = result.rows[0];
-      if (row === undefined || !(await replayMatches(transaction, row))) return undefined;
-      return { revision: row.revision, status: row.status };
-    });
-}
-
 export async function verifyEncounterReplay(
   database: Kysely<DatabaseSchema>,
   encounterId: string,

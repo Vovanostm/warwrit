@@ -261,15 +261,15 @@ decisions above: offer, ACCEPT/HELP, payout and trophies as in FIRST HUNT.
 Each step is a command that needs the company's party standing still at the
 named area. Facts come only from these commands and from encounters.
 
-| Instance | Steps (place) | Facts produced | Reward |
-| --- | --- | --- | --- |
-| `road-tracks` INVEST-01 | INSPECT the bank (Тихая Гать) → REPORT (Каменный Брод) | the raider band's tracks lead to Старая мельница | 40 |
-| `missing-herbs` INVEST-02 | ACCEPT gives the stock record → INSPECT the green by day → REPORT (all Березняк) | cut stems and a trail toward Северный Двор | 40 |
-| `cellar-rescue` RESCUE-01 | RELEASE the captive from the mill cellar once the raider band there is dead → DELIVER (Тихая Гать) | a living captive travels with the releasing company | 80 |
-| `lost-scout` RESCUE-02 | SEARCH the bank (Тихая Гать) → DELIVER (Каменный Брод) | the wounded scout is found alive and travels with the company | 80 |
-| `wolf-trail` HUNT-02 | JOIN at Березняк → fight three wolves → PICKUP the pack leader's pelt → PRESENT (Березняк) | wolf encounter, unique pelt | 80 |
-| `mill-beast` HUNT-01 | unlocked by MILL-02; JOIN at the mill at night → fight one beast → PICKUP a claw → PRESENT (Тихая Гать) | night-beast encounter, unique claw | 90 |
-| `mill-worker` MILL-01…04 | ACCEPT (Северный Двор) → INSPECT the mill yard (grain-cart tracks) and ASK the Тихая Гать warning keeper (he saw the worker taken at night) → RELEASE the worker trapped in the mill once the beast is dead → DELIVER (Северный Двор) | observation, human report, living worker | 80 |
+| Instance                  | Steps (place)                                                                                                                                                                                                                         | Facts produced                                                | Reward |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ------ |
+| `road-tracks` INVEST-01   | INSPECT the bank (Тихая Гать) → REPORT (Каменный Брод)                                                                                                                                                                                | the raider band's tracks lead to Старая мельница              | 40     |
+| `missing-herbs` INVEST-02 | ACCEPT gives the stock record → INSPECT the green by day → REPORT (all Березняк)                                                                                                                                                      | cut stems and a trail toward Северный Двор                    | 40     |
+| `cellar-rescue` RESCUE-01 | RELEASE the captive from the mill cellar once the raider band there is dead → DELIVER (Тихая Гать)                                                                                                                                    | a living captive travels with the releasing company           | 80     |
+| `lost-scout` RESCUE-02    | SEARCH the bank (Тихая Гать) → DELIVER (Каменный Брод)                                                                                                                                                                                | the wounded scout is found alive and travels with the company | 80     |
+| `wolf-trail` HUNT-02      | JOIN at Березняк → fight three wolves → PICKUP the pack leader's pelt → PRESENT (Березняк)                                                                                                                                            | wolf encounter, unique pelt                                   | 80     |
+| `mill-beast` HUNT-01      | unlocked by MILL-02; JOIN at the mill at night → fight one beast → PICKUP a claw → PRESENT (Тихая Гать)                                                                                                                               | night-beast encounter, unique claw                            | 90     |
+| `mill-worker` MILL-01…04  | ACCEPT (Северный Двор) → INSPECT the mill yard (grain-cart tracks) and ASK the Тихая Гать warning keeper (he saw the worker taken at night) → RELEASE the worker trapped in the mill once the beast is dead → DELIVER (Северный Двор) | observation, human report, living worker                      | 80     |
 
 Killing the beast does not establish guilt for the grain theft; the
 grain-cart tracks stay an open observation. A person in custody who is not

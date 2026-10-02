@@ -1,46 +1,5 @@
 export const WORLD_EXPECTED_COMPANY_ID_HEADER = 'x-warwrit-expected-company-id' as const;
 
-export interface WorldTravelPreviewRequestDto {
-  readonly schemaVersion: 1;
-  readonly purpose: 'NEW' | 'RETURN';
-  readonly edgeIds: readonly string[];
-}
-
-export interface WorldTravelPreviewResponseDto {
-  readonly schemaVersion: 1;
-  readonly publicRevision: string;
-  readonly routeEpoch: string;
-  readonly atTick: string;
-  readonly purpose: 'NEW' | 'RETURN';
-  readonly edgeIds: readonly string[];
-  readonly knownShortage: boolean;
-  readonly assumptions: readonly string[];
-  readonly requiredStockUnits: string;
-  readonly availableStockUnits: string;
-}
-
-export function isWorldTravelPreviewRequest(value: unknown): value is WorldTravelPreviewRequestDto {
-  return (
-    isRecord(value) &&
-    Object.keys(value).toSorted().join('\0') ===
-      ['edgeIds', 'purpose', 'schemaVersion'].join('\0') &&
-    value['schemaVersion'] === 1 &&
-    (value['purpose'] === 'NEW' || value['purpose'] === 'RETURN') &&
-    Array.isArray(value['edgeIds']) &&
-    value['edgeIds'].length > 0 &&
-    value['edgeIds'].length <= 16 &&
-    value['edgeIds'].every(isWorldId)
-  );
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function isWorldId(value: unknown): value is string {
-  return typeof value === 'string' && value.length > 0 && value.length <= 128;
-}
-
 export interface WorldAvailableDepartureDto {
   readonly purpose: 'NEW' | 'RETURN';
   readonly edgeIds: readonly string[];

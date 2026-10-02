@@ -20,7 +20,7 @@ export const EncounterMapHexStateSchema = schema(
   'EncounterMapHexState',
 );
 
-export const EncounterMapStateSchema = schema(
+const EncounterMapStateSchema = schema(
   {
     hexes: t.array(EncounterMapHexStateSchema),
     blocked: t.array(EncounterMapHexStateSchema),

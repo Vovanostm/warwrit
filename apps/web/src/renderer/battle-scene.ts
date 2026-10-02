@@ -15,6 +15,7 @@ import {
 } from '@babylonjs/core';
 
 import { acquireCanvasEngine, releaseCanvasEngine } from './canvas-engine.js';
+import { CAMERA_ELEVATION } from './three-quarter-camera.js';
 import { BATTLE_ART, unitSprite, type UnitRole } from './art.js';
 import {
   diffRenderUnits,
@@ -53,8 +54,6 @@ interface RenderedUnit {
 }
 
 const SQRT3 = Math.sqrt(3);
-/** Fixed three-quarter view (owner decision 2026-10-02): elevation above the ground plane. */
-const CAMERA_ELEVATION = (50 * Math.PI) / 180;
 const SPRITE_SIZE = 1.45;
 const HEX_RADIUS = 1 / SQRT3;
 const MIN_ZOOM = 1.5;
@@ -68,12 +67,12 @@ const RING_COLORS: Readonly<Record<UnitRole | 'selected' | 'target', Color3>> = 
   target: new Color3(1, 0.34, 0.22),
 };
 
-export function hexToWorld(q: number, r: number): { readonly x: number; readonly z: number } {
+function hexToWorld(q: number, r: number): { readonly x: number; readonly z: number } {
   return { x: q + r * 0.5, z: (r * SQRT3) / 2 };
 }
 
 /** Nearest axial hex for a ground point: the inverse of `hexToWorld` with cube rounding. */
-export function worldToHex(x: number, z: number): { readonly q: number; readonly r: number } {
+function worldToHex(x: number, z: number): { readonly q: number; readonly r: number } {
   const r = (2 * z) / SQRT3;
   const q = x - r * 0.5;
   const s = -q - r;

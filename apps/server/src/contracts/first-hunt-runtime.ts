@@ -68,7 +68,7 @@ interface HostilePoolMaximums {
   readonly morale: number;
 }
 
-export function huntSeed(worldId: string, profile: HuntProfile = FIRST_HUNT): number {
+function huntSeed(worldId: string, profile: HuntProfile = FIRST_HUNT): number {
   const digest = createHash('sha256')
     .update(
       JSON.stringify([
@@ -233,10 +233,6 @@ export async function ensureHuntGenesisInTransaction(
   return readHuntWorldState(worldId, profile, world);
 }
 
-export function readFirstHuntWorldState(worldId: string, value: unknown): FirstHuntWorldState {
-  return readHuntWorldState(worldId, FIRST_HUNT, value);
-}
-
 export function readHuntWorldState(
   worldId: string,
   profile: HuntProfile,
@@ -275,7 +271,7 @@ export function readHuntWorldState(
   };
 }
 
-export function readHostiles(
+function readHostiles(
   value: unknown,
   profile: HuntProfile = FIRST_HUNT,
 ): readonly FirstHuntHostileState[] {

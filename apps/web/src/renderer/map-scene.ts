@@ -55,7 +55,7 @@ const ROAD_COLORS = {
   planned: new Color3(0.95, 0.75, 0.38),
 } as const;
 
-export function siteToWorld(site: { readonly q: number; readonly r: number }): {
+function siteToWorld(site: { readonly q: number; readonly r: number }): {
   readonly x: number;
   readonly z: number;
 } {

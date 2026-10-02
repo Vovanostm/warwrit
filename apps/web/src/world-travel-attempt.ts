@@ -297,7 +297,7 @@ export function clearWorldTravelAttempt(
   storage.removeItem(attemptStorageKey(scope));
 }
 
-export function readWorldTravelReturnWindow(
+function readWorldTravelReturnWindow(
   storage: WorldTravelStorage,
   scope: WorldTravelScope,
 ): WorldTravelReturnWindow | undefined {

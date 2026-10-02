@@ -3,6 +3,7 @@
 **Cycle 3 in progress — 2026-10-02 (Babylon, contracts, art):** on
 `codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
 Done and seen live in the browser pane on real PostgreSQL:
+
 - Babylon.js replaces PlayCanvas: the global map (ink settlements, roads,
   moving company banner, night light) and the battlefield (hex field, ink
   sprites, rings, health bars, fallen bodies) under the owner's fixed 3/4
@@ -24,8 +25,8 @@ Done and seen live in the browser pane on real PostgreSQL:
 - Codex art (style C): battle units, ground, rubble, map ground, five
   settlements, banner, forest, wolves, the mill beast, captive, scout, five
   place illustrations and a camp; all in `assets/manifest.json`.
-Next: wolf-trail and mill-beast hunts (generalized FIRST HUNT pipeline),
-fists profile, company life (camp, F1, upkeep), M1_LOCAL_PLAYTEST, gate.
+  Next: wolf-trail and mill-beast hunts (generalized FIRST HUNT pipeline),
+  fists profile, company life (camp, F1, upkeep), M1_LOCAL_PLAYTEST, gate.
 
 **Cycle 2 playable — 2026-10-02 (one full FIRST HUNT):** on
 `codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).

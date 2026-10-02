@@ -38,12 +38,6 @@ export async function readWorldClock(
   return { epochMs: row.epoch_ms, startingTick: row.starting_tick, nowMs: String(nowMs), tick };
 }
 
-export function millisecondsUntilTick(clock: WorldClockReading, dueTick: string): string {
-  const deadline = BigInt(clock.epochMs) + (BigInt(dueTick) - BigInt(clock.startingTick)) * 21_600n;
-  const remaining = deadline - BigInt(clock.nowMs);
-  return remaining > 0n ? remaining.toString() : '0';
-}
-
 const LIGHT_DAY_MS = 600_000n;
 const LIGHT_NIGHT_MS = 300_000n;
 

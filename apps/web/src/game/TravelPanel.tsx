@@ -347,7 +347,7 @@ function TransitStatus(props: {
 }
 
 /** Sites visited after the origin, following the departure's edges. */
-export function routeSites(
+function routeSites(
   departure: WorldAvailableDepartureDto,
   map: WorldSurroundingsDto['map'],
 ): string[] {

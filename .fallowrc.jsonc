@@ -5,6 +5,8 @@
   // `pnpm report:quality`, not failed, until a refactor owns them.
   "$schema": "./node_modules/fallow/schema.json",
   "minimumVersion": "3.30.0",
+  // Manual browser probes are run by hand with Playwright, not imported.
+  "entry": ["apps/web/src/*.browser.mjs"],
   "workspaces": {
     "patterns": ["apps/*", "packages/*"],
   },

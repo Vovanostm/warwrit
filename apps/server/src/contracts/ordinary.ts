@@ -47,7 +47,7 @@ const MILL_BEAST = huntProfile('ci.m1.mill-beast.01')!;
 type Rejection = Extract<OrdinaryContractCommandResponseDto, { ok: false }>['code'];
 
 /** Where the company's single field party stands still, or null while moving or fighting. */
-export function standingPlace(state: CompanyCombatAggregateState): ContractPlace | null {
+function standingPlace(state: CompanyCombatAggregateState): ContractPlace | null {
   const lifecycle = state.economy.lifecycle;
   for (const party of lifecycle.parties) {
     if (party.location.kind !== 'AT') continue;
