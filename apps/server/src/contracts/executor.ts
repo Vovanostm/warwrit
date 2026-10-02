@@ -44,6 +44,11 @@ import {
 } from '../company/repository.js';
 import { readFirstHuntTerminalLockSet } from './repository.js';
 import {
+  TerminalAwaitingLeadershipChoice,
+  type FirstHuntTerminalEvidence,
+  type PrepareFirstHuntTerminalEvidence,
+} from './terminal-evidence-types.js';
+import {
   FIRST_HUNT_TERMS,
   readFirstHuntWorldState,
   type FirstHuntHostileState,
@@ -52,66 +57,6 @@ import {
 const COMPANY_SIDE_ID = 'first-hunt-companies';
 const HOSTILE_SIDE_ID = 'first-hunt-hostiles';
 const GROUND_CONTAINER_ID = 'first-hunt-ground-proof';
-
-export type FirstHuntTerminalEvidenceResidual =
-  | 'ENCOUNTER_REPLAY_INVALID'
-  | 'COMPANY_BINDING_MISMATCH'
-  | 'COMPANY_ROOT_NOT_ACTIVE'
-  | 'RECEIPT_TIME_EVIDENCE_MISSING'
-  | 'PHYSICAL_CONSEQUENCE_EVIDENCE_MISSING'
-  | 'DEATH_FINANCE_EVIDENCE_MISSING'
-  | 'TERMINAL_DISPOSITION_EVIDENCE_MISSING'
-  | 'LEARNING_EVIDENCE_MISSING'
-  | 'PRACTICE_PROFILE_INVALID'
-  | 'PRACTICE_CREDIT_EVIDENCE_MISSING'
-  | 'LEADERSHIP_SUCCESSION_EVIDENCE_MISSING'
-  | 'LEADERSHIP_CHOICE_REQUIRED'
-  | 'LEADERSHIP_CHOICE_REJECTED'
-  | 'PROFILE_INVALID';
-
-/** Terminal consequences wait for the owner to name a successor; not a failure. */
-export class TerminalAwaitingLeadershipChoice extends Error {
-  constructor(readonly companyId: string) {
-    super(`FIRST HUNT terminal waits for the leadership choice of ${companyId}`);
-  }
-}
-
-export type FirstHuntTerminalEvidence =
-  | {
-      readonly status: 'READY';
-      readonly consume: ConsumeCombatAggregateInput;
-      readonly finalize: FinalizeCombatAggregateInput;
-      readonly bindingId: string;
-      readonly terminalRevision: number;
-      readonly finalState: CompanyCombatAggregateState;
-      readonly finalStateDigest: string;
-      readonly outcomeDigest: string;
-      readonly practiceProfile: {
-        readonly version: string;
-        readonly profileId: string;
-        readonly challengeLevel: number;
-        readonly digest: string;
-      };
-      readonly contractProfileId: string;
-      readonly contractTermsDigest: string;
-    }
-  | {
-      readonly status: 'NOT_READY';
-      readonly residuals: readonly FirstHuntTerminalEvidenceResidual[];
-    };
-
-export type PrepareFirstHuntTerminalEvidence = (
-  transaction: Transaction<DatabaseSchema>,
-  input: {
-    readonly worldId: string;
-    readonly encounterId: string;
-    readonly terminalRevision: number;
-    readonly companyId: string;
-    readonly previous: CompanyCombatAggregateState;
-    readonly contractProfileId: string;
-    readonly contractTermsDigest: string;
-  },
-) => Promise<FirstHuntTerminalEvidence>;
 
 export function canFirstHuntHelperOptIn(hasAdmission: boolean): boolean {
   return !hasAdmission;

@@ -4,7 +4,7 @@ import * as combat from '@warwrit/game-core';
 import type { EncounterCommandDto, EncounterCommandResponse } from '@warwrit/protocol';
 import { sql, type Kysely, type RawBuilder, type Transaction } from 'kysely';
 
-import type { FirstHuntTerminalEvidence } from '../contracts/executor.js';
+import type { FirstHuntTerminalEvidence } from '../contracts/terminal-evidence-types.js';
 import type { DatabaseSchema } from '../db/database.js';
 import { loadCompanyAggregate } from '../company/repository.js';
 import { createCombatLabFixture } from '../combat-lab/scenario.js';

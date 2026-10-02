@@ -13,7 +13,7 @@ import type {
 import type {
   FirstHuntTerminalEvidence,
   FirstHuntTerminalEvidenceResidual,
-} from '../contracts/executor.js';
+} from '../contracts/terminal-evidence-types.js';
 import { prepareEncounterFoodFacts, travelAdvanceSourceEventId } from '../company/travel-food.js';
 
 export interface TerminalCommandRow {

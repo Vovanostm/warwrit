@@ -2,11 +2,9 @@ import { sql, type Kysely, type Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 import { lockCompanyAggregate } from '../company/repository.js';
-import {
-  applyFirstHuntTerminalEffectsInTransaction,
-  TerminalAwaitingLeadershipChoice,
-} from '../contracts/executor.js';
+import { applyFirstHuntTerminalEffectsInTransaction } from '../contracts/executor.js';
 import { readFirstHuntTerminalLockSet } from '../contracts/repository.js';
+import { TerminalAwaitingLeadershipChoice } from '../contracts/terminal-evidence-types.js';
 import { readWorldClock } from '../world/clock.js';
 import { prepareCompanyTerminalEvidence } from './executor.js';
 
