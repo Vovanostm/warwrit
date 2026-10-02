@@ -1,5 +1,32 @@
 # Warwrit current delivery plan
 
+**Cycle 3 in progress — 2026-10-02 (Babylon, contracts, art):** on
+`codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
+Done and seen live in the browser pane on real PostgreSQL:
+- Babylon.js replaces PlayCanvas: the global map (ink settlements, roads,
+  moving company banner, night light) and the battlefield (hex field, ink
+  sprites, rings, health bars, fallen bodies) under the owner's fixed 3/4
+  camera with pan/zoom. Clicking an enemy picks the target, a free hex the
+  destination. A human attack from the UI landed (raider 60 → 56).
+- Defects found by playing and fixed: live battle patches were never applied
+  in the browser (the room map arrives as iterable ArraySchema; regression
+  test added); the owner's successor choice was always rejected
+  STALE_REVISION (now the chosen survivor leads); the roster showed the
+  fallen as present and the run as active after a total loss; a remount
+  could leave the map on a lost WebGL context.
+- Ordinary contracts per the owner-accepted working profile (migration
+  0012): road tracks, missing herbs, cellar captive, lost scout and the
+  mill-worker chain. Scripted run for «Вороньи Перья»: accept at three
+  issuers, inspect, search, ask, report and deliver; cash 800 → 920 crowns
+  (40 + 80), an exact replay returned the stored response without a second
+  payment. Contracts with a step at the mill now authorize the dangerous
+  road. The mill-worker release waits for the mill-beast hunt.
+- Codex art (style C): battle units, ground, rubble, map ground, five
+  settlements, banner, forest, wolves, the mill beast, captive, scout, five
+  place illustrations and a camp; all in `assets/manifest.json`.
+Next: wolf-trail and mill-beast hunts (generalized FIRST HUNT pipeline),
+fists profile, company life (camp, F1, upkeep), M1_LOCAL_PLAYTEST, gate.
+
 **Cycle 2 playable — 2026-10-02 (one full FIRST HUNT):** on
 `codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
 How to try it: two accounts (Dex fixtures `player-one`/`player-two`), each
