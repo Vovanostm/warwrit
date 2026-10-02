@@ -168,6 +168,18 @@ function readPublicMap(value: unknown): EncounterPublicProjectionDto['map'] | un
   return Object.freeze({ hexes: parsedHexes.values, blocked: parsedBlocked.values });
 }
 
+/** Colyseus array fields decode to iterable ArraySchema objects, not plain arrays. */
+function copyRoomMap(value: unknown): unknown {
+  if (!isRecord(value)) return value;
+  const copyHexes = (hexes: unknown) =>
+    hexes !== null && typeof hexes === 'object' && Symbol.iterator in hexes
+      ? Array.from(hexes as Iterable<unknown>, (hex) =>
+          isRecord(hex) ? { q: hex['q'], r: hex['r'] } : hex,
+        )
+      : hexes;
+  return { hexes: copyHexes(value['hexes']), blocked: copyHexes(value['blocked']) };
+}
+
 function entriesOfUnits(value: unknown): readonly [string, unknown][] | undefined {
   if (value instanceof Map) return [...value.entries()].map(([key, unit]) => [String(key), unit]);
   if (!isRecord(value)) return undefined;
@@ -202,7 +214,7 @@ export function readRoomProjection(
     });
   }
   const hasMap = Object.hasOwn(value, 'map');
-  const map = hasMap ? readPublicMap(value['map']) : undefined;
+  const map = hasMap ? readPublicMap(copyRoomMap(value['map'])) : undefined;
   if (hasMap && !map) return undefined;
   const readNullable = (field: string) => (value[field] === '' ? null : (value[field] ?? null));
   return readEncounterProjection(

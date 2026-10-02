@@ -74,6 +74,42 @@ describe('encounter projection boundary', () => {
     expect(neutralUnitLabel(projection!.units[0]!)).toBe('Участник стороны unfamiliar-side');
   });
 
+  it('reads a reflected room map whose arrays are iterable schema objects', () => {
+    // ArraySchema is iterable but not an Array; rejecting it froze every live patch.
+    class IterableHexes {
+      constructor(private readonly hexes: readonly { q: number; r: number }[]) {}
+      *[Symbol.iterator]() {
+        yield* this.hexes;
+      }
+    }
+    const projection = readRoomProjection(
+      {
+        version: 1,
+        encounterId: 'encounter-1',
+        revision: 7,
+        status: 'active',
+        round: 1,
+        activationId: '',
+        actorUnitId: '',
+        deadlineAt: '',
+        map: {
+          hexes: new IterableHexes([
+            { q: 0, r: 0 },
+            { q: 0, r: 1 },
+          ]),
+          blocked: new IterableHexes([{ q: 0, r: 1 }]),
+        },
+        units: new Map([
+          ['unit-a', { id: 'unit-a', sideId: 'side-a', q: 0, r: 0, health: 3, status: 'active' }],
+        ]),
+      },
+      'encounter-1',
+    );
+
+    expect(projection?.revision).toBe(7);
+    expect(projection?.map?.blocked).toEqual([{ q: 0, r: 1 }]);
+  });
+
   it('reports immutable add, remove, and move deltas', () => {
     const before = toEncounterRenderProjection(readEncounterProjection(activeProjection())!).units;
     const afterDto = activeProjection(5);
