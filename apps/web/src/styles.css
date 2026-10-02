@@ -493,3 +493,31 @@ h1 {
     width: 100%;
   }
 }
+
+.encounter-actions {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.8rem 0 0;
+  padding: 0.8rem;
+  border: 1px solid #45403a;
+  background: #191714;
+}
+.encounter-actions-hint {
+  margin: 0;
+  color: #aaa69d;
+  font-size: 0.8rem;
+}
+.encounter-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.encounter-action-row select {
+  min-width: 14rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid #45403a;
+  background: #11100e;
+  color: #e8dcc2;
+  font: inherit;
+}

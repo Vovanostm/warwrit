@@ -324,6 +324,88 @@ export function EncounterPanel(props: {
                 setDestinationKey(`${q},${r}`);
             }}
           />
+          {canIssue && (
+            <div className="encounter-actions" aria-label="Команды текущего участника">
+              <p className="encounter-actions-hint">
+                Ход {actorLabel}: щёлкните врага или клетку на поле, затем выберите действие.
+                Дальность и затраты проверяет сервер.
+              </p>
+              {attackTargets.length > 0 && (
+                <div className="encounter-action-row">
+                  <select
+                    aria-label="Цель другой стороны"
+                    value={selectedTargetId}
+                    onChange={(event) => setSelectedTargetId(event.currentTarget.value)}
+                  >
+                    {attackTargets.map((unit) => (
+                      <option key={unit.id} value={unit.id}>
+                        {unitLabel(unit, ourNames)} · {unit.health} здоровья
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    className="primary-action button-action"
+                    type="button"
+                    disabled={!selectedTargetId}
+                    onClick={() =>
+                      void submitIntent({ type: 'attack', targetId: selectedTargetId })
+                    }
+                  >
+                    Атаковать
+                  </button>
+                </div>
+              )}
+              {moveDestinations.length > 0 && (
+                <div className="encounter-action-row">
+                  <select
+                    aria-label="Клетка для перемещения"
+                    value={destinationKey}
+                    onChange={(event) => setDestinationKey(event.currentTarget.value)}
+                  >
+                    {moveDestinations.map(({ q, r }) => (
+                      <option key={`${q},${r}`} value={`${q},${r}`}>
+                        клетка {q}, {r}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    className="button-action"
+                    type="button"
+                    disabled={!destinationKey}
+                    onClick={() => {
+                      const [q, r] = destinationKey.split(',').map(Number);
+                      void submitIntent({ type: 'move', to: { q: q!, r: r! } });
+                    }}
+                  >
+                    Переместиться
+                  </button>
+                </div>
+              )}
+              <div className="encounter-action-row">
+                <button
+                  className="button-action"
+                  type="button"
+                  onClick={() => void submitIntent({ type: 'defend' })}
+                >
+                  Защищаться
+                </button>
+                <button
+                  className="button-action"
+                  type="button"
+                  onClick={() => void submitIntent({ type: 'wait' })}
+                >
+                  Ждать (конец хода)
+                </button>
+                <button
+                  className="button-action"
+                  type="button"
+                  onClick={() => void submitIntent({ type: 'retreat' })}
+                >
+                  Отступить
+                </button>
+              </div>
+            </div>
+          )}
           <ul className="encounter-roster" aria-label="Открытая сводка участников">
             {projection.units.map((unit) => {
               const canSelect = selectable.has(unit.id);
@@ -353,91 +435,6 @@ export function EncounterPanel(props: {
               );
             })}
           </ul>
-          {canIssue && (
-            <div className="encounter-actions" aria-label="Команды текущего участника">
-              <p>Текущий ход: выберите одно действие для указанного участника.</p>
-              {attackTargets.length > 0 && (
-                <>
-                  <label>
-                    Цель другой стороны
-                    <select
-                      value={selectedTargetId}
-                      onChange={(event) => setSelectedTargetId(event.currentTarget.value)}
-                    >
-                      {attackTargets.map((unit) => (
-                        <option key={unit.id} value={unit.id}>
-                          {unitLabel(unit, ourNames)} · {unit.health} здоровья
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <button
-                    className="primary-action button-action"
-                    type="button"
-                    disabled={!selectedTargetId}
-                    onClick={() =>
-                      void submitIntent({ type: 'attack', targetId: selectedTargetId })
-                    }
-                  >
-                    Атаковать выбранную цель
-                  </button>
-                </>
-              )}
-              {moveDestinations.length > 0 && (
-                <>
-                  <label>
-                    Открытая клетка карты
-                    <select
-                      value={destinationKey}
-                      onChange={(event) => setDestinationKey(event.currentTarget.value)}
-                    >
-                      {moveDestinations.map(({ q, r }) => (
-                        <option key={`${q},${r}`} value={`${q},${r}`}>
-                          q {q}, r {r}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <button
-                    className="quiet-action"
-                    type="button"
-                    disabled={!destinationKey}
-                    onClick={() => {
-                      const [q, r] = destinationKey.split(',').map(Number);
-                      void submitIntent({ type: 'move', to: { q: q!, r: r! } });
-                    }}
-                  >
-                    Переместиться
-                  </button>
-                </>
-              )}
-              <p className="state-note">
-                Дальность, путь и затраты проверяет сервер; эта схема показывает только открытые
-                клетки и не предсказывает результат.
-              </p>
-              <button
-                className="primary-action button-action"
-                type="button"
-                onClick={() => void submitIntent({ type: 'defend' })}
-              >
-                Защищаться
-              </button>
-              <button
-                className="quiet-action"
-                type="button"
-                onClick={() => void submitIntent({ type: 'wait' })}
-              >
-                Ждать
-              </button>
-              <button
-                className="quiet-action"
-                type="button"
-                onClick={() => void submitIntent({ type: 'retreat' })}
-              >
-                Отступить
-              </button>
-            </div>
-          )}
           {actorIsOurs &&
             !canIssue &&
             projection.status === 'active' &&
