@@ -18,9 +18,12 @@ import {
   readCompanyCombatAggregateState,
   publicRevision,
   PHYSICAL_POLICY_VERSION,
+  HUNT_PROFILES,
+  huntProfile,
 } from '@warwrit/game-core';
 import type {
   CompanyCommand,
+  CampSiteEvidence,
   CompanyCombatAggregateState,
   EconomyContext,
   ItemAccessEvidence,
@@ -53,6 +56,7 @@ import {
 } from './travel-food.js';
 import type { TravelFoodRouteBoundary } from './travel-food.js';
 import { readWorldClock } from '../world/clock.js';
+import { readHuntWorldState, selectHuntWorldRow } from '../contracts/first-hunt-runtime.js';
 
 const preparedCompanyCommand: unique symbol = Symbol('prepared-company-command');
 const worldRequestKeyFields = ['commandId', 'companyId', 'kind', 'requestKey', 'worldId'];
@@ -205,7 +209,9 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   if (
     input.request.type !== 'RenameCompany' &&
     input.request.type !== 'ChoosePerk' &&
-    input.request.type !== 'EquipItem'
+    input.request.type !== 'EquipItem' &&
+    input.request.type !== 'BeginFieldCamp' &&
+    input.request.type !== 'EndFieldCamp'
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
@@ -227,6 +233,38 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   if (input.request.type === 'EquipItem' && equipAccess === undefined)
     return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
 
+  // A field camp needs a server-attested site: the party stands still where no living
+  // hostile is present. Striking a camp names the open agreement; nothing else is chosen.
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  const openCamp =
+    party === undefined
+      ? undefined
+      : state.economy.finance.maintenance.find(
+          (mode) =>
+            mode.kind === 'FIELD_CAMP' && mode.partyId === party.partyId && mode.endedAt === null,
+        );
+  let campSite: CampSiteEvidence | undefined;
+  if (input.request.type === 'BeginFieldCamp') {
+    if (!party || party.location.kind !== 'AT' || openCamp)
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    campSite = {
+      kind: 'CAMP_SITE',
+      id: randomUUID(),
+      companyId,
+      worldId: input.worldId,
+      revision: canonicalRevision(lifecycle.revision),
+      sourceEventId: randomUUID(),
+      atTick: campaignTick(clock.tick),
+      partyId: party.partyId,
+      location: party.location,
+      stationary: true,
+      conflict: await hostilesPresent(input.transaction, input.worldId, party.location.siteId),
+    };
+    if (campSite.conflict) return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+  }
+  if (input.request.type === 'EndFieldCamp' && !openCamp)
+    return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+
   // A stationary company whose root lags the world clock settles the elapsed food
   // from its own carried stock inside this same command; nothing is invented.
   const food = prepareStationaryFoodFacts(state, clock.tick, input.request.commandId);
@@ -246,26 +284,30 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     expectedRevision: publicRevision(input.request.expectedPublicRevision),
     campaignTick: campaignTick(clock.tick),
     rulesetId: COMPANY_RULESET_ID,
-    type: input.request.type,
+    type: input.request.type === 'EndFieldCamp' ? 'EndMaintenance' : input.request.type,
     payload:
-      input.request.type === 'RenameCompany'
-        ? {
-            companyId,
-            name: input.request.payload['name'],
-            bannerId: input.request.payload['bannerId'],
-          }
-        : input.request.type === 'EquipItem'
-          ? {
-              characterId: input.request.payload['characterId'],
-              itemId: input.request.payload['itemId'],
-              slotId: input.request.payload['slotId'],
-              accessEvidenceId: equipAccess?.id,
-            }
-          : {
-              characterId: input.request.payload['characterId'],
-              perkId: input.request.payload['perkId'],
-              milestone: input.request.payload['milestone'],
-            },
+      input.request.type === 'BeginFieldCamp'
+        ? { partyId: party?.partyId, siteEligibilityId: campSite?.id }
+        : input.request.type === 'EndFieldCamp'
+          ? { agreementOrCampId: openCamp?.agreementId, reason: 'LEAVE' }
+          : input.request.type === 'RenameCompany'
+            ? {
+                companyId,
+                name: input.request.payload['name'],
+                bannerId: input.request.payload['bannerId'],
+              }
+            : input.request.type === 'EquipItem'
+              ? {
+                  characterId: input.request.payload['characterId'],
+                  itemId: input.request.payload['itemId'],
+                  slotId: input.request.payload['slotId'],
+                  accessEvidenceId: equipAccess?.id,
+                }
+              : {
+                  characterId: input.request.payload['characterId'],
+                  perkId: input.request.payload['perkId'],
+                  milestone: input.request.payload['milestone'],
+                },
   };
 
   const parsed = parseCompanyCommand(commandValue);
@@ -279,9 +321,16 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     canonicalRevision: lifecycle.revision,
     atTick: campaignTick(clock.tick),
     completeGraph: true,
-    contactIds: equipAccess ? [equipAccess.operatorId] : [],
+    // The player commands a camp through the people standing with the party.
+    contactIds: equipAccess
+      ? [equipAccess.operatorId]
+      : (input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp') && party
+        ? lifecycle.characters
+            .filter((character) => character.presence.fieldPartyId === party.partyId)
+            .map((character) => character.identity.characterId)
+        : [],
     facts: [],
-    financeFacts: [],
+    financeFacts: campSite ? [campSite] : [],
     physicalFacts: [...foodFacts, ...(equipAccess ? [equipAccess] : [])],
     practiceFacts: [],
   };
@@ -293,12 +342,24 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     equipRequest !== undefined &&
     prepared.next.physical?.items.find((item) => item.itemId === equipRequest.itemId)?.equipped
       ?.characterId === equipRequest.characterId;
+  const campChanged =
+    (input.request.type === 'BeginFieldCamp' &&
+      prepared.next.finance.maintenance.some(
+        (mode) =>
+          mode.kind === 'FIELD_CAMP' && mode.partyId === party?.partyId && mode.endedAt === null,
+      )) ||
+    (input.request.type === 'EndFieldCamp' &&
+      prepared.next.finance.maintenance.some(
+        (mode) => mode.agreementId === openCamp?.agreementId && mode.endedAt !== null,
+      ));
   if (
     prepared.replayed ||
     prepared.receipt.requirements.length !== 0 ||
     (input.request.type === 'EquipItem'
       ? !equipped
-      : prepared.receipt.lifecycleReceipt === null || prepared.receipt.events.length === 0)
+      : input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp'
+        ? !campChanged
+        : prepared.receipt.lifecycleReceipt === null || prepared.receipt.events.length === 0)
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
@@ -330,25 +391,38 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
         resultingRevision: nextLifecycle.revision,
       },
       auditEvents:
-        input.request.type === 'EquipItem'
+        input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp'
           ? [
               {
                 eventId: randomUUID(),
                 revision: nextLifecycle.revision,
                 event: {
-                  type: 'ItemEquipped',
+                  type:
+                    input.request.type === 'BeginFieldCamp' ? 'FieldCampBegun' : 'FieldCampEnded',
                   commandId: parsed.command.commandId,
-                  characterId: input.request.payload['characterId'],
-                  itemId: input.request.payload['itemId'],
-                  slotId: input.request.payload['slotId'],
+                  partyId: party?.partyId,
                 },
               },
             ]
-          : prepared.receipt.events.map((event) => ({
-              eventId: event.id,
-              revision: nextLifecycle.revision,
-              event,
-            })),
+          : input.request.type === 'EquipItem'
+            ? [
+                {
+                  eventId: randomUUID(),
+                  revision: nextLifecycle.revision,
+                  event: {
+                    type: 'ItemEquipped',
+                    commandId: parsed.command.commandId,
+                    characterId: input.request.payload['characterId'],
+                    itemId: input.request.payload['itemId'],
+                    slotId: input.request.payload['slotId'],
+                  },
+                },
+              ]
+            : prepared.receipt.events.map((event) => ({
+                eventId: event.id,
+                revision: nextLifecycle.revision,
+                event,
+              })),
     },
   );
   return { kind: 'COMMITTED', response };
@@ -408,7 +482,7 @@ export async function persistFirstHuntCompanyTransition(input: {
   if (
     (await findOwnedCompanyId(input.transaction, lifecycle.worldId, input.accountId)) !==
       lifecycle.companyId ||
-    input.itemId !== 'proof.raider-standard.old-mill.01' ||
+    huntProfile(input.transition.instanceId)?.proofId !== input.itemId ||
     input.transition.operation !== input.operation ||
     next.economy.lifecycle.worldId !== lifecycle.worldId ||
     next.economy.lifecycle.companyId !== lifecycle.companyId ||
@@ -1132,4 +1206,24 @@ export async function catchUpStationaryCompany(input: {
     },
   );
   return next;
+}
+
+/** Any living hostile of a hunt standing at this site makes a field camp a conflict. */
+async function hostilesPresent(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  siteId: string,
+): Promise<boolean> {
+  for (const hunt of HUNT_PROFILES) {
+    if (hunt.objectiveLocation.siteId !== siteId) continue;
+    const row = await selectHuntWorldRow(transaction, worldId, hunt, false);
+    if (!row) continue;
+    if (
+      readHuntWorldState(worldId, hunt, row).hostiles.some(
+        (hostile) => (hostile.currentPools['health'] ?? 0) > 0,
+      )
+    )
+      return true;
+  }
+  return false;
 }

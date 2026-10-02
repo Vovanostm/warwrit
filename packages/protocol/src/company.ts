@@ -119,6 +119,8 @@ export interface CompanyHoldingsDto {
     /** Unresolved physical conditions (wounds, illness) by definition id. */
     readonly conditions: readonly string[];
   }[];
+  /** The company's party is in a field camp that covers its current food. */
+  readonly fieldCamp: boolean;
 }
 export interface CompanyReadResponseDto {
   readonly schemaVersion: 1;
@@ -172,6 +174,8 @@ export const ORDINARY_PLAYER_COMPANY_COMMAND_TYPES = [
   'RenameCompany',
   'TransferItem',
   'EquipItem',
+  'BeginFieldCamp',
+  'EndFieldCamp',
   'RepairItem',
   'ClaimLoot',
 ] as const;
@@ -189,6 +193,10 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly perkId: string;
     readonly milestone: 25 | 60;
   };
+  /** Pitch a field camp where the party stands still; the server attests the site. */
+  readonly BeginFieldCamp: Record<string, never>;
+  /** Strike the party's field camp. */
+  readonly EndFieldCamp: Record<string, never>;
   /** Put an item the character already carries into a body slot; access is server-attested. */
   readonly EquipItem: {
     readonly characterId: string;

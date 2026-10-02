@@ -42,6 +42,7 @@ export function GameShell(props: {
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: CompanyHoldingsDto['items'][number]) => void;
+  readonly onToggleCamp: (pitch: boolean) => void;
   readonly placeSlot: ReactNode;
   readonly battleSlot: ReactNode;
 }) {
@@ -234,6 +235,35 @@ export function GameShell(props: {
                             : 'Прямого пути отсюда сейчас нет.'
                         }`}
                   </p>
+                  {!travelling && party?.location === focusSite.siteId && (
+                    <div className="camp-row">
+                      {props.holdings?.fieldCamp ? (
+                        <>
+                          <p className="state-note">
+                            Отряд стоит лагерем: еду добывают на месте, пайки не тратятся. Чтобы
+                            выступить, сверните лагерь.
+                          </p>
+                          <button
+                            type="button"
+                            className="quiet-action"
+                            disabled={props.equipBusy}
+                            onClick={() => props.onToggleCamp(false)}
+                          >
+                            Свернуть лагерь
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          className="quiet-action"
+                          disabled={props.equipBusy}
+                          onClick={() => props.onToggleCamp(true)}
+                        >
+                          Разбить лагерь
+                        </button>
+                      )}
+                    </div>
+                  )}
                   {reading.dto.observerSiteId === focusSite.siteId && (
                     <>
                       <ObservedHostiles observed={reading.dto.observedHostiles ?? []} />

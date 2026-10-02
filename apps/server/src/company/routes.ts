@@ -391,6 +391,8 @@ function parseOrdinaryCompanyCommandV2(
       (payload['milestone'] !== 25 && payload['milestone'] !== 60)
     )
       return undefined;
+  } else if (value['type'] === 'BeginFieldCamp' || value['type'] === 'EndFieldCamp') {
+    if (Object.keys(payload).length !== 0) return undefined;
   } else if (value['type'] === 'EquipItem') {
     if (
       canonicalJson(Object.keys(payload).sort()) !==

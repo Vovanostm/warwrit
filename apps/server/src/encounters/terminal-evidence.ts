@@ -217,7 +217,7 @@ export function prepareFirstHuntTerminalEvidence(input: {
   )
     return notReady('ENCOUNTER_REPLAY_INVALID');
   if (
-    input.contractProfileId !== combat.FIRST_HUNT_PROFILE_ID ||
+    !combat.HUNT_PROFILES.some((hunt) => hunt.profileId === input.contractProfileId) ||
     !/^[0-9a-f]{64}$/u.test(input.contractTermsDigest)
   )
     return notReady('PROFILE_INVALID');

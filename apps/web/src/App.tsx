@@ -1069,6 +1069,47 @@ export function App() {
     [refreshWorldParty, restoreJourney],
   );
 
+  const toggleCamp = useCallback(
+    async (scope: WorldTravelScope, expectedPublicRevision: string, pitch: boolean) => {
+      setEquipBusy(true);
+      setEquipMessage(undefined);
+      try {
+        const response = await fetch(`${apiBaseUrl}/company/commands`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: {
+            'content-type': 'application/json',
+            [WORLD_EXPECTED_COMPANY_ID_HEADER]: scope.companyId,
+          },
+          body: JSON.stringify({
+            schemaVersion: 2,
+            commandId: crypto.randomUUID(),
+            expectedPublicRevision,
+            type: pitch ? 'BeginFieldCamp' : 'EndFieldCamp',
+            payload: {},
+          }),
+        });
+        if (response.status === 401) {
+          void restoreJourney();
+          return;
+        }
+        if (!response.ok)
+          setEquipMessage(
+            pitch
+              ? 'Лагерь здесь не разбить: отряд в пути, рядом враги или лагерь уже стоит.'
+              : 'Лагерь не удалось свернуть. Данные обновлены — повторите.',
+          );
+        await refreshWorldParty(scope);
+      } catch {
+        setEquipMessage('Нет связи с сервером. Проверьте лагерь после обновления.');
+      } finally {
+        setEquipBusy(false);
+      }
+    },
+    [refreshWorldParty, restoreJourney],
+  );
+
   const signOut = async () => {
     if (signingOut.current) return;
     signingOut.current = true;
@@ -1128,6 +1169,7 @@ export function App() {
         onEquip={(characterId, item) =>
           void equipItem(scope, journey.world.publicRevision, characterId, item)
         }
+        onToggleCamp={(pitch) => void toggleCamp(scope, journey.world.publicRevision, pitch)}
         placeSlot={
           <>
             <ContractBoard

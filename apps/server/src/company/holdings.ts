@@ -73,5 +73,8 @@ export function projectCompanyHoldings(
     };
   });
 
-  return { cashQ, wallets, items, people };
+  const fieldCamp = state.economy.finance.maintenance.some(
+    (mode) => mode.kind === 'FIELD_CAMP' && mode.endedAt === null,
+  );
+  return { cashQ, wallets, items, people, fieldCamp };
 }

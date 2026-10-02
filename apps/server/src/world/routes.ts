@@ -810,6 +810,9 @@ async function executeV2TravelDeparture(input: {
       return v2Rejected(input.input.commandId, currentRevision, 'STALE_ROUTE_EPOCH');
     if (partyState.location.kind !== 'AT' || routeRow?.status === 'IN_TRANSIT')
       return v2Rejected(input.input.commandId, currentRevision, 'INVALID_ROUTE');
+    // A field camp covers food only where it stands; strike it before marching.
+    if (hasOpenFieldCamp(state, partyState.partyId))
+      return v2Rejected(input.input.commandId, currentRevision, 'UNSUPPORTED_ACTION');
     if (routeRow && !isValidCompletedRouteForDeparture(routeRow, state))
       return v2Rejected(input.input.commandId, currentRevision, 'INVALID_ROUTE');
     const clock = await readWorldClock(transaction, input.worldId, input.now, true);
@@ -1445,6 +1448,8 @@ function listAvailableDepartures(
   const root = materializedRoot(offerState);
   const atTick = root.lifecycle.campaignTick;
   if (clockTick !== atTick) return [];
+  if (root.finance.maintenance.some((mode) => mode.kind === 'FIELD_CAMP' && mode.endedAt === null))
+    return [];
   if (root.finance.processedTick !== atTick || root.physical.processedTick !== atTick) return [];
 
   const region = requireRegion();
@@ -2327,4 +2332,10 @@ function followableRouteFoodContainerIds(
     })
     .map((container) => container.containerId)
     .toSorted();
+}
+
+function hasOpenFieldCamp(state: CompanyCombatAggregateState, partyId: string): boolean {
+  return state.economy.finance.maintenance.some(
+    (mode) => mode.kind === 'FIELD_CAMP' && mode.partyId === partyId && mode.endedAt === null,
+  );
 }
