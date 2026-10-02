@@ -47,10 +47,20 @@ export function projectCompanyHoldings(
       slot: COMPANY_CATALOGUE.items.find((entry) => entry.id === item.definitionId)?.slot ?? null,
     }));
 
+  // Deaths the company witnessed in its own resolved encounters; lifecycle knowledge is only
+  // refreshed by later observations, so the roster would otherwise show the fallen as present.
+  const fallen = new Set(
+    state.encounter.completed.flatMap((record) =>
+      record.dispositions
+        .filter((disposition) => disposition.status === 'DEAD')
+        .map((disposition) => disposition.characterId as string),
+    ),
+  );
   const people = [...characterIds].map((characterId) => {
     const vitals = physical?.vitals.find((entry) => entry.characterId === characterId);
     return {
       characterId,
+      fallen: fallen.has(characterId),
       currentHealth: vitals?.currentHealth ?? null,
       maximumHealth: vitals?.maximumHealth ?? null,
       currentStamina: vitals?.currentStamina ?? null,

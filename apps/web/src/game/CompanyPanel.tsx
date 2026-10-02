@@ -34,11 +34,9 @@ export function CompanyPanel(props: {
           const carried =
             holdings?.items.filter((item) => item.carrierCharacterId === character.characterId) ??
             [];
+          const status = body?.fallen ? 'DEAD' : character.knownStatus;
           return (
-            <li
-              key={character.characterId}
-              className={`person person-${character.knownStatus.toLowerCase()}`}
-            >
+            <li key={character.characterId} className={`person person-${status.toLowerCase()}`}>
               <div className="person-head">
                 <span className="person-name">
                   {character.name}
@@ -46,7 +44,7 @@ export function CompanyPanel(props: {
                     <span className="leader-mark"> · глава</span>
                   )}
                 </span>
-                <span className="person-status">{statusLabel(character.knownStatus)}</span>
+                <span className="person-status">{statusLabel(status)}</span>
               </div>
               {body && body.maximumHealth !== null && (
                 <Meter
@@ -82,23 +80,22 @@ export function CompanyPanel(props: {
                             : ' · в руках'
                           : ''}
                       </span>
-                      {item.slot !== null &&
-                        item.equippedBy === null &&
-                        character.knownStatus === 'AVAILABLE' && (
-                          <button
-                            type="button"
-                            className="gear-action"
-                            disabled={props.equipBusy}
-                            onClick={() => props.onEquip(character.characterId, item)}
-                          >
-                            {item.slot === 'HEAD' || item.slot === 'BODY' ? 'надеть' : 'взять'}
-                          </button>
-                        )}
+                      {item.slot !== null && item.equippedBy === null && status === 'AVAILABLE' && (
+                        <button
+                          type="button"
+                          className="gear-action"
+                          disabled={props.equipBusy}
+                          onClick={() => props.onEquip(character.characterId, item)}
+                        >
+                          {item.slot === 'HEAD' || item.slot === 'BODY' ? 'надеть' : 'взять'}
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ul>
               )}
               {body &&
+                status === 'AVAILABLE' &&
                 !carried.some((item) => item.equippedBy !== null && item.slot === 'MAIN_HAND') && (
                   <p className="person-warning">Без оружия в руках в бой не выйти.</p>
                 )}

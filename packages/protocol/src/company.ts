@@ -110,6 +110,8 @@ export interface CompanyHoldingsDto {
   }[];
   readonly people: readonly {
     readonly characterId: string;
+    /** Died in an encounter this company witnessed. */
+    readonly fallen: boolean;
     readonly currentHealth: number | null;
     readonly maximumHealth: number | null;
     readonly currentStamina: number | null;
