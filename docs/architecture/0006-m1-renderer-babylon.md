@@ -26,6 +26,15 @@ pipeline gate before first playable. Pixel style, camera angle, normal/depth
 maps, direction count and asset recipes remain unspecified; implementation is
 pending.
 
+## Art style and camera — 2026-10-02
+
+Owner decision after the Codex style gate (`assets/art/m1/style/`): unit art
+uses style C, ink line with flat wash («C — чернила»), sharing the painted
+riverbank tile and leader portrait palette. Camera: fixed 3/4 isometric view
+with pan (mouse/WASD) and wheel zoom, no rotation («Фикс. 3/4 изометрия»), so
+sprites need one facing angle. Normal/depth maps and the production asset list
+remain to be specified.
+
 ## World map direction — 2026-10-01
 
 The owner stated: «Карта мира - глобальная карта, на которой перемещаются npc и

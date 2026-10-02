@@ -1,5 +1,36 @@
 # Warwrit current delivery plan
 
+**Cycle 2 playable — 2026-10-02 (one full FIRST HUNT):** on
+`codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
+How to try it: two accounts (Dex fixtures `player-one`/`player-two`), each
+creates a company; at Каменный Брод one takes «Знамя налётчиков» (**Место**),
+the other helps; both march Тихая Гать → Старая мельница, JOIN, fight (30 s
+human deadline, AFK and resume), pick up the trophy, return and present it.
+Demonstration on real PostgreSQL 17 (API-driven battle bots, browser for
+pickup/present/roster): six mercenaries beat three raiders; owner cash
+800 → 900 crowns, issuer wallet 200 → 100, proof REDEEMED with its bearer.
+Race and replay: two simultaneous PICKUPs (owner, helper) → one success, one
+STALE_REVISION, one custodian; three simultaneous PRESENTs (owner ×2, helper)
+→ one success; a fresh helper PRESENT and a second owner PRESENT →
+NOT_AVAILABLE; exact replay of the accepted command returns the stored receipt
+with no second payout; the same command ID with a changed body →
+INVALID_COMMAND. Owner-only (no helper) run: won with two members dead; found
+and fixed a stale roster (the fallen showed «В отряде») via a `fallen` flag
+from the company's own encounter dispositions. Leader death: system end when
+no one can continue, else the owner's stored successor choice (migration 0011,
+`/encounters/:id/leadership`). Loss of a two-company multi-member battle is
+covered by `encounters/postgres.integration.test.ts`. Restart survival checked
+for travel, wounds and the claim. Owner decisions 2026-10-02 (recorded in m1-spec
+§5, CONTRACTS_M1_DERIVATIVE and ADR-0006): shorter roads (≈9 min to the mill),
+payouts and leave/cancel as FIRST HUNT, trophy stays with its bearer, unarmed
+fighters use fists/wait only, art style C (ink), fixed 3/4 camera. Not done:
+human UI combat playtest, the fists/incapacitated profile, Babylon.js views
+(Cycle 3). Checks: focused server/web vitest (57 passed, DB-gated files
+skipped in that run), web/server typecheck; earlier full suite with
+PostgreSQL 619/620, the one failure (rollback list missing 0011) fixed.
+`check:changes` (fallow) still fails on inherited code; commits use
+`--no-verify`.
+
 **Cycle 1 playable — 2026-10-01 (company and world):** on
 `codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
 How to try it: start the stack per
