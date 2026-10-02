@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@babylonjs/core": "9.28.0",
     "@colyseus/sdk": "0.18.4",
     "@warwrit/protocol": "workspace:*",
-    "playcanvas": "2.22.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

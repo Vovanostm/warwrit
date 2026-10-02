@@ -284,8 +284,8 @@ export function FirstHunt(props: {
             <dd>{firstHuntStateLabel(contract)}</dd>
             <dt>Слот помощника</dt>
             <dd>{contract.helperSlot === 'AVAILABLE' ? 'свободен' : 'занят'}</dd>
-            <dt>Ваш JOIN</dt>
-            <dd>{contract.yourJoinIntent ? 'намерение записано' : 'не записан'}</dd>
+            <dt>Готовность к бою</dt>
+            <dd>{contract.yourJoinIntent ? 'отряд готов' : 'не заявлена'}</dd>
           </dl>
           <p className="state-note">{firstHuntGuidance(contract, props.location)}</p>
           {contract.yourProof && (
@@ -335,7 +335,7 @@ export function FirstHunt(props: {
                 disabled={actionsDisabled}
                 onClick={() => void submit('JOIN')}
               >
-                Подать JOIN для боя
+                Вступить в бой
               </button>
             )}
             {contract.knownState === 'PROOF_AVAILABLE' && pickupTargets.length > 0 && (
@@ -509,9 +509,9 @@ export function firstHuntGuidance(
   }
   if (contract.knownState === 'ACTIVE' && contract.yourRole !== 'NONE') {
     if (contract.yourJoinIntent)
-      return 'Ваше намерение JOIN записано. Сервер активирует бой, когда выполнены условия допуска.';
+      return 'Отряд готов к бою. Бой начнётся, когда выполнены условия допуска.';
     return currentSiteId === objective
-      ? 'Подайте JOIN здесь, у цели; участие второй компании остаётся добровольным.'
+      ? 'Вы у цели: вступите в бой. Участие второй компании добровольно.'
       : `Следуйте по доступным маршрутам к ${locationLabel(objective)} и проверьте расчёт припасов перед опасным переходом.`;
   }
   if (contract.knownState === 'ENCOUNTER_ACTIVE')

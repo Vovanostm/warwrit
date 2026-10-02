@@ -1,4 +1,113 @@
 {
   "schemaVersion": 1,
-  "assets": []
+  "assets": [
+    {
+      "id": "art.m1.battle.ground-grass",
+      "path": "assets/art/m1/battle/ground-grass.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/ground-grass.json",
+      "generatedAt": "2026-10-02T10:59:09.454Z"
+    },
+    {
+      "id": "art.m1.battle.ground-mud",
+      "path": "assets/art/m1/battle/ground-mud.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/ground-mud.json",
+      "generatedAt": "2026-10-02T11:00:36.657Z"
+    },
+    {
+      "id": "art.m1.battle.obstacle-rubble",
+      "path": "assets/art/m1/battle/obstacle-rubble.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/obstacle-rubble.json",
+      "generatedAt": "2026-10-02T11:01:40.833Z"
+    },
+    {
+      "id": "art.m1.battle.unit-merc-spear",
+      "path": "assets/art/m1/battle/unit-merc-spear.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-merc-spear.json",
+      "generatedAt": "2026-10-02T10:54:33.798Z"
+    },
+    {
+      "id": "art.m1.battle.unit-merc-sword",
+      "path": "assets/art/m1/battle/unit-merc-sword.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-merc-sword.json",
+      "generatedAt": "2026-10-02T10:52:11.960Z"
+    },
+    {
+      "id": "art.m1.battle.unit-raider-axe",
+      "path": "assets/art/m1/battle/unit-raider-axe.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-raider-axe.json",
+      "generatedAt": "2026-10-02T10:56:01.232Z"
+    },
+    {
+      "id": "art.m1.battle.unit-raider-spear",
+      "path": "assets/art/m1/battle/unit-raider-spear.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-raider-spear.json",
+      "generatedAt": "2026-10-02T10:57:29.164Z"
+    },
+    {
+      "id": "art.m1.style.portrait-leader",
+      "path": "assets/art/m1/style/portrait-leader.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/portrait-leader.json",
+      "generatedAt": "2026-10-01T23:48:46.986Z"
+    },
+    {
+      "id": "art.m1.style.tile-riverbank",
+      "path": "assets/art/m1/style/tile-riverbank.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/tile-riverbank.json",
+      "generatedAt": "2026-10-01T23:47:50.500Z"
+    },
+    {
+      "id": "art.m1.style.unit-a-painted",
+      "path": "assets/art/m1/style/unit-a-painted.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/unit-a-painted.json",
+      "generatedAt": "2026-10-01T23:44:09.090Z"
+    },
+    {
+      "id": "art.m1.style.unit-b-pixel",
+      "path": "assets/art/m1/style/unit-b-pixel.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/unit-b-pixel.json",
+      "generatedAt": "2026-10-01T23:55:34.252Z"
+    },
+    {
+      "id": "art.m1.style.unit-c-ink",
+      "path": "assets/art/m1/style/unit-c-ink.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/unit-c-ink.json",
+      "generatedAt": "2026-10-01T23:50:38.332Z"
+    }
+  ]
 }

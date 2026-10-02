@@ -12,7 +12,7 @@ import {
   type EncounterConnectionStatus,
   type EncounterScope,
 } from './encounter/connection.js';
-import { PlayCanvasView } from './renderer/PlayCanvasView.js';
+import { BattleField } from './renderer/BattleField.js';
 import { LeadershipChoice } from './encounter/LeadershipChoice.js';
 import {
   canIssueEncounterIntent,
@@ -52,6 +52,17 @@ const HOSTILE_LABELS: Readonly<Record<string, string>> = {
 };
 
 /** Our people by name, known hostiles by kind, the other company's people neutrally. */
+/** Wall-clock milliseconds refreshed every `intervalMs`, or null when not ticking. */
+function useWallClock(intervalMs: number | null): number | null {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (intervalMs === null) return;
+    const id = setInterval(() => setNow(Date.now()), intervalMs);
+    return () => clearInterval(id);
+  }, [intervalMs]);
+  return intervalMs === null ? null : now;
+}
+
 function unitLabel(
   unit: { readonly id: string; readonly sideId: string },
   ourNames: Readonly<Record<string, string>>,
@@ -191,6 +202,11 @@ export function EncounterPanel(props: {
       updateUnitSelection(actorUnitId);
   }, [actorIsOurs, actorUnitId]);
   const actorUnit = projection?.units.find((unit) => unit.id === actorUnitId);
+  const clock = useWallClock(projection?.status === 'active' ? 1000 : null);
+  const secondsLeft =
+    projection?.deadlineAt && clock !== null
+      ? Math.max(0, Math.ceil((Date.parse(projection.deadlineAt) - clock) / 1000))
+      : null;
   const ourNames = props.unitNames ?? {};
   const actorLabel = actorUnit ? unitLabel(actorUnit, ourNames) : 'участник вне открытой сводки';
   const pendingCommand = scopedState?.pendingCommand;
@@ -259,7 +275,7 @@ export function EncounterPanel(props: {
               : actorUnitId === null
                 ? 'Сервер пока не назначил следующий ход.'
                 : actorIsOurs
-                  ? `Ваш ход · ${actorLabel}`
+                  ? `Ваш ход · ${actorLabel}${secondsLeft === null ? '' : ` · осталось ${secondsLeft} с`}`
                   : `Ход другой стороны · ${actorLabel}`}
           </p>
           {scopedState?.grant?.selfAfk === true && (
@@ -286,11 +302,27 @@ export function EncounterPanel(props: {
           {scopedState?.grant?.selfAfk === undefined && scopedState?.status === 'connected' && (
             <p className="state-note">Состояние бездействия недоступно в этой версии службы.</p>
           )}
-          <PlayCanvasView
+          <BattleField
             projection={projection}
-            controllableUnitIds={scopedState?.grant?.controllableUnitIds ?? []}
+            ownUnitIds={Object.keys(ourNames)}
             selectedUnitId={selectedUnitId}
-            onSelectUnit={updateUnitSelection}
+            targetUnitId={canIssue && selectedTargetId !== '' ? selectedTargetId : null}
+            destination={
+              canIssue && destinationKey !== ''
+                ? {
+                    q: Number(destinationKey.split(',')[0]),
+                    r: Number(destinationKey.split(',')[1]),
+                  }
+                : null
+            }
+            onPickUnit={(unitId) => {
+              if (attackTargets.some((unit) => unit.id === unitId)) setSelectedTargetId(unitId);
+              else if (selectable.has(unitId)) updateUnitSelection(unitId);
+            }}
+            onPickHex={({ q, r }) => {
+              if (moveDestinations.some((hex) => hex.q === q && hex.r === r))
+                setDestinationKey(`${q},${r}`);
+            }}
           />
           <ul className="encounter-roster" aria-label="Открытая сводка участников">
             {projection.units.map((unit) => {
@@ -406,12 +438,15 @@ export function EncounterPanel(props: {
               </button>
             </div>
           )}
-          {actorIsOurs && !canIssue && projection.status === 'active' && (
-            <p className="state-note">
-              Ваш ход известен, но текущая сводка или полномочие управления устарели. Дождитесь
-              синхронизации связи.
-            </p>
-          )}
+          {actorIsOurs &&
+            !canIssue &&
+            projection.status === 'active' &&
+            scopedState?.grant?.selfAfk !== true && (
+              <p className="state-note">
+                Ваш ход известен, но текущая сводка или полномочие управления устарели. Дождитесь
+                синхронизации связи.
+              </p>
+            )}
           {!actorIsOurs && projection.status === 'active' && (
             <p className="state-note">
               Команды появятся, когда сервер подтвердит ваш ход и право управления.

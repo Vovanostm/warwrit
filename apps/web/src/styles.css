@@ -391,7 +391,7 @@ h1 {
 .encounter-canvas {
   display: block;
   width: 100%;
-  height: clamp(15rem, 38vw, 25rem);
+  height: clamp(20rem, 52vh, 36rem);
   outline: none;
 }
 .encounter-renderer-caption {

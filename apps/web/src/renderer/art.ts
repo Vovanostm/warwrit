@@ -1,0 +1,51 @@
+/**
+ * Battle art in the approved ink style (ADR-0006, 2026-10-02). Licence records live in
+ * `assets/manifest.json`; every image here is Codex-generated original work.
+ */
+import groundGrass from '../../../../assets/art/m1/battle/ground-grass.png';
+import groundMud from '../../../../assets/art/m1/battle/ground-mud.png';
+import rubble from '../../../../assets/art/m1/battle/obstacle-rubble.png';
+import mercSpear from '../../../../assets/art/m1/battle/unit-merc-spear.png';
+import mercSword from '../../../../assets/art/m1/battle/unit-merc-sword.png';
+import raiderAxe from '../../../../assets/art/m1/battle/unit-raider-axe.png';
+import raiderSpear from '../../../../assets/art/m1/battle/unit-raider-spear.png';
+
+export type UnitRole = 'ours' | 'ally' | 'hostile';
+
+interface Sprite {
+  readonly url: string;
+  /** The way the figure faces in the source image. */
+  readonly facing: 'LEFT' | 'RIGHT';
+}
+
+export const BATTLE_ART = {
+  groundField: groundMud,
+  groundOuter: groundGrass,
+  rubble,
+} as const;
+
+const MERCENARIES: readonly Sprite[] = [
+  { url: mercSword, facing: 'RIGHT' },
+  { url: mercSpear, facing: 'RIGHT' },
+];
+
+const AXE_RAIDER: Sprite = { url: raiderAxe, facing: 'LEFT' };
+const SPEAR_RAIDER: Sprite = { url: raiderSpear, facing: 'LEFT' };
+
+/** Authored FIRST HUNT raiders by public unit id; other hostiles share the axe raider. */
+const RAIDERS: Readonly<Record<string, Sprite>> = {
+  'world.raider.old-mill.front.01': AXE_RAIDER,
+  'world.raider.old-mill.bow.01': SPEAR_RAIDER,
+  'world.raider.old-mill.heavy.01': SPEAR_RAIDER,
+};
+
+function stableIndex(id: string, modulo: number): number {
+  let hash = 0;
+  for (const char of id) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return hash % modulo;
+}
+
+export function unitSprite(unitId: string, role: UnitRole): Sprite {
+  if (role === 'hostile') return RAIDERS[unitId] ?? AXE_RAIDER;
+  return MERCENARIES[stableIndex(unitId, MERCENARIES.length)]!;
+}

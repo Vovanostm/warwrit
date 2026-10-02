@@ -62,6 +62,9 @@ export function registerCompanyRoutes(
       if (state === undefined) throw new Error('Owned company snapshot is unavailable');
       const view = projectCompanyLifecycle(state.economy.lifecycle, companyId);
       if (view === null) throw new Error('Owned company projection is unavailable');
+      // Lifecycle knowledge refreshes only through observations; the owner always knows its
+      // own company's current leader and whether its run has ended.
+      const own = state.economy.lifecycle.company;
       return {
         holdings: projectCompanyHoldings(
           state,
@@ -72,8 +75,8 @@ export function registerCompanyRoutes(
           companyId: view.companyId,
           revision: view.revision,
           companyPresentation: view.companyPresentation,
-          leaderId: view.leaderId,
-          runStatus: view.runStatus,
+          leaderId: own ? (own.actingLeaderId ?? own.currentLeaderId) : view.leaderId,
+          runStatus: own?.runStatus ?? view.runStatus,
           characters: view.characters.map((character) => ({
             characterId: character.characterId,
             name: character.name,
