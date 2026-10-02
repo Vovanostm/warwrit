@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import {
+  COMPANY_CATALOGUE,
   canPerform,
   campaignTick,
   canonicalRevision,
@@ -224,7 +225,11 @@ export function prepareFirstHuntProofPickup(input: {
     location,
     custodian: { kind: 'WORLD', id: input.worldId },
     carrier: null,
-    capacityG: 1000,
+    // The transient ground bundle holds exactly this hunt's proof.
+    capacityG: Math.max(
+      1000,
+      COMPANY_CATALOGUE.items.find((entry) => entry.id === profile.proofDefinitionId)?.weightG ?? 0,
+    ),
     access: 'CUSTODIAN',
     closed: null,
   };

@@ -1,32 +1,42 @@
 # Warwrit current delivery plan
 
-**Cycle 3 in progress — 2026-10-02 (Babylon, contracts, art):** on
+**Cycle 3 delivered for owner playtest — 2026-10-02 (not yet accepted):** on
 `codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
-Done and seen live in the browser pane on real PostgreSQL:
+How to try it: [M1_LOCAL_PLAYTEST](M1_LOCAL_PLAYTEST.md). Seen live on real
+PostgreSQL 17 (browser pane and API scripts):
 
-- Babylon.js replaces PlayCanvas: the global map (ink settlements, roads,
-  moving company banner, night light) and the battlefield (hex field, ink
-  sprites, rings, health bars, fallen bodies) under the owner's fixed 3/4
-  camera with pan/zoom. Clicking an enemy picks the target, a free hex the
-  destination. A human attack from the UI landed (raider 60 → 56).
-- Defects found by playing and fixed: live battle patches were never applied
-  in the browser (the room map arrives as iterable ArraySchema; regression
-  test added); the owner's successor choice was always rejected
-  STALE_REVISION (now the chosen survivor leads); the roster showed the
-  fallen as present and the run as active after a total loss; a remount
-  could leave the map on a lost WebGL context.
-- Ordinary contracts per the owner-accepted working profile (migration
-  0012): road tracks, missing herbs, cellar captive, lost scout and the
-  mill-worker chain. Scripted run for «Вороньи Перья»: accept at three
-  issuers, inspect, search, ask, report and deliver; cash 800 → 920 crowns
-  (40 + 80), an exact replay returned the stored response without a second
-  payment. Contracts with a step at the mill now authorize the dangerous
-  road. The mill-worker release waits for the mill-beast hunt.
-- Codex art (style C): battle units, ground, rubble, map ground, five
-  settlements, banner, forest, wolves, the mill beast, captive, scout, five
-  place illustrations and a camp; all in `assets/manifest.json`.
-  Next: wolf-trail and mill-beast hunts (generalized FIRST HUNT pipeline),
-  fists profile, company life (camp, F1, upkeep), M1_LOCAL_PLAYTEST, gate.
+- Babylon.js replaces PlayCanvas: global map (ink settlements, roads, moving
+  banner, night light, place illustrations) and battlefield (hex field, ink
+  sprites, rings, health bars, fallen bodies) under the fixed 3/4 camera with
+  pan/zoom; a human attack from the UI landed; live battle patches apply.
+- All eight contracts run: FIRST HUNT; road tracks, missing herbs, cellar
+  captive, lost scout and the mill-worker chain (ordinary runtime, migration
+  0012); wolf trail and the night mill beast on the generalized hunt runtime
+  (migration 0013). Scripted run for «Вороньи Перья»: cash 800 → 920 (road
+  tracks 40, scout 80) → 1000 (cellar 80) → beast fought at night (one member
+  fell), claw picked up and presented → 1090; exact replays returned the
+  stored response without a second payment; mill worker delivered → 1170;
+  three wolves beaten at Березняк, pelt picked up and presented → 1250, a second
+  presentation refused NOT_AVAILABLE. (The pelt first failed: the transient
+  ground bundle was sized for the 1 kg standard, not the 1.5 kg pelt; fixed.) The beast opens only after the
+  two mill-worker clues and its death opens the worker's release.
+- Company life: field camp (rations not spent, departures refused while
+  camping), wage debt shown, loss and succession (system end with nobody left;
+  the owner's chosen successor after a leader death).
+- Defects found by playing and fixed: frozen live battle sync; successor choice
+  always STALE_REVISION; fallen shown as present and run as active; lost WebGL
+  context on remount; dangerous-route food check and proof pickup/terminal
+  profile limited to FIRST HUNT; the ground proof bundle too small for the pelt; camp needed the party as attested contacts.
+- Gate, once on the integrated branch: `pnpm verify` (589 tests passed, 35
+  skipped), `pnpm test:combat:stress` (10 000 battles ok) and `pnpm
+test:migrations` (smoke + 14 PostgreSQL tests, clean database) all exit 0.
+  Server PostgreSQL integration suites: 91 passed when run sequentially; with
+  file parallelism one rollback test can meet another file's rows on the shared
+  database.
+  Not done: unarmed («кулаки») and incapacitated combat profiles (owner decision
+  recorded; needs a combat-kernel change), F1 safe service and paying wages in
+  the UI, a food shop; Mac performance `NOT_MEASURED`; the owner's playtest and
+  acceptance are pending. `check:changes` (fallow, branch delta) was not rerun.
 
 **Cycle 2 playable — 2026-10-02 (one full FIRST HUNT):** on
 `codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
