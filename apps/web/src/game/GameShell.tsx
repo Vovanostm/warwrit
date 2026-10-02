@@ -315,6 +315,13 @@ function ObservedCompanies(props: {
   );
 }
 
+function hostileLabel(entityId: string, weaponItemId: string): string {
+  if (entityId.startsWith('world.wolf.'))
+    return entityId.includes('.leader.') ? 'Вожак волчьей стаи' : 'Волк';
+  if (entityId.startsWith('world.beast.')) return 'Огромный зверь';
+  return `Налётчик · ${itemLabel(weaponItemId).toLowerCase()}`;
+}
+
 function ObservedHostiles(props: { readonly observed: WorldSurroundingsDto['observedHostiles'] }) {
   if (props.observed.length === 0) return null;
   return (
@@ -323,7 +330,7 @@ function ObservedHostiles(props: { readonly observed: WorldSurroundingsDto['obse
       <ul className="supplies hostiles">
         {props.observed.map((entry) => (
           <li key={entry.entityId}>
-            <span>Налётчик · {itemLabel(entry.weaponItemId).toLowerCase()}</span>
+            <span>{hostileLabel(entry.entityId, entry.weaponItemId)}</span>
             <span>{entry.wounded ? 'ранен' : 'цел'}</span>
           </li>
         ))}

@@ -4,32 +4,39 @@ import type { FirstHuntTermsDto } from '@warwrit/protocol';
 import type { Kysely, Transaction } from 'kysely';
 
 import {
-  FIRST_HUNT_ENCOUNTER_LOCATION,
-  FIRST_HUNT_GENESIS_WALLET_Q,
-  FIRST_HUNT_HOSTILE_GENESIS,
   FIRST_HUNT_INSTANCE_ID,
-  FIRST_HUNT_ISSUER_ID,
-  FIRST_HUNT_ISSUER_LOCATION,
-  FIRST_HUNT_PROFILE_ID,
-  FIRST_HUNT_REWARD_Q,
-  FIRST_HUNT_WALLET_ID,
+  HUNT_PROFILES,
+  huntProfile,
+  type HuntProfile,
 } from '@warwrit/game-core';
 import type { DatabaseSchema } from '../db/database.js';
 
-const GENESIS_SOURCE_ID = 'first-hunt-world-genesis-v1';
+const FIRST_HUNT = huntProfile(FIRST_HUNT_INSTANCE_ID)!;
 
-export const FIRST_HUNT_TERMS: FirstHuntTermsDto = Object.freeze({
-  profileId: FIRST_HUNT_PROFILE_ID,
-  issuerId: FIRST_HUNT_ISSUER_ID,
-  issuerLocation: FIRST_HUNT_ISSUER_LOCATION,
-  objectiveLocation: FIRST_HUNT_ENCOUNTER_LOCATION,
-  rewardQ: FIRST_HUNT_REWARD_Q,
-  claimPolicy: 'UNIQUE_CURRENT_BEARER',
-  maximumHelpers: 1,
-});
+function genesisSourceId(profile: HuntProfile): string {
+  return profile === FIRST_HUNT
+    ? 'first-hunt-world-genesis-v1'
+    : `hunt-world-genesis-v1:${profile.instanceId}`;
+}
+
+/** Immutable offered terms of a hunt; their digest binds every acceptance. */
+export function huntTerms(profile: HuntProfile): FirstHuntTermsDto {
+  return Object.freeze({
+    profileId: profile.profileId,
+    issuerId: profile.issuerId,
+    issuerLocation: profile.issuerLocation,
+    objectiveLocation: profile.objectiveLocation,
+    rewardQ: profile.rewardQ,
+    claimPolicy: 'UNIQUE_CURRENT_BEARER',
+    maximumHelpers: 1,
+  });
+}
+
+export const FIRST_HUNT_TERMS: FirstHuntTermsDto = huntTerms(FIRST_HUNT);
 
 export interface FirstHuntWorldState {
   readonly worldId: string;
+  readonly instanceId: string;
   readonly profileId: string;
   readonly revision: string;
   readonly seed: number;
@@ -61,14 +68,14 @@ interface HostilePoolMaximums {
   readonly morale: number;
 }
 
-export function firstHuntSeed(worldId: string): number {
+export function huntSeed(worldId: string, profile: HuntProfile = FIRST_HUNT): number {
   const digest = createHash('sha256')
     .update(
       JSON.stringify([
         'warwrit:first-hunt:seed:v1',
         worldId,
-        FIRST_HUNT_PROFILE_ID,
-        FIRST_HUNT_INSTANCE_ID,
+        profile.profileId,
+        profile.instanceId,
       ]),
       'utf8',
     )
@@ -81,53 +88,116 @@ export async function ensureFirstHuntGenesis(
   worldId: string,
 ): Promise<void> {
   await database.transaction().execute(async (transaction) => {
-    await ensureFirstHuntGenesisInTransaction(transaction, worldId);
+    for (const profile of HUNT_PROFILES)
+      await ensureHuntGenesisInTransaction(transaction, worldId, profile);
   });
 }
 
-export async function ensureFirstHuntGenesisInTransaction(
+export function ensureFirstHuntGenesisInTransaction(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
 ): Promise<FirstHuntWorldState> {
-  const hostileGenesis = FIRST_HUNT_HOSTILE_GENESIS.map((hostile) => ({
-    ...hostile,
-    currentPools: hostile.initialPools,
-  }));
-  await transaction
-    .insertInto('world_first_hunt_state')
-    .values({
-      world_id: worldId,
-      schema_version: 1,
-      profile_id: FIRST_HUNT_PROFILE_ID,
-      genesis_source_id: GENESIS_SOURCE_ID,
-      revision: '0',
-      seed: String(firstHuntSeed(worldId)),
-      issuer_id: FIRST_HUNT_ISSUER_ID,
-      issuer_area_id: FIRST_HUNT_ISSUER_LOCATION.areaId,
-      wallet_id: FIRST_HUNT_WALLET_ID,
-      wallet_q: FIRST_HUNT_GENESIS_WALLET_Q,
-      hostiles: canonicalJson(hostileGenesis),
-    })
-    .onConflict((conflict) => conflict.column('world_id').doNothing())
-    .execute();
+  return ensureHuntGenesisInTransaction(transaction, worldId, FIRST_HUNT);
+}
 
-  const world = await transaction
-    .selectFrom('world_first_hunt_state')
+/** Raw world row of a hunt: FIRST HUNT keeps its original table, later hunts their own. */
+export async function selectHuntWorldRow(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  profile: HuntProfile,
+  lock = true,
+): Promise<Record<string, unknown> | undefined> {
+  if (profile === FIRST_HUNT) {
+    let query = transaction
+      .selectFrom('world_first_hunt_state')
+      .selectAll()
+      .where('world_id', '=', worldId);
+    if (lock) query = query.forUpdate();
+    return query.executeTakeFirst();
+  }
+  let query = transaction
+    .selectFrom('world_hunt_states')
     .selectAll()
     .where('world_id', '=', worldId)
-    .forUpdate()
-    .executeTakeFirst();
-  if (!world) throw new TypeError('FIRST HUNT world genesis is unavailable');
-  readFirstHuntWorldState(worldId, world);
+    .where('instance_id', '=', profile.instanceId);
+  if (lock) query = query.forUpdate();
+  return query.executeTakeFirst();
+}
 
-  const termsDigest = createHash('sha256').update(canonicalJson(FIRST_HUNT_TERMS)).digest();
+/** Compare-and-set the hunt's wallet and hostiles at the observed revision. */
+export async function updateHuntWorldRow(
+  transaction: Transaction<DatabaseSchema>,
+  world: FirstHuntWorldState,
+  next: {
+    readonly revision: string;
+    readonly walletQ?: string;
+    readonly hostiles?: readonly FirstHuntHostileState[];
+  },
+): Promise<void> {
+  const profile = huntProfile(world.instanceId)!;
+  const values = {
+    revision: next.revision,
+    ...(next.walletQ === undefined ? {} : { wallet_q: next.walletQ }),
+    ...(next.hostiles === undefined ? {} : { hostiles: canonicalJson(next.hostiles) }),
+  };
+  const updated =
+    profile === FIRST_HUNT
+      ? await transaction
+          .updateTable('world_first_hunt_state')
+          .set(values)
+          .where('world_id', '=', world.worldId)
+          .where('revision', '=', world.revision)
+          .executeTakeFirst()
+      : await transaction
+          .updateTable('world_hunt_states')
+          .set(values)
+          .where('world_id', '=', world.worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .where('revision', '=', world.revision)
+          .executeTakeFirst();
+  if (Number(updated.numUpdatedRows) !== 1) throw new Error('Hunt world state CAS failed');
+}
+
+export async function ensureHuntGenesisInTransaction(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  profile: HuntProfile,
+): Promise<FirstHuntWorldState> {
+  // contract_instances rows reference the FIRST HUNT world row, so it always exists first.
+  if (profile !== FIRST_HUNT)
+    await ensureHuntGenesisInTransaction(transaction, worldId, FIRST_HUNT);
+  const terms = huntTerms(profile);
+  const hostileGenesis = canonicalJson(
+    profile.hostiles.map((hostile) => ({ ...hostile, currentPools: hostile.initialPools })),
+  );
+  const genesis = {
+    world_id: worldId,
+    schema_version: 1,
+    profile_id: profile.profileId,
+    genesis_source_id: genesisSourceId(profile),
+    revision: '0',
+    seed: String(huntSeed(worldId, profile)),
+    issuer_id: profile.issuerId,
+    issuer_area_id: profile.issuerLocation.areaId,
+    wallet_id: profile.walletId,
+    wallet_q: profile.genesisWalletQ,
+    hostiles: hostileGenesis,
+  };
+  if (profile === FIRST_HUNT)
+    await transaction
+      .insertInto('world_first_hunt_state')
+      .values(genesis)
+      .onConflict((conflict) => conflict.column('world_id').doNothing())
+      .execute();
+
+  const termsDigest = createHash('sha256').update(canonicalJson(terms)).digest();
   await transaction
     .insertInto('contract_instances')
     .values({
       world_id: worldId,
-      instance_id: FIRST_HUNT_INSTANCE_ID,
-      profile_id: FIRST_HUNT_PROFILE_ID,
-      terms: FIRST_HUNT_TERMS,
+      instance_id: profile.instanceId,
+      profile_id: profile.profileId,
+      terms,
       terms_digest: termsDigest,
       revision: '0',
       owner_company_id: null,
@@ -137,66 +207,86 @@ export async function ensureFirstHuntGenesisInTransaction(
     })
     .onConflict((conflict) => conflict.columns(['world_id', 'instance_id']).doNothing())
     .execute();
+  if (profile !== FIRST_HUNT)
+    await transaction
+      .insertInto('world_hunt_states')
+      .values({ ...genesis, instance_id: profile.instanceId })
+      .onConflict((conflict) => conflict.columns(['world_id', 'instance_id']).doNothing())
+      .execute();
 
+  const world = await selectHuntWorldRow(transaction, worldId, profile);
+  if (!world) throw new TypeError(`Hunt world genesis is unavailable for ${profile.instanceId}`);
   const contract = await transaction
     .selectFrom('contract_instances')
     .select(['profile_id', 'terms', 'terms_digest'])
     .where('world_id', '=', worldId)
-    .where('instance_id', '=', FIRST_HUNT_INSTANCE_ID)
+    .where('instance_id', '=', profile.instanceId)
     .forUpdate()
     .executeTakeFirst();
   if (
     !contract ||
-    contract.profile_id !== FIRST_HUNT_PROFILE_ID ||
-    canonicalJson(contract.terms) !== canonicalJson(FIRST_HUNT_TERMS) ||
+    contract.profile_id !== profile.profileId ||
+    canonicalJson(contract.terms) !== canonicalJson(terms) ||
     !contract.terms_digest.equals(termsDigest)
   )
-    throw new TypeError('FIRST HUNT immutable contract terms do not match the runtime profile');
-
-  return readFirstHuntWorldState(worldId, world);
+    throw new TypeError('Hunt immutable contract terms do not match the runtime profile');
+  return readHuntWorldState(worldId, profile, world);
 }
 
 export function readFirstHuntWorldState(worldId: string, value: unknown): FirstHuntWorldState {
-  if (!isRecord(value)) throw new TypeError('FIRST HUNT world state is invalid');
-  const hostiles = readHostiles(value['hostiles']);
+  return readHuntWorldState(worldId, FIRST_HUNT, value);
+}
+
+export function readHuntWorldState(
+  worldId: string,
+  profile: HuntProfile,
+  value: unknown,
+): FirstHuntWorldState {
+  if (!isRecord(value)) throw new TypeError('Hunt world state is invalid');
+  const hostiles = readHostiles(value['hostiles'], profile);
   const seed = Number(value['seed']);
   if (
     value['world_id'] !== worldId ||
+    (profile !== FIRST_HUNT && value['instance_id'] !== profile.instanceId) ||
     value['schema_version'] !== 1 ||
-    value['profile_id'] !== FIRST_HUNT_PROFILE_ID ||
-    value['genesis_source_id'] !== GENESIS_SOURCE_ID ||
+    value['profile_id'] !== profile.profileId ||
+    value['genesis_source_id'] !== genesisSourceId(profile) ||
     !isDecimal(value['revision']) ||
     !Number.isSafeInteger(seed) ||
     seed < 1 ||
     seed > 0xffff_ffff ||
-    value['issuer_id'] !== FIRST_HUNT_ISSUER_ID ||
-    value['issuer_area_id'] !== FIRST_HUNT_ISSUER_LOCATION.areaId ||
-    value['wallet_id'] !== FIRST_HUNT_WALLET_ID ||
+    value['issuer_id'] !== profile.issuerId ||
+    value['issuer_area_id'] !== profile.issuerLocation.areaId ||
+    value['wallet_id'] !== profile.walletId ||
     !isDecimal(value['wallet_q'])
   )
-    throw new TypeError('FIRST HUNT world state is outside the accepted runtime profile');
+    throw new TypeError('Hunt world state is outside the accepted runtime profile');
   return {
     worldId,
-    profileId: FIRST_HUNT_PROFILE_ID,
+    instanceId: profile.instanceId,
+    profileId: profile.profileId,
     revision: value['revision'],
     seed,
-    issuerId: FIRST_HUNT_ISSUER_ID,
-    issuerAreaId: FIRST_HUNT_ISSUER_LOCATION.areaId,
-    walletId: FIRST_HUNT_WALLET_ID,
+    issuerId: profile.issuerId,
+    issuerAreaId: profile.issuerLocation.areaId,
+    walletId: profile.walletId,
     walletQ: value['wallet_q'],
     hostiles,
   };
 }
 
-export function readHostiles(value: unknown): readonly FirstHuntHostileState[] {
-  if (!Array.isArray(value) || value.length !== FIRST_HUNT_HOSTILE_GENESIS.length)
-    throw new TypeError('FIRST HUNT hostile state is invalid');
+export function readHostiles(
+  value: unknown,
+  profile: HuntProfile = FIRST_HUNT,
+): readonly FirstHuntHostileState[] {
+  if (!Array.isArray(value) || value.length !== profile.hostiles.length)
+    throw new TypeError('Hunt hostile state is invalid');
   const byId = new Map<string, FirstHuntHostileState>();
   for (const hostile of value) {
-    if (!isRecord(hostile)) throw new TypeError('FIRST HUNT hostile state is invalid');
+    if (!isRecord(hostile)) throw new TypeError('Hunt hostile state is invalid');
     const entityId = hostile['entityId'];
-    if (typeof entityId !== 'string') throw new TypeError('FIRST HUNT hostile state is invalid');
-    const genesis = FIRST_HUNT_HOSTILE_GENESIS.find((entry) => entry.entityId === entityId);
+    if (typeof entityId !== 'string') throw new TypeError('Hunt hostile state is invalid');
+    const genesis = profile.hostiles.find((entry) => entry.entityId === entityId);
     if (
       !genesis ||
       byId.has(entityId) ||
@@ -226,10 +316,10 @@ export function readHostiles(value: unknown): readonly FirstHuntHostileState[] {
         }) ||
       !isPool(hostile['currentPools'], genesis.attributes)
     )
-      throw new TypeError('FIRST HUNT hostile state does not match its retained genesis');
+      throw new TypeError('Hunt hostile state does not match its retained genesis');
     byId.set(entityId, hostile as unknown as FirstHuntHostileState);
   }
-  return FIRST_HUNT_HOSTILE_GENESIS.map((entry) => byId.get(entry.entityId)!);
+  return profile.hostiles.map((entry) => byId.get(entry.entityId)!);
 }
 
 function isPool(value: unknown, maximums: HostilePoolMaximums): boolean {

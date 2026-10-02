@@ -49,12 +49,14 @@ export async function admitFirstHuntInTransaction(input: {
   readonly now: Date;
 }): Promise<string | undefined> {
   const { transaction, worldId, contract, companyStates, world, atTick, now } = input;
+  const profile = combat.huntProfile(contract.instance_id);
   if (
+    !profile ||
     contract.world_id !== worldId ||
-    contract.instance_id !== combat.FIRST_HUNT_INSTANCE_ID ||
     contract.owner_company_id === null ||
     world.worldId !== worldId ||
-    world.profileId !== combat.FIRST_HUNT_PROFILE_ID ||
+    world.instanceId !== profile.instanceId ||
+    world.profileId !== profile.profileId ||
     world.hostiles.some((hostile) => hostile.currentPools['health'] === 0)
   )
     return undefined;
@@ -195,8 +197,8 @@ export async function admitFirstHuntInTransaction(input: {
     const location = party.location;
     if (
       location.kind !== 'AT' ||
-      location.siteId !== combat.FIRST_HUNT_ENCOUNTER_LOCATION.siteId ||
-      location.areaId !== combat.FIRST_HUNT_ENCOUNTER_LOCATION.areaId ||
+      location.siteId !== profile.objectiveLocation.siteId ||
+      location.areaId !== profile.objectiveLocation.areaId ||
       state.encounter.active !== null
     )
       return undefined;
@@ -233,10 +235,7 @@ export async function admitFirstHuntInTransaction(input: {
       ).length
     );
   }, 0);
-  if (
-    totalMembers > combat.FIRST_HUNT_ALLIED_SLOTS.length ||
-    totalMembers + world.hostiles.length > 12
-  )
+  if (totalMembers > profile.alliedSlots.length || totalMembers + world.hostiles.length > 12)
     return undefined;
 
   const encounterId = randomUUID();
@@ -260,7 +259,7 @@ export async function admitFirstHuntInTransaction(input: {
       members: members.map((character) => ({
         characterId: character.identity.characterId,
         unitId: combat.unitId(character.identity.characterId),
-        position: combat.FIRST_HUNT_ALLIED_SLOTS[slotIndex++]!,
+        position: profile.alliedSlots[slotIndex++]!,
       })),
     };
   });
@@ -289,24 +288,24 @@ export async function admitFirstHuntInTransaction(input: {
   }));
   const evidence = {
     id: `first-hunt:${worldId}:${encounterId}`,
-    sourceEventId: `first-hunt:${worldId}:${combat.FIRST_HUNT_INSTANCE_ID}:activation`,
+    sourceEventId: `first-hunt:${worldId}:${profile.instanceId}:activation`,
     version: combat.FIRST_HUNT_WORLD_BINDING_VERSION,
     bindingId,
     worldId,
     atTick: combat.campaignTick(atTick),
     location: {
       kind: 'AT' as const,
-      ...combat.FIRST_HUNT_ENCOUNTER_LOCATION,
+      ...profile.objectiveLocation,
     },
     setup: {
       schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
       battleId: combat.battleId(encounterId),
       rulesetId: combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID,
       seed: world.seed,
-      map: combat.FIRST_HUNT_COMBAT_MAP,
+      map: profile.combatMap,
       sides: [
-        { id: alliedSideId, retreatHexes: combat.FIRST_HUNT_RETREAT_HEXES.allied },
-        { id: hostileSideId, retreatHexes: combat.FIRST_HUNT_RETREAT_HEXES.hostile },
+        { id: alliedSideId, retreatHexes: profile.retreatHexes.allied },
+        { id: hostileSideId, retreatHexes: profile.retreatHexes.hostile },
       ] as const,
     },
     parties,

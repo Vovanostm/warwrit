@@ -7,16 +7,20 @@ import {
   canonicalJson,
   canPerform,
   FIRST_HUNT_INSTANCE_ID,
-  FIRST_HUNT_PROFILE_ID,
-  FIRST_HUNT_PROOF_ID,
-  FIRST_HUNT_PROOF_DEFINITION_ID,
+  HUNT_PROFILES,
+  huntProfile,
+  MILL_BEAST_UNLOCK_SLOTS,
+  ordinaryContractProfile,
   publicRevision,
+  readOrdinaryContractState,
+  type HuntProfile,
   readCompanyCombatAggregateState,
   receiveExternalPayment,
   prepareFirstHuntLifecycleTransition,
   type CompanyCombatAggregateState,
 } from '@warwrit/game-core';
 import type {
+  HuntInstanceId,
   FirstHuntPickupTargetDto,
   FirstHuntCommandDto,
   FirstHuntCommandResponseDto,
@@ -35,7 +39,7 @@ import {
   persistFirstHuntCompanyTransition,
 } from '../company/executor.js';
 import { admitFirstHuntInTransaction } from '../encounters/admission.js';
-import { readWorldClock } from '../world/clock.js';
+import { readWorldClock, readWorldLight } from '../world/clock.js';
 import { readFirstHuntReceipt, persistFirstHuntReceipt } from './repository.js';
 import {
   canFirstHuntHelperOptIn,
@@ -45,8 +49,10 @@ import {
 } from './executor.js';
 import {
   ensureFirstHuntGenesis,
-  FIRST_HUNT_TERMS,
-  readFirstHuntWorldState,
+  ensureHuntGenesisInTransaction,
+  huntTerms,
+  readHuntWorldState,
+  selectHuntWorldRow,
 } from './first-hunt-runtime.js';
 
 type ContractRow = DatabaseSchema['contract_instances'];
@@ -60,129 +66,38 @@ export function registerFirstHuntRoutes(
   app.get('/contracts/first-hunt', async (request, reply) => {
     const accountId = await resolveSessionAccount(request, database);
     if (!accountId) return reply.code(401).send({ error: 'authentication required' });
-    const companyId = await database
-      .transaction()
-      .execute((transaction) => findOwnedCompanyId(transaction, worldId, accountId));
+    const query = request.query as Record<string, unknown> | undefined;
+    const profile = huntProfile(
+      typeof query?.['instanceId'] === 'string' ? query['instanceId'] : FIRST_HUNT_INSTANCE_ID,
+    );
+    if (!profile) return reply.code(404).send({ error: 'unknown hunt' });
     await ensureFirstHuntGenesis(database, worldId);
     const response = await database.transaction().execute(async (transaction) => {
-      const contract = await readContract(transaction, worldId);
-      if (!contract) return null;
-      const admission = await transaction
-        .selectFrom('encounter_admissions')
-        .select(['encounter_id', 'effects_applied_at'])
-        .where('world_id', '=', worldId)
-        .where('instance_id', '=', FIRST_HUNT_INSTANCE_ID)
-        .executeTakeFirst();
-      const encounter = admission
-        ? await transaction
-            .selectFrom('encounters')
-            .select(['id', 'status'])
-            .where('id', '=', admission.encounter_id)
-            .executeTakeFirst()
-        : undefined;
-      const proof = admission
-        ? await transaction
-            .selectFrom('world_proof_claims')
-            .select([
-              'item_id',
-              'ground_item',
-              'custodian_company_id',
-              'redeemed_company_id',
-              'redemption_receipt_id',
-            ])
-            .where('world_id', '=', worldId)
-            .where('source_id', '=', proofSourceId(admission.encounter_id))
-            .executeTakeFirst()
-        : undefined;
-      const role =
-        companyId && contract.owner_company_id === companyId
-          ? 'OWNER'
-          : companyId && contract.helper_company_id === companyId
-            ? 'HELPER'
-            : 'NONE';
-      const state = proof?.redemption_receipt_id
-        ? 'SETTLED'
-        : proof?.ground_item !== null && proof?.ground_item !== undefined
-          ? 'PROOF_AVAILABLE'
-          : proof?.custodian_company_id
-            ? 'PROOF_HELD'
-            : encounter?.status === 'active'
-              ? 'ENCOUNTER_ACTIVE'
-              : contract.owner_company_id
-                ? 'ACTIVE'
-                : 'OFFERED';
-      const proofCompanyId =
-        companyId &&
-        (proof?.custodian_company_id === companyId || proof?.redeemed_company_id === companyId)
-          ? companyId
-          : undefined;
-      const proofAggregate = proofCompanyId
-        ? await loadCompanyAggregate(transaction, worldId, proofCompanyId)
-        : undefined;
-      const currentAggregate = companyId
-        ? await loadCompanyAggregate(transaction, worldId, companyId)
-        : undefined;
-      const physicalProof = proofAggregate?.economy.physical?.items.find(
-        (item) => item.itemId === proof?.item_id && item.tombstone === null,
-      );
-      const yourProof =
-        proof && proofCompanyId && physicalProof?.containerId
-          ? {
-              itemId: proof.item_id,
-              containerId: physicalProof.containerId,
-              redemption: proof.redemption_receipt_id
-                ? ('REDEEMED' as const)
-                : ('UNREDEEMED' as const),
-            }
-          : null;
-      const body: FirstHuntReadResponseDto = {
-        schemaVersion: 1,
-        publicRevision: contract.revision,
-        contract: contract
-          ? {
-              instanceId: FIRST_HUNT_INSTANCE_ID,
-              definitionEdition: FIRST_HUNT_PROFILE_ID,
-              termsDigest: contract.terms_digest.toString('hex'),
-              terms: FIRST_HUNT_TERMS,
-              yourRole: role,
-              knownState: state,
-              yourJoinIntent:
-                role === 'OWNER'
-                  ? contract.owner_join !== null
-                  : role === 'HELPER' && contract.helper_join !== null,
-              helperSlot: contract.helper_company_id ? 'OCCUPIED' : 'AVAILABLE',
-              encounterId: admission?.encounter_id ?? null,
-              pickupTargets:
-                companyId &&
-                (role === 'OWNER' || role === 'HELPER') &&
-                proof?.ground_item !== null &&
-                proof?.ground_item !== undefined &&
-                admission?.effects_applied_at !== null &&
-                encounter?.status === 'resolved' &&
-                currentAggregate &&
-                isAtArea(
-                  currentAggregate,
-                  FIRST_HUNT_TERMS.objectiveLocation.siteId,
-                  FIRST_HUNT_TERMS.objectiveLocation.areaId,
-                ) &&
-                currentAggregate.economy.lifecycle.characters.some(
-                  (character) =>
-                    character.presence.availability === 'AVAILABLE' &&
-                    character.presence.encounterBindingId === null &&
-                    character.presence.location.kind === 'AT' &&
-                    character.presence.location.siteId ===
-                      FIRST_HUNT_TERMS.objectiveLocation.siteId &&
-                    character.presence.location.areaId ===
-                      FIRST_HUNT_TERMS.objectiveLocation.areaId &&
-                    canPerform(character, 'travel'),
-                )
-                  ? firstHuntPickupTargets(currentAggregate, companyId)
-                  : [],
-              yourProof,
-            }
-          : null,
-      };
-      return body;
+      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      return readHuntView(transaction, worldId, companyId, profile);
+    });
+    reply.header('cache-control', 'no-store');
+    return response;
+  });
+
+  /** Hunts beyond FIRST HUNT the company can know of: unlocked ones, or ones it took part in. */
+  app.get('/contracts/hunts', async (request, reply) => {
+    const accountId = await resolveSessionAccount(request, database);
+    if (!accountId) return reply.code(401).send({ error: 'authentication required' });
+    await ensureFirstHuntGenesis(database, worldId);
+    const response = await database.transaction().execute(async (transaction) => {
+      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      const unlocked = await millBeastUnlocked(transaction, worldId);
+      const hunts: FirstHuntReadResponseDto[] = [];
+      for (const profile of HUNT_PROFILES) {
+        if (profile.instanceId === FIRST_HUNT_INSTANCE_ID) continue;
+        const view = await readHuntView(transaction, worldId, companyId, profile);
+        if (!view?.contract) continue;
+        if (profile.needsMillWorkerClues && !unlocked && view.contract.yourRole === 'NONE')
+          continue;
+        hunts.push(view);
+      }
+      return { schemaVersion: 1 as const, hunts };
     });
     reply.header('cache-control', 'no-store');
     return response;
@@ -213,6 +128,7 @@ async function executeContractCommand(input: {
   readonly requestKey: string;
 }): Promise<FirstHuntCommandResponseDto> {
   const { database, worldId, accountId, request, requestKey } = input;
+  const profile = huntProfile(request.payload.instanceId);
   await ensureFirstHuntGenesis(database, worldId);
   return database.transaction().execute(async (transaction) => {
     const reject = (
@@ -236,8 +152,9 @@ async function executeContractCommand(input: {
     const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
     if (!companyId) return reject('NOT_AUTHORIZED');
 
-    const observedContract = await readContract(transaction, worldId);
-    if (!observedContract || observedContract.profile_id !== FIRST_HUNT_PROFILE_ID)
+    if (!profile) return reject('NOT_AVAILABLE');
+    const observedContract = await readContract(transaction, worldId, profile.instanceId);
+    if (!observedContract || observedContract.profile_id !== profile.profileId)
       return reject('NOT_AVAILABLE');
     const lockedCompanyIds = [
       ...new Set([
@@ -290,14 +207,11 @@ async function executeContractCommand(input: {
       .execute();
     const now = new Date();
     const clock = await readWorldClock(transaction, worldId, now, true);
-    const world = await transaction
-      .selectFrom('world_first_hunt_state')
-      .selectAll()
-      .where('world_id', '=', worldId)
-      .forUpdate()
-      .executeTakeFirst();
+    await ensureHuntGenesisInTransaction(transaction, worldId, profile);
+    const world = await selectHuntWorldRow(transaction, worldId, profile);
     if (!world) return reject('NOT_AVAILABLE');
-    const worldState = readFirstHuntWorldState(worldId, world);
+    const worldState = readHuntWorldState(worldId, profile, world);
+    const terms = huntTerms(profile);
 
     const contract = await transaction
       .selectFrom('contract_instances')
@@ -306,7 +220,7 @@ async function executeContractCommand(input: {
       .where('instance_id', '=', request.payload.instanceId)
       .forUpdate()
       .executeTakeFirst();
-    if (!contract || contract.profile_id !== FIRST_HUNT_PROFILE_ID) return reject('NOT_AVAILABLE');
+    if (!contract || contract.profile_id !== profile.profileId) return reject('NOT_AVAILABLE');
     if (
       contract.owner_company_id !== observedContract.owner_company_id ||
       contract.helper_company_id !== observedContract.helper_company_id
@@ -333,6 +247,15 @@ async function executeContractCommand(input: {
     let state = companyStates.get(companyId);
     if (!state) return reject('NOT_AUTHORIZED', contract.revision);
     const commandType = request.type;
+    if (
+      (commandType === 'ACCEPT' || commandType === 'HELP') &&
+      profile.needsMillWorkerClues &&
+      !(await millBeastUnlocked(transaction, worldId))
+    )
+      return reject('NOT_AVAILABLE', contract.revision);
+    // A night threat shows itself only in the Light night phase.
+    if (commandType === 'JOIN' && profile.nightOnly && readWorldLight(clock).phase !== 'NIGHT')
+      return reject('NOT_AVAILABLE', contract.revision);
     if (commandType === 'HELP') {
       const admission = await transaction
         .selectFrom('encounter_admissions')
@@ -391,17 +314,9 @@ async function executeContractCommand(input: {
       (contract.helper_join !== null && helperJoin === undefined)
     )
       return reject('NOT_AVAILABLE', contract.revision);
-    const atIssuer = isAtArea(
-      state,
-      FIRST_HUNT_TERMS.issuerLocation.siteId,
-      FIRST_HUNT_TERMS.issuerLocation.areaId,
-    );
+    const atIssuer = isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId);
     const atObjective =
-      isAtArea(
-        state,
-        FIRST_HUNT_TERMS.objectiveLocation.siteId,
-        FIRST_HUNT_TERMS.objectiveLocation.areaId,
-      ) &&
+      isAtArea(state, terms.objectiveLocation.siteId, terms.objectiveLocation.areaId) &&
       state.encounter.active === null &&
       !state.economy.lifecycle.parties.some((party) => party.location.kind === 'TRANSIT');
     if (commandType === 'PICKUP' || commandType === 'PRESENT') {
@@ -439,7 +354,7 @@ async function executeContractCommand(input: {
         admission.terminal_revision !== encounter.revision ||
         admission.effects_applied_at === null ||
         !proof ||
-        proof.item_id !== FIRST_HUNT_PROOF_ID
+        proof.item_id !== profile.proofId
       )
         return reject('NOT_AVAILABLE', contract.revision);
 
@@ -485,9 +400,10 @@ async function executeContractCommand(input: {
           requestKey,
           publicRevision: nextRevision,
           operation: 'PICKUP',
-          itemId: FIRST_HUNT_PROOF_ID,
+          itemId: profile.proofId,
           transition: {
             operation: 'PICKUP',
+            instanceId: profile.instanceId,
             sourceId,
             targetContainerId: request.payload.toContainerId,
           },
@@ -509,16 +425,12 @@ async function executeContractCommand(input: {
         !isFirstHuntProofCustodian(companyId, proof.custodian_company_id) ||
         proof.redeemed_company_id !== null ||
         proof.redemption_receipt_id !== null ||
-        !isAtArea(
-          state,
-          FIRST_HUNT_TERMS.issuerLocation.siteId,
-          FIRST_HUNT_TERMS.issuerLocation.areaId,
-        )
+        !isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId)
       )
         return reject('NOT_AVAILABLE', contract.revision);
       const physical = state.economy.physical;
       const proofItem = physical?.items.find(
-        (item) => item.itemId === FIRST_HUNT_PROOF_ID && item.tombstone === null,
+        (item) => item.itemId === profile.proofId && item.tombstone === null,
       );
       const proofContainer = proofItem?.containerId
         ? physical?.containers.find((container) => container.containerId === proofItem.containerId)
@@ -532,8 +444,8 @@ async function executeContractCommand(input: {
         proofContainer.access !== 'COMPANY' ||
         proofContainer.closed !== null ||
         proofContainer.location.kind !== 'AT' ||
-        proofContainer.location.siteId !== FIRST_HUNT_TERMS.issuerLocation.siteId ||
-        proofContainer.location.areaId !== FIRST_HUNT_TERMS.issuerLocation.areaId
+        proofContainer.location.siteId !== terms.issuerLocation.siteId ||
+        proofContainer.location.areaId !== terms.issuerLocation.areaId
       )
         return reject('NOT_AVAILABLE', contract.revision);
       const activeCharacterIds = new Set<string>(
@@ -559,7 +471,7 @@ async function executeContractCommand(input: {
               String(wallet.owner.id) === companyId,
           )
         : undefined;
-      const rewardQ = BigInt(FIRST_HUNT_TERMS.rewardQ);
+      const rewardQ = BigInt(terms.rewardQ);
       if (!recipient) return reject('NOT_AVAILABLE', contract.revision);
       if (BigInt(worldState.walletQ) < rewardQ)
         return reject('INSUFFICIENT_FUNDS', contract.revision);
@@ -602,18 +514,19 @@ async function executeContractCommand(input: {
         requestKey,
         publicRevision: nextRevision,
         operation: 'PRESENT',
-        itemId: FIRST_HUNT_PROOF_ID,
+        itemId: profile.proofId,
         transition: {
           operation: 'PRESENT',
+          instanceId: profile.instanceId,
           sourceId: proof.source_id,
           issuerWalletId: worldState.walletId,
           recipientWalletId: recipient.walletId,
-          rewardQ: FIRST_HUNT_TERMS.rewardQ,
+          rewardQ: terms.rewardQ,
           atTick: clock.tick,
           worldWalletBeforeQ: worldState.walletQ,
           worldRevisionBefore: worldState.revision,
         },
-        rewardQ: FIRST_HUNT_TERMS.rewardQ,
+        rewardQ: terms.rewardQ,
       });
       const updated = await transaction
         .updateTable('contract_instances')
@@ -733,6 +646,129 @@ async function executeContractCommand(input: {
   });
 }
 
+/** One hunt contract as the viewing company knows it. */
+async function readHuntView(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  companyId: string | undefined,
+  profile: HuntProfile,
+): Promise<FirstHuntReadResponseDto | null> {
+  const contract = await readContract(transaction, worldId, profile.instanceId);
+  if (!contract) return null;
+  const admission = await transaction
+    .selectFrom('encounter_admissions')
+    .select(['encounter_id', 'effects_applied_at'])
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', profile.instanceId)
+    .executeTakeFirst();
+  const encounter = admission
+    ? await transaction
+        .selectFrom('encounters')
+        .select(['id', 'status'])
+        .where('id', '=', admission.encounter_id)
+        .executeTakeFirst()
+    : undefined;
+  const proof = admission
+    ? await transaction
+        .selectFrom('world_proof_claims')
+        .select([
+          'item_id',
+          'ground_item',
+          'custodian_company_id',
+          'redeemed_company_id',
+          'redemption_receipt_id',
+        ])
+        .where('world_id', '=', worldId)
+        .where('source_id', '=', proofSourceId(admission.encounter_id))
+        .executeTakeFirst()
+    : undefined;
+  const role =
+    companyId && contract.owner_company_id === companyId
+      ? 'OWNER'
+      : companyId && contract.helper_company_id === companyId
+        ? 'HELPER'
+        : 'NONE';
+  const state = proof?.redemption_receipt_id
+    ? 'SETTLED'
+    : proof?.ground_item !== null && proof?.ground_item !== undefined
+      ? 'PROOF_AVAILABLE'
+      : proof?.custodian_company_id
+        ? 'PROOF_HELD'
+        : encounter?.status === 'active'
+          ? 'ENCOUNTER_ACTIVE'
+          : contract.owner_company_id
+            ? 'ACTIVE'
+            : 'OFFERED';
+  const proofCompanyId =
+    companyId &&
+    (proof?.custodian_company_id === companyId || proof?.redeemed_company_id === companyId)
+      ? companyId
+      : undefined;
+  const proofAggregate = proofCompanyId
+    ? await loadCompanyAggregate(transaction, worldId, proofCompanyId)
+    : undefined;
+  const currentAggregate = companyId
+    ? await loadCompanyAggregate(transaction, worldId, companyId)
+    : undefined;
+  const physicalProof = proofAggregate?.economy.physical?.items.find(
+    (item) => item.itemId === proof?.item_id && item.tombstone === null,
+  );
+  const yourProof =
+    proof && proofCompanyId && physicalProof?.containerId
+      ? {
+          itemId: proof.item_id,
+          containerId: physicalProof.containerId,
+          redemption: proof.redemption_receipt_id ? ('REDEEMED' as const) : ('UNREDEEMED' as const),
+        }
+      : null;
+  const body: FirstHuntReadResponseDto = {
+    schemaVersion: 1,
+    publicRevision: contract.revision,
+    contract: contract
+      ? {
+          instanceId: profile.instanceId as HuntInstanceId,
+          definitionEdition: profile.profileId,
+          termsDigest: contract.terms_digest.toString('hex'),
+          terms: huntTerms(profile),
+          yourRole: role,
+          knownState: state,
+          yourJoinIntent:
+            role === 'OWNER'
+              ? contract.owner_join !== null
+              : role === 'HELPER' && contract.helper_join !== null,
+          helperSlot: contract.helper_company_id ? 'OCCUPIED' : 'AVAILABLE',
+          encounterId: admission?.encounter_id ?? null,
+          pickupTargets:
+            companyId &&
+            (role === 'OWNER' || role === 'HELPER') &&
+            proof?.ground_item !== null &&
+            proof?.ground_item !== undefined &&
+            admission?.effects_applied_at !== null &&
+            encounter?.status === 'resolved' &&
+            currentAggregate &&
+            isAtArea(
+              currentAggregate,
+              profile.objectiveLocation.siteId,
+              profile.objectiveLocation.areaId,
+            ) &&
+            currentAggregate.economy.lifecycle.characters.some(
+              (character) =>
+                character.presence.availability === 'AVAILABLE' &&
+                character.presence.encounterBindingId === null &&
+                character.presence.location.kind === 'AT' &&
+                character.presence.location.siteId === profile.objectiveLocation.siteId &&
+                character.presence.location.areaId === profile.objectiveLocation.areaId &&
+                canPerform(character, 'travel'),
+            )
+              ? firstHuntPickupTargets(currentAggregate, companyId, profile)
+              : [],
+          yourProof,
+        }
+      : null,
+  };
+  return body;
+}
+
 function compareIds(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0;
 }
@@ -740,14 +776,38 @@ function compareIds(left: string, right: string): number {
 async function readContract(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
+  instanceId: string,
 ): Promise<ContractRow | undefined> {
   const row = await transaction
     .selectFrom('contract_instances')
     .selectAll()
     .where('world_id', '=', worldId)
-    .where('instance_id', '=', FIRST_HUNT_INSTANCE_ID)
+    .where('instance_id', '=', instanceId)
     .executeTakeFirst();
   return row;
+}
+
+/** MILL-02: the grain-cart tracks and the keeper's report, held together by some company. */
+async function millBeastUnlocked(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+): Promise<boolean> {
+  const profile = ordinaryContractProfile('ci.m1.mill-worker.01');
+  if (!profile) return false;
+  const row = await transaction
+    .selectFrom('ordinary_contracts')
+    .select('state')
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', profile.instanceId)
+    .executeTakeFirst();
+  if (!row) return false;
+  const state = readOrdinaryContractState(profile, row.state);
+  const holders = new Set(state.facts.map((fact) => fact.companyId));
+  return [...holders].some((companyId) =>
+    MILL_BEAST_UNLOCK_SLOTS.every((slotId) =>
+      state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId),
+    ),
+  );
 }
 
 interface StoredJoinIntent {
@@ -842,11 +902,12 @@ function proofSourceId(encounterId: string): string {
 function firstHuntPickupTargets(
   state: CompanyCombatAggregateState,
   companyId: string,
+  profile: HuntProfile,
 ): readonly FirstHuntPickupTargetDto[] {
   const physical = state.economy.physical;
   if (!physical) return [];
   const proofDefinition = COMPANY_CATALOGUE.items.find(
-    (entry) => entry.id === FIRST_HUNT_PROOF_DEFINITION_ID && entry.enabled,
+    (entry) => entry.id === profile.proofDefinitionId && entry.enabled,
   );
   if (!proofDefinition) return [];
 
@@ -869,8 +930,8 @@ function firstHuntPickupTargets(
           container.kind === 'PARTY_SUPPLY' ||
           container.kind === 'STATIC') &&
         container.location.kind === 'AT' &&
-        container.location.siteId === FIRST_HUNT_TERMS.objectiveLocation.siteId &&
-        container.location.areaId === FIRST_HUNT_TERMS.objectiveLocation.areaId &&
+        container.location.siteId === profile.objectiveLocation.siteId &&
+        container.location.areaId === profile.objectiveLocation.areaId &&
         availableContainerG(physical, container.containerId) >= proofDefinition.weightG
       );
     })

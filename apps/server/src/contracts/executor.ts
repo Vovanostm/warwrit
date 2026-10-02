@@ -8,12 +8,8 @@ import {
   COMBAT_V2_SCHEMA_VERSION,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
-  FIRST_HUNT_ENCOUNTER_LOCATION,
-  FIRST_HUNT_INSTANCE_ID,
-  FIRST_HUNT_PROFILE_ID,
-  FIRST_HUNT_PROOF_DEFINITION_ID,
-  FIRST_HUNT_PROOF_ID,
   FIRST_HUNT_PRACTICE_PROFILE_ID,
+  huntProfile,
   M1_DOMAIN_BRIDGE_V2_RULESET_ID,
   parseCompanyCommand,
   PHYSICAL_POLICY_VERSION,
@@ -23,11 +19,10 @@ import {
   readCompanyCombatAggregateState,
 } from '@warwrit/game-core';
 import type {
+  HuntProfile,
   BattleSetupV2,
   BattleState,
   CompanyCombatAggregateState,
-  ConsumeCombatAggregateInput,
-  FinalizeCombatAggregateInput,
   ItemAccessEvidence,
   LootAuthorizationEvidence,
   PhysicalContainer,
@@ -49,8 +44,10 @@ import {
   type PrepareFirstHuntTerminalEvidence,
 } from './terminal-evidence-types.js';
 import {
-  FIRST_HUNT_TERMS,
-  readFirstHuntWorldState,
+  huntTerms,
+  readHuntWorldState,
+  selectHuntWorldRow,
+  updateHuntWorldRow,
   type FirstHuntHostileState,
 } from './first-hunt-runtime.js';
 
@@ -163,19 +160,25 @@ export function prepareFirstHuntProofPickup(input: {
   const previous = readCompanyCombatAggregateState(input.previous);
   const lifecycle = previous.economy.lifecycle;
   const physical = previous.economy.physical;
-  if (!physical || lifecycle.worldId !== input.worldId || previous.encounter.active !== null)
+  const profile = huntProfile(input.request.payload.instanceId);
+  if (
+    !profile ||
+    !physical ||
+    lifecycle.worldId !== input.worldId ||
+    previous.encounter.active !== null
+  )
     return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
 
   const sourceId = `encounter:${input.encounterId}:terminal`;
-  const groundItem = createGroundProof(input.worldId, sourceId);
+  const groundItem = createGroundProof(input.worldId, sourceId, profile);
   if (
     canonicalJson(input.groundItem) !== canonicalJson(groundItem) ||
-    physical.items.some((item) => item.itemId === FIRST_HUNT_PROOF_ID) ||
+    physical.items.some((item) => item.itemId === profile.proofId) ||
     physical.containers.some((container) => container.containerId === GROUND_CONTAINER_ID)
   )
     return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
 
-  const location = { kind: 'AT' as const, ...FIRST_HUNT_ENCOUNTER_LOCATION };
+  const location = { kind: 'AT' as const, ...profile.objectiveLocation };
   const target = physical.containers.find(
     (container) => container.containerId === input.request.payload.toContainerId,
   );
@@ -253,7 +256,7 @@ export function prepareFirstHuntProofPickup(input: {
     operatorId: operator.identity.characterId,
     location,
     containerIds: [GROUND_CONTAINER_ID, target.containerId],
-    itemIds: [FIRST_HUNT_PROOF_ID],
+    itemIds: [profile.proofId],
     purpose: 'LOOT',
   };
   const authorization: LootAuthorizationEvidence = {
@@ -263,7 +266,7 @@ export function prepareFirstHuntProofPickup(input: {
     id: `first-hunt-loot-${hashId([input.worldId, input.encounterId, input.request.commandId])}`,
     kind: 'LOOT_AUTHORIZATION',
     outcomeId: sourceId,
-    itemIds: [FIRST_HUNT_PROOF_ID],
+    itemIds: [profile.proofId],
     fromContainerIds: [GROUND_CONTAINER_ID],
     ownerAfter: { kind: 'COMPANY', id: lifecycle.companyId },
   };
@@ -279,7 +282,7 @@ export function prepareFirstHuntProofPickup(input: {
     type: 'ClaimLoot',
     payload: {
       outcomeId: sourceId,
-      itemQuantities: [{ itemId: FIRST_HUNT_PROOF_ID, quantity: 1 }],
+      itemQuantities: [{ itemId: profile.proofId, quantity: 1 }],
       toContainerId: target.containerId,
       accessEvidenceId: access.id,
       claimAuthorizationId: authorization.id,
@@ -346,6 +349,8 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
     encounterId: input.encounterId,
   });
   if (lockSet === undefined) throw new TypeError('FIRST HUNT terminal lock set is unavailable');
+  const hunt = huntProfile(lockSet.instanceId);
+  if (!hunt) throw new TypeError('Hunt terminal profile is unavailable');
   const accounts = await transaction
     .selectFrom('identity_accounts')
     .select('id')
@@ -378,33 +383,24 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
     previousByCompany.set(companyId, previous);
   }
 
-  const worldRow = await transaction
-    .selectFrom('world_first_hunt_state')
-    .selectAll()
-    .where('world_id', '=', input.worldId)
-    .forUpdate()
-    .executeTakeFirst();
+  const worldRow = await selectHuntWorldRow(transaction, input.worldId, hunt);
   if (!worldRow) throw new TypeError('FIRST HUNT world state is unavailable');
-  const world = readFirstHuntWorldState(input.worldId, worldRow);
+  const world = readHuntWorldState(input.worldId, hunt, worldRow);
 
   const contract = await transaction
     .selectFrom('contract_instances')
     .select(['profile_id', 'terms', 'terms_digest', 'owner_company_id', 'helper_company_id'])
     .where('world_id', '=', input.worldId)
-    .where('instance_id', '=', FIRST_HUNT_INSTANCE_ID)
+    .where('instance_id', '=', hunt.instanceId)
     .forUpdate()
     .executeTakeFirst();
-  if (
-    !contract ||
-    contract.profile_id !== FIRST_HUNT_PROFILE_ID ||
-    contract.owner_company_id === null
-  )
+  if (!contract || contract.profile_id !== hunt.profileId || contract.owner_company_id === null)
     throw new TypeError('FIRST HUNT contract binding is unavailable');
   const contractTermsDigest = createHash('sha256')
     .update(canonicalJson(contract.terms), 'utf8')
     .digest('hex');
   if (
-    canonicalJson(contract.terms) !== canonicalJson(FIRST_HUNT_TERMS) ||
+    canonicalJson(contract.terms) !== canonicalJson(huntTerms(hunt)) ||
     contract.terms_digest.toString('hex') !== contractTermsDigest
   )
     throw new TypeError('FIRST HUNT contract terms are not the locked approved profile');
@@ -417,7 +413,7 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
     .executeTakeFirst();
   if (
     !admission ||
-    admission.instance_id !== FIRST_HUNT_INSTANCE_ID ||
+    admission.instance_id !== hunt.instanceId ||
     admission.binding_version !== 2 ||
     admission.terminal_revision !== input.terminalRevision ||
     !isRecord(admission.binding) ||
@@ -687,26 +683,21 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
     });
   }
 
-  const nextRevision = (BigInt(world.revision) + 1n).toString();
-  const worldUpdated = await transaction
-    .updateTable('world_first_hunt_state')
-    .set({ hostiles: canonicalJson(hostiles), revision: nextRevision })
-    .where('world_id', '=', input.worldId)
-    .where('revision', '=', world.revision)
-    .executeTakeFirst();
-  if (Number(worldUpdated.numUpdatedRows) !== 1)
-    throw new Error('FIRST HUNT hostile world state CAS failed');
+  await updateHuntWorldRow(transaction, world, {
+    revision: (BigInt(world.revision) + 1n).toString(),
+    hostiles,
+  });
 
   const companySide = setup.sides.find((side) => side.id === COMPANY_SIDE_ID);
   const hasCompanyVictory =
     companySide !== undefined && state.outcome?.winnerSideId === companySide.id;
   if (hasCompanyVictory) {
-    const groundItem = createGroundProof(input.worldId, proofSourceId);
+    const groundItem = createGroundProof(input.worldId, proofSourceId, hunt);
     await transaction
       .insertInto('world_proof_claims')
       .values({
         world_id: input.worldId,
-        item_id: FIRST_HUNT_PROOF_ID,
+        item_id: hunt.proofId,
         source_id: proofSourceId,
         encounter_id: input.encounterId,
         terminal_revision: input.terminalRevision,
@@ -730,10 +721,10 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
     throw new Error('FIRST HUNT terminal effects acknowledgement CAS failed');
 }
 
-function createGroundProof(worldId: string, sourceId: string) {
+function createGroundProof(worldId: string, sourceId: string, profile: HuntProfile) {
   return {
-    itemId: FIRST_HUNT_PROOF_ID,
-    definitionId: FIRST_HUNT_PROOF_DEFINITION_ID,
+    itemId: profile.proofId,
+    definitionId: profile.proofDefinitionId,
     owner: { kind: 'WORLD' as const, id: worldId },
     containerId: GROUND_CONTAINER_ID,
     quantity: 1,

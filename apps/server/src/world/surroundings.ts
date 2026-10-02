@@ -1,8 +1,4 @@
-import {
-  FIRST_HUNT_ENCOUNTER_LOCATION,
-  projectCompanyLifecycle,
-  SEROE_PORECHYE,
-} from '@warwrit/game-core';
+import { HUNT_PROFILES, projectCompanyLifecycle, SEROE_PORECHYE } from '@warwrit/game-core';
 import type { WorldSurroundingsDto } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
@@ -10,7 +6,7 @@ import type { Kysely } from 'kysely';
 import { resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
 import { findOwnedCompanyId, loadCompanyAggregate } from '../company/repository.js';
-import { readFirstHuntWorldState } from '../contracts/first-hunt-runtime.js';
+import { readHuntWorldState, selectHuntWorldRow } from '../contracts/first-hunt-runtime.js';
 import { readWorldClock, readWorldLight } from './clock.js';
 
 const MS_PER_TICK = '21600';
@@ -86,23 +82,22 @@ export function registerWorldSurroundingsRoute(
         }
       }
       const observedHostiles: WorldSurroundingsDto['observedHostiles'][number][] = [];
-      if (observerSiteId === FIRST_HUNT_ENCOUNTER_LOCATION.siteId) {
-        const row = await transaction
-          .selectFrom('world_first_hunt_state')
-          .selectAll()
-          .where('world_id', '=', worldId)
-          .executeTakeFirst();
-        if (row) {
-          for (const hostile of readFirstHuntWorldState(worldId, row).hostiles) {
-            const health = hostile.currentPools['health'] ?? 0;
-            if (health <= 0) continue;
-            observedHostiles.push({
-              entityId: hostile.entityId,
-              siteId: observerSiteId,
-              weaponItemId: hostile.weaponItemId,
-              wounded: health < (hostile.initialPools['health'] ?? health),
-            });
-          }
+      const night = readWorldLight(clock).phase === 'NIGHT';
+      for (const hunt of HUNT_PROFILES) {
+        // A night threat is seen only by a party standing there at night.
+        if (hunt.objectiveLocation.siteId !== observerSiteId || (hunt.nightOnly && !night))
+          continue;
+        const row = await selectHuntWorldRow(transaction, worldId, hunt, false);
+        if (!row) continue;
+        for (const hostile of readHuntWorldState(worldId, hunt, row).hostiles) {
+          const health = hostile.currentPools['health'] ?? 0;
+          if (health <= 0) continue;
+          observedHostiles.push({
+            entityId: hostile.entityId,
+            siteId: observerSiteId,
+            weaponItemId: hostile.weaponItemId,
+            wounded: health < (hostile.initialPools['health'] ?? health),
+          });
         }
       }
       const response: WorldSurroundingsDto = {

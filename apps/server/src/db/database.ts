@@ -293,6 +293,20 @@ export interface DatabaseSchema {
     readonly wallet_q: string;
     readonly state: unknown;
   };
+  readonly world_hunt_states: {
+    readonly world_id: string;
+    readonly instance_id: string;
+    readonly schema_version: number;
+    readonly profile_id: string;
+    readonly genesis_source_id: string;
+    readonly revision: string;
+    readonly seed: string;
+    readonly issuer_id: string;
+    readonly issuer_area_id: string;
+    readonly wallet_id: string;
+    readonly wallet_q: string;
+    readonly hostiles: unknown;
+  };
   readonly ordinary_contract_receipts: {
     readonly world_id: string;
     readonly company_id: string;

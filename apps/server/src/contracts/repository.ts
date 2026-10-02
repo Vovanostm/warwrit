@@ -7,6 +7,8 @@ import type { DatabaseSchema } from '../db/database.js';
 import {
   FIRST_HUNT_INSTANCE_ID,
   FIRST_HUNT_PROFILE_ID,
+  HUNT_PROFILES,
+  huntProfile,
   isDangerousRouteContract,
   ORDINARY_CONTRACT_PROFILES,
   readOrdinaryContractState,
@@ -17,7 +19,7 @@ import { FIRST_HUNT_TERMS } from './first-hunt-runtime.js';
 
 export interface FirstHuntTerminalLockSet {
   readonly worldId: string;
-  readonly instanceId: typeof FIRST_HUNT_INSTANCE_ID;
+  readonly instanceId: string;
   readonly encounterId: string;
   readonly companyIds: readonly string[];
   readonly accountIds: readonly string[];
@@ -36,7 +38,7 @@ export async function readFirstHuntTerminalLockSet(
     .executeTakeFirst();
   if (
     !admission ||
-    admission.instance_id !== FIRST_HUNT_INSTANCE_ID ||
+    huntProfile(admission.instance_id) === undefined ||
     !isRecord(admission.binding) ||
     admission.binding['worldId'] !== input.worldId ||
     admission.binding['version'] !== 's02-encounter-binding-2' ||
@@ -70,7 +72,7 @@ export async function readFirstHuntTerminalLockSet(
     return undefined;
   return {
     worldId: input.worldId,
-    instanceId: FIRST_HUNT_INSTANCE_ID,
+    instanceId: admission.instance_id,
     encounterId: input.encounterId,
     companyIds: [...companyIds].toSorted(compareCodeUnits),
     accountIds: owners.map((owner) => owner.account_id).toSorted(compareCodeUnits),
@@ -111,6 +113,29 @@ export async function readDangerousRouteMembership(
       profileId: FIRST_HUNT_PROFILE_ID,
       termsDigest: row.terms_digest.toString('hex'),
     };
+
+  // Hunts after FIRST HUNT whose objective is behind the dangerous road (the mill beast).
+  for (const hunt of HUNT_PROFILES) {
+    if (hunt.instanceId === FIRST_HUNT_INSTANCE_ID) continue;
+    if (!isDangerousRouteContract(hunt.instanceId, hunt.profileId)) continue;
+    let huntQuery = transaction
+      .selectFrom('contract_instances')
+      .select(['profile_id', 'terms_digest', 'owner_company_id', 'helper_company_id'])
+      .where('world_id', '=', worldId)
+      .where('instance_id', '=', hunt.instanceId);
+    if (lock) huntQuery = huntQuery.forUpdate();
+    const huntRow = await huntQuery.executeTakeFirst();
+    if (
+      huntRow &&
+      huntRow.profile_id === hunt.profileId &&
+      (huntRow.owner_company_id === companyId || huntRow.helper_company_id === companyId)
+    )
+      return {
+        instanceId: hunt.instanceId,
+        profileId: hunt.profileId,
+        termsDigest: huntRow.terms_digest.toString('hex'),
+      };
+  }
 
   for (const profile of ORDINARY_CONTRACT_PROFILES) {
     if (!isDangerousRouteContract(profile.instanceId, profile.definitionId)) continue;

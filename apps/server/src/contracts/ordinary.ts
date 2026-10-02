@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import {
   canonicalJson,
   canPerform,
+  huntProfile,
   ORDINARY_CONTRACT_PROFILES,
   ordinaryContractGenesis,
   ordinaryContractProfile,
@@ -35,7 +36,13 @@ import {
 } from '../company/repository.js';
 import type { DatabaseSchema } from '../db/database.js';
 import { readWorldClock, readWorldLight } from '../world/clock.js';
-import { ensureFirstHuntGenesisInTransaction } from './first-hunt-runtime.js';
+import {
+  ensureFirstHuntGenesisInTransaction,
+  ensureHuntGenesisInTransaction,
+  type FirstHuntHostileState,
+} from './first-hunt-runtime.js';
+
+const MILL_BEAST = huntProfile('ci.m1.mill-beast.01')!;
 
 type Rejection = Extract<OrdinaryContractCommandResponseDto, { ok: false }>['code'];
 
@@ -91,12 +98,14 @@ async function readGates(
   worldId: string,
 ): Promise<Readonly<Record<OrdinaryStepGate, boolean>>> {
   const clock = await readWorldClock(transaction, worldId);
-  const world = await ensureFirstHuntGenesisInTransaction(transaction, worldId);
+  const allDead = (state: { readonly hostiles: readonly FirstHuntHostileState[] }) =>
+    state.hostiles.every((hostile) => hostile.currentPools['health'] === 0);
+  const raiders = await ensureFirstHuntGenesisInTransaction(transaction, worldId);
+  const beast = await ensureHuntGenesisInTransaction(transaction, worldId, MILL_BEAST);
   return {
     DAYLIGHT: readWorldLight(clock).phase === 'DAY',
-    RAIDERS_DEFEATED: world.hostiles.every((hostile) => hostile.currentPools['health'] === 0),
-    // The mill beast hunt is not yet a runtime encounter; its release step stays closed.
-    BEAST_DEFEATED: false,
+    RAIDERS_DEFEATED: allDead(raiders),
+    BEAST_DEFEATED: allDead(beast),
   };
 }
 

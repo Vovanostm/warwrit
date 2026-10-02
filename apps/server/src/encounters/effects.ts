@@ -1,8 +1,10 @@
+import { huntProfile } from '@warwrit/game-core';
 import { sql, type Kysely, type Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 import { lockCompanyAggregate } from '../company/repository.js';
 import { applyFirstHuntTerminalEffectsInTransaction } from '../contracts/executor.js';
+import { selectHuntWorldRow } from '../contracts/first-hunt-runtime.js';
 import { readFirstHuntTerminalLockSet } from '../contracts/repository.js';
 import { TerminalAwaitingLeadershipChoice } from '../contracts/terminal-evidence-types.js';
 import { readWorldClock } from '../world/clock.js';
@@ -92,12 +94,8 @@ async function applyOne(
     .execute();
   await readWorldClock(transaction, lockSet.worldId, new Date(), true);
 
-  const world = await transaction
-    .selectFrom('world_first_hunt_state')
-    .select('world_id')
-    .where('world_id', '=', lockSet.worldId)
-    .forUpdate()
-    .executeTakeFirst();
+  const hunt = huntProfile(lockSet.instanceId);
+  const world = hunt ? await selectHuntWorldRow(transaction, lockSet.worldId, hunt) : undefined;
   if (world === undefined) return false;
 
   const contract = await transaction

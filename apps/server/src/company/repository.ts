@@ -6,10 +6,8 @@ import {
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   COMPANY_SCHEMA_VERSION,
-  FIRST_HUNT_ENCOUNTER_LOCATION,
-  FIRST_HUNT_PROOF_ID,
-  FIRST_HUNT_REWARD_Q,
-  FIRST_HUNT_WALLET_ID,
+  FIRST_HUNT_INSTANCE_ID,
+  huntProfile,
   availableContainerG,
   campaignTick,
   canonicalJson,
@@ -19,7 +17,7 @@ import {
   receiveExternalPayment,
   readCompanyCombatAggregateState,
 } from '@warwrit/game-core';
-import type { CompanyCombatAggregateState } from '@warwrit/game-core';
+import type { CompanyCombatAggregateState, HuntProfile } from '@warwrit/game-core';
 import type { DatabaseSchema } from '../db/database.js';
 
 export interface CompanyStorageReceipt {
@@ -46,11 +44,13 @@ export interface CompanyStorageWrite {
 export type FirstHuntExternalCompanyTransition =
   | {
       readonly operation: 'PICKUP';
+      readonly instanceId: string;
       readonly sourceId: string;
       readonly targetContainerId: string;
     }
   | {
       readonly operation: 'PRESENT';
+      readonly instanceId: string;
       readonly sourceId: string;
       readonly issuerWalletId: string;
       readonly recipientWalletId: string;
@@ -711,6 +711,34 @@ export function firstHuntTerminalReceiptIdentity(input: {
   };
 }
 
+function transitionHunt(transition: FirstHuntExternalCompanyTransition): HuntProfile {
+  const hunt = huntProfile(transition.instanceId);
+  if (!hunt) throw new TypeError('Hunt proof transition names no known hunt');
+  return hunt;
+}
+
+/** The issuer wallet row of a hunt: FIRST HUNT keeps its original table. */
+async function lockHuntIssuer(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  hunt: HuntProfile,
+) {
+  return hunt.instanceId === FIRST_HUNT_INSTANCE_ID
+    ? transaction
+        .selectFrom('world_first_hunt_state')
+        .select(['wallet_id', 'wallet_q', 'revision'])
+        .where('world_id', '=', worldId)
+        .forUpdate()
+        .executeTakeFirst()
+    : transaction
+        .selectFrom('world_hunt_states')
+        .select(['wallet_id', 'wallet_q', 'revision'])
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', hunt.instanceId)
+        .forUpdate()
+        .executeTakeFirst();
+}
+
 async function validateFirstHuntProofClaimInTransaction(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
@@ -720,6 +748,7 @@ async function validateFirstHuntProofClaimInTransaction(
     readonly receiptId: string;
   },
 ): Promise<void> {
+  const hunt = transitionHunt(input.transition);
   const claim = await transaction
     .selectFrom('world_proof_claims')
     .select([
@@ -730,7 +759,7 @@ async function validateFirstHuntProofClaimInTransaction(
       'redemption_receipt_id',
     ])
     .where('world_id', '=', worldId)
-    .where('item_id', '=', FIRST_HUNT_PROOF_ID)
+    .where('item_id', '=', hunt.proofId)
     .forUpdate()
     .executeTakeFirst();
   if (
@@ -749,12 +778,7 @@ async function validateFirstHuntProofClaimInTransaction(
     throw new TypeError('FIRST HUNT proof claim does not match its company transition');
 
   if (input.transition.operation === 'PRESENT') {
-    const issuer = await transaction
-      .selectFrom('world_first_hunt_state')
-      .select(['wallet_id', 'wallet_q', 'revision'])
-      .where('world_id', '=', worldId)
-      .forUpdate()
-      .executeTakeFirst();
+    const issuer = await lockHuntIssuer(transaction, worldId, hunt);
     if (
       !issuer ||
       issuer.wallet_id !== input.transition.issuerWalletId ||
@@ -775,12 +799,13 @@ async function applyFirstHuntProofClaimInTransaction(
     readonly receiptId: string;
   },
 ): Promise<void> {
+  const hunt = transitionHunt(input.transition);
   if (input.transition.operation === 'PICKUP') {
     const claimed = await transaction
       .updateTable('world_proof_claims')
       .set({ ground_item: null, custodian_company_id: companyId })
       .where('world_id', '=', worldId)
-      .where('item_id', '=', FIRST_HUNT_PROOF_ID)
+      .where('item_id', '=', hunt.proofId)
       .where('source_id', '=', input.transition.sourceId)
       .where('ground_item', 'is not', null)
       .where('custodian_company_id', 'is', null)
@@ -791,24 +816,36 @@ async function applyFirstHuntProofClaimInTransaction(
   }
 
   const rewardQ = BigInt(input.transition.rewardQ);
-  const issuer = await transaction
-    .updateTable('world_first_hunt_state')
-    .set({
-      wallet_q: (BigInt(input.transition.worldWalletBeforeQ) - rewardQ).toString(),
-      revision: (BigInt(input.transition.worldRevisionBefore) + 1n).toString(),
-    })
-    .where('world_id', '=', worldId)
-    .where('wallet_id', '=', input.transition.issuerWalletId)
-    .where('wallet_q', '=', input.transition.worldWalletBeforeQ)
-    .where('revision', '=', input.transition.worldRevisionBefore)
-    .executeTakeFirst();
+  const debit = {
+    wallet_q: (BigInt(input.transition.worldWalletBeforeQ) - rewardQ).toString(),
+    revision: (BigInt(input.transition.worldRevisionBefore) + 1n).toString(),
+  };
+  const issuer =
+    hunt.instanceId === FIRST_HUNT_INSTANCE_ID
+      ? await transaction
+          .updateTable('world_first_hunt_state')
+          .set(debit)
+          .where('world_id', '=', worldId)
+          .where('wallet_id', '=', input.transition.issuerWalletId)
+          .where('wallet_q', '=', input.transition.worldWalletBeforeQ)
+          .where('revision', '=', input.transition.worldRevisionBefore)
+          .executeTakeFirst()
+      : await transaction
+          .updateTable('world_hunt_states')
+          .set(debit)
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', hunt.instanceId)
+          .where('wallet_id', '=', input.transition.issuerWalletId)
+          .where('wallet_q', '=', input.transition.worldWalletBeforeQ)
+          .where('revision', '=', input.transition.worldRevisionBefore)
+          .executeTakeFirst();
   if (Number(issuer.numUpdatedRows) !== 1)
     throw new Error('FIRST HUNT issuer wallet debit CAS failed');
   const redeemed = await transaction
     .updateTable('world_proof_claims')
     .set({ redeemed_company_id: companyId, redemption_receipt_id: input.receiptId })
     .where('world_id', '=', worldId)
-    .where('item_id', '=', FIRST_HUNT_PROOF_ID)
+    .where('item_id', '=', hunt.proofId)
     .where('source_id', '=', input.transition.sourceId)
     .where('ground_item', 'is', null)
     .where('custodian_company_id', '=', companyId)
@@ -839,6 +876,7 @@ function validateFirstHuntExternalTransition(
     throw new TypeError('Invalid FIRST HUNT external company command');
   }
   const expectedType = input.transition.operation;
+  const hunt = transitionHunt(input.transition);
   const expectedEventType =
     expectedType === 'PICKUP' ? 'FirstHuntProofPickedUp' : 'FirstHuntProofPresented';
   if (
@@ -847,7 +885,7 @@ function validateFirstHuntExternalTransition(
     request['commandId'] !== input.commandId ||
     request['type'] !== expectedType ||
     !isJsonObject(request['payload']) ||
-    request['payload']['instanceId'] !== 'ci.m1.raider-standard.01' ||
+    request['payload']['instanceId'] !== hunt.instanceId ||
     (input.transition.operation === 'PICKUP' &&
       request['payload']['toContainerId'] !== input.transition.targetContainerId) ||
     !isNonEmpty(input.transition.sourceId) ||
@@ -857,7 +895,7 @@ function validateFirstHuntExternalTransition(
     input.response['receiptId'] !== input.receiptId ||
     input.event['schemaVersion'] !== 1 ||
     input.event['type'] !== expectedEventType ||
-    input.event['itemId'] !== FIRST_HUNT_PROOF_ID ||
+    input.event['itemId'] !== hunt.proofId ||
     input.eventId !== `${input.commandId}:first-hunt-${expectedType.toLowerCase()}`
   )
     throw new TypeError('Invalid FIRST HUNT external company command');
@@ -891,7 +929,7 @@ function validateFirstHuntExternalTransition(
       canonicalStateJson(afterApplied.slice(0, beforeApplied.length)) !==
         canonicalStateJson(beforeApplied) ||
       afterApplied.at(-1)?.commandId !== input.commandId ||
-      !validProofPickupDelta(previous, next, input.transition)
+      !validProofPickupDelta(previous, next, input.transition, hunt)
     )
       throw new TypeError('FIRST HUNT pickup is not an exact proof ClaimLoot transition');
     return;
@@ -901,7 +939,7 @@ function validateFirstHuntExternalTransition(
     canonicalStateJson(beforeEconomy.physical) !== canonicalStateJson(afterEconomy.physical) ||
     input.event['rewardQ'] !== input.transition.rewardQ ||
     request['payload'] === null ||
-    !validProofPresentationDelta(previous, next, input.transition, input.receiptId)
+    !validProofPresentationDelta(previous, next, input.transition, input.receiptId, hunt)
   )
     throw new TypeError('FIRST HUNT presentation is not an exact proof settlement transition');
 }
@@ -916,11 +954,12 @@ function validProofPickupDelta(
   previous: CompanyCombatAggregateState,
   next: CompanyCombatAggregateState,
   transition: Extract<FirstHuntExternalCompanyTransition, { operation: 'PICKUP' }>,
+  hunt: HuntProfile,
 ): boolean {
   const before = previous.economy.physical;
   const after = next.economy.physical;
   if (!before || !after) return false;
-  const proof = after.items.find((item) => item.itemId === FIRST_HUNT_PROOF_ID);
+  const proof = after.items.find((item) => item.itemId === hunt.proofId);
   const target = before.containers.find(
     (container) => container.containerId === transition.targetContainerId,
   );
@@ -953,7 +992,7 @@ function validProofPickupDelta(
       .map((membership) => String(membership.characterId)),
   );
   return (
-    !before.items.some((item) => item.itemId === FIRST_HUNT_PROOF_ID) &&
+    !before.items.some((item) => item.itemId === hunt.proofId) &&
     proof !== undefined &&
     proof.owner.kind === 'COMPANY' &&
     proof.owner.id === previous.economy.lifecycle.companyId &&
@@ -968,12 +1007,12 @@ function validProofPickupDelta(
     target.access === 'COMPANY' &&
     target.closed === null &&
     target.location.kind === 'AT' &&
-    target.location.siteId === FIRST_HUNT_ENCOUNTER_LOCATION.siteId &&
-    target.location.areaId === FIRST_HUNT_ENCOUNTER_LOCATION.areaId &&
+    target.location.siteId === hunt.objectiveLocation.siteId &&
+    target.location.areaId === hunt.objectiveLocation.areaId &&
     (target.kind === 'CARRIED' || target.kind === 'PARTY_SUPPLY' || target.kind === 'STATIC') &&
     availableContainerG(before, target.containerId) >= (definition?.weightG ?? Infinity) &&
     canonicalStateJson(before.items) ===
-      canonicalStateJson(after.items.filter((item) => item.itemId !== FIRST_HUNT_PROOF_ID)) &&
+      canonicalStateJson(after.items.filter((item) => item.itemId !== hunt.proofId)) &&
     canonicalStateJson(before.containers) === canonicalStateJson(after.containers) &&
     canonicalStateJson(before.conditions) === canonicalStateJson(after.conditions) &&
     canonicalStateJson(before.vitals) === canonicalStateJson(after.vitals) &&
@@ -987,7 +1026,7 @@ function validProofPickupDelta(
     authorization?.['kind'] === 'LOOT_AUTHORIZATION' &&
     authorization?.['sourceEventId'] === transition.sourceId &&
     authorization?.['outcomeId'] === transition.sourceId &&
-    canonicalStateJson(authorization?.['itemIds']) === canonicalStateJson([FIRST_HUNT_PROOF_ID]) &&
+    canonicalStateJson(authorization?.['itemIds']) === canonicalStateJson([hunt.proofId]) &&
     canonicalStateJson(authorization?.['fromContainerIds']) ===
       canonicalStateJson(['first-hunt-ground-proof']) &&
     canonicalStateJson(authorization?.['ownerAfter']) ===
@@ -995,7 +1034,7 @@ function validProofPickupDelta(
     after.sourceEffects.length === before.sourceEffects.length + 1 &&
     canonicalStateJson(before.knowledge.itemSnapshots) ===
       canonicalStateJson(
-        after.knowledge.itemSnapshots.filter((item) => item.itemId !== FIRST_HUNT_PROOF_ID),
+        after.knowledge.itemSnapshots.filter((item) => item.itemId !== hunt.proofId),
       ) &&
     canonicalStateJson(before.knowledge.conditionSnapshots) ===
       canonicalStateJson(after.knowledge.conditionSnapshots) &&
@@ -1023,7 +1062,7 @@ function validProofPickupDelta(
       ),
     ) === canonicalStateJson(target) &&
     canonicalStateJson(
-      after.knowledge.itemSnapshots.find((item) => item.itemId === FIRST_HUNT_PROOF_ID),
+      after.knowledge.itemSnapshots.find((item) => item.itemId === hunt.proofId),
     ) === canonicalStateJson(proof)
   );
 }
@@ -1033,10 +1072,11 @@ function validProofPresentationDelta(
   next: CompanyCombatAggregateState,
   transition: Extract<FirstHuntExternalCompanyTransition, { operation: 'PRESENT' }>,
   receiptId: string,
+  hunt: HuntProfile,
 ): boolean {
   const companyId = previous.economy.lifecycle.companyId;
   const sourceItem = previous.economy.physical?.items.find(
-    (item) => item.itemId === FIRST_HUNT_PROOF_ID && item.tombstone === null,
+    (item) => item.itemId === hunt.proofId && item.tombstone === null,
   );
   const pool = previous.economy.finance.pools.find((entry) => entry.poolId === 'local');
   const recipient = previous.economy.finance.wallets.find(
@@ -1051,8 +1091,8 @@ function validProofPresentationDelta(
     pool?.walletId !== transition.recipientWalletId ||
     recipient?.owner.kind !== 'COMPANY' ||
     recipient.owner.id !== companyId ||
-    transition.issuerWalletId !== FIRST_HUNT_WALLET_ID ||
-    transition.rewardQ !== FIRST_HUNT_REWARD_Q ||
+    transition.issuerWalletId !== hunt.walletId ||
+    transition.rewardQ !== hunt.rewardQ ||
     !isRevision(transition.atTick) ||
     !isRevision(transition.worldWalletBeforeQ) ||
     !isRevision(transition.worldRevisionBefore) ||

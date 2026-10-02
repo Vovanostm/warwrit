@@ -372,6 +372,9 @@ async function cleanupFirstHuntJoinScenario(
       .execute();
     await removeEncounterFixture(database, admission.encounter_id);
   }
+  await database.deleteFrom('world_hunt_states').where('world_id', '=', worldId).execute();
+  await database.deleteFrom('ordinary_contract_receipts').where('world_id', '=', worldId).execute();
+  await database.deleteFrom('ordinary_contracts').where('world_id', '=', worldId).execute();
   await database.deleteFrom('contract_instances').where('world_id', '=', worldId).execute();
   await database.deleteFrom('world_first_hunt_state').where('world_id', '=', worldId).execute();
   for (const actor of actors) {
@@ -1539,6 +1542,12 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         expect(await verifyEncounterReplay(restartedDatabase, encounterId)).toBe(true);
       } finally {
         await removeEncounterFixture(database, encounterId);
+        await database.deleteFrom('world_hunt_states').where('world_id', '=', worldId).execute();
+        await database
+          .deleteFrom('ordinary_contract_receipts')
+          .where('world_id', '=', worldId)
+          .execute();
+        await database.deleteFrom('ordinary_contracts').where('world_id', '=', worldId).execute();
         await database.deleteFrom('contract_instances').where('world_id', '=', worldId).execute();
         await database
           .deleteFrom('world_first_hunt_state')

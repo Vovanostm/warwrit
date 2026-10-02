@@ -40,9 +40,10 @@ export const FIRST_HUNT_RETREAT_HEXES = Object.freeze({
 
 export interface FirstHuntHostileDefinition {
   readonly entityId: string;
-  readonly weaponItemId: 'raider-weapon' | 'bow' | 'great-weapon';
+  /** Descriptive gear; never loot. Beasts fight with an existing combat weapon profile. */
+  readonly weaponItemId: 'raider-weapon' | 'bow' | 'great-weapon' | 'wolf-fangs' | 'beast-claws';
   readonly weaponId: WeaponId;
-  readonly armorItemId: 'padded-coat';
+  readonly armorItemId: 'padded-coat' | 'thick-hide';
   readonly position: Hex;
   readonly attributes: UnitAttributes;
   readonly initialPools: {
@@ -51,7 +52,7 @@ export interface FirstHuntHostileDefinition {
     readonly armor: number;
     readonly morale: number;
   };
-  readonly armorCondition: 40;
+  readonly armorCondition: number;
   readonly weaponCondition: 10000;
   readonly doctrine: 'aggressive';
 }

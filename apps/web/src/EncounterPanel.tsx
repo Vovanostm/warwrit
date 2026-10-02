@@ -70,6 +70,13 @@ function unitLabel(
   return (
     ourNames[unit.id] ??
     HOSTILE_LABELS[unit.id] ??
+    (unit.id.startsWith('world.wolf.')
+      ? unit.id.includes('.leader.')
+        ? 'Вожак волков'
+        : 'Волк'
+      : unit.id.startsWith('world.beast.')
+        ? 'Огромный зверь'
+        : undefined) ??
     (unit.sideId === 'first-hunt-companies'
       ? 'Боец второй компании'
       : neutralUnitLabel(unit as never))

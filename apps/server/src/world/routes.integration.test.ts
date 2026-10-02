@@ -2179,6 +2179,7 @@ describe('authenticated world travel (PostgreSQL)', () => {
           '0010_first_hunt_runtime',
           '0011_encounter_leadership_choices',
           '0012_ordinary_contracts',
+          '0013_world_hunt_states',
         ] as const;
         const beforeDown = await runMigrations(rollback, 'status');
         expect(beforeDown.applied.slice(-migrationSuffix.length)).toEqual(migrationSuffix);
@@ -3294,6 +3295,18 @@ async function cleanupSyntheticCompany(
   actor: SyntheticCompany,
 ): Promise<void> {
   await db.transaction().execute(async (transaction) => {
+    await transaction
+      .deleteFrom('world_hunt_states')
+      .where('world_id', '=', actor.worldId)
+      .execute();
+    await transaction
+      .deleteFrom('ordinary_contract_receipts')
+      .where('world_id', '=', actor.worldId)
+      .execute();
+    await transaction
+      .deleteFrom('ordinary_contracts')
+      .where('world_id', '=', actor.worldId)
+      .execute();
     await transaction
       .deleteFrom('contract_instances')
       .where('world_id', '=', actor.worldId)

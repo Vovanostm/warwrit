@@ -2,8 +2,7 @@ import { createHash } from 'node:crypto';
 
 import {
   COMPANY_CATALOGUE,
-  FIRST_HUNT_INSTANCE_ID,
-  FIRST_HUNT_PROFILE_ID,
+  isDangerousRouteContract,
   PHYSICAL_POLICY_VERSION,
   SAFE_TRAVEL_ALPHA_V1,
   TRAVEL_RULES,
@@ -513,8 +512,8 @@ function validFirstHuntExecution(
     execution.profileId === TRAVEL_RULES.profileId &&
     execution.edgeIds.length === 1 &&
     execution.edgeIds[0] === 'tikhaya-gat-staraya-melnitsa' &&
-    authorization?.instanceId === FIRST_HUNT_INSTANCE_ID &&
-    authorization.profileId === FIRST_HUNT_PROFILE_ID &&
+    authorization !== undefined &&
+    isDangerousRouteContract(authorization.instanceId, authorization.profileId) &&
     /^[0-9a-f]{64}$/.test(authorization.termsDigest) &&
     edge?.danger === 'DANGEROUS' &&
     edge.edgeId === 'tikhaya-gat-staraya-melnitsa' &&

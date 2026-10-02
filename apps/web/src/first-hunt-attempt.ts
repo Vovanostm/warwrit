@@ -9,6 +9,8 @@ import {
 export interface FirstHuntScope {
   readonly accountId: string;
   readonly companyId: string;
+  /** Hunts after FIRST HUNT keep their own pending attempt. */
+  readonly instanceId?: string;
 }
 
 export interface FirstHuntAttempt {
@@ -97,7 +99,10 @@ export function firstHuntEncounterDiscoveryId(
 }
 
 export function firstHuntAttemptKey(scope: FirstHuntScope): string {
-  return `warwrit:first-hunt:v1:${encodeURIComponent(scope.accountId)}:${encodeURIComponent(scope.companyId)}`;
+  const base = `warwrit:first-hunt:v1:${encodeURIComponent(scope.accountId)}:${encodeURIComponent(scope.companyId)}`;
+  return scope.instanceId === undefined || scope.instanceId === 'ci.m1.raider-standard.01'
+    ? base
+    : `${base}:${encodeURIComponent(scope.instanceId)}`;
 }
 
 export function createFirstHuntAttempt(input: {

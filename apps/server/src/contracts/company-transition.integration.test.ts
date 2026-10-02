@@ -94,6 +94,7 @@ describe('FIRST HUNT revisioned company transition (isolated PostgreSQL)', () =>
       });
       const transition = {
         operation: 'PRESENT' as const,
+        instanceId: 'ci.m1.raider-standard.01',
         sourceId: proofSourceId,
         issuerWalletId: FIRST_HUNT_WALLET_ID,
         recipientWalletId: recipient.walletId,
@@ -355,6 +356,18 @@ describe('FIRST HUNT revisioned company transition (isolated PostgreSQL)', () =>
             .execute();
           await transaction
             .deleteFrom('company_audit_events')
+            .where('world_id', '=', worldId)
+            .execute();
+          await transaction
+            .deleteFrom('world_hunt_states')
+            .where('world_id', '=', worldId)
+            .execute();
+          await transaction
+            .deleteFrom('ordinary_contract_receipts')
+            .where('world_id', '=', worldId)
+            .execute();
+          await transaction
+            .deleteFrom('ordinary_contracts')
             .where('world_id', '=', worldId)
             .execute();
           await transaction

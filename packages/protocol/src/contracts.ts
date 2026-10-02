@@ -3,12 +3,20 @@ export interface FirstHuntLocationDto {
   readonly areaId: string;
 }
 
+/** Hunt contracts sharing the FIRST HUNT runtime (owner decision 2026-10-02). */
+export const HUNT_INSTANCE_IDS = [
+  'ci.m1.raider-standard.01',
+  'ci.m1.wolf-trail.01',
+  'ci.m1.mill-beast.01',
+] as const;
+export type HuntInstanceId = (typeof HUNT_INSTANCE_IDS)[number];
+
 export interface FirstHuntTermsDto {
-  readonly profileId: 'first-hunt-runtime-profile-2026-10-01-v1';
+  readonly profileId: string;
   readonly issuerId: string;
   readonly issuerLocation: FirstHuntLocationDto;
   readonly objectiveLocation: FirstHuntLocationDto;
-  readonly rewardQ: '100000000';
+  readonly rewardQ: string;
   readonly claimPolicy: 'UNIQUE_CURRENT_BEARER';
   readonly maximumHelpers: 1;
 }
@@ -20,7 +28,7 @@ export interface FirstHuntPickupTargetDto {
 }
 
 export interface FirstHuntContractViewDto {
-  readonly instanceId: 'ci.m1.raider-standard.01';
+  readonly instanceId: HuntInstanceId;
   readonly definitionEdition: string;
   readonly termsDigest: string;
   readonly terms: FirstHuntTermsDto;
@@ -207,7 +215,7 @@ export function isFirstHuntReadResponse(value: unknown): value is FirstHuntReadR
       'pickupTargets',
       'yourProof',
     ]) ||
-    contract['instanceId'] !== 'ci.m1.raider-standard.01' ||
+    !HUNT_INSTANCE_IDS.includes(contract['instanceId'] as HuntInstanceId) ||
     !isText(contract['definitionEdition']) ||
     !isText(contract['termsDigest']) ||
     !isRecord(contract['terms']) ||
@@ -220,11 +228,11 @@ export function isFirstHuntReadResponse(value: unknown): value is FirstHuntReadR
       'claimPolicy',
       'maximumHelpers',
     ]) ||
-    contract['terms']['profileId'] !== 'first-hunt-runtime-profile-2026-10-01-v1' ||
+    !isText(contract['terms']['profileId']) ||
     !isText(contract['terms']['issuerId']) ||
     !isLocation(contract['terms']['issuerLocation']) ||
     !isLocation(contract['terms']['objectiveLocation']) ||
-    contract['terms']['rewardQ'] !== '100000000' ||
+    !isDecimal(contract['terms']['rewardQ']) ||
     contract['terms']['claimPolicy'] !== 'UNIQUE_CURRENT_BEARER' ||
     contract['terms']['maximumHelpers'] !== 1 ||
     !['NONE', 'OWNER', 'HELPER'].includes(String(contract['yourRole'])) ||

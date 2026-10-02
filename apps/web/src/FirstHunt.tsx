@@ -63,6 +63,12 @@ function containerLabel(containerId: string): string {
   return containerId.endsWith('"party-supply"]') ? 'в обозе отряда' : 'у бойца отряда';
 }
 
+const HUNT_TEXT: Readonly<Record<string, { readonly code: string; readonly title: string }>> = {
+  'ci.m1.raider-standard.01': { code: 'HUNT-03', title: 'Знамя у старой мельницы' },
+  'ci.m1.wolf-trail.01': { code: 'HUNT-02', title: 'Волчья тропа' },
+  'ci.m1.mill-beast.01': { code: 'HUNT-01', title: 'Ночной зверь у мельницы' },
+};
+
 export function FirstHunt(props: {
   readonly scope: FirstHuntScope;
   readonly location: string | null;
@@ -84,7 +90,11 @@ export function FirstHunt(props: {
       const currentGeneration = ++generation.current;
       setView((current) => ({ ...current, status: 'loading' }));
       try {
-        const response = await fetch(`${apiBaseUrl}/contracts/first-hunt`, {
+        const query =
+          props.scope.instanceId === undefined
+            ? ''
+            : `?instanceId=${encodeURIComponent(props.scope.instanceId)}`;
+        const response = await fetch(`${apiBaseUrl}/contracts/first-hunt${query}`, {
           credentials: 'same-origin',
           cache: 'no-store',
         });
@@ -110,7 +120,7 @@ export function FirstHunt(props: {
         return undefined;
       }
     },
-    [props.scope.accountId, props.scope.companyId, props.refreshKey],
+    [props.scope.accountId, props.scope.companyId, props.scope.instanceId, props.refreshKey],
   );
 
   useEffect(() => {
@@ -246,10 +256,14 @@ export function FirstHunt(props: {
     });
   }, [pendingJoinPollKey, refresh, notifyEncounterDiscovered]);
 
+  const huntText = HUNT_TEXT[props.scope.instanceId ?? 'ci.m1.raider-standard.01'] ?? {
+    code: 'HUNT',
+    title: 'Охота',
+  };
   return (
-    <section className="first-hunt" aria-label="Контракт городской стражи">
-      <p className="eyebrow">Контракт · HUNT-03</p>
-      <h2>Знамя у старой мельницы</h2>
+    <section className="first-hunt" aria-label={`Контракт: ${huntText.title}`}>
+      <p className="eyebrow">Контракт · {huntText.code}</p>
+      <h2>{huntText.title}</h2>
       {view.status === 'loading' && view.response === undefined && (
         <p className="state-note">Загружаем условия и состояние.</p>
       )}
@@ -457,30 +471,38 @@ export function firstHuntStateLabel(
   }
 }
 
+const ISSUERS: Readonly<Record<string, string>> = {
+  'npc.city-watch-contact.kamenny-brod.01': 'городская стража',
+  'npc.woodland-village-caller.bereznyak.01': 'старейшина Березняка',
+  'npc.local-warning-keeper.tikhaya-gat.01': 'смотритель Тихой Гати',
+};
+
 function issuerLabel(issuerId: string): string {
-  return issuerId === 'npc.city-watch-contact.kamenny-brod.01' ? 'городская стража' : issuerId;
+  return ISSUERS[issuerId] ?? issuerId;
 }
+
+const SITES: Readonly<Record<string, string>> = {
+  'kamenny-brod': 'Каменный Брод',
+  bereznyak: 'Березняк',
+  'tikhaya-gat': 'Тихая Гать',
+  'severny-dvor': 'Северный Двор',
+  'staraya-melnitsa': 'Старая мельница',
+};
 
 function locationLabel(siteId: string): string {
-  switch (siteId) {
-    case 'kamenny-brod':
-      return 'Каменный Брод';
-    case 'staraya-melnitsa':
-      return 'Старая мельница';
-    default:
-      return siteId;
-  }
+  return SITES[siteId] ?? siteId;
 }
 
+const AREAS: Readonly<Record<string, string>> = {
+  'kamenny-brod-market': 'городской рынок',
+  'bereznyak-green': 'деревенский луг',
+  'tikhaya-gat-bank': 'берег',
+  'severny-dvor-yard': 'двор',
+  'staraya-melnitsa-yard': 'двор мельницы',
+};
+
 function areaLabel(areaId: string): string {
-  switch (areaId) {
-    case 'kamenny-brod-market':
-      return 'городской рынок';
-    case 'staraya-melnitsa-yard':
-      return 'двор мельницы';
-    default:
-      return areaId;
-  }
+  return AREAS[areaId] ?? areaId;
 }
 
 function rewardLabel(rewardQ: string): string {
