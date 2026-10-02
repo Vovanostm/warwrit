@@ -2,7 +2,6 @@ import {
   Camera,
   Color3,
   Color4,
-  Engine,
   FreeCamera,
   HemisphericLight,
   Mesh,
@@ -15,6 +14,7 @@ import {
   Vector3,
 } from '@babylonjs/core';
 
+import { acquireCanvasEngine, releaseCanvasEngine } from './canvas-engine.js';
 import { BATTLE_ART, unitSprite, type UnitRole } from './art.js';
 import {
   diffRenderUnits,
@@ -114,7 +114,7 @@ export async function mountEncounterScene(
   callbacks: EncounterSceneCallbacks,
   signal?: AbortSignal,
 ): Promise<EncounterScene> {
-  const engine = new Engine(canvas, true, { preserveDrawingBuffer: false, stencil: false }, true);
+  const engine = acquireCanvasEngine(canvas);
   const scene = new Scene(engine);
   scene.clearColor = new Color4(0.07, 0.065, 0.06, 1);
   const light = new HemisphericLight('soft-sky', new Vector3(0.2, 1, -0.3), scene);
@@ -472,7 +472,7 @@ export async function mountEncounterScene(
     scene.onPointerObservable.remove(pointerObserver);
     engine.stopRenderLoop();
     scene.dispose();
-    engine.dispose();
+    releaseCanvasEngine(canvas);
     units.clear();
     textures.clear();
     spriteMaterials.clear();

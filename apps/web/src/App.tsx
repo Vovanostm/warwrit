@@ -14,6 +14,7 @@ import { CompanyOpening } from './CompanyOpening.js';
 import { getOrCreateCompanyCreateAttempt } from './company-create-attempt.js';
 import { GameShell } from './game/GameShell.js';
 import { FirstHunt } from './FirstHunt.js';
+import { ContractBoard } from './game/ContractBoard.js';
 import {
   clearWorldTravelAttempt,
   clearWorldTravelReturnWindow,
@@ -1127,13 +1128,21 @@ export function App() {
           void equipItem(scope, journey.world.publicRevision, characterId, item)
         }
         placeSlot={
-          <FirstHunt
-            scope={scope}
-            location={journey.world.party?.location ?? null}
-            onUnauthorized={() => void restoreJourney()}
-            refreshKey={contractRefreshGeneration}
-            onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
-          />
+          <>
+            <ContractBoard
+              siteId={journey.world.party?.location ?? null}
+              refreshKey={contractRefreshGeneration}
+              onUnauthorized={() => void restoreJourney()}
+              onRewardPaid={refreshWorldForShell}
+            />
+            <FirstHunt
+              scope={scope}
+              location={journey.world.party?.location ?? null}
+              onUnauthorized={() => void restoreJourney()}
+              refreshKey={contractRefreshGeneration}
+              onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
+            />
+          </>
         }
         battleSlot={
           <Suspense

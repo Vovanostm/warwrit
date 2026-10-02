@@ -1,7 +1,6 @@
 import {
   Color3,
   Color4,
-  Engine,
   HemisphericLight,
   Matrix,
   Mesh,
@@ -14,6 +13,7 @@ import {
 import type { WorldSurroundingsDto } from '@warwrit/protocol';
 
 import { MAP_ART, siteSprite } from './art.js';
+import { acquireCanvasEngine, releaseCanvasEngine } from './canvas-engine.js';
 import { mountThreeQuarterCamera, type ThreeQuarterCamera } from './three-quarter-camera.js';
 
 type MapDto = WorldSurroundingsDto['map'];
@@ -115,7 +115,7 @@ export function mountMapScene(
     readonly onLabels: (labels: readonly MapLabelPosition[]) => void;
   },
 ): MapScene {
-  const engine = new Engine(canvas, true, { preserveDrawingBuffer: false, stencil: false }, true);
+  const engine = acquireCanvasEngine(canvas);
   const scene = new Scene(engine);
   const light = new HemisphericLight('sky', new Vector3(0.2, 1, -0.3), scene);
   light.groundColor = new Color3(0.42, 0.4, 0.36);
@@ -212,7 +212,9 @@ export function mountMapScene(
     rings.set(site.siteId, { mesh: ring, material });
   }
 
-  const banner = sprite('party', MAP_ART.party, 1.5);
+  const banner = sprite('party', MAP_ART.party, 2.4);
+  // The company's own banner stays readable at night.
+  (banner.material as StandardMaterial).emissiveColor = new Color3(0.6, 0.55, 0.5);
   banner.isPickable = false;
   const bannerTarget = new Vector3();
   let bannerPlaced = false;
@@ -253,7 +255,7 @@ export function mountMapScene(
       if (from && to) target = { x: from.x + (to.x - from.x) * t, z: from.z + (to.z - from.z) * t };
     }
     if (!target) return;
-    bannerTarget.set(target.x, 0.7, target.z);
+    bannerTarget.set(target.x, 1.05, target.z - 0.25);
     if (!bannerPlaced) {
       banner.position.copyFrom(bannerTarget);
       bannerPlaced = true;
@@ -311,7 +313,7 @@ export function mountMapScene(
       camera.dispose();
       engine.stopRenderLoop();
       scene.dispose();
-      engine.dispose();
+      releaseCanvasEngine(canvas);
       textures.clear();
     },
   };

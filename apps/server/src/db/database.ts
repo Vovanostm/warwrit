@@ -284,6 +284,24 @@ export interface DatabaseSchema {
     readonly mode: 'PERMANENT' | 'ACTING' | 'REGENCY';
     readonly chosen_at: Generated<Date>;
   };
+  readonly ordinary_contracts: {
+    readonly world_id: string;
+    readonly instance_id: string;
+    readonly profile_id: string;
+    readonly revision: string;
+    readonly wallet_id: string;
+    readonly wallet_q: string;
+    readonly state: unknown;
+  };
+  readonly ordinary_contract_receipts: {
+    readonly world_id: string;
+    readonly company_id: string;
+    readonly command_id: string;
+    readonly instance_id: string;
+    readonly request_key: string;
+    readonly response: unknown;
+    readonly created_at: Generated<Date>;
+  };
 }
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {

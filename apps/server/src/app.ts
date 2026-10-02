@@ -8,6 +8,7 @@ import fastify, {
 import { registerIdentityRoutes, type IdentityRoutesOptions } from './auth/routes.js';
 import { registerCompanyRoutes, type CompanyRoutesOptions } from './company/routes.js';
 import { registerWorldRoutes } from './world/routes.js';
+import { registerOrdinaryContractRoutes } from './contracts/ordinary.js';
 import { registerFirstHuntRoutes } from './contracts/routes.js';
 import { createLogger } from './logger.js';
 import { registerCombatLab, type CombatLabSettings } from './combat-lab/routes.js';
@@ -55,6 +56,7 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
     registerCompanyRoutes(app, options.company);
     registerWorldRoutes(app, options.company);
     registerFirstHuntRoutes(app, options.company);
+    registerOrdinaryContractRoutes(app, options.company);
   }
   if (options.encounters !== undefined) {
     if (process.env['NODE_ENV'] === 'production' && options.encounters.fixtureAdmission === true) {

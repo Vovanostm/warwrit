@@ -264,3 +264,98 @@ function isLocation(value: unknown): value is FirstHuntLocationDto {
     isText(value['areaId'])
   );
 }
+
+/** One ordinary contract (investigation or rescue) as the viewing company knows it. */
+export interface OrdinaryContractDto {
+  readonly instanceId: string;
+  readonly template: 'INVESTIGATE' | 'RESCUE';
+  readonly issuerRoleId: string;
+  readonly issuerLocation: { readonly siteId: string; readonly areaId: string };
+  readonly rewardQ: string;
+  readonly revision: string;
+  readonly yourRole: 'OWNER' | 'HELPER' | 'NONE';
+  readonly helperSlot: 'AVAILABLE' | 'OCCUPIED';
+  readonly state: 'OFFERED' | 'ACTIVE' | 'COMPLETED';
+  /** True when the viewer's company was paid for this contract. */
+  readonly completedByYou: boolean;
+  readonly canAccept: boolean;
+  readonly canHelp: boolean;
+  readonly steps: readonly {
+    readonly stepId: string;
+    readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER';
+    readonly location: { readonly siteId: string; readonly areaId: string };
+    readonly doneByYou: boolean;
+    /** Null when the step can be taken now; otherwise why not. */
+    readonly blocker:
+      | null
+      | 'NOT_AVAILABLE'
+      | 'NOT_A_PARTICIPANT'
+      | 'WRONG_PLACE'
+      | 'ALREADY_DONE'
+      | 'MISSING_EVIDENCE'
+      | 'CONDITION_NOT_MET';
+    readonly completes: boolean;
+  }[];
+  /** People travelling with the viewer's company for this contract. */
+  readonly yourCustody: readonly string[];
+}
+
+export interface OrdinaryContractBoardDto {
+  readonly schemaVersion: 1;
+  readonly contracts: readonly OrdinaryContractDto[];
+}
+
+export interface OrdinaryContractCommandDto {
+  readonly schemaVersion: 1;
+  readonly commandId: string;
+  readonly instanceId: string;
+  readonly expectedRevision: string;
+  readonly type: 'ACCEPT' | 'HELP' | 'STEP';
+  readonly stepId: string | null;
+}
+
+export type OrdinaryContractCommandResponseDto =
+  | {
+      readonly schemaVersion: 1;
+      readonly commandId: string;
+      readonly ok: true;
+      readonly revision: string;
+      readonly rewardQ: string | null;
+    }
+  | {
+      readonly schemaVersion: 1;
+      readonly commandId: string;
+      readonly ok: false;
+      readonly code:
+        | 'NOT_AUTHORIZED'
+        | 'INVALID_COMMAND'
+        | 'STALE_REVISION'
+        | 'NOT_AVAILABLE'
+        | 'NOT_A_PARTICIPANT'
+        | 'WRONG_PLACE'
+        | 'ALREADY_DONE'
+        | 'MISSING_EVIDENCE'
+        | 'CONDITION_NOT_MET'
+        | 'INSUFFICIENT_FUNDS';
+    };
+
+export function isOrdinaryContractCommand(value: unknown): value is OrdinaryContractCommandDto {
+  return (
+    isRecord(value) &&
+    hasExactKeys(value, [
+      'schemaVersion',
+      'commandId',
+      'instanceId',
+      'expectedRevision',
+      'type',
+      'stepId',
+    ]) &&
+    value['schemaVersion'] === 1 &&
+    typeof value['commandId'] === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u.test(value['commandId']) &&
+    isText(value['instanceId']) &&
+    isDecimal(value['expectedRevision']) &&
+    (((value['type'] === 'ACCEPT' || value['type'] === 'HELP') && value['stepId'] === null) ||
+      (value['type'] === 'STEP' && isText(value['stepId'])))
+  );
+}

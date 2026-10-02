@@ -746,3 +746,84 @@
 .map-badge-hostile {
   background: #9c3b2c;
 }
+
+.contract-board {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+}
+
+.contract-board h3 {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.contract-card {
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--line);
+  background: rgb(24 21 17 / 92%);
+}
+
+.contract-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.contract-card h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.contract-reward {
+  color: #d9b36a;
+  white-space: nowrap;
+}
+
+.contract-issuer,
+.contract-brief,
+.contract-custody,
+.contract-message {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+}
+
+.contract-issuer {
+  color: var(--muted);
+}
+
+.contract-custody {
+  color: #c9d8b6;
+}
+
+.contract-steps {
+  margin: 0.6rem 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.86rem;
+}
+
+.contract-steps li > span:first-child {
+  margin-right: 0.5rem;
+}
+
+.contract-step-done > span:first-child {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.contract-finding {
+  display: block;
+  color: #e3d3ad;
+  font-style: italic;
+}
+
+.contract-blocker {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
