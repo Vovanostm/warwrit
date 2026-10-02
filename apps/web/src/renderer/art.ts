@@ -1,5 +1,5 @@
 /**
- * Battle art in the approved ink style (ADR-0006, 2026-10-02). Licence records live in
+ * Battle and map art in the approved ink style (ADR-0006, 2026-10-02). Licence records live in
  * `assets/manifest.json`; every image here is Codex-generated original work.
  */
 import groundGrass from '../../../../assets/art/m1/battle/ground-grass.png';
@@ -9,6 +9,14 @@ import mercSpear from '../../../../assets/art/m1/battle/unit-merc-spear.png';
 import mercSword from '../../../../assets/art/m1/battle/unit-merc-sword.png';
 import raiderAxe from '../../../../assets/art/m1/battle/unit-raider-axe.png';
 import raiderSpear from '../../../../assets/art/m1/battle/unit-raider-spear.png';
+import forestClump from '../../../../assets/art/m1/map/forest-clump.png';
+import groundLand from '../../../../assets/art/m1/map/ground-land.png';
+import partyBanner from '../../../../assets/art/m1/map/party-banner.png';
+import siteCity from '../../../../assets/art/m1/map/site-city.png';
+import siteFarmstead from '../../../../assets/art/m1/map/site-farmstead.png';
+import siteMill from '../../../../assets/art/m1/map/site-mill.png';
+import siteRiverVillage from '../../../../assets/art/m1/map/site-river-village.png';
+import siteVillage from '../../../../assets/art/m1/map/site-village.png';
 
 export type UnitRole = 'ours' | 'ally' | 'hostile';
 
@@ -48,4 +56,25 @@ function stableIndex(id: string, modulo: number): number {
 export function unitSprite(unitId: string, role: UnitRole): Sprite {
   if (role === 'hostile') return RAIDERS[unitId] ?? AXE_RAIDER;
   return MERCENARIES[stableIndex(unitId, MERCENARIES.length)]!;
+}
+
+export const MAP_ART = {
+  ground: groundLand,
+  forest: forestClump,
+  party: partyBanner,
+} as const;
+
+/** Authored W01 settlements by site id; unknown sites fall back to their public kind. */
+const SITES: Readonly<Record<string, string>> = {
+  'kamenny-brod': siteCity,
+  bereznyak: siteVillage,
+  'tikhaya-gat': siteRiverVillage,
+  'severny-dvor': siteFarmstead,
+  'staraya-melnitsa': siteMill,
+};
+
+export function siteSprite(siteId: string, kind: 'CITY' | 'VILLAGE' | 'LANDMARK'): string {
+  return (
+    SITES[siteId] ?? (kind === 'CITY' ? siteCity : kind === 'LANDMARK' ? siteMill : siteVillage)
+  );
 }

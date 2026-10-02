@@ -21,6 +21,7 @@ import {
 } from './surroundings.js';
 import { departureKey, TravelPanel } from './TravelPanel.js';
 import { WorldMap, type PartyMarker } from './WorldMap.js';
+import { WorldMapCanvas } from './WorldMapCanvas.js';
 
 type Tab = 'travel' | 'place' | 'company';
 const TRANSIT_REFRESH_MS = 15_000;
@@ -98,6 +99,7 @@ export function GameShell(props: {
     ? (execution?.edgeIds ?? legacyRoute?.edgeIds ?? [])
     : (selected?.edgeIds ?? []);
   const marker = partyMarker(props.world, map, tick, props.company);
+  const hostileSiteIds = new Set((reading.dto.observedHostiles ?? []).map((entry) => entry.siteId));
   const focusSite = map.sites.find(
     (site) => site.siteId === (focusSiteId ?? (travelling ? null : party?.location)),
   );
@@ -141,19 +143,30 @@ export function GameShell(props: {
 
       <div className="game-main">
         <div className="map-frame">
-          <WorldMap
+          <WorldMapCanvas
             map={map}
             night={light.phase === 'NIGHT'}
             party={marker}
-            moving={travelling}
             observed={reading.dto.observedCompanies}
-            hostileSiteIds={
-              new Set((reading.dto.observedHostiles ?? []).map((entry) => entry.siteId))
-            }
+            hostileSiteIds={hostileSiteIds}
             reachableSiteIds={reachable}
             selectedSiteId={selected?.toSiteId ?? focusSiteId}
             plannedEdgeIds={plannedEdgeIds}
             onSelectSite={selectSite}
+            fallback={
+              <WorldMap
+                map={map}
+                night={light.phase === 'NIGHT'}
+                party={marker}
+                moving={travelling}
+                observed={reading.dto.observedCompanies}
+                hostileSiteIds={hostileSiteIds}
+                reachableSiteIds={reachable}
+                selectedSiteId={selected?.toSiteId ?? focusSiteId}
+                plannedEdgeIds={plannedEdgeIds}
+                onSelectSite={selectSite}
+              />
+            }
           />
           <p className="map-legend">
             {map.regionName} · нажмите на место на карте, чтобы проложить путь

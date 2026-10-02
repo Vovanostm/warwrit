@@ -108,6 +108,78 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/style/unit-c-ink.json",
       "generatedAt": "2026-10-01T23:50:38.332Z"
+    },
+    {
+      "id": "art.m1.map.forest-clump",
+      "path": "assets/art/m1/map/forest-clump.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/forest-clump.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.ground-land",
+      "path": "assets/art/m1/map/ground-land.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/ground-land.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.party-banner",
+      "path": "assets/art/m1/map/party-banner.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/party-banner.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-city",
+      "path": "assets/art/m1/map/site-city.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-city.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-farmstead",
+      "path": "assets/art/m1/map/site-farmstead.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-farmstead.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-mill",
+      "path": "assets/art/m1/map/site-mill.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-mill.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-river-village",
+      "path": "assets/art/m1/map/site-river-village.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-river-village.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-village",
+      "path": "assets/art/m1/map/site-village.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-village.json",
+      "generatedAt": "2026-10-02"
     }
   ]
 }
