@@ -1,5 +1,22 @@
 # Warwrit current delivery plan
 
+**Integration result — 2026-10-04:** owner-requested combined publication is
+complete. [PR136](https://github.com/Vovanostm/warwrit/pull/136) merged normally
+into `main` as `f65daf62063951e8ab220c68213884833775105f`, with the expected
+head checked. GitHub also marks ancestor PR135 merged. This integrates the
+current game branch and `chore/claude-harness`; PR134 and PR129 remain outside
+this request. Primary checkout switched to `main` and pulled with fast-forward;
+the retained playable worktree fast-forwarded on its existing branch. Both
+reached the remote merge commit; browser diagnostics and player data remain
+local and preserved. Documentation conflict resolution passed formatting,
+JSON/TOML parsing, marker and diff checks; game code was unchanged by resolution.
+The local quality audit remains FAILED; the checkpoint/merge commit hook was
+skipped, not passed. PR CI [37157248220](https://github.com/Vovanostm/warwrit/actions/runs/37157248220)
+and main CI [37157277254](https://github.com/Vovanostm/warwrit/actions/runs/37157277254)
+were IN_PROGRESS at this readback, so CI success is NOT_PROVED. No deployment
+or full-M1 acceptance is claimed. This dated result supersedes earlier
+uncommitted/unpublished/unauthorized-merge status below.
+
 **Publication and merge request — 2026-10-04:** after the failed normal
 commit audit was reported, the owner requested merging all current game and
 documentation work into the default branch and updating the local worktree.
