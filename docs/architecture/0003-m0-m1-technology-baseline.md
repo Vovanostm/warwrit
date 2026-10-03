@@ -5,7 +5,16 @@
 - Requirements: `Q-T02`, `ENG-FND`, `ARCH-BOUNDARY`, `ENCOUNTER-AUTH`, `RECONNECT`
 - Supersedes: informal technology recommendations that are not encoded in an accepted ADR
 
-## Dated renderer amendment — 2026-09-29
+## Dated renderer amendment — 2026-10-01
+
+[ADR-0006](0006-m1-renderer-babylon.md) records the owner's accepted selection
+of Babylon.js for the M1 client renderer. It supersedes ADR-0005's PlayCanvas
+selection and the provisional engine-selection gates below; all other ADR-0003
+decisions and the pure domain / adapter boundaries remain unchanged. This is an
+owner technology decision, not a benchmark victory. Babylon implementation,
+visual/device/runtime acceptance and production integration remain pending.
+
+## Historical renderer amendment — 2026-09-29 (superseded by ADR-0006)
 
 [ADR-0005](0005-m1-renderer-playcanvas.md) selects PlayCanvas2.22.4 for the current
 private-M1 Mac/Chrome target after the representative comparison. It supersedes
@@ -81,7 +90,7 @@ Do not adopt `@colyseus/database`, Drizzle, an ORM, Redis, an event store, or a 
 
 Keep the existing React/Vite browser shell. Game rendering must remain an adapter beside React rather than making React own simulation state.
 
-### 6. Renderer: provisional, not yet frozen
+### 6. Historical renderer decision — superseded by ADR-0006
 
 Do not install a production renderer solely from the prior recommendation.
 
@@ -124,7 +133,7 @@ The numeric thresholds are decision triggers, not claims about current Bun perfo
 
 Change only after expected-load tests show the default Colyseus `ws` transport violates an agreed connection, CPU, memory, or latency budget. Raw transport throughput alone is not a reason.
 
-### Babylon.js vs PlayCanvas
+### Historical Babylon.js vs PlayCanvas selection gate — superseded by ADR-0006
 
 Use the same representative scene, assets, interactions, target browser/hardware profile, and acceptance script. Score at minimum:
 
