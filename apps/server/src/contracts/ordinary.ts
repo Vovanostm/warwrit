@@ -1,3 +1,5 @@
+import { executeCommandTransaction } from '../db/command-transaction.js';
+import { settleDueContinuousMovementInTransaction } from '../world/continuous-movement.js';
 import { randomUUID } from 'node:crypto';
 
 import {
@@ -238,6 +240,7 @@ async function executeOrdinaryCommand(
   let company = await loadCompanyAggregate(transaction, worldId, companyId);
   if (!company) return reject('NOT_AUTHORIZED');
   const clock = await readWorldClock(transaction, worldId, new Date(), true);
+  company = await settleDueContinuousMovementInTransaction(transaction, company, accountId, clock);
   const gates = await readGates(transaction, worldId);
   const state = readOrdinaryContractState(profile, row.state);
   const prepared = prepareOrdinaryContractCommand(
@@ -370,13 +373,16 @@ export function registerOrdinaryContractRoutes(
     const accountId = await resolveSessionAccount(request, database);
     if (!accountId) return reply.code(401).send({ error: 'authentication required' });
     const body = request.body;
-    const response = await database.transaction().execute((transaction) =>
-      executeOrdinaryCommand(transaction, {
-        worldId,
-        accountId,
-        request: body,
-        requestKey: canonicalJson(body),
-      }),
+    const response = await executeCommandTransaction(
+      database,
+      (transaction) =>
+        executeOrdinaryCommand(transaction, {
+          worldId,
+          accountId,
+          request: body,
+          requestKey: canonicalJson(body),
+        }),
+      (result) => result.ok,
     );
     const status = response.ok ? 200 : response.code === 'NOT_AUTHORIZED' ? 403 : 409;
     return reply.code(status).send(response);

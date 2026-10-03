@@ -1,6 +1,7 @@
 import { sql } from 'kysely';
 import type { Kysely } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
+import { processContinuousMovementCandidate } from './continuous-movement.js';
 import { processWorldRouteCandidate } from './routes.js';
 
 interface RouteWorkerCandidate {
@@ -24,7 +25,7 @@ export function startWorldRouteWorker(
              accepted_route->>'acceptedByAccountId' as accepted_by_account_id
         from public.world_party_routes
        where world_id = ${worldId}
-         and accepted_route->'execution'->>'phase' in ('IN_TRANSIT', 'AT_BOUNDARY')
+         and (accepted_route->'execution'->>'phase' in ('IN_TRANSIT', 'AT_BOUNDARY') or (status='IN_TRANSIT' and accepted_route->>'kind' in ('FREE_MOVEMENT','CONTINUOUS_MOVEMENT')))
        order by company_id, party_id
     `.execute(database);
     for (const row of rows) {
@@ -32,11 +33,13 @@ export function startWorldRouteWorker(
       if (typeof row.accepted_by_account_id !== 'string' || row.accepted_by_account_id.length === 0)
         continue;
       try {
-        await processWorldRouteCandidate(database, worldId, {
+        const candidate = {
           companyId: row.company_id,
           partyId: row.party_id,
           acceptedByAccountId: row.accepted_by_account_id,
-        });
+        };
+        await processContinuousMovementCandidate(database, worldId, candidate);
+        await processWorldRouteCandidate(database, worldId, candidate);
       } catch (error) {
         onError(error);
       }

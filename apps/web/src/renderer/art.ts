@@ -2,6 +2,16 @@
  * Battle and map art in the approved ink style (ADR-0006, 2026-10-02). Licence records live in
  * `assets/manifest.json`; every image here is Codex-generated original work.
  */
+import worldGrass from '../../../../assets/art/m1/world-v2/grass-meadow.png';
+import worldWoodland from '../../../../assets/art/m1/world-v2/woodland.png';
+import worldHills from '../../../../assets/art/m1/world-v2/hills.png';
+import worldMarsh from '../../../../assets/art/m1/world-v2/marsh.png';
+import worldRiverbank from '../../../../assets/art/m1/world-v2/riverbank.png';
+import worldRock from '../../../../assets/art/m1/world-v2/rock.png';
+import worldRoad from '../../../../assets/art/m1/world-v2/road.png';
+import worldWater from '../../../../assets/art/m1/world-v2/water.png';
+import worldDeciduous from '../../../../assets/art/m1/world-v2/deciduous.png';
+import worldConifer from '../../../../assets/art/m1/world-v2/conifer.png';
 import groundGrass from '../../../../assets/art/m1/battle/ground-grass.png';
 import groundMud from '../../../../assets/art/m1/battle/ground-mud.png';
 import rubble from '../../../../assets/art/m1/battle/obstacle-rubble.png';
@@ -78,6 +88,17 @@ export function unitSprite(unitId: string, role: UnitRole): Sprite {
 
 export const MAP_ART = {
   ground: groundLand,
+  terrainLayers: {
+    grass: worldGrass,
+    woodland: worldWoodland,
+    hills: worldHills,
+    marsh: worldMarsh,
+    riverbank: worldRiverbank,
+    rock: worldRock,
+    water: worldWater,
+  },
+  road: worldRoad,
+  trees: { deciduous: worldDeciduous, conifer: worldConifer },
   forest: forestClump,
   party: partyBanner,
 } as const;

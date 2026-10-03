@@ -1,3 +1,9 @@
+import {
+  prepareDueContinuousMovement,
+  persistDueContinuousMovementRoute,
+  settleDueContinuousMovementInTransaction,
+} from '../world/continuous-movement.js';
+import { readPartyRoute } from '../world/repository.js';
 import { randomUUID } from 'node:crypto';
 import {
   campaignTick,
@@ -12,6 +18,9 @@ import {
   prepareCompanyEconomy,
   preparePartyTravelArrival,
   preparePartyTravelDeparture,
+  prepareFreeMovementStart,
+  prepareFreeMovementStop,
+  prepareFreeMovementReroute,
   continuePartyRouteExecution,
   preparePartyRouteExecutionArrival,
   preparePartyRouteExecutionDeparture,
@@ -110,6 +119,18 @@ interface PreparedTrustedCompanyCommand {
 
 export type TrustedCompanyTravelEffect =
   | {
+      readonly kind: 'FREE_MOVEMENT_START';
+      readonly input: Omit<Parameters<typeof prepareFreeMovementStart>[0], 'root'>;
+    }
+  | {
+      readonly kind: 'FREE_MOVEMENT_SETTLE';
+      readonly input: Omit<Parameters<typeof prepareFreeMovementStop>[0], 'root'>;
+    }
+  | {
+      readonly kind: 'FREE_MOVEMENT_REROUTE';
+      readonly input: Omit<Parameters<typeof prepareFreeMovementReroute>[0], 'root'>;
+    }
+  | {
       readonly kind: 'DEPARTURE';
       readonly input: Omit<Parameters<typeof preparePartyTravelDeparture>[0], 'root'>;
     }
@@ -201,8 +222,8 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       : rejectRequest('INVALID_COMMAND', previousLifecycle.knowledge.revision);
   }
 
-  const state = previous;
-  const lifecycle = state.economy.lifecycle;
+  let state = previous;
+  let lifecycle = state.economy.lifecycle;
   if (input.request.expectedPublicRevision !== lifecycle.knowledge.revision)
     return rejectRequest('STALE_REVISION', lifecycle.knowledge.revision);
 
@@ -216,9 +237,23 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
   const clock = await readWorldClock(input.transaction, input.worldId, input.now, true);
+  const route = lifecycle.parties[0]
+    ? await readPartyRoute(
+        input.transaction,
+        input.worldId,
+        companyId,
+        lifecycle.parties[0].partyId,
+        true,
+      )
+    : undefined;
+  const due = prepareDueContinuousMovement(state, route, clock, input.request.commandId);
+  state = due.state;
+  lifecycle = state.economy.lifecycle;
   if (
     state.encounter.active !== null ||
-    lifecycle.parties.some((party) => party.location.kind === 'TRANSIT') ||
+    lifecycle.parties.some(
+      (party) => party.location.kind === 'TRANSIT' || party.location.kind === 'MOVING',
+    ) ||
     (BigInt(clock.tick) > BigInt(lifecycle.campaignTick) &&
       state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal))
   )
@@ -281,7 +316,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     worldId: input.worldId,
     companyId,
     actorRef: { kind: 'PLAYER', id: input.accountId },
-    expectedRevision: publicRevision(input.request.expectedPublicRevision),
+    expectedRevision: publicRevision(lifecycle.knowledge.revision),
     campaignTick: campaignTick(clock.tick),
     rulesetId: COMPANY_RULESET_ID,
     type: input.request.type === 'EndFieldCamp' ? 'EndMaintenance' : input.request.type,
@@ -377,7 +412,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   };
   await updateCompanyAggregateWithReceipt(
     input.transaction,
-    lifecycle.revision,
+    previousLifecycle.revision,
     nextLifecycle.revision,
     nextState,
     {
@@ -390,8 +425,13 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
         response,
         resultingRevision: nextLifecycle.revision,
       },
-      auditEvents:
-        input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp'
+      auditEvents: [
+        ...due.events.map((event) => ({
+          eventId: randomUUID(),
+          revision: nextLifecycle.revision,
+          event,
+        })),
+        ...(input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp'
           ? [
               {
                 eventId: randomUUID(),
@@ -422,9 +462,11 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
                 eventId: event.id,
                 revision: nextLifecycle.revision,
                 event,
-              })),
+              }))),
+      ],
     },
   );
+  await persistDueContinuousMovementRoute(input.transaction, due);
   return { kind: 'COMMITTED', response };
 }
 
@@ -797,7 +839,10 @@ function validateSafeTripInput(
   const lifecycle = state.economy.lifecycle;
   const segments = context.trustedTransitSegments ?? [];
   const departure =
-    segments.length === 0 && lifecycle.parties.some((party) => party.location.kind === 'AT');
+    segments.length === 0 &&
+    lifecycle.parties.some(
+      (party) => party.location.kind === 'AT' || party.location.kind === 'TERRAIN',
+    );
   const arrival =
     segments.length === 1 &&
     segments[0]!.worldId === lifecycle.worldId &&
@@ -806,7 +851,7 @@ function validateSafeTripInput(
     lifecycle.parties.some(
       (party) =>
         party.partyId === segments[0]!.partyId &&
-        party.location.kind === 'TRANSIT' &&
+        (party.location.kind === 'TRANSIT' || party.location.kind === 'MOVING') &&
         party.location.segmentId === segments[0]!.segmentId,
     );
   if (!departure && !arrival) return 'UNSUPPORTED_ACTION';
@@ -844,6 +889,50 @@ function composePreparedTravelEffect(
     finance: prepared.nextState.economy.finance,
     physical,
   };
+  if (effect.kind === 'FREE_MOVEMENT_START') {
+    if (prepared.trustedTransitSegments.length !== 0)
+      throw new TypeError('Free movement start cannot use a trusted transit segment');
+    const result = prepareFreeMovementStart({ root, ...effect.input });
+    return {
+      state: readCompanyCombatAggregateState({
+        ...prepared.nextState,
+        economy: { ...prepared.nextState.economy, ...result.root },
+      }),
+      observationEvents: result.observationEvents,
+    };
+  }
+  if (effect.kind === 'FREE_MOVEMENT_SETTLE' || effect.kind === 'FREE_MOVEMENT_REROUTE') {
+    const segment = prepared.trustedTransitSegments[0];
+    const party = segment
+      ? prepared.priorState.economy.lifecycle.parties.find(
+          (entry) => entry.partyId === segment.partyId,
+        )
+      : undefined;
+    if (
+      prepared.trustedTransitSegments.length !== 1 ||
+      !segment ||
+      party?.location.kind !== 'MOVING' ||
+      party.location.segmentId !== segment.segmentId ||
+      party.location.regionVersion !==
+        ('priorExecution' in effect.input
+          ? effect.input.priorExecution.regionVersion
+          : effect.input.execution.regionVersion) ||
+      party.location.startedAt !== segment.startedAt ||
+      party.location.arrivalNotBefore !== segment.dueTick
+    )
+      throw new TypeError('Free movement settlement does not match the prepared segment');
+    const result =
+      effect.kind === 'FREE_MOVEMENT_REROUTE'
+        ? prepareFreeMovementReroute({ root, ...effect.input })
+        : prepareFreeMovementStop({ root, ...effect.input });
+    return {
+      state: readCompanyCombatAggregateState({
+        ...prepared.nextState,
+        economy: { ...prepared.nextState.economy, ...result.root },
+      }),
+      observationEvents: result.observationEvents,
+    };
+  }
   if (effect.kind === 'EXECUTION_DEPARTURE') {
     if (prepared.trustedTransitSegments.length !== 0)
       throw new TypeError('Execution departure cannot use a trusted transit segment');
@@ -1120,7 +1209,18 @@ export async function catchUpStationaryCompany(input: {
   readonly atTick: string;
   readonly requestKind: string;
 }): Promise<CompanyCombatAggregateState | undefined> {
-  const previous = input.state;
+  const clock = await readWorldClock(
+    input.transaction,
+    input.state.economy.lifecycle.worldId,
+    new Date(),
+    true,
+  );
+  const previous = await settleDueContinuousMovementInTransaction(
+    input.transaction,
+    input.state,
+    input.accountId,
+    clock,
+  );
   const lifecycle = previous.economy.lifecycle;
   if (BigInt(input.atTick) <= BigInt(lifecycle.campaignTick)) return previous;
   const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;

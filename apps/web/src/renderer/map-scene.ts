@@ -20,6 +20,7 @@ type MapDto = WorldSurroundingsDto['map'];
 
 export type MapPartyPosition =
   | { readonly kind: 'SITE'; readonly siteId: string }
+  | { readonly kind: 'TERRAIN'; readonly q: number; readonly r: number }
   | {
       readonly kind: 'ROAD';
       readonly fromSiteId: string;
@@ -33,6 +34,8 @@ export interface MapView {
   readonly reachableSiteIds: ReadonlySet<string>;
   readonly selectedSiteId: string | null;
   readonly plannedEdgeIds: readonly string[];
+  readonly selectedHex?: { readonly q: number; readonly r: number } | null;
+  readonly plannedHexPath?: readonly { readonly q: number; readonly r: number }[];
 }
 
 export interface MapLabelPosition {
@@ -112,6 +115,7 @@ export function mountMapScene(
   initialView: MapView,
   callbacks: {
     readonly onSelectSite: (siteId: string) => void;
+    readonly onSelectTerrain: (position: { readonly q: number; readonly r: number }) => void;
     readonly onLabels: (labels: readonly MapLabelPosition[]) => void;
   },
 ): MapScene {
@@ -145,8 +149,20 @@ export function mountMapScene(
   };
 
   const points = new Map(map.sites.map((site) => [site.siteId, siteToWorld(site)]));
-  const xs = [...points.values()].map((p) => p.x);
-  const zs = [...points.values()].map((p) => p.z);
+  const walkBounds = map.walkBounds ?? {
+    minQ: Math.min(...map.sites.map((site) => site.q)),
+    maxQ: Math.max(...map.sites.map((site) => site.q)),
+    minR: Math.min(...map.sites.map((site) => site.r)),
+    maxR: Math.max(...map.sites.map((site) => site.r)),
+  };
+  const boundPoints = [
+    siteToWorld({ q: walkBounds.minQ, r: walkBounds.minR }),
+    siteToWorld({ q: walkBounds.maxQ, r: walkBounds.maxR }),
+    siteToWorld({ q: walkBounds.minQ, r: walkBounds.maxR }),
+    siteToWorld({ q: walkBounds.maxQ, r: walkBounds.minR }),
+  ];
+  const xs = boundPoints.map((p) => p.x);
+  const zs = boundPoints.map((p) => p.z);
   const bounds = {
     minX: Math.min(...xs),
     maxX: Math.max(...xs),
@@ -165,6 +181,38 @@ export function mountMapScene(
   groundMaterial.specularColor = Color3.Black();
   ground.material = groundMaterial;
   ground.isPickable = false;
+
+  const terrainColors = {
+    WOODLAND: new Color3(0.24, 0.32, 0.21),
+    RIVERBANK: new Color3(0.28, 0.37, 0.39),
+    OPEN_GROUND: new Color3(0.39, 0.35, 0.26),
+  } as const;
+  const blockedHexes = new Set((map.blockedHexes ?? []).map(({ q, r }) => `${q},${r}`));
+  const terrainTiles = new Map<
+    string,
+    { readonly mesh: Mesh; readonly material: StandardMaterial }
+  >();
+  for (const row of map.terrainRows ?? []) {
+    for (let q = row.fromQ; q <= row.toQ; q += 1) {
+      const key = `${q},${row.r}`;
+      const center = siteToWorld({ q, r: row.r });
+      const tile = MeshBuilder.CreateCylinder(
+        `terrain:${key}`,
+        { height: 0.05, diameter: 1.82, tessellation: 6 },
+        scene,
+      );
+      tile.position.set(center.x, 0.035, center.z);
+      const material = new StandardMaterial(`terrain:${key}`, scene);
+      material.diffuseColor = blockedHexes.has(key)
+        ? new Color3(0.14, 0.12, 0.1)
+        : terrainColors[row.terrain];
+      material.specularColor = Color3.Black();
+      tile.material = material;
+      tile.isPickable = true;
+      tile.metadata = { terrainHex: !blockedHexes.has(key), q, r: row.r };
+      terrainTiles.set(key, { mesh: tile, material });
+    }
+  }
 
   for (const [index, point] of forestPoints(map).entries()) {
     const forest = sprite(`forest:${index}`, MAP_ART.forest, 1.2 + (index % 3) * 0.2);
@@ -233,6 +281,17 @@ export function mountMapScene(
         ? ROAD_COLORS.planned
         : ROAD_COLORS[edge.danger === 'DANGEROUS' ? 'DANGEROUS' : 'SAFE'];
     }
+    const selectedHex = next.selectedHex ? `${next.selectedHex.q},${next.selectedHex.r}` : null;
+    const plannedHexes = new Set((next.plannedHexPath ?? []).map(({ q, r }) => `${q},${r}`));
+    for (const [key, tile] of terrainTiles) {
+      const isSelected = key === selectedHex;
+      const isPlanned = plannedHexes.has(key);
+      tile.material.emissiveColor = isSelected
+        ? new Color3(0.95, 0.76, 0.34)
+        : isPlanned
+          ? new Color3(0.42, 0.31, 0.11)
+          : Color3.Black();
+    }
     for (const [siteId, ring] of rings) {
       const selected = next.selectedSiteId === siteId;
       const reachable = next.reachableSiteIds.has(siteId);
@@ -248,6 +307,8 @@ export function mountMapScene(
     if (party.kind === 'SITE') {
       const site = points.get(party.siteId);
       if (site) target = { x: site.x + 0.9, z: site.z - 0.5 };
+    } else if (party.kind === 'TERRAIN') {
+      target = siteToWorld(party);
     } else {
       const from = points.get(party.fromSiteId);
       const to = points.get(party.toSiteId);
@@ -268,6 +329,10 @@ export function mountMapScene(
     onPick: (hit) => {
       const siteId = (hit?.pickedMesh?.metadata as { siteId?: string } | undefined)?.siteId;
       if (siteId) callbacks.onSelectSite(siteId);
+      const terrain = hit?.pickedMesh?.metadata as
+        { terrainHex?: boolean; q?: number; r?: number } | undefined;
+      if (terrain?.terrainHex && Number.isSafeInteger(terrain.q) && Number.isSafeInteger(terrain.r))
+        callbacks.onSelectTerrain({ q: terrain.q!, r: terrain.r! });
     },
   });
 

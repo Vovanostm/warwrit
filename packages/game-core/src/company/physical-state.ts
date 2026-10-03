@@ -150,6 +150,23 @@ function ownerExists(lifecycle: LifecycleState, owner: OwnerRef): boolean {
 }
 function locationValid(location: LocationRef): boolean {
   if (location.kind === 'AT') return isEntityId(location.siteId) && isEntityId(location.areaId);
+  if (location.kind === 'TERRAIN')
+    return (
+      location.regionVersion.length > 0 &&
+      isExactInteger(location.q, true) &&
+      isExactInteger(location.r, true)
+    );
+  if (location.kind === 'MOVING')
+    return (
+      location.segmentId.length > 0 &&
+      location.regionVersion.length > 0 &&
+      [location.fromQ, location.fromR, location.toQ, location.toR].every((value) =>
+        isExactInteger(value, true),
+      ) &&
+      isExactInteger(location.startedAt) &&
+      isExactInteger(location.arrivalNotBefore) &&
+      BigInt(location.arrivalNotBefore) >= BigInt(location.startedAt)
+    );
   return (
     isEntityId(location.segmentId) &&
     isEntityId(location.from) &&

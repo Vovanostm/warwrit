@@ -44,6 +44,23 @@ export interface CharacterIdentity {
 export type LocationRef =
   | { readonly kind: 'AT'; readonly siteId: string; readonly areaId: string }
   | {
+      readonly kind: 'TERRAIN';
+      readonly regionVersion: string;
+      readonly q: string;
+      readonly r: string;
+    }
+  | {
+      readonly kind: 'MOVING';
+      readonly segmentId: string;
+      readonly regionVersion: string;
+      readonly fromQ: string;
+      readonly fromR: string;
+      readonly toQ: string;
+      readonly toR: string;
+      readonly startedAt: CampaignTick;
+      readonly arrivalNotBefore: CampaignTick;
+    }
+  | {
       readonly kind: 'TRANSIT';
       readonly segmentId: string;
       readonly from: string;

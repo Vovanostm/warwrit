@@ -278,7 +278,7 @@ export interface FoodFulfillmentEvidence extends PhysicalScope {
   readonly fromTick: CampaignTick;
   readonly toTick: CampaignTick;
   readonly channel: 'STOCK' | 'PROVIDER';
-  readonly location: AtLocation;
+  readonly location: LocationRef;
   readonly containerId?: string;
   readonly providerId?: string;
   readonly poolId?: string;

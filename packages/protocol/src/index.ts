@@ -35,6 +35,12 @@ export type {
 } from './company.js';
 export { ORDINARY_PLAYER_COMPANY_COMMAND_TYPES } from './company.js';
 export type {
+  WorldFreeMovementRequestDto,
+  WorldFreeMovementRejectionDto,
+  WorldFreeMovementResponseDto,
+  WorldFreeMovementPreviewRequestDto,
+  WorldFreeMovementPreviewResponseDto,
+  WorldHexDto,
   WorldAvailableDepartureDto,
   WorldPartyReadResponseDto,
   WorldPartyReadResponseV1Dto,
@@ -53,3 +59,11 @@ export { WORLD_EXPECTED_COMPANY_ID_HEADER } from './world.js';
 export * from './contracts.js';
 export * from './encounter.js';
 export * from './combat-lab.js';
+export type {
+  WorldFreeMovementV2RequestDto,
+  WorldFreeMovementV2ResponseDto,
+  WorldFreeMovementV2RejectionDto,
+  WorldFreeMovementTargetDto,
+  WorldPointMicroFpDto,
+} from './world.js';
+export type { WorldContinuousMapDto } from './world.js';

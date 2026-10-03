@@ -312,14 +312,29 @@ export function validateLifecycleGraph(state: LifecycleState, context: Lifecycle
     requireLifecycle(
       location.kind === 'AT'
         ? isEntityId(location.siteId) && isEntityId(location.areaId)
-        : location.kind === 'TRANSIT' &&
-            isEntityId(location.segmentId) &&
-            isEntityId(location.from) &&
-            isEntityId(location.to) &&
-            isExactInteger(location.startedAt) &&
-            isExactInteger(location.arrivalNotBefore) &&
-            BigInt(location.arrivalNotBefore) >= BigInt(location.startedAt) &&
-            BigInt(location.startedAt) <= BigInt(context.atTick),
+        : location.kind === 'TERRAIN'
+          ? typeof location.regionVersion === 'string' &&
+            location.regionVersion.length > 0 &&
+            isExactInteger(location.q, true) &&
+            isExactInteger(location.r, true)
+          : location.kind === 'MOVING'
+            ? isEntityId(location.segmentId) &&
+              isEntityId(location.regionVersion) &&
+              [location.fromQ, location.fromR, location.toQ, location.toR].every((value) =>
+                isExactInteger(value, true),
+              ) &&
+              isExactInteger(location.startedAt) &&
+              isExactInteger(location.arrivalNotBefore) &&
+              BigInt(location.arrivalNotBefore) >= BigInt(location.startedAt) &&
+              BigInt(location.startedAt) <= BigInt(context.atTick)
+            : location.kind === 'TRANSIT' &&
+              isEntityId(location.segmentId) &&
+              isEntityId(location.from) &&
+              isEntityId(location.to) &&
+              isExactInteger(location.startedAt) &&
+              isExactInteger(location.arrivalNotBefore) &&
+              BigInt(location.arrivalNotBefore) >= BigInt(location.startedAt) &&
+              BigInt(location.startedAt) <= BigInt(context.atTick),
       'INVALID_STATE',
     );
     requireLifecycle(

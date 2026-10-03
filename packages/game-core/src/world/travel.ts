@@ -26,6 +26,12 @@ import type {
   TrustedContractRouteAuthorization,
   TrustedRouteSupplyAssessment,
 } from './route.js';
+import {
+  acceptFreeMovement,
+  prepareFreeMovementDeparture as prepareFreeDeparture,
+  prepareFreeMovementSettlement as prepareFreeSettlement,
+} from './free-movement.js';
+import type { FreeMovementExecution, WorldHexPosition, terrainLocation } from './free-movement.js';
 
 export const SAFE_TRAVEL_ALPHA_V1 = Object.freeze({
   profileId: TRAVEL_RULES.profileId,
@@ -420,4 +426,111 @@ export function continuePartyRouteExecution(input: {
     transitSegment: trustedTransitSegment(applied.root, prepared.route),
     observationEvents: applied.observationEvents,
   });
+}
+
+export function prepareFreeMovementStart(input: {
+  readonly root: MaterializedCompanyState;
+  readonly region: WorldRegion;
+  readonly execution: FreeMovementExecution;
+  readonly segmentId: string;
+}): {
+  readonly root: MaterializedCompanyState;
+  readonly execution: FreeMovementExecution;
+  readonly transitSegment: TrustedTransitSegment;
+  readonly observationEvents: readonly LifecycleEvent[];
+} {
+  requireAlignedRoot(input.root, input.execution.startedAt);
+  const result = prepareFreeDeparture(input);
+  return {
+    ...result,
+    transitSegment: {
+      worldId: input.root.lifecycle.worldId,
+      companyId: input.root.lifecycle.companyId,
+      partyId: input.execution.partyId,
+      segmentId: input.segmentId,
+      routeEpoch: input.execution.routeEpoch,
+      profileId: TRAVEL_RULES.profileId,
+      startedAt: input.execution.startedAt,
+      dueTick: input.execution.arrivesAt,
+    },
+  };
+}
+
+export function prepareFreeMovementStop(input: {
+  readonly root: MaterializedCompanyState;
+  readonly region: WorldRegion;
+  readonly execution: FreeMovementExecution;
+  readonly segmentId: string;
+  readonly trustedTick: CampaignTick;
+}): {
+  readonly root: MaterializedCompanyState;
+  readonly position: WorldHexPosition;
+  readonly location:
+    | ReturnType<typeof terrainLocation>
+    | Extract<
+        MaterializedCompanyState['lifecycle']['parties'][number]['location'],
+        { readonly kind: 'AT' }
+      >;
+  readonly observationEvents: readonly LifecycleEvent[];
+} {
+  const result = prepareFreeSettlement(input);
+  const party = result.root.lifecycle.parties.find(
+    (entry) => entry.partyId === input.execution.partyId,
+  );
+  const location = party?.location;
+  if (!location || (location.kind !== 'AT' && location.kind !== 'TERRAIN'))
+    throw new RoutePreparationError('INVALID_ARRIVAL');
+  const position =
+    location.kind === 'AT'
+      ? input.region.sites.find((site) => site.siteId === location.siteId)?.coordinate
+      : { q: Number(location.q), r: Number(location.r) };
+  if (!position) throw new RoutePreparationError('INVALID_ARRIVAL');
+  return { ...result, position, location };
+}
+
+export function prepareFreeMovementReroute(input: {
+  readonly root: MaterializedCompanyState;
+  readonly region: WorldRegion;
+  readonly priorExecution: FreeMovementExecution;
+  readonly priorSegmentId: string;
+  readonly destination: WorldHexPosition;
+  readonly routeEpoch: string;
+  readonly nextSegmentId: string;
+  readonly atTick: CampaignTick;
+}): {
+  readonly root: MaterializedCompanyState;
+  readonly execution: FreeMovementExecution;
+  readonly position: WorldHexPosition;
+  readonly transitSegment: TrustedTransitSegment;
+  readonly observationEvents: readonly LifecycleEvent[];
+} {
+  requireAlignedRoot(input.root, input.atTick);
+  const settled = prepareFreeMovementStop({
+    root: input.root,
+    region: input.region,
+    execution: input.priorExecution,
+    segmentId: input.priorSegmentId,
+    trustedTick: input.atTick,
+  });
+  const execution = acceptFreeMovement({
+    region: input.region,
+    partyId: input.priorExecution.partyId,
+    from: settled.position,
+    to: input.destination,
+    routeEpoch: input.routeEpoch,
+    atTick: input.atTick,
+  });
+  const started = prepareFreeMovementStart({
+    root: settled.root,
+    region: input.region,
+    execution,
+    segmentId: input.nextSegmentId,
+  });
+  return {
+    root: started.root,
+    execution,
+    position: settled.position,
+    transitSegment: started.transitSegment,
+    observationEvents: Object.freeze([...settled.observationEvents, ...started.observationEvents]),
+  };
 }

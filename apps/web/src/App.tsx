@@ -7,6 +7,7 @@ import {
   type CreateCompanyPayloadDto,
   type CreateCompanyRequestDto,
   type WorldPartyReadResponseDto,
+  type WorldFreeMovementResponseDto,
   WORLD_EXPECTED_COMPANY_ID_HEADER,
 } from '@warwrit/protocol';
 import { CombatLab } from './combat-lab/CombatLab.js';
@@ -36,6 +37,17 @@ import {
   type WorldTravelScope,
   type WorldTravelStorage,
 } from './world-travel-attempt.js';
+import {
+  classifyFreeMovementPost,
+  clearFreeMovementAttempt,
+  createFreeMovementAttempt,
+  readFreeMovementAttempt,
+  readFreeMovementResponse,
+  saveFreeMovementAttempt,
+  type FreeMovementAction,
+  type FreeMovementAttempt,
+  type FreeMovementScope,
+} from './world-free-movement-attempt.js';
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
 const EncounterPanel = lazy(() =>
@@ -63,9 +75,12 @@ type JourneyState =
       readonly company: CompanySummaryDto;
       readonly holdings: CompanyHoldingsDto | undefined;
       readonly world: WorldPartyReadResponseDto;
+      readonly freeMovement: WorldFreeMovementResponseDto | null;
       readonly returnWindowOpen: boolean;
       readonly travelAttemptPending: boolean;
+      readonly freeMovementAttemptPending: boolean;
       readonly travelMessage?: string;
+      readonly freeMovementMessage?: string | undefined;
     }
   | { readonly status: 'error'; readonly message: string; readonly retry: () => void };
 
@@ -245,6 +260,7 @@ export function App() {
   const signingOut = useRef(false);
   const activeTravelScope = useRef<WorldTravelScope | undefined>(undefined);
   const pendingTravelAttempt = useRef<WorldTravelAttempt | undefined>(undefined);
+  const pendingFreeMovementAttempt = useRef<FreeMovementAttempt | undefined>(undefined);
   const travelBusy = useRef(false);
   const travelGeneration = useRef(0);
   const travelController = useRef<AbortController | undefined>(undefined);
@@ -372,6 +388,7 @@ export function App() {
           setTravelBusyState(false);
           clearStoredTravelReturnWindow(previousScope);
           pendingTravelAttempt.current = undefined;
+          pendingFreeMovementAttempt.current = undefined;
         }
         activeTravelScope.current = scope;
         const worldResponse = await fetch(`${apiBaseUrl}/world/party`, {
@@ -394,6 +411,7 @@ export function App() {
           clearStoredTravelReturnWindow(scope);
           activeTravelScope.current = undefined;
           pendingTravelAttempt.current = undefined;
+          pendingFreeMovementAttempt.current = undefined;
           publish({ status: 'signed-out' });
           return;
         }
@@ -413,12 +431,58 @@ export function App() {
         )
           return;
         if (world === undefined) throw new Error('Не удалось безопасно прочитать состояние мира.');
+        const roadInTransit =
+          world.schemaVersion === 1
+            ? world.route !== null
+            : world.execution !== null && world.execution.phase !== 'COMPLETE';
+        let freeMovement: WorldFreeMovementResponseDto | null = null;
+        if (!roadInTransit && world.party?.movementVersion === 1) {
+          const movementResponse = await fetch(
+            `${apiBaseUrl}/world/free-movement?schemaVersion=1`,
+            {
+              credentials: 'same-origin',
+              cache: 'no-store',
+              headers: worldPartyReadHeaders(scope),
+              signal: controller.signal,
+            },
+          );
+          if (
+            requestGeneration.current !== generation ||
+            signingOut.current ||
+            controller.signal.aborted
+          )
+            return;
+          if (movementResponse.status === 401) {
+            activeTravelScope.current = undefined;
+            pendingTravelAttempt.current = undefined;
+            pendingFreeMovementAttempt.current = undefined;
+            publish({ status: 'signed-out' });
+            return;
+          }
+          if (movementResponse.status !== 409) {
+            if (movementResponse.status === 403) {
+              if (retryCompanyMismatch) {
+                await restoreJourney(signal, false);
+                return;
+              }
+              throw new Error(
+                'Сеанс или выбранная компания изменились. Повторите загрузку записи.',
+              );
+            }
+            if (!movementResponse.ok) throw responseError(movementResponse);
+            freeMovement = readFreeMovementResponse(await movementResponse.json()) ?? null;
+            if (!freeMovement)
+              throw new Error('Не удалось безопасно прочитать свободное движение.');
+          }
+        }
         const storage = travelStorage();
         const storedAttempt = storage
           ? readWorldTravelAttempt(storage, scope)
           : { kind: 'UNAVAILABLE' as const };
         pendingTravelAttempt.current =
           storedAttempt.kind === 'FOUND' ? storedAttempt.attempt : undefined;
+        const freeMovementAttempt = storage ? readFreeMovementAttempt(storage, scope) : undefined;
+        pendingFreeMovementAttempt.current = freeMovementAttempt;
         const returnWindowOpen = storage
           ? isWorldTravelReturnWindowOpen(storage, scope, world)
           : false;
@@ -428,8 +492,10 @@ export function App() {
           company,
           holdings,
           world,
+          freeMovement,
           returnWindowOpen,
           travelAttemptPending: storedAttempt.kind === 'FOUND',
+          freeMovementAttemptPending: freeMovementAttempt !== undefined,
           ...(storedAttempt.kind === 'INVALID'
             ? {
                 travelMessage:
@@ -872,6 +938,282 @@ export function App() {
     [restoreJourney],
   );
 
+  const refreshFreeMovement = useCallback(async (scope: FreeMovementScope) => {
+    if (
+      travelBusy.current ||
+      activeTravelScope.current?.accountId !== scope.accountId ||
+      activeTravelScope.current.companyId !== scope.companyId
+    )
+      return undefined;
+    const controller = new AbortController();
+    const generation = ++travelGeneration.current;
+    travelController.current = controller;
+    travelBusy.current = true;
+    setTravelBusyState(true);
+    const operationCurrent = () =>
+      isWorldTravelOperationCurrent({
+        operationGeneration: generation,
+        currentGeneration: travelGeneration.current,
+        operationScope: scope,
+        currentScope: activeTravelScope.current ?? { accountId: '', companyId: '' },
+        signal: controller.signal,
+      });
+    try {
+      const response = await fetch(`${apiBaseUrl}/world/free-movement?schemaVersion=1`, {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: worldPartyReadHeaders(scope),
+        signal: controller.signal,
+      });
+      if (!operationCurrent()) return undefined;
+      if (response.status === 401) {
+        activeTravelScope.current = undefined;
+        pendingFreeMovementAttempt.current = undefined;
+        setJourney({ status: 'signed-out' });
+        return undefined;
+      }
+      if (!response.ok) {
+        if (response.status === 403) throw new Error('Компания изменилась. Перезагрузите сеанс.');
+        if (response.status === 409) return null;
+        throw responseError(response);
+      }
+      const current = readFreeMovementResponse(await response.json());
+      if (!current) throw new Error('Не удалось прочитать положение отряда.');
+      if (!operationCurrent()) return undefined;
+      setJourney((state) =>
+        state.status === 'company-ready' &&
+        state.session.accountId === scope.accountId &&
+        state.company.companyId === scope.companyId
+          ? { ...state, freeMovement: current, freeMovementMessage: undefined }
+          : state,
+      );
+      return current;
+    } catch (error) {
+      if (operationCurrent())
+        setJourney((state) =>
+          state.status === 'company-ready' && state.company.companyId === scope.companyId
+            ? {
+                ...state,
+                freeMovementMessage:
+                  error instanceof Error ? error.message : 'Не удалось обновить карту.',
+              }
+            : state,
+        );
+      return undefined;
+    } finally {
+      if (generation === travelGeneration.current) {
+        travelBusy.current = false;
+        travelController.current = undefined;
+        setTravelBusyState(false);
+      }
+    }
+  }, []);
+
+  const runFreeMovementAttempt = useCallback(async (attempt: FreeMovementAttempt) => {
+    const { scope } = attempt;
+    if (
+      travelBusy.current ||
+      activeTravelScope.current?.accountId !== scope.accountId ||
+      activeTravelScope.current.companyId !== scope.companyId
+    )
+      return;
+    const storage = travelStorage();
+    if (!storage) {
+      setJourney((state) =>
+        state.status === 'company-ready'
+          ? {
+              ...state,
+              freeMovementMessage: 'Локальное хранилище недоступно; запрос не отправлен.',
+            }
+          : state,
+      );
+      return;
+    }
+    const controller = new AbortController();
+    const generation = ++travelGeneration.current;
+    travelController.current = controller;
+    travelBusy.current = true;
+    setTravelBusyState(true);
+    const operationCurrent = () =>
+      isWorldTravelOperationCurrent({
+        operationGeneration: generation,
+        currentGeneration: travelGeneration.current,
+        operationScope: scope,
+        currentScope: activeTravelScope.current ?? { accountId: '', companyId: '' },
+        signal: controller.signal,
+      });
+    const setMessage = (message: string) => {
+      if (!operationCurrent()) return;
+      setJourney((state) =>
+        state.status === 'company-ready' && state.company.companyId === scope.companyId
+          ? { ...state, freeMovementMessage: message, freeMovementAttemptPending: true }
+          : state,
+      );
+    };
+    try {
+      saveFreeMovementAttempt(storage, attempt);
+      pendingFreeMovementAttempt.current = attempt;
+      setJourney((state) =>
+        state.status === 'company-ready' && state.company.companyId === scope.companyId
+          ? { ...state, freeMovementAttemptPending: true, freeMovementMessage: undefined }
+          : state,
+      );
+      let response: Response;
+      try {
+        response = await fetch(`${apiBaseUrl}/world/free-movement?schemaVersion=1`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: {
+            'content-type': 'application/json',
+            ...worldPartyReadHeaders(scope),
+          },
+          body: JSON.stringify(attempt.request),
+          signal: controller.signal,
+        });
+      } catch {
+        if (operationCurrent())
+          setMessage('Результат приказа неизвестен. Повтор отправит тот же приказ.');
+        return;
+      }
+      let body: unknown;
+      try {
+        body = await response.json();
+      } catch {
+        body = null;
+      }
+      if (!operationCurrent()) return;
+      if (response.status === 401) {
+        activeTravelScope.current = undefined;
+        pendingFreeMovementAttempt.current = undefined;
+        setJourney({ status: 'signed-out' });
+        return;
+      }
+      const result = classifyFreeMovementPost(response.status, body, attempt.request.commandId);
+      if (result.kind === 'UNKNOWN') {
+        setMessage('Результат приказа неизвестен. Повтор отправит тот же приказ.');
+        return;
+      }
+      const refreshedResponse = await fetch(`${apiBaseUrl}/world/free-movement?schemaVersion=1`, {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: worldPartyReadHeaders(scope),
+        signal: controller.signal,
+      });
+      if (!operationCurrent()) return;
+      if (!refreshedResponse.ok) {
+        setMessage('Приказ получен, но положение не обновилось. Повторите сверку.');
+        return;
+      }
+      const current = readFreeMovementResponse(await refreshedResponse.json());
+      if (!current) {
+        setMessage('Ответ о положении повреждён. Повторите тот же приказ для сверки.');
+        return;
+      }
+      const worldResponse = await fetch(`${apiBaseUrl}/world/party`, {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: worldPartyReadHeaders(scope),
+        signal: controller.signal,
+      });
+      if (!operationCurrent()) return;
+      if (!worldResponse.ok) {
+        setMessage(
+          'Положение обновилось, но доступ к месту не сверился. Повторите ту же проверку.',
+        );
+        return;
+      }
+      const world = readWorldPartyResponse(await worldResponse.json());
+      if (!world) {
+        setMessage('Ответ карты повреждён. Повторите тот же приказ для сверки.');
+        return;
+      }
+      clearFreeMovementAttempt(storage, scope);
+      pendingFreeMovementAttempt.current = undefined;
+      setJourney((state) =>
+        state.status === 'company-ready' && state.company.companyId === scope.companyId
+          ? {
+              ...state,
+              world,
+              freeMovement: current,
+              freeMovementAttemptPending: false,
+              ...(result.kind === 'REJECTED'
+                ? { freeMovementMessage: freeMovementRejectionMessage(result.code) }
+                : { freeMovementMessage: undefined }),
+            }
+          : state,
+      );
+    } catch (error) {
+      if (operationCurrent())
+        setMessage(
+          error instanceof Error ? error.message : 'Не удалось выполнить приказ движения.',
+        );
+    } finally {
+      if (generation === travelGeneration.current) {
+        travelBusy.current = false;
+        travelController.current = undefined;
+        setTravelBusyState(false);
+      }
+    }
+  }, []);
+
+  const startFreeMovement = useCallback(
+    (
+      action: FreeMovementAction,
+      current: WorldFreeMovementResponseDto | null,
+      scope: FreeMovementScope,
+    ) => {
+      if (!current || travelBusy.current || pendingFreeMovementAttempt.current) return;
+      try {
+        const attempt = createFreeMovementAttempt({
+          scope,
+          current,
+          commandId: crypto.randomUUID(),
+          action,
+        });
+        void runFreeMovementAttempt(attempt);
+      } catch (error) {
+        setJourney((state) =>
+          state.status === 'company-ready'
+            ? {
+                ...state,
+                freeMovementMessage:
+                  error instanceof Error ? error.message : 'Не удалось подготовить приказ.',
+              }
+            : state,
+        );
+      }
+    },
+    [runFreeMovementAttempt],
+  );
+
+  const retryFreeMovement = useCallback(
+    (scope: FreeMovementScope) => {
+      const attempt =
+        pendingFreeMovementAttempt.current ??
+        (() => {
+          const storage = travelStorage();
+          return storage ? readFreeMovementAttempt(storage, scope) : undefined;
+        })();
+      if (
+        !attempt ||
+        attempt.scope.accountId !== scope.accountId ||
+        attempt.scope.companyId !== scope.companyId
+      )
+        return;
+      void runFreeMovementAttempt(attempt);
+    },
+    [runFreeMovementAttempt],
+  );
+
+  function freeMovementRejectionMessage(code: string): string {
+    if (code === 'STALE_REVISION' || code === 'STALE_ROUTE_EPOCH')
+      return 'Карта изменилась. Обновите положение и выберите путь снова.';
+    if (code === 'INSUFFICIENT_ITEMS') return 'Пайков не хватит на этот путь.';
+    if (code === 'INVALID_ROUTE') return 'Путь недоступен или отряд не может выступить.';
+    return 'Сервер отклонил приказ движения.';
+  }
+
   const startWorldTravel = useCallback(
     (action: WorldTravelAction, current: WorldPartyReadResponseDto, scope: WorldTravelScope) => {
       if (travelBusy.current || pendingTravelAttempt.current) return;
@@ -976,6 +1318,11 @@ export function App() {
     const [accountId, companyId] = readyScope.split('\u0000') as [string, string];
     void refreshWorldParty({ accountId, companyId });
   }, [readyScope, refreshWorldParty]);
+  const refreshFreeMovementForShell = useCallback(() => {
+    if (!readyScope) return;
+    const [accountId, companyId] = readyScope.split('\u0000') as [string, string];
+    void refreshFreeMovement({ accountId, companyId });
+  }, [readyScope, refreshFreeMovement]);
 
   // Money, items and bodies change with world events (food on the road, battle, payout).
   const worldRevision =
@@ -1156,6 +1503,12 @@ export function App() {
         company={journey.company}
         holdings={journey.holdings}
         world={journey.world}
+        freeMovement={journey.freeMovement}
+        freeMovementScope={scope}
+        freeMovementPending={journey.freeMovementAttemptPending}
+        {...(journey.freeMovementMessage === undefined
+          ? {}
+          : { freeMovementMessage: journey.freeMovementMessage })}
         travelBusy={travelBusyState}
         travelPending={journey.travelAttemptPending}
         returnWindowOpen={journey.returnWindowOpen}
@@ -1163,6 +1516,9 @@ export function App() {
         onTravel={(action) => startWorldTravel(action, journey.world, scope)}
         onRetryTravel={() => retryWorldTravel(journey.world, scope)}
         onRefreshWorld={refreshWorldForShell}
+        onRefreshFreeMovement={refreshFreeMovementForShell}
+        onFreeMovement={(action) => startFreeMovement(action, journey.freeMovement, scope)}
+        onRetryFreeMovement={() => retryFreeMovement(scope)}
         onSignOut={() => void signOut()}
         equipBusy={equipBusy}
         {...(equipMessage === undefined ? {} : { equipMessage })}
@@ -1200,6 +1556,7 @@ export function App() {
             fallback={<p className="state-note">Открываем сводку боя…</p>}
           >
             <EncounterPanel
+              hideWhenIdle
               unitNames={Object.fromEntries(
                 journey.company.characters.map((character) => [
                   character.characterId,

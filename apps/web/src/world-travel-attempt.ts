@@ -646,11 +646,17 @@ function readParty(value: unknown): WorldPartyReadResponseV1Dto['party'] | undef
     typeof value['partyId'] !== 'string' ||
     typeof value['location'] !== 'string' ||
     !isStringArray(value['memberIds']) ||
-    !isIntegerString(value['routeEpoch'])
+    !isIntegerString(value['routeEpoch']) ||
+    (value['movementVersion'] !== undefined &&
+      value['movementVersion'] !== 1 &&
+      value['movementVersion'] !== 2)
   )
     return undefined;
   return {
     partyId: value['partyId'],
+    ...(value['movementVersion'] === 1 || value['movementVersion'] === 2
+      ? { movementVersion: value['movementVersion'] }
+      : {}),
     location: value['location'],
     memberIds: [...value['memberIds']],
     routeEpoch: value['routeEpoch'],

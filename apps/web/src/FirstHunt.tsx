@@ -288,8 +288,8 @@ export function FirstHunt(props: {
           </p>
           <p>
             Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
-            {areaLabel(contract.terms.objectiveLocation.areaId)}. Путь и расчёт припасов показаны в
-            карточке путешествия выше.
+            {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом убедитесь,
+            что у отряда есть провизия.
           </p>
           <dl>
             <dt>Ваша роль</dt>
@@ -534,7 +534,7 @@ export function firstHuntGuidance(
       return 'Отряд готов к бою. Бой начнётся, когда выполнены условия допуска.';
     return currentSiteId === objective
       ? 'Вы у цели: вступите в бой. Участие второй компании добровольно.'
-      : `Следуйте по доступным маршрутам к ${locationLabel(objective)} и проверьте расчёт припасов перед опасным переходом.`;
+      : `Следуйте по доступным маршрутам к ${locationLabel(objective)} и запаситесь провизией перед опасным переходом.`;
   }
   if (contract.knownState === 'ENCOUNTER_ACTIVE')
     return 'Бой идёт. Участие закреплено сервером; выйти из контракта до завершения нельзя.';

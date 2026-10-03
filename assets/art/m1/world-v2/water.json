@@ -1,0 +1,22 @@
+{
+  "asset": "water",
+  "mode": "built-in image_gen",
+  "tool": "image_gen.imagegen",
+  "prompt": "Use case: stylized-concept\nAsset type: one square seamless tileable albedo texture for a medieval temperate 2.5D strategic world map.\nPrimary request: calm river and lake water surface, filling the entire square from edge to edge, no shore. Professional realistic painted ink and wash look, fine restrained ripples with subtle darker flowing swirls, soft varied tonal depth and low contrast.\nComposition/framing: camera exactly straight overhead, orthographic flat surface, uniform texture density, no focal point or distinctive landmarks. All four edges must wrap seamlessly horizontally and vertically for repeated terrain tiling.\nLighting/mood: flat albedo under diffuse even daylight, calm and subdued.\nColor palette: muted slate blue and teal green water, greyed earthy hues compatible with sage green, brown and grey terrain. Avoid brilliant tropical blue.\nConstraints: square image; consistent small-scale texture across the full image; seamless periodic edge continuity; no shore, fish, boats, foam landmarks, horizon, reflected sky or clouds, perspective, cast shadows, text, border, vignette or watermark.",
+  "transparent_background": false,
+  "source_path": "/Users/vovanostm/.codex/generated_images/01a10291-cb9a-75c0-b7e1-84b38cb54740/exec-cfe1d5fc-3c18-4307-b6ec-766e231770fd.png",
+  "saved_path": "/private/tmp/warwrit-world-art/water/water.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "format": "PNG",
+  "generated_date": "2026-10-03",
+  "corrections": 0,
+  "inspection": {
+    "view_image": true,
+    "result": "Muted slate blue and teal green, fine overhead ripple texture; no shore, objects, text, border or vignette observed.",
+    "tiling": "Requested seamless horizontal and vertical wrap. Single-image inspection shows even density; exact edge periodicity and renderer tiling NOT_MEASURED."
+  },
+  "workspaceAsset": "assets/art/m1/world-v2/water.png"
+}

@@ -138,9 +138,11 @@ export function advancePhysicalRecovery(
       }),
     };
   }
-  for (const party of root.lifecycle.parties.filter((entry) => entry.location.kind === 'TRANSIT')) {
+  for (const party of root.lifecycle.parties.filter(
+    (entry) => entry.location.kind === 'TRANSIT' || entry.location.kind === 'MOVING',
+  )) {
     const location = party.location;
-    if (location.kind !== 'TRANSIT') continue;
+    if (location.kind !== 'TRANSIT' && location.kind !== 'MOVING') continue;
     const matches = trustedTransitSegments.filter(
       (segment) =>
         segment.worldId === root.lifecycle.worldId &&

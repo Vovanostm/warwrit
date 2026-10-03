@@ -35,6 +35,20 @@ export interface WorldRegion {
   readonly provenance: 'AUTHORED_INITIAL_FIXTURE';
   readonly sites: readonly WorldRegionSite[];
   readonly edges: readonly WorldRegionEdge[];
+  /** Finite authored hex bounds and terrain runs used by both navigation and rendering. */
+  readonly walkBounds: {
+    readonly minQ: number;
+    readonly maxQ: number;
+    readonly minR: number;
+    readonly maxR: number;
+  };
+  readonly terrainRows: readonly {
+    readonly r: number;
+    readonly fromQ: number;
+    readonly toQ: number;
+    readonly terrain: Exclude<WorldTerrain, 'SETTLEMENT' | 'MILL_RUIN'>;
+  }[];
+  readonly blockedHexes: readonly { readonly q: number; readonly r: number }[];
 }
 
 function freezeSite(site: WorldRegionSite): WorldRegionSite {
@@ -53,6 +67,22 @@ const regionDraft: WorldRegion = {
   regionId: 'seroe-porechye',
   name: 'Серое Поречье',
   provenance: 'AUTHORED_INITIAL_FIXTURE',
+  walkBounds: { minQ: -4, maxQ: 5, minR: -4, maxR: 4 },
+  terrainRows: [
+    { r: -4, fromQ: -1, toQ: 5, terrain: 'WOODLAND' },
+    { r: -3, fromQ: -2, toQ: 5, terrain: 'WOODLAND' },
+    { r: -2, fromQ: -3, toQ: 5, terrain: 'RIVERBANK' },
+    { r: -1, fromQ: -3, toQ: 4, terrain: 'OPEN_GROUND' },
+    { r: 0, fromQ: -3, toQ: 4, terrain: 'OPEN_GROUND' },
+    { r: 1, fromQ: -4, toQ: 4, terrain: 'WOODLAND' },
+    { r: 2, fromQ: -4, toQ: 3, terrain: 'WOODLAND' },
+    { r: 3, fromQ: -4, toQ: 3, terrain: 'RIVERBANK' },
+    { r: 4, fromQ: -4, toQ: 2, terrain: 'OPEN_GROUND' },
+  ],
+  blockedHexes: [
+    { q: 5, r: -2 },
+    { q: -4, r: 2 },
+  ],
   sites: [
     {
       siteId: 'kamenny-brod',
@@ -146,6 +176,57 @@ function validateRegion(region: WorldRegion): void {
   }
 
   const adjacency = new Map(region.sites.map((site) => [site.siteId, new Set<string>()]));
+  if (
+    ![
+      region.walkBounds.minQ,
+      region.walkBounds.maxQ,
+      region.walkBounds.minR,
+      region.walkBounds.maxR,
+    ].every(Number.isSafeInteger) ||
+    region.walkBounds.minQ > region.walkBounds.maxQ ||
+    region.walkBounds.minR > region.walkBounds.maxR
+  )
+    throw new RangeError('Invalid world walk bounds');
+  const terrainRows = new Set<number>();
+  for (const row of region.terrainRows) {
+    if (
+      !Number.isSafeInteger(row.r) ||
+      !Number.isSafeInteger(row.fromQ) ||
+      !Number.isSafeInteger(row.toQ) ||
+      row.r < region.walkBounds.minR ||
+      row.r > region.walkBounds.maxR ||
+      row.fromQ < region.walkBounds.minQ ||
+      row.toQ > region.walkBounds.maxQ ||
+      row.fromQ > row.toQ ||
+      terrainRows.has(row.r)
+    )
+      throw new RangeError('Invalid authored terrain row');
+    terrainRows.add(row.r);
+  }
+  const blocked = new Set<string>();
+  for (const hex of region.blockedHexes) {
+    const row = region.terrainRows.find((entry) => entry.r === hex.r);
+    const key = `${hex.q},${hex.r}`;
+    if (
+      !Number.isSafeInteger(hex.q) ||
+      !row ||
+      hex.q < row.fromQ ||
+      hex.q > row.toQ ||
+      blocked.has(key)
+    )
+      throw new RangeError('Invalid blocked world hex');
+    blocked.add(key);
+  }
+  for (const site of region.sites) {
+    const row = region.terrainRows.find((entry) => entry.r === site.coordinate.r);
+    if (
+      !row ||
+      site.coordinate.q < row.fromQ ||
+      site.coordinate.q > row.toQ ||
+      blocked.has(`${site.coordinate.q},${site.coordinate.r}`)
+    )
+      throw new RangeError('World site is outside authored walk terrain');
+  }
   const edgeIds = new Set<string>();
   for (const edge of region.edges) {
     const from = adjacency.get(edge.fromSiteId);
@@ -180,6 +261,9 @@ validateRegion(regionDraft);
 
 export const SEROE_PORECHYE = Object.freeze({
   ...regionDraft,
+  walkBounds: Object.freeze({ ...regionDraft.walkBounds }),
+  terrainRows: Object.freeze(regionDraft.terrainRows.map((row) => Object.freeze({ ...row }))),
+  blockedHexes: Object.freeze(regionDraft.blockedHexes.map((hex) => Object.freeze({ ...hex }))),
   sites: Object.freeze(regionDraft.sites.map(freezeSite)),
   edges: Object.freeze(regionDraft.edges.map((edge) => Object.freeze({ ...edge }))),
 });

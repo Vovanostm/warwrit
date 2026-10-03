@@ -1,3 +1,6 @@
+import { MovementTerrain } from './MovementTerrain.js';
+import { ContinuousMapCanvas } from './ContinuousMapCanvas.js';
+import { useContinuousMovement } from './continuous-movement.js';
 import './game.css';
 import { useEffect, useState, type ReactNode } from 'react';
 
@@ -5,6 +8,7 @@ import type {
   CompanyHoldingsDto,
   CompanySummaryDto,
   WorldAvailableDepartureDto,
+  WorldFreeMovementResponseDto,
   WorldPartyReadResponseDto,
   WorldSurroundingsDto,
 } from '@warwrit/protocol';
@@ -23,6 +27,8 @@ import { departureKey, TravelPanel } from './TravelPanel.js';
 import { WorldMap, type PartyMarker } from './WorldMap.js';
 import { WorldMapCanvas } from './WorldMapCanvas.js';
 import { placeIllustration } from '../renderer/art.js';
+import { FreeMovementPanel } from './FreeMovementPanel.js';
+import type { FreeMovementAction, FreeMovementScope } from '../world-free-movement-attempt.js';
 
 type Tab = 'travel' | 'place' | 'company';
 const TRANSIT_REFRESH_MS = 15_000;
@@ -31,6 +37,10 @@ export function GameShell(props: {
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
   readonly world: WorldPartyReadResponseDto;
+  readonly freeMovement: WorldFreeMovementResponseDto | null;
+  readonly freeMovementScope: FreeMovementScope;
+  readonly freeMovementPending: boolean;
+  readonly freeMovementMessage?: string;
   readonly travelBusy: boolean;
   readonly travelPending: boolean;
   readonly returnWindowOpen: boolean;
@@ -38,6 +48,9 @@ export function GameShell(props: {
   readonly onTravel: (action: WorldTravelAction) => void;
   readonly onRetryTravel: () => void;
   readonly onRefreshWorld: () => void;
+  readonly onRefreshFreeMovement: () => void;
+  readonly onFreeMovement: (action: FreeMovementAction) => void;
+  readonly onRetryFreeMovement: () => void;
   readonly onSignOut: () => void;
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
@@ -46,6 +59,14 @@ export function GameShell(props: {
   readonly placeSlot: ReactNode;
   readonly battleSlot: ReactNode;
 }) {
+  const movement = useContinuousMovement(
+    props.freeMovementScope,
+    props.onRefreshWorld,
+    props.world.party?.movementVersion !== 1 &&
+      (props.world.schemaVersion === 1
+        ? !props.world.route
+        : !props.world.execution || props.world.execution.phase === 'COMPLETE'),
+  );
   const party = props.world.party;
   const surroundings = useSurroundings(
     `${props.world.publicRevision}:${party?.routeEpoch ?? ''}:${party?.location ?? ''}`,
@@ -53,11 +74,24 @@ export function GameShell(props: {
   const now = useNow(1000);
   const [tab, setTab] = useState<Tab>('travel');
   const [selected, setSelected] = useState<WorldAvailableDepartureDto | null>(null);
+  const [selectedHex, setSelectedHex] = useState<{ readonly q: number; readonly r: number } | null>(
+    null,
+  );
+  const [selectedHexPath, setSelectedHexPath] = useState<
+    readonly { readonly q: number; readonly r: number }[] | undefined
+  >();
+  const [freeSiteTargeting, setFreeSiteTargeting] = useState(false);
   const [focusSiteId, setFocusSiteId] = useState<string | null>(null);
 
   const execution = props.world.schemaVersion === 2 ? props.world.execution : null;
   const legacyRoute = props.world.schemaVersion === 1 ? props.world.route : null;
-  const travelling = legacyRoute !== null || (execution !== null && execution.phase !== 'COMPLETE');
+  const freeMovement = props.freeMovement;
+  const freeRoute = freeMovement?.movement?.status === 'MOVING' ? freeMovement.movement : null;
+  const travelling = movement.current
+    ? movement.current.mode === 'MOVING'
+    : legacyRoute !== null ||
+      (execution !== null && execution.phase !== 'COMPLETE') ||
+      freeRoute !== null;
 
   // A selection that the server no longer offers is dropped.
   const departures = props.world.availableDepartures ?? [];
@@ -68,14 +102,16 @@ export function GameShell(props: {
   }, [departures, selectedKey]);
 
   // While on the road, the server worker advances the route; re-read it periodically.
-  const { onRefreshWorld, travelBusy } = props;
+  const { onRefreshWorld, onRefreshFreeMovement, travelBusy } = props;
   useEffect(() => {
     if (!travelling) return;
     const id = setInterval(() => {
-      if (!travelBusy) onRefreshWorld();
+      if (travelBusy) return;
+      if (freeRoute) onRefreshFreeMovement();
+      else onRefreshWorld();
     }, TRANSIT_REFRESH_MS);
     return () => clearInterval(id);
-  }, [travelling, travelBusy, onRefreshWorld]);
+  }, [travelling, travelBusy, freeRoute, onRefreshFreeMovement, onRefreshWorld]);
 
   if (surroundings.status === 'loading') {
     return <div className="game-loading">Разворачиваем карту…</div>;
@@ -100,13 +136,37 @@ export function GameShell(props: {
   const plannedEdgeIds = travelling
     ? (execution?.edgeIds ?? legacyRoute?.edgeIds ?? [])
     : (selected?.edgeIds ?? []);
-  const marker = partyMarker(props.world, map, tick, props.company);
+  const plannedHexPath = selectedHex ? selectedHexPath : freeRoute?.path;
+  const freePosition = freeRoute
+    ? freePositionAt(freeRoute.path, freeRoute.startedAt, tick, freeRoute.ticksPerHex)
+    : freeMovement?.party?.position.kind === 'TERRAIN'
+      ? freeMovement.party.position
+      : undefined;
+  const marker = freePosition
+    ? {
+        at: { kind: 'TERRAIN' as const, ...freePosition },
+        label: props.company.companyPresentation?.name ?? 'Ваш отряд',
+      }
+    : partyMarker(props.world, map, tick, props.company);
   const hostileSiteIds = new Set((reading.dto.observedHostiles ?? []).map((entry) => entry.siteId));
   const focusSite = map.sites.find(
     (site) => site.siteId === (focusSiteId ?? (travelling ? null : party?.location)),
   );
 
   const selectSite = (siteId: string) => {
+    if (freeSiteTargeting) {
+      const site = map.sites.find((entry) => entry.siteId === siteId);
+      if (site) {
+        setSelectedHex({ q: site.q, r: site.r });
+        setSelectedHexPath(undefined);
+        setSelected(null);
+        setFreeSiteTargeting(false);
+        setTab('travel');
+        return;
+      }
+    }
+    setSelectedHex(null);
+    setSelectedHexPath(undefined);
     setFocusSiteId(siteId);
     const options = departures.filter((departure) => departure.toSiteId === siteId);
     if (!travelling && options.length > 0) {
@@ -145,33 +205,61 @@ export function GameShell(props: {
 
       <div className="game-main">
         <div className="map-frame">
-          <WorldMapCanvas
-            map={map}
-            night={light.phase === 'NIGHT'}
-            party={marker}
-            observed={reading.dto.observedCompanies}
-            hostileSiteIds={hostileSiteIds}
-            reachableSiteIds={reachable}
-            selectedSiteId={selected?.toSiteId ?? focusSiteId}
-            plannedEdgeIds={plannedEdgeIds}
-            onSelectSite={selectSite}
-            fallback={
-              <WorldMap
+          {map.continuous &&
+          props.world.party?.movementVersion !== 1 &&
+          !legacyRoute &&
+          (!execution || execution.phase === 'COMPLETE') ? (
+            <ContinuousMapCanvas
+              region={map.continuous}
+              sites={map.sites}
+              current={movement.current}
+              clock={movement.clock.current}
+              night={light.phase === 'NIGHT'}
+              onMove={movement.send}
+              onSelectSite={selectSite}
+            />
+          ) : (
+            <>
+              {' '}
+              <WorldMapCanvas
                 map={map}
                 night={light.phase === 'NIGHT'}
                 party={marker}
-                moving={travelling}
                 observed={reading.dto.observedCompanies}
                 hostileSiteIds={hostileSiteIds}
                 reachableSiteIds={reachable}
                 selectedSiteId={selected?.toSiteId ?? focusSiteId}
                 plannedEdgeIds={plannedEdgeIds}
+                selectedHex={selectedHex}
+                {...(plannedHexPath === undefined ? {} : { plannedHexPath })}
                 onSelectSite={selectSite}
+                onSelectTerrain={(position) => {
+                  setSelectedHex(position);
+                  setSelectedHexPath(undefined);
+                  setSelected(null);
+                  setFocusSiteId(null);
+                  setTab('travel');
+                }}
+                fallback={
+                  <WorldMap
+                    map={map}
+                    night={light.phase === 'NIGHT'}
+                    party={marker}
+                    moving={travelling}
+                    observed={reading.dto.observedCompanies}
+                    hostileSiteIds={hostileSiteIds}
+                    reachableSiteIds={reachable}
+                    selectedSiteId={selected?.toSiteId ?? focusSiteId}
+                    plannedEdgeIds={plannedEdgeIds}
+                    {...(plannedHexPath === undefined ? {} : { plannedHexPath })}
+                    onSelectSite={selectSite}
+                  />
+                }
               />
-            }
-          />
+            </>
+          )}
           <p className="map-legend">
-            {map.regionName} · нажмите на место на карте, чтобы проложить путь
+            {map.regionName} · ПКМ — идти · S — остановиться · зажать ЛКМ — двигать карту
           </p>
         </div>
 
@@ -188,27 +276,108 @@ export function GameShell(props: {
             </TabButton>
           </nav>
           <div hidden={tab !== 'travel'}>
-            <TravelPanel
-              world={props.world}
-              map={map}
-              currentTick={tick}
-              msPerTick={msPerTick}
-              selected={selected}
-              busy={props.travelBusy}
-              pendingAttempt={props.travelPending}
-              returnWindowOpen={props.returnWindowOpen}
-              {...(props.travelMessage === undefined ? {} : { message: props.travelMessage })}
-              onSelect={(departure) => {
-                setSelected(departure);
-                if (departure) setFocusSiteId(departure.toSiteId);
-              }}
-              onTravel={(action) => {
-                props.onTravel(action);
-                setSelected(null);
-              }}
-              onRetry={props.onRetryTravel}
-              onRefresh={props.onRefreshWorld}
-            />
+            {map.continuous &&
+            props.world.party?.movementVersion !== 1 &&
+            !legacyRoute &&
+            (!execution || execution.phase === 'COMPLETE') ? (
+              <section className="panel travel-panel" aria-label="Путешествие">
+                <h2 className="panel-title">Путь</h2>
+                <p className="travel-status">
+                  {movement.current?.mode === 'MOVING'
+                    ? Number(movement.current.plan?.arrivesAtMs ?? 0) <=
+                      movement.clock.current.serverMs +
+                        performance.now() -
+                        movement.clock.current.receivedAt
+                      ? 'Прибываем…'
+                      : `Отряд движется. Осталось ${Math.max(0, Math.ceil((Number(movement.current.plan?.arrivesAtMs ?? 0) - (movement.clock.current.serverMs + performance.now() - movement.clock.current.receivedAt)) / 1000))} с.`
+                    : movement.current?.mode === 'STATIONARY_SITE'
+                      ? 'Отряд в поселении.'
+                      : movement.current
+                        ? 'Отряд остановился в местности.'
+                        : 'Сверяем положение отряда…'}
+                </p>
+                <MovementTerrain
+                  current={movement.current}
+                  region={map.continuous}
+                  serverMs={
+                    movement.clock.current.serverMs +
+                    performance.now() -
+                    movement.clock.current.receivedAt
+                  }
+                />
+                {movement.current?.mode === 'MOVING' && (
+                  <button
+                    className="action"
+                    disabled={movement.busy}
+                    onClick={() => movement.send({ kind: 'STOP' })}
+                  >
+                    Остановиться
+                  </button>
+                )}
+                {movement.busy && <p role="status">Отправляем приказ…</p>}
+                {movement.unknown && (
+                  <button className="action" onClick={movement.retry}>
+                    Повторить сохранённый приказ
+                  </button>
+                )}
+                {movement.message && (
+                  <p className="travel-error" role="alert">
+                    {movement.message}
+                  </p>
+                )}
+                <p className="state-note">
+                  Нажмите правой кнопкой по земле или поселению. Новый приказ меняет цель из
+                  текущего положения.
+                </p>
+              </section>
+            ) : (
+              <>
+                {' '}
+                <TravelPanel
+                  world={props.world}
+                  map={map}
+                  currentTick={tick}
+                  msPerTick={msPerTick}
+                  selected={selected}
+                  busy={props.travelBusy}
+                  pendingAttempt={props.travelPending}
+                  returnWindowOpen={props.returnWindowOpen}
+                  {...(props.travelMessage === undefined ? {} : { message: props.travelMessage })}
+                  onSelect={(departure) => {
+                    setSelected(departure);
+                    if (departure) setFocusSiteId(departure.toSiteId);
+                  }}
+                  onTravel={(action) => {
+                    props.onTravel(action);
+                    setSelected(null);
+                  }}
+                  onRetry={props.onRetryTravel}
+                  onRefresh={props.onRefreshWorld}
+                />
+                <FreeMovementPanel
+                  map={map}
+                  current={props.freeMovement}
+                  destination={selectedHex}
+                  scope={props.freeMovementScope}
+                  msPerTick={msPerTick}
+                  busy={props.travelBusy}
+                  pending={props.freeMovementPending}
+                  {...(props.freeMovementMessage === undefined
+                    ? {}
+                    : { message: props.freeMovementMessage })}
+                  onDestination={setSelectedHex}
+                  onPreviewPath={setSelectedHexPath}
+                  siteTargeting={freeSiteTargeting}
+                  onSiteTargeting={setFreeSiteTargeting}
+                  onMove={(action) => {
+                    props.onFreeMovement(action);
+                    setSelectedHex(null);
+                    setSelectedHexPath(undefined);
+                  }}
+                  onRetry={props.onRetryFreeMovement}
+                />
+              </>
+            )}
           </div>
           <div hidden={tab !== 'place'}>
             <section className="panel place-panel" aria-label="Место">
@@ -297,11 +466,17 @@ export function GameShell(props: {
       <section className="game-battle">{props.battleSlot}</section>
       <footer className="game-footer">
         Локальная альфа ·{' '}
-        {travelling && marker?.at.kind === 'ROAD'
-          ? `в пути к ${siteName(marker.at.toSiteId)}`
-          : party
-            ? `стоянка: ${siteName(party.location)}`
-            : 'без партии'}
+        {movement.current
+          ? movement.current.mode === 'MOVING'
+            ? 'отряд в пути'
+            : movement.current.mode === 'STATIONARY_TERRAIN'
+              ? 'отряд в местности'
+              : 'отряд в поселении'
+          : travelling && marker?.at.kind === 'ROAD'
+            ? `в пути к ${siteName(marker.at.toSiteId)}`
+            : party
+              ? `стоянка: ${siteName(party.location)}`
+              : 'без партии'}
       </footer>
     </div>
   );
@@ -323,6 +498,19 @@ function TabButton(props: {
       {props.children}
     </button>
   );
+}
+
+function freePositionAt(
+  path: readonly { readonly q: number; readonly r: number }[],
+  startedAt: string,
+  tick: number,
+  ticksPerHex: number,
+): { readonly q: number; readonly r: number } {
+  const index = Math.min(
+    path.length - 1,
+    Math.max(0, Math.floor((tick - Number(startedAt)) / ticksPerHex)),
+  );
+  return path[index] ?? path[0] ?? { q: 0, r: 0 };
 }
 
 function ObservedCompanies(props: {

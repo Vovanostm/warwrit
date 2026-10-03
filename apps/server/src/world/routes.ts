@@ -1,10 +1,15 @@
 import {
+  handleContinuousMovementRead,
+  handleContinuousMovementPost,
+} from './continuous-movement.js';
+import {
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   SAFE_TRAVEL_ALPHA_V1,
   accrueFinance,
   assessPhysicalFoodStock,
   acceptedWorldRegion,
+  isContinuousRegionVersion,
   canonicalJson,
   canonicalRevision,
   isEntityId,
@@ -31,7 +36,13 @@ import {
   WORLD_REGION_VERSION,
   campaignTick,
   trustedTransitSegment,
+  acceptFreeMovement,
+  freeMovementPositionAt,
+  findFreeMovementPath,
+  FREE_MOVEMENT_PROFILE,
+  isWalkableHex,
 } from '@warwrit/game-core';
+import type { FreeMovementExecution, WorldHexPosition } from '@warwrit/game-core';
 import type { CompanyCommandRejectionDto } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import type {
@@ -44,6 +55,11 @@ import type {
   WorldTravelV2ResponseDto,
   WorldTravelRejectionDto,
   WorldTravelPreviewResponseDto,
+  WorldFreeMovementRequestDto,
+  WorldFreeMovementResponseDto,
+  WorldFreeMovementPreviewRequestDto,
+  WorldFreeMovementPreviewResponseDto,
+  WorldFreeMovementRejectionDto,
 } from '@warwrit/protocol';
 import { isWorldTravelPreviewRequest } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
@@ -98,11 +114,239 @@ type RejectedWorldTravelResponse = {
 
 class InvalidStoredWorldRouteError extends Error {}
 
+interface StoredFreeMovement {
+  readonly kind: 'FREE_MOVEMENT';
+  readonly acceptedByAccountId: string;
+  readonly status: 'MOVING' | 'STOPPED' | 'ARRIVED';
+  readonly segmentId: string;
+  readonly execution: FreeMovementExecution;
+}
+
+function registerWorldFreeMovementRoutes(
+  app: FastifyInstance,
+  { database, worldId }: CompanyRoutesOptions,
+): void {
+  app.get('/world/free-movement', async (request, reply) => {
+    if (!isRecord(request.query) || request.query['schemaVersion'] !== '1')
+      return handleContinuousMovementRead(request, reply, { database, worldId });
+    const accountId = await resolveSessionAccount(request, database);
+    if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
+    const expectedCompanyId = readExpectedCompanyId(request.raw.rawHeaders);
+    return database.transaction().execute(async (transaction) => {
+      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      if (!companyId || (expectedCompanyId !== undefined && companyId !== expectedCompanyId))
+        return reply.code(403).send({ error: 'company context mismatch' });
+      const state = await loadCompanyAggregate(transaction, worldId, companyId);
+      if (!state) return reply.code(404).send({ error: 'company unavailable' });
+      const clock = await readWorldClock(transaction, worldId);
+      const party =
+        state.economy.lifecycle.parties.length === 1
+          ? state.economy.lifecycle.parties[0]
+          : undefined;
+      const routeRow = party
+        ? await readPartyRoute(transaction, worldId, companyId, party.partyId)
+        : undefined;
+      if (isContinuousRegionVersion(routeRow?.region_version))
+        return reply.code(409).send({ error: 'continuous movement uses v2' });
+      let movement: StoredFreeMovement | undefined;
+      if (routeRow?.accepted_route && isFreeMovementEnvelope(routeRow.accepted_route)) {
+        movement = readFreeMovementEnvelope(routeRow.accepted_route);
+        assertStoredFreeMovementMatchesCompany(routeRow, movement, state);
+      }
+      if (routeRow?.status === 'IN_TRANSIT' && !movement)
+        return reply.code(409).send({ error: 'another route is active' });
+      const body = freeMovementResponseFor(state, routeRow, movement, clock.tick);
+      reply.header('cache-control', 'no-store');
+      return body;
+    });
+  });
+
+  app.post('/world/free-movement/preview', { bodyLimit: 2048 }, async (request, reply) => {
+    const accountId = await resolveSessionAccount(request, database);
+    if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
+    const input = parseFreeMovementPreviewRequest(request.body);
+    if (!input) return reply.code(400).send({ error: 'invalid movement preview' });
+    const expectedCompanyId = readExpectedCompanyId(request.raw.rawHeaders);
+    if (expectedCompanyId === undefined)
+      return reply.code(400).send({ error: 'company context required' });
+    const preview = await database.transaction().execute(async (transaction) => {
+      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      if (!companyId || companyId !== expectedCompanyId) return undefined;
+      const state = await loadCompanyAggregate(transaction, worldId, companyId);
+      if (!state?.economy.physical) return undefined;
+      const party =
+        state.economy.lifecycle.parties.length === 1
+          ? state.economy.lifecycle.parties[0]
+          : undefined;
+      if (!party) return undefined;
+      const routeRow = await readPartyRoute(transaction, worldId, companyId, party.partyId);
+      const clock = await readWorldClock(transaction, worldId, new Date());
+      const currentRevision = state.economy.lifecycle.knowledge.revision;
+      const currentEpoch = routeRow?.route_epoch ?? '0';
+      if (
+        input.expectedPublicRevision !== currentRevision ||
+        input.expectedRouteEpoch !== currentEpoch ||
+        BigInt(state.economy.lifecycle.campaignTick) > BigInt(clock.tick)
+      )
+        return undefined;
+      let movement: StoredFreeMovement | undefined;
+      if (routeRow?.status === 'IN_TRANSIT') {
+        if (!isFreeMovementEnvelope(routeRow.accepted_route)) return undefined;
+        movement = readFreeMovementEnvelope(routeRow.accepted_route);
+        assertStoredFreeMovementMatchesCompany(routeRow, movement, state);
+      } else if (routeRow && !isValidCompletedRouteForDeparture(routeRow, state)) {
+        return undefined;
+      }
+      const region = requireRegion();
+      const from =
+        movement?.status === 'MOVING'
+          ? freeMovementPositionAt(movement.execution, campaignTick(clock.tick))
+          : freeMovementPositionForLocation(party.location, region);
+      if (!from || !isWalkableHex(region, input.destination)) return undefined;
+      const path = findFreeMovementPath(region, from, input.destination);
+      if (!path) return undefined;
+      const arrivesAt = campaignTick(
+        (
+          BigInt(clock.tick) +
+          BigInt(path.length - 1) * BigInt(FREE_MOVEMENT_PROFILE.ticksPerHex)
+        ).toString(),
+      );
+      const accrued = accrueFinance(state.economy.finance, state.economy.lifecycle, arrivesAt);
+      const requirements = accrued.requirements.filter(
+        (
+          requirement,
+        ): requirement is Extract<typeof requirement, { readonly kind: 'FOOD_CONSUMPTION' }> =>
+          requirement.kind === 'FOOD_CONSUMPTION',
+      );
+      const partyMemberIds = new Set<string>(
+        state.economy.lifecycle.characters
+          .filter((character) => character.presence.fieldPartyId === party.partyId)
+          .map((character) => character.identity.characterId),
+      );
+      const containers = state.economy.physical.containers
+        .filter(
+          (container) =>
+            (container.kind === 'PARTY_SUPPLY' &&
+              container.carrier?.kind === 'PARTY' &&
+              container.carrier.id === party.partyId) ||
+            (container.kind === 'CARRIED' &&
+              container.carrier?.kind === 'CHARACTER' &&
+              partyMemberIds.has(container.carrier.id)),
+        )
+        .filter(
+          (container) =>
+            container.closed === null &&
+            container.access === 'COMPANY' &&
+            container.custodian.kind === 'COMPANY' &&
+            container.custodian.id === companyId,
+        )
+        .map((container) => container.containerId);
+      const stock = assessPhysicalFoodStock(
+        state.economy.physical,
+        requirements,
+        containers,
+        companyId,
+      );
+      const response: WorldFreeMovementPreviewResponseDto = {
+        schemaVersion: 1,
+        worldTick: clock.tick,
+        publicRevision: currentRevision,
+        routeEpoch: currentEpoch,
+        regionVersion: region.version,
+        profileId: FREE_MOVEMENT_PROFILE.profileId,
+        ticksPerHex: FREE_MOVEMENT_PROFILE.ticksPerHex,
+        from,
+        to: input.destination,
+        path,
+        arrivesAt,
+        requiredStockUnits: stock.requiredUnits,
+        availableStockUnits: stock.availableUnits,
+        knownShortage: stock.knownShortage,
+      };
+      return response;
+    });
+    if (!preview) return reply.code(409).send({ error: 'movement preview unavailable' });
+    reply.header('cache-control', 'no-store');
+    return preview;
+  });
+
+  app.post('/world/free-movement', { bodyLimit: 2048 }, async (request, reply) => {
+    if (isRecord(request.body) && request.body['schemaVersion'] === 2)
+      return handleContinuousMovementPost(request, reply, { database, worldId });
+    const accountId = await resolveSessionAccount(request, database);
+    if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
+    const input = parseFreeMovementRequest(request.body);
+    if (!input)
+      return reply.code(400).send(rejectFreeMovement(null, EMPTY_REVISION, 'INVALID_COMMAND'));
+    const expectedCompanyId = readExpectedCompanyId(request.raw.rawHeaders);
+    if (expectedCompanyId === undefined)
+      return reply
+        .code(400)
+        .send(rejectFreeMovement(input.commandId, EMPTY_REVISION, 'INVALID_COMMAND'));
+    const requestKey = canonicalJson(input);
+    const result = await database.transaction().execute(async (transaction) => {
+      const account = await transaction
+        .selectFrom('identity_accounts')
+        .select('id')
+        .where('id', '=', accountId)
+        .forUpdate()
+        .executeTakeFirst();
+      if (!account) return { status: 401, body: { error: 'authentication required' } };
+      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      if (!companyId || companyId !== expectedCompanyId)
+        return {
+          status: 403,
+          body: rejectFreeMovement(input.commandId, EMPTY_REVISION, 'NOT_AUTHORIZED'),
+        };
+      const snapshot = await transaction
+        .selectFrom('company_snapshots')
+        .select(['canonical_revision', 'public_revision'])
+        .where('world_id', '=', worldId)
+        .where('company_id', '=', companyId)
+        .forUpdate()
+        .executeTakeFirst();
+      if (!snapshot) throw new Error('Owned company snapshot is unavailable');
+
+      const previousReceipt = await readWorldRouteReceipt(
+        transaction,
+        worldId,
+        companyId,
+        input.commandId,
+      );
+      if (previousReceipt) {
+        if (previousReceipt.account_id !== accountId)
+          return {
+            status: 403,
+            body: rejectFreeMovement(input.commandId, snapshot.public_revision, 'NOT_AUTHORIZED'),
+          };
+        if (previousReceipt.request_key !== requestKey)
+          return {
+            status: 409,
+            body: rejectFreeMovement(input.commandId, snapshot.public_revision, 'INVALID_COMMAND'),
+          };
+        return {
+          status: 200,
+          body: readStoredFreeMovementResponse(previousReceipt.response, input.commandId),
+        };
+      }
+      return {
+        status: 409,
+        body: rejectFreeMovement(input.commandId, snapshot.public_revision, 'INVALID_COMMAND'),
+      };
+    });
+    if (typeof result.body === 'string')
+      return reply.code(result.status).type('application/json; charset=utf-8').send(result.body);
+    return reply.code(result.status).send(result.body);
+  });
+}
+
 export function registerWorldRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyRoutesOptions,
 ): void {
   registerWorldSurroundingsRoute(app, { database, worldId });
+
+  registerWorldFreeMovementRoutes(app, { database, worldId });
   app.post('/world/travel/preview', { bodyLimit: 2048 }, async (request, reply) => {
     const accountId = await resolveSessionAccount(request, database);
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
@@ -1293,7 +1537,16 @@ function projectWorldParty(
 ): WorldPartyReadResponseDto {
   if (routeRow) {
     try {
-      if (isStoredV2Route(routeRow.accepted_route)) {
+      if (isContinuousRegionVersion(routeRow.region_version)) {
+        if (
+          !isRecord(routeRow.accepted_route) ||
+          routeRow.accepted_route['kind'] !== 'CONTINUOUS_MOVEMENT'
+        )
+          throw new TypeError('Invalid continuous route');
+      } else if (isFreeMovementEnvelope(routeRow.accepted_route)) {
+        const movement = readFreeMovementEnvelope(routeRow.accepted_route);
+        assertStoredFreeMovementMatchesCompany(routeRow, movement, state);
+      } else if (isStoredV2Route(routeRow.accepted_route)) {
         const execution = readRouteExecutionEnvelope(routeRow.accepted_route).execution;
         assertStoredExecutionMatchesCompany(routeRow, execution, state);
         if (execution.phase === 'COMPLETE') {
@@ -1317,7 +1570,16 @@ function projectWorldParty(
     schemaVersion: response.schemaVersion,
     worldTick: response.worldTick,
     publicRevision: response.publicRevision,
-    party: response.party,
+    party: response.party
+      ? {
+          ...response.party,
+          ...(isContinuousRegionVersion(routeRow?.region_version)
+            ? { movementVersion: 2 as const }
+            : routeRow && isFreeMovementEnvelope(routeRow.accepted_route)
+              ? { movementVersion: 1 as const }
+              : {}),
+        }
+      : null,
     availableDepartures: response.availableDepartures ?? [],
     route: response.route,
   };
@@ -1351,10 +1613,15 @@ function responseFor(
   let activeExecution: PartyRouteExecution | undefined;
   if (routeRow?.status === 'IN_TRANSIT') {
     try {
-      activeExecution = readRouteExecutionEnvelope(routeRow.accepted_route).execution;
-      assertStoredExecutionMatchesCompany(routeRow, activeExecution, state);
-      if (activeExecution.phase !== 'IN_TRANSIT' || !activeExecution.segment)
-        throw new TypeError('Stored active execution has no segment');
+      if (
+        !isContinuousRegionVersion(routeRow.region_version) &&
+        !isFreeMovementEnvelope(routeRow.accepted_route)
+      ) {
+        activeExecution = readRouteExecutionEnvelope(routeRow.accepted_route).execution;
+        assertStoredExecutionMatchesCompany(routeRow, activeExecution, state);
+        if (activeExecution.phase !== 'IN_TRANSIT' || !activeExecution.segment)
+          throw new TypeError('Stored active execution has no segment');
+      }
     } catch {
       activeExecution = undefined;
       activeRoute = readAcceptedRoute(routeRow, state);
@@ -1396,7 +1663,14 @@ function responseFor(
     party: party
       ? {
           partyId: party.partyId,
-          location: party.location.kind === 'AT' ? party.location.siteId : party.location.from,
+          location:
+            party.location.kind === 'AT'
+              ? party.location.siteId
+              : party.location.kind === 'TRANSIT'
+                ? party.location.from
+                : party.location.kind === 'MOVING'
+                  ? `${party.location.fromQ},${party.location.fromR}`
+                  : `${party.location.q},${party.location.r}`,
           memberIds,
           routeEpoch: routeRow?.party_id === party.partyId ? routeRow.route_epoch : '0',
         }
@@ -1611,6 +1885,11 @@ function isValidCompletedRouteForDeparture(
   state: CompanyCombatAggregateState,
 ): boolean {
   try {
+    if (isFreeMovementEnvelope(routeRow.accepted_route)) {
+      const movement = readFreeMovementEnvelope(routeRow.accepted_route);
+      assertStoredFreeMovementMatchesCompany(routeRow, movement, state);
+      return movement.status !== 'MOVING' && routeRow.status === 'ARRIVED';
+    }
     if (isStoredV2Route(routeRow.accepted_route)) {
       const execution = readRouteExecutionEnvelope(routeRow.accepted_route).execution;
       assertStoredExecutionMatchesCompany(routeRow, execution, state);
@@ -2081,7 +2360,14 @@ function v2ResponseFor(
     publicRevision: state.economy.lifecycle.knowledge.revision,
     party: {
       partyId: party.partyId,
-      location: party.location.kind === 'AT' ? party.location.siteId : party.location.from,
+      location:
+        party.location.kind === 'AT'
+          ? party.location.siteId
+          : party.location.kind === 'TRANSIT'
+            ? party.location.from
+            : party.location.kind === 'MOVING'
+              ? `${party.location.fromQ},${party.location.fromR}`
+              : `${party.location.q},${party.location.r}`,
       memberIds,
       routeEpoch: execution.routeEpoch,
     },
@@ -2338,4 +2624,271 @@ function hasOpenFieldCamp(state: CompanyCombatAggregateState, partyId: string): 
   return state.economy.finance.maintenance.some(
     (mode) => mode.kind === 'FIELD_CAMP' && mode.partyId === partyId && mode.endedAt === null,
   );
+}
+
+function parseFreeMovementRequest(value: unknown): WorldFreeMovementRequestDto | undefined {
+  if (!isRecord(value) || value['schemaVersion'] !== 1) return undefined;
+  const action = value['action'];
+  const shared = [
+    'schemaVersion',
+    'commandId',
+    'expectedPublicRevision',
+    'expectedRouteEpoch',
+    'action',
+  ];
+  if (
+    Object.keys(value).length !== shared.length ||
+    !shared.every((key) => Object.hasOwn(value, key)) ||
+    !isEntityId(value['commandId']) ||
+    !isExactInteger(value['expectedPublicRevision']) ||
+    !isExactInteger(value['expectedRouteEpoch']) ||
+    !isRecord(action)
+  )
+    return undefined;
+  if (action['kind'] === 'STOP')
+    return Object.keys(action).length === 1
+      ? (value as unknown as WorldFreeMovementRequestDto)
+      : undefined;
+  if (!['START', 'REROUTE'].includes(String(action['kind']))) return undefined;
+  const destination = action['destination'];
+  if (
+    Object.keys(action).length !== 2 ||
+    !isRecord(destination) ||
+    Object.keys(destination).length !== 2 ||
+    !Number.isSafeInteger(destination['q']) ||
+    !Number.isSafeInteger(destination['r'])
+  )
+    return undefined;
+  return value as unknown as WorldFreeMovementRequestDto;
+}
+
+function parseFreeMovementPreviewRequest(
+  value: unknown,
+): WorldFreeMovementPreviewRequestDto | undefined {
+  if (
+    !isRecord(value) ||
+    Object.keys(value).length !== 4 ||
+    value['schemaVersion'] !== 1 ||
+    !isExactInteger(value['expectedPublicRevision']) ||
+    !isExactInteger(value['expectedRouteEpoch']) ||
+    !isHex(value['destination'])
+  )
+    return undefined;
+  return value as unknown as WorldFreeMovementPreviewRequestDto;
+}
+
+function rejectFreeMovement(
+  commandId: string | null,
+  revision: string,
+  code: WorldFreeMovementRejectionDto['code'],
+): WorldFreeMovementRejectionDto {
+  return { schemaVersion: 1, commandId, ok: false, publicRevision: revision, code };
+}
+
+function isFreeMovementEnvelope(value: unknown): boolean {
+  return isRecord(value) && value['kind'] === 'FREE_MOVEMENT';
+}
+
+function readFreeMovementEnvelope(value: unknown): StoredFreeMovement {
+  if (
+    !isRecord(value) ||
+    Object.keys(value).length !== 5 ||
+    !['kind', 'acceptedByAccountId', 'status', 'segmentId', 'execution'].every((key) =>
+      Object.hasOwn(value, key),
+    ) ||
+    value['kind'] !== 'FREE_MOVEMENT' ||
+    !isEntityId(value['acceptedByAccountId']) ||
+    !isEntityId(value['segmentId']) ||
+    !['MOVING', 'STOPPED', 'ARRIVED'].includes(String(value['status'])) ||
+    !isRecord(value['execution'])
+  )
+    throw new InvalidStoredWorldRouteError('Stored free movement is invalid');
+  const raw = value['execution'];
+  const required = [
+    'schemaVersion',
+    'partyId',
+    'regionVersion',
+    'profileId',
+    'routeEpoch',
+    'startedAt',
+    'arrivesAt',
+    'from',
+    'to',
+    'path',
+  ];
+  if (
+    Object.keys(raw).length !== required.length ||
+    !required.every((key) => Object.hasOwn(raw, key)) ||
+    raw['schemaVersion'] !== 1 ||
+    !isEntityId(raw['partyId']) ||
+    typeof raw['regionVersion'] !== 'string' ||
+    raw['profileId'] !== 'free-terrain-step-v1' ||
+    !isExactInteger(raw['routeEpoch']) ||
+    !isExactInteger(raw['startedAt']) ||
+    !isExactInteger(raw['arrivesAt']) ||
+    !isHex(raw['from']) ||
+    !isHex(raw['to']) ||
+    !Array.isArray(raw['path']) ||
+    !raw['path'].every(isHex)
+  )
+    throw new InvalidStoredWorldRouteError('Stored free movement execution is invalid');
+  const execution = raw as unknown as FreeMovementExecution;
+  const region = acceptedWorldRegion(execution.regionVersion);
+  if (!region) throw new InvalidStoredWorldRouteError('Unknown free movement region edition');
+  let expected: FreeMovementExecution;
+  try {
+    expected = acceptFreeMovement({
+      region,
+      partyId: execution.partyId,
+      from: execution.from,
+      to: execution.to,
+      routeEpoch: execution.routeEpoch,
+      atTick: campaignTick(execution.startedAt),
+    });
+  } catch {
+    throw new InvalidStoredWorldRouteError('Stored free movement path is invalid');
+  }
+  if (canonicalJson(execution) !== canonicalJson(expected))
+    throw new InvalidStoredWorldRouteError('Stored free movement path changed');
+  return {
+    kind: 'FREE_MOVEMENT',
+    acceptedByAccountId: value['acceptedByAccountId'],
+    status: value['status'] as StoredFreeMovement['status'],
+    segmentId: value['segmentId'],
+    execution,
+  };
+}
+
+function assertStoredFreeMovementMatchesCompany(
+  routeRow: StoredPartyRoute,
+  movement: StoredFreeMovement,
+  state: CompanyCombatAggregateState,
+): void {
+  const execution = movement.execution;
+  const party = state.economy.lifecycle.parties.find(
+    (entry) => entry.partyId === routeRow.party_id,
+  );
+  const region = acceptedWorldRegion(execution.regionVersion);
+  if (
+    !party ||
+    !region ||
+    routeRow.party_id !== execution.partyId ||
+    routeRow.route_epoch !== execution.routeEpoch ||
+    routeRow.segment_id !== movement.segmentId ||
+    routeRow.region_version !== execution.regionVersion ||
+    routeRow.profile_id !== execution.profileId ||
+    (movement.status === 'MOVING') !== (routeRow.status === 'IN_TRANSIT')
+  )
+    throw new InvalidStoredWorldRouteError('Stored free movement does not match its route row');
+  if (movement.status === 'MOVING') {
+    if (party.location.kind !== 'MOVING' || party.location.segmentId !== movement.segmentId)
+      throw new InvalidStoredWorldRouteError(
+        'Stored free movement is not reflected in company state',
+      );
+    return;
+  }
+  const position = freeMovementPositionForLocation(party.location, region);
+  if (!position || !execution.path.some((hex) => hex.q === position.q && hex.r === position.r))
+    throw new InvalidStoredWorldRouteError('Settled free movement position is outside its path');
+}
+
+function isHex(value: unknown): value is WorldHexPosition {
+  return (
+    isRecord(value) &&
+    Object.keys(value).length === 2 &&
+    Number.isSafeInteger(value['q']) &&
+    Number.isSafeInteger(value['r'])
+  );
+}
+
+function freeMovementPositionForLocation(
+  location: CompanyCombatAggregateState['economy']['lifecycle']['parties'][number]['location'],
+  region: NonNullable<ReturnType<typeof acceptedWorldRegion>>,
+): WorldHexPosition | undefined {
+  if (location.kind === 'AT')
+    return region.sites.find((site) => site.siteId === location.siteId)?.coordinate;
+  if (location.kind === 'TERRAIN' && location.regionVersion === region.version) {
+    const position = { q: Number(location.q), r: Number(location.r) };
+    return isWalkableHex(region, position) ? position : undefined;
+  }
+  return undefined;
+}
+
+function freeMovementResponseFor(
+  state: CompanyCombatAggregateState,
+  routeRow: StoredPartyRoute | undefined,
+  movement: StoredFreeMovement | undefined,
+  worldTick: string,
+): WorldFreeMovementResponseDto {
+  const parties = state.economy.lifecycle.parties;
+  const party = parties.length === 1 ? parties[0] : undefined;
+  if (!party)
+    return {
+      schemaVersion: 1,
+      worldTick,
+      publicRevision: state.economy.lifecycle.knowledge.revision,
+      party: null,
+      movement: null,
+    };
+  const region = requireRegion();
+  let position: WorldHexPosition | undefined;
+  let positionKind: 'SITE' | 'TERRAIN' = 'TERRAIN';
+  let siteId: string | undefined;
+  if (movement?.status === 'MOVING') {
+    position = freeMovementPositionAt(movement.execution, campaignTick(worldTick));
+  } else if (party.location.kind === 'AT') {
+    position = freeMovementPositionForLocation(party.location, region);
+    positionKind = 'SITE';
+    siteId = party.location.siteId;
+  } else if (party.location.kind === 'TERRAIN') {
+    position = freeMovementPositionForLocation(party.location, region);
+  }
+  if (!position)
+    throw new InvalidStoredWorldRouteError('Company has no valid free movement position');
+  return {
+    schemaVersion: 1,
+    worldTick,
+    publicRevision: state.economy.lifecycle.knowledge.revision,
+    party: {
+      partyId: party.partyId,
+      routeEpoch: routeRow?.route_epoch ?? '0',
+      position: { ...position, kind: positionKind, ...(siteId ? { siteId } : {}) },
+    },
+    movement: movement
+      ? {
+          segmentId: movement.segmentId,
+          routeEpoch: movement.execution.routeEpoch,
+          regionVersion: movement.execution.regionVersion,
+          profileId: movement.execution.profileId,
+          ticksPerHex: FREE_MOVEMENT_PROFILE.ticksPerHex,
+          startedAt: movement.execution.startedAt,
+          arrivesAt: movement.execution.arrivesAt,
+          from: movement.execution.from,
+          to: movement.execution.to,
+          path: movement.execution.path,
+          position:
+            movement.status === 'MOVING'
+              ? freeMovementPositionAt(movement.execution, campaignTick(worldTick))
+              : position,
+          status: movement.status,
+        }
+      : null,
+  };
+}
+
+function readStoredFreeMovementResponse(
+  value: unknown,
+  commandId: string,
+): WorldFreeMovementResponseDto {
+  if (
+    !isRecord(value) ||
+    value['schemaVersion'] !== 1 ||
+    value['commandId'] !== commandId ||
+    typeof value['worldTick'] !== 'string' ||
+    typeof value['publicRevision'] !== 'string' ||
+    !isRecord(value['party']) ||
+    (value['movement'] !== null && !isRecord(value['movement']))
+  )
+    throw new InvalidStoredWorldRouteError('Stored free movement response is invalid');
+  return value as unknown as WorldFreeMovementResponseDto;
 }

@@ -1,3 +1,4 @@
+import { CONTINUOUS_WORLD_REGION } from '@warwrit/game-core';
 import { HUNT_PROFILES, projectCompanyLifecycle, SEROE_PORECHYE } from '@warwrit/game-core';
 import type { WorldSurroundingsDto } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
@@ -28,6 +29,9 @@ const PUBLIC_MAP: WorldSurroundingsDto['map'] = {
     travelTicks: edge.provisionalTravelTicks,
     danger: edge.danger,
   })),
+  walkBounds: SEROE_PORECHYE.walkBounds,
+  terrainRows: SEROE_PORECHYE.terrainRows,
+  blockedHexes: SEROE_PORECHYE.blockedHexes,
 };
 const TICKS_PER_DAY = '1000';
 
@@ -105,7 +109,7 @@ export function registerWorldSurroundingsRoute(
         serverTimeMs: clock.nowMs,
         campaign: { tick: clock.tick, msPerTick: MS_PER_TICK, ticksPerDay: TICKS_PER_DAY },
         light: readWorldLight(clock),
-        map: PUBLIC_MAP,
+        map: { ...PUBLIC_MAP, continuous: CONTINUOUS_WORLD_REGION },
         observerSiteId,
         observedCompanies,
         observedHostiles,

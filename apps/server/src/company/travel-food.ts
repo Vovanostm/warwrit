@@ -1,8 +1,10 @@
 import { createHash } from 'node:crypto';
 
 import {
+  FIRST_HUNT_TRAVEL_SCOPE,
   COMPANY_CATALOGUE,
   isDangerousRouteContract,
+  isContinuousRegionVersion,
   PHYSICAL_POLICY_VERSION,
   SAFE_TRAVEL_ALPHA_V1,
   TRAVEL_RULES,
@@ -10,6 +12,7 @@ import {
   assessPhysicalFoodStock,
   acceptedWorldRegion,
   accrueFinance,
+  canonicalJson,
   entityId,
   isEntityId,
   isExactInteger,
@@ -20,7 +23,10 @@ import type {
   PartyRouteExecution,
   PhysicalContainer,
   WorldRegionEdge,
+  FreeMovementExecution,
+  ContinuousCompanyExecution,
 } from '@warwrit/game-core';
+import type { LocationRef } from '@warwrit/game-core';
 
 type FoodRequirement = Extract<
   ReturnType<typeof accrueFinance>['requirements'][number],
@@ -40,11 +46,19 @@ export interface TravelFoodExecutionBoundary {
 export interface TravelFoodDepartureBoundary {
   readonly kind: 'DEPARTURE';
   readonly partyId: string;
-  readonly location: { readonly kind: 'AT'; readonly siteId: string; readonly areaId: string };
+  readonly location: LocationRef;
   readonly settledThroughTick: string;
 }
 
-export type TravelFoodRouteBoundary = TravelFoodExecutionBoundary | TravelFoodDepartureBoundary;
+export interface TravelFoodFreeMovementBoundary {
+  readonly kind: 'FREE_MOVEMENT';
+  readonly execution: FreeMovementExecution | ContinuousCompanyExecution;
+  readonly segmentId: string;
+  readonly settledThroughTick: string;
+}
+
+export type TravelFoodRouteBoundary =
+  TravelFoodExecutionBoundary | TravelFoodDepartureBoundary | TravelFoodFreeMovementBoundary;
 
 type FoodAccess =
   | { readonly kind: 'SKIP' }
@@ -205,6 +219,7 @@ export function prepareTravelFoodFacts(
 
   let executionFoodAccess:
     { readonly partyId: string; readonly sites: ReadonlySet<string> } | undefined;
+  let freeMovementAccess: { readonly partyId: string; readonly segmentId: string } | undefined;
   let departureFoodAccess: TravelFoodDepartureBoundary | undefined;
   let departurePartyMemberIds: ReadonlySet<string> = new Set();
   if (routeBoundary) {
@@ -223,13 +238,15 @@ export function prepareTravelFoodFacts(
       if (
         !isEntityId(routeBoundary.partyId) ||
         !party ||
-        party.location.kind !== 'AT' ||
-        !sameAtLocation(party.location, routeBoundary.location) ||
+        (party.location.kind !== 'AT' && party.location.kind !== 'TERRAIN') ||
+        (routeBoundary.location.kind !== 'AT' && routeBoundary.location.kind !== 'TERRAIN') ||
+        !samePhysicalLocation(party.location, routeBoundary.location) ||
         partyMembers.length === 0 ||
         partyMembers.some(
           (character) =>
-            character.presence.location.kind !== 'AT' ||
-            !sameAtLocation(character.presence.location, routeBoundary.location),
+            (character.presence.location.kind !== 'AT' &&
+              character.presence.location.kind !== 'TERRAIN') ||
+            !samePhysicalLocation(character.presence.location, routeBoundary.location),
         )
       )
         return { kind: 'REJECTED', reason: 'INVALID_STATE' };
@@ -237,6 +254,35 @@ export function prepareTravelFoodFacts(
       departurePartyMemberIds = new Set(
         partyMembers.map((character) => character.identity.characterId),
       );
+    } else if (routeBoundary.kind === 'FREE_MOVEMENT') {
+      const { execution } = routeBoundary;
+      const party = lifecycle.parties.find((entry) => entry.partyId === execution.partyId);
+      const members = lifecycle.characters.filter(
+        (character) => character.presence.fieldPartyId === execution.partyId,
+      );
+      if (
+        (execution.schemaVersion === 1
+          ? !acceptedWorldRegion(execution.regionVersion) ||
+            execution.profileId !== 'free-terrain-step-v1'
+          : !isContinuousRegionVersion(execution.regionVersion)) ||
+        !isEntityId(routeBoundary.segmentId) ||
+        (execution.schemaVersion === 1
+          ? execution.path.length < 2
+          : execution.plan.path.length < 2) ||
+        party?.location.kind !== 'MOVING' ||
+        party.location.segmentId !== routeBoundary.segmentId ||
+        party.location.regionVersion !== execution.regionVersion ||
+        party.location.startedAt !== execution.startedAt ||
+        party.location.arrivalNotBefore !== execution.arrivesAt ||
+        members.length === 0 ||
+        members.some(
+          (member) =>
+            member.presence.location.kind !== 'MOVING' ||
+            member.presence.location.segmentId !== routeBoundary.segmentId,
+        )
+      )
+        return { kind: 'REJECTED', reason: 'INVALID_STATE' };
+      freeMovementAccess = { partyId: execution.partyId, segmentId: routeBoundary.segmentId };
     } else {
       const { execution } = routeBoundary;
       const region = acceptedWorldRegion(execution.regionVersion);
@@ -303,12 +349,24 @@ export function prepareTravelFoodFacts(
         ((executionFoodAccess?.partyId === character.presence.fieldPartyId &&
           executionFoodAccess.sites.has(location.siteId)) ||
           (departureFoodAccess?.partyId === character.presence.fieldPartyId &&
-            sameAtLocation(location, departureFoodAccess.location)));
+            samePhysicalLocation(location, departureFoodAccess.location)));
       const safeV1SiteAllowed =
         location.kind === 'AT' &&
         (location.siteId === SAFE_TRAVEL_ALPHA_V1.fromSiteId ||
           location.siteId === SAFE_TRAVEL_ALPHA_V1.toSiteId);
-      if (location.kind !== 'AT' || (!partyRouteSiteAllowed && !safeV1SiteAllowed))
+      const freeMovementAllowed =
+        location.kind === 'MOVING' &&
+        freeMovementAccess?.partyId === character.presence.fieldPartyId &&
+        freeMovementAccess.segmentId === location.segmentId;
+      if (
+        location.kind !== 'MOVING' &&
+        !(
+          (location.kind === 'TERRAIN' &&
+            departureFoodAccess?.partyId === character.presence.fieldPartyId &&
+            samePhysicalLocation(location, departureFoodAccess.location)) ||
+          (location.kind === 'AT' && (partyRouteSiteAllowed || safeV1SiteAllowed))
+        )
+      )
         return { kind: 'REJECT', reason: 'INSUFFICIENT_ITEMS' };
 
       const containers = physical.containers.filter(
@@ -320,9 +378,10 @@ export function prepareTravelFoodFacts(
           container.access === 'COMPANY' &&
           container.custodian.kind === 'COMPANY' &&
           container.custodian.id === lifecycle.companyId &&
-          container.location.kind === 'AT' &&
-          container.location.siteId === location.siteId &&
-          container.location.areaId === location.areaId &&
+          (freeMovementAllowed
+            ? container.location.kind === 'MOVING' &&
+              container.location.segmentId === location.segmentId
+            : samePhysicalLocation(container.location, location)) &&
           (container.kind === 'STATIC' ||
             (container.kind === 'PARTY_SUPPLY' &&
               container.carrier?.kind === 'PARTY' &&
@@ -500,23 +559,33 @@ function sameAtLocation(
   return left.siteId === right.siteId && left.areaId === right.areaId;
 }
 
+function samePhysicalLocation(left: LocationRef, right: LocationRef): boolean {
+  return canonicalJson(left) === canonicalJson(right);
+}
+
 function validFirstHuntExecution(
   execution: PartyRouteExecution,
   edges: readonly WorldRegionEdge[],
 ): boolean {
   const authorization = execution.dangerousAuthorization;
   const edge = edges.length === 1 ? edges[0] : undefined;
-  const fromSiteId = execution.purpose === 'NEW' ? 'tikhaya-gat' : 'staraya-melnitsa';
-  const toSiteId = execution.purpose === 'NEW' ? 'staraya-melnitsa' : 'tikhaya-gat';
+  const fromSiteId =
+    execution.purpose === 'NEW'
+      ? FIRST_HUNT_TRAVEL_SCOPE.fromSiteId
+      : FIRST_HUNT_TRAVEL_SCOPE.toSiteId;
+  const toSiteId =
+    execution.purpose === 'NEW'
+      ? FIRST_HUNT_TRAVEL_SCOPE.toSiteId
+      : FIRST_HUNT_TRAVEL_SCOPE.fromSiteId;
   return Boolean(
     execution.profileId === TRAVEL_RULES.profileId &&
     execution.edgeIds.length === 1 &&
-    execution.edgeIds[0] === 'tikhaya-gat-staraya-melnitsa' &&
+    execution.edgeIds[0] === FIRST_HUNT_TRAVEL_SCOPE.edgeId &&
     authorization !== undefined &&
     isDangerousRouteContract(authorization.instanceId, authorization.profileId) &&
     /^[0-9a-f]{64}$/.test(authorization.termsDigest) &&
     edge?.danger === 'DANGEROUS' &&
-    edge.edgeId === 'tikhaya-gat-staraya-melnitsa' &&
+    edge.edgeId === FIRST_HUNT_TRAVEL_SCOPE.edgeId &&
     ((edge.fromSiteId === fromSiteId && edge.toSiteId === toSiteId) ||
       (edge.fromSiteId === toSiteId && edge.toSiteId === fromSiteId)) &&
     execution.phase === 'IN_TRANSIT' &&
@@ -537,7 +606,8 @@ export function prepareStationaryFoodFacts(
   const lifecycle = state.economy.lifecycle;
   if (BigInt(toTick) <= BigInt(lifecycle.campaignTick)) return { kind: 'PREPARED', facts: [] };
   const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
-  if (party?.location.kind !== 'AT') return { kind: 'REJECTED', reason: 'INVALID_STATE' };
+  if (party?.location.kind !== 'AT' && party?.location.kind !== 'TERRAIN')
+    return { kind: 'REJECTED', reason: 'INVALID_STATE' };
   return prepareTravelFoodFacts(state, toTick, commandId, {
     kind: 'DEPARTURE',
     partyId: party.partyId,

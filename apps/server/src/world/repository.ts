@@ -1,5 +1,9 @@
 import { sql, type Transaction } from 'kysely';
-import type { WorldTravelResponseDto, WorldTravelV2ResponseDto } from '@warwrit/protocol';
+import type {
+  WorldFreeMovementResponseDto,
+  WorldTravelResponseDto,
+  WorldTravelV2ResponseDto,
+} from '@warwrit/protocol';
 import type { DatabaseSchema } from '../db/database.js';
 
 export interface StoredPartyRoute {
@@ -98,7 +102,8 @@ export async function persistWorldTravel(input: {
   readonly accountId: string;
   readonly commandId: string;
   readonly requestKey: string;
-  readonly response: WorldTravelResponseDto | WorldTravelV2ResponseDto;
+  readonly response:
+    WorldTravelResponseDto | WorldTravelV2ResponseDto | WorldFreeMovementResponseDto;
   readonly route: {
     readonly partyId: string;
     readonly routeEpoch: string;

@@ -1,0 +1,1012 @@
+{
+  "specVersion": "3.4.0",
+  "id": "M1-FREE-MOVEMENT",
+  "title": "Бесшовная глобальная карта и непрерывное движение отряда по ПКМ",
+  "date": "2026-10-03",
+  "status": "IMPLEMENTATION_ACTIVE_ACCEPTANCE_PENDING",
+  "language": "ru",
+  "authority": {
+    "confirmedRequirements": [
+      "ПКМ по проходимой точке карты сразу отдаёт приказ идти туда; отдельное подтверждение не требуется.",
+      "Непрерывное перемещение и смена направления из текущей позиции, как в предоставленном игровом референсе.",
+      "Сетка значительно мельче предыдущей реализации и скрыта в обычном режиме игры.",
+      "Карта содержит типы местности; местность влияет на скорость отряда.",
+      "Поверхность и переходы между типами местности бесшовны.",
+      "Решение владельца 2026-10-03: расстояния между точками интереса и видимая скорость отряда увеличены втрое.",
+      "Биомы обширнее, с разнообразными природными контурами; добавить деревья и более реалистичные разнообразные текстуры.",
+      "Десять субагентов по отдельным материалам и независимый критик для каждого существенного игрового или визуального цикла.",
+      "Колесо над всей областью карты, включая HTML-подписи, меняет масштаб плавно и не прокручивает страницу; дороги естественные и извилистые.",
+      "Решение владельца 2026-10-03: реализовать ощутимо более быстрые тропы, грунтовые дороги и мощёные тракты по обсуждённой калибровке; маршрут выбирается по времени прибытия."
+    ],
+    "preservedDecisions": [
+      "Авторская карта, общий постоянно работающий онлайн-мир, существующие часы Campaign и Light.",
+      "Приватная игра для владельца и приглашённых игроков; целевой масштаб 10–20 одновременных игроков ещё не измерен.",
+      "Реальное сохранение компании, пути, припасов и последствий; принятый маршрут продолжается офлайн.",
+      "Обычный полный контракт целится в 20–30 реальных минут; это не подтверждённый баланс."
+    ],
+    "engineeringDecisions": "Ниже выбран один способ реализации для Warwrit. Источники BB подтверждают модель мира в реальном времени; VCMI подтверждает разделение стоимости хода и анимации Heroes III. Не заявлять, что BB использует выбранные здесь A*, размер сетки или wire protocol.",
+    "balanceStatus": "Коэффициенты местности и базовая скорость — явные стартовые значения для первого прототипа, не утверждённый финальный баланс.",
+    "supersedes": "Редакцию 2.0.0 этого JSON в части неопределённых форматов, произвольных рациональных координат, optionalSiteId, неопределённого бюджета поиска и выбора способа рисования. Исторический M1-FREE-MOVEMENT.md сохраняет источники/ownership/legacy, но не определяет новую механику.",
+    "implementationBoundary": "Owner requested implementation on 2026-10-03. Sole code writer uses the assigned isolated checkout. Merge, deployment and paid resources remain unauthorized."
+  },
+  "playerOutcome": {
+    "journey": "Игрок нажимает ПКМ в поле. Появляются цель и линия маршрута, отряд плавно идёт по земле, замедляется в лесу, ускоряется на дороге. Новая ПКМ в пути меняет цель без возврата к клетке. Игрок останавливается между поселениями, продолжает путь, входит в поселение и после повторного входа видит ту же компанию и сохранённый маршрут.",
+    "visualReference": "references/free-movement-owner-reference.png",
+    "referenceInterpretation": [
+      "Единый ландшафт с полями, лесами, дорогами и скалистыми участками; отдельные клетки не видны.",
+      "Отряд со знаменем свободно расположен на поверхности, а не прикреплён к центру крупного гекса.",
+      "Поселения встроены в ландшафт; переход между ними и дикой местностью не меняет сцену карты.",
+      "Референс задаёт поведение и читаемость; его графику не копировать в игровые ассеты."
+    ]
+  },
+  "scope": {
+    "in": [
+      "Переделка существующей карты Babylon/React, мелкая навигация, бесшовные слои местности и управление по ПКМ.",
+      "Взвешенный поиск пути, сглаживание, непрерывная позиция, скорость по местности, остановка и перенаправление.",
+      "Авторитетный серверный маршрут, автоматическое прибытие, сохранение и восстановление.",
+      "Сохранение проверок доступа, опасности, снабжения, состояния участников и совместимости."
+    ],
+    "out": [
+      "Процедурная генерация мира, кризисы, новые контракты, новая боевая система.",
+      "Миграция движка, новая навигационная платформа, глобальная пауза и личное ускорение времени.",
+      "Новые тактические столкновения отрядов и физическое расталкивание маркеров.",
+      "Генерация нового полного набора графики и окончательная балансировка всей игры."
+    ]
+  },
+  "controls": {
+    "rightClick": {
+      "event": "pointerup с button=2 после соответствующего pointerdown на поверхности карты",
+      "action": "Один MOVE_TO с точной координатой земли; сервер сам выбирает start или reroute по текущему состоянию.",
+      "contextMenu": "Отменять contextmenu только внутри игровой карты. Не перехватывать ПКМ в формах, панелях и за пределами карты.",
+      "destinationFeedback": "Сразу показать маркер запрошенной цели; до ответа сервера он обозначает ожидание, а не принятый путь.",
+      "dragThresholdCssPx": 5,
+      "dragRule": "Перемещение указателя дальше порога, pointercancel, потеря capture или начало pan отменяют клик и не создают приказ."
+    },
+    "leftClick": "Выбор поселения или объекта и просмотр информации; не отдаёт приказ перемещения.",
+    "camera": "По решению владельца от 2026-10-03: pan при зажатой ЛКМ после порога drag 5 CSS px; короткий ЛКМ сохраняет выбор объекта. Средняя кнопка также поддерживает pan; zoom колесом. Действия камеры не отправляют MOVE_TO.",
+    "stop": "Клавиша S, когда карта в фокусе и пользователь не вводит текст, и видимая кнопка Остановиться; оба отправляют STOP.",
+    "siteTarget": "ПКМ по поселению задаёт серверный входной anchor этого поселения; вход и локальные взаимодействия разрешаются только после фактического прибытия.",
+    "blockedTarget": "Показать Недоступная точка, сохранить текущий маршрут. Не телепортировать и не подменять цель далёкой доступной клеткой.",
+    "rapidClicks": "Один изменяющий запрос в полёте. Новые клики заменяют единственную ожидающую цель; после подтверждения предыдущего приказа отправляется последняя цель с актуальной revision/epoch.",
+    "unknownOutcome": "При потерянном ответе сначала выяснить результат тем же commandId и телом, затем отправлять новую цель. Отмена fetch не означает отмену уже принятого сервером приказа."
+  },
+  "mapData": {
+    "owner": "Версионированная авторская карта в game-core; серверная навигация и клиентская география производны от одной редакции.",
+    "coordinateSystem": "Плоские x/z. 1 world unit=1024 fp. Нормализованное расстояние между старыми соседними гексами около 1 world unit; новое движение не использует q/r.",
+    "fixedPointUnitsPerWorldUnit": 1024,
+    "destinationPrecisionFp": 1,
+    "navigation": {
+      "topology": "Скрытая квадратная сетка с восемью соседями; ни логика, ни интерфейс не ограничивают позицию отряда центрами её ячеек.",
+      "cellSizeFp": 64,
+      "cellsPerOldHexDistance": 16,
+      "normalZoomMaxCellWidthCssPx": 8,
+      "resolutionRule": "cellSizeFp=64 фиксирован в редакции карты и одинаков на сервере и клиентах. Zoom и DPI не меняют граф. 8 CSS px — проверка нормального масштаба; если превышено, согласовать viewport либо новую редакцию сетки, не менять её во время игры.",
+      "walkMask": "Пределы редакции региона и явные blocking shapes. Начальный прямоугольник задаёт память сетки, а не объявляет всё внутри проходимым: реальный регион ограничен authored boundary.",
+      "partyNavigationRadiusFp": 24,
+      "clearanceRule": "Расширить непроходимые участки на навигационный радиус; не путать его с размером нарисованного знамени.",
+      "siteAnchors": "Явные доступные anchorFp и areaId. Статический вход хранится в region; никакого автоматического anchor в центре нарисованного замка.",
+      "gridOriginFp": {
+        "x": -8192,
+        "z": -6144
+      },
+      "columns": 256,
+      "rows": 192,
+      "cellCount": 49152,
+      "indexRule": "col=floor((xFp-originX)/64), row=floor((zFp-originZ)/64), index=row*256+col. Прямоугольник [-8192,8192)×[-6144,6144); точки вне него отклоняются. Отрицательные координаты используют floor, не trunc.",
+      "centerRule": "centerFp=(originX+(col+0.5)*64, originZ+(row+0.5)*64). Для пути доступны только центры с walkable=true после clearance."
+    },
+    "terrainLayers": {
+      "base": "В каждой позиции ровно один базовый terrainId: grassland, forest, hills, marsh, riverbank, rock, deep_water или cliff.",
+      "overlays": "Дорога, мост и брод — отдельные версионированные слои с явной геометрией; поселение остаётся site, а не конкурирующим владельцем местности.",
+      "precedence": "Границы, clearance и непроходимость сохраняются. Мост/брод пересекает воду только в явном коридоре. Дорожный overlay заменяет скорость основания; в стыке дорожных типов выбирается самый быстрый, bridge имеет приоритет над дорожным продолжением. Несогласованные прочие overlaps отклоняются.",
+      "sampling": "Nav cells: baseTerrainId, overlayId и dangerAreaIds. Walkability и speed spans вычисляются из этой редакции. Смена terrain/overlay происходит на границе cells; дробная точка внутри клетки допустима. Visual blend не меняет samples."
+    },
+    "visuals": {
+      "ground": "Один MeshBuilder.CreateGround для текущего ограниченного региона. Один terrain-blend material с общей control texture; никакого mesh/material на навигационную клетку.",
+      "terrainTransitions": "Плавный визуальный край леса, поля, берега и дороги. Игровая скорость меняется на точно определённой границе данных; визуальное смешивание не меняет правила скрыто.",
+      "forbidden": "Отдельные цилиндры-гексы, видимые пустоты между клетками, шахматная смена материалов и нанесённая поверх карты навигационная сетка в обычном режиме.",
+      "decoration": "Деревья и камни согласовать с базовым слоем и walkMask; декоративные деревья не должны случайно становиться источником коллизии или перехватывать picking земли.",
+      "renderOrder": "Земля, маршрут и маркер цели, объекты/отряд, HTML подписи; видимость и масштаб знамени согласовать с существующей камерой.",
+      "debugGrid": "Допустима только отдельным debug-переключателем, выключенным по умолчанию.",
+      "material": "Четыре переиспользуемые текстуры: grass, woodland-floor, soil/rock, wet-bank. RGBA control texture выбирает их доли. Hills используют grass/soil, marsh wet-bank/woodland, cliff/rock soil; конкретный asset path взять из существующих лицензированных ассетов.",
+      "controlTexture": "Для текущих 256×192 nav cells создать 1024×768 control texture: 4 texels на cell. Одинаковый world-to-UV transform; visual feather шириной 1 nav cell. GPU linear filtering, weights normalized. Это производная визуальная текстура, не источник speed.",
+      "roads": "В V4: trail=96fp, dirt_road=112fp, paved_road=144fp; прежняя детерминированная вариация ±13%. Авторские paired banks общие для рисунка и скорости. Тропа земляная, грунтовка с колеями, тракт серо-каменный с мощением; существующие материалы, без нового asset pack.",
+      "waterAndCliffs": "Вода — самостоятельный непрерывный визуальный слой по water shapes; скалы — существующие sprites по blocking shapes. Видимый мост/брод обязан совпадать с authored passable corridor.",
+      "partyFoot": "Позиция относится к точке ног/основания спрайта, не к центру полотнища. Billboard располагается поверх земли с фиксированным grounding offset; тень, знамя и маршрут привязаны к одному world point.",
+      "depth": "Billboard depth-test по мировым координатам; ground не закрывает отряд. Подписи не двигают anchor; выделение объекта не изменяет физическую позицию.",
+      "assetFallback": "Если нужной текстуры нет, первый цикл использует имеющиеся textures и мягкое тонирование. Отсутствие нового art pack не оправдывает видимую сетку или отдельные цветные острова."
+    },
+    "legacyCoordinateConversion": {
+      "edition": "axial-to-cartesian-fp-v1",
+      "xFp": "1024*q + 512*r",
+      "zFp": "-887*r",
+      "rule": "При подготовке новой редакции один раз получить целые координаты старых sites этим преобразованием и хранить их как anchorFp. 887 — зафиксированное приближение 1024*sqrt(3)/2; не округлять заново разными реализациями. Legacy V1/V2 road edition не менять."
+    }
+  },
+  "terrainSpeed": {
+    "profileId": "free-terrain-continuous-v3",
+    "tuningStatus": "OWNER_ACCEPTED_STARTING_CALIBRATION_NOT_FINAL_BALANCE",
+    "baseSpeedFpPerSecond": 24,
+    "baseCalibration": "1024 fp по траве занимает примерно 42.67 секунды. Это стартовая скорость, близкая к предыдущему временному профилю; Campaign и Light не ускоряются.",
+    "multiplierUnit": "permille",
+    "types": [
+      {
+        "id": "grassland",
+        "name": "Поле и луг",
+        "walkable": true,
+        "speedPermille": 1000
+      },
+      {
+        "id": "forest",
+        "name": "Лес",
+        "walkable": true,
+        "speedPermille": 600
+      },
+      {
+        "id": "hills",
+        "name": "Холмы",
+        "walkable": true,
+        "speedPermille": 800
+      },
+      {
+        "id": "marsh",
+        "name": "Болото",
+        "walkable": true,
+        "speedPermille": 300
+      },
+      {
+        "id": "riverbank",
+        "name": "Берег",
+        "walkable": true,
+        "speedPermille": 800
+      },
+      {
+        "id": "rock",
+        "name": "Проходимая каменистая местность",
+        "walkable": true,
+        "speedPermille": 500
+      },
+      {
+        "id": "deep_water",
+        "name": "Глубокая вода",
+        "walkable": false,
+        "speedPermille": null
+      },
+      {
+        "id": "cliff",
+        "name": "Скалы и обрыв",
+        "walkable": false,
+        "speedPermille": null
+      }
+    ],
+    "overlaySpeeds": [
+      {
+        "id": "trail",
+        "name": "Тропа",
+        "speedPermille": 1400
+      },
+      {
+        "id": "dirt_road",
+        "name": "Грунтовая дорога",
+        "speedPermille": 1800
+      },
+      {
+        "id": "paved_road",
+        "name": "Мощёный тракт",
+        "speedPermille": 2000
+      },
+      {
+        "id": "bridge",
+        "name": "Явный мост",
+        "speedPermille": 1800
+      },
+      {
+        "id": "ford",
+        "name": "Явный брод",
+        "speedPermille": 550
+      }
+    ],
+    "formula": "speed = baseSpeed * terrainOrOverlayPermille / 1000; существующие утверждённые факторы отряда применяются отдельно. Не добавлять новый бонус/штраф состава, груза или состояния без существующего правила.",
+    "boundaryRule": "traceSegment делит полилинию на фактически пересечённые speed cells. Соседние collinear spans с одинаковой скоростью объединяются до округления durationUs. На границе position непрерывна, скорость меняется без easing. Недоиспользованное время переходит в следующий span.",
+    "eta": "Сумма length / effectiveSpeed по фактическим участкам; та же функция используется поиском, принятым маршрутом, исполнением и отображаемым ETA.",
+    "safeArithmetic": "Канонические координаты в microFp (1 fp=65536 microFp); время accepted schedule в integer microseconds. BigInt для промежуточного умножения/квадратов, decimal strings в сохранении. Полный accepted schedule фиксирован: повторная проекция не пересчитывает длительности из rounded position.",
+    "balanceFollowup": "Измерить дорогу, поле, лес, смешанный путь и полный обычный контракт; менять только будущую редакцию профиля, не пересчитывать уже принятые маршруты.",
+    "durationFormula": {
+      "length": "Для каждого финального straight speed span: ceil(integer sqrt(dxMicroFp²+dzMicroFp²)); ошибка меньше 1 microFp на span. Perfect square сохраняется без прибавки.",
+      "durationUs": "ceil(lengthMicroFp * 1000000000 / (65536 * baseSpeedFpPerSecond * speedPermille)); для нулевой длины span не создаётся.",
+      "schedule": "startOffsetUs[0]=0; endOffsetUs[i]=startOffsetUs[i]+durationUs[i]; startOffsetUs[i+1]=endOffsetUs[i]. Последняя граница ровно totalDurationUs.",
+      "errorBudget": "<1 microFp по длине и <1 us по времени на финальный span. Не обещать ошибку 1 ms для произвольного неограниченного маршрута; cap 4096 spans ограничивает суммарное округление до 4.096 ms.",
+      "searchAndSmoothing": "Вес каждого проверяемого segment вычисляет та же trace/cost функция. У финального сглаженного плана cost считается заново; smoothing не принимается, если итоговая durationUs больше заменяемой цепочки. Не использовать произвольный допуск +1 ms на каждое сглаживание."
+    }
+  },
+  "pathfinding": {
+    "algorithm": "A* с весом ребра, равным времени прохождения; обычный BFS с одинаковой ценой шага запрещён для разной местности.",
+    "objective": "Минимальное рассчитанное время; существенный дорожный крюк допустим, когда быстрее. Не принуждать к заведомо более медленной дороге.",
+    "heuristic": "floor(distanceMicroFpToGoal * 1000000000 / (65536*maxAllowedBaseSpeed*maxPermille)). Нижнюю длину считать integer sqrt; коэффициент max относится ко всему разрешённому профилю, включая road. A* завершать, когда goal извлечён из queue, а не при первом обнаружении. Reopen при улучшении g; никогда не ceil heuristic.",
+    "determinism": "Соседи: E, SE, S, SW, W, NW, N, NE в row-major координатах. Сравнение очереди (fUs,hUs,nodeIndex); virtual start=-2, goal=-1. Relax при меньшем g; при равенстве меньший parentIndex. Одна редакция и input дают один plan.",
+    "edgeCost": "Интегрировать длину в каждой реально пересечённой скоростной области; цена диагонали отличается от прямого шага.",
+    "continuousEndpoints": "Два виртуальных узла exactStart и exactGoal. Каждый соединить с доступными центрами 3×3 neighborhood своей клетки, если traceSegment разрешает полный сегмент. Если exactStart→exactGoal проходим, добавить прямое ребро с реальной стоимостью; не возвращать его до сравнения с более быстрым обходом по дороге.",
+    "lineValidation": "Supercover/DDA или эквивалентная проверка всего сегмента с clearance; запрещены срез угла двух препятствий и прохождение между ними при недостаточном зазоре.",
+    "smoothing": "Из текущей вершины проверять кандидатов от самой дальней к ближней в оставшейся исходной цепочке. Первый collision-safe shortcut с costUs не больше заменяемой цепочки выбирается; иначе сохранить следующий узел. Recompile speed spans после выбора; никакого Catmull-Rom/Bezier для физической траектории.",
+    "smoothingLimit": "Не гарантировать глобально оптимальный any-angle путь; A* даёт оптимум выбранного графа. Кривая Безье/Hermite не может менять физический путь без проверки всего изгиба.",
+    "failure": "NO_PATH не меняет текущий маршрут или ресурсы. Ограничить поиск конечными границами редакции карты; если достигнут явный бюджет, вернуть отдельную ошибку, не частичный успешный путь.",
+    "technology": "Использовать существующий TypeScript/game-core. Navmesh, Theta*, JPS и иерархию не добавлять в этот цикл без измеренного недостатка простого взвешенного A*."
+  },
+  "continuousMovement": {
+    "authority": "Сервер принимает цель, вычисляет маршрут, скорость, момент начала и окончание. Клиент не задаёт положение, время, стоимость или факт прибытия.",
+    "timeModel": "Точное доверенное серверное время в миллисекундах определяет прогресс движения; существующие целые CampaignTick определяют финансовые и физические последствия. Полтакта или остаток миллисекунд не теряются при STOP/REROUTE.",
+    "canonicalPosition": "Один bounded point {xMicroFp,zMicroFp} с signed integer decimal strings, 65536 microFp на 1 fp; MOVING дополнительно ссылается на planId/epoch. STOP/REROUTE сохраняют вычисленный point с максимальной ошибкой 0.5 microFp на ось, а не номер клетки. Не строить неограниченные цепочки рациональных знаменателей.",
+    "progress": "elapsedUs=clamp(trustedTimeMs*1000-startedAtMs*1000,0,totalDurationUs); binary search по endOffsetUs. В span [a,b): point=from+roundNearest((to-from)*(elapsedUs-a)/(b-a)), ties away from zero. После последнего span вернуть точный goal. Использовать сохранённую schedule, не сумму deltaTime.",
+    "stop": "Под lock получить trusted time, point и заработанные последствия, сохранить stopped point и увеличить epoch на 1. Пространственная погрешность до 0.5 microFp на ось; не округлять до fp/nav cell. Idempotent STOP у уже стоящего отряда принимается без новых расходов и без изменения epoch.",
+    "reroute": "На boundary принятия нового приказа спроецировать старый plan на тот же trustedTimeMs и этот point использовать как origin нового. Увеличить epoch ровно на 1. Если новая цель/guards/path invalid, весь новый приказ отклонить без изменения старой plan/epoch/root.",
+    "arrival": "Worker сверяет planId+epoch и trustedTimeMs*1000>=startedAtMs*1000+totalDurationUs, однократно materializes финальную позицию/AT. Номинальное время достижения сохраняется из plan; late worker не начисляет лишние минуты travel/stamina. STOP не требуется.",
+    "rendering": "В renderer beforeRender/requestAnimationFrame вычислять позицию по accepted speed spans с дробным render time; React получает plan только на ответ/refresh. Запрещено двигать banner только при React state update/poll каждые несколько секунд.",
+    "turning": "Ориентацию спрайта можно сглаживать отдельно; физическую позицию нельзя вести по неподтверждённой кривой через препятствия.",
+    "networkCorrection": "Сравнивать только epoch/revision своей компании. Новый accepted epoch отображать сразу из его saved origin. Clock correction <=100 ms сглаживать за 200 ms; большая correction/re-auth заменяет clock baseline и показывает Синхронизация. В одном render frame не перескакивать через blocking cells из-за position easing.",
+    "tabResume": "После фонового таба пересчитать позицию из абсолютного принятого времени, а не проигрывать пропущенные кадры. Не экстраполировать дальше конечной точки или последнего подтверждённого режима.",
+    "clockRules": "Клиентский Date.now не является authority. Использовать оценку server-time offset и монотонное время отображения; не ускорять игровой мир ради плавности."
+  },
+  "protocolAndPersistence": {
+    "commandKinds": ["MOVE_TO", "STOP"],
+    "scope": "Cookie session + фактический world/company context. Для POST обязателен x-warwrit-expected-company-id; malformed/mismatch отклонить. SITE target разрешает server anchor, но не доказывает присутствие.",
+    "transactions": "Существующие root/executor/receipts и PostgreSQL: authenticate, ownership, тот же порядок блокировок, точный replay перед freshness, root CAS, settle, plan/effects/receipt, commit, response. Не создавать второй канонический position store.",
+    "idempotency": "Повтор того же commandId и тела возвращает прежний ответ без повторного расхода. То же имя с другим телом конфликтует. Два конкурентных приказа не создают два активных пути.",
+    "supersededPlan": "Worker и поздний ответ проверяют movementEpoch и segment identity; старое завершение не возвращает отменённый путь.",
+    "persistenceFrequency": "Сохранять принятый план, STOP/REROUTE и обязательные последствия/прибытие, не обновлять БД на каждом кадре или шаге мелкой сетки.",
+    "compatibility": "Старые road V1/V2, исторические ответы и старые редакции профиля исполняются по записанным правилам. Не переписывать выпущенные миграции или replay history; неизвестная версия закрывается без частичной записи.",
+    "migration": "Только при доказанной необходимости новая ordered up/down pair; существующие данные и rollback сохраняются. Текущий JSON не утверждает, что миграция нужна.",
+    "version": 2,
+    "endpoints": {
+      "GET /world/free-movement": "Свой current mode, revision, epoch, serverTimeMs, point и active plan. Cache-Control no-store. Не возвращать полный canonical root или acceptedByAccountId.",
+      "POST /world/free-movement": "Один MOVE_TO или STOP; request schemaVersion=2. v1 free и старые road endpoints сохраняют свои записанные semantics."
+    },
+    "publicPlanFields": [
+      "planVersion",
+      "planId",
+      "mapEdition",
+      "speedProfileId",
+      "movementEpoch",
+      "from",
+      "goal",
+      "startedAtMs",
+      "totalDurationUs",
+      "speedSpans"
+    ],
+    "storageOnlyFields": [
+      "acceptedByAccountId",
+      "settledThroughCampaignTick",
+      "systemArrivalReceiptIdentity",
+      "rootCASRevision"
+    ],
+    "arrivalPrecision": "due: trustedTimeMs*1000 >= startedAtMs*1000+totalDurationUs; arrivesAtMs=ceil((startedAtMs*1000+totalDurationUs)/1000) для UI. arrivalTick вычисляется existing world clock на этой boundary.",
+    "validation": "Fail closed по discriminated target, лишним keys, unsupported versions, целым bounded xFp/zFp и decimal revision/epoch. Client path/time/speed/currentPosition не допускаются в request."
+  },
+  "preservedGameRules": [
+    "Не обходить camp, active encounter, learning, capability и presence guards свободным кликом.",
+    "Путь через опасную область сохраняет существующие authorization/supply rules, включая законный safe return. Опасность — отдельная политика, не синоним непроходимости.",
+    "Проверка опасности/припасов выполняется по всему реальному сглаженному пути и его ETA, а не только по конечному siteId или старой дороге.",
+    "Пока новый путь нельзя корректно авторизовать существующей политикой, явно отклонить опасный маршрут; не объявлять всю карту безопасной.",
+    "People, party, carried containers и observations согласованы с одной физической позицией. Припасы, fractional carry, stamina и wages закрываются ровно один раз.",
+    "Terrain рядом с поселением не выдаёт shop/issuer/clue/camp/encounter доступ."
+  ],
+  "ui": {
+    "path": "Тонкая линия принятого пути и маркер цели; ожидающий приказ имеет другое состояние. Цвета местности читаются без debug сетки.",
+    "information": "Компактные текущая местность, относительная скорость и ETA; снабжение/ошибка показываются по необходимости. Не показывать x/z, schemaVersion, epoch и названия алгоритмов игроку.",
+    "preview": "Hover или необязательный предварительный расчёт допустим, но не блокирует обычный ПКМ отдельной кнопкой подтверждения.",
+    "state": "Стоит, движется, ожидает ответа, связь потеряна или отклонено. Не показывать одновременно Отряд стоит и Отряд движется.",
+    "picking": "Babylon ray picking выделяет землю/вход объекта через общий world-to-render transform. Подписи, декорации и UI не перехватывают намерение идти в неверную координату.",
+    "coordinateAcceptance": "На нормальном масштабе цель отличается от точки земли под указателем не больше 2 CSS px, кроме явно обозначенного site anchor. Проверять pan, zoom и HiDPI.",
+    "failure": "При rejected/NO_PATH показать причину, оставить ранее принятый маршрут. При unknown не показывать фиктивное успешное движение."
+  },
+  "implementationOwnership": {
+    "writerCount": 1,
+    "existingWorktree": "/Users/vovanostm/.codex/worktrees/free-world-movement/warwrit",
+    "existingBase": "65c5e39290b0a28923ee365ef18096246d30cf7c",
+    "state": "Грязные изменения предыдущего исполнения и незавершённые исправления сохранены; это не готовый новый baseline.",
+    "writeSet": [
+      "packages/game-core/src/world/** и только необходимые consumers формы location в packages/game-core/src/company/**",
+      "packages/protocol/src/world.ts и public exports",
+      "apps/server/src/world/** и необходимые company executor/travel-food consumers",
+      "apps/web/src/App.tsx, game/**, renderer/map-scene.ts и controller свободного движения",
+      "Целевые существующие world/core/server/web регрессии; новая миграция только при доказанной нужде"
+    ],
+    "parent": "Сверяет состояние остановленного автора, задаёт последовательность, владеет БД/процессами/браузером и принимает игровой результат. Не допускает второго писателя тех же файлов.",
+    "entryGate": "Перед новым запуском прочитать это ТЗ, M1-FREE-MOVEMENT.md с supersession, AGENTS.md и CURRENT_PLAN; восстановить coherence частичных изменений. Само наличие этого файла не запускает субагента."
+  },
+  "deliveryStages": [
+    {
+      "id": 1,
+      "outcome": "ПКМ по мелкой скрытой навигации запускает видимое непрерывное движение по полю в текущей игре.",
+      "demonstration": "Вход, реальная компания, точная цель, принятие приказа, плавное знамя; без кнопки Выступить и больших гексов."
+    },
+    {
+      "id": 2,
+      "outcome": "Бесшовные трава/лес/дорога, взвешенный путь и фактическая смена скорости.",
+      "demonstration": "Один путь пересекает три поверхности; объезд медленного участка по дороге выбирается, когда быстрее."
+    },
+    {
+      "id": 3,
+      "outcome": "STOP/REROUTE из частичной позиции, безопасные препятствия и доступ в поселение после автоматического прибытия.",
+      "demonstration": "Остановка между мелкими клетками, новая ПКМ, обход скалы, прибытие и существующее локальное действие."
+    },
+    {
+      "id": 4,
+      "outcome": "Долговременный авторитетный путь и необходимые сохранённые guards.",
+      "demonstration": "Logout/login, reload, API restart, офлайн-прибытие, retry, конфликт и отсутствие двойного расхода."
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "A01",
+      "scenario": "ПКМ в поле вне site/road",
+      "expected": "Один MOVE_TO, цель под указателем, плавный путь к точной точке без дополнительного подтверждения."
+    },
+    {
+      "id": "A02",
+      "scenario": "ЛКМ, pan, wheel, drag, context menu вне карты",
+      "expected": "Ни одного приказа движения; стандартное поведение вне canvas сохранено."
+    },
+    {
+      "id": "A03",
+      "scenario": "Обычный zoom и pan в разные стороны",
+      "expected": "256×192 hidden cells, cellSize=64 fp; normal zoom<=8 CSS px/cell, default grid hidden. Один ground, без mesh/material на cell, без gaps/sharp checkerboard seams."
+    },
+    {
+      "id": "A04",
+      "scenario": "Равные расстояния по трём типам дорог и местности",
+      "expected": "V3 profile,192fp: paved_road4000000us,dirt_road4444445us,trail5714286us,grass8000000us,forest13333334us,marsh26666667us; independent oracle, road overlay replaces base terrain speed."
+    },
+    {
+      "id": "A05",
+      "scenario": "Короткий путь через болото против более длинной дороги",
+      "expected": "Выбран путь с меньшим рассчитанным временем на графе; smoothing не увеличивает стоимость и не срезает препятствие."
+    },
+    {
+      "id": "A06",
+      "scenario": "Граница лес/поле и несколько границ за один большой интервал",
+      "expected": "Непрерывная позиция, правильная смена скорости, тот же результат при разбиении времени на короткие интервалы."
+    },
+    {
+      "id": "A07",
+      "scenario": "STOP и новая ПКМ посередине сегмента и между CampaignTick",
+      "expected": "Frozen V2 mixedPlan: По mixedPlan при t=1010000 ms STOP сохраняет xMicroFp=14627635; следующий MOVE_TO начинает с того же point. Ни snap, ни двойного elapsed/ledger."
+    },
+    {
+      "id": "A08",
+      "scenario": "Скала, вода без моста, диагональный узкий угол и unreachable цель",
+      "expected": "Обход либо понятный отказ. Существующий путь и ресурсы при отказе сохранены; мост/брод работает только в своём коридоре."
+    },
+    {
+      "id": "A09",
+      "scenario": "30/60/120 FPS и фоновый таб",
+      "expected": "Одна серверная позиция/ETA в одно время; рендер идёт каждый доступный кадр без скачков по узлам. На целевом Mac целиться в 60 FPS; фактический результат измерить."
+    },
+    {
+      "id": "A10",
+      "scenario": "Быстрые ПКМ, потерянный ответ, точный retry и changed-body retry",
+      "expected": "Один pointer gesture→один запрос; last-wins pending goal. Потерянный response сначала exact replay, затем fresh GET. COMMAND_ID_CONFLICT на changed body; один расход."
+    },
+    {
+      "id": "A11",
+      "scenario": "Два одновременных конфликтующих приказа и старый worker после reroute",
+      "expected": "Корректная сериализация и revision/epoch rejection; старое прибытие не воскресит предыдущий путь."
+    },
+    {
+      "id": "A12",
+      "scenario": "Logout/login, reload, API restart и завершение маршрута офлайн",
+      "expected": "Реальный PostgreSQL сохраняет ту же компанию/profile/schedule; due arrival после restart исполняется один раз, учитывая travel interval только до deadline. Stationary STOP не оживает."
+    },
+    {
+      "id": "A13",
+      "scenario": "Terrain около поселения, затем настоящее достижение anchor",
+      "expected": "В первом случае местный доступ запрещён; после автоматического AT работают прежние локальные взаимодействия."
+    },
+    {
+      "id": "A14",
+      "scenario": "Опасная область, нехватка supplies, camp/encounter/learning и неспособный участник",
+      "expected": "Существующие guards и законный return сохранены; свободный путь не даёт обхода. Проверить food carry, wages, stamina, участников и containers."
+    },
+    {
+      "id": "A15",
+      "scenario": "Чужой аккаунт, смена компании и запоздалый ответ",
+      "expected": "Нет чужого receipt/state disclosure и подмены нового UI старым ответом."
+    },
+    {
+      "id": "A16",
+      "scenario": "Старый V1/V2 road save, исторический response и переход числового tick 99→100",
+      "expected": "Исторические правила сохраняются, числа сравниваются численно; новая форма не ломает сохранённый маршрут."
+    },
+    {
+      "id": "A17",
+      "scenario": "ПКМ по HTML подписи site, по tree billboard и ground при DPR1/2 после pan/zoom",
+      "expected": "Site→SITE target/anchor; tree не портит ground point. Terrain marker <=2 CSS px от ray hit. contextmenu не дублирует intent."
+    },
+    {
+      "id": "A18",
+      "scenario": "Долгий offline interval, worker проснулся после arrival, компания затем выполняет time-advancing command",
+      "expected": "Прибытие однократно на saved deadline; travel/stamina не считаются после него. Existing stationary rules закрывают остаток, root/containers/location согласованы."
+    },
+    {
+      "id": "A19",
+      "scenario": "Многократные reroute/stop и same-tick commands",
+      "expected": "Bounded microFp coordinates не раздувают знаменатели; одна точность во всех циклах, no double food/carry/wages. STOP stationary — idempotent no-op."
+    },
+    {
+      "id": "A20",
+      "scenario": "Nav/source edition mismatch, budget exceeded и backward trusted clock",
+      "expected": "Различимые MAP_EDITION_MISMATCH/ROUTE_TOO_COMPLEX/TRUSTED_TIME_UNAVAILABLE; ни fallback teleport, ни partial route, ни mutation старого root."
+    }
+  ],
+  "verification": {
+    "required": "Реальный браузер плюс PostgreSQL для representative journey, restart, concurrency и retry; core regressions для скорости, границ, детерминизма и частичной позиции.",
+    "performanceTargets": {
+      "moveAcknowledgmentLocalP95Ms": 150,
+      "pathSearchCurrentMapP95Ms": 50,
+      "normalZoomTargetFps": 60,
+      "measurementStatus": "NOT_MEASURED"
+    },
+    "targetMeaning": "Инженерные цели на named owner Mac с локальным стеком, не обещание задержки в интернете и не измерение серверной ёмкости. Измерить на текущей карте до любых оптимизаций.",
+    "proportionalChecks": "Сначала игровая демонстрация и необходимые focused checks. Финальный existing integrated gate выполняется один раз после завершения; не создавать отдельный framework или тест на каждый helper.",
+    "definitionOfDone": "Representative playableAcceptanceMap показана в браузере; A01–A20 подтверждены применимыми checks. Actual DB/restart/race/privacy evidence и измеренные FPS/latency отделены от pure tests и arithmetic examples. Финальный existing gate и ограничения записаны в CURRENT_PLAN.",
+    "currentResult": "Обновлённое ТЗ и независимая проверка арифметики примеров. Реализация по revision3.0.0, browser/database acceptance, balance/FPS/latency: NOT_RUN/NOT_MEASURED.",
+    "performanceMethod": "Проверить current 49152-cell field на named Mac: 100 searches по заранее выбранным safe/forest/mixed/blocked целям; логировать p50/p95/max и expanded nodes без token/session data. Browser frame sample 60 s во время принятого движения после warmup, default viewport; отдельно RTT/command latency. Это измерение, не требование новой инфраструктуры."
+  },
+  "research": {
+    "checkedAt": "2026-10-03",
+    "limitation": "Прочитаны official BB dev blog и отдельные части открытой реализации VCMI (Heroes III), не закрытый исходный код BB или оригинальной Heroes III. BB blog #7 ранний; современные exact coefficients и алгоритм BB не подтверждены.",
+    "sources": [
+      {
+        "id": "R1",
+        "url": "https://www.redblobgames.com/pathfinding/a-star/introduction.html",
+        "usedFor": "Взвешенный граф, A*, стоимость пути, отделение поиска маршрута от физического движения.",
+        "readStatus": "READ"
+      },
+      {
+        "id": "R2",
+        "url": "https://www.redblobgames.com/pathfinding/grids/algorithms.html",
+        "usedFor": "Grid representation не задаёт клеточное отображение; straightening/Theta*; ограничения алгоритмов с одинаковой ценой шага.",
+        "readStatus": "READ"
+      },
+      {
+        "id": "R3",
+        "url": "https://gafferongames.com/post/fix_your_timestep/",
+        "usedFor": "Независимость симуляции от кадров и сохранение временного остатка; здесь выбран аналитический путь вместо лишнего физического tick-loop.",
+        "readStatus": "READ"
+      },
+      {
+        "id": "R4",
+        "url": "https://gafferongames.com/post/snapshot_interpolation/",
+        "usedFor": "Отделение authoritative state от плавного отображения и стоимость latency; известный принятый план позволяет аналитическую проекцию вместо обязательного потока position snapshots.",
+        "readStatus": "READ"
+      },
+      {
+        "id": "R5",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button",
+        "usedFor": "button=2 — secondary button; отмена browser contextmenu в контролируемой области.",
+        "readStatus": "READ"
+      },
+      {
+        "id": "R6",
+        "url": "https://github.com/BabylonJS/Documentation/blob/master/content/features/featuresDeepDive/mesh/interactions/picking_collisions.md",
+        "usedFor": "Ray picking и predicate для поверхности, без перехвата декоративными meshes; перед реализацией проверить API по pinned Babylon typings.",
+        "readStatus": "READ_OFFICIAL_SOURCE_MARKDOWN"
+      },
+      {
+        "id": "R7",
+        "url": "https://battlebrothersgame.com/blog-post-7-worldmap/",
+        "usedFor": "Официальное описание strategic map, real-time parties, дорог и landscape. Ранняя WIP публикация; не переносить её speculative systems.",
+        "readStatus": "READ_OFFICIAL_POST"
+      },
+      {
+        "id": "R8",
+        "url": "https://github.com/vcmi/vcmi/blob/develop/lib/pathfinder/CPathfinder.cpp",
+        "symbols": ["CPathfinderHelper::getMovementCost", "CPathfinderHelper::getTileMovementCost"],
+        "usedFor": "Рабочая открытая реализация road/terrain movement costs и diagonal distance в Heroes III-compatible engine.",
+        "readStatus": "READ_RELEVANT_SOURCE"
+      },
+      {
+        "id": "R9",
+        "url": "https://github.com/vcmi/vcmi/blob/develop/lib/pathfinder/PathfindingRules.cpp",
+        "symbols": ["MovementCostRule::process"],
+        "usedFor": "Turn/movement-point policy; явно не копируется в real-time Warwrit.",
+        "readStatus": "READ_RELEVANT_SOURCE"
+      },
+      {
+        "id": "R10",
+        "url": "https://github.com/vcmi/vcmi/blob/develop/client/mapView/MapViewController.cpp",
+        "symbols": [
+          "movementContext->progress",
+          "positionCurr = vstd::lerp(positionFrom, positionDest, progress)"
+        ],
+        "usedFor": "Отдельная render interpolation поверх клеточного маршрута; доказательство, что grid и визуальные скачки не обязаны совпадать.",
+        "readStatus": "READ_RELEVANT_SOURCE"
+      },
+      {
+        "id": "R11",
+        "url": "https://www.redblobgames.com/pathfinding/a-star/implementation.html",
+        "usedFor": "Практические weighted relaxation/priority queue и роль consistent admissible heuristic; типы и коэффициенты Warwrit заданы самим ТЗ.",
+        "readStatus": "READ_RELEVANT_SECTIONS"
+      }
+    ],
+    "unavailableSources": [
+      {
+        "url": "https://theory.stanford.edu/~amitp/GameProgramming/MovementCosts.html",
+        "status": "TLS_TIMEOUT_NOT_USED"
+      },
+      {
+        "url": "https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html",
+        "status": "TLS_TIMEOUT_NOT_USED"
+      },
+      {
+        "url": "https://vcmi.eu/developers/MapObject_Format/",
+        "status": "HTTP404_NOT_USED"
+      }
+    ]
+  },
+  "referenceFindings": {
+    "battleBrothers": {
+      "evidence": "Официальный Dev Blog #7 описывает отряды со знаменами, движение в pauseable real time, дороги и разные ландшафты. Это ранняя публикация: предложения о followers/crafting не считать подтверждением выпущенных правил.",
+      "adopt": "Непрерывное движение отряда по поверхности, реальное положение, цель на карте.",
+      "warwritDifference": "В общем онлайн-мире нет глобальной паузы и персонального ускорения."
+    },
+    "heroesIII": {
+      "evidence": "VCMI CPathfinderHelper считает terrain/road cost и множитель sqrt(2) для диагонали; MovementCostRule расходует movement points/turns; MapViewController отдельно интерполирует positionFrom→positionDest по progress.",
+      "adopt": "Одна стоимость местности для маршрута и исполнения; физическое правило отдельно от частоты кадров.",
+      "warwritDifference": "Дневной запас movement points и смену хода не переносить; Warwrit исполняет принятый путь по серверному времени."
+    },
+    "designConclusion": "Мелкая сетка отвечает на вопрос куда можно пройти и сколько это займёт. Координата отряда непрерывна и не является номером клетки. Бесшовное изображение строится отдельным слоем из той же географии."
+  },
+  "architecture": {
+    "worldModel": "2.5D: плоская навигация x/z и billboard/ink-объекты в существующей камере Babylon. Высота декорации не участвует в длине маршрута; hills задают коэффициент местности, не новую физику склонов.",
+    "layers": [
+      {
+        "owner": "game-core/world",
+        "responsibility": "Неизменяемая редакция географии; подготовка speed/walk fields, time-weighted path, accepted schedule и детерминированная проекция позиции. Никаких clock calls, I/O или browser API."
+      },
+      {
+        "owner": "server/world + existing company executor",
+        "responsibility": "Auth, trusted time, один root/epoch, guards, транзакции/receipt, автоматическое прибытие и восстановление."
+      },
+      {
+        "owner": "web/renderer",
+        "responsibility": "Земля и декорации, picking, input, линия пути, banner pose из accepted schedule на каждом кадре. Не изменяет каноническое состояние."
+      }
+    ],
+    "publicBoundaries": [
+      "buildNavigationField(region)",
+      "findTravelPath(field, exactStart, target, speedProfile)",
+      "compileMovementPlan(path, field, trustedStartTime, speedProfile)",
+      "positionAt(plan, trustedTime)",
+      "prepareMoveTo(root, currentPlan, target, trustedTime)",
+      "prepareStop(root, currentPlan, trustedTime)"
+    ],
+    "boundaryMeaning": "Имена обозначают конечные обязанности, не требование отдельного файла/класса на функцию. Переиспользовать существующие owners; одна функция traceSegment владеет проверкой проходимости и пересечений terrain/speed.",
+    "noFrameWrites": true
+  },
+  "authoringPipeline": {
+    "mapEdition": "seroe-porechye-continuous-v4",
+    "sourceFormat": "Один immutable region object: bounds, boundary polygons, terrain shapes, road/bridge/ford polylines/corridors, blocking shapes, existing sites с anchorFp/areaId. Все вершины целые fp; простой polygon без self-intersection; стабильный shapeId.",
+    "baseCoverage": "Внутри boundary по умолчанию grassland. Прочие base shapes имеют уникальный целый paintPriority; на пересечении выигрывает больший priority. Так overlay/terrain определяется однозначно, а не порядком обхода массива.",
+    "buildSteps": [
+      "Проверить integer coordinates, bounds, shapeId, polygon validity, непересечение несовместимых overlays и anchors внутри региона.",
+      "Детерминированно растеризовать base/overlay по центрам 256×192 cells; границы speed field проходят по сторонам cells.",
+      "Blocking geometry расширить на radiusFp=24. Cell проходима только если её закрытый квадрат не пересекает expanded obstacle и целиком лежит в boundary. Явный bridge/ford разрешает только water corridor; cliff не открывается автоматически.",
+      "Скомпилировать immutable walk/speed fields; проверить все site anchors и соединение их с доступными центрами.",
+      "Из тех же данных получить control masks, road geometry и decoration placements. Поставить server/web одну mapEdition. При mismatch MOVE_TO отклоняется и UI обновляет карту."
+    ],
+    "updatePolicy": "Не добавлять редактор, importer, отдельный bake-сервис или framework. Для первой authored карты достаточно существующего owner данных и компактного чистого builder. Generated fields не редактируются вручную.",
+    "initialSites": "Каменный Брод, Березняк, Тихая Гать, Северный Двор и Старая мельница сохраняют identity и areaId. Их новая визуальная точка совпадает с anchor.",
+    "dangerBoundary": "Новая карта должна явно связать опасные области/переходы с существующим owner policy; отсутствие такой связи — блокер опасного пути. Не выводить опасность только из terrainId и не объявлять неизвестную полосу безопасной."
+  },
+  "navigationImplementation": {
+    "traceSegment": "Детерминированный supercover/DDA по всей линии. Half-open speed cells: левая/нижняя граница включена, правая/верхняя исключена; при движении по общей границе выбирать клетку с меньшим row-major index. Zero-length касание не добавляет времени, но учитывается в collision check.",
+    "cornerRule": "Для диагонали обе соседние ортогональные клетки должны быть walkable. Все supercover cells сегмента также walkable после conservative clearance. Никакого прохода через точку касания двух blocked cells.",
+    "sourceAndGoal": "Точки внутри blocking geometry/за boundary отклонить. Недоступный center не разрешает перенести туда actualStart. Если нет ни одного допустимого connector, вернуть NO_PATH и оставить старый план.",
+    "directRoute": "Прямое ребро допускается независимо от числа crossed cells, но цена отражает все speed/danger spans. Поле не означает всегда прямую линию: быстрый road detour может выиграть.",
+    "bounds": {
+      "maxGridCells": 49152,
+      "maxGraphVertices": 49154,
+      "maxRawPathVertices": 4096,
+      "maxFinalSpeedSpans": 4096,
+      "maxRequestBodyBytes": 2048
+    },
+    "searchBudget": "Фиксированные bounds по вершинам/памяти; без недетерминированного timeout внутри pure core. Превышение длины/лимита возвращает ROUTE_TOO_COMPLEX. Нельзя молча обрезать путь или выдавать не достигнутую цель за success.",
+    "performancePolicy": "Текущую конечную сетку сначала измерить. Операции не растут с размером журнала команд; cache immutable field по mapEdition в адаптере допустим. Иерархию/navmesh/JPS не вводить как обязательный prerequisite."
+  },
+  "movementExecution": {
+    "persistentStates": ["STATIONARY_TERRAIN", "STATIONARY_SITE", "MOVING"],
+    "clientOnlyStates": ["COMMAND_PENDING", "COMMAND_UNKNOWN", "RESYNCING"],
+    "transitions": [
+      {
+        "from": "STATIONARY_*",
+        "command": "MOVE_TO valid",
+        "to": "MOVING",
+        "epochDelta": 1
+      },
+      {
+        "from": "MOVING",
+        "command": "MOVE_TO valid",
+        "to": "MOVING from projected current point",
+        "epochDelta": 1
+      },
+      {
+        "from": "MOVING",
+        "command": "STOP before arrival",
+        "to": "STATIONARY_TERRAIN or actual stationary site anchor",
+        "epochDelta": 1
+      },
+      {
+        "from": "MOVING",
+        "command": "server arrival due",
+        "to": "STATIONARY_SITE or STATIONARY_TERRAIN",
+        "epochDelta": 1
+      },
+      {
+        "from": "STATIONARY_*",
+        "command": "STOP",
+        "to": "same state",
+        "epochDelta": 0
+      },
+      {
+        "from": "any",
+        "command": "rejected command",
+        "to": "same canonical state",
+        "epochDelta": 0
+      }
+    ],
+    "zeroDistance": "Если target совпадает с current position в microFp, принять idempotent outcome ALREADY_AT_TARGET без нового плана/epoch. Для MOVING это STOP в текущей точке: закрыть старый plan и увеличить epoch, не создавать zero-length MOVING.",
+    "passingSites": "Проход через вход поселения в MOVING не выдаёт local access. AT присваивается при stationary point, точно равном canonical anchor, и после сохранённой arrival/stop. Terrain рядом с anchor не считается присутствием.",
+    "arrivalWorkerIntervalMs": 1000,
+    "arrivalVisibleDelayTargetMs": 1500,
+    "lateProcessing": "Сначала закрыть интервал движения до scheduled arrival, затем обработать оставшийся период обычными existing stationary rules. Не считать весь offline interval путешествием. Существующие company commands, продвигающие время, обязаны учитывать due movement boundary под тем же lock.",
+    "resourceTimeBoundary": "Единственный owner finance/food/stamina остаётся существующим executor. Navigation milliseconds не создают второй financial clock: ledger через существующие CampaignTick и fractional carry. Несколько MOVE/STOP в одном tick не списывают этот tick многократно.",
+    "clockRewind": "Если trustedTimeMs меньше последней принятой временной границы компании, отклонить с TRUSTED_TIME_UNAVAILABLE без изменения root; не делать отрицательный прогресс. План после restart использует сохранённый UTC baseline, не process uptime.",
+    "speedChanges": "В этом цикле profile/version и speed schedule frozen до следующего принятого MOVE_TO. Отдельное изменение состава/gear/condition в пути следует existing guard и не пересчитывает прошлое. Dynamic reroute/retiming не добавлять скрыто."
+  },
+  "wireContract": {
+    "types": {
+      "Target": "{kind:TERRAIN,xFp:integer,zFp:integer} | {kind:SITE,siteId:string}; mutually exclusive, no optionalSiteId.",
+      "Point": "{xMicroFp:signed decimal string,zMicroFp:signed decimal string}; abs within padded bounds*65536.",
+      "SpeedSpan": "{from:Point,to:Point,terrainId:string,overlayId:string|null,speedPermille:integer,startOffsetUs:unsigned decimal string,endOffsetUs:unsigned decimal string}",
+      "RevisionEpoch": "Unsigned canonical decimal string, 0..9999999999999999999; numeric BigInt comparison.",
+      "Action": "{kind:MOVE_TO,mapEdition:string,target:Target} | {kind:STOP}",
+      "Accepted": "{schemaVersion:2,result:ACCEPTED,commandId,publicRevision,movementEpoch,serverTimeMs,worldTick,mode,point,plan|null,outcome}",
+      "Rejected": "{schemaVersion:2,result:REJECTED,commandId|null,code}; не содержит чужую revision/state."
+    },
+    "moveRequestExample": {
+      "headers": {
+        "x-warwrit-expected-company-id": "00000000-0000-4000-8000-000000000010"
+      },
+      "body": {
+        "schemaVersion": 2,
+        "commandId": "move-example-001",
+        "expectedPublicRevision": "7",
+        "expectedMovementEpoch": "3",
+        "action": {
+          "kind": "MOVE_TO",
+          "mapEdition": "seroe-porechye-continuous-v4",
+          "target": {
+            "kind": "TERRAIN",
+            "xFp": 576,
+            "zFp": 0
+          }
+        }
+      }
+    },
+    "siteRequestExample": {
+      "schemaVersion": 2,
+      "commandId": "move-site-example-002",
+      "expectedPublicRevision": "8",
+      "expectedMovementEpoch": "4",
+      "action": {
+        "kind": "MOVE_TO",
+        "mapEdition": "seroe-porechye-continuous-v4",
+        "target": {
+          "kind": "SITE",
+          "siteId": "kamenny-brod"
+        }
+      }
+    },
+    "stopRequestExample": {
+      "schemaVersion": 2,
+      "commandId": "stop-example-003",
+      "expectedPublicRevision": "8",
+      "expectedMovementEpoch": "4",
+      "action": {
+        "kind": "STOP"
+      }
+    },
+    "examplesStatus": "Форматы для реализации и тестовых fixtures; UUID/revisions не являются live account или готовыми производственными командами.",
+    "failureTable": [
+      {
+        "http": 400,
+        "codes": ["INVALID_COMMAND", "UNSUPPORTED_VERSION"],
+        "effect": "Ничего не менять."
+      },
+      {
+        "http": 401,
+        "codes": ["AUTH_REQUIRED"],
+        "effect": "Никакого receipt/state disclosure."
+      },
+      {
+        "http": 403,
+        "codes": ["NOT_AUTHORIZED"],
+        "effect": "Никакого чужого state/revision disclosure."
+      },
+      {
+        "http": 409,
+        "codes": [
+          "STALE_REVISION",
+          "STALE_MOVEMENT_EPOCH",
+          "COMMAND_ID_CONFLICT",
+          "MAP_EDITION_MISMATCH"
+        ],
+        "effect": "Текущий план сохраняется. Exact retry проверяется раньше freshness."
+      },
+      {
+        "http": 422,
+        "codes": [
+          "TARGET_BLOCKED",
+          "OUT_OF_BOUNDS",
+          "NO_PATH",
+          "ROUTE_TOO_COMPLEX",
+          "MOVEMENT_NOT_ALLOWED",
+          "ROUTE_FORBIDDEN",
+          "KNOWN_SUPPLY_SHORTAGE"
+        ],
+        "effect": "Весь intent отклонён; старый путь/root/resources неизменны. Safe return uses existing policy."
+      },
+      {
+        "http": 503,
+        "codes": ["TRUSTED_TIME_UNAVAILABLE"],
+        "effect": "Нет частичного изменения. Клиент не подставляет собственное время."
+      }
+    ],
+    "recovery": "После STALE/EDITION mismatch прочитать current state/map и сверить pending latest goal. Не автоматически повторять чужой/изменённый request под прежним commandId. UNKNOWN replay возвращает historical response, после него GET даёт свежий state."
+  },
+  "clientExecution": {
+    "inputHandlers": "pointerdown запоминает pointerId/button/startCss; pointerup проверяет pair, movement<=5 px, target canvas, no cancelled/pan. contextmenu предотвращает меню, но сам не отправляет приказ; это исключает двойную отправку pointerup+contextmenu.",
+    "siteLabels": "ПКМ на HTML label того же site проходит тем же MOVE_TO handler с SITE target. Tooltip/панель/disabled overlay не передают terrain click сквозь UI.",
+    "groundPicking": "Перевести clientX/clientY через canvas bounding rect и renderWidth/clientWidth, renderHeight/clientHeight. Ray picking только ground/navigation picking surface; billboard trees/flags не задают ground point. Затем единый inverse render transform и round destination до fp.",
+    "focusAndCapture": "pointer capture применяется только на жест карты; release/pointercancel/blur снимает intent. S не работает в input/textarea/contenteditable. Scroll wheel над панелью не масштабирует карту.",
+    "clockSync": "На каждом state/command response записать requestSendPerformanceMs, receivePerformanceMs, serverTimeMs. baselineAtReceive=serverTimeMs+RTT/2; renderServerTime=baseline+(performance.now-receivePerformanceMs). Это оценка для отображения, не доверенное время commands.",
+    "pollIntervalMs": 1000,
+    "pollRules": "Переиспользовать existing refresh transport. Один незавершённый read на company; epoch/revision comparison не допускает старый state. Rendering не зависит от polling interval.",
+    "resyncTriggers": [
+      "visibilitychange to visible",
+      "online",
+      "session/company switch",
+      "command accepted/rejected",
+      "plan boundary reached locally"
+    ],
+    "offline": "Принятый собственный plan можно показать до его goal, но AT/local actions остаются disabled до серверного commit. New intents при offline не выдавать за accepted.",
+    "arrivalUI": "Достигнув goal по render time, держать banner на goal и показывать Прибываем до stationary response. Не идти дальше и не оставлять бесконечную надпись Движется при ETA=0.",
+    "unknownRetry": "Один сохранённый request на account/company. Пока UNKNOWN, никакой второй root-changing intent; новая ПКМ сохраняет только latest target. Logout/company switch aborts reads и исключает старые callbacks.",
+    "correctionBudget": "При неизменных epoch/profile и локальном RTT<=100 ms rendered point в sync sample отличается от authoritative projection не более 2 CSS px. Величину RTT/time skew фиксировать при проверке, не обещать этот предел при любой сети."
+  },
+  "reproducibleCases": {
+    "precision": {
+      "microFpPerFp": 65536,
+      "canonicalRounding": "nearest, ties away from zero",
+      "durationRounding": "ceil to integer us after collinear equal-speed merge"
+    },
+    "terrainTiming": {
+      "distanceFp": 192,
+      "baseSpeedFpPerSecond": 24,
+      "expectedDurationUs": {
+        "grassland": "8000000",
+        "forest": "13333334",
+        "hills": "10000000",
+        "marsh": "26666667",
+        "riverbank": "10000000",
+        "rock": "16000000",
+        "trail": "5714286",
+        "dirt_road": "4444445",
+        "paved_road": "4000000",
+        "bridge": "4444445",
+        "ford": "14545455"
+      },
+      "status": "Independent integer-us calibration for192fp; runtime evidence recorded separately.",
+      "speedProfileId": "free-terrain-continuous-v3"
+    },
+    "mixedPlan": {
+      "fixture": "Straight x-axis; cells x=[0,192) grass, [192,384) forest, [384,576) road; all walkable, no alternative route. Nonproduction deterministic fixture. Frozen legacy V2 profile; coefficients and deadlines remain historical compatibility examples.",
+      "startedAtMs": "1000000",
+      "from": {
+        "xMicroFp": "0",
+        "zMicroFp": "0"
+      },
+      "goal": {
+        "xMicroFp": "37748736",
+        "zMicroFp": "0"
+      },
+      "speedSpans": [
+        {
+          "from": {
+            "xMicroFp": "0",
+            "zMicroFp": "0"
+          },
+          "to": {
+            "xMicroFp": "12582912",
+            "zMicroFp": "0"
+          },
+          "terrainId": "grassland",
+          "overlayId": null,
+          "speedPermille": 1000,
+          "startOffsetUs": "0",
+          "endOffsetUs": "8000000"
+        },
+        {
+          "from": {
+            "xMicroFp": "12582912",
+            "zMicroFp": "0"
+          },
+          "to": {
+            "xMicroFp": "25165824",
+            "zMicroFp": "0"
+          },
+          "terrainId": "forest",
+          "overlayId": null,
+          "speedPermille": 650,
+          "startOffsetUs": "8000000",
+          "endOffsetUs": "20307693"
+        },
+        {
+          "from": {
+            "xMicroFp": "25165824",
+            "zMicroFp": "0"
+          },
+          "to": {
+            "xMicroFp": "37748736",
+            "zMicroFp": "0"
+          },
+          "terrainId": "grassland",
+          "overlayId": "road",
+          "speedPermille": 1250,
+          "startOffsetUs": "20307693",
+          "endOffsetUs": "26707693"
+        }
+      ],
+      "totalDurationUs": "26707693",
+      "arrivesAtMs": "1026708",
+      "stopAtMs": "1010000",
+      "expectedStoppedPoint": {
+        "xMicroFp": "14627635",
+        "zMicroFp": "0"
+      },
+      "expectedStoppedPositionFpApprox": 223.1999969482422,
+      "rerouteInvariant": "Новый plan.from строго равен expectedStoppedPoint. STOP и MOVE_TO между целыми nav centers не возвращают x к 192/224/256.",
+      "intervalInvariant": "positionAt(1010000) одинаков при прямом запросе, после render frames и после restart; ledger не вычисляется по количеству проекций.",
+      "speedProfileId": "free-terrain-continuous-v2"
+    },
+    "fasterDetour": {
+      "fixture": "Два единственных коридора: direct marsh length=240 fp, road detour length=384 fp; connectors включены в указанные длины. Все остальные клетки blocked.",
+      "expectedCostsUs": {
+        "directMarsh": "22222223",
+        "roadDetour": "12800000"
+      },
+      "expectedChoice": "roadDetour, хотя его длина больше.",
+      "speedProfileId": "free-terrain-continuous-v2"
+    },
+    "smoothingCounterexample": {
+      "fixture": "Две waypoint chains вокруг blocked rock и вокруг marsh. Прямой shortcut через rock закрыт; через marsh медленнее исходного road path.",
+      "expected": "Не принимать оба shortcut; smooth только реально проходимую и не более дорогую цепь."
+    },
+    "repeatedSameTick": "Два MOVE_TO и STOP с trusted times в одном CampaignTick: разные receipt/epoch при принятых изменениях, ни один повторно не начисляет finance/food tick.",
+    "diagonal": {
+      "fromFp": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "toFp": {
+        "xFp": 64,
+        "zFp": 64
+      },
+      "lengthMicroFp": "5931642",
+      "grassDurationUs": "3771237"
+    }
+  },
+  "playableAcceptanceMap": {
+    "map": "Только существующее Серое Поречье, один authored edition. Сохранить five site identities. Не создавать отдельную showcase scene вместо живой игры.",
+    "requiredGeometry": [
+      "Полоса открытого поля для прямого пути между двумя произвольными точками.",
+      "Лесной участок, который можно пересечь и обойти.",
+      "Дорога по safe части существующего соединения с более быстрым detour.",
+      "Одна явная blocked rock/water область с достаточным обходным коридором."
+    ],
+    "firstJourney": "Authenticated company из Северного Двора: ПКМ в nearby safe поле, поворот новой ПКМ, S между клетками; затем ПКМ к Каменному Броду и local interaction после worker arrival. Маршрут через grass/forest/road показать в этой же карте.",
+    "journeyTiming": "Первый короткий offroad путь 128–512 fp (примерно 5–22 s по траве); весь демонстрационный цикл 3–5 min. Это acceptance probe, не подмена целевого полного контракта 20–30 min.",
+    "visualChecks": "Default viewport 1280×800, desktop DPR=1 и DPR=2, zoom default и ±2 steps. Проверить землю, границы textures, ground point marker, tree occlusion и site label right-click.",
+    "completionRule": "Перед расширением content/type coverage показать этот journey. Наличие восьми terrain IDs без плавного игрового пути не считается прогрессом.",
+    "remainingTypes": "Hills/marsh/riverbank/rock/bridge/ford работают как versioned data по тому же алгоритму. Не требовать новых production landmarks для их проверки; finite core fixtures проверяют coefficients/crossings."
+  },
+  "worldArtAmendment": {
+    "date": "2026-10-03",
+    "geographyEdition": "seroe-porechye-continuous-v2",
+    "worldScale": 3,
+    "transform": "scene x/z = canonical fp × worldScale / 1024; picking uses the exact inverse. MicroFp coordinates first divide by 65536.",
+    "speed": "Canonical base remains 24 fp/s; the same scale gives 72 former scene-fp-equivalents/s and triple physical POI spacing. A matched distance/speed increase preserves travel cadence and existing accepted ETA. Terrain changes can change new-route ETA.",
+    "compatibility": "Read saved continuous-v1 and continuous-v2 route/terrain data. Coordinates share unchanged fp/microFp units and site identities; accepted old schedules and exact receipts are never rebaked. New orders use v2 geography. New water lies entirely inside retained blockers, so it does not strand an old walkable origin.",
+    "biomes": "Two extensive irregular woodlands, southern/northern uplands, organic marsh and riverbank, stone ridges and water; no rectangular biome slabs. Retain bounded 256×192 navigation with 64 fp cells.",
+    "materials": [
+      "grass",
+      "woodland",
+      "hills",
+      "marsh",
+      "riverbank",
+      "rock",
+      "road",
+      "water",
+      "deciduous",
+      "conifer"
+    ],
+    "renderer": "Seven ground textures with two blend controls and stochastic triangular texture sampling; feathered dirt roads; two shared instanced tree sources. Tree placement respects actual terrain, road clearance, blockers and settlements.",
+    "camera": "Start near current party at a useful fixed scale rather than fitting every POI. LMB drag and wheel zoom with larger overview range; right click keeps exact canonical target.",
+    "critic": "Independent critic reviews current default/overview/moving/zoomed screenshots and actual journey evidence; fix confirmed material issues and request re-review. Static images cannot prove player enjoyment.",
+    "assets": "Ten generated originals and exact prompts/provenance in assets/art/m1/world-v2; existing assets/manifest.json records their original-work licensing."
+  },
+  "roadScrollAmendment": {
+    "date": "2026-10-03",
+    "authority": "Latest explicit owner request; supersedes earlier straight road geometry, 192fp base road width and instant wheel steps.",
+    "mapEdition": "seroe-porechye-continuous-v3",
+    "wheel": "Native non-passive capture on the map wrapper (including labels), preventDefault and stopPropagation. Normalize pixel/line/page deltas, bound each wheel impulse, accumulate a clamped target zoom and ease toward it per render delta (90 ms time constant). Keep the ground point under the pointer fixed. Cancel pending zoom on drag; release listeners/observer on disposal. Outside the map, ordinary page scroll remains available.",
+    "roads": "Four authored waypoint paths, bounded Catmull-Rom samples in integer fp. Base width96fp replaces192fp for a narrower rural road at worldScale3; deterministic width variation is bounded by ±13%. This also narrows the speed footprint for new V3 plans; old accepted schedules remain frozen. Road polygon banks own both navigation speed bands and renderer ribbons; use exactly the published vertices, paired left-forward/right-reverse. Continuous distance UVs, modest width variation and feathered worn shoulders. No decorative bends outside the speed footprint.",
+    "compatibility": "V1/V2/V3 terrain saves remain readable. Preserve exact older frozen plans, deadlines and receipts. New MOVE_TO uses V3 geography; new road travel times follow the new road bands. No migration, new speed coefficients, clocks or assets.",
+    "sources": [
+      {
+        "url": "https://github.com/widelands/widelands/blob/master/src/graphic/gl/road_program.cc",
+        "finding": "Road segments derive textured triangle quads from actual field endpoints, perpendicular width, endpoint overlap and brightness."
+      },
+      {
+        "url": "https://github.com/vcmi/vcmi/blob/develop/client/mapView/MapRenderer.cpp",
+        "finding": "Heroes III-compatible road renderer selects road image/direction/rotation from actual map road data; it does not own movement costs."
+      },
+      {
+        "url": "https://catlikecoding.com/unity/tutorials/hex-map/part-7/",
+        "finding": "Strategy-map implementation tutorial: road topology, terrain restrictions, width variation and smoothstep/noise blending. Teaching implementation, not evidence of shipped Battle Brothers internals."
+      },
+      {
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event",
+        "finding": "Native wheel cancellation requires a non-passive listener; wheel delta units can differ."
+      }
+    ],
+    "acceptance": [
+      "Scrollable short viewport: wheel over ground and settlement label leaves window.scrollY unchanged and sends no movement command; wheel outside map still scrolls.",
+      "Small wheel/trackpad deltas produce smaller gradual changes than a large wheel notch; reversal and zoom limits remain smooth; pointer ground anchor is stable after pan/zoom/DPR2.",
+      "Curve bends match road navigation speed, abandoned straight shortcuts have no road bonus, settlement endpoints and tree clearance remain connected.",
+      "Live old V2 save resumes exactly; new V3 move/stop/site arrival persist; independent critic reviews current overview and near-road captures."
+    ]
+  },
+  "routeProgressAmendment": {
+    "date": "2026-10-03",
+    "authority": "Latest explicit owner correction: unchanged bright traversed path looks broken; show traversed and remaining portions.",
+    "rendering": "Muted grey accepted-path history beneath an opaque gold remaining suffix. Each render uses the same accepted speed span and interpolated point as the party; the gold line starts at that point and shrinks through span boundaries. Moving-only Пройдено / Осталось legend identifies colors. No commands or canonical state derived from the visual line.",
+    "lifecycle": "Rebuild the suffix only when its point count changes; update vertex positions in place otherwise. Remove previous plan lines on STOP/reroute and hide route/destination at projected arrival; reload derives the split from the retained accepted schedule.",
+    "scope": "Web rendering only; no protocol, canonical schedule, clock, speed, storage, migration or road geometry change.",
+    "acceptance": [
+      "While moving, bright line starts exactly at party ground position, completed section is visibly muted; count of route meshes stays bounded through terrain/speed boundaries.",
+      "STOP and arrival clear the route and legend; reroute removes the old plan and starts at current position.",
+      "Reload during movement restores both portions from the same accepted schedule; independent critic inspects current moving captures."
+    ]
+  },
+  "roadSpeedAmendment": {
+    "date": "2026-10-03",
+    "authority": "Owner: update wiki and implement discussed finite calibration.",
+    "mapEdition": "seroe-porechye-continuous-v4",
+    "speedProfileId": "free-terrain-continuous-v3",
+    "rationale": "Road1250/grass1000 was provisional. ATP3-21.18 §3-22 gives4km/h road vs2.4 cross-country. Chosen game values are calibration, not measured biome norms.",
+    "sources": [
+      "https://www.bits.de/NRANEU/others/amd-us-archive/atp3-21-18%2817%29.pdf",
+      "https://www.mountaineering.scot/safety-and-skills/essential-skills/navigation/planning-and-following-a-route"
+    ],
+    "roads": {
+      "kamenny-brod-severny-dvor": "paved_road",
+      "kamenny-brod-bereznyak": "dirt_road",
+      "kamenny-brod-tikhaya-gat": "dirt_road",
+      "tikhaya-gat-staraya-melnitsa": "trail"
+    },
+    "compatibility": "V1/V2/V3/V4 positions readable; accepted V2 speed schedules, receipts and deadlines frozen. New orders V4/V3; no migration/reset/clock change.",
+    "routing": "Costs and admissible heuristic use selected profile; smoothing preserves road-time advantage; slower road detour remains disfavored.",
+    "status": "IMPLEMENTED; focused core/build/type/lint/format and real PostgreSQL checks passed; normal browser journey and independent road critic passed in documented scope; final balance/devices NOT_MEASURED."
+  }
+}

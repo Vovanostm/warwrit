@@ -1,0 +1,32 @@
+{
+  "asset": "road",
+  "file": "road.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "format": "PNG",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "mode": "built-in",
+    "source": "/Users/vovanostm/.codex/generated_images/01a10291-913a-7bf3-b2cf-5a01de17a0f8/exec-492687e7-d288-4d3f-b8b7-e81bbe7ede6a.png",
+    "prompt": "Use case: stylized-concept\nAsset type: square seamless repeatable ground material texture for a medieval game, 1024 x 1024 pixels.\nPrimary request: an overhead flat texture of a weathered dirt road surface filling the entire image, no landscape or scene.\nStyle/medium: professional hand-painted ink and wash with believable realistic packed earth, restrained delicate granular brushwork.\nComposition/framing: orthographic directly overhead, flat uniform scale, edge-to-edge soil. Two broad very subtle compressed wheel ruts run vertically the full height and continue across the top and bottom seam; their tonal variation is soft and irregular, never stark black lines. Road material covers full tile width.\nLighting/mood: perfectly even diffuse daylight, no directional lighting, no baked cast shadows, no vignette.\nColor palette: weathered light warm umber and dusty tan, muted medium-low contrast; harmonizes with muted sage grass and dark woodland.\nMaterials/textures: compacted dusty earth, sparse tiny embedded rounded pebbles, fine dust, irregular small worn patches, subtle vertical compression. Natural believable details without large distinctive stones or motifs.\nConstraints: create a genuinely tileable square seamless material. Opposite edges must match when repeated, especially top-bottom continuous vertical wheel compression; left-right edges also seamless. All texture features reach and wrap edges. No frame, border, grass verges, horizon, perspective, scenic winding road, trees, buildings, characters, props, text, watermark, large cracks, puddles, or dramatic relief. No photograph; retain refined painted ink/wash game-art character.",
+    "transparent_background": false,
+    "correction_count": 0
+  },
+  "inspection": {
+    "method": "view_image",
+    "status": "VISUALLY_INSPECTED",
+    "findings": [
+      "Square overhead edge-to-edge dirt material; warm muted umber and tan.",
+      "Subtle full-height vertical wheel ruts; no stark black rut lines.",
+      "Small embedded pebbles, fine dusty irregular patches; no scenery, grass border, text or vignette."
+    ],
+    "limits": [
+      "Opposite-edge pixel continuity is not proven; repeat appearance requires renderer/tiled preview check.",
+      "Generated source is 1254 x 1254 despite 1024 x 1024 prompt; original preserved without resizing.",
+      "Two vertical wheel ruts will create a recognizable directional repeat."
+    ]
+  },
+  "workspaceAsset": "assets/art/m1/world-v2/road.png"
+}

@@ -33,6 +33,18 @@ const actor = object({ kind: choice('PLAYER', ...INTERNAL_ACTORS), id });
 const ref = object({ kind: id, id });
 const ownerRef = object({ kind: choice('CHARACTER', 'COMPANY', 'ESTATE', 'WORLD'), id });
 const at = object({ kind: choice('AT'), siteId: id, areaId: id });
+const terrain = object({ kind: choice('TERRAIN'), regionVersion: id, q: signed, r: signed });
+const moving = object({
+  kind: choice('MOVING'),
+  segmentId: id,
+  regionVersion: id,
+  fromQ: signed,
+  fromR: signed,
+  toQ: signed,
+  toR: signed,
+  startedAt: unsigned,
+  arrivalNotBefore: unsigned,
+});
 const transit = object({
   kind: choice('TRANSIT'),
   segmentId: id,
@@ -41,7 +53,7 @@ const transit = object({
   startedAt: unsigned,
   arrivalNotBefore: unsigned,
 });
-const location = either(at, transit);
+const location = either(at, either(terrain, either(moving, transit)));
 const identity = object({
   birthName: text,
   sex: id,

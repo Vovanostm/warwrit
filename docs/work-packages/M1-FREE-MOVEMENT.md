@@ -1,0 +1,562 @@
+# Free global-map movement — implementation assignment
+
+## Route-progress correction — 2026-10-03
+
+The owner observed that traversed travel remained the same bright line and asked
+for visible traversed/remaining portions. JSON revision 3.2.1 owns this web-only
+correction. The old renderer constructed the full gold line only on plan change.
+Now muted grey history sits below a gold remaining suffix, whose first vertex
+uses the same interpolated speed-span point as the party on every render. A small
+Пройдено / Осталось legend appears while moving. Vertex positions update in place;
+span changes rebuild only the suffix. STOP/reroute clears the old plan, projected
+completion hides route/destination, and reload derives progress from the retained
+accepted schedule. Canonical commands, times, speeds and storage are unchanged.
+
+Real Chrome: six samples over 15 seconds matched remaining first vertex to party
+x/z within ~1e-7 scene units; suffix vertices decreased 12→10→9 through speed-span
+boundaries while exactly two route meshes remained. A second journey confirmed
+the split after reload (history origin differs from current suffix/party), muted
+alpha0.55, and final CSS legend colors rgb(140,153,158) / rgb(247,196,99).
+STOP removed both line meshes and the legend; a short new ground route started
+from the exact stopped position and arrival again cleared meshes and legend.
+The browser was left stationary. Initial screenshot inspection exposed equal
+legend key colors due to CSS specificity; corrected and verified via computed
+styles. An intermediate probe ran after natural arrival and found no legend;
+its failed inspection was replaced by the actual moving/STOP/arrival sequence.
+
+Web typecheck, focused ESLint, Prettier and diff whitespace checks passed. No new
+unit tests or production/full-game build were needed for this rendering correction;
+prior build/database/full-gate results below predate it. Independent critic read
+source and moving/reloaded captures: no material readability blocker. Browser
+measurements remain parent-owned evidence. Optional polish is brighter contrast
+on pale roads; very long allowed plans need a measured frame sample before any
+performance claim (remaining span vertices are still allocated per frame).
+Captures: `output/playwright/path-progress-moving.png`,
+`path-progress-stopped.png`. No commit/push/merge/deployment; earlier publication
+quality blocker remains open.
+
+## Scroll and road refinement — 2026-10-03
+
+Owner requested map wheel capture, smooth zoom and more natural winding roads.
+JSON revision 3.2.0 records the amendment and primary research: Widelands road
+triangle strips, VCMI/Heroes-compatible road rendering, Catlike Coding strategy-map
+road blending and MDN wheel cancellation. Closed Battle Brothers road code was
+not inspected. Parent remains the sole code/runtime writer.
+
+Map-wrapper non-passive wheel capture includes settlement labels and normalizes
+pixel/line/page deltas. A bounded target zoom eases per frame with a 90ms time
+constant, retaining the ground point beneath the cursor. Pan cancels pending zoom;
+listeners and observer are removed on disposal. Four authored waypoint roads use
+bounded integer-fp Catmull-Rom sampling, paired bank polygons and distance UVs.
+Base width is 96fp with up to ±13% variation, explicitly superseding 192fp for
+new V3 geography. The rendered banks own the exact new navigation speed footprint;
+road speed remains 1250 permille. Older accepted plans, deadlines and receipts
+remain frozen; V1/V2/V3 terrain positions stay readable. No migration or new asset.
+
+Real Chrome at a genuinely scrollable 1280×550 viewport (document 789px) retained
+scrollY=0 when wheeling over ground and Bereznyak's HTML label; outside-map wheel
+scrolled 120px. Pan/zoom generated zero movement commands. A native 20px wheel
+delta changed zoom 10.9858 through 11.0996/11.1648 toward 11.252 gradually. Pointer
+anchor error stayed below 0.08 CSS px. DPR2 reached exact zoom limits 2/28 and reversed
+smoothly to 2.04825 from the lower limit. Production build and focused camera/core
+checks passed (11); five focused real PostgreSQL files passed 34 with one worker
+and original timeouts. The disposable check database/volume was removed; player
+runtime/database preserved. Production build retains the existing large-chunk
+warning; sustained GPU-present FPS and full M1 remain unproven.
+
+The retained V2 stopped forest point was exactly preserved on V3 read. A new V3
+move, partial STOP and reroute started at the exact stopped microFp position;
+Bereznyak arrival completed as STATIONARY_SITE. A further ground move after pan/zoom
+at observed DPR2 had 0.260 CSS px target reprojection error; the final stationary
+point (-94306304, -59047936 microFp) survived reload exactly. Independent critic inspected three
+current screenshots and relevant source: no material visual blocker; narrower
+road width is now consistent with the owning specification. Optional polish:
+overview forest is dark and road surface somewhat pale/uniform. Critic did not
+independently run the parent-owned browser or database checks.
+
+Captures: `output/playwright/roads-v3-overview.png`, `roads-v3-near.png`,
+`roads-v3-stopped.png`, `roads-v3-arrived.png`, `roads-v3-dpr2.png`,
+`roads-v3-final.png`. Current full-game gate was not
+repeated for this incremental correction. Earlier publication quality blocker
+remains; no commit/push/merge/deployment ran.
+
+## World art and scale cycle — 2026-10-03
+
+Owner requested 3× POI distances, 3× party speed, broader irregular biomes,
+more trees and realistic varied materials, with ten texture artists and an
+independent critic. JSON revision 3.1.0 records the concrete amendment.
+Parent is the sole code/manifest/runtime writer in the existing isolated checkout;
+ten workers own separate temporary art directories and the critic is read-only.
+
+The public geography now uses `continuous-v2` with `worldScale=3`: one forward
+and inverse renderer transform triples physical spacing and speed together.
+Canonical fp/microFp coordinates, clocks and accepted route deadlines remain
+unchanged. Both continuous editions remain readable; new intents use V2 geography.
+Old receipts replay exactly, and frozen old plans retain their original schedules.
+New water is inside a retained blocker; no former traversable origin becomes water.
+
+Ten generated materials are integrated from `assets/art/m1/world-v2`, with exact
+prompts/provenance and licensing in the existing asset catalogue. Seven blended
+terrain layers use stochastic sampling; roads feather into ground. Shared tree
+instances respect actual woodland polygons, roads, blockers and site clearance.
+The camera opens near the party; its overview range is wider. The party has a
+clear ground ring, and the travel panel exposes accepted terrain/relative speed.
+Inactive battle content is hidden after authentic no-active discovery.
+
+Initial independent critique reproduced rectangular slabs, mirrored repetition,
+weak party readability and uncontrolled tree scatter. The second pass confirmed
+material visual improvement and requested removal of an orphan bridge strip plus
+terrain/speed information; both were corrected. The third visual pass and a
+separate near-forest arrival pass found no material visual/readability blocker
+in their inspected scope. Owner enjoyment and full M1 acceptance remain unproved.
+
+Real Chrome confirmed exact 3× scene POI spacing, 1160 non-pickable trees,
+RMB movement, partial STOP/reroute continuity, site arrival at Bereznyak and
+off-road forest arrival. The stopped forest point remained exactly unchanged
+after reload. Accepted spans expose road 1250 and forest 650 speed permille.
+LMB pan and wheel zoom issued no movement requests; DPR2 target reprojection
+error was 0.165 CSS px after pan/zoom. Fresh journey/sampling had no browser errors.
+Final views: `output/playwright/world-v2-overview-final.png`,
+`world-v2-moving.png`, `world-v2-dpr2.png`, `world-v2-forest-arrived.png`.
+
+A short focused Chrome sample on Apple M3 Pro/ANGLE Metal, with only our two
+verification builds temporarily paused and then resumed, retained 110 scene
+frames: median interval 8.4ms, p95 11.6ms; CPU scene-render interval median 3.9ms,
+p95 6.4ms. The earlier sample during simultaneous builds was 112.9/363.3ms.
+These are bounded scene-cadence measurements, not GPU-present FPS or a long-trip
+performance acceptance. No unrelated owner process was changed.
+
+Clean disposable checkout: `/private/tmp/warwrit-world-v2-gate`, containing the
+current production changes and new assets. `scripts/bootstrap.sh` passed format,
+lint, architecture, dead-code, pattern/content checks, builds and typechecks;
+its parallel unit stage exited 1 with nine test timeouts. The same complete unit
+suite then passed **601 tests, 46 skipped** with `VITEST_MAX_WORKERS=2 pnpm test:unit`.
+Assertions, test timeouts and source were unchanged. Subsequent existing commands
+passed: `pnpm test:combat:stress` (10000 battles, 100 replay checks) and
+`pnpm test:migrations` (up/down smoke plus 14 PostgreSQL auth/encounter tests).
+This is a recovered verification sequence, not a successful first bootstrap run.
+
+The five focused world/company/contract PostgreSQL files passed **34 tests**
+on a separate database in the disposable project, including the new retained V1
+terrain-origin regression. Their first parallel run had five test timeouts and
+one environment-dependent skip; the complete repeat enabled both database inputs
+and disabled file parallelism with the original test timeouts. No game code was
+changed to obtain the passes. Logs: `/private/tmp/warwrit-world-v2-gate.log`,
+`warwrit-world-v2-unit-retry.log`, `warwrit-world-v2-stress.log`,
+`warwrit-world-v2-migrations.log`, `warwrit-world-v2-focused-db-retry.log`.
+Disposable project/volume removed; player database/runtime preserved.
+The earlier movement quality-gate blocker remains open; no commit/push/merge ran.
+
+## Implementation result — 2026-10-03
+
+Playable continuous movement is implemented in the authenticated game. This is
+`PLAYABLE_WITH_REMAINING_ACCEPTANCE`, not full M1 or a pass of all twenty scenarios.
+Parent `/root` is the sole final source writer; earlier dated assignments below
+are retained history. Working branch: `codex/free-world-movement-v3`; changes are
+staged and **NOT_COMMITTED**. No push, merge, deployment or paid resources ran.
+
+Try `http://127.0.0.1:5287`: right-click terrain or a settlement to move, press
+`S` to stop, hold the left (or middle) mouse button to pan and use the wheel to zoom. The retained
+art-cycle verification ended stationary in the woodland beside Bereznyak.
+The prior movement checkpoint ended at Tikhaya Gat with camp closed.
+
+### Delivered behavior and compatibility
+
+- Owner control amendment, 2026-10-03: left-button drag now pans the global map.
+  Real Chrome measured a matching 100×50 CSS-pixel label shift with zero movement
+  requests; a subsequent right-click sent one MOVE_TO and S sent STOP.
+  Existing two camera tests and web typecheck passed on this amendment.
+  Earlier full-gate evidence below predates this small control change.
+
+- One authored ground surface, soft terrain boundaries, roads, five existing
+  settlements, hidden 256×192 navigation cells and a continuously rendered banner.
+  Weighted deterministic A* and validated shortcuts minimize computed travel time;
+  speed spans follow terrain/road boundaries without snapping the party to cells.
+- V2 `MOVE_TO`/`STOP` retains exact decimal-string microFp coordinates and a frozen
+  integer-microsecond schedule. STOP and reroute share the canonical position;
+  worker, reads and ordinary/contract commands compose due arrival atomically.
+  Late arrival settles travel at its deadline before stationary catch-up.
+- Existing revision/CAS, account ownership, exact receipt replay, site access,
+  party/member/container movement, stock food/carry and command rollback remain
+  integrated. Dangerous authorization is scoped to Tikhaya Gat ↔ Mill through
+  `FIRST_HUNT_TRAVEL_SCOPE`. An accepted trip must have actual ETA stock coverage;
+  no invented food or new famine policy was introduced.
+- The existing location q/r slots contain microFp only for
+  `seroe-porechye-continuous-v1`; old editions retain axial units. Movement version
+  and region edition distinguish consumers. There is no second writable position
+  store, released migration change, new migration or web → game-core dependency.
+- Canonical GET `/world/free-movement` returns V2. Explicit `?schemaVersion=1`
+  retains the historical read adapter; recorded V1 POST responses replay unchanged.
+  New V1 movement intents are rejected. Saved V1 free and V1/V2 road schedules
+  retain their original semantics instead of being recompiled with new speeds.
+- Unknown POST outcomes keep the exact account/company-scoped request. A later
+  click resolves it by exact replay, performs a fresh read, then sends the latest
+  queued goal. A historical receipt timestamp cannot rewind render time.
+
+### Actual verification
+
+`/private/tmp/warwrit-movement-final-gate` is a disposable checkout copied from the
+assigned base plus the implementation. `scripts/bootstrap.sh` passed: formatting,
+lint, architecture, dead code, patterns, content, build and typecheck; **601 unit
+checks passed, 45 skipped**; **10,000 combat stress battles**; migration smoke and
+**14 real database auth/encounter checks**. Formatting and deterministic ID-order
+failures found on earlier attempts were corrected without weakening any gate.
+The final retry changes also passed focused lint/format and 12 relevant regressions.
+The existing commit hook initially rejected the missing coverage report; the
+unchanged `pnpm test:coverage` then passed601 checks (45 skipped) and produced real
+coverage for the hook. The hook still rejected `pnpm check:changes`: the main-base
+quality audit reports complexity and duplication across the branch. A diagnostic
+comparison with the assigned base65c5e39 also fails:62 introduced complexity
+findings and19 introduced clone groups, with0 dead-code issues. This diagnostic
+does not replace the main-base gate. **Publication/commit readiness is not passed**;
+the functional bootstrap and browser checks above do not imply it. No hook or
+check was disabled; neither commit attempt created a commit.
+
+A separate disposable PostgreSQL database ran **33 integration checks** across
+world routes, V2 continuous movement, company commands/routes and contract company
+transitions. This includes 10 V2 cases: replay/conflict/privacy, concurrent orders,
+atomic blocked/danger rejection, scoped dangerous trip/return and rejected unscoped
+return, stationary no-op, due STOP, ordinary-command arrival/rollback, ETA stock
+rejection and late worker arrival. Disposable volumes were removed; the player
+runtime and its database remain available.
+
+Real headed Chrome verified arbitrary right-click → partial STOP → reroute, exact
+STOP point equal to next plan.from, reload retaining plan ID/deadline, logout/login
+retaining the same company, API shutdown through deadline and subsequent arrival,
+site-label targeting and camp open/close after arrival. Deliberately losing an
+accepted POST response produced an identical retry followed by the latest queued
+goal. Pan/wheel/right drag did not issue movement; DPR2 pan/zoom followed by a
+single right-click and STOP worked. A fresh reload produced no page/console errors;
+intentional offline/response-loss console failures remain historical test effects.
+Screenshot: isolated checkout `output/playwright/continuous-final.png`.
+
+### Measurements and finite remaining work
+
+On Mac15,6 / M3 Pro / 36 GB, the retained deterministic 100-route sample found all
+paths: p50 **10.37 ms**, p95 **50.88 ms**, maximum **87.04 ms**. The p95≤50 ms target
+is **not met**. The final layered scene produced1201 Chrome frame callbacks in
+10006.9ms, p95 interval9.9ms. This measures RAF cadence, not GPU present time or
+a complete forced30/60/120-FPS acceptance comparison.
+
+The final visual uses four GPU texture layers from existing licensed art, a
+normalized 1024×768 RGBA control texture, one-cell visual feather and bilinear
+filtering on one ground mesh. Roads are flat continuous corridor strips with
+shared texture and longitudinal UVs; decoration does not own collision or ground
+picking. The final clean bootstrap also passed after this renderer change.
+
+A public-export probe passed all nine canonical 192fp terrain/road/bridge/ford
+integer-duration oracles and unbridged-water rejection. A real Chrome sample
+measured marker error1.37 CSS px at DPR1 and2 (ground-ray error0.19px); this is a
+representative point, not every camera/object combination. Full forced FPS/GPU
+measurement, all incapacitated-member/learning/encounter combinations, large
+repeated-reroute resource comparisons and full twenty-scenario acceptance are
+not claimed passed.
+The original source ZIP gap remains `RC-GAP-MACHINE-01`; proprietary Battle Brothers
+implementation details and exact shipped coefficients are not asserted.
+
+Next bounded cycle: resolve the failed quality gate and remaining movement
+acceptance/search-time target before publication, content expansion or full M1. The broader sandbox,
+physical moving-world encounters and crisis stages retain their own scope.
+
+**Resumed assignment — 2026-10-03:** owner requested implementation of the
+revision3.0.0 JSON with skills and existing patterns. The same isolated writer
+is active; previous preparation-only/stopped status is historical. Parent owns
+the runtime and acceptance. Necessary map-gesture changes may also touch
+`apps/web/src/renderer/three-quarter-camera.ts` and directly relevant tests,
+preserving battle behavior. `apps/server/src/contracts/ordinary.ts` is assigned
+only if needed to settle a due arrival before existing presence/command checks;
+no reward or contract-policy redesign. No second code writer or new migration
+is assigned. Merge/deployment/paid resources remain unauthorized.
+
+**Active specification revision — 2026-10-03:**
+[M1-FREE-MOVEMENT.json](M1-FREE-MOVEMENT.json), revision3.0.0, is the sole full
+current specification. It concretizes authored map construction, finite grid,
+weighted navigation, bounded continuous positions, terrain speed schedule,
+wire formats and twenty acceptance scenarios. Numeric examples were checked
+independently; new implementation/runtime checks remain NOT_RUN. This supersedes
+the interim revision2.0.0 pointer below and does not resume the stopped writer.
+
+**Supersession — owner correction, 2026-10-03:** the owner rejected the coarse
+visible grid and discontinuous movement. The new owning specification is
+[M1-FREE-MOVEMENT.json](M1-FREE-MOVEMENT.json): direct right-click movement,
+continuous position, a hidden grid 16 times finer per old hex distance,
+seamless terrain and terrain-dependent speed. Its numeric speed coefficients
+are explicitly provisional. The previous implementation and follow-up writer
+are stopped, with changes preserved. This document retains source, ownership
+and compatibility history; conflicting engineering decisions below are
+superseded. The current request is specification preparation, not a fresh
+implementation dispatch or runtime acceptance.
+
+Status: owner-authorized implementation, 2026-10-03; no implementation or
+runtime acceptance claimed. Owner requested one subagent to prepare the global
+map and implement free movement with a concrete professional specification.
+This document owns this bounded slice; the broader accepted scope remains
+[wiki §18](../wiki/m1-spec.md). Parent owns integration and final verification.
+
+## Outcome and acceptance journey
+
+In the existing authenticated game, click a traversable terrain point outside
+roads/settlements, see a route and supply/ETA preview, confirm movement, watch
+the actual company move, stop between sites, redirect from its actual position,
+reach a settlement, and use its existing local interactions. Reload, logout/login
+and API restart retain the same company, path/position and consequences.
+The result must be playable in the existing Babylon/React shell, not a separate
+renderer demo, local animation, fake endpoint or road-only selection renamed free.
+
+## Authority and required reading
+
+Latest direct owner decisions in wiki §18 override earlier route-only proposals:
+authored map; free movement with stop/reroute; shared continuously running world;
+six field members; separate unchanged world clocks; ordinary contract target
+20–30 minutes. This slice does not implement the wider sandbox, crises or load
+target. It does not grant merge, push, deployment or paid-service permission.
+
+Read AGENTS.md, AGENT_TEAM, CURRENT_PLAN, ADR-0003, AI_TECHNOLOGY_HANDOFF,
+ADR-0006, M1-WORLD-FOUNDATION and the complete M1-WORLD-TRAVEL contract.
+The latter's proposed stationary-only reroute and adjacent-edge FREE_INTENT
+restriction are superseded for new free movement by the owner request; legacy
+accepted-route/replay behavior remains unchanged. Use warwrit-domain for domain
+changes. Read physical-state.md when changing carried items/food/location.
+
+Canonical sources, read live by parent: WORLD recTrujX2wy7V49qk,
+accepted RC-P2 approval rechIKj0hsvfXIvFU, lore v1.2 recQNKqYfwoJpCXVu,
+base apph3bj1NyVrfJeLM / table tblwAxG5Ek1FyWpiW. Full Notes/Purpose snapshot:
+`/private/tmp/warwrit-free-movement-sources-20261003.json`.
+Read it fully; original ZIP remains RC-GAP-MACHINE-01 / NOT_RUN.
+Do not reconstruct source catalogues or turn provisional tuning into approved
+balance. Missing graph results for current world adapters justify source search.
+
+## Verified base, isolation and ownership
+
+Game base: open PR135, codex/m1-c06-rescue,
+HEAD 65c5e39290b0a28923ee365ef18096246d30cf7c; main 4ec0be6.
+Parent checked the base checkout clean. PR135 CI is failed; do not claim green
+baseline or repeat historical runtime claims as your own verification.
+
+Only worker write root:
+`/Users/vovanostm/.codex/worktrees/free-world-movement/warwrit`.
+It is a newly attached managed worktree at that exact game HEAD, initially
+detached and clean. Do not edit /Users/vovanostm/learn/warwrit-m1, the primary
+checkout or other worktrees. You are not alone in the codebase; never revert,
+overwrite or clean others' work. Parent edits shared planning only in the primary
+checkout. Use absolute workdir for every command. No child agents.
+
+Owned paths inside the worker root, for this feature only:
+
+- packages/game-core/src/world/** and package public exports.
+- packages/game-core/src/company/** only for canonical location shapes,
+  shape validation/serialization, movement/carrier/observation effects and
+  necessary location consumers. Existing finance, learning, health, equipment
+  and permission policies must not be redesigned.
+- packages/protocol/src/world.ts and necessary public exports.
+- apps/server/src/world/**.
+- apps/server/src/company/{executor,repository,travel-food}.ts and their
+  focused regression/integration tests, for movement/root/effect composition.
+- apps/server/src/{app,index}.ts and apps/server/src/db/database.ts only for
+  registration/worker lifecycle or unavoidable DB typings.
+- apps/server/src/contracts/** and apps/server/src/encounters/admission.ts only
+  to preserve physical site-access checks with the new location representation;
+  no contract, reward, combat or JOIN policy redesign.
+- apps/web/src/game/**, apps/web/src/renderer/{map-scene,projection}.ts,
+  apps/web/src/world-travel-attempt{,.test}.ts, apps/web/src/CompanyOpening.tsx,
+  apps/web/src/styles.css and focused map/controller tests. Necessary map-only
+  renderer modules may be added; preserve the existing battle scene.
+- packages/testkit/src/world* tests and directly affected location fixtures.
+- New migration 0014 up/down ONLY if a concrete schema need exists. Never edit
+  0001–0013; report migration need/compatibility to parent before DB execution.
+- output/free-movement/** for a concise implementation handoff/demo notes.
+
+Everything else is read-only. If a necessary consumer lies outside the write
+set, name it and ask the parent for a narrow extension. Do not guess permission.
+No config/harness/lockfile/tooling changes or new runtime dependencies.
+
+Parent scope amendment, 2026-10-03: `apps/web/src/App.tsx` and
+`apps/web/src/world-free-movement-attempt{,.test}.ts` are assigned to the same
+writer for necessary authenticated map integration and exact retry handling.
+The parent acceptance review found discrete position snapping and missing
+automatic arrival; correction remains in this slice. Runtime acceptance is
+pending, and reported focused checks do not establish the full journey.
+
+## Concrete implementation decisions
+
+1. Keep existing authored region/sites/roads, ink assets and fixed 3/4 Babylon
+   camera. Add finite explicit walk bounds and terrain data in the region owner,
+   and project that same public data into rendering and navigation. No procedural
+   geography, second terrain truth, new content pack or engine migration.
+2. Represent free destinations and physical positions with bounded deterministic
+   integer/fixed-point coordinates and an explicit region edition. Do not accept
+   NaN, Infinity, unsafe integers, unbounded paths or positions outside the map.
+   Keep rendering transforms reversible and shared with picking. Inspect exact
+   Babylon 9.28.0 typings and official picking documentation before using APIs.
+3. The client submits destination/stop intent and revisions, never authority,
+   actual position, path cost, trusted time, supply or successful arrival.
+   Server/core compute the path from the real current position. Use the simplest
+   bounded deterministic path calculation for the authored traversability; fixed
+   tie-breaking and no corner/obstacle crossing. An unobstructed path can be
+   direct. Do not add a generic navigation framework.
+4. One canonical physical location owner: company lifecycle party/member
+   location, with retained travel plan/segment facts as execution metadata.
+   Account for all location-shape consumers and own observations and carriers.
+   A stopped off-road company must have a truthful terrain location; never fake
+   a settlement or encode it as “still standing at the departure village.”
+   Existing local access must require actual arrival; terrain proximity must
+   not grant an issuer, shop, clue, camp/F1 or encounter permission.
+5. Persist accepted start/from/to/path, edition, timing/profile and epoch.
+   Derive progress deterministically from explicit trusted time; do not write
+   on each rendered frame. Pure core has no I/O, clock calls or randomness.
+   STOP/REROUTE settle the earned elapsed interval first and retain the physical
+   position at that server time. No jumping to source/destination, lost inventory,
+   double food/wages/stamina settlement or reused superseded segment.
+6. Extend the existing trusted root/executor/effects and PostgreSQL transaction;
+   no second canonical snapshot or sidecar position pretending to be authority.
+   Authenticate first; ownership before receipt disclosure; exact receipt replay
+   before freshness evaluation. Changed body under the same ID must conflict.
+   Keep one lock order and one root CAS. Stop, move, worker continuation and
+   existing commands must serialize. Publish success only after commit.
+7. Add explicitly versioned free-movement protocol/storage semantics. Preserve
+   V1/V2 DTOs, stored responses, region editions and in-flight old road routes.
+   Never recalculate an old ETA, rewrite history or require resetting the world.
+   If compatibility needs a migration, use the new ordered pair only and preserve
+   recorded data on rollback. Unknown versions fail closed.
+8. Keep existing food, stamina, wages, capability, camp/F1, active encounter and
+   learning guards. Movement of people/items must agree. Dangerous location/path
+   access and supply checks cannot be bypassed by clicking beside a site or
+   crossing off-road. Preserve real safe return semantics; no invented starvation,
+   free gear, rescue/carry producer or automatic camp. Request the parent only for
+   a concrete new product conflict. Numeric terrain penalties are not approved;
+   use existing provisional travel parameters, centrally versioned. Document a
+   finite speed calibration without changing Campaign/Light clocks; measure a
+   representative trip rather than claim final 20–30 minute contract balance.
+9. UI: terrain click selects destination and highlights path; confirm with visible
+   ETA/supply preview. Settlement click remains useful. “Остановиться” works during
+   travel, a new destination redirects from current position. Drag/pan/zoom must
+   not issue a movement command. Show moving/stopped/offline/rejected/unknown
+   outcome states with safe exact retry. Abort/ignore stale requests after company
+   or session switch; late old success must not replace current movement.
+10. Keep the map legible: map boundary, passable/blocked areas where authored,
+    chosen point, route and banner position. Reuse current assets; no asset
+    generation, copied BB art or cosmetic overhaul before this journey works.
+
+## Acceptance scenarios and proportionate verification
+
+Implement the shortest full journey first; then verify important invariants
+through existing public boundaries. No helper-test/count target.
+
+- Move from a settlement to an off-road point, stop mid-path, redirect from
+  that actual position, arrive at another settlement and retain normal access.
+- Malformed/out-of-bounds/blocked destination rejects atomically. Camp, encounter,
+  incapable member and other existing movement blockers remain effective.
+- Two simultaneous conflicting movement commands cannot create two active paths.
+  Exact retry, changed-body retry and foreign account/company behave correctly.
+- Old worker/arrival after stop/reroute cannot resurrect an obsolete path.
+  Food/carry, stamina, money, people and containers are preserved/settled once.
+- Reload/re-auth/API restart resume accepted movement; stop remains stopped.
+  V1/V2 road state and historical response replay still work.
+- Ground picking agrees with displayed location; pan/drag does not move; stale
+  replies and lost-response retry never display an invented accepted position.
+
+Build affected workspace exports before tests, then use repository commands:
+`pnpm --filter @warwrit/game-core build`, protocol/testkit builds as needed;
+focused vitest runs for world routes/travel, physical travel, server movement and
+web controller; game-core/protocol/server/web typechecks; targeted formatting,
+lint and architecture checks. Record command exit and actual results.
+Do not run full bootstrap/gate on every edit or change CI to hide failures.
+Parent owns final integrated gate and independent review.
+
+Worker owns only local node_modules/dist in this worktree and frozen-lockfile
+dependency installation if needed. Parent owns all DB/service/browser lifecycles;
+do not use shared ports/DB, default compose project or cleanup existing volumes.
+If a real-DB/browser check needs resources, report READY_FOR_RUNTIME with the
+exact launch instructions and parent will allocate an isolated stack. Never
+replace real transaction/browser evidence with mocks or label skipped tests pass.
+
+## Execution and handoff
+
+One-shot warwrit_implementer (repository profile: Luna, high). Start with
+`pnpm agent:preflight` and confirm the exact clean worktree/base above. Read full
+sources, trace move through authorization → domain/effects → transaction → DTO
+→ map, then send parent a short implementation plan and start without another
+approval round for ordinary engineering choices. No commits/push/PRs/merge,
+deployment, external messages, paid work, child agents or memory writes.
+
+Checkpoint after 45 minutes; after 90 minutes report a bounded handoff if not
+finished, preserving all changes for continuation. Stop earlier at completed
+acceptance or a concrete source/ownership/invariant blocker. Do not lower quality
+or silently reduce acceptance to meet the timebox. Parent can extend the same
+assignment; never invent “done” from a timer.
+
+Return DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT / BLOCKED; absolute root/base/HEAD,
+changed paths and ordinary diff, design/compatibility/migration decisions,
+commands and outcomes, short steps to try it, runtime evidence or NOT_RUN,
+known risks and one next action. No file hashes/manifests. DONE requires a real
+playable demonstration and relevant evidence; otherwise state the exact gap.
+
+Prompt design references: repository AGENT_TEAM and the official
+[Codex subagents guide](https://developers.openai.com/codex/subagents), read
+2026-10-03. Enforced choices: one bounded writer, isolation, parent-owned
+integration, explicit evidence and independent review. Prompt behavior and
+throughput have not been benchmarked; no separate agent-evaluation project.
+
+## Road speed and types cycle — 2026-10-03
+
+Owner request: update the wiki and implement substantially faster roads with trail,
+dirt road and paved road types. The chosen calibration and research rationale are
+owned by [the wiki](../wiki/m1-spec.md#скорость-дорог-и-пересечённой-местности--2026-10-03)
+and JSON revision 3.4.0. This is a tested initial calibration, not measured final
+balance or a universal human walking-speed table.
+
+Implementation in retained `free-world-movement` checkout, branch
+`codex/free-world-movement-v3`: V4 geography uses V3 speeds (grass 1000, forest 600,
+hills/riverbank 800, rock 500, marsh 300; trail 1400, dirt/bridge 1800,
+paved 2000, ford 550). Base speed and world clocks are unchanged. Road bank widths
+are 96/112/144fp with the retained authored bends and edge variation. Three shared
+materials show a narrow earthy trail, rutted dirt and grey paving.
+
+Time costs and the A* lower bound use the selected profile. Smoothing preserves a
+beneficial road detour; a slower remote road is not compulsory. The fastest road
+wins at a junction, with bridge precedence. Independent review found that the
+stationary label initially chose a different overlapping road; the corrected
+public comparator now owns the same selection in navigation and the label.
+V2 accepted plans, receipts and deadlines retain their original coefficients;
+V1–V4 positions remain readable. No migration or data reset.
+
+Actual focused checks: core build; 10 public free-movement specifications
+(including beneficial/slower detours, smoothing, overlap order and bridge
+precedence, retained/current profile reload and forged-speed rejection);
+web/server typechecks and builds; edited-code ESLint/Prettier and ordinary diff
+check. Five world/company/food specification files passed against a disposable
+PostgreSQL 17 database after all pending migrations applied. No database test
+used the existing player database. The full bootstrap/quality gate was not rerun
+for this incremental tuning; the previously recorded branch quality limitation
+remains outside this slice. No commit/push/merge/deployment.
+
+Actual browser journey through normal Dex login and company creation:
+
+- North Court → Stone Ford followed paving, showed ×2 and restored its moving
+  route after page reload, then arrived in the settlement.
+- Stone Ford → Quiet Causeway accepted a road route of 66,735,850us vs
+  94,423,092us for the straight chord in the same geography/profile; the UI
+  showed dirt ×1.8. STOP cleared the line and retained exact terrain coordinates
+  `(94318654, -44040192)` in microFp. Reload preserved the stopped point; the next
+  accepted route started at exactly that point and arrived in Quiet Causeway.
+- Right-clicking the safe trail approach toward Old Mill accepted a 35,712,845us
+  route containing trail speed 1400; the daytime UI showed trail ×1.4.
+
+Current screenshots are in the absolute directory
+`/Users/vovanostm/.codex/visualizations/2026/10/03/01a10318-def8-76f0-a8a7-a784e3814a52`:
+`road-paved-moving.png`, `road-reload-moving.png`, `road-dirt-moving.png`,
+`road-stop.png`, `roads-overview-day.png`, `road-trail-moving-day.png`.
+Independent read-only road critic reviewed the current source and these six
+captures and found no remaining material defect. It did not operate the browser;
+journey and SQL observations came from the author. Optional advice: increase
+trail/dirt colour distinction at overview scale. Other devices/scales, subjective
+speed enjoyment and final game-wide balance remain NOT_MEASURED.
+
+Runtime closeout: after the parallel route-presentation chat became idle, the
+existing API was gracefully restarted with its retained configuration; readiness
+returned OK. Normal login at `http://127.0.0.1:5287` restored the existing company
+and showed the new paved/dirt/trail geography without changing its stopped
+position. Main-game capture: `roads-main-overview.png` in the same screenshot
+directory. The separate checking API/web processes and their specifically named
+Dex/PostgreSQL Compose projects/volume were removed. The player runtime/database
+were retained. Try the existing game: right-click a settlement or road; S stops.

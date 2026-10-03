@@ -1,0 +1,40 @@
+{
+  "asset": "conifer",
+  "destination": "/private/tmp/warwrit-world-art/conifer/conifer.png",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "original_source": "/Users/vovanostm/.codex/generated_images/01a10292-639e-7632-9bd3-5de9a51d9c85/exec-5a061d99-0962-4115-b105-513b1ca56839.png",
+  "prompt": "Use case: stylized-concept\nAsset type: single transparent conifer tree sprite for a temperate medieval 2.5D global strategy map.\nPrimary request: one mature natural Scots pine-like conifer, seen from a fixed camera 50 degrees above the ground, three-quarter isometric map view.\nSubject: only ONE tree. Layered irregular dark sage and olive needle boughs, some open gaps exposing the warm brown trunk and branching structure. Asymmetric natural mature silhouette, broad irregular boughs with an uneven crown, not a perfect cone. Clean clearly visible trunk base.\nStyle/medium: professional realistic restrained hand-painted ink and wash game sprite, grounded natural materials, reminiscent of sober medieval illustrated global-map art. Fine crisp painterly edge detail with coherent large readable masses, no cartoon outlines.\nComposition/framing: entire tree and trunk base fully within square frame, centered, generous transparent margins on every side. Three-quarter elevated map perspective, not eye-level.\nLighting/mood: soft daylight from top-left, restrained natural shading within the tree.\nColor palette: muted forest dark sage, olive, grey-green needles and warm subdued brown bark. No bright emerald or neon saturation.\nScene/backdrop: completely empty genuinely transparent background with actual alpha.\nConstraints: single isolated tree; no external cast ground shadow, no ground patch or mound, no grass, no horizon, no environment, no multiple trees, no text, no border, no watermark. No white matte or checkerboard artwork. Preserve actual transparent alpha around and between boughs.",
+  "generation_count": 1,
+  "correction_count": 0,
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "alpha_validation": {
+    "mode": "RGBA",
+    "bit_depth": 8,
+    "actual_alpha": true,
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 999181,
+    "opaque_pixels": 316,
+    "partial_alpha_pixels": 573019,
+    "corner_alpha": [0, 0, 0, 0],
+    "visible_bounds": [19, 19, 1220, 1254],
+    "method": "PNG IHDR and stdlib zlib scanline alpha decode; view_image visual inspection"
+  },
+  "visual_inspection": {
+    "single_tree": true,
+    "irregular_layered_silhouette": true,
+    "visible_warm_brown_trunk_base": true,
+    "muted_sage_olive_palette": true,
+    "no_ground_patch_or_external_shadow": true,
+    "no_text_border_or_multiple_trees": true,
+    "style_risks": [
+      "The requested elevated camera angle is subtle; tree reads somewhat frontal. Check at actual map scale.",
+      "RGBA alpha is predominantly partial rather than exactly opaque; verify compositing against map terrain.",
+      "Very faint nonzero alpha reaches the bottom row according to pixel bounds despite visibly complete trunk base."
+    ]
+  },
+  "workspaceAsset": "assets/art/m1/world-v2/conifer.png"
+}

@@ -84,6 +84,7 @@ function unitLabel(
 }
 
 export function EncounterPanel(props: {
+  readonly hideWhenIdle?: boolean;
   readonly unitNames?: Readonly<Record<string, string>>;
   readonly scope: EncounterScope;
   readonly onUnauthorized: () => void;
@@ -243,6 +244,8 @@ export function EncounterPanel(props: {
         moveDestinations[0] ? `${moveDestinations[0].q},${moveDestinations[0].r}` : '',
       );
   }, [destinationKey, moveDestinations]);
+
+  if (props.hideWhenIdle && scopedState?.status === 'no-active') return null;
 
   return (
     <section className="encounter-panel" aria-label="Активное сражение">

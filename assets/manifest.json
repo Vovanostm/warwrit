@@ -288,6 +288,105 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/places/tikhaya-gat.json",
       "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.world-v2.grass",
+      "path": "assets/art/m1/world-v2/grass.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/grass.json",
+      "generatedAt": "2026-10-03T16:20:25.876Z"
+    },
+    {
+      "id": "art.m1.world-v2.woodland",
+      "path": "assets/art/m1/world-v2/woodland.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/woodland.json",
+      "generatedAt": "2026-10-03T16:20:58.334Z"
+    },
+    {
+      "id": "art.m1.world-v2.hills",
+      "path": "assets/art/m1/world-v2/hills.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/hills.json",
+      "generatedAt": "2026-10-03T16:21:05.548Z"
+    },
+    {
+      "id": "art.m1.world-v2.marsh",
+      "path": "assets/art/m1/world-v2/marsh.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/marsh.json",
+      "generatedAt": "2026-10-03T16:21:22.918Z"
+    },
+    {
+      "id": "art.m1.world-v2.riverbank",
+      "path": "assets/art/m1/world-v2/riverbank.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/riverbank.json",
+      "generatedAt": "2026-10-03T16:21:43.877Z"
+    },
+    {
+      "id": "art.m1.world-v2.rock",
+      "path": "assets/art/m1/world-v2/rock.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/rock.json",
+      "generatedAt": "2026-10-03T16:22:05.342Z"
+    },
+    {
+      "id": "art.m1.world-v2.road",
+      "path": "assets/art/m1/world-v2/road.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/road.json",
+      "generatedAt": "2026-10-03T16:22:16.148Z"
+    },
+    {
+      "id": "art.m1.world-v2.water",
+      "path": "assets/art/m1/world-v2/water.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/water.json",
+      "generatedAt": "2026-10-03T16:22:22.712Z"
+    },
+    {
+      "id": "art.m1.world-v2.deciduous",
+      "path": "assets/art/m1/world-v2/deciduous.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/deciduous.json",
+      "generatedAt": "2026-10-03T16:23:00.009Z"
+    },
+    {
+      "id": "art.m1.world-v2.conifer",
+      "path": "assets/art/m1/world-v2/conifer.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/conifer.json",
+      "generatedAt": "2026-10-03T16:23:21.518Z"
+    },
+    {
+      "id": "art.m1.world-v2.grass-meadow",
+      "path": "assets/art/m1/world-v2/grass-meadow.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/grass-meadow.json",
+      "generatedAt": "2026-10-03T19:03:14.845414+00:00"
     }
   ]
 }

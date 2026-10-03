@@ -1,3 +1,5 @@
+import { executeCommandTransaction } from '../db/command-transaction.js';
+import { settleDueContinuousMovementInTransaction } from '../world/continuous-movement.js';
 import { randomUUID } from 'node:crypto';
 import {
   availableContainerG,
@@ -130,283 +132,424 @@ async function executeContractCommand(input: {
   const { database, worldId, accountId, request, requestKey } = input;
   const profile = huntProfile(request.payload.instanceId);
   await ensureFirstHuntGenesis(database, worldId);
-  return database.transaction().execute(async (transaction) => {
-    const reject = (
-      code: Extract<FirstHuntCommandResponseDto, { ok: false }>['code'],
-      revision = '0',
-    ): FirstHuntCommandResponseDto => ({
-      schemaVersion: 1,
-      commandId: request.commandId,
-      ok: false,
-      publicRevision: revision,
-      code,
-    });
-
-    const account = await transaction
-      .selectFrom('identity_accounts')
-      .select('id')
-      .where('id', '=', accountId)
-      .forUpdate()
-      .executeTakeFirst();
-    if (!account) return reject('NOT_AUTHORIZED');
-    const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
-    if (!companyId) return reject('NOT_AUTHORIZED');
-
-    if (!profile) return reject('NOT_AVAILABLE');
-    const observedContract = await readContract(transaction, worldId, profile.instanceId);
-    if (!observedContract || observedContract.profile_id !== profile.profileId)
-      return reject('NOT_AVAILABLE');
-    const lockedCompanyIds = [
-      ...new Set([
-        companyId,
-        ...(observedContract.owner_company_id ? [observedContract.owner_company_id] : []),
-        ...(observedContract.helper_company_id ? [observedContract.helper_company_id] : []),
-      ]),
-    ].toSorted(compareIds);
-    for (const lockedCompanyId of lockedCompanyIds) {
-      if (!(await lockCompanyAggregate(transaction, worldId, lockedCompanyId)))
-        return reject('NOT_AUTHORIZED', observedContract.revision);
-    }
-    const snapshots = new Map<
-      string,
-      {
-        readonly canonical_revision: string;
-        readonly public_revision: string;
-      }
-    >();
-    for (const lockedCompanyId of lockedCompanyIds) {
-      const snapshot = await transaction
-        .selectFrom('company_snapshots')
-        .select(['canonical_revision', 'public_revision'])
-        .where('world_id', '=', worldId)
-        .where('company_id', '=', lockedCompanyId)
-        .executeTakeFirst();
-      if (snapshot) snapshots.set(lockedCompanyId, snapshot);
-    }
-    const snapshot = snapshots.get(companyId);
-    if (!snapshot) return reject('NOT_AUTHORIZED', observedContract.revision);
-
-    const prior = await readFirstHuntReceipt(transaction, {
-      worldId,
-      companyId,
-      commandId: request.commandId,
-    });
-    if (prior) {
-      if (prior.request_key !== requestKey) return reject('INVALID_COMMAND');
-      const replay = readAcceptedResponse(prior.response, request.commandId);
-      return replay ?? reject('INVALID_COMMAND');
-    }
-
-    await transaction
-      .selectFrom('world_party_routes')
-      .select('party_id')
-      .where('world_id', '=', worldId)
-      .where('company_id', 'in', lockedCompanyIds)
-      .orderBy('party_id', 'asc')
-      .forUpdate()
-      .execute();
-    const now = new Date();
-    const clock = await readWorldClock(transaction, worldId, now, true);
-    await ensureHuntGenesisInTransaction(transaction, worldId, profile);
-    const world = await selectHuntWorldRow(transaction, worldId, profile);
-    if (!world) return reject('NOT_AVAILABLE');
-    const worldState = readHuntWorldState(worldId, profile, world);
-    const terms = huntTerms(profile);
-
-    const contract = await transaction
-      .selectFrom('contract_instances')
-      .selectAll()
-      .where('world_id', '=', worldId)
-      .where('instance_id', '=', request.payload.instanceId)
-      .forUpdate()
-      .executeTakeFirst();
-    if (!contract || contract.profile_id !== profile.profileId) return reject('NOT_AVAILABLE');
-    if (
-      contract.owner_company_id !== observedContract.owner_company_id ||
-      contract.helper_company_id !== observedContract.helper_company_id
-    )
-      return reject('NOT_AVAILABLE', contract.revision);
-    const role =
-      companyId === contract.owner_company_id
-        ? 'OWNER'
-        : companyId === contract.helper_company_id
-          ? 'HELPER'
-          : 'NONE';
-
-    if (request.expectedPublicRevision !== contract.revision)
-      return reject('STALE_REVISION', contract.revision);
-
-    const companyStates = new Map<
-      string,
-      NonNullable<Awaited<ReturnType<typeof loadCompanyAggregate>>>
-    >();
-    for (const lockedCompanyId of lockedCompanyIds) {
-      const value = await loadCompanyAggregate(transaction, worldId, lockedCompanyId);
-      if (value) companyStates.set(lockedCompanyId, value);
-    }
-    let state = companyStates.get(companyId);
-    if (!state) return reject('NOT_AUTHORIZED', contract.revision);
-    const commandType = request.type;
-    if (
-      (commandType === 'ACCEPT' || commandType === 'HELP') &&
-      profile.needsMillWorkerClues &&
-      !(await millBeastUnlocked(transaction, worldId))
-    )
-      return reject('NOT_AVAILABLE', contract.revision);
-    // A night threat shows itself only in the Light night phase.
-    if (commandType === 'JOIN' && profile.nightOnly && readWorldLight(clock).phase !== 'NIGHT')
-      return reject('NOT_AVAILABLE', contract.revision);
-    if (commandType === 'HELP') {
-      const admission = await transaction
-        .selectFrom('encounter_admissions')
-        .select('encounter_id')
-        .where('world_id', '=', worldId)
-        .where('instance_id', '=', contract.instance_id)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!canFirstHuntHelperOptIn(admission !== undefined))
-        return reject('NOT_AVAILABLE', contract.revision);
-    }
-    let encounterActive = false;
-    if (commandType === 'LEAVE') {
-      const admission = await transaction
-        .selectFrom('encounter_admissions')
-        .select(['encounter_id', 'terminal_revision', 'effects_source_id', 'effects_applied_at'])
-        .where('world_id', '=', worldId)
-        .where('instance_id', '=', contract.instance_id)
-        .forUpdate()
-        .executeTakeFirst();
-      const encounter = admission
-        ? await transaction
-            .selectFrom('encounters')
-            .select(['status', 'revision'])
-            .where('id', '=', admission.encounter_id)
-            .forUpdate()
-            .executeTakeFirst()
-        : undefined;
-      if (
-        !canFirstHuntParticipantLeave({
-          admission:
-            admission === undefined
-              ? undefined
-              : {
-                  terminalRevision: admission.terminal_revision,
-                  effectsSourceId: admission.effects_source_id,
-                  effectsAppliedAt: admission.effects_applied_at,
-                },
-          encounterStatus: encounter?.status,
-          encounterRevision: encounter?.revision,
-          expectedEffectsSourceId:
-            admission && admission.terminal_revision !== null
-              ? `first-hunt-terminal:${admission.encounter_id}:${admission.terminal_revision}`
-              : undefined,
-        })
-      )
-        return reject('NOT_AVAILABLE', contract.revision);
-      encounterActive = encounter?.status === 'active';
-    }
-    if (BigInt(state.economy.lifecycle.campaignTick) > BigInt(clock.tick))
-      return reject('NOT_AVAILABLE', contract.revision);
-    const ownerJoin = readJoinIntent(contract.owner_join, contract.owner_company_id);
-    const helperJoin = readJoinIntent(contract.helper_join, contract.helper_company_id);
-    if (
-      (contract.owner_join !== null && ownerJoin === undefined) ||
-      (contract.helper_join !== null && helperJoin === undefined)
-    )
-      return reject('NOT_AVAILABLE', contract.revision);
-    const atIssuer = isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId);
-    const atObjective =
-      isAtArea(state, terms.objectiveLocation.siteId, terms.objectiveLocation.areaId) &&
-      state.encounter.active === null &&
-      !state.economy.lifecycle.parties.some((party) => party.location.kind === 'TRANSIT');
-    if (commandType === 'PICKUP' || commandType === 'PRESENT') {
-      if (commandType === 'PICKUP' && role !== 'OWNER' && role !== 'HELPER')
-        return reject('NOT_AUTHORIZED', contract.revision);
-      const admission = await transaction
-        .selectFrom('encounter_admissions')
-        .select(['encounter_id', 'terminal_revision', 'effects_applied_at'])
-        .where('world_id', '=', worldId)
-        .where('instance_id', '=', contract.instance_id)
-        .forUpdate()
-        .executeTakeFirst();
-      const encounter = admission
-        ? await transaction
-            .selectFrom('encounters')
-            .select(['id', 'status', 'revision'])
-            .where('id', '=', admission.encounter_id)
-            .forUpdate()
-            .executeTakeFirst()
-        : undefined;
-      const proof = admission
-        ? await transaction
-            .selectFrom('world_proof_claims')
-            .selectAll()
-            .where('world_id', '=', worldId)
-            .where('source_id', '=', proofSourceId(admission.encounter_id))
-            .forUpdate()
-            .executeTakeFirst()
-        : undefined;
-      if (
-        !admission ||
-        !encounter ||
-        encounter.status !== 'resolved' ||
-        admission.terminal_revision === null ||
-        admission.terminal_revision !== encounter.revision ||
-        admission.effects_applied_at === null ||
-        !proof ||
-        proof.item_id !== profile.proofId
-      )
-        return reject('NOT_AVAILABLE', contract.revision);
-
-      // The party has stood still since the battle; settle that time first as its own
-      // persisted step so the proof transition below stays an exact delta.
-      const caughtUp = await catchUpStationaryCompany({
-        transaction,
-        accountId,
-        state: state as CompanyCombatAggregateState,
-        atTick: clock.tick,
-        requestKind: `FIRST_HUNT_${commandType}_CATCH_UP`,
+  return executeCommandTransaction(
+    database,
+    async (transaction) => {
+      const reject = (
+        code: Extract<FirstHuntCommandResponseDto, { ok: false }>['code'],
+        revision = '0',
+      ): FirstHuntCommandResponseDto => ({
+        schemaVersion: 1,
+        commandId: request.commandId,
+        ok: false,
+        publicRevision: revision,
+        code,
       });
-      if (caughtUp === undefined) return reject('NOT_AVAILABLE', contract.revision);
-      state = caughtUp;
 
-      const nextRevision = (BigInt(contract.revision) + 1n).toString();
-      const receiptId = randomUUID();
-      if (commandType === 'PICKUP') {
-        if (proof.ground_item === null || proof.custodian_company_id !== null || !atObjective)
+      const account = await transaction
+        .selectFrom('identity_accounts')
+        .select('id')
+        .where('id', '=', accountId)
+        .forUpdate()
+        .executeTakeFirst();
+      if (!account) return reject('NOT_AUTHORIZED');
+      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      if (!companyId) return reject('NOT_AUTHORIZED');
+
+      if (!profile) return reject('NOT_AVAILABLE');
+      const observedContract = await readContract(transaction, worldId, profile.instanceId);
+      if (!observedContract || observedContract.profile_id !== profile.profileId)
+        return reject('NOT_AVAILABLE');
+      const lockedCompanyIds = [
+        ...new Set([
+          companyId,
+          ...(observedContract.owner_company_id ? [observedContract.owner_company_id] : []),
+          ...(observedContract.helper_company_id ? [observedContract.helper_company_id] : []),
+        ]),
+      ].toSorted(compareIds);
+      for (const lockedCompanyId of lockedCompanyIds) {
+        if (!(await lockCompanyAggregate(transaction, worldId, lockedCompanyId)))
+          return reject('NOT_AUTHORIZED', observedContract.revision);
+      }
+      const snapshots = new Map<
+        string,
+        {
+          readonly canonical_revision: string;
+          readonly public_revision: string;
+        }
+      >();
+      for (const lockedCompanyId of lockedCompanyIds) {
+        const snapshot = await transaction
+          .selectFrom('company_snapshots')
+          .select(['canonical_revision', 'public_revision'])
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', lockedCompanyId)
+          .executeTakeFirst();
+        if (snapshot) snapshots.set(lockedCompanyId, snapshot);
+      }
+      const snapshot = snapshots.get(companyId);
+      if (!snapshot) return reject('NOT_AUTHORIZED', observedContract.revision);
+
+      const prior = await readFirstHuntReceipt(transaction, {
+        worldId,
+        companyId,
+        commandId: request.commandId,
+      });
+      if (prior) {
+        if (prior.request_key !== requestKey) return reject('INVALID_COMMAND');
+        const replay = readAcceptedResponse(prior.response, request.commandId);
+        return replay ?? reject('INVALID_COMMAND');
+      }
+
+      await transaction
+        .selectFrom('world_party_routes')
+        .select('party_id')
+        .where('world_id', '=', worldId)
+        .where('company_id', 'in', lockedCompanyIds)
+        .orderBy('party_id', 'asc')
+        .forUpdate()
+        .execute();
+      const now = new Date();
+      const clock = await readWorldClock(transaction, worldId, now, true);
+      await ensureHuntGenesisInTransaction(transaction, worldId, profile);
+      const world = await selectHuntWorldRow(transaction, worldId, profile);
+      if (!world) return reject('NOT_AVAILABLE');
+      const worldState = readHuntWorldState(worldId, profile, world);
+      const terms = huntTerms(profile);
+
+      const contract = await transaction
+        .selectFrom('contract_instances')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', request.payload.instanceId)
+        .forUpdate()
+        .executeTakeFirst();
+      if (!contract || contract.profile_id !== profile.profileId) return reject('NOT_AVAILABLE');
+      if (
+        contract.owner_company_id !== observedContract.owner_company_id ||
+        contract.helper_company_id !== observedContract.helper_company_id
+      )
+        return reject('NOT_AVAILABLE', contract.revision);
+      const role =
+        companyId === contract.owner_company_id
+          ? 'OWNER'
+          : companyId === contract.helper_company_id
+            ? 'HELPER'
+            : 'NONE';
+
+      if (request.expectedPublicRevision !== contract.revision)
+        return reject('STALE_REVISION', contract.revision);
+
+      const companyStates = new Map<
+        string,
+        NonNullable<Awaited<ReturnType<typeof loadCompanyAggregate>>>
+      >();
+      for (const lockedCompanyId of lockedCompanyIds) {
+        const value = await loadCompanyAggregate(transaction, worldId, lockedCompanyId);
+        if (value) {
+          const owner = await transaction
+            .selectFrom('company_account_owners')
+            .select('account_id')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', lockedCompanyId)
+            .executeTakeFirst();
+          if (owner)
+            companyStates.set(
+              lockedCompanyId,
+              await settleDueContinuousMovementInTransaction(
+                transaction,
+                value,
+                owner.account_id,
+                clock,
+              ),
+            );
+        }
+      }
+      let state = companyStates.get(companyId);
+      if (!state) return reject('NOT_AUTHORIZED', contract.revision);
+      const commandType = request.type;
+      if (
+        (commandType === 'ACCEPT' || commandType === 'HELP') &&
+        profile.needsMillWorkerClues &&
+        !(await millBeastUnlocked(transaction, worldId))
+      )
+        return reject('NOT_AVAILABLE', contract.revision);
+      // A night threat shows itself only in the Light night phase.
+      if (commandType === 'JOIN' && profile.nightOnly && readWorldLight(clock).phase !== 'NIGHT')
+        return reject('NOT_AVAILABLE', contract.revision);
+      if (commandType === 'HELP') {
+        const admission = await transaction
+          .selectFrom('encounter_admissions')
+          .select('encounter_id')
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', contract.instance_id)
+          .forUpdate()
+          .executeTakeFirst();
+        if (!canFirstHuntHelperOptIn(admission !== undefined))
           return reject('NOT_AVAILABLE', contract.revision);
-        const prepared = prepareFirstHuntProofPickup({
-          previous: state,
+      }
+      let encounterActive = false;
+      if (commandType === 'LEAVE') {
+        const admission = await transaction
+          .selectFrom('encounter_admissions')
+          .select(['encounter_id', 'terminal_revision', 'effects_source_id', 'effects_applied_at'])
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', contract.instance_id)
+          .forUpdate()
+          .executeTakeFirst();
+        const encounter = admission
+          ? await transaction
+              .selectFrom('encounters')
+              .select(['status', 'revision'])
+              .where('id', '=', admission.encounter_id)
+              .forUpdate()
+              .executeTakeFirst()
+          : undefined;
+        if (
+          !canFirstHuntParticipantLeave({
+            admission:
+              admission === undefined
+                ? undefined
+                : {
+                    terminalRevision: admission.terminal_revision,
+                    effectsSourceId: admission.effects_source_id,
+                    effectsAppliedAt: admission.effects_applied_at,
+                  },
+            encounterStatus: encounter?.status,
+            encounterRevision: encounter?.revision,
+            expectedEffectsSourceId:
+              admission && admission.terminal_revision !== null
+                ? `first-hunt-terminal:${admission.encounter_id}:${admission.terminal_revision}`
+                : undefined,
+          })
+        )
+          return reject('NOT_AVAILABLE', contract.revision);
+        encounterActive = encounter?.status === 'active';
+      }
+      if (BigInt(state.economy.lifecycle.campaignTick) > BigInt(clock.tick))
+        return reject('NOT_AVAILABLE', contract.revision);
+      const ownerJoin = readJoinIntent(contract.owner_join, contract.owner_company_id);
+      const helperJoin = readJoinIntent(contract.helper_join, contract.helper_company_id);
+      if (
+        (contract.owner_join !== null && ownerJoin === undefined) ||
+        (contract.helper_join !== null && helperJoin === undefined)
+      )
+        return reject('NOT_AVAILABLE', contract.revision);
+      const atIssuer = isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId);
+      const atObjective =
+        isAtArea(state, terms.objectiveLocation.siteId, terms.objectiveLocation.areaId) &&
+        state.encounter.active === null &&
+        !state.economy.lifecycle.parties.some((party) => party.location.kind === 'TRANSIT');
+      if (commandType === 'PICKUP' || commandType === 'PRESENT') {
+        if (commandType === 'PICKUP' && role !== 'OWNER' && role !== 'HELPER')
+          return reject('NOT_AUTHORIZED', contract.revision);
+        const admission = await transaction
+          .selectFrom('encounter_admissions')
+          .select(['encounter_id', 'terminal_revision', 'effects_applied_at'])
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', contract.instance_id)
+          .forUpdate()
+          .executeTakeFirst();
+        const encounter = admission
+          ? await transaction
+              .selectFrom('encounters')
+              .select(['id', 'status', 'revision'])
+              .where('id', '=', admission.encounter_id)
+              .forUpdate()
+              .executeTakeFirst()
+          : undefined;
+        const proof = admission
+          ? await transaction
+              .selectFrom('world_proof_claims')
+              .selectAll()
+              .where('world_id', '=', worldId)
+              .where('source_id', '=', proofSourceId(admission.encounter_id))
+              .forUpdate()
+              .executeTakeFirst()
+          : undefined;
+        if (
+          !admission ||
+          !encounter ||
+          encounter.status !== 'resolved' ||
+          admission.terminal_revision === null ||
+          admission.terminal_revision !== encounter.revision ||
+          admission.effects_applied_at === null ||
+          !proof ||
+          proof.item_id !== profile.proofId
+        )
+          return reject('NOT_AVAILABLE', contract.revision);
+
+        // The party has stood still since the battle; settle that time first as its own
+        // persisted step so the proof transition below stays an exact delta.
+        const caughtUp = await catchUpStationaryCompany({
+          transaction,
           accountId,
-          request,
-          worldId,
-          campaignTick: clock.tick,
-          encounterId: admission.encounter_id,
-          groundItem: proof.ground_item,
+          state: state as CompanyCombatAggregateState,
+          atTick: clock.tick,
+          requestKind: `FIRST_HUNT_${commandType}_CATCH_UP`,
         });
-        if (prepared.kind !== 'PREPARED')
-          return reject(
-            prepared.code === 'CAPACITY' ? 'CAPACITY' : 'NOT_AVAILABLE',
-            contract.revision,
-          );
-        const sourceId = proofSourceId(admission.encounter_id);
-        const response = await persistFirstHuntCompanyTransition({
+        if (caughtUp === undefined) return reject('NOT_AVAILABLE', contract.revision);
+        state = caughtUp;
+
+        const nextRevision = (BigInt(contract.revision) + 1n).toString();
+        const receiptId = randomUUID();
+        if (commandType === 'PICKUP') {
+          if (proof.ground_item === null || proof.custodian_company_id !== null || !atObjective)
+            return reject('NOT_AVAILABLE', contract.revision);
+          const prepared = prepareFirstHuntProofPickup({
+            previous: state,
+            accountId,
+            request,
+            worldId,
+            campaignTick: clock.tick,
+            encounterId: admission.encounter_id,
+            groundItem: proof.ground_item,
+          });
+          if (prepared.kind !== 'PREPARED')
+            return reject(
+              prepared.code === 'CAPACITY' ? 'CAPACITY' : 'NOT_AVAILABLE',
+              contract.revision,
+            );
+          const sourceId = proofSourceId(admission.encounter_id);
+          const response = await persistFirstHuntCompanyTransition({
+            transaction,
+            accountId,
+            previous: state,
+            next: prepared.next,
+            commandId: request.commandId,
+            receiptId,
+            requestKey,
+            publicRevision: nextRevision,
+            operation: 'PICKUP',
+            itemId: profile.proofId,
+            transition: {
+              operation: 'PICKUP',
+              instanceId: profile.instanceId,
+              sourceId,
+              targetContainerId: request.payload.toContainerId,
+            },
+          });
+          const updated = await transaction
+            .updateTable('contract_instances')
+            .set({ revision: nextRevision })
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', contract.instance_id)
+            .where('revision', '=', contract.revision)
+            .executeTakeFirst();
+          if (Number(updated.numUpdatedRows) !== 1)
+            throw new Error('FIRST HUNT contract revision CAS failed');
+          return response;
+        }
+
+        if (
+          proof.ground_item !== null ||
+          !isFirstHuntProofCustodian(companyId, proof.custodian_company_id) ||
+          proof.redeemed_company_id !== null ||
+          proof.redemption_receipt_id !== null ||
+          !isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId)
+        )
+          return reject('NOT_AVAILABLE', contract.revision);
+        const physical = state.economy.physical;
+        const proofItem = physical?.items.find(
+          (item) => item.itemId === profile.proofId && item.tombstone === null,
+        );
+        const proofContainer = proofItem?.containerId
+          ? physical?.containers.find(
+              (container) => container.containerId === proofItem.containerId,
+            )
+          : undefined;
+        if (
+          !proofItem ||
+          proofItem.quantity !== 1 ||
+          proofItem.owner.kind !== 'COMPANY' ||
+          proofItem.owner.id !== companyId ||
+          !proofContainer ||
+          proofContainer.access !== 'COMPANY' ||
+          proofContainer.closed !== null ||
+          proofContainer.location.kind !== 'AT' ||
+          proofContainer.location.siteId !== terms.issuerLocation.siteId ||
+          proofContainer.location.areaId !== terms.issuerLocation.areaId
+        )
+          return reject('NOT_AVAILABLE', contract.revision);
+        const activeCharacterIds = new Set<string>(
+          state.economy.lifecycle.memberships
+            .filter((membership) => membership.endedAt === null)
+            .map((membership) => String(membership.characterId)),
+        );
+        if (
+          (proofContainer.custodian.kind === 'COMPANY' &&
+            proofContainer.custodian.id !== companyId) ||
+          (proofContainer.custodian.kind === 'CHARACTER' &&
+            !activeCharacterIds.has(proofContainer.custodian.id)) ||
+          proofContainer.custodian.kind === 'WORLD'
+        )
+          return reject('NOT_AVAILABLE', contract.revision);
+
+        const localPool = state.economy.finance.pools.find((pool) => pool.poolId === 'local');
+        const recipient = localPool
+          ? state.economy.finance.wallets.find(
+              (wallet) =>
+                wallet.walletId === localPool.walletId &&
+                wallet.owner.kind === 'COMPANY' &&
+                String(wallet.owner.id) === companyId,
+            )
+          : undefined;
+        const rewardQ = BigInt(terms.rewardQ);
+        if (!recipient) return reject('NOT_AVAILABLE', contract.revision);
+        if (BigInt(worldState.walletQ) < rewardQ)
+          return reject('INSUFFICIENT_FUNDS', contract.revision);
+        const finance = receiveExternalPayment(state.economy.finance, {
+          fromWalletId: worldState.walletId,
+          toWalletId: recipient.walletId,
+          recipient: { kind: 'COMPANY', id: companyId },
+          amountQ: rewardQ,
+          atTick: campaignTick(clock.tick),
+          movementId: `first-hunt-presentation:${receiptId}`,
+        });
+        const nextCompanyRevision = canonicalRevision(
+          (BigInt(state.economy.lifecycle.revision) + 1n).toString(),
+        );
+        const nextCompanyPublicRevision = publicRevision(
+          (BigInt(state.economy.lifecycle.knowledge.revision) + 1n).toString(),
+        );
+        const next = readCompanyCombatAggregateState({
+          ...state,
+          economy: {
+            ...state.economy,
+            finance,
+            lifecycle: {
+              ...state.economy.lifecycle,
+              revision: nextCompanyRevision,
+              knowledge: {
+                ...state.economy.lifecycle.knowledge,
+                revision: nextCompanyPublicRevision,
+              },
+            },
+          },
+        });
+        await persistFirstHuntCompanyTransition({
           transaction,
           accountId,
           previous: state,
-          next: prepared.next,
+          next,
           commandId: request.commandId,
           receiptId,
           requestKey,
           publicRevision: nextRevision,
-          operation: 'PICKUP',
+          operation: 'PRESENT',
           itemId: profile.proofId,
           transition: {
-            operation: 'PICKUP',
+            operation: 'PRESENT',
             instanceId: profile.instanceId,
-            sourceId,
-            targetContainerId: request.payload.toContainerId,
+            sourceId: proof.source_id,
+            issuerWalletId: worldState.walletId,
+            recipientWalletId: recipient.walletId,
+            rewardQ: terms.rewardQ,
+            atTick: clock.tick,
+            worldWalletBeforeQ: worldState.walletQ,
+            worldRevisionBefore: worldState.revision,
           },
+          rewardQ: terms.rewardQ,
         });
         const updated = await transaction
           .updateTable('contract_instances')
@@ -417,233 +560,115 @@ async function executeContractCommand(input: {
           .executeTakeFirst();
         if (Number(updated.numUpdatedRows) !== 1)
           throw new Error('FIRST HUNT contract revision CAS failed');
-        return response;
+        return {
+          schemaVersion: 1,
+          commandId: request.commandId,
+          ok: true,
+          receiptId,
+          publicRevision: nextRevision,
+        };
       }
-
-      if (
-        proof.ground_item !== null ||
-        !isFirstHuntProofCustodian(companyId, proof.custodian_company_id) ||
-        proof.redeemed_company_id !== null ||
-        proof.redemption_receipt_id !== null ||
-        !isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId)
-      )
-        return reject('NOT_AVAILABLE', contract.revision);
-      const physical = state.economy.physical;
-      const proofItem = physical?.items.find(
-        (item) => item.itemId === profile.proofId && item.tombstone === null,
-      );
-      const proofContainer = proofItem?.containerId
-        ? physical?.containers.find((container) => container.containerId === proofItem.containerId)
-        : undefined;
-      if (
-        !proofItem ||
-        proofItem.quantity !== 1 ||
-        proofItem.owner.kind !== 'COMPANY' ||
-        proofItem.owner.id !== companyId ||
-        !proofContainer ||
-        proofContainer.access !== 'COMPANY' ||
-        proofContainer.closed !== null ||
-        proofContainer.location.kind !== 'AT' ||
-        proofContainer.location.siteId !== terms.issuerLocation.siteId ||
-        proofContainer.location.areaId !== terms.issuerLocation.areaId
-      )
-        return reject('NOT_AVAILABLE', contract.revision);
-      const activeCharacterIds = new Set<string>(
-        state.economy.lifecycle.memberships
-          .filter((membership) => membership.endedAt === null)
-          .map((membership) => String(membership.characterId)),
-      );
-      if (
-        (proofContainer.custodian.kind === 'COMPANY' &&
-          proofContainer.custodian.id !== companyId) ||
-        (proofContainer.custodian.kind === 'CHARACTER' &&
-          !activeCharacterIds.has(proofContainer.custodian.id)) ||
-        proofContainer.custodian.kind === 'WORLD'
-      )
-        return reject('NOT_AVAILABLE', contract.revision);
-
-      const localPool = state.economy.finance.pools.find((pool) => pool.poolId === 'local');
-      const recipient = localPool
-        ? state.economy.finance.wallets.find(
-            (wallet) =>
-              wallet.walletId === localPool.walletId &&
-              wallet.owner.kind === 'COMPANY' &&
-              String(wallet.owner.id) === companyId,
-          )
-        : undefined;
-      const rewardQ = BigInt(terms.rewardQ);
-      if (!recipient) return reject('NOT_AVAILABLE', contract.revision);
-      if (BigInt(worldState.walletQ) < rewardQ)
-        return reject('INSUFFICIENT_FUNDS', contract.revision);
-      const finance = receiveExternalPayment(state.economy.finance, {
-        fromWalletId: worldState.walletId,
-        toWalletId: recipient.walletId,
-        recipient: { kind: 'COMPANY', id: companyId },
-        amountQ: rewardQ,
-        atTick: campaignTick(clock.tick),
-        movementId: `first-hunt-presentation:${receiptId}`,
-      });
-      const nextCompanyRevision = canonicalRevision(
-        (BigInt(state.economy.lifecycle.revision) + 1n).toString(),
-      );
-      const nextCompanyPublicRevision = publicRevision(
-        (BigInt(state.economy.lifecycle.knowledge.revision) + 1n).toString(),
-      );
-      const next = readCompanyCombatAggregateState({
-        ...state,
-        economy: {
-          ...state.economy,
-          finance,
-          lifecycle: {
-            ...state.economy.lifecycle,
-            revision: nextCompanyRevision,
-            knowledge: {
-              ...state.economy.lifecycle.knowledge,
-              revision: nextCompanyPublicRevision,
-            },
-          },
+      const participation = prepareFirstHuntLifecycleTransition(
+        {
+          revision: contract.revision,
+          ownerCompanyId: contract.owner_company_id,
+          helperCompanyId: contract.helper_company_id,
+          ownerJoin: ownerJoin ?? null,
+          helperJoin: helperJoin ?? null,
         },
-      });
-      await persistFirstHuntCompanyTransition({
-        transaction,
-        accountId,
-        previous: state,
-        next,
-        commandId: request.commandId,
-        receiptId,
-        requestKey,
-        publicRevision: nextRevision,
-        operation: 'PRESENT',
-        itemId: profile.proofId,
-        transition: {
-          operation: 'PRESENT',
-          instanceId: profile.instanceId,
-          sourceId: proof.source_id,
-          issuerWalletId: worldState.walletId,
-          recipientWalletId: recipient.walletId,
-          rewardQ: terms.rewardQ,
-          atTick: clock.tick,
-          worldWalletBeforeQ: worldState.walletQ,
-          worldRevisionBefore: worldState.revision,
-        },
-        rewardQ: terms.rewardQ,
-      });
-      const updated = await transaction
+        commandType === 'ACCEPT' || commandType === 'HELP'
+          ? {
+              type: commandType,
+              companyId,
+              accountId,
+              expectedRevision: request.expectedPublicRevision,
+              expectedTermsDigest: contract.terms_digest.toString('hex'),
+              termsDigest: request.payload.termsDigest,
+              atIssuer,
+            }
+          : commandType === 'LEAVE'
+            ? {
+                type: commandType,
+                companyId,
+                accountId,
+                expectedRevision: request.expectedPublicRevision,
+                encounterActive,
+              }
+            : {
+                type: commandType,
+                companyId,
+                accountId,
+                expectedRevision: request.expectedPublicRevision,
+                publicRevision: snapshot.public_revision,
+                campaignTick: clock.tick,
+                atObjective,
+              },
+      );
+      if (participation.kind === 'REJECTED') return reject(participation.code, contract.revision);
+      const nextRevision = participation.next.revision;
+      const values = {
+        owner_company_id: participation.next.ownerCompanyId,
+        helper_company_id: participation.next.helperCompanyId,
+        owner_join: participation.next.ownerJoin,
+        helper_join: participation.next.helperJoin,
+      };
+      const proposedContract = { ...contract, ...values };
+      const shouldActivate =
+        commandType === 'JOIN' &&
+        proposedContract.owner_join !== null &&
+        (proposedContract.helper_company_id === null || proposedContract.helper_join !== null);
+      const activeEncounterId = shouldActivate
+        ? await admitFirstHuntInTransaction({
+            transaction,
+            worldId,
+            contract: proposedContract,
+            companyStates,
+            world: worldState,
+            atTick: clock.tick,
+            now,
+          })
+        : undefined;
+      if (shouldActivate && activeEncounterId === undefined)
+        return reject('NOT_AVAILABLE', contract.revision);
+
+      const committed = await transaction
         .updateTable('contract_instances')
-        .set({ revision: nextRevision })
+        .set({ ...values, revision: nextRevision })
         .where('world_id', '=', worldId)
         .where('instance_id', '=', contract.instance_id)
         .where('revision', '=', contract.revision)
         .executeTakeFirst();
-      if (Number(updated.numUpdatedRows) !== 1)
+      if (Number(committed.numUpdatedRows) !== 1)
         throw new Error('FIRST HUNT contract revision CAS failed');
-      return {
+
+      const receiptId = randomUUID();
+      const receiptSnapshot = await transaction
+        .selectFrom('company_snapshots')
+        .select('canonical_revision')
+        .where('world_id', '=', worldId)
+        .where('company_id', '=', companyId)
+        .executeTakeFirst();
+      if (!receiptSnapshot) throw new Error('FIRST HUNT receipt company root is unavailable');
+      const response: Extract<FirstHuntCommandResponseDto, { ok: true }> = {
         schemaVersion: 1,
         commandId: request.commandId,
         ok: true,
         receiptId,
         publicRevision: nextRevision,
       };
-    }
-    const participation = prepareFirstHuntLifecycleTransition(
-      {
-        revision: contract.revision,
-        ownerCompanyId: contract.owner_company_id,
-        helperCompanyId: contract.helper_company_id,
-        ownerJoin: ownerJoin ?? null,
-        helperJoin: helperJoin ?? null,
-      },
-      commandType === 'ACCEPT' || commandType === 'HELP'
-        ? {
-            type: commandType,
-            companyId,
-            accountId,
-            expectedRevision: request.expectedPublicRevision,
-            expectedTermsDigest: contract.terms_digest.toString('hex'),
-            termsDigest: request.payload.termsDigest,
-            atIssuer,
-          }
-        : commandType === 'LEAVE'
-          ? {
-              type: commandType,
-              companyId,
-              accountId,
-              expectedRevision: request.expectedPublicRevision,
-              encounterActive,
-            }
-          : {
-              type: commandType,
-              companyId,
-              accountId,
-              expectedRevision: request.expectedPublicRevision,
-              publicRevision: snapshot.public_revision,
-              campaignTick: clock.tick,
-              atObjective,
-            },
-    );
-    if (participation.kind === 'REJECTED') return reject(participation.code, contract.revision);
-    const nextRevision = participation.next.revision;
-    const values = {
-      owner_company_id: participation.next.ownerCompanyId,
-      helper_company_id: participation.next.helperCompanyId,
-      owner_join: participation.next.ownerJoin,
-      helper_join: participation.next.helperJoin,
-    };
-    const proposedContract = { ...contract, ...values };
-    const shouldActivate =
-      commandType === 'JOIN' &&
-      proposedContract.owner_join !== null &&
-      (proposedContract.helper_company_id === null || proposedContract.helper_join !== null);
-    const activeEncounterId = shouldActivate
-      ? await admitFirstHuntInTransaction({
-          transaction,
-          worldId,
-          contract: proposedContract,
-          companyStates,
-          world: worldState,
-          atTick: clock.tick,
-          now,
-        })
-      : undefined;
-    if (shouldActivate && activeEncounterId === undefined)
-      return reject('NOT_AVAILABLE', contract.revision);
-
-    const committed = await transaction
-      .updateTable('contract_instances')
-      .set({ ...values, revision: nextRevision })
-      .where('world_id', '=', worldId)
-      .where('instance_id', '=', contract.instance_id)
-      .where('revision', '=', contract.revision)
-      .executeTakeFirst();
-    if (Number(committed.numUpdatedRows) !== 1)
-      throw new Error('FIRST HUNT contract revision CAS failed');
-
-    const receiptId = randomUUID();
-    const receiptSnapshot = await transaction
-      .selectFrom('company_snapshots')
-      .select('canonical_revision')
-      .where('world_id', '=', worldId)
-      .where('company_id', '=', companyId)
-      .executeTakeFirst();
-    if (!receiptSnapshot) throw new Error('FIRST HUNT receipt company root is unavailable');
-    const response: Extract<FirstHuntCommandResponseDto, { ok: true }> = {
-      schemaVersion: 1,
-      commandId: request.commandId,
-      ok: true,
-      receiptId,
-      publicRevision: nextRevision,
-    };
-    await persistFirstHuntReceipt(transaction, {
-      worldId,
-      companyId,
-      commandId: request.commandId,
-      receiptId,
-      requestKey,
-      response,
-      expectedCanonicalRevision: receiptSnapshot.canonical_revision,
-    });
-    return response;
-  });
+      await persistFirstHuntReceipt(transaction, {
+        worldId,
+        companyId,
+        commandId: request.commandId,
+        receiptId,
+        requestKey,
+        response,
+        expectedCanonicalRevision: receiptSnapshot.canonical_revision,
+      });
+      return response;
+    },
+    (result) => result.ok,
+  );
 }
 
 /** One hunt contract as the viewing company knows it. */

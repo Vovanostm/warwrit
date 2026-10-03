@@ -20,7 +20,10 @@ export function WorldMapCanvas(props: {
   readonly reachableSiteIds: ReadonlySet<string>;
   readonly selectedSiteId: string | null;
   readonly plannedEdgeIds: readonly string[];
+  readonly selectedHex?: { readonly q: number; readonly r: number } | null;
+  readonly plannedHexPath?: readonly { readonly q: number; readonly r: number }[];
   readonly onSelectSite: (siteId: string) => void;
+  readonly onSelectTerrain: (position: { readonly q: number; readonly r: number }) => void;
   /** Rendered instead of the canvas when WebGL is unavailable. */
   readonly fallback: React.ReactNode;
 }) {
@@ -34,9 +37,19 @@ export function WorldMapCanvas(props: {
     reachableSiteIds: props.reachableSiteIds,
     selectedSiteId: props.selectedSiteId,
     plannedEdgeIds: props.plannedEdgeIds,
+    ...(props.selectedHex === undefined ? {} : { selectedHex: props.selectedHex }),
+    ...(props.plannedHexPath === undefined ? {} : { plannedHexPath: props.plannedHexPath }),
   };
-  const latest = useRef({ view, onSelectSite: props.onSelectSite });
-  latest.current = { view, onSelectSite: props.onSelectSite };
+  const latest = useRef({
+    view,
+    onSelectSite: props.onSelectSite,
+    onSelectTerrain: props.onSelectTerrain,
+  });
+  latest.current = {
+    view,
+    onSelectSite: props.onSelectSite,
+    onSelectTerrain: props.onSelectTerrain,
+  };
   const mapKey = `${props.map.regionVersion}:${props.map.sites.length}:${props.map.edges.length}`;
 
   useEffect(() => {
@@ -46,6 +59,7 @@ export function WorldMapCanvas(props: {
     try {
       scene = mountMapScene(canvas, props.map, latest.current.view, {
         onSelectSite: (siteId) => latest.current.onSelectSite(siteId),
+        onSelectTerrain: (position) => latest.current.onSelectTerrain(position),
         onLabels: setLabels,
       });
     } catch {

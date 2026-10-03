@@ -117,8 +117,16 @@ export interface TrustedContractRouteAuthorization {
   readonly edgeIds: readonly string[];
 }
 
-const FIRST_HUNT_EDGE_ID = 'tikhaya-gat-staraya-melnitsa';
-const FIRST_HUNT_SITES = Object.freeze({ from: 'tikhaya-gat', to: 'staraya-melnitsa' });
+export const FIRST_HUNT_TRAVEL_SCOPE = Object.freeze({
+  edgeId: 'tikhaya-gat-staraya-melnitsa',
+  fromSiteId: 'tikhaya-gat',
+  toSiteId: 'staraya-melnitsa',
+});
+const FIRST_HUNT_EDGE_ID = FIRST_HUNT_TRAVEL_SCOPE.edgeId;
+const FIRST_HUNT_SITES = Object.freeze({
+  from: FIRST_HUNT_TRAVEL_SCOPE.fromSiteId,
+  to: FIRST_HUNT_TRAVEL_SCOPE.toSiteId,
+});
 
 /** Must come from an existing trusted adapter; this preparer does not create it. */
 export interface TrustedReturnOrCampAuthorization {

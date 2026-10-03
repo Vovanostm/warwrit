@@ -7,6 +7,7 @@ export interface PartyMarker {
   /** Site where the party stands, or the road it is on with progress 0..1 from `fromSiteId`. */
   readonly at:
     | { readonly kind: 'SITE'; readonly siteId: string }
+    | { readonly kind: 'TERRAIN'; readonly q: number; readonly r: number }
     | {
         readonly kind: 'ROAD';
         readonly fromSiteId: string;
@@ -33,6 +34,7 @@ export function WorldMap(props: {
   readonly reachableSiteIds: ReadonlySet<string>;
   readonly selectedSiteId: string | null;
   readonly plannedEdgeIds: readonly string[];
+  readonly plannedHexPath?: readonly { readonly q: number; readonly r: number }[];
   readonly onSelectSite: (siteId: string) => void;
 }) {
   const points = new Map(props.map.sites.map((site) => [site.siteId, project(site)]));
@@ -43,11 +45,13 @@ export function WorldMap(props: {
   const width = Math.max(...xs) - minX + PADDING;
   const height = Math.max(...ys) - minY + PADDING;
   const planned = new Set(props.plannedEdgeIds);
+  const plannedHexPoints = props.plannedHexPath?.map(project) ?? [];
 
   const partyPoint = (() => {
     if (!props.party) return undefined;
     const at = props.party.at;
     if (at.kind === 'SITE') return points.get(at.siteId);
+    if (at.kind === 'TERRAIN') return project(at);
     const from = points.get(at.fromSiteId);
     const to = points.get(at.toSiteId);
     if (!from || !to) return undefined;
@@ -97,6 +101,12 @@ export function WorldMap(props: {
           </g>
         );
       })}
+      {plannedHexPoints.length > 1 && (
+        <polyline
+          className="map-road map-road-planned"
+          points={plannedHexPoints.map((point) => `${point.x},${point.y}`).join(' ')}
+        />
+      )}
 
       {props.map.sites.map((site) => (
         <SiteMarker

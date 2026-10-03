@@ -360,7 +360,10 @@ export function settleFoodConsumption(
     context.atTick,
   );
   requirePhysical(
-    subject.presence.location.kind === 'AT' &&
+    (subject.presence.location.kind === 'AT' ||
+      (fact.channel === 'STOCK' &&
+        (subject.presence.location.kind === 'MOVING' ||
+          subject.presence.location.kind === 'TERRAIN'))) &&
       sameLocation(subject.presence.location, fact.location),
     'CONTACT_OR_ACCESS_REQUIRED',
   );
@@ -380,10 +383,7 @@ export function settleFoodConsumption(
       'INVALID_SOURCE',
     );
     const container = physicalContainer(physical, fact.containerId);
-    requirePhysical(
-      container.location.kind === 'AT' && sameLocation(container.location, fact.location),
-      'INVALID_SOURCE',
-    );
+    requirePhysical(sameLocation(container.location, fact.location), 'INVALID_SOURCE');
     const settled = settleStockFood(
       requirement,
       physical,
@@ -408,6 +408,7 @@ export function settleFoodConsumption(
     requirePhysical(
       provider.presence.availability === 'AVAILABLE' &&
         provider.presence.encounterBindingId === null &&
+        fact.location.kind === 'AT' &&
         provider.presence.location.kind === 'AT' &&
         sameLocation(provider.presence.location, fact.location),
       'CONTACT_OR_ACCESS_REQUIRED',

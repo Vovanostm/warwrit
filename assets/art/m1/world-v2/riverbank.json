@@ -1,0 +1,29 @@
+{
+  "asset": "riverbank",
+  "file": "riverbank.png",
+  "prompt": "Use case: stylized-concept\nAsset type: square seamless tileable game terrain albedo, 1024 x 1024\nPrimary request: ONE continuous riverbank GROUND MATERIAL texture, not a scene and not a river. Exact orthographic overhead view of damp light sandy sediment with fine rounded grey pebbles, sparse small muted reed and grass fragments lying on the soil, and thin organic silt discoloration.\nStyle/medium: restrained professional ink-and-wash game art with realistic material observation; cohesive temperate medieval 2.5D strategy-game material similar in atmosphere to Battle Brothers. Finely textured ground, subdued hand-painted linework, no cartoon outlines.\nComposition/framing: surface fills the entire square uniformly. Make perfectly seamless repeat on all four edges, with matching edge texture and density. Even fine-scale irregular detail, no focal point, no recognizable landmark, no clusters that visibly recur. Sediment is dominant, pebbles are small and scattered, plant fragments very sparse. No large uninterrupted feature or dominant edge-to-edge river line.\nLighting/mood: flat even diffuse daylight, neutral albedo without baked directional shadows or highlights.\nColor palette: warm grey-beige sediment, quiet mid-grey pebbles, dull sage and brown plant fragments, slight darker damp silt mottling. Low-to-moderate contrast, natural desaturated colors.\nConstraints: square opaque albedo, exact top-down, only ground. No water or river scene, no perspective, horizon, text, labels, border, vignette, cast shadows, footprints, large stones, flowers, logs or conspicuous recurrent objects.",
+  "provenance": {
+    "generator": "built-in image_gen.imagegen",
+    "mode": "generate",
+    "source": "/Users/vovanostm/.codex/generated_images/01a10290-f830-7f23-873e-2c6079d9d25a/exec-0c758605-fefb-46e4-950c-a0a9c0866e9f.png",
+    "generated_date": "2026-10-03",
+    "referenced_images": [],
+    "corrections": 0,
+    "postprocessing": "None; original generated PNG copied unchanged."
+  },
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "requested_dimensions": {
+    "width": 1024,
+    "height": 1024
+  },
+  "inspection": {
+    "method": "view_image",
+    "result": "Overhead opaque sediment ground with fine rounded pebbles, sparse sage-brown reed fragments and subdued silt mottling; no river scene, horizon, text, border or dominant river line.",
+    "concerns": "Some fine local pebble relief is baked into the albedo; exact pixel-perfect edge continuity and runtime repeat behavior are unverified.",
+    "tiling_risk": "Low-to-moderate: evenly distributed small-scale detail reduces obvious repeating landmarks, but a repeated tile preview/runtime tiling check was not run."
+  },
+  "workspaceAsset": "assets/art/m1/world-v2/riverbank.png"
+}

@@ -1,5 +1,95 @@
 # Warwrit current delivery plan
 
+**Publication and merge request — 2026-10-04:** after the failed normal
+commit audit was reported, the owner requested merging all current game and
+documentation work into the default branch and updating the local worktree.
+The repository default is `main` (the owner called it master). This authorizes
+integration of `codex/free-world-movement-v3` and `chore/claude-harness`, not
+unrelated open PRs or deployment. The local commit hook is skipped for this
+requested checkpoint; its actual audit remains FAILED (exit1): one unlisted
+dependency, 323 complexity findings, 71 clone groups across the 378-file branch
+delta. CI configuration/checks remain unchanged. Temporary browser diagnostics
+stay local. Documentation checkpoint `4c11a99` was already pushed; merge and
+local synchronization must be read back before reporting completion.
+
+**Road speed/types cycle — 2026-10-03:** owner-authorized calibration is
+implemented in retained `free-world-movement` / `codex/free-world-movement-v3`.
+V4 geography/V3 profile: trail1400, dirt1800, paved2000; forest600, hills800,
+marsh300, riverbank800, rock500; grass1000/base24 unchanged. The fastest road
+wins at junctions; bridge precedence and stationary labels share one rule.
+V2 accepted schedules/receipts/deadlines remain frozen; no migration.
+Ten public core checks, five PostgreSQL world/company/food spec files, affected
+builds/typechecks/lint/format passed. Normal authenticated browser demonstrated
+all three speeds, a faster road detour, arrival, moving reload and exact
+STOP/reload/reroute. Independent read-only critic found no remaining material
+road defect on six current captures. Device-scale coverage, subjective speed
+and final balance remain NOT_MEASURED. Existing player data preserved; primary localhost5287 runtime refreshed,
+normal login/map readback passed and isolated check infrastructure removed; parallel
+route-line work verified separately and retained. [Owning result](../work-packages/M1-FREE-MOVEMENT.md#road-speed-and-types-cycle--2026-10-03).
+No commit/push/merge/deployment; previous branch quality limitation remains.
+
+**Route-progress correction — 2026-10-03:** owner requested visible traversed vs
+remaining route because the unchanged bright line looked broken. Parent is sole
+writer in the same isolated checkout; JSON revision 3.2.1 owns muted history,
+party-anchored shrinking gold suffix and moving-only legend. Web typecheck and
+affected lint passed. Real Chrome confirmed moving split, terrain-span shrink,
+reload, STOP/reroute/arrival cleanup and bounded mesh count; independent visual
+critic found no material blocker. [Result](../work-packages/M1-FREE-MOVEMENT.md#route-progress-correction--2026-10-03).
+No canonical movement/storage changes or publication.
+
+**Scroll/road refinement — 2026-10-03:** owner-requested wheel capture,
+frame-based anchored zoom and winding road ribbons are playable in the existing
+isolated checkout. JSON revision 3.2.0 owns V3 shared rendered/navigation banks,
+96fp ±13% road width and retained V1/V2 saves. Real scrollable Chrome confirmed
+capture over ground/labels, ordinary scrolling outside, gradual small deltas,
+anchoring, DPR2 zoom limits/reversal and zero gesture movement commands.
+V3 partial STOP/reroute, Bereznyak arrival, DPR2 ground picking (0.260 CSS px)
+and exact stationary reload passed; independent visual critic
+found no material blocker. Focused 11, real PostgreSQL 34, affected builds/typecheck
+and lint passed. [Current result](../work-packages/M1-FREE-MOVEMENT.md#scroll-and-road-refinement--2026-10-03).
+No commit/push/merge/deployment; previous quality blocker remains.
+
+**World art/scale cycle — 2026-10-03:** owner requested 3× spacing/speed, natural
+biomes, trees, varied realistic materials and ten texture agents plus a critic.
+Parent owns code/assets integration and runtime; ten disjoint artists completed
+the materials, independent critic reviewed three visual iterations and forest arrival.
+New V2 geography
+uses public `worldScale=3` with unchanged canonical coordinates/times and readable
+V1 saves. Detailed decision and current evidence: [owning result](../work-packages/M1-FREE-MOVEMENT.md#world-art-and-scale-cycle--2026-10-03).
+Browser journey and critic passed in the inspected scope. Clean build/typechecks
+passed; the unchanged unit suite passed 601 checks (46 skipped) with two workers
+after the initial parallel run timed out. Existing stress (10000 battles),
+migration/auth/encounter (14) and focused PostgreSQL checks (34) passed.
+Disposable verification volume removed; player runtime/database preserved.
+Previous commit-quality blocker remains; no commit/push/merge/deployment.
+
+**Map control amendment — 2026-10-03:** owner requested left-button drag to pan.
+Implemented in the existing isolated movement checkout, retaining middle-button
+pan and right-click movement. Real Chrome confirmed matching 100×50 CSS-pixel
+camera movement with zero movement requests, then one MOVE_TO on right-click and
+STOP on S. Web typecheck and both existing camera tests passed.
+Earlier full-game checks below predate this amendment; commit remains blocked
+by the previously recorded quality gate.
+
+**Free movement playable checkpoint — 2026-10-03:** parent `/root` completed
+continuous V2 map movement in the isolated `free-world-movement` checkout at
+base `65c5e39290b0a28923ee365ef18096246d30cf7c`. Sole source writer; previous dated
+assignments below are historical. Real Chrome exercised partial STOP/reroute,
+reload/re-auth, offline arrival after API restart, lost-response exact retry and
+DPR2 gestures; site arrival and camp open/close worked. Clean bootstrap passed
+601 unit checks (45 skipped), 10,000 combat battles and14 migration/auth/encounter
+checks; separate disposable PostgreSQL passed33 movement/company/contract checks.
+Playable: `http://127.0.0.1:5287`, ПКМ идти, `S` остановиться. Full20-scenario
+acceptance and full M1 remain open; p95 search50.88ms exceeds50ms, GPU FPS is not proven. Four-layer terrain and road strips are implemented;
+a representative DPR1/2 marker sample measured1.37CSSpx error. Detailed implementation, compatibility and next cycle:
+[M1-FREE-MOVEMENT result](../work-packages/M1-FREE-MOVEMENT.md#implementation-result--2026-10-03).
+Working branch `codex/free-world-movement-v3`; staged changes, NOT_COMMITTED.
+The existing pre-commit/main-base quality gate rejected complexity/duplication;
+the diagnostic slice-base gate also fails (62 new complexity findings,19 new
+clone groups). Functional verification is passed, publication readiness is not.
+No push/merge/deployment/paid resources. Player database preserved; disposable
+check volumes removed.
+
 **Cycle 3 delivered for owner playtest — 2026-10-02 (not yet accepted):** on
 `codex/m1-c06-rescue` ([PR #135](https://github.com/Vovanostm/warwrit/pull/135)).
 How to try it: [M1_LOCAL_PLAYTEST](M1_LOCAL_PLAYTEST.md). Seen live on real
