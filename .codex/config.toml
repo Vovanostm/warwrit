@@ -1,8 +1,6 @@
 [agents]
 # Maximum spawned threads per session; the primary is excluded.
-max_concurrent_threads_per_session = 12
-default_subagent_model = "gpt-6-luna"
-default_subagent_reasoning_effort = "high"
+max_threads = 12
 
 # Explicit registration supports hosts without standalone-agent discovery.
 [agents.warwrit_explorer]

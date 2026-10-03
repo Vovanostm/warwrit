@@ -16,6 +16,7 @@
       "Биомы обширнее, с разнообразными природными контурами; добавить деревья и более реалистичные разнообразные текстуры.",
       "Десять субагентов по отдельным материалам и независимый критик для каждого существенного игрового или визуального цикла.",
       "Колесо над всей областью карты, включая HTML-подписи, меняет масштаб плавно и не прокручивает страницу; дороги естественные и извилистые.",
+      "Улучшить качество текстур: убрать видимые повторы и склейки, оживить карту, добавить траву, шевелящуюся от ветра.",
       "Решение владельца 2026-10-03: реализовать ощутимо более быстрые тропы, грунтовые дороги и мощёные тракты по обсуждённой калибровке; маршрут выбирается по времени прибытия."
     ],
     "preservedDecisions": [
@@ -1008,5 +1009,18 @@
     "compatibility": "V1/V2/V3/V4 positions readable; accepted V2 speed schedules, receipts and deadlines frozen. New orders V4/V3; no migration/reset/clock change.",
     "routing": "Costs and admissible heuristic use selected profile; smoothing preserves road-time advantage; slower road detour remains disfavored.",
     "status": "IMPLEMENTED; focused core/build/type/lint/format and real PostgreSQL checks passed; normal browser journey and independent road critic passed in documented scope; final balance/devices NOT_MEASURED."
+  },
+  "livingLandscapeAmendment": {
+    "date": "2026-10-03",
+    "authority": "Explicit owner request: improve repeated/seamed textures and add wind-moving grass and visual life.",
+    "boundary": "Renderer-only in the retained free-world-movement checkout; no geography, movement, weather/speed policy, money, database or dependency changes. Parent is sole writer; independent read-only critic required.",
+    "implementation": "Continuous non-repeating interior texture patches, smooth large-scale color variation; geographically grounded grass/reeds, sparse flowers and stones, travelling wind and water ripples. Decoration remains non-pickable; roads/site entrances and party/target/path stay readable.",
+    "acceptance": [
+      "Inspect default, close, overview and terrain/road/shore/woodland transitions in the authenticated existing game.",
+      "Observe wind over multiple frames; roots remain grounded, neighboring plants vary smoothly, water remains water.",
+      "Exercise left drag, wheel, right-click/STOP and reload; preserve saved company and unobstructed picking.",
+      "Inspect current screenshots and actual journey with an independent critic; fix material issues."
+    ],
+    "status": "IMPLEMENTATION_ACTIVE; new browser and visual acceptance NOT_RUN."
   }
 }

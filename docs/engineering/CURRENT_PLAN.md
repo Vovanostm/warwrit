@@ -28,6 +28,25 @@ normal login/map readback passed and isolated check infrastructure removed; para
 route-line work verified separately and retained. [Owning result](../work-packages/M1-FREE-MOVEMENT.md#road-speed-and-types-cycle--2026-10-03).
 No commit/push/merge/deployment; previous branch quality limitation remains.
 
+**Route art-direction critique — 2026-10-03:** owner rejected the current
+route presentation and requested a professional redesign proposal. Fresh
+independent critic finds the thin line/history/goal visually weak despite
+working route-progress mechanics. Selected proposal: CSS-pixel-sized parchment
+solid route with dark underlay, grey dashed history, rounded joins, diamond
+goal and explicit sprite masks on a projected SVG layer.
+[Owning brief](../work-packages/M1-FREE-MOVEMENT.md#route-presentation-critique--2026-10-03)
+is PROPOSED / NOT_IMPLEMENTED; multi-bend/day-night/zoom/contrast acceptance
+remains NOT_RUN / NOT_MEASURED. No game/runtime changes in this audit.
+
+**Living landscape refinement — 2026-10-03:** owner requested better textures,
+removal of visible repeats/seams, wind-moving grass and a more alive map.
+Parent `/root` is sole renderer writer in the retained `free-world-movement`
+checkout; existing player runtime/database preserved. Revision 3.3.0 records
+the bounded visual amendment. First outcome: seamless ground and grounded
+grass responding to travelling wind in the authenticated game at
+`http://127.0.0.1:5287`. Independent critic and current browser/check evidence
+are pending. No merge/deployment/paid resources authorized.
+
 **Route-progress correction — 2026-10-03:** owner requested visible traversed vs
 remaining route because the unchanged bright line looked broken. Parent is sole
 writer in the same isolated checkout; JSON revision 3.2.1 owns muted history,
@@ -360,3 +379,172 @@ activate CT02/JOIN until their real producers and required consumer evidence
 exist.
 
 Use the [current queue](PARALLEL_WAVES.md) for handoffs and [team responsibilities](AGENT_TEAM.md) for runtime capacity. Only checked mission PR merges are authorized; merge permission is not auto-merge, deployment, paid provisioning or force-push permission. Recheck exact PR head/base/review/CI and actual-main result per delivery. The final exact-tree verification sequence is owned by [AGENTS.md](../../AGENTS.md#verification-without-duplicate-work) and `scripts/bootstrap.sh`; apply CI `check:changes` to changed code without treating it as a replacement gate. Real durable, browser, Mac and owner journey evidence remains required under the [full M1 index](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s); none is claimed complete.
+
+## Earlier movement preparation and scope decisions — 2026-10-03
+
+The following checkpoints retain their dated source and interview decisions.
+Their pending implementation, branch, CI and writer states are historical;
+the delivered behavior and current publication authority are recorded above.
+
+**Free-movement implementation resumed — 2026-10-03:** owner requested
+implementation with skills and existing patterns. Active contract is
+[M1-FREE-MOVEMENT.json](../work-packages/M1-FREE-MOVEMENT.json), revision3.0.0.
+Resume found the JSON still at revision2 despite revision3 documentation;
+the retained refinement was restored, including ceil canonical lengths,
+floor heuristic and A* reopen. Same writer `/root/free_world_movement` owns
+the preserved dirty isolated checkout
+`/Users/vovanostm/.codex/worktrees/free-world-movement/warwrit` at
+`65c5e39290b0a28923ee365ef18096246d30cf7c`. No overlapping code writer.
+First observable cycle: immediate right-click, continuous banner, hidden fine
+grid and terrain-dependent speed in the real authenticated game. Parent owns
+documentation, independent review and isolated runtime/DB/browser lifecycle.
+Existing isolated database volumes are preserved; reserved ports are
+55147/5587/3187/5287/3188. Live main remains `4ec0be6`; PR135 remains open with
+failed CI. Implementation/acceptance checks for this resumed revision remain
+NOT_RUN at dispatch. No merge, deployment or paid resources are authorized.
+
+Resumed verification checkpoint: isolated PostgreSQL/Dex and baseline API/web
+were started; real Chrome login restored the same saved company. Its legacy
+free-v1 path was overdue (saved due tick14), while baseline UI still reported
+MOVING with ETA0 and a contradictory stationary line. This is a reproduced
+baseline defect, not new-revision acceptance. Independent source review found
+missing free-worker dispatch and late travel-food settlement at current tick;
+ordinary commands and contract/encounter catch-up need the same due boundary.
+First continuous-core build/focused grass timing passed as reported by author;
+independent built-export probes then reproduced missing obstacle clearance,
+diagonal corner crossing, approximate terrain-speed boundaries, nonoptimal goal
+connector cost and rejected fractional origins. Corrections remain with the
+same writer. Parent also reproduced production field construction failing on
+overlapping same-road corridors. These findings are open until corrected checks
+and the live journey pass. Target machine readback: MacBook Pro Mac15,6,
+Apple M3 Pro,36GB; FPS/path/latency remains NOT_MEASURED.
+
+**Integration ownership transfer — 2026-10-03:** `/root/free_world_movement`
+completed its core/camera continuation and stopped writing. Parent `/root` is
+now the sole writer in the same isolated checkout for V2 server/client integration,
+worker arrival and final corrections. Existing author edits remain preserved.
+No second code writer is active.
+
+**Continuous movement follow-up checkpoint — 2026-10-03:** same writer remains
+assigned to full V2 integration; camera-only completion is not delivery. Built
+core independent probes now confirm precise sloped speed boundaries, fractional
+origins, one-cell boundary passability and lower-row-major speed for shared
+edges (grass/marsh example2666667us). Production field builds without overlay
+ambiguity. One100-route deterministic map-spanning sample found100 paths without
+exceptions: p50171.8ms, p95622.3ms, max760.2ms on the named M3Pro. The previous
+fixture was not retained, so this is a new sample, not an exact repeated benchmark.
+Search still exceeds the50ms target. Live V2 journey, persistence/concurrency
+acceptance and final integrated gate remain NOT_RUN; baseline services/database
+are preserved. Canonical JSON readback is3.0.0 with20 scenarios, ceil lengths and
+floor/reopening heuristic. No release/merge/deployment is claimed.
+
+**Movement specification refinement — 2026-10-03:** owner requested a second
+research pass and a more concrete specification. The sole active full JSON
+[M1-FREE-MOVEMENT](../work-packages/M1-FREE-MOVEMENT.json) is now revision3.0.0.
+Research includes official BB Dev Blog7 (early WIP, real-time strategic parties)
+and relevant VCMI HeroesIII-compatible source: terrain/road/diagonal cost,
+turn policy and independent render interpolation. Closed BB/Heroes code and
+shipped exact coefficients were not verified. Revision3 selects a finite
+256x192 field (49152 hidden cells), 64fp cells, one blended ground surface,
+deterministic weighted A*/validated shortcuts, bounded microFp positions,
+integer-us accepted schedule, explicit MOVE_TO/STOP v2 targets/errors and
+automatic deadline settlement. It removes unbounded rational-position chains
+and ambiguous site targeting. Independent Fraction/isqrt arithmetic verifies
+terrain/diagonal costs, mixed schedule, partial STOP point and faster road
+detour; JSON shape/reference checks passed. Twenty acceptance scenarios are
+specified, not run. Existing worker remains stopped; no game code, new runtime
+journey, commit, publication, merge or deployment ran for this refinement.
+
+**Owner correction / JSON specification — 2026-10-03:** the owner rejected
+the coarse-grid discontinuous implementation and requested researched JSON
+requirements for continuous right-click movement, a much finer navigation grid,
+seamless terrain and terrain-dependent speed. Owning specification:
+[M1-FREE-MOVEMENT.json](../work-packages/M1-FREE-MOVEMENT.json), revision2.0.0.
+The same worker was interrupted; uncommitted code and partial corrections are
+preserved. No renewed implementation was dispatched. The JSON uses a hidden
+16-times-finer grid, weighted A*, validated path straightening, exact partial
+position and analytic server-time projection. Terrain multipliers, base speed
+and performance targets are provisional/unmeasured. The owner's reference is
+retained with the specification. JSON parsing, scenario/profile uniqueness
+and source/reference pointers were checked; new code/runtime acceptance is
+NOT_RUN. Prior acceptance findings below remain historical evidence, not a pass.
+
+**Free-movement acceptance review — 2026-10-03:** the assigned worker returned
+an uncommitted implementation with focused checks reported passed. Parent ran
+an isolated PostgreSQL17/Dex/API/web stack (55147/5587/3187/5287; realtime3188)
+and a real Chrome journey: login, company creation, terrain selection, supply
+preview and accepted movement. This is partial runtime evidence. Parent review
+confirmed hex-position snapping and missing automatic offline arrival; the
+worker also confirmed missing dangerous-route/supply enforcement. Corrections
+remain assigned to the same writer, including an exact retained partial-path
+cursor and smooth derived rendering, unchanged campaign clocks, worker arrival
+and guard preservation. Full stop/reroute/site-access/re-entry/restart acceptance
+and the final integrated gate are pending. No completed free-movement delivery,
+commit, publication, merge or deployment is claimed.
+
+**Free-movement implementation dispatch — 2026-10-03:** owner explicitly
+requested one subagent to prepare the global map and implement free movement.
+Active slice: [M1-FREE-MOVEMENT](../work-packages/M1-FREE-MOVEMENT.md), including
+its complete acceptance journey, source/compatibility contract and write set.
+Assigned writer: warwrit_implementer, exclusively in
+`/Users/vovanostm/.codex/worktrees/free-world-movement/warwrit`, isolated at
+PR135 head `65c5e39290b0a28923ee365ef18096246d30cf7c` (initially clean/detached).
+Primary and `/Users/vovanostm/learn/warwrit-m1` are not assigned for code edits.
+Parent owns source reconciliation, planning, shared resources, independent
+review, integration and final verification. This dispatch authorizes bounded
+implementation; no merge, deployment, paid work or runtime acceptance is implied.
+Canonical WORLD/approval/lore Notes and Purpose were read live; graph search
+returned no current world-adapter results, so source files were used.
+Existing main CI passed; PR135 remains open with failed CI. Implementation,
+new runtime journey and new checks are NOT_RUN at dispatch.
+
+**Owner scope interview — 2026-10-03:** the owner requires free global-map
+movement like Battle Brothers and describes the target as a Battle Brothers
+clone. The owner confirmed option 1: retain Warwrit's shared online world,
+using Battle Brothers as the gameplay reference. No global pause or personal
+world-time acceleration is introduced. Existing clocks and offline policy stay
+in force. The owner also confirmed six field-party members per company;
+the company's total roster is not capped by this answer. The owner selected
+the long-lived sandbox target: repeatable contracts, a changing world, economy
+and progression supporting weeks of play. The old finite M1 remains an
+intermediate milestone, not the finished-game scope. The first finished version
+is for a private group: the owner and invited players, without open registration.
+Public-release work is outside this first delivery; private multiplayer still
+needs correct ownership, persistence and recovery. The owner selected a target
+of 20–30 real minutes for an ordinary contract, including outbound travel,
+battle, return and reward. This is a design target, not a measured result or
+a change to the world clocks. The owner retained Warwrit's character progression
+through learning and practice; a separate BB combat-XP/level/perk system is not
+requested. The owner also requires major world crises in the first finished
+sandbox, as a separate playable world/content milestone. The owner selected
+10–20 simultaneous invited players as the acceptance target; server capacity
+is NOT_MEASURED. The owner selected an authored map; procedural world generation
+is outside this first version. The owner chose recoverable settlements after
+crisis devastation or capture, through gameplay actions, rather than permanent
+destruction. The owner selected one fully developed crisis type for the first
+finished version; additional types follow later. The specific type, recovery
+rules, triggers and recurrence remain unresolved; no particular new lore or
+rules are approved by the general requirement.
+The interview now establishes the high-level finished-game scope. The owner
+confirmed the eight-stage sequence with “Ок” on 2026-10-03; the stages and first
+playable cycle are in wiki §18. The first cycle is free movement on the authored map:
+select a traversable terrain
+point, travel, stop/reroute and retain the authoritative position after re-entry.
+This is a planning checkpoint, not implementation activation or runtime evidence;
+read the reconciled work-package/source contract before code changes.
+No deployment, provisioning or merge permission is added by these product answers.
+See [wiki §18](../wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03).
+Live readback: main `4ec0be6`; open PR135 head `65c5e39290b0a28923ee365ef18096246d30cf7c`,
+clean worktree `/Users/vovanostm/learn/warwrit-m1`. Its code uses site/road travel,
+not arbitrary terrain destinations. PR135 describes all eight runtime contracts
+and Babylon views; those runtime claims were not replayed in this interview.
+CI37033428128 failed because the coverage audit could not read
+`coverage/coverage-final.json`. No game checks, merge or deployment ran here.
+
+**M1 remaining-work overview — 2026-10-01:** the existing
+[wiki specification, section 17](../wiki/m1-spec.md#17-что-выполнить-до-полной-работоспособности-m1)
+now records the playable company/world cycle, complete FIRST HUNT cycle and
+full-content acceptance work. It incorporates the newer c06 Cycle 2/profile
+documentary checkpoint without changing dispatch or claiming runtime acceptance.
+`pnpm agent:status` succeeded: main `4ec0be6`, main CI successful; PR134/PR129
+remain open with failed CI. No game checks or new Airtable readback ran here.

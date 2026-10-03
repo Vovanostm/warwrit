@@ -2,6 +2,64 @@
 
 Applies repository-wide; read stricter directory instructions before editing.
 
+## Results first and quick wins
+
+Owner policy — 2026-10-01:
+
+- Deliver a usable player-visible result first; code, tests, reports and
+  infrastructure alone are not delivery.
+- Work in playable cycles: broad strokes, then detail. Each ends with a runnable,
+  understandable representative journey shown before expansion; a diagnostic
+  battle is not full M1.
+- Before each cycle, name one observable outcome and the simplest way to try it.
+  Build the shortest cohesive path with existing work and libraries.
+- Until it works well and meets player-facing acceptance, do not widen scope or
+  add content, extra tests, refactors, frameworks, tooling or performance work.
+- Before first playable, do only what is needed to prevent concrete data loss,
+  unauthorized access or incorrect money/state. Fix actual blockers; defer
+  optional hardening and extra tests until after the result.
+- If preparation accumulates without usable progress, stop and reduce the cycle;
+  ask if that changes agreed scope. No endless prerequisite packets or speculative
+  foundation.
+- Briefly show what is usable and how to try it; technical status cannot replace
+  demonstration. These priorities supersede older packet/planning requirements
+  that postpone first playable, not the full-M1 objective or safety.
+
+## Independent playable critique
+
+Owner policy — 2026-10-03:
+
+- For each substantive visual or gameplay cycle, launch an independent read-only
+  critic before presenting the cycle as complete. Reuse the critic for revisions.
+- Give the critic current screenshots and actual journey evidence. It checks
+  professional visual coherence, player/target readability, unobstructed input,
+  repetitive or empty travel, and concrete regressions against the owner request.
+- The author fixes confirmed material issues and requests another critic pass on
+  affected results. Cosmetic preferences and unmeasured player enjoyment stay
+  separate from defects; neither author confidence nor a green build is acceptance.
+
+## Minimal action and clarification
+
+Take the simplest minimal actions needed to satisfy the current request. Do not
+expand scope or add unnecessary investigation, planning, delegation or
+documentation. If anything is unclear, stop and ask the user one concise
+question before proceeding; do not guess or replace clarification with extended
+reasoning.
+
+Owner policy — 2026-10-01: do not routinely compute file hashes, compare
+checksums, create content manifests or repeat evidence audits. Use ordinary
+diffs and direct result checks. This does not change expected-head protection
+for merges. This supersedes older plan and skill requirements for this
+verification bookkeeping.
+
+## File-first project record
+
+Record substantive requirements, decisions, plans and results in their owning
+project files; update the existing wiki page instead of making copies. Chat is
+for a short summary and links, not the only durable record. Enter wiki pages
+through [docs/wiki/index.md](docs/wiki/index.md); keep live implementation status
+in [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md). Trivial replies need no filing.
+
 ## Hard rules
 
 These restate rules owned by the sections below. Check them before every write.
@@ -109,9 +167,10 @@ indexed at or after the current `HEAD` (re-index if not). Fall back to `rg`/`git
 and reading the files when the graph is stale, missing, returns nothing, or the
 answer decides ownership of a rule. Graph results are pointers; the source is proof.
 
-Run `pnpm agent:preflight` at the start of a task or resume to record checkout
-identity, and `pnpm agent:status` for the live main, CI, open PRs and active
-writer branches instead of trusting a written status. Focused commands for editing are in
+For code work, confirm the checkout, branch and dirty state before editing.
+Use `pnpm agent:status` when branch or PR integration needs live main, CI, PR
+and active-writer state. Small documentation edits do not require broad
+preflight or status checks. Focused commands are in
 [LOCAL_DEVELOPMENT.md](docs/engineering/LOCAL_DEVELOPMENT.md#focused-checks).
 
 ## Dependency and state boundaries
@@ -128,25 +187,26 @@ Reject invalid commands without partial mutation. Preserve exact money, unique o
 
 Apply the same canonical condition capabilities to actual tasks; presence, duty and ability are not interchangeable. Own retained values from external evidence instead of aliasing mutable adapter records. Narrative is an observer-appropriate rendering of established facts, never a second source of truth: no invented witness, fate, biography or teleport to make a story work. Keep new prose/content proposals separate from approved rules and code evidence.
 
-## Tests are executable specifications
+## Tests
 
-Owner policy, 2026-09-07: test important, durable software principles rather than mirror changing implementation. This supersedes blanket demands for a new test per behavior edit, command, field or helper.
+Use the smallest meaningful tests through public boundaries. Prioritize
+determinism, conservation, authorization, privacy, atomicity and idempotency.
+Reuse existing tests; add one only for an actual defect or important uncovered
+risk. No per-helper or count targets, coverage targets, or catalogue snapshots.
+Do not fake gameplay or database transactions, and do not remove the only
+regression for an unfixed bug. Run real database checks only for relevant
+database changes. Documentation and text-only changes need no game tests.
 
-Each retained test states an observable invariant through a stable public boundary. Priorities: determinism/replay, conservation and exact arithmetic, authorization/tenant isolation, privacy, atomic rejection, source idempotency, valid value-preserving serialization, and actual transaction/migration integrity. Add a small regression when a discovered defect violates one of these principles.
+## Proportional verification
 
-Do not snapshot entire catalogues, pin provisional balance values/counts/hashes as behavior, inspect private call order, mock every collaborator, or copy every command payload into a parallel test catalogue. Prefer a small set of readable examples and property/table-driven specifications. Use an independent schema validator only in test tooling, never as a second production rules engine. Compilation and content validation should handle structural checks already guaranteed there.
+Inspect the ordinary diff and the requested result. For code changes, run the
+smallest relevant test, typecheck or build for the concrete risk. Do not run the
+full suite after every packet or documentation change. Do not compute or compare
+hashes, create verification manifests, or repeat evidence audits.
 
-Refactoring or balance/content tuning should not require editing behavioral expectations. Change expectations only when the underlying contract changes, with its source recorded. Removing redundant tests must preserve their meaningful invariant in a named remaining specification; never delete the only regression for an unfixed bug. No test-count or blanket coverage targets. Do not replace many useful tests with one opaque giant test just to lower the count.
-
-Test the layer that owns the rule. Admission is not execution. Do not fake future gameplay handlers or database transactions to make a test pass. Test doubles are for external boundaries, not for reimplementing the domain. Keep a small real PostgreSQL migration/transaction check where applicable and the deterministic combat stress/replay gate.
-
-This is a project-specific risk-based policy, not a claim that Robert Martin recommends fewer tests indiscriminately. Relevant basis: his Test Contra-variance and Giving Up on TDD essays emphasize decoupling tests from implementation structure.
-
-## Verification without duplicate work
-
-During edits run focused specifications, formatting and typechecks for affected modules. Reuse completed evidence for an unchanged SHA; do not repeatedly run the full suite for wording-only progress updates.
-
-Before requesting acceptance, the exact final code must pass the existing full gate once in a clean environment. `scripts/bootstrap.sh` owns this sequence; other documents link here instead of copying it:
+For final integrated game-code delivery only, run the existing full gate once
+in a clean environment. `scripts/bootstrap.sh` owns this sequence; it is not a
+routine check for small tasks:
 
 ```bash
 pnpm verify
@@ -154,7 +214,8 @@ pnpm test:combat:stress
 pnpm test:migrations
 ```
 
-Record SHA, commands, outcomes and limitations. A tool/runner failure is not a pass; do not weaken checks to obtain green CI. A passed stress test proves technical invariants, not fun, balance, browser FPS or production load capacity.
+Briefly record actual checks, outcomes and limitations. A tool or runner failure
+is not a pass; do not weaken checks to obtain green CI.
 
 ## Persistence and operations
 
