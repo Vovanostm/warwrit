@@ -1,4 +1,3 @@
-import { compareNavigationOverlays, FREE_MOVEMENT_V3_PROFILE } from '@warwrit/game-core';
 import type { WorldContinuousMapDto, WorldFreeMovementV2ResponseDto } from '@warwrit/protocol';
 import { insidePolygon } from '../renderer/map-geography.js';
 
@@ -55,8 +54,10 @@ export function MovementTerrain(props: {
     .sort((a, b) => b.paintPriority - a.paintPriority)[0];
   const overlay = region.overlayShapes
     .filter((s) => insidePolygon(x, z, s.polygon))
-    .toSorted((a, b) =>
-      compareNavigationOverlays(a.overlayId, b.overlayId, FREE_MOVEMENT_V3_PROFILE),
+    .toSorted(
+      (a, b) =>
+        (region.navigationOverlayOrder?.indexOf(a.overlayId) ?? 0) -
+        (region.navigationOverlayOrder?.indexOf(b.overlayId) ?? 0),
     )[0];
   return (
     <p className="state-note">

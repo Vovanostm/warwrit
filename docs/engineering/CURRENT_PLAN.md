@@ -1,5 +1,22 @@
 # Warwrit current delivery plan
 
+**CI boundary correction — 2026-10-04:** PR136 and its main merge CI failed at
+`check:architecture`: the terrain label imported game-core directly from web.
+The attempted dependency declaration was rejected by the existing web/protocol
+boundary and discarded. The correction keeps navigation precedence in core,
+projects its ordered overlay IDs through the server/protocol map, and lets web
+read that immutable metadata. Older servers remain readable; geometry, drawing
+order, movement schedules and storage are unchanged. Architecture, affected
+lint/format/diff, protocol/core/testkit builds, web build, server typecheck and
+all ten existing public movement specifications passed. The initial local
+web/server checks saw stale protocol/testkit outputs; rebuilding those packages
+resolved them. Normal commit audit passed with no new issues (two inherited
+warnings excluded by its existing gate); no hook bypass for the correction.
+[PR137](https://github.com/Vovanostm/warwrit/pull/137) owns its integration and
+CI readback under the same explicit merge/sync request. The earlier main-base
+quality debt remains historical FAILED; PR136 and its main CI remain FAILED.
+No migration, dependency-policy change or deployment.
+
 **Integration result — 2026-10-04:** owner-requested combined publication is
 complete. [PR136](https://github.com/Vovanostm/warwrit/pull/136) merged normally
 into `main` as `f65daf62063951e8ab220c68213884833775105f`, with the expected
