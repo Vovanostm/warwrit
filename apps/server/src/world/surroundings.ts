@@ -1,4 +1,8 @@
-import { CONTINUOUS_WORLD_REGION } from '@warwrit/game-core';
+import {
+  compareNavigationOverlays,
+  CONTINUOUS_WORLD_REGION,
+  FREE_MOVEMENT_V2_PROFILE,
+} from '@warwrit/game-core';
 import { HUNT_PROFILES, projectCompanyLifecycle, SEROE_PORECHYE } from '@warwrit/game-core';
 import type { WorldSurroundingsDto } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
@@ -11,6 +15,18 @@ import { readHuntWorldState, selectHuntWorldRow } from '../contracts/first-hunt-
 import { readWorldClock, readWorldLight } from './clock.js';
 
 const MS_PER_TICK = '21600';
+const PUBLIC_CONTINUOUS_MAP = {
+  ...CONTINUOUS_WORLD_REGION,
+  navigationOverlayOrder: [
+    ...new Set(CONTINUOUS_WORLD_REGION.overlayShapes.map((shape) => shape.overlayId)),
+  ].toSorted((a, b) =>
+    compareNavigationOverlays(
+      a,
+      b,
+      CONTINUOUS_WORLD_REGION.speedProfileId ?? FREE_MOVEMENT_V2_PROFILE,
+    ),
+  ),
+};
 const PUBLIC_MAP: WorldSurroundingsDto['map'] = {
   regionVersion: SEROE_PORECHYE.version,
   regionName: SEROE_PORECHYE.name,
@@ -109,7 +125,7 @@ export function registerWorldSurroundingsRoute(
         serverTimeMs: clock.nowMs,
         campaign: { tick: clock.tick, msPerTick: MS_PER_TICK, ticksPerDay: TICKS_PER_DAY },
         light: readWorldLight(clock),
-        map: { ...PUBLIC_MAP, continuous: CONTINUOUS_WORLD_REGION },
+        map: { ...PUBLIC_MAP, continuous: PUBLIC_CONTINUOUS_MAP },
         observerSiteId,
         observedCompanies,
         observedHostiles,

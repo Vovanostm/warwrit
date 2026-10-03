@@ -377,6 +377,8 @@ export interface WorldContinuousMapDto {
     readonly paintPriority: number;
     readonly polygon: readonly WorldPointFpDto[];
   }[];
+  /** Server-derived navigation precedence, highest first; absent on older servers. */
+  readonly navigationOverlayOrder?: readonly string[];
   readonly overlayShapes: readonly {
     readonly shapeId: string;
     readonly overlayId: string;
