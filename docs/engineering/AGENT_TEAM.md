@@ -18,18 +18,15 @@ pins `warwrit_implementer` to `gpt-6-luna` and `warwrit_reviewer` to `gpt-6-sol`
 Use Sol for plan review as well. Reasoning settings remain inherited. Prompts
 prohibit child delegation; the parent assigns every packet.
 
-The project allows three child threads, excluding the parent: up to two independent
-Luna writers and one Sol reviewer. This is a bounded capacity trial, not a measured
-optimum or an instruction to fill idle slots. Each writer needs a separate worktree,
-write set and resource allocation. Start fewer when only one packet is ready.
-Two Luna writers have previously worked in distinct worktrees. In the restored
-September 29 session, however, spawning a new Luna returned `agent thread limit
-reached` after the retained Sol reviewer had completed; resuming an older archived
-Luna returned the same error. The available pair is currently one Luna and one Sol.
-Reuse these agents with explicit ownership transfers. A completed response is not
-proof that the host released its thread slot. Recheck actual host behavior before
-claiming additional capacity; changing this file cannot enlarge the running
-session. Never create user-owned tasks to evade limits.
+The primary project config reads `agents.max_threads = 12` under CLI 0.144.5.
+The last active-session readback exposed the parent plus two child slots. This is
+configured/runtime capacity evidence, not proof that twelve agents are staffed or
+that any count is optimal. Each writer still needs a separate worktree, write set
+and resource allocation; start only the writers needed for ready packets. Prior
+September 29 spawn attempts hit `agent thread limit reached` despite the config.
+A completed response is not proof that the host released its slot. Re-read live
+agent status and host behavior before assignment; a document change cannot enlarge
+the running session. Never create user-owned tasks to evade limits.
 See [the current packet queue](PARALLEL_WAVES.md) for dependencies and exact ownership.
 
 ## Assignment and scheduling
@@ -67,14 +64,18 @@ children do not execute its publication/checkpoint steps.
 ## Loading and host limits
 
 [Official Codex documentation](https://developers.openai.com/codex/multi-agent)
-defines project discovery from `.codex/agents/*.toml`. Explicit registrations in
-`.codex/config.toml` also support the installed CLI. `max_threads` is the documented
-legacy alias: the older CLI 0.144.5 rejected `max_concurrent_threads_per_session` during
-configuration readback. CLI 0.146.0 `codex features list` exits successfully and the TOML files parse;
-this does not prove that this untrusted worktree loaded the project settings or
-that a running session has three child slots. The primary project remains trusted;
-no global trust entry was changed. Start a fresh trusted project session after changes and
-verify the actual host exposes the named roles. Do not change global trust silently.
+defines project discovery from `.codex/agents/*.toml`. Primary project configuration
+now uses the legacy-compatible `agents.max_threads = 12`: the installed primary CLI
+0.144.5 rejected `max_concurrent_threads_per_session` and the `default_subagent_*`
+keys as role entries. A sanitized `config/read` through that primary CLI confirmed
+`max_threads = 12` and all four project role paths. The implementer, reviewer and
+orchestrator files explicitly pin Luna, Sol and Astra at high reasoning; TOML parsing
+confirmed those values, while `config/read` exposes registration paths rather than
+per-role model settings. Explorer has no project default and must be assigned Luna
+explicitly at dispatch. This is configuration/readback evidence, not a spawned-role
+or capacity test: the running session remains limited to parent plus two children,
+and fresh-session capacity is **NOT_RUN**. The user's global config and trust entries
+were not changed.
 
 Host/runtime overrides can take precedence. A read-only profile is not proof that
 every connector/tool is unable to write. A prompt's no-delegation rule is behavioral,

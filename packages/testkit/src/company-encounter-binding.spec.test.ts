@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   COMPANY_CATALOGUE,
   ENCOUNTER_BINDING_VERSION,
+  FIRST_HUNT_WORLD_BINDING_VERSION,
   M1_DOMAIN_BRIDGE_RULESET_ID,
   applyCombatCommand,
   battleId,
@@ -10,10 +11,16 @@ import {
   combatReceiptEventIds,
   commandId,
   createCombatReceiptJournal,
+  createCombatEncounterApplication,
+  createCompanyLearningState,
   createHexagon,
   prepareCombatReceipt,
   prepareEncounterBinding,
+  prepareBeginCombatAggregate,
+  readCompanyCombatAggregateState,
   replayCombat,
+  createSocialState,
+  isOpposingEncounterSide,
   sideId,
   unitId,
 } from '@warwrit/game-core';
@@ -163,6 +170,167 @@ describe('G05 — whole-candidate real participant binding', () => {
     const reloaded = JSON.parse(serialized) as typeof binding;
     const replay = replayCombat({ schemaVersion: 2, setup: reloaded.setup, commands: [] });
     expect(canonicalCombatState(replay.state)).toBe(canonicalCombatState(binding.initial.state));
+    expect(Object.hasOwn(binding, 'worldParticipants')).toBe(false);
+    expect(binding.version).toBe(ENCOUNTER_BINDING_VERSION);
+    expect(JSON.stringify(binding)).toBe(
+      JSON.stringify({
+        schemaVersion: 1,
+        version: ENCOUNTER_BINDING_VERSION,
+        bindingId: binding.bindingId,
+        worldId: binding.worldId,
+        sourceId: binding.sourceId,
+        sourceEventId: binding.sourceEventId,
+        atTick: binding.atTick,
+        location: binding.location,
+        participants: binding.participants,
+        setup: binding.setup,
+        initial: binding.initial,
+        lastAppliedRevision: binding.lastAppliedRevision,
+      }),
+    );
+  });
+
+  it('binds authentic world participants without changing the legacy company-only replay shape', () => {
+    const f = fixture();
+    const alliedSideId = sideId('companies');
+    const hostileSideId = sideId('hostiles');
+    const evidence: EncounterPositionEvidence = {
+      ...f.evidence,
+      version: FIRST_HUNT_WORLD_BINDING_VERSION,
+      setup: {
+        ...f.evidence.setup,
+        sides: [
+          {
+            id: alliedSideId,
+            retreatHexes: f.evidence.setup.map.hexes.filter(({ q }) => q === -2),
+          },
+          {
+            id: hostileSideId,
+            retreatHexes: f.evidence.setup.map.hexes.filter(({ q }) => q === 2),
+          },
+        ],
+      },
+      parties: f.evidence.parties.map((party) => ({ ...party, sideId: alliedSideId })),
+      worldParticipants: [
+        {
+          entityId: 'world-raider-front',
+          sourceId: 'world-raider-genesis',
+          unitId: unitId('world-raider-front'),
+          sideId: hostileSideId,
+          position: { q: 2, r: -1 },
+          weaponId: 'raider',
+          attributes: {
+            accuracy: 55,
+            armor: 20,
+            defense: 40,
+            health: 60,
+            initiative: 40,
+            morale: 60,
+            stamina: 70,
+          },
+          initialPools: { health: 55, armor: 15, stamina: 60, morale: 60 },
+        },
+      ],
+    };
+
+    const binding = prepareEncounterBinding(f.sources, f.request, evidence);
+    expect(
+      createCombatReceiptJournal(binding, f.sources[0]!.root.lifecycle.companyId).binding.version,
+    ).toBe(FIRST_HUNT_WORLD_BINDING_VERSION);
+    expect('worldParticipants' in binding ? binding.worldParticipants : undefined).toEqual(
+      evidence.worldParticipants,
+    );
+    expect(
+      binding.setup.units.find((unit) => unit.id === unitId('world-raider-front')),
+    ).toMatchObject({
+      sideId: hostileSideId,
+      position: { q: 2, r: -1 },
+      initialPools: { health: 55, armor: 15, stamina: 60, morale: 60 },
+    });
+    const replay = replayCombat({ schemaVersion: 2, setup: binding.setup, commands: [] });
+    expect(canonicalCombatState(replay.state)).toBe(canonicalCombatState(binding.initial.state));
+    expect(
+      isOpposingEncounterSide(
+        binding,
+        f.sources[0]!.root.lifecycle.companyId,
+        f.evidence.parties[1]!.members[0]!.unitId,
+      ),
+    ).toBe(false);
+    expect(
+      isOpposingEncounterSide(
+        binding,
+        f.sources[0]!.root.lifecycle.companyId,
+        unitId('world-raider-front'),
+      ),
+    ).toBe(true);
+
+    const legacy = prepareEncounterBinding(f.sources, f.request, f.evidence);
+    expect(Object.hasOwn(legacy, 'worldParticipants')).toBe(false);
+    expect(legacy.version).toBe(ENCOUNTER_BINDING_VERSION);
+    const legacyReplay = replayCombat({ schemaVersion: 2, setup: legacy.setup, commands: [] });
+    expect(canonicalCombatState(legacyReplay.state)).toBe(
+      canonicalCombatState(legacy.initial.state),
+    );
+
+    const aggregate = {
+      economy: f.sources[0]!.root,
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    };
+    const begun = prepareBeginCombatAggregate(aggregate, f.sources, f.request, evidence);
+    expect(begun.kind).toBe('PREPARED');
+    if (begun.kind !== 'PREPARED') return;
+    const roundTrip = readCompanyCombatAggregateState(JSON.parse(JSON.stringify(begun.next)));
+    expect(roundTrip.encounter.active?.binding.version).toBe(FIRST_HUNT_WORLD_BINDING_VERSION);
+    expect('worldParticipants' in roundTrip.encounter.active!.binding).toBe(true);
+
+    const malformedLegacy = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
+    const encounter = malformedLegacy['encounter'] as Record<string, unknown>;
+    const active = encounter['active'] as Record<string, unknown>;
+    const invalidBinding = active['binding'] as Record<string, unknown>;
+    invalidBinding['version'] = ENCOUNTER_BINDING_VERSION;
+    active['bindingDigest'] = canonicalJson(invalidBinding);
+    expect(() => readCompanyCombatAggregateState(malformedLegacy)).toThrow(TypeError);
+
+    for (const [field, replacement] of [
+      ['sideId', 'hostiles'],
+      ['position', { q: -2, r: -1 }],
+    ] as const) {
+      const changedParticipant = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
+      const changedActive = (changedParticipant['encounter'] as Record<string, unknown>)[
+        'active'
+      ] as Record<string, unknown>;
+      const changedBinding = changedActive['binding'] as Record<string, unknown>;
+      const participants = changedBinding['participants'] as Array<Record<string, unknown>>;
+      participants[0]![field] = replacement;
+      changedActive['bindingDigest'] = canonicalJson(changedBinding);
+      expect(() => readCompanyCombatAggregateState(changedParticipant)).toThrow(TypeError);
+    }
+
+    const missingWorldParticipants = JSON.parse(JSON.stringify(begun.next)) as Record<
+      string,
+      unknown
+    >;
+    const missingActive = (missingWorldParticipants['encounter'] as Record<string, unknown>)[
+      'active'
+    ] as Record<string, unknown>;
+    const missingBinding = missingActive['binding'] as Record<string, unknown>;
+    Reflect.deleteProperty(missingBinding, 'worldParticipants');
+    missingActive['bindingDigest'] = canonicalJson(missingBinding);
+    expect(() => readCompanyCombatAggregateState(missingWorldParticipants)).toThrow(TypeError);
+
+    const mismatchedWorldUnit = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
+    const mismatchedActive = (mismatchedWorldUnit['encounter'] as Record<string, unknown>)[
+      'active'
+    ] as Record<string, unknown>;
+    const mismatchedBinding = mismatchedActive['binding'] as Record<string, unknown>;
+    const mismatchedSetup = mismatchedBinding['setup'] as Record<string, unknown>;
+    const units = mismatchedSetup['units'] as Array<Record<string, unknown>>;
+    const worldUnit = units.find((unit) => unit['id'] === 'world-raider-front')!;
+    worldUnit['sideId'] = 'companies';
+    mismatchedActive['bindingDigest'] = canonicalJson(mismatchedBinding);
+    expect(() => readCompanyCombatAggregateState(mismatchedWorldUnit)).toThrow(TypeError);
   });
 
   type Fixture = ReturnType<typeof fixture>;

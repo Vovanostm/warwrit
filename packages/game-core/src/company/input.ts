@@ -17,20 +17,42 @@ export type ObjectOf<F extends Fields> = { readonly [K in RequiredKeys<F>]: Valu
   readonly [K in OptionalKeys<F>]?: ValueOf<F[K]>;
 };
 
-const JSON_LIMITS = Object.freeze({ depth: 20, nodes: 10000, entries: 1000 });
+const JSON_LIMITS = Object.freeze({
+  depth: 20,
+  nodes: 10000,
+  entries: 1000,
+  text: MAX_TEXT_LENGTH,
+});
+/**
+ * Owned whole-root comparisons (a company aggregate with history and an encounter is far
+ * larger than any request). Same encoding as canonicalJson, only a larger work budget.
+ */
+// An active encounter retains the canonical encoding of the admitted root as one string.
+const STATE_JSON_LIMITS = Object.freeze({
+  depth: 64,
+  nodes: 2_000_000,
+  entries: 200_000,
+  text: 50_000_000,
+});
+type JsonLimits = typeof JSON_LIMITS | typeof STATE_JSON_LIMITS;
 export function plainObject(value: unknown): value is Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
   const prototype: unknown = Object.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
 }
 /** One detached data snapshot: never call a method or getter supplied by the caller. */
-export function snapshotJson(value: unknown): JsonValue | undefined {
-  let remaining = JSON_LIMITS.nodes;
+export function snapshotJson(
+  value: unknown,
+  limits: JsonLimits = JSON_LIMITS,
+): JsonValue | undefined {
+  let remaining = limits.nodes;
   const ancestors = new Set<object>();
   function copy(item: unknown, depth: number): JsonValue {
-    if (--remaining < 0 || depth > JSON_LIMITS.depth) throw new TypeError('JSON budget exceeded');
+    if (--remaining < 0 || depth > limits.depth) throw new TypeError('JSON budget exceeded');
     if (item === null || typeof item === 'boolean') return item;
-    if (typeof item === 'string' && [...item].length <= MAX_TEXT_LENGTH) return item;
+    // Code points never exceed UTF-16 units, so only long strings need the exact count.
+    if (typeof item === 'string' && (item.length <= limits.text || [...item].length <= limits.text))
+      return item;
     if (
       typeof item === 'number' &&
       Number.isFinite(item) &&
@@ -46,7 +68,7 @@ export function snapshotJson(value: unknown): JsonValue | undefined {
     const descriptors = Object.getOwnPropertyDescriptors(item);
     const keys = Reflect.ownKeys(descriptors).filter((key) => !array || key !== 'length');
     const length: unknown = descriptors['length']?.value;
-    if (keys.length > JSON_LIMITS.entries || (array && length !== keys.length))
+    if (keys.length > limits.entries || (array && length !== keys.length))
       throw new TypeError('Invalid container size');
     ancestors.add(item);
     const result: Record<string, JsonValue> = {};
@@ -60,10 +82,11 @@ export function snapshotJson(value: unknown): JsonValue | undefined {
       const descriptor = descriptors[key]!;
       if (!('value' in descriptor) || !descriptor.enumerable)
         throw new TypeError('Not a data property');
-      Object.defineProperty(result, key, {
-        value: copy(descriptor.value, depth + 1),
-        enumerable: true,
-      });
+      const copied = copy(descriptor.value, depth + 1);
+      // Plain assignment keeps fast object shapes; only `__proto__` needs a defined property.
+      if (key === '__proto__')
+        Object.defineProperty(result, key, { value: copied, enumerable: true, writable: true });
+      else result[key] = copied;
     }
     ancestors.delete(item);
     return Object.freeze(array ? Object.values(result) : result);
@@ -178,7 +201,14 @@ export const jsonObject: Input<{ readonly [key: string]: JsonValue }> = {
 };
 /** Locale-independent request identity; not a cryptographic digest or public receipt. */
 export function canonicalJson(value: unknown): string {
-  const snapshot = snapshotJson(value);
+  return encodeCanonical(value, JSON_LIMITS);
+}
+/** canonicalJson for trusted, owned aggregate roots that exceed the request budget. */
+export function canonicalStateJson(value: unknown): string {
+  return encodeCanonical(value, STATE_JSON_LIMITS);
+}
+function encodeCanonical(value: unknown, limits: JsonLimits): string {
+  const snapshot = snapshotJson(value, limits);
   if (snapshot === undefined) throw new TypeError('Expected bounded JSON data');
   function encode(item: JsonValue): string {
     if (item === null || typeof item !== 'object') return JSON.stringify(item);

@@ -1,4 +1,392 @@
 {
   "schemaVersion": 1,
-  "assets": []
+  "assets": [
+    {
+      "id": "art.m1.battle.ground-grass",
+      "path": "assets/art/m1/battle/ground-grass.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/ground-grass.json",
+      "generatedAt": "2026-10-02T10:59:09.454Z"
+    },
+    {
+      "id": "art.m1.battle.ground-mud",
+      "path": "assets/art/m1/battle/ground-mud.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/ground-mud.json",
+      "generatedAt": "2026-10-02T11:00:36.657Z"
+    },
+    {
+      "id": "art.m1.battle.obstacle-rubble",
+      "path": "assets/art/m1/battle/obstacle-rubble.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/obstacle-rubble.json",
+      "generatedAt": "2026-10-02T11:01:40.833Z"
+    },
+    {
+      "id": "art.m1.battle.unit-merc-spear",
+      "path": "assets/art/m1/battle/unit-merc-spear.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-merc-spear.json",
+      "generatedAt": "2026-10-02T10:54:33.798Z"
+    },
+    {
+      "id": "art.m1.battle.unit-merc-sword",
+      "path": "assets/art/m1/battle/unit-merc-sword.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-merc-sword.json",
+      "generatedAt": "2026-10-02T10:52:11.960Z"
+    },
+    {
+      "id": "art.m1.battle.unit-raider-axe",
+      "path": "assets/art/m1/battle/unit-raider-axe.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-raider-axe.json",
+      "generatedAt": "2026-10-02T10:56:01.232Z"
+    },
+    {
+      "id": "art.m1.battle.unit-raider-spear",
+      "path": "assets/art/m1/battle/unit-raider-spear.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-raider-spear.json",
+      "generatedAt": "2026-10-02T10:57:29.164Z"
+    },
+    {
+      "id": "art.m1.style.portrait-leader",
+      "path": "assets/art/m1/style/portrait-leader.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/portrait-leader.json",
+      "generatedAt": "2026-10-01T23:48:46.986Z"
+    },
+    {
+      "id": "art.m1.style.tile-riverbank",
+      "path": "assets/art/m1/style/tile-riverbank.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/tile-riverbank.json",
+      "generatedAt": "2026-10-01T23:47:50.500Z"
+    },
+    {
+      "id": "art.m1.style.unit-a-painted",
+      "path": "assets/art/m1/style/unit-a-painted.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/unit-a-painted.json",
+      "generatedAt": "2026-10-01T23:44:09.090Z"
+    },
+    {
+      "id": "art.m1.style.unit-b-pixel",
+      "path": "assets/art/m1/style/unit-b-pixel.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/unit-b-pixel.json",
+      "generatedAt": "2026-10-01T23:55:34.252Z"
+    },
+    {
+      "id": "art.m1.style.unit-c-ink",
+      "path": "assets/art/m1/style/unit-c-ink.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/style/unit-c-ink.json",
+      "generatedAt": "2026-10-01T23:50:38.332Z"
+    },
+    {
+      "id": "art.m1.map.forest-clump",
+      "path": "assets/art/m1/map/forest-clump.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/forest-clump.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.ground-land",
+      "path": "assets/art/m1/map/ground-land.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/ground-land.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.party-banner",
+      "path": "assets/art/m1/map/party-banner.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/party-banner.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-city",
+      "path": "assets/art/m1/map/site-city.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-city.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-farmstead",
+      "path": "assets/art/m1/map/site-farmstead.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-farmstead.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-mill",
+      "path": "assets/art/m1/map/site-mill.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-mill.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-river-village",
+      "path": "assets/art/m1/map/site-river-village.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-river-village.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.map.site-village",
+      "path": "assets/art/m1/map/site-village.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/site-village.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.battle.unit-captive",
+      "path": "assets/art/m1/battle/unit-captive.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-captive.json",
+      "generatedAt": "2026-10-02T12:02:07.880Z"
+    },
+    {
+      "id": "art.m1.battle.unit-mill-beast",
+      "path": "assets/art/m1/battle/unit-mill-beast.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-mill-beast.json",
+      "generatedAt": "2026-10-02T12:00:19.416Z"
+    },
+    {
+      "id": "art.m1.battle.unit-raider-bow",
+      "path": "assets/art/m1/battle/unit-raider-bow.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-raider-bow.json",
+      "generatedAt": "2026-10-02T11:56:37.056Z"
+    },
+    {
+      "id": "art.m1.battle.unit-raider-greatsword",
+      "path": "assets/art/m1/battle/unit-raider-greatsword.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-raider-greatsword.json",
+      "generatedAt": "2026-10-02T11:57:52.161Z"
+    },
+    {
+      "id": "art.m1.battle.unit-scout",
+      "path": "assets/art/m1/battle/unit-scout.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-scout.json",
+      "generatedAt": "2026-10-02T12:03:24.836Z"
+    },
+    {
+      "id": "art.m1.battle.unit-wolf",
+      "path": "assets/art/m1/battle/unit-wolf.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/battle/unit-wolf.json",
+      "generatedAt": "2026-10-02T11:59:04.166Z"
+    },
+    {
+      "id": "art.m1.places.bereznyak",
+      "path": "assets/art/m1/places/bereznyak.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/bereznyak.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.places.camp",
+      "path": "assets/art/m1/places/camp.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/camp.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.places.kamenny-brod",
+      "path": "assets/art/m1/places/kamenny-brod.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/kamenny-brod.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.places.severny-dvor",
+      "path": "assets/art/m1/places/severny-dvor.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/severny-dvor.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.places.staraya-melnitsa",
+      "path": "assets/art/m1/places/staraya-melnitsa.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/staraya-melnitsa.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.places.tikhaya-gat",
+      "path": "assets/art/m1/places/tikhaya-gat.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/tikhaya-gat.json",
+      "generatedAt": "2026-10-02"
+    },
+    {
+      "id": "art.m1.world-v2.grass",
+      "path": "assets/art/m1/world-v2/grass.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/grass.json",
+      "generatedAt": "2026-10-03T16:20:25.876Z"
+    },
+    {
+      "id": "art.m1.world-v2.woodland",
+      "path": "assets/art/m1/world-v2/woodland.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/woodland.json",
+      "generatedAt": "2026-10-03T16:20:58.334Z"
+    },
+    {
+      "id": "art.m1.world-v2.hills",
+      "path": "assets/art/m1/world-v2/hills.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/hills.json",
+      "generatedAt": "2026-10-03T16:21:05.548Z"
+    },
+    {
+      "id": "art.m1.world-v2.marsh",
+      "path": "assets/art/m1/world-v2/marsh.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/marsh.json",
+      "generatedAt": "2026-10-03T16:21:22.918Z"
+    },
+    {
+      "id": "art.m1.world-v2.riverbank",
+      "path": "assets/art/m1/world-v2/riverbank.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/riverbank.json",
+      "generatedAt": "2026-10-03T16:21:43.877Z"
+    },
+    {
+      "id": "art.m1.world-v2.rock",
+      "path": "assets/art/m1/world-v2/rock.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/rock.json",
+      "generatedAt": "2026-10-03T16:22:05.342Z"
+    },
+    {
+      "id": "art.m1.world-v2.road",
+      "path": "assets/art/m1/world-v2/road.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/road.json",
+      "generatedAt": "2026-10-03T16:22:16.148Z"
+    },
+    {
+      "id": "art.m1.world-v2.water",
+      "path": "assets/art/m1/world-v2/water.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/water.json",
+      "generatedAt": "2026-10-03T16:22:22.712Z"
+    },
+    {
+      "id": "art.m1.world-v2.deciduous",
+      "path": "assets/art/m1/world-v2/deciduous.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/deciduous.json",
+      "generatedAt": "2026-10-03T16:23:00.009Z"
+    },
+    {
+      "id": "art.m1.world-v2.conifer",
+      "path": "assets/art/m1/world-v2/conifer.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/conifer.json",
+      "generatedAt": "2026-10-03T16:23:21.518Z"
+    },
+    {
+      "id": "art.m1.world-v2.grass-meadow",
+      "path": "assets/art/m1/world-v2/grass-meadow.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/world-v2/grass-meadow.json",
+      "generatedAt": "2026-10-03T19:03:14.845414+00:00"
+    }
+  ]
 }

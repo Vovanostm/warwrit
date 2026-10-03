@@ -3,17 +3,22 @@ import type {
   EncounterFixtureCreateDto,
   EncounterRoomTicketDto,
 } from '@warwrit/protocol';
-import { isEncounterCommandDto, isEncounterId } from '@warwrit/protocol';
+import { isEncounterCommandDto, isEncounterId, isEncounterResumeDto } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
 
 import { resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
 import {
+  InconsistentActiveEncounterError,
+  readActiveEncounter,
+  readEncounterAccess,
+} from './access.js';
+import { registerEncounterLeadershipRoutes } from './leadership.js';
+import {
   createFixtureEncounter,
   executeEncounterCommand,
-  readEncounterMetadata,
-  readEncounterProjection,
+  requestEncounterResume,
 } from './executor.js';
 
 declare module 'fastify' {
@@ -25,7 +30,7 @@ declare module 'fastify' {
 
 export interface EncounterRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
-  readonly fixtureAdmission: true;
+  readonly fixtureAdmission?: true;
   readonly onCommandCommitted?: (encounterId: string) => Promise<void>;
   readonly roomTicketIssuer?: (
     encounterId: string,
@@ -76,12 +81,53 @@ function registerAuthenticatedRoutes(app: FastifyInstance, options: EncounterRou
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
     request.encounterAccountId = accountId;
   });
-  app.post('/encounters/fixtures', { bodyLimit: 256 }, async (request, reply) => {
-    const accountId = request.encounterAccountId;
-    if (!isFixtureCreate(request.body)) return reply.code(400).send({ error: 'invalid request' });
-    const created = await createFixtureEncounter(database, accountId);
-    return reply.code(201).send(created);
+  if (options.fixtureAdmission === true) {
+    app.post('/encounters/fixtures', { bodyLimit: 256 }, async (request, reply) => {
+      const accountId = request.encounterAccountId;
+      if (!isFixtureCreate(request.body)) return reply.code(400).send({ error: 'invalid request' });
+      const created = await createFixtureEncounter(database, accountId);
+      return reply.code(201).send(created);
+    });
+  }
+
+  registerEncounterLeadershipRoutes(app, database);
+
+  app.get('/encounters/active', async (request, reply) => {
+    try {
+      return await readActiveEncounter(database, request.encounterAccountId);
+    } catch (error) {
+      if (!(error instanceof InconsistentActiveEncounterError)) throw error;
+      return reply.code(409).send({ error: 'encounter unavailable' });
+    }
   });
+
+  app.post<{ Params: { encounterId: string }; Body: unknown }>(
+    '/encounters/:encounterId/resume',
+    { bodyLimit: 256 },
+    async (request, reply) => {
+      const { encounterId } = request.params;
+      if (
+        !isEncounterId(encounterId) ||
+        !isEncounterResumeDto(request.body) ||
+        request.body.encounterId !== encounterId
+      )
+        return reply.code(400).send({ error: 'invalid request' });
+      const access = await readEncounterAccess(
+        database,
+        request.encounterAccountId,
+        encounterId,
+        options.fixtureAdmission === true,
+      );
+      if (access === undefined) return reply.code(404).send({ error: 'encounter unavailable' });
+      const resumed = await requestEncounterResume(
+        database,
+        request.encounterAccountId,
+        encounterId,
+      );
+      if (resumed === undefined) return reply.code(409).send({ error: 'resume unavailable' });
+      return resumed;
+    },
+  );
 
   app.get<{ Params: { encounterId: string } }>(
     '/encounters/:encounterId',
@@ -90,9 +136,37 @@ function registerAuthenticatedRoutes(app: FastifyInstance, options: EncounterRou
       if (!isEncounterId(request.params.encounterId)) {
         return reply.code(400).send({ error: 'invalid encounter id' });
       }
-      const metadata = await readEncounterMetadata(database, accountId, request.params.encounterId);
-      if (metadata === undefined) return reply.code(404).send({ error: 'encounter unavailable' });
-      return { version: 1, encounterId: request.params.encounterId, ...metadata };
+      const access = await readEncounterAccess(
+        database,
+        accountId,
+        request.params.encounterId,
+        options.fixtureAdmission === true,
+      );
+      if (access === undefined) return reply.code(404).send({ error: 'encounter unavailable' });
+      return {
+        version: 1,
+        encounterId: request.params.encounterId,
+        revision: access.projection.revision,
+        status: access.projection.status,
+      };
+    },
+  );
+
+  app.get<{ Params: { encounterId: string } }>(
+    '/encounters/:encounterId/projection',
+    async (request, reply) => {
+      if (!isEncounterId(request.params.encounterId)) {
+        return reply.code(400).send({ error: 'invalid encounter id' });
+      }
+      const access = await readEncounterAccess(
+        database,
+        request.encounterAccountId,
+        request.params.encounterId,
+        options.fixtureAdmission === true,
+      );
+      if (access === undefined) return reply.code(404).send({ error: 'encounter unavailable' });
+      reply.header('cache-control', 'no-store');
+      return access.projection;
     },
   );
 
@@ -106,13 +180,13 @@ function registerAuthenticatedRoutes(app: FastifyInstance, options: EncounterRou
         if (!isEncounterId(request.params.encounterId) || !isRoomTicketRequest(request.body)) {
           return reply.code(400).send({ error: 'invalid request' });
         }
-        const projection = await readEncounterProjection(
+        const access = await readEncounterAccess(
           database,
           accountId,
           request.params.encounterId,
+          options.fixtureAdmission === true,
         );
-        if (projection === undefined)
-          return reply.code(404).send({ error: 'encounter unavailable' });
+        if (access === undefined) return reply.code(404).send({ error: 'encounter unavailable' });
         const cookieHeader = request.headers.cookie;
         if (cookieHeader !== undefined && typeof cookieHeader !== 'string') {
           return reply.code(400).send({ error: 'invalid request' });
@@ -131,7 +205,18 @@ function registerAuthenticatedRoutes(app: FastifyInstance, options: EncounterRou
       const accountId = request.encounterAccountId;
       if (!isEncounterCommandDto(request.body))
         return reply.code(400).send({ error: 'invalid request' });
-      const result = await executeEncounterCommand(database, accountId, request.body);
+      const access = await readEncounterAccess(
+        database,
+        accountId,
+        request.body.encounterId,
+        options.fixtureAdmission === true,
+      );
+      const result = await executeEncounterCommand(
+        database,
+        accountId,
+        request.body,
+        access !== undefined,
+      );
       if (result.status === 'accepted') {
         try {
           await options.onCommandCommitted?.(request.body.encounterId);

@@ -5,9 +5,19 @@ import { defineConfig, loadEnv } from 'vite';
 const workspaceRoot = fileURLToPath(new URL('../..', import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  const combatLabEnabled =
-    process.env['VITE_COMBAT_LAB'] === '1' ||
-    loadEnv(mode, workspaceRoot, 'VITE_')['VITE_COMBAT_LAB'] === '1';
+  const settings = {
+    ...loadEnv(mode, workspaceRoot, 'VITE_'),
+    ...loadEnv(mode, workspaceRoot, 'WEB_'),
+    ...loadEnv(mode, workspaceRoot, 'API_'),
+    ...loadEnv(mode, workspaceRoot, 'ENCOUNTER_'),
+  };
+  const combatLabEnabled = settings['VITE_COMBAT_LAB'] === '1';
+  const port = Number(settings['WEB_PORT'] ?? '5173');
+  const apiTarget =
+    settings['API_PROXY_TARGET'] ??
+    (combatLabEnabled ? 'http://127.0.0.1:3000' : 'http://localhost:3000');
+  const encounterRealtimeTarget =
+    settings['ENCOUNTER_REALTIME_PROXY_TARGET'] ?? 'http://127.0.0.1:3110';
   return {
     build: {
       sourcemap: true,
@@ -15,13 +25,25 @@ export default defineConfig(({ mode }) => {
     envDir: '../..',
     plugins: [react()],
     server: {
-      port: 5173,
-      ...(combatLabEnabled ? { host: '127.0.0.1', strictPort: true } : {}),
+      port,
+      ...(combatLabEnabled || settings['WEB_PORT'] !== undefined
+        ? { host: '127.0.0.1', strictPort: true }
+        : {}),
       proxy: {
+        '/auth/callback': {
+          target: apiTarget,
+          changeOrigin: true,
+        },
         '/api': {
-          target: combatLabEnabled ? 'http://127.0.0.1:3000' : 'http://localhost:3000',
+          target: apiTarget,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/u, ''),
+        },
+        '/colyseus': {
+          target: encounterRealtimeTarget,
+          changeOrigin: true,
+          ws: true,
+          rewrite: (path) => path.replace(/^\/colyseus/u, ''),
         },
       },
     },

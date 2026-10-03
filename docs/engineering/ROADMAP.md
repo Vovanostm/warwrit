@@ -8,32 +8,11 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
-The parent owns integration and final evidence. Verified main `f77f126` includes
-PR119 static contract content, PR122 source/time-bound world knowledge and
-PR121/123/124 equipped capture, static sprite and explicit animation sampling.
-Parent audited PR124 and actual-main CI36548850610:
-verify, combat stress/replay and real PostgreSQL migration smoke passed. These
-preparers do not establish the persistent M1 journey.
-
-G10 death, succession and departure/learning/social composition are locally
-reviewed through `ab09035`, including CAPTIVE; final integration remains before H.
-The bounded F01 trusted-deed nickname consumer is the active independent domain packet; full
-F01 still needs its content mapping and genuine producer. Full
-animated sprite/normal-depth corpus and matched renderer comparison remain open.
-[Parallel waves](PARALLEL_WAVES.md) records the current packet queue and exclusive
-paths. The actual host exposes the parent plus one Luna writer and one
-Sol reviewer. Fresh agents now exchange bounded packets at frozen handoffs; extra configured
-roles do not enlarge runtime capacity. The full alpha and launcher remain incomplete.
-
-| Lane                  | Observed state                                         | Next responsibility                                  |
-| --------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
-| C05 learning          | PR #113 merged; pure causal composition available      | G10/world producer integration and durable execution |
-| E04 social            | PR #99 merged; joint acceptance complete               | E05 delivered in PR #101; F01 follows                |
-| G combat consequences | G09 merged in PR #102; runtime producer remains RT     | G10 joins C08 and E05 before activation              |
-| PB diagnostic         | PB06 merged; optional follow-ups unassigned            | Use only for useful diagnostic evidence              |
-| World / identity      | Pure world foundation/routes and local identity merged | Movement and durable world/account/company authority |
-
-C05 and learning composition through pure C08 are delivered in PR100/104/107/113. Existing authentic local/outcome causes are composed; the real producer entering OUT_OF_CONTACT remains G10/world/JOIN work. E05 and G09 are delivered in PR101/102; G10 is next. PR108 provides pure route/arrival preparation, while real movement and persistence remain separate. PR106 provides local OIDC identity; ID03 company binding waits for H. PR109 delivers the renderer harness; PR116 recorded the renderer selection, but the later animation defect reopens matched animated acceptance; ART05 variants and ART06 integration remain open. PR112/115 deliver PostgreSQL fixture execution, AI, transport and scoped restart evidence; physical JOIN remains separate. Migration0004 is released; recheck the next H migration. The full M1 launcher remains pending. Build game-core before testkit checks; green independent branches do not prove their union.
+The live checkout, worker paths, API readiness, and evidence are recorded only in
+[CURRENT_PLAN](CURRENT_PLAN.md). The task ownership queue is
+[PARALLEL_WAVES](PARALLEL_WAVES.md). This roadmap keeps the durable dependency
+map and accepted M1 scope below; prior branch snapshots and lane statuses are
+historical and do not establish current integration readiness.
 
 ## Domain and durable company
 
@@ -52,7 +31,7 @@ C08 activates real learning only after the full finance/time/composition and int
 The accepted playable loop is **company → travel → contract → physical two-company PvE → proof → consequences → save/re-entry**. The work can proceed in disjoint source and implementation lanes, then join at real authority boundaries:
 
 1. **Finite source contracts.** [WORLD](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recTrujX2wy7V49qk)'s RC-P2 proposal is accepted as `AAAA` by [canonical approval](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/rechIKj0hsvfXIvFU) and the [lore v1.2 amendment](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recQNKqYfwoJpCXVu): initial six real hours/1,000 Campaign ticks per day, independent 600-second Light day/300-second night, prospective clock segments, continued accepted travel with defensive offline policy, and a visible supply guard for new dangerous routes without blocking a valid return or camp. PR #103 fixes authored topology/coordinates and pure clocks; SPEC-WORLD/W03 onward still fix routes and actual producers for arrival, visibility and handoff; accepted RC-P2 is not a fresh owner choice. SPEC-CONTRACTS fixes eight instances, three contract types, eleven scenes, helper terms, proof and terminal cases. ID01 fixes own-site account/recovery; RT01 fixes encounter authority/deadline; BATTLE-PROFILES fixes the minimum actor profiles; ART01 establishes the same-scene renderer comparison. Genuinely unsupported material policy needs one bounded owner decision before the affected activation.
-2. **Durable foundations.** ID02–ID03 authenticate and bind an account to the same company on reconnect. W01–W03 provide source-bound topology, persistent Campaign Day and Light clocks, real routes/arrival; W04–W06 add supplies, camp, entities and one world writer. RT02–RT07 own persistent encounters, authenticated transitions, deadlines, Colyseus projections, reconnect and restart. ART02–ART07 measure Babylon.js and PlayCanvas on the actual Mac, select the renderer through the accepted decision, and provide licensed scene/actor assets. K01–K04 enforce source/time-aware map, battle and rumor knowledge.
+2. **Durable foundations.** ID02–ID03 authenticate and bind an account to the same company on reconnect. W01–W03 provide source-bound topology, persistent Campaign Day and Light clocks, real routes/arrival; W04–W06 add supplies, camp, entities and one world writer. RT02–RT07 own persistent encounters, authenticated transitions, deadlines, Colyseus projections, reconnect and restart. ART02–ART07 implement and validate scene/actor assets against the accepted PlayCanvas selection in ADR-0005; they do not reopen renderer selection. K01–K04 enforce source/time-aware map, battle and rumor knowledge.
 3. **Contracts and physical join.** CT01–CT07 own versioned instances, accessible clues/captives/hunt proof, custody, globally unique authorized claims, rewards and the complete authored content. JOIN01–JOIN03 transfer the actual world/encounter writer, bind two companies by presence and opt-in terms, and apply terminal effects plus world/proof release atomically. A second company is physical participation, not a second bounty; a prepared single-company H transaction alone does not complete this join.
 4. **Player path.** UI01 consumes PB06's controller experience but connects to persistent RT authority and the selected renderer. UI02–UI06 expose real company/services, map/travel, contracts/battle/proof, losses and re-entry without duplicating canonical state or disclosing private facts. Each advertised button needs its real command/result; do not present an ornamental quest as completion.
 

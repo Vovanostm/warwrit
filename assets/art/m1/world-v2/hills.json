@@ -1,0 +1,21 @@
+{
+  "asset": "hills",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: stylized-concept\nAsset type: one square seamless tileable upland/hills ground albedo texture for a medieval temperate 2.5D world map.\nPrimary request: flat ground surface viewed exactly straight overhead, suitable as a repeatable terrain material. Sparse short dry sage grass interspersed with dusty olive-ochre soil, tiny subdued grey shale chips and winding subtle bare soil patches. Broad gentle irregular varied patches with crisp tiny geological details.\nStyle/medium: professional restrained painted ink and wash, Battle Brothers-like temperate medieval map aesthetic with realistic geological fine detail. Low-medium contrast, muted green-earth suite, neither cartoon nor photorealistic macro photograph.\nComposition: square 1024 by 1024 pixels, edge-to-edge flat texture, seamless wrap on all four edges with no framing, no recognizable central subject, no dense bold repetitive rock clusters. Surface details maintain a consistent scale across whole tile.\nLighting: even diffuse daylight, pure albedo with no baked lighting, no directional shadow, no highlights or vignette.\nColor palette: muted sage green, dusty olive ochre, earthy tan, understated grey shale. Restrained natural saturation.\nConstraints: exact overhead ground, no topographic hill or mountain illustration, no perspective or horizon, no scenery, no trees, no buildings, no large stones, no border, no text, no watermark, no neon colors. Every edge must seamlessly continue into its opposite edge when repeated. Do not draw the tile arrangement; deliver only a single seamless square ground image.",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a10290-7400-74f0-b09e-e4f1a28440d3/exec-4ff0bde1-524b-480f-b2c2-18b3bbaed202.png",
+  "saved_image": "/private/tmp/warwrit-world-art/hills/hills.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "transparency": false,
+  "corrections": 0,
+  "inspection": "Viewed with view_image. Square overhead ground with muted dry sage/olive grass, dusty ochre soil and fine grey shale. No horizon, topographic hills, text or border. Detail reads naturalistic and subtly painted.",
+  "tiling": "Prompted seamless on all edges. Opposite-edge continuity and repeat visibility were not mechanically or runtime verified; generated texture may retain subtle seams or recognizable repeated broad patches.",
+  "status": "DONE",
+  "concerns": [
+    "Seamless tiling remains unverified.",
+    "Fine detail is relatively naturalistic; evaluate at intended world-map scale."
+  ],
+  "workspaceAsset": "assets/art/m1/world-v2/hills.png"
+}

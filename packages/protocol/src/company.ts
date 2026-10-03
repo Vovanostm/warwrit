@@ -1,5 +1,27 @@
-/** Transport-only boundary. The authenticated server must validate unknown payloads in game-core. */
-export interface PlayerCompanyCommandDto {
+/** The CreateCompany payload accepted by the versioned domain command schema. */
+export interface CreateCompanyPayloadDto {
+  readonly originId: string;
+  readonly cultureId: string;
+  readonly homelandId: string;
+  readonly familyStoryId: string;
+  readonly leaderInput: {
+    readonly birthName: string;
+    readonly sex: string;
+    readonly birthCultureId: string;
+    readonly birthplaceId: string;
+    readonly originId: string;
+    readonly speciesId: string;
+    readonly bornAt: string;
+  };
+  /** Issued and validated by the server; an ID alone does not grant opening authority. */
+  readonly candidateSetId: string;
+  readonly selectedCandidateIds: readonly string[];
+  readonly name: string;
+  readonly bannerId: string;
+}
+
+/** Transport-only boundary. The authenticated server validates unknown payloads in game-core. */
+export interface PlayerCompanyCommandDto<Type extends string = string, Payload = unknown> {
   readonly schemaVersion: number;
   readonly commandId: string;
   readonly worldId: string;
@@ -10,8 +32,109 @@ export interface PlayerCompanyCommandDto {
   readonly campaignTick: string;
   readonly rulesetId: string;
   readonly sourceEventId?: string;
-  readonly type: string;
-  readonly payload: unknown;
+  readonly type: Type;
+  readonly payload: Payload;
+}
+export type CreateCompanyCommandDto = PlayerCompanyCommandDto<
+  'CreateCompany',
+  CreateCompanyPayloadDto
+>;
+
+export interface CompanyOpeningOptionsResponseDto {
+  readonly schemaVersion: 1;
+  readonly opening: {
+    readonly candidateSetId: string;
+    readonly companyId: string;
+    readonly origin: { readonly id: string; readonly label: string };
+    readonly culture: { readonly id: string; readonly label: string };
+    readonly homeland: { readonly id: string; readonly label: string };
+    readonly familyStory: { readonly id: string; readonly label: string };
+    readonly bannerId: string;
+    readonly leaderDefaults: Omit<CreateCompanyPayloadDto['leaderInput'], 'birthName'>;
+    readonly candidates: readonly {
+      readonly characterId: string;
+      readonly name: string;
+      readonly sex: string;
+      readonly templateId: string;
+    }[];
+    readonly selection: { readonly minCount: 1; readonly maxCount: 2 };
+    readonly availability: { readonly allCanonicalPlayerChoicesOpen: false };
+  };
+}
+
+/** Only the untrusted request members are sent; all command scope is server-derived. */
+export interface CreateCompanyRequestDto {
+  readonly schemaVersion: 1;
+  readonly commandId: string;
+  readonly type: 'CreateCompany';
+  readonly payload: CreateCompanyPayloadDto;
+}
+
+/** Narrow allowlisted view derived from the company's observation projection. */
+export interface CompanySummaryDto {
+  readonly companyId: string;
+  readonly revision: string;
+  readonly companyPresentation: { readonly name: string; readonly bannerId: string } | null;
+  readonly leaderId: string | null;
+  readonly runStatus: 'ACTIVE' | 'GAME_OVER' | 'UNKNOWN';
+  readonly characters: readonly {
+    readonly characterId: string;
+    readonly name: string;
+    readonly nicknameTextKey: string | null;
+    readonly perkIds: readonly string[];
+    readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
+  }[];
+}
+/** Owner-private physical and money view; only the owning account receives it. */
+export interface CompanyHoldingsDto {
+  /** Exact company-owned cash in q units (1 crown = 1,000,000 q); members' purses excluded. */
+  readonly cashQ: string;
+  readonly wallets: readonly {
+    readonly walletId: string;
+    readonly siteId: string;
+    /** Member who owns the purse, or null for a company wallet. */
+    readonly ownerCharacterId: string | null;
+    readonly cashQ: string;
+  }[];
+  readonly items: readonly {
+    readonly itemId: string;
+    readonly definitionId: string;
+    readonly quantity: number;
+    readonly currentCondition: number;
+    readonly maximumCondition: number;
+    /** Character carrying the item, or null for party supply / other containers. */
+    readonly carrierCharacterId: string | null;
+    readonly equippedBy: string | null;
+    /** Body slot the item can occupy, or null for supplies. */
+    readonly slot: 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT' | null;
+  }[];
+  readonly people: readonly {
+    readonly characterId: string;
+    /** Died in an encounter this company witnessed. */
+    readonly fallen: boolean;
+    readonly currentHealth: number | null;
+    readonly maximumHealth: number | null;
+    readonly currentStamina: number | null;
+    readonly maximumStamina: number | null;
+    /** Unresolved physical conditions (wounds, illness) by definition id. */
+    readonly conditions: readonly string[];
+  }[];
+  /** The company's party is in a field camp that covers its current food. */
+  readonly fieldCamp: boolean;
+  /** Wages earned and not yet paid, and the part of them already due. */
+  readonly wagesOwedQ: string;
+  readonly wagesDueQ: string;
+}
+export interface CompanyReadResponseDto {
+  readonly schemaVersion: 1;
+  readonly company: CompanySummaryDto | null;
+  /** Present whenever company is present. */
+  readonly holdings?: CompanyHoldingsDto;
+}
+export interface CompanyCommandAcceptedDto {
+  readonly commandId: string;
+  readonly ok: true;
+  readonly publicRevision: string;
 }
 /** Must be rendered from public observations, never a raw domain result/state/error object. */
 export interface CompanyCommandRejectionDto {
@@ -19,5 +142,83 @@ export interface CompanyCommandRejectionDto {
   readonly ok: false;
   readonly publicRevision: string;
   readonly code:
-    'INVALID_COMMAND' | 'NOT_AUTHORIZED' | 'CONTACT_OR_ACCESS_REQUIRED' | 'UNSUPPORTED_ACTION';
+    | 'INVALID_COMMAND'
+    | 'NOT_AUTHORIZED'
+    | 'CONTACT_OR_ACCESS_REQUIRED'
+    | 'UNSUPPORTED_ACTION'
+    | 'IDEMPOTENCY_CONFLICT'
+    | 'STALE_REVISION'
+    | 'INSUFFICIENT_ITEMS'
+    | 'INSUFFICIENT_STAMINA';
 }
+
+export const ORDINARY_PLAYER_COMPANY_COMMAND_TYPES = [
+  'Recruit',
+  'JoinFieldParty',
+  'SetAssignment',
+  'RequestDeparture',
+  'PayClaims',
+  'GrantFarewell',
+  'TransferFunds',
+  'BeginFieldCamp',
+  'EndMaintenance',
+  'AcceptSafeService',
+  'AmendSafeService',
+  'StartLearning',
+  'StopLearning',
+  'ChoosePerk',
+  'StartRetraining',
+  'ApplyCare',
+  'ReturnToService',
+  'DesignateHeir',
+  'ResolveLeadership',
+  'ResolveNickname',
+  'ChangePresentation',
+  'RenameCompany',
+  'TransferItem',
+  'EquipItem',
+  'BeginFieldCamp',
+  'EndFieldCamp',
+  'RepairItem',
+  'ClaimLoot',
+] as const;
+export type OrdinaryPlayerCompanyCommandType =
+  (typeof ORDINARY_PLAYER_COMPANY_COMMAND_TYPES)[number];
+
+/** Payloads whose complete ordinary-command effects and public readback are enabled in V2. */
+export interface OrdinaryPlayerCompanyPayloads {
+  readonly RenameCompany: {
+    readonly name: string;
+    readonly bannerId: string;
+  };
+  readonly ChoosePerk: {
+    readonly characterId: string;
+    readonly perkId: string;
+    readonly milestone: 25 | 60;
+  };
+  /** Pitch a field camp where the party stands still; the server attests the site. */
+  readonly BeginFieldCamp: Record<string, never>;
+  /** Strike the party's field camp. */
+  readonly EndFieldCamp: Record<string, never>;
+  /** Put an item the character already carries into a body slot; access is server-attested. */
+  readonly EquipItem: {
+    readonly characterId: string;
+    readonly itemId: string;
+    readonly slotId: 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT';
+  };
+}
+
+export type EnabledOrdinaryPlayerCompanyCommandType = keyof OrdinaryPlayerCompanyPayloads;
+export type OrdinaryPayloadForType<Type extends EnabledOrdinaryPlayerCompanyCommandType> =
+  OrdinaryPlayerCompanyPayloads[Type];
+
+/** Strict V2 player intent. Authority, company, time and canonical revision are server supplied. */
+export type OrdinaryPlayerCompanyCommandV2Dto = {
+  [Type in EnabledOrdinaryPlayerCompanyCommandType]: {
+    readonly schemaVersion: 2;
+    readonly commandId: string;
+    readonly expectedPublicRevision: string;
+    readonly type: Type;
+    readonly payload: OrdinaryPayloadForType<Type>;
+  };
+}[EnabledOrdinaryPlayerCompanyCommandType];

@@ -1,5 +1,7 @@
 # Documentation map
 
+- [`wiki/index.md`](wiki/index.md) — локальная wiki; вход к единой обзорной
+  спецификации M1.
 - [`authority/PROJECT_AUTHORITY.md`](authority/PROJECT_AUTHORITY.md) — source-of-truth hierarchy and change control.
 - [`architecture/0001-modular-monolith.md`](architecture/0001-modular-monolith.md) — typed modular-monolith boundary.
 - [`architecture/0002-deterministic-combat-kernel.md`](architecture/0002-deterministic-combat-kernel.md) — dependency-free deterministic M0 combat and replay decision.

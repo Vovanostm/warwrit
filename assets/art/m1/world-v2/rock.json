@@ -1,0 +1,32 @@
+{
+  "asset": "rock",
+  "status": "generated_and_visually_inspected",
+  "image": "/private/tmp/warwrit-world-art/rock/rock.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "requested_dimensions": {
+    "width": 1024,
+    "height": 1024
+  },
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "mode": "built-in",
+    "source": "/Users/vovanostm/.codex/generated_images/01a10291-4b67-7851-912a-48fd885f4309/exec-48e0c6fc-1cd3-4254-9cf3-c354a393dff5.png",
+    "corrections": 0,
+    "transparent_background": false,
+    "prompt": "Use case: stylized-concept\nAsset type: square seamless tileable ground albedo texture for a professional temperate medieval 2.5D strategy map.\nPrimary request: one flat overhead grey shale and rock surface texture, 1024 by 1024 square, artwork completely fills the tile. Opposite edges must match seamlessly in both axes for indefinite repetition.\nStyle/medium: restrained ink-and-wash rendering with believable geological stone material, finely drawn muted fractures and soft mineral washes; polished game terrain texture.\nComposition/framing: orthographic straight down, planar ground, organic irregular layered shale slabs of varied modest size, small fractures and gravel, tiny sparse muted moss confined to crevices. Fine material detail supported by calm low-frequency forms. No focal object or huge standout repeated stone.\nLighting/mood: diffuse even daylight, flat albedo only, consistent brightness to every edge; no directional illumination or baked cast shadows.\nColor palette: muted warm and cool grey stone, subtle ochre traces and subdued moss green, medium values, avoid black and chalk white.\nConstraints: continuous edge-to-edge geological surface with naturally matched opposite edges, no border, vignette, text, markings, mountains, horizon, perspective, relief cliffs, plants, objects, or dramatic cracks. Do not create a montage or a texture preview grid. Deliver just the original single texture tile."
+  },
+  "inspection": {
+    "method": "view_image",
+    "result": "Square flat overhead shale texture with restrained warm/cool grey and ochre, fine gravel, sparse muted moss and no text/border/vignette. Slab detail reads naturally. Fine edge shading depicts material relief; no broad directional cast shadows observed.",
+    "seam_check": "NOT_RUN: single tile inspected; exact opposite-edge continuity and repeated-map appearance require tiled runtime preview.",
+    "style_risks": [
+      "Stone material is more realistic than strongly painterly; ink/wash influence is subtle.",
+      "Largest slabs may be noticeable if texture scale is too large on map."
+    ]
+  },
+  "ownership": "Only /private/tmp/warwrit-world-art/rock/ was written; no repository or shared manifest changes.",
+  "workspaceAsset": "assets/art/m1/world-v2/rock.png"
+}

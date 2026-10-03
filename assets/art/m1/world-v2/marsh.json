@@ -1,0 +1,33 @@
+{
+  "asset": "marsh",
+  "path": "/private/tmp/warwrit-world-art/marsh/marsh.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "format": "PNG",
+  "prompt": "Use case: stylized-concept\nAsset type: seamless square tileable ground albedo texture for a medieval 2.5D strategy world map, 1024x1024 square\nPrimary request: professional realistic painted ink-and-wash marsh ground, temperate wetland. A straight overhead, flat ground surface fills the entire image.\nMaterials/textures: wet dark earthy peat with damp moss and small sedge tufts, irregular tiny shallow muddy pools, sparse broken reed fragments. Subtle organic unevenness, finely painted restrained texture, no large repeated landmarks. Pools are small, quiet, muddy grey-blue water, with soft irregular edges; peat remains brown-grey and readable rather than black.\nStyle/medium: realistic painterly ground material, delicate ink-and-wash touch, game-ready matte albedo with balanced detail suitable for zoomed-out map. Cohesive with muted sage grass and earthy brown woodland textures.\nLighting/mood: uniform diffuse daylight, flat albedo, no directional lighting or cast shadows.\nColor palette: natural muted olive, sage, grey-blue, desaturated dark earth brown; no vivid green, no black swamp.\nComposition/framing: orthographic perpendicular top-down; evenly distributed natural variation at small scale, no focal point. Opposite edges must continue seamlessly in both axes when repeated, with matching colors and forms crossing the image boundaries.\nConstraints: one square texture only, seamless tileable on ALL FOUR EDGES. No horizon, perspective, raised objects, trees, text, border, watermark, cast shadows, vignette, grid, checkerboard, large repeated landmarks, dramatic highlights, or noisy speckling. Preserve quiet readable middle values.",
+  "tool": "image_gen.imagegen",
+  "mode": "built-in",
+  "tool_arguments": {
+    "prompt": "Use case: stylized-concept\nAsset type: seamless square tileable ground albedo texture for a medieval 2.5D strategy world map, 1024x1024 square\nPrimary request: professional realistic painted ink-and-wash marsh ground, temperate wetland. A straight overhead, flat ground surface fills the entire image.\nMaterials/textures: wet dark earthy peat with damp moss and small sedge tufts, irregular tiny shallow muddy pools, sparse broken reed fragments. Subtle organic unevenness, finely painted restrained texture, no large repeated landmarks. Pools are small, quiet, muddy grey-blue water, with soft irregular edges; peat remains brown-grey and readable rather than black.\nStyle/medium: realistic painterly ground material, delicate ink-and-wash touch, game-ready matte albedo with balanced detail suitable for zoomed-out map. Cohesive with muted sage grass and earthy brown woodland textures.\nLighting/mood: uniform diffuse daylight, flat albedo, no directional lighting or cast shadows.\nColor palette: natural muted olive, sage, grey-blue, desaturated dark earth brown; no vivid green, no black swamp.\nComposition/framing: orthographic perpendicular top-down; evenly distributed natural variation at small scale, no focal point. Opposite edges must continue seamlessly in both axes when repeated, with matching colors and forms crossing the image boundaries.\nConstraints: one square texture only, seamless tileable on ALL FOUR EDGES. No horizon, perspective, raised objects, trees, text, border, watermark, cast shadows, vignette, grid, checkerboard, large repeated landmarks, dramatic highlights, or noisy speckling. Preserve quiet readable middle values.",
+    "transparent_background": false
+  },
+  "provenance": {
+    "source_path": "/Users/vovanostm/.codex/generated_images/01a10290-b7b2-7fb0-a371-542d818a0f7d/exec-96507718-1dc9-4ef6-a7f2-a4cc11c09af7.png",
+    "original_preserved": true,
+    "copied_without_modification": true,
+    "generation_attempts": 1,
+    "corrections": 0
+  },
+  "inspection": {
+    "method": "view_image",
+    "result": "Muted overhead peat/moss marsh with small muddy pools and sparse reeds. No text, border, trees, or horizon observed.",
+    "limitations": "Single tile visually inspected. Opposite-edge continuity and in-engine repeating appearance not measured; generated seamless intent is not proven."
+  },
+  "risks": [
+    "Exact seamless edge continuity remains unproven.",
+    "Fine peat/moss detail may read darker or busier at distant zoom; in-engine map-scale check needed."
+  ],
+  "workspaceAsset": "assets/art/m1/world-v2/marsh.png"
+}

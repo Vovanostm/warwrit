@@ -1,7 +1,7 @@
-import { compareCodeUnits, invariant } from '../primitives.js';
+import { invariant } from '../primitives.js';
 import { assertBattleState, effectiveInitiative } from './engine.js';
 import { createRandomState } from './random.js';
-import { combatRules } from './rules.js';
+import { combatRules, compareCombatUnitIds } from './rules.js';
 import { validateBattleSetupV2, type BattleSetupV2, type CombatUnitSetupV2 } from './setup-v2.js';
 import { COMBAT_SCHEMA_VERSION } from './types.js';
 import type {
@@ -42,7 +42,7 @@ function initialOrder(units: readonly CombatUnitState[], setup: BattleSetupV2): 
     .toSorted(
       (left, right) =>
         effectiveInitiative(right, rules) - effectiveInitiative(left, rules) ||
-        compareCodeUnits(left.id, right.id),
+        compareCombatUnitIds(setup.rulesetId, left.id, right.id),
     )
     .map(({ id }) => id);
 }

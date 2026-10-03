@@ -45,7 +45,7 @@ const perk = object({
 });
 const item = object({
   id,
-  kind: choice('weapon', 'shield', 'armor', 'consumable', 'book', 'permission'),
+  kind: choice('weapon', 'shield', 'armor', 'consumable', 'book', 'permission', 'trophy'),
   weightG: natural(),
   stackMax: natural(1),
   enabled: bool,
@@ -305,6 +305,9 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
         workId: 'local-knowledge',
       },
       { id: 'rare-treatment-token', kind: 'permission', weightG: 0, enabled: false },
+      { id: 'raider-standard-trophy', kind: 'trophy', weightG: 1000 },
+      { id: 'wolf-pelt-trophy', kind: 'trophy', weightG: 1500 },
+      { id: 'beast-claw-trophy', kind: 'trophy', weightG: 400 },
     ] as const
   ).map((item) => ({ stackMax: 1, enabled: true, ...item })),
   works: (

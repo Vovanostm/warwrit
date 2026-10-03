@@ -9,6 +9,7 @@ import {
   COMBAT_V2_SCHEMA_VERSION,
   createHexagon,
   M1_DOMAIN_BRIDGE_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V2_RULESET_ID,
   replayCombat,
   sideId,
   startBattleV2,
@@ -116,7 +117,9 @@ describe('combat V2 runtime', () => {
 
   it('breaks initiative ties by id code units, independent of the host locale', () => {
     // ICU collation (any locale) puts 'unit-a' first; code units put 'Unit-b' first.
-    const base = setupV2();
+    // Recorded m1-domain-bridge encounters keep their locale order (see
+    // order-compatibility.test.ts); the code-unit order applies from the V2 ruleset.
+    const base = { ...setupV2(), rulesetId: M1_DOMAIN_BRIDGE_V2_RULESET_ID };
     const [template] = base.units;
     if (template === undefined) throw new Error('fixture unit missing');
     const tied = {

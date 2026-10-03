@@ -13,11 +13,25 @@ automatically updated Codex personal memory. Do not load every link into every t
 | Handoff/evidence fields                  | [warwrit-delivery](../../.agents/skills/warwrit-delivery/SKILL.md#handoff)    | Diff/source changes invalidate affected evidence                                     |
 | Role assignment                          | [agent team](AGENT_TEAM.md)                                                   | Verify host support and resource ownership                                           |
 | Harness/quality lane state               | [harness handoff](HARNESS_HANDOFF.md)                                         | Refresh with `pnpm agent:status`; its facts are a dated checkpoint                   |
+| Agent capacity and process evidence      | [studio process audit](STUDIO_PROCESS_AUDIT_2026-09-29.md)                    | New session/config readback and each matched packet measurement                      |
 
 ## Source-linked operational lessons
 
 Reviewed 2026-09-27 against `a5fb1c0ba42d94ce80f8dce16d04203b9827c02e`.
 Historical observations require rechecking when their named source changes.
+
+Addendum 2026-09-29, observed in `warwrit-alpha-c06` at `4489db4` during a
+shared workspace dependency handoff:
+
+- Before mutating a dirty shared manifest or lockfile, save the exact pre-task
+  bytes or hash. Equal diff line counts do not prove unchanged content. This
+  task had no pre-mutation snapshot; the pinned filtered frozen install and
+  public ESM import passed, and the prior coverage graph was preserved by
+  inspection, but exact pre-task lock identity remains **UNVERIFIED**.
+- For related work, reuse and directly steer a native writer who already holds
+  source context instead of restarting each card from a fresh CLI task. CLI
+  session 71285 stopped before CreateCompany and the native backend writer
+  resumed source ownership. Any speedup from reuse remains **NOT_MEASURED**.
 
 - Workspace tests can need built public-package exports. Check manifests and the
   existing build order before treating a missing `dist` import as a domain bug.
@@ -39,6 +53,20 @@ Historical observations require rechecking when their named source changes.
   direct `src` tests) and hides testkit coverage from `src`. `pnpm test:coverage`
   runs Vitest in `coverage` mode, which resolves `@warwrit/*` to source. Measured
   coverage can contradict static CRAP estimates; measure before prioritising.
+- Coverage runs that mix built public workspace imports with direct source can
+  report duplicate Istanbul mappings. In the September 29 H probe, paired runs
+  isolated this to import resolution and a Vitest-only source alias yielded one
+  mapping; `/private/tmp/warwrit-h-fresh-evidence-luna-result.md` and
+  `/private/tmp/warwrit-h-alias-review-sol-result.md` hold revision-bound proof.
+  Recheck current Vitest config and imports before reusing this diagnosis;
+  synthetic same-span probes were not product evidence.
+- Duplicated live ownership in CURRENT_PLAN, AGENT_TEAM, PARALLEL_WAVES and
+  ROADMAP caused stale dispatches to recur. CURRENT_PLAN owns the live
+  checkout/evidence checkpoint, PARALLEL_WAVES the task/path/API queue, and
+  AGENT_TEAM the stable collaboration protocol; ROADMAP retains durable scope
+  and dependencies. Re-read the live queue at each handoff instead of copying
+  actor/path assignments into another document.
+
 - Generic review helpers conflicted with project test and approval policy and were
   removed on 2026-09-29; see [skills history](../../.agents/skills/README.md#history).
 

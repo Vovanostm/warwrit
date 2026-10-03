@@ -1,0 +1,19 @@
+{
+  "tool": "image_gen.imagegen",
+  "mode": "built-in",
+  "prompt": "Use case: stylized-concept\nAsset type: square seamless tileable opaque ground albedo texture for a professional temperate medieval 2.5D strategy world map, consistent with Battle Brothers-like restrained ink-and-wash material art.\nPrimary request: a grassland ground surface that repeats seamlessly in both axes; exact overhead orthographic view of flat ground, a material texture rather than a landscape scene.\nMaterials/textures: fine realistic small grass blades, scattered tiny herbs, sparse patches of exposed warm earth, natural irregular variations at fine, medium, and broad scales; no distinctive repeated motifs. Vegetation is cropped close to the ground, readable yet low contrast.\nStyle/medium: realistic painterly material with subtle restrained ink-and-wash detail, professional game texture, softly mottled rather than grainy.\nColor palette: muted mossy olive and sage greens with subtle warm ochre-brown earth; natural desaturated temperate grassland; no neon green.\nComposition/framing: square full bleed surface, uniform texture density across all edges, opposite edges match seamlessly, no central subject and no directional pattern.\nLighting/mood: broad uniform diffuse illumination, low contrast, no directional light, no cast shadows, no baked lighting gradients.\nConstraints: opaque image, no perspective, no horizon, no scene or terrain silhouette, no objects, rocks, buildings, paths, characters, text, grid, borders, watermark, edge vignette or standout motifs. Seamless tileable ground albedo only.",
+  "source_path": "/Users/vovanostm/.codex/generated_images/01a1028f-f1a1-7133-b81e-7388c742469c/exec-297767fc-e138-408a-8aeb-a4fec734eda5.png",
+  "output_path": "/private/tmp/warwrit-world-art/grass/grass.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "opaque": true,
+  "inspection": {
+    "method": "view_image",
+    "result": "Muted olive/sage close-cropped grass, sparse herbs and warm exposed earth; flat overhead framing with uniform illumination. No objects, text, cast shadows or vignette observed.",
+    "tiling": "Requested seamless; repeat/render acceptance not run. Potential visible edge seams must be checked in material preview.",
+    "style_risk": "Fine botanical detail may be dense at world-map scale; evaluate texture scale and filtering in the target renderer."
+  },
+  "workspaceAsset": "assets/art/m1/world-v2/grass.png"
+}

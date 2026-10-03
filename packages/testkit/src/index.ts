@@ -2,6 +2,7 @@ import { invariant } from '@warwrit/game-core';
 import { PROTOCOL_VERSION } from '@warwrit/protocol';
 
 export * from './combat.js';
+export { createCompanyCombatAggregateFixture } from './company-combat-aggregate-fixture.js';
 
 export interface FixedClock {
   readonly now: () => Date;

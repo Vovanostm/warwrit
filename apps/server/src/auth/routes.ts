@@ -210,7 +210,7 @@ export function registerIdentityRoutes(app: FastifyInstance, options: IdentityRo
         if (oldToken !== undefined) {
           await transaction
             .updateTable('identity_sessions')
-            .set({ revoked_at: new Date() })
+            .set({ revoked_at: sql<Date>`now()` })
             .where('token_digest', '=', digest(oldToken))
             .where('revoked_at', 'is', null)
             .execute();
@@ -256,7 +256,7 @@ export function registerIdentityRoutes(app: FastifyInstance, options: IdentityRo
     if (token !== undefined) {
       await database
         .updateTable('identity_sessions')
-        .set({ revoked_at: new Date() })
+        .set({ revoked_at: sql<Date>`now()` })
         .where('token_digest', '=', digest(token))
         .where('revoked_at', 'is', null)
         .execute();

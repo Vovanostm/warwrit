@@ -142,7 +142,7 @@ function prepared(result: LifecycleResult) {
   if (result.kind !== 'PREPARED') throw new Error(result.error);
   return result;
 }
-function opening() {
+function opening(commandId = 'command-CreateCompany', frontId = 'front') {
   const state = empty();
   const fact: OpeningEvidence = {
     ...source(state, 'opening'),
@@ -157,7 +157,7 @@ function opening() {
     partyId: 'party',
     seed: 42,
     candidates: [
-      { characterId: 'front', templateId: 'front', name: 'Front', sex: 'male' },
+      { characterId: frontId, templateId: 'front', name: 'Front', sex: 'male' },
       { characterId: 'reach', templateId: 'reach', name: 'Reach', sex: 'female' },
       { characterId: 'support', templateId: 'support', name: 'Support', sex: 'male' },
     ],
@@ -166,19 +166,25 @@ function opening() {
     providerId: 'provider',
   };
   const { characterId: _id, ...identity } = character('leader').identity;
-  const cmd = input(state, 'CreateCompany', {
-    companyId: state.companyId,
-    worldId: state.worldId,
-    originId: fact.originId,
-    cultureId: fact.cultureId,
-    homelandId: home.siteId,
-    familyStoryId: fact.familyStoryId,
-    leaderInput: identity,
-    candidateSetId: fact.id,
-    selectedCandidateIds: ['front'],
-    name: 'First company',
-    bannerId: 'standard',
-  });
+  const cmd = input(
+    state,
+    'CreateCompany',
+    {
+      companyId: state.companyId,
+      worldId: state.worldId,
+      originId: fact.originId,
+      cultureId: fact.cultureId,
+      homelandId: home.siteId,
+      familyStoryId: fact.familyStoryId,
+      leaderInput: identity,
+      candidateSetId: fact.id,
+      selectedCandidateIds: [frontId],
+      name: 'First company',
+      bannerId: 'standard',
+    },
+    'PLAYER',
+    commandId,
+  );
   const ctx = context(state, cmd, [fact]);
   return { state, fact, cmd, ctx, result: prepared(prepareCompanyLifecycle(state, cmd, ctx)) };
 }
@@ -273,6 +279,43 @@ describe('WP-02.2 lifecycle postulates', () => {
     expect(
       prepareCompanyLifecycle(result.next, changed, context(result.next, changed)),
     ).toMatchObject({ kind: 'REJECTED', state: result.next, error: 'IDEMPOTENCY_CONFLICT' });
+  });
+
+  it('keeps opening observations bounded for valid long command and character IDs', () => {
+    const longId = 'x'.repeat(120);
+    const { result } = opening(longId, longId);
+    expect(result.next.knowledge.characters.map((known) => known.identity.characterId)).toContain(
+      longId,
+    );
+    expect(result.receipt.events.every((event) => [...event.id].length <= 256)).toBe(true);
+
+    const state = result.next;
+    const commandId = JSON.stringify(['opening-owner-observation-command', '2']);
+    const observationId = 'later-observation';
+    const cmd = input(
+      state,
+      'Observe',
+      {
+        observationId,
+        observerRef: { kind: 'COMPANY', id: state.companyId },
+        subjectRef: { kind: 'CHARACTER', id: longId },
+        factId: observationId,
+        sourceId: `source-${commandId}`,
+      },
+      'DOMAIN_RECEIPT',
+      commandId,
+    );
+    const fact: LifecycleEvidence = {
+      ...source(state, observationId),
+      sourceEventId: cmd.sourceEventId,
+      kind: 'COMPANY_OBSERVATION',
+      subject: { kind: 'CHARACTER', id: longId },
+    };
+    expect(prepareCompanyLifecycle(state, cmd, context(state, cmd, [fact]))).toMatchObject({
+      kind: 'REJECTED',
+      state,
+      error: 'IDEMPOTENCY_CONFLICT',
+    });
   });
 
   it('keeps a service history distinct from location and rejects a second active service', () => {
@@ -856,7 +899,7 @@ describe('lifecycle continuity and source scope', () => {
     state = prepared(observe(state, 'front', 'report-front')).next;
     state = prepared(observe(state, 'sibling', 'report-sibling')).next;
     expect(projectCompanyLifecycle(state, 'company')?.characters.map((p) => p.characterId)).toEqual(
-      ['front', 'sibling'],
+      ['front', 'leader', 'sibling'],
     );
     expect(observe(state, 'front', 'report-sibling')).toMatchObject({
       kind: 'REJECTED',
@@ -906,6 +949,39 @@ describe('lifecycle continuity and source scope', () => {
       state: observed,
       error: 'TERMINAL',
     });
+  });
+
+  it('publishes an actual company rename once and leaves a no-op presentation revision unchanged', () => {
+    const state = opening().result.next;
+    const rename = input(state, 'RenameCompany', {
+      companyId: state.companyId,
+      name: 'Ashen Company',
+      bannerId: 'ashen-banner',
+    });
+    const renamed = prepared(prepareCompanyLifecycle(state, rename, context(state, rename))).next;
+
+    expect(projectCompanyLifecycle(renamed, state.companyId)).toMatchObject({
+      revision: (BigInt(state.knowledge.revision) + 1n).toString(),
+      companyPresentation: { name: 'Ashen Company', bannerId: 'ashen-banner' },
+    });
+
+    const samePresentation = input(
+      renamed,
+      'RenameCompany',
+      {
+        companyId: renamed.companyId,
+        name: 'Ashen Company',
+        bannerId: 'ashen-banner',
+      },
+      'PLAYER',
+      'rename-same-presentation',
+    );
+    const repeated = prepared(
+      prepareCompanyLifecycle(renamed, samePresentation, context(renamed, samePresentation)),
+    ).next;
+    expect(projectCompanyLifecycle(repeated, renamed.companyId)?.revision).toBe(
+      renamed.knowledge.revision,
+    );
   });
 
   it('does not let a public projection mutate stored observation snapshots', () => {

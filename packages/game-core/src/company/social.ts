@@ -1,6 +1,7 @@
 import {
   canonicalJson,
   choice,
+  either,
   id,
   natural,
   object,
@@ -60,6 +61,82 @@ export interface SocialState {
   readonly relations: readonly DirectedRelation[];
   /** Append-only facts a person actually learned. E02 derives active memories from this chronicle. */
   readonly chronicle: readonly LearnedFact[];
+}
+
+/** Read retained social knowledge through its owning schemas, rejecting unknown fields. */
+export function readSocialState(value: unknown): SocialState {
+  if (!plainSocialObject(value)) throw new SocialViolation('INVALID_SOURCE');
+  const fields = Object.getOwnPropertyDescriptors(value);
+  if (
+    Reflect.ownKeys(fields).some((key) => key !== 'relations' && key !== 'chronicle') ||
+    !['relations', 'chronicle'].every(
+      (key) => fields[key] && 'value' in fields[key]! && fields[key]!.enumerable,
+    )
+  )
+    throw new SocialViolation('INVALID_SOURCE');
+  const relations = snapshotSocialArray(fields['relations']!.value);
+  const chronicle = snapshotSocialArray(fields['chronicle']!.value);
+  if (!relations || !chronicle) throw new SocialViolation('INVALID_SOURCE');
+  const relationInput = object({
+    fromId: id,
+    toId: id,
+    base: relationAxesInput,
+    baseSourceEventId: either(
+      { schema: { type: 'null' }, read: (entry: unknown): entry is null => entry === null },
+      id,
+    ),
+  });
+  requireSocial(
+    relations.every((entry) => relationInput.read(entry)),
+    'INVALID_SOURCE',
+  );
+  requireSocial(
+    chronicle.every((entry) => learnedFactInput.read(entry)),
+    'INVALID_SOURCE',
+  );
+  const retainedRelations = relations as unknown as readonly DirectedRelation[];
+  const retainedChronicle = chronicle as unknown as readonly LearnedFact[];
+  requireSocial(
+    new Set(retainedRelations.map((entry) => `${entry.fromId}\0${entry.toId}`)).size ===
+      retainedRelations.length &&
+      new Set(retainedChronicle.map((entry) => entry.memoryId)).size === retainedChronicle.length &&
+      new Set(retainedChronicle.map((entry) => `${entry.personId}\0${entry.factId}`)).size ===
+        retainedChronicle.length,
+    'INVALID_SOURCE',
+  );
+  for (const fact of retainedChronicle)
+    validateFarewellResolution(
+      { relations: retainedRelations, chronicle: retainedChronicle },
+      fact,
+    );
+  return { relations: retainedRelations, chronicle: retainedChronicle };
+}
+
+function plainSocialObject(value: unknown): value is Record<string, unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null)
+  );
+}
+
+/** Retained histories may grow beyond request array limits; each entry stays individually bounded. */
+function snapshotSocialArray(value: unknown): readonly unknown[] | undefined {
+  if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype) return undefined;
+  const descriptors = Object.getOwnPropertyDescriptors(value) as Record<string, PropertyDescriptor>;
+  const keys = Reflect.ownKeys(descriptors).filter((key) => key !== 'length');
+  if (keys.length !== value.length || descriptors['length']?.value !== value.length)
+    return undefined;
+  const result: unknown[] = [];
+  for (let index = 0; index < value.length; index += 1) {
+    const descriptor = descriptors[String(index)];
+    if (!descriptor || !('value' in descriptor) || !descriptor.enumerable) return undefined;
+    const entry = snapshotJson(descriptor.value);
+    if (entry === undefined) return undefined;
+    result.push(entry);
+  }
+  return result;
 }
 export interface SocialTransition<T> {
   readonly state: SocialState;

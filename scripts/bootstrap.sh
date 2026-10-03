@@ -12,12 +12,8 @@ if [[ "$actual_node" != v24.20.* ]]; then
   exit 1
 fi
 
-command -v docker >/dev/null 2>&1 || {
-  printf 'Docker is required for the migration smoke test.\n' >&2
-  exit 1
-}
-
-docker compose version >/dev/null
+source "$ROOT_DIR/scripts/compose-cli.sh"
+select_compose_cli
 corepack enable
 corepack prepare pnpm@11.25.0 --activate
 pnpm install --frozen-lockfile
@@ -28,7 +24,7 @@ POSTGRES_HOST_PORT=''
 INFRA_STARTED=0
 
 compose() {
-  POSTGRES_PORT=0 docker compose \
+  POSTGRES_PORT=0 "${COMPOSE_CLI[@]}" \
     --project-name "$COMPOSE_PROJECT" \
     --file "$COMPOSE_FILE" \
     "$@"
@@ -41,8 +37,8 @@ cleanup() {
   if [[ "${KEEP_INFRA:-0}" == '1' ]]; then
     printf 'Kept verification PostgreSQL in Compose project %s on 127.0.0.1:%s.\n' \
       "$COMPOSE_PROJECT" "${POSTGRES_HOST_PORT:-unresolved}"
-    printf 'Cleanup: docker compose --project-name %s --file %s down --volumes --remove-orphans\n' \
-      "$COMPOSE_PROJECT" "$COMPOSE_FILE"
+    printf 'Cleanup: %s --project-name %s --file %s down --volumes --remove-orphans\n' \
+      "${COMPOSE_CLI[*]}" "$COMPOSE_PROJECT" "$COMPOSE_FILE"
   elif [[ "$INFRA_STARTED" == '1' ]]; then
     if ! compose down --volumes --remove-orphans; then
       printf 'Failed to clean verification Compose project %s.\n' \

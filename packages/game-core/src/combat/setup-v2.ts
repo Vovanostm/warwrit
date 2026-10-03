@@ -11,6 +11,7 @@ import {
 
 export const COMBAT_V2_SCHEMA_VERSION = 2 as const;
 export const M1_DOMAIN_BRIDGE_RULESET_ID = 'm1-domain-bridge-v1' as const;
+export const M1_DOMAIN_BRIDGE_V2_RULESET_ID = 'm1-domain-bridge-v2' as const;
 
 const V2_UNIT_LIMITS = {
   minimum: 2,
@@ -31,7 +32,7 @@ export interface CombatUnitSetupV2 extends CombatUnitSetup {
 export interface BattleSetupV2 {
   readonly schemaVersion: typeof COMBAT_V2_SCHEMA_VERSION;
   readonly battleId: BattleId;
-  readonly rulesetId: typeof M1_DOMAIN_BRIDGE_RULESET_ID;
+  readonly rulesetId: typeof M1_DOMAIN_BRIDGE_RULESET_ID | typeof M1_DOMAIN_BRIDGE_V2_RULESET_ID;
   readonly seed: number;
   readonly map: CombatMap;
   readonly sides: readonly [CombatSideSetup, CombatSideSetup];
@@ -95,8 +96,9 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
     `V2 battle setup schemaVersion must be ${COMBAT_V2_SCHEMA_VERSION}`,
   );
   invariant(
-    setup.rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID,
-    `V2 battle setup ruleset must be ${M1_DOMAIN_BRIDGE_RULESET_ID}`,
+    setup.rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID ||
+      setup.rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+    `V2 battle setup ruleset must be ${M1_DOMAIN_BRIDGE_RULESET_ID} or ${M1_DOMAIN_BRIDGE_V2_RULESET_ID}`,
   );
   invariant(setup.battleId.length > 0, 'Battle id must not be empty');
   invariant(Number.isSafeInteger(setup.seed), 'Battle seed must be a safe integer');

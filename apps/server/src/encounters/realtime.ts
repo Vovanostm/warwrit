@@ -20,11 +20,17 @@ export interface EncounterRealtime {
 export function registerEncounterRealtime(
   app: FastifyInstance,
   database: Kysely<DatabaseSchema>,
-  options: { readonly host: string; readonly port: number },
+  options: {
+    readonly host: string;
+    readonly port: number;
+    readonly fixtureAdmission?: boolean;
+  },
 ): EncounterRealtime {
   const transport = new WebSocketTransport();
   const server = new Server({ transport, gracefullyShutdown: false, greet: false });
-  server.define('encounter', createEncounterRoomClass(database)).filterBy(['encounterId']);
+  server
+    .define('encounter', createEncounterRoomClass(database, options.fixtureAdmission === true))
+    .filterBy(['encounterId']);
   let aiWorker: EncounterAiWorker | undefined;
 
   app.addHook('onReady', async () => {
@@ -32,7 +38,10 @@ export function registerEncounterRealtime(
     aiWorker = startEncounterAiWorker(database, {
       onCommitted: refreshEncounterRoomProjections,
       onError: (error) => {
-        app.log.error({ error, event: 'encounter.ai_worker.failed' }, 'Encounter AI worker failed');
+        app.log.error(
+          { err: error, event: 'encounter.ai_worker.failed' },
+          'Encounter AI worker failed',
+        );
       },
     });
   });

@@ -12,6 +12,7 @@ const databases: ReturnType<typeof createDatabase>[] = [];
 afterEach(async () => {
   await Promise.all(apps.splice(0).map((app) => app.close()));
   await Promise.all(databases.splice(0).map((database) => database.destroy()));
+  vi.unstubAllEnvs();
 });
 
 function encounterApp() {
@@ -42,7 +43,14 @@ type Route =
 
 const routes: readonly Route[] = [
   { method: 'POST', url: '/encounters/fixtures', payload: { version: 1 } },
+  { method: 'GET', url: '/encounters/active' },
+  {
+    method: 'POST',
+    url: `/encounters/${encounterId}/resume`,
+    payload: { version: 1, encounterId },
+  },
   { method: 'GET', url: `/encounters/${encounterId}` },
+  { method: 'GET', url: `/encounters/${encounterId}/projection` },
   { method: 'POST', url: `/encounters/${encounterId}/room-ticket`, payload: { version: 1 } },
   { method: 'POST', url: '/encounters/commands', payload: command },
 ];
@@ -71,5 +79,19 @@ describe('encounter HTTP authorization', () => {
       expect(response.json()).toEqual({ error: 'authentication required' });
     }
     expect(roomTicketIssuer).not.toHaveBeenCalled();
+  });
+
+  it('mounts authenticated production access without enabling fixture creation', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    const database = createDatabase(unreachableDatabase);
+    databases.push(database);
+    const app = buildApp({ logger: false, encounters: { database } });
+    apps.push(app);
+    await app.ready();
+
+    const routes = app.printRoutes();
+    expect(routes).toContain('active');
+    expect(routes).toContain('projection');
+    expect(routes).not.toContain('fixtures');
   });
 });

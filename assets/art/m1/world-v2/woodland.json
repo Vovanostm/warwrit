@@ -1,0 +1,21 @@
+{
+  "asset": "woodland",
+  "status": "generated_and_visually_inspected",
+  "mode": "built-in image_gen",
+  "source_file": "/Users/vovanostm/.codex/generated_images/01a10290-3115-75a0-9cb0-fc2c02d5c7cc/exec-1250acf1-21ae-4b94-9349-e2457ffc3a1f.png",
+  "output_file": "/private/tmp/warwrit-world-art/woodland/woodland.png",
+  "prompt": "Use case: stylized-concept\nAsset type: ONE square seamless tileable woodland-floor albedo texture for a professional temperate medieval 2.5D strategy world map, Battle Brothers-like restrained ink-wash art with realistic material detail. Output one square image, ideally 1024x1024.\nPrimary request: dark earthy olive and warm brown temperate forest floor, fine irregular decomposed leaf litter, small fern fragments, thin scattered sticks, quiet moss, tiny pebbles. Natural varied small-scale material embedded in broad subtle patches. Match a muted sage meadow palette; earthy olive, sage and brown colors must remain visible, not black or monochrome.\nComposition/framing: perfect perpendicular overhead flat ground covering the entire square. Ground details are small and equally scaled across the whole image. Textural material only, no scene, no centerpiece, no dominant repeated object.\nStyle/medium: sophisticated hand-painted ink wash, subtle delicate contour accents, physically plausible natural surface detail, restrained contrast and realistic varied matter. Painterly material texture suitable for viewing across a large world map, not noisy high-contrast concept art.\nLighting: diffuse completely even daylight. This is albedo: no directional lighting, baked cast shadows, ambient vignette, highlights or illumination gradient.\nConstraints: professionally seamless repeating tile. Left and right boundaries must join, top and bottom boundaries must join without visible seams. Elements crossing a boundary must wrap accurately across the opposite edge. Preserve a natural irregular distribution and broad subtle color variations without center-to-edge composition.\nAvoid: trees, trunks, large logs, large ferns, large stones, buildings, paths, animals, people, perspective, horizon, borders, text, lettering, watermark, vignette, black corners, baked shadows, single dominant leaf.",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "transparent_background": false,
+  "edits": 0,
+  "inspection": {
+    "method": "view_image",
+    "outcome": "Plausible flat overhead temperate woodland ground; muted olive/brown palette, moss, decomposed leaves, sticks and small pebbles; no scene objects, horizon, text, vignette or dominant focal object.",
+    "concerns": "Fine leaf and stick detail is fairly dense and a few green fronds may read as repeated landmarks at large map coverage. Exact repeat-edge continuity is not verified by single-image inspection.",
+    "tiling_status": "NOT_RUN: repeated mosaic and in-engine tile continuity"
+  },
+  "workspaceAsset": "assets/art/m1/world-v2/woodland.png"
+}

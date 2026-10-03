@@ -4,18 +4,27 @@ import { prepareCombatConsequences } from './combat-consequences.js';
 import type { PreparedCombatConsequences } from './combat-consequences.js';
 import { prepareCombatPhysicalEffects } from './combat-physical.js';
 import type { PreparedCombatPhysicalEffects } from './combat-physical.js';
+import { validateCombatReceiptJournal } from './combat-receipts.js';
 import type { CombatReceiptJournal } from './combat-receipts.js';
 import { COMPANY_RULES } from './definitions.js';
 import type { EconomyContext } from './economy-types.js';
 import type { CommandOf } from './lifecycle-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
+import { COMPANY_CATALOGUE } from './definitions.js';
+import { COMPANY_COMMAND_SCHEMA_VERSION, COMPANY_RULESET_ID } from './model.js';
 import { requirePhysical } from './physical-state.js';
+import {
+  admitPractice,
+  type PracticeContext,
+  type PracticeEvidence,
+} from './practice-admission.js';
+import { PROGRESSION_RULES } from './progression.js';
 import { preparePracticeCredit } from './practice-credit.js';
-import type { PracticeContext } from './practice-admission.js';
 import { skillLevel } from './skill-progress.js';
 import { activeMembership, effectiveLeaderId } from './lifecycle-state.js';
 
 export const COMBAT_PRACTICE_PROFILE_VERSION = 's02-combat-practice-profile-2' as const;
+export const FIRST_HUNT_PRACTICE_PROFILE_ID = 'first-hunt-practice-profile-2026-10-01-v1' as const;
 
 /** Adapter-trusted action and completed-cycle boundaries, bound to a frozen encounter. */
 export interface CombatPracticeProfile {
@@ -47,9 +56,17 @@ export interface TrustedCombatPracticeCredit {
 
 export interface PreparedCombatPracticeEffects extends PreparedCombatConsequences {
   readonly credits: number;
-  /** The runtime boundary producer still has to issue these trusted cycle descriptors. */
-  readonly practiceResiduals: readonly ['LEADERSHIP_CYCLE_PRODUCER'];
 }
+
+export type CombatPracticeProfileResidual =
+  'INVALID_JOURNAL' | 'PROFILE_INVALID' | 'RECEIPT_TICK_MISSING' | 'COMPANY_NOT_BOUND';
+
+export type CombatPracticeProfileProduction =
+  | { readonly status: 'READY'; readonly profile: CombatPracticeProfile }
+  | {
+      readonly status: 'NOT_READY';
+      readonly residuals: readonly CombatPracticeProfileResidual[];
+    };
 
 interface DerivedInteraction {
   readonly sourceEventId: string;
@@ -87,6 +104,170 @@ export interface CombatPracticeStartSnapshot {
   readonly aptitudeAtStartBps: number;
 }
 
+/** A second allied company is a participant, not an opponent for practice credit. */
+interface CombatSideBinding {
+  readonly participants: readonly { readonly companyId: string; readonly sideId: string }[];
+  readonly setup: { readonly units: readonly { readonly id: string; readonly sideId: string }[] };
+}
+
+export function isOpposingEncounterSide(
+  binding: CombatSideBinding,
+  companyId: string,
+  unitId: string,
+): boolean {
+  const own = binding.participants.filter((participant) => participant.companyId === companyId);
+  const ownSideIds = new Set(own.map((participant) => participant.sideId));
+  const unit = binding.setup.units.find((candidate) => candidate.id === unitId);
+  requirePhysical(own.length > 0 && unit, 'INVALID_SOURCE');
+  return !ownSideIds.has(unit.sideId);
+}
+
+/**
+ * Derive action starts and complete leadership cycles from one validated durable journal.
+ * Unpaired subordinate actions remain incomplete and earn no leadership credit.
+ */
+export function deriveCombatPracticeProfile(input: {
+  readonly root: MaterializedCompanyState;
+  readonly journal: CombatReceiptJournal;
+  readonly receiptTicks: readonly string[];
+  readonly profileId: string;
+  readonly challengeLevel: number;
+}): CombatPracticeProfileProduction {
+  let journal: CombatReceiptJournal;
+  try {
+    journal = validateCombatReceiptJournal(input.journal);
+  } catch {
+    return { status: 'NOT_READY', residuals: Object.freeze(['INVALID_JOURNAL']) };
+  }
+  if (!journal.binding.participants.some((entry) => entry.companyId === journal.companyId))
+    return { status: 'NOT_READY', residuals: Object.freeze(['COMPANY_NOT_BOUND']) };
+  if (
+    input.root.lifecycle.companyId !== journal.companyId ||
+    input.root.lifecycle.worldId !== journal.binding.worldId ||
+    input.root.lifecycle.campaignTick !== journal.binding.atTick
+  )
+    return { status: 'NOT_READY', residuals: Object.freeze(['COMPANY_NOT_BOUND']) };
+  if (
+    input.receiptTicks.length !== journal.receipts.length ||
+    input.receiptTicks.some(
+      (tick, index) =>
+        !/^(0|[1-9][0-9]*)$/u.test(tick) ||
+        (index > 0 && BigInt(tick) < BigInt(input.receiptTicks[index - 1]!)),
+    )
+  )
+    return { status: 'NOT_READY', residuals: Object.freeze(['RECEIPT_TICK_MISSING']) };
+  if (
+    !id.read(input.profileId) ||
+    !Number.isSafeInteger(input.challengeLevel) ||
+    input.challengeLevel < 0 ||
+    input.challengeLevel > COMPANY_RULES.maxSkillLevel
+  )
+    return { status: 'NOT_READY', residuals: Object.freeze(['PROFILE_INVALID']) };
+
+  const participants = new Map(journal.binding.participants.map((entry) => [entry.unitId, entry]));
+  const actionStarts: CombatPracticeProfile['actionStarts'][number][] = [];
+  const qualifyingAttacks: {
+    readonly ordinal: number;
+    readonly tick: string;
+    readonly commandId: string;
+    readonly unitId: string;
+    readonly characterId: string;
+  }[] = [];
+  const leaderId = effectiveLeaderId(input.root.lifecycle);
+
+  for (let ordinal = 1; ordinal < journal.receipts.length; ordinal += 1) {
+    const receipt = journal.receipts[ordinal]!;
+    const command = receipt.kernelCommand;
+    if (command === null) continue;
+    const participant = participants.get(command.actorId);
+    if (participant?.companyId !== journal.companyId) continue;
+    if (command.type === 'defend') {
+      actionStarts.push({
+        activationId: command.activationId,
+        unitId: command.actorId,
+        startedAt: input.receiptTicks[ordinal]!,
+        startReceiptOrdinal: ordinal,
+      });
+      continue;
+    }
+    if (command.type !== 'attack') continue;
+    const event = receipt.transition.events.find(
+      (entry): entry is AttackResolvedEvent => entry.type === 'attack.resolved',
+    );
+    if (
+      event?.attackerId !== command.actorId ||
+      event.targetId !== command.targetId ||
+      !isOpposingEncounterSide(journal.binding, journal.companyId, event.targetId)
+    )
+      continue;
+    actionStarts.push({
+      activationId: command.activationId,
+      unitId: command.actorId,
+      startedAt: input.receiptTicks[ordinal]!,
+      startReceiptOrdinal: ordinal,
+    });
+    qualifyingAttacks.push({
+      ordinal,
+      tick: input.receiptTicks[ordinal]!,
+      commandId: command.commandId,
+      unitId: command.actorId,
+      characterId: participant.projection.characterId,
+    });
+  }
+
+  qualifyingAttacks.sort(
+    (left, right) =>
+      compareDecimalTicks(left.tick, right.tick) ||
+      compareCodeUnits(left.commandId, right.commandId) ||
+      compareCodeUnits(left.unitId, right.unitId),
+  );
+  const leadershipCycles: CombatPracticeProfile['leadershipCycles'][number][] = [];
+  let first: (typeof qualifyingAttacks)[number] | undefined;
+  let previousCycleEndOrdinal = 0;
+  for (const action of qualifyingAttacks) {
+    if (action.characterId === leaderId) continue;
+    if (action.ordinal <= previousCycleEndOrdinal) continue;
+    if (!first) {
+      first = action;
+      continue;
+    }
+    if (first.characterId === action.characterId || first.ordinal >= action.ordinal) continue;
+    const cycleId = `leadership-cycle-${journal.binding.setup.battleId}-${first.ordinal}-${action.ordinal}`;
+    leadershipCycles.push({
+      cycleId,
+      commanderId: leaderId,
+      startedAt: first.tick,
+      completedAt: action.tick,
+      startReceiptOrdinal: first.ordinal,
+      endReceiptOrdinal: action.ordinal,
+    });
+    previousCycleEndOrdinal = action.ordinal;
+    first = undefined;
+  }
+
+  return {
+    status: 'READY',
+    profile: Object.freeze({
+      version: COMBAT_PRACTICE_PROFILE_VERSION,
+      profileId: input.profileId,
+      bindingId: journal.binding.bindingId,
+      challengeLevel: input.challengeLevel,
+      actionStarts: Object.freeze(actionStarts),
+      leadershipCycles: Object.freeze(leadershipCycles),
+    }),
+  };
+}
+
+function compareDecimalTicks(left: string, right: string): number {
+  const a = BigInt(left);
+  const b = BigInt(right);
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+function compareCodeUnits(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
 /**
  * Derive credits for one receipt from the journal already validated at the aggregate boundary.
  * Keep this package-internal: callers must not use it to bypass whole-journal replay validation.
@@ -98,7 +279,8 @@ export function deriveCombatPracticeReceipt(
   profile: CombatPracticeProfile,
   receiptTicks: readonly string[],
   savedStarts: readonly CombatPracticeStartSnapshot[],
-  trustedCredits: readonly TrustedCombatPracticeCredit[],
+  trustedCredits: readonly TrustedCombatPracticeCredit[] | undefined,
+  context?: EconomyContext & PracticeContext,
 ): readonly TrustedCombatPracticeCredit[] {
   requirePhysical(
     receiptIndex > 0 &&
@@ -151,10 +333,16 @@ export function deriveCombatPracticeReceipt(
     requirePhysical(sourceEventId, 'INVALID_SOURCE');
     const attacker = participantByUnit.get(event.attackerId);
     const defender = participantByUnit.get(event.targetId);
-    const externalAttacker =
-      attacker !== undefined && attacker.companyId !== validatedJournal.companyId;
-    const externalDefender =
-      defender !== undefined && defender.companyId !== validatedJournal.companyId;
+    const externalAttacker = isOpposingEncounterSide(
+      validatedJournal.binding,
+      validatedJournal.companyId,
+      event.attackerId,
+    );
+    const externalDefender = isOpposingEncounterSide(
+      validatedJournal.binding,
+      validatedJournal.companyId,
+      event.targetId,
+    );
     if (attacker?.companyId === validatedJournal.companyId && externalDefender) {
       const start = starts.get(kernelCommand.activationId);
       requirePhysical(start?.unitId === kernelCommand.actorId, 'INVALID_SOURCE');
@@ -281,7 +469,123 @@ export function deriveCombatPracticeReceipt(
   }
   const currentInteractions = interactions.filter((entry) => entry.receiptOrdinal === receiptIndex);
   const credits = new Map<string, TrustedCombatPracticeCredit>();
-  for (const credit of trustedCredits) {
+  const producedCredits =
+    trustedCredits ??
+    currentInteractions.map((interaction) => {
+      requirePhysical(context, 'INVALID_SOURCE');
+      const cycle =
+        interaction.methodId === 'command-cycle'
+          ? profile.leadershipCycles.find(
+              (entry) => entry.cycleId === interaction.cycleProof?.cycleId,
+            )
+          : undefined;
+      const snapshot = savedStarts.find(
+        (entry) =>
+          (cycle === undefined
+            ? entry.sourceId === interaction.activationId
+            : entry.startReceiptOrdinal === cycle.startReceiptOrdinal) &&
+          entry.characterId === interaction.characterId &&
+          entry.skillId === interaction.skillId,
+      );
+      const currentPerson = root.lifecycle.characters.find(
+        (entry) => entry.identity.characterId === interaction.characterId,
+      );
+      const levelAtStart =
+        snapshot?.levelAtStart ??
+        (interaction.startReceiptOrdinal === receiptIndex && currentPerson
+          ? skillLevel(currentPerson.skills[interaction.skillId] ?? 0)
+          : undefined);
+      const aptitudeAtStartBps =
+        snapshot?.aptitudeAtStartBps ??
+        (interaction.startReceiptOrdinal === receiptIndex
+          ? currentPerson?.aptitudeBySkill[interaction.skillId]
+          : undefined);
+      const atTick = receiptTicks[receiptIndex]!;
+      requirePhysical(
+        levelAtStart !== undefined &&
+          Number.isSafeInteger(aptitudeAtStartBps) &&
+          aptitudeAtStartBps! > 0 &&
+          context.companyId === root.lifecycle.companyId &&
+          context.worldId === root.lifecycle.worldId &&
+          context.canonicalRevision === root.lifecycle.revision &&
+          context.atTick === atTick,
+        'INVALID_SOURCE',
+      );
+      const payload = {
+        receiptId: `${interaction.sourceEventId}-${profile.profileId}-${interaction.characterId}-${interaction.methodId}`,
+        characterId: interaction.characterId,
+        skillId: interaction.skillId,
+        methodId: interaction.methodId,
+        challengeLevel: profile.challengeLevel,
+        outcome: interaction.outcome,
+        effortTicks: '0',
+      } as const;
+      const sourceEventId = interaction.sourceEventId;
+      const command: CommandOf<'CreditPractice'> = {
+        schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+        commandId: `combat-practice-${sourceEventId}-${interaction.characterId}-${interaction.methodId}`,
+        worldId: context.worldId,
+        companyId: context.companyId,
+        actorRef: { kind: 'DOMAIN_RECEIPT', id: sourceEventId },
+        expectedRevision: context.canonicalRevision,
+        campaignTick: atTick,
+        rulesetId: COMPANY_RULESET_ID,
+        sourceEventId,
+        type: 'CreditPractice',
+        payload,
+      };
+      const proof: PracticeEvidence['proof'] = interaction.cycleProof
+        ? { kind: 'command-cycle', ...interaction.cycleProof }
+        : interaction.methodId === 'weapon-attack'
+          ? {
+              kind: 'weapon-attack',
+              interaction: {
+                sourceEventId,
+                attackerId: interaction.attackerId,
+                defenderId: interaction.defenderId,
+                atTick,
+                origin: 'EXTERNAL',
+              },
+              weaponProfile: interaction.weaponProfile!,
+            }
+          : {
+              kind: 'guard-interaction',
+              interaction: {
+                sourceEventId,
+                attackerId: interaction.attackerId,
+                defenderId: interaction.defenderId,
+                atTick,
+                origin: 'EXTERNAL',
+              },
+            };
+      const fact: PracticeEvidence = {
+        worldId: context.worldId,
+        companyId: context.companyId,
+        sourceEventId,
+        rulesVersion: PROGRESSION_RULES.version,
+        catalogueVersion: COMPANY_CATALOGUE.version,
+        payload,
+        startedAt: interaction.startedAt,
+        completedAt: atTick,
+        levelAtStart,
+        aptitudeAtStartBps: aptitudeAtStartBps!,
+        proof,
+      };
+      const trustedContext: EconomyContext & PracticeContext = {
+        ...context,
+        principal: command.actorRef,
+        internalGrant: {
+          commandId: command.commandId,
+          sourceEventId,
+          canonicalRequest: canonicalJson(command),
+          evidenceRevision: context.canonicalRevision,
+        },
+        practiceFacts: [fact],
+      };
+      admitPractice(command, trustedContext);
+      return { command, context: trustedContext };
+    });
+  for (const credit of producedCredits) {
     const command = credit.command;
     requirePhysical(command.type === 'CreditPractice' && command.sourceEventId, 'INVALID_SOURCE');
     const key = interactionKey({
@@ -373,6 +677,29 @@ export function deriveCombatPracticeReceipt(
   return Object.freeze(currentInteractions.map((entry) => credits.get(interactionKey(entry))!));
 }
 
+/** Build the deterministic, source-bound credit envelopes for one verified receipt. */
+export function prepareCombatPracticeCredits(input: {
+  readonly root: MaterializedCompanyState;
+  readonly journal: CombatReceiptJournal;
+  readonly receiptIndex: number;
+  readonly profile: CombatPracticeProfile;
+  readonly receiptTicks: readonly string[];
+  readonly savedStarts: readonly CombatPracticeStartSnapshot[];
+  readonly context: EconomyContext & PracticeContext;
+}): readonly TrustedCombatPracticeCredit[] {
+  const journal = validateCombatReceiptJournal(input.journal);
+  return deriveCombatPracticeReceipt(
+    input.root,
+    journal,
+    input.receiptIndex,
+    input.profile,
+    input.receiptTicks,
+    input.savedStarts,
+    undefined,
+    input.context,
+  );
+}
+
 function interactionKey(
   entry: Pick<DerivedInteraction, 'sourceEventId' | 'characterId' | 'skillId' | 'methodId'>,
 ) {
@@ -455,8 +782,16 @@ export function prepareCombatPracticeEffects(
     requirePhysical(sourceEventId, 'INVALID_SOURCE');
     const attacker = participantByUnit.get(event.attackerId);
     const defender = participantByUnit.get(event.targetId);
-    const isExternalAttacker = attacker !== undefined && attacker.companyId !== journal.companyId;
-    const isExternalDefender = defender !== undefined && defender.companyId !== journal.companyId;
+    const isExternalAttacker = isOpposingEncounterSide(
+      journal.binding,
+      journal.companyId,
+      event.attackerId,
+    );
+    const isExternalDefender = isOpposingEncounterSide(
+      journal.binding,
+      journal.companyId,
+      event.targetId,
+    );
     if (attacker?.companyId === journal.companyId && isExternalDefender) {
       const start = starts.get(kernelCommand.activationId);
       requirePhysical(start?.unitId === kernelCommand.actorId, 'INVALID_SOURCE');
@@ -662,6 +997,5 @@ export function prepareCombatPracticeEffects(
     ...verified,
     root,
     credits: interactions.length,
-    practiceResiduals: Object.freeze(['LEADERSHIP_CYCLE_PRODUCER'] as const),
   });
 }

@@ -102,4 +102,21 @@ describe('server configuration', () => {
       'loopback HTTP and realtime listeners',
     );
   });
+
+  it('permits authenticated encounter runtime configuration in production with fixtures disabled', () => {
+    const config = loadServerConfig({
+      NODE_ENV: 'production',
+      HOST: '0.0.0.0',
+      PORT: '3000',
+      DATABASE_URL: 'postgres://user:secret@db.example.test/warwrit',
+      OIDC_ISSUER: 'https://identity.example.test',
+      OIDC_CLIENT_ID: 'warwrit',
+      OIDC_CLIENT_SECRET: 'secret',
+      OIDC_REDIRECT_URI: 'https://game.example.test/auth/callback',
+      PUBLIC_ORIGIN: 'https://game.example.test',
+    });
+
+    expect(config.identity).toBeDefined();
+    expect(config.fixtureEncountersEnabled).toBeUndefined();
+  });
 });

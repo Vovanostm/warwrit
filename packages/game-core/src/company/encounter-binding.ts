@@ -17,15 +17,16 @@ import { isEntityId } from './values.js';
 import type { CampaignTick, CanonicalRevision } from './values.js';
 
 export const ENCOUNTER_BINDING_VERSION = 's02-encounter-binding-1' as const;
+/** Versioned adapter binding for authentic retained world combatants. */
+export const FIRST_HUNT_WORLD_BINDING_VERSION = 's02-encounter-binding-2' as const;
 export interface EncounterCompanySource {
   readonly root: MaterializedCompanyState;
   readonly context: LifecycleContext;
 }
 /** Trusted world placement, never deserialized from a player's encounter command. */
-export interface EncounterPositionEvidence {
+interface EncounterPositionEvidenceBase {
   readonly id: string;
   readonly sourceEventId: string;
-  readonly version: typeof ENCOUNTER_BINDING_VERSION;
   readonly bindingId: string;
   readonly worldId: string;
   readonly atTick: CampaignTick;
@@ -44,6 +45,65 @@ export interface EncounterPositionEvidence {
   }[];
 }
 
+/** Authentic non-company combatants, produced from retained world state by the adapter. */
+export interface EncounterWorldParticipant {
+  readonly entityId: string;
+  readonly sourceId: string;
+  readonly unitId: UnitId;
+  readonly sideId: SideId;
+  readonly position: Hex;
+  readonly weaponId: BattleSetupV2['units'][number]['weaponId'];
+  readonly attributes: BattleSetupV2['units'][number]['attributes'];
+  readonly initialPools: BattleSetupV2['units'][number]['initialPools'];
+}
+
+/** Legacy evidence bytes remain company-only; world bindings require their own version. */
+export type EncounterPositionEvidence = EncounterPositionEvidenceBase &
+  (
+    | { readonly version: typeof ENCOUNTER_BINDING_VERSION; readonly worldParticipants?: never }
+    | {
+        readonly version: typeof FIRST_HUNT_WORLD_BINDING_VERSION;
+        readonly worldParticipants: readonly EncounterWorldParticipant[];
+      }
+  );
+
+type FrozenBindingBase = {
+  readonly schemaVersion: 1;
+  readonly bindingId: string;
+  readonly worldId: string;
+  readonly sourceId: string;
+  readonly sourceEventId: string;
+  readonly atTick: CampaignTick;
+  readonly location: AtLocation;
+  readonly participants: readonly {
+    readonly companyId: string;
+    readonly partyId: string;
+    readonly revision: CanonicalRevision;
+    readonly physicalPolicyVersion: string;
+    readonly unitId: UnitId;
+    readonly sideId: SideId;
+    readonly position: Hex;
+    readonly projection: ReturnType<typeof projectCharacterCombatWithMorale>;
+    readonly vitals: ReturnType<typeof physicalVitals>;
+    readonly equipment: readonly ReturnType<
+      typeof ownPhysical<MaterializedCompanyState['physical']['items'][number]>
+    >[];
+  }[];
+  readonly setup: BattleSetupV2;
+  readonly initial: ReturnType<typeof startBattleV2>;
+  readonly lastAppliedRevision: number;
+};
+
+export type FrozenEncounterBinding =
+  | (FrozenBindingBase & {
+      readonly version: typeof ENCOUNTER_BINDING_VERSION;
+      readonly worldParticipants?: never;
+    })
+  | (FrozenBindingBase & {
+      readonly version: typeof FIRST_HUNT_WORLD_BINDING_VERSION;
+      readonly worldParticipants: readonly EncounterWorldParticipant[];
+    });
+
 function claim(ids: Set<string>, id: string): void {
   requirePhysical(isEntityId(id) && !ids.has(id), 'INVALID_SOURCE');
   ids.add(id);
@@ -54,10 +114,11 @@ export function prepareEncounterBinding(
   sources: readonly EncounterCompanySource[],
   request: { readonly bindingId: string; readonly battleId: BattleId },
   position: EncounterPositionEvidence,
-) {
+): FrozenEncounterBinding {
   const evidence = ownPhysical(position);
   requirePhysical(
-    evidence.version === ENCOUNTER_BINDING_VERSION &&
+    (evidence.version === ENCOUNTER_BINDING_VERSION ||
+      evidence.version === FIRST_HUNT_WORLD_BINDING_VERSION) &&
       isEntityId(evidence.id) &&
       isEntityId(evidence.sourceEventId) &&
       isEntityId(evidence.worldId) &&
@@ -152,22 +213,46 @@ export function prepareEncounterBinding(
   });
   requirePhysical(usedCompanies.size === companies.size, 'INVALID_SOURCE');
   participants.sort((a, b) => (a.unitId < b.unitId ? -1 : 1));
+  const worldParticipants = (
+    evidence.version === FIRST_HUNT_WORLD_BINDING_VERSION ? evidence.worldParticipants : []
+  ).map((participant) => {
+    claim(characters, participant.entityId);
+    claim(units, participant.unitId);
+    requirePhysical(
+      isEntityId(participant.sourceId) && participant.entityId === participant.unitId,
+      'INVALID_SOURCE',
+    );
+    return ownPhysical(participant);
+  });
+  requirePhysical(
+    evidence.version !== FIRST_HUNT_WORLD_BINDING_VERSION || worldParticipants.length > 0,
+    'INVALID_SOURCE',
+  );
+  const companyUnits = participants.map((participant) => ({
+    id: participant.unitId,
+    sideId: participant.sideId,
+    position: participant.position,
+    weaponId: participant.projection.weapon.profileId,
+    attributes: participant.projection.attributes,
+    initialPools: participant.projection.current,
+  }));
+  const worldUnits = worldParticipants.map((participant) => ({
+    id: participant.unitId,
+    sideId: participant.sideId,
+    position: participant.position,
+    weaponId: participant.weaponId,
+    attributes: participant.attributes,
+    initialPools: participant.initialPools,
+  }));
   const setup: BattleSetupV2 = {
     ...evidence.setup,
-    units: participants.map((participant) => ({
-      id: participant.unitId,
-      sideId: participant.sideId,
-      position: participant.position,
-      weaponId: participant.projection.weapon.profileId,
-      attributes: participant.projection.attributes,
-      initialPools: participant.projection.current,
-    })),
+    units: [...companyUnits, ...worldUnits].toSorted((a, b) =>
+      a.id < b.id ? -1 : a.id > b.id ? 1 : 0,
+    ),
   };
   // G02 validates the whole setup and applies current pools BEFORE ordering initiative.
   const initial = startBattleV2(setup);
-  return ownPhysical({
-    schemaVersion: 1,
-    version: ENCOUNTER_BINDING_VERSION,
+  const fields = {
     bindingId: request.bindingId,
     worldId: evidence.worldId,
     sourceId: evidence.id,
@@ -178,7 +263,17 @@ export function prepareEncounterBinding(
     setup,
     initial,
     lastAppliedRevision: initial.state.revision,
-  } as const);
+  } as const;
+  return evidence.version === FIRST_HUNT_WORLD_BINDING_VERSION
+    ? ownPhysical({
+        schemaVersion: 1,
+        version: FIRST_HUNT_WORLD_BINDING_VERSION,
+        ...fields,
+        worldParticipants: Object.freeze(worldParticipants),
+      })
+    : ownPhysical({
+        schemaVersion: 1,
+        version: ENCOUNTER_BINDING_VERSION,
+        ...fields,
+      });
 }
-
-export type FrozenEncounterBinding = ReturnType<typeof prepareEncounterBinding>;

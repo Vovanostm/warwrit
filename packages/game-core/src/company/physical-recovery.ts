@@ -2,6 +2,7 @@ import { COMPANY_RULES } from './definitions.js';
 import { person } from './lifecycle-state.js';
 import { campaignTick, isExactInteger } from './values.js';
 import { foodCovered } from './physical-food.js';
+import { canonicalJson } from './input.js';
 import {
   activeConditions,
   conditionDefinition,
@@ -11,6 +12,8 @@ import {
   syncLifecycleConditions,
 } from './physical-state.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
+import type { TrustedTransitSegment } from './physical-types.js';
+import { travelProfile } from './physical-types.js';
 
 function restore(
   current: number,
@@ -29,6 +32,7 @@ function restore(
 export function advancePhysicalRecovery(
   root: MaterializedCompanyState,
   toTick: string,
+  trustedTransitSegments: readonly TrustedTransitSegment[] = [],
 ): MaterializedCompanyState {
   const from = BigInt(root.physical.processedTick);
   const to = BigInt(toTick);
@@ -133,6 +137,71 @@ export function advancePhysicalRecovery(
         };
       }),
     };
+  }
+  for (const party of root.lifecycle.parties.filter(
+    (entry) => entry.location.kind === 'TRANSIT' || entry.location.kind === 'MOVING',
+  )) {
+    const location = party.location;
+    if (location.kind !== 'TRANSIT' && location.kind !== 'MOVING') continue;
+    const matches = trustedTransitSegments.filter(
+      (segment) =>
+        segment.worldId === root.lifecycle.worldId &&
+        segment.companyId === root.lifecycle.companyId &&
+        segment.partyId === party.partyId &&
+        segment.segmentId === location.segmentId &&
+        segment.startedAt === location.startedAt &&
+        segment.dueTick === location.arrivalNotBefore,
+    );
+    requirePhysical(matches.length === 1, 'INVALID_SOURCE');
+    const segment = matches[0]!;
+    const profile = travelProfile(segment.profileId);
+    requirePhysical(profile, 'INVALID_SOURCE');
+    const end = to < BigInt(segment.dueTick) ? to : BigInt(segment.dueTick);
+    const start = from > BigInt(segment.startedAt) ? from : BigInt(segment.startedAt);
+    if (end <= start) continue;
+    const interval = BigInt(profile.staminaEveryTicks);
+    const completedBefore = (start - BigInt(segment.startedAt)) / interval;
+    const completedThrough = (end - BigInt(segment.startedAt)) / interval;
+    if (completedThrough <= completedBefore) continue;
+    const members = root.lifecycle.characters.filter(
+      (entry) => entry.presence.fieldPartyId === party.partyId,
+    );
+    for (const character of members) {
+      for (let boundary = completedBefore + 1n; boundary <= completedThrough; boundary++) {
+        const vitals = physical.vitals.find(
+          (entry) => entry.characterId === character.identity.characterId,
+        );
+        const key = physicalId('travel-stamina-v1', physical.sourceEffects.length.toString());
+        const requestKey = canonicalJson({
+          segmentId: segment.segmentId,
+          routeEpoch: segment.routeEpoch,
+          characterId: character.identity.characterId,
+          cost: profile.staminaPerMember,
+          boundaryTick: (BigInt(segment.startedAt) + boundary * interval).toString(),
+        });
+        const prior = physical.sourceEffects.find((entry) => entry.requestKey === requestKey);
+        if (prior) {
+          requirePhysical(prior.requestKey === requestKey, 'IDEMPOTENCY_CONFLICT');
+          continue;
+        }
+        requirePhysical(
+          vitals && vitals.currentStamina >= profile.staminaPerMember,
+          'INSUFFICIENT_STAMINA',
+        );
+        physical = {
+          ...physical,
+          vitals: physical.vitals.map((entry) =>
+            entry.characterId === character.identity.characterId
+              ? {
+                  ...entry,
+                  currentStamina: entry.currentStamina - profile.staminaPerMember,
+                }
+              : entry,
+          ),
+          sourceEffects: [...physical.sourceEffects, { key, requestKey }],
+        };
+      }
+    }
   }
   physical = { ...physical, processedTick: campaignTick(to.toString()) };
   const lifecycle = syncLifecycleConditions(root.lifecycle, physical);

@@ -4,6 +4,7 @@ import {
   entityId,
   prepareCompanyEconomy,
   prepareCompanyLifecycle,
+  projectCompanyLifecycle,
 } from '@warwrit/game-core';
 import type { CompanyEconomyState, LifecycleState } from '@warwrit/game-core';
 import { command, context, economy, prepared, tick } from './company-economy-fixture.js';
@@ -55,6 +56,11 @@ describe('B01 — profile perk selection', () => {
     const result = prepared(prepareCompanyEconomy(state, input.cmd, input.ctx));
 
     expect(character(result.next).perks).toEqual(['leadership-25-a']);
+    const publicView = projectCompanyLifecycle(result.next.lifecycle, 'company')!;
+    expect(publicView.revision).toBe('1');
+    expect(
+      publicView.characters.find((entry) => entry.characterId === 'worker-0')?.perkIds,
+    ).toEqual(['leadership-25-a']);
     expect(result.receipt.lifecycleReceipt?.events).toEqual([
       expect.objectContaining({
         type: 'PerkChosen',
@@ -93,6 +99,37 @@ describe('B01 — profile perk selection', () => {
     const input = choose(state, 'leadership-25-a', 25, 'provider');
 
     rejectUnchanged(state, input.cmd, input.ctx, 'CONTACT_OR_ACCESS_REQUIRED');
+  });
+
+  it('requires an existing owner observation before a perk can be published', () => {
+    const state = economy([1n, 1n]);
+    const input = choose(state, 'leadership-25-a', 25);
+    const withoutOwnerObservation = {
+      ...state,
+      lifecycle: {
+        ...state.lifecycle,
+        knowledge: {
+          ...state.lifecycle.knowledge,
+          characters: state.lifecycle.knowledge.characters.filter(
+            (entry) => entry.identity.characterId !== 'worker-0',
+          ),
+        },
+      },
+    };
+    const cmd = command(
+      withoutOwnerObservation,
+      'ChoosePerk',
+      input.cmd.payload,
+      input.cmd.commandId,
+    );
+
+    expect(
+      prepareCompanyEconomy(withoutOwnerObservation, cmd, context(withoutOwnerObservation, cmd)),
+    ).toMatchObject({
+      kind: 'REJECTED',
+      state: withoutOwnerObservation,
+      error: 'CONTACT_OR_ACCESS_REQUIRED',
+    });
   });
 
   it('keeps the used milestone on the character across leave and re-hire', () => {

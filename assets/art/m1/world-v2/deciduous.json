@@ -1,0 +1,39 @@
+{
+  "asset": "deciduous.png",
+  "prompt": "Use case: stylized-concept\nAsset type: single transparent tree sprite for a 2.5D medieval world map\nPrimary request: One mature temperate broadleaf tree, oak/birch-like, realistic restrained painted ink-and-wash aesthetic reminiscent of a medieval Battle Brothers world map.\nScene/backdrop: True transparent background, isolated asset.\nSubject: A compact single mature tree with a broad organic asymmetrical crown, distinct branching foliage cluster volumes, finely varied muted olive and sage green foliage, and a warm brown slender visible trunk. Balanced natural proportions; avoid spherical lollipop shape. No root dirt mound.\nComposition/framing: Fixed orthographic three-quarter isometric view from 50 degrees elevation above horizontal. Show the crown top and the front trunk. One tree only, completely framed with generous transparent margin; trunk base positioned bottom center. Not a forest, not multiple trees.\nStyle/medium: Restrained realistic naturalistic painted ink and wash, subtle crisp ink contour and fine leaf-cluster texture, suited to a small strategy-game sprite. Muted natural colors compatible with realistic ground textures, no cartoon exaggeration.\nLighting/mood: Soft daylight from top left, gentle self shading. No external cast ground shadow.\nConstraints: Preserve clean actual alpha transparency, no white matte, no checkerboard, no horizon, no ground, no background, no text, no watermark, no border. Do not include any other object.",
+  "provenance": {
+    "tool": "image_gen.imagegen",
+    "mode": "built-in generation",
+    "transparent_background": true,
+    "generation_count": 1,
+    "corrections": 0,
+    "source_path": "/Users/vovanostm/.codex/generated_images/01a10292-1c78-7441-8437-c8551ba6107e/exec-88ae8d2f-6aa9-4ad5-923e-0a7382c635f4.png",
+    "copied_without_modification": true
+  },
+  "dimensions": {
+    "width": 1238,
+    "height": 1271
+  },
+  "alpha_validation": {
+    "has_alpha": true,
+    "png_color_type": "RGBA",
+    "bit_depth": 8,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 857199,
+    "opaque_pixels": 74,
+    "partial_alpha_pixels": 716225,
+    "corner_alpha": [0, 0, 0, 0],
+    "method": "sips metadata; read-only PNG pixel decoding with Python standard library; Pillow unavailable"
+  },
+  "visual_inspection": {
+    "performed": true,
+    "tool": "view_image",
+    "findings": "One mature broadleaf tree with varied asymmetrical muted olive crown, branch volumes, visible warm-brown trunk, full framing, no ground mound or external shadow. No matte/background/text/border.",
+    "concerns": [
+      "Perspective appears lower than requested 50-degree elevation; exact camera angle is not independently measurable.",
+      "Nearly all subject pixels have partial alpha; map composite appearance needs parent integration inspection."
+    ]
+  },
+  "workspaceAsset": "assets/art/m1/world-v2/deciduous.png"
+}

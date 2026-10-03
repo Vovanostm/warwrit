@@ -4,6 +4,50 @@ export interface EncounterFixtureCreateDto {
   readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
 }
 
+export interface EncounterActiveDto {
+  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+  readonly encounterId: string | null;
+}
+
+export interface EncounterControlGrantRequestDto {
+  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+}
+
+export interface EncounterResumeDto {
+  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+  readonly encounterId: string;
+}
+
+export function isEncounterResumeDto(value: unknown): value is EncounterResumeDto {
+  return (
+    isRecord(value) &&
+    Object.keys(value).length === 2 &&
+    value['version'] === ENCOUNTER_PROTOCOL_VERSION &&
+    isEncounterId(value['encounterId'])
+  );
+}
+
+export interface EncounterControlGrantDto {
+  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+  readonly encounterId: string;
+  readonly revision: number;
+  readonly controllableUnitIds: readonly string[];
+  /** Authenticated caller's status only; absent when served by an older runtime. */
+  readonly selfAfk?: boolean;
+  /** Activation epoch after which the caller's resume request may take effect. */
+  readonly resumeRequestedAfterEpoch?: number | null;
+}
+
+export function isEncounterControlGrantRequestDto(
+  value: unknown,
+): value is EncounterControlGrantRequestDto {
+  return (
+    isRecord(value) &&
+    Object.keys(value).length === 1 &&
+    value['version'] === ENCOUNTER_PROTOCOL_VERSION
+  );
+}
+
 export interface EncounterCommandDto {
   readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
   readonly encounterId: string;
@@ -104,8 +148,12 @@ export interface EncounterPublicProjectionDto {
   readonly activationId: string | null;
   readonly actorUnitId: string | null;
   readonly deadlineAt: string | null;
-  readonly controllableUnitIds: readonly string[];
   readonly units: readonly EncounterPublicUnitDto[];
+  /** Public board geometry. Optional only for compatibility with older responses. */
+  readonly map?: {
+    readonly hexes: readonly Readonly<{ q: number; r: number }>[];
+    readonly blocked: readonly Readonly<{ q: number; r: number }>[];
+  };
 }
 
 export interface EncounterRoomTicketDto {
@@ -116,4 +164,18 @@ export interface EncounterRoomTicketDto {
   readonly publicAddress?: string;
   readonly reconnectionToken?: string;
   readonly devMode?: boolean;
+}
+
+/** Owner-only succession choice after the company leader died in a resolved encounter. */
+export interface EncounterLeadershipDto {
+  readonly version: 1;
+  readonly encounterId: string;
+  /** True while consequences wait for the owner to name a successor. */
+  readonly required: boolean;
+  readonly candidates: readonly { readonly characterId: string; readonly name: string }[];
+  readonly modes: readonly ('PERMANENT' | 'ACTING' | 'REGENCY')[];
+  readonly chosen: null | {
+    readonly candidateId: string;
+    readonly mode: 'PERMANENT' | 'ACTING' | 'REGENCY';
+  };
 }

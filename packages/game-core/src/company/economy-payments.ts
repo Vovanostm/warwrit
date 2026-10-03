@@ -133,6 +133,50 @@ export function moveCash(
     ],
   };
 }
+
+/** Credit a company wallet from a trusted external payer in the caller's atomic settlement. */
+export function receiveExternalPayment(
+  finance: CompanyFinance,
+  input: {
+    readonly fromWalletId: string;
+    readonly toWalletId: string;
+    readonly recipient: OwnerRef;
+    readonly amountQ: bigint;
+    readonly atTick: CampaignTick;
+    readonly movementId: string;
+  },
+): CompanyFinance {
+  requireEconomy(input.amountQ > 0n && input.fromWalletId !== input.toWalletId, 'INVALID_ARGUMENT');
+  const destination = walletFor(finance, input.toWalletId);
+  requireEconomy(
+    canonicalJson(destination.owner) === canonicalJson(input.recipient),
+    'INVALID_SOURCE',
+  );
+  requireEconomy(
+    !finance.movements.some((movement) => movement.movementId === input.movementId),
+    'IDEMPOTENCY_CONFLICT',
+  );
+  return {
+    ...finance,
+    wallets: finance.wallets.map((wallet) =>
+      wallet.walletId === destination.walletId
+        ? { ...wallet, cashQ: q(BigInt(wallet.cashQ) + input.amountQ) }
+        : wallet,
+    ),
+    movements: [
+      ...finance.movements,
+      {
+        movementId: input.movementId,
+        from: input.fromWalletId,
+        to: input.toWalletId,
+        amountQ: q(input.amountQ),
+        atTick: input.atTick,
+        purpose: 'PRESENTATION',
+      },
+    ],
+  };
+}
+
 export function recipientWallet(
   finance: CompanyFinance,
   recipient: OwnerRef,

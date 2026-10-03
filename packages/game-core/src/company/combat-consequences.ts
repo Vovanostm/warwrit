@@ -3,6 +3,7 @@ import { applyCondition } from './physical-care.js';
 import type { CommandOf } from './lifecycle-types.js';
 import { recordFinancialDeath } from './economy-knowledge.js';
 import type {
+  FinanceEvidence,
   EconomyContext,
   EconomyRequirement,
   FinancialDeathEvidence,
@@ -20,6 +21,7 @@ import { validateCombatReceiptJournal } from './combat-receipts.js';
 import type { CombatReceiptJournal } from './combat-receipts.js';
 import { validateEconomy } from './economy-state.js';
 import { canonicalRevision } from './values.js';
+import { PHYSICAL_POLICY_VERSION } from './physical-types.js';
 
 export interface PreparedCombatConsequences extends PreparedCombatPhysicalEffects {
   readonly root: MaterializedCompanyState;
@@ -123,6 +125,99 @@ function applyKernelWound(
 }
 
 export type CombatReceiptDomainCommand = CommandOf<'ApplyCondition'> | CommandOf<'RecordDeath'>;
+
+/** Derive the owner evidence for one journal receipt from its replayed events and frozen binding. */
+export function deriveCombatReceiptDomainEvidence(
+  root: MaterializedCompanyState,
+  journal: CombatReceiptJournal,
+  receiptIndex: number,
+  scope: Pick<EconomyContext, 'canonicalRevision' | 'atTick' | 'companyId' | 'worldId'>,
+): {
+  readonly physicalFacts: readonly PhysicalEvidence[];
+  readonly financeFacts: readonly FinanceEvidence[];
+} {
+  const validated = validateCombatReceiptJournal(journal);
+  requirePhysical(
+    scope.companyId === validated.companyId &&
+      scope.worldId === validated.binding.worldId &&
+      scope.companyId === root.lifecycle.companyId &&
+      scope.worldId === root.lifecycle.worldId &&
+      canonicalRevision(scope.canonicalRevision) === scope.canonicalRevision,
+    'INVALID_SOURCE',
+  );
+  const receipt = validated.receipts[receiptIndex];
+  requirePhysical(receipt && receiptIndex > 0, 'INVALID_SOURCE');
+  const participantByUnit = new Map(
+    validated.binding.participants
+      .filter((participant) => participant.companyId === validated.companyId)
+      .map((participant) => [participant.unitId, participant.projection.characterId]),
+  );
+  const physicalFacts: PhysicalEvidence[] = [];
+  const financeFacts: FinanceEvidence[] = [];
+  for (let ordinal = 0; ordinal < receipt.transition.events.length; ordinal += 1) {
+    const event = receipt.transition.events[ordinal]!;
+    const characterId = eventCharacterId(event, participantByUnit);
+    if (!characterId) continue;
+    const sourceEventId = receipt.sourceEventIds[ordinal];
+    requirePhysical(sourceEventId, 'INVALID_STATE');
+    const evidenceId = `${sourceEventId}:terminal-consequence`;
+    if (event.type === 'unit.wounded') {
+      const definition = conditionForSeverity(event.severity);
+      physicalFacts.push({
+        id: evidenceId,
+        companyId: scope.companyId,
+        worldId: scope.worldId,
+        revision: scope.canonicalRevision,
+        sourceEventId,
+        atTick: scope.atTick,
+        ordinal,
+        version: PHYSICAL_POLICY_VERSION,
+        kind: 'CONDITION_SOURCE',
+        characterId,
+        definitionId: definition.id,
+        causeId: sourceEventId,
+        onsetTick: scope.atTick,
+      });
+    } else if (event.type === 'unit.died') {
+      const custodyOutcomeId = `${evidenceId}:custody`;
+      const causeId = sourceEventId;
+      physicalFacts.push({
+        id: custodyOutcomeId,
+        companyId: scope.companyId,
+        worldId: scope.worldId,
+        revision: scope.canonicalRevision,
+        sourceEventId,
+        atTick: scope.atTick,
+        ordinal,
+        version: PHYSICAL_POLICY_VERSION,
+        kind: 'DEATH_OUTCOME',
+        characterId,
+        actualDeathTick: scope.atTick,
+        causeId,
+        location: validated.binding.location,
+        corpseContainerId: `${evidenceId}:corpse`,
+      });
+      financeFacts.push({
+        id: `${evidenceId}:finance`,
+        companyId: scope.companyId,
+        worldId: scope.worldId,
+        revision: scope.canonicalRevision,
+        sourceEventId,
+        atTick: scope.atTick,
+        kind: 'FINANCIAL_DEATH',
+        characterId,
+        actualDeathTick: scope.atTick,
+        recipient: { kind: 'ESTATE', id: characterId },
+        causeId,
+        custodyOutcomeId,
+      });
+    }
+  }
+  return {
+    physicalFacts: Object.freeze(physicalFacts),
+    financeFacts: Object.freeze(financeFacts),
+  };
+}
 
 /** Reuse G08's event-to-owner command derivation for one verified ordinal only. */
 export function deriveCombatReceiptDomainCommands(

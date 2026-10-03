@@ -46,7 +46,7 @@ interface MutableEdition {
 }
 
 interface MutableCatalogue {
-  schemaVersion: number;
+  schemaVersion: 1;
   worldRegionVersion: string;
   editions: MutableEdition[];
 }
@@ -85,6 +85,37 @@ describe('M1 contract catalogue', () => {
       original,
     );
     expect((original?.definition as ContractDefinition).issuerRoleId).toBe('local-village-steward');
+  });
+
+  it('preserves source region provenance across serialization and accepts only the supported runtime edition', () => {
+    const restored = JSON.parse(JSON.stringify(CONTRACT_M1_CATALOGUE)) as ContractCatalogue;
+    const serialized = JSON.stringify(restored);
+
+    expect(restored.worldRegionVersion).toBe('w01-authored-fixture-2026-09-28-v1');
+    expect(validateContractCatalogue(restored)).toEqual({ valid: true, issues: [] });
+    expect(JSON.stringify(restored)).toBe(serialized);
+    expect(
+      bindContractInstance('ct-m1-authored-v1', 'ci.m1.road-tracks.01', restored),
+    ).toMatchObject({
+      definitionId: 'ct.m1.road-tracks.v1',
+      definitionEdition: 'ct-m1-authored-v1',
+      definition: {
+        issuerRoleId: 'city-notice-clerk',
+        issuerLocation: { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' },
+      },
+    });
+    expect(JSON.stringify(restored)).toBe(serialized);
+
+    const retagged = mutableCatalogue();
+    retagged.worldRegionVersion = 'w01-authored-fixture-2026-09-29-v2';
+    expect(validateContractCatalogue(retagged)).toEqual({
+      valid: false,
+      issues: ['INVALID_CATALOGUE_SHAPE_OR_VERSION'],
+    });
+
+    const unsupportedSourceEdition = mutableCatalogue();
+    unsupportedSourceEdition.worldRegionVersion = 'w01-authored-fixture-2026-09-30-v3';
+    expect(validateContractCatalogue(unsupportedSourceEdition).valid).toBe(false);
   });
 
   it('rejects malformed references, duplicated identities, prerequisite cycles and unreachable outcomes', () => {

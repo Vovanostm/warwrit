@@ -23,6 +23,12 @@ importers:
       '@vitest/coverage-v8':
         specifier: 4.1.11
         version: 4.1.11(vitest@4.1.11)
+      '@warwrit/game-core':
+        specifier: workspace:*
+        version: link:packages/game-core
+      ajv:
+        specifier: 8.20.0
+        version: 8.20.0
       eslint:
         specifier: ^10.9.1
         version: 10.9.1(supports-color@7.2.0)
@@ -127,9 +133,18 @@ importers:
       '@types/pg':
         specifier: ^8.0.0
         version: 8.23.1
+      '@warwrit/testkit':
+        specifier: workspace:*
+        version: link:../../packages/testkit
 
   apps/web:
     dependencies:
+      '@babylonjs/core':
+        specifier: 9.28.0
+        version: 9.28.0
+      '@colyseus/sdk':
+        specifier: 0.18.4
+        version: 0.18.4(@colyseus/core@0.18.17)(typescript@5.9.3)(zod@4.6.5)
       '@warwrit/protocol':
         specifier: workspace:*
         version: link:../../packages/protocol

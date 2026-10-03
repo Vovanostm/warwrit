@@ -11,7 +11,7 @@ export const COMBAT_RANDOM_ALGORITHM = 'xorshift32-v1' as const;
 export const M0_WEAPON_IDS = ['bow', 'great-weapon', 'raider', 'spear', 'sword-shield'] as const;
 
 export type LegacyCombatRulesetId = typeof M0_COMBAT_RULESET_ID;
-export type CombatRulesetId = LegacyCombatRulesetId | 'm1-domain-bridge-v1';
+export type CombatRulesetId = LegacyCombatRulesetId | 'm1-domain-bridge-v1' | 'm1-domain-bridge-v2';
 export type WeaponId = (typeof M0_WEAPON_IDS)[number];
 export type UnitStatus = 'active' | 'dead' | 'retreated';
 export type WoundSeverity = 'minor' | 'severe';

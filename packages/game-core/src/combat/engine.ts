@@ -1,7 +1,7 @@
-import { assertNever, compareCodeUnits, invariant } from '../primitives.js';
+import { assertNever, invariant } from '../primitives.js';
 import { findPath, hexDistance, hexEquals, hexKey } from './hex.js';
 import { createRandomState, drawRandomInt } from './random.js';
-import { combatRules, type CombatRules, weaponProfile } from './rules.js';
+import { combatRules, compareCombatUnitIds, type CombatRules, weaponProfile } from './rules.js';
 import { COMBAT_SCHEMA_VERSION } from './types.js';
 import type {
   ActivationEndedEvent,
@@ -21,6 +21,7 @@ import type {
   CombatMap,
   CombatSideSetup,
   CombatTransition,
+  CombatRulesetId,
   CombatUnitSetup,
   CombatUnitState,
   DefendCommand,
@@ -232,13 +233,17 @@ export function effectiveDefense(unit: CombatUnitState, rules: CombatRules): num
   );
 }
 
-function orderInitiative(units: readonly CombatUnitState[], rules: CombatRules): readonly UnitId[] {
+function orderInitiative(
+  units: readonly CombatUnitState[],
+  rules: CombatRules,
+  rulesetId: CombatRulesetId,
+): readonly UnitId[] {
   return units
     .filter(({ status }) => status === 'active')
     .toSorted(
       (left, right) =>
         effectiveInitiative(right, rules) - effectiveInitiative(left, rules) ||
-        compareCodeUnits(left.id, right.id),
+        compareCombatUnitIds(rulesetId, left.id, right.id),
     )
     .map(({ id }) => id);
 }
@@ -389,7 +394,7 @@ function advanceActivation(
   }
 
   round += 1;
-  order = orderInitiative(state.units, rules);
+  order = orderInitiative(state.units, rules, state.rulesetId);
   turnIndex = 0;
   const roundState: BattleState = {
     ...state,
@@ -416,7 +421,7 @@ export function startBattle(setup: BattleSetup): CombatTransition {
   const rules = combatRules(setup.rulesetId);
   validateSetup(setup, rules);
   const units = setup.units.map(unitFromSetup);
-  const initiativeOrder = orderInitiative(units, rules);
+  const initiativeOrder = orderInitiative(units, rules, setup.rulesetId);
   const baseState: BattleState = {
     schemaVersion: COMBAT_SCHEMA_VERSION,
     battleId: setup.battleId,

@@ -3,7 +3,10 @@ import { startBattleV2 } from '../combat/runtime-v2.js';
 import type { CombatCommand, CombatEvent, CombatTransition } from '../combat/types.js';
 import type { CompanyCommand } from './commands.js';
 import { EconomyViolation, requireEconomy } from './economy-state.js';
-import { ENCOUNTER_BINDING_VERSION } from './encounter-binding.js';
+import {
+  ENCOUNTER_BINDING_VERSION,
+  FIRST_HUNT_WORLD_BINDING_VERSION,
+} from './encounter-binding.js';
 import type { FrozenEncounterBinding } from './encounter-binding.js';
 import { guardCompanyCommand } from './guards.js';
 import type { TrustedCompanyContext } from './guards.js';
@@ -46,10 +49,17 @@ export function combatReceiptEventIds(receiptId: string, events: readonly Combat
 }
 
 /** A fresh internal journal, not a bound company, an applied receipt or a durable commit. */
-export function createCombatReceiptJournal(binding: FrozenEncounterBinding, companyId: string) {
+export function createCombatReceiptJournal(
+  binding: FrozenEncounterBinding,
+  companyId: string,
+): CombatReceiptJournal {
   const frozen = ownPhysical(binding);
+  const supportedBinding =
+    (frozen.version === ENCOUNTER_BINDING_VERSION && frozen.worldParticipants === undefined) ||
+    (frozen.version === FIRST_HUNT_WORLD_BINDING_VERSION &&
+      Array.isArray(frozen.worldParticipants));
   requireEconomy(
-    frozen.version === ENCOUNTER_BINDING_VERSION &&
+    supportedBinding &&
       frozen.schemaVersion === 1 &&
       id.read(frozen.bindingId) &&
       id.read(frozen.worldId) &&
@@ -98,24 +108,46 @@ function checkReceipt(receipt: PreparedCombatReceipt, binding: FrozenEncounterBi
  * Revalidates canonical G06 history, not adapter authentication. Callers must source this journal
  * from the authenticated G06 path or trusted storage; this proves its exact kernel sequence.
  */
+// Validated bindings and receipts are deep-frozen snapshots owned by this module, so
+// re-validating the same objects (a journal re-read once per receipt) can reuse earlier
+// work by identity. Anything else - a new or mutable object - is validated in full.
+const validatedBindings = new WeakMap<object, Set<string>>();
+const validatedReceipts = new WeakMap<
+  object,
+  { readonly binding: object; readonly prior: object | null; readonly companyId: string }
+>();
+
 export function validateCombatReceiptJournal(value: CombatReceiptJournal): CombatReceiptJournal {
-  const binding = ownPhysical(value.binding);
-  createCombatReceiptJournal(binding, value.companyId);
-  const receipts = value.receipts.map((receipt) => ownPhysical(receipt));
+  const knownBinding = validatedBindings.get(value.binding)?.has(value.companyId) === true;
+  const binding = knownBinding ? value.binding : ownPhysical(value.binding);
+  if (!knownBinding) createCombatReceiptJournal(binding, value.companyId);
+  const receipts = value.receipts.map((receipt) =>
+    validatedReceipts.has(receipt) ? receipt : ownPhysical(receipt),
+  );
   const requests = new Map<string, string>();
   for (let index = 0; index < receipts.length; index += 1) {
     const receipt = receipts[index]!;
-    checkReceipt(receipt, binding);
-    requireEconomy(
-      receipt.transition.state.revision === binding.initial.state.revision + index &&
-        receipt.request.companyId === value.companyId &&
-        receipt.request.worldId === binding.worldId,
-      'INVALID_STATE',
-    );
+    const prior = index === 0 ? null : receipts[index - 1]!;
+    const link = validatedReceipts.get(receipt);
+    const known =
+      link !== undefined &&
+      link.binding === binding &&
+      link.prior === prior &&
+      link.companyId === value.companyId;
+    if (!known) {
+      checkReceipt(receipt, binding);
+      requireEconomy(
+        receipt.transition.state.revision === binding.initial.state.revision + index &&
+          receipt.request.companyId === value.companyId &&
+          receipt.request.worldId === binding.worldId,
+        'INVALID_STATE',
+      );
+    }
     const requestBody = canonicalJson(receipt.request);
     const priorRequest = requests.get(receipt.request.commandId);
     requireEconomy(!priorRequest || priorRequest === requestBody, 'IDEMPOTENCY_CONFLICT');
     requests.set(receipt.request.commandId, requestBody);
+    if (known) continue;
 
     if (index === 0) {
       requireEconomy(
@@ -123,6 +155,7 @@ export function validateCombatReceiptJournal(value: CombatReceiptJournal): Comba
           canonicalJson(receipt.transition) === canonicalJson(binding.initial),
         'INVALID_SOURCE',
       );
+      validatedReceipts.set(receipt, { binding, prior, companyId: value.companyId });
       continue;
     }
 
@@ -142,6 +175,7 @@ export function validateCombatReceiptJournal(value: CombatReceiptJournal): Comba
         canonicalJson({ state: result.state, events: result.events }),
       'INVALID_SOURCE',
     );
+    validatedReceipts.set(receipt, { binding, prior, companyId: value.companyId });
   }
 
   const lastRevision = receipts.at(-1)?.transition.state.revision ?? binding.lastAppliedRevision;
@@ -153,15 +187,20 @@ export function validateCombatReceiptJournal(value: CombatReceiptJournal): Comba
     proposedLastAppliedRevision: lastRevision,
   });
   requireEconomy(
-    canonicalJson(binding) === canonicalJson(value.binding) &&
+    (binding === value.binding || canonicalJson(binding) === canonicalJson(value.binding)) &&
       validated.companyId === value.companyId &&
       validated.proposedLastAppliedRevision === value.proposedLastAppliedRevision &&
       receipts.length === value.receipts.length &&
       receipts.every(
-        (receipt, index) => canonicalJson(receipt) === canonicalJson(value.receipts[index]),
+        (receipt, index) =>
+          receipt === value.receipts[index] ||
+          canonicalJson(receipt) === canonicalJson(value.receipts[index]),
       ),
     'INVALID_STATE',
   );
+  const companies = validatedBindings.get(binding) ?? new Set<string>();
+  companies.add(value.companyId);
+  validatedBindings.set(binding, companies);
   return validated;
 }
 

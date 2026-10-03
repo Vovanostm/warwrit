@@ -1,7 +1,7 @@
-import { compareCodeUnits, invariant } from '../primitives.js';
+import { invariant } from '../primitives.js';
 import { applyCombatCommand, assertBattleState, startBattle } from './engine.js';
 import { findPath, hexDistance, hexKey } from './hex.js';
-import { combatRules, type CombatRules, weaponProfile } from './rules.js';
+import { combatRules, compareCombatUnitIds, type CombatRules, weaponProfile } from './rules.js';
 import {
   commandId,
   type AiDoctrine,
@@ -39,7 +39,7 @@ function enemiesOf(state: BattleState, actor: CombatUnitState): readonly CombatU
       (left, right) =>
         left.health - right.health ||
         hexDistance(actor.position, left.position) - hexDistance(actor.position, right.position) ||
-        compareCodeUnits(left.id, right.id),
+        compareCombatUnitIds(state.rulesetId, left.id, right.id),
     );
 }
 
@@ -120,7 +120,8 @@ function movementTowardEnemy(
     )
     .toSorted(
       (left, right) =>
-        left.path.length - right.path.length || compareCodeUnits(left.target.id, right.target.id),
+        left.path.length - right.path.length ||
+        compareCombatUnitIds(state.rulesetId, left.target.id, right.target.id),
     );
 
   const candidate = candidates[0];

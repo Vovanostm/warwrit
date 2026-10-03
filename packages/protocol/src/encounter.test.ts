@@ -1,7 +1,11 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
-import { ENCOUNTER_PROTOCOL_VERSION, isEncounterCommandDto } from './encounter.js';
+import {
+  ENCOUNTER_PROTOCOL_VERSION,
+  isEncounterCommandDto,
+  isEncounterControlGrantRequestDto,
+} from './encounter.js';
 
 // Untrusted HTTP and realtime payloads pass through this guard before any
 // command reaches the executor: it must accept every valid shape and nothing else.
@@ -69,5 +73,20 @@ describe('encounter command guard', () => {
     for (const value of [null, undefined, 'command', 42, []]) {
       expect(isEncounterCommandDto(value)).toBe(false);
     }
+  });
+});
+
+describe('private encounter control grant request guard', () => {
+  it('accepts only the versioned empty request body', () => {
+    expect(isEncounterControlGrantRequestDto({ version: 1 })).toBe(true);
+    for (const value of [
+      null,
+      undefined,
+      [],
+      { version: 2 },
+      { version: 1, encounterId: 'client-controlled' },
+      { version: 1, companyId: 'client-controlled' },
+    ])
+      expect(isEncounterControlGrantRequestDto(value)).toBe(false);
   });
 });

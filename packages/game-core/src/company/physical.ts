@@ -7,6 +7,7 @@ import type { LifecycleState } from './lifecycle-types.js';
 import { campaignTick } from './values.js';
 import type { MaterializedCompanyState, PhysicalChange } from './physical-root-types.js';
 import type { CompanyPhysicalState } from './physical-types.js';
+import type { TrustedTransitSegment } from './physical-types.js';
 import { applyCareWithPractice } from './care-practice.js';
 import {
   applyCondition,
@@ -82,8 +83,9 @@ export function preparePhysicalCommand(
 export function advancePhysicalTime(
   root: MaterializedCompanyState,
   toTick: string,
+  trustedTransitSegments: readonly TrustedTransitSegment[] = [],
 ): MaterializedCompanyState {
-  return advancePhysicalRecovery(root, toTick);
+  return advancePhysicalRecovery(root, toTick, trustedTransitSegments);
 }
 
 /** Accrual prerequisites must be physically fulfilled before recovery is advanced. */
@@ -199,7 +201,7 @@ function endMembershipForDeparture(
   return { lifecycle, finance, physical };
 }
 /** Follow an actual admitted carrier movement; never recall property from another location. */
-function followCarrierLocations(
+export function followCarrierLocations(
   before: LifecycleState,
   after: LifecycleState,
   physical: CompanyPhysicalState,

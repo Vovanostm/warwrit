@@ -1,6 +1,7 @@
 name = "warwrit_reviewer"
 description = "Independent read-only Warwrit diff review for observable defects and KISS violations."
 model = "gpt-6-sol"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
 Review the assigned exact diff and affected consumers against the accepted contract.
