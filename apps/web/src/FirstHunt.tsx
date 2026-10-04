@@ -1,4 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  issuerBuilding,
+  issuerVenue,
+  oldMillVisit,
+  visitingIssuer,
+  type ContractVisitProps,
+} from './game/contract-visits.js';
 
 import {
   isFirstHuntReadResponse,
@@ -69,13 +76,15 @@ const HUNT_TEXT: Readonly<Record<string, { readonly code: string; readonly title
   'ci.m1.mill-beast.01': { code: 'HUNT-01', title: 'Ночной зверь у мельницы' },
 };
 
-export function FirstHunt(props: {
-  readonly scope: FirstHuntScope;
-  readonly location: string | null;
-  readonly onUnauthorized: () => void;
-  readonly refreshKey?: number;
-  readonly onEncounterDiscovered?: () => void;
-}) {
+export function FirstHunt(
+  props: ContractVisitProps & {
+    readonly scope: FirstHuntScope;
+    readonly location: string | null;
+    readonly onUnauthorized: () => void;
+    readonly refreshKey?: number;
+    readonly onEncounterDiscovered?: () => void;
+  },
+) {
   const [view, setView] = useState<ViewState>({ status: 'loading' });
   const [selectedContainerId, setSelectedContainerId] = useState('');
   const generation = useRef(0);
@@ -90,33 +99,23 @@ export function FirstHunt(props: {
       const currentGeneration = ++generation.current;
       setView((current) => ({ ...current, status: 'loading' }));
       try {
-        const query =
-          props.scope.instanceId === undefined
-            ? ''
-            : `?instanceId=${encodeURIComponent(props.scope.instanceId)}`;
-        const response = await fetch(`${apiBaseUrl}/contracts/first-hunt${query}`, {
-          credentials: 'same-origin',
-          cache: 'no-store',
-        });
+        const value = await readHunt(props.scope.instanceId);
         if (currentGeneration !== generation.current) return undefined;
-        if (response.status === 401) {
+        if (value === 'unauthorized') {
           unauthorizedRef.current();
           return undefined;
         }
-        if (!response.ok) throw new Error('Не удалось прочитать условия контракта.');
-        const value: unknown = await response.json();
-        if (!isFirstHuntReadResponse(value))
-          throw new Error('Ответ контракта имеет неверный формат.');
-        const saved = storage() ? readFirstHuntAttempt(storage()!, props.scope) : undefined;
-        setView(firstHuntReadyView(value, saved, preservedCommandError));
+        setView(firstHuntReadyView(value, restoredAttempt(props.scope), preservedCommandError));
         return value;
       } catch (error) {
-        if (currentGeneration !== generation.current) return;
-        setView((current) => ({
-          ...current,
-          status: 'failed',
-          error: error instanceof Error ? error.message : 'Нет связи с контрактом.',
-        }));
+        setView((current) => {
+          if (currentGeneration !== generation.current) return current;
+          return {
+            ...current,
+            status: 'failed',
+            error: attemptError(error, 'Нет связи с контрактом.'),
+          };
+        });
         return undefined;
       }
     },
@@ -162,7 +161,7 @@ export function FirstHunt(props: {
         } catch (error) {
           setView((state) => ({
             ...state,
-            error: error instanceof Error ? error.message : 'Не удалось сохранить запрос.',
+            error: attemptError(error, 'Не удалось сохранить запрос.'),
           }));
           return;
         }
@@ -207,7 +206,7 @@ export function FirstHunt(props: {
           ...state,
           attempt,
           pending: false,
-          error: error instanceof Error ? error.message : 'Неизвестный результат запроса.',
+          error: attemptError(error, 'Неизвестный результат запроса.'),
         }));
       }
     },
@@ -260,6 +259,50 @@ export function FirstHunt(props: {
     code: 'HUNT',
     title: 'Охота',
   };
+  const atIssuer = contract
+    ? visitingIssuer(props.visit, contract.instanceId, contract.terms.issuerLocation.siteId)
+    : false;
+  const atField =
+    props.visit === null ||
+    oldMillVisit(props.visit, contract?.terms.objectiveLocation.siteId ?? '');
+  if (contract && !view.attempt) {
+    if (
+      contract.yourRole === 'NONE' &&
+      (contract.knownState === 'SETTLED' || contract.terms.issuerLocation.siteId !== props.location)
+    )
+      return null;
+    if (
+      props.visit &&
+      !atIssuer &&
+      !(
+        contract.yourRole !== 'NONE' &&
+        oldMillVisit(props.visit, contract.terms.objectiveLocation.siteId)
+      )
+    )
+      return null;
+    if (contract.yourRole === 'NONE' && !atIssuer) {
+      const building = issuerBuilding(contract.instanceId);
+      return (
+        <article className="contract-card contract-lead">
+          <h4>{huntText.title}</h4>
+          <p>
+            {issuerLabel(contract.terms.issuerId)} · {issuerVenue(contract.instanceId)}
+          </p>
+          <p className="state-note">Узнайте условия у заказчика.</p>
+          {building && (
+            <button
+              type="button"
+              className="quiet-action"
+              disabled={!props.canVisit}
+              onClick={() => props.onVisitIssuer(contract.terms.issuerLocation.siteId, building)}
+            >
+              Поговорить →
+            </button>
+          )}
+        </article>
+      );
+    }
+  }
   return (
     <section className="first-hunt" aria-label={`Контракт: ${huntText.title}`}>
       <p className="eyebrow">Контракт · {huntText.code}</p>
@@ -282,15 +325,23 @@ export function FirstHunt(props: {
             {locationLabel(contract.terms.issuerLocation.siteId)},{' '}
             {areaLabel(contract.terms.issuerLocation.areaId)}.
           </p>
-          <p>
-            Награда: {rewardLabel(contract.terms.rewardQ)} единственному носителю трофея. Помощь
-            второй компании добровольна; выплата не делится.
-          </p>
-          <p>
-            Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
-            {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом убедитесь,
-            что у отряда есть провизия.
-          </p>
+          <p>Награда: {rewardLabel(contract.terms.rewardQ)}. Принятые условия фиксированы.</p>
+          <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
+            <summary>Куда идти и что потребуется?</summary>
+            <p>
+              Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
+              {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом
+              убедитесь, что у отряда есть провизия.
+            </p>
+          </details>
+          <details className="contract-conversation">
+            <summary>Как получить награду?</summary>
+            <p>После боя нужно забрать подлинный трофей и лично предъявить его заказчику.</p>
+            <p>
+              Награда: {rewardLabel(contract.terms.rewardQ)} единственному носителю трофея. Помощь
+              второй компании добровольна; выплата не делится. Принятые условия фиксированы.
+            </p>
+          </details>
           <dl>
             <dt>Ваша роль</dt>
             <dd>{firstHuntRoleLabel(contract.yourRole)}</dd>
@@ -312,17 +363,17 @@ export function FirstHunt(props: {
             </p>
           )}
           <div className="first-hunt-actions">
-            {availableActions.includes('ACCEPT') && (
+            {atIssuer && availableActions.includes('ACCEPT') && (
               <button
                 className="primary-action button-action"
                 type="button"
                 disabled={actionsDisabled}
                 onClick={() => void submit('ACCEPT')}
               >
-                Принять контракт
+                Договориться и взять поручение
               </button>
             )}
-            {availableActions.includes('HELP') && (
+            {atIssuer && availableActions.includes('HELP') && (
               <button
                 className="primary-action button-action"
                 type="button"
@@ -342,7 +393,13 @@ export function FirstHunt(props: {
                 Отказаться от помощи
               </button>
             )}
-            {availableActions.includes('JOIN') && (
+            {!atField &&
+              (availableActions.includes('JOIN') || availableActions.includes('PICKUP')) && (
+                <button type="button" className="quiet-action" onClick={props.onJournal}>
+                  Выйти на площадь и продолжить →
+                </button>
+              )}
+            {atField && availableActions.includes('JOIN') && (
               <button
                 className="primary-action button-action"
                 type="button"
@@ -352,7 +409,7 @@ export function FirstHunt(props: {
                 Вступить в бой
               </button>
             )}
-            {contract.knownState === 'PROOF_AVAILABLE' && pickupTargets.length > 0 && (
+            {atField && contract.knownState === 'PROOF_AVAILABLE' && pickupTargets.length > 0 && (
               <>
                 <label>
                   Куда положить трофей
@@ -381,14 +438,31 @@ export function FirstHunt(props: {
                 )}
               </>
             )}
-            {availableActions.includes('PRESENT') && (
+            {!atIssuer &&
+              availableActions.includes('PRESENT') &&
+              issuerBuilding(contract.instanceId) && (
+                <button
+                  type="button"
+                  className="quiet-action"
+                  disabled={!props.canVisit}
+                  onClick={() =>
+                    props.onVisitIssuer(
+                      contract.terms.issuerLocation.siteId,
+                      issuerBuilding(contract.instanceId)!,
+                    )
+                  }
+                >
+                  Вернуться к заказчику · {issuerVenue(contract.instanceId)} →
+                </button>
+              )}
+            {atIssuer && availableActions.includes('PRESENT') && (
               <button
                 className="primary-action button-action"
                 type="button"
                 disabled={actionsDisabled}
                 onClick={() => void submit('PRESENT')}
               >
-                Предъявить трофей страже
+                Предъявить трофей заказчику
               </button>
             )}
             <button className="quiet-action" type="button" onClick={() => void refresh()}>
@@ -550,4 +624,26 @@ export function firstHuntGuidance(
         ? 'Предъявите трофей заказчику. Награда достанется текущему носителю.'
         : `Вернитесь к заказчику в ${locationLabel(issuer)}, сохраняя трофей в своём контейнере.`;
   return 'Выплата завершена. Трофей остаётся в прежнем контейнере и отмечен как погашенный.';
+}
+
+export async function readHunt(instanceId: string | undefined) {
+  const query = instanceId === undefined ? '' : `?instanceId=${encodeURIComponent(instanceId)}`;
+  const response = await fetch(`${apiBaseUrl}/contracts/first-hunt${query}`, {
+    credentials: 'same-origin',
+    cache: 'no-store',
+  });
+  if (response.status === 401) return 'unauthorized' as const;
+  if (!response.ok) throw new Error('Не удалось прочитать условия контракта.');
+  const value: unknown = await response.json();
+  if (!isFirstHuntReadResponse(value)) throw new Error('Ответ контракта имеет неверный формат.');
+  return value;
+}
+
+function restoredAttempt(scope: FirstHuntScope) {
+  const local = storage();
+  return local ? readFirstHuntAttempt(local, scope) : undefined;
+}
+
+function attemptError(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }

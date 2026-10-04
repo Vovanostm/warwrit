@@ -33,12 +33,6 @@ import siteFarmstead from '../../../../assets/art/m1/map/site-farmstead.png';
 import siteMill from '../../../../assets/art/m1/map/site-mill.png';
 import siteRiverVillage from '../../../../assets/art/m1/map/site-river-village.png';
 import siteVillage from '../../../../assets/art/m1/map/site-village.png';
-import placeBereznyak from '../../../../assets/art/m1/places/bereznyak.png';
-import placeCamp from '../../../../assets/art/m1/places/camp.png';
-import placeKamennyBrod from '../../../../assets/art/m1/places/kamenny-brod.png';
-import placeSevernyDvor from '../../../../assets/art/m1/places/severny-dvor.png';
-import placeStarayaMelnitsa from '../../../../assets/art/m1/places/staraya-melnitsa.png';
-import placeTikhayaGat from '../../../../assets/art/m1/places/tikhaya-gat.png';
 
 export type UnitRole = 'ours' | 'ally' | 'hostile';
 
@@ -118,17 +112,4 @@ export function siteSprite(siteId: string, kind: 'CITY' | 'VILLAGE' | 'LANDMARK'
   return (
     SITES[siteId] ?? (kind === 'CITY' ? siteCity : kind === 'LANDMARK' ? siteMill : siteVillage)
   );
-}
-
-const PLACES: Readonly<Record<string, string>> = {
-  'kamenny-brod': placeKamennyBrod,
-  bereznyak: placeBereznyak,
-  'tikhaya-gat': placeTikhayaGat,
-  'severny-dvor': placeSevernyDvor,
-  'staraya-melnitsa': placeStarayaMelnitsa,
-};
-
-/** Header illustration for a settlement, or the field camp. */
-export function placeIllustration(siteId: string | 'camp'): string | undefined {
-  return siteId === 'camp' ? placeCamp : PLACES[siteId];
 }

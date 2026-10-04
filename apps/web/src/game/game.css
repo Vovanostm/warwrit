@@ -9,6 +9,7 @@
   min-height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
+  grid-template-columns: minmax(0, 1fr);
   color: var(--ink);
 }
 
@@ -561,6 +562,34 @@
   }
 }
 
+@media (width < 44rem) {
+  .game-topbar {
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    padding: 0.7rem;
+  }
+  .topbar-company {
+    min-width: 0;
+    gap: 0.5rem;
+  }
+  .topbar-name {
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+  .clocks {
+    order: 4;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .game-main {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.7rem 0.7rem 0;
+  }
+  .game-side {
+    min-width: 0;
+  }
+}
+
 /* Contract and battle cards rendered inside the shell. */
 .game-side .first-hunt,
 .game-battle .encounter-panel {
@@ -778,6 +807,23 @@
 .contract-card h4 {
   margin: 0;
   font-size: 1.05rem;
+}
+
+.contract-conversation {
+  margin: 12px 0;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.contract-conversation summary {
+  color: var(--gold);
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.contract-conversation summary:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
 }
 
 .contract-reward {

@@ -1,5 +1,72 @@
 # Warwrit current delivery plan
 
+**Living-place integration authorized — 2026-10-04:** owner explicitly
+requested “fix conflicts, merge, update local main”, authorizing PR139 merge
+and local main update. Parent owns the isolated `living-places-integration`
+checkout. Integrate current main road/exact-geometry work with local issuer
+meetings and layered scenes, preserving both resource registries and historical
+records. Earlier no-merge statements below are superseded for PR139 only.
+Run current-head verification and independent integrated critique before merge.
+Preserve the primary checkout's unrelated dirty owner documents and player data.
+No deployment or paid provisioning authorized.
+
+**Contracts through people and places — 2026-10-04:** owner requires
+meaningful issuer visits instead of a settlement-wide contract dispenser.
+Parent remains sole writer on `codex/living-locations` / PR139. Existing
+local offers now direct the player to the herbalist, elder, river inn, market
+notice clerk or guardhouse; fixed terms and hand-ins use the matching meeting.
+Accepted field work and findings remain in the journal. Meeting points are
+client presentation inside existing canonical issuer areas; no server interior
+state, new NPC, bargaining, reputation or reward rule is claimed. Final
+bootstrap passed:608 unit checks,46 skipped,10,000 stress battles and14
+DB checks. Changed-code audit passed; authenticated browser covers local
+meetings, focus and390px layout. Independent critic found no material defect
+in final source and wide/narrow captures. Acceptance-to-payment gameplay is
+NOT_RUN. PR139 conflicts with newer main map/road work; integration and CI
+remain separate. Detailed result in the
+[owning amendment](../work-packages/M1-LIVING-PLACES.md#owner-correction--contracts-through-people-and-places-2026-10-04).
+Broader depth proposals remain separately labelled, not implemented policy.
+No merge/deployment authorization.
+
+**Cohesive settlement correction active — 2026-10-04:** owner rejected the
+first living-place overview as pasted houses on meadow texture. Parent owns
+the same `codex/living-locations` / PR139; replaces overview with coherent
+painted lanes, courtyards, buildings and separate depth planes. First result:
+complete Bereznyak scene, then city/river/farm/ruin in the same style.
+[Owning amendment](../work-packages/M1-LIVING-PLACES.md#owner-correction--cohesive-settlements-2026-10-04).
+Correction implemented: connected painted village, town, river settlement,
+farm and ruined mill with separate distant/settlement/near depth planes,
+door-aligned markers and matching close views. Ten types retain three variants.
+Current authenticated browser covers all village entrances, existing actions,
+remote previews, keyboard focus, day/night and390px layout. Independent critic
+found no established material defect in inspected results. Full bootstrap
+passed; subsequent equivalent layer-default consolidation passed current
+focused checks and changed-code audit.
+[Evidence and limits](../work-packages/M1-LIVING-PLACES.md#cohesive-scene-result--2026-10-04).
+Previous visual acceptance is superseded. Existing API/player data retained.
+Correction implementation `381fbf8` passed the normal commit audit; PR139 owns
+publication and current-head CI readback. No merge/deployment authorization.
+
+**Living places implemented — 2026-10-04:** owner requested parallax visits,
+highlighted building entrances and ten building types with three variants each.
+Parent `/root` owns the primary checkout on `codex/living-locations`, base
+`9c86605`; no overlapping writer. First outcome: explore a layered settlement
+scene from **Место** and enter a highlighted building at the party's actual
+site. [Owning scope](../work-packages/M1-LIVING-PLACES.md). Existing API/player
+database preserved. Ten original building sheets provide 30 variants; five
+authored places include the ruined old mill. Final bootstrap passed: 604 unit
+checks (46 skipped), 10,000 combat stress battles and 14 database checks.
+Changed-code audit passed with three inherited warnings excluded. Authenticated
+browser verified layered motion, ten village entrances, keyboard/Escape focus,
+map return, existing actions and remote previews; 390px layout has no horizontal
+overflow. Independent read-only critic found no remaining concrete defect in
+current source/captures. [Results and limits](../work-packages/M1-LIVING-PLACES.md#result).
+[PR139](https://github.com/Vovanostm/warwrit/pull/139) published from `584497b`
+with the normal commit audit passed; GitHub CI pending at publication. Full M1,
+actual ruined-mill entry and live reduced-motion
+acceptance remain unproven.
+No merge, deployment or paid resources authorized.
+
 **Road art quality active — 2026-10-04:** owner requested coherent realistic
 road materials, shallow isometric relief and placement, repeated independent
 critique, isolated implementation, PR and merge. This authorizes publication

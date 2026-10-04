@@ -1,0 +1,69 @@
+{
+  "source": "codex-image-generation",
+  "tool": "built-in imagegen",
+  "date": "2026-10-04",
+  "license": "original work generated for Warwrit; no third-party art",
+  "layout": "one row, rural / river / town, three equal square cells, transparent background",
+  "assets": [
+    {
+      "id": "market",
+      "name": "Базар",
+      "path": "assets/art/m1/places/buildings/market.png",
+      "prompt": "Original Warwrit game asset, three market buildings: open village stalls with ochre linen awnings and vegetables; river fish market with timber gallery and nets; stone city market hall with a rust red awning and crates. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "forge",
+      "name": "Кузница",
+      "path": "assets/art/m1/places/buildings/forge.png",
+      "prompt": "Original Warwrit game asset, three smithies: rugged village timber forge with anvil; river stone forge with a lean-to and stacked charcoal; town half timber smithy with massive brick chimney and a hammer sign. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "elder",
+      "name": "Дом старейшины",
+      "path": "assets/art/m1/places/buildings/elder.png",
+      "prompt": "Original Warwrit game asset, three elder houses: modest village longhouse with carved door; riverside manor with a timber gallery; dignified stone town council house with small bell turret. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "inn",
+      "name": "Трактир",
+      "path": "assets/art/m1/places/buildings/inn.png",
+      "prompt": "Original Warwrit game asset, three inns: warm thatched village tavern; riverside inn with a timber veranda; tall town half timber tavern with a slate roof and hanging tankard sign. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "chapel",
+      "name": "Часовня",
+      "path": "assets/art/m1/places/buildings/chapel.png",
+      "prompt": "Original Warwrit game asset, three chapels: tiny timber village chapel; riverside fieldstone shrine with weathered steeple; narrow gothic town chapel of pale stone. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "herbalist",
+      "name": "Травник",
+      "path": "assets/art/m1/places/buildings/herbalist.png",
+      "prompt": "Original Warwrit game asset, three herbalists: thatched cottage with drying herbs; river cottage with herb garden and clay pots; narrow town apothecary with glass bottles and leaf sign. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "stable",
+      "name": "Конюшня",
+      "path": "assets/art/m1/places/buildings/stable.png",
+      "prompt": "Original Warwrit game asset, three stables: rustic thatch stable with hay; riverside timber stable with cart and open stalls; town brick stable with arched entrance and horseshoe sign. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "watch",
+      "name": "Караульня",
+      "path": "assets/art/m1/places/buildings/watch.png",
+      "prompt": "Original Warwrit game asset, three guardhouses: village wooden watchtower and gate; river timber palisade tower; squat stone town gatehouse with a rust red banner. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "mill",
+      "name": "Мельница",
+      "path": "assets/art/m1/places/buildings/mill.png",
+      "prompt": "Original Warwrit game asset, three mills: village windmill with four wooden sails; riverside watermill with a large wheel; sturdy town grain mill with timber upper floors. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    },
+    {
+      "id": "granary",
+      "name": "Амбар",
+      "path": "assets/art/m1/places/buildings/granary.png",
+      "prompt": "Original Warwrit game asset, three granaries: raised village timber barn; river dock warehouse with sacks and hoist; town stone warehouse with wide double doors and barrels. ONE TRANSPARENT sprite sheet containing exactly THREE complete distinct buildings arranged in ONE horizontal row. Equal thirds, each building centered in its own third, all grounded at 85 percent sheet height, 10 percent clear transparent margins around each. No overlap, no labels, no text, no people, no scenery, no solid backdrop. Wide landscape canvas 3:1. Fixed three-quarter front view, consistent scale and lighting. Professional hand painted dark medieval northern European fantasy, fine irregular black ink contour, textured flat watercolor wash, weathered warm grey fieldstone, muted moss and umber wood, ochre linen, rusty red accents, tiny amber lit windows. Intricate credible architecture and distinct silhouettes, grounded contact shadows. Restrained painterly detail, readable game silhouettes. Not cartoon, not pixel art, not 3D render. Transparent background required."
+    }
+  ]
+}
