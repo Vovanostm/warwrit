@@ -612,6 +612,33 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
       "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.roads-v1.paved",
+      "path": "assets/art/m1/roads-v1/paved.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/roads-v1/paved.json",
+      "generatedAt": "2026-10-04T01:50:48.074834+00:00"
+    },
+    {
+      "id": "art.m1.roads-v1.trail",
+      "path": "assets/art/m1/roads-v1/trail.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/roads-v1/trail.json",
+      "generatedAt": "2026-10-04T01:51:20.232249+00:00"
+    },
+    {
+      "id": "art.m1.roads-v1.dirt",
+      "path": "assets/art/m1/roads-v1/dirt.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/roads-v1/dirt.json",
+      "generatedAt": "2026-10-04T01:51:48.368159+00:00"
     }
   ]
 }

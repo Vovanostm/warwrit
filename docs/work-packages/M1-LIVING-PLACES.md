@@ -287,3 +287,23 @@ PR139 currently conflicts with newer main map/road work. This branch is a
 playable candidate; integration and CI must be reported independently. Full acceptance → clue → return → payout through these new
 meeting controls is **NOT_RUN**; client visits are not a new server occupancy
 rule. Broader systemic depth remains the proposal above. No merge/deployment.
+
+## Authorized integration — 2026-10-04
+
+Owner explicitly requested “fix conflicts, merge, update local main”. This
+supersedes this work package's earlier no-merge statements for PR139 only.
+Parent owns the isolated integration checkout; the primary checkout's unrelated
+owner documents, local captures and retained player data remain intact.
+Both settlement and road records are retained in the existing art registry;
+current main exact geometry and road rendering remain authoritative. Final
+integrated source checks, playable smoke check, independent critique and GitHub
+CI are required before the expected-head merge. Deployment is not authorized.
+
+Conflict resolution retains all existing registry entries and both delivery
+histories. No domain/server/protocol difference remains against main. Fresh
+integrated web typecheck and21 focused presentation/transport/exact-navigation
+checks passed. Unit coverage run passed614 checks,46 skipped; the normal audit
+against current main passed. Full clean CI and the independent integrated
+playable review remain pending before merge. The initial isolated typecheck
+could not find unbuilt public workspace packages; building the pinned packages
+resolved that environment failure without source changes.

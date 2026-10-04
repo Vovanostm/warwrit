@@ -24,6 +24,7 @@ export function isContinuousRegionVersion(version: string | undefined): boolean 
     'seroe-porechye-continuous-v2',
     'seroe-porechye-continuous-v3',
     'seroe-porechye-continuous-v4',
+    'seroe-porechye-continuous-v5',
   ].includes(version ?? '');
 }
 const site = (siteId: string, q: number, r: number, areaId: string) => ({
@@ -119,21 +120,25 @@ function authoredRoads() {
         i === 0 ? -roadType.widthFp / 2 : i === points.length - 1 ? roadType.widthFp / 2 : 0;
       const x = point.xFp + ux * extension,
         z = point.zFp + uz * extension;
-      left.push({ xFp: Math.round(x - uz * halfWidth), zFp: Math.round(z + ux * halfWidth) });
-      right.push({ xFp: Math.round(x + uz * halfWidth), zFp: Math.round(z - ux * halfWidth) });
+      const center = { xFp: Math.round(x), zFp: Math.round(z) };
+      const offset = { xFp: Math.round(-uz * halfWidth), zFp: Math.round(ux * halfWidth) };
+      left.push({ xFp: center.xFp + offset.xFp, zFp: center.zFp + offset.zFp });
+      right.push({ xFp: center.xFp - offset.xFp, zFp: center.zFp - offset.zFp });
     }
     return {
       shapeId: edge.edgeId,
       overlayId: roadType.overlayId,
       // Paired banks: forward left side, reversed right side. Renderer uses these exact vertices.
       polygon: [...left, ...right.reverse()],
+      stations: points,
     };
   });
 }
 
 /** Authored continuous derivative; legacy road editions above remain byte-for-byte compatible. */
 export const CONTINUOUS_WORLD_REGION: NavigationRegion = Object.freeze({
-  mapEdition: 'seroe-porechye-continuous-v4',
+  mapEdition: 'seroe-porechye-continuous-v5',
+  navigationVersion: 'polygon-v1',
   speedProfileId: FREE_MOVEMENT_V3_PROFILE,
   worldScale: 3,
   origin: Object.freeze({ xFp: -8192, zFp: -6144 }),

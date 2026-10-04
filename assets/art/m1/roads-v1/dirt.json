@@ -1,0 +1,27 @@
+{
+  "asset": "road-dirt",
+  "file": "dirt.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "format": "PNG",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "mode": "built-in",
+    "source": "exec-13bead2b-ddae-4272-96ff-3949fa3be603.png",
+    "promptRecipe": "Original square seamless top-down diffuse medieval road material, full frame uniform-scale surface. Muted grey-brown packed clay, fine grit and gravel, faint longitudinal cart scraping, shallow cracks and damp variation, no bold tracks or orange hue. Handcrafted painterly realism, unified desaturated earthy palette. No perspective, scenery, borders, text, modern objects or strong baked directional shadow. Renderer supplies isometry and relief. Requested1024 square; preserve actual original dimensions.",
+    "transparent_background": false,
+    "timestampBasis": "Generated original file modification time; not a tool-reported generation timestamp."
+  },
+  "inspection": {
+    "method": "view_image and actual game",
+    "status": "RASTER_AND_RUNTIME_INSPECTED",
+    "limits": [
+      "Opposite-edge continuity not assumed; renderer blends randomized interior patches.",
+      "Prompt recipe records design constraints; generated original preserved without raster editing.",
+      "Actual daytime moving and stationary day/night material views inspected; not all-device or subjective game-quality acceptance."
+    ]
+  },
+  "workspaceAsset": "assets/art/m1/roads-v1/dirt.png"
+}

@@ -19,6 +19,8 @@ export default defineConfig(({ mode }) => ({
   },
   test: {
     environment: 'node',
+    // Bound concurrent CPU-heavy geometry/combat suites on the two-core target.
+    maxWorkers: 2,
     include: ['apps/**/*.{test,spec}.{ts,tsx}', 'packages/**/*.{test,spec}.{ts,tsx}'],
     passWithNoTests: false,
     restoreMocks: true,

@@ -1,8 +1,8 @@
 {
-  "specVersion": "3.4.0",
+  "specVersion": "3.5.0",
   "id": "M1-FREE-MOVEMENT",
   "title": "Бесшовная глобальная карта и непрерывное движение отряда по ПКМ",
-  "date": "2026-10-03",
+  "date": "2026-10-04",
   "status": "IMPLEMENTATION_ACTIVE_ACCEPTANCE_PENDING",
   "language": "ru",
   "authority": {
@@ -77,12 +77,12 @@
     "fixedPointUnitsPerWorldUnit": 1024,
     "destinationPrecisionFp": 1,
     "navigation": {
-      "topology": "Скрытая квадратная сетка с восемью соседями; ни логика, ни интерфейс не ограничивают позицию отряда центрами её ячеек.",
+      "topology": "Hidden square search/index buckets plus published road-station chains. Exact positions and polygon segments own movement; no hex conversion.",
       "cellSizeFp": 64,
       "cellsPerOldHexDistance": 16,
       "normalZoomMaxCellWidthCssPx": 8,
       "resolutionRule": "cellSizeFp=64 фиксирован в редакции карты и одинаков на сервере и клиентах. Zoom и DPI не меняют граф. 8 CSS px — проверка нормального масштаба; если превышено, согласовать viewport либо новую редакцию сетки, не менять её во время игры.",
-      "walkMask": "Пределы редакции региона и явные blocking shapes. Начальный прямоугольник задаёт память сетки, а не объявляет всё внутри проходимым: реальный регион ограничен authored boundary.",
+      "walkMask": "V5 grid-node clearance is checked at its exact centre; each edge and actual destination are checked independently against geometry. A blocked part of a bucket cannot reject an otherwise legal narrow bridge.",
       "partyNavigationRadiusFp": 24,
       "clearanceRule": "Расширить непроходимые участки на навигационный радиус; не путать его с размером нарисованного знамени.",
       "siteAnchors": "Явные доступные anchorFp и areaId. Статический вход хранится в region; никакого автоматического anchor в центре нарисованного замка.",
@@ -100,7 +100,7 @@
       "base": "В каждой позиции ровно один базовый terrainId: grassland, forest, hills, marsh, riverbank, rock, deep_water или cliff.",
       "overlays": "Дорога, мост и брод — отдельные версионированные слои с явной геометрией; поселение остаётся site, а не конкурирующим владельцем местности.",
       "precedence": "Границы, clearance и непроходимость сохраняются. Мост/брод пересекает воду только в явном коридоре. Дорожный overlay заменяет скорость основания; в стыке дорожных типов выбирается самый быстрый, bridge имеет приоритет над дорожным продолжением. Несогласованные прочие overlaps отклоняются.",
-      "sampling": "Nav cells: baseTerrainId, overlayId и dangerAreaIds. Walkability и speed spans вычисляются из этой редакции. Смена terrain/overlay происходит на границе cells; дробная точка внутри клетки допустима. Visual blend не меняет samples."
+      "sampling": "V5 polygon-v1: exact source polygons classify actual anchors and reduced rational segment intervals. Cells are candidate/search buckets and never extend road speed to the full cell. Retained V2 plans execute their frozen original schedule."
     },
     "visuals": {
       "ground": "Один MeshBuilder.CreateGround для текущего ограниченного региона. Один terrain-blend material с общей control texture; никакого mesh/material на навигационную клетку.",
@@ -110,7 +110,7 @@
       "renderOrder": "Земля, маршрут и маркер цели, объекты/отряд, HTML подписи; видимость и масштаб знамени согласовать с существующей камерой.",
       "debugGrid": "Допустима только отдельным debug-переключателем, выключенным по умолчанию.",
       "material": "Четыре переиспользуемые текстуры: grass, woodland-floor, soil/rock, wet-bank. RGBA control texture выбирает их доли. Hills используют grass/soil, marsh wet-bank/woodland, cliff/rock soil; конкретный asset path взять из существующих лицензированных ассетов.",
-      "controlTexture": "Для текущих 256×192 nav cells создать 1024×768 control texture: 4 texels на cell. Одинаковый world-to-UV transform; visual feather шириной 1 nav cell. GPU linear filtering, weights normalized. Это производная визуальная текстура, не источник speed.",
+      "controlTexture": "Two RGBA1024x768 controls: explicit grass/forest/hills/marsh and bank/rock/cliff/water weights, nonnegative normalized; broad biome feather80fp. One documented V flip; controls are linear data, colour shader has explicit gamma decode/display conversion. Narrow roads use exact core geometry.",
       "roads": "В V4: trail=96fp, dirt_road=112fp, paved_road=144fp; прежняя детерминированная вариация ±13%. Авторские paired banks общие для рисунка и скорости. Тропа земляная, грунтовка с колеями, тракт серо-каменный с мощением; существующие материалы, без нового asset pack.",
       "waterAndCliffs": "Вода — самостоятельный непрерывный визуальный слой по water shapes; скалы — существующие sprites по blocking shapes. Видимый мост/брод обязан совпадать с authored passable corridor.",
       "partyFoot": "Позиция относится к точке ног/основания спрайта, не к центру полотнища. Billboard располагается поверх земли с фиксированным grounding offset; тень, знамя и маршрут привязаны к одному world point.",
@@ -221,14 +221,14 @@
     }
   },
   "pathfinding": {
-    "algorithm": "A* с весом ребра, равным времени прохождения; обычный BFS с одинаковой ценой шага запрещён для разной местности.",
+    "algorithm": "Deterministic A* on the finite eight-neighbour grid plus shared authored station nodes, exact local endpoint projections/connectors, reopening and maximum-speed lower-bound heuristic.",
     "objective": "Минимальное рассчитанное время; существенный дорожный крюк допустим, когда быстрее. Не принуждать к заведомо более медленной дороге.",
     "heuristic": "floor(distanceMicroFpToGoal * 1000000000 / (65536*maxAllowedBaseSpeed*maxPermille)). Нижнюю длину считать integer sqrt; коэффициент max относится ко всему разрешённому профилю, включая road. A* завершать, когда goal извлечён из queue, а не при первом обнаружении. Reopen при улучшении g; никогда не ceil heuristic.",
     "determinism": "Соседи: E, SE, S, SW, W, NW, N, NE в row-major координатах. Сравнение очереди (fUs,hUs,nodeIndex); virtual start=-2, goal=-1. Relax при меньшем g; при равенстве меньший parentIndex. Одна редакция и input дают один plan.",
-    "edgeCost": "Интегрировать длину в каждой реально пересечённой скоростной области; цена диагонали отличается от прямого шага.",
+    "edgeCost": "Integer microsecond time from exact rational polygon intervals, ceil length and duration; adjacent-grid costs compiled once through that same tracer. No centre-sampled neighbour pricing inV5.",
     "continuousEndpoints": "Два виртуальных узла exactStart и exactGoal. Каждый соединить с доступными центрами 3×3 neighborhood своей клетки, если traceSegment разрешает полный сегмент. Если exactStart→exactGoal проходим, добавить прямое ребро с реальной стоимостью; не возвращать его до сравнения с более быстрым обходом по дороге.",
     "lineValidation": "Supercover/DDA или эквивалентная проверка всего сегмента с clearance; запрещены срез угла двух препятствий и прохождение между ними при недостаточном зазоре.",
-    "smoothing": "Из текущей вершины проверять кандидатов от самой дальней к ближней в оставшейся исходной цепочке. Первый collision-safe shortcut с costUs не больше заменяемой цепочки выбирается; иначе сохранить следующий узел. Recompile speed spans после выбора; никакого Catmull-Rom/Bezier для физической траектории.",
+    "smoothing": "A chord must retain clearance and not increase exact time. A road-only chain can shorten only within the connected visible physical core; free connectors and genuinely faster field shortcuts retain their true terrain speed. No client-only spline/snap.",
     "smoothingLimit": "Не гарантировать глобально оптимальный any-angle путь; A* даёт оптимум выбранного графа. Кривая Безье/Hermite не может менять физический путь без проверки всего изгиба.",
     "failure": "NO_PATH не меняет текущий маршрут или ресурсы. Ограничить поиск конечными границами редакции карты; если достигнут явный бюджет, вернуть отдельную ошибку, не частичный успешный путь.",
     "technology": "Использовать существующий TypeScript/game-core. Navmesh, Theta*, JPS и иерархию не добавлять в этот цикл без измеренного недостатка простого взвешенного A*."
@@ -585,28 +585,28 @@
     "noFrameWrites": true
   },
   "authoringPipeline": {
-    "mapEdition": "seroe-porechye-continuous-v4",
+    "mapEdition": "seroe-porechye-continuous-v5",
     "sourceFormat": "Один immutable region object: bounds, boundary polygons, terrain shapes, road/bridge/ford polylines/corridors, blocking shapes, existing sites с anchorFp/areaId. Все вершины целые fp; простой polygon без self-intersection; стабильный shapeId.",
     "baseCoverage": "Внутри boundary по умолчанию grassland. Прочие base shapes имеют уникальный целый paintPriority; на пересечении выигрывает больший priority. Так overlay/terrain определяется однозначно, а не порядком обхода массива.",
     "buildSteps": [
-      "Проверить integer coordinates, bounds, shapeId, polygon validity, непересечение несовместимых overlays и anchors внутри региона.",
-      "Детерминированно растеризовать base/overlay по центрам 256×192 cells; границы speed field проходят по сторонам cells.",
-      "Blocking geometry расширить на radiusFp=24. Cell проходима только если её закрытый квадрат не пересекает expanded obstacle и целиком лежит в boundary. Явный bridge/ford разрешает только water corridor; cliff не открывается автоматически.",
-      "Скомпилировать immutable walk/speed fields; проверить все site anchors и соединение их с доступными центрами.",
-      "Из тех же данных получить control masks, road geometry и decoration placements. Поставить server/web одну mapEdition. При mismatch MOVE_TO отклоняется и UI обновляет карту."
+      "Validate integer authoring coordinates, nonzero/simple polygons and finite edge/node bounds; derive published stations and symmetric quantized paired banks from one authored chain.",
+      "Compile closed-bbox polygon candidates in64fp buckets. Prove FULL only when no source edge bbox touches the bucket, the padded rectangular boundary contains it and no blocker clearance bbox overlaps it; all others remain MIXED.",
+      "Use exact BigInt segment intersections/rational interval classification for surface, speed, collision and danger. Whole-cell rejection belongs only to frozen legacy navigation.",
+      "Compile immutable exact adjacent-grid costs and bounded road-station edges; validate local exact connectors and road-core containment. Search and simplification use the same trace/cost semantics.",
+      "Derive control masks/core/8fp outward shoulders and non-pickable decoration. The same accepted path/clock owns party, ground SVG split and ETA. Reject map/version mismatches before mutation."
     ],
     "updatePolicy": "Не добавлять редактор, importer, отдельный bake-сервис или framework. Для первой authored карты достаточно существующего owner данных и компактного чистого builder. Generated fields не редактируются вручную.",
     "initialSites": "Каменный Брод, Березняк, Тихая Гать, Северный Двор и Старая мельница сохраняют identity и areaId. Их новая визуальная точка совпадает с anchor.",
     "dangerBoundary": "Новая карта должна явно связать опасные области/переходы с существующим owner policy; отсутствие такой связи — блокер опасного пути. Не выводить опасность только из terrainId и не объявлять неизвестную полосу безопасной."
   },
   "navigationImplementation": {
-    "traceSegment": "Детерминированный supercover/DDA по всей линии. Half-open speed cells: левая/нижняя граница включена, правая/верхняя исключена; при движении по общей границе выбирать клетку с меньшим row-major index. Zero-length касание не добавляет времени, но учитывается в collision check.",
-    "cornerRule": "Для диагонали обе соседние ортогональные клетки должны быть walkable. Все supercover cells сегмента также walkable после conservative clearance. Никакого прохода через точку касания двух blocked cells.",
+    "traceSegment": "V5: exact rational intersections of source terrain/overlay/danger polygons, sorted by BigInt cross multiplication. Inclusive traversable boundaries, stable paint/overlay precedence. Vertex-only contacts have no time; impassable or closed blocker contacts reject. FULL fast path only on a <=64-cell closed rectangle with identical proven surface. V2 DDA and frozen schedules remain unchanged.",
+    "cornerRule": "V5 validates exact clearance and the whole segment, including impassable vertex contacts; centre masks only decide whether that search node is valid. V2 retains its conservative supercover corner policy.",
     "sourceAndGoal": "Точки внутри blocking geometry/за boundary отклонить. Недоступный center не разрешает перенести туда actualStart. Если нет ни одного допустимого connector, вернуть NO_PATH и оставить старый план.",
     "directRoute": "Прямое ребро допускается независимо от числа crossed cells, но цена отражает все speed/danger spans. Поле не означает всегда прямую линию: быстрый road detour может выиграть.",
     "bounds": {
       "maxGridCells": 49152,
-      "maxGraphVertices": 49154,
+      "maxGraphVertices": 51200,
       "maxRawPathVertices": 4096,
       "maxFinalSpeedSpans": 4096,
       "maxRequestBodyBytes": 2048
@@ -1022,5 +1022,83 @@
       "Inspect current screenshots and actual journey with an independent critic; fix material issues."
     ],
     "status": "IMPLEMENTATION_ACTIVE; new browser and visual acceptance NOT_RUN."
+  },
+  "exactGeometryAmendment": {
+    "date": "2026-10-04",
+    "authority": "Owner approved the reviewed geometry proposal and step-by-step implementation; no publication or merge authorization.",
+    "mapEdition": "seroe-porechye-continuous-v5",
+    "navigationVersion": "polygon-v1",
+    "newPlanVersion": 3,
+    "speedProfile": "free-terrain-continuous-v3 unchanged",
+    "eventStorage": "Accepted segmentIndex plus reduced fromT/toT numerator/denominator decimal strings; authoring/segment coordinate differences <=2^30microFp imply denominator<=2^61, at most19digits. Public/STOP position rounds once to nearest microFp; exact event parameters survive reload.",
+    "compatibility": "Old V2 plans, receipts, deadlines and saved positions are read without recompilation. Server/web enforce supported edition/plan pair; no SQL migration or data rewrite.",
+    "visual": "Opaque full-width core; separate8fp outward non-speed skirt. Published station distance owns roadV; priority/depth ordering owns junctions. Ground route projection uses y=0. Eight explicit normalized terrain weights; water is never residual.",
+    "checks": "16 focused public movement tests passed. Four actual site routes:24 road spans/24 exact subintervals, zero phantom intervals. Paved bank -1fp=2000; skirt+4fp/outside+12fp=grass1000. Authenticated V3 multi-bend arrival, moving reload, road-to-field exit and final-build partial STOP/reload with identical retained point observed. Clean scripts/bootstrap.sh passed:610 unit checks (46 skipped),10000 combat battles, migrations and14 PostgreSQL auth/encounter checks. Additional real PostgreSQL continuous movement file:11 passed. Final label-collision-only correction after full gate: web production build/typecheck/lint passed; overview overlap readback empty. Independent final visual critic READY_WITH_LIMITS: corrected cue/settlement placement, active DPR1 close/overview and DPR2 close inspected; final DPR2 overview is arrival, so it proves cue placement only.",
+    "performance": {
+      "method": "100 fixed fp goals from Kamenny Brod, x[-4096,4095], z[-3072,3071]; deterministic index arithmetic; includes blocked goals; one immutable compiled field",
+      "compileMs": 1444.252792,
+      "found": 97,
+      "blocked": 3,
+      "complex": 0,
+      "p50Ms": 71.83770800000002,
+      "p95Ms": 135.8174170000002,
+      "maxMs": 159.14566700000069,
+      "targetP95Ms": 50
+    },
+    "limits": [
+      "p95 search135.82ms exceeds50ms target; no claim of achieved target/capacity.",
+      "Minute browser rAF sample120fps average, p95 frame10ms in mixed moving/stationary view; this is not GPU timing or all-device proof.",
+      "Optional art polish: vary paved stone weathering without obscuring or changing the physical core.",
+      "Independent source cache review found no indexing defect. Region inputs remain readonly by contract; mutation of nested authoring data is an unexecuted risk, with no mutating consumer found."
+    ],
+    "evidence": "Owning implementation/result in M1-FREE-MOVEMENT.md; finite local geometric/browser artifacts remain under output/.",
+    "projectionAcceptance": "Six active samples: DPR1/2 × default/min/max zoom. Picking roundtrip <0.001 CSSpx, SVG split/party ground discrepancy <0.006 CSSpx. Company overview cue uses fixed nearby vertical candidates with4px label clearance and a leader to the same ground anchor.",
+    "verificationBoundary": "Full clean gate passed before the final UI-only label collision correction. That final correction was verified by web production build/typecheck/lint and actual browser placement, without repeating domain/database/stress checks. Failed earlier gate attempts (artifact formatting, unnecessary exports, exact-optional test fixture) were corrected, not suppressed. No SQL migration, dependency addition, publication or deployment.",
+    "runtime": "Final verified web http://127.0.0.1:5291/ -> API3217, realtime3218, same preserved player database. Another chat replaced5287 runtime; it was not stopped or overwritten. Ordinary authenticated V3 movement/arrival and STOP/reload preserve (95068872,-166174486)microFp on this final origin. Existing session reused; fresh OIDC login on5291 NOT_RUN."
+  },
+  "roadArtAmendment": {
+    "date": "2026-10-04",
+    "authority": "Owner explicitly requested isolated road-art worktree, repeated independent critique, PR and merge. Supersedes historical no-publication scope for this bounded road-art slice and its necessary V5 exact-geometry dependency. No deployment, auto-merge or other-branch authorization.",
+    "playerOutcome": "Paved, dirt and trail roads share a muted earthy palette and read as worn surfaces with shallow isometric relief; accepted paths and speed use the exact physical banks.",
+    "implementation": "Three original generated diffuse textures. Five-vertex cross sections preserve canonical outer x/z banks, crown <=0.004scene units, upward normals, unwrapped station-distance UV, restrained material grain/light response, inside-core soil margins and separate outward non-speed skirt. Deterministic junction/depth priority retained; ground picking/party/route remain y=0.",
+    "references": [
+      "https://battlebrothersgame.com/blog-post-7-worldmap/",
+      "https://vcmi.eu/img/screenshots/main_page/Editor.webp"
+    ],
+    "review": "Independent critic found and verified fixes for downward normals and cut-out paving edges. Final READY_WITH_LIMITS for valid day moving paved route, dirt/trail junction and stationary night frames. Independent source review found no defect in bounded V2/V3/auth and helper-preservation review. Additional final active-night DPR1 overview: READY_WITH_LIMITS; route follows visible corridor and company/destination/legend remain distinguishable. No entire-night/close-scale acceptance.",
+    "measurements": {
+      "dpr": 1,
+      "viewport": "1280x800",
+      "zoom": 2.000228344682291,
+      "maxReliefGroundSeparationCssPx": 0.8788474716186556,
+      "minRoadNormalY": 0.9988994840941917
+    },
+    "verification": "Final code:16 focused movement tests, fresh610-check coverage and unchanged new-only quality audit passed;11 real PostgreSQL movement regressions passed on disposable migrated database. Clean scripts/bootstrap.sh passed610 unit checks/46 skipped,10000 battles, migrations and14 SQL auth/encounter checks before the final equivalent sorted-neighbor forEach rewrite; current-head clean PR CI must pass before merge.",
+    "limits": [
+      "Fresh5291 OIDC login NOT_RUN; active-night DPR1 overview now observed on final API, detailed/all-DPR active-night matrix NOT_RUN.",
+      "Static night views include DPR2; no all-device quality claim.",
+      "Existing exact-route search p95=135.82ms exceeds50ms target.",
+      "Optional localized edge damage and long-paving variation remain polish; full M1 and player enjoyment are not accepted by this slice."
+    ],
+    "publication": {
+      "pullRequest": "https://github.com/Vovanostm/warwrit/pull/140",
+      "mergeAuthority": "Explicit owner request for this isolated slice; expected head and successful current-head clean CI required.",
+      "integrationStatusOwner": "GitHub PR140 live status/checks; local runtime and author proof are separate."
+    },
+    "runtimeReadback": "Final API3217/realtime3218 and web5291 from road-art worktree retain the original player database. Ordinary night Kamenny Brod→North Court order showed66s/paved×2; UI STOP and reload returned identical retained point (48589673,-90355124)microFp with200/STATIONARY_TERRAIN. Active-night overview capture: output/playwright/road-final-night-moving.png; independent final night critic READY_WITH_LIMITS, no reproduced blocker for this single overview frame.",
+    "ciCorrection": {
+      "failedRun": "https://github.com/Vovanostm/warwrit/actions/runs/37172997817",
+      "failure": "Clean bootstrap passed; coverage timed out at5s in the authored-junction field-build test (609 passed/1 timeout). Merge blocked until current-head replacement CI passes.",
+      "fix": "Reject finite-edge non-intersections before reducing fractions; skip polygon edges outside the closed point-height interval. Collinear/equality/rational cases retain the old rules. An attempted exact-cell shortcut was measured, provided no material benefit and was discarded. No assertion, timeout, coverage or audit threshold change.",
+      "preservation": "All49152 center terrain/overlay/walkability/danger entries, compiled grid-edge durations and road graph exactly match retained baseline. Four settlement paths and full compiled V3 plans exactly match. Independent source reviewer found no defect in signed ranges or closed-height gate.",
+      "measurement": {
+        "method": "One sequential baseline/current build of the same full authored region in the same Node process; finite host sample, not capacity.",
+        "baselineCompileMs": 1496.33075,
+        "updatedCompileMs": 1082.275792,
+        "improvementPercent": 27.67
+      },
+      "checks": "16 focused coverage specs, full610-check coverage and unchanged origin/main audit pass;11 real SQL movement checks rerun after this fix on a new disposable database. Replacement current-head clean CI pending.",
+      "limits": "The earlier135.82ms search p95 belongs to the pre-optimization edition of this implementation. Post-fix search p95/capacity NOT_MEASURED;50ms target is not claimed."
+    }
   }
 }

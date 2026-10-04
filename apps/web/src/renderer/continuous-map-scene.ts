@@ -27,6 +27,18 @@ import { createMapLife } from './map-life.js';
 import type { MapLabelPosition } from './map-scene.js';
 import type { RouteOverlayFrame } from './route-overlay.js';
 
+type PublicPlan = NonNullable<WorldFreeMovementV2ResponseDto['plan']>;
+function spanInterpolation(p: PublicPlan, span: PublicPlan['speedSpans'][number], t: number) {
+  const geometry = p.planVersion === 3 ? span.geometry : undefined;
+  if (!geometry) return { from: span.from, to: span.to, along: t };
+  const from = p.path[geometry.segmentIndex]!,
+    to = p.path[geometry.segmentIndex + 1]!;
+  const a = Number(geometry.fromT.numerator) / Number(geometry.fromT.denominator);
+  const b = Number(geometry.toT.numerator) / Number(geometry.toT.denominator);
+  const along = a + (b - a) * t;
+  return { from, to, along };
+}
+
 export function mountContinuousMapScene(
   canvas: HTMLCanvasElement,
   region: WorldContinuousMapDto,
@@ -35,6 +47,7 @@ export function mountContinuousMapScene(
     onMove: (action: WorldFreeMovementV2RequestDto['action']) => void;
     onSelectSite: (id: string) => void;
     onLabels: (labels: readonly MapLabelPosition[]) => void;
+    onParty: (point: { x: number; y: number } | null) => void;
     onRoute: (frame: RouteOverlayFrame | null) => void;
   },
 ) {
@@ -61,7 +74,18 @@ export function mountContinuousMapScene(
     dirt_road: createRoadMaterial(scene, 'dirt_road'),
     paved_road: createRoadMaterial(scene, 'paved_road'),
   };
-  for (const corridor of region.overlayShapes) {
+  const shoulderMaterials = {
+    trail: createRoadMaterial(scene, 'trail', true),
+    dirt_road: createRoadMaterial(scene, 'dirt_road', true),
+    paved_road: createRoadMaterial(scene, 'paved_road', true),
+  };
+  // Slow surfaces first, bridge/fast winning core last. Opaque cores write depth.
+  const orderedRoads = region.overlayShapes.toSorted(
+    (a, b) =>
+      (region.navigationOverlayOrder?.indexOf(b.overlayId) ?? 0) -
+      (region.navigationOverlayOrder?.indexOf(a.overlayId) ?? 0),
+  );
+  for (const [roadIndex, corridor] of orderedRoads.entries()) {
     const points = corridor.polygon;
     if (points.length < 4 || points.length % 2 !== 0) continue;
     const road = new Mesh(`corridor:${corridor.shapeId}`, scene);
@@ -69,35 +93,56 @@ export function mountContinuousMapScene(
     const positions: number[] = [],
       normals: number[] = [],
       uvs: number[] = [],
+      widths: number[] = [],
       indices: number[] = [];
     const stations = points.length / 2;
+    // Canonical banks remain the outside vertices. Only decorative Y is crowned;
+    // picking, speed and the ground-projected route still use the shared x/z.
+    const crossSection = [0, 0.22, 0.5, 0.78, 1];
+    const stationDistances: number[] = [];
     let distance = 0;
+    let acrossAngle: number | undefined;
     let previous: { x: number; z: number } | undefined;
     for (let i = 0; i < stations; i += 1) {
       const left = points[i]!,
         right = points[points.length - 1 - i]!;
-      const center = { x: (left.xFp + right.xFp) / 2, z: (left.zFp + right.zFp) / 2 };
+      const station = corridor.stations?.[i];
+      const center = {
+        x: station?.xFp ?? (left.xFp + right.xFp) / 2,
+        z: station?.zFp ?? (left.zFp + right.zFp) / 2,
+      };
       if (previous) distance += sceneFp(Math.hypot(center.x - previous.x, center.z - previous.z));
       previous = center;
-      positions.push(
-        sceneFp(left.xFp),
-        0.008,
-        sceneFp(left.zFp),
-        sceneFp(right.xFp),
-        0.008,
-        sceneFp(right.zFp),
-      );
-      normals.push(0, 1, 0, 0, 1, 0);
-      uvs.push(0, distance / 1.5, 1, distance / 1.5);
+      stationDistances.push(distance);
+      const width = sceneFp(Math.hypot(right.xFp - left.xFp, right.zFp - left.zFp));
+      let angle = Math.atan2(right.zFp - left.zFp, right.xFp - left.xFp);
+      if (acrossAngle !== undefined)
+        angle += Math.round((acrossAngle - angle) / (2 * Math.PI)) * 2 * Math.PI;
+      acrossAngle = angle;
+      for (const across of crossSection) {
+        const crown = 0.004 * Math.sin(across * Math.PI);
+        positions.push(
+          sceneFp(left.xFp + (right.xFp - left.xFp) * across),
+          0.004 + roadIndex * 0.0002 + crown,
+          sceneFp(left.zFp + (right.zFp - left.zFp) * across),
+        );
+        uvs.push(across, distance);
+        widths.push(width, angle);
+      }
       if (i > 0) {
-        const j = i * 2;
-        indices.push(j - 2, j, j - 1, j - 1, j, j + 1);
+        for (let across = 0; across < crossSection.length - 1; across++) {
+          const j = i * crossSection.length + across;
+          const p = j - crossSection.length;
+          indices.push(p, p + 1, j, p + 1, j + 1, j);
+        }
       }
     }
+    VertexData.ComputeNormals(positions, indices, normals);
     vertices.positions = positions;
     vertices.normals = normals;
     vertices.indices = indices;
     vertices.uvs = uvs;
+    vertices.uvs2 = widths;
     vertices.applyToMesh(road);
     road.material =
       corridor.overlayId === 'paved_road'
@@ -106,6 +151,57 @@ export function mountContinuousMapScene(
           ? roadMaterials.trail
           : roadMaterials.dirt_road;
     road.isPickable = false;
+    const type =
+      corridor.overlayId === 'paved_road'
+        ? 'paved_road'
+        : corridor.overlayId === 'trail'
+          ? 'trail'
+          : 'dirt_road';
+    for (const side of [0, 1]) {
+      const skirt = new Mesh(`shoulder:${corridor.shapeId}:${side}`, scene);
+      const data = new VertexData(),
+        positions: number[] = [],
+        normals: number[] = [],
+        uvs: number[] = [],
+        widths: number[] = [],
+        indices: number[] = [];
+      for (let i = 0; i < stations; i++) {
+        const left = points[i]!,
+          right = points[points.length - 1 - i]!;
+        const inner = side === 0 ? left : right,
+          opposite = side === 0 ? right : left;
+        const length = Math.hypot(inner.xFp - opposite.xFp, inner.zFp - opposite.zFp);
+        const outer = {
+          xFp: inner.xFp + ((inner.xFp - opposite.xFp) / length) * 8,
+          zFp: inner.zFp + ((inner.zFp - opposite.zFp) / length) * 8,
+        };
+        positions.push(
+          sceneFp(inner.xFp),
+          0.004,
+          sceneFp(inner.zFp),
+          sceneFp(outer.xFp),
+          0.004,
+          sceneFp(outer.zFp),
+        );
+        normals.push(0, 1, 0, 0, 1, 0);
+        const distance = stationDistances[i]!;
+        uvs.push(0, distance, 1, distance);
+        widths.push(sceneFp(8), 0, sceneFp(8), 0);
+        if (i > 0) {
+          const j = i * 2;
+          indices.push(j - 2, j, j - 1, j - 1, j, j + 1);
+        }
+      }
+      data.positions = positions;
+      data.normals = normals;
+      data.uvs = uvs;
+      data.uvs2 = widths;
+      data.indices = indices;
+      data.applyToMesh(skirt);
+      skirt.material = shoulderMaterials[type];
+      skirt.isPickable = false;
+      skirt.alphaIndex = roadIndex;
+    }
   }
   const sprite = (name: string, url: string, size: number) => {
     const mesh = MeshBuilder.CreatePlane(name, { size }, scene);
@@ -263,14 +359,15 @@ export function mountContinuousMapScene(
           (Number(span.endOffsetUs) - Number(span.startOffsetUs)),
       ),
     );
+    const { from, to, along } = spanInterpolation(p, span, t);
     return {
       spanIndex,
       point: {
         xMicroFp: String(
-          Number(span.from.xMicroFp) + (Number(span.to.xMicroFp) - Number(span.from.xMicroFp)) * t,
+          Number(from.xMicroFp) + (Number(to.xMicroFp) - Number(from.xMicroFp)) * along,
         ),
         zMicroFp: String(
-          Number(span.from.zMicroFp) + (Number(span.to.zMicroFp) - Number(span.from.zMicroFp)) * t,
+          Number(from.zMicroFp) + (Number(to.zMicroFp) - Number(from.zMicroFp)) * along,
         ),
       },
     };
@@ -310,6 +407,12 @@ export function mountContinuousMapScene(
         y: (screen.y * canvas.clientHeight) / engine.getRenderHeight(),
       };
     };
+    const bannerCorners = banner.getBoundingInfo().boundingBox.vectorsWorld.map(project);
+    const bannerHeight =
+      Math.max(...bannerCorners.map((v) => v.y)) - Math.min(...bannerCorners.map((v) => v.y));
+    callbacks.onParty(
+      p && bannerHeight < 24 ? project(new Vector3(banner.position.x, 0, banner.position.z)) : null,
+    );
     callbacks.onLabels(
       [...markers].map(([siteId, mesh]) => {
         const point = project(new Vector3(mesh.position.x, 0.08, mesh.position.z));
@@ -318,7 +421,7 @@ export function mountContinuousMapScene(
     );
     if (hasRemaining && p) {
       const points = routePoints.map(project);
-      const split = project(new Vector3(banner.position.x, 0.025, banner.position.z));
+      const split = project(new Vector3(banner.position.x, 0, banner.position.z));
       const bounds = (mesh: Mesh) => {
         const corners = mesh.getBoundingInfo().boundingBox.vectorsWorld.map(project);
         const x = Math.min(...corners.map((v) => v.x));
@@ -365,7 +468,10 @@ export function mountContinuousMapScene(
         'lighting',
         night ? new Color3(0.76, 0.81, 0.91) : new Color3(1.04, 1.02, 0.98),
       );
-      for (const roadMaterial of Object.values(roadMaterials))
+      for (const roadMaterial of [
+        ...Object.values(roadMaterials),
+        ...Object.values(shoulderMaterials),
+      ])
         roadMaterial.setColor3(
           'lighting',
           night ? new Color3(0.76, 0.81, 0.91) : new Color3(1.04, 1.02, 0.98),
@@ -382,7 +488,7 @@ export function mountContinuousMapScene(
           ? [
               current.plan.speedSpans[0]!.from,
               ...current.plan.speedSpans.map((span) => span.to),
-            ].map((p) => new Vector3(microScene(p.xMicroFp), 0.025, microScene(p.zMicroFp)))
+            ].map((p) => new Vector3(microScene(p.xMicroFp), 0, microScene(p.zMicroFp)))
           : [];
       }
     },

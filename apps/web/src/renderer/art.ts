@@ -8,7 +8,9 @@ import worldHills from '../../../../assets/art/m1/world-v2/hills.png';
 import worldMarsh from '../../../../assets/art/m1/world-v2/marsh.png';
 import worldRiverbank from '../../../../assets/art/m1/world-v2/riverbank.png';
 import worldRock from '../../../../assets/art/m1/world-v2/rock.png';
-import worldRoad from '../../../../assets/art/m1/world-v2/road.png';
+import roadTrail from '../../../../assets/art/m1/roads-v1/trail.png';
+import roadDirt from '../../../../assets/art/m1/roads-v1/dirt.png';
+import roadPaved from '../../../../assets/art/m1/roads-v1/paved.png';
 import worldWater from '../../../../assets/art/m1/world-v2/water.png';
 import worldDeciduous from '../../../../assets/art/m1/world-v2/deciduous.png';
 import worldConifer from '../../../../assets/art/m1/world-v2/conifer.png';
@@ -91,7 +93,7 @@ export const MAP_ART = {
     rock: worldRock,
     water: worldWater,
   },
-  road: worldRoad,
+  roads: { trail: roadTrail, dirt_road: roadDirt, paved_road: roadPaved },
   trees: { deciduous: worldDeciduous, conifer: worldConifer },
   forest: forestClump,
   party: partyBanner,

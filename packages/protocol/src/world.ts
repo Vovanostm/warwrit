@@ -219,8 +219,15 @@ export interface WorldFreeMovementV2ResponseDto {
   readonly worldTick: string;
   readonly mode: 'STATIONARY_TERRAIN' | 'STATIONARY_SITE' | 'MOVING';
   readonly point: WorldPointMicroFpDto;
+  /** Surface at the server-projected anchor; absent on retained historical receipts. */
+  readonly surface?: {
+    readonly terrainId: string;
+    readonly overlayId: string | null;
+    readonly speedPermille: number;
+  };
   readonly plan: null | {
-    readonly planVersion: 2;
+    readonly planVersion: 2 | 3;
+    readonly navigationVersion?: 'polygon-v1';
     readonly planId: string;
     readonly mapEdition: string;
     readonly speedProfileId: string;
@@ -240,6 +247,11 @@ export interface WorldFreeMovementV2ResponseDto {
       readonly speedPermille: number;
       readonly startOffsetUs: string;
       readonly endOffsetUs: string;
+      readonly geometry?: {
+        readonly segmentIndex: number;
+        readonly fromT: { readonly numerator: string; readonly denominator: string };
+        readonly toT: { readonly numerator: string; readonly denominator: string };
+      };
     }[];
   };
 }
@@ -364,6 +376,7 @@ export interface WorldSurroundingsDto {
 /** Public authored geometry, without live entities or private company state. */
 export interface WorldContinuousMapDto {
   readonly mapEdition: string;
+  readonly navigationVersion?: 'polygon-v1';
   /** Presentation scale; canonical coordinates and accepted times are unchanged. */
   readonly worldScale?: number;
   readonly origin: WorldPointFpDto;
@@ -383,6 +396,7 @@ export interface WorldContinuousMapDto {
     readonly shapeId: string;
     readonly overlayId: string;
     readonly polygon: readonly WorldPointFpDto[];
+    readonly stations?: readonly WorldPointFpDto[];
   }[];
   readonly blockingShapes: readonly {
     readonly shapeId: string;

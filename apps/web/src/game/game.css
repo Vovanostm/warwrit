@@ -959,3 +959,40 @@
   align-items: center;
   gap: 6px;
 }
+
+/* Keep the company identifiable when its world sprite becomes too small. */
+.map-party-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  translate: -50% calc(-100% - 8px);
+  z-index: 2;
+  pointer-events: none;
+  padding: 3px 7px;
+  border: 1px solid #dfbf77;
+  border-radius: 3px;
+  background: #241d16;
+  color: #f2d49a;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.map-party-indicator::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: calc(50% - 5px);
+  border: 5px solid transparent;
+  border-top-color: #dfbf77;
+}
+
+.map-party-indicator::before {
+  content: '';
+  position: absolute;
+  top: calc(100% + 8px);
+  left: calc(50% - 0.5px);
+  width: 1px;
+  height: var(--party-leader-length, 0px);
+  background: #dfbf77;
+  box-shadow: 1px 0 #241d16;
+}
