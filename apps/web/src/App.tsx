@@ -1526,15 +1526,17 @@ export function App() {
           void equipItem(scope, journey.world.publicRevision, characterId, item)
         }
         onToggleCamp={(pitch) => void toggleCamp(scope, journey.world.publicRevision, pitch)}
-        placeSlot={
+        placeSlot={(contractVisit) => (
           <>
             <ContractBoard
+              {...contractVisit}
               siteId={journey.world.party?.location ?? null}
               refreshKey={contractRefreshGeneration}
               onUnauthorized={() => void restoreJourney()}
               onRewardPaid={refreshWorldForShell}
             />
             <FirstHunt
+              {...contractVisit}
               scope={scope}
               location={journey.world.party?.location ?? null}
               onUnauthorized={() => void restoreJourney()}
@@ -1542,6 +1544,7 @@ export function App() {
               onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
             />
             <HuntList
+              {...contractVisit}
               scope={scope}
               location={journey.world.party?.location ?? null}
               refreshKey={contractRefreshGeneration}
@@ -1549,7 +1552,7 @@ export function App() {
               onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
             />
           </>
-        }
+        )}
         battleSlot={
           <Suspense
             key={`${scope.accountId}:${scope.companyId}:${encounterGeneration}`}

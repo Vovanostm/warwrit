@@ -8,6 +8,8 @@ interface PlaceProps {
   readonly kind: 'CITY' | 'VILLAGE' | 'LANDMARK';
   readonly night: boolean;
   readonly canEnter: boolean;
+  readonly inside: BuildingType | null;
+  readonly onInside: (type: BuildingType | null) => void;
   readonly onMap: () => void;
   readonly onContracts: () => void;
   readonly onEquipment: () => void;
@@ -18,18 +20,18 @@ type PaintedBuilding = PlaceLayout['buildings'][number];
 export function PlaceScene(props: PlaceProps) {
   const scene = useRef<HTMLDivElement>(null);
   const returnButton = useRef<HTMLButtonElement>(null);
-  const [inside, setInside] = useState<BuildingType | null>(null);
+  const inside = props.inside;
   const layout = placeBuildings(props.siteId, props.kind);
   const activeVisit = visitedBuilding(layout, inside, props.canEnter);
   function leaveBuilding() {
     const type = inside;
-    setInside(null);
+    props.onInside(null);
     requestAnimationFrame(() =>
       scene.current?.querySelector<HTMLButtonElement>(`[data-building="${type}"]`)?.focus(),
     );
   }
   function enterBuilding(type: BuildingType) {
-    setInside(type);
+    props.onInside(type);
     requestAnimationFrame(() => returnButton.current?.focus());
   }
   return (
@@ -296,10 +298,10 @@ function VisitAction(
     readonly ruined: boolean;
   },
 ) {
-  if (props.type === 'elder' || props.ruined) {
+  if (['elder', 'herbalist', 'watch', 'market', 'inn'].includes(props.type) || props.ruined) {
     return (
       <button className="action" type="button" onClick={props.onContracts}>
-        Местные поручения →
+        Поручения и действия →
       </button>
     );
   }

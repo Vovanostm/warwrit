@@ -4,17 +4,20 @@ import type { FirstHuntReadResponseDto } from '@warwrit/protocol';
 
 import { FirstHunt } from '../FirstHunt.js';
 import type { FirstHuntScope } from '../first-hunt-attempt.js';
+import type { ContractVisitProps } from './contract-visits.js';
 
 const REFRESH_MS = 15_000;
 
 /** Hunts after FIRST HUNT: shown where offered, and while the company takes part. */
-export function HuntList(props: {
-  readonly scope: FirstHuntScope;
-  readonly location: string | null;
-  readonly refreshKey: number;
-  readonly onUnauthorized: () => void;
-  readonly onEncounterDiscovered: () => void;
-}) {
+export function HuntList(
+  props: ContractVisitProps & {
+    readonly scope: FirstHuntScope;
+    readonly location: string | null;
+    readonly refreshKey: number;
+    readonly onUnauthorized: () => void;
+    readonly onEncounterDiscovered: () => void;
+  },
+) {
   const [hunts, setHunts] = useState<readonly FirstHuntReadResponseDto[]>([]);
   const { onUnauthorized } = props;
 
@@ -61,6 +64,10 @@ export function HuntList(props: {
         )
         .map(({ contract }) => (
           <FirstHunt
+            visit={props.visit}
+            canVisit={props.canVisit}
+            onJournal={props.onJournal}
+            onVisitIssuer={props.onVisitIssuer}
             key={contract!.instanceId}
             scope={{ ...props.scope, instanceId: contract!.instanceId }}
             location={props.location}

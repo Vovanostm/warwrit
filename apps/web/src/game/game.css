@@ -809,6 +809,23 @@
   font-size: 1.05rem;
 }
 
+.contract-conversation {
+  margin: 12px 0;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.contract-conversation summary {
+  color: var(--gold);
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.contract-conversation summary:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
 .contract-reward {
   color: #d9b36a;
   white-space: nowrap;

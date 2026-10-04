@@ -160,3 +160,130 @@ the incorrectly named `ruin-night-final-19.jpg` is a map after hot reload and
 is excluded from visual evidence. Correction implementation commit `381fbf8`
 passed the normal commit audit. PR139 owns publication; current correction CI
 must be read from its new head. NOT_MERGED; no deployment authorization.
+
+## Owner correction — contracts through people and places, 2026-10-04
+
+Owner rejects a settlement-wide contract dispenser and requires meaningful
+visits: tavern, smith, elder, notice board and watch/barracks. The broader goal
+is a deep, interesting game. This supersedes the first visual cycle's decision
+to keep every available offer actionable in the place sidebar.
+
+Current-source readback: Airtable `recZhUoTiwT7kIc8s`, `rechIKj0hsvfXIvFU`
+and the earlier proposal `recA4VT0YX9x0LuO1`, plus
+[the authored catalogue](../content/CONTRACTS_M1_DERIVATIVE.md). Earlier rules
+already require actual local issuers, authentic evidence and physical hand-in.
+The earlier web shell at `9c86605` shows a common sidebar; it does not implement
+individual building conversations. Original archive concordance remains
+unavailable; this is not a reconstruction of original game UI.
+
+First observable cycle: at Bereznyak, a lead directs the player to the herbalist;
+enter, ask what happened and what payment requires, accept existing terms,
+inspect the real daytime clue, return to the same issuer and report for the
+existing once-only payment. The journal retains accepted tasks and findings
+while away; it cannot replace conversations and hand-ins. The author owns the
+existing web shell/boards, place presentation and this section. No new domain,
+server, protocol, migration, reward or NPC identity is introduced.
+
+### Implemented meeting-point presentation
+
+| Existing issuer / contract                                    | Meeting point in the existing issuer area |
+| ------------------------------------------------------------- | ----------------------------------------- |
+| City notice clerk / road tracks                               | Market notice board                       |
+| Village provisioner / missing herbs                           | Herbalist                                 |
+| City watch / lost scout and raider standard                   | Guardhouse                                |
+| Village steward / mill worker                                 | Elder's house                             |
+| Bereznyak elder / wolf trail                                  | Elder's house                             |
+| River caller / cellar rescue and warning keeper / night beast | Inn                                       |
+
+The keeper's existing ASK step is also at the river inn. A notice board gives
+a lead, while its existing clerk discusses the contract. A smith has no
+existing authored contract: no assignment is fabricated merely to fill a door.
+Remote scenes remain disabled previews. Meeting points are authored client
+presentation inside the same canonical areas, not persisted server subareas;
+server presence, proof, revision, funded wallet and replay checks remain the
+authority. No claim of server-enforced interior occupancy is made.
+
+Outside a meeting, new local offers show leads rather than accept/help buttons.
+Inside, only the matching issuer's offers and relevant task interactions appear.
+Source-based conversation topics expose the brief and fixed proof/payment terms.
+Accepted field work stays accessible in the journal, while ASK/REPORT/DELIVER
+and hunt PRESENT lead back to their meeting point. Existing request retries,
+helper choices, encounter discovery and custody remain intact.
+
+### Deeper design direction — proposal, not implemented policy
+
+Use three distinct sources of opportunity: public announcements, local talk
+and direct personal requests. Each offer has an interested issuer, a reason
+to hire the company, a source for each known statement and explicit proof
+requirements. Rumors remain attributed uncertain reports; hearing a rumor does
+not establish guilt, spawn a captive or complete an objective.
+
+Reference patterns: The Witcher 3 uses notice boards alongside conversations
+with issuers; Mount & Blade: Warband distributes requests among lords, village
+elders and guild masters, with taverns serving other social functions; Battle
+Brothers distinguishes settlement contracts and tavern information. These are
+design comparisons, not evidence of a replicated or newly tested game system.
+
+Proposed roles: inn — travelers and attributed news; smith — equipment-related
+work; elder — village needs; board — public leads; watch — official search and
+bounties; herbalist — supplies and local observations; market — merchant needs.
+New smith work, trade, reputation gates, bargaining, NPC schedules and response
+consequences need a finite authored profile before becoming executable rules.
+Existing rewards/terms are fixed; this cycle adds no bargaining or reputation
+bonuses.
+
+Depth should come from information and consequential choices. The existing
+mill chain already distinguishes grain-cart evidence, a keeper's report,
+night-beast proof and delivery of the living worker: killing the beast does
+not prove grain theft. Extend that causal structure before generating extra
+fetch quests. A future choice must change a source-backed outcome, relationship
+or access and survive re-entry; dialogue options that all produce the same
+result must not be presented as branching gameplay. Distinct information can
+justify a detour; empty obligatory building hops cannot.
+
+Current-cycle acceptance: a local lead opens the correct building; unrelated
+buildings expose no acceptance or hand-in; a matching meeting shows fixed terms;
+the journal preserves existing work; remote entry stays disabled; keyboard,
+return focus and narrow screens remain usable. Full acceptance/payment playthrough
+must be reported separately from read-only UI checks. Independent critic required.
+
+### Meeting-point cycle result — 2026-10-04
+
+The playable UI journey at `http://127.0.0.1:5287` is **Место → Пропавшие
+травы → Поговорить** or the highlighted **Травник** door. The matching meeting
+shows the established brief, fixed40-crown reward and personal evidence hand-in.
+The elder separately offers **Волчья тропа**, with80 crowns visible before
+acceptance. Plaza leads expose no accept button; unrelated buildings show no
+other issuer's offers. The forge retains equipment access without an invented
+smith contract. The journal keeps accepted tasks and observations.
+
+Fresh read-only browser checks cover herbalist lead/doorway/topics, elder,
+forge, journal focus, Escape return focus, and390px layout (viewport/content
+both390px). The retained **Проверка луга** company remains at Bereznyak with850
+crowns; no acceptance, field work, hand-in or payment command was submitted.
+Current captures: `output/playwright/living-places/herbalist-conversation-wide-final-33.jpg`
+and `herbalist-conversation-narrow-current-29.jpg`.
+
+Critic-found regressions are fixed: premature hand-in invitations before proof,
+lost journal focus, treating every village mill as the objective, and wolf
+JOIN/PICKUP while speaking to the elder. Three component regressions check
+lead/issuer routing, blocked versus ready hand-in including a remote site, and
+actual ruined-mill versus village/issuer field access. The existing hunt
+transport test also checks selected-instance routing, session rejection and
+malformed/private response rejection after the reader extraction. These tests
+verify public presentation/transport, not a fabricated gameplay transaction.
+
+Final `scripts/bootstrap.sh` passed on the current source:608 unit checks,
+46 skipped,10,000 combat stress battles and14 database checks; disposable
+verification infrastructure was removed. Log:
+`/tmp/warwrit-contract-visits-bootstrap-final.log`. Current coverage generation
+and the normal changed-code audit passed; log:
+`/tmp/warwrit-contract-visits-audit-final.log`. Focused renderer/transport checks
+passed15 tests. Independent read-only critic returned **DONE** on the final
+source and1440×900/390px captures, with no material defect found.
+Earlier audit failures were corrected without suppressions or hook bypass.
+
+PR139 currently conflicts with newer main map/road work. This branch is a
+playable candidate; integration and CI must be reported independently. Full acceptance → clue → return → payout through these new
+meeting controls is **NOT_RUN**; client visits are not a new server occupancy
+rule. Broader systemic depth remains the proposal above. No merge/deployment.

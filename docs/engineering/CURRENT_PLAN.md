@@ -1,5 +1,23 @@
 # Warwrit current delivery plan
 
+**Contracts through people and places — 2026-10-04:** owner requires
+meaningful issuer visits instead of a settlement-wide contract dispenser.
+Parent remains sole writer on `codex/living-locations` / PR139. Existing
+local offers now direct the player to the herbalist, elder, river inn, market
+notice clerk or guardhouse; fixed terms and hand-ins use the matching meeting.
+Accepted field work and findings remain in the journal. Meeting points are
+client presentation inside existing canonical issuer areas; no server interior
+state, new NPC, bargaining, reputation or reward rule is claimed. Final
+bootstrap passed:608 unit checks,46 skipped,10,000 stress battles and14
+DB checks. Changed-code audit passed; authenticated browser covers local
+meetings, focus and390px layout. Independent critic found no material defect
+in final source and wide/narrow captures. Acceptance-to-payment gameplay is
+NOT_RUN. PR139 conflicts with newer main map/road work; integration and CI
+remain separate. Detailed result in the
+[owning amendment](../work-packages/M1-LIVING-PLACES.md#owner-correction--contracts-through-people-and-places-2026-10-04).
+Broader depth proposals remain separately labelled, not implemented policy.
+No merge/deployment authorization.
+
 **Cohesive settlement correction active — 2026-10-04:** owner rejected the
 first living-place overview as pasted houses on meadow texture. Parent owns
 the same `codex/living-locations` / PR139; replaces overview with coherent
