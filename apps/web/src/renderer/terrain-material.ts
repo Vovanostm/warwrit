@@ -107,20 +107,20 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
     scene,
     {
       vertexSource: `precision highp float;
-      attribute vec3 position; attribute vec2 uv;
-      uniform mat4 worldViewProjection; varying vec2 terrainUv;
-      void main(){ terrainUv=uv; gl_Position=worldViewProjection*vec4(position,1.0); }`,
+      attribute vec3 position,normal; attribute vec2 uv;
+      uniform mat4 worldViewProjection; varying vec2 terrainUv; varying vec3 groundNormal;
+      void main(){ terrainUv=uv; groundNormal=normal; gl_Position=worldViewProjection*vec4(position,1.0); }`,
       fragmentSource: `precision highp float;
-      varying vec2 terrainUv;
+      varying vec2 terrainUv; varying vec3 groundNormal;
       uniform sampler2D controlA, controlB, grassMap, woodlandMap, hillsMap, marshMap, riverbankMap, rockMap, waterMap;
-      uniform vec3 lighting; uniform vec2 detailScale,worldOffset; uniform float time;
+      uniform vec3 lighting,edgeMist; uniform vec2 detailScale,worldOffset; uniform float time;
       ${naturalTextureShader}
       void main(){
         vec4 a=max(texture2D(controlA,terrainUv),vec4(0)), b=max(texture2D(controlB,terrainUv),vec4(0));
         float sum=max(dot(a+b,vec4(1.0)),0.0001);
         a/=sum; b/=sum; float water=b.a;
         vec2 uv=terrainUv*detailScale; vec3 color=vec3(0.0);
-        if(a.r>0.001) color+=mix(naturalTile(grassMap,uv),pow(vec3(0.34,0.37,0.20),vec3(2.2)),0.24)*a.r;
+        if(a.r>0.001) color+=mix(naturalTile(grassMap,uv),pow(vec3(0.32,0.33,0.22),vec3(2.2)),0.38)*a.r;
         if(a.g>0.001) color+=naturalTile(woodlandMap,uv)*a.g;
         if(a.b>0.001) color+=naturalTile(hillsMap,uv)*a.b;
         if(a.a>0.001) color+=naturalTile(marshMap,uv)*a.a;
@@ -133,19 +133,31 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
           color+=naturalTile(waterMap,uv*0.7+drift)*(1.0+0.045*ripples)*water;
         }
         float meadow=landNoise(uv*0.23+vec2(17,3));
-        float variation=0.79+0.29*landNoise(uv*0.48)+0.08*landNoise(uv*1.8);
+        float variation=0.94+0.08*landNoise(uv*0.48)+0.025*landNoise(uv*1.8);
         vec3 tint=mix(vec3(0.84,0.94,0.83),vec3(1.07,1.01,0.87),meadow);
         color*=mix(vec3(1),tint,a.r+a.b*0.4);
         vec2 scenePoint=vec2(terrainUv.x,1.0-terrainUv.y)*detailScale*1.5+worldOffset;
         float windLight=sin(scenePoint.x*0.71+scenePoint.y*0.39-time*1.65);
-        color*=1.0+a.r*0.055*windLight;
+        color*=1.0+a.r*0.025*windLight;
         float cloud=0.94+0.06*landNoise(uv*0.10+vec2(time*0.016,time*0.008));
-        gl_FragColor=vec4(pow(max(color*lighting*variation*cloud,vec3(0)),vec3(1.0/2.2)),1.0);
+        float slopeLight=0.28+0.90*max(dot(normalize(groundNormal),normalize(vec3(-0.5,1.0,-0.6))),0.0);
+        vec3 shaded=pow(max(color*lighting*variation*cloud,vec3(0)),vec3(1.0/2.2))*slopeLight;
+        // A quiet atmospheric edge ends the displayed atlas without adding walkable land.
+        vec2 edgeDistance=min(terrainUv,1.0-terrainUv)*detailScale*1.5;
+        float edge=smoothstep(0.0,0.85,min(edgeDistance.x,edgeDistance.y));
+        gl_FragColor=vec4(mix(edgeMist,shaded,edge),1.0);
       }`,
     },
     {
-      attributes: ['position', 'uv'],
-      uniforms: ['worldViewProjection', 'lighting', 'detailScale', 'worldOffset', 'time'],
+      attributes: ['position', 'normal', 'uv'],
+      uniforms: [
+        'worldViewProjection',
+        'lighting',
+        'edgeMist',
+        'detailScale',
+        'worldOffset',
+        'time',
+      ],
       samplers: [
         'controlA',
         'controlB',
@@ -183,6 +195,7 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
     material.setTexture(sampler, texture);
   }
   material.setColor3('lighting', Color3.White());
+  material.setColor3('edgeMist', new Color3(0.2, 0.22, 0.21));
   return material;
 }
 
@@ -237,8 +250,8 @@ export function createRoadMaterial(
         vec2 grain=vec2(dot(sourceColor-crossSample,luma),dot(sourceColor-alongSample,luma));
         vec2 slope=acrossRoad*grain.x+vec2(-acrossRoad.y,acrossRoad.x)*grain.y;
         vec3 normal=normalize(surfaceNormal+vec3(slope.x,0.0,slope.y)*(paving*1.5+0.4));
-        float diffuse=dot(normal,normalize(vec3(0.2,1.0,-0.3)));
-        float relief=0.78+0.24*max(diffuse,0.0);
+        float diffuse=dot(normal,normalize(vec3(-0.5,1.0,-0.6)));
+        float relief=0.48+0.64*max(diffuse,0.0);
         float variation=0.93+0.09*landNoise(roadPoint*3.7);
         float alpha=1.0;
         if(shoulder>0.5){

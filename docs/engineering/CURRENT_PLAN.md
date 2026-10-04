@@ -1,5 +1,15 @@
 # Warwrit current delivery plan
 
+**World volume correction active — 2026-10-04:** owner rejected PR140 as flat.
+Parent is sole writer in isolated `road-art-quality` checkout, new branch
+`codex/world-volume`, base `1657bd4`. The continuing road mission authorizes
+PR and merge, not deployment. Renderer-only elevation, shared ground contacts,
+projection and picking preserve exact navigation/saved state. First playable:
+travel along the paved bend, pan to wooded hills, compare overview/close day/night.
+Mandatory independent critic compares approved ink/place references and actual
+journey before acceptance. [Owning correction](../work-packages/M1-FREE-MOVEMENT.md#world-volume-correction--2026-10-04).
+Primary living-place checkout and retained player database remain outside write scope.
+
 **Road art quality active — 2026-10-04:** owner requested coherent realistic
 road materials, shallow isometric relief and placement, repeated independent
 critique, isolated implementation, PR and merge. This authorizes publication

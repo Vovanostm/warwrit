@@ -33,6 +33,10 @@ export function mountThreeQuarterCamera(
   engine: AbstractEngine,
   canvas: HTMLCanvasElement,
   options: {
+    readonly elevation?: number;
+    readonly azimuth?: number;
+    /** Optional actual terrain hit; wheel anchoring must follow raised ground. */
+    readonly pickGround?: (x: number, y: number) => { x: number; y: number; z: number } | null;
     readonly minZoom: number;
     readonly maxZoom: number;
     readonly onPick: (hit: PickingInfo | null) => void;
@@ -49,23 +53,28 @@ export function mountThreeQuarterCamera(
   camera.minZ = 0.1;
   camera.maxZ = 400;
   scene.activeCamera = camera;
+  const elevation = options.elevation ?? CAMERA_ELEVATION;
+  const azimuth = options.azimuth ?? 0;
+  const right = { x: Math.cos(azimuth), z: Math.sin(azimuth) };
+  const forward = { x: -Math.sin(azimuth), z: Math.cos(azimuth) };
   const view = { centerX: 0, centerZ: 0, zoom: options.minZoom };
   let targetZoom = view.zoom;
   let zoomAnchor: { x: number; z: number; u: number; v: number } | null = null;
 
   const place = () => {
+    const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
+    const halfWidth = view.zoom * aspect;
     const distance = 80;
     camera.position = new Vector3(
-      view.centerX,
-      Math.sin(CAMERA_ELEVATION) * distance,
-      view.centerZ - Math.cos(CAMERA_ELEVATION) * distance,
+      view.centerX - forward.x * Math.cos(elevation) * distance,
+      Math.sin(elevation) * distance,
+      view.centerZ - forward.z * Math.cos(elevation) * distance,
     );
     camera.setTarget(new Vector3(view.centerX, 0, view.centerZ));
-    const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
     camera.orthoTop = view.zoom;
     camera.orthoBottom = -view.zoom;
-    camera.orthoLeft = -view.zoom * aspect;
-    camera.orthoRight = view.zoom * aspect;
+    camera.orthoLeft = -halfWidth;
+    camera.orthoRight = halfWidth;
   };
   const clampZoom = (zoom: number) => Math.min(options.maxZoom, Math.max(options.minZoom, zoom));
 
@@ -79,46 +88,59 @@ export function mountThreeQuarterCamera(
     pointerId: number;
   } | null = null;
   const panButtons = options.panButtons ?? [0, 1, 2];
+  const onPointerDown = (event: PointerEvent) => {
+    if (event.button === 2 && options.onSecondaryPick) event.preventDefault();
+    targetZoom = view.zoom;
+    zoomAnchor = null;
+    canvas.setPointerCapture?.(event.pointerId);
+    press = {
+      x: event.clientX,
+      y: event.clientY,
+      centerX: view.centerX,
+      centerZ: view.centerZ,
+      moved: false,
+      button: event.button,
+      pointerId: event.pointerId,
+    };
+  };
+  const onPointerMove = (event: PointerEvent) => {
+    if (!press || event.buttons === 0) return;
+    const dx = event.clientX - press.x;
+    const dy = event.clientY - press.y;
+    if (Math.hypot(dx, dy) > 5) press.moved = true;
+    if (!press.moved || !panButtons.includes(press.button)) return;
+    const step = (2 * view.zoom) / Math.max(canvas.clientHeight, 1);
+    const depth = (dy * step) / Math.sin(elevation);
+    view.centerX = press.centerX - dx * step * right.x + depth * forward.x;
+    view.centerZ = press.centerZ - dx * step * right.z + depth * forward.z;
+    place();
+  };
+  const onPointerUp = (event: PointerEvent) => {
+    if (
+      press &&
+      !press.moved &&
+      press.button === event.button &&
+      press.pointerId === event.pointerId
+    ) {
+      const hit = scene.pick(scene.pointerX, scene.pointerY, (mesh) => mesh.isPickable);
+      if (press.button === 2 && options.onSecondaryPick) options.onSecondaryPick(hit);
+      else if (press.button === 0) options.onPick(hit);
+    }
+    if (canvas.hasPointerCapture?.(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    press = null;
+  };
   const pointerObserver = scene.onPointerObservable.add((info) => {
     const event = info.event as PointerEvent;
-    if (info.type === PointerEventTypes.POINTERDOWN) {
-      if (event.button === 2 && options.onSecondaryPick) event.preventDefault();
-      targetZoom = view.zoom;
-      zoomAnchor = null;
-      canvas.setPointerCapture?.(event.pointerId);
-      press = {
-        x: event.clientX,
-        y: event.clientY,
-        centerX: view.centerX,
-        centerZ: view.centerZ,
-        moved: false,
-        button: event.button,
-        pointerId: event.pointerId,
-      };
-    } else if (info.type === PointerEventTypes.POINTERMOVE && press && event.buttons !== 0) {
-      const dx = event.clientX - press.x;
-      const dy = event.clientY - press.y;
-      if (Math.hypot(dx, dy) > 5) press.moved = true;
-      if (press.moved && panButtons.includes(press.button)) {
-        const step = (2 * view.zoom) / Math.max(canvas.clientHeight, 1);
-        view.centerX = press.centerX - dx * step;
-        view.centerZ = press.centerZ + (dy * step) / Math.sin(CAMERA_ELEVATION);
-        place();
-      }
-    } else if (info.type === PointerEventTypes.POINTERUP) {
-      if (
-        press &&
-        !press.moved &&
-        press.button === event.button &&
-        press.pointerId === event.pointerId
-      ) {
-        const hit = scene.pick(scene.pointerX, scene.pointerY, (mesh) => mesh.isPickable);
-        if (press.button === 2 && options.onSecondaryPick) options.onSecondaryPick(hit);
-        else if (press.button === 0) options.onPick(hit);
-      }
-      if (canvas.hasPointerCapture?.(event.pointerId))
-        canvas.releasePointerCapture(event.pointerId);
-      press = null;
+    switch (info.type) {
+      case PointerEventTypes.POINTERDOWN:
+        onPointerDown(event);
+        break;
+      case PointerEventTypes.POINTERMOVE:
+        onPointerMove(event);
+        break;
+      case PointerEventTypes.POINTERUP:
+        onPointerUp(event);
+        break;
     }
   });
 
@@ -135,8 +157,20 @@ export function mountThreeQuarterCamera(
     targetZoom = clampZoom(targetZoom * Math.exp(deltaPixels * 0.0012));
     const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
     const u = ((event.clientX - rect.left) / rect.width - 0.5) * 2 * aspect;
-    const v = ((0.5 - (event.clientY - rect.top) / rect.height) * 2) / Math.sin(CAMERA_ELEVATION);
-    zoomAnchor = { x: view.centerX + u * view.zoom, z: view.centerZ + v * view.zoom, u, v };
+    const v = ((0.5 - (event.clientY - rect.top) / rect.height) * 2) / Math.sin(elevation);
+    const hit = options.pickGround?.(event.clientX - rect.left, event.clientY - rect.top);
+    const x = hit?.x ?? view.centerX + (u * right.x + v * forward.x) * view.zoom;
+    const z = hit?.z ?? view.centerZ + (u * right.z + v * forward.z) * view.zoom;
+    // A raised point has a fixed screen-up displacement in addition to x/z.
+    const heightOffset = (hit?.y ?? 0) / Math.tan(elevation);
+    const anchorX = x + forward.x * heightOffset,
+      anchorZ = z + forward.z * heightOffset;
+    zoomAnchor = {
+      x: anchorX,
+      z: anchorZ,
+      u: (anchorX - view.centerX) / view.zoom,
+      v: (anchorZ - view.centerZ) / view.zoom,
+    };
   };
   wheelTarget.addEventListener('wheel', onWheel, { passive: false, capture: true });
   const zoomObserver = scene.onBeforeRenderObservable.add(() => {
@@ -175,8 +209,8 @@ export function mountThreeQuarterCamera(
     event.preventDefault();
     targetZoom = view.zoom;
     zoomAnchor = null;
-    view.centerX += move[0];
-    view.centerZ += move[1];
+    view.centerX += move[0] * right.x + move[1] * forward.x;
+    view.centerZ += move[0] * right.z + move[1] * forward.z;
     place();
   };
   const clearPress = () => {
@@ -199,8 +233,12 @@ export function mountThreeQuarterCamera(
       const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
       view.centerX = (bounds.minX + bounds.maxX) / 2;
       view.centerZ = (bounds.minZ + bounds.maxZ) / 2;
-      const fitHeight = ((bounds.maxZ - bounds.minZ) * Math.sin(CAMERA_ELEVATION)) / 2 + margin;
-      const fitWidth = (bounds.maxX - bounds.minX) / (2 * Math.max(aspect, 0.5)) + margin;
+      const dx = bounds.maxX - bounds.minX,
+        dz = bounds.maxZ - bounds.minZ;
+      const fitHeight =
+        ((dx * Math.abs(forward.x) + dz * Math.abs(forward.z)) * Math.sin(elevation)) / 2 + margin;
+      const fitWidth =
+        (dx * Math.abs(right.x) + dz * Math.abs(right.z)) / (2 * Math.max(aspect, 0.5)) + margin;
       view.zoom = clampZoom(Math.max(fitHeight, fitWidth));
       targetZoom = view.zoom;
       zoomAnchor = null;

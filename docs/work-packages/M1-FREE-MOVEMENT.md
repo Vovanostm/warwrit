@@ -1,5 +1,26 @@
 # Free global-map movement — implementation assignment
 
+## World volume correction — 2026-10-04
+
+Owner rejected the previous shallow crown as flat. This supersedes its visual
+acceptance, not its exact x/z navigation or frozen schedules. Sole renderer writer:
+parent on `codex/world-volume`, isolated checkout at base `1657bd4`; continuing
+road mission includes PR/merge, excludes deployment and other branches.
+
+One finite presentation height mesh supplies terrain, road draping, vegetation,
+settlement/party contacts, sampled route projection and actual ground picking.
+Fixed world isometry uses diagonal ground axes; already projected ink sprites
+retain their source proportions and lighting. Visible rolling ground and hill
+slopes, quiet road ruts/crown and soft contact shadows must read together.
+Shared elevation never changes canonical distances, costs, collision or saves.
+
+Acceptance: actual road/field journey with STOP/reload; day/night overview and
+close views with road bends, hills, forest and inhabited/ruined places; terrain
+ray-pick and route/party contact roundtrips; wheel anchoring and LMB pan without
+movement commands. Independent critic must compare unit-c-ink, Severny Dvor
+place illustration and existing weathered building art. No palette-only pass.
+Implementation/verification pending.
+
 ## Road materials and isometric relief — 2026-10-04
 
 Owner authorizes this isolated slice's PR and merge, including previously approved
