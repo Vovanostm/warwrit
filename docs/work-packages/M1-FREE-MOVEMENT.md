@@ -71,6 +71,28 @@ review and expected-head merge readback; consult GitHub for live integration
 status. Both disposable verification databases/volumes were removed; final
 API3217/realtime3218 and web5291 retain the player database.
 
+### CI coverage correction — 2026-10-04
+
+[Run37172997817](https://github.com/Vovanostm/warwrit/actions/runs/37172997817)
+passed the full clean bootstrap, then failed one5s authored-junction field-build
+coverage timeout (609 passed). It is FAILED, not a completed delivery gate.
+The correction removes actual discarded geometric work: reject non-intersecting
+finite edges before GCD, and skip polygon edges outside a point's closed height
+range. Equality/horizontal edges/negative denominators/collinearity retain the
+same rules. The tried exact-cell shortcut gave no material improvement and was
+discarded. Assertions, timeouts, coverage and audit policy are unchanged.
+
+Sequential same-host baseline/current compilation:1496.33ms→1082.28ms (27.67%).
+Every49152-cell terrain/overlay/walkability/danger value, all compiled grid-edge
+durations and road graph match the retained baseline. Four actual site paths and
+entire compiled V3 plans match.16 focused coverage cases, full610-check coverage
+and origin/main quality audit pass.11 real SQL movement scenarios are rerun on a
+new owned disposable database. Independent source reviewer found no defect in
+signed-range or closed-height filtering. Replacement current-head clean CI must
+pass before merge. Previous135.82ms search p95 is historical; post-fix search
+p95/capacity NOT_MEASURED, with no achieved50ms claim. Renderer/materials are
+unchanged, so accepted visual evidence still applies.
+
 ## Exact geometry cycle — 2026-10-04
 
 Owner approved the reviewed polygon/station design and step-by-step implementation.

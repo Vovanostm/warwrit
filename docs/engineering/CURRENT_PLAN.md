@@ -20,6 +20,15 @@ neighbor-loop rewrite; final tests/coverage/audit pass. Final API night road
 order and STOP/reload preserve the same retained point; fresh login NOT_RUN.
 No deployment.
 
+**Road-art CI correction — 2026-10-04:** PR140's clean bootstrap passed but
+run37172997817 FAILED at one5s coverage field-build timeout. Exact edge-range and
+closed-height rejection remove discarded work;27.67% faster cold compile in one
+same-host sample. All cell metadata/compiled edges/road graph and four full site
+plans match.16 focused coverage tests, full610-check coverage/audit pass;11 real
+SQL movement checks rerun on disposable infrastructure. No gate/timeout change.
+Independent source review found no defect; visual code unchanged. Replacement
+current-head clean CI is required before merge; post-fix search p95 NOT_MEASURED.
+
 **Live movement recheck — 2026-10-04:** current `main` at `ae9bf3a`
 was checked through the authenticated game at `http://127.0.0.1:5287`.
 Its GitHub CI is SUCCESS. API/web were restarted from that checkout with the

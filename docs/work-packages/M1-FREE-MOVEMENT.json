@@ -1085,6 +1085,20 @@
       "mergeAuthority": "Explicit owner request for this isolated slice; expected head and successful current-head clean CI required.",
       "integrationStatusOwner": "GitHub PR140 live status/checks; local runtime and author proof are separate."
     },
-    "runtimeReadback": "Final API3217/realtime3218 and web5291 from road-art worktree retain the original player database. Ordinary night Kamenny Brod→North Court order showed66s/paved×2; UI STOP and reload returned identical retained point (48589673,-90355124)microFp with200/STATIONARY_TERRAIN. Active-night overview capture: output/playwright/road-final-night-moving.png; independent final night critic READY_WITH_LIMITS, no reproduced blocker for this single overview frame."
+    "runtimeReadback": "Final API3217/realtime3218 and web5291 from road-art worktree retain the original player database. Ordinary night Kamenny Brod→North Court order showed66s/paved×2; UI STOP and reload returned identical retained point (48589673,-90355124)microFp with200/STATIONARY_TERRAIN. Active-night overview capture: output/playwright/road-final-night-moving.png; independent final night critic READY_WITH_LIMITS, no reproduced blocker for this single overview frame.",
+    "ciCorrection": {
+      "failedRun": "https://github.com/Vovanostm/warwrit/actions/runs/37172997817",
+      "failure": "Clean bootstrap passed; coverage timed out at5s in the authored-junction field-build test (609 passed/1 timeout). Merge blocked until current-head replacement CI passes.",
+      "fix": "Reject finite-edge non-intersections before reducing fractions; skip polygon edges outside the closed point-height interval. Collinear/equality/rational cases retain the old rules. An attempted exact-cell shortcut was measured, provided no material benefit and was discarded. No assertion, timeout, coverage or audit threshold change.",
+      "preservation": "All49152 center terrain/overlay/walkability/danger entries, compiled grid-edge durations and road graph exactly match retained baseline. Four settlement paths and full compiled V3 plans exactly match. Independent source reviewer found no defect in signed ranges or closed-height gate.",
+      "measurement": {
+        "method": "One sequential baseline/current build of the same full authored region in the same Node process; finite host sample, not capacity.",
+        "baselineCompileMs": 1496.33075,
+        "updatedCompileMs": 1082.275792,
+        "improvementPercent": 27.67
+      },
+      "checks": "16 focused coverage specs, full610-check coverage and unchanged origin/main audit pass;11 real SQL movement checks rerun after this fix on a new disposable database. Replacement current-head clean CI pending.",
+      "limits": "The earlier135.82ms search p95 belongs to the pre-optimization edition of this implementation. Post-fix search p95/capacity NOT_MEASURED;50ms target is not claimed."
+    }
   }
 }

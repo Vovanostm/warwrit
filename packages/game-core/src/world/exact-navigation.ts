@@ -119,6 +119,9 @@ function onSegment(p: Point & { readonly d: bigint }, a: Point, b: Point): boole
     p.z <= (a.z > b.z ? a.z : b.z) * p.d
   );
 }
+function edgeSpansHeight(height: bigint, a: bigint, b: bigint): boolean {
+  return a <= b ? height >= a && height <= b : height >= b && height <= a;
+}
 function covered(p: Point & { readonly d: bigint }, polygon: Polygon): boolean {
   const vertices = polygon.vertices;
   if (polygon.rectangle) {
@@ -128,6 +131,9 @@ function covered(p: Point & { readonly d: bigint }, polygon: Polygon): boolean {
   for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
     const a = vertices[j]!,
       b = vertices[i]!;
+    // Neither a boundary contact nor a ray crossing can occur outside this closed
+    // edge height range. Retain equality so horizontal edges/corners remain covered.
+    if (!edgeSpansHeight(p.z, a.z * p.d, b.z * p.d)) continue;
     const px = p.x - a.x * p.d,
       pz = p.z - a.z * p.d;
     const dx = b.x - a.x,
@@ -143,9 +149,13 @@ function edgeIntersections(a: Point, delta: Point, c: Point, d: Point): Ratio[] 
     offset = subtract(c, a);
   const denominator = cross(delta, edge);
   if (denominator) {
-    const t = ratio(cross(offset, edge), denominator),
-      u = ratio(cross(offset, delta), denominator);
-    return t.n >= 0n && t.n <= t.d && u.n >= 0n && u.n <= u.d ? [t] : [];
+    // Reject non-intersecting finite edges before reducing fractions. Only accepted
+    // event parameters need a GCD; the second parameter is a range check only.
+    const direction = denominator > 0n ? 1n : -1n,
+      distance = denominator * direction,
+      t = cross(offset, edge) * direction,
+      u = cross(offset, delta) * direction;
+    return t >= 0n && t <= distance && u >= 0n && u <= distance ? [ratio(t, distance)] : [];
   }
   if (cross(offset, delta) !== 0n) return [];
   const axis = delta.x ? 'x' : 'z';
