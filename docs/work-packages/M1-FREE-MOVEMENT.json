@@ -1100,5 +1100,13 @@
       "checks": "16 focused coverage specs, full610-check coverage and unchanged origin/main audit pass;11 real SQL movement checks rerun after this fix on a new disposable database. Replacement current-head clean CI pending.",
       "limits": "The earlier135.82ms search p95 belongs to the pre-optimization edition of this implementation. Post-fix search p95/capacity NOT_MEASURED;50ms target is not claimed."
     }
+  },
+  "worldVolumeAmendment": {
+    "date": "2026-10-04",
+    "delivery": "PR141 owns current-head CI and authorized merge readback; retained playable5291 and player data preserved. No deployment.",
+    "authority": "Owner rejected flat world; continuing isolated road-art mission includes PR and merge, no deployment.",
+    "compatibility": "Renderer presentation only; exact x/z polygons, accepted V2/V3 schedules, speed and saves unchanged.",
+    "implementation": "One sampled triangle height field owns ground contacts, draped roads, vegetation, party, route and ray picking; fixed diagonal isometry preserves projected sprite aspect. Real hill/rolling relief,35.264deg elevation/45deg azimuth, triangle-normal light, grounded contact wash,0.85scene edge mist with depth-writing grass fade and measured in-viewport moving-banner label clearance.",
+    "acceptance": "7 focused surface/camera checks and618-check coverage pass (46 skipped); actual retained day/night paved/field journeys, STOP/reload and arrival observed. Material source and visual findings corrected. 885e63f clean bootstrap passed618 checks/46skip,10000 battles,migrations+14DBchecks. Final independent critic READY_WITH_LIMITS at885e63f for genuine day active39s label clearance, day edge overview and night68-to38s overview/close: no reproduced material visual defect in supplied views; earlier FIRST HUNT DB scenario remains historical FAILED. No full-M1/enjoyment acceptance."
   }
 }

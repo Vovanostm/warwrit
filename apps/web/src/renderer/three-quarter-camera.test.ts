@@ -1,4 +1,12 @@
-import { NullEngine, PointerEventTypes, Scene, type PickingInfo } from '@babylonjs/core';
+import {
+  Matrix,
+  MeshBuilder,
+  NullEngine,
+  PointerEventTypes,
+  Scene,
+  Vector3,
+  type PickingInfo,
+} from '@babylonjs/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { mountThreeQuarterCamera } from './three-quarter-camera.js';
@@ -15,15 +23,20 @@ function cameraFixture(options: {
   readonly onSecondaryPick?: (hit: unknown) => void;
   readonly onStop?: () => void;
   readonly panButtons?: readonly number[];
+  readonly dpr?: number;
+  readonly elevation?: number;
+  readonly azimuth?: number;
+  readonly pickGround?: (x: number, y: number) => { x: number; y: number; z: number } | null;
 }) {
   globalThis.ResizeObserver = TestResizeObserver;
   const engine = new NullEngine({
-    renderWidth: 400,
-    renderHeight: 300,
+    renderWidth: 400 * (options.dpr ?? 1),
+    renderHeight: 300 * (options.dpr ?? 1),
     textureSize: 512,
     deterministicLockstep: false,
     lockstepMaxSteps: 4,
   });
+  vi.spyOn(engine, 'getHardwareScalingLevel').mockReturnValue(1 / (options.dpr ?? 1));
   const scene = new Scene(engine);
   const keys = new Map<string, EventListener>();
   const canvas = {
@@ -35,6 +48,9 @@ function cameraFixture(options: {
   } as unknown as HTMLCanvasElement;
   const onPick = options.onPick ?? vi.fn();
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
+    ...(options.elevation !== undefined ? { elevation: options.elevation } : {}),
+    ...(options.azimuth !== undefined ? { azimuth: options.azimuth } : {}),
+    ...(options.pickGround ? { pickGround: options.pickGround } : {}),
     minZoom: 2,
     maxZoom: 14,
     onPick,
@@ -59,12 +75,12 @@ function cameraFixture(options: {
     keys.get('keydown')?.(event);
     return event;
   };
-  const dispatchWheel = (deltaY: number, deltaMode = 0) => {
+  const dispatchWheel = (deltaY: number, deltaMode = 0, x = 100, y = 150) => {
     const event = {
       deltaY,
       deltaMode,
-      clientX: 100,
-      clientY: 150,
+      clientX: x,
+      clientY: y,
       preventDefault: vi.fn(),
       stopPropagation: vi.fn(),
     } as unknown as WheelEvent;
@@ -105,6 +121,53 @@ describe('three-quarter camera input options', () => {
       expect(fixture.scene.activeCamera!.orthoTop).toBeLessThanOrEqual(14);
       fixture.camera.dispose();
       expect(fixture.keys.has('wheel')).toBe(false);
+    } finally {
+      fixture.camera.dispose();
+      fixture.scene.dispose();
+      fixture.engine.dispose();
+    }
+  });
+
+  it.each([1, 2])('anchors actual raised-ground picks to the wheel cursor at DPR%s', (dpr) => {
+    const point = new Vector3(-1.1, 1.2, 0.35);
+    const fixture = cameraFixture({
+      dpr,
+      elevation: Math.atan(Math.sqrt(0.5)),
+      azimuth: Math.PI / 4,
+      pickGround: (x, y) => fixture.scene.pick(x, y, (m) => m === ground)?.pickedPoint ?? null,
+    });
+    const ground = MeshBuilder.CreateGround(
+      'raised-ground',
+      { width: 20, height: 20 },
+      fixture.scene,
+    );
+    ground.position.y = point.y;
+    vi.spyOn(fixture.engine, 'getDeltaTime').mockReturnValue(16);
+    const project = () => {
+      fixture.scene.render();
+      return Vector3.Project(
+        point,
+        Matrix.Identity(),
+        fixture.scene.getTransformMatrix(),
+        fixture.scene.activeCamera!.viewport.toGlobal(400 * dpr, 300 * dpr),
+      ).scale(1 / dpr);
+    };
+    try {
+      const before = project();
+      expect(
+        fixture.scene
+          .pick(before.x, before.y, (m) => m === ground)!
+          .pickedPoint!.subtract(point)
+          .length(),
+      ).toBeLessThan(0.0001);
+      for (const delta of [-240, 180, -90, 240]) {
+        fixture.dispatchWheel(delta, 0, before.x, before.y);
+        for (let i = 0; i < 80; i++)
+          fixture.scene.onBeforeRenderObservable.notifyObservers(fixture.scene);
+        const after = project();
+        expect(after.x).toBeCloseTo(before.x, 3);
+        expect(after.y).toBeCloseTo(before.y, 3);
+      }
     } finally {
       fixture.camera.dispose();
       fixture.scene.dispose();

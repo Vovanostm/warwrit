@@ -3,8 +3,16 @@ import type { WorldContinuousMapDto } from '@warwrit/protocol';
 import { insidePolygon, nearPolygon } from './map-geography.js';
 
 /** A finite decorative meadow, derived from public geography. Nothing here owns collision. */
-export function createMapLife(scene: Scene, region: WorldContinuousMapDto) {
+export function createMapLife(
+  scene: Scene,
+  region: WorldContinuousMapDto,
+  heightAt: (x: number, z: number) => number,
+) {
   const scale = (region.worldScale ?? 1) / 1024;
+  const minX = region.origin.xFp * scale,
+    minZ = region.origin.zFp * scale;
+  const maxX = minX + region.columns * region.cellSizeFp * scale;
+  const maxZ = minZ + region.rows * region.cellSizeFp * scale;
   const terrain = [...region.terrainShapes].sort((a, b) => b.paintPriority - a.paintPriority);
   const positions: number[] = [],
     colors: number[] = [],
@@ -18,9 +26,10 @@ export function createMapLife(scene: Scene, region: WorldContinuousMapDto) {
     return (seed >>> 0) / 4294967296;
   };
   const vertex = (x: number, y: number, z: number, bend: number, phase: number, color: Color3) => {
-    positions.push(x, y, z);
+    positions.push(x, y + heightAt(x, z), z);
     uvs.push(bend, phase);
-    colors.push(color.r, color.g, color.b, 1);
+    const edge = Math.max(0, Math.min(1, Math.min(x - minX, maxX - x, z - minZ, maxZ - z) / 0.85));
+    colors.push(color.r, color.g, color.b, edge * edge * (3 - 2 * edge));
   };
   const blade = (x: number, z: number, height: number, width: number, color: Color3) => {
     const angle = random() * Math.PI * 2;
@@ -111,7 +120,7 @@ export function createMapLife(scene: Scene, region: WorldContinuousMapDto) {
       const count = reeds ? 4 : wooded ? 3 : 5 + Math.floor(random() * 3);
       const height = reeds ? 0.22 + random() * 0.14 : 0.14 + random() * 0.1;
       const green = random();
-      const color = new Color3(0.32 + green * 0.18, 0.44 + green * 0.13, 0.17 + green * 0.08);
+      const color = new Color3(0.28 + green * 0.12, 0.31 + green * 0.11, 0.17 + green * 0.07);
       for (let i = 0; i < count; i += 1) {
         blade(
           sx + (random() - 0.5) * 0.09,
@@ -139,7 +148,7 @@ export function createMapLife(scene: Scene, region: WorldContinuousMapDto) {
       vertexSource: `precision highp float;
       attribute vec3 position; attribute vec4 color; attribute vec2 uv;
       uniform mat4 worldViewProjection; uniform float time;
-      varying vec3 bladeColor;
+      varying vec3 bladeColor; varying float edgeOpacity;
       void main(){
         vec3 p=position;
         float front=sin(p.x*0.71+p.z*0.39-time*1.65);
@@ -148,11 +157,16 @@ export function createMapLife(scene: Scene, region: WorldContinuousMapDto) {
         float bend=uv.x*(front*0.7+gust+flutter);
         p.x+=bend*0.065; p.z+=bend*0.038;
         p.y-=abs(bend)*uv.x*0.007;
-        bladeColor=color.rgb*(0.94+0.06*front);
+        bladeColor=color.rgb*(0.94+0.06*front); edgeOpacity=color.a;
         gl_Position=worldViewProjection*vec4(p,1);
       }`,
-      fragmentSource: `precision highp float; varying vec3 bladeColor; uniform vec3 lighting;
-      void main(){ gl_FragColor=vec4(bladeColor*lighting,1); }`,
+      fragmentSource: `precision highp float; varying vec3 bladeColor; varying float edgeOpacity; uniform vec3 lighting;
+      void main(){
+        // Screen-door edge fade preserves depth-writing occlusion for opaque interior blades.
+        float threshold=fract(dot(floor(gl_FragCoord.xy),vec2(0.75487766,0.56984029)));
+        if(edgeOpacity<=threshold) discard;
+        gl_FragColor=vec4(bladeColor*lighting,1);
+      }`,
     },
     {
       attributes: ['position', 'color', 'uv'],

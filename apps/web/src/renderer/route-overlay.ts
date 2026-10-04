@@ -12,9 +12,44 @@ export interface RouteOverlayFrame {
   readonly traversed: readonly RouteScreenPoint[];
   readonly remaining: readonly RouteScreenPoint[];
   readonly sprites: readonly RouteScreenRect[];
+  readonly party: RouteScreenRect;
   readonly ring: RouteScreenRect;
   readonly goal: RouteScreenPoint;
   readonly goalSiteId: string | undefined;
+}
+
+function labelOverlapsParty(label: RouteScreenRect, party: RouteScreenRect) {
+  return (
+    label.x + label.width > party.x - 6 &&
+    label.x < party.x + party.width + 6 &&
+    label.y + label.height > party.y - 6 &&
+    label.y < party.y + party.height + 6
+  );
+}
+
+/** Keep the moving banner clear of labels using their actual CSS bounds. */
+function avoidPartyLabels(svg: SVGSVGElement, party: RouteScreenRect | undefined) {
+  const labels = svg.parentElement?.querySelectorAll<HTMLElement>('.map-label');
+  if (!labels) return;
+  const canvasBounds = svg.getBoundingClientRect();
+  labels.forEach((label) => {
+    label.style.translate = '';
+    if (!party) return;
+    const rect = label.getBoundingClientRect();
+    const position = {
+      x: rect.left - canvasBounds.left,
+      y: rect.top - canvasBounds.top,
+      width: rect.width,
+      height: rect.height,
+    };
+    if (!labelOverlapsParty(position, party)) return;
+    const above = party.y - rect.height - 6;
+    const targetTop =
+      above >= 4
+        ? above
+        : Math.min(canvasBounds.height - rect.height - 4, party.y + party.height + 6);
+    label.style.translate = `-50% calc(0.6rem + ${targetTop - position.y}px)`;
+  });
 }
 
 /** A presentation of the accepted route; never an owner of movement or time. */
@@ -35,6 +70,7 @@ export function mountRouteOverlay(svg: SVGSVGElement, legend: HTMLDivElement) {
   return (frame: RouteOverlayFrame | null) => {
     svg.style.display = frame ? 'block' : 'none';
     legend.style.display = frame ? 'flex' : 'none';
+    avoidPartyLabels(svg, frame?.party);
     if (!frame) return;
     svg.setAttribute('viewBox', `0 0 ${frame.width} ${frame.height}`);
     background.setAttribute('width', String(frame.width));

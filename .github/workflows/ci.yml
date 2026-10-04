@@ -42,7 +42,7 @@ jobs:
 
       - name: Measure unit-test coverage for the audit
         if: github.event_name == 'pull_request'
-        run: pnpm test:coverage --maxWorkers=2
+        run: pnpm test:coverage --maxWorkers=1
 
       - name: Reject quality regressions in changed files
         if: github.event_name == 'pull_request'

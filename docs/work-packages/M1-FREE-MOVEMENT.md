@@ -1,5 +1,87 @@
 # Free global-map movement — implementation assignment
 
+## World volume correction — 2026-10-04
+
+Owner rejected the previous shallow crown as flat. This supersedes its visual
+acceptance, not its exact x/z navigation or frozen schedules. Sole renderer writer:
+parent on `codex/world-volume`, isolated checkout at base `1657bd4`; continuing
+road mission includes PR/merge, excludes deployment and other branches.
+
+One finite presentation height mesh supplies terrain, road draping, vegetation,
+settlement/party contacts, sampled route projection and actual ground picking.
+Fixed world isometry uses diagonal ground axes; already projected ink sprites
+retain their source proportions and lighting. Visible rolling ground and hill
+slopes, quiet road ruts/crown and soft contact shadows must read together.
+Shared elevation never changes canonical distances, costs, collision or saves.
+
+Acceptance: actual road/field journey with STOP/reload; day/night overview and
+close views with road bends, hills, forest and inhabited/ruined places; terrain
+ray-pick and route/party contact roundtrips; wheel anchoring and LMB pan without
+movement commands. Independent critic must compare unit-c-ink, Severny Dvor
+place illustration and existing weathered building art. No palette-only pass.
+Implementation: the public256x192 grid is rendered as a real triangle height
+field. Hills, rock and low wet ground have broad continuous relief; settlement
+contacts are terraced. Paired road banks are subdivided linearly at most24fp,
+with seven cross-section samples, quiet crown and outward8fp decorative shoulder.
+All contacts and route chords sample the actual mesh diagonal; x/z remains exact.
+World camera elevation is35.264 degrees, azimuth45 degrees; battle defaults stay
+unchanged. Projected art keeps its original aspect/bottom pivot and baked lighting.
+Terrain-normal shading and grounded ink contact shadows expose crest/flank volume.
+A matching0.85-scene-unit edge mist ends the finite atlas; meadow fades with
+screen-door depth writes. Moving banner/label overlaps use measured screen bounds
+and an in-viewport label displacement, preserving input and canonical positions.
+
+Author checks: surface/picking/draped-chord and real raised-ground wheel anchoring
+at DPR1/2, including zoom reversals:7 focused checks passed. Web typecheck/build,
+changed-file lint/format and normal changed-code audit passed. Integrated coverage
+passed618 checks,46 skipped; a later two-worker coverage retry timed out in two
+unchanged field-build checks under concurrent local load. Sequential one-worker
+coverage passed618/46 with original timeouts and thresholds. First clean bootstrap
+at `fa0baee` passed unit/build/10000 battles but FAILED one FIRST HUNT terminal
+physical-evidence database scenario; no assertion/policy was weakened. Final-code
+clean bootstrap at `885e63f` PASSED:618 unit checks,46 skipped,10000 battles,
+migration up/down smoke and14 PostgreSQL auth/encounter checks. Its disposable
+Compose project was removed; retained player infrastructure was untouched.
+
+Actual retained company journey on5291/API3217: field48s atx1 arrived North Court;
+paved69s tox2 became25s, STOP/reload kept the same road cusp, resume23s arrived
+Stone Ford. Return69s became60s, moving reload resumed at34s and arrived North
+Court. Night69s became38s and arrived Stone Ford. LMB pan and raised-ground wheel
+did not change target. Fresh OIDC login succeeded without database reset. A second
+retained test company was used after the first ran out of rations; no stock was
+fabricated and replenishment UI remains outside this renderer slice.
+
+Independent source checks fixed raised-ground zoom drift, grass depth occlusion
+and top-clipped displaced labels. Independent visual checks fixed insufficient
+broad relief, raw edge void, floating edge grass and a site-label/banner overlap.
+Final independent critic returned READY_WITH_LIMITS at `885e63f`: genuine day
+active39s confirms the full flag/ring clear of Stone Ford label; fresh day overview
+confirms the atmospheric edge without material floating grass. Combined with night
+68-to38s views, relief, planted sprites, road contact, route portions and targets
+remain readable. No reproduced material visual defect remains in supplied views.
+Angular canonical route corners and further road contrast/night mood are optional
+preferences, not acceptance defects. Critic inspected finite frames and author
+journey evidence; it did not rerun tests or measure whole-game quality/enjoyment. The reproduced Stone Ford label
+overlap is corrected in an actual day48-to38s free-point road trip: measured label
+bottom stays6CSSpx above the banner bounds. A top-edge displacement uses the
+below-banner alternative; arrival/completion restores the label base position. Inspected day/night overview/close
+views do not measure subjective enjoyment, full M1 readiness or hardware capacity.
+No game-core/protocol/server behavior, migration, balance or lore change.
+Published in [PR141](https://github.com/Vovanostm/warwrit/pull/141), which owns
+current-head CI and actual authorized merge readback. Retained company returned
+to Stone Ford on5291 for the owner playtest; player infrastructure is preserved.
+
+### CI scheduling correction — 2026-10-04
+
+PR141 [run37199433423](https://github.com/Vovanostm/warwrit/actions/runs/37199433423)
+passed clean bootstrap but FAILED the coverage step: unchanged authored-junction
+field-build check took5149ms against its5000ms limit under two concurrent workers;
+617 checks passed,46 skipped. Local exact-code sequential coverage had already
+passed618/46. Run coverage with one worker in CI to avoid simultaneous expensive
+field compilation on the bounded runner. Tests, assertions, timeouts, coverage
+and audit policy remain unchanged; renderer/navigation code is unchanged.
+Replacement current-head CI must pass before the authorized merge.
+
 ## Road materials and isometric relief — 2026-10-04
 
 Owner authorizes this isolated slice's PR and merge, including previously approved

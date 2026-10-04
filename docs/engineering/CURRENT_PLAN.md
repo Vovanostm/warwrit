@@ -1,5 +1,30 @@
 # Warwrit current delivery plan
 
+**World volume correction — 2026-10-04:** owner rejected PR140 as flat.
+Parent is sole writer in isolated `road-art-quality` checkout, new branch
+`codex/world-volume`, base `1657bd4`. The continuing road mission authorizes
+PR and merge, not deployment. Renderer-only elevation, shared ground contacts,
+projection and picking preserve exact navigation/saved state. First playable:
+travel along the paved bend, pan to wooded hills, compare overview/close day/night.
+Mandatory independent critic compares approved ink/place references and actual
+journey before acceptance. [Owning correction](../work-packages/M1-FREE-MOVEMENT.md#world-volume-correction--2026-10-04).
+Primary living-place checkout and retained player database remain outside write scope.
+Current main `06b8555` is integrated; exact roads and living places are preserved.
+Shared relief/isometry/contacts, edge mist and moving-label clearance implemented.
+Source reviews fixed material defects; final independent playable critic returned
+READY_WITH_LIMITS for day/night overview/close and corrected moving-label contact.
+No remaining reproduced material defect in supplied views; full-game quality and
+subjective enjoyment are not measured. Clean
+bootstrap at `885e63f` PASSED618 checks/46skip,10000 battles,migrations/14DB checks.
+Focused7 checks,618-check coverage and normal audit pass. First bootstrap failed
+one unrelated FIRST HUNT DB scenario and remains historical FAILED.
+Published in [PR141](https://github.com/Vovanostm/warwrit/pull/141). GitHub owns
+current-head CI and actual merge readback; owner authorized this bounded merge.
+Local playable5291 retains player data. PR run37199433423 passed bootstrap but
+FAILED one unchanged field-build coverage timeout under two workers. CI coverage
+now runs sequentially with unchanged tests/limits; replacement CI required.
+No deployment or full-M1 acceptance.
+
 **Living-place integration authorized — 2026-10-04:** owner explicitly
 requested “fix conflicts, merge, update local main”, authorizing PR139 merge
 and local main update. Parent owns the isolated `living-places-integration`
