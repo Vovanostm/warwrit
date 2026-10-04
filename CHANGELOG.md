@@ -7,6 +7,14 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ## Unreleased
 
+- 2026-10-05, branch `codex/map-topology-experiments`, published:
+  [PR148](https://github.com/Vovanostm/warwrit/pull/148) delivers the owner-selected
+  hex default, cached exact route edges and bounded terrain detours. Independent
+  source/playable review and focused checks pass; current-head clean CI and the
+  explicitly authorized merge remain pending. Primary main is at PR147 with
+  concurrent drafts preserved. GitHub owns subsequent CI/merge facts.
+  [Owning delivery record](docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
+
 ### Tree diversity on current main
 
 - 2026-10-05, branch `codex/forest-diversity-main`, local: owner requested the

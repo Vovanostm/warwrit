@@ -5,8 +5,8 @@
 of `codex/map-topology-experiments`, followed by a safe local-main update.
 Parent remains sole writer in `/private/tmp/warwrit-map-topology-research`;
 independent reviewer is read-only. Integrate current main's renderer changes,
-retain both documentation histories and existing player data. Required PR-head
-CI, review and merge are pending; no deployment or auto-merge authorized.
+retain both documentation histories and existing player data. [Published PR148](https://github.com/Vovanostm/warwrit/pull/148); required PR-head
+CI and merge are pending. Independent review is complete; no deployment or auto-merge authorized.
 Primary has concurrent location-depth/shared-document changes; retain those
 changes and do not overwrite active writers during local-main integration.
 Independent source/revision reviews found no material defect. Current focused
