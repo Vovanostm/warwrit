@@ -1,0 +1,56 @@
+{
+  "status": "CANDIDATE_APPROACH_RAY_CLEAR_REQUIRES_RUNTIME_CRITIC",
+  "file": "farmstead-v4.png",
+  "identity": "Северный Двор",
+  "sourcewidth": 1536,
+  "sourceheight": 1024,
+  "pivot": {
+    "u": 0.7356770833333334,
+    "v": 0.8525390625
+  },
+  "bounds": [0.0032552083333333335, 0.154296875, 0.7649739583333334, 0.919921875],
+  "bounds_definition": "Normalized [left,top,right,bottom] visible alpha>=8, exclusive right/bottom",
+  "pivot_definition": "Ground entry point on open east/front side beside last remaining gateleaf at source(1130,873), same arrival gap asv3; +/-0.015normalized visualestimate pending runtime",
+  "references": [
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "farmstead-v3.png"
+  ],
+  "identity_original": "/Users/vovanostm/learn/warwrit/assets/art/m1/places/severny-dvor.png",
+  "camera_recipe": "True orthographicE35.2643897/A45, shared groundaxes±30°, squarefootprintdiamondsqrt(3):1; no measuredgeometrypass",
+  "generator": "Built-in imagegen focused rightfence removal edit, transparent_background=true, no manualpixelchanges",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a10326-e07f-7a42-9760-9ae654192571/exec-978f8e79-23ba-4bef-975a-2a8d4f38ef0c.png",
+  "prompt_file": "farmstead-prompt-v4.txt",
+  "alpha_zero_fraction": 0.6717459360758463,
+  "alpha_extrema": [0, 254],
+  "observations": [
+    "Removed east/right palisade/fence and tuftstrip that blocked steep approach.",
+    "Barn/house/workcart/left/front fence and grim materials retained without mirroring.",
+    "Right gateleaf/post was also removed by generator, leaving one leaf at attached frontfence endpoint and an open east approach. Parent inspected v4 and requested this open-side entrancepivot for live integration.",
+    "No baked road, water, new rear entrance or large opaque groundplate."
+  ],
+  "approach_ray_check": {
+    "from": [1130, 873],
+    "actual_direction": [100, -600],
+    "actual_sample_interval_dy": 30,
+    "actual_sample_range_dy": [30, 600],
+    "actual_sample_count": 20,
+    "actual_alpha_all_samples": 0,
+    "endpoint_alpha": 1,
+    "broad_direction": [500, -700],
+    "broad_sample_dy": [30, 60, 90, 120, 180, 240, 300, 360, 420, 480],
+    "broad_alpha_all_samples": 0,
+    "conclusion": "Actual steep and broad uprightray centerline samples are transparent to entry point. Not runtime/comprehensivecorridor proof.",
+    "evidence_file": "farmstead-v4-ray-check.json"
+  },
+  "concerns": [
+    "Open east boundary has one attached gateleaf; runtime critic should confirm clear recognizable frontarrival.",
+    "No generous leftmargin achieved (visiblealphax5); main structures appear uncut but peripheralgroundtufts nearframe.",
+    "Faint alpha1-7 fringe beyond visiblebounds retained; exactgroundaxes unmeasured."
+  ],
+  "NOT_RUN": [
+    "Current farmv4 runtime day/nightcomposite",
+    "Independent criticv4approval",
+    "Gameplaymovement/clickverification"
+  ],
+  "ownership": "Onlyscratchsitesfileswritten; nootherassets/sharedsource/docsservices changed; no furthergeneration beforelivecritic."
+}

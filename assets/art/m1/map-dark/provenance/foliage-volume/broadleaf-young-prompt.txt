@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: isolated transparent individual tree sprite for a fixed isometric dark-fantasy strategy map, E35.2643897/A45
+Input images: Image 1 approved grim map master: use only its ink-painted atmosphere, muted values and upper-left lighting. Image 2 approved character cutout: use only its painterly ink surface style. Images 3 and 4 are existing tree silhouettes to avoid: no broad horizontal old-oak shape and no bent mature white-barked birch or flared roots.
+Primary request: one clearly young, narrow, upright deciduous tree with sparse, off-center foliage tiers and a simple slim trunk.
+Subject: A single young tree, mostly straight vertical trunk, narrow upright silhouette, thinner unscarred grey-umber bark, a few visible light-facing bark planes. Three to five small separated irregular branch tiers, unevenly spaced and slightly offset to one side, with substantial open air between tiers so the stem remains clearly visible. Foliage is modest and sparse; no big crown.
+Style/medium: original hand-painted 2D cutout for a serious grounded dark-fantasy map. Crisp ink contours, broad restrained brush planes, credible natural growth.
+Composition/framing: show entire crown and small visible root flare, base near bottom center, trunk vertical, slender narrow silhouette, generous transparent margins, fixed orthographic sprite, centered.
+Lighting/mood: same upper-left key across tree; broad angular upper-left lit planes on foliage and stem, deep soot shadow on lower-right/undersides. Readable distinction of lit planes and darker recesses even at reduced map scale.
+Color palette: subdued grey-brown trunk, muted slate/soot shadow, dull olive and restrained dried ochre leaves; no bright yellow.
+Materials/textures: painterly branch overlap, a few broad foliage masses with small credible leaf texture; avoid fine grain and repetitive tiny leaf marks. No smooth plastic clumps.
+Constraints: exactly one young tree, true transparent alpha, no backdrop, vignette, glow, ground slab or cast shadow. Fully visible roots and crown, no crop. No people, extra trees, buildings, props, text, watermark. Do not mirror or rotate light direction.

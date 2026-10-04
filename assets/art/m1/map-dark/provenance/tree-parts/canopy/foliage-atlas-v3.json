@@ -1,0 +1,56 @@
+{
+  "image": "foliage-atlas-v3.png",
+  "width": 1254,
+  "height": 1254,
+  "hasAlpha": true,
+  "alphaThreshold": 39,
+  "boundsConvention": "source pixels / normalized atlas UV: origin TOP LEFT, x right, y DOWN; [left,top,right,bottom], right/bottom exclusive. attachmentLocal is relative to cropped alpha39 frame, same origin.",
+  "frames": [
+    {
+      "key": "deciduousUpper",
+      "sourcePixels": [66, 131, 617, 594],
+      "attachmentPixels": [75, 365],
+      "attachmentAlpha": 242,
+      "direction": "loose broad upper canopy, lateral exposed twig attachment",
+      "frameUV": [
+        0.05263157894736842, 0.10446570972886762, 0.4920255183413078, 0.47368421052631576
+      ],
+      "attachmentAtlasUV": [0.05980861244019139, 0.29106858054226475],
+      "attachmentLocal": [0.016333938294010888, 0.5053995680345572]
+    },
+    {
+      "key": "deciduousSide",
+      "sourcePixels": [775, 171, 1179, 597],
+      "attachmentPixels": [785, 584],
+      "attachmentAlpha": 249,
+      "direction": "side branch, bottom-left attachment",
+      "frameUV": [0.6180223285486444, 0.13636363636363635, 0.9401913875598086, 0.47607655502392343],
+      "attachmentAtlasUV": [0.6259968102073366, 0.46570972886762363],
+      "attachmentLocal": [0.024752475247524754, 0.9694835680751174]
+    },
+    {
+      "key": "pineLeft",
+      "sourcePixels": [63, 703, 571, 1163],
+      "attachmentPixels": [542, 709],
+      "attachmentAlpha": 251,
+      "direction": "left/down needle bough, UPPER-RIGHT twig attachment",
+      "frameUV": [
+        0.050239234449760764, 0.5606060606060606, 0.45534290271132377, 0.9274322169059012
+      ],
+      "attachmentAtlasUV": [0.43221690590111644, 0.5653907496012759],
+      "attachmentLocal": [0.9429133858267716, 0.013043478260869565]
+    },
+    {
+      "key": "pineRight",
+      "sourcePixels": [746, 711, 1203, 1173],
+      "attachmentPixels": [756, 721],
+      "attachmentAlpha": 248,
+      "direction": "right/down needle bough, UPPER-LEFT twig attachment",
+      "frameUV": [0.594896331738437, 0.5669856459330144, 0.9593301435406698, 0.9354066985645934],
+      "attachmentAtlasUV": [0.6028708133971292, 0.5749601275917066],
+      "attachmentLocal": [0.02188183807439825, 0.021645021645021644]
+    }
+  ],
+  "attachmentMethod": "Exposed twig base selected visually and its alpha sampled >=39. Parent connects pivots to actual skeleton branch tips.",
+  "runtimeAcceptance": "NOT_RUN"
+}

@@ -1,5 +1,196 @@
 # Free global-map movement — implementation assignment
 
+## Tree diversity on current main — 2026-10-05
+
+Owner explicitly requested “Implement — доведи всё до рабочего состояния в main”.
+This authorizes the bounded implementation, PR and expected-head merge of the
+fourteen-form forest mission. Parent owns isolated `codex/forest-diversity-main`
+on merged `917644a` (PR146), source integration, documentation and final checks.
+The primary checkout contains other owners' terrain/art/wiki/skill drafts and
+player data; preserve those exact changes while updating main. No deployment,
+auto-merge, paid production or unrelated draft publication is authorized.
+
+Continue the accepted composed-trunk/curved-canopy renderer and original
+map-dark atlas/palette/projection, rather than replacing it with the old-base
+whole-tree sprite attempt. Four existing body assemblies anchor the expansion.
+Target 14 authored assemblies: seven deciduous and seven conifers, each with
+four mature forms (broad/compact/asymmetric/split crown), two young forms
+(slender/dense) and one old living form. Distinction must come from authored
+branch/crown mass arrangement and age proportions, not hue, flipping or yaw.
+Ground axes, measured source/root/attachment pivots, curved near/far masses,
+NW light, shared batched geometry, nonpickability and prop depth remain owned
+by the current renderer. No new species, lore, canonical movement/collision/
+speed/save rule, framework or dependency. Prior twelve whole-sprite PNGs and
+exact provenance remain preserved in the unmerged old `tree-diversity` checkout;
+its catalogue-only acceptance does not accept this composed integration.
+
+Natural placement carries forward the reviewed finite deterministic sampler:
+850fp smooth density pockets, clearings,380fp edge thinning, age-aware modest
+sizes, no identical form within440fp, road-bank110fp plus root radius, sites
+260fp (city400fp) plus radius, and blockers with radius. Public map edition
+seeds bounded sampling (20000 attempts/1600 accepted trees); actual public
+terrain priorities, obstacles and authored pinewood geography remain authority.
+Roads, targets and entrances must remain visible and operable.
+
+First playable: travel beside Bereznyak, inspect forest edges/clearings at
+close and overview zoom in day/night, STOP/reroute/reload, pan and wheel without
+page scroll or unwanted orders. Independent read-only source and playable critic
+compare current screenshots/journey with unit-c-ink, Bereznyak/place lore and
+approved map-dark parts. Fix material findings and repeat affected review.
+Focused placement and existing complete-tree geometry regressions plus web
+checks are local; final clean bootstrap/stress/PostgreSQL gate runs once in
+normal PR CI. No test or quality gate weakening. Publication and clean PR CI
+remain pending; performance/enjoyment remain NOT_MEASURED. Normal public fixture sign-in approval is requested separately after the earlier automatic
+approval rejection; no authentication workaround or fabricated travel state.
+
+### Local result and evidence — 2026-10-05
+
+Implemented fourteen authored assemblies using the original atlases: seven per
+family, with mature/young/old crown arrangements. Actual public geography produces
+504 trees and includes all fourteen forms (8–62 instances per form), with stable
+reload placement, irregular density pockets, clearings and age-aware edges.
+Conifers share a bole and differ mainly in bough arrangements; stronger silhouette
+contrast is optional polish, not fourteen new species or dramatically different
+body shapes. No new asset, dependency, migration or canonical gameplay/save rule.
+
+Independent read-only source review found no material placement, clearance,
+grounding, prop-depth or input defect. The repeated art critic inspected twelve
+current production-mount/gallery day/night overview/close captures against the
+approved unit/place/atlas references and returned READY_WITH_LIMITS: no reproduced
+material seam, root, light, style/lore or road/site readability defect. Captures are
+local `/private/tmp/warwrit-forest-review/`; the untracked gallery/public-geography
+harnesses are excluded from publication. They do not contain company/gameplay state.
+
+Parent native input on the production mount logged SITE for the opaque city,
+TERRAIN through a tree and grass, and STOP for S. Pan/zoom added no orders and
+window scroll remained zero. This is renderer callback proof only, not server
+travel/arrival or saved-position proof. New authenticated journey/STOP/reload are
+NOT_RUN: automatic browser review rejected access to the local Dex login while
+the separately requested fixture-sign-in permission remains unanswered. No alternate
+authentication surface, account/data reset, fabricated supplies or time was used.
+PR146's earlier journey remains historical evidence, not current journey acceptance.
+
+Local checks: four focused forest/geometry regressions with coverage, web
+typecheck, changed-file lint, original-resource validation (87 assets), production
+build (before the final behavior-preserving scene extraction) and diff check PASS. Full sequential coverage FAILED: 629 passed, 47 skipped,
+two unchanged navigation-field tests exceeded their existing 5s limit. It produced
+no coverage JSON, so the first audit FAILED to read that file. Focused coverage
+then exposed an inherited picking callback above the audit threshold after code
+movement; reuse the existing site decoder and separate terrain-hit coordinate
+validation to retain all original guards and lower callback complexity. Extract
+the existing site assembly/alpha-mask loop into cohesive renderer functions,
+retaining exact materials, measured projection, contacts and picking order.
+Independent source review found no material change at these boundaries. No tests,
+timeouts, assertions or quality thresholds are weakened. Final unchanged changed-code audit PASS with current focused coverage; the normal
+pre-commit hook repeats it before publication. Clean full bootstrap,
+combat stress, PostgreSQL and full coverage are owned by normal PR CI, NOT_RUN
+locally. Sustained FPS, temporal animation and enjoyment are NOT_MEASURED.
+
+Primary main has another active location-depth writer, plus retained unrelated
+terrain/art/wiki/skill drafts. Integrate remote main in the isolated checkout;
+local-primary update must wait for shared-file ownership or preserve those writes
+without stashing/restoring an active writer's files. No deployment authorized.
+
+## Component forest integration — 2026-10-04
+
+Owner explicitly requested review, PR merge and local main update for the approved
+5290 map. Parent owns `codex/component-forest-integration`, based on merged
+`bcc30f5` (including supplies PR144); no deployment or other PR is authorized.
+The earlier standalone 5290 checkout is an art reference, not an integration base.
+
+Bounded port: original dark ink/wash terrain and five settlement cutouts; measured
+source aspect, opaque bounds and entrance pivots; three deciduous bodies and one
+pine composed from original trunk/foliage atlases, with coordinate-seeded part
+variation and curved near/far canopy surfaces. Sources/prompts remain in
+[map-dark](../../assets/art/m1/map-dark/README.md) and the asset manifest.
+Ground, roads, party, route and canonical movement retain the current main
+implementation. Tree roots and settlement entrances sample its shared triangle
+height field; decorations remain nonpickable. Alpha-aware site picking rejects
+transparent margins. Labels use projected visible bounds and measured HTML sizes.
+The current supplies party sprite, small ring, road types, V3 interpolation,
+raised-ground wheel anchoring and living-place visits remain present.
+
+Style authority remains ADR-0006, original unit-c ink and matching original place
+illustrations. No new lore, navigable geometry, faction or gameplay mechanic.
+Earlier prototype approval does not accept this main integration. Independent
+source review and integrated day/night overview/close playable critique are
+required. Full game quality, enjoyment and all-device performance are NOT_MEASURED.
+
+Integration findings and fixes: active-route labels were resetting their measured
+base offset; route avoidance now retains zero base translation and only adds the
+needed vertical displacement. Relief depth clipped painted city foreground below
+its entrance pivot; towns and both tree batches now share one prop pass with
+relative depth after terrain. Opaque site hits take precedence over terrain to
+match this visible layering; transparent margins fall through. While a mask is
+loading, that site hit cannot silently dispatch a terrain order. Original local
+water/peat under Tikhaya Gat and the ruined mill's wheel mouth are restored as
+cosmetic contacts in the main terrain shader, with restrained local reeds.
+
+Checks: seven existing surface/camera tests, web typecheck, changed-file lint,
+format/content validation and diff check PASS. Independent repeated source review
+found no remaining concrete material defect in the scoped source, including the
+wet-contact shader. Clean `scripts/bootstrap.sh` PASS:627 unit checks/47 skipped,
+10,000 combat battles, migration smoke and14 real PostgreSQL auth/encounter checks;
+its disposable infrastructure was removed. Final cosmetic corrections overlapped
+that gate's build; final published-head CI is still required. Initial coverage
+FAILED two unchanged5s movement-field timeouts under concurrent local scene load
+(625 passed/47 skipped). Unloaded sequential replacement passed627/47 skipped. After bounded helper
+extraction, final sequential coverage passed628/47 skipped, including one public
+NullEngine regression for all four assembled trees: deterministic geometry,
+complete relief grounding, curved normals, nonpickable shared prop layer and
+geometry retained across lighting changes. The initial new-code audit FAILED;
+shared seeded hash/obstacle checks and cohesive assembly/projection/label helpers
+removed introduced duplication/complexity without suppression or policy changes.
+Temporary test/type/lint failures during extraction were corrected; final focused
+checks and unchanged changed-code audit PASS. No timeout/assertion/gate weakened.
+
+Normal second local fixture login and company creation succeeded. Night departure
+North Court→Stone Ford showed65s and paving×2; S STOP retained
+(90002024,-158732552)microFp at revision5 through reload. Normal return used a V3
+plan, survived moving reload, arrived at North Court
+(100663296,-174391296)microFp/revision7 and stayed there after reload, plan null,
+cash850. The first arrival wait matched stale pre-command state; this was corrected
+by a separate exact-goal arrival/readback, not counted as an arrival pass.
+
+All five opaque site samples and HTML labels→SITE; all five transparent margins→
+TERRAIN. These15 POSTs were intercepted/rejected locally; no backend state writes.
+Final opaque city foreground below its entrance pivot also dispatches SITE
+(`kamenny-brod`); the intercepted request leaves revision7 unchanged.
+Native pan40.00975/-20.00465CSSpx, raised-ground wheel error3.22e-6 scene units,
+scroll0/gesturePOST0. Both tree meshes are nonpickable; a tree click→TERRAIN.
+These are parent executions; independent critic did not operate the browser.
+
+Current screenshots are local `output/playwright/component-integration-r3-*`;
+night moving/stopped/arrived captures use `component-integration-journey-*`.
+Earlier R1 city clipping and the first R3 NIGHT default unloaded capture were
+rejected. The loaded replacement passed independent review of16 DAY/NIGHT views.
+Final extracted source was independently reviewed with no material regression;
+post-extraction eight DAY views use `component-integration-final-day-*`.
+The critic's final revised acceptance is recorded in the PR; it inspected captures
+and parent-run journey evidence, rather than operating the browser itself.
+No ideal/full-game/M1, enjoyment or all-device performance acceptance.
+
+The old first-account prototype save remains preserved: it stored planVersion2
+with mapEditionV5 and is rejected by current main. It was not rewritten or used
+for acceptance; the second fixture company was created through the real UI.
+Existing released0014 supply migration was applied to that retained local test
+DB; this slice adds no migration. Local implementation ready for publication; exact-head PR CI/merge readback still
+required. Primary has active writers and unrelated route/terrain/doc drafts;
+local-main update must wait until their writes stop and preserve both histories.
+No deployment authorized.
+
+### Concurrent main integration — 2026-10-05
+
+Published [PR146](https://github.com/Vovanostm/warwrit/pull/146) initially met
+newer main `4a82c36`, which merged route-visibility PR145 during asset upload.
+Integrated that main in the owned checkout; retained unmasked complete route and
+goal annotations and both branches' dated documentation. Only the React import
+and changelog insertion conflicted. No gameplay, tree, site or terrain change
+from this integration. Independent source review and final PR CI own current
+combined-code acceptance; prior captures remain bounded evidence. In-app browser
+access for final refresh was rejected by URL policy; current combined-route
+browser capture is NOT_RUN, and no alternate surface bypass was attempted.
+
 ## Tree art rejection and diagnosis — 2026-10-04
 
 Owner reports incorrectly oriented, visibly flat trees after PR141. This supersedes
@@ -1095,3 +1286,94 @@ no merge/deployment. Final bootstrap PASS:633unit/47skip,10000stress,migrations/
 Actual RMB/S/reload/reroute/arrival retained exact points; independent source and
 supplied-evidence critic found no material defect. Separate movementSQL-suite
 NOT_RERUN; overview/close/FPS/VM/full-M1 limits remain in the owning result.
+
+## Settlement route visibility correction — 2026-10-04
+
+Owner screenshots show a destination diamond clipped near Bereznyak and a
+rectangular gap in the route on Kamenny Brod's approach. The SVG used black
+rectangles over complete settlement sprite bounds, including transparent padding;
+these cut annotations even on unobstructed ground. This correction supersedes
+the retained settlement-mask behavior in the integrated party delivery above.
+
+Parent is the sole writer for this bounded local fix in primary `main`, based on
+merged `bcc30f5`. `ContinuousMapCanvas.tsx` no longer masks route strokes or goals;
+`route-overlay.ts` and `continuous-map-scene.ts` remove unused mask inputs and
+rectangle updates. Route annotations remain above the map, including settlement
+art. Terrain-draped geometry, history/remaining split at the party foot, destination
+placement beside site labels, label avoidance, legend and non-intercepting input
+are retained. No domain, speed, clock, save, migration or art change.
+
+Actual checks: web typecheck, three-file ESLint/Prettier and `git diff --check`
+passed. The running localhost:5293 DOM has zero route masks/masked elements and
+keeps `pointer-events: none`; the retained company is stopped on the paved
+approach. Automatic approval review rejected the attempted short verification
+move because it changes saved position and may consume supplies. Owner permission
+was requested; moving/STOP/arrival and current visual acceptance are pending
+(`NOT_RUN` for this correction). Full-game/device/performance gates are NOT_RUN;
+no commit, PR, merge or deployment for this follow-up.
+
+Independent read-only critic confirmed the rectangular clipping in both owner
+captures and the source-level removal of its cause, with no input interception
+in the changed code. Current stationary capture:
+`output/playwright/route-mask-fix-stationary.png`. The critic has no current moving
+capture; whether annotations over painted settlement art affect readability
+remains a visual acceptance limit, not a reproduced regression.
+
+### Playable verification after owner authorization — 2026-10-04
+
+Owner explicitly authorized testing the retained company with “Да, можешь как
+угодно тестировать”. This supersedes the permission-pending runtime limitation
+above; no company reset, purchase, art/domain change or publication was performed.
+
+Actual localhost:5293 normal-UI journey on the unchanged three-file diff:
+
+- The retained dirt-road position → Kamenny Brod showed continuous strokes and
+  a complete site diamond on the daytime approach; arrival cleared the overlay.
+- Kamenny Brod → western paved-road ground goal at night retained the line
+  through the former settlement-mask area and a complete diamond. S during this
+  active trip cleared the strokes, marker and legend.
+- The stopped point → Bereznyak showed the complete site marker at overview and
+  close scale, a continuous route and joined history/remaining at the party foot.
+  Arrival cleared the overlay; a new ground goal beside the village showed a
+  whole diamond on the road and completed normally.
+- Return toward Kamenny Brod survived page reload and arrived. Its initial
+  moving screenshot preceded asset loading, so the full integrated reload check
+  was repeated on Kamenny Brod → Tikhaya Gat: reload restored the moving company,
+  history, remaining path and goal with all map art loaded (9s in DOM, 7s in the
+  screenshot). The final return arrived in Kamenny Brod and cleared the overlay;
+  the company was left stationary there with 800 crowns, and the game stays open.
+
+Current captures under `output/playwright/`: `route-mask-fix-city-day.png`,
+`route-mask-fix-city-approach.png`, `route-mask-fix-city-night.png`,
+`route-mask-fix-stop.png`, `route-mask-fix-village-overview.png`,
+`route-mask-fix-village-close.png`, `route-mask-fix-village-ground-goal.png`,
+`route-mask-fix-reload-moving.png` (the settled repeated journey),
+`route-mask-fix-return-arrived.png` (the first completed return),
+`route-mask-fix-final-city.png` (final stationary company).
+The independent critic found no material defect in supplied day/night,
+close/overview, ground-goal, STOP and arrival captures. Its corrected settled
+reload pass also found no material issue and explicitly withdrew the concern
+based on the superseded loading frame. It did not operate the browser. Prior web typecheck,
+scoped ESLint and source/doc Prettier checks remain applicable to the unchanged
+code; current diff whitespace check passed. Full-game/device/performance gates
+remain NOT_RUN. Fix remains local and uncommitted on `main`; no PR/merge/deploy.
+
+### Route visibility delivery — 2026-10-04
+
+Owner “merge to main” authorizes this reviewed correction's publication and merge.
+Sole delivery writer: `/private/tmp/warwrit-route-visibility` on
+`codex/route-visibility-fix`, based on `bcc30f5`. The three web files match the
+playtested delta; unrelated primary changes are excluded. Existing source and
+playable review applies; clean PR CI will own the complete bootstrap/stress/SQL
+gate. Publication, CI and merge remain pending at this checkpoint. No migrations,
+domain rules, art, clock or persistent-data reset; no deployment/paid resources.
+
+Before publication: frozen-lockfile installation and core/protocol/testkit builds
+passed on Node24.20.0 / pnpm11.25.0; web typecheck and scoped ESLint passed.
+Initial scoped formatting check found an extra blank line in the copied checkpoint;
+it was corrected and the six-file Prettier check passed. Coverage ran with one
+worker through the existing command: 627 passed, 47 skipped (95 files passed,
+7 skipped). The enforced pre-commit audit passed with that real coverage and
+excluded seven inherited findings; its semantic-identity warning used the existing
+syntactic fallback, without changing the gate. The clean full gate is reserved
+for PR CI, not repeated locally.

@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: corrected dark-fantasy conifer sprite cutout.
+Input images: Image 1 is the PRIMARY style authority: preserve its desaturated grim map materials and charcoal-ink shadows. Image 2 is the target single conifer to preserve: retain its vertical weathered trunk, irregular narrow crown, ragged branch architecture and isometric pose. Image 3 informs only contour weight; Image 4 informs only old weathered timber and restrained materials.
+Primary request: simplify Image 2's outer foliage into fewer broad, ragged branch silhouettes. Replace the dense needle-like fringe and fine twig detail with compact broken bough masses and clear dark gaps. Also remove the surrounding low-opacity brown/black glow entirely: pixels outside the actual tree must be fully transparent, with no vignette or atmospheric backdrop.
+Scene/backdrop: genuine transparent background with no environmental layer.
+Subject: one complete solitary conifer, vertical umber-charcoal trunk, uneven sparse charcoal/slate/muted-sage bough tiers, a few exposed dead branches, subdued broken crown.
+Style/medium: exact grim dark-fantasy ink-and-flat-wash language of Image 1; rough edged, weathered, matte and readable at game scale.
+Composition/framing: preserve Image 2's actual source aspect and orthographic map camera, elevation 35.264 degrees, azimuth 45 degrees, ground axes ±30 degrees and projected square diamond √3:1 rather than 2:1. Trunk vertical. Entire top, root and foot pivot visible; generous clear transparent margins, including at least 6% below root contact; no clipping.
+Lighting/mood: overcast upper-left light confined to tree surface; short subdued grounding only directly at the root.
+Constraints: one conifer only; change outer foliage simplification and exterior alpha only; preserve trunk/crown identity.
+Avoid: tiny needles, fine twigs, regular Christmas-tree tiers, symmetric branches, bright greens, gloss, aura, haze, halo, glow, vignette, gradient, background matte, transparent colored pixels outside silhouette, long cast shadow, ground plate, scene, text, symbols, watermark.

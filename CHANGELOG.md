@@ -7,6 +7,25 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ## Unreleased
 
+### Tree diversity on current main
+
+- 2026-10-05, branch `codex/forest-diversity-main`, local: owner requested the
+  working 14-form forest in main. Continue PR146's composed curved crowns and
+  original atlas style, with age/species silhouettes and deterministic natural
+  pockets/clearings; preserve relief, input, routes and gameplay. Scope: web tree
+  forms/geometry/placement/geography/mount and owning docs. Prior whole-sprite
+  attempt and primary unrelated drafts/player data remain preserved. Four focused
+  geometry/placement checks, typecheck/build/lint/content pass;
+  independent source and day/night art critic READY_WITH_LIMITS. Full local
+  coverage FAILED two unchanged navigation timeouts (629 pass/47 skip); normal
+  PR CI/merge pending, authenticated journey NOT_RUN after automatic login
+  rejection. Shared picking decoder/terrain validation and site-assembly extraction retain
+  projection, material, alpha and input guards; final unchanged audit passes
+  with current focused coverage.
+  Active primary location-depth writer prevents overlapping shared-file writes;
+  no deployment or new migration.
+  [Owning scope/results](docs/work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
+
 ### Added
 
 - 2026-10-05, branch `codex/map-topology-experiments`, local (started 2026-10-04): owner-requested
@@ -56,6 +75,58 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   `git commit --no-verify`.
 
 ### Fixed
+
+- 2026-10-05, branch `codex/component-forest-integration`, published PR146:
+  integrated newer main `4a82c36` (merged PR145) after concurrent route delivery.
+  Preserved full unmasked route/goal annotations and both dated documentation
+  histories; resolved only the React import and changelog insertion conflict.
+  Final PR-head CI remains required. Browser refresh/capture via the in-app tool
+  was blocked by its URL policy; no alternate browser workaround attempted.
+
+- 2026-10-04, branch `codex/component-forest-integration`, local: owner-requested
+  dark-fantasy map correction ports approved original terrain/settlement art and
+  composed trunk/crown trees onto current main relief. Entrance/root pivots,
+  alpha-aware targets and measured labels preserve a shared isometry and natural
+  contacts. Scope: web map renderer/labels, original map-dark assets/provenance
+  and manifest; roads, supplies, visits and canonical movement retain current main.
+  [Owning integration](docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04)
+  records actual checks and limits; exact-head PR CI/merge pending.
+
+  Independent source/playable critique and native journey/input pass; original
+  audit regressions corrected by bounded assembly/projection/measurement helpers
+  and shared deterministic hash/obstacle primitives. One meaningful assembled-tree
+  geometry regression added; final coverage628/47skip and audit pass. Exact-head
+  PR CI/merge pending; primary concurrent drafts/writers preserved.
+
+- 2026-10-04, branch `codex/route-visibility-fix`, local: owner authorized
+  publication and merge of the reviewed route visibility correction. Isolated
+  delivery includes only the three map files and owning movement/checkpoint/
+  changelog records, preserving unrelated terrain/art/docs and retained player
+  data. Clean PR CI/publication/merge pending; scoped source and playable results
+  are recorded in [the owning contract](docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-delivery--2026-10-04).
+
+- 2026-10-04, branch `main`, local: owner-authorized normal-UI testing now
+  supersedes the permission-pending route correction status below. Town/village
+  paths and complete site/ground diamonds were inspected at day/night and
+  close/overview scales; S and arrival clear annotations, and reload restores
+  the moving route with map art loaded. Independent moving-capture critique found
+  no material defect, including the corrected settled-reload capture. Final return
+  arrived in Kamenny Brod with overlay cleared; retained company has 800 crowns.
+  Existing focused source checks apply to unchanged code; full gate NOT_RUN.
+  [Actual journey and limits](docs/work-packages/M1-FREE-MOVEMENT.md#playable-verification-after-owner-authorization--2026-10-04).
+
+- 2026-10-04, branch `main`, local (not committed or published): owner screenshots
+  exposed cropped destination markers and missing route sections near settlements.
+  Removed SVG clipping by full settlement sprite rectangles, including transparent
+  margins; route annotations stay above the map while terrain-draped geometry,
+  party junction, label avoidance and input remain unchanged. Affected paths:
+  `ContinuousMapCanvas.tsx`, `renderer/route-overlay.ts`,
+  `renderer/continuous-map-scene.ts`. Web typecheck, scoped ESLint/Prettier and
+  diff checks passed. Live DOM has no route masks and retains `pointer-events: none`.
+  Moving visual acceptance is pending permission to move the retained company;
+  independent source critique confirmed the fix's cause/scope; no current moving
+  visual verdict, new full gate, publication or merge. See
+  [route visibility correction](docs/work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
 
 - 2026-10-04, branch `codex/supplies-delivery`, published (not yet merged):
   supplies can be bought through the local bazaar/granary with finite merchant

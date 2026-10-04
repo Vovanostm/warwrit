@@ -666,6 +666,121 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/trees-v1/conifer.json",
       "generatedAt": "2026-10-04T12:47:24.163488+00:00"
+    },
+    {
+      "id": "art.m1.map-dark.master-grim-v1",
+      "path": "assets/art/m1/map-dark/master-grim-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/master/metadata-v1.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.village-v1",
+      "path": "assets/art/m1/map-dark/village-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/sites/village-v1.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.river-village-v1",
+      "path": "assets/art/m1/map-dark/river-village-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/sites/river-village-v1.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.mill-v1",
+      "path": "assets/art/m1/map-dark/mill-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/sites/mill-v1.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.meadow-grim-v2",
+      "path": "assets/art/m1/map-dark/meadow-grim-v2.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/ground/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.woodland-grim-v2",
+      "path": "assets/art/m1/map-dark/woodland-grim-v2.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/ground/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.shore-grim-v2",
+      "path": "assets/art/m1/map-dark/shore-grim-v2.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/ground/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.rock-grim-v2",
+      "path": "assets/art/m1/map-dark/rock-grim-v2.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/ground/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.water-grim-v2",
+      "path": "assets/art/m1/map-dark/water-grim-v2.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/ground/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.city-v4",
+      "path": "assets/art/m1/map-dark/city-v4.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/sites/city-v4.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.farmstead-v4",
+      "path": "assets/art/m1/map-dark/farmstead-v4.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/sites/farmstead-v4.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.map-dark.trunk-atlas-v1",
+      "path": "assets/art/m1/map-dark/trunk-atlas-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/tree-parts/trunks/metadata.json"
+    },
+    {
+      "id": "art.m1.map-dark.foliage-atlas-v3",
+      "path": "assets/art/m1/map-dark/foliage-atlas-v3.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map-dark/provenance/tree-parts/canopy/foliage-atlas-v3-provenance.json"
     }
   ]
 }

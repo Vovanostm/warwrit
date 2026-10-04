@@ -1131,5 +1131,15 @@
     "evidence": "../wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05",
     "limits": "Current search p95 remains above 50ms; target VM capacity, memory, FPS and full-M1 acceptance are NOT_MEASURED/NOT_RUN. No publication, merge or deployment.",
     "verification": "Final bootstrap passed 633 unit tests, 47 skipped, 10,000 stress battles, migration smoke/up and 14 PostgreSQL/auth checks. Normal RMB/S/reload/reroute/arrival preserved exact points; independent supplied-evidence/source critic found no material defect. Early focused 3 failures and their fixes/unchanged limits retained in owning wiki. Separate movement SQL suite NOT_RERUN."
+  },
+  "componentForestIntegration": {
+    "date": "2026-10-04",
+    "authority": "Owner authorizes review/PR/merge/local main for approved5290 map; no deployment.",
+    "branch": "codex/component-forest-integration",
+    "base": "bcc30f5",
+    "scope": "Original dark map art, composed trees, grounded entrances/roots and alpha-aware labels/targets; current main relief/roads/supplies/party/routes retained.",
+    "evidence": "M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04",
+    "status": "Published PR146; independent source and day/night forest critique approved bounded result; native journey/input pass before newer-main integration. Final local coverage628/47skip, unchanged audit and8 focused combined-code checks pass. Exact combined PR CI/merge pending. Combined-route browser recapture NOT_RUN after CUA URL policy rejection; prior separate map/PR145 evidence retained. Primary active terrain writers must finish before local-main update.",
+    "integratedMain": "4a82c36 (PR145 route visibility; 2026-10-05)"
   }
 }

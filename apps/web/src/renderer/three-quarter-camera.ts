@@ -39,6 +39,8 @@ export function mountThreeQuarterCamera(
     readonly pickGround?: (x: number, y: number) => { x: number; y: number; z: number } | null;
     readonly minZoom: number;
     readonly maxZoom: number;
+    /** Optional alpha-aware map picker; battle picking keeps the default. */
+    readonly pick?: (x: number, y: number) => PickingInfo | null;
     readonly onPick: (hit: PickingInfo | null) => void;
     readonly onSecondaryPick?: (hit: PickingInfo | null) => void;
     readonly onStop?: () => void;
@@ -122,7 +124,9 @@ export function mountThreeQuarterCamera(
       press.button === event.button &&
       press.pointerId === event.pointerId
     ) {
-      const hit = scene.pick(scene.pointerX, scene.pointerY, (mesh) => mesh.isPickable);
+      const hit = options.pick
+        ? options.pick(scene.pointerX, scene.pointerY)
+        : scene.pick(scene.pointerX, scene.pointerY, (mesh) => mesh.isPickable);
       if (press.button === 2 && options.onSecondaryPick) options.onSecondaryPick(hit);
       else if (press.button === 0) options.onPick(hit);
     }

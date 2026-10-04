@@ -1,0 +1,30 @@
+{
+  "asset": "bark-ink-v2.png",
+  "tool": "builtin image_gen__imagegen",
+  "source": "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-99a94552-276b-48af-a887-9c5f2af0e8ad.png",
+  "copied_unchanged": true,
+  "settings": {
+    "transparent_background": false
+  },
+  "references": [
+    {
+      "path": "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "role": "primary hand-ink/flat-wash style"
+    },
+    {
+      "path": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+      "role": "muted palette only"
+    }
+  ],
+  "prompt": "bark-ink-v2.prompt.txt",
+  "dimensions_px": {
+    "width": 1254,
+    "height": 1254
+  },
+  "mode": "RGB",
+  "status": "fresh candidate for parent material and runtime evaluation; no further generation authorized in this slice",
+  "evidence_gaps": [
+    "Actual 3D surface/UV wrap and directional lighting: NOT_RUN.",
+    "Tile repeat seam behavior: NOT_RUN."
+  ]
+}

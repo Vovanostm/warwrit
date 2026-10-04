@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-04",
+  "status": "DONE_WITH_CONCERNS: useful component candidate; parent/critic live assembly required",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "originalCopiesUnchanged": true,
+  "generation": {
+    "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-2fe7227c-53b5-4c7d-b8b3-ae6a3234c919.png",
+    "saved": "foliage-atlas-v1.png",
+    "prompt": "prompt.txt",
+    "references": [
+      "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/map-dark/master-grim-v1.png",
+      "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/style/unit-c-ink.png",
+      "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/map-dark/broadleaf-v2.png",
+      "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/map-dark/conifer-sparse-v1.png"
+    ]
+  },
+  "oneTargetedLayoutEdit": {
+    "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-1c35357d-4640-463e-bcab-0c3d004dad14.png",
+    "saved": "foliage-atlas-v2.png",
+    "prompt": "layout-correction-prompt.txt",
+    "references": [
+      "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/map-dark/master-grim-v1.png",
+      "/private/tmp/warwrit-map-polish-01a1031c/style-dark/tree-parts/canopy/foliage-atlas-v1.png"
+    ],
+    "reason": "First-pass left components spilled equal-quadrant boundary; fit into distinct quadrants."
+  },
+  "inspection": "Both source copies viewed. Selected original measured with sips and existing PNG alpha decoder reused in-memory for read-only quadrant alpha>=39 scan. No per-image proof script saved; no raster modifications or hashes.",
+  "weaknesses": [
+    "All four fragments are isolated in distinct quadrants, but >=10%-cell margins are not fully met on left fragments' right edge: upper margin 36px and lower margin 28px instead of target63px. Cropped alpha frames stay nonoverlapping; parent judged layout usable for first composite.",
+    "Native foliage/twig detail remains fairly fine, and source has gentle baked plane highlights. Runtime card depth/lighting and actual reduced scale must establish volume rather than relying on texture detail.",
+    "Attachment pivots are visual twig-base estimates confirmed nontransparent, not automatic anatomy proof."
+  ],
+  "checks": {
+    "dimensions": "1254x1254 RGBA",
+    "componentBounds": "Measured alpha>=39, right/bottom exclusive",
+    "runtimeComposition": "NOT_RUN",
+    "independentCritic": "NOT_RUN",
+    "runtimeApproval": "NOT_CLAIMED"
+  },
+  "ownership": "Only canopy scratch directory written; project/shared paths untouched."
+}

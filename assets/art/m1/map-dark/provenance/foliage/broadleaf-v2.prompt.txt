@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: corrected dark-fantasy broadleaf tree sprite cutout.
+Input images: Image 1 is the PRIMARY style authority: use its grim muted material palette and charcoal ink shadow masses. Image 2 is the tree to preserve: keep one weather-beaten broadleaf tree, gnarly branching trunk, asymmetrical canopy, and isometric orientation. Image 3 is secondary contour-weight reference. Image 4 is material reference for aged timber and restrained earthy contrast only.
+Primary request: make one focused cleanup to Image 2: simplify its canopy into sparse broad, irregular leaf masses and exposed dark branching negative space. Remove the many tiny, separate leaf silhouettes; make the crown ragged and angular, not round or puffy. Keep dried-ochre and dull grey-olive color, with more bark/branch structure visible.
+Scene/backdrop: genuine transparent background; all non-tree pixels transparent.
+Subject: same single mature broadleaf tree, crooked weathered charcoal-umber trunk, a few gnarly limbs and sparse wind-worn foliage.
+Style/medium: Image 1 governs; serious dark fantasy, inked flat wash, near-charcoal shadows and tactile bark, restrained desaturated tones.
+Composition/framing: preserve exact orthographic map angle and the existing tree's overall identity; camera elevation 35.264 degrees and azimuth 45 degrees; ground axes at ±30 degrees; square ground diamond projects √3:1, not 2:1. Trunk vertical in image space. Keep the entire crown, trunk, and root contact visible, with generous transparent margins including at least 6% below roots and no content touching any image edge. Foot pivot at trunk-root contact.
+Lighting/mood: soft overcast upper-left baked light on the tree only; short subdued footing; no glow or atmospheric field.
+Constraints: one asset only, true transparent cutout and mostly opaque subject pixels; change foliage density/detail and framing only.
+Avoid: round bright broccoli canopy, dense continuous cloud, individual leaf-by-leaf rendering, bright greens, symmetrical tiering, foliage hiding all branches, people, buildings, rocks, grass, ground plate, cast shadow, haze, gradient, vignette, halo, RGB matte, crop, text, symbols, watermark.

@@ -1,0 +1,18 @@
+Builtin tool: image_gen__imagegen
+Settings: transparent_background=false.
+Generated source: /Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-99a94552-276b-48af-a887-9c5f2af0e8ad.png
+References in order:
+1. /Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png — primary bold hand-ink and flat-wash style reference.
+2. /private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png — muted grim palette reference only.
+
+Use case: stylized-concept
+Asset type: square neutral diffuse/base-color material tile for real tapered 3D tree stems and branches in a serious dark-fantasy isometric strategy game.
+Input images: Image 1, the approved unit-C sprite, is the primary reference for bold hand-ink contour language and broad flat-wash material planes. Image 2, the approved grim map master, is the palette reference only. Use only these two references.
+Primary request: Design a deliberately simplified hand-painted tree-bark material tile. This must read as illustrated game art, not a photograph, realistic scanned bark, or 3D render. The 3D mesh and runtime lighting will supply roundness, directional highlights, and shadows.
+Subject: aged wood indicated by broad quiet vertical fields in muted slate-grey and grey-umber, with a few sparse long angular charcoal grooves and fine split marks. Show subtle painterly grain without building a dense pattern.
+Style/medium: coarse hand-ink contour accents and opaque flat-wash fills; large confident brush shapes, controlled edges, readable at small scale. Match the unit-C sprite's graphic painted construction, keeping surface value calm.
+Composition/framing: square seamless repeat tile, straight-on orthographic material swatch. Let broad vertical grain flow naturally through the boundaries; no framed edge, object, centered motif, or obvious repeated stripes.
+Lighting/mood: neutral diffuse albedo under even light. Keep the tile evenly lit with low-to-moderate value variation so real directional 3D lighting can clearly define the trunk faces. No baked shading, key-light direction, cast shadow, specular highlights, vignette, or perspective.
+Color palette: subdued slate, cool grey, charcoal soot and restrained umber warmth. Muted and serious, no saturated gold or green.
+Materials/textures: a small number of broad flat painted planes and sparse long grooves; avoid dense surface detail.
+Constraints: opaque RGB square texture only. No peeling bark plates, overlapping flakes, scales, pebbles, photo texture, 3D realism, high-frequency grain, scratch clutter, mosaic, moss, leaves, branches, tree silhouette, props, text, border, watermark. Tileable on all sides; do not create artificial directional lighting.

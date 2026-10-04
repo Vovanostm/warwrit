@@ -1,0 +1,12 @@
+Use case: precise-object-edit.
+Image1 is EDIT TARGET: the existing transparent 2x2 foliage component atlas.
+Image2 is original grim master: palette, matte ink/wash and upper-left light reference only.
+Image3 is original unit-C ink: restrained broad selected ink/light/recess planes reference only.
+Concrete problem: both old pine fragments sweep right/down and the runtime cannot mirror their baked light. Need opposite ANATOMICAL directions with the SAME upper-left lighting.
+PRESERVE TOP HALF EXACTLY: top-left and top-right deciduous components must keep their shapes, twigs, colors, positions, scales and alpha unchanged. Preserve the square 2x2 nonoverlapping atlas and fully transparent background/gutters.
+EDIT ONLY THE TWO BOTTOM CELLS:
+BOTTOM LEFT: replace with one broad natural LEFTWARD AND DOWNWARD pine needle bough. Its exposed twig ATTACHMENT BASE is at the UPPER RIGHT of this cell. The branch axis and hanging needle body sweep left and down away from that upper-right base, occupying the center/left/lower part of the cell. No rightward dominant sweep. Anatomically credible pine sprays and dark internal recesses.
+BOTTOM RIGHT: one medium RIGHTWARD AND DOWNWARD pine bough/tuft. Exposed twig ATTACHMENT BASE at the UPPER LEFT of this cell, branch/needles sweep right and down away from that base. Medium natural width, not a whole tree.
+LIGHTING BOTH: use the SAME gentle upper-left light-facing cues, deep muted slate/soot recesses. DO NOT flip or mirror lighting when making the left bough. Source direction differs while upper-left light stays coherent. Mostly neutral diffuse; runtime will supply depth/strong light, no cast shadows.
+Materials: organic matte grey-olive/slate needles, sparse selective fine dark ink edges with BROAD angular light/recess foliage masses. No glossy plastic, bright white highlights, silver fur, exhaustive fine needle hatching, fuzzy noisy texture carpet or neon. Restrained serious dark fantasy matching the source.
+Each bottom component is completely contained in its own equal quadrant, with generous fully transparent gutters and air around the silhouette; no connection/overlap across cells. Exactly four components total, no full pine tree or trunks, ground, props, labels, text, watermark, backdrop, vignette, glow or haze. Actual alpha0 background, plant opaque, partial alpha only silhouette antialias. Keep whole square canvas and cell layout.

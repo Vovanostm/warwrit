@@ -1,0 +1,38 @@
+{
+  "status": "CANDIDATE_REQUIRES_RUNTIME_COMPOSITE_AND_CRITIC",
+  "file": "village-v1.png",
+  "identity": "bereznyak",
+  "sourcewidth": 1536,
+  "sourceheight": 1024,
+  "pivot": {
+    "u": 0.562,
+    "v": 0.863
+  },
+  "bounds": [0.036458333333333336, 0.10546875, 0.9817708333333334, 0.900390625],
+  "bounds_definition": "Normalized [left,top,right,bottom], visible alpha>=8; exclusive right/bottom",
+  "pivot_definition": "Visual estimate of principal arrival entrance ground contact, not bounding-box bottom; +/-0.015 normalized pending current composite",
+  "references": [
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/bereznyak.png"
+  ],
+  "camera_recipe": "Orthographic E35.2643897/A45; common ground axes +/-30 deg; square ground diamond width:height sqrt(3):1; generated geometry not certified",
+  "generator": "Built-in imagegen, transparent_background=true; one generation; no manual pixel edits",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a10326-e07f-7a42-9760-9ae654192571/exec-eb58b010-875b-4071-8a9d-ac709a082fa6.png",
+  "prompt_file": "village-prompt-v1.txt",
+  "alpha_zero_fraction": 0.6039708455403646,
+  "alpha_extrema": [0, 254],
+  "observations": [
+    "Three practical repaired cottages with market awning and harvest drying rack; no new lore.",
+    "Arrival pivot is ground center of front cottage's low-fence opening; smaller doorstep is behind gap."
+  ],
+  "concerns": [
+    "Fine roof/masonry lines remain denser than desired flat broad wash; inspect current gameplay scale.",
+    "Exact mathematically coherent axes requested, generated drawing not a measured geometry proof.",
+    "Faint alpha1-7 fringe beyond visible bounds; preserve original alpha, verify composite."
+  ],
+  "NOT_RUN": [
+    "Current runtime composite",
+    "Independent critic approval",
+    "Road entrance/shore wheel semantic placement"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "asset": "trunk-atlas-v1.png",
+  "tool": "builtin image_gen__imagegen",
+  "source": "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-2ea796d0-a009-4971-b576-429b9b994002.png",
+  "copied_unchanged": true,
+  "settings": {
+    "transparent_background": true
+  },
+  "references": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/foliage-volume/broadleaf-old-v1.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/foliage/conifer-v1.png"
+  ],
+  "prompt": "trunk-atlas-v1.prompt.txt",
+  "dimensions_px": {
+    "width": 1254,
+    "height": 1254
+  },
+  "mode": "RGBA",
+  "alpha_bounds_threshold": 39,
+  "cell_count": 4,
+  "cells": [
+    {
+      "name": "deciduous-stout-twisted",
+      "cell_bounds_exclusive": [0, 0, 627, 627],
+      "alpha_ge_39_bounds_exclusive": [159, 24, 569, 623],
+      "root_pivot_estimate_uv_in_cell": [0.54, 0.96],
+      "root_pivot_estimate_px_atlas": [339, 602],
+      "canopy_attachment_tip_estimates_px_atlas": [
+        [492, 27],
+        [255, 114],
+        [540, 120]
+      ],
+      "attachment_note": "manual visible bare upper-fork tips; points are source-atlas pixels, confirm after cell extraction/scene fit"
+    },
+    {
+      "name": "deciduous-leaning-mature",
+      "cell_bounds_exclusive": [627, 0, 1254, 627],
+      "alpha_ge_39_bounds_exclusive": [722, 56, 1160, 621],
+      "root_pivot_estimate_uv_in_cell": [0.39, 0.96],
+      "root_pivot_estimate_px_atlas": [872, 602],
+      "canopy_attachment_tip_estimates_px_atlas": [
+        [746, 182],
+        [891, 148],
+        [1048, 57]
+      ],
+      "attachment_note": "manual visible bare upper-fork tips; points are source-atlas pixels, confirm after cell extraction/scene fit"
+    },
+    {
+      "name": "deciduous-compact-young",
+      "cell_bounds_exclusive": [0, 627, 627, 1254],
+      "alpha_ge_39_bounds_exclusive": [218, 740, 517, 1216],
+      "root_pivot_estimate_uv_in_cell": [0.58, 0.96],
+      "root_pivot_estimate_px_atlas": [364, 1229],
+      "canopy_attachment_tip_estimates_px_atlas": [
+        [404, 741],
+        [244, 754],
+        [498, 787]
+      ],
+      "attachment_note": "manual visible bare upper-fork tips; points are source-atlas pixels, confirm after cell extraction/scene fit"
+    },
+    {
+      "name": "pine-irregular-taper",
+      "cell_bounds_exclusive": [627, 627, 1254, 1254],
+      "alpha_ge_39_bounds_exclusive": [797, 653, 1086, 1229],
+      "root_pivot_estimate_uv_in_cell": [0.44, 0.96],
+      "root_pivot_estimate_px_atlas": [903, 1229],
+      "canopy_attachment_tip_estimates_px_atlas": [
+        [913, 655],
+        [870, 717],
+        [1004, 789]
+      ],
+      "attachment_note": "manual visible bare upper-fork tips; points are source-atlas pixels, confirm after cell extraction/scene fit"
+    }
+  ],
+  "visual_notes": "Single atlas shows four visually distinct trunk forms. Top row are larger/mature deciduous boles; bottom-left is compact younger deciduous; bottom-right is a narrower tapered pine with short lateral branch remnants. Broad ink shadows, pale upper-left planes and textured bark are strong and may need default-scale integration review. No foliage present.",
+  "evidence_gaps": [
+    "No engine/runtime composition, alpha-cutoff texture test or individual cell extraction proof.",
+    "Root pivots and canopy attachment tips are manual estimates; validate after extraction."
+  ]
+}

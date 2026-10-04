@@ -1,0 +1,74 @@
+{
+  "status": "CANDIDATE_REQUIRES_CURRENT_RUNTIME_COMPOSITE_AND_CRITIC",
+  "file": "city-v4.png",
+  "identity": "Каменный Брод",
+  "sourcewidth": 1536,
+  "sourceheight": 1024,
+  "pivot": {
+    "u": 0.302734375,
+    "v": 0.865234375
+  },
+  "bounds": [0.23763020833333334, 0.0830078125, 0.9388020833333334, 0.9072265625],
+  "bounds_definition": "Normalized visible alpha>=8 exclusive right/bottom",
+  "pivot_definition": "Visually estimated ground contact at doorway/short doorstep center(465,886); not bounding bottom; +/-0.015 normalized pending composite",
+  "references": [
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "city-v3.png"
+  ],
+  "camera_recipe": "Orthographic E35.2643897/A45; common ground axes +/-30, square ground diamond sqrt(3):1; not measured camera proof",
+  "generator": "Built-in imagegen targeted edit; transparent_background=true; no manual pixel edits",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a10326-e07f-7a42-9760-9ae654192571/exec-b3197730-733a-41cd-b63d-4117bdb05683.png",
+  "prompt_file": "city-prompt-v4.txt",
+  "alpha_zero_fraction": 0.6231950124104818,
+  "alpha_extrema": [0, 254],
+  "observations": [
+    "External left gate masonry stub and detached tufts removed; own arch left jamb remains.",
+    "Interior ground transparency restored, accepted market/forge/house materials and right gate tower preserved.",
+    "Visible top margin8.3%, rightmargin6.1%; rightmargin short of8% request but major silhouette fully framed."
+  ],
+  "approach_ray_readonly_check": {
+    "estimated_gate_pixel": [465, 886],
+    "direction": [-600, -200],
+    "samples": [
+      {
+        "distance": 45,
+        "point": [420, 871],
+        "alpha": 253
+      },
+      {
+        "distance": 60,
+        "point": [405, 866],
+        "alpha": 118
+      },
+      {
+        "distance": 75,
+        "point": [390, 861],
+        "alpha": 0
+      },
+      {
+        "distance": 90,
+        "point": [375, 856],
+        "alpha": 0
+      },
+      {
+        "distance": 120,
+        "point": [345, 846],
+        "alpha": 0
+      },
+      {
+        "distance": 420,
+        "point": [45, 746],
+        "alpha": 0
+      }
+    ],
+    "conclusion": "External ray sampled at75-420px before gate is transparent. Last45-60px intersects own gate arch/jamb/threshold; current runtime road and critic must determine visibility. Not an approval."
+  },
+  "concerns": [
+    "Own narrow left doorpost may still occlude final approach, requires current gameplay close composite.",
+    "Fine material lines remain more detailed than requested quiet broad washes.",
+    "Generated architectural axes not certified; no camera pass claim.",
+    "Faint alpha1-7 fringe beyond visible bounds remains unchanged."
+  ],
+  "NOT_RUN": ["Runtime v4 composite", "Independent critic v4 approval"],
+  "ownership": "Only scratch style-dark/sites written; parent owns runtime integration. No more generation before current v4 composite critic."
+}

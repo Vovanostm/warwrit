@@ -11,8 +11,6 @@ export interface RouteOverlayFrame {
   readonly height: number;
   readonly traversed: readonly RouteScreenPoint[];
   readonly remaining: readonly RouteScreenPoint[];
-  readonly sprites: readonly RouteScreenRect[];
-  readonly party: RouteScreenPoint;
   readonly partyBounds: RouteScreenRect;
   readonly goal: RouteScreenPoint;
   readonly goalSiteId: string | undefined;
@@ -33,7 +31,7 @@ function avoidPartyLabels(svg: SVGSVGElement, party: RouteScreenRect | undefined
   if (!labels) return;
   const canvasBounds = svg.getBoundingClientRect();
   labels.forEach((label) => {
-    label.style.translate = '';
+    label.style.translate = '0 0';
     if (!party) return;
     const rect = label.getBoundingClientRect();
     const position = {
@@ -48,7 +46,7 @@ function avoidPartyLabels(svg: SVGSVGElement, party: RouteScreenRect | undefined
       above >= 4
         ? above
         : Math.min(canvasBounds.height - rect.height - 4, party.y + party.height + 6);
-    label.style.translate = `-50% calc(0.6rem + ${targetTop - position.y}px)`;
+    label.style.translate = `0 ${targetTop - position.y}px`;
   });
 }
 
@@ -56,11 +54,7 @@ function avoidPartyLabels(svg: SVGSVGElement, party: RouteScreenRect | undefined
 export function mountRouteOverlay(svg: SVGSVGElement, legend: HTMLDivElement) {
   const history = [...svg.querySelectorAll<SVGPathElement>('[data-route="history"]')];
   const remaining = [...svg.querySelectorAll<SVGPathElement>('[data-route="remaining"]')];
-  const background = svg.querySelector<SVGRectElement>('[data-route="background"]')!;
-  const masks = svg.querySelector<SVGGElement>('[data-route="sprites"]')!;
-  const party = svg.querySelector<SVGCircleElement>('[data-route="party"]')!;
   const goal = svg.querySelector<SVGGElement>('[data-route="goal"]')!;
-  const spriteRects: SVGRectElement[] = [];
   const path = (points: readonly RouteScreenPoint[]) => {
     if (points.some((p) => !Number.isFinite(p.x) || !Number.isFinite(p.y))) return '';
     return points
@@ -73,30 +67,10 @@ export function mountRouteOverlay(svg: SVGSVGElement, legend: HTMLDivElement) {
     avoidPartyLabels(svg, frame?.partyBounds);
     if (!frame) return;
     svg.setAttribute('viewBox', `0 0 ${frame.width} ${frame.height}`);
-    background.setAttribute('width', String(frame.width));
-    background.setAttribute('height', String(frame.height));
     const past = path(frame.traversed),
       next = path(frame.remaining);
     for (const line of history) line.setAttribute('d', past);
     for (const line of remaining) line.setAttribute('d', next);
-    while (spriteRects.length > frame.sprites.length) spriteRects.pop()!.remove();
-    frame.sprites.forEach((rect, i) => {
-      let node = spriteRects[i];
-      if (!node) {
-        node = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        node.setAttribute('fill', 'black');
-        node.setAttribute('rx', '2');
-        masks.append(node);
-        spriteRects.push(node);
-      }
-      node.setAttribute('x', String(rect.x - 2));
-      node.setAttribute('y', String(rect.y - 2));
-      node.setAttribute('width', String(rect.width + 4));
-      node.setAttribute('height', String(rect.height + 4));
-    });
-    // Keep both strokes joined at the group foot, even when a settlement overlaps it.
-    party.setAttribute('cx', String(frame.party.x));
-    party.setAttribute('cy', String(frame.party.y));
     let destination = frame.goal;
     if (frame.goalSiteId) {
       const label = svg.parentElement?.querySelector<HTMLElement>(

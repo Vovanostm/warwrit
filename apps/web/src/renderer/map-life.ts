@@ -1,6 +1,6 @@
 import { Color3, Mesh, ShaderMaterial, VertexData, type Scene } from '@babylonjs/core';
 import type { WorldContinuousMapDto } from '@warwrit/protocol';
-import { insidePolygon, nearPolygon } from './map-geography.js';
+import { insidePolygon, decorationObstructed } from './map-geography.js';
 
 /** A finite decorative meadow, derived from public geography. Nothing here owns collision. */
 export function createMapLife(
@@ -92,10 +92,15 @@ export function createMapLife(
       start,
     );
   };
+  const wetSettlement = region.sites.find((site) => site.siteId === 'tikhaya-gat');
   for (let row = 0; row < region.rows; row += 2) {
     for (let column = 0; column < region.columns; column += 2) {
       const x = region.origin.xFp + (column + 0.1 + random() * 1.8) * region.cellSizeFp;
       const z = region.origin.zFp + (row + 0.1 + random() * 1.8) * region.cellSizeFp;
+      const wetDistance = wetSettlement
+        ? Math.hypot(wetSettlement.anchorFp.xFp - x, wetSettlement.anchorFp.zFp - z) * scale
+        : Infinity;
+      const localWet = wetDistance < 1.15;
       const kind =
         terrain.find((shape) => insidePolygon(x, z, shape.polygon))?.terrainId ?? 'grassland';
       if (
@@ -103,8 +108,7 @@ export function createMapLife(
         kind === 'deep_water' ||
         kind === 'cliff' ||
         kind === 'rock' ||
-        region.blockingShapes.some((shape) => insidePolygon(x, z, shape.polygon)) ||
-        region.overlayShapes.some((shape) => nearPolygon(x, z, shape.polygon, 28)) ||
+        decorationObstructed(region, x, z, 28) ||
         region.sites.some((site) => Math.hypot(site.anchorFp.xFp - x, site.anchorFp.zFp - z) < 175)
       )
         continue;
@@ -115,7 +119,7 @@ export function createMapLife(
         0.5;
       if (random() > 0.35 + patch * 0.6) continue;
       if (kind === 'hills' && random() < 0.24) stone(sx, sz);
-      const reeds = kind === 'marsh' || kind === 'riverbank';
+      const reeds = localWet || kind === 'marsh' || kind === 'riverbank';
       const wooded = kind === 'forest';
       const count = reeds ? 4 : wooded ? 3 : 5 + Math.floor(random() * 3);
       const height = reeds ? 0.22 + random() * 0.14 : 0.14 + random() * 0.1;

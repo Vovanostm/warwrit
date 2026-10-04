@@ -70,6 +70,39 @@ NOT_RUN; optimization and topology benefit NOT_MEASURED. Origin: primary
 have concurrent writers. Local, uncommitted, NOT_INTEGRATED/NOT_PUBLISHED;
 existing missions, source changes and player data preserved.
 
+**Tree diversity to main authorized — 2026-10-05:** owner requests working
+implementation in main, including this mission's PR/merge. Parent owns clean
+`forest-diversity-main` / `codex/forest-diversity-main`, base917644a (PR146).
+Extend the accepted composed forest to 14 family/age assemblies and natural
+seeded pockets/clearings; preserve main relief, roads, routes, supplies, contacts,
+art palette/projection and player state. One bounded forms writer; parent owns
+placement/mount/docs/integration; independent critic required. Old whole-sprite
+attempt and primary dirty terrain/wiki/skill drafts remain preserved and outside
+publication. First playable: forest-edge journey by Bereznyak with STOP/reload,
+day/night close/overview and pan/zoom. Implemented with 504 deterministic trees
+and all 14 forms; focused regressions,
+web typecheck/build/lint/content pass. Independent source and day/night art
+critic READY_WITH_LIMITS; final changed-code audit passes with focused coverage. Full local coverage FAILED two unchanged navigation
+5s timeouts (629 pass/47 skip); normal clean PR CI/merge pending. Native public
+renderer input verified, authenticated journey NOT_RUN after automatic login
+review rejection; fixture sign-in permission remains separately requested.
+Primary has an active location-depth writer; preserve shared files/drafts.
+No deployment.
+[Owning scope and results](../work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
+
+**Component forest integration authorized — 2026-10-04:** owner requested
+review, PR merge and local main update for the approved5290 dark-fantasy map.
+Parent owns `codex/component-forest-integration`, base `bcc30f5`; the obsolete
+standalone scene contributes art/parts only. Current merged relief, roads,
+supplies, proportional party, draped routes and living places are preserved.
+[Owning integration and evidence](../work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04).
+Port implemented locally; independent source/playable review, native journey/input,
+clean bootstrap and final628-check coverage/changed-code audit pass. [Published PR146](https://github.com/Vovanostm/warwrit/pull/146) integrated newer
+main `4a82c36` / PR145, preserving its route fix. Final PR CI and exact-head merge
+remain pending; NOT_MERGED. Primary has concurrent route/
+terrain writers; local-main update waits for their write completion.
+Primary owner drafts and player data are retained. No deployment authorized.
+
 **Code-quality fixes authorized — 2026-10-04:** owner explicitly requested
 “Fix issues, pr, review, merge, update local main”. This authorizes the bounded
 three-defect audit correction, its PR/review/merge and local main update.
@@ -870,3 +903,42 @@ SQL rollback conflict was rerun sequentially on the disposable DB. Fresh5293 UI
 shop/travel/STOP/reroute evidence retained; owner company/cash preserved. Expired
 creation browser path remains NOT_RUN. PR/merge and playable critique closeout pending;
 see the dated [owning delivery amendment](../work-packages/M1-SUPPLIES.md).
+
+**Settlement route visibility follow-up — 2026-10-04:** owner reports a cropped
+goal near Bereznyak and a route gap near Kamenny Brod. Parent owns the minimal
+three-file web correction in primary `main` at `bcc30f5`; unrelated docs/skills
+and player data are retained. Removed blanket SVG settlement masks; draped
+geometry, party junction, label avoidance and map input remain. Web typecheck,
+scoped lint/format and diff checks passed; localhost:5293 loaded the unmasked SVG
+with non-intercepting input. Automatic approval review rejected a short live move
+because it changes the retained campaign position/resources; owner permission
+and independent current moving visual acceptance pending. Read-only source
+critique confirmed the clipping cause and its removal. Local only; no PR/merge or
+full gate. [Owning correction](../work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
+
+**Route visibility playable recheck — 2026-10-04:** owner explicitly authorized
+testing the retained company. This supersedes the permission-pending note above.
+Normal UI verified continuous town approaches, full Bereznyak site/ground goals,
+day/night and close/overview views, S/arrival cleanup and restored moving route
+after reload with loaded map art. Independent supplied-capture critique found no
+material issue; corrected settled-reload review and final town return pending.
+Unchanged source retains prior scoped checks. Local only, no reset/PR/merge/deploy;
+full game/device/performance gates NOT_RUN.
+[Actual journey](../work-packages/M1-FREE-MOVEMENT.md#playable-verification-after-owner-authorization--2026-10-04).
+
+**Route visibility recheck completed — 2026-10-04:** final return arrived in
+Kamenny Brod, company stationary with 800 crowns and no stale route/goal/legend.
+Independent critic re-read the settled moving-after-reload capture and withdrew
+its concern based on a superseded loading frame; no material findings remain in
+the bounded source/capture review. Runtime movement evidence remains parent-owned;
+DPR/device/performance and broader player acceptance are NOT_MEASURED. Dev5293
+left open. Fix remains local/uncommitted, no PR/merge/deploy for this follow-up.
+
+**Route visibility delivery authorized — 2026-10-04:** owner requested
+“merge to main” after the playable verification. This authorizes publication and
+merge of this bounded route fix, superseding the no-merge status above. Sole
+writer uses `/private/tmp/warwrit-route-visibility`, branch
+`codex/route-visibility-fix`, based on `bcc30f5`. Only the three reviewed web files,
+their owning movement amendment and scoped changelog/checkpoint records are
+included; unrelated primary terrain/art/docs changes and player data are retained.
+Publication/CI/merge pending; no deployment or paid resources.
