@@ -13,6 +13,12 @@ not proof of subjective speed satisfaction. [Owning readback](../work-packages/M
 No gameplay changes, balance changes or deployment in this recheck.
 The owner explicitly authorized publishing and merging this verification record
 on 2026-10-04, then opening the retained game for a personal playtest.
+PR138 first passed the full bootstrap but its audit failed because the required
+coverage JSON was absent. The correction generates existing unit coverage with
+two workers before the PR audit, preserving its thresholds. The default-worker
+local coverage run hit a combat-property timeout; two workers passed 604 checks
+(46 skipped), and the unchanged audit passed with no new findings. Replacement
+CI is pending.
 
 **CI boundary correction — 2026-10-04:** PR136 and its main merge CI failed at
 `check:architecture`: the terrain label imported game-core directly from web.
