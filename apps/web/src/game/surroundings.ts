@@ -96,12 +96,13 @@ export function estimatedLight(
   now: number,
 ): { readonly phase: 'DAY' | 'NIGHT'; readonly msLeft: number } {
   const elapsed = Math.max(0, now - reading.receivedAt);
-  const { phase, msIntoPhase, phaseMs } = reading.dto.light;
-  const into = Number(msIntoPhase) + elapsed;
-  const length = Number(phaseMs);
-  if (into < length) return { phase, msLeft: length - into };
-  // Past the boundary since the last reading: show the next phase until the next poll.
-  const next = phase === 'DAY' ? 'NIGHT' : 'DAY';
-  const nextLength = next === 'DAY' ? 600_000 : 300_000;
-  return { phase: next, msLeft: Math.max(0, nextLength - (into - length)) };
+  const { phase, msIntoPhase } = reading.dto.light;
+  // The server clock uses repeating 10-minute days and 5-minute nights.
+  const dayMs = 600_000;
+  const nightMs = 300_000;
+  const cycleMs = dayMs + nightMs;
+  const phaseOffset = phase === 'DAY' ? 0 : dayMs;
+  const cyclePosition = (phaseOffset + Number(msIntoPhase) + elapsed) % cycleMs;
+  if (cyclePosition < dayMs) return { phase: 'DAY', msLeft: dayMs - cyclePosition };
+  return { phase: 'NIGHT', msLeft: cycleMs - cyclePosition };
 }
