@@ -477,6 +477,141 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/places/buildings/provenance.json",
       "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.bereznyak-painting",
+      "path": "assets/art/m1/places/settlements-v2/bereznyak-painting.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.bereznyak",
+      "path": "assets/art/m1/places/settlements-v2/bereznyak.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.distance",
+      "path": "assets/art/m1/places/settlements-v2/distance.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.foreground",
+      "path": "assets/art/m1/places/settlements-v2/foreground.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.kamenny-brod-painting",
+      "path": "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.kamenny-brod",
+      "path": "assets/art/m1/places/settlements-v2/kamenny-brod.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.severny-dvor-painting",
+      "path": "assets/art/m1/places/settlements-v2/severny-dvor-painting.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.severny-dvor",
+      "path": "assets/art/m1/places/settlements-v2/severny-dvor.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.staraya-melnitsa-distance",
+      "path": "assets/art/m1/places/settlements-v2/staraya-melnitsa-distance.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.staraya-melnitsa",
+      "path": "assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.tikhaya-gat-painting",
+      "path": "assets/art/m1/places/settlements-v2/tikhaya-gat-painting.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.tikhaya-gat",
+      "path": "assets/art/m1/places/settlements-v2/tikhaya-gat.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.kamenny-brod-foreground",
+      "path": "assets/art/m1/places/settlements-v2/kamenny-brod-foreground.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.tikhaya-gat-foreground",
+      "path": "assets/art/m1/places/settlements-v2/tikhaya-gat-foreground.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.settlements-v2.staraya-melnitsa-foreground",
+      "path": "assets/art/m1/places/settlements-v2/staraya-melnitsa-foreground.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
+      "generatedAt": "2026-10-04"
     }
   ]
 }

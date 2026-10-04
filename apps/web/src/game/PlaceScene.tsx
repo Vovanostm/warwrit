@@ -1,11 +1,5 @@
 import { useRef, useState, type CSSProperties, type PointerEvent, type Ref } from 'react';
-import { MAP_ART, placeIllustration } from '../renderer/art.js';
-import {
-  BUILDINGS,
-  placeBuildings,
-  type BuildingType,
-  type BuildingVariant,
-} from './place-buildings.js';
+import { BUILDINGS, placeBuildings, type BuildingType } from './place-buildings.js';
 import './place-scene.css';
 
 interface PlaceProps {
@@ -18,13 +12,15 @@ interface PlaceProps {
   readonly onContracts: () => void;
   readonly onEquipment: () => void;
 }
+type PlaceLayout = ReturnType<typeof placeBuildings>;
+type PaintedBuilding = PlaceLayout['buildings'][number];
 
 export function PlaceScene(props: PlaceProps) {
   const scene = useRef<HTMLDivElement>(null);
   const returnButton = useRef<HTMLButtonElement>(null);
   const [inside, setInside] = useState<BuildingType | null>(null);
   const layout = placeBuildings(props.siteId, props.kind);
-  const activeVisit = props.canEnter ? inside : null;
+  const activeVisit = visitedBuilding(layout, inside, props.canEnter);
   function leaveBuilding() {
     const type = inside;
     setInside(null);
@@ -37,16 +33,14 @@ export function PlaceScene(props: PlaceProps) {
     requestAnimationFrame(() => returnButton.current?.focus());
   }
   return (
-    <section className={placeClass(props, layout.ruined)} aria-label={`Локация: ${props.name}`}>
-      <PlaceHeader {...props} />
+    <section
+      className={`place-scene${props.night ? ' place-night' : ''}`}
+      aria-label={`Локация: ${props.name}`}
+    >
+      <PlaceHeader name={props.name} night={props.night} onMap={props.onMap} />
       <div
         ref={scene}
         className="place-diorama"
-        onPointerMove={(event) => parallax(event, scene.current)}
-        onPointerLeave={() => {
-          scene.current?.style.setProperty('--look-x', '0px');
-          scene.current?.style.setProperty('--look-y', '0px');
-        }}
         onKeyDown={(event) => {
           if (event.key === 'Escape' && activeVisit) {
             event.stopPropagation();
@@ -54,45 +48,45 @@ export function PlaceScene(props: PlaceProps) {
           }
         }}
       >
-        <PlaceLayers siteId={props.siteId} />
-        {activeVisit ? (
+        <div hidden={Boolean(activeVisit)}>
+          <PlaceOverview layout={layout} canEnter={props.canEnter} onEnter={enterBuilding} />
+        </div>
+        {activeVisit && (
           <PlaceVisit
-            {...props}
-            type={activeVisit}
-            variant={layout.variant}
-            ruined={layout.ruined}
+            name={props.name}
+            building={activeVisit}
+            layout={layout}
+            onContracts={props.onContracts}
+            onEquipment={props.onEquipment}
             onLeave={leaveBuilding}
             returnRef={returnButton}
           />
-        ) : (
-          <div className="place-buildings">
-            {layout.buildings.map((building) => (
-              <BuildingEntrance
-                key={building.type}
-                building={building}
-                variant={layout.variant}
-                ruined={layout.ruined}
-                canEnter={props.canEnter}
-                onEnter={enterBuilding}
-              />
-            ))}
-          </div>
         )}
       </div>
+      {!activeVisit && (
+        <PlaceBuildingMenu layout={layout} canEnter={props.canEnter} onEnter={enterBuilding} />
+      )}
       <PlaceCaption canEnter={props.canEnter} inside={Boolean(activeVisit)} />
     </section>
   );
 }
 
-function placeClass(props: PlaceProps, ruined: boolean) {
-  return `place-scene${props.night ? ' place-night' : ''}${props.kind === 'LANDMARK' ? ' place-wild' : ''}${ruined ? ' place-ruin' : ''}`;
+function visitedBuilding(layout: PlaceLayout, type: BuildingType | null, canEnter: boolean) {
+  if (!canEnter) return undefined;
+  return layout.buildings.find((building) => building.type === type);
 }
 
-function parallax(event: PointerEvent<HTMLDivElement>, node: HTMLDivElement | null) {
-  if (event.pointerType !== 'mouse' || !node) return;
-  const rect = node.getBoundingClientRect();
-  node.style.setProperty('--look-x', `${((event.clientX - rect.left) / rect.width - 0.5) * 16}px`);
-  node.style.setProperty('--look-y', `${((event.clientY - rect.top) / rect.height - 0.5) * 8}px`);
+function parallax(event: PointerEvent<HTMLDivElement>) {
+  if (event.pointerType !== 'mouse') return;
+  const rect = event.currentTarget.getBoundingClientRect();
+  event.currentTarget.style.setProperty(
+    '--look-x',
+    `${((event.clientX - rect.left) / rect.width - 0.5) * 18}px`,
+  );
+  event.currentTarget.style.setProperty(
+    '--look-y',
+    `${((event.clientY - rect.top) / rect.height - 0.5) * 10}px`,
+  );
 }
 
 function PlaceHeader(props: Pick<PlaceProps, 'name' | 'night' | 'onMap'>) {
@@ -109,98 +103,130 @@ function PlaceHeader(props: Pick<PlaceProps, 'name' | 'night' | 'onMap'>) {
   );
 }
 
-function PlaceLayers(props: { readonly siteId: string }) {
-  const backdrop = placeIllustration(props.siteId);
+function PlaceOverview(props: {
+  readonly layout: PlaceLayout;
+  readonly canEnter: boolean;
+  readonly onEnter: (type: BuildingType) => void;
+}) {
+  const [ready, setReady] = useState(false);
   return (
-    <>
-      {backdrop && (
-        <div className="place-distance" style={{ backgroundImage: `url(${backdrop})` }} />
-      )}
-      <div
-        className="place-ground"
-        style={{ '--ground-image': `url(${MAP_ART.terrainLayers.grass})` } as CSSProperties}
+    <div
+      className="place-panorama"
+      style={{ aspectRatio: props.layout.aspect }}
+      onPointerMove={parallax}
+      onPointerLeave={(event) => {
+        event.currentTarget.style.setProperty('--look-x', '0px');
+        event.currentTarget.style.setProperty('--look-y', '0px');
+      }}
+    >
+      <img
+        className="place-distance place-art"
+        src={props.layout.distance}
+        alt=""
+        draggable={false}
       />
-      <svg
-        className="place-path"
-        viewBox="0 0 1000 700"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M515 -40 C450 130 505 180 438 258 S368 360 460 412 S575 498 465 558 S390 648 475 740"
-          fill="none"
-          stroke="#504933"
-          strokeWidth="84"
-          opacity=".3"
+      <div className={`place-midground${ready ? ' place-painted' : ''}`}>
+        <img
+          className="place-settlement place-art"
+          src={props.layout.image}
+          alt=""
+          draggable={false}
+          onLoad={() => setReady(true)}
         />
-        <path
-          d="M515 -40 C450 130 505 180 438 258 S368 360 460 412 S575 498 465 558 S390 648 475 740"
-          fill="none"
-          stroke="#b2a17c"
-          strokeWidth="72"
-          opacity=".6"
-        />
-        <path
-          d="M515 -40 C450 130 505 180 438 258 S368 360 460 412 S575 498 465 558 S390 648 475 740"
-          fill="none"
-          stroke="#7b6d4e"
-          strokeWidth="55"
-          strokeDasharray="2 21"
-          opacity=".3"
-        />
-      </svg>
-      <div className="place-haze" />
-      <div className="place-foreground" aria-hidden="true">
-        <img src={MAP_ART.forest} alt="" />
-        <img src={MAP_ART.forest} alt="" />
+        {props.layout.smoke.map(([x, y]) => (
+          <BuildingSmoke key={`${x}:${y}`} x={x} y={y} />
+        ))}
       </div>
-    </>
+      <img
+        className="place-foreground place-art"
+        src={props.layout.foreground}
+        alt=""
+        draggable={false}
+      />
+      <div className={`place-entrances${ready ? ' place-painted' : ''}`}>
+        {props.layout.buildings.map((building) => (
+          <BuildingEntrance
+            key={building.type}
+            building={building}
+            ruined={props.layout.ruined}
+            canEnter={props.canEnter && ready}
+            onEnter={props.onEnter}
+          />
+        ))}
+      </div>
+      <div className="place-atmosphere" aria-hidden="true" />
+      {!ready && (
+        <p className="place-loading" role="status">
+          Открываем вид поселения…
+        </p>
+      )}
+    </div>
   );
 }
 
+function buildingName(type: BuildingType, ruined: boolean) {
+  return ruined ? 'Двор мельницы' : BUILDINGS[type].name;
+}
+
 function BuildingEntrance(props: {
-  readonly building: ReturnType<typeof placeBuildings>['buildings'][number];
-  readonly variant: BuildingVariant;
+  readonly building: PaintedBuilding;
   readonly ruined: boolean;
   readonly canEnter: boolean;
   readonly onEnter: (type: BuildingType) => void;
 }) {
-  const { building } = props;
-  const name = props.ruined ? 'Двор мельницы' : BUILDINGS[building.type].name;
+  const name = buildingName(props.building.type, props.ruined);
   return (
     <button
       type="button"
-      data-building={building.type}
-      className={`place-building place-building-${building.type}`}
-      style={{
-        left: `${building.x}%`,
-        top: `${building.y}%`,
-        width: `${building.width}%`,
-        zIndex: Math.round(building.y),
-      }}
+      data-building={props.building.type}
+      className="place-building"
+      style={{ left: `${props.building.x}%`, top: `${props.building.y}%` }}
       disabled={!props.canEnter}
       aria-label={`Войти: ${name}`}
       aria-describedby="place-access"
-      onClick={() => props.onEnter(building.type)}
+      onClick={() => props.onEnter(props.building.type)}
     >
-      {!props.ruined && <BuildingArt type={building.type} variant={props.variant} />}
-      <BuildingSmoke type={building.type} />
-      <span className="place-building-label">{name}</span>
-      <span className="place-enter" aria-hidden="true">
-        Войти
+      <span className="place-door" aria-hidden="true">
+        ◆
       </span>
+      <span className="place-building-label">{name}</span>
     </button>
   );
 }
 
-function BuildingSmoke(props: { readonly type: BuildingType }) {
-  if (!['forge', 'inn', 'elder'].includes(props.type)) return null;
+function BuildingSmoke(props: { readonly x: number; readonly y: number }) {
   return (
-    <span className="place-smoke" aria-hidden="true">
+    <span
+      className="place-smoke"
+      aria-hidden="true"
+      style={{ left: `${props.x}%`, top: `${props.y}%` }}
+    >
       <i />
       <i />
       <i />
     </span>
+  );
+}
+
+function PlaceBuildingMenu(props: {
+  readonly layout: PlaceLayout;
+  readonly canEnter: boolean;
+  readonly onEnter: (type: BuildingType) => void;
+}) {
+  return (
+    <nav className="place-building-menu" aria-label="Здания поселения">
+      {props.layout.buildings.map(({ type }) => (
+        <button
+          key={type}
+          type="button"
+          disabled={!props.canEnter}
+          aria-label={`Открыть: ${buildingName(type, props.layout.ruined)}`}
+          onClick={() => props.onEnter(type)}
+        >
+          {buildingName(type, props.layout.ruined)}
+        </button>
+      ))}
+    </nav>
   );
 }
 
@@ -213,34 +239,27 @@ const RUIN_VISIT = {
 };
 
 function PlaceVisit(
-  props: Pick<PlaceProps, 'siteId' | 'name' | 'onContracts' | 'onEquipment'> & {
-    readonly type: BuildingType;
-    readonly variant: BuildingVariant;
-    readonly ruined: boolean;
+  props: Pick<PlaceProps, 'name' | 'onContracts' | 'onEquipment'> & {
+    readonly building: PaintedBuilding;
+    readonly layout: PlaceLayout;
     readonly onLeave: () => void;
     readonly returnRef: Ref<HTMLButtonElement>;
   },
 ) {
-  const selected = props.ruined ? RUIN_VISIT : BUILDINGS[props.type];
+  const selected = props.layout.ruined ? RUIN_VISIT : BUILDINGS[props.building.type];
   return (
     <div className="place-interior" aria-label={selected.interior}>
-      <div className="place-interior-art">
-        {props.ruined ? (
-          <img src={placeIllustration(props.siteId)} alt="Разрушенная мельница у реки" />
-        ) : (
-          <BuildingArt type={props.type} variant={props.variant} />
-        )}
-      </div>
+      <PlaceDetail building={props.building} layout={props.layout} />
       <div className="place-interior-copy">
         <span className="place-eyebrow">
-          {props.name} · вывеска «{selected.sign}»
+          {props.name} · {selected.interior}
         </span>
         <h3>{selected.name}</h3>
         <p>{selected.detail}</p>
         <p className="place-service">{selected.service}</p>
         <VisitAction
-          type={props.type}
-          ruined={props.ruined}
+          type={props.building.type}
+          ruined={props.layout.ruined}
           onContracts={props.onContracts}
           onEquipment={props.onEquipment}
         />
@@ -254,6 +273,20 @@ function PlaceVisit(
         </button>
       </div>
     </div>
+  );
+}
+
+function PlaceDetail(props: { readonly building: PaintedBuilding; readonly layout: PlaceLayout }) {
+  const [x, y, width, height] = props.building.crop;
+  return (
+    <svg
+      className="place-detail place-art"
+      viewBox={`${x} ${y} ${width} ${height}`}
+      aria-hidden="true"
+      style={{ aspectRatio: `${width * props.layout.aspect} / ${height}` } as CSSProperties}
+    >
+      <image href={props.layout.painting} width="100" height="100" preserveAspectRatio="none" />
+    </svg>
   );
 }
 
@@ -283,25 +316,12 @@ function PlaceCaption(props: { readonly canEnter: boolean; readonly inside: bool
     <footer className="place-scene-footer">
       <span id="place-access" className="place-access">
         {props.canEnter
-          ? '◆ Двери открыты для вашего отряда'
+          ? '◆ Входы доступны вашему отряду'
           : '◇ Вид издали · чтобы войти, прибудьте сюда'}
       </span>
       <span>
-        {props.inside ? 'Esc — на площадь' : 'Выберите здание · мышь раскрывает глубину сцены'}
+        {props.inside ? 'Esc — на площадь' : 'Выберите вход · на узком экране листайте панораму'}
       </span>
     </footer>
-  );
-}
-
-function BuildingArt(props: { readonly type: BuildingType; readonly variant: BuildingVariant }) {
-  return (
-    <span
-      className="place-building-art"
-      aria-hidden="true"
-      style={{
-        backgroundImage: `url(${BUILDINGS[props.type].image})`,
-        backgroundPosition: `${props.variant * 50}% 50%`,
-      }}
-    />
   );
 }

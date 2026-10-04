@@ -26,7 +26,7 @@ import {
 import { departureKey, TravelPanel } from './TravelPanel.js';
 import { WorldMap, type PartyMarker } from './WorldMap.js';
 import { WorldMapCanvas } from './WorldMapCanvas.js';
-import { placeIllustration } from '../renderer/art.js';
+import { placeBuildings } from './place-buildings.js';
 import { FreeMovementPanel } from './FreeMovementPanel.js';
 import { PlaceScene } from './PlaceScene.js';
 import type { FreeMovementAction, FreeMovementScope } from '../world-free-movement-attempt.js';
@@ -406,10 +406,10 @@ export function GameShell(props: {
             <section className="panel place-panel" aria-label="Место">
               {focusSite ? (
                 <>
-                  {placeIllustration(focusSite.siteId) && (
+                  {placeBuildings(focusSite.siteId, focusSite.kind).painting && (
                     <img
                       className="place-illustration"
-                      src={placeIllustration(focusSite.siteId)}
+                      src={placeBuildings(focusSite.siteId, focusSite.kind).painting}
                       alt=""
                     />
                   )}

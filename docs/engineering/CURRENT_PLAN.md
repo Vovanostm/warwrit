@@ -1,5 +1,23 @@
 # Warwrit current delivery plan
 
+**Cohesive settlement correction active — 2026-10-04:** owner rejected the
+first living-place overview as pasted houses on meadow texture. Parent owns
+the same `codex/living-locations` / PR139; replaces overview with coherent
+painted lanes, courtyards, buildings and separate depth planes. First result:
+complete Bereznyak scene, then city/river/farm/ruin in the same style.
+[Owning amendment](../work-packages/M1-LIVING-PLACES.md#owner-correction--cohesive-settlements-2026-10-04).
+Correction implemented: connected painted village, town, river settlement,
+farm and ruined mill with separate distant/settlement/near depth planes,
+door-aligned markers and matching close views. Ten types retain three variants.
+Current authenticated browser covers all village entrances, existing actions,
+remote previews, keyboard focus, day/night and390px layout. Independent critic
+found no established material defect in inspected results. Full bootstrap
+passed; subsequent equivalent layer-default consolidation passed current
+focused checks and changed-code audit.
+[Evidence and limits](../work-packages/M1-LIVING-PLACES.md#cohesive-scene-result--2026-10-04).
+Previous visual acceptance is superseded. Existing API/player data retained.
+PR139 remains the publication target. No merge/deployment authorization.
+
 **Living places implemented — 2026-10-04:** owner requested parallax visits,
 highlighted building entrances and ten building types with three variants each.
 Parent `/root` owns the primary checkout on `codex/living-locations`, base
