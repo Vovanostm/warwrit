@@ -387,6 +387,96 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/world-v2/grass-meadow.json",
       "generatedAt": "2026-10-03T19:03:14.845414+00:00"
+    },
+    {
+      "id": "art.m1.places.buildings.chapel",
+      "path": "assets/art/m1/places/buildings/chapel.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.elder",
+      "path": "assets/art/m1/places/buildings/elder.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.forge",
+      "path": "assets/art/m1/places/buildings/forge.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.granary",
+      "path": "assets/art/m1/places/buildings/granary.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.herbalist",
+      "path": "assets/art/m1/places/buildings/herbalist.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.inn",
+      "path": "assets/art/m1/places/buildings/inn.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.market",
+      "path": "assets/art/m1/places/buildings/market.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.mill",
+      "path": "assets/art/m1/places/buildings/mill.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.stable",
+      "path": "assets/art/m1/places/buildings/stable.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.places.buildings.watch",
+      "path": "assets/art/m1/places/buildings/watch.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/places/buildings/provenance.json",
+      "generatedAt": "2026-10-04"
     }
   ]
 }
