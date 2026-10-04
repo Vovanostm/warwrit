@@ -1,3 +1,5 @@
+import type { WorldContinuousMapDto } from '@warwrit/protocol';
+
 export function insidePolygon(
   x: number,
   z: number,
@@ -12,7 +14,7 @@ export function insidePolygon(
   }
   return inside;
 }
-export function nearPolygon(
+function nearPolygon(
   x: number,
   z: number,
   points: readonly { xFp: number; zFp: number }[],
@@ -26,4 +28,17 @@ export function nearPolygon(
     const t = Math.max(0, Math.min(1, ((x - a.xFp) * dx + (z - a.zFp) * dz) / (dx * dx + dz * dz)));
     return Math.hypot(x - a.xFp - t * dx, z - a.zFp - t * dz) < distance;
   });
+}
+
+/** Decorations avoid canonical obstacles and authored roads at the caller's clearance. */
+export function decorationObstructed(
+  region: WorldContinuousMapDto,
+  x: number,
+  z: number,
+  clearance: number,
+): boolean {
+  return (
+    region.blockingShapes.some((shape) => insidePolygon(x, z, shape.polygon)) ||
+    region.overlayShapes.some((shape) => nearPolygon(x, z, shape.polygon, clearance))
+  );
 }

@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-04",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "savedOriginalUnchanged": "foliage-atlas-v3.png",
+  "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-084678a1-796e-42c7-8b6a-b29ff87418a5.png",
+  "prompt": "direction-correction-prompt.txt",
+  "references": [
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/tree-parts/canopy/foliage-atlas-v2.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/map-dark/master-grim-v1.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/style/unit-c-ink.png"
+  ],
+  "calls": "ONE edit, no further batch/correction",
+  "concreteResult": "Bottom-left anatomy extends left/down from upper-right exposed twig; bottom-right extends right/down from upper-left exposed twig, gentle upper-left cues kept. No procedural mirroring or rotation used.",
+  "observations": [
+    "Generator redrew/enlarged both top deciduous cells despite preserve-exactly instruction. All four frames and pivots were remeasured, parent informed; do not reuse v2 frame coordinates.",
+    "Four components remain distinct and isolated; native highlights/leaf detail still need actual curved-card runtime acceptance.",
+    "PNG copied unchanged, no raster manipulation. Existing PNG decoder reused in-memory for read-only quadrant alpha>=39 bounding and twig sample checks; no new proof script or hashes."
+  ],
+  "checks": {
+    "dimensions": "sips:1254x1254,hasAlpha=yes",
+    "bounds": "alpha>=39 measured per equal quadrant",
+    "pivots": "all selected twig attachments measured alpha>=39",
+    "runtimeAcceptance": "NOT_RUN",
+    "independentCritic": "NOT_RUN"
+  },
+  "ownership": "Only assigned canopy scratch files written."
+}

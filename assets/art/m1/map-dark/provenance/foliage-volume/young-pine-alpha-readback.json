@@ -1,0 +1,158 @@
+[
+  {
+    "path": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/foliage-volume/extra/broadleaf-young-v1.png",
+    "width": 1024,
+    "height": 1536,
+    "alphaMax": 254,
+    "alphaCounts": {
+      "zero": 1262877,
+      "one": 24814,
+      "twoToSeven": 24724,
+      "eightToThirtyEight": 8804,
+      "surviveCutoff015": 251645
+    },
+    "borderMax": 0,
+    "alpha8Bounds": {
+      "pixels": [257, 33, 879, 1503],
+      "normalized": [0.2509765625, 0.021484375, 0.8583984375, 0.978515625],
+      "count": 260449
+    },
+    "alpha39Bounds": {
+      "pixels": [258, 33, 879, 1502],
+      "normalized": [0.251953125, 0.021484375, 0.8583984375, 0.9778645833333334],
+      "count": 251645
+    },
+    "exteriorSamples": [
+      {
+        "x": 20,
+        "y": 20,
+        "alpha": 0
+      },
+      {
+        "x": 1004,
+        "y": 1516,
+        "alpha": 0
+      },
+      {
+        "x": 512,
+        "y": 10,
+        "alpha": 0
+      },
+      {
+        "x": 80,
+        "y": 691,
+        "alpha": 0
+      },
+      {
+        "x": 307,
+        "y": 153,
+        "alpha": 0
+      },
+      {
+        "x": 768,
+        "y": 1259,
+        "alpha": 0
+      }
+    ],
+    "rootCandidates": [
+      {
+        "x": 525,
+        "y": 1458,
+        "alpha": 0
+      },
+      {
+        "x": 514,
+        "y": 1476,
+        "alpha": 1
+      },
+      {
+        "x": 505,
+        "y": 1447,
+        "alpha": 252
+      },
+      {
+        "x": 502,
+        "y": 1464,
+        "alpha": 149
+      }
+    ]
+  },
+  {
+    "path": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/foliage-volume/extra/conifer-sparse-v1.png",
+    "width": 1024,
+    "height": 1536,
+    "alphaMax": 254,
+    "alphaCounts": {
+      "zero": 1204350,
+      "one": 32307,
+      "twoToSeven": 32556,
+      "eightToThirtyEight": 10794,
+      "surviveCutoff015": 292857
+    },
+    "borderMax": 0,
+    "alpha8Bounds": {
+      "pixels": [144, 12, 907, 1506],
+      "normalized": [0.140625, 0.0078125, 0.8857421875, 0.98046875],
+      "count": 303651
+    },
+    "alpha39Bounds": {
+      "pixels": [145, 13, 906, 1506],
+      "normalized": [0.1416015625, 0.008463541666666666, 0.884765625, 0.98046875],
+      "count": 292857
+    },
+    "exteriorSamples": [
+      {
+        "x": 20,
+        "y": 20,
+        "alpha": 0
+      },
+      {
+        "x": 1004,
+        "y": 1516,
+        "alpha": 0
+      },
+      {
+        "x": 512,
+        "y": 10,
+        "alpha": 0
+      },
+      {
+        "x": 80,
+        "y": 691,
+        "alpha": 0
+      },
+      {
+        "x": 307,
+        "y": 153,
+        "alpha": 0
+      },
+      {
+        "x": 768,
+        "y": 1259,
+        "alpha": 0
+      }
+    ],
+    "rootCandidates": [
+      {
+        "x": 525,
+        "y": 1458,
+        "alpha": 14
+      },
+      {
+        "x": 514,
+        "y": 1476,
+        "alpha": 0
+      },
+      {
+        "x": 505,
+        "y": 1447,
+        "alpha": 2
+      },
+      {
+        "x": 502,
+        "y": 1464,
+        "alpha": 0
+      }
+    ]
+  }
+]

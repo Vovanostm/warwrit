@@ -1,5 +1,17 @@
 # Warwrit current delivery plan
 
+**Component forest integration authorized — 2026-10-04:** owner requested
+review, PR merge and local main update for the approved5290 dark-fantasy map.
+Parent owns `codex/component-forest-integration`, base `bcc30f5`; the obsolete
+standalone scene contributes art/parts only. Current merged relief, roads,
+supplies, proportional party, draped routes and living places are preserved.
+[Owning integration and evidence](../work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04).
+Port implemented locally; independent source/playable review, native journey/input,
+clean bootstrap and final628-check coverage/changed-code audit pass. Final PR CI
+and exact-head merge remain pending; NOT_MERGED. Primary has concurrent route/
+terrain writers; local-main update waits for their write completion.
+Primary owner drafts and player data are retained. No deployment authorized.
+
 **Code-quality fixes authorized — 2026-10-04:** owner explicitly requested
 “Fix issues, pr, review, merge, update local main”. This authorizes the bounded
 three-defect audit correction, its PR/review/merge and local main update.

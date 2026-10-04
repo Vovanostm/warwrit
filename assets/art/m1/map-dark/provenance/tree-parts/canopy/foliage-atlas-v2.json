@@ -1,0 +1,50 @@
+{
+  "image": "foliage-atlas-v2.png",
+  "width": 1254,
+  "height": 1254,
+  "hasAlpha": true,
+  "alphaThreshold": 39,
+  "boundsConvention": "left/top inclusive, right/bottom exclusive; coordinates in original image, origin TOP LEFT, x right, y DOWN. frameUV normalized atlas [left,top,right,bottom]. attachmentLocal relative to cropped alpha39 frame, same top-left origin.",
+  "frames": [
+    {
+      "key": "deciduousUpper",
+      "sourcePixels": [106, 149, 591, 525],
+      "attachmentPixels": [228, 442],
+      "attachmentAlpha": 133,
+      "frameUV": [
+        0.08452950558213716, 0.11881977671451356, 0.47129186602870815, 0.41866028708133973
+      ],
+      "attachmentAtlasUV": [0.18181818181818182, 0.3524720893141946],
+      "attachmentLocal": [0.2515463917525773, 0.7792553191489362]
+    },
+    {
+      "key": "deciduousSide",
+      "sourcePixels": [771, 180, 1095, 517],
+      "attachmentPixels": [776, 508],
+      "attachmentAlpha": 244,
+      "frameUV": [0.6148325358851675, 0.14354066985645933, 0.8732057416267942, 0.41228070175438597],
+      "attachmentAtlasUV": [0.6188197767145136, 0.405103668261563],
+      "attachmentLocal": [0.015432098765432098, 0.973293768545994]
+    },
+    {
+      "key": "pineBough",
+      "sourcePixels": [121, 750, 599, 1127],
+      "attachmentPixels": [128, 758],
+      "attachmentAlpha": 246,
+      "frameUV": [0.09649122807017543, 0.5980861244019139, 0.47767145135566186, 0.8987240829346093],
+      "attachmentAtlasUV": [0.10207336523125997, 0.6044657097288676],
+      "attachmentLocal": [0.014644351464435146, 0.021220159151193633]
+    },
+    {
+      "key": "pineTuft",
+      "sourcePixels": [840, 752, 1089, 1129],
+      "attachmentPixels": [845, 759],
+      "attachmentAlpha": 247,
+      "frameUV": [0.6698564593301436, 0.5996810207336523, 0.868421052631579, 0.9003189792663477],
+      "attachmentAtlasUV": [0.6738437001594896, 0.6052631578947368],
+      "attachmentLocal": [0.020080321285140562, 0.01856763925729443]
+    }
+  ],
+  "pivotMethod": "Visual selected exposed twig base; measured source alpha >=39 at each pivot. Parent connects it to actual skeletal branch tip.",
+  "runtimeApproval": "NOT_RUN"
+}

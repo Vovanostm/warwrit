@@ -1,0 +1,157 @@
+{
+  "date": "2026-10-04",
+  "outcome": "DONE_WITH_CONCERNS: six newly generated selected candidates, integrated runtime + critic not yet accepted.",
+  "mode": "Built-in image_gen.imagegen only. No API/CLI fallback. No manual raster edit. No reused prior unified texture as final.",
+  "primaryStyleReference": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+  "referencesInspected": [
+    "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/places/kamenny-brod.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/style/unit-c-ink.png"
+  ],
+  "firstPassPrompts": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/prompts.json",
+  "correctionPrompts": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/correction-prompts.json",
+  "assets": [
+    {
+      "material": "meadow",
+      "selected": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/meadow-grim-v2.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "firstPass": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/meadow-grim-v1.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-332855a3-5f34-4d8c-b1c9-ea462a2b583c.png",
+        "inputs": ["/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png"]
+      },
+      "correction": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/meadow-grim-v2.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-26a48763-1bb9-4508-bfc3-d67f9fdd1d93.png",
+        "inputs": [
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/meadow-grim-v1.png"
+        ],
+        "reason": "Dense granular fine brush breakup and too much detailed small scenery in first pass; reduce to broad quieter washes and sparse marks."
+      }
+    },
+    {
+      "material": "road",
+      "selected": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/road-grim-v2.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "firstPass": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/road-grim-v1.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-47ef6625-2899-4c9c-9950-f74e14cf3092.png",
+        "inputs": ["/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png"]
+      },
+      "correction": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/road-grim-v2.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-e297d0df-0dc5-45d2-ab9c-78e42cbe8170.png",
+        "inputs": [
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/road-grim-v1.png"
+        ],
+        "reason": "Dense granular fine brush breakup and too much detailed small scenery in first pass; reduce to broad quieter washes and sparse marks."
+      }
+    },
+    {
+      "material": "woodland",
+      "selected": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/woodland-grim-v2.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "firstPass": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/woodland-grim-v1.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-9d549a1f-1b32-49e6-989d-3556e6c2eb35.png",
+        "inputs": ["/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png"]
+      },
+      "correction": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/woodland-grim-v2.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-9dfc9f99-ec70-4c62-946c-7324c06f53bd.png",
+        "inputs": [
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/woodland-grim-v1.png"
+        ],
+        "reason": "Dense granular fine brush breakup and too much detailed small scenery in first pass; reduce to broad quieter washes and sparse marks."
+      }
+    },
+    {
+      "material": "shore",
+      "selected": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/shore-grim-v2.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "firstPass": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/shore-grim-v1.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-10957548-5100-4f29-b790-ae12c86c1845.png",
+        "inputs": ["/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png"]
+      },
+      "correction": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/shore-grim-v2.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-87dffd6b-7e1b-458b-ba25-8a6b176ff064.png",
+        "inputs": [
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/shore-grim-v1.png"
+        ],
+        "reason": "Dense granular fine brush breakup and too much detailed small scenery in first pass; reduce to broad quieter washes and sparse marks."
+      }
+    },
+    {
+      "material": "rock",
+      "selected": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/rock-grim-v2.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "firstPass": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/rock-grim-v1.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-c120551f-2b6e-40be-8d94-0e6704f2130a.png",
+        "inputs": ["/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png"]
+      },
+      "correction": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/rock-grim-v2.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-da979411-3fdd-4046-b733-fe3cc1e2484b.png",
+        "inputs": [
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/rock-grim-v1.png"
+        ],
+        "reason": "Dense granular fine brush breakup and too much detailed small scenery in first pass; reduce to broad quieter washes and sparse marks."
+      }
+    },
+    {
+      "material": "water",
+      "selected": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/water-grim-v2.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "firstPass": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/water-grim-v1.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-0a2f97d0-a5c2-4838-9777-5b3b420501ee.png",
+        "inputs": ["/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png"]
+      },
+      "correction": {
+        "file": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/water-grim-v2.png",
+        "source": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-f26e13ba-773a-490a-8aa1-16b49eccc190.png",
+        "inputs": [
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+          "/private/tmp/warwrit-map-polish-01a1031c/style-dark/ground/water-grim-v1.png"
+        ],
+        "reason": "Dense granular fine brush breakup and too much detailed small scenery in first pass; reduce to broad quieter washes and sparse marks."
+      }
+    }
+  ],
+  "checks": {
+    "visualInspection": "All twelve generated outputs viewed with view_image.",
+    "dimensions": "All six selected images read back via sips: 1254×1254, hasAlpha=no.",
+    "runtimeSeams": "NOT_RUN",
+    "repetitionGrid": "NOT_RUN",
+    "composite": "NOT_RUN by asset author; parent owns live integration.",
+    "critic": "NOT_RUN by asset author; parent owns independent critic acceptance."
+  },
+  "observations": [
+    "New palette aligned with grim master: gray/soot/slate/umber/depleted autumn ochre, no bright lawn or cartoon motifs.",
+    "Diffuse flat overhead material swatches: no isometric hex tiles, scenery composition, borders, vignette, ruts/path shapes or baked directional cast shadows.",
+    "Corrections reduced grass/leaf/stone clutter and preserved material distinction.",
+    "Fine granular hand-brush breakup remains despite simplification correction; quiet broad-wash requirement only partly achieved. Do not claim its absence.",
+    "Water is dark cold slate with subtle flat wash; no white glints or foam. Rock uses sparse hairline fissures without raised boulders.",
+    "No opposite-edge equality, UV-scale repetition or runtime seam acceptance established. Parent geometry/blending and independent critic own final result.",
+    "No shared source, manifest or asset paths edited."
+  ]
+}

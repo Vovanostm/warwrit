@@ -1,0 +1,22 @@
+Builtin tool: image_gen__imagegen
+Settings: transparent_background=true.
+Generated original: /Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-2ea796d0-a009-4971-b576-429b9b994002.png
+References in order:
+1. /Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png — primary bold serious hand-ink/flat-wash style.
+2. /private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png — palette + upper-left light.
+3. /private/tmp/warwrit-map-polish-01a1031c/style-dark/foliage-volume/broadleaf-old-v1.png — anatomy only, do not copy silhouette or foliage.
+4. /private/tmp/warwrit-map-polish-01a1031c/style-dark/foliage/conifer-v1.png — pine anatomy only, do not copy silhouette or foliage.
+
+Use case: stylized-concept
+Asset type: transparent 2×2 atlas of four separate foliage-free trunk components for real tree assembly in a fixed E35.2643897/A45 dark-fantasy strategy map.
+Input images: Image 1, approved unit-C sprite, is the primary reference for bold serious hand-ink contours and broad flat-wash value shapes. Image 2, approved grim map master, is the muted palette and fixed upper-left lighting reference. Images 3 and 4 are existing tree art used only for credible anatomy cues; do not copy their full silhouettes and do not include their foliage or backgrounds.
+Primary request: In a single square 2×2 atlas, create exactly four isolated timber trunk components: three deciduous trunks and one pine trunk. Each occupies one equal cell with generous transparent gutters between all cells; no shape may touch a cell boundary or another component. Transparent outside each component. No grid lines or labels.
+Shared anatomy and style: These are real organic tree boles built as serious hand-painted ink-and-flat-wash forms, not primitive tubes. Each has a visible short curved root shoulder at ground contact, fused knotty main fork with irregular anatomical transition, tapering into two or three unequal bare upper tips for later canopy attachment. Broad near-black ink shadow masses, restrained broad matte upper-left lit plane, dull sepia/umber/slate wood. Consistent orthographic camera, vertical gravity axis and upper-left light for all four. Bark reads as painted broad contours and planes, not photographic pixel-cutout texture. No cylindrical smooth poles, parallel stripe bark, pointed tripod feet, long root rails, smooth plastic, or glossy highlights.
+Cell 1 top-left: stout twisted mature deciduous bole, asymmetrical split main fork, two uneven canopy tips; substantial grounded root flare without spikes.
+Cell 2 top-right: leaning mature deciduous bole, clear counter-curved lower trunk and offset fork, three unequal tips; short curved root shoulders, natural seated base.
+Cell 3 bottom-left: compact younger deciduous bole, slimmer but sturdy irregular forks, two or three small unequal visible tips; modest grounded roots.
+Cell 4 bottom-right: tapered irregular pine bole, sturdy central stem and short declining main supports at several heights around the stem, three or four uneven upper tips; no foliage and no long rails or hoops.
+Composition/framing: Cell centers align to a clear 2×2 grid. Each root base sits near the bottom-center of its own cell with padding; upper tips end in the top 5–35% of their cell so crowns can attach at 65–95% trunk height. Each component is fully visible, with empty transparent separation between atlas cells. Aim for clean silhouettes readable at reduced map scale.
+Lighting/mood: identical restrained upper-left plane light; broad near-black opposing shadows define turning volume, no baked environment or ground shadow.
+Color/materials: muted sepia, grey-umber, slate and soot; restrained wood warmth only, no saturated yellow or green.
+Constraints: exactly four isolated trunk-only components, no foliage, leaves, needles, branches beyond each bole's own main fork, buildings, characters, props, setting, ground slab, cast shadow, text, symbols, border, watermark, frame, or lore additions. True transparent alpha background. Keep cell gutters transparent and prevent touching/bleed.

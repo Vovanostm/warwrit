@@ -27,6 +27,21 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ### Fixed
 
+- 2026-10-04, branch `codex/component-forest-integration`, local: owner-requested
+  dark-fantasy map correction ports approved original terrain/settlement art and
+  composed trunk/crown trees onto current main relief. Entrance/root pivots,
+  alpha-aware targets and measured labels preserve a shared isometry and natural
+  contacts. Scope: web map renderer/labels, original map-dark assets/provenance
+  and manifest; roads, supplies, visits and canonical movement retain current main.
+  [Owning integration](docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04)
+  records actual checks and limits; exact-head PR CI/merge pending.
+
+  Independent source/playable critique and native journey/input pass; original
+  audit regressions corrected by bounded assembly/projection/measurement helpers
+  and shared deterministic hash/obstacle primitives. One meaningful assembled-tree
+  geometry regression added; final coverage628/47skip and audit pass. Exact-head
+  PR CI/merge pending; primary concurrent drafts/writers preserved.
+
 - 2026-10-04, branch `codex/supplies-delivery`, published (not yet merged):
   supplies can be bought through the local bazaar/granary with finite merchant
   stock, exact cash and retained retry receipts; future companies start with

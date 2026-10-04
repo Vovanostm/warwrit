@@ -1,0 +1,11 @@
+Use case: precise-object-edit.
+Image 1 is approved grim material/style reference ONLY. Image 2 city-v2.png is edit target. Image 3 Kamenny Brod original scene is identity reference.
+KEEP same worn ink-painted masonry/timber/rust/slate/umber, inhabited working MARKET TOWN, house/forge/awning materials and believable proportions. Change COMPOSITION GEOMETRY ONLY.
+
+The gate in Image2 is still too far right and its LEFT flanking tower blocks approach. REMOVE that left gate tower completely. RELOCATE the gate to the EXTREME LOWER LEFT CORNER of the entire town silhouette, roughly x=230,y=870 in a 1536x1024 canvas. NO LEFT FLANKING TOWER. If a gate tower is necessary, put ONE modest tower on the RIGHT side only.
+The arch gate is attached to the low repaired city wall, NOT floating separately. Its wall and the whole inhabited market town continue back and RIGHT from it. ALL town architecture must lie to the RIGHT of the gate. Behind gate, ordinary roofs, market awnings, forge and patched enclosing wall fill the TOP RIGHT / RIGHT portions of canvas. Town is wider modest region settlement, not a symmetric castle or keep.
+Transparent corridor approaches gate from WEST / UPPER LEFT. Entire area LEFT of the doorway, including all of its upper-left approach, MUST be totally EMPTY TRANSPARENT ALPHA. NO tower, wall, tree, foundation, bush, roof or shadow upper-left of doorway. Specifically from gate foot toward(-600,-200), leave a 120-pixel-wide empty corridor ending at doorway. Never mask failure with a painted road or bypass. No baked road/water. Only tiny threshold at gate permitted. Outside town enclosing wall is coherent BEHIND and RIGHT, never curling left in front of approach.
+Gate MUST be the LEFTMOST LOWER CORNER. Not center of bottom wall. No left tower. All opaque town mass right of gate.
+
+True orthographic isoE35.2643897/A45; ground axes±30°, verticals vertical, square ground diamond√3:1. Align house/fence/wall/eave axes consistently; no perspective. Keep gate in diagonal iso wall rather than frontal fake wall.
+Actual transparent PNG, fully framed with margin, mostly opaque materials, no large alpha halo/soil plate/landscape. No text/UI/people/skulls/unknown lore; no style mood changes, no second image.

@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: corrected dark-fantasy party-banner map sprite cutout.
+Input images: Image 1 is the PRIMARY style authority; use its grim charcoal ink, muted values, weathered surface and overcast mood. Image 2 is the edit target; preserve its exact pole, crossbar, ragged banner shape, original broken cream ring around a central diamond, and exactly three rugged silhouettes. Image 3 is secondary contour reference only. Image 4 is party identity reference only, not a style source.
+Primary request: make one restrained correction to Image 2: mute the cloth from bright red to faded, desaturated oxblood, and remove all non-subject glow/halo so pixels beyond the actual marker are fully transparent. Keep the original symbol and exact three-figure group unchanged.
+Scene/backdrop: genuine transparent background only.
+Subject: one practical old wooden pole and crossbar; one weathered tattered oxblood cloth; the unchanged cream broken-ring-and-diamond sigil; exactly three compact rugged adventurer silhouettes close around the pole's foot.
+Style/medium: match Image 1's serious dark-fantasy hand-ink/flat-wash language, charcoal shadow masses, tactile aged material, restrained earth tones; figures remain small secondary silhouettes.
+Composition/framing: preserve Image 2's composition and source aspect; orthographic map camera elevation 35.264 degrees, azimuth 45 degrees, horizontal axes ±30 degrees, square ground diamond √3:1 not 2:1. Keep full pole, cloth and all three feet visible, generous transparent margins; stable normalized foot pivot close to bottom center.
+Lighting/mood: overcast baked upper-left light confined to subject pixels; no surrounding glow; only short subtle contact grounding beneath feet.
+Constraints: preserve the party identity, exact emblem geometry, figure count and group arrangement. Make the cloth visibly weathered and faded but not brown or gray.
+Avoid: vivid saturated scarlet, orange glow, halo, vignette, fog, background gradient, matte pixels, new symbols, gods, letters, runes, changing emblem geometry, extra/missing figures, large portraits, extra flags, ground plate, rocks, foliage, text, watermark.

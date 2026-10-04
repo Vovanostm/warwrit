@@ -1,0 +1,26 @@
+{
+  "status": "CHANGES_REQUIRED_APPROACH_UNPROVEN",
+  "file": "city-v2.png",
+  "sourcewidth": 1536,
+  "sourceheight": 1024,
+  "pivot": {
+    "u": 0.411,
+    "v": 0.743
+  },
+  "bounds": [0.28125, 0.0869140625, 0.9869791666666666, 0.8505859375],
+  "bounds_definition": "Normalized visible alpha>=8, exclusive right/bottom",
+  "pivot_definition": "Visual gate foot estimate, not forecourt edge, +/-0.015 normalized",
+  "prompt_file": "city-prompt-v2.txt",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a10326-e07f-7a42-9760-9ae654192571/exec-f69f5646-e7c7-4d1b-96d5-5fbe328ace30.png",
+  "references": [
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "city-v1.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/kamenny-brod.png"
+  ],
+  "generator": "Built-in imagegen transparency; single targeted recomposition edit; no manual pixel edits",
+  "concerns": [
+    "Generator failed requested extreme-left gate pivot; still observedu.411 vs requestedu.15.",
+    "Left flanking gate tower may still obscure last western approach ray. Parent inspected and requestedv3."
+  ],
+  "NOT_RUN": ["Runtime composite", "Independent critic approval"]
+}

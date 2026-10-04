@@ -43,6 +43,9 @@ export interface MapLabelPosition {
   /** CSS pixels from the canvas top-left corner. */
   readonly x: number;
   readonly y: number;
+  readonly visible?: boolean;
+  readonly align?: 'center' | 'start' | 'end';
+  readonly alternateX?: number;
 }
 
 export interface MapScene {

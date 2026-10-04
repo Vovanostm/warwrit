@@ -1,0 +1,24 @@
+{
+  "width": 1024,
+  "height": 1536,
+  "alphaThreshold": 8,
+  "contentBounds": [0.140625, 0.0078125, 0.8857421875, 0.98046875],
+  "contentBoundsPixels": [144, 12, 907, 1506],
+  "rootPivot": [0.48828125, 0.9309895833333334],
+  "rootPivotPixels": [500, 1430],
+  "rootPivotAlpha": 252,
+  "rootPivotMethod": "Visual root footprint anchor, confirmed visible at cutoff. Runtime grounding still needs parent scene validation.",
+  "rendererCutoff": 0.15,
+  "rendererContentBoundsPixels": [145, 13, 906, 1506],
+  "exteriorAlpha": "Frame and six tested exterior points alpha=0. Broad low-alpha aura excluded at cutoff .15 (integer alpha >=39 survives).",
+  "originalSource": "/Users/vovanostm/.codex/generated_images/01a10327-45d9-7b21-a080-d8374337be57/exec-7a987b11-d7d3-4b94-83bb-fad94cb593d6.png",
+  "generatedBy": "landscape_artist; one first-pass native generation, no correction",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "referenced_image_paths": [
+    "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/map-dark/master-grim-v1.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/style/unit-c-ink.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/map-dark/conifer-v1.png"
+  ],
+  "promptFile": "conifer-sparse-prompt.txt"
+}

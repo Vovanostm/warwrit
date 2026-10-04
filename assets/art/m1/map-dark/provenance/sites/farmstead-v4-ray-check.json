@@ -1,0 +1,226 @@
+[
+  {
+    "ray": "actual_steep",
+    "dy": 0,
+    "x": 1130,
+    "y": 873,
+    "alpha": 1
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 30,
+    "x": 1135,
+    "y": 843,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 60,
+    "x": 1140,
+    "y": 813,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 90,
+    "x": 1145,
+    "y": 783,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 120,
+    "x": 1150,
+    "y": 753,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 150,
+    "x": 1155,
+    "y": 723,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 180,
+    "x": 1160,
+    "y": 693,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 210,
+    "x": 1165,
+    "y": 663,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 240,
+    "x": 1170,
+    "y": 633,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 270,
+    "x": 1175,
+    "y": 603,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 300,
+    "x": 1180,
+    "y": 573,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 330,
+    "x": 1185,
+    "y": 543,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 360,
+    "x": 1190,
+    "y": 513,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 390,
+    "x": 1195,
+    "y": 483,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 420,
+    "x": 1200,
+    "y": 453,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 450,
+    "x": 1205,
+    "y": 423,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 480,
+    "x": 1210,
+    "y": 393,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 510,
+    "x": 1215,
+    "y": 363,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 540,
+    "x": 1220,
+    "y": 333,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 570,
+    "x": 1225,
+    "y": 303,
+    "alpha": 0
+  },
+  {
+    "ray": "actual_steep",
+    "dy": 600,
+    "x": 1230,
+    "y": 273,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 0,
+    "x": 1130,
+    "y": 873,
+    "alpha": 1
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 30,
+    "x": 1151,
+    "y": 843,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 60,
+    "x": 1173,
+    "y": 813,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 90,
+    "x": 1194,
+    "y": 783,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 120,
+    "x": 1216,
+    "y": 753,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 180,
+    "x": 1259,
+    "y": 693,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 240,
+    "x": 1301,
+    "y": 633,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 300,
+    "x": 1344,
+    "y": 573,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 360,
+    "x": 1387,
+    "y": 513,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 420,
+    "x": 1430,
+    "y": 453,
+    "alpha": 0
+  },
+  {
+    "ray": "broad_up_right",
+    "dy": 480,
+    "x": 1473,
+    "y": 393,
+    "alpha": 0
+  }
+]

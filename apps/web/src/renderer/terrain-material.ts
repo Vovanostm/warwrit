@@ -28,6 +28,19 @@ const naturalTextureShader = `
     return interiorPatch(source,uv,a)*blend.x+interiorPatch(source,uv,b)*blend.y+interiorPatch(source,uv,c)*blend.z;
   }`;
 
+function wetContactPoint(
+  region: WorldContinuousMapDto,
+  siteId: string,
+  scale: number,
+  offsetX: number,
+  offsetZ: number,
+) {
+  const site = region.sites.find((candidate) => candidate.siteId === siteId);
+  return site
+    ? new Vector2(site.anchorFp.xFp * scale + offsetX, site.anchorFp.zFp * scale + offsetZ)
+    : new Vector2(-1000, -1000);
+}
+
 /** Public geography owns terrain boundaries; these weights only blend its appearance. */
 export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDto) {
   const width = region.columns * region.cellSizeFp;
@@ -113,7 +126,7 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
       fragmentSource: `precision highp float;
       varying vec2 terrainUv; varying vec3 groundNormal;
       uniform sampler2D controlA, controlB, grassMap, woodlandMap, hillsMap, marshMap, riverbankMap, rockMap, waterMap;
-      uniform vec3 lighting,edgeMist; uniform vec2 detailScale,worldOffset; uniform float time;
+      uniform vec3 lighting,edgeMist; uniform vec2 detailScale,worldOffset,wetSettlementPoint,millWheelPoint; uniform float time;
       ${naturalTextureShader}
       void main(){
         vec4 a=max(texture2D(controlA,terrainUv),vec4(0)), b=max(texture2D(controlB,terrainUv),vec4(0));
@@ -132,11 +145,54 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
           float ripples=sin(uv.x*31.0+uv.y*17.0-time*1.2+landNoise(uv*2.0)*6.0);
           color+=naturalTile(waterMap,uv*0.7+drift)*(1.0+0.045*ripples)*water;
         }
+        vec2 scenePoint=vec2(terrainUv.x,1.0-terrainUv.y)*detailScale*1.5+worldOffset;
+        vec2 villageOffset=scenePoint-wetSettlementPoint;
+        float villageDistance=length(villageOffset);
+        float bankNoise=landNoise(villageOffset*1.7+vec2(8.3,2.1));
+        float villageEdge=1.15+(bankNoise-0.5)*0.55;
+        float villageWet=1.0-smoothstep(villageEdge-0.16,villageEdge+0.16,villageDistance);
+        if(villageWet>0.001){
+          float pools=landNoise(villageOffset*2.5+vec2(4.7,11.2));
+          float islands=landNoise(villageOffset*1.35+vec2(17.1,5.4));
+          float poolMask=smoothstep(0.49,0.70,pools)*(1.0-smoothstep(0.54,0.76,islands)*0.55);
+          vec2 wetUv=uv*0.78+vec2(time*0.002,time*0.0007);
+          vec3 poolWater=naturalTile(waterMap,wetUv);
+          vec3 peat=naturalTile(marshMap,uv);
+          float peatLip=1.0-smoothstep(0.0,0.07,abs(pools-0.49));
+          float reflection=pow(0.5+0.5*sin((villageOffset.y-villageOffset.x)*19.0+pools*5.0),14.0);
+          color=mix(color,peat*0.84,villageWet*0.08);
+          color=mix(color,poolWater*0.78+vec3(0.026,0.033,0.043),villageWet*poolMask*0.68);
+          color=mix(color,peat*0.84,villageWet*peatLip*0.16);
+          color+=vec3(0.022,0.029,0.038)*villageWet*poolMask*reflection;
+          float outerPeat=1.0-smoothstep(0.0,0.09,abs(villageDistance-villageEdge));
+          color=mix(color,peat*0.86,villageWet*outerPeat*0.16);
+        }
+        vec2 millOffset=scenePoint-millWheelPoint;
+        float millDistance=length(millOffset);
+        float millBankNoise=landNoise(millOffset*2.1+vec2(3.9,14.2));
+        float millEdge=0.24+(millBankNoise-0.5)*0.12;
+        float millWet=1.0-smoothstep(millEdge-0.07,millEdge+0.07,millDistance);
+        if(millWet>0.001){
+          float puddleNoise=landNoise(millOffset*5.2+vec2(9.1,6.3));
+          float millPools=smoothstep(0.51,0.71,puddleNoise);
+          float millIslands=landNoise(millOffset*2.2+vec2(2.8,18.7));
+          millPools*=1.0-smoothstep(0.55,0.77,millIslands)*0.52;
+          float wheelCore=1.0-smoothstep(0.12,0.18,millDistance);
+          millPools=max(millPools,wheelCore);
+          vec2 millWaterUv=uv*0.82+vec2(time*0.0015,time*0.0005);
+          vec3 millWater=naturalTile(waterMap,millWaterUv);
+          vec3 millPeat=naturalTile(marshMap,uv);
+          float millLip=1.0-smoothstep(0.0,0.06,abs(puddleNoise-0.51));
+          float wheelGlint=pow(0.5+0.5*sin((millOffset.y-millOffset.x)*22.0+puddleNoise*4.0),14.0);
+          float waterMouth=max(wheelCore,millWet*millPools*0.76);
+          color=mix(color,millWater*0.78+vec3(0.026,0.033,0.043),waterMouth);
+          color=mix(color,millPeat*0.84,millWet*millLip*0.15);
+          color+=vec3(0.022,0.029,0.038)*millWet*millPools*wheelGlint;
+        }
         float meadow=landNoise(uv*0.23+vec2(17,3));
         float variation=0.94+0.08*landNoise(uv*0.48)+0.025*landNoise(uv*1.8);
         vec3 tint=mix(vec3(0.84,0.94,0.83),vec3(1.07,1.01,0.87),meadow);
         color*=mix(vec3(1),tint,a.r+a.b*0.4);
-        vec2 scenePoint=vec2(terrainUv.x,1.0-terrainUv.y)*detailScale*1.5+worldOffset;
         float windLight=sin(scenePoint.x*0.71+scenePoint.y*0.39-time*1.65);
         color*=1.0+a.r*0.025*windLight;
         float cloud=0.94+0.06*landNoise(uv*0.10+vec2(time*0.016,time*0.008));
@@ -156,6 +212,8 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
         'edgeMist',
         'detailScale',
         'worldOffset',
+        'wetSettlementPoint',
+        'millWheelPoint',
         'time',
       ],
       samplers: [
@@ -178,6 +236,13 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
   material.setVector2(
     'worldOffset',
     new Vector2(region.origin.xFp * scale, region.origin.zFp * scale),
+  );
+  // Cosmetic wet contacts preserve the established stilt settlement and ruined wheel.
+  // They do not alter canonical terrain, navigation, roads or the height field.
+  material.setVector2('wetSettlementPoint', wetContactPoint(region, 'tikhaya-gat', scale, 0, 0));
+  material.setVector2(
+    'millWheelPoint',
+    wetContactPoint(region, 'staraya-melnitsa', scale, 0.46 * Math.SQRT1_2, 0.26 * Math.SQRT1_2),
   );
   material.setFloat('time', 0);
   for (const [sampler, url] of [

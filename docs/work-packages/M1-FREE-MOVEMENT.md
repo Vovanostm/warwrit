@@ -1,5 +1,93 @@
 # Free global-map movement — implementation assignment
 
+## Component forest integration — 2026-10-04
+
+Owner explicitly requested review, PR merge and local main update for the approved
+5290 map. Parent owns `codex/component-forest-integration`, based on merged
+`bcc30f5` (including supplies PR144); no deployment or other PR is authorized.
+The earlier standalone 5290 checkout is an art reference, not an integration base.
+
+Bounded port: original dark ink/wash terrain and five settlement cutouts; measured
+source aspect, opaque bounds and entrance pivots; three deciduous bodies and one
+pine composed from original trunk/foliage atlases, with coordinate-seeded part
+variation and curved near/far canopy surfaces. Sources/prompts remain in
+[map-dark](../../assets/art/m1/map-dark/README.md) and the asset manifest.
+Ground, roads, party, route and canonical movement retain the current main
+implementation. Tree roots and settlement entrances sample its shared triangle
+height field; decorations remain nonpickable. Alpha-aware site picking rejects
+transparent margins. Labels use projected visible bounds and measured HTML sizes.
+The current supplies party sprite, small ring, road types, V3 interpolation,
+raised-ground wheel anchoring and living-place visits remain present.
+
+Style authority remains ADR-0006, original unit-c ink and matching original place
+illustrations. No new lore, navigable geometry, faction or gameplay mechanic.
+Earlier prototype approval does not accept this main integration. Independent
+source review and integrated day/night overview/close playable critique are
+required. Full game quality, enjoyment and all-device performance are NOT_MEASURED.
+
+Integration findings and fixes: active-route labels were resetting their measured
+base offset; route avoidance now retains zero base translation and only adds the
+needed vertical displacement. Relief depth clipped painted city foreground below
+its entrance pivot; towns and both tree batches now share one prop pass with
+relative depth after terrain. Opaque site hits take precedence over terrain to
+match this visible layering; transparent margins fall through. While a mask is
+loading, that site hit cannot silently dispatch a terrain order. Original local
+water/peat under Tikhaya Gat and the ruined mill's wheel mouth are restored as
+cosmetic contacts in the main terrain shader, with restrained local reeds.
+
+Checks: seven existing surface/camera tests, web typecheck, changed-file lint,
+format/content validation and diff check PASS. Independent repeated source review
+found no remaining concrete material defect in the scoped source, including the
+wet-contact shader. Clean `scripts/bootstrap.sh` PASS:627 unit checks/47 skipped,
+10,000 combat battles, migration smoke and14 real PostgreSQL auth/encounter checks;
+its disposable infrastructure was removed. Final cosmetic corrections overlapped
+that gate's build; final published-head CI is still required. Initial coverage
+FAILED two unchanged5s movement-field timeouts under concurrent local scene load
+(625 passed/47 skipped). Unloaded sequential replacement passed627/47 skipped. After bounded helper
+extraction, final sequential coverage passed628/47 skipped, including one public
+NullEngine regression for all four assembled trees: deterministic geometry,
+complete relief grounding, curved normals, nonpickable shared prop layer and
+geometry retained across lighting changes. The initial new-code audit FAILED;
+shared seeded hash/obstacle checks and cohesive assembly/projection/label helpers
+removed introduced duplication/complexity without suppression or policy changes.
+Temporary test/type/lint failures during extraction were corrected; final focused
+checks and unchanged changed-code audit PASS. No timeout/assertion/gate weakened.
+
+Normal second local fixture login and company creation succeeded. Night departure
+North Court→Stone Ford showed65s and paving×2; S STOP retained
+(90002024,-158732552)microFp at revision5 through reload. Normal return used a V3
+plan, survived moving reload, arrived at North Court
+(100663296,-174391296)microFp/revision7 and stayed there after reload, plan null,
+cash850. The first arrival wait matched stale pre-command state; this was corrected
+by a separate exact-goal arrival/readback, not counted as an arrival pass.
+
+All five opaque site samples and HTML labels→SITE; all five transparent margins→
+TERRAIN. These15 POSTs were intercepted/rejected locally; no backend state writes.
+Final opaque city foreground below its entrance pivot also dispatches SITE
+(`kamenny-brod`); the intercepted request leaves revision7 unchanged.
+Native pan40.00975/-20.00465CSSpx, raised-ground wheel error3.22e-6 scene units,
+scroll0/gesturePOST0. Both tree meshes are nonpickable; a tree click→TERRAIN.
+These are parent executions; independent critic did not operate the browser.
+
+Current screenshots are local `output/playwright/component-integration-r3-*`;
+night moving/stopped/arrived captures use `component-integration-journey-*`.
+Earlier R1 city clipping and the first R3 NIGHT default unloaded capture were
+rejected. The loaded replacement passed independent review of16 DAY/NIGHT views.
+Final extracted source was independently reviewed with no material regression;
+post-extraction eight DAY views use `component-integration-final-day-*`.
+The critic's final revised acceptance is recorded in the PR; it inspected captures
+and parent-run journey evidence, rather than operating the browser itself.
+No ideal/full-game/M1, enjoyment or all-device performance acceptance.
+
+The old first-account prototype save remains preserved: it stored planVersion2
+with mapEditionV5 and is rejected by current main. It was not rewritten or used
+for acceptance; the second fixture company was created through the real UI.
+Existing released0014 supply migration was applied to that retained local test
+DB; this slice adds no migration. Local implementation ready for publication; exact-head PR CI/merge readback still
+required. Primary has active writers and unrelated route/terrain/doc drafts;
+local-main update must wait until their writes stop and preserve both histories.
+No deployment authorized.
+
 ## Tree art rejection and diagnosis — 2026-10-04
 
 Owner reports incorrectly oriented, visibly flat trees after PR141. This supersedes

@@ -1108,5 +1108,14 @@
     "compatibility": "Renderer presentation only; exact x/z polygons, accepted V2/V3 schedules, speed and saves unchanged.",
     "implementation": "One sampled triangle height field owns ground contacts, draped roads, vegetation, party, route and ray picking; fixed diagonal isometry preserves projected sprite aspect. Real hill/rolling relief,35.264deg elevation/45deg azimuth, triangle-normal light, grounded contact wash,0.85scene edge mist with depth-writing grass fade and measured in-viewport moving-banner label clearance.",
     "acceptance": "7 focused surface/camera checks and618-check coverage pass (46 skipped); actual retained day/night paved/field journeys, STOP/reload and arrival observed. Material source and visual findings corrected. 885e63f clean bootstrap passed618 checks/46skip,10000 battles,migrations+14DBchecks. Final independent critic READY_WITH_LIMITS at885e63f for genuine day active39s label clearance, day edge overview and night68-to38s overview/close: no reproduced material visual defect in supplied views; earlier FIRST HUNT DB scenario remains historical FAILED. No full-M1/enjoyment acceptance."
+  },
+  "componentForestIntegration": {
+    "date": "2026-10-04",
+    "authority": "Owner authorizes review/PR/merge/local main for approved5290 map; no deployment.",
+    "branch": "codex/component-forest-integration",
+    "base": "bcc30f5",
+    "scope": "Original dark map art, composed trees, grounded entrances/roots and alpha-aware labels/targets; current main relief/roads/supplies/party/routes retained.",
+    "evidence": "M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04",
+    "status": "Local: independent source and16-frame day/night critique approved bounded result; real departure/STOP/reload/return-arrival, alpha/foreground targets and gestures pass. Bootstrap627/47skip+10000battles+14DB checks; final628/47skip coverage and changed-code audit pass after bounded helper extraction. PR CI/merge pending; primary concurrent writers must finish before local-main update. No full-M1/performance claim."
   }
 }
