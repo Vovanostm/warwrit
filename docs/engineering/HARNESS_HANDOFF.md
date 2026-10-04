@@ -15,7 +15,7 @@ Codex's own session handoff; this page does not assign product work or ownership
    use a separate worktree from `origin/main`.
    Create it with an absolute path: `git -C <repo> worktree add ../x` resolves
    `../x` against the process cwd, not `<repo>`.
-3. `pnpm agent:preflight` prints `git gate: active` once #133 is merged and the
+3. `pnpm agent:preflight` prints `git gate: active` when the
    clone ran `pnpm run prepare`; `INACTIVE` means commits reach CI unchecked.
 4. Containers run on colima ([LOCAL_DEVELOPMENT](LOCAL_DEVELOPMENT.md#container-runtime-colima)).
 
@@ -28,17 +28,12 @@ Codex's own session handoff; this page does not assign product work or ownership
 | #130 | colima runtime docs; `CHANGELOG.md`; `.prettierignore` for personal Claude settings                                                                                                                                                                                                                                        | CI green                                                                                                                                  |
 | #131 | `pnpm agent:status`: live main, CI, open PRs, active writer branches, next migration                                                                                                                                                                                                                                       | Unauthenticated path prints `NOT_AVAILABLE`                                                                                               |
 | #132 | Claude `SessionStart` status hook; fallow commit/push gate (`PreToolUse`); agents `warwrit-critic` (read-only, role from `.codex/agents/warwrit_reviewer.toml`) and `warwrit-scribe` (docs only)                                                                                                                           | Gate probe in a temporary worktree: unused file → exit 2, `verdict: fail`; clean change passes (~18 s)                                    |
+| #133 | Tracked Git `pre-commit`/`pre-merge-commit` hooks run `pnpm check:changes` vs the merge-base with `origin/main` for every agent; `prepare` sets `core.hooksPath`; Markdown-only commits skip; Codex rules prompt on `git commit --no-verify`/`-n`                                                                          | Unused file rejected from `env -i /bin/sh`; clean merge with an unused file rejected; full gate green. Owner-approved squash 2026-09-30   |
 
-Open: #133 (branch `chore/git-push-gate`), handoff item 1. Tracked Git
-`pre-commit` and `pre-merge-commit` hooks run `pnpm check:changes` against the
-merge-base with `origin/main` for every agent; `prepare` sets `core.hooksPath`;
-Markdown-only commits skip; Codex rules prompt on `git commit --no-verify`/`-n`.
-Evidence in the PR body: unused file rejected from `env -i /bin/sh`, clean merge
-with an unused file rejected, full gate green. Merge needs owner permission.
-The owner clone's shared `.git/config` already has
-`core.hooksPath=scripts/git-hooks` (inert in worktrees without that directory).
+The owner clone's shared `.git/config` has `core.hooksPath=scripts/git-hooks`;
+a fresh worktree from main showed `git gate: active` without further steps.
 
-Main at this checkpoint: `47c26c4`, tree `bc06495`, CI success (run 36628079931).
+Main at this checkpoint: `4ec0be6` (#133), tree `6bd5c36`.
 
 ## Not yet proven
 
@@ -53,7 +48,7 @@ Each brief is self-contained. Owner selection is still required; "Writes" is
 the only path set the writer may touch, and two briefs with disjoint writes may
 run in parallel. Acceptance is the observable result, not a document saying so.
 
-### H1. Remove the duplicate Claude gate (after #133 merges)
+### H1. Remove the duplicate Claude gate (ready: #133 merged)
 
 - Why: with the Git hook active, the Claude `PreToolUse` fallow gate reruns the
   same audit on every Claude commit (~10 s). One gate, one owner.
@@ -68,20 +63,16 @@ run in parallel. Acceptance is the observable result, not a document saying so.
 - Precondition: `pnpm agent:preflight` shows `git gate: active` in the checkouts
   Claude uses; without it the Claude gate is the only local gate.
 
-### H2. Measured coverage in the audit (CI and local)
+### H2. Measured coverage in the audit — in review (`chore/audit-coverage`)
 
-- Why: the audit scores CRAP from static estimates; #129's false positive came
-  from that. If only CI gets coverage, the local hook becomes stricter than CI
-  and agents learn to bypass it.
-- Writes: `.github/workflows/ci.yml`, `scripts/git-hooks/pre-commit`,
-  `.fallowrc.jsonc`, `docs/engineering/LOCAL_DEVELOPMENT.md`, `CHANGELOG.md`.
-- Change: CI runs `pnpm test:coverage` and passes
-  `--coverage coverage/coverage-final.json` to `pnpm check:changes`. Decide and
-  document the local rule (e.g. static CRAP locally with the same threshold, or
-  use coverage only when it is newer than every changed file); do not use stale
-  coverage silently.
-- Accept: CI time delta recorded from two runs; an untested trivial function
-  no longer fails CI; the local hook verdict on the same change is documented.
+- CI runs `pnpm test:coverage` and sets `FALLOW_COVERAGE`; the local hook passes
+  `--max-crap 1e9` so CRAP is gated only where coverage is fresh.
+- Evidence: whole-tree health on 4ec0be6 — the estimate flags 37 functions that
+  measured coverage clears (e.g. `findRoute` 43.1, 87% covered) and misses 19
+  with 0% coverage. Probe: a new cc-6 helper in `encounters/room.ts` passes the
+  estimate, fails measured (CRAP 42). CI time delta: see the PR.
+- Remaining: PostgreSQL-only code (encounters) scores as untested; running the
+  integration specs under coverage in CI is a separate decision.
 
 ### H3. Run HARNESS_EVAL E1–E4
 
@@ -109,7 +100,7 @@ run in parallel. Acceptance is the observable result, not a document saying so.
 - `PreToolUse` hook on Edit/Write limited to the scribe's documented paths.
   Same owner-applied constraint as H1.
 
-Parallel-safe now: H2 with H3 (disjoint writes), H4, H5. H1 waits for #133.
+Parallel-safe now: H1, H3, H4, H5 (disjoint writes). H3's "current harness" should include H2 if it merges first.
 
 ## Known inherited signals (leads, not defects)
 
@@ -127,5 +118,9 @@ Parallel-safe now: H2 with H3 (disjoint writes), H4, H5. H1 waits for #133.
 - Merges run only with owner permission recorded on the PR; the owner's local
   `.claude/settings.local.json` allows `gh pr merge * --squash --match-head-commit *`.
   Always pass the full head SHA and read back the main tree.
+- fallow reads `coverage/coverage-final.json` whenever it exists, without
+  config or flag: `fallow health`/`audit` verdicts depend on leftover files.
+- zsh does not word-split an unquoted `$var`; probe loops need `${=var}` or
+  arrays, otherwise every run silently tests a one-token command.
 - When merging main into a branch, resolve conflicts only after proving each
   discarded side is already contained (compare blob hashes).
