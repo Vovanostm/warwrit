@@ -43,8 +43,12 @@ function avoidPartyLabels(svg: SVGSVGElement, party: RouteScreenRect | undefined
       height: rect.height,
     };
     if (!labelOverlapsParty(position, party)) return;
-    const shift = position.y + position.height - party.y + 6;
-    label.style.translate = `-50% calc(0.6rem - ${shift}px)`;
+    const above = party.y - rect.height - 6;
+    const targetTop =
+      above >= 4
+        ? above
+        : Math.min(canvasBounds.height - rect.height - 4, party.y + party.height + 6);
+    label.style.translate = `-50% calc(0.6rem + ${targetTop - position.y}px)`;
   });
 }
 
