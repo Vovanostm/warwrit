@@ -12,8 +12,8 @@ import roadTrail from '../../../../assets/art/m1/roads-v1/trail.png';
 import roadDirt from '../../../../assets/art/m1/roads-v1/dirt.png';
 import roadPaved from '../../../../assets/art/m1/roads-v1/paved.png';
 import worldWater from '../../../../assets/art/m1/world-v2/water.png';
-import worldDeciduous from '../../../../assets/art/m1/world-v2/deciduous.png';
-import worldConifer from '../../../../assets/art/m1/world-v2/conifer.png';
+import worldDeciduous from '../../../../assets/art/m1/trees-v1/deciduous.png';
+import worldConifer from '../../../../assets/art/m1/trees-v1/conifer.png';
 import groundGrass from '../../../../assets/art/m1/battle/ground-grass.png';
 import groundMud from '../../../../assets/art/m1/battle/ground-mud.png';
 import rubble from '../../../../assets/art/m1/battle/obstacle-rubble.png';
@@ -94,7 +94,11 @@ export const MAP_ART = {
     water: worldWater,
   },
   roads: { trail: roadTrail, dirt_road: roadDirt, paved_road: roadPaved },
-  trees: { deciduous: worldDeciduous, conifer: worldConifer },
+  // Measured source aspect/root pixels; provenance records the read-only alpha measurement.
+  trees: {
+    deciduous: { url: worldDeciduous, aspect: 1, rootX: 0.484645, foot: 0.869617 },
+    conifer: { url: worldConifer, aspect: 1, rootX: 0.555735, foot: 0.877592 },
+  },
   forest: forestClump,
   party: partyBanner,
 } as const;

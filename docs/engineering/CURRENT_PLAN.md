@@ -19,9 +19,26 @@ matching200. Board/hunts steady intervals14990–15002ms preserve15s polling.
 Both full local coverage attempts FAILED on two unchanged5s movement-field
 timeouts (620pass/2fail/46skip each); no gate or timeout change. Clean bootstrap,
 stress/migrations and full coverage are owned by current PR CI, NOT_RUN locally.
-GitHub owns actual publication/CI/merge state; delivery readback owns local main.
+[PR143](https://github.com/Vovanostm/warwrit/pull/143) owns actual publication,
+current-head CI/merge state and delivery readback of local main. Its initial
+`6e61314` publication met newer main `71bec87` (PR142); only this checkpoint
+conflicted. Both dated records are preserved; client fix source is unchanged.
 Full real-contract payment/restart/M1 acceptance remains NOT_RUN.
 No deployment or paid provisioning authorized.
+
+**Tree art rejected — 2026-10-04:** owner reports wrong orientation and flatness.
+5287 still serves the earlier primary renderer;5291 has the merged transform fixes,
+and exposed a separate tree-instance billboard inheritance defect. Independent critic revised
+tree-art angle/volume acceptance to CHANGES_REQUESTED. Terrain/route proof stays
+bounded and accepted. Correction uses two camera-matched ink tree sprites with
+explicit aspect/root pivots, checked beside towns and in a close/normal forest.
+Camera-matched replacement pair, explicit instance rotation and measured root
+pivots implemented in `codex/tree-projection` on `c47e770`; integrated stationary
+day/night close/overview independently accepted READY_WITH_LIMITS. GitHub owns
+[final PR checks and authorized integration](https://github.com/Vovanostm/warwrit/pulls?q=head%3Acodex%2Ftree-projection). New moving journey
+blocked by insufficient supplies and unavailable trading; NOT_RUN. Primary supplies
+writer/runtime and player DB remain untouched.
+[Diagnosis and correction boundary](../work-packages/M1-FREE-MOVEMENT.md#tree-art-rejection-and-diagnosis--2026-10-04).
 
 **World volume correction — 2026-10-04:** owner rejected PR140 as flat.
 Parent is sole writer in isolated `road-art-quality` checkout, new branch

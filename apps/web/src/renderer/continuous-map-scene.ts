@@ -76,11 +76,19 @@ export function mountContinuousMapScene(
     paved_road: createRoadMaterial(scene, 'paved_road', true),
   };
   createMapRoads(scene, region, roadMaterials, shoulderMaterials, heightAt);
-  const sprite = (name: string, url: string, size: number, foot = 1) => {
-    const mesh = MeshBuilder.CreatePlane(name, { size }, scene);
+  const sprite = (
+    name: string,
+    url: string,
+    size: number,
+    { foot = 1, aspect = 1, rootX = 0.5 } = {},
+  ) => {
+    const width = size * aspect;
+    const mesh = MeshBuilder.CreatePlane(name, { width, height: size }, scene);
     // Source art already includes projection. Rotate the whole plane toward the camera,
     // with its bottom pivot at the terrain contact instead of squashing it a second time.
-    mesh.bakeTransformIntoVertices(Matrix.Translation(0, size * (foot - 0.5), 0));
+    mesh.bakeTransformIntoVertices(
+      Matrix.Translation(width * (0.5 - rootX), size * (foot - 0.5), 0),
+    );
     mesh.billboardMode = Mesh.BILLBOARDMODE_ALL;
     const m = new StandardMaterial(name, scene),
       texture = new Texture(url, scene);
@@ -113,8 +121,8 @@ export function mountContinuousMapScene(
     markers.set(site.siteId, mesh);
   }
   const treeSources = [
-    sprite('deciduous-tree', MAP_ART.trees.deciduous, 1),
-    sprite('conifer-tree', MAP_ART.trees.conifer, 1),
+    sprite('deciduous-tree', MAP_ART.trees.deciduous.url, 1, MAP_ART.trees.deciduous),
+    sprite('conifer-tree', MAP_ART.trees.conifer.url, 1, MAP_ART.trees.conifer),
   ];
   for (const source of treeSources) {
     source.isVisible = false;
@@ -151,6 +159,8 @@ export function mountContinuousMapScene(
         continue;
       const type = wooded && (terrain.shapeId === 'eastern-pinewood' || seed % 4 === 0) ? 1 : 0;
       const tree = treeSources[type]!.createInstance(`tree:${column}:${row}`);
+      // Babylon instances copy transforms, but do not inherit the source billboard mode.
+      tree.billboardMode = Mesh.BILLBOARDMODE_ALL;
       const size = 0.42 + ((seed >>> 16) % 100) / 240;
       tree.scaling.set(size, size, size);
       tree.position.set(sceneFp(x), heightAt(sceneFp(x), sceneFp(z)), sceneFp(z));
@@ -160,7 +170,7 @@ export function mountContinuousMapScene(
     }
   }
   contacts.finish();
-  const banner = sprite('company-banner', MAP_ART.party, 0.72, 0.88);
+  const banner = sprite('company-banner', MAP_ART.party, 0.72, { foot: 0.88 });
   const partyRing = MeshBuilder.CreateTorus(
     'party-ground-ring',
     { diameter: 0.27, thickness: 0.035, tessellation: 24 },
