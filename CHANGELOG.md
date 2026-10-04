@@ -153,6 +153,14 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ### Changed
 
+- 2026-10-05, branch `codex/map-topology-experiments`, local committed:
+  integrated main `548837c` (PR147) with current trees and route visibility,
+  preserving both histories in three documentation conflicts. Navigation source
+  remains reviewed. Combined build/typecheck and normal desktop fixture
+  move/STOP/reload/reroute/arrival PASS with exact retained points; current-head
+  full PR CI and merge remain pending. No migrations, deployment or player-data reset.
+  [Owning integration results and limits](docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
+
 - 2026-10-05, branch `codex/map-topology-experiments`, local: final review fixes
   changed-code audit blockers by separating grid preparation and bounded exact
   shortcut selection and sharing the identical legacy span-duration rule in

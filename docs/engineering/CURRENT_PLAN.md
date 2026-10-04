@@ -12,7 +12,14 @@ changes and do not overwrite active writers during local-main integration.
 Independent source/revision reviews found no material defect. Current focused
 coverage 22/22, exact paths/durations in 202 comparisons and unchanged quality
 audit PASS. Earlier full/partial coverage timeouts remain FAILED history in the
-owning wiki. Final combined renderer journey and PR-head CI remain pending.
+owning wiki. Integrated current main `548837c` in `615c26e`; navigation source
+was unchanged and three documentation conflicts preserve both histories.
+Combined production build PASS. Fresh desktop fixture RMB/S/reload/reroute/
+arrival on 5316 gives three exact-point equalities and all HTTP200. The two
+short paths take 10.386279s and 4.391247s. Independent supplied-capture critique
+found no material regression in the short day-route slice. PR-head CI/merge
+are pending; GitHub owns subsequent publication/merge state. Fresh night,
+wider zoom/FPS/VM/full-M1 acceptance remains unproven.
 
 **Hex route optimization — 2026-10-05:** owner requested game-hex rationale and
 route optimization, then explicitly chose “Гексы: приоритет скорости поиска”
