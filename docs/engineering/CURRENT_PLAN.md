@@ -9,6 +9,16 @@ travel along the paved bend, pan to wooded hills, compare overview/close day/nig
 Mandatory independent critic compares approved ink/place references and actual
 journey before acceptance. [Owning correction](../work-packages/M1-FREE-MOVEMENT.md#world-volume-correction--2026-10-04).
 Primary living-place checkout and retained player database remain outside write scope.
+Current main `06b8555` is integrated; exact roads and living places are preserved.
+Shared relief/isometry/contacts, edge mist and moving-label clearance implemented.
+Source reviews fixed material defects; final independent playable critic returned
+READY_WITH_LIMITS for day/night overview/close and corrected moving-label contact.
+No remaining reproduced material defect in supplied views; full-game quality and
+subjective enjoyment are not measured. Clean
+bootstrap at `885e63f` PASSED618 checks/46skip,10000 battles,migrations/14DB checks.
+Focused7 checks,618-check coverage and normal audit pass. First bootstrap failed
+one unrelated FIRST HUNT DB scenario and remains historical FAILED.
+No merge or deployment has occurred for this correction.
 
 **Living-place integration authorized — 2026-10-04:** owner explicitly
 requested “fix conflicts, merge, update local main”, authorizing PR139 merge
