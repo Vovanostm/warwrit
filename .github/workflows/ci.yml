@@ -40,6 +40,10 @@ jobs:
       - name: Bootstrap and verify
         run: ./scripts/bootstrap.sh
 
+      - name: Measure unit-test coverage for the audit
+        if: github.event_name == 'pull_request'
+        run: pnpm test:coverage --maxWorkers=2
+
       - name: Reject quality regressions in changed files
         if: github.event_name == 'pull_request'
         env:
