@@ -37,7 +37,8 @@
     "test:unit": "vitest run",
     "typecheck": "pnpm -r --if-present run typecheck",
     "validate:content": "node scripts/validate-content.mjs",
-    "verify": "pnpm format && pnpm lint && pnpm check:architecture && pnpm check:dead-code && pnpm check:patterns && pnpm validate:content && pnpm build && pnpm typecheck && pnpm test:unit"
+    "verify": "pnpm format && pnpm lint && pnpm check:architecture && pnpm check:dead-code && pnpm check:patterns && pnpm validate:content && pnpm build && pnpm typecheck && pnpm test:unit",
+    "experiment:navigation": "tsx scripts/navigation-topology-experiment.ts"
   },
   "devDependencies": {
     "@ast-grep/cli": "0.45.3",

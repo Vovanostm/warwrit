@@ -1,0 +1,3653 @@
+{
+  "base": "bcc30f5eed48240149cb711ec27a1a096e5c1279",
+  "runtime": "v24.20.0",
+  "cpu": "Apple M3 Pro",
+  "mapEdition": "seroe-porechye-continuous-v5",
+  "seed": 20261004,
+  "rounds": 3,
+  "method": "101 identical directed cases, warmup per variant, sequential interleaved variant order rotated each round; search only timed, plan compilation outside timing; builds measured once; host load not isolated; no target-server capacity claim",
+  "summaries": [
+    {
+      "variant": "baseline-square",
+      "buildMs": 1243.975958,
+      "nodes": 49152,
+      "roadNodes": 131,
+      "attempts": 303,
+      "paths": 297,
+      "blockedGoals": 6,
+      "unreachable": 0,
+      "p50Ms": 79.03874999999971,
+      "p95Ms": 175.964833,
+      "maxMs": 707.9643340000002,
+      "identicalPaths": 297,
+      "meanDurationDelta": 0,
+      "worstDurationDelta": 0,
+      "bestDurationDelta": 0,
+      "deterministic": true
+    },
+    {
+      "variant": "optimized-square",
+      "buildMs": 1214.444208,
+      "nodes": 49152,
+      "roadNodes": 131,
+      "attempts": 303,
+      "paths": 297,
+      "blockedGoals": 6,
+      "unreachable": 0,
+      "p50Ms": 21.456500000000233,
+      "p95Ms": 100.09437500000058,
+      "maxMs": 169.45670900000005,
+      "identicalPaths": 297,
+      "meanDurationDelta": 0,
+      "worstDurationDelta": 0,
+      "bestDurationDelta": 0,
+      "deterministic": true
+    },
+    {
+      "variant": "hex",
+      "buildMs": 1167.0953339999996,
+      "nodes": 47705,
+      "roadNodes": 131,
+      "attempts": 303,
+      "paths": 297,
+      "blockedGoals": 6,
+      "unreachable": 0,
+      "p50Ms": 18.63816599999882,
+      "p95Ms": 90.96054200000071,
+      "maxMs": 302.7543749999995,
+      "identicalPaths": 51,
+      "meanDurationDelta": 0.013241414944439388,
+      "worstDurationDelta": 0.09319334852828698,
+      "bestDurationDelta": -0.045212627683228535,
+      "deterministic": true
+    }
+  ],
+  "cases": [
+    {
+      "index": 0,
+      "kind": "site",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "41741392",
+          "pointCount": 4,
+          "roadUs": 41741392,
+          "searchMs": [8.143167000000176, 12.954874999999447, 27.423875000000407]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "41741392",
+          "pointCount": 4,
+          "roadUs": 41741392,
+          "searchMs": [4.072584000000006, 6.053166999998211, 8.375583000000915]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "41736234",
+          "pointCount": 4,
+          "roadUs": 41736234,
+          "searchMs": [4.703209000000243, 5.217041999996582, 6.533917000000656]
+        }
+      }
+    },
+    {
+      "index": 1,
+      "kind": "site",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "65199176",
+          "pointCount": 6,
+          "roadUs": 65199176,
+          "searchMs": [18.763374999999996, 46.12433400000009, 50.84454199999891]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "65199176",
+          "pointCount": 6,
+          "roadUs": 65199176,
+          "searchMs": [12.402042000000165, 12.612499999999272, 20.245208000000275]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "65375486",
+          "pointCount": 6,
+          "roadUs": 65375486,
+          "searchMs": [11.585500000000138, 10.92725000000064, 24.936792000000423]
+        }
+      }
+    },
+    {
+      "index": 2,
+      "kind": "site",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "68516066",
+          "pointCount": 8,
+          "roadUs": 68516066,
+          "searchMs": [17.45724999999993, 33.50237500000003, 48.70074999999633]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "68516066",
+          "pointCount": 8,
+          "roadUs": 68516066,
+          "searchMs": [15.887750000000324, 11.390791999998328, 30.103792000001704]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "69139907",
+          "pointCount": 6,
+          "roadUs": 69139907,
+          "searchMs": [13.330458000000363, 9.596165999999357, 18.52950000000419]
+        }
+      }
+    },
+    {
+      "index": 3,
+      "kind": "site",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "96724221",
+          "pointCount": 5,
+          "roadUs": 53044907,
+          "searchMs": [44.057124999999814, 49.72370800000135, 86.99812499999825]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "96724221",
+          "pointCount": 5,
+          "roadUs": 53044907,
+          "searchMs": [10.423999999999978, 15.921708000001672, 12.000542000001587]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "101998813",
+          "pointCount": 3,
+          "roadUs": 26855822,
+          "searchMs": [6.244832999999744, 7.652249999999185, 14.58783399999811]
+        }
+      }
+    },
+    {
+      "index": 4,
+      "kind": "site",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "41867373",
+          "pointCount": 3,
+          "roadUs": 41867373,
+          "searchMs": [8.751125000000684, 10.484375, 17.397417000000132]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "41867373",
+          "pointCount": 3,
+          "roadUs": 41867373,
+          "searchMs": [3.809374999999818, 4.932541999998648, 5.203208000006271]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "41700487",
+          "pointCount": 3,
+          "roadUs": 41700487,
+          "searchMs": [2.602332999999817, 2.5588750000024447, 4.6447079999998095]
+        }
+      }
+    },
+    {
+      "index": 5,
+      "kind": "site",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "106803581",
+          "pointCount": 8,
+          "roadUs": 106803581,
+          "searchMs": [47.475916000000325, 60.195416999999, 93.3371660000048]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "106803581",
+          "pointCount": 8,
+          "roadUs": 106803581,
+          "searchMs": [18.2465830000001, 19.535334000000148, 38.34995899999922]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "107039082",
+          "pointCount": 5,
+          "roadUs": 107039082,
+          "searchMs": [14.510874999999942, 16.90124999999898, 42.36850000000413]
+        }
+      }
+    },
+    {
+      "index": 6,
+      "kind": "site",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "109286562",
+          "pointCount": 10,
+          "roadUs": 109286562,
+          "searchMs": [37.47691699999996, 56.725500000000466, 105.59504200000083]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "109286562",
+          "pointCount": 10,
+          "roadUs": 109286562,
+          "searchMs": [19.599834000000556, 21.198707999999897, 54.61779100000422]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "110464892",
+          "pointCount": 8,
+          "roadUs": 110464892,
+          "searchMs": [15.249791000000187, 17.950292000001355, 32.21870900000067]
+        }
+      }
+    },
+    {
+      "index": 7,
+      "kind": "site",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "138052102",
+          "pointCount": 6,
+          "roadUs": 94372788,
+          "searchMs": [45.93870799999968, 56.07829099999799, 85.93179199999577]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "138052102",
+          "pointCount": 6,
+          "roadUs": 94372788,
+          "searchMs": [13.260874999999942, 14.807875000002241, 29.13224999999511]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "143334759",
+          "pointCount": 4,
+          "roadUs": 74044253,
+          "searchMs": [11.158374999999978, 11.975875000000087, 20.76958399999421]
+        }
+      }
+    },
+    {
+      "index": 8,
+      "kind": "site",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "65420189",
+          "pointCount": 4,
+          "roadUs": 65420189,
+          "searchMs": [29.22083400000065, 31.354875000000902, 46.28558300000441]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "65420189",
+          "pointCount": 4,
+          "roadUs": 65420189,
+          "searchMs": [5.1727499999997235, 6.4837919999990845, 8.590083000002778]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "65420189",
+          "pointCount": 4,
+          "roadUs": 65420189,
+          "searchMs": [6.484459000000243, 6.038790999999037, 12.035000000003492]
+        }
+      }
+    },
+    {
+      "index": 9,
+      "kind": "site",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "106973211",
+          "pointCount": 6,
+          "roadUs": 106973211,
+          "searchMs": [51.235625000000255, 54.54766600000221, 69.78987500000221]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "106973211",
+          "pointCount": 6,
+          "roadUs": 106973211,
+          "searchMs": [14.873750000000655, 15.0970419999976, 21.77625000000262]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "107039082",
+          "pointCount": 5,
+          "roadUs": 107039082,
+          "searchMs": [12.313833000000159, 13.233292000000802, 16.030291000002762]
+        }
+      }
+    },
+    {
+      "index": 10,
+      "kind": "site",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "82714549",
+          "pointCount": 2,
+          "roadUs": 2910104,
+          "searchMs": [18.291167000000314, 22.989458000000013, 29.224667000002228]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "82714549",
+          "pointCount": 2,
+          "roadUs": 2910104,
+          "searchMs": [2.1731669999999212, 5.13983300000109, 2.449458000002778]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "82714549",
+          "pointCount": 2,
+          "roadUs": 2910104,
+          "searchMs": [1.867207999999664, 2.2193330000009155, 2.2342500000013388]
+        }
+      }
+    },
+    {
+      "index": 11,
+      "kind": "site",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "99805928",
+          "pointCount": 8,
+          "roadUs": 99805928,
+          "searchMs": [45.58954199999971, 49.057709000000614, 88.94058300000324]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "99805928",
+          "pointCount": 8,
+          "roadUs": 99805928,
+          "searchMs": [18.03874999999971, 17.95916700000089, 23.698333000000275]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "100439470",
+          "pointCount": 7,
+          "roadUs": 98630868,
+          "searchMs": [15.558750000000146, 14.262790999997378, 24.926165999997465]
+        }
+      }
+    },
+    {
+      "index": 12,
+      "kind": "site",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "68595587",
+          "pointCount": 8,
+          "roadUs": 68595587,
+          "searchMs": [20.62720900000022, 40.87920899999881, 32.33233299999847]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "68595587",
+          "pointCount": 8,
+          "roadUs": 68595587,
+          "searchMs": [10.222082999999657, 10.22679099999732, 16.399666999997862]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "69300519",
+          "pointCount": 6,
+          "roadUs": 69300519,
+          "searchMs": [7.993458000000828, 8.74433300000237, 12.589833000005456]
+        }
+      }
+    },
+    {
+      "index": 13,
+      "kind": "site",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "109605054",
+          "pointCount": 10,
+          "roadUs": 109605054,
+          "searchMs": [39.744666999999936, 54.824791999999434, 74.82379100000253]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "109605054",
+          "pointCount": 10,
+          "roadUs": 109605054,
+          "searchMs": [19.726458000000093, 39.13691699999981, 46.38683300000412]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "110585704",
+          "pointCount": 9,
+          "roadUs": 110585704,
+          "searchMs": [16.547166999999718, 22.604458000001614, 32.667333999997936]
+        }
+      }
+    },
+    {
+      "index": 14,
+      "kind": "site",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "82714549",
+          "pointCount": 2,
+          "roadUs": 2910104,
+          "searchMs": [8.753333000000566, 9.675500000001193, 10.022166999995534]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "82714549",
+          "pointCount": 2,
+          "roadUs": 2910104,
+          "searchMs": [2.0991659999999683, 2.763082999998005, 5.867167000003974]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "82714549",
+          "pointCount": 2,
+          "roadUs": 2910104,
+          "searchMs": [2.836500000000342, 2.3774999999986903, 5.770167000002402]
+        }
+      }
+    },
+    {
+      "index": 15,
+      "kind": "site",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "148050281",
+          "pointCount": 8,
+          "roadUs": 87782345,
+          "searchMs": [65.88133299999936, 88.28141699999833, 99.51737500000309]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "148050281",
+          "pointCount": 8,
+          "roadUs": 87782345,
+          "searchMs": [19.446875000000546, 25.596874999999272, 32.131833000006736]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "148266955",
+          "pointCount": 7,
+          "roadUs": 90921745,
+          "searchMs": [18.468292000000474, 32.236290999997436, 23.529042000001937]
+        }
+      }
+    },
+    {
+      "index": 16,
+      "kind": "site",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "96367663",
+          "pointCount": 5,
+          "roadUs": 47127105,
+          "searchMs": [21.255874999999833, 24.291958000001614, 44.540750000000116]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "96367663",
+          "pointCount": 5,
+          "roadUs": 47127105,
+          "searchMs": [6.65008299999954, 9.683499999999185, 11.133125000000291]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "101468402",
+          "pointCount": 3,
+          "roadUs": 39992588,
+          "searchMs": [4.097542000000431, 6.537124999998923, 6.1600000000034925]
+        }
+      }
+    },
+    {
+      "index": 17,
+      "kind": "site",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "138448849",
+          "pointCount": 6,
+          "roadUs": 88194222,
+          "searchMs": [41.39770800000042, 47.661792000002606, 70.15841699999874]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "138448849",
+          "pointCount": 6,
+          "roadUs": 88194222,
+          "searchMs": [15.958958000000166, 26.858499999998457, 25.014750000002095]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "143087295",
+          "pointCount": 4,
+          "roadUs": 81611481,
+          "searchMs": [8.573957999999948, 15.80370799999946, 12.711582999996608]
+        }
+      }
+    },
+    {
+      "index": 18,
+      "kind": "site",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "100110100",
+          "pointCount": 8,
+          "roadUs": 100110100,
+          "searchMs": [35.61958400000003, 31.619833000000654, 51.980374999999185]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "100110100",
+          "pointCount": 8,
+          "roadUs": 100110100,
+          "searchMs": [13.187542000000576, 14.016292000000249, 20.89533400000073]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "100269740",
+          "pointCount": 7,
+          "roadUs": 100269740,
+          "searchMs": [11.233541999999943, 10.406167000001005, 22.1470829999962]
+        }
+      }
+    },
+    {
+      "index": 19,
+      "kind": "site",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "148217515",
+          "pointCount": 8,
+          "roadUs": 84211528,
+          "searchMs": [51.95749999999953, 53.766708000002836, 69.95308300000033]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "148217515",
+          "pointCount": 8,
+          "roadUs": 84211528,
+          "searchMs": [18.534208999999464, 20.19391700000051, 28.343916999998328]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "147240290",
+          "pointCount": 7,
+          "roadUs": 98455581,
+          "searchMs": [20.537332999999308, 20.951708000000508, 30.652000000001863]
+        }
+      }
+    },
+    {
+      "index": 20,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -5954,
+        "zFp": 4775
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "414341313",
+          "pointCount": 4,
+          "roadUs": 1517248,
+          "searchMs": [74.78091700000004, 88.171666000002, 93.81729199999972]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "414341313",
+          "pointCount": 4,
+          "roadUs": 1517248,
+          "searchMs": [29.815582999999606, 29.962166999997862, 39.29779199999757]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "402688162",
+          "pointCount": 5,
+          "roadUs": 1520487,
+          "searchMs": [29.689250000000357, 39.97574999999779, 33.96750000000611]
+        }
+      }
+    },
+    {
+      "index": 21,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 5493,
+        "zFp": 2768
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "347081806",
+          "pointCount": 10,
+          "roadUs": 92222354,
+          "searchMs": [100.43433300000015, 107.78833400000076, 114.9030000000057]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "347081806",
+          "pointCount": 10,
+          "roadUs": 92222354,
+          "searchMs": [51.497041999999965, 62.62120800000048, 61.38216600000305]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "368941434",
+          "pointCount": 5,
+          "roadUs": 58026954,
+          "searchMs": [39.146874999999454, 41.16441599999962, 67.10766699999658]
+        }
+      }
+    },
+    {
+      "index": 22,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 1234,
+        "zFp": 5461
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "276729455",
+          "pointCount": 7,
+          "roadUs": 64291008,
+          "searchMs": [111.78608299999996, 118.70241700000042, 109.82112500000221]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "276729455",
+          "pointCount": 7,
+          "roadUs": 64291008,
+          "searchMs": [48.6123749999997, 47.497207999997045, 51.22687500000029]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "292017580",
+          "pointCount": 6,
+          "roadUs": 57231702,
+          "searchMs": [41.4873749999997, 50.021333000000595, 44.565958999999566]
+        }
+      }
+    },
+    {
+      "index": 23,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": -2855,
+        "zFp": 5107
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "328094578",
+          "pointCount": 6,
+          "roadUs": 50486562,
+          "searchMs": [86.59720799999923, 129.25016700000197, 96.79083299999911]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "328094578",
+          "pointCount": 6,
+          "roadUs": 50486562,
+          "searchMs": [36.63579100000061, 54.59675000000061, 53.1517079999976]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "313260560",
+          "pointCount": 7,
+          "roadUs": 71016017,
+          "searchMs": [51.63433299999997, 92.37108300000182, 55.65670900000259]
+        }
+      }
+    },
+    {
+      "index": 24,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 7127,
+        "zFp": 1712
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "259548331",
+          "pointCount": 6,
+          "roadUs": 1267941,
+          "searchMs": [49.43379199999981, 66.32004199999938, 62.34599999999773]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "259548331",
+          "pointCount": 6,
+          "roadUs": 1267941,
+          "searchMs": [11.53545800000029, 17.002166999998735, 10.657334000003175]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "271800523",
+          "pointCount": 7,
+          "roadUs": 1280995,
+          "searchMs": [10.392542000000503, 13.056916000001365, 11.462665999999444]
+        }
+      }
+    },
+    {
+      "index": 25,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -4300,
+        "zFp": 5118
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "308133622",
+          "pointCount": 4,
+          "roadUs": 1517248,
+          "searchMs": [64.148459, 90.82170800000313, 65.00254199999472]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "308133622",
+          "pointCount": 4,
+          "roadUs": 1517248,
+          "searchMs": [16.640207999999802, 21.456500000000233, 15.326332999997248]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "298953548",
+          "pointCount": 5,
+          "roadUs": 1520487,
+          "searchMs": [18.880959000000075, 21.57391600000119, 17.663790999999037]
+        }
+      }
+    },
+    {
+      "index": 26,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 5057,
+        "zFp": 5176
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "418375401",
+          "pointCount": 8,
+          "roadUs": 31411165,
+          "searchMs": [84.04783299999963, 102.21754099999816, 87.28600000000006]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "418375401",
+          "pointCount": 8,
+          "roadUs": 31411165,
+          "searchMs": [37.59687500000018, 54.92791700000089, 35.97699999999895]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "428324785",
+          "pointCount": 5,
+          "roadUs": 31429222,
+          "searchMs": [36.764625000000706, 48.517500000001746, 32.64033300000301]
+        }
+      }
+    },
+    {
+      "index": 27,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 7443,
+        "zFp": 1221
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "231161512",
+          "pointCount": 3,
+          "roadUs": 1827875,
+          "searchMs": [57.61145899999974, 91.76275000000169, 54.23833300000115]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "231161512",
+          "pointCount": 3,
+          "roadUs": 1827875,
+          "searchMs": [10.288958000000093, 13.18620799999917, 10.140375000002678]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "235526740",
+          "pointCount": 3,
+          "roadUs": 1831624,
+          "searchMs": [11.002582999999504, 14.23949999999968, 10.784458000001905]
+        }
+      }
+    },
+    {
+      "index": 28,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 434,
+        "zFp": -4957
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "108912463",
+          "pointCount": 2,
+          "roadUs": 1520246,
+          "searchMs": [5.816250000000764, 10.668375000001106, 6.371166999997513]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "108912463",
+          "pointCount": 2,
+          "roadUs": 1520246,
+          "searchMs": [2.5297920000002705, 4.651832999999897, 1.9116670000003069]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "108912463",
+          "pointCount": 2,
+          "roadUs": 1520246,
+          "searchMs": [1.7661250000001019, 3.11516599999959, 1.5867090000028838]
+        }
+      }
+    },
+    {
+      "index": 29,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 7877,
+        "zFp": -553
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "280278017",
+          "pointCount": 4,
+          "roadUs": 1267785,
+          "searchMs": [56.447832999999264, 116.36275000000023, 58.003583000005165]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "280278017",
+          "pointCount": 4,
+          "roadUs": 1267785,
+          "searchMs": [11.17016700000022, 26.28441699999894, 11.324790999999095]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "290015706",
+          "pointCount": 5,
+          "roadUs": 1277047,
+          "searchMs": [12.756209000000126, 30.24987500000134, 11.246375000002445]
+        }
+      }
+    },
+    {
+      "index": 30,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -2581,
+        "zFp": 241
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "125431538",
+          "pointCount": 2,
+          "roadUs": 8414100,
+          "searchMs": [25.379832999999962, 42.46387499999764, 26.385708000001614]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "125431538",
+          "pointCount": 2,
+          "roadUs": 8414100,
+          "searchMs": [3.4037920000000668, 5.266999999999825, 4.181249999994179]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "125431538",
+          "pointCount": 2,
+          "roadUs": 8414100,
+          "searchMs": [4.52350000000024, 5.319333000003098, 3.5365420000016456]
+        }
+      }
+    },
+    {
+      "index": 31,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 4738,
+        "zFp": -2940
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "277803836",
+          "pointCount": 10,
+          "roadUs": 87129821,
+          "searchMs": [87.77820900000006, 198.98033299999952, 96.74795900000026]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "277803836",
+          "pointCount": 10,
+          "roadUs": 87129821,
+          "searchMs": [44.94129100000009, 64.85762500000055, 43.286207999997714]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "277257747",
+          "pointCount": 10,
+          "roadUs": 108235286,
+          "searchMs": [37.55537499999991, 85.45883400000093, 44.68695799999841]
+        }
+      }
+    },
+    {
+      "index": 32,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -625,
+        "zFp": -5188
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "227030048",
+          "pointCount": 2,
+          "roadUs": 4791692,
+          "searchMs": [54.24541700000009, 103.97591699999975, 58.61787500000355]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "227030048",
+          "pointCount": 2,
+          "roadUs": 4791692,
+          "searchMs": [8.660707999999431, 21.5190419999999, 7.923374999998487]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "223814022",
+          "pointCount": 4,
+          "roadUs": 10711726,
+          "searchMs": [14.229583999999704, 32.13262499999837, 14.287125000002561]
+        }
+      }
+    },
+    {
+      "index": 33,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 4240,
+        "zFp": 4948
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "blocked-goal",
+          "durationUs": null,
+          "pointCount": 0,
+          "roadUs": null,
+          "searchMs": [0.0465409999997064, 0.018583000000944594, 0.02308400000038091]
+        },
+        "optimized-square": {
+          "outcome": "blocked-goal",
+          "durationUs": null,
+          "pointCount": 0,
+          "roadUs": null,
+          "searchMs": [0.03895799999918381, 0.05270800000289455, 0.00591599999461323]
+        },
+        "hex": {
+          "outcome": "blocked-goal",
+          "durationUs": null,
+          "pointCount": 0,
+          "roadUs": null,
+          "searchMs": [0.04862499999944703, 0.01900000000023283, 0.014250000000174623]
+        }
+      }
+    },
+    {
+      "index": 34,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -3740,
+        "zFp": 1442
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "341461252",
+          "pointCount": 5,
+          "roadUs": 1815254,
+          "searchMs": [75.78512500000033, 124.1372080000001, 73.27616699999635]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "341461252",
+          "pointCount": 5,
+          "roadUs": 1815254,
+          "searchMs": [18.311999999999898, 42.50929199999882, 17.47733299999527]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "341753870",
+          "pointCount": 4,
+          "roadUs": 1818951,
+          "searchMs": [17.023791999999958, 25.203125, 21.376875000001746]
+        }
+      }
+    },
+    {
+      "index": 35,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 7925,
+        "zFp": -2391
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "349210900",
+          "pointCount": 8,
+          "roadUs": 46359325,
+          "searchMs": [94.96279200000026, 148.6139579999981, 100.84020800000144]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "349210900",
+          "pointCount": 8,
+          "roadUs": 46359325,
+          "searchMs": [46.075292000000445, 71.51808299999902, 55.362708000000566]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "347094665",
+          "pointCount": 12,
+          "roadUs": 66569778,
+          "searchMs": [82.06687500000044, 100.86791699999958, 82.04891700000007]
+        }
+      }
+    },
+    {
+      "index": 36,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 7458,
+        "zFp": 2795
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "394977279",
+          "pointCount": 11,
+          "roadUs": 92678529,
+          "searchMs": [136.04799999999977, 160.70879199999763, 133.03558399999747]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "394977279",
+          "pointCount": 11,
+          "roadUs": 92678529,
+          "searchMs": [104.95308300000033, 111.37262499999997, 97.37758400000166]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "410447019",
+          "pointCount": 5,
+          "roadUs": 47806717,
+          "searchMs": [51.668791000000056, 50.79958400000032, 42.39829200000531]
+        }
+      }
+    },
+    {
+      "index": 37,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -746,
+        "zFp": -5245
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "231407453",
+          "pointCount": 3,
+          "roadUs": 4760845,
+          "searchMs": [173.1885000000002, 73.015625, 66.9249159999963]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "231407453",
+          "pointCount": 3,
+          "roadUs": 4760845,
+          "searchMs": [29.563208000000486, 11.434582999998383, 12.97858300000371]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "229740880",
+          "pointCount": 3,
+          "roadUs": 9081505,
+          "searchMs": [28.72412500000064, 15.064582999999402, 11.848792000004323]
+        }
+      }
+    },
+    {
+      "index": 38,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 2406,
+        "zFp": 5830
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "355578887",
+          "pointCount": 9,
+          "roadUs": 56495382,
+          "searchMs": [318.1140839999998, 197.12670900000012, 166.71375000000262]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "355578887",
+          "pointCount": 9,
+          "roadUs": 56495382,
+          "searchMs": [119.46212500000001, 99.85712499999863, 99.80625000000146]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "366480670",
+          "pointCount": 9,
+          "roadUs": 54315477,
+          "searchMs": [302.7543749999995, 113.1820829999997, 98.26379199999792]
+        }
+      }
+    },
+    {
+      "index": 39,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 5593,
+        "zFp": 2980
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "269018977",
+          "pointCount": 5,
+          "roadUs": 1267941,
+          "searchMs": [259.83937499999956, 73.56970899999942, 68.15058300000237]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "269018977",
+          "pointCount": 5,
+          "roadUs": 1267941,
+          "searchMs": [27.599167000000307, 19.028582999999344, 15.193665999999212]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "288179162",
+          "pointCount": 4,
+          "roadUs": 1281624,
+          "searchMs": [43.245333999999275, 12.393917000001238, 14.815207999999984]
+        }
+      }
+    },
+    {
+      "index": 40,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -1624,
+        "zFp": 5610
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "241734596",
+          "pointCount": 2,
+          "roadUs": 1612566,
+          "searchMs": [707.9643340000002, 78.96674999999959, 60.63762500000303]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "241734596",
+          "pointCount": 2,
+          "roadUs": 1612566,
+          "searchMs": [27.7554999999993, 10.33941600000253, 8.790166999999201]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "241734596",
+          "pointCount": 2,
+          "roadUs": 1612566,
+          "searchMs": [11.979416000000128, 11.290290999997524, 8.270750000003318]
+        }
+      }
+    },
+    {
+      "index": 41,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -4900,
+        "zFp": 5886
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "363738341",
+          "pointCount": 6,
+          "roadUs": 16169665,
+          "searchMs": [134.7752500000006, 159.18149999999878, 91.43274999999994]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "363738341",
+          "pointCount": 6,
+          "roadUs": 16169665,
+          "searchMs": [44.33820800000103, 38.17449999999735, 26.594082999996317]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "377379262",
+          "pointCount": 6,
+          "roadUs": 29422104,
+          "searchMs": [38.66412500000115, 35.84083299999838, 29.609541000005265]
+        }
+      }
+    },
+    {
+      "index": 42,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 6313,
+        "zFp": -831
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "288316498",
+          "pointCount": 6,
+          "roadUs": 1827875,
+          "searchMs": [102.5051250000015, 125.0783330000013, 70.77208300000348]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "288316498",
+          "pointCount": 6,
+          "roadUs": 1827875,
+          "searchMs": [25.869833000000654, 30.710084000002098, 22.13350000000355]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "290304495",
+          "pointCount": 5,
+          "roadUs": 1831624,
+          "searchMs": [23.605625000000146, 28.814750000001368, 22.886292000002868]
+        }
+      }
+    },
+    {
+      "index": 43,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": -3561,
+        "zFp": 1309
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "299182330",
+          "pointCount": 6,
+          "roadUs": 51538870,
+          "searchMs": [107.84645799999998, 153.7540829999998, 84.11979200000496]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "299182330",
+          "pointCount": 6,
+          "roadUs": 51538870,
+          "searchMs": [48.615499999999884, 45.19041599999764, 36.15299999999843]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "308314856",
+          "pointCount": 5,
+          "roadUs": 42108516,
+          "searchMs": [42.88824999999997, 41.42537500000253, 27.956333000001905]
+        }
+      }
+    },
+    {
+      "index": 44,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -1072,
+        "zFp": 4024
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "159769373",
+          "pointCount": 2,
+          "roadUs": 1271769,
+          "searchMs": [26.441249999999854, 27.42320800000016, 14.619792000004963]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "159769373",
+          "pointCount": 2,
+          "roadUs": 1271769,
+          "searchMs": [7.866249999999127, 5.423999999999069, 3.4043749999982538]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "159769373",
+          "pointCount": 2,
+          "roadUs": 1271769,
+          "searchMs": [24.619416999999885, 6.282583000000159, 3.118750000001455]
+        }
+      }
+    },
+    {
+      "index": 45,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -1734,
+        "zFp": 3723
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "169587467",
+          "pointCount": 2,
+          "roadUs": 1537717,
+          "searchMs": [71.7726249999996, 80.12266699999964, 47.656667000002926]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "169587467",
+          "pointCount": 2,
+          "roadUs": 1537717,
+          "searchMs": [9.013583999998446, 8.07208399999945, 4.915750000000116]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "169587467",
+          "pointCount": 2,
+          "roadUs": 1537717,
+          "searchMs": [6.526084000000992, 8.468832999998995, 5.925750000002154]
+        }
+      }
+    },
+    {
+      "index": 46,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -7495,
+        "zFp": 732
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "372050497",
+          "pointCount": 2,
+          "roadUs": 1675278,
+          "searchMs": [92.69904099999985, 90.79616700000042, 77.093541000002]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "372050497",
+          "pointCount": 2,
+          "roadUs": 1675278,
+          "searchMs": [25.462459000000308, 26.527125000000524, 17.51249999999709]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "372050497",
+          "pointCount": 2,
+          "roadUs": 1675278,
+          "searchMs": [18.63816599999882, 22.014999999999418, 14.399708999997529]
+        }
+      }
+    },
+    {
+      "index": 47,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -7371,
+        "zFp": 2752
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "519650204",
+          "pointCount": 4,
+          "roadUs": 50521906,
+          "searchMs": [113.5786250000001, 119.74445899999773, 123.93562500000553]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "519650204",
+          "pointCount": 4,
+          "roadUs": 50521906,
+          "searchMs": [56.72187499999927, 67.94929200000115, 71.41029200000048]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "524375704",
+          "pointCount": 4,
+          "roadUs": 50918249,
+          "searchMs": [58.26979199999914, 63.423917000000074, 63.83337500000198]
+        }
+      }
+    },
+    {
+      "index": 48,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 1072,
+        "zFp": 748
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "113533782",
+          "pointCount": 8,
+          "roadUs": 67015252,
+          "searchMs": [55.595666999999594, 70.84524999999849, 60.9552079999994]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "113533782",
+          "pointCount": 8,
+          "roadUs": 67015252,
+          "searchMs": [20.015917000000627, 18.20433299999786, 18.529540999996243]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "114418689",
+          "pointCount": 6,
+          "roadUs": 65742247,
+          "searchMs": [24.85966600000029, 14.471541000002617, 14.858582999993814]
+        }
+      }
+    },
+    {
+      "index": 49,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -7428,
+        "zFp": -5710
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "503280337",
+          "pointCount": 7,
+          "roadUs": 50374413,
+          "searchMs": [252.00108399999954, 161.6768340000017, 153.8666249999951]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "503280337",
+          "pointCount": 7,
+          "roadUs": 50374413,
+          "searchMs": [112.68879200000083, 115.15629099999933, 113.16216699999495]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "529256059",
+          "pointCount": 3,
+          "roadUs": 44193637,
+          "searchMs": [50.283417000000554, 53.12716700000237, 45.732332999999926]
+        }
+      }
+    },
+    {
+      "index": 50,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -7036,
+        "zFp": -2027
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "413532915",
+          "pointCount": 6,
+          "roadUs": 42861466,
+          "searchMs": [127.3370419999992, 137.47391699999935, 88.79166699999769]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "413532915",
+          "pointCount": 6,
+          "roadUs": 42861466,
+          "searchMs": [48.38195799999994, 48.77533299999777, 39.73562499999389]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "420725335",
+          "pointCount": 6,
+          "roadUs": 43151002,
+          "searchMs": [56.48112500000025, 55.27625000000262, 43.136124999997264]
+        }
+      }
+    },
+    {
+      "index": 51,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 90,
+        "zFp": 5701
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "285893601",
+          "pointCount": 3,
+          "roadUs": 30002842,
+          "searchMs": [107.43304200000057, 103.69374999999854, 84.8660830000008]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "285893601",
+          "pointCount": 3,
+          "roadUs": 30002842,
+          "searchMs": [31.14129200000025, 20.180083999999624, 15.57245800000237]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "312536983",
+          "pointCount": 2,
+          "roadUs": 2189897,
+          "searchMs": [14.573875000000044, 17.9129580000008, 10.567416999998386]
+        }
+      }
+    },
+    {
+      "index": 52,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 6549,
+        "zFp": 291
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "185498713",
+          "pointCount": 4,
+          "roadUs": 1827875,
+          "searchMs": [72.58274999999958, 72.24504199999865, 45.973541999999725]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "185498713",
+          "pointCount": 4,
+          "roadUs": 1827875,
+          "searchMs": [15.50483400000121, 15.77112500000294, 11.068624999999884]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "191322672",
+          "pointCount": 4,
+          "roadUs": 1831624,
+          "searchMs": [12.503499999998894, 16.071458000002167, 8.953041000000667]
+        }
+      }
+    },
+    {
+      "index": 53,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 3171,
+        "zFp": -5581
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "156926870",
+          "pointCount": 2,
+          "roadUs": 1549128,
+          "searchMs": [13.368375000000015, 16.18237500000032, 11.691291999995883]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "156926870",
+          "pointCount": 2,
+          "roadUs": 1549128,
+          "searchMs": [6.609166999998706, 6.992582999999286, 3.649541999999201]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "156926870",
+          "pointCount": 2,
+          "roadUs": 1549128,
+          "searchMs": [4.223833000000013, 4.949792000003072, 3.847249999998894]
+        }
+      }
+    },
+    {
+      "index": 54,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -927,
+        "zFp": -4074
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "252475110",
+          "pointCount": 3,
+          "roadUs": 46599268,
+          "searchMs": [120.68566699999974, 135.55704100000003, 91.01075000000128]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "252475110",
+          "pointCount": 3,
+          "roadUs": 46599268,
+          "searchMs": [24.50012500000048, 28.388417000001937, 26.290790999999444]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "249129634",
+          "pointCount": 7,
+          "roadUs": 71902244,
+          "searchMs": [44.99675000000025, 51.54512500000055, 38.37825000000157]
+        }
+      }
+    },
+    {
+      "index": 55,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 1031,
+        "zFp": -2711
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "75576086",
+          "pointCount": 8,
+          "roadUs": 62164050,
+          "searchMs": [45.54804200000035, 41.61699999999837, 41.96925000000192]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "75576086",
+          "pointCount": 8,
+          "roadUs": 62164050,
+          "searchMs": [31.531832999999097, 13.39929199999824, 13.302000000003318]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "76675126",
+          "pointCount": 6,
+          "roadUs": 60649187,
+          "searchMs": [17.046040999999605, 11.067707999998674, 13.202208000002429]
+        }
+      }
+    },
+    {
+      "index": 56,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 99,
+        "zFp": 5727
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "287264240",
+          "pointCount": 3,
+          "roadUs": 30005497,
+          "searchMs": [112.3588749999999, 78.08875000000262, 113.41462499999761]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "287264240",
+          "pointCount": 3,
+          "roadUs": 30005497,
+          "searchMs": [31.93108299999949, 17.2554999999993, 22.726290999999037]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "313861318",
+          "pointCount": 2,
+          "roadUs": 2190964,
+          "searchMs": [19.849291999998968, 11.676625000000058, 12.429292000000714]
+        }
+      }
+    },
+    {
+      "index": 57,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 2697,
+        "zFp": -710
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "8150572",
+          "pointCount": 2,
+          "roadUs": 1469382,
+          "searchMs": [3.2985829999997804, 3.2901249999995343, 12.933125000003201]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "8150572",
+          "pointCount": 2,
+          "roadUs": 1469382,
+          "searchMs": [1.2130409999990661, 1.155332999998791, 8.5279589999991]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "8150572",
+          "pointCount": 2,
+          "roadUs": 1469382,
+          "searchMs": [3.3552920000001905, 1.04833299999882, 1.3400829999955022]
+        }
+      }
+    },
+    {
+      "index": 58,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": -3763,
+        "zFp": -4671
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "235865964",
+          "pointCount": 2,
+          "roadUs": 1579863,
+          "searchMs": [82.08795800000007, 65.7778330000001, 102.9698750000025]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "235865964",
+          "pointCount": 2,
+          "roadUs": 1579863,
+          "searchMs": [13.061125000000175, 12.092667000000802, 10.681250000001455]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "235865964",
+          "pointCount": 2,
+          "roadUs": 1579863,
+          "searchMs": [16.65362500000083, 9.892541999997775, 24.231499999994412]
+        }
+      }
+    },
+    {
+      "index": 59,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 916,
+        "zFp": 5722
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "197461462",
+          "pointCount": 4,
+          "roadUs": 1275989,
+          "searchMs": [32.32374999999956, 31.982166000001598, 38.2177920000031]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "197461462",
+          "pointCount": 4,
+          "roadUs": 1275989,
+          "searchMs": [15.485042000000249, 14.353583000000071, 18.788625000001048]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "211609576",
+          "pointCount": 3,
+          "roadUs": 1285451,
+          "searchMs": [15.251374999999825, 14.133375000001251, 12.722209000006842]
+        }
+      }
+    },
+    {
+      "index": 60,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 6662,
+        "zFp": -5708
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "339955833",
+          "pointCount": 7,
+          "roadUs": 43408806,
+          "searchMs": [142.9036670000005, 105.21016700000109, 102.37137500000244]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "339955833",
+          "pointCount": 7,
+          "roadUs": 43408806,
+          "searchMs": [56.59304200000042, 49.35345899999811, 48.710707999998704]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "350171858",
+          "pointCount": 4,
+          "roadUs": 30718460,
+          "searchMs": [52.26441700000032, 49.76375000000189, 56.95274999999674]
+        }
+      }
+    },
+    {
+      "index": 61,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -6317,
+        "zFp": -320
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "285956683",
+          "pointCount": 2,
+          "roadUs": 1834416,
+          "searchMs": [81.92420800000036, 81.97799999999916, 79.18983399999706]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "285956683",
+          "pointCount": 2,
+          "roadUs": 1834416,
+          "searchMs": [11.857332999999926, 11.109292000001005, 11.040875000006054]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "285956683",
+          "pointCount": 2,
+          "roadUs": 1834416,
+          "searchMs": [11.799250000000029, 9.543166000003112, 17.228166000000783]
+        }
+      }
+    },
+    {
+      "index": 62,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -1124,
+        "zFp": -67
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "102274756",
+          "pointCount": 6,
+          "roadUs": 77240037,
+          "searchMs": [78.92458299999998, 59.966292000000976, 70.45116699999926]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "102274756",
+          "pointCount": 6,
+          "roadUs": 77240037,
+          "searchMs": [18.419332999999824, 14.156541000000288, 20.7154589999991]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "102412648",
+          "pointCount": 6,
+          "roadUs": 78211084,
+          "searchMs": [12.901292000000467, 16.19645799999853, 13.903874999996333]
+        }
+      }
+    },
+    {
+      "index": 63,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": -3296,
+        "zFp": -1969
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "233539600",
+          "pointCount": 3,
+          "roadUs": 15036435,
+          "searchMs": [78.8796659999989, 71.44316700000127, 77.48191700000461]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "233539600",
+          "pointCount": 3,
+          "roadUs": 15036435,
+          "searchMs": [14.819166999999652, 16.36225000000195, 17.951875000006112]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "235076174",
+          "pointCount": 3,
+          "roadUs": 13340184,
+          "searchMs": [13.663666999998895, 13.39770900000076, 13.560458999992989]
+        }
+      }
+    },
+    {
+      "index": 64,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -4147,
+        "zFp": -5076
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "366318947",
+          "pointCount": 6,
+          "roadUs": 50374413,
+          "searchMs": [139.06975000000057, 137.6540419999983, 146.58987500000512]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "366318947",
+          "pointCount": 6,
+          "roadUs": 50374413,
+          "searchMs": [84.76354199999878, 61.63587499999994, 56.865749999997206]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "368779467",
+          "pointCount": 3,
+          "roadUs": 44193637,
+          "searchMs": [69.04520800000137, 24.04449999999997, 29.436957999998413]
+        }
+      }
+    },
+    {
+      "index": 65,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 4114,
+        "zFp": -1243
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "188197252",
+          "pointCount": 8,
+          "roadUs": 66530577,
+          "searchMs": [224.5609999999997, 99.35329199999978, 96.70654099999956]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "188197252",
+          "pointCount": 8,
+          "roadUs": 66530577,
+          "searchMs": [76.31345899999906, 32.69604199999958, 32.47899999999936]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "191034839",
+          "pointCount": 8,
+          "roadUs": 66260774,
+          "searchMs": [79.16208299999926, 34.48504099999991, 35.25408299999981]
+        }
+      }
+    },
+    {
+      "index": 66,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 4462,
+        "zFp": -411
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "224282402",
+          "pointCount": 9,
+          "roadUs": 108190985,
+          "searchMs": [177.16129199999887, 156.92820899999788, 125.58879200000229]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "224282402",
+          "pointCount": 9,
+          "roadUs": 108190985,
+          "searchMs": [78.02674999999908, 56.80225000000064, 53.15574999999808]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "224443055",
+          "pointCount": 6,
+          "roadUs": 107790164,
+          "searchMs": [56.987208000000464, 71.01470799999879, 46.4331250000032]
+        }
+      }
+    },
+    {
+      "index": 67,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 1842,
+        "zFp": -3921
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "129147549",
+          "pointCount": 2,
+          "roadUs": 1323377,
+          "searchMs": [64.16162499999882, 52.299542000000656, 67.22408400000131]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "129147549",
+          "pointCount": 2,
+          "roadUs": 1323377,
+          "searchMs": [7.533750000000509, 4.69945799999914, 6.742500000000291]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "129147549",
+          "pointCount": 2,
+          "roadUs": 1323377,
+          "searchMs": [3.806124999999156, 6.590208000001439, 5.700834000002942]
+        }
+      }
+    },
+    {
+      "index": 68,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 81,
+        "zFp": -2637
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "57293274",
+          "pointCount": 3,
+          "roadUs": 3957801,
+          "searchMs": [8.7104589999999, 12.848167000000103, 9.256333000004815]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "57293274",
+          "pointCount": 3,
+          "roadUs": 3957801,
+          "searchMs": [4.049874999998792, 4.252124999999069, 3.7247500000012224]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "57373528",
+          "pointCount": 3,
+          "roadUs": 3745100,
+          "searchMs": [2.0867079999989073, 1.9606669999993755, 2.0404169999965234]
+        }
+      }
+    },
+    {
+      "index": 69,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 5658,
+        "zFp": 967
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "169397684",
+          "pointCount": 3,
+          "roadUs": 1267941,
+          "searchMs": [41.78125, 47.225791000000754, 41.32012499999837]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "169397684",
+          "pointCount": 3,
+          "roadUs": 1267941,
+          "searchMs": [7.492709000000104, 10.29191599999831, 10.62358399999357]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "179268732",
+          "pointCount": 3,
+          "roadUs": 1281624,
+          "searchMs": [7.491125000000466, 9.165458999999828, 5.943750000005821]
+        }
+      }
+    },
+    {
+      "index": 70,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 6971,
+        "zFp": -3078
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "301040330",
+          "pointCount": 7,
+          "roadUs": 46359325,
+          "searchMs": [165.57554100000016, 137.75900000000183, 122.50191600000107]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "301040330",
+          "pointCount": 7,
+          "roadUs": 46359325,
+          "searchMs": [169.45670900000005, 66.40054099999907, 47.75712499999645]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "300192067",
+          "pointCount": 11,
+          "roadUs": 66569778,
+          "searchMs": [103.81370900000002, 85.57545899999968, 89.84575000000041]
+        }
+      }
+    },
+    {
+      "index": 71,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 6175,
+        "zFp": 3650
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "423752335",
+          "pointCount": 10,
+          "roadUs": 92222354,
+          "searchMs": [175.964833, 218.99504199999865, 127.98133299999608]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "423752335",
+          "pointCount": 10,
+          "roadUs": 92222354,
+          "searchMs": [119.23662499999955, 89.26250000000073, 74.7742919999946]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "446350786",
+          "pointCount": 6,
+          "roadUs": 58026954,
+          "searchMs": [95.47354199999972, 97.38695799999914, 54.33437500000582]
+        }
+      }
+    },
+    {
+      "index": 72,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -6979,
+        "zFp": 5706
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "489197205",
+          "pointCount": 9,
+          "roadUs": 60252024,
+          "searchMs": [358.0619999999999, 152.42016600000352, 128.7023330000011]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "489197205",
+          "pointCount": 9,
+          "roadUs": 60252024,
+          "searchMs": [157.40795900000012, 150.69274999999834, 73.60358399999677]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "485560443",
+          "pointCount": 7,
+          "roadUs": 63091169,
+          "searchMs": [106.82491599999958, 108.58104100000128, 86.03483300000516]
+        }
+      }
+    },
+    {
+      "index": 73,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": -624,
+        "zFp": -2388
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "84764279",
+          "pointCount": 3,
+          "roadUs": 8829324,
+          "searchMs": [13.61908399999993, 12.092083000003186, 9.085291999996116]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "84764279",
+          "pointCount": 3,
+          "roadUs": 8829324,
+          "searchMs": [3.2817920000015874, 4.169791000000259, 3.700541999998677]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "84535985",
+          "pointCount": 3,
+          "roadUs": 9940967,
+          "searchMs": [2.693874999999025, 2.489125000000058, 2.284291000003577]
+        }
+      }
+    },
+    {
+      "index": 74,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 276,
+        "zFp": -4423
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "236277074",
+          "pointCount": 7,
+          "roadUs": 71066627,
+          "searchMs": [155.57058300000062, 99.76787500000137, 98.81695800000307]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "236277074",
+          "pointCount": 7,
+          "roadUs": 71066627,
+          "searchMs": [71.10233400000106, 47.30891700000211, 42.94316699999763]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "233150284",
+          "pointCount": 7,
+          "roadUs": 92371015,
+          "searchMs": [76.11299999999937, 41.76162500000282, 37.70454099999915]
+        }
+      }
+    },
+    {
+      "index": 75,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 2412,
+        "zFp": -3546
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "118890160",
+          "pointCount": 8,
+          "roadUs": 70021924,
+          "searchMs": [141.53233399999954, 62.9876660000009, 58.71879099999933]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "118890160",
+          "pointCount": 8,
+          "roadUs": 70021924,
+          "searchMs": [32.55433400000038, 21.042833999999857, 18.141332999999577]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "119430225",
+          "pointCount": 6,
+          "roadUs": 70565124,
+          "searchMs": [27.60283299999901, 18.513291999999637, 19.531333999999333]
+        }
+      }
+    },
+    {
+      "index": 76,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 5855,
+        "zFp": -2717
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "313877535",
+          "pointCount": 10,
+          "roadUs": 87129821,
+          "searchMs": [155.79070899999897, 121.60550000000148, 140.90616600000067]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "313877535",
+          "pointCount": 10,
+          "roadUs": 87129821,
+          "searchMs": [72.97620900000038, 59.299707999998645, 63.385583999996015]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "312765771",
+          "pointCount": 10,
+          "roadUs": 108235286,
+          "searchMs": [77.97045900000012, 73.16791700000249, 54.14887499999895]
+        }
+      }
+    },
+    {
+      "index": 77,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 6899,
+        "zFp": 4276
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "377892209",
+          "pointCount": 4,
+          "roadUs": 1777332,
+          "searchMs": [104.84741699999904, 90.59320799999841, 84.13458299999911]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "377892209",
+          "pointCount": 4,
+          "roadUs": 1777332,
+          "searchMs": [42.12145899999996, 24.947833000001992, 28.28954199999862]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "382256063",
+          "pointCount": 3,
+          "roadUs": 1775983,
+          "searchMs": [39.95616700000028, 22.360916000001453, 30.575125000003027]
+        }
+      }
+    },
+    {
+      "index": 78,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": -1127,
+        "zFp": -2306
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "105273882",
+          "pointCount": 3,
+          "roadUs": 12092715,
+          "searchMs": [17.144625000000815, 15.381625000001804, 13.106583000000683]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "105273882",
+          "pointCount": 3,
+          "roadUs": 12092715,
+          "searchMs": [6.879124999999476, 4.6684170000007725, 3.4340419999934966]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "105221935",
+          "pointCount": 3,
+          "roadUs": 11483796,
+          "searchMs": [3.75579099999959, 3.7127919999984442, 3.150832999999693]
+        }
+      }
+    },
+    {
+      "index": 79,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -1318,
+        "zFp": -4003
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "257244764",
+          "pointCount": 3,
+          "roadUs": 45676749,
+          "searchMs": [105.65179199999875, 104.49179200000071, 79.03874999999971]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "257244764",
+          "pointCount": 3,
+          "roadUs": 45676749,
+          "searchMs": [24.533667000001515, 33.83958300000086, 25.360083000006853]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "254892213",
+          "pointCount": 4,
+          "roadUs": 51107184,
+          "searchMs": [21.508583999999246, 25.327166000002762, 18.794457999996666]
+        }
+      }
+    },
+    {
+      "index": 80,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 2902,
+        "zFp": -5617
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "225871825",
+          "pointCount": 8,
+          "roadUs": 65666896,
+          "searchMs": [126.2980000000025, 109.93770799999766, 97.71712500000285]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "225871825",
+          "pointCount": 8,
+          "roadUs": 65666896,
+          "searchMs": [42.92104200000176, 45.223666000001685, 34.84654199999932]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "225083978",
+          "pointCount": 6,
+          "roadUs": 67986085,
+          "searchMs": [35.26508300000205, 40.13737499999843, 33.44366699999955]
+        }
+      }
+    },
+    {
+      "index": 81,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -3864,
+        "zFp": 2113
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "265680068",
+          "pointCount": 5,
+          "roadUs": 1383158,
+          "searchMs": [86.27349999999933, 91.60466699999961, 65.39566700000432]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "265680068",
+          "pointCount": 5,
+          "roadUs": 1383158,
+          "searchMs": [16.448457999998936, 16.68762499999866, 12.432917000005546]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "272757895",
+          "pointCount": 3,
+          "roadUs": 1344086,
+          "searchMs": [12.759041000001162, 14.306000000000495, 10.921750000001339]
+        }
+      }
+    },
+    {
+      "index": 82,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -4511,
+        "zFp": -3957
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "336980431",
+          "pointCount": 6,
+          "roadUs": 39089422,
+          "searchMs": [122.53729100000055, 117.77779200000077, 91.72762499999953]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "336980431",
+          "pointCount": 6,
+          "roadUs": 39089422,
+          "searchMs": [50.31545900000128, 44.435457999999926, 35.66254199999821]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "360096867",
+          "pointCount": 5,
+          "roadUs": 4749328,
+          "searchMs": [33.83245800000077, 30.095832999999402, 21.70770800000173]
+        }
+      }
+    },
+    {
+      "index": 83,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 46,
+        "zFp": -2631
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "58741112",
+          "pointCount": 3,
+          "roadUs": 3959549,
+          "searchMs": [9.50066699999661, 6.92620800000077, 7.182250000005297]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "58741112",
+          "pointCount": 3,
+          "roadUs": 3959549,
+          "searchMs": [2.876250000001164, 1.9804999999978463, 1.850165999996534]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "58824289",
+          "pointCount": 3,
+          "roadUs": 3745100,
+          "searchMs": [2.7872499999975844, 4.475125000000844, 2.13445800000045]
+        }
+      }
+    },
+    {
+      "index": 84,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -2348,
+        "zFp": -1059
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "192682977",
+          "pointCount": 8,
+          "roadUs": 89594355,
+          "searchMs": [95.41729200000191, 103.41791599999851, 73.55354200000147]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "192682977",
+          "pointCount": 8,
+          "roadUs": 89594355,
+          "searchMs": [34.963416999999026, 36.85616700000173, 27.02833300000202]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "197148499",
+          "pointCount": 5,
+          "roadUs": 83013666,
+          "searchMs": [15.880083000000013, 22.516875000001164, 15.54200000000128]
+        }
+      }
+    },
+    {
+      "index": 85,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": 2083,
+        "zFp": 627
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "85991797",
+          "pointCount": 2,
+          "roadUs": 6919041,
+          "searchMs": [44.96349999999802, 54.43662499999846, 42.03941699999996]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "85991797",
+          "pointCount": 2,
+          "roadUs": 6919041,
+          "searchMs": [4.585583000000042, 4.206291999998939, 2.613042000004498]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "85991797",
+          "pointCount": 2,
+          "roadUs": 6919041,
+          "searchMs": [2.666124999999738, 3.208167000000685, 4.243207999999868]
+        }
+      }
+    },
+    {
+      "index": 86,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -5167,
+        "zFp": 3642
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "355022603",
+          "pointCount": 4,
+          "roadUs": 1383158,
+          "searchMs": [91.05341699999917, 88.86295800000153, 78.20324999999866]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "355022603",
+          "pointCount": 4,
+          "roadUs": 1383158,
+          "searchMs": [27.071124999998574, 23.801666000003024, 20.336374999998952]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "372029278",
+          "pointCount": 3,
+          "roadUs": 1346522,
+          "searchMs": [21.346624999998312, 19.87616699999853, 18.12858299999789]
+        }
+      }
+    },
+    {
+      "index": 87,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -6303,
+        "zFp": -1202
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "403264882",
+          "pointCount": 9,
+          "roadUs": 108076157,
+          "searchMs": [138.98754200000258, 132.28174999999828, 134.88787500000035]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "403264882",
+          "pointCount": 9,
+          "roadUs": 108076157,
+          "searchMs": [87.93083299999853, 86.00408400000015, 81.11258299999463]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "405833909",
+          "pointCount": 7,
+          "roadUs": 108441267,
+          "searchMs": [76.20745800000077, 67.99599999999919, 58.814416000001074]
+        }
+      }
+    },
+    {
+      "index": 88,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": -3742,
+        "zFp": 3839
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "362641623",
+          "pointCount": 9,
+          "roadUs": 70124101,
+          "searchMs": [122.67699999999968, 150.16587500000242, 130.92741699999897]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "362641623",
+          "pointCount": 9,
+          "roadUs": 70124101,
+          "searchMs": [75.23712499999965, 68.23737500000061, 75.63983400000143]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "358506540",
+          "pointCount": 8,
+          "roadUs": 71031047,
+          "searchMs": [69.40729099999953, 86.30612499999916, 90.96054200000071]
+        }
+      }
+    },
+    {
+      "index": 89,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 2578,
+        "zFp": 1523
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "23927518",
+          "pointCount": 2,
+          "roadUs": 1267746,
+          "searchMs": [3.0868330000012065, 3.939125000000786, 3.238416000000143]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "23927518",
+          "pointCount": 2,
+          "roadUs": 1267746,
+          "searchMs": [1.2376669999976002, 1.4779170000001614, 1.0133329999953276]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "23927518",
+          "pointCount": 2,
+          "roadUs": 1267746,
+          "searchMs": [2.742500000000291, 2.0907919999990554, 1.197375000003376]
+        }
+      }
+    },
+    {
+      "index": 90,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -6555,
+        "zFp": -1831
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "375782550",
+          "pointCount": 6,
+          "roadUs": 42863883,
+          "searchMs": [126.37795899999765, 146.9184580000001, 86.1884579999969]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "375782550",
+          "pointCount": 6,
+          "roadUs": 42863883,
+          "searchMs": [50.32670800000051, 81.79979100000492, 38.009791999997105]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "384080781",
+          "pointCount": 6,
+          "roadUs": 43151002,
+          "searchMs": [48.02404199999728, 67.80883300000278, 35.736792000003334]
+        }
+      }
+    },
+    {
+      "index": 91,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 2436,
+        "zFp": -2538
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "145506259",
+          "pointCount": 11,
+          "roadUs": 106979715,
+          "searchMs": [81.67266699999891, 111.28316600000107, 68.48725000000559]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "145506259",
+          "pointCount": 11,
+          "roadUs": 106979715,
+          "searchMs": [27.550665999999183, 36.63237500000105, 26.086542000004556]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "146814128",
+          "pointCount": 9,
+          "roadUs": 108625145,
+          "searchMs": [22.515959000000294, 38.82116600000154, 23.001750000003085]
+        }
+      }
+    },
+    {
+      "index": 92,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 5044,
+        "zFp": 4758
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "blocked-goal",
+          "durationUs": null,
+          "pointCount": 0,
+          "roadUs": null,
+          "searchMs": [0.0608749999992142, 0.017583000000740867, 0.03125]
+        },
+        "optimized-square": {
+          "outcome": "blocked-goal",
+          "durationUs": null,
+          "pointCount": 0,
+          "roadUs": null,
+          "searchMs": [0.019250000001193257, 0.04458400000294205, 0.00966599999810569]
+        },
+        "hex": {
+          "outcome": "blocked-goal",
+          "durationUs": null,
+          "pointCount": 0,
+          "roadUs": null,
+          "searchMs": [0.009834000000410015, 0.0236670000012964, 0.027459000004455447]
+        }
+      }
+    },
+    {
+      "index": 93,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 4983,
+        "zFp": 5801
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "431243113",
+          "pointCount": 11,
+          "roadUs": 61973826,
+          "searchMs": [163.68924999999945, 309.12633300000016, 157.25950000000012]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "431243113",
+          "pointCount": 11,
+          "roadUs": 61973826,
+          "searchMs": [121.33641700000226, 168.4230830000015, 96.94337500000256]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "448857597",
+          "pointCount": 9,
+          "roadUs": 54315477,
+          "searchMs": [148.19454199999745, 183.40762499999983, 98.3070000000007]
+        }
+      }
+    },
+    {
+      "index": 94,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": -7027,
+        "zFp": 33
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "480003803",
+          "pointCount": 7,
+          "roadUs": 76815017,
+          "searchMs": [186.2177499999998, 166.4697079999969, 129.96991600000183]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "480003803",
+          "pointCount": 7,
+          "roadUs": 76815017,
+          "searchMs": [97.12437499999942, 99.63937499999884, 77.45841600000131]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "488358752",
+          "pointCount": 5,
+          "roadUs": 49194126,
+          "searchMs": [54.28595800000039, 49.827125000003434, 47.5882500000007]
+        }
+      }
+    },
+    {
+      "index": 95,
+      "kind": "sample",
+      "start": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "goal": {
+        "xFp": -7794,
+        "zFp": -5649
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "429200811",
+          "pointCount": 5,
+          "roadUs": 14551780,
+          "searchMs": [122.69829200000095, 146.00562499999796, 94.41679200000362]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "429200811",
+          "pointCount": 5,
+          "roadUs": 14551780,
+          "searchMs": [61.178875000001426, 74.70124999999825, 42.51637499999924]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "435810719",
+          "pointCount": 4,
+          "roadUs": 1747515,
+          "searchMs": [39.315458000000945, 53.262792000001355, 34.946209000001545]
+        }
+      }
+    },
+    {
+      "index": 96,
+      "kind": "sample",
+      "start": {
+        "xFp": -1536,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": 2830,
+        "zFp": -4345
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "200002378",
+          "pointCount": 10,
+          "roadUs": 110824732,
+          "searchMs": [91.04204199999731, 130.1324999999997, 91.55512499999895]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "200002378",
+          "pointCount": 10,
+          "roadUs": 110824732,
+          "searchMs": [43.44920799999818, 48.95212499999616, 39.533000000003085]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "201201578",
+          "pointCount": 8,
+          "roadUs": 111954055,
+          "searchMs": [45.679416999999376, 46.575708999997005, 35.89375000000291]
+        }
+      }
+    },
+    {
+      "index": 97,
+      "kind": "sample",
+      "start": {
+        "xFp": 2560,
+        "zFp": -887
+      },
+      "goal": {
+        "xFp": -7815,
+        "zFp": 4540
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "535005611",
+          "pointCount": 9,
+          "roadUs": 60252024,
+          "searchMs": [226.4864579999994, 270.6504169999971, 134.18849999999657]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "535005611",
+          "pointCount": 9,
+          "roadUs": 60252024,
+          "searchMs": [110.52908299999763, 155.89483299999847, 100.09437500000058]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "532599224",
+          "pointCount": 8,
+          "roadUs": 63091169,
+          "searchMs": [79.03279199999815, 127.44070900000224, 70.86108400000376]
+        }
+      }
+    },
+    {
+      "index": 98,
+      "kind": "sample",
+      "start": {
+        "xFp": 1536,
+        "zFp": -2661
+      },
+      "goal": {
+        "xFp": 5005,
+        "zFp": -4578
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "163562890",
+          "pointCount": 2,
+          "roadUs": 1580410,
+          "searchMs": [8.807957999997598, 12.39774999999645, 10.225666999998793]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "163562890",
+          "pointCount": 2,
+          "roadUs": 1580410,
+          "searchMs": [3.1942920000001322, 5.150333999998111, 4.928917000004731]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "163562890",
+          "pointCount": 2,
+          "roadUs": 1580410,
+          "searchMs": [4.1440829999992275, 5.793332999994163, 5.16162500000064]
+        }
+      }
+    },
+    {
+      "index": 99,
+      "kind": "sample",
+      "start": {
+        "xFp": 2048,
+        "zFp": 1774
+      },
+      "goal": {
+        "xFp": 4647,
+        "zFp": -3270
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "240885132",
+          "pointCount": 7,
+          "roadUs": 84584753,
+          "searchMs": [82.89033399999971, 136.12766700000066, 91.30462499999703]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "240885132",
+          "pointCount": 7,
+          "roadUs": 84584753,
+          "searchMs": [36.2354579999992, 52.28008299999783, 41.10462499999994]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "236156893",
+          "pointCount": 11,
+          "roadUs": 101464050,
+          "searchMs": [44.26474999999846, 84.65162500000588, 45.17879100000573]
+        }
+      }
+    },
+    {
+      "index": 100,
+      "kind": "fractional",
+      "start": {
+        "xFp": 160.25,
+        "zFp": -864.5
+      },
+      "goal": {
+        "xFp": 0,
+        "zFp": 0
+      },
+      "variants": {
+        "baseline-square": {
+          "outcome": "path",
+          "durationUs": "19445041",
+          "pointCount": 3,
+          "roadUs": 19445041,
+          "searchMs": [6.796707999998034, 11.092666999997164, 7.826374999996915]
+        },
+        "optimized-square": {
+          "outcome": "path",
+          "durationUs": "19445041",
+          "pointCount": 3,
+          "roadUs": 19445041,
+          "searchMs": [3.133165999999619, 6.061500000003434, 2.654291999999259]
+        },
+        "hex": {
+          "outcome": "path",
+          "durationUs": "19233972",
+          "pointCount": 3,
+          "roadUs": 19233972,
+          "searchMs": [2.9366250000020955, 6.320541000000958, 3.480290999999852]
+        }
+      }
+    }
+  ],
+  "browserJourney": {
+    "viewport": {
+      "width": 1200,
+      "height": 757,
+      "canvas": {
+        "x": 23.3984375,
+        "y": 77.390625,
+        "width": 753,
+        "height": 593
+      },
+      "pageOverflow": false
+    },
+    "move": {
+      "status": 200,
+      "mode": "MOVING",
+      "durationUs": "78959401",
+      "from": {
+        "xMicroFp": "198115328",
+        "zMicroFp": "-195887104"
+      }
+    },
+    "stop": {
+      "status": 200,
+      "mode": "STATIONARY_TERRAIN",
+      "point": {
+        "xMicroFp": "198055421",
+        "zMicroFp": "-195137666"
+      }
+    },
+    "reload": {
+      "mode": "STATIONARY_TERRAIN",
+      "samePoint": true
+    },
+    "reroute": {
+      "mode": "MOVING",
+      "sameOrigin": true,
+      "durationUs": "116487170",
+      "from": {
+        "xMicroFp": "198055421",
+        "zMicroFp": "-195137666"
+      }
+    },
+    "arrival": {
+      "status": "ARRIVED",
+      "goal": {
+        "xMicroFp": "303955968",
+        "zMicroFp": "-180813824"
+      },
+      "proof": "read-only world_party_routes query after normal UI reload at recorded destination"
+    }
+  }
+}

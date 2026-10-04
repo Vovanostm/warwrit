@@ -1254,6 +1254,39 @@ mid-route S stop, reroute and town return are captured in the current
 `output/playwright/supplies-integrated-*.jpg` evidence. Independent critique and
 PR/main CI are recorded in the supply delivery closeout; this is not full M1 acceptance.
 
+## Navigation topology experiment — 2026-10-04
+
+Owner authorized implementation and comparison after the initial hex-map research.
+[Owning result, reproduction and limits](../wiki/m1-spec.md#эксперимент-и-реализация--2026-10-04)
+records the finite matched experiment. Production remains square `polygon-v1`;
+static road-edge costs and surface priority preparation now live in the derived
+field, not each search. Opt-in six-neighbor hex search uses the same polygons,
+roads, clearance, speed profiles and exact endpoints; it is not a new map edition
+or accepted world-generation rule. Existing accepted V2/V3 paths/schedules remain
+frozen. No migrations, transport changes or clock/balance changes. Local isolated
+branch `codex/map-topology-experiments`; no merge/deployment authorization.
+
+Local closeout 2026-10-05: final bootstrap PASS (verify 631,47 skipped; stress 10000;
+migration smoke/up and 14 PostgreSQL/auth checks); separate movement PostgreSQL 11
+and affected domain 20 PASS. Supplied browser move/STOP/reload/reroute retained
+exact endpoints; independent read-only critic found no confirmed navigation defect.
+Measured p95 remains above 50ms; VM capacity/FPS/memory and full M1 acceptance are
+unproven. Historical failed attempts and unchanged bounds are in the owning wiki.
+
+### Hex route optimization amendment — 2026-10-05
+
+Owner explicitly chose hex search speed after being shown the measured≤7.2%
+journey-cost penalty. This supersedes the previous square recommendation for
+new polygon-v1 orders in the local isolated branch. Legacy square navigation
+and accepted V2/V3 schedules remain; geometry, speeds, clocks and storage stay
+unchanged. Compiled sorted neighbors/costs and≤16 exact two-chord detour checks
+improve both search variants. [Owning rationale, matched results and checks](../wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05)
+retain failures and limits. Full any-angle optimality/VM capacity remain unproven;
+no merge/deployment. Final bootstrap PASS:633unit/47skip,10000stress,migrations/14DB/auth checks.
+Actual RMB/S/reload/reroute/arrival retained exact points; independent source and
+supplied-evidence critic found no material defect. Separate movementSQL-suite
+NOT_RERUN; overview/close/FPS/VM/full-M1 limits remain in the owning result.
+
 ## Settlement route visibility correction — 2026-10-04
 
 Owner screenshots show a destination diamond clipped near Bereznyak and a

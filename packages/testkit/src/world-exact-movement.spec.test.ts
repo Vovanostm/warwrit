@@ -37,9 +37,13 @@ const region: NavigationRegion = {
   dangerAreaShapes: [],
   sites: [],
 };
-const compile = (source: NavigationRegion, path: readonly PointFp[]) =>
+const compile = (
+  source: NavigationRegion,
+  path: readonly PointFp[],
+  topology: 'square' | 'hex' = 'square',
+) =>
   compileMovementPlan({
-    field: buildNavigationField(source),
+    field: buildNavigationField(source, topology),
     path,
     movementEpoch: '1',
     startedAtMs: '1000',
@@ -125,110 +129,163 @@ describe('polygon-owned movement', () => {
     expect(() => readContinuousMovementPlan({ ...old, navigationVersion: 'polygon-v1' })).toThrow();
   });
 
-  it('rejects clearance contact and impassable vertex contact but permits an exact thin bridge', () => {
-    const blocker = { shapeId: 'block', polygon: rect(64, 0, 80, 64) };
-    expect(() =>
-      compile({ ...region, blockingShapes: [blocker] }, [
-        { xFp: 40, zFp: 8 },
-        { xFp: 40, zFp: 56 },
-      ]),
-    ).toThrow('NO_PATH');
-    const cliff = {
-      shapeId: 'cliff',
-      terrainId: 'cliff' as const,
-      paintPriority: 10,
-      polygon: [
-        { xFp: 32, zFp: 32 },
-        { xFp: 40, zFp: 48 },
-        { xFp: 24, zFp: 48 },
-      ],
-    };
-    expect(() =>
-      compile({ ...region, terrainShapes: [...region.terrainShapes, cliff] }, [
-        { xFp: 8, zFp: 32 },
-        { xFp: 56, zFp: 32 },
-      ]),
-    ).toThrow('NO_PATH');
-    const water = {
-      shapeId: 'water',
-      terrainId: 'deep_water' as const,
-      paintPriority: 10,
-      polygon: rect(0, 0, 64, 64),
-    };
-    const bridge = {
-      shapeId: 'bridge',
-      overlayId: 'bridge' as const,
-      polygon: rect(8, 0, 24, 64),
-      stations: [
-        { xFp: 16, zFp: 0 },
-        { xFp: 16, zFp: 64 },
-      ],
-    };
-    const source = {
-      ...region,
-      terrainShapes: [...region.terrainShapes, water],
-      overlayShapes: [bridge],
-    };
-    const field = buildNavigationField(source);
-    expect(isContinuousPointWalkable(field, { xFp: 16, zFp: 32 })).toBe(true);
-    expect(findTravelPath(field, { xFp: 16, zFp: -8 }, { xFp: 16, zFp: 72 })).toBeDefined();
-    expect(
-      compile(source, [
-        { xFp: 16, zFp: -8 },
-        { xFp: 16, zFp: 72 },
-      ]).speedSpans.map((s) => s.overlayId),
-    ).toEqual([null, 'bridge', null]);
-  });
+  it.each(['square', 'hex'] as const)(
+    'rejects clearance contact and impassable vertex contact but permits an exact thin bridge (%s)',
+    (topology) => {
+      const compileHere = (source: NavigationRegion, path: readonly PointFp[]) =>
+        compile(source, path, topology);
+      const blocker = { shapeId: 'block', polygon: rect(64, 0, 80, 64) };
+      expect(() =>
+        compileHere({ ...region, blockingShapes: [blocker] }, [
+          { xFp: 40, zFp: 8 },
+          { xFp: 40, zFp: 56 },
+        ]),
+      ).toThrow('NO_PATH');
+      const cliff = {
+        shapeId: 'cliff',
+        terrainId: 'cliff' as const,
+        paintPriority: 10,
+        polygon: [
+          { xFp: 32, zFp: 32 },
+          { xFp: 40, zFp: 48 },
+          { xFp: 24, zFp: 48 },
+        ],
+      };
+      expect(() =>
+        compileHere({ ...region, terrainShapes: [...region.terrainShapes, cliff] }, [
+          { xFp: 8, zFp: 32 },
+          { xFp: 56, zFp: 32 },
+        ]),
+      ).toThrow('NO_PATH');
+      const water = {
+        shapeId: 'water',
+        terrainId: 'deep_water' as const,
+        paintPriority: 10,
+        polygon: rect(0, 0, 64, 64),
+      };
+      const bridge = {
+        shapeId: 'bridge',
+        overlayId: 'bridge' as const,
+        polygon: rect(8, 0, 24, 64),
+        stations: [
+          { xFp: 16, zFp: 0 },
+          { xFp: 16, zFp: 64 },
+        ],
+      };
+      const source = {
+        ...region,
+        terrainShapes: [...region.terrainShapes, water],
+        overlayShapes: [bridge],
+      };
+      const field = buildNavigationField(source, topology);
+      expect(isContinuousPointWalkable(field, { xFp: 16, zFp: 32 })).toBe(true);
+      expect(findTravelPath(field, { xFp: 16, zFp: -8 }, { xFp: 16, zFp: 72 })).toBeDefined();
+      expect(
+        compileHere(source, [
+          { xFp: 16, zFp: -8 },
+          { xFp: 16, zFp: 72 },
+        ]).speedSpans.map((s) => s.overlayId),
+      ).toEqual([null, 'bridge', null]);
+    },
+  );
 
-  it('chooses a genuinely faster detour and keeps free field shortcuts when the road loses', () => {
-    const bounds = rect(-64, -64, 1088, 512);
-    const source: NavigationRegion = {
-      ...region,
-      origin: { xFp: -64, zFp: -64 },
-      columns: 18,
-      rows: 9,
-      boundary: bounds,
-      terrainShapes: [
-        { shapeId: 'grass', terrainId: 'grassland', paintPriority: 0, polygon: bounds },
-      ],
-      overlayShapes: [
-        {
-          shapeId: 'detour',
-          overlayId: 'paved_road',
-          polygon: rect(0, 176, 1024, 224),
-          stations: [
-            { xFp: 0, zFp: 200 },
-            { xFp: 256, zFp: 200 },
-            { xFp: 512, zFp: 200 },
-            { xFp: 768, zFp: 200 },
-            { xFp: 1024, zFp: 200 },
-          ],
-        },
-      ],
-    };
-    const start = { xFp: 96, zFp: 96 },
-      goal = { xFp: 928, zFp: 96 };
-    const path = findTravelPath(buildNavigationField(source), start, goal)!;
-    expect(BigInt(compile(source, path).totalDurationUs)).toBeLessThan(
-      BigInt(compile(source, [start, goal]).totalDurationUs),
-    );
-    expect(compile(source, path).speedSpans.some((s) => s.overlayId === 'paved_road')).toBe(true);
-    const slower = {
-      ...source,
-      overlayShapes: [
-        {
-          ...source.overlayShapes[0]!,
-          overlayId: 'trail' as const,
-          polygon: rect(0, 400, 1024, 448),
-          stations: [
-            { xFp: 0, zFp: 424 },
-            { xFp: 1024, zFp: 424 },
-          ],
-        },
-      ],
-    };
-    expect(findTravelPath(buildNavigationField(slower), start, goal)).toEqual([start, goal]);
-  });
+  it.each(['square', 'hex'] as const)(
+    'chooses a genuinely faster detour and keeps free field shortcuts when the road loses (%s)',
+    (topology) => {
+      const bounds = rect(-64, -64, 1088, 512);
+      const source: NavigationRegion = {
+        ...region,
+        origin: { xFp: -64, zFp: -64 },
+        columns: 18,
+        rows: 9,
+        boundary: bounds,
+        terrainShapes: [
+          { shapeId: 'grass', terrainId: 'grassland', paintPriority: 0, polygon: bounds },
+        ],
+        overlayShapes: [
+          {
+            shapeId: 'detour',
+            overlayId: 'paved_road',
+            polygon: rect(0, 176, 1024, 224),
+            stations: [
+              { xFp: 0, zFp: 200 },
+              { xFp: 256, zFp: 200 },
+              { xFp: 512, zFp: 200 },
+              { xFp: 768, zFp: 200 },
+              { xFp: 1024, zFp: 200 },
+            ],
+          },
+        ],
+      };
+      const start = { xFp: 96, zFp: 96 },
+        goal = { xFp: 928, zFp: 96 };
+      const path = findTravelPath(buildNavigationField(source, topology), start, goal)!;
+      expect(BigInt(compile(source, path).totalDurationUs)).toBeLessThan(
+        BigInt(compile(source, [start, goal]).totalDurationUs),
+      );
+      expect(compile(source, path).speedSpans.some((s) => s.overlayId === 'paved_road')).toBe(true);
+      const slower = {
+        ...source,
+        overlayShapes: [
+          {
+            ...source.overlayShapes[0]!,
+            overlayId: 'trail' as const,
+            polygon: rect(0, 400, 1024, 448),
+            stations: [
+              { xFp: 0, zFp: 424 },
+              { xFp: 1024, zFp: 424 },
+            ],
+          },
+        ],
+      };
+      expect(findTravelPath(buildNavigationField(slower, topology), start, goal)).toEqual([
+        start,
+        goal,
+      ]);
+    },
+  );
+
+  it.each(['square', 'hex'] as const)(
+    'finds a faster terrain detour before collapsing a lattice zigzag to the direct chord (%s)',
+    (topology) => {
+      const bounds = rect(0, 0, 1024, 1024);
+      const source: NavigationRegion = {
+        ...region,
+        origin: { xFp: 0, zFp: 0 },
+        columns: 16,
+        rows: 16,
+        boundary: bounds,
+        terrainShapes: [
+          { shapeId: 'grass', terrainId: 'grassland', paintPriority: 0, polygon: bounds },
+          {
+            shapeId: 'hill',
+            terrainId: 'hills',
+            paintPriority: 1,
+            polygon: rect(256, 256, 384, 384),
+          },
+        ],
+        overlayShapes: [],
+      };
+      const field = buildNavigationField(source, topology);
+      const start = { xFp: 96, zFp: 96 },
+        goal = { xFp: 928, zFp: 800 };
+      const path = findTravelPath(field, start, goal)!;
+      const plan = compileMovementPlan({
+        field,
+        path,
+        startedAtMs: '1000',
+        movementEpoch: '1',
+        planId: 'terrain-detour',
+      });
+      // The direct chord takes 46.761348s. A grass detour stays below 46s;
+      // the old search/smoothing returned the slower direct chord for both grids.
+      expect(BigInt(plan.totalDurationUs)).toBeLessThan(46_000_000n);
+      expect(path[0]).toEqual(start);
+      expect(path.at(-1)).toEqual(goal);
+      expect(findTravelPath(field, start, goal)).toEqual(path);
+      expect(readContinuousMovementPlan(JSON.parse(JSON.stringify(plan)))).toEqual(plan);
+    },
+  );
 
   it('retains a sliver and danger contact when neither the cell centre nor corners cover them', () => {
     const source = {
@@ -253,10 +310,13 @@ describe('polygon-owned movement', () => {
     });
     expect(plan.dangerAreaIds).toEqual(['small-danger']);
     const point = { xFp: 32, zFp: 32 };
-    const blocked = buildNavigationField({
-      ...region,
-      blockingShapes: [{ shapeId: 'near-edge', polygon: rect(64, 0, 80, 64) }],
-    });
+    const blocked = buildNavigationField(
+      {
+        ...region,
+        blockingShapes: [{ shapeId: 'near-edge', polygon: rect(64, 0, 80, 64) }],
+      },
+      'square',
+    );
     expect(blocked.walkable[5]).toBe(true);
     expect(isContinuousPointWalkable(blocked, point)).toBe(true);
   });

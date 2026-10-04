@@ -1,5 +1,82 @@
 # Warwrit current delivery plan
 
+**Hex navigation delivery authorized — 2026-10-05:** owner requested
+“Review, merge, update local main”. This authorizes review, publication and merge
+of `codex/map-topology-experiments`, followed by a safe local-main update.
+Parent remains sole writer in `/private/tmp/warwrit-map-topology-research`;
+independent reviewer is read-only. Integrate current main's renderer changes,
+retain both documentation histories and existing player data. [Published PR148](https://github.com/Vovanostm/warwrit/pull/148); required PR-head
+CI and merge are pending. Independent review is complete; no deployment or auto-merge authorized.
+Primary has concurrent location-depth/shared-document changes; retain those
+changes and do not overwrite active writers during local-main integration.
+Independent source/revision reviews found no material defect. Current focused
+coverage 22/22, exact paths/durations in 202 comparisons and unchanged quality
+audit PASS. Earlier full/partial coverage timeouts remain FAILED history in the
+owning wiki. Integrated current main `548837c` in `615c26e`; navigation source
+was unchanged and three documentation conflicts preserve both histories.
+Combined production build PASS. Fresh desktop fixture RMB/S/reload/reroute/
+arrival on 5316 gives three exact-point equalities and all HTTP200. The two
+short paths take 10.386279s and 4.391247s. Independent supplied-capture critique
+found no material regression in the short day-route slice. PR-head CI/merge
+are pending; GitHub owns subsequent publication/merge state. Fresh night,
+wider zoom/FPS/VM/full-M1 acceptance remains unproven.
+
+**Hex route optimization — 2026-10-05:** owner requested game-hex rationale and
+route optimization, then explicitly chose “Гексы: приоритет скорости поиска”
+after the measured ≤7.2% journey penalty was disclosed. This supersedes the
+author's previous square recommendation. Sole writer/checkout/base unchanged.
+New polygon-v1 orders default to hex; legacy square and frozen V2/V3 schedules
+remain. Compiled sorted neighbors/costs remove per-expansion work; bounded exact
+two-chord checks improve 11/99 hex routes with 88 unchanged, 0 worse. Case 51 travel
+312.537→289.688s. Matched five-variant 101×3: hex p50 29.61→27.24ms,
+p95 219.85→217.97ms; new square 31.60/240.22ms. Host load varied; no 50ms or VM
+capacity claim. Final bootstrap PASS: 633 unit tests, 47 skipped, 10,000 stress battles and migrations/14 DB/auth checks;
+normal RMB/S/reload/reroute/arrival preserves exact origins/goals. Independent
+supplied-evidence critic found no material new defect. Current movement SQL-suite
+NOT_RERUN; earlier 11 checks are historical. Fresh overview/close/FPS/VM acceptance
+remain unproven. Failures and unchanged thresholds are retained in the
+[owning result](../wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05).
+Local/uncommitted, NOT_PUBLISHED/NOT_MERGED; no deployment authorization.
+
+**Map topology experiment delivered locally — 2026-10-05 (activated 2026-10-04):**
+Historical stage; the hex-default decision above supersedes its square recommendation.
+Owner requested “Проведи эксперименты, реализуй, сравни”. Sole writer in isolated
+`/private/tmp/warwrit-map-topology-research`, branch
+`codex/map-topology-experiments`, base `bcc30f5`.
+[Owning result and reproduction](../wiki/m1-spec.md#эксперимент-и-реализация--2026-10-04):
+101 cases ×3 interleaved repeats. Static road costs/surface priority preparation
+reduce square-search p95 175.96→100.09ms with all 297 successful paths and schedules
+unchanged. Opt-in hidden hex search p95 90.96ms, but average/worst travel duration
++1.32%/+9.32%; server keeps improved square navigation. No saved-plan, geometry,
+speed, clock, transport or migration changes. Browser move/STOP/reload/reroute
+preserved the exact stopped origin; independent read-only critic found no confirmed
+navigation defect in supplied day/night captures/response evidence. Blue marsh
+readability remains an existing renderer concern. Local game http://127.0.0.1:5316
+is open with an isolated fixture DB; primary player data/shared writers untouched.
+Final bootstrap PASS: verify 631/47 skipped, stress 10000, migration smoke plus 14
+PostgreSQL/auth checks. Separate 11 movement PostgreSQL tests and 20 domain tests
+PASS. Earlier overlapping-build timeouts and two bootstrap failures are retained
+in the owning record; limits were not weakened. Performance above the 50ms target,
+target VM capacity, memory, sustained FPS, overview/close/full-M1 acceptance remain
+NOT_MEASURED/NOT_RUN. Local, uncommitted, NOT_INTEGRATED/NOT_PUBLISHED/NOT_MERGED;
+no merge/deployment authorization. Generator and macrohex authoring remain proposals.
+
+**Global-map topology research — 2026-10-04:** owner asks whether hex cells
+would simplify transitions, movement costs, pathfinding and generation.
+[Owning wiki proposal](../wiki/m1-spec.md#19-гексы-устройство-глобальной-карты-и-генерация--2026-10-04)
+compares current exact polygon/grid/road navigation with hex regions, Voronoi
+generation and navmeshes. Recommendation: retain continuous movement and exact
+roads; profile the current search first, then try derived macrohex authoring on
+one area if useful. No new topology, generator, art or gameplay rule is approved.
+One source-level 100-goal probe returned 98 paths/2 blocked goals / 0 errors;
+successful-path p95 1014.78ms was measured under concurrent local build load,
+not an isolated baseline or server-capacity result. Game tests/browser/critic
+NOT_RUN; optimization and topology benefit NOT_MEASURED. Origin: primary
+`main bcc30f5`; documentation-only writer in isolated
+`/private/tmp/warwrit-map-topology-research` because primary shared documents
+have concurrent writers. Local, uncommitted, NOT_INTEGRATED/NOT_PUBLISHED;
+existing missions, source changes and player data preserved.
+
 **Tree diversity to main authorized — 2026-10-05:** owner requests working
 implementation in main, including this mission's PR/merge. Parent owns clean
 `forest-diversity-main` / `codex/forest-diversity-main`, base917644a (PR146).
