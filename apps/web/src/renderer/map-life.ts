@@ -161,16 +161,19 @@ export function createMapLife(
         gl_Position=worldViewProjection*vec4(p,1);
       }`,
       fragmentSource: `precision highp float; varying vec3 bladeColor; varying float edgeOpacity; uniform vec3 lighting;
-      void main(){ if(edgeOpacity<0.01) discard; gl_FragColor=vec4(bladeColor*lighting,edgeOpacity); }`,
+      void main(){
+        // Screen-door edge fade preserves depth-writing occlusion for opaque interior blades.
+        float threshold=fract(dot(floor(gl_FragCoord.xy),vec2(0.75487766,0.56984029)));
+        if(edgeOpacity<=threshold) discard;
+        gl_FragColor=vec4(bladeColor*lighting,1);
+      }`,
     },
     {
       attributes: ['position', 'color', 'uv'],
       uniforms: ['worldViewProjection', 'time', 'lighting'],
-      needAlphaBlending: true,
     },
   );
   material.backFaceCulling = false;
-  material.disableDepthWrite = true;
   material.setFloat('time', 0);
   material.setColor3('lighting', Color3.White());
   mesh.material = material;
