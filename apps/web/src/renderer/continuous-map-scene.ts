@@ -340,6 +340,7 @@ export function mountContinuousMapScene(
         traversed,
         remaining,
         sprites: [banner, ...markers.values()].map(bounds),
+        party: bounds(banner),
         ring: bounds(partyRing),
         goal: remaining[remaining.length - 1]!,
         goalSiteId: goalSite?.siteId,
