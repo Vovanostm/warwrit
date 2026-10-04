@@ -55,7 +55,13 @@ timeouts and introduced complexity/clone findings were corrected, not bypassed.
 Limits: active-night travel/fresh5291 login NOT_RUN; full-device and subjective
 play acceptance NOT_MEASURED. Existing search p95135.82ms still exceeds50ms.
 Localized edge weathering/long-paving variation are optional refinements, not
-claims of complete professional-game or full-M1 acceptance. Publication pending.
+claims of complete professional-game or full-M1 acceptance.
+
+Published in [PR140](https://github.com/Vovanostm/warwrit/pull/140). The owner
+explicitly authorizes merging this slice. That PR owns current-head clean CI,
+review and expected-head merge readback; consult GitHub for live integration
+status. Both disposable verification databases/volumes were removed; final
+API3217/realtime3218 and web5291 retain the player database.
 
 ## Exact geometry cycle — 2026-10-04
 

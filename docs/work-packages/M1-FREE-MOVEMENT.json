@@ -1079,6 +1079,11 @@
       "Static night views include DPR2; no all-device quality claim.",
       "Existing exact-route search p95=135.82ms exceeds50ms target.",
       "Optional localized edge damage and long-paving variation remain polish; full M1 and player enjoyment are not accepted by this slice."
-    ]
+    ],
+    "publication": {
+      "pullRequest": "https://github.com/Vovanostm/warwrit/pull/140",
+      "mergeAuthority": "Explicit owner request for this isolated slice; expected head and successful current-head clean CI required.",
+      "integrationStatusOwner": "GitHub PR140 live status/checks; local runtime and author proof are separate."
+    }
   }
 }

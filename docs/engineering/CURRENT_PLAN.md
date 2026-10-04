@@ -13,7 +13,10 @@ three surfaces through a road bend/junction in the actual game.
 READY_WITH_LIMITS and source-preservation review found no blocking defect.
 Local clean bootstrap passed610 checks/10000 battles/migrations/14 SQL auth checks;
 final-code16 movement tests, coverage/audit and11 SQL movement checks pass.
-Current-head clean PR CI/publication are pending.
+Implementation is published in [PR140](https://github.com/Vovanostm/warwrit/pull/140); it owns current-head
+clean CI and merge readback. Owner authorizes this PR merge; GitHub is authoritative
+for its live integration status. Local clean run preceded the final equivalent
+neighbor-loop rewrite; final tests/coverage/audit pass. No deployment.
 
 **Live movement recheck — 2026-10-04:** current `main` at `ae9bf3a`
 was checked through the authenticated game at `http://127.0.0.1:5287`.
