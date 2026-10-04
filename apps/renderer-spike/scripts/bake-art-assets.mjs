@@ -20,10 +20,11 @@ const scoutMode = arguments_.includes('--scout');
 const actorClass = optionValue('actor');
 const clip = optionValue('clip');
 const sampleSeconds = optionValue('sample-seconds');
+const requestedFrameSize = optionValue('size');
 if (
   arguments_.some(
     (argument) =>
-      !['--scout', '--actor=', '--clip=', '--sample-seconds='].some(
+      !['--scout', '--actor=', '--clip=', '--sample-seconds=', '--size='].some(
         (option) => argument === option || argument.startsWith(option),
       ),
   )
@@ -32,19 +33,28 @@ if (
 }
 if (scoutMode && (!actorClass || !clip || sampleSeconds === undefined))
   throw new Error('ART05 scout mode requires --actor, --clip and --sample-seconds');
-if (!scoutMode && (actorClass || clip || sampleSeconds !== undefined))
-  throw new Error('ART05 actor, clip and sample options require --scout');
+if (
+  !scoutMode &&
+  (actorClass || clip || sampleSeconds !== undefined || requestedFrameSize !== undefined)
+)
+  throw new Error('ART05 actor, clip, sample and size options require --scout');
 if (scoutMode && !['Knight', 'Rogue', 'Barbarian'].includes(actorClass))
   throw new Error(`ART05 does not support actor ${actorClass}`);
 if (scoutMode && !['Idle_A', 'Walking_A', 'Melee_1H_Attack_Chop', 'Hit_A'].includes(clip))
   throw new Error(`ART05 does not support animation ${clip}`);
 if (scoutMode && (!Number.isFinite(Number(sampleSeconds)) || Number(sampleSeconds) < 0))
   throw new Error('ART05 sample seconds must be a finite nonnegative number');
+if (scoutMode && requestedFrameSize !== undefined && !['256', '512'].includes(requestedFrameSize))
+  throw new Error('ART05 scout size must be 256 or 512');
+const frameSize = requestedFrameSize === '256' ? 256 : 512;
 const sampleToken = scoutMode ? String(Number(sampleSeconds)).replace('.', 'p') : null;
 const actorToken = scoutMode ? actorClass.toLowerCase() : 'knight';
 const clipToken = scoutMode ? clip.toLowerCase() : 'idle_a';
 const outputDirectory = scoutMode
-  ? resolve(appRoot, `public/art-pipeline/scout-b2/${actorToken}-${clipToken}-t${sampleToken}`)
+  ? resolve(
+      appRoot,
+      `public/art-pipeline/scout-b2/${actorToken}-${clipToken}-t${sampleToken}${frameSize === 256 ? '-s256' : ''}`,
+    )
   : resolve(appRoot, 'public/art-pipeline/knight-idle-8dir');
 const url = new URL(
   process.env.WARWRIT_ART_BAKE_URL ?? 'http://127.0.0.1:5181/?engine=playcanvas&art-bake=1',
@@ -136,7 +146,6 @@ try {
 
   const outputs = [];
   const frameCount = 8;
-  const frameSize = 512;
   const captureStartedAt = performance.now();
   let groundedPivot = null;
   let sourceCrop = null;
