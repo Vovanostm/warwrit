@@ -8,7 +8,8 @@ bounded and accepted. Correction uses two camera-matched ink tree sprites with
 explicit aspect/root pivots, checked beside towns and in a close/normal forest.
 Camera-matched replacement pair, explicit instance rotation and measured root
 pivots implemented in `codex/tree-projection` on `c47e770`; integrated stationary
-day/night close/overview independently accepted READY_WITH_LIMITS. CI pending. New moving journey
+day/night close/overview independently accepted READY_WITH_LIMITS. GitHub owns
+[final PR checks and authorized integration](https://github.com/Vovanostm/warwrit/pulls?q=head%3Acodex%2Ftree-projection). New moving journey
 blocked by insufficient supplies and unavailable trading; NOT_RUN. Primary supplies
 writer/runtime and player DB remain untouched.
 [Diagnosis and correction boundary](../work-packages/M1-FREE-MOVEMENT.md#tree-art-rejection-and-diagnosis--2026-10-04).

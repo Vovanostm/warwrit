@@ -51,8 +51,10 @@ Close forest repetition is optional future polish; use authored variants with th
 same light, never flipped copies. Critic inspected source/captures, did not operate
 the browser. Independent source review found no material defect in exact Babylon
 instance inheritance, pivot/aspect mapping or preserved site/banner/navigation
-boundaries; reviewer tests/services NOT_RUN. Current-head CI pending; no full-M1
-or enjoyment acceptance.
+boundaries; reviewer tests/services NOT_RUN. GitHub owns current-head clean CI
+and expected-head authorized merge readback for `codex/tree-projection`; author
+checks and stationary visual acceptance are separate. No full-M1 or enjoyment
+acceptance.
 
 Checks:12 existing renderer projection/surface/camera tests, web typecheck, changed
 code ESLint/Prettier, content validation and normal quality audit passed. Coverage
