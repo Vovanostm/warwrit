@@ -9,6 +9,8 @@ import {
   VertexData,
 } from '@babylonjs/core';
 import type { Scene } from '@babylonjs/core';
+import { TREE_FORMS, type CanopyMass, type TreeForm, type TreeSpecies } from './map-tree-forms.js';
+export type { TreeSpecies } from './map-tree-forms.js';
 
 interface TreeFrame {
   readonly left: number;
@@ -35,11 +37,10 @@ export interface TreePartArt {
   };
 }
 
-export type TreeSpecies = 'deciduous' | 'conifer';
-
 export interface ComponentTreePlacement {
   readonly id: number;
   readonly species: TreeSpecies;
+  /** Index into the finite TREE_FORMS catalogue. */
   readonly template: number;
   readonly size: number;
   readonly root: { readonly xFp: number; readonly zFp: number };
@@ -58,25 +59,6 @@ interface Point3 {
   readonly x: number;
   readonly y: number;
   readonly z: number;
-}
-
-interface CanopyMass {
-  /** The atlas fragment's twig-base pivot is placed at this painted trunk attachment. */
-  readonly attachment: number;
-  /** An opaque lower-crown pixel used to cover the painted fork cap. */
-  readonly overlapPivot?: { readonly x: number; readonly y: number };
-  readonly width: number;
-  readonly height: number;
-  readonly frame: number;
-  /** Small yaw offset from the current camera-facing crown plane. */
-  readonly facing: number;
-  readonly curve: number;
-  readonly recessed?: boolean;
-}
-
-interface TreeTemplate {
-  readonly canopyScale: number;
-  readonly canopy: readonly CanopyMass[];
 }
 
 const DEFAULT_FRAME: TreeFrame = { left: 0, top: 0, right: 1, bottom: 1 };
@@ -99,280 +81,6 @@ const CONTROL_VISIBLE_HEIGHT: Readonly<Record<TreeSpecies, number>> = {
 };
 const CANOPY_COLUMNS = 5;
 const CANOPY_ROWS = 4;
-const templates: readonly TreeTemplate[] = [
-  {
-    canopyScale: 1.7,
-    canopy: [
-      {
-        attachment: 0,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.66,
-        height: 0.51,
-        frame: 0,
-        facing: -0.18,
-        curve: 0.1,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.59,
-        height: 0.5,
-        frame: 1,
-        facing: 0.17,
-        curve: 0.09,
-      },
-      {
-        attachment: 2,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.5,
-        height: 0.43,
-        frame: 0,
-        facing: -0.04,
-        curve: 0.07,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.46,
-        height: 0.38,
-        frame: 1,
-        facing: 0.25,
-        curve: 0.065,
-        recessed: true,
-      },
-      {
-        attachment: 0,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.68,
-        height: 0.57,
-        frame: 1,
-        facing: 0.12,
-        curve: 0.08,
-        recessed: true,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.72,
-        height: 0.6,
-        frame: 0,
-        facing: -0.08,
-        curve: 0.08,
-      },
-      {
-        attachment: 2,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.66,
-        height: 0.56,
-        frame: 1,
-        facing: -0.12,
-        curve: 0.075,
-        recessed: true,
-      },
-    ],
-  },
-  {
-    canopyScale: 1.7,
-    canopy: [
-      {
-        attachment: 0,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.63,
-        height: 0.49,
-        frame: 0,
-        facing: -0.2,
-        curve: 0.1,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.56,
-        height: 0.46,
-        frame: 1,
-        facing: 0.18,
-        curve: 0.09,
-      },
-      {
-        attachment: 2,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.48,
-        height: 0.42,
-        frame: 0,
-        facing: -0.05,
-        curve: 0.07,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.44,
-        height: 0.37,
-        frame: 1,
-        facing: 0.24,
-        curve: 0.065,
-        recessed: true,
-      },
-      {
-        attachment: 0,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.66,
-        height: 0.56,
-        frame: 1,
-        facing: 0.12,
-        curve: 0.08,
-        recessed: true,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.7,
-        height: 0.58,
-        frame: 0,
-        facing: -0.08,
-        curve: 0.08,
-      },
-      {
-        attachment: 2,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.64,
-        height: 0.54,
-        frame: 1,
-        facing: -0.12,
-        curve: 0.075,
-        recessed: true,
-      },
-    ],
-  },
-  {
-    canopyScale: 1.7,
-    canopy: [
-      {
-        attachment: 0,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.6,
-        height: 0.47,
-        frame: 0,
-        facing: -0.18,
-        curve: 0.095,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.57,
-        height: 0.46,
-        frame: 1,
-        facing: 0.16,
-        curve: 0.09,
-      },
-      {
-        attachment: 2,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.47,
-        height: 0.4,
-        frame: 0,
-        facing: -0.04,
-        curve: 0.07,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.43,
-        height: 0.36,
-        frame: 1,
-        facing: 0.22,
-        curve: 0.06,
-        recessed: true,
-      },
-      {
-        attachment: 0,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.64,
-        height: 0.54,
-        frame: 1,
-        facing: 0.12,
-        curve: 0.08,
-        recessed: true,
-      },
-      {
-        attachment: 1,
-        overlapPivot: { x: 0.678766, y: 0.710583 },
-        width: 0.68,
-        height: 0.56,
-        frame: 0,
-        facing: -0.08,
-        curve: 0.08,
-      },
-      {
-        attachment: 2,
-        overlapPivot: { x: 0.556931, y: 0.748826 },
-        width: 0.62,
-        height: 0.52,
-        frame: 1,
-        facing: -0.12,
-        curve: 0.075,
-        recessed: true,
-      },
-    ],
-  },
-  {
-    canopyScale: 1,
-    canopy: [
-      ...[
-        [1, 2],
-        [3, 4],
-        [5, 6],
-      ].flatMap((attachments, tier) =>
-        attachments.map((attachment, index) => {
-          const extendsLeft = attachment % 2 === 1;
-          return {
-            attachment,
-            width: [0.3, 0.4, 0.46][tier]!,
-            height: [0.2, 0.24, 0.22][tier]!,
-            frame: extendsLeft ? 2 : 3,
-            facing: extendsLeft ? -0.08 : 0.06,
-            curve: 0.055,
-            recessed: index === 1,
-          };
-        }),
-      ),
-      {
-        attachment: 0,
-        overlapPivot: { x: 0.801181, y: 0.232609 },
-        width: 0.2,
-        height: 0.19,
-        frame: 2,
-        facing: -0.05,
-        curve: 0.04,
-      },
-      {
-        attachment: 0,
-        overlapPivot: { x: 0.118162, y: 0.192641 },
-        width: 0.18,
-        height: 0.18,
-        frame: 3,
-        facing: 0.06,
-        curve: 0.04,
-        recessed: true,
-      },
-      // Foreground boughs cross the bole; the other six recede outwards.
-      {
-        attachment: 2,
-        width: 0.34,
-        height: 0.28,
-        frame: 2,
-        facing: -0.04,
-        curve: 0.06,
-      },
-      {
-        attachment: 3,
-        width: 0.3,
-        height: 0.24,
-        frame: 3,
-        facing: 0.08,
-        curve: 0.055,
-      },
-    ],
-  },
-];
 
 export function coordinateHash(column: number, row: number, salt: number): number {
   let value = Math.imul(column + 1, 0x9e3779b1) ^ Math.imul(row + 1, 0x85ebca77) ^ salt;
@@ -444,7 +152,7 @@ function trunkAttachment(
   };
 }
 
-/** Measure the four fixed composites once so trunk and foliage share the control's visible height. */
+/** Resolve the approved atlas family independently of catalogue order. */
 function canopyFrame(frames: readonly TreeFrame[], index: number, conifer: boolean): TreeFrame {
   const speciesIndex = (conifer ? 2 : 0) + (index % 2);
   return frames[Math.min(speciesIndex, frames.length - 1)] ?? DEFAULT_FRAME;
@@ -455,7 +163,7 @@ function canopyPivot(mass: CanopyMass, frame: TreeFrame) {
 }
 
 function visibleAssemblyHeight(
-  template: TreeTemplate,
+  template: TreeForm,
   trunkFrame: TreePartArt['trunk']['frames'][number],
   canopyFrames: readonly TreeFrame[],
   conifer: boolean,
@@ -609,10 +317,10 @@ function appendTreeGeometry(
   canopyIndices: number[],
   canopyColors: number[],
 ): void {
-  const template = templates[tree.template]!;
+  const template = TREE_FORMS[tree.template]!;
   const variation = coordinateHash(tree.root.xFp, tree.root.zFp, 0x94d049bb);
   const yaw = (hashUnit(variation) - 0.5) * 0.24;
-  const trunkFrame = art.trunk.frames[tree.species === 'conifer' ? 3 : tree.template]!;
+  const trunkFrame = art.trunk.frames[template.trunkFrame]!;
   appendTrunkCard(
     trunkFrame,
     { width: art.trunk.width, height: art.trunk.height },
@@ -624,8 +332,8 @@ function appendTreeGeometry(
   );
   const atlasFrames = art.canopy.frames.length > 0 ? art.canopy.frames : [DEFAULT_FRAME];
   for (const [massIndex, baseMass] of template.canopy.entries()) {
-    const mass = variedCanopyMass(baseMass, tree.id, massIndex, tree.species === 'deciduous');
-    const speciesFrame = tree.species === 'deciduous' ? mass.frame % 2 : 2 + (mass.frame % 2);
+    const mass = variedCanopyMass(baseMass, tree.id, massIndex, template.species === 'deciduous');
+    const speciesFrame = template.species === 'deciduous' ? mass.frame % 2 : 2 + (mass.frame % 2);
     const frame = atlasFrames[Math.min(speciesFrame, atlasFrames.length - 1)] ?? DEFAULT_FRAME;
     const attachment = trunkAttachment(
       trunkFrame,
@@ -670,9 +378,9 @@ export function createComponentTreeBatch(
     canopyIndices: number[] = [],
     canopyColors: number[] = [];
 
-  const templateScales = templates.map((template, templateIndex) => {
-    const species: TreeSpecies = templateIndex === 3 ? 'conifer' : 'deciduous';
-    const trunkFrame = art.trunk.frames[templateIndex]!;
+  const templateScales = TREE_FORMS.map((template) => {
+    const species = template.species;
+    const trunkFrame = art.trunk.frames[template.trunkFrame]!;
     const canopyFrames = art.canopy.frames.length > 0 ? art.canopy.frames : [DEFAULT_FRAME];
     const extent = visibleAssemblyHeight(
       template,
@@ -764,7 +472,7 @@ export function createComponentTreeBatch(
   treeKey.includedOnlyMeshes = [stems, canopy];
 
   const shadows = trees.flatMap((tree) => {
-    const template = templates[tree.template]!;
+    const template = TREE_FORMS[tree.template]!;
     const spread = Math.max(
       0.18,
       ...template.canopy.map((mass) => mass.width * template.canopyScale * 0.5),

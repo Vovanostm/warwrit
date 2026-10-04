@@ -1,5 +1,96 @@
 # Free global-map movement — implementation assignment
 
+## Tree diversity on current main — 2026-10-05
+
+Owner explicitly requested “Implement — доведи всё до рабочего состояния в main”.
+This authorizes the bounded implementation, PR and expected-head merge of the
+fourteen-form forest mission. Parent owns isolated `codex/forest-diversity-main`
+on merged `917644a` (PR146), source integration, documentation and final checks.
+The primary checkout contains other owners' terrain/art/wiki/skill drafts and
+player data; preserve those exact changes while updating main. No deployment,
+auto-merge, paid production or unrelated draft publication is authorized.
+
+Continue the accepted composed-trunk/curved-canopy renderer and original
+map-dark atlas/palette/projection, rather than replacing it with the old-base
+whole-tree sprite attempt. Four existing body assemblies anchor the expansion.
+Target 14 authored assemblies: seven deciduous and seven conifers, each with
+four mature forms (broad/compact/asymmetric/split crown), two young forms
+(slender/dense) and one old living form. Distinction must come from authored
+branch/crown mass arrangement and age proportions, not hue, flipping or yaw.
+Ground axes, measured source/root/attachment pivots, curved near/far masses,
+NW light, shared batched geometry, nonpickability and prop depth remain owned
+by the current renderer. No new species, lore, canonical movement/collision/
+speed/save rule, framework or dependency. Prior twelve whole-sprite PNGs and
+exact provenance remain preserved in the unmerged old `tree-diversity` checkout;
+its catalogue-only acceptance does not accept this composed integration.
+
+Natural placement carries forward the reviewed finite deterministic sampler:
+850fp smooth density pockets, clearings,380fp edge thinning, age-aware modest
+sizes, no identical form within440fp, road-bank110fp plus root radius, sites
+260fp (city400fp) plus radius, and blockers with radius. Public map edition
+seeds bounded sampling (20000 attempts/1600 accepted trees); actual public
+terrain priorities, obstacles and authored pinewood geography remain authority.
+Roads, targets and entrances must remain visible and operable.
+
+First playable: travel beside Bereznyak, inspect forest edges/clearings at
+close and overview zoom in day/night, STOP/reroute/reload, pan and wheel without
+page scroll or unwanted orders. Independent read-only source and playable critic
+compare current screenshots/journey with unit-c-ink, Bereznyak/place lore and
+approved map-dark parts. Fix material findings and repeat affected review.
+Focused placement and existing complete-tree geometry regressions plus web
+checks are local; final clean bootstrap/stress/PostgreSQL gate runs once in
+normal PR CI. No test or quality gate weakening. Publication and clean PR CI
+remain pending; performance/enjoyment remain NOT_MEASURED. Normal public fixture sign-in approval is requested separately after the earlier automatic
+approval rejection; no authentication workaround or fabricated travel state.
+
+### Local result and evidence — 2026-10-05
+
+Implemented fourteen authored assemblies using the original atlases: seven per
+family, with mature/young/old crown arrangements. Actual public geography produces
+504 trees and includes all fourteen forms (8–62 instances per form), with stable
+reload placement, irregular density pockets, clearings and age-aware edges.
+Conifers share a bole and differ mainly in bough arrangements; stronger silhouette
+contrast is optional polish, not fourteen new species or dramatically different
+body shapes. No new asset, dependency, migration or canonical gameplay/save rule.
+
+Independent read-only source review found no material placement, clearance,
+grounding, prop-depth or input defect. The repeated art critic inspected twelve
+current production-mount/gallery day/night overview/close captures against the
+approved unit/place/atlas references and returned READY_WITH_LIMITS: no reproduced
+material seam, root, light, style/lore or road/site readability defect. Captures are
+local `/private/tmp/warwrit-forest-review/`; the untracked gallery/public-geography
+harnesses are excluded from publication. They do not contain company/gameplay state.
+
+Parent native input on the production mount logged SITE for the opaque city,
+TERRAIN through a tree and grass, and STOP for S. Pan/zoom added no orders and
+window scroll remained zero. This is renderer callback proof only, not server
+travel/arrival or saved-position proof. New authenticated journey/STOP/reload are
+NOT_RUN: automatic browser review rejected access to the local Dex login while
+the separately requested fixture-sign-in permission remains unanswered. No alternate
+authentication surface, account/data reset, fabricated supplies or time was used.
+PR146's earlier journey remains historical evidence, not current journey acceptance.
+
+Local checks: four focused forest/geometry regressions with coverage, web
+typecheck, changed-file lint, original-resource validation (87 assets), production
+build (before the final behavior-preserving scene extraction) and diff check PASS. Full sequential coverage FAILED: 629 passed, 47 skipped,
+two unchanged navigation-field tests exceeded their existing 5s limit. It produced
+no coverage JSON, so the first audit FAILED to read that file. Focused coverage
+then exposed an inherited picking callback above the audit threshold after code
+movement; reuse the existing site decoder and separate terrain-hit coordinate
+validation to retain all original guards and lower callback complexity. Extract
+the existing site assembly/alpha-mask loop into cohesive renderer functions,
+retaining exact materials, measured projection, contacts and picking order.
+Independent source review found no material change at these boundaries. No tests,
+timeouts, assertions or quality thresholds are weakened. Final unchanged changed-code audit PASS with current focused coverage; the normal
+pre-commit hook repeats it before publication. Clean full bootstrap,
+combat stress, PostgreSQL and full coverage are owned by normal PR CI, NOT_RUN
+locally. Sustained FPS, temporal animation and enjoyment are NOT_MEASURED.
+
+Primary main has another active location-depth writer, plus retained unrelated
+terrain/art/wiki/skill drafts. Integrate remote main in the isolated checkout;
+local-primary update must wait for shared-file ownership or preserve those writes
+without stashing/restoring an active writer's files. No deployment authorized.
+
 ## Component forest integration — 2026-10-04
 
 Owner explicitly requested review, PR merge and local main update for the approved

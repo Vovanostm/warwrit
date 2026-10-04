@@ -14,20 +14,33 @@ export function insidePolygon(
   }
   return inside;
 }
-function nearPolygon(
+export function distanceToPolygonEdge(
+  x: number,
+  z: number,
+  points: readonly { xFp: number; zFp: number }[],
+): number {
+  let nearest = Infinity;
+  for (const [i, a] of points.entries()) {
+    const b = points[(i + 1) % points.length]!;
+    const dx = b.xFp - a.xFp,
+      dz = b.zFp - a.zFp;
+    const lengthSquared = dx * dx + dz * dz;
+    const t =
+      lengthSquared === 0
+        ? 0
+        : Math.max(0, Math.min(1, ((x - a.xFp) * dx + (z - a.zFp) * dz) / lengthSquared));
+    nearest = Math.min(nearest, Math.hypot(x - a.xFp - t * dx, z - a.zFp - t * dz));
+  }
+  return nearest;
+}
+
+export function nearPolygon(
   x: number,
   z: number,
   points: readonly { xFp: number; zFp: number }[],
   distance: number,
 ): boolean {
-  if (insidePolygon(x, z, points)) return true;
-  return points.some((a, i) => {
-    const b = points[(i + 1) % points.length]!;
-    const dx = b.xFp - a.xFp,
-      dz = b.zFp - a.zFp;
-    const t = Math.max(0, Math.min(1, ((x - a.xFp) * dx + (z - a.zFp) * dz) / (dx * dx + dz * dz)));
-    return Math.hypot(x - a.xFp - t * dx, z - a.zFp - t * dz) < distance;
-  });
+  return insidePolygon(x, z, points) || distanceToPolygonEdge(x, z, points) < distance;
 }
 
 /** Decorations avoid canonical obstacles and authored roads at the caller's clearance. */
