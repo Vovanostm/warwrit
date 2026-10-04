@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-**World volume correction active — 2026-10-04:** owner rejected PR140 as flat.
+**World volume correction — 2026-10-04:** owner rejected PR140 as flat.
 Parent is sole writer in isolated `road-art-quality` checkout, new branch
 `codex/world-volume`, base `1657bd4`. The continuing road mission authorizes
 PR and merge, not deployment. Renderer-only elevation, shared ground contacts,
@@ -18,7 +18,9 @@ subjective enjoyment are not measured. Clean
 bootstrap at `885e63f` PASSED618 checks/46skip,10000 battles,migrations/14DB checks.
 Focused7 checks,618-check coverage and normal audit pass. First bootstrap failed
 one unrelated FIRST HUNT DB scenario and remains historical FAILED.
-No merge or deployment has occurred for this correction.
+Published in [PR141](https://github.com/Vovanostm/warwrit/pull/141). GitHub owns
+current-head CI and actual merge readback; owner authorized this bounded merge.
+Local playable5291 retains player data. No deployment or full-M1 acceptance.
 
 **Living-place integration authorized — 2026-10-04:** owner explicitly
 requested “fix conflicts, merge, update local main”, authorizing PR139 merge

@@ -1103,6 +1103,7 @@
   },
   "worldVolumeAmendment": {
     "date": "2026-10-04",
+    "delivery": "PR141 owns current-head CI and authorized merge readback; retained playable5291 and player data preserved. No deployment.",
     "authority": "Owner rejected flat world; continuing isolated road-art mission includes PR and merge, no deployment.",
     "compatibility": "Renderer presentation only; exact x/z polygons, accepted V2/V3 schedules, speed and saves unchanged.",
     "implementation": "One sampled triangle height field owns ground contacts, draped roads, vegetation, party, route and ray picking; fixed diagonal isometry preserves projected sprite aspect. Real hill/rolling relief,35.264deg elevation/45deg azimuth, triangle-normal light, grounded contact wash,0.85scene edge mist with depth-writing grass fade and measured in-viewport moving-banner label clearance.",

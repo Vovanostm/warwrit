@@ -67,6 +67,9 @@ bottom stays6CSSpx above the banner bounds. A top-edge displacement uses the
 below-banner alternative; arrival/completion restores the label base position. Inspected day/night overview/close
 views do not measure subjective enjoyment, full M1 readiness or hardware capacity.
 No game-core/protocol/server behavior, migration, balance or lore change.
+Published in [PR141](https://github.com/Vovanostm/warwrit/pull/141), which owns
+current-head CI and actual authorized merge readback. Retained company returned
+to Stone Ford on5291 for the owner playtest; player infrastructure is preserved.
 
 ## Road materials and isometric relief — 2026-10-04
 
