@@ -83,4 +83,8 @@ contracts shortcut.
 Local playtest: `http://127.0.0.1:5287`, select a map place, then **Место**.
 Enter a highlighted building where the party is present; **← Карта** returns.
 Diagnostic captures remain local under `output/playwright/living-places`.
-Publication pending. NOT_MERGED; no deployment authorization.
+Published [PR139](https://github.com/Vovanostm/warwrit/pull/139), implementation
+commit `584497b`, normal commit audit passed. GitHub CI pending at publication;
+local checks do not prove its result. Canonical Airtable/Empirical publication
+checkpoint NOT_UPDATED; repository files and PR own this delivery record.
+NOT_MERGED; no deployment authorization.

@@ -14,7 +14,9 @@ browser verified layered motion, ten village entrances, keyboard/Escape focus,
 map return, existing actions and remote previews; 390px layout has no horizontal
 overflow. Independent read-only critic found no remaining concrete defect in
 current source/captures. [Results and limits](../work-packages/M1-LIVING-PLACES.md#result).
-Publication pending; full M1, actual ruined-mill entry and live reduced-motion
+[PR139](https://github.com/Vovanostm/warwrit/pull/139) published from `584497b`
+with the normal commit audit passed; GitHub CI pending at publication. Full M1,
+actual ruined-mill entry and live reduced-motion
 acceptance remain unproven.
 No merge, deployment or paid resources authorized.
 
