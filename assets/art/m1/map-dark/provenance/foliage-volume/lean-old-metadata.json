@@ -1,0 +1,56 @@
+{
+  "reference_scope": "Approved grim master and approved unit sprite used for mood/style; existing broadleaf-v2 and conifer-v1 used to avoid silhouette repetition.",
+  "assets": {
+    "broadleaf-lean-v1": {
+      "source": "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-3c49a5d1-2faa-4728-8295-7cbeee98b29d.png",
+      "path": "broadleaf-lean-v1.png",
+      "tool": "builtin image_gen__imagegen; generated during the two-call path-resolution hiccup, selected first tree result; no raster transformation",
+      "prompt": "broadleaf-lean-v1.prompt.txt",
+      "pivot_estimate_uv": [0.52, 0.98],
+      "dimensions_px": {
+        "width": 1024,
+        "height": 1536
+      },
+      "alpha_bounds_exclusive": {
+        "8": [64, 20, 996, 1513],
+        "39": [64, 21, 996, 1513],
+        "128": [65, 22, 995, 1512]
+      },
+      "alpha_zero_corners": [true, true, true, true],
+      "tree_root_pivot_estimate_uv_note": "manual visual estimate of root flare center at ground-contact baseline; confirm in scene",
+      "runtime_cutoff_alpha_0_15": 38,
+      "alpha_ge_39_pixels": 378626,
+      "below_cutoff_nonzero_pixels": 101375,
+      "visible_root_pivot_estimate_px": [532, 1505],
+      "root_pivot_definition": "manual estimate at the main stem/root flare ground-contact point; final pivot should be confirmed on the runtime isometric composite",
+      "tree_alpha_cutoff_note": "Renderer cutoff 0.15 corresponds to about alpha 38/255; alpha>=39 bounds are listed. Nonzero alpha below 39 may include faint glow/edge pixels and should be discarded by that cutoff.",
+      "discarded_generation_note": "A second simplified birch generation was also produced while recovering the default output path; the selected file is the first fuller-spec result listed above. It was not integrated."
+    },
+    "broadleaf-old-v1": {
+      "source": "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-c68af5b7-881a-4169-b2e7-abc2ce0df2c3.png",
+      "initial_source": "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-865f49ac-14ff-4040-a37b-c3361b6e3d43.png",
+      "path": "broadleaf-old-v1.png",
+      "tool": "builtin image_gen__imagegen; one initial generation plus one targeted foliage-paint correction; corrected output copied unchanged",
+      "prompt": "broadleaf-old-v1.prompt.txt",
+      "pivot_estimate_uv": [0.57, 0.98],
+      "dimensions_px": {
+        "width": 1199,
+        "height": 1312
+      },
+      "alpha_bounds_exclusive": {
+        "8": [15, 0, 1187, 1305],
+        "39": [15, 3, 1187, 1305],
+        "128": [15, 4, 1186, 1304]
+      },
+      "alpha_zero_corners": [true, true, true, true],
+      "tree_root_pivot_estimate_uv_note": "manual visual estimate of root flare center at ground-contact baseline; confirm in scene",
+      "runtime_cutoff_alpha_0_15": 38,
+      "alpha_ge_39_pixels": 768600,
+      "below_cutoff_nonzero_pixels": 79799,
+      "visible_root_pivot_estimate_px": [683, 1286],
+      "root_pivot_definition": "manual estimate at the main stem/root flare ground-contact point; final pivot should be confirmed on the runtime isometric composite",
+      "tree_alpha_cutoff_note": "Renderer cutoff 0.15 corresponds to about alpha 38/255; alpha>=39 bounds are listed. Nonzero alpha below 39 may include faint glow/edge pixels and should be discarded by that cutoff."
+    }
+  },
+  "acceptance": "art source candidates only; in-game composite and independent critic/runtime acceptance remain parent-owned and NOT_RUN for this worker"
+}

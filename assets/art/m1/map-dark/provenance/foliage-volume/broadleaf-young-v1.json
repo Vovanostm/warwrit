@@ -1,0 +1,25 @@
+{
+  "width": 1024,
+  "height": 1536,
+  "alphaThreshold": 8,
+  "contentBounds": [0.2509765625, 0.021484375, 0.8583984375, 0.978515625],
+  "contentBoundsPixels": [257, 33, 879, 1503],
+  "rootPivot": [0.4931640625, 0.9420572916666666],
+  "rootPivotPixels": [505, 1447],
+  "rootPivotAlpha": 252,
+  "rootPivotMethod": "Visual root footprint anchor, confirmed visible at cutoff. Runtime grounding still needs parent scene validation.",
+  "rendererCutoff": 0.15,
+  "rendererContentBoundsPixels": [258, 33, 879, 1502],
+  "exteriorAlpha": "Frame and six tested exterior points alpha=0. Broad low-alpha aura excluded at cutoff .15 (integer alpha >=39 survives).",
+  "originalSource": "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-9670859a-31be-405f-8e32-92d8c7d23931.png",
+  "generatedBy": "geography_implementer; reused unchanged per parent to avoid duplicate generation",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "referenced_image_paths": [
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/foliage/broadleaf-v2.png",
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/foliage-volume/broadleaf-lean-v1.png"
+  ],
+  "promptFile": "broadleaf-young-prompt.txt"
+}

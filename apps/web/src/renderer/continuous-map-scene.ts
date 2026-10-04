@@ -1,4 +1,5 @@
 import {
+  type PickingInfo,
   Color3,
   Color4,
   HemisphericLight,
@@ -10,6 +11,8 @@ import {
   StandardMaterial,
   Texture,
   Vector3,
+  VertexData,
+  VertexBuffer,
 } from '@babylonjs/core';
 import type {
   WorldContinuousMapDto,
@@ -19,15 +22,124 @@ import type {
 } from '@warwrit/protocol';
 import { acquireCanvasEngine, releaseCanvasEngine } from './canvas-engine.js';
 import { mountThreeQuarterCamera } from './three-quarter-camera.js';
-import { MAP_ART, siteSprite } from './art.js';
+import {
+  MAP_ART,
+  MAP_TREE_PARTS,
+  CITY_SPRITE_SIZE,
+  mapSiteSprite,
+  type MapSpriteArt,
+} from './art.js';
+import {
+  createComponentTreeBatch,
+  coordinateHash,
+  type ComponentTreePlacement,
+} from './map-trees.js';
 import { createTerrainMaterial, createRoadMaterial } from './terrain-material.js';
-import { insidePolygon, nearPolygon } from './map-geography.js';
+import { insidePolygon, decorationObstructed } from './map-geography.js';
 import { createMapRoads } from './map-roads.js';
 import { createMapShadows } from './map-shadows.js';
 import { createMapSurface } from './map-surface.js';
 import { createMapLife } from './map-life.js';
 import type { MapLabelPosition } from './map-scene.js';
 import type { RouteOverlayFrame } from './route-overlay.js';
+
+function spriteGeometry(art: MapSpriteArt, height: number): VertexData {
+  const { bounds, pivot } = art;
+  const width = height * (art.width / art.height);
+  const left = (bounds.left - pivot.x) * width;
+  const right = (bounds.right - pivot.x) * width;
+  const top = (pivot.y - bounds.top) * height;
+  const bottom = (pivot.y - bounds.bottom) * height;
+  const data = new VertexData();
+  data.positions = [left, bottom, 0, right, bottom, 0, right, top, 0, left, top, 0];
+  data.indices = [0, 1, 2, 0, 2, 3];
+  data.uvs = [
+    bounds.left,
+    1 - bounds.bottom,
+    bounds.right,
+    1 - bounds.bottom,
+    bounds.right,
+    1 - bounds.top,
+    bounds.left,
+    1 - bounds.top,
+  ];
+  data.normals = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
+  return data;
+}
+
+interface AlphaMask {
+  readonly width: number;
+  readonly height: number;
+  readonly alpha: Uint8Array;
+}
+
+function loadAlphaMask(url: string): Promise<AlphaMask | null> {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      if (!context) return resolve(null);
+      try {
+        context.drawImage(image, 0, 0);
+        const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+        const alpha = new Uint8Array(canvas.width * canvas.height);
+        for (let i = 0; i < alpha.length; i += 1) alpha[i] = pixels[i * 4 + 3]!;
+        resolve({ width: canvas.width, height: canvas.height, alpha });
+      } catch {
+        resolve(null);
+      }
+    };
+    image.onerror = () => resolve(null);
+    image.src = url;
+  });
+}
+
+function spritePixelIsOpaque(mask: AlphaMask, u: number, v: number, cutoff: number): boolean {
+  const x = Math.min(mask.width - 1, Math.max(0, Math.floor(u * mask.width)));
+  // Babylon texture V grows from the source image's bottom edge.
+  const y = Math.min(mask.height - 1, Math.max(0, Math.floor((1 - v) * mask.height)));
+  return mask.alpha[y * mask.width + x]! >= cutoff;
+}
+
+function projectedSpriteBounds(mesh: Mesh, project: (point: Vector3) => { x: number; y: number }) {
+  mesh.computeWorldMatrix(true);
+  const positions = mesh.getVerticesData(VertexBuffer.PositionKind) ?? [];
+  const localBounds = { left: Infinity, right: -Infinity, bottom: Infinity, top: -Infinity };
+  for (let index = 0; index < positions.length; index += 3) {
+    localBounds.left = Math.min(localBounds.left, positions[index]!);
+    localBounds.right = Math.max(localBounds.right, positions[index]!);
+    localBounds.bottom = Math.min(localBounds.bottom, positions[index + 1]!);
+    localBounds.top = Math.max(localBounds.top, positions[index + 1]!);
+  }
+  const world = mesh.getWorldMatrix();
+  const projected = [
+    [localBounds.left, localBounds.bottom],
+    [localBounds.left, localBounds.top],
+    [localBounds.right, localBounds.bottom],
+    [localBounds.right, localBounds.top],
+  ].map(([x, y]) => project(Vector3.TransformCoordinates(new Vector3(x!, y!, 0), world)));
+  return {
+    left: Math.min(...projected.map(({ x }) => x)),
+    right: Math.max(...projected.map(({ x }) => x)),
+    top: Math.min(...projected.map(({ y }) => y)),
+    bottom: Math.max(...projected.map(({ y }) => y)),
+  };
+}
+
+function spriteOnScreen(
+  bounds: { left: number; right: number; top: number; bottom: number },
+  width: number,
+  height: number,
+) {
+  return bounds.right >= 0 && bounds.left <= width && bounds.bottom >= 0 && bounds.top <= height;
+}
+
+function pickedSiteId(hit: PickingInfo) {
+  return (hit.pickedMesh?.metadata as { siteId?: string } | undefined)?.siteId;
+}
 
 type PublicPlan = NonNullable<WorldFreeMovementV2ResponseDto['plan']>;
 function spanInterpolation(p: PublicPlan, span: PublicPlan['speedSpans'][number], t: number) {
@@ -55,6 +167,9 @@ export function mountContinuousMapScene(
 ) {
   const engine = acquireCanvasEngine(canvas),
     scene = new Scene(engine);
+  // Projected prop footings can extend below their gate/root pivot.
+  // Draw all props against each other after terrain, without clipping their painted foreground.
+  scene.setRenderingAutoClearDepthStencil(1, true);
   // One forward/inverse transform owns all displayed distances and movement speed.
   const unitsPerFp = (region.worldScale ?? 1) / 1024;
   const sceneFp = (fp: number) => fp * unitsPerFp;
@@ -104,71 +219,92 @@ export function mountContinuousMapScene(
   };
   const contacts = createMapShadows(scene, heightAt);
   const markers = new Map<string, Mesh>();
+  const spriteAlphaMasks = new Map<string, AlphaMask>();
+  const alphaMaskLoads = new Map<string, Promise<AlphaMask | null>>();
   for (const site of region.sites) {
     const info = sites.find((s) => s.siteId === site.siteId);
     if (!info) continue;
-    const mesh = sprite(
-      `site:${site.siteId}`,
-      siteSprite(site.siteId, info.kind),
-      info.kind === 'CITY' ? 1.3 : 1,
-    );
+    const isKamennyBrod = site.siteId === 'kamenny-brod';
+    const size = isKamennyBrod ? CITY_SPRITE_SIZE : info.kind === 'CITY' ? 1.3 : 1;
+    const art = mapSiteSprite(site.siteId, info.kind);
+    const mesh = new Mesh(`site:${site.siteId}`, scene);
+    spriteGeometry(art, size).applyToMesh(mesh);
+    mesh.billboardMode = Mesh.BILLBOARDMODE_ALL;
+    const texture = new Texture(art.url, scene);
+    texture.hasAlpha = true;
+    const paint = new StandardMaterial(`site:${site.siteId}`, scene);
+    paint.diffuseTexture = texture;
+    paint.emissiveTexture = texture;
+    paint.disableLighting = true;
+    paint.useAlphaFromDiffuseTexture = true;
+    paint.transparencyMode = Material.MATERIAL_ALPHATEST;
+    paint.alphaCutOff = 0.04;
+    paint.backFaceCulling = false;
+    paint.specularColor = Color3.Black();
+    mesh.material = paint;
+    mesh.renderingGroupId = 1;
     const x = sceneFp(site.anchorFp.xFp),
       z = sceneFp(site.anchorFp.zFp);
-    mesh.position.set(x, heightAt(x, z) - (info.kind === 'CITY' ? 0.12 : 0.08), z);
-    contacts.add(x, z, info.kind === 'CITY' ? 0.55 : 0.42, 0.3);
+    mesh.position.set(x, heightAt(x, z) + 0.025, z);
     mesh.isPickable = true;
     mesh.metadata = { siteId: site.siteId };
     markers.set(site.siteId, mesh);
+    contacts.add(x, z, isKamennyBrod ? 0.55 : 0.25, 0.12);
+    let alphaLoad = alphaMaskLoads.get(art.url);
+    if (!alphaLoad) {
+      alphaLoad = loadAlphaMask(art.url);
+      alphaMaskLoads.set(art.url, alphaLoad);
+    }
+    void alphaLoad.then((mask) => {
+      if (mask) spriteAlphaMasks.set(site.siteId, mask);
+    });
   }
-  const treeSources = [
-    sprite('deciduous-tree', MAP_ART.trees.deciduous.url, 1, MAP_ART.trees.deciduous),
-    sprite('conifer-tree', MAP_ART.trees.conifer.url, 1, MAP_ART.trees.conifer),
-  ];
-  for (const source of treeSources) {
-    source.isVisible = false;
-    const treeMaterial = source.material as StandardMaterial;
-    treeMaterial.transparencyMode = Material.MATERIAL_ALPHATEST;
-    treeMaterial.alphaCutOff = 0.15;
-    treeMaterial.emissiveColor = new Color3(0.15, 0.15, 0.15);
-  }
-  const foliage: {
-    mesh: ReturnType<Mesh['createInstance']>;
-    x: number;
-    groundY: number;
-    phase: number;
-  }[] = [];
+  const unitHash = (column: number, row: number, salt: number) =>
+    coordinateHash(column, row, salt) / 0x100000000;
+  const trees: ComponentTreePlacement[] = [];
   // Deterministic scattered woodland clusters; geography excludes roads, cliffs and sites.
   for (let row = 0; row < region.rows; row += 3) {
     for (let column = 0; column < region.columns; column += 3) {
-      const seed = ((column * 73856093) ^ (row * 19349663)) >>> 0;
-      const x = region.origin.xFp + (column + 0.4 + (seed % 127) / 127) * region.cellSizeFp;
-      const z = region.origin.zFp + (row + 0.4 + ((seed >>> 8) % 127) / 127) * region.cellSizeFp;
+      const occupancy = coordinateHash(column, row, 0x68bc21eb);
+      const x =
+        region.origin.xFp +
+        (column + 0.25 + unitHash(column, row, 0x02e5be93) * 1.5) * region.cellSizeFp;
+      const z =
+        region.origin.zFp +
+        (row + 0.25 + unitHash(column, row, 0x967a889b) * 1.5) * region.cellSizeFp;
       const terrain = region.terrainShapes
         .filter((shape) => insidePolygon(x, z, shape.polygon))
         .sort((a, b) => b.paintPriority - a.paintPriority)[0];
       const wooded = terrain?.terrainId === 'forest';
       if (
-        (!wooded && (terrain?.terrainId !== 'grassland' || seed % 31 !== 0)) ||
-        (wooded && seed % 5 === 0) ||
+        (!wooded && (terrain?.terrainId !== 'grassland' || occupancy % 31 !== 0)) ||
+        (wooded && occupancy % 5 === 0) ||
         region.sites.some(
-          (site) => Math.hypot(site.anchorFp.xFp - x, site.anchorFp.zFp - z) < 260,
+          (site) =>
+            Math.hypot(site.anchorFp.xFp - x, site.anchorFp.zFp - z) <
+            (site.siteId === 'kamenny-brod' ? 400 : 260),
         ) ||
-        region.blockingShapes.some((shape) => insidePolygon(x, z, shape.polygon)) ||
-        region.overlayShapes.some((shape) => nearPolygon(x, z, shape.polygon, 110))
+        decorationObstructed(region, x, z, 110)
       )
         continue;
-      const type = wooded && (terrain.shapeId === 'eastern-pinewood' || seed % 4 === 0) ? 1 : 0;
-      const tree = treeSources[type]!.createInstance(`tree:${column}:${row}`);
-      // Babylon instances copy transforms, but do not inherit the source billboard mode.
-      tree.billboardMode = Mesh.BILLBOARDMODE_ALL;
-      const size = 0.42 + ((seed >>> 16) % 100) / 240;
-      tree.scaling.set(size, size, size);
-      tree.position.set(sceneFp(x), heightAt(sceneFp(x), sceneFp(z)), sceneFp(z));
-      contacts.add(tree.position.x, tree.position.z, size * 0.45, 0.24);
-      tree.isPickable = false;
-      foliage.push({ mesh: tree, x: tree.position.x, groundY: tree.position.y, phase: seed % 97 });
+      const species =
+        wooded && (terrain.shapeId === 'eastern-pinewood' || occupancy % 4 === 0)
+          ? 'conifer'
+          : 'deciduous';
+      const template =
+        species === 'conifer' ? 3 : Math.floor(unitHash(column, row, 0x7f4a7c15) * 3);
+      trees.push({
+        id: coordinateHash(column, row, 0x369dea0f),
+        species,
+        template,
+        size: 0.42 + unitHash(column, row, 0x94d049bb) * 0.42,
+        root: { xFp: x, zFp: z },
+      });
     }
   }
+  const componentTrees = createComponentTreeBatch(scene, MAP_TREE_PARTS, trees, sceneFp, heightAt);
+  for (const shadow of componentTrees.shadows)
+    contacts.add(shadow.x, shadow.z, shadow.width / 2, shadow.opacity);
   contacts.finish();
   const partySize = 0.48;
   const partyArt = MAP_ART.partyGroup;
@@ -190,12 +326,29 @@ export function mountContinuousMapScene(
   partyRing.material = ringMaterial;
   (banner.material as StandardMaterial).emissiveColor = new Color3(0.65, 0.6, 0.5);
   banner.renderingGroupId = 2;
+  const opaqueSiteHit = (hit: PickingInfo) => {
+    const siteId = pickedSiteId(hit);
+    if (typeof siteId !== 'string') return true;
+    const mask = spriteAlphaMasks.get(siteId);
+    if (!mask) return true;
+    const uv = hit.getTextureCoordinates();
+    const cutoff = Math.ceil((hit.pickedMesh!.material as StandardMaterial).alphaCutOff * 255);
+    // Keep an unready sprite hit so it cannot silently turn into a terrain order.
+    return !!uv && spritePixelIsOpaque(mask, uv.x, uv.y, cutoff);
+  };
+  const pickMapTarget = (x: number, y: number) => {
+    // Props render after terrain, so an opaque foreground footing wins over ground depth.
+    const hits = scene.multiPick(x, y, (mesh) => mesh.isPickable && mesh !== ground) ?? [];
+    hits.sort((left, right) => left.distance - right.distance);
+    return hits.find(opaqueSiteHit) ?? scene.pick(x, y, (mesh) => mesh === ground);
+  };
   let view: WorldFreeMovementV2ResponseDto | null = null,
     clock = { serverMs: 0, receivedAt: 0 };
   let routeSpans: Vector3[][] = [];
   const groundPoint = (x: number, z: number) => new Vector3(x, heightAt(x, z) + 0.018, z);
   const drapedSegment = surface.drape;
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
+    pick: pickMapTarget,
     elevation: Math.atan(Math.sqrt(0.5)),
     azimuth: Math.PI / 4,
     pickGround: (x, y) => scene.pick(x, y, (m) => m === ground)?.pickedPoint ?? null,
@@ -205,11 +358,12 @@ export function mountContinuousMapScene(
     wheelTarget: canvas.parentElement ?? canvas,
     onPick(hit) {
       const id = hit?.pickedMesh?.metadata?.siteId;
-      if (typeof id === 'string') callbacks.onSelectSite(id);
+      if (typeof id === 'string' && spriteAlphaMasks.has(id)) callbacks.onSelectSite(id);
     },
     onSecondaryPick(hit) {
       const id = hit?.pickedMesh?.metadata?.siteId;
       if (typeof id === 'string') {
+        if (!spriteAlphaMasks.has(id)) return;
         callbacks.onMove({
           kind: 'MOVE_TO',
           mapEdition: region.mapEdition,
@@ -278,13 +432,6 @@ export function mountContinuousMapScene(
     const visualTime = performance.now() / 1000;
     material.setFloat('time', visualTime);
     meadowMaterial.setFloat('time', visualTime);
-    for (const tree of foliage) {
-      const sway = 0.012 * Math.sin(visualTime * 0.85 + tree.x * 0.4 + tree.phase);
-      tree.mesh.rotation.z = sway;
-      // Compensate rotation around the sprite center so the trunk stays planted.
-      tree.mesh.position.x = tree.x;
-      tree.mesh.position.y = tree.groundY;
-    }
     const progress = position(clock.serverMs + performance.now() - clock.receivedAt);
     const p = progress?.point;
     banner.setEnabled(!!p);
@@ -330,8 +477,42 @@ export function mountContinuousMapScene(
     );
     callbacks.onLabels(
       [...markers].map(([siteId, mesh]) => {
-        const point = project(groundPoint(mesh.position.x, mesh.position.z));
-        return { siteId, x: point.x, y: point.y + 12 };
+        const project = (world: Vector3) => {
+          const point = Vector3.Project(world, Matrix.Identity(), transform, viewport);
+          return {
+            x: (point.x * canvas.clientWidth) / engine.getRenderWidth(),
+            y: (point.y * canvas.clientHeight) / engine.getRenderHeight(),
+          };
+        };
+        const point = Vector3.Project(
+          groundPoint(mesh.position.x, mesh.position.z),
+          Matrix.Identity(),
+          transform,
+          viewport,
+        );
+        const anchor = {
+          x: (point.x * canvas.clientWidth) / engine.getRenderWidth(),
+          y: (point.y * canvas.clientHeight) / engine.getRenderHeight(),
+        };
+        const spriteBounds = projectedSpriteBounds(mesh, project);
+        const visible = spriteOnScreen(spriteBounds, canvas.clientWidth, canvas.clientHeight);
+        if (siteId === 'kamenny-brod' || spriteBounds.bottom + 36 > canvas.clientHeight) {
+          return {
+            siteId,
+            x: spriteBounds.right + 8,
+            y: spriteBounds.top + 8,
+            alternateX: spriteBounds.left - 8,
+            visible,
+            align: 'start' as const,
+          };
+        }
+        return {
+          siteId,
+          x: anchor.x,
+          y: spriteBounds.bottom + 8,
+          visible,
+          align: 'center' as const,
+        };
       }),
     );
     if (hasRemaining && p) {
@@ -406,6 +587,11 @@ export function mountContinuousMapScene(
         'lighting',
         night ? new Color3(0.68, 0.74, 0.84) : new Color3(1.04, 1.02, 0.98),
       );
+      componentTrees.setNight(night);
+      for (const mesh of markers.values())
+        (mesh.material as StandardMaterial).emissiveColor.copyFrom(
+          night ? new Color3(0.58, 0.64, 0.74) : new Color3(1, 1, 0.94),
+        );
       light.intensity = night ? 0.62 : 1.15;
       light.diffuse = night ? new Color3(0.74, 0.8, 0.96) : new Color3(1, 0.98, 0.92);
       const edgeMist = night ? new Color3(0.13, 0.15, 0.18) : new Color3(0.2, 0.22, 0.21);

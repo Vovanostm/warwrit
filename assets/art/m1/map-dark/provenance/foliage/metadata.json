@@ -1,0 +1,78 @@
+{
+  "generator": "built-in image_gen",
+  "candidate_source": {
+    "root": "/private/tmp/warwrit-map-polish-01a1031c/scene",
+    "head": "65c5e39290b0a28923ee365ef18096246d30cf7c",
+    "source_state": "read-only for this task; existing dirty changes preserved"
+  },
+  "references": {
+    "primary_style_every_call": "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "secondary_unit_ink": "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/style/unit-c-ink.png",
+    "oldmill_material_reference": "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/places/staraya-melnitsa.png",
+    "forge_material_reference": "/Users/vovanostm/learn/warwrit/assets/art/m1/places/buildings/forge.png",
+    "party_identity_only": "/private/tmp/warwrit-map-polish-01a1031c/scene/assets/art/m1/map-unified/party-banner-v2.png"
+  },
+  "assets": [
+    {
+      "selected": "broadleaf-v2.png",
+      "dimensions_px": [1254, 1254],
+      "alpha_bounds_xy_inclusive": {
+        "alpha_ge_1": [0, 21, 1239, 1239],
+        "alpha_ge_8": [41, 28, 1235, 1236],
+        "alpha_ge_128": [42, 29, 1233, 1235]
+      },
+      "foot_pivot_uv_estimated_by_inspection": [0.52, 0.98],
+      "prompts": ["broadleaf-v1.prompt.txt", "broadleaf-v2.prompt.txt"],
+      "generation_sources": [
+        "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-09d9e898-d0e8-4541-9db8-05fc9e7c9d53.png",
+        "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-2c207876-5919-4c91-8a8b-fe1b1227137a.png"
+      ],
+      "limitations": [
+        "One correction opened the dark branch structure and angular crown, but the subject still leaves little alpha>=8 margin on the right and below.",
+        "Alpha>=1 stray/halo pixels touch the left edge; parent intends to composite using an alpha cutoff and inspect actual bounds.",
+        "Visual composite and game-scale critic NOT_RUN in this asset packet."
+      ]
+    },
+    {
+      "selected": "conifer-v1.png",
+      "comparison": "conifer-v2.png is also retained; its one targeted correction increased crop and did not materially remove the faint low-alpha aura, so v1 is preferred for framing.",
+      "dimensions_px": [1024, 1536],
+      "alpha_bounds_xy_inclusive": {
+        "alpha_ge_1": [0, 27, 1001, 1513],
+        "alpha_ge_8": [96, 61, 931, 1442],
+        "alpha_ge_128": [97, 62, 930, 1441]
+      },
+      "foot_pivot_uv_estimated_by_inspection": [0.5, 0.95],
+      "prompts": ["conifer-v1.prompt.txt", "conifer-v2.prompt.txt"],
+      "generation_sources": [
+        "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-0964c233-fa6a-434a-8ed1-700d9deac98c.png",
+        "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-c573c3ab-6d93-4ac9-b57f-cf0efba0801c.png"
+      ],
+      "limitations": [
+        "Ragged, desaturated crown with exposed branch structure; branch edges retain fine needle-like detail.",
+        "Faint surrounding glow remains below alpha 8; alpha>=8 bounds provide the usable cutout.",
+        "Selected v1 after comparing the allowed v2 correction; no game composite or critic verdict yet."
+      ]
+    },
+    {
+      "selected": "party-banner-v2.png",
+      "dimensions_px": [1024, 1536],
+      "alpha_bounds_xy_inclusive": {
+        "alpha_ge_1": [65, 37, 945, 1463],
+        "alpha_ge_8": [231, 39, 941, 1426],
+        "alpha_ge_128": [232, 39, 940, 1425]
+      },
+      "foot_pivot_uv_estimated_by_inspection": [0.5, 0.92],
+      "prompts": ["party-banner-v1.prompt.txt", "party-banner-v2.prompt.txt"],
+      "generation_sources": [
+        "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-e42ebd3d-0e44-4678-88b8-ec7ba4cf55bb.png",
+        "/Users/vovanostm/.codex/generated_images/01a1032d-5eed-73c2-a176-707f6ce941b6/exec-ac45ca73-905c-49ad-85b5-529ffe3ef376.png"
+      ],
+      "limitations": [
+        "Exactly three rugged silhouettes and original broken cream ring/central diamond are preserved.",
+        "Cloth remains more vivid than the requested faded oxblood; the v2 correction muted it slightly but low-alpha surrounding red/brown glow persists below alpha 8.",
+        "No new text or insignia; game composite and critic review NOT_RUN."
+      ]
+    }
+  ]
+}

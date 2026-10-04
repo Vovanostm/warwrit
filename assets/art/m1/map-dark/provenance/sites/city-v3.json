@@ -1,0 +1,55 @@
+{
+  "status": "CHANGES_REQUIRED_LEFT_WALL_STUB_STILL_BLOCKS_APPROACH",
+  "file": "city-v3.png",
+  "sourcewidth": 1536,
+  "sourceheight": 1024,
+  "pivot": {
+    "u": 0.293,
+    "v": 0.894
+  },
+  "bounds": [0.19466145833333334, 0.0068359375, 0.9986979166666666, 0.939453125],
+  "bounds_definition": "Normalized visible alpha>=8, exclusive right/bottom",
+  "pivot_definition": "Visual approximate gate doorway ground foot; not furthest forecourt edge; +/-0.015 normalized pending composite",
+  "prompt_file": "city-prompt-v3.txt",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a10326-e07f-7a42-9760-9ae654192571/exec-2de16c3d-b8a1-47a7-8580-9edcfee85e4f.png",
+  "references": [
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "city-v2.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/kamenny-brod.png"
+  ],
+  "generator": "Built-in imagegen transparent edit, no manual pixel edits",
+  "observations": [
+    "Removed left gate tower and moved gate toward extreme lower-left, town mass right/back.",
+    "Materials/inhabited market identity retained.",
+    "Generator added opaque interior paving unlike prior transparent courtyard; needs current composite acceptance."
+  ],
+  "concerns": [
+    "Short LEFT gate wall stub still intersects required up-left approach ray, so correction cannot be called complete.",
+    "Requested gateu.15 not achieved; observedu.293.",
+    "Top/right margins very small (<1%) though major silhouettes not obviously cut; alpha bounds almost touch frame.",
+    "Generated architectural axes not certified."
+  ],
+  "approach_ray_readonly_check": {
+    "estimated_gate_pixel": [450, 915],
+    "direction": [-600, -200],
+    "samples": [
+      {
+        "point": [360, 885],
+        "alpha": 253,
+        "distance": 90
+      },
+      {
+        "point": [330, 875],
+        "alpha": 252,
+        "distance": 120
+      },
+      {
+        "point": [300, 865],
+        "alpha": 0,
+        "distance": 150
+      }
+    ],
+    "conclusion": "Opaque left masonry stub crosses final90-120px before gate; full approach transparency fails."
+  },
+  "NOT_RUN": ["Runtime v3 composite", "Independent critic v3 approval"]
+}

@@ -1,0 +1,23 @@
+Initial generation prompt (builtin image_gen__imagegen; generated exec-865f49ac-14ff-4040-a37b-c3361b6e3d43.png):
+Use case: stylized-concept
+Asset type: individual transparent tree sprite for an isometric dark-fantasy strategy map, fixed E35.2643897/A45
+Input images: Image 1 approved grim map master, for painterly ink atmosphere, muted palette, upper-left light only. Image 2 approved ink character, for hand-painted surface and edge treatment only. Images 3-4 are existing tree silhouettes to avoid: especially avoid Image 3's extremely wide low spreading crown and central flared trunk, and Image 4's dense narrow conifer.
+Primary request: One old, broad irregular oak, weathered and ancient. Make it clearly distinct from the existing wide horizontal oak by giving this tree a taller, more compact irregular crown and a visibly split, gnarled trunk.
+Subject: a single mature old deciduous oak with two substantial leaders splitting low into the crown, thick crooked main limbs, and a heavy root flare. Foliage forms several separated, uneven clumps; preserve dark negative-space gaps between major boughs so the trunk and branch structure remain readable. The canopy is irregular, broader than a young tree but not a flat horizontal umbrella.
+Style/medium: original 2D painted game cutout with deliberate ink contours, layered painterly planes, serious grounded dark fantasy, matching reference's dense material detail without copying its buildings or scene.
+Composition/framing: entire crown and visible rooted base fit within frame, transparent breathing room on every side; single tree centered, base near bottom center. Fixed orthographic sprite, upright primary trunk, no mirroring, clean readable silhouette.
+Lighting/mood: consistent upper-left key; upper-left broad angular foliage and bark planes receive restrained light; lower-right foliage and branch undersides are deep soot shadow, giving layered volume.
+Color palette: muted slate and soot shadows, bark in weathered grey and umber, sparse dried ochre and dull olive leaves.
+Materials/textures: detailed furrowed oak bark, knots, scars and split wood; layered branch overlap; foliage grouped into textured painted masses with visible light-facing planes, not a noisy carpet of individually defined leaves.
+Constraints: exactly one oak, genuinely transparent background and alpha, no ground slab, cast shadow, glow, vignette or backdrop. Root flare visible at bottom, no cropping, no props, people, buildings, text or watermark.
+
+One targeted correction (builtin image_gen__imagegen, using initial image as target; output exec-c68af5b7-881a-4169-b2e7-abc2ce0df2c3.png):
+Use case: style-transfer
+Asset type: isolated transparent tree sprite for a fixed isometric dark-fantasy game map, E35.2643897/A45
+Input images: Image 1 is the exact target oak cutout. Preserve its silhouette, trunk anatomy, branch positions, overall proportions, roots, framing and camera exactly. Image 2 is the approved grim map master, a mood/palette/upper-left lighting reference only.
+Primary request: Refine only the oak foliage paint treatment to read as broad, confident painted volume at map scale. Keep the current tree structure and all bark untouched.
+Style/medium: retain the original hand-painted ink-and-wash game asset.
+Lighting/mood: consistent upper-left light. Make the lit upper-left crown read as a few broad angular foliage planes, with layered shadow masses and clear lower-right/underside soot recesses; preserve open negative spaces around major branches.
+Color palette: reduce bright yellow and gold. Use muted dull olive, desaturated dried ochre, umber and slate-olive, with restrained highlights. Keep vivid yellow out.
+Materials/textures: simplify the very fine leaf-by-leaf grain into larger readable foliage clusters and broad planar brushwork, while retaining believable leaf texture. Reduce tiny repetitive marks and noisy hatching. Preserve bark color and detail exactly.
+Constraints: this is a targeted surface-paint correction only. Do not change the silhouette, branch/root anatomy, geometry, tree count, crop, scale, transparent alpha, or lighting direction. One tree only, transparent background, no glow, no cast shadow, no vignette, no ground, no added objects/text/watermark.

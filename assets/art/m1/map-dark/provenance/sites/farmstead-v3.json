@@ -1,0 +1,56 @@
+{
+  "status": "CHANGES_REQUIRED_APPROACH_RAY_BLOCKED",
+  "file": "farmstead-v3.png",
+  "sourcewidth": 1536,
+  "sourceheight": 1024,
+  "pivot": {
+    "u": 0.7356770833333334,
+    "v": 0.8525390625
+  },
+  "bounds": [0.0026041666666666665, 0.154296875, 0.8515625, 0.9189453125],
+  "bounds_definition": "Normalized visible alpha>=8, exclusive right/bottom",
+  "pivot_definition": "Visual ground midpoint of lower-right open front gate gap(1130,873),+/-0.015normalized",
+  "prompt_file": "farmstead-prompt-v3.txt",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a10326-e07f-7a42-9760-9ae654192571/exec-2cd8a48d-b086-4c39-8296-bf18ee1842ab.png",
+  "references": [
+    "/private/tmp/warwrit-map-polish-01a1031c/style-dark/master/master-grim-v1.png",
+    "farmstead-v2.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/severny-dvor.png"
+  ],
+  "generator": "Built-inimagegen targetedrecomposition,no manualpixelchanges",
+  "observations": [
+    "Existing gate moved to lower-right; inhabited farm mass shifted left; material/identity preserved."
+  ],
+  "approach_ray": {
+    "from": [1130, 873],
+    "direction": [100, -600],
+    "blocking_samples": [
+      {
+        "point": [1145, 783],
+        "alpha": 252
+      },
+      {
+        "point": [1150, 753],
+        "alpha": 252
+      },
+      {
+        "point": [1160, 693],
+        "alpha": 253
+      },
+      {
+        "point": [1170, 633],
+        "alpha": 253
+      },
+      {
+        "point": [1180, 573],
+        "alpha": 253
+      },
+      {
+        "point": [1190, 513],
+        "alpha": 253
+      }
+    ],
+    "conclusion": "Right gateleaf/fence/palisade obscures90-360px of actual approach. Not ready."
+  },
+  "NOT_RUN": ["Runtimev3composite", "Independentcriticapproval"]
+}

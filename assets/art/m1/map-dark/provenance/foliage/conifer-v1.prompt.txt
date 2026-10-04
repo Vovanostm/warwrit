@@ -1,0 +1,12 @@
+Use case: stylized-concept
+Asset type: one cutout conifer sprite for a serious dark-fantasy isometric strategy map.
+Input images: Image 1 is the PRIMARY style authority; match its grim muted palette, charcoal ink shadows, weathered texture and overcast atmosphere. Image 2 is a secondary unit-ink contour/value reference. Image 3 is a supporting material reference for battered timber, stone and low warm accents only; do not copy architecture.
+Scene/backdrop: genuine clean transparent pixels outside the tree.
+Subject: one solitary mature conifer with a narrow vertical weathered charcoal-umber trunk and an irregular ragged crown of sparse slate, charcoal and muted sage bough masses. Narrow asymmetrical branch tiers taper unevenly; expose dark branch/trunk negative space. Branch shapes should be broad, broken silhouette strokes, not tiny needles.
+Style/medium: hand-inked flat wash matching Image 1, serious dark fantasy, desaturated, grim, rough etched contours and charcoal shadow masses, controlled small-scale readability.
+Composition/framing: one complete centered tree, actual source aspect retained without crop; orthographic map camera elevation 35.264 degrees and azimuth 45 degrees; horizontal ground axes project at ±30 degrees and a square ground plane projects √3:1 (not 2:1). Trunk is vertical in image space. Show crown, full trunk and root foot pivot, with generous transparent margins including below the roots.
+Lighting/mood: overcast baked upper-left light only; short subdued contact grounding limited to root contact; no bloom or haze.
+Color palette: muted charcoal, slate, grey-sage and weathered umber; extremely restrained dried-ochre accents only if naturally part of bark.
+Materials/textures: sparse ragged matte boughs, layered readable branch masses, weatherbeaten bark and broken branch ends.
+Constraints: exactly one conifer, true alpha cutout, mostly opaque tree pixels, clear complete silhouette with transparent exterior and stable trunk-foot pivot.
+Avoid: lush emerald green, bright needle tufts, exhaustive fine needles, regular Christmas-tree tiers, symmetrical perfect triangle, glossy foliage, fog, glow, vignette, halo, cast shadow beyond a short root contact, soil/ground plate, scenery, people, rocks, text, symbols, watermark.

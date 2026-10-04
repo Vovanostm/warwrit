@@ -31,7 +31,7 @@ function avoidPartyLabels(svg: SVGSVGElement, party: RouteScreenRect | undefined
   if (!labels) return;
   const canvasBounds = svg.getBoundingClientRect();
   labels.forEach((label) => {
-    label.style.translate = '';
+    label.style.translate = '0 0';
     if (!party) return;
     const rect = label.getBoundingClientRect();
     const position = {
@@ -46,7 +46,7 @@ function avoidPartyLabels(svg: SVGSVGElement, party: RouteScreenRect | undefined
       above >= 4
         ? above
         : Math.min(canvasBounds.height - rect.height - 4, party.y + party.height + 6);
-    label.style.translate = `-50% calc(0.6rem + ${targetTop - position.y}px)`;
+    label.style.translate = `0 ${targetTop - position.y}px`;
   });
 }
 

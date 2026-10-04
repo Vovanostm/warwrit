@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type {
   WorldContinuousMapDto,
   WorldFreeMovementV2RequestDto,
@@ -8,6 +8,76 @@ import type {
 import { mountContinuousMapScene } from '../renderer/continuous-map-scene.js';
 import type { MapLabelPosition } from '../renderer/map-scene.js';
 import { mountRouteOverlay } from '../renderer/route-overlay.js';
+
+function alignedLabelLeft(label: MapLabelPosition, size: { width: number }) {
+  return label.align === 'start'
+    ? label.x
+    : label.align === 'end'
+      ? label.x - size.width
+      : label.x - size.width * 0.34;
+}
+
+function centerLabelLeft(
+  label: MapLabelPosition,
+  left: number,
+  size: { width: number },
+  width: number,
+) {
+  if (label.align !== 'center') return left;
+  if (left < 4) left = label.x + 4;
+  else if (left + size.width > width - 4) left = label.x - size.width - 4;
+  return left;
+}
+
+function labelPosition(
+  label: MapLabelPosition,
+  size: { width: number; height: number },
+  width: number,
+  height: number,
+) {
+  let left = centerLabelLeft(label, alignedLabelLeft(label, size), size, width);
+  if (label.align === 'start' && left + size.width > width - 4)
+    left = (label.alternateX ?? label.x - 8) - size.width;
+  left = Math.max(4, Math.min(left, Math.max(4, width - size.width - 4)));
+  const top = Math.max(4, Math.min(label.y + 4, Math.max(4, height - size.height - 4)));
+  return { left, top };
+}
+
+function labelSizeChanged(
+  previous: { width: number; height: number } | undefined,
+  width: number,
+  height: number,
+) {
+  return (
+    !previous || Math.abs(previous.width - width) > 0.5 || Math.abs(previous.height - height) > 0.5
+  );
+}
+
+function recordLabelSize(
+  button: HTMLButtonElement,
+  sizes: Map<string, { width: number; height: number }>,
+) {
+  const siteId = button.dataset['siteId'];
+  if (!siteId) return false;
+  const { width, height } = button.getBoundingClientRect();
+  if (!labelSizeChanged(sizes.get(siteId), width, height)) return false;
+  sizes.set(siteId, { width, height });
+  return true;
+}
+
+function useMapLabels() {
+  const labelsLayer = useRef<HTMLDivElement>(null);
+  const labelSizes = useRef(new Map<string, { width: number; height: number }>());
+  const [labels, setLabels] = useState<readonly MapLabelPosition[]>([]);
+  const [, setLabelMeasurements] = useState(0);
+  useLayoutEffect(() => {
+    const buttons =
+      labelsLayer.current?.querySelectorAll<HTMLButtonElement>('[data-site-id]') ?? [];
+    const changed = Array.from(buttons, (button) => recordLabelSize(button, labelSizes.current));
+    if (changed.some(Boolean)) setLabelMeasurements((revision) => revision + 1);
+  }, [labels]);
+  return { labelsLayer, labelSizes, labels, setLabels };
+}
 
 export function ContinuousMapCanvas(props: {
   region: WorldContinuousMapDto;
@@ -26,8 +96,8 @@ export function ContinuousMapCanvas(props: {
   const partyIndicator = useRef<HTMLDivElement>(null);
   const labelPress = useRef<{ id: number; x: number; y: number; siteId: string } | null>(null);
   latest.current = props;
-  const [labels, setLabels] = useState<readonly MapLabelPosition[]>([]),
-    [failed, setFailed] = useState(false);
+  const { labelsLayer, labelSizes, labels, setLabels } = useMapLabels();
+  const [failed, setFailed] = useState(false);
   useEffect(() => {
     if (!canvas.current || !routeSvg.current || !routeLegend.current) return;
     const drawRoute = mountRouteOverlay(routeSvg.current, routeLegend.current);
@@ -70,7 +140,10 @@ export function ContinuousMapCanvas(props: {
               (p, i) =>
                 p.siteId === next[i]?.siteId &&
                 Math.abs(p.x - next[i]!.x) < 0.3 &&
-                Math.abs(p.y - next[i]!.y) < 0.3,
+                Math.abs(p.y - next[i]!.y) < 0.3 &&
+                p.visible === next[i]!.visible &&
+                p.align === next[i]!.align &&
+                p.alternateX === next[i]!.alternateX,
             )
               ? old
               : next,
@@ -127,51 +200,58 @@ export function ContinuousMapCanvas(props: {
       <div ref={partyIndicator} className="map-party-indicator" hidden>
         Ваш отряд
       </div>
-      <div className="world-map-labels">
-        {labels.map((l) => (
-          <button
-            key={l.siteId}
-            className="map-label"
-            data-site-id={l.siteId}
-            style={{ transform: `translate(${l.x}px,${l.y}px)` }}
-            onClick={() => props.onSelectSite(l.siteId)}
-            onPointerDown={(e) => {
-              if (e.button === 2)
-                labelPress.current = {
-                  id: e.pointerId,
-                  x: e.clientX,
-                  y: e.clientY,
-                  siteId: l.siteId,
-                };
-            }}
-            onBlur={() => {
-              labelPress.current = null;
-            }}
-            onPointerCancel={() => {
-              labelPress.current = null;
-            }}
-            onPointerUp={(e) => {
-              const p = labelPress.current;
-              labelPress.current = null;
-              if (
-                e.button === 2 &&
-                p?.id === e.pointerId &&
-                p.siteId === l.siteId &&
-                Math.hypot(e.clientX - p.x, e.clientY - p.y) <= 5
-              ) {
-                canvas.current?.focus();
-                props.onMove({
-                  kind: 'MOVE_TO',
-                  mapEdition: props.region.mapEdition,
-                  target: { kind: 'SITE', siteId: l.siteId },
-                });
-              }
-            }}
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            {props.sites.find((s) => s.siteId === l.siteId)?.name}
-          </button>
-        ))}
+      <div className="world-map-labels" ref={labelsLayer}>
+        {labels.map((l) => {
+          if (l.visible === false) return null;
+          const size = labelSizes.current.get(l.siteId) ?? { width: 96, height: 20 };
+          const width = labelsLayer.current?.clientWidth ?? 0;
+          const height = labelsLayer.current?.clientHeight ?? 0;
+          const { left, top } = labelPosition(l, size, width, height);
+          return (
+            <button
+              key={l.siteId}
+              className="map-label"
+              data-site-id={l.siteId}
+              style={{ transform: `translate(${left}px,${top}px)`, translate: '0 0' }}
+              onClick={() => props.onSelectSite(l.siteId)}
+              onPointerDown={(e) => {
+                if (e.button === 2)
+                  labelPress.current = {
+                    id: e.pointerId,
+                    x: e.clientX,
+                    y: e.clientY,
+                    siteId: l.siteId,
+                  };
+              }}
+              onBlur={() => {
+                labelPress.current = null;
+              }}
+              onPointerCancel={() => {
+                labelPress.current = null;
+              }}
+              onPointerUp={(e) => {
+                const p = labelPress.current;
+                labelPress.current = null;
+                if (
+                  e.button === 2 &&
+                  p?.id === e.pointerId &&
+                  p.siteId === l.siteId &&
+                  Math.hypot(e.clientX - p.x, e.clientY - p.y) <= 5
+                ) {
+                  canvas.current?.focus();
+                  props.onMove({
+                    kind: 'MOVE_TO',
+                    mapEdition: props.region.mapEdition,
+                    target: { kind: 'SITE', siteId: l.siteId },
+                  });
+                }
+              }}
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              {props.sites.find((s) => s.siteId === l.siteId)?.name}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

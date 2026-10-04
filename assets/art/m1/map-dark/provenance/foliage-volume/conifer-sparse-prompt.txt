@@ -1,0 +1,10 @@
+Use case: stylized-concept.
+Asset type: one isolated transparent 2D pine tree sprite for a serious dark-fantasy strategy map.
+Input Image 1: PRIMARY approved grim master, atmosphere/muted palette/ink-and-flat-wash brush/light reference only.
+Input Image 2: approved unit-c-ink cutout, credible angular light planes and painterly ink surface reference only.
+Input Image 3: existing conifer silhouette to AVOID; make this new tree substantially sparser with long exposed stem and irregular few lateral boughs, not the dense triangular fir shape.
+Primary request: one tall sparse weathered pine, with a straight vertical stem, asymmetric widely separated tiered boughs, visible branch junctions, rooted foot fully visible. Natural anatomy: grey-umber fissured bark, exposed long sections of upright trunk, 4-6 unevenly spaced lateral needle boughs, longer off-center upper crown and sparse shorter lower branches; branching believable, slender irregular silhouette. A few broken bare branch tips, no props.
+Perspective: fixed orthographic isometric camera elevation 35.2643897 degrees / azimuth 45 degrees. Trunk remains vertical in image. Entire crown/roots visible, roots near bottom center, generous true-alpha margins.
+Style: original serious hand-painted 2D dark fantasy ink drawing + restrained flat wash. Credible bark/branch anatomy, selected crisp edges, BROAD angular upper-left lit crown planes and deep soot darker overlapping underside planes. Volume must read at small map scale, not through a fine noisy needle carpet. No rounded toy/plastic/puffy crown; no glossy 3D/PBR.
+Palette: muted slate and soot, grey-brown/umber stem, dull desaturated olive needles, very restrained dry ochre accents. No bright yellow, neon green or vivid lawn.
+Transparency: ONLY tree visible, actual transparent alpha=0 outside silhouette, plant/wood fully opaque, partial alpha only antialiased edges. NO background, broad soft glow/haze, vignette, ground slab or cast shadow. No extra trees, scenery, people, text or watermark. Upper-left light must stay consistent.
