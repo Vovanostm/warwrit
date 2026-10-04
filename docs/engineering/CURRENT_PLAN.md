@@ -1,5 +1,19 @@
 # Warwrit current delivery plan
 
+**Live movement recheck — 2026-10-04:** current `main` at `ae9bf3a`
+was checked through the authenticated game at `http://127.0.0.1:5287`.
+Its GitHub CI is SUCCESS. API/web were restarted from that checkout with the
+existing player database preserved. North Court → Stone Ford showed 70s,
+then 31s with visible progress, then settlement arrival; Stone Ford → Quiet
+Causeway showed 67s and arrived. A safe trail approach showed 45s, then 10s
+and trail ×1.4, then stopped at its goal. Accepted schedules confirm
+48fp/s paving, 43.2fp/s dirt, 33.6fp/s trail and 24fp/s grass. Thus roads are
+mechanically faster; minute-long settlement trips are the current pace,
+not proof of subjective speed satisfaction. [Owning readback](../work-packages/M1-FREE-MOVEMENT.md#live-movement-recheck--2026-10-04).
+No gameplay changes, balance changes or deployment in this recheck.
+The owner explicitly authorized publishing and merging this verification record
+on 2026-10-04, then opening the retained game for a personal playtest.
+
 **CI boundary correction — 2026-10-04:** PR136 and its main merge CI failed at
 `check:architecture`: the terrain label imported game-core directly from web.
 The attempted dependency declaration was rejected by the existing web/protocol

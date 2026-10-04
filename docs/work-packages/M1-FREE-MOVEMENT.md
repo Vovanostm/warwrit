@@ -653,3 +653,48 @@ position. Main-game capture: `roads-main-overview.png` in the same screenshot
 directory. The separate checking API/web processes and their specifically named
 Dex/PostgreSQL Compose projects/volume were removed. The player runtime/database
 were retained. Try the existing game: right-click a settlement or road; S stops.
+
+### Live movement recheck — 2026-10-04
+
+Owner asked to verify that the party now moves quickly across the map.
+Checked current merged `main` at `ae9bf3a` through the authenticated browser,
+using the existing company and player database. Current main CI is SUCCESS.
+The API and web were no longer listening; rebuilding the server and restarting
+both from the primary checkout restored readiness and the playable map without
+resetting data.
+
+Observed journeys and their accepted V4 geography / V3 profile schedules:
+
+- North Court → Stone Ford: 69.538796s; UI showed 70s, then 31s with party
+  advancement, growing traversed history and shrinking remaining route, then
+  settlement arrival. Paving spans run at 48fp/s (×2); brief grass runs at 24fp/s.
+- Stone Ford → Quiet Causeway: 66.735850s; UI showed 67s and later arrival
+  with the route cleared. Dirt spans run at 43.2fp/s (×1.8); the starting paved
+  junction correctly shows ×2, and brief grass gaps run at 24fp/s. No moving
+  dirt-label screenshot was captured in this recheck.
+- Quiet Causeway → safe trail point: 44.490104s; UI showed 45s, then 10s,
+  trail ×1.4 and visible advancement, then stopped at the goal. Trail spans
+  run at 33.6fp/s; dirt overlaps and brief grass gaps retain their own speeds.
+  The accepted route crosses no danger area. Return to Quiet Causeway completed
+  through the same normal map controls; the party was left in the settlement.
+
+Current captures in
+`/Users/vovanostm/.codex/visualizations/2026/10/03/01a10318-def8-76f0-a8a7-a784e3814a52`:
+`speed-recheck-paved.jpg` (moving paved route), `speed-recheck-dirt-start.jpg`
+(starting paved junction), `speed-recheck-dirt-moving.jpg` (despite its filename,
+this is the dirt journey's arrival), `speed-recheck-trail.jpg` (moving trail).
+
+Speeds above derive from accepted span geometry and duration. Browser evidence
+confirms countdown, visible progress and arrival; exact arrival wall-time and
+render FPS are NOT_MEASURED. Database `updated_at` does not refresh on these
+route updates and was excluded from elapsed-time measurement. Roads are
+mechanically faster than grass, while these settlement trips still take roughly
+one real minute. Subjective pace satisfaction and other devices/scales remain
+NOT_MEASURED. No gameplay/balance changes or repeated full gate in this recheck.
+
+Independent read-only critic reviewed the current plans and captures and found
+no material speed/display defect in these journeys. It did not operate the
+browser; completion observations were supplied by the author. This verification
+record is authorized for publication and merge by the owner on 2026-10-04.
+The retained local game is running for the owner's personal playtest; subjective
+pace acceptance remains pending that playtest.
