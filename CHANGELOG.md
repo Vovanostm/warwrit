@@ -27,6 +27,23 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ### Fixed
 
+- 2026-10-04, branch `codex/supplies-delivery`, published (not yet merged):
+  supplies can be bought through the local bazaar/granary with finite merchant
+  stock, exact cash and retained retry receipts; future companies start with
+  thirty rations and 800–850 crowns after hiring. Opening forms survive definitive
+  rejection and refresh expired options before new requests. The proportionate
+  party sprite, terrain-grounded ring and draped route share their foot junction.
+  Independent review corrected legacy first-POST initialization, remote-cash
+  quotes, carried ration ownership, malformed pending purchases, incomplete
+  receipts and GAME_OVER purchase controls. A new ordered 0014 migration retains
+  shop state and refuses destructive rollback. Scope: company core/protocol/server,
+  web opening/shop/map and party art; owner request and actual checks/limits are in
+  [M1-SUPPLIES](docs/work-packages/M1-SUPPLIES.md#delivery-amendment--2026-10-04).
+  Local verify627/47 skipped, coverage/audit and sequential PostgreSQL17 checks
+  passed; independent source/visual critique found no remaining material defect
+  in inspected evidence. Final PR CI/merge pending; expired-form browser creation
+  remains NOT_RUN. Existing saves and unrelated drafts are retained.
+
 - 2026-09-29, #128: combat initiative ties, AI targets and canonical replay order
   no longer depend on the host locale (`compareCodeUnits`); stress digest
   unchanged for existing ids.

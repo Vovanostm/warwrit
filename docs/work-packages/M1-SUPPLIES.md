@@ -152,3 +152,11 @@ The final review also closed GAME_OVER purchase controls: new purchases require
 an ACTIVE company in both the company shortcut and the directly visited shop.
 A retained uncertain request can still be retried to recover its prior receipt.
 The quote regression verifies both cases.
+
+Independent playable critique closeout: DONE_WITH_CONCERNS, no material defect in
+inspected current day/night, field/route/STOP and shop captures. Small/dark figures
+at the mobile overview are optional contrast polish; ring/cue preserve location.
+Critic inspected source and supplied captures, did not operate browser/DB. Source
+review also found no remaining material defect after the final fixes. Evidence
+predates the commit but matches the captured source; separate final-head CI and
+main runtime readback are still required before delivery closeout.
