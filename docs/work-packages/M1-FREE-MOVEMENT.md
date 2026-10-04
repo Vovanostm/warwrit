@@ -1,5 +1,69 @@
 # Free global-map movement — implementation assignment
 
+## Tree art rejection and diagnosis — 2026-10-04
+
+Owner reports incorrectly oriented, visibly flat trees after PR141. This supersedes
+vegetation-art acceptance, not proven terrain relief, road/route geometry or saves.
+This is the continuing isolated map-art correction mission: the owner explicitly
+requested worktree, PR and merge; deployment/auto-merge remain unauthorized.
+Source readback: active5287 serves the primary06b8555 renderer with Y-only
+billboards and alternating negative X scale, which compresses the sprite view and
+mirrors baked lighting. Merged5291/c47e770 configures the source plane as camera-facing and uses
+positive scale. Babylon9.28 instances do not copy that billboard mode; actual tree
+instances remained unrotated and appeared sheared/leaning in the diagonal camera.
+Source-plane changes alone neither fixed those instances nor supplied art volume.
+
+Both existing tree assets are near-frontal portraits: long exposed front trunks,
+side-facing branch tiers and fine leaf noise rather than readable crown tops and
+near/far masses. Their original provenance already records a lower/subtle camera
+angle and predominantly partial alpha. A single plane and contact ellipse cannot
+correct an unsuitable source projection. Source dimensions/alpha-foot margins
+also need explicit aspect and root-pivot metadata rather than a square/default foot.
+
+Independent critic revised tree art/angle quality to CHANGES_REQUESTED; its
+previous dimensional-sprite acceptance was too broad. Smallest next playable
+correction: one deciduous and one conifer transparent ink sprite matched to fixed
+orthographic35.264-degree elevation/45-degree azimuth, broad irregular canopy
+masses, visible crown top and shadowed underside, shared NW light and muted palette.
+Keep the existing fixed-camera2.5D pipeline, positive scale and shared terrain
+contacts. First accept town+tree close and normal forest frames with planted roots,
+rounded readable crowns and unobstructed party/route before adding variants.
+Do not cross-copy the same frontal raster or change the renderer framework.
+Implementation in `codex/tree-projection`, isolated road-art-quality checkout on
+`c47e770`: each tree instance explicitly faces the full camera; two original
+transparent ink sprites show elevated overlapping canopy masses and shared NW
+light. The first generated pair was rejected as frontal and both viewpoints were
+redrawn. Source PNGs stay unmodified; measured alpha-root coordinates and aspect
+now ground the visible trunk rather than the transparent frame bottom. Positive
+scale and the existing terrain contact wash remain. Site/banner transforms are
+equivalent; canonical geography, speed, picking, schedules and saves are unchanged.
+
+Current integrated browser: genuine night overview/close, daytime deciduous+town
+and conifer close/region overview inspected on5291. LMB pan and wheel preserve
+stationary settlement state. A normal RMB journey to Bereznyak was rejected with
+insufficient supplies; current bazaar says trading is unavailable. Successful
+moving/arrival proof for this correction is NOT_RUN; stock/time/player DB were not
+fabricated. Prior PR141 journeys remain historical evidence only. Independent
+repeat critic returned READY_WITH_LIMITS for stationary visual acceptance: corrected
+canopy tops, short rooted boles, shared elevated viewpoint/light and readable crown
+volume; no reproduced material angle/grounding/readability defect in supplied views.
+Close forest repetition is optional future polish; use authored variants with the
+same light, never flipped copies. Critic inspected source/captures, did not operate
+the browser. Independent source review found no material defect in exact Babylon
+instance inheritance, pivot/aspect mapping or preserved site/banner/navigation
+boundaries; reviewer tests/services NOT_RUN. GitHub owns current-head clean CI
+and expected-head authorized merge readback for `codex/tree-projection`; author
+checks and stationary visual acceptance are separate. No full-M1 or enjoyment
+acceptance.
+
+Checks:12 existing renderer projection/surface/camera tests, web typecheck, changed
+code ESLint/Prettier, content validation and normal quality audit passed. Coverage
+with the owned animated scene unloaded passed618/46skip under unchanged limits;
+first locally loaded attempt FAILED two unchanged5s field-build timeouts
+(616 passed/46skip). No test or policy was weakened. The final clean
+bootstrap/stress/migrations gate will run in the PR CI, not duplicate local runs.
+Primary supplies work and its runtime are outside this slice's write ownership.
+
 ## World volume correction — 2026-10-04
 
 Owner rejected the previous shallow crown as flat. This supersedes its visual

@@ -1,0 +1,23 @@
+{
+  "asset": "conifer.png",
+  "tool": "image_gen.imagegen",
+  "transparent_background": true,
+  "referenceImages": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/map/site-farmstead.png"],
+  "initialPrompt": "Use case: stylized-concept. Asset: ONE original isolated transparent tree sprite for Warwrit's grounded dark-fantasy 2.5D map. References: image1 is ONLY approved irregular ink/flat-wash rendering and muted material palette; image2 is ONLY the actual map building projection and shared lighting. Do not include a person or building. Camera MUST match image2's elevated orthographic isometric map view: fixed35.264 degrees above horizontal and45-degree ground azimuth. Clearly see the TOP of the crown, its near and far lobes, with a compressed/partly occluded trunk beneath; NOT a frontal eye-level tree portrait. Match map building's large shadow masses and ink contours. One NW/top-left key light; warm grey/umber bark, muted olive/slate/ochre foliage. Natural credible mature silhouette, asymmetrical age and branch structure; no cute rounded toy tree or glossy surfaces. Broad readable foliage volumes, restrained leaf marks; NO micro-noisy photographic leaves. Actual transparent background, tree only, full crown and root framed with a modest transparent margin, root base at bottom center. No ground patch or external ground shadow, no grass, no text, no watermark. Self-shadowing and underside darkness must make crown volume convincing at a small map scale.\nSubject: One mature Scots-pine-like conifer with irregular spreading bough tiers, weathered bark and crown clearly viewed from ABOVE. Show the upper surfaces of bough masses and overlap hiding parts of the short front trunk, natural uneven silhouette; not a long tall frontal Christmas tree, not a toy cone.",
+  "correctionPrompt": "EDIT THE TREE VIEWPOINT, redraw the tree geometry, do not rotate or squash the bitmap. Image1 is the edit target; image2 is the actual Warwrit isometric map building and REQUIRED camera/projection reference. KEEP image1's mature species, asymmetrical natural silhouette, irregular ink line, subdued olive/ochre/soot palette, NW/upper-left light, actual transparent background. Change ONLY the VIEWPOINT to a clearly ELEVATED orthographic view looking DOWN over the tree, matching the building's visible roof-top plane (fixed map camera35.264degrees above ground,45deg azimuth). Current target is wrong: frontal trunk/branch portrait. New canopy MUST show broad TOP surfaces, its front underside a compressed dark band. Upper trunk forks must be HIDDEN by overlapping canopy. Shorten the projected exposed lower trunk, roots lying on a foreshortened natural ground ellipse but no ground disk. Broad irregular foliage volume with top/near/far planes and restrained leaf marks at map scale. This must visibly change the view, not merely add shadows or leaves. Single tree only, whole crown and visible root point with modest transparent margins. No building, person, terrain, external ground shadow, text or watermark. Preserve real alpha transparency. Scots pine: top-facing nested irregular ELLIPTICAL/conical bough whorls overlapping the trunk; upper branch attachment joints hidden; short projected lower bole; see bough TOP surfaces, not long horizontal front-facing tiers.",
+  "originalSource": "/Users/vovanostm/.codex/generated_images/01a0fe72-19fb-7871-9a2b-a830af1cd507/exec-adbe4ad5-7610-425e-bc3c-66c34f32e8c3.png",
+  "generationCount": 2,
+  "corrections": 1,
+  "measurements": {
+    "width": 1254,
+    "height": 1254,
+    "aspect": 1,
+    "rootX": 0.555735,
+    "foot": 0.877592,
+    "rootPixel": [696.39, 1100],
+    "solidBounds": [107, 115, 1201, 1109],
+    "alphaExtrema": [0, 255]
+  },
+  "pivotMethod": "Lowest alpha>=64 pixel in central trunk band x=40%-65%,y=65%-100%; alpha-weighted center of bottom four trunk rows. Read-only PIL; raster unmodified.",
+  "review": "First pair rejected as frontal. Edited pair + integrated genuine stationary day/night overview and town/forest close: independent critic READY_WITH_LIMITS; no reproduced material projection/grounding/readability defect. Close silhouette repetition is optional future polish. Current-cycle successful travel NOT_RUN: rejected for insufficient supplies; no whole-game quality or enjoyment acceptance."
+}
