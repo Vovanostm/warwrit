@@ -23,6 +23,7 @@ export function ContinuousMapCanvas(props: {
     latest = useRef(props);
   const routeSvg = useRef<SVGSVGElement>(null);
   const routeLegend = useRef<HTMLDivElement>(null);
+  const partyIndicator = useRef<HTMLDivElement>(null);
   const maskId = `route-mask-${useId()}`;
   const labelPress = useRef<{ id: number; x: number; y: number; siteId: string } | null>(null);
   latest.current = props;
@@ -34,6 +35,33 @@ export function ContinuousMapCanvas(props: {
     try {
       scene.current = mountContinuousMapScene(canvas.current, props.region, props.sites, {
         onRoute: drawRoute,
+        onParty: (point) => {
+          const indicator = partyIndicator.current;
+          if (!indicator) return;
+          indicator.hidden = !point;
+          if (point) {
+            const container = indicator.parentElement!.getBoundingClientRect();
+            const width = indicator.offsetWidth;
+            const height = indicator.offsetHeight;
+            const occupied = [...indicator.parentElement!.querySelectorAll('.map-label')].map(
+              (label) => label.getBoundingClientRect(),
+            );
+            const gap =
+              [0, 24, 48, 72, 96].find((offset) => {
+                const left = container.left + point.x - width / 2;
+                const top = container.top + point.y - height - 8 - offset;
+                return !occupied.some(
+                  (rect) =>
+                    left < rect.right + 4 &&
+                    left + width > rect.left - 4 &&
+                    top < rect.bottom + 4 &&
+                    top + height > rect.top - 4,
+                );
+              }) ?? 96;
+            indicator.style.transform = `translate(${point.x}px,${point.y - gap}px)`;
+            indicator.style.setProperty('--party-leader-length', `${gap}px`);
+          }
+        },
         onMove: (a) => latest.current.onMove(a),
         onSelectSite: (id) => latest.current.onSelectSite(id),
         onLabels: (next) =>
@@ -105,6 +133,9 @@ export function ContinuousMapCanvas(props: {
           </svg>
           Осталось
         </span>
+      </div>
+      <div ref={partyIndicator} className="map-party-indicator" hidden>
+        Ваш отряд
       </div>
       <div className="world-map-labels">
         {labels.map((l) => (

@@ -39,6 +39,13 @@ export function MovementTerrain(props: {
       </p>
     );
   }
+  if (current.surface)
+    return (
+      <p className="state-note">
+        {terrainNames[current.surface.overlayId ?? current.surface.terrainId] ?? 'Местность'} ·
+        отряд стоит
+      </p>
+    );
   const x =
     region.origin.xFp +
     (Math.floor((Number(current.point.xMicroFp) / 65536 - region.origin.xFp) / region.cellSizeFp) +

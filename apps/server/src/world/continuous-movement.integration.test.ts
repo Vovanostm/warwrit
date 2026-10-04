@@ -54,6 +54,16 @@ describe('continuous movement executor (PostgreSQL)', () => {
         );
         expect(accepted.plan!.from).toEqual({ xMicroFp: '100663296', zMicroFp: '-174391296' });
         expect(accepted.plan!.mapEdition).toBe(MAP_EDITION);
+        expect(accepted.plan).toMatchObject({ planVersion: 3, navigationVersion: 'polygon-v1' });
+        const route = await db
+          .selectFrom('world_party_routes')
+          .select('accepted_route')
+          .where('world_id', '=', scenario.worldId)
+          .where('company_id', '=', scenario.companyId)
+          .executeTakeFirstOrThrow();
+        expect((route.accepted_route as { execution: { plan: unknown } }).execution.plan).toEqual(
+          accepted.plan,
+        );
         const stored = await readSnapshot(db, scenario);
         expect(stored.economy.lifecycle.parties[0]!.location).toMatchObject({
           kind: 'MOVING',
