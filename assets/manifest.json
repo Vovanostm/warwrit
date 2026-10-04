@@ -639,6 +639,24 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/roads-v1/dirt.json",
       "generatedAt": "2026-10-04T01:51:48.368159+00:00"
+    },
+    {
+      "id": "art.m1.trees-v1.deciduous",
+      "path": "assets/art/m1/trees-v1/deciduous.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/trees-v1/deciduous.json",
+      "generatedAt": "2026-10-04T12:46:38.502272+00:00"
+    },
+    {
+      "id": "art.m1.trees-v1.conifer",
+      "path": "assets/art/m1/trees-v1/conifer.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/trees-v1/conifer.json",
+      "generatedAt": "2026-10-04T12:47:24.163488+00:00"
     }
   ]
 }
