@@ -7,6 +7,25 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ## Unreleased
 
+### Tree diversity on current main
+
+- 2026-10-05, branch `codex/forest-diversity-main`, local: owner requested the
+  working 14-form forest in main. Continue PR146's composed curved crowns and
+  original atlas style, with age/species silhouettes and deterministic natural
+  pockets/clearings; preserve relief, input, routes and gameplay. Scope: web tree
+  forms/geometry/placement/geography/mount and owning docs. Prior whole-sprite
+  attempt and primary unrelated drafts/player data remain preserved. Four focused
+  geometry/placement checks, typecheck/build/lint/content pass;
+  independent source and day/night art critic READY_WITH_LIMITS. Full local
+  coverage FAILED two unchanged navigation timeouts (629 pass/47 skip); normal
+  PR CI/merge pending, authenticated journey NOT_RUN after automatic login
+  rejection. Shared picking decoder/terrain validation and site-assembly extraction retain
+  projection, material, alpha and input guards; final unchanged audit passes
+  with current focused coverage.
+  Active primary location-depth writer prevents overlapping shared-file writes;
+  no deployment or new migration.
+  [Owning scope/results](docs/work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
+
 ### Added
 
 - 2026-09-29, #125: fallow (`pnpm check:dead-code` in `pnpm verify`,

@@ -1,5 +1,25 @@
 # Warwrit current delivery plan
 
+**Tree diversity to main authorized — 2026-10-05:** owner requests working
+implementation in main, including this mission's PR/merge. Parent owns clean
+`forest-diversity-main` / `codex/forest-diversity-main`, base917644a (PR146).
+Extend the accepted composed forest to 14 family/age assemblies and natural
+seeded pockets/clearings; preserve main relief, roads, routes, supplies, contacts,
+art palette/projection and player state. One bounded forms writer; parent owns
+placement/mount/docs/integration; independent critic required. Old whole-sprite
+attempt and primary dirty terrain/wiki/skill drafts remain preserved and outside
+publication. First playable: forest-edge journey by Bereznyak with STOP/reload,
+day/night close/overview and pan/zoom. Implemented with 504 deterministic trees
+and all 14 forms; focused regressions,
+web typecheck/build/lint/content pass. Independent source and day/night art
+critic READY_WITH_LIMITS; final changed-code audit passes with focused coverage. Full local coverage FAILED two unchanged navigation
+5s timeouts (629 pass/47 skip); normal clean PR CI/merge pending. Native public
+renderer input verified, authenticated journey NOT_RUN after automatic login
+review rejection; fixture sign-in permission remains separately requested.
+Primary has an active location-depth writer; preserve shared files/drafts.
+No deployment.
+[Owning scope and results](../work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
+
 **Component forest integration authorized — 2026-10-04:** owner requested
 review, PR merge and local main update for the approved5290 dark-fantasy map.
 Parent owns `codex/component-forest-integration`, base `bcc30f5`; the obsolete

@@ -29,13 +29,10 @@ import {
   mapSiteSprite,
   type MapSpriteArt,
 } from './art.js';
-import {
-  createComponentTreeBatch,
-  coordinateHash,
-  type ComponentTreePlacement,
-} from './map-trees.js';
+import { createComponentTreeBatch } from './map-trees.js';
+import { TREE_FORMS } from './map-tree-forms.js';
+import { generateForest } from './map-forest.js';
 import { createTerrainMaterial, createRoadMaterial } from './terrain-material.js';
-import { insidePolygon, decorationObstructed } from './map-geography.js';
 import { createMapRoads } from './map-roads.js';
 import { createMapShadows } from './map-shadows.js';
 import { createMapSurface } from './map-surface.js';
@@ -137,8 +134,16 @@ function spriteOnScreen(
   return bounds.right >= 0 && bounds.left <= width && bounds.bottom >= 0 && bounds.top <= height;
 }
 
-function pickedSiteId(hit: PickingInfo) {
-  return (hit.pickedMesh?.metadata as { siteId?: string } | undefined)?.siteId;
+function pickedSiteId(hit: PickingInfo | null) {
+  return (hit?.pickedMesh?.metadata as { siteId?: string } | undefined)?.siteId;
+}
+
+function pickedTerrainPoint(hit: PickingInfo | null, canvasWidth: number, unitsPerFp: number) {
+  if (!hit?.pickedPoint || canvasWidth <= 0) return null;
+  return {
+    xFp: Math.round(hit.pickedPoint.x / unitsPerFp),
+    zFp: Math.round(hit.pickedPoint.z / unitsPerFp),
+  };
 }
 
 type PublicPlan = NonNullable<WorldFreeMovementV2ResponseDto['plan']>;
@@ -151,6 +156,68 @@ function spanInterpolation(p: PublicPlan, span: PublicPlan['speedSpans'][number]
   const b = Number(geometry.toT.numerator) / Number(geometry.toT.denominator);
   const along = a + (b - a) * t;
   return { from, to, along };
+}
+
+function createSiteMarker(
+  scene: Scene,
+  site: WorldContinuousMapDto['sites'][number],
+  info: WorldSurroundingsDto['map']['sites'][number],
+  sceneFp: (fp: number) => number,
+  heightAt: (x: number, z: number) => number,
+) {
+  const size = site.siteId === 'kamenny-brod' ? CITY_SPRITE_SIZE : info.kind === 'CITY' ? 1.3 : 1;
+  const art = mapSiteSprite(site.siteId, info.kind);
+  const mesh = new Mesh(`site:${site.siteId}`, scene);
+  spriteGeometry(art, size).applyToMesh(mesh);
+  mesh.billboardMode = Mesh.BILLBOARDMODE_ALL;
+  const texture = new Texture(art.url, scene);
+  texture.hasAlpha = true;
+  const paint = new StandardMaterial(`site:${site.siteId}`, scene);
+  paint.diffuseTexture = texture;
+  paint.emissiveTexture = texture;
+  paint.disableLighting = true;
+  paint.useAlphaFromDiffuseTexture = true;
+  paint.transparencyMode = Material.MATERIAL_ALPHATEST;
+  paint.alphaCutOff = 0.04;
+  paint.backFaceCulling = false;
+  paint.specularColor = Color3.Black();
+  mesh.material = paint;
+  mesh.renderingGroupId = 1;
+  const x = sceneFp(site.anchorFp.xFp),
+    z = sceneFp(site.anchorFp.zFp);
+  mesh.position.set(x, heightAt(x, z) + 0.025, z);
+  mesh.isPickable = true;
+  mesh.metadata = { siteId: site.siteId };
+  return { mesh, art, contactRadius: site.siteId === 'kamenny-brod' ? 0.55 : 0.25 };
+}
+
+function mountMapSites(
+  scene: Scene,
+  region: WorldContinuousMapDto,
+  sites: WorldSurroundingsDto['map']['sites'],
+  sceneFp: (fp: number) => number,
+  heightAt: (x: number, z: number) => number,
+  contacts: ReturnType<typeof createMapShadows>,
+) {
+  const markers = new Map<string, Mesh>();
+  const spriteAlphaMasks = new Map<string, AlphaMask>();
+  const alphaMaskLoads = new Map<string, Promise<AlphaMask | null>>();
+  for (const site of region.sites) {
+    const info = sites.find((entry) => entry.siteId === site.siteId);
+    if (!info) continue;
+    const { mesh, art, contactRadius } = createSiteMarker(scene, site, info, sceneFp, heightAt);
+    markers.set(site.siteId, mesh);
+    contacts.add(mesh.position.x, mesh.position.z, contactRadius, 0.12);
+    let alphaLoad = alphaMaskLoads.get(art.url);
+    if (!alphaLoad) {
+      alphaLoad = loadAlphaMask(art.url);
+      alphaMaskLoads.set(art.url, alphaLoad);
+    }
+    void alphaLoad.then((mask) => {
+      if (mask) spriteAlphaMasks.set(site.siteId, mask);
+    });
+  }
+  return { markers, spriteAlphaMasks };
 }
 
 export function mountContinuousMapScene(
@@ -218,90 +285,15 @@ export function mountContinuousMapScene(
     return mesh;
   };
   const contacts = createMapShadows(scene, heightAt);
-  const markers = new Map<string, Mesh>();
-  const spriteAlphaMasks = new Map<string, AlphaMask>();
-  const alphaMaskLoads = new Map<string, Promise<AlphaMask | null>>();
-  for (const site of region.sites) {
-    const info = sites.find((s) => s.siteId === site.siteId);
-    if (!info) continue;
-    const isKamennyBrod = site.siteId === 'kamenny-brod';
-    const size = isKamennyBrod ? CITY_SPRITE_SIZE : info.kind === 'CITY' ? 1.3 : 1;
-    const art = mapSiteSprite(site.siteId, info.kind);
-    const mesh = new Mesh(`site:${site.siteId}`, scene);
-    spriteGeometry(art, size).applyToMesh(mesh);
-    mesh.billboardMode = Mesh.BILLBOARDMODE_ALL;
-    const texture = new Texture(art.url, scene);
-    texture.hasAlpha = true;
-    const paint = new StandardMaterial(`site:${site.siteId}`, scene);
-    paint.diffuseTexture = texture;
-    paint.emissiveTexture = texture;
-    paint.disableLighting = true;
-    paint.useAlphaFromDiffuseTexture = true;
-    paint.transparencyMode = Material.MATERIAL_ALPHATEST;
-    paint.alphaCutOff = 0.04;
-    paint.backFaceCulling = false;
-    paint.specularColor = Color3.Black();
-    mesh.material = paint;
-    mesh.renderingGroupId = 1;
-    const x = sceneFp(site.anchorFp.xFp),
-      z = sceneFp(site.anchorFp.zFp);
-    mesh.position.set(x, heightAt(x, z) + 0.025, z);
-    mesh.isPickable = true;
-    mesh.metadata = { siteId: site.siteId };
-    markers.set(site.siteId, mesh);
-    contacts.add(x, z, isKamennyBrod ? 0.55 : 0.25, 0.12);
-    let alphaLoad = alphaMaskLoads.get(art.url);
-    if (!alphaLoad) {
-      alphaLoad = loadAlphaMask(art.url);
-      alphaMaskLoads.set(art.url, alphaLoad);
-    }
-    void alphaLoad.then((mask) => {
-      if (mask) spriteAlphaMasks.set(site.siteId, mask);
-    });
-  }
-  const unitHash = (column: number, row: number, salt: number) =>
-    coordinateHash(column, row, salt) / 0x100000000;
-  const trees: ComponentTreePlacement[] = [];
-  // Deterministic scattered woodland clusters; geography excludes roads, cliffs and sites.
-  for (let row = 0; row < region.rows; row += 3) {
-    for (let column = 0; column < region.columns; column += 3) {
-      const occupancy = coordinateHash(column, row, 0x68bc21eb);
-      const x =
-        region.origin.xFp +
-        (column + 0.25 + unitHash(column, row, 0x02e5be93) * 1.5) * region.cellSizeFp;
-      const z =
-        region.origin.zFp +
-        (row + 0.25 + unitHash(column, row, 0x967a889b) * 1.5) * region.cellSizeFp;
-      const terrain = region.terrainShapes
-        .filter((shape) => insidePolygon(x, z, shape.polygon))
-        .sort((a, b) => b.paintPriority - a.paintPriority)[0];
-      const wooded = terrain?.terrainId === 'forest';
-      if (
-        (!wooded && (terrain?.terrainId !== 'grassland' || occupancy % 31 !== 0)) ||
-        (wooded && occupancy % 5 === 0) ||
-        region.sites.some(
-          (site) =>
-            Math.hypot(site.anchorFp.xFp - x, site.anchorFp.zFp - z) <
-            (site.siteId === 'kamenny-brod' ? 400 : 260),
-        ) ||
-        decorationObstructed(region, x, z, 110)
-      )
-        continue;
-      const species =
-        wooded && (terrain.shapeId === 'eastern-pinewood' || occupancy % 4 === 0)
-          ? 'conifer'
-          : 'deciduous';
-      const template =
-        species === 'conifer' ? 3 : Math.floor(unitHash(column, row, 0x7f4a7c15) * 3);
-      trees.push({
-        id: coordinateHash(column, row, 0x369dea0f),
-        species,
-        template,
-        size: 0.42 + unitHash(column, row, 0x94d049bb) * 0.42,
-        root: { xFp: x, zFp: z },
-      });
-    }
-  }
+  const { markers, spriteAlphaMasks } = mountMapSites(
+    scene,
+    region,
+    sites,
+    sceneFp,
+    heightAt,
+    contacts,
+  );
+  const trees = generateForest(region, TREE_FORMS);
   const componentTrees = createComponentTreeBatch(scene, MAP_TREE_PARTS, trees, sceneFp, heightAt);
   for (const shadow of componentTrees.shadows)
     contacts.add(shadow.x, shadow.z, shadow.width / 2, shadow.opacity);
@@ -357,11 +349,11 @@ export function mountContinuousMapScene(
     panButtons: [0, 1],
     wheelTarget: canvas.parentElement ?? canvas,
     onPick(hit) {
-      const id = hit?.pickedMesh?.metadata?.siteId;
+      const id = pickedSiteId(hit);
       if (typeof id === 'string' && spriteAlphaMasks.has(id)) callbacks.onSelectSite(id);
     },
     onSecondaryPick(hit) {
-      const id = hit?.pickedMesh?.metadata?.siteId;
+      const id = pickedSiteId(hit);
       if (typeof id === 'string') {
         if (!spriteAlphaMasks.has(id)) return;
         callbacks.onMove({
@@ -373,9 +365,8 @@ export function mountContinuousMapScene(
       }
       const rect = canvas.getBoundingClientRect();
       const groundHit = scene.pick(scene.pointerX, scene.pointerY, (m) => m === ground);
-      if (!groundHit?.pickedPoint || rect.width <= 0) return;
-      const p = groundHit.pickedPoint;
-      const point = { xFp: Math.round(p.x / unitsPerFp), zFp: Math.round(p.z / unitsPerFp) };
+      const point = pickedTerrainPoint(groundHit, rect.width, unitsPerFp);
+      if (!point) return;
       canvas.focus();
       callbacks.onMove({
         kind: 'MOVE_TO',
