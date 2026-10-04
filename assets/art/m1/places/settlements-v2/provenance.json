@@ -1,0 +1,168 @@
+{
+  "source": "codex-image-generation",
+  "tool": "built-in imagegen",
+  "date": "2026-10-04",
+  "license": "original work generated for Warwrit; no third-party art",
+  "direction": "ADR-0006 style C: irregular ink contours, strong shadow masses, muted slate/soot/umber/ochre, weathered credible timber and stone. Connected painted settlement lanes/yards; independent distance, settlement and foreground. Door coordinates and close view bounds in place-buildings.ts.",
+  "notes": "Ten types each have rural, town and river architecture painted into three complete settlements. Earlier building sheets remain authored source assets; separate silhouettes are no longer composited in the player overview. Old mill remains ruined. Full paintings supply matching close views/sidebar. Exact generation/edit prompts below record chronological stages, including discarded intermediate village cutout whose ground-edge alpha was corrected.",
+  "assets": [
+    {
+      "path": "assets/art/m1/places/settlements-v2/bereznyak-painting.png",
+      "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/bereznyak.png"],
+      "stages": [
+        {
+          "operation": "village-scene-prompt",
+          "prompt": "Create original high-end 2D game environment art for Warwrit. One FULL COHESIVE SETTLEMENT painting, landscape 3:2, not a sprite sheet, no isolated buildings, no UI, no text. Elevated three-quarter view of a complete northern medieval village nestled among birches, under overcast daylight. Fine irregular black ink contour and richly textured watercolor/gouache, weathered warm-grey stone, muted moss, umber timber, restrained ochre/rust accents. Professional environment illustration with believable scale, one consistent perspective and soft upper-left light.\nComposition: distant hills, birch wood and small strip of cloudy sky occupy upper 20 percent; a winding village lane enters bottom center, branches around a broad packed-earth market square with well. The foreground and middle are SETTLEMENT: worn dirt, wheel ruts, puddles, cobbles at entrances, garden beds, timber fences, stacked firewood, farm carts, laundry and fences joining building yards. Each building sits organically on this painted ground with foundation, steps and contact shadow. No giant empty grassy foreground, no meadow carpet.\nEmbed exactly ten identifiable main service buildings distributed in clear left/right clusters around the connected lanes, with a few small supporting houses between them for natural density: rear left a stone chapel with tiny bell tower; rear middle an elder's carved timber longhouse; rear right a windmill; middle far left a timber guardhouse by the village gate; middle left a forge with tall chimney and anvil yard; middle right a large thatched inn; right a stable around a fenced hay courtyard; front left a herbalist cottage with hanging herbs and vegetable beds; front center-right a market of ochre cloth stalls on the square; front right a raised timber granary with loading hoist, sacks and cart. Service doors visible toward camera and accessible from lane. Each cluster has architectural depth and overlap, but no service building obscured. Human-scale props, no people (decorative occupancy must not invent NPC facts), no characters. No frontmost trees hiding the ten service doorways; foreground edge framing will be a separate layer. Rich, warm, materially convincing, restrained dark-fantasy ink painting. This must look like a real inhabited village landscape, NOT a collage of icons."
+        },
+        {
+          "operation": "village-style-prompt",
+          "prompt": "Image1 is EDIT TARGET: preserve exact full village composition, ten main building positions/scales/shapes, doors and lanes, every yard and well and supporting homes. Images2 and3 are approved Warwrit STYLE references. Change ONLY the rendering style of Image1 to match the reference images: stronger irregular black INK contour, bold dark SHADOW MASSES and flat hand-painted textured wash. Restrained slate/soot/umber/ochre, weathered material; warm wood, dark roof edges, grey rough stone. Serious grounded dark fantasy, not sepia photographic engraving, not soft mist blur, not childish. Keep exact original 3:2 aspect and camera, no rearrangement, no new objects/people/symbols. Readable believable construction, not abandoned village, soft upper-left light preserved. Preserve all ten distinct doors in exact original pixels/coordinates. Sharper crafted material edges and roof silhouettes; quiet atmospheric distance. Output full opaque cohesive painting, not cutouts. Exact same geometry and composition, only ink/wash treatment improved to approved style."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/bereznyak.png",
+      "references": ["assets/art/m1/places/settlements-v2/bereznyak-painting.png"],
+      "stages": [
+        {
+          "operation": "village-cutout-prompt",
+          "prompt": "EDIT TARGET: the provided complete village painting. Produce a precise parallax settlement MIDGROUND CUTOUT on genuine transparency. Preserve the exact 3:2 canvas, all TEN buildings, their exact positions, scales, geometry, roofs, doors, chimneys, ink/wash pixels, all streets, gardens, courtyards, fences, supporting houses and complete ground down to every bottom/side edge. Remove ONLY the distant sky, mountains, far river and far woodland behind the settlement silhouette; make those pixels alpha transparent. Keep every roof tip and windmill sail intact against transparency. Keep the village's birch trees at the rear boundary as part of its irregular skyline, but do not retain distant mountains/sky. Opaque connected earth/paving, structures, yards and props from the settlement horizon to the bottom edge. No recoloring, restyling, redesign or rearrangement, no added objects, no border, no checkerboard baked into pixels. This is an aligned production cutout layer extracted from the original, not a new illustration."
+        },
+        {
+          "operation": "village-edge-prompt",
+          "prompt": "Edit the supplied village parallax cutout. Preserve EXACT all existing village objects, positions, colors and ink/wash geometry. The transparent sky and distant background above the settlement MUST remain transparent, roofs/windmill/tree skyline untouched. Change ONLY the lower and side ground-edge gaps: fill every transparent region BELOW the skyline through the bottom and left/right canvas edges with matching weathered muddy street/earth/low brush and yard continuation. The whole lower 80 percent must be a connected painted opaque ground plane reaching all canvas sides and the bottom. Do not present this as a floating island/cut-out vignette. True transparent sky above, complete opaque painted earth to frame edges below. 3:2 canvas unchanged; no new buildings, no shifting of doors, no rearrangement. Alpha only behind upper village silhouette; no alpha in bottom corners."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+      "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/bereznyak.png"],
+      "stages": [
+        {
+          "operation": "city-scene-prompt",
+          "prompt": "Reference image is STYLE AND QUALITY REFERENCE ONLY, not an edit target. Create a NEW original Warwrit cohesive medieval TOWN landscape in exactly the reference's irregular fine black ink and textured watercolor/gouache style, subdued warm grey stone, umber timber, moss, ochre cloth, rust accents, soft overcast upper-left daylight. 3:2 landscape canvas, fixed elevated 3/4 view. Fully integrated settlement environment, one perspective/material lighting, no isolated sprites or houses on meadow carpet. No UI/text/people.\nTown Stone Ford: a dense stone-walled northern town at a shallow river crossing. Small strip of sky and distant wooded hills upper 15%, visible town walls/gate and glimpse of stone bridge behind. Packed urban blocks, adjoining yards, cobbled curving lanes, drainage gutters, town square with well and lantern posts, carts, barrels, firewood and weeds in paving. Fine layered ground interaction/foundations and cast shadows.\nExactly ten distinguishable service buildings reachable from lanes, loosely following the reference layout but TOWN architecture variants: upper left substantial stone chapel with bell turret; upper middle dignified council house/elder with carved stone porch and small civic bell; upper right tall stone/timber grain mill with loading hoist (no windmill sails); middle far left fortified stone guard gatehouse; middle left forge with brick chimney and open glowing furnace/anvil yard; middle right half-timbered inn with two-storey gallery and mug sign; middle far right stable court with hay and wagon bays; front left herbalist's tall narrow shop with hanging herb bundles and planted beds; center square ochre/rust market stalls, contiguous painted square; front right robust stone granary/warehouse, sacks, timber hoist, cart. Supporting houses between principal buildings create lived urban density. Visible service doorways toward camera. Complete image to edges, no empty grass foreground, no frontmost tree hiding entrances. This is a connected town where every path and facade belongs to a coherent whole, professional detailed 2D RPG environment art. Match the original unit and place references' strong irregular INK shadow masses and flat wash, not glossy photorealism. Serious grounded dark fantasy, credible weathering but an inhabited functional settlement."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/kamenny-brod.png",
+      "references": ["assets/art/m1/places/settlements-v2/kamenny-brod-painting.png"],
+      "stages": [
+        {
+          "operation": "settlement-extract-prompt",
+          "prompt": "EDIT TARGET: the provided complete settlement painting. Extract its aligned parallax MIDGROUND layer with genuinely transparent distant background. Keep the exact original 3:2 canvas, all service buildings at their exact positions/scales, roof tips, doors, chimneys, original ink style, colors and lighting. Keep all connected lanes, water/docks/bridge if present, yards, gardens, fences, supporting houses, trees at settlement boundary and complete opaque painted terrain to bottom and side edges. Remove ONLY sky, far mountains and far woodland behind the irregular settlement skyline; make those background pixels alpha transparent. No other change. No brown matte, no halo, no vignette, no baked checkerboard, no restyling, additions or rearrangements. Keep every service entrance exposed and all architecture intact. This is precise background extraction from the supplied painting, not a redesign."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/tikhaya-gat-painting.png",
+      "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/bereznyak.png"],
+      "stages": [
+        {
+          "operation": "river-scene-prompt",
+          "prompt": "Reference image is STYLE AND QUALITY REFERENCE ONLY, not an edit target. Create a NEW original Warwrit cohesive medieval RIVERSIDE SETTLEMENT landscape in exactly the reference's irregular fine black ink and textured watercolor/gouache style, subdued warm grey stone, weathered umber timber, moss, ochre cloth, restrained rust accents, soft overcast upper-left daylight. 3:2 landscape canvas, fixed elevated 3/4 view. Complete integrated environment with one perspective and light, no isolated sprites or meadow carpet. No UI/text/people.\nQuiet Causeway: timber settlement on a river bend. Sky and distant wooded banks upper 15%; river visible along right edge, weathered small dock and connecting footbridge; reed banks, damp mud/cobble lanes, boardwalk sections and fences connect all yards and the riverside market square. Ground has wheel tracks, puddles, ropes, mooring posts, nets, logs, barrels, herbs; each building foundation sits correctly in the same terrain with cast shadow.\nExactly ten distinguishable main buildings reachable from lanes and loosely following reference layout but different RIVER variants: upper left compact river-stone chapel with low bell turret; upper middle elder's elevated timber house with open gallery; upper right WATERMILL beside river with prominent water wheel and sluice, no windmill sails; middle far left timber palisade guardhouse; middle left river-stone forge, black chimney and charcoal yard; middle right timber inn with wraparound balcony and mug sign; middle far right stable open yard under long lean-to and hay; front left herbalist cottage with covered drying porch/herbs/garden; center-right market of cloth fish/produce stalls near dock, nets and crates; front right timber dock granary/warehouse on low stone plinth with hoist and grain sacks. Supporting houses, gardens and boat sheds between them create natural coherent density. Doors clearly facing lanes/camera. No giant empty grass foreground, no frontmost tree hiding service doors. Professionally detailed RPG environment: every building, path, fence and bank is integrated into a place. Match the original unit and place references' strong irregular INK shadow masses and flat wash, not glossy photorealism. Serious grounded dark fantasy, credible weathering but an inhabited functional settlement."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/tikhaya-gat.png",
+      "references": ["assets/art/m1/places/settlements-v2/tikhaya-gat-painting.png"],
+      "stages": [
+        {
+          "operation": "settlement-extract-prompt",
+          "prompt": "EDIT TARGET: the provided complete settlement painting. Extract its aligned parallax MIDGROUND layer with genuinely transparent distant background. Keep the exact original 3:2 canvas, all service buildings at their exact positions/scales, roof tips, doors, chimneys, original ink style, colors and lighting. Keep all connected lanes, water/docks/bridge if present, yards, gardens, fences, supporting houses, trees at settlement boundary and complete opaque painted terrain to bottom and side edges. Remove ONLY sky, far mountains and far woodland behind the irregular settlement skyline; make those background pixels alpha transparent. No other change. No brown matte, no halo, no vignette, no baked checkerboard, no restyling, additions or rearrangements. Keep every service entrance exposed and all architecture intact. This is precise background extraction from the supplied painting, not a redesign."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/severny-dvor-painting.png",
+      "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/bereznyak.png"],
+      "stages": [
+        {
+          "operation": "farm-scene-prompt",
+          "prompt": "Reference image is STYLE AND QUALITY REFERENCE ONLY, not an edit target. Create a NEW original Warwrit cohesive northern medieval FARMSTEAD environment in exactly the reference's irregular fine black ink and textured watercolor/gouache style, muted moss/umber timber, grey stone, ochre straw, soft overcast upper-left daylight. 3:2 landscape, elevated fixed 3/4 view, no UI/text/people. A small coherent enclosed farm settlement in wooded rolling countryside: upper 15% sky and distant forest/fields; modest carved longhouse of farm elder upper-left; modest timber WINDMILL upper-right; broad STABLE with courtyard, cart and hay lower-left; large raised timber GRANARY and loading ramp/sacks lower-right. Four main buildings grounded in the same painted terrain, connected by worn wheel-rutted lanes around a stone well and shared working yard; garden beds, orchard, wattle fences, woodpile, old wagon, mud/puddles, planted plots and stacked hay. Small supporting cottages and sheds make it a complete place. Continuous fences mark believable boundaries; doorways face shared yard and lane. No cutout collage, no meadow texture carpet, no giant empty grass foreground, no foreground tree hiding doors. Every roof, yard, cast shadow and lane shares the same perspective and natural light. Professionally finished coherent RPG environment art. Match the original unit and place references' strong irregular INK shadow masses and flat wash, not glossy photorealism. Serious grounded dark fantasy, credible weathering but an inhabited functional settlement."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/severny-dvor.png",
+      "references": ["assets/art/m1/places/settlements-v2/severny-dvor-painting.png"],
+      "stages": [
+        {
+          "operation": "settlement-extract-prompt",
+          "prompt": "EDIT TARGET: the provided complete settlement painting. Extract its aligned parallax MIDGROUND layer with genuinely transparent distant background. Keep the exact original 3:2 canvas, all service buildings at their exact positions/scales, roof tips, doors, chimneys, original ink style, colors and lighting. Keep all connected lanes, water/docks/bridge if present, yards, gardens, fences, supporting houses, trees at settlement boundary and complete opaque painted terrain to bottom and side edges. Remove ONLY sky, far mountains and far woodland behind the irregular settlement skyline; make those background pixels alpha transparent. No other change. No brown matte, no halo, no vignette, no baked checkerboard, no restyling, additions or rearrangements. Keep every service entrance exposed and all architecture intact. This is precise background extraction from the supplied painting, not a redesign."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "references": ["assets/art/m1/places/staraya-melnitsa.png"],
+      "stages": [
+        {
+          "operation": "ruin-extract-prompt",
+          "prompt": "EDIT TARGET: existing original Warwrit ruined watermill painting. Extract an aligned parallax MIDGROUND with genuine transparent sky. Preserve ORIGINAL WIDE CANVAS/aspect and every object position, exact scale and ink/wash style, ruined roof/broken wheel/stonework, cellar/yard entrance, river, waterfall, damaged fences, rocks, near trees and entire connected ground/river to every bottom and side edge. Preserve ruined condition and existing distant castle silhouette; remove ONLY open sky and far hills/forest behind the mill/trees/castle silhouette. Alpha transparent there, no matte/halos/checkerboard. No repair, rebuilding, repainting, new architecture, creatures, characters or symbols. Full original composition and ruins retained."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/staraya-melnitsa-distance.png",
+      "references": ["assets/art/m1/places/staraya-melnitsa.png"],
+      "stages": [
+        {
+          "operation": "ruin-far-prompt",
+          "prompt": "EDIT TARGET original Warwrit ruined mill wide landscape. Create its DISTANT BACKGROUND layer: preserve the source wide aspect and existing cloudy sunset sky, wooded distant hills and EXISTING far castle silhouette at upper right in exactly the original positions, scale, ink/wash and slate/umber/ochre dark fantasy style. Remove all near/middle elements: the ruined mill, its wheel/chimney, waterfall, near trees, yard, fences, grass, props and foreground. Seamlessly paint the cleared area as distant muted hills/forest and far river/calm ground consistent with the retained horizon. NO new buildings/symbols/people, only keep the original distant castle, no repair/rebuild of mill (the mill belongs on a separate transparent layer). One full opaque background painting, no alpha. Preserve sunset top quarter and distant geography, no rearrangement of sky/castle."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/distance.png",
+      "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/bereznyak.png"],
+      "stages": [
+        {
+          "operation": "far-prompt",
+          "prompt": "Create a Warwrit environment BACKGROUND DEPTH LAYER in the reference's serious grounded dark-fantasy irregular black ink/flat watercolor wash, muted slate/soot/umber/ochre, strong quiet shadow masses, overcast upper-left daylight. 3:2 landscape. Northern rolling hills, far river bend and layered autumn birch/conifer forest silhouettes receding into grey mist under cloudy sky. NO settlements, buildings, roads, gates, props, characters or animals; nothing architectural anywhere. Upper 45% sky, layered forest/hills and far river occupy lower 55%, soft atmospheric distance, painterly material. Low hills not snow mountains. This will be behind an opaque settlement cutout, so foreground is calm and unobtrusive. Original non-franchise environment painting, no border or text, not photorealistic."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/foreground.png",
+      "references": ["assets/art/m1/places/settlements-v2/bereznyak-painting.png"],
+      "stages": [
+        {
+          "operation": "front-prompt",
+          "prompt": "Create a production transparent FOREGROUND depth layer for the complete Warwrit village reference. 3:2 landscape exact same framing/view/light/material style, irregular bold black ink and flat textured muted watercolor, soot/umber/ochre/moss, serious grounded dark fantasy. The canvas center and upper 75% are entirely transparent. Only a sparse very close frame: lower-left corner weathered timber fence with one worn post and a small tangled bramble/ochre birch foliage, lower-right corner grey mossy stones and low bramble/reed foliage, thin bottom edge sparse foreground grass/twigs. Nothing at center bottom except a few blades; leave the central entering lane OPEN. These larger nearer silhouettes never occupy above 70% image height or farther in than 14% of image width on either side. Real alpha cutout, no sky, no ground carpet, no buildings, no decorative vignette gradient, no border, no texts. Match soft upper-left lighting and reference ink style; keep contact irregular and organic. Close scenery is intentionally darker than middle distance but not a solid black frame."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/kamenny-brod-foreground.png",
+      "references": ["assets/art/m1/places/settlements-v2/kamenny-brod-painting.png"],
+      "stages": [
+        {
+          "operation": "city-front-prompt",
+          "prompt": "Reference is style/light/material reference only. Create ONLY a sparse transparent foreground depth layer for Warwrit: strong irregular black ink contour and flat textured wash, credible weathered forms, muted slate/soot/umber/ochre, upper-left overcast light, same elevated three-quarter camera. Canvas center and upper80% ENTIRELY transparent. Props confined to bottom outer corners, each no wider than12% canvas and no higher than18% canvas. No village/buildings/ground carpet/people/text/background, no matte or vignette. Large areas true alpha, a few organic contact twigs at very bottom edges only. Keep the center bottom entry path clear. Restrained unobtrusive close silhouettes, no giant vertical post obscuring doors. 3:2 canvas. Stone Ford town: bottom-left low chipped stone parapet with one iron mooring ring and a small ochre weed; bottom-right a low damp fieldstone ledge with a short coil of worn rope. Dignified functional weathered town material, no tall fence post."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/tikhaya-gat-foreground.png",
+      "references": ["assets/art/m1/places/settlements-v2/tikhaya-gat-painting.png"],
+      "stages": [
+        {
+          "operation": "river-front-prompt",
+          "prompt": "Reference is style/light/material reference only. Create ONLY a sparse transparent foreground depth layer for Warwrit: strong irregular black ink contour and flat textured wash, credible weathered forms, muted slate/soot/umber/ochre, upper-left overcast light, same elevated three-quarter camera. Canvas center and upper80% ENTIRELY transparent. Props confined to bottom outer corners, each no wider than12% canvas and no higher than18% canvas. No village/buildings/ground carpet/people/text/background, no matte or vignette. Large areas true alpha, a few organic contact twigs at very bottom edges only. Keep the center bottom entry path clear. Restrained unobtrusive close silhouettes, no giant vertical post obscuring doors. 3:2 canvas. Quiet Causeway: bottom-left only sparse damp dock-plank ends and rolled fishing net with a short low cleat; bottom-right thin rushes and one small grey river stone with a coil of hemp rope. Low riverbank/dock silhouettes, no high fence or wall, no boat."
+        }
+      ]
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/staraya-melnitsa-foreground.png",
+      "references": ["assets/art/m1/places/staraya-melnitsa.png"],
+      "stages": [
+        {
+          "operation": "ruin-front-prompt",
+          "prompt": "Reference is style/light/material reference only. Create ONLY a sparse transparent foreground depth layer for Warwrit: strong irregular black ink contour and flat textured wash, credible weathered forms, muted slate/soot/umber/ochre, upper-left overcast light, same elevated three-quarter camera. Canvas center and upper80% ENTIRELY transparent. Props confined to bottom outer corners, each no wider than12% canvas and no higher than18% canvas. No village/buildings/ground carpet/people/text/background, no matte or vignette. Large areas true alpha, a few organic contact twigs at very bottom edges only. Keep the center bottom entry path clear. Restrained unobtrusive close silhouettes, no giant vertical post obscuring doors. Wide 2.4:1 canvas matching ruined mill reference. Bottom-left brittle ochre bramble twigs and chipped mossy rocks; bottom-right a short broken horizontal fence rail lying low among dead reeds. Ruined uninhabited watermill surroundings, no intact architecture, no rebuilt fence, no windmill, no new symbols. Same sunset reference material/light, very small frame accents."
+        }
+      ]
+    }
+  ]
+}

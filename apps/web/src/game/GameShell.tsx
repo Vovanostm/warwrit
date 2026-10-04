@@ -26,8 +26,10 @@ import {
 import { departureKey, TravelPanel } from './TravelPanel.js';
 import { WorldMap, type PartyMarker } from './WorldMap.js';
 import { WorldMapCanvas } from './WorldMapCanvas.js';
-import { placeIllustration } from '../renderer/art.js';
+import { BUILDINGS, placeBuildings, type BuildingType } from './place-buildings.js';
+import type { ContractVisit, ContractVisitProps } from './contract-visits.js';
 import { FreeMovementPanel } from './FreeMovementPanel.js';
+import { PlaceScene } from './PlaceScene.js';
 import type { FreeMovementAction, FreeMovementScope } from '../world-free-movement-attempt.js';
 
 type Tab = 'travel' | 'place' | 'company';
@@ -56,7 +58,7 @@ export function GameShell(props: {
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: CompanyHoldingsDto['items'][number]) => void;
   readonly onToggleCamp: (pitch: boolean) => void;
-  readonly placeSlot: ReactNode;
+  readonly placeSlot: (context: ContractVisitProps) => ReactNode;
   readonly battleSlot: ReactNode;
 }) {
   const movement = useContinuousMovement(
@@ -82,6 +84,7 @@ export function GameShell(props: {
   >();
   const [freeSiteTargeting, setFreeSiteTargeting] = useState(false);
   const [focusSiteId, setFocusSiteId] = useState<string | null>(null);
+  const [buildingVisit, setBuildingVisit] = useState<ContractVisit | null>(null);
 
   const execution = props.world.schemaVersion === 2 ? props.world.execution : null;
   const legacyRoute = props.world.schemaVersion === 1 ? props.world.route : null;
@@ -152,8 +155,33 @@ export function GameShell(props: {
   const focusSite = map.sites.find(
     (site) => site.siteId === (focusSiteId ?? (travelling ? null : party?.location)),
   );
+  const visiting = tab === 'place' && focusSite;
+  const canEnter = Boolean(
+    focusSite &&
+    !travelling &&
+    party?.location === focusSite.siteId &&
+    (!movement.current || movement.current.mode === 'STATIONARY_SITE'),
+  );
+  const contractVisit =
+    canEnter && buildingVisit?.siteId === focusSite?.siteId ? buildingVisit : null;
+  const canVisit =
+    !travelling &&
+    Boolean(party) &&
+    (!movement.current || movement.current.mode === 'STATIONARY_SITE');
+  const visitIssuer = (siteId: string, building: BuildingType) => {
+    if (!canVisit || party?.location !== siteId) return;
+    setFocusSiteId(siteId);
+    setBuildingVisit({ siteId, building });
+    setTab('place');
+    requestAnimationFrame(() => document.getElementById('place-contracts')?.focus());
+  };
+  const openJournal = () => {
+    setBuildingVisit(null);
+    requestAnimationFrame(() => document.getElementById('place-contracts')?.focus());
+  };
 
   const selectSite = (siteId: string) => {
+    setBuildingVisit(null);
     if (freeSiteTargeting) {
       const site = map.sites.find((entry) => entry.siteId === siteId);
       if (site) {
@@ -179,7 +207,18 @@ export function GameShell(props: {
   };
 
   return (
-    <div className={`game-shell${light.phase === 'NIGHT' ? ' game-night' : ''}`}>
+    <div
+      className={`game-shell${light.phase === 'NIGHT' ? ' game-night' : ''}`}
+      onKeyDown={(event) => {
+        if (event.key !== 'Escape' || !contractVisit) return;
+        event.stopPropagation();
+        const building = contractVisit.building;
+        setBuildingVisit(null);
+        requestAnimationFrame(() =>
+          document.querySelector<HTMLButtonElement>(`[data-building="${building}"]`)?.focus(),
+        );
+      }}
+    >
       <header className="game-topbar">
         <a className="wordmark" href="/" aria-label="Warwrit">
           <span className="sigil" aria-hidden="true">
@@ -204,7 +243,31 @@ export function GameShell(props: {
       </header>
 
       <div className="game-main">
-        <div className="map-frame">
+        <div className={`map-frame${visiting ? ' map-frame-visiting' : ''}`}>
+          {visiting && (
+            <PlaceScene
+              key={`${focusSite.siteId}:${travelling}:${party?.location ?? ''}`}
+              siteId={focusSite.siteId}
+              name={focusSite.name}
+              kind={focusSite.kind}
+              night={light.phase === 'NIGHT'}
+              canEnter={canEnter}
+              inside={contractVisit?.building ?? null}
+              onInside={(building) =>
+                setBuildingVisit(building ? { siteId: focusSite.siteId, building } : null)
+              }
+              onMap={() => {
+                setBuildingVisit(null);
+                setTab('travel');
+              }}
+              onContracts={() => {
+                const target = document.getElementById('place-contracts');
+                target?.scrollIntoView({ behavior: 'auto', block: 'start' });
+                target?.focus({ preventScroll: true });
+              }}
+              onEquipment={() => setTab('company')}
+            />
+          )}
           {map.continuous &&
           props.world.party?.movementVersion !== 1 &&
           !legacyRoute &&
@@ -258,7 +321,7 @@ export function GameShell(props: {
               />
             </>
           )}
-          <p className="map-legend">
+          <p className="map-legend" hidden={Boolean(visiting)}>
             {map.regionName} · ПКМ — идти · S — остановиться · зажать ЛКМ — двигать карту
           </p>
         </div>
@@ -380,13 +443,17 @@ export function GameShell(props: {
             )}
           </div>
           <div hidden={tab !== 'place'}>
-            <section className="panel place-panel" aria-label="Место">
+            <section
+              className="panel place-panel"
+              aria-label="Место"
+              hidden={Boolean(contractVisit)}
+            >
               {focusSite ? (
                 <>
-                  {placeIllustration(focusSite.siteId) && (
+                  {placeBuildings(focusSite.siteId, focusSite.kind).painting && (
                     <img
                       className="place-illustration"
-                      src={placeIllustration(focusSite.siteId)}
+                      src={placeBuildings(focusSite.siteId, focusSite.kind).painting}
                       alt=""
                     />
                   )}
@@ -449,7 +516,24 @@ export function GameShell(props: {
                 </>
               )}
             </section>
-            {props.placeSlot}
+            <div id="place-contracts" tabIndex={-1}>
+              <p className="state-note">
+                {contractVisit
+                  ? `Разговоры · ${BUILDINGS[contractVisit.building].name}`
+                  : `Наводки и журнал отряда · ${party ? siteName(party.location) : 'в дороге'}`}
+              </p>
+              {contractVisit && (
+                <button type="button" className="quiet-action" onClick={openJournal}>
+                  Журнал отряда →
+                </button>
+              )}
+              {props.placeSlot({
+                visit: contractVisit,
+                canVisit,
+                onVisitIssuer: visitIssuer,
+                onJournal: openJournal,
+              })}
+            </div>
           </div>
           <div hidden={tab !== 'company'}>
             <CompanyPanel

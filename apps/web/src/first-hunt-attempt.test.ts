@@ -20,6 +20,7 @@ import {
   firstHuntReadyView,
   firstHuntRoleLabel,
   firstHuntStateLabel,
+  readHunt,
 } from './FirstHunt.js';
 import {
   canIssueEncounterIntent,
@@ -524,5 +525,30 @@ describe('FIRST HUNT browser command attempts', () => {
         'encounter-one',
       ),
     ).toBeUndefined();
+  });
+});
+
+describe('FIRST HUNT meeting offer transport', () => {
+  it('loads the requested hunt and rejects unauthorized or malformed offers', async () => {
+    const fetchOffer = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(offer), { status: 200 }))
+      .mockResolvedValueOnce(new Response(null, { status: 401 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ...offer, privateWallet: '1' }), { status: 200 }),
+      );
+    vi.stubGlobal('fetch', fetchOffer);
+    try {
+      expect(await readHunt(offer.contract!.instanceId)).toEqual(offer);
+      expect(fetchOffer.mock.calls[0]![0]).toContain('?instanceId=ci.m1.raider-standard.01');
+      expect(fetchOffer.mock.calls[0]![1]).toMatchObject({
+        credentials: 'same-origin',
+        cache: 'no-store',
+      });
+      expect(await readHunt(undefined)).toBe('unauthorized');
+      await expect(readHunt(undefined)).rejects.toThrow('Ответ контракта имеет неверный формат.');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
