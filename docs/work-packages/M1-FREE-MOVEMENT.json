@@ -1065,7 +1065,7 @@
       "https://battlebrothersgame.com/blog-post-7-worldmap/",
       "https://vcmi.eu/img/screenshots/main_page/Editor.webp"
     ],
-    "review": "Independent critic found and verified fixes for downward normals and cut-out paving edges. Final READY_WITH_LIMITS for valid day moving paved route, dirt/trail junction and stationary night frames. Independent source review found no defect in bounded V2/V3/auth and helper-preservation review.",
+    "review": "Independent critic found and verified fixes for downward normals and cut-out paving edges. Final READY_WITH_LIMITS for valid day moving paved route, dirt/trail junction and stationary night frames. Independent source review found no defect in bounded V2/V3/auth and helper-preservation review. Additional final active-night DPR1 overview: READY_WITH_LIMITS; route follows visible corridor and company/destination/legend remain distinguishable. No entire-night/close-scale acceptance.",
     "measurements": {
       "dpr": 1,
       "viewport": "1280x800",
@@ -1075,7 +1075,7 @@
     },
     "verification": "Final code:16 focused movement tests, fresh610-check coverage and unchanged new-only quality audit passed;11 real PostgreSQL movement regressions passed on disposable migrated database. Clean scripts/bootstrap.sh passed610 unit checks/46 skipped,10000 battles, migrations and14 SQL auth/encounter checks before the final equivalent sorted-neighbor forEach rewrite; current-head clean PR CI must pass before merge.",
     "limits": [
-      "Active night travel and fresh5291 OIDC login NOT_RUN.",
+      "Fresh5291 OIDC login NOT_RUN; active-night DPR1 overview now observed on final API, detailed/all-DPR active-night matrix NOT_RUN.",
       "Static night views include DPR2; no all-device quality claim.",
       "Existing exact-route search p95=135.82ms exceeds50ms target.",
       "Optional localized edge damage and long-paving variation remain polish; full M1 and player enjoyment are not accepted by this slice."
@@ -1084,6 +1084,7 @@
       "pullRequest": "https://github.com/Vovanostm/warwrit/pull/140",
       "mergeAuthority": "Explicit owner request for this isolated slice; expected head and successful current-head clean CI required.",
       "integrationStatusOwner": "GitHub PR140 live status/checks; local runtime and author proof are separate."
-    }
+    },
+    "runtimeReadback": "Final API3217/realtime3218 and web5291 from road-art worktree retain the original player database. Ordinary night Kamenny Brod→North Court order showed66s/paved×2; UI STOP and reload returned identical retained point (48589673,-90355124)microFp with200/STATIONARY_TERRAIN. Active-night overview capture: output/playwright/road-final-night-moving.png; independent final night critic READY_WITH_LIMITS, no reproduced blocker for this single overview frame."
   }
 }

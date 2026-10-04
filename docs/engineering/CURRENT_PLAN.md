@@ -16,7 +16,9 @@ final-code16 movement tests, coverage/audit and11 SQL movement checks pass.
 Implementation is published in [PR140](https://github.com/Vovanostm/warwrit/pull/140); it owns current-head
 clean CI and merge readback. Owner authorizes this PR merge; GitHub is authoritative
 for its live integration status. Local clean run preceded the final equivalent
-neighbor-loop rewrite; final tests/coverage/audit pass. No deployment.
+neighbor-loop rewrite; final tests/coverage/audit pass. Final API night road
+order and STOP/reload preserve the same retained point; fresh login NOT_RUN.
+No deployment.
 
 **Live movement recheck — 2026-10-04:** current `main` at `ae9bf3a`
 was checked through the authenticated game at `http://127.0.0.1:5287`.

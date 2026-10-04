@@ -52,7 +52,15 @@ checks. This local clean run preceded the final equivalent sorted-neighbor
 current-head PR CI is required before merge. Initial unrestricted-worker test
 timeouts and introduced complexity/clone findings were corrected, not bypassed.
 
-Limits: active-night travel/fresh5291 login NOT_RUN; full-device and subjective
+Final API readback: ordinary night road order showed66s/paved×2 in the composed
+DPR1 overview (`road-final-night-moving.png`). UI STOP/reload returned identical
+(48589673,-90355124)microFp and200/STATIONARY_TERRAIN. This adds one actual
+active-night observation; detailed/all-DPR active-night matrix remains NOT_RUN. Final single-frame
+independent critic READY_WITH_LIMITS: corridor fit and company/destination/legend
+are readable; no blocking defect. This supersedes the earlier active-night gap
+only for that composed overview.
+
+Limits: fresh5291 login NOT_RUN; full-device and subjective
 play acceptance NOT_MEASURED. Existing search p95135.82ms still exceeds50ms.
 Localized edge weathering/long-paving variation are optional refinements, not
 claims of complete professional-game or full-M1 acceptance.
