@@ -800,3 +800,42 @@ SQL rollback conflict was rerun sequentially on the disposable DB. Fresh5293 UI
 shop/travel/STOP/reroute evidence retained; owner company/cash preserved. Expired
 creation browser path remains NOT_RUN. PR/merge and playable critique closeout pending;
 see the dated [owning delivery amendment](../work-packages/M1-SUPPLIES.md).
+
+**Settlement route visibility follow-up — 2026-10-04:** owner reports a cropped
+goal near Bereznyak and a route gap near Kamenny Brod. Parent owns the minimal
+three-file web correction in primary `main` at `bcc30f5`; unrelated docs/skills
+and player data are retained. Removed blanket SVG settlement masks; draped
+geometry, party junction, label avoidance and map input remain. Web typecheck,
+scoped lint/format and diff checks passed; localhost:5293 loaded the unmasked SVG
+with non-intercepting input. Automatic approval review rejected a short live move
+because it changes the retained campaign position/resources; owner permission
+and independent current moving visual acceptance pending. Read-only source
+critique confirmed the clipping cause and its removal. Local only; no PR/merge or
+full gate. [Owning correction](../work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
+
+**Route visibility playable recheck — 2026-10-04:** owner explicitly authorized
+testing the retained company. This supersedes the permission-pending note above.
+Normal UI verified continuous town approaches, full Bereznyak site/ground goals,
+day/night and close/overview views, S/arrival cleanup and restored moving route
+after reload with loaded map art. Independent supplied-capture critique found no
+material issue; corrected settled-reload review and final town return pending.
+Unchanged source retains prior scoped checks. Local only, no reset/PR/merge/deploy;
+full game/device/performance gates NOT_RUN.
+[Actual journey](../work-packages/M1-FREE-MOVEMENT.md#playable-verification-after-owner-authorization--2026-10-04).
+
+**Route visibility recheck completed — 2026-10-04:** final return arrived in
+Kamenny Brod, company stationary with 800 crowns and no stale route/goal/legend.
+Independent critic re-read the settled moving-after-reload capture and withdrew
+its concern based on a superseded loading frame; no material findings remain in
+the bounded source/capture review. Runtime movement evidence remains parent-owned;
+DPR/device/performance and broader player acceptance are NOT_MEASURED. Dev5293
+left open. Fix remains local/uncommitted, no PR/merge/deploy for this follow-up.
+
+**Route visibility delivery authorized — 2026-10-04:** owner requested
+“merge to main” after the playable verification. This authorizes publication and
+merge of this bounded route fix, superseding the no-merge status above. Sole
+writer uses `/private/tmp/warwrit-route-visibility`, branch
+`codex/route-visibility-fix`, based on `bcc30f5`. Only the three reviewed web files,
+their owning movement amendment and scoped changelog/checkpoint records are
+included; unrelated primary terrain/art/docs changes and player data are retained.
+Publication/CI/merge pending; no deployment or paid resources.

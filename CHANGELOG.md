@@ -27,6 +27,36 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ### Fixed
 
+- 2026-10-04, branch `codex/route-visibility-fix`, local: owner authorized
+  publication and merge of the reviewed route visibility correction. Isolated
+  delivery includes only the three map files and owning movement/checkpoint/
+  changelog records, preserving unrelated terrain/art/docs and retained player
+  data. Clean PR CI/publication/merge pending; scoped source and playable results
+  are recorded in [the owning contract](docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-delivery--2026-10-04).
+
+- 2026-10-04, branch `main`, local: owner-authorized normal-UI testing now
+  supersedes the permission-pending route correction status below. Town/village
+  paths and complete site/ground diamonds were inspected at day/night and
+  close/overview scales; S and arrival clear annotations, and reload restores
+  the moving route with map art loaded. Independent moving-capture critique found
+  no material defect, including the corrected settled-reload capture. Final return
+  arrived in Kamenny Brod with overlay cleared; retained company has 800 crowns.
+  Existing focused source checks apply to unchanged code; full gate NOT_RUN.
+  [Actual journey and limits](docs/work-packages/M1-FREE-MOVEMENT.md#playable-verification-after-owner-authorization--2026-10-04).
+
+- 2026-10-04, branch `main`, local (not committed or published): owner screenshots
+  exposed cropped destination markers and missing route sections near settlements.
+  Removed SVG clipping by full settlement sprite rectangles, including transparent
+  margins; route annotations stay above the map while terrain-draped geometry,
+  party junction, label avoidance and input remain unchanged. Affected paths:
+  `ContinuousMapCanvas.tsx`, `renderer/route-overlay.ts`,
+  `renderer/continuous-map-scene.ts`. Web typecheck, scoped ESLint/Prettier and
+  diff checks passed. Live DOM has no route masks and retains `pointer-events: none`.
+  Moving visual acceptance is pending permission to move the retained company;
+  independent source critique confirmed the fix's cause/scope; no current moving
+  visual verdict, new full gate, publication or merge. See
+  [route visibility correction](docs/work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
+
 - 2026-10-04, branch `codex/supplies-delivery`, published (not yet merged):
   supplies can be bought through the local bazaar/granary with finite merchant
   stock, exact cash and retained retry receipts; future companies start with
