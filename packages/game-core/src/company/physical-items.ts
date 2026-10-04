@@ -198,7 +198,7 @@ function bodyFor(root: MaterializedCompanyState, characterId: string) {
   return body;
 }
 /** Personal packs and shared supply use the same finite carriers, not two allowances. */
-function requirePartyTransportCapacity(
+export function requirePartyTransportCapacity(
   root: MaterializedCompanyState,
   physical: CompanyPhysicalState,
 ): void {

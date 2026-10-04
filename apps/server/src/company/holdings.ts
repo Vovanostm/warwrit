@@ -1,4 +1,4 @@
-import { COMPANY_CATALOGUE } from '@warwrit/game-core';
+import { COMPANY_CATALOGUE, COMPANY_RULES } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
 
@@ -84,5 +84,51 @@ export function projectCompanyHoldings(
     .filter((claim) => BigInt(claim.dueAt) <= BigInt(state.economy.lifecycle.campaignTick))
     .reduce((sum, claim) => sum + owed(claim), 0n)
     .toString();
-  return { cashQ, wallets, items, people, fieldCamp, wagesOwedQ, wagesDueQ };
+  const party = state.economy.lifecycle.parties[0];
+  const partyMembers = state.economy.lifecycle.characters.filter(
+    (person) =>
+      person.presence.fieldPartyId === party?.partyId && person.presence.availability !== 'DEAD',
+  );
+  const partyCarriers = new Set(
+    partyMembers.map((person) => `CHARACTER:${person.identity.characterId}`),
+  );
+  if (party) partyCarriers.add(`PARTY:${party.partyId}`);
+  const carriedContainers = new Set(
+    (physical?.containers ?? [])
+      .filter(
+        (container) =>
+          container.closed === null &&
+          container.carrier !== null &&
+          partyCarriers.has(`${container.carrier.kind}:${container.carrier.id}`),
+      )
+      .map((container) => container.containerId),
+  );
+  const rations = (physical?.items ?? [])
+    .filter((item) => carriedContainers.has(item.containerId ?? ''))
+    .filter(
+      (item) =>
+        item.tombstone === null &&
+        item.definitionId === 'ration' &&
+        item.owner.kind === 'COMPANY' &&
+        item.owner.id === companyId,
+    )
+    .reduce((sum, item) => sum + item.quantity, 0);
+  // Food already opened for today's partial interval still feeds the person.
+  const dayTicks = Number(COMPANY_RULES.ticksPerDay);
+  const openedFood = partyMembers.reduce((sum, person) => {
+    const membership = state.economy.lifecycle.memberships.find(
+      (entry) => entry.characterId === person.identity.characterId && entry.endedAt === null,
+    );
+    const usedTicks = Number(
+      physical?.foodCarry.find((entry) => entry.membershipId === membership?.membershipId)
+        ?.tickUnits ?? '0',
+    );
+    return sum + (usedTicks > 0 ? (dayTicks - usedTicks) / dayTicks : 0);
+  }, 0);
+  const supplies = {
+    rations,
+    people: partyMembers.length,
+    days: partyMembers.length ? (rations + openedFood) / partyMembers.length : 0,
+  };
+  return { cashQ, wallets, items, people, fieldCamp, wagesOwedQ, wagesDueQ, supplies };
 }

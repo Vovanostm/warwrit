@@ -50,6 +50,11 @@ export interface CompanyOpeningOptionsResponseDto {
     readonly homeland: { readonly id: string; readonly label: string };
     readonly familyStory: { readonly id: string; readonly label: string };
     readonly bannerId: string;
+    readonly startingAssets?: {
+      readonly crowns: number;
+      readonly signingCrowns: number;
+      readonly rations: number;
+    };
     readonly leaderDefaults: Omit<CreateCompanyPayloadDto['leaderInput'], 'birthName'>;
     readonly candidates: readonly {
       readonly characterId: string;
@@ -87,6 +92,7 @@ export interface CompanySummaryDto {
 }
 /** Owner-private physical and money view; only the owning account receives it. */
 export interface CompanyHoldingsDto {
+  readonly supplies?: { readonly rations: number; readonly people: number; readonly days: number };
   /** Exact company-owned cash in q units (1 crown = 1,000,000 q); members' purses excluded. */
   readonly cashQ: string;
   readonly wallets: readonly {
@@ -149,10 +155,14 @@ export interface CompanyCommandRejectionDto {
     | 'IDEMPOTENCY_CONFLICT'
     | 'STALE_REVISION'
     | 'INSUFFICIENT_ITEMS'
-    | 'INSUFFICIENT_STAMINA';
+    | 'INSUFFICIENT_STAMINA'
+    | 'INSUFFICIENT_FUNDS'
+    | 'CAPACITY'
+    | 'OUT_OF_STOCK';
 }
 
 export const ORDINARY_PLAYER_COMPANY_COMMAND_TYPES = [
+  'BuySupplies',
   'Recruit',
   'JoinFieldParty',
   'SetAssignment',
@@ -187,6 +197,11 @@ export type OrdinaryPlayerCompanyCommandType =
 
 /** Payloads whose complete ordinary-command effects and public readback are enabled in V2. */
 export interface OrdinaryPlayerCompanyPayloads {
+  readonly BuySupplies: {
+    readonly siteId: string;
+    readonly quantity: number;
+    readonly shopRevision: string;
+  };
   readonly RenameCompany: {
     readonly name: string;
     readonly bannerId: string;
@@ -222,3 +237,12 @@ export type OrdinaryPlayerCompanyCommandV2Dto = {
     readonly payload: OrdinaryPayloadForType<Type>;
   };
 }[EnabledOrdinaryPlayerCompanyCommandType];
+
+export interface SupplyShopDto {
+  readonly siteId: string;
+  readonly revision: string;
+  readonly rationPriceQ: string;
+  /** Owner-private cash accessible at this shop, after current reservations. */
+  readonly availableCashQ?: string;
+  readonly rations: number;
+}

@@ -1,4 +1,4 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import type { Kysely } from 'kysely';
 import {
   COMPANY_CATALOGUE,
@@ -38,6 +38,7 @@ import { createOpeningAggregate, issueOpeningOption, openingOptionView } from '.
 import type { IssuedOpeningOption } from './opening.js';
 import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
+import { readSupplyShop } from './supplies.js';
 import { projectCompanyHoldings } from './holdings.js';
 
 export interface CompanyRoutesOptions {
@@ -49,6 +50,23 @@ export function registerCompanyRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyRoutesOptions,
 ): void {
+  app.get<{ Params: { siteId: string } }>('/company/supplies/:siteId', async (request, reply) => {
+    const accountId = await resolveSessionAccount(request, database);
+    if (!accountId) return reply.code(401).send({ error: 'authentication required' });
+    const companyId = await database
+      .transaction()
+      .execute((transaction) => findOwnedCompanyId(transaction, worldId, accountId));
+    if (!companyId) return reply.code(403).send({ error: 'company required' });
+    const shop = await readSupplyShop(
+      database,
+      worldId,
+      request.params.siteId,
+      companyId,
+      accountId,
+    );
+    return shop ?? reply.code(404).send({ error: 'no supply shop here' });
+  });
+
   app.get('/company', async (request, reply): Promise<CompanyReadResponseDto | unknown> => {
     const accountId = await resolveSessionAccount(request, database);
     if (accountId === undefined) {
@@ -145,30 +163,8 @@ export function registerCompanyRoutes(
     const accountId = await resolveSessionAccount(request, database);
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
 
-    if (isRecord(request.body) && request.body['schemaVersion'] === 2) {
-      const ordinary = parseOrdinaryCompanyCommandV2(request.body);
-      if (!ordinary)
-        return reply.code(400).send({
-          commandId: readCompanyCommandId(request.body),
-          ok: false,
-          publicRevision: '0',
-          code: 'INVALID_COMMAND',
-        });
-      const result = await database.transaction().execute((transaction) =>
-        executeOrdinaryPlayerCompanyCommand({
-          transaction,
-          accountId,
-          expectedCompanyId: readExpectedCompanyId(request.raw.rawHeaders),
-          worldId,
-          request: ordinary,
-          requestKey: canonicalJson(ordinary),
-          now: new Date(),
-        }),
-      );
-      return reply
-        .code(result.kind === 'COMMITTED' ? 200 : result.statusCode)
-        .send(result.response);
-    }
+    if (isOrdinaryCompanyRequest(request.body))
+      return executeOrdinaryCompanyRequest(request, reply, database, worldId, accountId);
 
     const input = createCompanyInput(request.body);
     if (!input)
@@ -375,7 +371,18 @@ function parseOrdinaryCompanyCommandV2(
     return undefined;
   }
 
-  if (value['type'] === 'RenameCompany') {
+  if (value['type'] === 'BuySupplies') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !==
+        canonicalJson(['quantity', 'shopRevision', 'siteId']) ||
+      !isEntityId(payload['siteId']) ||
+      !isExactInteger(payload['shopRevision']) ||
+      !Number.isInteger(payload['quantity']) ||
+      Number(payload['quantity']) < 1 ||
+      Number(payload['quantity']) > 100
+    )
+      return undefined;
+  } else if (value['type'] === 'RenameCompany') {
     if (
       canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['bannerId', 'name']) ||
       typeof payload['name'] !== 'string' ||
@@ -482,12 +489,7 @@ function openingFinanceFacts(
     },
     ...[evidence.leaderId, ...selectedCandidateIds].map((characterId) => {
       const founder = characterId === evidence.leaderId;
-      const signingWallet = founder
-        ? undefined
-        : initial.economy.finance.wallets.find(
-            (wallet) => wallet.owner.kind === 'CHARACTER' && wallet.owner.id === characterId,
-          );
-      if (!founder && !signingWallet) throw new Error('Candidate signing wallet is unavailable');
+      const signingWalletId = founder ? null : candidateSigningWallet(initial, characterId);
       return {
         ...financeScope,
         id: randomUUID(),
@@ -496,7 +498,7 @@ function openingFinanceFacts(
         characterId,
         poolId: 'local',
         recipient: { kind: 'CHARACTER' as const, id: characterId },
-        signingWalletId: signingWallet?.walletId ?? null,
+        signingWalletId,
         rates: founder
           ? []
           : COMPANY_RULES.economy.qualificationBands.map((band) => ({
@@ -506,4 +508,47 @@ function openingFinanceFacts(
       };
     }),
   ];
+}
+
+function isOrdinaryCompanyRequest(value: unknown) {
+  return isRecord(value) && value['schemaVersion'] === 2;
+}
+async function executeOrdinaryCompanyRequest(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  database: Kysely<DatabaseSchema>,
+  worldId: string,
+  accountId: string,
+) {
+  const ordinary = parseOrdinaryCompanyCommandV2(request.body);
+  if (!ordinary)
+    return reply.code(400).send({
+      commandId: readCompanyCommandId(request.body),
+      ok: false,
+      publicRevision: '0',
+      code: 'INVALID_COMMAND',
+    });
+  const result = await database.transaction().execute((transaction) =>
+    executeOrdinaryPlayerCompanyCommand({
+      transaction,
+      accountId,
+      expectedCompanyId: readExpectedCompanyId(request.raw.rawHeaders),
+      worldId,
+      request: ordinary,
+      requestKey: canonicalJson(ordinary),
+      now: new Date(),
+    }),
+  );
+  return reply.code(result.kind === 'COMMITTED' ? 200 : result.statusCode).send(result.response);
+}
+
+function candidateSigningWallet(
+  initial: ReturnType<typeof createOpeningAggregate>,
+  characterId: string,
+) {
+  const wallet = initial.economy.finance.wallets.find(
+    (entry) => entry.owner.kind === 'CHARACTER' && entry.owner.id === characterId,
+  );
+  if (!wallet) throw new Error('Candidate signing wallet is unavailable');
+  return wallet.walletId;
 }

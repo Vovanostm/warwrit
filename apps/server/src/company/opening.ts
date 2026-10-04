@@ -52,7 +52,7 @@ export function issueOpeningOption(
     sourceEventId: randomUUID(),
     atTick,
     kind: 'OPENING',
-    profileId: 'm1-company-start',
+    profileId: 'm1-company-start-ten-days',
     originId: 'broken-company',
     familyStoryId: 'no-present-kin',
     cultureId: 'north',
@@ -85,6 +85,16 @@ export function openingOptionView(evidence: OpeningEvidence) {
       homeland: { id: evidence.location.siteId, label: 'Северный Двор' },
       familyStory: { id: evidence.familyStoryId, label: 'Без близких рядом' },
       bannerId: evidence.originId,
+      startingAssets: {
+        crowns: COMPANY_CATALOGUE.origins.find((entry) => entry.id === evidence.originId)!
+          .cashCrowns,
+        signingCrowns: COMPANY_CATALOGUE.openingProfiles.find(
+          (entry) => entry.id === evidence.profileId,
+        )!.signingCrowns,
+        rations: COMPANY_CATALOGUE.openingProfiles
+          .find((entry) => entry.id === evidence.profileId)!
+          .sharedItems.find((item) => item.definitionId === 'ration')!.quantity,
+      },
       selection: { minCount: 1 as const, maxCount: 2 as const },
       availability: { allCanonicalPlayerChoicesOpen: false as const },
       leaderDefaults: {

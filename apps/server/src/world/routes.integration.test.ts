@@ -2180,6 +2180,7 @@ describe('authenticated world travel (PostgreSQL)', () => {
           '0011_encounter_leadership_choices',
           '0012_ordinary_contracts',
           '0013_world_hunt_states',
+          '0014_settlement_supplies',
         ] as const;
         const beforeDown = await runMigrations(rollback, 'status');
         expect(beforeDown.applied.slice(-migrationSuffix.length)).toEqual(migrationSuffix);

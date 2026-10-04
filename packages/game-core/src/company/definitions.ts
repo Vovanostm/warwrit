@@ -510,6 +510,22 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
         { definitionId: 'repair-unit', quantity: 2 },
       ],
     },
+    {
+      id: 'm1-company-start-ten-days',
+      leaderBaseLevel: 3,
+      defaultAptitudeBps: 10000,
+      candidateAgeMinDays: 6570,
+      candidateAgeMaxDays: 16425,
+      variation: 2,
+      signingCrowns: 50,
+      dailyWageMilli: '10000',
+      leaderGearIds: ['sword', 'shield', 'simple-helmet', 'padded-coat'],
+      sharedItems: [
+        { definitionId: 'ration', quantity: 30 },
+        { definitionId: 'medical-unit', quantity: 2 },
+        { definitionId: 'repair-unit', quantity: 2 },
+      ],
+    },
   ],
   familyStories: [
     { id: 'no-present-kin', relativeCount: 0 },

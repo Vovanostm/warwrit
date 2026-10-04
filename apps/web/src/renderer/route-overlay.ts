@@ -12,8 +12,8 @@ export interface RouteOverlayFrame {
   readonly traversed: readonly RouteScreenPoint[];
   readonly remaining: readonly RouteScreenPoint[];
   readonly sprites: readonly RouteScreenRect[];
-  readonly party: RouteScreenRect;
-  readonly ring: RouteScreenRect;
+  readonly party: RouteScreenPoint;
+  readonly partyBounds: RouteScreenRect;
   readonly goal: RouteScreenPoint;
   readonly goalSiteId: string | undefined;
 }
@@ -58,7 +58,7 @@ export function mountRouteOverlay(svg: SVGSVGElement, legend: HTMLDivElement) {
   const remaining = [...svg.querySelectorAll<SVGPathElement>('[data-route="remaining"]')];
   const background = svg.querySelector<SVGRectElement>('[data-route="background"]')!;
   const masks = svg.querySelector<SVGGElement>('[data-route="sprites"]')!;
-  const ring = svg.querySelector<SVGEllipseElement>('[data-route="ring"]')!;
+  const party = svg.querySelector<SVGCircleElement>('[data-route="party"]')!;
   const goal = svg.querySelector<SVGGElement>('[data-route="goal"]')!;
   const spriteRects: SVGRectElement[] = [];
   const path = (points: readonly RouteScreenPoint[]) => {
@@ -70,7 +70,7 @@ export function mountRouteOverlay(svg: SVGSVGElement, legend: HTMLDivElement) {
   return (frame: RouteOverlayFrame | null) => {
     svg.style.display = frame ? 'block' : 'none';
     legend.style.display = frame ? 'flex' : 'none';
-    avoidPartyLabels(svg, frame?.party);
+    avoidPartyLabels(svg, frame?.partyBounds);
     if (!frame) return;
     svg.setAttribute('viewBox', `0 0 ${frame.width} ${frame.height}`);
     background.setAttribute('width', String(frame.width));
@@ -94,10 +94,9 @@ export function mountRouteOverlay(svg: SVGSVGElement, legend: HTMLDivElement) {
       node.setAttribute('width', String(rect.width + 4));
       node.setAttribute('height', String(rect.height + 4));
     });
-    ring.setAttribute('cx', String(frame.ring.x + frame.ring.width / 2));
-    ring.setAttribute('cy', String(frame.ring.y + frame.ring.height / 2));
-    ring.setAttribute('rx', String(frame.ring.width / 2 + 3));
-    ring.setAttribute('ry', String(frame.ring.height / 2 + 3));
+    // Keep both strokes joined at the group foot, even when a settlement overlaps it.
+    party.setAttribute('cx', String(frame.party.x));
+    party.setAttribute('cy', String(frame.party.y));
     let destination = frame.goal;
     if (frame.goalSiteId) {
       const label = svg.parentElement?.querySelector<HTMLElement>(

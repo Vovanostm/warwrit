@@ -7,6 +7,9 @@ type HeldItem = CompanyHoldingsDto['items'][number];
 export function CompanyPanel(props: {
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
+  readonly supplyVenueName: string;
+  readonly canBuySupplies: boolean;
+  readonly onBuySupplies: () => void;
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: HeldItem) => void;
@@ -26,6 +29,31 @@ export function CompanyPanel(props: {
           {props.equipMessage}
         </p>
       )}
+      <div className="supply-summary">
+        <h3>Припасы</h3>
+        {holdings?.supplies && (
+          <p>
+            {holdings.supplies.rations} рационов · на{' '}
+            {holdings.supplies.days.toLocaleString('ru-RU', { maximumFractionDigits: 1 })} игровых
+            дней для {holdings.supplies.people} чел.
+          </p>
+        )}
+        <p className="state-note">
+          Один рацион — еда для одного человека на один игровой день. День кампании длится 6 часов
+          реального времени.
+        </p>
+        <button
+          type="button"
+          className="action"
+          disabled={!props.canBuySupplies}
+          onClick={props.onBuySupplies}
+        >
+          Купить припасы → {props.supplyVenueName}
+        </button>
+        {!props.canBuySupplies && (
+          <p className="state-note">Для покупки остановитесь в поселении и зайдите на базар.</p>
+        )}
+      </div>
       <ul className="people">
         {company.characters.map((character) => {
           const body = holdings?.people.find(

@@ -74,6 +74,10 @@ export function CompanyOpening(props: {
           спутников, назовите главу и компанию. Мир и начальные условия задаёт сервер.
         </p>
       </div>
+      <StartingSupplies
+        assets={props.opening.startingAssets}
+        companions={selectedCandidateIds.length}
+      />
       <form className="opening-form" onSubmit={(event) => void submit(event)}>
         <fieldset className="opening-candidates" disabled={submitting || props.pendingAttempt}>
           <legend>Кто отправится с вами</legend>
@@ -156,5 +160,20 @@ export function CompanyOpening(props: {
         )}
       </form>
     </>
+  );
+}
+
+function StartingSupplies(props: {
+  readonly assets: Opening['startingAssets'];
+  readonly companions: number;
+}) {
+  if (!props.assets) return null;
+  const { crowns, signingCrowns, rations } = props.assets;
+  return (
+    <p className="state-note">
+      На старте: {crowns - props.companions * signingCrowns} кр. после найма · {rations} рационов ·
+      запас на {Math.floor(rations / (props.companions + 1))} игровых дней. Один рацион кормит
+      одного человека один игровой день. Пополнить запас можно на базаре.
+    </p>
   );
 }

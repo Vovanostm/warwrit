@@ -49,7 +49,7 @@ export function mountContinuousMapScene(
     onMove: (action: WorldFreeMovementV2RequestDto['action']) => void;
     onSelectSite: (id: string) => void;
     onLabels: (labels: readonly MapLabelPosition[]) => void;
-    onParty: (point: { x: number; y: number } | null) => void;
+    onParty: (point: { x: number; y: number; spriteHeight: number } | null) => void;
     onRoute: (frame: RouteOverlayFrame | null) => void;
   },
 ) {
@@ -170,10 +170,15 @@ export function mountContinuousMapScene(
     }
   }
   contacts.finish();
-  const banner = sprite('company-banner', MAP_ART.party, 0.72, { foot: 0.88 });
+  const partySize = 0.48;
+  const partyArt = MAP_ART.partyGroup;
+  const banner = sprite('company-banner', partyArt.url, partySize, {
+    foot: partyArt.groundPivot.y,
+    rootX: partyArt.groundPivot.x,
+  });
   const partyRing = MeshBuilder.CreateTorus(
     'party-ground-ring',
-    { diameter: 0.27, thickness: 0.035, tessellation: 24 },
+    { diameter: 0.24, thickness: 0.012, tessellation: 24 },
     scene,
   );
   partyRing.scaling.y = 0.1;
@@ -305,11 +310,23 @@ export function mountContinuousMapScene(
         y: (screen.y * canvas.clientHeight) / engine.getRenderHeight(),
       };
     };
-    const bannerCorners = banner.getBoundingInfo().boundingBox.vectorsWorld.map(project);
-    const bannerHeight =
-      Math.max(...bannerCorners.map((v) => v.y)) - Math.min(...bannerCorners.map((v) => v.y));
+    // Billboard bounds can retain the pre-camera orientation. Project the authored
+    // visible top through its actual rendered transform instead of those bounds.
+    const partyFoot = project(banner.position);
+    const partyTop = project(
+      Vector3.TransformCoordinates(
+        new Vector3(0, partySize * partyArt.visibleHeight, 0),
+        banner.getWorldMatrix(),
+      ),
+    );
+    const bannerHeight = partyFoot.y - partyTop.y;
     callbacks.onParty(
-      p && bannerHeight < 24 ? project(groundPoint(banner.position.x, banner.position.z)) : null,
+      p && bannerHeight < 24
+        ? {
+            ...partyFoot,
+            spriteHeight: bannerHeight,
+          }
+        : null,
     );
     callbacks.onLabels(
       [...markers].map(([siteId, mesh]) => {
@@ -329,7 +346,11 @@ export function mountContinuousMapScene(
         ...routeSpans.slice(spanIndex + 1).flat(),
       ].map(project);
       const bounds = (mesh: Mesh) => {
-        const corners = mesh.getBoundingInfo().boundingBox.vectorsWorld.map(project);
+        const corners = mesh
+          .getBoundingInfo()
+          .boundingBox.vectors.map((corner) =>
+            project(Vector3.TransformCoordinates(corner, mesh.getWorldMatrix())),
+          );
         const x = Math.min(...corners.map((v) => v.x));
         const y = Math.min(...corners.map((v) => v.y));
         return {
@@ -349,9 +370,9 @@ export function mountContinuousMapScene(
         height: canvas.clientHeight,
         traversed,
         remaining,
-        sprites: [banner, ...markers.values()].map(bounds),
-        party: bounds(banner),
-        ring: bounds(partyRing),
+        sprites: [...markers.values()].map(bounds),
+        party: project(foot),
+        partyBounds: bounds(banner),
         goal: remaining[remaining.length - 1]!,
         goalSiteId: goalSite?.siteId,
       });

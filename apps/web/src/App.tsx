@@ -4,7 +4,6 @@ import {
   type CompanyHoldingsDto,
   type CompanyOpeningOptionsResponseDto,
   type CompanySummaryDto,
-  type CreateCompanyPayloadDto,
   type CreateCompanyRequestDto,
   type WorldPartyReadResponseDto,
   type WorldFreeMovementResponseDto,
@@ -12,7 +11,10 @@ import {
 } from '@warwrit/protocol';
 import { CombatLab } from './combat-lab/CombatLab.js';
 import { CompanyOpening } from './CompanyOpening.js';
-import { getOrCreateCompanyCreateAttempt } from './company-create-attempt.js';
+import {
+  getOrCreateCompanyCreateAttempt,
+  refreshedCompanyCreatePayload,
+} from './company-create-attempt.js';
 import { GameShell } from './game/GameShell.js';
 import { FirstHunt } from './FirstHunt.js';
 import { ContractBoard } from './game/ContractBoard.js';
@@ -213,7 +215,7 @@ function readOpening(value: unknown): CompanyOpeningOptionsResponseDto['opening'
 function rejectionMessage(code: unknown): string {
   switch (code) {
     case 'INVALID_COMMAND':
-      return 'Сервер не принял выбранные варианты. Запросите новые варианты и попробуйте снова.';
+      return 'Сервер не подтвердил варианты начала. Ваш выбор сохранён; нажмите «Открыть компанию» ещё раз.';
     case 'NOT_AUTHORIZED':
       return 'Сеанс завершился. Войдите снова, чтобы открыть компанию.';
     case 'CONTACT_OR_ACCESS_REQUIRED':
@@ -578,8 +580,6 @@ export function App() {
             pendingCreateAccountId.current = undefined;
             setHasPendingCreateAttempt(false);
           }
-          if (requestGeneration.current === generation && !signingOut.current)
-            await restoreJourney();
         }
         throw new Error(rejectionMessage(code));
       }
@@ -606,6 +606,17 @@ export function App() {
     [restoreJourney],
   );
 
+  function discardOtherAccountCreateAttempt(accountId: string) {
+    if (
+      pendingCreateAttempt.current !== undefined &&
+      pendingCreateAccountId.current !== accountId
+    ) {
+      pendingCreateAttempt.current = undefined;
+      pendingCreateAccountId.current = undefined;
+      setHasPendingCreateAttempt(false);
+    }
+  }
+
   const createCompany = useCallback(
     async (
       opening: CompanyOpeningOptionsResponseDto['opening'],
@@ -616,26 +627,23 @@ export function App() {
       },
       accountId: string,
     ) => {
-      if (
-        pendingCreateAttempt.current !== undefined &&
-        pendingCreateAccountId.current !== accountId
-      ) {
-        pendingCreateAttempt.current = undefined;
-        pendingCreateAccountId.current = undefined;
-        setHasPendingCreateAttempt(false);
+      discardOtherAccountCreateAttempt(accountId);
+      let freshOpening = opening;
+      if (pendingCreateAttempt.current === undefined) {
+        const generation = requestGeneration.current;
+        const assertCurrentSession = () => {
+          if (requestGeneration.current !== generation || signingOut.current)
+            throw new Error('Сеанс изменился. Повторите вход, чтобы открыть компанию.');
+        };
+        const renewed = await renewOpeningForCreate(assertCurrentSession);
+        if (renewed === undefined) {
+          await restoreJourney();
+          return;
+        }
+        freshOpening = renewed;
       }
       const request = getOrCreateCompanyCreateAttempt(pendingCreateAttempt, () => {
-        const payload: CreateCompanyPayloadDto = {
-          originId: opening.origin.id,
-          cultureId: opening.culture.id,
-          homelandId: opening.homeland.id,
-          familyStoryId: opening.familyStory.id,
-          leaderInput: { ...opening.leaderDefaults, birthName: input.leaderName.trim() },
-          candidateSetId: opening.candidateSetId,
-          selectedCandidateIds: [...input.selectedCandidateIds],
-          name: input.name.trim(),
-          bannerId: opening.bannerId,
-        };
+        const payload = refreshedCompanyCreatePayload(opening, freshOpening, input);
         return {
           schemaVersion: 1,
           commandId: crypto.randomUUID(),
@@ -1700,4 +1708,26 @@ function JourneyMessage(props: {
       <p className="summary">{props.detail}</p>
     </div>
   );
+}
+
+async function renewOpeningForCreate(assertCurrentSession: () => void) {
+  const response = await fetch(`${apiBaseUrl}/company/opening-options`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    cache: 'no-store',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({}),
+  });
+  assertCurrentSession();
+  if (response.status === 409) return undefined;
+  assertOpeningResponse(response);
+  const renewed = readOpening(await response.json());
+  assertCurrentSession();
+  if (renewed === undefined) throw new Error('Сервер вернул неполные варианты начала.');
+  return renewed;
+}
+function assertOpeningResponse(response: Response) {
+  if (response.status === 401)
+    throw new Error('Сеанс завершился. Войдите снова, чтобы открыть компанию.');
+  if (!response.ok) throw responseError(response);
 }
