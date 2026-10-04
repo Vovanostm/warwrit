@@ -18,6 +18,8 @@ import {
   companySourceKey,
   compileMovementPlan,
   continuousLocationPoint,
+  continuousSurfaceAt,
+  isContinuousPointWalkable,
   continuousSite,
   isContinuousRegionVersion,
   createCampaignClock,
@@ -129,9 +131,11 @@ function readContinuous(row: StoredPartyRoute | undefined): StoredContinuousMove
     s.execution?.schemaVersion !== 2 ||
     s.execution.partyId !== row.party_id ||
     s.execution.routeEpoch !== row.route_epoch ||
-    s.execution.plan?.planVersion !== 2 ||
+    (s.execution.plan?.planVersion !== 2 && s.execution.plan?.planVersion !== 3) ||
     s.execution.plan.planId !== row.segment_id ||
     !isContinuousRegionVersion(s.execution.plan.mapEdition) ||
+    (s.execution.plan.planVersion === 3) !==
+      (s.execution.plan.mapEdition === 'seroe-porechye-continuous-v5') ||
     s.execution.plan.speedProfileId !== row.profile_id ||
     s.execution.regionVersion !== row.region_version ||
     !['MOVING', 'STOPPED', 'ARRIVED'].includes(s.status)
@@ -408,6 +412,10 @@ function responseFor(
         ? 'STATIONARY_SITE'
         : 'STATIONARY_TERRAIN',
     point,
+    surface: continuousSurfaceAt(field, {
+      xFp: Number(point.xMicroFp) / 65536,
+      zFp: Number(point.zMicroFp) / 65536,
+    }),
     plan: moving ? stored.execution.plan : null,
   };
 }
@@ -565,6 +573,17 @@ export async function settleDueContinuousMovementInTransaction(
   return candidate.state;
 }
 
+async function lockOwnedMovementCompany(
+  tx: Transaction<DatabaseSchema>,
+  worldId: string,
+  accountId: string,
+) {
+  const companyId = await findOwnedCompanyId(tx, worldId, accountId);
+  if (!companyId) throw new MovementRejection('NOT_AUTHORIZED');
+  const state = await lockCompanyAggregate(tx, worldId, companyId);
+  if (!state) throw new MovementRejection('NOT_AUTHORIZED');
+  return { companyId, state };
+}
 export async function handleContinuousMovementRead(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -583,10 +602,7 @@ export async function handleContinuousMovementRead(
         .where('id', '=', accountId)
         .forUpdate()
         .executeTakeFirst();
-      const companyId = await findOwnedCompanyId(tx, worldId, accountId);
-      if (!companyId) throw new MovementRejection('NOT_AUTHORIZED');
-      const state = await lockCompanyAggregate(tx, worldId, companyId);
-      if (!state) throw new MovementRejection('NOT_AUTHORIZED');
+      const { companyId, state } = await lockOwnedMovementCompany(tx, worldId, accountId);
       const party = state.economy.lifecycle.parties[0];
       if (!party) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
       const row = await readPartyRoute(tx, worldId, companyId, party.partyId, true);
@@ -784,11 +800,7 @@ export async function executeContinuousMovement(
             .execute();
         return response;
       }
-      const targetCell =
-        Math.floor((goal.zFp - field.region.origin.zFp) / field.region.cellSizeFp) *
-          field.region.columns +
-        Math.floor((goal.xFp - field.region.origin.xFp) / field.region.cellSizeFp);
-      if (!field.walkable[targetCell]) throw new MovementRejection('TARGET_BLOCKED');
+      if (!isContinuousPointWalkable(field, goal)) throw new MovementRejection('TARGET_BLOCKED');
       const path = findTravelPath(
         field,
         { xFp: Number(from.xMicroFp) / 65536, zFp: Number(from.zMicroFp) / 65536 },

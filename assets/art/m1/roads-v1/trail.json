@@ -1,0 +1,27 @@
+{
+  "asset": "road-trail",
+  "file": "trail.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "format": "PNG",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "mode": "built-in",
+    "source": "exec-7213786c-cca9-4fbc-8900-b0f2ccb8df41.png",
+    "promptRecipe": "Original square seamless top-down diffuse medieval road material, full frame uniform-scale surface. Grey-taupe compacted trail loam, fine pebbles, root fibres and leaf crumbs, restrained olive traces. Handcrafted painterly realism, unified desaturated earthy palette. No perspective, scenery, borders, text, modern objects or strong baked directional shadow. Renderer supplies isometry and relief. Requested1024 square; preserve actual original dimensions.",
+    "transparent_background": false,
+    "timestampBasis": "Generated original file modification time; not a tool-reported generation timestamp."
+  },
+  "inspection": {
+    "method": "view_image and actual game",
+    "status": "RASTER_AND_RUNTIME_INSPECTED",
+    "limits": [
+      "Opposite-edge continuity not assumed; renderer blends randomized interior patches.",
+      "Prompt recipe records design constraints; generated original preserved without raster editing.",
+      "Actual daytime moving and stationary day/night material views inspected; not all-device or subjective game-quality acceptance."
+    ]
+  },
+  "workspaceAsset": "assets/art/m1/roads-v1/trail.png"
+}

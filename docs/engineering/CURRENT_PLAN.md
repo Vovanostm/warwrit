@@ -1,5 +1,20 @@
 # Warwrit current delivery plan
 
+**Road art quality active — 2026-10-04:** owner requested coherent realistic
+road materials, shallow isometric relief and placement, repeated independent
+critique, isolated implementation, PR and merge. This authorizes publication
+and merge of this bounded road/map-geometry slice, not deployment or other
+branches. Sole writer: parent in `road-art-quality` / `codex/road-art-quality`,
+base `9c86605`. Previously approved V5 exact geometry is carried as a necessary
+dependency so the drawn road and accepted route remain aligned. Primary living
+places checkout and player database are preserved; own web5291 now uses this worktree. First outcome: compare all
+three surfaces through a road bend/junction in the actual game.
+[Owning contract](../work-packages/M1-FREE-MOVEMENT.json). Browser/material checks pass for finite inspected views; final visual critic
+READY_WITH_LIMITS and source-preservation review found no blocking defect.
+Local clean bootstrap passed610 checks/10000 battles/migrations/14 SQL auth checks;
+final-code16 movement tests, coverage/audit and11 SQL movement checks pass.
+Current-head clean PR CI/publication are pending.
+
 **Live movement recheck — 2026-10-04:** current `main` at `ae9bf3a`
 was checked through the authenticated game at `http://127.0.0.1:5287`.
 Its GitHub CI is SUCCESS. API/web were restarted from that checkout with the
@@ -19,6 +34,25 @@ two workers before the PR audit, preserving its thresholds. The default-worker
 local coverage run hit a combat-property timeout; two workers passed 604 checks
 (46 skipped), and the unchanged audit passed with no new findings. Replacement
 CI is pending.
+
+**Exact map geometry cycle — 2026-10-04:** owner-approved V5/polygon-v1,
+planVersion3 and exact road station routing are playable on retained
+`codex/map-geometry-v5` at base `ae9bf3a`. Parent is sole writer of this slice;
+verified localhost5291/3217 now uses this checkout and preserves the original
+database/company. Another runtime replaced5287 during final review; it was left
+untouched, and the final web version moved to5291.
+Exact point guards replace conservative cell rejection; old V2 schedules remain
+frozen. Full-width core, outward8fp skirt, eight terrain weights and ground SVG
+projection are implemented.16 public movement checks and independent source /
+scoped playable review pass; actual trip, moving reload, partial STOP/reload and
+field-speed exit observed. Four-site containment oracle:24 road spans, zero
+phantom intervals. Search p95 135.82ms exceeds50ms target. DPR1/2 × default/min/max active
+projection passed; clean full gate and11 real PostgreSQL movement checks passed.
+Final UI-only company-label collision fix passed focused web/browser checks after
+the full gate; final critic READY_WITH_LIMITS after correcting cue/label overlap.
+Authenticated V3 move/arrival/STOP/reload passed on5291/API3217; fresh login there
+is NOT_RUN. Disposable databases removed. [Owning result](../work-packages/M1-FREE-MOVEMENT.md#exact-geometry-cycle--2026-10-04).
+No commit/push/merge/deployment; no full-M1 or global professional-game acceptance.
 
 **CI boundary correction — 2026-10-04:** PR136 and its main merge CI failed at
 `check:architecture`: the terrain label imported game-core directly from web.

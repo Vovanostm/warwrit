@@ -17,7 +17,7 @@ const naturalTextureShader = `
     mat2 rotation=mat2(cos(angle),-sin(angle),sin(angle),cos(angle));
     vec2 center=vec2(vertex.x+vertex.y*0.5,vertex.y*0.8660254);
     vec2 sampleUv=vec2(0.5)+(random-0.5)*0.18+rotation*(uv-center)*0.28;
-    return texture2D(source,sampleUv).rgb;
+    return pow(texture2D(source,sampleUv).rgb,vec3(2.2));
   }
   vec3 naturalTile(sampler2D source,vec2 uv){
     vec2 skew=vec2(uv.x-uv.y*0.57735027,uv.y*1.15470054);
@@ -32,34 +32,44 @@ const naturalTextureShader = `
 export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDto) {
   const width = region.columns * region.cellSizeFp;
   const height = region.rows * region.cellSizeFp;
-  const colors: Readonly<Record<string, readonly [string, string]>> = {
-    grassland: ['#ff0000', '#000000'],
-    forest: ['#00ff00', '#000000'],
-    hills: ['#0000ff', '#000000'],
-    marsh: ['#000000', '#ff0000'],
-    riverbank: ['#000000', '#00ff00'],
-    rock: ['#000000', '#0000ff'],
-    cliff: ['#000000', '#0000ff'],
-    deep_water: ['#000000', '#000000'],
+  // Four opaque canvases encode RGB groups and the two fourth weights. Canvas alpha is
+  // compositing coverage, so it cannot also encode marsh/water without losing painted regions.
+  const colors: Readonly<Record<string, readonly string[]>> = {
+    grassland: ['#ff0000', '#000000', '#000000', '#000000'],
+    forest: ['#00ff00', '#000000', '#000000', '#000000'],
+    hills: ['#0000ff', '#000000', '#000000', '#000000'],
+    marsh: ['#000000', '#ff0000', '#000000', '#000000'],
+    riverbank: ['#000000', '#000000', '#ff0000', '#000000'],
+    rock: ['#000000', '#000000', '#00ff00', '#000000'],
+    cliff: ['#000000', '#000000', '#0000ff', '#000000'],
+    deep_water: ['#000000', '#000000', '#000000', '#ff0000'],
   };
   const shapes = [
     ...region.terrainShapes,
     ...region.blockingShapes.map((s) => ({ ...s, terrainId: 'rock', paintPriority: 19 })),
-  ].sort((a, b) => a.paintPriority - b.paintPriority);
-  const controls = [0, 1].map((channel) => {
+  ].toSorted(
+    (a, b) =>
+      a.paintPriority - b.paintPriority ||
+      (a.shapeId < b.shapeId ? -1 : a.shapeId > b.shapeId ? 1 : 0),
+  );
+  const maskWidth = 1024,
+    maskHeight = 768;
+  const layers = [0, 1, 2, 3].map((channel) => {
     const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 768;
+    canvas.width = maskWidth;
+    canvas.height = maskHeight;
     const context = canvas.getContext('2d');
     if (!context) throw new Error('Terrain control texture unavailable');
     context.fillStyle = colors['grassland']![channel]!;
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    context.filter = 'blur(5px)';
+    context.fillRect(0, 0, maskWidth, maskHeight);
+    // An authored 80fp soft transition, independent of map dimensions, zoom and DPR.
+    context.filter = `blur(${(80 * maskWidth) / width}px)`;
     for (const shape of shapes) {
       context.beginPath();
-      shape.polygon.forEach((point, i) => {
-        const x = ((point.xFp - region.origin.xFp) / width) * canvas.width;
-        const y = (1 - (point.zFp - region.origin.zFp) / height) * canvas.height;
+      shape.polygon.forEach((p, i) => {
+        const x = ((p.xFp - region.origin.xFp) / width) * maskWidth;
+        // Babylon ground V grows towards +z. Upload uses invertY=true exactly once.
+        const y = (1 - (p.zFp - region.origin.zFp) / height) * maskHeight;
         if (i === 0) context.moveTo(x, y);
         else context.lineTo(x, y);
       });
@@ -67,15 +77,28 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
       context.fillStyle = (colors[shape.terrainId] ?? colors['grassland'])![channel]!;
       context.fill();
     }
+    return context.getImageData(0, 0, maskWidth, maskHeight).data;
+  });
+  const controls = [0, 1].map((group) => {
+    const data = new Uint8Array(maskWidth * maskHeight * 4);
+    const rgb = layers[group * 2]!,
+      alpha = layers[group * 2 + 1]!;
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = rgb[i]!;
+      data[i + 1] = rgb[i + 1]!;
+      data[i + 2] = rgb[i + 2]!;
+      data[i + 3] = alpha[i]!;
+    }
     const texture = RawTexture.CreateRGBATexture(
-      new Uint8Array(context.getImageData(0, 0, canvas.width, canvas.height).data),
-      canvas.width,
-      canvas.height,
+      data,
+      maskWidth,
+      maskHeight,
       scene,
       false,
       true,
       Texture.BILINEAR_SAMPLINGMODE,
     );
+    texture.gammaSpace = false;
     texture.wrapU = texture.wrapV = Texture.CLAMP_ADDRESSMODE;
     return texture;
   });
@@ -93,17 +116,17 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
       uniform vec3 lighting; uniform vec2 detailScale,worldOffset; uniform float time;
       ${naturalTextureShader}
       void main(){
-        vec3 a=texture2D(controlA,terrainUv).rgb, b=texture2D(controlB,terrainUv).rgb;
-        float water=max(0.0,1.0-dot(a+b,vec3(1.0)));
-        float sum=max(dot(a+b,vec3(1.0))+water,0.0001);
-        a/=sum; b/=sum; water/=sum;
+        vec4 a=max(texture2D(controlA,terrainUv),vec4(0)), b=max(texture2D(controlB,terrainUv),vec4(0));
+        float sum=max(dot(a+b,vec4(1.0)),0.0001);
+        a/=sum; b/=sum; float water=b.a;
         vec2 uv=terrainUv*detailScale; vec3 color=vec3(0.0);
-        if(a.r>0.001) color+=mix(naturalTile(grassMap,uv),vec3(0.34,0.37,0.20),0.24)*a.r;
+        if(a.r>0.001) color+=mix(naturalTile(grassMap,uv),pow(vec3(0.34,0.37,0.20),vec3(2.2)),0.24)*a.r;
         if(a.g>0.001) color+=naturalTile(woodlandMap,uv)*a.g;
         if(a.b>0.001) color+=naturalTile(hillsMap,uv)*a.b;
-        if(b.r>0.001) color+=naturalTile(marshMap,uv)*b.r;
-        if(b.g>0.001) color+=naturalTile(riverbankMap,uv)*b.g;
-        if(b.b>0.001) color+=naturalTile(rockMap,uv)*b.b;
+        if(a.a>0.001) color+=naturalTile(marshMap,uv)*a.a;
+        if(b.r>0.001) color+=naturalTile(riverbankMap,uv)*b.r;
+        if(b.g>0.001) color+=naturalTile(rockMap,uv)*b.g;
+        if(b.b>0.001) color+=naturalTile(rockMap,uv)*vec3(0.64,0.68,0.72)*b.b;
         if(water>0.001){
           vec2 drift=vec2(time*0.013,time*0.005);
           float ripples=sin(uv.x*31.0+uv.y*17.0-time*1.2+landNoise(uv*2.0)*6.0);
@@ -117,7 +140,7 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
         float windLight=sin(scenePoint.x*0.71+scenePoint.y*0.39-time*1.65);
         color*=1.0+a.r*0.055*windLight;
         float cloud=0.94+0.06*landNoise(uv*0.10+vec2(time*0.016,time*0.008));
-        gl_FragColor=vec4(color*lighting*variation*cloud,1.0);
+        gl_FragColor=vec4(pow(max(color*lighting*variation*cloud,vec3(0)),vec3(1.0/2.2)),1.0);
       }`,
     },
     {
@@ -154,7 +177,7 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
     ['rockMap', MAP_ART.terrainLayers.rock],
     ['waterMap', MAP_ART.terrainLayers.water],
   ] as const) {
-    const texture = new Texture(url, scene);
+    const texture = new Texture(url, scene, { useSRGBBuffer: false, gammaSpace: true });
     texture.wrapU = texture.wrapV = Texture.CLAMP_ADDRESSMODE;
     texture.anisotropicFilteringLevel = 8;
     material.setTexture(sampler, texture);
@@ -163,54 +186,95 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
   return material;
 }
 
-/** Three road surfaces share bank geometry and feather naturally into the ground. */
-export function createRoadMaterial(scene: Scene, roadType: 'trail' | 'dirt_road' | 'paved_road') {
+/** Shared-bank roads: distance UVs, shallow lit crown and quiet earthen margins. */
+export function createRoadMaterial(
+  scene: Scene,
+  roadType: 'trail' | 'dirt_road' | 'paved_road',
+  shoulder = false,
+) {
   const paved = roadType === 'paved_road';
   const material = new ShaderMaterial(
-    `continuous-roads:${roadType}`,
+    `continuous-roads:${roadType}:${shoulder ? 'margin' : 'core'}`,
     scene,
     {
-      vertexSource: `precision highp float; attribute vec3 position; attribute vec2 uv;
-      uniform mat4 worldViewProjection; varying vec2 roadUv,roadPoint;
-      void main(){ roadUv=uv; roadPoint=position.xz; gl_Position=worldViewProjection*vec4(position,1.0); }`,
-      fragmentSource: `precision highp float; varying vec2 roadUv,roadPoint;
-      uniform sampler2D roadMap; uniform vec3 lighting, surfaceTint; uniform float paving, rutStrength;
+      vertexSource: `precision highp float;
+      attribute vec3 position,normal; attribute vec2 uv,uv2;
+      uniform mat4 worldViewProjection; varying vec2 roadUv,roadPoint; varying float roadWidth;
+      varying vec3 surfaceNormal; varying vec2 acrossRoad;
+      void main(){
+        roadUv=uv; roadWidth=uv2.x; roadPoint=position.xz; surfaceNormal=normal; acrossRoad=vec2(cos(uv2.y),sin(uv2.y));
+        gl_Position=worldViewProjection*vec4(position,1.0);
+      }`,
+      fragmentSource: `precision highp float;
+      varying vec2 roadUv,roadPoint; varying float roadWidth; varying vec3 surfaceNormal; varying vec2 acrossRoad;
+      uniform sampler2D roadMap,soilMap; uniform vec3 lighting; uniform float paving,trail,shoulder;
       ${naturalTextureShader}
       void main(){
-        float wear=landNoise(roadPoint*3.7);
-        float waviness=0.04*(landNoise(roadPoint*7.0)-0.5);
-        float edge=min(roadUv.x+waviness,1.0-roadUv.x-waviness);
-        vec3 color=mix(naturalTile(roadMap,roadPoint*2.0),surfaceTint,0.28);
-        if(paving>0.5){
-          vec2 stoneUv=vec2(roadUv.x*5.0,roadUv.y*8.0);
-          stoneUv.x+=mod(floor(stoneUv.y),2.0)*0.5;
-          vec2 edgeUv=min(fract(stoneUv),1.0-fract(stoneUv));
-          float stone=smoothstep(0.015,0.065,min(edgeUv.x,edgeUv.y));
-          color*=mix(0.68,0.92+0.16*hash2(floor(stoneUv)).x,stone);
+        // Longitudinal V never restarts at a station; width stays in world units.
+        vec2 detail=vec2(roadUv.x*roadWidth,roadUv.y)*7.0;
+        vec3 sourceColor=naturalTile(roadMap,detail);
+        vec3 albedo=sourceColor;
+        float broadWear=landNoise(vec2(roadUv.x*4.0,roadUv.y*1.8));
+        float edge=min(roadUv.x,1.0-roadUv.x);
+        float margin=1.0-smoothstep(0.015,0.18+0.025*broadWear,edge);
+        float wander=(landNoise(vec2(roadUv.y*2.2,17.0))-0.5)*0.025;
+        float tracks=1.0-smoothstep(0.018,0.085,
+          min(abs(roadUv.x-0.30-wander),abs(roadUv.x-0.70-wander)));
+        float centre=1.0-smoothstep(0.10,0.46,abs(roadUv.x-0.5));
+        float worn=(1.0-trail)*tracks+trail*centre;
+        vec3 dusty=pow(vec3(0.43,0.40,0.32),vec3(2.2));
+        float grit=landNoise(detail*14.0);
+        vec3 soil=mix(naturalTile(soilMap,roadPoint*7.0),dusty,0.35);
+        albedo=mix(albedo,soil,margin*(0.55+0.30*grit));
+        // Restrained contact wear inside the physical banks; the outer skirt is soil.
+        albedo*=1.0-margin*(0.06+0.05*grit);
+        albedo*=1.0-(1.0-paving)*worn*(0.16+0.08*broadWear);
+        // Broad crown normals respond to the same north-west sky direction as sprites.
+        // Restrained grain contrast suggests wear without glossy specular or fake curbs.
+        vec3 crossSample=naturalTile(roadMap,detail+vec2(0.035,0.0));
+        vec3 alongSample=naturalTile(roadMap,detail+vec2(0.0,0.035));
+        vec3 luma=vec3(0.2126,0.7152,0.0722);
+        vec2 grain=vec2(dot(sourceColor-crossSample,luma),dot(sourceColor-alongSample,luma));
+        vec2 slope=acrossRoad*grain.x+vec2(-acrossRoad.y,acrossRoad.x)*grain.y;
+        vec3 normal=normalize(surfaceNormal+vec3(slope.x,0.0,slope.y)*(paving*1.5+0.4));
+        float diffuse=dot(normal,normalize(vec3(0.2,1.0,-0.3)));
+        float relief=0.78+0.24*max(diffuse,0.0);
+        float variation=0.93+0.09*landNoise(roadPoint*3.7);
+        float alpha=1.0;
+        if(shoulder>0.5){
+          albedo=soil;
+          alpha=(1.0-smoothstep(0.0,1.0,roadUv.x))*0.50;
         }
-        float ruts=1.0-smoothstep(0.025,0.10,min(abs(roadUv.x-0.32),abs(roadUv.x-0.68)));
-        gl_FragColor=vec4(color*lighting*(0.83+0.10*wear-rutStrength*ruts),smoothstep(0.02,0.22+0.07*wear,edge)*0.90);
+        gl_FragColor=vec4(pow(max(albedo*lighting*relief*variation,vec3(0)),vec3(1.0/2.2)),alpha);
       }`,
     },
     {
-      attributes: ['position', 'uv'],
-      uniforms: ['worldViewProjection', 'lighting', 'surfaceTint', 'paving', 'rutStrength'],
-      samplers: ['roadMap'],
-      needAlphaBlending: true,
+      attributes: ['position', 'normal', 'uv', 'uv2'],
+      uniforms: ['worldViewProjection', 'lighting', 'paving', 'trail', 'shoulder'],
+      samplers: ['roadMap', 'soilMap'],
+      needAlphaBlending: shoulder,
     },
   );
-  const texture = new Texture(paved ? MAP_ART.terrainLayers.rock : MAP_ART.road, scene);
+  const texture = new Texture(MAP_ART.roads[shoulder ? 'trail' : roadType], scene, {
+    useSRGBBuffer: false,
+    gammaSpace: true,
+  });
   texture.wrapU = texture.wrapV = Texture.CLAMP_ADDRESSMODE;
   texture.anisotropicFilteringLevel = 8;
   material.setTexture('roadMap', texture);
+  const soilTexture = new Texture(MAP_ART.roads.trail, scene, {
+    useSRGBBuffer: false,
+    gammaSpace: true,
+  });
+  soilTexture.wrapU = soilTexture.wrapV = Texture.CLAMP_ADDRESSMODE;
+  soilTexture.anisotropicFilteringLevel = 8;
+  material.setTexture('soilMap', soilTexture);
   material.setColor3('lighting', Color3.White());
-  material.setColor3(
-    'surfaceTint',
-    Color3.FromHexString(paved ? '#8f9587' : roadType === 'trail' ? '#756047' : '#947253'),
-  );
-  material.setFloat('paving', paved ? 1 : 0);
-  material.setFloat('rutStrength', roadType === 'dirt_road' ? 0.12 : 0);
+  material.setFloat('shoulder', shoulder ? 1 : 0);
+  material.setFloat('paving', paved && !shoulder ? 1 : 0);
+  material.setFloat('trail', roadType === 'trail' ? 1 : 0);
   material.backFaceCulling = false;
-  material.disableDepthWrite = true;
+  material.disableDepthWrite = shoulder;
+  material.zOffset = shoulder ? -1 : paved ? -6 : roadType === 'dirt_road' ? -4 : -2;
   return material;
 }

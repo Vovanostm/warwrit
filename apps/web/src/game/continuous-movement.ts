@@ -9,6 +9,9 @@ import { worldPartyReadHeaders } from '../world-free-movement-attempt.js';
 const api = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
 type Action = WorldFreeMovementV2RequestDto['action'];
 const decimal = (v: unknown): v is string => typeof v === 'string' && /^(0|[1-9]\d{0,18})$/.test(v);
+function fractionDigits(t: { numerator: string; denominator: string }): boolean {
+  return /^(0|[1-9]\d{0,18})$/.test(t.numerator) && /^[1-9]\d{0,18}$/.test(t.denominator);
+}
 function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto | undefined {
   if (typeof value !== 'object' || value === null) return undefined;
   const v = value as WorldFreeMovementV2ResponseDto;
@@ -32,12 +35,18 @@ function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto 
   if (v.plan) {
     const p = v.plan;
     if (
-      p.planVersion !== 2 ||
+      (p.planVersion !== 2 && p.planVersion !== 3) ||
+      (p.planVersion === 3 &&
+        (p.navigationVersion !== 'polygon-v1' ||
+          p.mapEdition !== 'seroe-porechye-continuous-v5')) ||
+      (p.planVersion === 2 &&
+        (p.navigationVersion !== undefined || p.mapEdition === 'seroe-porechye-continuous-v5')) ||
       ![
         'seroe-porechye-continuous-v1',
         'seroe-porechye-continuous-v2',
         'seroe-porechye-continuous-v3',
         'seroe-porechye-continuous-v4',
+        'seroe-porechye-continuous-v5',
       ].includes(p.mapEdition) ||
       typeof p.planId !== 'string' ||
       typeof p.speedProfileId !== 'string' ||
@@ -74,6 +83,24 @@ function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto 
         BigInt(span.endOffsetUs) <= BigInt(end)
       )
         return undefined;
+      if (p.planVersion === 3) {
+        const g = span.geometry;
+        const fraction = (t: { numerator: string; denominator: string } | undefined) => {
+          if (!t || !fractionDigits(t)) return false;
+          return BigInt(t.numerator) <= BigInt(t.denominator) && BigInt(t.denominator) <= 1n << 61n;
+        };
+        if (
+          !g ||
+          !Number.isSafeInteger(g.segmentIndex) ||
+          g.segmentIndex < 0 ||
+          g.segmentIndex + 1 >= p.path.length ||
+          !fraction(g.fromT) ||
+          !fraction(g.toT) ||
+          BigInt(g.fromT.numerator) * BigInt(g.toT.denominator) >=
+            BigInt(g.toT.numerator) * BigInt(g.fromT.denominator)
+        )
+          return undefined;
+      }
       end = span.endOffsetUs;
       previous = span.to;
     }

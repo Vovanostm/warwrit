@@ -1,5 +1,137 @@
 # Free global-map movement — implementation assignment
 
+## Road materials and isometric relief — 2026-10-04
+
+Owner authorizes this isolated slice's PR and merge, including previously approved
+V5 exact geometry needed to align road rendering and movement. Sole writer:
+`codex/road-art-quality`, base `9c86605`; primary living-place and previous
+geometry checkouts are preserved. No deployment or other-branch merge.
+
+Three original generated1254px-square paving/dirt/trail materials replace the
+brown procedural road and brick grid. Muted stones, packed earth and worn loam
+share one palette. Five-vertex cross sections have restrained crown/light grain,
+continuous station-distance UV and inside-core earth transitions matching the
+outward8fp non-speed skirt. Canonical x/z banks and ground picking/path/party
+remain authoritative. Junction depth priority stays deterministic. Camera remains
+orthographic50degrees; relief is decorative, not navigation elevation.
+
+Reference inspection: official Battle Brothers2014 world-map blog for composition
+(not a modern renderer claim), and VCMI's actual map-editor image for winding
+cobble corners and readable boundaries. Assets are original, with provenance in
+`assets/art/m1/roads-v1`; recorded times derive from original file modification
+times, not invented tool timestamps.
+
+Critic iterations corrected a downward-normal winding mistake and the initial
+cut-out paving edge. Final independent verdict: READY_WITH_LIMITS, no reproduced
+road-art blocker in day moving paving/default/close, trail/dirt junction and
+stationary night views. Accepted captures live locally in `output/playwright/`:
+`moving-day-default.png`, `moving-day-close.png`, `final-trail-close.png`,
+`final-day-junction.png`, `final-dpr2-night-default.png`,
+`final-dpr2-night-close.png`, `final-dpr2-night-overview.png`. Night captures are
+stationary. Invalid blank/clipped captures are excluded. Critic inspected frames;
+journey and quantitative measurements are author evidence.
+
+At1280x800/DPR1 and zoom2.00023, max decorative relief-to-ground separation is
+0.879CSSpx and min road normalY0.998899. Ground route stays in the visible road
+through bends; material continuity and grounded ring are readable. Existing V5
+journey evidence includes arrival, moving reload, STOP/reload and road-to-field
+speed exit with the player database preserved. Web5291 uses this worktree; API3217
+now runs this worktree with retained configuration and database. No player data reset.
+
+The mandatory quality audit required cohesive helper extraction in exact
+navigation/search/validation, web interpolation and owned-company read locking.
+Independent source comparison with staged or preserved original source found no
+valid-input semantic defect. Test workers are bounded at2 for heavy suites;
+assertions, timeouts, audit thresholds and hook policy remain unchanged.
+Final code:16 public movement tests, fresh610-check coverage and the unchanged
+new-only quality audit pass.11 real PostgreSQL movement checks pass against the
+owned migrated disposable database. Clean `scripts/bootstrap.sh` passes610 unit
+checks (46 skipped),10000 combat battles, migrations and14 SQL auth/encounter
+checks. This local clean run preceded the final equivalent sorted-neighbor
+`forEach` rewrite; focused tests/coverage/audit cover final code, and clean
+current-head PR CI is required before merge. Initial unrestricted-worker test
+timeouts and introduced complexity/clone findings were corrected, not bypassed.
+
+Limits: active-night travel/fresh5291 login NOT_RUN; full-device and subjective
+play acceptance NOT_MEASURED. Existing search p95135.82ms still exceeds50ms.
+Localized edge weathering/long-paving variation are optional refinements, not
+claims of complete professional-game or full-M1 acceptance. Publication pending.
+
+## Exact geometry cycle — 2026-10-04
+
+Owner approved the reviewed polygon/station design and step-by-step implementation.
+Version3.5.0 of the owning JSON replaces centre-cell navigation for new orders.
+One parent writer, `codex/map-geometry-v5` at base `ae9bf3a`, retained movement
+checkout; verified localhost5291/3217 now runs this checkout with the original
+player database and saved company preserved. During final review another runtime
+replaced5287; it was not stopped or overwritten. Final web moved to5291, and
+ordinary receipt recovery on the checked version preserves accepted state. No publication or merge.
+
+New V5/polygon-v1 orders compile planVersion3: exact rational polygon intersections,
+immutable candidate buckets and exact adjacent-grid costs, explicit road stations,
+actual-point destination/clearance and speed. A cell grants no bonus to its whole
+area. Road-chain chords stay inside the connected core; faster field shortcuts
+remain legal. Exact event denominator is bounded by2^61/19digits. Old V2 plans,
+receipts, deadlines and saved positions execute frozen; no migration.
+
+Terrain uses eight explicit weights with normalized linear control data; water is
+not residual. The visible core is opaque across its physical width; a separate8fp
+outward skirt has no road speed. Banks/stations/longitudinal UV share authoring;
+winning surfaces have explicit render/depth order. Party and SVG use the accepted
+plan with ground projection at y=0, and stationary labels come from the server.
+
+Observed: normal authenticated69s road-faster multi-bend trip vs100s direct,
+arrival, moving reload, partial STOP/reload with the exact same retained point,
+reroute into the field and ×2→×1. Six new regressions plus ten existing movement
+specs pass, including narrow road arithmetic, rational reload, slivers, danger,
+clearance and an off-centre thin bridge. Independent source review found and
+confirmed correction of conservative-cell destination rejection. Independent
+visual critic sees line/ground-ring correspondence through bends and night reload;
+no material blocker in those frames, READY_WITH_LIMITS.
+
+An independent winding-number/intersection oracle checked all24 road-labelled
+spans of the four authored site routes:24 positive-length subintervals, zero outside
+matching road polygons. Paved bank probes:1fp inside ×2;4fp in skirt and12fp outside
+×1. These finite checks do not prove every possible route. Browser rAF sample:
+120fps average, p95 frame10ms across a minute of mixed moving/stationary play;
+GPU timing and capacity are NOT_MEASURED. Picking round-trip DPR1/2 samples below
+0.001CSSpx at default/min/max zoom for both DPRs. All six active SVG split
+samples agree with the party ground projection below0.006CSSpx.
+
+Performance is improved by immutable exact edge compilation: map compilation
+1.44s;100 deterministic goals yielded97 paths,3 blocked targets, zero complexity
+overflow. Search p50 71.84ms/p95 135.82ms/max159.15ms on the owner's Mac. The50ms
+p95 target is **not met**; do not turn functional/visual checks into a performance
+pass. Optional remaining art polish is warm stone variation/weathering.
+Clean `scripts/bootstrap.sh` passed in a disposable copy:610 unit checks
+(46 skipped),10000 combat battles, migrations and14 PostgreSQL auth/encounter
+checks. Additional continuous-movement PostgreSQL file:11 passed, including
+V3 JSON persistence. Final server build/restart preserved player data; normal
+V3 movement and partial STOP/reload retained exactly
+`(89456745,-157931675)microFp`. Both disposable verification databases were removed.
+
+The critic found overview company visibility and then a label-overlap defect.
+A fixed screen cue now identifies the company when the projected banner is
+smaller than24px; five nearby vertical candidates avoid settlement labels with4px
+clearance, and a leader preserves the ground anchor. Final collision-only UI fix
+followed the full gate: web production build/typecheck/lint and browser rectangle
+readback passed; domain/database/stress were not rerun for that UI-only correction.
+Final visual critic:READY_WITH_LIMITS. Corrected cue placement no longer overlaps
+settlement names; DPR1 close/overview and DPR2 close show readable active route
+and history within the paved corridor. The final DPR2 overview shows arrival
+and proves only cue/label placement; prior active overview evidence retains its
+finite scope. New isolated origin5291/API3217 also passed ordinary movement,
+arrival and partial STOP/reload with identical point
+`(95068872,-166174486)microFp`. Existing session reused; fresh OIDC login on5291
+is NOT_RUN. Earlier gate failures from local artifact
+formatting, unnecessary exports and an exact-optional test fixture were corrected;
+checks were not weakened. Source-only four-slot grid-cache review found no indexing
+defect; nested region mutation remains an unexecuted readonly-contract risk,
+with no mutating consumer found.
+
+Try [the running map](http://127.0.0.1:5291/): ПКМ по дороге/полю — идти,
+«Остановиться»/S — стоп; ЛКМ drag and captured smooth wheel retain their controls.
+
 ## Route presentation critique — 2026-10-03
 
 Статус: **PROPOSED / NOT_IMPLEMENTED**. Владелец отверг визуальное качество
