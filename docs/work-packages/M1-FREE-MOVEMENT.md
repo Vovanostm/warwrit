@@ -71,6 +71,17 @@ Published in [PR141](https://github.com/Vovanostm/warwrit/pull/141), which owns
 current-head CI and actual authorized merge readback. Retained company returned
 to Stone Ford on5291 for the owner playtest; player infrastructure is preserved.
 
+### CI scheduling correction — 2026-10-04
+
+PR141 [run37199433423](https://github.com/Vovanostm/warwrit/actions/runs/37199433423)
+passed clean bootstrap but FAILED the coverage step: unchanged authored-junction
+field-build check took5149ms against its5000ms limit under two concurrent workers;
+617 checks passed,46 skipped. Local exact-code sequential coverage had already
+passed618/46. Run coverage with one worker in CI to avoid simultaneous expensive
+field compilation on the bounded runner. Tests, assertions, timeouts, coverage
+and audit policy remain unchanged; renderer/navigation code is unchanged.
+Replacement current-head CI must pass before the authorized merge.
+
 ## Road materials and isometric relief — 2026-10-04
 
 Owner authorizes this isolated slice's PR and merge, including previously approved

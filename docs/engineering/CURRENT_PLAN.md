@@ -20,7 +20,10 @@ Focused7 checks,618-check coverage and normal audit pass. First bootstrap failed
 one unrelated FIRST HUNT DB scenario and remains historical FAILED.
 Published in [PR141](https://github.com/Vovanostm/warwrit/pull/141). GitHub owns
 current-head CI and actual merge readback; owner authorized this bounded merge.
-Local playable5291 retains player data. No deployment or full-M1 acceptance.
+Local playable5291 retains player data. PR run37199433423 passed bootstrap but
+FAILED one unchanged field-build coverage timeout under two workers. CI coverage
+now runs sequentially with unchanged tests/limits; replacement CI required.
+No deployment or full-M1 acceptance.
 
 **Living-place integration authorized — 2026-10-04:** owner explicitly
 requested “fix conflicts, merge, update local main”, authorizing PR139 merge
