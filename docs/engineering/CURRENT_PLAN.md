@@ -16,7 +16,8 @@ passed; subsequent equivalent layer-default consolidation passed current
 focused checks and changed-code audit.
 [Evidence and limits](../work-packages/M1-LIVING-PLACES.md#cohesive-scene-result--2026-10-04).
 Previous visual acceptance is superseded. Existing API/player data retained.
-PR139 remains the publication target. No merge/deployment authorization.
+Correction implementation `381fbf8` passed the normal commit audit; PR139 owns
+publication and current-head CI readback. No merge/deployment authorization.
 
 **Living places implemented — 2026-10-04:** owner requested parallax visits,
 highlighted building entrances and ten building types with three variants each.

@@ -147,7 +147,7 @@ rules or player storage change.
   and14 migration/auth/encounter checks. Disposable verification PostgreSQL
   was removed. First attempt failed on the obsolete illustration export and
   is not a pass. After the passing bootstrap, equivalent layer defaults were
-  consolidated in `placeBuildings`; current web typecheck, affected lint and
+  consolidated in `placeBuildings`; current web build/typecheck, affected lint and
   changed-code audit against `origin/main` passed, with4 inherited findings
   excluded by the existing gate. No suppression or hook bypass.
 - NOT_RUN/NOT_MEASURED: live reduced-motion override, physical remote-place
@@ -157,4 +157,6 @@ rules or player storage change.
 Playtest remains at `http://127.0.0.1:5287`: map place → **Место** → highlighted
 entrance. Current captures are local in `output/playwright/living-places`;
 the incorrectly named `ruin-night-final-19.jpg` is a map after hot reload and
-is excluded from visual evidence. PR139 owns publication; NOT_MERGED.
+is excluded from visual evidence. Correction implementation commit `381fbf8`
+passed the normal commit audit. PR139 owns publication; current correction CI
+must be read from its new head. NOT_MERGED; no deployment authorization.
