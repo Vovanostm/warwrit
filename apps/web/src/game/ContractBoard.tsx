@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type {
   OrdinaryContractBoardDto,
   OrdinaryContractCommandDto,
-  OrdinaryContractCommandResponseDto,
   OrdinaryContractDto,
 } from '@warwrit/protocol';
+import {
+  classifyOrdinaryContractPost,
+  selectOrdinaryContractAttempt,
+} from './ordinary-contract-attempt.js';
 
 import { formatCrowns } from './format.js';
 import {
@@ -171,6 +174,8 @@ export function ContractBoard(
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | undefined>(undefined);
   const [pending, setPending] = useState<OrdinaryContractCommandDto | undefined>(undefined);
+  const pendingRef = useRef<OrdinaryContractCommandDto | undefined>(undefined);
+  const sendingRef = useRef(false);
   const { onUnauthorized, onRewardPaid } = props;
 
   const refresh = useCallback(async () => {
@@ -185,10 +190,18 @@ export function ContractBoard(
     return () => clearInterval(id);
   }, [refresh, props.siteId, props.refreshKey]);
 
-  const send = async (command: OrdinaryContractCommandDto) => {
+  const send = async (requested: OrdinaryContractCommandDto, retry = false) => {
+    if (sendingRef.current) return;
+    const command = selectOrdinaryContractAttempt(pendingRef.current, requested, retry);
+    if (!command) return;
+    sendingRef.current = true;
+    if (!pendingRef.current) {
+      // Reserve synchronously so same-turn clicks cannot replace an in-flight command.
+      pendingRef.current = command;
+      setPending(command);
+    }
     setBusy(true);
     setMessage(undefined);
-    setPending(command);
     try {
       const response = await fetch('/api/contracts/ordinary/commands', {
         method: 'POST',
@@ -196,23 +209,31 @@ export function ContractBoard(
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(command),
       });
-      if (response.status === 401) {
+      const body: unknown = response.status === 401 ? null : await response.json();
+      const result = classifyOrdinaryContractPost(response.status, body, command.commandId);
+      if (result.kind === 'UNAUTHENTICATED') {
         onUnauthorized();
         return;
       }
-      const body = (await response.json()) as OrdinaryContractCommandResponseDto;
+      if (result.kind === 'UNKNOWN') {
+        // Keep the command ID and body until a matching terminal receipt is verified.
+        setMessage('Связь прервалась, результат неизвестен. Повторите тот же запрос.');
+        return;
+      }
+      pendingRef.current = undefined;
       setPending(undefined);
-      if (body.ok) {
-        if (body.rewardQ !== null) {
-          setMessage(`Заказчик заплатил ${formatCrowns(body.rewardQ)} кр.`);
-          onRewardPaid();
-        }
-      } else setMessage(REJECTION_TEXT[body.code] ?? 'Сервер отклонил запрос.');
+      if (result.kind === 'REJECTED')
+        setMessage(REJECTION_TEXT[result.response.code] ?? 'Сервер отклонил запрос.');
+      else if (result.response.rewardQ !== null) {
+        setMessage(`Заказчик заплатил ${formatCrowns(result.response.rewardQ)} кр.`);
+        onRewardPaid();
+      }
       await refresh();
     } catch {
-      // Unknown outcome: the same command can be sent again and is applied at most once.
+      // Unknown outcome: only this exact command can safely be sent again.
       setMessage('Связь прервалась, результат неизвестен. Повторите тот же запрос.');
     } finally {
+      sendingRef.current = false;
       setBusy(false);
     }
   };
@@ -264,7 +285,7 @@ export function ContractBoard(
               type="button"
               className="gear-action"
               disabled={busy}
-              onClick={() => void send(pending)}
+              onClick={() => void send(pending, true)}
             >
               Повторить
             </button>
@@ -280,7 +301,7 @@ export function ContractBoard(
           canVisit={props.canVisit}
           onVisitIssuer={props.onVisitIssuer}
           onJournal={props.onJournal}
-          busy={busy}
+          busy={busy || pending !== undefined}
           onCommand={(type, stepId) => void send(command(contract, type, stepId))}
         />
       ))}

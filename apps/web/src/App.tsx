@@ -546,6 +546,10 @@ export function App() {
     }
   }, []);
 
+  const onContractUnauthorized = useCallback(() => {
+    void restoreJourney();
+  }, [restoreJourney]);
+
   const submitCompanyCreateAttempt = useCallback(
     async (request: CreateCompanyRequestDto, accountId: string) => {
       const generation = requestGeneration.current;
@@ -1532,14 +1536,14 @@ export function App() {
               {...contractVisit}
               siteId={journey.world.party?.location ?? null}
               refreshKey={contractRefreshGeneration}
-              onUnauthorized={() => void restoreJourney()}
+              onUnauthorized={onContractUnauthorized}
               onRewardPaid={refreshWorldForShell}
             />
             <FirstHunt
               {...contractVisit}
               scope={scope}
               location={journey.world.party?.location ?? null}
-              onUnauthorized={() => void restoreJourney()}
+              onUnauthorized={onContractUnauthorized}
               refreshKey={contractRefreshGeneration}
               onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
             />
@@ -1548,7 +1552,7 @@ export function App() {
               scope={scope}
               location={journey.world.party?.location ?? null}
               refreshKey={contractRefreshGeneration}
-              onUnauthorized={() => void restoreJourney()}
+              onUnauthorized={onContractUnauthorized}
               onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
             />
           </>

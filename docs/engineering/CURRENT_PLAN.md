@@ -1,5 +1,28 @@
 # Warwrit current delivery plan
 
+**Code-quality fixes authorized — 2026-10-04:** owner explicitly requested
+“Fix issues, pr, review, merge, update local main”. This authorizes the bounded
+three-defect audit correction, its PR/review/merge and local main update.
+Isolated `code-quality-fixes` checkout / `codex/code-quality-fixes`, base
+`c47e770`; one source writer, parent owns integration and documentation.
+First usable result: an uncertain ordinary-contract response retains exact
+retry, clock renders do not reset contract polling, and light extrapolation
+survives multiple cycles. [Owning audit and result](evidence/CODE_QUALITY_REVIEW_2026-10-04.md).
+Broader architecture proposals and supplies changes remain outside this slice.
+Existing player data and the dirty primary supplies checkout are preserved.
+The three fixes are implemented; final66 client checks/coverage, typecheck,
+affected lint/format, architecture and staged changed-code audit PASS.
+Independent source reviews and scoped recovery UI critique found no material
+defect. Actual App synthetic HTTP journey preserves exact retry through502 and
+wrong-ID200, blocks replacement/duplicate sending and restores actions on a
+matching200. Board/hunts steady intervals14990–15002ms preserve15s polling.
+Both full local coverage attempts FAILED on two unchanged5s movement-field
+timeouts (620pass/2fail/46skip each); no gate or timeout change. Clean bootstrap,
+stress/migrations and full coverage are owned by current PR CI, NOT_RUN locally.
+GitHub owns actual publication/CI/merge state; delivery readback owns local main.
+Full real-contract payment/restart/M1 acceptance remains NOT_RUN.
+No deployment or paid provisioning authorized.
+
 **World volume correction — 2026-10-04:** owner rejected PR140 as flat.
 Parent is sole writer in isolated `road-art-quality` checkout, new branch
 `codex/world-volume`, base `1657bd4`. The continuing road mission authorizes
