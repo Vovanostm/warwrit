@@ -1,8 +1,8 @@
 {
-  "specVersion": "3.5.0",
+  "specVersion": "3.5.1",
   "id": "M1-FREE-MOVEMENT",
   "title": "Бесшовная глобальная карта и непрерывное движение отряда по ПКМ",
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "status": "IMPLEMENTATION_ACTIVE_ACCEPTANCE_PENDING",
   "language": "ru",
   "authority": {
@@ -77,7 +77,7 @@
     "fixedPointUnitsPerWorldUnit": 1024,
     "destinationPrecisionFp": 1,
     "navigation": {
-      "topology": "Hidden square search/index buckets plus published road-station chains. Exact positions and polygon segments own movement; no hex conversion.",
+      "topology": "New polygon-v1 orders use a hidden six-neighbor hex search lattice and authored road-station chains. Exact polygon buckets remain square and independent of search. Legacy editions retain square search; accepted V2/V3 paths and schedules are frozen.",
       "cellSizeFp": 64,
       "cellsPerOldHexDistance": 16,
       "normalZoomMaxCellWidthCssPx": 8,
@@ -94,7 +94,17 @@
       "rows": 192,
       "cellCount": 49152,
       "indexRule": "col=floor((xFp-originX)/64), row=floor((zFp-originZ)/64), index=row*256+col. Прямоугольник [-8192,8192)×[-6144,6144); точки вне него отклоняются. Отрицательные координаты используют floor, не trunc.",
-      "centerRule": "centerFp=(originX+(col+0.5)*64, originZ+(row+0.5)*64). Для пути доступны только центры с walkable=true после clearance."
+      "centerRule": "centerFp=(originX+(col+0.5)*64, originZ+(row+0.5)*64). Для пути доступны только центры с walkable=true после clearance.",
+      "cellSizeMeaning": "64fp square geometry/index buckets and legacy square navigation; hex search lattice is derived separately.",
+      "hexSearchGrid": {
+        "xStepFp": 70,
+        "zStepFp": 60.62178039550781,
+        "columns": 235,
+        "rows": 203,
+        "nodes": 47705,
+        "coordinatePrecision": "microFp; staggered rows",
+        "maximumNodes": 49152
+      }
     },
     "terrainLayers": {
       "base": "В каждой позиции ровно один базовый terrainId: grassland, forest, hills, marsh, riverbank, rock, deep_water или cliff.",
@@ -221,14 +231,14 @@
     }
   },
   "pathfinding": {
-    "algorithm": "Deterministic A* on the finite eight-neighbour grid plus shared authored station nodes, exact local endpoint projections/connectors, reopening and maximum-speed lower-bound heuristic.",
+    "algorithm": "Deterministic A* on the finite six-neighbor hex lattice for polygon-v1 by default; explicit eight-neighbor square remains for comparison and legacy editions. Shared authored station nodes, exact endpoint projections/connectors, reopening and maximum-speed lower-bound heuristic are retained.",
     "objective": "Минимальное рассчитанное время; существенный дорожный крюк допустим, когда быстрее. Не принуждать к заведомо более медленной дороге.",
     "heuristic": "floor(distanceMicroFpToGoal * 1000000000 / (65536*maxAllowedBaseSpeed*maxPermille)). Нижнюю длину считать integer sqrt; коэффициент max относится ко всему разрешённому профилю, включая road. A* завершать, когда goal извлечён из queue, а не при первом обнаружении. Reopen при улучшении g; никогда не ceil heuristic.",
-    "determinism": "Соседи: E, SE, S, SW, W, NW, N, NE в row-major координатах. Сравнение очереди (fUs,hUs,nodeIndex); virtual start=-2, goal=-1. Relax при меньшем g; при равенстве меньший parentIndex. Одна редакция и input дают один plan.",
+    "determinism": "For exact search, compiled grid-neighbor IDs then road-extra IDs are sorted ascending. Queue comparison is (fUs,gUs,nodeIndex); relax only on smaller g. One edition, topology and input give the same path. Legacy search ordering remains unchanged.",
     "edgeCost": "Integer microsecond time from exact rational polygon intervals, ceil length and duration; adjacent-grid costs compiled once through that same tracer. No centre-sampled neighbour pricing inV5.",
-    "continuousEndpoints": "Два виртуальных узла exactStart и exactGoal. Каждый соединить с доступными центрами 3×3 neighborhood своей клетки, если traceSegment разрешает полный сегмент. Если exactStart→exactGoal проходим, добавить прямое ребро с реальной стоимостью; не возвращать его до сравнения с более быстрым обходом по дороге.",
+    "continuousEndpoints": "Actual endpoints connect to exact-valid nearby grid/road stations. The minimum raw graph route is reconstructed before final exact-cost comparison with the direct chord, so an expensive lattice zigzag does not prematurely exclude a faster smoothed detour.",
     "lineValidation": "Supercover/DDA или эквивалентная проверка всего сегмента с clearance; запрещены срез угла двух препятствий и прохождение между ними при недостаточном зазоре.",
-    "smoothing": "A chord must retain clearance and not increase exact time. A road-only chain can shorten only within the connected visible physical core; free connectors and genuinely faster field shortcuts retain their true terrain speed. No client-only spline/snap.",
+    "smoothing": "A chord must retain clearance and not increase exact time. A road-only chain can shorten only within the connected visible physical core; free connectors and genuinely faster field shortcuts retain their true terrain speed. No client-only spline/snap. Before accepting a two-point result, test at most 16 raw interior candidates for a strictly cheaper exact-valid two-chord detour; preserve a wholly road-covered chain. This is bounded heuristic improvement, not global any-angle optimality.",
     "smoothingLimit": "Не гарантировать глобально оптимальный any-angle путь; A* даёт оптимум выбранного графа. Кривая Безье/Hermite не может менять физический путь без проверки всего изгиба.",
     "failure": "NO_PATH не меняет текущий маршрут или ресурсы. Ограничить поиск конечными границами редакции карты; если достигнут явный бюджет, вернуть отдельную ошибку, не частичный успешный путь.",
     "technology": "Использовать существующий TypeScript/game-core. Navmesh, Theta*, JPS и иерархию не добавлять в этот цикл без измеренного недостатка простого взвешенного A*."
@@ -1108,5 +1118,18 @@
     "compatibility": "Renderer presentation only; exact x/z polygons, accepted V2/V3 schedules, speed and saves unchanged.",
     "implementation": "One sampled triangle height field owns ground contacts, draped roads, vegetation, party, route and ray picking; fixed diagonal isometry preserves projected sprite aspect. Real hill/rolling relief,35.264deg elevation/45deg azimuth, triangle-normal light, grounded contact wash,0.85scene edge mist with depth-writing grass fade and measured in-viewport moving-banner label clearance.",
     "acceptance": "7 focused surface/camera checks and618-check coverage pass (46 skipped); actual retained day/night paved/field journeys, STOP/reload and arrival observed. Material source and visual findings corrected. 885e63f clean bootstrap passed618 checks/46skip,10000 battles,migrations+14DBchecks. Final independent critic READY_WITH_LIMITS at885e63f for genuine day active39s label clearance, day edge overview and night68-to38s overview/close: no reproduced material visual defect in supplied views; earlier FIRST HUNT DB scenario remains historical FAILED. No full-M1/enjoyment acceptance."
+  },
+  "hexSearchAmendment": {
+    "date": "2026-10-05",
+    "originatingBranch": "codex/map-topology-experiments",
+    "deliveryStatus": "local",
+    "ownerDecision": "Гексы: приоритет скорости поиска",
+    "decisionContext": "Owner chose hex after being shown that some sampled trips remain up to 7.2% longer than square, in exchange for faster search. This is a measured sample limit, not a global bound.",
+    "supersededTopology": "Hidden square search/index buckets plus published road-station chains. Exact positions and polygon segments own movement; no hex conversion.",
+    "supersededAlgorithm": "Deterministic A* on the finite eight-neighbour grid plus shared authored station nodes, exact local endpoint projections/connectors, reopening and maximum-speed lower-bound heuristic.",
+    "implementation": "Compile sorted exact grid-neighbor IDs/durations once per field; retain exact dynamic road approaches. Compare bounded smoothed candidates without changing terrain speed, roads, clearance, clocks or accepted-plan serialization.",
+    "evidence": "../wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05",
+    "limits": "Current search p95 remains above 50ms; target VM capacity, memory, FPS and full-M1 acceptance are NOT_MEASURED/NOT_RUN. No publication, merge or deployment.",
+    "verification": "Final bootstrap passed 633 unit tests, 47 skipped, 10,000 stress battles, migration smoke/up and 14 PostgreSQL/auth checks. Normal RMB/S/reload/reroute/arrival preserved exact points; independent supplied-evidence/source critic found no material defect. Early focused 3 failures and their fixes/unchanged limits retained in owning wiki. Separate movement SQL suite NOT_RERUN."
   }
 }

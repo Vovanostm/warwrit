@@ -47,7 +47,19 @@ export interface NavigationField {
   readonly walkable: readonly boolean[];
   readonly dangerAreaIds: readonly (readonly string[])[];
   readonly exactGeometry?: ExactGeometry;
+  readonly exactSurfacePolicy?: SurfacePolicy;
+  /** Derived search lattice only; polygon geometry and persisted plans keep their edition. */
+  readonly searchGrid?: {
+    readonly columns: number;
+    readonly rows: number;
+    readonly xStepFp: number;
+    readonly zStepFp: number;
+  };
+  readonly roadEdgeDurations?: ReadonlyMap<string, number | undefined>;
   readonly gridEdgeDurations?: readonly number[];
+  /** Sorted traversable neighbors compiled with the immutable grid-edge costs. */
+  readonly gridNeighborNodes?: readonly (readonly number[])[];
+  readonly gridNeighborDurations?: readonly (readonly number[])[];
   readonly roadPoints?: readonly PointFp[];
   readonly roadEdges?: ReadonlyMap<number, readonly number[]>;
 }
@@ -159,22 +171,29 @@ function assertCompatibleOverlays(matches: NavigationRegion['overlayShapes']): v
 
 function surfacePolicy(region: NavigationRegion): SurfacePolicy {
   const profile = SPEED_PROFILES[region.speedProfileId ?? FREE_MOVEMENT_V2_PROFILE];
-  return (terrainMatches, overlayMatches) => {
-    const terrain = terrainMatches
-      .map((i) => region.terrainShapes[i]!)
-      .toSorted(
-        (a, b) => b.paintPriority - a.paintPriority || compareCodeUnits(b.shapeId, a.shapeId),
-      )[0];
-    const matches = overlayMatches.map((i) => region.overlayShapes[i]!);
-    assertCompatibleOverlays(matches);
-    const overlay = matches.toSorted(
+  const terrainOrder = region.terrainShapes
+    .map((_, i) => i)
+    .sort(
+      (a, b) =>
+        region.terrainShapes[b]!.paintPriority - region.terrainShapes[a]!.paintPriority ||
+        compareCodeUnits(region.terrainShapes[b]!.shapeId, region.terrainShapes[a]!.shapeId),
+    );
+  const overlayOrder = region.overlayShapes
+    .map((_, i) => i)
+    .sort(
       (a, b) =>
         compareNavigationOverlays(
-          a.overlayId,
-          b.overlayId,
+          region.overlayShapes[a]!.overlayId,
+          region.overlayShapes[b]!.overlayId,
           region.speedProfileId ?? FREE_MOVEMENT_V2_PROFILE,
-        ) || compareCodeUnits(a.shapeId, b.shapeId),
-    )[0];
+        ) || compareCodeUnits(region.overlayShapes[a]!.shapeId, region.overlayShapes[b]!.shapeId),
+    );
+  return (terrainMatches, overlayMatches) => {
+    const terrainIndex = terrainOrder.find((i) => terrainMatches.includes(i));
+    const overlayIndex = overlayOrder.find((i) => overlayMatches.includes(i));
+    const terrain = terrainIndex === undefined ? undefined : region.terrainShapes[terrainIndex];
+    const overlay = overlayIndex === undefined ? undefined : region.overlayShapes[overlayIndex];
+    assertCompatibleOverlays(overlayMatches.map((i) => region.overlayShapes[i]!));
     const terrainId = terrain?.terrainId ?? 'deep_water',
       overlayId = overlay?.overlayId ?? null;
     return {
@@ -193,7 +212,11 @@ function surfacePolicy(region: NavigationRegion): SurfacePolicy {
 /** Surface at the actual anchor, not the centre of its search bucket. */
 export function continuousSurfaceAt(field: NavigationField, point: PointFp) {
   if (field.exactGeometry)
-    return exactSurfaceAt(field.exactGeometry, point, surfacePolicy(field.region));
+    return exactSurfaceAt(
+      field.exactGeometry,
+      point,
+      field.exactSurfacePolicy ?? surfacePolicy(field.region),
+    );
   const index = cellAt(field, point),
     terrainId = field.terrainIds[index] ?? 'deep_water',
     overlayId = field.overlays[index] ?? null;
@@ -211,8 +234,12 @@ const NEIGHBORS = Object.freeze([
 ] as const);
 
 function nearbyGridNodes(field: NavigationField, point: PointFp): number[] {
-  const column = Math.floor((point.xFp - field.region.origin.xFp) / NAV_CELL_SIZE_FP);
-  const row = Math.floor((point.zFp - field.region.origin.zFp) / NAV_CELL_SIZE_FP);
+  const row = Math.floor(
+    (point.zFp - field.region.origin.zFp) / (field.searchGrid?.zStepFp ?? NAV_CELL_SIZE_FP),
+  );
+  const column = Math.floor(
+    (point.xFp - field.region.origin.xFp) / (field.searchGrid?.xStepFp ?? NAV_CELL_SIZE_FP),
+  );
   const nodes: number[] = [];
   for (let dr = -1; dr <= 1; dr++)
     for (let dc = -1; dc <= 1; dc++) {
@@ -250,64 +277,99 @@ function legacyCellWalkable(
   );
 }
 
-export function buildNavigationField(region: NavigationRegion): NavigationField {
+function sampleNavigationCell(
+  region: NavigationRegion,
+  point: PointFp,
+  column: number,
+  row: number,
+) {
+  const x1 = region.origin.xFp + column * region.cellSizeFp;
+  const z1 = region.origin.zFp + row * region.cellSizeFp;
+  const cell = {
+    minX: x1,
+    minZ: z1,
+    maxX: x1 + region.cellSizeFp,
+    maxZ: z1 + region.cellSizeFp,
+  };
+  const clearanceCell = {
+    minX: cell.minX - CLEARANCE_RADIUS_FP,
+    minZ: cell.minZ - CLEARANCE_RADIUS_FP,
+    maxX: cell.maxX + CLEARANCE_RADIUS_FP,
+    maxZ: cell.maxZ + CLEARANCE_RADIUS_FP,
+  };
+  const inside = rectWithinPolygon(cell, region.boundary);
+  const terrain = region.terrainShapes
+    .filter((shape) => inPolygon(point, shape.polygon))
+    .toSorted(
+      (left, right) =>
+        left.paintPriority - right.paintPriority || compareCodeUnits(left.shapeId, right.shapeId),
+    )
+    .at(-1);
+  const overlayMatches = region.overlayShapes.filter((shape) => inPolygon(point, shape.polygon));
+  assertCompatibleOverlays(overlayMatches);
+  const overlay = overlayMatches.toSorted(
+    (a, b) =>
+      compareNavigationOverlays(
+        a.overlayId,
+        b.overlayId,
+        region.speedProfileId ?? FREE_MOVEMENT_V2_PROFILE,
+      ) || compareCodeUnits(a.shapeId, b.shapeId),
+  )[0];
+  const blocked = region.blockingShapes.some((shape) =>
+    polygonIntersectsRect(shape.polygon, clearanceCell),
+  );
+  const terrainId = terrain?.terrainId ?? 'deep_water';
+  const walk = legacyCellWalkable(inside, terrain?.terrainId, blocked, overlay?.overlayId);
+  return { terrainId, overlayId: overlay?.overlayId ?? null, walk };
+}
+
+function navigationSearchGrid(region: NavigationRegion, searchTopology: 'square' | 'hex') {
+  if (searchTopology === 'hex' && region.navigationVersion !== 'polygon-v1')
+    throw new RangeError('Hex search requires exact polygon geometry');
+  // Near-equilateral six-neighbor lattice, quantized to microFp. About the same
+  // node density as 64fp squares; region buckets remain square for exact geometry.
+  const xStepFp = 70;
+  const zStepFp = Math.round(((xStepFp * Math.sqrt(3)) / 2) * MICRO_FP_PER_FP) / MICRO_FP_PER_FP;
+  const searchGrid =
+    searchTopology === 'hex'
+      ? Object.freeze({
+          columns: Math.ceil((region.columns * region.cellSizeFp) / xStepFp),
+          rows: Math.ceil((region.rows * region.cellSizeFp) / zStepFp),
+          xStepFp,
+          zStepFp,
+        })
+      : undefined;
+  if (searchGrid && searchGrid.columns * searchGrid.rows > MAX_NAV_CELLS)
+    throw new RangeError('ROUTE_TOO_COMPLEX');
+  return searchGrid;
+}
+
+export function buildNavigationField(
+  region: NavigationRegion,
+  searchTopology: 'square' | 'hex' = region.navigationVersion === 'polygon-v1' ? 'hex' : 'square',
+): NavigationField {
   validateNavigationEdition(region);
   const exactGeometry =
     region.navigationVersion === 'polygon-v1' ? buildExactGeometry(region) : undefined;
+  const searchGrid = navigationSearchGrid(region, searchTopology);
+  const policy = surfacePolicy(region);
+  const layout = { region, ...(searchGrid ? { searchGrid } : {}) };
   const terrainIds: TerrainId[] = [];
   const overlays: OverlayId[] = [];
   const walkable: boolean[] = [];
   const dangerAreaIds: string[][] = [];
-  for (let row = 0; row < region.rows; row += 1) {
-    for (let column = 0; column < region.columns; column += 1) {
-      const point = {
-        xFp: region.origin.xFp + (column + 0.5) * region.cellSizeFp,
-        zFp: region.origin.zFp + (row + 0.5) * region.cellSizeFp,
-      };
-      const x1 = region.origin.xFp + column * region.cellSizeFp;
-      const z1 = region.origin.zFp + row * region.cellSizeFp;
-      const cell = {
-        minX: x1,
-        minZ: z1,
-        maxX: x1 + region.cellSizeFp,
-        maxZ: z1 + region.cellSizeFp,
-      };
-      const clearanceCell = {
-        minX: cell.minX - CLEARANCE_RADIUS_FP,
-        minZ: cell.minZ - CLEARANCE_RADIUS_FP,
-        maxX: cell.maxX + CLEARANCE_RADIUS_FP,
-        maxZ: cell.maxZ + CLEARANCE_RADIUS_FP,
-      };
-      const inside = rectWithinPolygon(cell, region.boundary);
-      const terrain = region.terrainShapes
-        .filter((shape) => inPolygon(point, shape.polygon))
-        .toSorted(
-          (left, right) =>
-            left.paintPriority - right.paintPriority ||
-            compareCodeUnits(left.shapeId, right.shapeId),
-        )
-        .at(-1);
-      const overlayMatches = region.overlayShapes.filter((shape) =>
-        inPolygon(point, shape.polygon),
-      );
-      assertCompatibleOverlays(overlayMatches);
-      const overlay = overlayMatches.toSorted(
-        (a, b) =>
-          compareNavigationOverlays(
-            a.overlayId,
-            b.overlayId,
-            region.speedProfileId ?? FREE_MOVEMENT_V2_PROFILE,
-          ) || compareCodeUnits(a.shapeId, b.shapeId),
-      )[0];
-      const blocked = region.blockingShapes.some((shape) =>
-        polygonIntersectsRect(shape.polygon, clearanceCell),
-      );
-      const terrainId = terrain?.terrainId ?? 'deep_water';
-      const walk = legacyCellWalkable(inside, terrain?.terrainId, blocked, overlay?.overlayId);
+  for (let row = 0; row < (searchGrid?.rows ?? region.rows); row += 1) {
+    for (let column = 0; column < (searchGrid?.columns ?? region.columns); column += 1) {
+      const point = center(layout, column, row);
+      const { terrainId, overlayId, walk } = sampleNavigationCell(region, point, column, row);
       terrainIds.push(terrainId);
-      overlays.push(overlay?.overlayId ?? null);
+      overlays.push(overlayId);
       walkable.push(
-        exactGeometry ? exactPointValid(exactGeometry, point, surfacePolicy(region)) : walk,
+        exactGeometry
+          ? point.xFp < region.origin.xFp + region.columns * region.cellSizeFp &&
+              point.zFp < region.origin.zFp + region.rows * region.cellSizeFp &&
+              exactPointValid(exactGeometry, point, policy)
+          : walk,
       );
       dangerAreaIds.push(
         region.dangerAreaShapes
@@ -323,25 +385,22 @@ export function buildNavigationField(region: NavigationRegion): NavigationField 
     overlays: Object.freeze(overlays),
     walkable: Object.freeze(walkable),
     dangerAreaIds: Object.freeze(dangerAreaIds.map((ids) => Object.freeze(ids))),
-    ...(exactGeometry ? { exactGeometry } : {}),
+    ...(exactGeometry ? { exactGeometry, exactSurfacePolicy: policy } : {}),
+    ...(searchGrid ? { searchGrid } : {}),
   };
   if (!exactGeometry) return Object.freeze(field);
   return compileExactRoadGraph(field, exactGeometry);
 }
 
 function compileExactGridEdges(field: NavigationField): readonly number[] {
-  const count = field.region.columns * field.region.rows,
-    region = field.region;
+  const count = gridCount(field);
   const gridEdgeDurations = Array<number>(count * 4).fill(-1);
   for (let node = 0; node < count; node++) {
     if (!field.walkable[node]) continue;
     const { column, row } = nodeCoords(field, node);
-    for (const [dc, dr] of [
-      [1, 0],
-      [-1, 1],
-      [0, 1],
-      [1, 1],
-    ] as const) {
+    for (const [dc, dr] of gridNeighbors(field, row).filter(
+      ([dc, dr]) => dr > 0 || (dr === 0 && dc > 0),
+    )) {
       const next = nodeIndex(field, column + dc, row + dr);
       if (next < 0 || !field.walkable[next]) continue;
       const duration = traceSegment(
@@ -349,10 +408,41 @@ function compileExactGridEdges(field: NavigationField): readonly number[] {
         centerByIndex(field, node),
         centerByIndex(field, next),
       )?.costUs;
-      gridEdgeDurations[node * 4 + gridEdgeSlot(region.columns, next - node)] = duration ?? -1;
+      gridEdgeDurations[node * 4 + gridEdgeSlot(field, node, next)] = duration ?? -1;
     }
   }
   return Object.freeze(gridEdgeDurations);
+}
+
+function compileGridNeighbors(field: NavigationField, gridEdgeDurations: readonly number[]) {
+  const count = gridCount(field);
+  const gridNeighborNodes: number[][] = Array.from({ length: count }, () => []);
+  for (let node = 0; node < count; node++) {
+    const { column, row } = nodeCoords(field, node);
+    for (const [dc, dr] of gridNeighbors(field, row)) {
+      const next = nodeIndex(field, column + dc, row + dr);
+      if (next < 0) continue;
+      const low = Math.min(node, next),
+        high = Math.max(node, next);
+      if (gridEdgeDurations[low * 4 + gridEdgeSlot(field, low, high)]! >= 0)
+        gridNeighborNodes[node]!.push(next);
+    }
+    gridNeighborNodes[node]!.sort((a, b) => a - b);
+  }
+  return {
+    gridNeighborNodes: Object.freeze(gridNeighborNodes.map((nodes) => Object.freeze(nodes))),
+    gridNeighborDurations: Object.freeze(
+      gridNeighborNodes.map((nodes, node) =>
+        Object.freeze(
+          nodes.map((next) => {
+            const low = Math.min(node, next),
+              high = Math.max(node, next);
+            return gridEdgeDurations[low * 4 + gridEdgeSlot(field, low, high)]!;
+          }),
+        ),
+      ),
+    ),
+  };
 }
 
 function compileExactRoadGraph(
@@ -373,7 +463,7 @@ function compileExactRoadGraph(
     add(a, b);
     add(b, a);
   };
-  const count = region.columns * region.rows;
+  const count = gridCount(field);
   const addRoad = (road: NavigationRegion['overlayShapes'][number]) => {
     let previous: number | undefined;
     for (const p of road.stations ?? []) {
@@ -389,7 +479,7 @@ function compileExactRoadGraph(
           exactGeometry,
           roadPoints[previous - count]!,
           p,
-          surfacePolicy(region),
+          field.exactSurfacePolicy ?? surfacePolicy(region),
         );
         if (!trace || trace.intervals.some((span) => span.overlayId === null))
           throw new RangeError('Invalid authored road corridor');
@@ -406,9 +496,19 @@ function compileExactRoadGraph(
   // Compile immutable adjacent-grid costs once per edition, through the same exact tracer.
   // No accepted order pays again for the unchanging geometry of these finite edges.
   const gridEdgeDurations = compileExactGridEdges(field);
+  const compiledNeighbors = compileGridNeighbors(field, gridEdgeDurations);
+  const roadEdgeDurations = new Map<string, number | undefined>();
+  const point = (node: number) =>
+    node < count ? centerByIndex(field, node) : roadPoints[node - count]!;
+  for (const [a, neighbors] of roadEdges)
+    for (const b of neighbors)
+      if (a < b)
+        roadEdgeDurations.set(`${a}:${b}`, traceSegment(field, point(a), point(b))?.costUs);
   return Object.freeze({
     ...field,
+    roadEdgeDurations,
     gridEdgeDurations: Object.freeze(gridEdgeDurations),
+    ...compiledNeighbors,
     roadPoints: Object.freeze(roadPoints),
     roadEdges: new Map(
       [...roadEdges].map(([n, edges]) => [n, Object.freeze(edges.sort((a, b) => a - b))]),
@@ -624,18 +724,55 @@ function validateExactSpan(plan: ContinuousMovementPlan, span: SpeedSpan, index:
     throw new RangeError('Invalid saved geometric timing');
 }
 
-function gridEdgeSlot(columns: number, delta: number): number {
+function gridColumns(field: Pick<NavigationField, 'region' | 'searchGrid'>): number {
+  return field.searchGrid?.columns ?? field.region.columns;
+}
+function gridCount(field: NavigationField): number {
+  return gridColumns(field) * (field.searchGrid?.rows ?? field.region.rows);
+}
+const HEX_NEIGHBORS = [
+  [
+    [-1, -1],
+    [0, -1],
+    [-1, 0],
+    [1, 0],
+    [-1, 1],
+    [0, 1],
+  ],
+  [
+    [0, -1],
+    [1, -1],
+    [-1, 0],
+    [1, 0],
+    [0, 1],
+    [1, 1],
+  ],
+] as const;
+function gridNeighbors(
+  field: NavigationField,
+  row: number,
+): readonly (readonly [number, number])[] {
+  if (!field.searchGrid) return NEIGHBORS;
+  return HEX_NEIGHBORS[row % 2]!;
+}
+function gridEdgeSlot(field: NavigationField, a: number, b: number): number {
+  const columns = gridColumns(field),
+    delta = b - a;
+  if (field.searchGrid) {
+    const row = Math.floor(a / columns);
+    return delta === 1 ? 0 : delta === columns + (row % 2 === 0 ? -1 : 0) ? 1 : 2;
+  }
   return delta === 1 ? 0 : delta === columns - 1 ? 1 : delta === columns ? 2 : 3;
 }
 
 function prepareExactSearchGraph(field: NavigationField, start: PointFp, goal: PointFp) {
-  const gridCount = field.region.columns * field.region.rows,
+  const count = gridCount(field),
     roadPoints = [...(field.roadPoints ?? [])];
   const extras = new Map<number, number[]>(
     [...(field.roadEdges ?? [])].map(([node, edges]) => [node, [...edges]]),
   );
   const point = (node: number) =>
-    node < gridCount ? centerByIndex(field, node) : roadPoints[node - gridCount]!;
+    node < count ? centerByIndex(field, node) : roadPoints[node - count]!;
   const connect = (a: number, b: number) => {
     if (a === b) return;
     for (const [x, y] of [
@@ -657,7 +794,7 @@ function prepareExactSearchGraph(field: NavigationField, start: PointFp, goal: P
         Math.floor((p.zFp - field.region.origin.zFp) / 64),
     ) <= 1;
   const originalRoadEdges = [...extras].flatMap(([a, edges]) =>
-    a >= gridCount ? edges.filter((b) => b >= gridCount && b > a).map((b) => [a, b] as const) : [],
+    a >= count ? edges.filter((b) => b >= count && b > a).map((b) => [a, b] as const) : [],
   );
   // A target can be between authored stations. Split a candidate edge at its exact clicked approach.
   for (const origin of [start, goal])
@@ -683,30 +820,14 @@ function prepareExactSearchGraph(field: NavigationField, start: PointFp, goal: P
         index = roadPoints.length;
         roadPoints.push(p);
       }
-      const node = gridCount + index;
+      const node = count + index;
       connect(node, a);
       connect(node, b);
     }
   if (roadPoints.length > 2048) throw new RangeError('ROUTE_TOO_COMPLEX');
 
-  return { gridCount, roadPoints, extras, point, nearby };
-}
-
-function exactSearchNeighbors(
-  field: NavigationField,
-  node: number,
-  graph: ReturnType<typeof prepareExactSearchGraph>,
-): number[] {
-  const { extras, gridCount } = graph;
-  const neighbors = [...(extras.get(node) ?? [])];
-  if (node < gridCount) {
-    const { column, row } = nodeCoords(field, node);
-    for (const [dc, dr] of NEIGHBORS) {
-      const n = nodeIndex(field, column + dc, row + dr);
-      if (n >= 0 && field.walkable[n]) neighbors.push(n);
-    }
-  }
-  return neighbors;
+  for (const neighbors of extras.values()) neighbors.sort((a, b) => a - b);
+  return { gridCount: count, roadPoints, extras, point, nearby };
 }
 
 function reconstructExactPath(
@@ -728,15 +849,9 @@ function exactSearchEdgeCost(
   a: number,
   b: number,
 ): number | undefined {
-  const { gridCount, point } = graph;
-  if (a < gridCount && b < gridCount && field.gridEdgeDurations) {
-    const value =
-      field.gridEdgeDurations[
-        Math.min(a, b) * 4 + gridEdgeSlot(field.region.columns, Math.abs(a - b))
-      ]!;
-    return value < 0 ? undefined : value;
-  }
+  const { point } = graph;
   const key = a < b ? `${a}:${b}` : `${b}:${a}`;
+  if (field.roadEdgeDurations?.has(key)) return field.roadEdgeDurations.get(key);
   if (!edgeCosts.has(key)) edgeCosts.set(key, traceSegment(field, point(a), point(b))?.costUs);
   return edgeCosts.get(key);
 }
@@ -782,8 +897,11 @@ function findExactTravelPath(
     if (estimates[node]! >= 0) return estimates[node]!;
     return (estimates[node] = minimumTravelTime(field, point(node), goal));
   };
-  const relax = (next: number, current: { node: number; g: number }) => {
-    const duration = edge(current.node, next);
+  const relax = (
+    next: number,
+    current: { node: number; g: number },
+    duration: number | undefined,
+  ) => {
     if (duration === undefined) return;
     const g = current.g + duration;
     if (!(g < cost[next]!)) return;
@@ -792,9 +910,18 @@ function findExactTravelPath(
     closed[next] = 0;
     heap.push({ node: next, g, f: g + estimate(next) });
   };
-  const direct = traceSegment(field, start, goal);
-  let best = direct?.costUs ?? Infinity,
-    bestPath: readonly PointFp[] | undefined = direct ? [start, goal] : undefined;
+  const relaxNeighbors = (current: { node: number; g: number }) => {
+    // Grid IDs precede road IDs. Both lists are already sorted, preserving
+    // deterministic relaxation order without allocating/sorting per expansion.
+    const neighbors = field.gridNeighborNodes![current.node];
+    const durations = field.gridNeighborDurations![current.node];
+    if (neighbors && durations)
+      for (let i = 0; i < neighbors.length; i++) relax(neighbors[i]!, current, durations[i]);
+    for (const next of graph.extras.get(current.node) ?? [])
+      relax(next, current, edge(current.node, next));
+  };
+  let best = Infinity,
+    bestPath: readonly PointFp[] | undefined;
   for (const [node, g] of starts) {
     cost[node] = g;
     parent[node] = -2;
@@ -812,10 +939,24 @@ function findExactTravelPath(
       best = current.g + finish;
       bestPath = reconstructExactPath(parent, current.node, start, goal, point);
     }
-    const neighbors = exactSearchNeighbors(field, current.node, graph);
-    neighbors.toSorted((a, b) => a - b).forEach((next) => relax(next, current));
+    relaxNeighbors(current);
   }
-  return finishExactPath(field, bestPath);
+  return chooseExactShortcut(field, start, goal, bestPath);
+}
+
+function chooseExactShortcut(
+  field: NavigationField,
+  start: PointFp,
+  goal: PointFp,
+  bestPath: readonly PointFp[] | undefined,
+): readonly PointFp[] | undefined {
+  const direct = traceSegment(field, start, goal);
+  const smoothed = finishExactPath(field, bestPath);
+  if (!smoothed) return direct ? [start, goal] : undefined;
+  const smoothedCost = smoothed
+    .slice(1)
+    .reduce((sum, p, i) => sum + traceSegment(field, smoothed[i]!, p)!.costUs, 0);
+  return direct && direct.costUs <= smoothedCost ? [start, goal] : smoothed;
 }
 
 function finishExactPath(
@@ -939,6 +1080,16 @@ function collectLegacyRouteSpans(field: NavigationField, path: readonly PointFp[
   return { routeSpans, danger };
 }
 
+function legacySpanDuration(span: Pick<SpeedSpan, 'from' | 'to' | 'speedPermille'>): bigint {
+  const dx = BigInt(span.to.xMicroFp) - BigInt(span.from.xMicroFp);
+  const dz = BigInt(span.to.zMicroFp) - BigInt(span.from.zMicroFp);
+  const length = integerSqrtCeil(dx * dx + dz * dz);
+  return ceilDiv(
+    length * 1_000_000_000n,
+    65_536n * BigInt(BASE_SPEED_FP_PER_SECOND) * BigInt(span.speedPermille),
+  );
+}
+
 function compileLegacyMovementPlan(
   input: Parameters<typeof compileMovementPlan>[0],
 ): ContinuousMovementPlan {
@@ -946,13 +1097,7 @@ function compileLegacyMovementPlan(
   const speedSpans: SpeedSpan[] = [];
   let offset = 0n;
   for (const span of routeSpans) {
-    const dx = BigInt(span.to.xMicroFp) - BigInt(span.from.xMicroFp);
-    const dz = BigInt(span.to.zMicroFp) - BigInt(span.from.zMicroFp);
-    const length = integerSqrtCeil(dx * dx + dz * dz);
-    const duration = ceilDiv(
-      length * 1_000_000_000n,
-      65_536n * BigInt(BASE_SPEED_FP_PER_SECOND) * BigInt(span.speedPermille),
-    );
+    const duration = legacySpanDuration(span);
     speedSpans.push(
       Object.freeze({
         ...span,
@@ -1136,7 +1281,12 @@ function traceSegment(
     }
   | undefined {
   if (field.exactGeometry) {
-    const traced = traceExactGeometry(field.exactGeometry, from, to, surfacePolicy(field.region));
+    const traced = traceExactGeometry(
+      field.exactGeometry,
+      from,
+      to,
+      field.exactSurfacePolicy ?? surfacePolicy(field.region),
+    );
     if (!traced) return undefined;
     const spans = traced.intervals.map((interval) => ({
       ...interval,
@@ -1264,19 +1414,36 @@ function traceSegment(
   let costUs = 0;
   for (let index = 0; index < spans.length; index += 1) {
     const span = spans[index]!;
-    const dx = BigInt(span.to.xMicroFp) - BigInt(span.from.xMicroFp);
-    const dz = BigInt(span.to.zMicroFp) - BigInt(span.from.zMicroFp);
-    const length = integerSqrtCeil(dx * dx + dz * dz);
-    const duration = ceilDiv(
-      length * 1_000_000_000n,
-      65_536n * BigInt(BASE_SPEED_FP_PER_SECOND) * BigInt(span.speedPermille),
-    );
+    const duration = legacySpanDuration(span);
     costUs += Number(duration);
     spans[index] = { ...span, startOffsetUs: '0', endOffsetUs: duration.toString() };
   }
   return { costUs, spans, dangerAreaIds: [...danger].sort() };
 }
 
+// A lattice zigzag may conceal a cheaper two-chord terrain detour.
+function improveDirectShortcut(
+  field: NavigationField,
+  path: readonly PointFp[],
+  preserveRoad: boolean,
+): readonly PointFp[] {
+  let out: PointFp[] = [path[0]!, path.at(-1)!];
+  let bestCost = traceSegment(field, path[0]!, path.at(-1)!)!.costUs;
+  const stride = Math.max(1, Math.ceil((path.length - 2) / 16));
+  for (let i = 1; i < path.length - 1; i += stride) {
+    const first = traceSegment(field, path[0]!, path[i]!);
+    const last = traceSegment(field, path[i]!, path.at(-1)!);
+    if (!first || !last) continue;
+    if (preserveRoad && ![...first.spans, ...last.spans].every((span) => span.overlayId !== null))
+      continue;
+    const cost = first.costUs + last.costUs;
+    if (cost < bestCost) {
+      bestCost = cost;
+      out = [path[0]!, path[i]!, path.at(-1)!];
+    }
+  }
+  return Object.freeze(out);
+}
 function smoothPath(field: NavigationField, path: readonly PointFp[]): readonly PointFp[] {
   const out: PointFp[] = [path[0]!];
   const cumulative = [0];
@@ -1306,6 +1473,8 @@ function smoothPath(field: NavigationField, path: readonly PointFp[]): readonly 
     out.push(path[selected]!);
     index = selected;
   }
+  if (field.exactGeometry && out.length === 2 && path.length > 2)
+    return improveDirectShortcut(field, path, offRoadEdges.at(-1) === 0);
   return Object.freeze(out);
 }
 function heuristic(field: NavigationField, node: number, goal: PointFp): number {
@@ -1330,7 +1499,11 @@ export function isContinuousPointWalkable(field: NavigationField, point: PointFp
   const zMicro = point.zFp * MICRO_FP_PER_FP;
   if (!Number.isSafeInteger(xMicro) || !Number.isSafeInteger(zMicro)) return false;
   if (field.exactGeometry)
-    return exactPointValid(field.exactGeometry, point, surfacePolicy(field.region));
+    return exactPointValid(
+      field.exactGeometry,
+      point,
+      field.exactSurfacePolicy ?? surfacePolicy(field.region),
+    );
   const index = cellAt(field, point);
   return index >= 0 && field.walkable[index] === true;
 }
@@ -1340,9 +1513,12 @@ function cellAt(field: NavigationField, point: PointFp): number {
   return nodeIndex(field, column, row);
 }
 function nodeIndex(field: NavigationField, column: number, row: number): number {
-  return column < 0 || row < 0 || column >= field.region.columns || row >= field.region.rows
+  return column < 0 ||
+    row < 0 ||
+    column >= gridColumns(field) ||
+    row >= (field.searchGrid?.rows ?? field.region.rows)
     ? -1
-    : row * field.region.columns + column;
+    : row * gridColumns(field) + column;
 }
 type Fraction = {
   readonly n: bigint;
@@ -1454,12 +1630,20 @@ function cellsAlongInterval(
   return result;
 }
 function nodeCoords(field: NavigationField, node: number): { column: number; row: number } {
-  return { column: node % field.region.columns, row: Math.floor(node / field.region.columns) };
+  return { column: node % gridColumns(field), row: Math.floor(node / gridColumns(field)) };
 }
-function center(field: NavigationField, column: number, row: number): PointFp {
+function center(
+  field: Pick<NavigationField, 'region' | 'searchGrid'>,
+  column: number,
+  row: number,
+): PointFp {
+  const xStep = field.searchGrid?.xStepFp ?? NAV_CELL_SIZE_FP;
+  const zStep = field.searchGrid?.zStepFp ?? NAV_CELL_SIZE_FP;
   return {
-    xFp: field.region.origin.xFp + column * NAV_CELL_SIZE_FP + NAV_CELL_SIZE_FP / 2,
-    zFp: field.region.origin.zFp + row * NAV_CELL_SIZE_FP + NAV_CELL_SIZE_FP / 2,
+    xFp: field.region.origin.xFp + (column + 0.5 + (field.searchGrid ? (row % 2) / 2 : 0)) * xStep,
+    zFp:
+      Math.round((field.region.origin.zFp + (row + 0.5) * zStep) * MICRO_FP_PER_FP) /
+      MICRO_FP_PER_FP,
   };
 }
 function centerByIndex(field: NavigationField, index: number): PointFp {

@@ -11,6 +11,7 @@ import {
   prepareFreeMovementStart,
   prepareFreeMovementStop,
   buildNavigationField,
+  continuousSurfaceAt,
   findTravelPath,
   compileMovementPlan,
   positionAt,
@@ -28,11 +29,8 @@ describe('authored free world movement', () => {
     expect(field.region.overlayShapes.map((shape) => shape.shapeId).sort()).toEqual(
       SEROE_PORECHYE.edges.map((edge) => edge.edgeId).sort(),
     );
-    const overlayAt = (xFp: number, zFp: number) => {
-      const column = Math.floor((xFp - field.region.origin.xFp) / field.region.cellSizeFp);
-      const row = Math.floor((zFp - field.region.origin.zFp) / field.region.cellSizeFp);
-      return field.overlays[row * field.region.columns + column];
-    };
+    const overlayAt = (xFp: number, zFp: number) =>
+      continuousSurfaceAt(field, { xFp, zFp }).overlayId;
     // The curve owns the speed band: its bend is fast, the abandoned straight shortcut is not.
     expect(overlayAt(160, -864)).toBe('paved_road');
     expect(overlayAt(544, -928)).toBeNull();
@@ -50,80 +48,88 @@ describe('authored free world movement', () => {
     expect(plan.speedSpans[0]).toMatchObject({ overlayId: 'paved_road', speedPermille: 2000 });
   });
 
-  it('chooses a faster road detour without smoothing away its advantage, and rejects a slower detour', () => {
-    const boundary = [
-      { xFp: 0, zFp: 0 },
-      { xFp: 1024, zFp: 0 },
-      { xFp: 1024, zFp: 448 },
-      { xFp: 0, zFp: 448 },
-    ];
-    const region: NavigationRegion = {
-      mapEdition: 'road-detour-v1',
-      speedProfileId: FREE_MOVEMENT_V3_PROFILE,
-      origin: { xFp: 0, zFp: 0 },
-      columns: 16,
-      rows: 7,
-      cellSizeFp: 64,
-      boundary,
-      terrainShapes: [
-        { shapeId: 'grass', terrainId: 'grassland', paintPriority: 0, polygon: boundary },
-      ],
-      overlayShapes: [
-        {
-          shapeId: 'detour',
-          overlayId: 'paved_road',
-          polygon: [
-            { xFp: 0, zFp: 192 },
-            { xFp: 1024, zFp: 192 },
-            { xFp: 1024, zFp: 320 },
-            { xFp: 0, zFp: 320 },
-          ],
-        },
-      ],
-      blockingShapes: [],
-      dangerAreaShapes: [],
-      sites: [],
-    };
-    const start = { xFp: 96, zFp: 96 },
-      goal = { xFp: 928, zFp: 96 };
-    const planFor = (
-      field: ReturnType<typeof buildNavigationField>,
-      path: readonly { xFp: number; zFp: number }[],
-    ) =>
-      compileMovementPlan({
-        field,
-        path,
-        movementEpoch: '1',
-        startedAtMs: '1000',
-        planId: 'road-detour',
-      });
-    const field = buildNavigationField(region);
-    const plan = planFor(field, findTravelPath(field, start, goal)!);
-    const direct = planFor(field, [start, goal]);
-    expect(plan.path.some((point) => BigInt(point.zMicroFp) > BigInt(start.zFp * 65536))).toBe(
-      true,
-    );
-    expect(plan.speedSpans.some((span) => span.overlayId === 'paved_road')).toBe(true);
-    expect(BigInt(plan.totalDurationUs)).toBeLessThan(BigInt(direct.totalDurationUs));
-    expect(findTravelPath(field, start, goal)).toEqual(findTravelPath(field, start, goal));
+  it.each(['legacy', 'square', 'hex'] as const)(
+    'chooses a faster road detour without smoothing away its advantage, and rejects a slower detour (%s)',
+    (topology) => {
+      const boundary = [
+        { xFp: 0, zFp: 0 },
+        { xFp: 1024, zFp: 0 },
+        { xFp: 1024, zFp: 448 },
+        { xFp: 0, zFp: 448 },
+      ];
+      const region: NavigationRegion = {
+        mapEdition: 'road-detour-v1',
+        speedProfileId: FREE_MOVEMENT_V3_PROFILE,
+        origin: { xFp: 0, zFp: 0 },
+        columns: 16,
+        rows: 7,
+        cellSizeFp: 64,
+        boundary,
+        terrainShapes: [
+          { shapeId: 'grass', terrainId: 'grassland', paintPriority: 0, polygon: boundary },
+        ],
+        overlayShapes: [
+          {
+            shapeId: 'detour',
+            overlayId: 'paved_road',
+            polygon: [
+              { xFp: 0, zFp: 192 },
+              { xFp: 1024, zFp: 192 },
+              { xFp: 1024, zFp: 320 },
+              { xFp: 0, zFp: 320 },
+            ],
+          },
+        ],
+        blockingShapes: [],
+        dangerAreaShapes: [],
+        sites: [],
+      };
+      const start = { xFp: 96, zFp: 96 },
+        goal = { xFp: 928, zFp: 96 };
+      const planFor = (
+        field: ReturnType<typeof buildNavigationField>,
+        path: readonly { xFp: number; zFp: number }[],
+      ) =>
+        compileMovementPlan({
+          field,
+          path,
+          movementEpoch: '1',
+          startedAtMs: '1000',
+          planId: 'road-detour',
+        });
+      const searchRegion =
+        topology === 'legacy' ? region : { ...region, navigationVersion: 'polygon-v1' as const };
+      const field = buildNavigationField(searchRegion, topology === 'hex' ? 'hex' : 'square');
+      const plan = planFor(field, findTravelPath(field, start, goal)!);
+      const direct = planFor(field, [start, goal]);
+      expect(plan.path.some((point) => BigInt(point.zMicroFp) > BigInt(start.zFp * 65536))).toBe(
+        true,
+      );
+      expect(plan.speedSpans.some((span) => span.overlayId === 'paved_road')).toBe(true);
+      expect(BigInt(plan.totalDurationUs)).toBeLessThan(BigInt(direct.totalDurationUs));
+      expect(findTravelPath(field, start, goal)).toEqual(findTravelPath(field, start, goal));
 
-    const remoteRoad = buildNavigationField({
-      ...region,
-      overlayShapes: [
+      const remoteRoad = buildNavigationField(
         {
-          ...region.overlayShapes[0]!,
-          overlayId: 'trail',
-          polygon: [
-            { xFp: 0, zFp: 320 },
-            { xFp: 1024, zFp: 320 },
-            { xFp: 1024, zFp: 448 },
-            { xFp: 0, zFp: 448 },
+          ...searchRegion,
+          overlayShapes: [
+            {
+              ...region.overlayShapes[0]!,
+              overlayId: 'trail',
+              polygon: [
+                { xFp: 0, zFp: 320 },
+                { xFp: 1024, zFp: 320 },
+                { xFp: 1024, zFp: 448 },
+                { xFp: 0, zFp: 448 },
+              ],
+            },
           ],
         },
-      ],
-    });
-    expect(findTravelPath(remoteRoad, start, goal)).toEqual([start, goal]);
-  });
+        topology === 'hex' ? 'hex' : 'square',
+      );
+      expect(findTravelPath(remoteRoad, start, goal)).toEqual([start, goal]);
+    },
+  );
 
   it('keeps each accepted speed profile frozen through reload and rejects cross-profile or unknown speeds', () => {
     const boundary = [
