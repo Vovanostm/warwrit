@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useId, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type {
   WorldContinuousMapDto,
   WorldFreeMovementV2RequestDto,
@@ -94,7 +94,6 @@ export function ContinuousMapCanvas(props: {
   const routeSvg = useRef<SVGSVGElement>(null);
   const routeLegend = useRef<HTMLDivElement>(null);
   const partyIndicator = useRef<HTMLDivElement>(null);
-  const maskId = `route-mask-${useId()}`;
   const labelPress = useRef<{ id: number; x: number; y: number; siteId: string } | null>(null);
   latest.current = props;
   const { labelsLayer, labelSizes, labels, setLabels } = useMapLabels();
@@ -172,23 +171,14 @@ export function ContinuousMapCanvas(props: {
         aria-label="Карта Серого Поречья. Зажать левую кнопку мыши — двигать карту, правая кнопка — идти, S — остановиться."
       />
       <svg ref={routeSvg} className="map-route-overlay" aria-hidden="true">
-        <defs>
-          <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
-            <rect data-route="background" fill="white" />
-            <g data-route="sprites" />
-            <circle data-route="party" r="8" fill="white" />
-          </mask>
-        </defs>
-        <g mask={`url(#${maskId})`}>
-          <path data-route="history" className="route-stroke route-history-outline" />
-          <path data-route="history" className="route-stroke route-history" />
-          <path data-route="remaining" className="route-stroke route-remaining-outline" />
-          <path data-route="remaining" className="route-stroke route-remaining" />
-          <g data-route="goal">
-            <path d="M0 -8L8 0L0 8L-8 0Z" className="route-stroke route-goal-outline" />
-            <path d="M0 -8L8 0L0 8L-8 0Z" className="route-stroke route-goal" />
-            <circle r="1.5" className="route-goal-dot" />
-          </g>
+        <path data-route="history" className="route-stroke route-history-outline" />
+        <path data-route="history" className="route-stroke route-history" />
+        <path data-route="remaining" className="route-stroke route-remaining-outline" />
+        <path data-route="remaining" className="route-stroke route-remaining" />
+        <g data-route="goal">
+          <path d="M0 -8L8 0L0 8L-8 0Z" className="route-stroke route-goal-outline" />
+          <path d="M0 -8L8 0L0 8L-8 0Z" className="route-stroke route-goal" />
+          <circle r="1.5" className="route-goal-dot" />
         </g>
       </svg>
       <div ref={routeLegend} className="map-route-legend" aria-label="Обозначения пути">

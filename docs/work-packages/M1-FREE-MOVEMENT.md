@@ -88,6 +88,18 @@ required. Primary has active writers and unrelated route/terrain/doc drafts;
 local-main update must wait until their writes stop and preserve both histories.
 No deployment authorized.
 
+### Concurrent main integration — 2026-10-05
+
+Published [PR146](https://github.com/Vovanostm/warwrit/pull/146) initially met
+newer main `4a82c36`, which merged route-visibility PR145 during asset upload.
+Integrated that main in the owned checkout; retained unmasked complete route and
+goal annotations and both branches' dated documentation. Only the React import
+and changelog insertion conflicted. No gameplay, tree, site or terrain change
+from this integration. Independent source review and final PR CI own current
+combined-code acceptance; prior captures remain bounded evidence. In-app browser
+access for final refresh was rejected by URL policy; current combined-route
+browser capture is NOT_RUN, and no alternate surface bypass was attempted.
+
 ## Tree art rejection and diagnosis — 2026-10-04
 
 Owner reports incorrectly oriented, visibly flat trees after PR141. This supersedes
@@ -1150,3 +1162,94 @@ transform, keeping the far-view cue above the group. Normal UI field travel,
 mid-route S stop, reroute and town return are captured in the current
 `output/playwright/supplies-integrated-*.jpg` evidence. Independent critique and
 PR/main CI are recorded in the supply delivery closeout; this is not full M1 acceptance.
+
+## Settlement route visibility correction — 2026-10-04
+
+Owner screenshots show a destination diamond clipped near Bereznyak and a
+rectangular gap in the route on Kamenny Brod's approach. The SVG used black
+rectangles over complete settlement sprite bounds, including transparent padding;
+these cut annotations even on unobstructed ground. This correction supersedes
+the retained settlement-mask behavior in the integrated party delivery above.
+
+Parent is the sole writer for this bounded local fix in primary `main`, based on
+merged `bcc30f5`. `ContinuousMapCanvas.tsx` no longer masks route strokes or goals;
+`route-overlay.ts` and `continuous-map-scene.ts` remove unused mask inputs and
+rectangle updates. Route annotations remain above the map, including settlement
+art. Terrain-draped geometry, history/remaining split at the party foot, destination
+placement beside site labels, label avoidance, legend and non-intercepting input
+are retained. No domain, speed, clock, save, migration or art change.
+
+Actual checks: web typecheck, three-file ESLint/Prettier and `git diff --check`
+passed. The running localhost:5293 DOM has zero route masks/masked elements and
+keeps `pointer-events: none`; the retained company is stopped on the paved
+approach. Automatic approval review rejected the attempted short verification
+move because it changes saved position and may consume supplies. Owner permission
+was requested; moving/STOP/arrival and current visual acceptance are pending
+(`NOT_RUN` for this correction). Full-game/device/performance gates are NOT_RUN;
+no commit, PR, merge or deployment for this follow-up.
+
+Independent read-only critic confirmed the rectangular clipping in both owner
+captures and the source-level removal of its cause, with no input interception
+in the changed code. Current stationary capture:
+`output/playwright/route-mask-fix-stationary.png`. The critic has no current moving
+capture; whether annotations over painted settlement art affect readability
+remains a visual acceptance limit, not a reproduced regression.
+
+### Playable verification after owner authorization — 2026-10-04
+
+Owner explicitly authorized testing the retained company with “Да, можешь как
+угодно тестировать”. This supersedes the permission-pending runtime limitation
+above; no company reset, purchase, art/domain change or publication was performed.
+
+Actual localhost:5293 normal-UI journey on the unchanged three-file diff:
+
+- The retained dirt-road position → Kamenny Brod showed continuous strokes and
+  a complete site diamond on the daytime approach; arrival cleared the overlay.
+- Kamenny Brod → western paved-road ground goal at night retained the line
+  through the former settlement-mask area and a complete diamond. S during this
+  active trip cleared the strokes, marker and legend.
+- The stopped point → Bereznyak showed the complete site marker at overview and
+  close scale, a continuous route and joined history/remaining at the party foot.
+  Arrival cleared the overlay; a new ground goal beside the village showed a
+  whole diamond on the road and completed normally.
+- Return toward Kamenny Brod survived page reload and arrived. Its initial
+  moving screenshot preceded asset loading, so the full integrated reload check
+  was repeated on Kamenny Brod → Tikhaya Gat: reload restored the moving company,
+  history, remaining path and goal with all map art loaded (9s in DOM, 7s in the
+  screenshot). The final return arrived in Kamenny Brod and cleared the overlay;
+  the company was left stationary there with 800 crowns, and the game stays open.
+
+Current captures under `output/playwright/`: `route-mask-fix-city-day.png`,
+`route-mask-fix-city-approach.png`, `route-mask-fix-city-night.png`,
+`route-mask-fix-stop.png`, `route-mask-fix-village-overview.png`,
+`route-mask-fix-village-close.png`, `route-mask-fix-village-ground-goal.png`,
+`route-mask-fix-reload-moving.png` (the settled repeated journey),
+`route-mask-fix-return-arrived.png` (the first completed return),
+`route-mask-fix-final-city.png` (final stationary company).
+The independent critic found no material defect in supplied day/night,
+close/overview, ground-goal, STOP and arrival captures. Its corrected settled
+reload pass also found no material issue and explicitly withdrew the concern
+based on the superseded loading frame. It did not operate the browser. Prior web typecheck,
+scoped ESLint and source/doc Prettier checks remain applicable to the unchanged
+code; current diff whitespace check passed. Full-game/device/performance gates
+remain NOT_RUN. Fix remains local and uncommitted on `main`; no PR/merge/deploy.
+
+### Route visibility delivery — 2026-10-04
+
+Owner “merge to main” authorizes this reviewed correction's publication and merge.
+Sole delivery writer: `/private/tmp/warwrit-route-visibility` on
+`codex/route-visibility-fix`, based on `bcc30f5`. The three web files match the
+playtested delta; unrelated primary changes are excluded. Existing source and
+playable review applies; clean PR CI will own the complete bootstrap/stress/SQL
+gate. Publication, CI and merge remain pending at this checkpoint. No migrations,
+domain rules, art, clock or persistent-data reset; no deployment/paid resources.
+
+Before publication: frozen-lockfile installation and core/protocol/testkit builds
+passed on Node24.20.0 / pnpm11.25.0; web typecheck and scoped ESLint passed.
+Initial scoped formatting check found an extra blank line in the copied checkpoint;
+it was corrected and the six-file Prettier check passed. Coverage ran with one
+worker through the existing command: 627 passed, 47 skipped (95 files passed,
+7 skipped). The enforced pre-commit audit passed with that real coverage and
+excluded seven inherited findings; its semantic-identity warning used the existing
+syntactic fallback, without changing the gate. The clean full gate is reserved
+for PR CI, not repeated locally.

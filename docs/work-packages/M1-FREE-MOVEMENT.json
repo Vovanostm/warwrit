@@ -1116,6 +1116,7 @@
     "base": "bcc30f5",
     "scope": "Original dark map art, composed trees, grounded entrances/roots and alpha-aware labels/targets; current main relief/roads/supplies/party/routes retained.",
     "evidence": "M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04",
-    "status": "Local: independent source and16-frame day/night critique approved bounded result; real departure/STOP/reload/return-arrival, alpha/foreground targets and gestures pass. Bootstrap627/47skip+10000battles+14DB checks; final628/47skip coverage and changed-code audit pass after bounded helper extraction. PR CI/merge pending; primary concurrent writers must finish before local-main update. No full-M1/performance claim."
+    "status": "Published PR146; independent source and day/night forest critique approved bounded result; native journey/input pass before newer-main integration. Final local coverage628/47skip, unchanged audit and8 focused combined-code checks pass. Exact combined PR CI/merge pending. Combined-route browser recapture NOT_RUN after CUA URL policy rejection; prior separate map/PR145 evidence retained. Primary active terrain writers must finish before local-main update.",
+    "integratedMain": "4a82c36 (PR145 route visibility; 2026-10-05)"
   }
 }
