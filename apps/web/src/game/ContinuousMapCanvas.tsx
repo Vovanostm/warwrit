@@ -49,7 +49,7 @@ export function ContinuousMapCanvas(props: {
             const gap =
               [0, 24, 48, 72, 96].find((offset) => {
                 const left = container.left + point.x - width / 2;
-                const top = container.top + point.y - height - 8 - offset;
+                const top = container.top + point.y - point.spriteHeight - height - 8 - offset;
                 return !occupied.some(
                   (rect) =>
                     left < rect.right + 4 &&
@@ -58,8 +58,8 @@ export function ContinuousMapCanvas(props: {
                     top + height > rect.top - 4,
                 );
               }) ?? 96;
-            indicator.style.transform = `translate(${point.x}px,${point.y - gap}px)`;
-            indicator.style.setProperty('--party-leader-length', `${gap}px`);
+            indicator.style.transform = `translate(${point.x}px,${point.y - point.spriteHeight - gap}px)`;
+            indicator.style.setProperty('--party-leader-length', `${gap + point.spriteHeight}px`);
           }
         },
         onMove: (a) => latest.current.onMove(a),
@@ -103,7 +103,7 @@ export function ContinuousMapCanvas(props: {
           <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
             <rect data-route="background" fill="white" />
             <g data-route="sprites" />
-            <ellipse data-route="ring" fill="black" />
+            <circle data-route="party" r="8" fill="white" />
           </mask>
         </defs>
         <g mask={`url(#${maskId})`}>

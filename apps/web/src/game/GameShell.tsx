@@ -14,6 +14,7 @@ import type {
 } from '@warwrit/protocol';
 
 import type { WorldTravelAction } from '../world-travel-attempt.js';
+import { SupplyShop } from './SupplyShop.js';
 import { CompanyPanel } from './CompanyPanel.js';
 import { formatCrowns, itemLabel, siteKindLabel } from './format.js';
 import {
@@ -168,6 +169,8 @@ export function GameShell(props: {
     !travelling &&
     Boolean(party) &&
     (!movement.current || movement.current.mode === 'STATIONARY_SITE');
+  const supplyBuilding: BuildingType = party?.location === 'severny-dvor' ? 'granary' : 'market';
+  const supplyVenueName = BUILDINGS[supplyBuilding].name;
   const visitIssuer = (siteId: string, building: BuildingType) => {
     if (!canVisit || party?.location !== siteId) return;
     setFocusSiteId(siteId);
@@ -527,6 +530,16 @@ export function GameShell(props: {
                   Журнал отряда →
                 </button>
               )}
+              {contractVisit?.building === supplyBuilding && (
+                <SupplyShop
+                  key={`${props.company.companyId}:${contractVisit.siteId}`}
+                  company={props.company}
+                  holdings={props.holdings}
+                  siteId={contractVisit.siteId}
+                  venueName={supplyVenueName}
+                  onPurchased={props.onRefreshWorld}
+                />
+              )}
               {props.placeSlot({
                 visit: contractVisit,
                 canVisit,
@@ -539,6 +552,17 @@ export function GameShell(props: {
             <CompanyPanel
               company={props.company}
               holdings={props.holdings}
+              supplyVenueName={supplyVenueName}
+              canBuySupplies={
+                props.company.runStatus === 'ACTIVE' &&
+                canVisit &&
+                ['kamenny-brod', 'bereznyak', 'severny-dvor', 'tikhaya-gat'].includes(
+                  party?.location ?? '',
+                )
+              }
+              onBuySupplies={() => {
+                if (party) visitIssuer(party.location, supplyBuilding);
+              }}
               equipBusy={props.equipBusy}
               {...(props.equipMessage === undefined ? {} : { equipMessage: props.equipMessage })}
               onEquip={props.onEquip}

@@ -20,6 +20,7 @@ const client = new Client({ connectionString });
 /** Roll back the migrations after 0010 so the older rollback checks start from 0010. */
 async function downToFirstHunt(): Promise<void> {
   for (const name of [
+    '0014_settlement_supplies',
     '0013_world_hunt_states',
     '0012_ordinary_contracts',
     '0011_encounter_leadership_choices',
@@ -47,6 +48,7 @@ try {
     '0011_encounter_leadership_choices',
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
+    '0014_settlement_supplies',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -64,7 +66,17 @@ try {
     '0011_encounter_leadership_choices',
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
+    '0014_settlement_supplies',
   ]);
+
+  await client.query(
+    "insert into settlement_supplies (world_id, site_id, revision, rations, cash_q) values ('migration-smoke-supplies', 'severny-dvor', 1, 290, 40000000)",
+  );
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /refusing to delete persisted settlement supplies/u,
+  );
+  await client.query("delete from settlement_supplies where world_id = 'migration-smoke-supplies'");
 
   const secondUp = await runMigrations(client, 'up');
   assert.deepEqual(secondUp.applied, []);
@@ -161,6 +173,7 @@ try {
     '0011_encounter_leadership_choices',
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
+    '0014_settlement_supplies',
   ]);
 
   const company = createCompanyStorageFixture();
@@ -477,6 +490,7 @@ try {
     '0011_encounter_leadership_choices',
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
+    '0014_settlement_supplies',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;

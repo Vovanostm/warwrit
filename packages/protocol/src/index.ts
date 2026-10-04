@@ -24,6 +24,7 @@ export type {
   CompanyCommandAcceptedDto,
   CompanyCommandRejectionDto,
   CompanyHoldingsDto,
+  SupplyShopDto,
   CompanyReadResponseDto,
   CompanySummaryDto,
   CreateCompanyCommandDto,

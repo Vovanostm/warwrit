@@ -128,6 +128,15 @@
       "generatedAt": "2026-10-02"
     },
     {
+      "id": "art.m1.map.party-banner-v2",
+      "path": "assets/art/m1/map/party-banner-v2.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/map/party-banner-v2.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
       "id": "art.m1.map.party-banner",
       "path": "assets/art/m1/map/party-banner.png",
       "kind": "image",

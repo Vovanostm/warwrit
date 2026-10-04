@@ -782,3 +782,21 @@ full-content acceptance work. It incorporates the newer c06 Cycle 2/profile
 documentary checkpoint without changing dispatch or claiming runtime acceptance.
 `pnpm agent:status` succeeded: main `4ec0be6`, main CI successful; PR134/PR129
 remain open with failed CI. No game checks or new Airtable readback ran here.
+
+**Supply playtest cycle — 2026-10-04:** owner requests understandable supply purchases and initial gold/food for ten Campaign Days. Active bounded contract: [M1-SUPPLIES](../work-packages/M1-SUPPLIES.md). Sole writer in primary checkout on `codex/supplies-playtest`; prior PR139 is already merged. Shop/startup implementation is playable: 30 starting rations (10 days for three people), 800–850 crowns after hiring, local bazaar/granary purchases with exact retry and atomic stock/cash. Real PostgreSQL creation/purchase/travel/rollback/race checks, browser buy/reload, scoped checks, full verify/stress and repaired migration gate passed; independent critic found no material defect in the new-company journey. Final readiness/food-coverage follow-ups received focused checks. Personal fresh start is open at localhost:5293; source/results and limits are in the contract. Local changes are NOT_MERGED. Preserve existing player companies and unrelated economy/quest drafts. No merge or deployment authorization for this new cycle.
+
+**Opening expiry follow-up — 2026-10-04:** owner start failed after the 15-minute opening option expired; web refresh also erased the form/error. New attempts refresh equivalent server options, remap companions and preserve forms on rejection; uncertain retries retain exact identity. Two regression/retry tests and scoped web checks passed; independent source critic found no material defect. Final expired-form browser creation remains NOT_RUN; account restored for personal retry. Details: [M1-SUPPLIES](../work-packages/M1-SUPPLIES.md). Local and NOT_MERGED.
+
+**Party/route presentation correction — 2026-10-04:** owner requested proportional banner and strokes joined at the group center. Parent owns bounded continuous-map web/art delta on `codex/supplies-playtest`. New ink sprite, shared ground-foot pivot and unmasked junction are running at localhost:5293; actual moving split error0.0036 CSSpx, STOP/night arrival clear the route. Scoped web/content checks passed; independent integrated critic found no material defect in inspected references/source/captures (did not operate browser). [Owning amendment](../work-packages/M1-FREE-MOVEMENT.md#party-proportions-and-route-junction--2026-10-04). Local and NOT_MERGED.
+
+**Supplies and party delivery authorized — 2026-10-04:** owner requested “Fix issues, pr, review, merge, update local main”. This authorizes scoped supply/opening/party corrections, PR publication, independent review, merge and local main update. Parent is sole writer in `/private/tmp/warwrit-supplies-delivery` on `codex/supplies-delivery`, based on current main `efda41f`. Preserve unrelated local design documents and existing player data. No deployment or paid resources.
+
+**Supplies delivery candidate — 2026-10-04:** integrated current main relief/draped
+routes without replacing their behavior. Independent source review findings fixed:
+legacy first POST, carried owned food, accessible-wallet quote, malformed pending
+purchase and incomplete receipts. Final local verify627/47 skipped, coverage/audit
+enforced gate, scoped types and sequential real PostgreSQL17 checks passed. Parallel
+SQL rollback conflict was rerun sequentially on the disposable DB. Fresh5293 UI
+shop/travel/STOP/reroute evidence retained; owner company/cash preserved. Expired
+creation browser path remains NOT_RUN. PR/merge and playable critique closeout pending;
+see the dated [owning delivery amendment](../work-packages/M1-SUPPLIES.md).

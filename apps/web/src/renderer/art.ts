@@ -28,6 +28,7 @@ import wolf from '../../../../assets/art/m1/battle/unit-wolf.png';
 import forestClump from '../../../../assets/art/m1/map/forest-clump.png';
 import groundLand from '../../../../assets/art/m1/map/ground-land.png';
 import partyBanner from '../../../../assets/art/m1/map/party-banner.png';
+import partyGroup from '../../../../assets/art/m1/map/party-banner-v2.png';
 import siteCity from '../../../../assets/art/m1/map/site-city.png';
 import siteFarmstead from '../../../../assets/art/m1/map/site-farmstead.png';
 import siteMill from '../../../../assets/art/m1/map/site-mill.png';
@@ -101,6 +102,12 @@ export const MAP_ART = {
   },
   forest: forestClump,
   party: partyBanner,
+  partyGroup: {
+    url: partyGroup,
+    /** Combined foot contacts in the authored square party image. */
+    groundPivot: { x: 0.49, y: 0.8 },
+    visibleHeight: 0.53,
+  },
 } as const;
 
 /** Authored W01 settlements by site id; unknown sites fall back to their public kind. */

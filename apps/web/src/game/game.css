@@ -996,3 +996,34 @@
   background: #dfbf77;
   box-shadow: 1px 0 #241d16;
 }
+
+.supply-summary,
+.supply-shop {
+  border: 1px solid var(--border, #514638);
+  background: #211e19;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.supply-summary h3 {
+  margin: 0 0 8px;
+  color: #d5be8b;
+}
+.supply-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.supply-quantity input {
+  width: 80px;
+  padding: 8px;
+  background: #171612;
+  border: 1px solid #6a5a43;
+  color: #e4d6bc;
+  font: inherit;
+}
+.supply-shop .action,
+.supply-summary .action {
+  width: 100%;
+  margin-top: 8px;
+}

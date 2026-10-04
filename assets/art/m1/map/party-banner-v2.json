@@ -1,0 +1,16 @@
+{
+  "id": "party-banner-v2",
+  "tool": "built-in image_gen",
+  "useCase": "precise-object-edit",
+  "prompts": [
+    "Use case: precise-object-edit.\nAsset type: Warwrit world-map party sprite, one square RGBA sprite on genuinely transparent background.\nInput image 1 is the edit target, the existing party banner. Image 2 is the approved ink/flat-wash style reference only.\nPrimary request: fix the enormous flag relative to its three mercenaries. Keep exactly three anonymous rough-cloaked travelers and the same original dull oxblood flag with pale broken-circle-and-diamond sigil. Make the humans the primary readable silhouettes, standing closely around the pole; give each figure credible adult proportions. Shorten the pole to about 1.4 times a person's height above their shared footing, and make the cloth about half a person tall and 0.6 person wide. No giant banner, monument or pile of stones.\nPreserve the target's serious grounded dark fantasy ink contours, matte flat washes, muted charcoal/umber/soot/oxblood palette, weathered timber and wool, light from upper left and existing three-quarter top-down projection (about 50 degrees). No cartoon faces, glossy or photorealistic render, bright colors, new faction symbols, scenery, text or watermark.\nComposition: isolated complete compact group, square canvas, horizontal center of the three people's combined foot positions at x=50%, ground/contact pivot at y=82% of canvas. Natural tiny irregular earth contact only, no platform or tile. Leave transparent padding all around and keep all feet, pole and cloth intact. Preserve true transparency.",
+    "Use case: precise-object-edit. Edit only the flag and pole proportions in this transparent Warwrit sprite. Keep all three mercenaries, their faces, poses, materials, ground contacts, ink/flat-wash style, colors, three-quarter projection, lighting, overall square canvas and transparent padding unchanged. The pole is still too tall: SHORTEN its above-ground height to 1.4 times the center mercenary's standing height, about one-third shorter than now. Keep the pole bottom held by the center mercenary, shorten the upper section. The top tip should end around 37% of canvas height, just modestly above the three heads. Shrink the hanging oxblood cloth to about half of a standing mercenary's height and 0.6 of that height wide. Keep the same broken-circle-and-diamond emblem and ragged cloth character, readable but secondary to the humans. Highest flag point about y=37%, same combined feet/contact pivot at x=50%, y=82%. No other changes; no enormous standard; no text, scenery, extra figures, platforms or background. Preserve true alpha transparency."
+  ],
+  "references": ["assets/art/m1/map/party-banner.png", "assets/art/m1/style/unit-c-ink.png"],
+  "groundPivot": {
+    "x": 0.49,
+    "y": 0.8
+  },
+  "visibleHeight": 0.53,
+  "notes": "Three anonymous map mercenaries and the existing abstract sigil. Pole/cloth reduced to human scale; preserve historical v1. Pivot at center of the combined foot contacts."
+}

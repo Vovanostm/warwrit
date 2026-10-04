@@ -244,6 +244,13 @@ interface EncounterActivationPolicyTable {
 }
 
 export interface DatabaseSchema {
+  readonly settlement_supplies: {
+    readonly world_id: string;
+    readonly site_id: string;
+    readonly revision: string;
+    readonly rations: number;
+    readonly cash_q: string;
+  };
   readonly engineering_schema_probe: EngineeringSchemaProbeTable;
   readonly schema_migrations: SchemaMigrationsTable;
   readonly identity_accounts: IdentityAccountTable;
@@ -393,6 +400,9 @@ export function createDatabaseReadinessProbe(
       `.execute(database);
     }
     if (companyStorageEnabled) {
+      await sql`select world_id, site_id, revision, rations, cash_q from settlement_supplies limit 0`.execute(
+        database,
+      );
       await sql`
         select owners.world_id, owners.account_id, owners.company_id,
           snapshots.schema_version, snapshots.ruleset_id, snapshots.catalogue_version,

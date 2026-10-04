@@ -56,6 +56,7 @@ export function PlaceScene(props: PlaceProps) {
         {activeVisit && (
           <PlaceVisit
             name={props.name}
+            siteId={props.siteId}
             building={activeVisit}
             layout={layout}
             onContracts={props.onContracts}
@@ -241,7 +242,7 @@ const RUIN_VISIT = {
 };
 
 function PlaceVisit(
-  props: Pick<PlaceProps, 'name' | 'onContracts' | 'onEquipment'> & {
+  props: Pick<PlaceProps, 'name' | 'siteId' | 'onContracts' | 'onEquipment'> & {
     readonly building: PaintedBuilding;
     readonly layout: PlaceLayout;
     readonly onLeave: () => void;
@@ -249,6 +250,7 @@ function PlaceVisit(
   },
 ) {
   const selected = props.layout.ruined ? RUIN_VISIT : BUILDINGS[props.building.type];
+  const supplies = props.siteId === 'severny-dvor' && props.building.type === 'granary';
   return (
     <div className="place-interior" aria-label={selected.interior}>
       <PlaceDetail building={props.building} layout={props.layout} />
@@ -258,10 +260,15 @@ function PlaceVisit(
         </span>
         <h3>{selected.name}</h3>
         <p>{selected.detail}</p>
-        <p className="place-service">{selected.service}</p>
+        <p className="place-service">
+          {supplies
+            ? 'Здесь можно купить походные рационы. Выберите количество в окне припасов.'
+            : selected.service}
+        </p>
         <VisitAction
           type={props.building.type}
           ruined={props.layout.ruined}
+          supplies={supplies}
           onContracts={props.onContracts}
           onEquipment={props.onEquipment}
         />
@@ -296,9 +303,26 @@ function VisitAction(
   props: Pick<PlaceProps, 'onContracts' | 'onEquipment'> & {
     readonly type: BuildingType;
     readonly ruined: boolean;
+    readonly supplies: boolean;
   },
 ) {
-  if (['elder', 'herbalist', 'watch', 'market', 'inn'].includes(props.type) || props.ruined) {
+  if (props.supplies || props.type === 'market') {
+    return (
+      <button className="action" type="button" onClick={props.onContracts}>
+        Купить припасы →
+      </button>
+    );
+  }
+  return <OrdinaryVisitAction {...props} />;
+}
+
+function OrdinaryVisitAction(
+  props: Pick<PlaceProps, 'onContracts' | 'onEquipment'> & {
+    readonly type: BuildingType;
+    readonly ruined: boolean;
+  },
+) {
+  if (['elder', 'herbalist', 'watch', 'inn'].includes(props.type) || props.ruined) {
     return (
       <button className="action" type="button" onClick={props.onContracts}>
         Поручения и действия →

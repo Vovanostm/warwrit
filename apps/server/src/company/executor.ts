@@ -5,7 +5,10 @@ import {
 } from '../world/continuous-movement.js';
 import { readPartyRoute } from '../world/repository.js';
 import { randomUUID } from 'node:crypto';
+import { readCarriedSupplyPurse } from './supplies.js';
 import {
+  prepareSupplyPurchase,
+  SUPPLY_INITIAL_RATIONS,
   campaignTick,
   canonicalJson,
   canonicalRevision,
@@ -228,6 +231,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     return rejectRequest('STALE_REVISION', lifecycle.knowledge.revision);
 
   if (
+    input.request.type !== 'BuySupplies' &&
     input.request.type !== 'RenameCompany' &&
     input.request.type !== 'ChoosePerk' &&
     input.request.type !== 'EquipItem' &&
@@ -309,6 +313,150 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       lifecycle.knowledge.revision,
     );
   const foodFacts = food.facts;
+
+  if (input.request.type === 'BuySupplies') {
+    const parsed = parseCompanyCommand({
+      schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+      commandId: input.request.commandId,
+      worldId: input.worldId,
+      companyId,
+      actorRef: { kind: 'PLAYER', id: input.accountId },
+      expectedRevision: lifecycle.knowledge.revision,
+      campaignTick: clock.tick,
+      rulesetId: COMPANY_RULESET_ID,
+      type: 'BuySupplies',
+      payload: input.request.payload,
+    });
+    if (!parsed.ok || parsed.command.type !== 'BuySupplies')
+      return rejectRequest('INVALID_COMMAND', lifecycle.knowledge.revision);
+    // Close the old food/payroll interval before receiving the purchase. Bought food cannot fund the past.
+    const timedCommand = parseCompanyCommand({
+      ...parsed.command,
+      commandId: randomUUID(),
+      actorRef: { kind: 'SYSTEM', id: 'supply-clock' },
+      expectedRevision: lifecycle.revision,
+      sourceEventId: randomUUID(),
+      type: 'AdvanceCampaign',
+      payload: { toTick: clock.tick, authoritativeInputs: [] },
+    });
+    if (!timedCommand.ok) throw new Error('Invalid supply clock command');
+    const timed = prepareCompanyEconomy(state.economy, timedCommand.command, {
+      worldId: input.worldId,
+      companyId,
+      principal: { kind: 'SYSTEM', id: 'supply-clock' },
+      publicRevision: lifecycle.knowledge.revision,
+      canonicalRevision: lifecycle.revision,
+      atTick: campaignTick(clock.tick),
+      internalGrant: {
+        commandId: timedCommand.command.commandId,
+        sourceEventId: timedCommand.command.sourceEventId!,
+        canonicalRequest: canonicalJson(timedCommand.command),
+      },
+      completeGraph: true,
+      contactIds: [],
+      facts: [],
+      financeFacts: [],
+      physicalFacts: foodFacts,
+      practiceFacts: [],
+    });
+    if (
+      timed.kind !== 'PREPARED' ||
+      timed.receipt.requirements.length !== 0 ||
+      !timed.next.physical
+    )
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    const siteId = input.request.payload.siteId;
+    const row = await input.transaction
+      .selectFrom('settlement_supplies')
+      .selectAll()
+      .where('world_id', '=', input.worldId)
+      .where('site_id', '=', siteId)
+      .forUpdate()
+      .executeTakeFirst();
+    // The world clock is already locked for this transaction. A legacy world's
+    // first shop is materialized only after an accepted exchange, never on rejection.
+    const carriedPurse = await readCarriedSupplyPurse(
+      input.transaction,
+      input.worldId,
+      companyId,
+      input.accountId,
+    );
+    const purchase = prepareSupplyPurchase(
+      { ...timed.next, physical: timed.next.physical },
+      parsed.command,
+      {
+        worldId: input.worldId,
+        siteId,
+        revision: row ? String(row.revision) : '0',
+        rations: row?.rations ?? SUPPLY_INITIAL_RATIONS,
+        cashQ: row ? String(row.cash_q) : '0',
+      },
+      carriedPurse,
+    );
+    if (purchase.kind !== 'PREPARED')
+      return rejectRequest(purchase.code, lifecycle.knowledge.revision);
+    const next = readCompanyCombatAggregateState({ ...state, economy: purchase.next });
+    const response: CompanyCommandAcceptedDto = {
+      commandId: input.request.commandId,
+      ok: true,
+      publicRevision: next.economy.lifecycle.knowledge.revision,
+    };
+    await updateCompanyAggregateWithReceipt(
+      input.transaction,
+      previousLifecycle.revision,
+      next.economy.lifecycle.revision,
+      next,
+      {
+        command: parsed.command,
+        receipt: {
+          receiptId: randomUUID(),
+          commandId: input.request.commandId,
+          sourceKey: companySourceKey(parsed.command),
+          requestKey: input.requestKey,
+          response,
+          resultingRevision: next.economy.lifecycle.revision,
+        },
+        auditEvents: [
+          ...due.events.map((event) => ({
+            eventId: randomUUID(),
+            revision: next.economy.lifecycle.revision,
+            event,
+          })),
+          {
+            eventId: randomUUID(),
+            revision: next.economy.lifecycle.revision,
+            event: {
+              type: 'SuppliesPurchased',
+              commandId: input.request.commandId,
+              siteId,
+              quantity: input.request.payload.quantity,
+              costQ: purchase.costQ,
+              shopRevision: purchase.shop.revision,
+            },
+          },
+        ],
+      },
+    );
+    await input.transaction
+      .insertInto('settlement_supplies')
+      .values({
+        world_id: input.worldId,
+        site_id: siteId,
+        revision: purchase.shop.revision,
+        rations: purchase.shop.rations,
+        cash_q: purchase.shop.cashQ,
+      })
+      .onConflict((conflict) =>
+        conflict.columns(['world_id', 'site_id']).doUpdateSet({
+          revision: purchase.shop.revision,
+          rations: purchase.shop.rations,
+          cash_q: purchase.shop.cashQ,
+        }),
+      )
+      .execute();
+    await persistDueContinuousMovementRoute(input.transaction, due);
+    return { kind: 'COMMITTED', response };
+  }
 
   const commandValue = {
     schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,

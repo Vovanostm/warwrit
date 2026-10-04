@@ -93,3 +93,11 @@ export * from './social-bindings.js';
 export * from './social-finance.js';
 
 export { readFarewellOutcome } from './farewell-outcome.js';
+export {
+  prepareSupplyPurchase,
+  supplySpendableCashQ,
+  SUPPLY_SHOPS,
+  SUPPLY_PRICE_Q,
+  SUPPLY_INITIAL_RATIONS,
+} from './supplies.js';
+export type { SettlementSupplies } from './supplies.js';

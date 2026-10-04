@@ -1012,3 +1012,53 @@ browser; completion observations were supplied by the author. This verification
 record is authorized for publication and merge by the owner on 2026-10-04.
 The retained local game is running for the owner's personal playtest; subjective
 pace acceptance remains pending that playtest.
+
+## Party proportions and route junction — 2026-10-04
+
+Owner rejected the oversized company banner and route strokes ending away from
+the group center. This correction supersedes the proposed three-pixel ring gap
+above. Parent owns this bounded web/art delta in the primary checkout on
+`codex/supplies-playtest`; unrelated supply and owner/wiki work remains retained.
+No domain, command, speed, timing, storage or migration change; no merge/deploy.
+
+The continuous map uses the original ink-style party with three anonymous
+mercenaries and its existing abstract sigil, revised into human-scale pole/cloth
+proportions. Historical v1 stays available to the legacy map. Built-in image_gen
+made v2; both exact prompts/references are stored in
+`assets/art/m1/map/party-banner-v2.json`, beside the consuming PNG and registered
+in the existing asset registry. The party plane is 0.48 instead of 0.72 units,
+screen-facing to preserve its already painted projection, with an authored
+combined-foot pivot (0.49,0.80) baked into its vertices. Its world position,
+thinner ground ring and route junction share the same interpolated y=0 point.
+The SVG no longer masks the party/ring; an eight-pixel foot window prevents a
+settlement mask hiding the junction. Distant identification sits above the actual
+visible sprite height and retains its ground leader.
+
+Actual localhost:5293 owner journey: Kamenny Brod → ground goal → arrival →
+field movement → STOP → return to Kamenny Brod at night. A moving DOM sample
+compares history end / remaining start (553.07,285.24) with the projected group
+foot (553.072754,285.237686), max difference 0.0036 CSS pixels. Both strokes and
+legend clear on STOP/arrival. Close and overview views were inspected; the
+company remained saved and returned to its original settlement. Captures:
+`output/playwright/party-route-field-progress.jpg`,
+`party-route-return-current.jpg`, `party-route-night-arrival.jpg`.
+
+Affected web typecheck, scoped ESLint/Prettier and content registry validation
+passed. No new tests for this reversible presentation correction; full game
+gate/device/performance matrix NOT_RUN. Independent read-only critic inspected source, shared art references and five
+current journey captures, finding no confirmed material defect. Optional feedback
+is the small/dark silhouettes at this narrow map scale; the ground ring and
+distant cue retain identification. The critic did not operate the browser or run
+checks. No full-device, subjective enjoyment or complete-game acceptance claim.
+
+Integrated party delivery — 2026-10-04:
+
+The party correction is integrated with main `efda41f` terrain relief, contact
+shadows, trees and existing draped route spans. The new group's authored foot
+pivot is applied once by the sprite constructor. Ring and route junction use the
+same terrain-height ground point. Settlement sprite masks remain; the party
+junction is unobstructed. Visible-top and label bounds use the rendered billboard
+transform, keeping the far-view cue above the group. Normal UI field travel,
+mid-route S stop, reroute and town return are captured in the current
+`output/playwright/supplies-integrated-*.jpg` evidence. Independent critique and
+PR/main CI are recorded in the supply delivery closeout; this is not full M1 acceptance.
