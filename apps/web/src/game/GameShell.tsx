@@ -28,6 +28,7 @@ import { WorldMap, type PartyMarker } from './WorldMap.js';
 import { WorldMapCanvas } from './WorldMapCanvas.js';
 import { placeIllustration } from '../renderer/art.js';
 import { FreeMovementPanel } from './FreeMovementPanel.js';
+import { PlaceScene } from './PlaceScene.js';
 import type { FreeMovementAction, FreeMovementScope } from '../world-free-movement-attempt.js';
 
 type Tab = 'travel' | 'place' | 'company';
@@ -152,6 +153,7 @@ export function GameShell(props: {
   const focusSite = map.sites.find(
     (site) => site.siteId === (focusSiteId ?? (travelling ? null : party?.location)),
   );
+  const visiting = tab === 'place' && focusSite;
 
   const selectSite = (siteId: string) => {
     if (freeSiteTargeting) {
@@ -204,7 +206,28 @@ export function GameShell(props: {
       </header>
 
       <div className="game-main">
-        <div className="map-frame">
+        <div className={`map-frame${visiting ? ' map-frame-visiting' : ''}`}>
+          {visiting && (
+            <PlaceScene
+              key={`${focusSite.siteId}:${travelling}:${party?.location ?? ''}`}
+              siteId={focusSite.siteId}
+              name={focusSite.name}
+              kind={focusSite.kind}
+              night={light.phase === 'NIGHT'}
+              canEnter={
+                !travelling &&
+                party?.location === focusSite.siteId &&
+                (!movement.current || movement.current.mode === 'STATIONARY_SITE')
+              }
+              onMap={() => setTab('travel')}
+              onContracts={() => {
+                const target = document.getElementById('place-contracts');
+                target?.scrollIntoView({ behavior: 'auto', block: 'start' });
+                target?.focus({ preventScroll: true });
+              }}
+              onEquipment={() => setTab('company')}
+            />
+          )}
           {map.continuous &&
           props.world.party?.movementVersion !== 1 &&
           !legacyRoute &&
@@ -258,7 +281,7 @@ export function GameShell(props: {
               />
             </>
           )}
-          <p className="map-legend">
+          <p className="map-legend" hidden={Boolean(visiting)}>
             {map.regionName} · ПКМ — идти · S — остановиться · зажать ЛКМ — двигать карту
           </p>
         </div>
@@ -449,7 +472,12 @@ export function GameShell(props: {
                 </>
               )}
             </section>
-            {props.placeSlot}
+            <div id="place-contracts" tabIndex={-1}>
+              <p className="state-note">
+                Поручения отряда · {party ? siteName(party.location) : 'в дороге'}
+              </p>
+              {props.placeSlot}
+            </div>
           </div>
           <div hidden={tab !== 'company'}>
             <CompanyPanel

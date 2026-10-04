@@ -9,6 +9,7 @@
   min-height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
+  grid-template-columns: minmax(0, 1fr);
   color: var(--ink);
 }
 
@@ -558,6 +559,34 @@
 
   .game-side {
     max-height: none;
+  }
+}
+
+@media (width < 44rem) {
+  .game-topbar {
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    padding: 0.7rem;
+  }
+  .topbar-company {
+    min-width: 0;
+    gap: 0.5rem;
+  }
+  .topbar-name {
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+  .clocks {
+    order: 4;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .game-main {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.7rem 0.7rem 0;
+  }
+  .game-side {
+    min-width: 0;
   }
 }
 

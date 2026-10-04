@@ -1,5 +1,25 @@
 # Warwrit current delivery plan
 
+**Living places implemented — 2026-10-04:** owner requested parallax visits,
+highlighted building entrances and ten building types with three variants each.
+Parent `/root` owns the primary checkout on `codex/living-locations`, base
+`9c86605`; no overlapping writer. First outcome: explore a layered settlement
+scene from **Место** and enter a highlighted building at the party's actual
+site. [Owning scope](../work-packages/M1-LIVING-PLACES.md). Existing API/player
+database preserved. Ten original building sheets provide 30 variants; five
+authored places include the ruined old mill. Final bootstrap passed: 604 unit
+checks (46 skipped), 10,000 combat stress battles and 14 database checks.
+Changed-code audit passed with three inherited warnings excluded. Authenticated
+browser verified layered motion, ten village entrances, keyboard/Escape focus,
+map return, existing actions and remote previews; 390px layout has no horizontal
+overflow. Independent read-only critic found no remaining concrete defect in
+current source/captures. [Results and limits](../work-packages/M1-LIVING-PLACES.md#result).
+[PR139](https://github.com/Vovanostm/warwrit/pull/139) published from `584497b`
+with the normal commit audit passed; GitHub CI pending at publication. Full M1,
+actual ruined-mill entry and live reduced-motion
+acceptance remain unproven.
+No merge, deployment or paid resources authorized.
+
 **Live movement recheck — 2026-10-04:** current `main` at `ae9bf3a`
 was checked through the authenticated game at `http://127.0.0.1:5287`.
 Its GitHub CI is SUCCESS. API/web were restarted from that checkout with the
