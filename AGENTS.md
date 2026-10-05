@@ -2,6 +2,18 @@
 
 Applies repository-wide; read stricter directory instructions before editing.
 
+## Desktop viewport and mobile orientation
+
+Owner policy — 2026-10-05:
+
+- Warwrit targets the desktop version. Use one desktop layout and interaction
+  design as the supported implementation and acceptance target.
+- Mobile viewing is landscape only and uses the same desktop interface at a
+  smaller scale. Do not build a separate mobile layout or portrait experience.
+- Do not add mobile-specific screens, navigation or responsive reflows unless
+  the owner explicitly changes this scope. Existing adaptations need not be
+  removed as part of unrelated work.
+
 ## Results first and quick wins
 
 Owner policy — 2026-10-01:

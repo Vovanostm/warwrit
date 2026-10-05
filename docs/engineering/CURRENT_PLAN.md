@@ -1,5 +1,97 @@
 # Warwrit current delivery plan
 
+**Location depth isolated checks — 2026-10-05:** base9ee53d3 candidate passes
+coverage639/47skipped, projection2/2, web typecheck, scoped lint/format and
+ordinary audit after behavior-preserving closure extraction. Fresh native
+desktop entrance/Escape/focus, anchor movement, remount and12 actual corner
+states PASS; automation failures and evidence are in the
+[owning verification](../work-packages/M1-LIVING-PLACES.md#isolated-candidate-verification--2026-10-05).
+Current-head PR CI and expected-head merge remain pending.
+
+**Location depth publication/merge authorized — 2026-10-05:** owner explicitly
+requested “approve, merge, update local main”. Parent owns isolated
+`codex/place-depth-main` / `place-depth-delivery`, base `9ee53d3`. Only the place
+UI/depth renderer/offline maps/provenance/five registry records, desktop policy,
+visual evidence and owning documents are included. Foreground-edge and DPR fixes
+are retained. Concurrent primary terrain/wildlife/wiki/instruction changes and
+player data stay preserved. Local coverage/ordinary audit and exact PR CI/review
+must pass before the expected-head merge; publication/merge are pending.
+[Scope, authority and evidence](../work-packages/M1-LIVING-PLACES.md#publication-authorized--2026-10-05).
+
+**Desktop viewport accepted — 2026-10-05:** owner specified desktop as the
+supported version. Mobile viewing is landscape only, with the same desktop
+interface at a smaller scale; no separate mobile/portrait UX.
+[Repository policy](../../AGENTS.md#desktop-viewport-and-mobile-orientation)
+is updated locally on `main`; existing adaptations are retained. Place-depth
+acceptance targets desktop; the already captured390px checks are supplementary.
+No UI layout change, publication or merge accompanies this policy update.
+
+**Location depth implementation active — 2026-10-05:** owner requested
+optimal method selection, implementation, review and testing. Parent is the sole
+writer on primary `main` / `917644a`: place depth renderer/React integration,
+offline depth assets/script, additive asset registry and owning documents only.
+First playable: Bereznyak buildings/lanes change perspective under mouse input
+while entrances follow their doors; apply to the other four existing paintings
+after that result works. Existing art, canonical state and unrelated dirty work
+are preserved. Independent read-only source/playable critic required before
+closeout. Full local gate is owned serially by the parent; player DB is retained.
+No PR, merge, deployment or paid production is requested.
+
+**Location depth local closeout — 2026-10-05:** supersedes the active status
+above. Five depth maps and a bounded Babylon perspective shader are implemented;
+doors/smoke share projection, reduced motion is neutral and GPU failure retains
+the original CSS range. Repeated independent source/visual critic found no open
+material defect in supplied five-scene day/night/extreme/motion-frame views.
+Native door/Escape, disabled remote entrances, fallback and lifecycle assertions
+PASS. Final clean bootstrap at `548837c` plus this slice:633 passed/47skipped,
+10000-battle stress and migrations/14 PostgreSQL checks PASS. Prior interrupted
+final-source build is not counted. Separate forest integration updated primary
+from917644a to548837c and preserved this local dirty slice and all other writers.
+[Implementation, workflow and limits](../work-packages/M1-LIVING-PLACES.md#location-depth-implementation--2026-10-05).
+Desktop is the acceptance target; narrow evidence is supplementary. Ruin/night
+and lifecycle harness proof does not establish a complete player journey;
+FPS/memory/enjoyment NOT_MEASURED. This slice remains local, not committed or
+published; no migration, player-data reset, merge or deployment by this task.
+
+**Location depth sharpness correction — 2026-10-05:** final native view
+revealed a half-size canvas after DPR2→1; removed the place-only manual scaling
+override and retained the shared adaptive engine. Fresh DPR1/DPR2 mounts,
+repeated viewport/DPR transitions and sharp neutral/extreme/motion-frame views
+PASS; affected independent critic DONE with no material defect. Corrected clean
+bootstrap at548837c plus this local slice PASS:633/47skipped,10000 battles,
+migration smoke/14PG; the cancelled stale-copy attempt is not counted.
+[Correction and final evidence](../work-packages/M1-LIVING-PLACES.md#исправление-чёткости--2026-10-05).
+Desktop policy and local/unpublished status above remain unchanged; FPS/memory
+NOT_MEASURED. CHANGELOG/CURRENT_PLAN ownership returned by forest writer;
+its new closeout entries retained. Pending PR148 primary integration is owned
+by the navigation task after this closeout; this gate covers548837c plus this
+slice, not a future integration.
+
+**Location foreground edge correction — 2026-10-05:** owner reported a
+clipped gate-image boundary at extreme mouse positions. CSS-only active overscan
+now1.13 covers the existing full foreground travel; fallback1.035 and reduced
+motion retained. Native32-corner checks across four settlements/minimum desktop/
+fallback/reduced motion and CSS format/diff PASS; affected critic DONE without
+material finding.
+[Current correction and evidence](../work-packages/M1-LIVING-PLACES.md#края-переднего-плана--2026-10-05).
+Full game/DB gate NOT_RUN for this CSS-only followup; prior633/47 code gate is
+historical. Primary remains548837c, integration explicitly paused by PR148 owner
+until this correction closeout; preserve all other dirty work/data/services.
+Local/uncommitted/unpublished; FPS NOT_MEASURED.
+
+**Location depth methods researched — 2026-10-05:** owner requested modern,
+simple methods and ready scripts/workflows for volume inside place paintings.
+Local research on primary `main` / `917644a` compares depth shaders, textured
+surfaces, layered depth/inpainting, projected geometry and Gaussian splats.
+[Owning comparison and proposed workflow](../work-packages/M1-LIVING-PLACES.md#location-depth-methods--2026-10-05).
+Recommendation: offline Depth Anything V2 Small plus a bounded depth-projection
+prototype, with selected occlusion layers/geometry only if needed. This is a
+proposal, not an implemented renderer or newly accepted technology. Tools/model
+licenses, installed Babylon types and existing art were inspected. Documentation
+checks only; model execution, game integration and playable critique NOT_RUN,
+quality/performance NOT_MEASURED. Other dirty work remains outside this slice.
+No publication, merge, deployment or paid provisioning.
+
 **Hex navigation delivery authorized — 2026-10-05:** owner requested
 “Review, merge, update local main”. This authorizes review, publication and merge
 of `codex/map-topology-experiments`, followed by a safe local-main update.

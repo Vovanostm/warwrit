@@ -7,6 +7,98 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ## Unreleased
 
+### Location depth isolated validation
+
+- 2026-10-05, originating branch `codex/place-depth-main`, local: final
+  navigation-base candidate passes coverage639/47skipped, focused projection2/2,
+  web typecheck, scoped lint/format and ordinary audit. Initial CRAP findings
+  were corrected by cohesive mount/render/interpolation extraction with the
+  same behavior and unchanged gate. Fresh isolated desktop native entrance,
+  Escape/focus, movement, remount and12 actual extreme/fallback/reduced-motion
+  states pass. Failed automation attempts and current evidence are retained in
+  [owning verification](docs/work-packages/M1-LIVING-PLACES.md#isolated-candidate-verification--2026-10-05).
+  Source scope and desktop policy above remain; PR CI/merge pending, FPS/memory
+  NOT_MEASURED, full mill journey NOT_RUN.
+
+### Location depth delivery authorized
+
+- 2026-10-05, originating branch `codex/place-depth-main`, local: owner
+  approved publication, merge and local-main update of the existing depth slice.
+  Isolated branch starts at navigation main9ee53d3 and retains the reviewed DPR
+  and foreground-edge corrections plus desktop policy. Scope and selected
+  current visual evidence in
+  [owning delivery record](docs/work-packages/M1-LIVING-PLACES.md#publication-authorized--2026-10-05).
+  Local coverage and ordinary audit are recorded there; current-head PR CI,
+  publication and merge remain pending. Unrelated primary drafts/player data
+  preserved; no new migration or canonical gameplay change.
+
+### Desktop target
+
+- 2026-10-05, originating branch `main`, local: owner specified desktop as
+  the supported game version, with landscape-only mobile viewing of the same
+  interface at a smaller scale. [AGENTS.md](AGENTS.md#desktop-viewport-and-mobile-orientation)
+  records the shared layout/acceptance target and excludes a separate mobile
+  or portrait UX. Existing adaptations are retained; this changes instructions,
+  not the UI. Current place work follows the updated scope. Documentation
+  readback, formatting and scoped diff/link checks completed at closeout;
+  no game tests needed for this policy-only change. Not published or merged.
+
+### Location depth implementation
+
+- 2026-10-05, originating branch `main`, local (not committed or published):
+  owner requested optimal method selection, implementation, review and testing.
+  Five offline Depth Anything V2 Small maps drive an original Babylon.js
+  perspective shader; doors and smoke share the depth projection. Existing
+  paintings, distant/foreground layers and game actions are preserved. Scope:
+  `PlaceScene`, place layout/CSS, new `place-depth-*` renderer modules/tests,
+  `prepare-place-depth.py`, `places/depth-v1`, additive asset registry and
+  [owning result](docs/work-packages/M1-LIVING-PLACES.md#location-depth-implementation--2026-10-05).
+  Focused projection tests, web build/typecheck, architecture and content97
+  PASS. Independent repeated source/visual critique found no open material
+  defect in five scenes/day/night/extremes; corrected the reproduced GPU-fallback
+  edge strip by retaining the original static parallax range and resetting look.
+  Final clean bootstrap at `548837c` plus this slice PASS:633/47skipped,
+  10000-battle stress, migrations/14 PostgreSQL checks. Native entrance/Escape,
+  remote-access and reduced-motion/fallback/lifecycle assertions PASS; harness
+  and motion-frame proof limits are recorded in the owning document. Earlier
+  final-source attempt was interrupted during build, not counted as a pass.
+  Unrelated dirty work and retained player data preserved. No migration,
+  publication of this slice, merge, deployment or paid provisioning. Forest PR147
+  was integrated separately by its authorized writer with this dirty slice retained.
+
+- 2026-10-05, originating branch `main`, local sharpness correction: native
+  final view exposed a half-size canvas after a DPR2→1 transition. Removed the
+  place renderer's manual hardware scaling override; shared Babylon adaptive
+  scaling now retains full DPR resolution. Fresh DPR1/DPR2 mounts and repeated
+  viewport/DPR changes PASS; new neutral/extreme/motion captures and affected
+  independent critic show no material defect. Corrected clean bootstrap on
+  `548837c` plus this slice PASS:633/47skipped,10000 battles,migrations/14PG.
+  Prior cancelled stale-copy attempt is not counted. Updated source and
+  [correction/evidence](docs/work-packages/M1-LIVING-PLACES.md#исправление-чёткости--2026-10-05);
+  other authors' forest closeout preserved. FPS NOT_MEASURED; remains uncommitted.
+
+- 2026-10-05, originating branch `main`, local gate-edge correction: owner
+  reported clipped foreground edges at mouse extremes, missed by the previous
+  visual pass. Active CSS foreground overscan increased to1.13 to cover the
+  full42/21px travel; fallback/reduced-motion behavior retained. Native32-corner
+  checks across four settlements/minimum desktop/fallback/reduced motion and
+  scoped CSS format/diff PASS; affected critic DONE, no material finding. Full game/DB gate
+  NOT_RUN for this CSS-only followup, FPS NOT_MEASURED. Scope: place CSS and
+  [owning correction](docs/work-packages/M1-LIVING-PLACES.md#края-переднего-плана--2026-10-05);
+  retained data/other writers untouched; uncommitted/unpublished.
+
+### Location depth research
+
+- 2026-10-05, originating branch `main`, local (not committed or published):
+  owner requested modern simple methods and ready workflows for perspective
+  inside location paintings. [Owning comparison](docs/work-packages/M1-LIVING-PLACES.md#location-depth-methods--2026-10-05)
+  records source-checked tools, model/license/device limits and a proposed
+  depth-shader-first prototype with selective occlusion repair. Updated only
+  `M1-LIVING-PLACES`, `CURRENT_PLAN` and this entry; existing dirty work retained.
+  Documentation readback, formatting, scoped diff and local links checked.
+  No game/asset change; tool execution, integration and playable critique
+  NOT_RUN, quality/performance NOT_MEASURED. No publication/merge/deployment.
+
 - 2026-10-05, branch `codex/map-topology-experiments`, published:
   [PR148](https://github.com/Vovanostm/warwrit/pull/148) delivers the owner-selected
   hex default, cached exact route edges and bounded terrain detours. Independent

@@ -1,0 +1,16 @@
+{
+  "operation": "offline monocular depth estimation; near is white",
+  "model": "depth-anything/Depth-Anything-V2-Small-hf",
+  "modelRevision": "5426e4f0f36572d16453bbda7a8389317b1bef99",
+  "modelLicense": "Apache-2.0 (Depth Anything V2 Small)",
+  "script": "scripts/prepare-place-depth.py",
+  "normalization": "1st/99th percentiles, clipped to [0,1], 8-bit grayscale, Gaussian radius 0.6",
+  "sources": {
+    "assets/art/m1/places/depth-v1/bereznyak.png": "assets/art/m1/places/settlements-v2/bereznyak-painting.png",
+    "assets/art/m1/places/depth-v1/kamenny-brod.png": "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+    "assets/art/m1/places/depth-v1/tikhaya-gat.png": "assets/art/m1/places/settlements-v2/tikhaya-gat-painting.png",
+    "assets/art/m1/places/depth-v1/severny-dvor.png": "assets/art/m1/places/settlements-v2/severny-dvor-painting.png",
+    "assets/art/m1/places/depth-v1/staraya-melnitsa.png": "assets/art/m1/places/staraya-melnitsa.png"
+  },
+  "status": "derived render data; does not alter source art or canonical geography"
+}

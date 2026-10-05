@@ -14,6 +14,11 @@ import riverForeground from '../../../../assets/art/m1/places/settlements-v2/tik
 import ruinForeground from '../../../../assets/art/m1/places/settlements-v2/staraya-melnitsa-foreground.png';
 import distance from '../../../../assets/art/m1/places/settlements-v2/distance.png';
 import foreground from '../../../../assets/art/m1/places/settlements-v2/foreground.png';
+import villageDepth from '../../../../assets/art/m1/places/depth-v1/bereznyak.png';
+import townDepth from '../../../../assets/art/m1/places/depth-v1/kamenny-brod.png';
+import riverDepth from '../../../../assets/art/m1/places/depth-v1/tikhaya-gat.png';
+import farmDepth from '../../../../assets/art/m1/places/depth-v1/severny-dvor.png';
+import ruinDepth from '../../../../assets/art/m1/places/depth-v1/staraya-melnitsa.png';
 
 export const BUILDINGS = {
   market: {
@@ -106,6 +111,7 @@ interface PlaceLayout {
   readonly foreground?: string;
   readonly image: string | undefined;
   readonly painting: string | undefined;
+  readonly depth?: string;
   readonly aspect: number;
   readonly buildings: readonly PlaceBuilding[];
   readonly smoke: readonly (readonly [number, number])[];
@@ -113,6 +119,7 @@ interface PlaceLayout {
 }
 
 const RURAL: PlaceLayout = {
+  depth: villageDepth,
   image: village,
   painting: villagePainting,
   aspect: 1.5,
@@ -135,6 +142,7 @@ const RURAL: PlaceLayout = {
   ],
 };
 const TOWN: PlaceLayout = {
+  depth: townDepth,
   foreground: townForeground,
   image: town,
   painting: townPainting,
@@ -158,6 +166,7 @@ const TOWN: PlaceLayout = {
   ],
 };
 const RIVER: PlaceLayout = {
+  depth: riverDepth,
   foreground: riverForeground,
   image: river,
   painting: riverPainting,
@@ -181,6 +190,7 @@ const RIVER: PlaceLayout = {
   ],
 };
 const FARM: PlaceLayout = {
+  depth: farmDepth,
   image: farm,
   painting: farmPainting,
   aspect: 1.5,
@@ -194,6 +204,7 @@ const FARM: PlaceLayout = {
   smoke: [[27, 10]],
 };
 const RUIN: PlaceLayout = {
+  depth: ruinDepth,
   foreground: ruinForeground,
   distance: ruinDistance,
   image: ruin,
