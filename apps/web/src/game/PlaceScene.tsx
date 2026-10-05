@@ -1,5 +1,13 @@
-import { useRef, useState, type CSSProperties, type PointerEvent, type Ref } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+  type Ref,
+} from 'react';
 import { BUILDINGS, placeBuildings, type BuildingType } from './place-buildings.js';
+import { mountPlaceDepth } from '../renderer/place-depth-scene.js';
 import './place-scene.css';
 
 interface PlaceProps {
@@ -51,7 +59,12 @@ export function PlaceScene(props: PlaceProps) {
         }}
       >
         <div hidden={Boolean(activeVisit)}>
-          <PlaceOverview layout={layout} canEnter={props.canEnter} onEnter={enterBuilding} />
+          <PlaceOverview
+            key={props.siteId}
+            layout={layout}
+            canEnter={props.canEnter}
+            onEnter={enterBuilding}
+          />
         </div>
         {activeVisit && (
           <PlaceVisit
@@ -82,13 +95,14 @@ function visitedBuilding(layout: PlaceLayout, type: BuildingType | null, canEnte
 function parallax(event: PointerEvent<HTMLDivElement>) {
   if (event.pointerType !== 'mouse') return;
   const rect = event.currentTarget.getBoundingClientRect();
+  const depthActive = event.currentTarget.classList.contains('place-depth-active');
   event.currentTarget.style.setProperty(
     '--look-x',
-    `${((event.clientX - rect.left) / rect.width - 0.5) * 18}px`,
+    `${((event.clientX - rect.left) / rect.width - 0.5) * (depthActive ? 60 : 18)}px`,
   );
   event.currentTarget.style.setProperty(
     '--look-y',
-    `${((event.clientY - rect.top) / rect.height - 0.5) * 10}px`,
+    `${((event.clientY - rect.top) / rect.height - 0.5) * (depthActive ? 30 : 10)}px`,
   );
 }
 
@@ -106,20 +120,67 @@ function PlaceHeader(props: Pick<PlaceProps, 'name' | 'night' | 'onMap'>) {
   );
 }
 
+function mountOverviewDepth(canvas: HTMLCanvasElement, root: HTMLElement, layout: PlaceLayout) {
+  if (!layout.image || !layout.depth) return;
+  const anchors = [...root.querySelectorAll<HTMLElement>('.place-building, .place-smoke')].map(
+    (element) => ({
+      element,
+      x: parseFloat(element.style.left),
+      y: parseFloat(element.style.top),
+    }),
+  );
+  const status = (active: boolean) => {
+    root.classList.toggle('place-depth-active', active);
+    root.dataset['depth'] = active ? 'active' : 'fallback';
+    if (!active) {
+      root.style.setProperty('--look-x', '0px');
+      root.style.setProperty('--look-y', '0px');
+    }
+  };
+  try {
+    return mountPlaceDepth(canvas, layout.image, layout.depth, anchors, status);
+  } catch {
+    status(false);
+    return undefined;
+  }
+}
+
 function PlaceOverview(props: {
   readonly layout: PlaceLayout;
   readonly canEnter: boolean;
   readonly onEnter: (type: BuildingType) => void;
 }) {
   const [ready, setReady] = useState(false);
+  const panorama = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const depth = useRef<ReturnType<typeof mountPlaceDepth> | undefined>(undefined);
+  useEffect(() => {
+    const root = panorama.current;
+    if (!canvas.current || !root) return;
+    depth.current = mountOverviewDepth(canvas.current, root, props.layout);
+    return () => {
+      depth.current?.dispose();
+      depth.current = undefined;
+    };
+  }, [props.layout.image, props.layout.depth]);
   return (
     <div
+      ref={panorama}
       className="place-panorama"
       style={{ aspectRatio: props.layout.aspect }}
-      onPointerMove={parallax}
+      onPointerMove={(event) => {
+        parallax(event);
+        if (event.pointerType !== 'mouse') return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        depth.current?.look(
+          ((event.clientX - rect.left) / rect.width) * 2 - 1,
+          ((event.clientY - rect.top) / rect.height) * 2 - 1,
+        );
+      }}
       onPointerLeave={(event) => {
         event.currentTarget.style.setProperty('--look-x', '0px');
         event.currentTarget.style.setProperty('--look-y', '0px');
+        depth.current?.look(0, 0);
       }}
     >
       <img
@@ -136,6 +197,7 @@ function PlaceOverview(props: {
           draggable={false}
           onLoad={() => setReady(true)}
         />
+        <canvas ref={canvas} className="place-depth-canvas place-art" aria-hidden="true" />
         {props.layout.smoke.map(([x, y]) => (
           <BuildingSmoke key={`${x}:${y}`} x={x} y={y} />
         ))}

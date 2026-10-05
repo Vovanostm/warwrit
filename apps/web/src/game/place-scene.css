@@ -100,11 +100,35 @@
 .place-settlement {
   object-fit: contain;
 }
+.place-depth-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+.place-depth-active .place-depth-canvas {
+  opacity: 1;
+}
+.place-depth-active .place-settlement {
+  visibility: hidden;
+}
+.place-depth-active {
+  /* Cover the foreground's ±42/21px travel at the 768px minimum panorama width. */
+  --foreground-scale: 1.13;
+}
+.place-depth-active .place-midground,
+.place-depth-active .place-entrances {
+  transform: scale(1.065);
+  transition: none;
+}
 .place-foreground {
   z-index: 2;
   object-fit: cover;
   object-position: bottom;
-  transform: scale(1.035) translate(calc(var(--look-x) * 1.4), calc(var(--look-y) * 1.4));
+  transform: scale(var(--foreground-scale, 1.035))
+    translate(calc(var(--look-x) * 1.4), calc(var(--look-y) * 1.4));
 }
 .place-atmosphere {
   z-index: 3;
@@ -341,6 +365,10 @@
   .place-foreground {
     transform: none;
     transition: none;
+  }
+  .place-depth-active .place-midground,
+  .place-depth-active .place-entrances {
+    transform: none;
   }
   .place-smoke {
     display: none;
