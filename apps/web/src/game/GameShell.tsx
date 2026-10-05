@@ -1,8 +1,9 @@
+import { WorldAmbience } from './WorldAmbience.js';
 import { MovementTerrain } from './MovementTerrain.js';
 import { ContinuousMapCanvas } from './ContinuousMapCanvas.js';
 import { useContinuousMovement } from './continuous-movement.js';
 import './game.css';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import type {
   CompanyHoldingsDto,
@@ -28,7 +29,7 @@ import { departureKey, TravelPanel } from './TravelPanel.js';
 import { WorldMap, type PartyMarker } from './WorldMap.js';
 import { WorldMapCanvas } from './WorldMapCanvas.js';
 import { BUILDINGS, placeBuildings, type BuildingType } from './place-buildings.js';
-import type { ContractVisit, ContractVisitProps } from './contract-visits.js';
+import type { ContractPlaceFact, ContractVisit, ContractVisitProps } from './contract-visits.js';
 import { FreeMovementPanel } from './FreeMovementPanel.js';
 import { PlaceScene } from './PlaceScene.js';
 import type { FreeMovementAction, FreeMovementScope } from '../world-free-movement-attempt.js';
@@ -75,6 +76,7 @@ export function GameShell(props: {
     `${props.world.publicRevision}:${party?.routeEpoch ?? ''}:${party?.location ?? ''}`,
   );
   const now = useNow(1000);
+  const soundPoint = useRef<{ xFp: number; zFp: number } | null>(null);
   const [tab, setTab] = useState<Tab>('travel');
   const [selected, setSelected] = useState<WorldAvailableDepartureDto | null>(null);
   const [selectedHex, setSelectedHex] = useState<{ readonly q: number; readonly r: number } | null>(
@@ -85,7 +87,11 @@ export function GameShell(props: {
   >();
   const [freeSiteTargeting, setFreeSiteTargeting] = useState(false);
   const [focusSiteId, setFocusSiteId] = useState<string | null>(null);
+  const [placeFacts, setPlaceFacts] = useState<readonly ContractPlaceFact[]>([]);
   const [buildingVisit, setBuildingVisit] = useState<ContractVisit | null>(null);
+  useEffect(() => {
+    setPlaceFacts([]);
+  }, [props.company.companyId]);
 
   const execution = props.world.schemaVersion === 2 ? props.world.execution : null;
   const legacyRoute = props.world.schemaVersion === 1 ? props.world.route : null;
@@ -239,6 +245,16 @@ export function GameShell(props: {
             </span>
           )}
         </div>
+        <WorldAmbience
+          region={map.continuous}
+          point={soundPoint}
+          night={light.phase === 'NIGHT'}
+          siteId={
+            !travelling && (!movement.current || movement.current.mode === 'STATIONARY_SITE')
+              ? (party?.location ?? null)
+              : null
+          }
+        />
         <Clocks tick={tick} ticksPerDay={ticksPerDay} light={light} stale={surroundings.stale} />
         <button className="action action-quiet" type="button" onClick={props.onSignOut}>
           Выйти
@@ -252,6 +268,7 @@ export function GameShell(props: {
               key={`${focusSite.siteId}:${travelling}:${party?.location ?? ''}`}
               siteId={focusSite.siteId}
               name={focusSite.name}
+              facts={placeFacts.filter((fact) => fact.siteId === focusSite.siteId)}
               kind={focusSite.kind}
               night={light.phase === 'NIGHT'}
               canEnter={canEnter}
@@ -281,6 +298,17 @@ export function GameShell(props: {
               current={movement.current}
               clock={movement.clock.current}
               night={light.phase === 'NIGHT'}
+              onPosition={(point) => {
+                soundPoint.current = point;
+              }}
+              observations={
+                !surroundings.stale &&
+                !travelling &&
+                (!movement.current || movement.current.mode === 'STATIONARY_SITE') &&
+                reading.dto.observerSiteId === party?.location
+                  ? reading.dto
+                  : null
+              }
               onMove={movement.send}
               onSelectSite={selectSite}
             />
@@ -542,6 +570,7 @@ export function GameShell(props: {
               )}
               {props.placeSlot({
                 visit: contractVisit,
+                onPlaceFacts: setPlaceFacts,
                 canVisit,
                 onVisitIssuer: visitIssuer,
                 onJournal: openJournal,

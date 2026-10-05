@@ -7,6 +7,59 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ## Unreleased
 
+### Living-world commit-audit correction
+
+- 2026-10-05, originating branch `codex/living-world-main`, local: the ordinary commit audit rejected eight introduced complexity findings. Extract cohesive habitat/population/animation, sound and background UI functions without changing behavior or any gate. Corrected audit, focused7, typecheck/lint and temporary90-second exact fauna comparison PASS; initial diagnostic path failure retained. Earlier full coverage643/47 and bootstrap remain pre-extraction evidence; final PR CI is pending. [Owning validation](docs/wiki/m1-spec.md#проверка-изолированной-поставки--2026-10-05). No canonical state or migration change.
+
+### Living-world delivery authorized
+
+- 2026-10-05, originating branch `codex/living-world-main`, local: owner requested “merge, update local main”. Isolate the reviewed habitat/reaction/audio/place-activity/lawful-observation slice from unrelated primary drafts. Include its original wildlife assets/provenance and registry; canonical state, migrations and player data unchanged. Prior clean bootstrap PASS and independent capture review retained; exact PR CI and merge pending. [Owning behavior/checks](docs/wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
+
+### Living-world presentation implementation
+
+- 2026-10-05, originating branch `main` (`f3d214c`), local: owner authorized
+  implementation of the biome/living-world discussion. Habitat-specific four
+  species now use actual flowers/trees and react to the company; opt-in local
+  synthesized ambience, bounded day/night settlement work, lawful current map
+  observations and company-known completed-work notes are integrated. Affected:
+  web renderer/game presentation; owning [implementation and checks](docs/wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
+  No protocol, canonical state, migration or player-data change. Focused7,
+  web typecheck/lint/format/architecture and representative native/component
+  desktop/sound checks PASS after documented corrections. Independent affected
+  source/capture critique found no remaining material defect after frog/bird
+  scale correction; forest flight remains visually unproven. Clean final bootstrap
+  PASS:643/47 skipped,10000 stress battles, migration smoke/14 PostgreSQL/auth
+  checks; temporary DB removed. Real new journey, FPS and audible sound quality
+  unverified.
+  Actual moving patrols need unavailable route/observation state; no invented
+  traffic, new species, seasons, paid art, publication, merge or deployment.
+
+### Living-world layers beyond fauna — design follow-up
+
+- 2026-10-05, originating branch `main`, local: owner's follow-up asks whether
+  fauna is sufficient. [Owning recommendation](docs/wiki/m1-spec.md#достаточно-ли-фауны-для-живого-мира--2026-10-05)
+  adds priorities for shared environmental motion, place-specific sound,
+  settlement work, local reactions, actual world traffic and fact-bound
+  consequences. Existing motion remains acknowledged; moving traders/caravans
+  are not activated in M1. Documentation-only review-draft; no code/assets/audio
+  or player-state change. Formatting/local links/readback checked; gameplay
+  and browser acceptance NOT_RUN, appeal/production cost NOT_MEASURED.
+
+### Biome-specific ambient wildlife proposal
+
+- 2026-10-05, originating branch `main` (`f3d214c`), local: owner requested
+  distinct biome fauna instead of hares/butterflies everywhere.
+  [Owning matrix and next cycle](docs/wiki/m1-spec.md#20-биомы-и-живая-природа--2026-10-05)
+  compare actual geography and four current wildlife forms with live WORLD/lore
+  Notes/Purpose and inspected art. Propose habitat-based distribution, quiet
+  forest/rock areas, dragonflies/ducks next, and later forest/night/domestic life.
+  Real contract wolves/mill beast remain separate from ambient decoration.
+  Only wiki/checkpoint/changelog documentation changed; runtime, assets and
+  player state unchanged. Initial new-table formatting failure corrected;
+  repeated formatting/local-link/readback checks PASS. Implementation, new
+  browser journey/game tests/independent playable critique NOT_RUN; density/FPS
+  NOT_MEASURED. Review-draft, not committed/published/merged.
+
 ### Synchronized place motion
 
 - 2026-10-05, originating branch `codex/place-motion-sync`, local: owner

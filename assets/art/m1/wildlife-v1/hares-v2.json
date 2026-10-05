@@ -1,0 +1,31 @@
+{
+  "tool": "built-in image_gen",
+  "useCase": "stylized-concept",
+  "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/bereznyak.png"],
+  "license": "original work generated for Warwrit; no third-party art",
+  "projection": {
+    "elevationDegrees": 35.2643897,
+    "azimuthDegrees": 45
+  },
+  "lighting": "upper-left in both original poses; no mirrored baked lighting",
+  "width": 1774,
+  "height": 887,
+  "frames": 2,
+  "id": "hares-v2",
+  "prompts": [
+    "Use case: stylized-concept. Asset: transparent original wildlife sprite atlas for Warwrit serious grounded dark fantasy global map. Inspected reference images unit-c-ink.png and bereznyak.png provide STYLE ONLY: irregular black ink contours, flat muted wash, strong shadow masses, soot/umber/ochre, no glossy render. Create EXACTLY TWO anatomically credible lean brown wild European hares, full body including feet and long ears, no cute/chibi/toy form, small natural dark eyes. Two equal horizontal atlas cells, left hare centered at (25%,50%) heading toward lower RIGHT, right hare centered at (75%,50%) heading toward upper LEFT (rear three-quarter view), each with generous transparent padding and feet near 82% height. SAME elevated orthographic game view for both: elevation 35.264 degrees above ground, world azimuth 45 degrees, common vertical, natural compact grazing/ready-to-hop crouch, source proportions already projected. Light comes from image upper-left in BOTH views; draw each pose separately, NEVER mirrored lighting. Rough fur suggested by bold ink/wash shapes, muted tawny/grey brown, dark ear tips, modest dusty ivory belly; realistic limbs. Transparent background, no grass, ground, cast shadow, frame, divider, text, objects or extra animals. Both hares same apparent size. Wide 2:1 composition.",
+    "Edit target is the original transparent two-hare atlas. Preserve the left hare, original ink/flat wash style, exact 1774x887 horizontal two-cell composition and transparent background. Correct ONLY the right hare: it must be a lean alert wild hare in a LOW READY-TO-BOUND CROUCH, seen from elevated rear three-quarter view, moving toward image upper LEFT. It must NOT sit vertically on its haunches: lower the chest and head, extend the torso horizontally, hind legs tucked under the rump ready to push, front paws planted forward, ears naturally swept back slightly. Anatomically credible wild European hare, small dark eye, muted tawny/soot/umber wash, black ear tips. No cute/toy form. Same upper-left light in BOTH cells, do not mirror baked lighting. Keep whole hare within right cell with clear transparent padding and feet at same baseline about 86% canvas height. Both animals should have similar visible body length and scale. Match inspected original unit-c-ink and bereznyak style references. No grass, shadow, ground, text, border, extra animals or extra frames."
+  ],
+  "editTarget": "assets/art/m1/wildlife-v1/hares.png",
+  "groundPivots": [
+    {
+      "x": 0.5851183765501691,
+      "y": 0.8624577226606539
+    },
+    {
+      "x": 0.4695603156708005,
+      "y": 0.8376550169109357
+    }
+  ],
+  "notes": "Two equal square atlas cells; alpha >=20 bounds measured from unchanged original PNG. Pivots use visible horizontal midpoint and lowest opaque foot. Natural crouch replaces seated return pose. Small ambient wildlife only, no canonical entity or hostile identity."
+}

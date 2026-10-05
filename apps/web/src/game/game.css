@@ -1027,3 +1027,25 @@
   width: 100%;
   margin-top: 8px;
 }
+
+.world-sound {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #b6ac91;
+  font-size: 0.7rem;
+}
+.world-sound label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.world-sound input {
+  width: 5rem;
+  accent-color: #b8a071;
+}
+.map-observation {
+  display: block;
+  color: #d6c492;
+  font-size: 0.65rem;
+}

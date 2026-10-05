@@ -1,5 +1,43 @@
 # Warwrit current delivery plan
 
+**Living-world delivery authorized — 2026-10-05:** owner requested “merge, update local main”. Parent owns isolated `codex/living-world-main`, base `f3d214c`; scoped web presentation, original wildlife assets/registry and owning docs only. Pre-extraction clean bootstrap and source/capture review remain historical evidence. Eight introduced audit findings were fixed by cohesive extraction; final audit/focused7/typecheck/lint/exact fauna comparison and repeated desktop component checks PASS. Current affected critic/audio and exact PR CI remain pending. Preserve concurrent primary drafts and player data; no deployment or auto-merge. [Scope/checks](../wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
+
+**Living-world first cycle delivered locally — 2026-10-05:** owner authorized “Ок, implement”.
+Parent owns primary `main f3d214c`: habitat/reaction rendering, local ambience,
+bounded place activity and existing lawful observations/consequences. Preserve all
+unrelated dirty work and player data. First playable: meadow → woodland → wet edge,
+then Bereznyak day/night; keep paths, doors, STOP/reload and sound controls usable.
+No invented patrol routes, unseen actors, new canon, moving traders or deployment.
+[Owning implementation record](../wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
+Habitat/reaction, local synthesized sound controls, bounded place activities,
+lawful current map observations and known completed-work notes implemented.
+Focused7, typecheck/lint/format/architecture and native/component browser checks
+PASS; independent source/capture critic found no remaining material defect after
+frog/bird scale correction. Clean final bootstrap PASS:643/47 skipped,
+10000 stress battles, migration smoke/14 PostgreSQL/auth checks; temporary DB
+removed. Existing retained company remains at North Yard/850 crowns. Native cross-biome
+travel, audible quality, FPS/RAM and full-M1 acceptance NOT_RUN/NOT_MEASURED.
+No new species or autonomous patrol routes; local/uncommitted/unpublished.
+
+**Living-world design follow-up — 2026-10-05:** owner asks what fauna alone
+cannot provide. [Owning recommendation](../wiki/m1-spec.md#достаточно-ли-фауны-для-живого-мира--2026-10-05)
+prioritizes habitat distribution, sound and bounded settlement activities,
+then actual world actors and observable consequences over more species.
+Documentation-only review-draft, local `main`; no implementation activation
+or M1 expansion. Formatting/local links/readback checked; game/browser
+acceptance NOT_RUN, appeal/production cost NOT_MEASURED.
+
+**Biome fauna design — 2026-10-05:** owner requested more distinct habitats.
+Local documentation-only review-draft on `main f3d214c` records
+[current source findings, habitat matrix and next cycle](../wiki/m1-spec.md#20-биомы-и-живая-природа--2026-10-05).
+Current dry-ground selection does not distinguish meadow/forest/hills; frogs
+already use wet habitats. First proposed cycle redistributes existing forms;
+dragonflies/ducks follow after integrated acceptance. No runtime/art/state
+change or implementation activation; actual threats remain canonical world
+entities. Formatting/local-link/readback checks PASS after correcting new-table
+formatting. Browser/game tests/independent playable critique NOT_RUN;
+density/FPS NOT_MEASURED. Local, not committed/published/merged.
+
 **Place motion synchronization delivery — 2026-10-05:** owner explicitly
 requested “merge in main, update local main”. Parent owns isolated
 `/private/tmp/warwrit-place-motion-sync` / `codex/place-motion-sync`, base
