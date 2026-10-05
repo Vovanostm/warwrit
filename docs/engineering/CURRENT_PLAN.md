@@ -1,5 +1,15 @@
 # Warwrit current delivery plan
 
+**Place motion synchronization delivery — 2026-10-05:** owner explicitly
+requested “merge in main, update local main”. Parent owns isolated
+`/private/tmp/warwrit-place-motion-sync` / `codex/place-motion-sync`, base
+PR149/main `793ce7e`. Reapply the reviewed common animation look to that actual
+source; PR149 retained the independent timing. Only three presentation files
+and owning documents are included; primary drafts/player data preserved.
+Current-base typecheck/projection2/coverage639/47 skipped/audit and360-frame
+component-browser/input/reduced-motion/fallback checks PASS; source review clear,
+fresh capture review/PR CI/merge pending. Local/unpublished, NOT_MERGED. [Owning scope and results](../work-packages/M1-LIVING-PLACES.md#motion-synchronization-delivery--2026-10-05).
+
 **Location depth isolated checks — 2026-10-05:** base9ee53d3 candidate passes
 coverage639/47skipped, projection2/2, web typecheck, scoped lint/format and
 ordinary audit after behavior-preserving closure extraction. Fresh native

@@ -7,6 +7,20 @@ their merge date. Earlier history is in the Git log and merged pull requests.
 
 ## Unreleased
 
+### Synchronized place motion
+
+- 2026-10-05, originating branch `codex/place-motion-sync`, local: owner
+  authorized merge/local-main update of the timing correction. Reapplied on
+  PR149/main `793ce7e`, retaining its mount/draw extraction. `PlaceScene.tsx`,
+  `place-scene.css` and `place-depth-scene.ts` drive painting, doors/smoke and
+  outer layers from the same smoothed look, including startup/pointer leave,
+  with no second active CSS transition. Assets/depth/amplitudes, fallback,
+  reduced motion and player data retained. Earlier focused/browser review is
+  historical; fresh typecheck/projection2/coverage639/47 skipped/audit and
+  desktop360-frame/input/reduced-motion/fallback PASS, source review clear;
+  fresh capture review/PR CI/merge pending. No migration/deployment.
+  [Owning behavior, checks and limits](docs/work-packages/M1-LIVING-PLACES.md#motion-synchronization-delivery--2026-10-05).
+
 ### Location depth isolated validation
 
 - 2026-10-05, originating branch `codex/place-depth-main`, local: final

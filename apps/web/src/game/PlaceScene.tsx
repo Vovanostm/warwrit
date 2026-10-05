@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { BUILDINGS, placeBuildings, type BuildingType } from './place-buildings.js';
 import { mountPlaceDepth } from '../renderer/place-depth-scene.js';
+import { PLACE_LOOK_LIMIT } from '../renderer/place-depth-projection.js';
 import './place-scene.css';
 
 interface PlaceProps {
@@ -95,14 +96,14 @@ function visitedBuilding(layout: PlaceLayout, type: BuildingType | null, canEnte
 function parallax(event: PointerEvent<HTMLDivElement>) {
   if (event.pointerType !== 'mouse') return;
   const rect = event.currentTarget.getBoundingClientRect();
-  const depthActive = event.currentTarget.classList.contains('place-depth-active');
+  if (event.currentTarget.classList.contains('place-depth-active')) return;
   event.currentTarget.style.setProperty(
     '--look-x',
-    `${((event.clientX - rect.left) / rect.width - 0.5) * (depthActive ? 60 : 18)}px`,
+    `${((event.clientX - rect.left) / rect.width - 0.5) * 18}px`,
   );
   event.currentTarget.style.setProperty(
     '--look-y',
-    `${((event.clientY - rect.top) / rect.height - 0.5) * (depthActive ? 30 : 10)}px`,
+    `${((event.clientY - rect.top) / rect.height - 0.5) * 10}px`,
   );
 }
 
@@ -138,7 +139,10 @@ function mountOverviewDepth(canvas: HTMLCanvasElement, root: HTMLElement, layout
     }
   };
   try {
-    return mountPlaceDepth(canvas, layout.image, layout.depth, anchors, status);
+    return mountPlaceDepth(canvas, layout.image, layout.depth, anchors, status, (look) => {
+      root.style.setProperty('--look-x', `${(look.x / PLACE_LOOK_LIMIT.x) * 30}px`);
+      root.style.setProperty('--look-y', `${(look.y / PLACE_LOOK_LIMIT.y) * 15}px`);
+    });
   } catch {
     status(false);
     return undefined;
@@ -178,8 +182,10 @@ function PlaceOverview(props: {
         );
       }}
       onPointerLeave={(event) => {
-        event.currentTarget.style.setProperty('--look-x', '0px');
-        event.currentTarget.style.setProperty('--look-y', '0px');
+        if (!event.currentTarget.classList.contains('place-depth-active')) {
+          event.currentTarget.style.setProperty('--look-x', '0px');
+          event.currentTarget.style.setProperty('--look-y', '0px');
+        }
         depth.current?.look(0, 0);
       }}
     >

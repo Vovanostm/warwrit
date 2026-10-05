@@ -121,6 +121,12 @@
 .place-depth-active .place-midground,
 .place-depth-active .place-entrances {
   transform: scale(1.065);
+}
+.place-depth-active .place-distance,
+.place-depth-active .place-midground,
+.place-depth-active .place-entrances,
+.place-depth-active .place-foreground {
+  /* All depth layers use the renderer's already-smoothed look in the same frame. */
   transition: none;
 }
 .place-foreground {
