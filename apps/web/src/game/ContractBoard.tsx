@@ -12,6 +12,7 @@ import {
 
 import { formatCrowns } from './format.js';
 import {
+  contractPlaceFacts,
   issuerBuilding,
   issuerVenue,
   ordinaryStepVenue,
@@ -177,11 +178,16 @@ export function ContractBoard(
   const pendingRef = useRef<OrdinaryContractCommandDto | undefined>(undefined);
   const sendingRef = useRef(false);
   const { onUnauthorized, onRewardPaid } = props;
+  const onPlaceFacts = useRef(props.onPlaceFacts);
+  onPlaceFacts.current = props.onPlaceFacts;
 
   const refresh = useCallback(async () => {
     const next = await readBoard();
     if (next === 'unauthorized') onUnauthorized();
-    else if (next) setBoard(next);
+    else if (next) {
+      setBoard(next);
+      onPlaceFacts.current?.(contractPlaceFacts(next.contracts));
+    }
   }, [onUnauthorized]);
 
   useEffect(() => {

@@ -826,6 +826,22 @@
       "license": "derived from project-owned artwork; estimator Depth Anything V2 Small Apache-2.0",
       "provenance": "assets/art/m1/places/depth-v1/provenance.json",
       "generatedAt": "2026-10-05"
+    },
+    {
+      "id": "art.m1.wildlife.hares",
+      "path": "assets/art/m1/wildlife-v1/hares.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/wildlife-v1/hares.json"
+    },
+    {
+      "id": "art.m1.wildlife.hares-v2",
+      "path": "assets/art/m1/wildlife-v1/hares-v2.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/m1/wildlife-v1/hares-v2.json"
     }
   ]
 }

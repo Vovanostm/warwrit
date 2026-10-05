@@ -1,3 +1,4 @@
+import type { OrdinaryContractDto } from '@warwrit/protocol';
 import { BUILDINGS, type BuildingType } from './place-buildings.js';
 
 /** Authored meeting points inside the existing canonical issuer areas. */
@@ -17,7 +18,38 @@ export interface ContractVisit {
   readonly building: BuildingType;
 }
 
+export interface ContractPlaceFact {
+  readonly instanceId: string;
+  readonly siteId: string;
+  readonly text: string;
+}
+
+const COMPLETED_FACTS: Readonly<Record<string, string>> = {
+  'ci.m1.road-tracks.01': 'Писарю доложили о следах на дороге.',
+  'ci.m1.missing-herbs.01': 'Заготовщице доложили о пропавших травах.',
+  'ci.m1.cellar-rescue.01': 'Освобождённый пленник доставлен в Тихую Гать.',
+  'ci.m1.lost-scout.01': 'Найденный разведчик доставлен в Каменный Брод.',
+  'ci.m1.mill-worker.01': 'Работник мельницы доставлен в Северный Двор.',
+};
+
+/** Only established, company-known completion; never general prosperity or a new witness. */
+export function contractPlaceFacts(contracts: readonly OrdinaryContractDto[]): ContractPlaceFact[] {
+  return contracts
+    .filter(
+      (contract) =>
+        contract.yourRole !== 'NONE' &&
+        contract.state === 'COMPLETED' &&
+        COMPLETED_FACTS[contract.instanceId],
+    )
+    .map((contract) => ({
+      instanceId: contract.instanceId,
+      siteId: contract.issuerLocation.siteId,
+      text: COMPLETED_FACTS[contract.instanceId]!,
+    }));
+}
+
 export interface ContractVisitProps {
+  readonly onPlaceFacts?: (facts: readonly ContractPlaceFact[]) => void;
   readonly visit: ContractVisit | null;
   readonly canVisit: boolean;
   readonly onVisitIssuer: (siteId: string, building: BuildingType) => void;

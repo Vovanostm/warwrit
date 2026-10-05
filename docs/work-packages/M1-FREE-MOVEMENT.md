@@ -1377,3 +1377,64 @@ worker through the existing command: 627 passed, 47 skipped (95 files passed,
 excluded seven inherited findings; its semantic-identity warning used the existing
 syntactic fallback, without changing the gate. The clean full gate is reserved
 for PR CI, not repeated locally.
+
+## Ambient map wildlife — 2026-10-05
+
+Owner requested animated hares and butterflies to make the global map feel alive.
+Local implementation on `main` / `548837c` owns `map-wildlife.ts`, its focused
+regression, four `continuous-map-scene.ts` lifecycle additions, original
+`wildlife-v1` assets/provenance and two additive asset registrations. Existing
+terrain/place/wiki work and player data are retained.
+
+Seeded habitat selection scatters up to 64 hares and 128 butterflies across the
+public geography without a north-first quota bias. Hares make three short bounds,
+pause, return and pause on independent 18–30 s cycles. Two separately drawn ink
+poses use measured foot pivots; v2 replaces the seated return silhouette without
+mirroring baked lighting. Butterflies follow irregular local loops with animated
+wings and disappear at night. The full 260 fp motion envelope excludes roads,
+water, blockers, map edges and settlement contacts. Current relief supplies ground
+height every frame. Fauna are nonpickable presentation only, without collision,
+commands, receipts or save state.
+
+Other parties, wandering traders and hostile humans, beasts and mythical creatures
+remain future canonical-world/NPC work. This slice adds no faction, magic, combat
+encounter, generated lore or speculative NPC framework.
+
+Checks: eight focused wildlife/camera/surface checks PASS; final wildlife regression,
+web typecheck, scoped lint, formatting, architecture and asset validation (99 assets)
+PASS. Initial primary typecheck failed during another author's coordinated
+stash/restore; restored source subsequently passed. Clean wildlife-only bootstrap
+at `548837c` plus this slice PASS: 632 unit tests/47 skipped, 10,000-battle combat
+stress, migration smoke and 14 real PostgreSQL tests. Disposable infrastructure
+removed; log: `/private/tmp/warwrit-wildlife-bootstrap.log`. No repeated full gate
+after unchanged source. A later material butterfly readability correction changes
+the reviewed source; its final clean bootstrap PASS with the same 632 tests/47
+skipped, 10,000 stress battles, migration smoke and 14 PostgreSQL checks. Final log:
+`/private/tmp/warwrit-wildlife-final-bootstrap.log`. Temporary container, volume and
+network cleanup PASS; retained game data was untouched.
+
+Native integrated inspection at `http://127.0.0.1:5287/`, desktop 1440×900, covers
+day/night overview and close views, maximum supported zoom, LMB camera pan and a
+32 s sequence containing complete hare cycles. Evidence is in
+`output/playwright/wildlife/`: `day-overview.jpg`, `day-close-b.jpg`, `day-pan.jpg`,
+`day-tight.jpg`, `night-close.jpg`, `night-overview.jpg`, original `cycle-*.jpg`
+with capture times, `hare-cycle-contact.jpg` and `wildlife-cycle.gif`.
+The company remained stationary at Severny Dvor with 850 crowns; this chat issued
+no travel/purchase commands. Map access was initially rejected and then explicitly
+approved by the owner. Separate Dex 5587 access was rejected; returning to the
+approved map exposed an already active session, so no new login or alternate
+authentication path was used. Dex consent is no longer required for these checks.
+
+Independent final source/raster review found no material defect. The integrated
+critic verified actual outward/return bounds and night/pan behavior, then found
+that butterflies appeared as undifferentiated ochre flecks at maximum zoom.
+The bounded correction increases scale from 0.75–1.25 to 1.5–2.0, widens the dark
+outline and keeps partly closed wings visible. Repeat review of original
+`butterfly-v2-overview.jpg`, `butterfly-v2-close.jpg` and `butterfly-v2-00.jpg`
+through `27.jpg` closed that finding: paired wings and flap changes are visible,
+smaller than hares, without crowding roads, labels or controls. Current animation
+preview: `wildlife-preview.gif`. Wildlife regression, primary web typecheck and
+scoped lint/format PASS after this correction. No remaining material defect in
+the inspected visual scope. FPS, memory and enjoyment NOT_MEASURED; wildlife
+travel/STOP/reload journey NOT_RUN by this chat, full M1/player acceptance unproven.
+Local/uncommitted, not published/merged/deployed; no migration or player-data change.

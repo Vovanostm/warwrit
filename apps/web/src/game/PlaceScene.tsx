@@ -6,6 +6,8 @@ import {
   type PointerEvent,
   type Ref,
 } from 'react';
+import { PlaceActivity } from './PlaceActivity.js';
+import type { ContractPlaceFact } from './contract-visits.js';
 import { BUILDINGS, placeBuildings, type BuildingType } from './place-buildings.js';
 import { mountPlaceDepth } from '../renderer/place-depth-scene.js';
 import { PLACE_LOOK_LIMIT } from '../renderer/place-depth-projection.js';
@@ -16,6 +18,7 @@ interface PlaceProps {
   readonly name: string;
   readonly kind: 'CITY' | 'VILLAGE' | 'LANDMARK';
   readonly night: boolean;
+  readonly facts?: readonly ContractPlaceFact[];
   readonly canEnter: boolean;
   readonly inside: BuildingType | null;
   readonly onInside: (type: BuildingType | null) => void;
@@ -49,6 +52,7 @@ export function PlaceScene(props: PlaceProps) {
       aria-label={`Локация: ${props.name}`}
     >
       <PlaceHeader name={props.name} night={props.night} onMap={props.onMap} />
+      <PlaceMemory facts={props.facts} />
       <div
         ref={scene}
         className="place-diorama"
@@ -88,6 +92,17 @@ export function PlaceScene(props: PlaceProps) {
   );
 }
 
+function PlaceMemory({ facts }: { facts: readonly ContractPlaceFact[] | undefined }) {
+  if (!facts || facts.length === 0) return null;
+  return (
+    <aside className="place-memory" aria-label="Результаты наших поручений">
+      {facts.map((fact) => (
+        <p key={fact.instanceId}>{fact.text}</p>
+      ))}
+    </aside>
+  );
+}
+
 function visitedBuilding(layout: PlaceLayout, type: BuildingType | null, canEnter: boolean) {
   if (!canEnter) return undefined;
   return layout.buildings.find((building) => building.type === type);
@@ -123,13 +138,13 @@ function PlaceHeader(props: Pick<PlaceProps, 'name' | 'night' | 'onMap'>) {
 
 function mountOverviewDepth(canvas: HTMLCanvasElement, root: HTMLElement, layout: PlaceLayout) {
   if (!layout.image || !layout.depth) return;
-  const anchors = [...root.querySelectorAll<HTMLElement>('.place-building, .place-smoke')].map(
-    (element) => ({
-      element,
-      x: parseFloat(element.style.left),
-      y: parseFloat(element.style.top),
-    }),
-  );
+  const anchors = [
+    ...root.querySelectorAll<HTMLElement>('.place-building, .place-smoke, .place-activity'),
+  ].map((element) => ({
+    element,
+    x: parseFloat(element.style.left),
+    y: parseFloat(element.style.top),
+  }));
   const status = (active: boolean) => {
     root.classList.toggle('place-depth-active', active);
     root.dataset['depth'] = active ? 'active' : 'fallback';
@@ -204,6 +219,7 @@ function PlaceOverview(props: {
           onLoad={() => setReady(true)}
         />
         <canvas ref={canvas} className="place-depth-canvas place-art" aria-hidden="true" />
+        <PlaceActivity layout={props.layout} />
         {props.layout.smoke.map(([x, y]) => (
           <BuildingSmoke key={`${x}:${y}`} x={x} y={y} />
         ))}

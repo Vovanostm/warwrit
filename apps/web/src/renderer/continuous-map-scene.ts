@@ -37,6 +37,7 @@ import { createMapRoads } from './map-roads.js';
 import { createMapShadows } from './map-shadows.js';
 import { createMapSurface } from './map-surface.js';
 import { createMapLife } from './map-life.js';
+import { createMapWildlife } from './map-wildlife.js';
 import type { MapLabelPosition } from './map-scene.js';
 import type { RouteOverlayFrame } from './route-overlay.js';
 
@@ -230,6 +231,7 @@ export function mountContinuousMapScene(
     onLabels: (labels: readonly MapLabelPosition[]) => void;
     onParty: (point: { x: number; y: number; spriteHeight: number } | null) => void;
     onRoute: (frame: RouteOverlayFrame | null) => void;
+    onPosition?: (point: { xFp: number; zFp: number } | null) => void;
   },
 ) {
   const engine = acquireCanvasEngine(canvas),
@@ -246,7 +248,13 @@ export function mountContinuousMapScene(
   const { ground, heightAt } = surface;
   const material = createTerrainMaterial(scene, region);
   ground.material = material;
-  const meadowMaterial = createMapLife(scene, region, heightAt);
+  const meadow = createMapLife(scene, region, heightAt);
+  const meadowMaterial = meadow.material;
+  const trees = generateForest(region, TREE_FORMS);
+  const wildlife = createMapWildlife(scene, region, heightAt, undefined, {
+    flowers: meadow.flowers,
+    trees,
+  });
   const roadMaterials = {
     trail: createRoadMaterial(scene, 'trail'),
     dirt_road: createRoadMaterial(scene, 'dirt_road'),
@@ -293,7 +301,6 @@ export function mountContinuousMapScene(
     heightAt,
     contacts,
   );
-  const trees = generateForest(region, TREE_FORMS);
   const componentTrees = createComponentTreeBatch(scene, MAP_TREE_PARTS, trees, sceneFp, heightAt);
   for (const shadow of componentTrees.shadows)
     contacts.add(shadow.x, shadow.z, shadow.width / 2, shadow.opacity);
@@ -425,6 +432,13 @@ export function mountContinuousMapScene(
     meadowMaterial.setFloat('time', visualTime);
     const progress = position(clock.serverMs + performance.now() - clock.receivedAt);
     const p = progress?.point;
+    callbacks.onPosition?.(
+      p ? { xFp: Number(p.xMicroFp) / 65536, zFp: Number(p.zMicroFp) / 65536 } : null,
+    );
+    wildlife.update(
+      visualTime,
+      p ? { x: microScene(p.xMicroFp), z: microScene(p.zMicroFp) } : null,
+    );
     banner.setEnabled(!!p);
     partyRing.setEnabled(!!p);
     if (p) {
@@ -579,6 +593,7 @@ export function mountContinuousMapScene(
         night ? new Color3(0.68, 0.74, 0.84) : new Color3(1.04, 1.02, 0.98),
       );
       componentTrees.setNight(night);
+      wildlife.setNight(night);
       for (const mesh of markers.values())
         (mesh.material as StandardMaterial).emissiveColor.copyFrom(
           night ? new Color3(0.58, 0.64, 0.74) : new Color3(1, 1, 0.94),

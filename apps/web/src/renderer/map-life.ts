@@ -14,6 +14,7 @@ export function createMapLife(
   const maxX = minX + region.columns * region.cellSizeFp * scale;
   const maxZ = minZ + region.rows * region.cellSizeFp * scale;
   const terrain = [...region.terrainShapes].sort((a, b) => b.paintPriority - a.paintPriority);
+  const flowers: { xFp: number; zFp: number }[] = [];
   const positions: number[] = [],
     colors: number[] = [],
     uvs: number[] = [],
@@ -134,7 +135,10 @@ export function createMapLife(
           color.scale(0.85 + random() * 0.3),
         );
       }
-      if (!wooded && !reeds && patch > 0.6 && random() < 0.1) flower(sx, sz, height * 0.8);
+      if (!wooded && !reeds && patch > 0.6 && random() < 0.1) {
+        flower(sx, sz, height * 0.8);
+        flowers.push({ xFp: x, zFp: z });
+      }
     }
   }
   const mesh = new Mesh('wind-meadow', scene);
@@ -181,5 +185,5 @@ export function createMapLife(
   material.setFloat('time', 0);
   material.setColor3('lighting', Color3.White());
   mesh.material = material;
-  return material;
+  return { material, flowers };
 }

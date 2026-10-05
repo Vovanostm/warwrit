@@ -65,7 +65,7 @@ function recordLabelSize(
   return true;
 }
 
-function useMapLabels() {
+function useMapLabels(observations: WorldSurroundingsDto | null | undefined) {
   const labelsLayer = useRef<HTMLDivElement>(null);
   const labelSizes = useRef(new Map<string, { width: number; height: number }>());
   const [labels, setLabels] = useState<readonly MapLabelPosition[]>([]);
@@ -75,7 +75,7 @@ function useMapLabels() {
       labelsLayer.current?.querySelectorAll<HTMLButtonElement>('[data-site-id]') ?? [];
     const changed = Array.from(buttons, (button) => recordLabelSize(button, labelSizes.current));
     if (changed.some(Boolean)) setLabelMeasurements((revision) => revision + 1);
-  }, [labels]);
+  }, [labels, observations]);
   return { labelsLayer, labelSizes, labels, setLabels };
 }
 
@@ -85,6 +85,8 @@ export function ContinuousMapCanvas(props: {
   current: WorldFreeMovementV2ResponseDto | null;
   clock: { serverMs: number; receivedAt: number };
   night: boolean;
+  onPosition?: (point: { xFp: number; zFp: number } | null) => void;
+  observations?: WorldSurroundingsDto | null;
   onMove: (a: WorldFreeMovementV2RequestDto['action']) => void;
   onSelectSite: (id: string) => void;
 }) {
@@ -96,7 +98,7 @@ export function ContinuousMapCanvas(props: {
   const partyIndicator = useRef<HTMLDivElement>(null);
   const labelPress = useRef<{ id: number; x: number; y: number; siteId: string } | null>(null);
   latest.current = props;
-  const { labelsLayer, labelSizes, labels, setLabels } = useMapLabels();
+  const { labelsLayer, labelSizes, labels, setLabels } = useMapLabels(props.observations);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
     if (!canvas.current || !routeSvg.current || !routeLegend.current) return;
@@ -104,6 +106,7 @@ export function ContinuousMapCanvas(props: {
     try {
       scene.current = mountContinuousMapScene(canvas.current, props.region, props.sites, {
         onRoute: drawRoute,
+        onPosition: (point) => latest.current.onPosition?.(point),
         onParty: (point) => {
           const indicator = partyIndicator.current;
           if (!indicator) return;
@@ -249,6 +252,16 @@ export function ContinuousMapCanvas(props: {
               onContextMenu={(e) => e.preventDefault()}
             >
               {props.sites.find((s) => s.siteId === l.siteId)?.name}
+              {props.observations?.observedCompanies
+                .filter((entry) => entry.siteId === l.siteId)
+                .map((entry, index) => (
+                  <span className="map-observation" key={`${entry.companyName}:${index}`}>
+                    {entry.companyName} · {entry.memberCount} чел.
+                  </span>
+                ))}
+              {props.observations?.observedHostiles.some((entry) => entry.siteId === l.siteId) && (
+                <span className="map-observation">Замечена опасная группа</span>
+              )}
             </button>
           );
         })}

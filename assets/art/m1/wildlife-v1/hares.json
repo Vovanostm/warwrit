@@ -1,0 +1,19 @@
+{
+  "tool": "built-in image_gen",
+  "useCase": "stylized-concept",
+  "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/bereznyak.png"],
+  "license": "original work generated for Warwrit; no third-party art",
+  "projection": {
+    "elevationDegrees": 35.2643897,
+    "azimuthDegrees": 45
+  },
+  "lighting": "upper-left in both original poses; no mirrored baked lighting",
+  "width": 1774,
+  "height": 887,
+  "frames": 2,
+  "id": "hares-v1",
+  "prompts": [
+    "Use case: stylized-concept. Asset: transparent original wildlife sprite atlas for Warwrit serious grounded dark fantasy global map. Inspected reference images unit-c-ink.png and bereznyak.png provide STYLE ONLY: irregular black ink contours, flat muted wash, strong shadow masses, soot/umber/ochre, no glossy render. Create EXACTLY TWO anatomically credible lean brown wild European hares, full body including feet and long ears, no cute/chibi/toy form, small natural dark eyes. Two equal horizontal atlas cells, left hare centered at (25%,50%) heading toward lower RIGHT, right hare centered at (75%,50%) heading toward upper LEFT (rear three-quarter view), each with generous transparent padding and feet near 82% height. SAME elevated orthographic game view for both: elevation 35.264 degrees above ground, world azimuth 45 degrees, common vertical, natural compact grazing/ready-to-hop crouch, source proportions already projected. Light comes from image upper-left in BOTH views; draw each pose separately, NEVER mirrored lighting. Rough fur suggested by bold ink/wash shapes, muted tawny/grey brown, dark ear tips, modest dusty ivory belly; realistic limbs. Transparent background, no grass, ground, cast shadow, frame, divider, text, objects or extra animals. Both hares same apparent size. Wide 2:1 composition."
+  ],
+  "status": "historical authoring version; seated return pose superseded"
+}

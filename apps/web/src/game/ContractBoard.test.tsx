@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { OrdinaryContractDto } from '@warwrit/protocol';
 import { ContractConversation } from './ContractBoard.js';
+import { contractPlaceFacts } from './contract-visits.js';
 import type { ContractVisit } from './contract-visits.js';
 
 const issuerLocation = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
@@ -119,4 +120,16 @@ describe('contract conversation and journal boundaries', () => {
       'class="gear-action"',
     );
   });
+});
+
+it('shows place memory only for established completion known to the company', () => {
+  expect(contractPlaceFacts([herbs])).toEqual([]);
+  expect(contractPlaceFacts([{ ...herbs, state: 'COMPLETED', yourRole: 'NONE' }])).toEqual([]);
+  expect(contractPlaceFacts([{ ...herbs, state: 'COMPLETED' }])).toEqual([
+    {
+      instanceId: herbs.instanceId,
+      siteId: 'bereznyak',
+      text: 'Заготовщице доложили о пропавших травах.',
+    },
+  ]);
 });
