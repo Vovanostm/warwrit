@@ -90,6 +90,7 @@ export function mountPlaceDepth(
   depth: string,
   anchors: readonly PlaceDepthAnchor[],
   onStatus: (active: boolean) => void,
+  onLook: (look: PlaceLook) => void,
 ) {
   const engine = acquireCanvasEngine(canvas);
   const scene = new Scene(engine);
@@ -151,6 +152,7 @@ export function mountPlaceDepth(
     }
     try {
       scene.render();
+      onLook(current);
     } catch {
       fail();
       return;
@@ -205,6 +207,7 @@ export function mountPlaceDepth(
       ready = true;
       engine.resize();
       scene.render();
+      onLook(current);
       onStatus(true);
       schedule();
     })

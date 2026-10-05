@@ -689,3 +689,54 @@ captures document the foreground correction. Independent reviewer found no
 semantic defect in the bounded refactor; final capture review is pending.
 Publication, current-head CI and merge remain pending. FPS/memory remain
 NOT_MEASURED; full mill player journey NOT_RUN.
+
+### Синхронизация движения слоёв — 2026-10-05
+
+Первоначальная локальная коррекция и её360-frame проверка остаются историей.
+При отдельном обновлении primary из PR149 исходники вернулись к прежнему
+таймингу; текущая доставка ниже повторно проверяет исправление на этом main.
+
+### Motion synchronization delivery — 2026-10-05
+
+Owner reported different timing between image animation and parallax, then
+explicitly requested “merge in main, update local main”. The previous primary
+correction used one smoothed look for painting, doors/smoke and CSS layers.
+Focused checks and360 desktop rAF samples across five places, reversals/leave,
+native door/Escape/focus, remote access, reduced motion and fallback passed;
+an independent source/seven-capture critic found no material defect. These
+were component-browser checks, not a full logged-in gameplay journey.
+
+The separately merged PR149 (`793ce7e`) retained older independent timing, so
+this correction is reapplied on that actual source while keeping its cohesive
+mount/draw/interpolation extraction. The depth renderer supplies the rendered
+current look to outer CSS layers in the same frame, including initial readiness.
+Their second450ms transition is removed; pointer leave uses the same neutral
+target. Depth, assets, amplitudes, foreground coverage and door/smoke projection
+are unchanged. GPU fallback retains the18/10px CSS range/450ms transition;
+reduced motion remains neutral.
+
+Parent is sole writer in `/private/tmp/warwrit-place-motion-sync`, branch
+`codex/place-motion-sync`, base `793ce7e`: three presentation files and owning
+documents only. Primary drafts/player data remain outside publication.
+Current-base results: web typecheck, scoped ESLint/Prettier, projection2/2,
+coverage639 passed/47 skipped and ordinary changed-code audit PASS with unchanged
+gates. The first web typecheck/dev scan FAILED because this fresh worktree lacked
+built workspace protocol exports; building `@warwrit/protocol` dependencies fixed
+both without source changes. Audit advisory styling notes were nonblocking.
+
+Current desktop1365×1000 component browser PASS:360 rAF samples in14 trajectories
+across five scenes/reversal/rapid reversal/leave; max shader/CSS/computed-transform
+mismatch0.00005085px (limit0.001px), motion observed in every trajectory. Native
+door/Escape/restored focus, all remote doors disabled, live reduced motion and
+forced GPU fallback PASS. Browser source: isolated `http://localhost:5321`.
+The CLI daemon saves captures under primary
+`/Users/vovanostm/learn/warwrit/output/playwright/place-motion/`,
+including12 motion frames and five day/night scenes. Initial instrumentation
+attempts FAILED on mismatched optimized Babylon imports, detached pre-remount DOM
+and focus observed before its scheduled frame; corrected imports/commit/focus
+waits passed without production changes. Log `/private/tmp/warwrit-place-motion-browser.log`.
+Independent current-base source review found no material defect; fresh capture
+review pending. Full clean bootstrap/stress/migrations are owned by PR CI,
+NOT_RUN locally; canonical Airtable/Empirical checkpoint NOT_UPDATED.
+Status: local, publication/merge pending; no deployment or new migration.
+Full player journey is NOT_RUN; FPS/GPU/RAM NOT_MEASURED.
