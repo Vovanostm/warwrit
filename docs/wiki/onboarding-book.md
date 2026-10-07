@@ -1232,3 +1232,544 @@ NOT_RUN: docs-only scope и более строгая пропорциональ
 записи передаются в handoff, общие файлы здесь не изменяются.
 **Один следующий шаг:** родитель получает решение о новом цикле или остановке
 и записывает его до любых правок строк.
+
+## B8 — новая редакция: «Казна» и «Щит» — 2026-10-07
+
+Решение владельца 2026-10-07 после трёх REJECT редакции `f3da66e`: книгу
+переписывает Claude. Это новая структурная попытка, не правка вариантов A/B
+выше; те остаются отклонённой историей. Числа и подстановка — как в
+[разделе B8](#b8--два-варианта-для-выбора-владельца--2026-10-07): 900 крон,
+по 50 за найм, 10 в день, 30 пайков; `{heroName}` и имена спутников только
+в именительном падеже, глаголы героя и спутников — в настоящем времени.
+
+Отступление от брифа на решение владельца: книга идёт от третьего лица
+в настоящем времени, без «мы». Летописец остаётся в заголовке книги.
+При двух-трёх людях любое «мы» рассказчика добавляет в кадр лишнего человека.
+
+Что изменено по сути:
+
+- **Решение героя — поступок.** В «Казне» герой честно расплачивается
+  с уходящими и оставляет компании доли павших у Брода. В «Щите» снимает
+  с проданного воза щит убитого и несёт вдове.
+- **Спутники различаются делом.** Один возвращает лёгкую житную монету,
+  другой берёт деньги не считая; один говорит «сначала вдова» и колет вдове
+  дрова, другой просит деньги сразу.
+- **Числа только в найме и в одной реплике при погрузке;** последний
+  разворот кончается поступком или фактом, не счётом.
+- Мир виден в вещах: житная крона легче коронной, замазанный герб,
+  павшие в Бродской сече, волки на доске. Новых событий мира нет;
+  Ждан Рогожа, Вирьян Косой и вдова — частные лица вступления, не канон.
+
+### Вариант «Казна»
+
+#### К1 — двор
+
+**RU**
+
+> Боярина схоронили по первому снегу. Наследник дружину не берёт: кормить
+> нечем. Во дворе делят, что осталось: котлы, сёдла, две пары сапог на всех.
+> Кто-то уже ведёт со двора чужого коня.
+>
+> Сундук с дружинной казной и счётную книгу держит {heroName}.
+>
+> — Делим, — говорит Ждан Рогожа, старший из оставшихся. — Каждому
+> по книге, до монеты. И по домам.
+
+**EN**
+
+> The boyar was buried with the first snow. His heir will not keep the
+> retinue: there is nothing to feed it on. In the yard they share out what
+> is left: kettles, saddles, two pairs of boots between all of them.
+> Someone is already leading someone else's horse out of the gate.
+>
+> {heroName} holds the retinue's pay chest and the ledger.
+>
+> “We split it,” says Zhdan Rogozha, the eldest of those left. “Everyone
+> gets what the ledger says, to the coin. Then home.”
+
+**Иллюстрация:** двор в первом снегу, сёдла и котлы на рогоже; герой
+у окованного сундука, Ждан стоит над ним; в воротах кто-то уводит коня.
+
+#### К2 — сундук
+
+**RU**
+
+> {heroName} открывает сундук и платит по книге: каждому его долю,
+> до монеты. Ждан пересчитывает свою и заглядывает на дно.
+>
+> — А там?
+>
+> — Доли тех, кто лёг у Брода. Девятьсот крон.
+>
+> — Им уже не надо.
+>
+> — Значит, надо нам. Кто остаётся — пятьдесят сразу, десять в день.
+>
+> Ждан плюёт под ноги и идёт седлать.
+
+**EN**
+
+> {heroName} opens the chest and pays out by the ledger: everyone's share,
+> to the coin. Zhdan counts his and peers at the bottom of the chest.
+>
+> “And that?”
+>
+> “The shares of the ones who fell at the Ford. Nine hundred crowns.”
+>
+> “They've no use for it now.”
+>
+> “Then we do. Whoever stays gets fifty now and ten a day.”
+>
+> Zhdan spits and goes to saddle up.
+
+**Иллюстрация:** раскрытый сундук, на дне монеты; Ждан наклонился над ним,
+в руке своя доля.
+
+#### К3 — кто остаётся
+
+##### Два человека
+
+**RU**
+
+> Остаётся {companionName}: сидит на колоде, пока двор пустеет, и на ворота
+> не смотрит. Ворота за последним скрипят и не закрываются до конца.
+>
+> {heroName} отсчитывает пятьдесят. {companionName} пересчитывает, одну
+> монету взвешивает на ладони и возвращает.
+>
+> — Житная. Лёгкая. Дай коронную.
+>
+> {heroName} меняет. {companionName} убирает деньги и спрашивает, где мешки.
+
+**EN**
+
+> {companionName} stays, sitting on a chopping block while the yard empties,
+> not looking at the gate. It creaks behind the last of them and does not
+> quite close.
+>
+> {heroName} counts out fifty. {companionName} counts them again, weighs one
+> coin in hand and hands it back.
+>
+> “Zhitnoe. Light. Give me a royal one.”
+>
+> {heroName} swaps it. {companionName} puts the money away and asks where
+> the sacks are.
+
+##### Три человека
+
+**RU**
+
+> Остаются двое. {companionName} сидит на колоде, пока двор пустеет.
+> {secondCompanionName} доходит до ворот, возвращается за забытым ремнём
+> и больше не уходит.
+>
+> {heroName} отсчитывает по пятьдесят. {companionName} пересчитывает,
+> одну монету взвешивает на ладони и возвращает:
+>
+> — Житная. Лёгкая. Дай коронную.
+>
+> {secondCompanionName} берёт свои не считая и спрашивает только, где ночевать.
+
+**EN**
+
+> Two stay. {companionName} sits on a chopping block while the yard empties.
+> {secondCompanionName} gets as far as the gate, comes back for a forgotten
+> strap and does not leave again.
+>
+> {heroName} counts out fifty each. {companionName} counts them again, weighs
+> one coin in hand and hands it back:
+>
+> “Zhitnoe. Light. Give me a royal one.”
+>
+> {secondCompanionName} takes theirs without counting and asks only where
+> they'll sleep tonight.
+
+**Иллюстрация:** монета на ладони спутника против света; пустой двор позади.
+
+#### К4 — кладовая
+
+##### Два человека
+
+**RU**
+
+> Кладовая почти пуста: на полках мышиный помёт и прошлогодний лук.
+> Наследник выносит тридцать пайков: сухари, солонину, крупу.
+>
+> — Берите. И котлы оставьте.
+>
+> {companionName} грузит мешки и считает вслух:
+>
+> — Пятнадцать дней на двоих.
+>
+> {heroName} молча ставит взятый котёл обратно к стене. Котёл хороший,
+> медный.
+
+**EN**
+
+> The storeroom is nearly bare: mouse droppings and last year's onions on
+> the shelves. The heir brings out thirty rations: rusks, salt beef, groats.
+>
+> “Take them. And leave the kettles.”
+>
+> {companionName} loads the sacks, counting aloud:
+>
+> “Fifteen days for two.”
+>
+> Without a word {heroName} sets the kettle back against the wall. A good
+> one, copper.
+
+##### Три человека
+
+**RU**
+
+> Кладовая почти пуста: на полках мышиный помёт и прошлогодний лук.
+> Наследник выносит тридцать пайков: сухари, солонину, крупу.
+>
+> — Берите. И котлы оставьте.
+>
+> {companionName} грузит мешки и считает вслух:
+>
+> — Десять дней на троих.
+>
+> {secondCompanionName} пробует сухарь на зуб и кладёт обратно в мешок.
+> {heroName} молча ставит взятый котёл к стене.
+
+**EN**
+
+> The storeroom is nearly bare: mouse droppings and last year's onions on
+> the shelves. The heir brings out thirty rations: rusks, salt beef, groats.
+>
+> “Take them. And leave the kettles.”
+>
+> {companionName} loads the sacks, counting aloud:
+>
+> “Ten days for three.”
+>
+> {secondCompanionName} tests a rusk with their teeth and drops it back in
+> the sack. Without a word {heroName} sets the kettle back against the wall.
+
+**Иллюстрация:** низкая кладовая, мешки на плече спутника; наследник
+в дверях, медный котёл у стены.
+
+#### К5 — ворота
+
+##### Два человека
+
+**RU**
+
+> На воротах ещё висит боярский стяг. {heroName} снимает его, складывает
+> и относит наследнику.
+>
+> — Себе не возьмёте?
+>
+> — Чужое.
+>
+> Наследник держит стяг, как мокрое бельё, и не знает, куда его деть.
+> {companionName} уже за воротами, с мешком на плече, и не оглядывается.
+>
+> {heroName} выходит следом и прикрывает ворота.
+
+**EN**
+
+> The boyar's banner still hangs on the gate. {heroName} takes it down,
+> folds it and carries it to the heir.
+>
+> “You won't keep it?”
+>
+> “It isn't ours.”
+>
+> The heir holds the banner like wet washing, not knowing where to put it.
+> {companionName} is already outside the gate, a sack on one shoulder, not
+> looking back.
+>
+> {heroName} follows and pulls the gate to.
+
+##### Три человека
+
+**RU**
+
+> На воротах ещё висит боярский стяг. {heroName} снимает его, складывает
+> и относит наследнику.
+>
+> — Себе не возьмёте?
+>
+> — Чужое.
+>
+> Наследник держит стяг, как мокрое бельё, и не знает, куда его деть.
+> {companionName} и {secondCompanionName} уже за воротами, с мешками,
+> и не оглядываются.
+>
+> {heroName} выходит следом и прикрывает ворота.
+
+**EN**
+
+> The boyar's banner still hangs on the gate. {heroName} takes it down,
+> folds it and carries it to the heir.
+>
+> “You won't keep it?”
+>
+> “It isn't ours.”
+>
+> The heir holds the banner like wet washing, not knowing where to put it.
+> {companionName} and {secondCompanionName} are already outside the gate
+> with the sacks, not looking back.
+>
+> {heroName} follows and pulls the gate to.
+
+**Иллюстрация:** наследник со сложенным стягом в руках; полуприкрытые
+ворота, за ними спины компании.
+
+### Вариант «Щит»
+
+#### Щ1 — воз
+
+**RU**
+
+> Боярин умер, задолжав всем. Наследник продаёт всё, что звенит. Во дворе
+> стоит воз: сёдла, котлы, щиты с замазанным гербом.
+>
+> {heroName} переворачивает верхний щит. На изнанке ножом вырезано:
+> «Вирьян Косой». Вирьяна убили в Бродской сече, на третий год Смуты.
+> Щит дружина с тех пор возила с собой.
+
+**EN**
+
+> The boyar died owing everyone. His heir is selling whatever clinks. A cart
+> stands in the yard: saddles, kettles, shields with the arms painted over.
+>
+> {heroName} turns the top shield over. Cut into the back with a knife:
+> “Viryan Kosoy.” Viryan was killed in the Battle of the Ford, in the third
+> year of the Troubles. The retinue had carried his shield ever since.
+
+**Иллюстрация:** воз со щитами, герб замазан сажей; изнанка одного щита
+с вырезанным именем.
+
+#### Щ2 — приказчик
+
+**RU**
+
+> {heroName} снимает щит с воза. Приказчик хватается за край.
+>
+> — Боярское.
+>
+> — Вирьяново. Имя видишь?
+>
+> Приказчик грамоты не знает, но буквы видит. Из-за одного щита спорить
+> не хочет — отпускает.
+>
+> Сзади хмыкает {companionName}: всё это время чинит на колоде ремень
+> и не встаёт.
+>
+> — Вдове понесёшь?
+>
+> — Понесу.
+
+**EN**
+
+> {heroName} lifts the shield off the cart. The steward grabs its rim.
+>
+> “That's the boyar's.”
+>
+> “Viryan's. See the name?”
+>
+> The steward cannot read, but he can see letters. One shield isn't worth
+> the argument. He lets go.
+>
+> Behind them {companionName} snorts, still mending a strap on a chopping
+> block, not getting up.
+>
+> “Taking it to the widow?”
+>
+> “Yes.”
+
+**Иллюстрация:** две руки на краю щита; спутник на колоде с ремнём
+на коленях.
+
+#### Щ3 — найм
+
+##### Два человека
+
+**RU**
+
+> {companionName} откладывает ремень.
+>
+> — А потом?
+>
+> — Потом работа. Пятьдесят сразу, десять в день. Казна у меня.
+>
+> — Сначала вдова. Деньги потом.
+>
+> {heroName} всё равно отсчитывает пятьдесят и кладёт на колоду, рядом
+> с ремнём. {companionName} смотрит на монеты, сгребает их в кошель
+> и берёт щит под мышку.
+
+**EN**
+
+> {companionName} puts the strap down.
+>
+> “And after that?”
+>
+> “After that, work. Fifty now, ten a day. I hold the chest.”
+>
+> “The widow first. Money later.”
+>
+> {heroName} counts out fifty anyway and leaves it on the block beside the
+> strap. {companionName} looks at the coins, sweeps them into a purse and
+> tucks the shield under one arm.
+
+##### Три человека
+
+**RU**
+
+> {companionName} откладывает ремень.
+>
+> — А потом?
+>
+> — Потом работа. Пятьдесят сразу, десять в день. Казна у меня.
+>
+> — Сначала вдова. Деньги потом.
+>
+> {heroName} всё равно отсчитывает пятьдесят. {companionName} сгребает
+> монеты в кошель и берёт щит под мышку.
+>
+> У ворот стоит {secondCompanionName} и смотрит, как отсчитывают.
+>
+> — Мне сразу.
+>
+> {heroName} отсчитывает ещё пятьдесят.
+
+**EN**
+
+> {companionName} puts the strap down.
+>
+> “And after that?”
+>
+> “After that, work. Fifty now, ten a day. I hold the chest.”
+>
+> “The widow first. Money later.”
+>
+> {heroName} counts out fifty anyway. {companionName} sweeps the coins into
+> a purse and tucks the shield under one arm.
+>
+> {secondCompanionName} stands at the gate, watching the counting.
+>
+> “I'll have mine now.”
+>
+> {heroName} counts out another fifty.
+
+**Иллюстрация:** монеты на колоде; спутник со щитом под мышкой; у ворот
+второй спутник, если он выбран.
+
+#### Щ4 — вдова
+
+**RU**
+
+> Вдова живёт на краю, у огородов. В сенях пусто: ни мешков, ни кадки.
+> У печи поленница — на два дня.
+>
+> Щит она берёт обеими руками и долго смотрит на вырезанное имя.
+>
+> — Четыре года ждала. Хоть щит дождалась.
+>
+> Пока она молчит, {companionName} колет во дворе оставшиеся чурки.
+>
+> Вдова ставит щит к печи, рядом с поленьями.
+
+**EN**
+
+> The widow lives at the edge, by the vegetable plots. The entry is bare:
+> no sacks, no tub. By the stove there is wood for two days.
+>
+> She takes the shield in both hands and looks a long time at the name.
+>
+> “Four years I waited. At least the shield came home.”
+>
+> While she says nothing more, {companionName} splits the last logs in her
+> yard.
+>
+> The widow stands the shield by the stove, next to the firewood.
+
+**Иллюстрация:** низкий дом на краю; вдова со щитом на пороге, спутник
+с топором у колоды, поленница у печи в проёме.
+
+#### Щ5 — доска
+
+##### Два человека
+
+**RU**
+
+> — Тридцать пайков, — {companionName} раскладывает их на два мешка. —
+> На двоих пятнадцать дней.
+>
+> {companionName} завязывает мешки своим узлом: видно будет, если кто
+> развяжет.
+>
+> От вдовы идут к доске с заказами. Свежие листы прибиты гвоздями
+> прямо поверх прошлогодних, размокших.
+>
+> Ближний лист — про волков.
+
+**EN**
+
+> “Thirty rations,” {companionName} says, sharing them between two sacks.
+> “Fifteen days for two.”
+>
+> {companionName} ties the sacks with a knot of their own: it will show
+> if anyone undoes them.
+>
+> From the widow's they go to the job board. New notices are nailed over
+> last year's, gone soft with rain.
+>
+> The nearest one is about wolves.
+
+##### Три человека
+
+**RU**
+
+> — Тридцать пайков, — {companionName} раскладывает их на два мешка. —
+> На троих десять дней.
+>
+> {companionName} завязывает мешки своим узлом: видно будет, если кто
+> развяжет.
+>
+> От вдовы идут к доске с заказами. Свежие листы прибиты гвоздями
+> прямо поверх прошлогодних, размокших. {secondCompanionName} спрашивает,
+> почём нынче волк.
+>
+> Ближний лист — про волков.
+
+**EN**
+
+> “Thirty rations,” {companionName} says, sharing them between two sacks.
+> “Ten days for three.”
+>
+> {companionName} ties the sacks with a knot of their own: it will show
+> if anyone undoes them.
+>
+> From the widow's they go to the job board. New notices are nailed over
+> last year's, gone soft with rain. {secondCompanionName} asks what a wolf
+> pays these days.
+>
+> The nearest one is about wolves.
+
+**Иллюстрация:** доска с листами поверх старых, один с грубым рисунком
+волка; компания со спины.
+
+### Критика новой редакции
+
+| Раунд | «Казна»                  | «Щит»                    | Главное                                                                                                                  |
+| ----- | ------------------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| 1     | REJECT · 2/3/2/1/3/2/1/2 | REJECT · 2/3/2/2/3/2/2/1 | Неясно, чья казна в К2; финал К5 на счёте; «доска» в Щ4 сталкивается с доской заказов; оговорка о летописце              |
+| 2     | ACCEPT · 2/3/3/3/3/3/3/2 | REJECT · 2/3/2/3/3/3/3/1 | «Щит»: «видел» при имени спутника (род); пояснения рассказчика; «Мешки завязаны» без действующего лица                   |
+| 3     | ACCEPT · 2/3/3/3/3/3/3/3 | ACCEPT · 2/3/3/3/3/3/3/3 | Род и настоящее время при именах чисто; RU 41–54 слова. Полировка без блокировки: безымянные наследник, вдова, приказчик |
+
+Порядок оценок: люди / конкретность / язык / подтекст / лор / механика /
+ритм / перевод. После раунда 1: казна — доли павших у Брода, честный
+расчёт с уходящими; убраны оговорка о летописце, телега, торг и вал,
+счёт в последних разворотах; Щ4 — «щит», спутник колет вдове дрова.
+После раунда 2: «видел» → «смотрит, как отсчитывают»; «спорить не хочет»;
+узел вяжет спутник; убрано «Никто не просил»; правка EN «Казны».
+
+**Итог, local:** оба варианта приняты текстовым критиком в раунде 3.
+Открыто для владельца: выбор варианта (AC-4) и отказ от «мы» рассказчика.
+Игра, CI и читательский плейтест — NOT_RUN; интерес читателя — NOT_MEASURED.
