@@ -133,7 +133,7 @@ export function createTerrainMaterial(scene: Scene, region: WorldContinuousMapDt
         float sum=max(dot(a+b,vec4(1.0)),0.0001);
         a/=sum; b/=sum; float water=b.a;
         vec2 uv=terrainUv*detailScale; vec3 color=vec3(0.0);
-        if(a.r>0.001) color+=mix(naturalTile(grassMap,uv),pow(vec3(0.32,0.33,0.22),vec3(2.2)),0.38)*a.r;
+        if(a.r>0.001) color+=naturalTile(grassMap,uv)*a.r;
         if(a.g>0.001) color+=naturalTile(woodlandMap,uv)*a.g;
         if(a.b>0.001) color+=naturalTile(hillsMap,uv)*a.b;
         if(a.a>0.001) color+=naturalTile(marshMap,uv)*a.a;
