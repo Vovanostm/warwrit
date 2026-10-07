@@ -14,3 +14,7 @@ coverage/
 artifacts/
 postgres-data/
 .fallow/
+# Local evidence, browser automation state and agent worktrees
+output/
+.playwright-cli/
+.claude/worktrees/
