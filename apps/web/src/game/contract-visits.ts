@@ -1,4 +1,5 @@
 import type { OrdinaryContractDto } from '@warwrit/protocol';
+import { lookup } from '../i18n/index.js';
 import { BUILDINGS, type BuildingType } from './place-buildings.js';
 
 /** Authored meeting points inside the existing canonical issuer areas. */
@@ -24,13 +25,8 @@ export interface ContractPlaceFact {
   readonly text: string;
 }
 
-const COMPLETED_FACTS: Readonly<Record<string, string>> = {
-  'ci.m1.road-tracks.01': 'Писарю доложили о следах на дороге.',
-  'ci.m1.missing-herbs.01': 'Заготовщице доложили о пропавших травах.',
-  'ci.m1.cellar-rescue.01': 'Освобождённый пленник доставлен в Тихую Гать.',
-  'ci.m1.lost-scout.01': 'Найденный разведчик доставлен в Каменный Брод.',
-  'ci.m1.mill-worker.01': 'Работник мельницы доставлен в Северный Двор.',
-};
+/** Authored completion line, if any: `contract.<id>.done`. */
+const completedFact = (instanceId: string) => lookup(`contract.${instanceId}.done`);
 
 /** Only established, company-known completion; never general prosperity or a new witness. */
 export function contractPlaceFacts(contracts: readonly OrdinaryContractDto[]): ContractPlaceFact[] {
@@ -39,12 +35,12 @@ export function contractPlaceFacts(contracts: readonly OrdinaryContractDto[]): C
       (contract) =>
         contract.yourRole !== 'NONE' &&
         contract.state === 'COMPLETED' &&
-        COMPLETED_FACTS[contract.instanceId],
+        completedFact(contract.instanceId) !== undefined,
     )
     .map((contract) => ({
       instanceId: contract.instanceId,
       siteId: contract.issuerLocation.siteId,
-      text: COMPLETED_FACTS[contract.instanceId]!,
+      text: completedFact(contract.instanceId)!,
     }));
 }
 
