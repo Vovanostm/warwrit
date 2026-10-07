@@ -15,6 +15,14 @@ config_file = "agents/warwrit_implementer.toml"
 description = "Independent read-only diff and invariant review."
 config_file = "agents/warwrit_reviewer.toml"
 
+[agents.warwrit_visual_critic]
+description = "Independent read-only art-direction critic scored against approved references."
+config_file = "agents/warwrit_visual_critic.toml"
+
+[agents.warwrit_text_critic]
+description = "Independent read-only critic of player-facing text scored against the writing rules, lore and mechanics."
+config_file = "agents/warwrit_text_critic.toml"
+
 [agents.warwrit_orchestrator]
 description = "Read-only Warwrit orchestration and evidence-contract checker for a bounded batch."
 config_file = "agents/warwrit_orchestrator.toml"
