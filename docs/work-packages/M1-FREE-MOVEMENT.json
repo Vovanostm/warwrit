@@ -1139,7 +1139,10 @@
     "base": "bcc30f5",
     "scope": "Original dark map art, composed trees, grounded entrances/roots and alpha-aware labels/targets; current main relief/roads/supplies/party/routes retained.",
     "evidence": "M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04",
-    "status": "Published PR146; independent source and day/night forest critique approved bounded result; native journey/input pass before newer-main integration. Final local coverage628/47skip, unchanged audit and8 focused combined-code checks pass. Exact combined PR CI/merge pending. Combined-route browser recapture NOT_RUN after CUA URL policy rejection; prior separate map/PR145 evidence retained. Primary active terrain writers must finish before local-main update.",
-    "integratedMain": "4a82c36 (PR145 route visibility; 2026-10-05)"
+    "status": "Merged PR146 as917644a; primary main/origin/main/remote match, owner drafts retained and restore conflicts resolved. PR CI37234733636 SUCCESS (628/47skip,10000 battles,migrations+14PG,coverage,audit). Bounded independent source/art/input approval; combined moving-route recapture/post-merge browser refresh NOT_RUN after URL-policy rejection. Local terrain-ink drafts outside PR art acceptance. Main push CI37235532971 IN_PROGRESS; full-M1/performance NOT_MEASURED.",
+    "integratedMain": "4a82c36 (PR145 route visibility; 2026-10-05)",
+    "reviewedHead": "2ed5f084b2f889d6f1f147a047ab06e6d1f5db42",
+    "mergeCommit": "917644aafa0b166af57f08932d1d3494697f260f",
+    "closeout": "M1-FREE-MOVEMENT.md#component-forest-merged-closeout--2026-10-05"
   }
 }

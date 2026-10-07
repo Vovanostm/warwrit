@@ -2,10 +2,303 @@
 
 Notable changes to the repository's tooling, gates and delivered behavior. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the
-project has no released versions yet, so entries stay under _Unreleased_ with
-their merge date. Earlier history is in the Git log and merged pull requests.
+project has no released versions yet, so entries stay under _Unreleased_. New
+entries include their date, originating branch and actual delivery status; record
+the merge date when merged. Earlier history is in the Git log and merged pull
+requests.
 
 ## Unreleased
+
+### Pending local work published
+
+- 2026-10-07, branch `claude/world-lore-and-briefs` from `main` (`47c60e0`),
+  published: on the owner's «Да, всё закоммить» all pending local work on the
+  primary checkout was committed in topical commits and opened as a pull
+  request — the contract texts and i18n catalogue, world/vision/briefs docs,
+  critics and 3D skills, terrain ink materials and the wiki research drafts
+  written by earlier sessions. Local evidence (`output/`, `.playwright-cli/`)
+  and agent worktrees (`.claude/worktrees/`) are now ignored, not committed.
+  Merge is not authorized.
+
+### Work package: melee always connects (combat ruleset v3) — proposal
+
+- 2026-10-07, originating branch `main` (`47c60e0`), local: the owner asked for
+  a full specification with acceptance criteria, self-verification and a
+  code-quality test for the accepted melee rule. Added
+  [M1-MELEE-CONNECT](docs/work-packages/M1-MELEE-CONNECT.md), linked from
+  [combat](docs/wiki/combat.md#урон-в-ближнем-бою--решение-владельца-2026-10-07).
+  It specifies:
+  - new ruleset `m1-domain-bridge-v3` with melee/ranged weapon kinds and
+    `meleeTraining` per unit;
+  - a one-roll quality model (precise/solid/glancing, miss only for recruits and
+    ranged) with a provable always-damage invariant;
+  - an optional `quality` on `attack.resolved`, leaving v1/v2 byte-identical;
+  - practice mapping that keeps the SUCCESS rate;
+  - a pure `previewAttack` exposed only in the combat lab;
+  - seven time-boxed steps, 15 acceptance criteria, a test plan, a
+    self-verification pass, a code-quality gate, and open decisions D1–D3.
+
+  Grounded in the current engine, rules, setup-v2, practice, admission and
+  protocol code. An independent `warwrit-critic` pass on revision 1 found 7
+  confirmed gaps (M0-only combat lab, three v1/v2-only server checks,
+  exact-field aggregate validators, the replay digest field, a missing schema 2
+  stress runner, the D1 default, preview rejection codes). All are fixed in
+  revision 2, together with a public `recentAttacks` battle line for a
+  player-visible result. Documentation only; implementation NOT_RUN.
+
+### Contract texts and string catalogue
+
+- 2026-10-07, originating branch `main`, local: owner asked to split the briefs
+  into separate files with acceptance criteria and critique. Added
+  `docs/engineering/briefs/2026-10-07/` (README, 00-common, B1–B9), the text
+  critique rubric [TEXT_CRITIQUE.md](docs/engineering/TEXT_CRITIQUE.md) and the
+  `warwrit-text-critic` / `warwrit_text_critic` agents; removed the single
+  AGENT_BRIEFS file. The i18n catalogue is split per area
+  (`contracts.ru.ts`, `contracts.en.ts`) to avoid shared-file conflicts. Web
+  typecheck, `vitest run apps/web/src` 80/80, eslint and prettier PASS.
+
+- 2026-10-07, originating branch `main`, local: on the owner's «Да, перепиши»
+  the eight M1 contracts use the rewritten Porechye texts (named issuers,
+  briefs, steps, findings, completion facts; hunt briefs shown at the issuer).
+  Strings moved to the new `apps/web/src/i18n` module (`ru.ts`, `en.ts`,
+  `lookup`/`t`; `?lang=en`), with a type that requires a complete English
+  catalogue; no new dependency. Mechanics, steps and rewards unchanged.
+  Affected: `ContractBoard.tsx`, `contract-visits.ts`, `FirstHunt.tsx`,
+  `ContractBoard.test.tsx` (two expected literals), world docs. Checks: web
+  typecheck, `vitest run apps/web/src` 80/80, eslint and prettier PASS; browser
+  NOT_RUN (local `.env` database port mismatch, not changed).
+- 2026-10-07, originating branch `main`, local: detailed agent briefs B1–B9 for
+  the remaining vision decisions in
+  [briefs/2026-10-07](docs/engineering/briefs/2026-10-07/README.md) (split later the same day).
+  Not dispatched.
+
+### Game direction: Battle Brothers rules, XCOM presentation, melee always damages
+
+- 2026-10-07, originating branch `main` (`47c60e0`), local: the owner answered
+  «Да, давай дух Battle Brothers и взял у XCOM только подачу» and set the rule
+  «Урон в ближнем бою должен быть всегда (кроме новобранцев или боя с
+  призраками) — игра должна быть логичнее xcom в этом плане». Recorded in:
+  - [m1-spec §18](docs/wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03);
+  - [combat](docs/wiki/combat.md#урон-в-ближнем-бою--решение-владельца-2026-10-07),
+    with a proposed reading for confirmation: hit quality instead of miss,
+    shield/armor damage counts, recruit threshold, incorporeal exception that
+    adds no creature, ranged keeps its miss chance;
+  - [battlefield-test-maps](docs/wiki/battlefield-test-maps.md): no cover or
+    flanking, melee preview shows strike strength.
+
+  The current core still rolls `hitChance` for every attack. The change needs a
+  new combat rules version and a compatibility analysis, and V1 replays stay
+  unchanged. Implementation NOT_RUN. The canonical Airtable record was not
+  updated (no access in this session): NOT_RUN.
+  Same day: the owner confirmed the proposed reading («Да»), which is now
+  recorded as accepted in the spec, combat and battlefield pages. Open item: the
+  recruit skill threshold.
+
+### Game vision page
+
+- 2026-10-07, originating branch `main`, local: owner confirmed autobattle with
+  AI retreat and possible deaths, an order to travel to a settlement and log out
+  with auto-resolved battles on the way, and a second region right after M1.
+  Vision REQ-18/19, M1-spec §7 and CURRENT_PLAN updated. Documentation only.
+
+- 2026-10-07, originating branch `main`, local: owner decided offline
+  behaviour (field camp with slower upkeep, terrain hunting/gathering,
+  autobattle when attacked, safer logout in settlements) and crises (duchy war
+  with settlement capture first, monster waves next). Vision REQ-12/18 and
+  sections, M1-spec §7/§18 and bestiary world-rules amended; the old camp rule
+  is superseded. Documentation only.
+
+- 2026-10-07, originating branch `main`, local: owner amendment — no battle
+  time budget, contracts of varying length, more repeatable and new contracts,
+  combat-free visual-novel and detective missions. Updated vision REQ-09/11,
+  added REQ-17 and a proposed mission-format section with three candidates;
+  M1-spec tempo answer and CURRENT_PLAN amended. Documentation only.
+
+- 2026-10-07, originating branch `main`, local: owner restated the genre and
+  references (Battle Brothers, Wartales, The Witcher, XCOM) and asked whether
+  the MMO fits and whether it is recorded. Added
+  [docs/wiki/vision.md](docs/wiki/vision.md): owner decision, pillars, what to
+  take from each game, MMO-fit table, REQ-01..16 summary with sources, open
+  decisions and plan refinements; linked from M1-spec §1, wiki index and
+  CURRENT_PLAN. Web sources on Wartales, BB crises, Dofus/Wakfu and Foxhole are
+  cited. Documentation only; game code unchanged.
+
+### Battlefield look and test maps — proposal
+
+- 2026-10-07, originating branch `main` (`47c60e0`), local: owner asked that the
+  battlefield look like Battle Brothers / Disciples / Wartales and for several
+  maps to test combat, character display and animations. Added
+  [battlefield-test-maps](docs/wiki/battlefield-test-maps.md), linked from the
+  [wiki index](docs/wiki/index.md). It covers:
+  - what to take from each reference and what not to copy;
+  - shared battlefield acceptance targets (field, grid, camera scale options,
+    unit base and bars, occlusion, night/local light, honest rules);
+  - six diagnostic maps T0–T5 on existing places, bestiary and weapon profiles;
+  - a minimal implementation path (serverless display stand first, combat-lab
+    scenarios later);
+  - open owner decisions (unit size, field size, elevation/cover).
+
+  Grounded in the current core: hexes plus `blocked` only, spear range 1–2, and
+  no line-of-sight rule. Documentation only; implementation NOT_RUN.
+  Same day: added an XCOM-quality section covering six presentation pillars,
+  the state/visualization split (an XCOM 2 `X2Action`-style client sequencer
+  over the existing combat events), animation blending and contact-frame sync,
+  and the rule decisions it needs (attack preview function, line of sight,
+  ZOC/height/cover).
+
+### World of warring duchies and writing rules
+
+- 2026-10-07, originating branch `main`, local: owner found «Совет опекунов»
+  odd and asked for a literary style after Lermontov, Tolkien and others.
+  Renamed it to the Boyar Duma; read «Тамань», «Капитанская дочка» ch. II,
+  «Бежин луг», part of «Севастополь в декабре месяце» and «Страшная месть»;
+  added [literary-style.md](docs/wiki/world/literary-style.md) with borrowed
+  devices, narrative voices, name phonology per duchy and five Porechye samples.
+  Tolkien, Sapkowski and Glen Cook are summarized from memory, not re-read.
+  Samples are review drafts; game text unchanged.
+
+- 2026-10-07, originating branch `main` (`47c60e0`), local: owner decided that
+  Warwrit is an MMO with a large world of several duchies at war (Witcher
+  analogy). Added [docs/wiki/world/](docs/wiki/world/index.md): realm, four
+  duchies and the regency council, the succession war, Seroe Porechye in the war
+  with named issuers and rewritten texts for the eight M1 contracts, anti-slop
+  [writing rules](docs/wiki/world/writing.md) and a
+  [localization design](docs/wiki/world/localization.md); analysis tables in
+  `docs/content/world/*.csv`. AGENTS.md lore ban amended for the duchies. Cause:
+  the lore review found constraints without history, power or people, and
+  bureaucratic player text. Names, dates and texts are review drafts; game code
+  and in-game text are unchanged. Checks: CSV column validation and local links;
+  game tests NOT_RUN (documentation only).
+
+### Characters 3D: Mixamo scope extended to combat packs
+
+- 2026-10-07, originating branch `main` (`47c60e0`), local: owner answered «Да,
+  расширь». Mixamo use for `codex/characters-3d` now covers the free Sword and
+  Shield, Great Sword and Longbow packs as the primary combat clip set. The
+  cause: the visual rubric REJECT on `1687b19` traced pose and attack defects to
+  the UAL clips. Updated the
+  [warwrit-characters-3d](.agents/skills/warwrit-characters-3d/SKILL.md) and
+  [mixamo-blender](.agents/skills/mixamo-blender/SKILL.md) skills: one pack per
+  weapon family, root travel removed before the bake, and no runtime procedural
+  position correction. The branch agent recorded the decision in its contract
+  and adopted the skills (`def9fd6`); the primary copies remain uncommitted.
+
+### Visual critic with a scored reference rubric
+
+- 2026-10-07, originating branch `main` (`47c60e0`), local: the owner reported
+  that `codex/characters-3d` results were still not acceptable after its critic
+  passed them. Cause: visual passes used the diff reviewer (`warwrit_reviewer`),
+  which re-checked only the author's fixes and had no reference rubric. Added
+  [VISUAL_CRITIQUE.md](docs/engineering/VISUAL_CRITIQUE.md) (author inputs,
+  first-look test, 8 scored criteria, ACCEPT only when every criterion is ≥ 2,
+  a convergence rule that forces a technique change, and a calibration example on
+  `1687b19`). Also added the Codex `warwrit_visual_critic` agent (registered in
+  `.codex/config.toml`), the Claude `warwrit-visual-critic` agent, an
+  [AGENTS.md](AGENTS.md#independent-playable-critique) policy bullet and the
+  critique step in the `warwrit-characters-3d` skill. Check: an independent run
+  of the rubric on the `1687b19` captures, without the calibration section,
+  returned REJECT with the same gaps (pose, rendering language, night value,
+  shield material, attack clip) and a convergence note. Prettier and link checks
+  PASS; TOML parses. The branch agent copied the files into `codex/characters-3d`
+  (`def9fd6`); the primary copies remain uncommitted.
+
+### Skills: 3D character workflow and GLB optimisation
+
+- 2026-10-07, originating branch `main` (`47c60e0`), local: owner reviewed
+  Codex thread `01a112ef-4c1f-7591-be7d-0fd49504ebee` (`codex/characters-3d`,
+  style gate v2) and approved the character tilt toward the camera and Mixamo for
+  clips missing from UAL. Added the
+  [warwrit-characters-3d](.agents/skills/warwrit-characters-3d/SKILL.md) skill.
+  It covers the skeleton and clip map, the tilt rule, ink-material value matching
+  against the reference, lore limits (no emblems), the Mixamo retarget path, an
+  evidence workflow, and `scripts/optimize-glb.sh` (glTF-Transform 4.5.1:
+  dedup/prune/resize/WebP). Linked the skill from the
+  [skills README](.agents/skills/README.md) and
+  [mixamo-blender](.agents/skills/mixamo-blender/SKILL.md). Checks: the script
+  ran on copies of `ranger.glb` (9.7 → 1.9 MB) and `Shield_Wooden.glb`
+  (5.9 → 0.3 MB); both loaded in Babylon 9.28 with textures ready. A live tilt
+  probe (−25…−30°) in the branch workshop gave an upright, reference-like figure.
+  Corrections on the same day: the camera convention (the workshop views from +z,
+  the battle camera from −z), the contact-shadow direction (screen up-right in
+  the game camera) and plain-path references to the untracked `combat.md`. At the
+  owner's request the review session copied both skills into `codex/characters-3d`
+  with the owner decisions and next-cycle brief (commit `3f4fc06`, audit NOT_RUN
+  under the branch exception). The primary copies remain uncommitted.
+
+### Agent rules: work-package step discipline
+
+- 2026-10-07, originating branch `main` (`47c60e0`), local: owner asked to
+  prevent repeats of the defects found in the review of Codex thread
+  `01a112ef-4c1f-7591-be7d-0fd49504ebee` (`codex/characters-3d` step 1:
+  worktree and downloads in `/private/tmp`, production build and coverage run
+  in parallel for a load-only step, timeouts reported without isolated rerun,
+  audit blocker not asked, hand-edited lockfile, link to an untracked
+  screenshot). Owner chose: intermediate work-branch commits may use
+  `--no-verify` with the audit recorded `NOT_RUN`, passing before the PR.
+  Added [AGENTS.md § Work-package steps](AGENTS.md#work-package-steps) and a
+  sequential-checks rule under Proportional verification; cross-linked from
+  [LOCAL_DEVELOPMENT](docs/engineering/LOCAL_DEVELOPMENT.md). Documentation only;
+  game checks not applicable. Not committed/published/merged.
+
+### Characters: real-time 3D plan with swappable equipment — proposal
+
+- 2026-10-06, originating branch `main` (`47c60e0`), local: owner asked for a
+  precise agent plan after reviewing the stalled Codex sprite-pipeline thread.
+  [M1-CHARACTERS-3D](docs/work-packages/M1-CHARACTERS-3D.md) proposes real-time
+  3D characters in Babylon (CC0 Quaternius bodies/outfits/animations, bone
+  attachments) in eight time-boxed steps. Step 0 is an owner gate to amend the
+  ADR-0006 sprite direction; nothing is activated. Documentation only; code,
+  assets and checks NOT_RUN. Not committed/published/merged.
+
+### Progression research and candidate balance correction
+
+- 2026-10-06, originating branch `main` (`47c60e0`), local: owner requested
+  continued modern-game/review research and concrete skill balance.
+  [20-game overview](docs/wiki/progression-research.md),
+  [source editions/limits](docs/wiki/progression-research-sources.md) and
+  [B1 profile](docs/wiki/character-balance.md) compare tactics, practice,
+  injuries and hybrid tradeoffs. Candidate future XP rates/course pace/physical
+  bounds added; earlier whole-turn shot/armor prices corrected, attack reactions
+  prepaid and eight hybrids priced. 13 disciplines/52 perks retained.
+  Affected: owning progression/ability pages, combat cross-links, wiki index/log
+  and CURRENT_PLAN. All new rules remain review-draft; accepted source policies,
+  code/contracts/migrations/assets/player state unchanged. Actual documentary
+  and arithmetic checks recorded in [owning results](docs/wiki/character-progression.md#исследование-и-поправка-b1--2026-10-06);
+  gameplay/UI/simulation/playtest/independent playable critique NOT_RUN,
+  actual balance/pace/course economy NOT_MEASURED. Not committed/published/merged.
+
+### Character skills and hybrid abilities — design proposal
+
+- 2026-10-06, originating branch `main` (`47c60e0`), local: owner requested
+  skill trees, warrior/archer classes, hybrids and injury-related development.
+  [Owning design](docs/wiki/character-progression.md) adds 13 discipline descriptions,
+  eight roles and strength/health/pain/courage rules;
+  [catalogue](docs/wiki/character-abilities.md) proposes 52 perks/eight hybrids.
+  Retain actual-practice/finite-study/discipline-choice policies; damage alone
+  does not award XP or increase HP/strength. Five added disciplines and all
+  new ability/physical balance remain review-draft. Affected: two owning wiki
+  pages, combat cross-links, wiki index/log and CURRENT_PLAN; source/contracts,
+  migrations and player state unchanged. Documentation format/local-links/
+  choice structure/readback/scoped diff-check PASS, recorded in owning design;
+  implementation/game/browser/independent playable critique
+  NOT_RUN, learning pace/balance NOT_MEASURED. Not committed/published/merged.
+
+### Living-world merged / local-main synchronization
+
+- 2026-10-05, originating branch `codex/living-world-main`, merged:
+  owner requested merge/update main. [PR151](https://github.com/Vovanostm/warwrit/pull/151)
+  (`f9d300d`) merged as `47c60e0`; primary/origin/GitHub main match, reviewed
+  tree unchanged. Four-biome fauna/reactions, local synthesized ambience,
+  bounded place work, lawful observations and known-work notes delivered.
+  Web presentation/assets/registry/owning docs affected; no domain/protocol,
+  migration or player-data change. Exact-head PR CI attempt2 SUCCESS (643/47,
+  10000 stress,14 SQL/auth, coverage/audit); attempt1 navigation coverage
+  timeouts retained. Independent critic READY_WITH_LIMITS; local typecheck,
+  diff/readiness/native reload PASS. Scoped recovery preserves unrelated drafts,
+  company/North Yard/850 crowns and original DB/Dex. Main CI IN_PROGRESS;
+  actual new travel NOT_RUN, FPS/RAM/audio quality NOT_MEASURED.
+  [Owning results and recovery](docs/wiki/m1-spec.md#слияние-и-обновление-main--2026-10-05).
+  This dated closeout is local/uncommitted; no deployment.
 
 ### Living-world commit-audit correction
 
@@ -60,6 +353,49 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   browser journey/game tests/independent playable critique NOT_RUN; density/FPS
   NOT_MEASURED. Review-draft, not committed/published/merged.
 
+### Company opening after reading Russian classics
+
+- 2026-10-05, originating branch `main`, local: owner again rejected the
+  compressed origin as non-literary and requested Lermontov, Dostoevsky and
+  Tolstoy. Read the opening of Bela, Crime and Punishment I.1 and Caucasian
+  Prisoner I–II; [sources and reading limits](docs/wiki/onboarding-references.md#классическая-проза--2026-10-05).
+  Replaced the [five-page sample](docs/wiki/onboarding-book.md) with one
+  third-person scene: proposal, questions, hesitation, paid hiring and arrival
+  next morning. Miron is only a sample name for the player-selected leader.
+  [Owning history and checks](docs/wiki/onboarding-lore.md) retains prior
+  rejections. This sample covers two companions only; background mapping and
+  first-job availability remain unresolved. M1 contracts/supplies/code unchanged.
+  New prose is review-draft, not accepted or published; UI/art/playtest NOT_RUN.
+
+### Company opening revised after owner rejection
+
+- 2026-10-05, originating branch `main`, local: supersedes the military-opening
+  recommendation below. Owner rejected its prose and fit with Warwrit, authorized
+  a new origin, then requested clearer language and believable motives. Earlier
+  rank correction and D&D reading remain historical research. The current
+  [five-page book](docs/wiki/onboarding-book.md) follows a completed escort job,
+  known companions and paid hiring from savings;
+  [owning comparison](docs/wiki/onboarding-lore.md) records rejections and scope,
+  [references](docs/wiki/onboarding-references.md) retain actual reading limits.
+  Existing backgrounds, world contracts and supplies are unchanged. Navigation,
+  wiki log and CURRENT_PLAN corrected after the shared writer completed.
+  Formatting/local-link/readback checks PASS; UI/art/playtest NOT_RUN.
+  New prose remains review-draft, without owner acceptance; not published/merged.
+
+### Place motion merged closeout
+
+- 2026-10-05, originating branch `codex/place-motion-sync`, merged:
+  [PR150](https://github.com/Vovanostm/warwrit/pull/150), reviewed2c271ce,
+  merged asf3d214c. PR CI37318286511 SUCCESS: bootstrap639/47 skipped,
+  10000 stress battles, migrations/14 PostgreSQL checks, coverage and audit.
+  Independent source/current-capture review found no material defect. Local
+  main updated to the same remote commit; only two shared documents required
+  scoped recovery, preserving all other drafts/player data and both histories.
+  Integrated typecheck/diff/readiness PASS; existing local5293 runtime restored
+  without data reset/migration. Main CI37319767204 IN_PROGRESS, new logged-in
+  journey NOT_RUN; no deployment. Supersedes earlier local/pending motion entries.
+  [Owning closeout](docs/work-packages/M1-LIVING-PLACES.md#motion-synchronization-merged-closeout--2026-10-05).
+
 ### Synchronized place motion
 
 - 2026-10-05, originating branch `codex/place-motion-sync`, local: owner
@@ -98,6 +434,116 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   Local coverage and ordinary audit are recorded there; current-head PR CI,
   publication and merge remain pending. Unrelated primary drafts/player data
   preserved; no new migration or canonical gameplay change.
+
+### Synchronized place motion
+
+- 2026-10-05, originating branch `main`, local: owner-reported place image/
+  parallax timing mismatch corrected in `PlaceScene.tsx`, `place-scene.css`
+  and `place-depth-scene.ts`. Active outer layers now use the painting's
+  smoothed look in the same render frame, including startup and pointer leave;
+  remove their independent450ms CSS delay. Existing assets/depth/amplitudes,
+  entrances/smoke, reduced motion, fallback and player state retained. Focused
+  source checks and360-frame desktop component-browser/input checks PASS;
+  independent source/seven-capture critic found no material defect; full
+  journey/game/DB gate NOT_RUN.
+  Local/uncommitted/unpublished, no migration or deployment.
+  [Owning behavior, checks and limits](docs/work-packages/M1-LIVING-PLACES.md#синхронизация-движения-слоёв--2026-10-05).
+
+### PR148 merged and primary main updated
+
+- 2026-10-05, originating branch `codex/map-topology-experiments`, merged
+  [PR148](https://github.com/Vovanostm/warwrit/pull/148) as `9ee53d3`; local-main
+  closeout on `main` after the owner's explicit merge/update request. PR and main
+  CI SUCCESS. Coordinated primary/doc write freezes, scoped six-document recovery
+  and safe fast-forward retained all local source, assets, lore/forest/place/wildlife
+  histories and player data. HEAD, origin/main and GitHub main match `9ee53d3`.
+  Core build, core/web typecheck, diff and5287 proxied readiness PASS; normal
+  browser reload restores the rendered map and original stationary850-crown company.
+  No new travel or full integrated gameplay gate was run in this update; retained
+  starvation limitation remains. Recovery stash retained; unrelated drafts remain
+  uncommitted. No migration, deployment or player reset.
+  [Owning closeout](docs/wiki/m1-spec.md#слияние-и-обновление-primary-main--2026-10-05).
+
+- 2026-10-05, branch `codex/map-topology-experiments`, published:
+  [PR148](https://github.com/Vovanostm/warwrit/pull/148) delivers the owner-selected
+  hex default, cached exact route edges and bounded terrain detours. Independent
+  source/playable review and focused checks pass; current-head clean CI and the
+  explicitly authorized merge remain pending. Primary main is at PR147 with
+  concurrent drafts preserved. GitHub owns subsequent CI/merge facts.
+  [Owning delivery record](docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
+
+### Company origins and illustrated opening — design proposal
+
+- 2026-10-05, originating branch `main`, local: owner requested lore, MMO
+  consistency, literary/Slavic references and a credible illustrated opening.
+  [Owning comparison](docs/wiki/onboarding-lore.md),
+  [ten-page book and late entry](docs/wiki/onboarding-book.md) and
+  [sources/quest motifs](docs/wiki/onboarding-references.md) compare four origins
+  and propose one shared military catastrophe with distinct witnesses, followed
+  by later arrivals with other histories. Name/appearance precede the book;
+  company naming follows it. Dragon, war, biographies and legal procedure remain
+  proposals; existing M1 contracts, starting supplies and accepted private-world
+  scope are preserved. Documentation fields/local links/formatting checked;
+  initial formatting and link-parser issues corrected in owning results.
+  Navigation and CURRENT_PLAN updated after parallel writers completed.
+  No code/art implementation, publication or merge; gameplay/CI/independent
+  playable critique NOT_RUN, reading time/appeal/capacity NOT_MEASURED.
+
+### Ambient map wildlife
+
+- 2026-10-05, originating branch `main`, local: owner-requested hares and
+  butterflies animate on the global map. `map-wildlife.ts`, its regression,
+  four continuous-map lifecycle additions, original `wildlife-v1` atlas/provenance
+  and two asset registrations implement seeded safe habitats, bounds/rest,
+  irregular winged flight and night response without targets or canonical NPC
+  state. Future parties/traders/enemies remain separate scope. The independent
+  integrated critic's butterfly readability finding was corrected and repeated
+  desktop capture review found no remaining material defect. Focused checks,
+  final primary typecheck/lint/format, architecture and content validation PASS;
+  initial clean bootstrap PASS (632/47 skipped, 10,000 stress battles, migrations/
+  14 PostgreSQL tests), corrected-source final bootstrap PASS with the same counts
+  and temporary infrastructure removed. Pan/zoom and
+  day/night motion inspected; retained company stayed stationary with 850 crowns.
+  FPS/memory/enjoyment NOT_MEASURED; wildlife travel/STOP/reload NOT_RUN by this chat.
+  Not committed/published/merged; no migration, player reset or deployment.
+  [Owning results and limits](docs/work-packages/M1-FREE-MOVEMENT.md#ambient-map-wildlife--2026-10-05).
+
+### Forest main/runtime closeout
+
+- 2026-10-05, originating branch `codex/forest-diversity-main`, merged PR147
+  `548837c`; local runtime/integration closeout on `main`: owner requested normal
+  sign-in, verification, writer coordination and working primary main. Both active
+  primary authors paused writes; safe fast-forward retained all drafts and both
+  histories, with recovery stash kept. Restored5287/API3187/realtime3188 and matched
+  PUBLIC_ORIGIN/OIDC callback without changing the other author's .env/services
+  or retained player DB. Wildlife consumes the merged polygon-edge helper; its
+  source/atlas remain the other local slice. Scope: forest integration/runtime,
+  `M1-FREE-MOVEMENT`, `CURRENT_PLAN` and this entry. PR/main CI SUCCESS, integrated
+  web typecheck/diff/readiness PASS; actual normal-UI opening, movement/S/reroute,
+  reload/arrival, purchase and pan/zoom/day/night proof in separate test DB.
+  Final independent forest critic PASS, including fully rendered settled reload
+  at1365×900; old-company starvation recovery remains outside
+  accepted rules. No deployment, player reset, new migration or full-M1 claim.
+  [Actual result and limits](docs/work-packages/M1-FREE-MOVEMENT.md#primary-main-integration-and-actual-journey--2026-10-05).
+
+### Tree diversity on current main
+
+- 2026-10-05, branch `codex/forest-diversity-main`, local: owner requested the
+  working 14-form forest in main. Continue PR146's composed curved crowns and
+  original atlas style, with age/species silhouettes and deterministic natural
+  pockets/clearings; preserve relief, input, routes and gameplay. Scope: web tree
+  forms/geometry/placement/geography/mount and owning docs. Prior whole-sprite
+  attempt and primary unrelated drafts/player data remain preserved. Four focused
+  geometry/placement checks, typecheck/build/lint/content pass;
+  independent source and day/night art critic READY_WITH_LIMITS. Full local
+  coverage FAILED two unchanged navigation timeouts (629 pass/47 skip); normal
+  PR CI/merge pending, authenticated journey NOT_RUN after automatic login
+  rejection. Shared picking decoder/terrain validation and site-assembly extraction retain
+  projection, material, alpha and input guards; final unchanged audit passes
+  with current focused coverage.
+  Active primary location-depth writer prevents overlapping shared-file writes;
+  no deployment or new migration.
+  [Owning scope/results](docs/work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
 
 ### Desktop target
 
@@ -166,32 +612,20 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   No game/asset change; tool execution, integration and playable critique
   NOT_RUN, quality/performance NOT_MEASURED. No publication/merge/deployment.
 
-- 2026-10-05, branch `codex/map-topology-experiments`, published:
-  [PR148](https://github.com/Vovanostm/warwrit/pull/148) delivers the owner-selected
-  hex default, cached exact route edges and bounded terrain detours. Independent
-  source/playable review and focused checks pass; current-head clean CI and the
-  explicitly authorized merge remain pending. Primary main is at PR147 with
-  concurrent drafts preserved. GitHub owns subsequent CI/merge facts.
-  [Owning delivery record](docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
+### Terrain implementation
 
-### Tree diversity on current main
-
-- 2026-10-05, branch `codex/forest-diversity-main`, local: owner requested the
-  working 14-form forest in main. Continue PR146's composed curved crowns and
-  original atlas style, with age/species silhouettes and deterministic natural
-  pockets/clearings; preserve relief, input, routes and gameplay. Scope: web tree
-  forms/geometry/placement/geography/mount and owning docs. Prior whole-sprite
-  attempt and primary unrelated drafts/player data remain preserved. Four focused
-  geometry/placement checks, typecheck/build/lint/content pass;
-  independent source and day/night art critic READY_WITH_LIMITS. Full local
-  coverage FAILED two unchanged navigation timeouts (629 pass/47 skip); normal
-  PR CI/merge pending, authenticated journey NOT_RUN after automatic login
-  rejection. Shared picking decoder/terrain validation and site-assembly extraction retain
-  projection, material, alpha and input guards; final unchanged audit passes
-  with current focused coverage.
-  Active primary location-depth writer prevents overlapping shared-file writes;
-  no deployment or new migration.
-  [Owning scope/results](docs/work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
+- 2026-10-04, branch `main`, local (not committed or published): owner requested
+  implementation of [terrain-art](docs/wiki/terrain-art.md#13-реализация--2026-10-04)
+  with subagents. First five original ink terrain/road PNGs and exact provenance
+  use existing material slots; asset registry preserves historical resources.
+  Removed the legacy 38% flat meadow tint so authored earth/grass washes survive.
+  Scope: `assets/art/m1/terrain-ink-v1`, `assets/manifest.json`, renderer `art.ts`
+  and `terrain-material.ts`; unrelated dirty route/docs preserved. Focused web
+  typecheck, content validation, production build and lint/format passed. Independent
+  source/raster critic found no established defect, but current integrated views
+  and movement remain NOT_RUN after expired login and rejected test sign-in.
+  Explicit sign-in/trip approval pending. Remaining five materials, full visual
+  acceptance and candidate performance NOT_RUN/NOT_MEASURED; no merge/deployment.
 
 ### Added
 
@@ -225,6 +659,16 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   in an isolated documentation checkout due to primary shared-file writers;
   NOT_INTEGRATED, uncommitted/unpublished. No game or save changes.
 
+- 2026-10-04, originating branch `main`, local: owner-requested
+  [terrain art specification](docs/wiki/terrain-art.md) for fields, marshes and
+  roads coherent with existing ink town/village art. Defines shared inspected
+  references, ten target materials, transitions, road-direction constraints,
+  staged production and integrated visual/gameplay acceptance. Preserves the
+  owner's example under `docs/wiki/references/`; updates wiki navigation/log and
+  `CURRENT_PLAN`. Production details and numerical targets remain proposals.
+  Documentation readback, links, formatting and scoped diff checked; new textures,
+  game/runtime acceptance NOT_RUN, performance NOT_MEASURED. No publication/merge.
+
 - 2026-09-29, #125: fallow (`pnpm check:dead-code` in `pnpm verify`,
   `pnpm check:changes` on pull requests, `pnpm report:quality`) and ast-grep
   code-shape rules with rule tests (`pnpm check:patterns`).
@@ -242,6 +686,21 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   `git commit --no-verify`.
 
 ### Fixed
+
+- 2026-10-05, originating branch `codex/component-forest-integration`, merged:
+  [PR146](https://github.com/Vovanostm/warwrit/pull/146), reviewed `2ed5f08`,
+  merged as `917644a`; supersedes pending entries below. Dark map art, composed
+  trees, grounded contacts, alpha picking and labels retain main roads/supplies/
+  unmasked routes. PR CI37234733636 SUCCESS: bootstrap628/47 skipped,10000 battles,
+  migrations/14 PostgreSQL checks, coverage and unchanged audit. Primary main
+  updated; both histories and five local terrain-ink slots preserved, restore
+  conflicts resolved and recovery retained. Main push CI37235532971 IN_PROGRESS.
+  Bounded critic approval; combined-route recapture/post-merge browser refresh
+  NOT_RUN after URL-policy rejection. Local drafts remain outside PR art acceptance.
+  [Owning result/limits](docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-merged-closeout--2026-10-05).
+  Primary typecheck/content92/format/diff PASS; Airtable checkpoint read back.
+  Empirical event FAILED (storage limit), recorded in owning closeout.
+  No migration, player-data reset, deployment or full-M1/performance claim.
 
 - 2026-10-05, branch `codex/component-forest-integration`, published PR146:
   integrated newer main `4a82c36` (merged PR145) after concurrent route delivery.
@@ -264,6 +723,23 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   and shared deterministic hash/obstacle primitives. One meaningful assembled-tree
   geometry regression added; final coverage628/47skip and audit pass. Exact-head
   PR CI/merge pending; primary concurrent drafts/writers preserved.
+
+- 2026-10-05, originating branch `codex/route-visibility-fix`, merged:
+  main push CI37233985843 completed SUCCESS at `4a82c36`, superseding the
+  in-progress status below. Live remote main, origin/main and primary main match;
+  route files have no local diff. Dev5293 restored the retained company (800
+  crowns); readiness and documentation format/diff checks passed. Unrelated
+  local terrain/art/wiki/skill work remains preserved. No deployment.
+
+- 2026-10-04, branch `codex/route-visibility-fix`, merged:
+  [PR145](https://github.com/Vovanostm/warwrit/pull/145), reviewed head `988eea2`,
+  merged as `4a82c36`. PR CI37233180326 passed full bootstrap627/47 skipped,
+  10000-battle stress, migration smoke/14 PostgreSQL checks, coverage and audit.
+  This supersedes the local/pending entries below. Primary main updated to
+  origin/main; scoped documentation restore retained both histories and all
+  unrelated terrain/art/wiki/skill work. Main push CI37233985843 is in progress;
+  dev5293 and player data retained. Actual merge/results are recorded in
+  [the owning closeout](docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-merged-closeout--2026-10-04).
 
 - 2026-10-04, branch `codex/route-visibility-fix`, local: owner authorized
   publication and merge of the reviewed route visibility correction. Isolated
@@ -294,6 +770,12 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   independent source critique confirmed the fix's cause/scope; no current moving
   visual verdict, new full gate, publication or merge. See
   [route visibility correction](docs/work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
+
+- 2026-10-04, `codex/supplies-delivery`, merged: [PR144](https://github.com/Vovanostm/warwrit/pull/144)
+  merged as `bcc30f5`; this supersedes the published status below. Final-head
+  CI passed bootstrap, stress, migrations, coverage and changed-code gates.
+  Primary main updated; main push CI37213517376 also passed. Unrelated owner
+  drafts/skills and player data retained.
 
 - 2026-10-04, branch `codex/supplies-delivery`, published (not yet merged):
   supplies can be bought through the local bazaar/granary with finite merchant
@@ -358,6 +840,16 @@ their merge date. Earlier history is in the Git log and merged pull requests.
   and independent supplied-evidence critique pass within inspected scope.
   [Results, checks and limits](docs/wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05).
 
+- 2026-10-04, branch `codex/supplies-playtest`, local (not committed or merged):
+  [AGENTS.md](AGENTS.md#required-changelog-and-change-awareness) requires agents
+  to record substantive changes and their reasons in this changelog before
+  closeout/commit/publication, and read incoming entries with `CURRENT_PLAN`
+  after resuming, changing branches or integrating changes. Owner requested
+  this to prevent agents from confusing branch-specific work and missing new
+  decisions. Entries identify affected paths, delivery status and source links;
+  integration preserves both branches' history. This entry covers only the
+  instruction change and changelog format clarification. Verification: scoped
+  diff, readback and local link check; game tests `NOT_RUN` (documentation only).
 - 2026-09-29: local containers run on colima; see
   [LOCAL_DEVELOPMENT.md](docs/engineering/LOCAL_DEVELOPMENT.md#container-runtime-colima).
 - 2026-09-29, #125: seven internal-only game-core exports removed; `ajv` and

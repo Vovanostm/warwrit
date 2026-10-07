@@ -122,7 +122,8 @@ against the merge-base with `origin/main` (override with `FALLOW_AUDIT_BASE`), s
 an untracked unused file also blocks a commit; a Markdown-only commit skips it.
 It takes about 10–15 s. Rebase and cherry-pick run no hook, and
 `git commit --no-verify` skips it (the audit is then `NOT_RUN`); CI stays the
-final gate.
+final gate. Agents may skip it only for intermediate work-branch commits under
+[AGENTS.md § Work-package steps](../../AGENTS.md#work-package-steps).
 
 A fresh `pnpm install` points the clone's `core.hooksPath` at the hooks. pnpm
 skips that `prepare` step when `node_modules` is already current, so an existing

@@ -1,5 +1,112 @@
 # Warwrit current delivery plan
 
+**Briefs split with acceptance and critique — 2026-10-07:** owner asked for
+separate files so agents execute unambiguously. [briefs/2026-10-07](briefs/2026-10-07/README.md)
+holds the common contract (rules, quality bar, critique loop, checks, DoD,
+handoff) and B1–B9 with numbered acceptance criteria, owner quotes, allowed
+paths, steps and stop conditions. New text critic: [TEXT_CRITIQUE](TEXT_CRITIQUE.md),
+`.claude/agents/warwrit-text-critic.md`, `.codex/agents/warwrit_text_critic.toml`.
+The i18n catalogue is split per area (`contracts.ru.ts`/`contracts.en.ts`) so
+parallel briefs do not share one file; web typecheck and 80/80 web tests PASS.
+Prerequisite P0: the owner decides how to commit the local work before dispatch.
+
+**Contract texts in game, agent briefs — 2026-10-07:** owner: «Да, перепиши».
+The eight M1 contracts now use the Porechye texts (named issuers, briefs, steps,
+findings, completion facts; hunt briefs) from a new `apps/web/src/i18n`
+module with complete Russian and English catalogues (`?lang=en`). Local on
+`main`, not committed. Checks: web typecheck PASS, `vitest run apps/web/src`
+80/80 PASS (two expectations updated to the new text), eslint/prettier PASS;
+browser check NOT_RUN — the checkout `.env` database port (55147) does not match
+the compose port (55432), left untouched. Owner also asked for detailed prompts
+for the remaining work: [briefs/2026-10-07](briefs/2026-10-07/README.md)
+(B1 field camp, B2 autobattle, B3 repeatable contracts, B4 non-combat missions,
+B5 duchy-war crisis, B6 localization, B7 bestiary/quest revision, B8 company
+book, B9 second region after M1). Not dispatched.
+
+**Autobattle and second region decided — 2026-10-07:** autobattle AI retreats,
+deaths are possible; the player may order the AI to travel to a settlement and log
+out, with battles on the way auto-resolved (REQ-18). Second region with a second
+city comes right after M1 (REQ-19).
+
+**Offline camp and crises decided — 2026-10-07:** offline in the field the
+company camps: slower food/wage spend, hunting/gathering by terrain; enemies may
+attack and the battle is resolved by autobattle; logging out in a settlement is
+safer (REQ-18, replaces the M1-spec §7 camp rule). First crisis: duchy war with
+settlement capture; further crises: monster waves (REQ-12). Rates and autobattle
+details remain open with recommendations in the [vision](../wiki/vision.md).
+Open: second-region timing.
+
+**Vision amendment — 2026-10-07:** owner rejected a battle time budget;
+contracts vary in length and may run longer. More repeatable and new contracts
+are required, and part of the missions are combat-free visual novels and
+detectives (REQ-17, [vision](../wiki/vision.md#миссии-без-боя-новеллы-и-детективы)).
+Still open: offline company, crisis type, multi-region timing.
+
+**Game vision consolidated — 2026-10-07:** owner restated the game: a mercenary
+band in a grey dark-fantasy world torn by war and mythic creatures; references
+Battle Brothers, Wartales, The Witcher; combat BB/Wartales/XCOM; world map
+BB/Wartales; MMO. [Vision page](../wiki/vision.md) consolidates REQ-01..16,
+the MMO-fit analysis and recommendations. Open owner decisions: offline company
+safety (main risk), crisis type (recommended: duchy war as in BB Noble War),
+battle time budget 5–10 min, multi-region timing. The eight stages are kept;
+refinements are proposals. Documentation only; code NOT_RUN.
+
+**Characters 3D plan proposed — 2026-10-06:** owner requested an exact agent
+plan for swappable weapons/armor/hair. [M1-CHARACTERS-3D](../work-packages/M1-CHARACTERS-3D.md)
+(proposed, not active): real-time 3D characters in Babylon from CC0 assets.
+Starts only after the owner confirms the ADR-0006 amendment (step 0).
+Documentation only on `main 47c60e0`; implementation NOT_RUN.
+
+**Progression comparative research — 2026-10-06:** owner requests a large
+modern-game/review survey and concrete skill/balance recommendations.
+Documentation-only local follow-up on primary `main 47c60e0`; parent owns three
+new wiki pages and additive updates to progression/abilities/combat/navigation/log,
+this checkpoint and changelog. [20-game comparison](../wiki/progression-research.md)
+and [source editions](../wiki/progression-research-sources.md) distinguish critic
+opinions, historical rules and inference. [Candidate B1](../wiki/character-balance.md)
+proposes practice rates x2, funded course1000 XP/Campaign Day, bounded physical
+growth, prepaid attack reactions and priced hybrid variants; 52 perks/eight
+hybrids retained. Earlier whole-turn shot/armor costs amended after opportunity
+cost comparison. Existing learning/uniqueness/no generic cap policies preserved;
+all new numbers/actions remain review-draft, not approved/activated M1.
+Actual documentation/arithmetic checks and limits are recorded in
+[owning design](../wiki/character-progression.md#исследование-и-поправка-b1--2026-10-06).
+Game/code/UI/simulation/playtest/independent playable critique NOT_RUN;
+actual balance/learning pace/course economy NOT_MEASURED. No commit/publication/
+merge/deployment/assets/migrations/player-state changes; unrelated dirty work kept.
+
+**Character progression design — 2026-10-06:** owner requests skill trees,
+warrior/archer roles, hybrid abilities and growth of courage/strength/health
+under injury. Documentation-only local proposal on primary `main 47c60e0`;
+parent owns the two new wiki pages and these additive navigation/closeout edits.
+[Owning design](../wiki/character-progression.md) records 13 disciplines,
+eight roles, eight physical/mental indicators and causal learning;
+[ability catalogue](../wiki/character-abilities.md) proposes 52 perks/eight hybrids.
+Full live Learning/Social/Definitions/P2 snapshot Notes/Purpose read;
+independent practice, finite study, discipline choices/no generic XP caps remain.
+New catalogue/five disciplines/physical adaptation are review-draft, not approved
+or activated M1; damage alone earns no XP/HP/strength. Existing dirty work kept.
+Documentation format/local-links/anchors/sources/choice structure/readback and
+scoped diff-check PASS; game/UI/browser/independent playable
+critique NOT_RUN, progression pace/balance NOT_MEASURED. No code/assets/migrations,
+commit/publication/merge/deployment or player-data change.
+
+**Living-world merged / primary-main updated — 2026-10-05:** owner-authorized
+[PR151](https://github.com/Vovanostm/warwrit/pull/151), reviewed `f9d300d`, merged
+`47c60e0`; primary main/origin/main/live GitHub main match, reviewed merge tree
+unchanged. PR CI37347521533 attempt2 SUCCESS: bootstrap643/47,10000 stress,
+migration smoke/14 PostgreSQL/auth, coverage643/47 and audit. Attempt1 coverage
+navigation timeouts retained as failed history; no gate weakened. Independent
+exact-source/capture critic READY_WITH_LIMITS. Scoped recovery stash61ecbcd;
+merged source clean, both document histories/unrelated drafts/player data retained.
+Primary dev5293/API3193/realtime3194 restored with original `.env` after processes
+were found stopped; native reload restores North Yard/850 crowns with no console
+errors. Web typecheck/diff/readiness PASS. Main push CI37350909372 IN_PROGRESS;
+new actual travel/STOP/return NOT_RUN, FPS/RAM/subjective sound NOT_MEASURED.
+Empirical NOT_WRITTEN (existing storage541/100); no deployment.
+[Actual merged closeout](../wiki/m1-spec.md#слияние-и-обновление-main--2026-10-05)
+supersedes pending/local delivery status below; this dated record is local.
+
 **Living-world delivery authorized — 2026-10-05:** owner requested “merge, update local main”. Parent owns isolated `codex/living-world-main`, base `f3d214c`; scoped web presentation, original wildlife assets/registry and owning docs only. Pre-extraction clean bootstrap and source/capture review remain historical evidence. Eight introduced audit findings were fixed by cohesive extraction; final audit/focused7/typecheck/lint/exact fauna comparison and repeated desktop component checks PASS. Current affected critic/audio and exact PR CI remain pending. Preserve concurrent primary drafts and player data; no deployment or auto-merge. [Scope/checks](../wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
 
 **Living-world first cycle delivered locally — 2026-10-05:** owner authorized “Ок, implement”.
@@ -38,6 +145,38 @@ entities. Formatting/local-link/readback checks PASS after correcting new-table
 formatting. Browser/game tests/independent playable critique NOT_RUN;
 density/FPS NOT_MEASURED. Local, not committed/published/merged.
 
+**Company prose after classics — 2026-10-05:** owner rejected the next
+compressed draft and explicitly requested Lermontov, Dostoevsky and Tolstoy.
+[Actual reading limits](../wiki/onboarding-references.md#классическая-проза--2026-10-05)
+and [new scene](../wiki/onboarding-book.md) are local review-draft. Third-person
+sample follows one leader and two known guards through questions, hesitation,
+paid hiring and arrival next morning; Miron is an illustrative name only.
+Other backgrounds/one-companion version and first-job availability remain
+unresolved. Accepted M1/contracts/supplies unchanged; no UI or game-code
+implementation, publication or literary acceptance. [Owning record](../wiki/onboarding-lore.md).
+
+**Company opening superseded — 2026-10-05:** owner rejected the military
+origin and subsequent prose, authorized a complete reworking, then requested
+cleaner language and believable causality. Current local review-draft uses
+completion of an escort job, known companions and paid hiring from savings.
+[Five-page book](../wiki/onboarding-book.md) and
+[owning decision history](../wiki/onboarding-lore.md) supersede the catastrophe
+recommendation below. Background compatibility and first-job availability
+remain unresolved; accepted M1/world/contracts/supplies unchanged.
+Formatting/local links/readback PASS; UI/art/playtest NOT_RUN, literary
+acceptance absent. Local only; no publication, merge or gameplay implementation.
+
+**Place motion merged/local-main closeout — 2026-10-05:** supersedes earlier
+pending/local synchronization statuses. Owner-authorized [PR150](https://github.com/Vovanostm/warwrit/pull/150),
+reviewed `2c271ce`, merged as `f3d214c`; PR CI37318286511 SUCCESS and independent
+source/seven-capture critique clear. Primary main/origin/main/live GitHub main
+match; source clean, unrelated drafts and both document histories retained with
+recovery stash1e594a7. Integrated web typecheck/diff/proxied readiness PASS.
+Existing retained DB/Dex and dev5293/API3193/realtime3194 restored without `.env`
+change, migration, reset or player command. Main CI37319767204 IN_PROGRESS;
+post-merge logged-in journey NOT_RUN, performance NOT_MEASURED. No deployment.
+[Actual delivery and limits](../work-packages/M1-LIVING-PLACES.md#motion-synchronization-merged-closeout--2026-10-05).
+
 **Place motion synchronization delivery — 2026-10-05:** owner explicitly
 requested “merge in main, update local main”. Parent owns isolated
 `/private/tmp/warwrit-place-motion-sync` / `codex/place-motion-sync`, base
@@ -66,79 +205,30 @@ player data stay preserved. Local coverage/ordinary audit and exact PR CI/review
 must pass before the expected-head merge; publication/merge are pending.
 [Scope, authority and evidence](../work-packages/M1-LIVING-PLACES.md#publication-authorized--2026-10-05).
 
-**Desktop viewport accepted — 2026-10-05:** owner specified desktop as the
-supported version. Mobile viewing is landscape only, with the same desktop
-interface at a smaller scale; no separate mobile/portrait UX.
-[Repository policy](../../AGENTS.md#desktop-viewport-and-mobile-orientation)
-is updated locally on `main`; existing adaptations are retained. Place-depth
-acceptance targets desktop; the already captured390px checks are supplementary.
-No UI layout change, publication or merge accompanies this policy update.
+**Location motion synchronization — 2026-10-05:** owner reported that image
+animation and outer parallax move at different times. Local primary `main`
+/`9ee53d3` now drives the active distant/foreground CSS layers from the same
+smoothed renderer look as the painting/doors/smoke, without a second CSS
+transition; startup and pointer leave share that path. Original depth, amplitude,
+assets, reduced motion and fallback range retained. Web typecheck, scoped
+lint/format, two existing projection checks and desktop component-browser
+360-frame timing/input/reduced-motion/fallback checks PASS; independent read-only
+source/seven-capture critic found no material defect in this correction. Full player journey/full game/DB gate NOT_RUN, performance
+NOT_MEASURED. Local, uncommitted/unpublished; player data and unrelated dirty
+work preserved. [Owning result](../work-packages/M1-LIVING-PLACES.md#синхронизация-движения-слоёв--2026-10-05).
 
-**Location depth implementation active — 2026-10-05:** owner requested
-optimal method selection, implementation, review and testing. Parent is the sole
-writer on primary `main` / `917644a`: place depth renderer/React integration,
-offline depth assets/script, additive asset registry and owning documents only.
-First playable: Bereznyak buildings/lanes change perspective under mouse input
-while entrances follow their doors; apply to the other four existing paintings
-after that result works. Existing art, canonical state and unrelated dirty work
-are preserved. Independent read-only source/playable critic required before
-closeout. Full local gate is owned serially by the parent; player DB is retained.
-No PR, merge, deployment or paid production is requested.
-
-**Location depth local closeout — 2026-10-05:** supersedes the active status
-above. Five depth maps and a bounded Babylon perspective shader are implemented;
-doors/smoke share projection, reduced motion is neutral and GPU failure retains
-the original CSS range. Repeated independent source/visual critic found no open
-material defect in supplied five-scene day/night/extreme/motion-frame views.
-Native door/Escape, disabled remote entrances, fallback and lifecycle assertions
-PASS. Final clean bootstrap at `548837c` plus this slice:633 passed/47skipped,
-10000-battle stress and migrations/14 PostgreSQL checks PASS. Prior interrupted
-final-source build is not counted. Separate forest integration updated primary
-from917644a to548837c and preserved this local dirty slice and all other writers.
-[Implementation, workflow and limits](../work-packages/M1-LIVING-PLACES.md#location-depth-implementation--2026-10-05).
-Desktop is the acceptance target; narrow evidence is supplementary. Ruin/night
-and lifecycle harness proof does not establish a complete player journey;
-FPS/memory/enjoyment NOT_MEASURED. This slice remains local, not committed or
-published; no migration, player-data reset, merge or deployment by this task.
-
-**Location depth sharpness correction — 2026-10-05:** final native view
-revealed a half-size canvas after DPR2→1; removed the place-only manual scaling
-override and retained the shared adaptive engine. Fresh DPR1/DPR2 mounts,
-repeated viewport/DPR transitions and sharp neutral/extreme/motion-frame views
-PASS; affected independent critic DONE with no material defect. Corrected clean
-bootstrap at548837c plus this local slice PASS:633/47skipped,10000 battles,
-migration smoke/14PG; the cancelled stale-copy attempt is not counted.
-[Correction and final evidence](../work-packages/M1-LIVING-PLACES.md#исправление-чёткости--2026-10-05).
-Desktop policy and local/unpublished status above remain unchanged; FPS/memory
-NOT_MEASURED. CHANGELOG/CURRENT_PLAN ownership returned by forest writer;
-its new closeout entries retained. Pending PR148 primary integration is owned
-by the navigation task after this closeout; this gate covers548837c plus this
-slice, not a future integration.
-
-**Location foreground edge correction — 2026-10-05:** owner reported a
-clipped gate-image boundary at extreme mouse positions. CSS-only active overscan
-now1.13 covers the existing full foreground travel; fallback1.035 and reduced
-motion retained. Native32-corner checks across four settlements/minimum desktop/
-fallback/reduced motion and CSS format/diff PASS; affected critic DONE without
-material finding.
-[Current correction and evidence](../work-packages/M1-LIVING-PLACES.md#края-переднего-плана--2026-10-05).
-Full game/DB gate NOT_RUN for this CSS-only followup; prior633/47 code gate is
-historical. Primary remains548837c, integration explicitly paused by PR148 owner
-until this correction closeout; preserve all other dirty work/data/services.
-Local/uncommitted/unpublished; FPS NOT_MEASURED.
-
-**Location depth methods researched — 2026-10-05:** owner requested modern,
-simple methods and ready scripts/workflows for volume inside place paintings.
-Local research on primary `main` / `917644a` compares depth shaders, textured
-surfaces, layered depth/inpainting, projected geometry and Gaussian splats.
-[Owning comparison and proposed workflow](../work-packages/M1-LIVING-PLACES.md#location-depth-methods--2026-10-05).
-Recommendation: offline Depth Anything V2 Small plus a bounded depth-projection
-prototype, with selected occlusion layers/geometry only if needed. This is a
-proposal, not an implemented renderer or newly accepted technology. Tools/model
-licenses, installed Babylon types and existing art were inspected. Documentation
-checks only; model execution, game integration and playable critique NOT_RUN,
-quality/performance NOT_MEASURED. Other dirty work remains outside this slice.
-No publication, merge, deployment or paid provisioning.
+**PR148 merged and primary updated — 2026-10-05:** supersedes the pending
+navigation publication/merge/local-main observations below. PR148 MERGED as
+`9ee53d3`; PR/main CI SUCCESS. After coordinated writer freezes, scoped recovery
+and safe fast-forward, primary HEAD/origin/main/GitHub main match that commit.
+All local source/assets/docs/player data retained, recovery stash preserved;
+unrelated drafts remain uncommitted. Core build, core/web typecheck, diff and
+5287 proxied readiness PASS. Normal browser reload restores the rendered map,
+original stationary company and850 crowns. New travel/full integrated gameplay
+NOT_RUN for this update; existing starvation limitation remains. Location writer
+receives primary ownership back for its separately authorized isolated delivery.
+[Actual integration and limits](../wiki/m1-spec.md#слияние-и-обновление-primary-main--2026-10-05).
+No new migration, reset or deployment.
 
 **Hex navigation delivery authorized — 2026-10-05:** owner requested
 “Review, merge, update local main”. This authorizes review, publication and merge
@@ -217,6 +307,53 @@ NOT_RUN; optimization and topology benefit NOT_MEASURED. Origin: primary
 have concurrent writers. Local, uncommitted, NOT_INTEGRATED/NOT_PUBLISHED;
 existing missions, source changes and player data preserved.
 
+**Lore and company opening researched — 2026-10-05:** owner requested scenario
+comparison, Slavic/literary motifs and an illustrated origin book credible for
+many players. Local review draft on primary `main` compares four origins and
+recommends one shared catastrophe with bounded direct witnesses, plus later
+arrivals through other histories. Ten short book pages cover character identity,
+service, two scouts, distant dragon attack, shelter, deferred report and company
+naming; a separate late-entry text avoids replaying the catastrophe. Existing
+M1 scope/contracts/supplies remain unchanged. Dragon status/date, military law,
+biographical cash source and first-job availability still require product decisions.
+[Owning design, sources and actual checks](../wiki/onboarding-lore.md).
+Documentation checks PASS after correcting initial formatting/parser issues;
+code/art/UI/playtest/CI NOT_RUN, appeal/reading time/MMO capacity NOT_MEASURED.
+This is local research, not an activated implementation, publication or acceptance.
+
+**Ambient map wildlife — 2026-10-05:** owner requested animated hares and
+butterflies. Local `main` / `548837c` implements seeded nonpickable fauna,
+independent bounds/rest cycles, separately drawn ink poses/foot pivots, irregular
+winged flight and butterfly disappearance at night. Complete habitats avoid
+roads/water/obstacles and sites while following current relief. Future parties,
+traders and hostile NPC mechanics remain OUT. Focused checks, primary web
+typecheck/lint/format, architecture and asset validation PASS. Clean wildlife-only
+bootstrap before butterfly correction PASS: 632 tests/47 skipped, 10,000 stress
+battles and migrations/14 PostgreSQL tests. Final corrected-source bootstrap PASS
+with the same counts; temporary infrastructure removed.
+Independent repeated integrated desktop day/night/close/overview/motion/pan critique
+found no remaining material defect after increasing butterfly wing readability.
+Normal map inspection preserved the stationary company and 850 crowns; no new
+login/travel/purchase performed. FPS/memory/enjoyment NOT_MEASURED; wildlife
+travel/STOP/reload journey NOT_RUN by this chat, full M1 acceptance unproven.
+[Owning behavior, evidence and limits](../work-packages/M1-FREE-MOVEMENT.md#ambient-map-wildlife--2026-10-05).
+Local, uncommitted and unpublished; unrelated drafts/player data retained.
+
+**Forest main/runtime verified — 2026-10-05:** supersedes the pending forest
+status below. PR147 is MERGED as `548837c`; PR/main CI SUCCESS. Primary `main`
+now matches that commit after coordinated location/wildlife write pauses, retaining
+both document histories, all dirty/untracked work and a recovery stash. Dev5287
+/API3187/realtime3188 restored with matching PUBLIC_ORIGIN/OIDC callback; readiness
+and integrated web typecheck PASS. Owner manual sign-in and subsequent same-browser
+native OIDC verification succeed. Actual separate-database company journey verifies
+ПКМ, S, reroute, moving/settled reload, city/village/forest arrival, local purchase,
+pan/zoom with page scroll0 and natural day/night overview/close captures. Final
+independent forest critic PASS, including fully rendered settled reload at1365×900.
+Legacy retained companies
+without food still reject movement/purchase under the accepted unrecovered-starvation
+policy; data and rules preserved. This is forest delivery, not full-M1 acceptance.
+[Runtime, journey and limits](../work-packages/M1-FREE-MOVEMENT.md#primary-main-integration-and-actual-journey--2026-10-05).
+
 **Tree diversity to main authorized — 2026-10-05:** owner requests working
 implementation in main, including this mission's PR/merge. Parent owns clean
 `forest-diversity-main` / `codex/forest-diversity-main`, base917644a (PR146).
@@ -237,6 +374,80 @@ Primary has an active location-depth writer; preserve shared files/drafts.
 No deployment.
 [Owning scope and results](../work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
 
+**Desktop viewport accepted — 2026-10-05:** owner specified desktop as the
+supported version. Mobile viewing is landscape only, with the same desktop
+interface at a smaller scale; no separate mobile/portrait UX.
+[Repository policy](../../AGENTS.md#desktop-viewport-and-mobile-orientation)
+is updated locally on `main`; existing adaptations are retained. Place-depth
+acceptance targets desktop; the already captured390px checks are supplementary.
+No UI layout change, publication or merge accompanies this policy update.
+
+**Location depth implementation active — 2026-10-05:** owner requested
+optimal method selection, implementation, review and testing. Parent is the sole
+writer on primary `main` / `917644a`: place depth renderer/React integration,
+offline depth assets/script, additive asset registry and owning documents only.
+First playable: Bereznyak buildings/lanes change perspective under mouse input
+while entrances follow their doors; apply to the other four existing paintings
+after that result works. Existing art, canonical state and unrelated dirty work
+are preserved. Independent read-only source/playable critic required before
+closeout. Full local gate is owned serially by the parent; player DB is retained.
+No PR, merge, deployment or paid production is requested.
+
+**Location depth local closeout — 2026-10-05:** supersedes the active status
+above. Five depth maps and a bounded Babylon perspective shader are implemented;
+doors/smoke share projection, reduced motion is neutral and GPU failure retains
+the original CSS range. Repeated independent source/visual critic found no open
+material defect in supplied five-scene day/night/extreme/motion-frame views.
+Native door/Escape, disabled remote entrances, fallback and lifecycle assertions
+PASS. Final clean bootstrap at `548837c` plus this slice:633 passed/47skipped,
+10000-battle stress and migrations/14 PostgreSQL checks PASS. Prior interrupted
+final-source build is not counted. Separate forest integration updated primary
+from917644a to548837c and preserved this local dirty slice and all other writers.
+[Implementation, workflow and limits](../work-packages/M1-LIVING-PLACES.md#location-depth-implementation--2026-10-05).
+Desktop is the acceptance target; narrow evidence is supplementary. Ruin/night
+and lifecycle harness proof does not establish a complete player journey;
+FPS/memory/enjoyment NOT_MEASURED. This slice remains local, not committed or
+published; no migration, player-data reset, merge or deployment by this task.
+
+**Location depth sharpness correction — 2026-10-05:** final native view
+revealed a half-size canvas after DPR2→1; removed the place-only manual scaling
+override and retained the shared adaptive engine. Fresh DPR1/DPR2 mounts,
+repeated viewport/DPR transitions and sharp neutral/extreme/motion-frame views
+PASS; affected independent critic DONE with no material defect. Corrected clean
+bootstrap at548837c plus this local slice PASS:633/47skipped,10000 battles,
+migration smoke/14PG; the cancelled stale-copy attempt is not counted.
+[Correction and final evidence](../work-packages/M1-LIVING-PLACES.md#исправление-чёткости--2026-10-05).
+Desktop policy and local/unpublished status above remain unchanged; FPS/memory
+NOT_MEASURED. CHANGELOG/CURRENT_PLAN ownership returned by forest writer;
+its new closeout entries retained. Pending PR148 primary integration is owned
+by the navigation task after this closeout; this gate covers548837c plus this
+slice, not a future integration.
+
+**Location foreground edge correction — 2026-10-05:** owner reported a
+clipped gate-image boundary at extreme mouse positions. CSS-only active overscan
+now1.13 covers the existing full foreground travel; fallback1.035 and reduced
+motion retained. Native32-corner checks across four settlements/minimum desktop/
+fallback/reduced motion and CSS format/diff PASS; affected critic DONE without
+material finding.
+[Current correction and evidence](../work-packages/M1-LIVING-PLACES.md#края-переднего-плана--2026-10-05).
+Full game/DB gate NOT_RUN for this CSS-only followup; prior633/47 code gate is
+historical. Primary remains548837c, integration explicitly paused by PR148 owner
+until this correction closeout; preserve all other dirty work/data/services.
+Local/uncommitted/unpublished; FPS NOT_MEASURED.
+
+**Location depth methods researched — 2026-10-05:** owner requested modern,
+simple methods and ready scripts/workflows for volume inside place paintings.
+Local research on primary `main` / `917644a` compares depth shaders, textured
+surfaces, layered depth/inpainting, projected geometry and Gaussian splats.
+[Owning comparison and proposed workflow](../work-packages/M1-LIVING-PLACES.md#location-depth-methods--2026-10-05).
+Recommendation: offline Depth Anything V2 Small plus a bounded depth-projection
+prototype, with selected occlusion layers/geometry only if needed. This is a
+proposal, not an implemented renderer or newly accepted technology. Tools/model
+licenses, installed Babylon types and existing art were inspected. Documentation
+checks only; model execution, game integration and playable critique NOT_RUN,
+quality/performance NOT_MEASURED. Other dirty work remains outside this slice.
+No publication, merge, deployment or paid provisioning.
+
 **Component forest integration authorized — 2026-10-04:** owner requested
 review, PR merge and local main update for the approved5290 dark-fantasy map.
 Parent owns `codex/component-forest-integration`, base `bcc30f5`; the obsolete
@@ -249,6 +460,52 @@ main `4a82c36` / PR145, preserving its route fix. Final PR CI and exact-head mer
 remain pending; NOT_MERGED. Primary has concurrent route/
 terrain writers; local-main update waits for their write completion.
 Primary owner drafts and player data are retained. No deployment authorized.
+
+**Component forest merged closeout — 2026-10-05:** supersedes the pending note
+above. [PR146](https://github.com/Vovanostm/warwrit/pull/146), reviewed `2ed5f08`,
+merged with expected-head protection as `917644a`. PR CI37234733636 SUCCESS:
+bootstrap628/47 skipped, 10000-battle stress, migrations/14 PostgreSQL checks,
+coverage and unchanged audit. Primary main, origin/main and remote main match;
+both completed primary writers' histories and all local terrain/art/wiki/skill
+work are retained, including five uncommitted terrain-ink slots. Restore conflicts
+are resolved, no unmerged index entries; recovery stash retained. Main push
+CI37235532971 IN_PROGRESS. Bounded art/input critic approval stands; combined
+moving-route recapture/post-merge browser refresh NOT_RUN after browser URL-policy
+rejection. Local texture drafts are outside reviewed PR art acceptance. No data
+reset, deployment or full-M1/performance acceptance. Details and limits:
+[owning closeout](../work-packages/M1-FREE-MOVEMENT.md#component-forest-merged-closeout--2026-10-05).
+
+**Terrain art implementation active — 2026-10-04:** owner requests implementation
+of [terrain-art](../wiki/terrain-art.md) with best practices and subagents.
+Parent is sole asset/renderer/document writer on primary `main`, base `bcc30f5`;
+existing dirty route, skills and design documents are preserved. Bounded read-only
+integration explorer and independent visual/source critic support the cycle.
+First playable: meadow, marsh and three roads beside established settlement art;
+remaining five surfaces follow the first integrated critique. Original generated
+1254×1254 PNGs, exact prompts/shared references and registry entries are local.
+Five asset slots are connected; legacy grass flattening is removed. Web typecheck,
+production build, content79 validation and scoped lint/format PASS. Independent
+source/raster critique found no established defect; integrated acceptance pending.
+Geometry, movement, clocks and retained player data are outside the write scope.
+Current integrated inspection is pending: the browser session expired and automatic
+approval review rejected local test credential submission. Explicit sign-in/short
+trip permission was requested; source/asset work continues. Local implementation,
+not publication/merge/deployment; previous specification status remains history.
+
+**Terrain art specification — 2026-10-04:** owner requests a complete specification
+for fields, marshes and roads matching existing town/village art.
+[Owning wiki specification](../wiki/terrain-art.md) records inspected ink/place
+references, material briefs, transitions, nondirectional base textures versus
+road-coordinate wear, proposed production format and staged integrated acceptance.
+Parent owns only this documentation slice and its reference screenshot on primary
+`main`, local base `bcc30f5`; existing dirty documents/skills are preserved.
+The specification is local, design-only: numerical production/performance targets
+are proposals, not accepted rules or measured results. First future playable:
+compare field and three road surfaces beside Kamenny Brod and an existing marsh
+area in the actual client, with day/night and zoom critique before expansion.
+New art, implementation, playable critique and runtime checks NOT_RUN;
+performance NOT_MEASURED. No PR, merge, deployment or paid production authorization.
+Existing implementation missions and their delivery records below are retained.
 
 **Code-quality fixes authorized — 2026-10-04:** owner explicitly requested
 “Fix issues, pr, review, merge, update local main”. This authorizes the bounded
@@ -315,6 +572,57 @@ FAILED one unchanged field-build coverage timeout under two workers. CI coverage
 now runs sequentially with unchanged tests/limits; replacement CI required.
 No deployment or full-M1 acceptance.
 
+**Character production skills installed — 2026-10-04:** owner rejected the
+cutout appearance, requested skeletal 2D/3D comparison, then project-local
+Blender/Mixamo/Meshy skill installation. Parent owns only the three new skills,
+their discovery links/README and scoped combat documentation; unrelated dirty
+supplies/map/place work is preserved. Blender and official Meshy skills were
+installed from pinned upstream commits with MIT licenses and local Babylon.js
+boundaries; Mixamo is a project-authored Adobe/Blender workflow, not an official
+connector. All three skill validators and nine Blender Python syntax checks
+passed. The Blender PATH shim points to an absent app; actual Blender execution
+is unavailable. Initial npm metadata lookup failed EPERM in the shared cache;
+temporary-cache retry confirmed Meshy CLI 0.4.0 and its official repository.
+Local `meshy doctor` passed; no stored profile/environment key was present,
+and API access was not checked.
+Independent instruction review found two conflicts: mandatory upstream phase
+approvals and a PlayCanvas-specific guidance link. Both were corrected; the
+affected recheck found no remaining concrete instruction conflict. Local links,
+discovery links and scoped diff check passed. This is tooling delivery, not an
+accepted 3D character: source acquisition/generation, retargeting, GLB playback
+and visual acceptance NOT_RUN; cost/performance NOT_MEASURED. Next proof: one
+body, two armor appearances, held knife and one clip on one exact export
+skeleton in the existing Babylon field. [Owning amendment](../wiki/combat.md#3d-production-skills--2026-10-04).
+No paid tasks, publication, merge or deployment.
+
+**Combat design proposal — 2026-10-04:** owner requests modular characters,
+interchangeable knives/axes/bows, armor, faces/hair and combat mechanics.
+[Owning wiki design](../wiki/combat.md) records parts, grips, equipment
+compatibility, weapon animation families, proposed action costs and one bounded
+next prototype. This is design-only; the active supplies implementation below
+is preserved. Current combat rules/types and approved ink/place references were
+inspected. New profiles, in-battle weapon switching, line-of-fire policy and
+balance remain proposals, not accepted or implemented behavior. Game/art
+implementation, playable critique and runtime checks NOT_RUN; performance
+NOT_MEASURED. No merge or deployment authorization.
+
+**Living-place integration delivered — 2026-10-04:** authorized
+[PR139](https://github.com/Vovanostm/warwrit/pull/139) merged as
+`06b85550913dda93b445656a48ed7dab6eb11452`; primary `main` fast-forwarded to
+the same remote commit. Road and settlement registry records and both histories
+are retained. Exact reviewed head `505537a` passed
+[CI37194203778](https://github.com/Vovanostm/warwrit/actions/runs/37194203778):
+614 unit checks,46 skipped,10,000 stress battles,14 database checks, coverage
+and changed-code audit. Independent critic: DONE_WITH_CONCERNS, no material
+integration/input/layout defect in inspected village meeting, remote city,
+390px and night captures. Main's phototextured map versus painted settlement
+style gap remains for the separate map owner. Full payout journey and repeated
+local village night journey NOT_RUN. Retained shared DB records a MOVE_TO and
+arrival through another API during read-only inspection; unchanged Bereznyak
+presence is not claimed. Owner's three dirty documents and local captures were
+restored, retaining both records in the checkpoint conflict. This closure is a
+local checkpoint amendment; PR records the published result. No deployment.
+
 **Living-place integration authorized — 2026-10-04:** owner explicitly
 requested “fix conflicts, merge, update local main”, authorizing PR139 merge
 and local main update. Parent owns the isolated `living-places-integration`
@@ -324,6 +632,35 @@ records. Earlier no-merge statements below are superseded for PR139 only.
 Run current-head verification and independent integrated critique before merge.
 Preserve the primary checkout's unrelated dirty owner documents and player data.
 No deployment or paid provisioning authorized.
+
+**Dark fantasy consistency correction — 2026-10-04:** owner rejected the
+isolated map candidate as childish and requires consistency with established
+worktrees. Root `AGENTS.md` now requires inspected ink/flat-wash references,
+credible weathered forms, common projection/light/scale, lore fidelity and
+independent integrated critique. Existing place scenes, building sheets and
+style C were inspected alongside `road-art-quality` and `free-world-movement`
+records; the historical ink-alpha checkout retains no inspected assets here.
+Isolated map revision is now independently **APPROVED** for the bounded
+style/lore/input cycle: current day/night overview and site views match the
+inspected references; city/farm approaches, marsh and ruined-mill water contact
+are corrected. Playable candidate: `http://127.0.0.1:5290`. Production web build,
+focused renderer/camera checks and real departure/STOP/return/reload passed.
+Full M1, performance and other devices are not accepted; no publication, merge
+or deployment. [Candidate result](/private/tmp/warwrit-map-polish-01a1031c/scene/docs/work-packages/M1-FREE-MOVEMENT.md#final-integrated-dark-fantasy-acceptance--2026-10-04).
+
+Follow-up whole-tree volume approval was superseded by the owner's rejection.
+The component correction in isolated5290 is now independently **APPROVED** for
+bounded visual/input: all1209 trees assemble authored projected organic bodies
+and layered curved foliage, with seeded part/crown variation. Critic personally
+inspected16 current DAY/NIGHT overview/woodland/site views; stump/bouquet and
+split-cape findings closed. Shared dark-fantasy style/isometry/lore/geography and
+site/road exclusions remain. Nativepan/anchoredzoom and site/terrain/alpha probes
+pass; finalweb build/typecheck/lint/format/diff pass. Real departure was rejected
+KNOWN_SUPPLY_SHORTAGE; successful travel/STOP/return NOT_RUN this cycle. Reload
+keeps point0/revision74/plan-null/cash850; no supplies/save bypass. This remains
+an isolated candidate, not integration into main or fullM1/performance/ideal
+quality acceptance. No publication/merge/deployment of this candidate.
+[Current correction](/private/tmp/warwrit-map-polish-01a1031c/scene/docs/work-packages/M1-FREE-MOVEMENT.md#component-tree-depth-correction--2026-10-04).
 
 **Contracts through people and places — 2026-10-04:** owner requires
 meaningful issuer visits instead of a settlement-wide contract dispenser.
@@ -1051,6 +1388,23 @@ shop/travel/STOP/reroute evidence retained; owner company/cash preserved. Expire
 creation browser path remains NOT_RUN. PR/merge and playable critique closeout pending;
 see the dated [owning delivery amendment](../work-packages/M1-SUPPLIES.md).
 
+**Supplies/party delivery merged — 2026-10-04:**
+[PR144](https://github.com/Vovanostm/warwrit/pull/144), reviewed `c395145`, merged
+`bcc30f5eed48240149cb711ec27a1a096e5c1279`; final PR CI37212941490 SUCCESS
+(bootstrap627/47skip,10000 stress,migrations14DB,coverage/audit). No remaining
+material finding in independent scoped source and supplied-capture visual review;
+critics did not independently operate browser/DB. Primary main and origin/main
+match; only unrelated owner documents/skills and local closeout records are dirty.
+Both checkpoint/wiki histories restored, original work retained in stash/backup.
+Dev5293 runs from primary main against retained player DB; readiness200. Owning
+[M1-SUPPLIES closeout](../work-packages/M1-SUPPLIES.md#merged-delivery-closeout--2026-10-04)
+supersedes earlier local/no-authorization statuses for this authorized slice.
+No deployment or full M1 acceptance. Expired-form browser creation remains NOT_RUN.
+Main push CI37213517376 also completed SUCCESS at `bcc30f5`. Final main UI restores
+the retained company and correct local shop quote; map left open at5293. Game
+source/assets have no local diff; local documentation closeout remains with the
+preserved unrelated drafts. Dev session44449, retained DB/Dex unchanged.
+
 **Settlement route visibility follow-up — 2026-10-04:** owner reports a cropped
 goal near Bereznyak and a route gap near Kamenny Brod. Parent owns the minimal
 three-file web correction in primary `main` at `bcc30f5`; unrelated docs/skills
@@ -1089,3 +1443,26 @@ writer uses `/private/tmp/warwrit-route-visibility`, branch
 their owning movement amendment and scoped changelog/checkpoint records are
 included; unrelated primary terrain/art/docs changes and player data are retained.
 Publication/CI/merge pending; no deployment or paid resources.
+
+**Route visibility delivery merged — 2026-10-04:**
+[PR145](https://github.com/Vovanostm/warwrit/pull/145), reviewed
+`988eea2cd6889990efc0ba5bdbf357fee64b40bd`, merged
+`4a82c36095126f6828ec1ea83ace0436c4525123`. PR CI37233180326 SUCCESS:
+bootstrap627/47 skipped, 10000 combat stress, migration smoke/14 PostgreSQL
+checks, measured coverage and changed-code audit. No blocking review comments;
+independent source/capture critique applies to the unchanged three-file delta.
+Primary main equals origin/main; candidate and merged trees have no diff.
+Scoped stash restoration reconciled additive conflicts in the three documents,
+retaining both histories and unrelated terrain/art/wiki/skill work. Backup stash
+`fb0f2f0` is retained. Main push CI37233985843 is in progress; no main-CI pass is
+claimed. Dev5293/player database remain available. Source/results/limits:
+[owning closeout](../work-packages/M1-FREE-MOVEMENT.md#route-visibility-merged-closeout--2026-10-04).
+This supersedes earlier local/pending statuses for the route fix only; no
+deployment or full M1/device/performance acceptance.
+
+**Post-merge route closeout — 2026-10-05:** main CI37233985843 completed SUCCESS
+at `4a82c36`, superseding its in-progress status above. Live GitHub main,
+origin/main and primary main match; route files have no local diff. Ready API and
+open localhost:5293 restored the retained company with 800 crowns. Capture:
+`output/playwright/route-visibility-main-merged.png`. Scoped documentation format
+and diff checks passed; unrelated local terrain/art/wiki/skill changes retained.
