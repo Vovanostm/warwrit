@@ -740,3 +740,27 @@ review pending. Full clean bootstrap/stress/migrations are owned by PR CI,
 NOT_RUN locally; canonical Airtable/Empirical checkpoint NOT_UPDATED.
 Status: local, publication/merge pending; no deployment or new migration.
 Full player journey is NOT_RUN; FPS/GPU/RAM NOT_MEASURED.
+
+### Motion synchronization merged closeout — 2026-10-05
+
+Supersedes the pending/local delivery status above. Owner-authorized
+[PR150](https://github.com/Vovanostm/warwrit/pull/150), reviewed head `2c271ce`,
+merged with expected-head protection as `f3d214c`. PR-head
+[CI37318286511](https://github.com/Vovanostm/warwrit/actions/runs/37318286511)
+SUCCESS: clean bootstrap639 passed/47 skipped,10000 stress battles, migration
+smoke/14 PostgreSQL checks, measured coverage639/47 and unchanged quality audit.
+No blocking review threads. Final independent source/seven-current-capture
+review found no material defect; browser measurements/native input were operated
+by the parent, full logged-in gameplay/performance remain unverified.
+
+Primary `main`, `origin/main` and live GitHub main match `f3d214c`; place source
+has no local diff. Scoped two-document recovery and fast-forward retained both
+histories and unrelated dirty/untracked work. Recovery stash `1e594a7` is kept.
+Integrated web typecheck, ordinary diff/unmerged-index check and5293 proxied
+readiness PASS. Restored only the existing free-movement PostgreSQL/Dex
+containers and dev5293/API3193/realtime3194 from unchanged `.env`; no migration,
+reset or player command. Local runtime: `http://localhost:5293`. Main push
+CI37319767204 is IN_PROGRESS; no main-CI pass is claimed. New post-merge
+logged-in journey NOT_RUN; canonical external checkpoint remains NOT_UPDATED.
+The temporary candidate web/browser is stopped and its clean worktree removed;
+recovery/logs and primary captures retained. No deployment.

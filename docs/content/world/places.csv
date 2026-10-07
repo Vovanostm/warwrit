@@ -1,0 +1,6 @@
+id,name_ru,name_en,in_ru,region,claimed_by,type,war_fact,need_now,status
+kamenny-brod,Каменный Брод,Kamenny Brod,в Каменном Броде,seroe-porechye,zhitnoe;polesye (город считает себя королевским),город и каменная переправа,Бродская сеча на 3-м году; житный гарнизон ушёл год назад,стража без людей; дезертиры на дорогах; две подати,proposal
+bereznyak,Березняк,Bereznyak,в Березняке,seroe-porechye,polesye;zhitnoe,лесная деревня,полесские вербовщики увели мужчин; волки после сечи смелее,травы для ран; защита от волков,proposal
+tikhaya-gat,Тихая Гать,Tikhaya Gat,в Тихой Гати,seroe-porechye,zhitnoe;polesye,речное село на настилах,перевозчики знают броды и нужны обеим сторонам,сторожить реку; вернуть перевозчика,proposal
+severny-dvor,Северный Двор,Severny Dvor,в Северном Дворе,seroe-porechye,zhitnoe,хлебный хутор,платит двум сборщикам; прячет зерно,вернуть зерно и работника,proposal
+staraya-melnitsa,Старая мельница,the Old Mill,у Старой мельницы,seroe-porechye,нет,сгоревшая водяная мельница,сожжена полесскими в Бродскую сечу; рядом наспех закопаны мёртвые,опасная руина; не восстанавливается,proposal

@@ -160,3 +160,39 @@ Critic inspected source and supplied captures, did not operate browser/DB. Sourc
 review also found no remaining material defect after the final fixes. Evidence
 predates the commit but matches the captured source; separate final-head CI and
 main runtime readback are still required before delivery closeout.
+
+Merged delivery closeout — 2026-10-04:
+
+[PR144](https://github.com/Vovanostm/warwrit/pull/144) merged at
+`bcc30f5eed48240149cb711ec27a1a096e5c1279`, expected reviewed head
+`c395145a4fe39c73181b27f4aa5c5e5d1786a111`, base `efda41f`.
+[Final-head CI37212941490](https://github.com/Vovanostm/warwrit/actions/runs/37212941490)
+completed SUCCESS: clean bootstrap627/47 skipped,10,000 combat battles, migration
+smoke plus14 encounter/identity SQL checks, measured coverage and changed-code gate.
+Live unresolved review threads were empty. Merged source has no diff from the
+reviewed candidate. This supersedes earlier local/published/NOT_MERGED statuses
+for this slice only. No deployment or broader M1 acceptance.
+
+Primary checkout is on `main`, identical to `origin/main` at the merge SHA for
+all game/source/assets. Unrelated owner instructions, skills and combat/economy
+wiki drafts are restored as local changes. Checkpoint/wiki insertion conflicts
+retain both histories. Original tracked/untracked work remains recoverable in
+stash `supplies-playtest preserved before authorized main update` and the local
+backup `/private/tmp/warwrit-primary-before-main`; old source was not reapplied
+onto merged main. The current quality report in main includes the older report,
+whose original is also retained in the backup. Disposable verification DB removed;
+retained player PostgreSQL/Dex volumes untouched. Dev runs from primary main at
+localhost:5293; readiness returned200. Final browser readback is recorded below.
+
+Final primary-main UI readback: retained company restores at its town with800
+crowns; Company → Buy supplies opens the local bazaar, showing300 stock,
+4 crowns/ration, ten rations for40 crowns and current carried food coverage.
+No personal purchase was submitted. Fresh main shop screenshot:
+`output/playwright/supplies-main-shop.jpg`. The game is left on its map for the owner.
+
+Main push [CI37213517376](https://github.com/Vovanostm/warwrit/actions/runs/37213517376)
+completed SUCCESS at merge `bcc30f5`: clean bootstrap627/47 skipped,10,000
+combat battles and migration smoke/14 SQL checks. Main's pipeline omits PR-only
+coverage/audit, which passed on the unchanged reviewed PR tree. Dev session44449
+serves primary main at5293/API3193/realtime3194; retained PostgreSQL55147 and Dex5587
+remain. Final map screenshot: `output/playwright/supplies-main-map.jpg`.

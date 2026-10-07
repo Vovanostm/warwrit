@@ -3,6 +3,8 @@ import darkVillage from '../../../../assets/art/m1/map-dark/village-v1.png';
 import darkRiverVillage from '../../../../assets/art/m1/map-dark/river-village-v1.png';
 import darkFarmstead from '../../../../assets/art/m1/map-dark/farmstead-v4.png';
 import darkMill from '../../../../assets/art/m1/map-dark/mill-v1.png';
+import inkMeadow from '../../../../assets/art/m1/terrain-ink-v1/meadow.png';
+import inkMarsh from '../../../../assets/art/m1/terrain-ink-v1/marsh.png';
 import darkMeadow from '../../../../assets/art/m1/map-dark/meadow-grim-v2.png';
 import darkWoodland from '../../../../assets/art/m1/map-dark/woodland-grim-v2.png';
 import darkShore from '../../../../assets/art/m1/map-dark/shore-grim-v2.png';
@@ -14,9 +16,9 @@ import treeTrunk from '../../../../assets/art/m1/map-dark/trunk-atlas-v1.png';
  * Battle and map art in the approved ink style (ADR-0006, 2026-10-02). Licence records live in
  * `assets/manifest.json`; every image here is Codex-generated original work.
  */
-import roadTrail from '../../../../assets/art/m1/roads-v1/trail.png';
-import roadDirt from '../../../../assets/art/m1/roads-v1/dirt.png';
-import roadPaved from '../../../../assets/art/m1/roads-v1/paved.png';
+import roadTrail from '../../../../assets/art/m1/terrain-ink-v1/trail.png';
+import roadDirt from '../../../../assets/art/m1/terrain-ink-v1/dirt.png';
+import roadPaved from '../../../../assets/art/m1/terrain-ink-v1/paved.png';
 import groundGrass from '../../../../assets/art/m1/battle/ground-grass.png';
 import groundMud from '../../../../assets/art/m1/battle/ground-mud.png';
 import rubble from '../../../../assets/art/m1/battle/obstacle-rubble.png';
@@ -89,10 +91,10 @@ export function unitSprite(unitId: string, role: UnitRole): Sprite {
 export const MAP_ART = {
   ground: groundLand,
   terrainLayers: {
-    grass: darkMeadow,
+    grass: inkMeadow,
     woodland: darkWoodland,
     hills: darkMeadow,
-    marsh: darkShore,
+    marsh: inkMarsh,
     riverbank: darkShore,
     rock: darkRock,
     water: darkWater,

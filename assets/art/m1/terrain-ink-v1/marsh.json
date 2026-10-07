@@ -1,0 +1,43 @@
+{
+  "asset": "marsh",
+  "workspaceAsset": "assets/art/m1/terrain-ink-v1/marsh.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "format": "PNG",
+  "purpose": "Global map albedo; terrain-art.md owner implementation request 2026-10-04",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "mode": "built-in",
+    "source": "exec-4209fa44-e97e-4d51-9121-07778f9ba997.png",
+    "prompt": "Use case: stylized-concept. One original ground albedo texture for Warwrit's existing 2.5D map, square opaque PNG requested 1024x1024. Supplied images are shared STYLE AND MATERIAL references only (ink figure, town, village, river place). Match irregular variable broken ink contours, selective hand hatching, grouped shadow marks and restrained flat earthy washes. Serious grounded dark fantasy, credible weathered material, QUIET BACKGROUND contrast. Material: Readable damp peat earth, cool grey umber and subdued moss, small flat slate grey water patches, sparse broken sedge remnants. Quiet muddy washes between selectively inked peat seams; no black sludge, bright slime, shiny puddles or large recognizable hummocks. Flat perpendicular overhead surface, edge to edge, no horizon, scene or perspective. Nondirectional albedo for engine's rotated interior-patch blending. No sun direction, cast shadows, glossy reflections, photographic grain, dense uniform line meshes, large landmarks, roads as complete ribbons, wheel ruts, trees, buildings, people, symbols, writing, montage, border or vignette. Slate/soot/umber/ochre/grey olive palette related to references. Broad calm washes, irregular medium detail, sparse small hand-drawn detail; readable at gameplay scale and night. Consistent compatible average color at edges. Deliver one coherent material filling the whole square.",
+    "references": [
+      "assets/art/m1/style/unit-c-ink.png",
+      "assets/art/m1/map/site-city.png",
+      "assets/art/m1/map/site-village.png",
+      "assets/art/m1/places/settlements-v2/tikhaya-gat-painting.png"
+    ],
+    "transparent_background": false,
+    "requestedDimensions": {
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  "license": "original work generated for Warwrit using supplied project-owned style references; no third-party art copied",
+  "processing": "Original generated raster copied unchanged; requested 1024 square is not the actual dimension.",
+  "integration": {
+    "colorSpace": "sRGB albedo, manual linear decode in ShaderMaterial",
+    "filtering": "mipmaps; trilinear default; anisotropicFilteringLevel 8",
+    "sampling": "Continuously blended rotated interior patches; no mirrors or edge tiling",
+    "scale": "Shared terrain detailScale: world dimensions / 1.5"
+  },
+  "inspection": {
+    "raster": "view_image inspected original",
+    "integrated": "PENDING independent current-client review",
+    "limits": [
+      "Opposite-edge continuity not assumed; interior sampling prevents edge seams",
+      "No performance or full-game acceptance claimed by this sidecar"
+    ]
+  }
+}

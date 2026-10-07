@@ -783,6 +783,51 @@
       "provenance": "assets/art/m1/map-dark/provenance/tree-parts/canopy/foliage-atlas-v3-provenance.json"
     },
     {
+      "id": "art.m1.terrain-ink-v1.meadow",
+      "path": "assets/art/m1/terrain-ink-v1/meadow.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit using supplied project-owned style references; no third-party art copied",
+      "provenance": "assets/art/m1/terrain-ink-v1/meadow.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.terrain-ink-v1.marsh",
+      "path": "assets/art/m1/terrain-ink-v1/marsh.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit using supplied project-owned style references; no third-party art copied",
+      "provenance": "assets/art/m1/terrain-ink-v1/marsh.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.terrain-ink-v1.trail",
+      "path": "assets/art/m1/terrain-ink-v1/trail.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit using supplied project-owned style references; no third-party art copied",
+      "provenance": "assets/art/m1/terrain-ink-v1/trail.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.terrain-ink-v1.dirt",
+      "path": "assets/art/m1/terrain-ink-v1/dirt.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit using supplied project-owned style references; no third-party art copied",
+      "provenance": "assets/art/m1/terrain-ink-v1/dirt.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
+      "id": "art.m1.terrain-ink-v1.paved",
+      "path": "assets/art/m1/terrain-ink-v1/paved.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit using supplied project-owned style references; no third-party art copied",
+      "provenance": "assets/art/m1/terrain-ink-v1/paved.json",
+      "generatedAt": "2026-10-04"
+    },
+    {
       "id": "art.m1.places.depth-v1.bereznyak",
       "path": "assets/art/m1/places/depth-v1/bereznyak.png",
       "kind": "image",

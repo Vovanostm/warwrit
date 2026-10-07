@@ -129,7 +129,7 @@ it('shows place memory only for established completion known to the company', ()
     {
       instanceId: herbs.instanceId,
       siteId: 'bereznyak',
-      text: 'Заготовщице доложили о пропавших травах.',
+      text: 'Агафья знает: травы унесли в сторону Северного Двора.',
     },
   ]);
 });

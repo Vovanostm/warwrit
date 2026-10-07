@@ -6,6 +6,7 @@ import {
   visitingIssuer,
   type ContractVisitProps,
 } from './game/contract-visits.js';
+import { lookup } from './i18n/index.js';
 
 import {
   isFirstHuntReadResponse,
@@ -70,10 +71,10 @@ function containerLabel(containerId: string): string {
   return containerId.endsWith('"party-supply"]') ? 'в обозе отряда' : 'у бойца отряда';
 }
 
-const HUNT_TEXT: Readonly<Record<string, { readonly code: string; readonly title: string }>> = {
-  'ci.m1.raider-standard.01': { code: 'HUNT-03', title: 'Знамя у старой мельницы' },
-  'ci.m1.wolf-trail.01': { code: 'HUNT-02', title: 'Волчья тропа' },
-  'ci.m1.mill-beast.01': { code: 'HUNT-01', title: 'Ночной зверь у мельницы' },
+const HUNT_CODES: Readonly<Record<string, string>> = {
+  'ci.m1.raider-standard.01': 'HUNT-03',
+  'ci.m1.wolf-trail.01': 'HUNT-02',
+  'ci.m1.mill-beast.01': 'HUNT-01',
 };
 
 export function FirstHunt(
@@ -255,9 +256,11 @@ export function FirstHunt(
     });
   }, [pendingJoinPollKey, refresh, notifyEncounterDiscovered]);
 
-  const huntText = HUNT_TEXT[props.scope.instanceId ?? 'ci.m1.raider-standard.01'] ?? {
-    code: 'HUNT',
-    title: 'Охота',
+  const huntId = props.scope.instanceId ?? 'ci.m1.raider-standard.01';
+  const huntText = {
+    code: HUNT_CODES[huntId] ?? 'HUNT',
+    title: lookup(`contract.${huntId}.title`) ?? 'Охота',
+    brief: lookup(`contract.${huntId}.brief`),
   };
   const atIssuer = contract
     ? visitingIssuer(props.visit, contract.instanceId, contract.terms.issuerLocation.siteId)
@@ -325,6 +328,7 @@ export function FirstHunt(
             {locationLabel(contract.terms.issuerLocation.siteId)},{' '}
             {areaLabel(contract.terms.issuerLocation.areaId)}.
           </p>
+          {huntText.brief && <p className="contract-brief">{huntText.brief}</p>}
           <p>Награда: {rewardLabel(contract.terms.rewardQ)}. Принятые условия фиксированы.</p>
           <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
             <summary>Куда идти и что потребуется?</summary>
@@ -545,38 +549,16 @@ export function firstHuntStateLabel(
   }
 }
 
-const ISSUERS: Readonly<Record<string, string>> = {
-  'npc.city-watch-contact.kamenny-brod.01': 'городская стража',
-  'npc.woodland-village-caller.bereznyak.01': 'старейшина Березняка',
-  'npc.local-warning-keeper.tikhaya-gat.01': 'смотритель Тихой Гати',
-};
-
 function issuerLabel(issuerId: string): string {
-  return ISSUERS[issuerId] ?? issuerId;
+  return lookup(issuerId) ?? issuerId;
 }
-
-const SITES: Readonly<Record<string, string>> = {
-  'kamenny-brod': 'Каменный Брод',
-  bereznyak: 'Березняк',
-  'tikhaya-gat': 'Тихая Гать',
-  'severny-dvor': 'Северный Двор',
-  'staraya-melnitsa': 'Старая мельница',
-};
 
 function locationLabel(siteId: string): string {
-  return SITES[siteId] ?? siteId;
+  return lookup(`place.${siteId}.name`) ?? siteId;
 }
 
-const AREAS: Readonly<Record<string, string>> = {
-  'kamenny-brod-market': 'городской рынок',
-  'bereznyak-green': 'деревенский луг',
-  'tikhaya-gat-bank': 'берег',
-  'severny-dvor-yard': 'двор',
-  'staraya-melnitsa-yard': 'двор мельницы',
-};
-
 function areaLabel(areaId: string): string {
-  return AREAS[areaId] ?? areaId;
+  return lookup(`area.${areaId}`) ?? areaId;
 }
 
 function rewardLabel(rewardQ: string): string {

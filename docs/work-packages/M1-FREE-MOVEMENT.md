@@ -91,6 +91,110 @@ terrain/art/wiki/skill drafts. Integrate remote main in the isolated checkout;
 local-primary update must wait for shared-file ownership or preserve those writes
 without stashing/restoring an active writer's files. No deployment authorized.
 
+### Tree diversity merged closeout — 2026-10-05
+
+[PR147](https://github.com/Vovanostm/warwrit/pull/147), originating branch
+`codex/forest-diversity-main`, is MERGED. Reviewed head
+`1565a8047bfa31cec5f9cafcce324d091f76de45`; expected-head merge
+`548837c484ab17ba9efe1828c8689d9f847b9b1b`, read back at 23:08:31Z on
+2026-10-04 (2026-10-05 Moscow). Live remote main and origin/main match that merge;
+ordinary diffs prove both the CI synthetic merge and actual main contain the
+reviewed tree. The isolated worktree now serves the actual merged main commit.
+No primary branch switch, stash, reset, player-data change or unrelated publication.
+
+[PR CI37241702290](https://github.com/Vovanostm/warwrit/actions/runs/37241702290)
+SUCCESS: clean bootstrap 631 unit checks / 47 skipped, 10,000 combat scenarios,
+migration smoke and 14 real PostgreSQL auth/encounter checks; complete sequential
+coverage 631 / 47 and unchanged changed-code audit (10 changed files, no issues).
+The ordinary pre-commit hook also passed. Earlier local coverage and audit failures
+above remain recorded; no timeout, assertion or gate was weakened. Main push
+CI37242669624 was initially IN_PROGRESS; final readback confirms SUCCESS
+at merged `548837c`. Airtable merged-closeout Notes readback exactly matches
+the appended delivery note; its earlier IN_PROGRESS observation remains history.
+
+Final independent source reviews and repeated affected art/input critic remain
+READY_WITH_LIMITS. Source extraction retains all original projection, material,
+alpha-loading, contact and dispatch boundaries. Fresh post-extraction native
+production callbacks still select city SITE, terrain through a tree and STOP.
+Actual authenticated travel/arrival/STOP/reload remains NOT_RUN because the
+separately requested sign-in permission is unanswered after automatic rejection.
+Gallery and public-geography diagnostics are excluded from the PR and have no
+company/backend state. No full-M1, performance, wind or enjoyment acceptance.
+
+The primary checkout remains at its earlier main commit while another active
+writer edits location depth and shared documents. Its source, drafts, saves and
+services were left untouched. Permission to coordinate that writer was requested;
+local primary fast-forward and final 5287 refresh remain pending. This closeout is
+local documentation in the owned merged-main worktree; the published PR/CI and
+Airtable checkpoint own remote delivery readback. Empirical event NOT_WRITTEN:
+its prior storage-limit rejection was not retried without an entitlement change.
+No deployment, auto-merge or paid provisioning.
+
+### Primary-main integration and actual journey — 2026-10-05
+
+Owner explicitly authorized normal sign-in, verification, coordination and final
+local-main completion. The location-depth and wildlife writers confirmed a write
+pause; the topology author confirmed its writes are isolated. Primary `main` was
+fast-forwarded from `917644a` to merged PR147 `548837c`, preserving all tracked
+and untracked drafts in the retained recovery stash
+`forest147 coordinated primary recovery 2026-10-05`. Document insertion conflicts
+retain both histories. Wildlife uses the equivalent existing
+`distanceToPolygonEdge` helper (two renamed references), rather than duplicating
+its `polygonEdgeDistance` implementation. Its four map-mount additions and
+all location/terrain/source drafts remain local, outside PR147 publication.
+No unmerged index entries remain; primary web typecheck and diff check PASS.
+
+The owner reported ERR_CONNECTION_REFUSED at5287. It had no listener. An owned
+persistent dev process now serves primary main at5287/API3187/realtime3188, with
+matching PUBLIC_ORIGIN and OIDC callback; the other writer's .env/5293 services
+and the retained player database are unchanged. Initial restart FAILED because
+PUBLIC_ORIGIN still pointed to5293; corrected process overrides pass API and
+proxied database readiness. URL-policy rejection remains history. After server
+recovery and the owner's manual login, actual tab metadata changed to an allowed
+HTTP game page; the same CUA browser2/tab1 became accessible. No alternate browser,
+raw browser command or authentication bypass was used.
+
+The old retained `Проверка-пути` company restores with850 crowns at North Farm,
+but has no food. Native movement and ordinary purchase reject atomically under
+[the accepted legacy-starvation limit](M1-SUPPLIES.md): bought food cannot settle
+the past, and no recovery policy exists. Neither its resources nor its timeline
+were edited. This remains an explicit gameplay limitation, not forest acceptance.
+
+Actual native journey uses a separate database
+`warwrit_forest_acceptance_20261005` with existing0001–0014 migrations, actual
+primary main source and normal OIDC/company-opening UI at5291/API3287/realtime3288.
+`Лесной маршрут QA` opens with two people,850 crowns and30 rations. No canonical
+state, supplies or clocks were fabricated. Concurrent127.0.0.1 ports share cookie
+scope; a first creation attempt rejected expired session while the primary tab
+was open. Testing continues in one tab, with the original company restored later.
+
+Native ПКМ starts a57s field route; S stops and clears its overlay; a new ПКМ
+changes the target from the current position (42s). Reload restores the moving
+route (26s remaining). Drag/zoom preserve window.scrollY=0. The route naturally
+finishes in terrain; ПКМ city starts17s, arrives at Kamenny Brod and clears the
+route. Reload retains that site and unlocks local entrances. Ordinary Bazaar
+Buy10 transfers40 crowns:850→810, stock300→290, carried28→38; actual opened-food
+coverage is20 days. A subsequent42s journey arrives at Bereznyak and clears the route. A native
+click through a tree crown starts109s forest travel; its live terrain modifier
+is×0.6 versus field speed. Natural forest arrival clears the route; actual night
+then begins without changing clocks. Matching forest night/close/overview captures
+retain readable roots, targets and paths; wheel still leaves page scroll0.
+Current captures: `/private/tmp/warwrit-forest-final/` (desktop1365×900).
+Night captures are complete. Final independent forest critic PASS within PR147
+scope, including settled reload rendering at1365×900. Replacement evidence
+`settled-reload-complete-desktop.png` shows the fully rendered restored original
+company/map; the early-loading blank `arrived-reloaded-day.png` is excluded from
+acceptance. No remaining material finding within this forest scope. Sibling
+drafts, route aesthetics, full M1, sustained performance and enjoyment remain
+outside acceptance. The owner separately confirmed that the5287 map opened.
+The temporary5291 test process is stopped; its test database and primary player
+database are retained. The original5287 login/map are restored after testing.
+A repeated final integrated web typecheck passes after later wildlife writer
+revisions. Read-only integration review finds no reproduced defect and confirms
+all four wildlife mount calls; later wildlife behavior remains its owning slice,
+not a full preservation claim from the pre-update recovery stash.
+No full-M1, performance or subjective enjoyment acceptance is claimed.
+
 ## Component forest integration — 2026-10-04
 
 Owner explicitly requested review, PR merge and local main update for the approved
@@ -190,6 +294,41 @@ from this integration. Independent source review and final PR CI own current
 combined-code acceptance; prior captures remain bounded evidence. In-app browser
 access for final refresh was rejected by URL policy; current combined-route
 browser capture is NOT_RUN, and no alternate surface bypass was attempted.
+
+### Component forest merged closeout — 2026-10-05
+
+This dated closeout supersedes the publication/merge/writer-pending statuses above.
+[PR146](https://github.com/Vovanostm/warwrit/pull/146) is MERGED: reviewed head
+`2ed5f084b2f889d6f1f147a047ab06e6d1f5db42`, actual merge/main
+`917644aafa0b166af57f08932d1d3494697f260f` (2026-10-04T21:17:59Z).
+Expected-head merge followed owner authorization and the independent final source
+review with no material defect. PR CI37234733636 completed SUCCESS: bootstrap
+628 passed/47 skipped, 10,000 combat battles, migration smoke/14 PostgreSQL checks,
+628/47 coverage and unchanged audit with no issues in88 changed files.
+
+After live task readback confirmed both primary writers had finished, primary
+`main` fast-forwarded to the merge; local HEAD, origin/main and live remote main
+match. Scoped stash restoration had additive conflicts in changelog/checkpoint,
+art imports and manifest. Both histories and the owner's five terrain-ink-v1
+material slots were restored; meadow changes only grass, retaining the merged
+hill material. The owner's removal of meadow flattening and all unrelated
+terrain/art/wiki/skill work remain unstaged. Manifest validation passes92 assets.
+Primary web typecheck, scoped formatting and diff checks PASS; unrelated tracked
+drafts match their saved pre-update diff. Canonical Airtable checkpoint was
+updated and read back. Empirical event write FAILED: PLAN_LIMIT_MEMORY_REACHED
+(541/100 records); no retry or paid upgrade.
+No unmerged index entries remain; recovery stash `46a496a` and
+`/private/tmp/component-primary-preserved.json` remain available. Those local
+texture drafts are outside PR146's reviewed art acceptance. Player databases were
+not changed during local-main update.
+
+Main push CI37235532971 is IN_PROGRESS at this readback, not a claimed pass.
+The critic retains bounded forest/site/day-night art and earlier input acceptance;
+combined moving-route browser capture and post-merge browser refresh are NOT_RUN
+because the in-app tool rejected access under its URL policy. No alternate browser
+workaround was used. Full-M1, subjective quality and sustained FPS remain
+NOT_MEASURED. No deployment or new migration. Local closeout records accompany
+preserved owner drafts; they are not a second published change.
 
 ## Tree art rejection and diagnosis — 2026-10-04
 
@@ -1378,6 +1517,38 @@ excluded seven inherited findings; its semantic-identity warning used the existi
 syntactic fallback, without changing the gate. The clean full gate is reserved
 for PR CI, not repeated locally.
 
+### Route visibility merged closeout — 2026-10-04
+
+[PR145](https://github.com/Vovanostm/warwrit/pull/145) was published from
+`codex/route-visibility-fix`, reviewed head
+`988eea2cd6889990efc0ba5bdbf357fee64b40bd`, and merged with expected-head protection
+as `4a82c36095126f6828ec1ea83ace0436c4525123` after owner authorization. Actual
+GitHub state is MERGED. PR CI37233180326 passed the clean bootstrap (627 checks,
+47 skipped), 10000-battle combat stress, migration smoke and 14 PostgreSQL checks,
+measured coverage and changed-file audit. There were no blocking review comments.
+The independent read-only source/capture verdict applies to the unchanged
+production delta; browser evidence is author-owned and broader acceptance remains
+bounded as above.
+
+Primary `main` and `origin/main` now match the merge commit; there is no candidate
+versus merged-tree diff. Only the three reviewed source files and owning route
+documentation were published. Scoped local stash restoration caused additive
+conflicts in changelog/checkpoint/movement records; both branch histories were
+retained and resolved, without replacing unrelated terrain/art/wiki/skill work.
+Backup stash `fb0f2f0` and `/private/tmp/warwrit-route-main-preserve` are retained.
+Dev5293/player data are preserved. Main push CI37233985843 is in progress, not a
+claimed pass. This local closeout supersedes preceding pending statuses; no
+deployment, paid resources, new migrations or full-M1/performance acceptance.
+
+Post-merge verification — 2026-10-05: main CI37233985843 completed SUCCESS at
+`4a82c36`, superseding the in-progress note above. Live remote main, origin/main
+and primary main match, and all three route source files have no local diff.
+API readiness returned OK; the browser restored the retained company with 800
+crowns and remains open at localhost:5293. Current capture:
+`output/playwright/route-visibility-main-merged.png`. Scoped documentation
+formatting and diff checks passed. Unrelated local terrain/art/wiki/skill work is
+still preserved and is outside this PR's acceptance.
+
 ## Ambient map wildlife — 2026-10-05
 
 Owner requested animated hares and butterflies to make the global map feel alive.
@@ -1438,3 +1609,14 @@ scoped lint/format PASS after this correction. No remaining material defect in
 the inspected visual scope. FPS, memory and enjoyment NOT_MEASURED; wildlife
 travel/STOP/reload journey NOT_RUN by this chat, full M1/player acceptance unproven.
 Local/uncommitted, not published/merged/deployed; no migration or player-data change.
+
+## Living-world merged closeout — 2026-10-05
+
+Owner-authorized [PR151](https://github.com/Vovanostm/warwrit/pull/151) merged
+as `47c60e0`; primary/origin/GitHub main synchronized,16 slice source files clean,
+unrelated drafts/player data retained. Existing movement/input/state contracts
+unchanged. Exact-head PR CI attempt2 SUCCESS; first coverage timeouts remain
+failed history. Post-sync web typecheck/diff/readiness/native reload PASS;
+North Yard/850 crowns retained. Main CI IN_PROGRESS; new actual travel/STOP/return
+NOT_RUN, performance/subjective audio NOT_MEASURED. [Owning delivery and recovery](../wiki/m1-spec.md#слияние-и-обновление-main--2026-10-05).
+This appended closeout is local; implementation merged, no deployment.

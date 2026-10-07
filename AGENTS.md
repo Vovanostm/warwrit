@@ -2,6 +2,48 @@
 
 Applies repository-wide; read stricter directory instructions before editing.
 
+## Dark fantasy, shared visual style and lore
+
+Owner policy — 2026-10-04:
+
+- Treat Warwrit as serious, grounded dark fantasy. Preserve the approved
+  ink/flat-wash direction in [ADR-0006](docs/architecture/0006-m1-renderer-babylon.md).
+  Start art work by viewing `assets/art/m1/style/unit-c-ink.png` and the relevant
+  `assets/art/m1/places/` scene; use existing building art for credible materials.
+  Similar genre mood does not authorize copying franchise art.
+- Give all artists the same inspected, source-linked reference and constraints.
+  Match irregular ink contours, strong shadow masses, weathered stone/timber,
+  muted slate/soot/umber/ochre and restrained rust accents across map, places,
+  units and UI. Reject cute rounded silhouettes, toy castles, pristine pale
+  masonry, vivid lawns, glossy surfaces and unrelated visual styles. Dark fantasy
+  requires credible forms and material character, not just a darker filter.
+- Preserve one approved projection per view: shared ground axes, verticals,
+  aspect, foot/gate pivots and light direction for towns, roads, trees and parties.
+  Do not squash already projected sprites again or mirror their baked lighting.
+  Keep roots and entrances grounded with irregular natural contact; retain
+  readable paths, labels and targets in both day and night.
+- Read the relevant place/contract sources before drawing or writing. Use
+  [the M1 source map](docs/wiki/m1-spec.md) and
+  [contract provenance](docs/content/CONTRACTS_M1_DERIVATIVE.md) as pointers,
+  respecting canonical authority. Keep the same place identity, geography,
+  construction, condition, names and symbols across map, visits and narrative;
+  the dangerous ruined old mill must not become a working picturesque mill.
+  Do not invent factions, gods, magic, witnesses or historical events for mood.
+  Weathering does not make every inhabited settlement abandoned or ruined.
+- Owner amendment — 2026-10-07: Warwrit is an MMO with a large world of several
+  duchies at war with each other (Witcher analogy, no franchise copying). Use
+  [the world page](docs/wiki/world/index.md) and
+  [writing rules](docs/wiki/world/writing.md) for lore and player text; the
+  ban above still applies to anything those pages do not define.
+- Keep one current reference set and the exact asset prompts/provenance with the
+  consuming assets. Compare proposed art with established assets before batch
+  production; a new worktree or artist does not reset accepted style or lore.
+- The independent playable critic must compare current integrated day/night,
+  overview and close views with those references and applicable lore, as well as
+  the actual journey. A style/lore conflict is an acceptance defect. Fix material
+  findings and repeat the review before claiming completion; palette-only,
+  isolated-asset or green-build approval does not accept the game scene.
+
 ## Desktop viewport and mobile orientation
 
 Owner policy — 2026-10-05:
@@ -50,6 +92,17 @@ Owner policy — 2026-10-03:
   affected results. Cosmetic preferences and unmeasured player enjoyment stay
   separate from defects; neither author confidence nor a green build is acceptance.
 
+Owner policy — 2026-10-07, after the diff reviewer passed character captures that
+still clearly differed from the reference:
+
+- Visual results use the visual critic (`warwrit_visual_critic` /
+  `warwrit-visual-critic`) and [its rubric](docs/engineering/VISUAL_CRITIQUE.md),
+  not the diff reviewer. Every pass is an absolute, scored comparison with the
+  references; an affected-results readback never replaces it.
+- The author passes images, not conclusions. The result is ACCEPT only when every
+  criterion scores at least 2; a criterion stuck at 1 or below for two passes
+  requires a technique-level change, not more tuning.
+
 ## Minimal action and clarification
 
 Take the simplest minimal actions needed to satisfy the current request. Do not
@@ -64,6 +117,33 @@ diffs and direct result checks. This does not change expected-head protection
 for merges. This supersedes older plan and skill requirements for this
 verification bookkeeping.
 
+## Work-package steps
+
+Owner policy — 2026-10-07, after step 1 of `codex/characters-3d` ended with
+documents only, uncommitted code in `/private/tmp` and an exhausted time box:
+
+- Keep worktrees, downloads and other work in a persistent directory (for
+  example `.claude/worktrees/` or `~/.codex/worktrees/`), never `/tmp` or
+  `/private/tmp`, which macOS clears on reboot. Commit each finished step;
+  uncommitted code is not progress.
+- A step is done when its stated done criterion is met. Check that criterion
+  directly, plus the smallest typecheck or lint for the changed code. Production
+  builds, coverage and full suites are not step checks (see
+  [Proportional verification](#proportional-verification)). Time spent on checks
+  the step does not require counts against its time box.
+- On a work branch, if the commit audit blocks only code that a later step of
+  the same approved package replaces, commit with `git commit --no-verify`,
+  record the audit as `NOT_RUN` in the step result and make it pass before the
+  branch is published as a PR. Do not refactor such code just to commit. Never
+  skip the audit on `main`, a merge commit or the published PR head.
+- When stopping for the owner, put every open blocker (source, gate, permission)
+  into one question with a recommended option each. Do not leave a known blocker
+  unasked.
+- Change generated files such as `pnpm-lock.yaml` with their owning tool, not by
+  hand; if the tool cannot run, report that blocker.
+- Committed documents link only to tracked files. Name untracked local evidence
+  by path without a link.
+
 ## File-first project record
 
 Record substantive requirements, decisions, plans and results in their owning
@@ -71,6 +151,54 @@ project files; update the existing wiki page instead of making copies. Chat is
 for a short summary and links, not the only durable record. Enter wiki pages
 through [docs/wiki/index.md](docs/wiki/index.md); keep live implementation status
 in [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md). Trivial replies need no filing.
+
+### Required changelog and change awareness
+
+Owner policy — 2026-10-04:
+
+- Before continuing work after a branch/worktree switch, resume, pull, merge,
+  rebase or cherry-pick, read new entries in [CHANGELOG.md](CHANGELOG.md) and
+  the current `CURRENT_PLAN`. Compare them with this checkout's actual diff and
+  affected source; do not assume another branch's implementation is present here.
+- For every substantive change, including instructions and documentation, add
+  an entry under `CHANGELOG.md`'s `Unreleased` before the final response and
+  before committing or publishing. State the date, originating branch, what
+  changed, why (owner request, decision or defect), affected paths/contracts,
+  and actual delivery status (`local`, `published` or `merged`); link the owning
+  document or PR when available. Record relevant checks and remaining limits
+  there or in the linked owning document.
+- Preserve existing entries and their reasons. Append dated corrections or
+  superseding decisions; during integration retain both branches' entries and
+  reconcile their actual status without declaring unmerged work delivered.
+  Changelog records context; current source and live Git/PR state prove presence.
+- The slice owner writes its entry; delegated agents hand it to the shared-file
+  owner. Do not overwrite another writer's entries. Missing changelog updates
+  block task closeout; report a shared-writer conflict explicitly.
+
+### Required documentation closeout
+
+Owner policy — 2026-10-04:
+
+Before the final response for every substantive task, perform a documentation
+update pass. For work being committed or published, do this before the commit
+or publication so the relevant documentation accompanies the change.
+
+- Inspect this task's actual diff, owner decisions and executed checks. Update
+  only documents affected by those changes; do not summarize unrelated dirty work.
+- Update the existing owning work-package or wiki page with changed behavior,
+  decisions, actual results and remaining limits. Keep live implementation status
+  in `CURRENT_PLAN`; update setup, API or architecture documentation only when
+  the task changes those contracts. Preserve dated history and source authority.
+- Record actual check outcomes, including failures; mark skipped checks as
+  `NOT_RUN` and missing measurements as `NOT_MEASURED`. Distinguish local
+  implementation from publication, merge and player acceptance.
+- Respect one writer per shared path. Delegated and read-only agents hand the
+  parent precise documentation updates and source pointers; the owning writer
+  integrates them before closing the overall task. Report blocked updates instead
+  of overwriting another writer's documents.
+- Read back the edited sections and check the scoped diff and local links.
+  In the final response, link the updated documents or state briefly why the task
+  has no documentation impact. Do not create filler entries or duplicate reports.
 
 ## Hard rules
 
@@ -225,6 +353,10 @@ pnpm verify
 pnpm test:combat:stress
 pnpm test:migrations
 ```
+
+Run builds, coverage and test suites one at a time, not in parallel with each
+other. A test that times out while another heavy job runs is not yet evidence of
+a defect; rerun it alone once before reporting it as a failure.
 
 Briefly record actual checks, outcomes and limitations. A tool or runner failure
 is not a pass; do not weaken checks to obtain green CI.
