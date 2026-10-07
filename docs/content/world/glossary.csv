@@ -1,0 +1,23 @@
+term_ru,term_en,type,rule,note
+Стожарское королевство,Kingdom of Stozhary,realm,transliterate,Стожары — народное имя Плеяд; семь звёзд на гербе и монете
+Смута,the Troubles,event,translate,бытовое название войны за наследство
+война за венец,War of the Circlet,event,translate,официальное название
+венец,circlet,object,translate,королевский венец; не crown — чтобы не путать с монетой
+крона,crown,currency,translate,мн. ч. кроны/крон; см. ICU plural
+Собор,the Assembly,institution,translate,вручает венец
+Боярская дума,the Boyar Council,institution,translate,семь бояр хранят венец в Белоречи; в народе — «семибоярщина»
+герцогство,duchy,title,translate,
+посадник,mayor,title,translate,выборный глава города
+десятник,sergeant,title,translate,младший командир десятка
+староста,village elder,title,translate,
+мытарь,tax collector,title,translate,с оттенком презрения
+Серое Поречье,Grey Porechye,region,translate+transliterate,«серое» переводится; Поречье — нет
+Мутня,the Mutnya,river,transliterate,
+Каменный Брод,Kamenny Brod,place,transliterate,смысл «каменная переправа» дать в описании
+Березняк,Bereznyak,place,transliterate,
+Тихая Гать,Tikhaya Gat,place,transliterate,гать — дорога-настил по болоту
+Северный Двор,Severny Dvor,place,transliterate,
+Старая мельница,the Old Mill,place,translate,
+Бродская сеча,Battle of the Ford,event,translate,
+Белоречь,Belorech,place,transliterate,столица
+нечисть,the unclean,folk term,translate,слово персонажа; не классификация
