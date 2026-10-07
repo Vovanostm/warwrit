@@ -691,8 +691,8 @@ NOT_MEASURED / NOT_RUN. Платежи, запасы, профили и игро
 Один рацион кормит одного человека один день: запас на 15 или 10 дней.
 Десять дней не исчерпывают казну. Оклад каждого спутника — 10 крон за
 Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 крон на одного/двух.
-В A вступительные выплаты показаны на разворотах 2 и 3,
-в B — только на развороте 4; повторных выплат нет. Условия ежедневной платы
+Вступительные выплаты показаны только на развороте 3 каждого варианта;
+повторных выплат нет. Условия ежедневной платы
 не означают ещё один расчёт внутри книги. Еда не покупается,
 не съедается и не теряется. Найм не заменён долей в прибыли.
 Обычные вещи в кадре не становятся новой выдачей инвентаря.
@@ -704,84 +704,89 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 не переносить узнаваемые ворота Северного Двора в каждый город. Нового арта,
 визуальной приёмки или сцен в игре нет.
 
-### Вариант A — до новой службы
+### Вариант A — до конца похода
 
-**Постановка:** вербовщик берёт людей по одному, с распределением на месте.
-Герой предпочитает знакомого спутника новому отряду и предлагает свой найм.
-Каждый спутник соглашается до выплаты. Заказа ещё нет.
+**Постановка:** герой отказывается от службы без оговорённых срока и дела,
+чтобы выбирать работу своей компании. Первый спутник требует знать, куда
+его поведут; второй, если выбран, спрашивает о еде. Заказа ещё нет.
 
 #### A1 — у двери
 
 **RU · летописец; книга, разворот 1**
 
 > Мы сидим во дворе среди людей из распавшихся дружин. На рукавах светлеют
-> места от споротых знаков. Вербовщик держит ладонь на косяке и пропускает
-> людей по одному. {companionName} спрашивает, можно ли нам вместе.
+> места от споротых знаков. У двери набирают людей на новую службу.
+> {heroName} спрашивает, надолго ли.
 >
-> — Распределят на месте. Следующий.
+> — До конца похода.
 >
-> {companionName} возвращается к скамье, но не садится. Мы подбираем вещи.
-> {heroName} вынимает кошель и кладёт его на свободное место.
+> — А куда идти?
+>
+> — Куда пошлют.
+>
+> {heroName} возвращается к скамье. {companionName} освобождает место,
+> убрав с него свои вещи. На доски ложится кошель.
 
 **EN · company chronicler; book, spread 1**
 
 > We sit in the yard among people from disbanded companies. Pale patches
-> show where badges have been unpicked from sleeves. The recruiter rests
-> a hand on the doorframe, letting people through one at a time.
-> {companionName} asks whether we can stay together.
+> show where badges have been unpicked from sleeves. Someone at the door
+> is recruiting. {heroName} asks how long the service will last.
 >
-> “They'll assign you when you get there. Next.”
+> “Until the campaign ends.”
 >
-> {companionName} comes back to the bench but stays standing. We gather our
-> things. {heroName} takes out a purse and sets it on the empty seat.
+> “And where would we go?”
+>
+> “Wherever you're sent.”
+>
+> {heroName} returns to the bench. {companionName} clears a space beside
+> them. A purse lands on the bare boards.
 
-**Иллюстрация:** тесный двор; споротый знак, спутник у скамьи, кошель на
-свободном месте. Вербовщик у косяка в глубине, без нового герба.
+**Иллюстрация:** споротые знаки на рукавах; герой отходит от двери к
+спутнику на скамье. Кошель между ними, вербовщик в глубине, без нового герба.
 
-#### A2 — пятьдесят
+#### A2 — своё дело
 
 **RU · летописец; книга, разворот 2**
 
-> — Ты почему не идёшь? — спрашивает {companionName}.
+> — В новой дружине тоже платят, — говорит {companionName}.
 >
-> — Не хочу снова привыкать к чужим. Тебя хотя бы знаю.
+> — А работу выбирают за нас. Я хочу знать, за что берусь.
 >
-> {heroName} отсчитывает на скамью пятьдесят крон.
+> {heroName} развязывает кошель. Мы слышим монеты; у двери опять зовут
+> следующего.
 >
-> — За найм. Работу поищем сами.
+> — Пятьдесят сейчас, десять в день. Пойдёшь со мной? Работу здесь поищем.
 >
-> — А если не найдём?
+> — Пока ищем, тоже платишь?
 >
-> — Жалованье всё равно плачу.
+> — Тоже.
 >
-> {companionName} садится рядом.
+> {companionName} садится ближе, положив вещи к ногам.
 >
-> — Тогда нанимай.
->
-> Мы ждём, пока монеты пересчитают. {companionName} убирает их в кошель.
+> — Ладно. Только не веди вслепую.
 
 **EN · company chronicler; book, spread 2**
 
-> “Why aren't you going?” asks {companionName}.
+> “The new company pays too,” says {companionName}.
 >
-> “I don't want to get used to strangers all over again. At least I know you.”
+> “And chooses our work for us. I want to know what I'm taking on.”
 >
-> {heroName} counts out fifty crowns on the bench.
+> {heroName} opens the purse. Coins clink. We hear another recruit called
+> to the door.
 >
-> “For signing on. We'll find our own work.”
+> “Fifty now, ten a day. Come with me? We'll look for work here.”
 >
-> “And if we don't?”
+> “You pay while we're looking?”
 >
-> “You still get your wages.”
+> “Yes.”
 >
-> {companionName} sits beside us.
+> {companionName} sits closer, setting everything down.
 >
-> “All right. Hire me.”
->
-> We wait while the coins are counted. {companionName} puts them in a purse.
+> “All right. But tell me what we're walking into.”
 
-**Иллюстрация:** пятьдесят крон между двумя людьми на скамье; дверь остаётся
-на дальнем плане. Не показывать второй кошель или дополнительную выплату.
+**Иллюстрация:** открытый кошель ещё в руках героя; спутник придвигается
+ближе. Деньги не переданы: согласие предшествует выплате на A3.
 
 #### A3 — место рядом
 
@@ -789,71 +794,62 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 
 **RU · летописец; книга, разворот 3; два человека**
 
-> Мы стягиваем вещи к скамье. {companionName} пробует развязать мешок с едой.
+> {heroName} отсчитывает пятьдесят крон на скамью. {companionName}
+> пересчитывает их, убирает в кошель и поворачивается к выходу со двора.
+> Мы сидим рядом, теперь спиной к двери, у которой набирают людей.
 >
-> — Кто так затянул? Зубами теперь развязывать.
+> — Смотри, не найми сразу полдвора.
 >
-> {heroName} держит горловину, пока пальцы нащупывают конец шнура.
-> Узел поддаётся. {companionName} завязывает вместо него петлю и оставляет
-> длинный конец снаружи.
->
-> — За этот тяни.
->
-> Мы поднимаемся. Мешок больше не лежит поперёк наших вещей.
+> {companionName} сдвигает свои вещи к мешку с едой.
 
 **EN · company chronicler; book, spread 3; two people**
 
-> We pull our things towards the bench. {companionName} tries to untie the
-> food sack.
+> {heroName} counts fifty crowns onto the bench. {companionName} checks
+> the coins, puts them away and turns towards the yard's exit. We sit side
+> by side now, our backs to the door where they are taking recruits.
 >
-> “Who pulled it that tight? We'll have to use our teeth.”
+> “Don't go hiring half the yard.”
 >
-> {heroName} holds the neck of the sack while fingers work the cord loose.
-> The knot gives. {companionName} ties a loop instead, leaving a long end
-> sticking out.
->
-> “Pull this one.”
->
-> We stand up. The sack no longer lies across our things.
+> {companionName} moves the belongings beside our food sack.
 
 ##### Три человека: герой и два спутника
 
 **RU · летописец; книга, разворот 3; три человека**
 
-> {secondCompanionName} подходит к скамье, но вещи держит при себе.
+> {heroName} отсчитывает пятьдесят крон. {companionName} убирает плату.
 >
-> — И в дни без работы платишь?
+> — Смотри, не найми сразу полдвора.
 >
-> — Плачу, — отвечает {heroName}. — Пятьдесят за найм.
+> {secondCompanionName} подходит к скамье.
+>
+> — Еда общая? Или из платы вычтешь?
+>
+> — Еда из этого мешка. Плату не трогаю.
 >
 > — Тогда и я с вами.
 >
-> {heroName} отсчитывает ещё пятьдесят. {secondCompanionName} убирает плату,
-> ставит свои вещи у мешка и пробует узел.
->
-> — Кто так затянул? Зубами теперь развязывать.
->
-> Мы ослабляем шнур. {secondCompanionName} перевязывает горловину петлёй.
+> {heroName} отсчитывает ещё пятьдесят. {secondCompanionName} принимает
+> монеты и садится. Мы подбираем вещи, чтобы все поместились.
 
 **EN · company chronicler; book, spread 3; three people**
 
-> {secondCompanionName} comes to the bench, still holding on to everything.
+> {heroName} counts out fifty crowns. {companionName} pockets the pay.
 >
-> “You pay on days without work, too?”
+> “Don't go hiring half the yard.”
 >
-> “I do,” says {heroName}. “Fifty for signing on.”
+> {secondCompanionName} comes to the bench.
+>
+> “Is the food shared? Or does it come out of my pay?”
+>
+> “This sack is for all of us. You keep your pay.”
 >
 > “Then I'm coming with you.”
 >
-> {heroName} counts out another fifty. {secondCompanionName} pockets the pay,
-> puts everything beside the sack and tries the knot.
->
-> “Who pulled it that tight? We'll have to use our teeth.”
->
-> We loosen the cord. {secondCompanionName} ties a loop at the sack's neck.
+> {heroName} counts out another fifty. {secondCompanionName} takes the coins
+> and sits down. We move our things so everyone has room.
 
-**Иллюстрация:** руки у завязки; при двух людях никто третий не входит в кадр.
-При трёх — второй спутник ставит вещи рядом только после согласия и выплаты.
+**Иллюстрация:** люди на одной скамье, вещи отодвинуты к ногам. При двух
+никто третий не входит в кадр; при трёх вторая выплата идёт после согласия.
 
 #### A4 — запас
 
@@ -864,22 +860,24 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 > Нас двое. Из девятисот крон после найма остаётся восемьсот пятьдесят.
 > В мешке тридцать рационов — еды на пятнадцать дней.
 >
-> — Деньги спрячь, — говорит {companionName}, оглядывая тесный двор.
+> — А теперь куда? — спрашивает {companionName}.
 >
-> {heroName} затягивает кошель и прячет под одежду. Мы разбираем свои вещи.
-> Кто-то пробует сесть на край нашего плаща; {companionName} стягивает
-> плащ со скамьи и освобождает место.
+> {heroName} затягивает кошель. У двери кто-то спрашивает про плату.
+> Мы ждём ответа, но из-за голосов ничего не разобрать.
+>
+> — Пойдём узнаем, кому здесь нужны люди.
 
 **EN · company chronicler; book, spread 4; two people**
 
 > There are two of us. Of the nine hundred crowns, eight hundred and fifty
 > remain after hiring. The sack holds thirty rations: food for fifteen days.
 >
-> “Put the money away,” says {companionName}, looking round the crowded yard.
+> “Where to now?” asks {companionName}.
 >
-> {heroName} ties the purse shut and tucks it under clothing. We pick up
-> our belongings. Someone tries to sit on the edge of our cloak;
-> {companionName} pulls it off the bench and clears the seat.
+> {heroName} ties the purse shut. Someone at the door asks about pay.
+> We listen for the answer, but the other voices drown it out.
+>
+> “Let's find out who needs people here.”
 
 ##### Три человека: герой и два спутника
 
@@ -888,24 +886,24 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 > Нас трое. Из девятисот крон после найма остаётся восемьсот.
 > В мешке тридцать рационов — еды на десять дней.
 >
-> — Деньги спрячь, — говорит {companionName}, оглядывая тесный двор.
+> — А теперь куда? — спрашивает {companionName}.
 >
-> {heroName} затягивает кошель и прячет под одежду. Мы разбираем свои вещи.
-> Кто-то пробует сесть на край нашего плаща; {companionName} стягивает
-> плащ со скамьи. {secondCompanionName} подбирает последний тюк,
-> освобождая скамью.
+> {heroName} затягивает кошель. {secondCompanionName} поднимает мешок
+> с едой, пока у двери спрашивают про плату. Ответа мы не слышим.
+>
+> — Пойдём узнаем, кому здесь нужны люди.
 
 **EN · company chronicler; book, spread 4; three people**
 
 > There are three of us. Of the nine hundred crowns, eight hundred remain
 > after hiring. The sack holds thirty rations: food for ten days.
 >
-> “Put the money away,” says {companionName}, looking round the crowded yard.
+> “Where to now?” asks {companionName}.
 >
-> {heroName} ties the purse shut and tucks it under clothing. We pick up
-> our belongings. Someone tries to sit on the edge of our cloak;
-> {companionName} pulls it off the bench. {secondCompanionName} lifts the last
-> bundle, clearing the seat.
+> {heroName} ties the purse shut. {secondCompanionName} picks up the food
+> sack. Someone at the door asks about pay. We cannot hear the answer.
+>
+> “Let's find out who needs people here.”
 
 **Иллюстрация:** мешок закрыт, деньги убраны; выбранный состав встаёт со скамьи.
 Рационы не изображать как тридцать дополнительных мешков или новый товар.
@@ -914,31 +912,35 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 
 **RU · летописец; книга, разворот 5**
 
-> Работы у нас ещё нет. {heroName} берёт мешок; мы идём к выходу со двора,
-> мимо людей у вербовщика. {companionName} придерживает дверь. За ней
-> проезжает телега, и приходится подождать: колесо проходит почти по порогу.
-> Из двора снова зовут следующего. Мы пропускаем телегу.
+> {heroName} выходит на улицу. Мы идём следом, когда у двери вербовщика
+> снова зовут следующего. {companionName} оборачивается.
 >
-> — Теперь, — говорит {companionName}. Мы выходим за телегой.
+> — Нас?
+>
+> {heroName} качает головой и идёт дальше. У стены сушат бельё;
+> с рубах капает на камни. {companionName} догоняет нас, оглянувшись ещё
+> раз на двор, и дальше идёт рядом.
 
 **EN · company chronicler; book, spread 5**
 
-> We still have no work. {heroName} takes the sack; we head out of the yard,
-> past the people waiting for the recruiter. {companionName} holds the door.
-> A cart is passing outside. We have to wait: a wheel runs close to the
-> threshold. Someone in the yard calls for the next recruit. We let the
-> cart pass.
+> {heroName} steps into the street. We follow, just as the recruiter calls
+> for the next person. {companionName} turns back.
 >
-> “Now,” says {companionName}. We follow the cart into the street.
+> “Us?”
+>
+> {heroName} shakes their head and keeps walking. Laundry hangs beside the
+> wall; water drips from shirts onto the stones. {companionName} catches
+> up, glances once more at the yard, then walks beside us.
 
-**Иллюстрация:** выход со двора к живой улице; спутник держит дверь,
-герой несёт запас. Никакой выделенной доски заказов или уже взятой миссии.
+**Иллюстрация:** герой впереди на улице, первый спутник догоняет и идёт рядом;
+при трёх людях второй уже с ними. Двор остаётся позади, нет уже взятой миссии.
 
-### Вариант B — не делить
+### Вариант B — пока есть деньги
 
 **Постановка:** после распада дружины люди начинают расходиться поодиночке.
-Герой первым берёт общий груз и удерживает разговор на месте; найм следует
-после открытого возражения спутника, а не после готового согласия.
+Герой хочет брать работу по охране, но не в одиночку: деньги позволяют
+нанять людей и начать искать заказ. Первый спутник требует плату вперёд,
+второй — еду не за свой счёт. Обещанного заказа или награды нет.
 
 #### B1 — у мешка
 
@@ -946,64 +948,63 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 
 > Мы укладываем вещи у стены. Из двора по одному уходят люди из распавшихся
 > дружин. На плаще виден выцветший прямоугольник от старого знака.
-> {companionName} отодвигает свой тюк от остальных, протягивает ремень через
-> пряжку. Мешок с едой стоит между нами. {heroName} поднимает его на плечо.
-> {companionName} перестаёт затягивать ремень, но тюк не придвигает обратно.
+> {companionName} затягивает тюк, собираясь уходить. {heroName} кладёт
+> кошель между нами.
+>
+> — За охрану в одиночку я не возьмусь. А на твой найм денег хватит.
+>
+> {companionName} оставляет тюк на земле.
 
 **EN · company chronicler; book, spread 1**
 
 > We pack our things by the wall. People from disbanded companies leave
 > the yard one by one. A faded rectangle marks where the old badge sat on
-> the cloak. {companionName} pulls a bundle away from the rest and threads
-> a strap through its buckle. The food sack stands between us.
-> {heroName} lifts it onto one shoulder. {companionName} stops tightening
-> the strap but leaves the bundle where it is.
+> the cloak. {companionName} tightens a bundle, ready to leave.
+> {heroName} puts a purse between us.
+>
+> “I won't take guard work alone. But I can afford to hire you.”
+>
+> {companionName} leaves the bundle on the ground.
 
-**Иллюстрация:** вещи у стены, выцветший след знака, герой примеряет мешок;
-без следов битвы, погибших или нового походного имущества.
+**Иллюстрация:** кошель на земле между двумя людьми, спутник ещё не берёт
+свой тюк. Выцветший след знака на плаще; без битвы или нового имущества.
 
 #### B2 — возражение
 
 **RU · летописец; книга, разворот 2**
 
-> — И мой тюк понесёшь? — спрашивает {companionName}.
+> — Что охранять будем? — спрашивает {companionName}.
 >
-> {heroName} ставит мешок рядом с нашими вещами.
+> — Сначала узнаем, кому нужны люди.
 >
-> — Еду понесу. Тебя нанимаю.
+> — То есть работы нет.
 >
-> — А заказ есть?
+> — Пока нет.
 >
-> — Нет.
+> Мы сидим у стены. {companionName} придерживает кошель ногой, чтобы
+> тот не съехал в грязь, но в руки не берёт. Во дворе уже свободно;
+> лишь у двери несколько человек ждут, пока их позовут.
 >
-> {companionName} кладёт ремень на тюк.
->
-> — Значит, искать пойдём. А за день без работы кто платит?
->
-> Мы слышим, как во дворе зовут людей под новое знамя. {companionName}
-> не оборачивается, ждёт ответа.
+> — А за день без работы кто платит?
 
 **EN · company chronicler; book, spread 2**
 
-> “Taking my bundle too?” asks {companionName}.
+> “What are we guarding?” asks {companionName}.
 >
-> {heroName} sets the sack beside our things.
+> “First we'll find out who needs people.”
 >
-> “I'll carry the food. I'm hiring you.”
+> “So there's no job.”
 >
-> “Have you got a job?”
+> “Not yet.”
 >
-> “No.”
+> We sit by the wall. {companionName} stops the purse slipping into the mud
+> with a foot, but doesn't pick it up. The yard has cleared; only a few
+> people wait by the door to be called in.
 >
-> {companionName} lays the strap on the bundle.
->
-> “Then we'll be looking. Who pays for a day without work?”
->
-> We hear someone in the yard calling people to a new banner.
-> {companionName} doesn't turn, waiting for an answer.
+> “Who pays for a day without work?”
 
-**Иллюстрация:** свободный ремень на тюке; лицо спутника направлено
-к герою, не к зовущей толпе. Никакого узнаваемого герцогского знамени.
+**Иллюстрация:** нога удерживает кошель у края грязи; спутник ждёт ответа,
+герой сидит напротив. Ни чужого знамени, ни показанного готового заказа.
 
 #### B3 — десять в день
 
@@ -1011,73 +1012,72 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 
 **RU · летописец; книга, разворот 3; два человека**
 
-> — Я. Десять крон в день. Работа есть или нет, — отвечает {heroName}.
-> — Пятьдесят за найм — сразу.
+> — Я. Десять крон за день, даже если работы нет, — отвечает {heroName}.
+> — Пятьдесят за найм — сейчас.
 >
-> {companionName} смотрит на кошель.
+> — Ладно. Но пятьдесят сначала.
 >
-> — Ладно. Отсчитывай.
->
-> Мы придвигаем тюк к мешку. {companionName} продевает ремень под груз,
-> затягивает один конец, второй отдаёт {heroName}. Мешок ложится на плечо,
-> но кошель ещё закрыт. {companionName} протягивает ладонь.
+> {companionName} поднимает кошель и протягивает обратно. {heroName}
+> отсчитывает пятьдесят крон. {companionName} пересчитывает монеты,
+> прячет свой кошель и берёт тюк. Мы поднимаемся от стены.
 
 **EN · company chronicler; book, spread 3; two people**
 
-> “I do. Ten crowns a day, work or no work,” says {heroName}.
+> “I do. Ten crowns a day, even when there's no work,” says {heroName}.
 > “Fifty for signing on, paid now.”
 >
-> {companionName} looks at the purse.
+> “All right. But the fifty first.”
 >
-> “All right. Count it out.”
->
-> We move the bundle beside the sack. {companionName} threads the strap
-> under the load, tightens one end and gives the other to {heroName}.
-> The sack rests on a shoulder, but the purse is still shut.
-> {companionName} holds out a hand.
+> {companionName} picks up the purse and hands it back. {heroName}
+> counts out fifty crowns. {companionName} counts the coins again,
+> puts them away and picks up the bundle. We get up from the wall.
 
 ##### Три человека: герой и два спутника
 
 **RU · летописец; книга, разворот 3; три человека**
 
-> — Я. Десять крон в день. Работа есть или нет, — отвечает {heroName}.
-> — Пятьдесят за найм — сразу.
+> — Я. Десять крон за день, даже если работы нет, — отвечает {heroName}.
+> — Пятьдесят за найм — сейчас.
 >
-> — Ладно. Отсчитывай.
+> — Ладно. Но пятьдесят сначала.
 >
-> {secondCompanionName} придерживает свой тюк.
+> {companionName} протягивает кошель обратно. {heroName} отсчитывает
+> пятьдесят крон; {companionName} убирает монеты.
 >
-> — Это и мне?
+> {secondCompanionName} ставит вещи рядом.
 >
-> — Тебе столько же.
+> — А еда? Из этих десяти покупать?
 >
-> — Тогда пойду.
+> — Едим из общего запаса. Тебе плачу столько же.
 >
-> Мы собираем вещи вместе. {companionName} держит мешок, пока
-> {secondCompanionName} продевает под него ремень. Один конец затянут,
-> второй отдан {heroName}. Спутники протягивают ладони к кошелю.
+> — Тогда и я с вами.
+>
+> {heroName} отсчитывает ещё пятьдесят. {secondCompanionName} принимает
+> плату. Мы поднимаемся от стены.
 
 **EN · company chronicler; book, spread 3; three people**
 
-> “I do. Ten crowns a day, work or no work,” says {heroName}.
+> “I do. Ten crowns a day, even without work,” says {heroName}.
 > “Fifty for signing on, paid now.”
 >
-> “All right. Count it out.”
+> “All right. But the fifty first.”
 >
-> {secondCompanionName} holds on to the bundle.
+> {companionName} hands the purse back. {heroName} counts out fifty crowns;
+> {companionName} pockets them.
 >
-> “Same for me?”
+> {secondCompanionName} sets everything down beside us.
 >
-> “Same for you.”
+> “What about food? Buy it out of those ten?”
 >
-> “Then I'll come.”
+> “We eat from the shared supplies. Your pay is the same.”
 >
-> We gather our things together. {companionName} holds the sack while
-> {secondCompanionName} threads the strap underneath. One end is tightened,
-> the other handed to {heroName}. The companions hold out their hands for the pay.
+> “Then I'm coming with you.”
+>
+> {heroName} counts out another fifty. {secondCompanionName} takes the pay.
+> We get up from the wall.
 
-**Иллюстрация:** руки у ремня и протянутые ладони; при трёх людях второй
-спутник участвует после своего согласия. Нет разделения имущества на равные доли.
+**Иллюстрация:** кошель возвращают герою; каждый выбранный спутник получает
+пятьдесят и берёт вещи. Нет разделения имущества на равные доли.
 
 #### B4 — расчёт
 
@@ -1085,92 +1085,99 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 
 **RU · летописец; книга, разворот 4; два человека**
 
-> Из девятисот крон {heroName} отсчитывает пятьдесят за найм.
-> {companionName} пересчитывает монеты и прячет свой кошель.
+> Нас двое. Из девятисот крон после найма остаётся восемьсот пятьдесят.
+> Еды тридцать рационов — на пятнадцать дней.
 >
-> Мы завязываем кошель с оставшимися восемьюстами пятьюдесятью кронами.
-> Еда уже здесь: тридцать рационов, на двоих хватит на пятнадцать дней.
-> {companionName} подбирает свой тюк и пробует пряжку большим пальцем.
+> {heroName} затягивает кошель. Мы берём мешок с едой; у двери уже
+> никого нет. {companionName} отходит к выходу, но останавливается.
 >
-> — Держит. Можно идти.
+> — Ты платишь. Тебе и вести.
+>
+> {heroName} проходит вперёд. Мы выходим из двора.
 
 **EN · company chronicler; book, spread 4; two people**
 
-> From nine hundred crowns, {heroName} counts out fifty as a signing payment.
-> {companionName} counts the coins again and puts them in a purse.
+> There are two of us. After hiring, eight hundred and fifty of the nine
+> hundred crowns remain. Thirty rations will feed us for fifteen days.
 >
-> We tie up the purse with eight hundred and fifty crowns left.
-> The food is already here: thirty rations, enough for two people for
-> fifteen days. {companionName} picks up the bundle and tests the buckle
-> with a thumb.
+> {heroName} ties the purse shut. We pick up the food sack; the door is
+> deserted now. {companionName} heads for the exit, then stops.
 >
-> “Holds. We can go.”
+> “You're paying. You lead.”
+>
+> {heroName} goes ahead. We leave the yard.
 
 ##### Три человека: герой и два спутника
 
 **RU · летописец; книга, разворот 4; три человека**
 
-> Из девятисот крон {heroName} отсчитывает по пятьдесят за найм каждому.
-> {companionName} пересчитывает монеты и прячет свой кошель.
+> Нас трое. Из девятисот крон после найма остаётся восемьсот.
+> Еды тридцать рационов — на десять дней.
 >
-> Мы завязываем кошель с оставшимися восемьюстами кронами.
-> Еда уже здесь: тридцать рационов, на троих хватит на десять дней.
-> {secondCompanionName} убирает плату и подбирает свой тюк.
-> {companionName} пробует пряжку большим пальцем.
+> {heroName} затягивает кошель. {secondCompanionName} поднимает мешок
+> с едой; у двери уже никого нет. {companionName} отходит к выходу,
+> но останавливается.
 >
-> — Держит. Можно идти.
+> — Ты платишь. Тебе и вести.
+>
+> {heroName} проходит вперёд. Мы выходим из двора.
 
 **EN · company chronicler; book, spread 4; three people**
 
-> From nine hundred crowns, {heroName} counts out fifty for each companion's
-> signing payment. {companionName} counts the coins again and puts them in a purse.
+> There are three of us. After hiring, eight hundred of the nine hundred
+> crowns remain. Thirty rations will feed us for ten days.
 >
-> We tie up the purse with eight hundred crowns left. The food is already
-> here: thirty rations, enough for three people for ten days.
-> {secondCompanionName} pockets the payment and picks up the bundle.
-> {companionName} tests the buckle with a thumb.
+> {heroName} ties the purse shut. {secondCompanionName} picks up the food
+> sack; the door is deserted now. {companionName} heads for the exit,
+> then stops.
 >
-> “Holds. We can go.”
+> “You're paying. You lead.”
+>
+> {heroName} goes ahead. We leave the yard.
 
-**Иллюстрация:** каждая выплата отдельно, общий кошель завязан;
-люди собирают вещи. Не изображать ещё один расчёт зарплаты.
+**Иллюстрация:** общий кошель завязан, вещи собраны; первый спутник
+пропускает героя к выходу. Не изображать ещё один расчёт зарплаты.
 
-#### B5 — на пороге
+#### B5 — первый вопрос
 
 **RU · летописец; книга, разворот 5**
 
-> У порога мы останавливаемся: мешок цепляется за дверь.
-> {companionName} подаётся назад, подхватывает его снизу.
+> На улице {heroName} идёт впереди. Мы проходим мимо открытой лавки,
+> где кто-то переставляет пустые ящики. {heroName} останавливается.
+> {companionName} чуть не налетает сзади и отходит к стене.
 >
-> — Боком. А то тут до вечера простоим.
+> — Вам охрана нужна?
 >
-> Мы отступаем на шаг. {heroName} поворачивается; {companionName} держит
-> мешок под локтем, пока он не проходит между косяками. Дверь открывается
-> до конца, и мы выходим на улицу. {companionName} отпускает груз.
+> Мы ждём у входа. Из лавки доносится стук: один ящик ставят на другой.
+> {heroName} не уходит, пока там не обернутся.
 
 **EN · company chronicler; book, spread 5**
 
-> We stop at the threshold: the sack catches on the door. {companionName}
-> steps back and lifts it from underneath.
+> Out in the street, {heroName} walks ahead. We pass an open shop where
+> someone is shifting empty crates. {heroName} stops. {companionName}
+> nearly walks into them, then steps aside against the wall.
 >
-> “Sideways. Or we'll be here till evening.”
+> “Do you need guards?”
 >
-> We take a step back. {heroName} turns; {companionName} holds the sack
-> beneath an elbow until it clears the doorframe. The door swings all the
-> way open and we step into the street. {companionName} lets go of the load.
+> We wait at the entrance. A crate knocks against another inside.
+> {heroName} stays there until someone turns to look.
 
-**Иллюстрация:** мешок у створки, спутник помогает пройти; улица продолжает
-свои дела. Тот же запас, без съеденных рационов, чужих гербов или награды.
+**Иллюстрация:** герой у входа в безымянную лавку, спутники рядом; внутри
+ящики, не новый именованный заказчик. Ни ответа, ни награды, ни взятой миссии.
 
-### Статус B8 перед вторым раундом
+### Статус B8 перед третьим раундом
 
 Раунд 1 на `eacc440`: A — REJECT, B — REJECT. У A оценки 1 получили
 люди, язык, ритм и перевод; у B — люди, язык, подтекст, ритм и перевод.
-Перед вторым полным проходом изменены причины и последовательность найма:
-каждый спутник выбирает до выплаты, A получает повод отказаться от чужого
-отряда, B — ясные условия ежедневной и вступительной платы. Убраны повтор
-узла в A4, запрет тратить личную плату на еду в B4 и числовой хвост B5.
-Независимая приёмка исправленного текста и выбор владельца ещё не получены.
+Раунд 2 на `de6f121`: оба REJECT; люди, язык, ритм и перевод снова по 1.
+Перед последним проходом сцены пересобраны: A отказывается от неопределённой
+службы, B пробует брать работу по охране за свой счёт. Найм следует из этих
+решений; вместо узлов и задержек показаны требования спутников, уход от
+вербовщика и первый вопрос о работе. Выплаты в обеих версиях проходят на
+развороте 3. Повторная просьба первого спутника в A заменена предостережением
+против лишнего найма; в B после согласия сразу платят. Убраны конструкции,
+требующие склонять имя героя. Последняя независимая приёмка
+и выбор владельца ещё не получены.
 Исторические версии сохранены. Игровые данные и код не изменены.
 Проверки шага 1 на исходной редакции: 10 разворотов, 10 заметок об
 иллюстрациях, 28 полных языковых редакций, по 48–71 слов; 6 новых локальных
@@ -1179,6 +1186,12 @@ Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 кро
 по 46–75 слов; допустимые параметры, отсутствие третьего спутника в
 редакциях для двух людей, 6 новых локальных ссылок/якорей,
 `prettier --check`, `git diff --check` — PASS.
+Проверки редакции для раунда 3: 10 разворотов, 10 иллюстрационных заметок,
+28 полных языковых редакций по 42–82 слова; допустимые параметры,
+отсутствие невыбранного спутника и 6 новых локальных ссылок/якорей — PASS
+(`node output/B8/check-text.cjs`). Prettier и `git diff --check` — PASS.
+Первый локальный patch самопроверки не применился из-за порядка контекстов;
+повторный patch исправлен, проверки выполнены уже на новой редакции.
 Подстановка имени считается одним словом, слова через дефис — одним;
 заголовки и иллюстрации не входят в счёт.
 Игра, typecheck, Vitest, CI и визуальная критика — NOT_RUN (документы);
