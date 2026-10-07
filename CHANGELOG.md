@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Wave 1 agent results: company book, cache investigation, bestiary
+
+- 2026-10-08, branch `claude/wave1-docs` from `main` (`b7ffefc`), published;
+  owner «Ok, merge prs, update main». Integrates the accepted, owner-approved
+  parts of the wave-1 Codex briefs (documentation only, no code):
+  - **B8 company book** (`codex/b8-company-book` at `5b943aa`): Codex variants
+    A/B were REJECT after three text-critic rounds; on the owner's decision
+    Claude rewrote the book as «Казна» and «Щит»; both ACCEPT in round 3.
+    Owner chose «Щит», third person without the chronicler's «мы».
+    [Text and rounds](docs/wiki/onboarding-book.md#b8--новая-редакция-казна-и-щит--2026-10-07).
+  - **B4 «Кто выдал тайник»** (`codex/b4-story-missions` at `88590bd`): story
+    revision 6 (patched-sack clue instead of the tally stick, owner decision)
+    text-critic ACCEPT and owner «Одобряю»; runtime contract
+    [M1-STORY-MISSIONS](docs/work-packages/M1-STORY-MISSIONS.md). Reward
+    decision (40 crowns from Kondrat's existing funds) is recorded on the
+    working branch, not yet here.
+  - **B7 bestiary and quest decisions** (`codex/b7-content-revision` at
+    `ef0008e`): 30 selected creatures, all 60 IDs retained; creature names
+    text-critic ACCEPT; 60 quest editorial decisions. The rewritten quest
+    drafts (REJECT) are not included.
+    Checks: prettier on changed docs. Game, CI-only checks per PR. Code parts
+    of B1/B3/B4 remain on their working branches.
+
 ### Pending local work published
 
 - 2026-10-07, branch `claude/world-lore-and-briefs` from `main` (`47c60e0`),
@@ -19,6 +42,8 @@ requests.
   written by earlier sessions. Local evidence (`output/`, `.playwright-cli/`)
   and agent worktrees (`.claude/worktrees/`) are now ignored, not committed.
   Merge is not authorized.
+- 2026-10-07 correction: merged on the owner's «Yes» as
+  [PR #152](https://github.com/Vovanostm/warwrit/pull/152) (`b7ffefc`).
 
 ### Work package: melee always connects (combat ruleset v3) — proposal
 

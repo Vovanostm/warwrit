@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**Wave 1 briefs — status 2026-10-08:** owner «Ok, merge prs, update main»
+merges the accepted documentation via `claude/wave1-docs`: B8 book «Щит»
+(owner choice, third person), B4 approved story and runtime contract, B7
+bestiary selection and quest decisions. Still running on Codex worktrees
+(`~/.codex/worktrees/`): B1 field camp (step 2 code, fresh session after
+disconnects), B3 repeatable contracts (core done, privacy fix committed;
+server/board/text/journeys pending), B4 investigation steps 3–5 (reward 40
+crowns, owner decision), B7 quest drafts (three batches REJECT; owner plan:
+Claude rewrites the cards). B8 strings in game are the next B8 step.
+No player-visible feature from wave 1 yet.
+
 **Briefs split with acceptance and critique — 2026-10-07:** owner asked for
 separate files so agents execute unambiguously. [briefs/2026-10-07](briefs/2026-10-07/README.md)
 holds the common contract (rules, quality bar, critique loop, checks, DoD,
