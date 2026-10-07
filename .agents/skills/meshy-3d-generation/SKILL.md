@@ -1,6 +1,6 @@
 ---
 name: meshy-3d-generation
-description: "Create or edit digital 3D assets with Meshy: models, textures, rigging, animation, and reference images. For physical printing, use meshy-3d-printing."
+description: 'Create or edit digital 3D assets with Meshy: models, textures, rigging, animation, and reference images. For physical printing, use meshy-3d-printing.'
 license: MIT
 ---
 
@@ -28,12 +28,12 @@ completion. Choose the shortest suitable pipeline and reuse existing assets for 
 
 ## Read what this request needs
 
-| Need | Reference |
-|---|---|
-| CLI runner, credentials, or output location | [Setup](references/setup.md) |
-| Generation, texturing, rigging, animation, or conversion | [Pipelines](references/pipelines.md) |
-| Cost, waiting, preview, delivery, or finding a previous model | [Delivery](references/delivery.md) |
-| Failed or uncertain operation | [Troubleshooting](references/troubleshooting.md) |
+| Need                                                          | Reference                                        |
+| ------------------------------------------------------------- | ------------------------------------------------ |
+| CLI runner, credentials, or output location                   | [Setup](references/setup.md)                     |
+| Generation, texturing, rigging, animation, or conversion      | [Pipelines](references/pipelines.md)             |
+| Cost, waiting, preview, delivery, or finding a previous model | [Delivery](references/delivery.md)               |
+| Failed or uncertain operation                                 | [Troubleshooting](references/troubleshooting.md) |
 
 Read the relevant section when needed; recipes are examples to adapt to the requested result,
 not a requirement to execute every stage. An untextured model skips texture generation; an

@@ -3,6 +3,7 @@
 Read this before Phase 1 (naming and file layout), Phase 5 (texture contract) and Phases 9 and 10.
 
 Contents
+
 1. Naming and file organisation
 2. Texture contract
 3. Budgets and LOD policy
@@ -74,18 +75,18 @@ Pick a target device and frame budget before finalising density; a desktop 60 fp
 16.7 ms for everything, not for meshes alone. These are starting planning ranges, not
 measurements or guarantees:
 
-| Asset class | LOD0 tris | LOD1 / LOD2 | Textures | Material groups |
-| --- | --- | --- | --- | --- |
-| Hero character | 60 to 100k | 15 to 30k / 5 to 10k | 2k main set, 4k only for a proven close view | 3 to 6 |
-| Standard character or enemy | 20 to 35k | 8 to 15k / 2 to 5k | shared 1 to 2k | 1 to 3 |
-| Large creature or boss | 120 to 200k if the target allows | 40k / 12k | 2 to 4k | 4 to 8 |
-| Player vehicle | 60 to 120k | 20 to 40k / 5 to 10k | 2k body, shared parts | 3 to 6 |
-| Traffic or prop vehicle | 10 to 25k | 4k / 1k | shared atlas | 1 to 2 |
-| Architecture module | 0.5 to 5k per piece | silhouette variants | tiles 1 to 2k plus trim sheet | 1 to 2 |
-| Hero building | 20 to 80k | 8k / 2k | tiles, trims, unique decals | 3 to 6 |
-| Small prop | 0.3 to 3k | 0.1 to 1k | shared atlas 1 to 2k | 1 |
-| Hero weapon | 10 to 30k | 3k / 1k | 2k unique | 1 to 2 |
-| Environment piece | 2 to 20k | 0.5 to 5k / 0.2 to 1k | tileable plus detail normal | 1 |
+| Asset class                 | LOD0 tris                        | LOD1 / LOD2           | Textures                                     | Material groups |
+| --------------------------- | -------------------------------- | --------------------- | -------------------------------------------- | --------------- |
+| Hero character              | 60 to 100k                       | 15 to 30k / 5 to 10k  | 2k main set, 4k only for a proven close view | 3 to 6          |
+| Standard character or enemy | 20 to 35k                        | 8 to 15k / 2 to 5k    | shared 1 to 2k                               | 1 to 3          |
+| Large creature or boss      | 120 to 200k if the target allows | 40k / 12k             | 2 to 4k                                      | 4 to 8          |
+| Player vehicle              | 60 to 120k                       | 20 to 40k / 5 to 10k  | 2k body, shared parts                        | 3 to 6          |
+| Traffic or prop vehicle     | 10 to 25k                        | 4k / 1k               | shared atlas                                 | 1 to 2          |
+| Architecture module         | 0.5 to 5k per piece              | silhouette variants   | tiles 1 to 2k plus trim sheet                | 1 to 2          |
+| Hero building               | 20 to 80k                        | 8k / 2k               | tiles, trims, unique decals                  | 3 to 6          |
+| Small prop                  | 0.3 to 3k                        | 0.1 to 1k             | shared atlas 1 to 2k                         | 1               |
+| Hero weapon                 | 10 to 30k                        | 3k / 1k               | 2k unique                                    | 1 to 2          |
+| Environment piece           | 2 to 20k                         | 0.5 to 5k / 0.2 to 1k | tileable plus detail normal                  | 1               |
 
 Runtime counts differ from the modelling viewport because UV and normal splits duplicate
 vertices; record the engine's measured counts, not Blender's.

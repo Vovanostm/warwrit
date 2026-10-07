@@ -16,8 +16,8 @@ Two sources are legitimate. Use them, and say which one you used.
 meshy make "MODEL_DESCRIPTION" --dry-run --output-schema v1 --format json --no-update-check
 ```
 
-   Read `steps[]` and `estimated_credits`. The same per-step numbers apply when you run those
-   steps yourself as `text-to-3d`/`image-to-3d` commands.
+Read `steps[]` and `estimated_credits`. The same per-step numbers apply when you run those
+steps yourself as `text-to-3d`/`image-to-3d` commands.
 
 2. **The published price list**, <https://docs.meshy.ai/en/api/pricing>, for everything else —
    retexture, remesh, convert, resize, UV, rigging, animation, 2D, motion, print analysis and

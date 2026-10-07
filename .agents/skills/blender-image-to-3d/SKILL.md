@@ -51,16 +51,16 @@ full checklist or numeric defaults.
   reference view they came from, or `# inferred`.
 - Skill scripts (all take `-- --help`):
 
-| Script | Purpose |
-| --- | --- |
-| `scripts/init_master.py` | master .blend: units, collections, calibration proxies, reference planes at real scale, game camera |
-| `scripts/review_render.py` | clay / silhouette / wire / checker / material renders from fixed views, the reference-matched camera, gameplay pixel size, turntables, posed frames |
-| `scripts/compose_review.py` | compare sheet (reference, render, overlay, gameplay strip) plus silhouette IoU and width-profile numbers; plain Python with Pillow |
-| `scripts/world_gate.py` | world-registered silhouette IoU for orthographic reference views: the camera covers the reference matte's exact world window, so scale and placement errors count |
-| `scripts/validate.py` | topology, transforms, UVs, weights, armature, sockets, colliders, naming, tri budget; exit 1 on FAIL |
-| `scripts/bake_maps.py` | normal and AO from HIGH to LOW, base colour, roughness, metallic; rebuilds delivery materials |
-| `scripts/export_delivery.py` | GLB/FBX export with asset-manifest.json and animation-contract.json |
-| `scripts/roundtrip.py` | imports the export into a blank Blender, reports what arrived, renders a check |
+| Script                       | Purpose                                                                                                                                                           |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/init_master.py`     | master .blend: units, collections, calibration proxies, reference planes at real scale, game camera                                                               |
+| `scripts/review_render.py`   | clay / silhouette / wire / checker / material renders from fixed views, the reference-matched camera, gameplay pixel size, turntables, posed frames               |
+| `scripts/compose_review.py`  | compare sheet (reference, render, overlay, gameplay strip) plus silhouette IoU and width-profile numbers; plain Python with Pillow                                |
+| `scripts/world_gate.py`      | world-registered silhouette IoU for orthographic reference views: the camera covers the reference matte's exact world window, so scale and placement errors count |
+| `scripts/validate.py`        | topology, transforms, UVs, weights, armature, sockets, colliders, naming, tri budget; exit 1 on FAIL                                                              |
+| `scripts/bake_maps.py`       | normal and AO from HIGH to LOW, base colour, roughness, metallic; rebuilds delivery materials                                                                     |
+| `scripts/export_delivery.py` | GLB/FBX export with asset-manifest.json and animation-contract.json                                                                                               |
+| `scripts/roundtrip.py`       | imports the export into a blank Blender, reports what arrived, renders a check                                                                                    |
 
 Read `references/categories.md` for the asset's category before Phase 0. Read
 `references/rigging-animation.md` before Phase 6 and `references/delivery-and-acceptance.md`

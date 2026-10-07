@@ -12,11 +12,11 @@ node --version
 meshy --version
 ```
 
-| Observation | Runner to use for every command below |
-|---|---|
-| `meshy --version` prints `0.4.0` | `meshy` |
-| no `meshy` command, or another version | `npm exec --yes --package=meshy-cli@0.4.0 -- meshy` |
-| no Node.js, or Node older than 22.12 | stop and report it: the user installs Node.js 22.12+ |
+| Observation                            | Runner to use for every command below                |
+| -------------------------------------- | ---------------------------------------------------- |
+| `meshy --version` prints `0.4.0`       | `meshy`                                              |
+| no `meshy` command, or another version | `npm exec --yes --package=meshy-cli@0.4.0 -- meshy`  |
+| no Node.js, or Node older than 22.12   | stop and report it: the user installs Node.js 22.12+ |
 
 Recipes are written as `meshy …`. When the pinned temporary package is the runner, put
 `npm exec --yes --package=meshy-cli@0.4.0 --` in front of the same arguments; the exit code
@@ -129,7 +129,7 @@ Failure branches — each is a different recovery, so read the error rather than
 
 - **Browser never opened / user is on another device**: the URL and code in the stderr line are
   all they need; they can open it anywhere they are signed in to Meshy.
-- **Code expired or was denied** (the login exits non-zero after polling): run the *same* login
+- **Code expired or was denied** (the login exits non-zero after polling): run the _same_ login
   command again for a fresh code. Never re-run a paid create because a login timed out.
 - **`device_flow_not_supported`**: this API host has no device endpoint. Ask the user to run
   `meshy auth login` in their own desktop terminal (loopback + browser), or to store their own
@@ -144,13 +144,13 @@ test environment variables, and never print tokens, device codes or signed URLs.
 
 ## 4. Where files go
 
-Two paths decide every write. Resolve them from the user's own words *before* the first command:
+Two paths decide every write. Resolve them from the user's own words _before_ the first command:
 
-| The user named | `WORKSPACE` (the write boundary) | `PROJECT_ROOT` (bookkeeping) | Final model file |
-|---|---|---|---|
-| nothing | `./meshy_output` | `./meshy_output` | inside the project folder |
-| a directory, e.g. `./assets` | `./assets` | `./assets/meshy_output` | `./assets/<descriptive-name>.<ext>` |
-| a file, e.g. `./assets/chest.glb` | `./assets` | `./assets/meshy_output` | exactly `./assets/chest.glb` |
+| The user named                    | `WORKSPACE` (the write boundary) | `PROJECT_ROOT` (bookkeeping) | Final model file                    |
+| --------------------------------- | -------------------------------- | ---------------------------- | ----------------------------------- |
+| nothing                           | `./meshy_output`                 | `./meshy_output`             | inside the project folder           |
+| a directory, e.g. `./assets`      | `./assets`                       | `./assets/meshy_output`      | `./assets/<descriptive-name>.<ext>` |
+| a file, e.g. `./assets/chest.glb` | `./assets`                       | `./assets/meshy_output`      | exactly `./assets/chest.glb`        |
 
 `./meshy_output` is only the **default**, never an override: a path the user asked for wins.
 When the named directory is itself called `meshy_output`, `PROJECT_ROOT` is that directory

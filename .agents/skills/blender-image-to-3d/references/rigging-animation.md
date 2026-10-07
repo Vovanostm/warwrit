@@ -4,6 +4,7 @@ Read this before Phase 6 (articulation) and again before Phases 7 and 8. Applies
 moves: characters and creatures fully, vehicles and hinged props for the pivot and socket rules.
 
 Contents
+
 1. Skeleton families and hierarchy
 2. Binding and weights
 3. Extreme-pose sheet
@@ -111,16 +112,16 @@ count equals a cooldown.
 
 Starting library by family (adapt to the actual game):
 
-| Family | Minimum library |
-| --- | --- |
-| Player character | idle variants, forward/back/left/right locomotion, starts and stops, turns, basic attack, ability gestures, dash or dodge, hit reactions, stun, downed loop, revive, death |
-| Melee enemy | idle, move, attack anticipation, active, recovery, hit variants, stagger, death |
-| Ranged or caster enemy | idle, move, aim, cast or fire, recoil, interruption, death |
-| Quadruped | idle, walk, run, turn, bite or lunge, recoil, death, with correct foot contacts and spine timing |
-| Flying or floating | hover loop, flight loop, banking turns, attack, interruption, fall or dissolve |
-| Boss | locomotion, each move family, phase transition, telegraph poses, stagger, death |
-| Vehicle | idle, wheels spin (driven by code), suspension bounce, doors open and close, turret traverse, destroyed state |
-| Interactable | open, close, locked, active, hit, break, channel states |
+| Family                 | Minimum library                                                                                                                                                            |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Player character       | idle variants, forward/back/left/right locomotion, starts and stops, turns, basic attack, ability gestures, dash or dodge, hit reactions, stun, downed loop, revive, death |
+| Melee enemy            | idle, move, attack anticipation, active, recovery, hit variants, stagger, death                                                                                            |
+| Ranged or caster enemy | idle, move, aim, cast or fire, recoil, interruption, death                                                                                                                 |
+| Quadruped              | idle, walk, run, turn, bite or lunge, recoil, death, with correct foot contacts and spine timing                                                                           |
+| Flying or floating     | hover loop, flight loop, banking turns, attack, interruption, fall or dissolve                                                                                             |
+| Boss                   | locomotion, each move family, phase transition, telegraph poses, stagger, death                                                                                            |
+| Vehicle                | idle, wheels spin (driven by code), suspension bounce, doors open and close, turret traverse, destroyed state                                                              |
+| Interactable           | open, close, locked, active, hit, break, channel states                                                                                                                    |
 
 Per attack record: anticipation, authoritative active window, recovery, allowed cancels,
 locomotion permission and interruption behaviour. Keep a clear silhouette change on major
@@ -148,6 +149,7 @@ simulation mesh or the collision surface. The same applies to chains, tassels, a
 membranes, tank tracks and hanging cables.
 
 Authoring process:
+
 1. Build a low-resolution, evenly distributed simulation cage with stable panels and enough
    resolution for the intended folds. Transfer its motion to the render garment through a
    validated bind (Surface Deform or Mesh Deform in Blender, or the engine's cloth workflow).

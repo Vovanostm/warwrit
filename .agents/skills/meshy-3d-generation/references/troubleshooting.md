@@ -39,21 +39,21 @@ the selected source; status does not honor it in 0.4.0.
 
 ## CLI 0.4.0 exit codes
 
-| Exit | Meaning | Recovery |
-|---|---|---|
-| 1 | Generic/server/protocol error or failed task | Inspect the error and any known task before deciding next steps. |
-| 2 | Usage or operation conflict | Correct arguments/account/payload mismatch; do not invent a fresh operation ID to bypass a conflict. |
-| 3 | Authentication | Use the source-aware checks above; status also uses this for failed network verification. |
-| 4 | Validation | Correct the rejected input or explain the unsupported request. |
-| 5 | Not found | Check the resource, task ID and account. |
-| 6 | Rate limit | Back off for read/status requests; respect server guidance. |
-| 7 | Network | Retry safe reads after connectivity recovers; inspect submission state before any create. |
-| 8 | Timeout | Resume waiting on an existing task; a login timeout needs a new authorization flow. |
-| 9 | Insufficient credit | Report balance/top-up requirement; no repeated submissions. |
-| 10 | Submission outcome unknown | Reconcile first; never automatically resubmit. |
-| 11 | Local I/O | Fix the output path/permissions, then resume from the known task or landed files. |
-| 12 / 13 | Check failed / unknown | Inspect check details; do not present an unknown result as a pass. |
-| 130 | Interrupted | Preserve task/operation context and reconcile before continuing. |
+| Exit    | Meaning                                      | Recovery                                                                                             |
+| ------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 1       | Generic/server/protocol error or failed task | Inspect the error and any known task before deciding next steps.                                     |
+| 2       | Usage or operation conflict                  | Correct arguments/account/payload mismatch; do not invent a fresh operation ID to bypass a conflict. |
+| 3       | Authentication                               | Use the source-aware checks above; status also uses this for failed network verification.            |
+| 4       | Validation                                   | Correct the rejected input or explain the unsupported request.                                       |
+| 5       | Not found                                    | Check the resource, task ID and account.                                                             |
+| 6       | Rate limit                                   | Back off for read/status requests; respect server guidance.                                          |
+| 7       | Network                                      | Retry safe reads after connectivity recovers; inspect submission state before any create.            |
+| 8       | Timeout                                      | Resume waiting on an existing task; a login timeout needs a new authorization flow.                  |
+| 9       | Insufficient credit                          | Report balance/top-up requirement; no repeated submissions.                                          |
+| 10      | Submission outcome unknown                   | Reconcile first; never automatically resubmit.                                                       |
+| 11      | Local I/O                                    | Fix the output path/permissions, then resume from the known task or landed files.                    |
+| 12 / 13 | Check failed / unknown                       | Inspect check details; do not present an unknown result as a pass.                                   |
+| 130     | Interrupted                                  | Preserve task/operation context and reconcile before continuing.                                     |
 
 These are 0.4.0 codes, not HTTP status codes. Some OAuth errors use generic exit 1; inspect
 their message and hint as well.

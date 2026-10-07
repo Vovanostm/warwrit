@@ -6,6 +6,7 @@ topology rules, UV and material policy, articulation and sockets, and what the a
 check looks for. The construction helpers named here live in `assets/build_template.py`.
 
 Contents
+
 1. Construction techniques (all categories)
 2. Characters (bipeds)
 3. Creatures (quadrupeds, winged, serpentine, multi-limbed)
@@ -19,21 +20,21 @@ Contents
 Code-driven modelling works when each part is built from a measured construction, not sculpted
 free-hand. Pick the technique per part:
 
-| Need | Technique | Helper |
-| --- | --- | --- |
-| Organic mass with joints (torso, limbs, neck, tail) | Skin modifier over a joint chain with radii, plus Subdivision | `skin_chain` |
-| Fused organic base for sculpting | Join blockout pieces, voxel Remesh at 1/200 of height, then `push` sculpting | `join_meshes`, `remesh_voxel`, `push` |
-| Hard-surface shell (car body, hull, fuselage, torso armour) | Loft cross sections read at stations from the side and top views | `loft` |
-| Rotational parts (wheels, rims, columns, bolts, vases, barrels) | Lathe a 2D profile | `profile_spin` |
-| Extruded profiles (arches, mouldings, beams, tracks, trims, rails) | Extrude a 2D outline | `profile_extrude` |
-| Cables, horns, tails, pipes, tentacles, railings, roots | Curve with bevel depth and taper | `curve_tube` |
-| Panels, plates, cloth, cladding, roofs | Grid or extracted faces plus Solidify | `grid`, `solidify` |
-| Symmetry | Mirror modifier with clipping, applied only on the delivery copy | `mirror` |
-| Cut-outs (windows, wheel wells, vents, panel lines) | Boolean with a hidden cutter, then Bevel for light-catching edges | `boolean`, `bevel` |
-| Repetition (windows, rivets, treads, teeth, stairs) | Array, optionally along a curve | `array` |
-| Tapering limbs and spires | Scale cross sections along an axis | `taper` |
-| Low mesh over a sculpt | Base cage with joint loops, Shrinkwrap to HIGH, then Subdivision level 1 | `shrinkwrap` |
-| Extra LODs | Duplicate, Decimate, then fix the silhouette by hand | `lod_copy` |
+| Need                                                               | Technique                                                                    | Helper                                |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------- |
+| Organic mass with joints (torso, limbs, neck, tail)                | Skin modifier over a joint chain with radii, plus Subdivision                | `skin_chain`                          |
+| Fused organic base for sculpting                                   | Join blockout pieces, voxel Remesh at 1/200 of height, then `push` sculpting | `join_meshes`, `remesh_voxel`, `push` |
+| Hard-surface shell (car body, hull, fuselage, torso armour)        | Loft cross sections read at stations from the side and top views             | `loft`                                |
+| Rotational parts (wheels, rims, columns, bolts, vases, barrels)    | Lathe a 2D profile                                                           | `profile_spin`                        |
+| Extruded profiles (arches, mouldings, beams, tracks, trims, rails) | Extrude a 2D outline                                                         | `profile_extrude`                     |
+| Cables, horns, tails, pipes, tentacles, railings, roots            | Curve with bevel depth and taper                                             | `curve_tube`                          |
+| Panels, plates, cloth, cladding, roofs                             | Grid or extracted faces plus Solidify                                        | `grid`, `solidify`                    |
+| Symmetry                                                           | Mirror modifier with clipping, applied only on the delivery copy             | `mirror`                              |
+| Cut-outs (windows, wheel wells, vents, panel lines)                | Boolean with a hidden cutter, then Bevel for light-catching edges            | `boolean`, `bevel`                    |
+| Repetition (windows, rivets, treads, teeth, stairs)                | Array, optionally along a curve                                              | `array`                               |
+| Tapering limbs and spires                                          | Scale cross sections along an axis                                           | `taper`                               |
+| Low mesh over a sculpt                                             | Base cage with joint loops, Shrinkwrap to HIGH, then Subdivision level 1     | `shrinkwrap`                          |
+| Extra LODs                                                         | Duplicate, Decimate, then fix the silhouette by hand                         | `lod_copy`                            |
 
 Measure everything from the brief. Every constant in a build script is a real dimension in
 metres with a comment saying which reference view it came from. A guessed value gets the comment

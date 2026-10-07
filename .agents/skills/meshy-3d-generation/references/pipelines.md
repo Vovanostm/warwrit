@@ -13,16 +13,16 @@ commands use the v1 envelope; never scrape task IDs from human-readable progress
 
 ## Pick the route from the intent
 
-| What the user wants | Route | Notes |
-|---|---|---|
-| A model to look at / a digital prop | text-to-3d preview, then refine when texture is wanted | GLB unless they name a format |
-| A model of a specific object in a photo | image-to-3d, `--should-texture true` for colour | one clean reference, whole subject visible |
-| A low-poly / game-ready asset on a budget | image-to-3d `--model-type smart-topology --target-polycount N`, or remesh after a standard model | 100–15000 triangles for smart topology; mobile/web budgets sit at the low end |
-| An LOD chain from a model that exists | remesh the **existing** task, once per level | never regenerate for a second LOD |
-| A character that must move | textured humanoid in A/T pose → rigging → bundled clips or `animate` | see the rigging preconditions below |
-| A different format / size of an existing asset | convert / resize on that task | one step, no regeneration |
-| A concept image, or a style reference before committing to 3D | text-to-image / image-to-image | optional, and only when offered and accepted |
-| A printable physical object | hand the whole job to the printing skill | it sets geometry, format and texture from the start |
+| What the user wants                                           | Route                                                                                            | Notes                                                                         |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| A model to look at / a digital prop                           | text-to-3d preview, then refine when texture is wanted                                           | GLB unless they name a format                                                 |
+| A model of a specific object in a photo                       | image-to-3d, `--should-texture true` for colour                                                  | one clean reference, whole subject visible                                    |
+| A low-poly / game-ready asset on a budget                     | image-to-3d `--model-type smart-topology --target-polycount N`, or remesh after a standard model | 100–15000 triangles for smart topology; mobile/web budgets sit at the low end |
+| An LOD chain from a model that exists                         | remesh the **existing** task, once per level                                                     | never regenerate for a second LOD                                             |
+| A character that must move                                    | textured humanoid in A/T pose → rigging → bundled clips or `animate`                             | see the rigging preconditions below                                           |
+| A different format / size of an existing asset                | convert / resize on that task                                                                    | one step, no regeneration                                                     |
+| A concept image, or a style reference before committing to 3D | text-to-image / image-to-image                                                                   | optional, and only when offered and accepted                                  |
+| A printable physical object                                   | hand the whole job to the printing skill                                                         | it sets geometry, format and texture from the start                           |
 
 Prefer the shortest chain that satisfies the request. An untextured mesh does not need refine;
 a GLB does not need a convert step; a plain preview does not need a 2D concept first.
