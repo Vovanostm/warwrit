@@ -1,7 +1,7 @@
 ---
 title: Первая книга компании — страницы и постановка
 created: 2026-10-05
-updated: 2026-10-05
+updated: 2026-10-07
 type: concept
 tags: [game-design, narrative, review-draft]
 status: review-draft
@@ -13,6 +13,12 @@ sources:
 ---
 
 # Первая книга компании — страницы и постановка
+
+**Текущий цикл B8 — 2026-10-07:** [два новых варианта A/B](#b8--два-варианта-для-выбора-владельца--2026-10-07)
+для «Разорившейся дружины». Прежние редакции ниже сохранены как история,
+не как действующий старт. После трёх раундов оба варианта — REJECT;
+они не готовы для выбора. Новый цикл требует решения владельца;
+строки и UI не меняются.
 
 **Пересборка 2026-10-05, review-draft.** Владелец отклонил военный пролог
 по языку и соответствию миру, затем разрешил пересобрать весь старт.
@@ -646,3 +652,1128 @@ Desktop — поддерживаемая постановка; mobile landscape 
 [границами](onboarding-references.md). Это не стилизация под одного из классиков.
 Привлекательность, время просмотра, иллюстрации, UI и игровой плейтест
 NOT_MEASURED / NOT_RUN. Платежи, запасы, профили и игровой код не меняются.
+
+## B8 — два варианта для выбора владельца — 2026-10-07
+
+Контракт: [B8](../engineering/briefs/2026-10-07/B8-company-book.md) и
+[00-common](../engineering/briefs/2026-10-07/00-common.md). Исходный commit:
+`b7ffefcdfa699d2feb587059eb926480ae891dcb`, ветка `codex/b8-company-book`.
+Это две постановки одного происхождения, не новые backgrounds или общая
+катастрофа мира. Реплики и действия — предложения для личного вступления
+компании. Они не назначают игроку родство, присягу, прежнее звание или подвиг.
+
+### Чтение и подстановка
+
+- Каждый вариант состоит ровно из пяти разворотов. На экране — один язык,
+  RU или EN, и только одна полная редакция разворота для выбранного состава.
+  Указания постановки и иллюстрации игрок не читает.
+- `{heroName}` — выбранное игроком имя, всегда в именительном падеже;
+  глаголы героя стоят в настоящем времени. Пол героя не подразумевается.
+- `{companionName}` и `{secondCompanionName}` — имена только выбранных
+  спутников, в сохранённом порядке выбора. На текущем старте это Rell, Mora
+  или Kest; в книге нет обязательного Rell и нет невыбранного третьего человека.
+  Реплики не задают спутнику пол, профессию или региональную биографию.
+- В A развороты 3 и 4, в B развороты 3 и 4 имеют полные редакции для двух
+  или трёх людей. Это обработка состава внутри A/B, не дополнительные варианты
+  для владельца. Предложения не собираются из условных кусочков.
+- Рассказчик всех разворотов — летописец компании, «мы»; именованные реплики
+  находятся внутри его рассказа. Голос летописца не выдаёт героям грамотность
+  или отдельный предмет-книгу.
+- Город не назван. Двор, дверь и улица — камерная постановка при месте
+  появления, не обязательный маршрут или обещание определённого здания.
+  Текст пригоден для разных городов; работающий старт сейчас выдаётся в
+  Северном Дворе, поддержка нескольких стартовых городов здесь не заявлена.
+
+### Числа и границы
+
+[Выдача старта](../../apps/server/src/company/opening.ts) и
+[M1-SUPPLIES](../work-packages/M1-SUPPLIES.md): 900 крон до вступительных
+выплат, по 50 крон выбранному спутнику, 30 рационов. После найма одного
+спутника — два человека и 850 крон; двух — три человека и 800 крон.
+Один рацион кормит одного человека один день: запас на 15 или 10 дней.
+Десять дней не исчерпывают казну. Оклад каждого спутника — 10 крон за
+Campaign Day: в M1-SUPPLIES десять дней требуют 100/200 крон на одного/двух.
+Вступительные выплаты показаны только на развороте 3 каждого варианта;
+повторных выплат нет. Условия ежедневной платы
+не означают ещё один расчёт внутри книги. Еда не покупается,
+не съедается и не теряется. Найм не заменён долей в прибыли.
+Обычные вещи в кадре не становятся новой выдачей инвентаря.
+Работа ещё не взята; книга не обещает отдельного спасения, поручения,
+выхода из службы или результата договора.
+
+Иллюстрации ниже — только заметки. Для камня и дерева можно использовать
+имеющиеся [городские материалы](../../assets/art/m1/places/severny-dvor.png),
+не переносить узнаваемые ворота Северного Двора в каждый город. Нового арта,
+визуальной приёмки или сцен в игре нет.
+
+### Вариант A — до конца похода
+
+**Постановка:** герой отказывается от службы без оговорённых срока и дела,
+чтобы выбирать работу своей компании. Первый спутник требует знать, куда
+его поведут; второй, если выбран, спрашивает о еде. Заказа ещё нет.
+
+#### A1 — у двери
+
+**RU · летописец; книга, разворот 1**
+
+> Мы сидим во дворе среди людей из распавшихся дружин. На рукавах светлеют
+> места от споротых знаков. У двери набирают людей на новую службу.
+> {heroName} спрашивает, надолго ли.
+>
+> — До конца похода.
+>
+> — А куда идти?
+>
+> — Куда пошлют.
+>
+> {heroName} возвращается к скамье. {companionName} освобождает место,
+> убрав с него свои вещи. На доски ложится кошель.
+
+**EN · company chronicler; book, spread 1**
+
+> We sit in the yard among people from disbanded companies. Pale patches
+> show where badges have been unpicked from sleeves. Someone at the door
+> is recruiting. {heroName} asks how long the service will last.
+>
+> “Until the campaign ends.”
+>
+> “And where would we go?”
+>
+> “Wherever you're sent.”
+>
+> {heroName} returns to the bench. {companionName} clears a space beside
+> them. A purse lands on the bare boards.
+
+**Иллюстрация:** споротые знаки на рукавах; герой отходит от двери к
+спутнику на скамье. Кошель между ними, вербовщик в глубине, без нового герба.
+
+#### A2 — своё дело
+
+**RU · летописец; книга, разворот 2**
+
+> — В новой дружине тоже платят, — говорит {companionName}.
+>
+> — А работу выбирают за нас. Я хочу знать, за что берусь.
+>
+> {heroName} развязывает кошель. Мы слышим монеты; у двери опять зовут
+> следующего.
+>
+> — Пятьдесят сейчас, десять в день. Пойдёшь со мной? Работу здесь поищем.
+>
+> — Пока ищем, тоже платишь?
+>
+> — Тоже.
+>
+> {companionName} садится ближе, положив вещи к ногам.
+>
+> — Ладно. Только не веди вслепую.
+
+**EN · company chronicler; book, spread 2**
+
+> “The new company pays too,” says {companionName}.
+>
+> “And chooses our work for us. I want to know what I'm taking on.”
+>
+> {heroName} opens the purse. Coins clink. We hear another recruit called
+> to the door.
+>
+> “Fifty now, ten a day. Come with me? We'll look for work here.”
+>
+> “You pay while we're looking?”
+>
+> “Yes.”
+>
+> {companionName} sits closer, setting everything down.
+>
+> “All right. But tell me what we're walking into.”
+
+**Иллюстрация:** открытый кошель ещё в руках героя; спутник придвигается
+ближе. Деньги не переданы: согласие предшествует выплате на A3.
+
+#### A3 — место рядом
+
+##### Два человека: герой и один спутник
+
+**RU · летописец; книга, разворот 3; два человека**
+
+> {heroName} отсчитывает пятьдесят крон на скамью. {companionName}
+> пересчитывает их, убирает в кошель и поворачивается к выходу со двора.
+> Мы сидим рядом, теперь спиной к двери, у которой набирают людей.
+>
+> — Смотри, не найми сразу полдвора.
+>
+> {companionName} сдвигает свои вещи к мешку с едой.
+
+**EN · company chronicler; book, spread 3; two people**
+
+> {heroName} counts fifty crowns onto the bench. {companionName} checks
+> the coins, puts them away and turns towards the yard's exit. We sit side
+> by side now, our backs to the door where they are taking recruits.
+>
+> “Don't go hiring half the yard.”
+>
+> {companionName} moves the belongings beside our food sack.
+
+##### Три человека: герой и два спутника
+
+**RU · летописец; книга, разворот 3; три человека**
+
+> {heroName} отсчитывает пятьдесят крон. {companionName} убирает плату.
+>
+> — Смотри, не найми сразу полдвора.
+>
+> {secondCompanionName} подходит к скамье.
+>
+> — Еда общая? Или из платы вычтешь?
+>
+> — Еда из этого мешка. Плату не трогаю.
+>
+> — Тогда и я с вами.
+>
+> {heroName} отсчитывает ещё пятьдесят. {secondCompanionName} принимает
+> монеты и садится. Мы подбираем вещи, чтобы все поместились.
+
+**EN · company chronicler; book, spread 3; three people**
+
+> {heroName} counts out fifty crowns. {companionName} pockets the pay.
+>
+> “Don't go hiring half the yard.”
+>
+> {secondCompanionName} comes to the bench.
+>
+> “Is the food shared? Or does it come out of my pay?”
+>
+> “This sack is for all of us. You keep your pay.”
+>
+> “Then I'm coming with you.”
+>
+> {heroName} counts out another fifty. {secondCompanionName} takes the coins
+> and sits down. We move our things so everyone has room.
+
+**Иллюстрация:** люди на одной скамье, вещи отодвинуты к ногам. При двух
+никто третий не входит в кадр; при трёх вторая выплата идёт после согласия.
+
+#### A4 — запас
+
+##### Два человека: герой и один спутник
+
+**RU · летописец; книга, разворот 4; два человека**
+
+> Нас двое. Из девятисот крон после найма остаётся восемьсот пятьдесят.
+> В мешке тридцать рационов — еды на пятнадцать дней.
+>
+> — А теперь куда? — спрашивает {companionName}.
+>
+> {heroName} затягивает кошель. У двери кто-то спрашивает про плату.
+> Мы ждём ответа, но из-за голосов ничего не разобрать.
+>
+> — Пойдём узнаем, кому здесь нужны люди.
+
+**EN · company chronicler; book, spread 4; two people**
+
+> There are two of us. Of the nine hundred crowns, eight hundred and fifty
+> remain after hiring. The sack holds thirty rations: food for fifteen days.
+>
+> “Where to now?” asks {companionName}.
+>
+> {heroName} ties the purse shut. Someone at the door asks about pay.
+> We listen for the answer, but the other voices drown it out.
+>
+> “Let's find out who needs people here.”
+
+##### Три человека: герой и два спутника
+
+**RU · летописец; книга, разворот 4; три человека**
+
+> Нас трое. Из девятисот крон после найма остаётся восемьсот.
+> В мешке тридцать рационов — еды на десять дней.
+>
+> — А теперь куда? — спрашивает {companionName}.
+>
+> {heroName} затягивает кошель. {secondCompanionName} поднимает мешок
+> с едой, пока у двери спрашивают про плату. Ответа мы не слышим.
+>
+> — Пойдём узнаем, кому здесь нужны люди.
+
+**EN · company chronicler; book, spread 4; three people**
+
+> There are three of us. Of the nine hundred crowns, eight hundred remain
+> after hiring. The sack holds thirty rations: food for ten days.
+>
+> “Where to now?” asks {companionName}.
+>
+> {heroName} ties the purse shut. {secondCompanionName} picks up the food
+> sack. Someone at the door asks about pay. We cannot hear the answer.
+>
+> “Let's find out who needs people here.”
+
+**Иллюстрация:** мешок закрыт, деньги убраны; выбранный состав встаёт со скамьи.
+Рационы не изображать как тридцать дополнительных мешков или новый товар.
+
+#### A5 — другой выход
+
+**RU · летописец; книга, разворот 5**
+
+> {heroName} выходит на улицу. Мы идём следом, когда у двери вербовщика
+> снова зовут следующего. {companionName} оборачивается.
+>
+> — Нас?
+>
+> {heroName} качает головой и идёт дальше. У стены сушат бельё;
+> с рубах капает на камни. {companionName} догоняет нас, оглянувшись ещё
+> раз на двор, и дальше идёт рядом.
+
+**EN · company chronicler; book, spread 5**
+
+> {heroName} steps into the street. We follow, just as the recruiter calls
+> for the next person. {companionName} turns back.
+>
+> “Us?”
+>
+> {heroName} shakes their head and keeps walking. Laundry hangs beside the
+> wall; water drips from shirts onto the stones. {companionName} catches
+> up, glances once more at the yard, then walks beside us.
+
+**Иллюстрация:** герой впереди на улице, первый спутник догоняет и идёт рядом;
+при трёх людях второй уже с ними. Двор остаётся позади, нет уже взятой миссии.
+
+### Вариант B — пока есть деньги
+
+**Постановка:** после распада дружины люди начинают расходиться поодиночке.
+Герой хочет брать работу по охране, но не в одиночку: деньги позволяют
+нанять людей и начать искать заказ. Первый спутник требует плату вперёд,
+второй — еду не за свой счёт. Обещанного заказа или награды нет.
+
+#### B1 — у мешка
+
+**RU · летописец; книга, разворот 1**
+
+> Мы укладываем вещи у стены. Из двора по одному уходят люди из распавшихся
+> дружин. На плаще виден выцветший прямоугольник от старого знака.
+> {companionName} затягивает тюк, собираясь уходить. {heroName} кладёт
+> кошель между нами.
+>
+> — За охрану в одиночку я не возьмусь. А на твой найм денег хватит.
+>
+> {companionName} оставляет тюк на земле.
+
+**EN · company chronicler; book, spread 1**
+
+> We pack our things by the wall. People from disbanded companies leave
+> the yard one by one. A faded rectangle marks where the old badge sat on
+> the cloak. {companionName} tightens a bundle, ready to leave.
+> {heroName} puts a purse between us.
+>
+> “I won't take guard work alone. But I can afford to hire you.”
+>
+> {companionName} leaves the bundle on the ground.
+
+**Иллюстрация:** кошель на земле между двумя людьми, спутник ещё не берёт
+свой тюк. Выцветший след знака на плаще; без битвы или нового имущества.
+
+#### B2 — возражение
+
+**RU · летописец; книга, разворот 2**
+
+> — Что охранять будем? — спрашивает {companionName}.
+>
+> — Сначала узнаем, кому нужны люди.
+>
+> — То есть работы нет.
+>
+> — Пока нет.
+>
+> Мы сидим у стены. {companionName} придерживает кошель ногой, чтобы
+> тот не съехал в грязь, но в руки не берёт. Во дворе уже свободно;
+> лишь у двери несколько человек ждут, пока их позовут.
+>
+> — А за день без работы кто платит?
+
+**EN · company chronicler; book, spread 2**
+
+> “What are we guarding?” asks {companionName}.
+>
+> “First we'll find out who needs people.”
+>
+> “So there's no job.”
+>
+> “Not yet.”
+>
+> We sit by the wall. {companionName} stops the purse slipping into the mud
+> with a foot, but doesn't pick it up. The yard has cleared; only a few
+> people wait by the door to be called in.
+>
+> “Who pays for a day without work?”
+
+**Иллюстрация:** нога удерживает кошель у края грязи; спутник ждёт ответа,
+герой сидит напротив. Ни чужого знамени, ни показанного готового заказа.
+
+#### B3 — десять в день
+
+##### Два человека: герой и один спутник
+
+**RU · летописец; книга, разворот 3; два человека**
+
+> — Я. Десять крон за день, даже если работы нет, — отвечает {heroName}.
+> — Пятьдесят за найм — сейчас.
+>
+> — Ладно. Но пятьдесят сначала.
+>
+> {companionName} поднимает кошель и протягивает обратно. {heroName}
+> отсчитывает пятьдесят крон. {companionName} пересчитывает монеты,
+> прячет свой кошель и берёт тюк. Мы поднимаемся от стены.
+
+**EN · company chronicler; book, spread 3; two people**
+
+> “I do. Ten crowns a day, even when there's no work,” says {heroName}.
+> “Fifty for signing on, paid now.”
+>
+> “All right. But the fifty first.”
+>
+> {companionName} picks up the purse and hands it back. {heroName}
+> counts out fifty crowns. {companionName} counts the coins again,
+> puts them away and picks up the bundle. We get up from the wall.
+
+##### Три человека: герой и два спутника
+
+**RU · летописец; книга, разворот 3; три человека**
+
+> — Я. Десять крон за день, даже если работы нет, — отвечает {heroName}.
+> — Пятьдесят за найм — сейчас.
+>
+> — Ладно. Но пятьдесят сначала.
+>
+> {companionName} протягивает кошель обратно. {heroName} отсчитывает
+> пятьдесят крон; {companionName} убирает монеты.
+>
+> {secondCompanionName} ставит вещи рядом.
+>
+> — А еда? Из этих десяти покупать?
+>
+> — Едим из общего запаса. Тебе плачу столько же.
+>
+> — Тогда и я с вами.
+>
+> {heroName} отсчитывает ещё пятьдесят. {secondCompanionName} принимает
+> плату. Мы поднимаемся от стены.
+
+**EN · company chronicler; book, spread 3; three people**
+
+> “I do. Ten crowns a day, even without work,” says {heroName}.
+> “Fifty for signing on, paid now.”
+>
+> “All right. But the fifty first.”
+>
+> {companionName} hands the purse back. {heroName} counts out fifty crowns;
+> {companionName} pockets them.
+>
+> {secondCompanionName} sets everything down beside us.
+>
+> “What about food? Buy it out of those ten?”
+>
+> “We eat from the shared supplies. Your pay is the same.”
+>
+> “Then I'm coming with you.”
+>
+> {heroName} counts out another fifty. {secondCompanionName} takes the pay.
+> We get up from the wall.
+
+**Иллюстрация:** кошель возвращают герою; каждый выбранный спутник получает
+пятьдесят и берёт вещи. Нет разделения имущества на равные доли.
+
+#### B4 — расчёт
+
+##### Два человека: герой и один спутник
+
+**RU · летописец; книга, разворот 4; два человека**
+
+> Нас двое. Из девятисот крон после найма остаётся восемьсот пятьдесят.
+> Еды тридцать рационов — на пятнадцать дней.
+>
+> {heroName} затягивает кошель. Мы берём мешок с едой; у двери уже
+> никого нет. {companionName} отходит к выходу, но останавливается.
+>
+> — Ты платишь. Тебе и вести.
+>
+> {heroName} проходит вперёд. Мы выходим из двора.
+
+**EN · company chronicler; book, spread 4; two people**
+
+> There are two of us. After hiring, eight hundred and fifty of the nine
+> hundred crowns remain. Thirty rations will feed us for fifteen days.
+>
+> {heroName} ties the purse shut. We pick up the food sack; the door is
+> deserted now. {companionName} heads for the exit, then stops.
+>
+> “You're paying. You lead.”
+>
+> {heroName} goes ahead. We leave the yard.
+
+##### Три человека: герой и два спутника
+
+**RU · летописец; книга, разворот 4; три человека**
+
+> Нас трое. Из девятисот крон после найма остаётся восемьсот.
+> Еды тридцать рационов — на десять дней.
+>
+> {heroName} затягивает кошель. {secondCompanionName} поднимает мешок
+> с едой; у двери уже никого нет. {companionName} отходит к выходу,
+> но останавливается.
+>
+> — Ты платишь. Тебе и вести.
+>
+> {heroName} проходит вперёд. Мы выходим из двора.
+
+**EN · company chronicler; book, spread 4; three people**
+
+> There are three of us. After hiring, eight hundred of the nine hundred
+> crowns remain. Thirty rations will feed us for ten days.
+>
+> {heroName} ties the purse shut. {secondCompanionName} picks up the food
+> sack; the door is deserted now. {companionName} heads for the exit,
+> then stops.
+>
+> “You're paying. You lead.”
+>
+> {heroName} goes ahead. We leave the yard.
+
+**Иллюстрация:** общий кошель завязан, вещи собраны; первый спутник
+пропускает героя к выходу. Не изображать ещё один расчёт зарплаты.
+
+#### B5 — первый вопрос
+
+**RU · летописец; книга, разворот 5**
+
+> На улице {heroName} идёт впереди. Мы проходим мимо открытой лавки,
+> где кто-то переставляет пустые ящики. {heroName} останавливается.
+> {companionName} чуть не налетает сзади и отходит к стене.
+>
+> — Вам охрана нужна?
+>
+> Мы ждём у входа. Из лавки доносится стук: один ящик ставят на другой.
+> {heroName} не уходит, пока там не обернутся.
+
+**EN · company chronicler; book, spread 5**
+
+> Out in the street, {heroName} walks ahead. We pass an open shop where
+> someone is shifting empty crates. {heroName} stops. {companionName}
+> nearly walks into them, then steps aside against the wall.
+>
+> “Do you need guards?”
+>
+> We wait at the entrance. A crate knocks against another inside.
+> {heroName} stays there until someone turns to look.
+
+**Иллюстрация:** герой у входа в безымянную лавку, спутники рядом; внутри
+ящики, не новый именованный заказчик. Ни ответа, ни награды, ни взятой миссии.
+
+### Результат B8 и остановка — 2026-10-07
+
+**Частичный результат, local / unpublished / NOT_MERGED.** В последнем
+раунде `warwrit_text_critic` проверил полные A/B RU/EN на
+`f3da66e9f76cc83f216548991de4330f2ee5d569`: **оба REJECT**.
+[Таблица трёх раундов, оценки и конечные блокеры](onboarding-lore.md#b8--три-раунда-текстовой-критики--2026-10-07)
+сохранена отдельно. Порядок оценок: люди / конкретность / язык / подтекст /
+лор / механика / ритм / перевод. A — **1/2/1/2/3/1/1/2**;
+B — **1/2/1/2/3/3/1/2**. Люди, язык и ритм остались на 1 третий раз;
+ACCEPT не получен, предел трёх раундов исчерпан. Текст после оценки не
+переписан; четвёртого прохода нет. Шаг 2 не выполнен по критерию done.
+Шаг 3 фиксирует отзывы, шаг 4 передаёт родителю блокеры, не принятые тексты.
+
+| Критерий | Результат | Проверенное основание                                                                                              |
+| -------- | --------- | ------------------------------------------------------------------------------------------------------------------ |
+| AC-1     | PASS      | Два варианта по пять разворотов, 10 иллюстрационных заметок, 28 полных языковых/составных редакций по 42–82 слова. |
+| AC-2     | FAIL      | A/B REJECT на всех трёх проходах; последние полные оценки выше.                                                    |
+| AC-3     | FAIL      | Лор = 3 у обоих, механика B = 3, A = 1: A5 при двух людях подразумевает лишнюю фигуру. Денежная арифметика верна.  |
+| AC-4     | NOT_RUN   | Выбор владельца не получен; до текстовой приёмки строки и UI остаются вне работы.                                  |
+
+Открыты три конечных блокера: **мотив и разные голоса в сцене найма A/B**
+нужны через действие, не повторный денежный торг; **ритм и финал A/B**
+должны двигаться поступком, не ведомостью и ожиданием; **точка наблюдения
+A5** не должна делать летописца третьим телом в партии из двух.
+История отклонённых версий сохранена; код, данные, канон, арт и UI не менялись.
+
+**Вопрос владельцу:** как продолжать после исчерпанных трёх раундов?
+Варианты: **новый структурный цикл A/B** с наймом через поступок,
+деятельными финалами без полученного заказа и устойчивым составом A5
+**(рекомендую)**; новый цикл только B (изменение объёма, нужно согласие);
+или отложить книгу, сохранив обе версии отклонёнными. Ни выбор основания,
+ни вкус владельца сами по себе не означают ACCEPT.
+
+### Выполненные проверки и границы
+
+Проверки шага 1 на исходной редакции: 10 разворотов, 10 заметок об
+иллюстрациях, 28 полных языковых редакций, по 48–71 слов; 6 новых локальных
+ссылок/якорей, `prettier --check`, `git diff --check` — PASS.
+Проверки редакции для раунда 2: тот же полный состав разворотов и языков,
+по 46–75 слов; допустимые параметры, отсутствие третьего спутника в
+редакциях для двух людей, 6 новых локальных ссылок/якорей,
+`prettier --check`, `git diff --check` — PASS.
+Проверки редакции для раунда 3: 10 разворотов, 10 иллюстрационных заметок,
+28 полных языковых редакций по 42–82 слова; допустимые параметры,
+отсутствие невыбранного спутника и 6 новых локальных ссылок/якорей — PASS
+(`node output/B8/check-text.cjs`). Prettier и `git diff --check` — PASS.
+Первый локальный patch самопроверки не применился из-за порядка контекстов;
+повторный patch исправлен, проверки выполнены уже на новой редакции.
+Подстановка имени считается одним словом, слова через дефис — одним;
+заголовки и иллюстрации не входят в счёт.
+Закрытие документации: `node output/B8/check-text.cjs` — PASS,
+28 редакций по 42–82 слова, 11 ссылок/якорей B8 в двух owning-страницах;
+`pnpm exec prettier --check docs/wiki/onboarding-book.md docs/wiki/onboarding-lore.md`
+и `git diff --check` — PASS. Readback изменённых разделов и scoped diff
+выполнен; проза совпадает с проверенной редакцией `f3da66e`.
+Локальный helper учитывает только разделы B8; его путь указан как
+неотслеживаемое свидетельство, не ссылка на committed-файл.
+
+Игра/стек, typecheck, Vitest, CI, визуальная критика и читательский плейтест —
+NOT_RUN: docs-only scope и более строгая пропорциональная проверка AGENTS.
+Интерес читателя и время чтения — NOT_MEASURED. Push, PR, merge и deploy не
+выполнялись. CHANGELOG и CURRENT_PLAN принадлежат родителю: точные добавочные
+записи передаются в handoff, общие файлы здесь не изменяются.
+**Один следующий шаг:** родитель получает решение о новом цикле или остановке
+и записывает его до любых правок строк.
+
+## B8 — новая редакция: «Казна» и «Щит» — 2026-10-07
+
+Решение владельца 2026-10-07 после трёх REJECT редакции `f3da66e`: книгу
+переписывает Claude. Это новая структурная попытка, не правка вариантов A/B
+выше; те остаются отклонённой историей. Числа и подстановка — как в
+[разделе B8](#b8--два-варианта-для-выбора-владельца--2026-10-07): 900 крон,
+по 50 за найм, 10 в день, 30 пайков; `{heroName}` и имена спутников только
+в именительном падеже, глаголы героя и спутников — в настоящем времени.
+
+Отступление от брифа на решение владельца: книга идёт от третьего лица
+в настоящем времени, без «мы». Летописец остаётся в заголовке книги.
+При двух-трёх людях любое «мы» рассказчика добавляет в кадр лишнего человека.
+
+Что изменено по сути:
+
+- **Решение героя — поступок.** В «Казне» герой честно расплачивается
+  с уходящими и оставляет компании доли павших у Брода. В «Щите» снимает
+  с проданного воза щит убитого и несёт вдове.
+- **Спутники различаются делом.** Один возвращает лёгкую житную монету,
+  другой берёт деньги не считая; один говорит «сначала вдова» и колет вдове
+  дрова, другой просит деньги сразу.
+- **Числа только в найме и в одной реплике при погрузке;** последний
+  разворот кончается поступком или фактом, не счётом.
+- Мир виден в вещах: житная крона легче коронной, замазанный герб,
+  павшие в Бродской сече, волки на доске. Новых событий мира нет;
+  Ждан Рогожа, Вирьян Косой и вдова — частные лица вступления, не канон.
+
+### Вариант «Казна»
+
+#### К1 — двор
+
+**RU**
+
+> Боярина схоронили по первому снегу. Наследник дружину не берёт: кормить
+> нечем. Во дворе делят, что осталось: котлы, сёдла, две пары сапог на всех.
+> Кто-то уже ведёт со двора чужого коня.
+>
+> Сундук с дружинной казной и счётную книгу держит {heroName}.
+>
+> — Делим, — говорит Ждан Рогожа, старший из оставшихся. — Каждому
+> по книге, до монеты. И по домам.
+
+**EN**
+
+> The boyar was buried with the first snow. His heir will not keep the
+> retinue: there is nothing to feed it on. In the yard they share out what
+> is left: kettles, saddles, two pairs of boots between all of them.
+> Someone is already leading someone else's horse out of the gate.
+>
+> {heroName} holds the retinue's pay chest and the ledger.
+>
+> “We split it,” says Zhdan Rogozha, the eldest of those left. “Everyone
+> gets what the ledger says, to the coin. Then home.”
+
+**Иллюстрация:** двор в первом снегу, сёдла и котлы на рогоже; герой
+у окованного сундука, Ждан стоит над ним; в воротах кто-то уводит коня.
+
+#### К2 — сундук
+
+**RU**
+
+> {heroName} открывает сундук и платит по книге: каждому его долю,
+> до монеты. Ждан пересчитывает свою и заглядывает на дно.
+>
+> — А там?
+>
+> — Доли тех, кто лёг у Брода. Девятьсот крон.
+>
+> — Им уже не надо.
+>
+> — Значит, надо нам. Кто остаётся — пятьдесят сразу, десять в день.
+>
+> Ждан плюёт под ноги и идёт седлать.
+
+**EN**
+
+> {heroName} opens the chest and pays out by the ledger: everyone's share,
+> to the coin. Zhdan counts his and peers at the bottom of the chest.
+>
+> “And that?”
+>
+> “The shares of the ones who fell at the Ford. Nine hundred crowns.”
+>
+> “They've no use for it now.”
+>
+> “Then we do. Whoever stays gets fifty now and ten a day.”
+>
+> Zhdan spits and goes to saddle up.
+
+**Иллюстрация:** раскрытый сундук, на дне монеты; Ждан наклонился над ним,
+в руке своя доля.
+
+#### К3 — кто остаётся
+
+##### Два человека
+
+**RU**
+
+> Остаётся {companionName}: сидит на колоде, пока двор пустеет, и на ворота
+> не смотрит. Ворота за последним скрипят и не закрываются до конца.
+>
+> {heroName} отсчитывает пятьдесят. {companionName} пересчитывает, одну
+> монету взвешивает на ладони и возвращает.
+>
+> — Житная. Лёгкая. Дай коронную.
+>
+> {heroName} меняет. {companionName} убирает деньги и спрашивает, где мешки.
+
+**EN**
+
+> {companionName} stays, sitting on a chopping block while the yard empties,
+> not looking at the gate. It creaks behind the last of them and does not
+> quite close.
+>
+> {heroName} counts out fifty. {companionName} counts them again, weighs one
+> coin in hand and hands it back.
+>
+> “Zhitnoe. Light. Give me a royal one.”
+>
+> {heroName} swaps it. {companionName} puts the money away and asks where
+> the sacks are.
+
+##### Три человека
+
+**RU**
+
+> Остаются двое. {companionName} сидит на колоде, пока двор пустеет.
+> {secondCompanionName} доходит до ворот, возвращается за забытым ремнём
+> и больше не уходит.
+>
+> {heroName} отсчитывает по пятьдесят. {companionName} пересчитывает,
+> одну монету взвешивает на ладони и возвращает:
+>
+> — Житная. Лёгкая. Дай коронную.
+>
+> {secondCompanionName} берёт свои не считая и спрашивает только, где ночевать.
+
+**EN**
+
+> Two stay. {companionName} sits on a chopping block while the yard empties.
+> {secondCompanionName} gets as far as the gate, comes back for a forgotten
+> strap and does not leave again.
+>
+> {heroName} counts out fifty each. {companionName} counts them again, weighs
+> one coin in hand and hands it back:
+>
+> “Zhitnoe. Light. Give me a royal one.”
+>
+> {secondCompanionName} takes theirs without counting and asks only where
+> they'll sleep tonight.
+
+**Иллюстрация:** монета на ладони спутника против света; пустой двор позади.
+
+#### К4 — кладовая
+
+##### Два человека
+
+**RU**
+
+> Кладовая почти пуста: на полках мышиный помёт и прошлогодний лук.
+> Наследник выносит тридцать пайков: сухари, солонину, крупу.
+>
+> — Берите. И котлы оставьте.
+>
+> {companionName} грузит мешки и считает вслух:
+>
+> — Пятнадцать дней на двоих.
+>
+> {heroName} молча ставит взятый котёл обратно к стене. Котёл хороший,
+> медный.
+
+**EN**
+
+> The storeroom is nearly bare: mouse droppings and last year's onions on
+> the shelves. The heir brings out thirty rations: rusks, salt beef, groats.
+>
+> “Take them. And leave the kettles.”
+>
+> {companionName} loads the sacks, counting aloud:
+>
+> “Fifteen days for two.”
+>
+> Without a word {heroName} sets the kettle back against the wall. A good
+> one, copper.
+
+##### Три человека
+
+**RU**
+
+> Кладовая почти пуста: на полках мышиный помёт и прошлогодний лук.
+> Наследник выносит тридцать пайков: сухари, солонину, крупу.
+>
+> — Берите. И котлы оставьте.
+>
+> {companionName} грузит мешки и считает вслух:
+>
+> — Десять дней на троих.
+>
+> {secondCompanionName} пробует сухарь на зуб и кладёт обратно в мешок.
+> {heroName} молча ставит взятый котёл к стене.
+
+**EN**
+
+> The storeroom is nearly bare: mouse droppings and last year's onions on
+> the shelves. The heir brings out thirty rations: rusks, salt beef, groats.
+>
+> “Take them. And leave the kettles.”
+>
+> {companionName} loads the sacks, counting aloud:
+>
+> “Ten days for three.”
+>
+> {secondCompanionName} tests a rusk with their teeth and drops it back in
+> the sack. Without a word {heroName} sets the kettle back against the wall.
+
+**Иллюстрация:** низкая кладовая, мешки на плече спутника; наследник
+в дверях, медный котёл у стены.
+
+#### К5 — ворота
+
+##### Два человека
+
+**RU**
+
+> На воротах ещё висит боярский стяг. {heroName} снимает его, складывает
+> и относит наследнику.
+>
+> — Себе не возьмёте?
+>
+> — Чужое.
+>
+> Наследник держит стяг, как мокрое бельё, и не знает, куда его деть.
+> {companionName} уже за воротами, с мешком на плече, и не оглядывается.
+>
+> {heroName} выходит следом и прикрывает ворота.
+
+**EN**
+
+> The boyar's banner still hangs on the gate. {heroName} takes it down,
+> folds it and carries it to the heir.
+>
+> “You won't keep it?”
+>
+> “It isn't ours.”
+>
+> The heir holds the banner like wet washing, not knowing where to put it.
+> {companionName} is already outside the gate, a sack on one shoulder, not
+> looking back.
+>
+> {heroName} follows and pulls the gate to.
+
+##### Три человека
+
+**RU**
+
+> На воротах ещё висит боярский стяг. {heroName} снимает его, складывает
+> и относит наследнику.
+>
+> — Себе не возьмёте?
+>
+> — Чужое.
+>
+> Наследник держит стяг, как мокрое бельё, и не знает, куда его деть.
+> {companionName} и {secondCompanionName} уже за воротами, с мешками,
+> и не оглядываются.
+>
+> {heroName} выходит следом и прикрывает ворота.
+
+**EN**
+
+> The boyar's banner still hangs on the gate. {heroName} takes it down,
+> folds it and carries it to the heir.
+>
+> “You won't keep it?”
+>
+> “It isn't ours.”
+>
+> The heir holds the banner like wet washing, not knowing where to put it.
+> {companionName} and {secondCompanionName} are already outside the gate
+> with the sacks, not looking back.
+>
+> {heroName} follows and pulls the gate to.
+
+**Иллюстрация:** наследник со сложенным стягом в руках; полуприкрытые
+ворота, за ними спины компании.
+
+### Вариант «Щит»
+
+#### Щ1 — воз
+
+**RU**
+
+> Боярин умер, задолжав всем. Наследник продаёт всё, что звенит. Во дворе
+> стоит воз: сёдла, котлы, щиты с замазанным гербом.
+>
+> {heroName} переворачивает верхний щит. На изнанке ножом вырезано:
+> «Вирьян Косой». Вирьяна убили в Бродской сече, на третий год Смуты.
+> Щит дружина с тех пор возила с собой.
+
+**EN**
+
+> The boyar died owing everyone. His heir is selling whatever clinks. A cart
+> stands in the yard: saddles, kettles, shields with the arms painted over.
+>
+> {heroName} turns the top shield over. Cut into the back with a knife:
+> “Viryan Kosoy.” Viryan was killed in the Battle of the Ford, in the third
+> year of the Troubles. The retinue had carried his shield ever since.
+
+**Иллюстрация:** воз со щитами, герб замазан сажей; изнанка одного щита
+с вырезанным именем.
+
+#### Щ2 — приказчик
+
+**RU**
+
+> {heroName} снимает щит с воза. Приказчик хватается за край.
+>
+> — Боярское.
+>
+> — Вирьяново. Имя видишь?
+>
+> Приказчик грамоты не знает, но буквы видит. Из-за одного щита спорить
+> не хочет — отпускает.
+>
+> Сзади хмыкает {companionName}: всё это время чинит на колоде ремень
+> и не встаёт.
+>
+> — Вдове понесёшь?
+>
+> — Понесу.
+
+**EN**
+
+> {heroName} lifts the shield off the cart. The steward grabs its rim.
+>
+> “That's the boyar's.”
+>
+> “Viryan's. See the name?”
+>
+> The steward cannot read, but he can see letters. One shield isn't worth
+> the argument. He lets go.
+>
+> Behind them {companionName} snorts, still mending a strap on a chopping
+> block, not getting up.
+>
+> “Taking it to the widow?”
+>
+> “Yes.”
+
+**Иллюстрация:** две руки на краю щита; спутник на колоде с ремнём
+на коленях.
+
+#### Щ3 — найм
+
+##### Два человека
+
+**RU**
+
+> {companionName} откладывает ремень.
+>
+> — А потом?
+>
+> — Потом работа. Пятьдесят сразу, десять в день. Казна у меня.
+>
+> — Сначала вдова. Деньги потом.
+>
+> {heroName} всё равно отсчитывает пятьдесят и кладёт на колоду, рядом
+> с ремнём. {companionName} смотрит на монеты, сгребает их в кошель
+> и берёт щит под мышку.
+
+**EN**
+
+> {companionName} puts the strap down.
+>
+> “And after that?”
+>
+> “After that, work. Fifty now, ten a day. I hold the chest.”
+>
+> “The widow first. Money later.”
+>
+> {heroName} counts out fifty anyway and leaves it on the block beside the
+> strap. {companionName} looks at the coins, sweeps them into a purse and
+> tucks the shield under one arm.
+
+##### Три человека
+
+**RU**
+
+> {companionName} откладывает ремень.
+>
+> — А потом?
+>
+> — Потом работа. Пятьдесят сразу, десять в день. Казна у меня.
+>
+> — Сначала вдова. Деньги потом.
+>
+> {heroName} всё равно отсчитывает пятьдесят. {companionName} сгребает
+> монеты в кошель и берёт щит под мышку.
+>
+> У ворот стоит {secondCompanionName} и смотрит, как отсчитывают.
+>
+> — Мне сразу.
+>
+> {heroName} отсчитывает ещё пятьдесят.
+
+**EN**
+
+> {companionName} puts the strap down.
+>
+> “And after that?”
+>
+> “After that, work. Fifty now, ten a day. I hold the chest.”
+>
+> “The widow first. Money later.”
+>
+> {heroName} counts out fifty anyway. {companionName} sweeps the coins into
+> a purse and tucks the shield under one arm.
+>
+> {secondCompanionName} stands at the gate, watching the counting.
+>
+> “I'll have mine now.”
+>
+> {heroName} counts out another fifty.
+
+**Иллюстрация:** монеты на колоде; спутник со щитом под мышкой; у ворот
+второй спутник, если он выбран.
+
+#### Щ4 — вдова
+
+**RU**
+
+> Вдова живёт на краю, у огородов. В сенях пусто: ни мешков, ни кадки.
+> У печи поленница — на два дня.
+>
+> Щит она берёт обеими руками и долго смотрит на вырезанное имя.
+>
+> — Четыре года ждала. Хоть щит дождалась.
+>
+> Пока она молчит, {companionName} колет во дворе оставшиеся чурки.
+>
+> Вдова ставит щит к печи, рядом с поленьями.
+
+**EN**
+
+> The widow lives at the edge, by the vegetable plots. The entry is bare:
+> no sacks, no tub. By the stove there is wood for two days.
+>
+> She takes the shield in both hands and looks a long time at the name.
+>
+> “Four years I waited. At least the shield came home.”
+>
+> While she says nothing more, {companionName} splits the last logs in her
+> yard.
+>
+> The widow stands the shield by the stove, next to the firewood.
+
+**Иллюстрация:** низкий дом на краю; вдова со щитом на пороге, спутник
+с топором у колоды, поленница у печи в проёме.
+
+#### Щ5 — доска
+
+##### Два человека
+
+**RU**
+
+> — Тридцать пайков, — {companionName} раскладывает их на два мешка. —
+> На двоих пятнадцать дней.
+>
+> {companionName} завязывает мешки своим узлом: видно будет, если кто
+> развяжет.
+>
+> От вдовы идут к доске с заказами. Свежие листы прибиты гвоздями
+> прямо поверх прошлогодних, размокших.
+>
+> Ближний лист — про волков.
+
+**EN**
+
+> “Thirty rations,” {companionName} says, sharing them between two sacks.
+> “Fifteen days for two.”
+>
+> {companionName} ties the sacks with a knot of their own: it will show
+> if anyone undoes them.
+>
+> From the widow's they go to the job board. New notices are nailed over
+> last year's, gone soft with rain.
+>
+> The nearest one is about wolves.
+
+##### Три человека
+
+**RU**
+
+> — Тридцать пайков, — {companionName} раскладывает их на два мешка. —
+> На троих десять дней.
+>
+> {companionName} завязывает мешки своим узлом: видно будет, если кто
+> развяжет.
+>
+> От вдовы идут к доске с заказами. Свежие листы прибиты гвоздями
+> прямо поверх прошлогодних, размокших. {secondCompanionName} спрашивает,
+> почём нынче волк.
+>
+> Ближний лист — про волков.
+
+**EN**
+
+> “Thirty rations,” {companionName} says, sharing them between two sacks.
+> “Ten days for three.”
+>
+> {companionName} ties the sacks with a knot of their own: it will show
+> if anyone undoes them.
+>
+> From the widow's they go to the job board. New notices are nailed over
+> last year's, gone soft with rain. {secondCompanionName} asks what a wolf
+> pays these days.
+>
+> The nearest one is about wolves.
+
+**Иллюстрация:** доска с листами поверх старых, один с грубым рисунком
+волка; компания со спины.
+
+### Критика новой редакции
+
+| Раунд | «Казна»                  | «Щит»                    | Главное                                                                                                                  |
+| ----- | ------------------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| 1     | REJECT · 2/3/2/1/3/2/1/2 | REJECT · 2/3/2/2/3/2/2/1 | Неясно, чья казна в К2; финал К5 на счёте; «доска» в Щ4 сталкивается с доской заказов; оговорка о летописце              |
+| 2     | ACCEPT · 2/3/3/3/3/3/3/2 | REJECT · 2/3/2/3/3/3/3/1 | «Щит»: «видел» при имени спутника (род); пояснения рассказчика; «Мешки завязаны» без действующего лица                   |
+| 3     | ACCEPT · 2/3/3/3/3/3/3/3 | ACCEPT · 2/3/3/3/3/3/3/3 | Род и настоящее время при именах чисто; RU 41–54 слова. Полировка без блокировки: безымянные наследник, вдова, приказчик |
+
+Порядок оценок: люди / конкретность / язык / подтекст / лор / механика /
+ритм / перевод. После раунда 1: казна — доли павших у Брода, честный
+расчёт с уходящими; убраны оговорка о летописце, телега, торг и вал,
+счёт в последних разворотах; Щ4 — «щит», спутник колет вдове дрова.
+После раунда 2: «видел» → «смотрит, как отсчитывают»; «спорить не хочет»;
+узел вяжет спутник; убрано «Никто не просил»; правка EN «Казны».
+
+**Итог, local:** оба варианта приняты текстовым критиком в раунде 3.
+Открыто для владельца: выбор варианта (AC-4) и отказ от «мы» рассказчика.
+Игра, CI и читательский плейтест — NOT_RUN; интерес читателя — NOT_MEASURED.
+
+**Решение владельца — 2026-10-07:** в игру идёт вариант **«Щит»**; рассказ
+от третьего лица без «мы» летописца принят. AC-4 выполнен; строки и UI —
+следующий шаг (каталог `i18n/book.ru.ts` / `book.en.ts`).

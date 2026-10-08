@@ -11,7 +11,7 @@ requests.
 
 ### Mechanics wiki with cross-links
 
-- 2026-10-08, originating branch `codex/world-map`, local: the owner asked to
+- 2026-10-08, originating branch `codex/world-map`, merged 2026-10-08 (owner «commit, merge»): the owner asked to
   describe everything at once as a full wiki with cross-linked mechanics.
   Added [docs/wiki/mechanics/](docs/wiki/mechanics/index.md): 18 combat pages
   (turn and action points, fatigue, melee, armour, weapons, ranged, preview,
@@ -27,7 +27,7 @@ requests.
 
 ### Game benchmarks, mistakes to avoid and world game master
 
-- 2026-10-08, originating branch `codex/world-map`, local: the owner asked to
+- 2026-10-08, originating branch `codex/world-map`, merged 2026-10-08 (owner «commit, merge»): the owner asked to
   analyse the world map, compare highly rated similar games and save which
   references Warwrit takes and which mistakes it avoids. Added
   [benchmarks](docs/wiki/benchmarks.md) (reviews of ten games, Battle Brothers
@@ -53,7 +53,7 @@ requests.
 
 ### Global world atlas concept
 
-- 2026-10-08, originating branch `codex/world-map`, local: the owner requested
+- 2026-10-08, originating branch `codex/world-map`, merged 2026-10-08 (owner «commit, merge»): the owner requested
   a generated world map consistent with Warwrit's lore. Added the standalone
   ink atlas, exact built-in imagegen prompt and provenance in
   `assets/art/world/stozhar-v1/`, plus [the owning design](docs/wiki/world/map.md)
@@ -67,7 +67,7 @@ requests.
   basins and ten distinct districts. Expanded generation/review pending;
   renderer integration and gameplay checks NOT_RUN.
 
-- 2026-10-08 follow-up, `codex/world-map`, local: owner required tens of hours,
+- 2026-10-08 follow-up, `codex/world-map`, merged 2026-10-08: owner required tens of hours,
   more than 100 POIs and coherent geography. Added the desktop zoomable
   `assets/art/world/stozhar-v3/atlas.html`, 128 unique proposed places in
   `places.json`, five image iterations with exact prompts/provenance, and
@@ -83,6 +83,29 @@ requests.
   readability; v3 supersedes it. [Owning result](docs/wiki/world/map.md).
   Game integration/day/night NOT_RUN; play duration NOT_MEASURED.
 
+### Wave 1 agent results: company book, cache investigation, bestiary
+
+- 2026-10-08, branch `claude/wave1-docs` from `main` (`b7ffefc`), published;
+  owner «Ok, merge prs, update main». Integrates the accepted, owner-approved
+  parts of the wave-1 Codex briefs (documentation only, no code):
+  - **B8 company book** (`codex/b8-company-book` at `5b943aa`): Codex variants
+    A/B were REJECT after three text-critic rounds; on the owner's decision
+    Claude rewrote the book as «Казна» and «Щит»; both ACCEPT in round 3.
+    Owner chose «Щит», third person without the chronicler's «мы».
+    [Text and rounds](docs/wiki/onboarding-book.md#b8--новая-редакция-казна-и-щит--2026-10-07).
+  - **B4 «Кто выдал тайник»** (`codex/b4-story-missions` at `88590bd`): story
+    revision 6 (patched-sack clue instead of the tally stick, owner decision)
+    text-critic ACCEPT and owner «Одобряю»; runtime contract
+    [M1-STORY-MISSIONS](docs/work-packages/M1-STORY-MISSIONS.md). Reward
+    decision (40 crowns from Kondrat's existing funds) is recorded on the
+    working branch, not yet here.
+  - **B7 bestiary and quest decisions** (`codex/b7-content-revision` at
+    `ef0008e`): 30 selected creatures, all 60 IDs retained; creature names
+    text-critic ACCEPT; 60 quest editorial decisions. The rewritten quest
+    drafts (REJECT) are not included.
+    Checks: prettier on changed docs. Game, CI-only checks per PR. Code parts
+    of B1/B3/B4 remain on their working branches.
+
 ### Pending local work published
 
 - 2026-10-07, branch `claude/world-lore-and-briefs` from `main` (`47c60e0`),
@@ -93,6 +116,8 @@ requests.
   written by earlier sessions. Local evidence (`output/`, `.playwright-cli/`)
   and agent worktrees (`.claude/worktrees/`) are now ignored, not committed.
   Merge is not authorized.
+- 2026-10-07 correction: merged on the owner's «Yes» as
+  [PR #152](https://github.com/Vovanostm/warwrit/pull/152) (`b7ffefc`).
 
 ### Work package: melee always connects (combat ruleset v3) — proposal
 

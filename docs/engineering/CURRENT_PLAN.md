@@ -16,9 +16,21 @@ bypass through the adjacent working bridge. Final independent standalone
 engraved-atlas pass ACCEPT at overview scale: all six applicable scores 2;
 close rendering/materials remain 1 and need higher-resolution authored detail
 for close-view acceptance. Catalogue/embedded JSON/JS syntax/local links/diff,
-desktop atlas journeys and change audit PASS. Local, not published/merged. No game integration,
+desktop atlas journeys and change audit PASS. Merged to `main` with the
+2026-10-08 docs PR on the owner's «commit, merge». No game integration,
 renderer/state/migration change; game day/night/journey NOT_RUN, duration
 NOT_MEASURED. Exact prompts/provenance retained beside the images.
+
+**Wave 1 briefs — status 2026-10-08:** owner «Ok, merge prs, update main»
+merges the accepted documentation via `claude/wave1-docs`: B8 book «Щит»
+(owner choice, third person), B4 approved story and runtime contract, B7
+bestiary selection and quest decisions. Still running on Codex worktrees
+(`~/.codex/worktrees/`): B1 field camp (step 2 code, fresh session after
+disconnects), B3 repeatable contracts (core done, privacy fix committed;
+server/board/text/journeys pending), B4 investigation steps 3–5 (reward 40
+crowns, owner decision), B7 quest drafts (three batches REJECT; owner plan:
+Claude rewrites the cards). B8 strings in game are the next B8 step.
+No player-visible feature from wave 1 yet.
 
 **Briefs split with acceptance and critique — 2026-10-07:** owner asked for
 separate files so agents execute unambiguously. [briefs/2026-10-07](briefs/2026-10-07/README.md)
