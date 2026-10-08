@@ -1,0 +1,33 @@
+Edit the attached porechye-detail.png (EDIT TARGET). Preserve everything not listed:
+the projection, ink rendering, palette, ash-grey Mutnya, the Karaulny bridge (wooden
+deck on stone piers), the low two-arch stone Kamenny Brod crossing and its low-roofed
+market town east of it, the earthworks and Bereznyak in the north.
+
+Make only these local changes:
+1. Capital outskirts, bottom-left: cut back to a few roofs in the very corner
+   (about 15% of the sheet). Remove the church tower and the town wall. Fill the
+   freed area with fields, open ground and a forest edge.
+2. Lower river: remove the second parallel channel and its waterfall. Keep ONE
+   Mutnya. Add only a narrow mill stream that visibly flows north INTO the Mutnya
+   on its south bank, downstream of Kamenny Brod.
+3. Tikhaya Gat: keep ONE village on wooden stilts and platforms, on the south bank of
+   the Mutnya near the mouth of the mill stream, with boats and a bell post. Replace
+   the other stilt village (upper right) with bank, reeds and shallows.
+4. Old Mill: on the mill stream, close to Tikhaya Gat, on the same south bank. Make it
+   visibly BURNT: char-black rafter ends, soot streaks above openings, a broken wheel
+   with missing paddles; roofless, abandoned, overgrown track. No smoke.
+5. Mass graves: move the grave mounds from the north bank to the south bank right next
+   to the Old Mill: shallow low mounds and disturbed earth with plain wooden posts
+   (no crosses). Turn the old grave area on the north bank into rough pasture.
+6. Severny Dvor: add a small grain farmstead (two barns, a house, a few small fields)
+   on the north bank between the Bereznyak road and the north end of the Kamenny Brod
+   crossing, west of the market town.
+7. Vyazov bridge, top-left: redraw as a crossing roughly perpendicular to the banks,
+   with both end spans standing on piers tied to the riverside streets and only the
+   MIDDLE span missing, its timbers in the water.
+8. Podmostye: three or four small yards at the north end of the Karaulny bridge.
+9. Main route Vyazov bank road -> Karaulny bridge -> Kamenny Brod: slightly stronger
+   value contrast than minor tracks; quiet a few minor tracks in the north-east.
+
+Avoid: text, labels, crosses, church towers, castles, blue water, new creatures,
+new towns. Output the same size, landscape 3:2.

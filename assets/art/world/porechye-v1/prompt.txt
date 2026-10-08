@@ -1,0 +1,50 @@
+Close-view regional atlas sheet of Grey Porechye (Серое Поречье), Warwrit.
+Purpose: a higher-detail redraw of one small region of the approved world atlas,
+for close inspection. Not a new map: keep the layout of the attached atlas crop.
+
+Inputs and roles:
+1. layout-reference-atlas-crop.png — LAYOUT reference. Keep the river course,
+   north-up orientation, oblique bird's-eye atlas projection, light direction and
+   relative positions of settlements and crossings.
+2. unit-c-ink.png — STYLE reference: irregular ink contour, cross-hatching, strong
+   shadow masses, flat muted wash.
+3. kamenny-brod-painting.png — MATERIAL reference for Kamenny Brod: weathered
+   fieldstone, dark shingle roofs, timber, a LOW two-arch stone cart crossing.
+4. staraya-melnitsa.png — MATERIAL reference for the Old Mill: burnt watermill,
+   collapsed roof timbers, broken wheel, abandoned.
+
+Places (x%, y% of the sheet, origin top-left; keep each on the side of the river
+where it sits in the layout crop):
+- Vyazov, west edge (~10%, 39%): riverside town quarters; its wooden bridge
+  (~16%, 29%) has the MIDDLE SPAN COLLAPSED into the river; some roofless quarters.
+- Podmostye (~37%, 27%): a few yards at the north end of the Karaulny bridge.
+- Karaulny bridge (~36%, 39%): WOODEN PLANK DECK on OLD STONE PIERS. Not a stone arch.
+- Earthworks (~46%, 17%): low old grassed-over earth ramparts, no garrison.
+- Bereznyak (~55%, 20%): forest village among birch and pine, herb-drying sheds.
+- Clay bank (~37%, 50%): grey clay riverbank with cart tracks.
+- Severny Dvor (~54%, 57%): grain farmstead, barns, a few small fields.
+- Kamenny Brod (~68%, 64%): the ONLY stone cart crossing in the region — a LOW
+  two-arch stone crossing — and a compact market town of low dark roofs and a small
+  watch house. Not a castle, no tall towers, no walls with banners.
+- Burial pits (~82%, 68%): shallow mass graves — low disturbed mounds, a few
+  crude wooden markers.
+- Tikhaya Gat (~89%, 82%): river village on wooden platforms and stilts, boats,
+  a bell post on the bank.
+- Old Mill (~82%, 86%): burnt ruined watermill on a small side stream joining the
+  river; no smoke, no work, overgrown track.
+- Bottom-left corner: only the edge of the crown city outskirts, not dominant.
+
+World rules: the river Mutnya is ASH-GREY, silty, never blue. Serious grounded
+dark fantasy; war traces are local (the broken span, the burnt mill, graves);
+inhabited places look lived-in and worn, not ruined.
+
+Style: ink linework and hatching over flat muted wash; palette slate, soot, umber,
+muted ochre, faded olive, restrained rust accents. Weathered stone and timber,
+irregular contours, roots and entrances grounded. Readable paths and crossings.
+
+Avoid: text, letters, labels, legends, compass, frame; castles, tall white
+towers, pristine pale masonry, stone-arch Karaulny bridge, blue water, vivid
+green lawns, glossy surfaces, cute rounded shapes, fantasy creatures,
+a working picturesque mill.
+
+Format: landscape 3:2, the largest resolution the tool provides.
