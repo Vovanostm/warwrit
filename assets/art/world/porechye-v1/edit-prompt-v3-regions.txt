@@ -1,0 +1,25 @@
+Edit the attached annotated image (EDIT TARGET). The red rectangles and the drawn
+lines are guides only: remove every red and blue mark in the output. Change ONLY
+the content inside the numbered red rectangles; everything outside them must stay
+as it is. Keep the same ink-hatched rendering, palette, light and projection.
+
+Box 1: Severny Dvor — a small grain farmstead on dry land: one house, two barns,
+a haystack, three small fenced fields, a cart track joining the road to the stone
+bridge. Do not put buildings in the river.
+
+Box 2: Vyazov bridge — follow the red line: a bridge crossing the river straight
+from the Vyazov street end (bottom of the line) to the far bank (top of the line),
+roughly perpendicular to the banks. Both end spans stand on stone piers and are
+tied to the bank roads; only the MIDDLE span is missing, its broken timbers in the
+water. Remove the bridge pieces that lie along the river.
+
+Box 3 and 3b: follow the blue line — a NARROW mill stream (a few strokes wide)
+comes from the bottom edge, runs north past the burnt mill and its broken wheel,
+and joins the main river at the top of the blue line. Turn all other broad water
+inside boxes 3 and 3b into dry bank, rough meadow, reeds and a few stones. Keep
+the burnt roofless mill and its broken wheel next to the stream. Keep the grave
+mounds where they are, but replace every cross with a single plain wooden post.
+
+Box 4: replace the inflowing creek with wet meadow and reeds; no open water.
+
+Output the same 1536x1024 size. No text, no crosses, no new buildings outside box 1.

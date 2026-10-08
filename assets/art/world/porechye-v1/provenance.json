@@ -1,0 +1,61 @@
+{
+  "asset": "porechye-detail-v3.png (standalone concept ACCEPT 2026-10-09; in-game use BLOCKED)",
+  "created": "2026-10-09",
+  "kind": "close-view regional atlas sheet",
+  "status": "review-draft",
+  "ownerRequest": "Проанализируй карту, проанализируй мир — что можно улучшить? Use codex для генерации изображений.",
+  "generation": {
+    "tool": "Codex CLI 0.146.0, built-in image_gen (imagegen skill, built-in mode)",
+    "invokedFrom": "Claude Code via `codex exec -s workspace-write` with four attached images",
+    "prompt": "prompt.txt (passed verbatim to image_gen, as reported by Codex)",
+    "operation": "generate with layout, style and material references"
+  },
+  "size": {
+    "width": 1536,
+    "height": 1024
+  },
+  "inputs": [
+    {
+      "file": "layout-reference-atlas-crop.png",
+      "role": "layout reference",
+      "derivedFrom": "assets/art/world/stozhar-v3/world-map-engraved.png crop x=682 y=307 w=364 h=190, upscaled 3x"
+    },
+    {
+      "file": "assets/art/m1/style/unit-c-ink.png",
+      "role": "style reference"
+    },
+    {
+      "file": "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+      "role": "material reference, Kamenny Brod"
+    },
+    {
+      "file": "assets/art/m1/places/staraya-melnitsa.png",
+      "role": "material reference, Old Mill"
+    }
+  ],
+  "owningDocument": "docs/wiki/world/map.md#второй-анализ-карты-и-мира--2026-10-09",
+  "limits": [
+    "Standalone still concept; not integrated into the game or atlas.html.",
+    "Not a coordinate source; places.json remains the owner of names and coordinates."
+  ],
+  "iterations": [
+    {
+      "image": "porechye-detail.png",
+      "operation": "generate",
+      "prompt": "prompt.txt",
+      "critic": "REJECT pass 1: props/lore 1, layout 1, others 2"
+    },
+    {
+      "image": "porechye-detail-v2.png",
+      "operation": "built-in whole-image edit of porechye-detail.png",
+      "prompt": "edit-prompt-v2.txt",
+      "critic": "REJECT pass 2: props/lore 2, layout 1 (Severny Dvor/Bereznyak, Vyazov bridge, mill stream, new creek), others 2"
+    },
+    {
+      "image": "porechye-detail-v3.png",
+      "operation": "region-by-region (owner choice «a» 2026-10-09): (1) Bereznyak region x750-1070 y110-305 pasted back from porechye-detail.png; (2) one Codex built-in edit of an annotated guide (edit-prompt-v3-regions.txt), of which ONLY boxes x780-1200 y780-1024, x1200-1536 y815-1024 and x1300-1536 y420-530 were composited — the rest of that output (it removed the lower Mutnya) was discarded; (3) three Codex built-in edits of 3x crops (edit-prompt-v3-crops.txt): Severny Dvor x690-1010 y270-510, Vyazov bridge x0-420 y0-300, grave posts x770-1030 y760-950, downscaled and pasted with feathered inner masks (outer 12% kept). Compositing: Pillow 12.1, Gaussian feather 10-18 px.",
+      "prompt": "edit-prompt-v3-regions.txt; edit-prompt-v3-crops.txt",
+      "critic": "ACCEPT pass 3 (new critic instance): all applicable criteria 2 (layout 1->1->2, props/lore 1->2->2); in-game day/night, side-by-side sheet and 2x seam check NOT_RUN. Polish: lower-right bank seam, mill wheel beside the stream, Kamenny Brod timber vs fieldstone, smoke, main route value, oversized haystacks/posts, river exits right edge."
+    }
+  ]
+}

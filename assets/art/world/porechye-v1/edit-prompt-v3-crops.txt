@@ -1,0 +1,23 @@
+Three separate focused edits, ONE output image per input crop. Each crop will be
+pasted back into a larger map, so keep the outer 15% border of every crop exactly as
+it is (same banks, roads, trees, water at the edges), keep the same ink-hatched
+rendering, palette, light and oblique projection, same pixel size as the input.
+No text, no crosses, no red marks in the output.
+
+A) crop-severny.png -> crop-severny-edit.png
+Add Severny Dvor, a small grain farmstead, on the DRY LAND in the centre-right of the
+crop (never in the water): one low house, two barns with dark shingle roofs, a
+haystack, two or three small fenced grain fields, a cart track joining the nearby
+road. Lived-in, worn timber. The river on the left stays unchanged.
+
+B) crop-vyazov-guide.png -> crop-vyazov-edit.png
+The red line is a guide; remove it. Redraw the Vyazov bridge along the red line: it
+crosses the river straight from the town street at the bottom end of the line to the
+far bank at the top end, roughly perpendicular to the banks. Timber deck on stone
+piers. Both end spans stand and land on the bank roads; only the MIDDLE span is
+missing, its broken timbers lying in the water. Remove the old bridge pieces that
+lie along the river. Keep the town houses and banks unchanged.
+
+C) crop-graves.png -> crop-graves-edit.png
+Shallow grave mounds next to a ruined mill. Replace every cross-shaped marker with a
+single plain upright wooden post. Change nothing else.
