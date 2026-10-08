@@ -43,6 +43,22 @@ for the remaining work: [briefs/2026-10-07](briefs/2026-10-07/README.md)
 B5 duchy-war crisis, B6 localization, B7 bestiary/quest revision, B8 company
 book, B9 second region after M1). Not dispatched.
 
+**Mechanics wiki — 2026-10-08:** one page per combat and world mechanic with
+status and cross-links in [mechanics](../wiki/mechanics/index.md). Documentation
+only; the first combat mechanics (zone of control, morale with
+flight/surrender, telegraphed intent) still need a work package.
+
+**Design compass, armies and focus — 2026-10-08:** owner decisions REQ-21..23
+in [vision](../wiki/vision.md): the band never commands armies; duchy armies
+fight parallel battles, some decided by the game master, some by simple rules
+without tactical battle; test 10–20 players, target 200–1000 bands; focus on
+the current world and deep combat. **REQ-19 (second region after M1) and brief
+B9 are cancelled.** Accepted recommendations: first combat mechanics — zone of
+control, morale with flight/surrender, telegraphed creature intent; the game
+master decides battles that change a town's owner or turn the crisis, simple
+rules decide skirmishes, ambushes and small sieges. Agents read [DESIGN_COMPASS](DESIGN_COMPASS.md); evidence in
+[benchmarks](../wiki/benchmarks.md). Documentation only; nothing implemented.
+
 **Autobattle and second region decided — 2026-10-07:** autobattle AI retreats,
 deaths are possible; the player may order the AI to travel to a settlement and log
 out, with battles on the way auto-resolved (REQ-18). Second region with a second

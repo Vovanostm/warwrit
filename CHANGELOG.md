@@ -9,6 +9,48 @@ requests.
 
 ## Unreleased
 
+### Mechanics wiki with cross-links
+
+- 2026-10-08, originating branch `codex/world-map`, local: the owner asked to
+  describe everything at once as a full wiki with cross-linked mechanics.
+  Added [docs/wiki/mechanics/](docs/wiki/mechanics/index.md): 18 combat pages
+  (turn and action points, fatigue, melee, armour, weapons, ranged, preview,
+  zone of control, morale, telegraphed intent, retreat, formations,
+  displacement, terrain, wounds, opponents, talents, pressure) and 10 world
+  pages (world turn, place state, attached places, contracts, relations,
+  armies, game master, crisis and season, ambitions, chronicle), each with
+  status, rule or proposal, player view, cross-links, reference and mistake.
+  Core numbers are quoted from `packages/game-core/src/combat/rules.ts`; new
+  rules are candidates without numbers. Linked from benchmarks, DESIGN_COMPASS,
+  vision, combat, wiki index and SCHEMA. Local links and anchors PASS;
+  implementation NOT_RUN.
+
+### Game benchmarks, mistakes to avoid and world game master
+
+- 2026-10-08, originating branch `codex/world-map`, local: the owner asked to
+  analyse the world map, compare highly rated similar games and save which
+  references Warwrit takes and which mistakes it avoids. Added
+  [benchmarks](docs/wiki/benchmarks.md) (reviews of ten games, Battle Brothers
+  world systems, mistake table, three-layer world proposal, first cycle,
+  lore proposals) and linked it from the wiki index, world page and log.
+  Recorded owner decisions as REQ-21 (mercenary band that does not command
+  armies; duchy armies march and fight parallel battles so the world lives;
+  a game master sets the war — direction, design not approved) and
+  REQ-22 (test 10–20 players, target 200–1000 bands) and REQ-23 (focus on
+  making the current world interesting and on deep, high-quality combat with
+  many mechanics; new worlds/regions only after success) in
+  [vision](docs/wiki/vision.md). Revision the same day: the report was rewritten
+  in detail (world, story and combat per game, mistakes, good/bad examples) and
+  a compact agent digest [DESIGN_COMPASS](docs/engineering/DESIGN_COMPASS.md)
+  was added to the brief reading list. Owner: some army battles are decided by
+  the game master, some by simple rules without tactical battle; REQ-19 and
+  brief B9 (second region after M1) are cancelled. The owner then accepted the
+  recommendations: first combat mechanics are zone of control, morale with
+  flight/surrender and telegraphed creature intent; the game master decides
+  battles that change a town's owner or turn the crisis, simple rules decide
+  skirmishes, ambushes and small sieges. Documentation only; implementation NOT_RUN,
+  server capacity NOT_MEASURED.
+
 ### Global world atlas concept
 
 - 2026-10-08, originating branch `codex/world-map`, local: the owner requested

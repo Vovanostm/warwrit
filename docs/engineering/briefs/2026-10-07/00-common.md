@@ -12,6 +12,8 @@ Read in full, in this order:
 2. `docs/wiki/vision.md` — genre, references, MMO fit, REQ-01..19.
 3. `docs/wiki/world/index.md`, `docs/wiki/world/porechye.md` — world and region.
 4. `docs/engineering/CURRENT_PLAN.md` — the top entries (live status).
+   4a. `docs/engineering/DESIGN_COMPASS.md` — references, mistakes to avoid,
+   checklists and examples (added 2026-10-08; supersedes REQ-19).
 5. Every file listed under **Must read** in your brief.
 
 Owner decisions are quoted verbatim in each brief. They outrank any older text.

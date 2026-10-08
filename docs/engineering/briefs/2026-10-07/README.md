@@ -27,7 +27,7 @@ them; agents branch from that commit.
 | [B6](B6-localization.md)         | All UI strings in i18n, English complete, language switch   | code + text        | B1–B4 or ACKed scope  | 6 h      |
 | [B7](B7-content-revision.md)     | Bestiary and 60 quest cards fit the world and writing rules | docs/text          | —                     | 6 h      |
 | [B8](B8-company-book.md)         | New company opening book, two variants for the owner        | text               | —                     | 4 h      |
-| [B9](B9-second-region.md)        | Second region proposals (after M1 only)                     | design             | M1 accepted           | 3 h      |
+| [B9](B9-second-region.md)        | ~~Second region proposals~~ — cancelled 2026-10-08 (REQ-19) | design             | M1 accepted           | 3 h      |
 
 ## Order and parallel work
 
@@ -37,7 +37,7 @@ them; agents branch from that commit.
   (the parent resolves them at merge).
 - Wave 2: **B2** after B1; **B6** after B1–B4 (or on an ACKed component list).
 - Wave 3: **B5** after B2 and B3, when CURRENT_PLAN shows stages 3–6 stable.
-- After M1 acceptance: **B9**.
+- ~~After M1 acceptance: **B9**~~ — cancelled 2026-10-08 (REQ-19).
 
 Owner checkpoints built into briefs: B4 story, B5 phase table, B8 variant choice,
 B9 region choice.

@@ -24,6 +24,7 @@ sources:
 
 Связанные страницы: [Серое Поречье в войне](porechye.md) ·
 [Глобальная карта](map.md) ·
+[Ориентиры и ошибки](../benchmarks.md) ·
 [Литературный слог](literary-style.md) ·
 [Как писать](writing.md) · [Переводы](localization.md).
 
