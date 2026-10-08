@@ -1,5 +1,5 @@
 {
-  "asset": "porechye-detail-v3.png (standalone concept ACCEPT 2026-10-09; in-game use BLOCKED)",
+  "asset": "porechye-detail-v4.png (standalone concept ACCEPT 2026-10-09; in-game use BLOCKED)",
   "created": "2026-10-09",
   "kind": "close-view regional atlas sheet",
   "status": "review-draft",
@@ -56,6 +56,12 @@
       "operation": "region-by-region (owner choice «a» 2026-10-09): (1) Bereznyak region x750-1070 y110-305 pasted back from porechye-detail.png; (2) one Codex built-in edit of an annotated guide (edit-prompt-v3-regions.txt), of which ONLY boxes x780-1200 y780-1024, x1200-1536 y815-1024 and x1300-1536 y420-530 were composited — the rest of that output (it removed the lower Mutnya) was discarded; (3) three Codex built-in edits of 3x crops (edit-prompt-v3-crops.txt): Severny Dvor x690-1010 y270-510, Vyazov bridge x0-420 y0-300, grave posts x770-1030 y760-950, downscaled and pasted with feathered inner masks (outer 12% kept). Compositing: Pillow 12.1, Gaussian feather 10-18 px.",
       "prompt": "edit-prompt-v3-regions.txt; edit-prompt-v3-crops.txt",
       "critic": "ACCEPT pass 3 (new critic instance): all applicable criteria 2 (layout 1->1->2, props/lore 1->2->2); in-game day/night, side-by-side sheet and 2x seam check NOT_RUN. Polish: lower-right bank seam, mill wheel beside the stream, Kamenny Brod timber vs fieldstone, smoke, main route value, oversized haystacks/posts, river exits right edge."
+    },
+    {
+      "image": "porechye-detail-v4.png",
+      "operation": "two Codex built-in edits of 3x crops of v3, pasted with feathered inner masks (outer 10% kept): Kamenny Brod town x900-1220 y420-600 (fieldstone ground floors as in the visit painting, squat watch-gate with one faded rust banner, stone granary with hoist, stone quay, smoke; author decision on owner's «all yours»); lower right x940-1536 y640-940 (Tikhaya Gat moved to the south bank — owner «ok»; open channel; inked south bank; mill wheel in a stone race).",
+      "prompt": "edit-prompt-v4-crops.txt",
+      "critic": "ACCEPT pass 4: materials 3, all other applicable criteria 2. Author 2x seam check: A (Brod) no water leftover, faint ~25x8 px boat ghost at x1160-1185 y562-570; B (north bank) broken stile on dry ground, not a second bell post. Open polish: main route value, oversized haystacks/posts, river exits right edge, palette saturation. Owner questions: antler emblem on the banner (from the approved visit painting), lantern post reading as gibbet."
     }
   ]
 }

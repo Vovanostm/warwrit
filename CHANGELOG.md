@@ -22,7 +22,9 @@ requests.
   pass 1 REJECT, pass 2 REJECT with props/lore 1→2 and layout fidelity 1
   twice; owner chose per-region edits («a») and plain grave posts: v3 built by
   region compositing — pass 3 ACCEPT as a standalone concept (all applicable
-  criteria 2); in-game use BLOCKED, polish listed in map.md. Installed the
+  criteria 2); v4 polish (Kamenny Brod matching its visit painting, Tikhaya
+  Gat on the south bank, mill wheel in its race) — pass 4 ACCEPT, materials 3;
+  in-game use BLOCKED, remaining polish listed in map.md. Installed the
   `openai-develop-web-game` skill after code review (Trail of Bits port;
   local Playwright 1.63; smoke test PASS). Added
   [GAMEDEV_SKILLS](docs/engineering/GAMEDEV_SKILLS.md): installed skills,

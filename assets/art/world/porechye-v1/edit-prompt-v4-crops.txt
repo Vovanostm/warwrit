@@ -1,0 +1,28 @@
+Two focused edits, ONE output image per input crop, same pixel size as the input.
+Each crop is pasted back into a larger map: keep the outer 15% border of every crop
+exactly as it is (banks, roads, water, trees at the edges). Same ink-hatched rendering,
+muted slate/soot/umber/ochre palette with restrained rust, same light and oblique
+projection. No text, no crosses, no tall towers, no castle walls.
+
+D) crop-brod.png -> crop-brod-edit.png  (Kamenny Brod market town by the low stone crossing)
+Make the town match its visit painting (material reference kamenny-brod-painting.png):
+fieldstone ground floors with timber upper storeys and dark weathered shingle roofs;
+a squat fieldstone watch-gate at the town end of the stone bridge, no taller than the
+houses, with ONE faded rust banner; a stone granary with a timber hoist beside the
+crossing; a short stone quay with two moored boats at the bank; market awnings kept;
+thin chimney smoke from two or three roofs. Worn, lived-in, low and broad. Keep the
+two-arch stone bridge, the river and the roads at the crop edges unchanged.
+
+E) crop-gat.png -> crop-gat-edit.png  (lower right: Tikhaya Gat, the Old Mill, the river)
+- Keep the main river flowing across the top part of the crop, OPEN water along its
+  whole width; nothing spans or blocks the channel.
+- Draw the SOUTH bank of the river as an irregular inked bank with stones and reeds.
+- Move Tikhaya Gat to the SOUTH bank: a small village of houses on wooden stilts and
+  platforms built out from the south bank into the shallows, boats tied up, a bell
+  post standing on the south bank, thin smoke from one roof. Remove the stilt houses
+  and bell post from their old place in mid-channel / north side.
+- The burnt Old Mill stays where it is, roofless, charred, no smoke; put its broken
+  waterwheel IN a short stone-lined race fed by the narrow mill stream, with water
+  visibly running under the wheel back into the stream.
+- The narrow mill stream still joins the river; the grave mounds with plain posts at
+  the left edge stay unchanged. The mill and the village are linked by a footpath.
