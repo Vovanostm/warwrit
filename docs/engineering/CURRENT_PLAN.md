@@ -1,5 +1,25 @@
 # Warwrit current delivery plan
 
+**World atlas / geography audit — 2026-10-08:** owner required a larger
+world, tens of hours, more than 100 POIs and logical roads/forests/swamps/
+bridges/villages/fields. Sole writer in primary `codex/world-map`, base `f71ccf9`.
+Current [owning atlas](../wiki/world/map.md): 128 proposed feature anchors
+(24 cities/40 villages/18 war sites/16 nature/16 road nodes/14 work sites),
+standalone desktop search/filter/zoom/pan atlas and generated base in
+`assets/art/world/stozhar-v3/`. Requirements filed as REQ-20 in
+[vision](../wiki/vision.md#масштаб-мира--2026-10-08). First concept corrected
+after critique, then owner rejected its scale; expanded v2 failed minor-label
+readability. Initial v3 review rejected water/crossing anchors on dry land.
+Current raster removes the crown river loop, clarifies local waterworks and
+crossings; catalogue relocated against painted features, with local Vyasov
+bypass through the adjacent working bridge. Final independent standalone
+engraved-atlas pass ACCEPT at overview scale: all six applicable scores 2;
+close rendering/materials remain 1 and need higher-resolution authored detail
+for close-view acceptance. Catalogue/embedded JSON/JS syntax/local links/diff,
+desktop atlas journeys and change audit PASS. Local, not published/merged. No game integration,
+renderer/state/migration change; game day/night/journey NOT_RUN, duration
+NOT_MEASURED. Exact prompts/provenance retained beside the images.
+
 **Briefs split with acceptance and critique — 2026-10-07:** owner asked for
 separate files so agents execute unambiguously. [briefs/2026-10-07](briefs/2026-10-07/README.md)
 holds the common contract (rules, quality bar, critique loop, checks, DoD,

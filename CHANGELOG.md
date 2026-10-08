@@ -9,6 +9,38 @@ requests.
 
 ## Unreleased
 
+### Global world atlas concept
+
+- 2026-10-08, originating branch `codex/world-map`, local: the owner requested
+  a generated world map consistent with Warwrit's lore. Added the standalone
+  ink atlas, exact built-in imagegen prompt and provenance in
+  `assets/art/world/stozhar-v1/`, plus [the owning design](docs/wiki/world/map.md)
+  and wiki links. Existing north/south/west/east duchies, crown domain and
+  disputed Porechye are retained; geometry, drainage and roads are proposals.
+  First image generated at 1536×1024. Initial critique REJECT (castle-like
+  Kamenny Brod and blue Mutnya); corrected still-image pass ACCEPT. Owner then
+  rejected the small scale and requested more cities/villages, varied marshes
+  and places damaged by war. Expanded design and exact prompt in
+  `assets/art/world/stozhar-v2/`: 24 urban nodes, village networks, three river
+  basins and ten distinct districts. Expanded generation/review pending;
+  renderer integration and gameplay checks NOT_RUN.
+
+- 2026-10-08 follow-up, `codex/world-map`, local: owner required tens of hours,
+  more than 100 POIs and coherent geography. Added the desktop zoomable
+  `assets/art/world/stozhar-v3/atlas.html`, 128 unique proposed places in
+  `places.json`, five image iterations with exact prompts/provenance, and
+  REQ-20 in [vision](docs/wiki/vision.md). Corrected the crown river loop,
+  water-dependent landmarks, crossing/settlement anchors and Vyasov bypass;
+  fields, woods, marsh and working/ruined sites follow their terrain. Initial
+  v3 critic rejected misplaced city/crossing/waterwork markers; repeated style
+  failures led to graphic ink reconstruction with low roof groups. Final
+  standalone atlas ACCEPT at overview scale (six applicable scores 2); close
+  rendering/materials remain 1 at 3× and require higher-resolution authored
+  detail. Catalogue/embedded JSON/JS syntax/local links/diff, desktop atlas
+  journeys and change audit PASS. Expanded v2 is complete but failed minor-label
+  readability; v3 supersedes it. [Owning result](docs/wiki/world/map.md).
+  Game integration/day/night NOT_RUN; play duration NOT_MEASURED.
+
 ### Pending local work published
 
 - 2026-10-07, branch `claude/world-lore-and-briefs` from `main` (`47c60e0`),
