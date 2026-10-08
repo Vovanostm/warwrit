@@ -9,6 +9,80 @@ requests.
 
 ## Unreleased
 
+### Mechanics wiki with cross-links
+
+- 2026-10-08, originating branch `codex/world-map`, merged 2026-10-08 (owner «commit, merge»): the owner asked to
+  describe everything at once as a full wiki with cross-linked mechanics.
+  Added [docs/wiki/mechanics/](docs/wiki/mechanics/index.md): 18 combat pages
+  (turn and action points, fatigue, melee, armour, weapons, ranged, preview,
+  zone of control, morale, telegraphed intent, retreat, formations,
+  displacement, terrain, wounds, opponents, talents, pressure) and 10 world
+  pages (world turn, place state, attached places, contracts, relations,
+  armies, game master, crisis and season, ambitions, chronicle), each with
+  status, rule or proposal, player view, cross-links, reference and mistake.
+  Core numbers are quoted from `packages/game-core/src/combat/rules.ts`; new
+  rules are candidates without numbers. Linked from benchmarks, DESIGN_COMPASS,
+  vision, combat, wiki index and SCHEMA. Local links and anchors PASS;
+  implementation NOT_RUN.
+
+### Game benchmarks, mistakes to avoid and world game master
+
+- 2026-10-08, originating branch `codex/world-map`, merged 2026-10-08 (owner «commit, merge»): the owner asked to
+  analyse the world map, compare highly rated similar games and save which
+  references Warwrit takes and which mistakes it avoids. Added
+  [benchmarks](docs/wiki/benchmarks.md) (reviews of ten games, Battle Brothers
+  world systems, mistake table, three-layer world proposal, first cycle,
+  lore proposals) and linked it from the wiki index, world page and log.
+  Recorded owner decisions as REQ-21 (mercenary band that does not command
+  armies; duchy armies march and fight parallel battles so the world lives;
+  a game master sets the war — direction, design not approved) and
+  REQ-22 (test 10–20 players, target 200–1000 bands) and REQ-23 (focus on
+  making the current world interesting and on deep, high-quality combat with
+  many mechanics; new worlds/regions only after success) in
+  [vision](docs/wiki/vision.md). Revision the same day: the report was rewritten
+  in detail (world, story and combat per game, mistakes, good/bad examples) and
+  a compact agent digest [DESIGN_COMPASS](docs/engineering/DESIGN_COMPASS.md)
+  was added to the brief reading list. Owner: some army battles are decided by
+  the game master, some by simple rules without tactical battle; REQ-19 and
+  brief B9 (second region after M1) are cancelled. The owner then accepted the
+  recommendations: first combat mechanics are zone of control, morale with
+  flight/surrender and telegraphed creature intent; the game master decides
+  battles that change a town's owner or turn the crisis, simple rules decide
+  skirmishes, ambushes and small sieges. Documentation only; implementation NOT_RUN,
+  server capacity NOT_MEASURED.
+
+### Global world atlas concept
+
+- 2026-10-08, originating branch `codex/world-map`, merged 2026-10-08 (owner «commit, merge»): the owner requested
+  a generated world map consistent with Warwrit's lore. Added the standalone
+  ink atlas, exact built-in imagegen prompt and provenance in
+  `assets/art/world/stozhar-v1/`, plus [the owning design](docs/wiki/world/map.md)
+  and wiki links. Existing north/south/west/east duchies, crown domain and
+  disputed Porechye are retained; geometry, drainage and roads are proposals.
+  First image generated at 1536×1024. Initial critique REJECT (castle-like
+  Kamenny Brod and blue Mutnya); corrected still-image pass ACCEPT. Owner then
+  rejected the small scale and requested more cities/villages, varied marshes
+  and places damaged by war. Expanded design and exact prompt in
+  `assets/art/world/stozhar-v2/`: 24 urban nodes, village networks, three river
+  basins and ten distinct districts. Expanded generation/review pending;
+  renderer integration and gameplay checks NOT_RUN.
+
+- 2026-10-08 follow-up, `codex/world-map`, merged 2026-10-08: owner required tens of hours,
+  more than 100 POIs and coherent geography. Added the desktop zoomable
+  `assets/art/world/stozhar-v3/atlas.html`, 128 unique proposed places in
+  `places.json`, five image iterations with exact prompts/provenance, and
+  REQ-20 in [vision](docs/wiki/vision.md). Corrected the crown river loop,
+  water-dependent landmarks, crossing/settlement anchors and Vyasov bypass;
+  fields, woods, marsh and working/ruined sites follow their terrain. Initial
+  v3 critic rejected misplaced city/crossing/waterwork markers; repeated style
+  failures led to graphic ink reconstruction with low roof groups. Final
+  standalone atlas ACCEPT at overview scale (six applicable scores 2); close
+  rendering/materials remain 1 at 3× and require higher-resolution authored
+  detail. Catalogue/embedded JSON/JS syntax/local links/diff, desktop atlas
+  journeys and change audit PASS. Expanded v2 is complete but failed minor-label
+  readability; v3 supersedes it. [Owning result](docs/wiki/world/map.md).
+  Game integration/day/night NOT_RUN; play duration NOT_MEASURED.
+
 ### Wave 1 agent results: company book, cache investigation, bestiary
 
 - 2026-10-08, branch `claude/wave1-docs` from `main` (`b7ffefc`), published;

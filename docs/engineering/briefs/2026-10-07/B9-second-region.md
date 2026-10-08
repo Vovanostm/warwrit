@@ -1,5 +1,9 @@
 # B9 — Second region and second city (after M1 only)
 
+**Cancelled by the owner 2026-10-08** («REQ-19 отменить — ок»): new regions
+come only if the game succeeds; focus on the current world and combat
+(REQ-23). Do not dispatch. Kept for history.
+
 Execute with [00-common.md](00-common.md). Type: design first, then art and code.
 **Do not start until CURRENT_PLAN records M1 acceptance.** Time box for the
 proposal: 3 agent-hours.

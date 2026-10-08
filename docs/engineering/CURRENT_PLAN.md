@@ -1,5 +1,26 @@
 # Warwrit current delivery plan
 
+**World atlas / geography audit — 2026-10-08:** owner required a larger
+world, tens of hours, more than 100 POIs and logical roads/forests/swamps/
+bridges/villages/fields. Sole writer in primary `codex/world-map`, base `f71ccf9`.
+Current [owning atlas](../wiki/world/map.md): 128 proposed feature anchors
+(24 cities/40 villages/18 war sites/16 nature/16 road nodes/14 work sites),
+standalone desktop search/filter/zoom/pan atlas and generated base in
+`assets/art/world/stozhar-v3/`. Requirements filed as REQ-20 in
+[vision](../wiki/vision.md#масштаб-мира--2026-10-08). First concept corrected
+after critique, then owner rejected its scale; expanded v2 failed minor-label
+readability. Initial v3 review rejected water/crossing anchors on dry land.
+Current raster removes the crown river loop, clarifies local waterworks and
+crossings; catalogue relocated against painted features, with local Vyasov
+bypass through the adjacent working bridge. Final independent standalone
+engraved-atlas pass ACCEPT at overview scale: all six applicable scores 2;
+close rendering/materials remain 1 and need higher-resolution authored detail
+for close-view acceptance. Catalogue/embedded JSON/JS syntax/local links/diff,
+desktop atlas journeys and change audit PASS. Merged to `main` with the
+2026-10-08 docs PR on the owner's «commit, merge». No game integration,
+renderer/state/migration change; game day/night/journey NOT_RUN, duration
+NOT_MEASURED. Exact prompts/provenance retained beside the images.
+
 **Wave 1 briefs — status 2026-10-08:** owner «Ok, merge prs, update main»
 merges the accepted documentation via `claude/wave1-docs`: B8 book «Щит»
 (owner choice, third person), B4 approved story and runtime contract, B7
@@ -33,6 +54,22 @@ for the remaining work: [briefs/2026-10-07](briefs/2026-10-07/README.md)
 (B1 field camp, B2 autobattle, B3 repeatable contracts, B4 non-combat missions,
 B5 duchy-war crisis, B6 localization, B7 bestiary/quest revision, B8 company
 book, B9 second region after M1). Not dispatched.
+
+**Mechanics wiki — 2026-10-08:** one page per combat and world mechanic with
+status and cross-links in [mechanics](../wiki/mechanics/index.md). Documentation
+only; the first combat mechanics (zone of control, morale with
+flight/surrender, telegraphed intent) still need a work package.
+
+**Design compass, armies and focus — 2026-10-08:** owner decisions REQ-21..23
+in [vision](../wiki/vision.md): the band never commands armies; duchy armies
+fight parallel battles, some decided by the game master, some by simple rules
+without tactical battle; test 10–20 players, target 200–1000 bands; focus on
+the current world and deep combat. **REQ-19 (second region after M1) and brief
+B9 are cancelled.** Accepted recommendations: first combat mechanics — zone of
+control, morale with flight/surrender, telegraphed creature intent; the game
+master decides battles that change a town's owner or turn the crisis, simple
+rules decide skirmishes, ambushes and small sieges. Agents read [DESIGN_COMPASS](DESIGN_COMPASS.md); evidence in
+[benchmarks](../wiki/benchmarks.md). Documentation only; nothing implemented.
 
 **Autobattle and second region decided — 2026-10-07:** autobattle AI retreats,
 deaths are possible; the player may order the AI to travel to a settlement and log

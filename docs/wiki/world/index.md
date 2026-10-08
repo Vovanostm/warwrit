@@ -1,7 +1,7 @@
 ---
 title: Мир Warwrit — Стожарское королевство и Смута
 created: 2026-10-07
-updated: 2026-10-07
+updated: 2026-10-08
 type: concept
 tags: [lore, game-design, review-draft]
 status: review-draft
@@ -23,6 +23,8 @@ sources:
 [глоссарий](../../content/world/glossary.csv).
 
 Связанные страницы: [Серое Поречье в войне](porechye.md) ·
+[Глобальная карта](map.md) ·
+[Ориентиры и ошибки](../benchmarks.md) ·
 [Литературный слог](literary-style.md) ·
 [Как писать](writing.md) · [Переводы](localization.md).
 

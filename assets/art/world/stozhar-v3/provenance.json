@@ -1,0 +1,80 @@
+{
+  "asset": "world-map-engraved.png",
+  "created": "2026-10-08",
+  "kind": "standalone-explorable-world-atlas",
+  "status": "review-draft",
+  "generation": "built-in imagegen",
+  "size": {
+    "width": 1585,
+    "height": 992
+  },
+  "catalogue": "places.json",
+  "presentation": "atlas.html",
+  "ownerRequirements": [
+    "A larger varied world with inhabited and war-damaged places.",
+    "Tens of hours and more than 100 points of interest.",
+    "Logical placement of roads, forests, swamps, bridges, villages, fields and work sites."
+  ],
+  "iterations": [
+    {
+      "image": "world-map.png",
+      "prompt": "prompt.txt",
+      "operation": "generate"
+    },
+    {
+      "image": "world-map-geography.png",
+      "prompt": "geography-edit-prompt.txt",
+      "operation": "edit",
+      "editTarget": "world-map.png"
+    },
+    {
+      "image": "world-map-final.png",
+      "prompt": "landmarks-edit-prompt.txt",
+      "operation": "edit",
+      "editTarget": "world-map-geography.png"
+    },
+    {
+      "image": "world-map-ink.png",
+      "prompt": "style-edit-prompt.txt",
+      "operation": "edit with directly supplied approved style references",
+      "editTarget": "world-map-final.png",
+      "referenceInputs": [
+        "assets/art/m1/style/unit-c-ink.png",
+        "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+        "assets/art/m1/places/staraya-melnitsa.png"
+      ]
+    },
+    {
+      "image": "world-map-engraved.png",
+      "prompt": "engraving-edit-prompt.txt",
+      "operation": "graphic ink reconstruction with approved references",
+      "editTarget": "world-map-ink.png",
+      "referenceInputs": [
+        "assets/art/m1/style/unit-c-ink.png",
+        "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+        "assets/art/m1/places/staraya-melnitsa.png"
+      ]
+    }
+  ],
+  "inspectedStyleReferences": [
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+    "assets/art/m1/places/staraya-melnitsa.png"
+  ],
+  "sources": [
+    "docs/wiki/world/index.md",
+    "docs/wiki/world/porechye.md",
+    "docs/wiki/world/writing.md",
+    "docs/wiki/world/map.md",
+    "docs/wiki/vision.md",
+    "docs/content/world/duchies.csv",
+    "docs/architecture/0006-m1-renderer-babylon.md"
+  ],
+  "referenceUse": "Approved art inspected and described in initial prompts; three approved images directly supplied as style references for the final repaint, with the geographic atlas as edit target.",
+  "coordinates": "128 authored anchors in atlas percentages; not game coordinates or a measured count of painted site clusters.",
+  "implementation": "standalone HTML atlas; not integrated with the game renderer",
+  "playDuration": "NOT_MEASURED",
+  "visualCritique": "ACCEPT for standalone overview atlas: six applicable game-scale scores 2; pose and motion N/A. Rendering and material detail score 1 at 3x close zoom. Full integrated visual acceptance BLOCKED without in-game day/night captures, outside this standalone scope.",
+  "closeZoomLimit": "Native raster 1585x992; higher-resolution reference-matched authored detail needed for close-view acceptance. Further global palette tuning does not resolve repeated close scores of 1.",
+  "independentAnchorCoverage": "Eight selected places in nine desktop captures; not an independent check of all 128 anchors."
+}

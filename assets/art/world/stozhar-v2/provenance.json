@@ -1,0 +1,29 @@
+{
+  "asset": "world-map.png",
+  "created": "2026-10-08",
+  "kind": "expanded-standalone-world-atlas-concept",
+  "status": "review-draft",
+  "generation": "built-in imagegen",
+  "prompt": "prompt.txt",
+  "size": { "width": 1586, "height": 992 },
+  "ownerRequest": "Larger world with more cities and villages, distinct war-damaged places, wetlands and interesting non-template geography.",
+  "design": "24 proposed urban nodes including the five existing seats and Kamenny Brod; village networks and ten distinct districts described in docs/wiki/world/map.md.",
+  "sources": [
+    "docs/wiki/world/index.md",
+    "docs/wiki/world/porechye.md",
+    "docs/wiki/world/map.md",
+    "docs/wiki/world/literary-style.md",
+    "docs/content/world/duchies.csv",
+    "docs/architecture/0006-m1-renderer-babylon.md"
+  ],
+  "inspectedStyleReferences": [
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+    "assets/art/m1/places/staraya-melnitsa.png"
+  ],
+  "referenceUse": "Viewed before generation and described in the exact prompt; new composition, no image edit target.",
+  "proposedGeometry": "New secondary towns, local districts, city positions, territory shapes, roads, drainage and coastline are proposals. Existing lore names retain their source proposal status.",
+  "implementation": "not connected to the game renderer",
+  "visualCritique": "REJECT for minor-label readability at overview scale; zoomable presentation required. Integrated game acceptance not assessed.",
+  "ownerReadback": "Owner required tens of hours, more than 100 points of interest and another geography audit; superseded by stozhar-v3/atlas.html."
+}

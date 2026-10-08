@@ -1,0 +1,41 @@
+{
+  "asset": "world-map.png",
+  "created": "2026-10-08",
+  "kind": "standalone-world-atlas-concept",
+  "status": "review-draft",
+  "generation": "built-in imagegen",
+  "prompt": "prompt.txt",
+  "editPrompt": "edit-prompt.txt",
+  "generationStages": [
+    {
+      "operation": "generate",
+      "prompt": "prompt.txt",
+      "result": "first still-image critique REJECT"
+    },
+    {
+      "operation": "edit",
+      "prompt": "edit-prompt.txt",
+      "target": "first generated atlas",
+      "result": "world-map.png; second still-image critique ACCEPT"
+    }
+  ],
+  "size": { "width": 1536, "height": 1024 },
+  "projection": "north-up illustrated atlas; does not change the game camera",
+  "sources": [
+    "docs/wiki/world/index.md",
+    "docs/wiki/world/porechye.md",
+    "docs/content/world/duchies.csv",
+    "docs/wiki/world/map.md",
+    "docs/architecture/0006-m1-renderer-babylon.md"
+  ],
+  "inspectedStyleReferences": [
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+    "assets/art/m1/places/staraya-melnitsa.png"
+  ],
+  "referenceUse": "Viewed before generation and described in the exact prompt; no image edit target was supplied.",
+  "proposedGeometry": "Territory shapes, city positions, roads, coastline and west-to-east Mutnya drainage are composition proposals. Existing world names retain their source proposal status.",
+  "implementation": "not connected to the game renderer",
+  "visualCritique": "first pass REJECT; corrected second pass ACCEPT for standalone illustration, scores 2/3/2/2/2/2/3, motion N/A; integrated game acceptance not assessed",
+  "ownerReadback": "Owner found the realm too small and requested more cities, villages and distinct war-damaged/wetland places; superseded by expanded stozhar-v2 design."
+}
