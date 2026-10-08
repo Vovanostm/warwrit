@@ -1,5 +1,5 @@
 {
-  "asset": "porechye-detail-v4.png (standalone concept ACCEPT 2026-10-09; in-game use BLOCKED)",
+  "asset": "porechye-detail-v5.png (standalone concept ACCEPT 2026-10-09; in-game use BLOCKED)",
   "created": "2026-10-09",
   "kind": "close-view regional atlas sheet",
   "status": "review-draft",
@@ -62,6 +62,12 @@
       "operation": "two Codex built-in edits of 3x crops of v3, pasted with feathered inner masks (outer 10% kept): Kamenny Brod town x900-1220 y420-600 (fieldstone ground floors as in the visit painting, squat watch-gate with one faded rust banner, stone granary with hoist, stone quay, smoke; author decision on owner's «all yours»); lower right x940-1536 y640-940 (Tikhaya Gat moved to the south bank — owner «ok»; open channel; inked south bank; mill wheel in a stone race).",
       "prompt": "edit-prompt-v4-crops.txt",
       "critic": "ACCEPT pass 4: materials 3, all other applicable criteria 2. Author 2x seam check: A (Brod) no water leftover, faint ~25x8 px boat ghost at x1160-1185 y562-570; B (north bank) broken stile on dry ground, not a second bell post. Open polish: main route value, oversized haystacks/posts, river exits right edge, palette saturation. Owner questions: antler emblem on the banner (from the approved visit painting), lantern post reading as gibbet."
+    },
+    {
+      "image": "porechye-detail-v5.png",
+      "operation": "owner 2026-10-09: keep the antler banner; replace the gibbet-like post with a plain lantern post. One Codex built-in edit of a 4x crop x830-970 y410-530; only x872-927 y433-508 pasted (pixel diff confirms no other change).",
+      "prompt": "edit-prompt-v5-lantern.txt",
+      "critic": "ACCEPT pass 5: materials 3, all other applicable criteria 2; gibbet gone, paste seamless; lantern reads as a lantern only at 2x. Antler banner kept by owner decision. Open polish: boat ghost x1160-1185 y562-570, main route value, oversized haystacks/posts, possible orphan fence x1045-1115 y230-262, palette, river exit edge."
     }
   ]
 }

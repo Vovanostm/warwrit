@@ -11,7 +11,7 @@ requests.
 
 ### World review, Porechye close view via Codex, gamedev skills
 
-- 2026-10-09, branch `claude/world-review-porechye-detail`, local: owner asked
+- 2026-10-09, branch `claude/world-review-porechye-detail`, merged: owner asked
   to analyse the map and world, use Codex for images and find gamedev skills.
   Added the second map/world analysis and an improvement plan to
   [map](docs/wiki/world/map.md#второй-анализ-карты-и-мира--2026-10-09) (lore
@@ -24,7 +24,9 @@ requests.
   region compositing — pass 3 ACCEPT as a standalone concept (all applicable
   criteria 2); v4 polish (Kamenny Brod matching its visit painting, Tikhaya
   Gat on the south bank, mill wheel in its race) — pass 4 ACCEPT, materials 3;
-  in-game use BLOCKED, remaining polish listed in map.md. Installed the
+  v5: antler banner kept, gibbet-like post replaced by a lantern (owner) —
+  pass 5 ACCEPT; in-game use BLOCKED, remaining polish listed in map.md.
+  Published as PR #155; merged on the owner's «merge». Installed the
   `openai-develop-web-game` skill after code review (Trail of Bits port;
   local Playwright 1.63; smoke test PASS). Added
   [GAMEDEV_SKILLS](docs/engineering/GAMEDEV_SKILLS.md): installed skills,
