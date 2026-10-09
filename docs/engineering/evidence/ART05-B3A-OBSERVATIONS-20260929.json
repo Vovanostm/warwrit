@@ -1,0 +1,239 @@
+{
+  "sourcePatchSha256": "853e8b9ebc50d0dadb50fcab644fc68de328f647037ef0daa9dbf9f3dc85aa4c",
+  "base": "eee82753eb439c10dc098075ccfd7cb7d04d9e15",
+  "independentReview": "NOT_RUN",
+  "fullGate": "PENDING",
+  "measurements": {
+    "fps": "NOT_MEASURED",
+    "gpuMemory": "NOT_MEASURED",
+    "rss": "NOT_MEASURED"
+  },
+  "consumer": {
+    "phases": [
+      {
+        "index": 0,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d00-color.png"
+      },
+      {
+        "index": 1,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0p13333334028720856-s256/knight-walking_a-t0p13333334028720856-d00-color.png"
+      },
+      {
+        "index": 2,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0p2666666805744171-s256/knight-walking_a-t0p2666666805744171-d00-color.png"
+      },
+      {
+        "index": 3,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0p40000002086162567-s256/knight-walking_a-t0p40000002086162567-d00-color.png"
+      },
+      {
+        "index": 4,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0p5333333611488342-s256/knight-walking_a-t0p5333333611488342-d00-color.png"
+      },
+      {
+        "index": 5,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0p6666667014360428-s256/knight-walking_a-t0p6666667014360428-d00-color.png"
+      },
+      {
+        "index": 6,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0p8000000417232513-s256/knight-walking_a-t0p8000000417232513-d00-color.png"
+      },
+      {
+        "index": 7,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0p9333333820104599-s256/knight-walking_a-t0p9333333820104599-d00-color.png"
+      },
+      {
+        "index": 8,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d00-color.png"
+      }
+    ],
+    "directions": [
+      {
+        "index": 0,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d00-color.png"
+      },
+      {
+        "index": 1,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d01-color.png"
+      },
+      {
+        "index": 2,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d02-color.png"
+      },
+      {
+        "index": 3,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d03-color.png"
+      },
+      {
+        "index": 4,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d04-color.png"
+      },
+      {
+        "index": 5,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d05-color.png"
+      },
+      {
+        "index": 6,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d06-color.png"
+      },
+      {
+        "index": 7,
+        "texture": "/art-pipeline/scout-b2/knight-walking_a-t0-s256/knight-walking_a-t0-d07-color.png"
+      }
+    ],
+    "resources": {
+      "roots": 2,
+      "textures": 64,
+      "sharedMesh": true,
+      "sharedMaterial": true,
+      "dimensions": [256, 256],
+      "centerHit": {
+        "actorId": "probe-b",
+        "distance": 0.4
+      },
+      "outsideHit": null
+    },
+    "afterDestroy": {
+      "roots": 0,
+      "textures": 0,
+      "loadedResources": 0
+    }
+  },
+  "failure": {
+    "missing": {
+      "error": "Error: ART05 animated sprite image failed: Network error",
+      "roots": 0,
+      "assets": 0,
+      "retainedTextures": 0
+    },
+    "malformed": {
+      "error": "Error: ART05 animated sprite sample 0 has invalid capture metadata.",
+      "roots": 0,
+      "assets": 0
+    }
+  },
+  "cancelManifest": {
+    "result": "AbortError: signal is aborted without reason",
+    "retainedResources": 0,
+    "totalObservedAssetObjects": 0
+  },
+  "cancelTexture": {
+    "result": "Error: ART05 animated sprite load cancelled.",
+    "retainedResources": 0,
+    "totalObservedAssetObjects": 64
+  },
+  "routes": [
+    {
+      "query": "",
+      "animatedRoots": 0,
+      "scoutTextures": 0,
+      "enabledModels": 18,
+      "hasBakeController": false
+    },
+    {
+      "query": "&art-preview=sprite",
+      "animatedRoots": 0,
+      "scoutTextures": 0,
+      "enabledModels": 17,
+      "hasBakeController": false
+    },
+    {
+      "query": "&art-bake=1&art-animated=1",
+      "animatedRoots": 0,
+      "scoutTextures": 0,
+      "enabledModels": 1,
+      "hasBakeController": true
+    },
+    {
+      "query": "&art-animated=1",
+      "animatedRoots": 6,
+      "scoutTextures": 64,
+      "enabledModels": 12,
+      "hasBakeController": false
+    }
+  ],
+  "scene": {
+    "spriteCount": 6,
+    "modelKnights": 0,
+    "otherModels": 12,
+    "textureCount": 64,
+    "click": {
+      "x": 262.76798335658987,
+      "y": 326.7262788995912
+    },
+    "bounds": {
+      "x": 16,
+      "y": 119.484375,
+      "width": 889,
+      "height": 500.0625
+    },
+    "canvas": {
+      "width": 1600,
+      "height": 900
+    },
+    "selected": ["red-knight-1", "Hover: red-knight-1", "Selected red-knight-1"]
+  },
+  "controllerDestroy": {
+    "capturedTextures": 64,
+    "remainingResources": 0,
+    "appRootReleased": true,
+    "appRegistryReleased": true
+  },
+  "corpus": {
+    "samples": [
+      {
+        "time": 0,
+        "bytes": 288935,
+        "frontHash": "03a5ef4f36c73ddb748dfdd30e2cb2ac5289119aa876a13958e613b03b09c606",
+        "sideHash": "9bfe118b21db65bc3d55184e020f1d765bfb7a741efab4a6e3e6819da00096d2"
+      },
+      {
+        "time": 0.13333334028720856,
+        "bytes": 284113,
+        "frontHash": "2711eebdfb8f31cc9ec50508d51dc16ce01aa4342cebf97e5e0cd1fa9df4ff50",
+        "sideHash": "33ce1c27c6a685feda994cd21f1f9d815f7a5601c7a1d7ed34162a983b0ecc7b"
+      },
+      {
+        "time": 0.2666666805744171,
+        "bytes": 285060,
+        "frontHash": "e5b85a5a785a0827f8478e3ea9bcb5234dd9fbff906faad58c0947c7630d6cc5",
+        "sideHash": "d28dc11a167580b647c1daec532bff2f0a7b4910e12b473320ccf08f8478d6d0"
+      },
+      {
+        "time": 0.40000002086162567,
+        "bytes": 286618,
+        "frontHash": "d0010f8be32886421648af2572c4141b0e88f073a589c80c97e3eb948f80cb03",
+        "sideHash": "2166a3b597815ae0c99ccb70817a8867eb85b62a62a4a6b25e7f3bcfbc8f29a2"
+      },
+      {
+        "time": 0.5333333611488342,
+        "bytes": 287810,
+        "frontHash": "c4c4534350ff3c964b0733c00fe28ae695a4e9904c3d78abb9c741c55e76223e",
+        "sideHash": "01aa02b91054ce8894f96102ae5f51d2fa3c0325f4052409a0ca4cf27aeea489"
+      },
+      {
+        "time": 0.6666667014360428,
+        "bytes": 283220,
+        "frontHash": "93994f9718100e1c17fb52af92a0a01e767dc96837bd4e120eb6894895bcc1b3",
+        "sideHash": "32f9570400ea88a3bdd41a073067ffcc6152dfcc2fbd5a1d397e72028fcd06aa"
+      },
+      {
+        "time": 0.8000000417232513,
+        "bytes": 284989,
+        "frontHash": "29c5e339219caba033539a30de12dfd497d3d52bacad4d014cc38239c61d87ff",
+        "sideHash": "43b93842910e30499031e903248935fdac7c768d6eed83e9eca11b1381d91664"
+      },
+      {
+        "time": 0.9333333820104599,
+        "bytes": 287258,
+        "frontHash": "3865e6b609b13cfbeeac513df55c51c3cdd495477a30d9a2bba32ef3b17c4de1",
+        "sideHash": "7e45e8695e9d3d5bcfa3085de1cb2492c7a38c14e856bba7ab8fdff4dd4590f8"
+      }
+    ],
+    "pngCount": 192,
+    "pngBytes": 2288003,
+    "textureBaseBytesColorOnly": 16777216,
+    "gpuMemory": "NOT_MEASURED",
+    "fps": "NOT_MEASURED"
+  }
+}
