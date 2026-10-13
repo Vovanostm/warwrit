@@ -24,8 +24,19 @@ export interface ThreeQuarterCamera {
   dispose(): void;
 }
 
+const PAN_KEYS: Readonly<Record<string, readonly [number, number]>> = {
+  KeyW: [0, 1],
+  ArrowUp: [0, 1],
+  KeyS: [0, -1],
+  ArrowDown: [0, -1],
+  KeyA: [-1, 0],
+  ArrowLeft: [-1, 0],
+  KeyD: [1, 0],
+  ArrowRight: [1, 0],
+};
+
 /**
- * Orthographic camera at a fixed angle with no rotation: drag or WASD/arrows pan, the wheel
+ * Orthographic camera at a fixed angle with no rotation: drag or held WASD/arrows pan continuously, the wheel
  * zooms, and a press without movement reports a pick.
  */
 export function mountThreeQuarterCamera(
@@ -80,11 +91,10 @@ export function mountThreeQuarterCamera(
   };
   const clampZoom = (zoom: number) => Math.min(options.maxZoom, Math.max(options.minZoom, zoom));
 
+  const heldKeys = new Set<string>();
   let press: {
     x: number;
     y: number;
-    centerX: number;
-    centerZ: number;
     moved: boolean;
     button: number;
     pointerId: number;
@@ -92,14 +102,13 @@ export function mountThreeQuarterCamera(
   const panButtons = options.panButtons ?? [0, 1, 2];
   const onPointerDown = (event: PointerEvent) => {
     if (event.button === 2 && options.onSecondaryPick) event.preventDefault();
+    canvas.focus?.({ preventScroll: true });
     targetZoom = view.zoom;
     zoomAnchor = null;
     canvas.setPointerCapture?.(event.pointerId);
     press = {
       x: event.clientX,
       y: event.clientY,
-      centerX: view.centerX,
-      centerZ: view.centerZ,
       moved: false,
       button: event.button,
       pointerId: event.pointerId,
@@ -113,8 +122,10 @@ export function mountThreeQuarterCamera(
     if (!press.moved || !panButtons.includes(press.button)) return;
     const step = (2 * view.zoom) / Math.max(canvas.clientHeight, 1);
     const depth = (dy * step) / Math.sin(elevation);
-    view.centerX = press.centerX - dx * step * right.x + depth * forward.x;
-    view.centerZ = press.centerZ - dx * step * right.z + depth * forward.z;
+    view.centerX += -dx * step * right.x + depth * forward.x;
+    view.centerZ += -dx * step * right.z + depth * forward.z;
+    press.x = event.clientX;
+    press.y = event.clientY;
     place();
   };
   const onPointerUp = (event: PointerEvent) => {
@@ -177,55 +188,87 @@ export function mountThreeQuarterCamera(
     };
   };
   wheelTarget.addEventListener('wheel', onWheel, { passive: false, capture: true });
-  const zoomObserver = scene.onBeforeRenderObservable.add(() => {
+  const easeZoom = (dt: number) => {
     const remaining = targetZoom - view.zoom;
-    if (remaining === 0) return;
-    const dt = Math.min(engine.getDeltaTime(), 50);
+    if (remaining === 0) return false;
     view.zoom =
       Math.abs(remaining) < 0.0001 ? targetZoom : view.zoom + remaining * (1 - Math.exp(-dt / 90));
     if (zoomAnchor) {
       view.centerX = zoomAnchor.x - zoomAnchor.u * view.zoom;
       view.centerZ = zoomAnchor.z - zoomAnchor.v * view.zoom;
     }
-    place();
+    return true;
+  };
+  const panWithKeys = (dt: number) => {
+    let horizontal = 0;
+    let vertical = 0;
+    for (const code of heldKeys) {
+      const move = PAN_KEYS[code]!;
+      horizontal += move[0];
+      vertical += move[1];
+    }
+    const length = Math.hypot(horizontal, vertical);
+    if (length === 0) return false;
+    // Constant screen speed at every zoom/elevation; diagonals are not faster.
+    const step = (view.zoom * 1.4 * dt) / (1000 * length);
+    const depth = (vertical * step) / Math.sin(elevation);
+    const dx = horizontal * step * right.x + depth * forward.x;
+    const dz = horizontal * step * right.z + depth * forward.z;
+    view.centerX += dx;
+    view.centerZ += dz;
+    if (zoomAnchor) {
+      zoomAnchor.x += dx;
+      zoomAnchor.z += dz;
+    }
+    if (press) press.moved = true;
+    return true;
+  };
+  const navigationObserver = scene.onBeforeRenderObservable.add(() => {
+    // Bound long stalls without slowing ordinary 10–60 FPS held movement.
+    const dt = Math.max(0, Math.min(engine.getDeltaTime(), 100));
+    const zoomed = easeZoom(Math.min(dt, 50));
+    const panned = panWithKeys(dt);
+    if (zoomed || panned) place();
   });
 
-  const onKey = (event: KeyboardEvent) => {
-    if (isEditableTarget(event.target)) return;
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (isEditableTarget(event.target) || event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.code === 'KeyS' && options.onStop) {
       event.preventDefault();
-      options.onStop();
+      if (!event.repeat) options.onStop();
       return;
     }
-    const step = view.zoom * 0.08;
-    const moves: Readonly<Record<string, readonly [number, number]>> = {
-      KeyW: [0, step],
-      ArrowUp: [0, step],
-      KeyS: [0, -step],
-      ArrowDown: [0, -step],
-      KeyA: [-step, 0],
-      ArrowLeft: [-step, 0],
-      KeyD: [step, 0],
-      ArrowRight: [step, 0],
-    };
-    const move = moves[event.code];
-    if (!move) return;
+    if (!PAN_KEYS[event.code]) return;
     event.preventDefault();
-    targetZoom = view.zoom;
-    zoomAnchor = null;
-    view.centerX += move[0] * right.x + move[1] * forward.x;
-    view.centerZ += move[0] * right.z + move[1] * forward.z;
-    place();
+    if (heldKeys.size === 0) {
+      targetZoom = view.zoom;
+      zoomAnchor = null;
+    }
+    heldKeys.add(event.code);
+  };
+  const onKeyUp = (event: KeyboardEvent) => {
+    if (heldKeys.delete(event.code)) event.preventDefault();
   };
   const clearPress = () => {
     press = null;
   };
   canvas.addEventListener('pointercancel', clearPress);
   canvas.addEventListener('lostpointercapture', clearPress);
-  canvas.addEventListener('blur', clearPress);
-  canvas.ownerDocument?.defaultView?.addEventListener('blur', clearPress);
+  const clearInput = () => {
+    heldKeys.clear();
+    if (press && canvas.hasPointerCapture?.(press.pointerId))
+      canvas.releasePointerCapture(press.pointerId);
+    clearPress();
+  };
+  const onVisibilityChange = () => {
+    if (canvas.ownerDocument?.hidden) clearInput();
+  };
+  canvas.addEventListener('blur', clearInput);
+  canvas.ownerDocument?.defaultView?.addEventListener('blur', clearInput);
+  canvas.ownerDocument?.addEventListener('visibilitychange', onVisibilityChange);
   canvas.tabIndex = 0;
-  canvas.addEventListener('keydown', onKey);
+  canvas.addEventListener('keydown', onKeyDown);
+  canvas.addEventListener('keyup', onKeyUp);
   const resizeObserver = new ResizeObserver(() => {
     engine.resize();
     place();
@@ -234,6 +277,7 @@ export function mountThreeQuarterCamera(
 
   return {
     fit(bounds, margin) {
+      clearInput();
       const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
       view.centerX = (bounds.minX + bounds.maxX) / 2;
       view.centerZ = (bounds.minZ + bounds.maxZ) / 2;
@@ -249,14 +293,17 @@ export function mountThreeQuarterCamera(
       place();
     },
     dispose() {
+      clearInput();
       resizeObserver.disconnect();
       wheelTarget.removeEventListener('wheel', onWheel, true);
-      scene.onBeforeRenderObservable.remove(zoomObserver);
-      canvas.removeEventListener('keydown', onKey);
+      scene.onBeforeRenderObservable.remove(navigationObserver);
+      canvas.removeEventListener('keydown', onKeyDown);
+      canvas.removeEventListener('keyup', onKeyUp);
       canvas.removeEventListener('pointercancel', clearPress);
       canvas.removeEventListener('lostpointercapture', clearPress);
-      canvas.removeEventListener('blur', clearPress);
-      canvas.ownerDocument?.defaultView?.removeEventListener('blur', clearPress);
+      canvas.removeEventListener('blur', clearInput);
+      canvas.ownerDocument?.defaultView?.removeEventListener('blur', clearInput);
+      canvas.ownerDocument?.removeEventListener('visibilitychange', onVisibilityChange);
       scene.onPointerObservable.remove(pointerObserver);
     },
   };
