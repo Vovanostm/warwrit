@@ -1,5 +1,21 @@
 # Warwrit current delivery plan
 
+**Smooth battle camera — 2026-10-13, LOCAL / CHECKS PASS:**
+owner requests held WASD/LMB navigation, worktree/tests/merge/main update.
+Separate managed worktree `~/.codex/worktrees/battle-camera-pan/warwrit`,
+branch `codex/battle-camera-pan` from origin/main731ccec; implementation and
+merge authorized for this camera slice. Owner separately approved coordination:
+scene writer integrates `panButtons:[0,1]` into local uncommitted sprite battle,
+HUD writer owns hints. Primary dirty sprite/core/HUD branch must stay intact.
+[Owning contract/results](../wiki/battlefield-test-maps.md#плавная-камера-боя--2026-10-13).
+Shared camera holds keys on render time, screen-relative normalized diagonals,
+keyup/blur/hidden/dispose cleanup, world S=STOP, click vs drag and combined
+wheel/pointer/keys. Camera13/scoped types/lint/format/audit PASS; initial TS fixture
+cast and coverage environment failures corrected. Review found wheel cancellation
+and drag/zoom snap, fixed with regression; repeat source review ACCEPT (own13tests/probe); browser/critic/CI/merge
+PENDING. SharedAPI session-cap refusal preserved; separate runtime planned.
+No sprite-WIP merge, deployment, migration or new mechanics.
+
 **World atlas / geography audit — 2026-10-08:** owner required a larger
 world, tens of hours, more than 100 POIs and logical roads/forests/swamps/
 bridges/villages/fields. Sole writer in primary `codex/world-map`, base `f71ccf9`.

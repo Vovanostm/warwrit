@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Smooth held-key battle camera
+
+- 2026-10-13, branch `codex/battle-camera-pan`, local: owner requested smooth
+  WASD/held-LMB camera navigation with worktree, tests, merge and main update.
+  `apps/web/src/renderer/three-quarter-camera.ts` uses frame-time held movement,
+  screen-relative equal diagonal speed, focus/visibility cleanup and incremental
+  drag; preserves world S=STOP and click inspection. Wheel/held-key/drag compose.
+  Camera tests, CURRENT_PLAN and [owning result](docs/wiki/battlefield-test-maps.md#плавная-камера-боя--2026-10-13)
+  updated. Camera13/noEmit/scoped lint/format/changed-code audit PASS; initial
+  TS fixture/coverage failures and corrected review findings recorded there.
+  Repeat independent source review ACCEPT; browser/playable critique/CI/merge PENDING. Scene writer owns
+  LMB adapter in primary dirty sprite WIP; this branch does not publish that WIP.
+  No mechanics/migrations/dependencies/deployment change.
+
 ### World review, Porechye close view via Codex, gamedev skills
 
 - 2026-10-09, branch `claude/world-review-porechye-detail`, merged: owner asked
