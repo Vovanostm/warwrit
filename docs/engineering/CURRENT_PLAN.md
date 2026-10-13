@@ -12,8 +12,13 @@ Shared camera holds keys on render time, screen-relative normalized diagonals,
 keyup/blur/hidden/dispose cleanup, world S=STOP, click vs drag and combined
 wheel/pointer/keys. Camera13/scoped types/lint/format/audit PASS; initial TS fixture
 cast and coverage environment failures corrected. Review found wheel cancellation
-and drag/zoom snap, fixed with regression; repeat source review ACCEPT (own13tests/probe); browser/critic/CI/merge
-PENDING. SharedAPI session-cap refusal preserved; separate runtime planned.
+and drag/zoom snap, fixed with regression; repeat source review ACCEPT (own13tests/probe). Actual isolated3024/5322
+WASD/drag/click/wheel/blur/HUDfocus/daynight PASS;0POST/revision4/actorhuman3/
+AP4/12positionsstatus retained. Menu3lines/bounds PASS. Camera copied to primary,
+scene author1line adapter/HUD author2line helper connected; all other WIP retained.
+Two runnerassertions corrected (release timing/transienthover), current source
+unchanged. SharedAPI session-cap refusal preserved. Visualcritic/PRCI/merge
+PENDING; localfullbootstrap NOT_RUN, existing PR pipeline owns clean full gate.
 No sprite-WIP merge, deployment, migration or new mechanics.
 
 **World atlas / geography audit — 2026-10-08:** owner required a larger

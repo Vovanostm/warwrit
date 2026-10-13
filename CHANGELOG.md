@@ -19,8 +19,11 @@ requests.
   Camera tests, CURRENT_PLAN and [owning result](docs/wiki/battlefield-test-maps.md#плавная-камера-боя--2026-10-13)
   updated. Camera13/noEmit/scoped lint/format/changed-code audit PASS; initial
   TS fixture/coverage failures and corrected review findings recorded there.
-  Repeat independent source review ACCEPT; browser/playable critique/CI/merge PENDING. Scene writer owns
-  LMB adapter in primary dirty sprite WIP; this branch does not publish that WIP.
+  Repeat independent source review ACCEPT; actual isolated3024/5322 held-key,
+  LMBdrag/click/combinedwheel/focus/daynight PASS,0actionsPOST/revision4/actor/AP
+  stable. Scene writer1line LMB adapter/HUDwriter2line menu helper integrated
+  in primary dirty WIP; this branch does not publish that WIP. Independent
+  playable critique/PRCI/merge PENDING; localfullgate NOT_RUN, PR pipeline owns it.
   No mechanics/migrations/dependencies/deployment change.
 
 ### World review, Porechye close view via Codex, gamedev skills
