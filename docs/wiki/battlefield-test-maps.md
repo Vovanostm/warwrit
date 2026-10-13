@@ -371,6 +371,24 @@ human-4; короткий ЛКМ после pan/zoom осматривает «Т
 Владельцы сцены и HUD подключили один adapter и две строки подсказки в
 основном dirty checkout; проверенная камера скопирована туда после clean
 scoped/source readback. Их спрайтовый WIP не публикуется этим изменением.
-Независимая playable critique и PR/CI/merge/main update PENDING.
-Local full bootstrap NOT_RUN; существующий PR pipeline должен выполнить
-чистый bootstrap/verify/stress/migrations/coverage/audit перед слиянием.
+Независимая повторная camera-cycle visual critique **ACCEPT**: все семь
+применимых критериев 2/3 на игровом и крупном масштабе, motion clips N/A.
+Первый BLOCKED относился к недостающим изображениям; после close-сравнения,
+выбранной клетки рядом с лучником, ступени +1 и ночи без общей сетки критик
+повторил абсолютную оценку. Материальных замечаний нет; собственный ввод
+критика NOT_RUN, реальный ввод выполнен автором и прочитан критиком.
+
+Опубликован [PR156](https://github.com/Vovanostm/warwrit/pull/156).
+[CI38404171166](https://github.com/Vovanostm/warwrit/actions/runs/38404171166)
+на head64b49ee **SUCCESS**: чистый bootstrap/verify651 tests/47 skipped,
+10000 stress battles/20 deterministic reruns/100 replay checks, migration
+up/down и 14 real database specifications, coverage651/47 skipped и audit
+без новых findings. Пропущенные47 тестов не объявлены выполненными.
+Local full bootstrap NOT_RUN; полный gate выполнил существующий PR pipeline
+в изолированном окружении. Исходники камеры после этого CI не менялись;
+последующий commit добавляет только эту документационную запись.
+Merge/main update ещё PENDING на момент этой записи; live PR/Git дают
+фактический результат слияния. Разрешение владельца действует для PR камеры.
+Основной dirty `codex/sprite-combat-stage1` сохраняется; main обновляется
+в отдельном созданном worktree, подключение текущего боя уже присутствует
+в основной рабочей копии. Остальная спрайтовая боёвка не включена в PR156.

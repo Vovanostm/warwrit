@@ -11,7 +11,7 @@ requests.
 
 ### Smooth held-key battle camera
 
-- 2026-10-13, branch `codex/battle-camera-pan`, local: owner requested smooth
+- 2026-10-13, branch `codex/battle-camera-pan`, published: owner requested smooth
   WASD/held-LMB camera navigation with worktree, tests, merge and main update.
   `apps/web/src/renderer/three-quarter-camera.ts` uses frame-time held movement,
   screen-relative equal diagonal speed, focus/visibility cleanup and incremental
@@ -23,7 +23,12 @@ requests.
   LMBdrag/click/combinedwheel/focus/daynight PASS,0actionsPOST/revision4/actor/AP
   stable. Scene writer1line LMB adapter/HUDwriter2line menu helper integrated
   in primary dirty WIP; this branch does not publish that WIP. Independent
-  playable critique/PRCI/merge PENDING; localfullgate NOT_RUN, PR pipeline owns it.
+  repeated absolute camera visual ACCEPT sevencriteria2/3 (game/close), owncritic
+  input NOT_RUN. [PR156](https://github.com/Vovanostm/warwrit/pull/156) published;
+  CI38404171166/head64b49ee SUCCESS:651tests/47skip,10000stress,14DBspecs,
+  migrations/coverage/audit. Localfullgate NOT_RUN; camera code unchanged after
+  CI. Final checkpoint is documentation only; merge/main still PENDING here,
+  live PR proves actual result; primary dirty spritebranch/WIP preserved.
   No mechanics/migrations/dependencies/deployment change.
 
 ### World review, Porechye close view via Codex, gamedev skills

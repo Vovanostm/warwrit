@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-**Smooth battle camera — 2026-10-13, LOCAL / CHECKS PASS:**
+**Smooth battle camera — 2026-10-13, PUBLISHED / CAMERA ACCEPT:**
 owner requests held WASD/LMB navigation, worktree/tests/merge/main update.
 Separate managed worktree `~/.codex/worktrees/battle-camera-pan/warwrit`,
 branch `codex/battle-camera-pan` from origin/main731ccec; implementation and
@@ -17,8 +17,14 @@ WASD/drag/click/wheel/blur/HUDfocus/daynight PASS;0POST/revision4/actorhuman3/
 AP4/12positionsstatus retained. Menu3lines/bounds PASS. Camera copied to primary,
 scene author1line adapter/HUD author2line helper connected; all other WIP retained.
 Two runnerassertions corrected (release timing/transienthover), current source
-unchanged. SharedAPI session-cap refusal preserved. Visualcritic/PRCI/merge
-PENDING; localfullbootstrap NOT_RUN, existing PR pipeline owns clean full gate.
+unchanged. SharedAPI session-cap refusal preserved. Absolute repeated visualcritic ACCEPT sevencriteria2/3 atgame+close,
+clipsN/A/owninputNOT_RUN. [PR156](https://github.com/Vovanostm/warwrit/pull/156)
+published; CI38404171166 on64b49ee SUCCESS:651tests/47skip,10000stress,
+20deterministic/100replay,14realDBspecs/migrations,coverage/audit. Localfullbootstrap
+NOT_RUN; code unchanged after CI, final doc-only checkpoint follows. Merge/main
+PENDING at this checkpoint; live PR proves actual merge. Owner authorizes
+cameraPR merge/mainFF only; primary dirty spritebranch stays intact, created
+worktree becomes cleanmain after merge. Sharedprimary camera already copied.
 No sprite-WIP merge, deployment, migration or new mechanics.
 
 **World atlas / geography audit — 2026-10-08:** owner required a larger
