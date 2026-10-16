@@ -89,52 +89,55 @@
   text-shadow: 0 1px 2px #000;
 }
 .battle-initiative {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 6px;
   position: absolute;
   top: 18px;
-  left: 16%;
-  right: 16%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 96px;
-  padding: 9px 11px;
+  left: 200px;
+  right: 220px;
+  padding: 7px 10px;
   border: 1px solid #61726b7a;
-  border-radius: 14px;
+  border-radius: 6px;
   background: rgb(24 40 42 / 85%);
   box-shadow: 0 4px 20px #0c111755;
   z-index: 4;
 }
-.battle-round-divider {
+.battle-timeline {
   display: flex;
   align-items: center;
-  gap: 7px;
-  flex: 0 0 auto;
-}
-.battle-round-divider b {
-  display: grid;
-  place-items: center;
-  width: 33px;
-  height: 39px;
-  border: 1px solid #687269;
-  border-radius: 4px;
-  background: #53634b66;
-  font-size: 23px;
-  color: #d3ddc4;
-}
-.battle-round-divider span {
-  font-size: 8px;
-  line-height: 1.7;
-  color: #c5cebe;
-}
-.battle-current-queue {
-  display: flex;
-  gap: 5px;
-  flex: 1;
+  gap: 6px;
   min-width: 0;
   overflow-x: auto;
-  padding: 1px 1px 5px;
+  padding: 3px 1px 5px;
   scrollbar-width: thin;
   scrollbar-color: #788779 transparent;
+}
+.battle-round-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 44px;
+  flex: 0 0 44px;
+  color: #c5cebe;
+}
+.battle-round-divider b {
+  font:
+    600 24px/1.2 Georgia,
+    serif;
+  color: #d3ddc4;
+}
+.battle-round-divider span,
+.battle-round-divider small {
+  font-size: 10px;
+  line-height: 1.4;
+}
+.battle-current-queue,
+.battle-next-queue {
+  display: contents;
 }
 .initiative-unit {
   position: relative;
@@ -146,9 +149,6 @@
   border-radius: 6px;
   color: #dee4d8;
   background: #192b2e;
-}
-.initiative-unit[data-past='true'] {
-  opacity: 0.58;
 }
 .initiative-unit[data-side='opponent']::after {
   content: '';
@@ -295,17 +295,16 @@
   display: block;
 }
 .battle-next-round {
-  border-left: 1px solid #77877b55;
-  padding-left: 10px;
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px dashed #87917b;
 }
+
 .battle-next-round span {
   max-width: 70px;
   font-size: 7px;
 }
-.battle-unknown-order {
-  color: #97a79d;
-  font-size: 24px;
-}
+
 .battle-card-header {
   display: flex;
   align-items: center;
@@ -891,4 +890,20 @@
   color: #c8d3c5;
   font-size: 12px;
   line-height: 16px;
+}
+
+.battle-view .battle-timeline-arrow {
+  width: 28px;
+  min-width: 28px;
+  height: 72px;
+  padding: 4px;
+}
+.battle-timeline-arrow svg {
+  width: 18px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }

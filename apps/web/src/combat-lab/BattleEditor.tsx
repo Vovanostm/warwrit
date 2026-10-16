@@ -147,7 +147,7 @@ function EditorMessages({
       )}
       {errors.length === 0 && (
         <p className="battle-editor-ready" role="status">
-          Черновик можно отправить на запуск; сервер повторит проверку перед созданием боя.
+          Можно начинать бой.
         </p>
       )}
       {importErrors.length > 0 && (
@@ -329,9 +329,8 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
     <section className="battle-editor" aria-label="Редактор черновика боя">
       <header className="battle-editor-heading">
         <div>
-          <p className="battle-editor-eyebrow">Локальный конструктор · без кампании</p>
           <h2>Черновик боя</h2>
-          <p>Состав, поле и seed редактируются до запуска. Здесь бой не симулируется.</p>
+          <p>Измените состав и карту перед запуском.</p>
         </div>
         <div className="battle-editor-files">
           <button

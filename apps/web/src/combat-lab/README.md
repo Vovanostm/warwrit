@@ -40,13 +40,15 @@ from the painted field in day/night. The legend explains movement, weapon
 range, their overlap, attackable targets and fire.
 
 The approved Command desk HUD overlays the full desktop viewport. Top portrait
-initiative separates the current round from the next round, whose order is not
-yet projected. Hover/focus a portrait highlights its figure; clicking pins
+initiative shows remaining current-round turns and a distinct next-round forecast
+from the canonical order function. It refreshes with accepted state; inspection
+never reorders it. Hover/focus a portrait highlights its figure; clicking pins
 inspection without changing the acting fighter. Selecting a cell retains pinned
 inspection while its path forecast takes priority; selecting a unit clears the
-selected path. Field hover overrides retained portrait focus. Bottom-left actor and mirrored
-bottom-right hovered/pinned unit cards show actual resources and observed
-states. Five icon commands expose costs and unavailable reasons on hover/focus;
+selected path. Field hover overrides retained portrait focus. The bottom-left actor and, only for a different unit,
+bottom-right hovered/pinned inspection cards show actual resources and observed
+states. Five icon commands show short names and AP/stamina costs; hover/focus exposes
+secondary detail and unavailable reasons;
 keys 1–5 invoke the same commands when the field has focus. Four skill slots show learned abilities, with an explicit overflow button;
 their ranks are editable before battle. Campaign progression and additional timed
 status effects remain outside this local prototype. The top-right menu provides replay, restart and return to editors.

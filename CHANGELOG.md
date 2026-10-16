@@ -11,6 +11,15 @@ requests.
 
 ### Live initiative queue and reduced combat HUD
 
+- 2026-10-16, branch `codex/live-combat-ux`, local implementation: canonical
+  core order function now projects the next round through the optional lab DTO.
+  Web renders remaining/current portraits and a distinct forecast, removes the
+  unknown-order placeholder/duplicate actor and retains decision costs/risks.
+  Two raster drafts and exact provenance are tracked; A is selected.
+  Core/protocol/server/web types and48focused checks PASS;805unit/47SKIPPED
+  coverage PASS. Real4desktop-size/inspection0POST/guard-refresh PASS.
+  Source review found no concrete issue; visual review, final audit and clean
+  PR gate/publication/merge pending. PR157 remains a separately owned dependency.
 - 2026-10-16, branch `codex/live-combat-ux`, local: owner authorizes raster
   drafts, implementation with subagents, PR/review and merge to default main.
   Existing [UX research and approved queue behaviour](docs/wiki/battlefield-test-maps.md#проверка-текстов-и-избыточности-ux--2026-10-16)

@@ -134,14 +134,13 @@ it('shows the approved command desk from observed resources and server attack pr
     'Шанс попадания 68%',
     'События боя (1)',
     'попадание',
-    'ПОРЯДОК НЕИЗВЕСТЕН',
   ])
     expect(html).toContain(text);
   expect(html).toContain('15 × 11 гексов');
   expect(html).not.toContain('hidden-seed');
   expect(html.match(/class="initiative-unit(?: [^"]*)?"/g)).toHaveLength(2);
   expect(html).not.toContain('Предварительный порядок');
-  expect(html).toContain('урон не указан сервером');
+  expect(html).toContain('урон недоступен');
 });
 
 it('retains fallback inspection, utilities and honestly unavailable ability slots', () => {
@@ -542,7 +541,7 @@ it('retains weapon reach with an explicit AP warning instead of implying a legal
   expect(html).not.toContain('Можно атаковать');
 });
 
-it('distinguishes acted and current portraits using only the received round order', () => {
+it('removes acted portraits and keeps the actual actor at the start of the received queue', () => {
   const html = renderToStaticMarkup(
     <BattleView
       view={{ ...view, turnIndex: 1, activation: { ...view.activation!, actorId: 'B001' } }}
@@ -552,9 +551,54 @@ it('distinguishes acted and current portraits using only the received round orde
       onSelectHex={() => {}}
     />,
   );
-  expect(html).toContain('aria-label="Ход завершён"');
-  expect(html).toContain('В строю · инициатива 18 · Ход завершён');
-  expect(html).toContain(' · Сейчас ходит');
+  expect(html).not.toContain('data-unit-id="W01"');
+  expect(html).toContain('data-unit-id="B001"');
   expect(html).toContain('aria-current="step"');
-  expect(html).toContain('ПОРЯДОК НЕИЗВЕСТЕН');
+  expect(html).not.toContain('ПОРЯДОК НЕИЗВЕСТЕН');
+});
+
+it('uses the canonical forecast order and never sorts it in the browser', () => {
+  const before = render({ ...view, nextRoundInitiative: { round: 3, unitIds: ['B001', 'W01'] } });
+  const nextQueue = before.slice(before.indexOf('aria-label="Прогноз следующего раунда"'));
+  expect(nextQueue.indexOf('data-unit-id="B001"')).toBeLessThan(
+    nextQueue.indexOf('data-unit-id="W01"'),
+  );
+  expect(before.match(/aria-current="step"/g)).toHaveLength(1);
+  expect(before).not.toContain('ПОРЯДОК НЕИЗВЕСТЕН');
+  const after = render({ ...view, nextRoundInitiative: { round: 3, unitIds: ['W01', 'B001'] } });
+  const changedQueue = after.slice(after.indexOf('aria-label="Прогноз следующего раунда"'));
+  expect(changedQueue.indexOf('data-unit-id="W01"')).toBeLessThan(
+    changedQueue.indexOf('data-unit-id="B001"'),
+  );
+});
+
+it('does not show an unavailable forecast or departed combatant in the live queue', () => {
+  const html = render({
+    ...view,
+    units: view.units.map((unit) =>
+      unit.id === 'B001' ? { ...unit, status: 'retreated' as const } : unit,
+    ),
+  });
+  expect(html).not.toContain('data-unit-id="B001"');
+  expect(html).not.toContain('aria-label="Прогноз следующего раунда"');
+});
+
+it('shows one actor card without a duplicate inspection or neutral terrain badge', () => {
+  const html = renderToStaticMarkup(
+    <BattleView
+      view={view}
+      selectedUnitId="W01"
+      selectedHex={null}
+      onSelectUnit={() => {}}
+      onSelectHex={() => {}}
+    />,
+  );
+  expect(html).toContain('aria-label="Действующий боец"');
+  expect(html).not.toContain('aria-label="Состояние: Щитник"');
+  expect(html).not.toContain('Высота +0');
+  expect(html).not.toContain('ЛКМ — осмотр');
+  const other = render();
+  expect(other).toContain('aria-label="Состояние: Волк"');
+  expect(other).toContain('Высота +1');
+  expect(other).toContain('Огонь');
 });

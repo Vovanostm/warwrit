@@ -13,7 +13,6 @@ export function BattleHeading({ view }: { view: CombatLabView }) {
           view.units.filter((u) => u.sideId !== view.controlledSideId && u.status === 'active')
             .length
         }{' '}
-        · раунд {view.round}
       </small>
     </header>
   );

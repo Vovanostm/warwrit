@@ -74,7 +74,7 @@ function weaponInspection(
           ? 'не хватает ОД'
           : reachCost && reachUnit && reachUnit.pools.stamina.current < reachCost.staminaCost
             ? 'не хватает сил'
-            : 'одна цель';
+            : '';
   return { reachUnit, reach, reachNote };
 }
 

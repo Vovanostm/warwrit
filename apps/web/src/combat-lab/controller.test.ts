@@ -745,3 +745,20 @@ it('keeps a browser-denied storage getter from crashing battle restoration', asy
     notice: 'Не удалось восстановить бой. Обновите страницу для повторного чтения.',
   });
 });
+
+it('rejects malformed initiative forecasts before admitting a session response', async () => {
+  const current = view(1);
+  expect(isCombatLabView({ ...current, nextRoundInitiative: { round: 2, unitIds: [] } })).toBe(
+    true,
+  );
+  for (const forecast of [
+    null,
+    { round: 2 },
+    { round: 3, unitIds: [] },
+    { round: 2, unitIds: ['unknown'] },
+  ]) {
+    await expect(
+      readSessionView(Response.json({ ...current, nextRoundInitiative: forecast }), 'session'),
+    ).rejects.toThrow('invalid view');
+  }
+});

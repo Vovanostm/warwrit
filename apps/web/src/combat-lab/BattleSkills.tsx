@@ -1,3 +1,4 @@
+import { BattleCost } from './BattleCost.js';
 import { useRef, useState } from 'react';
 import type { CombatLabView, CombatLabSkillId } from '@warwrit/protocol';
 import { CombatIcon } from './CombatIcon.js';
@@ -47,6 +48,7 @@ export function BattleSkills({ view, selectedSkillId, onSelectSkill, skillDisabl
           <CombatIcon name={skillIcons[skill.skillId]} />
           <b className="battle-skill-rank">{skill.rank}</b>
         </button>
+        <BattleCost cost={skill} />
         <span id={`skill-${skill.skillId}`} className="battle-command-tooltip" role="tooltip">
           <strong>
             {skill.name} · ранг {skill.rank}

@@ -177,11 +177,7 @@ export function BattleView(props: BattleViewProps) {
             skillDisabledReason={skillDisabledReason}
           />
         </div>
-        <UnitCard
-          unit={inspected}
-          view={view}
-          temporary={initiativeHover !== null || hoveredTarget?.unitId != null}
-        />
+        {inspected && inspected.id !== activeActor?.id && <UnitCard unit={inspected} view={view} />}
       </section>
       <BattleLog
         view={view}
