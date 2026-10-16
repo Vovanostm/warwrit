@@ -221,10 +221,11 @@ function TerrainState({
   return (
     <>
       {' '}
-      {!compact && tile && (
+      {!compact && tile && (tile.height > 0 || tile.terrain !== 'plain') && (
         <span title={`Клетка ${tile.q}, ${tile.r}; текущая поверхность, без постоянного эффекта`}>
-          Высота +{tile.height}
-          {tile.terrain === 'mud' ? ' · грязь' : tile.terrain === 'fire' ? ' · огонь' : ''}
+          {tile.height > 0 && `Высота +${tile.height}`}
+          {tile.height > 0 && tile.terrain !== 'plain' && ' · '}
+          {tile.terrain === 'mud' ? 'Грязь' : tile.terrain === 'fire' ? 'Огонь' : ''}
         </span>
       )}
     </>
@@ -257,12 +258,10 @@ export function UnitCard({
   unit,
   actor,
   view,
-  temporary = false,
 }: {
   unit: Unit | undefined;
   actor?: boolean;
   view: CombatLabView;
-  temporary?: boolean;
 }) {
   const points = actor ? view.activation?.actionPoints : undefined;
   return (
@@ -326,13 +325,6 @@ export function UnitCard({
           ЛКМ закрепляет осмотр.
         </p>
       )}
-      <small className="battle-card-foot">
-        {actor
-          ? 'ЛКМ — осмотр · ПКМ — приказ'
-          : temporary
-            ? 'Наведение · ЛКМ закрепляет осмотр'
-            : 'Закреплено · ЛКМ меняет осмотр'}
-      </small>
     </section>
   );
 }

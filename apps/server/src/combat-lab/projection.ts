@@ -41,6 +41,7 @@ export function projectCombatLabView(
   const ordinaryGuard = { ...state.units[0]!, guarding: true };
   delete ordinaryGuard.shieldBraceRank;
   const { activation, outcome } = state;
+  const nextRoundInitiative = combat.previewCombatInitiative(state);
   let previewCommandId = combat.commandId(`lab-preview:${state.revision}`);
   while (state.processedCommandIds.includes(previewCommandId))
     previewCommandId = combat.commandId(`${previewCommandId}:`);
@@ -119,6 +120,7 @@ export function projectCombatLabView(
     viewRevision: state.revision,
     status: state.status,
     round: state.round,
+    ...(nextRoundInitiative === undefined ? {} : { nextRoundInitiative }),
     map: {
       hexes: state.map.hexes.map(copyHex),
       blocked: state.map.blocked.map(copyHex),

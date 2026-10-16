@@ -1,5 +1,7 @@
+import { BattleCost } from './BattleCost.js';
 import type { CombatLabView, CombatLabSkillId } from '@warwrit/protocol';
 import type { Unit } from './BattleUnitCard.js';
+
 export function BattleGuidance({
   view,
   status,
@@ -15,32 +17,36 @@ export function BattleGuidance({
   reachNote: string;
   selectedSkillId: CombatLabSkillId | null;
 }) {
+  if (view.status !== 'active') return <div className="battle-order-guidance">{status}</div>;
+  const skill = view.skills?.find(({ skillId }) => skillId === selectedSkillId);
   return (
     <div className="battle-order-guidance" role="status">
-      <strong>{status}</strong>
-      {view.status === 'active' && reach && !selectedSkillId && (
-        <span className="battle-weapon-reach" aria-label="Дальность выбранного оружия">
-          <i aria-hidden="true" />
-          {reachUnit?.name ?? reachUnit?.id} ·{' '}
-          {reach.minimumRange === reach.maximumRange
-            ? reach.maximumRange
-            : `${reach.minimumRange}–${reach.maximumRange}`}{' '}
-          {reach.maximumRange === 1 ? 'гекс' : 'гекса'} · {reachNote}
-        </span>
-      )}
-      {view.status === 'active' && !selectedSkillId ? (
-        <span className="battle-range-legend" aria-label="Обозначения зон">
-          <i data-zone="move" aria-hidden="true" /> Ход
-          <i data-zone="weapon" aria-hidden="true" /> Дальность
-          <i data-zone="both" aria-hidden="true" /> Ход + дальность
-          <small>ПКМ — приказ ходящему</small>
-        </span>
+      {skill ? (
+        <>
+          <strong>{skill.name}</strong>
+          <BattleCost cost={skill} />
+          <span className="battle-skill-mode">
+            Выберите цель · ПКМ — применить · Esc — отменить
+          </span>
+        </>
       ) : (
-        <span className="battle-skill-mode">
-          {selectedSkillId
-            ? `Выбран приём: ${view.skills?.find((skill) => skill.skillId === selectedSkillId)?.name} · ПКМ по цели · Esc — отменить`
-            : 'Наведение — прогноз · ПКМ — приказ'}
-        </span>
+        <>
+          {reach && (
+            <span className="battle-weapon-reach" aria-label="Дальность выбранного оружия">
+              {reachUnit?.name ?? reachUnit?.id} ·{' '}
+              {reach.minimumRange === reach.maximumRange
+                ? reach.maximumRange
+                : `${reach.minimumRange}–${reach.maximumRange}`}{' '}
+              {reach.maximumRange === 1 ? 'гекс' : 'гекса'}
+              {reachNote && ` · ${reachNote}`}
+            </span>
+          )}
+          <span className="battle-range-legend" aria-label="Обозначения зон">
+            <i data-zone="move" aria-hidden="true" /> Движение
+            <i data-zone="weapon" aria-hidden="true" /> Оружие
+            <i data-zone="both" aria-hidden="true" /> Обе зоны
+          </span>
+        </>
       )}
     </div>
   );

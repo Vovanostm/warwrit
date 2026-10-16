@@ -180,6 +180,7 @@ export interface CombatLabView extends CombatLabViewRequest {
     'm0-prototype-v1' | 'sprite-prototype-v1' | 'sprite-prototype-v2' | 'sprite-prototype-v3';
   readonly status: 'active' | 'resolved';
   readonly round: number;
+  readonly nextRoundInitiative?: { readonly round: number; readonly unitIds: readonly string[] };
   readonly map: Readonly<Record<'hexes' | 'blocked', readonly CombatLabHex[]>> & {
     readonly name?: string;
     readonly tiles?: readonly CombatLabTile[];

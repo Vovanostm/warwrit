@@ -1,3 +1,4 @@
+import { BattleCost } from './BattleCost.js';
 import type { RefObject } from 'react';
 import type {
   CombatLabAction,
@@ -69,6 +70,7 @@ export function CommandDesk({
     reason: string,
     onClick: () => unknown,
     detail: string,
+    price?: { readonly actionPointCost: number; readonly staminaCost: number },
   ) => {
     reason = selectedSkillId ? 'Выбран приём · Esc — отменить' : reason;
     const key = commandKeys[label]!;
@@ -88,6 +90,12 @@ export function CommandDesk({
           <CombatIcon name={commandIcons[label]!} />
           <kbd aria-hidden="true">{key}</kbd>
         </button>
+        <span className="battle-command-label">{shortCommandLabel[label]}</span>
+        {price ? (
+          <BattleCost cost={price} />
+        ) : label === 'Завершить ход' ? (
+          <span className="battle-action-cost">Все ОД</span>
+        ) : null}
         <div
           role="tooltip"
           id={`command-${label.replaceAll(' ', '-')}`}
@@ -113,6 +121,7 @@ export function CommandDesk({
             attackReason,
             () => selectedTarget && actOnField({ type: 'attack', targetId: selectedTarget.id }),
             selectedTarget?.name ?? selectedTarget?.id ?? 'Выберите противника',
+            selectedAttack ?? attackCost,
           )}
           {actionButton(
             'Переместиться',
@@ -120,6 +129,7 @@ export function CommandDesk({
             moveReason,
             () => selectedHex && actOnField({ type: 'move', to: selectedHex }),
             selectedHex ? `Клетка ${selectedHex.q}, ${selectedHex.r}` : 'Выберите клетку',
+            selectedMovement,
           )}
           {actionButton(
             'Защищаться',
@@ -129,6 +139,7 @@ export function CommandDesk({
             rules?.defend.damageReductionPercent !== undefined
               ? `Сила входящего удара −${rules.defend.damageReductionPercent}% · завершает ход`
               : 'Защита · завершает ход',
+            rules?.defend,
           )}
           {actionButton(
             'Завершить ход',
@@ -148,9 +159,7 @@ export function CommandDesk({
           )}
         </div>
       </div>
-      <p className="battle-dock-help">
-        ЛКМ — осмотр · ПКМ — идти / атаковать · колесо — масштаб · средняя кнопка — сдвиг
-      </p>
+
       <CommandFeedback
         selectedMovement={selectedMovement}
         activeActor={activeActor}
@@ -182,9 +191,11 @@ function CommandFeedback({
 }: CommandFeedbackProps) {
   return (
     <div className="battle-feedback-row">
-      <span className="battle-autoplay-status" role="status" data-active={autoplay}>
-        {autoplay ? 'Автобой включён' : 'Ручное управление'}
-      </span>
+      {autoplay && (
+        <span className="battle-autoplay-status" role="status" data-active="true">
+          Автобой включён
+        </span>
+      )}
       {selectedMovement?.fireDamage ? (
         <p className="battle-danger-warning">
           {selectedMovement.fireDamage >= (activeActor?.pools.health.current ?? Infinity)
@@ -220,3 +231,11 @@ function publishedCost(
 ): string {
   return cost ? `${cost.actionPointCost} ОД · силы ${cost.staminaCost}` : fallback;
 }
+
+const shortCommandLabel: Readonly<Record<string, string>> = {
+  Атаковать: 'Атака',
+  Переместиться: 'Движение',
+  Защищаться: 'Защита',
+  'Завершить ход': 'Конец хода',
+  Отступить: 'Отступить',
+};

@@ -155,7 +155,7 @@
   pointer-events: none;
 }
 .battle-unit-card {
-  min-height: 248px;
+  min-height: 216px;
   padding: 12px;
   border: 1px solid var(--battle-border);
   border-radius: var(--battle-radius);
@@ -170,7 +170,7 @@
   letter-spacing: 0.03em;
 }
 .battle-card-data h2 {
-  min-height: 44px;
+  min-height: 32px;
   margin-bottom: 8px;
 }
 .battle-resource {
@@ -213,7 +213,8 @@
   font-weight: 600;
 }
 .battle-weapon-reach {
-  justify-self: end;
+  justify-self: start;
+  grid-column: 1 / -1;
   color: var(--battle-gold);
   font-size: 11px;
 }
@@ -399,12 +400,18 @@
 .battle-view .initiative-unit.battle-control {
   padding: 0;
   min-width: 44px;
-  height: 100px;
+  height: 72px;
+  min-height: 72px;
+  flex: 0 0 44px;
+  max-width: 44px;
   border-color: var(--battle-border);
   border-radius: var(--battle-radius);
   background: #202e31;
 }
 .battle-view .initiative-unit.battle-control[aria-current='step'] {
+  flex-basis: 58px;
+  max-width: 58px;
+  height: 84px;
   border-color: var(--battle-gold);
   background: #3c3e31;
 }
@@ -472,4 +479,57 @@
   min-width: 14px;
   padding: 0;
   font-size: 8px;
+}
+
+/* The forecast is a continuation of the same timeline, not a second queue owner. */
+.battle-view .initiative-unit[data-forecast='true'] {
+  border-style: dashed;
+}
+.battle-view .initiative-unit[aria-current='step'] .battle-portrait {
+  height: 65px;
+}
+.battle-view .battle-round-divider span {
+  font-size: 10px;
+}
+.battle-view .battle-next-round span {
+  max-width: none;
+}
+.battle-skill-cost {
+  justify-self: end;
+  color: var(--battle-gold);
+}
+.battle-command-label {
+  display: block;
+  margin-top: 5px;
+  text-align: center;
+  font:
+    500 10px/1.2 system-ui,
+    sans-serif;
+  color: var(--battle-muted);
+}
+.battle-view .battle-effects {
+  height: 15px;
+}
+.battle-feedback-row:empty {
+  display: none;
+}
+
+.battle-action-cost {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 4px;
+  color: var(--battle-gold);
+  font:
+    500 10px/1.3 system-ui,
+    sans-serif;
+  white-space: nowrap;
+}
+.battle-command,
+.battle-ability-slot {
+  align-self: start;
+}
+.battle-order-guidance > .battle-action-cost {
+  justify-self: end;
+  font-size: 12px;
 }

@@ -103,7 +103,7 @@ function AttackDetails({ forecastAttack }: Pick<Props, 'forecastAttack'>) {
               </div>
             </div>
           )}
-          <small>При попадании{!forecastAttack.damage && ' · урон не указан сервером'}</small>
+          <small>При попадании{!forecastAttack.damage && ' · урон недоступен'}</small>
         </>
       )}
     </>

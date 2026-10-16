@@ -306,6 +306,17 @@ function orderInitiative(
     .map(({ id }) => id);
 }
 
+export function previewCombatInitiative(
+  state: BattleState,
+): { readonly round: number; readonly unitIds: readonly UnitId[] } | undefined {
+  const rules = combatRules(state.rulesetId);
+  if (state.status !== 'active' || state.round >= rules.limits.maximumRounds) return undefined;
+  return {
+    round: state.round + 1,
+    unitIds: orderInitiative(state.units, rules, state.rulesetId),
+  };
+}
+
 function unitById(state: BattleState, id: UnitId): CombatUnitState | undefined {
   return state.units.find((unit) => unit.id === id);
 }

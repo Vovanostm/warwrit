@@ -41,10 +41,34 @@ function isSpriteView(view: Partial<CombatLabView>): boolean {
   );
 }
 
+function hasInitiativeForecast(view: Partial<CombatLabView>): boolean {
+  const forecast = view.nextRoundInitiative;
+  if (forecast === undefined) return true;
+  if (
+    forecast === null ||
+    typeof forecast !== 'object' ||
+    view.status !== 'active' ||
+    view.round === undefined ||
+    !Number.isSafeInteger(forecast.round) ||
+    forecast.round !== view.round + 1 ||
+    !Array.isArray(forecast.unitIds)
+  )
+    return false;
+  return (
+    new Set(forecast.unitIds).size === forecast.unitIds.length &&
+    forecast.unitIds.every(
+      (id) =>
+        typeof id === 'string' &&
+        view.units?.some((unit) => unit?.id === id && unit.status === 'active'),
+    )
+  );
+}
+
 export function isCombatLabView(value: unknown): value is CombatLabView {
   if (value === null || typeof value !== 'object') return false;
   const view = value as Partial<CombatLabView>;
-  if (!hasViewIdentity(view) || !hasViewCollections(view)) return false;
+  if (!hasViewIdentity(view) || !hasViewCollections(view) || !hasInitiativeForecast(view))
+    return false;
   return view.scenarioId === SPRITE_COMBAT_LAB_SCENARIO
     ? isSpriteView(view)
     : view.scenarioId === COMBAT_LAB_SCENARIO;

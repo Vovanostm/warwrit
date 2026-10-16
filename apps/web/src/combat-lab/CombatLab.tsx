@@ -273,7 +273,7 @@ export function CombatLab() {
         installSession(next);
         setSelectedUnitId(next.view.activation?.actorId ?? null);
         setSelectedHex(null);
-        setNotice('Бой начался.');
+        setNotice('');
       },
       failed: (uncertain, message) => {
         setStartUnresolved(uncertain);
@@ -550,13 +550,11 @@ export function CombatLab() {
     <main className={`combat-lab-page${session ? ' combat-lab-page--fighting' : ''}`}>
       {!session && (
         <>
-          <p className="eyebrow">Отдельный бой · кампания не меняется</p>
+          <p className="eyebrow">Тренировочный бой · кампания не меняется</p>
           <h1>Лаборатория боя</h1>
         </>
       )}
-      {!session && (
-        <p>Составьте бой и карту, затем проверьте приказы на поле. Фигуры остаются статичными.</p>
-      )}
+      {!session && <p>Выберите бойцов, настройте поле и начните бой.</p>}
       {!session && (
         <section aria-label="Настройка боя">
           {catalogLoading && <p role="status">Загружаются бойцы и карты…</p>}

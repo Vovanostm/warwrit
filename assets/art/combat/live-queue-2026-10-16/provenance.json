@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-16",
+  "branch": "codex/combat-ux-audit-20261016",
+  "tool": "built-in image_gen.imagegen",
+  "use_case": "ui-mockup",
+  "status": "Illustrative raster drafts only. Not runtime evidence or approved new game art. No paid CLI/API fallback used.",
+  "references": [
+    {
+      "path": "assets/art/m1/style/unit-c-ink.png",
+      "role": "approved soldier ink/flat-wash style"
+    },
+    {
+      "path": "assets/art/m1/places/staraya-melnitsa.png",
+      "role": "approved ruined mill identity/materials"
+    },
+    {
+      "path": "output/playwright/sprite-head-20261016/game-day.png",
+      "role": "current battlefield/HUD reference screenshot; local evidence, not committed reference"
+    }
+  ],
+  "drafts": [
+    {
+      "file": "draft-a-compact-strip.png",
+      "generated_source": "/Users/vovanostm/.codex/generated_images/01a144d6-e331-7b83-b4d1-a3cad65d0a70/exec-4fc4f0b0-e563-4c73-9aae-9bb7f2319ca7.png",
+      "prompt": "Use case: ui-mockup\nAsset type: Warwrit desktop battle HUD illustrative draft A, landscape 16:10.\nPrimary request: Rework the HUD on input image 3. Preserve its actual ruined mill scene, tactical hex board, individual grounded ink sprites and overall camera. Keep the same art family as image 1 (ink soldier) and image 2 (ruined mill). Remove existing HUD and replace it with a restrained implementable desktop game interface, with compact top initiative queue and bottom command strip. This is an interface draft, not new environment or character art.\nComposition: Keep the middle 70% of the battlefield exposed. At top center, a slim horizontal initiative portrait queue occupying only about 75 pixels of vertical screen height. One currently acting soldier portrait larger at the left with muted ochre border, then upcoming soldier and wolf portraits. Do NOT show already spent turns. After several upcoming portraits a fine vertical line with small label “Раунд 2”, then next-round portrait predictions. Left of queue small “Раунд 1”. No large panel for the future round.\nBottom left one compact actor card with soldier portrait, “Лук”, “ОД 4/4”, short health/armor bars. Bottom center flat command strip, about 100 pixels tall, three legible labeled actions “Движение”, “Атака”, “Завершить ход”, small costs shown with each appropriate action. Beside these a chosen-target forecast “Волк” and “65% · 12–18”. A small optional target card is allowed only because the target is another entity, never duplicate the acting soldier. Keep action affordances simple, no new abilities.\nStyle/medium: real game screenshot mockup, crisp readable UI, serious grounded dark fantasy, irregular ink contours and flat wash, muted slate, soot, umber, ochre, restrained iron frame and soft parchment text. No ornate fantasy chrome.\nConstraints: Render Russian labels exactly as quoted. Never include unknown order text, question marks, repeated manual controls, battle started text, neutral height text or multiple current-turn labels. No glossy surfaces, cute characters, vivid lawns, franchise logos or copied proprietary UI. Preserve the ruined old mill as dangerous and ruined. No arrows or annotations or concept-sheet headings. Opaque background."
+    },
+    {
+      "file": "draft-b-consolidated.png",
+      "generated_source": "/Users/vovanostm/.codex/generated_images/01a144d6-e331-7b83-b4d1-a3cad65d0a70/exec-dde3647f-12ef-408f-bf80-fbb61550299c.png",
+      "prompt": "Use case: ui-mockup\nAsset type: Warwrit desktop battle HUD illustrative draft B, landscape 16:10.\nPrimary request: Create an alternative interface draft from the actual game screenshot in input image 3. Preserve its ruined old mill scene, tactical hex board, ink sprites and camera. Image 1 is soldier/style reference and image 2 is scene/material reference. Replace only the HUD. Use a horizontal queue integrated directly into the upper edge and a single consolidated shallow bottom HUD. This must look like an implementable game screen, no annotations.\nComposition: Keep the central 75% of board visible. Across top center a narrow unobtrusive row of portraits on individual dark iron tabs, no large enclosing banner. Active soldier portrait at the left larger, restrained ochre underline. Follow it with four upcoming soldier/wolf portraits. Then a fine vertical divider and small text “Раунд 2”, followed by next-round portraits. “Раунд 1” small at upper left beside queue. Distinct from a large top panel: queue should feel light and connected to the upper border.\nBottom: one unified 120-pixel-high horizontal dark slate bar with thin weathered iron rule, spanning roughly 90% of screen width. Left section actor portrait (small), name “Лук”, “ОД 4/4”, health 65/65 and armor 12/12. Middle section compact action buttons in one row with exact labels “Движение”, “Атака”, “Завершить ход”; costs “1 ОД” below movement, “2 ОД” below attack, no cost below end turn. Right section chosen-target forecast, wolf portrait, exact text “Волк” and “65% · 12–18”. Use fine vertical separators to make actor, action and forecast sections clear without three freestanding panels.\nStyle/medium: high fidelity real game screenshot mockup, sober grounded dark fantasy, irregular ink and flat-wash art matching references, muted soot/slate/umber/ochre, readable parchment-colored text with restrained contrast. Very simple iron framing, no gloss or ornate fantasy decoration.\nConstraints: Keep provided art identifiable, ruined mill ruined, no new lore. All bodies and portraits fully inside their intended bounds. No unknown-order message, question marks, duplicate actor card, repeated current-turn labels, manual controls, battle-start message, neutral elevation, new abilities, franchise logos, cute style, vivid lawns. Exact Russian labels, legible balanced typography. Opaque background."
+    }
+  ],
+  "inspection": {
+    "performed": true,
+    "recommendation": "Draft A: closest to current UI structure and least implementation risk; clear bounded queue/forecast against detailed battlefield. Borrow Draft B lower-HUD alignment as space permits.",
+    "limits": [
+      "Generated mockups simplify available actions to illustrate hierarchy; implementation must preserve all existing actions and real costs.",
+      "Example forecast 65% and 12–18 is illustrative, not approved combat data; implementation must use actual available forecast fields.",
+      "Draft B changes battlefield framing more than A, so it is layout guidance only.",
+      "Both depict static queue predictions; live reordering must be verified in the implemented UI."
+    ]
+  }
+}

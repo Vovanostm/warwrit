@@ -151,38 +151,38 @@ export function BattleView(props: BattleViewProps) {
         remainingAP={remainingAP}
         activeActor={activeActor}
       />
-      <section className="battle-action-dock" aria-label="Приказы действующему бойцу">
-        <UnitCard unit={activeActor} actor view={view} />
-        <div
-          className="battle-dock-orders"
-          data-tooltip-input={tooltipInput}
-          onPointerMove={() => setTooltipInput('pointer')}
-          onKeyDownCapture={() => setTooltipInput('keyboard')}
-        >
-          <BattleGuidance
-            view={view}
-            status={status}
-            reachUnit={reachUnit}
-            reach={reach}
-            reachNote={reachNote}
-            selectedSkillId={selectedSkillId}
-          />
-          <div className="battle-command-area">
-            {children ?? <p>Приказы доступны в управлении боем.</p>}
+      {view.status === 'active' && (
+        <section className="battle-action-dock" aria-label="Приказы действующему бойцу">
+          <UnitCard unit={activeActor} actor view={view} />
+          <div
+            className="battle-dock-orders"
+            data-tooltip-input={tooltipInput}
+            onPointerMove={() => setTooltipInput('pointer')}
+            onKeyDownCapture={() => setTooltipInput('keyboard')}
+          >
+            <BattleGuidance
+              view={view}
+              status={status}
+              reachUnit={reachUnit}
+              reach={reach}
+              reachNote={reachNote}
+              selectedSkillId={selectedSkillId}
+            />
+            <div className="battle-command-area">
+              {children ?? <p>Приказы доступны в управлении боем.</p>}
+            </div>
+            <BattleSkills
+              view={view}
+              selectedSkillId={selectedSkillId}
+              onSelectSkill={onSelectSkill}
+              skillDisabledReason={skillDisabledReason}
+            />
           </div>
-          <BattleSkills
-            view={view}
-            selectedSkillId={selectedSkillId}
-            onSelectSkill={onSelectSkill}
-            skillDisabledReason={skillDisabledReason}
-          />
-        </div>
-        <UnitCard
-          unit={inspected}
-          view={view}
-          temporary={initiativeHover !== null || hoveredTarget?.unitId != null}
-        />
-      </section>
+          {inspected && inspected.id !== activeActor?.id && (
+            <UnitCard unit={inspected} view={view} />
+          )}
+        </section>
+      )}
       <BattleLog
         view={view}
         status={status}
