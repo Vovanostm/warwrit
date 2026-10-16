@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Live initiative queue and reduced combat HUD
+
+- 2026-10-16, branch `codex/live-combat-ux`, local: owner authorizes raster
+  drafts, implementation with subagents, PR/review and merge to default main.
+  Existing [UX research and approved queue behaviour](docs/wiki/battlefield-test-maps.md#проверка-текстов-и-избыточности-ux--2026-10-16)
+  retained in the owning wiki. Separate worktree starts from integrated
+  e87a379 including sprite-outline repair; primary and other active worktrees
+  untouched. Parent owns web/shared docs; separate pure-forecast author and
+  image-draft author have disjoint paths/checkouts. Checks and delivery pending
+  at activation; no campaign writes, deployment or paid services.
+
 ### Resume sprite combat as an isolated, deliverable improvement cycle
 
 - 2026-10-16, branch `codex/combat-cycle-20261016`, local: owner requested

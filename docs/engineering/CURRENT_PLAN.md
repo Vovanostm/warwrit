@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+**Live initiative and combat UX — 2026-10-16, ACTIVE / ISOLATED:**
+Owner explicitly authorizes image drafts, implementation, subagents, PR/review
+and merge to the actual default branch main. Parent owns
+`codex/live-combat-ux` in combat-live-queue/warwrit, base e87a379 (includes
+outline fix). Separate forecast writer owns core/protocol/server projection in
+combat-queue-projection/warwrit; artist owns only live-queue-2026-10-16 assets in
+combat-ux-audit/warwrit. Primary/integration worktree WIP preserved.
+Observable result: live portrait queue + next-round forecast, one actor card,
+contextual target/cost/risk, reduced repeated copy, intact sprite silhouettes.
+Own stand3036/5336. [Owner contract and research](../wiki/battlefield-test-maps.md#полный-цикл-реализации-ux--2026-10-16).
+Implementation/review/runtime/full gate/publication/merge NOT_RUN at activation;
+other active integration dependency and cross-chat coordination pending.
+
 **Combat improvement cycle — 2026-10-16, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized worktree/subagent cycle merged through [PR157](https://github.com/Vovanostm/warwrit/pull/157).
 Reviewed head `2c1ac2a`, merge/main `2072a6468e4552cb7f7ae685c09e9ba98efe9a96`;
