@@ -54,6 +54,12 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
+    files: ['assets/art/combat/**/concepts.js'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+  {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       globals: {

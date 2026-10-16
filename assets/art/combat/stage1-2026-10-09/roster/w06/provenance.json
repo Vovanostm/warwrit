@@ -1,0 +1,84 @@
+{
+  "id": "W06",
+  "title": "Knife warrior, light equipment",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; pending independent visual acceptance",
+  "owner_source": "docs/wiki/battlefield-test-maps.md W06 row",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "tool_arguments": {
+    "prompt": "Use case: stylized-concept\nAsset type: Warwrit W06 static combat roster sprite, one full-body adult human knife warrior on real alpha transparency.\nInput images: Image 1 unit-c-ink.png is the approved human anatomy, equipment credibility and irregular ink/flat-wash rendering reference. Image 2 staraya-melnitsa.png supplies weathered matte cloth/leather/iron palette and lighting only; do not include any scene. Image 3 battle-ux-v3.png is the fixed elevated three-quarter camera and small-sprite scale reference.\nPrimary request: Create a SINGLE adult grounded medieval knife warrior W06. Light worn quilted jacket/gambeson, ordinary dark trousers, practical leather boots and belt. No shield, sword, helmet armour, cape, heraldry or decorative ornaments. A single ordinary short iron utility fighting knife in right hand, blade around one hand-length (15 to 20 cm), minimal practical handle and no large sword crossguard. Keep blade visibly separated from torso silhouette and clearly a knife.\nPose and projection: compact credible combat guard with knees slightly bent, two grounded feet comfortably apart; right elbow bent close to body with knife held forward at waist/chest level, left empty hand raised slightly in a natural guard. Adult normal proportions and plausible fingers/grip. Fixed elevated three-quarter view matching the battlefield reference: torso/head/feet all facing screen upper-right, upper surfaces mildly visible. Do not create a frontal portrait or crouching assassin.\nStyle: hand-drawn irregular dark ink contours, modest internal hatching, flat muted wash, strong shadow masses matching unit C. Matte weathered materials, soot/slate/umber/ochre cloth and restrained rust, pale ordinary adult face, serious expression. Lit from upper-left; no mirrored lighting.\nComposition: full isolated body and entire knife inside frame, comfortable transparent margins around hair, boots, hands and knife. Human silhouette readable when displayed at 80 px total subject height. No background, ground tile, pedestal, terrain patch, contact shadow, border, text, extra person, magic, glow, toy/cute anatomy, glossy render, photorealism or franchise copying. Actual transparent alpha background.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+    ],
+    "transparent_background": true
+  },
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-655b-7241-b169-e5b224e121de/exec-7975e067-ca92-40f8-b72f-fe705f94dc31.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/w06/sprite.png",
+  "generation_calls": 1,
+  "correction_calls": 0,
+  "inspected_references": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+  ],
+  "observed_image": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "bit_depth": 8,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 1200627,
+    "opaque_pixels": 498,
+    "partial_alpha_pixels": 371391,
+    "canvas_corners_alpha": [0, 0, 0, 0],
+    "subject_bbox_alpha_gt_zero_inclusive": [33, 19, 1207, 1221],
+    "subject_bbox_alpha_ge_128_inclusive": [333, 40, 939, 1212],
+    "pixels_alpha_ge_250": 344820,
+    "pixels_alpha_1_to_10": 11234,
+    "most_common_subject_alpha": 253
+  },
+  "observations": [
+    "One full adult human with two complete legs/boots and two arms/hands; no obvious anatomy or cropping failure.",
+    "Light diamond-quilted gambeson, worn leather belt/boots, dark trousers; no shield, heraldry, magic or glow.",
+    "Compact bent-knee guard, empty left hand raised, right hand holding visible short broad pointed knife at waist. Knife is longer than one fist but clearly much shorter than the reference sword; modest straight guard remains.",
+    "Face, torso and feet face right/upper-right in elevated three-quarter view; upper-left highlight and dark ink shadows follow references.",
+    "Full isolated figure with clear margins and no painted ground tile or contact shadow."
+  ],
+  "checks": [
+    {
+      "name": "Personal inspection of all three references",
+      "result": "PASS"
+    },
+    {
+      "name": "Saved sprite visual inspection: whole body, anatomy, weapon, facing",
+      "result": "PASS; author observation only"
+    },
+    {
+      "name": "PNG dimensions and alpha decoded with Python standard library; no image edits",
+      "result": "PASS"
+    },
+    {
+      "name": "Canvas corners alpha zero",
+      "result": "PASS"
+    },
+    {
+      "name": "80 px in-battle readability and day/night integration",
+      "result": "NOT_RUN"
+    },
+    {
+      "name": "Independent scored visual critic",
+      "result": "NOT_RUN; parent owns acceptance"
+    }
+  ],
+  "limitations": [
+    "The core subject is nearly opaque (mostly alpha 253), rather than uniformly alpha 255. Low-alpha antialias/residue extends beyond the alpha>=128 subject bounds; no alpha postprocessing was performed.",
+    "Knife silhouette and elevated projection require independent review at the integrated 80 px human height.",
+    "Static sprite only; no animations, integrations, dependencies, commit or publication."
+  ],
+  "documentation_handoff": "Parent owns shared CHANGELOG/CURRENT_PLAN/wiki updates; W06 author writes only its assigned directory."
+}

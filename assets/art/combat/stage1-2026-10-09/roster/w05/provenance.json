@@ -1,0 +1,74 @@
+{
+  "id": "W05",
+  "subject": "Adult bow warrior; static full body with lowered practical strung wooden bow and back quiver.",
+  "status": "local_generated_not_independently_accepted",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "mode": "built-in",
+    "date": "2026-10-09",
+    "calls": 1,
+    "transparent_background": true,
+    "exact_prompt": "Use case: stylized-concept\nAsset type: ONE static full-body transparent game sprite, Warwrit combat roster W05 bow warrior, meant to read at 80 px human height.\nPrimary request: Create one credible adult human bow warrior with a practical lowered wooden bow and back quiver, standing alert in a relaxed ready stance. No drawn arrow, no shooting pose. Outfit: worn soot-brown padded jacket, muted umber leather belt and bracers, slate-brown trousers, weathered practical boots; bare adult head with short dark hair. Ordinary equipment, no shield or extra visible weapon.\nInput images: Image 1 unit-c-ink.png is the approved human anatomy, adult proportions, ink contours and wash reference. Image 2 staraya-melnitsa.png is the weathered materials and muted palette reference ONLY; do not include any scenery. Image 3 battle-ux-v3.png is the fixed elevated three-quarter battlefield camera/projection reference ONLY; do not include UI or other figures.\nComposition/framing: Isolated single complete adult figure from head to both boot soles, all equipment fully within frame, generous transparent margins. Fixed elevated three-quarter view, facing screen upper-right; head, torso and feet share the facing direction. See upper surfaces of shoulders and boots consistent with battlefield reference. The warrior holds ONE strung wooden longbow in the nearer hand at hip height, lowered diagonally beside the body; the intact curved stave and a single taut string joining its two tips are separately visible. Hand wraps the central bow grip correctly, no merged fingers/string. Other hand rests relaxed near waist. Back quiver with a small group of arrows visible above shoulder. No drawn projectile. Natural adult anatomy, grounded stance and readable silhouette.\nStyle/medium: Match the approved unit C directly: irregular dark ink contour, internal hatching, flat matte watercolor wash, strong dark shadow masses. Serious grounded dark fantasy, believable human proportions and practical medieval construction. No glossy 3D shading.\nLighting: fixed upper-left light, lower-right shadow on body; no cast/contact shadow on backdrop.\nColor: muted soot/slate/umber/ochre; restrained rust only. No vivid colors.\nBackdrop: genuinely transparent alpha everywhere outside figure and equipment, including gap inside bow and between legs.\nAvoid: scenery, floor, ground tile, pedestal, terrain patch, painted contact shadow, labels, text, border, watermark, heraldry, symbols, fantasy ornaments, magic, glowing eyes, cute proportions, toy armor, huge pauldrons, exaggerated weapon scale, franchise copying, cropped bow tips or feet, extra limbs, extra bows, arrow in hand. Output only one static sprite.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+    ],
+    "source_path": "/Users/vovanostm/.codex/generated_images/01a12153-410c-7a60-bc9c-1638be95d265/exec-50c9711c-ed93-4154-8602-8ba023ad8fe9.png"
+  },
+  "references_personally_inspected": true,
+  "specification": "docs/wiki/battlefield-test-maps.md W05 row: Лук — Подвижная дальняя поддержка",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/w05/sprite.png",
+  "observed_png": {
+    "dimensions": [1254, 1254],
+    "mode": "RGBA",
+    "alpha_extrema": [0, 255],
+    "alpha_bbox": [47, 19, 1232, 1254],
+    "transparent_pixels": 1167344,
+    "opaque_pixels": 779,
+    "partial_alpha_pixels": 404393,
+    "total_pixels": 1572516
+  },
+  "additional_alpha_observation": {
+    "threshold_8_bbox": [239, 38, 935, 1217],
+    "threshold_8_pixels": 389763,
+    "dominant_nonzero_alpha": 253
+  },
+  "visual_observations": [
+    "One complete adult human; visible head, both hands, both boots and entire bow.",
+    "Near hand wraps central wooden bow grip; other hand relaxed beside waist.",
+    "Lowered bow has continuous curved stave and a straight single string visibly attached at both tips; string is occluded by sleeve/hand where expected.",
+    "Back quiver and arrow fletching visible over rear shoulder.",
+    "Face and torso face screen upper-right in elevated three-quarter view; upper-left highlights match reference.",
+    "Irregular dark ink, hatching, flat subdued brown/soot wash and weathered cloth/leather match inspected unit C direction.",
+    "No ground tile, pedestal, terrain patch, text, symbols or painted contact shadow visible."
+  ],
+  "checks": [
+    {
+      "check": "Saved PNG decoded with standard-library PNG/zlib reader",
+      "outcome": "PASS",
+      "note": "1254x1254; 8-bit RGBA, noninterlaced; true zero-alpha background."
+    },
+    {
+      "check": "Full-figure and equipment visual inspection with view_image",
+      "outcome": "PASS",
+      "note": "Feet and bow tips have visible margins."
+    },
+    {
+      "check": "Pillow alpha probe",
+      "outcome": "NOT_RUN",
+      "note": "Pillow unavailable; used standard-library PNG reader instead; no dependencies installed."
+    },
+    {
+      "check": "Game/render/integrated visual acceptance",
+      "outcome": "NOT_RUN",
+      "note": "Parent owns scene integration and independent critic."
+    }
+  ],
+  "limitations": [
+    "Faint alpha values 1-7 scatter beyond visible subject and reach canvas bottom; visible subject at alpha>=8 retains margins. Generated alpha preserved without editing.",
+    "Most interior alpha is 253 rather than 255; sprite is near-opaque rather than strictly opaque.",
+    "Readability at 80px human height was not independently measured in integrated scene.",
+    "Independent visual acceptance belongs to parent and critic; generation is not ACCEPT."
+  ]
+}

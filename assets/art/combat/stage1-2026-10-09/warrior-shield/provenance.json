@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-09",
+  "status": "proposal-unapproved",
+  "kind": "single-stance-concept-not-production-animation",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "checks": {
+    "visual_inspection": "one complete adult figure, readable shield and blade, coherent ink and muted wash",
+    "sips": "PASS: 1212x1297, hasAlpha yes",
+    "pillow_alpha_extrema": "NOT_RUN: system Python missing PIL; no dependency installed",
+    "in_game_scale_animation": "NOT_MEASURED"
+  },
+  "references": [
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/settlements-v2/staraya-melnitsa.png"
+  ],
+  "source_file": "/Users/vovanostm/.codex/generated_images/01a1212c-6469-79f0-a50d-3406eb091500/exec-8d8e9952-954a-472b-8c62-88b78c756a8c.png",
+  "prompt": "Use case: stylized-concept\nAsset type: ONE isolated transparent full-body tactical combat sprite concept for original Warwrit dark fantasy, stage 1 style proposal.\nInput images: Image 1 is the approved unit-c-ink.png human body proportions and ink/flat-wash STYLE reference, not an edit target. Image 2 is the ruined staraya-melnitsa place reference for credible weathered material and matching restrained palette, not a background or edit target.\nPrimary request: A single adult human guard, weathered quilted coat, ordinary short sword in right hand and round wooden shield in left hand; one ready stance with natural grounded weight. He looks toward the upper-right of the screen in fixed three-quarter view. Realistic human proportions like image 1. Full body and entire weapon and shield visible, uncropped, comfortably framed with small empty margins.\nStyle/medium: serious grounded original dark fantasy hand-drawn sprite. Irregular black ink outer and INTERNAL contours, hatching, crisp strong shadow masses, flat muted slate/soot/umber/ochre wash with minimal restrained rust accent. Match image 1's credible adult anatomy, weathered fabric and shoes, and image 2's weathered wood/metal. Surface is matte, not glossy.\nLighting: upper-left light with coherent fixed baked shadows; no mirroring of reference lighting.\nConstraints: blank genuinely transparent background, no tile, no ground patch, no pedestal, no scenery, no contact ellipse or cast ground shadow. No text, no insignia, no invented emblem, no glow. One single stance only, not a sprite sheet. Hands must wrap handles correctly and be anatomically legible, short sword recognizable and straight, shield clearly wooden with plain iron rim and plain central boss. Boots natural and weighted; adult feet contact one implied ground plane.\nAvoid: cute, chibi, toy, giant head, painted miniature, smooth 3D render, pale pristine armor, vivid grass, vivid saturated colors, decorative fantasy weapons, franchise copying, photoreal photographic face.",
+  "observations": [
+    "Single full-body adult guard; silhouette, sword and boots uncropped.",
+    "Muted umber/slate flat wash and dense irregular ink/hatching; weathered coat, wood and steel readable.",
+    "Three-quarter facing screen upper-right; bright upper-left surfaces and right-side shadow consistent."
+  ],
+  "limitations": [
+    "Weapon reads longer than intended short sword.",
+    "Detailed reference-like pose is close to approved baseline rather than demonstrating new class silhouette.",
+    "No animation, alternate facing, integrated hex-scale readability or gameplay acceptance measured."
+  ]
+}

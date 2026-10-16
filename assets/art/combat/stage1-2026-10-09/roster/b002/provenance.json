@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-09",
+  "id": "B002",
+  "subject": "Brown bear / Бурый медведь",
+  "status": "static-sprite-pending-independent-acceptance",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "reference_cards_read": [
+    "docs/wiki/bestiary/creatures/b002.md",
+    "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md"
+  ],
+  "references": [
+    {
+      "role": "ink-wash-style-light",
+      "file": "assets/art/m1/style/unit-c-ink.png"
+    },
+    {
+      "role": "weathered-material-palette",
+      "file": "assets/art/m1/places/settlements-v2/staraya-melnitsa.png"
+    },
+    {
+      "role": "approved-overall-camera-direction",
+      "file": "assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+    },
+    {
+      "role": "dark-fur-ink-value-only-not-anatomy",
+      "file": "assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+    }
+  ],
+  "source_file": "/Users/vovanostm/.codex/generated_images/01a1212c-6469-79f0-a50d-3406eb091500/exec-65bbbed5-9802-45cb-86d5-2d260560ce2e.png",
+  "prompt": "Use case: stylized-concept\nAsset type: B002 Brown bear, ONE isolated transparent static full-body tactical combat creature for Warwrit. No animation, no sheet.\nInput roles: Image 1 unit-c-ink.png approved contour/hatching/flat-wash style and fixed upper-left lighting only, not human anatomy for bear. Image 2 ruined staraya-melnitsa.png weathered matte palette/material consistency only, not background. Image 3 battle-ux-v3.png approved elevated three-quarter camera/game battlefield readability only. Image 4 night-mill-beast-concept-v2.png dark animal fur value/ink reference ONLY: B002 is an ordinary anatomically credible natural brown bear, NOT that monster, no monster hands/spines/glowing eyes.\nPrimary request: A large heavy ordinary brown bear on all four natural bear legs, worn shaggy brown fur, heavy shoulder hump, small rounded ears, strong natural muzzle, broad paws with long practical natural claws. Full body completely visible and uncropped with margins. Alert defensive stance, head directed screen upper-right, elevated three-quarter tactical camera; stance carries believable weight on one implied ground plane. Four legs and four natural bear paws placed clearly, near and far legs anatomically distinct, no extra limb or humanoid arm. Natural small eyes with dark pupils, mouth closed or only slightly parted; no excessive roar or fantasy tusks.\nDesign from B002 source: dangerous natural fauna, a heavy solitary omnivorous bear, not an obligatory man-eater. Worn fur and long claws, no invented biography, wounds, collar, armor, props or insignia.\nStyle: serious grounded original dark fantasy, crisp irregular black ink external AND internal contours, internal hatching, strong dark shadow masses, muted soot/slate/umber/ochre flat wash. Dull brown dense shaggy fur, no glossy photoreal hair. Fixed light upper-left with subdued light edge accents; no mirroring. Legible bear silhouette in same battle camera and at human comparison height80px, bear physically larger than human but no extra tile.\nConstraints: ONE bear only on genuinely transparent blank background. No ground patch, contact shadow, tile, pedestal, environment, border, text, UI or extras. No magic, glow, luminous eyes, cute rounded toy anatomy, chibi, painted miniature or smooth 3D rendering. No franchise copying.",
+  "observations": [
+    "Heavy natural brown bear silhouette; shoulder hump, rounded ears, natural muzzle, closed mouth, worn shaggy fur.",
+    "Four legs and four paws visible: far hind paw is partially occluded naturally beneath body.",
+    "Body and claws uncropped with margins; no ground patch, magical detail, props or scenery.",
+    "Upper-right face and upper-left illumination; dark ink/hatching and matte muted brown wash."
+  ],
+  "checks": {
+    "dimensions": "1254x1254",
+    "alpha": "sips hasAlpha yes",
+    "visual_anatomy": "four limbs and paws visually observed, no obvious extra limb or cut-off anatomy",
+    "small_scale_battlefield_readability": "NOT_MEASURED",
+    "independent_visual_acceptance": "pending"
+  },
+  "limitations": [
+    "Some long claws and contrast accents require comparative critic acceptance.",
+    "Relative creature/human battlefield scale and 80px baseline integration not measured.",
+    "No animation or alternate direction."
+  ]
+}

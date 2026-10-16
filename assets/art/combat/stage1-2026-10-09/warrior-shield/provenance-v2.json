@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-09",
+  "status": "proposal-unapproved-pending-independent-review",
+  "kind": "single-stance-concept-revision-not-production-animation",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "reason": "Independent visual critic equipment score 1: sword too long and bright, shield iron too clean.",
+  "references": [
+    {
+      "role": "edit-target",
+      "file": "assets/art/combat/stage1-2026-10-09/warrior-shield/concept.png"
+    },
+    {
+      "role": "approved-style-reference",
+      "file": "assets/art/m1/style/unit-c-ink.png"
+    }
+  ],
+  "source_file": "/Users/vovanostm/.codex/generated_images/01a1212c-6469-79f0-a50d-3406eb091500/exec-baba8e04-2b97-4b91-8bda-893c00729b18.png",
+  "prompt": "Use case: precise-object-edit\nAsset type: ONE isolated transparent full-body tactical combat sprite concept.\nInput images: Image 1 concept.png is the EDIT TARGET. Image 2 approved unit-c-ink.png is STYLE AND WEATHERED PROP REFERENCE only.\nPrimary request: Revise Image 1 only in its equipment. Shorten its sword BLADE approximately 35 percent so it becomes a practical arm-length short sword; keep the existing hilt position, hand grip and downward-right blade direction. Do not resize the whole character. Substantially dull and darken the sword's bright grey blade into matte dark weathered iron with a restrained light edge, as in image 2. Remove the current polished white blade face. Weather and dull the shield iron rim and central boss: dark soot-grey iron, pitted scratches, irregular muted edge highlights, no clean glossy finish. Keep round plain weathered wood shield and no emblem.\nPreserve exactly: adult anatomy, face, coat, boots, original ready stance, fixed three-quarter upper-right gaze, full uncropped body, margins, lighting from upper-left, and credible hand gripping the hilt. Preserve the current dark internal ink hatching and flat muted umber/slate washes.\nBackground must remain genuinely transparent including around shortened sword tip, no tile, ground patch, pedestal, scenery, ground shadow or text. Single stance, not sheet. Original grounded serious dark fantasy. No added ornaments, colors, effects or props.",
+  "observations": [
+    "Blade visibly shorter, tip now ends before right leg instead of extending across it.",
+    "Blade face darkened; light edge remains readable.",
+    "Rim and boss are darker and pitted; less clean metallic surface.",
+    "Adult anatomy, pose, coat, boots, grip, fullbody and upper-left light appear maintained."
+  ],
+  "checks": {
+    "sips": "PASS 1212x1297 hasAlpha yes",
+    "visual_inspection": "PASS for requested local revisions; independent critic acceptance pending",
+    "animation_hex_scale": "NOT_MEASURED"
+  },
+  "limitations": [
+    "Exact percent shortening not measured.",
+    "Some highlights remain on shield boss and rim; independent critic decides acceptance.",
+    "No animation, alternate facings or in-game-scale proof."
+  ]
+}

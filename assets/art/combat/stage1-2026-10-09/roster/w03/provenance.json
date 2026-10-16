@@ -1,0 +1,69 @@
+{
+  "asset_id": "W03",
+  "subject": "Two-handed axe warrior",
+  "status": "local-generated; independent visual acceptance pending",
+  "generation": {
+    "tool": "built-in image_gen.imagegen",
+    "prompt": "Use case: stylized-concept\nAsset type: Warwrit W03 static full-body combat sprite, a single isolated transparent cutout.\nPrimary request: create one adult human warrior wielding a practical TWO-HANDED AXE with BOTH hands firmly wrapping the same long wooden haft. No shield. W03's role is a heavy close-range strike against a protected target.\nInput images: Image 1 (unit-c-ink.png) is the approved human anatomy, credible equipment proportions, ink-and-flat-wash style and linework reference. Preserve its grounded adult realism and readable rough silhouette, but replace sword and shield with the two-handed axe. Image 2 (staraya-melnitsa.png) is only the shared material, palette and upper-left lighting reference; do not draw any scene or building. Image 3 (battle-ux-v3.png) is the approved elevated three-quarter battlefield camera and scale/readability reference, not a UI or background target.\nSubject: one rugged adult man in a worn soot-umber quilted gambeson, leather belt, dark practical trousers and weathered boots; restrained exposed chainmail at collar optional. Credible proportions, no heroic bulging muscles. Both feet planted in a compact staggered combat stance. Head, torso and toes face screen UPPER-RIGHT. Both bent arms hold a long straight hardwood axe haft diagonally across the front of his body, hands clearly separated along its lower half; the axe head projects toward upper-right with a clear silhouette. Ordinary battle axe, one modest broad iron cutting blade with a blunt poll, securely mounted to the haft. Axe haft about shoulder-height in physical length, blade head physically plausible and clearly larger than a one-hand hatchet, no giant fantasy blade, no double-bladed axe. A calm ready pose before a heavy strike, not midair or wildly swinging.\nStyle/medium: serious grounded dark fantasy hand-painted 2D sprite; irregular dark ink contours, crisp internal hatching, flat wash and strong shadow masses; match approved fighter C. Matte weathered iron, rough cloth, worn leather and wood. Muted soot, slate, umber, ochre with very restrained rust.\nComposition/framing: fixed elevated three-quarter view matching battlefield reference; see top of head, shoulders and boots. Entire figure and all axe parts visible with ample margins. One figure centered on a square canvas. Human must read when body is only 80 pixels tall; prioritize compact silhouette, visible both-hand grip and recognizable axe. Full-body, grounded boots, no cropping.\nLighting/mood: upper-left light, restrained highlights and substantial dark shadows. Do not mirror reference lighting.\nScene/backdrop: true transparent alpha background, no ground or background of any kind.\nConstraints: exactly one warrior, exactly two arms, two hands, two legs and two feet. Both hands visibly grip the SAME axe haft. NO sword, NO shield, NO secondary weapon. No ground tile, pedestal, terrain patch, painted contact shadow, border, text, UI, heraldry, symbols, glow, magic, franchise imagery, glossy photorealism, cute rounded forms or clean pale materials. Preserve alpha in output.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+    ],
+    "transparent_background": true,
+    "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12152-f6ad-7402-ba59-42978e9aa61d/exec-cfed00e1-eb68-4b72-b475-3a7c820854ab.png",
+    "output_hint": "Generated images are saved to /Users/vovanostm/.codex/generated_images/01a12152-f6ad-7402-ba59-42978e9aa61d as /Users/vovanostm/.codex/generated_images/01a12152-f6ad-7402-ba59-42978e9aa61d/exec-cfed00e1-eb68-4b72-b475-3a7c820854ab.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "started_at": "2026-10-09T15:41:46.646Z",
+    "calls": 1
+  },
+  "reference_inspection": {
+    "personally_viewed": true,
+    "roles": [
+      "Human anatomy, pose, equipment proportions and ink rendering",
+      "Ruined mill materials, subdued palette and light",
+      "Approved battlefield direction and elevated three-quarter projection"
+    ]
+  },
+  "observations": [
+    "One adult human with exactly two visible arms, hands, legs and boots.",
+    "Both hands visibly grip the same long straight axe haft at separated positions; no shield or sword.",
+    "Practical single-bladed iron axe with a blunt poll and wrapped wood haft; blade silhouette projects upper-right.",
+    "Full figure and all equipment visible, feet planted in staggered stance; head and torso face screen upper-right.",
+    "Irregular ink contours, internal hatching, flat washes and strong shadow masses; weathered matte cloth, iron, wood and leather."
+  ],
+  "checks": {
+    "visual_inspection": "Completed using view_image",
+    "pillow_inspection": "NOT_RUN: installed python3 lacks PIL; use standard-library PNG inspection instead",
+    "png_dimensions_alpha": "PASS: RGBA with fully transparent background, complete subject bbox and positive margins"
+  },
+  "limitations": [
+    "Independent visual critic acceptance pending.",
+    "80px in-scene readability and grounding not yet measured; parent handles integration.",
+    "No animation, gameplay behavior, commit or publication.",
+    "Most nonzero alpha is nearly opaque (240-254), with edge translucency; inspect compositing in final battlefield before acceptance."
+  ],
+  "measurements": {
+    "format": "PNG",
+    "dimensions": [1254, 1254],
+    "mode": "RGBA",
+    "bit_depth": 8,
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 1144076,
+    "partially_transparent_pixels": 427984,
+    "opaque_pixels": 456,
+    "nonzero_alpha_bbox": [29, 19, 1224, 1236],
+    "nonzero_alpha_margin_pixels": {
+      "left": 29,
+      "top": 19,
+      "right": 30,
+      "bottom": 18
+    },
+    "alpha_checked_with": "Python standard library PNG decompression and row-filter decoding",
+    "alpha_distribution": {
+      "alpha_1_to_127": 18684,
+      "alpha_128_to_239": 6054,
+      "alpha_240_to_254": 403246,
+      "alpha_255": 456
+    }
+  }
+}

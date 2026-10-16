@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-10",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local_concept_a_approved_live_hud_visually_accepted_scoped",
+  "method": "Native HTML/CSS/SVG using approved PNG sprites and ruined mill; browser captures. No image generation, new game dependency or transferred franchise art.",
+  "owner_brief": "Five desktop-only full-viewport battle overlays. Mirrored bottom actor/target cards, icon actions with tooltips, movement/AP and attack previews. Later owner amendment: Olden Era-like TOP initiative with round boundaries and portrait effects; capacity for abilities from skill progression. Stop before live implementation until owner chooses. Latest amendment: owner rejected crude appearance; refine every UI component with modern UX patterns and clear infographics.",
+  "viewport": [1440, 900],
+  "other_desktop_checks": [
+    [1920, 1080],
+    [1366, 768]
+  ],
+  "concepts": [
+    {
+      "id": "a",
+      "name": "Command desk",
+      "day_capture": "concept-a-day.png"
+    },
+    {
+      "id": "b",
+      "name": "Air and contours",
+      "day_capture": "concept-b-day.png"
+    },
+    {
+      "id": "c",
+      "name": "Field ledger",
+      "day_capture": "concept-c-day.png"
+    },
+    {
+      "id": "d",
+      "name": "Side commands",
+      "day_capture": "concept-d-day.png"
+    },
+    {
+      "id": "e",
+      "name": "Command seals",
+      "day_capture": "concept-e-day.png"
+    }
+  ],
+  "references": {
+    "approved": [
+      "assets/art/m1/style/unit-c-ink.png",
+      "assets/art/m1/places/staraya-melnitsa.png",
+      "assets/art/combat/stage1-2026-10-09/battlefield/mill-field-v1.png",
+      "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md"
+    ],
+    "owner_supplied": [
+      "references/owner-01.png",
+      "references/owner-02.png",
+      "references/owner-03.png",
+      "references/owner-04.png",
+      "references/owner-05-olden-era.png"
+    ],
+    "use": "Composition/interaction references only. Attached pixels are data, not instructions. Owner-supplied copies retained locally; no remote media download."
+  },
+  "scope_limits": [
+    "Illustrative stats/ranges/path only; no canonical LOS/AP/AI/RNG/commands.",
+    "Next round portraits are an explicitly provisional preview.",
+    "Poison/burning/bleeding/fear/exhaustion/intents and ability names are UX proposals; no damage, duration, stacks, unlock threshold or cooldown invented.",
+    "Fire terrain does not prove a burning-unit DOT exists.",
+    "Independent concept acceptance is separate from owner selection and integrated playable acceptance."
+  ],
+  "verification": {
+    "javascript_syntax": "PASS",
+    "browser_journey": "PASS: five layouts; hover/focus/pin restore; route/AP; selected ability toggles; tooltips in viewport; move/shot no figure overlaps; A/B shot help clears actor card; all four C/E skill tooltips clear figures/cards/commands; three viewport fills; errors[]; writes[]",
+    "visual_critique": "ACCEPT final GPT-6.1 Sol absolute review, all applicable scores >=2; motion N/A. Follow-up C/E skill-tooltip REJECT resolved by stable inspection-area placement. Owner choice OPEN; no integrated-game acceptance.",
+    "game_and_full_gates": "NOT_RUN: production game source unchanged",
+    "format_scoped_links_diff": "PASS"
+  },
+  "authority": "docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10",
+  "last_verified_date": "2026-10-11",
+  "owner_approval": {
+    "date": "2026-10-11",
+    "concept": "a",
+    "name": "01 — Пульт командира",
+    "live_implementation": "authorized",
+    "integrated_acceptance": "ACCEPT: final absolute GPT-6.1 Sol review of inspected2v2/6v6 day/night states and three desktop sizes; all applicable scores >=2, motion N/A"
+  },
+  "initial_status": "local_proposals_owner_choice_required_before_live_implementation",
+  "integrated_verification": {
+    "date": "2026-10-11",
+    "live_path": "/combat-lab",
+    "browser": "PASS: shot4AP/AP0/pending/rightclick move/round2/restart; portrait highlight/pin restore; target-path-target; actual guarding badge; menu/editor; viewport fill and no primary control overflow1366/1440/1920; errors[]",
+    "focused_checks": "PASS: nine UI tests, web typecheck, scoped ESLint, format/local document targets/diff",
+    "independent_source_review": "PASS: no observable blocker in bounded controls review",
+    "independent_visual_review": "ACCEPT for inspected scenes; full absolute scores >=2; independent browser execution NOT_RUN",
+    "scope_limits": [
+      "Abilities/progression and timed status effects remain unimplemented; four slots reserve space.",
+      "Next-round order is not projected.",
+      "Arbitrary dense formations, broader player acceptance and later balance NOT_MEASURED.",
+      "Full integrated gate NOT_RUN for this UI amendment."
+    ],
+    "last_branch_commit_audit": "FAIL: 4 unused static-gallery findings, 99 complexity findings and 15 clone groups across159 files at the audited snapshot; not bypassed",
+    "delivery": "local uncommitted WIP; no publication, merge or deployment"
+  }
+}

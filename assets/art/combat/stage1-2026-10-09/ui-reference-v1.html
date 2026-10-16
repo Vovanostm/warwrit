@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Warwrit · референс интерфейса боя</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #121310;
+        color: #e6dcc6;
+        font:
+          15px/1.5 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 1520px;
+        margin: auto;
+        padding: 30px 32px;
+      }
+      header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+      .eyebrow {
+        color: #b59b6e;
+        text-transform: uppercase;
+        letter-spacing: 0.17em;
+        font-size: 11px;
+        margin: 0 0 8px;
+      }
+      h1 {
+        font:
+          38px/1.1 Georgia,
+          serif;
+        margin: 0;
+      }
+      .intro {
+        max-width: 570px;
+        color: #a9a391;
+        margin: 10px 0 0;
+      }
+      a {
+        color: #dcc28d;
+        text-underline-offset: 4px;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      button {
+        border: 1px solid #514d3e;
+        background: #1e211b;
+        color: #c8c1ae;
+        padding: 12px 18px;
+        cursor: pointer;
+        font: inherit;
+      }
+      button[aria-pressed='true'] {
+        color: #f0ddb3;
+        border-color: #c3a367;
+        background: #343022;
+      }
+      button:focus-visible {
+        outline: 2px solid #d8bc82;
+        outline-offset: 3px;
+      }
+      figure {
+        margin: 0;
+        border: 1px solid #514b3b;
+        background: #191713;
+        box-shadow: 0 12px 50px #0008;
+      }
+      figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      figcaption {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        border-top: 1px solid #514b3b;
+        padding: 13px 18px;
+        color: #b9b29f;
+        font-size: 13px;
+      }
+      .notes {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 28px;
+        padding: 27px 0 15px;
+      }
+      .notes article {
+        border-top: 1px solid #514b3b;
+        padding-top: 14px;
+      }
+      .number {
+        color: #b39159;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+      }
+      h2 {
+        font:
+          21px Georgia,
+          serif;
+        margin: 8px 0;
+      }
+      .notes p {
+        color: #a9a391;
+        font-size: 13px;
+        margin: 0;
+      }
+      footer {
+        display: flex;
+        gap: 28px;
+        color: #837f71;
+        border-top: 1px solid #38382e;
+        padding-top: 18px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">Warwrit / интерфейс боя / 10 октября 2026</p>
+          <h1>Поле, цели, действия</h1>
+          <p class="intro">
+            Референс на кадрах рабочего прототипа. Статичные фигуры, ясные границы выстрела и панель
+            приказов рядом с полем.
+            <a href="ui-fullscreen-concepts-v2/index.html"
+              >Пять полноэкранных концептов для выбора →</a
+            >
+            <a href="ui-concepts-2026-10-10/index.html">Предыдущие четыре варианта</a>
+          </p>
+        </div>
+        <nav aria-label="Варианты сцены">
+          <button type="button" data-scene="day" aria-pressed="true">Лучник · день</button>
+          <button type="button" data-scene="night" aria-pressed="false">Лучник · ночь</button>
+          <button type="button" data-scene="melee" aria-pressed="false">Ближний бой</button>
+          <button type="button" data-scene="mill" aria-pressed="false">Мельница · 6×6</button>
+        </nav>
+      </header>
+      <figure>
+        <img
+          id="scene"
+          src="ui-reference-day.png"
+          alt="Дневной бой: зона выстрела, доступные цели и панель действий"
+        />
+        <figcaption>
+          <span id="caption">Лучник: доступные клетки и противники выделены одновременно.</span
+          ><a href="/combat-lab">Открыть рабочий бой →</a>
+        </figcaption>
+      </figure>
+      <section class="notes" aria-label="Решения интерфейса">
+        <article>
+          <span class="number">01 / ДАЛЬНОСТЬ</span>
+          <h2>Видимая зона выстрела</h2>
+          <p>
+            Заливка и границы клеток читаются поверх земли. Зона отражает доступный сейчас выстрел,
+            включая препятствия и оставшиеся ресурсы.
+          </p>
+        </article>
+        <article>
+          <span class="number">02 / ВЫБОР ЦЕЛИ</span>
+          <h2>Все доступные противники</h2>
+          <p>
+            Контур и маркер у ног выделяют каждую законную цель. Наведение показывает прогноз.
+            Недоступный враг остаётся доступен для осмотра.
+          </p>
+        </article>
+        <article>
+          <span class="number">03 / ЧИТАЕМОСТЬ</span>
+          <h2>Фигура отделена от земли</h2>
+          <p>
+            Сдержанный контур, контактная тень и разные маркеры сторон сохраняют тушь и приглушённую
+            палитру. Без анимаций и яркого свечения.
+          </p>
+        </article>
+        <article>
+          <span class="number">04 / УПРАВЛЕНИЕ</span>
+          <h2>Приказы под рукой</h2>
+          <p>
+            Действующий боец, ОД, цена и доступность приказов находятся у нижнего края поля. Осмотр
+            другой фигуры не меняет того, кто ходит.
+          </p>
+        </article>
+      </section>
+      <footer>
+        <span>Утверждённые спрайты и фон разрушенной мельницы.</span
+        ><span
+          >Референс компоновки; изображения показывают локальные проверки, а не симулируют
+          бой.</span
+        >
+      </footer>
+    </main>
+    <script>
+      const descriptions = {
+        day: [
+          'Лучник: доступные клетки и противники выделены одновременно.',
+          'Дневной бой: зона выстрела, доступные цели и панель действий',
+        ],
+        night: [
+          'Ночной свет: та же иерархия клетки, цели и действующего бойца.',
+          'Ночной бой: читаемая зона выстрела и доступные цели',
+        ],
+        melee: [
+          'Ближний бой: выделены все противники, которых можно атаковать.',
+          'Ближний бой с подсветкой законных целей и панелью действий',
+        ],
+        mill: [
+          'Полный состав: два столбца и три разнесённых ряда сохраняют читаемость фигур.',
+          'Бой шесть на шесть у мельницы с разнесённой стартовой расстановкой',
+        ],
+      };
+      for (const button of document.querySelectorAll('[data-scene]')) {
+        button.addEventListener('click', () => {
+          const scene = button.dataset.scene;
+          document.querySelector('#scene').src = `ui-reference-${scene}.png`;
+          document.querySelector('#scene').alt = descriptions[scene][1];
+          document.querySelector('#caption').textContent = descriptions[scene][0];
+          for (const other of document.querySelectorAll('[data-scene]'))
+            other.setAttribute('aria-pressed', String(other === button));
+        });
+      }
+    </script>
+  </body>
+</html>

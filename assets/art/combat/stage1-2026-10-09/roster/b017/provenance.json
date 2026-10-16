@@ -1,0 +1,85 @@
+{
+  "asset_id": "B017",
+  "subject": "Grave beast / Могильный зверь",
+  "status": "local-generated; independent visual acceptance pending",
+  "source_contracts": [
+    "docs/wiki/bestiary/creatures/b017.md",
+    "docs/wiki/battlefield-test-maps.md",
+    "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md"
+  ],
+  "generation": {
+    "tool": "built-in image_gen.imagegen",
+    "prompt": "Use case: stylized-concept\nAsset type: Warwrit B017 Grave beast, one static full-body transparent combat sprite.\nPrimary request: draw a HAIRLESS, stooped, LIVING NONHUMAN scavenger carnivore with very long forelimbs. Its silhouette reads as a living animal evolved for scavenging, never an undead person, risen soldier or zombie.\nInput images: Image 1 unit-c-ink.png supplies approved irregular ink, hatching, flat wash and grounded anatomy discipline only. Image 2 staraya-melnitsa.png supplies subdued matte material palette and upper-left lighting only, no scene. Image 3 battle-ux-v3.png supplies fixed elevated three-quarter battlefield camera and small-scale silhouette readability only, no UI/background. Image 4 night-mill-beast-concept-v2.png supplies approved dark creature ink rendering, irregular contours and strong shadow masses ONLY: do not copy its fur, huge claws, glowing eye or anatomy. B017 is hairless and a separate creature.\nSubject: exactly one complete living beast. A heavy hunched shoulder line and curved stooped back, short crouched muscular hind legs, disproportionately long sinewy forelimbs reaching the ground. Four limbs total: two forelimbs and two hind legs. Sparse natural skin folds and leathery bare skin, no fur. A compact low-forward carnivore head with a powerful animal jaw, a subtle short muzzle, small dark non-glowing eyes, closed or slightly parted mouth and a few restrained natural teeth. Avoid a skull face or recognizably human dead man's face. Strong living muscle volumes beneath bare skin; no putrefaction, wounds, exposed bones, skeleton, corpse texture or human costume. Long low forelimbs terminate in sturdy splayed grasping paws with short natural claws, not oversized knives. Compact haunches, alert living-animal posture, slight asymmetric ready stance.\nStyle/medium: serious grounded dark fantasy hand-painted 2D sprite. Exact approved rough dark ink contours, crisp internal hatching, flat muted washes, substantial dark shadow masses. Matte weathered-looking bare skin in muted slate, soot and umber with restrained ochre highlights, no glossy photorealistic flesh and no pale pink smooth alien.\nComposition/framing: elevated three-quarter camera, looking down enough to see top of head, back, shoulders and paws. Entire animal facing screen UPPER-RIGHT; snout and gaze point diagonally up and right, hindquarters toward lower-left. All four limb endpoints grounded and visible without tangled or duplicated anatomy. Full figure with comfortable empty margins on every edge. Prioritize a clear hunched silhouette and long forelimbs at the battlefield's 80px human height, no extra occupied cells implied.\nLighting/mood: upper-left light, light-catching planes subdued, strong dark lower/right shadows, no mirrored baked light.\nScene/backdrop: true transparent alpha, no environment.\nConstraints: one creature only; four limbs total. No armor, clothing, weapon, bandage, burial cloth, jewelry, markings, religion, symbols, text, UI, frame, wings, horns, invented magic, glow or franchise copying. No corpse, prey or bones. No ground tile, pedestal, terrain patch or painted contact shadow. No cropping. Preserve transparent alpha.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+    ],
+    "transparent_background": true,
+    "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12152-f6ad-7402-ba59-42978e9aa61d/exec-6306a7bd-398e-4f1a-be31-d1f2a266a787.png",
+    "output_hint": "Generated images are saved to /Users/vovanostm/.codex/generated_images/01a12152-f6ad-7402-ba59-42978e9aa61d as /Users/vovanostm/.codex/generated_images/01a12152-f6ad-7402-ba59-42978e9aa61d/exec-6306a7bd-398e-4f1a-be31-d1f2a266a787.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "started_at": "2026-10-09T15:47:05.782Z",
+    "calls": 1
+  },
+  "reference_inspection": {
+    "personally_viewed": true,
+    "roles": [
+      "Approved human ink rendering and grounded anatomy discipline",
+      "Mill subdued materials palette and light",
+      "Battlefield elevated three-quarter projection and readability",
+      "B053v2 creature ink rendering and shadow masses only; B017 does not copy its fur or anatomy"
+    ]
+  },
+  "observations": [
+    "One complete hairless nonhuman living scavenger, with no visible undead anatomy.",
+    "Two long grounded forelimbs and two shorter hind legs, all four paws visible.",
+    "Heavy hunched shoulder/back line and animal head with a short muzzle and dark non-glowing eye.",
+    "Bare matte folded slate/umber skin with rough ink contours, hatching, flat washes and strong shadow masses.",
+    "No costume, armor, weapons, corpse, symbols, ground patch or painted shadow."
+  ],
+  "checks": {
+    "visual_inspection": "Completed using view_image; full creature and all limb endpoints visible",
+    "png_dimensions_alpha": "PASS: RGBA with fully transparent background pixels and complete visible subject; faint border alpha remains"
+  },
+  "limitations": [
+    "Independent visual critic acceptance pending.",
+    "In-scene size, 80px-relative readability, projection alignment and compositing not measured; parent owns integration.",
+    "Card remains a design proposal; this sprite does not approve new world presence or abilities.",
+    "No animation, gameplay behavior, commit or publication.",
+    "Nonzero-alpha bbox touches top/left/bottom through faint alpha artifacts; visible alpha>=128 subject retains positive margins. Preserve original output; parent should assess faint artifacts in compositing."
+  ],
+  "measurements": {
+    "format": "PNG",
+    "dimensions": [1254, 1254],
+    "mode": "RGBA",
+    "bit_depth": 8,
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 1036351,
+    "partially_transparent_pixels": 535175,
+    "opaque_pixels": 990,
+    "alpha_distribution": {
+      "alpha_1_to_127": 37569,
+      "alpha_128_to_239": 5821,
+      "alpha_240_to_254": 491785,
+      "alpha_255": 990
+    },
+    "nonzero_alpha_bbox": [0, 0, 1240, 1254],
+    "nonzero_alpha_margin_pixels": {
+      "left": 0,
+      "top": 0,
+      "right": 14,
+      "bottom": 0
+    },
+    "alpha_checked_with": "Python standard library PNG decompression and row-filter decoding",
+    "alpha_at_least_128_bbox": [73, 184, 1209, 1134],
+    "alpha_at_least_128_margin_pixels": {
+      "left": 73,
+      "top": 184,
+      "right": 45,
+      "bottom": 120
+    },
+    "canvas_border_alpha_max": 1,
+    "canvas_border_nonzero_pixels": 139
+  }
+}

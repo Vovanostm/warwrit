@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-09",
+  "id": "W01",
+  "owner_approved_basis": "assets/art/m1/style/unit-c-ink.png",
+  "status": "new-static-sprite-pending-independent-acceptance",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "references": [
+    {
+      "role": "approved-human-foundation",
+      "file": "assets/art/m1/style/unit-c-ink.png"
+    },
+    {
+      "role": "weathered-material-palette",
+      "file": "assets/art/m1/places/settlements-v2/staraya-melnitsa.png"
+    },
+    {
+      "role": "approved-overall-camera-direction",
+      "file": "assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+    }
+  ],
+  "owning_spec": "docs/wiki/battlefield-test-maps.md W01 row",
+  "source_file": "/Users/vovanostm/.codex/generated_images/01a1212c-6469-79f0-a50d-3406eb091500/exec-1001b1c8-577e-437f-bce9-8f72617fadde.png",
+  "prompt": "Use case: stylized-concept\nAsset type: W01, one transparent static full-body sword-and-shield combat warrior for Warwrit. Not animation, not sheet.\nInput roles: Image 1 unit-c-ink.png is the OWNER-APPROVED HUMAN FOUNDATION: preserve this man's adult anatomy, ordinary head size, posture, quilted coat, grounded boots, hand-grip, round shield and visible sword length/proportions. Image 2 staraya-melnitsa.png is material and subdued ink/flat-wash palette reference only. Image 3 battle-ux-v3.png is elevated three-quarter combat camera and battlefield readability reference only. Do not include any background, text or UI from reference images.\nPrimary request: Create the W01 static warrior based faithfully on fighter C from image 1, full body in a believable ready stance facing screen upper-right, fixed elevated three-quarter view and light from upper-left. Plain practical sword held in right hand downward-right, ordinary round wooden shield held in left hand. Padded quilted coat, trousers and leather boots, all worn but serviceable. No additional equipment. Sword should preserve C's visible blade length and thin natural blade width relative to forearm and figure: copy the image 1 proportions, do not exaggerate blade or shorten into a dagger.\nStyle: preserve image 1's irregular dark ink contours and internal hatching, flat muted soot/slate/umber/ochre wash, strong coherent shadow masses and matte weathered cloth/leather/wood/iron. Its small-scale strong silhouette must remain legible at 80px human height. No glossy or pristine iron; restrained edge highlights only. Ordinary credible adult anatomy, no chibi or giant head, no caricature, no painted miniature or 3D render. Original grounded serious dark fantasy without franchise copying, heraldry, invented insignia, magic or glow.\nComposition: single full-body uncropped figure with small transparent margins around hair, feet, sword point and shield; both boots on one implied ground plane. Background genuinely transparent, no ground patch, tile, pedestal, contact ellipse or painted shadow. No scenery, border, lettering or additional figure. Preserve natural hand grip and no duplicated fingers.\nThis is the approved fighter C foundation; prior generated W01 concepts are not supplied and must not influence it.",
+  "observations": [
+    "Adult full-body sword+round-shield warrior with quilted coat and leather boots.",
+    "Hair, footwear, sword point and shield are uncropped with transparent margins.",
+    "Down-right blade and visible grip follow fighter C; adult proportions and fixed upper-right face preserved visually.",
+    "Irregular dark ink, broad shadow masses and muted matte umber/slate flat wash.",
+    "Shield rim and blade retain strong light edge accents resembling approved fighter C."
+  ],
+  "checks": {
+    "dimensions": "1240x1269",
+    "alpha": "sips hasAlpha yes",
+    "visual_review": "author inspected generated image; independent acceptance pending",
+    "eighty_pixel_readability": "NOT_MEASURED",
+    "animation": "NOT_RUN outside authorized static scope"
+  },
+  "limitations": [
+    "Exact proportion equivalence to C not numerically measured.",
+    "Facing variants, animation and battlefield integrated readability not measured.",
+    "Source had light iron edges; generated sprite retains prominent iron accents for critic/owner inspection."
+  ]
+}

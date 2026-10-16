@@ -1,0 +1,122 @@
+{
+  "id": "W04",
+  "subject": "Копьё",
+  "created_date": "2026-10-09",
+  "status": "local; independent visual acceptance pending",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "source_spec": "docs/wiki/battlefield-test-maps.md W04 row",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "reference_roles": [
+    {
+      "path": "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "role": "approved human anatomy, practical proportions, ink rendering, flat wash and weathered clothing"
+    },
+    {
+      "path": "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "role": "supporting scene palette and material reference only"
+    },
+    {
+      "path": "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+      "role": "approved elevated tactical projection and overall dark fantasy direction"
+    }
+  ],
+  "calls": [
+    {
+      "purpose": "initial generation",
+      "arguments": {
+        "prompt": "Use case: stylized-concept.\nAsset type: Warwrit W04 static transparent full-body tactical combat sprite, one adult human spear warrior.\nInput image roles: Image 1 unit-c-ink.png is the approved human anatomy, practical proportions, ink linework, flat wash and weathered clothing foundation. Image 2 staraya-melnitsa.png is supporting palette/material reference only: subdued umber, soot and slate, weathered practical wood and iron; do not reproduce its environment. Image 3 battle-ux-v3.png defines the approved elevated three-quarter tactical projection and serious dark fantasy mood; do not reproduce its UI, other fighters, or background.\nPrimary request: Create ONE grounded adult spear warrior supporting the second line and holding an approach. Full head-to-toe figure facing screen UPPER-RIGHT, viewed from a fixed elevated three-quarter camera. Adult credible anatomy, alert practical stance, two boots firmly planted at the same implied ground plane, ordinary worn dark padded gambeson, dark trousers, leather boots and plain small weathered iron helmet. No shield. No sword. No symbols or heraldry.\nWeapon: ONE long straight practical wooden spear with a small plain leaf-shaped matte iron point. Both hands visibly and plausibly wrap the SAME shaft, grips separated naturally at waist/chest level. Long shaft projects diagonally from rear lower-left past the warrior toward screen upper-right, readable and controlled in both hands; full spear point AND full rear butt inside canvas with substantial transparent margin. Spear should read as at least roughly one-and-a-half adult heights, not a short javelin. Do not shorten spear just to fill figure framing. Enough canvas width for the entire spear; figure may occupy less width.\nStyle: match the first reference's irregular dark ink contours, internal hatching, flat matte washes, strong shadow masses and weathered believable materials. Muted soot/slate/umber/ochre, restrained rust, no glossy finish, no pristine pale armor, no vivid colors. Light from UPPER-LEFT, baked shadow side consistent with references. Serious grounded dark fantasy.\nFraming: isolated single full figure and full equipment, comfortably inside the canvas with clear margins on all sides; no cropping at all. Readable silhouette when human body is displayed 80 pixels tall. Transparent background with actual alpha. NO terrain, no ground patch, no tile, no pedestal, no painted or cast contact shadow, no smoke, no text, no borders, no extra figures. Keep independent transparent cutout edges. No fantasy ornament, magic, glow, franchise design, cute proportions, or toy style.",
+        "referenced_image_paths": [
+          "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+          "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+          "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+        ],
+        "transparent_background": true
+      },
+      "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-1f5f-7fc3-b628-9ff6f68c717d/exec-eaa46e20-b8fa-413c-8c51-98bb8baec1db.png",
+      "observed": {
+        "dimensions": [1254, 1254],
+        "mode": "RGBA",
+        "alpha_extrema": [0, 255],
+        "transparent_pixels": 1233454,
+        "subject_bbox": [0, 89, 1243, 1244],
+        "transparent_margins": {
+          "left": 0,
+          "top": 89,
+          "right": 11,
+          "bottom": 10
+        }
+      },
+      "result": "replaced after essential framing correction; alpha reached left edge and narrow right/bottom margin"
+    },
+    {
+      "purpose": "single essential framing correction",
+      "arguments": {
+        "prompt": "Use case: precise-object-edit. Edit this W04 spear warrior sprite only to correct the framing. Preserve the exact warrior, both-hand grip, continuous spear geometry, anatomy, elevated three-quarter projection, upper-right facing, upper-left light, palette and ink rendering. Do not redesign or retune the weapon or character. The current alpha content reaches the left canvas edge and gets too close to the right/bottom edges. Make the entire existing sprite uniformly about 82% as large inside a larger transparent square canvas, centered with at least 8% clear transparent padding on every side including the full spear butt, tip and both boots. Keep all original subject content; no crops. Actual transparent alpha background. No new shadow, no ground, no tile, no text, no extra objects.",
+        "referenced_image_paths": [
+          "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/w04/sprite.png"
+        ],
+        "transparent_background": true
+      },
+      "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-1f5f-7fc3-b628-9ff6f68c717d/exec-d29a54e3-f166-41d5-96e4-d417c2432d13.png",
+      "observed": {
+        "dimensions": [1254, 1254],
+        "mode": "RGBA",
+        "alpha_extrema": [0, 255],
+        "transparent_pixels": 1332752,
+        "total_pixels": 1572516,
+        "subject_bbox": [25, 61, 1200, 1182],
+        "transparent_margins": {
+          "left": 25,
+          "top": 61,
+          "right": 54,
+          "bottom": 72
+        }
+      },
+      "result": "selected final sprite.png"
+    }
+  ],
+  "output_path": "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/w04/sprite.png",
+  "visual_observations": [
+    "One full adult human with plain iron helmet, weathered padded gambeson, trousers and leather boots.",
+    "Facing screen upper-right with elevated three-quarter view and upper-left lighting.",
+    "One continuous long wooden spear with plain leaf-shaped iron point; both hands visibly wrap the same shaft.",
+    "Full spear butt and point, head and both boots remain inside the canvas.",
+    "Irregular dark contours, matte flat wash, ink hatching and muted umber/soot materials; no terrain, painted contact shadow, text or heraldry."
+  ],
+  "checks": [
+    {
+      "name": "personal reference viewing",
+      "status": "PASS"
+    },
+    {
+      "name": "initial PIL inspection",
+      "status": "FAILED",
+      "detail": "PIL was absent; no dependencies installed. Replaced inspection with standard-library PNG decoding."
+    },
+    {
+      "name": "PNG alpha and dimensions",
+      "status": "PASS",
+      "method": "Python standard-library PNG RGBA decoding and alpha scan; source pixels unchanged."
+    },
+    {
+      "name": "full figure / spear / hands visual inspection",
+      "status": "PASS",
+      "detail": "Viewed generated images; final shows full spear and credible separated grips."
+    },
+    {
+      "name": "80px integrated readability",
+      "status": "NOT_MEASURED"
+    },
+    {
+      "name": "independent visual critic",
+      "status": "NOT_RUN",
+      "detail": "Parent owns integrated critic acceptance."
+    }
+  ],
+  "limitations": [
+    "Final alpha bbox has clear but nonuniform margins; sparse partially transparent edge pixels extend beyond the visible silhouette.",
+    "Readability at supported 80px body height and integrated day/night scene remain unmeasured.",
+    "No claim of independent visual ACCEPT; no animation, gameplay integration, commit or publication performed."
+  ]
+}

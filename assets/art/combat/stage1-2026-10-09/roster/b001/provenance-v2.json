@@ -1,0 +1,39 @@
+{
+  "subject_id": "B001",
+  "subject": "Wolf",
+  "date": "2026-10-09",
+  "status": "REJECTED extraction candidate; exterior haze persists",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "technique": "one precise background-extraction edit of existing sprite.png only",
+  "prompt": "Use case: background-extraction.\nThe attached image is an EDIT TARGET, not a style reference. Perform precise background removal only. Preserve this exact wolf illustration and its exact pixels, anatomy, pose, head, facial expression, four legs, tail, fur texture, ink hatching, colors, size, position and lighting.\nRemove the entire soft brown-gray haze surrounding the wolf, including haze between the legs and beneath paws and tail. That haze is unwanted background, not fur and not part of the animal. Remove all colored background and cast-shadow pixels outside the actual sharp wolf silhouette.\nReturn the SAME wolf isolated on a genuinely transparent RGBA canvas: alpha=0 outside the animal silhouette including all leg gaps. No halo, glow, mist, backdrop, ground or contact shadow. Restore solid opacity inside the wolf; use partial alpha only for fine fur and antialiased silhouette edges.\nDo not redraw, regenerate, rotate, mirror, crop, reposition, alter anatomy or change the wolf at all. Maintain full original canvas and full uncropped animal. Only remove exterior background/haze.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b001/sprite.png"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12154-5d93-7cb0-8cab-46d06725206b/exec-1f833820-63c0-4e00-9cde-8c483e03bedf.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b001/sprite-v2.png",
+  "observed": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "alpha_zero_pixels": 1091038,
+    "alpha_255_pixels": 0,
+    "bbox_alpha_gt0": [0, 45, 1449, 1024],
+    "bbox_alpha_gt127": [210, 48, 1445, 960],
+    "corner_alpha": [0, 0, 0, 0]
+  },
+  "checks": [
+    "Viewed edit target before tool call.",
+    "Inspected returned image visually; brown haze visibly persists around and below wolf.",
+    "Read-only Pillow alpha inspection; no image processing or dependency installation.",
+    "Previous sprite.png and provenance.json preserved."
+  ],
+  "limitations": [
+    "Tool did not isolate the wolf; clean alpha requirement remains failed.",
+    "Wolf fur appears brighter and muzzle/leg silhouette slightly changed despite exact preservation prompt; pixel preservation not established.",
+    "No additional call made under the one-call authorization.",
+    "No shared writes, gallery changes, commit or publication."
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "id": "B023",
+  "title": "Gallows shadow — tethered creature rendering",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; pending independent visual acceptance",
+  "owner_source": "docs/wiki/bestiary/creatures/b023.md",
+  "specification": "docs/wiki/battlefield-test-maps.md B023 row",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "tool_arguments": {
+    "prompt": "Use case: stylized-concept\nAsset type: Warwrit B023 static transparent combat roster sprite, a benign nonhuman tethered fantasy creature.\nInput images: Image 1 unit-c-ink.png defines hand-drawn irregular ink, flat washes and upper-left lighting. Image 2 staraya-melnitsa.png defines rough weathered wood, coarse cord and muted palette only, no scene. Image 3 battle-ux-v3.png defines elevated three-quarter projection and small sprite readability. Image 4 night-mill-beast-concept-v2.png defines dark creature ink masses only, not its bear anatomy or eyes.\nSubject: a thin, nonhuman fibre silhouette physically tethered by a taut ordinary coarse hemp cord around its waist/torso to a compact rough upright timber behind it. The creature STANDS on two narrow feet on the same level as the timber base. Show one narrow angular head with no facial detail, two slender bent arms and two complete slender legs; its structure consists of dense dark fibres like knotted weathered plant fibre, with credible connected joints. It leans a little forward toward screen upper-right, torso rotated upper-right, while the cord remains taut. The cord is visibly tied around its waist and tied firmly around the support, with the entire continuous rope path in view. Small simple rough timber support, full height and base within frame, no ground or scenery backdrop.\nSafety and content constraints: no cord near the neck; no hanging loop; no suspended body; no corpse, skeleton, injury, violence, distressed person or execution scene. Entirely nonhuman standing creature with ordinary waist tether. No magic, smoke, glow, glowing eyes, symbols, weapons, ornaments or religious iconography.\nStyle: serious grounded fantasy, irregular dark ink outlines, internal hatching, matte flat washes and strong dark masses. Muted soot/slate/umber/ochre, subdued weathered timber and hemp, matching the references. Visible thin silhouette distinct from the wood. Fixed elevated three-quarter view, upper surfaces slightly visible, facing screen upper-right, light from upper-left.\nFrame: one isolated complete creature, complete timber and all cord with comfortable transparent margins. True alpha transparency. No ground tile, terrain patch, painted contact shadow, pedestal, text, border, background, extra character or photorealistic/glossy rendering. Clear silhouette for human-equivalent 80px combat display.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+    ],
+    "transparent_background": true
+  },
+  "inspected_references": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-655b-7241-b169-e5b224e121de/exec-29f43165-226f-4073-a064-955b94fe6b20.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b023/sprite.png",
+  "generation_calls": 2,
+  "attempts": [
+    {
+      "tool_arguments": {
+        "prompt": "Use case: stylized-concept\nAsset type: Warwrit B023 Gallows shadow static isolated combat sprite with its essential physical rope and wood support, real alpha transparency.\nInput images: Image 1 unit-c-ink.png establishes irregular ink outlines, matte flat washes, credible proportion and upper-left lighting. Image 2 staraya-melnitsa.png supplies weathered wood/rope material character and subdued palette only. Image 3 battle-ux-v3.png establishes elevated three-quarter camera and small sprite readability. Image 4 night-mill-beast-concept-v2.png supplies dark creature tonal masses and ink hatching only, NOT its bear anatomy or eyes.\nSource subject: B023 is a THIN silhouette repeating the TENSION OF A REAL ROPE; it remains physically attached to an actual support with an old noose. It must not look like a freely floating ghost. No biography, execution victim, faction, culprit, religious symbol or additional supernatural power is specified.\nComposition and anatomy: one slender dark humanoid-like fibrous silhouette, with a small featureless narrow profile, two thin tension-stretched arms reaching slightly forward and two narrow lower limbs. It strains toward screen upper-right, but a clearly visible continuous taut coarse hemp rope physically connects its upper torso/noose to a compact old bare weathered wood support immediately behind it. Use a single short upright gnarled tree-trunk support with one sturdy lateral fork/branch; show the rope wrapped and knotted around this actual branch, the entire rope path, and a plainly visible old hanging loop continuous with the figure's upper body. The shadow's narrow fibrous form follows this taut rope line rather than billowing into a robe. Rope, loop, attachment and full simple support all inside the canvas. The essential wood support is part of this isolated asset, not a scenery backdrop. Bottom of support and lower limbs have a common level with no painted ground.\nStyle and palette: severe grounded dark fantasy, strong soot-black silhouette masses, irregular dark ink contours, internal hatching, restrained slate/umber/ochre flat washes, frayed hemp fibres and rough weathered timber. Match the supplied art's matte non-glossy rendering. Enough muted edge contrast to distinguish the slender form from the wood. No translucent glowing spectral smoke or magical effect. No readable face, skull, bones, corpse costume, hood, weapons, armour, symbols or ornaments.\nCamera: fixed elevated three-quarter battlefield view, slightly visible top surfaces, figure profile and pose facing screen upper-right, lit from upper-left. No mirrored lighting.\nFraming: full subject, entire wood support and continuous rope/loop with comfortable alpha margins. Isolated on actual transparent background. Readable at a human-equivalent 80 px sprite height; avoid wispy unstructured details. No ground tile, terrain patch, grass, scenery, pedestal, painted shadow, text, border, extra figure, aura, glowing eyes or franchise copying.",
+        "referenced_image_paths": [
+          "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+          "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+          "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+          "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+        ],
+        "transparent_background": true
+      },
+      "status": "FAILED; no image returned",
+      "error": {
+        "code": "moderation_blocked",
+        "stage": "output",
+        "categories": ["self-harm", "violence"],
+        "request_id": "d4b1e56f-7ed7-418d-9d88-db211958edae",
+        "message": "Your request was rejected by the safety system."
+      }
+    },
+    {
+      "tool_arguments": {
+        "prompt": "Use case: stylized-concept\nAsset type: Warwrit B023 static transparent combat roster sprite, a benign nonhuman tethered fantasy creature.\nInput images: Image 1 unit-c-ink.png defines hand-drawn irregular ink, flat washes and upper-left lighting. Image 2 staraya-melnitsa.png defines rough weathered wood, coarse cord and muted palette only, no scene. Image 3 battle-ux-v3.png defines elevated three-quarter projection and small sprite readability. Image 4 night-mill-beast-concept-v2.png defines dark creature ink masses only, not its bear anatomy or eyes.\nSubject: a thin, nonhuman fibre silhouette physically tethered by a taut ordinary coarse hemp cord around its waist/torso to a compact rough upright timber behind it. The creature STANDS on two narrow feet on the same level as the timber base. Show one narrow angular head with no facial detail, two slender bent arms and two complete slender legs; its structure consists of dense dark fibres like knotted weathered plant fibre, with credible connected joints. It leans a little forward toward screen upper-right, torso rotated upper-right, while the cord remains taut. The cord is visibly tied around its waist and tied firmly around the support, with the entire continuous rope path in view. Small simple rough timber support, full height and base within frame, no ground or scenery backdrop.\nSafety and content constraints: no cord near the neck; no hanging loop; no suspended body; no corpse, skeleton, injury, violence, distressed person or execution scene. Entirely nonhuman standing creature with ordinary waist tether. No magic, smoke, glow, glowing eyes, symbols, weapons, ornaments or religious iconography.\nStyle: serious grounded fantasy, irregular dark ink outlines, internal hatching, matte flat washes and strong dark masses. Muted soot/slate/umber/ochre, subdued weathered timber and hemp, matching the references. Visible thin silhouette distinct from the wood. Fixed elevated three-quarter view, upper surfaces slightly visible, facing screen upper-right, light from upper-left.\nFrame: one isolated complete creature, complete timber and all cord with comfortable transparent margins. True alpha transparency. No ground tile, terrain patch, painted contact shadow, pedestal, text, border, background, extra character or photorealistic/glossy rendering. Clear silhouette for human-equivalent 80px combat display.",
+        "referenced_image_paths": [
+          "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+          "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+          "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+          "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+        ],
+        "transparent_background": true
+      },
+      "status": "SUCCESS; saved raw output without editing",
+      "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-655b-7241-b169-e5b224e121de/exec-29f43165-226f-4073-a064-955b94fe6b20.png"
+    }
+  ],
+  "parent_revision_instruction": "Proceed with ONE revised benign fantasy creature prompt: thin nonhuman fibre silhouette visibly attached by taut cord at waist/torso to rough timber, standing on feet, no loop around neck, no body suspended, no corpse, no injury and no execution scene. Omit empty hanging loop too. This shows a tethered creature; exact dangerous area belongs to runtime. Record moderation failure and missing source-loop depiction as limitation, do not alter canonical card.",
+  "observed_image": {
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "bit_depth": 8,
+    "color_type": 6,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 1089239,
+    "opaque_pixels": 856,
+    "partial_alpha_pixels": 482421,
+    "canvas_corners_alpha": [0, 0, 0, 0],
+    "subject_bbox_alpha_gt_zero_inclusive": [0, 9, 1237, 1253],
+    "subject_bbox_alpha_ge_128_inclusive": [64, 78, 1189, 1177],
+    "common_alpha_values": [
+      [0, 1089239],
+      [252, 214497],
+      [253, 113298],
+      [251, 33534],
+      [1, 30588],
+      [250, 11632],
+      [2, 7332],
+      [249, 6860]
+    ]
+  },
+  "observations": [
+    "One nonhuman slender fibre/wood-like figure with complete narrow head, two arms, two legs and visible feet.",
+    "Continuous taut coarse cord runs from visible knot and several wraps around an upright timber to several wraps at the creature's waist.",
+    "Complete support including wood braces and support base is visible; no terrain patch or painted contact shadow.",
+    "Figure strains toward screen right/upper-right in elevated three-quarter rendering; upper-left light and dark irregular ink masses follow references.",
+    "No rope around neck, suspended body, loop, corpse, injury, weapons, symbols, smoke, glow or extra figure.",
+    "Figure and support are visually inside comfortable margins; low-alpha residue reaches canvas edges but the alpha>=128 silhouette does not touch edges."
+  ],
+  "checks": [
+    {
+      "name": "Full B023 card and current spec row read",
+      "result": "PASS"
+    },
+    {
+      "name": "All four reference images personally inspected",
+      "result": "PASS"
+    },
+    {
+      "name": "Returned image inspection: anatomy, full attachment, rope continuity, support and margins",
+      "result": "PASS; author observation only"
+    },
+    {
+      "name": "PNG dimensions and alpha decoded with Python standard library, image unmodified",
+      "result": "PASS"
+    },
+    {
+      "name": "JSON syntax readback",
+      "result": "PASS"
+    },
+    {
+      "name": "80 px integrated day/night readability",
+      "result": "NOT_RUN"
+    },
+    {
+      "name": "Independent scored visual critic",
+      "result": "NOT_RUN; parent owns acceptance"
+    }
+  ],
+  "limitations": [
+    "First generation failed with output moderation_blocked self-harm/violence. Parent approved one benign revised-content retry; no policy bypass or CLI fallback used.",
+    "The source's actual old noose/loop is NOT DEPICTED. This benign tethered creature is a derivative art rendering, not full confirmation of the source dangerous area, entity abilities or canonical presence; canonical card unchanged.",
+    "The fibrous figure has a substantial material appearance closer to knotted plant fibres than an unstructured shadow; critic must assess source/style fidelity.",
+    "Whole asset is wider than a standalone human because it includes the physical support and cord; 80 px and occupancy integration remains unverified.",
+    "Core subject alpha is mostly 252/253, with faint residue reaching two canvas edges. No alpha postprocessing was performed.",
+    "Static asset only; no animation, runtime integration, dependencies, commit or publication."
+  ],
+  "documentation_handoff": "Parent owns CHANGELOG/CURRENT_PLAN/wiki updates. Record raw B023 sprite as local pending critique, with missing source loop and moderation revision. W06 preserved; only b023 directory edited in this task."
+}

@@ -1,0 +1,57 @@
+{
+  "id": "roster-b053",
+  "name": "Night mill beast",
+  "date": "2026-10-09",
+  "status": "local static sprite; owner approved dark B053 concept style; independent roster acceptance pending",
+  "tool": "image_gen built-in",
+  "model": "underlying model identifier not exposed",
+  "call_count": 2,
+  "transparent_background": true,
+  "prompt": "Use case: identity-preserve / stylized-concept.\nAsset type: ONE static transparent full-body Warwrit B053 Night mill beast battle sprite, not an animation or sheet.\nInput roles: Image 1 unit-c-ink is approved hand-ink/flat-wash rendering and game-scale reference; Image 2 ruined staraya-melnitsa is world materials/light/palette reference only; Image 3 battle-ux-v3 is approved fixed elevated three-quarter battlefield projection/readability reference only; Image 4 night-mill-beast-concept-v2 is the OWNER APPROVED dark fur style and beast anatomy reference; Image 5 production unit-mill-beast is anatomy and species silhouette authority.\nSubject: preserve the SAME B053 beast as image 4/5: massive hunched shaggy body, small low-set blunt head sunk into huge sloping shoulders, very long heavy clawed forelimbs, sturdy bent hind legs, exact four-limbed anatomy and coarse angular fur silhouette. Do not change species or add anatomy. Dominant dark charcoal/peat shag, sparse muted brown/taupe broken fur accents, irregular tangled internal black ink hatching, strong black shadow masses. No large cream triangular wedges or repetitive bright chevrons. Claws dull worn grey horn, not ivory white. Existing tiny pale eyes only, matte pale flecks with NO emissive eye glow or aura.\nIMPORTANT ORIENTATION: pose the complete beast to face SCREEN UPPER-RIGHT (northeast), its head/gaze/chest and foreclaws directed diagonally toward upper-right of canvas, not left, not lower-right. Rotate/re-draw anatomy consistently into this direction; do not mirror any baked light. Fixed elevated three-quarter camera like Image3; readable crown, shoulder tops and back. Heavy grounded idle crouch, not leaping or attacking. Preserve characteristic hunched front-heavy silhouette even with the new direction.\nLighting: same restrained upper-left baked light across all body parts, credible matte surfaces. No dramatic rim light or new lighting treatment.\nComposition: exactly ONE complete isolated full-body creature; all feet, claws, head and back uncropped with clear padding on every side, stable grounded paws near lower center. Intended larger than human but silhouette must read at a human comparison height of80px. No additional subjects, equipment, symbols, powers or invented lore.\nOutput/background: genuinely transparent alpha, crisp opaque ink edges. NO scenery, terrain patch, floor, cast/contact shadow, hex tile, pedestal, base, text, watermark, border, UI, collage or sprite sheet. Hand-ink and earthy flat wash, not 3D, photoreal fur, airbrush, glossy surfaces or cute proportions. No horns, antlers, wings, tail, armor, weapon or extra limbs.",
+  "references": [
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png",
+    "assets/art/m1/battle/unit-mill-beast.png"
+  ],
+  "initial_returned_source_path": "/Users/vovanostm/.codex/generated_images/01a1212d-1014-7031-8982-cd76b40cf7c0/exec-45005271-a6b0-4766-9c4b-e186c64f4618.png",
+  "correction_prompt": "Use case: precise-object-edit / identity-preserve.\nImage1 is the B053 roster sprite to correct. Image2 is approved dark B053 style reference.\nEssential correction ONLY: the sprite currently directs its muzzle down-right. Redraw the SAME beast's viewing orientation so the head, nose, gaze and overall stance aim DIAGONALLY UP-RIGHT, toward the TWO O'CLOCK direction on the screen (northeast). The nose needs to point clearly higher-right of its eye, not lower-right. Keep the small blunt head settled in the massive shoulders but angle the head slightly up toward2o'clock; rotate the stance consistently to match. Show its four grounded limbs from the same fixed elevated three-quarter camera. Preserve existing anatomy, species proportions, heavy hunched idle stance, full-body size and dark ink/fur values. Do not mirror the image; upper-left light must remain upper-left.\nKeep entire beast with every claw/paw visible and at least small padding all round; retain dark charcoal/peat dominant mass, irregular interior ink hatching, sparse muted taupe highlights, dull grey horn claws. Tiny existing pale eye has no emissive glow or aura. Do not brighten fur into cream wedges. No added horns, tail, limbs, extra eyes, weapons, armor, magic, symbols or powers.\nExactly one full-body transparent static sprite, transparent_background true. No floor, shadows, scenery, terrain patch, hex tile, pedestal, text, sheet or border. Output is a direction correction, not a species redesign or animation.",
+  "correction_references": [
+    "/Users/vovanostm/.codex/generated_images/01a1212d-1014-7031-8982-cd76b40cf7c0/exec-45005271-a6b0-4766-9c4b-e186c64f4618.png",
+    "assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a1212d-1014-7031-8982-cd76b40cf7c0/exec-2abbe209-5d97-4d6e-83e3-8bf69b858b85.png",
+  "output": "assets/art/combat/stage1-2026-10-09/roster/b053/sprite.png",
+  "sources": [
+    "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+    "docs/wiki/bestiary/creatures/b053.md"
+  ],
+  "observed_dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "observed_alpha": "sips hasAlpha: yes",
+  "observations": [
+    "Complete four-limbed beast and every claw/paw visible with margin; no background furniture or painted floor shadow.",
+    "Massive hunched dark shaggy body, low small blunt head, oversized long forelimbs and sturdy bent hind legs retained; no added anatomy.",
+    "One essential direction correction raised nose/gaze toward upper-right; no pixel mirroring.",
+    "Dark soot/peat mass, layered interior ink hatching, muted taupe fur strokes and desaturated grey horn claws.",
+    "Small existing pale eye remains a bright fleck; no surrounding glow or new power depicted."
+  ],
+  "checks": {
+    "reference_inspection": "PASS: personally viewed all five shared references",
+    "source_reading": "PASS: full roster brief and B053 card read",
+    "output_visual_inspection": "PASS: inspected both initial and final returned PNGs",
+    "png_metadata": "PASS: sips 1254x1254 hasAlpha yes",
+    "game_scale_readability": "NOT_MEASURED",
+    "independent_visual_acceptance": "NOT_RUN by artist"
+  },
+  "limits": [
+    "One static facing/pose only; no animation or directional atlas.",
+    "Fur highlights remain visibly layered; compare at actual game scale with approved v2 during critic pass.",
+    "New angle raises the head slightly relative to source; species anatomy visually retained, no pixel-identical claim.",
+    "Existing B053 review-draft gameplay profile unchanged; no new abilities or lore.",
+    "No integration, shared-file writes, commits or publication by artist."
+  ]
+}

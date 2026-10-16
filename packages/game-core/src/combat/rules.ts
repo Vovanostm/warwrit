@@ -1,6 +1,19 @@
 import { assertNever, compareCodeUnits, invariant } from '../primitives.js';
+import { hexDistance } from './hex.js';
 import { M1_DOMAIN_BRIDGE_RULESET_ID, M1_DOMAIN_BRIDGE_V2_RULESET_ID } from './setup-v2.js';
-import { M0_COMBAT_RULESET_ID, type CombatRulesetId, type UnitId, type WeaponId } from './types.js';
+import {
+  M0_COMBAT_RULESET_ID,
+  SPRITE_PROTOTYPE_RULESET_ID,
+  SPRITE_PROTOTYPE_V2_RULESET_ID,
+  SPRITE_PROTOTYPE_V3_RULESET_ID,
+  type CombatRulesetId,
+  type UnitId,
+  type CombatUnitState,
+  type BattleState,
+  type WeaponId,
+} from './types.js';
+
+export const SPRITE_PROTOTYPE_FIRE_DAMAGE = 5;
 
 export interface WeaponProfile {
   readonly id: WeaponId;
@@ -196,14 +209,74 @@ export const COMBAT_RULES_V1: CombatRules & { readonly id: typeof M0_COMBAT_RULE
   ],
 };
 
+export const SPRITE_PROTOTYPE_RULES: CombatRules & {
+  readonly id: typeof SPRITE_PROTOTYPE_RULESET_ID;
+} = {
+  ...COMBAT_RULES_V1,
+  id: SPRITE_PROTOTYPE_RULESET_ID,
+  units: { minimum: 2, maximum: 12 },
+};
+
+export const SPRITE_PROTOTYPE_V2_RULES: CombatRules = {
+  ...SPRITE_PROTOTYPE_RULES,
+  id: SPRITE_PROTOTYPE_V2_RULESET_ID,
+  recovery: { staminaPerActivation: 10 },
+};
+
+export const SPRITE_PROTOTYPE_V3_RULES: CombatRules = {
+  ...SPRITE_PROTOTYPE_V2_RULES,
+  id: SPRITE_PROTOTYPE_V3_RULESET_ID,
+};
+
+export function isSpriteS4Ruleset(id: CombatRulesetId): boolean {
+  return id === SPRITE_PROTOTYPE_V2_RULESET_ID || id === SPRITE_PROTOTYPE_V3_RULESET_ID;
+}
+
+export function isSpritePrototypeRuleset(id: CombatRulesetId): boolean {
+  return id === SPRITE_PROTOTYPE_RULESET_ID || isSpriteS4Ruleset(id);
+}
+
+export function isCombatPanicked(state: BattleState, unit: CombatUnitState): boolean {
+  return (
+    isSpriteS4Ruleset(state.rulesetId) &&
+    unit.status === 'active' &&
+    (unit.moralePolicy === 'human' || unit.moralePolicy === 'beast') &&
+    unit.morale <= 20
+  );
+}
+
+export function combatGuardedDamage(
+  rawDamage: number,
+  target: CombatUnitState,
+  rules: CombatRules,
+): number {
+  return isSpriteS4Ruleset(rules.id) && target.guarding
+    ? Math.max(
+        1,
+        Math.floor(
+          (rawDamage *
+            (rules.id === SPRITE_PROTOTYPE_V3_RULESET_ID && target.shieldBraceRank
+              ? 65 - target.shieldBraceRank * 5
+              : 75)) /
+            100,
+        ),
+      )
+    : rawDamage;
+}
+
 export function combatRules(rulesetId: CombatRulesetId): CombatRules {
   invariant(
     rulesetId === COMBAT_RULES_V1.id ||
+      rulesetId === SPRITE_PROTOTYPE_RULES.id ||
+      rulesetId === SPRITE_PROTOTYPE_V2_RULESET_ID ||
+      rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID ||
       rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID ||
       rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID,
     `Unknown combat ruleset: ${rulesetId}`,
   );
-  return COMBAT_RULES_V1;
+  if (rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID) return SPRITE_PROTOTYPE_V3_RULES;
+  if (rulesetId === SPRITE_PROTOTYPE_V2_RULESET_ID) return SPRITE_PROTOTYPE_V2_RULES;
+  return rulesetId === SPRITE_PROTOTYPE_RULES.id ? SPRITE_PROTOTYPE_RULES : COMBAT_RULES_V1;
 }
 
 export function compareCombatUnitIds(
@@ -218,6 +291,9 @@ export function compareCombatUnitIds(
       // ast-grep-ignore: implicit-locale-compare — preserve their recorded ordering.
       return left.localeCompare(right);
     case M1_DOMAIN_BRIDGE_V2_RULESET_ID:
+    case SPRITE_PROTOTYPE_RULESET_ID:
+    case SPRITE_PROTOTYPE_V2_RULESET_ID:
+    case SPRITE_PROTOTYPE_V3_RULESET_ID:
       return compareCodeUnits(left, right);
     default:
       return assertNever(rulesetId);
@@ -228,4 +304,78 @@ export function weaponProfile(rules: CombatRules, weaponId: WeaponId): WeaponPro
   const weapon = rules.weapons.find(({ id }) => id === weaponId);
   invariant(weapon !== undefined, `Unknown weapon profile: ${weaponId}`);
   return weapon;
+}
+
+/** On-hit damage before current health caps; shared by execution and previews. */
+export function combatAttackDamage(
+  rawDamage: number,
+  targetArmor: number,
+  weapon: WeaponProfile,
+): {
+  readonly armorAbsorbed: number;
+  readonly healthDamage: number;
+  readonly armorDamage: number;
+} {
+  const penetratingDamage = Math.floor((rawDamage * weapon.armorPenetrationPercent) / 100);
+  const blockableDamage = rawDamage - penetratingDamage;
+  const armorAbsorbed = Math.min(targetArmor, blockableDamage);
+  const healthDamage = penetratingDamage + (blockableDamage - armorAbsorbed);
+  const armorDamage = Math.min(
+    targetArmor,
+    Math.max(armorAbsorbed, Math.ceil((rawDamage * weapon.armorDamagePercent) / 100)),
+  );
+  return { armorAbsorbed, healthDamage, armorDamage };
+}
+
+export function combatHitChance(
+  actor: CombatUnitState,
+  target: CombatUnitState,
+  rules: CombatRules,
+): number {
+  if (isSpritePrototypeRuleset(rules.id)) {
+    if (target.incorporeal === true) return 0;
+    if (
+      actor.trainedMelee === true &&
+      actor.weaponId !== 'bow' &&
+      hexDistance(actor.position, target.position) === 1
+    ) {
+      return 100;
+    }
+  }
+  const woundPenalty = (unit: CombatUnitState) =>
+    unit.wounds.reduce(
+      (total, wound) =>
+        total +
+        (wound.severity === 'severe'
+          ? rules.initiative.severeWoundPenalty
+          : rules.initiative.minorWoundPenalty),
+      0,
+    );
+  const lowStamina =
+    actor.stamina * 100 <= actor.attributes.stamina * rules.hit.lowStaminaThresholdPercent;
+  const shaken = actor.morale <= rules.hit.shakenMoraleThreshold;
+  const actorAccuracy = Math.max(
+    0,
+    actor.attributes.accuracy -
+      woundPenalty(actor) -
+      (lowStamina ? rules.hit.lowStaminaPenalty : 0) -
+      (shaken ? rules.hit.shakenPenalty : 0),
+  );
+  const targetShaken = target.morale <= rules.hit.shakenMoraleThreshold;
+  const targetDefense = Math.max(
+    0,
+    target.attributes.defense +
+      weaponProfile(rules, target.weaponId).defenseModifier +
+      (target.guarding ? rules.defend.defenseBonus : 0) -
+      woundPenalty(target) -
+      (targetShaken ? rules.hit.shakenPenalty : 0),
+  );
+  const weapon = weaponProfile(rules, actor.weaponId);
+  return Math.min(
+    rules.hit.maximumChance,
+    Math.max(
+      rules.hit.minimumChance,
+      rules.hit.baseChance + actorAccuracy + weapon.accuracyModifier - targetDefense,
+    ),
+  );
 }

@@ -15,6 +15,21 @@ const rejectionCodes = new Set([
   'LIMIT_REACHED',
 ]);
 
+export function combatSkillReasonText(reason: string | undefined): string {
+  const reasons: Readonly<Record<string, string>> = {
+    BATTLE_TERMINAL: 'Бой завершён.',
+    NOT_ACTIVE_UNIT: 'Сейчас ходит другой боец.',
+    PANICKED: 'Боец в панике.',
+    SKILL_NOT_AVAILABLE: 'Приём недоступен с этим снаряжением или уже применён.',
+    INVALID_TARGET: 'Приём нельзя применить к этой цели.',
+    OUT_OF_RANGE: 'Цель вне дальности приёма.',
+    BLOCKED_LINE_OF_SIGHT: 'Линия до цели перекрыта.',
+    INSUFFICIENT_ACTION_POINTS: 'Не хватает очков действий.',
+    INSUFFICIENT_STAMINA: 'Не хватает сил.',
+  };
+  return reason ? (reasons[reason] ?? reason) : 'Нет допустимой цели.';
+}
+
 export type CombatLabActionReplyOutcome =
   | { readonly status: 'accepted' }
   | { readonly status: 'rejected'; readonly code: string }
@@ -77,26 +92,4 @@ export function latestCombatLabView(
     return incoming;
   }
   return current;
-}
-
-export function isCombatLabView(value: unknown): value is CombatLabView {
-  if (value === null || typeof value !== 'object') return false;
-  const view = value as Partial<CombatLabView>;
-  return (
-    view.version === COMBAT_LAB_VERSION &&
-    typeof view.sessionId === 'string' &&
-    typeof view.battleId === 'string' &&
-    typeof view.scenarioId === 'string' &&
-    typeof view.controlledSideId === 'string' &&
-    Number.isSafeInteger(view.viewRevision) &&
-    (view.status === 'active' || view.status === 'resolved') &&
-    Array.isArray(view.units) &&
-    Array.isArray(view.initiativeOrder) &&
-    Array.isArray(view.events) &&
-    view.map !== undefined &&
-    view.map !== null &&
-    typeof view.map === 'object' &&
-    Array.isArray(view.map.hexes) &&
-    Array.isArray(view.map.blocked)
-  );
 }

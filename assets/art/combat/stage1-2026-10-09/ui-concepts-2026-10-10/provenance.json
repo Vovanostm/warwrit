@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-10",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local_ui_layout_proposals_owner_selection_pending",
+  "method": "Native HTML/CSS/SVG composition of existing approved sprites and mill art; browser screenshots. No image-generation call or franchise asset transfer.",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "brief": "Owner rejected current battle UI/UX; propose four meaningfully different screens closer to Heroes, Wartales and Battle Brothers. Preserve 6x6, 4 AP, full static figures and actor/inspection separation. Lower diagnostic copy and equal-weight controls. Keep muted ink/flat-wash materials and ruined Old Mill identity.",
+  "concepts": [
+    {
+      "id": "a",
+      "name": "Framed command console",
+      "influence": "Heroes III compact bottom console; modern portrait initiative",
+      "day_capture": "concept-a-day.png"
+    },
+    {
+      "id": "b",
+      "name": "Field-first floating controls",
+      "influence": "Wartales field emphasis and compact ability controls",
+      "day_capture": "concept-b-day.png"
+    },
+    {
+      "id": "c",
+      "name": "Acting fighter dossier",
+      "influence": "Battle Brothers resource/equipment clarity and bottom turn portraits; proposed left dossier is an interpretation",
+      "day_capture": "concept-c-day.png"
+    },
+    {
+      "id": "d",
+      "name": "Tactical inspector",
+      "influence": "Warwrit-specific explicit actor/target and consequence separation",
+      "day_capture": "concept-d-day.png"
+    }
+  ],
+  "approved_local_references": [
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/staraya-melnitsa.png",
+    "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+    "assets/art/combat/stage1-2026-10-09/battlefield/provenance-v1.json"
+  ],
+  "external_references_personally_opened": [
+    {
+      "game": "Heroes III",
+      "page": "https://strelow.blogspot.com/2019/03/heroes-of-might-and-magic-iii.html",
+      "image": "https://1.bp.blogspot.com/-DhBGIepoivs/YNEc5sW7flI/AAAAAAAAKz4/NH5ErGxtkPAwqrxMDdRwDcW7YTH0o3f9wCLcBGAsYHQ/s800/05_combat_screen_two_heroes.png",
+      "observed_pattern": "Battlefield above a compact bottom command and event strip"
+    },
+    {
+      "game": "Wartales",
+      "page": "https://chromabox.com/blog/test-wartales-une-early-access-deja-bien-finie.html",
+      "image": "https://chromabox.com/uploads/blog/2023/02/wartales/4.jpg",
+      "observed_pattern": "Large field, compact bottom actor/ability controls and target-local forecast"
+    },
+    {
+      "game": "Battle Brothers",
+      "page": "https://store.playstation.com/de-de/product/EP3736-CUSA28064_00-BATTLEBROTHERSEU",
+      "image": "https://image.api.playstation.com/vulcan/ap/rnd/202110/0711/7rUFhia5lMXOWtEpQk1CNKHA.jpg",
+      "observed_pattern": "Persistent actor resources, equipment/action icons and lower portrait strip"
+    }
+  ],
+  "authority": "docs/wiki/battlefield-test-maps.md#четыре-концепта-боевого-интерфейса--2026-10-10",
+  "boundaries": "Layout proposals only. Fixed illustrative stats/range do not implement canonical LOS, AP, AI, morale, damage or a new ruleset. No battle API/RNG/replay or campaign changes. User selection pending; independent concept critique is not integrated playable acceptance.",
+  "verification": {
+    "browser_journey": "PASS: all four tabs, five commands within 1440x900, twelve units, actor preserved, mode switch, 165-cell full grid, day/night, fullscreen/Escape. No page errors or write requests observed.",
+    "javascript_syntax": "PASS",
+    "visual_review": "ACCEPT for four layout proposals, every applicable score >=2. Superseded by later five-fullscreen-concept brief; not owner approval.",
+    "game_and_full_gates": "NOT_RUN: no production gameplay source changed"
+  }
+}

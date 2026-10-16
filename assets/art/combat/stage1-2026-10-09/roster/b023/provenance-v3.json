@@ -1,0 +1,87 @@
+{
+  "id": "B023",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; pending parent integration and independent scored review",
+  "owner_source": "docs/wiki/bestiary/creatures/b023.md",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "edit_target": "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b023/sprite-v2.png",
+  "input_personally_inspected": true,
+  "edit_calls_for_this_asset": 1,
+  "retries": 0,
+  "preserved_inputs": ["sprite.png", "provenance.json", "sprite-v2.png", "provenance-v2.json"],
+  "checks": [
+    {
+      "name": "Author visual inspection of returned image",
+      "result": "PASS for isolated subject/object count; framing limitations below"
+    },
+    {
+      "name": "PNG dimensions, alpha and visible bounds decoded via Python standard library",
+      "result": "PASS"
+    },
+    {
+      "name": "Image pixel editing",
+      "result": "NOT_RUN; both assets created only by imagegen, copied without modification"
+    },
+    {
+      "name": "Integrated flexible tether and stationary fixture",
+      "result": "NOT_RUN; parent owns runtime integration"
+    },
+    {
+      "name": "Independent scored review of split",
+      "result": "NOT_RUN; parent owns review"
+    }
+  ],
+  "documentation_handoff": "Parent owns all shared files, changelog and integration. No shared docs/HTML edited; no commit/publication.",
+  "version": 3,
+  "asset_role": "single selectable standing creature",
+  "tool_arguments": {
+    "prompt": "Use case: background-extraction / precise-object-edit.\nImage 1 is the exact edit target. Extract ONLY the single standing nonhuman fibrous creature on the right into a standalone static game sprite on real transparent alpha.\nPreserve the exact creature design, angular narrow head, complete two arms/hands and two legs/feet, standing pose, upper-right facing, silhouette, connected anatomy, fibrous ink texture, muted brown/slate/soot palette, shadow masses and upper-left light. Do not redesign or change pose or anatomy.\nRemove the ENTIRE tree, every root, the branch loop, and ALL rope or tether, including the rope wraps on the creature's waist. Where waist wraps are removed, reveal only matching continuous dark fibrous body texture, with no added gear or objects.\nOutput contains one selectable creature only, with full head/hands/feet and comfortable transparent margins. No tree, no root, no loop, no rope remnants, no scenery, ground, terrain tile, painted shadow, pedestal, symbols, text, border, extra figure, glow, new gear or background. Real alpha transparency, not a painted checkerboard. Keep elevated three-quarter projection and original light direction.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b023/sprite-v2.png"
+    ],
+    "transparent_background": true
+  },
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-655b-7241-b169-e5b224e121de/exec-d6f127d1-7a0d-4c4e-865d-454e0d95c1e1.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b023/sprite-v3.png",
+  "observed_image": {
+    "mode": "RGBA",
+    "file": "sprite-v3.png",
+    "width": 1254,
+    "height": 1254,
+    "bit_depth": 8,
+    "color_type": 6,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 1129440,
+    "opaque_pixels": 444,
+    "partial_alpha_pixels": 442632,
+    "canvas_corners_alpha": [0, 0, 0, 0],
+    "subject_bbox_alpha_gt_zero_inclusive": [23, 7, 1239, 1253],
+    "visible_body_bbox_alpha_ge_128_inclusive": [292, 10, 1089, 1252],
+    "common_alpha_values": [
+      [0, 1129440],
+      [253, 292950],
+      [252, 49803],
+      [251, 16057],
+      [1, 14632],
+      [250, 8740],
+      [249, 5583],
+      [2, 5252]
+    ]
+  },
+  "observations": [
+    "Only the standing fibrous creature is visible; entire tree, roots, branch loop, waist wraps and horizontal tether removed.",
+    "Two arms/hands and two legs/feet, narrow angular head, original fibrous creature identity and pose visually retained; no new gear, background, ground or contact shadow.",
+    "Original irregular ink, matte muted palette and upper-left light visually retained. Generator reframed/scaled the figure taller in the square canvas.",
+    "All visible body parts appear present, but the figure has VERY TIGHT vertical framing: alpha>=128 visible bbox y10..1252 on height1254, leaving only one row below the visible silhouette. No second edit permitted."
+  ],
+  "limitations": [
+    "Visible silhouette is extremely close to bottom canvas edge; parent/critic must inspect full toe framing before acceptance.",
+    "Imagegen preserves design visually but does not prove pixel-exact anatomy/texture preservation; extraction changed figure scale/framing.",
+    "Actual attachment is intentionally absent from creature sprite. Runtime must draw flexible tether to stationary fixture; no free-floating creature ability is implied.",
+    "Faint alpha residue reaches bottom edge; no programmatic cleanup performed.",
+    "80 px readability, runtime behavior and critic acceptance NOT_RUN."
+  ]
+}

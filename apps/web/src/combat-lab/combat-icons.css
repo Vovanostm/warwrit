@@ -1,0 +1,21 @@
+.combat-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  background: currentColor;
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  pointer-events: none;
+}
+.battle-icon-credits {
+  font-size: 10px;
+  color: #a8beb1;
+}
+.battle-icon-credits a {
+  color: #d6cba9;
+}

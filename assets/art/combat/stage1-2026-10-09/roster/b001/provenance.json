@@ -1,0 +1,65 @@
+{
+  "subject_id": "B001",
+  "subject": "Wolf",
+  "date": "2026-10-09",
+  "status": "local generated candidate; independent visual acceptance pending",
+  "source_card": "docs/wiki/bestiary/creatures/b001.md",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "calls": [
+    {
+      "prompt": "Use case: stylized-concept.\nAsset type: one static transparent full-body combat sprite for Warwrit, B001 Wolf.\nPrimary request: create one ordinary adult grey-brown wolf, credible natural anatomy, narrow chest, dense coarse rough fur and a low-carried head. It is dangerous natural fauna, not a supernatural beast. Four anatomically correct legs with all four paws visible and grounded in an alert, low balanced stance; recognizable canine muzzle, two ordinary ears and one natural bushy tail carried low. No snarling fantasy exaggeration.\nInput images and roles: image 1 unit-c-ink.png is the approved ink rendering, contour and wash style only, not a human subject; image 2 staraya-melnitsa.png is subdued palette and grounded material/light direction reference only, not background; image 3 battle-ux-v3.png is approved elevated three-quarter battlefield projection and readable creature scale reference only; image 4 night-mill-beast-concept-v2.png is dark coarse-fur ink/hatching and shadow-mass reference only, DO NOT copy its monster anatomy, giant claws, glowing eyes or posture.\nStyle/medium: serious grounded dark fantasy ink illustration; irregular dark ink contours, restrained internal hatching, flat matte washes and strong soot shadow masses. Coarse fur locks with slate-grey, soot, weathered umber and muted grey-brown variation. Natural dark eyes, natural wolf paws and claws; no glow.\nComposition: isolated single complete wolf, fixed elevated three-quarter view visibly looking down at the wolf's back and paws. Body runs from rear at screen lower-left toward muzzle at screen upper-right, facing screen upper-right. Keep the head low at shoulder level and show the far legs with plausible separation. Full muzzle, ears, tail, all four feet fully inside canvas with generous transparent margins on every side. Readable clean silhouette when scaled relative to an 80px-high human.\nLighting: upper-left light, soft restrained highlights on top and left fur, strong shaded underside; do not mirror baked lighting.\nBackground: genuinely transparent alpha everywhere outside wolf. No ground tile, terrain patch, pedestal, contact shadow, backdrop, border, words, watermark, equipment, symbols, other objects or other creatures. No painted cast shadow below paws.\nAvoid: cute rounded proportions, cartoon face, glossy 3D render, photographic fur, pristine pale coat, vivid colors, magic, monster claws, invented lore, extra limbs or cropped body.",
+      "referenced_image_paths": [
+        "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+        "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+        "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+        "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+      ],
+      "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12154-5d93-7cb0-8cab-46d06725206b/exec-542fc3c9-da76-4491-9eba-ea1eaf08d7fc.png",
+      "result": "superseded: faint exterior haze and lower-right facing"
+    },
+    {
+      "prompt": "Use case: background-extraction.\nAsset type: corrected B001 wolf transparent static combat sprite.\nEdit the first image, the generated wolf. Essential correction: remove ALL haze, glow, painted background and shadow outside the wolf so the entire exterior including gaps between legs is genuinely alpha=0. Solid wolf interior alpha=255 with only antialiased edge pixels. No ground shadow. Preserve the same ordinary rough grey-brown narrow-chested wolf, low head, one tail, two ears, and exactly four anatomically credible legs and paws. Preserve the irregular ink contours, internal hatching, coarse fur flat wash and upper-left light. Complete uncropped subject, generous clear transparent margins.\nProjection requirement: fixed elevated three-quarter tabletop view, facing screen upper-right, muzzle pointing toward the top-right corner and rear toward bottom-left. Show its back from above. The first image reads lower-right; correct the viewing/facing direction to upper-right without mirroring the baked lighting. All four paws visible. No magic, glow, objects, ground tile, border, text or cast shadow.\nReference roles: image 1 is the editable generated wolf target. Image 2 unit-c-ink is approved contour/wash rendering reference only. Image 3 battle-ux-v3 is elevated battlefield projection reference only, no background should be copied.",
+      "referenced_image_paths": [
+        "/Users/vovanostm/.codex/generated_images/01a12154-5d93-7cb0-8cab-46d06725206b/exec-542fc3c9-da76-4491-9eba-ea1eaf08d7fc.png",
+        "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+        "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+      ],
+      "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12154-5d93-7cb0-8cab-46d06725206b/exec-3dcdab84-6bf0-4cc6-9697-b9222b548444.png",
+      "result": "saved candidate"
+    }
+  ],
+  "dimensions": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA"
+  },
+  "alpha": {
+    "minimum": 0,
+    "maximum": 254,
+    "fully_transparent_pixels": 1110953,
+    "fully_opaque_pixels": 0,
+    "partially_transparent_pixels": 461911,
+    "bbox_gt0": [0, 0, 1498, 982],
+    "bbox_gt127": [219, 54, 1439, 948],
+    "corner_values": [0, 0, 0, 0]
+  },
+  "observations": [
+    "Full uncropped ordinary wolf with rough grey-brown coat, one tail, two ears, long canine muzzle and four identifiable legs and paws.",
+    "Elevated view reads facing upper-right; upper-left light and ink hatching retained.",
+    "All body parts within frame; substantial-alpha body bounds leave margins."
+  ],
+  "checks": [
+    "Viewed AGENTS.md, roster BRIEF and exact B001 card in full; personally viewed all four common references.",
+    "Built-in generation then one correction.",
+    "Pillow metadata and alpha inspection using existing bundled runtime; no package installation or image processing."
+  ],
+  "limitations": [
+    "A faint exterior haze remains after the one permitted correction; alpha>0 bounds touch top and left canvas. Clean alpha exterior requirement is not fully met.",
+    "Maximum alpha is 254 rather than 255; saved file is unmodified output.",
+    "Final head carriage is higher than initial low-head interpretation; far front paw is raised. Parent critic should assess source/stance fidelity.",
+    "No integrated 80px readability, day/night playable journey or independent visual score performed; NOT_RUN.",
+    "No commit, publication, animation or shared documentation edits."
+  ]
+}

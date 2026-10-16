@@ -1,0 +1,58 @@
+{
+  "asset_id": "B037",
+  "version": 2,
+  "title": "Hollow voice / Пустоголос — portable resonator removed",
+  "created_date": "2026-10-09",
+  "originating_branch": "codex/sprite-combat-stage1",
+  "delivery_status": "local",
+  "generator": "built-in image_gen.imagegen",
+  "mode": "precise-object-edit",
+  "reason": "Independent critic props/lore=1: hollow trunk fused to back invented a portable resonator. Parent directed removal; environment later supplies separate hollow tree.",
+  "source_card": "docs/wiki/bestiary/creatures/b037.md",
+  "transparent_background": true,
+  "prompt": "Use case: precise-object-edit.\nAsset type: transparent static full-body Warwrit creature B037 sprite correction.\nInput image 1 is the EDIT TARGET: /Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b037/sprite.png.\nPrimary request: Remove ONLY the hollow wooden trunk/resonator object that is attached to the creature's upper back, at the upper-left of the figure. Delete all bark and wooden hollow rim/cavity from that location. That object invents a portable resonator; the environment will supply a separate hollow tree later. Leave clean genuine transparent empty space behind and above the creature. Do not add any replacement object.\nStrict invariants: preserve the entire thin physical nonhuman creature: same head, dark eyes, mouth, slender torso, four limbs, bent joints, gripping digits, feet, dry membrane sheets, full anatomy, same crouched pose and facing, same silhouette of body and limbs, exact ink/hatching, muted matte colors, upper-left lighting and scale. Preserve the creature's membrane surfaces around its throat, shoulders and limbs. Remove only the small membrane ties specifically touching the deleted wooden prop if needed so no detached wooden fragments or attachment debris remain; do not redesign body or create new anatomy. Where the trunk overlapped the creature's upper back, restore only the minimum continuous thin back contour consistent with adjacent anatomy.\nComposition/framing: preserve original image size and figure placement, full figure and margins. No cropping or zoom.\nBackdrop: genuine transparent alpha; all removed-prop area is transparent. Keep existing transparent space transparent.\nAvoid: wood/trunk/resonator carried on back, replacement props, tree, stump, ground/terrain patch, contact or cast shadow, glow, aura, runes, symbols, human ghost, text, border, watermark, additional creature, palette or pose changes. One precise object removal only.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b037/sprite.png"
+  ],
+  "reference_roles": [
+    "Inspected B037 sprite v1 is the sole edit target; inherited approved ink/material/projection references are recorded in provenance.json"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12154-061b-7ee1-ad4f-1a13a65a0b7d/exec-ccd6bfe1-b6e2-402f-b966-f440c7294445.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b037/sprite-v2.png",
+  "preserved_v1_path": "assets/art/combat/stage1-2026-10-09/roster/b037/sprite.png",
+  "generation_calls_this_correction": 1,
+  "observed_png": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 1241086,
+    "opaque_pixels": 767,
+    "visible_bbox_alpha_ge_16": [234, 370, 1143, 1176],
+    "border_alpha_max": 1,
+    "border_nonzero_pixels": 11
+  },
+  "observations": [
+    "Hollow bark/trunk/resonator object and its wood-facing ties removed; clean transparent space behind and above creature.",
+    "Head, dark eye, four bent slender limbs, lower feet, dry membrane sheets, crouched pose, scale and figure placement visibly retained.",
+    "Minimum upper-back contour restored in ink and membrane material consistent with remaining creature.",
+    "No replacement prop, bark remnant, terrain, symbol, glow, cast shadow or contact shadow."
+  ],
+  "checks": {
+    "edit_target_personally_viewed": "PASS before generation",
+    "visual_object_removal": "PASS: no wooden resonator remains",
+    "full_anatomy_visual_inspection": "PASS: complete head, torso, limbs, digits and membranes remain uncropped",
+    "png_dimensions_and_real_alpha": "PASS: stdlib PNG decode, RGBA 1254x1254 alpha0..255",
+    "visible_content_border_clearance": "PASS: alpha>=16 bbox has ample margins; eleven alpha1 outer-edge residual pixels",
+    "provenance_json_parse": "PASS",
+    "full_absolute_visual_critic_re_review": "NOT_RUN: parent owns next pass",
+    "80px_readability": "NOT_MEASURED",
+    "integrated_day_night_gameplay": "NOT_RUN"
+  },
+  "limitations": [
+    "Detailed anatomy remains an art proposal from the sparse source card.",
+    "Separate stationary hollow tree/resonator must be supplied by environment; this correction contains creature only and does not depict new combat abilities.",
+    "Eleven outer-border pixels have alpha1/255 residual near-invisible generation noise; original generated alpha retained.",
+    "No shared documentation, gallery, code, dependencies, commit, publication or W10 changes."
+  ]
+}

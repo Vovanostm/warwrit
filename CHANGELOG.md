@@ -9,27 +9,672 @@ requests.
 
 ## Unreleased
 
-### Smooth held-key battle camera
+### Resume sprite combat as an isolated, deliverable improvement cycle
 
-- 2026-10-13, branch `codex/battle-camera-pan`, published: owner requested smooth
-  WASD/held-LMB camera navigation with worktree, tests, merge and main update.
-  `apps/web/src/renderer/three-quarter-camera.ts` uses frame-time held movement,
-  screen-relative equal diagonal speed, focus/visibility cleanup and incremental
-  drag; preserves world S=STOP and click inspection. Wheel/held-key/drag compose.
-  Camera tests, CURRENT_PLAN and [owning result](docs/wiki/battlefield-test-maps.md#плавная-камера-боя--2026-10-13)
-  updated. Camera13/noEmit/scoped lint/format/changed-code audit PASS; initial
-  TS fixture/coverage failures and corrected review findings recorded there.
-  Repeat independent source review ACCEPT; actual isolated3024/5322 held-key,
-  LMBdrag/click/combinedwheel/focus/daynight PASS,0actionsPOST/revision4/actor/AP
-  stable. Scene writer1line LMB adapter/HUDwriter2line menu helper integrated
-  in primary dirty WIP; this branch does not publish that WIP. Independent
-  repeated absolute camera visual ACCEPT sevencriteria2/3 (game/close), owncritic
-  input NOT_RUN. [PR156](https://github.com/Vovanostm/warwrit/pull/156) published;
-  CI38404171166/head64b49ee SUCCESS:651tests/47skip,10000stress,14DBspecs,
-  migrations/coverage/audit. Localfullgate NOT_RUN; camera code unchanged after
-  CI. Final checkpoint is documentation only; merge/main still PENDING here,
-  live PR proves actual result; primary dirty spritebranch/WIP preserved.
-  No mechanics/migrations/dependencies/deployment change.
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: owner requested
+  worktree/subagent development, current wiki, merge and main validation.
+  Main-based isolated snapshot integrates the existing sprite combat code,
+  editor, art and approved history while preserving primary WIP and excluding
+  unrelated SupplyShop/launch edits. A fail-closed V1 projection invariant is
+  retained for the sprite-only surrendered status; no historical DTO widening. Existing unit coverage
+  755PASS/47SKIPPED; playable5330/API3030 starts. Initial audit missingcoverage
+  ERROR then covered FAIL on complexity/duplication; intermediate snapshot
+  precommit audit NOT_RUN under AGENTS work-package exception because later
+  steps replace failing modules. No bypass permitted on published/main/merge
+  heads. Module cleanup, skills editor, current visual/gameplay review and
+  full clean delivery gate remain required. CURRENT_PLAN owns sequencing.
+
+### Editable technique ranks and shared combat phases
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: per-unit sandbox
+  technique ranks/default/empty presets, metadata from the canonical skill
+  catalogue, and warnings preserving incompatible learned ranks. No campaign XP
+  or new perk tree. Protocol catalogue, server custom setup, editor and
+  SkillLoadout affected. Focused22 checks PASS; initial server typecheck exposed
+  missing V1 projection narrowing, now retained as a fail-closed invariant.
+- Core move/reaction/fire, warning, panic, wound and AI phases share existing
+  admission and damage-preview rules without changing policy/replay/RNG ordering.
+  Core93 focused checks, lint/format/typecheck PASS; scoped core complexity and
+  clone findings zero. Independent source review of both slices found no material
+  findings; it did not run browser/DB checks. Intermediate integration hooks
+  NOT_RUN under the existing package exception; whole-union audit/full gate and
+  fresh visual acceptance pending. See [current combat page](docs/wiki/battlefield-test-maps.md).
+
+### Battle controls, initiative and missing-session recovery
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: HUD presentation,
+  scene lifecycle and projection are cohesive modules; current/acted/waiting
+  initiative labels derive from server turnIndex. Controller separates session
+  transport, public-view admission, field command confirmation and availability;
+  same-ID retry/auth/Escape semantics preserved. Missing temporary session now
+  explicitly points to restart/editor instead of claiming a completed battle.
+- Worker HUD18 and controller28 focused checks PASS. Integrated web types first
+  FAIL on optional test data; corrected, then web types/UI40 PASS. Server types
+  and public V1 projection rejection regression PASS. Source-only independent
+  review found no material findings; fresh integrated visual/journey and final
+  delivery gate pending. Intermediate hooks NOT_RUN, attempted main audits FAIL
+  on other owned prototype code; no published/main bypass allowed.
+- Historical galleries share immutable metadata without changing approved art or
+  layouts. Worker syntax/lint/format/diff PASS; its audit used a relaxed CRAP
+  threshold and is not the actual gate. Missing coverage blocked normal commit;
+  automatic review rejected bypass. Parent integrated the staged patch for
+  ordinary coverage/audit before committing. Browser console acceptance pending.
+  Current wiki removes superseded 3D production instructions while retaining
+  useful map/XCOM links and dated authority; research/progression boundaries
+  are explicit in [the owning page](docs/wiki/battlefield-test-maps.md).
+
+### Integrated sprite renderer and checked delivery candidate
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: padded silhouette
+  outline fixes clipped crown/edge while preserving original body/pick mask;
+  renderer separates terrain, figures, feedback, marker planning and picking.
+  Thirteen finite renderer checks preserve legal-preview/inspection priorities,
+  alpha thresholds and bounded geometry. Editor immutable actions/atomic imports
+  and controller lifecycle/keyboard/autoplay close initial snapshot audit debt.
+- Fixed catalogue completion erasing missing-session notice, denied storage getter
+  restoration, disabled editor keyboard mutation and ambiguous skill refusal copy.
+  Moved HUD props to remove a real architecture cycle. Actual integrated types,
+  lint/architecture/pattern/content and795unitPASS/47SKIPPED; ordinary main-based
+  audit PASS with zero new blocking findings. First failed checks retained in
+  owning result; advisory styling findings remain. No gate/config weakening.
+- Independent source reviewer finding corrected/read back. Independent real UI
+  battle manualR1–2 thenauto endedR8/6alliedsurvivors; inspected damage agreed
+  with previews, invalid skill refused, no repeated movement destination within
+  activation. Strategy comparison/fun NOT_MEASURED. Final absolute visual review
+  and clean PR/DB/stress/main journey pending.
+  [Owning result](docs/wiki/battlefield-test-maps.md#результат-интеграции-и-игровые-проверки--2026-10-16).
+
+### Keep the combat delivery scoped
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: final diff review
+  excludes the separate live-map agent-review/consultation document and its
+  checkpoint/history imports. Original primary and prior branch retain that
+  work; this combat PR does not publish it. No combat code or evidence changed.
+  Markdown format/local references checked; no game retest required.
+
+### Reserve prepared-threat badges before accepted events
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local correction to
+  published draftPR157: independent visual critic rejected overlapping
+  preparation/movement labels (FEEDBACK-02). Scene now creates current threat
+  labels before placing events and reserves their bounds alongside figures.
+  Added a dense neighbouring-badge spacing regression;8focused/web types/
+  lint/format PASS, freshcoverage796PASS/47SKIPPED. Independent source review
+  found no material issues. Same-critic absolute visual recheck/newheadCI pending.
+  Previous head87c5c6a CI38909754401 PASS includes clean bootstrap,10k stress,
+  14 PostgreSQL checks and strict audit; not claimed for this source correction.
+  Owning wiki records rejected image/reproduction and scoped outline proof;
+  index no longer calls the working sprite sandbox unimplemented.
+
+### Battle camera menu helper
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner-authorized
+  camera coordination supplied separate reviewed camera module and scene
+  panButtons[0,1] adapter; camera SSOT remains the shared module. Adapter
+  author types/lint/format/diff PASS, own browser journey NOT_RUN after context
+  loss; camera author13 focused/source-review PASS. Root updated only two existing CombatLab menu
+  labels for LMB drag/WASD camera control; buttons/cards/layout unchanged.
+  Root scoped lint/format/menu copy/fit PASS; camera author5322 journey
+  key/drag/click/combinedwheel/blur/HUD/daynight0POST/revision4 stable PASS.
+  Initial runner synchronization/offcanvas failures preserved. Independent
+  camera appearance now scoped ACCEPT after supplied missinginputs;7criteria2/3,
+  own critic input NOT_RUN. Separate module PR/main delivery completed as
+  confirmed in the merge receipt below; sprite integration remains local.
+  [Owning helper](docs/wiki/battlefield-test-maps.md#подсказка-управления-камерой--2026-10-13),
+  CURRENT_PLAN/web README updated; quick-use text reconciles short LMB
+  inspection with held WASD/arrows, LMB/MMB drag and wheel zoom. A follow-up
+  documentation correction replaces superseded stacked-border/AP-only-shot
+  wording with one coloured grid and passive weaponReach versus legal current
+  attackPreview; existing implementation and rules unchanged.
+  Separate camera-owner publication verified: draftPR156/head64b49ee3 and
+  same-head CI38404171166 success;5camera/test/own-doc files only. First camera
+  visual BLOCKED missing inputs superseded by same-critic full ACCEPT. Current
+  GitHub PR156 OPEN/READY/head54f7da890/CI38407349732 IN_PROGRESS; old CI
+  success was not current-head PASS. Superseding2026-10-13 live receipt:
+  PR156 MERGED reviewedhead54f7da890/merge86c1da055; finalCI38407349732
+  SUCCESS samehead. Root verified camera worktree main clean,HEAD/main/originmain
+  match86c1da055 and finalhead-to-merge ordinarydiffempty. Primarycodexbranch/
+  HEADb44f5c1/WIP retained. Only module/test/own-docs merged, not sprite integration.
+  This sprite branch/helper remains local; no root commit/publication/merge/deploy.
+
+### One coherent desktop battle-control family
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner rejected
+  inconsistent/unpolished controls. Unified command/skill/utility/text sizes,
+  frame/state palette and typography in battle-controls.css; removed conflicting
+  control styling and editor leakage. Compact console236->179.4 clears default
+  lower figures; auto start/stop moves to utility and step to menu. Skill overflow
+  and explicit tooltip input mode stabilize selection/focus; rank/shortcut costs
+  and public view authority retained. BattleView/CombatLab/test assertion,
+  battle-view/combat-lab/combat-icons CSS affected; README/CURRENT_PLAN and
+  [owning result](docs/wiki/battlefield-test-maps.md#единый-боевой-интерфейс--2026-10-13)
+  updated, wiki top current pointer reconciled without erasing dated rejects.
+  Web noEmit/lint/format/UI16 PASS; three desktop layouts/0POST inspection,
+  stable aim/overflow/Esc/menu and real auto stop PASS. Follow-up UI17 PASS;
+  first HUD critic REJECT (command tooltip covered feet), corrected by anchoring
+  above the actual actor card;1366/1440 custom+dense tooltip bounds PASS.
+  Terminal stance badges now require active status; resolved next-round hidden.
+  Initial brittle class/
+  expanded-name probe/hover focus/overlarge console findings corrected.
+  Scoped HUD appearance ACCEPT, seven criteria2/3; own critic input NOT_RUN,
+  terminal initial exclusion followed by fresh own5321 autoR8/rev151 terminal
+  1366/1440 actualUI/HTTP PASS,0inspectionPOST,stable36px/radius6 outcome buttons;
+  terminal critic ACCEPT7criteria2/3, own input/runtime NOT_RUN. Captured before
+  separate camera integration; camera not accepted by this HUD verdict.
+  Failed original metadataSecurityError/mainlaunchquota
+  preserved, freshbattle not labelled originalR9. Terrain/height separate, full game/DB gate NOT_RUN,
+  general AAA/fun/FPS not claimed. Inherited audit blocks broader closeout,
+  no commit bypass/publication/merge/deploy.
+
+### Finite renderer/core readback and prior-fire forecast correction
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: collaborating
+  owners corrected field topology/material occlusion and PREVIEW-04 late
+  reaction HP cap after prior fire. Final546/444 supersedes588/402; opaque
+  projected mill tops supersede rejected dirt top. Author UV/depth/focused21
+  (geometry4+UI17)/types/lint/format/diff PASS. Frozen field visual ACCEPT
+  scores3/2/2/2/3/2/2,motionN/A; critic input/tests/build NOT_RUN. Fresh integrated
+  post-HUD day/night narrow readback PASS by same critic: full field ACCEPT
+  retained, no material regression; unchanged renderer. Core43/build/types/read-only/replay PASS by
+  author; mainAPI runtime correction PENDING, unchanged3022. Isolated3023/5321
+  actualUI/HTTP/readback PASS:10HP/fire5thenreaction5 matchesHUD5, revision31,
+  no state injection; initial pan/nativeconfirmation runner timeouts recorded.
+  Actual manual summary read: R9/revision149,76orders,5survivors,errors0;
+  oldAPI journey does not prove live corrected preview. Owning wiki/preview/
+  CURRENT_PLAN updated; wiki top/frontmatter now point to the scoped current
+  field/HUD/terminal acceptance with remaining main runtime limits,
+  preserving historical PENDING/reject sections; [finite result](docs/wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
+  Full/DB gates NOT_RUN here, balance NOT_MEASURED; inherited audit/WIP open,
+  no bypass/commit/publication/merge/deploy.
+
+### Height occlusion reopened after owner review
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local documentation:
+  parallel owner review reports lower-grid lines showing through +1 terrain.
+  Recorded translucent-top/depth hypothesis and bounded opaque tile/continuous
+  UV/exposed cliff proposal, not accepted asset production or rule change.
+  [Owning defect](docs/wiki/battlefield-test-maps.md#перекрытие-нижней-сетки-высотой--новый-defect-2026-10-13)
+  and CURRENT_PLAN updated; renderer author owns repair. Current fix/terrain
+  visual PENDING, reproduction and code fix NOT_RUN by this shared-doc writer.
+  Historical captures remain history; no broad visual approval inferred.
+
+### One colour grid replaces stacked tactical contours
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner instructed
+  one grid with colour states. Parallel renderer/geometry author integrated
+  165 stable fills, one tactical-grid, 588 physical edges/402 shared and removed
+  legacy/inset contours. Canonical previews/inspection/input and entity outlines
+  retained, ground remains below figures. Its HUD intersection legend transferred
+  to this shared writer. Renderer/battle-cell-grid/geometry tests/HUD CSS affected;
+  [owning result](docs/wiki/battlefield-test-maps.md#единая-цветовая-сетка--2026-10-13),
+  web README and CURRENT_PLAN updated. Author reports geometry+UI20/20/noEmit/
+  lint/format PASS after corrected initial TS/Float32 checks; root noEmit PASS.
+  Private 6v6 stable identities/canonical cells/0POST unchanged revision PASS.
+  New grid visual PENDING; previous double/inset ACCEPT remains historical,
+  superseded. Full game/DB gate NOT_RUN; inherited audit open, no commit bypass/
+  publication/merge/deploy.
+
+### Battle command icons and selected weapon inspection
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner rejected
+  homemade command glyphs. Replaced commands/five skills with ten local
+  CC BY 3.0 Game Icons, preserving input/tooltips and adding shortcut/rank
+  readability plus author/source/adaptation credit. CombatIcon, icon CSS/assets,
+  CombatLab/BattleView and combat-lab README affected.
+  [Icon result](docs/wiki/battlefield-test-maps.md#иконки-команд-и-приёмов--2026-10-13):
+  scoped lint/16 UI tests/browser hover-keyboard-disabled guard PASS;
+  web noEmit PASS before/after shared-grid fix; available aim/selected/Esc/rally
+  tooltip PASS with unchanged revision. Scoped icon visual ACCEPT (all applicable scores 2/3); critic pointer/revision
+  binding NOT_RUN. Initial overlong review stopped without verdict; fresh bounded
+  critic completed. Grid/height acceptance remains separate.
+- Same date/branch, local integration record for collaborating weapon-reach
+  author: pure detached units[].weaponReach, independent inspection and
+  attackPreview admission, selected-unit caption/legend. Core/protocol/projection
+  and HUD present; 46 focused tests/builds/checks reported PASS on that version;
+  actual bow45/halberd18/shield6/LOS/resource refresh/halberd2 attack PASS.
+  [Owning result](docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13),
+  melee/ranged, both README and CURRENT_PLAN updated. Saved visual captures
+  ACCEPT >=2; the parallel new grid supersedes current integration acceptance,
+  now PENDING. Full game/DB gate NOT_RUN for this narrow closeout; inherited
+  branch audit remains open. No commit bypass/publication/merge/deploy.
+
+### Weapon reach remains readable where movement overlaps
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner screenshot
+  showed the archer's weak range wash hidden by movement. Strengthened ochre
+  fill/ink-backed outer boundary; overlapping cells now use one fill with an
+  inner cyan movement cue. Kept full grid/input geometry, server range/attack
+  admission, targets and ground-before-figure layers. Scene/README and
+  [owning result](docs/wiki/battlefield-test-maps.md#контраст-области-оружия--исправление-2026-10-13),
+  CURRENT_PLAN affected. Web noEmit/lint/format and 16 UI tests PASS; actual
+  45 canonical cells / 38 overlaps/target forecast/unchanged revision PASS, 6v6
+  day/night/close/grid/reference captures. Independent scoped visual ACCEPT (all applicable scores >=2); critic
+  browser input/full game/DB gate NOT_RUN. Previous branch audit remains open;
+  no commit bypass/publication/merge/deploy or domain/protocol/server changes.
+
+### Occupied cell creature hover
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner reported
+  that hovering an uncovered part of an occupied hex did not highlight its
+  creature. Unified sprite/ground target resolution with active occupancy and
+  opaque-sprite priority; hover/inspection/canonical action targeting now agree.
+  Added uniform muted silhouette/ground-ring hover emphasis and empty-cell
+  clearing without promoting ground effects over figures. Scene and combat-lab
+  README affected; [owning fix/evidence](docs/wiki/battlefield-test-maps.md#наведение-на-занятую-клетку--исправление-2026-10-13),
+  CURRENT_PLAN updated. Actual wolf body/cell mismatch reproduced and corrected
+  after reload;90occupied-cell points across11figures PASS, hover0POST and
+  unchanged actor/revision, day/night/grid captures. Web typecheck/scoped
+  lint/format and14BattleView tests PASS; independent scoped visual/source
+  critic ACCEPT (all applicable scores>=2, its own input NOT_RUN). No rule/
+  protocol/server/migration change; full gate NOT_RUN. Inherited branch audit
+  still prevents closeout/commit; no hook bypass/publication/merge/deploy.
+
+### Combat rubble occupies a readable single cell
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner screenshot
+  showed rubble overlapping several cells with unclear blocked footprint.
+  Uniformly resized the existing art and aligned its measured visible centre
+  to the owning hex; added persistent non-pickable ochre/ink ground borders
+  and blocked hover/pin explanation. Scene/BattleView/UI regression, README,
+  [owning wiki result](docs/wiki/battlefield-test-maps.md#завалы-принадлежат-одному-гексу--2026-10-13)
+  and CURRENT_PLAN updated; canonical geometry/rules/replay unchanged.
+  Web noEmit/scoped lint/format, UI 14/14 and actual blocked-cell no-order journey
+  PASS; 12,575 visible-art samples stayed inside projected hex. Current day/night/
+  close/equal-height captures ready; independent absolute visual ACCEPT, all applicable scores >=2
+  (owning cell/neighbor/HUD3), critic input
+  NOT_RUN. Full game/DB gate NOT_RUN for this visual/HUD fix; prior branch
+  audit still blocks commit, no bypass or publication/merge/deploy.
+
+### Combat v3 scene, learned skills and autoplay
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner requested
+  subagent implementation of combat rendering/heights, enemy AI, skills and
+  autobattles. Integrated semantic ground-before-figure layers, matching stable
+  alpha picking/entity order, textured exposed height faces and sparse empty-cell
+  height labels; canonical v3 skill ranks/commands/previews, skill-aware tactical
+  AI and pure/server/HUD autoplay with visible stop. Five finite skills are
+  brace/pressure/reach/aimed/rally, editor ranks0–3, four slots plus overflow.
+  Historical v1/v2 replay semantics retained; v3 overkill reports actual HP loss.
+  Removed web runtime core dependency via optional server ruleHints/public
+  guard percentage; server owns connectivity admission with draft-preserving
+  visible rejection. Added public boundary/regression checks, updated combat
+  READMEs/ability/opponent pages and CURRENT_PLAN.
+  [Owning result and proof limits](docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
+  UI skills/autoplay/full mill/editor/reload/invalid-import/closed-map retry PASS;
+  terrain identity74points and alpha/HUD input PASS. V3 matrix12battles/2085commands
+  resolved R8–11 without unlawful commands/cycles/replay divergence. Isolated
+  verify PASS737tests/47skipped; baseline stress10000battles/100replay PASS.
+  Independent source boundary review passed its finite scope; full absolute
+  visual ACCEPT for supplied current scenes, every applicable criterion >=2.
+  Actual browser125%/critic pointer execution NOT_RUN; threat caption moved
+  above victim/deduplicated and recaptured after full reload, repeat isolated
+  verify PASS on affected source. Full Docker/PostgreSQL gate
+  NOT_RUN; branch audit FAIL130complexity/17clones after49 inherited exclusions,
+  no check weakened or hook bypass. Existing gallery JS/CSS registered as
+  legitimate HTML entrypoints/browser globals, no new runtime dependency.
+  No campaign progression/twenty unique ability sets/poison or burning status
+  engine; general balance/fun/performance NOT_MEASURED. Local WIP, no commit,
+  publication, merge or deployment; full DoD closeout not claimed.
+
+### Combat specification and reopened visual acceptance
+
+- 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner rejected
+  a selected hex drawn across a character and requested a full specification
+  first. Added the [complete combat technical specification](docs/wiki/battlefield-test-maps.md#полное-техническое-тз-пошагового-боя--2026-10-13):
+  semantic layers/alpha/depth, hex picking, fullscreen HUD/initiative/statuses,
+  ability slots, previews, path/LOS/reactions/AI, battle/map editors, command
+  authority/replay and acceptance matrix. Inspected pinned Honeycomb,
+  Babylon9.28.0 and Floating UI GitHub sources; retained existing engine/core,
+  no dependency installation or source copying. Reopened scene acceptance as
+  REJECT: ground-ring group2 after actor group1 violates RENDER-01; fix NOT_RUN.
+  Supersedes earlier visual ACCEPT for integration, preserves historical
+  gameplay evidence. Added mandatory combat layering scenarios to the visual
+  critique rubric so a reproduced overlap forces REJECT. Updated wiki navigation/log, turn semantics and
+  CURRENT_PLAN. New numerical UX targets/effects/dependencies remain proposals.
+  Documentation-only pass; game tests/full gate NOT_RUN, performance
+  NOT_MEASURED. Independent specification review findings resolved for picking
+  versus legality and proposed action-catalogue status. Markdown format,
+  new-section local links and diff checks PASS. Existing branch audit remains
+  open; no commit/publication/merge/deploy.
+
+### Combat v2 improvement cycle
+
+- 2026-10-12, checked 2026-10-13, branch `codex/sprite-combat-stage1`, local:
+  owner requested a finished combat prototype through an executed improvement loop.
+  Sprite v2 integrates tactical targets/approach, guard/fatigue, finite reactions,
+  panic/escape/human-only surrender, one-retarget declared strikes, AP0 scheduling
+  and static-map admission, preserving historical rules/replays. Fixed heavy
+  reversal, sequential reaction forecasts, false-safe origin escape and false
+  control by bow/spent reactions. HUD uses smaller proportional figures,
+  foreground active markers, correct defeat text and no command tooltip over
+  terminal controls. Core/replay, lab server/protocol, editors/renderer/HUD,
+  their READMEs, mechanic pages/wiki index and CURRENT_PLAN affected.
+  [Owning loop/parameters/checks](docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
+  Actual UI/replay: rush R8/147 victory, safety-fixed hold R14/187 defeat,
+  human surrender R5/89 with two surrenders; finite independent source/playable
+  ACCEPT. Absolute day/night visual and final hold/surrender readback ACCEPT
+  (text/layout 3, inactive readability 2); critic browser input NOT_RUN.
+  Fresh mill left playable at web5320; format/scoped links/diff PASS.
+  Latest safety 37 focused tests, UI 12, affected typechecks/build/lint PASS;
+  failed first fixture typecheck/lint and tooltip probe corrected and rerun.
+  Historical stress/disposable PostgreSQL checks PASS; full verify formatting
+  FAIL, owned formatting fixed, unrelated WIP preserved, later stages NOT_RUN.
+  Existing branch audit blocks commit. Abilities/progression/captive campaign,
+  general balance/fun/performance remain outside measured delivery. No commit
+  bypass, publication, merge or deployment.
+
+### Reachable battle movement contrast
+
+- 2026-10-11, branch `codex/sprite-combat-stage1`, local: owner reported
+  movement cells blending into terrain. Separate slate-teal fill, pale borders
+  and ink backing make canonical movement destinations visible; hover/pin remain
+  on top, shot-area style unchanged. Updated combat-lab renderer and README.
+  [Owning amendment](docs/wiki/battlefield-test-maps.md#контраст-доступной-зоны-движения--исправление-2026-10-11).
+  Web typecheck/scoped lint PASS; browser 39 destinations with matching borders,
+  day/night/grid on-off, pin-hover and actual 4AP move/AP0 removal PASS.
+  Absolute visual ACCEPT, all applicable scores ≥2; critic input NOT_RUN.
+  Format/scoped links/diff PASS; game tests/full gate NOT_RUN for this visual fix.
+  Existing branch audit blocks commit. No publication/merge/deployment.
+
+### Aligned battle hex grid and overlays
+
+- 2026-10-11, branch `codex/sprite-combat-stage1`, local: owner screenshot
+  exposed rotated hex borders/inset fills missed by the previous input checks.
+  Shared pointy-top radius/centres and mesh helpers align grid, movement/shot
+  zones, hover/selection and hex unit bases. Honeycomb GitHub sources inspected
+  at pinned commit; no new dependency, gameplay, protocol or server change.
+  [Owning amendment/research](docs/wiki/battlefield-test-maps.md#геометрия-сетки-и-совпадение-маркеров--исправление-2026-10-11).
+  11 focused tests/web typecheck/scoped lint PASS; browser165 cells/444 shared
+  edges/45shot borders aligned,150edge+180corner probes without dead zones,
+  pinned/hover/near-edge rightclick3AP PASS. Source review cleared;
+  absolute visual ACCEPT, all applicable scores ≥2; geometry/pinned-hover score3,
+  critic browser input NOT_RUN. Format/scoped links/diff PASS.
+  Full gate NOT_RUN; existing branch audit blocks
+  commit. No publication/merge/deployment.
+
+### Continuous battle hex picking
+
+- 2026-10-11, branch `codex/sprite-combat-stage1`, local: owner reported
+  boundary dead zones and missing selected-cell highlight. Sprite ground picks
+  cover full hexes; cube-rounded fallback fills internal height seams and rejects
+  missing/perimeter cells. Shared inverse in web renderer preserves old scene
+  math. Hover and pinned selection have distinct persistent markers.
+  [Owning amendment](docs/wiki/battlefield-test-maps.md#непрерывный-выбор-гекса--исправление-2026-10-11).
+  Ten scoped tests/web typecheck/lint and 140 edge/180 corner browser points,
+  border right-click/persistent selection PASS. Source findings fixed;
+  240 height-edge points/perimeter rejection/pan/zoom PASS. Absolute visual
+  ACCEPT for inspected day/night/height-test states, all applicable scores≥2;
+  critic input execution NOT_RUN, extreme camera framing not accepted.
+  Format/scoped links/diff PASS; full gate NOT_RUN. Existing branch audit
+  blocks commit; no publication/merge/deployment.
+
+### Approved command desk battle HUD
+
+- 2026-10-11, branch `codex/sprite-combat-stage1`, local: owner approved
+  concept 01 Command desk. Live fullscreen HUD implemented in web
+  combat lab: portrait initiative, mirrored cards, icon commands, reserved skills,
+  canonical previews/states and editor menu. Scene framing and W09 portrait
+  crop corrected; hover field takes priority over retained portrait focus.
+  Selected movement wins over pinned-target forecast, with pinned inspection
+  retained; selecting a unit clears the path. Muted shot grid, AP spend/remaining
+  segments, side shapes and upper-left forecast preserve field readability.
+  [Owning decision](docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10).
+  Web typecheck/scoped lint/nine UI tests and actual shot/AP0/pending/move/
+  round/restart/hover/target-path-target/menu/editor journeys PASS, three viewport fills PASS.
+  Final absolute integrated visual ACCEPT for inspected 2v2/6v6 day/night
+  and three desktop sizes, all applicable scores ≥2 (motion N/A); guarding badge
+  checked in real browser. Format/scoped links/diff PASS. Full gate NOT_RUN
+  this UI cycle; arbitrary dense formations and broader player acceptance unmeasured.
+  Last branch-wide commit audit FAIL: 4 static-gallery entrypoint findings, 99
+  complexity findings, 15 clone groups across 159 changed files; not bypassed. No publication, merge or deployment.
+
+### Five fullscreen battle UI proposals and approval gate
+
+- 2026-10-10, branch `codex/sprite-combat-stage1`, local proposals: owner
+  requested five desktop-only full-viewport battle overlays and a stop before
+  choosing the live UX. Added `assets/art/combat/stage1-2026-10-09/ui-fullscreen-concepts-v2/`:
+  native interactive layouts, captures/comparison and owner references.
+  Mirrored actor/target cards, icon-only actions with hover/focus tooltips;
+  later owner amendment adds Olden Era-like TOP round-separated initiative,
+  portrait effects and four demonstration ability slots from skill progression.
+  Effects/abilities are proposals, not engine semantics. Gamedev GPT-6.1 Sol
+  taxonomy reviewed. [Owning comparison and boundaries](docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10)
+  and CURRENT_PLAN updated. Later owner rejection of crude UI led to shared
+  component refinement: typography/numeric hierarchy, resource bars, chance
+  ring, damage channels, AP infographic, distinct ability icons/states.
+  Tooltip layers and forecast occlusion findings corrected. Syntax and
+  refreshed five-layout browser journey/three viewport fills PASS, errors[]/
+  writes[]; full independent visual re-review PENDING. Corrected prior four-concept final verdict to ACCEPT/history.
+  Live UI delegate stopped; isolated work retained without integration.
+  Production source/API/rules/AI/replay/dependency/migration unchanged;
+  game/full/integrated gates NOT_RUN. Owner choice OPEN; previous prototype
+  commit audit NOT_DONE; no publication, merge or deployment.
+
+- 2026-10-11, same branch, local continuation: restored the five-concept web
+  viewer and rechecked the final browser journeys. Selected abilities now have
+  an explicit pressed state; A/B shot tooltips keep actor values visible.
+  Five journeys, selected-skill captures, syntax/format/scoped links/diff PASS.
+  First full independent GPT-6.1 Sol visual review ACCEPT (all applicable
+  scores ≥2). Follow-up selected-skill state exposed C/E figure occlusion
+  (REJECT); stable left inspection placement fixed it. Final absolute
+  visual re-score ACCEPT for all five; all four C/E ability-tooltip states
+  avoid figures/cards/commands in the browser. Owner selection OPEN;
+  live/integrated-game acceptance NOT_RUN. Existing prototype commit audit
+  remains NOT_DONE. No publication/merge/deployment.
+
+### Four alternative battle UI concepts
+
+- 2026-10-10, branch `codex/sprite-combat-stage1`, local proposals: owner
+  rejected the current screen's overall UI/UX and requested four concepts
+  closer to Heroes/Wartales/Battle Brothers. Added native interactive
+  `assets/art/combat/stage1-2026-10-09/ui-concepts-2026-10-10/` gallery,
+  four 1440×900 day captures/comparison and reference provenance. Compact
+  console, floating controls, actor dossier and target inspector share approved
+  sprites/mill art and an explicitly illustrative state; no gameplay/API/rules/
+  replay/dependency/migration changes. Gamedev GPT-6.1 Sol advised; visual
+  GPT-6.1 Sol found C initiative cropping and A night label, corrected.
+  Final historical four-concept re-review ACCEPT (all applicable scores ≥2);
+  later owner five-fullscreen brief supersedes this choice. [Owning comparison](docs/wiki/battlefield-test-maps.md#четыре-концепта-боевого-интерфейса--2026-10-10)
+  and CURRENT_PLAN updated; A recommended, owner selection OPEN. Browser
+  four-tab/actions-fit/inspect/mode/grid/day-night/fullscreen checks, syntax,
+  format/scoped links/diff PASS. Production game/full/integrated acceptance
+  NOT_RUN. Shared prototype commit audit remains NOT_DONE; no publication,
+  merge or deployment.
+
+### Combat target contrast and action dock
+
+- 2026-10-10, branch `codex/sprite-combat-stage1`, local: owner's four
+  UI requests implemented with gamedev GPT-6.1 Sol. Strengthened canonical
+  bow cells/all legal target silhouettes and markers, unit/ground contrast,
+  and a below-field actor/AP/action dock with canonical prices/disabled reasons.
+  Updated web BattleView/CombatLab/scene/CSS/tests, declared existing public
+  game-core workspace dependency with pnpm, added a four-view screenshot
+  [UI reference](assets/art/combat/stage1-2026-10-09/ui-reference-v1.html).
+  After full mill visual REJECT for overlapping diagonal, server default
+  new drafts use two columns/three spaced ranks; accepted/imported setups,
+  rules and old replays unchanged. Earlier rush/hold evidence uses former start.
+  [Owning result](docs/wiki/battlefield-test-maps.md#читаемость-целей-и-панель-действий--2026-10-10),
+  lab README and CURRENT_PLAN updated. Web/server typecheck/scoped ESLint,
+  five UI/four custom-battle tests, actual shot/end-turn/target checks and
+  four-tab reference PASS. Independent source review found no concrete defect;
+  final day/night bow/melee/revised mill visual ACCEPT, applicable scores ≥2,
+  motion N/A. Documentation format/scoped links/diff PASS. Full gate NOT_RUN
+  after this UI amendment; later dense positions/new deployment balance
+  NOT_MEASURED. Existing complexity audit still blocks ordinary commit,
+  NOT_DONE. No external dependency/migration/publication/merge/deployment.
+
+### Combat AI effectiveness and user-facing playtest
+
+- 2026-10-10, branch `codex/sprite-combat-stage1`, local: owner requested
+  dev restart, actual fights and tactical-depth/routine analysis. Reopened
+  the isolated stand; five completed UI battles plus four partial probes
+  record state/replay outcomes. Same mill start: rush round9/one death,
+  hold round22/five deaths. Sword hit+back preserves80HP/36armor vs38HP/0armor
+  without retreat; heavy AI never attacks the kiting actor. Disconnected wall
+  repeats120 defends to round60. ID-driven targeting and spear step-to100%
+  reproduced. Gamedev and independent gameplay critic GPT-6.1 Sol found
+  current depth insufficient. [Owning assessment](docs/wiki/battlefield-test-maps.md#игровая-проверка-ai-и-тактической-глубины--2026-10-10),
+  opponents/fatigue wiki and CURRENT_PLAN record priorities and evidence
+  boundaries. No gameplay source, rules, dependency or migration changed.
+  Documentation format/diff and added local links PASS; whole-document link
+  scan FAIL on five unrelated historical absolute paths. New game/full/visual
+  gates NOT_RUN; human
+  enjoyment/general balance/AI compute NOT_MEASURED. Existing shared commit
+  audit blocker remains NOT_DONE. No publication/merge/deployment.
+
+### Archer shot area and overhead damage forecast
+
+- 2026-10-10, branch `codex/sprite-combat-stage1`, local: owner requested
+  archer shot-area highlight and damage/miss above hovered targets, implemented
+  with gamedev GPT-6.1 Sol. Core provides affordable bow range/LOS cells and
+  on-hit health/armor loss ranges using the unchanged execution calculation.
+  Additive optional lab projection fields feed rust shot cells and an overhead
+  forecast; geometry avoids figures/results and a connector identifies the
+  target. No hover RNG, command, dependency, migration or replay change.
+  [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
+  ranged/preview wiki, lab README and CURRENT_PLAN updated. Focused parent
+  tests 7 files/44 PASS; build/typechecks/scoped ESLint PASS. Browser forecast
+  2–4 health/12–18 armor, miss25%; actual shot3/16; blocked target and AP0
+  excluded. Final v3 visual ACCEPT, all seven applicable criteria 2 (motion
+  N/A), explicitly checks all three bodies and target connector. Source
+  readback has no remaining blocker; full gate NOT_RUN after
+  amendment. Existing complexity audit blocks ordinary commit, NOT_DONE.
+  No publication/merge/deployment.
+
+### Battle hover preview and right-click controls
+
+- 2026-10-10, branch `codex/sprite-combat-stage1`, local: owner requested
+  route/AP preview on hover and right-click movement/attack. Battle scene
+  and HUD use canonical previews without commands on hover; left-click
+  inspects, middle-button drag pans, wheel zooms. Paths now include the
+  actor origin even for one-step moves. Shared field/button dispatch checks
+  latest view and retains fire confirmation. Invalid/friendly targets do
+  not submit commands; navigation/revision/leave clears old hover and native
+  context menus are suppressed. [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
+  preview wiki, lab README and CURRENT_PLAN updated. Browser command/AP,
+  hover-only, fire cancel/accept and navigation checks PASS; web typecheck,
+  scoped ESLint and 12 focused tests PASS. Independent GPT-6.1 Sol source
+  review has no remaining controls blocker. Initial visual review REJECT
+  for thin route contrast; stronger ochre stroke/ink border implemented,
+  fresh day/night re-review ACCEPT, all applicable scores 2 (motion N/A).
+  Full gate NOT_RUN after this amendment;
+  earlier prototype gate remains historical evidence. Existing audit debt
+  still blocks ordinary commit, NOT_DONE. No publication/merge/deployment.
+
+### Playable sprite combat and editors
+
+- 2026-10-09, branch `codex/sprite-combat-stage1`, local: owner requested
+  implementation with subagents and a working static-sprite prototype.
+  Added the isolated `pnpm dev:combat` stand, custom battle/map editors,
+  twenty visual profiles, JSON/local drafts, static Babylon scene and battle
+  controls. Versioned prototype core adds dual-budget movement, heights,
+  mud/fire, bow LOS, trained adjacent melee, fire/death morale and detour AI;
+  old M0/M1 replay behavior remains separate. Protocol/server validate custom
+  drafts before allocation, advance opponent commands within accepted receipts
+  and export capability-protected replay. No campaign database, migration or
+  runtime dependency added. [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09)
+  records actual verification, scope and remaining preset mechanics;
+  CURRENT_PLAN and combat-lab setup docs updated. Integrated core/server/editor
+  focused tests: 62 PASS. Browser editor/play/terminal/replay journeys PASS;
+  static v10 visual ACCEPT and final GPT-6.1 Sol source review passed within
+  its bounded scope. Added authored mill painting/provenance, alpha-aware
+  picking, separate actor/night grading, silhouette edges and collision-aware
+  overhead text; custom restart preserves accepted setup after reload and
+  checks catalog availability before deleting. Action availability uses pure
+  command dry-runs, disabling unavailable defense/retreat. Removed unused
+  lab exports. Full gate initially stopped on unrelated untracked launch JSON,
+  then unused exports and three analyzer false positives in SupplyShop props;
+  annotated those directly used props without behavior changes. Final clean
+  bootstrap gate PASS: 666 tests (47 skipped), 10,000 stress battles,
+  migration smoke and 14 encounter/OIDC checks. Separate change audit FAIL
+  on introduced complexity/duplication; ordinary commit blocked, NOT_DONE.
+  Owner's 2026-10-10 model amendment restricts
+  further delegates to GPT-6.1 Sol / GPT-6 Luna.
+  No publication, merge or deployment.
+
+### Combat reuse deeper recheck
+
+- 2026-10-09, branch `codex/sprite-combat-stage1`, local: owner requested
+  deeper verification and better reuse choices. [The revised combat contract](docs/wiki/battlefield-test-maps.md#углублённая-перепроверка-и-более-простой-поиск--2026-10-09)
+  supersedes mandatory ngraph adaptation with one bounded Dijkstra field
+  inspired by Athena Crisis; keeps existing hex/AI/initiative/RNG/replay and
+  starts with a linear frontier, TinyQueue only if integration measurements
+  justify it. Added independent AP/stamina labels, shared preview preparation,
+  canonical-route/versioning boundaries, pinned candidate comparison and probe
+  limits; linked [preview requirements](docs/wiki/mechanics/preview.md) and
+  updated CURRENT_PLAN. Reproduced ngraph blocked-goal/callback/tie-order cases
+  and abstract-astar decrease-key failure. Six new repo queries/13 families;
+  three new deep candidates, old ngraph/TinyQueue rechecked. Existing combat
+  14/14 and server lab 7/7 tests PASS; isolated prototypes matched independent
+  scalar/resource oracles on the recorded corpus. Documentation format,
+  scoped tracked links and diff PASS. New game integration/browser journey
+  NOT_RUN; production performance/capacity/time savings NOT_MEASURED.
+  No foreign source copied into production, package installed, game behavior
+  changed, migration, publication, merge or deployment. Earlier research
+  remains below as dated history.
+
+### Combat modules and algorithm reuse research
+
+- 2026-10-09, branch `codex/sprite-combat-stage1`, local: owner requested
+  ready GitHub modules/algorithms in the combat specification. Added
+  [the reuse matrix and adaptation contract](docs/wiki/battlefield-test-maps.md#повторное-использование-готового-кода--2026-10-09),
+  linked it into S2–S4 and the mind map, and updated CURRENT_PLAN. Inspected
+  pinned ngraph.path, ROT.js and boardgame.io sources/licenses/tests/issues;
+  recommends MIT/ISC weighted-search source adaptation with blocked-goal,
+  direction, AP/stamina and deterministic-preview checks. Reuses existing
+  core/AI/replay; complete framework adoption rejected, MCTS deferred.
+  Eight repository queries/18 families; sequential-thinking MCP used.
+  Documentation format, scoped tracked links and diff checks PASS.
+  Candidate execution/integration/game checks NOT_RUN; performance/time
+  savings NOT_MEASURED. No foreign source copied into production, package
+  installed, game behavior changed, migration, publication, merge or deployment.
+
+### Sprite-combat specification and visual agreement
+
+- 2026-10-09, branch `codex/sprite-combat-stage1`, local: owner returned combat
+  character production to sprites and confirmed Battle Brothers' positioning,
+  weapons, fatigue and morale, 6×6, opponent selection and two samples before
+  twenty separate asset tasks. Extended [the owning battlefield page](docs/wiki/battlefield-test-maps.md#спрайтовая-боёвка-тз-этапа-1--2026-10-09)
+  with a decision matrix, ten selected warrior/ten bestiary profiles, five locations,
+  UX, lore mind map, source-pinned GitHub research and a versioned real-lab plan.
+  Added the local approval board and generated concepts/prompts under
+  `assets/art/combat/stage1-2026-10-09/`; two samples were revised after critique.
+  Updated ADR-0006, combat/wiki navigation and CURRENT_PLAN without changing
+  Babylon or game rules. Source/format/JavaScript/JSON/links and desktop board
+  journeys PASS. Independent concept findings and corrections are recorded in
+  the owning page; integrated day/night/gameplay acceptance BLOCKED; motion out of current scope.
+  Full game checks NOT_RUN, performance NOT_MEASURED. No production code,
+  migration, dependency, publication, merge or deployment; style/remaining
+  balance/implementation await the real stand. D1–D12, roster and style are now
+  approved: 80 px/15×11, four AP, no ZOC movement lock, human escape/surrender,
+  one retarget with new warning/response activation, heights/mud/fire and static
+  full figures only. Approved C replaces rejected W01 as foundation. Twenty
+  individual asset tasks under `roster/` completed after style agreement; all
+  twenty generated PNG/provenance pairs saved. Primary gallery uses nineteen new
+  figures plus existing B001 after alpha failures; rejected variants retained.
+  B023 benign tethered variant omits source loop, exact generation rejection
+  recorded. Linked mechanics/vision/bestiary amendments preserve old proposals.
+  Updated matrix/all-image loading and80/220px gallery interactions PASS;
+  first static critic found body-scale/B030 silhouette/B037 lore gaps. Corrected
+  human body/foot scaling and B030/B037 v2; absolute re-review pending,
+  integrated acceptance still BLOCKED.
+
+- 2026-10-09, same branch, local correction: after the repeated absolute static
+  review, replaced B030's mound with a fresh upright folded silhouette (`v3`)
+  and restored B023's empty loop on a rooted stationary anchor (`v2`). Updated
+  the gallery, visible B030 height and owning specification/checkpoint; exact
+  prompts, rejected attempts and earlier variants retained. B023's scene
+  fixtures still require separation before gameplay. Revised all-image loading,
+  80/220 px, backdrop/console, embedded JS, provenance JSON and local HTML links
+  PASS. Full static art/lore scores reached ≥2; B023 composition scored 1,
+  so two bounded edits separated the creature (`v3`) and stationary tree/loop
+  (`fixture.png`). Gallery selects the creature only; runtime tether/occupancy
+  remain future requirements. Final absolute static review: all twenty figures
+  score ≥2 on six isolated-art criteria; split/complete toes confirmed,
+  clear night80 capture inspected. Narrow B023 bottom margin remains a
+  preparation risk. Agreed stage 1 scope complete locally; integrated battle
+  acceptance remains BLOCKED. No game-source change,
+  publication, merge or deployment.
 
 ### World review, Porechye close view via Codex, gamedev skills
 

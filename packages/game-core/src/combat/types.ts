@@ -7,13 +7,31 @@ export type UnitId = Brand<string, 'UnitId'>;
 
 export const COMBAT_SCHEMA_VERSION = 1 as const;
 export const M0_COMBAT_RULESET_ID = 'm0-prototype-v1' as const;
+export const SPRITE_PROTOTYPE_RULESET_ID = 'sprite-prototype-v1' as const;
+export const SPRITE_PROTOTYPE_V3_RULESET_ID = 'sprite-prototype-v3' as const;
+export const COMBAT_SKILL_IDS = [
+  'shield-brace',
+  'armor-pressure',
+  'reach-thrust',
+  'aimed-shot',
+  'rally',
+] as const;
+export type CombatSkillId = (typeof COMBAT_SKILL_IDS)[number];
+export type CombatSkillRanks = Partial<Record<CombatSkillId, 1 | 2 | 3>>;
+export const SPRITE_PROTOTYPE_V2_RULESET_ID = 'sprite-prototype-v2' as const;
 export const COMBAT_RANDOM_ALGORITHM = 'xorshift32-v1' as const;
 export const M0_WEAPON_IDS = ['bow', 'great-weapon', 'raider', 'spear', 'sword-shield'] as const;
 
 export type LegacyCombatRulesetId = typeof M0_COMBAT_RULESET_ID;
-export type CombatRulesetId = LegacyCombatRulesetId | 'm1-domain-bridge-v1' | 'm1-domain-bridge-v2';
+export type CombatRulesetId =
+  | LegacyCombatRulesetId
+  | typeof SPRITE_PROTOTYPE_RULESET_ID
+  | typeof SPRITE_PROTOTYPE_V2_RULESET_ID
+  | typeof SPRITE_PROTOTYPE_V3_RULESET_ID
+  | 'm1-domain-bridge-v1'
+  | 'm1-domain-bridge-v2';
 export type WeaponId = (typeof M0_WEAPON_IDS)[number];
-export type UnitStatus = 'active' | 'dead' | 'retreated';
+export type UnitStatus = 'active' | 'dead' | 'retreated' | 'surrendered';
 export type WoundSeverity = 'minor' | 'severe';
 export type BattleStatus = 'active' | 'resolved';
 export type AiDoctrine = 'aggressive' | 'survivor';
@@ -26,6 +44,12 @@ export interface Hex {
 export interface CombatMap {
   readonly hexes: readonly Hex[];
   readonly blocked: readonly Hex[];
+  readonly tiles?: readonly CombatTile[];
+}
+
+export interface CombatTile extends Hex {
+  readonly height: 0 | 1 | 2;
+  readonly terrain: 'plain' | 'mud' | 'fire';
 }
 
 export interface CombatSideSetup {
@@ -49,12 +73,21 @@ export interface CombatUnitSetup {
   readonly position: Hex;
   readonly weaponId: WeaponId;
   readonly attributes: UnitAttributes;
+  readonly skillRanks?: CombatSkillRanks;
+  readonly trainedMelee?: boolean;
+  readonly incorporeal?: boolean;
+  readonly moralePolicy?: 'human' | 'beast' | 'steady';
+  readonly threatProfile?: 'mill-slam';
 }
 
 export interface BattleSetup {
   readonly schemaVersion: typeof COMBAT_SCHEMA_VERSION;
   readonly battleId: BattleId;
-  readonly rulesetId: LegacyCombatRulesetId;
+  readonly rulesetId:
+    | LegacyCombatRulesetId
+    | typeof SPRITE_PROTOTYPE_RULESET_ID
+    | typeof SPRITE_PROTOTYPE_V2_RULESET_ID
+    | typeof SPRITE_PROTOTYPE_V3_RULESET_ID;
   readonly seed: number;
   readonly map: CombatMap;
   readonly sides: readonly [CombatSideSetup, CombatSideSetup];
@@ -72,8 +105,27 @@ export interface CombatUnitState extends CombatUnitSetup {
   readonly stamina: number;
   readonly morale: number;
   readonly guarding: boolean;
+  readonly shieldBraceRank?: 1 | 2 | 3;
   readonly status: UnitStatus;
   readonly wounds: readonly CombatWound[];
+  readonly escapePlan?: CombatEscapePlan;
+  readonly reactionSpent?: boolean;
+  readonly threat?: CombatThreat;
+}
+
+export interface CombatEscapePlan {
+  readonly exit: Hex;
+  readonly path: readonly Hex[];
+  readonly safe: boolean;
+}
+
+export interface CombatThreat {
+  readonly targetId: UnitId;
+  readonly targetHex: Hex;
+  readonly range: 2;
+  readonly damage: { readonly minimum: number; readonly maximum: number };
+  readonly retargeted: boolean;
+  readonly responseReceived: boolean;
 }
 
 export interface RandomState {
@@ -142,11 +194,51 @@ export interface RetreatCommand extends CombatCommandBase {
   readonly type: 'retreat';
 }
 
+export interface FleeCommand extends CombatCommandBase {
+  readonly type: 'flee';
+}
+export interface SurrenderCommand extends CombatCommandBase {
+  readonly type: 'surrender';
+}
+export interface PrepareThreatCommand extends CombatCommandBase {
+  readonly type: 'prepare-threat';
+  readonly targetId: UnitId;
+}
+export interface RetargetThreatCommand extends CombatCommandBase {
+  readonly type: 'retarget-threat';
+  readonly targetId: UnitId;
+}
+export interface ExecuteThreatCommand extends CombatCommandBase {
+  readonly type: 'execute-threat';
+}
+
+export interface UseSkillCommand extends CombatCommandBase {
+  readonly type: 'use-skill';
+  readonly skillId: CombatSkillId;
+  readonly targetId?: UnitId;
+}
+
 export type CombatCommand =
-  MoveCommand | AttackCommand | DefendCommand | WaitCommand | RetreatCommand;
+  | UseSkillCommand
+  | MoveCommand
+  | AttackCommand
+  | DefendCommand
+  | WaitCommand
+  | RetreatCommand
+  | FleeCommand
+  | SurrenderCommand
+  | PrepareThreatCommand
+  | RetargetThreatCommand
+  | ExecuteThreatCommand;
 
 export type CombatFailureCode =
+  | 'SKILL_NOT_AVAILABLE'
+  | 'PANICKED'
+  | 'THREAT_NOT_AVAILABLE'
+  | 'THREAT_RESPONSE_REQUIRED'
+  | 'SURRENDER_NOT_AVAILABLE'
   | 'BATTLE_TERMINAL'
+  | 'BLOCKED_LINE_OF_SIGHT'
   | 'DUPLICATE_COMMAND'
   | 'HEX_OCCUPIED'
   | 'INSUFFICIENT_ACTION_POINTS'
@@ -207,6 +299,13 @@ export interface UnitMovedEvent extends CombatEventBase {
   readonly staminaCost: number;
 }
 
+export interface UnitFireDamagedEvent extends CombatEventBase {
+  readonly type: 'unit.fire-damaged';
+  readonly unitId: UnitId;
+  readonly healthDamage: number;
+  readonly remainingHealth: number;
+}
+
 export interface AttackResolvedEvent extends CombatEventBase {
   readonly type: 'attack.resolved';
   readonly attackerId: UnitId;
@@ -254,7 +353,7 @@ export interface MoraleChangedEvent extends CombatEventBase {
   readonly unitId: UnitId;
   readonly delta: number;
   readonly morale: number;
-  readonly cause: 'ally-death' | 'damage' | 'wound';
+  readonly cause: 'ally-death' | 'damage' | 'wound' | 'rally';
 }
 
 export interface BattleResolvedEvent extends CombatEventBase {
@@ -262,12 +361,35 @@ export interface BattleResolvedEvent extends CombatEventBase {
   readonly outcome: BattleOutcome;
 }
 
+export interface UnitSurrenderedEvent extends CombatEventBase {
+  readonly type: 'unit.surrendered';
+  readonly unitId: UnitId;
+  readonly sideId: SideId;
+}
+export interface CombatThreatEvent extends CombatEventBase {
+  readonly type: 'threat.prepared' | 'threat.retargeted' | 'threat.cancelled' | 'threat.executed';
+  readonly unitId: UnitId;
+  readonly threat: CombatThreat;
+}
+
+export interface CombatSkillUsedEvent extends CombatEventBase {
+  readonly type: 'skill.used';
+  readonly unitId: UnitId;
+  readonly skillId: CombatSkillId;
+  readonly rank: 1 | 2 | 3;
+  readonly targetId?: UnitId;
+}
+
 export type CombatEvent =
+  | CombatSkillUsedEvent
+  | UnitSurrenderedEvent
+  | CombatThreatEvent
   | BattleStartedEvent
   | RoundStartedEvent
   | ActivationStartedEvent
   | ActivationEndedEvent
   | UnitMovedEvent
+  | UnitFireDamagedEvent
   | AttackResolvedEvent
   | UnitDamagedEvent
   | UnitWoundedEvent

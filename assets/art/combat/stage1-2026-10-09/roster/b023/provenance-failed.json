@@ -1,0 +1,62 @@
+{
+  "id": "B023",
+  "title": "Gallows shadow",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "BLOCKED: image generation returned no image",
+  "owner_source": "docs/wiki/bestiary/creatures/b023.md",
+  "specification": "docs/wiki/battlefield-test-maps.md B023 row",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "tool_arguments": {
+    "prompt": "Use case: stylized-concept\nAsset type: Warwrit B023 Gallows shadow static isolated combat sprite with its essential physical rope and wood support, real alpha transparency.\nInput images: Image 1 unit-c-ink.png establishes irregular ink outlines, matte flat washes, credible proportion and upper-left lighting. Image 2 staraya-melnitsa.png supplies weathered wood/rope material character and subdued palette only. Image 3 battle-ux-v3.png establishes elevated three-quarter camera and small sprite readability. Image 4 night-mill-beast-concept-v2.png supplies dark creature tonal masses and ink hatching only, NOT its bear anatomy or eyes.\nSource subject: B023 is a THIN silhouette repeating the TENSION OF A REAL ROPE; it remains physically attached to an actual support with an old noose. It must not look like a freely floating ghost. No biography, execution victim, faction, culprit, religious symbol or additional supernatural power is specified.\nComposition and anatomy: one slender dark humanoid-like fibrous silhouette, with a small featureless narrow profile, two thin tension-stretched arms reaching slightly forward and two narrow lower limbs. It strains toward screen upper-right, but a clearly visible continuous taut coarse hemp rope physically connects its upper torso/noose to a compact old bare weathered wood support immediately behind it. Use a single short upright gnarled tree-trunk support with one sturdy lateral fork/branch; show the rope wrapped and knotted around this actual branch, the entire rope path, and a plainly visible old hanging loop continuous with the figure's upper body. The shadow's narrow fibrous form follows this taut rope line rather than billowing into a robe. Rope, loop, attachment and full simple support all inside the canvas. The essential wood support is part of this isolated asset, not a scenery backdrop. Bottom of support and lower limbs have a common level with no painted ground.\nStyle and palette: severe grounded dark fantasy, strong soot-black silhouette masses, irregular dark ink contours, internal hatching, restrained slate/umber/ochre flat washes, frayed hemp fibres and rough weathered timber. Match the supplied art's matte non-glossy rendering. Enough muted edge contrast to distinguish the slender form from the wood. No translucent glowing spectral smoke or magical effect. No readable face, skull, bones, corpse costume, hood, weapons, armour, symbols or ornaments.\nCamera: fixed elevated three-quarter battlefield view, slightly visible top surfaces, figure profile and pose facing screen upper-right, lit from upper-left. No mirrored lighting.\nFraming: full subject, entire wood support and continuous rope/loop with comfortable alpha margins. Isolated on actual transparent background. Readable at a human-equivalent 80 px sprite height; avoid wispy unstructured details. No ground tile, terrain patch, grass, scenery, pedestal, painted shadow, text, border, extra figure, aura, glowing eyes or franchise copying.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+    ],
+    "transparent_background": true
+  },
+  "inspected_references": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "generation_calls": 1,
+  "returned_source_path": null,
+  "saved_path": null,
+  "observed_dimensions": null,
+  "observed_alpha": null,
+  "error": {
+    "code": "moderation_blocked",
+    "stage": "output",
+    "categories": ["self-harm", "violence"],
+    "request_id": "d4b1e56f-7ed7-418d-9d88-db211958edae",
+    "message": "Your request was rejected by the safety system."
+  },
+  "checks": [
+    {
+      "name": "Full B023 creature card and current spec row read",
+      "result": "PASS"
+    },
+    {
+      "name": "Personal inspection of all four common references",
+      "result": "PASS"
+    },
+    {
+      "name": "Image visual inspection, alpha and dimensions",
+      "result": "NOT_RUN: no output image returned"
+    },
+    {
+      "name": "Independent visual acceptance",
+      "result": "NOT_RUN"
+    }
+  ],
+  "limitations": [
+    "No sprite delivered. No CLI fallback, dependency, commit, shared-path write or W06 change.",
+    "Safer retry proposed to parent: standing fibre-dark silhouette, rope attached to torso rather than neck; clearly separate empty loop on support. Pending parent's instruction because bounded generation allowance did not specify moderation retry."
+  ],
+  "documentation_handoff": "Parent owns shared project documentation; record B023 as blocked unless a later successful generation supersedes this attempt."
+}

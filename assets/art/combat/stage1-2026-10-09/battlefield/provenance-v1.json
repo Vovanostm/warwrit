@@ -1,0 +1,40 @@
+{
+  "status": "local_generated_candidate",
+  "acceptance": "NOT_RUN",
+  "date": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "asset": "assets/art/combat/stage1-2026-10-09/battlefield/mill-field-v1.png",
+  "tool": "image_gen.imagegen",
+  "mode": "built_in_style_preserving_edit",
+  "transparent_background": false,
+  "generated_source_path": "/Users/vovanostm/.codex/generated_images/01a12258-6062-7332-acae-f6535c6a5d64/exec-21b3c2fd-7077-4361-8cb3-c9c72c864dd9.png",
+  "persisted_unchanged": true,
+  "dimensions": { "width": 1672, "height": 941, "hasAlpha": false },
+  "references": [
+    {
+      "path": "assets/art/m1/places/staraya-melnitsa.png",
+      "role": "edit target; ruined Old Mill architecture, materials, wheel, stream"
+    },
+    {
+      "path": "assets/art/m1/style/unit-c-ink.png",
+      "role": "supporting approved ink and flat wash style reference; no character insertion"
+    }
+  ],
+  "source_paths": [
+    "AGENTS.md#dark-fantasy-shared-visual-style-and-lore",
+    "docs/wiki/m1-spec.md#5-глобальная-карта-и-перемещение",
+    "docs/wiki/m1-spec.md#12-визуальный-язык-и-интерфейс",
+    "docs/content/CONTRACTS_M1_DERIVATIVE.md#finite-edition"
+  ],
+  "source_constraints": "Dangerous ruined Old Mill at existing staraya-melnitsa site. Working location names are authored derivatives, not recovered original canon. No invented lore, events, actors, witnesses or symbols.",
+  "prompt": "Use case: style-transfer.\nAsset type: opaque production game battlefield backdrop, wide landscape 16:9, ideally 1536x864.\nPrimary request: Reinterpret the approved ruined Old Mill illustration (input image 1) into a fixed elevated orthographic three-quarter battlefield viewed about 50 degrees downward. Input image 2 is the approved unit-C ink style reference; use its credible contour and flat wash technique only, do NOT paint its human into the scene.\nIdentity to preserve: the same dangerous RUINED old watermill, heavy weathered irregular stone masonry, collapsed broken timber roof and walls, damaged wooden waterwheel beside a stream, worn muddy approach. This is a ruin, never a working picturesque mill. Preserve architectural material identity and serious grounded dark fantasy.\nComposition: allocate about 75 percent of this image to a broad OPEN LEVEL battle floor in the centre and right, spanning roughly x12–94 percent, y22–90 percent. Keep the recognizable substantial ruined mill and broken wheel clustered in the UPPER LEFT margin. Put the stream only along the far LEFT edge. Sparse dead trees, broken fence fragments and ruined debris may frame the OUTER PERIMETER, outside the open battle floor. Make the combat floor largely empty and calm: irregular mud, worn flat stone patches, thin desaturated weeds, subtle painted contact texture and broad worn paths. No tall objects, scattered standing rocks, obstructions or holes inside the main floor. No central obstacles.\nCamera/projection: orthographic, elevated three-quarter at about 50-degree downward pitch, parallel shared ground axes, upright verticals, no horizon, no skyline, no distant castle, no vanishing point, no cinematic receding terrain. A continuous full-frame painted ground surface for flat sprite figures and hex overlays to be placed later. Believable scale for human figures approximately 80 pixels tall on a 1440-pixel-wide viewport; mill tower may be larger but not dominate the floor.\nStyle/medium: hand-painted ink and restrained flat-wash illustration matching both references. Irregular black ink contours, convincing heavy stone and rough broken timber, strong deliberate shadow masses at the perimeter. Natural unpolished material character, not a smooth game render.\nPalette/lighting: muted slate, soot, umber and ochre with restrained rust accents. Restrained diffuse upper-left daylight. Keep floor values moderately light/desaturated to read dark unit sprites clearly, without bright pristine masonry, luminous green lawns, glossy surfaces, or blackened illegible ground.\nStrict constraints: NO humans, characters, creatures, UI, hexagons, grid lines, labels, text, emblems, flags, invented symbols, invented lore, magical light, horizon or neat modern repeated textures. Do not copy an unrelated franchise. Do not retain the reference's original perspective vista or its central mill placement. Output a single clean wide opaque raster battlefield.",
+  "inspection": {
+    "generated_image_viewed": true,
+    "concerns": [
+      "Mill extends into upper-left part of requested x12–94%, y22–90% open region; central/right playable area should be checked against actual overlay placement.",
+      "Ground contains textured worn stone and low weeds; sprite and hex readability requires integrated browser review."
+    ],
+    "independent_visual_acceptance": "NOT_RUN",
+    "integrated_day_night_journey": "NOT_RUN"
+  }
+}

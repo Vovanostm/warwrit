@@ -1,0 +1,65 @@
+{
+  "id": "B030",
+  "variant": "v2",
+  "date": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; independent visual re-review pending",
+  "reason": "Parent critic reported silhouette/pose=1 at 80px: sack read as rock/mound without directional front or active contact threat.",
+  "subject_source": "docs/wiki/bestiary/creatures/b030.md",
+  "tool": "built-in image_gen.imagegen",
+  "calls_this_revision": 1,
+  "total_calls_for_b030": 2,
+  "transparent_background": true,
+  "edit_target": "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b030/sprite.png",
+  "prompt": "Use case: precise-object-edit.\nEdit target: first image, existing Warwrit B030 Shore mourner static combat sprite. Reference images 2-5 are established ink/flat-wash material, palette, light and elevated battlefield projection references. Keep target body silhouette, size, general pose, composition, full margins and actual transparent alpha.\nCorrect ONLY the upper-right/front breathing membrane and its immediate leading fold, and reduce the existing glossy slime highlights. At 80 pixels this currently reads as a rock/mound. Make it read as a living poised sack-like contact predator using strongly legible dark negative-space ink: one clearly OPEN long narrow breathing slit on the upper-right-facing surface, outlined by a thin restrained warm muted hide edge, with adjacent smaller thin breathing fissures. The main breathing slit is a deep-black tapered gap, clearly separated from ordinary hide wrinkles, visible from the fixed elevated three-quarter camera. It remains a breathing organ, not a face, mouth, eye or teeth. Show a slight forward-poised leading fold below it, a taut fold leaning toward upper-right as if preparing a close-contact movement; this fold remains attached to the same continuous sack body, never an arm, tentacle, limb or head. Its edge may lift slightly but do not increase the body's silhouette or invent a new appendage.\nExact card: sack-like creature with thin breathing slits emitting wordless crying-like sound; no human identity, no language, it seizes only on contact. Preserve one continuous sack-like body; absolutely no human face, head, hands, legs, humanoid ghost, eyes, claws, teeth, tentacles, wings, horns, tail, weapon, clothing, symbols, magic or new power. No sound symbols or text.\nKeep irregular dark ink contours and hatching, flat muted soot/slate/umber wash, coherent dark shadow masses, fixed elevated 3/4 facing screen upper-right, upper-left light, full silhouette grounded by lower body. Skin wet but matte: replace polished slime specular streaks with restrained dull dark damp patches, no glossy bright highlights. Retain all existing broad sack-body folds outside the targeted front.\nActual transparent background and alpha unchanged outside subject. No ground, shadow, tile, water, pedestal, terrain, scene, cropping or extra subjects.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b030/sprite.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-b0c1-73c0-9a1f-e7fc03785ef2/exec-6fb4dae8-25aa-4617-93c4-be6da074ebc4.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b030/sprite-v2.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "png": {
+    "bit_depth": 8,
+    "color_type": 6,
+    "mode": "RGBA",
+    "interlace": 0
+  },
+  "alpha": {
+    "zero_pixels": 958752,
+    "opaque_pixels": 484,
+    "partial_pixels": 613280,
+    "nonzero_bbox_inclusive": [31, 38, 1205, 1253],
+    "bbox_min_alpha_16": [82, 253, 1177, 1128],
+    "bbox_min_alpha_128": [83, 253, 1176, 1127],
+    "dominant_subject_alpha": 253
+  },
+  "observations": [
+    "Re-read full exact B030 card and inspected local edit target.",
+    "Upper-right membrane now has a prominently open narrow black breathing slit with adjacent smaller fissures; target front no longer relies solely on hide wrinkles.",
+    "Leading lower-front fold slightly more pronounced while remaining continuous with the sack body.",
+    "Overall silhouette, elevated view, body size and muted ink/hatching preserved visually; no humanoid head, arms, legs, eyes, teeth, claws or extra appendages.",
+    "No background, terrain, painted contact shadow, text, symbols, weapon or magic."
+  ],
+  "checks": [
+    "Python standard-library PNG header/zlib scanline inspection confirms 1254x1254 8-bit RGBA with actual transparent background.",
+    "Visible-subject alpha>=16 bbox [82,253,1177,1128] has complete margins.",
+    "Full-resolution output inspected for opening, continuous anatomy, cropping and alpha preservation.",
+    "Provenance JSON parsed and read back."
+  ],
+  "limitations": [
+    "Brightness reduction of slime is incomplete; visible bright beads remain. Matte wet material acceptance belongs to critic.",
+    "Small 80px threat/direction readability and full twenty-subject comparison NOT_RUN by this worker; parent re-review required.",
+    "V2 is a candidate correction, not ACCEPT. No additional edit attempted.",
+    "Alpha has low-opacity specks near canvas edges, predominantly 253 over body; original generated alpha preserved.",
+    "Wordless crying/contact behavior remains static visual interpretation, no audio or mechanics implemented."
+  ],
+  "preserved": "Original B030 sprite.png/provenance.json and all W08 assets untouched.",
+  "handoff_documentation": "Parent owns shared documentation/changelog; worker only wrote sprite-v2.png and provenance-v2.json in B030."
+}

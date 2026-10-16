@@ -1,0 +1,63 @@
+{
+  "id": "B030",
+  "name": "Shore mourner",
+  "date": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; independent visual acceptance pending",
+  "subject_source": "docs/wiki/bestiary/creatures/b030.md",
+  "source_authority": "Card B7 is authored review-draft proposal; owner approved selection for art/stand, no abilities implemented or canon status inferred.",
+  "selection_source": "docs/wiki/battlefield-test-maps.md:474",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "calls": 1,
+  "transparent_background": true,
+  "prompt": "Use case: stylized-concept.\nAsset: Warwrit B030 Shore mourner, one static full-body creature combat sprite on true transparent alpha.\nReference roles: image 1 unit-c-ink.png is the irregular hand-ink contour, hatching, flat-wash rendering standard; no human anatomy borrowed. Image 2 staraya-melnitsa.png supplies subdued weathered umber/slate/soot colors and upper-left light only, not terrain or objects. Image 3 battle-ux-v3.png gives fixed elevated three-quarter battlefield projection and upper-right forward orientation. Image 4 night-mill-beast-concept-v2.png supplies dark creature tonal weight, strong readable ink shadow masses and restrained organic surface treatment only; do not copy its fur, claws, eyes or anatomy.\nExact creature card: B030 is a sack-like shoreline creature with thin breathing slits that make a wordless crying-like sound. It has no language and does not imitate a missing person's identity. It draws small prey or curious visitors by sound and seizes only on physical contact. Thick slime is part of its traces. Do not invent additional powers or human identity.\nDepict one grounded squat sack-shaped organic body, heavy and sagging, tapering irregularly toward the upper-right-facing front; broad folded lower body naturally resting at ground height. It is living weathered organic hide, not a sewn fabric bag. Make a few thin dark breathing slits clearly visible in a folded membrane on the upper-right/front side, with restrained folds around them so these read as breathing organs, not eyes or a human mouth. Suggest wordless crying only through this contracted breathing membrane, without text or sound symbols. Subdued traces of thick slime cling in small dull edge deposits to its hide, no separate puddle or terrain. Preserve minimal anatomy: continuous single sack-like body, no humanoid head or face, no human hands/legs, no tentacles, wings, horns, tail, claws, teeth or invented extra appendages. No weapon, clothing or ornament.\nStyle: serious grounded dark fantasy; irregular strong dark ink contour, internal hatching, flat restrained muted soot/slate/umber washes, strong coherent shadow masses, weathered organic folds, no glossy 3D surface, no cute rounded cartoon proportions. Hide should have credible creased irregular texture and weight; avoid polished smooth blob rendering.\nComposition: whole creature visible, centered with generous transparent margins, fixed elevated three-quarter view looking down enough to see upper surface, forward end oriented screen upper-right, consistent upper-left light. Readable single distinctive sack silhouette and a clearly visible breathing membrane at small combat scale; no assumed numeric size/balance or occupied-cell count.\nBackdrop: actual transparent alpha only. No ground tile, platform, pedestal, terrain, scenery, water, contact shadow, text, border, other creatures, person, ghost or spirits. No magic effects, glow or glowing eyes.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-b0c1-73c0-9a1f-e7fc03785ef2/exec-da385b35-0437-41f6-a8c6-d64ad8fdc75d.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b030/sprite.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "png": {
+    "bit_depth": 8,
+    "color_type": 6,
+    "mode": "RGBA",
+    "interlace": 0
+  },
+  "alpha": {
+    "zero_pixels": 960637,
+    "opaque_pixels": 451,
+    "partial_pixels": 611428,
+    "nonzero_bbox_inclusive": [0, 21, 1233, 1253],
+    "bbox_min_alpha_16": [78, 251, 1160, 1127],
+    "bbox_min_alpha_128": [79, 252, 1159, 1126],
+    "dominant_subject_alpha": [252, 253]
+  },
+  "observations": [
+    "Personally viewed unit-c-ink, staraya-melnitsa, battle-ux-v3 and night-mill-beast-concept-v2; read full B030 card and roster brief.",
+    "One heavy sack-like organic body, folded lower mass at ground height, upper-right/front raised membrane with thin dark breathing slits.",
+    "No humanoid head or face, eyes, arms, legs, claws, tentacles, wings, tail, weapon, clothing, magic or glow.",
+    "Thick slime clings to hide; no separate terrain or puddle. No text, sound symbols, background, pedestal or painted shadow.",
+    "Complete visible subject with margins, dark ink/hatching and muted umber/slate wash."
+  ],
+  "checks": [
+    "PNG header and Python standard-library zlib scanline decoding: 1254x1254 8-bit RGBA, actual transparent pixels.",
+    "Alpha threshold >=16 visible bbox [78,251,1160,1127], ensuring substantial visible-subject margins.",
+    "Visual inspection: sack body and breathing slits conform to exact card; no extra anatomy or human ghost imitation.",
+    "Provenance JSON parse/readback."
+  ],
+  "limitations": [
+    "Static visual only: wordless crying, contact-only seizure and breathing-membrane interaction are not gameplay/audio implementations.",
+    "Slime specular highlights are stronger than restrained matte prompt; parent visual critic should assess coherence with approved flat-wash direction.",
+    "Subject alpha predominantly 252-253; faint near-transparent specks extend to canvas edges. Original generated alpha preserved without cleanup.",
+    "Battlefield integration, relative scale, small-size readability, day/night and independent visual acceptance NOT_RUN by this worker.",
+    "Species card does not establish numeric size or precise locomotion anatomy; sprite uses one continuous sack body without invented limbs."
+  ],
+  "handoff_documentation": "Parent owns shared changelog/current-plan/wiki updates. Worker only writes B030 directory; existing W08 preserved."
+}
