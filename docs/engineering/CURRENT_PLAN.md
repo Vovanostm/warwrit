@@ -16,8 +16,12 @@ patches integrated without bypass. Final candidate uses ordinary passing hook.
 Controller/HUD/skills/core/scene independent source review complete; denied
 sessionStorage getter P2 fixed/read back. Gameplay critic completed manual+
 auto R8 victory,6survivors/158commands; forecasts agreed in inspected attacks.
-One battle is not strategy/balance acceptance. Current fresh visual packet,
-clean PR bootstrap/DB/stress, expected-head merge and main playcheck pending.
+One battle is not strategy/balance acceptance. DraftPR157 at87c5c6a clean
+CI38909754401 PASS: bootstrap/stress/disposablePostgreSQL/coverage/audit.
+Visual critic REJECT: event overlaps prepared-threat badge in dense R3.
+Correction reserves current threat labels before events;8focused/types/lint/
+format PASS, freshcoverage796PASS/47SKIPPED; source readback no findings.
+Same-critic full absolute recheck/newheadCI, merge and main journey pending.
 Root owns shared docs; all isolated source writers frozen/released. Primary
 WIP retained. Canonical learning/provisional-perk boundaries remain unchanged.
 

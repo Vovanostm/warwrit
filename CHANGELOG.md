@@ -92,6 +92,20 @@ requests.
   work; this combat PR does not publish it. No combat code or evidence changed.
   Markdown format/local references checked; no game retest required.
 
+### Reserve prepared-threat badges before accepted events
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local correction to
+  published draftPR157: independent visual critic rejected overlapping
+  preparation/movement labels (FEEDBACK-02). Scene now creates current threat
+  labels before placing events and reserves their bounds alongside figures.
+  Added a dense neighbouring-badge spacing regression;8focused/web types/
+  lint/format PASS, freshcoverage796PASS/47SKIPPED. Independent source review
+  found no material issues. Same-critic absolute visual recheck/newheadCI pending.
+  Previous head87c5c6a CI38909754401 PASS includes clean bootstrap,10k stress,
+  14 PostgreSQL checks and strict audit; not claimed for this source correction.
+  Owning wiki records rejected image/reproduction and scoped outline proof;
+  index no longer calls the working sprite sandbox unimplemented.
+
 ### Battle camera menu helper
 
 - 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner-authorized

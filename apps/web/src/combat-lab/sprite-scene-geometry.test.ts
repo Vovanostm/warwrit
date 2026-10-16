@@ -27,6 +27,16 @@ it('moves feedback above reserved figures but retains the finite placement bound
   );
 });
 
+it('stacks a movement event above a neighbouring preparation badge and accepted event', () => {
+  const preparation = { x: 0.6, up: 1.25, halfWidth: 0.675, halfHeight: 0.15 };
+  const previousEvent = { x: 0, up: 1.8, halfWidth: 0.475, halfHeight: 0.16 };
+  const up = eventLabelUp(0, 1.23, 0.475, [preparation, previousEvent]);
+  expect(up).toBeCloseTo(2.13);
+  for (const box of [preparation, previousEvent]) {
+    expect(Math.abs(up - box.up)).toBeGreaterThanOrEqual(0.16 + box.halfHeight);
+  }
+});
+
 it('shifts a field anchor without changing its horizontal and target coordinates, stopping at the viewport limit', () => {
   const anchor = { x: 200, y: 260, targetY: 280 };
   expect(avoidAnchorOverlap(anchor, [{ left: 150, right: 250, top: 200, bottom: 300 }])).toEqual({

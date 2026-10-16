@@ -651,7 +651,7 @@ export async function mountSpriteBattleScene(
     renderedEventRevision = view.viewRevision;
     for (const mesh of eventLabels.splice(0)) mesh.dispose(false, true);
     const labels = eventFeedback(view, previousRevision);
-    const reserved = [...unitMeshes.values()]
+    const reserved = [...unitMeshes.values(), ...threatLabels]
       .filter((mesh) => mesh.isEnabled())
       .map((mesh) => ({
         x: mesh.position.x,
@@ -1115,8 +1115,8 @@ export async function mountSpriteBattleScene(
   canvas.setAttribute('aria-label', 'Поле боя с выбором бойца или клетки');
 
   unitMeshesForView(initialView);
-  renderEvents(initialView);
   updateMarkers();
+  renderEvents(initialView);
   const resizeObserver = new ResizeObserver(() => {
     engine.resize();
     clearHover();
@@ -1176,9 +1176,9 @@ export async function mountSpriteBattleScene(
       selectedCell = nextSelectedCell;
       updateLighting(night);
       unitMeshesForView(view);
-      renderEvents(view);
       if (changedRevision) clearHover();
       else updateMarkers();
+      renderEvents(view);
     },
     destroy,
   };
