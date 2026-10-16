@@ -1,4 +1,12 @@
 import {
+  validateUnitIdentity,
+  validateUnitPosition,
+  validateCombatMap,
+  createUnitAdmission,
+  validateHex,
+  validateInteger,
+} from './setup-validation.js';
+import {
   previewCombatSkills,
   combatSkillWeapon,
   combatSkillHitChance,
@@ -78,7 +86,7 @@ function failure(
   state: BattleState,
   code: CombatFailure['code'],
   message: string,
-): CombatCommandResult {
+): Extract<CombatCommandResult, { ok: false }> {
   return {
     ok: false,
     state,
@@ -125,17 +133,52 @@ function unitFromSetup(unit: CombatUnitSetup): CombatUnitState {
   };
 }
 
-function validateInteger(value: number, name: string, minimum = 0): void {
-  invariant(
-    Number.isSafeInteger(value) && value >= minimum,
-    `${name} must be an integer >= ${minimum}`,
-  );
+function validatePrototypeTraits(unit: CombatUnitSetup, rulesetId: CombatRulesetId): void {
+  if (unit.trainedMelee !== undefined || unit.incorporeal !== undefined) {
+    invariant(
+      isSpritePrototypeRuleset(rulesetId),
+      'Prototype combat traits require sprite-prototype-v1',
+    );
+    if (unit.trainedMelee !== undefined) {
+      invariant(typeof unit.trainedMelee === 'boolean', `${unit.id}.trainedMelee must be boolean`);
+    }
+    if (unit.incorporeal !== undefined) {
+      invariant(typeof unit.incorporeal === 'boolean', `${unit.id}.incorporeal must be boolean`);
+    }
+  }
+  if (unit.moralePolicy !== undefined || unit.threatProfile !== undefined) {
+    invariant(isSpriteS4Ruleset(rulesetId), 'S4 traits require sprite-prototype-v2');
+    invariant(
+      unit.moralePolicy === undefined || ['human', 'beast', 'steady'].includes(unit.moralePolicy),
+      'Unknown morale policy',
+    );
+    invariant(
+      unit.threatProfile === undefined || unit.threatProfile === 'mill-slam',
+      'Unknown threat profile',
+    );
+  }
 }
 
-function validateHex(value: Hex, name: string): void {
+function validateSetupAttributes(
+  unit: CombatUnitSetup,
+  rulesetId: CombatRulesetId,
+  rules: CombatRules,
+): void {
+  validateInteger(unit.attributes.health, `${unit.id}.health`, 1);
+  validateInteger(unit.attributes.armor, `${unit.id}.armor`);
+  validateInteger(unit.attributes.stamina, `${unit.id}.stamina`, 1);
+  validateInteger(unit.attributes.initiative, `${unit.id}.initiative`, 1);
+  validateInteger(unit.attributes.accuracy, `${unit.id}.accuracy`);
+  validateInteger(unit.attributes.defense, `${unit.id}.defense`);
+  validateInteger(unit.attributes.morale, `${unit.id}.morale`, 1);
   invariant(
-    Number.isSafeInteger(value.q) && Number.isSafeInteger(value.r),
-    `${name} coordinates must be safe integers`,
+    unit.attributes.morale <= rules.morale.maximum,
+    `${unit.id}.morale must be <= ${rules.morale.maximum}`,
+  );
+  invariant(validateCombatSkillRanks(unit.skillRanks), 'Invalid combat skill ranks');
+  invariant(
+    unit.skillRanks === undefined || rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID,
+    'Skills require sprite-prototype-v3',
   );
 }
 
@@ -153,17 +196,7 @@ function validateSetup(setup: BattleSetup, rules: CombatRules): void {
     `M0 battle must contain ${rules.units.minimum}-${rules.units.maximum} units`,
   );
 
-  const sideIds = new Set<string>();
-  const mapKeys = new Set(setup.map.hexes.map(hexKey));
-  const blockedKeys = new Set(setup.map.blocked.map(hexKey));
-  invariant(mapKeys.size === setup.map.hexes.length, 'Battle map hexes must be unique');
-  invariant(
-    blockedKeys.size === setup.map.blocked.length,
-    'Blocked battle map hexes must be unique',
-  );
-  invariant(setup.map.hexes.length > 0, 'Battle map must contain at least one hex');
-  setup.map.hexes.forEach((value, index) => validateHex(value, `map.hexes[${index}]`));
-  setup.map.blocked.forEach((value, index) => validateHex(value, `map.blocked[${index}]`));
+  const { mapKeys, blockedKeys } = validateCombatMap(setup.map);
   if (setup.map.tiles !== undefined) {
     invariant(
       isSpritePrototypeRuleset(setup.rulesetId),
@@ -187,81 +220,19 @@ function validateSetup(setup: BattleSetup, rules: CombatRules): void {
     }
   }
 
-  for (const blocked of blockedKeys) {
-    invariant(mapKeys.has(blocked), `Blocked hex ${blocked} must exist in the battle map`);
-  }
-
-  for (const side of setup.sides) {
-    invariant(side.id.length > 0, 'Side id must not be empty');
-    invariant(!sideIds.has(side.id), `Duplicate side id: ${side.id}`);
-    sideIds.add(side.id);
-    invariant(side.retreatHexes.length > 0, `Side ${side.id} must have a retreat edge`);
-    for (const [index, retreatHex] of side.retreatHexes.entries()) {
-      validateHex(retreatHex, `${side.id}.retreatHexes[${index}]`);
-      const key = hexKey(retreatHex);
-      invariant(mapKeys.has(key) && !blockedKeys.has(key), `Invalid retreat hex ${key}`);
-    }
-  }
-
-  const unitIds = new Set<string>();
-  const occupied = new Set<string>();
-  const unitsPerSide = new Map<string, number>();
+  const { sideIds, unitIds, occupied, unitsPerSide } = createUnitAdmission(
+    setup.sides,
+    mapKeys,
+    blockedKeys,
+  );
   for (const unit of setup.units) {
-    invariant(unit.id.length > 0, 'Unit id must not be empty');
-    invariant(!unitIds.has(unit.id), `Duplicate unit id: ${unit.id}`);
-    unitIds.add(unit.id);
-    invariant(sideIds.has(unit.sideId), `Unit ${unit.id} references unknown side ${unit.sideId}`);
-    if (unit.trainedMelee !== undefined || unit.incorporeal !== undefined) {
-      invariant(
-        isSpritePrototypeRuleset(setup.rulesetId),
-        'Prototype combat traits require sprite-prototype-v1',
-      );
-      if (unit.trainedMelee !== undefined) {
-        invariant(
-          typeof unit.trainedMelee === 'boolean',
-          `${unit.id}.trainedMelee must be boolean`,
-        );
-      }
-      if (unit.incorporeal !== undefined) {
-        invariant(typeof unit.incorporeal === 'boolean', `${unit.id}.incorporeal must be boolean`);
-      }
-    }
-    if (unit.moralePolicy !== undefined || unit.threatProfile !== undefined) {
-      invariant(isSpriteS4Ruleset(setup.rulesetId), 'S4 traits require sprite-prototype-v2');
-      invariant(
-        unit.moralePolicy === undefined || ['human', 'beast', 'steady'].includes(unit.moralePolicy),
-        'Unknown morale policy',
-      );
-      invariant(
-        unit.threatProfile === undefined || unit.threatProfile === 'mill-slam',
-        'Unknown threat profile',
-      );
-    }
+    validateUnitIdentity(unit, unitIds, sideIds);
+    validatePrototypeTraits(unit, setup.rulesetId);
     unitsPerSide.set(unit.sideId, (unitsPerSide.get(unit.sideId) ?? 0) + 1);
 
-    validateHex(unit.position, `${unit.id}.position`);
-    const positionKey = hexKey(unit.position);
-    invariant(mapKeys.has(positionKey), `Unit ${unit.id} must start on the battle map`);
-    invariant(!blockedKeys.has(positionKey), `Unit ${unit.id} must not start on blocked terrain`);
-    invariant(!occupied.has(positionKey), `Multiple units occupy ${positionKey}`);
-    occupied.add(positionKey);
+    validateUnitPosition(unit, mapKeys, blockedKeys, occupied);
 
-    validateInteger(unit.attributes.health, `${unit.id}.health`, 1);
-    validateInteger(unit.attributes.armor, `${unit.id}.armor`);
-    validateInteger(unit.attributes.stamina, `${unit.id}.stamina`, 1);
-    validateInteger(unit.attributes.initiative, `${unit.id}.initiative`, 1);
-    validateInteger(unit.attributes.accuracy, `${unit.id}.accuracy`);
-    validateInteger(unit.attributes.defense, `${unit.id}.defense`);
-    validateInteger(unit.attributes.morale, `${unit.id}.morale`, 1);
-    invariant(
-      unit.attributes.morale <= rules.morale.maximum,
-      `${unit.id}.morale must be <= ${rules.morale.maximum}`,
-    );
-    invariant(validateCombatSkillRanks(unit.skillRanks), 'Invalid combat skill ranks');
-    invariant(
-      unit.skillRanks === undefined || setup.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID,
-      'Skills require sprite-prototype-v3',
-    );
+    validateSetupAttributes(unit, setup.rulesetId, rules);
     weaponProfile(rules, unit.weaponId);
   }
 
@@ -613,17 +584,14 @@ function occupiedHexes(state: BattleState, excluding?: UnitId): ReadonlySet<stri
   );
 }
 
-function applyMove(
+function prepareMove(
   state: BattleState,
   command: MoveCommand,
+  actor: CombatUnitState,
   rules: CombatRules,
   forcedPath?: readonly Hex[],
-): CombatCommandResult {
-  const actor = unitById(state, command.actorId);
-  invariant(
-    actor !== undefined && state.activation !== null,
-    'Move validation requires active actor',
-  );
+) {
+  invariant(state.activation !== null, 'Move preparation requires an activation');
   const destinationKey = hexKey(command.to);
   if (occupiedHexes(state, actor.id).has(destinationKey)) {
     return failure(state, 'HEX_OCCUPIED', `Destination ${destinationKey} is occupied`);
@@ -666,6 +634,71 @@ function applyMove(
     return failure(state, 'INSUFFICIENT_STAMINA', 'Move exceeds remaining stamina');
   }
 
+  return { ok: true as const, path, actionPointCost, staminaCost };
+}
+
+function resolveDepartureReactions(
+  state: BattleState,
+  actor: CombatUnitState,
+  from: Hex,
+  to: Hex,
+  rules: CombatRules,
+) {
+  let reactionState = state;
+  let movingActor = actor;
+  const events: CombatEvent[] = [];
+  for (const controller of combatReactionControllers(reactionState, movingActor, from, to)) {
+    const strike = resolveCombatStrike(
+      reactionState,
+      controller,
+      movingActor,
+      rules,
+      weaponProfile(rules, controller.weaponId),
+      state.revision + 1,
+      0,
+    );
+    reactionState = {
+      ...strike.state,
+      units: strike.state.units.map((unit) =>
+        unit.id === controller.id ? { ...unit, reactionSpent: true } : unit,
+      ),
+    };
+    movingActor = unitById(reactionState, movingActor.id)!;
+    events.push(...strike.events);
+    if (movingActor.status === 'dead') {
+      break;
+    }
+  }
+  return { state: reactionState, actor: movingActor, events };
+}
+
+function applyMovementFire(state: BattleState, actor: CombatUnitState) {
+  const remainingHealth = Math.max(0, actor.health - SPRITE_PROTOTYPE_FIRE_DAMAGE);
+  const fireEvent: UnitFireDamagedEvent = {
+    type: 'unit.fire-damaged',
+    battleId: state.battleId,
+    revision: state.revision + 1,
+    unitId: actor.id,
+    healthDamage: actor.health - remainingHealth,
+    remainingHealth,
+  };
+  const damaged = {
+    ...actor,
+    health: remainingHealth,
+    ...(remainingHealth === 0 ? { status: 'dead' as const } : {}),
+  };
+  return { actor: damaged, event: fireEvent };
+}
+
+function executeMovePath(
+  state: BattleState,
+  command: MoveCommand,
+  actor: CombatUnitState,
+  rules: CombatRules,
+  path: readonly Hex[],
+  actionPointCost: number,
+  staminaCost: number,
+) {
   let actualPath = path;
   let actualActionPointCost = actionPointCost;
   let actualStaminaCost = staminaCost;
@@ -686,34 +719,17 @@ function applyMove(
     actualPosition = actor.position;
     currentActor = actor;
     for (const step of path) {
-      for (const controller of combatReactionControllers(
+      const reaction = resolveDepartureReactions(
         strikeState,
         currentActor,
         actualPosition,
         step,
-      )) {
-        const strike = resolveCombatStrike(
-          strikeState,
-          controller,
-          currentActor,
-          rules,
-          weaponProfile(rules, controller.weaponId),
-          state.revision + 1,
-          0,
-        );
-        strikeState = {
-          ...strike.state,
-          units: strike.state.units.map((unit) =>
-            unit.id === controller.id ? { ...unit, reactionSpent: true } : unit,
-          ),
-        };
-        currentActor = unitById(strikeState, actor.id)!;
-        events.push(...strike.events);
-        if (currentActor.status === 'dead') {
-          killedByReaction = true;
-          break;
-        }
-      }
+        rules,
+      );
+      strikeState = reaction.state;
+      currentActor = reaction.actor;
+      events.push(...reaction.events);
+      killedByReaction = currentActor.status === 'dead';
       if (killedByReaction) break;
       const cost = prototypeMovementStep(state, actualPosition, step);
       actualActionPointCost += cost.actionPointCost;
@@ -726,21 +742,10 @@ function applyMove(
         stamina: currentActor.stamina - cost.staminaCost,
       };
       if (cost.fire) {
-        const remainingHealth = Math.max(0, currentActor.health - SPRITE_PROTOTYPE_FIRE_DAMAGE);
-        const fireEvent: UnitFireDamagedEvent = {
-          type: 'unit.fire-damaged',
-          battleId: state.battleId,
-          revision: state.revision + 1,
-          unitId: actor.id,
-          healthDamage: currentActor.health - remainingHealth,
-          remainingHealth,
-        };
-        currentActor = {
-          ...currentActor,
-          health: remainingHealth,
-          ...(remainingHealth === 0 ? { status: 'dead' as const } : {}),
-        };
-        events.push(fireEvent);
+        const fire = applyMovementFire(state, currentActor);
+        currentActor = fire.actor;
+        const remainingHealth = currentActor.health;
+        events.push(fire.event);
         if (remainingHealth === 0) {
           killedByFire = true;
           events.push({
@@ -758,6 +763,55 @@ function applyMove(
       };
     }
   }
+  return {
+    actualPath,
+    actualActionPointCost,
+    actualStaminaCost,
+    actualPosition,
+    currentActor,
+    events,
+    killedByFire,
+    killedByReaction,
+    strikeState,
+  };
+}
+
+function resolveCommandOutcome(
+  state: BattleState,
+  events: readonly CombatEvent[],
+): CombatCommandResult | undefined {
+  const outcome = resolvedOutcome(state.units);
+  if (outcome === undefined) return undefined;
+  const terminal = resolveBattle(state, outcome, events);
+  assertBattleState(terminal.state);
+  return { ok: true, state: terminal.state, events: terminal.events };
+}
+
+function applyMove(
+  state: BattleState,
+  command: MoveCommand,
+  rules: CombatRules,
+  forcedPath?: readonly Hex[],
+): CombatCommandResult {
+  const actor = unitById(state, command.actorId);
+  invariant(
+    actor !== undefined && state.activation !== null,
+    'Move validation requires active actor',
+  );
+  const plan = prepareMove(state, command, actor, rules, forcedPath);
+  if (!plan.ok) return plan;
+  const { path, actionPointCost, staminaCost } = plan;
+  const {
+    actualPath,
+    actualActionPointCost,
+    actualStaminaCost,
+    actualPosition,
+    currentActor,
+    events,
+    killedByFire,
+    killedByReaction,
+    strikeState,
+  } = executeMovePath(state, command, actor, rules, path, actionPointCost, staminaCost);
   let nextState = spendActivation(
     { ...strikeState, units: replaceUnit(strikeState.units, actor.id, currentActor) },
     actualActionPointCost,
@@ -790,12 +844,8 @@ function applyMove(
     nextState = { ...nextState, units: moraleLoss.units };
     events.push(...moraleLoss.events);
   }
-  const outcome = resolvedOutcome(nextState.units);
-  if (outcome !== undefined) {
-    const terminal = resolveBattle(nextState, outcome, events);
-    assertBattleState(terminal.state);
-    return { ok: true, state: terminal.state, events: terminal.events };
-  }
+  const terminal = resolveCommandOutcome(nextState, events);
+  if (terminal !== undefined) return terminal;
   if (killedByFire || killedByReaction) {
     const advanced = advanceActivation(nextState, rules, events);
     assertBattleState(advanced.state);
@@ -871,6 +921,48 @@ function woundSeverity(
     return 'minor';
   }
   return undefined;
+}
+
+function applyStrikeWound(
+  state: BattleState,
+  target: CombatUnitState,
+  actualHealthDamage: number,
+  rules: CombatRules,
+  revision: number,
+) {
+  let damagedTarget = target;
+  const events: CombatEvent[] = [];
+  if (damagedTarget.health > 0 && damagedTarget.wounds.length < rules.wounds.maximumPerUnit) {
+    const severity = woundSeverity(actualHealthDamage, damagedTarget.attributes.health, rules);
+    if (severity !== undefined) {
+      damagedTarget = {
+        ...damagedTarget,
+        wounds: [...damagedTarget.wounds, { sequence: damagedTarget.wounds.length + 1, severity }],
+      };
+      const woundMorale = changeMorale(
+        damagedTarget,
+        -rules.morale.woundLoss,
+        'wound',
+        state.battleId,
+        revision,
+        rules.morale.maximum,
+      );
+      damagedTarget = woundMorale.unit;
+      if (woundMorale.event !== undefined) {
+        events.push(woundMorale.event);
+      }
+      const wounded: UnitWoundedEvent = {
+        type: 'unit.wounded',
+        battleId: state.battleId,
+        revision,
+        unitId: target.id,
+        severity,
+      };
+      events.push(wounded);
+    }
+  }
+
+  return { unit: damagedTarget, events };
 }
 
 function resolveCombatStrike(
@@ -960,38 +1052,9 @@ function resolveCombatStrike(
     };
     events.push(damaged);
 
-    if (remainingHealth > 0 && damagedTarget.wounds.length < rules.wounds.maximumPerUnit) {
-      const severity = woundSeverity(actualHealthDamage, target.attributes.health, rules);
-      if (severity !== undefined) {
-        damagedTarget = {
-          ...damagedTarget,
-          wounds: [
-            ...damagedTarget.wounds,
-            { sequence: damagedTarget.wounds.length + 1, severity },
-          ],
-        };
-        const woundMorale = changeMorale(
-          damagedTarget,
-          -rules.morale.woundLoss,
-          'wound',
-          state.battleId,
-          revision,
-          rules.morale.maximum,
-        );
-        damagedTarget = woundMorale.unit;
-        if (woundMorale.event !== undefined) {
-          events.push(woundMorale.event);
-        }
-        const wounded: UnitWoundedEvent = {
-          type: 'unit.wounded',
-          battleId: state.battleId,
-          revision,
-          unitId: target.id,
-          severity,
-        };
-        events.push(wounded);
-      }
-    }
+    const wound = applyStrikeWound(state, damagedTarget, actualHealthDamage, rules, revision);
+    damagedTarget = wound.unit;
+    events.push(...wound.events);
 
     if (remainingHealth === 0) {
       damagedTarget = { ...damagedTarget, status: 'dead' };
@@ -1092,12 +1155,8 @@ function applyAttack(
     revision,
     processedCommandIds: [...state.processedCommandIds, command.commandId],
   };
-  const outcome = resolvedOutcome(nextState.units);
-  if (outcome !== undefined) {
-    const terminal = resolveBattle(nextState, outcome, events);
-    assertBattleState(terminal.state);
-    return { ok: true, state: terminal.state, events: terminal.events };
-  }
+  const terminal = resolveCommandOutcome(nextState, events);
+  if (terminal !== undefined) return terminal;
   assertBattleState(nextState);
   return { ok: true, state: nextState, events };
 }
@@ -1182,47 +1241,48 @@ function applySkill(
   return { ok: true, state: next, events };
 }
 
-function applyPanicCommand(
+function applySurrender(
   state: BattleState,
-  command: Extract<CombatCommand, { type: 'flee' | 'surrender' }>,
+  command: Extract<CombatCommand, { type: 'surrender' }>,
+  actor: CombatUnitState,
   rules: CombatRules,
 ): CombatCommandResult {
-  const actor = unitById(state, command.actorId)!;
-  if (!isCombatPanicked(state, actor))
-    return failure(state, 'PANICKED', 'Only panicked units can use panic commands');
-  if (command.type === 'surrender') {
-    if (!canCombatSurrender(state, actor))
-      return failure(state, 'INVALID_TARGET', 'No capable human captor or a safe exit remains');
-    const revision = state.revision + 1;
-    const accepted = {
-      ...state,
+  if (!canCombatSurrender(state, actor))
+    return failure(state, 'INVALID_TARGET', 'No capable human captor or a safe exit remains');
+  const revision = state.revision + 1;
+  const accepted = {
+    ...state,
+    revision,
+    processedCommandIds: [...state.processedCommandIds, command.commandId],
+    units: replaceUnit(state.units, actor.id, {
+      ...actor,
+      status: 'surrendered',
+      guarding: false,
+    }),
+  };
+  const advanced = advanceActivation(accepted, rules, [
+    {
+      type: 'unit.surrendered',
+      battleId: state.battleId,
       revision,
-      processedCommandIds: [...state.processedCommandIds, command.commandId],
-      units: replaceUnit(state.units, actor.id, {
-        ...actor,
-        status: 'surrendered',
-        guarding: false,
-      }),
-    };
-    const advanced = advanceActivation(accepted, rules, [
-      {
-        type: 'unit.surrendered',
-        battleId: state.battleId,
-        revision,
-        unitId: actor.id,
-        sideId: actor.sideId,
-      },
-    ]);
-    assertBattleState(advanced.state);
-    return { ok: true, ...advanced };
-  }
-  const plan = findCombatEscapePlan(state, actor) ?? findCombatEscapePlan(state, actor, false);
-  if (plan === undefined) return applyWait(state, { ...command, type: 'wait' }, rules);
+      unitId: actor.id,
+      sideId: actor.sideId,
+    },
+  ]);
+  assertBattleState(advanced.state);
+  return { ok: true, ...advanced };
+}
+
+function affordableEscapePrefix(
+  state: BattleState,
+  actor: CombatUnitState,
+  path: readonly Hex[],
+): readonly Hex[] {
   let ap = 0;
   let stamina = 0;
   const prefix: Hex[] = [];
   let from = actor.position;
-  for (const to of plan.path) {
+  for (const to of path) {
     const cost = prototypeMovementStep(state, from, to);
     if (
       ap + cost.actionPointCost > state.activation!.remainingActionPoints ||
@@ -1234,6 +1294,21 @@ function applyPanicCommand(
     stamina += cost.staminaCost;
     from = to;
   }
+  return prefix;
+}
+
+function applyPanicCommand(
+  state: BattleState,
+  command: Extract<CombatCommand, { type: 'flee' | 'surrender' }>,
+  rules: CombatRules,
+): CombatCommandResult {
+  const actor = unitById(state, command.actorId)!;
+  if (!isCombatPanicked(state, actor))
+    return failure(state, 'PANICKED', 'Only panicked units can use panic commands');
+  if (command.type === 'surrender') return applySurrender(state, command, actor, rules);
+  const plan = findCombatEscapePlan(state, actor) ?? findCombatEscapePlan(state, actor, false);
+  if (plan === undefined) return applyWait(state, { ...command, type: 'wait' }, rules);
+  const prefix = affordableEscapePrefix(state, actor, plan.path);
   const planningState = {
     ...state,
     units: replaceUnit(state.units, actor.id, { ...actor, escapePlan: plan, guarding: false }),
@@ -1275,76 +1350,77 @@ function applyPanicCommand(
   return { ok: true, ...advanced };
 }
 
-function applyThreatCommand(
+function executeThreat(
   state: BattleState,
-  command: Extract<
-    CombatCommand,
-    { type: 'prepare-threat' | 'retarget-threat' | 'execute-threat' }
-  >,
+  command: Extract<CombatCommand, { type: 'execute-threat' }>,
+  actor: CombatUnitState,
   rules: CombatRules,
 ): CombatCommandResult {
-  const actor = unitById(state, command.actorId)!;
-  if (!isSpriteS4Ruleset(state.rulesetId) || actor.threatProfile !== 'mill-slam')
-    return failure(state, 'THREAT_NOT_AVAILABLE', 'Actor has no warning attack');
   const previous = actor.threat;
-  if (command.type === 'execute-threat') {
-    if (previous === undefined) return failure(state, 'THREAT_NOT_AVAILABLE', 'No prepared threat');
-    if (!previous.responseReceived)
-      return failure(
-        state,
-        'THREAT_RESPONSE_REQUIRED',
-        'Opponent must complete an activation after warning',
-      );
-    const target = unitById(state, previous.targetId);
-    if (
-      target?.status !== 'active' ||
-      !hexEquals(target.position, previous.targetHex) ||
-      hexDistance(actor.position, target.position) > 2 ||
-      !prototypeLineOfSight(state, actor.position, target.position)
-    ) {
-      const revision = state.revision + 1;
-      const { threat: _threat, ...cancelled } = actor;
-      const accepted = {
-        ...state,
-        revision,
-        processedCommandIds: [...state.processedCommandIds, command.commandId],
-        units: replaceUnit(state.units, actor.id, cancelled),
-      };
-      const advanced = advanceActivation(accepted, rules, [
-        {
-          type: 'threat.cancelled',
-          battleId: state.battleId,
-          revision,
-          unitId: actor.id,
-          threat: previous,
-        },
-      ]);
-      return { ok: true, ...advanced };
-    }
-    const attack = applyAttack(
+  if (previous === undefined) return failure(state, 'THREAT_NOT_AVAILABLE', 'No prepared threat');
+  if (!previous.responseReceived)
+    return failure(
       state,
-      { ...command, type: 'attack', targetId: target.id },
-      rules,
-      true,
+      'THREAT_RESPONSE_REQUIRED',
+      'Opponent must complete an activation after warning',
     );
-    if (!attack.ok) return attack;
-    const nextActor = unitById(attack.state, actor.id)!;
-    const { threat: _threat, ...cleared } = nextActor;
-    const accepted = { ...attack.state, units: replaceUnit(attack.state.units, actor.id, cleared) };
-    const events: CombatEvent[] = [
-      ...attack.events,
+  const target = unitById(state, previous.targetId);
+  if (
+    target?.status !== 'active' ||
+    !hexEquals(target.position, previous.targetHex) ||
+    hexDistance(actor.position, target.position) > 2 ||
+    !prototypeLineOfSight(state, actor.position, target.position)
+  ) {
+    const revision = state.revision + 1;
+    const { threat: _threat, ...cancelled } = actor;
+    const accepted = {
+      ...state,
+      revision,
+      processedCommandIds: [...state.processedCommandIds, command.commandId],
+      units: replaceUnit(state.units, actor.id, cancelled),
+    };
+    const advanced = advanceActivation(accepted, rules, [
       {
-        type: 'threat.executed',
+        type: 'threat.cancelled',
         battleId: state.battleId,
-        revision: accepted.revision,
+        revision,
         unitId: actor.id,
         threat: previous,
       },
-    ];
-    return accepted.status === 'active'
-      ? { ok: true, ...advanceActivation(accepted, rules, events) }
-      : { ok: true, state: accepted, events };
+    ]);
+    return { ok: true, ...advanced };
   }
+  const attack = applyAttack(
+    state,
+    { ...command, type: 'attack', targetId: target.id },
+    rules,
+    true,
+  );
+  if (!attack.ok) return attack;
+  const nextActor = unitById(attack.state, actor.id)!;
+  const { threat: _threat, ...cleared } = nextActor;
+  const accepted = { ...attack.state, units: replaceUnit(attack.state.units, actor.id, cleared) };
+  const events: CombatEvent[] = [
+    ...attack.events,
+    {
+      type: 'threat.executed',
+      battleId: state.battleId,
+      revision: accepted.revision,
+      unitId: actor.id,
+      threat: previous,
+    },
+  ];
+  return accepted.status === 'active'
+    ? { ok: true, ...advanceActivation(accepted, rules, events) }
+    : { ok: true, state: accepted, events };
+}
+
+function prepareThreat(
+  state: BattleState,
+  command: Extract<CombatCommand, { type: 'prepare-threat' | 'retarget-threat' }>,
+  actor: CombatUnitState,
+) {
+  const previous = actor.threat;
   if (
     command.type === 'prepare-threat'
       ? previous !== undefined
@@ -1366,6 +1442,24 @@ function applyThreatCommand(
     return failure(state, 'INSUFFICIENT_ACTION_POINTS', 'Warning requires action points');
   if (actor.stamina < stamina)
     return failure(state, 'INSUFFICIENT_STAMINA', 'Warning requires stamina');
+  return { ok: true as const, target, ap, stamina };
+}
+
+function applyThreatCommand(
+  state: BattleState,
+  command: Extract<
+    CombatCommand,
+    { type: 'prepare-threat' | 'retarget-threat' | 'execute-threat' }
+  >,
+  rules: CombatRules,
+): CombatCommandResult {
+  const actor = unitById(state, command.actorId)!;
+  if (!isSpriteS4Ruleset(state.rulesetId) || actor.threatProfile !== 'mill-slam')
+    return failure(state, 'THREAT_NOT_AVAILABLE', 'Actor has no warning attack');
+  if (command.type === 'execute-threat') return executeThreat(state, command, actor, rules);
+  const preparation = prepareThreat(state, command, actor);
+  if (!preparation.ok) return preparation;
+  const { target, ap, stamina } = preparation;
   const threat = createCombatThreat(state, actor, target, command.type === 'retarget-threat');
   const revision = state.revision + 1;
   const accepted = spendActivation(
@@ -1537,6 +1631,27 @@ export function applyCombatCommand(
   }
 }
 
+function assertUnitPools(unit: CombatUnitState, rules: CombatRules): void {
+  invariant(
+    unit.health >= 0 && unit.health <= unit.attributes.health,
+    `${unit.id} health is invalid`,
+  );
+  invariant(unit.armor >= 0 && unit.armor <= unit.attributes.armor, `${unit.id} armor is invalid`);
+  invariant(
+    unit.stamina >= 0 && unit.stamina <= unit.attributes.stamina,
+    `${unit.id} stamina is invalid`,
+  );
+  invariant(
+    unit.morale >= 0 && unit.morale <= rules.morale.maximum,
+    `${unit.id} morale is invalid`,
+  );
+  invariant(unit.wounds.length <= rules.wounds.maximumPerUnit, `${unit.id} has too many wounds`);
+  invariant(
+    unit.status !== 'dead' || unit.health === 0,
+    `${unit.id} cannot be dead with positive health`,
+  );
+}
+
 export function assertBattleState(state: BattleState): void {
   const rules = combatRules(state.rulesetId);
   invariant(
@@ -1570,34 +1685,10 @@ export function assertBattleState(state: BattleState): void {
 
   const activePositions = new Set<string>();
   for (const unit of state.units) {
-    invariant(
-      unit.health >= 0 && unit.health <= unit.attributes.health,
-      `${unit.id} health is invalid`,
-    );
-    invariant(
-      unit.armor >= 0 && unit.armor <= unit.attributes.armor,
-      `${unit.id} armor is invalid`,
-    );
-    invariant(
-      unit.stamina >= 0 && unit.stamina <= unit.attributes.stamina,
-      `${unit.id} stamina is invalid`,
-    );
-    invariant(
-      unit.morale >= 0 && unit.morale <= rules.morale.maximum,
-      `${unit.id} morale is invalid`,
-    );
-    invariant(unit.wounds.length <= rules.wounds.maximumPerUnit, `${unit.id} has too many wounds`);
-    invariant(
-      unit.status !== 'dead' || unit.health === 0,
-      `${unit.id} cannot be dead with positive health`,
-    );
+    assertUnitPools(unit, rules);
     if (unit.status === 'active') {
       invariant(unit.health > 0, `${unit.id} cannot be active without health`);
-      const key = hexKey(unit.position);
-      invariant(mapKeys.has(key), `${unit.id} must occupy a battle map hex`);
-      invariant(!blockedKeys.has(key), `${unit.id} must not occupy blocked terrain`);
-      invariant(!activePositions.has(key), `Active units overlap at ${key}`);
-      activePositions.add(key);
+      validateUnitPosition(unit, mapKeys, blockedKeys, activePositions, 'active');
     }
   }
 

@@ -1,12 +1,17 @@
+import {
+  validateUnitIdentity,
+  validateUnitPosition,
+  validateCombatMap,
+  createUnitAdmission,
+  validateInteger,
+} from './setup-validation.js';
 import { invariant } from '../primitives.js';
-import { hexKey } from './hex.js';
 import {
   M0_WEAPON_IDS,
   type BattleId,
   type CombatMap,
   type CombatSideSetup,
   type CombatUnitSetup,
-  type SideId,
 } from './types.js';
 
 export const COMBAT_V2_SCHEMA_VERSION = 2 as const;
@@ -37,20 +42,6 @@ export interface BattleSetupV2 {
   readonly map: CombatMap;
   readonly sides: readonly [CombatSideSetup, CombatSideSetup];
   readonly units: readonly CombatUnitSetupV2[];
-}
-
-function validateInteger(value: number, name: string, minimum = 0): void {
-  invariant(
-    Number.isSafeInteger(value) && value >= minimum,
-    `${name} must be an integer >= ${minimum}`,
-  );
-}
-
-function validateHex(value: { readonly q: number; readonly r: number }, name: string): void {
-  invariant(
-    Number.isSafeInteger(value.q) && Number.isSafeInteger(value.r),
-    `${name} coordinates must be safe integers`,
-  );
 }
 
 function validateCurrentPool(current: number, maximum: number, name: string, minimum = 0): void {
@@ -108,53 +99,21 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
     `V2 battle must contain ${V2_UNIT_LIMITS.minimum}-${V2_UNIT_LIMITS.maximum} real units`,
   );
 
-  const mapKeys = new Set(setup.map.hexes.map(hexKey));
-  const blockedKeys = new Set(setup.map.blocked.map(hexKey));
-  invariant(mapKeys.size === setup.map.hexes.length, 'Battle map hexes must be unique');
-  invariant(
-    blockedKeys.size === setup.map.blocked.length,
-    'Blocked battle map hexes must be unique',
+  const { mapKeys, blockedKeys } = validateCombatMap(setup.map);
+  const { sideIds, unitIds, occupied, unitsPerSide } = createUnitAdmission(
+    setup.sides,
+    mapKeys,
+    blockedKeys,
   );
-  invariant(setup.map.hexes.length > 0, 'Battle map must contain at least one hex');
-  setup.map.hexes.forEach((value, index) => validateHex(value, `map.hexes[${index}]`));
-  setup.map.blocked.forEach((value, index) => validateHex(value, `map.blocked[${index}]`));
-  for (const blocked of blockedKeys) {
-    invariant(mapKeys.has(blocked), `Blocked hex ${blocked} must exist in the battle map`);
-  }
-
-  const sideIds = new Set<string>();
-  for (const side of setup.sides) {
-    invariant(side.id.length > 0, 'Side id must not be empty');
-    invariant(!sideIds.has(side.id), `Duplicate side id: ${side.id}`);
-    sideIds.add(side.id);
-    invariant(side.retreatHexes.length > 0, `Side ${side.id} must have a retreat edge`);
-    for (const [index, retreatHex] of side.retreatHexes.entries()) {
-      validateHex(retreatHex, `${side.id}.retreatHexes[${index}]`);
-      const key = hexKey(retreatHex);
-      invariant(mapKeys.has(key) && !blockedKeys.has(key), `Invalid retreat hex ${key}`);
-    }
-  }
-
-  const unitIds = new Set<string>();
-  const occupied = new Set<string>();
-  const unitsPerSide = new Map<SideId, number>();
   for (const unit of setup.units) {
-    invariant(unit.id.length > 0, 'Unit id must not be empty');
-    invariant(!unitIds.has(unit.id), `Duplicate unit id: ${unit.id}`);
-    unitIds.add(unit.id);
-    invariant(sideIds.has(unit.sideId), `Unit ${unit.id} references unknown side ${unit.sideId}`);
+    validateUnitIdentity(unit, unitIds, sideIds);
     invariant(
       unit.trainedMelee === undefined && unit.incorporeal === undefined,
       'Prototype combat traits require sprite-prototype-v1',
     );
     unitsPerSide.set(unit.sideId, (unitsPerSide.get(unit.sideId) ?? 0) + 1);
 
-    validateHex(unit.position, `${unit.id}.position`);
-    const positionKey = hexKey(unit.position);
-    invariant(mapKeys.has(positionKey), `Unit ${unit.id} must start on the battle map`);
-    invariant(!blockedKeys.has(positionKey), `Unit ${unit.id} must not start on blocked terrain`);
-    invariant(!occupied.has(positionKey), `Multiple units occupy ${positionKey}`);
-    occupied.add(positionKey);
+    validateUnitPosition(unit, mapKeys, blockedKeys, occupied);
 
     invariant(
       M0_WEAPON_IDS.includes(unit.weaponId),

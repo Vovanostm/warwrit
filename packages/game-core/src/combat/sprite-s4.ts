@@ -1,9 +1,10 @@
+import { previewWeaponDamage } from './damage-preview.js';
 import { isSpriteS4Ruleset } from './rules.js';
 import { isCombatPanicked } from './rules.js';
 import { compareHex, hexDistance, hexEquals, hexNeighbors } from './hex.js';
 import { combatReactionControllers } from './reaction.js';
 import { previewCombatMovement, prototypeLineOfSight } from './sprite-prototype.js';
-import { combatAttackDamage, combatGuardedDamage, combatRules, weaponProfile } from './rules.js';
+import { combatRules, weaponProfile } from './rules.js';
 import {
   commandId,
   type BattleState,
@@ -111,73 +112,69 @@ export interface CombatThreatPreview {
   readonly action: 'prepare-threat' | 'retarget-threat' | 'execute-threat';
 }
 
+function previewThreatAction(
+  actor: CombatUnitState,
+  target: CombatUnitState,
+): CombatThreatPreview['action'] | undefined {
+  const threat = actor.threat;
+  if (threat === undefined) return 'prepare-threat';
+  const sameTarget = threat.targetId === target.id && hexEquals(threat.targetHex, target.position);
+  if (sameTarget && threat.responseReceived) return 'execute-threat';
+  if (!sameTarget && !threat.retargeted && threat.responseReceived) return 'retarget-threat';
+  return undefined;
+}
+
+function canThreatenTarget(
+  state: BattleState,
+  actor: CombatUnitState,
+  target: CombatUnitState,
+): boolean {
+  return (
+    target.status === 'active' &&
+    target.sideId !== actor.sideId &&
+    target.incorporeal !== true &&
+    hexDistance(actor.position, target.position) <= 2 &&
+    prototypeLineOfSight(state, actor.position, target.position)
+  );
+}
+
 export function previewCombatThreats(state: BattleState): readonly CombatThreatPreview[] {
   if (!isSpriteS4Ruleset(state.rulesetId) || state.status !== 'active' || state.activation === null)
     return [];
   const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
   if (actor?.threatProfile !== 'mill-slam' || isCombatPanicked(state, actor)) return [];
+  return state.units
+    .toSorted((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+    .flatMap((target) => {
+      const preview = previewThreatTarget(state, actor, target);
+      return preview === undefined ? [] : [preview];
+    });
+}
+
+function previewThreatTarget(
+  state: BattleState,
+  actor: CombatUnitState,
+  target: CombatUnitState,
+): CombatThreatPreview | undefined {
   const rules = combatRules(state.rulesetId);
   const weapon = weaponProfile(rules, actor.weaponId);
-  const candidates: CombatThreatPreview[] = [];
-  for (const target of state.units.toSorted((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
-    if (
-      target.status !== 'active' ||
-      target.sideId === actor.sideId ||
-      target.incorporeal === true ||
-      hexDistance(actor.position, target.position) > 2 ||
-      !prototypeLineOfSight(state, actor.position, target.position)
-    )
-      continue;
-    const action =
-      actor.threat === undefined
-        ? 'prepare-threat'
-        : actor.threat.targetId === target.id &&
-            hexEquals(actor.threat.targetHex, target.position) &&
-            actor.threat.responseReceived
-          ? 'execute-threat'
-          : !actor.threat.retargeted &&
-              (!hexEquals(actor.threat.targetHex, target.position) ||
-                actor.threat.targetId !== target.id)
-            ? 'retarget-threat'
-            : undefined;
-    if (
-      action === undefined ||
-      !prototypeLineOfSight(state, actor.position, target.position) ||
-      (action === 'retarget-threat' && !actor.threat?.responseReceived)
-    )
-      continue;
-    const actionPointCost = action === 'prepare-threat' ? 2 : action === 'retarget-threat' ? 0 : 4;
-    const staminaCost =
-      action === 'prepare-threat' ? 8 : action === 'retarget-threat' ? 0 : weapon.staminaCost;
-    if (state.activation.remainingActionPoints < actionPointCost || actor.stamina < staminaCost)
-      continue;
-    const min = combatAttackDamage(
-      combatGuardedDamage(Math.max(1, weapon.baseDamage - weapon.damageVariance), target, rules),
-      target.armor,
-      weapon,
-    );
-    const max = combatAttackDamage(
-      combatGuardedDamage(weapon.baseDamage + weapon.damageVariance, target, rules),
-      target.armor,
-      weapon,
-    );
-    candidates.push({
-      targetId: target.id,
-      targetHex: { ...target.position },
-      range: 2,
-      actionPointCost,
-      staminaCost,
-      action,
-      damage: {
-        health: {
-          minimum: Math.min(target.health, min.healthDamage),
-          maximum: Math.min(target.health, max.healthDamage),
-        },
-        armor: { minimum: min.armorDamage, maximum: max.armorDamage },
-      },
-    });
-  }
-  return candidates;
+  if (!canThreatenTarget(state, actor, target)) return undefined;
+  const action = previewThreatAction(actor, target);
+  if (action === undefined) return undefined;
+  const actionPointCost = action === 'prepare-threat' ? 2 : action === 'retarget-threat' ? 0 : 4;
+  const staminaCost =
+    action === 'prepare-threat' ? 8 : action === 'retarget-threat' ? 0 : weapon.staminaCost;
+  if (state.activation!.remainingActionPoints < actionPointCost || actor.stamina < staminaCost)
+    return undefined;
+  return {
+    targetId: target.id,
+    targetHex: { ...target.position },
+    range: 2,
+    actionPointCost,
+    staminaCost,
+    action,
+    damage: previewWeaponDamage(target, weapon, rules),
+  };
 }
 
 export function choosePanicCombatCommand(state: BattleState): CombatCommand | undefined {

@@ -89,6 +89,46 @@ function playerCommand(
 }
 
 describe('opt-in tactical sprite AI', () => {
+  it('keeps survivor retreat routing and the edge command legal in historical M0 and sprite v1', () => {
+    for (const rulesetId of [M0_COMBAT_RULESET_ID, SPRITE_PROTOTYPE_RULESET_ID]) {
+      const base = setup([
+        unit('runner', alpha, { q: 0, r: 0 }, 'sword-shield', { morale: 10 }),
+        unit('ally', alpha, { q: -3, r: 1 }, 'bow', { initiative: 90 }),
+        unit('enemy', beta, { q: 3, r: 0 }),
+        unit('enemy-bow', beta, { q: 3, r: -1 }, 'bow'),
+      ]);
+      const state = startBattle({
+        ...base,
+        rulesetId,
+        sides: [
+          {
+            id: alpha,
+            retreatHexes: [
+              { q: -2, r: 0 },
+              { q: -2, r: 1 },
+            ],
+          },
+          base.sides[1],
+        ],
+        units: base.units.map(({ trainedMelee: _trainedMelee, ...candidate }) => candidate),
+      }).state;
+      const before = JSON.parse(JSON.stringify(state)) as BattleState;
+      const move = chooseAiCommand(state, 'survivor');
+      expect(move).toMatchObject({ type: 'move', to: { q: -2, r: 0 } });
+      expect(state).toEqual(before);
+      const moved = apply(state, move);
+      expect(moved.units.find(({ id }) => id === 'runner')).toMatchObject({
+        health: 80,
+        position: { q: -2, r: 0 },
+      });
+      const retreat = chooseAiCommand(moved, 'survivor');
+      expect(retreat.type).toBe('retreat');
+      expect(apply(moved, retreat).units.find(({ id }) => id === 'runner')?.status).toBe(
+        'retreated',
+      );
+    }
+  });
+
   it('chooses the useful learned attack and rescues a panicked ally in v3', () => {
     const base = setup([
       { ...unit('bow', alpha, { q: 0, r: 0 }, 'bow'), skillRanks: { 'aimed-shot': 3, rally: 2 } },

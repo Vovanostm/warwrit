@@ -190,6 +190,86 @@ function prototypeMovementTowardEnemy(
   return best === undefined ? undefined : { to: best.move.to, target };
 }
 
+function prototypeRetreatCommand(
+  state: BattleState,
+  actor: CombatUnitState,
+  rules: CombatRules,
+): CombatCommand {
+  invariant(state.activation !== null, 'Retreat command requires an activation');
+  const side = state.sides.find(({ id }) => id === actor.sideId);
+  invariant(side !== undefined, `Unknown side ${actor.sideId}`);
+  const retreat = side.retreatHexes
+    .map((position) => ({ position, distance: hexDistance(actor.position, position) }))
+    .toSorted(
+      (left, right) => left.distance - right.distance || compareHex(left.position, right.position),
+    )[0];
+  const move = previewCombatMovement(state)
+    .filter(({ to }) =>
+      side.retreatHexes.some((edge) => hexDistance(to, edge) < hexDistance(actor.position, edge)),
+    )
+    .toSorted((left, right) => {
+      const leftDistance = Math.min(...side.retreatHexes.map((edge) => hexDistance(left.to, edge)));
+      const rightDistance = Math.min(
+        ...side.retreatHexes.map((edge) => hexDistance(right.to, edge)),
+      );
+      return (
+        leftDistance - rightDistance ||
+        left.actionPointCost - right.actionPointCost ||
+        left.staminaCost - right.staminaCost ||
+        compareHex(left.to, right.to)
+      );
+    })[0];
+  if (
+    move !== undefined &&
+    (retreat === undefined || hexDistance(move.to, retreat.position) < retreat.distance)
+  ) {
+    return { type: 'move', to: move.to, ...commandBase(state, 'retreat-move') };
+  }
+  return state.activation.remainingActionPoints >= rules.defend.actionPointCost &&
+    actor.stamina >= rules.defend.staminaCost
+    ? { type: 'defend', ...commandBase(state, 'retreat-defend') }
+    : { type: 'wait', ...commandBase(state, 'retreat-wait') };
+}
+
+function affordableLegacyTarget(
+  state: BattleState,
+  actor: CombatUnitState,
+  weapon: ReturnType<typeof weaponProfile>,
+): CombatUnitState | undefined {
+  return state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID
+    ? undefined
+    : enemiesOf(state, actor).find((enemy) => {
+        const distance = hexDistance(actor.position, enemy.position);
+        return (
+          distance >= weapon.minimumRange &&
+          distance <= weapon.maximumRange &&
+          state.activation !== null &&
+          state.activation.remainingActionPoints >= weapon.actionPointCost &&
+          actor.stamina >= weapon.staminaCost
+        );
+      });
+}
+
+function survivorRetreatCommand(
+  state: BattleState,
+  actor: CombatUnitState,
+  rules: CombatRules,
+): CombatCommand | undefined {
+  if (isAtRetreatEdge(state, actor)) {
+    return { type: 'retreat', ...commandBase(state, 'retreat') };
+  }
+  if (state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID)
+    return prototypeRetreatCommand(state, actor, rules);
+  const path = retreatPath(state, actor);
+  const steps = Math.min(path?.length ?? 0, availableMoveSteps(state, actor));
+  if (path !== undefined && steps > 0) {
+    const destination = path[steps - 1];
+    invariant(destination !== undefined, 'Retreat path must contain its destination');
+    return { type: 'move', to: destination, ...commandBase(state, 'retreat-move') };
+  }
+  return undefined;
+}
+
 export function chooseAiCommand(
   state: BattleState,
   doctrine: AiDoctrine = 'aggressive',
@@ -199,58 +279,11 @@ export function chooseAiCommand(
   const weapon = weaponProfile(rules, actor.weaponId);
   invariant(state.activation !== null, 'AI command requires an activation');
 
-  if (doctrine === 'survivor' && shouldRetreat(actor, rules)) {
-    if (isAtRetreatEdge(state, actor)) {
-      return { type: 'retreat', ...commandBase(state, 'retreat') };
-    }
-    if (state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID) {
-      const side = state.sides.find(({ id }) => id === actor.sideId);
-      invariant(side !== undefined, `Unknown side ${actor.sideId}`);
-      const retreat = side.retreatHexes
-        .map((position) => ({ position, distance: hexDistance(actor.position, position) }))
-        .toSorted(
-          (left, right) =>
-            left.distance - right.distance || compareHex(left.position, right.position),
-        )[0];
-      const move = previewCombatMovement(state)
-        .filter(({ to }) =>
-          side.retreatHexes.some(
-            (edge) => hexDistance(to, edge) < hexDistance(actor.position, edge),
-          ),
-        )
-        .toSorted((left, right) => {
-          const leftDistance = Math.min(
-            ...side.retreatHexes.map((edge) => hexDistance(left.to, edge)),
-          );
-          const rightDistance = Math.min(
-            ...side.retreatHexes.map((edge) => hexDistance(right.to, edge)),
-          );
-          return (
-            leftDistance - rightDistance ||
-            left.actionPointCost - right.actionPointCost ||
-            left.staminaCost - right.staminaCost ||
-            compareHex(left.to, right.to)
-          );
-        })[0];
-      if (
-        move !== undefined &&
-        (retreat === undefined || hexDistance(move.to, retreat.position) < retreat.distance)
-      ) {
-        return { type: 'move', to: move.to, ...commandBase(state, 'retreat-move') };
-      }
-      return state.activation.remainingActionPoints >= rules.defend.actionPointCost &&
-        actor.stamina >= rules.defend.staminaCost
-        ? { type: 'defend', ...commandBase(state, 'retreat-defend') }
-        : { type: 'wait', ...commandBase(state, 'retreat-wait') };
-    }
-    const path = retreatPath(state, actor);
-    const steps = Math.min(path?.length ?? 0, availableMoveSteps(state, actor));
-    if (path !== undefined && steps > 0) {
-      const destination = path[steps - 1];
-      invariant(destination !== undefined, 'Retreat path must contain its destination');
-      return { type: 'move', to: destination, ...commandBase(state, 'retreat-move') };
-    }
-  }
+  const retreat =
+    doctrine === 'survivor' && shouldRetreat(actor, rules)
+      ? survivorRetreatCommand(state, actor, rules)
+      : undefined;
+  if (retreat !== undefined) return retreat;
 
   if (state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID) {
     const attack = previewCombatAttacks(state)[0];
@@ -262,19 +295,7 @@ export function chooseAiCommand(
       };
     }
   }
-  const target =
-    state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID
-      ? undefined
-      : enemiesOf(state, actor).find((enemy) => {
-          const distance = hexDistance(actor.position, enemy.position);
-          return (
-            distance >= weapon.minimumRange &&
-            distance <= weapon.maximumRange &&
-            state.activation !== null &&
-            state.activation.remainingActionPoints >= weapon.actionPointCost &&
-            actor.stamina >= weapon.staminaCost
-          );
-        });
+  const target = affordableLegacyTarget(state, actor, weapon);
   if (target !== undefined) {
     return {
       type: 'attack',

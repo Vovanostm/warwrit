@@ -215,20 +215,36 @@ function tacticalAttack(
   };
 }
 
-function compareTacticalAttacks(state: BattleState, left: TacticalAttack, right: TacticalAttack) {
+function compareAttackEffect(left: TacticalAttack, right: TacticalAttack): number {
   return (
     right.killChance - left.killChance ||
     right.value - left.value ||
     right.healthDamage - left.healthDamage ||
     right.armorDamage - left.armorDamage ||
     right.attack.hitChance - left.attack.hitChance ||
-    right.targetThreat - left.targetThreat ||
+    right.targetThreat - left.targetThreat
+  );
+}
+
+function compareAttackMovement(
+  state: BattleState,
+  left: TacticalAttack,
+  right: TacticalAttack,
+): number {
+  return (
     (left.move?.actionPointCost ?? 0) - (right.move?.actionPointCost ?? 0) ||
     (left.move?.staminaCost ?? 0) - (right.move?.staminaCost ?? 0) ||
     compareHex(
       left.move?.to ?? activeActor(state).position,
       right.move?.to ?? activeActor(state).position,
-    ) ||
+    )
+  );
+}
+
+function compareTacticalAttacks(state: BattleState, left: TacticalAttack, right: TacticalAttack) {
+  return (
+    compareAttackEffect(left, right) ||
+    compareAttackMovement(state, left, right) ||
     compareCombatUnitIds(state.rulesetId, left.target.id, right.target.id)
   );
 }
@@ -301,25 +317,17 @@ function tacticalHoldCommand(state: BattleState, actor: CombatUnitState): Combat
     : { type: 'wait', ...commandBase(state, 'tactical-wait') };
 }
 
-/** Opt-in sprite policy. Legacy rulesets and chooseAiCommand retain their existing behavior. */
-export function chooseTacticalCombatCommand(state: BattleState): CombatCommand {
-  if (!isSpritePrototypeRuleset(state.rulesetId)) return chooseAiCommand(state);
-  const special = choosePrototypeSpecialCommand(state);
-  if (special !== undefined) return special;
-  const actor = activeActor(state);
-  const v3 = state.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID;
-  const rescue = v3
-    ? previewCombatSkills(state).find((skill) => {
-        const target = state.units.find((unit) => unit.id === skill.targetId);
-        return (
-          skill.legal &&
-          skill.skillId === 'rally' &&
-          target !== undefined &&
-          isCombatPanicked(state, target) &&
-          !isCombatPanicked(state, { ...target, morale: target.morale + (skill.moraleGain ?? 0) })
-        );
-      })
-    : undefined;
+function rescuePanickedAlly(state: BattleState): CombatCommand | undefined {
+  const rescue = previewCombatSkills(state).find((skill) => {
+    const target = state.units.find((unit) => unit.id === skill.targetId);
+    return (
+      skill.legal &&
+      skill.skillId === 'rally' &&
+      target !== undefined &&
+      isCombatPanicked(state, target) &&
+      !isCombatPanicked(state, { ...target, morale: target.morale + (skill.moraleGain ?? 0) })
+    );
+  });
   if (rescue !== undefined)
     return {
       type: 'use-skill',
@@ -327,53 +335,43 @@ export function chooseTacticalCombatCommand(state: BattleState): CombatCommand {
       targetId: rescue.targetId,
       ...commandBase(state, `rally:${rescue.targetId}`),
     };
-  const attacks = tacticalAttackOptions(state, actor);
-  const moves = previewCombatMovement(state).filter(
-    (move) =>
-      move.fireDamage +
-        (v3
-          ? (move.reactions ?? []).reduce(
-              (total, reaction) => total + reaction.damage.health.maximum,
-              0,
-            )
-          : expectedMovementReactionDamage(move, 'health')) <
-      actor.health,
-  );
-  for (const move of moves) {
-    const projected = afterPreviewedMove(state, actor, move);
-    attacks.push(...tacticalAttackOptions(projected, actor, move));
-  }
-  const best = attacks.toSorted((left, right) => compareTacticalAttacks(state, left, right))[0];
-  if (v3 && (best?.killChance ?? 0) < 100) {
-    const brace = previewCombatSkills(state).find(
-      (skill) => skill.legal && skill.skillId === 'shield-brace',
+  return undefined;
+}
+
+function maximumReplyDamage(state: BattleState, actor: CombatUnitState): number {
+  return state.units.reduce((total, enemy) => {
+    if (enemy.status !== 'active' || enemy.sideId === actor.sideId) return total;
+    return (
+      total +
+      (previewCombatAttacks(replyState(state, enemy)).find((attack) => attack.targetId === actor.id)
+        ?.damage.health.maximum ?? 0)
     );
-    const replyDamage = state.units.reduce((total, enemy) => {
-      if (enemy.status !== 'active' || enemy.sideId === actor.sideId) return total;
-      return (
-        total +
-        (previewCombatAttacks(replyState(state, enemy)).find(
-          (attack) => attack.targetId === actor.id,
-        )?.damage.health.maximum ?? 0)
-      );
-    }, 0);
-    if (brace !== undefined && replyDamage >= actor.health)
-      return {
-        type: 'use-skill',
-        skillId: 'shield-brace',
-        targetId: actor.id,
-        ...commandBase(state, 'shield-brace'),
-      };
-  }
-  if (v3 && actor.weaponId === 'bow' && (best?.killChance ?? 0) < 100) {
-    const danger = (position: BattleState) =>
-      position.units.reduce((total, enemy) => {
-        if (enemy.status !== 'active' || enemy.sideId === actor.sideId) return total;
-        const reply = previewCombatAttacks(replyState(position, enemy)).find(
-          (attack) => attack.targetId === actor.id,
-        );
-        return total + (reply?.damage.health.maximum ?? 0);
-      }, 0);
+  }, 0);
+}
+
+function lethalReplyBrace(state: BattleState, actor: CombatUnitState): CombatCommand | undefined {
+  const brace = previewCombatSkills(state).find(
+    (skill) => skill.legal && skill.skillId === 'shield-brace',
+  );
+  const replyDamage = maximumReplyDamage(state, actor);
+  if (brace !== undefined && replyDamage >= actor.health)
+    return {
+      type: 'use-skill',
+      skillId: 'shield-brace',
+      targetId: actor.id,
+      ...commandBase(state, 'shield-brace'),
+    };
+
+  return undefined;
+}
+
+function rangedEscape(
+  state: BattleState,
+  actor: CombatUnitState,
+  moves: readonly CombatMovementPreview[],
+): CombatCommand | undefined {
+  if (actor.weaponId === 'bow') {
+    const danger = (position: BattleState) => maximumReplyDamage(position, actor);
     const currentDanger = danger(state);
     if (currentDanger >= actor.health) {
       const retreat = moves
@@ -390,34 +388,14 @@ export function chooseTacticalCombatCommand(state: BattleState): CombatCommand {
         return { type: 'move', to: retreat.move.to, ...commandBase(state, 'ranged-escape') };
     }
   }
-  if (best !== undefined) {
-    return best.move === undefined
-      ? best.skillId !== undefined
-        ? {
-            type: 'use-skill',
-            skillId: best.skillId,
-            targetId: best.target.id,
-            ...commandBase(state, `skill:${best.skillId}:${best.target.id}`),
-          }
-        : {
-            type: 'attack',
-            targetId: best.target.id,
-            ...commandBase(state, `tactical-attack:${best.target.id}`),
-          }
-      : {
-          type: 'move',
-          to: best.move.to,
-          ...commandBase(state, `tactical-move:${best.target.id}`),
-        };
-  }
-  if (holdAgainstKiting(state, actor)) return tacticalHoldCommand(state, actor);
+  return undefined;
+}
 
-  // Contact is already achieved. If no attack is affordable, preserve that
-  // position for the next activation instead of pursuing a different enemy.
-  if (findPrototypeAttackRoute(state)?.path.length === 0) {
-    return tacticalHoldCommand(state, actor);
-  }
-
+function tacticalApproach(
+  state: BattleState,
+  actor: CombatUnitState,
+  moves: readonly CombatMovementPreview[],
+): CombatCommand {
   // Keep the existing fire-aware route owner, but compare each target's route
   // before technical IDs. Non-target enemies remain occupied obstacles.
   const routes = state.units
@@ -466,4 +444,67 @@ export function chooseTacticalCombatCommand(state: BattleState): CombatCommand {
         to: approach.move.to,
         ...commandBase(state, `tactical-approach:${approach.target.id}`),
       };
+}
+
+function tacticalAttackCommand(state: BattleState, best: TacticalAttack): CombatCommand {
+  return best.move === undefined
+    ? best.skillId !== undefined
+      ? {
+          type: 'use-skill',
+          skillId: best.skillId,
+          targetId: best.target.id,
+          ...commandBase(state, `skill:${best.skillId}:${best.target.id}`),
+        }
+      : {
+          type: 'attack',
+          targetId: best.target.id,
+          ...commandBase(state, `tactical-attack:${best.target.id}`),
+        }
+    : {
+        type: 'move',
+        to: best.move.to,
+        ...commandBase(state, `tactical-move:${best.target.id}`),
+      };
+}
+
+/** Opt-in sprite policy. Legacy rulesets and chooseAiCommand retain their existing behavior. */
+export function chooseTacticalCombatCommand(state: BattleState): CombatCommand {
+  if (!isSpritePrototypeRuleset(state.rulesetId)) return chooseAiCommand(state);
+  const special = choosePrototypeSpecialCommand(state);
+  if (special !== undefined) return special;
+  const actor = activeActor(state);
+  const v3 = state.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID;
+  const rescue = v3 ? rescuePanickedAlly(state) : undefined;
+  if (rescue !== undefined) return rescue;
+  const attacks = tacticalAttackOptions(state, actor);
+  const moves = previewCombatMovement(state).filter(
+    (move) =>
+      move.fireDamage +
+        (v3
+          ? (move.reactions ?? []).reduce(
+              (total, reaction) => total + reaction.damage.health.maximum,
+              0,
+            )
+          : expectedMovementReactionDamage(move, 'health')) <
+      actor.health,
+  );
+  for (const move of moves) {
+    const projected = afterPreviewedMove(state, actor, move);
+    attacks.push(...tacticalAttackOptions(projected, actor, move));
+  }
+  const best = attacks.toSorted((left, right) => compareTacticalAttacks(state, left, right))[0];
+  if (v3 && (best?.killChance ?? 0) < 100) {
+    const defensive = lethalReplyBrace(state, actor) ?? rangedEscape(state, actor, moves);
+    if (defensive !== undefined) return defensive;
+  }
+  if (best !== undefined) return tacticalAttackCommand(state, best);
+  if (holdAgainstKiting(state, actor)) return tacticalHoldCommand(state, actor);
+
+  // Contact is already achieved. If no attack is affordable, preserve that
+  // position for the next activation instead of pursuing a different enemy.
+  if (findPrototypeAttackRoute(state)?.path.length === 0) {
+    return tacticalHoldCommand(state, actor);
+  }
+
+  return tacticalApproach(state, actor, moves);
 }

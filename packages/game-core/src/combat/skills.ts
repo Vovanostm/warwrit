@@ -1,7 +1,6 @@
+import { previewWeaponDamage } from './damage-preview.js';
 import { hexDistance } from './hex.js';
 import {
-  combatAttackDamage,
-  combatGuardedDamage,
   combatHitChance,
   combatRules,
   isCombatPanicked,
@@ -165,6 +164,60 @@ export function combatSkillHitChance(
         : 0),
   );
 }
+function skillActorFailure(
+  state: BattleState,
+  actor: CombatUnitState,
+  skill: LearnedCombatSkill,
+): CombatFailureCode | undefined {
+  if (state.status !== 'active') return 'BATTLE_TERMINAL';
+  if (state.activation?.unitId !== actor.id || actor.status !== 'active') return 'NOT_ACTIVE_UNIT';
+  if (isCombatPanicked(state, actor)) return 'PANICKED';
+  if (!skill.equipmentAvailable || actor.threatProfile !== undefined) return 'SKILL_NOT_AVAILABLE';
+  return undefined;
+}
+
+function skillTargetFailure(
+  state: BattleState,
+  actor: CombatUnitState,
+  target: CombatUnitState,
+  skill: LearnedCombatSkill,
+): CombatFailureCode | undefined {
+  if (target.status !== 'active') return 'INVALID_TARGET';
+  if (
+    skill.target === 'enemy'
+      ? target.sideId === actor.sideId || target.incorporeal === true
+      : target.sideId !== actor.sideId
+  )
+    return 'INVALID_TARGET';
+  const rules = combatRules(state.rulesetId);
+  if (
+    skill.skillId === 'rally' &&
+    (target.moralePolicy !== 'human' || target.morale >= rules.morale.maximum)
+  )
+    return 'INVALID_TARGET';
+  if (skill.skillId === 'shield-brace' && actor.shieldBraceRank !== undefined)
+    return 'SKILL_NOT_AVAILABLE';
+  const distance = hexDistance(actor.position, target.position);
+  if (distance < skill.minimumRange || distance > skill.maximumRange) return 'OUT_OF_RANGE';
+  if (
+    ['aimed-shot', 'reach-thrust', 'rally'].includes(skill.skillId) &&
+    !prototypeLineOfSight(state, actor.position, target.position)
+  )
+    return 'BLOCKED_LINE_OF_SIGHT';
+  return undefined;
+}
+
+function skillResourceFailure(
+  state: BattleState,
+  actor: CombatUnitState,
+  skill: LearnedCombatSkill,
+): CombatFailureCode | undefined {
+  if (skill.actionPointCost > state.activation!.remainingActionPoints)
+    return 'INSUFFICIENT_ACTION_POINTS';
+  if (skill.staminaCost > actor.stamina) return 'INSUFFICIENT_STAMINA';
+  return undefined;
+}
+
 export function previewCombatSkills(
   state: BattleState,
   actorId?: UnitId,
@@ -176,53 +229,11 @@ export function previewCombatSkills(
   return getCombatSkills(state, actor.id).flatMap((skill) => {
     const targets = skill.target === 'self' ? [actor] : state.units;
     return targets.map((target) => {
-      let reason: CombatFailureCode | undefined;
-      if (state.status !== 'active') reason = 'BATTLE_TERMINAL';
-      else if (state.activation?.unitId !== actor.id || actor.status !== 'active')
-        reason = 'NOT_ACTIVE_UNIT';
-      else if (isCombatPanicked(state, actor)) reason = 'PANICKED';
-      else if (!skill.equipmentAvailable || actor.threatProfile !== undefined)
-        reason = 'SKILL_NOT_AVAILABLE';
-      else if (
-        target.status !== 'active' ||
-        (skill.target === 'enemy'
-          ? target.sideId === actor.sideId || target.incorporeal === true
-          : target.sideId !== actor.sideId)
-      )
-        reason = 'INVALID_TARGET';
-      else if (
-        skill.skillId === 'rally' &&
-        (target.moralePolicy !== 'human' || target.morale >= rules.morale.maximum)
-      )
-        reason = 'INVALID_TARGET';
-      else if (skill.skillId === 'shield-brace' && actor.shieldBraceRank !== undefined)
-        reason = 'SKILL_NOT_AVAILABLE';
-      else if (
-        hexDistance(actor.position, target.position) < skill.minimumRange ||
-        hexDistance(actor.position, target.position) > skill.maximumRange
-      )
-        reason = 'OUT_OF_RANGE';
-      else if (
-        (skill.skillId === 'aimed-shot' ||
-          skill.skillId === 'reach-thrust' ||
-          skill.skillId === 'rally') &&
-        !prototypeLineOfSight(state, actor.position, target.position)
-      )
-        reason = 'BLOCKED_LINE_OF_SIGHT';
-      else if (skill.actionPointCost > state.activation!.remainingActionPoints)
-        reason = 'INSUFFICIENT_ACTION_POINTS';
-      else if (skill.staminaCost > actor.stamina) reason = 'INSUFFICIENT_STAMINA';
+      const reason =
+        skillActorFailure(state, actor, skill) ??
+        skillTargetFailure(state, actor, target, skill) ??
+        skillResourceFailure(state, actor, skill);
       const weapon = combatSkillWeapon(state, actor, skill);
-      const low = combatAttackDamage(
-        combatGuardedDamage(Math.max(1, weapon.baseDamage - weapon.damageVariance), target, rules),
-        target.armor,
-        weapon,
-      );
-      const high = combatAttackDamage(
-        combatGuardedDamage(weapon.baseDamage + weapon.damageVariance, target, rules),
-        target.armor,
-        weapon,
-      );
       return {
         ...skill,
         rulesetId: state.rulesetId,
@@ -235,13 +246,7 @@ export function previewCombatSkills(
         ...(skill.target === 'enemy'
           ? {
               hitChance: combatSkillHitChance(state, actor, target, skill),
-              damage: {
-                health: {
-                  minimum: Math.min(target.health, low.healthDamage),
-                  maximum: Math.min(target.health, high.healthDamage),
-                },
-                armor: { minimum: low.armorDamage, maximum: high.armorDamage },
-              },
+              damage: previewWeaponDamage(target, weapon, rules),
             }
           : {}),
         ...(skill.skillId === 'rally'

@@ -1,11 +1,10 @@
+import { previewWeaponDamage } from './damage-preview.js';
 import { isSpriteS4Ruleset, SPRITE_PROTOTYPE_FIRE_DAMAGE } from './rules.js';
 import { previewCombatReactions, type CombatReactionPreview } from './reaction.js';
 import { isCombatPanicked } from './rules.js';
 import { invariant } from '../primitives.js';
 import { compareHex, hexDistance, hexKey, hexNeighbors } from './hex.js';
 import {
-  combatAttackDamage,
-  combatGuardedDamage,
   isSpritePrototypeRuleset,
   combatHitChance,
   combatRules,
@@ -118,18 +117,69 @@ function compareAttackRouteLabels(left: MovementLabel, right: MovementLabel): nu
   return left.fireDamage - right.fireDamage || compareLabels(left, right);
 }
 
+function movementObstacles(state: BattleState, actor: CombatUnitState): ReadonlySet<string> {
+  return new Set([
+    ...state.map.blocked.map(hexKey),
+    ...state.units
+      .filter((unit) => unit.status === 'active' && unit.id !== actor.id)
+      .map((unit) => hexKey(unit.position)),
+  ]);
+}
+
+function extendMovement(state: BattleState, current: MovementLabel, next: Hex): MovementLabel {
+  const [stepAp, stepStamina] = stepCost(state, current.hex, next);
+  return {
+    hex: next,
+    actionPointCost: current.actionPointCost + stepAp,
+    staminaCost: current.staminaCost + stepStamina,
+    fireDamage:
+      current.fireDamage +
+      (tileAt(state, next)?.terrain === 'fire' ? SPRITE_PROTOTYPE_FIRE_DAMAGE : 0),
+    parent: current,
+  };
+}
+
+function dominatesMovement(label: MovementLabel, by: MovementLabel): boolean {
+  if (label.actionPointCost > by.actionPointCost || label.staminaCost > by.staminaCost)
+    return false;
+  const equal =
+    label.actionPointCost === by.actionPointCost && label.staminaCost === by.staminaCost;
+  return !equal || comparePaths(pathOf(label), pathOf(by)) <= 0;
+}
+
+function retainMovementLabel(
+  labels: Map<string, MovementLabel[]>,
+  candidate: MovementLabel,
+): boolean {
+  const key = hexKey(candidate.hex);
+  const previous = labels.get(key) ?? [];
+  if (previous.some((label) => dominatesMovement(label, candidate))) return false;
+  const survivors = previous.filter((label) => !dominatesMovement(candidate, label));
+  survivors.push(candidate);
+  survivors.sort(compareLabels);
+  labels.set(key, survivors);
+  return true;
+}
+
+function movementCandidates(
+  state: BattleState,
+  current: MovementLabel,
+  valid: ReadonlySet<string>,
+  obstacles: ReadonlySet<string>,
+): readonly MovementLabel[] {
+  return hexNeighbors(current.hex)
+    .toSorted(compareHex)
+    .filter((next) => valid.has(hexKey(next)) && !obstacles.has(hexKey(next)))
+    .map((next) => extendMovement(state, current, next));
+}
+
 function movementField(state: BattleState): readonly CombatMovementPreview[] {
   const actor = activeActor(state);
   invariant(state.activation !== null, 'Movement preview requires an activation');
   const apBudget = state.activation.remainingActionPoints;
   const staminaBudget = actor.stamina;
   const valid = new Set(state.map.hexes.map(hexKey));
-  const blocked = new Set(state.map.blocked.map(hexKey));
-  const occupied = new Set(
-    state.units
-      .filter((unit) => unit.status === 'active' && unit.id !== actor.id)
-      .map((unit) => hexKey(unit.position)),
-  );
+  const obstacles = movementObstacles(state, actor);
   const labels = new Map<string, MovementLabel[]>([
     [
       hexKey(actor.position),
@@ -152,43 +202,21 @@ function movementField(state: BattleState): readonly CombatMovementPreview[] {
     const currentLabels = labels.get(hexKey(current.hex));
     if (currentLabels === undefined || !currentLabels.includes(current)) continue;
 
-    for (const next of hexNeighbors(current.hex).toSorted(compareHex)) {
-      const key = hexKey(next);
-      if (!valid.has(key) || blocked.has(key) || occupied.has(key)) continue;
-      const [stepAp, stepStamina] = stepCost(state, current.hex, next);
-      const actionPointCost = current.actionPointCost + stepAp;
-      const staminaCost = current.staminaCost + stepStamina;
-      if (stepAp < 1 || actionPointCost > apBudget || staminaCost > staminaBudget) continue;
-
-      const candidate: MovementLabel = {
-        hex: next,
-        actionPointCost,
-        staminaCost,
-        fireDamage:
-          current.fireDamage +
-          (tileAt(state, next)?.terrain === 'fire' ? SPRITE_PROTOTYPE_FIRE_DAMAGE : 0),
-        parent: current,
-      };
-      const previous = labels.get(key) ?? [];
-      const isDominated = (label: MovementLabel, by: MovementLabel): boolean => {
-        if (label.actionPointCost > by.actionPointCost || label.staminaCost > by.staminaCost) {
-          return false;
-        }
-        const equal =
-          label.actionPointCost === by.actionPointCost && label.staminaCost === by.staminaCost;
-        return !equal || comparePaths(pathOf(label), pathOf(by)) <= 0;
-      };
-      if (previous.some((label) => isDominated(label, candidate))) {
-        continue;
-      }
-      const survivors = previous.filter((label) => !isDominated(candidate, label));
-      survivors.push(candidate);
-      survivors.sort(compareLabels);
-      labels.set(key, survivors);
+    for (const candidate of movementCandidates(state, current, valid, obstacles)) {
+      if (candidate.actionPointCost > apBudget || candidate.staminaCost > staminaBudget) continue;
+      if (!retainMovementLabel(labels, candidate)) continue;
       frontier.push(candidate);
     }
   }
 
+  return previewMovementLabels(state, actor, labels);
+}
+
+function previewMovementLabels(
+  state: BattleState,
+  actor: CombatUnitState,
+  labels: ReadonlyMap<string, readonly MovementLabel[]>,
+): readonly CombatMovementPreview[] {
   const results: CombatMovementPreview[] = [];
   for (const [key, options] of labels) {
     if (key === hexKey(actor.position)) continue;
@@ -227,12 +255,7 @@ export function findPrototypeAttackRoute(state: BattleState): PrototypeAttackRou
   const weapon = weaponProfile(combatRules(state.rulesetId), actor.weaponId);
   const targets = validAttackTargets(state, actor);
   const valid = new Set(state.map.hexes.map(hexKey));
-  const blocked = new Set(state.map.blocked.map(hexKey));
-  const occupied = new Set(
-    state.units
-      .filter((unit) => unit.status === 'active' && unit.id !== actor.id)
-      .map((unit) => hexKey(unit.position)),
-  );
+  const obstacles = movementObstacles(state, actor);
   const start: MovementLabel = {
     hex: actor.position,
     actionPointCost: 0,
@@ -259,23 +282,9 @@ export function findPrototypeAttackRoute(state: BattleState): PrototypeAttackRou
       return { targetId: target.id, position: { ...current.hex }, path: pathOf(current) };
     }
 
-    for (const next of hexNeighbors(current.hex).toSorted(compareHex)) {
-      const key = hexKey(next);
-      if (!valid.has(key) || blocked.has(key) || occupied.has(key)) {
-        continue;
-      }
-      const fireDamage =
-        current.fireDamage +
-        (tileAt(state, next)?.terrain === 'fire' ? SPRITE_PROTOTYPE_FIRE_DAMAGE : 0);
-      if (fireDamage >= actor.health) continue;
-      const [stepAp, stepStamina] = stepCost(state, current.hex, next);
-      const candidate: MovementLabel = {
-        hex: next,
-        actionPointCost: current.actionPointCost + stepAp,
-        staminaCost: current.staminaCost + stepStamina,
-        fireDamage,
-        parent: current,
-      };
+    for (const candidate of movementCandidates(state, current, valid, obstacles)) {
+      const key = hexKey(candidate.hex);
+      if (candidate.fireDamage >= actor.health) continue;
       const existing = bestByHex.get(key);
       if (existing !== undefined && compareAttackRouteLabels(existing, candidate) <= 0) continue;
       bestByHex.set(key, candidate);
@@ -436,31 +445,12 @@ export function previewCombatAttacks(state: BattleState): readonly CombatAttackP
   return validAttackTargets(state, actor)
     .filter((target) => withinAttackRange(state, actor, target.position, weapon))
     .map((target) => {
-      const minimum = combatAttackDamage(
-        combatGuardedDamage(Math.max(1, weapon.baseDamage - weapon.damageVariance), target, rules),
-        target.armor,
-        weapon,
-      );
-      const maximum = combatAttackDamage(
-        combatGuardedDamage(Math.max(1, weapon.baseDamage + weapon.damageVariance), target, rules),
-        target.armor,
-        weapon,
-      );
       return {
         targetId: target.id,
         hitChance: combatHitChance(actor, target, rules),
         actionPointCost: weapon.actionPointCost,
         staminaCost: weapon.staminaCost,
-        damage: {
-          health: {
-            minimum: Math.min(target.health, minimum.healthDamage),
-            maximum: Math.min(target.health, maximum.healthDamage),
-          },
-          armor: {
-            minimum: Math.min(target.armor, minimum.armorDamage),
-            maximum: Math.min(target.armor, maximum.armorDamage),
-          },
-        },
+        damage: previewWeaponDamage(target, weapon, rules),
       };
     });
 }
