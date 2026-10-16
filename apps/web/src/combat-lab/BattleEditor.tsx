@@ -8,7 +8,6 @@ import type {
   CombatLabCustomUnit,
 } from '@warwrit/protocol';
 import {
-  editorSkills,
   createEmptyTiles,
   paintBattleTile,
   placeBattleUnit,
@@ -19,6 +18,7 @@ import {
 } from './editor-model.js';
 import type { TilePatch } from './editor-model.js';
 import './battle-editor.css';
+import { SkillLoadout } from './SkillLoadout.js';
 
 export interface BattleEditorProps {
   readonly catalog: CombatLabCatalog;
@@ -87,6 +87,60 @@ function nextDraftName(units: readonly CombatLabCustomUnit[], side: string): str
   let suffix = 1;
   while (existing.has(`${side}-${suffix}`)) suffix += 1;
   return `${side}-${suffix}`;
+}
+
+function editorCellLabel(
+  tile: CombatLabTile,
+  unit: CombatLabCustomUnit | undefined,
+  profile: CombatLabCatalog['profiles'][number] | undefined,
+): string {
+  const label = `Клетка ${tile.q}, ${tile.r}: ${tile.terrain}, высота ${tile.height}${tile.blocked ? ', препятствие' : ''}`;
+  if (!unit) return label;
+  const side = unit.sideId === 'human' ? 'свои' : 'противник';
+  return `${label}, ${side}: ${profile?.name ?? unit.profileId}`;
+}
+
+function EditorCell({
+  tile,
+  unit,
+  profile,
+  selected,
+  disabled,
+  onCellKey,
+}: {
+  readonly tile: CombatLabTile;
+  readonly unit: CombatLabCustomUnit | undefined;
+  readonly profile: CombatLabCatalog['profiles'][number] | undefined;
+  readonly selected: boolean;
+  readonly disabled: boolean;
+  readonly onCellKey: (event: KeyboardEvent<SVGGElement>, hex: CombatLabHex) => void;
+}) {
+  const hex = { q: tile.q, r: tile.r };
+  const [x, y] = center(hex);
+
+  return (
+    <g
+      key={hexKey(hex)}
+      data-editor-cell="true"
+      data-q={tile.q}
+      data-r={tile.r}
+      data-selected={selected}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-label={editorCellLabel(tile, unit, profile)}
+      onKeyDown={(event) => onCellKey(event, hex)}
+    >
+      <title>{`Клетка ${tile.q}, ${tile.r}: ${tile.terrain}, высота ${tile.height}`}</title>
+      <polygon className={tileClass(tile)} points={corners} transform={`translate(${x} ${y})`} />
+      <text className="battle-editor-coordinate" x={x} y={y + 3}>{`${tile.q},${tile.r}`}</text>
+      {unit && (
+        <g className={`battle-editor-unit ${unit.sideId}`} transform={`translate(${x} ${y - 10})`}>
+          <circle r="11" />
+          <text y="4">{profile?.kind === 'creature' ? 'Т' : 'Б'}</text>
+        </g>
+      )}
+    </g>
+  );
 }
 
 /** Local battle and map draft editor; all imports are validated before onChange. */
@@ -360,47 +414,19 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
           >
-            {sortedTiles.map((tile) => {
-              const hex = { q: tile.q, r: tile.r };
-              const [x, y] = center(hex);
-              const unit = unitsAt.get(hexKey(hex));
-              const sideName = unit?.sideId === 'human' ? 'свои' : 'противник';
-              const profile = catalog.profiles.find(({ id }) => id === unit?.profileId);
-              return (
-                <g
-                  key={hexKey(hex)}
-                  data-editor-cell="true"
-                  data-q={tile.q}
-                  data-r={tile.r}
-                  data-selected={inspectedHex?.q === tile.q && inspectedHex.r === tile.r}
-                  role="button"
-                  tabIndex={disabled ? -1 : 0}
-                  aria-label={`Клетка ${tile.q}, ${tile.r}: ${tile.terrain}, высота ${tile.height}${tile.blocked ? ', препятствие' : ''}${unit ? `, ${sideName}: ${profile?.name ?? unit.profileId}` : ''}`}
-                  onKeyDown={(event) => handleCellKey(event, hex)}
-                >
-                  <title>{`Клетка ${tile.q}, ${tile.r}: ${tile.terrain}, высота ${tile.height}`}</title>
-                  <polygon
-                    className={tileClass(tile)}
-                    points={corners}
-                    transform={`translate(${x} ${y})`}
-                  />
-                  <text
-                    className="battle-editor-coordinate"
-                    x={x}
-                    y={y + 3}
-                  >{`${tile.q},${tile.r}`}</text>
-                  {unit && (
-                    <g
-                      className={`battle-editor-unit ${unit.sideId}`}
-                      transform={`translate(${x} ${y - 10})`}
-                    >
-                      <circle r="11" />
-                      <text y="4">{profile?.kind === 'creature' ? 'Т' : 'Б'}</text>
-                    </g>
-                  )}
-                </g>
-              );
-            })}
+            {sortedTiles.map((tile) => (
+              <EditorCell
+                key={hexKey(tile)}
+                tile={tile}
+                unit={unitsAt.get(hexKey(tile))}
+                profile={catalog.profiles.find(
+                  ({ id }) => id === unitsAt.get(hexKey(tile))?.profileId,
+                )}
+                selected={inspectedHex?.q === tile.q && inspectedHex.r === tile.r}
+                disabled={disabled}
+                onCellKey={handleCellKey}
+              />
+            ))}
           </svg>
           {inspectedHex && (
             <p className="battle-editor-inspector" role="status">
@@ -515,40 +541,17 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
                       <b>{unit.sideId === 'human' ? 'Свои' : 'Противник'}</b> ·{' '}
                       {profile?.name ?? unit.profileId} · {hexKey(unit.position)}
                     </span>
-                    <div
-                      className="battle-editor-skills"
-                      aria-label={`Изученные приёмы: ${profile?.name ?? unit.id}`}
-                    >
-                      {editorSkills.map(([skillId, label]) => (
-                        <label key={skillId}>
-                          {label}
-                          <select
-                            aria-label={`${label}: ${unit.id}`}
-                            value={unit.skillRanks?.[skillId] ?? 0}
-                            onChange={(event) => {
-                              const rank = Number(event.target.value);
-                              const skillRanks = { ...unit.skillRanks };
-                              if (rank === 0) delete skillRanks[skillId];
-                              else skillRanks[skillId] = rank as 1 | 2 | 3;
-                              change({
-                                units: value.units.map((candidate) =>
-                                  candidate.id === unit.id
-                                    ? { ...candidate, skillRanks }
-                                    : candidate,
-                                ),
-                              });
-                            }}
-                          >
-                            <option value={0}>Не изучен</option>
-                            {[1, 2, 3].map((rank) => (
-                              <option key={rank} value={rank}>
-                                Ранг {rank}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      ))}
-                    </div>
+                    <SkillLoadout
+                      unit={unit}
+                      catalog={catalog}
+                      onChange={(skillRanks) =>
+                        change({
+                          units: value.units.map((candidate) =>
+                            candidate.id === unit.id ? { ...candidate, skillRanks } : candidate,
+                          ),
+                        })
+                      }
+                    />
                     <button
                       type="button"
                       aria-label={`Убрать ${profile?.name ?? unit.id}`}

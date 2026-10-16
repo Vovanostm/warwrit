@@ -1,0 +1,40 @@
+.skill-loadout {
+  width: 100%;
+  border-top: 1px solid #665d49;
+  padding-top: 8px;
+}
+.skill-loadout summary {
+  cursor: pointer;
+  color: #e0c996;
+}
+.skill-loadout p {
+  margin: 5px 0;
+}
+.skill-loadout ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+.skill-loadout .skill-loadout-choice {
+  display: block;
+  padding: 8px 0;
+  border-top: 1px solid #4b483e;
+}
+.skill-loadout-choice label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.skill-loadout-choice span {
+  font-size: 12px;
+  color: #bfb8a6;
+}
+.skill-loadout-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.skill-loadout .skill-loadout-warning {
+  color: #e2ad74;
+}

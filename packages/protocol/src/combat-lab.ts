@@ -55,10 +55,16 @@ export interface CombatLabBattleConfig {
   readonly map: { readonly name: string; readonly tiles: readonly CombatLabTile[] };
   readonly units: readonly CombatLabCustomUnit[];
 }
+export type CombatLabSkillDefinition = Omit<CombatLabSkill, 'rank' | 'equipmentAvailable'> & {
+  readonly equipment: readonly CombatLabView['units'][number]['weaponId'][];
+};
+
 export interface CombatLabCatalog {
+  readonly skills?: readonly CombatLabSkillDefinition[];
   readonly profiles: readonly {
     readonly id: string;
     readonly name: string;
+    readonly defaultSkillRanks?: CombatLabSkillRanks;
     readonly kind: 'human' | 'creature';
     readonly weaponId: 'bow' | 'great-weapon' | 'raider' | 'spear' | 'sword-shield';
   }[];

@@ -25,13 +25,6 @@ const profileRows = [
   ['B053', 'Мельничная тварь', 'great-weapon', 130, 24, 12, 47],
 ] as const;
 
-export const combatLabProfiles = profileRows.map(([id, name, weaponId]) => ({
-  id,
-  name,
-  weaponId,
-  kind: id.startsWith('W') ? ('human' as const) : ('creature' as const),
-}));
-
 const defaultSkillRanks: Readonly<Record<string, combat.CombatSkillRanks>> = {
   W01: { 'shield-brace': 1 },
   W02: { 'armor-pressure': 1 },
@@ -44,6 +37,14 @@ const defaultSkillRanks: Readonly<Record<string, combat.CombatSkillRanks>> = {
   W09: { 'reach-thrust': 1 },
   W10: { 'shield-brace': 1, rally: 1 },
 };
+
+export const combatLabProfiles = profileRows.map(([id, name, weaponId]) => ({
+  id,
+  name,
+  weaponId,
+  defaultSkillRanks: { ...defaultSkillRanks[id] },
+  kind: id.startsWith('W') ? ('human' as const) : ('creature' as const),
+}));
 
 export function defaultSpriteBattle(): CombatLabBattleConfig {
   return {
@@ -84,7 +85,11 @@ export function defaultSpriteBattle(): CombatLabBattleConfig {
 }
 
 export function combatLabCatalog(): CombatLabCatalog {
-  return { profiles: combatLabProfiles, defaultBattle: defaultSpriteBattle() };
+  return {
+    profiles: combatLabProfiles,
+    skills: combat.COMBAT_SKILLS,
+    defaultBattle: defaultSpriteBattle(),
+  };
 }
 
 const object = (value: unknown): value is Record<string, unknown> =>
@@ -102,29 +107,10 @@ const coordinate = (q: unknown, r: unknown) =>
   (r as number) >= 0 &&
   (r as number) < 11;
 
-/** Exact bounded transport validation before setup allocation or combat mutation. */
-export function isCustomBattle(value: unknown): value is CombatLabBattleConfig {
-  if (
-    !object(value) ||
-    !keys(value, ['version', 'name', 'seed', 'map', 'units']) ||
-    value['version'] !== 1 ||
-    !text(value['name']) ||
-    !Number.isSafeInteger(value['seed']) ||
-    (value['seed'] as number) < 0 ||
-    (value['seed'] as number) > 0xffffffff ||
-    !object(value['map']) ||
-    !keys(value['map'], ['name', 'tiles']) ||
-    !text(value['map']['name']) ||
-    !Array.isArray(value['map']['tiles']) ||
-    value['map']['tiles'].length !== 165 ||
-    !Array.isArray(value['units']) ||
-    value['units'].length < 2 ||
-    value['units'].length > 12
-  )
-    return false;
+function validateBattleTiles(tiles: readonly unknown[]): Set<string> | null {
   const tileKeys = new Set<string>();
   const blocked = new Set<string>();
-  for (const tile of value['map']['tiles']) {
+  for (const tile of tiles) {
     if (
       !object(tile) ||
       !keys(tile, ['q', 'r', 'height', 'terrain', 'blocked']) ||
@@ -133,22 +119,20 @@ export function isCustomBattle(value: unknown): value is CombatLabBattleConfig {
       !['plain', 'mud', 'fire'].includes(tile['terrain'] as string) ||
       typeof tile['blocked'] !== 'boolean'
     )
-      return false;
+      return null;
     const key = `${tile['q']},${tile['r']}`;
-    if (tileKeys.has(key)) return false;
+    if (tileKeys.has(key)) return null;
     tileKeys.add(key);
     if (tile['blocked']) blocked.add(key);
   }
-  if (
-    ![0, 14].every((q) =>
-      Array.from({ length: 11 }, (_, r) => `${q},${r}`).some((key) => !blocked.has(key)),
-    )
-  )
-    return false;
+  return blocked;
+}
+
+function validateBattleUnits(units: readonly unknown[], blocked: ReadonlySet<string>) {
   const ids = new Set<string>();
   const positions = new Set<string>();
   const counts = { human: 0, opponent: 0 };
-  for (const unit of value['units']) {
+  for (const unit of units) {
     if (
       !object(unit) ||
       !keys(unit, [
@@ -170,13 +154,54 @@ export function isCustomBattle(value: unknown): value is CombatLabBattleConfig {
       !keys(unit['position'], ['q', 'r']) ||
       !coordinate(unit['position']['q'], unit['position']['r'])
     )
-      return false;
+      return null;
     const key = `${unit['position']['q']},${unit['position']['r']}`;
-    if (positions.has(key) || blocked.has(key)) return false;
+    if (positions.has(key) || blocked.has(key)) return null;
     positions.add(key);
     ids.add(unit['id'] as string);
     counts[unit['sideId']] += 1;
   }
+  return counts;
+}
+
+function isBattleEnvelope(value: unknown): value is Record<string, unknown> & {
+  map: { name: string; tiles: unknown[] };
+  units: unknown[];
+} {
+  if (
+    !object(value) ||
+    !keys(value, ['version', 'name', 'seed', 'map', 'units']) ||
+    value['version'] !== 1 ||
+    !text(value['name']) ||
+    !Number.isSafeInteger(value['seed']) ||
+    (value['seed'] as number) < 0 ||
+    (value['seed'] as number) > 0xffffffff ||
+    !object(value['map']) ||
+    !keys(value['map'], ['name', 'tiles']) ||
+    !text(value['map']['name']) ||
+    !Array.isArray(value['map']['tiles']) ||
+    value['map']['tiles'].length !== 165 ||
+    !Array.isArray(value['units']) ||
+    value['units'].length < 2 ||
+    value['units'].length > 12
+  )
+    return false;
+  return true;
+}
+
+/** Exact bounded transport validation before setup allocation or combat mutation. */
+export function isCustomBattle(value: unknown): value is CombatLabBattleConfig {
+  if (!isBattleEnvelope(value)) return false;
+  const blocked = validateBattleTiles(value['map']['tiles']);
+  if (blocked === null) return false;
+  if (
+    ![0, 14].every((q) =>
+      Array.from({ length: 11 }, (_, r) => `${q},${r}`).some((key) => !blocked.has(key)),
+    )
+  )
+    return false;
+  const counts = validateBattleUnits(value['units'], blocked);
+  if (counts === null) return false;
   return (
     counts.human >= 1 &&
     counts.human <= 6 &&

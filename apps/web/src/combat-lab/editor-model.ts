@@ -6,14 +6,6 @@ import type {
   CombatLabCustomUnit,
 } from '@warwrit/protocol';
 
-export const editorSkills = [
-  ['shield-brace', 'Упор щитом'],
-  ['armor-pressure', 'Удар по броне'],
-  ['reach-thrust', 'Дальний укол'],
-  ['aimed-shot', 'Прицельный выстрел'],
-  ['rally', 'Собраться'],
-] as const;
-
 const EDITOR_MAP_WIDTH = 15;
 const EDITOR_MAP_HEIGHT = 11;
 const EDITOR_SIDE_LIMIT = 6;
@@ -142,6 +134,155 @@ export function validateMapDraft(value: unknown): string[] {
   return [...errors, ...validateMapContents(value['name'], value['tiles'])];
 }
 
+function validateUnitSkills(rawUnit: Record<string, unknown>, catalog: CombatLabCatalog): string[] {
+  const errors: string[] = [];
+  if (Object.hasOwn(rawUnit, 'skillRanks')) {
+    const ranks = rawUnit['skillRanks'];
+    if (
+      !isObject(ranks) ||
+      Object.entries(ranks).some(
+        ([id, rank]) =>
+          !(
+            catalog.skills?.map(({ skillId }) => skillId) ?? [
+              'shield-brace',
+              'armor-pressure',
+              'reach-thrust',
+              'aimed-shot',
+              'rally',
+            ]
+          ).includes(id as never) || ![1, 2, 3].includes(rank as number),
+      )
+    )
+      errors.push(
+        `Приёмы бойца ${String(rawUnit['id'])}: допустимы изученные ранги 1–3 известных приёмов.`,
+      );
+  }
+  return errors;
+}
+
+function validateUnitIdentity(
+  rawUnit: Record<string, unknown>,
+  allowedProfiles: ReadonlySet<string>,
+  ids: Set<string>,
+): string[] {
+  const errors: string[] = [];
+  if (
+    typeof rawUnit['id'] !== 'string' ||
+    rawUnit['id'].trim().length === 0 ||
+    rawUnit['id'].length > 64
+  ) {
+    errors.push('У каждого бойца должен быть уникальный ID длиной до 64 символов.');
+  } else if (ids.has(rawUnit['id'])) errors.push(`ID бойца ${rawUnit['id']} повторяется.`);
+  else ids.add(rawUnit['id']);
+  if (typeof rawUnit['profileId'] !== 'string' || !allowedProfiles.has(rawUnit['profileId'])) {
+    errors.push(`Профиль бойца ${String(rawUnit['id'])} отсутствует в каталоге.`);
+  }
+  return errors;
+}
+
+function validateUnitPosition(
+  rawUnit: Record<string, unknown>,
+  occupied: Set<string>,
+  blocked: ReadonlySet<string>,
+): string[] {
+  const errors: string[] = [];
+  if (!isObject(rawUnit['position']) || !hasExactKeys(rawUnit['position'], ['q', 'r'])) {
+    errors.push(`Позиция бойца ${String(rawUnit['id'])} должна содержать только q и r.`);
+    return errors;
+  }
+  if (!isEditorHex(rawUnit['position'])) {
+    errors.push(`Позиция бойца ${String(rawUnit['id'])} должна быть целой внутри поля 15×11.`);
+    return errors;
+  }
+  const positionKey = key(rawUnit['position']);
+  if (occupied.has(positionKey)) errors.push(`Клетка ${positionKey} занята несколькими бойцами.`);
+  occupied.add(positionKey);
+  if (blocked.has(positionKey))
+    errors.push(`Боец ${String(rawUnit['id'])} стоит на препятствии ${positionKey}.`);
+  return errors;
+}
+
+function validateRetreatEdges(rawMap: Record<string, unknown> | null): string[] {
+  if (rawMap === null || !Array.isArray(rawMap['tiles'])) return [];
+  const openEdges = new Set(rawMap['tiles'].filter(isOpenRetreatTile).map((tile) => tile.q));
+  return [0, EDITOR_MAP_WIDTH - 1].flatMap((q) =>
+    openEdges.has(q) ? [] : [`На краю q=${q} нужна хотя бы одна свободная клетка для отхода.`],
+  );
+}
+
+function isOpenRetreatTile(tile: unknown): tile is CombatLabTile {
+  if (!isObject(tile) || !isEditorHex(tile)) return false;
+  return (
+    (tile as Record<string, unknown>)['blocked'] !== true &&
+    (tile.q === 0 || tile.q === EDITOR_MAP_WIDTH - 1)
+  );
+}
+
+function blockedMapCells(rawMap: Record<string, unknown> | null): Set<string> {
+  const blocked = new Set<string>();
+  if (rawMap !== null && Array.isArray(rawMap['tiles'])) {
+    for (const tile of rawMap['tiles']) {
+      if (
+        isObject(tile) &&
+        isEditorHex(tile) &&
+        (tile as Record<string, unknown>)['blocked'] === true
+      )
+        blocked.add(key(tile));
+    }
+  }
+  return blocked;
+}
+
+function hasUnitShape(unit: unknown): unit is Record<string, unknown> {
+  return !(
+    !isObject(unit) ||
+    !hasExactKeys(unit, [
+      'id',
+      'profileId',
+      'sideId',
+      'position',
+      ...(Object.hasOwn(unit, 'skillRanks') ? ['skillRanks'] : []),
+    ])
+  );
+}
+
+function validateBattleUnits(
+  units: readonly unknown[],
+  rawMap: Record<string, unknown> | null,
+  catalog: CombatLabCatalog,
+): string[] {
+  const errors: string[] = [];
+  const allowedProfiles = new Set(catalog.profiles.map(({ id }) => id));
+  const ids = new Set<string>();
+  const occupied = new Set<string>();
+  const counts = { human: 0, opponent: 0 };
+  const blocked = blockedMapCells(rawMap);
+  for (const unit of units) {
+    if (!hasUnitShape(unit)) {
+      errors.push(
+        'Боец должен содержать id, profileId, sideId, position и необязательные skillRanks.',
+      );
+      continue;
+    }
+    const rawUnit = unit as Record<string, unknown>;
+    errors.push(...validateUnitSkills(rawUnit, catalog));
+
+    errors.push(...validateUnitIdentity(rawUnit, allowedProfiles, ids));
+    if (rawUnit['sideId'] !== 'human' && rawUnit['sideId'] !== 'opponent') {
+      errors.push(`Сторона бойца ${String(rawUnit['id'])} должна быть human или opponent.`);
+    } else counts[rawUnit['sideId']] += 1;
+    errors.push(...validateUnitPosition(rawUnit, occupied, blocked));
+  }
+  if (counts.human < 1 || counts.human > EDITOR_SIDE_LIMIT) {
+    errors.push(`Стороне human нужно от 1 до ${EDITOR_SIDE_LIMIT} бойцов.`);
+  }
+  if (counts.opponent < 1 || counts.opponent > EDITOR_SIDE_LIMIT) {
+    errors.push(`Стороне opponent нужно от 1 до ${EDITOR_SIDE_LIMIT} бойцов.`);
+  }
+  errors.push(...validateRetreatEdges(rawMap));
+  return errors;
+}
+
 export function validateBattleDraft(value: unknown, catalog: CombatLabCatalog): string[] {
   const errors: string[] = [];
   if (!isObject(value)) return ['Черновик боя должен быть JSON-объектом.'];
@@ -176,104 +317,7 @@ export function validateBattleDraft(value: unknown, catalog: CombatLabCatalog): 
     errors.push('Состав боя должен быть списком бойцов.');
     return [...new Set(errors)];
   }
-  const allowedProfiles = new Set(catalog.profiles.map(({ id }) => id));
-  const ids = new Set<string>();
-  const occupied = new Set<string>();
-  const counts = { human: 0, opponent: 0 };
-  const blocked = new Set<string>();
-  if (rawMap !== null && Array.isArray(rawMap['tiles'])) {
-    for (const tile of rawMap['tiles']) {
-      if (
-        isObject(tile) &&
-        isEditorHex(tile) &&
-        (tile as Record<string, unknown>)['blocked'] === true
-      )
-        blocked.add(key(tile));
-    }
-  }
-  for (const unit of value['units']) {
-    if (
-      !isObject(unit) ||
-      !hasExactKeys(unit, [
-        'id',
-        'profileId',
-        'sideId',
-        'position',
-        ...(Object.hasOwn(unit, 'skillRanks') ? ['skillRanks'] : []),
-      ])
-    ) {
-      errors.push(
-        'Боец должен содержать id, profileId, sideId, position и необязательные skillRanks.',
-      );
-      continue;
-    }
-    const rawUnit = unit as Record<string, unknown>;
-    if (Object.hasOwn(rawUnit, 'skillRanks')) {
-      const ranks = rawUnit['skillRanks'];
-      if (
-        !isObject(ranks) ||
-        Object.entries(ranks).some(
-          ([id, rank]) =>
-            !editorSkills.some(([skillId]) => skillId === id) ||
-            ![1, 2, 3].includes(rank as number),
-        )
-      )
-        errors.push(
-          `Приёмы бойца ${String(rawUnit['id'])}: допустимы изученные ранги 1–3 известных приёмов.`,
-        );
-    }
-
-    if (
-      typeof rawUnit['id'] !== 'string' ||
-      rawUnit['id'].trim().length === 0 ||
-      rawUnit['id'].length > 64
-    ) {
-      errors.push('У каждого бойца должен быть уникальный ID длиной до 64 символов.');
-    } else if (ids.has(rawUnit['id'])) errors.push(`ID бойца ${rawUnit['id']} повторяется.`);
-    else ids.add(rawUnit['id']);
-    if (typeof rawUnit['profileId'] !== 'string' || !allowedProfiles.has(rawUnit['profileId'])) {
-      errors.push(`Профиль бойца ${String(rawUnit['id'])} отсутствует в каталоге.`);
-    }
-    if (rawUnit['sideId'] !== 'human' && rawUnit['sideId'] !== 'opponent') {
-      errors.push(`Сторона бойца ${String(rawUnit['id'])} должна быть human или opponent.`);
-    } else counts[rawUnit['sideId']] += 1;
-    if (!isObject(rawUnit['position']) || !hasExactKeys(rawUnit['position'], ['q', 'r'])) {
-      errors.push(`Позиция бойца ${String(rawUnit['id'])} должна содержать только q и r.`);
-      continue;
-    }
-    if (!isEditorHex(rawUnit['position'])) {
-      errors.push(`Позиция бойца ${String(rawUnit['id'])} должна быть целой внутри поля 15×11.`);
-      continue;
-    }
-    const positionKey = key(rawUnit['position']);
-    if (occupied.has(positionKey)) errors.push(`Клетка ${positionKey} занята несколькими бойцами.`);
-    occupied.add(positionKey);
-    if (blocked.has(positionKey))
-      errors.push(`Боец ${String(rawUnit['id'])} стоит на препятствии ${positionKey}.`);
-  }
-  if (counts.human < 1 || counts.human > EDITOR_SIDE_LIMIT) {
-    errors.push(`Стороне human нужно от 1 до ${EDITOR_SIDE_LIMIT} бойцов.`);
-  }
-  if (counts.opponent < 1 || counts.opponent > EDITOR_SIDE_LIMIT) {
-    errors.push(`Стороне opponent нужно от 1 до ${EDITOR_SIDE_LIMIT} бойцов.`);
-  }
-  if (rawMap !== null && Array.isArray(rawMap['tiles'])) {
-    const openEdges = new Set<string>();
-    for (const tile of rawMap['tiles']) {
-      if (!isObject(tile) || !isEditorHex(tile)) continue;
-      const rawTile = tile as Record<string, unknown>;
-      if (rawTile['blocked'] !== true && (tile.q === 0 || tile.q === EDITOR_MAP_WIDTH - 1)) {
-        openEdges.add(String(tile.q));
-      }
-    }
-    if (!openEdges.has('0'))
-      errors.push('На краю q=0 нужна хотя бы одна свободная клетка для отхода.');
-    if (!openEdges.has(String(EDITOR_MAP_WIDTH - 1))) {
-      errors.push(
-        `На краю q=${EDITOR_MAP_WIDTH - 1} нужна хотя бы одна свободная клетка для отхода.`,
-      );
-    }
-  }
+  errors.push(...validateBattleUnits(value['units'], rawMap, catalog));
   // Connectivity and combat admission are validated by the server's canonical core.
   return [...new Set(errors)];
 }

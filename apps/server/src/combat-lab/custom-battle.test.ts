@@ -8,7 +8,12 @@ import {
 import { afterEach, assert, describe, expect, it } from 'vitest';
 import { decideAction, type CombatLabSession } from './routes.js';
 import { buildApp } from '../app.js';
-import { defaultSpriteBattle, isCustomBattle, createCustomBattleFixture } from './custom-battle.js';
+import {
+  combatLabCatalog,
+  defaultSpriteBattle,
+  isCustomBattle,
+  createCustomBattleFixture,
+} from './custom-battle.js';
 
 const settings = { host: '127.0.0.1', port: 3000, origin: 'http://127.0.0.1:5173' };
 const headers = { host: '127.0.0.1:3000', origin: settings.origin };
@@ -670,4 +675,18 @@ describe('custom sprite battle server boundary', () => {
     draft.units[0]!.position.q = 9;
     expect(fixture.originalSetup()).toEqual(before);
   });
+});
+
+it('serves canonical technique metadata and isolated profile defaults without changing battle version', () => {
+  const catalog = combatLabCatalog();
+  expect(catalog.skills).toEqual(combat.COMBAT_SKILLS);
+  expect(catalog.defaultBattle.version).toBe(1);
+  expect(catalog.profiles.find(({ id }) => id === 'W10')?.defaultSkillRanks).toEqual({
+    'shield-brace': 1,
+    rally: 1,
+  });
+  const profile = catalog.profiles.find(({ id }) => id === 'W10')!;
+  expect(profile.defaultSkillRanks).not.toBe(
+    catalog.defaultBattle.units.find(({ profileId }) => profileId === 'W10')?.skillRanks,
+  );
 });
