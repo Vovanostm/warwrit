@@ -497,3 +497,20 @@ it('retains weapon reach with an explicit AP warning instead of implying a legal
   expect(html).toContain('не хватает ОД');
   expect(html).not.toContain('Можно атаковать');
 });
+
+it('distinguishes acted and current portraits using only the received round order', () => {
+  const html = renderToStaticMarkup(
+    <BattleView
+      view={{ ...view, turnIndex: 1, activation: { ...view.activation!, actorId: 'B001' } }}
+      selectedUnitId={null}
+      selectedHex={null}
+      onSelectUnit={() => {}}
+      onSelectHex={() => {}}
+    />,
+  );
+  expect(html).toContain('aria-label="Ход завершён"');
+  expect(html).toContain('В строю · инициатива 18 · Ход завершён');
+  expect(html).toContain(' · Сейчас ходит');
+  expect(html).toContain('aria-current="step"');
+  expect(html).toContain('ПОРЯДОК НЕИЗВЕСТЕН');
+});

@@ -879,3 +879,16 @@
   justify-content: center;
   gap: 12px;
 }
+
+.battle-turn-acted {
+  position: absolute;
+  bottom: 21px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 4px;
+  border-radius: 2px;
+  background: #162527;
+  color: #c8d3c5;
+  font-size: 12px;
+  line-height: 16px;
+}
