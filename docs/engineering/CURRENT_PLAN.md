@@ -1,22 +1,28 @@
 # Warwrit current delivery plan
 
-**Live initiative and combat UX — 2026-10-16, LOCAL / REVIEWING:**
-Owner explicitly authorizes raster drafts, implementation, subagents, PR/review
-and merge to the actual default main; no deploy/auto-merge/paid services.
-Parent owns `codex/live-combat-ux` in combat-live-queue/warwrit, rebased onto
-main8f7ad25 after merged PR157 (includes outline fix). Other writers released;
-primary WIP preserved. Coordination ACK: independently owned narrow follow-up.
-Implemented live remaining-turn queue + canonical next-round forecast,
-current actor emphasis, one actor card, visible command labels/prices and
-contextual target/risk. Selected raster draft A; both prompts/provenance tracked.
-Web/server types,48focused tests and805unit/47SKIPPED coverage PASS.
-Four desktop sizes1280–1920, menu/light/portrait/keyboard0POST, accepted guard
-and refreshed canonical queue PASS. Independent source review: no concrete
-findings. First visual REJECT: undiscoverable forecast overflow and obsolete
-terminal panels. Visible arrows and terminal-only result repaired; repeat pending.
-Current48focused/types/audit PASS after main rebase; clean CI/publication/merge pending.
-Own stand3036/5336; no campaign writes. Historical failed test probes are
-recorded in the [owning contract/results](../wiki/battlefield-test-maps.md#полный-цикл-реализации-ux--2026-10-16).
+**Live initiative and combat UX — 2026-10-16, MERGED / MAIN JOURNEY PASS:**
+Owner-authorized drafts/subagent/PR/review/merge cycle completed through
+[PR158](https://github.com/Vovanostm/warwrit/pull/158), after sprite/outline PR157.
+Reviewed source e7846086bb5e5d21e21a1601f63415f293c89ad8;
+merge/main5c0b7ebeb28bda8530282d761268006a38d75256, reviewed-to-merge tree diff empty.
+[Clean CI38922603699](https://github.com/Vovanostm/warwrit/actions/runs/38922603699)
+SUCCESS:806unitPASS/47SKIPPED,10kcombatstress,20determinism/100replay,
+14disposablePostgreSQL checks, coverage and strict29-file audit PASS.
+Live remaining turns + canonical next-round forecast, visible scroll arrows,
+prices/action labels, one actor card and clean terminal result are merged.
+Two raster drafts/exact provenance tracked; A selected. Source reviewer no
+concrete findings. First visual REJECT exposed hidden overflow/stale terminal
+HUD; both fixed. Repeated critic exceeded12min+5min without verdict and was
+interrupted; replacement independent full absolute review ACCEPT(all7criteria2/3,
+motionN/A, owncriticinputNOT_RUN). Rim/grid/panel polish remains nonblocking.
+Actual4desktop sizes/last-portrait reachability/inspection0POST,6manualwaits
+throughR1→R2/canonical DOM agreement/autostop PASS; full current-head battle
+R8/rev151/victory5survivors, terminal dock/queue absent and hotkeys0POST.
+Merged-main ownstand3036/5336: restart12active/R1/rev4, arrows/inspection/menu/
+day-night0POST, defend1POST→rev5/actorhuman-6 and both canonical queues PASS.
+Local main and isolated branch updated without changing primary dirty WIP.
+No campaign write/deploy/auto-merge/paid services; balance/FPS/fullM1 NOT_MEASURED.
+[Owning research, drafts and results](../wiki/battlefield-test-maps.md#полный-цикл-реализации-ux--2026-10-16).
 
 **Combat improvement cycle — 2026-10-16, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized worktree/subagent cycle merged through [PR157](https://github.com/Vovanostm/warwrit/pull/157).

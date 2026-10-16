@@ -11,6 +11,20 @@ requests.
 
 ### Live initiative queue and reduced combat HUD
 
+- 2026-10-16, branch `codex/live-combat-ux`, merged:
+  [PR158](https://github.com/Vovanostm/warwrit/pull/158) at main5c0b7eb,
+  reviewed source e784608 with identical merge tree. Live canonical queue and
+  current-state forecast replace the unknown-order placeholder; edge-aware
+  arrows expose the full strip. Decision prices/risks stay visible; duplicate
+  actor/neutral copy and obsolete terminal dock are removed. Draft A selected.
+  Clean CI38922603699 PASS:806unit/47SKIPPED,10kstress,14disposableDB,
+  coverage/audit29files. Independent source review no concrete findings;
+  final absolute visual ACCEPT(all7scores2, motionN/A), after correcting
+  overflow/terminal findings and replacing a timed-out repeat critic.
+  Merged-main browser restart12units/scroll/inspection0POST/day-night/accepted
+  defend+canonical queues PASS. Source/game rules/schema remain scoped as
+  recorded in the owning wiki; balance/FPS/fullM1 NOT_MEASURED. This dated
+  receipt supersedes the activation/local-pending status below.
 - 2026-10-16, branch `codex/live-combat-ux`, local implementation: canonical
   core order function now projects the next round through the optional lab DTO.
   Web renders remaining/current portraits and a distinct forecast, removes the

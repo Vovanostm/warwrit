@@ -42,7 +42,9 @@ range, their overlap, attackable targets and fire.
 The approved Command desk HUD overlays the full desktop viewport. Top portrait
 initiative shows remaining current-round turns and a distinct next-round forecast
 from the canonical order function. It refreshes with accepted state; inspection
-never reorders it. Hover/focus a portrait highlights its figure; clicking pins
+never reorders it. Visible arrows, keyboard focus and trackpad scrolling reach
+portraits beyond the viewport. Completed battles hide the active dock and queue,
+leaving the result, journal and utilities. Hover/focus a portrait highlights its figure; clicking pins
 inspection without changing the acting fighter. Selecting a cell retains pinned
 inspection while its path forecast takes priority; selecting a unit clears the
 selected path. Field hover overrides retained portrait focus. The bottom-left actor and, only for a different unit,
