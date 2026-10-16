@@ -4,16 +4,17 @@
 Owner explicitly authorizes raster drafts, implementation, subagents, PR/review
 and merge to the actual default main; no deploy/auto-merge/paid services.
 Parent owns `codex/live-combat-ux` in combat-live-queue/warwrit, rebased onto
-PR157 baseline87c5c6a (includes outline fix). Other source writers released;
-primary and coordinator WIP preserved. Coordination ACK: narrow follow-up PR
-after PR157 merges; coordinator owns its renderer/shared docs until that merge.
+main8f7ad25 after merged PR157 (includes outline fix). Other writers released;
+primary WIP preserved. Coordination ACK: independently owned narrow follow-up.
 Implemented live remaining-turn queue + canonical next-round forecast,
 current actor emphasis, one actor card, visible command labels/prices and
 contextual target/risk. Selected raster draft A; both prompts/provenance tracked.
 Web/server types,48focused tests and805unit/47SKIPPED coverage PASS.
 Four desktop sizes1280–1920, menu/light/portrait/keyboard0POST, accepted guard
 and refreshed canonical queue PASS. Independent source review: no concrete
-findings. Visual critique and final audit/clean CI/publication/merge pending.
+findings. First visual REJECT: undiscoverable forecast overflow and obsolete
+terminal panels. Visible arrows and terminal-only result repaired; repeat pending.
+Current48focused/types/audit PASS after main rebase; clean CI/publication/merge pending.
 Own stand3036/5336; no campaign writes. Historical failed test probes are
 recorded in the [owning contract/results](../wiki/battlefield-test-maps.md#полный-цикл-реализации-ux--2026-10-16).
 

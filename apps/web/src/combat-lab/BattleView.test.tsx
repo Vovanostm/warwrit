@@ -180,7 +180,7 @@ it('does not show active stances or a future round after battle resolution', () 
       },
     ],
   });
-  expect(html).toContain('Погиб');
+  expect(html).not.toContain('aria-label="Приказы действующему бойцу"');
   expect(html).not.toContain('Готовит тяжёлый удар');
   expect(html).not.toContain('Паника · бежит');
   expect(html).not.toContain('до следующего хода');
@@ -234,7 +234,8 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
   expect(html).toContain('aria-label="Результат боя"');
   expect(html).toContain('<h2>Победа</h2>');
   expect(html).toContain('У противника не осталось бойцов в строю.');
-  expect(html).toContain('Сдался');
+  expect(html).not.toContain('aria-label="Действующий боец"');
+  expect(html).not.toContain('aria-label="Состояние: Волк"');
   expect(html).toContain('Сдались <b>1</b>');
   expect(html).toContain('Начать заново');
   expect(html).toContain('К редактору');

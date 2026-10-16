@@ -3668,3 +3668,24 @@ visual.txt, day-_.png, grid-_.png, overlays-on/off.png, close-day/night.png,
 equal-height.png/reference-sheet.png). Independent full visual critique,
 финальный аудит, clean PR bootstrap/DB/stress, публикация/merge и проверка
 из main ещё не завершены. Баланс, FPS и полный M1 NOT_MEASURED.
+
+**Повтор после первого визуального REJECT:** independent critic оценил
+7критериев2/2/2/2/3/2/1, motionN/A. Два подтверждённых UX-дефекта:
+будущие портреты обрывались без видимого способа прокрутки; после победы
+под результатом оставались карточки и disabled-приказы. Добавлены явные
+стрелки с отключением у края/ResizeObserver; keyboard/trackpad сохранены.
+Боевой dock/осмотр скрываются при resolved, результат/журнал/меню остаются.
+Основная версия перенесена на main8f7ad25 после PR157; его результаты сохранены.
+Текущие48focused/typecheck/audit29files PASS. Полный локальный lint сначала
+FAIL19 только на untracked browser-script артефактах в output; CI clean checkout
+их не содержит. Повтор scoped lint и fresh visual/terminal readback pending.
+
+Настоящий повтор rounds.txt подтвердил6принятых завершений хода:
+revision5/6/9/13/14/19, переход1→2; обе DOM-ленты совпадали с каждым
+серверным view. Автобой после pending остановился стабильно на revision20.
+Прочитан реальный terminal предыдущего прохода: resolved/R8/revision151,
+5своих в строю. Отдельная прежняя assert «forecast до последней команды
+равен порядку после всех ответных действий» была неверной: эти действия
+меняют инициативу. Она не используется как oracle; прогноз остаётся снимком
+текущего состояния. Прямое совпадение с текущей проекцией проверено выше,
+равенство с каноническим rollover без intervening-изменений — core regression.
