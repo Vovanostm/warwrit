@@ -1,0 +1,57 @@
+{
+  "asset_id": "W10",
+  "title": "Commander with ordinary weapon",
+  "created_date": "2026-10-09",
+  "originating_branch": "codex/sprite-combat-stage1",
+  "delivery_status": "local",
+  "generator": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: stylized-concept.\nAsset type: ONE transparent static full-body Warwrit combat sprite, roster W10, adult human mercenary commander with ordinary weapon.\nInput images: Image 1 assets/art/m1/style/unit-c-ink.png is the PRIMARY approved reference for adult anatomy, ink contour/hatching and sword scale/grip. Image 2 assets/art/m1/places/settlements-v2/staraya-melnitsa.png is ONLY the weathered material, subdued palette and upper-left light reference. Image 3 assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png is ONLY the elevated three-quarter projection and overall combat art direction. Do not reproduce the scene or UI.\nSubject: full adult seasoned mercenary commander, credible human anatomy, stern composed readable face, short graying hair and modest stubble, practical weathered padded service jacket, small plain iron shoulder protection, simple leather belt, trousers and sturdy boots. Plain worn equipment, no ornamental rank emblems. Calm balanced commanding stance; one empty hand raised in a clear restrained open directing gesture to rally or guide comrades, other hand securely grips ONE ordinary short one-handed straight sword in a low guard. Show the entire blade, handle and hand. Sword blade from guard to tip approximately 40 percent of standing body height, hilt short and functional, proportions matching Image 1. No giant or heroic greatsword. Clear separate arm and blade silhouette.\nComposition: one full figure centered, fixed elevated three-quarter view, facing screen UPPER-RIGHT away along the ground diagonal with readable three-quarter profile, never facing viewer front. Entire head, hand, sword tip, and both boot soles visible with generous clear margins. Same anatomy scale as reference C, no chibi head, no squat body. Grounded staggered feet. Intended sprite occupies 80px human height at desktop 1440x900; prioritize readable gesture and sword silhouette.\nStyle: irregular dark ink contours, internal hatching, flat matte washes and strong shadow masses. Muted soot, slate, umber and restrained ochre; weathered cloth/leather/iron. Light from screen upper-left. Serious grounded dark fantasy, precise adult forms, no glossy 3D rendering or painterly blur.\nBackground: genuine transparent alpha, fully empty outside figure/equipment. No ground tile, pedestal, terrain patch, dust, cast/contact shadow, lighting halo.\nConstraints: exactly one man, no aura, banner, heraldry, new symbols, medals, magic, glowing eyes, text, borders, watermark, background or scene. Do not mirror reference lighting. No animation or sprite sheet. Preserve full equipment without clipping.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+  ],
+  "reference_roles": [
+    "Primary approved human anatomy, pose, weapon proportions and ink rendering",
+    "Ruined mill scene materials, subdued palette and light",
+    "Overall combat direction and fixed elevated three-quarter projection"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12154-061b-7ee1-ad4f-1a13a65a0b7d/exec-e63be1e2-6b2a-4cbb-9ca9-db3593aeb8ed.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/w10/sprite.png",
+  "generation_calls": 1,
+  "targeted_correction_calls": 0,
+  "observed_png": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 1152328,
+    "opaque_pixels": 839,
+    "nonzero_alpha_bbox": [33, 3, 1208, 1230],
+    "border_alpha_max": 0
+  },
+  "observations": [
+    "One full adult mercenary with both boots, complete raised directing hand and entire sword visible.",
+    "Stern readable face, short graying hair and stubble, practical quilted jacket with plain weathered iron shoulder plates.",
+    "Empty open directing hand makes the commander role visible; ordinary sword held in low guard with correct hand-on-hilt construction.",
+    "Sword blade is approximately 40 percent of full figure height, matching compact one-handed fighter C proportions.",
+    "Elevated three-quarter rightward facing; upper-left highlights; rough ink contour, hatching and muted matte wash.",
+    "No visible banner, heraldry, aura, symbols, magic, text, ground patch or painted contact shadow."
+  ],
+  "checks": {
+    "personal_reference_inspection": "PASS: all three provided local reference images viewed before generation",
+    "full_figure_and_equipment_inspection": "PASS: head, hand, both boots and sword tip complete with margins",
+    "png_dimensions_and_alpha": "PASS: stdlib PNG decode confirms RGBA, real transparent pixels, 0..255 alpha and fully transparent outer border",
+    "independent_visual_acceptance": "NOT_RUN: parent owns critic pass",
+    "integrated_day_night_and_gameplay": "NOT_RUN",
+    "80px_in_game_readability": "NOT_MEASURED",
+    "game_tests": "NOT_RUN: static asset only",
+    "publication_merge_deployment": "NOT_RUN"
+  },
+  "limitations": [
+    "Local static concept only; parent must assess 80px presentation and consistency across roster through independent visual critique.",
+    "Upper-right ground direction requires integrated camera comparison; no animation/facing set supplied.",
+    "No code, shared document, dependency, commit or publication changes."
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "stage1-creature-b053-night-mill-beast-v2",
+  "status": "local revised Stage1 visual proposal; independent re-review pending; not canonical/profile/animation/integration",
+  "date": "2026-10-09",
+  "tool": "image_gen built-in",
+  "model": "underlying model identifier not exposed",
+  "call_count": 1,
+  "revision_of": "assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept.png",
+  "revision_reason": "Independent visual critic scored B053 value 1: oversized pale cream fur wedges conflicted with approved dark shaggy mass.",
+  "prompt": "Use case: precise-object-edit / identity-preserve.\nEdit target: Image 1 is the existing Warwrit B053 night-mill-beast Stage1 concept. Image 2 is the approved production unit-mill-beast reference for dark overall values and shag rendering.\nChange ONLY fur/claw rendering and values in Image 1. Preserve IDENTICAL silhouette, all anatomy and limb/claw positions, proportions, hunched stance, small low head, two existing pale eyes, camera, composition and generous uncropped paw margins. Keep actual transparent background and crisp opaque edges.\nCurrent Image 1 defect: huge repetitive pale cream triangular fur wedges dominate its mass. Correct it into predominantly dark charcoal/peat shaggy mass like Image 2. Reduce pale highlight area by approximately 70 percent. Replace repetitive geometric cream triangles with irregular tangled interior black ink hatching, rough coarse angular fur strands and broken sparse muted taupe/umber highlights. Avoid broad pale highlight panels, creamy chevrons and repeated zigzag bands. Strong near-black shadow masses should unify back, shoulders, torso and forelimbs; preserve enough restrained local detail to read dark shag as fur.\nDarken claws to worn dull grey horn, with only tiny edge highlights. Keep same upper-left baked light, no new dramatic rim light. Same small pale eyes, no eye aura or added glow.\nMaintain flat ink/wash dark-fantasy rendering, not glossy 3D, photorealistic fur or smooth airbrush. No added horns, extra eyes, wings, armor, weapons, tail or limbs. Do not change species or invent features.\nOutput: exactly one full uncropped isolated transparent creature, no floor, cast shadow, pedestal, hex tile, text, sheet, watermark or scenery.",
+  "references": [
+    "assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept.png",
+    "assets/art/m1/battle/unit-mill-beast.png"
+  ],
+  "sources": ["docs/wiki/bestiary/creatures/b053.md", "assets/art/m1/battle/unit-mill-beast.json"],
+  "transparent_background": true,
+  "output": "assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png",
+  "observations": [
+    "Full beast, claws and paws remain uncropped.",
+    "Dark charcoal/peat mass now dominates; broad pale cream patches markedly reduced and broken into thinner muted fur marks.",
+    "Claws are duller desaturated grey horn with reduced warm cream values.",
+    "Visible anatomy and pose remain closely matched to v1; no new horns, wings, weapons or extra limbs.",
+    "Repeated layered shag clumps remain visible; independent critic must decide whether rendering passes."
+  ],
+  "verification": {
+    "image_inspection": "PASS: current v1 and approved production input inspected before edit; v2 inspected after edit",
+    "sips": "PASS: 1254 x 1254 PNG; hasAlpha yes",
+    "highlight_area_reduction": "NOT_MEASURED: approximately 70 percent requested; no pixel-area measurement",
+    "exact_silhouette_identity": "NOT_MEASURED: visually closely matched, no pixel-identical claim",
+    "independent_critic": "NOT_RUN by delegated artist"
+  },
+  "limits": [
+    "One static facing/pose; no animation or directional atlas.",
+    "Not integrated in game scene or assessed at player display scale.",
+    "No shared document edits or commits by delegated artist; parent owns closeout.",
+    "V1 retained non-destructively."
+  ]
+}

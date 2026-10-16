@@ -1316,10 +1316,11 @@ export function App() {
   );
 
   useEffect(() => {
+    if (isCombatLab) return;
     const controller = new AbortController();
     void restoreJourney(controller.signal);
     return () => controller.abort();
-  }, [restoreJourney]);
+  }, [restoreJourney, isCombatLab]);
 
   const readyScope =
     journey.status === 'company-ready'

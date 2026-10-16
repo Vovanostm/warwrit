@@ -1,0 +1,35 @@
+{
+  "id": "stage1-creature-b053-night-mill-beast",
+  "status": "local stage-1 visual proposal; not accepted canon, gameplay profile, animation or integration",
+  "date": "2026-10-09",
+  "tool": "image_gen built-in",
+  "model": "underlying model identifier not exposed",
+  "call_count": 1,
+  "verification": {
+    "image_inspection": "PASS: full subject inspected visually after generation",
+    "sips": "PASS: 1254 x 1254 PNG; hasAlpha yes",
+    "pillow_alpha_extrema": "NOT_RUN: system Python has no PIL module",
+    "integrated_visual_critique": "NOT_RUN"
+  },
+  "transparent_background": true,
+  "prompt": "Use case: identity-preserve / stylized-concept.\nAsset type: one stage-1 transparent battle sprite concept for Warwrit; NOT a new creature species or canonical profile.\nInput images: Image 1 assets/art/m1/battle/unit-mill-beast.png is the subject/anatomy/silhouette reference and must be preserved. Image 2 assets/art/m1/style/unit-c-ink.png is the approved hand-ink and flat earthy wash reference. Image 3 assets/art/m1/places/settlements-v2/staraya-melnitsa.png is the ruined old mill materials/world reference only, not background to include.\nPrimary request: redraw the SAME existing night mill beast as one complete isolated full-body battle sprite in the approved irregular ink and muted flat-wash art direction. Preserve its massive hunched shaggy body, tiny low-set blunt animal head sunk into sloping shoulders, two small pale eyes, very long heavy clawed forelimbs, sturdy bent hind legs, angular coarse fur silhouette and exact four-limbed anatomy. It faces left and is grounded in a heavy crouched idle stance. Do not reinterpret as a wolf, demon, gorilla, or other new species.\nComposition: single complete uncropped creature, fixed three-quarter top-down battle camera about 50 degrees downward. Visible crown, upper shoulders and back; maintain the reference proportions. Give every claw, head and foot generous clear padding, keep feet near bottom center. No sheet, collage or other subject.\nStyle: hand-drawn irregular black ink contours, purposeful interior hatching, solid angular fur masses, strong charcoal shadows and muted soot/umber/taupe flat wash. Readable silhouette at game scale, credible coarse fur. Keep the same species; change rendering language only. Upper-left baked light direction. No glossy or volumetric 3D look, smooth airbrush or photoreal fur. No cute rounded anatomy.\nBackground: actual transparent alpha, isolated cutout with crisp opaque subject edges. No background scene, floor, hex tile, pedestal, base, cast shadow, mist, glowing aura, text, symbols, logo or watermark. Keep eye brightness confined to the existing two small pale eyes; do not add eyes, horns, antlers, wings, armor, weapons, tails or extra limbs.\nAuthority constraints: B053 wiki is review-draft; this is a visual proposal preserving production anatomy only. Do not depict new abilities, magic, origins or historical claims.",
+  "references": [
+    "assets/art/m1/battle/unit-mill-beast.png",
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/settlements-v2/staraya-melnitsa.png"
+  ],
+  "sources": ["docs/wiki/bestiary/creatures/b053.md", "assets/art/m1/battle/unit-mill-beast.json"],
+  "output": "assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept.png",
+  "observations": [
+    "Full subject inside image with all extremities visible and no scene/background furniture.",
+    "Production hunched shaggy silhouette, small low head and long claw forelimbs retained visually.",
+    "Earthy flat wash and angular ink-fur masses; no added horns, wings, weapons or extra limbs.",
+    "Single three-quarter idle image, not animation or directional set."
+  ],
+  "limits": [
+    "No canonical acceptance or gameplay profile change.",
+    "No current integrated scene readability or day/night critique.",
+    "Anatomy match assessed visually only; generated fur/claw details may differ.",
+    "No root branch switch, commit or shared-document edits by delegated artist."
+  ]
+}

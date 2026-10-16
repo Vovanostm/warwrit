@@ -1,0 +1,72 @@
+{
+  "id": "W09",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local generated static concept; independent acceptance pending",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "owner_source": "docs/wiki/battlefield-test-maps.md W09: Алебарда / древковое оружие",
+  "shared_brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "generations": [
+    {
+      "kind": "initial",
+      "exact_prompt": "Use case: stylized-concept.\nAsset type: Warwrit W09 static full-body combat roster sprite, one adult halberd warrior, isolated actual transparent background.\nInput references: image 1 unit-c-ink.png is the approved human anatomy, body proportion, equipment weight, irregular ink and flat-wash rendering foundation. Image 2 staraya-melnitsa.png provides credible weathered materials and muted scene palette only, do not draw the mill. Image 3 battle-ux-v3.png defines the elevated three-quarter battlefield projection and screen upper-right facing. No UI or scene is reproduced.\nSubject: one grounded adult human fighter with ordinary practical medieval military equipment: subdued soot/umber quilted cloth armor, leather belt and boots, a simple weathered iron open-faced helmet. No shield, no extra weapons, no heraldry. Full adult proportions, credible shoulders, arms, hands, knees and weight-bearing feet.\nW09 identity: long practical halberd, visibly distinct from a spear. One straight long wooden shaft held firmly with TWO separate anatomically plausible hands spaced along it. At its far upper-right end, one matte weathered iron head has a strongly readable broad axe blade projecting to one side, a narrow long thrust point aligned with the shaft, and a modest opposing hook. Simple practical small head, never oversized fantasy axe. Keep the axe blade and thrust point visibly separate in silhouette. Weapon is around 1.3 times the adult's height, diagonally carried at a controlled ready position across the body, butt end toward lower-left and head extending upper-right, both hands visibly wrapping the same shaft. Halberd head unobscured and whole shaft visible outside the two grips.\nComposition: single full-body figure, fixed elevated three-quarter view with face, torso and toes directed screen upper-right; upper-left light and deep lower-right shadows. Balanced planted combat-ready stance, no attack motion. Include whole head, both boots, entire shaft, butt, axe blade, hook, and thrust point with at least 8 percent transparent canvas margin on all sides. Choose enough canvas width so weapon is not cropped. Human intended to display at 80 px body height, weapon silhouette must read at that scale.\nStyle: closely match reference 1: irregular dark hand-ink contours, internal hatching, flat washes, strong shadow masses, restrained weathered surface texture; matte iron, cloth, leather and wood. Muted soot, slate, umber and ochre, restrained rust accents. Serious grounded dark fantasy, NOT stylized cartoon anatomy or cute round toy equipment; no glossy 3D renderer look.\nBackground: genuine alpha transparency, no background color, no scenery, no ground tile, no terrain patch, no pedestal, no painted contact shadow. No text, border, symbols, magic, glow, watermark or franchise imagery. No duplicate person, duplicate limbs, fused hands, floating fingers or cropped equipment.",
+      "referenced_image_paths": [
+        "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+        "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+        "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+      ],
+      "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-da6a-7940-9d2b-1d51a3a354f4/exec-a87d1e5d-3410-4cb8-90bc-963ffe445115.png",
+      "observed": {
+        "dimensions": [1145, 1374],
+        "mode": "RGBA",
+        "alpha_extrema": [0, 255],
+        "nonzero_alpha_bbox": [31, 36, 1125, 1343],
+        "margins_px": [31, 36, 20, 31]
+      },
+      "reason_not_selected": "Insufficient transparent margins around the full weapon."
+    },
+    {
+      "kind": "one essential framing correction",
+      "exact_prompt": "Use case: precise-object-edit.\nEdit target: the attached W09 halberd-warrior sprite. Make ONE essential framing correction only: preserve the existing warrior, weapon, anatomy, two-hand grips, ink rendering, colors, proportions, projection and lighting exactly, but place the entire unchanged sprite slightly smaller within a wider transparent canvas so there are generous genuinely transparent margins of at least 10 percent of the canvas on ALL FOUR sides, including above and right of the thrust point, left of the butt, and below both boots.\nDo not repaint, redesign, shorten or rotate the halberd, do not change pose, helmet or face. Keep the full axe blade, thrust point, hook, wooden shaft, metal butt, both hands and boots complete. Background remains actual alpha transparency. No ground, painted contact shadow, scenery, text, border or added objects. The only defect to correct is insufficient transparent framing space.",
+      "referenced_image_paths": [
+        "/Users/vovanostm/.codex/generated_images/01a12153-da6a-7940-9d2b-1d51a3a354f4/exec-a87d1e5d-3410-4cb8-90bc-963ffe445115.png"
+      ],
+      "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-da6a-7940-9d2b-1d51a3a354f4/exec-d0870f96-c554-4ac8-948f-d5886a1a6fbd.png",
+      "selected": true
+    }
+  ],
+  "final_file": "sprite.png",
+  "postprocessing": "None; returned PNG copied byte-for-byte, generated alpha preserved.",
+  "observed": {
+    "dimensions": [1145, 1374],
+    "mode": "RGBA",
+    "alpha_extrema": [0, 255],
+    "corner_alpha": [0, 0, 0, 0],
+    "nonzero_alpha_bbox": [49, 25, 1121, 1350],
+    "nonzero_alpha_margins_px": [49, 25, 24, 24],
+    "alpha_greater_than_1_bbox": [139, 156, 1061, 1242],
+    "alpha_greater_than_1_margins_px": [139, 156, 84, 132],
+    "nonzero_alpha_pixels": 294041,
+    "alpha_1_to_16_pixels": 13127
+  },
+  "visual_observations": [
+    "One full grounded adult warrior with two arms, two legs and both boots visible; no apparent extra limbs.",
+    "Two separate visible hands wrap the same straight shaft, with useful separation between grips; no apparent fused hand failure.",
+    "Long diagonal halberd has distinct broad axe blade, axial thrust point and opposing hook; shaft and metal butt are complete and uncropped.",
+    "Upper-right facing elevated three-quarter view, practical quilted coat and simple iron helmet, upper-left lighting.",
+    "Ink contours, internal hatching, flat muted umber/soot wash and weathered iron follow common references; no ground, scenery or painted contact shadow."
+  ],
+  "actual_checks": [
+    "Personally viewed all three mandatory common references before generation.",
+    "Personally viewed initial and corrected generated sprites.",
+    "Read PNG with bundled Pillow: RGBA, dimensions, alpha extrema, corner alpha and threshold alpha bounds measured.",
+    "System Python lacked Pillow; retried using existing bundled runtime successfully; no dependency installed.",
+    "No image edits outside image_gen; no animation, integration, commit or publication."
+  ],
+  "limitations": [
+    "Faint alpha=1 pixels extend farther into the transparent margins than the visible sprite; source alpha preserved.",
+    "Visible right margin is 84 px at alpha>1 (7.3 percent of width), slightly below requested 8 percent; all weapon points are complete and uncropped.",
+    "80 px body-height readability and integrated day/night visual acceptance NOT_RUN; parent and independent visual critic own acceptance."
+  ]
+}

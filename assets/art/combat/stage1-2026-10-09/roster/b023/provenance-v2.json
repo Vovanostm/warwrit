@@ -1,0 +1,100 @@
+{
+  "id": "B023",
+  "version": 2,
+  "title": "Gallows shadow — rooted tree anchor and separate empty rope loop",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; pending independent visual acceptance",
+  "owner_source": "docs/wiki/bestiary/creatures/b023.md",
+  "specification": "docs/wiki/battlefield-test-maps.md B023 row",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "tool_arguments": {
+    "prompt": "Use case: precise-object-edit\nAsset type: static transparent Warwrit roster concept.\nInput image 1 is the EDIT TARGET: preserve the standing nonhuman fibre creature exactly, including its anatomy, feet, pose, silhouette, ink rendering, upper-left light and colours. Change only the anchor object at screen left and its associated rope object.\nReplace the separate built timber post, squared blocks and carpenter braces with a STATIONARY natural rough tree-trunk anchor: one weathered bare forked tree trunk, irregular bark, a small natural spreading root flare at its base, and a short sturdy branch/fork near the top. Show no soil, ground tile, grass or scenery backdrop. Tree is a fixed environment fixture, not carried equipment. Keep its entire shape and roots inside transparent margins and in the same elevated three-quarter view.\nKeep the existing continuous taut hemp cord that connects tree to creature's WAIST/TORSO, never to neck. Tie it visibly around the rough trunk. Add one plain EMPTY CLOSED CIRCULAR HEMP ROPE LOOP fixed to the tree's short branch, clearly visible on the tree side and physically separate from the creature. It is an ordinary empty rope object, no person or body inside it; its closed circle and attachment to branch must be readable. Creature remains standing on its two feet. No cord at the creature's neck; no suspended body; no victim, corpse, injury, violence, distressed person or execution scene.\nPreserve irregular dark ink contours, internal hatching, subdued matte soot/slate/umber/ochre washes, strong shadow masses and upper-left lighting. Preserve real transparent alpha background. No symbols, smoke, glow, ornaments, extra people, ground tile, terrain patch, pedestal, painted contact shadow, text or border. Full tree, loop, waist tether and creature with margins. Do not change the figure to a ghost, person, different creature or new pose.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b023/sprite.png"
+    ],
+    "transparent_background": true
+  },
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-655b-7241-b169-e5b224e121de/exec-85235110-5339-4ae0-9164-f27654582381.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b023/sprite-v2.png",
+  "edit_target": "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b023/sprite.png",
+  "preserved_v1": [
+    "assets/art/combat/stage1-2026-10-09/roster/b023/sprite.png",
+    "assets/art/combat/stage1-2026-10-09/roster/b023/provenance.json"
+  ],
+  "failed_initial_attempt_record": "assets/art/combat/stage1-2026-10-09/roster/b023/provenance-failed.json",
+  "edit_calls_this_revision": 1,
+  "parent_instruction": "Replace separate timber post with stationary rough rooted forked tree-trunk anchor, visibly connected taut cord; add an empty closed circular hemp rope loop fixed at its branch, clearly separate from creature body/neck. Creature stays standing; preserve ink/light/alpha. Tree/rope are environment fixture, to be separated at integration. Preserve v1. One call; stop if rejected.",
+  "observed_image": {
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "bit_depth": 8,
+    "color_type": 6,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 989048,
+    "opaque_pixels": 1194,
+    "partial_alpha_pixels": 582274,
+    "canvas_corners_alpha": [0, 0, 0, 0],
+    "subject_bbox_alpha_gt_zero_inclusive": [0, 5, 1221, 1253],
+    "subject_bbox_alpha_ge_128_inclusive": [19, 77, 1190, 1179],
+    "common_alpha_values": [
+      [0, 989048],
+      [253, 309513],
+      [252, 124674],
+      [251, 27404],
+      [1, 21024],
+      [250, 12101],
+      [2, 7666],
+      [249, 7410]
+    ]
+  },
+  "observations": [
+    "Freestanding carpentered post and braces replaced by natural forked tree with rough bark and visible spreading roots.",
+    "One empty closed oval/circular hemp rope loop hangs from the tree branch; visible branch wrap and loop attachment; no body inside loop and no loop touching the creature.",
+    "Continuous taut cord remains visibly wrapped around tree trunk and creature waist; no cord at neck.",
+    "Standing nonhuman fibre figure visually retains v1's head, two arms, two complete legs, feet, right/upper-right pose, irregular ink and upper-left light. No apparent anatomy/cropping failure.",
+    "Complete roots, fork, loop, taut tether and creature visible; alpha>=128 silhouette within margins.",
+    "Tree, roots and associated rope are STATIONARY ENVIRONMENT FIXTURE components of this composition, not carried equipment. They require separation from moving creature rendering/occupancy at runtime integration."
+  ],
+  "checks": [
+    {
+      "name": "Edit target personally viewed before tool call",
+      "result": "PASS"
+    },
+    {
+      "name": "Visual inspection of full tree/root/loop/tether and preserved standing anatomy",
+      "result": "PASS; author observation only"
+    },
+    {
+      "name": "PNG dimensions and alpha decoded using Python standard library; output unmodified",
+      "result": "PASS"
+    },
+    {
+      "name": "Canvas corners fully transparent",
+      "result": "PASS"
+    },
+    {
+      "name": "JSON syntax/readback",
+      "result": "PASS"
+    },
+    {
+      "name": "80 px integrated fixture/creature readability and stationary separation",
+      "result": "NOT_RUN"
+    },
+    {
+      "name": "Independent scored critic after v2",
+      "result": "NOT_RUN; parent owns acceptance"
+    }
+  ],
+  "limitations": [
+    "Whole composition includes a stationary environment fixture and must not move as a single creature sprite. Integration needs separate fixture and creature ownership; separation not performed here.",
+    "The empty branch loop is visible but does not depict a victim, suspension or historical circumstances. Canonical card unchanged; art is a source-linked derivative proposal.",
+    "Fibrous figure remains materially wood/plant-like; critic must judge source fidelity and absolute style acceptance.",
+    "Visible silhouette has at least 19 px horizontal margin; very faint alpha residue reaches two edges. Core alpha mostly 252/253. No postprocessing performed.",
+    "Static isolated composition; no animations, shared writes, dependencies, commit, publication or runtime checks."
+  ],
+  "documentation_handoff": "Parent integrates changelog/owning-page updates and scored critic result. W06 and B023 v1 preserved."
+}

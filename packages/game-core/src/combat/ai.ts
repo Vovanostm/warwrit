@@ -1,7 +1,14 @@
 import { invariant } from '../primitives.js';
 import { applyCombatCommand, assertBattleState, startBattle } from './engine.js';
-import { findPath, hexDistance, hexKey } from './hex.js';
+import { compareHex, findPath, hexDistance, hexKey } from './hex.js';
 import { combatRules, compareCombatUnitIds, type CombatRules, weaponProfile } from './rules.js';
+import {
+  findPrototypeAttackRoute,
+  previewCombatAttacks,
+  previewCombatMovement,
+  prototypeLineOfSight,
+} from './sprite-prototype.js';
+import { SPRITE_PROTOTYPE_RULESET_ID } from './types.js';
 import {
   commandId,
   type AiDoctrine,
@@ -138,6 +145,51 @@ function movementTowardEnemy(
   return { to: destination, target: candidate.target };
 }
 
+function prototypeMovementTowardEnemy(
+  state: BattleState,
+  actor: CombatUnitState,
+): { readonly to: Hex; readonly target: CombatUnitState } | undefined {
+  invariant(state.activation !== null, 'Movement requires an activation');
+  const remainingActionPoints = state.activation.remainingActionPoints;
+  const rules = combatRules(state.rulesetId);
+  const weapon = weaponProfile(rules, actor.weaponId);
+  const route = findPrototypeAttackRoute(state);
+  if (route === undefined || route.path.length === 0) return undefined;
+  const target = state.units.find(({ id, status }) => id === route.targetId && status === 'active');
+  if (target === undefined) return undefined;
+  const moves = previewCombatMovement(state);
+  const prefixes = route.path.flatMap((to, index) => {
+    const prefix = route.path.slice(0, index + 1);
+    const move = moves.find(
+      (candidate) =>
+        candidate.to.q === to.q &&
+        candidate.to.r === to.r &&
+        candidate.path.length === prefix.length &&
+        candidate.path.every(
+          (hex, pathIndex) => hex.q === prefix[pathIndex]?.q && hex.r === prefix[pathIndex]?.r,
+        ),
+    );
+    if (move === undefined) return [];
+    const distance = hexDistance(move.to, target.position);
+    const canAttackAfterMove =
+      distance >= weapon.minimumRange &&
+      distance <= weapon.maximumRange &&
+      remainingActionPoints - move.actionPointCost >= weapon.actionPointCost &&
+      actor.stamina - move.staminaCost >= weapon.staminaCost &&
+      (actor.weaponId !== 'bow' || prototypeLineOfSight(state, move.to, target.position));
+    return [{ move, index, canAttackAfterMove }];
+  });
+  const best = prefixes.toSorted(
+    (left, right) =>
+      Number(right.canAttackAfterMove) - Number(left.canAttackAfterMove) ||
+      right.index - left.index ||
+      left.move.actionPointCost - right.move.actionPointCost ||
+      left.move.staminaCost - right.move.staminaCost ||
+      compareHex(left.move.to, right.move.to),
+  )[0];
+  return best === undefined ? undefined : { to: best.move.to, target };
+}
+
 export function chooseAiCommand(
   state: BattleState,
   doctrine: AiDoctrine = 'aggressive',
@@ -151,6 +203,46 @@ export function chooseAiCommand(
     if (isAtRetreatEdge(state, actor)) {
       return { type: 'retreat', ...commandBase(state, 'retreat') };
     }
+    if (state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID) {
+      const side = state.sides.find(({ id }) => id === actor.sideId);
+      invariant(side !== undefined, `Unknown side ${actor.sideId}`);
+      const retreat = side.retreatHexes
+        .map((position) => ({ position, distance: hexDistance(actor.position, position) }))
+        .toSorted(
+          (left, right) =>
+            left.distance - right.distance || compareHex(left.position, right.position),
+        )[0];
+      const move = previewCombatMovement(state)
+        .filter(({ to }) =>
+          side.retreatHexes.some(
+            (edge) => hexDistance(to, edge) < hexDistance(actor.position, edge),
+          ),
+        )
+        .toSorted((left, right) => {
+          const leftDistance = Math.min(
+            ...side.retreatHexes.map((edge) => hexDistance(left.to, edge)),
+          );
+          const rightDistance = Math.min(
+            ...side.retreatHexes.map((edge) => hexDistance(right.to, edge)),
+          );
+          return (
+            leftDistance - rightDistance ||
+            left.actionPointCost - right.actionPointCost ||
+            left.staminaCost - right.staminaCost ||
+            compareHex(left.to, right.to)
+          );
+        })[0];
+      if (
+        move !== undefined &&
+        (retreat === undefined || hexDistance(move.to, retreat.position) < retreat.distance)
+      ) {
+        return { type: 'move', to: move.to, ...commandBase(state, 'retreat-move') };
+      }
+      return state.activation.remainingActionPoints >= rules.defend.actionPointCost &&
+        actor.stamina >= rules.defend.staminaCost
+        ? { type: 'defend', ...commandBase(state, 'retreat-defend') }
+        : { type: 'wait', ...commandBase(state, 'retreat-wait') };
+    }
     const path = retreatPath(state, actor);
     const steps = Math.min(path?.length ?? 0, availableMoveSteps(state, actor));
     if (path !== undefined && steps > 0) {
@@ -160,16 +252,29 @@ export function chooseAiCommand(
     }
   }
 
-  const target = enemiesOf(state, actor).find((enemy) => {
-    const distance = hexDistance(actor.position, enemy.position);
-    return (
-      distance >= weapon.minimumRange &&
-      distance <= weapon.maximumRange &&
-      state.activation !== null &&
-      state.activation.remainingActionPoints >= weapon.actionPointCost &&
-      actor.stamina >= weapon.staminaCost
-    );
-  });
+  if (state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID) {
+    const attack = previewCombatAttacks(state)[0];
+    if (attack !== undefined) {
+      return {
+        type: 'attack',
+        targetId: attack.targetId,
+        ...commandBase(state, `attack:${attack.targetId}`),
+      };
+    }
+  }
+  const target =
+    state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID
+      ? undefined
+      : enemiesOf(state, actor).find((enemy) => {
+          const distance = hexDistance(actor.position, enemy.position);
+          return (
+            distance >= weapon.minimumRange &&
+            distance <= weapon.maximumRange &&
+            state.activation !== null &&
+            state.activation.remainingActionPoints >= weapon.actionPointCost &&
+            actor.stamina >= weapon.staminaCost
+          );
+        });
   if (target !== undefined) {
     return {
       type: 'attack',
@@ -178,7 +283,10 @@ export function chooseAiCommand(
     };
   }
 
-  const movement = movementTowardEnemy(state, actor);
+  const movement =
+    state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID
+      ? prototypeMovementTowardEnemy(state, actor)
+      : movementTowardEnemy(state, actor);
   if (movement !== undefined) {
     return {
       type: 'move',

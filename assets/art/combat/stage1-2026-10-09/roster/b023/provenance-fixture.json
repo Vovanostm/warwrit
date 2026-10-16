@@ -1,0 +1,87 @@
+{
+  "id": "B023",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; pending parent integration and independent scored review",
+  "owner_source": "docs/wiki/bestiary/creatures/b023.md",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "edit_target": "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b023/sprite-v2.png",
+  "input_personally_inspected": true,
+  "edit_calls_for_this_asset": 1,
+  "retries": 0,
+  "preserved_inputs": ["sprite.png", "provenance.json", "sprite-v2.png", "provenance-v2.json"],
+  "checks": [
+    {
+      "name": "Author visual inspection of returned image",
+      "result": "PASS for isolated subject/object count; framing limitations below"
+    },
+    {
+      "name": "PNG dimensions, alpha and visible bounds decoded via Python standard library",
+      "result": "PASS"
+    },
+    {
+      "name": "Image pixel editing",
+      "result": "NOT_RUN; both assets created only by imagegen, copied without modification"
+    },
+    {
+      "name": "Integrated flexible tether and stationary fixture",
+      "result": "NOT_RUN; parent owns runtime integration"
+    },
+    {
+      "name": "Independent scored review of split",
+      "result": "NOT_RUN; parent owns review"
+    }
+  ],
+  "documentation_handoff": "Parent owns all shared files, changelog and integration. No shared docs/HTML edited; no commit/publication.",
+  "asset_role": "stationary environment fixture; never carried equipment or selectable creature",
+  "tool_arguments": {
+    "prompt": "Use case: background-extraction / precise-object-edit.\nImage 1 is the exact EDIT TARGET. Extract ONLY the rough ROOTED FORKED TREE with its attached EMPTY CLOSED HEMP ROPE LOOP on the left. This is one stationary environment fixture on real alpha transparency.\nPreserve the exact tree identity: irregular bare forked trunk and short branch, rough weathered bark, spreading visible roots, muted brown/slate/soot/ochre ink rendering, internal hatching, shadows, elevated three-quarter camera and upper-left lighting. Preserve the complete empty oval closed hemp loop attached around the short branch with its existing wrap/knot. The loop is an ordinary empty rope object, physically separate from any creature or person.\nRemove the ENTIRE fibrous creature on the right and ALL horizontal rope/tether running from tree toward that creature. Remove all low trunk rope wraps/knot that belong to the horizontal tether; retain ONLY the branch rope supporting the empty loop. Reconstruct matching rough bark where the removed lower rope covered it. Do not add objects or scene.\nOutput is ONLY the stationary natural rooted tree with its one empty branch loop. Full roots, entire fork/branch and complete loop inside canvas with comfortable transparent margins. No creature, person, body, tether, rope sticking out horizontally, suspension scene, victim, injury, symbols, scenery backdrop, grass, soil, terrain patch, ground tile, pedestal, contact shadow, border or text. True alpha transparency, not painted checkerboard. Do not redesign tree or loop, change light direction, or add any carried equipment.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b023/sprite-v2.png"
+    ],
+    "transparent_background": true
+  },
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-655b-7241-b169-e5b224e121de/exec-1a2bdc51-1886-41da-a77e-01701beccaf0.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b023/fixture.png",
+  "observed_image": {
+    "mode": "RGBA",
+    "file": "fixture.png",
+    "width": 1254,
+    "height": 1254,
+    "bit_depth": 8,
+    "color_type": 6,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 1209018,
+    "opaque_pixels": 965,
+    "partial_alpha_pixels": 362533,
+    "canvas_corners_alpha": [0, 0, 0, 0],
+    "subject_bbox_alpha_gt_zero_inclusive": [0, 10, 1219, 1241],
+    "visible_body_bbox_alpha_ge_128_inclusive": [192, 12, 843, 1238],
+    "common_alpha_values": [
+      [0, 1209018],
+      [253, 276369],
+      [252, 36781],
+      [251, 8866],
+      [1, 6166],
+      [250, 3941],
+      [254, 2909],
+      [2, 2541]
+    ]
+  },
+  "observations": [
+    "Only rooted forked natural tree and attached empty closed hemp loop are visible.",
+    "Complete roots, irregular trunk, short fork/branch, rope wraps at branch and empty loop retained; creature and all horizontal tether/lower trunk wraps removed.",
+    "Rough bark reconstructed where lower tether wraps were removed. No new objects, scenery, ground patch or contact shadow.",
+    "Original irregular ink, muted matte wood/rope palette and upper-left light visually retained; generator reframed/scaled the fixture into standalone square canvas.",
+    "Visible alpha>=128 bbox has top12/bottom15 px margin and wide horizontal margins."
+  ],
+  "limitations": [
+    "Fixture must remain stationary; runtime tether is separate and must attach to an explicit tree anchor rather than moving with the creature.",
+    "Generator reframed/rescaled fixture; parent must determine separate world scale, grounding/pivot and tether anchor in integration.",
+    "Exact source identity is visually retained, not a guarantee of pixel-exact texture preservation.",
+    "Faint alpha residue extends outside visible fixture bounds; no programmatic cleanup performed.",
+    "Integrated scale, readability and scored critic acceptance NOT_RUN."
+  ]
+}

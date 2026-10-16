@@ -6,7 +6,12 @@
   "$schema": "./node_modules/fallow/schema.json",
   "minimumVersion": "3.30.0",
   // Manual browser probes are run by hand with Playwright, not imported.
-  "entry": ["apps/web/src/*.browser.mjs"],
+  "entry": [
+    "apps/web/src/*.browser.mjs",
+    // Approved static galleries are served through their HTML entry pages.
+    "assets/art/combat/**/concepts.js",
+    "assets/art/combat/**/concepts.css",
+  ],
   "workspaces": {
     "patterns": ["apps/*", "packages/*"],
   },

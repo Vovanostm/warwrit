@@ -1,0 +1,54 @@
+{
+  "asset_id": "B025",
+  "subject": "Reed dweller / Камышник",
+  "authority": "Owner approved static roster art selection; creature card remains an authored design proposal, not approved game mechanics",
+  "status": "local static candidate; independent visual acceptance pending",
+  "source_card": "docs/wiki/bestiary/creatures/b025.md",
+  "specification": "docs/wiki/battlefield-test-maps.md",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: stylized-concept.\nAsset type: one static full-body transparent Warwrit combat creature sprite, B025 Reed dweller / Камышник.\nReference roles: Image 1 unit-c-ink.png supplies irregular ink contour, internal hatching, restrained flat-wash rendering and grounded projection. Image 2 staraya-melnitsa.png supplies weathered material character and muted soot/slate/umber/ochre palette only; no scenery. Image 3 battle-ux-v3.png supplies the fixed elevated three-quarter battlefield view and directional orientation. Image 4 night-mill-beast-concept-v2.png supplies sober dark creature rendering and shadow density only, NOT its furry broad anatomy.\nSource anatomy to preserve: a tall narrow biped with fibrous skin and a bent neck. This is an animalistic ambush creature of wet reeds, not a sentient swamp ruler. Create exactly one full creature with two complete long slender weight-bearing legs and feet, narrow elongated torso, modest slender forelimbs, and a long bent forward-curving neck leading to a small plainly organic head. Head/body face screen upper-right in an elevated three-quarter view. Neck bend and narrow vertical silhouette must be very readable. Its fibrous skin has longitudinal wiry reed-like striations and weathered dry-wet organic folds in muted grey-brown; it is skin, not a humanoid wearing branches or a literal reed bundle. Keep feet and hands physically coherent, no extra limbs.\nSerious grounded dark fantasy, irregular dark ink contours, flat muted wash, dense shadow masses and fine internal hatching. Upper-left illumination; weathered matte texture, subdued soot, slate, umber and restrained dull ochre. No glossy render. No fur from the beast reference, no giant shoulder hump. No antlers, horns, leaves/crown, weapons, armor, ornaments, clothing, symbols, magic, glow, glowing eyes, or franchise copying.\nFull body and neck entirely inside canvas with clear margins. Feet complete and grounded in stance without rendering any ground. True transparent alpha outside creature and between limbs; no terrain, reeds around feet, water, tile, pedestal, painted contact shadow, drop shadow, text, border or watermark. Single isolated figure, no sprite sheet, no second subject. Readable silhouette at tactical scale, humans in same scene use 80 px height at 1440x900.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "reference_roles": [
+    "Ink contours, hatching, flat washes and grounded projection",
+    "Weathered matte materials and muted palette only",
+    "Fixed elevated three-quarter battlefield projection",
+    "Approved dark creature rendering and shadow density; not broad furry anatomy"
+  ],
+  "source_path": "/Users/vovanostm/.codex/generated_images/01a12153-8c96-7a01-a1e2-d00d974b47df/exec-71feec8d-e0d5-4be6-8209-53dc2e818560.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b025/sprite.png",
+  "generation_calls": 1,
+  "correction_calls": 0,
+  "observed": {
+    "dimensions": [1254, 1254],
+    "mode": "RGBA",
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 1202840,
+    "opaque_pixels": 520,
+    "partial_alpha_pixels": 369156,
+    "alpha_bounds_by_threshold": {
+      "1": [49, 25, 1230, 1254],
+      "16": [341, 32, 1056, 1237],
+      "128": [342, 33, 1055, 1236]
+    },
+    "corner_alpha": [0, 0, 0, 0],
+    "visual": "Tall narrow biped with long fibrous striations over torso/limbs, bent forward-curving neck and small elongated animalistic head facing screen upper-right. Two slender arms with clawed hands; two complete weight-bearing legs and clawed feet. Irregular ink contours, hatch shadows, muted grey/umber/ochre wash, upper-left illumination. No antlers, horns, weapons, clothing, magic, glowing eyes, ground patch or text."
+  },
+  "checks": {
+    "visual_inspection": "PASS: generated and saved image personally inspected; full creature anatomy with visible margins",
+    "png_structure_and_alpha": "PASS: standard-library decode confirms 8-bit RGBA, nonconstant genuine alpha and transparent corners",
+    "provenance_json": "PASS: readback and JSON parse",
+    "runtime_readability": "NOT_MEASURED",
+    "independent_visual_critique": "NOT_RUN: parent owns integrated critique"
+  },
+  "limitations": [
+    "Small elongated head and claw anatomy are generated visual interpretations of the sparse card, not new canonical facts or mechanics.",
+    "Very low-alpha pixels extend to bottom edge; visible alpha >=16 silhouette has 17 px bottom margin. Alpha preserved exactly without image editing.",
+    "No animation, gameplay integration or independent acceptance performed."
+  ]
+}

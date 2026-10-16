@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-09",
+  "status": "stage-1 proposal; grid removal and smaller units delivered; six-versus-six count FAILED",
+  "asset": "assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v2.png",
+  "tool": "image_gen built-in; underlying model identifier not exposed",
+  "prompt": "Use case: precise-object-edit.\nAsset type: revision of a stage-1 original dark-fantasy tactical battle desktop art-direction concept, not executable gameplay.\nInput images: Image 1 battle-ux-v1.png is the EDIT TARGET. Image 2 unit-c-ink.png is the approved human anatomy and irregular ink/flat-wash STYLE reference. Image 3 staraya-melnitsa.png is the approved ruined mill material and identity reference.\nChange only the battlefield units and painted grid overlays on image 1:\n1. Exactly SIX distinct adult human mercenary fighters on the left versus exactly SIX ordinary gray-brown wolves on the right, each separate full body with readable natural grounded contact. Preserve the six fighter equipment roles already shown: shield/sword, spear, axe, sword, bow, crossbow. Wolves are ordinary wolves, no supernatural features.\n2. Reduce ALL field figures to about 60 percent of their present apparent height, preserving anatomy, equipment, proportions and style. The current large figures occupy too much ground. Give the central damp yard much more breathing room and readable empty playable ground between figures.\n3. Completely REMOVE the AI-painted white/slate hexagon grid from all terrain and completely REMOVE the ochre selected hex, the ochre hex movement path and its dashed line, and the rust-red dashed wolf approach arrow. Restore underlying hand-painted yard terrain naturally. No painted grid whatsoever: the grid will be authored separately with exact geometry. Tiny understated non-hex faction/selection marks under feet are optional.\n4. Update the top initiative strip to six human portraits followed by six ordinary wolf portraits, compact enough to fit the same narrow strip.\nKeep all other elements and overall composition: ruined watermill on left with partly collapsed roof, exposed rafters, broken waterwheel, wet yard, visible cellar hatch, muted autumn surroundings, credible weathered stone/timber, shared elevated three-quarter projection, upper-left baked light direction, serious adult irregular black ink contours and flat muted watercolor wash, full landscape 16:10 canvas. Preserve the overall HUD layout: top initiative, small Russian place and round label, compact selected actor/actions bottom row, and small right wolf preview. Existing actor name and resource numbers remain illustrative and can stay; do not invent new lore or mechanics. No extra text paragraphs.\nConstraints: retain original serious dark-fantasy materials and shapes; no glossy 3D, no cute silhouettes, no neon, no magic, no new symbols, no logos, no franchise copying. This is art direction proposal only. No grids or movement arrows anywhere in the final battlefield.",
+  "references": [
+    {
+      "path": "assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v1.png",
+      "role": "viewed edit target"
+    },
+    {
+      "path": "assets/art/m1/style/unit-c-ink.png",
+      "role": "previously inspected adult anatomy and ink/flat-wash style reference"
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "role": "previously inspected ruined mill identity, materials and projection reference"
+    }
+  ],
+  "observations": [
+    "Painted hex grid, selected hex path and enemy arrow removed.",
+    "Field figures smaller with more empty central field.",
+    "Ruined mill materials and HUD layout preserved.",
+    "Visible field count is six human fighters and FIVE wolves, despite the exact six-versus-six prompt. Initiative also shows five wolf portraits."
+  ],
+  "limitations": [
+    "Six-versus-six owner criterion FAILED; no second generation under the single-call budget.",
+    "Raster art direction concept only; exact grid belongs to separate authoring.",
+    "HUD values and actor name remain illustrative unapproved.",
+    "No animation, runtime mechanics, player acceptance or independent visual acceptance proven."
+  ]
+}

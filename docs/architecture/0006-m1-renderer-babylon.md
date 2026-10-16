@@ -59,3 +59,24 @@ reason to reopen this choice; address a demonstrated Babylon acceptance failure
 within the owner-approved decision process.
 
 Historical PlayCanvas code and measurements remain intact as historical evidence.
+
+## Sprite combat production amendment — 2026-10-09
+
+The owner reports that the current 3D work is not producing satisfactory results
+and explicitly asks to focus combat on sprites, interesting battle locations,
+hexes and mechanics. This cycle returns character production to the sprite
+direction while retaining Babylon.js, fixed 3/4 camera and the approved ink
+style. Preserve existing 3D experiments and dated work-package history.
+
+First stage: agree the specification, overall battle screen and style using one
+warrior and one creature sample; generate the twenty individual concepts only
+after that agreement. The owner selected Battle Brothers' position, weapons,
+fatigue and morale as the combat foundation, six units per side, and a scenario
+builder for selecting opponents. The [owning specification](../wiki/battlefield-test-maps.md#спрайтовая-боёвка-тз-этапа-1--2026-10-09)
+records the confirmed D1–D12 matrix and selected art/stand roster. The owner
+subsequently approved mill direction, dark B053 and fighter C as W01 foundation,
+80 px/15×11, four AP, escape/surrender, one warned retarget, heights/mud/fire.
+This cycle uses only static full-body sprites; frame animation is later work.
+Twenty individual static asset tasks may proceed after this style agreement.
+Balance values, archived creature biographies and renderer changes are not approved.
+Concept generation is not integrated visual or gameplay acceptance.

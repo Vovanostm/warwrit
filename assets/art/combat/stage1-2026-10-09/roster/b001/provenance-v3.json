@@ -1,0 +1,48 @@
+{
+  "subject_id": "B001",
+  "date": "2026-10-09",
+  "status": "REJECTED generated v3; exterior haze persists",
+  "technique_change_reason": "Background-only extraction of prior image failed. Parent authorized one fresh generation using existing project unit-wolf.png and solid angular ink tufts, excluding failed images.",
+  "tool": "built-in image_gen.imagegen",
+  "prompt": "Use case: stylized-concept.\nGenerate one Warwrit B001 ordinary wolf as a full-body game combat sprite on genuine transparent background.\nReference image roles: image 1 existing unit-wolf.png is the anatomy, grounded stance, low head, gaunt narrow chest and SOLID angular charcoal ink-tuft fur reference. Image 2 unit-c-ink.png is shared opaque ink contour, wash and upper-left lighting reference. Image 3 staraya-melnitsa.png is subdued grey/umber palette reference only, do NOT copy any environment.\nCreate an ordinary credible adult grey-brown wolf with gaunt narrow chest, long natural canine muzzle, low carried head at shoulder height, two normal ears, one low natural tail and exactly FOUR anatomically correct legs with FOUR distinct PLANTED paws on the same implied ground plane. Four paws touching ground, no lifted foreleg. Preserve the credible proportions of existing wolf, not monster anatomy.\nNew orientation: fixed elevated three-quarter view seen from above, wolf faces SCREEN UPPER-RIGHT; back and rear at screen lower-left, nose towards top-right. Do not mirror reference lighting. Illumination remains upper-left, shaded lower/right underside. Draw a new projection, do not flip the old wolf.\nRendering technique: OPAQUE SOLID angular ink tufts and irregular crisp dark contour, flat matte charcoal/slate/umber wash, coarse internal hatching, strong shadow masses INSIDE the wolf. Fur locks are solid shapes attached to the body, no airy fur, wisps or translucent soft brush. Serious grounded dark fantasy, same ink as reference 1 and 2.\nCanvas: complete uncropped head, ears, feet and tail with generous empty transparent margin. Genuine RGBA alpha transparency outside the sharp animal silhouette and in gaps between legs. Interior solid opaque. Alpha zero exterior. Isolate directly like a cutout game sprite.\nABSOLUTELY NO haze, smoke, mist, halo, atmosphere, exterior colored wash, glow, wispy hairs, soft background gradients, contact shadow, cast shadow, ground, terrain, pedestal, backdrop, checkerboard painting, words, borders or additional objects. No magic, glowing eyes, excessive claws, cartoon features or photographic fur.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/battle/unit-wolf.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png"
+  ],
+  "transparent_background": true,
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12154-5d93-7cb0-8cab-46d06725206b/exec-00b467c3-1b03-4c41-8bac-e97abe9c82de.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b001/sprite-v3.png",
+  "observed": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "alpha_zero_pixels": 1145583,
+    "alpha_255_pixels": 0,
+    "bbox_alpha_gt0": [0, 17, 1520, 1024],
+    "bbox_alpha_gt127": [268, 146, 1383, 886]
+  },
+  "checks": [
+    "Personally viewed existing unit-wolf.png, unit-c-ink.png and ruined mill reference before call.",
+    "One fresh built-in call; failed haze images not supplied as references.",
+    "Visual inspection confirms four distinct paws, gaunt charcoal anatomy and lower head, full body inside frame.",
+    "Read-only Pillow metadata and alpha measurement on v3 and existing wolf; no image processing."
+  ],
+  "limitations": [
+    "Visible gray-brown exterior haze remains; transparent exterior requirement failed.",
+    "Projection reads mostly rightward with some upper-right body diagonal; independent facing acceptance not established.",
+    "No further tuning performed after one-call limit; prior outputs preserved.",
+    "No gallery/shared writes, commit, animation or publication."
+  ],
+  "fallback": {
+    "path": "assets/art/m1/battle/unit-wolf.png",
+    "status": "existing separate fallback; not copied or modified",
+    "dimensions": [512, 512],
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "bbox_alpha_gt0": [49, 198, 469, 490],
+    "limitation": "Existing wolf faces lower-left; parent to show separately, without mirroring baked light."
+  }
+}

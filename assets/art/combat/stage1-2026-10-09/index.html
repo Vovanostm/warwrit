@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Warwrit — согласование спрайтового боя</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #161916;
+        --paper: #ddd6c4;
+        --muted: #a9aa99;
+        --ochre: #c4a365;
+        --line: #454a3f;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-width: 1100px;
+        background: #101410;
+        color: var(--paper);
+        font:
+          15px/1.5 system-ui,
+          sans-serif;
+      }
+      header {
+        padding: 28px 44px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+      .eyebrow {
+        color: var(--ochre);
+        font: 11px/1.4 system-ui;
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 6px 0;
+        font:
+          36px/1.2 Georgia,
+          serif;
+        font-weight: normal;
+      }
+      h2 {
+        font:
+          25px/1.3 Georgia,
+          serif;
+        font-weight: normal;
+        margin: 0 0 12px;
+      }
+      p {
+        margin: 8px 0;
+      }
+      a {
+        color: var(--ochre);
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+      button,
+      select {
+        cursor: pointer;
+        color: var(--paper);
+        background: #1e251e;
+        border: 1px solid #62654d;
+        border-radius: 4px;
+        padding: 9px 15px;
+      }
+      button:hover {
+        border-color: var(--ochre);
+        background: #2e3529;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      select:focus-visible {
+        outline: 3px solid var(--ochre);
+        outline-offset: 3px;
+      }
+      nav {
+        padding: 16px 44px;
+        display: flex;
+        gap: 12px;
+      }
+      nav button[aria-selected='true'] {
+        background: var(--ochre);
+        color: #181d16;
+        border-color: var(--ochre);
+      }
+      main {
+        padding: 0 44px 44px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .tag {
+        padding: 6px 12px;
+        border: 1px solid #6a694a;
+        border-radius: 20px;
+        color: #dbca9c;
+        font-size: 12px;
+      }
+      .concept {
+        width: 100%;
+        max-height: calc(100vh - 255px);
+        object-fit: contain;
+        display: block;
+        background: #0e100e;
+        border: 1px solid var(--line);
+      }
+      .caption {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        margin: 14px 0;
+        font-size: 13px;
+      }
+      .note {
+        background: #24251b;
+        border-left: 3px solid var(--ochre);
+        padding: 12px 16px;
+        margin: 18px 0;
+      }
+      .columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+      }
+      .panel {
+        padding: 22px;
+        background: #192019;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 14px;
+      }
+      .figure-pair {
+        display: flex;
+        justify-content: center;
+        gap: 48px;
+        align-items: end;
+        min-height: 290px;
+        padding: 24px;
+        background: #22281e;
+        border-radius: 4px;
+      }
+      .figure-pair img {
+        height: 245px;
+        max-width: 310px;
+        object-fit: contain;
+      }
+      .figure-pair figure {
+        margin: 0;
+        text-align: center;
+      }
+      figcaption {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      #calibration {
+        width: 100%;
+        display: block;
+        background: radial-gradient(ellipse at center, #5f6044 0, #3b4533 70%, #222f26 100%);
+        border: 1px solid #5f6650;
+        border-radius: 4px;
+      }
+      #calibration.night {
+        background: radial-gradient(ellipse at center, #303943 0, #1e2930 70%, #141e25 100%);
+      }
+      .grid-cell {
+        fill: transparent;
+        stroke: #acaa82;
+        stroke-opacity: 0.25;
+        stroke-width: 0.8;
+      }
+      .blocked {
+        fill: #151e16;
+        fill-opacity: 0.8;
+        stroke: #84917a;
+        stroke-width: 1;
+      }
+      .path {
+        fill: #d9b56b;
+        fill-opacity: 0.18;
+        stroke: #d9b56b;
+        stroke-width: 2;
+      }
+      .target {
+        fill: #a15540;
+        fill-opacity: 0.18;
+        stroke: #c48465;
+        stroke-width: 2;
+      }
+      .scale-label {
+        fill: #eee4ca;
+        font: 13px system-ui;
+      }
+      .anchor {
+        fill: #e4c986;
+        stroke: #141c14;
+        stroke-width: 2;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      th {
+        color: var(--ochre);
+        text-align: left;
+        font-weight: 500;
+      }
+      th,
+      td {
+        padding: 11px 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      td:first-child {
+        width: 44px;
+        color: var(--ochre);
+      }
+      td select {
+        width: 190px;
+        padding: 7px;
+        font-size: 12px;
+      }
+      textarea {
+        display: block;
+        width: 100%;
+        height: 110px;
+        margin: 16px 0;
+        padding: 12px;
+        background: #111911;
+        color: var(--paper);
+        border: 1px solid var(--line);
+        font: 13px/1.5 system-ui;
+      }
+      .mindmap {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 20px;
+      }
+      details {
+        padding: 16px;
+        border: 1px solid var(--line);
+        background: #1e261e;
+        border-radius: 4px;
+      }
+      summary {
+        color: var(--ochre);
+        cursor: pointer;
+      }
+      details ul {
+        margin-bottom: 0;
+        padding-left: 19px;
+        font-size: 13px;
+      }
+      .source {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 14px;
+      }
+      footer {
+        padding: 14px 44px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        font-size: 12px;
+      }
+      .roster-gallery {
+        display: grid;
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .roster-refs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .roster-refs figure {
+        margin: 0;
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        padding: 10px 16px;
+        border: 1px solid var(--line);
+        background: #414737;
+      }
+      .roster-refs img {
+        height: 80px;
+      }
+      .roster-refs figcaption {
+        font-size: 12px;
+      }
+      .roster-gallery figure {
+        margin: 0;
+        padding: 12px 5px;
+        background: #414737;
+        border: 1px solid var(--line);
+        text-align: center;
+      }
+      .roster-refs.night figure,
+      .roster-gallery.night figure {
+        background: #17232c;
+      }
+      .roster-gallery img {
+        height: 80px;
+        max-width: 100%;
+        object-fit: contain;
+      }
+      .roster-gallery.large {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .roster-gallery.large img {
+        height: 220px;
+      }
+      .roster-gallery figcaption {
+        font-size: 11px;
+        margin-top: 8px;
+      }
+      .sprite-viewport {
+        display: block;
+        position: relative;
+        height: 140px;
+        overflow: visible;
+      }
+      .sprite-viewport img {
+        position: absolute;
+        max-width: none;
+        object-fit: initial;
+      }
+      .roster-refs.large .sprite-viewport,
+      .roster-gallery.large .sprite-viewport {
+        height: 385px;
+      }
+      .roster-refs .sprite-viewport {
+        width: 130px;
+      }
+      .roster-refs.large .sprite-viewport {
+        width: 300px;
+      }
+      .roster-refs.large img:not([data-body]) {
+        height: 220px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="eyebrow">Warwrit · арт и тактика · 09 октября 2026</div>
+        <h1>Спрайтовый бой</h1>
+        <p class="muted">
+          Направление и ТЗ согласованы. Двадцать фигур собраны для проверки единого стиля.
+        </p>
+      </div>
+      <span class="tag">Этап 1 · направление принято</span>
+    </header>
+    <nav role="tablist" aria-label="Материалы согласования">
+      <button id="tab-concept" role="tab" aria-controls="concept-panel" aria-selected="true">
+        01 — Общий кадр
+      </button>
+      <button id="tab-scale" role="tab" aria-controls="scale-panel" aria-selected="false">
+        02 — Спрайты и масштаб
+      </button>
+      <button id="tab-lineup" role="tab" aria-controls="lineup-panel" aria-selected="false">
+        03 — Состав боя 6×6
+      </button>
+      <button id="tab-decisions" role="tab" aria-controls="decisions-panel" aria-selected="false">
+        04 — Решения и mind map
+      </button>
+      <button id="tab-roster" role="tab" aria-controls="roster-panel" aria-selected="false">
+        05 — 20 статичных спрайтов
+      </button>
+    </nav>
+    <main>
+      <section id="concept-panel" role="tabpanel" aria-labelledby="tab-concept">
+        <img
+          class="concept"
+          src="keyart/battle-ux-v3.png"
+          alt="Концепт боя: шесть воинов и шесть волков в разрушенном дворе Старой мельницы; очередь сверху и действия снизу"
+        />
+        <div class="caption">
+          <span
+            >Чернила, выветренное дерево и камень, взрослые полные фигуры. XCOM — ориентир
+            подачи.</span
+          ><a
+            href="../../../../docs/wiki/battlefield-test-maps.md#спрайтовая-боёвка-тз-этапа-1--2026-10-09"
+            >Открыть ТЗ и источники</a
+          >
+        </div>
+        <div class="note">
+          Направление согласовано владельцем. Точная сетка 15×11, выбор и путь будут отдельным слоем
+          интерфейса. Принят рост человека 80 px. Цифры/имя условны; это концепт, не бой.
+        </div>
+      </section>
+      <section id="scale-panel" role="tabpanel" aria-labelledby="tab-scale" hidden>
+        <div class="controls">
+          <h2>Одна геометрия. Два образца.</h2>
+          <label
+            >Рост человека
+            <select id="scale">
+              <option value="63">63 px</option>
+              <option value="80" selected>80 px</option>
+              <option value="100">100 px</option>
+              <option value="140">140 px</option>
+            </select></label
+          ><button id="lighting" aria-pressed="false">Ночная подложка</button>
+        </div>
+        <svg
+          id="calibration"
+          viewBox="0 0 1120 440"
+          role="img"
+          aria-label="Калибровка: точная сетка 15 на 11, щитник и мельничная тварь; геометрический пример, без исполнения боя"
+        >
+          <g id="cells"></g>
+          <g id="actors"></g>
+        </svg>
+        <p class="source">
+          Размер — в координатах макета; при другой ширине окна весь макет масштабируется. Ночная
+          подложка проверяет контраст, а не настоящее освещение спрайта. Путь и препятствия
+          демонстрационные; это не команды ядра.
+        </p>
+        <div class="columns" style="margin-top: 22px">
+          <div class="panel">
+            <h2>W01 · Щитник</h2>
+            <div class="figure-pair">
+              <figure>
+                <img src="../../m1/style/unit-c-ink.png" alt="Утверждённый референс бойца C" />
+                <figcaption>Референс C</figcaption>
+              </figure>
+              <figure>
+                <img src="roster/w01/sprite.png" alt="Новый W01 на основе бойца C" />
+                <figcaption>Статичный образец</figcaption>
+              </figure>
+            </div>
+            <p class="muted">
+              Щитник C принят как основа. Новый W01 создан по нему; прежние v1/v2 отклонены. Сейчас
+              только статичные спрайты, интеграция ещё не принята.
+            </p>
+          </div>
+          <div class="panel">
+            <h2>B053 · Мельничная тварь</h2>
+            <div class="figure-pair">
+              <figure>
+                <img
+                  src="../../m1/battle/unit-mill-beast.png"
+                  alt="Существующий силуэт мельничной твари"
+                />
+                <figcaption>Текущий арт</figcaption>
+              </figure>
+              <figure>
+                <img
+                  src="creature-b053/night-mill-beast-concept-v2.png"
+                  alt="Новый прозрачный концепт мельничной твари"
+                />
+                <figcaption>Статичный образец</figcaption>
+              </figure>
+            </div>
+            <p class="muted">
+              Сохранён существующий силуэт. Новая способность этим артом не утверждается.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section id="lineup-panel" role="tabpanel" aria-labelledby="tab-lineup" hidden>
+        <h2>Выбрать, кто с кем дерётся</h2>
+        <p class="muted">
+          Подтверждённый размер — 6 на 6. Здесь собирается черновик сценария; настоящий бой
+          подключается на следующем этапе. Состав выбран владельцем; новые механики ещё не
+          реализованы.
+        </p>
+        <div class="controls" style="margin-top: 22px">
+          <label
+            >Место
+            <select id="battle-place">
+              <option>Старая мельница</option>
+              <option>Опушка Березняка</option>
+              <option>Каменный Брод</option>
+              <option>Тихая Гать</option>
+              <option>Северный Двор</option>
+              <option>Т0 — Полигон</option>
+            </select></label
+          >
+          <label
+            >Расстановка
+            <select id="formation">
+              <option>Два строя напротив</option>
+              <option>Разнесённые группы</option>
+            </select></label
+          >
+          <label
+            >Номер варианта
+            <input
+              id="scenario-number"
+              type="number"
+              min="1"
+              max="999999"
+              value="1"
+              style="
+                width: 95px;
+                background: #192019;
+                color: var(--paper);
+                padding: 8px;
+                border: 1px solid var(--line);
+              "
+          /></label>
+        </div>
+        <div class="columns">
+          <div class="panel">
+            <h2>Сторона А · 6 участников</h2>
+            <div id="side-a"></div>
+          </div>
+          <div class="panel">
+            <h2>Сторона Б · 6 участников</h2>
+            <div id="side-b"></div>
+          </div>
+        </div>
+        <button id="make-lineup" style="margin-top: 20px">Собрать черновик боя</button>
+        <textarea
+          id="lineup-summary"
+          readonly
+          aria-label="Выбранный состав боя"
+          placeholder="Выбери участников и собери сценарий"
+        ></textarea>
+        <div class="note">
+          Запуск боя требует принятых профилей, версии правил и серверного управления противником.
+          Этот конструктор сохраняет смысл твоего выбора и не имитирует результат.
+        </div>
+      </section>
+      <section id="decisions-panel" role="tabpanel" aria-labelledby="tab-decisions" hidden>
+        <h2>Твоя матрица решений</h2>
+        <p class="muted">
+          Все решения ниже подтверждены в чате 2026-10-09. Направление согласовано; производство
+          двадцати статичных спрайтов запущено. Числа баланса проверит настоящий стенд.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Развилка</th>
+              <th>Принятая основа</th>
+              <th>Твой вариант</th>
+            </tr>
+          </thead>
+          <tbody id="decisions"></tbody>
+        </table>
+        <textarea
+          id="answers"
+          readonly
+          aria-label="Принятые ответы"
+          placeholder="После выбора здесь появится строка для ответа в чат"
+        ></textarea>
+        <h2 style="margin-top: 28px">Карта связей с лором и wiki</h2>
+        <div class="mindmap">
+          <details open>
+            <summary>Решено владельцем</summary>
+            <ul>
+              <li>Гексы 15×11, индивидуальная инициатива, 6×6, 4 ОД</li>
+              <li>Обученный ближний урон без промаха</li>
+              <li>XCOM: подача, без укрытий/бонуса фланга</li>
+              <li>Первый приоритет: ZOC, мораль, намерения</li>
+              <li>80 px, полные фигуры, без анимации сейчас</li>
+              <li>Высоты 0/1/2, грязь и обычный огонь</li>
+              <li>Одно перенаведение с новым предупреждением и ответом</li>
+              <li>Люди бегут или сдаются, сдавшийся не атакует</li>
+            </ul>
+            <a href="../../../../docs/wiki/mechanics/index.md">Механики →</a>
+          </details>
+          <details open>
+            <summary>Лор и места</summary>
+            <ul>
+              <li>Общая война герцогств</li>
+              <li>Мельница разрушена и опасна</li>
+              <li>Деревни и хутора остаются живыми</li>
+              <li>Имена и история имеют статус предложений</li>
+            </ul>
+            <a href="../../../../docs/wiki/world/index.md">Мир →</a>
+          </details>
+          <details open>
+            <summary>Состав и практика</summary>
+            <ul>
+              <li>10 комплектов: W01–W10 в ТЗ</li>
+              <li>10 существ из текущего B7</li>
+              <li>B001/B053 имеют M1-источники</li>
+              <li>Отбор принят; новые навыки/биографии отдельно</li>
+              <li>Смена оружия не даёт мастерства</li>
+            </ul>
+            <a href="../../../../docs/wiki/bestiary/catalogue.md">Бестиарий →</a>
+          </details>
+          <details open>
+            <summary>Интересный ход</summary>
+            <ul>
+              <li>Удержать позицию или потратить силы</li>
+              <li>Прикрыть раненого или атаковать</li>
+              <li>Уйти с линии тяжёлой угрозы</li>
+              <li>Сломить мораль или добивать</li>
+              <li>Два маршрута и видимый отход</li>
+            </ul>
+            <a href="../../../../docs/wiki/mechanics/intent.md">Намерения →</a>
+          </details>
+          <details open>
+            <summary>Арт и UX</summary>
+            <ul>
+              <li>Один источник стиля и свет</li>
+              <li>Фигура, ступни, оружие, точная сетка</li>
+              <li>Очередь → путь → прогноз → исход</li>
+              <li>20 отдельных заданий после выбора</li>
+              <li>Независимый визуальный критик</li>
+            </ul>
+            <a href="../../../../docs/engineering/VISUAL_CRITIQUE.md">Приёмка →</a>
+          </details>
+          <details open>
+            <summary>Настоящий стенд</summary>
+            <ul>
+              <li>Следующий этап: существующий combat-lab</li>
+              <li>Одна карта и законченный настоящий бой</li>
+              <li>Одно чистое ядро, новая версия правил</li>
+              <li>Повтор, reload, старый replay</li>
+              <li>Этот экран не исполняет боёвку</li>
+            </ul>
+            <a href="../../../../apps/web/src/combat-lab/README.md">Текущий lab →</a>
+          </details>
+        </div>
+      </section>
+      <section id="roster-panel" role="tabpanel" aria-labelledby="tab-roster" hidden>
+        <div class="controls">
+          <h2>Десять комплектов · десять существ</h2>
+          <label
+            >Показ
+            <select id="roster-size">
+              <option value="80" selected>80 px — сравнение</option>
+              <option value="220">220 px — детали</option>
+            </select></label
+          >
+          <button id="roster-light" aria-pressed="false">Ночная подложка галереи</button>
+        </div>
+        <p class="source">
+          Референс C и образец B053 показаны рядом с полным составом. Рост каждого человека
+          рассчитан по голове и ступням, оружие не уменьшает фигуру. Размеры существ пока
+          сравнительные: окончательная посадка/масштаб относительно окружения проверяются в игре.
+          Ночная подложка не меняет свет спрайтов. Нажми фигуру, чтобы открыть исходный PNG.
+        </p>
+        <p class="source">
+          B001: показан существующий волк с исходным направлением взгляда. Новые варианты отклонены
+          из-за дымки в alpha; их референсы/запросы сохранены. B023 v3 — только выбираемая тварь;
+          <a href="roster/b023/fixture.png" target="_blank">дерево с пустой петлёй</a>
+          теперь отдельный неподвижный предмет сцены. Соединяющий шнур в игре рисуется отдельно.
+        </p>
+        <div id="roster-refs" class="roster-refs"></div>
+        <div id="roster-gallery" class="roster-gallery"></div>
+        <p class="note">
+          Статичные концепты с настоящей прозрачностью. Способности, балансовые числа и законченный
+          бой этим листом не подтверждаются. Точная сетка и подсветки принадлежат отдельному слою.
+        </p>
+      </section>
+    </main>
+    <footer>
+      Локальный экран согласования · новые правила, баланс и настоящий игровой стенд ещё не
+      реализованы · направление и состав приняты · ничего не публикуется автоматически.
+    </footer>
+    <script>
+      const tabs = [...document.querySelectorAll('[role="tab"]')];
+      function activate(tab) {
+        for (const item of tabs) {
+          const selected = item === tab;
+          item.setAttribute('aria-selected', String(selected));
+          item.tabIndex = selected ? 0 : -1;
+          document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+        }
+      }
+      for (const tab of tabs) {
+        tab.addEventListener('click', () => activate(tab));
+        tab.addEventListener('keydown', (event) => {
+          if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+          event.preventDefault();
+          const index =
+            event.key === 'Home'
+              ? 0
+              : event.key === 'End'
+                ? tabs.length - 1
+                : (tabs.indexOf(tab) + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) %
+                  tabs.length;
+          activate(tabs[index]);
+          tabs[index].focus();
+        });
+      }
+      activate(tabs[0]);
+      const NS = 'http://www.w3.org/2000/svg';
+      function svgElement(name, attributes, text) {
+        const element = document.createElementNS(NS, name);
+        for (const [key, value] of Object.entries(attributes))
+          element.setAttribute(key, String(value));
+        if (text) element.textContent = text;
+        return element;
+      }
+      const radius = 34,
+        squeeze = 0.57;
+      function centre(column, row) {
+        return {
+          x: 115 + Math.sqrt(3) * radius * (column + (row % 2) / 2),
+          y: 72 + 1.5 * radius * row * squeeze,
+        };
+      }
+      const blocked = new Set(['3,4', '4,4', '9,7']);
+      const path = new Set(['5,5', '6,5', '7,5']);
+      for (let row = 0; row < 11; row++)
+        for (let column = 0; column < 15; column++) {
+          const { x, y } = centre(column, row),
+            id = column + ',' + row;
+          const points = Array.from({ length: 6 }, (_, i) => {
+            const angle = ((60 * i - 30) * Math.PI) / 180;
+            return x + radius * Math.cos(angle) + ',' + (y + radius * Math.sin(angle) * squeeze);
+          }).join(' ');
+          const kind = blocked.has(id)
+            ? 'blocked'
+            : path.has(id)
+              ? 'path'
+              : id === '10,5'
+                ? 'target'
+                : 'grid-cell';
+          document.getElementById('cells').append(svgElement('polygon', { points, class: kind }));
+        }
+      function drawActors() {
+        const actors = document.getElementById('actors');
+        actors.replaceChildren();
+        const height = Number(document.getElementById('scale').value);
+        const human = bodyAnchors.C,
+          humanScale = height / human.body;
+        for (const actor of [
+          {
+            c: 5,
+            r: 5,
+            height: human.height * humanScale,
+            width: human.width * humanScale,
+            offsetX: human.x * humanScale,
+            offsetY: human.y * humanScale,
+            src: '../../m1/style/unit-c-ink.png',
+            label: 'W01',
+          },
+          {
+            c: 10,
+            r: 5,
+            height: height * 1.35,
+            width: height * 1.35,
+            src: 'creature-b053/night-mill-beast-concept-v2.png',
+            label: 'B053',
+          },
+        ]) {
+          const { x, y } = centre(actor.c, actor.r);
+          actors.append(
+            svgElement('image', {
+              href: actor.src,
+              x: x - (actor.offsetX ?? actor.width / 2),
+              y: y - (actor.offsetY ?? actor.height),
+              width: actor.width,
+              height: actor.height,
+            }),
+          );
+          actors.append(svgElement('circle', { cx: x, cy: y, r: 3.5, class: 'anchor' }));
+          actors.append(
+            svgElement(
+              'text',
+              { x, y: y + 29, 'text-anchor': 'middle', class: 'scale-label' },
+              actor.label,
+            ),
+          );
+        }
+      }
+      document.getElementById('scale').addEventListener('change', drawActors);
+      document.getElementById('lighting').addEventListener('click', (event) => {
+        const night = document.getElementById('calibration').classList.toggle('night');
+        event.currentTarget.setAttribute('aria-pressed', String(night));
+        event.currentTarget.textContent = night ? 'Дневная подложка' : 'Ночная подложка';
+      });
+      const roster = [
+        ['W01', 'Меч + щит'],
+        ['W02', 'Топор + щит'],
+        ['W03', 'Двуручный топор'],
+        ['W04', 'Копьё'],
+        ['W05', 'Лук'],
+        ['W06', 'Нож'],
+        ['W07', 'Молот'],
+        ['W08', 'Арбалет'],
+        ['W09', 'Алебарда'],
+        ['W10', 'Командир'],
+        ['B001', 'Волк'],
+        ['B002', 'Бурый медведь'],
+        ['B003', 'Дикий вепрь'],
+        ['B017', 'Могильный зверь'],
+        ['B019', 'Могильный сторож'],
+        ['B023', 'Висельная тень'],
+        ['B025', 'Камышник'],
+        ['B030', 'Береговая плакальщица'],
+        ['B037', 'Пустоголос'],
+        ['B053', 'Мельничная тварь'],
+      ];
+      const gallery = document.getElementById('roster-gallery');
+      // Native-pixel head/foot landmarks; body height excludes polearms/padding.
+      const bodyAnchors = {
+        C: { width: 512, height: 512, body: 479, x: 258.25, y: 470 },
+        B023: { width: 1254, height: 1254, body: 1243, x: 690.5, y: 1253 },
+        B030: { width: 1222, height: 1287, body: 1192, x: 613.5, y: 1241 },
+        W01: { width: 1240, height: 1269, body: 1236, x: 641.75, y: 1207.5 },
+        W02: { width: 1254, height: 1254, body: 1196, x: 642, y: 1163 },
+        W03: { width: 1254, height: 1254, body: 1171, x: 642.75, y: 1153.5 },
+        W04: { width: 1254, height: 1254, body: 825, x: 526, y: 1044.5 },
+        W05: { width: 1254, height: 1254, body: 1177, x: 660.75, y: 1162.5 },
+        W06: { width: 1254, height: 1254, body: 1173, x: 656.5, y: 1149 },
+        W07: { width: 1254, height: 1254, body: 1157, x: 658, y: 1155 },
+        W08: { width: 1254, height: 1254, body: 1115, x: 617, y: 1140.5 },
+        W09: { width: 1145, height: 1374, body: 958, x: 556.75, y: 1190.5 },
+        W10: { width: 1254, height: 1254, body: 1161, x: 641, y: 1163.5 },
+      };
+      function scaleBodies() {
+        const bodyHeight = Number(document.getElementById('roster-size').value);
+        for (const img of document.querySelectorAll('#roster-panel img[data-body]')) {
+          const anchor = bodyAnchors[img.dataset.body],
+            factor = bodyHeight / anchor.body;
+          img.style.width = anchor.width * factor + 'px';
+          img.style.height = anchor.height * factor + 'px';
+          img.style.left = '50%';
+          img.style.top = bodyHeight * 1.6 - anchor.y * factor + 'px';
+          img.style.transform = 'translateX(' + -anchor.x * factor + 'px)';
+        }
+      }
+
+      for (const [id, name, src] of [
+        ['C', 'Утверждённая основа', '../../m1/style/unit-c-ink.png'],
+        ['B053 ref', 'Принятый образец', 'creature-b053/night-mill-beast-concept-v2.png'],
+        ...roster.map(([id, name]) => [
+          id,
+          name,
+          id === 'B001'
+            ? '../../m1/battle/unit-wolf.png'
+            : 'roster/' +
+              id.toLowerCase() +
+              (['B023', 'B030'].includes(id)
+                ? '/sprite-v3.png'
+                : id === 'B037'
+                  ? '/sprite-v2.png'
+                  : '/sprite.png'),
+        ]),
+      ]) {
+        const figure = document.createElement('figure'),
+          link = document.createElement('a'),
+          img = document.createElement('img'),
+          caption = document.createElement('figcaption');
+        img.src = src;
+        img.alt = id + ' · ' + name;
+        link.href = src;
+        link.target = '_blank';
+        if (bodyAnchors[id]) {
+          link.className = 'sprite-viewport';
+          img.dataset.body = id;
+        }
+        link.append(img);
+        caption.textContent = id + ' · ' + name;
+        figure.append(link, caption);
+        (id === 'C' || id === 'B053 ref' ? document.getElementById('roster-refs') : gallery).append(
+          figure,
+        );
+      }
+      scaleBodies();
+      drawActors();
+      document.getElementById('roster-size').addEventListener('change', (event) => {
+        gallery.classList.toggle('large', event.target.value === '220');
+        document
+          .getElementById('roster-refs')
+          .classList.toggle('large', event.target.value === '220');
+        scaleBodies();
+      });
+      document.getElementById('roster-light').addEventListener('click', (event) => {
+        const night = gallery.classList.toggle('night');
+        document.getElementById('roster-refs').classList.toggle('night', night);
+        event.currentTarget.setAttribute('aria-pressed', String(night));
+        event.currentTarget.textContent = night
+          ? 'Дневная подложка галереи'
+          : 'Ночная подложка галереи';
+      });
+      for (const [side, defaults] of [
+        ['side-a', ['W01', 'W02', 'W03', 'W04', 'W05', 'W10']],
+        ['side-b', ['B001', 'B001', 'B001', 'B001', 'B053', 'B053']],
+      ]) {
+        for (let index = 0; index < 6; index++) {
+          const label = document.createElement('label');
+          label.style.cssText = 'display:flex;align-items:center;gap:18px;margin:10px 0';
+          label.textContent = String(index + 1).padStart(2, '0');
+          const select = document.createElement('select');
+          select.setAttribute(
+            'aria-label',
+            (side === 'side-a' ? 'Сторона А' : 'Сторона Б') + ', участник ' + (index + 1),
+          );
+          select.style.flex = '1';
+          for (const [id, name] of roster) {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = id + ' · ' + name;
+            select.append(option);
+          }
+          select.value = defaults[index];
+          label.append(select);
+          document.getElementById(side).append(label);
+        }
+      }
+      document.getElementById('make-lineup').addEventListener('click', () => {
+        const names = (side) =>
+          [...document.querySelectorAll('#' + side + ' select')]
+            .map((item) => roster.find(([id]) => id === item.value)[1])
+            .join(', ');
+        const number = document.getElementById('scenario-number');
+        if (!number.checkValidity()) {
+          number.reportValidity();
+          return;
+        }
+        document.getElementById('lineup-summary').value =
+          'Черновик, правила не исполнялись\n' +
+          document.getElementById('battle-place').value +
+          ' · ' +
+          document.getElementById('formation').value +
+          ' · вариант ' +
+          number.value +
+          '\nА: ' +
+          names('side-a') +
+          '\nБ: ' +
+          names('side-b');
+      });
+      const decisionRows = [
+        ['D1', 'Главная основа', 'Подтверждено: BB + подача XCOM', ['BB-основа', 'Иная основа']],
+        [
+          'D2',
+          'Воинские типы',
+          '10 комплектов с разными задачами',
+          ['Комплекты', 'Закрытые классы'],
+        ],
+        [
+          'D3',
+          'Поле и масштаб',
+          'Принято: 15×11, человек 80 px',
+          ['80 px, 15×11', '100 px, 15×11', 'Другой размер'],
+        ],
+        [
+          'D4',
+          'Экономика действий',
+          '4 ОД до первого плейтеста',
+          ['Сохранить 4 ОД', 'Пересмотреть ОД'],
+        ],
+        [
+          'D5',
+          'Зона контроля',
+          'Урон не отменяет шаг живого; лимит/цена ещё предложение',
+          ['Без запирания', 'Жёсткая реакция'],
+        ],
+        [
+          'D6',
+          'Мораль',
+          'Люди: безопасный отход, иначе сдача; без повторной атаки',
+          ['Бегство и сдача', 'Только бегство'],
+        ],
+        [
+          'D7',
+          'Намерения',
+          'Одна смена цели, новое предупреждение и ответная активация',
+          ['Фиксировать гексы', 'Разрешать перенаведение'],
+        ],
+        [
+          'D8',
+          'Местность',
+          'Высоты 0/1/2, грязь и обычный огонь сразу',
+          ['Первая очередь', 'Сразу высоты/эффекты'],
+        ],
+        [
+          'D9',
+          'Производство',
+          'Полные статичные фигуры; общий свет',
+          ['Полные фигуры', 'Модульное оснащение сразу'],
+        ],
+        [
+          'D10',
+          'Анимация',
+          'Сейчас только статичные спрайты; кадровая позже',
+          ['Без анимации сейчас', 'Скелетная 2D'],
+        ],
+        ['D11', 'Первое место', 'Старая мельница и калибровка Т0', ['Мельница', 'Опушка', 'Брод']],
+        [
+          'D12',
+          '20 отдельных арт-заданий',
+          'После общего кадра и двух образцов',
+          ['После выбора стиля', 'Все 20 концептов сейчас'],
+        ],
+        [
+          'Состав',
+          '10 существ',
+          '3 зверя + 7 необычных существ',
+          ['Предложенный список', '10 чудовищ без зверей'],
+        ],
+      ];
+      for (const [id, title, recommendation, options] of decisionRows) {
+        const row = document.createElement('tr');
+        for (const value of [id, title, recommendation]) {
+          const cell = document.createElement('td');
+          cell.textContent = value;
+          row.append(cell);
+        }
+        const cell = document.createElement('td'),
+          select = document.createElement('select');
+        select.dataset.id = id;
+        select.setAttribute('aria-label', id + ': ' + title);
+        for (const [index, label] of ['Не выбрано', ...options].entries()) {
+          const option = document.createElement('option');
+          option.value = index === 0 ? '' : label;
+          option.textContent = label;
+          select.append(option);
+        }
+        select.addEventListener('change', () => {
+          document.getElementById('answers').value = [
+            ...document.querySelectorAll('#decisions select'),
+          ]
+            .filter((item) => item.value)
+            .map((item) => item.dataset.id + ' — ' + item.value)
+            .join('\n');
+        });
+        cell.append(select);
+        const confirmed = {
+          D1: 'BB-основа',
+          D2: 'Комплекты',
+          D3: '80 px, 15×11',
+          D4: 'Сохранить 4 ОД',
+          D5: 'Без запирания',
+          D6: 'Бегство и сдача',
+          D7: 'Разрешать перенаведение',
+          D8: 'Сразу высоты/эффекты',
+          D9: 'Полные фигуры',
+          D10: 'Без анимации сейчас',
+          D11: 'Мельница',
+          D12: 'После выбора стиля',
+          Состав: 'Предложенный список',
+        };
+        select.value = confirmed[id];
+        select.disabled = true;
+        select.setAttribute('aria-label', id + ': подтверждено владельцем');
+        row.append(cell);
+        document.getElementById('decisions').append(row);
+      }
+      document.getElementById('answers').value = [...document.querySelectorAll('#decisions select')]
+        .map((item) => item.dataset.id + ' — ' + item.value)
+        .join('\n');
+    </script>
+  </body>
+</html>

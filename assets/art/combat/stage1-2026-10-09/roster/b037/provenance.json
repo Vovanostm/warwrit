@@ -1,0 +1,67 @@
+{
+  "asset_id": "B037",
+  "title": "Hollow voice / Пустоголос",
+  "created_date": "2026-10-09",
+  "originating_branch": "codex/sprite-combat-stage1",
+  "delivery_status": "local",
+  "source_card": "docs/wiki/bestiary/creatures/b037.md",
+  "source_authority": "Owner-selected for art/stand; species card remains authored review-draft, not implemented abilities",
+  "generator": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: stylized-concept.\nAsset type: ONE transparent static full-body Warwrit combat sprite, B037 Hollow voice / Пустоголос.\nSource card: docs/wiki/bestiary/creatures/b037.md says: \"Тонкое перепончатое существо, использующее дупло как резонатор. Повторяет короткие слышанные звуки, а не узнаёт чужую биографию.\" The creature is physical, thin and membranous; the hollow wood resonator is separate and can be disrupted without guaranteed death. Detailed anatomy below is a visual proposal for this sparse card, not new lore or combat powers.\nInput images: Image 1 unit-c-ink.png is approved ink contour, matte wash and adult human scale ONLY, do not copy the man. Image 2 staraya-melnitsa.png is weathered wood/materials, subdued palette and upper-left light ONLY, not scene content. Image 3 battle-ux-v3.png is elevated fixed three-quarter combat projection ONLY, no UI or landscape. Image 4 night-mill-beast-concept-v2.png is approved serious dark creature ink/wash style and shadow masses ONLY; do not copy its furry hulking anatomy or its bright eye.\nPrimary subject: one thin, sinewy nonhuman forest creature, a small crouched physical membranous animal rather than a human ghost or a tree monster. Slender angular torso, narrow nonhuman head and dark unlit eyes, short plain mouth opening, thin elongated bent limbs ending in modest gripping digits. Thin folded dry leathery membrane sheets connect limbs to body; an obvious taut throat membrane faces toward the adjacent hollow cavity. No fur bulk, no clothing or human face. Full body clearly shown outside the opening, both lower gripping feet visible. It uses the hollow as a sound resonator rather than wearing wood as armor.\nRequired resonator attachment: ONLY one narrow compact hollow rotten trunk segment directly beside/behind the body, with a clearly visible dark natural oval hollow mouth and a few fibrous ties of the creature's dry membrane connecting at its rim. This tiny bark-lined hollow segment is the minimum physical component necessary to show the card; no complete tree, canopy, branches, roots, stump ground platform or forest vignette. The creature and narrow hollow together remain one compact readable sprite silhouette. No sound rings, music notes or drawn spoken words.\nComposition: fixed elevated three-quarter view, head and crouched body facing screen UPPER-RIGHT along ground diagonal; unmirrored upper-left light. Entire head, limbs, feet, membranes and hollow component visible with generous clear margins. Main figure fully visible rather than hidden inside trunk. Compact distinct silhouette readable beside an 80px human at 1440x900. Membrane edges drawn crisply, not as smoke or ethereal mist.\nStyle: irregular dark ink contours, internal hatching, flat matte wash, strong shadow masses. Weathered dry membrane and bark rendered in muted soot, slate, umber and restrained ochre. Serious grounded dark fantasy with credible physical attachment and anatomy, same art set as references. No bright pale luminous ghost, glossy 3D render or soft painterly blur.\nBackdrop: genuinely transparent alpha, fully empty outside subject and required hollow segment. No terrain tile, pedestal, earth, moss/grass patch, landscape, contact/cast shadow, dust or lighting halo.\nConstraints: exactly one nonhuman creature; no human-copy ghost, invented biography, witness imagery, aura, symbols, runes, magic, glowing eyes, horns, huge fangs, armor, weapons, extra creatures, text, border or watermark. No animation or sprite sheet. Preserve full silhouette without cropping.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "reference_roles": [
+    "Approved ink contour, wash and human scale only",
+    "Weathered wood/materials, subdued palette and upper-left light only",
+    "Elevated fixed three-quarter combat projection only",
+    "Approved serious creature ink/wash style and shadow masses only, not anatomy or bright eyes"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12154-061b-7ee1-ad4f-1a13a65a0b7d/exec-0e420509-a5df-4253-bdc3-ee0c990b3479.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b037/sprite.png",
+  "generation_calls": 1,
+  "targeted_correction_calls": 0,
+  "observed_png": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 1136642,
+    "opaque_pixels": 960,
+    "nonzero_alpha_bbox": [0, 0, 1240, 1254],
+    "visible_bbox_alpha_ge_16": [234, 100, 1143, 1176],
+    "solid_bbox_alpha_ge_128": [235, 101, 1142, 1175],
+    "border_alpha_max": 1,
+    "border_nonzero_pixels": 94
+  },
+  "observations": [
+    "One crouched physical nonhuman creature with a thin sinewy body, angular nonhuman head and dark unlit eyes.",
+    "Four slender bent limbs with dry membrane folds, gripping digits and visible lower feet; complete silhouette and attachment without visible clipping.",
+    "Dry membranes stretch toward the rim of one compact hollow bark section behind the body, with a clearly visible dark oval cavity.",
+    "Rough ink contour/hatching and matte muted umber/slate/ochre washes, upper-left highlights.",
+    "No visible human-copy ghost, aura, runes, symbols, text, ground patch, roots/canopy or contact shadow."
+  ],
+  "checks": {
+    "source_card_read": "PASS: full B037 card read, repeated sounds and knowledge boundary retained in prompt",
+    "personal_reference_inspection": "PASS: all four local reference images viewed before generation",
+    "full_figure_and_attachment_inspection": "PASS: complete visible limbs, feet, head, membranes and hollow component with margins",
+    "png_dimensions_and_real_alpha": "PASS: stdlib PNG decode confirms RGBA and true alpha 0..255",
+    "visible_content_border_clearance": "PASS: alpha >=16 content has margins on all sides; 94 alpha-1 border pixels are residual near-invisible generation noise",
+    "independent_visual_acceptance": "NOT_RUN: parent owns critic pass",
+    "integrated_day_night_and_gameplay": "NOT_RUN",
+    "80px_in_game_readability": "NOT_MEASURED",
+    "game_tests": "NOT_RUN: static art only",
+    "publication_merge_deployment": "NOT_RUN"
+  },
+  "limitations": [
+    "Detailed anatomy is an art proposal because the card specifies thin membranes and hollow resonance without limb/head morphology.",
+    "Hollow component appears carried behind/attached to the creature; the card establishes use of a tree hollow but does not define portable resonators. Parent must evaluate this interpretation before acceptance.",
+    "94 outer-border pixels have alpha 1/255; no visibly cropped content, and original alpha preserved without pixel editing.",
+    "Upper-right ground direction and scale require integrated camera/roster comparison; no animation/facing set supplied.",
+    "No code, shared document, dependency, commit or publication changes; W10 preserved."
+  ]
+}

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Warwrit · четыре концепта боя</title>
+    <link rel="stylesheet" href="concepts.css" />
+  </head>
+  <body>
+    <header class="gallery-head">
+      <a class="brand" href="../ui-reference-v1.html"
+        >WARWRIT<span>БОЕВОЙ ИНТЕРФЕЙС / 4 КОНЦЕПТА</span></a
+      >
+      <nav aria-label="Концепт экрана">
+        <button data-view="a">01 <span>Консоль</span><small>Heroes</small></button>
+        <button data-view="b">02 <span>Свободное поле</span><small>Wartales</small></button>
+        <button data-view="c">03 <span>Досье бойца</span><small>Battle Brothers</small></button>
+        <button data-view="d">04 <span>Тактическая панель</span><small>Warwrit</small></button>
+      </nav>
+      <button id="full-toggle" class="quiet">Экран целиком ↗</button>
+    </header>
+    <main>
+      <div class="preview-frame">
+        <div id="screen" class="screen" aria-label="Макет экрана боя"></div>
+      </div>
+      <section class="concept-caption" aria-live="polite">
+        <div>
+          <p class="overline" id="concept-kicker"></p>
+          <h1 id="concept-title"></h1>
+        </div>
+        <p id="concept-summary"></p>
+        <div class="tradeoff">
+          <span>КОМПРОМИСС</span>
+          <p id="concept-risk"></p>
+        </div>
+      </section>
+      <p class="prototype-note">
+        Макеты для выбора компоновки. Наведение, осмотр целей, режимы действия и свет переключаются;
+        команды боя не исполняются. Значения — единая иллюстративная ситуация.
+        <a href="/combat-lab">Рабочая боёвка →</a>
+      </p>
+    </main>
+    <button id="exit-full" class="exit-full" title="Вернуться к выбору концепта">
+      ← Четыре концепта
+    </button>
+    <script src="concepts.js"></script>
+  </body>
+</html>

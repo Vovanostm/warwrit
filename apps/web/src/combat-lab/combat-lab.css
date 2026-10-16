@@ -1,30 +1,67 @@
 .combat-lab-page {
   box-sizing: border-box;
-  max-width: 76rem;
+  max-width: 96rem;
+  min-height: 100vh;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1rem 1.25rem 2rem;
+  background: #191713;
+  color: #e0d2b4;
+  font-family: Georgia, 'Times New Roman', serif;
 }
 
 .combat-lab-page h1 {
-  margin: 0.5rem 0 0.75rem;
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  margin: 0.35rem 0 0.5rem;
+  color: #eadbb9;
+  font-size: clamp(1.85rem, 3.5vw, 2.75rem);
   line-height: 1.1;
 }
 
-.combat-lab-page button {
-  min-height: 2.75rem;
-  padding: 0.55rem 0.8rem;
+.combat-lab-page > p:not(.eyebrow) {
+  max-width: 52rem;
+  color: #afa188;
+}
+
+.combat-lab-page .eyebrow {
+  margin: 0;
+  color: #a7764a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.combat-lab-page:where(:not(.combat-lab-page--fighting)) button,
+.combat-lab-page:where(:not(.combat-lab-page--fighting)) input,
+.combat-lab-page:where(:not(.combat-lab-page--fighting)) select {
+  min-height: 2.5rem;
+  padding: 0.45rem 0.72rem;
+  border: 1px solid #67583f;
+  border-radius: 0.2rem;
+  background: #2d281f;
+  color: #eadbb9;
   font: inherit;
 }
 
-.combat-lab-controls {
-  margin: 1rem 0;
-  padding: 0.75rem;
-  border: 1px solid #687078;
-  border-radius: 0.5rem;
+.combat-lab-page:where(:not(.combat-lab-page--fighting)) button:hover:not(:disabled) {
+  border-color: #b68c51;
+  background: #3b3021;
 }
 
-.combat-lab-actions {
+.combat-lab-page:where(:not(.combat-lab-page--fighting)) button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.combat-lab-controls,
+.combat-lab-footer-actions {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border: 1px solid #514638;
+  background: #211e19;
+}
+
+.combat-lab-actions,
+.combat-lab-footer-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -32,5 +69,36 @@
 
 .combat-lab-page [role='status'],
 .combat-lab-page [role='alert'] {
-  line-height: 1.5;
+  line-height: 1.45;
+}
+
+.battle-editor-note {
+  color: #a99b80;
+  font-size: 0.85rem;
+}
+
+.battle-editor-errors {
+  color: #e1a27c;
+}
+
+.battle-danger-warning {
+  padding: 0.4rem 0.65rem;
+  border-left: 3px solid #a64e34;
+  background: #33201a;
+  color: #e8ab8b;
+}
+
+.battle-path-cost {
+  color: #ddc68f;
+}
+
+.combat-lab-page--fighting {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: Inter, system-ui, sans-serif;
 }

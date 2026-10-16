@@ -1,0 +1,80 @@
+{
+  "id": "B019",
+  "name": "Grave keeper",
+  "status": "local_generated_not_independently_accepted",
+  "source_card": {
+    "path": "docs/wiki/bestiary/creatures/b019.md",
+    "read_in_full": true,
+    "authority": "B7 authored review-draft; selected for art/stand only, presence and abilities not canonically approved",
+    "retained_description": "Костяной корпус в остатках погребальной ткани, связанный с конкретным захоронением."
+  },
+  "specification": "docs/wiki/battlefield-test-maps.md B019 selected row: bony figure in burial cloth; grave boundary; no new religion.",
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "mode": "built-in",
+    "date": "2026-10-09",
+    "calls": 1,
+    "transparent_background": true,
+    "exact_prompt": "Use case: stylized-concept\nAsset type: ONE static transparent full-body Warwrit combat creature sprite, B019 Grave keeper.\nPrimary request: A human-sized bony humanoid figure with a recognizably human adult skeleton visible through remnants of worn burial cloth, planted in a vigilant guarding stance. Its concept belongs to one burial boundary; depict ONLY the figure, no grave or ground. Nothing implies a religion or supernatural visual effect.\nSource-lore constraints: B019 creature card describes a bony body in remains of burial cloth tied to one burial site. No defined biography, religious authority, heraldry or origin. Species and gameplay abilities remain authored proposals. Do not invent any of these.\nInput images: Image 1 unit-c-ink.png is adult anatomical scale, irregular ink, internal hatching, wash and light reference ONLY; do not copy its living person, sword or shield. Image 2 staraya-melnitsa.png is restrained weathered palette/material character ONLY; no scenery. Image 3 battle-ux-v3.png is fixed elevated three-quarter battlefield camera ONLY; no UI or scenery. Image 4 night-mill-beast-concept-v2.png is dark creature ink density and strong matte shadow masses ONLY; do not copy beast anatomy, fur, claws or facing.\nSubject: Adult human skull with dark empty eye sockets, ordinary anatomical human teeth and no glow. Two skeletal arms, two hands with anatomically credible five fingers each, two legs ending in complete human skeletal feet. Natural human rib cage, pelvis and bone joint proportions. A ragged unmarked burial shroud of weathered soot/umber linen remains draped over shoulders, ribs and hips, torn enough to reveal its bony body. Plain wrappings have no decoration, emblem, belt ornament or ritual insignia. No armor, weapon, tool or object. Long cloth remnants hang irregularly close to the body and stop above the feet; no sweeping cape.\nComposition/framing: Exactly one isolated complete figure, entire skull, hands, skeletal feet and cloth fully in frame with generous transparent margins. Fixed elevated three-quarter view facing screen upper-right; show top shoulder/skull surfaces. Head, rib cage and feet consistently face upper-right. Both skeletal feet planted in a credible stance, slight knees bent and one unarmed hand held low forward as a boundary-guarding gesture, other hand low near side. Readable bony silhouette and garment at human 80px display height.\nStyle/medium: Serious grounded dark fantasy; irregular dark ink contours, clear internal hatching and flat matte wash, strong shadow masses, matching the inspected shared references. Weathered bone in muted gray ochre, dirty umber/soot/slate cloth. No polished white skeleton, glossy render, cute/cartoon proportions or franchise imitation.\nLight: Upper-left key light, lower-right shadows on figure. No painted contact/cast shadow.\nBackdrop: Genuine transparent alpha outside figure, between limbs and through large visible anatomical openings.\nAvoid: invented religion, cross, rune, medallion, heraldry, magic, aura, smoke, floating body, glowing eyes, weapons, scythe, staff, armor, extra limbs, horns, monster claws, biography, headstone, grave mound, earth, rubble, terrain patch, ground tile, pedestal, background, contact shadow, text, labels, border, watermark, cropped toes or fingers. Output only this single static sprite.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+    ],
+    "source_path": "/Users/vovanostm/.codex/generated_images/01a12153-410c-7a60-bc9c-1638be95d265/exec-8a568ea3-ee9e-431a-b09b-a8940201ea43.png"
+  },
+  "references_personally_inspected": true,
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b019/sprite.png",
+  "observed_png": {
+    "dimensions": [1145, 1374],
+    "mode": "RGBA",
+    "bit_depth": 8,
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 1118352,
+    "opaque_pixels": 621,
+    "partial_alpha_pixels": 454257,
+    "total_pixels": 1573230,
+    "alpha_bbox": [0, 12, 1131, 1374],
+    "threshold_8_bbox": [296, 66, 1053, 1328],
+    "threshold_8_pixels": 419878,
+    "dominant_nonzero_alpha": 253
+  },
+  "visual_observations": [
+    "One complete adult human-sized skeletal figure with ordinary skull, rib cage and two arms, hands, legs and feet.",
+    "Both hands are unarmed; fingers are visibly separated with anatomically plausible joint chains, without observed duplicated limbs.",
+    "Two planted skeletal feet and complete toe groups; skull and rib cage face screen upper-right with top surfaces visible.",
+    "Weathered torn plain burial cloth wraps shoulders, torso and hips; no marks, emblem, religious icon, jewelry, armor or weapon visible.",
+    "Skull eye sockets are dark, with no glow, smoke, aura or other magical effect.",
+    "Strong irregular ink contour and internal hatching with soot/umber matte cloth, ochre gray weathered bone and upper-left highlights.",
+    "No grave, terrain, ground tile, pedestal or painted contact shadow; association with one burial boundary remains source context for later placement."
+  ],
+  "checks": [
+    {
+      "check": "PNG decoded with standard-library PNG/zlib reader",
+      "outcome": "PASS",
+      "note": "1145x1374 8-bit RGBA, noninterlaced; genuine alpha-zero background."
+    },
+    {
+      "check": "Saved image inspected with view_image",
+      "outcome": "PASS",
+      "note": "Entire skull, hands, feet and cloth retained with visible margins; no visible lore additions."
+    },
+    {
+      "check": "JSON parse/readback",
+      "outcome": "PASS"
+    },
+    {
+      "check": "Game/render/integrated visual acceptance",
+      "outcome": "NOT_RUN",
+      "note": "Parent owns integration and independent critic."
+    }
+  ],
+  "limitations": [
+    "Faint generated alpha values 1-7 extend outside visible subject and touch left/bottom canvas edges; alpha>=8 silhouette retains margins. No image editing or alpha cleanup performed.",
+    "Most interior pixels have alpha 252-253, near-opaque rather than strictly opaque.",
+    "Burial boundary cannot be visually demonstrated within isolated no-terrain sprite; use the source-consistent scene placement later.",
+    "80px silhouette readability and integrated perspective consistency remain NOT_MEASURED by independent critic.",
+    "Art selection does not approve new creature presence, religious canon, abilities or numerical balance."
+  ]
+}

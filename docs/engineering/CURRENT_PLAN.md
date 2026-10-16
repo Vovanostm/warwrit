@@ -1,31 +1,560 @@
 # Warwrit current delivery plan
 
-**Smooth battle camera — 2026-10-13, PUBLISHED / CAMERA ACCEPT:**
-owner requests held WASD/LMB navigation, worktree/tests/merge/main update.
-Separate managed worktree `~/.codex/worktrees/battle-camera-pan/warwrit`,
-branch `codex/battle-camera-pan` from origin/main731ccec; implementation and
-merge authorized for this camera slice. Owner separately approved coordination:
-scene writer integrates `panButtons:[0,1]` into local uncommitted sprite battle,
-HUD writer owns hints. Primary dirty sprite/core/HUD branch must stay intact.
-[Owning contract/results](../wiki/battlefield-test-maps.md#плавная-камера-боя--2026-10-13).
-Shared camera holds keys on render time, screen-relative normalized diagonals,
-keyup/blur/hidden/dispose cleanup, world S=STOP, click vs drag and combined
-wheel/pointer/keys. Camera13/scoped types/lint/format/audit PASS; initial TS fixture
-cast and coverage environment failures corrected. Review found wheel cancellation
-and drag/zoom snap, fixed with regression; repeat source review ACCEPT (own13tests/probe). Actual isolated3024/5322
-WASD/drag/click/wheel/blur/HUDfocus/daynight PASS;0POST/revision4/actorhuman3/
-AP4/12positionsstatus retained. Menu3lines/bounds PASS. Camera copied to primary,
-scene author1line adapter/HUD author2line helper connected; all other WIP retained.
-Two runnerassertions corrected (release timing/transienthover), current source
-unchanged. SharedAPI session-cap refusal preserved. Absolute repeated visualcritic ACCEPT sevencriteria2/3 atgame+close,
-clipsN/A/owninputNOT_RUN. [PR156](https://github.com/Vovanostm/warwrit/pull/156)
-published; CI38404171166 on64b49ee SUCCESS:651tests/47skip,10000stress,
-20deterministic/100replay,14realDBspecs/migrations,coverage/audit. Localfullbootstrap
-NOT_RUN; code unchanged after CI, final doc-only checkpoint follows. Merge/main
-PENDING at this checkpoint; live PR proves actual merge. Owner authorizes
-cameraPR merge/mainFF only; primary dirty spritebranch stays intact, created
-worktree becomes cleanmain after merge. Sharedprimary camera already copied.
-No sprite-WIP merge, deployment, migration or new mechanics.
+**Combat improvement cycle — 2026-10-16, ACTIVE / INTEGRATION WORKTREE:**
+Owner authorizes isolated worktrees, subagents, reviewed merges to main and
+postmerge play checks; deployment/paid services excluded. Root integration:
+`codex/combat-cycle-20261016` in managed combat-cycle-20261016/warwrit,
+based on main86c1da0. Primary b44f5c1/staged+unstaged prototype preserved
+read-only; SupplyShop/encounter-access/launch WIP excluded.
+First observable outcome: playable sprite6v6/editor at5330/API3030.
+Existing unit coverage run755PASS/47SKIPPED; not DB/fullgate/visual acceptance.
+Audit was attempted: first missing coverage ERROR, covered audit FAIL with
+introduced complexity/duplication. Intermediate snapshot commit uses the
+AGENTS work-package exception (precommit audit NOT_RUN), never main/merge/
+publishedhead; follow-up modules replace those failing sections before PR.
+Plan: preserve snapshot -> isolated HUD/editor+skills/core/renderer owners
+reduce actual complexity and resolve reproduced defects -> independent
+journey critique -> one clean PR gate -> expected-head merge -> main playcheck.
+Root owns shared docs/galleries; workers hand back bounded commits.
+Canonical Learning/Social Notes+Purpose and Definitions read16Oct; campaign
+XP/52proposedperks not implemented by sandbox rank controls.
+Current actual failures/limits remain explicit; no blanket combat DoD claim.
+
+**Battle camera helper — 2026-10-13, MODULE MERGED / SPRITE INTEGRATION LOCAL:**
+Live GitHub PR156 MERGED/head54f7da890/merge86c1da055; finalCI38407349732
+completedSUCCESS on reviewedhead. Root verified camera worktree actualmain
+clean:HEAD/main/originmain86c1da055; finalhead-to-mergetree ordinarydiffempty.
+Primary checkout remainscodex/sprite-combat-stage1/HEADb44f5c1/WIP retained.
+Same critic repeated full absolute after missinginputs: scoped camera ACCEPT,
+7criteria2/3,clipsN/A,owninputNOT_RUN. Only sharedcamera/test+3ownmainbaseddocs
+merged; root scene/helper/sprite WIP local/unpublished. CI counts reported by
+author belong to cleanPR, not rootfullWIP verification. Historicaldraft/blocked/
+inprogress states preserved below, superseded by this currentreceipt.
+[Published boundary](../wiki/battlefield-test-maps.md#отдельная-публикация-камеры--2026-10-13).
+separate camera writer owns shared module/test, scene writer applied only[0,1]
+and reports types/lint/format/diff PASS; own lost-browser journey NOT_RUN.
+Camera author13 focused/source-review PASS. Root
+updated two existing menu hints only; no new panels/geometry. Root lint/format
+and actual menu copy/fit PASS. Camera author5322 journey0POST/rev4/actor/AP/
+12positions unchanged PASS; independent camera appearance ACCEPT; module PR/main
+delivery verified, sprite adapter/helper publication remains separate.
+[Owning helper](../wiki/battlefield-test-maps.md#подсказка-управления-камерой--2026-10-13).
+
+**Unified desktop HUD — 2026-10-13, LOCAL / SCOPED HUD APPEARANCE ACCEPT:**
+owner requested coherent professional controls. One battle-controls.css/control
+family removes editor/icon/scene CSS conflicts: commands+skills56, utilities40,
+text36/radius6. Compact console236->179.4 avoids covering default lower figures;
+auto start/stop top utility, step in menu; overflow/input-mode/feedback stable.
+[Owning result](../wiki/battlefield-test-maps.md#единый-боевой-интерфейс--2026-10-13).
+Actual1366/1440/1920 geometry/menu/aim/overflow/Esc/hover+keyboard0POST
+actorarcher/revision0 PASS, real auto start/stop/stable40px/manual PASS.
+Web noEmit/lint/format and UI17 PASS. Tooltip first review REJECT (feet hidden),
+left-card ResizeObserver placement corrected; fresh1366/1440 pointer+keyboard
+custom+dense captures PASS, repeated seven-criterion appearance ACCEPT2/3. Dead historical
+stances and resolved next-round placeholder hidden; actual fresh5321 terminal
+R8/rev151/deadopponent4/0POST/unchangedrevision/controls36xradius6 PASS.
+OriginalR9 metadata SecurityError FAILED, not substituted; mainnewbattle quota
+blocked, freshisolatedautobattle used. Terminal appearance ACCEPT7criteria2/3,
+critic own runtime/input NOT_RUN; captured before separate camera integration.
+Initial class assertion, dynamic More
+probe, hover-after-keyboard and overlarge console issues corrected and recorded.
+HUD source frozen; independent UI critic own input NOT_RUN; terminal visuals
+initially excluded; supported1366/1440 terminal review now scoped ACCEPT.
+[Terminal evidence](../wiki/battlefield-test-maps.md#итоговый-hud-завершённого-боя--2026-10-13).
+Renderer/terrain separate.
+No full gate/DB/AAA certification; inherited audit/open WIP remains, no bypass/pub.
+Root owns HUD/shared docs; other chats own renderer and core/projection.
+
+**Parallel field/core readback — 2026-10-13, LOCAL / FINITE CHECKS:**
+final renderer546 edges/444 shared supersede588/402; existing mill projected
+opaque tops supersede rejected dirt top. Author surface880+10/depth0vs1066/
+focused21(geometry4+UI17)/types/lint/format/diff PASS by author.
+Frozen field visual ACCEPT:3/2/2/2/3/2/2,motionN/A; own critic input/tests/build
+NOT_RUN. Same field critic integrated post-HUD day/night readback PASS:
+full field ACCEPT retained, no material regression; renderer unchanged.
+Core PREVIEW-04 prior-fire HP cap source43/replay/read-only PASS by author;
+main API cached correction runtime PENDING, unchanged3022. Isolated3023/5321
+UI/HTTP proof PASS by author; readback R7/revision31/fire5thenreaction5 agrees
+with HUD5 at10HP, no state injection. Initial pan/confirmation timeouts recorded.
+Read actual manual summary R9/revision149/victory5survivors/76orders/0errors,
+old main API; balance/fun NOT_MEASURED.
+[Owning finite result](../wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
+
+**Height occlusion defect — historical intermediate checkpoint, 2026-10-13:**
+Superseded by the parallel field/core readback above; final opaque-depth repair
+is present with finite author checks and scoped field ACCEPT above.
+parallel owner review reports lower-grid lines visible through +1 terrain.
+Source hypothesis: translucent ground tops do not provide opaque depth occlusion.
+Renderer writer owns reproduction/opaque-depth repair on existing textures;
+root records the bounded tile/UV/cliff proposal as engineering proposal only.
+[Owning defect and proposal](../wiki/battlefield-test-maps.md#перекрытие-нижней-сетки-высотой--новый-defect-2026-10-13).
+New screenshot reproduction/fix/terrain visual acceptance NOT_RUN here; no
+new library/asset batch/height or LOS rule approval. Icon review is separate.
+
+**Single colour grid — historical intermediate checkpoint, 2026-10-13:**
+Final546/444 topology supersedes the588/402 below; scoped field ACCEPT
+is recorded above.
+owner instructed one grid with colour states. Parallel renderer author replaced
+stacked/inset contours with 165 stable cell fills and one tactical-grid,
+588 unique physical edges/402 shared. Canonical previews/inspection/input and
+entity silhouettes retained; ground group0/non-pickable, figures group1.
+[Owning current result](../wiki/battlefield-test-maps.md#единая-цветовая-сетка--2026-10-13).
+Author geometry+UI20/20/web noEmit/lint/format PASS; initial TS/Float32 checks
+failed then were corrected. Root web noEmit PASS after fixes. Private 6v6
+0POST/revision4/actor stable; legacy marker meshes0. New grid critic pending;
+old inset visual acceptance is historical/superseded. Full gate NOT_RUN.
+Renderer/geometry are owned by parallel chat; HUD/icons/shared docs here.
+
+**Battle command icons — 2026-10-13, LOCAL / SCOPED ICON VISUAL ACCEPT:**
+owner rejected homemade action glyphs. Ten local CC BY 3.0 Game Icons
+replace command/skill glyphs; opaque backgrounds removed, interface colours
+and keyboard/hover/cost/refusal preserved, visible credits in expanded log.
+34 px commands with shortcuts, 28 px skills with rank/availability.
+[Owning result](../wiki/battlefield-test-maps.md#иконки-команд-и-приёмов--2026-10-13).
+Scoped lint and 16 UI tests PASS; browser hover/keyboard/disabled action and
+unchanged actor/revision PASS. Web noEmit PASS before and after the grid writer fixed the shared-grid
+integration. Available aim/selected/Esc/rally tooltip journey PASS, archer
+revision 0 retained. Independent icon appearance/captured-state ACCEPT, all applicable scores 2/3;
+critic pointer/revision binding NOT_RUN. Initial overlong review stopped with
+no verdict; fresh bounded critic completed. Full gate NOT_RUN.
+Root owns HUD/icons/shared docs; other chat owns the new renderer/grid.
+
+**Selected weapon reach — 2026-10-13, LOCAL / JOURNEY VERIFIED:**
+public detached inspection independent of turn/AP/stamina; attackPreview alone
+admits attacks. Bow 45/halberd 18/shield 6, LOS/resource refresh and actual
+2-hex halberd attack PASS; collaborating author reports 46 focused tests and
+core/protocol builds/web-server checks PASS on that version.
+[Owning result](../wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13).
+Independent 12 saved captures ACCEPT >=2; current parallel grid rewrite
+supersedes that integration visual acceptance: PENDING. No publication/merge/deploy.
+
+**Weapon reach contrast — 2026-10-13, LOCAL / SCOPED VISUAL ACCEPT:**
+owner reported unreadable archer area under movement. Stronger ochre wash/
+ink-backed weapon borders; overlaps use one fill plus inner cyan movement
+contour. Actual hex geometry/input, public range/attack authority and body
+layering unchanged.
+[Owning result](../wiki/battlefield-test-maps.md#контраст-области-оружия--исправление-2026-10-13).
+Web noEmit/lint/format and 16 UI tests PASS; actual 45 canonical markers / 38 overlaps,
+target forecast and unchanged revision 0 / actor archer PASS. 6v6 day/night plus
+close/grid/reference captures inspected; independent scoped visual ACCEPT (all applicable scores >=2), critic input
+NOT_RUN. Root scene/docs writer; GPT-6.1 Sol read-only critic. Full gate NOT_RUN
+for narrow visual change; inherited branch audit unchanged, no hook bypass/
+commit/publication/merge/deploy. Prior hover acceptance is recorded separately below.
+
+**Occupied-hex hover — 2026-10-13, LOCAL / HOVER ACCEPT:**
+owner reported sprite-only entity hover. Field targeting now resolves a living
+occupant from an uncovered occupied hex, retaining opaque sprite priority;
+hover/inspection/action addressing share the same target. Uniform silhouette
+and grounded hover-ring emphasis clears on empty terrain; actor/selected markers
+remain independent.
+[Owning fix](../wiki/battlefield-test-maps.md#наведение-на-занятую-клетку--исправление-2026-10-13).
+Before: wolf body -> Wolf card; cell5,5 -> retained Commander. After reload:
+both -> Wolf.90 occupied terrain samples/11units(6allies,5enemies) PASS;
+99opaque overlaps excluded and separate sprite case checked. Empty hover clears;
+0actionPOST/revision50/actor unchanged. Web typecheck, scoped lint/format and
+14BattleView tests PASS; independent scoped visual/source critic ACCEPT
+(all applicable scores>=2, critic pointer NOT_RUN). No core/server/schema change;
+full gate NOT_RUN for this narrow fix. Inherited branch audit remains blocked;
+no commit bypass/publication/merge/deploy. Root owns scene/docs/browser.
+
+**Combat rubble cell readability — 2026-10-13, LOCAL / VISUAL ACCEPT:**
+owner screenshot exposed spill/unclear cell ownership. Existing rubble art uses
+uniform 1.1 scale and measured visible centre; permanent ochre/ink blocked-cell
+borders stay below figures, non-pickable. Hover/pin explains impassable cell;
+canonical blocked/path/LOS/replay semantics unchanged.
+[Owning result](../wiki/battlefield-test-maps.md#завалы-принадлежат-одному-гексу--2026-10-13).
+Web noEmit/lint/format PASS; UI 14/14, actual hover/left/right 0 POST and preserved
+revision PASS; 12,575 visible sprite samples inside owning projected hex.
+Day/night/close + current equal-height comparison ready; independent visual
+review ACCEPT, all applicable scores >=2; owning cell/neighbor/HUD scores3,
+critic pointer NOT_RUN. Documentation/format/scoped links read back. No full gate rerun for visual-only fix;
+existing whole-branch audit still blocks commit, no bypass/publish/merge/deploy.
+Root writer only, GPT-6.1 Sol read-only critic.
+
+**Combat specification implementation — 2026-10-13, LOCAL PLAYABLE / CLOSEOUT BLOCKED:**
+owner authorized subagent implementation: correct scene/heights, AI, real skills
+and autoplay. Integrated sprite-prototype-v3 preserves historical v1/v2 replays;
+static figures/instant moves, desktop fullscreen HUD, ground cues before figures,
+alpha-aware entity picking, textured height0/1/2 steps and sparse empty-cell
+height plaques. Five finite learned ranks1–3 (brace/pressure/reach/aimed/rally),
+editor rank controls, four slots plus overflow, canonical forecasts/commands,
+tactical skill-aware AI and lawful server autoplay step/start/stop are playable.
+Web has no game-core dependency; optional server ruleHints own projected rule
+costs/state badges. Server owns static connectivity; rejected creation retains draft.
+[Owning implementation/results/limits](../wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
+Actual UI: five skills, autoplay stop, full mill R8 victory/revision151,
+editor paint/save/reload/import/export/rejection/retry PASS; terrain expected
+identity58top/16side samples, alpha margins/HUD no-order/portrait linkage PASS.
+Independent boundary review no reproduced issue. Absolute visual ACCEPT for
+supplied current day/night/dense/zoom/overlay/threat scenes: every applicable
+criterion >=2. Critic pointer execution/actual browser125% NOT_RUN;
+Threat caption positioning/dedup corrected and recaptured after full page reload;
+repeat isolated verify PASS on affected source.
+Isolated verify PASS737tests/47skipped, all preceding checks; baseline stress
+10000battles/20deterministic/100replay PASS. Full bootstrap/database migration
+integration NOT_RUN (Docker/Colima unavailable); no retained DB used. Branch audit
+FAIL130complexity/17clones,49inherited excluded; no threshold suppression/hook bypass.
+Root owns shared docs/integration/browser, only GPT-6.1 Sol / GPT-6 Luna agents.
+All current writers/reviewers released; root left fresh default mill playable.
+No new dependencies/animations/XP/campaign custody/production writes; no commit,
+publication, merge or deploy. Twenty visual profiles are not twenty unique
+ability implementations. General balance/fun/AI/FPS capacity NOT_MEASURED.
+Current scenes/affected repeat verify/documentation readback complete. Next: resolve
+branch complexity/duplication audit and restore the owned disposable database gate;
+closeout blocked by branch audit and unexecuted database gate, not a completed DoD.
+
+**Combat specification first — 2026-10-13, LOCAL / VISUAL REJECT:**
+owner rejected a ground hex contour crossing a character and requested the
+complete technical specification before further implementation.
+[Full combat specification](../wiki/battlefield-test-maps.md#полное-техническое-тз-пошагового-боя--2026-10-13)
+covers scene layers, continuous hex input, fullscreen HUD, initiative/statuses,
+ability capacity, canonical previews, path/LOS/reactions/AI, editors, authority,
+replay, reusable technologies and observable acceptance scenarios.
+Current sprite figure group1 precedes ground-ring group2; Babylon9.28.0
+clears depth between groups by default. RENDER-01 remains unfixed.
+Prior visual ACCEPT below is superseded for scene integration; historical
+gameplay/replay checks remain scoped evidence. No game code or dependencies
+changed in this specification pass. New numerical UX budgets/status profiles
+and Floating UI remain proposals, NOT_MEASURED / integration NOT_RUN.
+Visual rubric now requires concrete combat layering cases and rejects any
+reproduced ground/opaque-figure overlap regardless of other scores.
+Next implementation starts with the owner's layer counterexample, then full
+absolute visual review; no content expansion before layer/input acceptance.
+Documentation/source research only; new gameplay/full gates NOT_RUN.
+Independent spec review found two wording issues; opaque entity picking before
+legality and proposed action-catalogue status clarified. Markdown formatting,
+new-section local links and diff checks PASS; no runtime acceptance claimed.
+Existing whole-branch audit remains open; no commit bypass/publication/merge/deploy.
+
+**Combat improvement cycle S2–S4 — 2026-10-12, checked 2026-10-13, LOCAL PLAYABLE:**
+owner requested finished local combat through an executed independent-critique loop.
+New sprite v2 preserves historical rules/replays. Tactical target/approach policy,
+guard/fatigue, finite nonlocking reactions, panic/escape/human-only surrender,
+one-retarget mill warning, AP0 scheduler, static-map admission and visible outcomes
+are integrated. Critic findings fixed: heavy reversal, reaction armor forecast,
+false-safe escape, crowded figures, defeat explanation and terminal tooltip overlap.
+[Owning loop, parameters and proof](../wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
+Current UI/replay: rush R8 victory/5 survivors; safety-fixed hold R14 defeat/2
+retreated; human surrender R5/2 surrendered. No AI-policy mismatches, activation
+revisits, full-AP waits or manual AP0 ends in rush/hold. Finite playable/source
+critic ACCEPT; full absolute day/night visual ACCEPT; affected hold/surrender
+readback ACCEPT (text/layout 3, inactive readability 2). Critic browser input
+NOT_RUN; author UI journeys PASS. Fresh mill left playable at 5320.
+Focused checks PASS (latest safety 37 tests, UI 12), core build/typecheck,
+web/server typecheck and scoped lint PASS. Historical stress and disposable
+PostgreSQL gate PASS; full verify FAIL on formatting, owned file corrected,
+unrelated launch file preserved, later chain NOT_RUN. Branch audit still blocks
+commit; local WIP, no hook bypass or publication/merge/deploy. Abilities/progression,
+campaign captivity and five finished maps outside this finite cycle; general
+balance, enjoyment and AI/FPS performance NOT_MEASURED.
+
+**Reachable movement contrast — 2026-10-11, LOCAL:** owner found movement
+cells unreadable. Separate slate-teal fill, pale opaque borders and ink backing
+show only canonical destinations; hover/pin remain distinct above those borders.
+[Owning result](../wiki/battlefield-test-maps.md#контраст-доступной-зоны-движения--исправление-2026-10-11).
+Web typecheck/lint PASS; browser 39 destinations/39 border pairs, day/night
+with grid on/off, pinned A/hover B and actual 4AP move/AP0 cue removal PASS.
+Absolute visual ACCEPT, all applicable scores ≥2, reachable/unreachable and
+movement/shot distinction score 3; independent critic input NOT_RUN.
+Format/scoped links/diff PASS; game tests/full gate NOT_RUN for visual-only fix.
+Existing branch audit still blocks commit. No publication/merge/deploy.
+
+**Aligned combat hex geometry — 2026-10-11, LOCAL:** owner screenshot exposed
+rotated torus borders and inset preview fills missed by the prior input pass.
+Pointy-top centres/radius shared; native torus orientation retained, full-cell
+movement/shot/selection fills. GitHub Honeycomb pinned source validates formulas;
+no new dependency or gameplay change.
+[Owning amendment/research](../wiki/battlefield-test-maps.md#геометрия-сетки-и-совпадение-маркеров--исправление-2026-10-11).
+11 focused tests/web typecheck/lint PASS; browser165 cells/444 neighbour edges/
+45shot borders aligned,150edge+180corner pointer probes without dead zones;
+persistent selection/near-edge rightclick3AP PASS. Source reviewer cleared;
+independent absolute visual ACCEPT, all applicable scores ≥2; geometry and
+pinned/hover distinction score 3, critic browser input NOT_RUN.
+Format/scoped links/diff PASS. Full gate NOT_RUN; previous branch audit
+still blocks commit. No publication/merge/deploy.
+
+**Continuous combat hex input — 2026-10-11, LOCAL:** full-size ground picking
+plus continuous board-plane fallback for height seams; selected hex remains
+marked while another is hovered. Alpha-aware figures and canonical routes/AP
+unchanged. 140 edge/180 corner points without dead zones; border right-click
+and persistent selection PASS. Ten scoped tests/web typecheck/lint PASS;
+source readback cleared two findings. Further 240 height-edge points PASS;
+raised perimeter rejection and pan/zoom without mutation PASS. Absolute visual
+ACCEPT for inspected day/night/height-test states, all applicable scores≥2.
+Independent critic input execution NOT_RUN; extreme camera framing not accepted.
+[Owning amendment](../wiki/battlefield-test-maps.md#непрерывный-выбор-гекса--исправление-2026-10-11).
+Full gate NOT_RUN; previous branch audit still blocks commit. No publication/merge/deploy.
+
+**Approved Command desk live HUD — 2026-10-11, LOCAL:** owner selected 01;
+fullscreen battle/portrait round queue/mirrored actor-inspection cards/icon
+commands/four reserved skill slots implemented. Public previews and canonical
+morale/stamina states; next-round order unknown, abilities unimplemented.
+Menu retains replay/restart/editor access, keys1–5 share guarded commands.
+[Owning implementation/checks](../wiki/battlefield-test-maps.md#рабочий-пульт-командира--2026-10-11).
+Web typecheck/scoped lint/nine UI tests PASS. Actual browser shot/AP0/pending/
+move/round2/restart, target-path-target precedence, portrait pin-restore,
+disabled no mutation and menu/editor journeys PASS; three desktop viewport fills PASS. Source findings fixed;
+final absolute visual ACCEPT for inspected 2v2/6v6 day/night and three sizes,
+all applicable scores ≥2, motion N/A. Critic browser execution NOT_RUN.
+Full gate NOT_RUN for this UI amendment;
+last branch-wide commit audit FAIL (4 unused static-gallery files, 99 complexity
+findings, 15 clone groups over 159 changed files). No commit bypass or publication/merge/deploy.
+
+**Five fullscreen battle UI concepts — 2026-10-10, refined/verified 2026-10-11, LOCAL PROPOSALS:**
+owner requires five desktop battlefield overlays and explicit choice before
+live implementation. Mirrored lower actor/target cards, icon actions with
+hover/focus tooltips; later amendment requires TOP initiative with round
+boundaries (owner Olden Era reference), portrait effects and skill-ability
+capacity. A command desk, B air/contours, C field ledger, D side commands,
+E command seals. [Owning comparison/status/UX boundaries](../wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10).
+Approved PNG art, native illustrative mockups; no game API/rules/AI/replay
+change. Ability names/effect durations/unlock thresholds are not activated.
+Latest owner rejected crude UI: shared components refined with numeric
+hierarchy, resource bars, chance ring, AP spend/remaining, distinct command/
+ability states and unobscured tooltips/forecasts. Gamedev taxonomy GPT-6.1 Sol;
+refreshed five-layout browser journeys/three viewport fills PASS, errors[]/
+writes[]. Initial visual REJECT findings fixed; full independent visual
+re-review ACCEPT: all applicable criteria ≥2, motion N/A. Follow-up C/E
+selected-skill tooltip occlusion REJECT resolved with a stable left inspection
+area; final absolute score table ACCEPT for all five. Browser five journeys,
+selected/toggle state, all four C/E skill-tooltip non-overlap states PASS.
+Syntax/format/scoped links/diff PASS. Viewer restored on web5320.
+Owner approved 01 Command desk on 2026-10-11. Live implementation ACTIVE;
+integrated visual/playable acceptance PENDING. Keep server-authored previews,
+actor authority, pending/idempotency and editor access. Reserve ability slots
+without inventing progression or status mechanics.
+Prior live UI worker interrupted; isolated UI/renderer work preserved.
+Game/full/integrated playable gates NOT_RUN; existing prototype commit audit
+NOT_DONE. No publication/merge/deployment.
+
+**Four battle UI concepts — 2026-10-10, LOCAL PROPOSALS:** owner rejected
+current overall UI/UX composition and requested Heroes/Wartales/BB-oriented
+alternatives. Native interactive gallery uses approved sprites/mill art:
+A bottom console, B floating field controls, C left actor dossier, D right
+tactical inspector. Gamedev GPT-6.1 Sol advisor; independent visual critic
+GPT-6.1 Sol. [Owning comparison/references/results](../wiki/battlefield-test-maps.md#четыре-концепта-боевого-интерфейса--2026-10-10).
+Recommendation A, alternative D; owner choice OPEN. Illustrated state only,
+no battle API or new mechanics. Browser four-tab/fullscreen/inspect/mode/grid/
+day-night checks PASS; five actions fit 1440×900, twelve units, no page errors
+or write requests. C portrait crop/A night-label findings fixed; final concept
+re-review ACCEPT for the historical four concepts, all applicable scores ≥2.
+Later full-viewport five-concept owner brief supersedes this selection.
+Syntax/format/scoped links/diff PASS. Existing lab unchanged;
+production game checks/integrated playable acceptance NOT_RUN. Prior UI
+readability ACCEPT below does not imply owner approval of composition.
+Existing shared prototype commit audit remains NOT_DONE; no publication/merge/deployment.
+
+**Target readability and action dock — 2026-10-10, LOCAL:** owner's four
+UI requests implemented with two gamedev GPT-6.1 Sol workers. Stronger bow
+cells, every canonical attack target outlined/marked, ink-backed silhouettes
+and side bases; single below-field action dock with actor/AP, canonical costs
+and unavailable reasons. Wait now says End turn; command/rules/replay semantics
+unchanged. Web declares existing public game-core workspace dependency.
+[Owning result and UI reference](../wiki/battlefield-test-maps.md#читаемость-целей-и-панель-действий--2026-10-10).
+Default new mill placement spread into two columns/three ranks after dense
+start visual REJECT; saved/imported setups unchanged. AI rush/hold numbers
+below refer to the former deployment. Final independent day/night bow/melee
+and revised mill visual ACCEPT, all applicable scores ≥2 (motion N/A).
+Browser: 50 canonical bow cells/50 fills/50 edges, two legal targets;
+blocked/far/friendly excluded, AP0 hides cues; actor remains independent of
+inspection; shot/end-turn accepted. Twelve mill initiative entries; entire dock
+fits 1440×900. Web/server typecheck, scoped ESLint, five UI/four custom-battle
+tests and four-tab reference check PASS. Source review found no concrete
+blocker. Documentation format/scoped links/diff PASS. Full gate NOT_RUN this
+UI amendment; later dense formations/new deployment balance NOT_MEASURED.
+Existing commit audit blocker remains NOT_DONE. No publication/merge/deployment.
+
+**Combat AI/user-playtest review — 2026-10-10, LOCAL:** DB-free dev stand
+restarted on API3022/web5320. Five completed browser/UI fights and four
+partial probes, with accepted command/state/replay evidence. Mill same start:
+rush wins round9/one death; hold wins round22/five deaths. Sword vs heavy:
+hit+back wins round7 with80HP/36armor and zero enemy attacks; stationary
+control wins round7 with38HP/0armor. Disconnected wall:120 defends, no
+movement/attack, round60 draw. ID-only target switch and spear61%→100%
+after1AP move reproduced. Gamedev/source analyst and independent journey
+critic GPT-6.1 Sol: current depth insufficient; target/response logic, empty
+loops/AP0 clicks and crowded corpses are concrete next priorities.
+[Owning assessment and proposed cycle](../wiki/battlefield-test-maps.md#игровая-проверка-ai-и-тактической-глубины--2026-10-10).
+Gameplay source unchanged; fixes/new numbers not implemented or approved.
+Documentation format/diff and added local links PASS; whole-document link scan
+FAIL on five unrelated historical absolute paths. New game/full/visual gates
+NOT_RUN; human enjoyment,
+general win rate and AI compute time NOT_MEASURED. Existing commit audit blocker
+remains NOT_DONE. No publication, merge or deployment.
+
+**Archer shot area and hover damage — 2026-10-10, LOCAL:** owner's request
+implemented with gamedev GPT-6.1 Sol. Canonical bow cells use range/LOS and
+current AP/stamina; target overlay shows on-hit health/armor loss and miss
+chance. Exact damage arithmetic is shared with execution; RNG/replays retain
+their behavior. Parent integration: 7 focused files/44 tests PASS;
+core/protocol build, server/web/core typecheck and scoped ESLint PASS.
+Browser: area51 cells, blocked target excluded; forecast health2–4/armor12–18,
+miss25%; shot lost health3/armor16, spent all4AP; AP0 removes zone/hover.
+Overlay collision placement and target connector: final independent day/night
+visual ACCEPT, all seven applicable criteria 2 (motion N/A); source readback
+found no remaining blocker. Camera hover and pointer transparency PASS.
+Full gate NOT_RUN after this amendment. Earlier complexity audit still blocks
+ordinary commit, NOT_DONE. No publication, merge or deployment.
+
+**Battle field controls — 2026-10-10, LOCAL:** on
+`codex/sprite-combat-stage1`, the owner's hover route/AP and right-click
+move/attack request is implemented. Left-click inspects; initiative owns the
+acting fighter. Canonical previews include stamina/fire and attack chance;
+fire retains confirmation. Camera navigation clears stale hover. Browser
+move/attack/AP, invalid-target, hover-only, fire cancel/accept and pan/zoom
+checks PASS. Web typecheck/scoped ESLint and 12 focused tests PASS.
+Independent GPT-6.1 Sol source review found no remaining controls blocker.
+Initial route visual review REJECT led to stronger ochre route/ink border;
+fresh day/night re-review ACCEPT, all applicable scores 2 (motion N/A).
+Full gate below is prior-prototype evidence,
+not a run after these controls. Existing complexity audit still blocks commit;
+NOT_DONE. No publication, merge or deployment.
+
+**Playable sprite combat and editors — 2026-10-10, LOCAL PLAYABLE:** owner
+authorized implementation with subagents. DoD: real playable combat with static
+sprites, immediate moves and overhead action text, custom battle builder and
+map editor. Primary `codex/sprite-combat-stage1` owns server/protocol/integration
+and shared docs; isolated `codex/sprite-prototype-core` owns combat core,
+`codex/sprite-prototype-ui` owns lab scene/HUD/controller, and
+`codex/sprite-prototype-editor` owns editor component/model. Preserve existing
+M0/M1 commands/replays; new provisional sprite ruleset isolates terrain changes.
+Lab is disposable and uses existing auth/state; editors save local drafts/JSON,
+not campaign state. First observable journey: create a mill battle, paint a
+custom map, place two squads, play to a terminal outcome, restart/reload draft.
+Integration and browser journey PASS: custom duel to round-six victory,
+6×6 opponent commands, paint/place/save/load/import/export, fire damage, edge
+retreat, replay, custom restart after reload and alpha-aware picking. Focused
+14 files/62 tests PASS. Independent source review found no concrete blocker;
+static visual v10 ACCEPT (all applicable scores ≥2; motion N/A). Full
+bootstrap gate PASS in persistent clean verification copy/disposable DB:
+666 unit tests, 47 skipped; 10,000 stress battles; migration smoke and 14 real
+encounter/OIDC checks. Separate change audit FAIL on introduced complexity /
+duplication; ordinary commit remains blocked, NOT_DONE. Provisional profiles omit creature powers,
+tether, panic/surrender and intent/retarget; this is not full M1. Owner model
+amendment: future delegates only GPT-6.1 Sol / GPT-6 Luna. No publication,
+merge or deployment authorized. Earlier research status remains history below.
+
+**Combat reuse deeper recheck — 2026-10-09:** owner requested deeper analysis
+and verification of the earlier recommendation. On `codex/sprite-combat-stage1`,
+[the revised owning contract](../wiki/battlefield-test-maps.md#углублённая-перепроверка-и-более-простой-поиск--2026-10-09)
+supersedes mandatory ngraph adaptation: one bounded single-source Dijkstra
+field, inspired by inspected Athena Crisis movement-radius/path code, serves
+movement range, hover routes and AI positions. Start with a linear frontier
+for four AP; inspected/tested ISC TinyQueue remains a measured-need alternative.
+Independent AP/stamina costs require nondominated labels with label parents;
+preview/execution/AI share pure preparation, preserving old commands/replays.
+Existing hex, initiative, AI, RNG and replay stay in place. Reproduced ngraph
+blocked-goal/direction/tie-order problems and abstract-astar's suboptimal
+decrease-key path; jkstra's dependencies/mutable vertex flags/incomplete
+license evidence prevent recommending its source transfer. Athena's square-grid
+game and separately licensed content are not adopted. Six new search queries,
+13 families, three new deep candidates plus ngraph/TinyQueue recheck;
+sequential-thinking MCP used. Existing combat tests 14/14 and lab tests 7/7
+PASS; isolated scalar/resource prototypes matched independent oracles on the
+recorded corpus. Synthetic 15×11 microprobes do not establish production FPS,
+capacity or time savings: NOT_MEASURED. Documentation format/scoped links/diff
+PASS. New search/preview/rules integration and browser journey NOT_RUN.
+Research/specification only, local; no production code/dependency/migration,
+publication, merge or deployment; S1 scene integration remains next.
+
+**Combat reuse specification amendment — 2026-10-09 (historical first pass,
+superseded by the recheck above):** owner requested ready
+GitHub modules/algorithms to avoid building combat from scratch. On
+`codex/sprite-combat-stage1`, [the owning reuse contract](../wiki/battlefield-test-maps.md#повторное-использование-готового-кода--2026-10-09)
+maps existing hex/initiative/AI/RNG/replay to S2–S4 and recommends pinned
+ngraph.path A*/Dijkstra source adaptation (MIT plus heap ISC attribution),
+without a runtime dependency in pure core. Source inspection found reversed
+cost callback arguments and a blocked-goal/infinite-distance counterexample;
+both require focused experimental checks before adoption. ROT.js unit-cost
+paths/speed scheduler and the full boardgame.io framework are unsuitable for
+these accepted rules/boundaries; MCTS adaptation is deferred until a concrete
+existing-AI failure. Eight repository queries, 18 provenance families and
+three source-inspected finalists; licensing, relevant tests and issues read.
+Sequential-thinking MCP used. Documentation format/scoped links/diff PASS;
+foreign-code execution, integration/game checks NOT_RUN; performance/savings
+NOT_MEASURED. Research/specification only, local; no game source, dependency,
+migration, publication, merge or deployment. Stage-1 art acceptance and S1
+scene integration remain as below; no implementation step launched.
+
+**Sprite-combat stage 1 — 2026-10-09:** owner approved D1–D12, the
+selected W01–W10/ten-creature roster and overall mill direction. Confirmed:
+BB position/weapons/fatigue/morale, 6×6 opponent builder, 80 px humans, 15×11,
+4 AP, no ZOC movement lock, human escape/surrender, one retarget with renewed
+warning and at least one player response activation, heights 0/1/2, mud/fire,
+full figures and **static sprites only now**. Fighter C is W01's foundation;
+B053 v2 and mill concept v3 establish direction. [Owning specification](../wiki/battlefield-test-maps.md#спрайтовая-боёвка-тз-этапа-1--2026-10-09)
+contains the matrix, roster, five locations, UX, lore mind map, pinned GitHub
+research and next-stage real-lab contract. Parent owns shared documents/board
+on `codex/sprite-combat-stage1`; individual asset tasks own disjoint directories
+under `assets/art/combat/stage1-2026-10-09/roster/`. Twenty static asset tasks
+completed after agreement; all PNG/provenance files saved. Gallery shows nineteen
+new figures and existing B001 after new wolf alpha failures. B023 v3 is a
+separate creature sprite; `fixture.png` supplies its stationary rooted tree/loop.
+Flexible tether and occupancy remain actual scene-integration requirements.
+[Local review board](../../assets/art/combat/stage1-2026-10-09/index.html),
+localhost:5319, supports scale comparison and 6×6 draft lineups; it executes
+no combat. Direction approval is separate from integrated acceptance: grid,
+occupancy, real day/night and completed journey remain BLOCKED. Motion is out
+of this cycle's scope. Earlier format/JS/JSON/links/browser checks PASS;
+updated matrix/gallery/readback PASS. First full static critique found W04/W09
+scale, B030 silhouette and B037 lore gaps; next absolute pass confirmed body/foot
+scaling and B037 v2, but kept B030 v2 at silhouette/pose 1 and B023 at lore 1.
+Full static re-review scored B030 v3 and B023 v2 art/lore ≥2, but B023's
+combined prop/target scored composition 1. Split B023 v3/fixture now displayed;
+latest all-image/80/220/backdrop/console checks PASS. Final full absolute
+static re-review: all six isolated-art criteria ≥2 for all twenty selected
+figures; B023 creature/fixture separation confirmed, no visible toe crop.
+Narrow source-canvas bottom margin remains a preparation risk. Formal
+integrated verdict BLOCKED; night80 capture is clear but no actual scene
+lighting is proved. Stage 1 agreed scope complete locally, saved in work
+commits. Next S1: real mill-scene sprites/hexes/selection/day-night, then
+S2–S4 rules and executable 6×6 stand. Game/full gate NOT_RUN,
+performance NOT_MEASURED. No game source, migration, dependency, publication,
+merge or deployment. Existing map and wave writers retain ownership.
+
+**Detailed live-map continuation DoD — 2026-10-09:** owner requested a
+what/where/why/evidence plan with six corrections. The
+[execution plan](LIVE_MAP_EFFICIENT_PROMPT.md#cycle-1-execution-plan-and-dod--2026-10-09)
+starts with rebuilding, checking and committing the retained implementation;
+then repairs browser assertions, runs real server integration, proves the whole
+Brod→Gat→Mill→Gat route and Gat→Glinisty Bereg crossing, repeats the whole route
+after every blocker fix, selectively removes dead procedural code and requires
+fallow/full-gate PASS plus integrated visual ACCEPT (all applicable scores ≥2).
+D6/local coordinates and D11/speed-profile amendments are specified. D7's faint
+unknown-place scope remains OPEN: the current brief includes it in cycle 1;
+moving it to cycle 4 is the recommendation, awaiting the owner's answer.
+Planning only on `claude/world-review-porechye-detail`; implementation belongs
+to the retained `claude/world-live-map` worktree, whose successor writer must
+be established before editing. Documentation format, added tracked links and
+scoped diff checks PASS. No game checks, database probe or agent launch;
+execution checks NOT_RUN. The owner reports the database is up, unverified here.
+
+**Consultation corrections accepted — 2026-10-09:** owner accepted the three
+corrections and [diagnosis by permission, coordinates and runtime geometry](AGENT_TEAM.md#accepted-diagnostic-sequence--2026-10-09).
+Wrong speed also needs road-attribute/profile diagnosis before a geometry-tool
+change. Recorded for the next cycle; implementation and browser proof unchanged.
+
+**Consultation readback — 2026-10-09:** owner supplied the reply choosing journey
+verification before pipeline changes. [Source review](AGENT_TEAM.md#owner-supplied-consultation-reply-choose-a--2026-10-09)
+supports that priority with corrections to geometry acceptance and raw-graph
+comparison. Advisory review only; no new implementation or browser evidence.
+
+**Live-map comparison follow-up — 2026-10-09:** owner requested an author-owned
+comparison and question-only Claude. Local [measured probes and prompt comparison](AGENT_TEAM.md#author-owned-comparison-and-question-only-claude--2026-10-09)
+support a viable GEOS corridor candidate with more vertices and a Skan closed-loop
+fix. [Active prompt](LIVE_MAP_EFFICIENT_PROMPT.md) is shorter and assigns execution
+to Codex, consultation only to Claude. OAuth prevented the advisory answer;
+Codex completed its own comparison. No game/implementation-status change or
+agent launch. Local probes/edition/static checks PASS; model A/B and full-game
+acceptance NOT_RUN, total savings NOT_MEASURED.
+
+**Live-map process review — 2026-10-09:** owner requested a deeper instruction
+analysis of Claude session `7fb9b151` and a more effective continuation prompt.
+Local on `claude/world-review-porechye-detail`: [causal review](AGENT_TEAM.md#causal-follow-up-instructions-and-implementation-choices)
+and [proposed launch prompt](LIVE_MAP_EFFICIENT_PROMPT.md). Prompt not launched;
+no game, hook, policy or implementation-status change. Static checks PASS;
+dynamic eval NOT_RUN, savings NOT_MEASURED. The retained live-map worktree owns
+its package/code and must refresh its own checkpoint when work resumes.
 
 **World atlas / geography audit — 2026-10-08:** owner required a larger
 world, tens of hours, more than 100 POIs and logical roads/forests/swamps/

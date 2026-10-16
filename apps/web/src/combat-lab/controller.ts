@@ -1,6 +1,8 @@
 import {
   COMBAT_LAB_VERSION,
   type CombatLabAcknowledgement,
+  SPRITE_COMBAT_LAB_SCENARIO,
+  COMBAT_LAB_SCENARIO,
   type CombatLabAction,
   type CombatLabView,
 } from '@warwrit/protocol';
@@ -14,6 +16,21 @@ const rejectionCodes = new Set([
   'REQUEST_CONFLICT',
   'LIMIT_REACHED',
 ]);
+
+export function combatSkillReasonText(reason: string | undefined): string {
+  const reasons: Readonly<Record<string, string>> = {
+    BATTLE_TERMINAL: 'Бой завершён.',
+    NOT_ACTIVE_UNIT: 'Сейчас ходит другой боец.',
+    PANICKED: 'Боец в панике.',
+    SKILL_NOT_AVAILABLE: 'Приём недоступен с этим снаряжением или уже применён.',
+    INVALID_TARGET: 'Приём нельзя применить к этой цели.',
+    OUT_OF_RANGE: 'Цель вне дальности приёма.',
+    BLOCKED_LINE_OF_SIGHT: 'Линия до цели перекрыта.',
+    INSUFFICIENT_ACTION_POINTS: 'Не хватает очков действий.',
+    INSUFFICIENT_STAMINA: 'Не хватает сил.',
+  };
+  return reason ? (reasons[reason] ?? reason) : 'Нет допустимой цели.';
+}
 
 export type CombatLabActionReplyOutcome =
   | { readonly status: 'accepted' }
@@ -82,7 +99,7 @@ export function latestCombatLabView(
 export function isCombatLabView(value: unknown): value is CombatLabView {
   if (value === null || typeof value !== 'object') return false;
   const view = value as Partial<CombatLabView>;
-  return (
+  const baseValid =
     view.version === COMBAT_LAB_VERSION &&
     typeof view.sessionId === 'string' &&
     typeof view.battleId === 'string' &&
@@ -97,6 +114,17 @@ export function isCombatLabView(value: unknown): value is CombatLabView {
     view.map !== null &&
     typeof view.map === 'object' &&
     Array.isArray(view.map.hexes) &&
-    Array.isArray(view.map.blocked)
-  );
+    Array.isArray(view.map.blocked);
+  if (!baseValid) return false;
+  if (view.scenarioId === SPRITE_COMBAT_LAB_SCENARIO) {
+    return (
+      view.battle !== undefined &&
+      Array.isArray(view.map.tiles) &&
+      view.map.tiles.length === 165 &&
+      (view.movementPreview === undefined || Array.isArray(view.movementPreview)) &&
+      (view.attackPreview === undefined || Array.isArray(view.attackPreview)) &&
+      (view.rangedAttackArea === undefined || Array.isArray(view.rangedAttackArea))
+    );
+  }
+  return view.scenarioId === COMBAT_LAB_SCENARIO;
 }

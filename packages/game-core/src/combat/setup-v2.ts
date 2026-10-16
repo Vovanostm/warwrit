@@ -143,6 +143,10 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
     invariant(!unitIds.has(unit.id), `Duplicate unit id: ${unit.id}`);
     unitIds.add(unit.id);
     invariant(sideIds.has(unit.sideId), `Unit ${unit.id} references unknown side ${unit.sideId}`);
+    invariant(
+      unit.trainedMelee === undefined && unit.incorporeal === undefined,
+      'Prototype combat traits require sprite-prototype-v1',
+    );
     unitsPerSide.set(unit.sideId, (unitsPerSide.get(unit.sideId) ?? 0) + 1);
 
     validateHex(unit.position, `${unit.id}.position`);

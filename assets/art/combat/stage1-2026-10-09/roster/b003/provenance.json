@@ -1,0 +1,71 @@
+{
+  "id": "B003",
+  "name": "Wild boar / Дикий вепрь",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local concept; independent critic acceptance pending",
+  "source_contracts": [
+    "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+    "docs/wiki/bestiary/creatures/b003.md"
+  ],
+  "source_authority": "Creature card is an authored design proposal, not canonical approval or implemented abilities; owner approved static selected-roster concept production.",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "calls": 2,
+  "correction_calls": 1,
+  "prompt": "Use case: stylized-concept.\nAsset type: one static full-body transparent Warwrit B003 Wild boar combat sprite.\nPrimary request: an ordinary dangerous natural wild boar, low and massive, with wedge-shaped head and crusts of dried dirt lying on dark coarse bristles. It must remain a credible real boar, not a magical monster.\nInput images: Image 1 unit-c-ink.png is the approved irregular ink outline and flat-wash style reference; no human anatomy or equipment. Image 2 staraya-melnitsa.png is weathered subdued palette, matte materials and upper-left lighting reference only; no terrain or architecture. Image 3 battle-ux-v3.png is the fixed elevated three-quarter battle camera and compatible silhouette/readability reference only; no scene or UI. Image 4 night-mill-beast-concept-v2.png is the approved dark creature ink, hatching, bristle-like rendering and strong shadow-mass reference; do not copy its bipedal anatomy, claws or eye glow.\nSubject: exactly one full grown wild boar. Broad barrel body, heavy muscular shoulders, low short strong neck, long low wedge-shaped head tapering to a normal leathery pig snout, small natural dark eyes, two triangular ears, credible curved ivory lower tusks, modest natural upper tusks where visible. Dirty stiff dark bristles with raised rough dorsal ridge; patches of dried umber mud caught in the coat. Four anatomically coherent short strong legs, cloven hooves, short natural tail. Alert braced stance with head held low, feet visibly separated so four-leg anatomy is understandable. No attack effects, blood or supernatural additions.\nComposition: full animal with entire snout, tusks, back, ears, all four hooves and tail inside generous transparent margins. Fixed elevated three-quarter projection matching battlefield reference, facing screen upper-right, body/neck/head/hooves consistently in this direction; no side-only flat profile. Strong low compact boar silhouette readable near 80 px human display scale. Feet at implied shared ground plane.\nStyle/medium: serious grounded dark fantasy ink illustration, irregular dark ink contours, internal hatching, matte flat washes, strong shadow masses, subdued soot/slate/umber/ochre with restrained muddy rust accents. Natural rough material character. Upper-left light, no mirrored baked lighting. Closely match the common Warwrit references.\nBackground: real transparent alpha.\nAvoid: ground tile, pedestal, terrain patch, any painted contact or cast shadow beneath hooves, text, border, multiple animals, sprite sheet, horns, extra tusks, oversized fantasy teeth, armor, equipment, glowing eyes, magic, symbols, cute piglet shapes, cartoon, glossy 3D, bright color, franchise copying, cropped extremities. Deliver one transparent PNG.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "returned_initial_source_path": "/Users/vovanostm/.codex/generated_images/01a12152-cf4b-7293-95c7-7c44bc80d81d/exec-1bb749a6-315a-4bf0-9c38-dd0af0778d4a.png",
+  "correction": {
+    "reason": "Initial cutout pointed screen lower-right instead of required upper-right.",
+    "prompt": "Use case: precise-object-edit.\nEdit target: Image 1 is the generated B003 wild-boar cutout. Supporting references: Image 2 is fighter C for elevated view/rendering/light, Image 3 is battle-ux-v3.png for fixed battlefield projection.\nEssential correction: the boar currently points screen lower-right; change the complete animal orientation so it faces screen UPPER-RIGHT, toward the top-right corner. Turn the body, head and four-leg stance consistently to point northeast in the image. The snout tip must lie ABOVE the body's central mass, with its gaze directed up and right, rather than down and right. Show the animal from elevated three-quarter, seen from slightly behind its left shoulder so its head extends upper-right and rear extends lower-left. Do not merely rotate the flat finished image or mirror its baked light.\nKeep the same ordinary natural boar identity, low massive barrel body, long low wedge-shaped head, dirty dark stiff bristles, raised dorsal ridge, dried umber mud, natural tusks, four credible short strong legs and cloven hooves, short tail. Preserve the existing irregular ink contours, internal hatching, flat washes, matte soot/umber/slate/ochre palette and upper-left light. No claws, horns, glowing eyes, armor, magic or extra anatomy. Entire animal and all four hooves/tusks/tail inside generous transparent margins. Real transparent alpha. No ground, tile, pedestal, scene, text, border or painted contact shadow. One static sprite only.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/generated_images/01a12152-cf4b-7293-95c7-7c44bc80d81d/exec-1bb749a6-315a-4bf0-9c38-dd0af0778d4a.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+      "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+    ],
+    "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12152-cf4b-7293-95c7-7c44bc80d81d/exec-5fb5ef2a-845b-4adf-bf93-868751556272.png"
+  },
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12152-cf4b-7293-95c7-7c44bc80d81d/exec-5fb5ef2a-845b-4adf-bf93-868751556272.png",
+  "saved_sprite_path": "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/b003/sprite.png",
+  "observations": [
+    "One complete natural boar with massive barrel body, rough dorsal ridge and dried umber mud crusts on bristles.",
+    "Four visible short strong legs with cloven hooves, two ears, short tail, wedge-shaped snout and natural curved tusks.",
+    "Corrected body/head direction extends upper-right from rear lower-left; head is raised more than original low-head source description.",
+    "Muted matte ink/hatching/flat-wash rendering; no armor, magic, glowing eyes, symbols, text, terrain or painted contact shadow visible."
+  ],
+  "checks": {
+    "width": 1254,
+    "height": 1254,
+    "png_color_type": 6,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 1001128,
+    "total_pixels": 1572516,
+    "threshold_bboxes_inclusive": {
+      "1": [0, 0, 1239, 1253],
+      "8": [59, 139, 1210, 1163],
+      "32": [60, 139, 1210, 1163],
+      "128": [61, 140, 1209, 1162]
+    },
+    "edge_alpha_max": 1,
+    "all_four_corners_transparent": false,
+    "visual_inspection": "Complete anatomy and extremities viewed directly; upper-right direction corrected. Raised head is a remaining source-match concern.",
+    "methods": [
+      "view_image on both returned sources",
+      "sips dimensions/alpha on initial image; standard-library PNG alpha decode on final image"
+    ]
+  },
+  "limitations": [
+    "Head is raised more than the source's low wedge-head description after orientation correction; independent critic should assess materiality.",
+    "Faint alpha=1 residue reaches canvas edges and at least one corner; alpha>=8 subject bbox retains substantive margins.",
+    "80 px display readability and integrated gameplay NOT_MEASURED. Independent visual ACCEPT not claimed.",
+    "Two-call allowance exhausted; no further correction made.",
+    "No animation, dependencies, shared documentation edit or commit. Parent owns changelog/checkpoint closeout."
+  ]
+}

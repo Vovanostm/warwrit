@@ -1,9 +1,15 @@
 export * from './ai.js';
 export * from './engine.js';
 export * from './hex.js';
+export * from './map-connectivity.js';
 export * from './random.js';
 export * from './replay.js';
 export * from './rules.js';
+export * from './sprite-prototype.js';
+export * from './sprite-s4.js';
+export * from './tactical-ai.js';
 export * from './runtime-v2.js';
 export * from './setup-v2.js';
 export * from './types.js';
+export * from './skills.js';
+export { advanceCombatAutoplay, type CombatAutoplayResult } from './autobattle.js';

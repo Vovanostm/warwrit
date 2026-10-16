@@ -1,0 +1,58 @@
+{
+  "id": "W08",
+  "date": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; independent visual acceptance pending",
+  "subject_source": "docs/wiki/battlefield-test-maps.md:397",
+  "brief": "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+  "tool": "built-in image_gen.imagegen",
+  "calls": 1,
+  "transparent_background": true,
+  "prompt": "Use case: stylized-concept.\nAsset: Warwrit W08 static full-body crossbow warrior combat sprite, one adult human isolated on actual transparent alpha.\nInput reference roles: Image 1 unit-c-ink.png is the approved adult anatomy, grounded equipment proportions, irregular ink and matte flat-wash rendering reference. Image 2 staraya-melnitsa.png provides worn wood, iron, muted palette and upper-left light only; do not draw scenery. Image 3 battle-ux-v3.png supplies the fixed elevated three-quarter battlefield projection, upper-right-facing orientation and strong small-unit silhouette.\nSubject: a credible grounded adult crossbow warrior wearing a plain worn kettle helmet, soot/slate padded jacket, umber belt and practical dark trousers and boots, with a narrow leather bolt case at the hip containing short bolts. No shield. Standing alert with both boots planted, knees slightly bent, torso/head looking toward screen upper-right, holding one practical medieval wood-and-iron crossbow at chest level aiming screen upper-right. Adult proportions close to reference C.\nWeapon accuracy is crucial: one straight visible long wooden tiller/stock, one transverse curved iron bow at its forward end, one taut bowstring joining the two bow tips behind the bow, a short bolt aligned along the top groove, small iron stirrup ahead of bow. Crossbow is held horizontally in the world's ground plane in correct elevated 3/4 perspective, not a vertical handheld bow. Right hand grips the trigger/tiller under rear stock, left hand supports underside of stock forward of right hand; both wrists and hands clearly connected and natural. Stock rests near shoulder, transverse bow extends across stock. Do not fuse fingers into string, do not add extra limbs or a second weapon. Leave weapon edges visible against transparent space so stock, bow and string can be read.\nStyle: serious grounded dark fantasy, hand drawn irregular dark ink contours and internal hatching, restrained flat washes, strong coherent shadow masses, matte weathered iron, cloth, leather and wood, muted soot/slate/umber/ochre with restrained rust. Match the reference C, no glossy 3D shading, no cartoon chibi proportions, no shiny plate armor, no heraldry or invented symbols.\nComposition: one full subject centered, fixed elevated 3/4 seen slightly from above, facing screen upper-right, lighting upper-left. Keep whole helmet, both boots, bow tips and stock uncut with generous transparent margins. Clear silhouette intended to occupy 80 pixels of visible height in a 1440x900 desktop battlefield.\nBackdrop: true transparent alpha everywhere outside figure and equipment; no ground tile, pedestal, terrain, painted contact shadow, text, border, scene or additional subject.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-b0c1-73c0-9a1f-e7fc03785ef2/exec-cca8abed-a057-4b4a-bf3b-68e4d9a8ea3e.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/w08/sprite.png",
+  "dimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "png": {
+    "bit_depth": 8,
+    "color_type": 6,
+    "mode": "RGBA",
+    "interlace": 0
+  },
+  "alpha": {
+    "zero_pixels": 1185778,
+    "opaque_pixels": 502,
+    "partial_pixels": 386236,
+    "nonzero_bbox_inclusive": [0, 7, 1239, 1229],
+    "bbox_min_alpha_16": [303, 87, 1179, 1202],
+    "bbox_min_alpha_128": [304, 88, 1178, 1202],
+    "dominant_subject_alpha": [252, 253]
+  },
+  "observations": [
+    "Personally inspected all three common references before generation.",
+    "Full adult human, worn kettle helmet and quilted padded coat, belt, trousers and planted boots; complete body and equipment visually uncut.",
+    "Wooden crossbow stock, transverse iron bow, drawn string, aligned bolt and front stirrup visible. Trigger-hand and forward support-hand connected to wrists; no obvious extra limbs.",
+    "Leather bolt case and short bolts visible at hip. Ink contours and hatching, flat muted umber/slate wash and matte worn equipment.",
+    "No visible terrain, pedestal, painted contact shadow, text or symbol."
+  ],
+  "checks": [
+    "PNG header and zlib scanline decoding with Python standard library: 1254x1254 8-bit RGBA, actual transparent pixels.",
+    "Alpha threshold bounding boxes confirm visible figure/equipment margins; faint alpha specks below 16 extend near canvas edges.",
+    "Visual inspection of generated full-resolution image: hands, weapon, full body and stylistic correspondence checked.",
+    "Default python3 Pillow import failed (ModuleNotFoundError); no dependency installed, measurement completed with standard library."
+  ],
+  "limitations": [
+    "Isolated sprite only; battlefield integration, 80px readability, day/night acceptance and independent visual critic NOT_RUN by this worker.",
+    "Facing is predominantly screen-right with slight upward aim; precise upper-right projection coherence should be checked in parent roster review.",
+    "Subject alpha predominantly 252-253 rather than fully opaque; faint near-transparent specks extend to x=0. Original generated alpha preserved without cleanup.",
+    "Crossbow string readability at 80px and exact mechanical alignment remain for parent/critic assessment; no whole-figure weapon tuning performed."
+  ],
+  "handoff_documentation": "Parent owns shared changelog/current-plan/wiki updates; worker writes only W08 directory."
+}

@@ -1,7 +1,9 @@
+import { isSpriteS4Ruleset } from './rules.js';
+import { SPRITE_PROTOTYPE_V3_RULESET_ID } from './types.js';
 import { invariant } from '../primitives.js';
 import { applyCombatCommand, assertBattleState, startBattle } from './engine.js';
 import { compareHex } from './hex.js';
-import { compareCombatUnitIds } from './rules.js';
+import { isSpritePrototypeRuleset, compareCombatUnitIds } from './rules.js';
 import { startBattleV2 } from './runtime-v2.js';
 import { COMBAT_V2_SCHEMA_VERSION, type BattleSetupV2 } from './setup-v2.js';
 import { COMBAT_SCHEMA_VERSION } from './types.js';
@@ -49,6 +51,9 @@ export function canonicalCombatState(state: BattleState): string {
     map: {
       hexes: state.map.hexes.toSorted(compareHex),
       blocked: state.map.blocked.toSorted(compareHex),
+      ...(isSpritePrototypeRuleset(state.rulesetId)
+        ? { tiles: (state.map.tiles ?? []).toSorted(compareHex) }
+        : {}),
     },
     sides: state.sides.map((side) => ({
       id: side.id,
@@ -56,7 +61,27 @@ export function canonicalCombatState(state: BattleState): string {
     })),
     units: state.units
       .toSorted((left, right) => compareCombatUnitIds(state.rulesetId, left.id, right.id))
-      .map(canonicalUnit),
+      .map((unit) => ({
+        ...canonicalUnit(unit),
+        ...(state.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID
+          ? { skillRanks: unit.skillRanks, shieldBraceRank: unit.shieldBraceRank }
+          : {}),
+        ...(isSpriteS4Ruleset(state.rulesetId)
+          ? {
+              reactionSpent: unit.reactionSpent,
+              moralePolicy: unit.moralePolicy,
+              threatProfile: unit.threatProfile,
+              threat: unit.threat,
+              escapePlan: unit.escapePlan,
+            }
+          : {}),
+        ...(isSpritePrototypeRuleset(state.rulesetId) && unit.trainedMelee !== undefined
+          ? { trainedMelee: unit.trainedMelee }
+          : {}),
+        ...(isSpritePrototypeRuleset(state.rulesetId) && unit.incorporeal !== undefined
+          ? { incorporeal: unit.incorporeal }
+          : {}),
+      })),
     random: state.random,
     round: state.round,
     initiativeOrder: state.initiativeOrder,

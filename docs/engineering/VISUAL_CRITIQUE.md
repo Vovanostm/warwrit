@@ -43,6 +43,31 @@ for code; it does not accept visuals.
 6. Readback of earlier findings is additional work and never replaces the full
    absolute review.
 
+### Mandatory combat layering checks — 2026-10-13
+
+The owner rejected a selected ground hex crossing an archer's waist/legs after
+an earlier visual ACCEPT. A general scene-integration score did not establish
+the ground/figure invariant. For combat, inspect the concrete scenarios in the
+[current specification](../wiki/battlefield-test-maps.md#полное-техническое-тз-пошагового-боя--2026-10-13),
+in addition to the absolute reference comparison:
+
+- Ground grid, movement/shot fills, paths, threats and active/pinned/portrait-hover
+  rings remain behind opaque body, weapon, shield and foot pixels. Entity outlines
+  are separate silhouette effects. A readable ring across the body is a defect.
+- Include the owner's rejected state, a crowded group, long weapon/large creature,
+  height steps and day/night with grid on/off and camera zoom. State missing
+  required cases; do not generalize from an isolated uncluttered actor.
+- Compare captures with/without ground overlays while preserving figures/HUD.
+  Inspect transparent sprite borders separately; rectangular transparency masks,
+  depth errors and broken grounding fail scene integration.
+- Hover/pin/initiative linkage and tooltip/terminal overlap need actual journey
+  evidence. Captures establish appearance, not successful pointer targeting.
+
+A reproduced layer violation scores scene integration at most 1 and forces
+REJECT regardless of other scores. Missing required visual inputs are BLOCKED;
+unexecuted input journeys are NOT_RUN, never inferred from images. Do not accept
+a remedy by shrinking characters or moving ground rings up to the body.
+
 Scores: 3 — reads as the same artist and family at that scale; 2 — only polish
 remains; 1 — a clear gap a player notices; 0 — a different style, or broken.
 

@@ -1,16 +1,32 @@
 import { randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 
 import * as combat from '@warwrit/game-core';
-import { COMBAT_LAB_SCENARIO, COMBAT_LAB_VERSION } from '@warwrit/protocol';
-import type { CombatLabAcknowledgement, CombatLabAction } from '@warwrit/protocol';
+import {
+  COMBAT_LAB_SCENARIO,
+  COMBAT_LAB_VERSION,
+  SPRITE_COMBAT_LAB_SCENARIO,
+} from '@warwrit/protocol';
+import type {
+  CombatLabAcknowledgement,
+  CombatLabAction,
+  CombatLabBattleConfig,
+  CombatLabCreate,
+} from '@warwrit/protocol';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 
 import { projectCombatLabView } from './projection.js';
 import { createCombatLabFixture } from './scenario.js';
+import {
+  combatLabCatalog,
+  createCustomBattleFixture,
+  defaultSpriteBattle,
+  isCustomBattle,
+} from './custom-battle.js';
 
 const CAPABILITY_HEADER = 'x-combat-lab-capability';
 const MAX_SESSIONS = 8;
 const MAX_BODY_BYTES = 4096;
+const MAX_CUSTOM_BODY_BYTES = 32 * 1024;
 const MAX_REPLAY_BYTES = 2 * 1024 * 1024;
 const MAX_DECISIONS = 8_000;
 
@@ -21,6 +37,7 @@ export interface CombatLabSettings {
 }
 
 export interface CombatLabSession {
+  readonly battle?: CombatLabBattleConfig;
   readonly capability: Buffer;
   readonly originalSetup: combat.BattleSetup;
   readonly controlledSideId: string;
@@ -55,6 +72,15 @@ function isActionBody(value: unknown): value is CombatLabAction {
     return false;
   const intent = value['intent'];
   switch (intent['type']) {
+    case 'use-skill':
+      return (
+        combat.COMBAT_SKILL_IDS.includes(intent['skillId'] as combat.CombatSkillId) &&
+        (Object.hasOwn(intent, 'targetId')
+          ? Object.keys(intent).length === 3 && id(intent['targetId'])
+          : Object.keys(intent).length === 2)
+      );
+    case 'autoplay':
+      return Object.keys(intent).length === 1;
     case 'move':
       return (
         Object.keys(intent).length === 2 &&
@@ -63,10 +89,15 @@ function isActionBody(value: unknown): value is CombatLabAction {
         Number.isSafeInteger(intent['to']['q']) &&
         Number.isSafeInteger(intent['to']['r'])
       );
+    case 'prepare-threat':
+    case 'retarget-threat':
     case 'attack':
       return Object.keys(intent).length === 2 && id(intent['targetId']);
     case 'defend':
     case 'wait':
+    case 'flee':
+    case 'surrender':
+    case 'execute-threat':
     case 'retreat':
       return Object.keys(intent).length === 1;
     default:
@@ -74,23 +105,44 @@ function isActionBody(value: unknown): value is CombatLabAction {
   }
 }
 
-function commandFor(action: CombatLabAction): combat.CombatCommand {
+function commandFor(action: CombatLabAction, state: combat.BattleState): combat.CombatCommand {
   const base = {
     commandId: combat.commandId(`human:${action.requestId}`),
     activationId: action.activationId,
     actorId: combat.unitId(action.actorId),
   };
   switch (action.intent.type) {
+    case 'use-skill':
+      return {
+        ...base,
+        type: 'use-skill',
+        skillId: action.intent.skillId,
+        ...(action.intent.targetId === undefined
+          ? {}
+          : { targetId: combat.unitId(action.intent.targetId) }),
+      };
+    case 'autoplay': {
+      const chosen =
+        state.rulesetId === 'sprite-prototype-v2' || state.rulesetId === 'sprite-prototype-v3'
+          ? combat.chooseTacticalCombatCommand(state)
+          : combat.chooseAiCommand(state);
+      return { ...chosen, ...base };
+    }
     case 'move':
       return { ...base, type: 'move', to: combat.hex(action.intent.to.q, action.intent.to.r) };
+    case 'prepare-threat':
+    case 'retarget-threat':
     case 'attack':
-      return { ...base, type: 'attack', targetId: combat.unitId(action.intent.targetId) };
+      return { ...base, type: action.intent.type, targetId: combat.unitId(action.intent.targetId) };
     case 'defend':
       return { ...base, type: 'defend' };
     case 'wait':
       return { ...base, type: 'wait' };
+    case 'flee':
+    case 'surrender':
+    case 'execute-threat':
     case 'retreat':
-      return { ...base, type: 'retreat' };
+      return { ...base, type: action.intent.type };
   }
 }
 
@@ -105,11 +157,15 @@ function actionBody(action: CombatLabAction): string {
     action.activationId,
     action.actorId,
     intent.type,
-    intent.type === 'move'
-      ? [intent.to.q, intent.to.r]
-      : intent.type === 'attack'
-        ? intent.targetId
-        : null,
+    intent.type === 'use-skill'
+      ? [intent.skillId, intent.targetId ?? null]
+      : intent.type === 'move'
+        ? [intent.to.q, intent.to.r]
+        : ['attack', 'prepare-threat', 'retarget-threat'].includes(intent.type)
+          ? 'targetId' in intent
+            ? intent.targetId
+            : null
+          : null,
   ]);
 }
 
@@ -132,6 +188,46 @@ export function prepareTransition(session: CombatLabSession, command: combat.Com
       replayBytes: session.replayBytes + bytes,
     },
   } as const;
+}
+
+/** Advance only an admitted sprite battle. Reads and historical retries never drive AI. */
+function advanceCombatLabOpponent(session: CombatLabSession): CombatLabSession {
+  if (!combat.isSpritePrototypeRuleset(session.state.rulesetId)) return session;
+  let next = session;
+  // A fully panicked controlled side can offer no manual decision for several
+  // rounds. Use the existing whole-battle bound, not an arbitrary 128-command
+  // continuation which rejected lawful forced escapes/round-limit outcomes.
+  const budget =
+    combat.combatRules(session.state.rulesetId).limits.maximumCommands - session.commands.length;
+  for (let count = 0; count < budget; count += 1) {
+    if (next.state.status !== 'active' || next.state.activation === null) return next;
+    const actor = next.state.units.find((unit) => unit.id === next.state.activation?.unitId);
+    combat.invariant(actor !== undefined, 'Opponent activation requires an actor');
+    const playerTurn = actor.sideId === next.controlledSideId;
+    if (
+      playerTurn &&
+      next.state.activation.remainingActionPoints > 0 &&
+      !combat.isCombatPanicked(next.state, actor)
+    )
+      return next;
+    const command: combat.CombatCommand =
+      combat.choosePanicCombatCommand(next.state) ??
+      (playerTurn
+        ? {
+            type: 'wait',
+            commandId: combat.commandId(`auto:${next.state.activation.id}:${next.state.revision}`),
+            actorId: actor.id,
+            activationId: next.state.activation.id,
+          }
+        : next.state.rulesetId === 'sprite-prototype-v2' ||
+            next.state.rulesetId === 'sprite-prototype-v3'
+          ? combat.chooseTacticalCombatCommand(next.state)
+          : combat.chooseAiCommand(next.state));
+    const prepared = prepareTransition(next, command);
+    combat.invariant(!('code' in prepared), 'Opponent generated an inadmissible command');
+    next = prepared.session;
+  }
+  combat.invariant(false, 'Opponent scheduler exceeded its bounded command budget');
 }
 
 export function decideAction(session: CombatLabSession, action: CombatLabAction) {
@@ -191,9 +287,10 @@ export function decideAction(session: CombatLabSession, action: CombatLabAction)
     session.state.activation.unitId !== action.actorId
   )
     return reject('INVALID_ACTION', 409);
-  const prepared = prepareTransition(session, commandFor(action));
+  const prepared = prepareTransition(session, commandFor(action, session.state));
   if ('code' in prepared)
     return reject(prepared.code, prepared.code === 'LIMIT_REACHED' ? 409 : 400);
+  const completed = advanceCombatLabOpponent(prepared.session);
   return save(
     {
       version: COMBAT_LAB_VERSION,
@@ -201,24 +298,22 @@ export function decideAction(session: CombatLabSession, action: CombatLabAction)
       battleId: action.battleId,
       requestId: action.requestId,
       status: 'accepted',
-      viewRevision: prepared.session.state.revision,
+      viewRevision: completed.state.revision,
     },
     200,
-    prepared.session,
+    completed,
   );
 }
 
-function isCreateBody(value: unknown): value is {
-  version: typeof COMBAT_LAB_VERSION;
-  requestId: string;
-  scenarioId: typeof COMBAT_LAB_SCENARIO;
-} {
+function isCreateBody(value: unknown): value is CombatLabCreate {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) return false;
   const body = value as Record<string, unknown>;
   return (
-    Object.keys(body).length === 3 &&
     body['version'] === COMBAT_LAB_VERSION &&
-    body['scenarioId'] === COMBAT_LAB_SCENARIO &&
+    ((body['scenarioId'] === COMBAT_LAB_SCENARIO && Object.keys(body).length === 3) ||
+      (body['scenarioId'] === SPRITE_COMBAT_LAB_SCENARIO &&
+        ((Object.keys(body).length === 3 && !Object.hasOwn(body, 'battle')) ||
+          (Object.keys(body).length === 4 && isCustomBattle(body['battle']))))) &&
     typeof body['requestId'] === 'string' &&
     body['requestId'].length > 0 &&
     body['requestId'].length <= 128
@@ -249,16 +344,36 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
     sessions.clear();
   });
 
-  app.post('/dev/combat-lab', { bodyLimit: MAX_BODY_BYTES }, async (request, reply) => {
+  app.get('/dev/combat-lab/catalog', async (request, reply) => {
     if (!guard(request)) return reply.code(403).send({ code: 'FORBIDDEN_LOCAL_ORIGIN' });
-    if (!isCreateBody(request.body)) return reply.code(400).send({ code: 'INVALID_REQUEST' });
+    return combatLabCatalog();
+  });
+
+  app.post('/dev/combat-lab', { bodyLimit: MAX_CUSTOM_BODY_BYTES }, async (request, reply) => {
+    if (!guard(request)) return reply.code(403).send({ code: 'FORBIDDEN_LOCAL_ORIGIN' });
+    if (
+      record(request.body) &&
+      request.body['scenarioId'] !== SPRITE_COMBAT_LAB_SCENARIO &&
+      Buffer.byteLength(JSON.stringify(request.body)) > MAX_BODY_BYTES
+    )
+      return reply.code(413).send({ code: 'INVALID_REQUEST' });
+    if (!isCreateBody(request.body))
+      return reply.code(400).send({
+        code: 'INVALID_REQUEST',
+        message:
+          'Проверьте состав, параметры карты и проход между стартовыми клетками всех бойцов.',
+      });
     if (sessions.size >= MAX_SESSIONS) return reply.code(409).send({ code: 'LIMIT_REACHED' });
 
     const sessionId = randomUUID();
-    const fixture = createCombatLabFixture(sessionId);
+    const fixture =
+      request.body.scenarioId === SPRITE_COMBAT_LAB_SCENARIO
+        ? createCustomBattleFixture(sessionId, request.body.battle ?? defaultSpriteBattle())
+        : createCombatLabFixture(sessionId);
     const transition = fixture.start();
     const originalSetup = fixture.originalSetup();
-    const session: CombatLabSession = {
+    const initialSession: CombatLabSession = {
+      ...('battle' in fixture ? { battle: fixture.battle } : {}),
       capability: randomBytes(32),
       originalSetup,
       controlledSideId: fixture.controlledSideId,
@@ -270,12 +385,19 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
       ),
       decisions: new Map(),
     };
+    const session = advanceCombatLabOpponent(initialSession);
     sessions.set(sessionId, session);
     reply.header(CAPABILITY_HEADER, session.capability.toString('hex'));
     return reply
       .code(201)
       .send(
-        projectCombatLabView(sessionId, session.controlledSideId, session.state, session.journal),
+        projectCombatLabView(
+          sessionId,
+          session.controlledSideId,
+          session.state,
+          session.journal,
+          session.battle,
+        ),
       );
   });
 
@@ -295,6 +417,7 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
         session.controlledSideId,
         session.state,
         session.journal,
+        session.battle,
       );
     },
   );
@@ -317,6 +440,16 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
       const decided = decideAction(session, action);
       if (decided.session !== session) sessions.set(action.sessionId, decided.session);
       return reply.code(decided.status).send(decided.acknowledgement);
+    },
+  );
+
+  app.get<{ Params: { sessionId: string } }>(
+    '/dev/combat-lab/:sessionId/replay',
+    async (request, reply) => {
+      if (!guard(request)) return reply.code(403).send({ code: 'FORBIDDEN_LOCAL_ORIGIN' });
+      const session = readSession(request);
+      if (session === undefined) return reply.code(404).send({ code: 'NOT_FOUND' });
+      return { schemaVersion: 1, setup: session.originalSetup, commands: session.commands };
     },
   );
 

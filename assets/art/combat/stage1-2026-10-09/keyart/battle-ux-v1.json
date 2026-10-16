@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-09",
+  "status": "stage-1 proposal; visual acceptance pending",
+  "asset": "assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v1.png",
+  "tool": "image_gen built-in; underlying model identifier not exposed",
+  "prompt": "Use case: ui-mockup.\nAsset type: high-fidelity battle screen concept for an original grounded dark-fantasy mercenary tactics game, landscape 16:10 desktop canvas.\nInput images: Image 1 unit-c-ink.png is the locked adult human anatomy, irregular expressive black ink contour and flat earthy wash STYLE reference. Image 2 staraya-melnitsa.png is the locked ruined watermill architecture, material and projection reference. Create a NEW overall screen using these references, not an edit of either.\nPrimary request: a beautiful, readable playable-looking tactical battle screenshot, six rugged adult full-body mercenary fighters facing three ordinary gray-brown wolves in the ruined mill yard. Original design, no franchise copying.\nScene/backdrop: Staraya Melnitsa ruined medieval watermill on left and upper outer battlefield border, visibly broken waterwheel beside stream, partly collapsed shingle roof and snapped rafters, weathered rubble stone and timber. Closed cellar hatch visible near edge of yard. Damp muddy yard with ruts and shallow puddles. Late autumn dry tawny grasses and sparse bare branches. The buildings and water are blocked outer geometry. A narrow passage around broken fence and a wider alternate path are both readable. Leave a large accessible central battlefield, not a cramped diorama. \nSubject: six distinct credible fighters in quilted garments, worn mail, practical leather and wool, a shield-and-sword man selected in lower-middle left, spear fighter, axe fighter, sword fighter, archer, crossbowman. Three ordinary wolves in right-middle field. Selected fighter apparent height about 80-100 pixels on a 1600x1000 screen. Other units similar consistent scale, separate full-body readable silhouettes, grounded feet with natural shadow contact. No character fills the screen.\nStyle/medium: hand-drawn irregular ink contours, broad dark shadow masses, restrained flat watercolor/ink wash, strong credible weathered stone and timber materials, the same serious adult style as both references. Full-height human anatomy, no bobbleheads, no glossy 3D.\nComposition/framing: fixed elevated three-quarter camera, one coherent projected hex grid and shared ground axes across field, units, mill and fences. Central battlefield about 75 percent of canvas. Full landscape screen edge-to-edge.\nInterface: elegant restrained soot-black and worn dark metal desktop battle HUD, thin ochre details, crisp high-contrast pictographic buttons and compact Russian text. A narrow top initiative strip with nine small portraits, subtle active outline. Small top left place label exactly \"СТАРАЯ МЕЛЬНИЦА\", top right small label \"РАУНД 1\". Compact bottom actor/action row with selected fighter portrait, three simple numeric resources and six clean action icons. Bottom right single clear button exactly \"КОНЕЦ ХОДА\". Narrow right preview card with wolf portrait and two compact rows, no paragraph. Preserve sight of the full battlefield and no giant side panel.\nGrid/intent: faint thin slate hexagonal tile outlines, exactly one consistent perspective across central yard, NO overlapping grids. Selected hex and a short 3-hex movement path muted ochre. A short rust-red dashed wolf approach arrow, visually separated from selected path. These are proposal graphic overlays, not magical effects.\nLighting/mood: cold overcast late autumn dusk but clear daytime-readable units and terrain; consistent gentle upper-left illumination and grounded shadow direction. Palette slate, soot, umber, worn ochre, restrained rusty red. Keep active path visible without neon.\nConstraints: ruined abandoned mill identity, broken roof and wheel, no pristine working mill. No supernatural species, gods, magic, runes, invented symbols, logos, signatures, watermarks or game franchise names. No rounded cute anatomy, chibi, toy castle, bright lawns, smooth pristine masonry, shiny plastic, glossy 3D. Do not mirror baked light direction. Do not add decorative illegible paragraphs. Original professional concept, not a claim that UI works.",
+  "references": [
+    {
+      "path": "assets/art/m1/style/unit-c-ink.png",
+      "role": "inspected adult anatomy and ink/flat-wash style reference"
+    },
+    {
+      "path": "assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+      "role": "inspected ruined mill identity, materials and projection reference"
+    },
+    {
+      "path": "assets/art/m1/places/staraya-melnitsa.json",
+      "role": "read source prompt and place provenance; not image input"
+    }
+  ],
+  "limitations": [
+    "Raster concept only: UI, hex positions, route lengths and resource values are not executable mechanics.",
+    "Generated resource numbers and actor name are illustrative, not approved lore or balance.",
+    "Unit scale exceeds requested 80-100px apparent height; independent critic must assess readability and projection.",
+    "No animation, alpha cutout, runtime integration or player acceptance proven."
+  ]
+}

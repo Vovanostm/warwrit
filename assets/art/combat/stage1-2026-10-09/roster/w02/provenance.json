@@ -1,0 +1,58 @@
+{
+  "id": "W02",
+  "created_at": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local, generated; independent visual acceptance pending",
+  "tool": "built-in image_gen.imagegen",
+  "calls": 1,
+  "correction_calls": 0,
+  "prompt": "Use case: stylized-concept.\nAsset type: one static transparent full-body Warwrit W02 combat sprite, axe and shield warrior.\nPrimary request: Generate one original grounded adult human warrior with a practical one-handed axe in his right hand and a worn wooden shield on his left arm. Match the approved fighter C anatomy, proportions, irregular ink and wash rendering and subdued materials. No scene.\nInput images: Image 1 unit-c-ink.png is the primary approved reference for credible adult anatomy, practical armor, shield size, ink linework and flat wash. Image 2 staraya-melnitsa.png is the reference for weathered material character, restrained soot/umber/slate/ochre palette and upper-left light only; do not include its architecture or terrain. Image 3 battle-ux-v3.png is the approved fixed elevated three-quarter battlefield camera and compatible fighter scale/readability; do not include its scene or UI.\nSubject: a stocky but naturally proportioned adult warrior, sober focused face, wearing weathered dark quilted padded coat with a plain belt, worn trousers and leather boots. Hold an ordinary compact single-bladed iron axe in one right hand with a wooden haft approximately forearm-length to short sword-grip-plus-blade length, clearly distinguishable axe head, functional hand-to-haft grip. No giant fantasy axe, double blade, spikes or oversized shaft. Axe held slightly out from body so entire weapon is readable. Shield is a plain worn wood round-to-oval shield with a dull iron boss, timber grain and scuffed rim, no symbols. Keep both arms and two legs anatomically sound.\nComposition/framing: exactly one full figure, including head, both boots, complete axe and complete shield, generous transparent margins on all sides. Fixed elevated three-quarter view matching the references, facing screen upper-right, head, chest, stance and equipment consistently facing that direction. Feet grounded at a shared implied plane. Readable silhouette when human is displayed at 80 px height. No sprite sheet, no multiple views.\nStyle/medium: serious grounded dark fantasy illustration, irregular dark ink contours, internal hatching, matte flat washes, strong irregular shadow masses, credible anatomy and construction. Muted slate, soot, umber and ochre, restrained rust accents; weathered iron, cloth, leather and wood. Match image 1 closely, do not turn it into glossy 3D, anime or cartoon.\nLighting: upper-left directional light, consistent with all references; preserve baked direction.\nBackground: genuinely transparent alpha, no backdrop.\nAvoid: ground tile, pedestal, terrain patch, painted cast/contact shadow beneath feet, extra characters, text, border, heraldry, invented faction symbols, magic, glow, cute rounded shapes, giant shoulders, bright colors, clean glossy armor, cropped subject or cropped weapon. No franchise copying.\nDeliver one PNG cutout with real transparency.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+  ],
+  "transparent_background": true,
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12152-cf4b-7293-95c7-7c44bc80d81d/exec-b2d30f24-a0a7-4023-9310-dcbc42004156.png",
+  "saved_sprite_path": "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/roster/w02/sprite.png",
+  "source_contracts": [
+    "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+    "docs/wiki/battlefield-test-maps.md W02 row"
+  ],
+  "observations": [
+    "Complete adult human figure with two visible boots, sober face, plain quilted coat and belt.",
+    "Compact single-bladed one-handed axe with visible functional right-hand grip; left-arm worn round-to-oval wooden shield with plain iron boss.",
+    "Upper-right three-quarter facing, upper-left lighting; muted soot/umber/slate/ochre ink/wash closely follows inspected fighter C reference.",
+    "No text, symbols, terrain, tile, pedestal or painted grounding shadow visible."
+  ],
+  "checks": {
+    "dimensions": {
+      "width": 1254,
+      "height": 1254
+    },
+    "png_color_type": 6,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 1074053,
+    "total_pixels": 1572516,
+    "all_four_corners_transparent": true,
+    "nonzero_alpha_bbox_inclusive": [0, 15, 1239, 1253],
+    "alpha_8_bbox_inclusive": [260, 28, 1000, 1226],
+    "alpha_32_bbox_inclusive": [262, 29, 998, 1225],
+    "alpha_128_bbox_inclusive": [263, 29, 997, 1224],
+    "edge_alpha_max": 1,
+    "visual_inspection": "PASS for complete figure/equipment, no observed anatomy/cropping/opaque-background failure",
+    "inspection_methods": [
+      "view_image returned source",
+      "sips pixelWidth/pixelHeight/hasAlpha",
+      "Python standard-library PNG alpha decode"
+    ],
+    "failed_optional_check": "Pillow-based additional alpha inspection NOT_RUN: PIL unavailable; standard-library PNG decode completed instead"
+  },
+  "limitations": [
+    "Faint alpha=1 pixels reach canvas edges; substantive figure at alpha>=8 retains margins.",
+    "80 px runtime readability NOT_MEASURED; no integrated gameplay/critic acceptance.",
+    "Static sprite only; no animation or generated shadow. No image edits or transformations applied.",
+    "No shared documentation edits or commit; parent owns changelog/checkpoint closeout."
+  ]
+}

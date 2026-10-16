@@ -16,6 +16,8 @@ import {
 
 import { acquireCanvasEngine, releaseCanvasEngine } from './canvas-engine.js';
 import { CAMERA_ELEVATION } from './three-quarter-camera.js';
+import { HEX_RADIUS, hexToWorld, worldToHex } from './hex-projection.js';
+import { createHexDisc } from './hex-mesh.js';
 import { BATTLE_ART, unitSprite, type UnitRole } from './art.js';
 import {
   diffRenderUnits,
@@ -53,9 +55,7 @@ interface RenderedUnit {
   unit: EncounterRenderUnit;
 }
 
-const SQRT3 = Math.sqrt(3);
 const SPRITE_SIZE = 1.45;
-const HEX_RADIUS = 1 / SQRT3;
 const MIN_ZOOM = 1.5;
 const MAX_ZOOM = 10;
 
@@ -67,26 +67,6 @@ const RING_COLORS: Readonly<Record<UnitRole | 'selected' | 'target', Color3>> = 
   target: new Color3(1, 0.34, 0.22),
 };
 
-function hexToWorld(q: number, r: number): { readonly x: number; readonly z: number } {
-  return { x: q + r * 0.5, z: (r * SQRT3) / 2 };
-}
-
-/** Nearest axial hex for a ground point: the inverse of `hexToWorld` with cube rounding. */
-function worldToHex(x: number, z: number): { readonly q: number; readonly r: number } {
-  const r = (2 * z) / SQRT3;
-  const q = x - r * 0.5;
-  const s = -q - r;
-  let rq = Math.round(q);
-  let rr = Math.round(r);
-  const rs = Math.round(s);
-  const dq = Math.abs(rq - q);
-  const dr = Math.abs(rr - r);
-  const ds = Math.abs(rs - s);
-  if (dq > dr && dq > ds) rq = -rr - rs;
-  else if (dr > ds) rr = -rq - rs;
-  return { q: rq + 0, r: rr + 0 };
-}
-
 function hexOutline(cx: number, cz: number): Vector3[] {
   return Array.from({ length: 7 }, (_, corner) => {
     const angle = (Math.PI / 3) * corner + Math.PI / 6;
@@ -95,9 +75,7 @@ function hexOutline(cx: number, cz: number): Vector3[] {
 }
 
 function hexDisc(name: string, scale: number, scene: Scene): Mesh {
-  const disc = MeshBuilder.CreateDisc(name, { radius: HEX_RADIUS * scale, tessellation: 6 }, scene);
-  disc.rotation.x = Math.PI / 2;
-  disc.rotation.y = Math.PI / 6;
+  const disc = createHexDisc(name, HEX_RADIUS * scale, scene);
   disc.isPickable = false;
   return disc;
 }

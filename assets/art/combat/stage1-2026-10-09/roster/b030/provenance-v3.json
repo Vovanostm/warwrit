@@ -1,0 +1,76 @@
+{
+  "id": "B030",
+  "variant": "v3",
+  "date": "2026-10-09",
+  "branch": "codex/sprite-combat-stage1",
+  "status": "local; independent absolute visual re-review pending",
+  "reason": "Second absolute critic pass kept silhouette/pose=1 at 80px. Technique change required rather than further slit tuning of same mound.",
+  "technique_change": "Fresh reference-based generation without old B030 image as input. Replace horizontal mound with upright asymmetric folded bellows-like sack leaning upper-right, compressed middle and enlarged forward breathing membrane; keep one continuous body and source-card biology.",
+  "subject_source": "docs/wiki/bestiary/creatures/b030.md",
+  "tool": "built-in image_gen.imagegen",
+  "calls_this_revision": 1,
+  "total_calls_for_b030": 3,
+  "generation_mode": "fresh reference-based generation, no old mound edit target",
+  "transparent_background": true,
+  "prompt": "Use case: stylized-concept.\nAsset: fresh Warwrit B030 Shore mourner static full-body combat sprite on actual transparent alpha.\nInput images roles: 1 unit-c-ink.png is the hand-ink contour/hatching/flat wash standard only, not human anatomy. 2 staraya-melnitsa.png supplies muted material palette and upper-left light only, no scenery. 3 battle-ux-v3.png supplies fixed elevated 3/4 battlefield view. 4 night-mill-beast-concept-v2.png supplies dark creature tonal weight, irregular ink and coherent shadow masses only, not furry anatomy/eyes/claws.\nTECHNIQUE CHANGE: design a NEW upright asymmetrical BELLOWS-LIKE LIVING SACK silhouette. Do not make a horizontal slug heap, rock, mound or draped boulder. Its body is taller than wide, about 1.6:1 visible height to body width. One broad grounded basal sack narrows through a compressed midsection, then bends forward toward SCREEN UPPER-RIGHT in a taut S-curve; the upper front membrane leads distinctly ahead of the central lower body. Strong asymmetric contour expresses an active forward-poised contact threat, with clear open transparent space on the right below its inclined leading section. This is ONE continuous sack body, not a torso/neck/head and not a person wearing a sack. Upper section has no separate head shape. Base is organic folded hide grounded at lowest edge, without paws/feet/limbs.\nExact B030 card biology only: sack-like shoreline creature with thin breathing slits producing a wordless crying-like sound; thick slime traces; contact-only seizure; no language or imitation of missing human. Species detail remains authored proposal, no new powers.\nMake the FRONT read at actual 80px occupied height: put 4-5 elongated THIN yet strongly bold DARK BREATHING SLITS across the upper-forward membrane. The slits are narrow parallel tapered black incisions following the stretched curved membrane, visible from the elevated camera, with pale muted hide bands between them. They are breathing organs, not eyes, teeth, a gaping monster mouth or a face. Leading outer folded membrane is visibly tense and slightly lifted toward upper-right, remains continuously attached to the body, with no tongue, arm, tentacle or appendage. Broad accordion-like hide folds down its compressed middle suggest a flexing living bellows and distinguish it from stone. Keep breathing bands and contour simple and bold enough to survive downscaling.\nSurface/material: creased and weathered organic hide with a restrained dull damp film; matte muted slate/soot/umber, no bright polished slime beads or glossy specular streaks. Irregular dark ink outlines, internal hatching, restrained flat washes, strong dark shadow masses, credible weight; serious grounded dark fantasy matching references, no cute creature.\nComposition: one centered FULL creature with generous alpha margins, fixed elevated 3/4 looking down at upper surfaces, forward side facing SCREEN UPPER-RIGHT, upper-left light. Keep tall posed silhouette, all membrane folds and basal contact edge completely in frame.\nAbsolute anatomy exclusions: no humanoid head/face/eyes/arms/hands/legs, no animal face, teeth, claws, tentacles, wings, horns, tail, weapon, clothes, symbols, ghost, glow, magic, sound icons or text. No ground tile, terrain, vegetation, puddle, scenery, pedestal, painted contact shadow, border or extra subjects. True transparent background.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png"
+  ],
+  "returned_source_path": "/Users/vovanostm/.codex/generated_images/01a12153-b0c1-73c0-9a1f-e7fc03785ef2/exec-a4488bba-bc58-48fc-887b-f41f0f1bfcdc.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/b030/sprite-v3.png",
+  "dimensions": {
+    "width": 1222,
+    "height": 1287
+  },
+  "png": {
+    "bit_depth": 8,
+    "color_type": 6,
+    "mode": "RGBA",
+    "interlace": 0
+  },
+  "alpha": {
+    "zero_pixels": 876799,
+    "opaque_pixels": 405,
+    "partial_pixels": 695510,
+    "nonzero_bbox_inclusive": [0, 17, 1207, 1286],
+    "bbox_min_alpha_16_inclusive": [38, 49, 1188, 1240],
+    "bbox_min_alpha_128_inclusive": [38, 50, 1188, 1240],
+    "dominant_subject_alpha": [252, 253]
+  },
+  "visible_body_rendering": {
+    "min_alpha_threshold": 16,
+    "bbox_xywh": [38, 49, 1151, 1192],
+    "bbox_exclusive": [38, 49, 1189, 1241],
+    "visible_height_px": 1192,
+    "scale_for_80px_visible_height": 0.06711409395973154,
+    "full_canvas_at_80px_visible_height": {
+      "width": 82.01342281879195,
+      "height": 86.3758389261745
+    }
+  },
+  "observations": [
+    "Fresh silhouette is upright and forward-leaning with broad basal contact, compressed folded middle, upper-forward continuous membrane.",
+    "Several black elongated breathing fissures separated by pale muted hide bands are prominent on upper front; no teeth or single gaping monster mouth.",
+    "No humanoid face, eyes, limbs, claws, wings, horns, tail, equipment, symbols, glow or magic.",
+    "Irregular ink, strong hatching and shadow masses, muted weathered hide and dull damp streaks; bright bead gloss reduced compared with earlier variants.",
+    "Whole visible body is within frame; no terrain, pedestal, painted contact shadow or text."
+  ],
+  "checks": [
+    "Python standard-library PNG header/zlib scanline inspection confirms 1222x1287 8-bit RGBA and actual transparent pixels.",
+    "Explicit visible-body alpha>=16 bbox [38,49,1188,1240] inclusive gives visible height 1192px for accurate 80px rendering.",
+    "Full-resolution output inspected for new silhouette, fissures, continuous body, anatomy exclusions and cropping.",
+    "JSON parsed/read back."
+  ],
+  "limitations": [
+    "Full silhouette height-to-width is approximately 1.04 due to strong forward lean, below prompt's suggested 1.6; upright internal axis and rightward poised shape are nonetheless visibly different from mound variants.",
+    "Upper membrane is a substantial pouch on the continuous sack; parent critic must assess that it reads as breathing body rather than a separate head.",
+    "Actual 80px and absolute twenty-sprite critic acceptance NOT_RUN by this worker; this is a candidate, not ACCEPT.",
+    "Faint alpha specks reach image edges; body opacity mainly 252-253. Original generated alpha preserved without cleanup.",
+    "Wordless crying and contact-only capture remain source biology and visual interpretation, not implemented audio or game behavior."
+  ],
+  "preserved": "Earlier B030 sprite/provenance variants and all W08 files untouched.",
+  "handoff_documentation": "Parent owns shared documentation/changelog; worker only wrote B030 sprite-v3.png and provenance-v3.json."
+}

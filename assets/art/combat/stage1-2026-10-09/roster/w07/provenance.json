@@ -1,0 +1,44 @@
+{
+  "asset_id": "W07",
+  "subject": "Hammer warrior, heavy equipment; not commander",
+  "status": "local static candidate; independent visual acceptance pending",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: stylized-concept.\nAsset type: one static full-body transparent Warwrit combat sprite W07, hammer warrior in heavy equipment.\nReference roles: Image 1 unit-c-ink.png is the approved adult anatomy, irregular ink contour/hatching, flat washes, grounded stance and modest realistic equipment reference. Image 2 staraya-melnitsa.png is only the approved weathered materials, muted palette, dark-fantasy world reference; do not include scenery. Image 3 battle-ux-v3.png is the fixed elevated three-quarter battlefield camera and scale reference; do not include UI or other people.\nCreate a single adult human hammer warrior, full body, viewed from elevated three-quarter camera and facing screen upper-right. Credible ordinary heavy medieval equipment: worn plain iron helmet, battered matte breastplate over dark padded garment and mail, practical iron shoulder/forearm protection, belt, dark cloth trousers and worn leather boots. No commander, no heraldry, no plume, no badge, no cloak display, no invented symbols.\nWeapon: exactly one compact period-plausible war hammer, a wooden haft about 60 cm long with a small blunt square iron striking face and a short opposing peen, the whole iron head modestly fist-sized. Hold it in a readable ready stance in front of the body, with one clearly attached adult hand gripping the haft firmly. Other arm balances stance. NO shield, NO sword, NO giant fantasy maul, NO block-sized sledgehammer. The small head and slim haft must read as a practical armor-crushing hammer, not an axe.\nNatural adult proportions, weight-bearing boots apart, coherent hands, legs and equipment. Irregular dark ink contours, internal hatching, restrained flat watercolor wash, strong dark shadow masses. Matte weathered iron, leather and cloth, muted soot/slate/umber/ochre with restrained rust accents. Upper-left light; no glossy 3D rendering. Match the serious grounded drawing of Image 1, with heavier armor.\nEntire helmet, boots, hands and hammer fully inside the frame with generous clear margins. Center the complete figure. True transparent alpha everywhere outside the character and weapon. No background color, no terrain patch, no ground tile, no pedestal, no painted contact shadow, no drop shadow, no text, no border, no watermark, no glow, no magic. The silhouette must remain clear when displayed at 80 px human height on a 1440x900 battlefield. One figure only, one still pose, not a sprite sheet.",
+  "referenced_image_paths": [
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/style/unit-c-ink.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/m1/places/settlements-v2/staraya-melnitsa.png",
+    "/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/keyart/battle-ux-v3.png"
+  ],
+  "reference_roles": [
+    "Approved adult anatomy, ink and flat wash rendering, realistic equipment proportions",
+    "Weathered materials and muted ruined-mill palette only",
+    "Fixed elevated three-quarter battlefield projection and scale only"
+  ],
+  "source_path": "/Users/vovanostm/.codex/generated_images/01a12153-8c96-7a01-a1e2-d00d974b47df/exec-f176ae95-d2d3-41c9-97ca-9ec282f06410.png",
+  "saved_path": "assets/art/combat/stage1-2026-10-09/roster/w07/sprite.png",
+  "generation_calls": 1,
+  "correction_calls": 0,
+  "observed": {
+    "dimensions": [1254, 1254],
+    "mode": "RGBA",
+    "alpha_extrema": [0, 255],
+    "transparent_pixels": 1171833,
+    "opaque_pixels": 558,
+    "partial_alpha_pixels": 400125,
+    "alpha_bbox": [23, 27, 1248, 1241],
+    "corner_alpha": [0, 0, 0, 0],
+    "visual": "Complete adult heavy-armored warrior facing screen upper-right, worn plain helmet/breastplate/mail/greaves and boots. One compact hammer with wooden haft held in a coherent right-hand grip across front. Free left hand, two grounded feet, no shield, heraldry, cape, ground patch, text or painted contact shadow. Upper-left lit iron, muted soot/umber cloth and irregular ink."
+  },
+  "checks": {
+    "visual_inspection": "PASS: inspected generated output and saved file; complete figure and weapon with visible margins",
+    "png_structure_and_alpha": "PASS: stdlib PNG decode; 8-bit RGBA with genuine nonconstant alpha and transparent corners",
+    "pillow_inspection": "NOT_RUN: available python3 has no PIL; used standard-library PNG decoding instead",
+    "runtime_80px_readability": "NOT_MEASURED",
+    "independent_visual_critique": "NOT_RUN: parent owns integrated critique"
+  },
+  "limitations": [
+    "No animation, integration, runtime journey or independent visual acceptance performed.",
+    "Alpha includes many partially transparent pixels and low-alpha pixels close to canvas edge; alpha was preserved exactly, without editing."
+  ]
+}
