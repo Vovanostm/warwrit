@@ -106,6 +106,24 @@ requests.
   Owning wiki records rejected image/reproduction and scoped outline proof;
   index no longer calls the working sprite sandbox unimplemented.
 
+### Sprite sandbox merged and exercised from main
+
+- 2026-10-16, delivery receipt on `main` for `codex/combat-cycle-20261016`,
+  merged through [PR157](https://github.com/Vovanostm/warwrit/pull/157):
+  reviewed2c1ac2a -> merge2072a64; whole-tree diff empty. Exact-head
+  CI38915129341 SUCCESS:796unit/47skip,10kstress/20determinism/100replay,
+  14realPostgreSQL,coverage and strict232-file audit PASS. No bypass on final
+  source commit or merge. Initial visual REJECT corrected; first repeat timed
+  out without verdict, fresh independent full static packet ACCEPT(all7criteria
+  > =2, motionN/A, criticowninputNOT_RUN).
+- Clean main stand5330/API3030: editor/default/start, actual right-click1AP
+  movement(AP4->3), guard, autobattleR9/rev161 victory5survivors, restart and
+  return-to-editor/recreate PASS. New12active/R1/rev4/AP4 left playable.
+  Primary WIP preserved; no deployment/migration/campaign XP. Wiki/index/current
+  plan reconciled with actual merge and measured limits; doc-only closeout
+  does not change reviewed game code. Full gate not rerun for documentation.
+  [Owning receipt](docs/wiki/battlefield-test-maps.md#поставка-в-main-и-проверка-после-слияния--2026-10-16).
+
 ### Battle camera menu helper
 
 - 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner-authorized

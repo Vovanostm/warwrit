@@ -1,29 +1,31 @@
 # Warwrit current delivery plan
 
-**Combat improvement cycle — 2026-10-16, ACTIVE / INTEGRATION WORKTREE:**
-Owner authorizes isolated worktrees, subagents, reviewed merges to main and
-postmerge play checks; deployment/paid services excluded. Root integration:
-`codex/combat-cycle-20261016` in managed combat-cycle-20261016/warwrit,
-based on main86c1da0. Primary b44f5c1/staged+unstaged prototype preserved
-read-only; SupplyShop/launch and separate live-map review WIP excluded. V1 encounter projection explicitly rejects
-sprite-only surrender status; the historical wire contract stays unchanged.
-First observable outcome: playable sprite6v6/editor at5330/API3030.
-Integrated local check:795 unit PASS/47SKIPPED, actual main-based audit PASS;
-web/server types, lint/architecture/pattern/content PASS. Initial format/lint/
-cycle failures corrected without gate changes. Intermediate snapshot/picks
-had precommit NOT_RUN under work-package exception; later blocked worker
-patches integrated without bypass. Final candidate uses ordinary passing hook.
-Controller/HUD/skills/core/scene independent source review complete; denied
-sessionStorage getter P2 fixed/read back. Gameplay critic completed manual+
-auto R8 victory,6survivors/158commands; forecasts agreed in inspected attacks.
-One battle is not strategy/balance acceptance. DraftPR157 at87c5c6a clean
-CI38909754401 PASS: bootstrap/stress/disposablePostgreSQL/coverage/audit.
-Visual critic REJECT: event overlaps prepared-threat badge in dense R3.
-Correction reserves current threat labels before events;8focused/types/lint/
-format PASS, freshcoverage796PASS/47SKIPPED; source readback no findings.
-Same-critic full absolute recheck/newheadCI, merge and main journey pending.
-Root owns shared docs; all isolated source writers frozen/released. Primary
-WIP retained. Canonical learning/provisional-perk boundaries remain unchanged.
+**Combat improvement cycle — 2026-10-16, MERGED / MAIN JOURNEY PASS:**
+Owner-authorized worktree/subagent cycle merged through [PR157](https://github.com/Vovanostm/warwrit/pull/157).
+Reviewed head `2c1ac2a`, merge/main `2072a6468e4552cb7f7ae685c09e9ba98efe9a96`;
+ordinary head-to-merge tree diff empty. Clean main checkout:
+`~/.codex/worktrees/battle-camera-pan/warwrit`; playable web5330/API3030.
+Original primary `codex/sprite-combat-stage1`/b44f5c1 and WIP preserved.
+Static sprite6v6, fullscreen HUD, heights/mud/fire, map/battle editors,
+individual technique ranks and manual/autobattle are merged. No campaign XP,
+new perk tree, deployment or paid provisioning. Historical V1 replay/wire
+boundaries retained; sprite surrender fails closed in production V1 projection.
+[Exact-head CI38915129341](https://github.com/Vovanostm/warwrit/actions/runs/38915129341)
+SUCCESS:796unitPASS/47SKIPPED,10kcombatstress,20determinism/100replay,
+14disposablePostgreSQL checks, coverage and strict232-file audit PASS.
+Independent source reviews complete. First visual REJECT exposed event/badge
+collision; fixed and regression checked. First repeat exceeded timebox without
+verdict; fresh independent full static packet ACCEPT(all7criteria2–3 at game/
+close; motionN/A, criticowninputNOT_RUN). Current main journey: editor reset/
+start12units; actualPCMmoved1hex/AP4->3; defend applied; autobattleR9/rev161
+victory5survivors; restart/editor/recreate PASS. New R1/rev4/12active/AP4 left
+ready. Startup restore404 from disposed prior session was shown as recoverable;
+no later console error appeared during the measured main journey.
+[Owning result](../wiki/battlefield-test-maps.md#поставка-в-main-и-проверка-после-слияния--2026-10-16).
+Code frozen; root owns shared documentation closeout. Coordinated live-queue/
+compact-HUD work is a separate follow-up, not included inPR157. Comparative
+strategy, balance/enjoyment and deviceFPS remain NOT_MEASURED. FullM1 remains
+outside this finite sandbox delivery.
 
 **Battle camera helper — 2026-10-13, MODULE MERGED / SPRITE INTEGRATION LOCAL:**
 Live GitHub PR156 MERGED/head54f7da890/merge86c1da055; finalCI38407349732
