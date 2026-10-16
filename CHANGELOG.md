@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Combat readability and reusable terrain
+
+- 2026-10-16, branch `codex/combat-readability`, local activation: owner rejects
+  current softness/terrain ambiguity/cramped hexes/cropped portraits and asks
+  for health/armor/morale bars below queue icons and field figures, reusable
+  map rendering, stronger research and independent critique. Existing owning
+  wiki amended; primary WIP preserved, HUD writer isolated. Implementation and
+  current acceptance NOT_RUN; previous scoped ACCEPT does not accept this cycle.
+
 ### Live initiative queue and reduced combat HUD
 
 - 2026-10-16, branch `codex/live-combat-ux`, merged:

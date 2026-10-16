@@ -1,5 +1,22 @@
 # Warwrit current delivery plan
 
+**Combat readability and reusable terrain — 2026-10-16, ACTIVE / OWNER REJECT:**
+Owner rejects current sprite softness, indistinct cell materials, cramped grid
+and clipped/misaligned initiative images despite previous finite acceptance.
+New outcome: larger readable cells, intact sharp figures/portraits, three
+health/armor/morale rows under top icons and battlefield feet; reusable finite
+terrain rendering driven by canonical map cells rather than mill photograph.
+Parent owns codex/combat-readability in combat-live-queue/warwrit basedmain5915ad0,
+renderer/terrain/field bars/docs. Isolated combat-status-hud writer owns upper
+portraits/vital presentation/CSS; two read-only investigators cover sampling
+and primary-source design research. Primary dirty WIP preserved.
+Rules/occupancy/AP/range/replay and Babylon choice unchanged. No new terrain
+mechanics or framework; existing plain/mud/fire/blocked/height only.
+First playable on3036/5336, then all20-profile and generated-map/dense day/night
+journeys, independent strict source+visual rejection loop. Implementation,
+current acceptance, final CI/publication/merge NOT_RUN at activation.
+[Owning requirements](../wiki/battlefield-test-maps.md#читаемость-бойцов-и-единый-рендер-поля--2026-10-16).
+
 **Live initiative and combat UX — 2026-10-16, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized drafts/subagent/PR/review/merge cycle completed through
 [PR158](https://github.com/Vovanostm/warwrit/pull/158), after sprite/outline PR157.
