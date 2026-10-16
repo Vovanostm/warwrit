@@ -9,16 +9,21 @@ import {
 } from '@babylonjs/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { mountThreeQuarterCamera } from './three-quarter-camera.js';
+import { mountThreeQuarterCamera, type GroundBounds } from './three-quarter-camera.js';
 
 const originalResizeObserver = globalThis.ResizeObserver;
 class TestResizeObserver {
+  constructor(readonly callback: ResizeObserverCallback) {
+    TestResizeObserver.latest = this;
+  }
+  static latest: TestResizeObserver;
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
 function cameraFixture(options: {
+  readonly bounds?: GroundBounds;
   readonly onPick?: (hit: unknown) => void;
   readonly onSecondaryPick?: (hit: unknown) => void;
   readonly onStop?: () => void;
@@ -68,6 +73,7 @@ function cameraFixture(options: {
     ...(options.elevation !== undefined ? { elevation: options.elevation } : {}),
     ...(options.azimuth !== undefined ? { azimuth: options.azimuth } : {}),
     ...(options.pickGround ? { pickGround: options.pickGround } : {}),
+    ...(options.bounds ? { bounds: options.bounds } : {}),
     minZoom: 2,
     maxZoom: 14,
     onPick,
@@ -153,6 +159,68 @@ afterEach(() => {
 });
 
 describe('three-quarter camera input options', () => {
+  it.each([0, Math.PI / 4])(
+    'contains the viewport through pan, zoom and resize at azimuth %s',
+    (azimuth) => {
+      const bounds = { minX: -10, maxX: 10, minZ: -8, maxZ: 8 };
+      const fixture = cameraFixture({ bounds, azimuth });
+      vi.spyOn(fixture.engine, 'getDeltaTime').mockReturnValue(50);
+      const assertContained = () => {
+        fixture.scene.render();
+        // Independent oracle: cast the four viewport corners onto the ground.
+        for (const x of [0, fixture.engine.getRenderWidth()]) {
+          for (const y of [0, fixture.engine.getRenderHeight()]) {
+            const ray = fixture.scene.createPickingRay(
+              x,
+              y,
+              Matrix.Identity(),
+              fixture.scene.activeCamera,
+            );
+            const point = ray.origin.add(ray.direction.scale(-ray.origin.y / ray.direction.y));
+            expect(point.x).toBeGreaterThanOrEqual(bounds.minX - 0.0001);
+            expect(point.x).toBeLessThanOrEqual(bounds.maxX + 0.0001);
+            expect(point.z).toBeGreaterThanOrEqual(bounds.minZ - 0.0001);
+            expect(point.z).toBeLessThanOrEqual(bounds.maxZ + 0.0001);
+          }
+        }
+      };
+      try {
+        assertContained();
+        for (const delta of [-240, -240, 240, 240, 240, 240]) {
+          fixture.dispatchWheel(delta, 0, 390, 10);
+          for (let i = 0; i < 50; i++) {
+            fixture.frame();
+            assertContained();
+          }
+        }
+        fixture.dispatchWheel(-240);
+        for (let i = 0; i < 50; i++) fixture.frame();
+        for (const code of ['KeyW', 'KeyS', 'KeyA', 'KeyD']) {
+          fixture.dispatchKey(code);
+          for (let i = 0; i < 100; i++) fixture.frame();
+          fixture.dispatchKey(code, fixture.canvas, 'keyup');
+          assertContained();
+        }
+        for (const [x, y] of [
+          [10000, 10000],
+          [-10000, -10000],
+        ]) {
+          fixture.notifyPointer(PointerEventTypes.POINTERDOWN, 0, 1, 100, 100);
+          fixture.notifyPointer(PointerEventTypes.POINTERMOVE, 0, 1, x!, y!);
+          fixture.notifyPointer(PointerEventTypes.POINTERUP, 0, 0, x!, y!);
+          assertContained();
+        }
+        // Very wide window must override even the configured minimum zoom.
+        vi.spyOn(fixture.engine, 'getRenderWidth').mockReturnValue(4000);
+        TestResizeObserver.latest.callback([], {} as ResizeObserver);
+        assertContained();
+        expect(fixture.scene.activeCamera!.orthoTop).toBeLessThan(2);
+      } finally {
+        fixture.dispose();
+      }
+    },
+  );
+
   it('captures wheel input, eases zoom without an immediate jump and respects its delta magnitude', () => {
     const fixture = cameraFixture({});
     vi.spyOn(fixture.engine, 'getDeltaTime').mockReturnValue(16);

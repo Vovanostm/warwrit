@@ -1084,6 +1084,13 @@ export async function mountSpriteBattleScene(
   };
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
+    // Use the painted plane's projected edges, including its registration offset.
+    bounds: {
+      minX: backgroundX - 1.1 - backgroundWidth / 2,
+      maxX: backgroundX - 1.1 + backgroundWidth / 2,
+      minZ: (backgroundUp - backgroundHeight / 2) / Math.sin(CAMERA_ELEVATION) - 2,
+      maxZ: (backgroundUp + backgroundHeight / 2) / Math.sin(CAMERA_ELEVATION) - 2,
+    },
     minZoom: 2.2,
     maxZoom: 17,
     pick: pickAt,

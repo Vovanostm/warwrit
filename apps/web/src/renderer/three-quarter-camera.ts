@@ -48,6 +48,8 @@ export function mountThreeQuarterCamera(
     readonly azimuth?: number;
     /** Optional actual terrain hit; wheel anchoring must follow raised ground. */
     readonly pickGround?: (x: number, y: number) => { x: number; y: number; z: number } | null;
+    /** Keep the whole viewport inside this ground-plane rectangle, including on resize. */
+    readonly bounds?: GroundBounds;
     readonly minZoom: number;
     readonly maxZoom: number;
     /** Optional alpha-aware map picker; battle picking keeps the default. */
@@ -74,7 +76,45 @@ export function mountThreeQuarterCamera(
   let targetZoom = view.zoom;
   let zoomAnchor: { x: number; z: number; u: number; v: number } | null = null;
 
+  const viewportExtent = () => {
+    const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
+    return {
+      x: aspect * Math.abs(right.x) + Math.abs(forward.x) / Math.sin(elevation),
+      z: aspect * Math.abs(right.z) + Math.abs(forward.z) / Math.sin(elevation),
+    };
+  };
+  const clampZoom = (zoom: number) => {
+    const bounds = options.bounds;
+    const extent = viewportExtent();
+    const maximum = bounds
+      ? Math.min(
+          options.maxZoom,
+          (bounds.maxX - bounds.minX) / (2 * extent.x),
+          (bounds.maxZ - bounds.minZ) / (2 * extent.z),
+        )
+      : options.maxZoom;
+    return Math.min(maximum, Math.max(Math.min(options.minZoom, maximum), zoom));
+  };
   const place = () => {
+    view.zoom = clampZoom(view.zoom);
+    targetZoom = clampZoom(targetZoom);
+    if (options.bounds) {
+      const extent = viewportExtent();
+      const beforeX = view.centerX;
+      const beforeZ = view.centerZ;
+      view.centerX = Math.max(
+        options.bounds.minX + extent.x * view.zoom,
+        Math.min(options.bounds.maxX - extent.x * view.zoom, view.centerX),
+      );
+      view.centerZ = Math.max(
+        options.bounds.minZ + extent.z * view.zoom,
+        Math.min(options.bounds.maxZ - extent.z * view.zoom, view.centerZ),
+      );
+      if (zoomAnchor) {
+        zoomAnchor.x += view.centerX - beforeX;
+        zoomAnchor.z += view.centerZ - beforeZ;
+      }
+    }
     const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
     const halfWidth = view.zoom * aspect;
     const distance = 80;
@@ -89,7 +129,6 @@ export function mountThreeQuarterCamera(
     camera.orthoLeft = -halfWidth;
     camera.orthoRight = halfWidth;
   };
-  const clampZoom = (zoom: number) => Math.min(options.maxZoom, Math.max(options.minZoom, zoom));
 
   const heldKeys = new Set<string>();
   let press: {

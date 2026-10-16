@@ -1,5 +1,15 @@
 # Warwrit current delivery plan
 
+**Battle camera bounds — 2026-10-16, LOCAL / REVIEW PENDING:**
+Owner explicitly authorizes isolated worktree, implementation, review and merge
+to main for this slice. `codex/battle-camera-bounds` from main5915ad0 confines
+the full viewport and zoom to the painted battle map, including drag/keys/resize.
+Camera15/web types/lint/coverage808+47SKIPPED/changed-file audit PASS.
+Author browser4desktop sizes/day-night/drag-keys-wheel-resize/0POST/stableunits
+PASS; author source review no concrete findings. Independent visual critique,
+clean PR CI and merge pending.
+[Owning result](../wiki/battlefield-test-maps.md#ограничение-камеры-областью-карты--2026-10-16).
+
 **Live initiative and combat UX — 2026-10-16, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized drafts/subagent/PR/review/merge cycle completed through
 [PR158](https://github.com/Vovanostm/warwrit/pull/158), after sprite/outline PR157.

@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Confine the battle camera to the painted map
+
+- 2026-10-16, branch `codex/battle-camera-bounds`, local: owner requested
+  removal of black space beyond the battle map and authorized review/merge.
+  Optional shared camera bounds constrain the whole viewport through keys,
+  drag, zoom, fit and resize; sprite scene supplies actual projected backdrop
+  edges. Other camera consumers retain existing behaviour. Camera15, web
+  types/lint, coverage808+47SKIPPED and strict changed-file audit PASS.
+  Initial typecheck prerequisite/test typing failures fixed; actual browser
+  4desktop sizes/day-night/keys-drag-wheel-resize/0POST/stableunits PASS.
+  Author source review no concrete findings; independent visual/clean PR CI/merge
+  pending. No domain, protocol or migration changes.
+  [Owning result](docs/wiki/battlefield-test-maps.md#ограничение-камеры-областью-карты--2026-10-16).
+
 ### Live initiative queue and reduced combat HUD
 
 - 2026-10-16, branch `codex/live-combat-ux`, merged:

@@ -3737,3 +3737,34 @@ human-3→human-6 и обновила очередь. Копия действу�
 производным от текущего состояния: будущие команды могут его изменить;
 нового ATB, повторных ходов за раунд или скрытой симуляции нет. Документационный
 closeout меняет только Markdown; исходники игры остаются проверенной версией.
+
+## Ограничение камеры областью карты — 2026-10-16
+
+Владелец разрешил отдельный worktree, реализацию, review и merge в main.
+Ветка `codex/battle-camera-bounds`, база `5915ad0`; исходный dirty checkout
+и другие worktree сохранены. Запрос: не показывать чёрное пространство
+за границами боевой карты.
+
+Shared `three-quarter-camera.ts` получает необязательные ground bounds.
+Они ограничивают весь viewport, а не только центр: drag, WASD/стрелки,
+плавный cursor-anchored zoom, fit и resize проходят через одну границу.
+Предельное отдаление зависит от пропорций окна; при очень широком окне
+ограничение карты имеет приоритет над minZoom. Другие камеры без bounds
+сохраняют прежнее поведение. Sprite scene передаёт фактические проекции
+краёв painted backdrop с его registration offset. Правила боя, протокол,
+сохранение и схема БД не меняются.
+
+Локальные проверки: camera15 PASS, web types/lint PASS, coverage808 PASS /
+47 SKIPPED, strict changed-file audit PASS (0 новых complexity/clones/dead code).
+Первая web typecheck попытка опередила сборку protocol и обнаружила также
+пропущенный обязательный аргумент camera в новом тесте; аргумент исправлен,
+после сборки проверка PASS. Author browser PASS: 1280×720, 1440×900,
+1920×1080, 2560×1080; крайние drag/held WASD/wheel/resize, day/night/grid.
+Проекции всех краёв backdrop охватывают viewport; 0 POST, позиции всех
+фигур неизменны. Evidence: `output/playwright/camera-bounds/journey-result.txt`
+и снимки этой папки (локальные, не tracked). Первая diagnostic browser
+попытка импортировала Babylon без Vite version query и получила duplicate
+registration; исправлено чтением уже загруженного module URL, не кодом игры.
+Author source review: scoped diff/consumers проверены, observable defects
+не найдены. Independent visual review/clean CI/merge PENDING.
+Полный clean gate исполняется существующим PR CI, без повторного local run.
