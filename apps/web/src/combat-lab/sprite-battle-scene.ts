@@ -26,6 +26,7 @@ import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-eng
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import { BATTLE_ART } from '../renderer/art.js';
 import { spriteForUnit } from './sprite-art.js';
+import { SPRITE_MASK_SIZE, SPRITE_OUTLINE_SIZE, spriteOutlinePixels } from './sprite-outline.js';
 import { HEX_RADIUS, hexToWorld, worldToHex } from '../renderer/hex-projection.js';
 import { createHexDisc, createHexSides } from '../renderer/hex-mesh.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
@@ -96,11 +97,11 @@ export async function mountSpriteBattleScene(
         source.src = url;
       });
       const surface = document.createElement('canvas');
-      surface.width = surface.height = 128;
+      surface.width = surface.height = SPRITE_MASK_SIZE;
       const context = surface.getContext('2d', { willReadFrequently: true });
       if (!context) throw new Error('Sprite input mask unavailable');
-      context.drawImage(source, 0, 0, 128, 128);
-      spriteMasks.set(url, context.getImageData(0, 0, 128, 128).data);
+      context.drawImage(source, 0, 0, SPRITE_MASK_SIZE, SPRITE_MASK_SIZE);
+      spriteMasks.set(url, context.getImageData(0, 0, SPRITE_MASK_SIZE, SPRITE_MASK_SIZE).data);
     }),
   );
   if (signal?.aborted) throw new Error('Scene mount cancelled');
@@ -513,33 +514,26 @@ export async function mountSpriteBattleScene(
         mesh.alphaIndex = 1;
         let edgeTexture = edgeTextures.get(sprite.url);
         if (!edgeTexture) {
-          edgeTexture = new DynamicTexture(`ink-edge:${sprite.id}`, 128, scene, false);
+          edgeTexture = new DynamicTexture(
+            `ink-edge:${sprite.id}`,
+            SPRITE_OUTLINE_SIZE,
+            scene,
+            false,
+          );
           edgeTexture.hasAlpha = true;
           const context = edgeTexture.getContext() as unknown as CanvasRenderingContext2D;
-          const pixels = context.createImageData(128, 128);
-          const mask = spriteMasks.get(sprite.url)!;
-          for (let row = 3; row < 125; row++) {
-            for (let column = 3; column < 125; column++) {
-              const offset = (row * 128 + column) * 4;
-              if ((mask[offset + 3] ?? 0) >= 16) continue;
-              let distance = 4;
-              for (let dy = -3; dy <= 3; dy++) {
-                for (let dx = -3; dx <= 3; dx++) {
-                  if ((mask[((row + dy) * 128 + column + dx) * 4 + 3] ?? 0) >= 64)
-                    distance = Math.min(distance, Math.max(Math.abs(dx), Math.abs(dy)));
-                }
-              }
-              // A narrow warm value edge and outer ink line separate dark fur/cloth
-              // from busy ground without recolouring the approved sprite itself.
-              if (distance <= 2) pixels.data.set([208, 193, 165, 210], offset);
-              else if (distance === 3) pixels.data.set([31, 28, 25, 200], offset);
-            }
-          }
+          const pixels = context.createImageData(SPRITE_OUTLINE_SIZE, SPRITE_OUTLINE_SIZE);
+          pixels.data.set(spriteOutlinePixels(spriteMasks.get(sprite.url)!));
           context.putImageData(pixels, 0, 0);
           edgeTexture.update();
           edgeTextures.set(sprite.url, edgeTexture);
         }
-        const edge = MeshBuilder.CreatePlane(`unit-edge:${unit.id}`, { width, height }, scene);
+        const outlineScale = SPRITE_OUTLINE_SIZE / SPRITE_MASK_SIZE;
+        const edge = MeshBuilder.CreatePlane(
+          `unit-edge:${unit.id}`,
+          { width: width * outlineScale, height: height * outlineScale },
+          scene,
+        );
         const edgeMaterial = new StandardMaterial(`unit-edge-art:${unit.id}`, scene);
         edgeMaterial.diffuseTexture = edgeTexture;
         edgeMaterial.useAlphaFromDiffuseTexture = true;
@@ -993,9 +987,15 @@ export async function mountSpriteBattleScene(
       const uv = hit.getTextureCoordinates();
       const mask = unit && spriteMasks.get(spriteForUnit(unit).url);
       if (!uv || !mask) continue;
-      const column = Math.max(0, Math.min(127, Math.floor(uv.x * 128)));
-      const row = Math.max(0, Math.min(127, Math.floor((1 - uv.y) * 128)));
-      if ((mask[(row * 128 + column) * 4 + 3] ?? 0) >= 16) return hit;
+      const column = Math.max(
+        0,
+        Math.min(SPRITE_MASK_SIZE - 1, Math.floor(uv.x * SPRITE_MASK_SIZE)),
+      );
+      const row = Math.max(
+        0,
+        Math.min(SPRITE_MASK_SIZE - 1, Math.floor((1 - uv.y) * SPRITE_MASK_SIZE)),
+      );
+      if ((mask[(row * SPRITE_MASK_SIZE + column) * 4 + 3] ?? 0) >= 16) return hit;
     }
     const groundHit = hits
       .filter(
