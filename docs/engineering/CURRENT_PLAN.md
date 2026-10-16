@@ -5,7 +5,7 @@ Owner authorizes isolated worktrees, subagents, reviewed merges to main and
 postmerge play checks; deployment/paid services excluded. Root integration:
 `codex/combat-cycle-20261016` in managed combat-cycle-20261016/warwrit,
 based on main86c1da0. Primary b44f5c1/staged+unstaged prototype preserved
-read-only; SupplyShop/launch WIP excluded. V1 encounter projection explicitly rejects
+read-only; SupplyShop/launch and separate live-map review WIP excluded. V1 encounter projection explicitly rejects
 sprite-only surrender status; the historical wire contract stays unchanged.
 First observable outcome: playable sprite6v6/editor at5330/API3030.
 Integrated local check:795 unit PASS/47SKIPPED, actual main-based audit PASS;
@@ -512,50 +512,6 @@ commits. Next S1: real mill-scene sprites/hexes/selection/day-night, then
 S2–S4 rules and executable 6×6 stand. Game/full gate NOT_RUN,
 performance NOT_MEASURED. No game source, migration, dependency, publication,
 merge or deployment. Existing map and wave writers retain ownership.
-
-**Detailed live-map continuation DoD — 2026-10-09:** owner requested a
-what/where/why/evidence plan with six corrections. The
-[execution plan](LIVE_MAP_EFFICIENT_PROMPT.md#cycle-1-execution-plan-and-dod--2026-10-09)
-starts with rebuilding, checking and committing the retained implementation;
-then repairs browser assertions, runs real server integration, proves the whole
-Brod→Gat→Mill→Gat route and Gat→Glinisty Bereg crossing, repeats the whole route
-after every blocker fix, selectively removes dead procedural code and requires
-fallow/full-gate PASS plus integrated visual ACCEPT (all applicable scores ≥2).
-D6/local coordinates and D11/speed-profile amendments are specified. D7's faint
-unknown-place scope remains OPEN: the current brief includes it in cycle 1;
-moving it to cycle 4 is the recommendation, awaiting the owner's answer.
-Planning only on `claude/world-review-porechye-detail`; implementation belongs
-to the retained `claude/world-live-map` worktree, whose successor writer must
-be established before editing. Documentation format, added tracked links and
-scoped diff checks PASS. No game checks, database probe or agent launch;
-execution checks NOT_RUN. The owner reports the database is up, unverified here.
-
-**Consultation corrections accepted — 2026-10-09:** owner accepted the three
-corrections and [diagnosis by permission, coordinates and runtime geometry](AGENT_TEAM.md#accepted-diagnostic-sequence--2026-10-09).
-Wrong speed also needs road-attribute/profile diagnosis before a geometry-tool
-change. Recorded for the next cycle; implementation and browser proof unchanged.
-
-**Consultation readback — 2026-10-09:** owner supplied the reply choosing journey
-verification before pipeline changes. [Source review](AGENT_TEAM.md#owner-supplied-consultation-reply-choose-a--2026-10-09)
-supports that priority with corrections to geometry acceptance and raw-graph
-comparison. Advisory review only; no new implementation or browser evidence.
-
-**Live-map comparison follow-up — 2026-10-09:** owner requested an author-owned
-comparison and question-only Claude. Local [measured probes and prompt comparison](AGENT_TEAM.md#author-owned-comparison-and-question-only-claude--2026-10-09)
-support a viable GEOS corridor candidate with more vertices and a Skan closed-loop
-fix. [Active prompt](LIVE_MAP_EFFICIENT_PROMPT.md) is shorter and assigns execution
-to Codex, consultation only to Claude. OAuth prevented the advisory answer;
-Codex completed its own comparison. No game/implementation-status change or
-agent launch. Local probes/edition/static checks PASS; model A/B and full-game
-acceptance NOT_RUN, total savings NOT_MEASURED.
-
-**Live-map process review — 2026-10-09:** owner requested a deeper instruction
-analysis of Claude session `7fb9b151` and a more effective continuation prompt.
-Local on `claude/world-review-porechye-detail`: [causal review](AGENT_TEAM.md#causal-follow-up-instructions-and-implementation-choices)
-and [proposed launch prompt](LIVE_MAP_EFFICIENT_PROMPT.md). Prompt not launched;
-no game, hook, policy or implementation-status change. Static checks PASS;
-dynamic eval NOT_RUN, savings NOT_MEASURED. The retained live-map worktree owns
-its package/code and must refresh its own checkpoint when work resumes.
 
 **World atlas / geography audit — 2026-10-08:** owner required a larger
 world, tens of hours, more than 100 POIs and logical roads/forests/swamps/

@@ -84,6 +84,14 @@ requests.
   and clean PR/DB/stress/main journey pending.
   [Owning result](docs/wiki/battlefield-test-maps.md#результат-интеграции-и-игровые-проверки--2026-10-16).
 
+### Keep the combat delivery scoped
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: final diff review
+  excludes the separate live-map agent-review/consultation document and its
+  checkpoint/history imports. Original primary and prior branch retain that
+  work; this combat PR does not publish it. No combat code or evidence changed.
+  Markdown format/local references checked; no game retest required.
+
 ### Battle camera menu helper
 
 - 2026-10-13, branch `codex/sprite-combat-stage1`, local: owner-authorized
@@ -653,85 +661,6 @@ requests.
   preparation risk. Agreed stage 1 scope complete locally; integrated battle
   acceptance remains BLOCKED. No game-source change,
   publication, merge or deployment.
-
-### Detailed live-map continuation plan and DoD
-
-- 2026-10-09, branch `claude/world-review-porechye-detail`, local: owner requested
-  the detailed next-step plan with six corrections and full-route replay after
-  each blocker fix. Added [the execution plan and DoD](docs/engineering/LIVE_MAP_EFFICIENT_PROMPT.md#cycle-1-execution-plan-and-dod--2026-10-09)
-  to the existing prompt and updated CURRENT_PLAN. Specifies a verified committed
-  baseline, honest browser assertions, executed PostgreSQL integration, mandatory
-  Gat→Glinisty Bereg open-bridge crossing, selective dead-map cleanup, fallow and
-  final integrated gates, scored visual ACCEPT and actual documentation closeout.
-  D6/D11 amendments are proposed for the owning implementation brief; D7's
-  unknown-place scope awaits the owner's answer. Documentation format, added
-  tracked links and scoped diff checks PASS. Documentation only: retained game
-  code untouched, game/database/browser/critic checks NOT_RUN.
-
-### Accepted live-map diagnostic sequence
-
-- 2026-10-09, branch `claude/world-review-porechye-detail`, local: owner accepted
-  the consultation corrections and diagnostic layers. Recorded
-  [the accepted sequence](docs/engineering/AGENT_TEAM.md#accepted-diagnostic-sequence--2026-10-09)
-  and updated consultant context/checkpoint; clarified that road attributes or
-  speed profiles can explain wrong speed without a Skan/GEOS change.
-  Format/link/diff checks PASS; game/browser checks NOT_RUN. Documentation only.
-
-### Supplied Claude recommendation: journey first
-
-- 2026-10-09, branch `claude/world-review-porechye-detail`, local: owner supplied
-  the consultation reply choosing A. Added [source-based review and corrections](docs/engineering/AGENT_TEAM.md#owner-supplied-consultation-reply-choose-a--2026-10-09):
-  geometry alignment remains required, the loop defect remains confirmed, and
-  raw skeleton edge comparison does not replace the runtime polygon-navigation
-  and authorization boundaries. Updated consultant context/provenance in
-  [the prompt](docs/engineering/LIVE_MAP_EFFICIENT_PROMPT.md).
-  Source/static checks PASS; new browser/algorithm/model A/B checks NOT_RUN.
-  Documentation only; no implementation or new gate.
-
-### Claude decision-consultation prompt
-
-- 2026-10-09, branch `claude/world-review-porechye-detail`, local: owner asked
-  for a Claude prompt. Added [the separate consultation prompt](docs/engineering/LIVE_MAP_EFFICIENT_PROMPT.md#claude-consultation-prompt)
-  to the existing owning document: supplied map facts, three next-step options,
-  concise decision/objection/check output and no tool use or implementation.
-  Retains Codex execution ownership and the owner's question-only restriction.
-  Static prompt/format/link/diff checks PASS; Claude execution NOT_RUN.
-
-### Author-owned live-map comparison, question-only Claude
-
-- 2026-10-09, branch `claude/world-review-porechye-detail`, local: owner asked
-  Codex to compare approaches itself and use Claude only for option questions.
-  Added [actual skeleton/corridor probes and instruction comparison](docs/engineering/AGENT_TEAM.md#author-owned-comparison-and-question-only-claude--2026-10-09).
-  Skan preserves the reproduced closed loop; GEOS candidate passes the edition
-  diagnostic but raises total vertices from 3201 to 3671 and changes corridor
-  area. Revised [the active prompt](docs/engineering/LIVE_MAP_EFFICIENT_PROMPT.md)
-  from 923 to 534 words; Codex owns implementation, Claude is a tool-free adviser.
-  Claude consultation failed on expired OAuth; no advice attributed to it.
-  Local algorithm/edition/static checks PASS; full-game/model A/B NOT_RUN,
-  end-to-end savings NOT_MEASURED. No game, dependency manifest or policy change.
-
-### Live-map instruction analysis and continuation prompt
-
-- 2026-10-09, branch `claude/world-review-porechye-detail`, local: owner asked
-  why the live-map agent built custom solutions and requested an effective
-  prompt. Extended [the instruction/decision analysis](docs/engineering/AGENT_TEAM.md#causal-follow-up-instructions-and-implementation-choices):
-  inherited Catmull–Rom, owner-approved agent-proposed pipeline, unloaded
-  advertised skills, and the coverage-dependent gate/prose conflict. Added
-  [a scoped launch prompt](docs/engineering/LIVE_MAP_EFFICIENT_PROMPT.md) with
-  reuse comparison, early playable proof and meaningful journey assertions.
-  Static prompt/format/link/diff checks PASS; dynamic eval NOT_RUN, savings
-  NOT_MEASURED. Documentation only; no rule/hook/game change or agent launch.
-
-### Live-map Claude session review
-
-- 2026-10-09, branch `claude/world-review-porechye-detail`, local: owner asked
-  for a deep review of live-map session `7fb9b151`. Added the source-backed
-  [session evaluation](docs/engineering/AGENT_TEAM.md#live-map-session-review--2026-10-09):
-  useful decisions and library reuse, insufficient journey assertions,
-  regional registration offsets, reproduced closed-loop/component-selection
-  defects, and simpler offline vector preparation. Read-only edition check
-  PASS; browser/SQL/full-suite checks NOT_RUN; proposed savings NOT_MEASURED.
-  Review documentation only; no game change, publication or acceptance.
 
 ### World review, Porechye close view via Codex, gamedev skills
 
