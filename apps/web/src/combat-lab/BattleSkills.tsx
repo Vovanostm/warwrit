@@ -8,15 +8,26 @@ interface Props {
   onSelectSkill: ((id: CombatLabSkillId) => void) | undefined;
   skillDisabledReason: string;
 }
+
+const targetReasons = new Set(['INVALID_TARGET', 'OUT_OF_RANGE', 'BLOCKED_LINE_OF_SIGHT']);
+
+function unavailableSkillReason(
+  view: CombatLabView,
+  skill: NonNullable<CombatLabView['skills']>[number],
+): string {
+  if (!skill.equipmentAvailable) return 'Текущее снаряжение не подходит для этого приёма.';
+  const previews = view.skillPreview?.filter((row) => row.skillId === skill.skillId) ?? [];
+  if (previews.some((row) => row.legal)) return '';
+  const refusal = previews.find((row) => row.reason && !targetReasons.has(row.reason));
+  if (refusal) return combatSkillReasonText(refusal.reason);
+  return `Нет подходящей цели в зоне приёма · дальность ${skill.minimumRange}–${skill.maximumRange}.`;
+}
+
 export function BattleSkills({ view, selectedSkillId, onSelectSkill, skillDisabledReason }: Props) {
   const [moreSkills, setMoreSkills] = useState(false);
   const moreSkillsButtonRef = useRef<HTMLButtonElement>(null);
   const renderSkillSlot = (skill: NonNullable<CombatLabView['skills']>[number]) => {
-    const previews =
-      view.skillPreview?.filter((candidate) => candidate.skillId === skill.skillId) ?? [];
-    const reason =
-      skillDisabledReason ||
-      (previews.some((preview) => preview.legal) ? '' : combatSkillReasonText(previews[0]?.reason));
+    const reason = skillDisabledReason || unavailableSkillReason(view, skill);
     return (
       <span className="battle-ability-slot battle-control-slot" key={skill.skillId}>
         <button

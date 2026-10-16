@@ -7,7 +7,6 @@ import {
   MeshBuilder,
   Matrix,
   PickingInfo,
-  Plane,
   PointLight,
   Scene,
   StandardMaterial,
@@ -15,6 +14,7 @@ import {
   Vector3,
   VertexBuffer,
   type AbstractMesh,
+  type Ray,
 } from '@babylonjs/core';
 import type {
   CombatLabAction,
@@ -25,6 +25,15 @@ import type {
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import { BATTLE_ART } from '../renderer/art.js';
+import {
+  opaqueSpritePixel,
+  eventLabelUp,
+  avoidAnchorOverlap,
+  intersectGroundLevel,
+  type LabelBox,
+} from './sprite-scene-geometry.js';
+import { markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
+import { eventFeedback } from './sprite-scene-feedback.js';
 import { spriteForUnit } from './sprite-art.js';
 import { SPRITE_MASK_SIZE, SPRITE_OUTLINE_SIZE, spriteOutlinePixels } from './sprite-outline.js';
 import { HEX_RADIUS, hexToWorld, worldToHex } from '../renderer/hex-projection.js';
@@ -48,6 +57,7 @@ const SQRT3 = Math.sqrt(3);
 // Leave room for adjacent full figures without changing their proportions or pivots.
 const SPRITE_PRESENTATION_SCALE = 0.82;
 const AXIAL_TO_WORLD = ({ q, r }: CombatLabHex) => hexToWorld(q, r);
+type BattleUnit = CombatLabView['units'][number];
 const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
 interface SpriteBattleScene {
@@ -104,7 +114,7 @@ export async function mountSpriteBattleScene(
       spriteMasks.set(url, context.getImageData(0, 0, SPRITE_MASK_SIZE, SPRITE_MASK_SIZE).data);
     }),
   );
-  if (signal?.aborted) throw new Error('Scene mount cancelled');
+  ensureMountAllowed(signal);
   const engine = acquireCanvasEngine(canvas);
   const scene = new Scene(engine);
   scene.clearColor = new Color4(0.075, 0.067, 0.057, 1);
@@ -116,13 +126,10 @@ export async function mountSpriteBattleScene(
     const point = foot ?? mesh.getBoundingInfo().boundingBox.centerWorld;
     return point.z * Math.cos(CAMERA_ELEVATION) - point.y * Math.sin(CAMERA_ELEVATION);
   };
+  const entityOrderKey = (mesh: AbstractMesh) => String(mesh.metadata?.combatUnitId ?? mesh.name);
   const compareObjects = (left: AbstractMesh, right: AbstractMesh) =>
     footDepth(right) - footDepth(left) ||
-    // Keep each entity's silhouette and body paired even at equal ground depth.
-    String(left.metadata?.combatUnitId ?? left.name).localeCompare(
-      String(right.metadata?.combatUnitId ?? right.name),
-    ) ||
-    // The two planes of one entity share an anchor: its ink edge goes first.
+    entityOrderKey(left).localeCompare(entityOrderKey(right)) ||
     left.alphaIndex - right.alphaIndex ||
     left.name.localeCompare(right.name);
   scene.setRenderingOrder(1, undefined, undefined, (left, right) =>
@@ -210,35 +217,44 @@ export async function mountSpriteBattleScene(
   groundMaterial.emissiveColor = initialNight ? new Color3(0.62, 0.67, 0.74) : Color3.White();
   background.material = groundMaterial;
 
-  if (initialView.units.some((unit) => spriteForUnit(unit).id === 'B023')) {
-    const occupied = initialTiles.find((tile) => tile.blocked);
-    if (occupied) {
-      const point = AXIAL_TO_WORLD(occupied);
-      const fixture = MeshBuilder.CreatePlane(
-        'b023-rooted-fixture',
-        { width: 1.15, height: 1.15 },
-        scene,
-      );
-      fixture.rotation.x = CAMERA_ELEVATION;
-      fixture.position.set(
-        point.x,
-        occupied.height * 0.12 + 0.575 * Math.cos(CAMERA_ELEVATION),
-        point.z + 0.575 * Math.sin(CAMERA_ELEVATION),
-      );
-      fixture.metadata = { combatFoot: new Vector3(point.x, occupied.height * 0.12, point.z) };
-      const material = new StandardMaterial('b023-rooted-fixture-ink', scene);
-      material.diffuseTexture = texture(b023FixtureUrl);
-      material.useAlphaFromDiffuseTexture = true;
-      material.disableDepthWrite = true;
-      material.backFaceCulling = false;
-      material.specularColor = Color3.Black();
-      material.emissiveColor = new Color3(0.24, 0.22, 0.19);
-      fixture.material = material;
-      fixture.isPickable = false;
-      fixture.renderingGroupId = 1;
-      addLabel(scene, fixedLabels, 'ОПОРА · ЗАНЯТА', new Vector3(point.x, 1.2, point.z), 'height');
+  const addRootedFixture = () => {
+    if (initialView.units.some((unit) => spriteForUnit(unit).id === 'B023')) {
+      const occupied = initialTiles.find((tile) => tile.blocked);
+      if (occupied) {
+        const point = AXIAL_TO_WORLD(occupied);
+        const fixture = MeshBuilder.CreatePlane(
+          'b023-rooted-fixture',
+          { width: 1.15, height: 1.15 },
+          scene,
+        );
+        fixture.rotation.x = CAMERA_ELEVATION;
+        fixture.position.set(
+          point.x,
+          occupied.height * 0.12 + 0.575 * Math.cos(CAMERA_ELEVATION),
+          point.z + 0.575 * Math.sin(CAMERA_ELEVATION),
+        );
+        fixture.metadata = { combatFoot: new Vector3(point.x, occupied.height * 0.12, point.z) };
+        const material = new StandardMaterial('b023-rooted-fixture-ink', scene);
+        material.diffuseTexture = texture(b023FixtureUrl);
+        material.useAlphaFromDiffuseTexture = true;
+        material.disableDepthWrite = true;
+        material.backFaceCulling = false;
+        material.specularColor = Color3.Black();
+        material.emissiveColor = new Color3(0.24, 0.22, 0.19);
+        fixture.material = material;
+        fixture.isPickable = false;
+        fixture.renderingGroupId = 1;
+        addLabel(
+          scene,
+          fixedLabels,
+          'ОПОРА · ЗАНЯТА',
+          new Vector3(point.x, 1.2, point.z),
+          'height',
+        );
+      }
     }
-  }
+  };
+  addRootedFixture();
 
   const plain = new StandardMaterial('plain-wash', scene);
   plain.diffuseColor = new Color3(0.49, 0.47, 0.39);
@@ -293,6 +309,7 @@ export async function mountSpriteBattleScene(
   const cellGrid = createBattleCellGrid(scene, initialTiles);
   const heightLabels: Mesh[] = [];
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
+  const groundYFor = (hex: CombatLabHex) => (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * 0.12;
   const stepMaterial = new StandardMaterial('terrain-step-earth', scene);
   // Raised earth is real opaque geometry, unlike the level-zero backdrop wash.
   // Do not reuse the alpha-bearing sprite texture cache for depth occluders.
@@ -319,159 +336,255 @@ export async function mountSpriteBattleScene(
   raisedTexture.wrapU = raisedTexture.wrapV = Texture.CLAMP_ADDRESSMODE;
   const raisedMaterials = new Map<StandardMaterial, StandardMaterial>();
   const raisedTints = new Map<StandardMaterial, Color3>();
-  for (const wash of [plain, mud, fire, blockedMaterial]) {
-    const material = new StandardMaterial(`raised-${wash.name}`, scene);
-    material.diffuseTexture = raisedTexture;
-    material.disableLighting = true;
-    material.linkEmissiveWithDiffuse = true;
-    const tint =
-      wash === mud
-        ? new Color3(0.72, 0.61, 0.48)
-        : wash === fire
-          ? new Color3(0.94, 0.73, 0.62)
-          : wash === blockedMaterial
-            ? new Color3(0.76, 0.72, 0.64)
-            : Color3.White();
-    material.emissiveColor = tint.multiply(groundMaterial.emissiveColor);
-    material.specularColor = Color3.Black();
-    material.backFaceCulling = false;
-    raisedMaterials.set(wash, material);
-    raisedTints.set(material, tint);
-  }
-  for (const tile of initialTiles) {
+  type Tile = (typeof initialTiles)[number];
+  const terrainWash = (tile: Tile) => {
+    if (tile.blocked) return blockedMaterial;
+    return ({ mud, fire } as Record<string, StandardMaterial>)[tile.terrain] ?? plain;
+  };
+  const raisedTint = (wash: StandardMaterial) => {
+    if (wash === mud) return new Color3(0.72, 0.61, 0.48);
+    if (wash === fire) return new Color3(0.94, 0.73, 0.62);
+    return wash === blockedMaterial ? new Color3(0.76, 0.72, 0.64) : Color3.White();
+  };
+  const mapRaisedTop = (cell: Mesh) => {
+    // Sample the existing painted field in its fixed projection. Adjacent tops
+    // share that artwork continuously; real opaque surfaces still own depth.
+    cell.computeWorldMatrix(true);
+    const positions = cell.getVerticesData(VertexBuffer.PositionKind)!;
+    const uvs: number[] = [];
+    for (let vertex = 0; vertex < positions.length; vertex += 3) {
+      const world = Vector3.TransformCoordinates(
+        new Vector3(positions[vertex]!, positions[vertex + 1]!, positions[vertex + 2]!),
+        cell.getWorldMatrix(),
+      );
+      const relative = world.subtract(background.position);
+      uvs.push(
+        relative.x / backgroundWidth + 0.5,
+        (relative.y * Math.cos(CAMERA_ELEVATION) + relative.z * Math.sin(CAMERA_ELEVATION)) /
+          backgroundHeight +
+          0.5,
+      );
+    }
+    cell.setVerticesData(VertexBuffer.UVKind, uvs);
+  };
+  const addTerrainSides = (
+    tile: Tile,
+    point: { x: number; z: number },
+    key: string,
+    cell: Mesh,
+  ) => {
+    // Side order follows the 30° pointy-top corners, not axial neighbour order.
+    const neighbours = [
+      [0, 1],
+      [-1, 1],
+      [-1, 0],
+      [0, -1],
+      [1, -1],
+      [1, 0],
+    ] as const;
+    const bottoms = neighbours.map(
+      ([dq, dr]) => (tileInfo.get(HEX_KEY({ q: tile.q + dq, r: tile.r + dr }))?.height ?? 0) * 0.12,
+    );
+    if (bottoms.some((bottom) => bottom < tile.height * 0.12)) {
+      const sides = createHexSides(
+        `ground-side:${key}`,
+        HEX_RADIUS,
+        tile.height * 0.12,
+        bottoms,
+        scene,
+      );
+      sides.position.set(point.x, 0, point.z);
+      sides.material = stepMaterial;
+      sides.metadata = cell.metadata;
+    }
+  };
+  const addRubble = (tile: Tile, point: { x: number; z: number }, key: string) => {
+    // The 512px PNG's visible pile bounds are (77,170)–(435,407).
+    // Centre that already projected artwork on its occupied cell, rather
+    // than anchoring the empty PNG bottom. Preserve the square sprite aspect.
+    const rubbleSize = 1.1;
+    const rubbleCenterOffset = (288.5 / 512 - 0.5) * rubbleSize;
+    const rubble = MeshBuilder.CreatePlane(
+      `rubble:${key}`,
+      { width: rubbleSize, height: rubbleSize },
+      scene,
+    );
+    rubble.rotation.x = CAMERA_ELEVATION;
+    rubble.position.set(
+      point.x,
+      tile.height * 0.12 + rubbleCenterOffset * Math.cos(CAMERA_ELEVATION),
+      point.z + rubbleCenterOffset * Math.sin(CAMERA_ELEVATION),
+    );
+    rubble.material = artMaterial(`rubble-ink:${key}`, BATTLE_ART.rubble);
+    rubble.isPickable = false;
+    rubble.renderingGroupId = 1;
+    rubble.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
+  };
+  const addHeight = (tile: Tile, point: { x: number; z: number }) => {
+    addLabel(
+      scene,
+      heightLabels,
+      `+${tile.height}`,
+      new Vector3(point.x, tile.height * 0.12 + 0.09, point.z),
+      'height',
+    );
+    heightLabels.at(-1)!.renderingGroupId = 0;
+    heightLabels.at(-1)!.metadata = { combatHex: { q: tile.q, r: tile.r } };
+    heightLabels.at(-1)?.setEnabled(false);
+  };
+  const addFire = (tile: Tile, point: { x: number; z: number }, key: string) => {
+    const ember = MeshBuilder.CreatePlane(
+      `fire-embers:${key}`,
+      { width: 0.85, height: 0.7 },
+      scene,
+    );
+    ember.rotation.x = CAMERA_ELEVATION;
+    ember.position.set(
+      point.x,
+      tile.height * 0.12 + 0.35 * Math.cos(CAMERA_ELEVATION),
+      point.z + 0.35 * Math.sin(CAMERA_ELEVATION),
+    );
+    const emberMaterial = new StandardMaterial(`fire-ember-ink:${key}`, scene);
+    emberMaterial.diffuseTexture = createEmberTexture(scene);
+    emberMaterial.useAlphaFromDiffuseTexture = true;
+    emberMaterial.disableDepthWrite = true;
+    emberMaterial.disableLighting = true;
+    emberMaterial.linkEmissiveWithDiffuse = true;
+    emberMaterial.emissiveColor = Color3.White();
+    emberMaterial.backFaceCulling = false;
+    ember.material = emberMaterial;
+    ember.isPickable = false;
+    ember.renderingGroupId = 0;
+    ember.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
+    const fireLight = new PointLight(
+      `fire-light:${key}`,
+      new Vector3(point.x, tile.height * 0.12 + 0.7, point.z),
+      scene,
+    );
+    fireLight.diffuse = new Color3(0.85, 0.47, 0.23);
+    fireLight.intensity = 0.45;
+    fireLight.range = 3;
+  };
+  const createGroundSurface = (tile: Tile) => {
     const key = HEX_KEY(tile);
     tileInfo.set(key, tile);
     const point = AXIAL_TO_WORLD(tile);
     const cell = createHexDisc(`ground:${key}`, HEX_RADIUS, scene);
     cell.position.set(point.x, tile.height * 0.12, point.z);
-    const wash = tile.blocked
-      ? blockedMaterial
-      : tile.terrain === 'mud'
-        ? mud
-        : tile.terrain === 'fire'
-          ? fire
-          : plain;
+    const wash = terrainWash(tile);
     cell.material = tile.height > 0 ? raisedMaterials.get(wash)! : wash;
-    if (tile.height > 0) {
-      // Sample the existing painted field in its fixed projection. Adjacent tops
-      // share that artwork continuously; real opaque surfaces still own depth.
-      cell.computeWorldMatrix(true);
-      const positions = cell.getVerticesData(VertexBuffer.PositionKind)!;
-      const uvs: number[] = [];
-      for (let vertex = 0; vertex < positions.length; vertex += 3) {
-        const world = Vector3.TransformCoordinates(
-          new Vector3(positions[vertex]!, positions[vertex + 1]!, positions[vertex + 2]!),
-          cell.getWorldMatrix(),
-        );
-        const relative = world.subtract(background.position);
-        uvs.push(
-          relative.x / backgroundWidth + 0.5,
-          (relative.y * Math.cos(CAMERA_ELEVATION) + relative.z * Math.sin(CAMERA_ELEVATION)) /
-            backgroundHeight +
-            0.5,
-        );
-      }
-      cell.setVerticesData(VertexBuffer.UVKind, uvs);
-    }
+    if (tile.height > 0) mapRaisedTop(cell);
     cell.metadata = { combatHex: { q: tile.q, r: tile.r } };
-    if (tile.height > 0) {
-      // Side order follows the 30° pointy-top corners, not axial neighbour order.
-      const neighbours = [
-        [0, 1],
-        [-1, 1],
-        [-1, 0],
-        [0, -1],
-        [1, -1],
-        [1, 0],
-      ] as const;
-      const bottoms = neighbours.map(
-        ([dq, dr]) =>
-          (tileInfo.get(HEX_KEY({ q: tile.q + dq, r: tile.r + dr }))?.height ?? 0) * 0.12,
-      );
-      if (bottoms.some((bottom) => bottom < tile.height * 0.12)) {
-        const sides = createHexSides(
-          `ground-side:${key}`,
-          HEX_RADIUS,
-          tile.height * 0.12,
-          bottoms,
-          scene,
-        );
-        sides.position.set(point.x, 0, point.z);
-        sides.material = stepMaterial;
-        sides.metadata = cell.metadata;
-      }
+    if (tile.height > 0) addTerrainSides(tile, point, key, cell);
+    return { point, key };
+  };
+  const addTerrainTile = (tile: Tile) => {
+    const { point, key } = createGroundSurface(tile);
+    if (tile.blocked) addRubble(tile, point, key);
+    if (tile.height > 0) addHeight(tile, point);
+    if (tile.terrain === 'fire') addFire(tile, point, key);
+  };
+  const createTerrain = () => {
+    for (const wash of [plain, mud, fire, blockedMaterial]) {
+      const material = new StandardMaterial(`raised-${wash.name}`, scene);
+      material.diffuseTexture = raisedTexture;
+      material.disableLighting = true;
+      material.linkEmissiveWithDiffuse = true;
+      const tint = raisedTint(wash);
+      material.emissiveColor = tint.multiply(groundMaterial.emissiveColor);
+      material.specularColor = Color3.Black();
+      material.backFaceCulling = false;
+      raisedMaterials.set(wash, material);
+      raisedTints.set(material, tint);
     }
-    if (tile.blocked) {
-      // The 512px PNG's visible pile bounds are (77,170)–(435,407).
-      // Centre that already projected artwork on its occupied cell, rather
-      // than anchoring the empty PNG bottom. Preserve the square sprite aspect.
-      const rubbleSize = 1.1;
-      const rubbleCenterOffset = (288.5 / 512 - 0.5) * rubbleSize;
-      const rubble = MeshBuilder.CreatePlane(
-        `rubble:${key}`,
-        { width: rubbleSize, height: rubbleSize },
-        scene,
-      );
-      rubble.rotation.x = CAMERA_ELEVATION;
-      rubble.position.set(
-        point.x,
-        tile.height * 0.12 + rubbleCenterOffset * Math.cos(CAMERA_ELEVATION),
-        point.z + rubbleCenterOffset * Math.sin(CAMERA_ELEVATION),
-      );
-      rubble.material = artMaterial(`rubble-ink:${key}`, BATTLE_ART.rubble);
-      rubble.isPickable = false;
-      rubble.renderingGroupId = 1;
-      rubble.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
-    }
-    if (tile.height > 0) {
-      addLabel(
-        scene,
-        heightLabels,
-        `+${tile.height}`,
-        new Vector3(point.x, tile.height * 0.12 + 0.09, point.z),
-        'height',
-      );
-      heightLabels.at(-1)!.renderingGroupId = 0;
-      heightLabels.at(-1)!.metadata = { combatHex: { q: tile.q, r: tile.r } };
-      heightLabels.at(-1)?.setEnabled(false);
-    }
-    if (tile.terrain === 'fire') {
-      const ember = MeshBuilder.CreatePlane(
-        `fire-embers:${key}`,
-        { width: 0.85, height: 0.7 },
-        scene,
-      );
-      ember.rotation.x = CAMERA_ELEVATION;
-      ember.position.set(
-        point.x,
-        tile.height * 0.12 + 0.35 * Math.cos(CAMERA_ELEVATION),
-        point.z + 0.35 * Math.sin(CAMERA_ELEVATION),
-      );
-      const emberMaterial = new StandardMaterial(`fire-ember-ink:${key}`, scene);
-      emberMaterial.diffuseTexture = createEmberTexture(scene);
-      emberMaterial.useAlphaFromDiffuseTexture = true;
-      emberMaterial.disableDepthWrite = true;
-      emberMaterial.disableLighting = true;
-      emberMaterial.linkEmissiveWithDiffuse = true;
-      emberMaterial.emissiveColor = Color3.White();
-      emberMaterial.backFaceCulling = false;
-      ember.material = emberMaterial;
-      ember.isPickable = false;
-      ember.renderingGroupId = 0;
-      ember.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
-      const fireLight = new PointLight(
-        `fire-light:${key}`,
-        new Vector3(point.x, tile.height * 0.12 + 0.7, point.z),
-        scene,
-      );
-      fireLight.diffuse = new Color3(0.85, 0.47, 0.23);
-      fireLight.intensity = 0.45;
-      fireLight.range = 3;
-    }
-  }
+    for (const tile of initialTiles) addTerrainTile(tile);
+  };
+  createTerrain();
 
-  const unitMeshesForView = (view: CombatLabView) => {
-    for (const marker of statusMarkers.splice(0)) marker.dispose(false, true);
+  const outlineTexture = (sprite: ReturnType<typeof spriteForUnit>) => {
+    let edgeTexture = edgeTextures.get(sprite.url);
+    if (!edgeTexture) {
+      edgeTexture = new DynamicTexture(`ink-edge:${sprite.id}`, SPRITE_OUTLINE_SIZE, scene, false);
+      edgeTexture.hasAlpha = true;
+      const context = edgeTexture.getContext() as unknown as CanvasRenderingContext2D;
+      const pixels = context.createImageData(SPRITE_OUTLINE_SIZE, SPRITE_OUTLINE_SIZE);
+      pixels.data.set(spriteOutlinePixels(spriteMasks.get(sprite.url)!));
+      context.putImageData(pixels, 0, 0);
+      edgeTexture.update();
+      edgeTextures.set(sprite.url, edgeTexture);
+    }
+    return edgeTexture;
+  };
+  const createUnitMeshes = (
+    unit: BattleUnit,
+    sprite: ReturnType<typeof spriteForUnit>,
+    width: number,
+    height: number,
+  ) => {
+    const mesh = MeshBuilder.CreatePlane(`unit:${unit.id}`, { width, height }, scene);
+    const material = new StandardMaterial(`unit-art:${unit.id}`, scene);
+    material.disableLighting = true;
+    material.linkEmissiveWithDiffuse = true;
+    material.diffuseTexture = texture(sprite.url);
+    material.useAlphaFromDiffuseTexture = true;
+    material.disableDepthWrite = true;
+    material.backFaceCulling = false;
+    material.specularColor = Color3.Black();
+    mesh.material = material;
+    mesh.isPickable = true;
+    mesh.renderingGroupId = 1;
+    mesh.alphaIndex = 1;
+    const edgeTexture = outlineTexture(sprite);
+    const outlineScale = SPRITE_OUTLINE_SIZE / SPRITE_MASK_SIZE;
+    const edge = MeshBuilder.CreatePlane(
+      `unit-edge:${unit.id}`,
+      { width: width * outlineScale, height: height * outlineScale },
+      scene,
+    );
+    const edgeMaterial = new StandardMaterial(`unit-edge-art:${unit.id}`, scene);
+    edgeMaterial.diffuseTexture = edgeTexture;
+    edgeMaterial.useAlphaFromDiffuseTexture = true;
+    edgeMaterial.disableDepthWrite = true;
+    edgeMaterial.disableLighting = true;
+    edgeMaterial.linkEmissiveWithDiffuse = true;
+    edgeMaterial.emissiveColor = Color3.White();
+    edgeMaterial.backFaceCulling = false;
+    edge.material = edgeMaterial;
+    edge.isPickable = false;
+    edge.renderingGroupId = 1;
+    edge.alphaIndex = 0;
+    unitEdges.set(unit.id, edge);
+    const shadow = MeshBuilder.CreateDisc(
+      `contact:${unit.id}`,
+      { radius: 0.26, tessellation: 12 },
+      scene,
+    );
+    shadow.rotation.x = Math.PI / 2;
+    shadow.scaling.x = 1.4;
+    shadow.material = contactMaterial;
+    shadow.isPickable = false;
+    contactShadows.set(unit.id, shadow);
+    unitMeshes.set(unit.id, mesh);
+    unitMaterials.set(unit.id, material);
+    return { mesh, material };
+  };
+  const addStatusMarker = (unit: BattleUnit, x: number, z: number, groundHeight: number) => {
+    // A ground status plaque is deliberately separate from the baked figure.
+    // Leave the cell centre clear when a living fighter steps onto this tile.
+    addLabel(
+      scene,
+      statusMarkers,
+      unit.status === 'surrendered' ? 'СДАЛСЯ' : unit.status === 'retreated' ? 'ОТСТУПИЛ' : 'ПОГИБ',
+      new Vector3(x - 0.34, groundHeight + 0.055, z + 0.3),
+      unit.status === 'surrendered' ? 'event' : 'danger',
+    );
+    const marker = statusMarkers.at(-1)!;
+    marker.billboardMode = Mesh.BILLBOARDMODE_NONE;
+    marker.rotation.x = Math.PI / 2;
+    marker.scaling.set(0.55, 0.75, 1);
+    marker.renderingGroupId = 0;
+  };
+  const removeAbsentUnits = (view: CombatLabView) => {
     const liveIds = new Set(view.units.map(({ id }) => id));
     for (const [id, mesh] of unitMeshes) {
       if (liveIds.has(id)) continue;
@@ -484,207 +597,60 @@ export async function mountSpriteBattleScene(
       unitEdges.get(id)?.dispose(false, true);
       unitEdges.delete(id);
     }
-    for (const unit of view.units) {
-      const sprite = spriteForUnit(unit);
-      const displayHeight = sprite.id.startsWith('W')
-        ? 1.4
-        : sprite.id === 'B001'
-          ? 0.73
-          : sprite.id === 'B053' || sprite.id === 'B002'
-            ? 1.62
-            : 1.23;
-      const factor = (displayHeight * SPRITE_PRESENTATION_SCALE) / sprite.bodyHeight;
-      const width = sprite.width * factor;
-      const height = sprite.height * factor;
-      let mesh = unitMeshes.get(unit.id);
-      let material = unitMaterials.get(unit.id);
-      if (!mesh || !material) {
-        mesh = MeshBuilder.CreatePlane(`unit:${unit.id}`, { width, height }, scene);
-        material = new StandardMaterial(`unit-art:${unit.id}`, scene);
-        material.disableLighting = true;
-        material.linkEmissiveWithDiffuse = true;
-        material.diffuseTexture = texture(sprite.url);
-        material.useAlphaFromDiffuseTexture = true;
-        material.disableDepthWrite = true;
-        material.backFaceCulling = false;
-        material.specularColor = Color3.Black();
-        mesh.material = material;
-        mesh.isPickable = true;
-        mesh.renderingGroupId = 1;
-        mesh.alphaIndex = 1;
-        let edgeTexture = edgeTextures.get(sprite.url);
-        if (!edgeTexture) {
-          edgeTexture = new DynamicTexture(
-            `ink-edge:${sprite.id}`,
-            SPRITE_OUTLINE_SIZE,
-            scene,
-            false,
-          );
-          edgeTexture.hasAlpha = true;
-          const context = edgeTexture.getContext() as unknown as CanvasRenderingContext2D;
-          const pixels = context.createImageData(SPRITE_OUTLINE_SIZE, SPRITE_OUTLINE_SIZE);
-          pixels.data.set(spriteOutlinePixels(spriteMasks.get(sprite.url)!));
-          context.putImageData(pixels, 0, 0);
-          edgeTexture.update();
-          edgeTextures.set(sprite.url, edgeTexture);
-        }
-        const outlineScale = SPRITE_OUTLINE_SIZE / SPRITE_MASK_SIZE;
-        const edge = MeshBuilder.CreatePlane(
-          `unit-edge:${unit.id}`,
-          { width: width * outlineScale, height: height * outlineScale },
-          scene,
-        );
-        const edgeMaterial = new StandardMaterial(`unit-edge-art:${unit.id}`, scene);
-        edgeMaterial.diffuseTexture = edgeTexture;
-        edgeMaterial.useAlphaFromDiffuseTexture = true;
-        edgeMaterial.disableDepthWrite = true;
-        edgeMaterial.disableLighting = true;
-        edgeMaterial.linkEmissiveWithDiffuse = true;
-        edgeMaterial.emissiveColor = Color3.White();
-        edgeMaterial.backFaceCulling = false;
-        edge.material = edgeMaterial;
-        edge.isPickable = false;
-        edge.renderingGroupId = 1;
-        edge.alphaIndex = 0;
-        unitEdges.set(unit.id, edge);
-        const shadow = MeshBuilder.CreateDisc(
-          `contact:${unit.id}`,
-          { radius: 0.26, tessellation: 12 },
-          scene,
-        );
-        shadow.rotation.x = Math.PI / 2;
-        shadow.scaling.x = 1.4;
-        shadow.material = contactMaterial;
-        shadow.isPickable = false;
-        contactShadows.set(unit.id, shadow);
-        unitMeshes.set(unit.id, mesh);
-        unitMaterials.set(unit.id, material);
-      }
-      const anchorX = (sprite.footX / sprite.width - 0.5) * width;
-      const footY = (sprite.footY - sprite.height / 2) * factor;
-      const { x, z } = AXIAL_TO_WORLD(unit.position);
-      const tile = tileInfo.get(HEX_KEY(unit.position));
-      mesh.rotation.x = CAMERA_ELEVATION;
-      mesh.position.set(
-        x - anchorX,
-        footY * Math.cos(CAMERA_ELEVATION) + (tile?.height ?? 0) * 0.12,
-        z + footY * Math.sin(CAMERA_ELEVATION),
-      );
-      contactShadows.get(unit.id)?.position.set(x, (tile?.height ?? 0) * 0.12 + 0.02, z);
-      mesh.metadata = {
-        combatUnitId: unit.id,
-        combatHex: unit.position,
-        combatFoot: new Vector3(x, (tile?.height ?? 0) * 0.12, z),
-      };
-      const edge = unitEdges.get(unit.id)!;
-      edge.metadata = { combatUnitId: unit.id, combatFoot: mesh.metadata.combatFoot };
-      edge.rotation.copyFrom(mesh.rotation);
-      edge.position.copyFrom(mesh.position);
-      edge.position.y -= 0.002 * Math.sin(CAMERA_ELEVATION);
-      edge.position.z += 0.002 * Math.cos(CAMERA_ELEVATION);
-      edge.setEnabled(unit.status === 'active');
-      const standing = unit.status === 'active';
-      mesh.setEnabled(standing);
-      mesh.isPickable = standing;
-      contactShadows.get(unit.id)?.setEnabled(standing);
-      material.alpha = 1;
-      if (!standing) {
-        // A ground status plaque is deliberately separate from the baked figure.
-        // Leave the cell centre clear when a living fighter steps onto this tile.
-        addLabel(
-          scene,
-          statusMarkers,
-          unit.status === 'surrendered'
-            ? 'СДАЛСЯ'
-            : unit.status === 'retreated'
-              ? 'ОТСТУПИЛ'
-              : 'ПОГИБ',
-          new Vector3(x - 0.34, (tile?.height ?? 0) * 0.12 + 0.055, z + 0.3),
-          unit.status === 'surrendered' ? 'event' : 'danger',
-        );
-        const marker = statusMarkers.at(-1)!;
-        marker.billboardMode = Mesh.BILLBOARDMODE_NONE;
-        marker.rotation.x = Math.PI / 2;
-        marker.scaling.set(0.55, 0.75, 1);
-        marker.renderingGroupId = 0;
-      }
-      // Art lighting is baked into the approved figures; do not mirror for the opposing side.
-    }
+  };
+  const syncUnit = (unit: BattleUnit) => {
+    const sprite = spriteForUnit(unit);
+    const factor = (spriteDisplayHeight(sprite.id) * SPRITE_PRESENTATION_SCALE) / sprite.bodyHeight;
+    const width = sprite.width * factor;
+    const height = sprite.height * factor;
+    let mesh = unitMeshes.get(unit.id);
+    let material = unitMaterials.get(unit.id);
+    if (!mesh || !material) ({ mesh, material } = createUnitMeshes(unit, sprite, width, height));
+
+    const anchorX = (sprite.footX / sprite.width - 0.5) * width;
+    const footY = (sprite.footY - sprite.height / 2) * factor;
+    const { x, z } = AXIAL_TO_WORLD(unit.position);
+    const groundHeight = groundYFor(unit.position);
+    mesh.rotation.x = CAMERA_ELEVATION;
+    mesh.position.set(
+      x - anchorX,
+      footY * Math.cos(CAMERA_ELEVATION) + groundHeight,
+      z + footY * Math.sin(CAMERA_ELEVATION),
+    );
+    contactShadows.get(unit.id)?.position.set(x, groundHeight + 0.02, z);
+    mesh.metadata = {
+      combatUnitId: unit.id,
+      combatHex: unit.position,
+      combatFoot: new Vector3(x, groundHeight, z),
+    };
+    const edge = unitEdges.get(unit.id)!;
+    edge.metadata = { combatUnitId: unit.id, combatFoot: mesh.metadata.combatFoot };
+    edge.rotation.copyFrom(mesh.rotation);
+    edge.position.copyFrom(mesh.position);
+    edge.position.y -= 0.002 * Math.sin(CAMERA_ELEVATION);
+    edge.position.z += 0.002 * Math.cos(CAMERA_ELEVATION);
+    edge.setEnabled(unit.status === 'active');
+    const standing = unit.status === 'active';
+    mesh.setEnabled(standing);
+    mesh.isPickable = standing;
+    contactShadows.get(unit.id)?.setEnabled(standing);
+    material.alpha = 1;
+    if (!standing) addStatusMarker(unit, x, z, groundHeight);
+  };
+  const unitMeshesForView = (view: CombatLabView) => {
+    for (const marker of statusMarkers.splice(0)) marker.dispose(false, true);
+    removeAbsentUnits(view);
+    for (const unit of view.units) syncUnit(unit);
   };
 
+  const upAxis = new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION));
   let renderedEventRevision: number | null = null;
   const renderEvents = (view: CombatLabView) => {
     if (renderedEventRevision === view.viewRevision) return;
     const previousRevision = renderedEventRevision;
     renderedEventRevision = view.viewRevision;
     for (const mesh of eventLabels.splice(0)) mesh.dispose(false, true);
-    const labels = new Map<string, string>();
-    for (const event of view.events) {
-      if (
-        previousRevision === null
-          ? event.revision !== view.viewRevision
-          : event.revision <= previousRevision
-      )
-        continue;
-      const eventType = event.type as string;
-      const subjectId =
-        eventType.startsWith('threat.') && eventType !== 'threat.executed'
-          ? event.unitId
-          : (event.targetId ?? event.unitId);
-      if (!subjectId) continue;
-      const unit = view.units.find(({ id }) => id === subjectId);
-      if (!unit) continue;
-      // The persistent badge already explains this same live threat. Keep other
-      // sources, changed targets and cancelled/executed events as event feedback.
-      if (
-        unit.status === 'active' &&
-        unit.threat &&
-        (event.targetId === null || event.targetId === unit.threat.targetId) &&
-        ((eventType === 'threat.prepared' && !unit.threat.retargeted) ||
-          (eventType === 'threat.retargeted' && unit.threat.retargeted))
-      )
-        continue;
-      let text = '';
-      if (eventType === 'attack.resolved') {
-        const damage = event.healthDamage ?? event.armorDamage ?? 0;
-        text =
-          event.hit === false
-            ? 'ПРОМАХ'
-            : event.hit === true
-              ? `ПОПАДАНИЕ${damage > 0 ? ` −${damage}` : ''}`
-              : 'УДАР';
-      } else if (eventType === 'unit.died') text = 'ПОГИБ';
-      else if (eventType === 'unit.surrendered') text = 'СДАЛСЯ';
-      else if (eventType === 'threat.prepared') text = 'ГОТОВИТ УДАР';
-      else if (eventType === 'threat.retargeted') text = 'НОВОЕ НАВЕДЕНИЕ';
-      else if (eventType === 'threat.cancelled') text = 'УДАР ОТМЕНЁН';
-      else if (eventType === 'threat.executed') text = 'УДАР';
-      else if (eventType === 'unit.defended') text = 'ЗАЩИТА';
-      else if (eventType === 'skill.used')
-        text =
-          view.skills?.find((skill) => skill.skillId === event.skillId)?.name.toUpperCase() ??
-          (event.skillId
-            ? {
-                'shield-brace': 'УПОР ЩИТОМ',
-                'armor-pressure': 'ПРОБИВАНИЕ БРОНИ',
-                'reach-thrust': 'ДАЛЬНИЙ ВЫПАД',
-                'aimed-shot': 'ПРИЦЕЛЬНЫЙ ВЫСТРЕЛ',
-                rally: 'ОБОДРЕНИЕ',
-              }[event.skillId]
-            : 'ПРИЁМ');
-      else if (eventType === 'unit.moved')
-        text = `ШАГ${event.actionPointCost ? ` · −${event.actionPointCost} ОД` : ''}`;
-      else if (eventType === 'unit.fire-damaged') text = `ОГОНЬ −${event.healthDamage ?? 0}`;
-      else if (eventType === 'unit.wounded') {
-        const previous = labels.get(subjectId);
-        text = previous ? `${previous} · РАНЕНИЕ` : 'РАНЕНИЕ';
-      } else if (eventType === 'unit.damaged') {
-        if ((event.healthDamage ?? 0) > 0) text = `ЗДОРОВЬЕ −${event.healthDamage}`;
-        else if ((event.armorDamage ?? 0) > 0) text = `БРОНЯ −${event.armorDamage}`;
-      }
-      if (text) labels.set(subjectId, text);
-    }
-    const upAxis = new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION));
+    const labels = eventFeedback(view, previousRevision);
     const reserved = [...unitMeshes.values()]
       .filter((mesh) => mesh.isEnabled())
       .map((mesh) => ({
@@ -693,48 +659,38 @@ export async function mountSpriteBattleScene(
         halfWidth: mesh.getBoundingInfo().boundingBox.extendSize.x,
         halfHeight: mesh.getBoundingInfo().boundingBox.extendSize.y,
       }));
-    for (const [id, text] of labels) {
-      const unit = view.units.find(({ id: unitId }) => unitId === id);
-      const mesh = unitMeshes.get(id);
-      if (!unit || !mesh) continue;
-      const point =
-        unit.status === 'active'
-          ? mesh.position
-          : (() => {
-              const { x, z } = AXIAL_TO_WORLD(unit.position);
-              return new Vector3(x, (tileInfo.get(HEX_KEY(unit.position))?.height ?? 0) * 0.12, z);
-            })();
-      const up =
-        unit.status === 'active'
-          ? mesh.getBoundingInfo().boundingBox.extendSize.y + (unit.threat ? 0.65 : 0.23)
-          : 0.3;
-      let labelUp = Vector3.Dot(point, upAxis) + up;
-      const halfWidth = text.startsWith('ШАГ') ? 0.475 : 0.675;
-      for (let attempt = 0; attempt < 36; attempt++) {
-        if (
-          !reserved.some(
-            (box) =>
-              Math.abs(point.x - box.x) < halfWidth + box.halfWidth &&
-              Math.abs(labelUp - box.up) < 0.16 + box.halfHeight,
-          )
-        )
-          break;
-        labelUp += 0.18;
-      }
-      const offset = labelUp - Vector3.Dot(point, upAxis);
-      reserved.push({ x: point.x, up: labelUp, halfWidth, halfHeight: 0.16 });
-      addLabel(
-        scene,
-        eventLabels,
-        text,
-        new Vector3(
-          point.x,
-          point.y + offset * Math.cos(CAMERA_ELEVATION),
-          point.z + offset * Math.sin(CAMERA_ELEVATION),
-        ),
-        'event',
-      );
+    for (const [id, text] of labels) placeEventLabel(view, id, text, reserved);
+  };
+  const eventAnchor = (unit: BattleUnit, mesh: Mesh) => {
+    if (unit.status !== 'active') {
+      const { x, z } = AXIAL_TO_WORLD(unit.position);
+      return { point: new Vector3(x, groundYFor(unit.position), z), up: 0.3 };
     }
+    return {
+      point: mesh.position,
+      up: mesh.getBoundingInfo().boundingBox.extendSize.y + (unit.threat ? 0.65 : 0.23),
+    };
+  };
+  const placeEventLabel = (view: CombatLabView, id: string, text: string, reserved: LabelBox[]) => {
+    const unit = view.units.find(({ id: unitId }) => unitId === id);
+    const mesh = unitMeshes.get(id);
+    if (!unit || !mesh) return;
+    const { point, up } = eventAnchor(unit, mesh);
+    const halfWidth = text.startsWith('ШАГ') ? 0.475 : 0.675;
+    const labelUp = eventLabelUp(point.x, Vector3.Dot(point, upAxis) + up, halfWidth, reserved);
+    const offset = labelUp - Vector3.Dot(point, upAxis);
+    reserved.push({ x: point.x, up: labelUp, halfWidth, halfHeight: 0.16 });
+    addLabel(
+      scene,
+      eventLabels,
+      text,
+      new Vector3(
+        point.x,
+        point.y + offset * Math.cos(CAMERA_ELEVATION),
+        point.z + offset * Math.sin(CAMERA_ELEVATION),
+      ),
+      'event',
+    );
   };
 
   const previewMeshes: Mesh[] = [];
@@ -764,25 +720,7 @@ export async function mountSpriteBattleScene(
   threatFill.disableLighting = true;
   threatFill.emissiveColor = threatMaterial.emissiveColor;
   threatFill.alpha = 0.26;
-  const updateMarkers = () => {
-    for (const label of threatLabels.splice(0)) label.dispose(false, true);
-    const previewCell = hoveredTarget?.hex ?? selectedCell;
-    const hoveredUnitId = hoveredTarget?.unitId ?? highlightedId;
-    const cellStyles = new Map<string, BattleCellStyle>();
-    const cue = (
-      hex: CombatLabHex,
-      fill: BattleCellStyle['fill'],
-      border: Color3,
-      priority: number,
-    ) => {
-      const key = HEX_KEY(hex);
-      if (!tileInfo.has(key) || (cellStyles.get(key)?.priority ?? -1) > priority) return;
-      cellStyles.set(key, { fill, border, priority });
-    };
-    for (const tile of initialTiles) {
-      if (showFullGrid) cue(tile, null, new Color3(0.42, 0.4, 0.34), 0);
-      if (tile.blocked) cue(tile, null, blockedBorderMaterial.emissiveColor, 2);
-    }
+  const updateHeightLabels = () => {
     // Inspection exposes at most two heights, never a field of plaques. Occupied
     // cells use the figure/inspection panel; ground text cannot crowd its feet.
     const inspectedCells = new Set(
@@ -799,171 +737,155 @@ export async function mountSpriteBattleScene(
       const key = HEX_KEY(label.metadata.combatHex);
       label.setEnabled(inspectedCells.has(key) && !occupiedCells.has(key));
     }
-    for (const mesh of previewMeshes.splice(0)) mesh.dispose(false, false);
-    const activeActor = currentView.units.find(({ id }) => id === currentView.activation?.actorId);
-    const playerTurn =
-      currentView.status === 'active' &&
-      activeActor?.status === 'active' &&
-      activeActor.sideId === currentView.controlledSideId &&
-      (currentView.activation?.actionPoints.current ?? 0) > 0;
-    const targetPreviews = selectedSkill
-      ? currentView.skillPreview?.filter(
-          (preview) => preview.skillId === selectedSkill && preview.legal,
-        )
-      : currentView.attackPreview;
-    const attackableIds = new Set(
-      playerTurn ? targetPreviews?.map(({ targetId }) => targetId) : [],
-    );
-    for (const unit of currentView.units) {
-      const mesh = unitMeshes.get(unit.id);
-      const material = unitMaterials.get(unit.id);
-      if (!mesh || !material) continue;
-      const active = unit.status === 'active' && currentView.activation?.actorId === unit.id;
-      material.emissiveColor = isNight ? new Color3(0.82, 0.85, 0.9) : Color3.White();
-      const edgeMaterial = unitEdges.get(unit.id)?.material as StandardMaterial | undefined;
-      if (edgeMaterial)
-        edgeMaterial.emissiveColor =
-          unit.status === 'active' && unit.id === hoveredUnitId
-            ? new Color3(1, 0.91, 0.68)
-            : unit.status === 'active' &&
-                unit.sideId !== currentView.controlledSideId &&
-                attackableIds.has(unit.id)
-              ? new Color3(1, 0.69, 0.46)
-              : isNight
-                ? new Color3(0.67, 0.7, 0.74)
-                : Color3.White();
-      if (unit.status === 'active') {
-        cue(
-          unit.position,
-          null,
-          unit.sideId === currentView.controlledSideId
-            ? friendlyRingMaterial.emissiveColor
-            : enemyRingMaterial.emissiveColor,
-          1,
+  };
+  const tintUnit = (
+    unit: BattleUnit,
+    hoveredUnitId: string | null,
+    attackableIds: ReadonlySet<string>,
+  ) => {
+    const material = unitMaterials.get(unit.id);
+    if (!unitMeshes.has(unit.id) || !material) return;
+    material.emissiveColor = isNight ? new Color3(0.82, 0.85, 0.9) : Color3.White();
+    tintUnitEdge(unit, hoveredUnitId, attackableIds);
+  };
+  const tintUnitEdge = (
+    unit: BattleUnit,
+    hoveredUnitId: string | null,
+    attackableIds: ReadonlySet<string>,
+  ) => {
+    const edgeMaterial = unitEdges.get(unit.id)?.material as StandardMaterial | undefined;
+    if (edgeMaterial)
+      edgeMaterial.emissiveColor = {
+        day: Color3.White(),
+        night: new Color3(0.67, 0.7, 0.74),
+        hover: new Color3(1, 0.91, 0.68),
+        target: new Color3(1, 0.69, 0.46),
+      }[unitEdgeTone(unit, currentView, hoveredUnitId, attackableIds, isNight)];
+  };
+  const drawThreatArrow = (id: string, start: Vector3, end: Vector3) => {
+    const direction = end.subtract(start);
+    if (direction.lengthSquared() > 0.01) {
+      const arrowTip = end.subtract(direction.normalize().scale(0.28));
+      const back = arrowTip.subtract(direction.scale(0.24));
+      const side = new Vector3(-direction.z, 0, direction.x).scale(0.15);
+      for (const [name, points] of [
+        ['shaft', [start, arrowTip]],
+        ['head', [back.add(side), arrowTip, back.subtract(side)]],
+      ] as const) {
+        const line = MeshBuilder.CreateTube(
+          `threat-${name}:${id}`,
+          { path: [...points], radius: 0.025, tessellation: 6 },
+          scene,
         );
-        if (active) cue(unit.position, previewMaterial, actorRingMaterial.emissiveColor, 5);
-        if (unit.id === selectedId)
-          cue(unit.position, selectionMaterial, pathMaterial.emissiveColor, 8);
+        line.material = threatMaterial;
+        line.isPickable = false;
+        previewMeshes.push(line);
       }
     }
-    for (const unit of currentView.units) {
-      const threat = unit.threat;
-      if (unit.status !== 'active' || !threat) continue;
-      const origin = AXIAL_TO_WORLD(unit.position);
-      const target = AXIAL_TO_WORLD(threat.targetHex);
-      const groundY = (tileInfo.get(HEX_KEY(threat.targetHex))?.height ?? 0) * 0.12;
-      cue(threat.targetHex, threatFill, threatMaterial.emissiveColor, 9);
-      const start = new Vector3(
-        origin.x,
-        0.19 + (tileInfo.get(HEX_KEY(unit.position))?.height ?? 0) * 0.12,
-        origin.z,
-      );
-      const end = new Vector3(target.x, groundY + 0.19, target.z);
-      const direction = end.subtract(start);
-      if (direction.lengthSquared() > 0.01) {
-        const arrowTip = end.subtract(direction.normalize().scale(0.28));
-        const back = arrowTip.subtract(direction.scale(0.24));
-        const side = new Vector3(-direction.z, 0, direction.x).scale(0.15);
-        for (const [name, points] of [
-          ['shaft', [start, arrowTip]],
-          ['head', [back.add(side), arrowTip, back.subtract(side)]],
-        ] as const) {
-          const line = MeshBuilder.CreateTube(
-            `threat-${name}:${unit.id}`,
-            { path: [...points], radius: 0.025, tessellation: 6 },
-            scene,
-          );
-          line.material = threatMaterial;
-          line.isPickable = false;
-          previewMeshes.push(line);
-        }
-      }
-      const figure = unitMeshes.get(unit.id)!;
-      addLabel(
-        scene,
-        threatLabels,
-        threat.retargeted ? 'Новое наведение' : 'Готовит удар',
-        figure.position.add(
+  };
+  const threatDamageAnchor = (
+    threat: NonNullable<BattleUnit['threat']>,
+    target: { x: number; z: number },
+    groundY: number,
+  ) => {
+    const threatenedUnit = currentView.units.find(
+      (candidate) =>
+        candidate.id === threat.targetId &&
+        candidate.status === 'active' &&
+        HEX_KEY(candidate.position) === HEX_KEY(threat.targetHex),
+    );
+    const threatenedFigure = threatenedUnit && unitMeshes.get(threatenedUnit.id);
+    return threatenedFigure
+      ? threatenedFigure.position.add(
           new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION)).scale(
-            figure.getBoundingInfo().boundingBox.extendSize.y + 0.25,
+            threatenedFigure.getBoundingInfo().boundingBox.extendSize.y + 0.25,
           ),
+        )
+      : new Vector3(target.x, groundY + 0.28, target.z + 0.45);
+  };
+  const renderThreat = (unit: BattleUnit) => {
+    const threat = unit.threat;
+    if (unit.status !== 'active' || !threat) return;
+    const origin = AXIAL_TO_WORLD(unit.position);
+    const target = AXIAL_TO_WORLD(threat.targetHex);
+    const groundY = groundYFor(threat.targetHex);
+    const start = new Vector3(origin.x, 0.19 + groundYFor(unit.position), origin.z);
+    const end = new Vector3(target.x, groundY + 0.19, target.z);
+    drawThreatArrow(unit.id, start, end);
+    const figure = unitMeshes.get(unit.id)!;
+    addLabel(
+      scene,
+      threatLabels,
+      threat.retargeted ? 'Новое наведение' : 'Готовит удар',
+      figure.position.add(
+        new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION)).scale(
+          figure.getBoundingInfo().boundingBox.extendSize.y + 0.25,
         ),
-        'danger',
-      );
-      const threatenedUnit = currentView.units.find(
-        (candidate) =>
-          candidate.id === threat.targetId &&
-          candidate.status === 'active' &&
-          HEX_KEY(candidate.position) === HEX_KEY(threat.targetHex),
-      );
-      const threatenedFigure = threatenedUnit && unitMeshes.get(threatenedUnit.id);
-      const damageAnchor = threatenedFigure
-        ? threatenedFigure.position.add(
-            new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION)).scale(
-              threatenedFigure.getBoundingInfo().boundingBox.extendSize.y + 0.25,
-            ),
-          )
-        : new Vector3(target.x, groundY + 0.28, target.z + 0.45);
-      addLabel(
-        scene,
-        threatLabels,
-        `Удар ${threat.damage.minimum}–${threat.damage.maximum} до брони`,
-        damageAnchor,
-        'danger',
-      );
-    }
-    const reachUnit = selectedId
-      ? currentView.units.find(({ id }) => id === selectedId)
-      : activeActor;
-    const reachCells =
-      reachUnit?.weaponReach?.cells ??
-      (reachUnit?.id === activeActor?.id ? currentView.rangedAttackArea : []);
-    const showReach =
-      currentView.status === 'active' && reachUnit?.status === 'active' && !selectedSkill;
-    const reachKeys = new Set(showReach ? (reachCells ?? []).map(HEX_KEY) : []);
-    const movementKeys = new Set(
-      playerTurn && !selectedSkill
-        ? currentView.movementPreview?.map((preview) => HEX_KEY(preview.to))
-        : [],
+      ),
+      'danger',
     );
-    for (const hex of showReach ? (reachCells ?? []) : []) {
-      const combined = movementKeys.has(HEX_KEY(hex));
-      cue(
-        hex,
-        combined ? combinedAreaMaterial : shotAreaMaterial,
-        combined ? combinedEdge : shotAreaEdgeMaterial.emissiveColor,
-        4,
-      );
-    }
-    if (playerTurn && activeActor) {
-      for (const preview of (selectedSkill ? [] : currentView.movementPreview) ?? []) {
-        if (!reachKeys.has(HEX_KEY(preview.to)))
-          cue(preview.to, movementAreaMaterial, movementEdgeMaterial.emissiveColor, 3);
-      }
-      const selectedPath =
-        !selectedSkill &&
-        currentView.movementPreview?.find(
-          (preview) => HEX_KEY(preview.to) === (previewCell ? HEX_KEY(previewCell) : ''),
-        );
-      if (selectedPath) {
-        for (const hex of selectedPath.path)
-          cue(hex, selectionMaterial, pathMaterial.emissiveColor, 7);
-      }
-      for (const target of targetPreviews ?? []) {
-        const unit = currentView.units.find(({ id }) => id === target.targetId);
-        if (unit?.status === 'active')
-          cue(unit.position, targetFill, targetMaterial.emissiveColor, 6);
-      }
-    }
-    if (selectedCell) cue(selectedCell, selectionMaterial, pathMaterial.emissiveColor, 8);
-    const hoverHex =
-      hoveredTarget?.hex ?? currentView.units.find((unit) => unit.id === highlightedId)?.position;
-    if (hoverHex) {
-      const key = HEX_KEY(hoverHex);
-      const existing = cellStyles.get(key);
-      cue(hoverHex, existing?.fill ?? previewMaterial, actorRingMaterial.emissiveColor, 10);
-    }
-    cellGrid.paint(cellStyles);
+    const damageAnchor = threatDamageAnchor(threat, target, groundY);
+    addLabel(
+      scene,
+      threatLabels,
+      `Удар ${threat.damage.minimum}–${threat.damage.maximum} до брони`,
+      damageAnchor,
+      'danger',
+    );
+  };
+  const fillMaterials = {
+    preview: previewMaterial,
+    selection: selectionMaterial,
+    movement: movementAreaMaterial,
+    combined: combinedAreaMaterial,
+    shot: shotAreaMaterial,
+    target: targetFill,
+    threat: threatFill,
+  };
+  const borderColours = {
+    grid: new Color3(0.42, 0.4, 0.34),
+    blocked: blockedBorderMaterial.emissiveColor,
+    friendly: friendlyRingMaterial.emissiveColor,
+    enemy: enemyRingMaterial.emissiveColor,
+    actor: actorRingMaterial.emissiveColor,
+    path: pathMaterial.emissiveColor,
+    movement: movementEdgeMaterial.emissiveColor,
+    combined: combinedEdge,
+    shot: shotAreaEdgeMaterial.emissiveColor,
+    target: targetMaterial.emissiveColor,
+    threat: threatMaterial.emissiveColor,
+  };
+  const clearPreviewMarkers = () => {
+    for (const label of threatLabels.splice(0)) label.dispose(false, true);
+    for (const mesh of previewMeshes.splice(0)) mesh.dispose(false, false);
+  };
+  const refreshFigureMarkers = (plan: ReturnType<typeof markerPlan>) => {
+    for (const unit of currentView.units) tintUnit(unit, plan.hoveredUnitId, plan.attackableIds);
+    for (const unit of currentView.units) renderThreat(unit);
+  };
+  const applyCellStyles = (cells: ReturnType<typeof markerPlan>['cells']) => {
+    const styles = new Map<string, BattleCellStyle>();
+    for (const [key, style] of cells)
+      styles.set(key, {
+        fill: style.fill ? fillMaterials[style.fill] : null,
+        border: borderColours[style.border],
+        priority: style.priority,
+      });
+    cellGrid.paint(styles);
+  };
+  const updateMarkers = () => {
+    clearPreviewMarkers();
+    updateHeightLabels();
+    const plan = markerPlan(currentView, initialTiles, {
+      selectedId,
+      selectedSkill,
+      selectedCell,
+      hoveredTarget,
+      highlightedId,
+      showFullGrid,
+    });
+    refreshFigureMarkers(plan);
+    applyCellStyles(plan.cells);
   };
 
   const pickFrom = (hit: PickingInfo | null) => {
@@ -978,25 +900,10 @@ export async function mountSpriteBattleScene(
     const figures = hits.filter(
       (hit) => (hit.pickedMesh?.metadata as { combatUnitId?: string } | null)?.combatUnitId,
     );
-    for (const hit of figures.toSorted((left, right) =>
-      compareObjects(right.pickedMesh!, left.pickedMesh!),
-    )) {
-      const unitId = (hit.pickedMesh?.metadata as { combatUnitId?: string } | null)?.combatUnitId;
-      if (!unitId) continue;
-      const unit = currentView.units.find((unit) => unit.id === unitId);
-      const uv = hit.getTextureCoordinates();
-      const mask = unit && spriteMasks.get(spriteForUnit(unit).url);
-      if (!uv || !mask) continue;
-      const column = Math.max(
-        0,
-        Math.min(SPRITE_MASK_SIZE - 1, Math.floor(uv.x * SPRITE_MASK_SIZE)),
-      );
-      const row = Math.max(
-        0,
-        Math.min(SPRITE_MASK_SIZE - 1, Math.floor((1 - uv.y) * SPRITE_MASK_SIZE)),
-      );
-      if ((mask[(row * SPRITE_MASK_SIZE + column) * 4 + 3] ?? 0) >= 16) return hit;
-    }
+    const figureHit = figures
+      .toSorted((left, right) => compareObjects(right.pickedMesh!, left.pickedMesh!))
+      .find(isOpaqueFigureHit);
+    if (figureHit) return figureHit;
     const groundHit = hits
       .filter(
         (hit) => !(hit.pickedMesh?.metadata as { combatUnitId?: string } | null)?.combatUnitId,
@@ -1006,44 +913,70 @@ export async function mountSpriteBattleScene(
     // Exact shared edges can miss both triangles by floating point error. Try
     // each actual level, nearest first; never round on level 0 then select a
     // different raised cell or extend the map beyond its visible perimeter.
+    return pickTerrainSeam(x, y);
+  };
+  const spriteMaskForHit = (hit: PickingInfo) => {
+    const unitId = hit.pickedMesh?.metadata?.combatUnitId;
+    const unit = currentView.units.find((candidate) => candidate.id === unitId);
+    return unit ? spriteMasks.get(spriteForUnit(unit).url) : undefined;
+  };
+  const isOpaqueFigureHit = (hit: PickingInfo) => {
+    const uv = hit.getTextureCoordinates();
+    const mask = spriteMaskForHit(hit);
+    return !!uv && !!mask && opaqueSpritePixel(mask, uv);
+  };
+  const pickTerrainSeam = (x: number, y: number) => {
     const ray = scene.createPickingRay(x, y, Matrix.Identity(), scene.activeCamera);
     const levels = [...new Set(initialTiles.map((tile) => tile.height))].sort((a, b) => b - a);
     for (const level of levels) {
-      const plane = Plane.FromPositionAndNormal(new Vector3(0, level * 0.12, 0), Vector3.Up());
-      const distance = ray.intersectsPlane(plane);
-      if (distance === null || distance < 0) continue;
-      const point = ray.origin.add(ray.direction.scale(distance));
-      const hex = worldToHex(point.x, point.z);
-      const tile = tileInfo.get(HEX_KEY(hex));
-      if (!tile || tile.height !== level) continue;
-      const hit = new PickingInfo();
-      hit.hit = true;
-      hit.distance = distance;
-      hit.pickedPoint = point;
-      hit.pickedMesh = scene.getMeshByName(`ground:${HEX_KEY(hex)}`);
-      return hit;
+      const hit = terrainSeamAtLevel(ray, level);
+      if (hit) return hit;
     }
     return null;
   };
-  const targetFrom = (hit: PickingInfo | null): BattleFieldTarget | null => {
-    const metadata = hit?.pickedMesh?.metadata as {
+  const terrainSeamAtLevel = (ray: Ray, level: number) => {
+    const intersection = intersectGroundLevel(ray, level);
+    if (!intersection) return null;
+    const { point, distance } = intersection;
+    const hex = worldToHex(point.x, point.z);
+    const tile = tileInfo.get(HEX_KEY(hex));
+    if (!tile || tile.height !== level) return null;
+    const hit = new PickingInfo();
+    hit.hit = true;
+    hit.distance = distance;
+    hit.pickedPoint = point;
+    hit.pickedMesh = scene.getMeshByName(`ground:${HEX_KEY(hex)}`);
+    return hit;
+  };
+  const occupantAt = (hex: CombatLabHex) =>
+    currentView.units.find(
+      (candidate) => candidate.status === 'active' && HEX_KEY(candidate.position) === HEX_KEY(hex),
+    )?.id ?? null;
+  const hitMetadata = (hit: PickingInfo | null) => {
+    return hit?.pickedMesh?.metadata as {
       combatUnitId?: string;
       combatHex?: CombatLabHex;
     } | null;
+  };
+  const anchorForId = (unitId: string | null) =>
+    fieldAnchor(unitId ? unitMeshes.get(unitId) : undefined);
+  const targetFrom = (hit: PickingInfo | null): BattleFieldTarget | null => {
+    const metadata = hitMetadata(hit);
     if (!metadata?.combatHex) return null;
     const hex = metadata.combatHex;
     // Opaque sprite hits win above; uncovered pixels of an occupied cell address
     // its living occupant through the same hover/inspection/action target.
-    const unitId =
-      metadata.combatUnitId ??
-      currentView.units.find(
-        (candidate) =>
-          candidate.status === 'active' && HEX_KEY(candidate.position) === HEX_KEY(hex),
-      )?.id ??
-      null;
-    const unit = unitId ? unitMeshes.get(unitId) : undefined;
+    const unitId = metadata.combatUnitId ?? occupantAt(hex);
+    return anchoredTarget(hex, unitId);
+  };
+  const anchoredTarget = (hex: CombatLabHex, unitId: string | null): BattleFieldTarget => {
+    const anchor = anchorForId(unitId);
+    return { hex, unitId, ...(anchor ? { anchor } : {}) };
+  };
+  const fieldAnchor = (unit: Mesh | undefined): BattleFieldTarget['anchor'] => {
     let anchor: BattleFieldTarget['anchor'];
-    if (unit && scene.activeCamera) {
+    if (!unit || !scene.activeCamera) return undefined;
+    {
       const above = unit.position.add(
         new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION)).scale(
           unit.getBoundingInfo().boundingBox.extendSize.y + 0.7,
@@ -1100,34 +1033,16 @@ export async function mountSpriteBattleScene(
             bottom: Math.max(...corners.map(({ y }) => y)),
           };
         });
-      for (let attempt = 0; attempt < reserved.length; attempt++) {
-        const collision = reserved.find(
-          (box) =>
-            anchor!.x + 118 > box.left &&
-            anchor!.x - 118 < box.right &&
-            anchor!.y > box.top &&
-            anchor!.y - 80 < box.bottom,
-        );
-        if (!collision || anchor.y === 100) break;
-        anchor = { ...anchor, y: Math.max(100, collision.top - 8) };
-      }
+      anchor = avoidAnchorOverlap(anchor, reserved);
     }
-    return {
-      hex,
-      unitId,
-      ...(anchor ? { anchor } : {}),
-    };
+    return anchor;
   };
+
   const hoverAt = (event: PointerEvent) => {
     if (event.buttons !== 0) return;
     const rect = canvas.getBoundingClientRect();
     const target = targetFrom(pickAt(event.clientX - rect.left, event.clientY - rect.top));
-    if (
-      target?.unitId === hoveredTarget?.unitId &&
-      target?.hex.q === hoveredTarget?.hex.q &&
-      target?.hex.r === hoveredTarget?.hex.r
-    )
-      return;
+    if (sameFieldTarget(target, hoveredTarget)) return;
     hoveredTarget = target;
     callbacks.onHover(target);
     updateMarkers();
@@ -1144,6 +1059,29 @@ export async function mountSpriteBattleScene(
   canvas.addEventListener('wheel', clearHover, { capture: true, passive: true });
   canvas.addEventListener('keydown', clearHover);
   canvas.addEventListener('contextmenu', preventContextMenu);
+  const refuseSkill = (reason: string | null | undefined) =>
+    callbacks.onRefusal?.(reason ?? 'Выберите допустимую цель приёма');
+  const useSelectedSkill = (skillId: CombatLabSkillId, targetId: string | null | undefined) => {
+    const preview = currentView.skillPreview?.find(
+      (row) => row.skillId === skillId && row.targetId === targetId,
+    );
+    if (preview?.legal) callbacks.onAct({ type: 'use-skill', skillId, targetId: preview.targetId });
+    else refuseSkill(preview?.reason);
+  };
+  const attackUnitIfLegal = (id: string) => {
+    if (currentView.attackPreview?.some(({ targetId }) => targetId === id))
+      callbacks.onAct({ type: 'attack', targetId: id });
+  };
+  const actAtTarget = (target: BattleFieldTarget | null) => {
+    if (!target) return;
+    const unit = currentView.units.find(
+      ({ id, status }) => id === target.unitId && status === 'active',
+    );
+    if (unit) {
+      attackUnitIfLegal(unit.id);
+    } else if (currentView.movementPreview?.some(({ to }) => HEX_KEY(to) === HEX_KEY(target.hex)))
+      callbacks.onAct({ type: 'move', to: target.hex });
+  };
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
     minZoom: 2.2,
@@ -1161,28 +1099,8 @@ export async function mountSpriteBattleScene(
     onPick: pickFrom,
     onSecondaryPick(hit) {
       const target = targetFrom(hit);
-      if (selectedSkill) {
-        const preview = currentView.skillPreview?.find(
-          (row) => row.skillId === selectedSkill && row.targetId === target?.unitId,
-        );
-        if (preview?.legal)
-          callbacks.onAct({
-            type: 'use-skill',
-            skillId: selectedSkill,
-            targetId: preview.targetId,
-          });
-        else callbacks.onRefusal?.(preview?.reason ?? 'Выберите допустимую цель приёма');
-        return;
-      }
-      if (!target) return;
-      const unit = currentView.units.find(
-        ({ id, status }) => id === target.unitId && status === 'active',
-      );
-      if (unit) {
-        if (currentView.attackPreview?.some(({ targetId }) => targetId === unit.id))
-          callbacks.onAct({ type: 'attack', targetId: unit.id });
-      } else if (currentView.movementPreview?.some(({ to }) => HEX_KEY(to) === HEX_KEY(target.hex)))
-        callbacks.onAct({ type: 'move', to: target.hex });
+      if (selectedSkill) useSelectedSkill(selectedSkill, target?.unitId);
+      else actAtTarget(target);
     },
   });
   camera.fit(
@@ -1227,6 +1145,22 @@ export async function mountSpriteBattleScene(
   };
   signal?.addEventListener('abort', destroy, { once: true });
 
+  const updateLighting = (night: boolean) => {
+    if (isNight === night) return;
+    isNight = night;
+    const values = night
+      ? {
+          clear: new Color4(0.025, 0.031, 0.044, 1),
+          intensity: 0.78,
+          ground: new Color3(0.62, 0.67, 0.74),
+        }
+      : { clear: new Color4(0.075, 0.067, 0.057, 1), intensity: 0.98, ground: Color3.White() };
+    scene.clearColor = values.clear;
+    light.intensity = values.intensity;
+    groundMaterial.emissiveColor = values.ground;
+    for (const [material, tint] of raisedTints)
+      material.emissiveColor = tint.multiply(groundMaterial.emissiveColor);
+  };
   return {
     setHighlightedUnit(id) {
       if (destroyed || highlightedId === id) return;
@@ -1240,16 +1174,7 @@ export async function mountSpriteBattleScene(
       selectedSkill = selectedSkillId;
       selectedId = nextSelectedId;
       selectedCell = nextSelectedCell;
-      if (isNight !== night) {
-        isNight = night;
-        scene.clearColor = night
-          ? new Color4(0.025, 0.031, 0.044, 1)
-          : new Color4(0.075, 0.067, 0.057, 1);
-        light.intensity = night ? 0.78 : 0.98;
-        groundMaterial.emissiveColor = night ? new Color3(0.62, 0.67, 0.74) : Color3.White();
-        for (const [material, tint] of raisedTints)
-          material.emissiveColor = tint.multiply(groundMaterial.emissiveColor);
-      }
+      updateLighting(night);
       unitMeshesForView(view);
       renderEvents(view);
       if (changedRevision) clearHover();
@@ -1306,7 +1231,8 @@ function addLabel(
   position: Vector3,
   tone: 'height' | 'danger' | 'event',
 ): void {
-  const labelWidth = tone === 'height' ? 96 : 256;
+  const style = labelStyles[tone];
+  const labelWidth = style.textureWidth;
   const texture = new DynamicTexture(
     `label:${text}`,
     { width: labelWidth, height: 64 },
@@ -1316,15 +1242,15 @@ function addLabel(
   texture.hasAlpha = true;
   const context = texture.getContext() as unknown as CanvasRenderingContext2D;
   context.clearRect(0, 0, labelWidth, 64);
-  context.fillStyle = tone === 'danger' ? '#713b2d' : tone === 'event' ? '#24201c' : '#363b38';
-  context.strokeStyle = tone === 'danger' ? '#c17646' : tone === 'event' ? '#b99a60' : '#8e9185';
+  context.fillStyle = style.fill;
+  context.strokeStyle = style.stroke;
   context.lineWidth = 3;
   context.beginPath();
   context.roundRect(3, 3, labelWidth - 6, 58, 8);
   context.fill();
   context.stroke();
   context.fillStyle = '#efe3c7';
-  context.font = tone === 'height' ? 'bold 36px sans-serif' : 'bold 26px sans-serif';
+  context.font = style.font;
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   context.fillText(text, labelWidth / 2, 32, labelWidth - 18);
@@ -1338,8 +1264,8 @@ function addLabel(
   const label = MeshBuilder.CreatePlane(
     `label:${text}`,
     {
-      width: tone === 'height' ? 0.32 : text.startsWith('ШАГ') ? 0.95 : 1.35,
-      height: tone === 'height' ? 0.18 : 0.3,
+      width: tone !== 'height' && text.startsWith('ШАГ') ? 0.95 : style.width,
+      height: style.height,
     },
     scene,
   );
@@ -1360,4 +1286,45 @@ function tilesFor(view: CombatLabView) {
     terrain: 'plain' as const,
     blocked: blocked.has(HEX_KEY(hex)),
   }));
+}
+
+function spriteDisplayHeight(id: string): number {
+  if (id.startsWith('W')) return 1.4;
+  return ({ B001: 0.73, B053: 1.62, B002: 1.62 } as Record<string, number>)[id] ?? 1.23;
+}
+
+const labelStyles = {
+  height: {
+    textureWidth: 96,
+    fill: '#363b38',
+    stroke: '#8e9185',
+    font: 'bold 36px sans-serif',
+    width: 0.32,
+    height: 0.18,
+  },
+  danger: {
+    textureWidth: 256,
+    fill: '#713b2d',
+    stroke: '#c17646',
+    font: 'bold 26px sans-serif',
+    width: 1.35,
+    height: 0.3,
+  },
+  event: {
+    textureWidth: 256,
+    fill: '#24201c',
+    stroke: '#b99a60',
+    font: 'bold 26px sans-serif',
+    width: 1.35,
+    height: 0.3,
+  },
+};
+
+function sameFieldTarget(left: BattleFieldTarget | null, right: BattleFieldTarget | null): boolean {
+  if (!left || !right) return left === right;
+  return left.unitId === right.unitId && HEX_KEY(left.hex) === HEX_KEY(right.hex);
+}
+
+function ensureMountAllowed(signal: AbortSignal | undefined): void {
+  if (signal?.aborted) throw new Error('Scene mount cancelled');
 }

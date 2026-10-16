@@ -87,6 +87,18 @@ function hasExactKeys(value: Record<string, unknown>, expected: readonly string[
   );
 }
 
+function validateTileSurface(rawTile: Record<string, unknown>, tileKey: string): string[] {
+  const errors: string[] = [];
+  if (![0, 1, 2].includes(rawTile['height'] as number))
+    errors.push(`Высота ${tileKey}: только 0, 1 или 2.`);
+  if (!['plain', 'mud', 'fire'].includes(rawTile['terrain'] as string)) {
+    errors.push(`Поверхность ${tileKey}: plain, mud или fire.`);
+  }
+  if (typeof rawTile['blocked'] !== 'boolean')
+    errors.push(`Препятствие ${tileKey}: требуется true или false.`);
+  return errors;
+}
+
 function validateMapContents(name: unknown, tiles: unknown): string[] {
   const errors: string[] = [];
   if (typeof name !== 'string' || name.trim().length === 0 || name.length > 80) {
@@ -111,13 +123,7 @@ function validateMapContents(name: unknown, tiles: unknown): string[] {
     const tileKey = key(tile);
     if (seen.has(tileKey)) errors.push(`Клетка ${tileKey} указана дважды.`);
     seen.add(tileKey);
-    if (![0, 1, 2].includes(rawTile['height'] as number))
-      errors.push(`Высота ${tileKey}: только 0, 1 или 2.`);
-    if (!['plain', 'mud', 'fire'].includes(rawTile['terrain'] as string)) {
-      errors.push(`Поверхность ${tileKey}: plain, mud или fire.`);
-    }
-    if (typeof rawTile['blocked'] !== 'boolean')
-      errors.push(`Препятствие ${tileKey}: требуется true или false.`);
+    errors.push(...validateTileSurface(rawTile, tileKey));
   }
   if (seen.size !== EDITOR_MAP_WIDTH * EDITOR_MAP_HEIGHT) {
     errors.push('В карте должны быть все клетки поля 15×11 без пропусков.');

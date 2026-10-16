@@ -429,6 +429,50 @@ it('renders learned skills with ranks and canonical costs, plus overflow instead
   expect(html).not.toContain('ещё не реализован');
 });
 
+it('explains unavailable equipment and absent skill targets without blaming the inspected unit', () => {
+  const skill = {
+    skillId: 'aimed-shot' as const,
+    name: 'Прицельный выстрел',
+    rank: 1 as const,
+    target: 'enemy' as const,
+    minimumRange: 2,
+    maximumRange: 4,
+    actionPointCost: 4,
+    staminaCost: 24,
+    duration: 'instant' as const,
+    description: 'Прицельный выстрел из лука',
+    equipmentAvailable: true,
+  };
+  const preview = {
+    ...skill,
+    rulesetId: 'sprite-prototype-v3' as const,
+    revision: view.viewRevision,
+    activationId: 'activation',
+    actorId: 'W01',
+    targetId: 'W01',
+    legal: false,
+    reason: 'INVALID_TARGET',
+  };
+  const observation = {
+    ...view,
+    skills: [skill],
+    skillPreview: [preview, { ...preview, targetId: 'B001', reason: 'OUT_OF_RANGE' }],
+  };
+  expect(render(observation)).toContain('Нет подходящей цели в зоне приёма · дальность 2–4.');
+  expect(render({ ...observation, skills: [{ ...skill, equipmentAvailable: false }] })).toContain(
+    'Текущее снаряжение не подходит для этого приёма.',
+  );
+  expect(
+    render({
+      ...observation,
+      skillPreview: [
+        preview,
+        { ...preview, targetId: 'B001', reason: 'INSUFFICIENT_ACTION_POINTS' },
+      ],
+    }),
+  ).toContain('Не хватает очков действий.');
+});
+
 it('identifies the selected blocked hex without offering a move forecast', () => {
   const blocked = { q: 2, r: 0 };
   const html = renderToStaticMarkup(

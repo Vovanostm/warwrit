@@ -9,14 +9,20 @@ import type {
 } from '@warwrit/protocol';
 import {
   createEmptyTiles,
-  paintBattleTile,
-  placeBattleUnit,
   removeBattleUnit,
   toMapDraft,
   validateBattleDraft,
-  validateMapDraft,
 } from './editor-model.js';
-import type { TilePatch } from './editor-model.js';
+import {
+  applyEditorBrush,
+  canDragPaint,
+  editorCellCoordinates,
+  parseSavedDrafts,
+  prepareBattleImport,
+  readEditorImportFile,
+  validSavedDrafts,
+} from './editor-actions.js';
+import type { EditorBrush, SavedDrafts } from './editor-actions.js';
 import './battle-editor.css';
 import { SkillLoadout } from './SkillLoadout.js';
 
@@ -26,18 +32,6 @@ export interface BattleEditorProps {
   readonly onChange: (value: CombatLabBattleConfig) => void;
   readonly disabled?: boolean;
 }
-
-type Brush =
-  | 'plain'
-  | 'mud'
-  | 'fire'
-  | 'blocked'
-  | 'clear-blocked'
-  | 'height-0'
-  | 'height-1'
-  | 'height-2'
-  | 'place';
-type SavedDrafts = Record<string, CombatLabBattleConfig>;
 
 const storageKey = 'warwrit.combat-lab.drafts.v1';
 const hexKey = ({ q, r }: CombatLabHex) => `${q},${r}`;
@@ -66,27 +60,14 @@ function downloadJson(filename: string, value: unknown): void {
 }
 
 function readSavedDrafts(): SavedDrafts {
-  const raw = localStorage.getItem(storageKey);
-  if (raw === null) return {};
-  const parsed: unknown = JSON.parse(raw);
-  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
-  return parsed as SavedDrafts;
+  return parseSavedDrafts(localStorage.getItem(storageKey));
 }
 
 function cellFromEvent(event: { target: EventTarget | null }): CombatLabHex | null {
   if (!(event.target instanceof Element)) return null;
   const cell = event.target.closest<SVGGElement>('[data-editor-cell]');
   if (cell === null) return null;
-  const q = Number(cell.getAttribute('data-q'));
-  const r = Number(cell.getAttribute('data-r'));
-  return Number.isInteger(q) && Number.isInteger(r) ? { q, r } : null;
-}
-
-function nextDraftName(units: readonly CombatLabCustomUnit[], side: string): string {
-  const existing = new Set(units.map((unit) => unit.id));
-  let suffix = 1;
-  while (existing.has(`${side}-${suffix}`)) suffix += 1;
-  return `${side}-${suffix}`;
+  return editorCellCoordinates(cell.getAttribute('data-q'), cell.getAttribute('data-r'));
 }
 
 function editorCellLabel(
@@ -143,12 +124,64 @@ function EditorCell({
   );
 }
 
+function EditorMessages({
+  errors,
+  importErrors,
+  notice,
+}: {
+  readonly errors: readonly string[];
+  readonly importErrors: readonly string[];
+  readonly notice: string;
+}) {
+  return (
+    <>
+      {errors.length > 0 && (
+        <section className="battle-editor-errors" role="alert" aria-label="Ошибки перед запуском">
+          <h3>Нельзя запустить этот черновик</h3>
+          <ul>
+            {errors.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {errors.length === 0 && (
+        <p className="battle-editor-ready" role="status">
+          Черновик можно отправить на запуск; сервер повторит проверку перед созданием боя.
+        </p>
+      )}
+      {importErrors.length > 0 && (
+        <section className="battle-editor-errors" role="alert" aria-label="Ошибки импорта">
+          <h3>Файл не применён</h3>
+          <ul>
+            {importErrors.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {notice && (
+        <p className="battle-editor-notice" role="status">
+          {notice}
+        </p>
+      )}
+    </>
+  );
+}
+
 /** Local battle and map draft editor; all imports are validated before onChange. */
 export function BattleEditor({ catalog, value, onChange, disabled = false }: BattleEditorProps) {
-  const [brush, setBrush] = useState<Brush>('plain');
   const [inspectedHex, setInspectedHex] = useState<CombatLabHex | null>(null);
-  const [sideId, setSideId] = useState<CombatLabCustomUnit['sideId']>('human');
-  const [profileId, setProfileId] = useState(catalog.profiles[0]?.id ?? '');
+  const [tool, setTool] = useState({
+    brush: 'plain' as EditorBrush,
+    sideId: 'human' as CombatLabCustomUnit['sideId'],
+    profileId: catalog.profiles[0]?.id ?? '',
+  });
+  const { brush, sideId, profileId } = tool;
+  const setBrush = (brush: EditorBrush) => setTool((current) => ({ ...current, brush }));
+  const setSideId = (sideId: CombatLabCustomUnit['sideId']) =>
+    setTool((current) => ({ ...current, sideId }));
+  const setProfileId = (profileId: string) => setTool((current) => ({ ...current, profileId }));
   const [savedDrafts, setSavedDrafts] = useState<SavedDrafts>({});
   const [savedName, setSavedName] = useState('');
   const [notice, setNotice] = useState('');
@@ -159,10 +192,7 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   useEffect(() => {
     try {
       const drafts = readSavedDrafts();
-      const valid: SavedDrafts = {};
-      for (const [name, draft] of Object.entries(drafts)) {
-        if (validateBattleDraft(draft, catalog).length === 0) valid[name] = draft;
-      }
+      const valid = validSavedDrafts(drafts, catalog);
       setSavedDrafts(valid);
       if (Object.keys(drafts).length !== Object.keys(valid).length) {
         localStorage.setItem(storageKey, JSON.stringify(valid));
@@ -187,40 +217,11 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   }
 
   function setTile(hex: CombatLabHex): void {
-    const tile = value.map.tiles.find(
-      (candidate) => candidate.q === hex.q && candidate.r === hex.r,
-    );
-    if (tile === undefined) return;
+    const result = applyEditorBrush(value, hex, brush, profileId, sideId);
+    if (result === null) return;
     setInspectedHex(hex);
-    if (brush === 'place') {
-      if (tile.blocked) {
-        setNotice(`Клетка ${hexKey(hex)} занята препятствием.`);
-        return;
-      }
-      const placed = placeBattleUnit(value.units, profileId, sideId, hex);
-      if (placed === null) {
-        setNotice(`Нельзя поставить бойца: клетка занята или сторона уже набрала 6 участников.`);
-        return;
-      }
-      change({ units: placed });
-      setNotice(`Боец ${nextDraftName(value.units, sideId)} размещён на ${hexKey(hex)}.`);
-      return;
-    }
-    let patch: TilePatch;
-    if (brush === 'blocked') patch = { blocked: true };
-    else if (brush === 'clear-blocked') patch = { blocked: false };
-    else if (brush.startsWith('height-')) {
-      patch = { height: Number(brush.at(-1)) as CombatLabTile['height'] };
-    } else patch = { terrain: brush as CombatLabTile['terrain'] };
-    if (
-      patch.blocked === true &&
-      value.units.some((unit) => hexKey(unit.position) === hexKey(hex))
-    ) {
-      setNotice('Сначала уберите бойца с клетки, затем отметьте препятствие.');
-      return;
-    }
-    const tiles = paintBattleTile(value.map.tiles, hex, patch);
-    change({ map: { ...value.map, tiles } });
+    if (result.patch !== undefined) change(result.patch);
+    if (result.notice !== undefined) setNotice(result.notice);
   }
 
   function handlePointerDown(event: PointerEvent<SVGSVGElement>): void {
@@ -231,12 +232,13 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   }
 
   function handlePointerMove(event: PointerEvent<SVGSVGElement>): void {
-    if (event.buttons !== 1 || brush === 'place' || disabled) return;
+    if (!canDragPaint(event.buttons, brush, disabled)) return;
     const hex = cellFromEvent(event);
     if (hex !== null) setTile(hex);
   }
 
   function handleCellKey(event: KeyboardEvent<SVGGElement>, hex: CombatLabHex): void {
+    if (disabled) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       setTile(hex);
@@ -295,40 +297,17 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
     event: ChangeEvent<HTMLInputElement>,
     kind: 'battle' | 'map',
   ): Promise<void> {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (file === undefined) return;
     try {
-      const data: unknown = JSON.parse(await file.text());
-      if (kind === 'battle') {
-        const validation = validateBattleDraft(data, catalog);
-        if (validation.length > 0) {
-          setImportErrors(validation);
-          setNotice('Импорт отменён: файл боя не прошёл проверку.');
-          return;
-        }
-        onChange(data as CombatLabBattleConfig);
-        setImportErrors([]);
-        setNotice(`Бой «${(data as CombatLabBattleConfig).name}» загружен из JSON.`);
+      const data = await readEditorImportFile(event.target);
+      if (data === undefined) return;
+      const result = prepareBattleImport(data, kind, value, catalog);
+      setNotice(result.notice);
+      if (result.status === 'rejected') {
+        setImportErrors([...result.errors]);
         return;
       }
-      const validation = validateMapDraft(data);
-      if (validation.length > 0) {
-        setImportErrors(validation);
-        setNotice('Импорт отменён: карта должна содержать полную сетку 15×11.');
-        return;
-      }
-      const map = data as { name: string; tiles: readonly CombatLabTile[] };
-      const next = { ...value, map: { name: map.name, tiles: map.tiles } };
-      const battleErrors = validateBattleDraft(next, catalog);
-      if (battleErrors.length > 0) {
-        setImportErrors(battleErrors);
-        setNotice('Импорт отменён: новые препятствия пересекаются с бойцами.');
-        return;
-      }
-      onChange(next);
+      onChange(result.battle);
       setImportErrors([]);
-      setNotice(`Карта «${map.name}» импортирована; состав боя сохранён.`);
     } catch (error) {
       setNotice(`Не удалось прочитать JSON: ${errorMessage(error)}`);
     }
@@ -629,36 +608,7 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
       <p className="battle-editor-local-note">
         Сохранения остаются в этом браузере и на этом устройстве; в кампанию они не попадают.
       </p>
-      {errors.length > 0 && (
-        <section className="battle-editor-errors" role="alert" aria-label="Ошибки перед запуском">
-          <h3>Нельзя запустить этот черновик</h3>
-          <ul>
-            {errors.map((error) => (
-              <li key={error}>{error}</li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {errors.length === 0 && (
-        <p className="battle-editor-ready" role="status">
-          Черновик можно отправить на запуск; сервер повторит проверку перед созданием боя.
-        </p>
-      )}
-      {importErrors.length > 0 && (
-        <section className="battle-editor-errors" role="alert" aria-label="Ошибки импорта">
-          <h3>Файл не применён</h3>
-          <ul>
-            {importErrors.map((error) => (
-              <li key={error}>{error}</li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {notice && (
-        <p className="battle-editor-notice" role="status">
-          {notice}
-        </p>
-      )}
+      <EditorMessages errors={errors} importErrors={importErrors} notice={notice} />
     </section>
   );
 }

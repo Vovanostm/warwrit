@@ -15,8 +15,6 @@ import { handleCombatLabActionReply, latestCombatLabView } from './controller.js
 import {
   startSessionAttempt,
   admittedBattleDraft,
-  readSavedSession,
-  readSessionView,
   messageFor,
   responseCode,
   type ActiveSession,
@@ -25,6 +23,15 @@ import { isCombatLabView } from './view-validation.js';
 import { executeFieldCommand, canIssueManualCommand } from './field-command.js';
 import { canControl } from './command-availability.js';
 import { CommandDesk } from './CommandDesk.js';
+import {
+  loadCombatLabCatalog,
+  applyRestoredSession,
+  restoreBattleSession,
+  restartSessionBattle,
+  downloadSessionReplay,
+} from './session-lifecycle.js';
+import { handleCombatLabKey, selectCombatSkill } from './command-input.js';
+import { autoplayContinuation, runAutoplayStep } from './autoplay.js';
 import './combat-lab.css';
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
@@ -62,6 +69,7 @@ export function CombatLab() {
   };
   const [notice, setNotice] = useState('');
   const [sessionLost, setSessionLost] = useState(false);
+  const view = session?.view ?? null;
   const hotkeyActions = useRef<Record<string, { reason: string; run: () => unknown }>>({});
   const generation = useRef(0);
   const startingRef = useRef(false);
@@ -75,22 +83,15 @@ export function CombatLab() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-      if (event.key === 'Escape') {
-        setMenuOpen(false);
-        setSelectedSkillId(null);
-        return;
-      }
-      if (
-        event.target instanceof HTMLElement &&
-        event.target.closest('input, textarea, select, button, [contenteditable="true"]')
-      )
-        return;
-      if (!(event.target instanceof HTMLElement) || !event.target.closest('.battle-view')) return;
-      const action = hotkeyActions.current[event.key === ' ' ? '4' : event.key];
-      if (!action || action.reason) return;
-      event.preventDefault();
-      action.run();
+      handleCombatLabKey(
+        event,
+        event.target instanceof HTMLElement ? event.target : null,
+        hotkeyActions.current,
+        () => {
+          setMenuOpen(false);
+          setSelectedSkillId(null);
+        },
+      );
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -98,24 +99,10 @@ export function CombatLab() {
 
   useEffect(() => {
     const controller = new AbortController();
-    void fetch(`${apiBaseUrl}/dev/combat-lab/catalog`, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) throw new Error('catalog unavailable');
-        const value: unknown = await response.json();
-        if (
-          value === null ||
-          typeof value !== 'object' ||
-          !('profiles' in value) ||
-          !Array.isArray(value.profiles) ||
-          !('defaultBattle' in value) ||
-          value.defaultBattle === null ||
-          typeof value.defaultBattle !== 'object'
-        )
-          throw new Error('invalid catalog');
-        const loaded = value as CombatLabCatalog;
+    void loadCombatLabCatalog(apiBaseUrl, controller.signal)
+      .then((loaded) => {
         setCatalog(loaded);
         setDraftBattle(sessionRef.current?.view.battle ?? loaded.defaultBattle);
-        setNotice('');
       })
       .catch(() => {
         if (!controller.signal.aborted)
@@ -157,31 +144,20 @@ export function CombatLab() {
   useEffect(() => {
     const controller = new AbortController();
     const expectedGeneration = generation.current;
-    const restore = async () => {
-      try {
-        const saved = readSavedSession(sessionStorage, sessionStorageKey);
-        if (!saved) return;
-        const response = await fetch(
-          `${apiBaseUrl}/dev/combat-lab/${encodeURIComponent(saved.id)}`,
-          { headers: { [capabilityHeader]: saved.capability }, signal: controller.signal },
-        );
-        if (controller.signal.aborted || generation.current !== expectedGeneration) return;
-        if (response.status === 404 || response.status === 401) {
-          sessionStorage.removeItem(sessionStorageKey);
-          setNotice('Сохранённая сессия недоступна. Создайте новый бой.');
-          return;
-        }
-        if (!response.ok) throw new Error('restore unavailable');
-        const view = await readSessionView(response, saved.id);
-        installSession({ id: saved.id, capability: saved.capability, view });
-        if (view.battle) setDraftBattle(view.battle);
-        setSelectedUnitId(view.activation?.actorId ?? null);
-      } catch {
-        if (!controller.signal.aborted)
-          setNotice('Не удалось восстановить бой. Обновите страницу для повторного чтения.');
-      }
-    };
-    void restore();
+    void restoreBattleSession(
+      apiBaseUrl,
+      () => sessionStorage,
+      sessionStorageKey,
+      controller.signal,
+      () => generation.current === expectedGeneration,
+    ).then((result) => {
+      applyRestoredSession(result, {
+        install: installSession,
+        draft: setDraftBattle,
+        selectUnit: setSelectedUnitId,
+        notice: setNotice,
+      });
+    });
     return () => controller.abort();
   }, []);
 
@@ -495,70 +471,54 @@ export function CombatLab() {
     return removed;
   };
 
-  const restartBattle = async () => {
-    const acceptedBattle = sessionRef.current?.view.battle;
-    if (!catalog || startingRef.current || startUnresolved) {
-      setNotice('Перезапуск недоступен: дождитесь загрузки состава или обновите страницу.');
-      return;
-    }
-    if (acceptedBattle && validateBattleDraft(acceptedBattle, catalog).length > 0) return;
-    if (!acceptedBattle || !(await endBattle())) return;
-    await startBattle(acceptedBattle);
-  };
+  const restartBattle = () =>
+    restartSessionBattle(
+      sessionRef.current,
+      catalog,
+      startingRef.current || startUnresolved,
+      endBattle,
+      startBattle,
+      setNotice,
+    );
 
-  const downloadReplay = async () => {
-    const current = sessionRef.current;
-    if (!current || deletingRef.current) return;
-    try {
-      const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}/replay`, {
-        headers: { [capabilityHeader]: current.capability },
-      });
-      if (!response.ok) {
-        setNotice(
-          response.status === 404 ? messageFor('NOT_FOUND') : 'Повтор боя скачать не удалось.',
+  const downloadReplay = () =>
+    downloadSessionReplay(
+      apiBaseUrl,
+      sessionRef.current,
+      deletingRef.current,
+      (replay, filename) => {
+        const url = URL.createObjectURL(
+          new Blob([`${JSON.stringify(replay, null, 2)}\n`], { type: 'application/json' }),
         );
-        return;
-      }
-      const replay = await response.json();
-      const url = URL.createObjectURL(
-        new Blob([`${JSON.stringify(replay, null, 2)}\n`], { type: 'application/json' }),
-      );
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = `${current.view.battle?.name ?? 'battle-replay'}.json`;
-      anchor.click();
-      URL.revokeObjectURL(url);
-      setNotice('Запись боя скачана.');
-    } catch {
-      setNotice('Повтор боя скачать не удалось.');
-    }
-  };
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      },
+      setNotice,
+    );
 
-  autoplayAction.current = () => {
-    const current = sessionRef.current;
-    if (
-      !current ||
-      pendingRef.current ||
-      deletingRef.current ||
-      sessionLostRef.current ||
-      !canControl(current.view)
-    )
-      return;
-    act({ type: 'autoplay' }, 'Шаг автобоя');
-  };
+  autoplayAction.current = () =>
+    runAutoplayStep(
+      sessionRef.current?.view ?? null,
+      {
+        pending: pendingRef.current !== null,
+        deleting: deletingRef.current,
+        sessionLost: sessionLostRef.current,
+      },
+      act,
+    );
   useEffect(() => {
-    if (!autoplay) return;
-    if (
-      !session ||
-      session.view.status !== 'active' ||
-      sessionLost ||
-      deleting ||
-      pending?.uncertain
-    ) {
-      stopAutoplay();
-      return;
-    }
-    if (pending || !canControl(session.view)) return;
+    const continuation = autoplayContinuation({
+      enabled: autoplay,
+      view,
+      sessionLost,
+      deleting,
+      pending,
+    });
+    if (continuation === 'stopped') stopAutoplay();
+    if (continuation !== 'ready') return;
     const timer = setTimeout(() => {
       if (autoplayRef.current) autoplayAction.current();
     }, 550);
@@ -568,7 +528,6 @@ export function CombatLab() {
   useEffect(() => {
     setSelectedSkillId(null);
   }, [session?.id, session?.view.activation?.id]);
-  const view = session?.view ?? null;
   const controlling = view !== null && !sessionLost && canControl(view);
   const commonReason = sessionLost
     ? 'Бой недоступен'
@@ -664,10 +623,10 @@ export function CombatLab() {
             selectedSkillId={selectedSkillId}
             skillDisabledReason={commonReason}
             onSelectSkill={(skillId) => {
-              const skill = view.skills?.find((candidate) => candidate.skillId === skillId);
-              if (!skill || commonReason) return;
-              if (skill.target === 'self') actOnField({ type: 'use-skill', skillId });
-              else setSelectedSkillId(selectedSkillId === skillId ? null : skillId);
+              selectCombatSkill(view, skillId, selectedSkillId, commonReason, {
+                act: actOnField,
+                select: setSelectedSkillId,
+              });
             }}
             busy={deleting || pending !== null || starting || startUnresolved}
             onRestart={() => {

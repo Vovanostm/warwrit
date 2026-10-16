@@ -93,5 +93,15 @@ describe('public encounter projection', () => {
     expect(projection).not.toHaveProperty('sides');
     expect(projection).not.toHaveProperty('controllableUnitIds');
     expect(projection).not.toHaveProperty('setup');
+
+    expect(() =>
+      toEncounterPublicProjection({
+        ...encounter,
+        state: {
+          ...encounter.state,
+          units: encounter.state.units.map((unit) => ({ ...unit, status: 'surrendered' })),
+        },
+      }),
+    ).toThrow('Sprite prototype status cannot enter a V1 encounter projection');
   });
 });

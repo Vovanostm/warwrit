@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { mountSpriteBattleScene, type BattleFieldTarget } from './sprite-battle-scene.js';
-import type { BattleViewProps } from './BattleView.js';
+import type { BattleViewProps } from './battle-view-props.js';
 export function useBattleScene(
   {
     view,

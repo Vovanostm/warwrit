@@ -1,113 +1,5 @@
 // UI concept study only: no battle API, canonical state or combat RNG.
-const artRoot = '../';
-const unitArt = {
-  W01: {
-    url: `${artRoot}roster/w01/sprite.png`,
-    width: 1240,
-    height: 1269,
-    body: 1236,
-    foot: 1207.5,
-  },
-  W02: {
-    url: `${artRoot}roster/w02/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1196,
-    foot: 1163,
-  },
-  W03: {
-    url: `${artRoot}roster/w03/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1171,
-    foot: 1153.5,
-  },
-  W04: {
-    url: `${artRoot}roster/w04/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 825,
-    foot: 1044.5,
-  },
-  W05: {
-    url: `${artRoot}roster/w05/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1177,
-    foot: 1162.5,
-  },
-  W06: {
-    url: `${artRoot}roster/w06/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1173,
-    foot: 1149,
-  },
-  W08: {
-    url: `${artRoot}roster/w08/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1115,
-    foot: 1140.5,
-  },
-  B001: { url: '../../../m1/battle/unit-wolf.png', width: 512, height: 512, body: 293, foot: 491 },
-  B003: {
-    url: `${artRoot}roster/b003/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1024,
-    foot: 1164,
-  },
-  B019: {
-    url: `${artRoot}roster/b019/sprite.png`,
-    width: 1145,
-    height: 1374,
-    body: 1260,
-    foot: 1327,
-  },
-  B025: {
-    url: `${artRoot}roster/b025/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1204,
-    foot: 1236,
-  },
-  B053: {
-    url: `${artRoot}roster/b053/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1206,
-    foot: 1226,
-  },
-};
-const units = [
-  { id: 'shield', art: 'W01', name: 'Меч + щит', q: 2, r: 2, side: 'human' },
-  { id: 'arbalest', art: 'W08', name: 'Арбалет', q: 5, r: 2, side: 'human' },
-  { id: 'spear', art: 'W04', name: 'Копьё', q: 2, r: 6, side: 'human' },
-  { id: 'archer', art: 'W05', name: 'Лучник', q: 5, r: 6, side: 'human' },
-  { id: 'great', art: 'W03', name: 'Двуручный топор', q: 2, r: 10, side: 'human' },
-  { id: 'knife', art: 'W06', name: 'Нож', q: 5, r: 10, side: 'human' },
-  { id: 'wolf', art: 'B001', name: 'Волк', q: 8, r: 6, side: 'enemy', legal: true, size: 48 },
-  { id: 'target', art: 'W02', name: 'Топор + щит', q: 9, r: 3, side: 'enemy', legal: true },
-  { id: 'boar', art: 'B003', name: 'Дикий вепрь', q: 10, r: 7, side: 'enemy', size: 61 },
-  { id: 'warden', art: 'B019', name: 'Могильный сторож', q: 12, r: 3, side: 'enemy', size: 86 },
-  { id: 'reed', art: 'B025', name: 'Камышник', q: 10, r: 10, side: 'enemy', size: 82 },
-  { id: 'mill', art: 'B053', name: 'Мельничная тварь', q: 13, r: 7, side: 'enemy', size: 106 },
-];
-const turnOrder = [
-  'archer',
-  'wolf',
-  'arbalest',
-  'spear',
-  'target',
-  'great',
-  'boar',
-  'knife',
-  'mill',
-  'shield',
-  'warden',
-  'reed',
-];
+const { unitArt, units, turnOrder } = window.WarwritCombatGalleryData;
 const concepts = {
   a: [
     '01 / ПУЛЬТ · КЛАССИЧЕСКАЯ ТАКТИКА',
@@ -215,20 +107,58 @@ function status(id, name, explanation) {
   return `<button class="state tool ${id}" aria-label="${name}">${icon(id)}<span>${name}</span>${tooltip(name, explanation)}</button>`;
 }
 function resources(enemy) {
-  return `<div class="resources">${[
-    ['heart', 'Здоровье', enemy ? '48 / 60' : '60 / 60', enemy ? 80 : 100],
-    ['defend', 'Броня', enemy ? '52 / 80' : '35 / 35', enemy ? 65 : 100],
-    ['fatigue', 'Усталость', enemy ? '24 / 80' : '16 / 80', enemy ? 30 : 20],
-  ]
-    .map(
-      ([id, label, value, width]) =>
-        `<div class="resource" data-resource="${id}">${icon(id)}<span>${label}</span><b><strong>${value.split(' / ')[0]}</strong><small>/${value.split(' / ')[1]}</small></b><i><em style="width:${width}%"></em></i></div>`,
-    )
-    .join('')}</div>`;
+  return `<div class="resources">${resourceData(enemy).map(resourceRow).join('')}</div>`;
+}
+function resourceData(enemy) {
+  return enemy
+    ? [
+        ['heart', 'Здоровье', '48 / 60', 80],
+        ['defend', 'Броня', '52 / 80', 65],
+        ['fatigue', 'Усталость', '24 / 80', 30],
+      ]
+    : [
+        ['heart', 'Здоровье', '60 / 60', 100],
+        ['defend', 'Броня', '35 / 35', 100],
+        ['fatigue', 'Усталость', '16 / 80', 20],
+      ];
+}
+function resourceRow([id, label, value, width]) {
+  const [current, max] = value.split(' / ');
+  return `<div class="resource" data-resource="${id}">${icon(id)}<span>${label}</span><b><strong>${current}</strong><small>/${max}</small></b><i><em style="width:${width}%"></em></i></div>`;
 }
 function card(enemy) {
   const u = units.find((u) => u.id === (enemy ? 'target' : 'archer'));
-  return `<section class="character-card ${enemy ? 'target-card' : 'actor-card'}" aria-label="${enemy ? 'Осматриваемая цель' : 'Действующий боец'}"><div class="card-header"><small>${enemy ? 'Противник · осмотр' : 'Ваш ход'}</small><span class="card-ap">${enemy ? icon('info') : '<i></i><i></i><i></i><i></i><b>4 ОД</b>'}</span></div><div class="card-main"><div class="portrait">${face(u)}</div><div class="card-data"><h2>${u.name}</h2>${resources(enemy)}</div></div><div class="states">${enemy ? status('fear', 'Страх', 'Иллюстрация состояния морали: дрогнул. Порог и последствия здесь не вычисляются.') + status('aggression', 'Агрессия', 'Иллюстрация наблюдаемого поведения: наступает. Не показывает скрытый выбор AI.') : status('calm', 'Спокоен', 'Мораль: спокоен. Осмотр других фигур не меняет действующего бойца.') + status('bow', 'Лук', 'Выстрел: 4 ОД · 16 сил. Значения демонстрационные.')}</div><div class="card-foot">${enemy ? 'Закреплено · ЛКМ меняет осмотр' : 'ЛКМ — осмотр · ПКМ — приказ'}</div></section>`;
+  return `<section class="character-card ${enemy ? 'target-card' : 'actor-card'}" aria-label="${cardLabel(enemy)}"><div class="card-header"><small>${cardHeading(enemy)}</small><span class="card-ap">${cardActionPoints(enemy)}</span></div><div class="card-main"><div class="portrait">${face(u)}</div><div class="card-data"><h2>${u.name}</h2>${resources(enemy)}</div></div><div class="states">${cardStates(enemy)}</div><div class="card-foot">${cardFoot(enemy)}</div></section>`;
+}
+function cardLabel(enemy) {
+  return enemy ? 'Осматриваемая цель' : 'Действующий боец';
+}
+function cardHeading(enemy) {
+  return enemy ? 'Противник · осмотр' : 'Ваш ход';
+}
+function cardActionPoints(enemy) {
+  return enemy ? icon('info') : '<i></i><i></i><i></i><i></i><b>4 ОД</b>';
+}
+function cardStates(enemy) {
+  return enemy
+    ? status(
+        'fear',
+        'Страх',
+        'Иллюстрация состояния морали: дрогнул. Порог и последствия здесь не вычисляются.',
+      ) +
+        status(
+          'aggression',
+          'Агрессия',
+          'Иллюстрация наблюдаемого поведения: наступает. Не показывает скрытый выбор AI.',
+        )
+    : status(
+        'calm',
+        'Спокоен',
+        'Мораль: спокоен. Осмотр других фигур не меняет действующего бойца.',
+      ) + status('bow', 'Лук', 'Выстрел: 4 ОД · 16 сил. Значения демонстрационные.');
+}
+function cardFoot(enemy) {
+  return enemy ? 'Закреплено · ЛКМ меняет осмотр' : 'ЛКМ — осмотр · ПКМ — приказ';
 }
 function actions() {
   return `<nav class="action-dock" aria-label="Действия бойца">${actionsData.map(([id, label, key, help]) => `<button class="action tool ${id === 'end' ? 'end' : ''}" data-action="${id}" aria-label="${label}" aria-description="${help}" ${id === 'retreat' ? 'aria-disabled="true"' : ''}>${icon(id)}<kbd>${key}</kbd>${id === 'retreat' ? `<span class="locked">${icon('lock')}</span>` : ''}${tooltip(label, help)}</button>`).join('')}</nav>`;
@@ -286,9 +216,35 @@ function effectRow(id) {
     .join('');
 }
 function turnTile(id, index, next = false) {
-  const u = units.find((u) => u.id === id),
-    states = (unitEffects[id] ?? []).map((key) => effects[key][0]).join(', ');
-  return `<button class="turn tool ${u.side === 'enemy' ? 'enemy' : 'ally'} ${id === 'archer' && !next ? 'active' : ''} ${next ? 'future' : ''}" data-inspect="${id}" aria-label="${next ? 'Прогноз следующего раунда' : 'Текущий раунд'}, ${index + 1}. ${u.name}" aria-description="${states}"><span class="face">${face(u)}</span><b class="order">${index + 1}</b>${id === 'archer' && !next ? '<span class="now">ХОД</span>' : ''}<span class="effect-row">${effectRow(id)}</span>${u.legal && !next ? '<i class="legal-dot">◇</i>' : ''}${tooltip(u.name, `${next ? 'Следующий раунд: предварительный порядок' : 'Раунд 1 · ' + (index + 1) + ' в очереди'} · ${u.side === 'human' ? 'свой' : 'противник'}${states ? ' · ' + states : ''}`)}</button>`;
+  const unit = units.find((u) => u.id === id);
+  const states = unitStateNames(id);
+  return `<button class="turn tool ${turnClass(unit, id, next)}" data-inspect="${id}" aria-label="${turnLabel(unit, index, next)}" aria-description="${states}"><span class="face">${face(unit)}</span><b class="order">${index + 1}</b>${turnCurrentMark(id, next)}<span class="effect-row">${effectRow(id)}</span>${turnLegalMark(unit, next)}${tooltip(unit.name, turnTooltip(unit, index, next, states))}</button>`;
+}
+function unitStateNames(id) {
+  return (unitEffects[id] ?? []).map((key) => effects[key][0]).join(', ');
+}
+function turnClass(unit, id, next) {
+  const side = unit.side === 'enemy' ? 'enemy' : 'ally';
+  return [side, isCurrentTurn(id, next) ? 'active' : '', next ? 'future' : ''].join(' ');
+}
+function isCurrentTurn(id, next) {
+  return id === 'archer' && !next;
+}
+function turnLabel(unit, index, next) {
+  return `${next ? 'Прогноз следующего раунда' : 'Текущий раунд'}, ${index + 1}. ${unit.name}`;
+}
+function turnCurrentMark(id, next) {
+  return id === 'archer' && !next ? '<span class="now">ХОД</span>' : '';
+}
+function turnLegalMark(unit, next) {
+  return unit.legal && !next ? '<i class="legal-dot">◇</i>' : '';
+}
+function turnTooltip(unit, index, next, states) {
+  const phase = next
+    ? 'Следующий раунд: предварительный порядок'
+    : `Раунд 1 · ${index + 1} в очереди`;
+  const side = unit.side === 'human' ? 'свой' : 'противник';
+  return `${phase} · ${side}${states ? ` · ${states}` : ''}`;
 }
 function initiative() {
   return `<nav class="initiative" aria-label="Инициатива с границами раундов"><div class="round-divider current"><b>1</b><span>РАУНД<br>СЕЙЧАС →</span></div><div class="queue current-queue">${turnOrder.map((id, n) => turnTile(id, n)).join('')}</div><div class="round-divider next"><b>2</b><span>РАУНД<br>ПРОГНОЗ →</span></div><div class="queue next-queue">${turnOrder
@@ -334,15 +290,20 @@ function battlefield() {
     for (let q = 0; q < 15; q++)
       cells += `<polygon class="cell" data-cell="${q},${r}" points="${points(hex(q, r))}"/>`;
   return `<div class="battlefield"><img class="ground" src="../battlefield/mill-field-v1.png" alt="Разрушенная мельница и каменный двор"><div class="play-plane"><svg class="map" viewBox="0 0 1440 900"><g class="ranges"></g><g class="grid">${cells}</g><g class="path"></g><g class="forecast-link"></g></svg>${units
-    .map((u) => {
-      const p = hex(u.q, u.r),
-        a = unitArt[u.art],
-        scale = (u.size ?? 80) / a.body;
-      return `<button class="unit ${u.side === 'enemy' ? 'enemy' : 'ally'} ${u.id === 'archer' ? 'actor' : ''}" data-unit="${u.id}" style="left:${p.x}px;top:${p.y}px" aria-label="${u.name}"><span class="base"></span><img class="body" src="${a.url}" alt="" style="width:${a.width * scale}px;height:${a.height * scale}px;bottom:${-(a.height - a.foot) * scale}px"><span class="unit-health"><i></i></span>${['target', 'wolf'].includes(u.id) ? `<span class="unit-state">${icon(u.id === 'wolf' ? 'aggression' : 'fear')}</span>` : ''}<span class="aim">◇</span><span class="unit-label">${u.name}</span></button>`;
-    })
+    .map(battleUnit)
     .join(
       '',
     )}<div class="local-forecast" aria-live="polite"></div><div class="move-forecast" aria-live="polite"></div></div></div>`;
+}
+function battleUnit(unit) {
+  const p = hex(unit.q, unit.r);
+  const art = unitArt[unit.art];
+  const scale = (unit.size ?? 80) / art.body;
+  return `<button class="unit ${unit.side === 'enemy' ? 'enemy' : 'ally'} ${unit.id === 'archer' ? 'actor' : ''}" data-unit="${unit.id}" style="left:${p.x}px;top:${p.y}px" aria-label="${unit.name}"><span class="base"></span><img class="body" src="${art.url}" alt="" style="width:${art.width * scale}px;height:${art.height * scale}px;bottom:${-(art.height - art.foot) * scale}px"><span class="unit-health"><i></i></span>${unitStateMark(unit)}<span class="aim">◇</span><span class="unit-label">${unit.name}</span></button>`;
+}
+function unitStateMark(unit) {
+  if (!['target', 'wolf'].includes(unit.id)) return '';
+  return `<span class="unit-state">${icon(unit.id === 'wolf' ? 'aggression' : 'fear')}</span>`;
 }
 function render() {
   screen.className = `screen ${view}${night ? ' night' : ''}`;
@@ -369,13 +330,15 @@ function render() {
   update();
   fit();
 }
-function update() {
+function updateModeDisplay() {
   screen.classList.toggle('night', night);
   screen.classList.toggle('show-grid', showGrid);
   screen.classList.toggle('move-mode', mode === 'move');
   screen
     .querySelectorAll('[data-action]')
-    .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.action === mode)));
+    .forEach((button) =>
+      button.setAttribute('aria-pressed', String(button.dataset.action === mode)),
+    );
   screen
     .querySelectorAll('[data-ability]')
     .forEach((button) =>
@@ -384,59 +347,103 @@ function update() {
         String(mode === 'skill' && button.dataset.ability === 'ready'),
       ),
     );
-  screen.querySelector('.mode-name').textContent =
-    mode === 'move'
-      ? 'Движение · 4 ОД'
-      : mode === 'bow'
-        ? 'Выстрел · 4 ОД · 16 сил'
-        : mode === 'skill'
-          ? 'Приём · предпросмотр концепта'
-          : 'Выберите действие';
-  let cells = '';
+  const labels = {
+    move: 'Движение · 4 ОД',
+    bow: 'Выстрел · 4 ОД · 16 сил',
+    skill: 'Приём · предпросмотр концепта',
+    none: 'Выберите действие',
+  };
+  screen.querySelector('.mode-name').textContent = labels[mode] ?? labels.none;
+}
+function renderRanges() {
+  screen.querySelector('.ranges').innerHTML = rangeMarkup(mode);
+}
+function rangeMarkup(currentMode) {
+  if (!['move', 'bow'].includes(currentMode)) return '';
+  const cells = [];
   for (let r = 0; r < 11; r++)
-    for (let q = 0; q < 15; q++) {
-      const d = distance(q, r);
-      if (d > 0 && d <= (mode === 'move' ? 4 : 4) && ['move', 'bow'].includes(mode)) {
-        cells += `<polygon class="range ${mode}" points="${points(hex(q, r))}"/>`;
-      }
-    }
-  screen.querySelector('.ranges').innerHTML = cells;
-  const inspection = hovered ?? pinned;
-  screen.querySelectorAll('.unit').forEach((b) => {
-    const u = units.find((u) => u.id === b.dataset.unit);
-    b.classList.toggle('legal', Boolean(u.legal) && mode === 'bow');
-    b.classList.toggle('inspected', u.id === inspection);
+    for (let q = 0; q < 15; q++) cells.push(rangeForCell(q, r, currentMode));
+  return cells.join('');
+}
+function rangeForCell(q, r, currentMode) {
+  return inDisplayedRange(q, r) ? rangeCell(q, r, currentMode) : '';
+}
+function inDisplayedRange(q, r) {
+  const d = distance(q, r);
+  return d !== 0 && d <= 4;
+}
+function rangeCell(q, r, currentMode) {
+  return `<polygon class="range ${currentMode}" points="${points(hex(q, r))}"/>`;
+}
+function updateInspectedUnit(inspection) {
+  screen.querySelectorAll('.unit').forEach((button) => {
+    const unit = units.find((entry) => entry.id === button.dataset.unit);
+    updateUnitFlags(button, unit, inspection);
   });
-  const inspected = units.find((u) => u.id === inspection);
+  const inspected = units.find((unit) => unit.id === inspection);
+  updateTargetCard(inspected);
+  return inspected;
+}
+function updateUnitFlags(button, unit, inspection) {
+  button.classList.toggle('legal', Boolean(unit.legal) && mode === 'bow');
+  button.classList.toggle('inspected', unit.id === inspection);
+}
+function updateTargetCard(inspected) {
   const targetCard = screen.querySelector('.target-card');
+  updateTargetIdentity(targetCard, inspected);
+  updateTargetResources(targetCard, inspected);
+  updateTargetStates(targetCard, inspected);
+  targetCard.querySelector('.card-foot').textContent = inspectionFoot();
+}
+function updateTargetIdentity(targetCard, inspected) {
   targetCard.querySelector('.portrait').innerHTML = face(inspected);
-  targetCard.querySelector('h2').textContent = inspected.name;
-  targetCard.querySelector('h2').title = inspected.name;
+  const heading = targetCard.querySelector('h2');
+  heading.textContent = inspected.name;
+  heading.title = inspected.name;
   targetCard.querySelector('.card-header small').textContent =
     inspected.side === 'enemy' ? 'Противник · осмотр' : 'Союзник · осмотр';
+}
+function updateTargetResources(targetCard, inspected) {
   targetCard.querySelector('.resources').innerHTML = resources(inspected.side === 'enemy');
-  if (inspected.art.startsWith('B')) {
-    targetCard.querySelector('[data-resource="defend"] b').textContent = '—';
-    targetCard.querySelector('[data-resource="defend"] em').style.width = '0%';
-  }
+  if (inspected.art.startsWith('B')) setUnarmored(targetCard);
+}
+function setUnarmored(targetCard) {
+  targetCard.querySelector('[data-resource="defend"] b').textContent = '—';
+  targetCard.querySelector('[data-resource="defend"] em').style.width = '0%';
+}
+function updateTargetStates(targetCard, inspected) {
+  const states = (unitEffects[inspected.id] ?? []).map((key) =>
+    status(key, effects[key][0], effects[key][1]),
+  );
   targetCard.querySelector('.states').innerHTML =
-    (unitEffects[inspected.id] ?? [])
-      .map((key) => status(key, effects[key][0], effects[key][1]))
-      .join('') ||
-    (inspected.id === 'wolf'
-      ? status('aggression', 'Наступает', effects.aggression[1])
-      : status('calm', 'Спокоен', 'Демонстрационное состояние.'));
-  targetCard.querySelector('.card-foot').textContent = hovered
-    ? 'Наведение · ЛКМ закрепляет'
-    : 'Закреплено · ЛКМ меняет осмотр';
-  const f = screen.querySelector('.local-forecast'),
-    p = hex(inspected.q, inspected.r);
-  f.hidden = !(mode === 'bow' && inspected.legal);
-  f.innerHTML = `<div class="forecast-title">${icon('bow')}<span>Выстрел · ${inspected.name}</span></div><div class="shot-summary"><div class="chance-ring"><strong>75<small>%</small></strong></div><div class="chance-label"><b>Попадание</b><span>Промах <strong>25%</strong></span></div></div><div class="damage-grid"><div>${icon('heart')}<strong>2–4</strong><span>здоровье</span></div><div>${icon('defend')}<strong>12–18</strong><span>броня</span></div></div><div class="forecast-foot"><span>При попадании</span><b>4 ОД · 16 сил</b></div><em>ПКМ — выстрел</em>`;
+    states.join('') || defaultInspectionStatus(inspected);
+}
+function inspectionFoot() {
+  return hovered ? 'Наведение · ЛКМ закрепляет' : 'Закреплено · ЛКМ меняет осмотр';
+}
+function defaultInspectionStatus(inspected) {
+  const explanation =
+    inspected.id === 'wolf' ? effects.aggression[1] : 'Демонстрационное состояние.';
+  const state = inspected.id === 'wolf' ? 'aggression' : 'calm';
+  const name = inspected.id === 'wolf' ? 'Наступает' : 'Спокоен';
+  return status(state, name, explanation);
+}
+function updateForecast(inspected) {
+  const forecast = screen.querySelector('.local-forecast');
+  const p = hex(inspected.q, inspected.r);
+  forecast.hidden = !(mode === 'bow' && inspected.legal);
+  forecast.innerHTML = `<div class="forecast-title">${icon('bow')}<span>Выстрел · ${inspected.name}</span></div><div class="shot-summary"><div class="chance-ring"><strong>75<small>%</small></strong></div><div class="chance-label"><b>Попадание</b><span>Промах <strong>25%</strong></span></div></div><div class="damage-grid"><div>${icon('heart')}<strong>2–4</strong><span>здоровье</span></div><div>${icon('defend')}<strong>12–18</strong><span>броня</span></div></div><div class="forecast-foot"><span>При попадании</span><b>4 ОД · 16 сил</b></div><em>ПКМ — выстрел</em>`;
   screen.querySelector('.forecast-link').innerHTML = '';
-  if (!f.hidden) positionForecast(f, p);
+  if (!forecast.hidden) positionForecast(forecast, p);
+}
+function update() {
+  updateModeDisplay();
+  renderRanges();
+  const inspected = updateInspectedUnit(hovered ?? pinned);
+  updateForecast(inspected);
   if (mode !== 'move') clearRoute();
 }
+
 function clearRoute() {
   screen.querySelector('.path').innerHTML = '';
   screen.querySelector('.move-forecast').hidden = true;
@@ -464,59 +471,91 @@ function route(cell) {
 function positionForecast(f, p) {
   const plane = screen.querySelector('.play-plane').getBoundingClientRect();
   const scale = plane.width / 1440;
-  const obstacles = [
+  const size = { width: f.offsetWidth, height: f.offsetHeight };
+  const obstacles = forecastObstacles(plane, scale);
+  const placement = selectForecastPlacement(p, size, obstacles);
+  f.style.left = `${placement.x}px`;
+  f.style.top = `${placement.y}px`;
+  drawForecastLink(f, p, placement, size);
+}
+function forecastObstacles(plane, scale) {
+  return [
     ...screen.querySelectorAll('.unit, .character-card, .initiative, .action-dock, .ability-dock'),
-  ].map((element) => {
-    const box = element.getBoundingClientRect();
-    return {
-      x: (box.x - plane.x) / scale,
-      y: (box.y - plane.y) / scale,
-      w: box.width / scale,
-      h: box.height / scale,
-    };
-  });
-  const width = f.offsetWidth,
-    height = f.offsetHeight;
-  const candidates = [
-    { x: p.x - 115, y: p.y + 28 },
-    { x: p.x + 34, y: p.y - height - 30 },
-    { x: p.x - width - 34, y: p.y - height - 30 },
-    { x: p.x - 115, y: p.y - height - 132 },
+  ].map((element) => obstacleBounds(element, plane, scale));
+}
+function obstacleBounds(element, plane, scale) {
+  const box = element.getBoundingClientRect();
+  return {
+    x: (box.x - plane.x) / scale,
+    y: (box.y - plane.y) / scale,
+    w: box.width / scale,
+    h: box.height / scale,
+  };
+}
+function selectForecastPlacement(point, size, obstacles) {
+  const candidates = forecastCandidates(point, size);
+  return (
+    candidates.find((candidate) => fitsForecast(candidate, size, obstacles)) ?? candidates.at(-1)
+  );
+}
+function forecastCandidates(point, { width, height }) {
+  return [
+    { x: point.x - 115, y: point.y + 28 },
+    { x: point.x + 34, y: point.y - height - 30 },
+    { x: point.x - width - 34, y: point.y - height - 30 },
+    { x: point.x - 115, y: point.y - height - 132 },
     { x: 1040, y: 120 },
   ];
-  const safe =
-    candidates.find(
-      (c) =>
-        c.x >= 20 &&
-        c.y >= 110 &&
-        c.x + width <= 1420 &&
-        c.y + height <= 780 &&
-        obstacles.every(
-          (o) =>
-            c.x + width + 10 < o.x ||
-            c.x - 10 > o.x + o.w ||
-            c.y + height + 10 < o.y ||
-            c.y - 10 > o.y + o.h,
-        ),
-    ) ?? candidates[candidates.length - 1];
-  f.style.left = `${safe.x}px`;
-  f.style.top = `${safe.y}px`;
-  const anchor = {
-    x: Math.max(safe.x + 12, Math.min(safe.x + width - 12, p.x)),
-    y: safe.y + height,
-  };
-  const endpoint = { x: p.x, y: p.y - (f.classList.contains('local-forecast') ? 108 : 0) };
-  if (endpoint.y < safe.y) anchor.y = safe.y;
-  if (endpoint.x < safe.x) {
-    anchor.x = safe.x;
-    anchor.y = Math.max(safe.y + 12, Math.min(safe.y + height - 12, endpoint.y));
-  }
-  if (endpoint.x > safe.x + width) {
-    anchor.x = safe.x + width;
-    anchor.y = Math.max(safe.y + 12, Math.min(safe.y + height - 12, endpoint.y));
-  }
+}
+function fitsForecast(candidate, { width, height }, obstacles) {
+  return (
+    inForecastBounds(candidate, width, height) &&
+    obstacles.every((obstacle) => missesObstacle(candidate, width, height, obstacle))
+  );
+}
+function inForecastBounds(candidate, width, height) {
+  return (
+    candidate.x >= 20 &&
+    candidate.y >= 110 &&
+    candidate.x + width <= 1420 &&
+    candidate.y + height <= 780
+  );
+}
+function missesObstacle(candidate, width, height, obstacle) {
+  return (
+    candidate.x + width + 10 < obstacle.x ||
+    candidate.x - 10 > obstacle.x + obstacle.w ||
+    candidate.y + height + 10 < obstacle.y ||
+    candidate.y - 10 > obstacle.y + obstacle.h
+  );
+}
+function drawForecastLink(forecast, point, placement, { width, height }) {
+  const endpoint = forecastEndpoint(forecast, point);
+  const anchor = forecastAnchor(endpoint, placement, width, height);
   screen.querySelector('.forecast-link').innerHTML =
     `<path d="M${anchor.x},${anchor.y}L${endpoint.x},${endpoint.y}"/><circle cx="${endpoint.x}" cy="${endpoint.y}" r="3"/>`;
+}
+function forecastEndpoint(forecast, point) {
+  return { x: point.x, y: point.y - (forecast.classList.contains('local-forecast') ? 108 : 0) };
+}
+function forecastAnchor(endpoint, placement, width, height) {
+  const anchor = {
+    x: Math.max(placement.x + 12, Math.min(placement.x + width - 12, endpoint.x)),
+    y: placement.y + height,
+  };
+  if (endpoint.y < placement.y) anchor.y = placement.y;
+  if (endpoint.x < placement.x) {
+    anchor.x = placement.x;
+    anchor.y = clamp(endpoint.y, placement.y + 12, placement.y + height - 12);
+  }
+  if (endpoint.x > placement.x + width) {
+    anchor.x = placement.x + width;
+    anchor.y = clamp(endpoint.y, placement.y + 12, placement.y + height - 12);
+  }
+  return anchor;
+}
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
 }
 // Raised skill rows use the clear left inspection area instead of covering figures.
 function placeAbilityTooltip(button) {
@@ -543,20 +582,37 @@ function clearHover() {
   hovered = null;
   update();
 }
-screen.addEventListener('pointerover', (e) => {
-  const ability = e.target.closest('[data-ability]');
+screen.addEventListener('pointerover', (e) => handlePointerOver(e));
+function handlePointerOver(e) {
+  handleAbilityHover(e.target);
+  handleUnitHover(e.target);
+  handleCellHover(e.target);
+}
+function handleAbilityHover(targetElement) {
+  const ability = targetElement.closest('[data-ability]');
   if (ability) placeAbilityTooltip(ability);
-  const unit = e.target.closest('[data-unit],[data-inspect]');
+}
+function handleUnitHover(targetElement) {
+  const unit = targetElement.closest('[data-unit],[data-inspect]');
   if (unit) inspect(unit.dataset.unit ?? unit.dataset.inspect);
-  const cell = e.target.closest('[data-cell]');
+}
+function handleCellHover(targetElement) {
+  const cell = targetElement.closest('[data-cell]');
   if (cell) route(cell.dataset.cell);
-});
-screen.addEventListener('pointerout', (e) => {
-  const unit = e.target.closest('[data-unit],[data-inspect]');
-  if (unit && !unit.contains(e.relatedTarget)) clearHover();
-  const cell = e.target.closest('[data-cell]');
-  if (cell && !cell.contains(e.relatedTarget)) clearRoute();
-});
+}
+screen.addEventListener('pointerout', (e) => handlePointerOut(e));
+function handlePointerOut(e) {
+  leaveUnit(e);
+  leaveCell(e);
+}
+function leaveUnit(event) {
+  const unit = event.target.closest('[data-unit],[data-inspect]');
+  if (unit && !unit.contains(event.relatedTarget)) clearHover();
+}
+function leaveCell(event) {
+  const cell = event.target.closest('[data-cell]');
+  if (cell && !cell.contains(event.relatedTarget)) clearRoute();
+}
 screen.addEventListener('focusin', (e) => {
   const ability = e.target.closest('[data-ability]');
   if (ability) placeAbilityTooltip(ability);
@@ -566,47 +622,57 @@ screen.addEventListener('focusin', (e) => {
 screen.addEventListener('focusout', (e) => {
   if (e.target.closest('[data-unit],[data-inspect]')) clearHover();
 });
-screen.addEventListener('click', (e) => {
-  const ability = e.target.closest('[data-ability]');
-  if (ability) {
-    notice(ability.getAttribute('aria-description'));
-    if (ability.dataset.ability === 'ready') {
-      mode = 'skill';
-      update();
-    }
-    return;
-  }
-  const action = e.target.closest('[data-action]');
-  if (action) {
-    if (action.getAttribute('aria-disabled') === 'true') {
-      notice('Отход недоступен: боец не у края поля.');
-      return;
-    }
-    mode = action.dataset.action;
-    screen.querySelector('.notice').hidden = true;
-    update();
-    if (!['move', 'bow'].includes(mode))
-      notice(
-        mode === 'end'
-          ? 'Макет: завершить ход. Боевые команды не отправляются.'
-          : 'Макет: защита за 2 ОД · 8 сил завершает активацию.',
-      );
-    return;
-  }
-  const unit = e.target.closest('[data-unit],[data-inspect]');
-  if (unit) {
-    pinned = unit.dataset.unit ?? unit.dataset.inspect;
-    update();
-    return;
-  }
-  const utility = e.target.closest('[data-utility]');
-  if (utility) {
-    if (utility.dataset.utility === 'sun') night = !night;
-    else if (utility.dataset.utility === 'grid') showGrid = !showGrid;
-    else notice('Макет: журнал и настройки раскрываются отдельно.');
+function handleAbilityClick(ability) {
+  if (!ability) return false;
+  notice(ability.getAttribute('aria-description'));
+  if (ability.dataset.ability === 'ready') {
+    mode = 'skill';
     update();
   }
-});
+  return true;
+}
+function handleActionClick(action) {
+  if (!action) return false;
+  if (isUnavailableAction(action)) return true;
+  mode = action.dataset.action;
+  screen.querySelector('.notice').hidden = true;
+  update();
+  showActionFeedback(mode);
+  return true;
+}
+function isUnavailableAction(action) {
+  if (action.getAttribute('aria-disabled') !== 'true') return false;
+  notice('Отход недоступен: боец не у края поля.');
+  return true;
+}
+function showActionFeedback(action) {
+  const messages = {
+    end: 'Макет: завершить ход. Боевые команды не отправляются.',
+    defend: 'Макет: защита за 2 ОД · 8 сил завершает активацию.',
+  };
+  if (messages[action]) notice(messages[action]);
+}
+function handleInspectionClick(unit) {
+  if (!unit) return false;
+  pinned = unit.dataset.unit ?? unit.dataset.inspect;
+  update();
+  return true;
+}
+function handleUtilityClick(utility) {
+  if (!utility) return;
+  if (utility.dataset.utility === 'sun') night = !night;
+  else if (utility.dataset.utility === 'grid') showGrid = !showGrid;
+  else notice('Макет: журнал и настройки раскрываются отдельно.');
+  update();
+}
+screen.addEventListener('click', (event) => handleClick(event));
+function handleClick(event) {
+  if (handleAbilityClick(event.target.closest('[data-ability]'))) return;
+  if (handleActionClick(event.target.closest('[data-action]'))) return;
+  if (handleInspectionClick(event.target.closest('[data-unit],[data-inspect]'))) return;
+  handleUtilityClick(event.target.closest('[data-utility]'));
+}
+
 screen.addEventListener('contextmenu', (e) => {
   e.preventDefault();
   notice('Предпросмотр приказа. Макет не изменяет боевое состояние.');
@@ -627,28 +693,39 @@ function full(next) {
 }
 document.querySelector('#full-toggle').addEventListener('click', () => full(true));
 document.querySelector('#exit-full').addEventListener('click', () => full(false));
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', (e) => handleKeydown(e));
+function handleKeydown(e) {
   if (e.key === 'Escape') {
-    if (document.body.classList.contains('full')) full(false);
-    else {
-      mode = 'none';
-      update();
-    }
+    cancelKeyAction();
     return;
   }
   if (e.target.closest('button')) return;
+  selectKeyboardAction(e);
+}
+function cancelKeyAction() {
+  if (document.body.classList.contains('full')) full(false);
+  else {
+    mode = 'none';
+    update();
+  }
+}
+function selectKeyboardAction(e) {
   const slot = Number(e.key) - 6;
-  if (slot >= 0 && slot < 4) {
-    e.preventDefault();
-    screen.querySelectorAll('[data-ability]')[slot].click();
-    return;
-  }
-  const id = { 1: 'bow', 2: 'move', 3: 'defend', 5: 'retreat', ' ': 'end' }[e.key];
-  if (id) {
-    e.preventDefault();
-    screen.querySelector(`[data-action="${id}"]`).click();
-  }
-});
+  if (selectAbilitySlot(e, slot)) return;
+  selectActionKey(e);
+}
+function selectAbilitySlot(event, slot) {
+  if (slot < 0 || slot >= 4) return false;
+  event.preventDefault();
+  screen.querySelectorAll('[data-ability]')[slot].click();
+  return true;
+}
+function selectActionKey(event) {
+  const id = { 1: 'bow', 2: 'move', 3: 'defend', 5: 'retreat', ' ': 'end' }[event.key];
+  if (!id) return;
+  event.preventDefault();
+  screen.querySelector(`[data-action="${id}"]`).click();
+}
 function fit() {
   const full = document.body.classList.contains('full'),
     frame = document.querySelector('.preview-frame');

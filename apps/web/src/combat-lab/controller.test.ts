@@ -21,6 +21,16 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { CommandDesk } from './CommandDesk.js';
 
+import { handleCombatLabKey, selectCombatSkill } from './command-input.js';
+import { autoplayContinuation, runAutoplayStep } from './autoplay.js';
+import {
+  loadCombatLabCatalog,
+  restoreBattleSession,
+  applyRestoredSession,
+  restartSessionBattle,
+  downloadSessionReplay,
+} from './session-lifecycle.js';
+
 const view = (viewRevision: number): CombatLabView => ({
   version: 1,
   sessionId: 'session',
@@ -420,7 +430,7 @@ it('uses skill previews for the active actor and keeps target skill orders separ
   executeFieldCommand(
     {
       ...current,
-      skillPreview: current.skillPreview?.map((preview) => ({
+      skillPreview: (current.skillPreview ?? []).map((preview) => ({
         ...preview,
         legal: false,
         reason: 'OUT_OF_RANGE',
@@ -432,4 +442,306 @@ it('uses skill previews for the active actor and keeps target skill orders separ
   );
   expect(effects.notice).toHaveBeenLastCalledWith('Цель вне дальности приёма.');
   expect(effects.act).toHaveBeenCalledTimes(2);
+});
+
+it('keeps board hotkeys out of interactive focus and preserves global Escape cancellation', () => {
+  const attack = vi.fn();
+  const wait = vi.fn();
+  const cancel = vi.fn();
+  const actions = {
+    '1': { reason: '', run: attack },
+    '4': { reason: '', run: wait },
+    '3': { reason: 'Ожидается ответ', run: attack },
+  };
+  const event = {
+    key: '1',
+    repeat: false,
+    altKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    preventDefault: vi.fn(),
+  };
+  const board = { closest: (selector: string) => selector === '.battle-view' };
+  const input = { closest: () => true };
+  const outside = { closest: () => null };
+  for (const target of [input, outside, null]) handleCombatLabKey(event, target, actions, cancel);
+  for (const flag of ['repeat', 'altKey', 'ctrlKey', 'metaKey', 'shiftKey'])
+    handleCombatLabKey({ ...event, [flag]: true }, board, actions, cancel);
+  handleCombatLabKey({ ...event, key: '3' }, board, actions, cancel);
+  handleCombatLabKey({ ...event, key: '9' }, board, actions, cancel);
+  expect(attack).not.toHaveBeenCalled();
+  expect(event.preventDefault).not.toHaveBeenCalled();
+  handleCombatLabKey(event, board, actions, cancel);
+  handleCombatLabKey({ ...event, key: ' ' }, board, actions, cancel);
+  expect(attack).toHaveBeenCalledOnce();
+  expect(wait).toHaveBeenCalledOnce();
+  expect(event.preventDefault).toHaveBeenCalledTimes(2);
+  handleCombatLabKey({ ...event, key: 'Escape' }, input, actions, cancel);
+  expect(cancel).toHaveBeenCalledOnce();
+});
+
+it('interprets technique selection independently from immediate self-target orders', () => {
+  const skill: CombatLabSkill = {
+    skillId: 'aimed-shot',
+    name: 'Выстрел',
+    rank: 1,
+    target: 'enemy',
+    minimumRange: 1,
+    maximumRange: 5,
+    actionPointCost: 2,
+    staminaCost: 4,
+    duration: 'instant',
+    description: 'Выстрел',
+    equipmentAvailable: true,
+  };
+  const current = {
+    ...playableView(),
+    skills: [skill, { ...skill, skillId: 'shield-brace' as const, target: 'self' as const }],
+  };
+  const effects = { act: vi.fn(), select: vi.fn() };
+  selectCombatSkill(current, 'rally', null, '', effects);
+  selectCombatSkill(current, 'aimed-shot', null, 'Ожидается ответ', effects);
+  expect(effects.select).not.toHaveBeenCalled();
+  selectCombatSkill(current, 'aimed-shot', null, '', effects);
+  expect(effects.select).toHaveBeenLastCalledWith('aimed-shot');
+  selectCombatSkill(current, 'aimed-shot', 'aimed-shot', '', effects);
+  expect(effects.select).toHaveBeenLastCalledWith(null);
+  selectCombatSkill(current, 'shield-brace', null, '', effects);
+  expect(effects.act).toHaveBeenCalledWith({ type: 'use-skill', skillId: 'shield-brace' });
+});
+
+it('pauses autoplay while a lawful action is pending and stops it on uncertain, lost or terminal sessions', () => {
+  const state = {
+    enabled: true,
+    view: playableView(),
+    sessionLost: false,
+    deleting: false,
+    pending: null,
+  };
+  expect(autoplayContinuation(state)).toBe('ready');
+  expect(autoplayContinuation({ ...state, enabled: false })).toBe('disabled');
+  for (const changed of [
+    { view: null },
+    { view: { ...state.view, status: 'resolved' as const } },
+    { sessionLost: true },
+    { deleting: true },
+    { pending: { uncertain: true } },
+  ])
+    expect(autoplayContinuation({ ...state, ...changed })).toBe('stopped');
+  expect(autoplayContinuation({ ...state, pending: { uncertain: false } })).toBe('paused');
+  const opponent = { ...state.view, controlledSideId: 'other-side' };
+  expect(autoplayContinuation({ ...state, view: opponent })).toBe('paused');
+  const act = vi.fn();
+  const ready = { pending: false, deleting: false, sessionLost: false };
+  for (const flag of Object.keys(ready))
+    runAutoplayStep(state.view, { ...ready, [flag]: true }, act);
+  runAutoplayStep(null, ready, act);
+  runAutoplayStep(opponent, ready, act);
+  expect(act).not.toHaveBeenCalled();
+  runAutoplayStep(state.view, ready, act);
+  expect(act).toHaveBeenCalledWith({ type: 'autoplay' }, 'Шаг автобоя');
+});
+
+it('loads only a catalogue response with profiles and a battle without owning unrelated notices', async () => {
+  const fetch = vi.fn();
+  vi.stubGlobal('fetch', fetch);
+  try {
+    const catalog = lifecycleCatalog();
+    fetch.mockResolvedValueOnce(Response.json(catalog));
+    await expect(loadCombatLabCatalog('/api', new AbortController().signal)).resolves.toEqual(
+      catalog,
+    );
+    fetch.mockResolvedValueOnce(Response.json({ profiles: [], defaultBattle: null }));
+    await expect(loadCombatLabCatalog('/api', new AbortController().signal)).rejects.toThrow(
+      'invalid catalog',
+    );
+    fetch.mockResolvedValueOnce(Response.json({}, { status: 503 }));
+    await expect(loadCombatLabCatalog('/api', new AbortController().signal)).rejects.toThrow(
+      'catalog unavailable',
+    );
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it('restores saved sessions by reading only, retains credentials on failures and ignores stale completion', async () => {
+  const fetch = vi.fn();
+  vi.stubGlobal('fetch', fetch);
+  const saved = JSON.stringify({ id: 'session', capability: 'capability' });
+  const storage = {
+    getItem: vi.fn<() => string | null>(() => saved),
+    removeItem: vi.fn(),
+  } as unknown as Storage;
+  const signal = new AbortController().signal;
+  const effects = { install: vi.fn(), draft: vi.fn(), selectUnit: vi.fn(), notice: vi.fn() };
+  try {
+    const current = { ...playableView(), battle: lifecycleCatalog().defaultBattle };
+    fetch.mockResolvedValueOnce(Response.json(current));
+    const restored = await restoreBattleSession(
+      '/api',
+      () => storage,
+      'saved-session',
+      signal,
+      () => true,
+    );
+    applyRestoredSession(restored, effects);
+    expect(effects.install).toHaveBeenCalledWith({
+      id: 'session',
+      capability: 'capability',
+      view: current,
+    });
+    expect(effects.selectUnit).toHaveBeenCalledWith('actor');
+    expect(effects.draft).toHaveBeenCalledWith(current.battle);
+    fetch.mockRejectedValueOnce(new Error('offline'));
+    applyRestoredSession(
+      await restoreBattleSession(
+        '/api',
+        () => storage,
+        'saved-session',
+        signal,
+        () => true,
+      ),
+      effects,
+    );
+    expect(effects.notice).toHaveBeenLastCalledWith(
+      expect.stringContaining('Не удалось восстановить бой'),
+    );
+    expect(storage.removeItem).not.toHaveBeenCalled();
+    fetch.mockResolvedValueOnce(Response.json(current));
+    expect(
+      await restoreBattleSession(
+        '/api',
+        () => storage,
+        'saved-session',
+        signal,
+        () => false,
+      ),
+    ).toEqual({ status: 'stale' });
+    fetch.mockResolvedValueOnce(Response.json({}, { status: 404 }));
+    applyRestoredSession(
+      await restoreBattleSession(
+        '/api',
+        () => storage,
+        'saved-session',
+        signal,
+        () => true,
+      ),
+      effects,
+    );
+    expect(storage.removeItem).toHaveBeenCalledWith('saved-session');
+    expect(effects.notice).toHaveBeenLastCalledWith(
+      'Сохранённая сессия недоступна. Создайте новый бой.',
+    );
+    vi.mocked(storage.getItem).mockReturnValueOnce(null);
+    expect(
+      await restoreBattleSession(
+        '/api',
+        () => storage,
+        'saved-session',
+        signal,
+        () => true,
+      ),
+    ).toEqual({ status: 'absent' });
+    applyRestoredSession({ status: 'absent' }, effects);
+    expect(effects.install).toHaveBeenCalledOnce();
+    expect(fetch.mock.calls.every(([, options]) => options.method === undefined)).toBe(true);
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it('validates a restart before deletion and creates a replacement only after confirmed deletion', async () => {
+  const catalog = lifecycleCatalog();
+  const current = {
+    id: 'session',
+    capability: 'capability',
+    view: { ...view(1), battle: catalog.defaultBattle },
+  };
+  const end = vi.fn(async () => false);
+  const start = vi.fn(async () => {});
+  const notice = vi.fn();
+  await restartSessionBattle(current, null, false, end, start, notice);
+  await restartSessionBattle(current, catalog, true, end, start, notice);
+  await restartSessionBattle(null, catalog, false, end, start, notice);
+  await restartSessionBattle(
+    { ...current, view: { ...current.view, battle: battleDraft() } },
+    catalog,
+    false,
+    end,
+    start,
+    notice,
+  );
+  expect(end).not.toHaveBeenCalled();
+  await restartSessionBattle(current, catalog, false, end, start, notice);
+  expect(start).not.toHaveBeenCalled();
+  end.mockResolvedValueOnce(true);
+  await restartSessionBattle(current, catalog, false, end, start, notice);
+  expect(start).toHaveBeenCalledWith(catalog.defaultBattle);
+  expect(end.mock.invocationCallOrder[1]).toBeLessThan(start.mock.invocationCallOrder[0]!);
+});
+
+it('downloads an authenticated replay without changing a session and reports unavailable or unreadable responses', async () => {
+  const fetch = vi.fn();
+  vi.stubGlobal('fetch', fetch);
+  const current = {
+    id: 'session',
+    capability: 'capability',
+    view: { ...view(1), battle: lifecycleCatalog().defaultBattle },
+  };
+  const save = vi.fn();
+  const notice = vi.fn();
+  try {
+    await downloadSessionReplay('/api', null, false, save, notice);
+    await downloadSessionReplay('/api', current, true, save, notice);
+    expect(fetch).not.toHaveBeenCalled();
+    const replay = { schemaVersion: 1, commands: [] };
+    fetch.mockResolvedValueOnce(Response.json(replay));
+    await downloadSessionReplay('/api', current, false, save, notice);
+    expect(save).toHaveBeenCalledWith(replay, 'Battle.json');
+    expect(fetch).toHaveBeenLastCalledWith('/api/dev/combat-lab/session/replay', {
+      headers: { 'x-combat-lab-capability': 'capability' },
+    });
+    fetch.mockResolvedValueOnce(Response.json({}, { status: 404 }));
+    await downloadSessionReplay('/api', current, false, save, notice);
+    expect(notice).toHaveBeenLastCalledWith(
+      'Бой больше недоступен. Начните заново или вернитесь к редактору.',
+    );
+    fetch.mockResolvedValueOnce(new Response('unreadable'));
+    await downloadSessionReplay('/api', current, false, save, notice);
+    expect(notice).toHaveBeenLastCalledWith('Повтор боя скачать не удалось.');
+    expect(save).toHaveBeenCalledOnce();
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+function lifecycleCatalog(): CombatLabCatalog {
+  const battle: CombatLabBattleConfig = {
+    ...battleDraft(),
+    units: [
+      { id: 'human', profileId: 'fighter', sideId: 'human', position: { q: 1, r: 1 } },
+      { id: 'enemy', profileId: 'fighter', sideId: 'opponent', position: { q: 13, r: 8 } },
+    ],
+  };
+  return {
+    defaultBattle: battle,
+    profiles: [{ id: 'fighter', name: 'Боец', kind: 'human', weaponId: 'sword-shield' }],
+  };
+}
+
+it('keeps a browser-denied storage getter from crashing battle restoration', async () => {
+  const result = await restoreBattleSession(
+    '/api',
+    () => {
+      throw new DOMException('Storage access denied', 'SecurityError');
+    },
+    'saved-session',
+    new AbortController().signal,
+    () => true,
+  );
+  expect(result).toEqual({
+    status: 'failed',
+    notice: 'Не удалось восстановить бой. Обновите страницу для повторного чтения.',
+  });
 });

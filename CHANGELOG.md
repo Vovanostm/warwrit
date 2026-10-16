@@ -15,13 +15,74 @@ requests.
   worktree/subagent development, current wiki, merge and main validation.
   Main-based isolated snapshot integrates the existing sprite combat code,
   editor, art and approved history while preserving primary WIP and excluding
-  unrelated SupplyShop/encounter-access/launch edits. Existing unit coverage
+  unrelated SupplyShop/launch edits. A fail-closed V1 projection invariant is
+  retained for the sprite-only surrendered status; no historical DTO widening. Existing unit coverage
   755PASS/47SKIPPED; playable5330/API3030 starts. Initial audit missingcoverage
   ERROR then covered FAIL on complexity/duplication; intermediate snapshot
   precommit audit NOT_RUN under AGENTS work-package exception because later
   steps replace failing modules. No bypass permitted on published/main/merge
   heads. Module cleanup, skills editor, current visual/gameplay review and
   full clean delivery gate remain required. CURRENT_PLAN owns sequencing.
+
+### Editable technique ranks and shared combat phases
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: per-unit sandbox
+  technique ranks/default/empty presets, metadata from the canonical skill
+  catalogue, and warnings preserving incompatible learned ranks. No campaign XP
+  or new perk tree. Protocol catalogue, server custom setup, editor and
+  SkillLoadout affected. Focused22 checks PASS; initial server typecheck exposed
+  missing V1 projection narrowing, now retained as a fail-closed invariant.
+- Core move/reaction/fire, warning, panic, wound and AI phases share existing
+  admission and damage-preview rules without changing policy/replay/RNG ordering.
+  Core93 focused checks, lint/format/typecheck PASS; scoped core complexity and
+  clone findings zero. Independent source review of both slices found no material
+  findings; it did not run browser/DB checks. Intermediate integration hooks
+  NOT_RUN under the existing package exception; whole-union audit/full gate and
+  fresh visual acceptance pending. See [current combat page](docs/wiki/battlefield-test-maps.md).
+
+### Battle controls, initiative and missing-session recovery
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: HUD presentation,
+  scene lifecycle and projection are cohesive modules; current/acted/waiting
+  initiative labels derive from server turnIndex. Controller separates session
+  transport, public-view admission, field command confirmation and availability;
+  same-ID retry/auth/Escape semantics preserved. Missing temporary session now
+  explicitly points to restart/editor instead of claiming a completed battle.
+- Worker HUD18 and controller28 focused checks PASS. Integrated web types first
+  FAIL on optional test data; corrected, then web types/UI40 PASS. Server types
+  and public V1 projection rejection regression PASS. Source-only independent
+  review found no material findings; fresh integrated visual/journey and final
+  delivery gate pending. Intermediate hooks NOT_RUN, attempted main audits FAIL
+  on other owned prototype code; no published/main bypass allowed.
+- Historical galleries share immutable metadata without changing approved art or
+  layouts. Worker syntax/lint/format/diff PASS; its audit used a relaxed CRAP
+  threshold and is not the actual gate. Missing coverage blocked normal commit;
+  automatic review rejected bypass. Parent integrated the staged patch for
+  ordinary coverage/audit before committing. Browser console acceptance pending.
+  Current wiki removes superseded 3D production instructions while retaining
+  useful map/XCOM links and dated authority; research/progression boundaries
+  are explicit in [the owning page](docs/wiki/battlefield-test-maps.md).
+
+### Integrated sprite renderer and checked delivery candidate
+
+- 2026-10-16, branch `codex/combat-cycle-20261016`, local: padded silhouette
+  outline fixes clipped crown/edge while preserving original body/pick mask;
+  renderer separates terrain, figures, feedback, marker planning and picking.
+  Thirteen finite renderer checks preserve legal-preview/inspection priorities,
+  alpha thresholds and bounded geometry. Editor immutable actions/atomic imports
+  and controller lifecycle/keyboard/autoplay close initial snapshot audit debt.
+- Fixed catalogue completion erasing missing-session notice, denied storage getter
+  restoration, disabled editor keyboard mutation and ambiguous skill refusal copy.
+  Moved HUD props to remove a real architecture cycle. Actual integrated types,
+  lint/architecture/pattern/content and795unitPASS/47SKIPPED; ordinary main-based
+  audit PASS with zero new blocking findings. First failed checks retained in
+  owning result; advisory styling findings remain. No gate/config weakening.
+- Independent source reviewer finding corrected/read back. Independent real UI
+  battle manualR1–2 thenauto endedR8/6alliedsurvivors; inspected damage agreed
+  with previews, invalid skill refused, no repeated movement destination within
+  activation. Strategy comparison/fun NOT_MEASURED. Final absolute visual review
+  and clean PR/DB/stress/main journey pending.
+  [Owning result](docs/wiki/battlefield-test-maps.md#результат-интеграции-и-игровые-проверки--2026-10-16).
 
 ### Battle camera menu helper
 

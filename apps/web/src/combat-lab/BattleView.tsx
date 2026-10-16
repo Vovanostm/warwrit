@@ -8,34 +8,12 @@ import { BattleForecast } from './BattleForecast.js';
 import { BattleInitiative } from './BattleInitiative.js';
 import { BattleOutcome } from './BattleOutcome.js';
 import { BattleSkills } from './BattleSkills.js';
-import { useRef, type ReactNode } from 'react';
-import type {
-  CombatLabAction,
-  CombatLabHex,
-  CombatLabView,
-  CombatLabSkillId,
-} from '@warwrit/protocol';
+import { useRef } from 'react';
+import type { BattleViewProps } from './battle-view-props.js';
+
 import { Icon, UnitCard } from './BattleUnitCard.js';
 import './battle-view.css';
 import './battle-controls.css';
-
-export interface BattleViewProps {
-  readonly view: CombatLabView;
-  readonly selectedUnitId: string | null;
-  readonly selectedHex: CombatLabHex | null;
-  readonly onSelectUnit: (id: string) => void;
-  readonly onSelectHex: (hex: CombatLabHex) => void;
-  readonly children?: ReactNode;
-  readonly menu?: ReactNode;
-  readonly onRefusal?: (reason: string) => void;
-  readonly onAct?: (action: CombatLabAction['intent']) => void;
-  readonly onRestart?: () => void;
-  readonly onEditor?: () => void;
-  readonly busy?: boolean;
-  readonly selectedSkillId?: CombatLabSkillId | null;
-  readonly onSelectSkill?: (id: CombatLabSkillId) => void;
-  readonly skillDisabledReason?: string;
-}
 
 export function BattleView(props: BattleViewProps) {
   const {

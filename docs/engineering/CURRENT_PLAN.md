@@ -5,20 +5,21 @@ Owner authorizes isolated worktrees, subagents, reviewed merges to main and
 postmerge play checks; deployment/paid services excluded. Root integration:
 `codex/combat-cycle-20261016` in managed combat-cycle-20261016/warwrit,
 based on main86c1da0. Primary b44f5c1/staged+unstaged prototype preserved
-read-only; SupplyShop/encounter-access/launch WIP excluded.
+read-only; SupplyShop/launch WIP excluded. V1 encounter projection explicitly rejects
+sprite-only surrender status; the historical wire contract stays unchanged.
 First observable outcome: playable sprite6v6/editor at5330/API3030.
-Existing unit coverage run755PASS/47SKIPPED; not DB/fullgate/visual acceptance.
-Audit was attempted: first missing coverage ERROR, covered audit FAIL with
-introduced complexity/duplication. Intermediate snapshot commit uses the
-AGENTS work-package exception (precommit audit NOT_RUN), never main/merge/
-publishedhead; follow-up modules replace those failing sections before PR.
-Plan: preserve snapshot -> isolated HUD/editor+skills/core/renderer owners
-reduce actual complexity and resolve reproduced defects -> independent
-journey critique -> one clean PR gate -> expected-head merge -> main playcheck.
-Root owns shared docs/galleries; workers hand back bounded commits.
-Canonical Learning/Social Notes+Purpose and Definitions read16Oct; campaign
-XP/52proposedperks not implemented by sandbox rank controls.
-Current actual failures/limits remain explicit; no blanket combat DoD claim.
+Integrated local check:795 unit PASS/47SKIPPED, actual main-based audit PASS;
+web/server types, lint/architecture/pattern/content PASS. Initial format/lint/
+cycle failures corrected without gate changes. Intermediate snapshot/picks
+had precommit NOT_RUN under work-package exception; later blocked worker
+patches integrated without bypass. Final candidate uses ordinary passing hook.
+Controller/HUD/skills/core/scene independent source review complete; denied
+sessionStorage getter P2 fixed/read back. Gameplay critic completed manual+
+auto R8 victory,6survivors/158commands; forecasts agreed in inspected attacks.
+One battle is not strategy/balance acceptance. Current fresh visual packet,
+clean PR bootstrap/DB/stress, expected-head merge and main playcheck pending.
+Root owns shared docs; all isolated source writers frozen/released. Primary
+WIP retained. Canonical learning/provisional-perk boundaries remain unchanged.
 
 **Battle camera helper — 2026-10-13, MODULE MERGED / SPRITE INTEGRATION LOCAL:**
 Live GitHub PR156 MERGED/head54f7da890/merge86c1da055; finalCI38407349732

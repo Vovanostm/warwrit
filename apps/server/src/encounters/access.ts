@@ -61,14 +61,20 @@ export function toEncounterPublicProjection(
         .toSorted(combat.compareHex)
         .map(({ q, r }) => ({ q, r })),
     },
-    units: encounter.state.units.map((unit) => ({
-      id: unit.id,
-      sideId: unit.sideId,
-      q: unit.position.q,
-      r: unit.position.r,
-      health: unit.health,
-      status: unit.status,
-    })),
+    units: encounter.state.units.map((unit) => {
+      combat.invariant(
+        unit.status !== 'surrendered',
+        'Sprite prototype status cannot enter a V1 encounter projection',
+      );
+      return {
+        id: unit.id,
+        sideId: unit.sideId,
+        q: unit.position.q,
+        r: unit.position.r,
+        health: unit.health,
+        status: unit.status,
+      };
+    }),
   };
 }
 

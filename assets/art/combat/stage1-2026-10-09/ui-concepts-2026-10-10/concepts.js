@@ -1,113 +1,5 @@
 // UI concept study only: no battle API, canonical state or combat RNG.
-const artRoot = '../';
-const unitArt = {
-  W01: {
-    url: `${artRoot}roster/w01/sprite.png`,
-    width: 1240,
-    height: 1269,
-    body: 1236,
-    foot: 1207.5,
-  },
-  W02: {
-    url: `${artRoot}roster/w02/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1196,
-    foot: 1163,
-  },
-  W03: {
-    url: `${artRoot}roster/w03/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1171,
-    foot: 1153.5,
-  },
-  W04: {
-    url: `${artRoot}roster/w04/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 825,
-    foot: 1044.5,
-  },
-  W05: {
-    url: `${artRoot}roster/w05/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1177,
-    foot: 1162.5,
-  },
-  W06: {
-    url: `${artRoot}roster/w06/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1173,
-    foot: 1149,
-  },
-  W08: {
-    url: `${artRoot}roster/w08/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1115,
-    foot: 1140.5,
-  },
-  B001: { url: '../../../m1/battle/unit-wolf.png', width: 512, height: 512, body: 293, foot: 491 },
-  B003: {
-    url: `${artRoot}roster/b003/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1024,
-    foot: 1164,
-  },
-  B019: {
-    url: `${artRoot}roster/b019/sprite.png`,
-    width: 1145,
-    height: 1374,
-    body: 1260,
-    foot: 1327,
-  },
-  B025: {
-    url: `${artRoot}roster/b025/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1204,
-    foot: 1236,
-  },
-  B053: {
-    url: `${artRoot}roster/b053/sprite.png`,
-    width: 1254,
-    height: 1254,
-    body: 1206,
-    foot: 1226,
-  },
-};
-const units = [
-  { id: 'shield', art: 'W01', name: 'Меч + щит', q: 2, r: 2, side: 'human' },
-  { id: 'arbalest', art: 'W08', name: 'Арбалет', q: 5, r: 2, side: 'human' },
-  { id: 'spear', art: 'W04', name: 'Копьё', q: 2, r: 6, side: 'human' },
-  { id: 'archer', art: 'W05', name: 'Лучник', q: 5, r: 6, side: 'human' },
-  { id: 'great', art: 'W03', name: 'Двуручный топор', q: 2, r: 10, side: 'human' },
-  { id: 'knife', art: 'W06', name: 'Нож', q: 5, r: 10, side: 'human' },
-  { id: 'wolf', art: 'B001', name: 'Волк', q: 8, r: 6, side: 'enemy', legal: true, size: 48 },
-  { id: 'target', art: 'W02', name: 'Топор + щит', q: 9, r: 3, side: 'enemy', legal: true },
-  { id: 'boar', art: 'B003', name: 'Дикий вепрь', q: 10, r: 7, side: 'enemy', size: 61 },
-  { id: 'warden', art: 'B019', name: 'Могильный сторож', q: 12, r: 3, side: 'enemy', size: 86 },
-  { id: 'reed', art: 'B025', name: 'Камышник', q: 10, r: 10, side: 'enemy', size: 82 },
-  { id: 'mill', art: 'B053', name: 'Мельничная тварь', q: 13, r: 7, side: 'enemy', size: 106 },
-];
-const turnOrder = [
-  'archer',
-  'wolf',
-  'arbalest',
-  'spear',
-  'target',
-  'great',
-  'boar',
-  'knife',
-  'mill',
-  'shield',
-  'warden',
-  'reed',
-];
+const { unitArt, units, turnOrder } = window.WarwritCombatGalleryData;
 const descriptions = {
   a: {
     kicker: '01 / HEROES · КОМПАКТНАЯ КЛАССИКА',
@@ -154,11 +46,22 @@ const portrait = (id) => `<div class="portrait"><img src="${unitArt[id].url}" al
 const pips = () =>
   '<div class="pips" aria-label="4 из 4 очков действия"><i></i><i></i><i></i><i></i><span>4 / 4 ОД</span></div>';
 function meters(target = false) {
-  return `<div class="meters ${target ? 'target-resources' : ''}">
- <div class="resource"><span>Здоровье</span><div class="bar"><i style="width:${target ? 80 : 100}%"></i></div><b>${target ? '48 / 60' : '60 / 60'}</b></div>
- <div class="resource"><span>Броня</span><div class="bar armor"><i style="width:${target ? 65 : 100}%"></i></div><b>${target ? '52 / 80' : '35 / 35'}</b></div>
- ${target ? '' : '<div class="resource"><span>Силы</span><div class="bar stamina"><i style="width:80%"></i></div><b>64 / 80</b></div>'}
- </div>`;
+  const resources = target
+    ? [
+        ['Здоровье', '48 / 60', 80, ''],
+        ['Броня', '52 / 80', 65, ' armor'],
+      ]
+    : [
+        ['Здоровье', '60 / 60', 100, ''],
+        ['Броня', '35 / 35', 100, ' armor'],
+        ['Силы', '64 / 80', 80, ' stamina'],
+      ];
+  return `<div class="meters ${target ? 'target-resources' : ''}">${resources
+    .map(([label, value, width, kind]) => meter(label, value, width, kind))
+    .join('')}</div>`;
+}
+function meter(label, value, width, kind) {
+  return `<div class="resource"><span>${label}</span><div class="bar${kind}"><i style="width:${width}%"></i></div><b>${value}</b></div>`;
 }
 function actorCard(kind = 'actor-card') {
   return `<section class="${kind}" aria-label="Действующий боец">${portrait('W05')}<div><p class="micro">Ваш ход</p><h2 class="actor-name">Лучник</h2>${pips()}${meters()}</div></section>`;
@@ -171,22 +74,51 @@ function actions() {
     ['end', 'Конец хода', 'Оставшиеся ОД', '4'],
     ['retreat', 'Отход', 'У края поля', '5'],
   ]
-    .map(
-      ([id, label, cost, key]) =>
-        `<button class="action ${id === 'end' ? 'end' : ''} ${id === 'retreat' ? 'muted' : ''}" data-action="${id}" title="${id === 'defend' ? 'Защита завершает активацию' : id === 'retreat' ? 'Отход доступен у края карты' : label}"><span class="key">${key}</span>${icon(id)}<span>${label}</span><small>${cost}</small></button>`,
-    )
+    .map(actionButton)
     .join('')}</div>`;
+}
+function actionButton([id, label, cost, key]) {
+  return `<button class="action ${actionClass(id)}" data-action="${id}" title="${actionTitle(id, label)}"><span class="key">${key}</span>${icon(id)}<span>${label}</span><small>${cost}</small></button>`;
+}
+function actionClass(id) {
+  return [id === 'end' ? 'end' : '', id === 'retreat' ? 'muted' : ''].join(' ');
+}
+function actionTitle(id, label) {
+  const titles = {
+    defend: 'Защита завершает активацию',
+    retreat: 'Отход доступен у края карты',
+  };
+  return titles[id] ?? label;
 }
 function forecast() {
   return `<section class="forecast" aria-label="Прогноз по цели"><div class="target-heading">${portrait('W02')}<div><p class="micro">Цель выстрела</p><h3 class="target-name">Топор + щит</h3></div></div><div class="probability"><strong>75%</strong><span>попадание · 25% промах</span></div><div class="damage"><span>Здоровье <b>−2–4</b></span><span>Броня <b>−12–18</b></span></div><div class="cost-line">При попадании · 4 ОД · 16 сил</div></section>`;
 }
 function turns() {
   return `<div class="turns hud" aria-label="Очередь хода"><span class="turn-caption">Инициатива</span>${turnOrder
-    .map((id, index) => {
-      const u = units.find((v) => v.id === id);
-      return `<button class="turn-tile ${u.side === 'enemy' ? 'enemy' : ''} ${id === 'archer' ? 'active' : ''}" data-inspect="${id}" title="${index + 1}. ${u.name}${id === 'archer' ? ' · действует сейчас' : ''}" aria-label="${index + 1}. ${u.name}"><img class="face" style="${u.art === 'B001' ? `width:175%;left:-10%;top:${4 - { a: 49, b: 46, c: 68, d: 37 }[view] * 0.78}px` : u.art === 'W04' ? `width:260%;left:-65%;top:${4 - { a: 49, b: 46, c: 68, d: 37 }[view] * 0.52}px` : u.art === 'B003' ? 'width:170%;left:-50%;top:-12px' : ''}" src="${unitArt[u.art].url}" alt=""><span class="n">${index + 1}</span></button>`;
-    })
+    .map(turnTile)
     .join('')}</div>`;
+}
+function turnTile(id, index) {
+  const unit = units.find((entry) => entry.id === id);
+  return `<button class="turn-tile ${turnClasses(unit)}" data-inspect="${id}" title="${turnTitle(unit, index)}" aria-label="${index + 1}. ${unit.name}"><img class="face" style="${turnFaceStyle(unit)}" src="${unitArt[unit.art].url}" alt=""><span class="n">${index + 1}</span></button>`;
+}
+function turnClasses(unit) {
+  const side = unit.side === 'enemy' ? 'enemy' : '';
+  const active = unit.id === 'archer' ? 'active' : '';
+  return `${side} ${active}`;
+}
+function turnTitle(unit, index) {
+  const current = unit.id === 'archer' ? ' · действует сейчас' : '';
+  return `${index + 1}. ${unit.name}${current}`;
+}
+function turnFaceStyle(unit) {
+  if (unit.art === 'B001') return `width:175%;left:-10%;top:${4 - viewHeight() * 0.78}px`;
+  if (unit.art === 'W04') return `width:260%;left:-65%;top:${4 - viewHeight() * 0.52}px`;
+  if (unit.art === 'B003') return 'width:170%;left:-50%;top:-12px';
+  return '';
+}
+function viewHeight() {
+  return { a: 49, b: 46, c: 68, d: 37 }[view];
 }
 const hint = '<p class="hint action-hint">ЛКМ — осмотр · ПКМ — приказ · Наведение — прогноз</p>';
 function topline() {
@@ -210,14 +142,29 @@ function map() {
 }
 function board() {
   return `<div class="board"><img class="ground" src="../battlefield/mill-field-v1.png" alt="Разрушенная каменная мельница и открытый двор">${map()}${units
-    .map((u) => {
-      const p = hex(u.q, u.r),
-        a = unitArt[u.art],
-        height = u.size ?? 80,
-        scale = height / a.body;
-      return `<button class="unit ${u.side === 'enemy' ? 'enemy' : ''} ${u.legal ? 'legal' : ''} ${u.id === 'archer' ? 'actor' : ''}" data-unit="${u.id}" aria-label="${u.name}${u.legal ? ' · доступен выстрел' : ''}" style="left:${p.x / 10}%;top:${p.y / 6}%"><span class="base"></span><img class="body" src="${a.url}" alt="" style="width:${a.width * scale}px;height:${a.height * scale}px;bottom:${-(a.height - a.foot) * scale}px"><span class="unit-health"><i></i></span><span class="unit-label">${u.name}</span></button>`;
-    })
+    .map(boardUnit)
     .join('')}<span class="locator">Развалины · 15 × 11 гексов</span></div>`;
+}
+function boardUnit(unit) {
+  const p = hex(unit.q, unit.r);
+  const art = unitArt[unit.art];
+  const scale = (unit.size ?? 80) / art.body;
+  return `<button class="unit ${unitClasses(unit)}" data-unit="${unit.id}" aria-label="${unit.name}${legalLabel(unit)}" style="left:${p.x / 10}%;top:${p.y / 6}%"><span class="base"></span><img class="body" src="${art.url}" alt="" style="width:${art.width * scale}px;height:${art.height * scale}px;bottom:${-(art.height - art.foot) * scale}px"><span class="unit-health"><i></i></span><span class="unit-label">${unit.name}</span></button>`;
+}
+function unitClasses(unit) {
+  return [unitSideClass(unit), isLegalTarget(unit), isActor(unit)].filter(Boolean).join(' ');
+}
+function unitSideClass(unit) {
+  return unit.side === 'enemy' ? 'enemy' : '';
+}
+function isLegalTarget(unit) {
+  return unit.legal ? 'legal' : '';
+}
+function isActor(unit) {
+  return unit.id === 'archer' ? 'actor' : '';
+}
+function legalLabel(unit) {
+  return unit.legal ? ' · доступен выстрел' : '';
 }
 function composition(view) {
   const field = board(),
@@ -237,73 +184,103 @@ let mode = 'bow',
   target = 'target',
   night = false,
   showGrid = false;
-function updatePreview() {
+function updateActionSelection() {
   document
     .querySelectorAll('.action')
-    .forEach((b) => b.classList.toggle('selected', b.dataset.action === mode));
-  document.querySelectorAll('.unit').forEach((b) => {
-    const u = units.find((v) => v.id === b.dataset.unit);
-    b.classList.toggle('target', u.id === target);
-    b.classList.toggle('legal', Boolean(u.legal) && mode === 'bow');
+    .forEach((button) => button.classList.toggle('selected', button.dataset.action === mode));
+}
+function updateUnitSelection() {
+  document.querySelectorAll('.unit').forEach((button) => {
+    const unit = units.find((entry) => entry.id === button.dataset.unit);
+    button.classList.toggle('target', unit.id === target);
+    button.classList.toggle('legal', Boolean(unit.legal) && mode === 'bow');
   });
+}
+function renderRange() {
+  const actor = units.find((unit) => unit.id === 'archer');
+  const cells = rangeCells(actor, mode === 'move' ? 3 : 4);
   const area = screen.querySelector('.area');
-  const actor = units.find((u) => u.id === 'archer');
-  let cells = '';
-  for (let r = 0; r < 11; r++)
-    for (let q = 0; q < 15; q++) {
-      const distance =
-        (Math.abs(q - actor.q) + Math.abs(r - actor.r) + Math.abs(q + r - actor.q - actor.r)) / 2;
-      if (distance > 0 && distance <= (mode === 'move' ? 3 : 4)) {
-        const p = hex(q, r);
-        cells += `<polygon class="range" points="${polygon(p.x, p.y)}"/>`;
-      }
-    }
   area.innerHTML = ['bow', 'move'].includes(mode) ? cells : '';
   area.style.opacity = mode === 'move' ? '.65' : '1';
+}
+function rangeCells(actor, limit) {
+  const cells = [];
+  for (let r = 0; r < 11; r++)
+    for (let q = 0; q < 15; q++) {
+      if (!inRange(q, r, actor, limit)) continue;
+      const p = hex(q, r);
+      cells.push(`<polygon class="range" points="${polygon(p.x, p.y)}"/>`);
+    }
+  return cells.join('');
+}
+function inRange(q, r, actor, limit) {
+  const distance =
+    (Math.abs(q - actor.q) + Math.abs(r - actor.r) + Math.abs(q + r - actor.q - actor.r)) / 2;
+  return distance > 0 && distance <= limit;
+}
+function updateSceneLighting() {
   screen.classList.toggle('night', night);
   const sceneMeta = screen.querySelector('.scene-meta');
   if (sceneMeta)
     sceneMeta.textContent = night ? 'ДВОР МЕЛЬНИЦЫ · НОЧНОЙ БОЙ' : 'ДВОР МЕЛЬНИЦЫ · ДНЕВНОЙ БОЙ';
   screen.querySelector('.all-grid').style.display = showGrid ? '' : 'none';
-  const chosen = units.find((u) => u.id === target);
-  screen.querySelectorAll('.target-name').forEach((n) => (n.textContent = chosen.name));
+}
+function updateTargetForecast(chosen) {
+  const legal = Boolean(chosen.legal);
+  screen.querySelectorAll('.target-name').forEach((node) => (node.textContent = chosen.name));
   screen
     .querySelectorAll('.target-heading .portrait img')
-    .forEach((n) => (n.src = unitArt[chosen.art].url));
-  const legal = Boolean(chosen.legal);
+    .forEach((node) => (node.src = unitArt[chosen.art].url));
   screen
     .querySelectorAll('.probability strong')
-    .forEach((n) => (n.textContent = legal ? '75%' : '—'));
+    .forEach((node) => (node.textContent = legal ? '75%' : '—'));
   screen
     .querySelectorAll('.probability span')
-    .forEach((n) => (n.textContent = legal ? 'попадание · 25% промах' : 'Нет доступного выстрела'));
-  screen.querySelectorAll('.damage').forEach((n) => (n.style.visibility = legal ? '' : 'hidden'));
+    .forEach(
+      (node) => (node.textContent = legal ? 'попадание · 25% промах' : 'Нет доступного выстрела'),
+    );
+  screen
+    .querySelectorAll('.damage')
+    .forEach((node) => (node.style.visibility = legal ? '' : 'hidden'));
   screen
     .querySelectorAll('.cost-line')
     .forEach(
-      (n) =>
-        (n.textContent = legal ? 'При попадании · 4 ОД · 16 сил' : 'Выберите цель в зоне выстрела'),
+      (node) =>
+        (node.textContent = legal
+          ? 'При попадании · 4 ОД · 16 сил'
+          : 'Выберите цель в зоне выстрела'),
     );
   screen
     .querySelectorAll('.target-reason')
     .forEach(
-      (n) =>
-        (n.innerHTML = legal
+      (node) =>
+        (node.innerHTML = legal
           ? 'В пределах выстрела.<br>Линия огня открыта.'
           : 'Осмотр фигуры.<br>Доступный выстрел не показан.'),
     );
-  screen.querySelector('.board-forecast')?.remove();
-  if (view === 'b' && legal && mode === 'bow') {
-    const f = document.createElement('div'),
-      p = hex(chosen.q, chosen.r);
-    f.className = 'board-forecast';
-    f.style.left = `${Math.min(76, p.x / 10 - 4)}%`;
-    f.style.top = `${p.y / 6 - 19}%`;
-    f.innerHTML =
-      '<strong>75% попадание</strong><span>Здоровье −2–4 · броня −12–18</span><br><span>При попадании · 4 ОД</span>';
-    screen.querySelector('.board').append(f);
-  }
+  return legal;
 }
+function renderBoardForecast(chosen, legal) {
+  screen.querySelector('.board-forecast')?.remove();
+  if (view !== 'b' || !legal || mode !== 'bow') return;
+  const forecast = document.createElement('div');
+  const p = hex(chosen.q, chosen.r);
+  forecast.className = 'board-forecast';
+  forecast.style.left = `${Math.min(76, p.x / 10 - 4)}%`;
+  forecast.style.top = `${p.y / 6 - 19}%`;
+  forecast.innerHTML =
+    '<strong>75% попадание</strong><span>Здоровье −2–4 · броня −12–18</span><br><span>При попадании · 4 ОД</span>';
+  screen.querySelector('.board').append(forecast);
+}
+function updatePreview() {
+  updateActionSelection();
+  updateUnitSelection();
+  renderRange();
+  updateSceneLighting();
+  const chosen = units.find((unit) => unit.id === target);
+  renderBoardForecast(chosen, updateTargetForecast(chosen));
+}
+
 function fit() {
   const frame = document.querySelector('.preview-frame'),
     full = document.body.classList.contains('full');
@@ -340,42 +317,54 @@ function notice(text) {
   n.textContent = text;
   screen.append(n);
 }
-screen.addEventListener('click', (event) => {
+function handleActionClick(event) {
   const action = event.target.closest('[data-action]');
-  if (action) {
-    mode = action.dataset.action;
-    updatePreview();
-    if (!['bow', 'move'].includes(mode))
-      notice(
-        mode === 'end'
-          ? 'Конец хода · предварительный просмотр'
-          : mode === 'defend'
-            ? 'Защита · 2 ОД · завершает активацию'
-            : 'Отход · нужен край карты',
-      );
-    return;
-  }
+  if (!action) return false;
+  mode = action.dataset.action;
+  updatePreview();
+  showActionNotice(mode);
+  return true;
+}
+function showActionNotice(action) {
+  const notices = {
+    end: 'Конец хода · предварительный просмотр',
+    defend: 'Защита · 2 ОД · завершает активацию',
+    retreat: 'Отход · нужен край карты',
+  };
+  if (notices[action]) notice(notices[action]);
+}
+function handleTargetClick(event) {
   const unit = event.target.closest('[data-unit],[data-inspect]');
-  if (unit) {
-    target = unit.dataset.unit ?? unit.dataset.inspect;
-    updatePreview();
-    return;
-  }
+  if (!unit) return false;
+  target = unit.dataset.unit ?? unit.dataset.inspect;
+  updatePreview();
+  return true;
+}
+function handleUtilityClick(event) {
   const utility = event.target.closest('[data-utility]');
-  if (utility) {
-    if (utility.dataset.utility === 'night') night = !night;
-    else if (utility.dataset.utility === 'grid') showGrid = !showGrid;
-    else notice('Журнал · редактор боя · настройки — в меню');
-    updatePreview();
-  }
+  if (!utility) return;
+  if (utility.dataset.utility === 'night') night = !night;
+  else if (utility.dataset.utility === 'grid') showGrid = !showGrid;
+  else notice('Журнал · редактор боя · настройки — в меню');
+  updatePreview();
+}
+screen.addEventListener('click', (event) => {
+  handleScreenClick(event);
 });
+function handleScreenClick(event) {
+  if (handleActionClick(event) || handleTargetClick(event)) return;
+  handleUtilityClick(event);
+}
+
 screen.addEventListener('pointerover', (event) => {
-  const b = event.target.closest('[data-unit]');
-  if (b && b.classList.contains('enemy')) {
-    target = b.dataset.unit;
-    updatePreview();
-  }
+  inspectHoveredEnemy(event.target);
 });
+function inspectHoveredEnemy(targetElement) {
+  const unit = targetElement.closest('[data-unit]');
+  if (!unit?.classList.contains('enemy')) return;
+  target = unit.dataset.unit;
+  updatePreview();
+}
 screen.addEventListener('contextmenu', (event) => {
   event.preventDefault();
   if (event.target.closest('[data-unit],.board')) notice('Макет: боевой приказ не отправлен');
@@ -392,7 +381,8 @@ document.querySelector('#exit-full').addEventListener('click', () => {
   fit();
 });
 addEventListener('resize', fit);
-addEventListener('keydown', (event) => {
+addEventListener('keydown', (event) => handleKeydown(event));
+function handleKeydown(event) {
   if (event.key === 'Escape') {
     document.body.classList.remove('full');
     screen.querySelector('.notice')?.remove();
@@ -401,7 +391,7 @@ addEventListener('keydown', (event) => {
     const action = ['bow', 'move', 'defend', 'end', 'retreat'][Number(event.key) - 1];
     screen.querySelector(`[data-action="${action}"]`).click();
   }
-});
+}
 if (query.get('full') === '1' || query.get('capture') === '1') document.body.classList.add('full');
 if (query.get('capture') === '1') document.body.classList.add('capture');
 setView(view);
