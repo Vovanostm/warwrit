@@ -11,6 +11,15 @@ requests.
 
 ### Combat readability and reusable terrain
 
+- 2026-10-16, branch `codex/combat-readability`, local implementation under review:
+  measured 20-profile portrait bounds/B037 pivot; selective high-resolution
+  outlines; larger shared hex layout; common pool rows in queue and field;
+  reusable canonical-cell terrain with the world's natural sampler. Primary
+  research and first source/visual REJECT recorded in the owning wiki. Camera,
+  rubble order/UV, footer and dense-field placement defects are being corrected.
+  Focused37 checks/types/lint and809-unit coverage PASS; first complexity audit
+  FAIL, strict visual acceptance/publication/merge pending. No rule/schema change.
+
 - 2026-10-16, branch `codex/combat-readability`, local activation: owner rejects
   current softness/terrain ambiguity/cramped hexes/cropped portraits and asks
   for health/armor/morale bars below queue icons and field figures, reusable

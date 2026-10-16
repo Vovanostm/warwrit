@@ -1,0 +1,11 @@
+{
+  "id": "combat-readable-fire",
+  "prompt": "Create a new original Warwrit isolated tactical terrain decal, using inspected /Users/vovanostm/.codex/worktrees/combat-live-queue/warwrit/assets/art/m1/style/unit-c-ink.png and /Users/vovanostm/.codex/worktrees/combat-live-queue/warwrit/assets/art/m1/places/staraya-melnitsa.png ONLY for matching ink / flat wash style. ONE low shallow irregular patch of blackened charcoal, grey ashes and several small clearly visible rust-orange FLAMES, seen from elevated 50 degree tactical camera. Wide footprint, low vertical profile, centered and fully contained with 8% transparent padding. Irregular natural edges, black interior ink contour, hand-painted restrained orange flame tongues with pale ochre small cores; unmistakable burning ground even at 60 pixel width. Serious grounded medieval dark fantasy, no magic, no symbols, no saturated neon, no huge bonfire, no firewood piles, no smoke haze or bloom, no background or cast shadow rectangle, no labels/text/UI/hex tile border. Transparent background required. Individual coal and flame grouping should occupy most of the canvas horizontally; readable silhouette and credible materials.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-16T18:50:18.849208+00:00",
+  "transparent_background": true,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-a395f671-13e5-4a8f-b64c-5f1b5c548472.png",
+  "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/staraya-melnitsa.png"],
+  "status": "Integrated candidate; independent in-scene acceptance pending."
+}

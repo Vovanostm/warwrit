@@ -3776,3 +3776,71 @@ day/night, сетка/ground-overlayson-off, hover/pin/действие и их 
 Независимые code reviewer и visual critic проверяют реальные кадры и journey;
 каждый конкретный owner-дефект блокирует закрытие независимо от общего балла.
 Непроведённые исследования/измерения маркируются NOT_RUN/NOT_MEASURED.
+
+### Исследование и первый независимый отказ
+
+Проверены первичные источники: [Wesnoth base/variant/transition](https://wiki.wesnoth.org/Tiles_Tutorial),
+[anchored multihex props](https://wiki.wesnoth.org/MultiHexTutorial),
+[Battle Brothers UI](https://battlebrothersgame.com/dev-blog-75-progress-update-reworked-ui/),
+[Riot clarity](https://www.leagueoflegends.com/en-us/news/dev/clarity-in-league/),
+[не только цвет](https://gameaccessibilityguidelines.com/ensure-no-essential-information-is-conveyed-by-a-fixed-colour-alone/).
+Официальные кадры Battle Brothers/Wartales использованы для сравнения композиции,
+не как доказательство наличия ровно трёх требуемых полосок. Их порядок задаёт владелец.
+
+Аудит исходных PNG показал: runtime использует полное разрешение; DPR уже учтён.
+Причины конкретных дефектов: постоянная кромка из128² маски, minification,
+угадываемые CSS crop295/315%, скопированный pivot/bodyHeight B037 от B053.
+Кромка теперь selective512², picking остаётся128²; B037 измерен заново;
+20профилей имеют конечные source-pixel visibleBounds, SVG proportionally fits.
+Cell spacing1.4 — только presentation; общий layout используется сеткой,
+foot/picking/terrain. Общие terrain материалы используют существующий natural
+sampler мира; канонические типы/занятость/LOS/AP/replay не меняются.
+
+Первый playable и source review выявили обрезание camera/HUD, чёрные завалы,
+неверный порядок пропсов и схлопнутые side UV. Исправлены map/figure/HUD framing,
+foot-based prop ordering, emissive tint и side UV. Дополнительный reviewer
+выявил переполнение footer и resize; исправления требуют текущего readback.
+Фокусированные37проверок и web types/lint PASS; coverage809unit/47SKIPPED PASS.
+Первый audit FAIL: новая сложность layout/camera/terrain; исправляется без
+отключения gate. Публикация, финальный clean CI и merge пока NOT_RUN.
+
+Независимый visual critic открыл весь пакет и дал REJECT: плашки закрывают
+соседей, огонь/грязь слабо различимы, высоты похожи на коробки, ночь слишком
+похожа на день. Это acceptance blockers, прежний ACCEPT не применяется.
+Вторая итерация меняет способ placement: компактные тройные tracks с разным
+рисунком и screen-space collision avoidance вокруг фигур/HUD, connector при
+смещении. Полные числа и подписи остаются под верхними портретами; нулевая
+броня сохраняет пустой track. Terrain получает характерные wet ruts/puddles,
+угли/огонь, отдельную почву уступов и выраженное ночное освещение. Новый полный
+визуальный проход и реальные damage/armor/morale checks ещё обязательны.
+Локальные кадры/сценарии: output/playwright/combat-readability/ (untracked).
+
+### Owner correction: compact foot strips, no callouts
+
+2026-10-16: owner explicitly rejects screen-space callouts and connector arms.
+This supersedes the placement experiment above; its layout helper is removed.
+Field tracks are32×12CSSpx, immediately4px below each foot, without numbers,
+frames or connectors. They render in the same foot-sorted entity group as
+sprites, so foreground figures cover background tracks rather than tracks
+covering heads. Queue retains labelled exact values and all three fixed rows.
+New generated mud and burning-coal assets/provenance replace procedural fire
+glyphs and the earlier muddy texture candidate. Day/night and dense current
+captures require fresh independent acceptance.
+
+### Вторая реализация — локальный checkpoint
+
+Новые mud/fire PNG с точными prompts/provenance включены в assets/manifest.json;
+сырой generated output сохранён без перерисовки. Мокрые лужи и угли с низким
+пламенем заменяют прежние шумную грязь и программные условные языки огня.
+Высота шага возвращена к0.12 при spacing1.4; боковины используют отдельную
+сухую почву. Общий anti-repeat sampler экспортирован из прежнего owning
+terrain-material.ts без переноса world/road функций. Сильнее разделены
+ночные тона фона/грунта/фигур. Три полевых track48×20 избегают прямоугольников
+соседних фигур и панелей; перерасчёт только при изменении экранной композиции.
+Полные числа/подписи остаются наверху, типы полевых track различаются также
+рисунком. Функция placement проверена на плотных рядах, краях, пустом состоянии
+и детерминированности; framing — на трёх viewport и отсутствии active units.
+Текущие49focused PASS, content101assets PASS; строгий audit33files PASS после
+исправлений сложности. Предыдущий809unit/47SKIPPED coverage относится к первому
+checkpoint, финальный clean gate на полном текущем дереве ещё NOT_RUN.
+Повторный независимый visual verdict, реальные изменения pools и merge pending.

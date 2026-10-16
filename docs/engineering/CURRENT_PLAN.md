@@ -15,6 +15,12 @@ mechanics or framework; existing plain/mud/fire/blocked/height only.
 First playable on3036/5336, then all20-profile and generated-map/dense day/night
 journeys, independent strict source+visual rejection loop. Implementation,
 current acceptance, final CI/publication/merge NOT_RUN at activation.
+Local implementation now integrates both isolated writers; all20 profiles/3maps
+launched through editor imports. First source and strict visual review REJECT;
+confirmed framing/prop/UV/footer defects corrected, dense bars/terrain/night
+technique revision in progress. Focused37/types/lint and809unit coverage PASS;
+first complexity audit FAIL, being corrected without gate changes. No current
+visual acceptance or publication/merge claimed.
 [Owning requirements](../wiki/battlefield-test-maps.md#читаемость-бойцов-и-единый-рендер-поля--2026-10-16).
 
 **Live initiative and combat UX — 2026-10-16, MERGED / MAIN JOURNEY PASS:**

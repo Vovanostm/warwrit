@@ -7,12 +7,10 @@ import {
   MeshBuilder,
   Matrix,
   PickingInfo,
-  PointLight,
   Scene,
   StandardMaterial,
   Texture,
   Vector3,
-  VertexBuffer,
   type AbstractMesh,
   type Ray,
 } from '@babylonjs/core';
@@ -24,7 +22,6 @@ import type {
 } from '@warwrit/protocol';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
-import { BATTLE_ART } from '../renderer/art.js';
 import {
   opaqueSpritePixel,
   eventLabelUp,
@@ -35,9 +32,16 @@ import {
 import { markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
 import { spriteForUnit } from './sprite-art.js';
-import { SPRITE_MASK_SIZE, SPRITE_OUTLINE_SIZE, spriteOutlinePixels } from './sprite-outline.js';
-import { HEX_RADIUS, hexToWorld, worldToHex } from '../renderer/hex-projection.js';
-import { createHexDisc, createHexSides } from '../renderer/hex-mesh.js';
+import {
+  SPRITE_MASK_SIZE,
+  SPRITE_VISUAL_SIZE,
+  SPRITE_VISUAL_OUTLINE_SIZE,
+  spriteOutlinePixels,
+} from './sprite-outline.js';
+import { BATTLE_LAYOUT, battleHexToWorld, battleWorldToHex } from './battle-layout.js';
+import { createBattleTerrain } from './battle-terrain.js';
+import { battleFrameBounds } from './battle-framing.js';
+import { mountBattleFieldVitals } from './battle-field-vitals.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
 const millFieldUrl = new URL(
@@ -50,13 +54,9 @@ const b023FixtureUrl = new URL(
   import.meta.url,
 ).href;
 
-const terrainFaceUrl = new URL('../../../../assets/art/m1/terrain-ink-v1/dirt.png', import.meta.url)
-  .href;
-
-const SQRT3 = Math.sqrt(3);
 // Leave room for adjacent full figures without changing their proportions or pivots.
 const SPRITE_PRESENTATION_SCALE = 0.82;
-const AXIAL_TO_WORLD = ({ q, r }: CombatLabHex) => hexToWorld(q, r);
+const AXIAL_TO_WORLD = battleHexToWorld;
 type BattleUnit = CombatLabView['units'][number];
 const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
@@ -97,6 +97,7 @@ export async function mountSpriteBattleScene(
   // Geometric plane hits include transparent canvas margins. Reuse a small alpha mask
   // for input only, so visibly empty corners do not steal neighbouring hex clicks.
   const spriteMasks = new Map<string, Uint8ClampedArray>();
+  const spriteSources = new Map<string, HTMLImageElement>();
   const spriteUrls = [...new Set(initialView.units.map((unit) => spriteForUnit(unit).url))];
   await Promise.all(
     spriteUrls.map(async (url) => {
@@ -111,6 +112,7 @@ export async function mountSpriteBattleScene(
       const context = surface.getContext('2d', { willReadFrequently: true });
       if (!context) throw new Error('Sprite input mask unavailable');
       context.drawImage(source, 0, 0, SPRITE_MASK_SIZE, SPRITE_MASK_SIZE);
+      spriteSources.set(url, source);
       spriteMasks.set(url, context.getImageData(0, 0, SPRITE_MASK_SIZE, SPRITE_MASK_SIZE).data);
     }),
   );
@@ -140,8 +142,15 @@ export async function mountSpriteBattleScene(
   light.groundColor = new Color3(0.33, 0.29, 0.24);
 
   const initialTiles = tilesFor(initialView);
-  const mapDepth = Math.max(2, ...initialTiles.map((tile) => tile.r)) + 1;
-  const centerZ = ((mapDepth - 1) * SQRT3) / 4;
+  const points = initialTiles.map(AXIAL_TO_WORLD);
+  const mapBounds = {
+    minX: Math.min(...points.map((point) => point.x)),
+    maxX: Math.max(...points.map((point) => point.x)),
+    minZ: Math.min(...points.map((point) => point.z)),
+    maxZ: Math.max(...points.map((point) => point.z)),
+  };
+  const centerX = (mapBounds.minX + mapBounds.maxX) / 2;
+  const centerZ = (mapBounds.minZ + mapBounds.maxZ) / 2;
   let currentView = initialView;
   let selectedId = selectedUnitId;
   let selectedSkill: CombatLabSkillId | null = null;
@@ -174,22 +183,11 @@ export async function mountSpriteBattleScene(
     }
     return result;
   };
-  const artMaterial = (name: string, url: string) => {
-    const result = new StandardMaterial(name, scene);
-    result.diffuseTexture = texture(url);
-    result.useAlphaFromDiffuseTexture = true;
-    result.disableDepthWrite = true;
-    result.backFaceCulling = false;
-    result.specularColor = Color3.Black();
-    result.emissiveColor = new Color3(0.23, 0.21, 0.18);
-    return result;
-  };
-
   // One authored projection is kept intact on a camera-facing backdrop. Tile and
   // foot anchors occupy the open courtyard; perimeter architecture is scenery.
-  const backgroundWidth = 25.5;
+  const backgroundWidth = Math.max(35.7, mapBounds.maxX - mapBounds.minX + 8);
   const backgroundHeight = (backgroundWidth * 941) / 1672;
-  const backgroundX = backgroundWidth * 0.35;
+  const backgroundX = centerX;
   const backgroundUp = backgroundHeight * 0.38;
   const centerUp = centerZ * Math.sin(CAMERA_ELEVATION);
   const upOffset = backgroundUp - centerUp;
@@ -206,7 +204,6 @@ export async function mountSpriteBattleScene(
   );
   // Register the painted perimeter around the HUD's free central play area.
   // Grid axes, sprite scale and foot pivots remain unchanged.
-  background.position.x -= 1.1;
   background.position.z -= 2;
   background.isPickable = false;
   const groundMaterial = new StandardMaterial('old-mill-painted-values', scene);
@@ -214,7 +211,7 @@ export async function mountSpriteBattleScene(
   groundMaterial.linkEmissiveWithDiffuse = true;
   groundMaterial.disableLighting = true;
   groundMaterial.specularColor = Color3.Black();
-  groundMaterial.emissiveColor = initialNight ? new Color3(0.62, 0.67, 0.74) : Color3.White();
+  groundMaterial.emissiveColor = initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White();
   background.material = groundMaterial;
 
   const addRootedFixture = () => {
@@ -230,10 +227,12 @@ export async function mountSpriteBattleScene(
         fixture.rotation.x = CAMERA_ELEVATION;
         fixture.position.set(
           point.x,
-          occupied.height * 0.12 + 0.575 * Math.cos(CAMERA_ELEVATION),
+          occupied.height * BATTLE_LAYOUT.heightStep + 0.575 * Math.cos(CAMERA_ELEVATION),
           point.z + 0.575 * Math.sin(CAMERA_ELEVATION),
         );
-        fixture.metadata = { combatFoot: new Vector3(point.x, occupied.height * 0.12, point.z) };
+        fixture.metadata = {
+          combatFoot: new Vector3(point.x, occupied.height * BATTLE_LAYOUT.heightStep, point.z),
+        };
         const material = new StandardMaterial('b023-rooted-fixture-ink', scene);
         material.diffuseTexture = texture(b023FixtureUrl);
         material.useAlphaFromDiffuseTexture = true;
@@ -256,25 +255,6 @@ export async function mountSpriteBattleScene(
   };
   addRootedFixture();
 
-  const plain = new StandardMaterial('plain-wash', scene);
-  plain.diffuseColor = new Color3(0.49, 0.47, 0.39);
-  plain.alpha = 0.03;
-  plain.diffuseTexture = texture(BATTLE_ART.groundOuter);
-  plain.specularColor = Color3.Black();
-  const mud = new StandardMaterial('mud-wash', scene);
-  mud.diffuseColor = new Color3(0.3, 0.23, 0.17);
-  mud.diffuseTexture = texture(BATTLE_ART.groundField);
-  mud.specularColor = Color3.Black();
-  mud.alpha = 0.35;
-  const fire = new StandardMaterial('fire-warning', scene);
-  fire.diffuseColor = new Color3(0.45, 0.19, 0.11);
-  fire.emissiveColor = new Color3(0.12, 0.035, 0.012);
-  fire.specularColor = Color3.Black();
-  fire.alpha = 0.18;
-  const blockedMaterial = new StandardMaterial('mill-rubble', scene);
-  blockedMaterial.diffuseColor = new Color3(0.22, 0.2, 0.17);
-  blockedMaterial.specularColor = Color3.Black();
-  blockedMaterial.alpha = 0.32;
   const blockedBorderMaterial = new StandardMaterial('blocked-cell-ochre', scene);
   blockedBorderMaterial.disableLighting = true;
   blockedBorderMaterial.emissiveColor = new Color3(0.66, 0.52, 0.34);
@@ -289,7 +269,7 @@ export async function mountSpriteBattleScene(
   const movementAreaMaterial = new StandardMaterial('reachable-movement-area', scene);
   movementAreaMaterial.disableLighting = true;
   movementAreaMaterial.emissiveColor = new Color3(0.25, 0.45, 0.5);
-  movementAreaMaterial.alpha = 0.34;
+  movementAreaMaterial.alpha = 0.13;
   const movementEdgeMaterial = new StandardMaterial('reachable-movement-edge', scene);
   movementEdgeMaterial.disableLighting = true;
   movementEdgeMaterial.emissiveColor = new Color3(0.61, 0.8, 0.8);
@@ -306,209 +286,57 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
-  const cellGrid = createBattleCellGrid(scene, initialTiles);
-  const heightLabels: Mesh[] = [];
+  const cellGrid = createBattleCellGrid(scene, initialTiles, BATTLE_LAYOUT);
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
-  const groundYFor = (hex: CombatLabHex) => (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * 0.12;
-  const stepMaterial = new StandardMaterial('terrain-step-earth', scene);
-  // Raised earth is real opaque geometry, unlike the level-zero backdrop wash.
-  // Do not reuse the alpha-bearing sprite texture cache for depth occluders.
-  const earthTexture = new Texture(
-    terrainFaceUrl,
-    scene,
-    false,
-    true,
-    Texture.TRILINEAR_SAMPLINGMODE,
-  );
-  earthTexture.hasAlpha = false;
-  stepMaterial.diffuseTexture = earthTexture;
-  stepMaterial.diffuseColor = Color3.White();
-  stepMaterial.specularColor = Color3.Black();
-  stepMaterial.backFaceCulling = false;
-  const raisedTexture = new Texture(
-    millFieldUrl,
-    scene,
-    false,
-    true,
-    Texture.TRILINEAR_SAMPLINGMODE,
-  );
-  raisedTexture.hasAlpha = false;
-  raisedTexture.wrapU = raisedTexture.wrapV = Texture.CLAMP_ADDRESSMODE;
-  const raisedMaterials = new Map<StandardMaterial, StandardMaterial>();
-  const raisedTints = new Map<StandardMaterial, Color3>();
-  type Tile = (typeof initialTiles)[number];
-  const terrainWash = (tile: Tile) => {
-    if (tile.blocked) return blockedMaterial;
-    return ({ mud, fire } as Record<string, StandardMaterial>)[tile.terrain] ?? plain;
-  };
-  const raisedTint = (wash: StandardMaterial) => {
-    if (wash === mud) return new Color3(0.72, 0.61, 0.48);
-    if (wash === fire) return new Color3(0.94, 0.73, 0.62);
-    return wash === blockedMaterial ? new Color3(0.76, 0.72, 0.64) : Color3.White();
-  };
-  const mapRaisedTop = (cell: Mesh) => {
-    // Sample the existing painted field in its fixed projection. Adjacent tops
-    // share that artwork continuously; real opaque surfaces still own depth.
-    cell.computeWorldMatrix(true);
-    const positions = cell.getVerticesData(VertexBuffer.PositionKind)!;
-    const uvs: number[] = [];
-    for (let vertex = 0; vertex < positions.length; vertex += 3) {
-      const world = Vector3.TransformCoordinates(
-        new Vector3(positions[vertex]!, positions[vertex + 1]!, positions[vertex + 2]!),
-        cell.getWorldMatrix(),
-      );
-      const relative = world.subtract(background.position);
-      uvs.push(
-        relative.x / backgroundWidth + 0.5,
-        (relative.y * Math.cos(CAMERA_ELEVATION) + relative.z * Math.sin(CAMERA_ELEVATION)) /
-          backgroundHeight +
-          0.5,
-      );
-    }
-    cell.setVerticesData(VertexBuffer.UVKind, uvs);
-  };
-  const addTerrainSides = (
-    tile: Tile,
-    point: { x: number; z: number },
-    key: string,
-    cell: Mesh,
-  ) => {
-    // Side order follows the 30° pointy-top corners, not axial neighbour order.
-    const neighbours = [
-      [0, 1],
-      [-1, 1],
-      [-1, 0],
-      [0, -1],
-      [1, -1],
-      [1, 0],
-    ] as const;
-    const bottoms = neighbours.map(
-      ([dq, dr]) => (tileInfo.get(HEX_KEY({ q: tile.q + dq, r: tile.r + dr }))?.height ?? 0) * 0.12,
-    );
-    if (bottoms.some((bottom) => bottom < tile.height * 0.12)) {
-      const sides = createHexSides(
-        `ground-side:${key}`,
-        HEX_RADIUS,
-        tile.height * 0.12,
-        bottoms,
+  const groundYFor = (hex: CombatLabHex) =>
+    (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
+  const terrain = createBattleTerrain(scene, initialTiles, initialNight);
+  const fieldVitals = mountBattleFieldVitals(canvas, scene);
+  const heightLabels: Mesh[] = [];
+  initialTiles
+    .filter((tile) => tile.height > 0)
+    .forEach((tile) => {
+      const point = AXIAL_TO_WORLD(tile);
+      addLabel(
         scene,
+        heightLabels,
+        `+${tile.height}`,
+        new Vector3(point.x, groundYFor(tile) + 0.09, point.z),
+        'height',
       );
-      sides.position.set(point.x, 0, point.z);
-      sides.material = stepMaterial;
-      sides.metadata = cell.metadata;
-    }
-  };
-  const addRubble = (tile: Tile, point: { x: number; z: number }, key: string) => {
-    // The 512px PNG's visible pile bounds are (77,170)–(435,407).
-    // Centre that already projected artwork on its occupied cell, rather
-    // than anchoring the empty PNG bottom. Preserve the square sprite aspect.
-    const rubbleSize = 1.1;
-    const rubbleCenterOffset = (288.5 / 512 - 0.5) * rubbleSize;
-    const rubble = MeshBuilder.CreatePlane(
-      `rubble:${key}`,
-      { width: rubbleSize, height: rubbleSize },
-      scene,
-    );
-    rubble.rotation.x = CAMERA_ELEVATION;
-    rubble.position.set(
-      point.x,
-      tile.height * 0.12 + rubbleCenterOffset * Math.cos(CAMERA_ELEVATION),
-      point.z + rubbleCenterOffset * Math.sin(CAMERA_ELEVATION),
-    );
-    rubble.material = artMaterial(`rubble-ink:${key}`, BATTLE_ART.rubble);
-    rubble.isPickable = false;
-    rubble.renderingGroupId = 1;
-    rubble.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
-  };
-  const addHeight = (tile: Tile, point: { x: number; z: number }) => {
-    addLabel(
-      scene,
-      heightLabels,
-      `+${tile.height}`,
-      new Vector3(point.x, tile.height * 0.12 + 0.09, point.z),
-      'height',
-    );
-    heightLabels.at(-1)!.renderingGroupId = 0;
-    heightLabels.at(-1)!.metadata = { combatHex: { q: tile.q, r: tile.r } };
-    heightLabels.at(-1)?.setEnabled(false);
-  };
-  const addFire = (tile: Tile, point: { x: number; z: number }, key: string) => {
-    const ember = MeshBuilder.CreatePlane(
-      `fire-embers:${key}`,
-      { width: 0.85, height: 0.7 },
-      scene,
-    );
-    ember.rotation.x = CAMERA_ELEVATION;
-    ember.position.set(
-      point.x,
-      tile.height * 0.12 + 0.35 * Math.cos(CAMERA_ELEVATION),
-      point.z + 0.35 * Math.sin(CAMERA_ELEVATION),
-    );
-    const emberMaterial = new StandardMaterial(`fire-ember-ink:${key}`, scene);
-    emberMaterial.diffuseTexture = createEmberTexture(scene);
-    emberMaterial.useAlphaFromDiffuseTexture = true;
-    emberMaterial.disableDepthWrite = true;
-    emberMaterial.disableLighting = true;
-    emberMaterial.linkEmissiveWithDiffuse = true;
-    emberMaterial.emissiveColor = Color3.White();
-    emberMaterial.backFaceCulling = false;
-    ember.material = emberMaterial;
-    ember.isPickable = false;
-    ember.renderingGroupId = 0;
-    ember.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
-    const fireLight = new PointLight(
-      `fire-light:${key}`,
-      new Vector3(point.x, tile.height * 0.12 + 0.7, point.z),
-      scene,
-    );
-    fireLight.diffuse = new Color3(0.85, 0.47, 0.23);
-    fireLight.intensity = 0.45;
-    fireLight.range = 3;
-  };
-  const createGroundSurface = (tile: Tile) => {
-    const key = HEX_KEY(tile);
-    tileInfo.set(key, tile);
-    const point = AXIAL_TO_WORLD(tile);
-    const cell = createHexDisc(`ground:${key}`, HEX_RADIUS, scene);
-    cell.position.set(point.x, tile.height * 0.12, point.z);
-    const wash = terrainWash(tile);
-    cell.material = tile.height > 0 ? raisedMaterials.get(wash)! : wash;
-    if (tile.height > 0) mapRaisedTop(cell);
-    cell.metadata = { combatHex: { q: tile.q, r: tile.r } };
-    if (tile.height > 0) addTerrainSides(tile, point, key, cell);
-    return { point, key };
-  };
-  const addTerrainTile = (tile: Tile) => {
-    const { point, key } = createGroundSurface(tile);
-    if (tile.blocked) addRubble(tile, point, key);
-    if (tile.height > 0) addHeight(tile, point);
-    if (tile.terrain === 'fire') addFire(tile, point, key);
-  };
-  const createTerrain = () => {
-    for (const wash of [plain, mud, fire, blockedMaterial]) {
-      const material = new StandardMaterial(`raised-${wash.name}`, scene);
-      material.diffuseTexture = raisedTexture;
-      material.disableLighting = true;
-      material.linkEmissiveWithDiffuse = true;
-      const tint = raisedTint(wash);
-      material.emissiveColor = tint.multiply(groundMaterial.emissiveColor);
-      material.specularColor = Color3.Black();
-      material.backFaceCulling = false;
-      raisedMaterials.set(wash, material);
-      raisedTints.set(material, tint);
-    }
-    for (const tile of initialTiles) addTerrainTile(tile);
-  };
-  createTerrain();
+      const label = heightLabels.at(-1)!;
+      label.renderingGroupId = 0;
+      label.metadata = { combatHex: { q: tile.q, r: tile.r } };
+      label.setEnabled(false);
+    });
 
   const outlineTexture = (sprite: ReturnType<typeof spriteForUnit>) => {
     let edgeTexture = edgeTextures.get(sprite.url);
     if (!edgeTexture) {
-      edgeTexture = new DynamicTexture(`ink-edge:${sprite.id}`, SPRITE_OUTLINE_SIZE, scene, false);
+      edgeTexture = new DynamicTexture(
+        `ink-edge:${sprite.id}`,
+        SPRITE_VISUAL_OUTLINE_SIZE,
+        scene,
+        false,
+      );
       edgeTexture.hasAlpha = true;
       const context = edgeTexture.getContext() as unknown as CanvasRenderingContext2D;
-      const pixels = context.createImageData(SPRITE_OUTLINE_SIZE, SPRITE_OUTLINE_SIZE);
-      pixels.data.set(spriteOutlinePixels(spriteMasks.get(sprite.url)!));
+      const pixels = context.createImageData(
+        SPRITE_VISUAL_OUTLINE_SIZE,
+        SPRITE_VISUAL_OUTLINE_SIZE,
+      );
+      const surface = document.createElement('canvas');
+      surface.width = surface.height = SPRITE_VISUAL_SIZE;
+      const maskContext = surface.getContext('2d', { willReadFrequently: true })!;
+      maskContext.drawImage(
+        spriteSources.get(sprite.url)!,
+        0,
+        0,
+        SPRITE_VISUAL_SIZE,
+        SPRITE_VISUAL_SIZE,
+      );
+      const mask = maskContext.getImageData(0, 0, SPRITE_VISUAL_SIZE, SPRITE_VISUAL_SIZE).data;
+      pixels.data.set(spriteOutlinePixels(mask, SPRITE_VISUAL_SIZE));
       context.putImageData(pixels, 0, 0);
       edgeTexture.update();
       edgeTextures.set(sprite.url, edgeTexture);
@@ -535,7 +363,7 @@ export async function mountSpriteBattleScene(
     mesh.renderingGroupId = 1;
     mesh.alphaIndex = 1;
     const edgeTexture = outlineTexture(sprite);
-    const outlineScale = SPRITE_OUTLINE_SIZE / SPRITE_MASK_SIZE;
+    const outlineScale = SPRITE_VISUAL_OUTLINE_SIZE / SPRITE_VISUAL_SIZE;
     const edge = MeshBuilder.CreatePlane(
       `unit-edge:${unit.id}`,
       { width: width * outlineScale, height: height * outlineScale },
@@ -629,7 +457,7 @@ export async function mountSpriteBattleScene(
     edge.position.copyFrom(mesh.position);
     edge.position.y -= 0.002 * Math.sin(CAMERA_ELEVATION);
     edge.position.z += 0.002 * Math.cos(CAMERA_ELEVATION);
-    edge.setEnabled(unit.status === 'active');
+    edge.setEnabled(false);
     const standing = unit.status === 'active';
     mesh.setEnabled(standing);
     mesh.isPickable = standing;
@@ -641,6 +469,7 @@ export async function mountSpriteBattleScene(
     for (const marker of statusMarkers.splice(0)) marker.dispose(false, true);
     removeAbsentUnits(view);
     for (const unit of view.units) syncUnit(unit);
+    fieldVitals.update(view);
   };
 
   const upAxis = new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION));
@@ -697,7 +526,7 @@ export async function mountSpriteBattleScene(
   const shotAreaMaterial = new StandardMaterial('ranged-shot-area', scene);
   shotAreaMaterial.disableLighting = true;
   shotAreaMaterial.emissiveColor = new Color3(0.67, 0.48, 0.22);
-  shotAreaMaterial.alpha = 0.36;
+  shotAreaMaterial.alpha = 0.13;
   const shotAreaEdgeMaterial = new StandardMaterial('ranged-area-muted-ochre', scene);
   shotAreaEdgeMaterial.disableLighting = true;
   shotAreaEdgeMaterial.emissiveColor = new Color3(0.92, 0.73, 0.4);
@@ -710,7 +539,7 @@ export async function mountSpriteBattleScene(
   const combinedAreaMaterial = new StandardMaterial('movement-and-reach', scene);
   combinedAreaMaterial.disableLighting = true;
   combinedAreaMaterial.emissiveColor = new Color3(0.44, 0.55, 0.35);
-  combinedAreaMaterial.alpha = 0.34;
+  combinedAreaMaterial.alpha = 0.13;
   const combinedEdge = new Color3(0.76, 0.84, 0.59);
   const targetFill = new StandardMaterial('target-cell-wash', scene);
   targetFill.disableLighting = true;
@@ -745,7 +574,7 @@ export async function mountSpriteBattleScene(
   ) => {
     const material = unitMaterials.get(unit.id);
     if (!unitMeshes.has(unit.id) || !material) return;
-    material.emissiveColor = isNight ? new Color3(0.82, 0.85, 0.9) : Color3.White();
+    material.emissiveColor = isNight ? new Color3(0.5, 0.57, 0.69) : Color3.White();
     tintUnitEdge(unit, hoveredUnitId, attackableIds);
   };
   const tintUnitEdge = (
@@ -753,14 +582,23 @@ export async function mountSpriteBattleScene(
     hoveredUnitId: string | null,
     attackableIds: ReadonlySet<string>,
   ) => {
-    const edgeMaterial = unitEdges.get(unit.id)?.material as StandardMaterial | undefined;
-    if (edgeMaterial)
-      edgeMaterial.emissiveColor = {
-        day: Color3.White(),
-        night: new Color3(0.67, 0.7, 0.74),
-        hover: new Color3(1, 0.91, 0.68),
-        target: new Color3(1, 0.69, 0.46),
-      }[unitEdgeTone(unit, currentView, hoveredUnitId, attackableIds, isNight)];
+    const edge = unitEdges.get(unit.id);
+    const emphasizedIds = [
+      hoveredUnitId,
+      selectedId,
+      currentView.activation?.actorId,
+      ...attackableIds,
+    ];
+    const emphasis = unit.status === 'active' && emphasizedIds.includes(unit.id);
+    if (!edge) return;
+    edge.setEnabled(emphasis);
+    const edgeMaterial = edge.material as StandardMaterial;
+    edgeMaterial.emissiveColor = {
+      day: Color3.White(),
+      night: new Color3(0.67, 0.7, 0.74),
+      hover: new Color3(1, 0.91, 0.68),
+      target: new Color3(1, 0.69, 0.46),
+    }[unitEdgeTone(unit, currentView, hoveredUnitId, attackableIds, isNight)];
   };
   const drawThreatArrow = (id: string, start: Vector3, end: Vector3) => {
     const direction = end.subtract(start);
@@ -935,10 +773,10 @@ export async function mountSpriteBattleScene(
     return null;
   };
   const terrainSeamAtLevel = (ray: Ray, level: number) => {
-    const intersection = intersectGroundLevel(ray, level);
+    const intersection = intersectGroundLevel(ray, level, BATTLE_LAYOUT.heightStep);
     if (!intersection) return null;
     const { point, distance } = intersection;
-    const hex = worldToHex(point.x, point.z);
+    const hex = battleWorldToHex(point.x, point.z);
     const tile = tileInfo.get(HEX_KEY(hex));
     if (!tile || tile.height !== level) return null;
     const hit = new PickingInfo();
@@ -1103,15 +941,60 @@ export async function mountSpriteBattleScene(
       else actAtTarget(target);
     },
   });
-  camera.fit(
-    {
-      minX: backgroundX - 12.3,
-      maxX: backgroundX + 10.1,
-      minZ: (backgroundUp - 5.5) / Math.sin(CAMERA_ELEVATION) - 2,
-      maxZ: (backgroundUp + 5.5) / Math.sin(CAMERA_ELEVATION) - 2,
-    },
-    0,
-  );
+  // Frame the whole map width and deployed figures inside the actual HUD opening.
+  // Empty rows remain available by pan; the initial view never hides an actor under UI.
+  const frameBattle = () => {
+    const viewport = canvas.getBoundingClientRect();
+    const surface = canvas.closest('.battle-view') ?? canvas.parentElement!;
+    const safeTop = Math.max(
+      24,
+      ...[...surface.querySelectorAll('.battle-initiative')].map(
+        (node) => node.getBoundingClientRect().bottom - viewport.top + 16,
+      ),
+    );
+    const safeBottom = Math.min(
+      viewport.height - 24,
+      ...[...surface.querySelectorAll('.battle-action-dock')].map(
+        (node) => node.getBoundingClientRect().top - viewport.top - 44,
+      ),
+    );
+    const figures = currentView.units
+      .filter((unit) => unit.status === 'active')
+      .map((unit) => {
+        const art = spriteForUnit(unit);
+        const factor = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
+        const point = AXIAL_TO_WORLD(unit.position);
+        const up =
+          point.z * Math.sin(CAMERA_ELEVATION) +
+          groundYFor(unit.position) * Math.cos(CAMERA_ELEVATION);
+        return { bottom: up, top: up + (art.footY - art.visibleBounds[1]) * factor };
+      });
+    camera.fit(
+      battleFrameBounds({
+        mapBounds,
+        figures,
+        width: viewport.width,
+        height: viewport.height,
+        safeTop,
+        safeBottom,
+      }),
+      0,
+    );
+  };
+  let cameraMoved = false;
+  const markWheel = () => {
+    cameraMoved = true;
+  };
+  const markKey = (event: KeyboardEvent) => {
+    if (/^(Arrow(Up|Down|Left|Right)|[wasd])$/i.test(event.key)) cameraMoved = true;
+  };
+  const markDrag = (event: PointerEvent) => {
+    if (event.buttons !== 0 && Math.hypot(event.movementX, event.movementY) > 0) cameraMoved = true;
+  };
+  canvas.addEventListener('wheel', markWheel, { passive: true });
+  canvas.addEventListener('keydown', markKey);
+  canvas.addEventListener('pointermove', markDrag);
+  frameBattle();
   canvas.setAttribute('aria-label', 'Поле боя с выбором бойца или клетки');
 
   unitMeshesForView(initialView);
@@ -1119,6 +1002,7 @@ export async function mountSpriteBattleScene(
   renderEvents(initialView);
   const resizeObserver = new ResizeObserver(() => {
     engine.resize();
+    if (!cameraMoved) frameBattle();
     clearHover();
   });
   resizeObserver.observe(canvas);
@@ -1138,6 +1022,10 @@ export async function mountSpriteBattleScene(
     canvas.removeEventListener('keydown', clearHover);
     canvas.removeEventListener('contextmenu', preventContextMenu);
     resizeObserver.disconnect();
+    canvas.removeEventListener('wheel', markWheel);
+    canvas.removeEventListener('keydown', markKey);
+    canvas.removeEventListener('pointermove', markDrag);
+    fieldVitals.destroy();
     camera.dispose();
     engine.stopRenderLoop();
     scene.dispose();
@@ -1152,14 +1040,13 @@ export async function mountSpriteBattleScene(
       ? {
           clear: new Color4(0.025, 0.031, 0.044, 1),
           intensity: 0.78,
-          ground: new Color3(0.62, 0.67, 0.74),
+          ground: new Color3(0.32, 0.4, 0.53),
         }
       : { clear: new Color4(0.075, 0.067, 0.057, 1), intensity: 0.98, ground: Color3.White() };
     scene.clearColor = values.clear;
     light.intensity = values.intensity;
     groundMaterial.emissiveColor = values.ground;
-    for (const [material, tint] of raisedTints)
-      material.emissiveColor = tint.multiply(groundMaterial.emissiveColor);
+    terrain.setNight(night);
   };
   return {
     setHighlightedUnit(id) {
@@ -1182,46 +1069,6 @@ export async function mountSpriteBattleScene(
     },
     destroy,
   };
-}
-
-function createEmberTexture(scene: Scene): DynamicTexture {
-  const result = new DynamicTexture('static-ink-embers', 256, scene, false);
-  result.hasAlpha = true;
-  const context = result.getContext() as unknown as CanvasRenderingContext2D;
-  context.clearRect(0, 0, 256, 256);
-  context.strokeStyle = '#201a17';
-  context.lineWidth = 5;
-  for (const [x, y, radius] of [
-    [55, 211, 26],
-    [99, 224, 30],
-    [148, 220, 27],
-    [193, 207, 25],
-  ] as const) {
-    context.fillStyle = '#393029';
-    context.beginPath();
-    context.ellipse(x, y, radius, radius * 0.42, -0.2, 0, Math.PI * 2);
-    context.fill();
-    context.stroke();
-  }
-  for (const [x, top, width] of [
-    [68, 96, 40],
-    [109, 42, 53],
-    [151, 76, 43],
-    [185, 119, 30],
-  ] as const) {
-    context.fillStyle = '#ac5b32';
-    context.beginPath();
-    context.moveTo(x - width / 2, 205);
-    context.lineTo(x - width * 0.3, top + 40);
-    context.lineTo(x + 5, top + 58);
-    context.lineTo(x + 14, top);
-    context.lineTo(x + width / 2, 193);
-    context.closePath();
-    context.fill();
-    context.stroke();
-  }
-  result.update();
-  return result;
 }
 
 function addLabel(

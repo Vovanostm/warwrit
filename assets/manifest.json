@@ -887,6 +887,24 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/wildlife-v1/hares-v2.json"
+    },
+    {
+      "id": "art.combat.readable-terrain.mud",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/mud.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/mud.json",
+      "generatedAt": "2026-10-16T18:50:18.849208+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.fire",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/fire.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/fire.json",
+      "generatedAt": "2026-10-16T18:50:18.849208+00:00"
     }
   ]
 }

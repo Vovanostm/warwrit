@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CombatLabView } from '@warwrit/protocol';
 import { Portrait, UnitStates, type Unit } from './BattleUnitCard.js';
 import { unitStatus } from './battle-hud-format.js';
+import { UnitVitals } from './UnitVitals.js';
 
 interface Props {
   view: CombatLabView;
@@ -159,6 +160,7 @@ function InitiativeUnit({
       onBlur={() => setInitiativeFocus(null)}
     >
       <Portrait unit={unit} />
+      <UnitVitals unit={unit} />
       <span className="battle-side-mark" aria-label={side} title={side} />
       <b className="battle-order-number">{index + 1}</b>
       {current && <span className="battle-turn-now">ХОД</span>}

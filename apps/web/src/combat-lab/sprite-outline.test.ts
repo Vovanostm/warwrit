@@ -1,17 +1,18 @@
 import { expect, it } from 'vitest';
 import { SPRITE_MASK_SIZE, SPRITE_OUTLINE_SIZE, spriteOutlinePixels } from './sprite-outline.js';
 
-it('keeps the full outline around figures touching all four source-image corners', () => {
-  const mask = new Uint8ClampedArray(SPRITE_MASK_SIZE ** 2 * 4);
-  for (const y of [0, SPRITE_MASK_SIZE - 1]) {
-    for (const x of [0, SPRITE_MASK_SIZE - 1]) mask[(y * SPRITE_MASK_SIZE + x) * 4 + 3] = 255;
+it.each([128, 512])('keeps full outline clearance at visual mask size %s', (size) => {
+  const mask = new Uint8ClampedArray(size ** 2 * 4);
+  for (const y of [0, size - 1]) {
+    for (const x of [0, size - 1]) mask[(y * size + x) * 4 + 3] = 255;
   }
   const original = mask.slice();
-  const pixels = spriteOutlinePixels(mask);
-  const alpha = (x: number, y: number) => pixels[(y * SPRITE_OUTLINE_SIZE + x) * 4 + 3];
+  const pixels = spriteOutlinePixels(mask, size);
+  const outlineSize = size + 6;
+  const alpha = (x: number, y: number) => pixels[(y * outlineSize + x) * 4 + 3];
   // Full three-pixel clearance outside each source corner, never a clipped cap.
-  for (const y of [0, SPRITE_OUTLINE_SIZE - 1]) {
-    for (const x of [0, SPRITE_OUTLINE_SIZE - 1]) expect(alpha(x, y)).toBe(200);
+  for (const y of [0, outlineSize - 1]) {
+    for (const x of [0, outlineSize - 1]) expect(alpha(x, y)).toBe(200);
   }
   expect(alpha(3, 3)).toBe(0);
   expect(alpha(2, 3)).toBe(210);

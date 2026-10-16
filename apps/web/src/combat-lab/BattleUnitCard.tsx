@@ -24,7 +24,13 @@ export function Portrait({ unit }: { unit: Unit }) {
   const art = spriteForUnit(unit);
   return (
     <span className="battle-portrait" data-art={art.id}>
-      <img src={art.url} alt="" />
+      <svg
+        viewBox={art.visibleBounds.join(' ')}
+        preserveAspectRatio="xMidYMid meet"
+        aria-hidden="true"
+      >
+        <image href={art.url} width={art.width} height={art.height} />
+      </svg>
     </span>
   );
 }
@@ -296,23 +302,25 @@ export function UnitCard({
             <div className="battle-card-data">
               <h2>{unit.name ?? unit.id}</h2>
               <dl className="battle-pools">
-                {(['health', 'armor', 'stamina'] as const).map((key) => (
-                  <div className="battle-resource" data-resource={key} key={key}>
-                    <Icon name={key} />
-                    <dt>{poolLabels[key]}</dt>
-                    <dd>
-                      <strong>{unit.pools[key].current}</strong>
-                      <small>/{unit.pools[key].maximum}</small>
-                    </dd>
-                    <span className="battle-resource-track">
-                      <i
-                        style={{
-                          width: resourceWidth(unit.pools[key]),
-                        }}
-                      />
-                    </span>
-                  </div>
-                ))}
+                {(actor ? (['stamina'] as const) : (['health', 'armor', 'stamina'] as const)).map(
+                  (key) => (
+                    <div className="battle-resource" data-resource={key} key={key}>
+                      <Icon name={key} />
+                      <dt>{poolLabels[key]}</dt>
+                      <dd>
+                        <strong>{unit.pools[key].current}</strong>
+                        <small>/{unit.pools[key].maximum}</small>
+                      </dd>
+                      <span className="battle-resource-track">
+                        <i
+                          style={{
+                            width: resourceWidth(unit.pools[key]),
+                          }}
+                        />
+                      </span>
+                    </div>
+                  ),
+                )}
               </dl>
             </div>
           </div>

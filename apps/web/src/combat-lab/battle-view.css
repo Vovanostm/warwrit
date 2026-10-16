@@ -190,43 +190,21 @@
   border-radius: 7px;
   background: radial-gradient(ellipse at center, #475044, #172c2d);
 }
-.battle-portrait img {
-  position: absolute;
-  max-width: none;
-  width: 295%;
-  height: auto;
-  left: -98%;
-  top: -3px;
+.battle-portrait img,
+.battle-portrait > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   filter: drop-shadow(0 1px 2px #0e1516);
 }
-.battle-portrait[data-art='W04'] img {
-  width: 260%;
-  left: -65%;
-  top: -21%;
-}
-.battle-portrait[data-art='B001'] img {
-  width: 175%;
-  left: -10%;
-  top: -27%;
-}
-.battle-portrait[data-art='B003'] img {
-  width: 170%;
-  left: -50%;
-  top: -11%;
-}
-.battle-portrait[data-art='B019'] img {
-  width: 180%;
-  left: -43%;
-  top: -5%;
-}
 .initiative-unit .battle-portrait {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
-  height: 56px;
-  border: none;
-  border-radius: 4px 4px 0 0;
+  height: 64px;
+  flex: 0 0 64px;
+  border: 1px solid #60736b;
+  border-radius: 4px;
 }
 .battle-order-number {
   position: absolute;
@@ -690,27 +668,7 @@
   }
 }
 
-/* Keep the approved portrait crop and command sizing above the host page defaults. */
-.initiative-unit .battle-portrait img {
-  width: 315%;
-  left: -107%;
-  top: -7px;
-}
-.initiative-unit .battle-portrait[data-art='W04'] img {
-  width: 260%;
-  left: -65%;
-  top: -22px;
-}
-.initiative-unit .battle-portrait[data-art='B001'] img {
-  width: 175%;
-  left: -10%;
-  top: -29px;
-}
-.initiative-unit .battle-portrait[data-art='B003'] img {
-  width: 170%;
-  left: -50%;
-  top: -12px;
-}
+/* Keep command sizing above the host page defaults. */
 .battle-view .combat-lab-actions {
   display: flex;
   flex-wrap: nowrap;
@@ -731,13 +689,6 @@
   height: 11px;
 }
 
-/* The halberd sprite has extra transparent space above its helmet. */
-.battle-portrait[data-art='W09'] img {
-  top: -53px;
-}
-.initiative-unit .battle-portrait[data-art='W09'] img {
-  top: -38px;
-}
 .battle-side-mark {
   position: absolute;
   left: 5px;
@@ -773,6 +724,59 @@
 .battle-move-pips i[data-ap='remaining'] {
   background: #acc4b7;
   border-color: #c4d5c6;
+}
+
+/* Keep every initiative portrait in one full-art frame with its own vitals below. */
+.battle-view .initiative-unit {
+  display: flex;
+  flex: 0 0 86px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  width: 86px;
+  max-width: 86px;
+  height: auto;
+  min-height: 0;
+  padding: 3px 3px 2px;
+}
+.battle-view .initiative-unit::after {
+  content: none;
+}
+.battle-view .initiative-unit .battle-portrait {
+  flex: 0 0 64px;
+  width: 100%;
+  height: 64px;
+}
+.battle-view .initiative-unit .unit-vitals {
+  flex: 0 0 auto;
+}
+.battle-view .initiative-unit .battle-effects {
+  position: relative;
+  inset: auto;
+  flex: 0 0 12px;
+  height: 12px;
+}
+.battle-view .initiative-unit .battle-order-number {
+  top: 5px;
+  right: 6px;
+  z-index: 1;
+}
+.battle-view .initiative-unit .battle-side-mark {
+  top: 7px;
+  left: 7px;
+  z-index: 1;
+}
+.battle-view .initiative-unit .battle-turn-now {
+  top: 43px;
+  left: 7px;
+  z-index: 1;
+  padding: 1px 3px;
+  border-radius: 2px;
+  background: #172321cf;
+  font-size: 8px;
+}
+.battle-view .initiative-unit[aria-current='step'] .battle-portrait {
+  border-color: #d9c082;
 }
 
 /* Keep the forecast in the clear inspection area above the actor card. */
@@ -906,4 +910,8 @@
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.initiative-unit[data-side]::after {
+  display: none;
 }

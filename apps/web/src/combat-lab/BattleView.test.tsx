@@ -143,6 +143,37 @@ it('shows the approved command desk from observed resources and server attack pr
   expect(html).toContain('урон недоступен');
 });
 
+it('places canonical health, armor and morale bars under each full portrait', () => {
+  const zeroArmorView: CombatLabView = {
+    ...view,
+    units: view.units.map((unit) =>
+      unit.id === 'B001'
+        ? { ...unit, pools: { ...unit.pools, armor: { current: 0, maximum: 0 } } }
+        : unit,
+    ),
+  };
+  const html = render(zeroArmorView);
+  const portraitIndex = html.indexOf('class="battle-portrait"');
+  const firstVitalsIndex = html.indexOf('class="unit-vitals"', portraitIndex);
+  const sideMarkIndex = html.indexOf('class="battle-side-mark"', firstVitalsIndex);
+  const firstVitalResources = html.slice(firstVitalsIndex, sideMarkIndex);
+  const healthIndex = firstVitalResources.indexOf('data-resource="health"');
+  const armorIndex = firstVitalResources.indexOf('data-resource="armor"');
+  const moraleIndex = firstVitalResources.indexOf('data-resource="morale"');
+  expect(portraitIndex).toBeGreaterThanOrEqual(0);
+  expect(firstVitalsIndex).toBeGreaterThan(portraitIndex);
+  expect(sideMarkIndex).toBeGreaterThan(firstVitalsIndex);
+  expect(healthIndex).toBeGreaterThanOrEqual(0);
+  expect(armorIndex).toBeGreaterThan(healthIndex);
+  expect(moraleIndex).toBeGreaterThan(armorIndex);
+  expect(html.match(/class="unit-vital" data-resource=/g)).toHaveLength(6);
+  expect(html).toContain('title="Здоровье: 9/31"');
+  expect(html).toContain('title="Броня: 4/11"');
+  expect(html).toContain('title="Мораль: 70/90"');
+  expect(html).toContain('title="Броня: 0/0"');
+  expect(html).toContain('style="width:0%"');
+});
+
 it('retains fallback inspection, utilities and honestly unavailable ability slots', () => {
   const html = render();
   expect(html).toContain('<canvas');

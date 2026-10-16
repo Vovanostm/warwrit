@@ -20,7 +20,11 @@ export interface BattleCellStyle {
 }
 
 /** One fill per cell and one strip per shared physical edge, recoloured in place. */
-export function createBattleCellGrid(scene: Scene, tiles: readonly GridTile[]) {
+export function createBattleCellGrid(
+  scene: Scene,
+  tiles: readonly GridTile[],
+  layout = { spacing: 1, heightStep: 0.12 },
+) {
   const key = (hex: CombatLabHex) => `${hex.q},${hex.r}`;
   const fills = new Map<string, Mesh>();
   const edges = new Map<
@@ -37,9 +41,9 @@ export function createBattleCellGrid(scene: Scene, tiles: readonly GridTile[]) {
   ] as const;
   for (const tile of tiles) {
     const cellKey = key(tile);
-    const { x, z } = hexToWorld(tile.q, tile.r);
-    const fill = createHexDisc(`cell-fill:${cellKey}`, HEX_RADIUS, scene);
-    fill.position.set(x, tile.height * 0.12 + 0.025, z);
+    const { x, z } = hexToWorld(tile.q, tile.r, layout.spacing);
+    const fill = createHexDisc(`cell-fill:${cellKey}`, HEX_RADIUS * layout.spacing, scene);
+    fill.position.set(x, tile.height * layout.heightStep + 0.025, z);
     fill.isPickable = false;
     fill.renderingGroupId = 0;
     fill.alphaIndex = 1;
@@ -53,9 +57,9 @@ export function createBattleCellGrid(scene: Scene, tiles: readonly GridTile[]) {
       const angle = (side * Math.PI) / 3 + Math.PI / 6;
       const corner = (a: number) =>
         new Vector3(
-          x + Math.cos(a) * HEX_RADIUS,
-          tile.height * 0.12 + 0.045,
-          z + Math.sin(a) * HEX_RADIUS,
+          x + Math.cos(a) * HEX_RADIUS * layout.spacing,
+          tile.height * layout.heightStep + 0.045,
+          z + Math.sin(a) * HEX_RADIUS * layout.spacing,
         );
       const existing = edges.get(edgeKey);
       if (existing) {
