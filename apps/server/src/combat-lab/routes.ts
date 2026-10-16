@@ -12,8 +12,9 @@ import type {
   CombatLabBattleConfig,
   CombatLabCreate,
 } from '@warwrit/protocol';
-import type { FastifyInstance, FastifyRequest } from 'fastify';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
+import { record, isActionBody } from './action-request.js';
 import { projectCombatLabView } from './projection.js';
 import { createCombatLabFixture } from './scenario.js';
 import {
@@ -51,60 +52,6 @@ export interface CombatLabSession {
   >;
 }
 
-const record = (value: unknown): value is Record<string, unknown> =>
-  value !== null && typeof value === 'object' && !Array.isArray(value);
-const id = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0 && value.length <= 128;
-
-function isActionBody(value: unknown): value is CombatLabAction {
-  if (!record(value) || Object.keys(value).length !== 8) return false;
-  if (
-    value['version'] !== COMBAT_LAB_VERSION ||
-    !id(value['sessionId']) ||
-    !id(value['battleId']) ||
-    !id(value['requestId']) ||
-    !Number.isSafeInteger(value['expectedViewRevision']) ||
-    (value['expectedViewRevision'] as number) < 0 ||
-    !id(value['activationId']) ||
-    !id(value['actorId']) ||
-    !record(value['intent'])
-  )
-    return false;
-  const intent = value['intent'];
-  switch (intent['type']) {
-    case 'use-skill':
-      return (
-        combat.COMBAT_SKILL_IDS.includes(intent['skillId'] as combat.CombatSkillId) &&
-        (Object.hasOwn(intent, 'targetId')
-          ? Object.keys(intent).length === 3 && id(intent['targetId'])
-          : Object.keys(intent).length === 2)
-      );
-    case 'autoplay':
-      return Object.keys(intent).length === 1;
-    case 'move':
-      return (
-        Object.keys(intent).length === 2 &&
-        record(intent['to']) &&
-        Object.keys(intent['to']).length === 2 &&
-        Number.isSafeInteger(intent['to']['q']) &&
-        Number.isSafeInteger(intent['to']['r'])
-      );
-    case 'prepare-threat':
-    case 'retarget-threat':
-    case 'attack':
-      return Object.keys(intent).length === 2 && id(intent['targetId']);
-    case 'defend':
-    case 'wait':
-    case 'flee':
-    case 'surrender':
-    case 'execute-threat':
-    case 'retreat':
-      return Object.keys(intent).length === 1;
-    default:
-      return false;
-  }
-}
-
 function commandFor(action: CombatLabAction, state: combat.BattleState): combat.CombatCommand {
   const base = {
     commandId: combat.commandId(`human:${action.requestId}`),
@@ -134,11 +81,10 @@ function commandFor(action: CombatLabAction, state: combat.BattleState): combat.
     case 'retarget-threat':
     case 'attack':
       return { ...base, type: action.intent.type, targetId: combat.unitId(action.intent.targetId) };
-    case 'defend':
-      return { ...base, type: 'defend' };
     case 'wait':
       return { ...base, type: 'wait' };
     case 'flee':
+    case 'defend':
     case 'surrender':
     case 'execute-threat':
     case 'retreat':
@@ -406,12 +352,24 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
     return session !== undefined && authorized(request, session) ? session : undefined;
   };
 
+  const requireSession = (
+    request: FastifyRequest<{ Params: { sessionId: string } }>,
+    reply: FastifyReply,
+  ): CombatLabSession | undefined => {
+    if (!guard(request)) {
+      void reply.code(403).send({ code: 'FORBIDDEN_LOCAL_ORIGIN' });
+      return undefined;
+    }
+    const session = readSession(request);
+    if (session === undefined) void reply.code(404).send({ code: 'NOT_FOUND' });
+    return session;
+  };
+
   app.get<{ Params: { sessionId: string } }>(
     '/dev/combat-lab/:sessionId',
     async (request, reply) => {
-      if (!guard(request)) return reply.code(403).send({ code: 'FORBIDDEN_LOCAL_ORIGIN' });
-      const session = readSession(request);
-      if (session === undefined) return reply.code(404).send({ code: 'NOT_FOUND' });
+      const session = requireSession(request, reply);
+      if (session === undefined) return reply;
       return projectCombatLabView(
         request.params.sessionId,
         session.controlledSideId,
@@ -426,9 +384,8 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
     '/dev/combat-lab/:sessionId/actions',
     { bodyLimit: MAX_BODY_BYTES },
     async (request, reply) => {
-      if (!guard(request)) return reply.code(403).send({ code: 'FORBIDDEN_LOCAL_ORIGIN' });
-      const session = readSession(request);
-      if (session === undefined) return reply.code(404).send({ code: 'NOT_FOUND' });
+      const session = requireSession(request, reply);
+      if (session === undefined) return reply;
       if (!isActionBody(request.body)) return reply.code(400).send({ code: 'INVALID_REQUEST' });
       const action = request.body;
       if (
@@ -446,9 +403,8 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
   app.get<{ Params: { sessionId: string } }>(
     '/dev/combat-lab/:sessionId/replay',
     async (request, reply) => {
-      if (!guard(request)) return reply.code(403).send({ code: 'FORBIDDEN_LOCAL_ORIGIN' });
-      const session = readSession(request);
-      if (session === undefined) return reply.code(404).send({ code: 'NOT_FOUND' });
+      const session = requireSession(request, reply);
+      if (session === undefined) return reply;
       return { schemaVersion: 1, setup: session.originalSetup, commands: session.commands };
     },
   );

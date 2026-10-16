@@ -1,8 +1,6 @@
 import {
   COMBAT_LAB_VERSION,
   type CombatLabAcknowledgement,
-  SPRITE_COMBAT_LAB_SCENARIO,
-  COMBAT_LAB_SCENARIO,
   type CombatLabAction,
   type CombatLabView,
 } from '@warwrit/protocol';
@@ -94,37 +92,4 @@ export function latestCombatLabView(
     return incoming;
   }
   return current;
-}
-
-export function isCombatLabView(value: unknown): value is CombatLabView {
-  if (value === null || typeof value !== 'object') return false;
-  const view = value as Partial<CombatLabView>;
-  const baseValid =
-    view.version === COMBAT_LAB_VERSION &&
-    typeof view.sessionId === 'string' &&
-    typeof view.battleId === 'string' &&
-    typeof view.scenarioId === 'string' &&
-    typeof view.controlledSideId === 'string' &&
-    Number.isSafeInteger(view.viewRevision) &&
-    (view.status === 'active' || view.status === 'resolved') &&
-    Array.isArray(view.units) &&
-    Array.isArray(view.initiativeOrder) &&
-    Array.isArray(view.events) &&
-    view.map !== undefined &&
-    view.map !== null &&
-    typeof view.map === 'object' &&
-    Array.isArray(view.map.hexes) &&
-    Array.isArray(view.map.blocked);
-  if (!baseValid) return false;
-  if (view.scenarioId === SPRITE_COMBAT_LAB_SCENARIO) {
-    return (
-      view.battle !== undefined &&
-      Array.isArray(view.map.tiles) &&
-      view.map.tiles.length === 165 &&
-      (view.movementPreview === undefined || Array.isArray(view.movementPreview)) &&
-      (view.attackPreview === undefined || Array.isArray(view.attackPreview)) &&
-      (view.rangedAttackArea === undefined || Array.isArray(view.rangedAttackArea))
-    );
-  }
-  return view.scenarioId === COMBAT_LAB_SCENARIO;
 }

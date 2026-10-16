@@ -1,8 +1,6 @@
-import { CombatIcon, type CombatIconName } from './CombatIcon.js';
 import { useEffect, useRef, useState } from 'react';
 import {
   COMBAT_LAB_VERSION,
-  SPRITE_COMBAT_LAB_SCENARIO,
   type CombatLabAction,
   type CombatLabBattleConfig,
   type CombatLabCatalog,
@@ -13,12 +11,20 @@ import {
 import { BattleView } from './BattleView.js';
 import { BattleEditor } from './BattleEditor.js';
 import { validateBattleDraft } from './editor-model.js';
+import { handleCombatLabActionReply, latestCombatLabView } from './controller.js';
 import {
-  combatSkillReasonText,
-  handleCombatLabActionReply,
-  isCombatLabView,
-  latestCombatLabView,
-} from './controller.js';
+  startSessionAttempt,
+  admittedBattleDraft,
+  readSavedSession,
+  readSessionView,
+  messageFor,
+  responseCode,
+  type ActiveSession,
+} from './session-transport.js';
+import { isCombatLabView } from './view-validation.js';
+import { executeFieldCommand, canIssueManualCommand } from './field-command.js';
+import { canControl } from './command-availability.js';
+import { CommandDesk } from './CommandDesk.js';
 import './combat-lab.css';
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
@@ -26,44 +32,10 @@ const capabilityHeader = 'x-combat-lab-capability';
 const pollingIntervalMs = 750;
 const sessionStorageKey = 'warwrit.combat-lab.session.v1';
 
-interface ActiveSession {
-  readonly id: string;
-  readonly capability: string;
-  readonly view: CombatLabView;
-}
-
 interface PendingAction {
   readonly body: string;
   readonly description: string;
   readonly uncertain: boolean;
-}
-
-const errorText: Record<string, string> = {
-  FORBIDDEN_LOCAL_ORIGIN: 'Эта страница не разрешена для боя.',
-  INVALID_ACTION: 'Такое действие сейчас недоступно. Состояние боя обновлено.',
-  INVALID_REQUEST: 'Бой не принял это действие.',
-  NOT_FOUND: 'Этот бой завершился.',
-  REQUEST_CONFLICT: 'Состояние боя изменилось. Обновите выбор.',
-  STALE_VIEW: 'Ход изменился до отправки. Состояние обновлено.',
-  UNAUTHORIZED: 'Сейчас ходит противник.',
-  LIMIT_REACHED: 'Сейчас запущено слишком много боёв.',
-};
-
-function responseCode(value: unknown, fallback: string): string {
-  if (value !== null && typeof value === 'object' && 'code' in value) {
-    const code = value.code;
-    if (typeof code === 'string') return code;
-  }
-  return fallback;
-}
-
-function messageFor(code: string): string {
-  return errorText[code] ?? `Запрос завершился с кодом ${code}.`;
-}
-
-function canControl(view: CombatLabView): boolean {
-  const actor = view.units.find((unit) => unit.id === view.activation?.actorId);
-  return view.status === 'active' && actor?.sideId === view.controlledSideId;
 }
 
 export function CombatLab() {
@@ -187,20 +159,8 @@ export function CombatLab() {
     const expectedGeneration = generation.current;
     const restore = async () => {
       try {
-        const raw = sessionStorage.getItem(sessionStorageKey);
-        if (!raw) return;
-        const saved: unknown = JSON.parse(raw);
-        if (
-          !saved ||
-          typeof saved !== 'object' ||
-          !('id' in saved) ||
-          !('capability' in saved) ||
-          typeof saved.id !== 'string' ||
-          typeof saved.capability !== 'string'
-        ) {
-          sessionStorage.removeItem(sessionStorageKey);
-          return;
-        }
+        const saved = readSavedSession(sessionStorage, sessionStorageKey);
+        if (!saved) return;
         const response = await fetch(
           `${apiBaseUrl}/dev/combat-lab/${encodeURIComponent(saved.id)}`,
           { headers: { [capabilityHeader]: saved.capability }, signal: controller.signal },
@@ -212,8 +172,7 @@ export function CombatLab() {
           return;
         }
         if (!response.ok) throw new Error('restore unavailable');
-        const view: unknown = await response.json();
-        if (!isCombatLabView(view) || view.sessionId !== saved.id) throw new Error('invalid view');
+        const view = await readSessionView(response, saved.id);
         installSession({ id: saved.id, capability: saved.capability, view });
         if (view.battle) setDraftBattle(view.battle);
         setSelectedUnitId(view.activation?.actorId ?? null);
@@ -320,79 +279,38 @@ export function CombatLab() {
 
   const startBattle = async (battle = draftBattle) => {
     stopAutoplay();
-    if (startingRef.current || startUnresolved || !catalog || !battle) return;
-    if (validateBattleDraft(battle, catalog).length > 0) return;
+    const admitted = admittedBattleDraft(battle, catalog, startingRef.current || startUnresolved);
+    if (!admitted) return;
     startingRef.current = true;
     setStarting(true);
     setNotice('');
     const expectedGeneration = ++generation.current;
     const controller = new AbortController();
     createAbort.current = controller;
-    const body = JSON.stringify({
-      version: COMBAT_LAB_VERSION,
-      requestId: crypto.randomUUID(),
-      scenarioId: SPRITE_COMBAT_LAB_SCENARIO,
-      battle,
-    });
-    try {
-      const response = await fetch(`${apiBaseUrl}/dev/combat-lab`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body,
-        signal: controller.signal,
-      });
-      if (controller.signal.aborted || generation.current !== expectedGeneration) return;
-      if (!response.ok) {
-        const error = await response.json().catch(() => null);
-        if (response.status >= 500) {
-          setStartUnresolved(true);
-          setNotice(
-            'Ответ о создании не получен. Этот бой мог открыться; повторный запуск пока закрыт, чтобы не создать второй.',
-          );
-          return;
+    await startSessionAttempt(apiBaseUrl, admitted, controller.signal, {
+      isCurrent: () => generation.current === expectedGeneration,
+      created: (next) => {
+        sessionLostRef.current = false;
+        setSessionLost(false);
+        sessionRef.current = next;
+        sessionAbort.current = null;
+        installSession(next);
+        setSelectedUnitId(next.view.activation?.actorId ?? null);
+        setSelectedHex(null);
+        setNotice('Бой начался.');
+      },
+      failed: (uncertain, message) => {
+        setStartUnresolved(uncertain);
+        setNotice(message);
+      },
+      finished: () => {
+        if (createAbort.current === controller) createAbort.current = null;
+        if (generation.current === expectedGeneration) {
+          startingRef.current = false;
+          setStarting(false);
         }
-        setNotice(
-          error !== null && typeof error === 'object' && typeof error.message === 'string'
-            ? error.message
-            : messageFor(responseCode(error, `${response.status}`)),
-        );
-        return;
-      }
-      const view: unknown = await response.json();
-      const capability = response.headers.get(capabilityHeader);
-      if (
-        !isCombatLabView(view) ||
-        capability === null ||
-        view.sessionId.length === 0 ||
-        view.battleId.length === 0
-      ) {
-        setStartUnresolved(true);
-        setNotice(
-          'Ответ о создании не подтверждён. Этот бой мог открыться; повторный запуск пока закрыт.',
-        );
-        return;
-      }
-      const next = { id: view.sessionId, capability, view };
-      sessionLostRef.current = false;
-      setSessionLost(false);
-      sessionRef.current = next;
-      sessionAbort.current = null;
-      installSession(next);
-      setSelectedUnitId(view.activation?.actorId ?? null);
-      setSelectedHex(null);
-      setNotice('Бой начался.');
-    } catch {
-      if (!controller.signal.aborted && generation.current === expectedGeneration) {
-        setStartUnresolved(true);
-        setNotice('Ответ о создании потерян. Бой мог открыться; повторный запуск пока закрыт.');
-      }
-    } finally {
-      if (createAbort.current === controller) createAbort.current = null;
-      if (generation.current === expectedGeneration) {
-        startingRef.current = false;
-        setStarting(false);
-      }
-    }
+      },
+    });
   };
 
   const submitAction = async (action: CombatLabAction, description: string, retryBody?: string) => {
@@ -513,63 +431,27 @@ export function CombatLab() {
     const current = sessionRef.current?.view;
     if (
       !current ||
-      autoplayRef.current ||
-      !canControl(current) ||
-      pendingRef.current ||
-      deletingRef.current ||
-      sessionLostRef.current
+      !canIssueManualCommand(current, {
+        autoplay: autoplayRef.current,
+        pending: pendingRef.current !== null,
+        deleting: deletingRef.current,
+        sessionLost: sessionLostRef.current,
+      })
     )
       return;
-    if (selectedSkillRef.current || intent.type === 'use-skill') {
-      const skillId = intent.type === 'use-skill' ? intent.skillId : selectedSkillRef.current;
-      const targetId =
-        intent.type === 'use-skill' || intent.type === 'attack' ? intent.targetId : undefined;
-      const skill = current.skills?.find((candidate) => candidate.skillId === skillId);
-      const resolvedTargetId = skill?.target === 'self' ? current.activation?.actorId : targetId;
-      const preview = current.skillPreview?.find(
-        (candidate) => candidate.skillId === skillId && candidate.targetId === resolvedTargetId,
-      );
-      if (!skill || !preview?.legal) {
-        setNotice(combatSkillReasonText(preview?.reason));
-        return;
-      }
-      act(
-        {
-          type: 'use-skill',
-          skillId: skill.skillId,
-          ...(skill.target === 'self' ? {} : { targetId: preview.targetId }),
-        },
-        skill.name,
-      );
-      return;
-    }
-    if (intent.type === 'move') {
-      const preview = current.movementPreview?.find(
-        ({ to }) => to.q === intent.to.q && to.r === intent.to.r,
-      );
-      if (!preview) return;
-      const fireDamage = preview.fireDamage ?? 0;
-      const actor = current.units.find(({ id }) => id === current.activation?.actorId);
-      if (
-        fireDamage > 0 &&
-        !window.confirm(
-          actor && fireDamage >= actor.pools.health.current
-            ? 'Боец погибнет на пути и не достигнет клетки. Продолжить?'
-            : `Огонь нанесёт ${fireDamage} урона здоровью. Продолжить?`,
-        )
-      )
-        return;
-      setSelectedHex(intent.to);
-      setSelectedUnitId(null);
-      act(intent, 'Перемещение');
-    } else if (
-      intent.type === 'attack' &&
-      current.attackPreview?.some(({ targetId }) => targetId === intent.targetId)
-    ) {
-      setSelectedUnitId(intent.targetId);
-      setSelectedHex(null);
-      act(intent, 'Атака');
-    }
+    executeFieldCommand(current, intent, selectedSkillRef.current, {
+      notice: setNotice,
+      confirm: (message) => window.confirm(message),
+      selectMovement: (to) => {
+        setSelectedHex(to);
+        setSelectedUnitId(null);
+      },
+      selectTarget: (id) => {
+        setSelectedUnitId(id);
+        setSelectedHex(null);
+      },
+      act,
+    });
   };
 
   const endBattle = async (): Promise<boolean> => {
@@ -688,22 +570,6 @@ export function CombatLab() {
   }, [session?.id, session?.view.activation?.id]);
   const view = session?.view ?? null;
   const controlling = view !== null && !sessionLost && canControl(view);
-  const selectedTarget = view?.units.find(
-    (unit) =>
-      unit.id === selectedUnitId &&
-      unit.sideId !== view.controlledSideId &&
-      unit.status === 'active',
-  );
-  const selectedMovement = view?.movementPreview?.find(
-    ({ to }) => selectedHex !== null && to.q === selectedHex.q && to.r === selectedHex.r,
-  );
-  const selectedAttack = view?.attackPreview?.find(
-    ({ targetId }) => targetId === selectedTarget?.id,
-  );
-  const activeActor = view?.units.find(({ id }) => id === view.activation?.actorId);
-  const rules = view?.ruleHints;
-  const attackCost = rules?.weapons.find(({ id }) => id === activeActor?.weaponId);
-  const ap = view?.activation?.actionPoints.current ?? 0;
   const commonReason = sessionLost
     ? 'Бой недоступен'
     : autoplay
@@ -719,94 +585,6 @@ export function CombatLab() {
             : !controlling
               ? 'Ход противника'
               : '';
-  const attackReason =
-    commonReason ||
-    (!selectedTarget
-      ? 'Выберите противника'
-      : !selectedAttack
-        ? attackCost && ap < attackCost.actionPointCost
-          ? 'Недостаточно ОД'
-          : attackCost && (activeActor?.pools.stamina.current ?? 0) < attackCost.staminaCost
-            ? 'Недостаточно сил'
-            : 'Цель недоступна для атаки'
-        : '');
-  const moveReason =
-    commonReason ||
-    (!selectedHex
-      ? 'Выберите клетку'
-      : !selectedMovement
-        ? ap === 0
-          ? 'Недостаточно ОД'
-          : 'Нет доступного пути'
-        : '');
-  const defendReason =
-    commonReason ||
-    (view?.availableActions?.includes('defend') === false
-      ? rules && ap < rules.defend.actionPointCost
-        ? 'Недостаточно ОД'
-        : rules && (activeActor?.pools.stamina.current ?? 0) < rules.defend.staminaCost
-          ? 'Недостаточно сил'
-          : 'Защита недоступна'
-      : '');
-  const waitReason =
-    commonReason || (view?.availableActions?.includes('wait') === false ? 'Ход недоступен' : '');
-  const retreatReason =
-    commonReason ||
-    (view?.availableActions?.includes('retreat') === false ? 'Нужен край отхода' : '');
-  const commandIcons: Record<string, CombatIconName> = {
-    Атаковать: 'attack',
-    Переместиться: 'move',
-    Защищаться: 'defend',
-    'Завершить ход': 'wait',
-    Отступить: 'retreat',
-  };
-  const commandKeys: Record<string, string> = {
-    Атаковать: '1',
-    Переместиться: '2',
-    Защищаться: '3',
-    'Завершить ход': '4',
-    Отступить: '5',
-  };
-  hotkeyActions.current = {};
-  const actionButton = (
-    label: string,
-    cost: string,
-    reason: string,
-    onClick: () => unknown,
-    detail: string,
-  ) => {
-    reason = selectedSkillId ? 'Выбран приём · Esc — отменить' : reason;
-    const key = commandKeys[label]!;
-    hotkeyActions.current[key] = { reason: menuOpen ? 'Меню открыто' : reason, run: onClick };
-    return (
-      <div className="battle-command battle-control-slot">
-        <button
-          className="battle-control battle-control--icon"
-          type="button"
-          aria-label={label}
-          aria-disabled={reason.length > 0}
-          onClick={() => {
-            if (!reason) onClick();
-          }}
-          aria-describedby={`command-${label.replaceAll(' ', '-')}`}
-        >
-          <CombatIcon name={commandIcons[label]!} />
-          <kbd aria-hidden="true">{key}</kbd>
-        </button>
-        <div
-          role="tooltip"
-          id={`command-${label.replaceAll(' ', '-')}`}
-          className="battle-command-tooltip"
-        >
-          <strong>
-            {label} <kbd>{key}</kbd>
-          </strong>
-          <span>{cost}</span>
-          <small className={reason ? 'battle-command-reason' : ''}>{reason || detail}</small>
-        </div>
-      </div>
-    );
-  };
   const draftErrors = catalog && draftBattle ? validateBattleDraft(draftBattle, catalog) : [];
 
   return (
@@ -990,94 +768,21 @@ export function CombatLab() {
               </>
             }
           >
-            <section className="combat-lab-controls" aria-label="Управление текущим ходом">
-              <div className="battle-command-group">
-                <small>ПРИКАЗЫ</small>
-                <div className="combat-lab-actions">
-                  {actionButton(
-                    'Атаковать',
-                    selectedAttack
-                      ? `${selectedAttack.actionPointCost} ОД · силы ${selectedAttack.staminaCost}`
-                      : attackCost
-                        ? `${attackCost.actionPointCost} ОД · силы ${attackCost.staminaCost}`
-                        : 'Выберите цель',
-                    attackReason,
-                    () =>
-                      selectedTarget && actOnField({ type: 'attack', targetId: selectedTarget.id }),
-                    selectedTarget?.name ?? selectedTarget?.id ?? 'Выберите противника',
-                  )}
-                  {actionButton(
-                    'Переместиться',
-                    selectedMovement
-                      ? `${selectedMovement.actionPointCost} ОД · силы ${selectedMovement.staminaCost}`
-                      : 'Цена по пути',
-                    moveReason,
-                    () => selectedHex && actOnField({ type: 'move', to: selectedHex }),
-                    selectedHex ? `Клетка ${selectedHex.q}, ${selectedHex.r}` : 'Выберите клетку',
-                  )}
-                  {actionButton(
-                    'Защищаться',
-                    rules
-                      ? `${rules.defend.actionPointCost} ОД · силы ${rules.defend.staminaCost}`
-                      : 'Цена не опубликована',
-                    defendReason,
-                    () => act({ type: 'defend' }, 'Защита'),
-                    rules?.defend.damageReductionPercent !== undefined
-                      ? `Сила входящего удара −${rules.defend.damageReductionPercent}% · завершает ход`
-                      : 'Защита · завершает ход',
-                  )}
-                  {actionButton(
-                    'Завершить ход',
-                    'Оставшиеся ОД',
-                    waitReason,
-                    () => act({ type: 'wait' }, 'Завершение хода'),
-                    rules
-                      ? `Передать инициативу · восстановление ${rules.recovery.staminaPerActivation} сил в начале следующего хода`
-                      : 'Передать инициативу',
-                  )}
-                  {actionButton(
-                    'Отступить',
-                    'Завершает ход',
-                    retreatReason,
-                    () => act({ type: 'retreat' }, 'Отступление'),
-                    'Уйти с поля',
-                  )}
-                </div>
-              </div>
-              <p className="battle-dock-help">
-                ЛКМ — осмотр · ПКМ — идти / атаковать · колесо — масштаб · средняя кнопка — сдвиг
-              </p>
-              <div className="battle-feedback-row">
-                <span className="battle-autoplay-status" role="status" data-active={autoplay}>
-                  {autoplay ? 'Автобой включён' : 'Ручное управление'}
-                </span>
-                {selectedMovement?.fireDamage ? (
-                  <p className="battle-danger-warning">
-                    {selectedMovement.fireDamage >= (activeActor?.pools.health.current ?? Infinity)
-                      ? 'Боец погибнет на пути и не достигнет клетки.'
-                      : `Огонь: −${selectedMovement.fireDamage} здоровья.`}{' '}
-                    Требуется подтверждение.
-                  </p>
-                ) : null}
-                {pending && (
-                  <p role="status" className="battle-pending-status">
-                    {pending.uncertain
-                      ? `Неизвестный ответ: ${pending.description}.`
-                      : `Ожидается ответ: ${pending.description}.`}
-                    {pending.uncertain && (
-                      <button className="battle-control" type="button" onClick={retryAction}>
-                        Повторить тот же запрос
-                      </button>
-                    )}
-                  </p>
-                )}
-                {notice && (
-                  <p className="battle-dock-notice" role="status">
-                    {notice}
-                  </p>
-                )}
-              </div>
-            </section>
+            <CommandDesk
+              view={view}
+              selectedUnitId={selectedUnitId}
+              selectedHex={selectedHex}
+              commonReason={commonReason}
+              selectedSkillId={selectedSkillId}
+              menuOpen={menuOpen}
+              hotkeyActions={hotkeyActions}
+              act={act}
+              actOnField={actOnField}
+              autoplay={autoplay}
+              pending={pending}
+              retryAction={retryAction}
+              notice={notice}
+            />
           </BattleView>
         </>
       )}
