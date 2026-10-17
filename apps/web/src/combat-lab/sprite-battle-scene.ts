@@ -162,7 +162,7 @@ export async function mountSpriteBattleScene(
   const contactMaterial = new StandardMaterial('unit-ground-contact', scene);
   contactMaterial.diffuseColor = Color3.Black();
   contactMaterial.specularColor = Color3.Black();
-  contactMaterial.alpha = 0.42;
+  contactMaterial.alpha = 0.32;
   const fixedLabels: Mesh[] = [];
   const eventLabels: Mesh[] = [];
   const statusMarkers: Mesh[] = [];
@@ -329,7 +329,7 @@ export async function mountSpriteBattleScene(
   );
   earthTexture.hasAlpha = false;
   stepMaterial.diffuseTexture = earthTexture;
-  stepMaterial.diffuseColor = Color3.White();
+  stepMaterial.diffuseColor = new Color3(0.48, 0.41, 0.32);
   stepMaterial.specularColor = Color3.Black();
   stepMaterial.backFaceCulling = false;
   const raisedTexture = new Texture(
@@ -401,6 +401,22 @@ export async function mountSpriteBattleScene(
       sides.position.set(point.x, 0, point.z);
       sides.material = stepMaterial;
       sides.metadata = cell.metadata;
+      // A foreground raised shelf can hide its own vertical face. Ink its exposed
+      // upper lip so the height transition remains legible even when that face is occluded.
+      const lips = bottoms.flatMap((bottom, side) => {
+        if (bottom >= tile.height * 0.12) return [];
+        const angle = (side * Math.PI) / 3 + Math.PI / 6;
+        const pointAt = (a: number) =>
+          new Vector3(
+            point.x + Math.cos(a) * HEX_RADIUS,
+            tile.height * 0.12 + 0.008,
+            point.z + Math.sin(a) * HEX_RADIUS,
+          );
+        return [[pointAt(angle), pointAt(angle + Math.PI / 3)]];
+      });
+      const rim = MeshBuilder.CreateLineSystem(`terrain-step-lip:${key}`, { lines: lips }, scene);
+      rim.color = new Color3(0.16, 0.13, 0.1);
+      rim.isPickable = false;
     }
   };
   const addRubble = (tile: Tile, point: { x: number; z: number }, key: string) => {
@@ -561,11 +577,22 @@ export async function mountSpriteBattleScene(
     unitEdges.set(unit.id, edge);
     const shadow = MeshBuilder.CreateDisc(
       `contact:${unit.id}`,
-      { radius: 0.26, tessellation: 12 },
+      { radius: 0.21, tessellation: 16 },
       scene,
     );
     shadow.rotation.x = Math.PI / 2;
-    shadow.scaling.x = 1.4;
+    shadow.scaling.x = 1.25;
+    shadow.scaling.y = 0.55;
+    // A small feathered contact wash, rather than a hard black oval under the whole sprite.
+    const shadowPositions = shadow.getVerticesData(VertexBuffer.PositionKind)!;
+    const shadowColours: number[] = [];
+    for (let vertex = 0; vertex < shadowPositions.length; vertex += 3) {
+      const radius = Math.hypot(shadowPositions[vertex]!, shadowPositions[vertex + 1]!);
+      shadowColours.push(0, 0, 0, radius < 0.01 ? 1 : 0);
+    }
+    shadow.setVerticesData(VertexBuffer.ColorKind, shadowColours);
+    shadow.hasVertexAlpha = true;
+    shadow.useVertexColors = true;
     shadow.material = contactMaterial;
     shadow.isPickable = false;
     contactShadows.set(unit.id, shadow);

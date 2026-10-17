@@ -7,7 +7,11 @@ fixed optical centre and off-axis pan/zoom; existing bounds retained. GitHub
 Three.js/Babylon/fSpy sources inspected; no new dependency. Camera18 PASS,
 web types/lint/coverage811+47SKIPPED/strict audit PASS. Author browser4sizes,
 day/night, stable image registration,165ground hits/body hover-pin/0POST PASS.
-Independent visual/current-head clean CI/merge PENDING. Prior bb55f5b CI SUCCESS
+CI38991283029 SUCCESS on1907d8c. Independent full visual REJECT on scene
+integration (height boundary/contact ovals), no black/ground-over-body found.
+Exposed height lip and feathered foot wash repaired locally; types/lint/
+coverage811+47SKIPPED/audit PASS. Same-critic full repeat/new-head CI/merge
+PENDING. Prior bb55f5b CI SUCCESS
 covers only bounds. Merge remains explicitly owner-authorized for this slice.
 [Owning research/result](../wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
 

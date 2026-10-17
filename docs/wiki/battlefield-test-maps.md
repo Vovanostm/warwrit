@@ -3840,3 +3840,31 @@ probe ошибочно предположил имя human-1 «Командир�
 них не менялся. Author source review scoped diff/callers no concrete findings.
 Independent visual/current-head clean CI/merge PENDING. Старые808/CI receipts
 не принимают новую проекцию. Full clean gate исполнит существующий PR CI.
+
+### Визуальное ревью и контакт с землёй — 2026-10-17
+
+CI38991283029 на1907d8c SUCCESS: clean bootstrap811 PASS/47 SKIPPED,
+10kstress/20determinism/100replay,14disposableDB checks, coverage/audit PASS.
+Первый critic дважды превысил budget без полного verdict (BLOCKED, не PASS).
+Новый независимый critic прочитал полный компактный набор и дополняющие
+normal grid-off/diagnostic overlay-hidden сравнения: REJECT, scene integration1.
+Чёрных полей и ground-over-body не воспроизвёл, но отверг нечитаемую границу
+height+1 и широкие жёсткие contact ovals. Close softness/rim/grid prominence
+остаются отдельно отмеченным polish; пакет не расширяется до новых assets.
+
+Автор проверил actual edge q9,3/y0→q10,3/y0.12 и q10,4/y0: world height и
+perspective foot transform уже верны (разница проекции около11px в close).
+Прежний height-close включал interior plateau; при текущем azimuth передняя
+поднятая площадка прячет собственную вертикальную стенку. Добавлен тонкий
+ink upper lip только на exposed height boundaries и затемнён материал
+видимых боковин. Ground group/picking/height costs не меняются. Contact
+wash уменьшен, с vertex-alpha fade к прозрачному краю вместо hard oval.
+Source: sprite-battle-scene.ts; no new art/dependency or domain changes.
+
+После исправления web types/lint/coverage811+47SKIPPED/strict audit PASS.
+Новые actual stopped-R2 day/night/grid on/off/4sizes/height-boundary/diagnostic
+frames: `output/playwright/camera-perspective/final-*` и
+`actual-height-edge-after.*`. Diagnostic hides/restores only166 ground-overlay
+meshes, не выдаётся за штатную UI-функцию или gameplay доказательство.
+Повторный полный absolute visual/current-head CI/merge PENDING; прежний
+зелёный1907 gate не принимает новый renderer source.

@@ -11,6 +11,14 @@ requests.
 
 ### Match battle grid and figures to painted perspective
 
+- 2026-10-17, branch `codex/battle-camera-bounds`, local review correction:
+  CI38991283029 SUCCESS on1907d8c; full visual REJECT exposed weak height
+  boundary/oversized hard contact ovals. Actual height transform confirmed;
+  exposed upper-lip ink/stronger earth sides and compact vertex-alpha contact
+  wash improve ground integration. No canonical height/rule/picking changes.
+  Web types/lint/coverage811+47SKIPPED/audit PASS; full same-critic repeat and
+  new-head clean CI/merge pending. Prior critic timed out/incomplete, not PASS.
+
 - 2026-10-17, branch `codex/battle-camera-bounds`, local: owner reported the
   orthographic grid/figures against a perspective background. Fixed pinhole
   reference plus off-axis pan/zoom now governs field and figures; projected
