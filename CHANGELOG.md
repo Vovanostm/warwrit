@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local correction after full
+  793ebd3 visual REJECT (game2/2/1/1/2/2/1,close3/3/1/1/2/2/1) despite clean
+  CI39034184313 SUCCESS. Add an original full-field ground plate/provenance,
+  fixed-world-size paving/soil and a finite yard/path blend (direct plate
+  stretching rejected in previews), actual surface-normal relief lighting,
+  brighter night key forms/neutral
+  silhouette edges and varied existing fire scales/placements. Preserve
+  connected geometry, spacing/height, camera bounds, picking/feet and rules.
+  Explicit0/1/2-unit captures/bar geometry PASS on published version; relief
+  writer scoped types/lint/format PASS. Fix confirmed steep-bank normal gating
+  and shared outline texture disposal; independent source readback DONE.
+  Fresh maps/desktop/day-night/bars/picks/layers/navigation/extremes/explicit
+  height captures/scoped types/lint/content112/real combat/terminal/restart/
+  shared-outline cache lifecycle and clean reload PASS. Focused16 PASS after
+  isolated repeat of an initial concurrent browser-load timeout; limits
+  unchanged. Full visual review running; CI/publication/merge pending. Refresh owner-requested wiki/index/log/current plan with
+  actual CI and scored rejection; preserve earlier failures and asset limits.
+  [Result and technique](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local courtyard correction and
   owner-requested wiki refresh: quiet fine earth replaces recognizable rut
   repeats; a finite authored courtyard connects the extracted mill scenery,

@@ -986,6 +986,24 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-quiet.json",
       "generatedAt": "2026-10-17T11:56:04.519710+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.field-ground",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/field-ground.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/field-ground.json",
+      "generatedAt": "2026-10-17T13:20:53.996557+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.paving",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/paving.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/paving.json",
+      "generatedAt": "2026-10-17T13:37:08.504659+00:00"
     }
   ]
 }

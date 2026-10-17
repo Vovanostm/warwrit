@@ -18,16 +18,17 @@ export const inkEarthShader = `
     return mix(upper, lower, weight.y);
   }
 
-  vec3 inkPatch(vec2 uv, vec2 vertex, vec2 dx, vec2 dy) {
+  vec3 inkPatch(vec2 uv, vec2 vertex, vec2 dx, vec2 dy, float detailWeight) {
     vec2 phase = hash2(vertex + vec2(18.7, 4.1));
     vec2 sampleUv = uv + phase * 29.0;
-    if (fineDetail < 0.001) return seamlessInkSample(earthMap, sampleUv, dx, dy);
-    if (fineDetail > 0.999) return seamlessInkSample(detailMap, sampleUv, dx, dy);
-    return mix(seamlessInkSample(earthMap, sampleUv, dx, dy),
-      seamlessInkSample(detailMap, sampleUv, dx, dy),fineDetail);
+    if (detailWeight > 0.999) return seamlessInkSample(detailMap,sampleUv,dx,dy);
+    vec3 soil=seamlessInkSample(earthMap,sampleUv,dx,dy);
+    soil=mix(vec3(0.13,0.105,0.075),soil,0.55);
+    if (detailWeight < 0.001) return soil;
+    return mix(soil,seamlessInkSample(detailMap,sampleUv,dx,dy),detailWeight);
   }
 
-  vec3 inkEarth(vec2 uv) {
+  vec3 inkEarth(vec2 uv, float detailWeight) {
     // Derivatives precede phase wrapping and source branches, preventing false coarse mip seams.
     vec2 dx=dFdx(uv), dy=dFdy(uv);
     // Shared hashed vertices change both source and phase without rotating baked light.
@@ -41,7 +42,7 @@ export const inkEarthShader = `
       a=base+vec2(1); b=base+vec2(0,1); c=base+vec2(1,0);
       weights=vec3(f.x+f.y-1.0,1.0-f.x,1.0-f.y);
     }
-    vec3 first=inkPatch(uv,a,dx,dy), second=inkPatch(uv,b,dx,dy), third=inkPatch(uv,c,dx,dy);
+    vec3 first=inkPatch(uv,a,dx,dy,detailWeight), second=inkPatch(uv,b,dx,dy,detailWeight), third=inkPatch(uv,c,dx,dy,detailWeight);
     // Prefer ink shadow edges in overlap regions rather than washing out all three marks.
     vec3 lightness=vec3(dot(first,vec3(0.2126,0.7152,0.0722)),
       dot(second,vec3(0.2126,0.7152,0.0722)),dot(third,vec3(0.2126,0.7152,0.0722)));

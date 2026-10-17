@@ -1,23 +1,30 @@
 # Warwrit current delivery plan
 
-**Combat readability — 2026-10-17, LOCAL / SITE COMPOSITION REVIEW:**
-Published1b47872/[PR160](https://github.com/Vovanostm/warwrit/pull/160) remains
-DRAFT/NOT_MERGED; cleanCI39024500756 SUCCESS belongs to that historical tree.
-Local3096bd7 projected-scenery full visual REJECT: game2/2/1/2/2/2/1,
-closeall2. Current local technique adds quiet fine earth and a bounded authored
-courtyard, with detailed close cobbles. Returned site1672×941 is an interior
-crop, not the requested high-resolution outpaint; oversized107/41m trials
-rejected by author, current17.85m region. Camera bounds/rules/geometry unchanged.
-Current independent source review DONE, no findings; fresh20profiles/3maps/
-3desktop/day-night/zoom/layers/4corners/12bar32×16gap4/0picks/0inspection-
-navigationPOST PASS. Real move4→5;R3/rev55 all3pools/30field/57queue match;
-terminal repeatR8/rev152/0queue-dock-bars-hotkeyPOST;editor0→restart12/R1/1layer
-PASS. Clean reload0renderer errors/warnings; types/lint/content110/format PASS.
-Full fresh absolute visual review PENDING; current-head CI/merge/main journey
-NOT_RUN; FPS NOT_MEASURED.
-Parent sole source/wiki/PR160 merger; primary WIP preserved. Owner-authorized
-expected-head merge remains pending quality acceptance; no deployment/auto-merge.
-[Owning result](../wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
+**Combat readability — 2026-10-17, LOCAL / FULL-FIELD CORRECTION:**
+[PR160](https://github.com/Vovanostm/warwrit/pull/160) remains draft and unmerged.
+Published head793ebd3 passed cleanCI39034184313:820unit/47skipped,10kstress,
+20determinism/100replay,14DB,coverage and57-file audit (8inherited excluded).
+Complete independent visual review REJECT: game2/2/1/1/2/2/1,
+close3/3/1/1/2/2/1. Ground repetition/place transition, faint night bodies,
+flat-looking heights and repeated small fires remain material findings on79.
+An interrupted prior pass was BLOCKED, not acceptance. Explicit archers on0/1/2
+and their bars/picks were captured and read back; layers remain visually behind
+opaque figures. Current local correction uses fixed-world-size paving/soil selected by a finite
+yard/path composition; a native1672×941 plate supplies broad palette only.
+Direct full-field stretching was rejected in author previews. Surface-normal
+lighting/height contours,512/128night edges and varied existing fires are integrated.
+Connected geometry, spacing2.6/height.28, picks/feet/rules/bounds are preserved.
+Two source findings (steep-bank exclusion/shared outline disposal) fixed;
+independent source readback DONE. Fresh maps/desktop/day-night/geometry/layers/
+inspection/navigation/extremes/explicit0-1-2 captures PASS. Types/lint PASS;
+actual move4→5/poolsR3rev55/terminalR8rev152/restart12 and shared-outline
+remove/readd/disposal probe PASS. Clean reload0renderer errors/warnings;
+content112 and16focused PASS (initial concurrent timeout, isolated repeat
+2.78s PASS without changed limits). Full current visual review running.
+Current-head CI/publication pending.
+Owner-authorized expected-head merge and main journey remain unexecuted.
+Parent owns source/wiki/PR160 integration; unrelated primary WIP preserved.
+[Owning result](../wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
 
 **Combat readability — 2026-10-17, HISTORICAL16c2811 / CORRECTION REQUIRED:**
 Current game candidate16c2811 in codex/combat-readability, worktree

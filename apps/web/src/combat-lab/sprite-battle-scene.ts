@@ -53,7 +53,7 @@ const millFieldUrl = new URL(
 ).href;
 
 const siteGroundUrl = new URL(
-  '../../../../assets/art/combat/readable-terrain-2026-10-16/site-ground.png',
+  '../../../../assets/art/combat/readable-terrain-2026-10-16/field-ground.png',
   import.meta.url,
 ).href;
 
@@ -178,6 +178,7 @@ export async function mountSpriteBattleScene(
   const unitMeshes = new Map<string, Mesh>();
   const unitMaterials = new Map<string, StandardMaterial>();
   const unitEdges = new Map<string, Mesh>();
+  const unitOutlineTextures = new Map<string, readonly [Texture, Texture]>();
   const contactShadows = new Map<string, Mesh>();
   const contactMaterial = new StandardMaterial('unit-ground-contact', scene);
   contactMaterial.diffuseColor = Color3.Black();
@@ -187,21 +188,31 @@ export async function mountSpriteBattleScene(
   const unitPresentationModes = [
     {
       sampling: Texture.BILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.45, 0.5, 0.6)],
+      colors: [Color3.White(), new Color3(0.62, 0.67, 0.78)],
     },
     {
       sampling: Texture.TRILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.55, 0.6, 0.7)],
+      colors: [Color3.White(), new Color3(0.76, 0.8, 0.9)],
     },
   ];
   scene.onBeforeCameraRenderObservable.add((camera) => {
     const pixelsPerWorld = canvas.clientHeight / (2 * camera.orthoTop!);
-    terrain.setPixelsPerWorld(pixelsPerWorld);
     const presentation = unitPresentationModes[Number(pixelsPerWorld < 64)]!;
-    for (const material of unitMaterials.values()) {
+    for (const [id, material] of unitMaterials) {
       const art = material.diffuseTexture as Texture;
       if (art.samplingMode !== presentation.sampling) art.updateSamplingMode(presentation.sampling);
       material.emissiveColor = presentation.colors[Number(isNight)]!;
+      const far = Number(pixelsPerWorld < 64);
+      const edge = unitEdges.get(id)!;
+      (edge.material as StandardMaterial).diffuseTexture = unitOutlineTextures.get(id)![far]!;
+      const padding = SPRITE_VISUAL_OUTLINE_SIZE - SPRITE_VISUAL_SIZE;
+      const outlineScale = far
+        ? (SPRITE_MASK_SIZE + padding) /
+          SPRITE_MASK_SIZE /
+          (SPRITE_VISUAL_OUTLINE_SIZE / SPRITE_VISUAL_SIZE)
+        : 1;
+      const body = unitMeshes.get(id)!;
+      edge.scaling.set(body.scaling.x * outlineScale, body.scaling.y * outlineScale, 1);
     }
   });
   const eventLabels: Mesh[] = [];
@@ -331,12 +342,13 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
+  const groundCompositionWidth = mapBounds.maxX - mapBounds.minX + 40;
   const terrain = mountBattleTerrain(scene, initialTiles, initialNight, {
     texture: texture(siteGroundUrl),
-    center: new Vector2(backgroundX - 4.1, backdropUp),
-    size: new Vector2(backgroundWidth * 0.5, backgroundHeight * 0.5),
+    center: new Vector2(perspective.targetX, 0),
+    size: new Vector2(groundCompositionWidth, (groundCompositionWidth * 941) / 1672),
     reference: new Vector2(perspective.targetX, perspective.distance),
-    crop: new Vector4(0.3, 0.18, 0.85, 0.7),
+    crop: new Vector4(0, 0, 1, 1),
     amount: 1,
   });
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
@@ -372,36 +384,24 @@ export async function mountSpriteBattleScene(
       label.setEnabled(false);
     });
 
-  const outlineTexture = (sprite: ReturnType<typeof spriteForUnit>) => {
-    let edgeTexture = edgeTextures.get(sprite.url);
+  const outlineTexture = (sprite: ReturnType<typeof spriteForUnit>, size = SPRITE_VISUAL_SIZE) => {
+    const key = `${size}:${sprite.url}`;
+    let edgeTexture = edgeTextures.get(key);
     if (!edgeTexture) {
-      edgeTexture = new DynamicTexture(
-        `ink-edge:${sprite.id}`,
-        SPRITE_VISUAL_OUTLINE_SIZE,
-        scene,
-        false,
-      );
+      const outlineSize = size + SPRITE_VISUAL_OUTLINE_SIZE - SPRITE_VISUAL_SIZE;
+      edgeTexture = new DynamicTexture(`ink-edge:${size}:${sprite.id}`, outlineSize, scene, false);
       edgeTexture.hasAlpha = true;
       const context = edgeTexture.getContext() as unknown as CanvasRenderingContext2D;
-      const pixels = context.createImageData(
-        SPRITE_VISUAL_OUTLINE_SIZE,
-        SPRITE_VISUAL_OUTLINE_SIZE,
-      );
+      const pixels = context.createImageData(outlineSize, outlineSize);
       const surface = document.createElement('canvas');
-      surface.width = surface.height = SPRITE_VISUAL_SIZE;
+      surface.width = surface.height = size;
       const maskContext = surface.getContext('2d', { willReadFrequently: true })!;
-      maskContext.drawImage(
-        spriteSources.get(sprite.url)!,
-        0,
-        0,
-        SPRITE_VISUAL_SIZE,
-        SPRITE_VISUAL_SIZE,
-      );
-      const mask = maskContext.getImageData(0, 0, SPRITE_VISUAL_SIZE, SPRITE_VISUAL_SIZE).data;
-      pixels.data.set(spriteOutlinePixels(mask, SPRITE_VISUAL_SIZE));
+      maskContext.drawImage(spriteSources.get(sprite.url)!, 0, 0, size, size);
+      const mask = maskContext.getImageData(0, 0, size, size).data;
+      pixels.data.set(spriteOutlinePixels(mask, size));
       context.putImageData(pixels, 0, 0);
       edgeTexture.update();
-      edgeTextures.set(sprite.url, edgeTexture);
+      edgeTextures.set(key, edgeTexture);
     }
     return edgeTexture;
   };
@@ -425,6 +425,7 @@ export async function mountSpriteBattleScene(
     mesh.renderingGroupId = 1;
     mesh.alphaIndex = 1;
     const edgeTexture = outlineTexture(sprite);
+    unitOutlineTextures.set(unit.id, [edgeTexture, outlineTexture(sprite, SPRITE_MASK_SIZE)]);
     const outlineScale = SPRITE_VISUAL_OUTLINE_SIZE / SPRITE_VISUAL_SIZE;
     const edge = MeshBuilder.CreatePlane(
       `unit-edge:${unit.id}`,
@@ -495,8 +496,11 @@ export async function mountSpriteBattleScene(
       unitMaterials.delete(id);
       contactShadows.get(id)?.dispose();
       contactShadows.delete(id);
-      unitEdges.get(id)?.dispose(false, true);
+      const edge = unitEdges.get(id);
+      edge?.material?.dispose(false, false);
+      edge?.dispose(false, false);
       unitEdges.delete(id);
+      unitOutlineTextures.delete(id);
     }
   };
   const syncUnit = (unit: BattleUnit) => {
@@ -654,7 +658,7 @@ export async function mountSpriteBattleScene(
     ];
     const emphasis = unit.status === 'active' && emphasizedIds.includes(unit.id);
     if (!edge) return;
-    edge.setEnabled(emphasis);
+    edge.setEnabled(emphasis || (isNight && unit.status === 'active'));
     const edgeMaterial = edge.material as StandardMaterial;
     edgeMaterial.emissiveColor = {
       day: Color3.White(),

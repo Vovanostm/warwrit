@@ -17,7 +17,7 @@ import fireUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/f
 import fireCrescentUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-crescent.png';
 import fireStubsUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-stubs.png';
 import { inkEarthShader } from './ink-earth-shader.js';
-import cobbleDetail from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-cobbles.png';
+import cobbleDetail from '../../../../assets/art/combat/readable-terrain-2026-10-16/paving.png';
 import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-quiet.png';
 import { BATTLE_ART } from '../renderer/art.js';
 import {
@@ -57,12 +57,12 @@ function groundMaterial(
     scene,
     {
       vertexSource: `precision highp float;
-        attribute vec3 position;
-        uniform mat4 worldViewProjection,world; varying vec3 worldPoint; varying vec2 cellPoint;
-        void main(){ worldPoint=(world*vec4(position,1.0)).xyz; cellPoint=position.xz; gl_Position=worldViewProjection*vec4(position,1.0); }`,
+        attribute vec3 position,normal; attribute float relief;
+        uniform mat4 worldViewProjection,world; varying vec3 worldPoint,worldNormal; varying vec2 cellPoint; varying float reliefStrength;
+        void main(){ worldPoint=(world*vec4(position,1.0)).xyz; worldNormal=(world*vec4(normal,0.0)).xyz; cellPoint=position.xz; reliefStrength=relief; gl_Position=worldViewProjection*vec4(position,1.0); }`,
       fragmentSource: `precision highp float;
-        varying vec3 worldPoint; varying vec2 cellPoint; uniform sampler2D terrainMap,earthMap,detailMap,siteMap;
-        uniform vec3 tint,lighting,earthTint,cameraEye; uniform float detailScale,blendSurface,siteAmount,fineDetail;
+        varying vec3 worldPoint,worldNormal; varying vec2 cellPoint; varying float reliefStrength; uniform sampler2D terrainMap,earthMap,detailMap,siteMap;
+        uniform vec3 tint,lighting,earthTint,cameraEye; uniform float detailScale,blendSurface,siteAmount;
         uniform vec2 siteCenter,siteSize,siteReference; uniform vec4 siteCrop;
         ${naturalTextureShader}
         ${inkEarthShader}
@@ -78,8 +78,6 @@ function groundMaterial(
           vec2 point=abs(cellPoint);
           float edge=max(point.x,point.x*0.5+point.y*0.8660254)/${BATTLE_LAYOUT.spacing / 2};
           float coverage=(1.0-smoothstep(0.60,1.05,edge+(landNoise(groundUv*9.0)-0.5)*0.28))*(1.0-smoothstep(0.95,1.0,edge))*blendSurface;
-          vec2 earthUv=groundUv*0.65;
-          vec3 earth=inkEarth(earthUv);
           float imageScale=siteReference.y/max(dot(ray,vec3(0.0,-${Math.sin(CAMERA_ELEVATION)},${Math.cos(CAMERA_ELEVATION)})),0.001);
           vec2 imagePoint=vec2(siteReference.x+ray.x*imageScale,
             dot(ray,vec3(0.0,${Math.cos(CAMERA_ELEVATION)},${Math.sin(CAMERA_ELEVATION)}))*imageScale);
@@ -87,16 +85,37 @@ function groundMaterial(
           float siteEdge=min(min(siteUv.x,1.0-siteUv.x),min(siteUv.y,1.0-siteUv.y));
           float siteCoverage=smoothstep(0.0,0.14,siteEdge+(landNoise(groundUv*0.8)-0.5)*0.04)*smoothstep(0.0,0.03,siteEdge);
           siteUv=mix(siteCrop.xy,siteCrop.zw,clamp(siteUv,0.0,1.0));
-          vec3 siteColor=linearizeRGB(textureGrad(siteMap,siteUv,dFdx(siteUv),dFdy(siteUv)).rgb);
-          float detail=clamp(dot(earth,vec3(0.2126,0.7152,0.0722))/0.12,0.25,2.0);
-          vec3 composed=siteColor*mix(1.0,detail,0.15);
-          vec3 baseGround=mix(earth,composed,siteAmount*(0.65-0.5*fineDetail)*siteCoverage)*earthTint;
+          // The authored plate supplies only broad material distribution, never metre-sized painted stones.
+          vec3 siteColor=linearizeRGB(textureLod(siteMap,siteUv,5.0).rgb);
+          float siteWeight=siteAmount*siteCoverage;
+          float yard=1.0-smoothstep(0.8,1.12,length((siteUv-vec2(0.24,0.5))/vec2(0.18,0.28))+(landNoise(groundUv*0.6)-0.5)*0.24);
+          float upperPath=abs(siteUv.y-(0.5+0.13*sin((siteUv.x-0.24)*5.8)));
+          float lowerPath=abs(siteUv.y-(0.5-0.17*sin((siteUv.x-0.24)*4.0)));
+          float paths=1.0-smoothstep(0.022,0.04,min(upperPath,lowerPath)+(landNoise(groundUv*0.8)-0.5)*0.014);
+          float detailWeight=max(yard,paths)*siteWeight;
+          vec3 earth=inkEarth(groundUv*0.65,detailWeight);
+          float siteLuma=max(dot(siteColor,vec3(0.2126,0.7152,0.0722)),0.01);
+          vec3 wash=mix(vec3(1.0),siteColor/siteLuma,siteWeight*0.08);
+          float tone=mix(1.0,clamp(siteLuma/0.11,0.75,1.25),siteWeight*0.5);
+          vec3 baseGround=earth*wash*tone*earthTint;
           color=mix(baseGround,color*tint,coverage);
+          // The finite field carries its shared-corner relief. Keep the camera-facing apron at its flat base value.
+          vec3 surfaceNormal=normalize(worldNormal);
+          surfaceNormal*=sign(surfaceNormal.y);
+          vec3 upperLeftLight=normalize(vec3(-0.46,0.82,0.34));
+          float slopeWeight=reliefStrength;
+          float flatLight=dot(vec3(0.0,1.0,0.0),upperLeftLight);
+          float reliefLight=clamp(1.0+(dot(surfaceNormal,upperLeftLight)-flatLight)*3.0,0.55,1.2);
+          color*=mix(1.0,reliefLight,slopeWeight);
+          float level=worldPoint.y/${BATTLE_LAYOUT.heightStep};
+          float contourWidth=max(fwidth(level),0.015);
+          float contour=1.0-smoothstep(contourWidth*0.35,contourWidth*1.25,abs(fract(level)-0.5));
+          color*=1.0-contour*slopeWeight*0.28;
           gl_FragColor=vec4(pow(max(color*lighting,vec3(0.0)),vec3(1.0/2.2)),1.0);
         }`,
     },
     {
-      attributes: ['position'],
+      attributes: ['position', 'normal', 'relief'],
       uniforms: [
         'worldViewProjection',
         'world',
@@ -111,7 +130,6 @@ function groundMaterial(
         'siteReference',
         'siteCrop',
         'siteAmount',
-        'fineDetail',
       ],
       samplers: ['terrainMap', 'earthMap', 'detailMap', 'siteMap'],
     },
@@ -125,7 +143,6 @@ function groundMaterial(
   result.setVector2('siteReference', composition.reference);
   result.setVector4('siteCrop', composition.crop);
   result.setFloat('siteAmount', composition.amount);
-  result.setFloat('fineDetail', 0);
   result.setFloat('blendSurface', surface === 'plain' ? 0 : 1);
   result.setColor3('tint', palette.day);
   result.setColor3('lighting', Color3.White());
@@ -194,7 +211,6 @@ export function mountBattleTerrain(
   composition?: GroundComposition,
 ): {
   readonly apron: Mesh;
-  setPixelsPerWorld(pixels: number): void;
   readonly terrainByHex: ReadonlyMap<string, BattleTerrainCell>;
   setNight(night: boolean): void;
 } {
@@ -270,6 +286,7 @@ export function mountBattleTerrain(
     scene,
   );
   apron.position.set((minX + maxX) / 2, -0.04, (minZ + maxZ) / 2);
+  apron.setVerticesData('relief', new Float32Array(apron.getTotalVertices()), false, 1);
   apron.material = groundMaterials.plain;
   apron.isPickable = false;
   apron.renderingGroupId = 0;
@@ -305,6 +322,7 @@ export function mountBattleTerrain(
     const groundY = tile.height * BATTLE_LAYOUT.heightStep;
     const cell = terrainByHex.get(tileKey)!;
     const ground = createBattleSurface(`ground:${tileKey}`, cell, scene);
+    ground.setVerticesData('relief', new Float32Array(ground.getTotalVertices()).fill(1), false, 1);
     ground.material = groundMaterials[terrainSurface(tile)];
     ground.isPickable = true;
     ground.renderingGroupId = 0;
@@ -345,7 +363,9 @@ export function mountBattleTerrain(
         scorchMaterial,
         (tile.q * 73856093) ^ (tile.r * 19349663),
       );
-      const emberWidth = BATTLE_LAYOUT.spacing * (0.8 + ((tile.q * 17 + tile.r * 13) % 7) * 0.02);
+      const variant = ((tile.q * 73856093) ^ (tile.r * 19349663)) >>> 0;
+      const emberScale = 0.62 + ((variant >>> 5) % 17) * 0.02;
+      const emberWidth = BATTLE_LAYOUT.spacing * emberScale;
       const ember = MeshBuilder.CreatePlane(
         `fire-embers:${tileKey}`,
         {
@@ -356,11 +376,10 @@ export function mountBattleTerrain(
       );
       ember.rotation.x = CAMERA_ELEVATION;
       ember.position.set(
-        point.x + (((tile.r * 11 + tile.q) % 5) - 2) * 0.04,
-        groundY + 0.36 * Math.cos(CAMERA_ELEVATION),
-        point.z - 0.42 + 0.36 * Math.sin(CAMERA_ELEVATION),
+        point.x + (((variant >>> 12) % 9) - 4) * 0.04,
+        groundY + ((0.36 * emberScale) / 0.86) * Math.cos(CAMERA_ELEVATION),
+        point.z + ((-0.42 + 0.36 * Math.sin(CAMERA_ELEVATION)) * emberScale) / 0.86,
       );
-      const variant = ((tile.q * 73856093) ^ (tile.r * 19349663)) >>> 0;
       ember.material = emberMaterials[variant % emberMaterials.length]!;
       ember.isPickable = false;
       ember.renderingGroupId = 0;
@@ -389,9 +408,5 @@ export function mountBattleTerrain(
     for (const material of emberMaterials) material.emissiveColor = light.embers;
   };
   setNight(initialNight);
-  const setPixelsPerWorld = (pixels: number) => {
-    const detail = Math.max(0, Math.min(1, (pixels - 55) / 35));
-    for (const material of Object.values(groundMaterials)) material.setFloat('fineDetail', detail);
-  };
-  return { apron, terrainByHex, setNight, setPixelsPerWorld };
+  return { apron, terrainByHex, setNight };
 }
