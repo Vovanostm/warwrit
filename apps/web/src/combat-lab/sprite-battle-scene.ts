@@ -46,7 +46,7 @@ import { mountBattleFieldVitals } from './battle-field-vitals.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
 const millFieldUrl = new URL(
-  '../../../../assets/art/combat/stage1-2026-10-09/battlefield/mill-field-v1.png',
+  '../../../../assets/art/combat/readable-terrain-2026-10-16/mill-scenery.png',
   import.meta.url,
 ).href;
 
@@ -189,7 +189,6 @@ export async function mountSpriteBattleScene(
   ];
   scene.onBeforeCameraRenderObservable.add((camera) => {
     const pixelsPerWorld = canvas.clientHeight / (2 * camera.orthoTop!);
-    terrain.setPixelsPerWorld(pixelsPerWorld);
     const presentation = unitPresentationModes[Number(pixelsPerWorld < 64)]!;
     for (const material of unitMaterials.values()) {
       const art = material.diffuseTexture as Texture;
@@ -218,7 +217,7 @@ export async function mountSpriteBattleScene(
     }
     return result;
   };
-  // One authored projection is kept intact on a camera-facing backdrop. Tile and
+  // Extracted scenery keeps the authored projection without a rectangular ground image. Tile and
   // foot anchors occupy the open courtyard; perimeter architecture is scenery.
   const backgroundWidth = 35.7;
   const backgroundHeight = (backgroundWidth * 941) / 1672;
@@ -324,16 +323,7 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
-  const terrain = mountBattleTerrain(scene, initialTiles, initialNight, {
-    texture: placeTexture,
-    uvFor: (point) => {
-      const projected = project(point);
-      return [
-        (projected.x - backgroundX + 1.1) / backgroundWidth + 0.5,
-        ((projected.z + 2) * Math.sin(CAMERA_ELEVATION) - backgroundUp) / backgroundHeight + 0.5,
-      ];
-    },
-  });
+  const terrain = mountBattleTerrain(scene, initialTiles, initialNight);
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
   const apronDepth = backdropDepth + 1;
   const apronScale = (perspective.distance + apronDepth) / perspective.distance;

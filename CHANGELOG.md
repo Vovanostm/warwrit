@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local correction after full
+  1b47872 visual REJECT despite successfulCI39024500756: extract true-alpha
+  mill scenery with source/provenance, remove rectangular authored-floor sampling
+  and zoomfade, register field/apron textures to one projected ground plane,
+  use hashed source/phase ink patches and explicit texture gradients. Actual
+  terrain geometry/picking/feet/rules unchanged. Source/types/lint/content108
+  PASS; fresh GPU geometry/maps/layers/navigation/extremes/actual combat and
+  clean-browser launch/reload PASS. Full critique REJECT game rendering/integration1,
+  closeall2; nextsite-wide composition/currentCI pending. Original assets
+  preserved; no migrations/deployment.
+  [Owning correction](docs/wiki/battlefield-test-maps.md#scenery-cutout-and-shared-projected-ground--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local terrain correction:
   add a dedicated seamless3-source ink-earth shader,2original ground variants
   with prompts/provenance and a zoom-dependent authored-yard blend; restore

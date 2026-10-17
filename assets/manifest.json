@@ -959,6 +959,15 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-cobbles.json",
       "generatedAt": "2026-10-17T09:39:00.611961+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.mill-scenery",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/mill-scenery.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/mill-scenery.json",
+      "generatedAt": "2026-10-17T10:48:30.352970+00:00"
     }
   ]
 }

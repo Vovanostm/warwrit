@@ -1,0 +1,14 @@
+{
+  "id": "combat-mill-scenery-cutout",
+  "prompt": "Use case: background-extraction. Edit target: attached mill-field-v1.png battlefield artwork. Extract scenery for Warwrit's game renderer on a genuinely transparent PNG. Preserve the exact wide canvas aspect, composition, scale, camera projection, all surviving objects and their coordinates, directional upper-left light, irregular black ink contours and muted slate/umber/ochre washes. Keep the dangerous ruined mill, broken wheel, stream and rocks along the left, perimeter broken stone walls, dead trees, fences, barrels and their tiny natural contact shadows. REMOVE all open walkable earth/courtyard paving, the whole broad central yard, all bare ground between scenery and all ground at image borders: these must be alpha-transparent, so an independently rendered continuous earth surface can show through. Keep only a very narrow irregular fringe of roots or stone contact under scenery, never a rectangular or oval ground island. No replacement flat background, no checkerboard pixels. Do not change the ruined building into a functioning mill; no new structures, emblems, characters, magic, text or landscape. Preserve reference detail without repainting or smoothing it. Return high-resolution wide image with true transparency and original relative object positions; do not recenter or crop.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17",
+  "transparent_background": true,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-b992e30f-dc8c-46a5-9e51-025c3d81a2af.png",
+  "references": [
+    "assets/art/combat/stage1-2026-10-09/battlefield/mill-field-v1.png",
+    "assets/art/m1/places/staraya-melnitsa.png"
+  ],
+  "status": "Local candidate; independent integrated visual acceptance pending."
+}

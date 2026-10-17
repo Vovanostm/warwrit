@@ -16,76 +16,62 @@ sources:
 
 ## Текущее состояние — 2026-10-17
 
-Переработка читаемости опубликована в [PR160](https://github.com/Vovanostm/warwrit/pull/160)
-из отдельного worktree `combat-live-queue/warwrit`, ветка
-`codex/combat-readability`. Последний полностью проверенный визуально
-опубликованный кандидат — `16c2811` (REJECT). PR остаётся черновиком,
-**в main ещё не слит; финальная визуальная приёмка не получена**.
-Текущий стенд кандидата: [поле боя](http://127.0.0.1:5336/combat-lab), API3036.
-Стенд включает локальную коррекцию грунта, описанную ниже;
-его дерево отличается от опубликованного кандидата. Это временные бои без
-записи в кампанию. Полный DoD M1 не принят; баланс и FPS не измерены.
+[PR160](https://github.com/Vovanostm/warwrit/pull/160) объединяет исправления
+читаемости в отдельном worktree `combat-live-queue/warwrit`, ветка
+`codex/combat-readability`. Последний опубликованный кандидат — `1b47872`:
+**чистый CI успешен, полная визуальная проверка REJECT; в main ещё не слит**.
+Новая коррекция композиции готовится локально. Разрешение владельца на слияние
+этого задания уже есть; оставшиеся блокеры относятся к качеству.
 
-В кандидате реализовано:
+Стенд [5336/combat-lab](http://127.0.0.1:5336/combat-lab), API3036,
+показывает локальные изменения и отличается от опубликованного кандидата.
+Бои временные, без записи в кампанию. Полный DoD M1 не принят;
+баланс, удовольствие от игры и FPS не измерены.
 
-- Общая сетка с шагом2.6; связанные склоны с шагом высоты0.28.
-  Геометрия, сетка, выбор клетки и ноги используют одну поверхность.
-  Канонические координаты, дальности, ОД, LOS и replay не менялись.
-- Целые портреты всех20профилей с одинаковым внутренним отступом;
-  здоровье, броня и мораль сразу под портретами и под ногами на поле.
-  Полевые полоски32×16CSSpx, отступ4px, без выносок и соединительных линий.
-- Полное разрешение спрайтов; отдельная фильтрация для близкого и общего вида.
-  Перспектива и ограничение камеры из уже слитого PR159 сохранены.
-- Общие материалы plain/mud/fire/blocked для редактора и сгенерированных карт;
-  три рисунка огня, новая чернильная земля с колеями, связанная с рисунком двора.
-  Край фоновой иллюстрации плавно соединяется с продолжением грунта.
-- Живая очередь из PR158; выбор портрета или бойца в журнале фокусирует камеру,
-  Home возвращает обзор, WASD/перетаскивание и колесо позволяют осмотреть поле.
+В объединённом варианте реализованы:
 
-Проверены все20профилей на трёх сгенерированных полях,1280×720/1440×900/1920×1080,
-день/ночь, крупные существа, общий/близкий вид, сетка и наземные наложения.
-Свежие проверки геометрии полосок, выбора клеток и крайних положений камеры
-прошли; осмотр и навигация дали0боевых приказов. Ранее на объединённой геометрии
-проверены настоящее движение, совпадение всех трёх ресурсов после боевых
-изменений, завершение боя и повторный запуск. Эти результаты не заменяют
-визуальную приёмку новой композиции.
+- Сетка с шагом 2.6 и связанные склоны с шагом высоты 0.28.
+  Поверхность общая для геометрии, сетки, выбора клетки и опор фигур.
+- Целые портреты всех 20 профилей с одинаковым внутренним отступом;
+  здоровье, броня и мораль сразу под портретами и ногами на поле.
+  Полевые полоски 32×16 CSS px, отступ 4 px, без выносок.
+- Спрайты в полном разрешении, отдельная фильтрация близкого и общего вида.
+  Перспектива из слитого PR159 сохранена.
+- Единые материалы plain/mud/fire/blocked для редактора и сгенерированных карт.
+  Типы и высоты берутся из канонических клеток; новые правила не добавлены.
+- Живая очередь из PR158; выбор портрета/бойца в журнале фокусирует камеру,
+  Home возвращает обзор, WASD, перетаскивание и колесо управляют камерой.
 
-Полный независимый визуальный проход `16c2811` завершён: **REJECT**,
-оценки2/2/1/2/2/2/1. Фигуры, портреты, полоски, ночная читаемость и слои приняты
-в пределах этого прохода. Остаются повторение грунта и горизонтальные стыки,
-переход между двором и продолжением земли, мягкие увеличенные детали грунта
-при максимальном приближении. До общего visual ACCEPT нужна смена техники
-земли и повторная полная проверка; узкая приёмка портретов этого не заменяет.
+Свежий игровой путь опубликованного `1b47872` прошёл: все 20 профилей на трёх
+полях, три размера desktop, день/ночь, крупные существа, сетка/наложения,
+максимальное приближение и четыре крайних положения камеры. Размеры полосок,
+выбор клеток и отсутствие боевых приказов при осмотре подтверждены.
+Настоящее движение, совпадение трёх ресурсов на поле и в очереди, завершение
+боя и повторный запуск также проверены.
 
-[CI08c2800](https://github.com/Vovanostm/warwrit/actions/runs/39016754146) успешен.
-[CI16c2811](https://github.com/Vovanostm/warwrit/actions/runs/39019195821)
-завершился **FAIL** на аудите сложности двух новых функций рендера; основные
-тесты и покрытие прошли. Локально параметры authored-ground нормализованы
-один раз при создании поля: повторные проверки типов, lint и аудит45файлов
-PASS, без изменения порогов. CI исправления ещё не выполнен.
+Однако полный независимый визуальный проход дал **REJECT: 2/2/1/2/2/2/1**.
+Бойцы, портреты, полоски и слои читаются; остаются повторение грунта, мягкие
+детали при приближении и отдельный «остров» рисунка мельницы. Успешный
+[CI39024500756](https://github.com/Vovanostm/warwrit/actions/runs/39024500756)
+этого не отменяет: 820 unit PASS / 47 SKIPPED, 10 000 stress боёв,
+20 deterministic reruns, 100 replay checks, 14 DB-проверок, покрытие и
+аудит 50 изменённых файлов прошли. Предыдущие REJECT и CI FAIL сохранены ниже.
 
-Локальная смена техники грунта: три исходные чернильные текстуры смешиваются
-непрерывными весами без поворота и отражения; края изображений перекрываются
-смещёнными выборками. При приближении рисунок двора уступает место более
-детальной земле. Код общий для клеток и продолжения поля; правила боя
-не меняются. Source review — DONE, types/lint/content107/audit — PASS.
-Новая версия запущена в браузере: shader compile, все20профилей/три поля,
-три размера desktop, геометрия12полосок32×16px/отступ4px, выбор клеток,
-крайние ракурсы и игровой путь до завершения/перезапуска — PASS.
-Первый запуск проверки не состоялся из-за закрытой сессии; после открытия
-все новые кадры получены. Полный визуальный ACCEPT и CI итогового коммита
-пока ожидаются; производительность новой техники не измерена.
-[Подробности коррекции](#layered-ink-earth-correction--2026-10-17).
-
-До слияния остаются устранение визуальных дефектов, полный visual ACCEPT,
-успешный CI итогового коммита и игровой путь из обновлённой main. Разрешение
-владельца на слияние этого задания уже есть; блокеры относятся к качеству.
+Локальная смена техники: прозрачный слой строений/воды/оград вместо
+прямоугольного рисунка земли; один проектируемый грунт под клетками и
+продолжением поля; разные источники и смещения текстур на общих вершинах,
+с явными производными для выбора mip-уровня. Прежняя выборка двора и её
+zoom-переход удалены. Канонические координаты, ОД, LOS и replay не меняются.
+Новый полный визуальный проход также дал REJECT: вблизи все критерии
+достигли 2, но в общем виде язык рисунка и интеграция остаются на 1
+из-за повторяющихся колей и отдельного острова мельницы. Следующая смена
+техники — цельная композиция двора на всю область с мелким слоем детализации.
+CI текущей локальной коррекции не запускался.
+[Текущая коррекция](#scenery-cutout-and-shared-projected-ground--2026-10-17).
 
 [Требования владельца](#читаемость-бойцов-и-единый-рендер-поля--2026-10-16),
-[исследование аналогов и UX](#проверка-текстов-и-избыточности-ux--2026-10-16),
-[интеграция перспективы](#combined-perspective-and-readability--2026-10-17),
-[последняя композиция грунта](#authored-ground-composition--2026-10-17).
-Последующие датированные результаты сохранены как история своих версий;
+[аналоги и UX](#проверка-текстов-и-избыточности-ux--2026-10-16).
+Датированные результаты ниже относятся к своим версиям;
 оперативный checkpoint — [CURRENT_PLAN](../engineering/CURRENT_PLAN.md).
 
 **Историческая поставка — 2026-10-16: [PR157](https://github.com/Vovanostm/warwrit/pull/157) слит в main, игровой путь из main проверен.**
@@ -4573,3 +4559,46 @@ Independent source closeout confirmed the dirty game delta was unchanged since
 its prior review: UV continuity, wrapping, linear mixing, LOD initialization,
 terrain picks and foot anchors have no concrete source finding. Reviewer browser
 input NOT_RUN. Full current absolute visual review is running separately.
+
+### Scenery cutout and shared projected ground — 2026-10-17
+
+Published1b47872 cleanCI39024500756 SUCCESS:820unit/47SKIPPED,10kstress/
+20determinism/100replay,14DB,coverage/50fileaudit. Full independent frozen
+visual REJECT2/2/1/2/2/2/1; native figures/portraits/strips/layers accepted
+within scope, ground repetition/close softness/picture-island integration
+remain defects. An earlier reviewer turn exceeded its bound without a final
+protocol and was interrupted; its missing verdict is not acceptance. The
+replacement critic opened every required image/reference and returned the
+complete scored rejection.
+
+Local technique change: extract scenery from the original mill-field-v1 into
+a true-alpha mill-scenery.png, preserving its1672×941canvas, object locations,
+projection and ruined condition. The broad yard becomes transparent; the
+continuous terrain owns the whole floor. Built-in imagegen output, exact
+prompt and provenance accompany the derivative; original art is unchanged.
+
+Remove authored-floor UV2/sampler/zoom-fade code. Ground and camera-facing
+apron now derive one floor UV by camera-ray intersection with y0; fixed
+optical-centre pan/zoom preserves registration. Category coverage and actual
+height geometry/picking/foot centres remain unchanged. Stochastic shared
+vertices choose source and phase, retaining baked light direction; ink-weighted
+blending avoids washed-out shadow edges. Explicit textureGrad receives
+derivatives computed before wrapping and source branches, avoiding false
+coarse mip seams. The pinned Babylon9.28 textureRepetitionFunctions shader
+uses the same explicit-derivative sampling technique.
+
+Correct-checkout bounded source review DONE on projection, positive weights,
+shared-edge continuity, camera initialization and unchanged gameplay geometry.
+Types/lint/content108/format PASS; derivative-only independent readback DONE.
+Fresh all20profiles/3maps/3desktop/day-night/maxzoom/layers/4corners captures
+PASS;12bars32×16/gap4,0picks,0inspection/navigationPOST. Full fresh absolute pass REJECT: game2/2/1/2/2/2/1, close all2, motionN/A.
+Close ground now accepted; game-scale rut repetition and bounded-site composition
+still require larger authored ground regions. First HMR/reload emitted invalid-program-query
+WebGL warnings while disposing the prior scene; subsequent fresh map shaders
+rendered. Fresh-browser launch/reload reports0renderer errors or warnings,
+12units/onefieldLayer; initial favicon404 is separate. Actual move4→5 and
+R3/rev55 all3pools/30field/57queue agree. Terminal first window activeR8/rev145,
+repeat resolvedR8/rev152,0queue/dock/visiblebars/hotkeyPOST; editor0→restart
+R1/12active/1fieldLayer. Performance NOT_MEASURED.
+Fresh evidence: output/playwright/projected-scenery-20261017/ (untracked).
+This correction is local; successful historicalCI does not verify this delta.
