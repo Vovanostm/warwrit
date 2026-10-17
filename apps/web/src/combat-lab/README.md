@@ -27,6 +27,11 @@ Commands always use the fighter whose initiative turn is active. Fire
 requires confirmation; unavailable targets do not submit commands. Holding
 WASD or arrow keys pans continuously; left- or middle-button drag also pans.
 The wheel zooms, and camera navigation clears the old hover.
+The battle uses a fixed perspective reference: equal cells and figures shrink
+with distance. Pan/zoom crop the same reference image, preserving registration
+with the painted background. The full viewport stays inside the painting on
+zoom out and resize. This calibration is specific to the mill art; it does not
+change canonical hex coordinates or other orthographic camera consumers.
 
 The selected unit's passive weapon range uses canonical range/LOS and remains
 visible independently of the active turn, AP and stamina. Server attack previews

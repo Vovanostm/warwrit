@@ -10,6 +10,7 @@ import {
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { mountThreeQuarterCamera, type GroundBounds } from './three-quarter-camera.js';
+import { projectCameraPoint, type PerspectiveReference } from './camera-projection.js';
 
 const originalResizeObserver = globalThis.ResizeObserver;
 class TestResizeObserver {
@@ -24,6 +25,7 @@ class TestResizeObserver {
 
 function cameraFixture(options: {
   readonly bounds?: GroundBounds;
+  readonly perspective?: PerspectiveReference;
   readonly onPick?: (hit: unknown) => void;
   readonly onSecondaryPick?: (hit: unknown) => void;
   readonly onStop?: () => void;
@@ -74,6 +76,7 @@ function cameraFixture(options: {
     ...(options.azimuth !== undefined ? { azimuth: options.azimuth } : {}),
     ...(options.pickGround ? { pickGround: options.pickGround } : {}),
     ...(options.bounds ? { bounds: options.bounds } : {}),
+    ...(options.perspective ? { perspective: options.perspective } : {}),
     minZoom: 2,
     maxZoom: 14,
     onPick,
@@ -254,50 +257,115 @@ describe('three-quarter camera input options', () => {
     }
   });
 
-  it.each([1, 2])('anchors actual raised-ground picks to the wheel cursor at DPR%s', (dpr) => {
-    const point = new Vector3(-1.1, 1.2, 0.35);
-    const fixture = cameraFixture({
-      dpr,
-      elevation: Math.atan(Math.sqrt(0.5)),
-      azimuth: Math.PI / 4,
-      pickGround: (x, y) => fixture.scene.pick(x, y, (m) => m === ground)?.pickedPoint ?? null,
-    });
-    const ground = MeshBuilder.CreateGround(
-      'raised-ground',
-      { width: 20, height: 20 },
-      fixture.scene,
-    );
-    ground.position.y = point.y;
+  it.each([
+    { dpr: 1, perspective: false },
+    { dpr: 2, perspective: false },
+    { dpr: 1, perspective: true },
+    { dpr: 2, perspective: true },
+  ])(
+    'anchors raised-ground wheel picks at DPR$dpr, perspective=$perspective',
+    ({ dpr, perspective }) => {
+      const point = new Vector3(-1.1, 1.2, 0.35);
+      const fixture = cameraFixture({
+        dpr,
+        ...(perspective ? { perspective: { targetX: 0, targetZ: 0, distance: 16 } } : {}),
+        elevation: Math.atan(Math.sqrt(0.5)),
+        azimuth: Math.PI / 4,
+        pickGround: (x, y) => fixture.scene.pick(x, y, (m) => m === ground)?.pickedPoint ?? null,
+      });
+      const ground = MeshBuilder.CreateGround(
+        'raised-ground',
+        { width: 20, height: 20 },
+        fixture.scene,
+      );
+      ground.position.y = point.y;
+      vi.spyOn(fixture.engine, 'getDeltaTime').mockReturnValue(16);
+      const project = () => {
+        fixture.scene.render();
+        return Vector3.Project(
+          point,
+          Matrix.Identity(),
+          fixture.scene.getTransformMatrix(),
+          fixture.scene.activeCamera!.viewport.toGlobal(400 * dpr, 300 * dpr),
+        ).scale(1 / dpr);
+      };
+      try {
+        const before = project();
+        expect(
+          fixture.scene
+            .pick(before.x, before.y, (m) => m === ground)!
+            .pickedPoint!.subtract(point)
+            .length(),
+        ).toBeLessThan(0.0001);
+        for (const delta of [-240, 180, -90, 240]) {
+          fixture.dispatchWheel(delta, 0, before.x, before.y);
+          for (let i = 0; i < 80; i++)
+            fixture.scene.onBeforeRenderObservable.notifyObservers(fixture.scene);
+          const after = project();
+          expect(after.x).toBeCloseTo(before.x, 3);
+          expect(after.y).toBeCloseTo(before.y, 3);
+        }
+      } finally {
+        fixture.camera.dispose();
+        fixture.scene.dispose();
+        fixture.engine.dispose();
+      }
+    },
+  );
+
+  it('uses perspective for both cell width and figure height while pan/zoom preserve their registration', () => {
+    const elevation = (50 * Math.PI) / 180;
+    const perspective = { targetX: 0, targetZ: 0, distance: 16 };
+    const fixture = cameraFixture({ perspective, elevation });
     vi.spyOn(fixture.engine, 'getDeltaTime').mockReturnValue(16);
-    const project = () => {
+    const project = (point: Vector3) => {
       fixture.scene.render();
       return Vector3.Project(
         point,
         Matrix.Identity(),
         fixture.scene.getTransformMatrix(),
-        fixture.scene.activeCamera!.viewport.toGlobal(400 * dpr, 300 * dpr),
-      ).scale(1 / dpr);
+        fixture.scene.activeCamera!.viewport.toGlobal(400, 300),
+      );
+    };
+    const widthAt = (z: number) =>
+      project(new Vector3(0.5, 0, z)).x - project(new Vector3(-0.5, 0, z)).x;
+    const heightAt = (z: number) =>
+      project(new Vector3(0, 0, z)).y -
+      project(new Vector3(0, Math.cos(elevation), z + Math.sin(elevation))).y;
+    const registered = () => {
+      const world = new Vector3(1.3, 0.24, 3.1);
+      const image = projectCameraPoint(world, perspective, elevation);
+      // The corresponding point on the authored reference plane must stay under the figure.
+      const up = image.z * Math.sin(elevation);
+      const backdrop = new Vector3(image.x, up * Math.cos(elevation), up * Math.sin(elevation));
+      const body = project(world),
+        painted = project(backdrop);
+      expect(body.x).toBeCloseTo(painted.x, 3);
+      expect(body.y).toBeCloseTo(painted.y, 3);
+      // Actual picking rays still recover canonical ground coordinates.
+      const foot = new Vector3(2, 0, 3);
+      const screen = project(foot);
+      const ray = fixture.scene.createPickingRay(
+        screen.x,
+        screen.y,
+        Matrix.Identity(),
+        fixture.scene.activeCamera,
+      );
+      const picked = ray.origin.add(ray.direction.scale(-ray.origin.y / ray.direction.y));
+      expect(picked.subtract(foot).length()).toBeLessThan(0.0001);
     };
     try {
-      const before = project();
-      expect(
-        fixture.scene
-          .pick(before.x, before.y, (m) => m === ground)!
-          .pickedPoint!.subtract(point)
-          .length(),
-      ).toBeLessThan(0.0001);
-      for (const delta of [-240, 180, -90, 240]) {
-        fixture.dispatchWheel(delta, 0, before.x, before.y);
-        for (let i = 0; i < 80; i++)
-          fixture.scene.onBeforeRenderObservable.notifyObservers(fixture.scene);
-        const after = project();
-        expect(after.x).toBeCloseTo(before.x, 3);
-        expect(after.y).toBeCloseTo(before.y, 3);
-      }
+      expect(widthAt(-4) / widthAt(4)).toBeGreaterThan(1.35);
+      expect(heightAt(-4) / heightAt(4)).toBeCloseTo(widthAt(-4) / widthAt(4), 4);
+      registered();
+      fixture.dispatchKey('KeyD');
+      for (let i = 0; i < 30; i++) fixture.frame();
+      fixture.dispatchKey('KeyD', fixture.canvas, 'keyup');
+      fixture.dispatchWheel(-240);
+      for (let i = 0; i < 80; i++) fixture.frame();
+      registered();
     } finally {
-      fixture.camera.dispose();
-      fixture.scene.dispose();
-      fixture.engine.dispose();
+      fixture.dispose();
     }
   });
 

@@ -1,6 +1,17 @@
 # Warwrit current delivery plan
 
-**Battle camera bounds — 2026-10-16, LOCAL / REVIEW PENDING:**
+**Battle perspective correction — 2026-10-17, LOCAL / REVIEW PENDING:**
+Owner expanded PR159 scope: match grid and figures to the painted perspective.
+Same worktree/branch; main and primary WIP untouched. Pinhole projection with
+fixed optical centre and off-axis pan/zoom; existing bounds retained. GitHub
+Three.js/Babylon/fSpy sources inspected; no new dependency. Camera18 PASS,
+web types/lint/coverage811+47SKIPPED/strict audit PASS. Author browser4sizes,
+day/night, stable image registration,165ground hits/body hover-pin/0POST PASS.
+Independent visual/current-head clean CI/merge PENDING. Prior bb55f5b CI SUCCESS
+covers only bounds. Merge remains explicitly owner-authorized for this slice.
+[Owning research/result](../wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
+
+**Battle camera bounds — 2026-10-16, HISTORICAL / PROJECTION SUPERSEDED:**
 Owner explicitly authorizes isolated worktree, implementation, review and merge
 to main for this slice. `codex/battle-camera-bounds` from main5915ad0 confines
 the full viewport and zoom to the painted battle map, including drag/keys/resize.

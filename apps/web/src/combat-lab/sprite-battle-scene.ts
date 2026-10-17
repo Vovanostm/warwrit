@@ -24,6 +24,7 @@ import type {
 } from '@warwrit/protocol';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
+import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { BATTLE_ART } from '../renderer/art.js';
 import {
   opaqueSpritePixel,
@@ -142,6 +143,9 @@ export async function mountSpriteBattleScene(
   const initialTiles = tilesFor(initialView);
   const mapDepth = Math.max(2, ...initialTiles.map((tile) => tile.r)) + 1;
   const centerZ = ((mapDepth - 1) * SQRT3) / 4;
+  // Art-directed pinhole calibration; the painting has no recoverable lens metadata.
+  // One fixed optical centre governs grid, figures and image-window navigation.
+  const perspective = { targetX: 9.5, targetZ: centerZ, distance: 16 };
   let currentView = initialView;
   let selectedId = selectedUnitId;
   let selectedSkill: CombatLabSkillId | null = null;
@@ -191,23 +195,26 @@ export async function mountSpriteBattleScene(
   const backgroundHeight = (backgroundWidth * 941) / 1672;
   const backgroundX = backgroundWidth * 0.35;
   const backgroundUp = backgroundHeight * 0.38;
-  const centerUp = centerZ * Math.sin(CAMERA_ELEVATION);
-  const upOffset = backgroundUp - centerUp;
   const background = MeshBuilder.CreatePlane(
     'old-mill-battlefield',
     { width: backgroundWidth, height: backgroundHeight },
     scene,
   );
   background.rotation.x = CAMERA_ELEVATION;
+  // Keep the painting at its authored image coordinates, behind all tactical geometry.
+  // Moving the frustum window rather than the optical centre prevents parallax drift.
+  const backdropDepth = 40;
+  const backdropScale = (perspective.distance + backdropDepth) / perspective.distance;
+  const backdropUp = backgroundUp - (centerZ + 2) * Math.sin(CAMERA_ELEVATION);
+  background.scaling.set(backdropScale, backdropScale, 1);
   background.position.set(
-    backgroundX,
-    upOffset * Math.cos(CAMERA_ELEVATION) - 10 * Math.sin(CAMERA_ELEVATION),
-    centerZ + upOffset * Math.sin(CAMERA_ELEVATION) + 10 * Math.cos(CAMERA_ELEVATION),
+    perspective.targetX + (backgroundX - 1.1 - perspective.targetX) * backdropScale,
+    backdropUp * backdropScale * Math.cos(CAMERA_ELEVATION) -
+      backdropDepth * Math.sin(CAMERA_ELEVATION),
+    centerZ +
+      backdropUp * backdropScale * Math.sin(CAMERA_ELEVATION) +
+      backdropDepth * Math.cos(CAMERA_ELEVATION),
   );
-  // Register the painted perimeter around the HUD's free central play area.
-  // Grid axes, sprite scale and foot pivots remain unchanged.
-  background.position.x -= 1.1;
-  background.position.z -= 2;
   background.isPickable = false;
   const groundMaterial = new StandardMaterial('old-mill-painted-values', scene);
   groundMaterial.diffuseTexture = texture(millFieldUrl);
@@ -357,12 +364,10 @@ export async function mountSpriteBattleScene(
         new Vector3(positions[vertex]!, positions[vertex + 1]!, positions[vertex + 2]!),
         cell.getWorldMatrix(),
       );
-      const relative = world.subtract(background.position);
+      const projected = projectCameraPoint(world, perspective, CAMERA_ELEVATION);
       uvs.push(
-        relative.x / backgroundWidth + 0.5,
-        (relative.y * Math.cos(CAMERA_ELEVATION) + relative.z * Math.sin(CAMERA_ELEVATION)) /
-          backgroundHeight +
-          0.5,
+        (projected.x - backgroundX + 1.1) / backgroundWidth + 0.5,
+        ((projected.z + 2) * Math.sin(CAMERA_ELEVATION) - backgroundUp) / backgroundHeight + 0.5,
       );
     }
     cell.setVerticesData(VertexBuffer.UVKind, uvs);
@@ -1084,6 +1089,7 @@ export async function mountSpriteBattleScene(
   };
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
+    perspective,
     // Use the painted plane's projected edges, including its registration offset.
     bounds: {
       minX: backgroundX - 1.1 - backgroundWidth / 2,

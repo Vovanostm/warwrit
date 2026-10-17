@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Match battle grid and figures to painted perspective
+
+- 2026-10-17, branch `codex/battle-camera-bounds`, local: owner reported the
+  orthographic grid/figures against a perspective background. Fixed pinhole
+  reference plus off-axis pan/zoom now governs field and figures; projected
+  raised-ground UV/wheel anchors preserve registration, map bounds retained.
+  GitHub Three.js/Babylon/fSpy mechanisms inspected; no dependency added.
+  Camera18/web types/lint/coverage811+47SKIPPED/strict audit PASS.
+  Actual4sizes/day-night/pan-zoom registration/165ground hits/body inspection
+  with0POST PASS; independent visual/current-head clean CI/merge pending.
+  Prior PR159 bb55f5b CI SUCCESS covers only the superseded bounds candidate.
+  [Owning research/result](docs/wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
+
 ### Confine the battle camera to the painted map
 
 - 2026-10-16, branch `codex/battle-camera-bounds`, local: owner requested

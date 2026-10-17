@@ -3768,3 +3768,75 @@ registration; исправлено чтением уже загруженног�
 Author source review: scoped diff/consumers проверены, observable defects
 не найдены. Independent visual review/clean CI/merge PENDING.
 Полный clean gate исполняется существующим PR CI, без повторного local run.
+
+## Перспектива сетки и фигур — 2026-10-17
+
+Владелец расширил текущий camera slice: ортографические клетки и фигуры
+не согласованы с перспективой painted mill. PR159 остаётся OPEN; SUCCESS
+CI38956788123 относится только к прежнему head bb55f5b с bounds, а не к
+новой проекции. Предыдущий critic был прерван, visual verdict NOT_RUN.
+Разрешение на реализацию/review/merge сохраняется; основной dirty checkout
+не меняется.
+
+### GitHub: выбор механизма
+
+**Supported choice:** pinhole perspective плюс off-axis image-window pan/zoom.
+Общая неподвижная optical centre задаёт уменьшение клеток и фигур с глубиной.
+Навигация меняет окно изображения, поэтому painted backdrop и ground anchors
+не получают различный parallax. Реализация использует установленный Babylon
+9.28.0; новая библиотека не требуется. Параметры рисунка не сохранились:
+50° elevation и distance16 — проверяемая art calibration, не восстановленный
+объектив и не доказанная единственная точка схода всего painted asset.
+
+Проверены три семейства, GitHub CLI source reads, 2026-10-17:
+
+- [Three.js PerspectiveCamera.setViewOffset/updateProjectionMatrix](https://github.com/mrdoob/three.js/blob/02681f3c27db6c94f424d08d83afb6a45d856cef/src/cameras/PerspectiveCamera.js#L304):
+  INSPECTED off-axis frustum, lens shift и inverse projection; MIT. Используется
+  механизм, без переноса Three.js/runtime. Camera tests найдены, чужие tests
+  NOT_RUN; наличие тестов не доказывает нашу регистрацию фона.
+- [Babylon PerspectiveFovLHToRef](https://github.com/BabylonJS/Babylon.js/blob/0520900e8d7afcb7b7923bb9bad913e49b6cf919/packages/dev/core/src/Maths/math.vector.pure.ts#L8496)
+  и [Camera.freezeProjectionMatrix](https://github.com/BabylonJS/Babylon.js/blob/0520900e8d7afcb7b7923bb9bad913e49b6cf919/packages/dev/core/src/Cameras/camera.pure.ts#L933):
+  INSPECTED у version9.28.0 и установленного source/typings; Apache-2.0.
+  Используем существующий API матрицы, picking остаётся штатным Babylon ray.
+- [fSpy solver](https://github.com/perarnia/fSpy/blob/702189ec5acbbd2c8ba492db0e52ecb5fc908f5c/src/gui/solver/solver.ts#L305):
+  INSPECTED focal length/camera orientation из vanishing points; GPL-3.0.
+  Только исследовательский источник, код не переносится. Автоматическая
+  калибровка не выбрана: нет надёжно размеченных ортогональных направлений
+  и исходных camera metadata painted asset. README/license/package inspected;
+  чужой solver не запускался. General homography warp без общей 3D камеры
+  отвергнут: сам по себе не задаёт уменьшение фигуры, высоту и picking.
+
+Поиск ограничен тремя направлениями (camera matching, off-axis perspective,
+Babylon projection), тремя подробно прочитанными семьями. Первые две узкие
+repo queries дали пустой ответ; старый stuffmatic/master и guessed main для
+fSpy вернули422, затем canonical perarnia/develop подтверждён metadata.
+Fetched source lives in `output/github-perspective-20261017/`, локально.
+Чужие scripts/builds NOT_RUN, зависимости не устанавливались. Проверка,
+которая опровергнет выбор: относительная регистрация grid/paint меняется
+после pan/zoom, неуменьшающиеся дальние фигуры или неверный ground hit.
+
+### Реализация и текущая проверка
+
+Shared camera допускает optional fixed perspective reference; остальные
+потребители сохраняют orthographic mode. Reference-plane bounds сохраняют
+полностью закрытый фоном viewport. ProjectCameraPoint задаёт то же pinhole
+преобразование для wheel anchor и UV raised ground. Backdrop отнесён за
+всё поле с сохранением исходного изображения, sprite foot pivots/масштаб
+в world units и canonical hex coordinates остаются едиными.
+
+Camera18/web types/lint PASS; coverage811 PASS/47 SKIPPED; strict audit against
+origin/main PASS (0 новых findings). Уменьшение equal-world cell/figure с
+глубиной, неизменная регистрация при pan/zoom, inverse ground rays, raised
+wheel anchors DPR1/2 и прежние input/bounds проверены. Browser PASS на
+1280×720/1440×900/1920×1080/2560×1080, day/night/grid/close: near/far cell
+width ratio1.421176 остаётся постоянным; reference UV8,4 остаётся в пределах
+1e-5 при keys/drag/wheel/resize. Края painting охватывают viewport; navigation
+0 POST, позиции фигур неизменны. Все165 ground centres получают свой mesh
+при реальном scene picking; actual body hover+LMB pin «Меч + щит» PASS,
+inspection0POST. Evidence: `output/playwright/camera-perspective/` (локально).
+Первая automation попытка ожидала неверную подпись кнопки сетки; затем
+probe ошибочно предположил имя human-1 «Командир». DOM/source readback
+исправил ожидания; обе первые попытки NOT_PASS сохранены, game code ради
+них не менялся. Author source review scoped diff/callers no concrete findings.
+Independent visual/current-head clean CI/merge PENDING. Старые808/CI receipts
+не принимают новую проекцию. Full clean gate исполнит существующий PR CI.
