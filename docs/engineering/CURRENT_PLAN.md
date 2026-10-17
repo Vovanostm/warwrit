@@ -1,6 +1,13 @@
 # Warwrit current delivery plan
 
 **Battle perspective correction — 2026-10-17, LOCAL / REVIEW PENDING:**
+Latest terrain amendment: footprint UV lifts with raised top; continuous earth
+side UV/vertex shade and shared display height0.28. Canonical rules unchanged.
+27focused/types/lint/format/811coverage+47SKIPPED/audit14 PASS. Real editor
+identical archers0/1/2 feet/ground aligned;165picks/bodyhover-pin/0POST PASS.
+Full current visual/new-head CI/merge PENDING.874dc2f CI38998708040 SUCCESS
+covers prior dark-strip version. This latest amendment supersedes its appearance.
+
 Owner expanded PR159 scope: match grid and figures to the painted perspective.
 Same worktree/branch; main and primary WIP untouched. Pinhole projection with
 fixed optical centre and off-axis pan/zoom; existing bounds retained. GitHub

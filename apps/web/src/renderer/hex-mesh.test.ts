@@ -172,12 +172,12 @@ it('draws one shared step rim at the higher surface regardless of tile order', (
     const borders = scene.getMeshByName('tactical-grid') as Mesh;
     expect(borders.getTotalVertices()).toBe(11 * 4);
     const levels = new Set(worldVertices(borders).map((point) => Number(point.y.toFixed(3))));
-    expect([...levels].sort()).toEqual([0.045, 0.285]);
+    expect([...levels].sort()).toEqual([0.045, 0.605]);
     const shared = borders.metadata.edgeCells.findIndex((cells: string[]) => cells.length === 2);
     expect(
       worldVertices(borders)
         .slice(shared * 4, shared * 4 + 4)
-        .every((p) => p.y > 0.28),
+        .every((p) => p.y > 0.6),
     ).toBe(true);
     const second = new Scene(engine);
     createBattleCellGrid(second, [
@@ -191,7 +191,7 @@ it('draws one shared step rim at the higher surface regardless of tile order', (
     expect(
       worldVertices(reverse)
         .slice(reverseShared * 4, reverseShared * 4 + 4)
-        .every((p) => p.y > 0.28),
+        .every((p) => p.y > 0.6),
     ).toBe(true);
     second.dispose();
   } finally {

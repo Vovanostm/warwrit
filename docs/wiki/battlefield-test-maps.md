@@ -3895,3 +3895,30 @@ output/playwright/camera-perspective/. Source frozen на этом вариан�
 тот же critic повторяет полный absolute pass. CI38997076787 SUCCESS
 на132156b относится к промежуточной lip версии, не к новой bank geometry.
 Новый текущий clean PR gate и merge PENDING.
+
+### Читаемая высота и непрерывная земля — 2026-10-17
+
+Bank-вариант874dc2f также получил integration1: боковины читались как тёмная
+лента. Исправлена причина в mapping: raised top берёт UV исходного ground
+footprint до подъёма, поэтому texture больше не компенсирует видимую высоту.
+Боковины используют непрерывные world-space UV и vertex shade вместо
+повторённой узкой полосы/тёмного tint. Общий renderer BATTLE_HEIGHT_STEP=0.28
+согласует top, figures, grid, decor и seam picking. Canonical уровни0/1/2,
+стоимость, LOS, команды и replay не меняются. Bank остаётся non-pickable.
+
+Focused camera/hex/sprite geometry27, web types/lint/format,
+coverage811 PASS/47 SKIPPED и strict14-file audit PASS. Первая focused попытка
+обнаружила старое числовое ожидание0.24/0.76; оно обновлено до0.56/0.44.
+CI38998708040 SUCCESS на874dc2f покрывает только предыдущую версию.
+Author source review проверил consumers общего height scale и camera helper;
+конкретных дефектов не найдено. Полный новый PR gate ещё PENDING.
+
+Нормальным редактором создан6v6 с тремя одинаковыми лучниками на q9/10/11,r3,
+height0/1/2: foot y0/0.28/0.56 совпадает с ground. Новые1440×900 day/night
+кадры показывают эту границу без скрытых верхней панелью голов.
+Свежий real-scene pick:165/165 ground centres,0 mismatch; actual hover+LMB
+pin «Лук» и0POST PASS. Terrain bank не забирает input. Console содержит
+только прежний favicon404, не runtime renderer exception.
+Evidence: output/playwright/camera-perspective/terrace-_, height-012-_,
+height-editor-result.txt; локальные файлы без tracked links.
+Полный повтор absolute visual review текущего варианта PENDING.

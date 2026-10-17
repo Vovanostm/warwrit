@@ -11,6 +11,15 @@ requests.
 
 ### Match battle grid and figures to painted perspective
 
+- 2026-10-17, branch `codex/battle-camera-bounds`, local height correction:
+  top UV now lifts its ground footprint; continuous earth-side UV/vertex shade
+  replaces repeated dark strips. Shared display height0.28 keeps tops, figures,
+  grid and picking aligned; canonical height/rules unchanged. Focused27/types/
+  lint/format/coverage811+47SKIPPED/audit14files PASS. Real editor0/1/2 archers,
+  165ground hits/body hover-pin/0POST PASS. Earlier numeric expectation failed,
+  corrected. Full current visual/new-head CI/merge pending; prior874dc2f CI SUCCESS.
+  [Owning result](docs/wiki/battlefield-test-maps.md#читаемая-высота-и-непрерывная-земля--2026-10-17).
+
 - 2026-10-17, branch `codex/battle-camera-bounds`, local technique correction:
   repeat visual integration1 rejected the wire lip. Real non-pickable earth
   banks now show exposed height volume; original canonical top/vertical pick

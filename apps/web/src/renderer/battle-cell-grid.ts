@@ -9,7 +9,7 @@ import {
   type Scene,
 } from '@babylonjs/core';
 import type { CombatLabHex } from '@warwrit/protocol';
-import { HEX_RADIUS, hexToWorld } from './hex-projection.js';
+import { BATTLE_HEIGHT_STEP, HEX_RADIUS, hexToWorld } from './hex-projection.js';
 import { createHexDisc } from './hex-mesh.js';
 
 type GridTile = CombatLabHex & { readonly height: number };
@@ -39,7 +39,7 @@ export function createBattleCellGrid(scene: Scene, tiles: readonly GridTile[]) {
     const cellKey = key(tile);
     const { x, z } = hexToWorld(tile.q, tile.r);
     const fill = createHexDisc(`cell-fill:${cellKey}`, HEX_RADIUS, scene);
-    fill.position.set(x, tile.height * 0.12 + 0.025, z);
+    fill.position.set(x, tile.height * BATTLE_HEIGHT_STEP + 0.025, z);
     fill.isPickable = false;
     fill.renderingGroupId = 0;
     fill.alphaIndex = 1;
@@ -54,7 +54,7 @@ export function createBattleCellGrid(scene: Scene, tiles: readonly GridTile[]) {
       const corner = (a: number) =>
         new Vector3(
           x + Math.cos(a) * HEX_RADIUS,
-          tile.height * 0.12 + 0.045,
+          tile.height * BATTLE_HEIGHT_STEP + 0.045,
           z + Math.sin(a) * HEX_RADIUS,
         );
       const existing = edges.get(edgeKey);

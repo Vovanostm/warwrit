@@ -37,7 +37,12 @@ import { markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
 import { spriteForUnit } from './sprite-art.js';
 import { SPRITE_MASK_SIZE, SPRITE_OUTLINE_SIZE, spriteOutlinePixels } from './sprite-outline.js';
-import { HEX_RADIUS, hexToWorld, worldToHex } from '../renderer/hex-projection.js';
+import {
+  BATTLE_HEIGHT_STEP,
+  HEX_RADIUS,
+  hexToWorld,
+  worldToHex,
+} from '../renderer/hex-projection.js';
 import { createHexDisc, createHexSides } from '../renderer/hex-mesh.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
@@ -237,10 +242,12 @@ export async function mountSpriteBattleScene(
         fixture.rotation.x = CAMERA_ELEVATION;
         fixture.position.set(
           point.x,
-          occupied.height * 0.12 + 0.575 * Math.cos(CAMERA_ELEVATION),
+          occupied.height * BATTLE_HEIGHT_STEP + 0.575 * Math.cos(CAMERA_ELEVATION),
           point.z + 0.575 * Math.sin(CAMERA_ELEVATION),
         );
-        fixture.metadata = { combatFoot: new Vector3(point.x, occupied.height * 0.12, point.z) };
+        fixture.metadata = {
+          combatFoot: new Vector3(point.x, occupied.height * BATTLE_HEIGHT_STEP, point.z),
+        };
         const material = new StandardMaterial('b023-rooted-fixture-ink', scene);
         material.diffuseTexture = texture(b023FixtureUrl);
         material.useAlphaFromDiffuseTexture = true;
@@ -316,7 +323,8 @@ export async function mountSpriteBattleScene(
   const cellGrid = createBattleCellGrid(scene, initialTiles);
   const heightLabels: Mesh[] = [];
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
-  const groundYFor = (hex: CombatLabHex) => (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * 0.12;
+  const groundYFor = (hex: CombatLabHex) =>
+    (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_HEIGHT_STEP;
   const stepMaterial = new StandardMaterial('terrain-step-earth', scene);
   // Raised earth is real opaque geometry, unlike the level-zero backdrop wash.
   // Do not reuse the alpha-bearing sprite texture cache for depth occluders.
@@ -329,7 +337,7 @@ export async function mountSpriteBattleScene(
   );
   earthTexture.hasAlpha = false;
   stepMaterial.diffuseTexture = earthTexture;
-  stepMaterial.diffuseColor = new Color3(0.48, 0.41, 0.32);
+  stepMaterial.diffuseColor = Color3.White();
   stepMaterial.specularColor = Color3.Black();
   stepMaterial.backFaceCulling = false;
   const raisedTexture = new Texture(
@@ -364,13 +372,41 @@ export async function mountSpriteBattleScene(
         new Vector3(positions[vertex]!, positions[vertex + 1]!, positions[vertex + 2]!),
         cell.getWorldMatrix(),
       );
-      const projected = projectCameraPoint(world, perspective, CAMERA_ELEVATION);
+      // Soil belongs to the canonical ground footprint, then rises with the top.
+      // Sampling the already lifted screen point would erase the visible height displacement.
+      const projected = projectCameraPoint(
+        new Vector3(world.x, 0, world.z),
+        perspective,
+        CAMERA_ELEVATION,
+      );
       uvs.push(
         (projected.x - backgroundX + 1.1) / backgroundWidth + 0.5,
         ((projected.z + 2) * Math.sin(CAMERA_ELEVATION) - backgroundUp) / backgroundHeight + 0.5,
       );
     }
     cell.setVerticesData(VertexBuffer.UVKind, uvs);
+  };
+  const mapEarthFace = (mesh: Mesh) => {
+    const positions = mesh.getVerticesData(VertexBuffer.PositionKind)!;
+    const matrix = mesh.computeWorldMatrix(true);
+    const uvs: number[] = [];
+    const colours: number[] = [];
+    for (let vertex = 0; vertex < positions.length; vertex += 3) {
+      const world = Vector3.TransformCoordinates(Vector3.FromArray(positions, vertex), matrix);
+      // Continuous world-space soil grain, rather than the same tiny stripe on every face.
+      const face = Math.floor(vertex / 12) * 12;
+      const dx = positions[face + 6]! - positions[face + 9]!;
+      const dz = positions[face + 8]! - positions[face + 11]!;
+      const length = Math.hypot(dx, dz);
+      uvs.push(
+        ((world.x * dx + world.z * dz) / length) * 0.42,
+        world.y * 1.2 + ((-world.x * dz + world.z * dx) / length) * 0.42,
+      );
+      const shade = (vertex / 3) % 4 < 2 ? 0.68 : 1;
+      colours.push(shade, shade, shade, 1);
+    }
+    mesh.setVerticesData(VertexBuffer.UVKind, uvs);
+    mesh.setVerticesData(VertexBuffer.ColorKind, colours);
   };
   const addTerrainSides = (
     tile: Tile,
@@ -388,25 +424,28 @@ export async function mountSpriteBattleScene(
       [1, 0],
     ] as const;
     const bottoms = neighbours.map(
-      ([dq, dr]) => (tileInfo.get(HEX_KEY({ q: tile.q + dq, r: tile.r + dr }))?.height ?? 0) * 0.12,
+      ([dq, dr]) =>
+        (tileInfo.get(HEX_KEY({ q: tile.q + dq, r: tile.r + dr }))?.height ?? 0) *
+        BATTLE_HEIGHT_STEP,
     );
-    if (bottoms.some((bottom) => bottom < tile.height * 0.12)) {
+    if (bottoms.some((bottom) => bottom < tile.height * BATTLE_HEIGHT_STEP)) {
       const sides = createHexSides(
         `ground-side:${key}`,
         HEX_RADIUS,
-        tile.height * 0.12,
+        tile.height * BATTLE_HEIGHT_STEP,
         bottoms,
         scene,
       );
       sides.position.set(point.x, 0, point.z);
       sides.material = stepMaterial;
       sides.metadata = cell.metadata;
+      mapEarthFace(sides);
       // A narrow sloped earth bank reads as volume when the vertical face is
       // hidden by the foreground shelf. It is decorative, never a second pick surface.
       const bank = createHexSides(
         `terrain-bank:${key}`,
         HEX_RADIUS,
-        tile.height * 0.12,
+        tile.height * BATTLE_HEIGHT_STEP,
         bottoms,
         scene,
         0.16,
@@ -414,6 +453,7 @@ export async function mountSpriteBattleScene(
       bank.position.copyFrom(sides.position);
       bank.material = stepMaterial;
       bank.isPickable = false;
+      mapEarthFace(bank);
     }
   };
   const addRubble = (tile: Tile, point: { x: number; z: number }, key: string) => {
@@ -430,20 +470,22 @@ export async function mountSpriteBattleScene(
     rubble.rotation.x = CAMERA_ELEVATION;
     rubble.position.set(
       point.x,
-      tile.height * 0.12 + rubbleCenterOffset * Math.cos(CAMERA_ELEVATION),
+      tile.height * BATTLE_HEIGHT_STEP + rubbleCenterOffset * Math.cos(CAMERA_ELEVATION),
       point.z + rubbleCenterOffset * Math.sin(CAMERA_ELEVATION),
     );
     rubble.material = artMaterial(`rubble-ink:${key}`, BATTLE_ART.rubble);
     rubble.isPickable = false;
     rubble.renderingGroupId = 1;
-    rubble.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
+    rubble.metadata = {
+      combatFoot: new Vector3(point.x, tile.height * BATTLE_HEIGHT_STEP, point.z),
+    };
   };
   const addHeight = (tile: Tile, point: { x: number; z: number }) => {
     addLabel(
       scene,
       heightLabels,
       `+${tile.height}`,
-      new Vector3(point.x, tile.height * 0.12 + 0.09, point.z),
+      new Vector3(point.x, tile.height * BATTLE_HEIGHT_STEP + 0.09, point.z),
       'height',
     );
     heightLabels.at(-1)!.renderingGroupId = 0;
@@ -459,7 +501,7 @@ export async function mountSpriteBattleScene(
     ember.rotation.x = CAMERA_ELEVATION;
     ember.position.set(
       point.x,
-      tile.height * 0.12 + 0.35 * Math.cos(CAMERA_ELEVATION),
+      tile.height * BATTLE_HEIGHT_STEP + 0.35 * Math.cos(CAMERA_ELEVATION),
       point.z + 0.35 * Math.sin(CAMERA_ELEVATION),
     );
     const emberMaterial = new StandardMaterial(`fire-ember-ink:${key}`, scene);
@@ -473,10 +515,12 @@ export async function mountSpriteBattleScene(
     ember.material = emberMaterial;
     ember.isPickable = false;
     ember.renderingGroupId = 0;
-    ember.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
+    ember.metadata = {
+      combatFoot: new Vector3(point.x, tile.height * BATTLE_HEIGHT_STEP, point.z),
+    };
     const fireLight = new PointLight(
       `fire-light:${key}`,
-      new Vector3(point.x, tile.height * 0.12 + 0.7, point.z),
+      new Vector3(point.x, tile.height * BATTLE_HEIGHT_STEP + 0.7, point.z),
       scene,
     );
     fireLight.diffuse = new Color3(0.85, 0.47, 0.23);
@@ -488,7 +532,7 @@ export async function mountSpriteBattleScene(
     tileInfo.set(key, tile);
     const point = AXIAL_TO_WORLD(tile);
     const cell = createHexDisc(`ground:${key}`, HEX_RADIUS, scene);
-    cell.position.set(point.x, tile.height * 0.12, point.z);
+    cell.position.set(point.x, tile.height * BATTLE_HEIGHT_STEP, point.z);
     const wash = terrainWash(tile);
     cell.material = tile.height > 0 ? raisedMaterials.get(wash)! : wash;
     if (tile.height > 0) mapRaisedTop(cell);

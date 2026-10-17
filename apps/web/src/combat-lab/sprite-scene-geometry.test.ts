@@ -53,8 +53,8 @@ it('shifts a field anchor without changing its horizontal and target coordinates
 
 it('intersects the actual raised level and rejects parallel or backwards rays', () => {
   const hit = intersectGroundLevel(new Ray(new Vector3(2, 1, 3), new Vector3(0, -1, 0)), 2);
-  expect(hit?.point.asArray()).toEqual([2, 0.24, 3]);
-  expect(hit?.distance).toBeCloseTo(0.76);
+  expect(hit?.point.asArray()).toEqual([2, 0.56, 3]);
+  expect(hit?.distance).toBeCloseTo(0.44);
   expect(intersectGroundLevel(new Ray(new Vector3(0, 1, 0), Vector3.Right()), 0)).toBeNull();
   expect(intersectGroundLevel(new Ray(new Vector3(0, 1, 0), Vector3.Up()), 0)).toBeNull();
 });
