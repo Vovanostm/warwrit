@@ -34,6 +34,7 @@ it('keeps the canonical top rim and caps deterministic natural banks at 0.22 rad
 
         const lipInner = (side * 35 + 28 + segment) * 3;
         expect(positions[lipInner + 1]).toBeCloseTo(top + 0.002, 7);
+        expect(normals[lipInner + 1]).toBeGreaterThan(0);
         expect(Math.hypot(positions[lipInner]!, positions[lipInner + 2]!)).toBeLessThan(
           Math.hypot(expectedX, expectedZ),
         );

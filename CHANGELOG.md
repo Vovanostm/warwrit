@@ -11,6 +11,16 @@ requests.
 
 ### Combat readability and reusable terrain
 
+- 2026-10-17, branch `codex/combat-readability`, published draft
+  [PR160](https://github.com/Vovanostm/warwrit/pull/160), local correction:
+  backdrop-off GPU probe exposed culled bank faces; fix Babylon winding and
+  upward lip normals. Blend two continuous world texture scales to reduce
+  motifs without stretching ink. Initial cleanCI bootstrap PASS but coverage
+  timed out on512outline; optimize exact boundary stamping, retain5s limit and
+  add independent pixel oracle. Current full815coverage/47SKIP/types/lint PASS,
+  source review DONE. Previous visual timebox BLOCKED; current full absolute
+  review/newCI/merge pending. Owning wiki preserves failures and evidence.
+
 - 2026-10-17, branches `codex/combat-terrain-banks` → `codex/combat-readability`,
   local: integrate deterministic segmented earth banks and narrow soil lips
   under raised hexes, preserving canonical tops/grid/picking; new ink earth

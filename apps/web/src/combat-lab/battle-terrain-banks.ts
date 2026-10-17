@@ -182,7 +182,7 @@ function appendBankIndices(geometry: BankGeometry, base: number): void {
       const upperRight = upperLeft + 1;
       const lowerLeft = upperLeft + rowSize;
       const lowerRight = lowerLeft + 1;
-      geometry.indices.push(upperLeft, upperRight, lowerRight, upperLeft, lowerRight, lowerLeft);
+      geometry.indices.push(upperLeft, lowerRight, upperRight, upperLeft, lowerLeft, lowerRight);
     }
   }
 }
@@ -245,7 +245,7 @@ function appendBankLipIndices(geometry: BankGeometry, base: number): void {
     const innerLeft = outerLeft + rowSize;
     const innerRight = innerLeft + 1;
     const outerRight = outerLeft + 1;
-    geometry.indices.push(outerLeft, innerLeft, innerRight, outerLeft, innerRight, outerRight);
+    geometry.indices.push(outerLeft, innerRight, innerLeft, outerLeft, outerRight, innerRight);
   }
 }
 

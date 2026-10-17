@@ -3992,3 +3992,29 @@ canonical geometry/picking согласованы. Последние web types/
 геометрическая регрессия и строгий38-file main-based audit PASS. Fresh navigation
 и inspection/layers снова0POST, Home и keyboard traversal сохранены. Повторный
 absolute visual review выполняется по новому полному набору, не по diff.
+
+### Terrain winding and clean-CI correction — 2026-10-17
+
+Второй critic не закончил обязательный пакет в срок: BLOCKED, предварительно
+2/2/1/2/2/2/1. Огонь признан различимым; рельеф/повторы остались замечаниями.
+Root выключил backdrop и получил чёрные щели; runtime backFaceCulling=false
+на bank material заполнил их. Причина — winding: Babylon ComputeNormals
+использует обратный относительно обычного cross порядок. Исправлены bank/lip
+indices, lip normals теперь +Y с регрессией. Палитра не скрывает отсутствующую
+геометрию. Рисунок грунта смешивает два непрерывных world масштаба; отвергнутый
+warp растягивал чернила и удалён до публикации. Source reviewer текущего delta
+DONE. Последняя full coverage815PASS/47SKIPPED, webtypes/scopedlint PASS;
+обычный main-based audit повторяется после смены upstream (автоматический
+five-file scope не считается полным main-based результатом).
+
+[Draft PR160](https://github.com/Vovanostm/warwrit/pull/160) опубликован на564db69.
+[CI39003537556](https://github.com/Vovanostm/warwrit/actions/runs/39003537556):
+bootstrap(verify/stress/DB) PASS, coverage FAIL на512mask timeout5000ms;
+quality audit NOT_RUN. Предел не повышался. Boundary-only outline stamping
+сохраняет исходный pixel contract; independent small mixed-alpha/hole
+Chebyshev oracle добавлен. Targeted coverage4PASS, test2.17s/total3.46s;
+full815coverage также PASS. Новый source reviewer подтвердил эквивалентность.
+Финальные кадры в output/playwright/terrain-final-20261017/ (untracked);
+replacement independent absolute critic проверяет полный пакет после
+превышения бюджета предыдущим. Clean CI текущей коррекции/visual ACCEPT/merge
+ещё pending. Ни один неполный pass не назван приёмкой.

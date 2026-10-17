@@ -55,7 +55,9 @@ function groundMaterial(
         ${naturalTextureShader}
         void main(){
           vec2 worldUv=groundUv*detailScale;
-          vec3 color=naturalTile(terrainMap,worldUv);
+          // Two independent world scales break repeated motifs without stretching ink marks.
+          vec3 color=mix(naturalTile(terrainMap,worldUv),
+            naturalTile(terrainMap,worldUv*0.61+vec2(19.7,6.4)),0.38);
           gl_FragColor=vec4(pow(max(color*tint*lighting,vec3(0.0)),vec3(1.0/2.2)),1.0);
         }`,
     },

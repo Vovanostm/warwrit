@@ -30,3 +30,49 @@ it('retains a closed head contour when the source hair is only two mask pixels f
   expect(pixels[(5 * SPRITE_OUTLINE_SIZE + 67) * 4 + 3]).toBe(0);
   expect(pixels[((SPRITE_OUTLINE_SIZE - 1) * SPRITE_OUTLINE_SIZE + 67) * 4 + 3]).toBe(0);
 });
+
+it('matches a nearest-Chebyshev oracle for mixed-alpha silhouettes and holes', () => {
+  const size = 9;
+  const mask = new Uint8ClampedArray(size ** 2 * 4);
+  const setAlpha = (x: number, y: number, alpha: number) => {
+    mask[(y * size + x) * 4 + 3] = alpha;
+  };
+  for (let y = 2; y <= 6; y++) {
+    for (let x = 2; x <= 6; x++) setAlpha(x, y, 255);
+  }
+  setAlpha(4, 4, 0);
+  setAlpha(1, 4, 63);
+  setAlpha(7, 4, 16);
+
+  const pixels = spriteOutlinePixels(mask, size);
+  const outlineSize = size + 6;
+  for (let row = 0; row < outlineSize; row++) {
+    for (let column = 0; column < outlineSize; column++) {
+      const x = column - 3;
+      const y = row - 3;
+      const sourceAlpha =
+        x >= 0 && x < size && y >= 0 && y < size ? mask[(y * size + x) * 4 + 3]! : 0;
+      let nearest = 4;
+      if (sourceAlpha < 16) {
+        for (let sourceY = 0; sourceY < size; sourceY++) {
+          for (let sourceX = 0; sourceX < size; sourceX++) {
+            if (mask[(sourceY * size + sourceX) * 4 + 3]! >= 64) {
+              nearest = Math.min(nearest, Math.max(Math.abs(x - sourceX), Math.abs(y - sourceY)));
+            }
+          }
+        }
+      }
+      const expected =
+        sourceAlpha >= 16 || nearest > 3
+          ? [0, 0, 0, 0]
+          : nearest <= 2
+            ? [208, 193, 165, 210]
+            : [31, 28, 25, 200];
+      expect(
+        Array.from(
+          pixels.slice((row * outlineSize + column) * 4, (row * outlineSize + column) * 4 + 4),
+        ),
+      ).toEqual(expected);
+    }
+  }
+});

@@ -14,9 +14,13 @@ readback DONE. Strict main-based audit34files PASS after bounded key-handler
 complexity correction; current29focused/types/lint/format PASS.
 Earlier terminalR8/rev151/editor layer lifecycle and actual pool agreement
 remain finite historical evidence. Full visual78e80c6 REJECT(2/2/1/2/1/2/1):
-box-like heights, grainy ground, tiny fire footprint. New ink earth, sloped
-banks and cell-wide fire technique correction active; full re-review/CI/PR/merge
-pending. No deployment or fullM1 claim.
+box-like heights, grainy ground, tiny fire footprint. New ink earth/sloped
+banks/fire integrated564db69, draftPR160. Repeat critic BLOCKED/timebox with
+residual terrain findings; actual backdrop-off probe found culled bank faces,
+winding corrected. Two-scale texture mix and exact boundary-outline stamping
+now local; source readback DONE, full815coverage/types/lint PASS. InitialCI
+bootstrapPASS/coverage512timeoutFAIL; no limit changes. Current absolute review
+and new cleanCI/merge pending. No deployment or fullM1 claim.
 [Current engineering correction](../wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
 The historical activation follows:
 
