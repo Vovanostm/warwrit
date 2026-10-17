@@ -1,5 +1,31 @@
 # Warwrit current delivery plan
 
+**Autonomous M1 GitHub queue — 2026-10-17, TASKS PUBLISHED / NOT IMPLEMENTED:**
+Owner requested audit and GitHub task creation, not dispatch or new code.
+[Parent161](https://github.com/Vovanostm/warwrit/issues/161) and16children162–177
+have pinned evidence, ownership/dependencies, executable DoD and mandatory wiki
+closeout; published bodies read back exactly. Baseline main a934355, main
+CI39008291834 SUCCESS. Source/CI audit only; new gameplay/full gate/visual critique
+NOT_RUN, balance/FPS NOT_MEASURED. #8 retained; #6 renderer contest superseded
+by ADR0006. PR160/134 failed CI and old animation PR129 are not silently accepted.
+Start with162 gate/163 actual HP defect/164 profiles, reserve all shared paths;
+165persistent bridge →166HUD, then tactics/recovery/device and final177journey.
+Only GPT-6.1 Sol/GPT-6 Luna. Existing active PR160 writer/primary WIP preserved.
+[Owning queue](M1_PRODUCTION_PLAN.md#current-github-execution-queue--2026-10-17).
+Documentation amendment is local on codex/combat-wiki-checkpoint-20261017;
+GitHub task publication is not merge/deploy/paid-service or agent-launch permission.
+
+**Combat delivery readback — 2026-10-17, VERIFIED SNAPSHOT:**
+Live GitHub and clean local main agree at a934355; PR157/158/159 are MERGED,
+all three merge commits are ancestors and reviewed-head/merge tree diffs empty.
+PR160 remains OPEN/DRAFT at16c2811; CI39019195821 FAILURE at check:changes
+(complexity/CRAP), current full visual acceptance PENDING in its owner's record.
+Next: PR160 owner resolves gate/current visual acceptance before merge/main journey.
+No new browser battle/full gate/visual critique in this readback (NOT_RUN).
+Primary WIP and other writers preserved. This documentation amendment is local
+on codex/combat-wiki-checkpoint-20261017, not a new game delivery or PR160 merge.
+[Full dated readback](../wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
+
 **Battle perspective and bounds — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized [PR159](https://github.com/Vovanostm/warwrit/pull/159) MERGED:
 reviewed6533ae7d3a1123a32285f09582b3813475a20dd8,
