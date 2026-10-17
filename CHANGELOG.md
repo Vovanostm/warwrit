@@ -11,6 +11,17 @@ requests.
 
 ### Match battle grid and figures to painted perspective
 
+- 2026-10-17, originating branch `codex/battle-camera-bounds`, merged:
+  [PR159](https://github.com/Vovanostm/warwrit/pull/159), reviewed6533ae7 →
+  main2285c85 with identical tree. Perspective field/figures, full-viewport map
+  bounds and connected height surface delivered. Full independent visual ACCEPT
+  (all7game/close2/2). CleanCI39006743444 SUCCESS:810unit/47SKIPPED,
+  10kstress/20determinism/100replay,14disposableDB,coverage/strict15-file audit.
+  Actual main5344:12figures/day-night/keys-drag-wheel/no void/ratio1.421176/
+  stablepositions/0navigationPOST; real defence200/1POST/nextactor PASS.
+  No canonical rules/protocol/migrations/deploy change; this closeout Markdown only.
+  [Merged result](docs/wiki/battlefield-test-maps.md#поставка-перспективы-и-границ-камеры-в-main--2026-10-17).
+
 - 2026-10-17, branch `codex/battle-camera-bounds`, local connected terrain:
   full5b88278 visual review rejected separate hex plinths (integration1).
   Shared-corner slopes now join canonical cell centres; ground/fill/grid/picking

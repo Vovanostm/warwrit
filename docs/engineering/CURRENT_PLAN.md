@@ -1,6 +1,24 @@
 # Warwrit current delivery plan
 
-**Battle perspective correction — 2026-10-17, LOCAL / VISUAL ACCEPT:**
+**Battle perspective and bounds — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
+Owner-authorized [PR159](https://github.com/Vovanostm/warwrit/pull/159) MERGED:
+reviewed6533ae7d3a1123a32285f09582b3813475a20dd8,
+merge/main2285c85f1bbce086f2f0233db48939d5118ae498; reviewed-to-merge tree diff empty.
+[Clean CI39006743444](https://github.com/Vovanostm/warwrit/actions/runs/39006743444)
+SUCCESS:810unit/47SKIPPED,10kstress/20determinism/100replay,14disposableDB,
+coverage/strict15-file audit. Fixed pinhole/off-axis navigation and full map bounds;
+connected terrain unifies grid/fills/picks with exact cell-centre foot heights.
+Independent full absolute visual ACCEPT(all7game/close2/2,motionN/A,owninputNOT_RUN).
+Prior rejected contact/height approaches and interrupted reviews retained below.
+Actual main web5344/API3044: fresh12-unit battle,1440day/night/key-drag-wheel
+bounds/ratio1.421176/0navigationPOST/stablepositions PASS; real defence200/1POST
+advances bow to commander. Console favicon404 only. Initial browser runner cache
+permission failure corrected with scoped execution; first attempt NOT_RUN.
+Primary dirty checkout preserved; no campaign write/deploy/paid service.
+This closeout changes only Markdown; fullM1/balance/FPS NOT_MEASURED.
+[Owning result](../wiki/battlefield-test-maps.md#поставка-перспективы-и-границ-камеры-в-main--2026-10-17).
+
+**Battle perspective correction — 2026-10-17, HISTORICAL / PRE-MERGE:**
 Latest connected-surface amendment supersedes the plinth/bank variants below:
 shared-corner earth slopes join exact canonical centres; ground/grid/fill/rays
 share triangles. Old walls/banks/level-plane fallback removed.26focused/types/

@@ -3969,3 +3969,37 @@ Author source/consumer review no concrete findings. Полный same-critic ver
 После captures вынесен только неизменный seam tolerance из pickAt в named
 helper ради его ответственности/quality gate; визуальная поверхность не менялась.
 Полный новый exact-head CI/merge ещё PENDING на момент commit.
+
+### Поставка перспективы и границ камеры в main — 2026-10-17
+
+[PR159](https://github.com/Vovanostm/warwrit/pull/159) MERGED с разрешения
+владельца, source head6533ae7d3a1123a32285f09582b3813475a20dd8,
+merge2285c85f1bbce086f2f0233db48939d5118ae498. Live head/base/CI/review threads
+проверены перед merge, открытых threads нет; merge использовал expected head.
+Чистый main worktree battle-camera-pan fast-forward обновлён; обычный
+reviewed-head→merge tree diff пуст. Основной dirty checkout не менялся.
+
+[Exact-head CI39006743444](https://github.com/Vovanostm/warwrit/actions/runs/39006743444)
+SUCCESS:810unit PASS/47 SKIPPED,10,000combatstress,20deterministic reruns,
+100replay checks,14disposablePostgreSQL checks,coverage и strict15-file audit.
+Это gate окончательной connected-surface версии, supersedes старые CI receipts.
+Full independent absolute visual ACCEPT:7критериев2/2 game/close,motionN/A,
+critic own input NOT_RUN. Pale rim/fill strength/slope texture остаются polish.
+
+Запуск из actual main на API3044/web5344: нормальный editor→бой12фигур;
+1440×900 day/night и extreme keys/drag/wheel сохраняют полный painted viewport,
+near/far equal-cell ratio1.421176. Navigation0POST и позиции всех12фигур
+неизменны. Реальная «Защищаться» получила200/1POST, передала ход от «Лук»
+к «Командир». Console содержит только favicon404, без runtime exception.
+Первая попытка browser runner была NOT_RUN из-за sandbox/npm cache EPERM;
+повтор с разрешённым исполнением прошёл, права/владельцы npm cache не менялись.
+Main screenshots и точный result: output/playwright/camera-main/main-day.png,
+main-night.png,main-after-defend.png,main-result.txt в clean main worktree;
+локальные evidence, не tracked links. Результат playable на
+http://127.0.0.1:5344/combat-lab (обычный редактор, кнопка «Начать бой»).
+
+Bounds и perspective/connected terrain поставлены в main. Исходные параметры
+объектива рисунка отсутствуют: calibration art-directed, не lens recovery.
+Canonical levels/LOS/costs/commands/replay/protocol/DB не меняются. Нет
+campaign writes/deploy/auto-merge/paid services; fullM1/balance/FPS NOT_MEASURED.
+Этот documentation closeout меняет только Markdown и не требует нового game gate.
