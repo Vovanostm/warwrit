@@ -11,6 +11,15 @@ requests.
 
 ### Match battle grid and figures to painted perspective
 
+- 2026-10-17, branch `codex/battle-camera-bounds`, local technique correction:
+  repeat visual integration1 rejected the wire lip. Real non-pickable earth
+  banks now show exposed height volume; original canonical top/vertical pick
+  faces retained. Hex-mesh geometry regression covers default/banked variants.
+  Prior close comparison accidentally upscaled a game crop; replaced by native
+  minZoom229px crop/reference-downscale evidence.22focused/types/lint/
+  coverage811+47SKIPPED/audit PASS. Same-critic full repeat/new-head CI/merge
+  pending; CI38997076787 SUCCESS covers intermediate132156b, not this geometry.
+
 - 2026-10-17, branch `codex/battle-camera-bounds`, local review correction:
   CI38991283029 SUCCESS on1907d8c; full visual REJECT exposed weak height
   boundary/oversized hard contact ovals. Actual height transform confirmed;

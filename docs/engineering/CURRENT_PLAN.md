@@ -11,7 +11,13 @@ CI38991283029 SUCCESS on1907d8c. Independent full visual REJECT on scene
 integration (height boundary/contact ovals), no black/ground-over-body found.
 Exposed height lip and feathered foot wash repaired locally; types/lint/
 coverage811+47SKIPPED/audit PASS. Same-critic full repeat/new-head CI/merge
-PENDING. Prior bb55f5b CI SUCCESS
+PENDING at that checkpoint. Repeat visual integration1 forced technique
+change: actual non-pickable sloped earth banks replace the wire lip; canonical
+hex tops/vertical pick faces retained. Native close comparison corrected from
+an artificially upscaled game crop. Camera+geometry22/types/lint/811coverage/
+audit PASS; same-critic full repeat/new bank-head CI/merge PENDING.
+CI38997076787 SUCCESS on132156b covers only intermediate lip version.
+Prior bb55f5b CI SUCCESS
 covers only bounds. Merge remains explicitly owner-authorized for this slice.
 [Owning research/result](../wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
 

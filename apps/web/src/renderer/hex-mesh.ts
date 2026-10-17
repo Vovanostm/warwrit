@@ -25,6 +25,7 @@ export function createHexSides(
   top: number,
   bottoms: readonly number[],
   scene: Scene,
+  bankWidth = 0,
 ): Mesh {
   const positions: number[] = [];
   const indices: number[] = [];
@@ -39,7 +40,11 @@ export function createHexSides(
     const x2 = Math.cos(second) * radius;
     const z2 = Math.sin(second) * radius;
     const offset = positions.length / 3;
-    positions.push(x1, bottom, z1, x2, bottom, z2, x2, top, z2, x1, top, z1);
+    // Optional decorative bank exposes an earth face even on a foreground plateau.
+    const outward = (first + second) / 2;
+    const dx = Math.cos(outward) * bankWidth;
+    const dz = Math.sin(outward) * bankWidth;
+    positions.push(x1 + dx, bottom, z1 + dz, x2 + dx, bottom, z2 + dz, x2, top, z2, x1, top, z1);
     // Preserve material grain size across level-one and level-two faces rather
     // than stretching the full square texture into each shallow wall.
     const u1 = (side * radius) / 2;

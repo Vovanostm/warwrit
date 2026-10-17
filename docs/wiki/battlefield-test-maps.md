@@ -3868,3 +3868,30 @@ frames: `output/playwright/camera-perspective/final-*` и
 meshes, не выдаётся за штатную UI-функцию или gameplay доказательство.
 Повторный полный absolute visual/current-head CI/merge PENDING; прежний
 зелёный1907 gate не принимает новый renderer source.
+
+### Объёмный откос вместо линии — 2026-10-17
+
+Повторный full absolute critic REJECT: exposed lip всё ещё читался как
+zigzag на плоском фоне, integration1 второй раз. Выполнена смена техники:
+вместо линии добавлена настоящая наклонная земляная bank geometry шириной
+0.16 world у открытых граней. Верх совпадает с canonical hex corners/y,
+низ расширяется к нижней земле. Bank — отдельный non-pickable decor;
+исходная вертикальная step geometry/ground pick surfaces и правила высоты
+сохранены. `hex-mesh.ts` optional bankWidth default0 сохраняет прежний API;
+существующая geometry regression проверяет оба варианта и верхние углы.
+
+Дополнительно обнаружена ошибка author comparison: прежний reference-close
+увеличивал crop ~72px game capture до420px рядом с high-res reference,
+искусственно добавляя blur. Новые native-min-zoom/bank-reference-close
+используют native229px screenshot при штатном minZoom2.2 без увеличения;
+reference уменьшается до той же высоты. Это поправка доказательства,
+не обновление ассета и не доказательство прежнего native close дефекта.
+Исторические rejected scores сохранены, текущий native close оценивается заново.
+
+Focused camera+geometry22/web types/lint/coverage811+47SKIPPED/audit10files
+PASS. Новые current sheets `bank-review-scenes.png`, `bank-review-sizes.png`,
+`bank-review-reference.png` и native/height originals лежат в прежнем local
+output/playwright/camera-perspective/. Source frozen на этом варианте;
+тот же critic повторяет полный absolute pass. CI38997076787 SUCCESS
+на132156b относится к промежуточной lip версии, не к новой bank geometry.
+Новый текущий clean PR gate и merge PENDING.

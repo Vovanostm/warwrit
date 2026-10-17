@@ -85,6 +85,24 @@ it('grounds raised tops and closes exposed step faces without changing hex corne
     ).toBe(true);
     // The first face borders a level-one neighbour; do not extend that face below it.
     expect(vertices.slice(0, 4).map((point) => point.y)).toEqual([0.12, 0.12, 0.24, 0.24]);
+    const bank = createHexSides(
+      'terrain-bank',
+      HEX_RADIUS,
+      0.24,
+      [0.12, 0, 0, 0, 0, 0],
+      scene,
+      0.16,
+    );
+    bank.isPickable = false;
+    const bankVertices = worldVertices(bank);
+    expect(
+      bankVertices
+        .filter((p) => Math.abs(p.y - 0.24) < 1e-6)
+        .every((p) => corners.some((corner) => Vector3.Distance(p, corner) < 1e-6)),
+    ).toBe(true);
+    expect(
+      bankVertices.filter((p) => p.y < 0.24 - 1e-6).every((p) => Math.hypot(p.x, p.z) > HEX_RADIUS),
+    ).toBe(true);
     // Front step strip has real geometry and selects its upper cell, not remote level zero.
     const ray = new Ray(new Vector3(0, 0.12, -2), new Vector3(0, 0, 1));
     const hit = scene.pickWithRay(ray, (mesh) => mesh.name.startsWith('ground'));

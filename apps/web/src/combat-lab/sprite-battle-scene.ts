@@ -401,22 +401,19 @@ export async function mountSpriteBattleScene(
       sides.position.set(point.x, 0, point.z);
       sides.material = stepMaterial;
       sides.metadata = cell.metadata;
-      // A foreground raised shelf can hide its own vertical face. Ink its exposed
-      // upper lip so the height transition remains legible even when that face is occluded.
-      const lips = bottoms.flatMap((bottom, side) => {
-        if (bottom >= tile.height * 0.12) return [];
-        const angle = (side * Math.PI) / 3 + Math.PI / 6;
-        const pointAt = (a: number) =>
-          new Vector3(
-            point.x + Math.cos(a) * HEX_RADIUS,
-            tile.height * 0.12 + 0.008,
-            point.z + Math.sin(a) * HEX_RADIUS,
-          );
-        return [[pointAt(angle), pointAt(angle + Math.PI / 3)]];
-      });
-      const rim = MeshBuilder.CreateLineSystem(`terrain-step-lip:${key}`, { lines: lips }, scene);
-      rim.color = new Color3(0.16, 0.13, 0.1);
-      rim.isPickable = false;
+      // A narrow sloped earth bank reads as volume when the vertical face is
+      // hidden by the foreground shelf. It is decorative, never a second pick surface.
+      const bank = createHexSides(
+        `terrain-bank:${key}`,
+        HEX_RADIUS,
+        tile.height * 0.12,
+        bottoms,
+        scene,
+        0.16,
+      );
+      bank.position.copyFrom(sides.position);
+      bank.material = stepMaterial;
+      bank.isPickable = false;
     }
   };
   const addRubble = (tile: Tile, point: { x: number; z: number }, key: string) => {
