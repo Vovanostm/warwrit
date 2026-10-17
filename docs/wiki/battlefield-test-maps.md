@@ -22,7 +22,7 @@ sources:
 опубликованный кандидат — `16c2811` (REJECT). PR остаётся черновиком,
 **в main ещё не слит; финальная визуальная приёмка не получена**.
 Текущий стенд кандидата: [поле боя](http://127.0.0.1:5336/combat-lab), API3036.
-Стенд включает локальную незакоммиченную коррекцию грунта, описанную ниже;
+Стенд включает локальную коррекцию грунта, описанную ниже;
 его дерево отличается от опубликованного кандидата. Это временные бои без
 записи в кампанию. Полный DoD M1 не принят; баланс и FPS не измерены.
 
@@ -69,9 +69,12 @@ PASS, без изменения порогов. CI исправления ещё
 смещёнными выборками. При приближении рисунок двора уступает место более
 детальной земле. Код общий для клеток и продолжения поля; правила боя
 не меняются. Source review — DONE, types/lint/content107/audit — PASS.
-Проверка новой версии в браузере **NOT_RUN**: сессия браузера оказалась закрыта,
-новые кадры не получены. Визуальный ACCEPT, производительность новой техники
-и CI итогового коммита пока не подтверждены.
+Новая версия запущена в браузере: shader compile, все20профилей/три поля,
+три размера desktop, геометрия12полосок32×16px/отступ4px, выбор клеток,
+крайние ракурсы и игровой путь до завершения/перезапуска — PASS.
+Первый запуск проверки не состоялся из-за закрытой сессии; после открытия
+все новые кадры получены. Полный визуальный ACCEPT и CI итогового коммита
+пока ожидаются; производительность новой техники не измерена.
 [Подробности коррекции](#layered-ink-earth-correction--2026-10-17).
 
 До слияния остаются устранение визуальных дефектов, полный visual ACCEPT,
@@ -4548,7 +4551,25 @@ Runtime shader compilation, new captures and repeat absolute visual critique
 are NOT_RUN. The attempted browser capture returned a closed-session error;
 output/playwright/layered-earth-20261017/maps.txt records the runner failure
 (untracked). This is neither a shader failure nor runtime acceptance.
-The correction is local/uncommitted at this checkpoint. Reopen the owned
+The correction was local/uncommitted at checkpoint534d5d7. Reopen the owned
 5336/3036 stand, capture day/night/close/extreme views, repeat the full critic,
 then publish and require successful current-head CI before the authorized
 expected-head merge. No merge, deployment or fullM1 acceptance is claimed.
+
+Browser continuation after documentation checkpoint534d5d7: reopening the owned
+session resolved the runner failure. Fresh WebGL2 shader compiled without
+errors; console favicon404 only. All20profiles/3fields,1280×720/1440×900/1920×1080,
+day/night, dense/maxzoom/grid/overlay and four extreme corners captured under
+output/playwright/layered-earth-20261017/ (untracked). All12field strips measure
+32×16CSSpx with4px foot gap; zero ground-pick mismatches; inspection/navigation
+zero actionPOST; apron covers the full viewport at all four pan extremes.
+
+Actual movement advanced revision4→5. AtR3/rev55 all3pools changed and30field/
+57queue values agreed. First terminal polling window ended activeR8/rev145;
+repeat reached resolvedR8/rev152. Queue/dock/visiblebar meshes0, terminal hotkeys
+zeroPOST; editor fieldLayers0; restartR1/12active/onefieldLayer. These are
+current-delta runtime results, not an inference from the earlier candidate.
+Independent source closeout confirmed the dirty game delta was unchanged since
+its prior review: UV continuity, wrapping, linear mixing, LOD initialization,
+terrain picks and foot anchors have no concrete source finding. Reviewer browser
+input NOT_RUN. Full current absolute visual review is running separately.

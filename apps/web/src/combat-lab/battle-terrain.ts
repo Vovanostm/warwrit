@@ -15,6 +15,9 @@ import mudUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/mu
 import fireUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire.png';
 import fireCrescentUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-crescent.png';
 import fireStubsUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-stubs.png';
+import earthVariantUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-worn.png';
+import earthThirdUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-cobbles.png';
+import { inkEarthShader } from './ink-earth-shader.js';
 import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-ruts.png';
 import { BATTLE_ART } from '../renderer/art.js';
 import {
@@ -39,6 +42,8 @@ type AuthoredGroundSampler = {
   }) => readonly [number, number];
 };
 
+const noAuthoredUv: AuthoredGroundSampler['uvFor'] = () => [-1, -1];
+
 type Palette = { readonly day: Color3; readonly night: Color3 };
 
 function groundMaterial(
@@ -47,8 +52,8 @@ function groundMaterial(
   palette: Palette,
   surface: 'plain' | 'mud' | 'fire' | 'blocked',
   scene: Scene,
-  earthTexture: Texture,
-  authoredGround?: AuthoredGroundSampler,
+  earthTextures: readonly [Texture, Texture, Texture],
+  authoredGround: AuthoredGroundSampler,
 ): ShaderMaterial {
   const result = new ShaderMaterial(
     name,
@@ -59,9 +64,10 @@ function groundMaterial(
         uniform mat4 worldViewProjection; varying vec2 groundUv,authoredUv,cellPoint;
         void main(){ groundUv=uv; authoredUv=uv2; cellPoint=position.xz; gl_Position=worldViewProjection*vec4(position,1.0); }`,
       fragmentSource: `precision highp float;
-        varying vec2 groundUv,authoredUv,cellPoint; uniform sampler2D terrainMap,earthMap,authoredMap;
-        uniform vec3 tint,lighting,earthTint; uniform float detailScale,blendSurface,useAuthoredMap;
+        varying vec2 groundUv,authoredUv,cellPoint; uniform sampler2D terrainMap,earthMap,earthVariantMap,earthThirdMap,authoredMap;
+        uniform vec3 tint,lighting,earthTint; uniform float detailScale,blendSurface,authoredDetail;
         ${naturalTextureShader}
+        ${inkEarthShader}
         void main(){
           vec2 worldUv=groundUv*detailScale;
           // Two independent world scales break repeated motifs without stretching ink marks.
@@ -71,17 +77,17 @@ function groundMaterial(
           vec2 point=abs(cellPoint);
           float edge=max(point.x,point.x*0.5+point.y*0.8660254)/${BATTLE_LAYOUT.spacing / 2};
           float coverage=(1.0-smoothstep(0.60,1.05,edge+(landNoise(groundUv*9.0)-0.5)*0.28))*(1.0-smoothstep(0.95,1.0,edge))*blendSurface;
-          vec2 earthUv=groundUv*1.45;
-          vec3 earth=naturalTile(earthMap,earthUv,1.0);
+          vec2 earthUv=groundUv*0.55;
+          vec3 earth=inkEarth(earthUv);
           vec3 baseGround=earth*earthTint;
           // Sample only the authored mill yard; an irregular inward fade keeps its edge from reading as a decal.
           bool insideAuthoredBounds=authoredUv.x>=${AUTHORED_GROUND_UV_BOUNDS.minU} && authoredUv.x<=${AUTHORED_GROUND_UV_BOUNDS.maxU}
             && authoredUv.y>=${AUTHORED_GROUND_UV_BOUNDS.minV} && authoredUv.y<=${AUTHORED_GROUND_UV_BOUNDS.maxV};
-          if(useAuthoredMap>0.5 && insideAuthoredBounds){
+          if(insideAuthoredBounds){
             float edgeDistance=min(min(authoredUv.x-${AUTHORED_GROUND_UV_BOUNDS.minU},${AUTHORED_GROUND_UV_BOUNDS.maxU}-authoredUv.x),
               min(authoredUv.y-${AUTHORED_GROUND_UV_BOUNDS.minV},${AUTHORED_GROUND_UV_BOUNDS.maxV}-authoredUv.y));
             float raggedEdge=edgeDistance+(landNoise(authoredUv*46.0)-0.5)*0.045;
-            float authoredCoverage=smoothstep(0.0,0.035,raggedEdge)*smoothstep(0.0,0.012,edgeDistance);
+            float authoredCoverage=smoothstep(0.0,0.035,raggedEdge)*smoothstep(0.0,0.012,edgeDistance)*authoredDetail;
             baseGround=mix(baseGround,pow(texture2D(authoredMap,authoredUv).rgb,vec3(2.2))*earthTint,authoredCoverage);
           }
           color=mix(baseGround,color*tint,coverage);
@@ -97,15 +103,17 @@ function groundMaterial(
         'detailScale',
         'earthTint',
         'blendSurface',
-        'useAuthoredMap',
+        'authoredDetail',
       ],
-      samplers: ['terrainMap', 'earthMap', 'authoredMap'],
+      samplers: ['terrainMap', 'earthMap', 'earthVariantMap', 'earthThirdMap', 'authoredMap'],
     },
   );
   result.setTexture('terrainMap', texture);
-  result.setTexture('earthMap', earthTexture);
-  result.setTexture('authoredMap', authoredGround?.texture ?? earthTexture);
-  result.setFloat('useAuthoredMap', authoredGround ? 1 : 0);
+  result.setTexture('earthMap', earthTextures[0]);
+  result.setTexture('earthVariantMap', earthTextures[1]);
+  result.setTexture('earthThirdMap', earthTextures[2]);
+  result.setFloat('authoredDetail', 1);
+  result.setTexture('authoredMap', authoredGround.texture);
   result.setFloat('blendSurface', surface === 'plain' ? 0 : 1);
   result.setColor3('tint', palette.day);
   result.setColor3('lighting', Color3.White());
@@ -115,8 +123,7 @@ function groundMaterial(
 
 function setContinuousGroundUv(
   mesh: Mesh,
-  authoredGround?: AuthoredGroundSampler,
-  sampleAuthoredGround = true,
+  uvFor: AuthoredGroundSampler['uvFor'] = noAuthoredUv,
 ): void {
   mesh.computeWorldMatrix(true);
   const positions = mesh.getVerticesData(VertexBuffer.PositionKind);
@@ -129,10 +136,7 @@ function setContinuousGroundUv(
       mesh.getWorldMatrix(),
     );
     uvs.push(world.x / GROUND_TEXTURE_WORLD_SIZE, world.z / GROUND_TEXTURE_WORLD_SIZE);
-    const authoredUv =
-      authoredGround && sampleAuthoredGround
-        ? authoredGround.uvFor({ x: world.x, y: 0, z: world.z })
-        : ([-1, -1] as const);
+    const authoredUv = uvFor({ x: world.x, y: 0, z: world.z });
     authoredUvs.push(authoredUv[0], authoredUv[1]);
   }
   mesh.setVerticesData(VertexBuffer.UVKind, uvs);
@@ -200,6 +204,7 @@ export function mountBattleTerrain(
   authoredGround?: AuthoredGroundSampler,
 ): {
   readonly apron: Mesh;
+  setPixelsPerWorld(pixelsPerWorld: number): void;
   readonly terrainByHex: ReadonlyMap<string, BattleTerrainCell>;
   setNight(night: boolean): void;
 } {
@@ -207,6 +212,12 @@ export function mountBattleTerrain(
   const textures = new Map<string, Texture>();
   const dirtTexture = textureFor(dirt, scene, textures);
   const mudTexture = textureFor(mudUrl, scene, textures);
+  const earthTextures = [
+    dirtTexture,
+    textureFor(earthVariantUrl, scene, textures),
+    textureFor(earthThirdUrl, scene, textures),
+  ] as const;
+  const placeGround = authoredGround ?? { texture: dirtTexture, uvFor: noAuthoredUv };
   const palettes: Record<'plain' | 'mud' | 'fire' | 'blocked', Palette> = {
     plain: { day: new Color3(0.88, 0.83, 0.75), night: new Color3(0.62, 0.65, 0.67) },
     mud: { day: new Color3(0.94, 0.97, 1), night: new Color3(0.49, 0.46, 0.43) },
@@ -220,8 +231,8 @@ export function mountBattleTerrain(
       palettes.plain,
       'plain',
       scene,
-      dirtTexture,
-      authoredGround,
+      earthTextures,
+      placeGround,
     ),
     mud: groundMaterial(
       'battle-ground:mud-puddles',
@@ -229,8 +240,8 @@ export function mountBattleTerrain(
       palettes.mud,
       'mud',
       scene,
-      dirtTexture,
-      authoredGround,
+      earthTextures,
+      placeGround,
     ),
     fire: groundMaterial(
       'battle-ground:charred-earth',
@@ -238,8 +249,8 @@ export function mountBattleTerrain(
       palettes.fire,
       'fire',
       scene,
-      dirtTexture,
-      authoredGround,
+      earthTextures,
+      placeGround,
     ),
     blocked: groundMaterial(
       'battle-ground:rubble-earth',
@@ -247,8 +258,8 @@ export function mountBattleTerrain(
       palettes.blocked,
       'blocked',
       scene,
-      dirtTexture,
-      authoredGround,
+      earthTextures,
+      placeGround,
     ),
   };
   const centres = tiles.map(battleHexToWorld);
@@ -265,7 +276,7 @@ export function mountBattleTerrain(
   apron.material = groundMaterials.plain;
   apron.isPickable = false;
   apron.renderingGroupId = 0;
-  setContinuousGroundUv(apron, authoredGround, false);
+  setContinuousGroundUv(apron);
   const scorchMaterial = new StandardMaterial('battle-ground:charred-scorch', scene);
   scorchMaterial.disableLighting = true;
   scorchMaterial.diffuseColor = new Color3(0.14, 0.12, 0.11);
@@ -302,7 +313,7 @@ export function mountBattleTerrain(
     ground.isPickable = true;
     ground.renderingGroupId = 0;
     ground.metadata = { combatHex: { q: tile.q, r: tile.r } };
-    setContinuousGroundUv(ground, authoredGround);
+    setContinuousGroundUv(ground, placeGround.uvFor);
 
     if (tile.blocked) {
       const rubbleSize = 1.1;
@@ -383,5 +394,13 @@ export function mountBattleTerrain(
     for (const material of emberMaterials) material.emissiveColor = light.embers;
   };
   setNight(initialNight);
-  return { apron, terrainByHex, setNight };
+  let previousDetail = -1;
+  const setPixelsPerWorld = (pixels: number) => {
+    const detail = Math.max(0, Math.min(1, (115 - pixels) / 35));
+    if (detail === previousDetail) return;
+    previousDetail = detail;
+    for (const material of Object.values(groundMaterials))
+      material.setFloat('authoredDetail', detail);
+  };
+  return { apron, terrainByHex, setNight, setPixelsPerWorld };
 }

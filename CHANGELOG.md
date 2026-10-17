@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local terrain correction:
+  add a dedicated seamless3-source ink-earth shader,2original ground variants
+  with prompts/provenance and a zoom-dependent authored-yard blend; restore
+  ordinary world sampler behavior. Normalize optional ground sampling once,
+  removing2new complexity findings without changing thresholds. Addresses
+  published16c2811 visual REJECT and CI audit FAIL. Affects combat-lab terrain,
+  scene/material wiring and asset manifest; rules/picking/foot geometry retained.
+  Source review/types/lint/content107 and actual maps/desktop/layers/geometry/
+  movement/pools/terminal/restart PASS. Full visual/currentCI/merge pending.
+  [Result and limits](docs/wiki/battlefield-test-maps.md#layered-ink-earth-correction--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local documentation update at
   owner request: refresh wiki landing/index and current plan for published game
   candidate16c2811/PR160; replace stale leading PR157 status with current behavior,
@@ -19,8 +30,10 @@ requests.
   plus local normalization of authored-ground inputs that removes the two new
   complexity findings; types/lint/strict45-file audit PASS, newCI pending.
   Document the local3-source ink-earth/zoom fade correction separately:
-  source readback/types/lint/content107/audit PASS; new runtime/visual NOT_RUN
-  after a closed browser-session error. Local stand differs from published head.
+  source readback/types/lint/content107/audit PASS. First browser attempt
+  NOT_RUN (closed session); reopened shader/maps/desktop/day-night/bars/picks/
+  extreme bounds and actual move/pools/terminal/restart PASS. Full critic/CI
+  pending. Local stand differs from published head.
   [Current wiki](docs/wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local visual technique revision:

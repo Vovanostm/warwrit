@@ -18,10 +18,12 @@ passed. Local sampler normalization/types/lint/45fileaudit PASS, newCI pending.
 remaining: current visual acceptance, successful final CI, merge and main journey.
 Local technique correction now adds3-source seamless ink earth and a zoom-dependent
 authored-yard fade; ordinary world sampling restored. Correct-checkout source
-readback DONE; types/lint/content107/main-based45file audit PASS. Current shader
-compile/captures/full visual/performance NOT_RUN: the browser session was closed,
-so the attempted new capture produced no images. Local code remains uncommitted
-and differs from published16c2811. Reopen5336/3036 and verify the actual scene next.
+readback DONE; types/lint/content107/main-based45file audit PASS. Reopened browser:
+shader/20profiles/3fields/desktop/day-night/12bar32×16gap4/0picks/4extremes/0navigationPOST
+PASS. Real move4→5;R3/rev55 all3pools/30field/57queue match; terminal repeat
+R8/rev152,0queue/dock/bars/POST; editor0→restart12/R1/1layer PASS. First attempt
+was closed-session NOT_RUN; current full visual review running, performance
+NOT_MEASURED. Local correction differs from published16c2811; publication pending.
 Wiki lead/index updated at owner request; dated history below is retained.
 [Current owner-facing state](../wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
 

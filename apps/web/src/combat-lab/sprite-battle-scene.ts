@@ -189,6 +189,7 @@ export async function mountSpriteBattleScene(
   ];
   scene.onBeforeCameraRenderObservable.add((camera) => {
     const pixelsPerWorld = canvas.clientHeight / (2 * camera.orthoTop!);
+    terrain.setPixelsPerWorld(pixelsPerWorld);
     const presentation = unitPresentationModes[Number(pixelsPerWorld < 64)]!;
     for (const material of unitMaterials.values()) {
       const art = material.diffuseTexture as Texture;
