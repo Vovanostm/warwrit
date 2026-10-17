@@ -10,7 +10,7 @@ attack reason on enemy hover, no move-then-attack warning, unmarked active
 fighter, conflicting colour channels and unreadable opponent turns. Rules,
 protocol and replay unchanged by the spec. Five owner choices have recommended
 defaults (AI pace, Move button, end-turn key, tooltip anchor, hex step). Readability cycle owns
-cells/portraits/foot bars. Decomposed into epic [#217](https://github.com/Vovanostm/warwrit/issues/217) and 38 issues #179–#216 with
+cells/portraits/foot bars. Decomposed into epic [#217](https://github.com/Vovanostm/warwrit/issues/217) and 38 issues #179–#216 plus question #218 with
 DoD/acceptance/evidence; docs branch `claude/combat-ui-tz` pushed, no PR.
 [Owning specification](../wiki/battlefield-test-maps.md#аудит-ui-боя-и-тз-исправлений--2026-10-17).
 

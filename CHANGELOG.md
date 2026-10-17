@@ -11,6 +11,15 @@ requests.
 
 ### Specify combat UI fixes from a played audit
 
+- 2026-10-17, branch `claude/combat-ui-tz`, published issues: owner-requested
+  best-practice review (WCAG 2.2, XAG 101, Game Accessibility Guidelines,
+  repository single-owner and privacy rules). Corrected UIX-02/03a/09a/16/20
+  and 01a, added owner question [#218](https://github.com/Vovanostm/warwrit/issues/218)
+  (bow 4 of 4 AP), and added size, try-it line, readiness, reproducible seed,
+  colour-vision, reduced-motion, keyboard and zoom checks to all 39 issues;
+  epic [#217](https://github.com/Vovanostm/warwrit/issues/217) lists seven owner decisions.
+  [Revision](docs/wiki/battlefield-test-maps.md#ревизия-по-лучшим-практикам--2026-10-17).
+
 - 2026-10-17, originating branch `claude/combat-ui-tz`, local: owner-requested
   audit of the battle UI on actual main a934355 compared with XCOM 2, Into the
   Breach, Heroes V and Battle Brothers. Added defects UIX-01…20 (incl. hex scale for the largest creature) with evidence,
