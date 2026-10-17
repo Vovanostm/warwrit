@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Reconcile combat wiki with verified delivery
+
+- 2026-10-17, branch `codex/combat-wiki-checkpoint-20261017`, local:
+  owner requested memory/wiki update after review and main readback.
+  Existing battlefield page, wiki index/log and CURRENT_PLAN now distinguish
+  merged PR157/158/159 from draft PR160 at16c2811 (CI39019195821 FAILURE,
+  current visual acceptance pending). Verified clean local/remote main a934355;
+  no game code, migrations or other writers' WIP changed. Scoped Markdown
+  formatting, relative-link/readback and diff checks PASS; gameplay/full gate/
+  new visual critique NOT_RUN for this documentation-only amendment.
+  [Owning dated checkpoint](docs/wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
+
 ### Match battle grid and figures to painted perspective
 
 - 2026-10-17, originating branch `codex/battle-camera-bounds`, merged:

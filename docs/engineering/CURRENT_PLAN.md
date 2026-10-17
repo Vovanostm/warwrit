@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**Combat delivery readback — 2026-10-17, VERIFIED SNAPSHOT:**
+Live GitHub and clean local main agree at a934355; PR157/158/159 are MERGED,
+all three merge commits are ancestors and reviewed-head/merge tree diffs empty.
+PR160 remains OPEN/DRAFT at16c2811; CI39019195821 FAILURE at check:changes
+(complexity/CRAP), current full visual acceptance PENDING in its owner's record.
+Next: PR160 owner resolves gate/current visual acceptance before merge/main journey.
+No new browser battle/full gate/visual critique in this readback (NOT_RUN).
+Primary WIP and other writers preserved. This documentation amendment is local
+on codex/combat-wiki-checkpoint-20261017, not a new game delivery or PR160 merge.
+[Full dated readback](../wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
+
 **Battle perspective and bounds — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized [PR159](https://github.com/Vovanostm/warwrit/pull/159) MERGED:
 reviewed6533ae7d3a1123a32285f09582b3813475a20dd8,

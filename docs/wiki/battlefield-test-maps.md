@@ -1,7 +1,7 @@
 ---
 title: Поле боя и спрайтовая боёвка — ТЗ и тестовые карты
 created: 2026-10-07
-updated: 2026-10-16
+updated: 2026-10-17
 type: proposal
 tags: [combat, battlefield, sprites, art-direction, review-draft]
 status: direction-approved; merged-playable-sandbox; static-visual-packet-accepted; main-journey-passed; full-spec-review-draft
@@ -14,7 +14,43 @@ sources:
 
 # Поле боя и тестовые карты
 
-**Текущий цикл — 2026-10-16: [PR157](https://github.com/Vovanostm/warwrit/pull/157) слит в main, игровой путь из main проверен.**
+## Сверка поставки — 2026-10-17
+
+По запросу владельца повторно сверены live GitHub, история и чистота локальной
+основной ветки. Основная ветка называется `main`. На момент проверки remote main
+и локальная main в `~/.codex/worktrees/battle-camera-pan/warwrit` совпадают:
+`a9343550b437fb0558324c3abcc26438294d8534`. Повторное слияние не требовалось;
+исходная `codex/sprite-combat-stage1` и незавершённые правки сохранены.
+
+| Поставка                                                                                                         | Фактический merge | Проверка опубликованного head                                                          |
+| ---------------------------------------------------------------------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------- |
+| [PR157](https://github.com/Vovanostm/warwrit/pull/157): спрайтовый бой, редакторы, ранги приёмов и полный контур | `2072a64`         | [CI38915129341](https://github.com/Vovanostm/warwrit/actions/runs/38915129341) SUCCESS |
+| [PR158](https://github.com/Vovanostm/warwrit/pull/158): живая очередь и упрощённый HUD                           | `5c0b7eb`         | [CI38922603699](https://github.com/Vovanostm/warwrit/actions/runs/38922603699) SUCCESS |
+| [PR159](https://github.com/Vovanostm/warwrit/pull/159): перспектива, границы камеры, связные высоты              | `2285c85`         | [CI39006743444](https://github.com/Vovanostm/warwrit/actions/runs/39006743444) SUCCESS |
+
+Все три merge входят в проверенную main; деревья опубликованных head и merge
+совпадают. Дополнительное чтение исправления контура и цепочки прогноза
+инициативы не выявило новых блокирующих дефектов в проверенной области.
+GitHub reviews у этих PR пусты: независимые проверки, описанные ниже, —
+проверки агентов, не формальные approvals GitHub.
+
+**Отдельный незавершённый цикл:** [PR160](https://github.com/Vovanostm/warwrit/pull/160)
+на head `16c281157f89695fc8a1072c0bfc7d6f244f2b40` остаётся OPEN/DRAFT.
+[CI39019195821](https://github.com/Vovanostm/warwrit/actions/runs/39019195821)
+завершился FAILURE на `check:changes` (complexity/CRAP); это результат gate,
+а не доказательство нового игрового дефекта. В рабочей записи владельца
+цикла текущая полная визуальная приёмка ещё PENDING. Предыдущий успешный CI
+и прежние кадры не принимают этот head. Нужны исправление причины gate,
+успешный CI и текущая визуальная приёмка, затем проверка перед merge и
+игровой путь из обновлённой main. Этот PR в поставку выше не включён.
+
+В этой сверке новый браузерный бой, полный gate и визуальная критика
+**NOT_RUN**: прежние результаты ниже сохранены с их датами и областью.
+Баланс, интерес и длительная производительность **NOT_MEASURED**.
+Оперативное продолжение принадлежит [CURRENT_PLAN](../engineering/CURRENT_PLAN.md),
+навигация — [индексу wiki](index.md). Новые игровые правила не утверждались.
+
+**Историческая поставка — 2026-10-16: [PR157](https://github.com/Vovanostm/warwrit/pull/157) слит в main, игровой путь из main проверен.**
 Цикл `codex/combat-cycle-20261016` объединён коммитом `2072a64`;
 исходный черновик сохранён. Запуск: `pnpm dev:combat`, страница `/combat-lab`.
 Проверенный стенд из чистой main: web 5330/API 3030, рабочая копия
