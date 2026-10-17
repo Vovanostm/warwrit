@@ -19,7 +19,9 @@ requests.
   restart/clean console PASS; types/lint/content110/format PASS. Full visual
   review pending; current CI/merge/main journey NOT_RUN.
   Preserve prior visual REJECT and historical CI outcomes. Wiki/index/current
-  plan distinguish the local stand from published1b47872/PR160 and actual main.
+  plan and wiki log distinguish the local stand from published1b47872/PR160
+  and actual main. Mandatory main-based56-file commit audit PASS,8 inherited
+  findings excluded; no audit bypass.
   [Current result and asset limits](docs/wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction after full
