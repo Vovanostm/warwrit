@@ -13,9 +13,10 @@ import {
 import type { CombatLabHex, CombatLabTile } from '@warwrit/protocol';
 import mudUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/mud.png';
 import fireUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire.png';
-import dirt from '../../../../assets/art/m1/terrain-ink-v1/dirt.png';
+import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-ink.png';
 import { BATTLE_ART } from '../renderer/art.js';
-import { createHexDisc, createHexSides } from '../renderer/hex-mesh.js';
+import { createHexDisc } from '../renderer/hex-mesh.js';
+import { createBattleTerrainBanks } from './battle-terrain-banks.js';
 import { naturalTextureShader } from '../renderer/terrain-material.js';
 import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { BATTLE_HEX_RADIUS, BATTLE_LAYOUT, battleHexToWorld } from './battle-layout.js';
@@ -67,7 +68,7 @@ function groundMaterial(
   result.setTexture('terrainMap', texture);
   result.setColor3('tint', palette.day);
   result.setColor3('lighting', Color3.White());
-  result.setFloat('detailScale', surface === 'mud' ? 1.8 : GROUND_TEXTURE_WORLD_SIZE);
+  result.setFloat('detailScale', surface === 'mud' ? 1.8 : 1.2);
   return result;
 }
 
@@ -152,7 +153,7 @@ export function createBattleTerrain(
   const palettes: Record<'plain' | 'mud' | 'fire' | 'blocked', Palette> = {
     plain: { day: new Color3(0.88, 0.83, 0.75), night: new Color3(0.62, 0.65, 0.67) },
     mud: { day: new Color3(0.94, 0.97, 1), night: new Color3(0.49, 0.46, 0.43) },
-    fire: { day: new Color3(0.43, 0.39, 0.36), night: new Color3(0.33, 0.37, 0.4) },
+    fire: { day: new Color3(0.16, 0.14, 0.13), night: new Color3(0.14, 0.14, 0.15) },
     blocked: { day: new Color3(0.7, 0.68, 0.64), night: new Color3(0.52, 0.56, 0.58) },
   };
   const groundMaterials = {
@@ -174,8 +175,8 @@ export function createBattleTerrain(
     ),
   };
   const exposedEarthPalette = {
-    day: new Color3(0.82, 0.73, 0.62),
-    night: new Color3(0.58, 0.61, 0.64),
+    day: new Color3(0.48, 0.4, 0.31),
+    night: new Color3(0.37, 0.39, 0.41),
   };
   const exposedEarthMaterial = groundMaterial(
     'battle-ground:exposed-earth-sides',
@@ -224,7 +225,7 @@ export function createBattleTerrain(
       return (neighbour?.height ?? 0) * BATTLE_LAYOUT.heightStep;
     });
     if (lowerHeights.some((height) => height < groundY)) {
-      const sides = createHexSides(
+      const sides = createBattleTerrainBanks(
         `ground-side:${tileKey}`,
         BATTLE_HEX_RADIUS,
         groundY,
@@ -232,6 +233,7 @@ export function createBattleTerrain(
         scene,
       );
       sides.position.set(point.x, 0, point.z);
+      setContinuousGroundUv(sides);
       sides.material = exposedEarthMaterial;
       sides.isPickable = false;
       sides.renderingGroupId = 0;
@@ -276,16 +278,16 @@ export function createBattleTerrain(
       const ember = MeshBuilder.CreatePlane(
         `fire-embers:${tileKey}`,
         {
-          width: 1.28,
-          height: (1.28 * 1024) / 1536,
+          width: BATTLE_LAYOUT.spacing * 0.88,
+          height: (BATTLE_LAYOUT.spacing * 0.88 * 1024) / 1536,
         },
         scene,
       );
       ember.rotation.x = CAMERA_ELEVATION;
       ember.position.set(
         point.x,
-        groundY + 0.25 * Math.cos(CAMERA_ELEVATION),
-        point.z - 0.3 + 0.25 * Math.sin(CAMERA_ELEVATION),
+        groundY + 0.36 * Math.cos(CAMERA_ELEVATION),
+        point.z - 0.42 + 0.36 * Math.sin(CAMERA_ELEVATION),
       );
       ember.material = emberMaterial;
       ember.isPickable = false;

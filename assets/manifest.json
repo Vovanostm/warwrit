@@ -905,6 +905,15 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/fire.json",
       "generatedAt": "2026-10-16T18:50:18.849208+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.earth-ink",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/earth-ink.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-ink.json",
+      "generatedAt": "2026-10-17T03:58:46.645102+00:00"
     }
   ]
 }

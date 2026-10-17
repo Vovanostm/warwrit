@@ -3945,3 +3945,50 @@ portrait→Enter→Tab/ShiftTab→Home с сохранением focus на кн
 сначала FAIL на сложности объединённого клавиатурного обработчика; overview
 и pan handlers разделены по владельцам событий, строгий main-based34-file
 повтор PASS без suppression. Независимый source readback этой коррекции DONE.
+
+### Absolute terrain rejection — 2026-10-17
+
+Независимый полный static pass на78e80c6: REJECT, семь оценок2/2/1/2/1/2/1,
+движение N/A. Портреты/три верхних ряда/полевые полоски/denseB053/maxzoom
+не обрезаны. Обычное отсечение соседей за пределами окна камеры не признано
+дефектом при наличии pan/Home/portrait focus. Блокеры: поднятые клетки похожи
+на отдельные шестигранные коробки; зернистый обычный грунт расходится с
+чернильным рисунком мельницы; маленькие угли не объясняют всю опасную клетку
+огня в Home-обзоре. По правилу convergence нужна смена техники, не оттенков.
+Назначены природные откосы в отдельном helper, новый ink-ground asset и покрытие
+огня по площади клетки. Исходные канонические tops/правила не меняются.
+Повторный полный visual pass/CI/merge pending.
+
+Текущий runtime78e80c6: scaled move rev2→3; R2/rev31 все три ресурса изменились,
+33полевых+60верхних значений совпали с public pools. Delayed-PNG probe:
+клик портрета до создания слоя0 затем targetX=selectedFootX/zoom4.8 PASS.
+TerminalR8/rev140: очередь0/dock0/фактических видимых meshполосок0; keys1/4
+0POST; editorlayer0→restart12active/R1/1layer PASS. Между delayed-image и
+terminal probe wrapper сначала упал на уже обработанном test-route; после
+удаления route и reload повтор PASS. Это сбой harness, не успешный первый run.
+
+### Natural terrain revision — 2026-10-17, local
+
+Новый original earth-ink.png с точным prompt/provenance заменяет мелкий
+зернистый dirt; sampling оставляет крупный чернильный рисунок. Fire использует
+обугленную поверхность всей canonical клетки и flame patch шириной0.88spacing.
+Изолированный bank writer b3f878b/64bc3fc передал helper/test: сегментированные
+земляные откосы вместо вертикального призматического среза, outward cap0.22radius
+и узкую irregular soil lip0.02–0.06radius. Root ограничил lip открытыми сторонами.
+Канонические tops/centers/heights/picking/grid не меняются, banks nonpickable.
+
+Source reviewer нашёл возможный seam от сброса face UV и ошибку знака lipcorners.
+Root исправил world-space UV после установки meshposition и единый inward
+знак; signed geometry regression PASS, независимый readback DONE. Worker narrow
+checks/audit PASS, первые clone/complexity отказы исправлены. Root30focused/
+types/lint и строгий main-based38file audit PASS до последней ограниченной lip
+коррекции; её geometry regression PASS.102asset content validation PASS.
+Повторные кадры20profiles/3maps/day-night/dense/maxzoom в
+output/playwright/terrain-revision-20261017/ (untracked). Full visual/clean CI/
+publication/merge pending; прежние REJECT не заменены авторской уверенностью.
+
+Финальный terrain source readback: UV и inward lip finding закрыты;
+canonical geometry/picking согласованы. Последние web types/scoped lint,
+геометрическая регрессия и строгий38-file main-based audit PASS. Fresh navigation
+и inspection/layers снова0POST, Home и keyboard traversal сохранены. Повторный
+absolute visual review выполняется по новому полному набору, не по diff.

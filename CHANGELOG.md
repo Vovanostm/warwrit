@@ -11,6 +11,22 @@ requests.
 
 ### Combat readability and reusable terrain
 
+- 2026-10-17, branches `codex/combat-terrain-banks` → `codex/combat-readability`,
+  local: integrate deterministic segmented earth banks and narrow soil lips
+  under raised hexes, preserving canonical tops/grid/picking; new ink earth
+  asset/provenance and cell-wide charred fire footprint replace rejected
+  materials. Root fixes reviewed bank UV seams and inward-corner sign with
+  signed regression. Focused30/types/lint, content102assets and strict38-file
+  audit PASS before final lip correction; final geometry check PASS. Full
+  visual re-review/CI/merge pending; owning wiki records initial check failures.
+
+- 2026-10-17, branch `codex/combat-readability`, local visual correction active:
+  full independent78e80c6 visual REJECT on box-shaped heights, grainy ground
+  and undersized fire footprint; portraits/field bars/dense focus intact.
+  Change technique to natural banks, ink ground and cell-wide fire; current
+  source78e80c6/pool/move/terminal/delayed-focus checks recorded in the owning
+  wiki. Final re-review, CI and merge pending.
+
 - 2026-10-17, branch `codex/combat-readability`, local integration correction:
   physical presentation spacing2.6 replaces1.4 after two independent dense
   reviews found foreground beasts hiding rear foot strips. Preserve figure
