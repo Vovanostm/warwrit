@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local courtyard correction and
+  owner-requested wiki refresh: quiet fine earth replaces recognizable rut
+  repeats; a finite authored courtyard connects the extracted mill scenery,
+  with detailed cobbles at close zoom. New assets/prompts/provenance and
+  combat terrain/shader/scene/manifest updated; canonical geometry/rules and
+  camera bounds unchanged. Independent source review DONE; fresh maps/desktop/
+  day-night/layers/geometry/navigation/extremes/real move/all3pools/terminal/
+  restart/clean console PASS; types/lint/content110/format PASS. Full visual
+  review pending; current CI/merge/main journey NOT_RUN.
+  Preserve prior visual REJECT and historical CI outcomes. Wiki/index/current
+  plan distinguish the local stand from published1b47872/PR160 and actual main.
+  [Current result and asset limits](docs/wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local correction after full
   1b47872 visual REJECT despite successfulCI39024500756: extract true-alpha
   mill scenery with source/provenance, remove rectangular authored-floor sampling

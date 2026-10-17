@@ -1,22 +1,23 @@
 # Warwrit current delivery plan
 
-**Combat readability — 2026-10-17, LOCAL TECHNIQUE CORRECTION:**
-Published1b47872/[PR160](https://github.com/Vovanostm/warwrit/pull/160) has
-cleanCI39024500756 SUCCESS820/47SKIP/10kstress/14DB/coverage/50audit, but full
-absolute visual REJECT2/2/1/2/2/2/1. Current local delta extracts true-alpha
-mill scenery, removes the authored-floor sampler/UV2/zoomfade, registers field
-and apron to one camera-ray floor UV and uses hashed source/phase ink patches
-with explicit sampling derivatives. Geometry/picks/feet/rules unchanged.
-Bounded source/derivative reviews DONE; types/lint/content108/format PASS.
-Fresh20profiles/3maps/3desktop/daynight/maxzoom/layers/4corners/12bar32×16gap4/
-0picks/0navigationPOST PASS. Clean-browser launch/reload0renderer warnings/errors;
-initial HMR invalid-program queries not reproduced. Real move4→5,all3poolsmatch,
-terminalR8/rev152→restart12/R1/1layer PASS. Full visual REJECT game2/2/1/2/2/2/1,
-closeall2: repeatedruts/siteisland remain. Nexttechnique: site-wide authored
-macrocomposition with quiet close ink detail. CurrentCI/merge/main journey pending.
-Parent remains sole source/wiki/PR160 merger; main a934355 integrated, primary
-WIP preserved. Owner merge permission already recorded; no deployment/auto-merge.
-[Current state](../wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
+**Combat readability — 2026-10-17, LOCAL / SITE COMPOSITION REVIEW:**
+Published1b47872/[PR160](https://github.com/Vovanostm/warwrit/pull/160) remains
+DRAFT/NOT_MERGED; cleanCI39024500756 SUCCESS belongs to that historical tree.
+Local3096bd7 projected-scenery full visual REJECT: game2/2/1/2/2/2/1,
+closeall2. Current local technique adds quiet fine earth and a bounded authored
+courtyard, with detailed close cobbles. Returned site1672×941 is an interior
+crop, not the requested high-resolution outpaint; oversized107/41m trials
+rejected by author, current17.85m region. Camera bounds/rules/geometry unchanged.
+Current independent source review DONE, no findings; fresh20profiles/3maps/
+3desktop/day-night/zoom/layers/4corners/12bar32×16gap4/0picks/0inspection-
+navigationPOST PASS. Real move4→5;R3/rev55 all3pools/30field/57queue match;
+terminal repeatR8/rev152/0queue-dock-bars-hotkeyPOST;editor0→restart12/R1/1layer
+PASS. Clean reload0renderer errors/warnings; types/lint/content110/format PASS.
+Full fresh absolute visual review PENDING; current-head CI/merge/main journey
+NOT_RUN; FPS NOT_MEASURED.
+Parent sole source/wiki/PR160 merger; primary WIP preserved. Owner-authorized
+expected-head merge remains pending quality acceptance; no deployment/auto-merge.
+[Owning result](../wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
 
 **Combat readability — 2026-10-17, HISTORICAL16c2811 / CORRECTION REQUIRED:**
 Current game candidate16c2811 in codex/combat-readability, worktree

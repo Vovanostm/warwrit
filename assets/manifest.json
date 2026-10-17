@@ -968,6 +968,24 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/mill-scenery.json",
       "generatedAt": "2026-10-17T10:48:30.352970+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.site-ground",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/site-ground.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/site-ground.json",
+      "generatedAt": "2026-10-17T11:50:27.288834+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.earth-quiet",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/earth-quiet.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-quiet.json",
+      "generatedAt": "2026-10-17T11:56:04.519710+00:00"
     }
   ]
 }

@@ -5,7 +5,9 @@ import {
   ShaderMaterial,
   StandardMaterial,
   Texture,
+  Vector2,
   Vector3,
+  Vector4,
   VertexData,
   type Scene,
 } from '@babylonjs/core';
@@ -14,10 +16,9 @@ import mudUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/mu
 import fireUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire.png';
 import fireCrescentUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-crescent.png';
 import fireStubsUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-stubs.png';
-import earthVariantUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-worn.png';
-import earthThirdUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-cobbles.png';
 import { inkEarthShader } from './ink-earth-shader.js';
-import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-ruts.png';
+import cobbleDetail from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-cobbles.png';
+import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-quiet.png';
 import { BATTLE_ART } from '../renderer/art.js';
 import {
   createBattleSurface,
@@ -31,6 +32,15 @@ import { BATTLE_HEX_RADIUS, BATTLE_LAYOUT, battleHexToWorld } from './battle-lay
 const GROUND_TEXTURE_WORLD_SIZE = 3.2;
 const key = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
+type GroundComposition = {
+  readonly texture: Texture;
+  readonly center: Vector2;
+  readonly size: Vector2;
+  readonly reference: Vector2;
+  readonly crop: Vector4;
+  readonly amount: number;
+};
+
 type Palette = { readonly day: Color3; readonly night: Color3 };
 
 function groundMaterial(
@@ -39,7 +49,8 @@ function groundMaterial(
   palette: Palette,
   surface: 'plain' | 'mud' | 'fire' | 'blocked',
   scene: Scene,
-  earthTextures: readonly [Texture, Texture, Texture],
+  earthTextures: { readonly base: Texture; readonly detail: Texture },
+  composition: GroundComposition,
 ): ShaderMaterial {
   const result = new ShaderMaterial(
     name,
@@ -50,8 +61,9 @@ function groundMaterial(
         uniform mat4 worldViewProjection,world; varying vec3 worldPoint; varying vec2 cellPoint;
         void main(){ worldPoint=(world*vec4(position,1.0)).xyz; cellPoint=position.xz; gl_Position=worldViewProjection*vec4(position,1.0); }`,
       fragmentSource: `precision highp float;
-        varying vec3 worldPoint; varying vec2 cellPoint; uniform sampler2D terrainMap,earthMap,earthVariantMap,earthThirdMap;
-        uniform vec3 tint,lighting,earthTint,cameraEye; uniform float detailScale,blendSurface;
+        varying vec3 worldPoint; varying vec2 cellPoint; uniform sampler2D terrainMap,earthMap,detailMap,siteMap;
+        uniform vec3 tint,lighting,earthTint,cameraEye; uniform float detailScale,blendSurface,siteAmount,fineDetail;
+        uniform vec2 siteCenter,siteSize,siteReference; uniform vec4 siteCrop;
         ${naturalTextureShader}
         ${inkEarthShader}
         void main(){
@@ -68,7 +80,17 @@ function groundMaterial(
           float coverage=(1.0-smoothstep(0.60,1.05,edge+(landNoise(groundUv*9.0)-0.5)*0.28))*(1.0-smoothstep(0.95,1.0,edge))*blendSurface;
           vec2 earthUv=groundUv*0.65;
           vec3 earth=inkEarth(earthUv);
-          vec3 baseGround=earth*earthTint;
+          float imageScale=siteReference.y/max(dot(ray,vec3(0.0,-${Math.sin(CAMERA_ELEVATION)},${Math.cos(CAMERA_ELEVATION)})),0.001);
+          vec2 imagePoint=vec2(siteReference.x+ray.x*imageScale,
+            dot(ray,vec3(0.0,${Math.cos(CAMERA_ELEVATION)},${Math.sin(CAMERA_ELEVATION)}))*imageScale);
+          vec2 siteUv=(imagePoint-siteCenter)/siteSize+0.5;
+          float siteEdge=min(min(siteUv.x,1.0-siteUv.x),min(siteUv.y,1.0-siteUv.y));
+          float siteCoverage=smoothstep(0.0,0.14,siteEdge+(landNoise(groundUv*0.8)-0.5)*0.04)*smoothstep(0.0,0.03,siteEdge);
+          siteUv=mix(siteCrop.xy,siteCrop.zw,clamp(siteUv,0.0,1.0));
+          vec3 siteColor=linearizeRGB(textureGrad(siteMap,siteUv,dFdx(siteUv),dFdy(siteUv)).rgb);
+          float detail=clamp(dot(earth,vec3(0.2126,0.7152,0.0722))/0.12,0.25,2.0);
+          vec3 composed=siteColor*mix(1.0,detail,0.15);
+          vec3 baseGround=mix(earth,composed,siteAmount*(0.65-0.5*fineDetail)*siteCoverage)*earthTint;
           color=mix(baseGround,color*tint,coverage);
           gl_FragColor=vec4(pow(max(color*lighting,vec3(0.0)),vec3(1.0/2.2)),1.0);
         }`,
@@ -84,14 +106,26 @@ function groundMaterial(
         'detailScale',
         'earthTint',
         'blendSurface',
+        'siteCenter',
+        'siteSize',
+        'siteReference',
+        'siteCrop',
+        'siteAmount',
+        'fineDetail',
       ],
-      samplers: ['terrainMap', 'earthMap', 'earthVariantMap', 'earthThirdMap'],
+      samplers: ['terrainMap', 'earthMap', 'detailMap', 'siteMap'],
     },
   );
   result.setTexture('terrainMap', texture);
-  result.setTexture('earthMap', earthTextures[0]);
-  result.setTexture('earthVariantMap', earthTextures[1]);
-  result.setTexture('earthThirdMap', earthTextures[2]);
+  result.setTexture('earthMap', earthTextures.base);
+  result.setTexture('detailMap', earthTextures.detail);
+  result.setTexture('siteMap', composition.texture);
+  result.setVector2('siteCenter', composition.center);
+  result.setVector2('siteSize', composition.size);
+  result.setVector2('siteReference', composition.reference);
+  result.setVector4('siteCrop', composition.crop);
+  result.setFloat('siteAmount', composition.amount);
+  result.setFloat('fineDetail', 0);
   result.setFloat('blendSurface', surface === 'plain' ? 0 : 1);
   result.setColor3('tint', palette.day);
   result.setColor3('lighting', Color3.White());
@@ -157,8 +191,10 @@ export function mountBattleTerrain(
   scene: Scene,
   tiles: readonly CombatLabTile[],
   initialNight: boolean,
+  composition?: GroundComposition,
 ): {
   readonly apron: Mesh;
+  setPixelsPerWorld(pixels: number): void;
   readonly terrainByHex: ReadonlyMap<string, BattleTerrainCell>;
   setNight(night: boolean): void;
 } {
@@ -166,11 +202,15 @@ export function mountBattleTerrain(
   const textures = new Map<string, Texture>();
   const dirtTexture = textureFor(dirt, scene, textures);
   const mudTexture = textureFor(mudUrl, scene, textures);
-  const earthTextures = [
-    dirtTexture,
-    textureFor(earthVariantUrl, scene, textures),
-    textureFor(earthThirdUrl, scene, textures),
-  ] as const;
+  const earthTextures = { base: dirtTexture, detail: textureFor(cobbleDetail, scene, textures) };
+  const site = composition ?? {
+    texture: dirtTexture,
+    center: Vector2.Zero(),
+    size: Vector2.One(),
+    reference: new Vector2(0, 1),
+    crop: new Vector4(0, 0, 1, 1),
+    amount: 0,
+  };
   const palettes: Record<'plain' | 'mud' | 'fire' | 'blocked', Palette> = {
     plain: { day: new Color3(0.88, 0.83, 0.75), night: new Color3(0.62, 0.65, 0.67) },
     mud: { day: new Color3(0.94, 0.97, 1), night: new Color3(0.49, 0.46, 0.43) },
@@ -185,6 +225,7 @@ export function mountBattleTerrain(
       'plain',
       scene,
       earthTextures,
+      site,
     ),
     mud: groundMaterial(
       'battle-ground:mud-puddles',
@@ -193,6 +234,7 @@ export function mountBattleTerrain(
       'mud',
       scene,
       earthTextures,
+      site,
     ),
     fire: groundMaterial(
       'battle-ground:charred-earth',
@@ -201,6 +243,7 @@ export function mountBattleTerrain(
       'fire',
       scene,
       earthTextures,
+      site,
     ),
     blocked: groundMaterial(
       'battle-ground:rubble-earth',
@@ -209,6 +252,7 @@ export function mountBattleTerrain(
       'blocked',
       scene,
       earthTextures,
+      site,
     ),
   };
   scene.onBeforeCameraRenderObservable.add((camera) => {
@@ -345,5 +389,9 @@ export function mountBattleTerrain(
     for (const material of emberMaterials) material.emissiveColor = light.embers;
   };
   setNight(initialNight);
-  return { apron, terrainByHex, setNight };
+  const setPixelsPerWorld = (pixels: number) => {
+    const detail = Math.max(0, Math.min(1, (pixels - 55) / 35));
+    for (const material of Object.values(groundMaterials)) material.setFloat('fineDetail', detail);
+  };
+  return { apron, terrainByHex, setNight, setPixelsPerWorld };
 }

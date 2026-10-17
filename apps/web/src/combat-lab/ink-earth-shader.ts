@@ -21,10 +21,10 @@ export const inkEarthShader = `
   vec3 inkPatch(vec2 uv, vec2 vertex, vec2 dx, vec2 dy) {
     vec2 phase = hash2(vertex + vec2(18.7, 4.1));
     vec2 sampleUv = uv + phase * 29.0;
-    float source = hash2(vertex + vec2(47.3, 81.2)).x;
-    if (source < 0.3333333) return seamlessInkSample(earthMap, sampleUv, dx, dy);
-    if (source < 0.6666667) return seamlessInkSample(earthVariantMap, sampleUv, dx, dy);
-    return seamlessInkSample(earthThirdMap, sampleUv, dx, dy);
+    if (fineDetail < 0.001) return seamlessInkSample(earthMap, sampleUv, dx, dy);
+    if (fineDetail > 0.999) return seamlessInkSample(detailMap, sampleUv, dx, dy);
+    return mix(seamlessInkSample(earthMap, sampleUv, dx, dy),
+      seamlessInkSample(detailMap, sampleUv, dx, dy),fineDetail);
   }
 
   vec3 inkEarth(vec2 uv) {

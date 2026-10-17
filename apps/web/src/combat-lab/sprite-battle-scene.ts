@@ -10,7 +10,9 @@ import {
   Scene,
   StandardMaterial,
   Texture,
+  Vector2,
   Vector3,
+  Vector4,
   VertexBuffer,
   type AbstractMesh,
 } from '@babylonjs/core';
@@ -47,6 +49,11 @@ import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-c
 
 const millFieldUrl = new URL(
   '../../../../assets/art/combat/readable-terrain-2026-10-16/mill-scenery.png',
+  import.meta.url,
+).href;
+
+const siteGroundUrl = new URL(
+  '../../../../assets/art/combat/readable-terrain-2026-10-16/site-ground.png',
   import.meta.url,
 ).href;
 
@@ -189,6 +196,7 @@ export async function mountSpriteBattleScene(
   ];
   scene.onBeforeCameraRenderObservable.add((camera) => {
     const pixelsPerWorld = canvas.clientHeight / (2 * camera.orthoTop!);
+    terrain.setPixelsPerWorld(pixelsPerWorld);
     const presentation = unitPresentationModes[Number(pixelsPerWorld < 64)]!;
     for (const material of unitMaterials.values()) {
       const art = material.diffuseTexture as Texture;
@@ -323,7 +331,14 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
-  const terrain = mountBattleTerrain(scene, initialTiles, initialNight);
+  const terrain = mountBattleTerrain(scene, initialTiles, initialNight, {
+    texture: texture(siteGroundUrl),
+    center: new Vector2(backgroundX - 4.1, backdropUp),
+    size: new Vector2(backgroundWidth * 0.5, backgroundHeight * 0.5),
+    reference: new Vector2(perspective.targetX, perspective.distance),
+    crop: new Vector4(0.3, 0.18, 0.85, 0.7),
+    amount: 1,
+  });
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
   const apronDepth = backdropDepth + 1;
   const apronScale = (perspective.distance + apronDepth) / perspective.distance;
