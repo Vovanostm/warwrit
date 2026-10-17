@@ -3827,7 +3827,7 @@ New generated mud and burning-coal assets/provenance replace procedural fire
 glyphs and the earlier muddy texture candidate. Day/night and dense current
 captures require fresh independent acceptance.
 
-### Вторая реализация — локальный checkpoint
+### Вторая реализация — исторический эксперимент до owner correction
 
 Новые mud/fire PNG с точными prompts/provenance включены в assets/manifest.json;
 сырой generated output сохранён без перерисовки. Мокрые лужи и угли с низким
@@ -3844,3 +3844,36 @@ terrain-material.ts без переноса world/road функций. Силь�
 исправлений сложности. Предыдущий809unit/47SKIPPED coverage относится к первому
 checkpoint, финальный clean gate на полном текущем дереве ещё NOT_RUN.
 Повторный независимый visual verdict, реальные изменения pools и merge pending.
+
+### Общая интеграция — 2026-10-17, local / acceptance pending
+
+Текущая версия aa71d46 содержит owner correction из чата «Исправить обрезание
+спрайтов (2)»: только32×12CSSpx, строго4px под ногами; без arms, connectors,
+чисел и отдельных плашек. Полоски входят в ту же группу foot-sorting, что и
+фигуры; непрозрачный передний боец корректно перекрывает задний индикатор.
+Полные подписи/значения остаются под верхними портретами. Эксперимент48×20 и
+его placement helper удалены, прежние49focused включали4проверки удалённого
+эксперимента и не являются числом текущих тестов. Сложность исправлена;
+обычный commit hook aa71d46 PASS по31изменённому файлу. Build/CI/merge всё ещё
+не выполнены для итогового дерева.
+
+Единый владелец интеграции/PR/review/merge — исходный чат и
+codex/combat-readability в combat-live-queue. Fork(2) работает изолированно над
+компактными полосками и их проверкой; fork(3) владеет только Portrait/portrait
+CSS/test в combat-portrait-fit. Основной dirty checkout не изменяется.
+Владелец явно разрешил согласование обоих новых чатов.
+
+Реальное движение через ПКМ по увеличенной сетке далоrev0→1. Затем наR2/rev29
+после боевых изменений здоровья, брони и морали36полевых и69верхних показаний
+совпали с публичным view, лишних слоёв нет. Исправлен resize после click-jitter:
+флаг пользовательского pan включается только при жесте более5px, как у общей
+камеры; wheel delta0 его не включает. Браузер1920×1080→1280×720 после1px
+дрожания заново кадрирует всех12бойцов между HUD; сознательный80px pan с
+последующим resize сохраняется. Навигация0actionPOST,17camera/framing checks,
+web typecheck и scoped lint PASS. Свежие локальные результаты:
+output/playwright/readability-final-20261017/ (untracked).
+
+Портретный inset и независимая финальная визуальная приёмка, clean CI и merge
+остаются обязательными. Наблюдаемое скрытие полоски под передней фигурой либо
+при сознательном уводе ног под панель не равно обрезанию исходного спрайта;
+это ограничение текущей камеры, которое нужно показать критику явно.

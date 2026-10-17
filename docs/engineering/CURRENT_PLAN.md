@@ -1,6 +1,15 @@
 # Warwrit current delivery plan
 
-**Combat readability and reusable terrain — 2026-10-16, ACTIVE / OWNER REJECT:**
+**Combat readability and reusable terrain — 2026-10-17, ACTIVE / ACCEPTANCE PENDING:**
+Local source aa71d46 committed with normal audit31PASS; exact pool-sync and
+scaled-cell input journey PASS. Latest owner correction forbids arms/callouts:
+field bars32×12CSSpx immediately4px below feet, foot-sorted with figures.
+Root owns one common integration/PR/review/merge; authorized forks work in
+isolation: (2) compact bars/critique, (3) Portrait inset/CSS/test. Final combined
+source/visual acceptance, clean CI and merge pending. Root camera jitter/resize
+correction verified with actual0POST navigation +17focused camera checks.
+The historical activation and first-rejection evidence follows:
+
 Owner rejects current sprite softness, indistinct cell materials, cramped grid
 and clipped/misaligned initiative images despite previous finite acceptance.
 New outcome: larger readable cells, intact sharp figures/portraits, three

@@ -982,17 +982,29 @@ export async function mountSpriteBattleScene(
     );
   };
   let cameraMoved = false;
-  const markWheel = () => {
-    cameraMoved = true;
+  const markWheel = (event: WheelEvent) => {
+    if (event.deltaY !== 0) cameraMoved = true;
   };
   const markKey = (event: KeyboardEvent) => {
     if (/^(Arrow(Up|Down|Left|Right)|[wasd])$/i.test(event.key)) cameraMoved = true;
   };
+  let cameraPress: { x: number; y: number } | null = null;
+  const rememberCameraPress = (event: PointerEvent) => {
+    cameraPress = [0, 1].includes(event.button) ? { x: event.clientX, y: event.clientY } : null;
+  };
+  const releaseCameraPress = () => {
+    cameraPress = null;
+  };
   const markDrag = (event: PointerEvent) => {
-    if (event.buttons !== 0 && Math.hypot(event.movementX, event.movementY) > 0) cameraMoved = true;
+    if (!cameraPress || event.buttons === 0) return;
+    if (Math.hypot(event.clientX - cameraPress.x, event.clientY - cameraPress.y) > 5)
+      cameraMoved = true;
   };
   canvas.addEventListener('wheel', markWheel, { passive: true });
   canvas.addEventListener('keydown', markKey);
+  canvas.addEventListener('pointerdown', rememberCameraPress);
+  canvas.addEventListener('pointerup', releaseCameraPress);
+  canvas.addEventListener('pointercancel', releaseCameraPress);
   canvas.addEventListener('pointermove', markDrag);
   frameBattle();
   canvas.setAttribute('aria-label', 'Поле боя с выбором бойца или клетки');
@@ -1024,6 +1036,9 @@ export async function mountSpriteBattleScene(
     resizeObserver.disconnect();
     canvas.removeEventListener('wheel', markWheel);
     canvas.removeEventListener('keydown', markKey);
+    canvas.removeEventListener('pointerdown', rememberCameraPress);
+    canvas.removeEventListener('pointerup', releaseCameraPress);
+    canvas.removeEventListener('pointercancel', releaseCameraPress);
     canvas.removeEventListener('pointermove', markDrag);
     fieldVitals.destroy();
     camera.dispose();

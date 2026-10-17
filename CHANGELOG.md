@@ -11,6 +11,15 @@ requests.
 
 ### Combat readability and reusable terrain
 
+- 2026-10-17, branch `codex/combat-readability`, local: integrate the owner's
+  explicit rejection of callout arms; compact32×12 foot-sorted tracks remain
+  directly4px under sprites. Record isolated bar/portrait ownership and the
+  superseded placement experiment. Correct camera resize after click jitter:
+  a deliberate pan uses the same5px threshold as the camera, zero wheel delta
+  does not suppress reframing. Actual click-jitter/resize and pan/resize with
+  0actionPOST,17focused tests, web types/lint PASS. Final integration acceptance,
+  clean CI and merge pending; [owning result](docs/wiki/battlefield-test-maps.md#общая-интеграция--2026-10-17-local--acceptance-pending).
+
 - 2026-10-16, branch `codex/combat-readability`, local implementation under review:
   measured 20-profile portrait bounds/B037 pivot; selective high-resolution
   outlines; larger shared hex layout; common pool rows in queue and field;
