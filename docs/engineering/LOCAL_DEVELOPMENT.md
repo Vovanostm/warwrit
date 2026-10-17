@@ -97,6 +97,12 @@ The Compose project name is the checkout directory name, so two checkouts get
 separate volumes but share the published ports; stop one stack before starting
 another.
 
+Orca worktrees run [`scripts/orca-setup.sh`](../../scripts/orca-setup.sh) on
+creation: dependencies, package builds and private combat-lab ports in
+`.worktree-ports`, which `pnpm dev:combat` reads. Several worktrees can serve
+the combat lab at once; the campaign stack above stays shared.
+[Orca setup and limits](AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18).
+
 ## Verification pipeline
 
 `pnpm verify` runs in this order:

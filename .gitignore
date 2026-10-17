@@ -19,3 +19,5 @@ postgres-data/
 output/
 .playwright-cli/
 .claude/worktrees/
+.worktree-ports
+.orca/

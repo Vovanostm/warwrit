@@ -1,0 +1,15 @@
+# Orca defaults for parallel Warwrit worktrees.
+# Policy and limits: docs/engineering/AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18
+# Never share node_modules: pnpm workspace links are relative and would resolve
+# to the primary checkout's packages instead of this worktree's sources.
+scripts:
+  setup: |
+    bash scripts/orca-setup.sh
+  archive: |
+    bash scripts/orca-archive.sh
+setupAgentStartupPolicy: wait-for-setup
+defaultTabs:
+  - title: Agent
+  - title: Shell
+issueCommand: |
+  gh issue view {{artifact_url}} --comments

@@ -1,5 +1,15 @@
 # Warwrit current delivery plan
 
+**Orca parallel worktrees — 2026-10-18, LOCAL / PR PENDING:**
+Owner asked to configure Orca for fast, correct parallel agent work. Branch
+`claude/orca-parallel-setup` adds orca.yaml hooks, .worktreeinclude, private
+combat-lab ports per worktree and the `warwrit-orca` coordinator skill
+(waves by file ownership, single writer per slice, coordinator owns shared
+records, ≤5 writers, gates one at a time). Repo registered in Orca with base
+origin/main. Setup/ports/archive PASS locally; Orca hooks and supervised run
+NOT_RUN until merge (needs owner permission).
+[Owning section](AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18).
+
 **Combat readability — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized [PR160](https://github.com/Vovanostm/warwrit/pull/160) MERGED.
 Reviewed head1bb92aaaae52a6ef78573471895ccd973aba1ced,

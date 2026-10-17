@@ -2,8 +2,12 @@
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
-api_port="${COMBAT_API_PORT:-3022}"
-web_port="${COMBAT_WEB_PORT:-5320}"
+# Orca worktrees get private ports from scripts/orca-setup.sh; explicit env still wins.
+worktree_port() { [[ -f .worktree-ports ]] && sed -n "s/^$1=\([0-9][0-9]*\)$/\1/p" .worktree-ports | head -n 1; }
+api_port="${COMBAT_API_PORT:-$(worktree_port COMBAT_API_PORT || true)}"
+web_port="${COMBAT_WEB_PORT:-$(worktree_port COMBAT_WEB_PORT || true)}"
+api_port="${api_port:-3022}"
+web_port="${web_port:-5320}"
 for candidate in "$api_port" "$web_port"; do
   if [[ ! "$candidate" =~ ^[1-9][0-9]*$ ]] || (( candidate > 65535 )); then
     printf 'Invalid combat lab port: %s\n' "$candidate" >&2

@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Configure Orca for parallel agent worktrees
+
+- 2026-10-18, originating branch `claude/orca-parallel-setup`, local/PR pending:
+  owner asked to configure Orca for maximum safe agent parallelism. Added
+  `orca.yaml` (setup/archive hooks, wait-for-setup, Agent/Shell tabs, issue
+  command), `.worktreeinclude`, `scripts/orca-setup.sh` (frozen install, package
+  builds, private combat-lab ports) and `scripts/orca-archive.sh`;
+  `pnpm dev:combat` reads `.worktree-ports`; new `warwrit-orca` coordinator skill.
+  Research and limits in [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18).
+  Setup, dual-port combat lab and archive cleanup PASS on a fresh worktree;
+  Orca hook execution and a supervised run NOT_RUN until merged.
+
 - 2026-10-17, originating branch `codex/combat-readability` → `main`, merged:
   owner-authorized [PR160](https://github.com/Vovanostm/warwrit/pull/160),
   reviewed1bb92aa/merge94bfe2558ec7ad48a2b3e2b596796131c0caacae,
