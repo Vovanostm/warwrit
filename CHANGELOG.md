@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local visual technique revision:
+  full b5a193c/08c2800 critique REJECT(2/2/1/1/2/2/1) exposed a rectangular
+  mill edge, low-detail ground and mismatched night lighting. Add irregular
+  backdrop alpha, registered authored-yard sampling on the shared cell surface,
+  an original rutted earth asset/provenance with preserved directional ink, and
+  coordinated near/far night values. Canonical terrain/picking/rules unchanged.
+  Types/lint/content105/main-based audit and fresh shader/browser captures PASS;
+  current full critic/CI/merge pending. [Owning result](docs/wiki/battlefield-test-maps.md#authored-ground-composition--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local final bound correction:
   source review confirmed projected physical bounds could exceed the finite
   camera-facing apron at extreme pan. Clamp to its reference-image rectangle;

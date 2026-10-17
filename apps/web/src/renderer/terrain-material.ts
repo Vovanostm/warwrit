@@ -11,22 +11,24 @@ export const naturalTextureShader = `
     vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
     return mix(mix(hash2(i).x,hash2(i+vec2(1,0)).x,f.x),mix(hash2(i+vec2(0,1)).x,hash2(i+vec2(1)).x,f.x),f.y);
   }
-  vec3 interiorPatch(sampler2D source,vec2 uv,vec2 vertex){
+  vec3 interiorPatch(sampler2D source,vec2 uv,vec2 vertex,float preserveDirection){
     vec2 random=hash2(vertex);
     float angle=random.x*6.2831853;
     mat2 rotation=mat2(cos(angle),-sin(angle),sin(angle),cos(angle));
     vec2 center=vec2(vertex.x+vertex.y*0.5,vertex.y*0.8660254);
-    vec2 sampleUv=vec2(0.5)+(random-0.5)*0.18+rotation*(uv-center)*0.28;
+    vec2 sampleUv=vec2(0.5)+(random-0.5)*mix(0.18,0.12,preserveDirection)
+      +mix(rotation*(uv-center)*0.28,(uv-center)*0.38,preserveDirection);
     return pow(texture2D(source,sampleUv).rgb,vec3(2.2));
   }
-  vec3 naturalTile(sampler2D source,vec2 uv){
+  vec3 naturalTile(sampler2D source,vec2 uv,float preserveDirection){
     vec2 skew=vec2(uv.x-uv.y*0.57735027,uv.y*1.15470054);
     vec2 base=floor(skew), f=fract(skew), a,b,c; vec3 blend;
     if(f.x+f.y<1.0){ a=base; b=base+vec2(1,0); c=base+vec2(0,1); blend=vec3(1.0-f.x-f.y,f.x,f.y); }
     else { a=base+vec2(1); b=base+vec2(0,1); c=base+vec2(1,0); blend=vec3(f.x+f.y-1.0,1.0-f.x,1.0-f.y); }
     blend=blend*blend*blend; blend/=dot(blend,vec3(1));
-    return interiorPatch(source,uv,a)*blend.x+interiorPatch(source,uv,b)*blend.y+interiorPatch(source,uv,c)*blend.z;
-  }`;
+    return interiorPatch(source,uv,a,preserveDirection)*blend.x+interiorPatch(source,uv,b,preserveDirection)*blend.y+interiorPatch(source,uv,c,preserveDirection)*blend.z;
+  }
+  vec3 naturalTile(sampler2D source,vec2 uv){ return naturalTile(source,uv,0.0); }`;
 
 function wetContactPoint(
   region: WorldContinuousMapDto,

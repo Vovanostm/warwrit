@@ -932,6 +932,15 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/fire-stubs.json",
       "generatedAt": "2026-10-17T07:00:20.248Z"
+    },
+    {
+      "id": "art.combat.readable-terrain.earth-ruts",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/earth-ruts.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-ruts.json",
+      "generatedAt": "2026-10-17T08:30:47.702856+00:00"
     }
   ]
 }

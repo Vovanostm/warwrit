@@ -4399,3 +4399,50 @@ Bound correction runtime PASS: four opposite extreme drag corners with
 apron screen rectangle covering the full1440×900viewport,0actionPOST;
 Home returns overview.23camera/framing/webtypes PASS. Source counterexample
 and corrected coordinate-space readback DONE; final new-head CI pending.
+
+### Authored ground composition — 2026-10-17
+
+Full independent critique on b5a193c normal captures and08c2800 extreme corners:
+REJECT2/2/1/1/2/2/1,motionN/A. Selected archer and layering were present and
+intact; focused large creature was intact at max zoom. Offscreen neighbours
+were withdrawn as a defect. Remaining actual gaps: straight painting rectangle
+against generic earth, lost directional material detail, field/figures failing
+to share the painting's night values. This supersedes prior partial impressions.
+
+New presentation technique: camera-facing original artwork has a shader alpha
+fade with an irregular edge. Shared cell geometry receives a second UV set
+from the same reference projection; the bounded authored courtyard is sampled
+on the ground footprint and then lifted with the terrain. Terrain category
+masks still own mud/fire/blocked appearance and fade to the same base at shared
+edges; no private rule, new canonical field or map-name inference is added.
+The sampler is optional: common earth remains the fallback and the apron is
+earth-only. The current lab uses its existing mill place art; this does not
+claim a catalogue of different place scenes.
+
+New original earth-ruts.png uses source-linked ink ruts, cobbles and sparse
+roots. Direction-preserving interior sampling retains rut contours while blending
+shared lattice patches continuously; default world sampling stays unchanged. Original imagegen output and exact
+prompt/provenance are saved beside the asset and registered in manifest.
+Unit night values are now near0.45/0.5/0.6, overview0.55/0.6/0.7 in linear
+material space, preserving a readable foreground within the same night wash.
+
+Types/lint/content105 and main-based audit PASS; runtime shader compilation
+PASS. First scene material setter edit had a missing parenthesis; corrected
+before browser capture. Current evidence in output/playwright/ink-composition-20261017/
+(untracked), all20profiles/3fields/desktop/day-night. Authored crop coverage also
+reaches exactly0 at its boundary to avoid the earlier noise-edge seam pattern.
+A source reviewer accidentally inspected primaryb44f5c1; that report is excluded
+from current evidence, corrected-path review requested. Full new visual/CI/
+merge remain pending.
+
+Correct-path source review found the new image edges were not truly matched,
+so direct WRAP sampling could produce seams. The shared sampler now has a finite
+direction-preserving mode for ink ruts: sample only image interior with shared
+lattice weights; existing two-argument callers retain the original rotated mode.
+Authored UV/alpha/gamma review found no additional concrete source issue.
+
+Source fix readback DONE in correct checkout: sampler uses conservativeUV
+[.06,.94] interior, continuous lattice weights, and algebraically unchanged
+mode0 for existing world callers. Current browser shaders compile; all12GPU
+strips/picks and four apron corners/0POST pass again. Current full critic/CI
+remain pending; earlier partial or wrong-checkout reports do not accept this tree.

@@ -1,5 +1,14 @@
 # Warwrit current delivery plan
 
+**Authored ground composition — 2026-10-17, LOCAL / RE-REVIEW:**
+Full combined critic rejectedb5a193c/08c2800 visuals2/2/1/1/2/2/1:
+rectangular painting edge, low-detail earth and incoherent night. New backdrop
+alpha/shared-surface courtyard sampler/original ink ruts/linear night values
+are integrated locally; categories/picks/rules unchanged. Types/lint/content105/
+audit/browser shader PASS. Correct-path source and fresh full visual pass,
+current-head CI/merge pending. Prior source report from primaryb44f5c1 excluded.
+[Current result](../wiki/battlefield-test-maps.md#authored-ground-composition--2026-10-17).
+
 **Combat readability combined with current main — 2026-10-17, LOCAL / FINAL REVIEW:**
 PR160 now integrates main a934355/PR159. CleanCI39014594194 on b5a193c
 SUCCESS820/47SKIP/10kstress/14DB/41audit. Later extreme-bound source

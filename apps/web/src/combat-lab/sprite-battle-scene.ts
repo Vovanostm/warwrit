@@ -38,6 +38,7 @@ import {
   spriteOutlinePixels,
 } from './sprite-outline.js';
 import { BATTLE_LAYOUT, battleHexToWorld } from './battle-layout.js';
+import { createBattleBackdropMaterial } from './battle-backdrop.js';
 import { mountBattleTerrain } from './battle-terrain.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { battleFrameBounds } from './battle-framing.js';
@@ -179,11 +180,11 @@ export async function mountSpriteBattleScene(
   const unitPresentationModes = [
     {
       sampling: Texture.BILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.72, 0.76, 0.82)],
+      colors: [Color3.White(), new Color3(0.45, 0.5, 0.6)],
     },
     {
       sampling: Texture.TRILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.9, 0.91, 0.95)],
+      colors: [Color3.White(), new Color3(0.55, 0.6, 0.7)],
     },
   ];
   scene.onBeforeCameraRenderObservable.add((camera) => {
@@ -245,12 +246,9 @@ export async function mountSpriteBattleScene(
   // Register the painted perimeter around the HUD's free central play area.
   // Grid axes, sprite scale and foot pivots remain unchanged.
   background.isPickable = false;
-  const groundMaterial = new StandardMaterial('old-mill-painted-values', scene);
-  groundMaterial.diffuseTexture = texture(millFieldUrl);
-  groundMaterial.linkEmissiveWithDiffuse = true;
-  groundMaterial.disableLighting = true;
-  groundMaterial.specularColor = Color3.Black();
-  groundMaterial.emissiveColor = initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White();
+  const placeTexture = texture(millFieldUrl);
+  const groundMaterial = createBattleBackdropMaterial(scene, placeTexture);
+  groundMaterial.setColor3('tint', initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White());
   background.material = groundMaterial;
 
   const addRootedFixture = () => {
@@ -325,7 +323,16 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
-  const terrain = mountBattleTerrain(scene, initialTiles, initialNight);
+  const terrain = mountBattleTerrain(scene, initialTiles, initialNight, {
+    texture: placeTexture,
+    uvFor: (point) => {
+      const projected = project(point);
+      return [
+        (projected.x - backgroundX + 1.1) / backgroundWidth + 0.5,
+        ((projected.z + 2) * Math.sin(CAMERA_ELEVATION) - backgroundUp) / backgroundHeight + 0.5,
+      ];
+    },
+  });
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
   const apronDepth = backdropDepth + 1;
   const apronScale = (perspective.distance + apronDepth) / perspective.distance;
@@ -1170,7 +1177,7 @@ export async function mountSpriteBattleScene(
       : { clear: new Color4(0.075, 0.067, 0.057, 1), intensity: 0.98, ground: Color3.White() };
     scene.clearColor = values.clear;
     light.intensity = values.intensity;
-    groundMaterial.emissiveColor = values.ground;
+    groundMaterial.setColor3('tint', values.ground);
     terrain.setNight(night);
   };
   const followActivation = (previousActor: string | undefined) => {
