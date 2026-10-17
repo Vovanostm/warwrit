@@ -4381,3 +4381,21 @@ category contribution on a shared geometric edge. Coverage now reaches zero
 at that edge on both cells, keeping common world earth continuous while
 retaining irregular interior patches. Independent narrow source readback DONE; no residual source defect. Fresh
 combined captures/absolute visual acceptance remain pending.
+
+Extreme-pan source counterexample confirmed after b5a193c cleanCI SUCCESS:
+physical near corner(-10,-10) projects toX~-27 while the camera-facing apron
+starts nearX~-13.5 on the generated15×11 field. Bounds now use mapBounds±10
+in reference-image coordinates, inside the apron; all actual cell centres and
+radii remain reachable in this finite field. Current code CI/edge journey
+pending; green b5a193c covered the prior bounds. Its actual clean run
+[39014594194](https://github.com/Vovanostm/warwrit/actions/runs/39014594194)
+passed820unit/47SKIP,10kstress/20determinism/100replay,14DB,coverage/41-fileaudit.
+Combined default journey: actual move rev4→5, R3/rev55 all3pools changed,
+30field+57queue values agreed; terminalR8/rev152 zero queue/dock/visiblebar
+meshes,0hotkeyPOST; editor0→restart12active/R1/1layer. First terminal polling
+window ended activeR7, repeated polling reached terminal; not a first-run pass.
+
+Bound correction runtime PASS: four opposite extreme drag corners with
+apron screen rectangle covering the full1440×900viewport,0actionPOST;
+Home returns overview.23camera/framing/webtypes PASS. Source counterexample
+and corrected coordinate-space readback DONE; final new-head CI pending.

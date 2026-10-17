@@ -1,7 +1,11 @@
 # Warwrit current delivery plan
 
 **Combat readability combined with current main — 2026-10-17, LOCAL / FINAL REVIEW:**
-PR160 now integrates main a934355/PR159. Preserve fixed-optical-centre
+PR160 now integrates main a934355/PR159. CleanCI39014594194 on b5a193c
+SUCCESS820/47SKIP/10kstress/14DB/41audit. Later extreme-bound source
+counterexample confirmed; reference-coordinate bounds correction is local,
+four extreme corner drags/apron coverage/0POST and23camera/types PASS;
+new-head CI pending. Full visual review in progress. Preserve fixed-optical-centre
 perspective/bounds and connected height surfaces; share spacing2.6/height.28
 across terrain/grid/picks/feet. Full HUD/vitals/sharp sprites remain integrated;
 field strips measured32×16px with4px gap at both perspective depths.

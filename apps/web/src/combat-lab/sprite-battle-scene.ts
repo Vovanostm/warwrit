@@ -961,18 +961,13 @@ export async function mountSpriteBattleScene(
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
     perspective,
-    // Bound navigation to the finite terrain apron, in the fixed reference image.
-    bounds: (() => {
-      const corners = [mapBounds.minX - 10, mapBounds.maxX + 10].flatMap((x) =>
-        [mapBounds.minZ - 10, mapBounds.maxZ + 10].map((z) => project({ x, y: 0, z })),
-      );
-      return {
-        minX: Math.min(...corners.map((p) => p.x)),
-        maxX: Math.max(...corners.map((p) => p.x)),
-        minZ: Math.min(...corners.map((p) => p.z)),
-        maxZ: Math.max(...corners.map((p) => p.z)),
-      };
-    })(),
+    // The apron is camera-facing: clamp in its reference-image coordinates.
+    bounds: {
+      minX: mapBounds.minX - 10,
+      maxX: mapBounds.maxX + 10,
+      minZ: mapBounds.minZ - 10,
+      maxZ: mapBounds.maxZ + 10,
+    },
     minZoom: 2.2,
     maxZoom: 17,
     pick: pickAt,

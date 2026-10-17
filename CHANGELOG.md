@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local final bound correction:
+  source review confirmed projected physical bounds could exceed the finite
+  camera-facing apron at extreme pan. Clamp to its reference-image rectangle;
+  generated15×11 edge cells remain reachable. Four extreme drag corners/
+  full-viewport apron/0POST and23camera/types PASS. Previous b5a193c cleanCI SUCCESS
+  (820/47SKIP,10kstress,14DB,41-file audit); new-head verification pending.
+  [Owning result](docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local integration of main
   a934355/PR159 into PR160: retain perspective/bounds and connected surfaces;
   share2.6spacing/.28height across grid/picking/feet; derive field strips in
