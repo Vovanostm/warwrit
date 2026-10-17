@@ -1,6 +1,27 @@
 # Warwrit current delivery plan
 
-**Combat readability — 2026-10-17, LOCAL / AUTHORED MATERIAL AND NARROW BANK:**
+**Combat readability — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
+Owner-authorized [PR160](https://github.com/Vovanostm/warwrit/pull/160) MERGED.
+Reviewed head1bb92aaaae52a6ef78573471895ccd973aba1ced,
+merge/main94bfe2558ec7ad48a2b3e2b596796131c0caacae; ordinary tree diff empty.
+[Clean CI39051364869](https://github.com/Vovanostm/warwrit/actions/runs/39051364869)
+SUCCESS820unit/47SKIP/10kstress/20determinism/100replay/14DB/coverage/66fileaudit;
+8inherited findings excluded. Source reviews DONE. Full21image+2reference visual
+ACCEPT: game all2, close3/3/2/2/2/2/2, motionN/A/criticowninputNOT_RUN;
+later outline factors independently verified equivalent. Earlier REJECT/CI FAIL retained.
+Whole sharp portraits/figures,32×16px vitals4px below feet, spacing2.6/height.28,
+connected banks, ink materials/shared edited-generated terrain and navigation merged.
+Actual main stand5336/API3036 in clean battle-camera-pan/warwrit: day/night,
+Home/keys/drag0POST/rev4, move4→5/endturn6/2POST/actorhuman3→human6,
+12bar geometry/0pick mismatches PASS. Autobattle firstR5rev100 active,
+repeat resolvedR9rev163/0terminalHUD/hotkeyPOST; editor0layer→12active/R1/1layer.
+Clean reload0renderer errors/warnings (initial favicon404 only). Main listeners
+confirmed from main checkout;5344/3044 and primary dirty WIP preserved.
+Only Markdown in this receipt; game tests NOT_RUN for the closeout itself.
+No campaign write/deploy/paid service/fullM1/balance/FPS claim. Minor rut/fire
+repetition remains nonblocking polish. [Merged result](../wiki/battlefield-test-maps.md#поставка-pr160-в-main--2026-10-17).
+
+**Combat readability — 2026-10-17, HISTORICAL / AUTHORED MATERIAL AND NARROW BANK:**
 Correction after d185b71 REJECT: ink-yard-earth, authored plate material masks,
 connected0.78–0.88radius top/banks, physical field UV, true-alpha ruined-yard
 fringes outside canonical field and on existing blocked cells. Rules/centres/

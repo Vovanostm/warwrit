@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, originating branch `codex/combat-readability` → `main`, merged:
+  owner-authorized [PR160](https://github.com/Vovanostm/warwrit/pull/160),
+  reviewed1bb92aa/merge94bfe2558ec7ad48a2b3e2b596796131c0caacae,
+  ordinary reviewed-to-merge tree diff empty. Deliver whole sharp portraits/
+  figures, vitals below portraits/feet, larger shared cells and readable ink
+  terrain/banks for edited/generated battles, preserving rules and navigation.
+  Full independent visual ACCEPT, source reviews DONE; cleanCI39051364869
+  SUCCESS820unit/47SKIP/10kstress/20determinism/100replay/14DB/coverage/66fileaudit
+  (8inherited excluded). Actual main5336/3036 day-night/navigation/geometry/
+  move/endturn/autobattleR9rev163/terminal/restart PASS. Primary dirty WIP and
+  other stand preserved. This receipt changes only Markdown; game tests NOT_RUN
+  for it. Retain failures/history, nonblocking rut/fire polish and finite limits.
+  [Merged result and provenance](docs/wiki/battlefield-test-maps.md#поставка-pr160-в-main--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local follow-up after
   73a4d40 CI39048861412 FAIL at boundaryCRAP30: build the common emphasized-ID
   list once per marker refresh and reuse it in per-unit outline application.

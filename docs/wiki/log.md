@@ -8,6 +8,19 @@ tags: [meta]
 
 # Wiki log
 
+## [2026-10-17] merge | Читаемость спрайтового боя в main
+
+- [PR160](https://github.com/Vovanostm/warwrit/pull/160) слит с expected-head
+  `1bb92aa`, merge `94bfe25`, diff деревьев пуст. [Чистый CI39051364869](https://github.com/Vovanostm/warwrit/actions/runs/39051364869)
+  SUCCESS: 820 unit / 47 SKIPPED, 10k stress, 20 determinism, 100 replay,
+  14 DB, покрытие и аудит 66 файлов. Полный независимый visual ACCEPT;
+  source reviews завершены, прежние REJECT/FAIL сохранены.
+- [Путь из main](battlefield-test-maps.md#поставка-pr160-в-main--2026-10-17):
+  стенд5336/API3036, день/ночь/камера/полоски/выбор клеток, движение и ход,
+  полный автобой R9/rev163, terminal без HUD/POST и новый бой12/R1 PASS.
+  Исходный dirty checkout и другой стенд сохранены. Поправлены текущая
+  сводка wiki, оглавление, CURRENT_PLAN и CHANGELOG; баланс/FPS/M1 не приняты.
+
 ## [2026-10-17] implementation/checkpoint | Читаемость спрайтового боя
 
 - По запросу владельца обновлены [страница боя](battlefield-test-maps.md#текущее-состояние--2026-10-17),
