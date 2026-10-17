@@ -3,7 +3,8 @@
 Run `pnpm dev:combat`, then open `http://127.0.0.1:5320/combat-lab`.
 The launcher builds protocol/core and starts a separate loopback API on 3022
 and web on 5320 without opening the campaign database. Override
-`COMBAT_API_PORT` / `COMBAT_WEB_PORT` when those ports are occupied.
+`COMBAT_API_PORT` / `COMBAT_WEB_PORT` when those ports are occupied. Orca worktrees get private
+ports from `.worktree-ports` (written by `scripts/orca-setup.sh`).
 
 Choose up to six units per side from twenty approved visual profiles. Paint
 terrain, heights and obstacles, place units, then start the accepted draft.

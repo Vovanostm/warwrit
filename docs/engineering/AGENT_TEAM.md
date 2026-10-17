@@ -61,6 +61,70 @@ deployment, paid-service or external-message authority. Reuse
 [warwrit-delivery's handoff fields](../../.agents/skills/warwrit-delivery/SKILL.md#handoff);
 children do not execute its publication/checkpoint steps.
 
+## Orca parallel worktrees — 2026-10-18
+
+Owner request: configure Orca so several agents build Warwrit in parallel as
+fast as correctness allows. Orca (`orca` CLI, Orca.app; not the Arcadia-only `arca` fork) gives each agent its own Git
+worktree, terminals and supervised orchestration runs (Run/Task/Dispatch,
+ask/reply, decision gates). The repository part is checked in:
+
+- [`orca.yaml`](../../orca.yaml): setup runs [`scripts/orca-setup.sh`](../../scripts/orca-setup.sh)
+  (frozen pnpm install from the global store, protocol/game-core/testkit builds,
+  private combat-lab ports in gitignored `.worktree-ports`); the agent waits for
+  setup; tabs Agent/Shell; archive runs [`scripts/orca-archive.sh`](../../scripts/orca-archive.sh),
+  which stops only that worktree's combat-lab servers; the issue command prints
+  the linked GitHub issue.
+- [`.worktreeinclude`](../../.worktreeinclude): private copies of `.env` and
+  `.claude/settings.local.json`. `node_modules` is never shared: pnpm workspace
+  links are relative (`apps/web/node_modules/@warwrit/protocol ->
+../../../../packages/protocol`), so a shared tree would compile against the
+  primary checkout's packages.
+- `pnpm dev:combat` reads `.worktree-ports`; explicit `COMBAT_*_PORT` still wins.
+  Campaign `pnpm dev`, PostgreSQL/Dex and OIDC ports stay one shared stack.
+- [`warwrit-orca`](../../.agents/skills/warwrit-orca/SKILL.md) is the coordinator
+  workflow: waves by file ownership, worker spec, review and merge order.
+
+Orca reads setup and tabs from the **new worktree's** `orca.yaml` (so from
+`main` once merged), but `.worktreeinclude` and the archive hook from the
+**primary checkout** registered in Orca. While the primary checkout stays on the
+WIP branch `codex/sprite-combat-stage1`, `.env` is not copied and archive does
+not run; combat-lab work does not need `.env`.
+
+Orca holds a personal local setup hook `pnpm install` for Warwrit. With no
+saved command-source choice a nonempty local hook means **Local only**, so the
+YAML setup is ignored until Settings → Repository → setup command source is
+**orca.yaml only** (or the local hook is cleared). Until then workers run
+`bash scripts/orca-setup.sh` themselves when `.worktree-ports` is missing.
+Repo base ref in Orca: `origin/main` (set 2026-10-18).
+
+**Research basis.** [Orca orca.yaml reference](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/model/orca-yaml.mdx)
+and [worktrees](https://www.onorca.dev/docs/model/worktrees);
+[Claude Code best practices](https://code.claude.com/docs/en/best-practices)
+(a check the agent can run, fresh-context reviewer, writer/reviewer split);
+Cognition [«Don't build multi-agents»](https://cognition.com/blog/dont-build-multi-agents)
+and its [2026 follow-up](https://cognition.com/blog/multi-agents-working):
+parallel agents with partial context make incompatible decisions, so writes stay
+single-threaded and extra agents contribute review and research;
+[parallel agents with Git worktrees (DEV)](https://dev.to/andrea_schiona/running-coding-agents-in-parallel-with-git-worktrees-4cnk)
+and [Augment: multi-agent workspace](https://www.augmentcode.com/guides/how-to-run-a-multi-agent-coding-workspace):
+worktrees move conflicts to merge time, semantic conflicts merge cleanly but
+regress, review becomes the bottleneck, practical laptop ceiling is about four
+to five active agents; [METR 2025](https://simonwillison.net/2025/Jul/12/ai-open-source-productivity/)
+shows perceived speed-up is not measured speed-up (experienced developers 19%
+slower in its early-2025 setting; METR now calls it historical).
+
+**Operating limits on this Mac (12 CPU, 36 GB, ~184 GB free on 2026-10-18):**
+up to five writer worktrees with dev servers/tests; read-only reviewers extra;
+full gates, coverage, stress and migration checks one at a time. 39 Codex
+worktrees use 31 GB; clean up released ones before large waves.
+
+Checks 2026-10-18: setup on a fresh `main` worktree PASS (install + three
+package builds, ports 23426/25426); `pnpm dev:combat` served `/combat-lab` and
+proxied `/api/dev/combat-lab/catalog` on those ports; archive stopped launcher,
+server and Vite with no leftover process. Orca's own hook execution and a
+supervised run end-to-end: NOT_RUN until `orca.yaml` is on `main`. Measured
+throughput of parallel waves: NOT_MEASURED.
+
 ## Loading and host limits
 
 [Official Codex documentation](https://developers.openai.com/codex/multi-agent)

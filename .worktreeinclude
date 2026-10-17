@@ -1,0 +1,3 @@
+# Private copies for each new Orca worktree; sources must be gitignored in the primary checkout.
+.env
+.claude/settings.local.json

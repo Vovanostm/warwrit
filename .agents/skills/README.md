@@ -1,6 +1,6 @@
 # Warwrit skills
 
-The four `warwrit-*` skills own the project workflow. They are workflows, not a
+The five `warwrit-*` skills own the project workflow. They are workflows, not a
 GDD or a source of authorization; [AGENTS.md](../../AGENTS.md) and the active
 contract take precedence.
 
@@ -10,6 +10,7 @@ contract take precedence.
 | `warwrit-domain`   | Implement a bounded game-core change                                     |
 | `warwrit-review`   | Invariant review, known defect patterns, general and simplification pass |
 | `warwrit-delivery` | Validate, publish, authorized merge, checkpoint and next-task handoff    |
+| `warwrit-orca`     | Parallel waves through Orca worktrees, supervised workers, merge order   |
 
 ## Character production
 
