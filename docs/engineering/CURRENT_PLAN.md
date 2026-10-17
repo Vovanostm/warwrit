@@ -1,6 +1,15 @@
 # Warwrit current delivery plan
 
-**Battle perspective correction — 2026-10-17, LOCAL / REVIEW PENDING:**
+**Battle perspective correction — 2026-10-17, LOCAL / VISUAL ACCEPT:**
+Latest connected-surface amendment supersedes the plinth/bank variants below:
+shared-corner earth slopes join exact canonical centres; ground/grid/fill/rays
+share triangles. Old walls/banks/level-plane fallback removed.26focused/types/
+lint/format PASS;810coverage+47SKIPPED before seam helper extraction. Actual
+0/1/2 feet/ground,4widths/day-night/165picks/bodypin/0POST PASS. Prior5b88278
+visual REJECT integration1; CI39002814730 SUCCESS covers only that prior tree.
+Full same-critic absolute ACCEPT(all7game/close2/2,motionN/A,owninputNOT_RUN).
+Strict15-file audit PASS. Current-head CI/merge PENDING; merge authorized.
+
 Latest terrain amendment: footprint UV lifts with raised top; continuous earth
 side UV/vertex shade and shared display height0.28. Canonical rules unchanged.
 27focused/types/lint/format/811coverage+47SKIPPED/audit14 PASS. Real editor

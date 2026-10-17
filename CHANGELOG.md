@@ -11,6 +11,16 @@ requests.
 
 ### Match battle grid and figures to painted perspective
 
+- 2026-10-17, branch `codex/battle-camera-bounds`, local connected terrain:
+  full5b88278 visual review rejected separate hex plinths (integration1).
+  Shared-corner slopes now join canonical cell centres; ground/fill/grid/picking
+  share one surface. Removed obsolete walls/banks/level-plane seam picker.
+  Focused26/types/lint/format PASS;810coverage+47SKIPPED before seam-helper
+  extraction. Real editor0/1/2/crowded/day-night/4widths/165picks/hover-pin/0POST
+  PASS. Initial matrix/winding/audit failures fixed; strict15-file audit PASS.
+  Full same-critic absolute visual ACCEPT(all7game/close2/2); new CI/merge pending.
+  [Owning result](docs/wiki/battlefield-test-maps.md#связная-поверхность-вместо-отдельных-тумб--2026-10-17).
+
 - 2026-10-17, branch `codex/battle-camera-bounds`, local height correction:
   top UV now lifts its ground footprint; continuous earth-side UV/vertex shade
   replaces repeated dark strips. Shared display height0.28 keeps tops, figures,

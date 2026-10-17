@@ -3922,3 +3922,50 @@ pin «Лук» и0POST PASS. Terrain bank не забирает input. Console �
 Evidence: output/playwright/camera-perspective/terrace-_, height-012-_,
 height-editor-result.txt; локальные файлы без tracked links.
 Полный повтор absolute visual review текущего варианта PENDING.
+
+### Связная поверхность вместо отдельных тумб — 2026-10-17
+
+Полный replacement critic на5b88278: REJECT, integration1 (остальные шесть
+применимых game/close критериев2). Отдельные raised hex faces всё ещё
+выглядели как земляные тумбы. Два длительных прогона предыдущего критика
+остановлены без полного verdict; они не считаются приёмкой. CI39002814730
+SUCCESS на5b88278 покрывает предыдущую версию, не этот amendment.
+
+Выполнена смена представления: battle-terrain.ts строит общий corner height
+из трёх соседних tile centres. Каждая клетка сохраняет canonical centre y
+и небольшую ровную опору для стоп, переходящую в общие склоны. На внешнем
+краю карты поверхность сходит к painting. Ground, fills, single grid edges
+и Babylon rays используют одну triangulation. Отдельные вертикальные стороны,
+земляные banks и проекции seam на плоскости уровней удалены. Субпиксельный
+seam tolerance выбирает actual surface, не выдумывает другой ground plane.
+Canonical уровни/стоимость/LOS/позиции/команды/replay не меняются.
+
+Geometry regression заменяет тест удалённых стен: непрерывность shared corners,
+точные centre/foot heights, реальные ray picks с обеих сторон границы,
+согласованные fill vertices и single grid edge независимо от порядка tiles.
+Первая попытка выявила невычисленную world matrix до первого render; исправлено.
+Author screenshot выявил обратный winding central fan (дырки в fills); он
+исправлен и положительные normals вошли в ту же regression. Focused26 PASS,
+web types/lint/format PASS. Coverage810 PASS/47 SKIPPED до extraction seam helper.
+Strict audit сначала отклонил выросший pickAt; seam tolerance выделен в прежнюю
+отдельную функцию. Итоговый audit/result отмечен ниже. Старый plane-helper
+и его единственный тест удалены вместе с заменённым механизмом; новый actual
+surface regression сохраняет проверку picking, а не снимает unfixed defect.
+
+Новые normal editor height0/1/2 day/night, crowded/grid on/off/diagnostic,
+4desktop widths/native close captures: output/playwright/camera-perspective/
+connected-*. Свежие165/165 ground picks/body hover-pin/0POST PASS; foot/ground
+по-прежнему0/.28/.56. Первая height automation ждала кнопку day после reload
+в уже дневном режиме; snapshot/condition исправили automation, не игру.
+Author source/consumer review no concrete findings. Полный same-critic verdict,
+новый exact-head CI и merge PENDING.
+
+Финальный strict15-file audit PASS (0 новых findings); types/lint/format PASS.
+Повторный полный absolute critic ACCEPT на connected-* packet: все7 критериев
+2/2 game/close, motionN/A, critic own input NOT_RUN. Ground overlays не
+пересекают opaque bodies/weapons/feet; прямоугольных masks/чёрных полей нет.
+Подтверждённая смена техники устранила отдельные тумбы; smoother slope,
+светлая silhouette rim и сила тактических fills остаются nonblocking polish.
+После captures вынесен только неизменный seam tolerance из pickAt в named
+helper ради его ответственности/quality gate; визуальная поверхность не менялась.
+Полный новый exact-head CI/merge ещё PENDING на момент commit.
