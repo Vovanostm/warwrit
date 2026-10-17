@@ -23,7 +23,6 @@ export const inkEarthShader = `
     vec2 sampleUv = uv + phase * 29.0;
     if (detailWeight > 0.999) return seamlessInkSample(detailMap,sampleUv,dx,dy);
     vec3 soil=seamlessInkSample(earthMap,sampleUv,dx,dy);
-    soil=mix(vec3(0.13,0.105,0.075),soil,0.55);
     if (detailWeight < 0.001) return soil;
     return mix(soil,seamlessInkSample(detailMap,sampleUv,dx,dy),detailWeight);
   }

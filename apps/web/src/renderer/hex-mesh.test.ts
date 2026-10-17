@@ -100,6 +100,24 @@ it('joins raised earth continuously while preserving centre heights and actual s
     createBattleCellGrid(scene, tiles, terrain);
     const fill = scene.getMeshByName('cell-fill:0,0') as Mesh;
     const ground = scene.getMeshByName('ground:0,0') as Mesh;
+    const positions = ground.getVerticesData(VertexBuffer.PositionKind)!;
+    const cornerRadius = Math.max(
+      ...raised.corners.map((corner) =>
+        Math.hypot(corner.x - raised.centre.x, corner.z - raised.centre.z),
+      ),
+    );
+    const topRadii = Array.from(
+      { length: 6 },
+      (_, index) =>
+        Math.hypot(positions[(index + 1) * 3]!, positions[(index + 1) * 3 + 2]!) / cornerRadius,
+    );
+    expect(Math.min(...topRadii)).toBeGreaterThanOrEqual(0.78);
+    expect(Math.max(...topRadii)).toBeLessThanOrEqual(0.88);
+    expect(
+      Array.from({ length: 6 }, (_, index) => positions[(index + 1) * 3 + 1]!).every(
+        (height) => height === 0,
+      ),
+    ).toBe(true);
     expect(
       ground
         .getVerticesData('normal')!

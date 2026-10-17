@@ -42,6 +42,7 @@ import {
 import { BATTLE_LAYOUT, battleHexToWorld } from './battle-layout.js';
 import { createBattleBackdropMaterial } from './battle-backdrop.js';
 import { mountBattleTerrain } from './battle-terrain.js';
+import { mountBattleScenery } from './battle-scenery.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { battleFrameBounds } from './battle-framing.js';
 import { mountBattleFieldVitals } from './battle-field-vitals.js';
@@ -351,6 +352,8 @@ export async function mountSpriteBattleScene(
     crop: new Vector4(0, 0, 1, 1),
     amount: 1,
   });
+  const scenery = mountBattleScenery(scene, initialTiles);
+  scenery.setNight(initialNight);
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
   const apronDepth = backdropDepth + 1;
   const apronScale = (perspective.distance + apronDepth) / perspective.distance;
@@ -1189,6 +1192,7 @@ export async function mountSpriteBattleScene(
     light.intensity = values.intensity;
     groundMaterial.setColor3('tint', values.ground);
     terrain.setNight(night);
+    scenery.setNight(night);
   };
   const followActivation = (previousActor: string | undefined) => {
     const actorId = currentView.activation?.actorId;

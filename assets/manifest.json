@@ -1004,6 +1004,24 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/paving.json",
       "generatedAt": "2026-10-17T13:37:08.504659+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.ink-yard-earth",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/ink-yard-earth.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/ink-yard-earth.json",
+      "generatedAt": "2026-10-17T14:42:00Z"
+    },
+    {
+      "id": "art.combat.readable-terrain.yard-fringe",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/yard-fringe.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/yard-fringe.json",
+      "generatedAt": "2026-10-17T14:51:00Z"
     }
   ]
 }

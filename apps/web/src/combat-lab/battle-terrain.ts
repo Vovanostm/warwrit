@@ -18,8 +18,8 @@ import fireCrescentUrl from '../../../../assets/art/combat/readable-terrain-2026
 import fireStubsUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-stubs.png';
 import { inkEarthShader } from './ink-earth-shader.js';
 import cobbleDetail from '../../../../assets/art/combat/readable-terrain-2026-10-16/paving.png';
-import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-quiet.png';
-import { BATTLE_ART } from '../renderer/art.js';
+import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/ink-yard-earth.png';
+import rubbleUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/yard-fringe.png';
 import {
   createBattleSurface,
   createBattleTerrain as createTerrainMap,
@@ -29,7 +29,7 @@ import { naturalTextureShader } from '../renderer/terrain-material.js';
 import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { BATTLE_HEX_RADIUS, BATTLE_LAYOUT, battleHexToWorld } from './battle-layout.js';
 
-const GROUND_TEXTURE_WORLD_SIZE = 3.2;
+const GROUND_TEXTURE_WORLD_SIZE = 5.6;
 const key = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
 type GroundComposition = {
@@ -67,9 +67,10 @@ function groundMaterial(
         ${naturalTextureShader}
         ${inkEarthShader}
         void main(){
-          // Register both the lifted field and distant apron to one projected ground plane.
+          // Real earth carries its material up the bank; only the painted apron projects onto y=0.
           vec3 ray=worldPoint-cameraEye;
-          vec2 groundUv=(cameraEye+ray*(-cameraEye.y/min(ray.y,-0.001))).xz/${GROUND_TEXTURE_WORLD_SIZE};
+          vec2 projectedGround=(cameraEye+ray*(-cameraEye.y/min(ray.y,-0.001))).xz;
+          vec2 groundUv=mix(projectedGround,worldPoint.xz,reliefStrength)/${GROUND_TEXTURE_WORLD_SIZE};
           vec2 worldUv=groundUv*detailScale;
           // Two independent world scales break repeated motifs without stretching ink marks.
           vec3 color=mix(naturalTile(terrainMap,worldUv),
@@ -85,15 +86,15 @@ function groundMaterial(
           float siteEdge=min(min(siteUv.x,1.0-siteUv.x),min(siteUv.y,1.0-siteUv.y));
           float siteCoverage=smoothstep(0.0,0.14,siteEdge+(landNoise(groundUv*0.8)-0.5)*0.04)*smoothstep(0.0,0.03,siteEdge);
           siteUv=mix(siteCrop.xy,siteCrop.zw,clamp(siteUv,0.0,1.0));
-          // The authored plate supplies only broad material distribution, never metre-sized painted stones.
-          vec3 siteColor=linearizeRGB(textureLod(siteMap,siteUv,5.0).rgb);
+          // Authored cool stone/warm soil masses choose local materials, rather than stretching painted objects.
+          vec3 siteSample=textureLod(siteMap,siteUv,3.0).rgb;
+          vec3 siteColor=linearizeRGB(siteSample);
           float siteWeight=siteAmount*siteCoverage;
-          float yard=1.0-smoothstep(0.8,1.12,length((siteUv-vec2(0.24,0.5))/vec2(0.18,0.28))+(landNoise(groundUv*0.6)-0.5)*0.24);
-          float upperPath=abs(siteUv.y-(0.5+0.13*sin((siteUv.x-0.24)*5.8)));
-          float lowerPath=abs(siteUv.y-(0.5-0.17*sin((siteUv.x-0.24)*4.0)));
-          float paths=1.0-smoothstep(0.022,0.04,min(upperPath,lowerPath)+(landNoise(groundUv*0.8)-0.5)*0.014);
-          float detailWeight=max(yard,paths)*siteWeight;
-          vec3 earth=inkEarth(groundUv*0.65,detailWeight);
+          float pavingMass=landNoise(groundUv*0.7+vec2(4.2,17.5));
+          float authoredStone=smoothstep(0.72,0.88,siteSample.g/max(siteSample.r,0.01));
+          float detailWeight=mix(smoothstep(0.58,0.8,pavingMass)*0.75,
+            smoothstep(0.22,0.8,authoredStone+(pavingMass-0.5)*0.45),siteWeight);
+          vec3 earth=inkEarth(groundUv,detailWeight);
           float siteLuma=max(dot(siteColor,vec3(0.2126,0.7152,0.0722)),0.01);
           vec3 wash=mix(vec3(1.0),siteColor/siteLuma,siteWeight*0.08);
           float tone=mix(1.0,clamp(siteLuma/0.11,0.75,1.25),siteWeight*0.5);
@@ -107,6 +108,10 @@ function groundMaterial(
           float flatLight=dot(vec3(0.0,1.0,0.0),upperLeftLight);
           float reliefLight=clamp(1.0+(dot(surfaceNormal,upperLeftLight)-flatLight)*3.0,0.55,1.2);
           color*=mix(1.0,reliefLight,slopeWeight);
+          // Exposed earth belongs to actual sloping faces, rather than a painted height decal.
+          float bank=smoothstep(0.08,0.3,length(surfaceNormal.xz))*slopeWeight;
+          float strata=landNoise(vec2(worldPoint.x*3.7+worldPoint.z*1.9,worldPoint.y*28.0));
+          color=mix(color,color*mix(0.42,0.68,strata),bank*0.7);
           float level=worldPoint.y/${BATTLE_LAYOUT.heightStep};
           float contourWidth=max(fwidth(level),0.015);
           float contour=1.0-smoothstep(contourWidth*0.35,contourWidth*1.25,abs(fract(level)-0.5));
@@ -306,7 +311,7 @@ export function mountBattleTerrain(
     return material;
   });
   const rubbleMaterial = new StandardMaterial('battle-ground:rubble-ink', scene);
-  rubbleMaterial.diffuseTexture = textureFor(BATTLE_ART.rubble, scene, textures, true);
+  rubbleMaterial.diffuseTexture = textureFor(rubbleUrl, scene, textures, true);
   rubbleMaterial.useAlphaFromDiffuseTexture = true;
   rubbleMaterial.disableLighting = true;
   rubbleMaterial.linkEmissiveWithDiffuse = true;
@@ -329,13 +334,14 @@ export function mountBattleTerrain(
     ground.metadata = { combatHex: { q: tile.q, r: tile.r } };
 
     if (tile.blocked) {
-      const rubbleSize = 1.1;
-      const visibleCenterOffset = (288.5 / 512 - 0.5) * rubbleSize;
+      const rubbleWidth = 3;
+      const rubbleHeight = rubbleWidth * 0.5;
+      const visibleCenterOffset = 0.3 * rubbleHeight;
       const rubble = MeshBuilder.CreatePlane(
         `rubble:${tileKey}`,
         {
-          width: rubbleSize,
-          height: rubbleSize,
+          width: rubbleWidth,
+          height: rubbleHeight,
         },
         scene,
       );

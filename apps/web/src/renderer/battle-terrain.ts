@@ -62,8 +62,14 @@ export function createBattleSurface(
     ...cell.corners.map((corner) => Math.hypot(corner.x - cell.centre.x, corner.z - cell.centre.z)),
   );
   const positions = [0, 0, 0];
-  for (const corner of cell.corners) {
-    positions.push((corner.x - cell.centre.x) * 0.4, 0, (corner.z - cell.centre.z) * 0.4);
+  for (const [index, corner] of cell.corners.entries()) {
+    const phase = index * 2.399 + cell.centre.x * 0.73 + cell.centre.z * 1.17;
+    const topRadius = 0.83 + 0.05 * Math.sin(phase);
+    positions.push(
+      (corner.x - cell.centre.x) * topRadius,
+      0,
+      (corner.z - cell.centre.z) * topRadius,
+    );
   }
   for (const corner of cell.corners) {
     positions.push(corner.x - cell.centre.x, corner.y - cell.centre.y, corner.z - cell.centre.z);

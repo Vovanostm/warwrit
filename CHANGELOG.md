@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local technique correction
+  after d185b71 full visual REJECT: replace fine uniform earth with original
+  ink-yard-earth, classify authored plate stone/soil masses into fixed-scale
+  materials, attach real-field UV to physical slopes, narrow connected banks
+  around deterministic0.78–0.88radius plateaus, and show inked exposed earth.
+  Add original alpha ruined-yard fringe/provenance outside canonical field and
+  as art for existing blocked cells; no new obstacles or rules. Preserve centres,
+  shared corners/grid/picks/feet, spacing/height, sprites/bars/night and camera.
+  Affects combat-lab terrain/scenery, shared renderer surface/test and assets.
+  Independent source review DONE; types/lint/content114/geometry5 and fresh
+  all-profile/generated-map/day-night/desktop/geometry/navigation/combat/terminal/
+  restart browser checks PASS. Full absolute visual review PENDING; no current
+  publication/CI/merge claimed. [Owning result](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local documentation update at
   owner request: record completed d185b71 full visual REJECT (all21images and
   both references; game2/2/1/2/2/2/1, close3/3/1/2/2/2/1) in the existing

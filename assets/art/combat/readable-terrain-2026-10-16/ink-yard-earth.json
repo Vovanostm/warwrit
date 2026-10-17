@@ -1,0 +1,14 @@
+{
+  "id": "combat-readable-ink-yard-earth",
+  "prompt": "Use case: style-transfer. Asset type: seamless ground-material tile for the Warwrit desktop tactical battlefield, used in a 5 metre by 5 metre patch at a time, camera sees it obliquely from above. Edit target: the supplied earth-quiet tile. Reference images: unit-c-ink supplies irregular black ink line weight and flat shadow masses; staraya-melnitsa supplies old ruined watermill yard materials and muted slate/soot/umber/ochre palette. Replace the monotonous thousands of granular speckles with deliberate confident hand-inked earth structure. A continuous ruined yard ground, varied interlocking broad dirt patches, several shallow eroded wagon-rut fragments, loose broken weathered flat stones half buried in soil, sparse flattened ochre grass tufts and dark damp cracks. Each stone roughly 10–35 cm across, all visible material detail drawn with crisp irregular black ink edges, solid shadow undercuts and flat muted washes, just as in the mill reference. About 65% bare firm soil, 20% dispersed irregular old paving fragments, 15% grass/worn tracks. Paving is broken and scattered, NOT a geometric paved patch, no straight boundary, no broad swath of clean cobbles. Keep open standing ground for fighter silhouettes. Many varied purposeful marks, never pointillist grain or fine noise. Top-down orthographic square tile, no perspective baked into the ground, shared upper-left light. Ground extends fully to all four edges, seamless edge continuity and uniform detail scale, no border/vignette. Serious grounded dark fantasy, no fantasy icons, no buildings, no water, no people, no text or grid, no miniature diorama. Do not mirror or rotate baked lighting. Opaque background. Save as a new sibling asset; preserve edit target.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-ffc75d07-4866-428e-8467-3e9094252aae.png",
+  "references": [
+    "assets/art/combat/readable-terrain-2026-10-16/earth-quiet.png",
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/staraya-melnitsa.png"
+  ],
+  "status_at_generation": "Local candidate; integrated visual acceptance pending."
+}

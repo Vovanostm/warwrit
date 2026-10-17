@@ -1,6 +1,20 @@
 # Warwrit current delivery plan
 
-**Combat readability — 2026-10-17, LOCAL d185b71 / FULL VISUAL REJECT:**
+**Combat readability — 2026-10-17, LOCAL / AUTHORED MATERIAL AND NARROW BANK:**
+Correction after d185b71 REJECT: ink-yard-earth, authored plate material masks,
+connected0.78–0.88radius top/banks, physical field UV, true-alpha ruined-yard
+fringes outside canonical field and on existing blocked cells. Rules/centres/
+spacing2.6/height.28/grid/picks/feet and deliberate navigation preserved.
+Source review DONE; types/lint/content114/geometry5 PASS. Fresh20profiles/
+3maps/3desktop/day-night/dense/maxzoom/overlays/extremes/explicit0-1-2 PASS;
+12bars32×16gap4,0pick mismatches,0inspection/navigationPOST. Actual move12→13,
+36field/54queue readings match; terminalR4rev83/0HUD/hotkeyPOST; editor0layer→
+restart12active/R1/1layer PASS. Full new21image+2reference visual pass PENDING;
+source frozen. Current-head publication/CI/merge/main journey NOT_RUN.
+Same draftPR160/published793ebd3/maina934355; parent sole source/wiki integrator.
+[Owning result](../wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
+**Combat readability — 2026-10-17, HISTORICAL d185b71 / FULL VISUAL REJECT:**
 [PR160](https://github.com/Vovanostm/warwrit/pull/160) remains draft and unmerged.
 Published head793ebd3 passed cleanCI39034184313:820unit/47skipped,10kstress,
 20determinism/100replay,14DB,coverage and57-file audit (8inherited excluded).
