@@ -1,0 +1,10 @@
+{
+  "id": "combat-readable-paving",
+  "prompt": "Use case: precise-object-edit. Edit target field-ground.png, take the weathered broken paving at the LEFT of the supplied image as material reference. Produce ONE square top-down ground material swatch covering only about3metres by3metres: 12to18 irregular weathered flat stone slabs across the width, with broken edges, narrow earth-filled joints and sparse tiny ochre weeds. Fill all corners with continuous paving, no path composition, no soil field, no perimeter. Same serious dark-fantasy INK AND FLAT WASH as the reference: deliberate black irregular stone contours and chips, bold simple shadow masses, muted warm grey/slate/umber, matte credible ancient paving. Clear designed shapes, no photographic fine grain or noisy gravel. Orthographic directly overhead, diffuse upper-left lighting, no tall objects or cast shadows. No people, buildings, roots larger than joints, text, symbols, grid or interface. Native high-detail square raster, no borders; broadly continuous edges suitable for stochastic ground sampling without mirrored lighting. This is a local-scale paving material, not an entire landscape.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-9032d665-738b-45e6-923b-3cce0eb193d0.png",
+  "references": ["assets/art/combat/readable-terrain-2026-10-16/field-ground.png"],
+  "status_at_generation": "Local candidate; integrated visual acceptance pending."
+}

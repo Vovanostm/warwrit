@@ -9,7 +9,7 @@ import {
   type Scene,
 } from '@babylonjs/core';
 import type { CombatLabHex } from '@warwrit/protocol';
-import { createBattleSurface, createBattleTerrain } from './battle-terrain.js';
+import { createBattleSurface, type BattleTerrainCell } from './battle-terrain.js';
 
 type GridTile = CombatLabHex & { readonly height: number };
 export interface BattleCellStyle {
@@ -22,7 +22,7 @@ export interface BattleCellStyle {
 export function createBattleCellGrid(
   scene: Scene,
   tiles: readonly GridTile[],
-  terrain = createBattleTerrain(tiles),
+  terrain: ReadonlyMap<string, BattleTerrainCell>,
 ) {
   const key = (hex: CombatLabHex) => `${hex.q},${hex.r}`;
   const fills = new Map<string, Mesh>();

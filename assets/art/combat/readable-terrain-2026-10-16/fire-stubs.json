@@ -1,0 +1,15 @@
+{
+  "id": "combat-readable-fire-stubs",
+  "prompt": "Create ONE original game terrain cutout, same irregular black ink / flat muted wash as attached Warwrit unit and ruined mill, and matching existing attached fire patch in projection/material language. Grounded dark fantasy, no magic or emblems. Three-quarter camera looking down at ground at50degrees, upright short orange/rust flames over dark cracked charcoal earth, natural ragged ground contact edge. Light from upper left. Wide horizontal3:2 canvas, TRANSPARENT background, generous transparent margin, no baked opaque rectangle, no outer bloom/glow. Clear ink contours and strong dark shadow masses, no smooth CGI/photo. No border/hexagon/text/characters/environment/horizon. Material must read at60pxwide and keep low ground-hugging silhouette. VARIANT C: compact angular patch of black scorched earth, three short charred timber stubs clustered on one side, one broad split flame on the other side and scattered low embers; strongly asymmetrical silhouette, distinct from original and crescent variant.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17T07:00:20.248Z",
+  "transparent_background": true,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-f8c32c88-65f4-439b-b9e5-2ee275da6221.png",
+  "references": [
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/staraya-melnitsa.png",
+    "assets/art/combat/readable-terrain-2026-10-16/fire.png"
+  ],
+  "status": "Integrated candidate; independent in-scene acceptance pending."
+}

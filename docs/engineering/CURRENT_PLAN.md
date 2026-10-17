@@ -1,5 +1,166 @@
 # Warwrit current delivery plan
 
+**Combat readability — 2026-10-17, LOCAL / AUTHORED MATERIAL AND NARROW BANK:**
+Correction after d185b71 REJECT: ink-yard-earth, authored plate material masks,
+connected0.78–0.88radius top/banks, physical field UV, true-alpha ruined-yard
+fringes outside canonical field and on existing blocked cells. Rules/centres/
+spacing2.6/height.28/grid/picks/feet and deliberate navigation preserved.
+Source review DONE; types/lint/content114/geometry5 PASS. Fresh20profiles/
+3maps/3desktop/day-night/dense/maxzoom/overlays/extremes/explicit0-1-2 PASS;
+12bars32×16gap4,0pick mismatches,0inspection/navigationPOST. Actual move12→13,
+36field/54queue readings match; terminalR4rev83/0HUD/hotkeyPOST; editor0layer→
+restart12active/R1/1layer PASS. Full21image+2reference absolute visual ACCEPT
+on published ee3103a: game all2, close3/3/2/2/2/2/2, motionN/A,
+criticowninputNOT_RUN. Clean reload0renderer errors/warnings. Normal66fileaudit
+PASS (8inherited excluded); CI39046615446 bootstrap/coverage PASS, qualityFAIL
+on tintUnitEdge cyclomatic6/CRAP42 with fresh coverage. Local equivalent boolean
+factor reviewed for all8states; types/lint/markers4 PASS. Visual behavior unchanged;
+new-head publication/CI/merge/main journey pending. Same draftPR160/maina934355;
+parent sole source/wiki integrator. Second CI39048861412 on73a4d40 FAIL at
+boundaryCRAP30 despite bootstrap/coverage PASS. Move common emphasized IDs
+once per refresh; independent source equivalence/lifecycle readback DONE.
+Types/lint/markers4/day-night-day1/12/1 outlines PASS. Fresh local coverage
+820PASS/47SKIP and explicitly main-based66file audit PASS (8inherited excluded);
+first default1fileaudit was insufficient and repeated with pinnedmain.
+New-head CI/merge pending. Native main remainsa934355. No fullM1/balance/FPS claim.
+[Owning result](../wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
+**Combat readability — 2026-10-17, HISTORICAL d185b71 / FULL VISUAL REJECT:**
+[PR160](https://github.com/Vovanostm/warwrit/pull/160) remains draft and unmerged.
+Published head793ebd3 passed cleanCI39034184313:820unit/47skipped,10kstress,
+20determinism/100replay,14DB,coverage and57-file audit (8inherited excluded).
+Complete independent visual review REJECT: game2/2/1/1/2/2/1,
+close3/3/1/1/2/2/1. Ground repetition/place transition, faint night bodies,
+flat-looking heights and repeated small fires remain material findings on79.
+An interrupted prior pass was BLOCKED, not acceptance. Explicit archers on0/1/2
+and their bars/picks were captured and read back; layers remain visually behind
+opaque figures. Current local correction uses fixed-world-size paving/soil selected by a finite
+yard/path composition; a native1672×941 plate supplies broad palette only.
+Direct full-field stretching was rejected in author previews. Surface-normal
+lighting/height contours,512/128night edges and varied existing fires are integrated.
+Connected geometry, spacing2.6/height.28, picks/feet/rules/bounds are preserved.
+Two source findings (steep-bank exclusion/shared outline disposal) fixed;
+independent source readback DONE. Fresh maps/desktop/day-night/geometry/layers/
+inspection/navigation/extremes/explicit0-1-2 captures PASS. Types/lint PASS;
+actual move4→5/poolsR3rev55/terminalR8rev152/restart12 and shared-outline
+remove/readd/disposal probe PASS. Clean reload0renderer errors/warnings;
+content112 and16focused PASS (initial concurrent timeout, isolated repeat
+2.78s PASS without changed limits). Normal main-based61-file precommit audit
+PASS (8inherited excluded, no bypass). Full current visual review completed:
+all21images+2references, REJECT game2/2/1/2/2/2/1, close3/3/1/2/2/2/1;
+motionN/A, criticowninputNOT_RUN. Night improved to2; geometric paving,
+fine uniform soil, mill/field join and visually flat0/1/2 remain blockers.
+Claimed inspected-target dock occlusion is disputed: selected central beast
+is fully visible in max-zoom-day; lower occluded creatures are other units.
+Do not alter deliberate navigation from that unsupported claim.
+Repeated rendering/integration1 requires a technique change, then full re-review.
+Current-head CI/publication NOT_RUN; live PR head793ebd3, maina934355.
+Owner-authorized expected-head merge and main journey remain unexecuted.
+Parent owns source/wiki/PR160 integration; unrelated primary WIP preserved.
+[Owning result](../wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+
+**Combat readability — 2026-10-17, HISTORICAL16c2811 / CORRECTION REQUIRED:**
+Current game candidate16c2811 in codex/combat-readability, worktree
+combat-live-queue/warwrit, [PR160](https://github.com/Vovanostm/warwrit/pull/160).
+Main a934355/PR159 is integrated; primary dirty WIP preserved. Whole portraits,
+32×16px strips4px below feet, spacing2.6/.28 connected surface, shared generated
+terrain, authored yard/ink ruts and night correction are published. Source findings
+closed on the reviewed delta; types/lint/content105/main-based44-file audit and
+browser geometry/layers/navigation/extreme apron coverage PASS. Current complete
+16c2811 visual REJECT2/2/1/2/2/2/1: repeating ground/joins, place transition,
+close-ground softness; units/night/layers accepted in scope. Technique correction
+required; a narrow portrait pass cannot accept the full scene.
+[CI39019195821](https://github.com/Vovanostm/warwrit/actions/runs/39019195821)
+FAILED at quality audit:2newrenderer complexity findings; bootstrap/coverage
+passed. Local sampler normalization/types/lint/45fileaudit PASS, newCI pending.
+08c2800 CI39016754146 SUCCESS is historical; no current visual ACCEPT or merge. Owner explicitly authorized this mission's expected-head merge;
+remaining: current visual acceptance, successful final CI, merge and main journey.
+Local technique correction now adds3-source seamless ink earth and a zoom-dependent
+authored-yard fade; ordinary world sampling restored. Correct-checkout source
+readback DONE; types/lint/content107/main-based45file audit PASS. Reopened browser:
+shader/20profiles/3fields/desktop/day-night/12bar32×16gap4/0picks/4extremes/0navigationPOST
+PASS. Real move4→5;R3/rev55 all3pools/30field/57queue match; terminal repeat
+R8/rev152,0queue/dock/bars/POST; editor0→restart12/R1/1layer PASS. First attempt
+was closed-session NOT_RUN; current full visual review running, performance
+NOT_MEASURED. Local correction differs from published16c2811; publication pending.
+Wiki lead/index updated at owner request; dated history below is retained.
+[Current owner-facing state](../wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
+
+**Combat readability combined with current main — 2026-10-17, LOCAL / FINAL REVIEW:**
+PR160 now integrates main a934355/PR159. CleanCI39014594194 on b5a193c
+SUCCESS820/47SKIP/10kstress/14DB/41audit. Later extreme-bound source
+counterexample confirmed; reference-coordinate bounds correction is local,
+four extreme corner drags/apron coverage/0POST and23camera/types PASS;
+new-head CI pending. Full visual review in progress. Preserve fixed-optical-centre
+perspective/bounds and connected height surfaces; share spacing2.6/height.28
+across terrain/grid/picks/feet. Full HUD/vitals/sharp sprites remain integrated;
+field strips measured32×16px with4px gap at both perspective depths.
+New irregular material blending replaces hex-edged mud/fire patches.
+820coverage/47SKIPPED,27camera/geometry/types PASS; initial integration audit
+found dead inverse/duplicate export and stale coverage complexity, corrected;
+main-based52file audit PASS before final shader delta. Browser shader first
+failed on reserved GLSL word, fixed; repeat compiled with no errors.
+Fresh combined captures/independent reviews/current-head CI/merge pending.
+Owner explicitly authorized PR/review/merge for this mission.
+[Combined result](../wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+
+**Combat readability and reusable terrain — 2026-10-17, ACTIVE / ACCEPTANCE PENDING:**
+Parent owns one common integration/PR/review/authorized merge in
+codex/combat-readability, combat-live-queue/warwrit; primary dirty WIP preserved.
+Both authorized forks released writes: portrait4px inset and bar32×16CSSpx,
+exact4px foot gap, no arms/callouts. Narrow portrait source/visual ACCEPT;
+bar dense visual REJECT drove physical spacing2.6 replacing1.4. Canonical
+combat coordinates/rules unchanged; figure size retained. Actor action focus4.8,
+portrait/log focus, Home overview and activation follow now integrated locally.
+Current full source review found Home-focus, inactive-unit and pending-focus
+edge cases; corrected, current browser keyboard/navigation0POST and source
+readback DONE. Strict main-based audit34files PASS after bounded key-handler
+complexity correction; current29focused/types/lint/format PASS.
+Earlier terminalR8/rev151/editor layer lifecycle and actual pool agreement
+remain finite historical evidence. Full visual78e80c6 REJECT(2/2/1/2/1/2/1):
+box-like heights, grainy ground, tiny fire footprint. New ink earth/sloped
+banks/fire integrated564db69, draftPR160. Repeat critic BLOCKED/timebox with
+residual terrain findings; actual backdrop-off probe found culled bank faces,
+winding corrected. Two-scale texture mix and exact boundary-outline stamping
+now local; source readback DONE, full815coverage/types/lint PASS. InitialCI
+bootstrapPASS/coverage512timeoutFAIL; no limit changes. Current absolute review
+on6a63481 REJECT2/2/1/1/2/2/1; its cleanCI39006720822 SUCCESS.
+Current local correction: unit-only full-resolution sampling, clearer night
+figures, irregular feathered field margin and varied fire placements. Current
+source readback DONE; geometry/types/lint/main-based40file audit PASS. Full
+absolute re-review/newCI/merge pending. No deployment or fullM1 claim.
+[Current engineering correction](../wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
+Latest c50ba37 full visual REJECT2/2/2/1/2/2/1: native sharpness accepted,
+overview/night/composition/fire repetition remain blockers. Local technique
+correction frames deployed forces, preserves fixed mill scale, switches unit
+sampling/night treatment by projected size, and uses3original fire artworks.
+Source readback DONE, framing5/content104/types/lint/main-based44audit PASS;
+full fresh image packet under forces-framing-20261017 now in absolute critique.
+Current-head CI/publication/merge pending. Owner merge authorization covers
+this mission/PR160; auto-merge/deployment remain unauthorized.
+The historical activation follows:
+
+Owner rejects current sprite softness, indistinct cell materials, cramped grid
+and clipped/misaligned initiative images despite previous finite acceptance.
+New outcome: larger readable cells, intact sharp figures/portraits, three
+health/armor/morale rows under top icons and battlefield feet; reusable finite
+terrain rendering driven by canonical map cells rather than mill photograph.
+Parent owns codex/combat-readability in combat-live-queue/warwrit basedmain5915ad0,
+renderer/terrain/field bars/docs. Isolated combat-status-hud writer owns upper
+portraits/vital presentation/CSS; two read-only investigators cover sampling
+and primary-source design research. Primary dirty WIP preserved.
+Rules/occupancy/AP/range/replay and Babylon choice unchanged. No new terrain
+mechanics or framework; existing plain/mud/fire/blocked/height only.
+First playable on3036/5336, then all20-profile and generated-map/dense day/night
+journeys, independent strict source+visual rejection loop. Implementation,
+current acceptance, final CI/publication/merge NOT_RUN at activation.
+Local implementation now integrates both isolated writers; all20 profiles/3maps
+launched through editor imports. First source and strict visual review REJECT;
+confirmed framing/prop/UV/footer defects corrected, dense bars/terrain/night
+technique revision in progress. Focused37/types/lint and809unit coverage PASS;
+first complexity audit FAIL, being corrected without gate changes. No current
+visual acceptance or publication/merge claimed.
+[Owning requirements](../wiki/battlefield-test-maps.md#читаемость-бойцов-и-единый-рендер-поля--2026-10-16).
 **Battle perspective and bounds — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized [PR159](https://github.com/Vovanostm/warwrit/pull/159) MERGED:
 reviewed6533ae7d3a1123a32285f09582b3813475a20dd8,

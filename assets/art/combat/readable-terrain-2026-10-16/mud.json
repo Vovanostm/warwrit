@@ -1,0 +1,11 @@
+{
+  "id": "combat-readable-mud",
+  "prompt": "Create a new original Warwrit game terrain texture using the inspected files solely as art direction references: /Users/vovanostm/.codex/worktrees/combat-live-queue/warwrit/assets/art/m1/style/unit-c-ink.png and /Users/vovanostm/.codex/worktrees/combat-live-queue/warwrit/assets/art/m1/places/staraya-melnitsa.png. Deliver ONE square full-bleed overhead 2D terrain material of WET RUTTED MUD for a grounded serious dark-fantasy tactical game, muted warm umber soil with broad quiet slate-grey reflective water-filled irregular puddles and churned earthen ridges. Clearly wet rather than dry pebbly ground, readable when each cell is 60 pixels wide. Strong irregular ink outlines and restrained flat wash / hatching, hand-drawn same family as references, no photorealism, no glossy CGI. Low-frequency patches, approximately half puddle water/half mud; no straw, timber, planks, masonry, grass, objects, icons, hex borders, typography, labels, UI, vignette or framing. Surface fills the entire square uniformly, even overhead camera, no horizon and no large directional shadows. Uniform material illumination from upper left. Seamless tiling intent. Not a scene and not a mockup.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-16T18:50:18.849208+00:00",
+  "transparent_background": false,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-32912cbe-acbc-4be2-8112-58606f52eafd.png",
+  "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/staraya-melnitsa.png"],
+  "status": "Integrated candidate; independent in-scene acceptance pending."
+}

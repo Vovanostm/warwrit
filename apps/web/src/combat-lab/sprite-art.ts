@@ -9,6 +9,8 @@ export interface StaticSpriteArt {
   readonly bodyHeight: number;
   readonly footX: number;
   readonly footY: number;
+  /** Opaque art bounds plus a small source-pixel safety margin; UI never crops anatomy. */
+  readonly visibleBounds: readonly [number, number, number, number];
 }
 
 // For unanchored creatures, alpha bounds at >=25% opacity provide a provisional
@@ -24,6 +26,7 @@ const art = {
     bodyHeight: 1236,
     footX: 641.75,
     footY: 1207.5,
+    visibleBounds: [234, 14, 759, 1251],
   },
   W02: {
     url: new URL(
@@ -35,6 +38,7 @@ const art = {
     bodyHeight: 1196,
     footX: 642,
     footY: 1163,
+    visibleBounds: [256, 22, 749, 1210],
   },
   W03: {
     url: new URL(
@@ -46,6 +50,7 @@ const art = {
     bodyHeight: 1171,
     footX: 642.75,
     footY: 1153.5,
+    visibleBounds: [297, 43, 931, 1185],
   },
   W04: {
     url: new URL(
@@ -57,6 +62,7 @@ const art = {
     bodyHeight: 825,
     footX: 526,
     footY: 1044.5,
+    visibleBounds: [122, 164, 1034, 928],
   },
   W05: {
     url: new URL(
@@ -68,6 +74,7 @@ const art = {
     bodyHeight: 1177,
     footX: 660.75,
     footY: 1162.5,
+    visibleBounds: [233, 32, 708, 1191],
   },
   W06: {
     url: new URL(
@@ -79,6 +86,7 @@ const art = {
     bodyHeight: 1173,
     footX: 656.5,
     footY: 1149,
+    visibleBounds: [326, 33, 621, 1186],
   },
   W07: {
     url: new URL(
@@ -90,6 +98,7 @@ const art = {
     bodyHeight: 1157,
     footX: 658,
     footY: 1155,
+    visibleBounds: [320, 50, 650, 1170],
   },
   W08: {
     url: new URL(
@@ -101,6 +110,7 @@ const art = {
     bodyHeight: 1115,
     footX: 617,
     footY: 1140.5,
+    visibleBounds: [297, 81, 889, 1128],
   },
   W09: {
     url: new URL(
@@ -112,6 +122,7 @@ const art = {
     bodyHeight: 958,
     footX: 556.75,
     footY: 1190.5,
+    visibleBounds: [135, 152, 929, 1092],
   },
   W10: {
     url: new URL(
@@ -123,6 +134,7 @@ const art = {
     bodyHeight: 1161,
     footX: 641,
     footY: 1163.5,
+    visibleBounds: [287, 49, 819, 1174],
   },
   B001: {
     url: new URL('../../../../assets/art/m1/battle/unit-wolf.png', import.meta.url).href,
@@ -131,6 +143,7 @@ const art = {
     bodyHeight: 293,
     footX: 259,
     footY: 491,
+    visibleBounds: [43, 192, 432, 304],
   },
   B002: {
     url: new URL(
@@ -142,6 +155,7 @@ const art = {
     bodyHeight: 951,
     footX: 634.5,
     footY: 1121,
+    visibleBounds: [62, 163, 1146, 964],
   },
   B003: {
     url: new URL(
@@ -153,6 +167,7 @@ const art = {
     bodyHeight: 1024,
     footX: 635.5,
     footY: 1164,
+    visibleBounds: [53, 133, 1164, 1037],
   },
   B017: {
     url: new URL(
@@ -164,6 +179,7 @@ const art = {
     bodyHeight: 950,
     footX: 641,
     footY: 1134,
+    visibleBounds: [66, 177, 1150, 963],
   },
   B019: {
     url: new URL(
@@ -175,6 +191,7 @@ const art = {
     bodyHeight: 1260,
     footX: 674.5,
     footY: 1327,
+    visibleBounds: [290, 60, 769, 1274],
   },
   B023: {
     url: new URL(
@@ -186,6 +203,7 @@ const art = {
     bodyHeight: 1243,
     footX: 690.5,
     footY: 1253,
+    visibleBounds: [285, 3, 812, 1251],
   },
   B025: {
     url: new URL(
@@ -197,6 +215,7 @@ const art = {
     bodyHeight: 1204,
     footX: 698.5,
     footY: 1236,
+    visibleBounds: [335, 26, 727, 1217],
   },
   B030: {
     url: new URL(
@@ -208,6 +227,7 @@ const art = {
     bodyHeight: 1192,
     footX: 613.5,
     footY: 1241,
+    visibleBounds: [32, 43, 1163, 1204],
   },
   B037: {
     url: new URL(
@@ -216,9 +236,10 @@ const art = {
     ).href,
     width: 1254,
     height: 1254,
-    bodyHeight: 1206,
-    footX: 632.5,
-    footY: 1226,
+    bodyHeight: 804,
+    footX: 688.5,
+    footY: 1175,
+    visibleBounds: [228, 364, 921, 818],
   },
   B053: {
     url: new URL(
@@ -230,6 +251,7 @@ const art = {
     bodyHeight: 1206,
     footX: 632.5,
     footY: 1226,
+    visibleBounds: [11, 13, 1243, 1220],
   },
 } satisfies Record<string, Omit<StaticSpriteArt, 'id'>>;
 

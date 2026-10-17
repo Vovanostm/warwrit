@@ -9,6 +9,271 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local follow-up after
+  73a4d40 CI39048861412 FAIL at boundaryCRAP30: build the common emphasized-ID
+  list once per marker refresh and reuse it in per-unit outline application.
+  Same source membership/visibility/colors; independent source readback confirms
+  freshness and equivalence, types/lint/markers4/browser day-night-day PASS.
+  Fresh local coverage820PASS/47SKIP and pinned-main66-file audit PASS
+  (8inherited excluded); first upstream-only1fileaudit was repeated with main.
+  No gate/test limits or visual changes. Current visual ACCEPT retained;
+  new-head CI/merge pending. [Owning result](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local correction after published
+  ee3103a CI39046615446 FAIL: factor the same active/night/emphasis condition
+  in `sprite-battle-scene.ts` to remove a fresh-coverage cyclomatic6/CRAP42
+  regression. Independent source readback confirms all8 boolean states;
+  types/lint/markers4 PASS. No visual/command behavior change or gate suppression.
+  Record full ee3103a absolute visual ACCEPT (21images+2references, game all2,
+  close3/3/2/2/2/2/2), normal66-file audit PASS, clean reload and remaining polish
+  in the existing wiki/index/log/current plan. New-head CI/merge pending.
+  [Result and CI boundary](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local technique correction
+  after d185b71 full visual REJECT: replace fine uniform earth with original
+  ink-yard-earth, classify authored plate stone/soil masses into fixed-scale
+  materials, attach real-field UV to physical slopes, narrow connected banks
+  around deterministic0.78–0.88radius plateaus, and show inked exposed earth.
+  Add original alpha ruined-yard fringe/provenance outside canonical field and
+  as art for existing blocked cells; no new obstacles or rules. Preserve centres,
+  shared corners/grid/picks/feet, spacing/height, sprites/bars/night and camera.
+  Affects combat-lab terrain/scenery, shared renderer surface/test and assets.
+  Independent source review DONE; types/lint/content114/geometry5 and fresh
+  all-profile/generated-map/day-night/desktop/geometry/navigation/combat/terminal/
+  restart browser checks PASS. Full absolute visual review PENDING; no current
+  publication/CI/merge claimed. [Owning result](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local documentation update at
+  owner request: record completed d185b71 full visual REJECT (all21images and
+  both references; game2/2/1/2/2/2/1, close3/3/1/2/2/2/1) in the existing
+  battlefield wiki, index, log and CURRENT_PLAN. Night improves to2; ground
+  composition/material language and visible elevations remain blockers requiring
+  a technique change. Separate disputed target-occlusion observation from
+  confirmed findings. Record normal61-file audit PASS, live draft PR160 head
+  793ebd3/maina934355 and unexecuted current-head CI/publication/merge.
+  Documentation-only diff/format/local-link readback; game tests NOT_RUN for
+  this edit. Earlier results retained.
+  [Current result](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local correction after full
+  793ebd3 visual REJECT (game2/2/1/1/2/2/1,close3/3/1/1/2/2/1) despite clean
+  CI39034184313 SUCCESS. Add an original full-field ground plate/provenance,
+  fixed-world-size paving/soil and a finite yard/path blend (direct plate
+  stretching rejected in previews), actual surface-normal relief lighting,
+  brighter night key forms/neutral
+  silhouette edges and varied existing fire scales/placements. Preserve
+  connected geometry, spacing/height, camera bounds, picking/feet and rules.
+  Explicit0/1/2-unit captures/bar geometry PASS on published version; relief
+  writer scoped types/lint/format PASS. Fix confirmed steep-bank normal gating
+  and shared outline texture disposal; independent source readback DONE.
+  Fresh maps/desktop/day-night/bars/picks/layers/navigation/extremes/explicit
+  height captures/scoped types/lint/content112/real combat/terminal/restart/
+  shared-outline cache lifecycle and clean reload PASS. Focused16 PASS after
+  isolated repeat of an initial concurrent browser-load timeout; limits
+  unchanged. Full visual review was running at this commit (completed REJECT
+  in the dated correction above); CI/publication/merge pending. Refresh owner-requested wiki/index/log/current plan with
+  actual CI and scored rejection; preserve earlier failures and asset limits.
+  [Result and technique](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local courtyard correction and
+  owner-requested wiki refresh: quiet fine earth replaces recognizable rut
+  repeats; a finite authored courtyard connects the extracted mill scenery,
+  with detailed cobbles at close zoom. New assets/prompts/provenance and
+  combat terrain/shader/scene/manifest updated; canonical geometry/rules and
+  camera bounds unchanged. Independent source review DONE; fresh maps/desktop/
+  day-night/layers/geometry/navigation/extremes/real move/all3pools/terminal/
+  restart/clean console PASS; types/lint/content110/format PASS. Full visual
+  review pending; current CI/merge/main journey NOT_RUN.
+  Preserve prior visual REJECT and historical CI outcomes. Wiki/index/current
+  plan and wiki log distinguish the local stand from published1b47872/PR160
+  and actual main. Mandatory main-based56-file commit audit PASS,8 inherited
+  findings excluded; no audit bypass.
+  [Current result and asset limits](docs/wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local correction after full
+  1b47872 visual REJECT despite successfulCI39024500756: extract true-alpha
+  mill scenery with source/provenance, remove rectangular authored-floor sampling
+  and zoomfade, register field/apron textures to one projected ground plane,
+  use hashed source/phase ink patches and explicit texture gradients. Actual
+  terrain geometry/picking/feet/rules unchanged. Source/types/lint/content108
+  PASS; fresh GPU geometry/maps/layers/navigation/extremes/actual combat and
+  clean-browser launch/reload PASS. Full critique REJECT game rendering/integration1,
+  closeall2; nextsite-wide composition/currentCI pending. Original assets
+  preserved; no migrations/deployment.
+  [Owning correction](docs/wiki/battlefield-test-maps.md#scenery-cutout-and-shared-projected-ground--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local terrain correction:
+  add a dedicated seamless3-source ink-earth shader,2original ground variants
+  with prompts/provenance and a zoom-dependent authored-yard blend; restore
+  ordinary world sampler behavior. Normalize optional ground sampling once,
+  removing2new complexity findings without changing thresholds. Addresses
+  published16c2811 visual REJECT and CI audit FAIL. Affects combat-lab terrain,
+  scene/material wiring and asset manifest; rules/picking/foot geometry retained.
+  Source review/types/lint/content107 and actual maps/desktop/layers/geometry/
+  movement/pools/terminal/restart PASS. Full visual/currentCI/merge pending.
+  [Result and limits](docs/wiki/battlefield-test-maps.md#layered-ink-earth-correction--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local documentation update at
+  owner request: refresh wiki landing/index and current plan for published game
+  candidate16c2811/PR160; replace stale leading PR157 status with current behavior,
+  actual checks, previous visual rejection and remaining acceptance/CI/merge.
+  Preserve dated delivery history and distinguish candidate stand from main.
+  Markdown format/local-path/anchor/diff checks PASS; game tests NOT_RUN
+  for the documentation edit. Record full16c2811 visual REJECT and CI audit FAIL,
+  plus local normalization of authored-ground inputs that removes the two new
+  complexity findings; types/lint/strict45-file audit PASS, newCI pending.
+  Document the local3-source ink-earth/zoom fade correction separately:
+  source readback/types/lint/content107/audit PASS. First browser attempt
+  NOT_RUN (closed session); reopened shader/maps/desktop/day-night/bars/picks/
+  extreme bounds and actual move/pools/terminal/restart PASS. Full critic/CI
+  pending. Local stand differs from published head.
+  [Current wiki](docs/wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local visual technique revision:
+  full b5a193c/08c2800 critique REJECT(2/2/1/1/2/2/1) exposed a rectangular
+  mill edge, low-detail ground and mismatched night lighting. Add irregular
+  backdrop alpha, registered authored-yard sampling on the shared cell surface,
+  an original rutted earth asset/provenance with preserved directional ink, and
+  coordinated near/far night values. Canonical terrain/picking/rules unchanged.
+  Types/lint/content105/main-based audit and fresh shader/browser captures PASS;
+  current full critic/CI/merge pending. [Owning result](docs/wiki/battlefield-test-maps.md#authored-ground-composition--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local final bound correction:
+  source review confirmed projected physical bounds could exceed the finite
+  camera-facing apron at extreme pan. Clamp to its reference-image rectangle;
+  generated15×11 edge cells remain reachable. Four extreme drag corners/
+  full-viewport apron/0POST and23camera/types PASS. Previous b5a193c cleanCI SUCCESS
+  (820/47SKIP,10kstress,14DB,41-file audit); new-head verification pending.
+  [Owning result](docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local integration of main
+  a934355/PR159 into PR160: retain perspective/bounds and connected surfaces;
+  share2.6spacing/.28height across grid/picking/feet; derive field strips in
+  perspective screen pixels. Replace discrete banks and hex-edged surface
+  patches with connected geometry and irregular material blending; keep quiet
+  terrain extension behind the bounded painting. Preserve both branches' history.
+  820coverage/47SKIPPED,27camera/geometry/types and main-based52audit PASS before
+  final shader delta; actual12bar32×16/4px and0ground-pick errors PASS.
+  Initial import/shader/audit failures corrected, recorded in the
+  [owning result](docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+  Fresh absolute critique/currentCI/merge pending.
+
+### Combat readability and reusable terrain
+
+- 2026-10-17, branch `codex/combat-readability`, local correction to
+  [PR160](https://github.com/Vovanostm/warwrit/pull/160): frame deployed forces
+  instead of empty map margins; retain fixed authored mill scale; use near/far
+  unit sampling and night presentation; add two original fire variants with
+  provenance. Addresses c50ba37 absolute visual REJECT while retaining its
+  accepted native sprite detail. Source readback DONE; framing5/content104/
+  types/lint/main-based44-file audit PASS. Full visual/current-head CI/merge
+  pending. [Owning result](docs/wiki/battlefield-test-maps.md#forces-overview-and-distance-sampling--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local correction to
+  [PR160](https://github.com/Vovanostm/warwrit/pull/160): full-resolution unit
+  sampling, clearer night values and a nonpickable feathered terrain margin
+  address absolute visual REJECT on6a63481 despite its green cleanCI. Vary fire
+  footprint placement without mirroring. Fix reviewed margin winding;2geometry/
+  types/lint/main-based40-file audit PASS. New reference sheet uses actual
+  native close/game GPU captures, correcting the earlier enlarged gamecrop.
+  Full repeat visual/currentCI/merge pending; owning wiki retains prior results.
+
+- 2026-10-17, branch `codex/combat-readability`, published draft
+  [PR160](https://github.com/Vovanostm/warwrit/pull/160), local correction:
+  backdrop-off GPU probe exposed culled bank faces; fix Babylon winding and
+  upward lip normals. Blend two continuous world texture scales to reduce
+  motifs without stretching ink. Initial cleanCI bootstrap PASS but coverage
+  timed out on512outline; optimize exact boundary stamping, retain5s limit and
+  add independent pixel oracle. Current full815coverage/47SKIP/types/lint PASS,
+  source review DONE. Previous visual timebox BLOCKED; current full absolute
+  review/newCI/merge pending. Owning wiki preserves failures and evidence.
+
+- 2026-10-17, branches `codex/combat-terrain-banks` → `codex/combat-readability`,
+  local: integrate deterministic segmented earth banks and narrow soil lips
+  under raised hexes, preserving canonical tops/grid/picking; new ink earth
+  asset/provenance and cell-wide charred fire footprint replace rejected
+  materials. Root fixes reviewed bank UV seams and inward-corner sign with
+  signed regression. Focused30/types/lint, content102assets and strict38-file
+  audit PASS before final lip correction; final geometry check PASS. Full
+  visual re-review/CI/merge pending; owning wiki records initial check failures.
+
+- 2026-10-17, branch `codex/combat-readability`, local visual correction active:
+  full independent78e80c6 visual REJECT on box-shaped heights, grainy ground
+  and undersized fire footprint; portraits/field bars/dense focus intact.
+  Change technique to natural banks, ink ground and cell-wide fire; current
+  source78e80c6/pool/move/terminal/delayed-focus checks recorded in the owning
+  wiki. Final re-review, CI and merge pending.
+
+- 2026-10-17, branch `codex/combat-readability`, local integration correction:
+  physical presentation spacing2.6 replaces1.4 after two independent dense
+  reviews found foreground beasts hiding rear foot strips. Preserve figure
+  size, canonical coordinates/occupancy/range/AP/LOS/replay. Start focused on the
+  actor at zoom4.8; portrait/log selection focuses a unit, Home returns the
+  overview, and new activations follow the actor. Resize uses the HUD opening;
+  deliberate pan/zoom is retained. Source review exposed Home focus, inactive
+  selection and an async focus race; fixes retain pending intent and handle Home across
+  non-editable battle controls without moving keyboard focus. Bar32×16 and portrait inset integrated. Strict main-based34-file audit
+  PASS after correcting a failed key-handler complexity check, without gate
+  suppression. Source readback DONE; navigation/keyboard0POST and29focused/
+  types/lint/format PASS; combined visual/clean CI/merge pending.
+  [Current integration](docs/wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
+
+- 2026-10-17, branch `codex/compact-foot-bars`, local: owner rejects connector
+  arms and requires narrow tracks directly under battlefield figures. Preserve
+  width32 and fixed4px foot gap; raise the three-row strip from12 to16px with
+  clearer fill contrast after independent critic found weak overview/night row
+  separation. No callouts, horizontal shifts, rule changes or input targets.
+  Web types/scoped lint and27 existing focused tests PASS; full813unit/47SKIP
+  coverage PASS before the bounded observer cleanup. Current DPR1/2 geometry
+  captures cover1280/1440/1920 and maxzoom2.2. Real pools/texture, heights,
+  terminal and restart probes PASS. Source reviewer found
+  no defect in the frozen module diff. Dense large-creature occlusion remains
+  a shared-scene integration blocker; no final visual ACCEPT or merge claimed.
+  Manual main-based audit FAIL only in unchanged inherited road/terrain
+  functions (`createRoadMaterial`, `setNight`); no bar-module finding remains.
+  Initial local checkpoint used the work-branch exception (normal hook
+  NOT_RUN); superseding isolated audit with `FALLOW_AUDIT_BASE=aa71d46`
+  PASS for the two changed files. The final local checkpoint runs the normal
+  commit hook against that same slice base. Common PR integration still requires
+  strict main-based audit; inherited findings must be fixed before publication.
+  No gate/config suppression is introduced. Second absolute visual review REJECT
+  on dense-creature occlusion (scene integration1; remaining criteria2, motionN/A);
+  the common owner must validate the larger shared spacing before acceptance.
+  [Owner correction and shared delivery](docs/wiki/battlefield-test-maps.md#owner-correction-compact-foot-strips-no-callouts).
+
+- 2026-10-17, branches `codex/combat-portrait-fit` → `codex/combat-readability`,
+  local integration: give every portrait a4CSSpx art inset while preserving
+  the full measured silhouette/aspect and130px cards. All20 profiles across
+  3desktop sizes passed72bounds checks (minimum5px including frame); actor,
+  forecast, inspection and actualDPR2 also passed with0actionPOST. Independent
+  narrow source/visual review ACCEPT. Also ignore modifier shortcuts when
+  preserving user camera navigation; full integrated critique/CI/merge pending.
+
+- 2026-10-17, branch `codex/combat-readability`, local: integrate the owner's
+  explicit rejection of callout arms; compact32×12 foot-sorted tracks remain
+  directly4px under sprites. Record isolated bar/portrait ownership and the
+  superseded placement experiment. Correct camera resize after click jitter:
+  a deliberate pan uses the same5px threshold as the camera, zero wheel delta
+  does not suppress reframing. Actual click-jitter/resize and pan/resize with
+  0actionPOST,17focused tests, web types/lint PASS. Final integration acceptance,
+  clean CI and merge pending; [owning result](docs/wiki/battlefield-test-maps.md#общая-интеграция--2026-10-17-local--acceptance-pending).
+
+- 2026-10-16, branch `codex/combat-readability`, local implementation under review:
+  measured 20-profile portrait bounds/B037 pivot; selective high-resolution
+  outlines; larger shared hex layout; common pool rows in queue and field;
+  reusable canonical-cell terrain with the world's natural sampler. Primary
+  research and first source/visual REJECT recorded in the owning wiki. Camera,
+  rubble order/UV, footer and dense-field placement defects are being corrected.
+  Focused37 checks/types/lint and809-unit coverage PASS; first complexity audit
+  FAIL, strict visual acceptance/publication/merge pending. No rule/schema change.
+
+- 2026-10-16, branch `codex/combat-readability`, local activation: owner rejects
+  current softness/terrain ambiguity/cramped hexes/cropped portraits and asks
+  for health/armor/morale bars below queue icons and field figures, reusable
+  map rendering, stronger research and independent critique. Existing owning
+  wiki amended; primary WIP preserved, HUD writer isolated. Implementation and
+  current acceptance NOT_RUN; previous scoped ACCEPT does not accept this cycle.
+
 ### Match battle grid and figures to painted perspective
 
 - 2026-10-17, originating branch `codex/battle-camera-bounds`, merged:

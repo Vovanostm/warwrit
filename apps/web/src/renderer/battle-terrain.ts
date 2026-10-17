@@ -3,6 +3,10 @@ import type { CombatLabHex } from '@warwrit/protocol';
 import { BATTLE_HEIGHT_STEP, HEX_RADIUS, hexToWorld } from './hex-projection.js';
 
 type TerrainTile = CombatLabHex & { readonly height: number };
+export interface BattleTerrainLayout {
+  readonly spacing?: number;
+  readonly heightStep?: number;
+}
 export interface BattleTerrainCell {
   readonly centre: Vector3;
   readonly corners: readonly Vector3[];
@@ -10,18 +14,23 @@ export interface BattleTerrainCell {
 const cornerKey = (point: Vector3) => `${Math.round(point.x * 1e6)},${Math.round(point.z * 1e6)}`;
 
 /** Shared corners join the earth; canonical cell centres retain their exact height. */
-export function createBattleTerrain(tiles: readonly TerrainTile[]) {
+export function createBattleTerrain(
+  tiles: readonly TerrainTile[],
+  layout: BattleTerrainLayout = { spacing: 1, heightStep: BATTLE_HEIGHT_STEP },
+) {
+  const spacing = layout.spacing ?? 1;
+  const heightStep = layout.heightStep ?? BATTLE_HEIGHT_STEP;
   const cells = new Map<string, BattleTerrainCell>();
   const shared = new Map<string, { sum: number; count: number }>();
   for (const tile of tiles) {
-    const { x, z } = hexToWorld(tile.q, tile.r);
-    const centre = new Vector3(x, tile.height * BATTLE_HEIGHT_STEP, z);
+    const { x, z } = hexToWorld(tile.q, tile.r, spacing);
+    const centre = new Vector3(x, tile.height * heightStep, z);
     const corners = Array.from({ length: 6 }, (_, i) => {
       const angle = Math.PI / 6 + (i * Math.PI) / 3;
       const point = new Vector3(
-        x + Math.cos(angle) * HEX_RADIUS,
+        x + Math.cos(angle) * HEX_RADIUS * spacing,
         0,
-        z + Math.sin(angle) * HEX_RADIUS,
+        z + Math.sin(angle) * HEX_RADIUS * spacing,
       );
       const key = cornerKey(point),
         value = shared.get(key) ?? { sum: 0, count: 0 };
@@ -49,9 +58,18 @@ export function createBattleSurface(
   scene: Scene,
   offset = 0,
 ) {
+  const radius = Math.max(
+    ...cell.corners.map((corner) => Math.hypot(corner.x - cell.centre.x, corner.z - cell.centre.z)),
+  );
   const positions = [0, 0, 0];
-  for (const corner of cell.corners) {
-    positions.push((corner.x - cell.centre.x) * 0.4, 0, (corner.z - cell.centre.z) * 0.4);
+  for (const [index, corner] of cell.corners.entries()) {
+    const phase = index * 2.399 + cell.centre.x * 0.73 + cell.centre.z * 1.17;
+    const topRadius = 0.83 + 0.05 * Math.sin(phase);
+    positions.push(
+      (corner.x - cell.centre.x) * topRadius,
+      0,
+      (corner.z - cell.centre.z) * topRadius,
+    );
   }
   for (const corner of cell.corners) {
     positions.push(corner.x - cell.centre.x, corner.y - cell.centre.y, corner.z - cell.centre.z);
@@ -65,8 +83,8 @@ export function createBattleSurface(
   data.positions = positions;
   data.indices = indices;
   data.uvs = Array.from({ length: positions.length / 3 }, (_, i) => [
-    positions[i * 3]! / (2 * HEX_RADIUS) + 0.5,
-    positions[i * 3 + 2]! / (2 * HEX_RADIUS) + 0.5,
+    positions[i * 3]! / (2 * radius) + 0.5,
+    positions[i * 3 + 2]! / (2 * radius) + 0.5,
   ]).flat();
   data.normals = [];
   VertexData.ComputeNormals(positions, indices, data.normals);

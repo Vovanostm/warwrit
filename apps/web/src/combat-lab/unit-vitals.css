@@ -1,0 +1,56 @@
+.unit-vitals {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+  width: 100%;
+  padding: 4px 5px 5px;
+  pointer-events: none;
+}
+.unit-vital {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 3px;
+  height: 10px;
+  min-width: 0;
+}
+.unit-vital-reading {
+  display: contents;
+  font:
+    600 9px/1 system-ui,
+    sans-serif;
+  color: #e8e5d5;
+}
+.unit-vital-reading > span:first-child {
+  grid-column: 1;
+  grid-row: 1;
+  color: #c8c8b9;
+}
+.unit-vital-reading > span:last-child {
+  grid-column: 3;
+  grid-row: 1;
+  text-align: right;
+}
+.unit-vital > .unit-vital-track {
+  grid-column: 2;
+  grid-row: 1;
+}
+.unit-vital-track {
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #0e1718;
+  box-shadow: inset 0 0 0 1px #8792864d;
+}
+.unit-vital-track i {
+  display: block;
+  height: 100%;
+  background: #d28c7f;
+}
+.unit-vital[data-resource='armor'] .unit-vital-track i {
+  background: #a4c0cb;
+}
+.unit-vital[data-resource='morale'] .unit-vital-track i {
+  background: #d2bb7d;
+}

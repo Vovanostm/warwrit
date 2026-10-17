@@ -5,7 +5,7 @@ import { MAP_ART } from './art.js';
 
 // Shared lattice vertices sample only the image interior: neither mirrored motifs nor image
 // borders can become a seam. Smooth weights preserve continuity between neighboring triangles.
-const naturalTextureShader = `
+export const naturalTextureShader = `
   vec2 hash2(vec2 p){ return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453); }
   float landNoise(vec2 p){
     vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);

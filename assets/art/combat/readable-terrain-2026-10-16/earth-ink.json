@@ -1,0 +1,11 @@
+{
+  "id": "combat-readable-earth-ink",
+  "prompt": "Create ONE seamless square overhead DRY EARTH terrain texture for the serious dark fantasy game Warwrit. Use the attached two inspected references ONLY for the exact traditional irregular black ink and flat-wash drawing language. This is a tileable ground material, not a scene, not a UI, no characters. Full-bleed overhead ochre-grey compacted earth, broad quiet mottled patches and a few embedded irregular flat slate stones, shallow broken ruts and short directional ink hatch marks. Visible confident hand-drawn black contour marks and small shadow masses, like the ground around the ruined water mill in the reference. Main shapes 10-20% of the tile width, plenty of quiet earth between. Muted desaturated umber, warm gray and dull ochre; even diffuse lighting upper left. NO photographic grains, speckle noise, high-frequency pebbles, seamless smooth CG, grass, straw, planks, hexagons, borders, vignette, typography, objects or horizon. Seamless tiling on all four edges; avoid one dominant feature or regular pattern. Need readable chunky ink material at game scale about80px per tile. Texture fills the whole image.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17T03:58:46.645102+00:00",
+  "transparent_background": false,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-093e440c-7ed0-48a5-b3c8-84e4ba447027.png",
+  "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/staraya-melnitsa.png"],
+  "status": "Integrated candidate; repeat independent in-scene acceptance pending."
+}
