@@ -1,0 +1,559 @@
+{
+  "schemaVersion": 1,
+  "bake": "playcanvas-2.22.4-art05-b2-scout",
+  "actor": {
+    "id": "red-knight-1",
+    "classId": "Knight",
+    "equipment": ["sword_1handed", "shield_round"]
+  },
+  "animation": {
+    "clip": "Walking_A",
+    "sampleSeconds": 0.2666666805744171,
+    "durationSeconds": 1.0666667222976685,
+    "loop": true
+  },
+  "capture": {
+    "projection": "orthographic",
+    "directions": 8,
+    "yawDegrees": [0, 45, 90, 135, 180, 225, 270, 315],
+    "sourceSize": [1600, 900],
+    "outputSize": [256, 256],
+    "measuredCaptureMilliseconds": 683.5894999999998,
+    "sourceCrop": {
+      "x": 350,
+      "y": 0,
+      "width": 900,
+      "height": 900
+    },
+    "pivot": {
+      "x": 0.5,
+      "y": 0.3226163983345032,
+      "origin": "projected world-space actor root at [0, 0, 0]",
+      "normalizedFrom": "bottom-left"
+    },
+    "alpha": "WebGL alpha context; transparent background; saved PNG corners and coverage verified",
+    "animationProof": {
+      "componentPlayingAtCapture": true,
+      "clip": "Walking_A",
+      "sampleSeconds": 0.2666666805744171,
+      "changedNonRootJoints": ["upperarm.r", "upperarm.l", "upperleg.r", "upperleg.l"],
+      "equippedItems": ["art-bake-sword_1handed", "art-bake-shield_round"]
+    },
+    "geometryProof": {
+      "directionIndex": 0,
+      "characterWorldBounds": {
+        "min": [-0.7514681950636624, -0.1265687335636585, -0.498809997437334],
+        "max": [0.751468056710543, 2.315980938106607, 0.7043455116169846],
+        "meshCount": 9
+      },
+      "attachments": [
+        {
+          "name": "sword_1handed",
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [-0.572982907295227, 0.5647228360176086, 0.12370727211236954],
+          "worldBounds": {
+            "min": [-0.6734608260485091, 0.15579885250419423, -0.013538988516468953],
+            "max": [-0.47250201074726034, 0.697804817458576, 0.5551640639234612],
+            "meshCount": 1
+          }
+        },
+        {
+          "name": "shield_round",
+          "localScale": [0.42, 0.42, 0.42],
+          "worldPosition": [0.5729828476905823, 0.6467992067337036, 0.03616521507501602],
+          "worldBounds": {
+            "min": [0.38944700512823616, 0.45809357617999824, -0.15579925323427934],
+            "max": [0.7522090275418403, 0.8470308560816293, 0.23895154006830444],
+            "meshCount": 1
+          }
+        }
+      ]
+    },
+    "normal": "world-space skinned surface normal encoded as RGB = normal * 0.5 + 0.5",
+    "depth": {
+      "convention": "linear Euclidean metric distance from camera origin in meters",
+      "maximumMeters": 64,
+      "encoding": "unsigned 24-bit big-endian RGB, scaled over [0, 64] meters",
+      "cropSampling": "nearest-neighbor to preserve packed RGB values",
+      "clearPixels": "alpha is zero"
+    }
+  },
+  "licenses": [
+    {
+      "path": "assets/License-Adventurers-CC0.txt",
+      "sha256": "d4adc31660d1db22eb60eba648e01db41577548f6fa1a3576cb4a6283dae0a58"
+    },
+    {
+      "path": "assets/License-Character-Animations-CC0.txt",
+      "sha256": "373b159044d1a886ed15f57ca5a7673ba14e2623c460283452705f2056912ed9"
+    }
+  ],
+  "sourceAssets": [
+    {
+      "path": "assets/characters/Knight.glb",
+      "sha256": "e484370733824a0740683e7f6040aae0d20e5efd4107dde1175d6a2ad7e2f199"
+    },
+    {
+      "path": "assets/animations/Rig_Medium_General.glb",
+      "sha256": "5f725c0f745f36078c7238968cd5c04843cbc6260689eb6e7f5e2bbd7ffdd7ad"
+    },
+    {
+      "path": "assets/animations/Rig_Medium_MovementBasic.glb",
+      "sha256": "11422afd50abf7e8c92ea107e2e0bc94abd38023d6d15f55ad580347efbfa29e"
+    },
+    {
+      "path": "assets/accessories/sword_1handed.gltf",
+      "sha256": "6efd2d1007403cf1739acb43474dde63b18c186ec0bffee690987f9c89352d61"
+    },
+    {
+      "path": "assets/accessories/sword_1handed.bin",
+      "sha256": "c8acdc21adf19257e66b78e86d37855474a0a9fda796c39b39d6d08a5ca34bd5"
+    },
+    {
+      "path": "assets/accessories/shield_round.gltf",
+      "sha256": "c5f4209c2d268917f1cbc699fc54674045b2c26d597039289cb97600764d5948"
+    },
+    {
+      "path": "assets/accessories/shield_round.bin",
+      "sha256": "42da365328fc8804f44cd3db6becc8bc98729f11862b63e51b42820559d6e1e0"
+    },
+    {
+      "path": "assets/accessories/knight_texture.png",
+      "sha256": "028db4d1cd8b3471e6ba21686515abd4e36ae582f8b314b71ad2ab1fb5453b12"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d00-color.png",
+      "pass": "color",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3268,
+      "partialAlphaPixels": 397,
+      "alphaBounds": {
+        "left": 102,
+        "top": 87,
+        "right": 156,
+        "bottom": 175
+      },
+      "sha256": "e5b85a5a785a0827f8478e3ea9bcb5234dd9fbff906faad58c0947c7630d6cc5",
+      "bytes": 13204
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d00-normal.png",
+      "pass": "normal",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3268,
+      "partialAlphaPixels": 397,
+      "alphaBounds": {
+        "left": 102,
+        "top": 87,
+        "right": 156,
+        "bottom": 175
+      },
+      "sha256": "0dc7b44abf0e86c70075b94dcf5bd2f3abdf943fe9d1614b656d509ecfc0397c",
+      "bytes": 12990
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d00-depth.png",
+      "pass": "depth",
+      "directionIndex": 0,
+      "yawDegrees": 0,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3106,
+      "partialAlphaPixels": 72,
+      "alphaBounds": {
+        "left": 102,
+        "top": 88,
+        "right": 156,
+        "bottom": 174
+      },
+      "sha256": "52c1fb82ec24e9b4937738e11de5eda32db9dfb13144b4870f08faa789e604e6",
+      "bytes": 12404
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d01-color.png",
+      "pass": "color",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3144,
+      "partialAlphaPixels": 395,
+      "alphaBounds": {
+        "left": 97,
+        "top": 87,
+        "right": 149,
+        "bottom": 175
+      },
+      "sha256": "e98f78a43c71aab560453e2af394bbd2822058bee7aa7e1098ff40b701e81269",
+      "bytes": 13025
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d01-normal.png",
+      "pass": "normal",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3144,
+      "partialAlphaPixels": 395,
+      "alphaBounds": {
+        "left": 97,
+        "top": 87,
+        "right": 149,
+        "bottom": 175
+      },
+      "sha256": "a2fb4ed355165bbed7d2107b276a01feae00fdfc1cc53b691eb974f14030b8c2",
+      "bytes": 12912
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d01-depth.png",
+      "pass": "depth",
+      "directionIndex": 1,
+      "yawDegrees": 45,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2984,
+      "partialAlphaPixels": 60,
+      "alphaBounds": {
+        "left": 98,
+        "top": 87,
+        "right": 148,
+        "bottom": 175
+      },
+      "sha256": "93d3ed2bfffa34a8bd756b43bb73649f0cc6af3b6e959987b52d001d0d43d376",
+      "bytes": 12453
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d02-color.png",
+      "pass": "color",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2719,
+      "partialAlphaPixels": 394,
+      "alphaBounds": {
+        "left": 100,
+        "top": 85,
+        "right": 147,
+        "bottom": 176
+      },
+      "sha256": "d28dc11a167580b647c1daec532bff2f0a7b4910e12b473320ccf08f8478d6d0",
+      "bytes": 11431
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d02-normal.png",
+      "pass": "normal",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2719,
+      "partialAlphaPixels": 394,
+      "alphaBounds": {
+        "left": 100,
+        "top": 85,
+        "right": 147,
+        "bottom": 176
+      },
+      "sha256": "a37fdde5922afde2438d1de14a4d64fe0a9170dc11befb0322befba27b165973",
+      "bytes": 11398
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d02-depth.png",
+      "pass": "depth",
+      "directionIndex": 2,
+      "yawDegrees": 90,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2562,
+      "partialAlphaPixels": 72,
+      "alphaBounds": {
+        "left": 101,
+        "top": 86,
+        "right": 146,
+        "bottom": 175
+      },
+      "sha256": "761b4e0c0bb9dbc790b4741707251ba297bd549f6a2bc2f89b50d1a4108f81c0",
+      "bytes": 10980
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d03-color.png",
+      "pass": "color",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3130,
+      "partialAlphaPixels": 339,
+      "alphaBounds": {
+        "left": 102,
+        "top": 84,
+        "right": 149,
+        "bottom": 176
+      },
+      "sha256": "f68b9576d20baa1aa292d5a58adb22c40ff15576ba8152026d8469dab26b5ea6",
+      "bytes": 11058
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d03-normal.png",
+      "pass": "normal",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3130,
+      "partialAlphaPixels": 339,
+      "alphaBounds": {
+        "left": 102,
+        "top": 84,
+        "right": 149,
+        "bottom": 176
+      },
+      "sha256": "88a8e3a0f7ca01cb264b87102fd99114d880b75441ca48efa14d3c33ffe7a8a8",
+      "bytes": 11463
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d03-depth.png",
+      "pass": "depth",
+      "directionIndex": 3,
+      "yawDegrees": 135,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2982,
+      "partialAlphaPixels": 46,
+      "alphaBounds": {
+        "left": 103,
+        "top": 84,
+        "right": 148,
+        "bottom": 175
+      },
+      "sha256": "321b7b399ece5ff7e2561473c558bdc6e72c5e0405d729db6a5f3744bc7a6851",
+      "bytes": 11973
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d04-color.png",
+      "pass": "color",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3389,
+      "partialAlphaPixels": 376,
+      "alphaBounds": {
+        "left": 99,
+        "top": 83,
+        "right": 153,
+        "bottom": 175
+      },
+      "sha256": "f5b7787d5a3cb5a6e126c06f0612f4af35c86bb145688b84386d99ac7a2b6b60",
+      "bytes": 10439
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d04-normal.png",
+      "pass": "normal",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3389,
+      "partialAlphaPixels": 376,
+      "alphaBounds": {
+        "left": 99,
+        "top": 83,
+        "right": 153,
+        "bottom": 175
+      },
+      "sha256": "f4cf4f8431a3feb1c9c31aa6a2c632d97bc11ae2f5a632ae289b43b832121919",
+      "bytes": 11316
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d04-depth.png",
+      "pass": "depth",
+      "directionIndex": 4,
+      "yawDegrees": 180,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3232,
+      "partialAlphaPixels": 68,
+      "alphaBounds": {
+        "left": 99,
+        "top": 84,
+        "right": 153,
+        "bottom": 174
+      },
+      "sha256": "0377b84bacb70031f2a131b7984d13abbb60e5ad59b81df0657c2d6cef3b4345",
+      "bytes": 11869
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d05-color.png",
+      "pass": "color",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3178,
+      "partialAlphaPixels": 401,
+      "alphaBounds": {
+        "left": 106,
+        "top": 84,
+        "right": 158,
+        "bottom": 175
+      },
+      "sha256": "f850d25e25a9b2f82fff396fd71163df7018f719bb07377945e81054db2c09ec",
+      "bytes": 11114
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d05-normal.png",
+      "pass": "normal",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3178,
+      "partialAlphaPixels": 401,
+      "alphaBounds": {
+        "left": 106,
+        "top": 84,
+        "right": 158,
+        "bottom": 175
+      },
+      "sha256": "a39bf8b51646dbc73994daa60b176b29393194f351276d98929957ee4d1e5963",
+      "bytes": 11870
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d05-depth.png",
+      "pass": "depth",
+      "directionIndex": 5,
+      "yawDegrees": 225,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3004,
+      "partialAlphaPixels": 52,
+      "alphaBounds": {
+        "left": 107,
+        "top": 84,
+        "right": 157,
+        "bottom": 174
+      },
+      "sha256": "287e4b930965e084465c7c9da02f1e834fff3d18dd7e6d85d1d650234412c794",
+      "bytes": 12222
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d06-color.png",
+      "pass": "color",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2690,
+      "partialAlphaPixels": 388,
+      "alphaBounds": {
+        "left": 108,
+        "top": 85,
+        "right": 155,
+        "bottom": 175
+      },
+      "sha256": "114556bfe84090718f1b0dc60689354ca1f66d54c14eaf8d449de1d82856feed",
+      "bytes": 11166
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d06-normal.png",
+      "pass": "normal",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2690,
+      "partialAlphaPixels": 388,
+      "alphaBounds": {
+        "left": 108,
+        "top": 85,
+        "right": 155,
+        "bottom": 175
+      },
+      "sha256": "d6289d7f494c81272d08b0e653e4118fefef599168d93f1eb518c0eed0a2333e",
+      "bytes": 11562
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d06-depth.png",
+      "pass": "depth",
+      "directionIndex": 6,
+      "yawDegrees": 270,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2539,
+      "partialAlphaPixels": 67,
+      "alphaBounds": {
+        "left": 109,
+        "top": 86,
+        "right": 154,
+        "bottom": 175
+      },
+      "sha256": "fc20c9a05669ca698e024795a276c64274c26b9e01543ad77448c9076957ae21",
+      "bytes": 10990
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d07-color.png",
+      "pass": "color",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3028,
+      "partialAlphaPixels": 311,
+      "alphaBounds": {
+        "left": 106,
+        "top": 87,
+        "right": 153,
+        "bottom": 176
+      },
+      "sha256": "81eef9a5b49c425de94db1f958f273e7fbe7b52f3041474893fcc5af699fc936",
+      "bytes": 12606
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d07-normal.png",
+      "pass": "normal",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 3028,
+      "partialAlphaPixels": 311,
+      "alphaBounds": {
+        "left": 106,
+        "top": 87,
+        "right": 153,
+        "bottom": 176
+      },
+      "sha256": "cb797b5cda13a25af4418db886b4cbe0905f9833a1f19529a2f5e17bd7601e55",
+      "bytes": 12543
+    },
+    {
+      "file": "knight-walking_a-t0p2666666805744171-d07-depth.png",
+      "pass": "depth",
+      "directionIndex": 7,
+      "yawDegrees": 315,
+      "width": 256,
+      "height": 256,
+      "coveredPixels": 2899,
+      "partialAlphaPixels": 51,
+      "alphaBounds": {
+        "left": 107,
+        "top": 87,
+        "right": 152,
+        "bottom": 175
+      },
+      "sha256": "bb16a799f8d2d9e15d0007c5dde21a129abcd8a0822bc6b933e2359588d23f8a",
+      "bytes": 12072
+    }
+  ]
+}
