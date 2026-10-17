@@ -16,7 +16,13 @@ PASS (8inherited excluded); CI39046615446 bootstrap/coverage PASS, qualityFAIL
 on tintUnitEdge cyclomatic6/CRAP42 with fresh coverage. Local equivalent boolean
 factor reviewed for all8states; types/lint/markers4 PASS. Visual behavior unchanged;
 new-head publication/CI/merge/main journey pending. Same draftPR160/maina934355;
-parent sole source/wiki integrator. No fullM1/balance/FPS claim.
+parent sole source/wiki integrator. Second CI39048861412 on73a4d40 FAIL at
+boundaryCRAP30 despite bootstrap/coverage PASS. Move common emphasized IDs
+once per refresh; independent source equivalence/lifecycle readback DONE.
+Types/lint/markers4/day-night-day1/12/1 outlines PASS. Fresh local coverage
+820PASS/47SKIP and explicitly main-based66file audit PASS (8inherited excluded);
+first default1fileaudit was insufficient and repeated with pinnedmain.
+New-head CI/merge pending. Native main remainsa934355. No fullM1/balance/FPS claim.
 [Owning result](../wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
 
 **Combat readability — 2026-10-17, HISTORICAL d185b71 / FULL VISUAL REJECT:**

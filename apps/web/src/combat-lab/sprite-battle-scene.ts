@@ -649,16 +649,10 @@ export async function mountSpriteBattleScene(
   };
   const tintUnitEdge = (
     unit: BattleUnit,
-    hoveredUnitId: string | null,
-    attackableIds: ReadonlySet<string>,
+    plan: ReturnType<typeof markerPlan>,
+    emphasizedIds: readonly (string | null | undefined)[],
   ) => {
     const edge = unitEdges.get(unit.id);
-    const emphasizedIds = [
-      hoveredUnitId,
-      selectedId,
-      currentView.activation?.actorId,
-      ...attackableIds,
-    ];
     if (!edge) return;
     edge.setEnabled(unit.status === 'active' && (isNight || emphasizedIds.includes(unit.id)));
     const edgeMaterial = edge.material as StandardMaterial;
@@ -667,7 +661,7 @@ export async function mountSpriteBattleScene(
       night: new Color3(0.67, 0.7, 0.74),
       hover: new Color3(1, 0.91, 0.68),
       target: new Color3(1, 0.69, 0.46),
-    }[unitEdgeTone(unit, currentView, hoveredUnitId, attackableIds, isNight)];
+    }[unitEdgeTone(unit, currentView, plan.hoveredUnitId, plan.attackableIds, isNight)];
   };
   const drawThreatArrow = (id: string, start: Vector3, end: Vector3) => {
     const direction = end.subtract(start);
@@ -767,8 +761,13 @@ export async function mountSpriteBattleScene(
     for (const mesh of previewMeshes.splice(0)) mesh.dispose(false, false);
   };
   const refreshFigureMarkers = (plan: ReturnType<typeof markerPlan>) => {
-    for (const unit of currentView.units)
-      tintUnitEdge(unit, plan.hoveredUnitId, plan.attackableIds);
+    const emphasizedIds = [
+      plan.hoveredUnitId,
+      selectedId,
+      currentView.activation?.actorId,
+      ...plan.attackableIds,
+    ];
+    for (const unit of currentView.units) tintUnitEdge(unit, plan, emphasizedIds);
     for (const unit of currentView.units) renderThreat(unit);
   };
   const applyCellStyles = (cells: ReturnType<typeof markerPlan>['cells']) => {

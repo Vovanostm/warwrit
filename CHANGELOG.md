@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local follow-up after
+  73a4d40 CI39048861412 FAIL at boundaryCRAP30: build the common emphasized-ID
+  list once per marker refresh and reuse it in per-unit outline application.
+  Same source membership/visibility/colors; independent source readback confirms
+  freshness and equivalence, types/lint/markers4/browser day-night-day PASS.
+  Fresh local coverage820PASS/47SKIP and pinned-main66-file audit PASS
+  (8inherited excluded); first upstream-only1fileaudit was repeated with main.
+  No gate/test limits or visual changes. Current visual ACCEPT retained;
+  new-head CI/merge pending. [Owning result](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local correction after published
   ee3103a CI39046615446 FAIL: factor the same active/night/emphasis condition
   in `sprite-battle-scene.ts` to remove a fresh-coverage cyclomatic6/CRAP42
