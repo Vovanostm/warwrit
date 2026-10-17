@@ -9,9 +9,14 @@ Source review DONE; types/lint/content114/geometry5 PASS. Fresh20profiles/
 3maps/3desktop/day-night/dense/maxzoom/overlays/extremes/explicit0-1-2 PASS;
 12bars32×16gap4,0pick mismatches,0inspection/navigationPOST. Actual move12→13,
 36field/54queue readings match; terminalR4rev83/0HUD/hotkeyPOST; editor0layer→
-restart12active/R1/1layer PASS. Full new21image+2reference visual pass PENDING;
-source frozen. Current-head publication/CI/merge/main journey NOT_RUN.
-Same draftPR160/published793ebd3/maina934355; parent sole source/wiki integrator.
+restart12active/R1/1layer PASS. Full21image+2reference absolute visual ACCEPT
+on published ee3103a: game all2, close3/3/2/2/2/2/2, motionN/A,
+criticowninputNOT_RUN. Clean reload0renderer errors/warnings. Normal66fileaudit
+PASS (8inherited excluded); CI39046615446 bootstrap/coverage PASS, qualityFAIL
+on tintUnitEdge cyclomatic6/CRAP42 with fresh coverage. Local equivalent boolean
+factor reviewed for all8states; types/lint/markers4 PASS. Visual behavior unchanged;
+new-head publication/CI/merge/main journey pending. Same draftPR160/maina934355;
+parent sole source/wiki integrator. No fullM1/balance/FPS claim.
 [Owning result](../wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
 
 **Combat readability — 2026-10-17, HISTORICAL d185b71 / FULL VISUAL REJECT:**

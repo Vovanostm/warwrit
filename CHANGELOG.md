@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local correction after published
+  ee3103a CI39046615446 FAIL: factor the same active/night/emphasis condition
+  in `sprite-battle-scene.ts` to remove a fresh-coverage cyclomatic6/CRAP42
+  regression. Independent source readback confirms all8 boolean states;
+  types/lint/markers4 PASS. No visual/command behavior change or gate suppression.
+  Record full ee3103a absolute visual ACCEPT (21images+2references, game all2,
+  close3/3/2/2/2/2/2), normal66-file audit PASS, clean reload and remaining polish
+  in the existing wiki/index/log/current plan. New-head CI/merge pending.
+  [Result and CI boundary](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local technique correction
   after d185b71 full visual REJECT: replace fine uniform earth with original
   ink-yard-earth, classify authored plate stone/soil masses into fixed-scale

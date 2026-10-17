@@ -659,9 +659,8 @@ export async function mountSpriteBattleScene(
       currentView.activation?.actorId,
       ...attackableIds,
     ];
-    const emphasis = unit.status === 'active' && emphasizedIds.includes(unit.id);
     if (!edge) return;
-    edge.setEnabled(emphasis || (isNight && unit.status === 'active'));
+    edge.setEnabled(unit.status === 'active' && (isNight || emphasizedIds.includes(unit.id)));
     const edgeMaterial = edge.material as StandardMaterial;
     edgeMaterial.emissiveColor = {
       day: Color3.White(),
