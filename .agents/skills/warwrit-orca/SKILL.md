@@ -6,8 +6,10 @@ description: Coordinate parallel Warwrit work in Orca — plan conflict-free wav
 # Parallel Warwrit work in Orca
 
 [AGENTS.md](../../../AGENTS.md) and [AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18)
-stay authoritative. Load Orca's own guides first: `arca skills get orchestration`
-(supervised runs) or `arca skills get arca-cli` (worktrees, handoffs).
+stay authoritative. Use the `orca` CLI (Orca.app, Git repos); `arca` is a
+separate fork for the Arcadia/arc checkout and never manages Warwrit. Load
+Orca's own guides first: `orca skills get orchestration`
+(supervised runs) or `orca skills get orca-cli` (worktrees, handoffs).
 
 ## Rules that make parallel work fast
 
@@ -42,8 +44,8 @@ stay authoritative. Load Orca's own guides first: `arca skills get orchestration
    the epic block the matching issues until answered or accepted.
 2. Build waves: list each ready issue's files, group non-overlapping sets, keep
    dependency chains ≤ 3 deep. Projection/protocol changes go first.
-3. `arca orchestration run-create --objective "<epic>"`, then one
-   `arca orchestration worker-start --spec "<spec>" --worktree new-child
+3. `orca orchestration run-create --objective "<epic>"`, then one
+   `orca orchestration worker-start --spec "<spec>" --worktree new-child
 --name <issue-slug> --agent claude --setup run` per writer. Setup installs
    dependencies, builds workspace packages and assigns private combat-lab ports
    (`.worktree-ports`); the agent waits for it (`wait-for-setup`).
@@ -52,10 +54,10 @@ stay authoritative. Load Orca's own guides first: `arca skills get orchestration
    with `Closes #<n>`; put CHANGELOG/plan text in the PR body; never merge".
 5. While writers run, start read-only reviewers on finished PRs:
    `warwrit-critic` for diffs, `warwrit-visual-critic` for screenshots.
-6. `arca orchestration check --wait --types worker_done,escalation,question`;
+6. `orca orchestration check --wait --types worker_done,escalation,question`;
    answer questions, release settled workers, start the next wave.
 7. Integrate: owner-approved merges one at a time, shared records updated once,
-   then `arca worktree rm --worktree <id> --run-hooks` (the archive hook stops
+   then `orca worktree rm --worktree <id> --run-hooks` (the archive hook stops
    that worktree's dev servers).
 
 ## Stop conditions

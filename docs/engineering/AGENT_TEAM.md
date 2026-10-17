@@ -64,7 +64,7 @@ children do not execute its publication/checkpoint steps.
 ## Orca parallel worktrees — 2026-10-18
 
 Owner request: configure Orca so several agents build Warwrit in parallel as
-fast as correctness allows. Orca (`arca` CLI) gives each agent its own Git
+fast as correctness allows. Orca (`orca` CLI, Orca.app; not the Arcadia-only `arca` fork) gives each agent its own Git
 worktree, terminals and supervised orchestration runs (Run/Task/Dispatch,
 ask/reply, decision gates). The repository part is checked in:
 
@@ -89,6 +89,13 @@ Orca reads setup and tabs from the **new worktree's** `orca.yaml` (so from
 **primary checkout** registered in Orca. While the primary checkout stays on the
 WIP branch `codex/sprite-combat-stage1`, `.env` is not copied and archive does
 not run; combat-lab work does not need `.env`.
+
+Orca holds a personal local setup hook `pnpm install` for Warwrit. With no
+saved command-source choice a nonempty local hook means **Local only**, so the
+YAML setup is ignored until Settings → Repository → setup command source is
+**orca.yaml only** (or the local hook is cleared). Until then workers run
+`bash scripts/orca-setup.sh` themselves when `.worktree-ports` is missing.
+Repo base ref in Orca: `origin/main` (set 2026-10-18).
 
 **Research basis.** [Orca orca.yaml reference](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/model/orca-yaml.mdx)
 and [worktrees](https://www.onorca.dev/docs/model/worktrees);
