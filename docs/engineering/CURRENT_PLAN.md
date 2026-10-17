@@ -8,9 +8,10 @@ log/menu/night/zoom and autobattle to R8 victory. Twenty defects UIX-01…20
 recorded with evidence and acceptance; P0: silent right-click refusals, missing
 attack reason on enemy hover, no move-then-attack warning, unmarked active
 fighter, conflicting colour channels and unreadable opponent turns. Rules,
-protocol and replay unchanged by the spec. Three owner choices have recommended
-defaults (AI playback pace, Move button, end-turn key). Readability cycle owns
-cells/portraits/foot bars. Docs-only branch `claude/combat-ui-tz`, local.
+protocol and replay unchanged by the spec. Five owner choices have recommended
+defaults (AI pace, Move button, end-turn key, tooltip anchor, hex step). Readability cycle owns
+cells/portraits/foot bars. Decomposed into epic [#217](https://github.com/Vovanostm/warwrit/issues/217) and 38 issues #179–#216 with
+DoD/acceptance/evidence; docs branch `claude/combat-ui-tz` pushed, no PR.
 [Owning specification](../wiki/battlefield-test-maps.md#аудит-ui-боя-и-тз-исправлений--2026-10-17).
 
 **Battle perspective and bounds — 2026-10-17, MERGED / MAIN JOURNEY PASS:**

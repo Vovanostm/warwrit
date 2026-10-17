@@ -17,6 +17,8 @@ requests.
   violated requirements, required behaviour, owner questions with defaults,
   execution order and acceptance scenarios. Documentation only; game code,
   rules, protocol and replay unchanged; implementation/visual review NOT_RUN.
+  Published as epic [#217](https://github.com/Vovanostm/warwrit/issues/217) with 38 issues #179–#216;
+  evidence committed under `docs/engineering/evidence/combat-ui-audit-2026-10-17/`.
   [Specification](docs/wiki/battlefield-test-maps.md#аудит-ui-боя-и-тз-исправлений--2026-10-17).
 
 ### Match battle grid and figures to painted perspective
