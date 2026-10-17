@@ -1,5 +1,52 @@
 # Warwrit current delivery plan
 
+**Battle perspective correction — 2026-10-17, LOCAL / VISUAL ACCEPT:**
+Latest connected-surface amendment supersedes the plinth/bank variants below:
+shared-corner earth slopes join exact canonical centres; ground/grid/fill/rays
+share triangles. Old walls/banks/level-plane fallback removed.26focused/types/
+lint/format PASS;810coverage+47SKIPPED before seam helper extraction. Actual
+0/1/2 feet/ground,4widths/day-night/165picks/bodypin/0POST PASS. Prior5b88278
+visual REJECT integration1; CI39002814730 SUCCESS covers only that prior tree.
+Full same-critic absolute ACCEPT(all7game/close2/2,motionN/A,owninputNOT_RUN).
+Strict15-file audit PASS. Current-head CI/merge PENDING; merge authorized.
+
+Latest terrain amendment: footprint UV lifts with raised top; continuous earth
+side UV/vertex shade and shared display height0.28. Canonical rules unchanged.
+27focused/types/lint/format/811coverage+47SKIPPED/audit14 PASS. Real editor
+identical archers0/1/2 feet/ground aligned;165picks/bodyhover-pin/0POST PASS.
+Full current visual/new-head CI/merge PENDING.874dc2f CI38998708040 SUCCESS
+covers prior dark-strip version. This latest amendment supersedes its appearance.
+
+Owner expanded PR159 scope: match grid and figures to the painted perspective.
+Same worktree/branch; main and primary WIP untouched. Pinhole projection with
+fixed optical centre and off-axis pan/zoom; existing bounds retained. GitHub
+Three.js/Babylon/fSpy sources inspected; no new dependency. Camera18 PASS,
+web types/lint/coverage811+47SKIPPED/strict audit PASS. Author browser4sizes,
+day/night, stable image registration,165ground hits/body hover-pin/0POST PASS.
+CI38991283029 SUCCESS on1907d8c. Independent full visual REJECT on scene
+integration (height boundary/contact ovals), no black/ground-over-body found.
+Exposed height lip and feathered foot wash repaired locally; types/lint/
+coverage811+47SKIPPED/audit PASS. Same-critic full repeat/new-head CI/merge
+PENDING at that checkpoint. Repeat visual integration1 forced technique
+change: actual non-pickable sloped earth banks replace the wire lip; canonical
+hex tops/vertical pick faces retained. Native close comparison corrected from
+an artificially upscaled game crop. Camera+geometry22/types/lint/811coverage/
+audit PASS; same-critic full repeat/new bank-head CI/merge PENDING.
+CI38997076787 SUCCESS on132156b covers only intermediate lip version.
+Prior bb55f5b CI SUCCESS
+covers only bounds. Merge remains explicitly owner-authorized for this slice.
+[Owning research/result](../wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
+
+**Battle camera bounds — 2026-10-16, HISTORICAL / PROJECTION SUPERSEDED:**
+Owner explicitly authorizes isolated worktree, implementation, review and merge
+to main for this slice. `codex/battle-camera-bounds` from main5915ad0 confines
+the full viewport and zoom to the painted battle map, including drag/keys/resize.
+Camera15/web types/lint/coverage808+47SKIPPED/changed-file audit PASS.
+Author browser4desktop sizes/day-night/drag-keys-wheel-resize/0POST/stableunits
+PASS; author source review no concrete findings. Independent visual critique,
+clean PR CI and merge pending.
+[Owning result](../wiki/battlefield-test-maps.md#ограничение-камеры-областью-карты--2026-10-16).
+
 **Live initiative and combat UX — 2026-10-16, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized drafts/subagent/PR/review/merge cycle completed through
 [PR158](https://github.com/Vovanostm/warwrit/pull/158), after sprite/outline PR157.

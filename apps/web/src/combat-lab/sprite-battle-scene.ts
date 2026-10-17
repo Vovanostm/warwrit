@@ -6,7 +6,7 @@ import {
   Mesh,
   MeshBuilder,
   Matrix,
-  PickingInfo,
+  type PickingInfo,
   PointLight,
   Scene,
   StandardMaterial,
@@ -14,7 +14,6 @@ import {
   Vector3,
   VertexBuffer,
   type AbstractMesh,
-  type Ray,
 } from '@babylonjs/core';
 import type {
   CombatLabAction,
@@ -24,20 +23,20 @@ import type {
 } from '@warwrit/protocol';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
+import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { BATTLE_ART } from '../renderer/art.js';
 import {
   opaqueSpritePixel,
   eventLabelUp,
   avoidAnchorOverlap,
-  intersectGroundLevel,
   type LabelBox,
 } from './sprite-scene-geometry.js';
 import { markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
 import { spriteForUnit } from './sprite-art.js';
 import { SPRITE_MASK_SIZE, SPRITE_OUTLINE_SIZE, spriteOutlinePixels } from './sprite-outline.js';
-import { HEX_RADIUS, hexToWorld, worldToHex } from '../renderer/hex-projection.js';
-import { createHexDisc, createHexSides } from '../renderer/hex-mesh.js';
+import { BATTLE_HEIGHT_STEP, hexToWorld } from '../renderer/hex-projection.js';
+import { createBattleSurface, createBattleTerrain } from '../renderer/battle-terrain.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
 const millFieldUrl = new URL(
@@ -49,9 +48,6 @@ const b023FixtureUrl = new URL(
   '../../../../assets/art/combat/stage1-2026-10-09/roster/b023/fixture.png',
   import.meta.url,
 ).href;
-
-const terrainFaceUrl = new URL('../../../../assets/art/m1/terrain-ink-v1/dirt.png', import.meta.url)
-  .href;
 
 const SQRT3 = Math.sqrt(3);
 // Leave room for adjacent full figures without changing their proportions or pivots.
@@ -142,6 +138,9 @@ export async function mountSpriteBattleScene(
   const initialTiles = tilesFor(initialView);
   const mapDepth = Math.max(2, ...initialTiles.map((tile) => tile.r)) + 1;
   const centerZ = ((mapDepth - 1) * SQRT3) / 4;
+  // Art-directed pinhole calibration; the painting has no recoverable lens metadata.
+  // One fixed optical centre governs grid, figures and image-window navigation.
+  const perspective = { targetX: 9.5, targetZ: centerZ, distance: 16 };
   let currentView = initialView;
   let selectedId = selectedUnitId;
   let selectedSkill: CombatLabSkillId | null = null;
@@ -158,7 +157,7 @@ export async function mountSpriteBattleScene(
   const contactMaterial = new StandardMaterial('unit-ground-contact', scene);
   contactMaterial.diffuseColor = Color3.Black();
   contactMaterial.specularColor = Color3.Black();
-  contactMaterial.alpha = 0.42;
+  contactMaterial.alpha = 0.32;
   const fixedLabels: Mesh[] = [];
   const eventLabels: Mesh[] = [];
   const statusMarkers: Mesh[] = [];
@@ -191,23 +190,26 @@ export async function mountSpriteBattleScene(
   const backgroundHeight = (backgroundWidth * 941) / 1672;
   const backgroundX = backgroundWidth * 0.35;
   const backgroundUp = backgroundHeight * 0.38;
-  const centerUp = centerZ * Math.sin(CAMERA_ELEVATION);
-  const upOffset = backgroundUp - centerUp;
   const background = MeshBuilder.CreatePlane(
     'old-mill-battlefield',
     { width: backgroundWidth, height: backgroundHeight },
     scene,
   );
   background.rotation.x = CAMERA_ELEVATION;
+  // Keep the painting at its authored image coordinates, behind all tactical geometry.
+  // Moving the frustum window rather than the optical centre prevents parallax drift.
+  const backdropDepth = 40;
+  const backdropScale = (perspective.distance + backdropDepth) / perspective.distance;
+  const backdropUp = backgroundUp - (centerZ + 2) * Math.sin(CAMERA_ELEVATION);
+  background.scaling.set(backdropScale, backdropScale, 1);
   background.position.set(
-    backgroundX,
-    upOffset * Math.cos(CAMERA_ELEVATION) - 10 * Math.sin(CAMERA_ELEVATION),
-    centerZ + upOffset * Math.sin(CAMERA_ELEVATION) + 10 * Math.cos(CAMERA_ELEVATION),
+    perspective.targetX + (backgroundX - 1.1 - perspective.targetX) * backdropScale,
+    backdropUp * backdropScale * Math.cos(CAMERA_ELEVATION) -
+      backdropDepth * Math.sin(CAMERA_ELEVATION),
+    centerZ +
+      backdropUp * backdropScale * Math.sin(CAMERA_ELEVATION) +
+      backdropDepth * Math.cos(CAMERA_ELEVATION),
   );
-  // Register the painted perimeter around the HUD's free central play area.
-  // Grid axes, sprite scale and foot pivots remain unchanged.
-  background.position.x -= 1.1;
-  background.position.z -= 2;
   background.isPickable = false;
   const groundMaterial = new StandardMaterial('old-mill-painted-values', scene);
   groundMaterial.diffuseTexture = texture(millFieldUrl);
@@ -230,10 +232,12 @@ export async function mountSpriteBattleScene(
         fixture.rotation.x = CAMERA_ELEVATION;
         fixture.position.set(
           point.x,
-          occupied.height * 0.12 + 0.575 * Math.cos(CAMERA_ELEVATION),
+          occupied.height * BATTLE_HEIGHT_STEP + 0.575 * Math.cos(CAMERA_ELEVATION),
           point.z + 0.575 * Math.sin(CAMERA_ELEVATION),
         );
-        fixture.metadata = { combatFoot: new Vector3(point.x, occupied.height * 0.12, point.z) };
+        fixture.metadata = {
+          combatFoot: new Vector3(point.x, occupied.height * BATTLE_HEIGHT_STEP, point.z),
+        };
         const material = new StandardMaterial('b023-rooted-fixture-ink', scene);
         material.diffuseTexture = texture(b023FixtureUrl);
         material.useAlphaFromDiffuseTexture = true;
@@ -306,25 +310,12 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
-  const cellGrid = createBattleCellGrid(scene, initialTiles);
+  const terrain = createBattleTerrain(initialTiles);
+  const cellGrid = createBattleCellGrid(scene, initialTiles, terrain);
   const heightLabels: Mesh[] = [];
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
-  const groundYFor = (hex: CombatLabHex) => (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * 0.12;
-  const stepMaterial = new StandardMaterial('terrain-step-earth', scene);
-  // Raised earth is real opaque geometry, unlike the level-zero backdrop wash.
-  // Do not reuse the alpha-bearing sprite texture cache for depth occluders.
-  const earthTexture = new Texture(
-    terrainFaceUrl,
-    scene,
-    false,
-    true,
-    Texture.TRILINEAR_SAMPLINGMODE,
-  );
-  earthTexture.hasAlpha = false;
-  stepMaterial.diffuseTexture = earthTexture;
-  stepMaterial.diffuseColor = Color3.White();
-  stepMaterial.specularColor = Color3.Black();
-  stepMaterial.backFaceCulling = false;
+  const groundYFor = (hex: CombatLabHex) =>
+    (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_HEIGHT_STEP;
   const raisedTexture = new Texture(
     millFieldUrl,
     scene,
@@ -357,46 +348,19 @@ export async function mountSpriteBattleScene(
         new Vector3(positions[vertex]!, positions[vertex + 1]!, positions[vertex + 2]!),
         cell.getWorldMatrix(),
       );
-      const relative = world.subtract(background.position);
+      // Soil belongs to the canonical ground footprint, then rises with the top.
+      // Sampling the already lifted screen point would erase the visible height displacement.
+      const projected = projectCameraPoint(
+        new Vector3(world.x, 0, world.z),
+        perspective,
+        CAMERA_ELEVATION,
+      );
       uvs.push(
-        relative.x / backgroundWidth + 0.5,
-        (relative.y * Math.cos(CAMERA_ELEVATION) + relative.z * Math.sin(CAMERA_ELEVATION)) /
-          backgroundHeight +
-          0.5,
+        (projected.x - backgroundX + 1.1) / backgroundWidth + 0.5,
+        ((projected.z + 2) * Math.sin(CAMERA_ELEVATION) - backgroundUp) / backgroundHeight + 0.5,
       );
     }
     cell.setVerticesData(VertexBuffer.UVKind, uvs);
-  };
-  const addTerrainSides = (
-    tile: Tile,
-    point: { x: number; z: number },
-    key: string,
-    cell: Mesh,
-  ) => {
-    // Side order follows the 30° pointy-top corners, not axial neighbour order.
-    const neighbours = [
-      [0, 1],
-      [-1, 1],
-      [-1, 0],
-      [0, -1],
-      [1, -1],
-      [1, 0],
-    ] as const;
-    const bottoms = neighbours.map(
-      ([dq, dr]) => (tileInfo.get(HEX_KEY({ q: tile.q + dq, r: tile.r + dr }))?.height ?? 0) * 0.12,
-    );
-    if (bottoms.some((bottom) => bottom < tile.height * 0.12)) {
-      const sides = createHexSides(
-        `ground-side:${key}`,
-        HEX_RADIUS,
-        tile.height * 0.12,
-        bottoms,
-        scene,
-      );
-      sides.position.set(point.x, 0, point.z);
-      sides.material = stepMaterial;
-      sides.metadata = cell.metadata;
-    }
   };
   const addRubble = (tile: Tile, point: { x: number; z: number }, key: string) => {
     // The 512px PNG's visible pile bounds are (77,170)–(435,407).
@@ -412,20 +376,22 @@ export async function mountSpriteBattleScene(
     rubble.rotation.x = CAMERA_ELEVATION;
     rubble.position.set(
       point.x,
-      tile.height * 0.12 + rubbleCenterOffset * Math.cos(CAMERA_ELEVATION),
+      tile.height * BATTLE_HEIGHT_STEP + rubbleCenterOffset * Math.cos(CAMERA_ELEVATION),
       point.z + rubbleCenterOffset * Math.sin(CAMERA_ELEVATION),
     );
     rubble.material = artMaterial(`rubble-ink:${key}`, BATTLE_ART.rubble);
     rubble.isPickable = false;
     rubble.renderingGroupId = 1;
-    rubble.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
+    rubble.metadata = {
+      combatFoot: new Vector3(point.x, tile.height * BATTLE_HEIGHT_STEP, point.z),
+    };
   };
   const addHeight = (tile: Tile, point: { x: number; z: number }) => {
     addLabel(
       scene,
       heightLabels,
       `+${tile.height}`,
-      new Vector3(point.x, tile.height * 0.12 + 0.09, point.z),
+      new Vector3(point.x, tile.height * BATTLE_HEIGHT_STEP + 0.09, point.z),
       'height',
     );
     heightLabels.at(-1)!.renderingGroupId = 0;
@@ -441,7 +407,7 @@ export async function mountSpriteBattleScene(
     ember.rotation.x = CAMERA_ELEVATION;
     ember.position.set(
       point.x,
-      tile.height * 0.12 + 0.35 * Math.cos(CAMERA_ELEVATION),
+      tile.height * BATTLE_HEIGHT_STEP + 0.35 * Math.cos(CAMERA_ELEVATION),
       point.z + 0.35 * Math.sin(CAMERA_ELEVATION),
     );
     const emberMaterial = new StandardMaterial(`fire-ember-ink:${key}`, scene);
@@ -455,10 +421,12 @@ export async function mountSpriteBattleScene(
     ember.material = emberMaterial;
     ember.isPickable = false;
     ember.renderingGroupId = 0;
-    ember.metadata = { combatFoot: new Vector3(point.x, tile.height * 0.12, point.z) };
+    ember.metadata = {
+      combatFoot: new Vector3(point.x, tile.height * BATTLE_HEIGHT_STEP, point.z),
+    };
     const fireLight = new PointLight(
       `fire-light:${key}`,
-      new Vector3(point.x, tile.height * 0.12 + 0.7, point.z),
+      new Vector3(point.x, tile.height * BATTLE_HEIGHT_STEP + 0.7, point.z),
       scene,
     );
     fireLight.diffuse = new Color3(0.85, 0.47, 0.23);
@@ -469,13 +437,13 @@ export async function mountSpriteBattleScene(
     const key = HEX_KEY(tile);
     tileInfo.set(key, tile);
     const point = AXIAL_TO_WORLD(tile);
-    const cell = createHexDisc(`ground:${key}`, HEX_RADIUS, scene);
-    cell.position.set(point.x, tile.height * 0.12, point.z);
+    const surface = terrain.get(key)!;
+    const cell = createBattleSurface(`ground:${key}`, surface, scene);
+    const raised = surface.centre.y > 0 || surface.corners.some((corner) => corner.y > 0);
     const wash = terrainWash(tile);
-    cell.material = tile.height > 0 ? raisedMaterials.get(wash)! : wash;
-    if (tile.height > 0) mapRaisedTop(cell);
+    cell.material = raised ? raisedMaterials.get(wash)! : wash;
+    if (raised) mapRaisedTop(cell);
     cell.metadata = { combatHex: { q: tile.q, r: tile.r } };
-    if (tile.height > 0) addTerrainSides(tile, point, key, cell);
     return { point, key };
   };
   const addTerrainTile = (tile: Tile) => {
@@ -556,11 +524,22 @@ export async function mountSpriteBattleScene(
     unitEdges.set(unit.id, edge);
     const shadow = MeshBuilder.CreateDisc(
       `contact:${unit.id}`,
-      { radius: 0.26, tessellation: 12 },
+      { radius: 0.21, tessellation: 16 },
       scene,
     );
     shadow.rotation.x = Math.PI / 2;
-    shadow.scaling.x = 1.4;
+    shadow.scaling.x = 1.25;
+    shadow.scaling.y = 0.55;
+    // A small feathered contact wash, rather than a hard black oval under the whole sprite.
+    const shadowPositions = shadow.getVerticesData(VertexBuffer.PositionKind)!;
+    const shadowColours: number[] = [];
+    for (let vertex = 0; vertex < shadowPositions.length; vertex += 3) {
+      const radius = Math.hypot(shadowPositions[vertex]!, shadowPositions[vertex + 1]!);
+      shadowColours.push(0, 0, 0, radius < 0.01 ? 1 : 0);
+    }
+    shadow.setVerticesData(VertexBuffer.ColorKind, shadowColours);
+    shadow.hasVertexAlpha = true;
+    shadow.useVertexColors = true;
     shadow.material = contactMaterial;
     shadow.isPickable = false;
     contactShadows.set(unit.id, shadow);
@@ -910,10 +889,20 @@ export async function mountSpriteBattleScene(
       )
       .toSorted((left, right) => left.distance - right.distance)[0];
     if (groundHit) return groundHit;
-    // Exact shared edges can miss both triangles by floating point error. Try
-    // each actual level, nearest first; never round on level 0 then select a
-    // different raised cell or extend the map beyond its visible perimeter.
     return pickTerrainSeam(x, y);
+  };
+  const pickTerrainSeam = (x: number, y: number) => {
+    // Subpixel tolerance samples the same connected surface, never a separate level plane.
+    for (const [dx, dy] of [
+      [0.2, 0],
+      [-0.2, 0],
+      [0, 0.2],
+      [0, -0.2],
+    ]) {
+      const nearby = scene.pick(x + dx!, y + dy!, (mesh) => mesh.name.startsWith('ground:'));
+      if (nearby?.hit) return nearby;
+    }
+    return null;
   };
   const spriteMaskForHit = (hit: PickingInfo) => {
     const unitId = hit.pickedMesh?.metadata?.combatUnitId;
@@ -924,29 +913,6 @@ export async function mountSpriteBattleScene(
     const uv = hit.getTextureCoordinates();
     const mask = spriteMaskForHit(hit);
     return !!uv && !!mask && opaqueSpritePixel(mask, uv);
-  };
-  const pickTerrainSeam = (x: number, y: number) => {
-    const ray = scene.createPickingRay(x, y, Matrix.Identity(), scene.activeCamera);
-    const levels = [...new Set(initialTiles.map((tile) => tile.height))].sort((a, b) => b - a);
-    for (const level of levels) {
-      const hit = terrainSeamAtLevel(ray, level);
-      if (hit) return hit;
-    }
-    return null;
-  };
-  const terrainSeamAtLevel = (ray: Ray, level: number) => {
-    const intersection = intersectGroundLevel(ray, level);
-    if (!intersection) return null;
-    const { point, distance } = intersection;
-    const hex = worldToHex(point.x, point.z);
-    const tile = tileInfo.get(HEX_KEY(hex));
-    if (!tile || tile.height !== level) return null;
-    const hit = new PickingInfo();
-    hit.hit = true;
-    hit.distance = distance;
-    hit.pickedPoint = point;
-    hit.pickedMesh = scene.getMeshByName(`ground:${HEX_KEY(hex)}`);
-    return hit;
   };
   const occupantAt = (hex: CombatLabHex) =>
     currentView.units.find(
@@ -1084,6 +1050,14 @@ export async function mountSpriteBattleScene(
   };
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
+    perspective,
+    // Use the painted plane's projected edges, including its registration offset.
+    bounds: {
+      minX: backgroundX - 1.1 - backgroundWidth / 2,
+      maxX: backgroundX - 1.1 + backgroundWidth / 2,
+      minZ: (backgroundUp - backgroundHeight / 2) / Math.sin(CAMERA_ELEVATION) - 2,
+      maxZ: (backgroundUp + backgroundHeight / 2) / Math.sin(CAMERA_ELEVATION) - 2,
+    },
     minZoom: 2.2,
     maxZoom: 17,
     pick: pickAt,

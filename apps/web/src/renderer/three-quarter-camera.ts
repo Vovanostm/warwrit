@@ -1,12 +1,14 @@
 import {
   Camera,
   FreeCamera,
+  Matrix,
   PointerEventTypes,
   Vector3,
   type AbstractEngine,
   type PickingInfo,
   type Scene,
 } from '@babylonjs/core';
+import { projectCameraPoint, type PerspectiveReference } from './camera-projection.js';
 
 /** Fixed three-quarter view (owner decision 2026-10-02): elevation above the ground plane. */
 export const CAMERA_ELEVATION = (50 * Math.PI) / 180;
@@ -36,7 +38,7 @@ const PAN_KEYS: Readonly<Record<string, readonly [number, number]>> = {
 };
 
 /**
- * Orthographic camera at a fixed angle with no rotation: drag or held WASD/arrows pan continuously, the wheel
+ * Camera at a fixed angle with no rotation: drag or held WASD/arrows pan continuously, the wheel
  * zooms, and a press without movement reports a pick.
  */
 export function mountThreeQuarterCamera(
@@ -46,8 +48,12 @@ export function mountThreeQuarterCamera(
   options: {
     readonly elevation?: number;
     readonly azimuth?: number;
+    /** Painted perspective scenes pan the image window, keeping the optical centre fixed. */
+    readonly perspective?: PerspectiveReference;
     /** Optional actual terrain hit; wheel anchoring must follow raised ground. */
     readonly pickGround?: (x: number, y: number) => { x: number; y: number; z: number } | null;
+    /** Keep the viewport inside this reference-image rectangle (ground plane when orthographic). */
+    readonly bounds?: GroundBounds;
     readonly minZoom: number;
     readonly maxZoom: number;
     /** Optional alpha-aware map picker; battle picking keeps the default. */
@@ -62,7 +68,7 @@ export function mountThreeQuarterCamera(
   },
 ): ThreeQuarterCamera {
   const camera = new FreeCamera('three-quarter', Vector3.Zero(), scene);
-  camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
+  camera.mode = options.perspective ? Camera.PERSPECTIVE_CAMERA : Camera.ORTHOGRAPHIC_CAMERA;
   camera.minZ = 0.1;
   camera.maxZ = 400;
   scene.activeCamera = camera;
@@ -74,22 +80,77 @@ export function mountThreeQuarterCamera(
   let targetZoom = view.zoom;
   let zoomAnchor: { x: number; z: number; u: number; v: number } | null = null;
 
+  const viewportExtent = () => {
+    const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
+    return {
+      x: aspect * Math.abs(right.x) + Math.abs(forward.x) / Math.sin(elevation),
+      z: aspect * Math.abs(right.z) + Math.abs(forward.z) / Math.sin(elevation),
+    };
+  };
+  const clampZoom = (zoom: number) => {
+    const bounds = options.bounds;
+    const extent = viewportExtent();
+    const maximum = bounds
+      ? Math.min(
+          options.maxZoom,
+          (bounds.maxX - bounds.minX) / (2 * extent.x),
+          (bounds.maxZ - bounds.minZ) / (2 * extent.z),
+        )
+      : options.maxZoom;
+    return Math.min(maximum, Math.max(Math.min(options.minZoom, maximum), zoom));
+  };
   const place = () => {
+    view.zoom = clampZoom(view.zoom);
+    targetZoom = clampZoom(targetZoom);
+    if (options.bounds) {
+      const extent = viewportExtent();
+      const beforeX = view.centerX;
+      const beforeZ = view.centerZ;
+      view.centerX = Math.max(
+        options.bounds.minX + extent.x * view.zoom,
+        Math.min(options.bounds.maxX - extent.x * view.zoom, view.centerX),
+      );
+      view.centerZ = Math.max(
+        options.bounds.minZ + extent.z * view.zoom,
+        Math.min(options.bounds.maxZ - extent.z * view.zoom, view.centerZ),
+      );
+      if (zoomAnchor) {
+        zoomAnchor.x += view.centerX - beforeX;
+        zoomAnchor.z += view.centerZ - beforeZ;
+      }
+    }
     const aspect = engine.getRenderWidth() / Math.max(engine.getRenderHeight(), 1);
     const halfWidth = view.zoom * aspect;
-    const distance = 80;
+    const reference = options.perspective;
+    const distance = reference?.distance ?? 80;
+    const targetX = reference?.targetX ?? view.centerX;
+    const targetZ = reference?.targetZ ?? view.centerZ;
     camera.position = new Vector3(
-      view.centerX - forward.x * Math.cos(elevation) * distance,
+      targetX - forward.x * Math.cos(elevation) * distance,
       Math.sin(elevation) * distance,
-      view.centerZ - forward.z * Math.cos(elevation) * distance,
+      targetZ - forward.z * Math.cos(elevation) * distance,
     );
-    camera.setTarget(new Vector3(view.centerX, 0, view.centerZ));
+    camera.setTarget(new Vector3(targetX, 0, targetZ));
+    if (reference) {
+      // Off-axis pinhole projection: pan/zoom crop one calibrated image, with no backdrop parallax.
+      camera.fov = 2 * Math.atan(view.zoom / distance);
+      const projection = Matrix.PerspectiveFovLH(camera.fov, aspect, camera.minZ, camera.maxZ);
+      const dx = view.centerX - targetX;
+      const dz = view.centerZ - targetZ;
+      projection.setRowFromFloats(
+        2,
+        -(dx * right.x + dz * right.z) / halfWidth,
+        -((dx * forward.x + dz * forward.z) * Math.sin(elevation)) / view.zoom,
+        projection.m[10]!,
+        projection.m[11]!,
+      );
+      camera.freezeProjectionMatrix(projection);
+    }
     camera.orthoTop = view.zoom;
     camera.orthoBottom = -view.zoom;
     camera.orthoLeft = -halfWidth;
     camera.orthoRight = halfWidth;
   };
-  const clampZoom = (zoom: number) => Math.min(options.maxZoom, Math.max(options.minZoom, zoom));
 
   const heldKeys = new Set<string>();
   let press: {
@@ -178,8 +239,12 @@ export function mountThreeQuarterCamera(
     const z = hit?.z ?? view.centerZ + (u * right.z + v * forward.z) * view.zoom;
     // A raised point has a fixed screen-up displacement in addition to x/z.
     const heightOffset = (hit?.y ?? 0) / Math.tan(elevation);
-    const anchorX = x + forward.x * heightOffset,
-      anchorZ = z + forward.z * heightOffset;
+    const projected =
+      hit && options.perspective
+        ? projectCameraPoint(hit, options.perspective, elevation, azimuth)
+        : null;
+    const anchorX = projected?.x ?? x + forward.x * heightOffset,
+      anchorZ = projected?.z ?? z + forward.z * heightOffset;
     zoomAnchor = {
       x: anchorX,
       z: anchorZ,

@@ -1,4 +1,3 @@
-import { Plane, Vector3, type Ray } from '@babylonjs/core';
 import { SPRITE_MASK_SIZE } from './sprite-outline.js';
 
 export interface LabelBox {
@@ -66,14 +65,4 @@ export function avoidAnchorOverlap(
     result = { ...result, y: Math.max(100, collision.top - 8) };
   }
   return result;
-}
-
-export function intersectGroundLevel(
-  ray: Ray,
-  level: number,
-): { readonly point: Vector3; readonly distance: number } | null {
-  const plane = Plane.FromPositionAndNormal(new Vector3(0, level * 0.12, 0), Vector3.Up());
-  const distance = ray.intersectsPlane(plane);
-  if (distance === null || distance < 0) return null;
-  return { distance, point: ray.origin.add(ray.direction.scale(distance)) };
 }

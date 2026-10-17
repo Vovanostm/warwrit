@@ -3737,3 +3737,235 @@ human-3→human-6 и обновила очередь. Копия действу�
 производным от текущего состояния: будущие команды могут его изменить;
 нового ATB, повторных ходов за раунд или скрытой симуляции нет. Документационный
 closeout меняет только Markdown; исходники игры остаются проверенной версией.
+
+## Ограничение камеры областью карты — 2026-10-16
+
+Владелец разрешил отдельный worktree, реализацию, review и merge в main.
+Ветка `codex/battle-camera-bounds`, база `5915ad0`; исходный dirty checkout
+и другие worktree сохранены. Запрос: не показывать чёрное пространство
+за границами боевой карты.
+
+Shared `three-quarter-camera.ts` получает необязательные ground bounds.
+Они ограничивают весь viewport, а не только центр: drag, WASD/стрелки,
+плавный cursor-anchored zoom, fit и resize проходят через одну границу.
+Предельное отдаление зависит от пропорций окна; при очень широком окне
+ограничение карты имеет приоритет над minZoom. Другие камеры без bounds
+сохраняют прежнее поведение. Sprite scene передаёт фактические проекции
+краёв painted backdrop с его registration offset. Правила боя, протокол,
+сохранение и схема БД не меняются.
+
+Локальные проверки: camera15 PASS, web types/lint PASS, coverage808 PASS /
+47 SKIPPED, strict changed-file audit PASS (0 новых complexity/clones/dead code).
+Первая web typecheck попытка опередила сборку protocol и обнаружила также
+пропущенный обязательный аргумент camera в новом тесте; аргумент исправлен,
+после сборки проверка PASS. Author browser PASS: 1280×720, 1440×900,
+1920×1080, 2560×1080; крайние drag/held WASD/wheel/resize, day/night/grid.
+Проекции всех краёв backdrop охватывают viewport; 0 POST, позиции всех
+фигур неизменны. Evidence: `output/playwright/camera-bounds/journey-result.txt`
+и снимки этой папки (локальные, не tracked). Первая diagnostic browser
+попытка импортировала Babylon без Vite version query и получила duplicate
+registration; исправлено чтением уже загруженного module URL, не кодом игры.
+Author source review: scoped diff/consumers проверены, observable defects
+не найдены. Independent visual review/clean CI/merge PENDING.
+Полный clean gate исполняется существующим PR CI, без повторного local run.
+
+## Перспектива сетки и фигур — 2026-10-17
+
+Владелец расширил текущий camera slice: ортографические клетки и фигуры
+не согласованы с перспективой painted mill. PR159 остаётся OPEN; SUCCESS
+CI38956788123 относится только к прежнему head bb55f5b с bounds, а не к
+новой проекции. Предыдущий critic был прерван, visual verdict NOT_RUN.
+Разрешение на реализацию/review/merge сохраняется; основной dirty checkout
+не меняется.
+
+### GitHub: выбор механизма
+
+**Supported choice:** pinhole perspective плюс off-axis image-window pan/zoom.
+Общая неподвижная optical centre задаёт уменьшение клеток и фигур с глубиной.
+Навигация меняет окно изображения, поэтому painted backdrop и ground anchors
+не получают различный parallax. Реализация использует установленный Babylon
+9.28.0; новая библиотека не требуется. Параметры рисунка не сохранились:
+50° elevation и distance16 — проверяемая art calibration, не восстановленный
+объектив и не доказанная единственная точка схода всего painted asset.
+
+Проверены три семейства, GitHub CLI source reads, 2026-10-17:
+
+- [Three.js PerspectiveCamera.setViewOffset/updateProjectionMatrix](https://github.com/mrdoob/three.js/blob/02681f3c27db6c94f424d08d83afb6a45d856cef/src/cameras/PerspectiveCamera.js#L304):
+  INSPECTED off-axis frustum, lens shift и inverse projection; MIT. Используется
+  механизм, без переноса Three.js/runtime. Camera tests найдены, чужие tests
+  NOT_RUN; наличие тестов не доказывает нашу регистрацию фона.
+- [Babylon PerspectiveFovLHToRef](https://github.com/BabylonJS/Babylon.js/blob/0520900e8d7afcb7b7923bb9bad913e49b6cf919/packages/dev/core/src/Maths/math.vector.pure.ts#L8496)
+  и [Camera.freezeProjectionMatrix](https://github.com/BabylonJS/Babylon.js/blob/0520900e8d7afcb7b7923bb9bad913e49b6cf919/packages/dev/core/src/Cameras/camera.pure.ts#L933):
+  INSPECTED у version9.28.0 и установленного source/typings; Apache-2.0.
+  Используем существующий API матрицы, picking остаётся штатным Babylon ray.
+- [fSpy solver](https://github.com/perarnia/fSpy/blob/702189ec5acbbd2c8ba492db0e52ecb5fc908f5c/src/gui/solver/solver.ts#L305):
+  INSPECTED focal length/camera orientation из vanishing points; GPL-3.0.
+  Только исследовательский источник, код не переносится. Автоматическая
+  калибровка не выбрана: нет надёжно размеченных ортогональных направлений
+  и исходных camera metadata painted asset. README/license/package inspected;
+  чужой solver не запускался. General homography warp без общей 3D камеры
+  отвергнут: сам по себе не задаёт уменьшение фигуры, высоту и picking.
+
+Поиск ограничен тремя направлениями (camera matching, off-axis perspective,
+Babylon projection), тремя подробно прочитанными семьями. Первые две узкие
+repo queries дали пустой ответ; старый stuffmatic/master и guessed main для
+fSpy вернули422, затем canonical perarnia/develop подтверждён metadata.
+Fetched source lives in `output/github-perspective-20261017/`, локально.
+Чужие scripts/builds NOT_RUN, зависимости не устанавливались. Проверка,
+которая опровергнет выбор: относительная регистрация grid/paint меняется
+после pan/zoom, неуменьшающиеся дальние фигуры или неверный ground hit.
+
+### Реализация и текущая проверка
+
+Shared camera допускает optional fixed perspective reference; остальные
+потребители сохраняют orthographic mode. Reference-plane bounds сохраняют
+полностью закрытый фоном viewport. ProjectCameraPoint задаёт то же pinhole
+преобразование для wheel anchor и UV raised ground. Backdrop отнесён за
+всё поле с сохранением исходного изображения, sprite foot pivots/масштаб
+в world units и canonical hex coordinates остаются едиными.
+
+Camera18/web types/lint PASS; coverage811 PASS/47 SKIPPED; strict audit against
+origin/main PASS (0 новых findings). Уменьшение equal-world cell/figure с
+глубиной, неизменная регистрация при pan/zoom, inverse ground rays, raised
+wheel anchors DPR1/2 и прежние input/bounds проверены. Browser PASS на
+1280×720/1440×900/1920×1080/2560×1080, day/night/grid/close: near/far cell
+width ratio1.421176 остаётся постоянным; reference UV8,4 остаётся в пределах
+1e-5 при keys/drag/wheel/resize. Края painting охватывают viewport; navigation
+0 POST, позиции фигур неизменны. Все165 ground centres получают свой mesh
+при реальном scene picking; actual body hover+LMB pin «Меч + щит» PASS,
+inspection0POST. Evidence: `output/playwright/camera-perspective/` (локально).
+Первая automation попытка ожидала неверную подпись кнопки сетки; затем
+probe ошибочно предположил имя human-1 «Командир». DOM/source readback
+исправил ожидания; обе первые попытки NOT_PASS сохранены, game code ради
+них не менялся. Author source review scoped diff/callers no concrete findings.
+Independent visual/current-head clean CI/merge PENDING. Старые808/CI receipts
+не принимают новую проекцию. Full clean gate исполнит существующий PR CI.
+
+### Визуальное ревью и контакт с землёй — 2026-10-17
+
+CI38991283029 на1907d8c SUCCESS: clean bootstrap811 PASS/47 SKIPPED,
+10kstress/20determinism/100replay,14disposableDB checks, coverage/audit PASS.
+Первый critic дважды превысил budget без полного verdict (BLOCKED, не PASS).
+Новый независимый critic прочитал полный компактный набор и дополняющие
+normal grid-off/diagnostic overlay-hidden сравнения: REJECT, scene integration1.
+Чёрных полей и ground-over-body не воспроизвёл, но отверг нечитаемую границу
+height+1 и широкие жёсткие contact ovals. Close softness/rim/grid prominence
+остаются отдельно отмеченным polish; пакет не расширяется до новых assets.
+
+Автор проверил actual edge q9,3/y0→q10,3/y0.12 и q10,4/y0: world height и
+perspective foot transform уже верны (разница проекции около11px в close).
+Прежний height-close включал interior plateau; при текущем azimuth передняя
+поднятая площадка прячет собственную вертикальную стенку. Добавлен тонкий
+ink upper lip только на exposed height boundaries и затемнён материал
+видимых боковин. Ground group/picking/height costs не меняются. Contact
+wash уменьшен, с vertex-alpha fade к прозрачному краю вместо hard oval.
+Source: sprite-battle-scene.ts; no new art/dependency or domain changes.
+
+После исправления web types/lint/coverage811+47SKIPPED/strict audit PASS.
+Новые actual stopped-R2 day/night/grid on/off/4sizes/height-boundary/diagnostic
+frames: `output/playwright/camera-perspective/final-*` и
+`actual-height-edge-after.*`. Diagnostic hides/restores only166 ground-overlay
+meshes, не выдаётся за штатную UI-функцию или gameplay доказательство.
+Повторный полный absolute visual/current-head CI/merge PENDING; прежний
+зелёный1907 gate не принимает новый renderer source.
+
+### Объёмный откос вместо линии — 2026-10-17
+
+Повторный full absolute critic REJECT: exposed lip всё ещё читался как
+zigzag на плоском фоне, integration1 второй раз. Выполнена смена техники:
+вместо линии добавлена настоящая наклонная земляная bank geometry шириной
+0.16 world у открытых граней. Верх совпадает с canonical hex corners/y,
+низ расширяется к нижней земле. Bank — отдельный non-pickable decor;
+исходная вертикальная step geometry/ground pick surfaces и правила высоты
+сохранены. `hex-mesh.ts` optional bankWidth default0 сохраняет прежний API;
+существующая geometry regression проверяет оба варианта и верхние углы.
+
+Дополнительно обнаружена ошибка author comparison: прежний reference-close
+увеличивал crop ~72px game capture до420px рядом с high-res reference,
+искусственно добавляя blur. Новые native-min-zoom/bank-reference-close
+используют native229px screenshot при штатном minZoom2.2 без увеличения;
+reference уменьшается до той же высоты. Это поправка доказательства,
+не обновление ассета и не доказательство прежнего native close дефекта.
+Исторические rejected scores сохранены, текущий native close оценивается заново.
+
+Focused camera+geometry22/web types/lint/coverage811+47SKIPPED/audit10files
+PASS. Новые current sheets `bank-review-scenes.png`, `bank-review-sizes.png`,
+`bank-review-reference.png` и native/height originals лежат в прежнем local
+output/playwright/camera-perspective/. Source frozen на этом варианте;
+тот же critic повторяет полный absolute pass. CI38997076787 SUCCESS
+на132156b относится к промежуточной lip версии, не к новой bank geometry.
+Новый текущий clean PR gate и merge PENDING.
+
+### Читаемая высота и непрерывная земля — 2026-10-17
+
+Bank-вариант874dc2f также получил integration1: боковины читались как тёмная
+лента. Исправлена причина в mapping: raised top берёт UV исходного ground
+footprint до подъёма, поэтому texture больше не компенсирует видимую высоту.
+Боковины используют непрерывные world-space UV и vertex shade вместо
+повторённой узкой полосы/тёмного tint. Общий renderer BATTLE_HEIGHT_STEP=0.28
+согласует top, figures, grid, decor и seam picking. Canonical уровни0/1/2,
+стоимость, LOS, команды и replay не меняются. Bank остаётся non-pickable.
+
+Focused camera/hex/sprite geometry27, web types/lint/format,
+coverage811 PASS/47 SKIPPED и strict14-file audit PASS. Первая focused попытка
+обнаружила старое числовое ожидание0.24/0.76; оно обновлено до0.56/0.44.
+CI38998708040 SUCCESS на874dc2f покрывает только предыдущую версию.
+Author source review проверил consumers общего height scale и camera helper;
+конкретных дефектов не найдено. Полный новый PR gate ещё PENDING.
+
+Нормальным редактором создан6v6 с тремя одинаковыми лучниками на q9/10/11,r3,
+height0/1/2: foot y0/0.28/0.56 совпадает с ground. Новые1440×900 day/night
+кадры показывают эту границу без скрытых верхней панелью голов.
+Свежий real-scene pick:165/165 ground centres,0 mismatch; actual hover+LMB
+pin «Лук» и0POST PASS. Terrain bank не забирает input. Console содержит
+только прежний favicon404, не runtime renderer exception.
+Evidence: output/playwright/camera-perspective/terrace-_, height-012-_,
+height-editor-result.txt; локальные файлы без tracked links.
+Полный повтор absolute visual review текущего варианта PENDING.
+
+### Связная поверхность вместо отдельных тумб — 2026-10-17
+
+Полный replacement critic на5b88278: REJECT, integration1 (остальные шесть
+применимых game/close критериев2). Отдельные raised hex faces всё ещё
+выглядели как земляные тумбы. Два длительных прогона предыдущего критика
+остановлены без полного verdict; они не считаются приёмкой. CI39002814730
+SUCCESS на5b88278 покрывает предыдущую версию, не этот amendment.
+
+Выполнена смена представления: battle-terrain.ts строит общий corner height
+из трёх соседних tile centres. Каждая клетка сохраняет canonical centre y
+и небольшую ровную опору для стоп, переходящую в общие склоны. На внешнем
+краю карты поверхность сходит к painting. Ground, fills, single grid edges
+и Babylon rays используют одну triangulation. Отдельные вертикальные стороны,
+земляные banks и проекции seam на плоскости уровней удалены. Субпиксельный
+seam tolerance выбирает actual surface, не выдумывает другой ground plane.
+Canonical уровни/стоимость/LOS/позиции/команды/replay не меняются.
+
+Geometry regression заменяет тест удалённых стен: непрерывность shared corners,
+точные centre/foot heights, реальные ray picks с обеих сторон границы,
+согласованные fill vertices и single grid edge независимо от порядка tiles.
+Первая попытка выявила невычисленную world matrix до первого render; исправлено.
+Author screenshot выявил обратный winding central fan (дырки в fills); он
+исправлен и положительные normals вошли в ту же regression. Focused26 PASS,
+web types/lint/format PASS. Coverage810 PASS/47 SKIPPED до extraction seam helper.
+Strict audit сначала отклонил выросший pickAt; seam tolerance выделен в прежнюю
+отдельную функцию. Итоговый audit/result отмечен ниже. Старый plane-helper
+и его единственный тест удалены вместе с заменённым механизмом; новый actual
+surface regression сохраняет проверку picking, а не снимает unfixed defect.
+
+Новые normal editor height0/1/2 day/night, crowded/grid on/off/diagnostic,
+4desktop widths/native close captures: output/playwright/camera-perspective/
+connected-*. Свежие165/165 ground picks/body hover-pin/0POST PASS; foot/ground
+по-прежнему0/.28/.56. Первая height automation ждала кнопку day после reload
+в уже дневном режиме; snapshot/condition исправили automation, не игру.
+Author source/consumer review no concrete findings. Полный same-critic verdict,
+новый exact-head CI и merge PENDING.
+
+Финальный strict15-file audit PASS (0 новых findings); types/lint/format PASS.
+Повторный полный absolute critic ACCEPT на connected-* packet: все7 критериев
+2/2 game/close, motionN/A, critic own input NOT_RUN. Ground overlays не
+пересекают opaque bodies/weapons/feet; прямоугольных masks/чёрных полей нет.
+Подтверждённая смена техники устранила отдельные тумбы; smoother slope,
+светлая silhouette rim и сила тактических fills остаются nonblocking polish.
+После captures вынесен только неизменный seam tolerance из pickAt в named
+helper ради его ответственности/quality gate; визуальная поверхность не менялась.
+Полный новый exact-head CI/merge ещё PENDING на момент commit.
