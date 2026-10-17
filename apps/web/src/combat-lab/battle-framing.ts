@@ -2,7 +2,7 @@ import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { BATTLE_HEX_RADIUS } from './battle-layout.js';
 
 type MapBounds = { minX: number; maxX: number; minZ: number; maxZ: number };
-/** Initial overview: full map width and standing silhouettes fit between the HUD panels. */
+/** Overview frames standing forces; empty map margins remain reachable by pan. */
 export function battleFrameBounds({
   mapBounds,
   figures,
@@ -12,7 +12,7 @@ export function battleFrameBounds({
   safeBottom,
 }: {
   mapBounds: MapBounds;
-  figures: readonly { bottom: number; top: number }[];
+  figures: readonly { x: number; bottom: number; top: number }[];
   width: number;
   height: number;
   safeTop: number;
@@ -25,12 +25,14 @@ export function battleFrameBounds({
   const high = figures.length
     ? Math.max(...figures.map((figure) => figure.top))
     : mapBounds.maxZ * sin + 1.5;
+  const minX = figures.length ? Math.min(...figures.map((figure) => figure.x)) : mapBounds.minX;
+  const maxX = figures.length ? Math.max(...figures.map((figure) => figure.x)) : mapBounds.maxX;
   const zoom = Math.max(
     ((high - low) * height) / (2 * Math.max(180, safeBottom - safeTop)),
-    (mapBounds.maxX - mapBounds.minX + BATTLE_HEX_RADIUS * 2 + 0.6) / ((2 * width) / height),
+    (maxX - minX + BATTLE_HEX_RADIUS * 2 + 0.6) / ((2 * width) / height),
   );
   const upCenter =
     (low + high) / 2 + (((safeTop + safeBottom) / 2 - height / 2) * 2 * zoom) / height;
-  const x = (mapBounds.minX + mapBounds.maxX) / 2;
+  const x = (minX + maxX) / 2;
   return { minX: x, maxX: x, minZ: (upCenter - zoom) / sin, maxZ: (upCenter + zoom) / sin };
 }

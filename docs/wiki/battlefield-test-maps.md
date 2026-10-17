@@ -4043,3 +4043,32 @@ GPU crop при реальном wheelzoom2.2(~242px) и отдельный nati
 reference приведён к той же высоте, GPU не увеличен. Полный текущий набор:
 output/playwright/combat-acceptance-20261017/ (untracked). Source текущего delta
 readback DONE; повторный absolute pass/newcleanCI/merge pending.
+
+### Forces overview and distance sampling — 2026-10-17
+
+Полный critic наc50ba37: REJECT,2/2/2/1/2/2/1,motionN/A. Native close/game
+sheet устранил ошибочное заключение о потере чернильных деталей; остаются
+тёмные маленькие фигуры в обзоре, масштаб мельницы и повторение огня.
+Новый Home-обзор кадрирует стоящих бойцов, а не пустые поля карты; при пустом
+terminal используется map fallback. Панорамирование сохраняет доступ к краям.
+Мельница сохраняет authored aspect и постоянную мировую ширину35.7 вместо
+растягивания под карту; painting ограничен, за окраинами остаётся спокойный фон.
+
+Unit textures создают mipmaps один раз: bilinear вблизи, trilinear при
+pixelsPerWorld<64 для подавления aliasing вдали. Один before-camera observer
+владеет sampling и night tint; в обзоре силуэты получают отдельные ночные
+значения0.9/0.91/0.95, вблизи0.72/0.76/0.82. Это rendering, не новая механика.
+Три самостоятельных original fire artworks выбираются детерминированно поq/r,
+без mirroring/вращения запечённого света. Новые fire-crescent/fire-stubs PNG и
+точные prompts/provenance лежат рядом с consuming assets и включены в manifest.
+
+Source readback текущего delta DONE, конкретных дефектов не найдено; ограниченная
+painting coverage передана критику как визуальный риск. Framing regression5PASS,
+104asset validation/webtypes PASS. Scoped lint сначала FAIL на неиспользуемом
+centerX после изменения composition; переменная удалена, повтор PASS.
+Main-based44-file audit PASS. Свежие20profiles/3generatedfields/action/overview/
+maxzoom/day-night,1280/1440/1920,grid/overlayson-off и keyboard navigation
+в output/playwright/forces-framing-20261017/ (untracked). Inspection/navigation
+0actionPOST, осмотр не меняет revision. Полный absolute visual verdict, CI на
+новом опубликованном head и merge pending. Прежний green6a63481 не является
+проверкой этого дерева.

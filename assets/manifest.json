@@ -914,6 +914,24 @@
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-ink.json",
       "generatedAt": "2026-10-17T03:58:46.645102+00:00"
+    },
+    {
+      "id": "art.combat.readable-terrain.fire-crescent",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/fire-crescent.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/fire-crescent.json",
+      "generatedAt": "2026-10-17T07:00:17.199Z"
+    },
+    {
+      "id": "art.combat.readable-terrain.fire-stubs",
+      "path": "assets/art/combat/readable-terrain-2026-10-16/fire-stubs.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/readable-terrain-2026-10-16/fire-stubs.json",
+      "generatedAt": "2026-10-17T07:00:20.248Z"
     }
   ]
 }

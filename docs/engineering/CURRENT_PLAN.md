@@ -26,6 +26,14 @@ figures, irregular feathered field margin and varied fire placements. Current
 source readback DONE; geometry/types/lint/main-based40file audit PASS. Full
 absolute re-review/newCI/merge pending. No deployment or fullM1 claim.
 [Current engineering correction](../wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
+Latest c50ba37 full visual REJECT2/2/2/1/2/2/1: native sharpness accepted,
+overview/night/composition/fire repetition remain blockers. Local technique
+correction frames deployed forces, preserves fixed mill scale, switches unit
+sampling/night treatment by projected size, and uses3original fire artworks.
+Source readback DONE, framing5/content104/types/lint/main-based44audit PASS;
+full fresh image packet under forces-framing-20261017 now in absolute critique.
+Current-head CI/publication/merge pending. Owner merge authorization covers
+this mission/PR160; auto-merge/deployment remain unauthorized.
 The historical activation follows:
 
 Owner rejects current sprite softness, indistinct cell materials, cramped grid

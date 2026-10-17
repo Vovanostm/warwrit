@@ -10,8 +10,8 @@ it.each([
   const bounds = battleFrameBounds({
     mapBounds: { minX: 0, maxX: 26.6, minZ: 0, maxZ: 12.2 },
     figures: [
-      { bottom: 2, top: 4 },
-      { bottom: 8, top: 10.4 },
+      { x: 0, bottom: 2, top: 4 },
+      { x: 26.6, bottom: 8, top: 10.4 },
     ],
     width,
     height,
@@ -37,4 +37,21 @@ it('frames a terminal battle with no standing units without invalid camera value
   });
   expect(Object.values(bounds).every(Number.isFinite)).toBe(true);
   expect(bounds.maxZ).toBeGreaterThan(bounds.minZ);
+});
+
+it('keeps empty map margins from shrinking the forces in overview', () => {
+  const bounds = battleFrameBounds({
+    mapBounds: { minX: 0, maxX: 100, minZ: 0, maxZ: 20 },
+    figures: [
+      { x: 25, bottom: 2, top: 4 },
+      { x: 35, bottom: 4, top: 6 },
+    ],
+    width: 1440,
+    height: 900,
+    safeTop: 192,
+    safeBottom: 650,
+  });
+  const zoom = ((bounds.maxZ - bounds.minZ) * Math.sin(CAMERA_ELEVATION)) / 2;
+  expect((bounds.minX + bounds.maxX) / 2).toBe(30);
+  expect((zoom * 2 * 1440) / 900).toBeLessThan(25);
 });

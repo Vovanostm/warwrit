@@ -13,6 +13,8 @@ import {
 import type { CombatLabHex, CombatLabTile } from '@warwrit/protocol';
 import mudUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/mud.png';
 import fireUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire.png';
+import fireCrescentUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-crescent.png';
+import fireStubsUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-stubs.png';
 import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-ink.png';
 import { BATTLE_ART } from '../renderer/art.js';
 import { createHexDisc } from '../renderer/hex-mesh.js';
@@ -228,14 +230,17 @@ export function createBattleTerrain(
   scorchMaterial.disableLighting = true;
   scorchMaterial.diffuseColor = new Color3(0.14, 0.12, 0.11);
   scorchMaterial.specularColor = Color3.Black();
-  const emberMaterial = new StandardMaterial('battle-ground:fire-embers', scene);
-  emberMaterial.diffuseTexture = textureFor(fireUrl, scene, textures, true);
-  emberMaterial.useAlphaFromDiffuseTexture = true;
-  emberMaterial.disableLighting = true;
-  emberMaterial.linkEmissiveWithDiffuse = true;
-  emberMaterial.specularColor = Color3.Black();
-  emberMaterial.backFaceCulling = false;
-  emberMaterial.disableDepthWrite = true;
+  const emberMaterials = [fireUrl, fireCrescentUrl, fireStubsUrl].map((url, index) => {
+    const material = new StandardMaterial(`battle-ground:fire-embers:${index}`, scene);
+    material.diffuseTexture = textureFor(url, scene, textures, true);
+    material.useAlphaFromDiffuseTexture = true;
+    material.disableLighting = true;
+    material.linkEmissiveWithDiffuse = true;
+    material.specularColor = Color3.Black();
+    material.backFaceCulling = false;
+    material.disableDepthWrite = true;
+    return material;
+  });
   const rubbleMaterial = new StandardMaterial('battle-ground:rubble-ink', scene);
   rubbleMaterial.diffuseTexture = textureFor(BATTLE_ART.rubble, scene, textures, true);
   rubbleMaterial.useAlphaFromDiffuseTexture = true;
@@ -329,7 +334,8 @@ export function createBattleTerrain(
         groundY + 0.36 * Math.cos(CAMERA_ELEVATION),
         point.z - 0.42 + 0.36 * Math.sin(CAMERA_ELEVATION),
       );
-      ember.material = emberMaterial;
+      const variant = ((tile.q * 73856093) ^ (tile.r * 19349663)) >>> 0;
+      ember.material = emberMaterials[variant % emberMaterials.length]!;
       ember.isPickable = false;
       ember.renderingGroupId = 0;
       ember.metadata = ground.metadata;
@@ -357,7 +363,7 @@ export function createBattleTerrain(
     exposedEarthMaterial.setColor3('tint', exposedEarthPalette[phase]);
     exposedEarthMaterial.setColor3('lighting', light.terrain);
     rubbleMaterial.emissiveColor = light.rubble;
-    emberMaterial.emissiveColor = light.embers;
+    for (const material of emberMaterials) material.emissiveColor = light.embers;
   };
   setNight(initialNight);
   return { setNight };

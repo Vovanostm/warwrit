@@ -150,7 +150,6 @@ export async function mountSpriteBattleScene(
     minZ: Math.min(...points.map((point) => point.z)),
     maxZ: Math.max(...points.map((point) => point.z)),
   };
-  const centerX = (mapBounds.minX + mapBounds.maxX) / 2;
   const centerZ = (mapBounds.minZ + mapBounds.maxZ) / 2;
   let currentView = initialView;
   let selectedId = selectedUnitId;
@@ -170,6 +169,25 @@ export async function mountSpriteBattleScene(
   contactMaterial.specularColor = Color3.Black();
   contactMaterial.alpha = 0.42;
   const fixedLabels: Mesh[] = [];
+  const unitPresentationModes = [
+    {
+      sampling: Texture.BILINEAR_SAMPLINGMODE,
+      colors: [Color3.White(), new Color3(0.72, 0.76, 0.82)],
+    },
+    {
+      sampling: Texture.TRILINEAR_SAMPLINGMODE,
+      colors: [Color3.White(), new Color3(0.9, 0.91, 0.95)],
+    },
+  ];
+  scene.onBeforeCameraRenderObservable.add((camera) => {
+    const pixelsPerWorld = canvas.clientHeight / (2 * camera.orthoTop!);
+    const presentation = unitPresentationModes[Number(pixelsPerWorld < 64)]!;
+    for (const material of unitMaterials.values()) {
+      const art = material.diffuseTexture as Texture;
+      if (art.samplingMode !== presentation.sampling) art.updateSamplingMode(presentation.sampling);
+      material.emissiveColor = presentation.colors[Number(isNight)]!;
+    }
+  });
   const eventLabels: Mesh[] = [];
   const statusMarkers: Mesh[] = [];
   const threatLabels: Mesh[] = [];
@@ -182,7 +200,7 @@ export async function mountSpriteBattleScene(
       result = new Texture(
         url,
         scene,
-        sharp,
+        false,
         true,
         sharp ? Texture.BILINEAR_SAMPLINGMODE : Texture.TRILINEAR_SAMPLINGMODE,
       );
@@ -193,10 +211,10 @@ export async function mountSpriteBattleScene(
   };
   // One authored projection is kept intact on a camera-facing backdrop. Tile and
   // foot anchors occupy the open courtyard; perimeter architecture is scenery.
-  const backgroundWidth = Math.max(35.7, mapBounds.maxX - mapBounds.minX + 8);
+  const backgroundWidth = 35.7;
   const backgroundHeight = (backgroundWidth * 941) / 1672;
-  const backgroundX = centerX;
-  const backgroundUp = backgroundHeight * 0.38;
+  const backgroundX = mapBounds.minX + backgroundWidth * 0.59;
+  const backgroundUp = backgroundHeight * 0.38 + 4;
   const centerUp = centerZ * Math.sin(CAMERA_ELEVATION);
   const upOffset = backgroundUp - centerUp;
   const background = MeshBuilder.CreatePlane(
@@ -575,16 +593,6 @@ export async function mountSpriteBattleScene(
       label.setEnabled(inspectedCells.has(key) && !occupiedCells.has(key));
     }
   };
-  const tintUnit = (
-    unit: BattleUnit,
-    hoveredUnitId: string | null,
-    attackableIds: ReadonlySet<string>,
-  ) => {
-    const material = unitMaterials.get(unit.id);
-    if (!unitMeshes.has(unit.id) || !material) return;
-    material.emissiveColor = isNight ? new Color3(0.72, 0.76, 0.82) : Color3.White();
-    tintUnitEdge(unit, hoveredUnitId, attackableIds);
-  };
   const tintUnitEdge = (
     unit: BattleUnit,
     hoveredUnitId: string | null,
@@ -706,7 +714,8 @@ export async function mountSpriteBattleScene(
     for (const mesh of previewMeshes.splice(0)) mesh.dispose(false, false);
   };
   const refreshFigureMarkers = (plan: ReturnType<typeof markerPlan>) => {
-    for (const unit of currentView.units) tintUnit(unit, plan.hoveredUnitId, plan.attackableIds);
+    for (const unit of currentView.units)
+      tintUnitEdge(unit, plan.hoveredUnitId, plan.attackableIds);
     for (const unit of currentView.units) renderThreat(unit);
   };
   const applyCellStyles = (cells: ReturnType<typeof markerPlan>['cells']) => {
@@ -978,7 +987,7 @@ export async function mountSpriteBattleScene(
         const up =
           point.z * Math.sin(CAMERA_ELEVATION) +
           groundYFor(unit.position) * Math.cos(CAMERA_ELEVATION);
-        return { bottom: up, top: up + (art.footY - art.visibleBounds[1]) * factor };
+        return { x: point.x, bottom: up, top: up + (art.footY - art.visibleBounds[1]) * factor };
       });
     camera.fit(
       battleFrameBounds({

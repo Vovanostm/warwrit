@@ -12,6 +12,15 @@ requests.
 ### Combat readability and reusable terrain
 
 - 2026-10-17, branch `codex/combat-readability`, local correction to
+  [PR160](https://github.com/Vovanostm/warwrit/pull/160): frame deployed forces
+  instead of empty map margins; retain fixed authored mill scale; use near/far
+  unit sampling and night presentation; add two original fire variants with
+  provenance. Addresses c50ba37 absolute visual REJECT while retaining its
+  accepted native sprite detail. Source readback DONE; framing5/content104/
+  types/lint/main-based44-file audit PASS. Full visual/current-head CI/merge
+  pending. [Owning result](docs/wiki/battlefield-test-maps.md#forces-overview-and-distance-sampling--2026-10-17).
+
+- 2026-10-17, branch `codex/combat-readability`, local correction to
   [PR160](https://github.com/Vovanostm/warwrit/pull/160): full-resolution unit
   sampling, clearer night values and a nonpickable feathered terrain margin
   address absolute visual REJECT on6a63481 despite its green cleanCI. Vary fire
