@@ -11,6 +11,15 @@ requests.
 
 ### Combat readability and reusable terrain
 
+- 2026-10-17, branch `codex/combat-readability`, local correction to
+  [PR160](https://github.com/Vovanostm/warwrit/pull/160): full-resolution unit
+  sampling, clearer night values and a nonpickable feathered terrain margin
+  address absolute visual REJECT on6a63481 despite its green cleanCI. Vary fire
+  footprint placement without mirroring. Fix reviewed margin winding;2geometry/
+  types/lint/main-based40-file audit PASS. New reference sheet uses actual
+  native close/game GPU captures, correcting the earlier enlarged gamecrop.
+  Full repeat visual/currentCI/merge pending; owning wiki retains prior results.
+
 - 2026-10-17, branch `codex/combat-readability`, published draft
   [PR160](https://github.com/Vovanostm/warwrit/pull/160), local correction:
   backdrop-off GPU probe exposed culled bank faces; fix Babylon winding and

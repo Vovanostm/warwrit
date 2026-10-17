@@ -20,7 +20,11 @@ residual terrain findings; actual backdrop-off probe found culled bank faces,
 winding corrected. Two-scale texture mix and exact boundary-outline stamping
 now local; source readback DONE, full815coverage/types/lint PASS. InitialCI
 bootstrapPASS/coverage512timeoutFAIL; no limit changes. Current absolute review
-and new cleanCI/merge pending. No deployment or fullM1 claim.
+on6a63481 REJECT2/2/1/1/2/2/1; its cleanCI39006720822 SUCCESS.
+Current local correction: unit-only full-resolution sampling, clearer night
+figures, irregular feathered field margin and varied fire placements. Current
+source readback DONE; geometry/types/lint/main-based40file audit PASS. Full
+absolute re-review/newCI/merge pending. No deployment or fullM1 claim.
 [Current engineering correction](../wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
 The historical activation follows:
 

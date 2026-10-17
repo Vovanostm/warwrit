@@ -175,12 +175,19 @@ export async function mountSpriteBattleScene(
   const threatLabels: Mesh[] = [];
   const textures = new Map<string, Texture>();
   const edgeTextures = new Map<string, DynamicTexture>();
-  const texture = (url: string) => {
-    let result = textures.get(url);
+  const texture = (url: string, sharp = false) => {
+    const key = `${sharp}:${url}`;
+    let result = textures.get(key);
     if (!result) {
-      result = new Texture(url, scene, false, true, Texture.TRILINEAR_SAMPLINGMODE);
+      result = new Texture(
+        url,
+        scene,
+        sharp,
+        true,
+        sharp ? Texture.BILINEAR_SAMPLINGMODE : Texture.TRILINEAR_SAMPLINGMODE,
+      );
       result.hasAlpha = true;
-      textures.set(url, result);
+      textures.set(key, result);
     }
     return result;
   };
@@ -354,7 +361,7 @@ export async function mountSpriteBattleScene(
     const material = new StandardMaterial(`unit-art:${unit.id}`, scene);
     material.disableLighting = true;
     material.linkEmissiveWithDiffuse = true;
-    material.diffuseTexture = texture(sprite.url);
+    material.diffuseTexture = texture(sprite.url, true);
     material.useAlphaFromDiffuseTexture = true;
     material.disableDepthWrite = true;
     material.backFaceCulling = false;
@@ -575,7 +582,7 @@ export async function mountSpriteBattleScene(
   ) => {
     const material = unitMaterials.get(unit.id);
     if (!unitMeshes.has(unit.id) || !material) return;
-    material.emissiveColor = isNight ? new Color3(0.5, 0.57, 0.69) : Color3.White();
+    material.emissiveColor = isNight ? new Color3(0.72, 0.76, 0.82) : Color3.White();
     tintUnitEdge(unit, hoveredUnitId, attackableIds);
   };
   const tintUnitEdge = (

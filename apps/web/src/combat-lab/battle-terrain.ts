@@ -17,6 +17,7 @@ import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/eart
 import { BATTLE_ART } from '../renderer/art.js';
 import { createHexDisc } from '../renderer/hex-mesh.js';
 import { createBattleTerrainBanks } from './battle-terrain-banks.js';
+import { createBattleTerrainMargin } from './battle-terrain-margin.js';
 import { naturalTextureShader } from '../renderer/terrain-material.js';
 import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { BATTLE_HEX_RADIUS, BATTLE_LAYOUT, battleHexToWorld } from './battle-layout.js';
@@ -32,6 +33,15 @@ const NEIGHBOURS = [
 const GROUND_TEXTURE_WORLD_SIZE = 3.2;
 const key = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
+const ALPHA_OPTIONS = {
+  opaque: { attributes: ['position', 'uv'], defines: [], needAlphaBlending: false },
+  feather: {
+    attributes: ['position', 'uv', 'color'],
+    defines: ['#define FIELD_FEATHER'],
+    needAlphaBlending: true,
+  },
+};
+
 type Palette = { readonly day: Color3; readonly night: Color3 };
 
 function groundMaterial(
@@ -40,6 +50,7 @@ function groundMaterial(
   palette: Palette,
   surface: 'plain' | 'mud' | 'fire' | 'blocked',
   scene: Scene,
+  alpha: keyof typeof ALPHA_OPTIONS = 'opaque',
 ): ShaderMaterial {
   const result = new ShaderMaterial(
     name,
@@ -48,25 +59,42 @@ function groundMaterial(
       vertexSource: `precision highp float;
         attribute vec3 position; attribute vec2 uv;
         uniform mat4 worldViewProjection; varying vec2 groundUv;
-        void main(){ groundUv=uv; gl_Position=worldViewProjection*vec4(position,1.0); }`,
+        #ifdef FIELD_FEATHER
+          attribute vec4 color; varying float opacity;
+        #endif
+        void main(){
+          groundUv=uv;
+          #ifdef FIELD_FEATHER
+            opacity=color.a;
+          #endif
+          gl_Position=worldViewProjection*vec4(position,1.0);
+        }`,
       fragmentSource: `precision highp float;
         varying vec2 groundUv; uniform sampler2D terrainMap;
         uniform vec3 tint,lighting; uniform float detailScale;
+        #ifdef FIELD_FEATHER
+          varying float opacity;
+        #endif
         ${naturalTextureShader}
         void main(){
           vec2 worldUv=groundUv*detailScale;
           // Two independent world scales break repeated motifs without stretching ink marks.
           vec3 color=mix(naturalTile(terrainMap,worldUv),
             naturalTile(terrainMap,worldUv*0.61+vec2(19.7,6.4)),0.38);
-          gl_FragColor=vec4(pow(max(color*tint*lighting,vec3(0.0)),vec3(1.0/2.2)),1.0);
+          float alpha=1.0;
+          #ifdef FIELD_FEATHER
+            alpha=opacity*smoothstep(0.05,0.55,opacity+(landNoise(worldUv*8.0)-0.5)*0.22);
+          #endif
+          gl_FragColor=vec4(pow(max(color*tint*lighting,vec3(0.0)),vec3(1.0/2.2)),alpha);
         }`,
     },
     {
-      attributes: ['position', 'uv'],
+      ...ALPHA_OPTIONS[alpha],
       uniforms: ['worldViewProjection', 'tint', 'lighting', 'detailScale'],
       samplers: ['terrainMap'],
     },
   );
+  result.disableDepthWrite = alpha === 'feather';
   result.setTexture('terrainMap', texture);
   result.setColor3('tint', palette.day);
   result.setColor3('lighting', Color3.White());
@@ -176,6 +204,15 @@ export function createBattleTerrain(
       scene,
     ),
   };
+  const marginMaterial = groundMaterial(
+    'battle-ground:irregular-earth-margin',
+    dirtTexture,
+    palettes.plain,
+    'plain',
+    scene,
+    'feather',
+  );
+  createBattleTerrainMargin(scene, tiles, GROUND_TEXTURE_WORLD_SIZE).material = marginMaterial;
   const exposedEarthPalette = {
     day: new Color3(0.48, 0.4, 0.31),
     night: new Color3(0.37, 0.39, 0.41),
@@ -277,17 +314,18 @@ export function createBattleTerrain(
         scorchMaterial,
         (tile.q * 73856093) ^ (tile.r * 19349663),
       );
+      const emberWidth = BATTLE_LAYOUT.spacing * (0.8 + ((tile.q * 17 + tile.r * 13) % 7) * 0.02);
       const ember = MeshBuilder.CreatePlane(
         `fire-embers:${tileKey}`,
         {
-          width: BATTLE_LAYOUT.spacing * 0.88,
-          height: (BATTLE_LAYOUT.spacing * 0.88 * 1024) / 1536,
+          width: emberWidth,
+          height: (emberWidth * 1024) / 1536,
         },
         scene,
       );
       ember.rotation.x = CAMERA_ELEVATION;
       ember.position.set(
-        point.x,
+        point.x + (((tile.r * 11 + tile.q) % 5) - 2) * 0.04,
         groundY + 0.36 * Math.cos(CAMERA_ELEVATION),
         point.z - 0.42 + 0.36 * Math.sin(CAMERA_ELEVATION),
       );
@@ -314,6 +352,8 @@ export function createBattleTerrain(
       groundMaterials[surface].setColor3('tint', palettes[surface][phase]);
       groundMaterials[surface].setColor3('lighting', light.terrain);
     }
+    marginMaterial.setColor3('tint', palettes.plain[phase]);
+    marginMaterial.setColor3('lighting', light.terrain);
     exposedEarthMaterial.setColor3('tint', exposedEarthPalette[phase]);
     exposedEarthMaterial.setColor3('lighting', light.terrain);
     rubbleMaterial.emissiveColor = light.rubble;

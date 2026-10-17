@@ -4018,3 +4018,28 @@ full815coverage также PASS. Новый source reviewer подтвердил
 replacement independent absolute critic проверяет полный пакет после
 превышения бюджета предыдущим. Clean CI текущей коррекции/visual ACCEPT/merge
 ещё pending. Ни один неполный pass не назван приёмкой.
+
+### Sprite sampling, night and terrain perimeter — 2026-10-17
+
+Replacement critic завершил полный проход6a63481: REJECT,2/2/1/1/2/2/1,
+motionN/A. Конкретные замечания: мягкий GPU-боец, тёмные маленькие фигуры ночью,
+резкая граница арены на рисунке мельницы и одинаковые огненные patches.
+[CleanCI39006720822](https://github.com/Vovanostm/warwrit/actions/runs/39006720822)
+на6a63481 SUCCESS:815unit/47SKIPPED,10kstress/20determinism/100replay,
+14DB,coverage и38-file audit. Этот зелёный CI не заменяет visual ACCEPT.
+
+Текущая локальная коррекция: unit-only bilinear/full-resolution sampling без
+mipmap уменьшения (scenery сохраняет trilinear); cache key учитывает режим.
+Night body tint0.72/0.76/0.82, без постоянного светлого контура. Fire сохраняет
+charred cell footprint, меняет ширину/смещение детерминированно, без mirroring.
+Новый nonpickable vertex-alpha margin покрывает только отсутствующих соседей
+и мягко соединяет край поля с painted scene; canonical tops/input/rules прежние.
+Source reviewer выявил winding margin; исправлено и проверяется фактическими
+Babylon normals+Y. Геометрия2tests/webtypes/lint и main-based40-file audit PASS.
+
+Важная коррекция evidence: старый верхний equal-height sheet увеличивал игровой
+111px crop и не был настоящим close-кадром. Новый comparison показывает native
+GPU crop при реальном wheelzoom2.2(~242px) и отдельный native111px gamecrop;
+reference приведён к той же высоте, GPU не увеличен. Полный текущий набор:
+output/playwright/combat-acceptance-20261017/ (untracked). Source текущего delta
+readback DONE; повторный absolute pass/newcleanCI/merge pending.
