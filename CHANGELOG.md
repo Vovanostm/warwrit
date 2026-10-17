@@ -13,7 +13,7 @@ requests.
 
 - 2026-10-17, originating branch `claude/combat-ui-tz`, local: owner-requested
   audit of the battle UI on actual main a934355 compared with XCOM 2, Into the
-  Breach, Heroes V and Battle Brothers. Added defects UIX-01…19 with evidence,
+  Breach, Heroes V and Battle Brothers. Added defects UIX-01…20 (incl. hex scale for the largest creature) with evidence,
   violated requirements, required behaviour, owner questions with defaults,
   execution order and acceptance scenarios. Documentation only; game code,
   rules, protocol and replay unchanged; implementation/visual review NOT_RUN.

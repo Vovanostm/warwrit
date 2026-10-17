@@ -4,7 +4,7 @@
 Owner requested an audit of the current battle UI against leading turn-based
 games and a fix specification. Actual main a934355 on web5344/API3044 was
 played at 1440×900: editor→battle, hovers, attack/skill modes, move, end turn,
-log/menu/night/zoom and autobattle to R8 victory. Nineteen defects UIX-01…19
+log/menu/night/zoom and autobattle to R8 victory. Twenty defects UIX-01…20
 recorded with evidence and acceptance; P0: silent right-click refusals, missing
 attack reason on enemy hover, no move-then-attack warning, unmarked active
 fighter, conflicting colour channels and unreadable opponent turns. Rules,
