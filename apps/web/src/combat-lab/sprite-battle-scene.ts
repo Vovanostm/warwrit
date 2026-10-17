@@ -62,6 +62,7 @@ const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
 interface SpriteBattleScene {
   setHighlightedUnit(id: string | null): void;
+  focusUnit(id: string): void;
   update(
     view: CombatLabView,
     selectedUnitId: string | null,
@@ -941,9 +942,8 @@ export async function mountSpriteBattleScene(
       else actAtTarget(target);
     },
   });
-  // Frame the whole map width and deployed figures inside the actual HUD opening.
-  // Empty rows remain available by pan; the initial view never hides an actor under UI.
-  const frameBattle = () => {
+  // Both overview and unit focus use the opening between the actual HUD panels.
+  const cameraOpening = () => {
     const viewport = canvas.getBoundingClientRect();
     const surface = canvas.closest('.battle-view') ?? canvas.parentElement!;
     const safeTop = Math.max(
@@ -958,6 +958,10 @@ export async function mountSpriteBattleScene(
         (node) => node.getBoundingClientRect().top - viewport.top - 44,
       ),
     );
+    return { viewport, safeTop, safeBottom };
+  };
+  const frameBattle = () => {
+    const { viewport, safeTop, safeBottom } = cameraOpening();
     const figures = currentView.units
       .filter((unit) => unit.status === 'active')
       .map((unit) => {
@@ -981,12 +985,59 @@ export async function mountSpriteBattleScene(
       0,
     );
   };
+  let focusedId: string | null | undefined = initialView.activation?.actorId;
+  const focusUnit = (id: string) => {
+    const unit = currentView.units.find((candidate) => candidate.id === id);
+    if (!unit) return;
+    const { viewport, safeTop, safeBottom } = cameraOpening();
+    const point = AXIAL_TO_WORLD(unit.position);
+    const zoom = 4.8;
+    const up =
+      point.z * Math.sin(CAMERA_ELEVATION) +
+      groundYFor(unit.position) * Math.cos(CAMERA_ELEVATION) +
+      spriteDisplayHeight(spriteForUnit(unit).id) * SPRITE_PRESENTATION_SCALE * 0.45;
+    const centerUp =
+      up + (((safeTop + safeBottom) / 2 - viewport.height / 2) * 2 * zoom) / viewport.height;
+    camera.fit(
+      {
+        minX: point.x,
+        maxX: point.x,
+        minZ: (centerUp - zoom) / Math.sin(CAMERA_ELEVATION),
+        maxZ: (centerUp + zoom) / Math.sin(CAMERA_ELEVATION),
+      },
+      0,
+    );
+    focusedId = id;
+    cameraMoved = false;
+  };
+  const frameDefault = () => {
+    if (focusedId) focusUnit(focusedId);
+    else frameBattle();
+  };
   let cameraMoved = false;
   const markWheel = (event: WheelEvent) => {
     if (event.deltaY !== 0) cameraMoved = true;
   };
+  const battleSurface = canvas.closest('.battle-view')!;
+  const modifiedKey = (event: KeyboardEvent) =>
+    [event.altKey, event.ctrlKey, event.metaKey].some(Boolean);
+  const showOverview = (event: KeyboardEvent) => {
+    const target = event.target as HTMLElement | null;
+    const editable = target?.closest('input, textarea, select, [contenteditable="true"]');
+    if ([modifiedKey(event), editable, event.code !== 'Home'].some(Boolean)) return;
+    event.preventDefault();
+    focusedId = null;
+    cameraMoved = false;
+    frameBattle();
+  };
   const markKey = (event: KeyboardEvent) => {
-    if (/^(Arrow(Up|Down|Left|Right)|[wasd])$/i.test(event.key)) cameraMoved = true;
+    if (modifiedKey(event)) return;
+    if (
+      ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(
+        event.code,
+      )
+    )
+      cameraMoved = true;
   };
   let cameraPress: { x: number; y: number } | null = null;
   const rememberCameraPress = (event: PointerEvent) => {
@@ -1002,11 +1053,12 @@ export async function mountSpriteBattleScene(
   };
   canvas.addEventListener('wheel', markWheel, { passive: true });
   canvas.addEventListener('keydown', markKey);
+  battleSurface.addEventListener('keydown', showOverview as EventListener);
   canvas.addEventListener('pointerdown', rememberCameraPress);
   canvas.addEventListener('pointerup', releaseCameraPress);
   canvas.addEventListener('pointercancel', releaseCameraPress);
   canvas.addEventListener('pointermove', markDrag);
-  frameBattle();
+  frameDefault();
   canvas.setAttribute('aria-label', 'Поле боя с выбором бойца или клетки');
 
   unitMeshesForView(initialView);
@@ -1014,7 +1066,7 @@ export async function mountSpriteBattleScene(
   renderEvents(initialView);
   const resizeObserver = new ResizeObserver(() => {
     engine.resize();
-    if (!cameraMoved) frameBattle();
+    if (!cameraMoved) frameDefault();
     clearHover();
   });
   resizeObserver.observe(canvas);
@@ -1036,6 +1088,7 @@ export async function mountSpriteBattleScene(
     resizeObserver.disconnect();
     canvas.removeEventListener('wheel', markWheel);
     canvas.removeEventListener('keydown', markKey);
+    battleSurface.removeEventListener('keydown', showOverview as EventListener);
     canvas.removeEventListener('pointerdown', rememberCameraPress);
     canvas.removeEventListener('pointerup', releaseCameraPress);
     canvas.removeEventListener('pointercancel', releaseCameraPress);
@@ -1063,7 +1116,15 @@ export async function mountSpriteBattleScene(
     groundMaterial.emissiveColor = values.ground;
     terrain.setNight(night);
   };
+  const followActivation = (previousActor: string | undefined) => {
+    const actorId = currentView.activation?.actorId;
+    if (actorId && actorId !== previousActor) {
+      cameraMoved = false;
+      focusUnit(actorId);
+    }
+  };
   return {
+    focusUnit,
     setHighlightedUnit(id) {
       if (destroyed || highlightedId === id) return;
       highlightedId = id;
@@ -1071,6 +1132,7 @@ export async function mountSpriteBattleScene(
     },
     update(view, nextSelectedId, nextSelectedCell, night, fullGrid, selectedSkillId = null) {
       const changedRevision = currentView.viewRevision !== view.viewRevision;
+      const previousActor = currentView.activation?.actorId;
       showFullGrid = fullGrid;
       currentView = view;
       selectedSkill = selectedSkillId;
@@ -1081,6 +1143,7 @@ export async function mountSpriteBattleScene(
       if (changedRevision) clearHover();
       else updateMarkers();
       renderEvents(view);
+      followActivation(previousActor);
     },
     destroy,
   };

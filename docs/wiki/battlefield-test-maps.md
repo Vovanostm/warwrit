@@ -3877,3 +3877,71 @@ output/playwright/readability-final-20261017/ (untracked).
 остаются обязательными. Наблюдаемое скрытие полоски под передней фигурой либо
 при сознательном уводе ног под панель не равно обрезанию исходного спрайта;
 это ограничение текущей камеры, которое нужно показать критику явно.
+
+### Whole-art portrait inset — 2026-10-17, integrated local
+
+Изолированный fork «Исправить обрезание спрайтов (3)» передал только
+BattleUnitCard Portrait markup и portrait CSS из battle-view.css. Внутри каждой
+рамки появился самостоятельный viewport с4CSSpx inset: исходный SVG viewBox и
+aspect сохранены, размеры130px карточек/трёх рядов не меняются. Все20альфа-
+силуэтов уже входили в source bounds; прежние6sourcepx давали лишь~0.3CSSpx
+запаса и визуально прижимали головы к рамке. Реальные72проверки20профилей в
+1280×720/1440×900/1920×1080: запас≥5CSSpx с рамкой, обрезаний родительскими
+контейнерами нет;0actionPOST. Actor/forecast/inspected card и отдельный DPR2
+browser также PASS.23BattleView tests, web types, scoped lint/format/diff и
+narrow2-file audit PASS. Независимые source auditor и visual critic дали
+ACCEPT только портретной области; это не приёмка всего боя. Локальные кадры:
+combat-portrait-fit/warwrit/output/playwright/portrait-fit/ (untracked).
+
+Общий текущий бой завершёнR8/rev151; очередь/dock отсутствуют, terminal keys1/4
+дают0actionPOST. Выход в редактор удаляет слой полосок; новый бой даёт12active,
+R1 и ровно1слой. Сочетания Ctrl/Alt/Meta на canvas теперь не объявляются
+движением камеры: guard согласован с камерой, клавиши учитываются по code для
+раскладок RU/EN. Интегрированная визуальная приёмка и финальный CI ещё pending.
+
+### Shared spacing and action camera — 2026-10-17
+
+Две независимые проверки компактных полосок отклонили плотную группу:
+передний B003 закрывал индикаторы заднего B053 при spacing1.4. Вместо переноса
+полосок/выносок физический presentation spacing увеличен до2.6; шаг высоты0.12
+и размеры фигур сохранены. Grid, top geometry, picking, feet и bars используют
+один layout. Канонические q/r, occupancy, AP, range, LOS, RNG и replay не меняются.
+Это инженерная коррекция читаемости, не новая механика или размер карты.
+
+Поле открывается на текущем бойце с orthographic zoom4.8. Клик по портрету или
+строке бойца в журнале центрирует его; Home возвращает общий обзор. Новый
+действующий боец попадает в центр свободной от HUD области. Сознательное
+панорамирование/приближение сохраняется при resize; default focus/overview
+пересчитывается под фактические панели. При увеличении видна часть поля;
+обзор доступен Home, края — панорамированием. Полный PNG не обрезается рамкой
+рисунка; соседняя фигура за пределами viewport может уходить под HUD.
+
+Точный bar-module fork4b45866 интегрирован:32×16CSSpx,4px ниже стоп, три
+контрастные/различимые рисунком строки, без arms/X-shifts/чисел. Fork проверил
+DPR1/2×1280/1440/1920, actual zoom2.2, реальные33DOM-строки и2772texture-pixels
+против public pools, terminal0visible-meshes и два editor/recreate цикла0→1.
+Его два узких audit прошли от aa71d46; общий строгий main-based34-file audit
+теперь также PASS. Никакие audit/config thresholds не изменены. Общая coverage
+813PASS/47SKIPPED предшествует последним небольшим observer/night-phase правкам.
+
+Повторный source review нашёл три пути: Home после portrait-click оставался на
+кнопке; выбор выбывшего сбрасывал pan без перехода; ранний запрос фокусировки
+терялся до завершения async mount. Теперь Home обрабатывается в пределах боя и сохраняет keyboard focus
+на кнопках; editable/modifier shortcuts исключены. Существующий выбывший боец
+центрируется по последней клетке, а hook
+сохраняет отложенный запрос до готовности сцены. Финальная readback/визуальная
+приёмка/clean CI/merge остаются pending. Локальные runtime-кадры и receipts:
+output/playwright/readability-final-20261017/ (untracked). Предыдущий terminal
+receipt ошибочно называл canvas count visibleBars; он доказывает только
+очередь/dock/hotkeys/layer lifecycle, фактические mesh0 отдельно проверены fork.
+
+Текущий source readback после исправлений — DONE, конкретных оставшихся
+замечаний в focus/navigation нет. Браузерный navigation receipt проверил
+portrait→Enter→Tab/ShiftTab→Home с сохранением focus на кнопке; Ctrl+A/resize,
+1px jitter/resize и80px pan/resize прошли с0actionPOST. Три свежих desktop
+кадра1280/1440/1920, grid/overlayon-off и день/ночь обновлены. Скрытый DOM
+полосок предназначен для accessibility, геометрия проверяется по GPU meshes.
+29focused tests/web types/scoped lint/format PASS. Последний commit audit
+сначала FAIL на сложности объединённого клавиатурного обработчика; overview
+и pan handlers разделены по владельцам событий, строгий main-based34-file
+повтор PASS без suppression. Независимый source readback этой коррекции DONE.

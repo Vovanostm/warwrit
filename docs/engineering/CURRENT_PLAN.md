@@ -1,14 +1,22 @@
 # Warwrit current delivery plan
 
 **Combat readability and reusable terrain — 2026-10-17, ACTIVE / ACCEPTANCE PENDING:**
-Local source aa71d46 committed with normal audit31PASS; exact pool-sync and
-scaled-cell input journey PASS. Latest owner correction forbids arms/callouts:
-field bars32×12CSSpx immediately4px below feet, foot-sorted with figures.
-Root owns one common integration/PR/review/merge; authorized forks work in
-isolation: (2) compact bars/critique, (3) Portrait inset/CSS/test. Final combined
-source/visual acceptance, clean CI and merge pending. Root camera jitter/resize
-correction verified with actual0POST navigation +17focused camera checks.
-The historical activation and first-rejection evidence follows:
+Parent owns one common integration/PR/review/authorized merge in
+codex/combat-readability, combat-live-queue/warwrit; primary dirty WIP preserved.
+Both authorized forks released writes: portrait4px inset and bar32×16CSSpx,
+exact4px foot gap, no arms/callouts. Narrow portrait source/visual ACCEPT;
+bar dense visual REJECT drove physical spacing2.6 replacing1.4. Canonical
+combat coordinates/rules unchanged; figure size retained. Actor action focus4.8,
+portrait/log focus, Home overview and activation follow now integrated locally.
+Current full source review found Home-focus, inactive-unit and pending-focus
+edge cases; corrected, current browser keyboard/navigation0POST and source
+readback DONE. Strict main-based audit34files PASS after bounded key-handler
+complexity correction; current29focused/types/lint/format PASS.
+Earlier terminalR8/rev151/editor layer lifecycle and actual pool agreement
+remain finite historical evidence. Current combined visual acceptance, final
+clean CI, PR and merge pending; no deployment or fullM1 claim.
+[Current engineering correction](../wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
+The historical activation follows:
 
 Owner rejects current sprite softness, indistinct cell materials, cramped grid
 and clipped/misaligned initiative images despite previous finite acceptance.

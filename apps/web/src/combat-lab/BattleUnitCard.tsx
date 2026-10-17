@@ -24,13 +24,11 @@ export function Portrait({ unit }: { unit: Unit }) {
   const art = spriteForUnit(unit);
   return (
     <span className="battle-portrait" data-art={art.id}>
-      <svg
-        viewBox={art.visibleBounds.join(' ')}
-        preserveAspectRatio="xMidYMid meet"
-        aria-hidden="true"
-      >
-        <image href={art.url} width={art.width} height={art.height} />
-      </svg>
+      <span className="battle-portrait-art" aria-hidden="true">
+        <svg viewBox={art.visibleBounds.join(' ')} preserveAspectRatio="xMidYMid meet">
+          <image href={art.url} width={art.width} height={art.height} />
+        </svg>
+      </span>
     </span>
   );
 }

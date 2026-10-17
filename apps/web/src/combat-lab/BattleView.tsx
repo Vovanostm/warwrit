@@ -36,6 +36,7 @@ export function BattleView(props: BattleViewProps) {
   const battleViewRef = useRef<HTMLElement>(null);
   const {
     canvasRef,
+    focusUnit,
     night,
     setNight,
     fullGrid,
@@ -131,7 +132,10 @@ export function BattleView(props: BattleViewProps) {
       <BattleInitiative
         view={view}
         selectedUnitId={selectedUnitId}
-        onSelectUnit={onSelectUnit}
+        onSelectUnit={(id) => {
+          onSelectUnit(id);
+          focusUnit(id);
+        }}
         isAttackable={isAttackable}
         setInitiativePointer={setInitiativePointer}
         setInitiativeFocus={setInitiativeFocus}
@@ -187,7 +191,10 @@ export function BattleView(props: BattleViewProps) {
         view={view}
         status={status}
         selectedUnitId={selectedUnitId}
-        onSelectUnit={onSelectUnit}
+        onSelectUnit={(id) => {
+          onSelectUnit(id);
+          focusUnit(id);
+        }}
       />
     </section>
   );

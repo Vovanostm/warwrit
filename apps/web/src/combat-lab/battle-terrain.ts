@@ -295,27 +295,25 @@ export function createBattleTerrain(
   };
   tiles.forEach(createTile);
 
+  const lightByPhase = {
+    day: { terrain: Color3.White(), rubble: Color3.White(), embers: Color3.White() },
+    night: {
+      terrain: new Color3(0.44, 0.48, 0.54),
+      rubble: new Color3(0.62, 0.66, 0.72),
+      embers: new Color3(0.62, 0.48, 0.39),
+    },
+  };
   const setNight = (night: boolean) => {
+    const phase = night ? 'night' : 'day';
+    const light = lightByPhase[phase];
     for (const surface of Object.keys(groundMaterials) as (keyof typeof groundMaterials)[]) {
-      groundMaterials[surface].setColor3(
-        'tint',
-        night ? palettes[surface].night : palettes[surface].day,
-      );
-      groundMaterials[surface].setColor3(
-        'lighting',
-        night ? new Color3(0.44, 0.48, 0.54) : Color3.White(),
-      );
+      groundMaterials[surface].setColor3('tint', palettes[surface][phase]);
+      groundMaterials[surface].setColor3('lighting', light.terrain);
     }
-    exposedEarthMaterial.setColor3(
-      'tint',
-      night ? exposedEarthPalette.night : exposedEarthPalette.day,
-    );
-    exposedEarthMaterial.setColor3(
-      'lighting',
-      night ? new Color3(0.44, 0.48, 0.54) : Color3.White(),
-    );
-    rubbleMaterial.emissiveColor = night ? new Color3(0.62, 0.66, 0.72) : Color3.White();
-    emberMaterial.emissiveColor = night ? new Color3(0.62, 0.48, 0.39) : Color3.White();
+    exposedEarthMaterial.setColor3('tint', exposedEarthPalette[phase]);
+    exposedEarthMaterial.setColor3('lighting', light.terrain);
+    rubbleMaterial.emissiveColor = light.rubble;
+    emberMaterial.emissiveColor = light.embers;
   };
   setNight(initialNight);
   return { setNight };

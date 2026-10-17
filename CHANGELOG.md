@@ -11,6 +11,51 @@ requests.
 
 ### Combat readability and reusable terrain
 
+- 2026-10-17, branch `codex/combat-readability`, local integration correction:
+  physical presentation spacing2.6 replaces1.4 after two independent dense
+  reviews found foreground beasts hiding rear foot strips. Preserve figure
+  size, canonical coordinates/occupancy/range/AP/LOS/replay. Start focused on the
+  actor at zoom4.8; portrait/log selection focuses a unit, Home returns the
+  overview, and new activations follow the actor. Resize uses the HUD opening;
+  deliberate pan/zoom is retained. Source review exposed Home focus, inactive
+  selection and an async focus race; fixes retain pending intent and handle Home across
+  non-editable battle controls without moving keyboard focus. Bar32×16 and portrait inset integrated. Strict main-based34-file audit
+  PASS after correcting a failed key-handler complexity check, without gate
+  suppression. Source readback DONE; navigation/keyboard0POST and29focused/
+  types/lint/format PASS; combined visual/clean CI/merge pending.
+  [Current integration](docs/wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
+
+- 2026-10-17, branch `codex/compact-foot-bars`, local: owner rejects connector
+  arms and requires narrow tracks directly under battlefield figures. Preserve
+  width32 and fixed4px foot gap; raise the three-row strip from12 to16px with
+  clearer fill contrast after independent critic found weak overview/night row
+  separation. No callouts, horizontal shifts, rule changes or input targets.
+  Web types/scoped lint and27 existing focused tests PASS; full813unit/47SKIP
+  coverage PASS before the bounded observer cleanup. Current DPR1/2 geometry
+  captures cover1280/1440/1920 and maxzoom2.2. Real pools/texture, heights,
+  terminal and restart probes PASS. Source reviewer found
+  no defect in the frozen module diff. Dense large-creature occlusion remains
+  a shared-scene integration blocker; no final visual ACCEPT or merge claimed.
+  Manual main-based audit FAIL only in unchanged inherited road/terrain
+  functions (`createRoadMaterial`, `setNight`); no bar-module finding remains.
+  Initial local checkpoint used the work-branch exception (normal hook
+  NOT_RUN); superseding isolated audit with `FALLOW_AUDIT_BASE=aa71d46`
+  PASS for the two changed files. The final local checkpoint runs the normal
+  commit hook against that same slice base. Common PR integration still requires
+  strict main-based audit; inherited findings must be fixed before publication.
+  No gate/config suppression is introduced. Second absolute visual review REJECT
+  on dense-creature occlusion (scene integration1; remaining criteria2, motionN/A);
+  the common owner must validate the larger shared spacing before acceptance.
+  [Owner correction and shared delivery](docs/wiki/battlefield-test-maps.md#owner-correction-compact-foot-strips-no-callouts).
+
+- 2026-10-17, branches `codex/combat-portrait-fit` → `codex/combat-readability`,
+  local integration: give every portrait a4CSSpx art inset while preserving
+  the full measured silhouette/aspect and130px cards. All20 profiles across
+  3desktop sizes passed72bounds checks (minimum5px including frame); actor,
+  forecast, inspection and actualDPR2 also passed with0actionPOST. Independent
+  narrow source/visual review ACCEPT. Also ignore modifier shortcuts when
+  preserving user camera navigation; full integrated critique/CI/merge pending.
+
 - 2026-10-17, branch `codex/combat-readability`, local: integrate the owner's
   explicit rejection of callout arms; compact32×12 foot-sorted tracks remain
   directly4px under sprites. Record isolated bar/portrait ownership and the

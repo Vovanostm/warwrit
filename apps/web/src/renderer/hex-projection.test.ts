@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 import { worldToHex } from './hex-projection.js';
 
-it.each([1, 1.4])(
+it.each([1, 2.6])(
   'keeps corners and both sides of shared edges selectable at spacing %s',
   (spacing) => {
     const sqrt3 = Math.sqrt(3);
