@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+**Combat UI audit and fix specification — 2026-10-17, SPEC / IMPLEMENTATION NOT_RUN:**
+Owner requested an audit of the current battle UI against leading turn-based
+games and a fix specification. Actual main a934355 on web5344/API3044 was
+played at 1440×900: editor→battle, hovers, attack/skill modes, move, end turn,
+log/menu/night/zoom and autobattle to R8 victory. Nineteen defects UIX-01…19
+recorded with evidence and acceptance; P0: silent right-click refusals, missing
+attack reason on enemy hover, no move-then-attack warning, unmarked active
+fighter, conflicting colour channels and unreadable opponent turns. Rules,
+protocol and replay unchanged by the spec. Three owner choices have recommended
+defaults (AI playback pace, Move button, end-turn key). Readability cycle owns
+cells/portraits/foot bars. Docs-only branch `claude/combat-ui-tz`, local.
+[Owning specification](../wiki/battlefield-test-maps.md#аудит-ui-боя-и-тз-исправлений--2026-10-17).
+
 **Battle perspective and bounds — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized [PR159](https://github.com/Vovanostm/warwrit/pull/159) MERGED:
 reviewed6533ae7d3a1123a32285f09582b3813475a20dd8,

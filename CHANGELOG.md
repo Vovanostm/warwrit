@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Specify combat UI fixes from a played audit
+
+- 2026-10-17, originating branch `claude/combat-ui-tz`, local: owner-requested
+  audit of the battle UI on actual main a934355 compared with XCOM 2, Into the
+  Breach, Heroes V and Battle Brothers. Added defects UIX-01…19 with evidence,
+  violated requirements, required behaviour, owner questions with defaults,
+  execution order and acceptance scenarios. Documentation only; game code,
+  rules, protocol and replay unchanged; implementation/visual review NOT_RUN.
+  [Specification](docs/wiki/battlefield-test-maps.md#аудит-ui-боя-и-тз-исправлений--2026-10-17).
+
 ### Match battle grid and figures to painted perspective
 
 - 2026-10-17, originating branch `codex/battle-camera-bounds`, merged:
