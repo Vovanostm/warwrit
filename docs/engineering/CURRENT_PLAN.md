@@ -1,13 +1,29 @@
 # Warwrit current delivery plan
 
-**Authored ground composition — 2026-10-17, LOCAL / RE-REVIEW:**
-Full combined critic rejectedb5a193c/08c2800 visuals2/2/1/1/2/2/1:
-rectangular painting edge, low-detail earth and incoherent night. New backdrop
-alpha/shared-surface courtyard sampler/original ink ruts/linear night values
-are integrated locally; categories/picks/rules unchanged. Types/lint/content105/
-audit/browser shader PASS. Correct-path source and fresh full visual pass,
-current-head CI/merge pending. Prior source report from primaryb44f5c1 excluded.
-[Current result](../wiki/battlefield-test-maps.md#authored-ground-composition--2026-10-17).
+**Combat readability — 2026-10-17, PUBLISHED DRAFT / CORRECTION REQUIRED:**
+Current game candidate16c2811 in codex/combat-readability, worktree
+combat-live-queue/warwrit, [PR160](https://github.com/Vovanostm/warwrit/pull/160).
+Main a934355/PR159 is integrated; primary dirty WIP preserved. Whole portraits,
+32×16px strips4px below feet, spacing2.6/.28 connected surface, shared generated
+terrain, authored yard/ink ruts and night correction are published. Source findings
+closed on the reviewed delta; types/lint/content105/main-based44-file audit and
+browser geometry/layers/navigation/extreme apron coverage PASS. Current complete
+16c2811 visual REJECT2/2/1/2/2/2/1: repeating ground/joins, place transition,
+close-ground softness; units/night/layers accepted in scope. Technique correction
+required; a narrow portrait pass cannot accept the full scene.
+[CI39019195821](https://github.com/Vovanostm/warwrit/actions/runs/39019195821)
+FAILED at quality audit:2newrenderer complexity findings; bootstrap/coverage
+passed. Local sampler normalization/types/lint/45fileaudit PASS, newCI pending.
+08c2800 CI39016754146 SUCCESS is historical; no current visual ACCEPT or merge. Owner explicitly authorized this mission's expected-head merge;
+remaining: current visual acceptance, successful final CI, merge and main journey.
+Local technique correction now adds3-source seamless ink earth and a zoom-dependent
+authored-yard fade; ordinary world sampling restored. Correct-checkout source
+readback DONE; types/lint/content107/main-based45file audit PASS. Current shader
+compile/captures/full visual/performance NOT_RUN: the browser session was closed,
+so the attempted new capture produced no images. Local code remains uncommitted
+and differs from published16c2811. Reopen5336/3036 and verify the actual scene next.
+Wiki lead/index updated at owner request; dated history below is retained.
+[Current owner-facing state](../wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
 
 **Combat readability combined with current main — 2026-10-17, LOCAL / FINAL REVIEW:**
 PR160 now integrates main a934355/PR159. CleanCI39014594194 on b5a193c

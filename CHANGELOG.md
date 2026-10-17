@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local documentation update at
+  owner request: refresh wiki landing/index and current plan for published game
+  candidate16c2811/PR160; replace stale leading PR157 status with current behavior,
+  actual checks, previous visual rejection and remaining acceptance/CI/merge.
+  Preserve dated delivery history and distinguish candidate stand from main.
+  Markdown format/local-path/anchor/diff checks PASS; game tests NOT_RUN
+  for the documentation edit. Record full16c2811 visual REJECT and CI audit FAIL,
+  plus local normalization of authored-ground inputs that removes the two new
+  complexity findings; types/lint/strict45-file audit PASS, newCI pending.
+  Document the local3-source ink-earth/zoom fade correction separately:
+  source readback/types/lint/content107/audit PASS; new runtime/visual NOT_RUN
+  after a closed browser-session error. Local stand differs from published head.
+  [Current wiki](docs/wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local visual technique revision:
   full b5a193c/08c2800 critique REJECT(2/2/1/1/2/2/1) exposed a rectangular
   mill edge, low-detail ground and mismatched night lighting. Add irregular

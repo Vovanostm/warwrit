@@ -1,10 +1,10 @@
 ---
 title: Поле боя и спрайтовая боёвка — ТЗ и тестовые карты
 created: 2026-10-07
-updated: 2026-10-16
+updated: 2026-10-17
 type: proposal
 tags: [combat, battlefield, sprites, art-direction, review-draft]
-status: direction-approved; merged-playable-sandbox; static-visual-packet-accepted; main-journey-passed; full-spec-review-draft
+status: direction-approved; merged-playable-sandbox; combat-readability-correction; PR160-draft; full-spec-review-draft
 authority: owner decisions 2026-10-09; provisional balance; local prototype 2026-10-10
 sources:
   - m1-spec.md
@@ -14,7 +14,78 @@ sources:
 
 # Поле боя и тестовые карты
 
-**Текущий цикл — 2026-10-16: [PR157](https://github.com/Vovanostm/warwrit/pull/157) слит в main, игровой путь из main проверен.**
+## Текущее состояние — 2026-10-17
+
+Переработка читаемости опубликована в [PR160](https://github.com/Vovanostm/warwrit/pull/160)
+из отдельного worktree `combat-live-queue/warwrit`, ветка
+`codex/combat-readability`. Последний полностью проверенный визуально
+опубликованный кандидат — `16c2811` (REJECT). PR остаётся черновиком,
+**в main ещё не слит; финальная визуальная приёмка не получена**.
+Текущий стенд кандидата: [поле боя](http://127.0.0.1:5336/combat-lab), API3036.
+Стенд включает локальную незакоммиченную коррекцию грунта, описанную ниже;
+его дерево отличается от опубликованного кандидата. Это временные бои без
+записи в кампанию. Полный DoD M1 не принят; баланс и FPS не измерены.
+
+В кандидате реализовано:
+
+- Общая сетка с шагом2.6; связанные склоны с шагом высоты0.28.
+  Геометрия, сетка, выбор клетки и ноги используют одну поверхность.
+  Канонические координаты, дальности, ОД, LOS и replay не менялись.
+- Целые портреты всех20профилей с одинаковым внутренним отступом;
+  здоровье, броня и мораль сразу под портретами и под ногами на поле.
+  Полевые полоски32×16CSSpx, отступ4px, без выносок и соединительных линий.
+- Полное разрешение спрайтов; отдельная фильтрация для близкого и общего вида.
+  Перспектива и ограничение камеры из уже слитого PR159 сохранены.
+- Общие материалы plain/mud/fire/blocked для редактора и сгенерированных карт;
+  три рисунка огня, новая чернильная земля с колеями, связанная с рисунком двора.
+  Край фоновой иллюстрации плавно соединяется с продолжением грунта.
+- Живая очередь из PR158; выбор портрета или бойца в журнале фокусирует камеру,
+  Home возвращает обзор, WASD/перетаскивание и колесо позволяют осмотреть поле.
+
+Проверены все20профилей на трёх сгенерированных полях,1280×720/1440×900/1920×1080,
+день/ночь, крупные существа, общий/близкий вид, сетка и наземные наложения.
+Свежие проверки геометрии полосок, выбора клеток и крайних положений камеры
+прошли; осмотр и навигация дали0боевых приказов. Ранее на объединённой геометрии
+проверены настоящее движение, совпадение всех трёх ресурсов после боевых
+изменений, завершение боя и повторный запуск. Эти результаты не заменяют
+визуальную приёмку новой композиции.
+
+Полный независимый визуальный проход `16c2811` завершён: **REJECT**,
+оценки2/2/1/2/2/2/1. Фигуры, портреты, полоски, ночная читаемость и слои приняты
+в пределах этого прохода. Остаются повторение грунта и горизонтальные стыки,
+переход между двором и продолжением земли, мягкие увеличенные детали грунта
+при максимальном приближении. До общего visual ACCEPT нужна смена техники
+земли и повторная полная проверка; узкая приёмка портретов этого не заменяет.
+
+[CI08c2800](https://github.com/Vovanostm/warwrit/actions/runs/39016754146) успешен.
+[CI16c2811](https://github.com/Vovanostm/warwrit/actions/runs/39019195821)
+завершился **FAIL** на аудите сложности двух новых функций рендера; основные
+тесты и покрытие прошли. Локально параметры authored-ground нормализованы
+один раз при создании поля: повторные проверки типов, lint и аудит45файлов
+PASS, без изменения порогов. CI исправления ещё не выполнен.
+
+Локальная смена техники грунта: три исходные чернильные текстуры смешиваются
+непрерывными весами без поворота и отражения; края изображений перекрываются
+смещёнными выборками. При приближении рисунок двора уступает место более
+детальной земле. Код общий для клеток и продолжения поля; правила боя
+не меняются. Source review — DONE, types/lint/content107/audit — PASS.
+Проверка новой версии в браузере **NOT_RUN**: сессия браузера оказалась закрыта,
+новые кадры не получены. Визуальный ACCEPT, производительность новой техники
+и CI итогового коммита пока не подтверждены.
+[Подробности коррекции](#layered-ink-earth-correction--2026-10-17).
+
+До слияния остаются устранение визуальных дефектов, полный visual ACCEPT,
+успешный CI итогового коммита и игровой путь из обновлённой main. Разрешение
+владельца на слияние этого задания уже есть; блокеры относятся к качеству.
+
+[Требования владельца](#читаемость-бойцов-и-единый-рендер-поля--2026-10-16),
+[исследование аналогов и UX](#проверка-текстов-и-избыточности-ux--2026-10-16),
+[интеграция перспективы](#combined-perspective-and-readability--2026-10-17),
+[последняя композиция грунта](#authored-ground-composition--2026-10-17).
+Последующие датированные результаты сохранены как история своих версий;
+оперативный checkpoint — [CURRENT_PLAN](../engineering/CURRENT_PLAN.md).
+
+**Историческая поставка — 2026-10-16: [PR157](https://github.com/Vovanostm/warwrit/pull/157) слит в main, игровой путь из main проверен.**
 Цикл `codex/combat-cycle-20261016` объединён коммитом `2072a64`;
 исходный черновик сохранён. Запуск: `pnpm dev:combat`, страница `/combat-lab`.
 Проверенный стенд из чистой main: web 5330/API 3030, рабочая копия
@@ -4446,3 +4517,38 @@ Source fix readback DONE in correct checkout: sampler uses conservativeUV
 mode0 for existing world callers. Current browser shaders compile; all12GPU
 strips/picks and four apron corners/0POST pass again. Current full critic/CI
 remain pending; earlier partial or wrong-checkout reports do not accept this tree.
+
+### Layered ink earth correction — 2026-10-17
+
+The complete independent pass on published16c2811 returned
+REJECT2/2/1/2/2/2/1, motionN/A. Repeated earth motifs/horizontal joins,
+the painted courtyard transition and enlarged soft ground remain material
+defects. Portraits, figures, field strips, night values and layering passed
+within that review. CI39019195821 failed on two new terrain complexity
+findings after bootstrap/tests/coverage passed; green08c2800 is historical.
+
+Local correction replaces the direction-preserving lattice sampler with
+`ink-earth-shader.ts`: four offset samples cover each source-image wrap,
+then three distinct ink-earth images mix with continuous world-space weights
+and different scales. No rotation/mirroring of baked lighting is introduced.
+New earth-worn/earth-cobbles images, exact prompts and provenance accompany
+the existing rutted earth in assets/art/combat/readable-terrain-2026-10-16/.
+The authored courtyard contribution fades from80 to115CSSpx/world as zoom
+increases, handing close ground to the detailed earth sampler. The ordinary
+world terrain sampler retains its original two-argument implementation.
+
+Optional authored-ground input is normalized once on mount. Missing authored
+UVs use[-1,-1], outside the bounded sampler; the apron remains earth-only.
+This removes the two new complexity findings without changing audit thresholds.
+Correct-checkout source review of UV continuity, normalized weights, gamma,
+initialization and zoom transition DONE with no concrete residual finding.
+Types/lint/content107/main-based45-file audit PASS before publication.
+
+Runtime shader compilation, new captures and repeat absolute visual critique
+are NOT_RUN. The attempted browser capture returned a closed-session error;
+output/playwright/layered-earth-20261017/maps.txt records the runner failure
+(untracked). This is neither a shader failure nor runtime acceptance.
+The correction is local/uncommitted at this checkpoint. Reopen the owned
+5336/3036 stand, capture day/night/close/extreme views, repeat the full critic,
+then publish and require successful current-head CI before the authorized
+expected-head merge. No merge, deployment or fullM1 acceptance is claimed.
