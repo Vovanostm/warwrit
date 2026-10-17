@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Publish evidence-backed autonomous M1 tasks
+
+- 2026-10-17, branch `codex/combat-wiki-checkpoint-20261017`, local docs / published tasks:
+  owner requested a fresh implementation/gap/quality audit and GitHub tasks.
+  [Epic161](https://github.com/Vovanostm/warwrit/issues/161) plus16issues162–177
+  now own finite scopes, pinned evidence, dependencies, DoD and mandatory wiki
+  closeout; issue payloads read back exactly. Existing #8/#6 and PR134/160/129
+  are reconciled without duplicating work or treating historical gates as current.
+  Wiki M1/index/log, CURRENT_PLAN and M1_PRODUCTION_PLAN updated; stale absolute
+  c06 readiness link replaced with tracked local document. Source links/DoD/DAG,
+  Markdown/diff and local-link checks PASS. Game code/runtime/player DB unchanged;
+  new game/full-gate/visual checks NOT_RUN, FPS/enjoyment NOT_MEASURED.
+  [Owning queue](docs/engineering/M1_PRODUCTION_PLAN.md#current-github-execution-queue--2026-10-17).
+
 ### Reconcile combat wiki with verified delivery
 
 - 2026-10-17, branch `codex/combat-wiki-checkpoint-20261017`, local:
