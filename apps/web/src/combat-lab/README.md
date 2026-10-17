@@ -20,13 +20,21 @@ Opaque sprites retain priority where figures overlap; empty terrain clears
 temporary emphasis. A short left-click inspects a unit or hex. Hover uses full
 hex input with continuous height-seam picking. One shared pointy-top grid
 changes cell colours for movement, weapon range, their overlap, hover and pinned
-selection. Neighbouring cells at the same height meet along a complete edge;
+selection. Neighbouring cells share a complete edge on continuous earth slopes;
 ground states do not stack separate borders. Reachable cells remain readable
 with the full grid hidden. Movement cues disappear when AP is spent.
 Commands always use the fighter whose initiative turn is active. Fire
 requires confirmation; unavailable targets do not submit commands. Holding
 WASD or arrow keys pans continuously; left- or middle-button drag also pans.
 The wheel zooms, and camera navigation clears the old hover.
+The battle uses a fixed perspective reference: equal cells and figures shrink
+with distance. Pan/zoom crop the same reference image, preserving registration
+with the painted background. The full viewport stays inside the painting on
+zoom out and resize. This calibration is specific to the mill art; it does not
+change canonical hex coordinates or other orthographic camera consumers.
+Shared-corner terrain joins exact cell-centre heights with continuous slopes.
+Ground, grid, fills and ray picking use the same surface; figures retain a level
+foot area at their canonical cell centre. Height levels, costs and LOS stay canonical.
 
 The selected unit's passive weapon range uses canonical range/LOS and remains
 visible independently of the active turn, AP and stamina. Server attack previews

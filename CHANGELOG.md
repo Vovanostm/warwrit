@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local integration of main
+  a934355/PR159 into PR160: retain perspective/bounds and connected surfaces;
+  share2.6spacing/.28height across grid/picking/feet; derive field strips in
+  perspective screen pixels. Replace discrete banks and hex-edged surface
+  patches with connected geometry and irregular material blending; keep quiet
+  terrain extension behind the bounded painting. Preserve both branches' history.
+  820coverage/47SKIPPED,27camera/geometry/types and main-based52audit PASS before
+  final shader delta; actual12bar32×16/4px and0ground-pick errors PASS.
+  Initial import/shader/audit failures corrected, recorded in the
+  [owning result](docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+  Fresh absolute critique/currentCI/merge pending.
+
 ### Combat readability and reusable terrain
 
 - 2026-10-17, branch `codex/combat-readability`, local correction to
@@ -124,6 +136,80 @@ requests.
   map rendering, stronger research and independent critique. Existing owning
   wiki amended; primary WIP preserved, HUD writer isolated. Implementation and
   current acceptance NOT_RUN; previous scoped ACCEPT does not accept this cycle.
+
+### Match battle grid and figures to painted perspective
+
+- 2026-10-17, originating branch `codex/battle-camera-bounds`, merged:
+  [PR159](https://github.com/Vovanostm/warwrit/pull/159), reviewed6533ae7 →
+  main2285c85 with identical tree. Perspective field/figures, full-viewport map
+  bounds and connected height surface delivered. Full independent visual ACCEPT
+  (all7game/close2/2). CleanCI39006743444 SUCCESS:810unit/47SKIPPED,
+  10kstress/20determinism/100replay,14disposableDB,coverage/strict15-file audit.
+  Actual main5344:12figures/day-night/keys-drag-wheel/no void/ratio1.421176/
+  stablepositions/0navigationPOST; real defence200/1POST/nextactor PASS.
+  No canonical rules/protocol/migrations/deploy change; this closeout Markdown only.
+  [Merged result](docs/wiki/battlefield-test-maps.md#поставка-перспективы-и-границ-камеры-в-main--2026-10-17).
+
+- 2026-10-17, branch `codex/battle-camera-bounds`, local connected terrain:
+  full5b88278 visual review rejected separate hex plinths (integration1).
+  Shared-corner slopes now join canonical cell centres; ground/fill/grid/picking
+  share one surface. Removed obsolete walls/banks/level-plane seam picker.
+  Focused26/types/lint/format PASS;810coverage+47SKIPPED before seam-helper
+  extraction. Real editor0/1/2/crowded/day-night/4widths/165picks/hover-pin/0POST
+  PASS. Initial matrix/winding/audit failures fixed; strict15-file audit PASS.
+  Full same-critic absolute visual ACCEPT(all7game/close2/2); new CI/merge pending.
+  [Owning result](docs/wiki/battlefield-test-maps.md#связная-поверхность-вместо-отдельных-тумб--2026-10-17).
+
+- 2026-10-17, branch `codex/battle-camera-bounds`, local height correction:
+  top UV now lifts its ground footprint; continuous earth-side UV/vertex shade
+  replaces repeated dark strips. Shared display height0.28 keeps tops, figures,
+  grid and picking aligned; canonical height/rules unchanged. Focused27/types/
+  lint/format/coverage811+47SKIPPED/audit14files PASS. Real editor0/1/2 archers,
+  165ground hits/body hover-pin/0POST PASS. Earlier numeric expectation failed,
+  corrected. Full current visual/new-head CI/merge pending; prior874dc2f CI SUCCESS.
+  [Owning result](docs/wiki/battlefield-test-maps.md#читаемая-высота-и-непрерывная-земля--2026-10-17).
+
+- 2026-10-17, branch `codex/battle-camera-bounds`, local technique correction:
+  repeat visual integration1 rejected the wire lip. Real non-pickable earth
+  banks now show exposed height volume; original canonical top/vertical pick
+  faces retained. Hex-mesh geometry regression covers default/banked variants.
+  Prior close comparison accidentally upscaled a game crop; replaced by native
+  minZoom229px crop/reference-downscale evidence.22focused/types/lint/
+  coverage811+47SKIPPED/audit PASS. Same-critic full repeat/new-head CI/merge
+  pending; CI38997076787 SUCCESS covers intermediate132156b, not this geometry.
+
+- 2026-10-17, branch `codex/battle-camera-bounds`, local review correction:
+  CI38991283029 SUCCESS on1907d8c; full visual REJECT exposed weak height
+  boundary/oversized hard contact ovals. Actual height transform confirmed;
+  exposed upper-lip ink/stronger earth sides and compact vertex-alpha contact
+  wash improve ground integration. No canonical height/rule/picking changes.
+  Web types/lint/coverage811+47SKIPPED/audit PASS; full same-critic repeat and
+  new-head clean CI/merge pending. Prior critic timed out/incomplete, not PASS.
+
+- 2026-10-17, branch `codex/battle-camera-bounds`, local: owner reported the
+  orthographic grid/figures against a perspective background. Fixed pinhole
+  reference plus off-axis pan/zoom now governs field and figures; projected
+  raised-ground UV/wheel anchors preserve registration, map bounds retained.
+  GitHub Three.js/Babylon/fSpy mechanisms inspected; no dependency added.
+  Camera18/web types/lint/coverage811+47SKIPPED/strict audit PASS.
+  Actual4sizes/day-night/pan-zoom registration/165ground hits/body inspection
+  with0POST PASS; independent visual/current-head clean CI/merge pending.
+  Prior PR159 bb55f5b CI SUCCESS covers only the superseded bounds candidate.
+  [Owning research/result](docs/wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
+
+### Confine the battle camera to the painted map
+
+- 2026-10-16, branch `codex/battle-camera-bounds`, local: owner requested
+  removal of black space beyond the battle map and authorized review/merge.
+  Optional shared camera bounds constrain the whole viewport through keys,
+  drag, zoom, fit and resize; sprite scene supplies actual projected backdrop
+  edges. Other camera consumers retain existing behaviour. Camera15, web
+  types/lint, coverage808+47SKIPPED and strict changed-file audit PASS.
+  Initial typecheck prerequisite/test typing failures fixed; actual browser
+  4desktop sizes/day-night/keys-drag-wheel-resize/0POST/stableunits PASS.
+  Author source review no concrete findings; independent visual/clean PR CI/merge
+  pending. No domain, protocol or migration changes.
+  [Owning result](docs/wiki/battlefield-test-maps.md#ограничение-камеры-областью-карты--2026-10-16).
 
 ### Live initiative queue and reduced combat HUD
 

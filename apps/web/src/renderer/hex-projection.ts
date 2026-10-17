@@ -1,5 +1,7 @@
 /** Pointy-top axial grid; adjacent centres are one world unit apart. */
 export const HEX_RADIUS = 1 / Math.sqrt(3);
+/** Visible terrain rise per canonical height level; shared by tops, figures, grid and picking. */
+export const BATTLE_HEIGHT_STEP = 0.28;
 
 export function hexToWorld(
   q: number,

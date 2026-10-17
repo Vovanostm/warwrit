@@ -17,32 +17,17 @@ import fireCrescentUrl from '../../../../assets/art/combat/readable-terrain-2026
 import fireStubsUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/fire-stubs.png';
 import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/earth-ink.png';
 import { BATTLE_ART } from '../renderer/art.js';
-import { createHexDisc } from '../renderer/hex-mesh.js';
-import { createBattleTerrainBanks } from './battle-terrain-banks.js';
-import { createBattleTerrainMargin } from './battle-terrain-margin.js';
+import {
+  createBattleSurface,
+  createBattleTerrain as createTerrainMap,
+  type BattleTerrainCell,
+} from '../renderer/battle-terrain.js';
 import { naturalTextureShader } from '../renderer/terrain-material.js';
 import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { BATTLE_HEX_RADIUS, BATTLE_LAYOUT, battleHexToWorld } from './battle-layout.js';
 
-const NEIGHBOURS = [
-  [0, 1],
-  [-1, 1],
-  [-1, 0],
-  [0, -1],
-  [1, -1],
-  [1, 0],
-] as const;
 const GROUND_TEXTURE_WORLD_SIZE = 3.2;
 const key = ({ q, r }: CombatLabHex) => `${q},${r}`;
-
-const ALPHA_OPTIONS = {
-  opaque: { attributes: ['position', 'uv'], defines: [], needAlphaBlending: false },
-  feather: {
-    attributes: ['position', 'uv', 'color'],
-    defines: ['#define FIELD_FEATHER'],
-    needAlphaBlending: true,
-  },
-};
 
 type Palette = { readonly day: Color3; readonly night: Color3 };
 
@@ -52,7 +37,7 @@ function groundMaterial(
   palette: Palette,
   surface: 'plain' | 'mud' | 'fire' | 'blocked',
   scene: Scene,
-  alpha: keyof typeof ALPHA_OPTIONS = 'opaque',
+  earthTexture: Texture,
 ): ShaderMaterial {
   const result = new ShaderMaterial(
     name,
@@ -60,44 +45,43 @@ function groundMaterial(
     {
       vertexSource: `precision highp float;
         attribute vec3 position; attribute vec2 uv;
-        uniform mat4 worldViewProjection; varying vec2 groundUv;
-        #ifdef FIELD_FEATHER
-          attribute vec4 color; varying float opacity;
-        #endif
-        void main(){
-          groundUv=uv;
-          #ifdef FIELD_FEATHER
-            opacity=color.a;
-          #endif
-          gl_Position=worldViewProjection*vec4(position,1.0);
-        }`,
+        uniform mat4 worldViewProjection; varying vec2 groundUv,cellPoint;
+        void main(){ groundUv=uv; cellPoint=position.xz; gl_Position=worldViewProjection*vec4(position,1.0); }`,
       fragmentSource: `precision highp float;
-        varying vec2 groundUv; uniform sampler2D terrainMap;
-        uniform vec3 tint,lighting; uniform float detailScale;
-        #ifdef FIELD_FEATHER
-          varying float opacity;
-        #endif
+        varying vec2 groundUv,cellPoint; uniform sampler2D terrainMap,earthMap;
+        uniform vec3 tint,lighting,earthTint; uniform float detailScale,blendSurface;
         ${naturalTextureShader}
         void main(){
           vec2 worldUv=groundUv*detailScale;
           // Two independent world scales break repeated motifs without stretching ink marks.
           vec3 color=mix(naturalTile(terrainMap,worldUv),
             naturalTile(terrainMap,worldUv*0.61+vec2(19.7,6.4)),0.38);
-          float alpha=1.0;
-          #ifdef FIELD_FEATHER
-            alpha=opacity*smoothstep(0.05,0.55,opacity+(landNoise(worldUv*8.0)-0.5)*0.22);
-          #endif
-          gl_FragColor=vec4(pow(max(color*tint*lighting,vec3(0.0)),vec3(1.0/2.2)),alpha);
+          // Terrain patches have ragged soil transitions; the optional grid owns exact cell edges.
+          vec2 point=abs(cellPoint);
+          float edge=max(point.x,point.x*0.5+point.y*0.8660254)/${BATTLE_LAYOUT.spacing / 2};
+          float coverage=(1.0-smoothstep(0.60,1.05,edge+(landNoise(groundUv*9.0)-0.5)*0.28))*(1.0-smoothstep(0.95,1.0,edge))*blendSurface;
+          vec2 earthUv=groundUv*1.2;
+          vec3 earth=mix(naturalTile(earthMap,earthUv),naturalTile(earthMap,earthUv*0.61+vec2(19.7,6.4)),0.38);
+          color=mix(earth*earthTint,color*tint,coverage);
+          gl_FragColor=vec4(pow(max(color*lighting,vec3(0.0)),vec3(1.0/2.2)),1.0);
         }`,
     },
     {
-      ...ALPHA_OPTIONS[alpha],
-      uniforms: ['worldViewProjection', 'tint', 'lighting', 'detailScale'],
-      samplers: ['terrainMap'],
+      attributes: ['position', 'uv'],
+      uniforms: [
+        'worldViewProjection',
+        'tint',
+        'lighting',
+        'detailScale',
+        'earthTint',
+        'blendSurface',
+      ],
+      samplers: ['terrainMap', 'earthMap'],
     },
   );
-  result.disableDepthWrite = alpha === 'feather';
   result.setTexture('terrainMap', texture);
+  result.setTexture('earthMap', earthTexture);
+  result.setFloat('blendSurface', surface === 'plain' ? 0 : 1);
   result.setColor3('tint', palette.day);
   result.setColor3('lighting', Color3.White());
   result.setFloat('detailScale', surface === 'mud' ? 1.8 : 1.2);
@@ -173,12 +157,16 @@ function addScorch(
   mesh.metadata = { combatHex: { q: hex.q, r: hex.r } };
 }
 
-export function createBattleTerrain(
+export function mountBattleTerrain(
   scene: Scene,
   tiles: readonly CombatLabTile[],
   initialNight: boolean,
-): { setNight(night: boolean): void } {
-  const tileByKey = new Map(tiles.map((tile) => [key(tile), tile]));
+): {
+  readonly apron: Mesh;
+  readonly terrainByHex: ReadonlyMap<string, BattleTerrainCell>;
+  setNight(night: boolean): void;
+} {
+  const terrainByHex = createTerrainMap(tiles, BATTLE_LAYOUT);
   const textures = new Map<string, Texture>();
   const dirtTexture = textureFor(dirt, scene, textures);
   const mudTexture = textureFor(mudUrl, scene, textures);
@@ -195,37 +183,48 @@ export function createBattleTerrain(
       palettes.plain,
       'plain',
       scene,
+      dirtTexture,
     ),
-    mud: groundMaterial('battle-ground:mud-puddles', mudTexture, palettes.mud, 'mud', scene),
-    fire: groundMaterial('battle-ground:charred-earth', dirtTexture, palettes.fire, 'fire', scene),
+    mud: groundMaterial(
+      'battle-ground:mud-puddles',
+      mudTexture,
+      palettes.mud,
+      'mud',
+      scene,
+      dirtTexture,
+    ),
+    fire: groundMaterial(
+      'battle-ground:charred-earth',
+      dirtTexture,
+      palettes.fire,
+      'fire',
+      scene,
+      dirtTexture,
+    ),
     blocked: groundMaterial(
       'battle-ground:rubble-earth',
       dirtTexture,
       palettes.blocked,
       'blocked',
       scene,
+      dirtTexture,
     ),
   };
-  const marginMaterial = groundMaterial(
-    'battle-ground:irregular-earth-margin',
-    dirtTexture,
-    palettes.plain,
-    'plain',
-    scene,
-    'feather',
-  );
-  createBattleTerrainMargin(scene, tiles, GROUND_TEXTURE_WORLD_SIZE).material = marginMaterial;
-  const exposedEarthPalette = {
-    day: new Color3(0.48, 0.4, 0.31),
-    night: new Color3(0.37, 0.39, 0.41),
-  };
-  const exposedEarthMaterial = groundMaterial(
-    'battle-ground:exposed-earth-sides',
-    dirtTexture,
-    exposedEarthPalette,
-    'plain',
+  const centres = tiles.map(battleHexToWorld);
+  const minX = Math.min(0, ...centres.map(({ x }) => x)) - BATTLE_HEX_RADIUS;
+  const maxX = Math.max(0, ...centres.map(({ x }) => x)) + BATTLE_HEX_RADIUS;
+  const minZ = Math.min(0, ...centres.map(({ z }) => z)) - BATTLE_HEX_RADIUS;
+  const maxZ = Math.max(0, ...centres.map(({ z }) => z)) + BATTLE_HEX_RADIUS;
+  const apron = MeshBuilder.CreateGround(
+    'battle-ground:painted-world-apron',
+    { width: maxX - minX + 24, height: maxZ - minZ + 24 },
     scene,
   );
+  apron.position.set((minX + maxX) / 2, -0.04, (minZ + maxZ) / 2);
+  apron.material = groundMaterials.plain;
+  apron.isPickable = false;
+  apron.renderingGroupId = 0;
+  setContinuousGroundUv(apron);
   const scorchMaterial = new StandardMaterial('battle-ground:charred-scorch', scene);
   scorchMaterial.disableLighting = true;
   scorchMaterial.diffuseColor = new Color3(0.14, 0.12, 0.11);
@@ -256,33 +255,13 @@ export function createBattleTerrain(
     const tileKey = key(tile);
     const point = battleHexToWorld(tile);
     const groundY = tile.height * BATTLE_LAYOUT.heightStep;
-    const ground = createHexDisc(`ground:${tileKey}`, BATTLE_HEX_RADIUS, scene);
-    ground.position.set(point.x, groundY, point.z);
+    const cell = terrainByHex.get(tileKey)!;
+    const ground = createBattleSurface(`ground:${tileKey}`, cell, scene);
     ground.material = groundMaterials[terrainSurface(tile)];
     ground.isPickable = true;
     ground.renderingGroupId = 0;
     ground.metadata = { combatHex: { q: tile.q, r: tile.r } };
     setContinuousGroundUv(ground);
-
-    const lowerHeights = NEIGHBOURS.map(([dq, dr]) => {
-      const neighbour = tileByKey.get(key({ q: tile.q + dq, r: tile.r + dr }));
-      return (neighbour?.height ?? 0) * BATTLE_LAYOUT.heightStep;
-    });
-    if (lowerHeights.some((height) => height < groundY)) {
-      const sides = createBattleTerrainBanks(
-        `ground-side:${tileKey}`,
-        BATTLE_HEX_RADIUS,
-        groundY,
-        lowerHeights,
-        scene,
-      );
-      sides.position.set(point.x, 0, point.z);
-      setContinuousGroundUv(sides);
-      sides.material = exposedEarthMaterial;
-      sides.isPickable = false;
-      sides.renderingGroupId = 0;
-      sides.metadata = ground.metadata;
-    }
 
     if (tile.blocked) {
       const rubbleSize = 1.1;
@@ -356,15 +335,12 @@ export function createBattleTerrain(
     const light = lightByPhase[phase];
     for (const surface of Object.keys(groundMaterials) as (keyof typeof groundMaterials)[]) {
       groundMaterials[surface].setColor3('tint', palettes[surface][phase]);
+      groundMaterials[surface].setColor3('earthTint', palettes.plain[phase]);
       groundMaterials[surface].setColor3('lighting', light.terrain);
     }
-    marginMaterial.setColor3('tint', palettes.plain[phase]);
-    marginMaterial.setColor3('lighting', light.terrain);
-    exposedEarthMaterial.setColor3('tint', exposedEarthPalette[phase]);
-    exposedEarthMaterial.setColor3('lighting', light.terrain);
     rubbleMaterial.emissiveColor = light.rubble;
     for (const material of emberMaterials) material.emissiveColor = light.embers;
   };
   setNight(initialNight);
-  return { setNight };
+  return { apron, terrainByHex, setNight };
 }

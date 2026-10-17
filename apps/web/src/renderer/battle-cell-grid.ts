@@ -9,8 +9,7 @@ import {
   type Scene,
 } from '@babylonjs/core';
 import type { CombatLabHex } from '@warwrit/protocol';
-import { HEX_RADIUS, hexToWorld } from './hex-projection.js';
-import { createHexDisc } from './hex-mesh.js';
+import { createBattleSurface, type BattleTerrainCell } from './battle-terrain.js';
 
 type GridTile = CombatLabHex & { readonly height: number };
 export interface BattleCellStyle {
@@ -23,14 +22,11 @@ export interface BattleCellStyle {
 export function createBattleCellGrid(
   scene: Scene,
   tiles: readonly GridTile[],
-  layout = { spacing: 1, heightStep: 0.12 },
+  terrain: ReadonlyMap<string, BattleTerrainCell>,
 ) {
   const key = (hex: CombatLabHex) => `${hex.q},${hex.r}`;
   const fills = new Map<string, Mesh>();
-  const edges = new Map<
-    string,
-    { cells: string[]; start: Vector3; end: Vector3; height: number }
-  >();
+  const edges = new Map<string, { cells: string[]; start: Vector3; end: Vector3 }>();
   const neighbours = [
     [0, 1],
     [-1, 1],
@@ -41,9 +37,8 @@ export function createBattleCellGrid(
   ] as const;
   for (const tile of tiles) {
     const cellKey = key(tile);
-    const { x, z } = hexToWorld(tile.q, tile.r, layout.spacing);
-    const fill = createHexDisc(`cell-fill:${cellKey}`, HEX_RADIUS * layout.spacing, scene);
-    fill.position.set(x, tile.height * layout.heightStep + 0.025, z);
+    const surface = terrain.get(cellKey)!;
+    const fill = createBattleSurface(`cell-fill:${cellKey}`, surface, scene, 0.025);
     fill.isPickable = false;
     fill.renderingGroupId = 0;
     fill.alphaIndex = 1;
@@ -52,30 +47,16 @@ export function createBattleCellGrid(
     for (let side = 0; side < 6; side++) {
       const [dq, dr] = neighbours[side]!;
       const neighbourKey = key({ q: tile.q + dq, r: tile.r + dr });
-      // A step has one grid rim on its upper surface, not a second line at its foot.
       const edgeKey = [cellKey, neighbourKey].sort().join('|');
-      const angle = (side * Math.PI) / 3 + Math.PI / 6;
-      const corner = (a: number) =>
-        new Vector3(
-          x + Math.cos(a) * HEX_RADIUS * layout.spacing,
-          tile.height * layout.heightStep + 0.045,
-          z + Math.sin(a) * HEX_RADIUS * layout.spacing,
-        );
       const existing = edges.get(edgeKey);
       if (existing) {
         existing.cells.push(cellKey);
-        if (tile.height > existing.height) {
-          existing.start = corner(angle);
-          existing.end = corner(angle + Math.PI / 3);
-          existing.height = tile.height;
-        }
         continue;
       }
       edges.set(edgeKey, {
         cells: [cellKey],
-        start: corner(angle),
-        end: corner(angle + Math.PI / 3),
-        height: tile.height,
+        start: surface.corners[side]!.add(new Vector3(0, 0.045, 0)),
+        end: surface.corners[(side + 1) % 6]!.add(new Vector3(0, 0.045, 0)),
       });
     }
   }

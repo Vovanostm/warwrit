@@ -9,7 +9,8 @@ import {
   type Mesh,
 } from '@babylonjs/core';
 import { expect, it } from 'vitest';
-import { createHexBorder, createHexDisc, createHexSides } from './hex-mesh.js';
+import { createHexBorder, createHexDisc } from './hex-mesh.js';
+import { createBattleTerrain, createBattleSurface } from './battle-terrain.js';
 import { createBattleCellGrid, type BattleCellStyle } from './battle-cell-grid.js';
 import { HEX_RADIUS, hexToWorld, worldToHex } from './hex-projection.js';
 
@@ -64,36 +65,98 @@ it('tiles all six neighbours edge-to-edge and aligns the visible border with pic
   }
 });
 
-it('grounds raised tops and closes exposed step faces without changing hex corners', () => {
+it('joins raised earth continuously while preserving centre heights and actual surface picks', () => {
   const engine = new NullEngine();
   const scene = new Scene(engine);
   try {
-    const top = createHexDisc('ground:0,0', HEX_RADIUS, scene);
-    top.position.y = 0.24;
-    top.metadata = { combatHex: { q: 0, r: 0 } };
-    const sides = createHexSides('ground-side:0,0', HEX_RADIUS, 0.24, [0.12, 0, 0, 0, 0, 0], scene);
-    const material = new StandardMaterial('step', scene);
-    material.backFaceCulling = false;
-    sides.material = material;
-    sides.metadata = top.metadata;
-    const vertices = worldVertices(sides);
-    const corners = worldVertices(top).slice(1, 7);
-    expect(
-      vertices
-        .filter((point) => Math.abs(point.y - 0.24) < 1e-6)
-        .every((point) => corners.some((corner) => Vector3.Distance(point, corner) < 1e-6)),
-    ).toBe(true);
-    // The first face borders a level-one neighbour; do not extend that face below it.
-    expect(vertices.slice(0, 4).map((point) => point.y)).toEqual([0.12, 0.12, 0.24, 0.24]);
-    // Front step strip has real geometry and selects its upper cell, not remote level zero.
-    const ray = new Ray(new Vector3(0, 0.12, -2), new Vector3(0, 0, 1));
-    const hit = scene.pickWithRay(ray, (mesh) => mesh.name.startsWith('ground'));
-    expect(hit?.hit).toBe(true);
-    expect(hit?.pickedMesh).toBe(sides);
-    expect(hit?.pickedMesh?.metadata.combatHex).toEqual({ q: 0, r: 0 });
-    expect(scene.pickWithRay(new Ray(new Vector3(1, 0.12, -2), new Vector3(0, 0, 1)))?.hit).toBe(
-      false,
+    const tiles = [
+      { q: 0, r: 0, height: 2 },
+      { q: 1, r: 0, height: 0 },
+      { q: 0, r: 1, height: 0 },
+      { q: -1, r: 1, height: 0 },
+      { q: -1, r: 0, height: 0 },
+      { q: 0, r: -1, height: 0 },
+      { q: 1, r: -1, height: 0 },
+    ];
+    const terrain = createBattleTerrain(tiles);
+    for (const [key, cell] of terrain) createBattleSurface(`ground:${key}`, cell, scene);
+    const raised = terrain.get('0,0')!,
+      lower = terrain.get('1,0')!;
+    const shared = raised.corners.filter((a) =>
+      lower.corners.some((b) => Vector3.Distance(a, b) < 1e-6),
     );
+    expect(shared).toHaveLength(2);
+    expect(shared.every((p) => Math.abs(p.y - 0.56 / 3) < 1e-6)).toBe(true);
+    const pick = (x: number, z: number) =>
+      scene.pickWithRay(new Ray(new Vector3(x, 2, z), new Vector3(0, -1, 0)));
+    expect(pick(0, 0)?.pickedPoint?.y).toBeCloseTo(0.56);
+    expect(pick(0.05, 0)?.pickedPoint?.y).toBeCloseTo(0.56);
+    expect(pick(1, 0)?.pickedPoint?.y).toBeCloseTo(0);
+    expect(pick(0.49999, 0)?.pickedMesh?.name).toBe('ground:0,0');
+    expect(pick(0.50001, 0)?.pickedMesh?.name).toBe('ground:1,0');
+    expect(pick(0.49999, 0)?.pickedPoint?.y).toBeCloseTo(0.56 / 3, 4);
+    expect(pick(0.50001, 0)?.pickedPoint?.y).toBeCloseTo(0.56 / 3, 4);
+    expect(pick(3, 0)?.hit).toBe(false);
+    createBattleCellGrid(scene, tiles, terrain);
+    const fill = scene.getMeshByName('cell-fill:0,0') as Mesh;
+    const ground = scene.getMeshByName('ground:0,0') as Mesh;
+    expect(
+      ground
+        .getVerticesData('normal')!
+        .filter((_, i) => i % 3 === 1)
+        .every((y) => y > 0),
+    ).toBe(true);
+    const top = worldVertices(ground),
+      overlay = worldVertices(fill);
+    expect(
+      top.every(
+        (point, i) => Vector3.Distance(point.add(new Vector3(0, 0.025, 0)), overlay[i]!) < 1e-6,
+      ),
+    ).toBe(true);
+  } finally {
+    scene.dispose();
+    engine.dispose();
+  }
+});
+
+it('scales connected terrain layout while keeping surface texture UVs normalized', () => {
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  try {
+    const tiles = [
+      { q: 0, r: 0, height: 2 },
+      { q: 1, r: 0, height: 0 },
+      { q: 0, r: 1, height: 0 },
+      { q: -1, r: 1, height: 0 },
+      { q: -1, r: 0, height: 0 },
+      { q: 0, r: -1, height: 0 },
+      { q: 1, r: -1, height: 0 },
+    ];
+    const unit = createBattleTerrain(tiles);
+    const spaced = createBattleTerrain(tiles, { spacing: 2.6, heightStep: 0.28 });
+    const raised = spaced.get('0,0')!;
+    const lower = spaced.get('1,0')!;
+    expect(raised.centre.x).toBeCloseTo(0, 8);
+    expect(raised.centre.y).toBeCloseTo(0.56, 8);
+    expect(lower.centre.x).toBeCloseTo(2.6, 8);
+    const shared = raised.corners.filter((a) =>
+      lower.corners.some((b) => Vector3.Distance(a, b) < 1e-6),
+    );
+    expect(shared).toHaveLength(2);
+    expect(shared.every((point) => Math.abs(point.y - 0.56 / 3) < 1e-6)).toBe(true);
+
+    const unitMesh = createBattleSurface('unit-surface', unit.get('0,0')!, scene);
+    const spacedMesh = createBattleSurface('spaced-surface', raised, scene);
+    const unitUvs = unitMesh.getVerticesData(VertexBuffer.UVKind)!;
+    const spacedUvs = spacedMesh.getVerticesData(VertexBuffer.UVKind)!;
+    expect(spacedUvs).toHaveLength(unitUvs.length);
+    spacedUvs.forEach((uv, index) => expect(uv).toBeCloseTo(unitUvs[index]!, 6));
+    const radius = Math.max(
+      ...raised.corners.map((corner) =>
+        Math.hypot(corner.x - raised.centre.x, corner.z - raised.centre.z),
+      ),
+    );
+    expect(radius).toBeCloseTo(HEX_RADIUS * 2.6, 8);
   } finally {
     scene.dispose();
     engine.dispose();
@@ -104,10 +167,11 @@ it('draws shared grid edges once and recolours fixed cell geometry instead of st
   const engine = new NullEngine();
   const scene = new Scene(engine);
   try {
-    const grid = createBattleCellGrid(scene, [
+    const tiles = [
       { q: 0, r: 0, height: 0 },
       { q: 1, r: 0, height: 0 },
-    ]);
+    ];
+    const grid = createBattleCellGrid(scene, tiles, createBattleTerrain(tiles));
     const borders = scene.getMeshByName('tactical-grid') as Mesh;
     expect(borders.getTotalVertices()).toBe(11 * 4);
     expect(scene.meshes.filter((mesh) => mesh.name.startsWith('cell-fill:'))).toHaveLength(2);
@@ -143,37 +207,42 @@ it('draws shared grid edges once and recolours fixed cell geometry instead of st
   }
 });
 
-it('draws one shared step rim at the higher surface regardless of tile order', () => {
+it('draws one connected height edge regardless of tile order', () => {
   const engine = new NullEngine();
   const scene = new Scene(engine);
   try {
-    createBattleCellGrid(scene, [
-      { q: 1, r: 0, height: 2 },
-      { q: 0, r: 0, height: 0 },
-    ]);
+    const tiles = [
+      { q: 0, r: 0, height: 2 },
+      { q: 1, r: 0, height: 0 },
+      { q: 0, r: 1, height: 0 },
+      { q: -1, r: 1, height: 0 },
+      { q: -1, r: 0, height: 0 },
+      { q: 0, r: -1, height: 0 },
+      { q: 1, r: -1, height: 0 },
+    ];
+    const terrain = createBattleTerrain(tiles);
+    createBattleCellGrid(scene, tiles, terrain);
     const borders = scene.getMeshByName('tactical-grid') as Mesh;
-    expect(borders.getTotalVertices()).toBe(11 * 4);
-    const levels = new Set(worldVertices(borders).map((point) => Number(point.y.toFixed(3))));
-    expect([...levels].sort()).toEqual([0.045, 0.285]);
-    const shared = borders.metadata.edgeCells.findIndex((cells: string[]) => cells.length === 2);
+    expect(borders.getTotalVertices()).toBe(30 * 4);
+    const shared = borders.metadata.edgeCells.findIndex(
+      (cells: string[]) => cells.includes('0,0') && cells.includes('1,0'),
+    );
     expect(
       worldVertices(borders)
         .slice(shared * 4, shared * 4 + 4)
-        .every((p) => p.y > 0.28),
+        .every((p) => Math.abs(p.y - (0.56 / 3 + 0.045)) < 1e-6),
     ).toBe(true);
     const second = new Scene(engine);
-    createBattleCellGrid(second, [
-      { q: 0, r: 0, height: 0 },
-      { q: 1, r: 0, height: 2 },
-    ]);
+    const reversed = tiles.toReversed();
+    createBattleCellGrid(second, reversed, createBattleTerrain(reversed));
     const reverse = second.getMeshByName('tactical-grid') as Mesh;
     const reverseShared = reverse.metadata.edgeCells.findIndex(
-      (cells: string[]) => cells.length === 2,
+      (cells: string[]) => cells.includes('0,0') && cells.includes('1,0'),
     );
     expect(
       worldVertices(reverse)
         .slice(reverseShared * 4, reverseShared * 4 + 4)
-        .every((p) => p.y > 0.28),
+        .every((p) => Math.abs(p.y - (0.56 / 3 + 0.045)) < 1e-6),
     ).toBe(true);
     second.dispose();
   } finally {

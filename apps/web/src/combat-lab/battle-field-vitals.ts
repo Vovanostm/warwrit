@@ -2,6 +2,7 @@ import {
   Color3,
   DynamicTexture,
   MeshBuilder,
+  Matrix,
   StandardMaterial,
   Vector3,
   type Scene,
@@ -79,9 +80,20 @@ export function mountBattleFieldVitals(canvas: HTMLCanvasElement, scene: Scene) 
   };
   const strips = new Map<string, ReturnType<typeof makeStrip>>();
   const observer = scene.onBeforeCameraRenderObservable.add((camera) => {
-    const worldPerPixel = ((camera.orthoTop ?? 7) * 2) / Math.max(canvas.clientHeight, 1);
+    const viewport = camera.viewport.toGlobal(
+      scene.getEngine().getRenderWidth(),
+      scene.getEngine().getRenderHeight(),
+    );
     for (const [id, { mesh, source }] of strips) {
       const foot = source.metadata.combatFoot as Vector3;
+      const screen = (point: Vector3) =>
+        Vector3.Project(point, Matrix.Identity(), scene.getTransformMatrix(), viewport);
+      const base = screen(foot),
+        above = screen(foot.add(UP));
+      const pixelsPerWorld =
+        (Math.hypot(above.x - base.x, above.y - base.y) * canvas.clientHeight) /
+        scene.getEngine().getRenderHeight();
+      const worldPerPixel = 1 / pixelsPerWorld;
       mesh.position.copyFrom(foot.subtract(UP.scale((HEIGHT / 2 + 4) * worldPerPixel)));
       mesh.scaling.set(WIDTH * worldPerPixel, HEIGHT * worldPerPixel, 1);
       mesh.metadata = { combatUnitId: id, combatFoot: foot };
