@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+- 2026-10-17, branch `codex/combat-readability`, local documentation update at
+  owner request: record completed d185b71 full visual REJECT (all21images and
+  both references; game2/2/1/2/2/2/1, close3/3/1/2/2/2/1) in the existing
+  battlefield wiki, index, log and CURRENT_PLAN. Night improves to2; ground
+  composition/material language and visible elevations remain blockers requiring
+  a technique change. Separate disputed target-occlusion observation from
+  confirmed findings. Record normal61-file audit PASS, live draft PR160 head
+  793ebd3/maina934355 and unexecuted current-head CI/publication/merge.
+  Documentation-only diff/format/local-link readback; game tests NOT_RUN for
+  this edit. Earlier results retained.
+  [Current result](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+
 - 2026-10-17, branch `codex/combat-readability`, local correction after full
   793ebd3 visual REJECT (game2/2/1/1/2/2/1,close3/3/1/1/2/2/1) despite clean
   CI39034184313 SUCCESS. Add an original full-field ground plate/provenance,
@@ -24,7 +36,8 @@ requests.
   height captures/scoped types/lint/content112/real combat/terminal/restart/
   shared-outline cache lifecycle and clean reload PASS. Focused16 PASS after
   isolated repeat of an initial concurrent browser-load timeout; limits
-  unchanged. Full visual review running; CI/publication/merge pending. Refresh owner-requested wiki/index/log/current plan with
+  unchanged. Full visual review was running at this commit (completed REJECT
+  in the dated correction above); CI/publication/merge pending. Refresh owner-requested wiki/index/log/current plan with
   actual CI and scored rejection; preserve earlier failures and asset limits.
   [Result and technique](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
 

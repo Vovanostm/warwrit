@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-**Combat readability — 2026-10-17, LOCAL / FULL-FIELD CORRECTION:**
+**Combat readability — 2026-10-17, LOCAL d185b71 / FULL VISUAL REJECT:**
 [PR160](https://github.com/Vovanostm/warwrit/pull/160) remains draft and unmerged.
 Published head793ebd3 passed cleanCI39034184313:820unit/47skipped,10kstress,
 20determinism/100replay,14DB,coverage and57-file audit (8inherited excluded).
@@ -20,8 +20,16 @@ inspection/navigation/extremes/explicit0-1-2 captures PASS. Types/lint PASS;
 actual move4→5/poolsR3rev55/terminalR8rev152/restart12 and shared-outline
 remove/readd/disposal probe PASS. Clean reload0renderer errors/warnings;
 content112 and16focused PASS (initial concurrent timeout, isolated repeat
-2.78s PASS without changed limits). Full current visual review running.
-Current-head CI/publication pending.
+2.78s PASS without changed limits). Normal main-based61-file precommit audit
+PASS (8inherited excluded, no bypass). Full current visual review completed:
+all21images+2references, REJECT game2/2/1/2/2/2/1, close3/3/1/2/2/2/1;
+motionN/A, criticowninputNOT_RUN. Night improved to2; geometric paving,
+fine uniform soil, mill/field join and visually flat0/1/2 remain blockers.
+Claimed inspected-target dock occlusion is disputed: selected central beast
+is fully visible in max-zoom-day; lower occluded creatures are other units.
+Do not alter deliberate navigation from that unsupported claim.
+Repeated rendering/integration1 requires a technique change, then full re-review.
+Current-head CI/publication NOT_RUN; live PR head793ebd3, maina934355.
 Owner-authorized expected-head merge and main journey remain unexecuted.
 Parent owns source/wiki/PR160 integration; unrelated primary WIP preserved.
 [Owning result](../wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
