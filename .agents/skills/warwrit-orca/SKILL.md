@@ -23,6 +23,11 @@ separate fork for the Arcadia/arc checkout and never manages Warwrit.
   right before merge.
 - **Merge only with `agent:merge-approved`** on the PR, set by the owner; one PR
   at a time, expected head SHA. Without it, stop at `agent:pr`.
+- **Ownership is resolved by the coordinator first.** Apply `ownership_rules`
+  in the slice plan: tests of owned modules belong to the slice; a file no
+  active slice owns may be added (comment it on the issue); a file owned by an
+  active slice is handled by sequencing (`after`). Only what sequencing cannot
+  solve, or a product/rule question, becomes `agent:needs-owner`.
 - **Capacity:** ≤ 5 slices in `planning`/`implementing`/`review` at once;
   `orca-validate.sh` and PR CI one slice at a time.
 

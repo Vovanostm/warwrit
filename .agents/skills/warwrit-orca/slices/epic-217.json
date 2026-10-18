@@ -45,19 +45,29 @@
       "issues": [209, 211, 210],
       "ownership": [
         "apps/web/src/combat-lab/BattleOutcome.tsx",
-        "apps/web/src/combat-lab/BattleView.tsx (result panel and utilities only)",
-        "apps/web/src/combat-lab/battle-view.css (result styles)"
-      ]
+        "apps/web/src/combat-lab/BattleView.tsx (result panel and utilities)",
+        "apps/web/src/combat-lab/battle-view.css (result styles)",
+        "apps/web/src/combat-lab/CombatLab.tsx (autoplay utilities and terminal-state conditions only)",
+        "apps/web/src/combat-lab/BattleView.test.tsx",
+        "apps/web/src/combat-lab/controller.test.ts"
+      ],
+      "note": "#210 shows names as projected today; unique names arrive with #207 without extra work here."
     },
     {
-      "wave": 1,
-      "slice": "uix-w1-log",
+      "wave": 2,
+      "slice": "uix-w2-log",
       "issues": [206, 204],
       "ownership": [
         "apps/web/src/combat-lab/BattleLog.tsx",
         "apps/web/src/combat-lab/battle-hud-format.ts",
-        "apps/web/src/combat-lab/CombatLab.tsx (battle menu only)"
-      ]
+        "apps/web/src/combat-lab/CombatLab.tsx (battle menu)",
+        "apps/web/src/combat-lab/battle-view.css (log panel)",
+        "apps/web/src/combat-lab/battle-controls.css (dock offsets for the log only)",
+        "apps/server/src/combat-lab/projection.ts and packages/protocol/src/combat-lab.ts (additive morale before/after event facts for #204)",
+        "matching *.test.ts(x) files"
+      ],
+      "after": ["uix-w1-projection", "uix-w1-outcome", "uix-w1-desk"],
+      "note": "Runs after projection, outcome and desk merge so CombatLab.tsx, battle-view.css and battle-controls.css have one writer at a time. Additive event facts must stay replay-compatible."
     },
     {
       "wave": 2,
@@ -182,5 +192,10 @@
         "apps/web/src/combat-lab/unit-vitals.css"
       ]
     }
+  ],
+  "ownership_rules": [
+    "A slice owns the *.test.ts(x) files of the modules it owns.",
+    "The coordinator may extend a slice's ownership to a file no active slice owns; record it on the issue. A file owned by an active slice is resolved by sequencing with `after`, not by a second writer.",
+    "Only conflicts that sequencing cannot resolve, or product/rule questions, go to agent:needs-owner."
   ]
 }
