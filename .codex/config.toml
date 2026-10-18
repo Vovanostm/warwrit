@@ -26,3 +26,15 @@ config_file = "agents/warwrit_text_critic.toml"
 [agents.warwrit_orchestrator]
 description = "Read-only Warwrit orchestration and evidence-contract checker for a bounded batch."
 config_file = "agents/warwrit_orchestrator.toml"
+
+# Orca pipeline workers (2026-10-18). Organization MDM policy allows only
+# approval_policy untrusted/on-request and sandbox read-only/workspace-write,
+# so workers run sandboxed. Worktrees under ~/orca/workspaces/warwrit keep
+# their Git data in the primary checkout's .git; commits need it writable.
+[sandbox_workspace_write]
+network_access = true
+writable_roots = [
+  "/Users/vovanostm/learn/warwrit/.git",
+  "/Users/vovanostm/Library/pnpm",
+  "/Users/vovanostm/Library/Caches/ms-playwright",
+]

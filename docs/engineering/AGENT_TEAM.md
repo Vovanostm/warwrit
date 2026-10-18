@@ -173,9 +173,13 @@ readiness; `terminal send --interrupt` suspended a Codex process that then held
 non-ready terminals reached zsh (interrupted, no command ran, worktrees clean);
 the Claude Code auto-mode classifier refused coordinator-launched Codex with
 approvals/sandbox bypass, and a sandboxed Codex still asked for approvals.
-Prerequisites for the next wave: current Codex CLI on PATH, Orca's own Codex
-launcher (`worker-start --agent codex`) as the only launch path, and the
-owner's choice of worker permissions. Run `run_6c8d2ba11d09` tasks are blocked
+Organization MDM policy forbids Codex `never` approvals and full access, so
+Orca's YOLO launch flag is unusable; workers run sandboxed (`workspace-write`,
+`on-request` with the owner's `auto_review`) with the repository `.git`, pnpm
+store and Playwright cache writable via `.codex/config.toml`. Codex 0.163 is on
+PATH since 2026-10-18 (`~/.local/bin/codex` → Node 24.20 install). Prerequisites
+for the next wave: Orca Settings → Agents with YOLO off for Codex, Orca's own
+launcher (`worker-start --agent codex`) as the only launch path. Run `run_6c8d2ba11d09` tasks are blocked
 and superseded.
 
 Checks 2026-10-18: `orca-validate.sh` on this branch PASS (rebased, clean,

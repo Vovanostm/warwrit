@@ -83,6 +83,14 @@ Reuse the writer's terminal for its rework (`worker-start --task <rework>
 
 ## Known Orca pitfalls (2026-10-18)
 
+- Organization MDM policy (`/Library/Managed Preferences/com.openai.codex.plist`)
+  allows Codex approval policies `untrusted`/`on-request` and sandboxes
+  `read-only`/`workspace-write` only. Orca's YOLO default
+  (`--dangerously-bypass-approvals-and-sandbox`) is forbidden; workers run with
+  the owner's `on-request` + `auto_review` config inside `workspace-write`,
+  with the repository `.git`, pnpm store and Playwright cache writable
+  (`.codex/config.toml`). Do not pass `--ask-for-approval never`.
+
 - `terminal send --interrupt` suspends a Codex TUI (process state `T`) instead
   of interrupting it; a suspended Codex keeps `~/.codex/logs_2.sqlite` locked
   and every new Codex fails to start. Never interrupt agents; quit them.
