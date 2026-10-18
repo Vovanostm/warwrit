@@ -1,6 +1,16 @@
 # Warwrit current delivery plan
 
-**Orca parallel worktrees — 2026-10-18, LOCAL / PR PENDING:**
+**Orca issue pipeline — 2026-10-18, LOCAL / PR PENDING:**
+Owner: implement through Orca orchestration (plan, implement, review, test,
+docs, merge) with Codex workers. PR219 (Orca worktree setup) MERGED 0763bc4.
+Branch `claude/orca-issue-pipeline` adds the state machine skill, prompts,
+validate/state scripts and GitHub `agent:*` labels (created). First wave-1
+launch failed before any code change (Codex update prompt/lock, permission
+classifier); run_6c8d2ba11d09 blocked. Next: owner fixes Codex CLI/permissions,
+merge this PR, label wave 1 `agent:ready`, start the coordinator.
+[Owning section](AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18).
+
+**Orca parallel worktrees — 2026-10-18, MERGED (PR219, 0763bc4):**
 Owner asked to configure Orca for fast, correct parallel agent work. Branch
 `claude/orca-parallel-setup` adds orca.yaml hooks, .worktreeinclude, private
 combat-lab ports per worktree and the `warwrit-orca` coordinator skill
