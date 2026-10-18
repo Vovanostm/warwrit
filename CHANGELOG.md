@@ -19,8 +19,13 @@ requests.
   that audit and running it before each commit; `scripts/orca-validate.sh` runs
   the same audit. The skill records the owner's one-extra-recovery allowance for
   audit-only blockers and how a `needs-owner` slice resumes from its existing
-  worktree after an owner decision on #217. Paths:
-  `.agents/skills/warwrit-orca/` (SKILL.md, prompts), `scripts/orca-validate.sh`.
+  worktree after an owner decision on #217; decisions are #217 comments headed
+  `## Owner decision`, because owner and coordinator share one GitHub account.
+  The `--loop` mode of `scripts/orca-pipeline-tick.sh` now holds `caffeinate -i`,
+  counts its interval in wall-clock time (macOS `sleep` stalled the loop from
+  16:02 to 22:23 while the Mac slept) and ticks early when a worker reports.
+  Paths: `.agents/skills/warwrit-orca/` (SKILL.md, prompts),
+  `scripts/orca-validate.sh`, `scripts/orca-pipeline-tick.sh`.
 
 ### Let the pipeline coordinator resolve slice ownership
 

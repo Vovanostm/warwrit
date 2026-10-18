@@ -42,8 +42,10 @@ separate fork for the Arcadia/arc checkout and never manages Warwrit.
 ## Inputs
 
 - Slice plan: [`slices/epic-217.json`](slices/epic-217.json) — wave, slice name,
-  issues, ownership, `after` dependencies, notes. Owner decisions are in issue
-  #217 comments; only those count as decisions.
+  issues, ownership, `after` dependencies, notes. Owner decisions are #217
+  comments whose first line starts with `## Owner decision`; only those count.
+  The owner and the coordinator share one GitHub account, so the coordinator
+  never writes that heading.
 - Worker briefs: [`prompts/`](prompts/common.md). Fill `{{SLICE}}`, `{{ISSUES}}`
   (with titles), `{{OWNERSHIP}}`, `{{ROUND}}`, `{{FINDINGS}}`; always append
   `prompts/common.md`; add the slice `note`.
