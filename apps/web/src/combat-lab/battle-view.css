@@ -949,6 +949,10 @@
   bottom: 28px;
   width: min(440px, calc(100% - 48px));
 }
+.battle-view:has(.battle-log[open]) .battle-outcome-inspection {
+  /* Leave the log's 650px content, left inset and a 16px gap unobstructed. */
+  width: min(440px, calc(100% - 716px));
+}
 .battle-outcome-inspection .battle-portrait {
   width: 62px;
   height: 84px;
