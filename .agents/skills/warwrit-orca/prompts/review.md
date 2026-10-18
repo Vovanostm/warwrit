@@ -8,4 +8,4 @@ Findings are only: reproduced defects, unmet acceptance criteria, rule/privacy/
 replay violations, edits outside ownership {{OWNERSHIP}}, or missing proof.
 Each finding: file:line, counterexample, smallest fix. No style preferences.
 Write `.orca/{{SLICE}}/review-{{ROUND}}.md` starting with `VERDICT: ACCEPT` or
-`VERDICT: REWORK`. Report with `worker_done --report-path`.
+`VERDICT: REWORK`. Set `report_path` to that file in your final answer.

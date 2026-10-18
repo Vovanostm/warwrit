@@ -1,6 +1,14 @@
 # Warwrit current delivery plan
 
-**Orca issue pipeline — 2026-10-18, LOCAL / PR PENDING:**
+**Headless Orca pipeline — 2026-10-18, LOCAL / PR PENDING:**
+PR220 MERGED e001c25. Org MDM policy forbids Codex bypass/never-approval;
+Orca TUI Codex loses the foreground. Workers and coordinator now run
+`codex exec --approve-for-me` in plain Orca terminals with non-injected
+Dispatches; smoke commit + worker_done + orca/gh/push probe PASS. Next: merge,
+label wave 1 `agent:ready`, run `orca-pipeline-tick.sh --loop 20` in Orca.
+[Owning section](AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18).
+
+**Orca issue pipeline — 2026-10-18, MERGED (PR220, e001c25):**
 Owner: implement through Orca orchestration (plan, implement, review, test,
 docs, merge) with Codex workers. PR219 (Orca worktree setup) MERGED 0763bc4.
 Branch `claude/orca-issue-pipeline` adds the state machine skill, prompts,

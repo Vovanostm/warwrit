@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Warwrit pipeline worker result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["outcome", "summary", "files_modified", "report_path"],
+  "properties": {
+    "outcome": { "enum": ["succeeded", "failed"] },
+    "summary": {
+      "type": "string",
+      "description": "Three sentences: what was done, what was found, what remains."
+    },
+    "files_modified": { "type": "array", "items": { "type": "string" } },
+    "report_path": {
+      "type": "string",
+      "description": "Worktree-relative report path, or empty string."
+    }
+  }
+}
