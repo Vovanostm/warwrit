@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Headless Codex worker for the Orca issue pipeline. Runs `codex exec` with the
-# organization-allowed sandbox (workspace-write, approvals via automatic review)
+# organization-allowed mode: --approve-for-me = workspace-write sandbox with approvals via automatic review
 # and reports the result to the Orca Dispatch itself, so no TUI, prompt paste or
 # foreground race is involved.
 # Usage: scripts/orca-codex-worker.sh <task-id> <dispatch-id> <terminal-handle> <brief-file>
@@ -12,7 +12,7 @@ out="$root/.orca/runs/$task"
 mkdir -p "$out"
 schema="$root/.agents/skills/warwrit-orca/worker-result.schema.json"
 
-codex exec --approve-for-me --sandbox workspace-write -C "$root" \
+codex exec --approve-for-me -C "$root" \
   --add-dir "$common" --add-dir "$HOME/Library/pnpm" --add-dir "$HOME/Library/Caches/ms-playwright" \
   --output-schema "$schema" -o "$out/result.json" --json - < "$brief" \
   > "$out/events.jsonl" 2> "$out/stderr.log"
