@@ -6,6 +6,12 @@ Approved plan: `.orca/{{SLICE}}/plan.md` (+ accepted review notes).
 
 1. Implement the plan in small commits on this worktree's branch. Write the
    failing focused test first when a test is in the plan.
+   Before each commit refresh focused coverage
+   (`pnpm exec vitest related --run --coverage --mode coverage <changed files>`)
+   and run `pnpm check:changes`: the pre-commit audit (complexity, CRAP, unused
+   code against origin/main). Keep each new or changed function
+   within its limits while writing — split by responsibility and cover the
+   branches — instead of discovering the limits from a rejected commit.
 2. Run the smallest relevant checks while working, then
    `bash scripts/orca-validate.sh` until it passes (rebase onto origin/main first).
 3. For visible changes start `pnpm dev:combat` (private ports in

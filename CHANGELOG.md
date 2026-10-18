@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Run the commit audit before workers commit
+
+- 2026-10-18, originating branch `claude/orca-audit-early`, local/PR pending:
+  owner review of the running pipeline. `uix-w1-desk` and `uix-w1-outcome`
+  exhausted both recoveries because workers first met the pre-commit
+  `pnpm check:changes` audit (cyclomatic/cognitive complexity, CRAP) when the
+  commit was rejected. Worker plan/implement briefs now require shaping code for
+  that audit and running it before each commit; `scripts/orca-validate.sh` runs
+  the same audit. The skill records the owner's one-extra-recovery allowance for
+  audit-only blockers and how a `needs-owner` slice resumes from its existing
+  worktree after an owner decision on #217. Paths:
+  `.agents/skills/warwrit-orca/` (SKILL.md, prompts), `scripts/orca-validate.sh`.
+
 ### Let the pipeline coordinator resolve slice ownership
 
 - 2026-10-18, originating branch `claude/orca-ownership-rules`, local/PR pending:

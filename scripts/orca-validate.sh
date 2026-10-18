@@ -33,6 +33,9 @@ if [[ -n "$code" ]]; then
   # shellcheck disable=SC2086
   step lint pnpm exec eslint $code
   # shellcheck disable=SC2086
-  step related-tests pnpm exec vitest related --run --passWithNoTests $code
+  # Coverage of the related tests feeds the audit's CRAP scores.
+  step related-tests pnpm exec vitest related --run --coverage --mode coverage --passWithNoTests $code
+  # The same audit the pre-commit hook runs (complexity, CRAP, unused code).
+  step audit env FALLOW_AUDIT_BASE="$base" pnpm --silent check:changes
 fi
 exit "$status"
