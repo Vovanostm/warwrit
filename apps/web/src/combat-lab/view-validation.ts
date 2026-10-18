@@ -72,7 +72,8 @@ export function isCombatLabView(value: unknown): value is CombatLabView {
     !hasViewIdentity(view) ||
     !hasViewCollections(view) ||
     !hasInitiativeForecast(view) ||
-    !hasAttackRefusals(view)
+    !hasAttackRefusals(view) ||
+    !hasMovementAffordability(view)
   )
     return false;
   return view.scenarioId === SPRITE_COMBAT_LAB_SCENARIO
@@ -152,5 +153,18 @@ function hasAttackRefusals(view: Partial<CombatLabView>): boolean {
   return (
     Array.isArray(view.attackRefusals) &&
     view.attackRefusals.every((row) => validRefusal(row, view, seen))
+  );
+}
+
+function hasMovementAffordability(view: Partial<CombatLabView>): boolean {
+  if (view.movementPreview === undefined) return true;
+  return (
+    Array.isArray(view.movementPreview) &&
+    view.movementPreview.every(
+      (row) =>
+        isRecord(row) &&
+        (row['attackAffordableAfter'] === undefined ||
+          typeof row['attackAffordableAfter'] === 'boolean'),
+    )
   );
 }
