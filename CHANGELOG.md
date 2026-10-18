@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Let the pipeline coordinator resolve slice ownership
+
+- 2026-10-18, originating branch `claude/orca-ownership-rules`, local/PR pending:
+  the second coordinator tick stopped `uix-w1-outcome` and `uix-w1-log` with
+  `needs-owner` because the slice plan omitted tests, gave `CombatLab.tsx` to two
+  slices and lacked historical morale facts for #204. Slices now own their
+  tests; outcome owns the autoplay/terminal part of `CombatLab.tsx`; the log
+  slice moves to wave 2 after projection/outcome/desk and owns additive morale
+  event facts. The coordinator extends ownership itself when no active slice
+  owns a file and sequences otherwise. Merged PR221 recorded (585af1f).
+
 ### Make the Orca pipeline run headless Codex workers
 
 - 2026-10-18, originating branch `claude/orca-headless-workers`, local/PR pending:
@@ -17,7 +28,8 @@ requests.
   plain Orca terminals with non-injected Dispatches (`orca-start-worker.sh`,
   `orca-codex-worker.sh`, result schema); `orca-pipeline-tick.sh` runs one
   coordinator tick or a visible loop; `slices/epic-217.json` covers all 39
-  issues; skill and prompts rewritten for headless reporting. Smoke: setup,
+  issues; skill and prompts rewritten for headless reporting. Merged as
+  [PR221](https://github.com/Vovanostm/warwrit/pull/221) (585af1f). Smoke: setup,
   sandboxed commit, worker_done, orca/gh/git-push probe PASS; first full tick
   NOT_RUN at commit time.
   [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18).
