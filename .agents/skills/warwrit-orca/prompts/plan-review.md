@@ -6,4 +6,4 @@ computed on the client, a change outside ownership {{OWNERSHIP}}, a replay or
 protocol compatibility break, an unproven acceptance item, or needless scope.
 Write `.orca/{{SLICE}}/plan-review-{{ROUND}}.md` starting with `VERDICT: APPROVE`
 or `VERDICT: REVISE` and a numbered list of required changes. Style preferences
-are not findings. Report with `worker_done --report-path`.
+are not findings. Set `report_path` to that file in your final answer.

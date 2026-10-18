@@ -14,4 +14,4 @@ Read-only task: do not edit source. Write `.orca/{{SLICE}}/plan.md` with:
 4. Acceptance mapping: every acceptance criterion of every issue → how it will be
    proven (test, command output, screenshot at 1440x900 day/night).
 5. Risks, open questions, anything outside ownership.
-   Report with `worker_done --report-path .orca/{{SLICE}}/plan.md`.
+   Set `report_path` to `.orca/{{SLICE}}/plan.md` in your final answer.

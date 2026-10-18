@@ -16,4 +16,4 @@ Approved plan: `.orca/{{SLICE}}/plan.md` (+ accepted review notes).
    with its proof, checks run with exact results (NOT_RUN where skipped),
    proposed CHANGELOG entry, risks.
    Do not push or open a PR; the coordinator does that after review.
-   Report with `worker_done --report-path .orca/{{SLICE}}/report.md`.
+   Set `report_path` to `.orca/{{SLICE}}/report.md` in your final answer.

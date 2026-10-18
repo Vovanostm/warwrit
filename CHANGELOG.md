@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Make the Orca pipeline run headless Codex workers
+
+- 2026-10-18, originating branch `claude/orca-headless-workers`, local/PR pending:
+  owner asked to make agent auto-execution work under the organization Codex
+  policy. Workers and the coordinator run `codex exec --approve-for-me` from
+  plain Orca terminals with non-injected Dispatches (`orca-start-worker.sh`,
+  `orca-codex-worker.sh`, result schema); `orca-pipeline-tick.sh` runs one
+  coordinator tick or a visible loop; `slices/epic-217.json` covers all 39
+  issues; skill and prompts rewritten for headless reporting. Smoke: setup,
+  sandboxed commit, worker_done, orca/gh/git-push probe PASS; first full tick
+  NOT_RUN at commit time.
+  [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18).
+
 ### Run issues through an Orca pipeline
 
 - 2026-10-18, originating branch `claude/orca-issue-pipeline`, local/PR pending:
@@ -20,6 +33,8 @@ requests.
   launch failures and prerequisites recorded in
   [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18).
   Validate gate PASS on its own branch; end-to-end run NOT_RUN.
+  Merged 2026-10-18 with owner approval: [PR220](https://github.com/Vovanostm/warwrit/pull/220),
+  merge `e001c25`, CI PASS.
 
 ### Configure Orca for parallel agent worktrees
 

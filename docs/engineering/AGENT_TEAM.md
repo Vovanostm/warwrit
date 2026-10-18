@@ -182,6 +182,30 @@ for the next wave: Orca Settings → Agents with YOLO off for Codex, Orca's own
 launcher (`worker-start --agent codex`) as the only launch path. Run `run_6c8d2ba11d09` tasks are blocked
 and superseded.
 
+**Headless workers — 2026-10-18 (supersedes the TUI launch path above).**
+Orca-launched interactive Codex lost the terminal foreground (`node codex`
+in its own process group, TPGID = zsh) and stopped on tty input, which also
+kept the Codex log DB locked. Workers now run `codex exec --approve-for-me`
+(workspace-write sandbox, approvals by automatic review — allowed by the MDM
+policy) via [`scripts/orca-start-worker.sh`](../../scripts/orca-start-worker.sh)
+and [`scripts/orca-codex-worker.sh`](../../scripts/orca-codex-worker.sh): a plain
+Orca terminal, a non-injected Dispatch, a brief file, a JSON-schema result and
+a `worker_done` sent by the wrapper. The coordinator is the same headless Codex
+run by [`scripts/orca-pipeline-tick.sh`](../../scripts/orca-pipeline-tick.sh)
+(one tick, lock, self-healing Run/mailbox; `--loop N` repeats in a visible Orca
+terminal). The epic's slices are in
+[`slices/epic-217.json`](../../.agents/skills/warwrit-orca/slices/epic-217.json).
+A launchd schedule was refused by the Claude Code safety classifier and is not
+used; the Orca automation stays disabled because it launches a TUI.
+
+Smoke evidence 2026-10-18 (run `run_e48b73b5c4eb`): fresh Orca worktree from
+the branch ran `orca.yaml` setup (ports 23447/25447, package builds); headless
+worker typechecked web and committed `b5d6c03` into the shared `.git` from the
+sandbox, `worker_done` succeeded reached the mailbox. A capability probe from
+the sandbox ran `orca status`, `orca orchestration task-list`, `gh pr list`,
+`gh issue view` and `git push --dry-run` with exit 0. First attempt failed on
+`--approve-for-me` + `--sandbox` (mutually exclusive) and was fixed.
+
 Checks 2026-10-18: `orca-validate.sh` on this branch PASS (rebased, clean,
 packages, typecheck, format; a formatting failure was caught first);
 `vitest related` and eslint invocations PASS on a sample file; state script

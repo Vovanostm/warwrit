@@ -1,100 +1,97 @@
 ---
 name: warwrit-orca
-description: Run Warwrit GitHub issues through the Orca issue pipeline — plan, plan review, implement, deterministic validation, independent review, PR/CI, owner-approved merge and shared docs — with Codex workers in their own worktrees. Use when the owner asks to implement issues or an epic through Orca orchestration, or for one pipeline tick of the scheduled automation.
+description: Run Warwrit GitHub issues through the Orca issue pipeline — plan, plan review, implement, deterministic validation, independent review, PR/CI, owner-approved merge and shared docs — with headless Codex workers in their own worktrees. Use for one coordinator tick (scripts/orca-pipeline-tick.sh) or when the owner asks to implement issues through Orca.
 ---
 
 # Warwrit issue pipeline in Orca
 
 [AGENTS.md](../../../AGENTS.md) and [AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18)
 stay authoritative. Use the `orca` CLI (Orca.app, Git repos); `arca` is a
-separate fork for the Arcadia/arc checkout and never manages Warwrit. Read
-`orca skills get orchestration` once per session for the exact flag set.
+separate fork for the Arcadia/arc checkout and never manages Warwrit.
 
 ## Principles
 
 - **The coordinator owns every state transition.** A worker report is a claim;
-  advance only after re-reading GitHub (labels, PR, CI), the worktree diff and
-  `scripts/orca-validate.sh` exit code.
-- **Writes stay single-threaded per slice.** One Codex writer per worktree and
-  path set; planners and reviewers are read-only and use fresh contexts.
-- **Bounded loops.** Plan review ≤ 2 rounds, code review/rework ≤ 2 rounds, CI
-  rework ≤ 2 rounds; then `agent:needs-owner` with the evidence.
-- **Coordinator is the single writer of shared records** (`CHANGELOG.md`,
-  `CURRENT_PLAN.md`, wiki). It adds them to the PR branch just before merge.
-- **Merge only with `agent:merge-approved`** on the PR (set by the owner) or an
-  owner decision recorded in the PR/epic; one PR at a time, expected head SHA.
-- **Capacity:** ≤ 5 writers at once on this Mac; heavy gates one at a time.
+  advance only after re-reading GitHub (labels, PR, CI), the worktree diff,
+  verdict files and the `scripts/orca-validate.sh` exit code.
+- **Writes stay single-threaded per slice.** One writer per worktree; planners
+  and reviewers run in fresh contexts and do not edit source.
+- **Bounded loops.** Plan review ≤ 2 rounds, code review/rework ≤ 2, CI rework
+  ≤ 2; then label `agent:needs-owner` and comment the evidence.
+- **The coordinator is the single writer of shared records** (`CHANGELOG.md`,
+  `docs/engineering/CURRENT_PLAN.md`, wiki) and adds them to the PR branch
+  right before merge.
+- **Merge only with `agent:merge-approved`** on the PR, set by the owner; one PR
+  at a time, expected head SHA. Without it, stop at `agent:pr`.
+- **Capacity:** ≤ 5 slices in `planning`/`implementing`/`review` at once;
+  `orca-validate.sh` and PR CI one slice at a time.
 
-## Slices
+## Inputs
 
-A slice is one writer's work: one or more issues with disjoint ownership,
-taken from the epic's wave table (issue #217 comments). Slice name:
-`uix-<wave>-<area>`, worktree `~/orca/workspaces/warwrit/<slice>`, branch from
-`origin/main`. Track state on every issue in the slice with
-`scripts/orca-issue-state.sh <state> <issues…>`.
+- Slice plan: [`slices/epic-217.json`](slices/epic-217.json) — wave, slice name,
+  issues, ownership, `after` dependencies, notes. Owner decisions are in issue
+  #217 comments.
+- Worker briefs: [`prompts/`](prompts/common.md). Fill `{{SLICE}}`, `{{ISSUES}}`
+  (with titles), `{{OWNERSHIP}}`, `{{ROUND}}`, `{{FINDINGS}}`; always append
+  `prompts/common.md`; add the slice `note`.
+- Worker result schema: [`worker-result.schema.json`](worker-result.schema.json).
 
-## State machine
+## Workers are headless Codex
 
-| State                     | Who                                         | Exit condition (coordinator checks)                           |
-| ------------------------- | ------------------------------------------- | ------------------------------------------------------------- |
-| `ready`                   | owner/coordinator labels the issues         | worktree created, `planning` set                              |
-| `planning`                | Codex planner → fresh plan reviewer         | `plan-review-N.md` says `VERDICT: APPROVE`                    |
-| `implementing`            | Codex writer                                | `worker_done` succeeded **and** report present                |
-| `validating`              | coordinator runs `scripts/orca-validate.sh` | exit 0; else rework (back to `implementing`)                  |
-| `review`                  | fresh reviewer (Claude or Codex)            | `review-N.md` says `VERDICT: ACCEPT`; else rework             |
-| `pr`                      | coordinator pushes, opens PR, CI runs       | CI green **and** `agent:merge-approved`; CI red → rework      |
-| `done`                    | coordinator merges, writes shared docs      | PR merged, issues closed, worktree removed with `--run-hooks` |
-| `blocked` / `needs-owner` | anyone                                      | owner answer or unblocking change; comment says why           |
-
-## Commands (coordinator)
-
-Run inside an Orca terminal, or export `ORCA_TERMINAL_HANDLE=<mailbox handle>`.
-Prompt templates live in [`prompts/`](prompts/); fill `{{SLICE}}`, `{{ISSUES}}`,
-`{{OWNERSHIP}}`, `{{ROUND}}`, `{{FINDINGS}}` and append `prompts/common.md`.
+Organization MDM policy allows Codex approvals `untrusted`/`on-request` and
+sandboxes `read-only`/`workspace-write` only; interactive Codex TUIs launched
+by Orca also lose the terminal foreground. Every worker therefore runs
+`codex exec --approve-for-me` through two scripts:
 
 ```bash
-orca orchestration run-create --objective "<epic/wave>" --json
-orca worktree create --repo id:<repoId> --name <slice> --base-branch origin/main --no-parent --setup run --json
-orca orchestration task-create --spec "<plan prompt>" --task-title "<slice> plan" --json
-orca orchestration task-create --spec "<plan-review prompt>" --task-title "<slice> plan review" --deps '["<plan task>"]' --json
-orca orchestration worker-start --task <id> --worktree id:<repoId>::<path> --agent codex --json
-orca orchestration check --wait --types worker_done,escalation,question --timeout-ms 900000 --json
-bash scripts/orca-validate.sh <path>
-orca orchestration gate-create --task <merge task> --question "Merge PR #N?" --options '["yes","no"]' --json
+# from the slice worktree; brief file lives in that worktree
+bash scripts/orca-start-worker.sh <run> <task-id> <worktree-path> .orca/tasks/<name>.md
 ```
 
-Writers: `--agent codex`. Reviewers: `--agent claude` or a second Codex with
-the `warwrit_reviewer` profile model, always a new terminal (fresh context).
-Reuse the writer's terminal for its rework (`worker-start --task <rework>
---terminal <handle>`), release planners/reviewers after their report.
+It opens a plain Orca terminal, binds a Dispatch to it and runs
+`scripts/orca-codex-worker.sh`, which sends `worker_done` with the structured
+result. Logs: `<worktree>/.orca/runs/<task-id>/`. Briefs must say "do not call
+`orca`"; the wrapper reports.
 
-## PR and merge
+## One tick (what to do, in order)
 
-1. `git push -u origin <branch>`; `gh pr create` with one `Closes #N` per
-   issue, the report's acceptance proof, checks and risks. Commit only small
-   JPEG evidence under `docs/engineering/evidence/<slice>/`.
-2. Wait for CI through the app/`gh pr checks`; failure → rework task with the
-   failing log excerpt.
-3. With CI green and `agent:merge-approved`: rebase on `origin/main` if needed,
-   add the CHANGELOG/CURRENT_PLAN/wiki entries as one coordinator commit, wait
-   for CI again, `gh pr merge --merge --match-head-commit <sha>`, then
-   `scripts/orca-issue-state.sh done …` and `orca worktree rm --worktree <id>
---run-hooks`.
+Environment: `ORCA_TERMINAL_HANDLE` is the coordinator mailbox; the run id and
+repo id are in the tick prompt. Work from the coordinator worktree.
+
+1. **Mail.** `orca orchestration check --run <run> --json` (no wait). For each
+   message: record it on the slice, then `--ack` the delivery and
+   `orca orchestration worker-release --dispatch <id>` for settled workers.
+2. **Reconcile.** List open issues with `agent:*` labels
+   (`gh issue list -R Vovanostm/warwrit --search 'label:"agent:…"'`), slice
+   worktrees (`orca worktree list --repo id:<repo> --json`), open PRs and their
+   checks. GitHub labels win; fix drift by commenting and relabelling.
+3. **Advance each slice** whose condition holds:
+
+| From           | Condition                                                           | Action                                                                                                                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (none)         | issues labelled `agent:ready`, `after` slices `done`, capacity free | `orca worktree create --repo id:<repo> --name <slice> --base-branch origin/main --no-parent --setup run --json`; write plan brief; start planner; state `planning`                                                                           |
+| `planning`     | planner done, `plan.md` exists                                      | start plan reviewer (fresh terminal) with round N                                                                                                                                                                                            |
+| `planning`     | `plan-review-N.md` starts `VERDICT: APPROVE`                        | write implement brief; start writer; state `implementing`                                                                                                                                                                                    |
+| `planning`     | `VERDICT: REVISE`, N < 2                                            | planner revises with the findings; new review round                                                                                                                                                                                          |
+| `implementing` | writer `worker_done` succeeded and `report.md` exists               | state `validating`; run `bash scripts/orca-validate.sh <worktree>`                                                                                                                                                                           |
+| `validating`   | exit 0                                                              | start reviewer (fresh); state `review`                                                                                                                                                                                                       |
+| `validating`   | exit ≠ 0                                                            | rework brief with the failing `.orca/validate-*.log` excerpts; state `implementing`                                                                                                                                                          |
+| `review`       | `review-N.md` starts `VERDICT: ACCEPT`                              | copy small JPEG evidence to `docs/engineering/evidence/<slice>/`, commit, push branch, `gh pr create` (one `Closes #N` per issue, report proof, checks, risks); state `pr`                                                                   |
+| `review`       | `VERDICT: REWORK`, N < 2                                            | rework brief; state `implementing`                                                                                                                                                                                                           |
+| `pr`           | CI failed, rounds < 2                                               | rework brief with the failing job log excerpt; then push again                                                                                                                                                                               |
+| `pr`           | CI green and PR has `agent:merge-approved`                          | rebase on origin/main if behind (re-run validate), add CHANGELOG/CURRENT_PLAN entry commit, push, wait CI, `gh pr merge --merge --match-head-commit <sha>`; state `done`; `orca worktree rm --worktree id:<repo>::<path> --run-hooks --json` |
+| any            | loop limit reached or a rule/ownership conflict                     | state `needs-owner` (or `blocked`) with an issue comment naming the evidence                                                                                                                                                                 |
+
+4. **Report.** If anything changed, post one short comment on epic #217
+   (slice → state, PR links). Then stop.
+
+Move issue labels only with `bash scripts/orca-issue-state.sh <state> <issues…>`.
 
 ## Known Orca pitfalls (2026-10-18)
 
-- Organization MDM policy (`/Library/Managed Preferences/com.openai.codex.plist`)
-  allows Codex approval policies `untrusted`/`on-request` and sandboxes
-  `read-only`/`workspace-write` only. Orca's YOLO default
-  (`--dangerously-bypass-approvals-and-sandbox`) is forbidden; workers run with
-  the owner's `on-request` + `auto_review` config inside `workspace-write`,
-  with the repository `.git`, pnpm store and Playwright cache writable
-  (`.codex/config.toml`). Do not pass `--ask-for-approval never`.
-
-- `terminal send --interrupt` suspends a Codex TUI (process state `T`) instead
-  of interrupting it; a suspended Codex keeps `~/.codex/logs_2.sqlite` locked
-  and every new Codex fails to start. Never interrupt agents; quit them.
-- A Codex update prompt blocks Orca's readiness (`agent-update-prompt`). Keep
-  the Codex CLI on PATH current before a wave.
-- Long prompts pasted into a non-ready terminal land in zsh. Use `worker-start`
-  (it waits for readiness) instead of `terminal send` for task text.
+- Organization policy forbids `--dangerously-bypass-approvals-and-sandbox` and
+  `--ask-for-approval never`; use `codex exec --approve-for-me` only.
+- Orca-launched interactive Codex can lose the terminal foreground and stop on
+  tty input (`T` state), keeping `~/.codex/logs_2.sqlite` locked so no other
+  Codex starts. Never use TUI workers or `terminal send --interrupt` on them.
+- Long prompts pasted into terminals can land in zsh. Pass briefs as files.

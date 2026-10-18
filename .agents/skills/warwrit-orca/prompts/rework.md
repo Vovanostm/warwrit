@@ -5,4 +5,4 @@ quoted below) inside ownership {{OWNERSHIP}}. Do not widen scope. Re-run
 `bash scripts/orca-validate.sh`, refresh affected screenshots, append the fixes
 and new check results to `.orca/{{SLICE}}/report.md`.
 {{FINDINGS}}
-Report with `worker_done --report-path .orca/{{SLICE}}/report.md`.
+Set `report_path` to `.orca/{{SLICE}}/report.md` in your final answer.
