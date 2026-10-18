@@ -31,6 +31,8 @@ import {
 } from './rules.js';
 import {
   preparePrototypeMove,
+  combatWeaponTargetFailure,
+  ordinaryCombatAttackFailure,
   prototypeLineOfSight,
   prototypeMovementStep,
   SPRITE_PROTOTYPE_FIRE_DAMAGE,
@@ -1106,46 +1108,19 @@ function applyAttack(
     actor !== undefined && state.activation !== null,
     'Attack validation requires active actor',
   );
-  const target = unitById(state, command.targetId);
-  if (target === undefined) {
-    return failure(state, 'TARGET_NOT_FOUND', `Target ${command.targetId} does not exist`);
-  }
-  if (target.status !== 'active' || target.sideId === actor.sideId) {
-    return failure(state, 'INVALID_TARGET', `Target ${command.targetId} is not an active enemy`);
-  }
-  if (isSpritePrototypeRuleset(state.rulesetId) && target.incorporeal === true) {
-    return failure(
-      state,
-      'INVALID_TARGET',
-      `Target ${command.targetId} is incorporeal to ordinary weapons`,
-    );
-  }
-
   const ordinaryWeapon = weaponProfile(rules, actor.weaponId);
   const weapon = threatExecution
     ? { ...ordinaryWeapon, maximumRange: 2, actionPointCost: 4 }
     : ordinaryWeapon;
-  const distance = hexDistance(actor.position, target.position);
-  if (distance < weapon.minimumRange || distance > weapon.maximumRange) {
-    return failure(state, 'OUT_OF_RANGE', `Target ${command.targetId} is outside weapon range`);
-  }
-  if (
-    isSpritePrototypeRuleset(state.rulesetId) &&
-    (actor.weaponId === 'bow' || threatExecution) &&
-    !prototypeLineOfSight(state, actor.position, target.position)
-  ) {
-    return failure(
-      state,
-      'BLOCKED_LINE_OF_SIGHT',
-      `Target ${command.targetId} is blocked from bow line of sight`,
-    );
-  }
-  if (weapon.actionPointCost > state.activation.remainingActionPoints) {
-    return failure(state, 'INSUFFICIENT_ACTION_POINTS', 'Attack exceeds remaining action points');
-  }
-  if (weapon.staminaCost > actor.stamina) {
-    return failure(state, 'INSUFFICIENT_STAMINA', 'Attack exceeds remaining stamina');
-  }
+  const invalid = combatWeaponTargetFailure(
+    state,
+    actor,
+    command.targetId,
+    weapon,
+    threatExecution,
+  );
+  if (invalid) return failure(state, invalid.code, invalid.message);
+  const target = unitById(state, command.targetId)!;
 
   const revision = state.revision + 1;
   const strike = resolveCombatStrike(
@@ -1610,12 +1585,9 @@ export function applyCombatCommand(
   ) {
     return failure(state, 'PANICKED', 'Panicked units must escape or surrender');
   }
-  if (
-    isSpriteS4Ruleset(state.rulesetId) &&
-    actor.threatProfile === 'mill-slam' &&
-    command.type === 'attack'
-  ) {
-    return failure(state, 'THREAT_NOT_AVAILABLE', 'Mill slam requires a visible preparation');
+  if (command.type === 'attack') {
+    const invalid = ordinaryCombatAttackFailure(state, actor);
+    if (invalid) return failure(state, invalid.code, invalid.message);
   }
   switch (command.type) {
     case 'use-skill':
