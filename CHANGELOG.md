@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Switch the Orca pipeline to game-development workflow v2
+
+- 2026-10-19, originating branch `claude/orca-workflow-v2`, local/PR pending:
+  owner asked to prepare the agent team and a working development workflow
+  after the first pipeline day produced no commit or PR. The `warwrit-orca`
+  skill now defines roles (coordinator, contract writer, lane builder,
+  evaluator, visual critic), replaces plan + plan review with a short contract,
+  caps writers to one per lane (`web`, `core`), requires builds to end in
+  commits, has a fresh evaluator play the changed journey in `pnpm dev:combat`
+  plus a VISUAL_CRITIQUE-scored critic for visual diffs, and adds a fallback
+  ladder (restructure, split a one-issue finding, split oversized slices)
+  before `needs-owner`. Slice plan: `lanes`, `lane` per slice, #207 split into
+  `uix-w1-names`, `uix-w4-text` now waits for `uix-w2-log`. PR223 (audit before
+  commit, wall-clock loop) MERGED bf0ce5b 2026-10-19. Paths:
+  `.agents/skills/warwrit-orca/`, `docs/engineering/AGENT_TEAM.md`,
+  `docs/engineering/CURRENT_PLAN.md`. Checks: prettier; skill/prompt readback;
+  live tick under v2 NOT_RUN until merge.
+
 ### Run the commit audit before workers commit
 
 - 2026-10-18, originating branch `claude/orca-audit-early`, local/PR pending:
