@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**Orca game-development workflow v2 — 2026-10-19, local/PR pending:**
+Day-one result of the pipeline below: no commit or PR in about 11 hours
+(plan-review rounds, audit discovered at commit, `needs-owner` stops; PR223
+MERGED bf0ce5b moved the audit before commits and fixed the sleeping loop). v2:
+contract instead of plan review, one builder per lane (`web`, `core`), fresh
+evaluator that plays the game plus visual critic, fallback ladder before the
+owner, metric = merged PRs with playable proof per day. `uix-w1-names` (#207)
+split from projection. Wave-1 state at switch: outcome in review; desk and
+projection `needs-owner` → resume under v2; scene planning; log waits.
+[Owning section](AGENT_TEAM.md#game-development-workflow-v2--2026-10-19).
+
 **Headless Orca pipeline — 2026-10-18, MERGED (PR221) / RUNNING:**
 PR220 MERGED e001c25. Org MDM policy forbids Codex bypass/never-approval;
 Orca TUI Codex loses the foreground. Workers and coordinator now run

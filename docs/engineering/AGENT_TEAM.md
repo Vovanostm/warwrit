@@ -125,6 +125,44 @@ server and Vite with no leftover process. Orca's own hook execution and a
 supervised run end-to-end: NOT_RUN until `orca.yaml` is on `main`. Measured
 throughput of parallel waves: NOT_MEASURED.
 
+## Game-development workflow v2 — 2026-10-19
+
+Owner request: prepare the agent team and a working game-development workflow.
+Evidence from the first day of the 2026-10-18 pipeline: about 11 hours, five
+wave-1 slices, no commit and no PR. Time went to plan → plan review → revision
+rounds, recovery attempts that discovered the commit audit only on a rejected
+commit, and `needs-owner` stops; five parallel writers also contended for the
+same combat-lab files. v2 keeps Orca, GitHub labels, headless Codex and the
+owner merge gate and changes the flow
+([`warwrit-orca`](../../.agents/skills/warwrit-orca/SKILL.md)):
+
+- **Metric:** merged PRs with playable proof per day, reported each tick.
+- **Team:** coordinator; contract writer, evaluator and visual critic are fresh
+  read-only contexts; one builder per lane (`web`, `core`) writes.
+- **Contract instead of plan review:** one short file — scope, changes shaped
+  for the audit, data compatibility, proof per acceptance criterion, questions.
+- **Build ends in commits:** focused coverage + `pnpm check:changes` before each
+  commit; `orca-validate.sh` runs the same audit.
+- **Evaluate the running game:** the evaluator reviews the diff and plays the
+  journey in `pnpm dev:combat` with Playwright; visual diffs also get the
+  VISUAL_CRITIQUE-scored visual critic, in parallel.
+- **Fallback ladder before the owner:** restructure for audit-only failures,
+  split a one-issue finding into a follow-up slice, split oversized slices; only
+  product/rule questions reach the owner, batched per tick.
+
+Sources: Cognition, [Multi-Agents: What's Actually Working](https://cognition.com/blog/multi-agents-working)
+(parallel writer swarms fragment code; single-threaded writes, parallel reads,
+clean-context reviewer); Anthropic, [Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+(planner → generator → skeptical evaluator that plays the live app; sprint
+contracts; remove harness parts that stop being load-bearing; a retro game
+maker was playable only with the evaluator) and
+[Effective harnesses for long-running agents](https://anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+(one feature at a time, end-to-end browser testing before claiming done);
+[METR, 2026 update](https://metr.org/blog/2026-02-24-uplift-update/) (perceived
+speed-up is unreliable, so measure merged results). This section supersedes
+the plan-review stage and the parallel-writer capacity of the 2026-10-18
+pipeline below; its state, ownership and merge rules still apply.
+
 ## Issue pipeline in Orca — 2026-10-18
 
 Owner decision: implement issues only through Orca orchestration — plan,

@@ -1,51 +1,72 @@
 ---
 name: warwrit-orca
-description: Run Warwrit GitHub issues through the Orca issue pipeline — plan, plan review, implement, deterministic validation, independent review, PR/CI, owner-approved merge and shared docs — with headless Codex workers in their own worktrees. Use for one coordinator tick (scripts/orca-pipeline-tick.sh) or when the owner asks to implement issues through Orca.
+description: Run Warwrit GitHub issues through the Orca game-development workflow (v2) — contract, single-writer build per lane, deterministic validation, fresh evaluator with live playtest and visual critic, PR/CI, owner-approved merge — with headless Codex workers in their own worktrees. Use for one coordinator tick (scripts/orca-pipeline-tick.sh) or when the owner asks to implement issues through Orca.
 ---
 
-# Warwrit issue pipeline in Orca
+# Warwrit game-development workflow in Orca (v2, 2026-10-19)
 
-[AGENTS.md](../../../AGENTS.md) and [AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18)
+[AGENTS.md](../../../AGENTS.md) and [AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#game-development-workflow-v2--2026-10-19)
 stay authoritative. Use the `orca` CLI (Orca.app, Git repos); `arca` is a
 separate fork for the Arcadia/arc checkout and never manages Warwrit.
+
+Goal: **merged PRs with playable proof per day.** Every rule below serves that
+metric; ceremony that does not move a slice toward a merged, played result is
+removed. Each tick report states the metric.
+
+## Team
+
+| Role          | Context          | Writes                                              | Brief                                                  |
+| ------------- | ---------------- | --------------------------------------------------- | ------------------------------------------------------ |
+| Coordinator   | one tick, fresh  | labels, briefs, #217 notes                          | this skill                                             |
+| Contract      | fresh, read-only | `.orca/<slice>/contract.md`                         | [contract](prompts/contract.md)                        |
+| Builder       | one per **lane** | source, tests, commits                              | [build](prompts/build.md), [rework](prompts/rework.md) |
+| Evaluator     | fresh, read-only | `.orca/<slice>/eval-N.md`                           | [evaluate](prompts/evaluate.md)                        |
+| Visual critic | fresh, read-only | `.orca/<slice>/visual-N.md`                         | [visual](prompts/visual.md)                            |
+| Owner         | human            | `agent:merge-approved`, `## Owner decision` on #217 | —                                                      |
+
+All workers append [common rules](prompts/common.md). Research basis:
+[AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#game-development-workflow-v2--2026-10-19).
 
 ## Principles
 
 - **The coordinator owns every state transition.** A worker report is a claim;
-  advance only after re-reading GitHub (labels, PR, CI), the worktree diff,
+  advance only after re-reading GitHub (labels, PR, CI), the worktree's commits,
   verdict files and the `scripts/orca-validate.sh` exit code.
-- **Writes stay single-threaded per slice.** One writer per worktree; planners
-  and reviewers run in fresh contexts and do not edit source.
-- **Bounded loops.** Plan review ≤ 2 rounds, code review/rework ≤ 2, CI rework
-  ≤ 2; then label `agent:needs-owner` and comment the evidence. Exception
-  (owner, 2026-10-18): when the only remaining blocker is the commit audit
-  (complexity/CRAP of the slice's own functions), allow one more bounded
-  recovery — structural simplification plus real coverage, normal commit; never
-  weaken thresholds or hooks.
-- **Resume after an owner decision.** A `needs-owner` slice whose issues are
-  back in `agent:ready` resumes from its existing worktree and records, applying
-  the latest owner decision on #217 (plan → planner revision and the next review
-  round; implementation → the allowed recovery). Do not recreate the worktree.
+- **One writer per lane, parallel readers.** `lanes` in the slice plan cap
+  concurrent builders (`web` 1, `core` 1). Contract writers, evaluators and
+  critics are read-only and may run ahead or alongside: while one slice builds,
+  the next slice's contract is prepared. At most 5 workers at once.
+- **Contract, not plan review.** A short contract (what, how proven, function
+  shape that passes the audit) replaces plan + plan review. The coordinator
+  checks the contract's required sections itself; there is no review round.
+- **A build ends in commits.** The builder iterates on `pnpm check:changes`
+  inside its session until the normal commit succeeds; staged-but-uncommitted
+  work is a failed build.
+- **Evaluate the running game.** The evaluator reviews the diff with fresh
+  context _and_ plays the changed journey in `pnpm dev:combat`. Visual diffs
+  (`.css`, `.tsx`, scene/renderer, art) also get the visual critic, scored with
+  [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md).
+- **Change technique before asking the owner.** A failure goes through the
+  fallback ladder below; `needs-owner` is only for product/rule questions.
 - **The coordinator is the single writer of shared records** (`CHANGELOG.md`,
   `docs/engineering/CURRENT_PLAN.md`, wiki) and adds them to the PR branch
   right before merge.
 - **Merge only with `agent:merge-approved`** on the PR, set by the owner; one PR
   at a time, expected head SHA. Without it, stop at `agent:pr`.
-- **Ownership is resolved by the coordinator first.** Apply `ownership_rules`
-  in the slice plan: tests of owned modules belong to the slice; a file no
-  active slice owns may be added (comment it on the issue); a file owned by an
-  active slice is handled by sequencing (`after`). Only what sequencing cannot
-  solve, or a product/rule question, becomes `agent:needs-owner`.
-- **Capacity:** ≤ 5 slices in `planning`/`implementing`/`review` at once;
-  `orca-validate.sh` and PR CI one slice at a time.
+- **Ownership is resolved by the coordinator first** (`ownership_rules` in the
+  slice plan): tests of owned modules belong to the slice; a file no active
+  slice owns may be added (comment it on the issue); a file owned by an active
+  slice is handled by sequencing (`after`).
+- **Short records.** Issue and #217 comments are at most 5 lines per slice;
+  evidence stays in worktree files referenced by path.
 
 ## Inputs
 
-- Slice plan: [`slices/epic-217.json`](slices/epic-217.json) — wave, slice name,
-  issues, ownership, `after` dependencies, notes. Owner decisions are #217
-  comments whose first line starts with `## Owner decision`; only those count.
-  The owner and the coordinator share one GitHub account, so the coordinator
-  never writes that heading.
+- Slice plan: [`slices/epic-217.json`](slices/epic-217.json) — `lanes`, and per
+  slice wave, name, lane, issues, ownership, `after`, notes.
+- Owner decisions: #217 comments whose first line starts with
+  `## Owner decision`; only those count. Owner and coordinator share one GitHub
+  account, so the coordinator never writes that heading.
 - Worker briefs: [`prompts/`](prompts/common.md). Fill `{{SLICE}}`, `{{ISSUES}}`
   (with titles), `{{OWNERSHIP}}`, `{{ROUND}}`, `{{FINDINGS}}`; always append
   `prompts/common.md`; add the slice `note`.
@@ -76,31 +97,59 @@ repo id are in the tick prompt. Work from the coordinator worktree.
 1. **Mail.** `orca orchestration check --run <run> --json` (no wait). For each
    message: record it on the slice, then `--ack` the delivery and
    `orca orchestration worker-release --dispatch <id>` for settled workers.
-2. **Reconcile.** List open issues with `agent:*` labels
-   (`gh issue list -R Vovanostm/warwrit --search 'label:"agent:…"'`), slice
-   worktrees (`orca worktree list --repo id:<repo> --json`), open PRs and their
-   checks. GitHub labels win; fix drift by commenting and relabelling.
-3. **Advance each slice** whose condition holds:
+2. **Reconcile.** List open issues with `agent:*` labels, slice worktrees
+   (`orca worktree list --repo id:<repo> --json`), open PRs and their checks.
+   GitHub labels win; fix drift by commenting and relabelling.
+3. **Advance each slice** whose condition holds (labels in brackets):
 
-| From           | Condition                                                           | Action                                                                                                                                                                                                                                       |
-| -------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (none)         | issues labelled `agent:ready`, `after` slices `done`, capacity free | `orca worktree create --repo id:<repo> --name <slice> --base-branch origin/main --no-parent --setup run --json`; write plan brief; start planner; state `planning`                                                                           |
-| `planning`     | planner done, `plan.md` exists                                      | start plan reviewer (fresh terminal) with round N                                                                                                                                                                                            |
-| `planning`     | `plan-review-N.md` starts `VERDICT: APPROVE`                        | write implement brief; start writer; state `implementing`                                                                                                                                                                                    |
-| `planning`     | `VERDICT: REVISE`, N < 2                                            | planner revises with the findings; new review round                                                                                                                                                                                          |
-| `implementing` | writer `worker_done` succeeded and `report.md` exists               | state `validating`; run `bash scripts/orca-validate.sh <worktree>`                                                                                                                                                                           |
-| `validating`   | exit 0                                                              | start reviewer (fresh); state `review`                                                                                                                                                                                                       |
-| `validating`   | exit ≠ 0                                                            | rework brief with the failing `.orca/validate-*.log` excerpts; state `implementing`                                                                                                                                                          |
-| `review`       | `review-N.md` starts `VERDICT: ACCEPT`                              | copy small JPEG evidence to `docs/engineering/evidence/<slice>/`, commit, push branch, `gh pr create` (one `Closes #N` per issue, report proof, checks, risks); state `pr`                                                                   |
-| `review`       | `VERDICT: REWORK`, N < 2                                            | rework brief; state `implementing`                                                                                                                                                                                                           |
-| `pr`           | CI failed, rounds < 2                                               | rework brief with the failing job log excerpt; then push again                                                                                                                                                                               |
-| `pr`           | CI green and PR has `agent:merge-approved`                          | rebase on origin/main if behind (re-run validate), add CHANGELOG/CURRENT_PLAN entry commit, push, wait CI, `gh pr merge --merge --match-head-commit <sha>`; state `done`; `orca worktree rm --worktree id:<repo>::<path> --run-hooks --json` |
-| any            | loop limit reached or a rule/ownership conflict                     | state `needs-owner` (or `blocked`) with an issue comment naming the evidence                                                                                                                                                                 |
+| From           | Condition                                                                                | Action                                                                                                                                                                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ready]        | `after` slices done, worker slot free                                                    | create the worktree if missing (`orca worktree create --repo id:<repo> --name <slice> --base-branch origin/main --no-parent --setup run --json`); start the contract writer; → [planning]                                                    |
+| [planning]     | `contract.md` has every required section                                                 | wait for the lane's builder slot; write the build brief; start the builder; → [implementing]                                                                                                                                                 |
+| [planning]     | a section is missing or the contract asks an open rule question                          | one contract revision with the gap; a rule question → `needs-owner`                                                                                                                                                                          |
+| [implementing] | builder done, new commits on the branch, clean tree                                      | → [validating]; run `bash scripts/orca-validate.sh <worktree>`                                                                                                                                                                               |
+| [implementing] | builder failed                                                                           | fallback ladder                                                                                                                                                                                                                              |
+| [validating]   | exit 0                                                                                   | start the evaluator (and the visual critic for visual diffs) in parallel; → [review]                                                                                                                                                         |
+| [validating]   | exit ≠ 0                                                                                 | rework brief with the failing `.orca/validate-*.log` excerpts; → [implementing]                                                                                                                                                              |
+| [review]       | `eval-N.md` starts `VERDICT: ACCEPT` and, if run, `visual-N.md` starts `VERDICT: ACCEPT` | copy small JPEG evidence to `docs/engineering/evidence/<slice>/`, commit, push, `gh pr create` (one `Closes #N` per issue, proof, checks, risks); → [pr]                                                                                     |
+| [review]       | any `REWORK`                                                                             | rework brief with all findings; → [implementing]                                                                                                                                                                                             |
+| [pr]           | CI failed                                                                                | rework brief with the failing job log excerpt; push again                                                                                                                                                                                    |
+| [pr]           | CI green and PR has `agent:merge-approved`                                               | rebase on origin/main if behind (re-run validate), add the CHANGELOG/CURRENT_PLAN entry commit, push, wait CI, `gh pr merge --merge --match-head-commit <sha>`; → [done]; `orca worktree rm --worktree id:<repo>::<path> --run-hooks --json` |
 
-4. **Report.** If anything changed, post one short comment on epic #217
-   (slice → state, PR links). Then stop.
+4. **Report.** Post one short comment on epic #217 only if something changed:
+   slice → state, PR links, and the metric (merged with playable proof today,
+   open PRs, slices waiting on the owner). Then stop.
+
+Slices started before v2: `plan.md` with an approving `plan-review-N.md`
+counts as the contract, and `review-N.md` counts as `eval-N.md`. A `needs-owner`
+slice whose issues are back in `agent:ready` resumes from its existing
+worktree, applying the latest owner decision; never recreate the worktree.
 
 Move issue labels only with `bash scripts/orca-issue-state.sh <state> <issues…>`.
+
+## Fallback ladder
+
+Rework rounds per slice: at most 2 (validate, evaluator and CI findings share
+the budget). When a build fails or the budget is spent, take the first step
+that applies, once each, before `needs-owner`:
+
+1. **Audit-only failure** (complexity/CRAP/unused code of the slice's own
+   code): a fresh builder with a _restructure_ brief — split the named
+   functions into sub-components/hooks/pure helpers with their own tests;
+   thresholds and hooks are never weakened, `--no-verify` never used.
+2. **Finding limited to one issue of the slice:** move that issue to a new
+   follow-up slice (same lane, `after` this slice) in the slice plan, record it
+   on the issue, and finish the slice without it.
+3. **Slice too large** (several unmet criteria across issues): split into
+   one-issue slices in the plan and restart from the contract.
+4. Otherwise, or for a product/rule question: `needs-owner` with one question
+   and a recommended answer, collected into a single `## Owner questions`
+   comment on #217 per tick.
+
+Slices reach `done` only through a merged PR. New or split slices go to
+`.orca/pipeline/slices-local.json` in the coordinator worktree (same shape as
+the slice plan; entries override or extend it) and are listed in the #217
+report; the owner folds them into the tracked plan later.
 
 ## Known Orca pitfalls (2026-10-18)
 

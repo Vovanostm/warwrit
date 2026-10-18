@@ -1,12 +1,37 @@
 {
   "epic": 217,
-  "decisions": "Owner decisions approved 2026-10-18 in issue #217 comments.",
+  "decisions": "Owner decisions are #217 comments headed '## Owner decision' (D1, D2 2026-10-18; workflow v2 2026-10-19).",
+  "lanes": {
+    "web": 1,
+    "core": 1
+  },
+  "ownership_rules": [
+    "A slice owns the *.test.ts(x) files of the modules it owns.",
+    "The coordinator may extend a slice's ownership to a file no active slice owns; record it on the issue. A file owned by an active slice is resolved by sequencing with `after`, not by a second writer.",
+    "Only conflicts that sequencing cannot resolve, or product/rule questions, go to agent:needs-owner."
+  ],
   "slices": [
     {
       "wave": 1,
       "slice": "uix-w1-projection",
-      "issues": [180, 207, 184],
-      "note": "#184 server/protocol part only (attackAffordableAfter); client in uix-w2-scene",
+      "issues": [180, 184],
+      "note": "#184 server/protocol part only (attackAffordableAfter); client in uix-w2-scene 2026-10-19: #207 moved to uix-w1-names; this slice delivers #180 and #184 with owner decision D1.",
+      "ownership": [
+        "packages/protocol/src/combat-lab.ts",
+        "apps/server/src/combat-lab/",
+        "packages/game-core/src/combat/ (pure shared helper only)",
+        "apps/web/src/combat-lab/view-validation.ts"
+      ],
+      "after": [],
+      "lane": "core"
+    },
+    {
+      "wave": 1,
+      "slice": "uix-w1-names",
+      "lane": "core",
+      "issues": [207],
+      "after": ["uix-w1-projection"],
+      "note": "Split from uix-w1-projection (workflow v2 fallback step 2): plan-review-2 found the replay export drops lab presentation metadata, so stable names need additive export metadata in owned server/protocol paths and an export→serialize/parse→reconstruction test. Canonical replay setup/commands/rulesets/RNG and old exports stay unchanged; no replay player.",
       "ownership": [
         "packages/protocol/src/combat-lab.ts",
         "apps/server/src/combat-lab/",
@@ -23,7 +48,9 @@
         "apps/web/src/combat-lab/sprite-scene-markers.ts",
         "apps/web/src/combat-lab/sprite-scene-geometry.ts",
         "apps/web/src/combat-lab/BattleGuidance.tsx"
-      ]
+      ],
+      "after": [],
+      "lane": "web"
     },
     {
       "wave": 1,
@@ -37,7 +64,9 @@
         "apps/web/src/combat-lab/command-availability.ts",
         "apps/web/src/combat-lab/battle-controls.css",
         "apps/web/src/combat-lab/combat-icons.css"
-      ]
+      ],
+      "after": [],
+      "lane": "web"
     },
     {
       "wave": 1,
@@ -51,7 +80,9 @@
         "apps/web/src/combat-lab/BattleView.test.tsx",
         "apps/web/src/combat-lab/controller.test.ts"
       ],
-      "note": "#210 shows names as projected today; unique names arrive with #207 without extra work here."
+      "note": "#210 shows names as projected today; unique names arrive with #207 without extra work here.",
+      "after": [],
+      "lane": "web"
     },
     {
       "wave": 2,
@@ -67,7 +98,8 @@
         "matching *.test.ts(x) files"
       ],
       "after": ["uix-w1-projection", "uix-w1-outcome", "uix-w1-desk"],
-      "note": "Runs after projection, outcome and desk merge so CombatLab.tsx, battle-view.css and battle-controls.css have one writer at a time. Additive event facts must stay replay-compatible."
+      "note": "Runs after projection, outcome and desk merge so CombatLab.tsx, battle-view.css and battle-controls.css have one writer at a time. Additive event facts must stay replay-compatible.",
+      "lane": "web"
     },
     {
       "wave": 2,
@@ -79,7 +111,8 @@
         "apps/web/src/combat-lab/CombatLab.tsx",
         "apps/web/src/combat-lab/BattleUnitCard.tsx",
         "apps/web/src/combat-lab/BattleForecast.tsx"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 2,
@@ -90,7 +123,8 @@
         "apps/web/src/combat-lab/sprite-battle-scene.ts",
         "apps/web/src/combat-lab/sprite-scene-markers.ts",
         "apps/web/src/combat-lab/BattleGuidance.tsx"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 2,
@@ -101,7 +135,8 @@
         "apps/web/src/combat-lab/CommandDesk.tsx",
         "apps/web/src/combat-lab/command-availability.ts",
         "apps/web/src/combat-lab/battle-controls.css"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 2,
@@ -110,7 +145,9 @@
       "ownership": [
         "apps/web/src/combat-lab/battle-hud-projection.ts",
         "apps/web/src/combat-lab/BattleUnitCard.tsx"
-      ]
+      ],
+      "after": [],
+      "lane": "web"
     },
     {
       "wave": 3,
@@ -122,7 +159,8 @@
         "apps/web/src/combat-lab/autoplay.ts",
         "apps/web/src/combat-lab/sprite-battle-scene.ts",
         "apps/web/src/combat-lab/CombatLab.tsx"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 3,
@@ -133,7 +171,8 @@
         "apps/web/src/combat-lab/battle-hud-scene.ts",
         "apps/web/src/combat-lab/battle-controls.css",
         "apps/web/src/combat-lab/BattleView.tsx (utilities)"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 3,
@@ -143,7 +182,8 @@
       "ownership": [
         "apps/web/src/combat-lab/battle-framing.ts",
         "apps/web/src/renderer/three-quarter-camera.ts"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 4,
@@ -155,18 +195,20 @@
         "apps/web/src/combat-lab/sprite-battle-scene.ts",
         "apps/web/src/combat-lab/battle-terrain.ts",
         "apps/web/src/combat-lab/sprite-art.ts"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 4,
       "slice": "uix-w4-text",
       "issues": [213, 216, 205],
-      "after": ["uix-w3-tooltips", "uix-w1-log"],
+      "after": ["uix-w3-tooltips", "uix-w2-log"],
       "ownership": [
         "apps/web/src/combat-lab/*.css",
         "apps/web/src/combat-lab/BattleInitiative.tsx",
         "apps/web/src/combat-lab/BattleLog.tsx"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 4,
@@ -178,7 +220,8 @@
         "packages/game-core/src/combat/",
         "apps/server/src/combat-lab/",
         "docs/wiki/mechanics/ranged.md (coordinator)"
-      ]
+      ],
+      "lane": "web"
     },
     {
       "wave": 5,
@@ -190,12 +233,8 @@
         "apps/web/src/combat-lab/sprite-battle-scene.ts",
         "apps/web/src/combat-lab/sprite-scene-markers.ts",
         "apps/web/src/combat-lab/unit-vitals.css"
-      ]
+      ],
+      "lane": "web"
     }
-  ],
-  "ownership_rules": [
-    "A slice owns the *.test.ts(x) files of the modules it owns.",
-    "The coordinator may extend a slice's ownership to a file no active slice owns; record it on the issue. A file owned by an active slice is resolved by sequencing with `after`, not by a second writer.",
-    "Only conflicts that sequencing cannot resolve, or product/rule questions, go to agent:needs-owner."
   ]
 }
