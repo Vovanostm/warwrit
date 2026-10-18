@@ -538,6 +538,7 @@ it('pauses autoplay while a lawful action is pending and stops it on uncertain, 
     runAutoplayStep(state.view, { ...ready, [flag]: true }, act);
   runAutoplayStep(null, ready, act);
   runAutoplayStep(opponent, ready, act);
+  runAutoplayStep({ ...state.view, status: 'resolved' }, ready, act);
   expect(act).not.toHaveBeenCalled();
   runAutoplayStep(state.view, ready, act);
   expect(act).toHaveBeenCalledWith({ type: 'autoplay' }, 'Шаг автобоя');

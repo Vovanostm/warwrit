@@ -142,7 +142,14 @@ export function BattleView(props: BattleViewProps) {
         setHoveredTarget={setHoveredTarget}
       />
       <BattleThreats view={view} />
-      <BattleOutcome view={view} busy={busy} onRestart={onRestart} onEditor={onEditor} />
+      <BattleOutcome
+        key={`${view.sessionId}:${view.battleId}`}
+        view={view}
+        inspected={inspected}
+        busy={busy}
+        onRestart={onRestart}
+        onEditor={onEditor}
+      />
       <BattleForecast
         view={view}
         blockedCell={blockedCell}

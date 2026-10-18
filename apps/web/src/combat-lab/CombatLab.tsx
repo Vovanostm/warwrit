@@ -637,26 +637,28 @@ export function CombatLab() {
             }}
             menu={
               <>
-                <button
-                  className="battle-control battle-control--utility"
-                  type="button"
-                  aria-label={autoplay ? 'Остановить автобой' : 'Начать автобой'}
-                  title={autoplay ? 'Остановить автобой' : 'Начать автобой'}
-                  aria-pressed={autoplay}
-                  disabled={!autoplay && (!controlling || pending !== null || deleting)}
-                  onClick={() => {
-                    if (autoplayRef.current) stopAutoplay();
-                    else {
-                      setSelectedSkillId(null);
-                      autoplayRef.current = true;
-                      setAutoplay(true);
-                    }
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d={autoplay ? 'M8 5v14M16 5v14' : 'M8 5l11 7-11 7z'} />
-                  </svg>
-                </button>
+                {view.status === 'active' && (
+                  <button
+                    className="battle-control battle-control--utility"
+                    type="button"
+                    aria-label={autoplay ? 'Остановить автобой' : 'Начать автобой'}
+                    title={autoplay ? 'Остановить автобой' : 'Начать автобой'}
+                    aria-pressed={autoplay}
+                    disabled={!autoplay && (!controlling || pending !== null || deleting)}
+                    onClick={() => {
+                      if (autoplayRef.current) stopAutoplay();
+                      else {
+                        setSelectedSkillId(null);
+                        autoplayRef.current = true;
+                        setAutoplay(true);
+                      }
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d={autoplay ? 'M8 5v14M16 5v14' : 'M8 5l11 7-11 7z'} />
+                    </svg>
+                  </button>
+                )}
                 <div className="battle-menu">
                   <button
                     className="battle-control battle-control--utility"
@@ -702,16 +704,18 @@ export function CombatLab() {
                       >
                         К редактору
                       </button>
-                      <div className="battle-autoplay" aria-label="Автобой">
-                        <button
-                          className="battle-control"
-                          type="button"
-                          disabled={autoplay || !controlling || pending !== null || deleting}
-                          onClick={() => autoplayAction.current()}
-                        >
-                          Один шаг
-                        </button>
-                      </div>
+                      {view.status === 'active' && (
+                        <div className="battle-autoplay" aria-label="Автобой">
+                          <button
+                            className="battle-control"
+                            type="button"
+                            disabled={autoplay || !controlling || pending !== null || deleting}
+                            onClick={() => autoplayAction.current()}
+                          >
+                            Один шаг
+                          </button>
+                        </div>
+                      )}
                       <small>
                         ЛКМ — осмотр · ПКМ — приказ
                         <br />

@@ -185,7 +185,11 @@ it('retains fallback inspection, utilities and honestly unavailable ability slot
 });
 
 it('does not claim a winner absent a server outcome', () => {
-  expect(render()).not.toContain('Победа:');
+  for (const status of ['active', 'resolved'] as const) {
+    const html = render({ ...view, status, activation: null, outcome: null });
+    expect(html).not.toContain('aria-label="Результат боя"');
+    expect(html).not.toContain('<h2>Победа</h2>');
+  }
 });
 
 it('does not show active stances or a future round after battle resolution', () => {
@@ -267,10 +271,137 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
   expect(html).toContain('У противника не осталось бойцов в строю.');
   expect(html).not.toContain('aria-label="Действующий боец"');
   expect(html).not.toContain('aria-label="Состояние: Волк"');
-  expect(html).toContain('Сдались <b>1</b>');
+  expect(html).toContain('data-unit-id="B001"');
+  expect(html).toContain('Сдался');
+  expect(html).toContain('Осмотреть поле');
+  expect(html).toContain('aria-expanded="true"');
   expect(html).toContain('Начать заново');
   expect(html).toContain('К редактору');
   expect(html).not.toContain('data-attackable="true"');
+});
+
+it('shows every final fighter once on its side, preserving duplicate names and exact observations', () => {
+  const units: CombatLabView['units'] = [
+    { ...view.units[0]!, name: 'Тёзка', wounds: ['minor', 'severe', 'minor'] },
+    {
+      ...view.units[0]!,
+      id: 'W02',
+      name: 'Тёзка',
+      status: 'retreated',
+      pools: {
+        ...view.units[0]!.pools,
+        health: { current: 7, maximum: 33 },
+        armor: { current: 0, maximum: 0 },
+      },
+    },
+    {
+      ...view.units[1]!,
+      status: 'dead',
+      wounds: ['severe', 'severe'],
+      pools: { ...view.units[1]!.pools, health: { current: 0, maximum: 31 } },
+    },
+    { ...view.units[1]!, id: 'B002', status: 'surrendered' },
+  ];
+  const html = render({
+    ...view,
+    status: 'resolved',
+    activation: null,
+    outcome: { reason: 'last-side-standing', winnerSideId: 'human' },
+    sides: [...view.sides, { id: 'opponent', retreatHexes: [] }],
+    units,
+  });
+  const result = html.slice(html.indexOf('aria-label="Результат боя"'), html.indexOf('</footer>'));
+  const own = result.slice(
+    result.indexOf('data-side-id="human"'),
+    result.indexOf('data-side-id="opponent"'),
+  );
+  const enemy = result.slice(result.indexOf('data-side-id="opponent"'));
+  for (const id of ['W01', 'W02']) expect(own).toContain(`data-unit-id="${id}"`);
+  for (const id of ['B001', 'B002']) expect(enemy).toContain(`data-unit-id="${id}"`);
+  for (const unit of units)
+    expect(result.match(new RegExp(`data-unit-id="${unit.id}"`, 'g'))).toHaveLength(1);
+  expect(result.match(/class="battle-portrait"/g)).toHaveLength(4);
+  expect(result.match(/>Тёзка</g)).toHaveLength(2);
+  for (const text of [
+    'Здоровье 9/31',
+    'Броня 4/11',
+    'Здоровье 7/33',
+    'Броня 0/0',
+    'Здоровье 0/31',
+    'Лёгкие: 2',
+    'Тяжёлые: 1',
+    'Тяжёлые: 2',
+    'Нет ранений',
+    'В строю',
+    'Отступил',
+    'Погиб',
+    'Сдался',
+  ])
+    expect(result).toContain(text);
+});
+
+it('renders legacy terminal identities and portraits without optional preview or hint fields', () => {
+  const historical = { ...view };
+  delete historical.ruleHints;
+  delete historical.movementPreview;
+  delete historical.attackPreview;
+  const units = view.units.map((unit) => {
+    const legacy = { ...unit };
+    delete legacy.name;
+    delete legacy.profileId;
+    return legacy;
+  });
+  const html = render({
+    ...historical,
+    units,
+    sides: [...view.sides, { id: 'opponent', retreatHexes: [] }],
+    status: 'resolved',
+    activation: null,
+    outcome: { reason: 'round-limit', winnerSideId: null },
+  });
+  const result = html.slice(html.indexOf('aria-label="Результат боя"'));
+  expect(result).toContain('>W01<');
+  expect(result).toContain('>B001<');
+  expect(result.match(/class="battle-portrait"/g)).toHaveLength(2);
+  expect(result).toContain('Здоровье 9/31');
+});
+
+it('renders the original guarded round-limit survivor without terminal condition policy', () => {
+  const survivor = {
+    ...view.units[0]!,
+    guarding: true,
+    shieldBraceRank: 1 as const,
+    panicking: false,
+    wounds: ['minor', 'severe', 'minor'] as const,
+    pools: {
+      ...view.units[0]!.pools,
+      morale: { current: 25, maximum: 90 },
+      stamina: { current: 10, maximum: 40 },
+    },
+  };
+  const html = render({
+    ...view,
+    status: 'resolved',
+    activation: null,
+    outcome: { reason: 'round-limit', winnerSideId: null },
+    units: [survivor, view.units[1]!],
+  });
+  expect(html).toContain('<h2>Ничья</h2>');
+  expect(html).toContain('Достигнут предел раундов.');
+  expect(html).toContain('Здоровье 9/31');
+  expect(html).toContain('Лёгкие: 2');
+  expect(html).toContain('Тяжёлые: 1');
+  expect(html).toContain('В строю');
+  for (const text of [
+    'Дрогнул',
+    'Истощён',
+    'до следующего хода',
+    'Упор щитом',
+    'Приказы действующему бойцу',
+  ])
+    expect(html).not.toContain(text);
+  expect(html).toContain('Показать всю сетку');
+  expect(html).toContain('Ночная сцена');
 });
 
 it('explains defeat from the controlled side while enemies remain active', () => {
