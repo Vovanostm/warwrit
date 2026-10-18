@@ -1,68 +1,92 @@
 ---
 name: warwrit-orca
-description: Coordinate parallel Warwrit work in Orca — plan conflict-free waves from GitHub issues, start supervised workers in their own worktrees, review and integrate one PR at a time. Use when the owner asks to parallelize, fan out issues or run an epic with several agents; not for a single-writer task.
+description: Run Warwrit GitHub issues through the Orca issue pipeline — plan, plan review, implement, deterministic validation, independent review, PR/CI, owner-approved merge and shared docs — with Codex workers in their own worktrees. Use when the owner asks to implement issues or an epic through Orca orchestration, or for one pipeline tick of the scheduled automation.
 ---
 
-# Parallel Warwrit work in Orca
+# Warwrit issue pipeline in Orca
 
-[AGENTS.md](../../../AGENTS.md) and [AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18)
+[AGENTS.md](../../../AGENTS.md) and [AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18)
 stay authoritative. Use the `orca` CLI (Orca.app, Git repos); `arca` is a
-separate fork for the Arcadia/arc checkout and never manages Warwrit. Load
-Orca's own guides first: `orca skills get orchestration`
-(supervised runs) or `orca skills get orca-cli` (worktrees, handoffs).
+separate fork for the Arcadia/arc checkout and never manages Warwrit. Read
+`orca skills get orchestration` once per session for the exact flag set.
 
-## Rules that make parallel work fast
+## Principles
 
-- **Writes stay single-threaded per slice.** One writer per worktree, branch and
-  path set. Extra agents add intelligence (exploration, review, critique), not
-  concurrent edits to the same files.
-- **Plan waves by file ownership, not by issue count.** Two issues that edit the
-  same hot file go into one writer or into consecutive waves.
-- **Coordinator owns shared records.** Workers never edit `CHANGELOG.md`,
-  `docs/engineering/CURRENT_PLAN.md` or shared wiki pages; they put the entry
-  text in the PR body and `worker_done` report. The coordinator integrates.
-- **Capacity on the owner's Mac (12 CPU, 36 GB):** at most 5 concurrent writer
-  worktrees running dev servers or tests; read-only reviewers are extra. Full
-  `pnpm verify`, coverage, stress and migration gates run one at a time —
-  concurrent suites time out (seen 2026-10-17).
-- **Merge one PR at a time** with owner permission, re-verify the next branch
-  on the new main. A green branch does not prove the union.
+- **The coordinator owns every state transition.** A worker report is a claim;
+  advance only after re-reading GitHub (labels, PR, CI), the worktree diff and
+  `scripts/orca-validate.sh` exit code.
+- **Writes stay single-threaded per slice.** One Codex writer per worktree and
+  path set; planners and reviewers are read-only and use fresh contexts.
+- **Bounded loops.** Plan review ≤ 2 rounds, code review/rework ≤ 2 rounds, CI
+  rework ≤ 2 rounds; then `agent:needs-owner` with the evidence.
+- **Coordinator is the single writer of shared records** (`CHANGELOG.md`,
+  `CURRENT_PLAN.md`, wiki). It adds them to the PR branch just before merge.
+- **Merge only with `agent:merge-approved`** on the PR (set by the owner) or an
+  owner decision recorded in the PR/epic; one PR at a time, expected head SHA.
+- **Capacity:** ≤ 5 writers at once on this Mac; heavy gates one at a time.
 
-## Hot files (one writer per wave)
+## Slices
 
-| Area                | Files                                                                                           |
-| ------------------- | ----------------------------------------------------------------------------------------------- |
-| Combat scene        | `apps/web/src/combat-lab/sprite-battle-scene.ts`, `sprite-scene-markers.ts`, `battle-layout.ts` |
-| Combat HUD shell    | `BattleView.tsx`, `CombatLab.tsx`, `battle-controls.css`, `battle-view.css`                     |
-| Combat projection   | `packages/protocol/src/combat-lab.ts`, `apps/server/src/combat-lab/projection.ts`               |
-| Rules               | `packages/game-core/src/combat/*` (versioned rulesets, replay)                                  |
-| Lockfile/migrations | `pnpm-lock.yaml` (pnpm only), `apps/server/migrations/*` (never edit released)                  |
+A slice is one writer's work: one or more issues with disjoint ownership,
+taken from the epic's wave table (issue #217 comments). Slice name:
+`uix-<wave>-<area>`, worktree `~/orca/workspaces/warwrit/<slice>`, branch from
+`origin/main`. Track state on every issue in the slice with
+`scripts/orca-issue-state.sh <state> <issues…>`.
 
-## Coordinator loop
+## State machine
 
-1. Read the epic and its issues (`gh issue view <n>`). Owner decisions listed in
-   the epic block the matching issues until answered or accepted.
-2. Build waves: list each ready issue's files, group non-overlapping sets, keep
-   dependency chains ≤ 3 deep. Projection/protocol changes go first.
-3. `orca orchestration run-create --objective "<epic>"`, then one
-   `orca orchestration worker-start --spec "<spec>" --worktree new-child
---name <issue-slug> --agent claude --setup run` per writer. Setup installs
-   dependencies, builds workspace packages and assigns private combat-lab ports
-   (`.worktree-ports`); the agent waits for it (`wait-for-setup`).
-4. Worker spec = the issue's Target / Change / Constraints / Ownership /
-   Acceptance, plus: "work only in this worktree; commit each step; open a PR
-   with `Closes #<n>`; put CHANGELOG/plan text in the PR body; never merge".
-5. While writers run, start read-only reviewers on finished PRs:
-   `warwrit-critic` for diffs, `warwrit-visual-critic` for screenshots.
-6. `orca orchestration check --wait --types worker_done,escalation,question`;
-   answer questions, release settled workers, start the next wave.
-7. Integrate: owner-approved merges one at a time, shared records updated once,
-   then `orca worktree rm --worktree <id> --run-hooks` (the archive hook stops
-   that worktree's dev servers).
+| State                     | Who                                         | Exit condition (coordinator checks)                           |
+| ------------------------- | ------------------------------------------- | ------------------------------------------------------------- |
+| `ready`                   | owner/coordinator labels the issues         | worktree created, `planning` set                              |
+| `planning`                | Codex planner → fresh plan reviewer         | `plan-review-N.md` says `VERDICT: APPROVE`                    |
+| `implementing`            | Codex writer                                | `worker_done` succeeded **and** report present                |
+| `validating`              | coordinator runs `scripts/orca-validate.sh` | exit 0; else rework (back to `implementing`)                  |
+| `review`                  | fresh reviewer (Claude or Codex)            | `review-N.md` says `VERDICT: ACCEPT`; else rework             |
+| `pr`                      | coordinator pushes, opens PR, CI runs       | CI green **and** `agent:merge-approved`; CI red → rework      |
+| `done`                    | coordinator merges, writes shared docs      | PR merged, issues closed, worktree removed with `--run-hooks` |
+| `blocked` / `needs-owner` | anyone                                      | owner answer or unblocking change; comment says why           |
 
-## Stop conditions
+## Commands (coordinator)
 
-Stop and ask the owner when two ready issues need the same hot file in one
-wave, when a worker needs a rule/protocol change outside its issue, or when a
-shared resource (PostgreSQL, campaign `pnpm dev` ports) would be used by two
-writers at once.
+Run inside an Orca terminal, or export `ORCA_TERMINAL_HANDLE=<mailbox handle>`.
+Prompt templates live in [`prompts/`](prompts/); fill `{{SLICE}}`, `{{ISSUES}}`,
+`{{OWNERSHIP}}`, `{{ROUND}}`, `{{FINDINGS}}` and append `prompts/common.md`.
+
+```bash
+orca orchestration run-create --objective "<epic/wave>" --json
+orca worktree create --repo id:<repoId> --name <slice> --base-branch origin/main --no-parent --setup run --json
+orca orchestration task-create --spec "<plan prompt>" --task-title "<slice> plan" --json
+orca orchestration task-create --spec "<plan-review prompt>" --task-title "<slice> plan review" --deps '["<plan task>"]' --json
+orca orchestration worker-start --task <id> --worktree id:<repoId>::<path> --agent codex --json
+orca orchestration check --wait --types worker_done,escalation,question --timeout-ms 900000 --json
+bash scripts/orca-validate.sh <path>
+orca orchestration gate-create --task <merge task> --question "Merge PR #N?" --options '["yes","no"]' --json
+```
+
+Writers: `--agent codex`. Reviewers: `--agent claude` or a second Codex with
+the `warwrit_reviewer` profile model, always a new terminal (fresh context).
+Reuse the writer's terminal for its rework (`worker-start --task <rework>
+--terminal <handle>`), release planners/reviewers after their report.
+
+## PR and merge
+
+1. `git push -u origin <branch>`; `gh pr create` with one `Closes #N` per
+   issue, the report's acceptance proof, checks and risks. Commit only small
+   JPEG evidence under `docs/engineering/evidence/<slice>/`.
+2. Wait for CI through the app/`gh pr checks`; failure → rework task with the
+   failing log excerpt.
+3. With CI green and `agent:merge-approved`: rebase on `origin/main` if needed,
+   add the CHANGELOG/CURRENT_PLAN/wiki entries as one coordinator commit, wait
+   for CI again, `gh pr merge --merge --match-head-commit <sha>`, then
+   `scripts/orca-issue-state.sh done …` and `orca worktree rm --worktree <id>
+--run-hooks`.
+
+## Known Orca pitfalls (2026-10-18)
+
+- `terminal send --interrupt` suspends a Codex TUI (process state `T`) instead
+  of interrupting it; a suspended Codex keeps `~/.codex/logs_2.sqlite` locked
+  and every new Codex fails to start. Never interrupt agents; quit them.
+- A Codex update prompt blocks Orca's readiness (`agent-update-prompt`). Keep
+  the Codex CLI on PATH current before a wave.
+- Long prompts pasted into a non-ready terminal land in zsh. Use `worker-start`
+  (it waits for readiness) instead of `terminal send` for task text.

@@ -125,6 +125,64 @@ server and Vite with no leftover process. Orca's own hook execution and a
 supervised run end-to-end: NOT_RUN until `orca.yaml` is on `main`. Measured
 throughput of parallel waves: NOT_MEASURED.
 
+## Issue pipeline in Orca — 2026-10-18
+
+Owner decision: implement issues only through Orca orchestration — plan,
+implement, review, test, update docs, merge — with Codex agents as the main
+workers. The [`warwrit-orca`](../../.agents/skills/warwrit-orca/SKILL.md) skill
+is the coordinator procedure; its [`prompts/`](../../.agents/skills/warwrit-orca/prompts/common.md)
+are the worker briefs.
+
+- **State lives on GitHub.** Labels `agent:ready → planning → implementing →
+validating → review → pr → done`, plus `blocked` / `needs-owner`, set only by
+  [`scripts/orca-issue-state.sh`](../../scripts/orca-issue-state.sh). Orca
+  Run/Task/Dispatch records attempts; GitHub records the issue's state.
+- **The coordinator owns transitions.** Worker output is a claim. Advancing needs
+  the plan/review verdict file, the worktree diff,
+  [`scripts/orca-validate.sh`](../../scripts/orca-validate.sh) exit code
+  (rebased, clean tree, package builds, typecheck, prettier/eslint on changed
+  files, `vitest related`) and green PR CI.
+- **Fresh read-only contexts** plan-review and code-review; one Codex writer per
+  slice reuses its terminal for bounded rework (≤ 2 rounds per loop, then
+  `needs-owner`).
+- **Docs and merge.** The coordinator is the single writer of CHANGELOG,
+  CURRENT_PLAN and wiki and adds them to the PR right before merge. Merge needs
+  the owner's `agent:merge-approved` label on that PR (AGENTS hard rule 1),
+  green CI and the expected head SHA; one PR at a time.
+- **Automation.** An Orca automation "Warwrit pipeline tick" (created disabled)
+  runs one coordinator tick with the skill when a precheck finds issues in a
+  pipeline state.
+
+Sources: [Issue-Orchestrator](https://dev.to/brucebgordon/issue-orchestrator-a-software-engineering-control-plane-for-coding-agents-11ii)
+(orchestrator owns state; agent output is a claim),
+[Sortie](https://blog.serghei.pl/posts/how-i-taught-my-issue-tracker-to-dispatch-coding-agents/)
+(label-driven states reconciled each poll),
+[OpenCode issue workflow](https://gist.github.com/ppries/f07fd6316bbd45807dd7a1896555b05b)
+(plan → review → implement → review with convergence limits),
+[Addy Osmani, The Code Agent Orchestra](https://addyosmani.com/blog/code-agent-orchestra/)
+(verification is the bottleneck),
+[Augment: open-source orchestrators](https://www.augmentcode.com/tools/open-source-agent-orchestrators)
+(automated merge-conflict resolution mostly fails → serial merges), Orca
+[orchestration](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/cli/orchestration.mdx)
+and [automations](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/cli/automations.mdx).
+
+**First attempt, 2026-10-18 — failures retained.** Five Codex workers for epic
+#217 wave 1 did not start: the Codex CLI 0.146 update prompt blocked Orca
+readiness; `terminal send --interrupt` suspended a Codex process that then held
+`~/.codex/logs_2.sqlite` and blocked every other Codex; prompts pasted into
+non-ready terminals reached zsh (interrupted, no command ran, worktrees clean);
+the Claude Code auto-mode classifier refused coordinator-launched Codex with
+approvals/sandbox bypass, and a sandboxed Codex still asked for approvals.
+Prerequisites for the next wave: current Codex CLI on PATH, Orca's own Codex
+launcher (`worker-start --agent codex`) as the only launch path, and the
+owner's choice of worker permissions. Run `run_6c8d2ba11d09` tasks are blocked
+and superseded.
+
+Checks 2026-10-18: `orca-validate.sh` on this branch PASS (rebased, clean,
+packages, typecheck, format; a formatting failure was caught first);
+`vitest related` and eslint invocations PASS on a sample file; state script
+rejects unknown states. End-to-end pipeline run: NOT_RUN.
+
 ## Loading and host limits
 
 [Official Codex documentation](https://developers.openai.com/codex/multi-agent)

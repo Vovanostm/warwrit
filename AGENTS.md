@@ -277,7 +277,7 @@ skill discovery can read the same `SKILL.md` files directly.
 | Implement a pure domain change or cross-component effect             | [.agents/skills/warwrit-domain/SKILL.md](.agents/skills/warwrit-domain/SKILL.md)     |
 | Review/refactor, reproduce an exploit or verify an invariant         | [.agents/skills/warwrit-review/SKILL.md](.agents/skills/warwrit-review/SKILL.md)     |
 | Validate, publish, authorized merge, checkpoint or next-task handoff | [.agents/skills/warwrit-delivery/SKILL.md](.agents/skills/warwrit-delivery/SKILL.md) |
-| Run several agents in parallel through Orca                          | [.agents/skills/warwrit-orca/SKILL.md](.agents/skills/warwrit-orca/SKILL.md)         |
+| Run issues through the Orca pipeline with parallel Codex workers     | [.agents/skills/warwrit-orca/SKILL.md](.agents/skills/warwrit-orca/SKILL.md)         |
 
 ## Code Review Rules
 

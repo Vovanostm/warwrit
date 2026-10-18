@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Run issues through an Orca pipeline
+
+- 2026-10-18, originating branch `claude/orca-issue-pipeline`, local/PR pending:
+  owner decision to implement issues only through Orca orchestration with Codex
+  workers. `warwrit-orca` now defines the plan → plan review → implement →
+  validate → review → PR/CI → owner-approved merge → docs state machine with
+  GitHub `agent:*` labels; worker prompt templates; deterministic
+  `scripts/orca-validate.sh` and `scripts/orca-issue-state.sh`. First wave
+  launch failures and prerequisites recorded in
+  [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18).
+  Validate gate PASS on its own branch; end-to-end run NOT_RUN.
+
 ### Configure Orca for parallel agent worktrees
 
 - 2026-10-18, originating branch `claude/orca-parallel-setup`, local/PR pending:
@@ -20,6 +32,8 @@ requests.
   Research and limits in [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18).
   Setup, dual-port combat lab and archive cleanup PASS on a fresh worktree;
   Orca hook execution and a supervised run NOT_RUN until merged.
+  Merged 2026-10-18 with owner approval: [PR219](https://github.com/Vovanostm/warwrit/pull/219),
+  merge `0763bc4`, CI Verify clean checkout PASS.
 
 - 2026-10-17, originating branch `codex/combat-readability` → `main`, merged:
   owner-authorized [PR160](https://github.com/Vovanostm/warwrit/pull/160),
