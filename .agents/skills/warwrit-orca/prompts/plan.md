@@ -6,7 +6,8 @@ Ownership: {{OWNERSHIP}}
 Read-only task: do not edit source. Write `.orca/{{SLICE}}/plan.md` with:
 
 1. Files and functions to change (current main; issue links point to an older
-   commit), with the reason for each.
+   commit), with the reason for each. Shape new UI logic into small functions
+   that pass the commit audit (`pnpm check:changes`: complexity and CRAP).
 2. Data contract changes (optional projection fields), compatibility with old
    replays/projections.
 3. Test plan: which existing tests change, which focused tests are added and why

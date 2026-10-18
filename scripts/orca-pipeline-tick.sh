@@ -6,8 +6,23 @@
 # Usage: scripts/orca-pipeline-tick.sh [coordinator-worktree]
 #        scripts/orca-pipeline-tick.sh --loop [minutes]   (visible loop in an Orca terminal)
 set -uo pipefail
+# The loop keeps the Mac awake while it runs, ticks again as soon as a worker
+# reports, and counts the interval in wall-clock time: macOS `sleep` stops
+# while the system sleeps, so one long sleep could stall the loop for hours.
 if [[ "${1:-}" == "--loop" ]]; then
-  while true; do bash "$0"; sleep $(( ${2:-20} * 60 )); done
+  caffeinate -i -w $$ &
+  env_file="$HOME/orca/workspaces/warwrit/pipeline-coordinator/.orca/pipeline/coordinator.env"
+  mail_since() {
+    [[ -f "$env_file" ]] || return 1
+    (. "$env_file" && ORCA_TERMINAL_HANDLE="$MAILBOX" orca orchestration check --run "$RUN" --peek --json 2>/dev/null) \
+      | python3 -I -c 'import json,sys;m=json.load(sys.stdin)["result"]["messages"];sys.exit(0 if any(x["created_at"]>sys.argv[1] for x in m) else 1)' "$1"
+  }
+  while true; do
+    started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    bash "$0"
+    next=$(( $(date +%s) + ${2:-20} * 60 ))
+    while (( $(date +%s) < next )) && ! mail_since "$started"; do sleep 60; done
+  done
 fi
 
 repo="Vovanostm/warwrit"

@@ -17,7 +17,15 @@ separate fork for the Arcadia/arc checkout and never manages Warwrit.
 - **Writes stay single-threaded per slice.** One writer per worktree; planners
   and reviewers run in fresh contexts and do not edit source.
 - **Bounded loops.** Plan review ≤ 2 rounds, code review/rework ≤ 2, CI rework
-  ≤ 2; then label `agent:needs-owner` and comment the evidence.
+  ≤ 2; then label `agent:needs-owner` and comment the evidence. Exception
+  (owner, 2026-10-18): when the only remaining blocker is the commit audit
+  (complexity/CRAP of the slice's own functions), allow one more bounded
+  recovery — structural simplification plus real coverage, normal commit; never
+  weaken thresholds or hooks.
+- **Resume after an owner decision.** A `needs-owner` slice whose issues are
+  back in `agent:ready` resumes from its existing worktree and records, applying
+  the latest owner decision on #217 (plan → planner revision and the next review
+  round; implementation → the allowed recovery). Do not recreate the worktree.
 - **The coordinator is the single writer of shared records** (`CHANGELOG.md`,
   `docs/engineering/CURRENT_PLAN.md`, wiki) and adds them to the PR branch
   right before merge.
@@ -34,8 +42,10 @@ separate fork for the Arcadia/arc checkout and never manages Warwrit.
 ## Inputs
 
 - Slice plan: [`slices/epic-217.json`](slices/epic-217.json) — wave, slice name,
-  issues, ownership, `after` dependencies, notes. Owner decisions are in issue
-  #217 comments.
+  issues, ownership, `after` dependencies, notes. Owner decisions are #217
+  comments whose first line starts with `## Owner decision`; only those count.
+  The owner and the coordinator share one GitHub account, so the coordinator
+  never writes that heading.
 - Worker briefs: [`prompts/`](prompts/common.md). Fill `{{SLICE}}`, `{{ISSUES}}`
   (with titles), `{{OWNERSHIP}}`, `{{ROUND}}`, `{{FINDINGS}}`; always append
   `prompts/common.md`; add the slice `note`.
