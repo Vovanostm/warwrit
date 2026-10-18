@@ -30,7 +30,11 @@ export function BattleSkills({ view, selectedSkillId, onSelectSkill, skillDisabl
   const renderSkillSlot = (skill: NonNullable<CombatLabView['skills']>[number]) => {
     const reason = skillDisabledReason || unavailableSkillReason(view, skill);
     return (
-      <span className="battle-ability-slot battle-control-slot" key={skill.skillId}>
+      <span
+        className="battle-ability-slot battle-control-slot"
+        key={skill.skillId}
+        data-unavailable={Boolean(reason)}
+      >
         <button
           className="battle-control battle-control--icon"
           type="button"
@@ -46,8 +50,16 @@ export function BattleSkills({ view, selectedSkillId, onSelectSkill, skillDisabl
           aria-describedby={`skill-${skill.skillId}`}
         >
           <CombatIcon name={skillIcons[skill.skillId]} />
+          {reason && <span className="battle-unavailable-mark" aria-hidden="true" />}
           <b className="battle-skill-rank">{skill.rank}</b>
         </button>
+        <span className="battle-command-label">
+          {skill.skillId === 'aimed-shot'
+            ? 'Прицельный'
+            : skill.skillId === 'armor-pressure'
+              ? 'Удар в броню'
+              : skill.name}
+        </span>
         <BattleCost cost={skill} />
         <span id={`skill-${skill.skillId}`} className="battle-command-tooltip" role="tooltip">
           <strong>

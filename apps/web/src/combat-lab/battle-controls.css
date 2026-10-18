@@ -53,6 +53,32 @@
   outline: 2px solid #f1d397;
   outline-offset: 3px;
 }
+.battle-view .battle-control--icon[data-ready='true']:not([aria-disabled='true']) {
+  outline: 2px solid var(--battle-gold);
+  outline-offset: -4px;
+}
+.battle-unavailable-mark {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  background: #202c30;
+  color: var(--battle-disabled);
+}
+.battle-unavailable-mark::after {
+  content: '';
+  position: absolute;
+  inset: 5px 0;
+  height: 2px;
+  background: currentColor;
+  transform: rotate(-45deg);
+}
+.battle-control-slot[data-unavailable='true'] > .battle-action-cost {
+  color: var(--battle-disabled);
+}
 .battle-view .battle-control--icon {
   position: relative;
   width: var(--battle-icon-size);
@@ -190,8 +216,8 @@
   justify-self: center;
   width: min(100%, 720px);
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 24px;
+  grid-template-columns: minmax(0, 1fr) 124px;
+  gap: 10px 16px;
   padding: 12px;
   border: 1px solid var(--battle-border);
   border-radius: var(--battle-radius);
@@ -294,8 +320,8 @@
 .battle-view .combat-lab-actions,
 .battle-skill-list {
   display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: start;
   gap: 8px;
 }
 .battle-control-slot {
@@ -358,7 +384,7 @@
   right: 0;
   padding: 12px;
   display: grid;
-  grid-template-columns: repeat(4, var(--battle-icon-size));
+  grid-template-columns: repeat(2, 124px);
   gap: 8px;
   z-index: 15;
 }
@@ -506,9 +532,28 @@
   margin-top: 5px;
   text-align: center;
   font:
-    500 10px/1.2 system-ui,
+    500 18px/1.2 system-ui,
     sans-serif;
   color: var(--battle-muted);
+  min-height: 2.4em;
+  overflow-wrap: normal;
+}
+.battle-command,
+.battle-ability-slot {
+  text-align: center;
+}
+.battle-command {
+  width: 100px;
+}
+.battle-ability-slot {
+  width: 124px;
+}
+.battle-end-turn-warning {
+  color: var(--battle-ink);
+  font-size: 18px;
+}
+.battle-end-turn-warning:empty {
+  display: none;
 }
 .battle-view .battle-effects {
   height: 15px;
