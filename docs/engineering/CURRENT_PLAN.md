@@ -1,5 +1,52 @@
 # Warwrit current delivery plan
 
+**PR237 merge stage — 2026-10-19, published producer; NOT_MERGED:**
+Prior head `7c05b14` has successful CI39253806343. Normal integration
+`1b364d3` includes main `06b32bb` (PR236 plan changes), preserving both additive
+changelog sections. Apps/packages match gated `c055e9a`; Tier L reviewer1 and
+played evaluator1 ACCEPT remain applicable. Fresh coordinator validate EXIT0,
+8/8,709PASS/47SKIP,auditPASS. Shared-record update and exact-head CI precede
+expected-head merge under v3 mission permission; no blocking PR/issue labels
+or unresolved review threads observed. #184 remains open for bands/legend/CVD
+and legacy scene rendering. SkillReach waits for this merge; desk/outcome
+REWORK and the existing writer/dependency sequence remain. New playtest and
+deployment NOT_RUN. This dated entry supersedes earlier pending-CI statuses
+only for the prior head. [Proof](evidence/uix-w1-affordability/README.md).
+
+**UIX-03a / #184 producer — 2026-10-19, published / local ACCEPT:**
+`Vovanostm/uix-w1-affordability`, gated source `c055e9a`: optional server-owned
+post-path attack affordability, legacy omission accepted. Reviewer1 and played
+evaluator1 ACCEPT; 62 focused tests,29 live boundary cases,96 matched captures
+including native125%, real move/end-turn and UI-autobattle victory R10/rev182.
+Normal merge of main `f365f60` at `59af0ab` changes no gated apps/packages;
+additive CHANGELOG/CURRENT_PLAN conflicts retain both histories. Integrated
+coordinator validate EXIT0,8/8,709PASS/47SKIP,auditPASS. Fifteen finite
+baseline-saved replay streams compare equal across schemas1/2 and five rulesets;
+paired 10,000-battle stress outputs match (duration excluded),20 deterministic
+reruns/100 replay checks PASS. Hosted clean-checkout CI pending before merge. No full-game
+acceptance or deployment; performance/balance NOT_MEASURED. #184 remains open:
+its bands/legend/CVD/rendered legacy fallback belong to uix-w2-scene after#187.
+SkillReach waits for this producer merge; names follows both producers. Desk and
+outcome retain assigned integrated REWORK. Mission-level v3 tier gates govern
+this slice; historical per-PR owner-label statements below are superseded.
+[Proof and limits](evidence/uix-w1-affordability/README.md).
+
+**PR229 / UIX-01a — 2026-10-19, MERGED; successor contract local:**
+Owner `agent:merge-approved` and exact-head CI39243122114 SUCCESS allowed the
+expected-head merge of `2508eb6` to `1665527` at 11:36 UTC. Live PR/main
+readback confirms the merge; ordinary tree diff is empty and #180 is
+CLOSED / `agent:done`. Evaluator4 ACCEPT, prior validate8/8 and playable
+proof are reused explicitly; no new main playtest/game gates (NOT_RUN).
+The next eligible producer `uix-w1-affordability` (#184 subset) starts its
+read-only contract on this main; no bands/legend acceptance or #184 closure.
+Scene waits for skillReach after affordability; names waits for both producers.
+Desk#198 and outcome#209–211 retain integrated REWORK. Pending PR230/232/233
+remain inactive; local plan overrides remain authoritative until their merge.
+Metric today: **1 merged PR with playable proof**, 0 open gameplay PRs of #217.
+This dated receipt supersedes pending/live statuses below; recorded locally on
+`Vovanostm/uix-w1-affordability` for publication with its future PR.
+[Delivered proof](evidence/uix-w1-projection/README.md).
+
 **Autonomous studio — owner decision 2026-10-19:** «Да, продолжай — хочу,
 чтобы работа велась автономно — создавались issues, обновлялись, выполнялись,
 мержились — идея есть, ориентиры есть — теперь только этап полировки. Все

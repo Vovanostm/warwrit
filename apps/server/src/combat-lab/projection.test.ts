@@ -222,3 +222,173 @@ it('covers admitted controlled B053, panic, opponent and terminal partitions', (
   };
   expect(projectDuel(human, noEnemies).attackRefusals).toEqual([]);
 });
+
+it('quotes ordinary attack affordability on every movement destination', () => {
+  for (const profile of ['W01', 'W08']) {
+    const fixture = duel(profile, { q: 8, r: 5 });
+    const before = structuredClone(fixture);
+    const movements = projectDuel(fixture).movementPreview!;
+    expect(movements.map(({ attackAffordableAfter: _, ...row }) => row)).toEqual(
+      combat.previewCombatMovement(fixture.state),
+    );
+    expect(fixture).toEqual(before);
+    expect(movements.length).toBeGreaterThan(0);
+    for (const movement of movements) {
+      expect(movement.attackAffordableAfter).toBe(
+        profile === 'W01' && movement.actionPointCost === 1,
+      );
+    }
+  }
+});
+
+it('quotes fatigue and stamina boundaries against actual move then attack admission', () => {
+  const fixture = duel('W01', { q: 5, r: 5 });
+  for (const stamina of [100, 27, 16, 15]) {
+    const state = {
+      ...fixture.state,
+      units: fixture.state.units.map((unit) => (unit.id === 'actor' ? { ...unit, stamina } : unit)),
+    };
+    const before = structuredClone(state);
+    const quote = projectDuel(fixture, state).movementPreview!.find(
+      (row) => row.to.q === 4 && row.to.r === 5,
+    )!;
+    expect(quote).toBeDefined();
+    expect(quote.attackAffordableAfter).toBe(stamina >= 16);
+    const move = combat.applyCombatCommand(state, {
+      type: 'move',
+      commandId: combat.commandId(`move-${stamina}`),
+      actorId: combat.unitId('actor'),
+      activationId: state.activation!.id,
+      to: quote.to,
+    });
+    assert(move.ok);
+    const result = combat.applyCombatCommand(move.state, {
+      type: 'attack',
+      commandId: combat.commandId(`attack-${stamina}`),
+      actorId: combat.unitId('actor'),
+      activationId: move.state.activation!.id,
+      targetId: combat.unitId('target'),
+    });
+    expect(result.ok).toBe(quote.attackAffordableAfter);
+    expect(state).toEqual(before);
+    expect(move.state.units.find((unit) => unit.id === 'actor')!.stamina).toBe(stamina - 4);
+    const afterMove = projectCombatLabView(
+      'session',
+      'human',
+      move.state,
+      [...fixture.events, ...move.events],
+      fixture.battle,
+    );
+    expect(afterMove.viewRevision).toBe(move.state.revision);
+    expect(afterMove.movementPreview!.length).toBeGreaterThan(0);
+    expect(afterMove.movementPreview!.every((row) => row.attackAffordableAfter === false)).toBe(
+      true,
+    );
+  }
+});
+
+it('does not invent post-move ordinary attack capability for panic or B053', () => {
+  const fixture = duel('B053');
+  const movements = projectDuel(fixture).movementPreview!;
+  expect(movements.length).toBeGreaterThan(0);
+  expect(movements.every((row) => row.attackAffordableAfter === false)).toBe(true);
+  const human = duel();
+  const state = {
+    ...human.state,
+    units: human.state.units.map((unit) =>
+      unit.id === 'actor' ? { ...unit, morale: 0, moralePolicy: 'human' as const } : unit,
+    ),
+  };
+  expect(
+    projectDuel(human, state).movementPreview!.every((row) => row.attackAffordableAfter === false),
+  ).toBe(true);
+  const opponent = {
+    ...human.state,
+    activation: { ...human.state.activation!, unitId: combat.unitId('target') },
+  };
+  expect(projectDuel(human, opponent).movementPreview).toEqual([]);
+  expect(
+    projectDuel(human, { ...human.state, status: 'resolved', activation: null }),
+  ).not.toHaveProperty('movementPreview');
+  for (const type of ['move', 'attack'] as const) {
+    const rejected = combat.applyCombatCommand(state, {
+      type,
+      commandId: combat.commandId(`panic-${type}`),
+      actorId: combat.unitId('actor'),
+      activationId: state.activation!.id,
+      to: { q: 3, r: 4 },
+      targetId: combat.unitId('target'),
+    });
+    assert(!rejected.ok);
+    expect(rejected.error.code).toBe('PANICKED');
+    expect(rejected.state).toBe(state);
+  }
+});
+
+it('preserves ordinary attacks for untrained actors after a hazard-free move', () => {
+  const fixture = duel('W01', { q: 5, r: 5 });
+  const state = {
+    ...fixture.state,
+    units: fixture.state.units.map((unit) =>
+      unit.id === 'actor' ? { ...unit, trainedMelee: false } : unit,
+    ),
+  };
+  const quote = projectDuel(fixture, state).movementPreview!.find(
+    ({ to }) => to.q === 4 && to.r === 5,
+  )!;
+  expect(quote.attackAffordableAfter).toBe(true);
+  const move = combat.applyCombatCommand(state, {
+    type: 'move',
+    commandId: combat.commandId('untrained-move'),
+    actorId: combat.unitId('actor'),
+    activationId: state.activation!.id,
+    to: quote.to,
+  });
+  assert(move.ok);
+  const attack = combat.applyCombatCommand(move.state, {
+    type: 'attack',
+    commandId: combat.commandId('untrained-attack'),
+    actorId: combat.unitId('actor'),
+    activationId: move.state.activation!.id,
+    targetId: combat.unitId('target'),
+  });
+  expect(attack.ok).toBe(true);
+});
+
+it('never restores insufficient resources and refreshes exhausted movement activation', () => {
+  const fixture = duel('W01', { q: 8, r: 5 });
+  for (const [ap, stamina] of [
+    [2, 100],
+    [4, 11],
+  ]) {
+    const state = {
+      ...fixture.state,
+      activation: { ...fixture.state.activation!, remainingActionPoints: ap! },
+      units: fixture.state.units.map((unit) =>
+        unit.id === 'actor' ? { ...unit, stamina: stamina! } : unit,
+      ),
+    };
+    const movements = projectDuel(fixture, state).movementPreview!;
+    expect(movements.length).toBeGreaterThan(0);
+    expect(movements.every((row) => row.attackAffordableAfter === false)).toBe(true);
+  }
+  const quote = projectDuel(fixture).movementPreview!.find((row) => row.actionPointCost === 4)!;
+  expect(quote).toBeDefined();
+  const move = combat.applyCombatCommand(fixture.state, {
+    type: 'move',
+    commandId: combat.commandId('exhaust-move'),
+    actorId: combat.unitId('actor'),
+    activationId: fixture.state.activation!.id,
+    to: quote.to,
+  });
+  assert(move.ok);
+  expect(move.state.activation!.remainingActionPoints).toBe(0);
+  const view = projectCombatLabView(
+    'session',
+    'human',
+    move.state,
+    [...fixture.events, ...move.events],
+    fixture.battle,
+  );
+  expect(view.movementPreview).toEqual([]);
+});

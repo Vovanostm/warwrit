@@ -9,6 +9,61 @@ requests.
 
 ## Unreleased
 
+### Reconcile PR237 with the latest slice plan before merge
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-affordability`, published
+  producer PR [237](https://github.com/Vovanostm/warwrit/pull/237), merge pending.
+  Prior head `7c05b14` passed CI39253806343. Normal main integration
+  `1b364d3` includes `06b32bb` (PR236 slice plan); the only conflict was
+  additive CHANGELOG entries, both retained. Gated apps/packages are unchanged
+  from `c055e9a`; Tier L reviewer1 and played evaluator1 ACCEPT remain applicable.
+  Fresh coordinator validator on `1b364d3`: EXIT0,8/8,709PASS/47SKIP,auditPASS.
+  Evidence-only and shared-record path checks PASS. New-head hosted CI must pass
+  before expected-head merge; no deployment or new playtest claimed.
+  #184 stays open for the downstream bands/legend/CVD/legacy scene consumer.
+  [Proof and limits](docs/engineering/evidence/uix-w1-affordability/README.md).
+
+### Restore the post-movement attack affordability producer
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-affordability`, published
+  implementation, refs #184 (producer subset only).
+  Core derives optional `movementPreview[].attackAffordableAfter` through shared
+  admission/resource policy; protocol/server expose it and the web validates its
+  shape, including legacy omission. Six owned source/test paths; no command,
+  rules/RNG/replay/migration or visual changes. Independent reviewer1 and
+  evaluator1 ACCEPT on `c055e9a`; evaluator62 focusedPASS,29 live boundaryPASS,
+  96 matched before/after captures with native125%, real move/end-turn and
+  UI-autobattle victory R10/rev182 (93 accepted orders; terminal0 extra).
+  Main `f365f60` integrated by normal merge `59af0ab`; only additive shared-doc
+  conflicts resolved, both histories retained, gated apps/packages unchanged.
+  Coordinator integrated validate EXIT0/8of8,709PASS/47SKIP,auditPASS.
+  Fifteen baseline-saved replay streams on schemas1/2 and five rulesets produce
+  identical canonical states, complete events and accepted-command counts.
+  Paired 10,000-battle stress matches every deterministic output (duration excluded);
+  20 deterministic reruns/100 replay checks PASS. Final hosted clean-checkout CI
+  pending before merge.
+  #184 stays open for bands/legend/CVD/rendered legacy fallback in uix-w2-scene;
+  baseline-only zoom-readback anomaly retained in evaluator provenance.
+  [Independent proof](docs/engineering/evidence/uix-w1-affordability/README.md).
+  No deployment; performance/balance/capacity NOT_MEASURED.
+
+### Record PR229 merge and start the affordability producer contract
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-affordability`, local
+  receipt of merged [PR229](https://github.com/Vovanostm/warwrit/pull/229)
+  from `Vovanostm/uix-w1-projection`: expected head `2508eb6`, merge/main
+  `1665527`, owner `agent:merge-approved` present, exact-head
+  [CI39243122114](https://github.com/Vovanostm/warwrit/actions/runs/39243122114)
+  SUCCESS, no blocking review threads; ordinary merged-tree diff empty.
+  #180 is CLOSED / `agent:done`; evaluator4 ACCEPT and existing played proof
+  are reused, not rerun. No new game checks or main playtest: NOT_RUN.
+  Pipeline tick starts only the #184 producer contract on this branch;
+  bands/legend/visual acceptance and issue closure remain with uix-w2-scene.
+  Updated CURRENT_PLAN, owning wiki and
+  [proof receipt](docs/engineering/evidence/uix-w1-projection/README.md).
+  Projection worktree removed with archive hooks after preserving local reports;
+  desk/outcome REWORK and successor dependencies remain. No deployment.
+
 ### Slices for playtest findings and QA hooks
 
 - 2026-10-19, branch `claude/slices-227-228-235`, studio director: added

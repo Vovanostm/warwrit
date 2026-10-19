@@ -300,6 +300,27 @@ export function previewCombatMovement(state: BattleState): readonly CombatMoveme
   return movementField(state);
 }
 
+/** Nominal post-path resource quote; survival, reaction RNG and targets are separate. */
+export function previewCombatMovementAttackAffordability(
+  state: BattleState,
+): readonly (CombatMovementPreview & { readonly attackAffordableAfter: boolean })[] {
+  if (!isPrototype(state) || state.status !== 'active' || state.activation === null) return [];
+  const actor = activeActor(state);
+  const weapon = weaponProfile(combatRules(state.rulesetId), actor.weaponId);
+  const capable = ordinaryCombatAttackFailure(state, actor) === undefined;
+  const actionPoints = state.activation.remainingActionPoints;
+  return previewCombatMovement(state).map((movement) => ({
+    ...movement,
+    attackAffordableAfter:
+      capable &&
+      combatAttackResourceFailure(
+        weapon,
+        actionPoints - movement.actionPointCost,
+        actor.stamina - movement.staminaCost,
+      ) === undefined,
+  }));
+}
+
 export function preparePrototypeMove(
   state: BattleState,
   destination: Hex,

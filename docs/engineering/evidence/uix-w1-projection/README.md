@@ -8,6 +8,19 @@ owner-approved merge pending. This is the #180
 projection boundary, not downstream refusal wording, #184 affordability,
 #187 skill reach or #207 names.
 
+## Merge receipt — 2026-10-19
+
+[PR229](https://github.com/Vovanostm/warwrit/pull/229) merged at 11:36 UTC,
+with `agent:merge-approved` present, expected head
+`2508eb6bf5721ed28f4fc1c23aa6b26cd9fca369` and
+[CI39243122114](https://github.com/Vovanostm/warwrit/actions/runs/39243122114)
+SUCCESS (bootstrap, coverage and quality steps). Actual merge/main
+`16655275db7b7846cc8f09ff769dd4a4b52a646a`; ordinary tree diff from the
+checked head is empty; #180 is CLOSED / `agent:done`; no blocking review
+threads. Prior evaluator4 ACCEPT, validation8/8 and played proof below are
+reused. New main playtest/game gates NOT_RUN; no deployment. This receipt
+supersedes the historical pending statuses below. #184/#187/#207 stay open.
+
 ## Main integration — 2026-10-19
 
 PR229 now has `agent:merge-approved`; CI39196517767 succeeded at `35c117e`.
