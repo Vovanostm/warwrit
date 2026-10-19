@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-**Names producer #207 — 2026-10-19, local Tier L ACCEPT; publication/CI next:**
+**Names producer #207 — 2026-10-19, published PR239; CI pending:**
 `Vovanostm/uix-w1-names`: source `796fa52`, gated
 `f5803e5da321e6f71506e8488e612e75531943e9`; fresh reviewer1 and played
 evaluator1 ACCEPT for the amended server/protocol producer. Coordinator
@@ -11,7 +11,8 @@ UI autobattle opponent victory R10/rev171,54 accepted UI orders. Downloaded JSON
 alone reconstructs live names/status/outcome and matches baseline canonical
 state/events/count/RNG. Unauthorized export404/foreign Origin403. Evidence-only
 `a40d901` retains reports and28 JPEGs; [proof and limits](evidence/uix-w1-names/README.md).
-PR must use Refs #207; issue remains OPEN for visible field captions, terminal
+[PR239](https://github.com/Vovanostm/warwrit/pull/239) uses Refs #207; issue
+remains OPEN for visible field captions, terminal
 fighter inspection and inherited log/HUD clipping. Canonical replay/rules/RNG,
 mechanics/setup/wiki contracts unchanged; no full-issue or scene acceptance.
 #186 evaluator1 REWORK retains four proof gaps: native125/matched crowd,

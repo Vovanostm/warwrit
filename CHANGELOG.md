@@ -11,8 +11,9 @@ requests.
 
 ### Publish stable fighter-label and replay-presentation producer proof
 
-- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local producer
-  `796fa52`, publication/PR/CI pending, refs #207. Server/protocol retain detached
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, published producer
+  `796fa52` in [PR239](https://github.com/Vovanostm/warwrit/pull/239), CI/merge
+  pending, refs #207. Server/protocol retain detached
   full-roster duplicate labels and optional replay presentation metadata; canonical
   replay/history/RNG/rules and authorization unchanged. Tier L reviewer1 and
   played evaluator1 ACCEPT for `f5803e5`; coordinator validate8/8 PASS,
