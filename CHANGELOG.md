@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Record PR238 merge and release single-issue successors
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local receipt of
+  merged [PR238](https://github.com/Vovanostm/warwrit/pull/238): expected
+  head `3377996`, merge/main `073a02b`, exact-head CI39271231939 SUCCESS.
+  Tier L reviewer1 and played evaluator1 ACCEPT for `3ea21b0`; coordinator
+  validate8/8,732PASS/47SKIP,auditPASS; later evidence/shared-record paths PASS.
+  #187 remains OPEN for its rendered contour. Names #207 may plan on merged
+  main; the former scene #186/#187 scope is split before its next start under
+  workflow v3, preserving its old plan and all assigned integration findings.
+  [Existing proof](docs/engineering/evidence/uix-w1-skill-reach/README.md) is
+  reused; new main playtest/game gates/deployment NOT_RUN.
+
 ### Supply current learned-skill geometry for the scene consumer
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-skill-reach`, published

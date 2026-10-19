@@ -1,5 +1,20 @@
 # Warwrit current delivery plan
 
+**PR238 producer merged — 2026-10-19; single-issue successors released:**
+[PR238](https://github.com/Vovanostm/warwrit/pull/238) MERGED `073a02b` at
+15:05 UTC, expected head `3377996`, CI39271231939 SUCCESS. Tier L reviewer1
+and played evaluator1 ACCEPT for `3ea21b0`; coordinator validate8/8 PASS,
+732PASS/47SKIP,auditPASS; later commits are evidence/shared records only.
+#187 stays OPEN for contour/legend/CVD/current-selection rendering. #207
+names may plan on merged main. Before its next start, split scene into #186
+actor foundation and sequential #187 range-outline consumer; retain historical
+plan/reviews and scene integration findings, with full #186 enemy-turn proof
+still playback-owned. Desk/outcome integrated REWORK remains pending.
+Today **3 merged PRs with playable proof** (#229,#237,#238); new main
+playtest/game gates/deploy NOT_RUN. This receipt is local on the successor
+branch and supersedes only the pending producer status below.
+[Proof and limits](evidence/uix-w1-skill-reach/README.md).
+
 **UIX-05a / #187 producer — 2026-10-19, published branch / local ACCEPT; PR/CI pending:**
 `Vovanostm/uix-w1-skill-reach`, gated `3ea21b0`: optional authoritative learned-skill
 geometry on the current controlled sprite-v3 activation; legacy omission and empty
