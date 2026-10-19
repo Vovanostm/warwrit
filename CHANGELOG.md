@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Make full-field overview inspectable and separate crowded controls
+
+- 2026-10-20, branch `codex/battle-overview-227`, local: source `94c723c2`
+  adds existing-art overview portraits tied to unchanged feet, click-to-focus,
+  scale-aware resource detail and separate utility/command/skill lanes. This
+  addresses #227 evaluator/visual findings after full-field fit alone failed.
+  Changes are in combat-lab framing, vitals, scene and controls. Author 33
+  focused tests, web types, scoped lint/format and normal audit passed.
+  Initial evidence used cache-busting source interception; ordinary-runtime
+  independent evaluation and absolute visual acceptance remain pending.
+  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+- Delivery correction: [PR240](https://github.com/Vovanostm/warwrit/pull/240)
+  is merged as `eb98dd2`; PR CI39334291071 and main CI39335721903 succeeded.
+  #228 remains open for its picker. Earlier pending receipts are historical.
+
 ### Resume the playable fix sequence with field overview
 
 - 2026-10-19, branch `codex/battle-overview-227`, local: owner requested
@@ -18,6 +33,57 @@ requests.
   Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with mission scope
   and PR239's verified merge into `b568ee2` (main CI39296247123 successful).
   Camera code, gameplay and new visual acceptance remain NOT_RUN at this entry.
+
+### Add the human-opponent preset producer and playable evidence
+
+- 2026-10-20, branch `codex/human-battle-228`, local: implement #228 catalog
+  presets in server `custom-battle.ts` and optional protocol metadata. The new
+  human band demonstrates existing morale/surrender/withdrawal behavior;
+  defaults, rules, AI and replay formats remain unchanged. Independent source
+  review and played evaluation ACCEPT9534bf7;17focused tests and prior
+  coordinator validate8/8PASS. Two UI seeds surrendered2/1 opponents, manual
+  withdrawal reaction and3downloaded replay checks passed; default reset and
+  restoration passed. [Evidence and remaining picker](docs/engineering/evidence/core-preset-deserters/README.md).
+  Integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending; no whole#228/scene acceptance.
+  Updated battlefield wiki and CURRENT_PLAN; no migrations or dependencies.
+- Dated correction: documentation PR178 is MERGED at1b1e088; PR CI39324349645
+  and main CI39326177324 SUCCESS. Earlier pending receipts remain historical.
+  #227 visual/playable REWORK and #164 classifier/rescue limits stay explicit.
+
+### Record the approved bounded profile policy
+
+- 2026-10-20, branch `codex/combat-wiki-checkpoint-20261017`, local:
+  record the direct owner answer for #164 in CURRENT_PLAN/M1_PRODUCTION_PLAN:
+  provisional fists range1/damage6/2AP/8stamina, no penetration or weapon XP;
+  immobile members cannot independently move/retreat, assisted transport unresolved.
+  [Decision](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952)
+  was published and read back exactly. Implementation remains pending.
+  Prior documentation head `95069eb` independently ACCEPTED; validate5/5,
+  scoped format/diff and53new links/anchors PASS. PR178 exact-head CI pending.
+
+### Reconcile the M1 queue with delivered combat changes
+
+- 2026-10-19, branch `codex/combat-wiki-checkpoint-20261017`, local correction
+  for [PR178](https://github.com/Vovanostm/warwrit/pull/178): owner authorized
+  implementation, review and merge of the assessed fix sequence. Preserve the
+  original task queue and dated receipts while correcting PR160/PR239 delivery
+  and the closed #162 gate in CURRENT_PLAN, M1_PRODUCTION_PLAN and wiki navigation.
+  The remaining persistent-combat and recovery work is not declared delivered.
+  [Queue amendment](docs/engineering/M1_PRODUCTION_PLAN.md#current-amendment--2026-10-19).
+  Scoped formatting/diff checks PASS; new relative targets PASS. Five inherited
+  absolute evidence links are unavailable and unchanged. Merge hook initially
+  failed on missing coverage; one inherited zero-AP route test ran with coverage
+  (1 PASS, 15 SKIP) to satisfy that hook. Independent review pending; full gate
+  and browser NOT_RUN. No code, migrations or deployment.
+
+### Prepare a human-opponent battle preset
+
+- 2026-10-19, branch `codex/human-battle-228`, local: owner requested
+  implementation, review and merge of the playable fix sequence. The #228
+  contract reuses current human profiles and S4 morale/escape/reaction rules,
+  preserves the mill default and adds compatible server catalog presets before
+  the sequential editor picker. Implementation and gameplay checks NOT_RUN.
+  Parent coordinates shared records; no rule or lore change is authorized here.
 
 ### Stage names producer merge and retain actor-foundation REWORK
 
@@ -652,6 +718,32 @@ requests.
   map rendering, stronger research and independent critique. Existing owning
   wiki amended; primary WIP preserved, HUD writer isolated. Implementation and
   current acceptance NOT_RUN; previous scoped ACCEPT does not accept this cycle.
+
+### Publish evidence-backed autonomous M1 tasks
+
+- 2026-10-17, branch `codex/combat-wiki-checkpoint-20261017`, local docs / published tasks:
+  owner requested a fresh implementation/gap/quality audit and GitHub tasks.
+  [Epic161](https://github.com/Vovanostm/warwrit/issues/161) plus16issues162–177
+  now own finite scopes, pinned evidence, dependencies, DoD and mandatory wiki
+  closeout; issue payloads read back exactly. Existing #8/#6 and PR134/160/129
+  are reconciled without duplicating work or treating historical gates as current.
+  Wiki M1/index/log, CURRENT_PLAN and M1_PRODUCTION_PLAN updated; stale absolute
+  c06 readiness link replaced with tracked local document. Source links/DoD/DAG,
+  Markdown/diff and local-link checks PASS. Game code/runtime/player DB unchanged;
+  new game/full-gate/visual checks NOT_RUN, FPS/enjoyment NOT_MEASURED.
+  [Owning queue](docs/engineering/M1_PRODUCTION_PLAN.md#current-github-execution-queue--2026-10-17).
+
+### Reconcile combat wiki with verified delivery
+
+- 2026-10-17, branch `codex/combat-wiki-checkpoint-20261017`, local:
+  owner requested memory/wiki update after review and main readback.
+  Existing battlefield page, wiki index/log and CURRENT_PLAN now distinguish
+  merged PR157/158/159 from draft PR160 at16c2811 (CI39019195821 FAILURE,
+  current visual acceptance pending). Verified clean local/remote main a934355;
+  no game code, migrations or other writers' WIP changed. Scoped Markdown
+  formatting, relative-link/readback and diff checks PASS; gameplay/full gate/
+  new visual critique NOT_RUN for this documentation-only amendment.
+  [Owning dated checkpoint](docs/wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
 
 ### Match battle grid and figures to painted perspective
 

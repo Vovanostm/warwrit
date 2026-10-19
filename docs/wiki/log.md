@@ -8,6 +8,15 @@ tags: [meta]
 
 # Wiki log
 
+## [2026-10-19] update | сверка очереди и фактической поставки
+
+- Поправка к историческим срезам ниже: PR160 и PR239 слиты, #162 выполнена.
+  Старые OPEN/DRAFT и неуспешные CI относятся к указанным старым head.
+- [Очередь](../engineering/M1_PRODUCTION_PLAN.md#current-amendment--2026-10-19)
+  ведёт от понятного боя к постоянному encounter и одному маршруту с восстановлением;
+  полная приёмка восьми контрактов сохраняется отдельно. Реализация начата,
+  новые срезы ещё не объявлены принятыми. Эта правка — документационная.
+
 ## [2026-10-17] merge | Читаемость спрайтового боя в main
 
 - [PR160](https://github.com/Vovanostm/warwrit/pull/160) слит с expected-head
@@ -475,3 +484,26 @@ tags: [meta]
 - ТЗ разделены на файлы с критериями приёмки, критикой и условиями остановки:
   [briefs/2026-10-07](../engineering/briefs/2026-10-07/README.md). Добавлен
   критик текстов: [TEXT_CRITIQUE](../engineering/TEXT_CRITIQUE.md).
+
+## [2026-10-17] update | сверка поставки боёвки и основной ветки
+
+- По запросу владельца обновлены существующие `battlefield-test-maps.md`,
+  `index.md`, `log.md`, `../engineering/CURRENT_PLAN.md` и `../../CHANGELOG.md`.
+- [Датированная сверка](battlefield-test-maps.md#сверка-поставки--2026-10-17)
+  подтверждает PR157/158/159 в main a934355 и отделяет draft PR160/16c2811:
+  CI39019195821 FAILURE, текущая визуальная приёмка PENDING.
+- Новые игровые правила не вводились; чужие WIP сохранены. Изменение документации
+  локальное, отдельный коммит; новый игровой путь/gate/критика NOT_RUN.
+
+## [2026-10-17] update | доказательная очередь автономной разработки M1
+
+- По запросу владельца проверены live main a934355/CI, открытые issues/PR,
+  actual source и канонические M1 Notes/Purpose. [Эпик161](https://github.com/Vovanostm/warwrit/issues/161)
+  объединяет16опубликованных задач162–177: pinned evidence, ownership,
+  зависимости, DoD и обязательное обновление owning wiki в каждой.
+- Обновлены `m1-spec.md`, `index.md`, `log.md`, `M1_PRODUCTION_PLAN`,
+  `CURRENT_PLAN` и `CHANGELOG`. Уже доставленные модули не переоткрыты;
+  source defects отделены от evidence gaps, #8 сохранён, #6 superseded ADR0006.
+- Published issue bodies прочитаны обратно; исходники/локальные ссылки/DoD/DAG
+  проверены. Новый gameplay/full gate/visual critic NOT_RUN; performance/enjoyment
+  NOT_MEASURED. Код игры, базы игроков и чужие worktrees не менялись.

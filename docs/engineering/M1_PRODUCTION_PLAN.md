@@ -1,5 +1,86 @@
 # Full persistent M1 alpha production plan
 
+## Current amendment — 2026-10-19
+
+Remote main verified at `b568ee25b7529fa5abeeae85e45a41bc587124bb`.
+PR160 and PR239 are merged; #162 is closed as completed. #6 is closed as
+superseded by ADR-0006; #231 remains the canonical QA-hooks issue and #235 is
+closed as its duplicate. The 17 October queue below is retained as a dated
+baseline, not a current claim that PR160 is still draft or #162 blocks work.
+
+Owner authorized implementation, independent review and merge of the fix sequence:
+full-field overview and understandable combat → human opponent scenario →
+#164 profiles / #163 canonical HP → #165 persistent mechanics → #166 battle UI →
+one real contract/battle/consequences/payment/restart journey from #174/#177.
+The one-route milestone does not replace the full eight-contract acceptance.
+Amendment 2026-10-20: the [owner approved provisional fists](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952)
+(range1, damage6, 2AP/8stamina, no armour penetration/weapon-skill XP).
+Immobile members cannot independently move/retreat; assisted transport remains undefined.
+The current overview and preset branches are implementation in progress, not
+accepted or merged. No new gameplay or full gate ran for this documentation update.
+Live assignments and actual check results belong to [CURRENT_PLAN](CURRENT_PLAN.md).
+
+## Current GitHub execution queue — 2026-10-17
+
+Owner requested source-backed GitHub tasks for autonomous completion. Current
+review baseline: main `a9343550b437fb0558324c3abcc26438294d8534`, main
+[CI39008291834](https://github.com/Vovanostm/warwrit/actions/runs/39008291834)
+SUCCESS. [Epic161](https://github.com/Vovanostm/warwrit/issues/161) owns the
+published task queue below; each child contains evidence pinned to this source,
+write scope, dependencies, non-goals, DoD and mandatory owning-wiki closeout.
+This is a delivery backlog, not new gameplay approval or completed implementation.
+
+Current main already contains identity/company persistence, world/free travel,
+eight contracts, durable encounter/Colyseus, camp and supply shop, and the separate
+sprite lab/editors/skills/autobattle. Do not repeat historical foundation tasks.
+Confirmed source gaps are the production/lab combat split, reconnect-dependent HP
+bar denominator, rejected unarmed profile and the finite company V2 payload subset.
+Tactical quality, combined recovery and current device performance remain evidence
+gaps. New browser/full gate/visual review in this audit: NOT_RUN.
+
+| GitHub task                                            | Priority | Owned result                                                              | Functional predecessors                                          |
+| ------------------------------------------------------ | -------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [162](https://github.com/Vovanostm/warwrit/issues/162) | P0       | Довести PR160 до успешного CI и текущей визуальной приёмки                | live preflight / reservation                                     |
+| [163](https://github.com/Vovanostm/warwrit/issues/163) | P1       | Исправить ложные 100% HP после входа в уже идущий бой                     | live preflight / reservation                                     |
+| [164](https://github.com/Vovanostm/warwrit/issues/164) | P1       | Разрешить бой без оружия и корректный ограниченный профиль раненого       | live preflight / reservation                                     |
+| [165](https://github.com/Vovanostm/warwrit/issues/165) | P0       | Подключить принятую тактическую механику к постоянному encounter          | #164                                                             |
+| [166](https://github.com/Vovanostm/warwrit/issues/166) | P0       | Перенести Пульт командира из стенда в основной игровой бой                | #162, #163, #165                                                 |
+| [167](https://github.com/Vovanostm/warwrit/issues/167) | P1       | Дать игроку выплатить накопленное жалованье через настоящий PayClaims     | live preflight / reservation                                     |
+| [168](https://github.com/Vovanostm/warwrit/issues/168) | P1       | Сделать безопасную службу в поселении доступной игроку                    | live preflight / reservation                                     |
+| [169](https://github.com/Vovanostm/warwrit/issues/169) | P1       | Дать игроку выполнить действительный уход и вернуть бойца в строй         | live preflight / reservation                                     |
+| [170](https://github.com/Vovanostm/warwrit/issues/170) | P1       | Подключить обучение и переобучение компании к реальным командам           | live preflight / reservation                                     |
+| [171](https://github.com/Vovanostm/warwrit/issues/171) | P1       | Открыть существующие найм и передачу вещей в интерфейсе компании          | live preflight / reservation                                     |
+| [172](https://github.com/Vovanostm/warwrit/issues/172) | P2       | Завершить F01: прозвище от подлинного поступка и согласие игрока          | live preflight / reservation                                     |
+| [173](https://github.com/Vovanostm/warwrit/issues/173) | P1       | Проверить тактическую глубину AI и автобоя на воспроизводимых боях        | #165, #166                                                       |
+| [174](https://github.com/Vovanostm/warwrit/issues/174) | P0       | Доказать восстановление общего боя и единственность последствий/выплаты   | #165, #166                                                       |
+| [175](https://github.com/Vovanostm/warwrit/issues/175) | P1       | Измерить производительность текущего поля и полного M1 на Mac/Chrome      | #166                                                             |
+| [176](https://github.com/Vovanostm/warwrit/issues/176) | P1       | Проверить воспроизводимый запуск M1 из чистого клона и безопасный runbook | live preflight / reservation                                     |
+| [177](https://github.com/Vovanostm/warwrit/issues/177) | P0       | Пройти весь M1 в интерфейсе и закрыть реальные разрывы восьми контрактов  | #166, #167, #168, #169, #170, #171, #172, #174, #173, #175, #176 |
+
+Start with GATE/POOLS and profile compatibility; then BRIDGE → HUD. Company-action
+cards are separate responsibilities but share protocol/server composition paths:
+one integrator reserves them for serial writes. TACTICS/RECOVER/PERF follow the
+integrated battle; final JOURNEY also requires LAUNCH and all applicable company
+capabilities. Missing policy is a finite decision blocker, not permission to invent.
+Do not defer an already usable representative journey until all tasks are closed.
+
+Existing #8 remains the domain parent; its original requirements need actual
+command/residual evidence before closure. #6 is historical/superseded by ADR-0006,
+not a new engine contest. PR129's animated pilot is outside current static-sprite
+scope. PR134 and PR160 remain open with failed CI on this snapshot; preserve their
+writers, inspect the current exact head and never bypass quality gates.
+
+Owner constraint superseding earlier role/model examples below: use only
+GPT-6.1 Sol and GPT-6 Luna. Reserve read-only critique; do not choose a role that
+hard-codes another model. Shared files, DBs, ports and browser sessions need one
+owner. No deployment, paid actions, auto-merge or new merge permission arises
+from creating these issues. Recheck existing scoped permission separately.
+
+Detailed dated audit and evidence boundaries:
+[wiki M1](../wiki/m1-spec.md#актуальная-очередь-github--2026-10-17).
+Older waves below are historical planning; their live dispatch/status is
+superseded by this queue plus CURRENT_PLAN, not silently reactivated.
+
 **Renderer decision — 2026-10-01:** Babylon.js is the owner-selected M1 client
 renderer under [ADR-0006](../architecture/0006-m1-renderer-babylon.md); engine
 selection is no longer a prerequisite. Babylon visual/device/runtime,
@@ -47,8 +128,7 @@ reconstruct the missing archive catalogue. M2 public MMO, PvP, trading and
 listed M1 sources.
 
 The operational scheduling amendment
-([M1_EXECUTION_READINESS.md in the active c06 checkout](/Users/vovanostm/multica_workspaces_local/warwrit-alpha-c06/docs/engineering/M1_EXECUTION_READINESS.md),
-local operational evidence that may not yet be on main) selects I02a as a
+([M1_EXECUTION_READINESS.md](M1_EXECUTION_READINESS.md)) selects I02a as a
 consumer-readiness checkpoint to avoid the conditional F01 rescue-producer
 cycle. I02a requires completed H01–H08 and I01 and real durable verification of
 the named consumer subset. It does not waive H or ID03 and is not full I02.
