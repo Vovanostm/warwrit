@@ -1,7 +1,7 @@
 ---
 title: Поле боя и спрайтовая боёвка — ТЗ и тестовые карты
 created: 2026-10-07
-updated: 2026-10-17
+updated: 2026-10-19
 type: proposal
 tags: [combat, battlefield, sprites, art-direction, review-draft]
 status: direction-approved; merged-playable-sandbox; combat-readability-merged; PR160-merged; full-spec-review-draft
@@ -2482,6 +2482,45 @@ renderer не вычисляет unlock из портрета или W-ID.
 изображения не считаются готовыми контрактами действий.
 
 ### 9. Прогноз и обратная связь
+
+**UIX-01a / #180 — результат 2026-10-19, local ACCEPT, published [PR229](https://github.com/Vovanostm/warwrit/pull/229).**
+Optional `attackRefusals` даёт каждому активному публичному врагу ровно
+preview либо отказ общего admission ядра. Причины range/LOS/ОД/сил/хода/паники
+и утверждённый D1 `threat-not-available` не меняют правила боя. Диагностика
+содержит только разрешённые дальности и собственные ресурсы; D1 проверяет
+нынешнюю all-visible лабораторию, а не настоящий туман войны. Старые
+проекции без поля принимаются; повреждённые данные отклоняются до рендера.
+Новых надписей отказа и визуального изменения здесь нет. #184/#187/#207 —
+отдельные последующие slices, их готовность не заявляется.
+
+Независимый eval3 ACCEPT; validator8/8, clean bootstrap833PASS/47SKIP,
+10kstress/14DB PASS. Парный stress и15 сохранённых command streams на обоих
+исходниках совпали по canonical state, всем событиям и числу принятых команд.
+Это конечные сгенерированные случаи, не исторический архив всех replay.
+Живой путь: стандартная мельница → осмотр/камера0POST → движение/ход мышью
+и клавишей → завершённый бой; день/ночь, три размера, native Chrome125%.
+[Снимки, независимые отчёты и пределы](../engineering/evidence/uix-w1-projection/README.md).
+Ветка `Vovanostm/uix-w1-projection`, source candidate `fa7f516`; CI и merge
+с owner `agent:merge-approved` ещё pending. Баланс/производительность
+NOT_MEASURED; миграции/деплой не менялись.
+
+Поправка 2026-10-19: первый CI PR229 (39192938216) упал на импорте
+server source из web regression fixture. Кандидат `9c92995` заменяет только
+fixture на protocol-shaped данные, сохраняя все восемь test bodies; production
+не изменён относительно `fa7f516`. Свежий eval4 ACCEPT, coordinator validation8/8,
+702PASS/47SKIP и audit PASS;25 focused tests, web typecheck/input-boundary,
+реальный осмотр мельницы день/ночь0POST/rev4 и конец хода1POST/rev5 PASS.
+Первый audit с validator-only coverage FAIL сохранён; после focused server
+coverage штатный audit PASS. Прежние bootstrap/matrix/replay proof не выданы
+за новые. Исправление опубликовано в PR229; новый hosted CI и owner-approved merge pending.
+[Обновлённый proof](../engineering/evidence/uix-w1-projection/README.md).
+
+Поправка 2026-10-19 перед слиянием PR229: метка `agent:merge-approved`
+присутствует; CI39196517767 на `35c117e` SUCCESS. Текущий main `6f1fbae`
+интегрирован обычным merge без force-push; сохранены обе истории документов,
+apps/packages не изменены относительно принятого кандидата. Coordinator
+validate на `128fcb0` PASS8/8 (702PASS/47SKIP, audit PASS). Публикация
+и hosted CI нового head ожидаются; merge NOT_RUN.
 
 **PREVIEW-01:** прогноз связан с ruleset/revision/activation/actor/action/target.
 Смена любого входа инвалидирует его. Запрос предпросмотра не изменяет

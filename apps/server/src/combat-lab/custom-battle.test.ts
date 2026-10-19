@@ -690,3 +690,19 @@ it('serves canonical technique metadata and isolated profile defaults without ch
     catalog.defaultBattle.units.find(({ profileId }) => profileId === 'W10')?.skillRanks,
   );
 });
+
+it('public session reads expose refusal facts without changing the replay', async () => {
+  const app = lab();
+  const { before, privateHeaders, url } = await createSkillDuel(app);
+  const replay = await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders });
+  expect(replay.statusCode).toBe(200);
+  expect(before.attackRefusals).toEqual([]);
+  expect(before.attackPreview?.map((row) => row.targetId)).toEqual(['enemy']);
+  for (let read = 0; read < 2; read += 1) {
+    const response = await app.inject({ method: 'GET', url, headers: privateHeaders });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(before);
+  }
+  const after = await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders });
+  expect(after.json()).toEqual(replay.json());
+});

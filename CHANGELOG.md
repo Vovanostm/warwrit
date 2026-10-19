@@ -9,6 +9,53 @@ requests.
 
 ## Unreleased
 
+### Integrate current main before the approved PR229 merge
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, local
+  integration for [PR229](https://github.com/Vovanostm/warwrit/pull/229).
+  The live `agent:merge-approved` label enables the merge stage. Integrated
+  main `6f1fbae` with a normal merge to preserve published commits and avoid
+  force-push; resolved only additive CHANGELOG/CURRENT_PLAN conflicts,
+  retaining both histories. Main changes are documentation/plan/skill only;
+  game source remains the evaluator4-accepted candidate. Prior CI39196517767
+  SUCCESS applies to `35c117e`. Fresh coordinator validate on integration
+  `128fcb0` PASS8/8 (702 tests PASS/47 SKIP, audit PASS); scoped
+  format/diff/added-link checks PASS. Publication and exact-head CI pending.
+  No game rule, replay, migration or renderer change; merge NOT_RUN.
+  [Current proof](docs/engineering/evidence/uix-w1-projection/README.md).
+
+### Repair the web validator fixture after PR229 CI failure
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, published
+  correction for [PR229](https://github.com/Vovanostm/warwrit/pull/229):
+  CI39192938216 exposed server imports in the web validator regression fixture.
+  Commit `9c92995` replaces them with protocol-shaped synthetic data in
+  `apps/web/src/combat-lab/view-validation.test.ts`, preserving all eight
+  regression bodies and the separate real server integration tests. Production
+  code is unchanged from accepted `fa7f516`. Coordinator validation8/8,
+  702PASS/47SKIP and normal45-file audit PASS; fresh evaluator4 ACCEPT,
+  25 focused tests, web typecheck/input-boundary and day/night smoke PASS.
+  The initial audit with validator-only coverage failed; focused server
+  coverage restored the normal audit. Historical bootstrap/matrix/replay proof
+  remains attributed below; new-head hosted CI and owner-approved merge pending.
+  [Proof and limits](docs/engineering/evidence/uix-w1-projection/README.md).
+
+### Publish ordinary attack refusal projection for UIX-01a
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, published in
+  [PR229](https://github.com/Vovanostm/warwrit/pull/229): #180 and owner D1 require one optional server-owned
+  refusal or preview per active public enemy. Core admission is shared by
+  execution and projection; protocol/server publish sanitized refusal facts,
+  and the web boundary rejects malformed previews before overlap traversal.
+  Paths: `packages/game-core/src/combat/`, `packages/protocol/src/combat-lab.ts`,
+  `apps/server/src/combat-lab/`, `apps/web/src/combat-lab/view-validation{,.test}.ts`.
+  #184 was extracted by normal revert for reuse in its own slice; #187/#207
+  remain downstream. No rules/RNG/replay/migration change. Independent eval3
+  ACCEPT, validator8/8 and clean bootstrap PASS (833PASS/47SKIP,10kstress,
+  14DB); paired stress and15 saved replay streams equal. Native125% and all
+  three day/night source pairs captured. CI/merge pending; privacy is limited
+  to the all-visible lab. [Proof and limits](docs/engineering/evidence/uix-w1-projection/README.md).
+
 ### Studio operating model, mechanics reconciled with S4, art lane, melee slice
 
 - 2026-10-19, branch `claude/studio-operating-model`, published (PR pending

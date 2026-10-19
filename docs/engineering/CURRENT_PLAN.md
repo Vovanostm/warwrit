@@ -1,5 +1,41 @@
 # Warwrit current delivery plan
 
+**PR229 merge stage — 2026-10-19, local main integration; NOT_MERGED:**
+Live `agent:merge-approved` is present. Prior head `35c117e` has successful
+CI39196517767. Normal merge of `origin/main` `6f1fbae` preserves published
+history (no force-push); only additive CHANGELOG/CURRENT_PLAN conflicts were
+resolved. Production/test source is unchanged from the accepted candidate;
+evaluator4 ACCEPT and its played proof remain applicable. Coordinator
+validate on `128fcb0` PASS8/8 (702PASS/47SKIP, audit PASS). Publication
+and exact-head hosted CI remain pending before expected-head merge.
+Desk#198/outcome#209–211 remain REWORK awaiting scene/tooltip integration;
+scene and ready successors await merged dependencies. Pending PR230/232/233
+are not active contracts in this tick. [Proof](evidence/uix-w1-projection/README.md).
+
+**UIX-01a / #180 — 2026-10-19, published PR229 / local evaluation ACCEPT:**
+`Vovanostm/uix-w1-projection` at source candidate `fa7f516`; optional ordinary
+attack refusals share core admission, and malformed preview data is rejected
+at the client boundary. Independent eval3 ACCEPT resolves the final F3 proof:
+coordinator validator8/8, clean bootstrap833PASS/47SKIP/10kstress/14DB,
+paired unchanged stress and15 saved replay cases. Before/after day/night matrix
+at1366/1440/1920 and native Chrome125% completed; all-visible privacy scope only.
+[Proof, evaluator reports and screenshots](evidence/uix-w1-projection/README.md).
+[PR229](https://github.com/Vovanostm/warwrit/pull/229), CI/owner-approved merge
+pending; no gameplay/rules/balance/visual change claimed.
+#184 affordability, #187 skillReach/scene and #207 names remain sequenced
+successors; desk rework2 is live, outcome/scene await integration.
+
+**UIX-01a / #180 — CI correction 2026-10-19, published PR229 / local ACCEPT:**
+PR229's initial CI39192938216 failed on web-test imports of server source.
+Candidate `9c92995` uses a protocol-shaped fixture and preserves all eight
+regressions; production remains unchanged from `fa7f516`. Coordinator validation
+8/8,702PASS/47SKIP,audit PASS; independent eval4 ACCEPT,25 focused PASS,
+web typecheck/input-boundary and actual mill day/night inspection/end-turn PASS.
+Earlier full bootstrap/native125%/matrix/replay proof is reused on unchanged
+production, not rerun. Current-head hosted CI and owner merge label pending.
+Desk eval3 and visual3 remain live; successors still await merged dependencies.
+[Current proof](evidence/uix-w1-projection/README.md).
+
 **Studio director — 2026-10-19, PR pending owner merge label:** owner made the
 Claude session studio director with autonomy («ты — директор студии и
 отвечаешь за качество продукта»); merge stays behind `agent:merge-approved`.

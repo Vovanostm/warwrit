@@ -152,6 +152,24 @@ export interface CombatLabEvent {
   readonly rank?: 1 | 2 | 3;
   readonly moraleGain?: number;
 }
+export interface CombatLabAttackRefusal {
+  readonly targetId: string;
+  readonly code:
+    | 'out-of-range'
+    | 'too-close'
+    | 'no-line-of-sight'
+    | 'insufficient-action-points'
+    | 'insufficient-stamina'
+    | 'not-actor-turn'
+    | 'panicking'
+    | 'battle-resolved'
+    | 'threat-not-available';
+  readonly distance?: number;
+  readonly minimumRange?: number;
+  readonly maximumRange?: number;
+  readonly required?: { readonly actionPoints: number; readonly stamina: number };
+  readonly available?: { readonly actionPoints: number; readonly stamina: number };
+}
 export interface CombatLabView extends CombatLabViewRequest {
   readonly ruleHints?: {
     readonly hit: {
@@ -211,6 +229,7 @@ export interface CombatLabView extends CombatLabViewRequest {
       readonly armor: { readonly minimum: number; readonly maximum: number };
     };
   }[];
+  readonly attackRefusals?: readonly CombatLabAttackRefusal[];
   readonly rangedAttackArea?: readonly CombatLabHex[];
   readonly availableActions?: readonly ('defend' | 'wait' | 'retreat')[];
   readonly skills?: readonly CombatLabSkill[];
