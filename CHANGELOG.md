@@ -9,6 +9,36 @@ requests.
 
 ## Unreleased
 
+### Supply current learned-skill geometry for the scene consumer
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-skill-reach`, published
+  producer implementation `3ea21b0`, refs #187; PR/CI pending.
+  Pure core query shares existing spatial admission checks; optional protocol,
+  server projection and web validation carry all learned skill shapes with
+  current actor/activation/revision. Legacy omission/empty geometry supported;
+  rules, costs, RNG, replay schemas and visual source preserved.
+  Fresh Tier L reviewer and played evaluator ACCEPT; coordinator validate EXIT0,
+  8/8,732PASS/47SKIP,auditPASS; evaluator69 focusedPASS and actual baseline/candidate
+  mill victory/replay checks. Fresh15 baseline-saved streams match canonical
+  state, complete events and accepted counts across schemas1/2 and five rulesets.
+  [Evidence and limits](docs/engineering/evidence/uix-w1-skill-reach/README.md).
+  Updated CURRENT_PLAN; wiki mechanics unchanged. #187 remains open for rendered
+  outline/legend/CVD and integrated scene findings. Hosted full gate pending;
+  no merge/deploy or performance/balance measurement claimed.
+
+### Merge the affordability producer and start skillReach planning
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-skill-reach`, local receipt
+  of merged [PR237](https://github.com/Vovanostm/warwrit/pull/237): merge/main
+  `0c4b98d`, expected head `ca28ebd`, exact-head CI39257227488 SUCCESS.
+  Tier L reviewer/evaluator ACCEPT on `c055e9a`, integrated validate8/8 PASS;
+  later source unchanged, merged-tree diff empty, no blocking labels/threads.
+  #184 remains open for scene bands/legend/CVD/legacy rendering. Starts only
+  the dependent #187 skillReach producer contract; scene/names remain sequenced.
+  [Proof](docs/engineering/evidence/uix-w1-affordability/README.md).
+  New game checks/main playtest NOT_RUN; no deployment. Local reports retained
+  before removing the completed worktree with archive hooks.
+
 ### Reconcile PR237 with the latest slice plan before merge
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-affordability`, published

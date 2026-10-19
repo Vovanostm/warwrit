@@ -8,6 +8,7 @@ import {
 import { afterEach, assert, describe, expect, it } from 'vitest';
 import { decideAction, type CombatLabSession } from './routes.js';
 import { buildApp } from '../app.js';
+import { projectCombatLabView } from './projection.js';
 import {
   combatLabCatalog,
   defaultSpriteBattle,
@@ -158,6 +159,10 @@ describe('custom sprite battle server boundary', () => {
     const replay = (
       await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders })
     ).json<combat.CombatReplay>();
+    expectReadOnlySkillReach(replay);
+    expect(latest.skillReach).toEqual(
+      combat.previewCombatSkillReach(combat.replayCombat(replay).state, combat.unitId('fighter')),
+    );
     expect(replay.commands).toHaveLength(1);
     expect(replay.commands[0]).toMatchObject({ type: 'use-skill', skillId: 'shield-brace' });
     expect(
@@ -696,6 +701,11 @@ it('public session reads expose refusal facts without changing the replay', asyn
   const { before, privateHeaders, url } = await createSkillDuel(app);
   const replay = await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders });
   expect(replay.statusCode).toBe(200);
+  const reconstructed = expectReadOnlySkillReach(replay.json<combat.CombatReplay>());
+  expect(before.skillReach).toEqual(
+    combat.previewCombatSkillReach(reconstructed.state, reconstructed.state.activation!.unitId),
+  );
+  expect(before.skillReach?.map((row) => row.skillId)).toEqual(['shield-brace', 'armor-pressure']);
   expect(before.attackRefusals).toEqual([]);
   expect(before.attackPreview?.map((row) => row.targetId)).toEqual(['enemy']);
   for (let read = 0; read < 2; read += 1) {
@@ -705,4 +715,90 @@ it('public session reads expose refusal facts without changing the replay', asyn
   }
   const after = await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders });
   expect(after.json()).toEqual(replay.json());
+});
+
+function expectReadOnlySkillReach(replay: combat.VersionedCombatReplay) {
+  const saved = JSON.stringify(replay);
+  const reconstructed = combat.replayCombat(JSON.parse(saved) as combat.VersionedCombatReplay);
+  const before = structuredClone(reconstructed);
+  const canonical = combat.canonicalCombatState(reconstructed.state);
+  for (let read = 0; read < 2; read++) {
+    for (const unit of reconstructed.state.units)
+      combat.previewCombatSkillReach(reconstructed.state, unit.id);
+    if (combat.isSpritePrototypeRuleset(reconstructed.state.rulesetId)) {
+      const state = reconstructed.state;
+      const view = projectCombatLabView('replay', state.sides[0].id, state, reconstructed.events);
+      const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
+      expect(view.skillReach).toEqual(
+        actor?.sideId === state.sides[0].id ? combat.previewCombatSkillReach(state, actor.id) : [],
+      );
+    }
+  }
+  expect(reconstructed).toEqual(before);
+  expect(combat.canonicalCombatState(reconstructed.state)).toBe(canonical);
+  expect(JSON.stringify(replay)).toBe(saved);
+  expect(combat.replayCombat(JSON.parse(saved) as combat.VersionedCombatReplay)).toEqual(before);
+  expect(reconstructed.commandsApplied).toBe(replay.commands.length);
+  return reconstructed;
+}
+it.each(['sprite-prototype-v1', 'sprite-prototype-v2'] as const)(
+  'preserves complete saved %s replay results while deriving empty skill geometry',
+  (rulesetId) => {
+    const base = createCustomBattleFixture('legacy-reach', skillDuel()).originalSetup();
+    const setup: combat.BattleSetup = {
+      ...base,
+      rulesetId,
+      units: base.units.map(({ skillRanks: _skills, moralePolicy: _morale, ...unit }) => unit),
+    };
+    const state = combat.startBattle(setup).state;
+    const replay: combat.CombatReplay = {
+      schemaVersion: 1,
+      setup,
+      commands: [
+        {
+          type: 'wait',
+          commandId: combat.commandId('saved-wait'),
+          actorId: state.activation!.unitId,
+          activationId: state.activation!.id,
+        },
+      ],
+    };
+    const reproduced = expectReadOnlySkillReach(replay);
+    expect(
+      combat.previewCombatSkillReach(reproduced.state, reproduced.state.activation!.unitId),
+    ).toEqual([]);
+  },
+);
+it('preserves supported schema2 bridge replay without inventing a sprite schema3', () => {
+  const base = createCustomBattleFixture('schema2-reach', skillDuel()).originalSetup();
+  const setup: combat.BattleSetupV2 = {
+    ...base,
+    schemaVersion: 2,
+    rulesetId: 'm1-domain-bridge-v2',
+    units: base.units.map(
+      ({ skillRanks: _skills, moralePolicy: _morale, trainedMelee: _trained, ...unit }) => ({
+        ...unit,
+        weaponId: 'spear',
+        initialPools: {
+          health: unit.attributes.health,
+          armor: unit.attributes.armor,
+          stamina: unit.attributes.stamina,
+          morale: unit.attributes.morale,
+        },
+      }),
+    ),
+  };
+  const state = combat.startBattleV2(setup).state;
+  expectReadOnlySkillReach({
+    schemaVersion: 2,
+    setup,
+    commands: [
+      {
+        type: 'wait',
+        commandId: combat.commandId('bridge-wait'),
+        actorId: state.activation!.unitId,
+        activationId: state.activation!.id,
+      },
+    ],
+  });
 });

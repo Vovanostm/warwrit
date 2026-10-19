@@ -1,5 +1,5 @@
 import { previewWeaponDamage } from './damage-preview.js';
-import { hexDistance } from './hex.js';
+import { compareHex, hexDistance, hexKey } from './hex.js';
 import {
   combatHitChance,
   combatRules,
@@ -15,6 +15,7 @@ import {
   type CombatSkillId,
   type CombatUnitState,
   type UnitId,
+  type Hex,
   type WeaponId,
   type CombatFailureCode,
 } from './types.js';
@@ -197,14 +198,75 @@ function skillTargetFailure(
     return 'INVALID_TARGET';
   if (skill.skillId === 'shield-brace' && actor.shieldBraceRank !== undefined)
     return 'SKILL_NOT_AVAILABLE';
-  const distance = hexDistance(actor.position, target.position);
+  return skillPositionFailure(state, actor.position, target.position, skill);
+}
+
+function skillPositionFailure(
+  state: BattleState,
+  origin: Hex,
+  position: Hex,
+  skill: CombatSkillDefinition,
+): CombatFailureCode | undefined {
+  const distance = hexDistance(origin, position);
   if (distance < skill.minimumRange || distance > skill.maximumRange) return 'OUT_OF_RANGE';
   if (
     ['aimed-shot', 'reach-thrust', 'rally'].includes(skill.skillId) &&
-    !prototypeLineOfSight(state, actor.position, target.position)
+    !prototypeLineOfSight(state, origin, position)
   )
     return 'BLOCKED_LINE_OF_SIGHT';
   return undefined;
+}
+
+export interface CombatSkillReach {
+  readonly actorId: UnitId;
+  readonly activationId: string;
+  readonly revision: number;
+  readonly skillId: CombatSkillId;
+  readonly minimumRange: number;
+  readonly maximumRange: number;
+  readonly cells: readonly Hex[];
+}
+
+function skillReachActor(state: BattleState, actorId: UnitId): CombatUnitState | undefined {
+  if (state.rulesetId !== SPRITE_PROTOTYPE_V3_RULESET_ID || state.status !== 'active')
+    return undefined;
+  if (state.activation?.unitId !== actorId) return undefined;
+  return state.units.find((unit) => unit.id === actorId && unit.status === 'active');
+}
+
+function skillReachCells(
+  state: BattleState,
+  actor: CombatUnitState,
+  skill: LearnedCombatSkill,
+): readonly Hex[] {
+  if (!skill.equipmentAvailable || actor.threatProfile !== undefined) return [];
+  const blocked = new Set(state.map.blocked.map(hexKey));
+  const cells = new Map(state.map.hexes.map((cell) => [hexKey(cell), cell]));
+  return [...cells.values()]
+    .filter(
+      (cell) =>
+        !blocked.has(hexKey(cell)) && !skillPositionFailure(state, actor.position, cell, skill),
+    )
+    .sort(compareHex)
+    .map(({ q, r }) => ({ q, r }));
+}
+
+/** Passive spatial inspection; target eligibility and action resources remain in admission. */
+export function previewCombatSkillReach(
+  state: BattleState,
+  actorId: UnitId,
+): readonly CombatSkillReach[] {
+  const actor = skillReachActor(state, actorId);
+  if (!actor) return [];
+  return getCombatSkills(state, actorId).map((skill) => ({
+    actorId,
+    activationId: state.activation!.id,
+    revision: state.revision,
+    skillId: skill.skillId,
+    minimumRange: skill.minimumRange,
+    maximumRange: skill.maximumRange,
+    cells: skillReachCells(state, actor, skill),
+  }));
 }
 
 function skillResourceFailure(

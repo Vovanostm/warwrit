@@ -203,11 +203,13 @@ export function projectCombatLabView(
   };
 }
 
-function controlledActivation(state: combat.BattleState, sideId: string): boolean {
-  return state.units.some(
-    (unit) =>
-      unit.id === state.activation?.unitId && unit.sideId === sideId && unit.status === 'active',
+function activeActivation(state: combat.BattleState): combat.CombatUnitState | undefined {
+  return state.units.find(
+    (unit) => unit.id === state.activation?.unitId && unit.status === 'active',
   );
+}
+function controlledActivation(state: combat.BattleState, sideId: string): boolean {
+  return activeActivation(state)?.sideId === sideId;
 }
 
 function refusalDetails(
@@ -269,10 +271,12 @@ function projectSpriteActions(
 ): Partial<CombatLabView> {
   if (!combat.isSpritePrototypeRuleset(state.rulesetId)) return {};
   const attackRefusals = projectAttackRefusals(state, controlledSideId);
-  if (state.status !== 'active') return { attackRefusals };
+  const skillReach = projectSkillReach(state, controlledSideId);
+  if (state.status !== 'active' || !activeActivation(state)) return { attackRefusals, skillReach };
   const controlled = controlledActivation(state, controlledSideId);
   return {
     attackRefusals,
+    skillReach,
     movementPreview: controlled ? combat.previewCombatMovementAttackAffordability(state) : [],
     attackPreview: controlled ? combat.previewCombatAttacks(state) : [],
     rangedAttackArea: combat.previewCombatRangedArea(state),
@@ -283,4 +287,15 @@ function projectSpriteActions(
       rulesetId: state.rulesetId as NonNullable<CombatLabView['rulesetId']>,
     })),
   };
+}
+
+function projectSkillReach(
+  state: combat.BattleState,
+  controlledSideId: string,
+): NonNullable<CombatLabView['skillReach']> {
+  if (!controlledActivation(state, controlledSideId)) return [];
+  return combat.previewCombatSkillReach(state, state.activation!.unitId).map((row) => ({
+    ...row,
+    cells: row.cells.map(copyHex),
+  }));
 }

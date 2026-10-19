@@ -235,6 +235,16 @@ export interface CombatLabView extends CombatLabViewRequest {
   readonly availableActions?: readonly ('defend' | 'wait' | 'retreat')[];
   readonly skills?: readonly CombatLabSkill[];
   readonly skillPreview?: readonly CombatLabSkillPreview[];
+  /** Passive geometry for all learned skills of the controlled current activation. */
+  readonly skillReach?: readonly {
+    readonly actorId: string;
+    readonly activationId: string;
+    readonly revision: number;
+    readonly skillId: CombatLabSkillId;
+    readonly minimumRange: number;
+    readonly maximumRange: number;
+    readonly cells: readonly CombatLabHex[];
+  }[];
   readonly sides: readonly {
     readonly id: string;
     readonly retreatHexes: readonly CombatLabHex[];

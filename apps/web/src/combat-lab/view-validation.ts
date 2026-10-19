@@ -73,7 +73,8 @@ export function isCombatLabView(value: unknown): value is CombatLabView {
     !hasViewCollections(view) ||
     !hasInitiativeForecast(view) ||
     !hasAttackRefusals(view) ||
-    !hasMovementAffordability(view)
+    !hasMovementAffordability(view) ||
+    !hasSkillReach(view)
   )
     return false;
   return view.scenarioId === SPRITE_COMBAT_LAB_SCENARIO
@@ -168,4 +169,109 @@ function hasMovementAffordability(view: Partial<CombatLabView>): boolean {
           typeof row['attackAffordableAfter'] === 'boolean'),
     )
   );
+}
+
+function plainRecord(value: unknown): value is Record<string, unknown> {
+  return (
+    isRecord(value) &&
+    (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null)
+  );
+}
+function safeHex(value: unknown): value is { q: number; r: number } {
+  return plainRecord(value) && Number.isSafeInteger(value['q']) && Number.isSafeInteger(value['r']);
+}
+function hexIdentity(cell: { q: number; r: number }): string {
+  return `${cell.q},${cell.r}`;
+}
+function reachCompanions(view: Partial<CombatLabView>): boolean {
+  return (
+    view.units!.every(isRecord) &&
+    view.map!.hexes.every(safeHex) &&
+    view.map!.blocked.every(safeHex) &&
+    (view.skills === undefined || (Array.isArray(view.skills) && view.skills.every(isRecord)))
+  );
+}
+function reachContext(view: Partial<CombatLabView>): boolean {
+  if (view.scenarioId !== SPRITE_COMBAT_LAB_SCENARIO || view.rulesetId !== 'sprite-prototype-v3')
+    return false;
+  if (view.status !== 'active' || !isRecord(view.activation)) return false;
+  if (typeof view.activation.id !== 'string' || view.activation.id.length === 0) return false;
+  return (
+    Array.isArray(view.skills) &&
+    view.units!.some(
+      (unit) =>
+        unit.id === view.activation!.actorId &&
+        unit.status === 'active' &&
+        unit.sideId === view.controlledSideId,
+    )
+  );
+}
+function reachIdentity(row: Record<string, unknown>, view: Partial<CombatLabView>): boolean {
+  return (
+    typeof row['actorId'] === 'string' &&
+    row['actorId'].length > 0 &&
+    row['actorId'] === view.activation!.actorId &&
+    row['activationId'] === view.activation!.id &&
+    nonnegative(row['revision']) &&
+    row['revision'] === view.viewRevision
+  );
+}
+function reachRanges(row: Record<string, unknown>, view: Partial<CombatLabView>): boolean {
+  if (
+    !['shield-brace', 'armor-pressure', 'reach-thrust', 'aimed-shot', 'rally'].includes(
+      row['skillId'] as string,
+    )
+  )
+    return false;
+  const skill = view.skills!.find((skill) => skill.skillId === row['skillId']);
+  return (
+    skill !== undefined &&
+    nonnegative(row['minimumRange']) &&
+    nonnegative(row['maximumRange']) &&
+    row['minimumRange'] <= row['maximumRange'] &&
+    row['minimumRange'] === skill.minimumRange &&
+    row['maximumRange'] === skill.maximumRange
+  );
+}
+function reachCells(cells: unknown, hexes: Set<string>, blocked: Set<string>): boolean {
+  if (!Array.isArray(cells)) return false;
+  const seen = new Set<string>();
+  return cells.every((cell: unknown) => {
+    if (!safeHex(cell) || !hasOnlyKeys(cell, ['q', 'r'])) return false;
+    const key = hexIdentity(cell);
+    if (seen.has(key) || !hexes.has(key) || blocked.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+function validSkillReach(row: unknown, view: Partial<CombatLabView>, seen: Set<unknown>): boolean {
+  if (
+    !plainRecord(row) ||
+    !hasOnlyKeys(row, [
+      'actorId',
+      'activationId',
+      'revision',
+      'skillId',
+      'minimumRange',
+      'maximumRange',
+      'cells',
+    ])
+  )
+    return false;
+  if (!reachIdentity(row, view) || !reachRanges(row, view) || seen.has(row['skillId']))
+    return false;
+  seen.add(row['skillId']);
+  return reachCells(
+    row['cells'],
+    new Set(view.map!.hexes.map(hexIdentity)),
+    new Set(view.map!.blocked.map(hexIdentity)),
+  );
+}
+function hasSkillReach(view: Partial<CombatLabView>): boolean {
+  if (view.skillReach === undefined) return true;
+  if (!Array.isArray(view.skillReach) || !reachCompanions(view)) return false;
+  if (view.skillReach.length === 0) return true;
+  if (!reachContext(view)) return false;
+  const seen = new Set<unknown>();
+  return view.skillReach.every((row) => validSkillReach(row, view, seen));
 }

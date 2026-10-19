@@ -1,0 +1,9 @@
+### Result
+{"posts":78,"revision":163,"activation":null,"reach":[]}
+### Ran Playwright code
+```js
+await (async(page)=>{const download=page.waitForEvent("download");await page.getByRole("button",{name:"Скачать запись боя",exact:true}).click();await(await download).saveAs(".orca/uix-w1-skill-reach/eval-shots/candidate-mill-replay.json");return await page.evaluate(()=>({posts:evalProof.posts.length,revision:evalProof.views.at(-1).viewRevision,activation:evalProof.views.at(-1).activation,reach:evalProof.views.at(-1).skillReach}));})(page);
+```
+### Events
+- Downloading file Старая мельница.json ...
+- Downloaded file Старая мельница.json to ".playwright-cli/Старая-мельница.json"
