@@ -5,8 +5,9 @@ Live `agent:merge-approved` is present. Prior head `35c117e` has successful
 CI39196517767. Normal merge of `origin/main` `6f1fbae` preserves published
 history (no force-push); only additive CHANGELOG/CURRENT_PLAN conflicts were
 resolved. Production/test source is unchanged from the accepted candidate;
-evaluator4 ACCEPT and its played proof remain applicable. Fresh validation
-and exact-head hosted CI are pending before expected-head merge.
+evaluator4 ACCEPT and its played proof remain applicable. Coordinator
+validate on `128fcb0` PASS8/8 (702PASS/47SKIP, audit PASS). Publication
+and exact-head hosted CI remain pending before expected-head merge.
 Desk#198/outcome#209–211 remain REWORK awaiting scene/tooltip integration;
 scene and ready successors await merged dependencies. Pending PR230/232/233
 are not active contracts in this tick. [Proof](evidence/uix-w1-projection/README.md).

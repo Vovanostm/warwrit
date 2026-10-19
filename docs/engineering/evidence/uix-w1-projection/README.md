@@ -15,7 +15,10 @@ Integrated main `6f1fbae` by normal merge, preserving the published history
 and both branches' additive shared records. Upstream changes are documentation,
 plan and skills only; ordinary diff confirms apps/packages unchanged against
 `35c117e`. Existing evaluator4 ACCEPT and played proof are reused explicitly.
-Fresh validate and exact-head hosted CI remain pending; merge NOT_RUN.
+Coordinator validate on `128fcb0`: EXIT0, PASS rebased / clean-tree / packages /
+typecheck / format / lint / related-tests / audit; 702PASS/47SKIP. Normal
+integration commit audit, scoped format/diff and added-link checks PASS.
+Publication and exact-head hosted CI remain pending; merge NOT_RUN.
 
 ## How to try
 

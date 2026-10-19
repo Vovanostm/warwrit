@@ -18,7 +18,9 @@ requests.
   force-push; resolved only additive CHANGELOG/CURRENT_PLAN conflicts,
   retaining both histories. Main changes are documentation/plan/skill only;
   game source remains the evaluator4-accepted candidate. Prior CI39196517767
-  SUCCESS applies to `35c117e`; fresh validate and hosted CI are pending.
+  SUCCESS applies to `35c117e`. Fresh coordinator validate on integration
+  `128fcb0` PASS8/8 (702 tests PASS/47 SKIP, audit PASS); scoped
+  format/diff/added-link checks PASS. Publication and exact-head CI pending.
   No game rule, replay, migration or renderer change; merge NOT_RUN.
   [Current proof](docs/engineering/evidence/uix-w1-projection/README.md).
 

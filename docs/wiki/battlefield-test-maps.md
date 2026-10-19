@@ -2518,7 +2518,8 @@ coverage штатный audit PASS. Прежние bootstrap/matrix/replay proof
 Поправка 2026-10-19 перед слиянием PR229: метка `agent:merge-approved`
 присутствует; CI39196517767 на `35c117e` SUCCESS. Текущий main `6f1fbae`
 интегрирован обычным merge без force-push; сохранены обе истории документов,
-apps/packages не изменены относительно принятого кандидата. Fresh validate
+apps/packages не изменены относительно принятого кандидата. Coordinator
+validate на `128fcb0` PASS8/8 (702PASS/47SKIP, audit PASS). Публикация
 и hosted CI нового head ожидаются; merge NOT_RUN.
 
 **PREVIEW-01:** прогноз связан с ruleset/revision/activation/actor/action/target.
