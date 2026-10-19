@@ -1,7 +1,7 @@
 ---
 title: Поле боя и спрайтовая боёвка — ТЗ и тестовые карты
 created: 2026-10-07
-updated: 2026-10-17
+updated: 2026-10-19
 type: proposal
 tags: [combat, battlefield, sprites, art-direction, review-draft]
 status: direction-approved; merged-playable-sandbox; combat-readability-merged; PR160-merged; full-spec-review-draft
@@ -2482,6 +2482,27 @@ renderer не вычисляет unlock из портрета или W-ID.
 изображения не считаются готовыми контрактами действий.
 
 ### 9. Прогноз и обратная связь
+
+**UIX-01a / #180 — результат 2026-10-19, local ACCEPT, публикация подготовлена.**
+Optional `attackRefusals` даёт каждому активному публичному врагу ровно
+preview либо отказ общего admission ядра. Причины range/LOS/ОД/сил/хода/паники
+и утверждённый D1 `threat-not-available` не меняют правила боя. Диагностика
+содержит только разрешённые дальности и собственные ресурсы; D1 проверяет
+нынешнюю all-visible лабораторию, а не настоящий туман войны. Старые
+проекции без поля принимаются; повреждённые данные отклоняются до рендера.
+Новых надписей отказа и визуального изменения здесь нет. #184/#187/#207 —
+отдельные последующие slices, их готовность не заявляется.
+
+Независимый eval3 ACCEPT; validator8/8, clean bootstrap833PASS/47SKIP,
+10kstress/14DB PASS. Парный stress и15 сохранённых command streams на обоих
+исходниках совпали по canonical state, всем событиям и числу принятых команд.
+Это конечные сгенерированные случаи, не исторический архив всех replay.
+Живой путь: стандартная мельница → осмотр/камера0POST → движение/ход мышью
+и клавишей → завершённый бой; день/ночь, три размера, native Chrome125%.
+[Снимки, независимые отчёты и пределы](../engineering/evidence/uix-w1-projection/README.md).
+Ветка `Vovanostm/uix-w1-projection`, source candidate `fa7f516`; CI и merge
+с owner `agent:merge-approved` ещё pending. Баланс/производительность
+NOT_MEASURED; миграции/деплой не менялись.
 
 **PREVIEW-01:** прогноз связан с ruleset/revision/activation/actor/action/target.
 Смена любого входа инвалидирует его. Запрос предпросмотра не изменяет

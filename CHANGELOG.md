@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Publish ordinary attack refusal projection for UIX-01a
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, local,
+  publication prepared: #180 and owner D1 require one optional server-owned
+  refusal or preview per active public enemy. Core admission is shared by
+  execution and projection; protocol/server publish sanitized refusal facts,
+  and the web boundary rejects malformed previews before overlap traversal.
+  Paths: `packages/game-core/src/combat/`, `packages/protocol/src/combat-lab.ts`,
+  `apps/server/src/combat-lab/`, `apps/web/src/combat-lab/view-validation{,.test}.ts`.
+  #184 was extracted by normal revert for reuse in its own slice; #187/#207
+  remain downstream. No rules/RNG/replay/migration change. Independent eval3
+  ACCEPT, validator8/8 and clean bootstrap PASS (833PASS/47SKIP,10kstress,
+  14DB); paired stress and15 saved replay streams equal. Native125% and all
+  three day/night source pairs captured. CI/merge pending; privacy is limited
+  to the all-visible lab. [Proof and limits](docs/engineering/evidence/uix-w1-projection/README.md).
+
 ### Switch the Orca pipeline to game-development workflow v2
 
 - 2026-10-19, originating branch `claude/orca-workflow-v2`, local/PR pending:

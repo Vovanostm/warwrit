@@ -1,5 +1,17 @@
 # Warwrit current delivery plan
 
+**UIX-01a / #180 — 2026-10-19, local ACCEPT / publication prepared:**
+`Vovanostm/uix-w1-projection` at source candidate `fa7f516`; optional ordinary
+attack refusals share core admission, and malformed preview data is rejected
+at the client boundary. Independent eval3 ACCEPT resolves the final F3 proof:
+coordinator validator8/8, clean bootstrap833PASS/47SKIP/10kstress/14DB,
+paired unchanged stress and15 saved replay cases. Before/after day/night matrix
+at1366/1440/1920 and native Chrome125% completed; all-visible privacy scope only.
+[Proof, evaluator reports and screenshots](evidence/uix-w1-projection/README.md).
+CI/owner-approved merge pending; no gameplay/rules/balance/visual change claimed.
+#184 affordability, #187 skillReach/scene and #207 names remain sequenced
+successors; desk rework2 is live, outcome/scene await integration.
+
 **Orca game-development workflow v2 — 2026-10-19, local/PR pending:**
 Day-one result of the pipeline below: no commit or PR in about 11 hours
 (plan-review rounds, audit discovered at commit, `needs-owner` stops; PR223
