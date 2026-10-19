@@ -11,8 +11,8 @@ requests.
 
 ### Supply current learned-skill geometry for the scene consumer
 
-- 2026-10-19, originating branch `Vovanostm/uix-w1-skill-reach`, local
-  producer implementation `3ea21b0`, refs #187; publication/CI pending.
+- 2026-10-19, originating branch `Vovanostm/uix-w1-skill-reach`, published
+  producer implementation `3ea21b0`, refs #187; PR/CI pending.
   Pure core query shares existing spatial admission checks; optional protocol,
   server projection and web validation carry all learned skill shapes with
   current actor/activation/revision. Legacy omission/empty geometry supported;

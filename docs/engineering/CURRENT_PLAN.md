@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-**UIX-05a / #187 producer — 2026-10-19, local ACCEPT; publication pending:**
+**UIX-05a / #187 producer — 2026-10-19, published branch / local ACCEPT; PR/CI pending:**
 `Vovanostm/uix-w1-skill-reach`, gated `3ea21b0`: optional authoritative learned-skill
 geometry on the current controlled sprite-v3 activation; legacy omission and empty
 geometry supported. No rules/costs/RNG/replay/visual changes. Fresh Tier L reviewer1
