@@ -6,7 +6,9 @@ Claude session studio director with autonomy («ты — директор сту
 Board: **now** — Orca v2 wave 1 on #217 (metric: merged PRs with playable proof
 per day); **next** — `core-melee-connect` (#225) on lane core after
 `uix-w1-names`; art lane via [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md);
-**later** — QA hooks for regression journeys, retro per wave. Mechanics wiki
+**later** — QA hooks for regression journeys, retro per wave. Director
+playtest 2026-10-19 filed #227 (battlefield overview) and #228 (human preset
+for morale/flight/surrender). Mechanics wiki
 reconciled with S4. [Owning section](AGENT_TEAM.md#studio-operating-model--2026-10-19).
 
 **Orca game-development workflow v2 — 2026-10-19, local/PR pending:**

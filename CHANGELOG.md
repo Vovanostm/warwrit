@@ -23,7 +23,11 @@ requests.
   Added the [warwrit-art](.agents/skills/warwrit-art/SKILL.md) skill with
   `scripts/composite.py` (crop/paste/diff; smoke PASS). Opened issue #225 and
   slice `core-melee-connect` (lane core, after `uix-w1-names`;
-  `uix-w4-bow` now after it). Docs/plan only; no game code changed.
+  `uix-w4-bow` now after it). Director playtest of the combat lab (main
+  `8486177`, 1440×900): no battlefield overview at max zoom-out (#227);
+  default scenario has only beasts/creatures, so morale/flight/surrender never
+  show — human «deserter band» preset requested (#228); autobattle 8 rounds,
+  5:0, deterministic seed (noted on #173). Docs/plan only; no game code changed.
 
 ### Switch the Orca pipeline to game-development workflow v2
 
