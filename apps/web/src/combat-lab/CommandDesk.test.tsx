@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { afterEach, expect, it, vi } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import type { CombatLabView } from '@warwrit/protocol';
 import { CommandDesk } from './CommandDesk.js';
 import type { CombatLabHotkeyAction } from './command-input.js';
@@ -75,7 +75,6 @@ const props = () => ({
   retryAction: vi.fn(),
   notice: '',
 });
-afterEach(() => vi.useRealTimers());
 
 it.each([false, true])(
   'keeps the full transport message and retry in one feedback allocation (uncertain=%s)',
@@ -87,7 +86,6 @@ it.each([false, true])(
       `<span>${uncertain ? 'Неизвестный' : 'Ожидается'} ответ: Завершение хода.</span>`,
     );
     expect(html.includes('Повторить тот же запрос')).toBe(uncertain);
-    expect(html).toContain('role="status" aria-live="polite" aria-atomic="true"');
   },
 );
 
@@ -104,28 +102,13 @@ it('marks unavailable controls without disabling focus, mutes their prices and o
     expect(renderToStaticMarkup(<CommandDesk {...p} {...extra} />)).not.toContain(
       'data-ready="true"',
     );
-  expect(html).toContain('role="status" aria-live="polite" aria-atomic="true"');
 });
 
-it('gates the registered wait once and uses the actor weapon rather than the inspected enemy', () => {
-  vi.useFakeTimers();
+it('routes an available registered wait directly through the existing action', () => {
   const p = props();
   renderToStaticMarkup(<CommandDesk {...p} />);
   p.hotkeyActions.current['4']!.run();
-  expect(p.act).not.toHaveBeenCalled();
-  vi.advanceTimersByTime(1999);
-  p.hotkeyActions.current['4']!.run();
   expect(p.act).toHaveBeenCalledExactlyOnceWith({ type: 'wait' }, 'Завершение хода');
-  const partial = {
-    ...view,
-    activation: { ...view.activation!, actionPoints: { current: 2, maximum: 4 } },
-  };
-  p.act.mockClear();
-  renderToStaticMarkup(<CommandDesk {...p} view={partial} />);
-  p.hotkeyActions.current['4']!.run();
-  expect(p.act).not.toHaveBeenCalled();
-  p.hotkeyActions.current['4']!.run();
-  expect(p.act).toHaveBeenCalledTimes(1);
 });
 
 it.each([
@@ -143,21 +126,7 @@ it.each([
   expect(p.act).not.toHaveBeenCalled();
 });
 
-it('cancels armed confirmation on another command or Escape callback', () => {
-  vi.useFakeTimers();
-  const p = props();
-  renderToStaticMarkup(<CommandDesk {...p} />);
-  p.hotkeyActions.current['4']!.run();
-  p.hotkeyActions.current['1']!.run();
-  p.hotkeyActions.current['4']!.run();
-  expect(p.act).not.toHaveBeenCalled();
-  p.hotkeyActions.current['4']!.cancel?.();
-  p.hotkeyActions.current['4']!.run();
-  expect(p.act).not.toHaveBeenCalled();
-});
-
-it('keeps historical V1 observations without optional hints or previews usable and confirms conservatively', () => {
-  vi.useFakeTimers();
+it('keeps missing optional hints and previews safe without suppressing available wait', () => {
   const older = { ...view };
   delete older.ruleHints;
   delete older.attackPreview;
@@ -167,8 +136,6 @@ it('keeps historical V1 observations without optional hints or previews usable a
   expect(html).toContain('Цена не опубликована');
   expect(html).toContain('Цель недоступна для атаки');
   expect(html).not.toContain('data-ready="true"');
-  p.hotkeyActions.current['4']!.run();
-  expect(p.act).not.toHaveBeenCalled();
   p.hotkeyActions.current['4']!.run();
   expect(p.act).toHaveBeenCalledExactlyOnceWith({ type: 'wait' }, 'Завершение хода');
 });

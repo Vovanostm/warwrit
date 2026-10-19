@@ -15,35 +15,6 @@ interface CommandKeyTarget {
 export interface CombatLabHotkeyAction {
   readonly reason: string;
   readonly run: () => unknown;
-  readonly cancel?: () => void;
-}
-
-interface EndTurnConfirmation {
-  readonly context: string;
-  readonly deadline: number;
-}
-
-/** UI warning only: costs and AP are published observations, never command admission. */
-export function advanceEndTurnConfirmation(
-  confirmation: EndTurnConfirmation | null,
-  input: {
-    readonly context: string;
-    readonly current: number;
-    readonly maximum: number;
-    readonly attackCost: number | undefined;
-    readonly available: boolean;
-  },
-  now: number,
-): { confirmation: EndTurnConfirmation | null; dispatch: boolean } {
-  if (!input.available) return { confirmation: null, dispatch: false };
-  const needsWarning =
-    input.current > 0 &&
-    (input.current === input.maximum ||
-      input.attackCost === undefined ||
-      input.current >= input.attackCost);
-  if (!needsWarning || (confirmation?.context === input.context && now < confirmation.deadline))
-    return { confirmation: null, dispatch: true };
-  return { confirmation: { context: input.context, deadline: now + 2000 }, dispatch: false };
 }
 
 /** Escape remains global cancellation; command keys belong only to the board, outside interactive controls. */
@@ -55,7 +26,6 @@ export function handleCombatLabKey(
 ): void {
   if (event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
   if (event.key === 'Escape') {
-    actions['4']?.cancel?.();
     cancel();
     return;
   }
@@ -68,7 +38,6 @@ export function handleCombatLabKey(
   const action = actions[event.key === ' ' ? '4' : event.key];
   if (!action || action.reason) return;
   event.preventDefault();
-  if (action !== actions['4']) actions['4']?.cancel?.();
   action.run();
 }
 

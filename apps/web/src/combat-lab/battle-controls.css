@@ -595,13 +595,6 @@
 .battle-ability-slot {
   width: 120px;
 }
-.battle-end-turn-warning {
-  color: var(--battle-ink);
-  font-size: 18px;
-}
-.battle-end-turn-warning:empty {
-  display: none;
-}
 .battle-view .battle-effects {
   height: 15px;
 }

@@ -1,5 +1,5 @@
 import { BattleCost } from './BattleCost.js';
-import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+import type { RefObject } from 'react';
 import type {
   CombatLabAction,
   CombatLabHex,
@@ -8,7 +8,7 @@ import type {
 } from '@warwrit/protocol';
 import { commandSelection, commandReasons } from './command-availability.js';
 import { CombatIcon, type CombatIconName } from './CombatIcon.js';
-import { advanceEndTurnConfirmation, type CombatLabHotkeyAction } from './command-input.js';
+import type { CombatLabHotkeyAction } from './command-input.js';
 import { manualControlReasons } from './command-desk-state.js';
 
 interface CommandDeskProps {
@@ -43,7 +43,7 @@ export function CommandDesk({
   notice,
 }: CommandDeskProps) {
   const selection = commandSelection(view, selectedUnitId, selectedHex);
-  const { selectedMovement, activeActor, attackCost } = selection;
+  const { selectedMovement, activeActor } = selection;
   const reasons = commandReasons(selection, view, selectedHex, commonReason);
   const { manualReason, menuReason } = manualControlReasons({
     commonReason,
@@ -52,12 +52,6 @@ export function CommandDesk({
     menuOpen,
     selectedSkillId,
   });
-  const endTurn = useEndTurnConfirmation(
-    view,
-    attackCost?.actionPointCost,
-    manualReason || reasons.waitReason,
-    act,
-  );
   return (
     <section className="combat-lab-controls" aria-label="Управление текущим ходом">
       <CommandOrders
@@ -69,7 +63,6 @@ export function CommandDesk({
         hotkeyActions={hotkeyActions}
         act={act}
         actOnField={actOnField}
-        endTurn={endTurn}
       />
 
       <CommandFeedback
@@ -79,7 +72,6 @@ export function CommandDesk({
         pending={pending}
         retryAction={retryAction}
         notice={notice}
-        endTurnWarning={endTurn.warning}
       />
     </section>
   );
@@ -94,7 +86,6 @@ interface CommandOrdersProps {
   readonly hotkeyActions: CommandDeskProps['hotkeyActions'];
   readonly act: CommandDeskProps['act'];
   readonly actOnField: CommandDeskProps['actOnField'];
-  readonly endTurn: ReturnType<typeof useEndTurnConfirmation>;
 }
 
 function CommandOrders({
@@ -106,7 +97,6 @@ function CommandOrders({
   hotkeyActions,
   act,
   actOnField,
-  endTurn,
 }: CommandOrdersProps) {
   const { selectedTarget, selectedMovement, selectedAttack, rules, attackCost } = selection;
   const { attackReason, moveReason, defendReason, waitReason, retreatReason } = reasons;
@@ -130,7 +120,6 @@ function CommandOrders({
       manualReason={manualReason}
       menuReason={menuReason}
       hotkeyActions={hotkeyActions}
-      endTurn={endTurn}
     />
   );
   return (
@@ -167,7 +156,7 @@ function CommandOrders({
           'Завершить ход',
           'Оставшиеся ОД',
           waitReason,
-          endTurn.request,
+          () => act({ type: 'wait' }, 'Завершение хода'),
           rules
             ? `Передать инициативу · восстановление ${rules.recovery.staminaPerActivation} сил в начале следующего хода`
             : 'Передать инициативу',
@@ -186,7 +175,7 @@ function CommandOrders({
 
 interface CommandButtonProps extends Pick<
   CommandOrdersProps,
-  'manualReason' | 'menuReason' | 'hotkeyActions' | 'endTurn'
+  'manualReason' | 'menuReason' | 'hotkeyActions'
 > {
   readonly label: string;
   readonly cost: string;
@@ -208,7 +197,6 @@ function CommandButton({
   manualReason,
   menuReason,
   hotkeyActions,
-  endTurn,
 }: CommandButtonProps) {
   const commandIcons: Record<string, CombatIconName> = {
     Атаковать: 'attack',
@@ -228,13 +216,11 @@ function CommandButton({
   const key = commandKeys[label]!;
   const run = () => {
     if (reason) return;
-    if (key !== '4') endTurn.cancel();
     onClick();
   };
   hotkeyActions.current[key] = {
     reason: menuReason || reason,
     run,
-    ...(key === '4' ? { cancel: endTurn.cancel } : {}),
   };
   return (
     <div className="battle-command battle-control-slot" data-unavailable={Boolean(reason)}>
@@ -303,7 +289,6 @@ interface CommandFeedbackProps {
   readonly pending: CommandDeskProps['pending'];
   readonly retryAction: () => void;
   readonly notice: string;
-  readonly endTurnWarning: string;
 }
 
 function CommandFeedback({
@@ -313,13 +298,9 @@ function CommandFeedback({
   pending,
   retryAction,
   notice,
-  endTurnWarning,
 }: CommandFeedbackProps) {
   return (
     <div className="battle-feedback-row">
-      <p className="battle-end-turn-warning" role="status" aria-live="polite" aria-atomic="true">
-        {endTurnWarning}
-      </p>
       {autoplay && (
         <span className="battle-autoplay-status" role="status" data-active="true">
           Автобой включён
@@ -370,70 +351,6 @@ function PendingCommandStatus({
       )}
     </p>
   );
-}
-
-/** Published observations and identity for the local warning, not command admission. */
-function endTurnObservation(view: CombatLabView, attackCost: number | undefined, reason: string) {
-  const activation = view.activation;
-  const actionPoints = activation?.actionPoints ?? { current: 0, maximum: 0 };
-  return {
-    context: JSON.stringify([
-      view.sessionId,
-      view.battleId,
-      activation?.id,
-      activation?.actorId,
-      view.viewRevision,
-    ]),
-    current: actionPoints.current,
-    maximum: actionPoints.maximum,
-    attackCost,
-    available: !reason && view.status === 'active' && Boolean(activation),
-  };
-}
-
-function useEndTurnConfirmation(
-  view: CombatLabView,
-  attackCost: number | undefined,
-  reason: string,
-  act: CommandDeskProps['act'],
-) {
-  type Confirmation = ReturnType<typeof advanceEndTurnConfirmation>['confirmation'];
-  const confirmation = useRef<Confirmation>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [warning, setWarning] = useState<Confirmation>(null);
-  const observation = endTurnObservation(view, attackCost, reason);
-  const { context, available } = observation;
-  // Invalidate before input can run; effects alone leave a stale-confirmation window.
-  if (!available || confirmation.current?.context !== context) confirmation.current = null;
-  const cancel = useCallback(() => {
-    confirmation.current = null;
-    if (timer.current !== null) clearTimeout(timer.current);
-    timer.current = null;
-    setWarning(null);
-  }, []);
-  useEffect(() => cancel, [context, available, cancel]);
-  const request = () => {
-    const result = advanceEndTurnConfirmation(confirmation.current, observation, Date.now());
-    cancel();
-    confirmation.current = result.confirmation;
-    if (result.dispatch) {
-      act({ type: 'wait' }, 'Завершение хода');
-      return;
-    }
-    if (result.confirmation) {
-      setWarning(result.confirmation);
-      timer.current = setTimeout(cancel, Math.max(0, result.confirmation.deadline - Date.now()));
-    }
-  };
-  return {
-    request,
-    cancel,
-    warning:
-      // The ref is cleared synchronously above on any unavailable or foreign context.
-      warning && warning === confirmation.current
-        ? `Ещё раз — завершить; ОД не потрачены: ${observation.current}`
-        : '',
-  };
 }
 
 function publishedCost(
