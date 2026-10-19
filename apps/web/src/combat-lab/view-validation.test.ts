@@ -8,25 +8,7 @@ import { isCombatLabView } from './view-validation.js';
 import { readSessionView } from './session-transport.js';
 
 function viewFixture() {
-  const template = defaultSpriteBattle();
-  const battle = {
-    ...template,
-    units: [
-      {
-        id: 'human-1',
-        profileId: 'W08',
-        sideId: 'human' as const,
-        position: { q: 2, r: 5 },
-        skillRanks: { 'aimed-shot': 1 as const, rally: 1 as const },
-      },
-      {
-        id: 'opponent-1',
-        profileId: 'B053',
-        sideId: 'opponent' as const,
-        position: { q: 13, r: 5 },
-      },
-    ],
-  };
+  const battle = defaultSpriteBattle();
   const fixture = createCustomBattleFixture('validation', battle);
   const { state, events } = fixture.start();
   return projectCombatLabView('session', 'human', state, events, battle);
@@ -117,23 +99,4 @@ it('rejects corrupt refusals before transport admission, including terminal view
       ],
     }),
   ).toBe(false);
-});
-
-it('validates each present affordability flag and preserves partial legacy omission', async () => {
-  const view = viewFixture();
-  const movement = view.movementPreview![0]!;
-  for (const flag of [true, false, undefined]) {
-    const payload = {
-      ...view,
-      movementPreview: [{ ...movement, attackAffordableAfter: flag }, movement],
-    };
-    expect(isCombatLabView(payload)).toBe(true);
-  }
-  for (const flag of [null, 0, 'false', {}, []]) {
-    const payload = { ...view, movementPreview: [{ ...movement, attackAffordableAfter: flag }] };
-    expect(isCombatLabView(payload)).toBe(false);
-    await expect(
-      readSessionView(new Response(JSON.stringify(payload)), view.sessionId),
-    ).rejects.toThrow('invalid view');
-  }
 });

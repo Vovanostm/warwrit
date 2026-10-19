@@ -208,7 +208,6 @@ export interface CombatLabView extends CombatLabViewRequest {
     readonly path: readonly CombatLabHex[];
     readonly actionPointCost: number;
     readonly staminaCost: number;
-    readonly attackAffordableAfter?: boolean;
     readonly fireDamage?: number;
     readonly reactions?: readonly {
       readonly attackerId: string;

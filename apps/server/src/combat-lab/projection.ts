@@ -273,7 +273,7 @@ function projectSpriteActions(
   const controlled = controlledActivation(state, controlledSideId);
   return {
     attackRefusals,
-    movementPreview: controlled ? combat.previewCombatMovementAttackAffordability(state) : [],
+    movementPreview: controlled ? combat.previewCombatMovement(state) : [],
     attackPreview: controlled ? combat.previewCombatAttacks(state) : [],
     rangedAttackArea: combat.previewCombatRangedArea(state),
     availableActions,
