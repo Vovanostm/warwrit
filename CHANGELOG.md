@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Slices for playtest findings and QA hooks
+
+- 2026-10-19, branch `claude/slices-227-228-235`, studio director: added slices
+  `core-preset-deserters` (#228, core, after `core-melee-connect`),
+  `uix-overview-zoom` (#227, web, after `uix-w3-camera`) and `qa-game-hooks`
+  (#235, web, after `uix-w3-playback`) to the Orca plan with tiers and file
+  ownership that do not overlap active slices; `core-melee-connect` tier L.
+
 ### Orca workflow v3: contract first, one issue per PR, merge on gates
 
 - 2026-10-19, branch `claude/orca-workflow-v3`, published: owner removed the
