@@ -11,6 +11,7 @@ contract take precedence.
 | `warwrit-review`   | Invariant review, known defect patterns, general and simplification pass |
 | `warwrit-delivery` | Validate, publish, authorized merge, checkpoint and next-task handoff    |
 | `warwrit-orca`     | Parallel waves through Orca worktrees, supervised workers, merge order   |
+| `warwrit-art`      | Generated raster art: Codex image_gen, region compositing, critic loop   |
 
 ## Character production
 

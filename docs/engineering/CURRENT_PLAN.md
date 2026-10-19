@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**PR229 merge stage — 2026-10-19, local main integration; NOT_MERGED:**
+Live `agent:merge-approved` is present. Prior head `35c117e` has successful
+CI39196517767. Normal merge of `origin/main` `6f1fbae` preserves published
+history (no force-push); only additive CHANGELOG/CURRENT_PLAN conflicts were
+resolved. Production/test source is unchanged from the accepted candidate;
+evaluator4 ACCEPT and its played proof remain applicable. Fresh validation
+and exact-head hosted CI are pending before expected-head merge.
+Desk#198/outcome#209–211 remain REWORK awaiting scene/tooltip integration;
+scene and ready successors await merged dependencies. Pending PR230/232/233
+are not active contracts in this tick. [Proof](evidence/uix-w1-projection/README.md).
+
 **UIX-01a / #180 — 2026-10-19, published PR229 / local evaluation ACCEPT:**
 `Vovanostm/uix-w1-projection` at source candidate `fa7f516`; optional ordinary
 attack refusals share core admission, and malformed preview data is rejected
@@ -23,6 +34,17 @@ Earlier full bootstrap/native125%/matrix/replay proof is reused on unchanged
 production, not rerun. Current-head hosted CI and owner merge label pending.
 Desk eval3 and visual3 remain live; successors still await merged dependencies.
 [Current proof](evidence/uix-w1-projection/README.md).
+
+**Studio director — 2026-10-19, PR pending owner merge label:** owner made the
+Claude session studio director with autonomy («ты — директор студии и
+отвечаешь за качество продукта»); merge stays behind `agent:merge-approved`.
+Board: **now** — Orca v2 wave 1 on #217 (metric: merged PRs with playable proof
+per day); **next** — `core-melee-connect` (#225) on lane core after
+`uix-w1-names`; art lane via [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md);
+**later** — QA hooks for regression journeys, retro per wave. Director
+playtest 2026-10-19 filed #227 (battlefield overview) and #228 (human preset
+for morale/flight/surrender). Mechanics wiki
+reconciled with S4. [Owning section](AGENT_TEAM.md#studio-operating-model--2026-10-19).
 
 **Orca game-development workflow v2 — 2026-10-19, local/PR pending:**
 Day-one result of the pipeline below: no commit or PR in about 11 hours

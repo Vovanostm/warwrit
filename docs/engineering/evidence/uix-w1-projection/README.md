@@ -8,6 +8,15 @@ owner-approved merge pending. This is the #180
 projection boundary, not downstream refusal wording, #184 affordability,
 #187 skill reach or #207 names.
 
+## Main integration — 2026-10-19
+
+PR229 now has `agent:merge-approved`; CI39196517767 succeeded at `35c117e`.
+Integrated main `6f1fbae` by normal merge, preserving the published history
+and both branches' additive shared records. Upstream changes are documentation,
+plan and skills only; ordinary diff confirms apps/packages unchanged against
+`35c117e`. Existing evaluator4 ACCEPT and played proof are reused explicitly.
+Fresh validate and exact-head hosted CI remain pending; merge NOT_RUN.
+
 ## How to try
 
 Run `pnpm dev:combat`, open `/combat-lab`, start unchanged «Развалины мельницы»
