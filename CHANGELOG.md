@@ -19,7 +19,7 @@ requests.
   coordinator validate8/8PASS. Two UI seeds surrendered2/1 opponents, manual
   withdrawal reaction and3downloaded replay checks passed; default reset and
   restoration passed. [Evidence and remaining picker](docs/engineering/evidence/core-preset-deserters/README.md).
-  Integrated validator and hosted CI pending; no whole#228/scene acceptance.
+  Integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending; no whole#228/scene acceptance.
   Updated battlefield wiki and CURRENT_PLAN; no migrations or dependencies.
 - Dated correction: documentation PR178 is MERGED at1b1e088; PR CI39324349645
   and main CI39326177324 SUCCESS. Earlier pending receipts remain historical.

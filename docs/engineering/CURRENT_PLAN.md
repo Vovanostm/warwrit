@@ -8,7 +8,7 @@ before main integration;17focused tests PASS. Two actual UI seeds produced2/1
 surrenders; a manual withdrawal produced a reaction;3UI downloads reconstruct
 state/RNG/events and12/56/1live checkpoints. Default reset/reload/restart retained.
 [Proof and exact limits](evidence/core-preset-deserters/README.md). Main integration
-changed documentation only; integrated validator and hosted CI pending. #228 stays
+changed documentation only; integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending. #228 stays
 OPEN for the sequenced catalog picker. #227 full-field geometry and controls pass,
 but evaluator2/visual1 reject unreadable overview figures and native125 HUD
 collisions; sole web writer now corrects overview presentation and layout.

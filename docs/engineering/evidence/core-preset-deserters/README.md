@@ -11,8 +11,8 @@ replay formats are unchanged. No migration or dependency change.
 
 [Independent source review](review-1.md) and [played evaluation](eval-1.md)
 ACCEPT the gated producer. Coordinator validate before main integration:8/8PASS;
-author and reviewer each ran17focused tests. Integrated validate and exact-head
-CI are pending. Reports retain their original local evidence paths; the selected
+author and reviewer each ran17focused tests. Integrated coordinator validation 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); exact-head
+CI remains pending. Reports retain their original local evidence paths; the selected
 public replay/config/capture files beside this README are the published subset.
 
 | Real UI journey                                    | Result                                                    |
