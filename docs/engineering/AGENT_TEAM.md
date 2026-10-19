@@ -373,7 +373,8 @@ behind one core slice; six PRs went to pipeline infrastructure.
 **v3** ([warwrit-orca](../../.agents/skills/warwrit-orca/SKILL.md)):
 
 - **Merge on gates:** CI, `orca-validate.sh` and the tier verdicts for the
-  merged head SHA; the coordinator merges PRs it opened for slices and epic
+  gated code head (later commits only evidence, CHANGELOG/CURRENT_PLAN or a
+  merge of origin/main); the coordinator merges PRs it opened for slices and epic
   contracts; a CI fix goes back through review; `agent:blocked` on the PR or a
   linked issue, or an owner decision, stops a PR. Infrastructure PRs outside
   slices keep the owner gate (`agent:merge-approved`).
