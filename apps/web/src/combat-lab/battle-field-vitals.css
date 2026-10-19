@@ -1,10 +1,48 @@
 /* The visible tracks are foot-sorted with the figures; this is their accessible readout. */
 .battle-field-vitals {
   position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.battle-field-vital {
+  position: absolute;
   width: 1px;
   height: 1px;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+.battle-view .battle-overview-unit {
+  position: absolute;
+  width: 36px;
+  height: 44px;
+  padding: 2px;
+  border: 1px solid #a8bbae;
+  border-radius: 3px;
+  background: #202c2c;
+  pointer-events: auto;
+  box-shadow: 0 2px 4px #0009;
+}
+.battle-overview-unit[data-side='opponent'] {
+  border-color: #c0957d;
+}
+.battle-overview-unit[aria-current='step'] {
+  outline: 2px solid #d4bb82;
+}
+.battle-view .battle-overview-unit svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.battle-overview-leader {
+  position: absolute;
+  height: 1px;
+  background: #c5b58b;
+  transform-origin: left center;
   pointer-events: none;
+}
+.battle-overview-unit[hidden],
+.battle-overview-leader[hidden] {
+  display: none;
 }

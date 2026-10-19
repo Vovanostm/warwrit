@@ -369,7 +369,10 @@ export async function mountSpriteBattleScene(
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
   const groundYFor = (hex: CombatLabHex) =>
     (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
-  const fieldVitals = mountBattleFieldVitals(canvas, scene);
+  const fieldVitals = mountBattleFieldVitals(canvas, scene, (id) => {
+    callbacks.onSelectUnit(id);
+    focusUnit(id);
+  });
   const heightLabels: Mesh[] = [];
   initialTiles
     .filter((tile) => tile.height > 0)

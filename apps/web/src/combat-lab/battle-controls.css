@@ -564,3 +564,75 @@
   margin-top: 4px;
   padding-top: 4px;
 }
+
+/* Reserve finite desktop lanes at the native125 1024px CSS viewport. */
+.battle-view .battle-initiative {
+  left: 194px;
+  right: 268px;
+}
+.battle-overview .initiative-unit.battle-control,
+.battle-overview .initiative-unit.battle-control[aria-current='step'] {
+  height: 90px;
+  min-height: 90px;
+}
+.battle-overview .initiative-unit .unit-vitals {
+  display: none;
+}
+.battle-action-dock {
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 12px;
+}
+.battle-action-dock:has(.battle-inspected-unit) {
+  grid-template-columns: 220px minmax(0, 1fr) 220px;
+}
+.battle-dock-orders {
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 16px;
+}
+.battle-view .combat-lab-actions {
+  gap: 8px;
+}
+.battle-command {
+  width: 68px;
+}
+.battle-command-label {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.battle-action-cost {
+  font-size: 11px;
+}
+.battle-view .battle-control-slot {
+  flex-shrink: 0;
+}
+.battle-skill-list {
+  flex-wrap: wrap;
+}
+.battle-acting-unit .battle-card-main {
+  gap: 8px;
+}
+.battle-overview .battle-board-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 40%, transparent 22%, #111c21b8 85%);
+}
+
+/* Inspection keeps full pool labels below the portrait in the reserved narrow card. */
+.battle-inspected-unit .battle-card-main {
+  display: block;
+}
+.battle-inspected-unit .battle-portrait {
+  float: right;
+  width: 56px;
+  height: 76px;
+  margin: 0 0 8px 8px;
+}
+.battle-inspected-unit .battle-card-data h2 {
+  min-height: 80px;
+  overflow-wrap: anywhere;
+}
+.battle-inspected-unit .battle-resource {
+  clear: both;
+}
