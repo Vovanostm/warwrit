@@ -1,5 +1,26 @@
 # Warwrit current delivery plan
 
+**PR239 merge stage / #186 combined REWORK — 2026-10-19:**
+[PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`
+has successful exact-head clean-checkout CI39290710765; main `073a02b` is
+already included. Tier L reviewer1/evaluator1 ACCEPT for `f5803e5`, coordinator
+validate EXIT0/8of8,178PASS/47SKIP,auditPASS, and published independent playable
+proof are reused on unchanged code. Later commits contain evidence/shared
+records only. No blocking PR/issue labels or unresolved threads observed.
+This shared-record commit still needs its own CI and expected-head merge;
+NOT_MERGED at writing. #207 remains OPEN for numbered field captions,
+terminal inspection cards and inherited HUD/log clipping; [proof](evidence/uix-w1-names/README.md).
+Actor foundation `c60fd5e` now has both Tier V verdicts REWORK. Visual1 is
+BLOCKED on incomplete native125/layering/marker-reference/contrast proof and
+scores inherited overview scene integration1. Combined proof rework1 may
+proceed in the sole web lane, without speculative source edits or expanding
+into assigned readability/safe-area/terminal/tooltip work. Those findings are
+still unaccepted and must clear their integration gates; the split is no waiver.
+Refs186 only; actual enemy/frame closure remains #190. Other successor
+ownership/dependencies remain unchanged. New local full gate/playtest/deploy
+NOT_RUN; performance/balance NOT_MEASURED. This dated receipt supersedes the
+pending CI/live-critic statements below, not the retained consumer limits.
+
 **Names producer #207 — 2026-10-19, published PR239; CI pending:**
 `Vovanostm/uix-w1-names`: source `796fa52`, gated
 `f5803e5da321e6f71506e8488e612e75531943e9`; fresh reviewer1 and played

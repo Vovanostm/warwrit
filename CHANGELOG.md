@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Stage names producer merge and retain actor-foundation REWORK
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, published
+  [PR239](https://github.com/Vovanostm/warwrit/pull/239), merge stage:
+  head `902d2e8` has successful clean-checkout CI39290710765; branch contains
+  current main `073a02b`, no integration needed. Tier L reviewer/evaluator
+  ACCEPT for gated `f5803e5` and coordinator validate8/8 remain applicable:
+  later commits contain evidence and these shared records only. No blocking
+  labels or unresolved review threads observed. This record needs exact-head
+  CI before expected-head merge; it does not claim that merge has happened.
+  #207 stays OPEN for visible captions, terminal cards and inherited layout
+  limits; [producer proof](docs/engineering/evidence/uix-w1-names/README.md).
+  #186 visual1 now settled REWORK/BLOCKED on `c60fd5e`: missing native125,
+  loaded layering/input, marker comparison and contrast proof, plus inherited
+  overview scene-integration score1. Combined proof rework1 is next; inherited
+  readability/safe-area/terminal/tooltip allocations remain unaccepted and
+  cannot be waived by the foundation split. Updated CURRENT_PLAN; no mechanics,
+  setup or wiki behavior change. New local full gate/playtest/deploy NOT_RUN;
+  performance/balance NOT_MEASURED.
+
 ### Publish stable fighter-label and replay-presentation producer proof
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-names`, published producer
