@@ -326,7 +326,7 @@
 /* Keep the five commands on one baseline, including genuine browser zoom. */
 .battle-view .combat-lab-actions {
   display: grid;
-  grid-template-columns: 0.8fr 1.1fr 0.9fr 1.15fr 1.05fr;
+  grid-template-columns: 0.95fr 1fr 0.9fr 1.15fr 1fr;
   gap: 4px;
 }
 .battle-skill-list {
@@ -567,7 +567,26 @@
 }
 .battle-command,
 .battle-ability-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+.battle-control-slot > .battle-command-label {
+  width: 100%;
+  margin-top: 0;
+}
+.battle-control-slot > .battle-action-cost {
+  flex: 0 0 auto;
+  width: max-content;
+  margin-top: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+.battle-control-slot .battle-skill-rank {
+  min-width: 20px;
+  height: 20px;
+  font-size: 18px;
 }
 .battle-command {
   min-width: 0;
