@@ -3,7 +3,8 @@
 2026-10-19; branch `Vovanostm/uix-w1-projection`; source candidate
 `fa7f51662bd0fa0042467a77340171aa796aae71`, baseline
 `84861773b58548ae0817c1a2c322ae8d8d5a2a19`. Local evaluation **ACCEPT**;
-publication prepared, CI and owner-approved merge pending. This is the #180
+published [PR229](https://github.com/Vovanostm/warwrit/pull/229), CI and
+owner-approved merge pending. This is the #180
 projection boundary, not downstream refusal wording, #184 affordability,
 #187 skill reach or #207 names.
 

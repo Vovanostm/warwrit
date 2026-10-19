@@ -2483,7 +2483,7 @@ renderer не вычисляет unlock из портрета или W-ID.
 
 ### 9. Прогноз и обратная связь
 
-**UIX-01a / #180 — результат 2026-10-19, local ACCEPT, публикация подготовлена.**
+**UIX-01a / #180 — результат 2026-10-19, local ACCEPT, published [PR229](https://github.com/Vovanostm/warwrit/pull/229).**
 Optional `attackRefusals` даёт каждому активному публичному врагу ровно
 preview либо отказ общего admission ядра. Причины range/LOS/ОД/сил/хода/паники
 и утверждённый D1 `threat-not-available` не меняют правила боя. Диагностика

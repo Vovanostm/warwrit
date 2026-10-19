@@ -11,8 +11,8 @@ requests.
 
 ### Publish ordinary attack refusal projection for UIX-01a
 
-- 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, local,
-  publication prepared: #180 and owner D1 require one optional server-owned
+- 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, published in
+  [PR229](https://github.com/Vovanostm/warwrit/pull/229): #180 and owner D1 require one optional server-owned
   refusal or preview per active public enemy. Core admission is shared by
   execution and projection; protocol/server publish sanitized refusal facts,
   and the web boundary rejects malformed previews before overlap traversal.
