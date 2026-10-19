@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Prepare a human-opponent battle preset
+
+- 2026-10-19, branch `codex/human-battle-228`, local: owner requested
+  implementation, review and merge of the playable fix sequence. The #228
+  contract reuses current human profiles and S4 morale/escape/reaction rules,
+  preserves the mill default and adds compatible server catalog presets before
+  the sequential editor picker. Implementation and gameplay checks NOT_RUN.
+  Parent coordinates shared records; no rule or lore change is authorized here.
+
 ### Stage names producer merge and retain actor-foundation REWORK
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-names`, published

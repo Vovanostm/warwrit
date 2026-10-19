@@ -1,5 +1,14 @@
 # Warwrit current delivery plan
 
+**Human battle preset — 2026-10-19, LOCAL / implementation starting:**
+Owner authorized implementation, review and merge of the fix sequence.
+`codex/human-battle-228` owns the #228 server catalog producer using existing
+human profiles and current S4 rules. The existing mill remains the default;
+editor selection follows the producer merge and release of the web lane.
+No future melee/bow rule change is required to demonstrate current human
+morale/escape/reactions. Source, gameplay and independent acceptance NOT_RUN.
+Coordinator owns shared records; #227 camera is the independent web writer.
+
 **PR239 merge stage / #186 combined REWORK — 2026-10-19:**
 [PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`
 has successful exact-head clean-checkout CI39290710765; main `073a02b` is
