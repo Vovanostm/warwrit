@@ -77,6 +77,20 @@ const props = () => ({
 });
 afterEach(() => vi.useRealTimers());
 
+it.each([false, true])(
+  'keeps the full transport message and retry in one feedback allocation (uncertain=%s)',
+  (uncertain) => {
+    const html = renderToStaticMarkup(
+      <CommandDesk {...props()} pending={{ uncertain, description: 'Завершение хода' }} />,
+    );
+    expect(html).toContain(
+      `<span>${uncertain ? 'Неизвестный' : 'Ожидается'} ответ: Завершение хода.</span>`,
+    );
+    expect(html.includes('Повторить тот же запрос')).toBe(uncertain);
+    expect(html).toContain('role="status" aria-live="polite" aria-atomic="true"');
+  },
+);
+
 it('marks unavailable controls without disabling focus, mutes their prices and outlines only a ready attack', () => {
   const p = props();
   const html = renderToStaticMarkup(<CommandDesk {...p} />);

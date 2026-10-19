@@ -358,9 +358,11 @@ function PendingCommandStatus({
   if (!pending) return null;
   return (
     <p role="status" className="battle-pending-status">
-      {pending.uncertain
-        ? `Неизвестный ответ: ${pending.description}.`
-        : `Ожидается ответ: ${pending.description}.`}
+      <span>
+        {pending.uncertain
+          ? `Неизвестный ответ: ${pending.description}.`
+          : `Ожидается ответ: ${pending.description}.`}
+      </span>
       {pending.uncertain && (
         <button className="battle-control" type="button" onClick={retryAction}>
           Повторить тот же запрос
