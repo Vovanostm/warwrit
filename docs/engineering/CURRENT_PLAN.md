@@ -1,6 +1,14 @@
 # Warwrit current delivery plan
 
-**Studio director — 2026-10-19, PR pending owner merge label:** owner made the
+**Director board — 2026-10-19, PR pending owner merge:** slices
+`m1-deserter-preset` (#228, web, can start now) and `m1-field-overview` (#227,
+web, wave 4 after camera/scene/tooltips) added to
+[epic-217.json](../../.agents/skills/warwrit-orca/slices/epic-217.json); the
+coordinator's local splits folded in; 15 shared-file overlaps sequenced
+(`uix-w2-log` now after `core-melee-connect`). After the owner merges:
+`scripts/orca-issue-state.sh ready 227 228`. Daily digest on #217.
+
+**Studio director — 2026-10-19, PR226 MERGED 6f1fbae:** owner made the
 Claude session studio director with autonomy («ты — директор студии и
 отвечаешь за качество продукта»); merge stays behind `agent:merge-approved`.
 Board: **now** — Orca v2 wave 1 on #217 (metric: merged PRs with playable proof

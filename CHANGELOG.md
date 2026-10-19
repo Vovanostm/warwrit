@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Slices for #227 and #228; slice plan sequenced without shared writers
+
+- 2026-10-19, branch `claude/epic-217-slices-227-228`, published (PR pending
+  owner merge): owner made the studio director add slices for #227 and #228
+  without overlapping the running wave. Added `m1-deserter-preset` (#228,
+  lane web, no `after`: client lab preset in the editor, no server/protocol
+  change) and `m1-field-overview` (#227, lane web, after the camera, scene,
+  tooltips, outcome and desk chains; `uix-w4-scale` now follows it) to
+  [epic-217.json](.agents/skills/warwrit-orca/slices/epic-217.json). Folded
+  the coordinator's local splits (`uix-w1-affordability`, `-skill-reach`,
+  `-end-turn`, `-skill-names`) into the tracked plan. An ownership check of
+  the effective plan found 15 pairs of slices that could run at once on the
+  same file (`CombatLab.tsx`, `battle-controls.css`, `BattleUnitCard.tsx`,
+  `BattleView.tsx`, server/protocol); new `after` edges sequence them, and
+  `uix-w2-log` now follows `core-melee-connect` so the log shows hit quality.
+  Check: script over `after` closure, no cycles, 0 unsequenced overlaps.
+  Plan only; no game code. Correction: PR226 (studio operating model) is
+  MERGED 6f1fbae, 2026-10-19.
+
 ### Studio operating model, mechanics reconciled with S4, art lane, melee slice
 
 - 2026-10-19, branch `claude/studio-operating-model`, published (PR pending
