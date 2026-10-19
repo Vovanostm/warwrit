@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import type { CombatLabView } from '@warwrit/protocol';
-import { markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
+import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 const actor: CombatLabView['units'][number] = {
   id: 'actor',
   sideId: 'human',
@@ -143,7 +143,7 @@ it('skill mode uses only matching legal previews and preserves threat then hover
     ...aimed,
     hoveredTarget: { hex: enemy.position, unitId: 'enemy' },
   });
-  expect(hover.cells.get('2,0')).toEqual({ fill: 'threat', border: 'actor', priority: 10 });
+  expect(hover.cells.get('2,0')).toEqual({ fill: 'threat', border: 'inspection', priority: 10 });
   expect([...hover.attackableIds]).toEqual(['enemy']);
   const refused = markerPlan(
     { ...skillView, skillPreview: skillView.skillPreview.map((row) => ({ ...row, legal: false })) },
@@ -159,4 +159,63 @@ it('silhouette hover wins over attack tint only for living units', () => {
   expect(unitEdgeTone(enemy, view, null, attackable, true)).toBe('target');
   expect(unitEdgeTone(actor, view, null, attackable, false)).toBe('day');
   expect(unitEdgeTone({ ...enemy, status: 'dead' }, view, 'enemy', attackable, true)).toBe('night');
+});
+
+it('keeps one supplied actor marker through every inspection state, skill mode and AP zero', () => {
+  for (const inspected of [
+    selection,
+    { ...selection, selectedId: 'actor' },
+    { ...selection, selectedId: 'enemy', highlightedId: 'enemy' },
+    {
+      ...selection,
+      selectedCell: { q: 3, r: 0 },
+      hoveredTarget: { hex: enemy.position, unitId: 'enemy' },
+    },
+    { ...selection, selectedSkill: 'aimed-shot' as const, showFullGrid: true },
+  ]) {
+    const plan = markerPlan(
+      {
+        ...view,
+        units: [{ ...actor, name: 'Лучник' }, enemy],
+        activation: { ...view.activation, actionPoints: { current: 0, maximum: 4 } },
+      },
+      tiles,
+      inspected,
+    );
+    expect(plan.actor).toEqual({
+      id: 'actor',
+      name: 'Лучник',
+      sideId: 'human',
+      position: actor.position,
+    });
+  }
+  expect(markerPlan(view, tiles, selection).cells.get('0,0')).toEqual({
+    fill: null,
+    border: 'friendly',
+    priority: 1,
+  });
+  expect(
+    markerPlan({ ...view, activation: { ...view.activation, actorId: 'enemy' } }, tiles, selection)
+      .actor,
+  ).toEqual({ id: 'enemy', name: 'enemy', sideId: 'enemy', position: enemy.position });
+});
+
+it('clears the composite actor for terminal, null, missing and inactive activations', () => {
+  for (const absent of [
+    { ...view, status: 'resolved' as const },
+    { ...view, activation: null },
+    { ...view, activation: { ...view.activation, actorId: 'missing' } },
+    { ...view, units: [{ ...actor, status: 'dead' as const }, enemy] },
+  ])
+    expect(markerPlan(absent, tiles, selection).actor).toBeNull();
+});
+
+it('retains marker textures on movement and refreshes them for projected name or side changes', () => {
+  const descriptor = markerPlan(view, tiles, selection).actor!;
+  const key = actorMarkerKey(descriptor, 'human');
+  expect(actorMarkerKey({ ...descriptor, position: { q: 3, r: 1 } }, 'human')).toBe(key);
+  expect(actorMarkerKey({ ...descriptor, name: 'Другой боец' }, 'human')).not.toBe(key);
+  expect(actorMarkerKey({ ...descriptor, sideId: 'enemy' }, 'human')).not.toBe(key);
+  expect(actorMarkerKey(descriptor, 'enemy')).not.toBe(key);
+  expect(actorMarkerKey(null, 'human')).toBeNull();
 });

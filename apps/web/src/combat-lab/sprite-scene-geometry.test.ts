@@ -1,6 +1,11 @@
 import { expect, it } from 'vitest';
 import { SPRITE_MASK_SIZE } from './sprite-outline.js';
-import { opaqueSpritePixel, eventLabelUp, avoidAnchorOverlap } from './sprite-scene-geometry.js';
+import {
+  opaqueSpritePixel,
+  eventLabelUp,
+  avoidAnchorOverlap,
+  actorBadgePlacement,
+} from './sprite-scene-geometry.js';
 
 it('samples only original artwork with flipped UV rows and the existing opacity threshold', () => {
   const mask = new Uint8ClampedArray(SPRITE_MASK_SIZE ** 2 * 4);
@@ -43,4 +48,20 @@ it('shifts a field anchor without changing its horizontal and target coordinates
     y: 100,
     targetY: 280,
   });
+});
+
+it('places the measured actor badge above neighbouring weapons, bodies and reserved labels', () => {
+  const badge = { x: 0, up: 1.5, halfWidth: 0.8, halfHeight: 0.2 };
+  const reserved = [
+    { x: 0.5, up: 1.6, halfWidth: 0.4, halfHeight: 0.6 },
+    { x: 0, up: 2.7, halfWidth: 0.9, halfHeight: 0.3 },
+    { x: 3, up: 4, halfWidth: 0.4, halfHeight: 5 },
+  ];
+  const placed = actorBadgePlacement(badge, reserved);
+  expect(placed.up).toBeCloseTo(3.28);
+  expect(placed.x).toBe(badge.x);
+  expect(actorBadgePlacement(badge, [...reserved].reverse())).toEqual(placed);
+  expect(actorBadgePlacement(badge, [])).toEqual(badge);
+  for (const box of reserved.slice(0, 2))
+    expect(placed.up - box.up).toBeGreaterThan(placed.halfHeight + box.halfHeight);
 });
