@@ -90,8 +90,8 @@
       "wave": 2,
       "slice": "core-melee-connect",
       "issues": [225],
-      "after": ["uix-w1-names"],
-      "note": "Studio director 2026-10-19: owner decision 2026-10-07 (trained melee always deals damage). Re-baseline M1-MELEE-CONNECT on the sprite S4 rules (engine/reaction/damage-preview), new versioned ruleset, preview = resolution, old replays untouched. Forecast copy in BattleForecast.tsx is a follow-up after uix-w2-input.",
+      "after": ["uix-w1-names", "uix-w2-log"],
+      "note": "Studio director 2026-10-19: owner decision 2026-10-07 (trained melee always deals damage). Re-baseline M1-MELEE-CONNECT on the sprite S4 rules (engine/reaction/damage-preview), new versioned ruleset, preview = resolution, old replays untouched. Forecast copy in BattleForecast.tsx is a follow-up after uix-w2-input. After uix-w2-log: both own packages/protocol/src/combat-lab.ts and apps/server/src/combat-lab/projection.ts.",
       "ownership": [
         "packages/game-core/src/combat/",
         "packages/protocol/src/combat-lab.ts",
