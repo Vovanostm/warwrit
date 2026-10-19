@@ -151,6 +151,7 @@ function hasAttackRefusals(view: Partial<CombatLabView>): boolean {
   const seen = new Set<string>();
   return (
     Array.isArray(view.attackRefusals) &&
+    (view.attackPreview === undefined || Array.isArray(view.attackPreview)) &&
     view.attackRefusals.every((row) => validRefusal(row, view, seen))
   );
 }

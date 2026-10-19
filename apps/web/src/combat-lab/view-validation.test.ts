@@ -100,3 +100,30 @@ it('rejects corrupt refusals before transport admission, including terminal view
     }),
   ).toBe(false);
 });
+
+it.each([{}, 'corrupt', null])(
+  'rejects malformed attackPreview %j before refusal overlap validation',
+  (attackPreview) => {
+    const payload = {
+      ...viewFixture(),
+      attackPreview,
+      attackRefusals: [{ targetId: 'opponent-1', code: 'panicking' }],
+    };
+    expect(isCombatLabView(payload)).toBe(false);
+  },
+);
+
+it.each([{}, 'corrupt', null])(
+  'reports invalid view for malformed attackPreview %j combined with refusals',
+  async (attackPreview) => {
+    const view = viewFixture();
+    const payload = {
+      ...view,
+      attackPreview,
+      attackRefusals: [{ targetId: 'opponent-1', code: 'panicking' }],
+    };
+    await expect(
+      readSessionView(new Response(JSON.stringify(payload)), view.sessionId),
+    ).rejects.toThrow('invalid view');
+  },
+);
