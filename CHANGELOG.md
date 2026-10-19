@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Slices for playtest findings and QA hooks
+
+- 2026-10-19, branch `claude/slices-227-228-235`, studio director: added
+  one-issue slices to the Orca plan — #228 as producer `core-preset-deserters`
+  (core, Refs) and consumer `uix-preset-picker` (web, closes it), #227
+  `uix-overview-zoom` (web, tier V) and #235 `qa-game-hooks` (web) — each
+  sequenced with `after` behind every slice that owns the same files (reviewer
+  REWORK fixed); `core-melee-connect` tier L; `uix-w4-bow` lane corrected to core.
+
 ### Orca workflow v3: contract first, one issue per PR, merge on gates
 
 - 2026-10-19, branch `claude/orca-workflow-v3`, published: owner removed the
