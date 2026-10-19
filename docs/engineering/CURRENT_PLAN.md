@@ -1,5 +1,23 @@
 # Warwrit current delivery plan
 
+**UIX-03a / #184 producer — 2026-10-19, published / local ACCEPT:**
+`Vovanostm/uix-w1-affordability`, gated source `c055e9a`: optional server-owned
+post-path attack affordability, legacy omission accepted. Reviewer1 and played
+evaluator1 ACCEPT; 62 focused tests,29 live boundary cases,96 matched captures
+including native125%, real move/end-turn and UI-autobattle victory R10/rev182.
+Normal merge of main `f365f60` at `59af0ab` changes no gated apps/packages;
+additive CHANGELOG/CURRENT_PLAN conflicts retain both histories. Integrated
+coordinator validate EXIT0,8/8,709PASS/47SKIP,auditPASS. Fifteen finite
+baseline-saved replay streams compare equal across schemas1/2 and five rulesets;
+paired 10,000-battle stress outputs match (duration excluded),20 deterministic
+reruns/100 replay checks PASS. Hosted clean-checkout CI pending before merge. No full-game
+acceptance or deployment; performance/balance NOT_MEASURED. #184 remains open:
+its bands/legend/CVD/rendered legacy fallback belong to uix-w2-scene after#187.
+SkillReach waits for this producer merge; names follows both producers. Desk and
+outcome retain assigned integrated REWORK. Mission-level v3 tier gates govern
+this slice; historical per-PR owner-label statements below are superseded.
+[Proof and limits](evidence/uix-w1-affordability/README.md).
+
 **PR229 / UIX-01a — 2026-10-19, MERGED; successor contract local:**
 Owner `agent:merge-approved` and exact-head CI39243122114 SUCCESS allowed the
 expected-head merge of `2508eb6` to `1665527` at 11:36 UTC. Live PR/main
