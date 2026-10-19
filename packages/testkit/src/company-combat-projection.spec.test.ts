@@ -152,3 +152,31 @@ describe('G03 — character/equipment/condition combat projection', () => {
     expect(() => projectCharacterCombat(root(state), 'worker-0')).toThrow('INVALID_STATE');
   });
 });
+
+it('projects genuine unarmed wounds without weapon perks, XP identity or free equipment', () => {
+  let state = character(economy([1n]), { blades: 100 }, ['blades-25-a']);
+  state = vitals(state, 37, 19);
+  state = withLoadedConditions(
+    state,
+    { 'worker-0': ['severe-stable-wound', 'critical-bleed'] },
+    'existing',
+  );
+  const before = canonicalJson(state);
+  const projected = projectCharacterCombat(root(state), 'worker-0', 3);
+  expect(projected).toMatchObject({
+    schemaVersion: 3,
+    combatRulesetId: 'm1-domain-bridge-v3',
+    weapon: { profileId: 'fists', itemId: null, definitionId: null, skillId: null },
+    contributingPerkIds: [],
+    capabilities: { move: false, attack: true, defend: true, retreat: false },
+    attributes: { accuracy: 16, initiative: 36, health: 60, armor: 0 },
+    current: { health: 37, stamina: 19, armor: 0 },
+  });
+  expect(canonicalJson(state)).toBe(before);
+  for (const invalid of [
+    equip(state, 'sword', 'missing-shield', ['MAIN_HAND']),
+    equip(state, 'spear', 'bad-twohand', ['MAIN_HAND']),
+    equip(state, 'shield', 'orphan-shield', ['OFF_HAND']),
+  ])
+    expect(() => projectCharacterCombat(root(invalid), 'worker-0', 3)).toThrow('INVALID_STATE');
+});

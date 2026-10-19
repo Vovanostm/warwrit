@@ -109,7 +109,8 @@ async function replayMatches(
       encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
       encounter.setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION &&
       (encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_RULESET_ID ||
-        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID);
+        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
+        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID);
     if (
       (!fixtureEncounter && !companyBindingEncounter) ||
       encounter.setup.battleId !== encounter.id ||
@@ -1133,7 +1134,8 @@ export async function executeEncounterAiWake(
       encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
       encounter.setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION &&
       (encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_RULESET_ID ||
-        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID) &&
+        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
+        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID) &&
       controller?.admission_source === 'world_hostile';
     const admissionAuthority = await sql<{ readonly accepted: boolean }>`
       select ${aiWakeAdmissionAuthority(

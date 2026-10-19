@@ -16,6 +16,7 @@ import { BattleField } from './renderer/BattleField.js';
 import { LeadershipChoice } from './encounter/LeadershipChoice.js';
 import {
   canIssueEncounterIntent,
+  encounterConditionAllows,
   neutralUnitLabel,
   readEncounterCommandResponse,
   retainedSelection,
@@ -190,6 +191,14 @@ export function EncounterPanel(props: {
   const currentScopeKey = `${props.scope.accountId}:${props.scope.companyId}`;
   const scopedState = state.scopeKey === currentScopeKey ? state : undefined;
   const projection = scopedState?.projection;
+  const actorActions = scopedState?.grant?.actorActions;
+  const conditionAllows = (intent: EncounterCommandDto['intent']['type']) =>
+    encounterConditionAllows(
+      scopedState?.grant,
+      projection?.activationId,
+      projection?.actorUnitId,
+      intent,
+    );
   const selectable = new Set(scopedState?.grant?.controllableUnitIds ?? []);
   const actorUnitId = projection?.actorUnitId ?? null;
   const canIssue =
@@ -356,7 +365,7 @@ export function EncounterPanel(props: {
                   <button
                     className="primary-action button-action"
                     type="button"
-                    disabled={!selectedTargetId}
+                    disabled={!selectedTargetId || !conditionAllows('attack')}
                     onClick={() =>
                       void submitIntent({ type: 'attack', targetId: selectedTargetId })
                     }
@@ -381,7 +390,7 @@ export function EncounterPanel(props: {
                   <button
                     className="button-action"
                     type="button"
-                    disabled={!destinationKey}
+                    disabled={!destinationKey || !conditionAllows('move')}
                     onClick={() => {
                       const [q, r] = destinationKey.split(',').map(Number);
                       void submitIntent({ type: 'move', to: { q: q!, r: r! } });
@@ -391,10 +400,17 @@ export function EncounterPanel(props: {
                   </button>
                 </div>
               )}
+              {actorActions && actorActions.permittedIntents.length < 5 && (
+                <p className="state-note">
+                  Состояние бойца ограничивает доступные действия. Переноска и спасение пока
+                  недоступны.
+                </p>
+              )}
               <div className="encounter-action-row">
                 <button
                   className="button-action"
                   type="button"
+                  disabled={!conditionAllows('defend')}
                   onClick={() => void submitIntent({ type: 'defend' })}
                 >
                   Защищаться
@@ -409,6 +425,7 @@ export function EncounterPanel(props: {
                 <button
                   className="button-action"
                   type="button"
+                  disabled={!conditionAllows('retreat')}
                   onClick={() => void submitIntent({ type: 'retreat' })}
                 >
                   Отступить
@@ -527,7 +544,13 @@ export function EncounterPanel(props: {
         (!projection ||
           !canIssueEncounterIntent(projection, grant, selectedRef.current) ||
           command.actorId !== selectedRef.current ||
-          projection.activationId === null))
+          projection.activationId === null ||
+          !encounterConditionAllows(
+            grant,
+            command.activationId,
+            command.actorId,
+            command.intent.type,
+          )))
     )
       return;
     pendingCommandRef.current = command;

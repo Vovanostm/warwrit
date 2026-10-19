@@ -1,3 +1,4 @@
+import { validateCombatCapabilities } from './setup-v2.js';
 import {
   validateUnitIdentity,
   validateUnitPosition,
@@ -20,6 +21,7 @@ import { findPath, hexDistance, hexEquals, hexKey } from './hex.js';
 import { createRandomState, drawRandomInt } from './random.js';
 import {
   combatAttackDamage,
+  combatActionAllowed,
   combatGuardedDamage,
   isSpritePrototypeRuleset,
   combatHitChance,
@@ -1585,6 +1587,9 @@ export function applyCombatCommand(
   ) {
     return failure(state, 'PANICKED', 'Panicked units must escape or surrender');
   }
+  if (!combatActionAllowed(actor, command.type)) {
+    return failure(state, 'ACTION_NOT_AVAILABLE', 'This action is unavailable to this participant');
+  }
   if (command.type === 'attack') {
     const invalid = ordinaryCombatAttackFailure(state, actor);
     if (invalid) return failure(state, invalid.code, invalid.message);
@@ -1668,6 +1673,8 @@ export function assertBattleState(state: BattleState): void {
 
   const activePositions = new Set<string>();
   for (const unit of state.units) {
+    validateCombatCapabilities(unit.capabilities, state.rulesetId);
+    weaponProfile(rules, unit.weaponId);
     assertUnitPools(unit, rules);
     if (unit.status === 'active') {
       invariant(unit.health > 0, `${unit.id} cannot be active without health`);

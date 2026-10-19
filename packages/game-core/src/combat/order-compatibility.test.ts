@@ -379,17 +379,17 @@ describe('versioned combat unit ordering', () => {
     expect(() =>
       validateBattleSetupV2({
         ...bridgeSetup(M1_DOMAIN_BRIDGE_V2_RULESET_ID),
-        rulesetId: 'm1-domain-bridge-v3',
+        rulesetId: 'm1-domain-bridge-v99',
       } as unknown as BattleSetupV2),
     ).toThrow(/V2 battle setup ruleset must be/);
-    expect(() => combatRules('m1-domain-bridge-v3' as CombatRulesetId)).toThrow(
+    expect(() => combatRules('m1-domain-bridge-v99' as CombatRulesetId)).toThrow(
       /Unknown combat ruleset/,
     );
     expect(() => combatRules(undefined as unknown as CombatRulesetId)).toThrow(
       /Unknown combat ruleset/,
     );
     expect(() =>
-      compareCombatUnitIds('m1-domain-bridge-v3' as CombatRulesetId, unitId('a'), unitId('b')),
+      compareCombatUnitIds('m1-domain-bridge-v99' as CombatRulesetId, unitId('a'), unitId('b')),
     ).toThrow(/Unexpected value/);
     expect(COMBAT_RULES_V1.id).toBe(M0_COMBAT_RULESET_ID);
   });

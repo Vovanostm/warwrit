@@ -1,5 +1,5 @@
-import { M1_DOMAIN_BRIDGE_RULESET_ID } from '../combat/setup-v2.js';
-import type { WeaponId } from '../combat/types.js';
+import { M1_DOMAIN_BRIDGE_RULESET_ID, M1_DOMAIN_BRIDGE_V3_RULESET_ID } from '../combat/setup-v2.js';
+import type { WeaponId, CombatCapabilities } from '../combat/types.js';
 import { COMPANY_CATALOGUE } from './definitions.js';
 import { snapshotJson } from './input.js';
 import { person, requireLifecycle } from './lifecycle-state.js';
@@ -55,6 +55,24 @@ export interface CharacterCombatProjection {
     readonly armor: number;
     readonly stamina: number;
   };
+}
+
+export interface CharacterCombatProjectionV3 extends Omit<
+  CharacterCombatProjection,
+  'schemaVersion' | 'combatRulesetId' | 'weapon'
+> {
+  readonly schemaVersion: 3;
+  readonly combatRulesetId: typeof M1_DOMAIN_BRIDGE_V3_RULESET_ID;
+  readonly weapon:
+    | CharacterCombatProjection['weapon']
+    | {
+        readonly profileId: 'fists';
+        readonly itemId: null;
+        readonly definitionId: null;
+        readonly requiredOffHandItemId: null;
+        readonly skillId: null;
+      };
+  readonly capabilities: CombatCapabilities;
 }
 
 function owned<T>(value: T): T {
@@ -113,10 +131,28 @@ function equippedArmor(
 export function projectCharacterCombat(
   root: MaterializedCompanyState,
   characterId: string,
-): CharacterCombatProjection {
+): CharacterCombatProjection;
+export function projectCharacterCombat(
+  root: MaterializedCompanyState,
+  characterId: string,
+  version: 3,
+): CharacterCombatProjectionV3;
+export function projectCharacterCombat(
+  root: MaterializedCompanyState,
+  characterId: string,
+  version?: 3,
+): CharacterCombatProjection | CharacterCombatProjectionV3 {
   const character = person(root.lifecycle, characterId);
   const weapon = equippedWeaponContext(root, characterId);
-  requirePhysical(weapon, 'INVALID_STATE');
+  const unarmed =
+    version === 3 &&
+    !root.physical.items.some(
+      (item) =>
+        item.tombstone === null &&
+        item.equipped?.characterId === characterId &&
+        item.equipped.slots.some((slot) => slot === 'MAIN_HAND' || slot === 'OFF_HAND'),
+    );
+  requirePhysical(weapon || unarmed, 'INVALID_STATE');
   const vitals = physicalVitals(root.physical, characterId);
   const perk = evaluatePerkEffects(root, { kind: 'CHARACTER', characterId, task: 'NONE' });
   const armor = equippedArmor(root, characterId);
@@ -133,35 +169,43 @@ export function projectCharacterCombat(
   const maximumStamina = Math.max(1, BASE_STAMINA + perk.additive.maxStamina);
   const maximumArmor = armor.reduce((sum, entry) => sum + entry.maximumArmor, 0);
   const currentArmor = armor.reduce((sum, entry) => sum + entry.currentArmor, 0);
-  const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === weapon.definitionId);
+  const definition = COMPANY_CATALOGUE.items.find((entry) => entry.id === weapon?.definitionId);
   requireLifecycle(
-    definition?.enabled &&
-      definition.kind === 'weapon' &&
-      definition.weaponProfile === weapon.profileId &&
-      definition.skillId === weapon.skillId,
+    unarmed ||
+      (weapon &&
+        definition?.enabled &&
+        definition.kind === 'weapon' &&
+        definition.weaponProfile === weapon.profileId &&
+        definition.skillId === weapon.skillId),
     'INVALID_STATE',
   );
 
-  return owned({
+  const equipped = weapon
+    ? {
+        itemId: weapon.itemId,
+        requiredOffHandItemId: weapon.requiredOffHandItemId,
+        definitionId: weapon.definitionId,
+        profileId: weapon.profileId,
+        skillId: weapon.skillId,
+      }
+    : null;
+  const base = {
     schemaVersion: COMBAT_PROJECTION_SCHEMA_VERSION,
     catalogueVersion: COMPANY_CATALOGUE.version,
     domainRulesetId: COMPANY_CATALOGUE.rulesetId,
     combatRulesetId: M1_DOMAIN_BRIDGE_RULESET_ID,
     characterId,
-    weapon: {
-      itemId: weapon.itemId,
-      requiredOffHandItemId: weapon.requiredOffHandItemId,
-      definitionId: weapon.definitionId,
-      profileId: weapon.profileId,
-      skillId: weapon.skillId,
-    },
+    weapon: equipped,
     armor,
     conditionIds: conditions.map(({ instance }) => instance.conditionId),
     contributingPerkIds: perk.contributingPerkIds,
     attributes: {
       accuracy: Math.max(
         0,
-        20 + Math.floor(level(weapon.skillId) / 2) + perk.additive.accuracy + accuracyCondition,
+        20 +
+          (weapon ? Math.floor(level(weapon.skillId) / 2) : 0) +
+          perk.additive.accuracy +
+          accuracyCondition,
       ),
       armor: maximumArmor,
       defense: Math.max(0, 5 + Math.floor(level('defense') / 4) + perk.additive.defense),
@@ -174,5 +218,23 @@ export function projectCharacterCombat(
       armor: Math.min(currentArmor, maximumArmor),
       stamina: Math.min(vitals.currentStamina, maximumStamina),
     },
-  });
+  };
+  if (version === 3) {
+    const immobile = conditions.some(({ definition }) => definition.id === 'critical-bleed');
+    return owned({
+      ...base,
+      schemaVersion: 3,
+      combatRulesetId: M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      weapon: equipped ?? {
+        profileId: 'fists',
+        itemId: null,
+        definitionId: null,
+        requiredOffHandItemId: null,
+        skillId: null,
+      },
+      capabilities: { move: !immobile, attack: true, defend: true, retreat: !immobile },
+    });
+  }
+  requirePhysical(weapon, 'INVALID_STATE');
+  return owned({ ...base, weapon: equipped! });
 }

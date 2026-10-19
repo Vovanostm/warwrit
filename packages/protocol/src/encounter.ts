@@ -34,6 +34,12 @@ export interface EncounterControlGrantDto {
   readonly controllableUnitIds: readonly string[];
   /** Authenticated caller's status only; absent when served by an older runtime. */
   readonly selfAfk?: boolean;
+  /** Actor-scoped condition restrictions, bound to this grant's revision and activation. Costs/range still apply. */
+  readonly actorActions?: {
+    readonly activationId: string;
+    readonly actorId: string;
+    readonly permittedIntents: readonly ('move' | 'attack' | 'defend' | 'wait' | 'retreat')[];
+  };
   /** Activation epoch after which the caller's resume request may take effect. */
   readonly resumeRequestedAfterEpoch?: number | null;
 }

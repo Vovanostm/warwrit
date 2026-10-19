@@ -29,8 +29,15 @@ export type CombatRulesetId =
   | typeof SPRITE_PROTOTYPE_V2_RULESET_ID
   | typeof SPRITE_PROTOTYPE_V3_RULESET_ID
   | 'm1-domain-bridge-v1'
-  | 'm1-domain-bridge-v2';
-export type WeaponId = (typeof M0_WEAPON_IDS)[number];
+  | 'm1-domain-bridge-v2'
+  | 'm1-domain-bridge-v3';
+export type WeaponId = (typeof M0_WEAPON_IDS)[number] | 'fists';
+export interface CombatCapabilities {
+  readonly move: boolean;
+  readonly attack: boolean;
+  readonly defend: boolean;
+  readonly retreat: boolean;
+}
 export type UnitStatus = 'active' | 'dead' | 'retreated' | 'surrendered';
 export type WoundSeverity = 'minor' | 'severe';
 export type BattleStatus = 'active' | 'resolved';
@@ -72,6 +79,7 @@ export interface CombatUnitSetup {
   readonly sideId: SideId;
   readonly position: Hex;
   readonly weaponId: WeaponId;
+  readonly capabilities?: CombatCapabilities;
   readonly attributes: UnitAttributes;
   readonly skillRanks?: CombatSkillRanks;
   readonly trainedMelee?: boolean;
@@ -232,6 +240,7 @@ export type CombatCommand =
   | ExecuteThreatCommand;
 
 export type CombatFailureCode =
+  | 'ACTION_NOT_AVAILABLE'
   | 'SKILL_NOT_AVAILABLE'
   | 'PANICKED'
   | 'THREAT_NOT_AVAILABLE'

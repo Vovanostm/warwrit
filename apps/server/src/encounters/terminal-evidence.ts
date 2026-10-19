@@ -137,6 +137,7 @@ function startSnapshotsForReceipt(
         : command?.type === 'defend'
           ? 'defense'
           : undefined;
+    if (command?.type === 'attack' && skillId === null) continue;
     const aptitudeAtStartBps = skillId ? character?.aptitudeBySkill[skillId] : undefined;
     if (
       !participant ||

@@ -36,6 +36,7 @@ import {
   requestEncounterResume,
   verifyEncounterReplay,
 } from './executor.js';
+import { readEncounterAccess } from './access.js';
 import { firstHuntTimeoutCommandId } from './admission.js';
 import { startEncounterAiWorker } from './ai-worker.js';
 import { applyPendingFirstHuntTerminalEffects } from './effects.js';
@@ -150,7 +151,7 @@ function createWorldHostileSetup(encounterId: string): BattleSetupV2 {
   };
 }
 
-function makeFirstHuntJoinActor(worldId: string): FirstHuntJoinActor {
+function makeFirstHuntJoinActor(worldId: string, mixed = false): FirstHuntJoinActor {
   const accountId = randomUUID();
   const companyId = randomUUID();
   const partyId = randomUUID();
@@ -187,7 +188,7 @@ function makeFirstHuntJoinActor(worldId: string): FirstHuntJoinActor {
     ...container,
     location,
   });
-  const initial = combat.readCompanyCombatAggregateState({
+  let initial = combat.readCompanyCombatAggregateState({
     ...remapped,
     economy: {
       ...remapped.economy,
@@ -210,6 +211,51 @@ function makeFirstHuntJoinActor(worldId: string): FirstHuntJoinActor {
       },
     },
   });
+  if (mixed) {
+    const current = initial.economy;
+    const memberId = memberIds[0]!;
+    const criticalId = memberIds[2]!;
+    const lifecycle = {
+      ...current.lifecycle,
+      characters: current.lifecycle.characters.map((character) => ({
+        ...character,
+        conditionIds:
+          character.identity.characterId === criticalId
+            ? ['critical-bleed']
+            : character.conditionIds,
+      })),
+    };
+    const loaded = combat.createCompanyPhysicalState(lifecycle, {
+      conditionBindings: [
+        {
+          characterId: criticalId,
+          definitionId: 'critical-bleed',
+          conditionId: `existing-${criticalId}`,
+          sourceEventId: 'existing-critical',
+          causeId: 'existing-critical',
+          onsetTick: lifecycle.campaignTick,
+          deadlineTick: combat.campaignTick(String(BigInt(lifecycle.campaignTick) + 250n)),
+        },
+      ],
+    });
+    initial = combat.readCompanyCombatAggregateState({
+      ...initial,
+      economy: {
+        ...current,
+        lifecycle,
+        physical: {
+          ...current.physical!,
+          conditions: loaded.conditions,
+          items: current.physical!.items.map((item) =>
+            item.equipped?.characterId === memberId &&
+            item.equipped.slots.some((slot) => slot === 'MAIN_HAND' || slot === 'OFF_HAND')
+              ? { ...item, equipped: null }
+              : item,
+          ),
+        },
+      },
+    });
+  }
   return {
     accountId,
     companyId,
@@ -224,14 +270,17 @@ function makeFirstHuntJoinActor(worldId: string): FirstHuntJoinActor {
   };
 }
 
-async function seedFirstHuntJoinScenario(database: (typeof databases)[number]): Promise<{
+async function seedFirstHuntJoinScenario(
+  database: (typeof databases)[number],
+  mixed = false,
+): Promise<{
   readonly worldId: string;
   readonly owner: FirstHuntJoinActor;
   readonly helper: FirstHuntJoinActor;
   readonly app: ReturnType<typeof buildApp>;
 }> {
   const worldId = randomUUID();
-  const owner = makeFirstHuntJoinActor(worldId);
+  const owner = makeFirstHuntJoinActor(worldId, mixed);
   const helper = makeFirstHuntJoinActor(worldId);
   for (const [actor, subject] of [
     [owner, 'owner'],
@@ -301,6 +350,7 @@ async function seedFirstHuntJoinScenario(database: (typeof databases)[number]): 
   const app = buildApp({
     identity: { config: config.identity!, database },
     company: { database, worldId },
+    ...(mixed ? { encounters: { database } } : {}),
   });
   apps.push(app);
   return { worldId, owner, helper, app };
@@ -2631,3 +2681,120 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
     },
   );
 });
+
+it.skipIf(connectionString === undefined)(
+  'admits a mixed unarmed company through real JOIN and reloads the durable replay',
+  async () => {
+    const database = databases[0]!;
+    const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(database, true);
+    try {
+      let lastCommand: Record<string, unknown> | undefined;
+      for (const actor of [owner, helper]) {
+        const read = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: actor.headers,
+        });
+        const command = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: read.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        };
+        const joined = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: actor.headers,
+          payload: command,
+        });
+        expect(joined.statusCode, joined.body).toBe(200);
+        lastCommand = command;
+      }
+      const admission = await database
+        .selectFrom('encounter_admissions')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      const encounter = await database
+        .selectFrom('encounters')
+        .selectAll()
+        .where('id', '=', admission.encounter_id)
+        .executeTakeFirstOrThrow();
+      const setup = encounter.setup as unknown as BattleSetupV2;
+      expect(setup.rulesetId).toBe(combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID);
+      expect(setup.units).toHaveLength(9);
+      expect(setup.units.filter((unit) => unit.weaponId === 'fists')).toHaveLength(1);
+      expect(setup.units.filter((unit) => unit.capabilities?.move === false)).toHaveLength(1);
+      expect(await verifyEncounterReplay(database, admission.encounter_id)).toBe(true);
+      const privateAccess = await readEncounterAccess(
+        database,
+        owner.accountId,
+        admission.encounter_id,
+      );
+      expect(privateAccess).toBeDefined();
+      expect(privateAccess!.projection.units.every((unit) => Object.keys(unit).length === 6)).toBe(
+        true,
+      );
+      expect(JSON.stringify(privateAccess!.projection)).not.toContain('capabilities');
+      expect(
+        await readEncounterAccess(database, randomUUID(), admission.encounter_id),
+      ).toBeUndefined();
+      if (privateAccess!.controlGrant.actorActions) {
+        expect(privateAccess!.controlGrant.controllableUnitIds).toContain(
+          privateAccess!.controlGrant.actorActions.actorId,
+        );
+        expect(privateAccess!.controlGrant.actorActions.permittedIntents).toContain('wait');
+      }
+
+      const saved = await database
+        .transaction()
+        .execute((transaction) => loadCompanyAggregate(transaction, worldId, owner.companyId));
+      expect(saved?.encounter.active?.binding.participants).toHaveLength(6);
+      const active = await app.inject({
+        method: 'GET',
+        url: '/encounters/active',
+        headers: owner.headers,
+      });
+      expect(active.statusCode, active.body).toBe(200);
+      expect(active.json().encounterId).toBe(admission.encounter_id);
+      // A new application instance proves the stored contract receipt survives adapter reconstruction.
+      const config = loadServerConfig({
+        DATABASE_URL: connectionString,
+        OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+        OIDC_CLIENT_ID: 'warwrit-local',
+        OIDC_CLIENT_SECRET: 'local-only-secret',
+        OIDC_REDIRECT_URI: 'http://127.0.0.1:3108/auth/callback',
+        PUBLIC_ORIGIN: 'http://127.0.0.1:3108',
+        HOST: '127.0.0.1',
+        PORT: '3108',
+      });
+      const restarted = buildApp({
+        identity: { config: config.identity!, database },
+        company: { database, worldId },
+      });
+      apps.push(restarted);
+      if (lastCommand === undefined) throw new Error('JOIN receipt command is missing');
+      const replay = await restarted.inject({
+        method: 'POST',
+        url: '/contracts/commands',
+        headers: helper.headers,
+        payload: lastCommand,
+      });
+      expect(replay.statusCode, replay.body).toBe(200);
+      const after = await database
+        .selectFrom('encounters')
+        .select(['revision', 'state', 'setup'])
+        .where('id', '=', admission.encounter_id)
+        .executeTakeFirstOrThrow();
+      expect(after).toEqual({
+        revision: encounter.revision,
+        state: encounter.state,
+        setup: encounter.setup,
+      });
+    } finally {
+      await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+    }
+  },
+  60_000,
+);

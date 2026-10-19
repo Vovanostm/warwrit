@@ -16,6 +16,12 @@ const copyHex = ({ q, r }: CombatLabHex): CombatLabHex => ({ q, r });
 const pool = (current: number, maximum: number) => ({ current, maximum });
 
 // journal is the complete ordered kernel journal, including startBattle events.
+function labWeaponId(weaponId: combat.WeaponId) {
+  const legacy = combat.M0_WEAPON_IDS.find((candidate) => candidate === weaponId);
+  if (legacy === undefined) throw new TypeError('Combat lab requires an M0 weapon profile');
+  return legacy;
+}
+
 export function projectCombatLabView(
   sessionId: string,
   controlledSideId: string,
@@ -146,7 +152,7 @@ export function projectCombatLabView(
         id: unit.id,
         ...(label === undefined ? {} : { name: label.name, profileId: label.profileId }),
         sideId: unit.sideId,
-        weaponId: unit.weaponId,
+        weaponId: labWeaponId(unit.weaponId),
         ...(weaponReach === undefined ? {} : { weaponReach }),
         position: copyHex(unit.position),
         status: unit.status,

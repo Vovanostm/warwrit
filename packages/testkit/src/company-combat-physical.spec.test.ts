@@ -22,6 +22,8 @@ import {
   createSocialState,
   entityId,
   createHexagon,
+  deriveCombatPracticeProfile,
+  prepareCombatPracticeCredits,
   prepareCombatConsequences,
   prepareBeginCombatAggregate,
   prepareConsumeCombatAggregate,
@@ -914,7 +916,7 @@ describe('G09 — verified combat practice', () => {
       const payload = {
         receiptId: `${sourceEventId}-${profile.profileId}-${participant.projection.characterId}-weapon-attack`,
         characterId: participant.projection.characterId,
-        skillId: participant.projection.weapon.skillId,
+        skillId: participant.projection.weapon.skillId!,
         methodId: 'weapon-attack',
         challengeLevel: profile.challengeLevel,
         outcome: event.hit ? 'SUCCESS' : 'MEANINGFUL_FAILURE',
@@ -1315,7 +1317,7 @@ describe('G09 — verified combat practice', () => {
     const payload = {
       receiptId: `${sourceEventId}-${profile.profileId}-${attacker.projection.characterId}-weapon-attack`,
       characterId: attacker.projection.characterId,
-      skillId: attacker.projection.weapon.skillId,
+      skillId: attacker.projection.weapon.skillId!,
       methodId: 'weapon-attack',
       challengeLevel: profile.challengeLevel,
       outcome: event.hit ? 'SUCCESS' : 'MEANINGFUL_FAILURE',
@@ -1546,7 +1548,7 @@ describe('G10 — atomic combat company aggregate', () => {
           const participant = attacker;
           interaction = {
             characterId: participant.projection.characterId,
-            skillId: participant.projection.weapon.skillId,
+            skillId: participant.projection.weapon.skillId!,
             methodId: 'weapon-attack',
             outcome: event.hit ? 'SUCCESS' : 'MEANINGFUL_FAILURE',
             startedAt: f.f.root.lifecycle.campaignTick,
@@ -3531,4 +3533,109 @@ describe('G10 — atomic combat company aggregate', () => {
     if (changedLeadershipSource.kind === 'REJECTED')
       expect(changedLeadershipSource.error).toBe('IDEMPOTENCY_CONFLICT');
   });
+});
+
+it('applies two fists receipts and physical pools without weapon XP or action-start snapshots', () => {
+  const original = fixture(100, true);
+  const root = {
+    ...original.root,
+    physical: {
+      ...original.root.physical,
+      items: original.root.physical.items.map((item) =>
+        item.equipped?.characterId === 'a-leader' &&
+        item.equipped.slots.some((slot) => slot === 'MAIN_HAND' || slot === 'OFF_HAND')
+          ? { ...item, equipped: null }
+          : item,
+      ),
+    },
+  };
+  const sources = [{ ...original.sources[0]!, root }, original.sources[1]!];
+  const evidence = {
+    ...original.evidence,
+    setup: { ...original.evidence.setup, rulesetId: 'm1-domain-bridge-v3' as const },
+  };
+  const binding = prepareEncounterBinding(sources, original.request, evidence);
+  const f = {
+    ...original,
+    root,
+    sources,
+    evidence,
+    binding,
+    journal: createCombatReceiptJournal(binding, root.lifecycle.companyId),
+  };
+  let journal = accept(f, f.journal, binding.initial, null);
+  expect(binding.initial.state.activation?.unitId).toBe('a-leader-unit');
+  for (let index = 0; index < 2; index++) {
+    const state = journal.receipts.at(-1)!.transition.state;
+    const command: CombatCommand = {
+      type: 'attack',
+      commandId: commandId(`fists-${index}`),
+      activationId: state.activation!.id,
+      actorId: state.activation!.unitId,
+      targetId: unitId('b-leader-unit'),
+    };
+    const result = applyCombatCommand(state, command);
+    if (!result.ok) throw new Error(result.error.code);
+    journal = accept(f, journal, { state: result.state, events: result.events }, command);
+  }
+  const produced = deriveCombatPracticeProfile({
+    root,
+    journal,
+    receiptTicks: journal.receipts.map(() => root.lifecycle.campaignTick),
+    profileId: 'fists-proof',
+    challengeLevel: 3,
+  });
+  expect(produced.status).toBe('READY');
+  if (produced.status !== 'READY') throw new Error('profile not ready');
+  expect(produced.profile.actionStarts).toEqual([]);
+  const physical = prepareCombatPhysicalEffects(root, journal);
+  const ctx = combatContext(f, { financeFacts: [], physicalFacts: [] });
+  const consequences = prepareCombatConsequences(root, physical, journal, ctx);
+  const practice = prepareCombatPracticeEffects(
+    root,
+    physical,
+    consequences,
+    journal,
+    ctx,
+    produced.profile,
+    [],
+  );
+  expect(practice.credits).toBe(0);
+  expect(practice.root.lifecycle.characters.map((entry) => entry.skills)).toEqual(
+    root.lifecycle.characters.map((entry) => entry.skills),
+  );
+  expect(prepareCombatPhysicalEffects(root, JSON.parse(JSON.stringify(journal)))).toEqual(physical);
+});
+
+it('derives equipped practice credits from the public validated receipt producer', () => {
+  const f = aggregateFixture();
+  let journal = f.initialJournal;
+  for (let index = 0; index < 10; index++) {
+    const state = journal.receipts.at(-1)!.transition.state;
+    const command = chooseAiCommand(state);
+    const result = applyCombatCommand(state, command);
+    if (!result.ok) throw new Error(result.error.code);
+    journal = accept(f.f, journal, { state: result.state, events: result.events }, command);
+    if (command.type === 'attack' && command.actorId.startsWith('a-')) break;
+  }
+  const profile = deriveCombatPracticeProfile({
+    root: f.f.root,
+    journal,
+    receiptTicks: journal.receipts.map(() => f.f.root.lifecycle.campaignTick),
+    profileId: 'automatic-equipped',
+    challengeLevel: 3,
+  });
+  if (profile.status !== 'READY') throw new Error('profile not ready');
+  const input = {
+    root: f.f.root,
+    journal,
+    receiptIndex: journal.receipts.length - 1,
+    profile: profile.profile,
+    receiptTicks: journal.receipts.map(() => f.f.root.lifecycle.campaignTick),
+    savedStarts: [],
+    context: combatContext(f.f, { financeFacts: [], physicalFacts: [] }),
+  };
+  const credits = prepareCombatPracticeCredits(input);
+  expect(credits.some((entry) => entry.command.payload.skillId === 'blades')).toBe(true);
+  expect(prepareCombatPracticeCredits(input)).toEqual(credits);
 });

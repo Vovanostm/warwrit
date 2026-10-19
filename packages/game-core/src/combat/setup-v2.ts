@@ -12,11 +12,33 @@ import {
   type CombatMap,
   type CombatSideSetup,
   type CombatUnitSetup,
+  type CombatCapabilities,
 } from './types.js';
 
 export const COMBAT_V2_SCHEMA_VERSION = 2 as const;
 export const M1_DOMAIN_BRIDGE_RULESET_ID = 'm1-domain-bridge-v1' as const;
 export const M1_DOMAIN_BRIDGE_V2_RULESET_ID = 'm1-domain-bridge-v2' as const;
+export const M1_DOMAIN_BRIDGE_V3_RULESET_ID = 'm1-domain-bridge-v3' as const;
+
+export function validateCombatCapabilities(
+  value: CombatCapabilities | undefined,
+  rulesetId: string,
+): void {
+  if (rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID) {
+    invariant(value === undefined, 'Capabilities require bridge-v3');
+    return;
+  }
+  invariant(
+    value !== null &&
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      Object.keys(value).length === 4 &&
+      ['move', 'attack', 'defend', 'retreat'].every(
+        (key) => typeof value[key as keyof CombatCapabilities] === 'boolean',
+      ),
+    'Bridge-v3 requires four boolean capabilities',
+  );
+}
 
 const V2_UNIT_LIMITS = {
   minimum: 2,
@@ -37,7 +59,10 @@ export interface CombatUnitSetupV2 extends CombatUnitSetup {
 export interface BattleSetupV2 {
   readonly schemaVersion: typeof COMBAT_V2_SCHEMA_VERSION;
   readonly battleId: BattleId;
-  readonly rulesetId: typeof M1_DOMAIN_BRIDGE_RULESET_ID | typeof M1_DOMAIN_BRIDGE_V2_RULESET_ID;
+  readonly rulesetId:
+    | typeof M1_DOMAIN_BRIDGE_RULESET_ID
+    | typeof M1_DOMAIN_BRIDGE_V2_RULESET_ID
+    | typeof M1_DOMAIN_BRIDGE_V3_RULESET_ID;
   readonly seed: number;
   readonly map: CombatMap;
   readonly sides: readonly [CombatSideSetup, CombatSideSetup];
@@ -88,7 +113,8 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
   );
   invariant(
     setup.rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID ||
-      setup.rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+      setup.rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
+      setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID,
     `V2 battle setup ruleset must be ${M1_DOMAIN_BRIDGE_RULESET_ID} or ${M1_DOMAIN_BRIDGE_V2_RULESET_ID}`,
   );
   invariant(setup.battleId.length > 0, 'Battle id must not be empty');
@@ -116,9 +142,11 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
     validateUnitPosition(unit, mapKeys, blockedKeys, occupied);
 
     invariant(
-      M0_WEAPON_IDS.includes(unit.weaponId),
+      (M0_WEAPON_IDS as readonly string[]).includes(unit.weaponId) ||
+        (setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID && unit.weaponId === 'fists'),
       `Unsupported V2 weapon profile: ${unit.weaponId}`,
     );
+    validateCombatCapabilities(unit.capabilities, setup.rulesetId);
     validateUnitPools(unit);
   }
 

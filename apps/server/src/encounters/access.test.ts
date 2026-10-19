@@ -8,7 +8,7 @@ import {
 } from '@warwrit/game-core';
 import { describe, expect, it } from 'vitest';
 
-import { toEncounterPublicProjection } from './access.js';
+import { toEncounterControlGrant, toEncounterPublicProjection } from './access.js';
 import type { EncounterStoredRow } from './executor.js';
 
 describe('public encounter projection', () => {
@@ -93,6 +93,29 @@ describe('public encounter projection', () => {
     expect(projection).not.toHaveProperty('sides');
     expect(projection).not.toHaveProperty('controllableUnitIds');
     expect(projection).not.toHaveProperty('setup');
+    const v3Setup: combat.BattleSetupV2 = {
+      ...setup,
+      rulesetId: combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      units: setup.units.map((unit) => ({
+        ...unit,
+        capabilities: { move: false, attack: true, defend: true, retreat: false },
+      })),
+    };
+    const v3 = { ...encounter, setup: v3Setup, state: combat.startBattleV2(v3Setup).state };
+    const actorId = v3.state.activation!.unitId;
+    const own = toEncounterControlGrant(v3, { unit_ids: [actorId] });
+    expect(own?.actorActions).toEqual({
+      activationId: v3.state.activation!.id,
+      actorId,
+      permittedIntents: ['attack', 'defend', 'wait'],
+    });
+    expect(toEncounterControlGrant(v3, { unit_ids: ['foreign'] })?.actorActions).toBeUndefined();
+    expect(
+      toEncounterControlGrant(encounter, { unit_ids: [actorId] })?.actorActions,
+    ).toBeUndefined();
+    expect(
+      toEncounterPublicProjection(v3).units.every((unit) => Object.keys(unit).length === 6),
+    ).toBe(true);
 
     expect(() =>
       toEncounterPublicProjection({

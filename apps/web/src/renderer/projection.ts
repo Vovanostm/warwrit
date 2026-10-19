@@ -256,6 +256,47 @@ export function toEncounterRenderProjection(
   });
 }
 
+function validResumeControl(
+  value: Record<string, unknown>,
+  hasSelfAfk: boolean,
+  hasResumeEpoch: boolean,
+): boolean {
+  return !(
+    (hasSelfAfk && typeof value['selfAfk'] !== 'boolean') ||
+    (hasResumeEpoch &&
+      value['resumeRequestedAfterEpoch'] !== null &&
+      (!isSafeInteger(value['resumeRequestedAfterEpoch']) ||
+        (value['resumeRequestedAfterEpoch'] as number) < 0))
+  );
+}
+
+function readActorActions(
+  value: unknown,
+  ids: unknown,
+): EncounterControlGrantDto['actorActions'] | null {
+  if (value === undefined) return undefined;
+  if (
+    !isRecord(value) ||
+    Object.keys(value).length !== 3 ||
+    typeof value['activationId'] !== 'string' ||
+    typeof value['actorId'] !== 'string' ||
+    !Array.isArray(ids) ||
+    !ids.includes(value['actorId']) ||
+    !Array.isArray(value['permittedIntents']) ||
+    !value['permittedIntents'].every((intent) =>
+      ['move', 'attack', 'defend', 'wait', 'retreat'].includes(intent),
+    ) ||
+    new Set(value['permittedIntents']).size !== value['permittedIntents'].length ||
+    !value['permittedIntents'].includes('wait')
+  )
+    return null;
+  return Object.freeze({
+    activationId: value['activationId'],
+    actorId: value['actorId'],
+    permittedIntents: Object.freeze([...value['permittedIntents']]),
+  }) as EncounterControlGrantDto['actorActions'];
+}
+
 export function readEncounterControlGrant(
   value: unknown,
   expectedEncounterId: string,
@@ -264,9 +305,12 @@ export function readEncounterControlGrant(
   const ids = value['controllableUnitIds'];
   const hasSelfAfk = Object.hasOwn(value, 'selfAfk');
   const hasResumeEpoch = Object.hasOwn(value, 'resumeRequestedAfterEpoch');
+  const actorActions = readActorActions(value['actorActions'], ids);
   if (
-    Object.keys(value).length !== 4 + Number(hasSelfAfk) + Number(hasResumeEpoch) ||
+    Object.keys(value).length !==
+      4 + Number(hasSelfAfk) + Number(hasResumeEpoch) + Number(actorActions !== undefined) ||
     hasSelfAfk !== hasResumeEpoch ||
+    actorActions === null ||
     Object.keys(value).some(
       (key) =>
         ![
@@ -275,6 +319,7 @@ export function readEncounterControlGrant(
           'revision',
           'controllableUnitIds',
           'selfAfk',
+          'actorActions',
           'resumeRequestedAfterEpoch',
         ].includes(key),
     ) ||
@@ -284,11 +329,7 @@ export function readEncounterControlGrant(
     !Array.isArray(ids) ||
     ids.some((id) => typeof id !== 'string' || id.length === 0) ||
     new Set(ids).size !== ids.length ||
-    (hasSelfAfk && typeof value['selfAfk'] !== 'boolean') ||
-    (hasResumeEpoch &&
-      value['resumeRequestedAfterEpoch'] !== null &&
-      (!isSafeInteger(value['resumeRequestedAfterEpoch']) ||
-        (value['resumeRequestedAfterEpoch'] as number) < 0))
+    !validResumeControl(value, hasSelfAfk, hasResumeEpoch)
   )
     return undefined;
   return Object.freeze({
@@ -296,6 +337,7 @@ export function readEncounterControlGrant(
     encounterId: expectedEncounterId,
     revision: value['revision'],
     controllableUnitIds: Object.freeze([...ids]) as readonly string[],
+    ...(actorActions ? { actorActions } : {}),
     ...(hasSelfAfk ? { selfAfk: value['selfAfk'] as boolean } : {}),
     ...(hasResumeEpoch
       ? { resumeRequestedAfterEpoch: value['resumeRequestedAfterEpoch'] as number | null }
@@ -405,4 +447,20 @@ export function diffRenderUnits(
 /** The renderer never invents a class, name, weapon, or loadout absent from public data. */
 export function neutralUnitLabel(unit: EncounterPublicUnitDto): string {
   return `Участник стороны ${unit.sideId}`;
+}
+
+/** Private condition hint only; ordinary costs, targets and server authority still apply. */
+export function encounterConditionAllows(
+  grant: EncounterControlGrantDto | undefined,
+  activationId: string | null | undefined,
+  actorId: string | null | undefined,
+  intent: EncounterCommandDto['intent']['type'],
+): boolean {
+  const actions = grant?.actorActions;
+  if (!actions) return true;
+  return (
+    actions.activationId === activationId &&
+    actions.actorId === actorId &&
+    actions.permittedIntents.includes(intent)
+  );
 }

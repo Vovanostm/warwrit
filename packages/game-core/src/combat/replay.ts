@@ -1,3 +1,4 @@
+import { M1_DOMAIN_BRIDGE_V3_RULESET_ID } from './setup-v2.js';
 import { isSpriteS4Ruleset } from './rules.js';
 import { SPRITE_PROTOTYPE_V3_RULESET_ID } from './types.js';
 import { invariant } from '../primitives.js';
@@ -63,6 +64,9 @@ export function canonicalCombatState(state: BattleState): string {
       .toSorted((left, right) => compareCombatUnitIds(state.rulesetId, left.id, right.id))
       .map((unit) => ({
         ...canonicalUnit(unit),
+        ...(state.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+          ? { capabilities: unit.capabilities }
+          : {}),
         ...(state.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID
           ? { skillRanks: unit.skillRanks, shieldBraceRank: unit.shieldBraceRank }
           : {}),

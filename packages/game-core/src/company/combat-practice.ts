@@ -190,7 +190,7 @@ export function deriveCombatPracticeProfile(input: {
       });
       continue;
     }
-    if (command.type !== 'attack') continue;
+    if (command.type !== 'attack' || participant.projection.weapon.skillId === null) continue;
     const event = receipt.transition.events.find(
       (entry): entry is AttackResolvedEvent => entry.type === 'attack.resolved',
     );
@@ -343,7 +343,11 @@ export function deriveCombatPracticeReceipt(
       validatedJournal.companyId,
       event.targetId,
     );
-    if (attacker?.companyId === validatedJournal.companyId && externalDefender) {
+    if (
+      attacker?.companyId === validatedJournal.companyId &&
+      externalDefender &&
+      attacker.projection.weapon.skillId !== null
+    ) {
       const start = starts.get(kernelCommand.activationId);
       requirePhysical(start?.unitId === kernelCommand.actorId, 'INVALID_SOURCE');
       usedStarts.add(kernelCommand.activationId);
@@ -792,7 +796,11 @@ export function prepareCombatPracticeEffects(
       journal.companyId,
       event.targetId,
     );
-    if (attacker?.companyId === journal.companyId && isExternalDefender) {
+    if (
+      attacker?.companyId === journal.companyId &&
+      isExternalDefender &&
+      attacker.projection.weapon.skillId !== null
+    ) {
       const start = starts.get(kernelCommand.activationId);
       requirePhysical(start?.unitId === kernelCommand.actorId, 'INVALID_SOURCE');
       requirePhysical(character(initialRoot, attacker.projection.characterId), 'INVALID_SOURCE');

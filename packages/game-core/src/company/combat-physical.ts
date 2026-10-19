@@ -173,26 +173,7 @@ function validateCompanyBinding(root: MaterializedCompanyState, journal: CombatR
       'INVALID_SOURCE',
     );
   }
-  const unitIds = new Set<string>();
-  const itemIds = new Set<string>();
-  for (const participant of binding.participants) {
-    requirePhysical(!unitIds.has(participant.unitId), 'INVALID_SOURCE');
-    unitIds.add(participant.unitId);
-    const unit = binding.setup.units.find((entry) => entry.id === participant.unitId);
-    requirePhysical(
-      unit &&
-        unit.sideId === participant.sideId &&
-        canonicalJson(unit.position) === canonicalJson(participant.position) &&
-        unit.weaponId === participant.projection.weapon.profileId &&
-        canonicalJson(unit.attributes) === canonicalJson(participant.projection.attributes) &&
-        canonicalJson(unit.initialPools) === canonicalJson(participant.projection.current),
-      'INVALID_SOURCE',
-    );
-    for (const item of participant.equipment) {
-      requirePhysical(!itemIds.has(item.itemId), 'INVALID_SOURCE');
-      itemIds.add(item.itemId);
-    }
-  }
+  validateBoundUnits(binding);
 
   for (const participant of participants) {
     const characterId = participant.projection.characterId;
@@ -205,8 +186,11 @@ function validateCompanyBinding(root: MaterializedCompanyState, journal: CombatR
       character?.presence.fieldPartyId === participant.partyId &&
         participant.revision === root.lifecycle.revision &&
         participant.physicalPolicyVersion === root.physical.policyVersion &&
-        canonicalJson(projectCharacterCombatWithMorale(root, characterId)) ===
-          canonicalJson(participant.projection) &&
+        canonicalJson(
+          participant.projection.schemaVersion === 3
+            ? projectCharacterCombatWithMorale(root, characterId, 3)
+            : projectCharacterCombatWithMorale(root, characterId),
+        ) === canonicalJson(participant.projection) &&
         canonicalJson(physicalVitals(root.physical, characterId)) ===
           canonicalJson(participant.vitals),
       'INVALID_SOURCE',
@@ -218,6 +202,33 @@ function validateCompanyBinding(root: MaterializedCompanyState, journal: CombatR
       canonicalJson(equipment) === canonicalJson(participant.equipment),
       'INVALID_SOURCE',
     );
+  }
+}
+
+function validateBoundUnits(binding: FrozenEncounterBinding): void {
+  const unitIds = new Set<string>();
+  const itemIds = new Set<string>();
+  for (const participant of binding.participants) {
+    requirePhysical(!unitIds.has(participant.unitId), 'INVALID_SOURCE');
+    unitIds.add(participant.unitId);
+    const unit = binding.setup.units.find((entry) => entry.id === participant.unitId);
+    requirePhysical(
+      unit &&
+        unit.sideId === participant.sideId &&
+        canonicalJson(unit.position) === canonicalJson(participant.position) &&
+        unit.weaponId === participant.projection.weapon.profileId &&
+        canonicalJson(unit.capabilities ?? null) ===
+          canonicalJson(
+            participant.projection.schemaVersion === 3 ? participant.projection.capabilities : null,
+          ) &&
+        canonicalJson(unit.attributes) === canonicalJson(participant.projection.attributes) &&
+        canonicalJson(unit.initialPools) === canonicalJson(participant.projection.current),
+      'INVALID_SOURCE',
+    );
+    for (const item of participant.equipment) {
+      requirePhysical(!itemIds.has(item.itemId), 'INVALID_SOURCE');
+      itemIds.add(item.itemId);
+    }
   }
 }
 

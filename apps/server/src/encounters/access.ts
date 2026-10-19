@@ -78,7 +78,7 @@ export function toEncounterPublicProjection(
   };
 }
 
-function controlGrant(
+export function toEncounterControlGrant(
   encounter: EncounterStoredRow,
   participant: Pick<ParticipantRow, 'unit_ids' | 'afk' | 'resume_requested_after_epoch'>,
 ): EncounterControlGrantDto | undefined {
@@ -99,11 +99,37 @@ function controlGrant(
     encounterId: encounter.id,
     revision: encounter.revision,
     controllableUnitIds: [...participant.unit_ids],
+    ...actorActions(encounter, participant.unit_ids),
     ...(typeof participant.afk === 'boolean' ? { selfAfk: participant.afk } : {}),
     ...(participant.resume_requested_after_epoch === null ||
     Number.isSafeInteger(participant.resume_requested_after_epoch)
       ? { resumeRequestedAfterEpoch: participant.resume_requested_after_epoch }
       : {}),
+  };
+}
+
+function actorActions(
+  encounter: EncounterStoredRow,
+  ownedIds: readonly string[],
+): Pick<EncounterControlGrantDto, 'actorActions'> {
+  const state = encounter.state as combat.BattleState;
+  const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
+  if (
+    state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+    !state.activation ||
+    !actor?.capabilities ||
+    !ownedIds.includes(actor.id)
+  )
+    return {};
+  const capabilities = actor.capabilities;
+  return {
+    actorActions: {
+      activationId: state.activation.id,
+      actorId: actor.id,
+      permittedIntents: (['move', 'attack', 'defend', 'wait', 'retreat'] as const).filter(
+        (intent) => intent === 'wait' || capabilities[intent],
+      ),
+    },
   };
 }
 
@@ -187,7 +213,7 @@ async function fixtureAccess(
     !(await verifyEncounterReplayRow(transaction, encounter))
   )
     return undefined;
-  const grant = controlGrant(encounter, participant);
+  const grant = toEncounterControlGrant(encounter, participant);
   return grant === undefined
     ? undefined
     : { projection: toEncounterPublicProjection(encounter), controlGrant: grant };
@@ -263,7 +289,7 @@ async function companyBindingAccess(
     if (root === undefined || !sameBinding(root, binding)) return undefined;
 
     if (owner.account_id === accountId && expected.companyId === companyId) {
-      requestedGrant = controlGrant(encounter, stored);
+      requestedGrant = toEncounterControlGrant(encounter, stored);
     }
   }
   if (requestedGrant === undefined) return undefined;
