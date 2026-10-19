@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Merge the affordability producer and start skillReach planning
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-skill-reach`, local receipt
+  of merged [PR237](https://github.com/Vovanostm/warwrit/pull/237): merge/main
+  `0c4b98d`, expected head `ca28ebd`, exact-head CI39257227488 SUCCESS.
+  Tier L reviewer/evaluator ACCEPT on `c055e9a`, integrated validate8/8 PASS;
+  later source unchanged, merged-tree diff empty, no blocking labels/threads.
+  #184 remains open for scene bands/legend/CVD/legacy rendering. Starts only
+  the dependent #187 skillReach producer contract; scene/names remain sequenced.
+  [Proof](docs/engineering/evidence/uix-w1-affordability/README.md).
+  New game checks/main playtest NOT_RUN; no deployment. Local reports retained
+  before removing the completed worktree with archive hooks.
+
 ### Reconcile PR237 with the latest slice plan before merge
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-affordability`, published

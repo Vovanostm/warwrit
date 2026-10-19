@@ -1,5 +1,19 @@
 # Warwrit current delivery plan
 
+**PR237 producer merged — 2026-10-19; skillReach contract next:**
+[PR237](https://github.com/Vovanostm/warwrit/pull/237) MERGED `0c4b98d`
+at13:28 UTC, expected head `ca28ebd`, CI39257227488 SUCCESS. Tier L
+reviewer/evaluator ACCEPT for `c055e9a`, integrated validation8/8 PASS;
+subsequent evidence/shared records/main integrations preserve gated source.
+Merged-tree diff empty; PR/issue have no blocking label or review thread.
+This supersedes the pending statuses below. #184 stays OPEN for scene
+bands/legend/CVD/legacy acceptance. The sole eligible new slice is the #187
+skillReach producer contract on merged main; no scene source writer starts yet.
+Desk/outcome retain integrated REWORK; names waits for skillReach. Today:
+**2 merged PRs with playable proof** (#229,#237). No new main playtest/game
+checks or deployment (NOT_RUN). [Proof](evidence/uix-w1-affordability/README.md).
+Receipt local on `Vovanostm/uix-w1-skill-reach`, for its later publication.
+
 **PR237 merge stage — 2026-10-19, published producer; NOT_MERGED:**
 Prior head `7c05b14` has successful CI39253806343. Normal integration
 `1b364d3` includes main `06b32bb` (PR236 plan changes), preserving both additive
