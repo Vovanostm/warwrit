@@ -372,8 +372,11 @@ behind one core slice; six PRs went to pipeline infrastructure.
 
 **v3** ([warwrit-orca](../../.agents/skills/warwrit-orca/SKILL.md)):
 
-- **Merge on gates:** CI, `orca-validate.sh` and the tier gates; the coordinator
-  merges; `agent:blocked` or an owner decision stops a PR.
+- **Merge on gates:** CI, `orca-validate.sh` and the tier verdicts for the
+  merged head SHA; the coordinator merges PRs it opened for slices and epic
+  contracts; a CI fix goes back through review; `agent:blocked` on the PR or a
+  linked issue, or an owner decision, stops a PR. Infrastructure PRs are merged
+  by the owner or the studio director.
 - **Tiers:** D docs/tests → reviewer; L logic → reviewer + evaluator plays it;
   U UI → evaluator judges the issue's visual criteria; V art/scene → plus the
   full visual critic. Art proofs never block D/L/U.

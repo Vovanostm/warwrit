@@ -3,13 +3,13 @@
 **Orca workflow v3 — 2026-10-19, owner merge permission (mission level):**
 owner: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
 ревьюер»; «один issue — один pr»; «сначала общий контракт, идею, потом
-параллелить». Pipeline PRs merge when CI, `orca-validate.sh` and the tier gates
-pass; `agent:merge-approved` is no longer required; `agent:blocked` stops a PR.
+параллелить». PRs the coordinator opens for slices and epic contracts merge when CI,
+`orca-validate.sh` and the tier gates pass for the merged head; `agent:merge-approved` is no longer required; `agent:blocked` stops a PR.
 Epic contract first for new epics. [Owning section](AGENT_TEAM.md#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19).
 
 **Studio director — 2026-10-19, PR pending owner merge label:** owner made the
 Claude session studio director with autonomy («ты — директор студии и
-отвечаешь за качество продукта»); merge stays behind `agent:merge-approved`.
+отвечаешь за качество продукта»); merge stays behind `agent:merge-approved` (merge clause superseded by workflow v3 above).
 Board: **now** — Orca v2 wave 1 on #217 (metric: merged PRs with playable proof
 per day); **next** — `core-melee-connect` (#225) on lane core after
 `uix-w1-names`; art lane via [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md);
