@@ -1,17 +1,78 @@
 import { expect, it } from 'vitest';
 import {
-  defaultSpriteBattle,
-  createCustomBattleFixture,
-} from '../../../server/src/combat-lab/custom-battle.js';
-import { projectCombatLabView } from '../../../server/src/combat-lab/projection.js';
+  COMBAT_LAB_VERSION,
+  SPRITE_COMBAT_LAB_SCENARIO,
+  type CombatLabView,
+} from '@warwrit/protocol';
+import { createEmptyTiles } from './editor-model.js';
 import { isCombatLabView } from './view-validation.js';
 import { readSessionView } from './session-transport.js';
 
-function viewFixture() {
-  const battle = defaultSpriteBattle();
-  const fixture = createCustomBattleFixture('validation', battle);
-  const { state, events } = fixture.start();
-  return projectCombatLabView('session', 'human', state, events, battle);
+// Synthetic wire data; real projector/admission integration is tested on the server.
+function viewFixture(): CombatLabView {
+  const tiles = createEmptyTiles();
+  const units: CombatLabView['units'] = ['human', 'opponent'].map((sideId, index) => ({
+    id: `${sideId}-1`,
+    sideId,
+    weaponId: 'bow',
+    position: { q: 2 + index * 5, r: 5 },
+    status: 'active',
+    guarding: false,
+    initiative: 10,
+    pools: {
+      health: { current: 100, maximum: 100 },
+      armor: { current: 0, maximum: 0 },
+      stamina: { current: 100, maximum: 100 },
+      morale: { current: 100, maximum: 100 },
+    },
+    wounds: [],
+  }));
+  return {
+    version: COMBAT_LAB_VERSION,
+    sessionId: 'session',
+    battleId: 'validation',
+    scenarioId: SPRITE_COMBAT_LAB_SCENARIO,
+    controlledSideId: 'human',
+    viewRevision: 1,
+    status: 'active',
+    round: 1,
+    battle: {
+      version: 1,
+      name: 'Validation fixture',
+      seed: 1,
+      map: { name: 'Validation field', tiles },
+      units: [
+        { id: 'human-1', sideId: 'human', profileId: 'W01', position: { q: 2, r: 5 } },
+        { id: 'opponent-1', sideId: 'opponent', profileId: 'W01', position: { q: 7, r: 5 } },
+      ],
+    },
+    map: { hexes: tiles, blocked: [], tiles },
+    sides: [
+      { id: 'human', retreatHexes: [] },
+      { id: 'opponent', retreatHexes: [] },
+    ],
+    units,
+    initiativeOrder: ['human-1', 'opponent-1'],
+    turnIndex: 0,
+    activation: {
+      id: 'activation-1',
+      actorId: 'human-1',
+      actionPoints: { current: 4, maximum: 4 },
+    },
+    attackPreview: [],
+    attackRefusals: [
+      {
+        targetId: 'opponent-1',
+        code: 'out-of-range',
+        distance: 5,
+        minimumRange: 1,
+        maximumRange: 4,
+      },
+    ],
+    events: [],
+    omittedEventPrefix: 0,
+    outcome: null,
+  };
 }
 
 it('admits new and legacy omissions through the real session reader', async () => {
