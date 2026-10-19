@@ -1,0 +1,6 @@
+### Result
+{"focus":{"visible":true,"outline":"rgb(241, 211, 151) solid 2px"},"posts":[],"revisions":[4],"context":[{"actorId":"human-3","activationId":"1:human-3","revision":4,"skillId":"aimed-shot","minimumRange":2,"maximumRange":4,"cellCount":43}]}
+### Ran Playwright code
+```js
+await (async (page) => { const canvas=page.getByLabel("Поле боя с выбором бойца или клетки",{exact:true}); await canvas.focus(); await page.keyboard.down("w"); await page.waitForTimeout(200); await page.keyboard.up("w"); await page.mouse.move(850,360); await page.mouse.down(); await page.mouse.move(890,390,{steps:8}); await page.mouse.up(); await page.keyboard.press("Home"); const b=page.getByRole("button",{name:"Завершить ход",exact:true}); await b.focus(); const focus=await b.evaluate(el=>({visible:el.matches(":focus-visible"),outline:getComputedStyle(el).outline})); await page.screenshot({path:".orca/uix-w1-skill-reach/eval-shots/candidate-keyboard-focus.png"}); return await page.evaluate(focus=>({focus,posts:evalProof.posts, revisions:[...new Set(evalProof.views.map(v=>v.viewRevision))],context:evalProof.views.at(-1).skillReach.map(({cells,...row})=>({...row,cellCount:cells.length}))}),focus); })(page);
+```

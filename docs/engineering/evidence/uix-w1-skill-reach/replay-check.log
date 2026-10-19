@@ -1,0 +1,30 @@
+{
+  "replays": [
+    {
+      "lane": "baseline",
+      "schema": 1,
+      "ruleset": "sprite-prototype-v3",
+      "commandsApplied": 163,
+      "events": 400,
+      "revision": 163,
+      "round": 9,
+      "status": "resolved",
+      "matchedRoster": 12
+    },
+    {
+      "lane": "candidate",
+      "schema": 1,
+      "ruleset": "sprite-prototype-v3",
+      "commandsApplied": 163,
+      "events": 400,
+      "revision": 163,
+      "round": 9,
+      "status": "resolved",
+      "matchedRoster": 12
+    }
+  ],
+  "observedResponses": 539,
+  "uniqueRevisionsMatchedToPublicQuery": 79,
+  "result": "PASS",
+  "boundary": "Local downloads reconstructed on candidate public API; final coordinator baseline-stream comparison is separate and NOT_RUN here."
+}
