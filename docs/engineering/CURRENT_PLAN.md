@@ -1,5 +1,20 @@
 # Warwrit current delivery plan
 
+**UIX-05a / #187 producer — 2026-10-19, local ACCEPT; publication pending:**
+`Vovanostm/uix-w1-skill-reach`, gated `3ea21b0`: optional authoritative learned-skill
+geometry on the current controlled sprite-v3 activation; legacy omission and empty
+geometry supported. No rules/costs/RNG/replay/visual changes. Fresh Tier L reviewer1
+and played evaluator1 ACCEPT; coordinator validate EXIT0/8of8,732PASS/47SKIP,auditPASS.
+Evaluator69 focusedPASS, independent baseline/candidate1440×900 day/night overview
+and close, real move/end-turn, passive0POST, UI-autobattle victoryR9/rev163 and
+actual replay downloads/reconstruction. Coordinator15 baseline-saved streams match
+canonical states, complete events and accepted counts across schemas1/2/five rulesets.
+Hosted clean-checkout full gate pending; NOT_MERGED. #187 remains open for contour,
+legend/stroke/CVD/current-selection rendering and existing integrated scene REWORK.
+Scene/names wait for producer merge; desk/outcome retain assigned integration gaps.
+Today2 merged PRs with playable proof (#229,#237). No deployment; performance/balance
+NOT_MEASURED. [Proof and limits](evidence/uix-w1-skill-reach/README.md).
+
 **PR237 producer merged — 2026-10-19; skillReach contract next:**
 [PR237](https://github.com/Vovanostm/warwrit/pull/237) MERGED `0c4b98d`
 at13:28 UTC, expected head `ca28ebd`, CI39257227488 SUCCESS. Tier L
