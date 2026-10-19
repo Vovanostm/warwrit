@@ -13,6 +13,17 @@ pending; no gameplay/rules/balance/visual change claimed.
 #184 affordability, #187 skillReach/scene and #207 names remain sequenced
 successors; desk rework2 is live, outcome/scene await integration.
 
+**UIX-01a / #180 — CI correction 2026-10-19, published PR229 / local ACCEPT:**
+PR229's initial CI39192938216 failed on web-test imports of server source.
+Candidate `9c92995` uses a protocol-shaped fixture and preserves all eight
+regressions; production remains unchanged from `fa7f516`. Coordinator validation
+8/8,702PASS/47SKIP,audit PASS; independent eval4 ACCEPT,25 focused PASS,
+web typecheck/input-boundary and actual mill day/night inspection/end-turn PASS.
+Earlier full bootstrap/native125%/matrix/replay proof is reused on unchanged
+production, not rerun. Current-head hosted CI and owner merge label pending.
+Desk eval3 and visual3 remain live; successors still await merged dependencies.
+[Current proof](evidence/uix-w1-projection/README.md).
+
 **Orca game-development workflow v2 — 2026-10-19, local/PR pending:**
 Day-one result of the pipeline below: no commit or PR in about 11 hours
 (plan-review rounds, audit discovered at commit, `needs-owner` stops; PR223

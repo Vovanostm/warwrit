@@ -21,6 +21,28 @@ revision normally; UI autobattle finishes at round9/revision160, human victory,
 
 ## Independent review
 
+### CI correction — 2026-10-19
+
+Initial PR229 CI39192938216 failed: the web validator test imported server
+source before core declarations were built. Candidate `9c92995` replaces only
+that fixture with protocol-shaped synthetic data; all eight regression bodies
+and real server integration tests remain unchanged. Production matches accepted
+`fa7f516`. [Evaluation4](eval-4.md) independently returns **ACCEPT**:
+25 focused tests PASS, web typecheck PASS, 3,309 web compiler inputs with zero
+server/core paths, coordinator validation8/8 (702PASS/47SKIP,audit PASS).
+The builder's initial main-based audit with validator-only coverage failed;
+focused server coverage restored the normal audit without weakening gates.
+
+Fresh default-mill smoke at1440x900: six range refusals, inspection/camera and
+day/night0POST/revision4; normal end-turn1POST/revision5. Current images:
+[day](eval4-ci-r1-day-1440x900.jpg), [night](eval4-ci-r1-night-1440x900.jpg).
+Evaluator runtime and browser stopped. Earlier completion/native125%/matrix/
+bootstrap/stress/replay proof below is historical and reused for unchanged
+production, not rerun for this test-only correction. Correction published in
+PR229; new-head hosted CI pending; no owner merge label or merge.
+
+### Earlier runtime acceptance
+
 [Evaluation2](eval-2.md) preserves REWORK history: source/live/F1/F2 passed,
 F3 comparison pending. [Evaluation3](eval-3.md) independently resolves F3 and
 starts `VERDICT: ACCEPT`; source stayed unchanged. Report references to `.orca/`

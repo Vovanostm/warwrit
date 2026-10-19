@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Repair the web validator fixture after PR229 CI failure
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, published
+  correction for [PR229](https://github.com/Vovanostm/warwrit/pull/229):
+  CI39192938216 exposed server imports in the web validator regression fixture.
+  Commit `9c92995` replaces them with protocol-shaped synthetic data in
+  `apps/web/src/combat-lab/view-validation.test.ts`, preserving all eight
+  regression bodies and the separate real server integration tests. Production
+  code is unchanged from accepted `fa7f516`. Coordinator validation8/8,
+  702PASS/47SKIP and normal45-file audit PASS; fresh evaluator4 ACCEPT,
+  25 focused tests, web typecheck/input-boundary and day/night smoke PASS.
+  The initial audit with validator-only coverage failed; focused server
+  coverage restored the normal audit. Historical bootstrap/matrix/replay proof
+  remains attributed below; new-head hosted CI and owner-approved merge pending.
+  [Proof and limits](docs/engineering/evidence/uix-w1-projection/README.md).
+
 ### Publish ordinary attack refusal projection for UIX-01a
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, published in

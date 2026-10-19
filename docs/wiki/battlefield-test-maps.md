@@ -2504,6 +2504,17 @@ preview либо отказ общего admission ядра. Причины rang
 с owner `agent:merge-approved` ещё pending. Баланс/производительность
 NOT_MEASURED; миграции/деплой не менялись.
 
+Поправка 2026-10-19: первый CI PR229 (39192938216) упал на импорте
+server source из web regression fixture. Кандидат `9c92995` заменяет только
+fixture на protocol-shaped данные, сохраняя все восемь test bodies; production
+не изменён относительно `fa7f516`. Свежий eval4 ACCEPT, coordinator validation8/8,
+702PASS/47SKIP и audit PASS;25 focused tests, web typecheck/input-boundary,
+реальный осмотр мельницы день/ночь0POST/rev4 и конец хода1POST/rev5 PASS.
+Первый audit с validator-only coverage FAIL сохранён; после focused server
+coverage штатный audit PASS. Прежние bootstrap/matrix/replay proof не выданы
+за новые. Исправление опубликовано в PR229; новый hosted CI и owner-approved merge pending.
+[Обновлённый proof](../engineering/evidence/uix-w1-projection/README.md).
+
 **PREVIEW-01:** прогноз связан с ruleset/revision/activation/actor/action/target.
 Смена любого входа инвалидирует его. Запрос предпросмотра не изменяет
 состояние, боевой RNG, журнал или инициативу. Старый прогноз не может
