@@ -59,6 +59,9 @@ function viewFixture(): CombatLabView {
       actorId: 'human-1',
       actionPoints: { current: 4, maximum: 4 },
     },
+    movementPreview: [
+      { to: { q: 3, r: 5 }, path: [{ q: 3, r: 5 }], actionPointCost: 1, staminaCost: 4 },
+    ],
     attackPreview: [],
     attackRefusals: [
       {
@@ -188,3 +191,46 @@ it.each([{}, 'corrupt', null])(
     ).rejects.toThrow('invalid view');
   },
 );
+
+it('admits absent, empty, omitted, present and mixed affordability through the reader', async () => {
+  const view = viewFixture();
+  const movement = view.movementPreview![0]!;
+  for (const movementPreview of [
+    undefined,
+    [],
+    [movement],
+    [{ ...movement, attackAffordableAfter: true }],
+    [{ ...movement, attackAffordableAfter: false }],
+    [
+      movement,
+      { ...movement, attackAffordableAfter: true },
+      { ...movement, attackAffordableAfter: false },
+    ],
+  ]) {
+    const payload = JSON.parse(JSON.stringify({ ...view, movementPreview }));
+    expect(isCombatLabView(payload)).toBe(true);
+    await expect(
+      readSessionView(new Response(JSON.stringify(payload)), view.sessionId),
+    ).resolves.toEqual(payload);
+  }
+});
+
+it('rejects malformed affordability before transport admission, including terminal views', async () => {
+  const view = viewFixture();
+  const movement = view.movementPreview![0]!;
+  for (const movementPreview of [
+    null,
+    {},
+    [null],
+    [[]],
+    ...[null, 0, 'false', {}, []].map((flag) => [{ ...movement, attackAffordableAfter: flag }]),
+  ]) {
+    for (const status of ['active', 'resolved']) {
+      const payload = { ...view, status, activation: null, movementPreview };
+      expect(isCombatLabView(payload)).toBe(false);
+      await expect(
+        readSessionView(new Response(JSON.stringify(payload)), view.sessionId),
+      ).rejects.toThrow('invalid view');
+    }
+  }
+});
