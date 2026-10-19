@@ -53,13 +53,6 @@ export function BattleSkills({ view, selectedSkillId, onSelectSkill, skillDisabl
           {reason && <span className="battle-unavailable-mark" aria-hidden="true" />}
           <b className="battle-skill-rank">{skill.rank}</b>
         </button>
-        <span className="battle-command-label">
-          {skill.skillId === 'aimed-shot'
-            ? 'Прицельный'
-            : skill.skillId === 'armor-pressure'
-              ? 'Удар в броню'
-              : skill.name}
-        </span>
         <BattleCost cost={skill} />
         <span id={`skill-${skill.skillId}`} className="battle-command-tooltip" role="tooltip">
           <strong>

@@ -54,13 +54,8 @@ const render = (observation = view) =>
     />,
   );
 
-it('labels all five skills including overflow, retaining full names, rank, cost and description', () => {
+it('retains full accessible names, rank, cost and description including overflow', () => {
   const html = render();
-  const labels = [...html.matchAll(/class="battle-command-label">([^<]+)</g)].map(
-    (match) => match[1]!,
-  );
-  expect(labels).toEqual(['Упор щитом', 'Удар в броню', 'Дальний укол', 'Прицельный', 'Собраться']);
-  expect(labels.every((label) => label.length <= 12)).toBe(true);
   for (const skill of skills) {
     expect(html).toContain(`aria-label="${skill.name} · ранг 1"`);
     expect(html).toContain(skill.description);
