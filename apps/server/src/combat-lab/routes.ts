@@ -11,11 +11,14 @@ import type {
   CombatLabAction,
   CombatLabBattleConfig,
   CombatLabCreate,
+  CombatLabReplayPresentation,
 } from '@warwrit/protocol';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
 import { record, isActionBody } from './action-request.js';
 import { projectCombatLabView } from './projection.js';
+import { createCombatLabPresentation } from './presentation.js';
+import { exportCombatLabReplay } from './replay.js';
 import { createCombatLabFixture } from './scenario.js';
 import {
   combatLabCatalog,
@@ -39,6 +42,7 @@ export interface CombatLabSettings {
 
 export interface CombatLabSession {
   readonly battle?: CombatLabBattleConfig;
+  readonly presentation?: CombatLabReplayPresentation;
   readonly capability: Buffer;
   readonly originalSetup: combat.BattleSetup;
   readonly controlledSideId: string;
@@ -318,17 +322,23 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
         : createCombatLabFixture(sessionId);
     const transition = fixture.start();
     const originalSetup = fixture.originalSetup();
+    const presentationFields =
+      'battle' in fixture
+        ? {
+            battle: fixture.battle,
+            presentation: createCombatLabPresentation(fixture.battle, fixture.controlledSideId),
+          }
+        : {};
+    const replaySource = { originalSetup, commands: [], ...presentationFields };
     const initialSession: CombatLabSession = {
-      ...('battle' in fixture ? { battle: fixture.battle } : {}),
+      ...presentationFields,
       capability: randomBytes(32),
       originalSetup,
       controlledSideId: fixture.controlledSideId,
       state: transition.state,
       journal: transition.events,
       commands: [],
-      replayBytes: Buffer.byteLength(
-        JSON.stringify({ schemaVersion: 1, setup: originalSetup, commands: [] }),
-      ),
+      replayBytes: Buffer.byteLength(JSON.stringify(exportCombatLabReplay(replaySource))),
       decisions: new Map(),
     };
     const session = advanceCombatLabOpponent(initialSession);
@@ -343,6 +353,7 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
           session.state,
           session.journal,
           session.battle,
+          session.presentation,
         ),
       );
   });
@@ -376,6 +387,7 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
         session.state,
         session.journal,
         session.battle,
+        session.presentation,
       );
     },
   );
@@ -405,7 +417,7 @@ export function registerCombatLab(app: FastifyInstance, settings: CombatLabSetti
     async (request, reply) => {
       const session = requireSession(request, reply);
       if (session === undefined) return reply;
-      return { schemaVersion: 1, setup: session.originalSetup, commands: session.commands };
+      return exportCombatLabReplay(session);
     },
   );
 

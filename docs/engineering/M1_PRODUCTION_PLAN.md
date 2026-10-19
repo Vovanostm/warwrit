@@ -1,5 +1,23 @@
 # Full persistent M1 alpha production plan
 
+## Current amendment — 2026-10-19
+
+Remote main verified at `b568ee25b7529fa5abeeae85e45a41bc587124bb`.
+PR160 and PR239 are merged; #162 is closed as completed. #6 is closed as
+superseded by ADR-0006; #231 remains the canonical QA-hooks issue and #235 is
+closed as its duplicate. The 17 October queue below is retained as a dated
+baseline, not a current claim that PR160 is still draft or #162 blocks work.
+
+Owner authorized implementation, independent review and merge of the fix sequence:
+full-field overview and understandable combat → human opponent scenario →
+#164 profiles / #163 canonical HP → #165 persistent mechanics → #166 battle UI →
+one real contract/battle/consequences/payment/restart journey from #174/#177.
+The one-route milestone does not replace the full eight-contract acceptance.
+Fist parameters and assisted retreat require the pending owner decision.
+The current overview and preset branches are implementation in progress, not
+accepted or merged. No new gameplay or full gate ran for this documentation update.
+Live assignments and actual check results belong to [CURRENT_PLAN](CURRENT_PLAN.md).
+
 ## Current GitHub execution queue — 2026-10-17
 
 Owner requested source-backed GitHub tasks for autonomous completion. Current

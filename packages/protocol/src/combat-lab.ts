@@ -55,6 +55,17 @@ export interface CombatLabBattleConfig {
   readonly map: { readonly name: string; readonly tiles: readonly CombatLabTile[] };
   readonly units: readonly CombatLabCustomUnit[];
 }
+/** Optional lab-only export metadata; canonical replay schemas remain unchanged. */
+export interface CombatLabReplayPresentation {
+  readonly version: 1;
+  readonly controlledSideId: string;
+  readonly battle?: CombatLabBattleConfig;
+  readonly units: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly profileId?: string;
+  }[];
+}
 export type CombatLabSkillDefinition = Omit<CombatLabSkill, 'rank' | 'equipmentAvailable'> & {
   readonly equipment: readonly CombatLabView['units'][number]['weaponId'][];
 };
@@ -152,6 +163,24 @@ export interface CombatLabEvent {
   readonly rank?: 1 | 2 | 3;
   readonly moraleGain?: number;
 }
+export interface CombatLabAttackRefusal {
+  readonly targetId: string;
+  readonly code:
+    | 'out-of-range'
+    | 'too-close'
+    | 'no-line-of-sight'
+    | 'insufficient-action-points'
+    | 'insufficient-stamina'
+    | 'not-actor-turn'
+    | 'panicking'
+    | 'battle-resolved'
+    | 'threat-not-available';
+  readonly distance?: number;
+  readonly minimumRange?: number;
+  readonly maximumRange?: number;
+  readonly required?: { readonly actionPoints: number; readonly stamina: number };
+  readonly available?: { readonly actionPoints: number; readonly stamina: number };
+}
 export interface CombatLabView extends CombatLabViewRequest {
   readonly ruleHints?: {
     readonly hit: {
@@ -190,6 +219,7 @@ export interface CombatLabView extends CombatLabViewRequest {
     readonly path: readonly CombatLabHex[];
     readonly actionPointCost: number;
     readonly staminaCost: number;
+    readonly attackAffordableAfter?: boolean;
     readonly fireDamage?: number;
     readonly reactions?: readonly {
       readonly attackerId: string;
@@ -211,10 +241,21 @@ export interface CombatLabView extends CombatLabViewRequest {
       readonly armor: { readonly minimum: number; readonly maximum: number };
     };
   }[];
+  readonly attackRefusals?: readonly CombatLabAttackRefusal[];
   readonly rangedAttackArea?: readonly CombatLabHex[];
   readonly availableActions?: readonly ('defend' | 'wait' | 'retreat')[];
   readonly skills?: readonly CombatLabSkill[];
   readonly skillPreview?: readonly CombatLabSkillPreview[];
+  /** Passive geometry for all learned skills of the controlled current activation. */
+  readonly skillReach?: readonly {
+    readonly actorId: string;
+    readonly activationId: string;
+    readonly revision: number;
+    readonly skillId: CombatLabSkillId;
+    readonly minimumRange: number;
+    readonly maximumRange: number;
+    readonly cells: readonly CombatLabHex[];
+  }[];
   readonly sides: readonly {
     readonly id: string;
     readonly retreatHexes: readonly CombatLabHex[];

@@ -1,0 +1,16 @@
+{
+  "id": "combat-readable-site-ground",
+  "prompt": "Use case: compositing / outpainting. Reference/edit target: Warwrit ruined mill battlefield mill-field-v1.png. Create one expanded ground-only landscape plate to be composited beneath the existing exact mill scenery cutout; it must read as one authored continuous site, NOT a repeated texture. Keep the same elevated three-quarter camera, ground axes, upper-left lighting, irregular black ink outlines and flat muted slate/soot/umber/ochre wash, worn broken cobbles and directed earth marks. Wide16:9 fullbleed composition, ideally3840x2160 high detail. The reference scene occupies the CENTRAL ONE THIRD of the new canvas in both dimensions. Keep its courtyard layout and the stream at the far-left side of that central region, with the mill footprint upper-left within that central region. REMOVE ALL buildings, roof, wheel, fences, trees, barrels and tall walls from the image: another unchanged transparent layer supplies those objects. Render plausible matching ground underneath those removed objects, with shallow masonry fragments and root contact. Expand the courtyard and surroundings naturally on ALL FOUR SIDES: irregular broken paving and curved branching worn tracks continue from the old mill doorway across a large open tactical yard into quiet packed earth; sparse scrub and scattered small rubble at irregular distinct locations. Continue the existing narrow stream vertically ONLY outside the left edge of the central playable yard; no water crossing the central/right open combat area. Every region must be individually composed with meaningful curved paths and distinct stones/soil masses. NO parallel diagonal repeating ruts, wallpaper motifs, repeated patches, hexagons, regular grid, borders or vignette. No new buildings, settlements, factions, symbols, magic, characters, text or interface. This is one coherent ruined-mill site, not an isolated yard patch floating in generic earth. Preserve serious grounded dark fantasy and original place geography; neutral diffuse day values, no dramatic spotlight. Allimage corners filled with the continuous authored landscape, no transparency.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17",
+  "transparent_background": false,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-d892b55d-563f-4fb1-83f6-38bc960858e4.png",
+  "references": [
+    "assets/art/combat/stage1-2026-10-09/battlefield/mill-field-v1.png",
+    "assets/art/m1/places/staraya-melnitsa.png"
+  ],
+  "status_at_generation": "Local candidate; independent integrated acceptance pending.",
+  "consumer_crop_uv": [0.3, 0.18, 0.85, 0.7],
+  "notes": "Result remained1672x941 instead of requested outpaint resolution; consume ground-only interior crop, excluding water/trees/perimeter. Existing scenery layer preserves the actual mill and stream."
+}

@@ -1,0 +1,317 @@
+{
+  "epic": 217,
+  "decisions": "Owner decisions are #217 comments headed '## Owner decision' (D1, D2 2026-10-18; workflow v2 2026-10-19).",
+  "lanes": {
+    "web": 1,
+    "core": 1
+  },
+  "ownership_rules": [
+    "A slice owns the *.test.ts(x) files of the modules it owns.",
+    "The coordinator may extend a slice's ownership to a file no active slice owns; record it on the issue. A file owned by an active slice is resolved by sequencing with `after`, not by a second writer.",
+    "Only conflicts that sequencing cannot resolve, or product/rule questions, go to agent:needs-owner.",
+    "v3 (2026-10-19): one issue per slice and per PR; a slice listing several issues is split before its next start.",
+    "v3: merge after CI, validate and the tier gates (SKILL «Gate tiers»); agent:merge-approved is not required (owner decision 2026-10-19)."
+  ],
+  "slices": [
+    {
+      "wave": 1,
+      "slice": "uix-w1-projection",
+      "issues": [180, 184],
+      "note": "#184 server/protocol part only (attackAffordableAfter); client in uix-w2-scene 2026-10-19: #207 moved to uix-w1-names; this slice delivers #180 and #184 with owner decision D1.",
+      "ownership": [
+        "packages/protocol/src/combat-lab.ts",
+        "apps/server/src/combat-lab/",
+        "packages/game-core/src/combat/ (pure shared helper only)",
+        "apps/web/src/combat-lab/view-validation.ts"
+      ],
+      "after": [],
+      "lane": "core"
+    },
+    {
+      "wave": 1,
+      "slice": "uix-w1-names",
+      "lane": "core",
+      "issues": [207],
+      "after": ["uix-w1-projection"],
+      "note": "Split from uix-w1-projection (workflow v2 fallback step 2): plan-review-2 found the replay export drops lab presentation metadata, so stable names need additive export metadata in owned server/protocol paths and an export→serialize/parse→reconstruction test. Canonical replay setup/commands/rulesets/RNG and old exports stay unchanged; no replay player.",
+      "ownership": [
+        "packages/protocol/src/combat-lab.ts",
+        "apps/server/src/combat-lab/",
+        "packages/game-core/src/combat/ (pure shared helper only)",
+        "apps/web/src/combat-lab/view-validation.ts"
+      ]
+    },
+    {
+      "wave": 1,
+      "slice": "uix-w1-scene",
+      "issues": [186, 187],
+      "ownership": [
+        "apps/web/src/combat-lab/sprite-battle-scene.ts",
+        "apps/web/src/combat-lab/sprite-scene-markers.ts",
+        "apps/web/src/combat-lab/sprite-scene-geometry.ts",
+        "apps/web/src/combat-lab/BattleGuidance.tsx"
+      ],
+      "after": [],
+      "lane": "web"
+    },
+    {
+      "wave": 1,
+      "slice": "uix-w1-desk",
+      "issues": [198, 212, 214],
+      "note": "Space is an alias for end turn in command-input.ts; double press covers it. Do not edit CombatLab.tsx.",
+      "ownership": [
+        "apps/web/src/combat-lab/CommandDesk.tsx",
+        "apps/web/src/combat-lab/BattleSkills.tsx",
+        "apps/web/src/combat-lab/command-input.ts",
+        "apps/web/src/combat-lab/command-availability.ts",
+        "apps/web/src/combat-lab/battle-controls.css",
+        "apps/web/src/combat-lab/combat-icons.css"
+      ],
+      "after": [],
+      "lane": "web"
+    },
+    {
+      "wave": 1,
+      "slice": "uix-w1-outcome",
+      "issues": [209, 211, 210],
+      "ownership": [
+        "apps/web/src/combat-lab/BattleOutcome.tsx",
+        "apps/web/src/combat-lab/BattleView.tsx (result panel and utilities)",
+        "apps/web/src/combat-lab/battle-view.css (result styles)",
+        "apps/web/src/combat-lab/CombatLab.tsx (autoplay utilities and terminal-state conditions only)",
+        "apps/web/src/combat-lab/BattleView.test.tsx",
+        "apps/web/src/combat-lab/controller.test.ts"
+      ],
+      "note": "#210 shows names as projected today; unique names arrive with #207 without extra work here.",
+      "after": [],
+      "lane": "web"
+    },
+    {
+      "wave": 2,
+      "slice": "core-melee-connect",
+      "issues": [225],
+      "after": ["uix-w1-names", "uix-w2-log"],
+      "note": "Studio director 2026-10-19: owner decision 2026-10-07 (trained melee always deals damage). Re-baseline M1-MELEE-CONNECT on the sprite S4 rules (engine/reaction/damage-preview), new versioned ruleset, preview = resolution, old replays untouched. Forecast copy in BattleForecast.tsx is a follow-up after uix-w2-input. After uix-w2-log: both own packages/protocol/src/combat-lab.ts and apps/server/src/combat-lab/projection.ts.",
+      "ownership": [
+        "packages/game-core/src/combat/",
+        "packages/protocol/src/combat-lab.ts",
+        "apps/server/src/combat-lab/",
+        "docs/work-packages/M1-MELEE-CONNECT.md",
+        "docs/wiki/mechanics/melee.md (coordinator)"
+      ],
+      "lane": "core",
+      "tier": "L"
+    },
+    {
+      "wave": 2,
+      "slice": "uix-w2-log",
+      "issues": [206, 204],
+      "ownership": [
+        "apps/web/src/combat-lab/BattleLog.tsx",
+        "apps/web/src/combat-lab/battle-hud-format.ts",
+        "apps/web/src/combat-lab/CombatLab.tsx (battle menu)",
+        "apps/web/src/combat-lab/battle-view.css (log panel)",
+        "apps/web/src/combat-lab/battle-controls.css (dock offsets for the log only)",
+        "apps/server/src/combat-lab/projection.ts and packages/protocol/src/combat-lab.ts (additive morale before/after event facts for #204)",
+        "matching *.test.ts(x) files"
+      ],
+      "after": ["uix-w1-projection", "uix-w1-outcome", "uix-w1-desk"],
+      "note": "Runs after projection, outcome and desk merge so CombatLab.tsx, battle-view.css and battle-controls.css have one writer at a time. Additive event facts must stay replay-compatible.",
+      "lane": "web"
+    },
+    {
+      "wave": 2,
+      "slice": "uix-w2-input",
+      "issues": [181, 182, 183, 194],
+      "after": ["uix-w1-projection"],
+      "ownership": [
+        "apps/web/src/combat-lab/field-command.ts",
+        "apps/web/src/combat-lab/CombatLab.tsx",
+        "apps/web/src/combat-lab/BattleUnitCard.tsx",
+        "apps/web/src/combat-lab/BattleForecast.tsx"
+      ],
+      "lane": "web"
+    },
+    {
+      "wave": 2,
+      "slice": "uix-w2-scene",
+      "issues": [184, 185, 188, 189],
+      "after": ["uix-w1-projection", "uix-w1-scene"],
+      "ownership": [
+        "apps/web/src/combat-lab/sprite-battle-scene.ts",
+        "apps/web/src/combat-lab/sprite-scene-markers.ts",
+        "apps/web/src/combat-lab/BattleGuidance.tsx"
+      ],
+      "lane": "web"
+    },
+    {
+      "wave": 2,
+      "slice": "uix-w2-desk",
+      "issues": [197, 199, 200],
+      "after": ["uix-w1-desk", "uix-w1-projection"],
+      "ownership": [
+        "apps/web/src/combat-lab/CommandDesk.tsx",
+        "apps/web/src/combat-lab/command-availability.ts",
+        "apps/web/src/combat-lab/battle-controls.css"
+      ],
+      "lane": "web"
+    },
+    {
+      "wave": 2,
+      "slice": "uix-w2-hud",
+      "issues": [202, 203],
+      "ownership": [
+        "apps/web/src/combat-lab/battle-hud-projection.ts",
+        "apps/web/src/combat-lab/BattleUnitCard.tsx"
+      ],
+      "after": [],
+      "lane": "web"
+    },
+    {
+      "wave": 3,
+      "slice": "uix-w3-playback",
+      "issues": [190, 191, 193, 192],
+      "after": ["uix-w2-scene", "uix-w2-input"],
+      "ownership": [
+        "apps/web/src/combat-lab/controller.ts",
+        "apps/web/src/combat-lab/autoplay.ts",
+        "apps/web/src/combat-lab/sprite-battle-scene.ts",
+        "apps/web/src/combat-lab/CombatLab.tsx"
+      ],
+      "lane": "web"
+    },
+    {
+      "wave": 3,
+      "slice": "uix-w3-tooltips",
+      "issues": [195, 196, 215],
+      "after": ["uix-w2-input"],
+      "ownership": [
+        "apps/web/src/combat-lab/battle-hud-scene.ts",
+        "apps/web/src/combat-lab/battle-controls.css",
+        "apps/web/src/combat-lab/BattleView.tsx (utilities)"
+      ],
+      "lane": "web"
+    },
+    {
+      "wave": 3,
+      "slice": "uix-w3-camera",
+      "issues": [201],
+      "after": ["uix-w2-scene"],
+      "ownership": [
+        "apps/web/src/combat-lab/battle-framing.ts",
+        "apps/web/src/renderer/three-quarter-camera.ts"
+      ],
+      "lane": "web"
+    },
+    {
+      "wave": 4,
+      "slice": "core-preset-deserters",
+      "issues": [228],
+      "after": ["core-melee-connect", "uix-w4-bow", "uix-w2-log"],
+      "lane": "core",
+      "tier": "L",
+      "note": "Producer for #228 (PR says Refs #228, not Closes): adds the «Банда дезертиров» preset and an optional catalog presets field; existing profiles and S4 rules only. Studio director 2026-10-19.",
+      "ownership": [
+        "apps/server/src/combat-lab/custom-battle.ts",
+        "apps/server/src/combat-lab/custom-battle.test.ts",
+        "packages/protocol/src/combat-lab.ts (optional catalog presets field only)"
+      ]
+    },
+    {
+      "wave": 5,
+      "slice": "uix-preset-picker",
+      "issues": [228],
+      "after": ["core-preset-deserters", "uix-w1-outcome"],
+      "lane": "web",
+      "tier": "U",
+      "note": "Consumer for #228 (closes it): editor picker for catalog presets next to the current scenario.",
+      "ownership": [
+        "apps/web/src/combat-lab/BattleEditor.tsx (preset picker only)",
+        "apps/web/src/combat-lab/editor-model.ts",
+        "apps/web/src/combat-lab/session-lifecycle.ts (catalog shape only)"
+      ]
+    },
+    {
+      "wave": 3,
+      "slice": "uix-overview-zoom",
+      "issues": [227],
+      "after": ["uix-w3-camera", "uix-w3-playback", "uix-w3-tooltips", "uix-w1-outcome"],
+      "lane": "web",
+      "tier": "V",
+      "note": "Studio director 2026-10-19 (playtest): zoom-out limit fits the 15x11 field between HUD bands; overview key/button and return to the actor.",
+      "ownership": [
+        "apps/web/src/combat-lab/sprite-battle-scene.ts (camera zoom options and overview command only)",
+        "apps/web/src/combat-lab/battle-framing.ts",
+        "apps/web/src/combat-lab/BattleView.tsx (overview button only)",
+        "apps/web/src/combat-lab/battle-hud-scene.ts (overview handle only)"
+      ]
+    },
+    {
+      "wave": 4,
+      "slice": "qa-game-hooks",
+      "issues": [235],
+      "after": ["uix-w3-playback", "uix-w2-log"],
+      "lane": "web",
+      "tier": "L",
+      "note": "Studio director 2026-10-19: dev-only render_game_to_text/advanceTime for regression runs with openai-develop-web-game.",
+      "ownership": [
+        "apps/web/src/combat-lab/controller.ts",
+        "apps/web/src/combat-lab/game-hooks.ts (new)",
+        "apps/web/src/combat-lab/CombatLab.tsx (hook registration and autoplay timer)",
+        "apps/web/src/combat-lab/autoplay.ts"
+      ]
+    },
+    {
+      "wave": 4,
+      "slice": "uix-w4-scale",
+      "issues": [179],
+      "after": ["uix-w3-playback", "uix-w3-camera", "uix-overview-zoom"],
+      "ownership": [
+        "apps/web/src/combat-lab/battle-layout.ts",
+        "apps/web/src/combat-lab/sprite-battle-scene.ts",
+        "apps/web/src/combat-lab/battle-terrain.ts",
+        "apps/web/src/combat-lab/sprite-art.ts"
+      ],
+      "lane": "web"
+    },
+    {
+      "wave": 4,
+      "slice": "uix-w4-text",
+      "issues": [213, 216, 205],
+      "after": ["uix-w3-tooltips", "uix-w2-log"],
+      "ownership": [
+        "apps/web/src/combat-lab/*.css",
+        "apps/web/src/combat-lab/BattleInitiative.tsx",
+        "apps/web/src/combat-lab/BattleLog.tsx"
+      ],
+      "lane": "web"
+    },
+    {
+      "wave": 4,
+      "slice": "uix-w4-bow",
+      "issues": [218],
+      "after": ["uix-w1-projection", "core-melee-connect", "uix-w2-log"],
+      "note": "Owner chose B (bow 3 AP) as a new versioned ruleset; replay/stress/forecast checks. Sequenced after core-melee-connect (studio director 2026-10-19): one ruleset bump at a time; may share its new ruleset version. Lane corrected to core (owns game-core/server), studio director 2026-10-19.",
+      "ownership": [
+        "packages/game-core/src/combat/",
+        "apps/server/src/combat-lab/",
+        "docs/wiki/mechanics/ranged.md (coordinator)"
+      ],
+      "lane": "core",
+      "tier": "L"
+    },
+    {
+      "wave": 5,
+      "slice": "uix-w5-side",
+      "issues": [208],
+      "after": ["uix-w4-scale", "uix-w4-text"],
+      "ownership": [
+        "apps/web/src/combat-lab/BattleInitiative.tsx",
+        "apps/web/src/combat-lab/sprite-battle-scene.ts",
+        "apps/web/src/combat-lab/sprite-scene-markers.ts",
+        "apps/web/src/combat-lab/unit-vitals.css"
+      ],
+      "lane": "web"
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { buildApp } from '../app.js';
+import * as combat from '@warwrit/game-core';
+import { prepareTransition, type CombatLabSession } from './routes.js';
+import { createCustomBattleFixture, defaultSpriteBattle } from './custom-battle.js';
+import { createCombatLabPresentation } from './presentation.js';
+import { exportCombatLabReplay, projectCombatLabReplay } from './replay.js';
 
 const settings = { host: '127.0.0.1', port: 3000, origin: 'http://127.0.0.1:5173' };
 const headers = { host: '127.0.0.1:3000', origin: settings.origin };
@@ -39,6 +44,30 @@ describe('disposable combat lab session', () => {
     expect(first.statusCode).toBe(200);
     expect(first.json()).toEqual(view);
     expect(second.json()).toEqual(view);
+    const replay = await app.inject({
+      method: 'GET',
+      url: `${url}/replay`,
+      headers: privateHeaders,
+    });
+    expect(replay.statusCode).toBe(200);
+    expect(replay.json()).not.toHaveProperty('labPresentation');
+    expect(projectCombatLabReplay(replay.json()).units).toEqual(view.units);
+    expect(JSON.stringify(replay.json())).not.toContain(capability);
+    expect((await app.inject({ method: 'GET', url: `${url}/replay`, headers })).statusCode).toBe(
+      404,
+    );
+    expect(
+      (
+        await app.inject({
+          method: 'GET',
+          url: `${url}/replay`,
+          headers: {
+            ...privateHeaders,
+            origin: 'http://foreign.test',
+          },
+        })
+      ).statusCode,
+    ).toBe(403);
     expect((await app.inject({ method: 'GET', url, headers })).statusCode).toBe(404);
     expect(
       (
@@ -102,4 +131,48 @@ describe('disposable combat lab session', () => {
       else process.env['NODE_ENV'] = previous;
     }
   });
+});
+
+it('accounts for metadata bytes and preserves the exact replay limit across accepted commands', () => {
+  const battle = defaultSpriteBattle();
+  const fixture = createCustomBattleFixture('names-bytes', battle);
+  const started = fixture.start();
+  const source = {
+    originalSetup: fixture.originalSetup(),
+    commands: [],
+    presentation: createCombatLabPresentation(battle, fixture.controlledSideId),
+  };
+  const initialBytes = Buffer.byteLength(JSON.stringify(exportCombatLabReplay(source)));
+  const session: CombatLabSession = {
+    ...source,
+    capability: Buffer.alloc(32),
+    controlledSideId: fixture.controlledSideId,
+    state: started.state,
+    journal: started.events,
+    replayBytes: initialBytes,
+    decisions: new Map(),
+  };
+  expect(initialBytes).toBeGreaterThan(
+    Buffer.byteLength(
+      JSON.stringify(exportCombatLabReplay({ originalSetup: source.originalSetup, commands: [] })),
+    ),
+  );
+  const first = prepareTransition(session, combat.chooseTacticalCombatCommand(session.state));
+  expect('code' in first).toBe(false);
+  if ('code' in first) throw new Error('Expected accepted transition');
+  expect(first.session.replayBytes).toBe(
+    Buffer.byteLength(JSON.stringify(exportCombatLabReplay(first.session))),
+  );
+  const command = combat.chooseTacticalCombatCommand(first.session.state);
+  const bytes = Buffer.byteLength(JSON.stringify(command)) + 1;
+  const atLimit = { ...first.session, replayBytes: 2 * 1024 * 1024 - bytes };
+  const accepted = prepareTransition(atLimit, command);
+  expect('code' in accepted).toBe(false);
+  if ('code' in accepted) throw new Error('Expected accepted boundary');
+  expect(accepted.session.replayBytes).toBe(2 * 1024 * 1024);
+  const before = JSON.stringify(atLimit);
+  expect(prepareTransition({ ...atLimit, replayBytes: atLimit.replayBytes + 1 }, command)).toEqual({
+    code: 'LIMIT_REACHED',
+  });
+  expect(JSON.stringify(atLimit)).toBe(before);
 });

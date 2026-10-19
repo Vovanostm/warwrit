@@ -1,0 +1,15 @@
+{
+  "id": "combat-readable-earth-worn",
+  "prompt": "Create one original seamless square overhead ground texture for Warwrit, matching attached fighter/ruined mill/existing earth-ruts references in irregular black ink contour, flat muted umber/slate wash, small directional hatch marks and worn materials. Ground patch represents6\u00d76metres, flat even diffuse lighting upperleft. Fullbleed, no borders/hexagons/characters/buildings/horizon/text. Serious grounded darkfantasy. No cracked-rock carpet, smoothCG, photo noise, dominant geometric pattern. Mostly compacted earth with local meaningful marks; sparse roots and small worn embedded stones. This is a new variant, not a copy of the existing diagonal rut pattern. Keep same palette and detail scale. VARIANT B: broad quiet bare worn earth makes80percent of area; one interrupted meandering wheel rut near one side, three small asymmetrical groups of cobbles, short scattered black ink scuffs and a few dead ochre grassroots. Irregular open areas. Do not draw two full diagonal parallel grooves.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17T09:39:43.136604+00:00",
+  "transparent_background": false,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-feafe991-d934-4cfd-92d8-683870a0fa0c.png",
+  "references": [
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/staraya-melnitsa.png",
+    "assets/art/combat/readable-terrain-2026-10-16/earth-ruts.png"
+  ],
+  "status": "Integrated candidate; independent in-scene acceptance pending."
+}

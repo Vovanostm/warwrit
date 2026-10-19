@@ -5,10 +5,12 @@ import {
   COMBAT_LAB_VERSION,
   SPRITE_COMBAT_LAB_SCENARIO,
   type CombatLabBattleConfig,
+  type CombatLabAttackRefusal,
   type CombatLabHex,
+  type CombatLabReplayPresentation,
   type CombatLabView,
 } from '@warwrit/protocol';
-import { combatLabProfiles } from './custom-battle.js';
+import { createCombatLabPresentation } from './presentation.js';
 
 const copyHex = ({ q, r }: CombatLabHex): CombatLabHex => ({ q, r });
 const pool = (current: number, maximum: number) => ({ current, maximum });
@@ -20,6 +22,7 @@ export function projectCombatLabView(
   state: combat.BattleState,
   journal: readonly combat.CombatEvent[],
   battle?: CombatLabBattleConfig,
+  presentation?: CombatLabReplayPresentation,
 ): CombatLabView {
   combat.invariant(
     state.rulesetId === 'm0-prototype-v1' || combat.isSpritePrototypeRuleset(state.rulesetId),
@@ -36,6 +39,11 @@ export function projectCombatLabView(
   combat.invariant(
     journal.at(-1)?.revision === state.revision,
     'Journal must match current revision',
+  );
+  const labels = new Map(
+    (presentation ?? (battle && createCombatLabPresentation(battle, controlledSideId)))?.units.map(
+      (unit) => [unit.id, unit],
+    ),
   );
   const rules = combat.combatRules(state.rulesetId);
   const ordinaryGuard = { ...state.units[0]!, guarding: true };
@@ -126,35 +134,17 @@ export function projectCombatLabView(
       blocked: state.map.blocked.map(copyHex),
       ...(battle === undefined ? {} : { name: battle.map.name, tiles: battle.map.tiles }),
     },
-    ...(combat.isSpritePrototypeRuleset(state.rulesetId) && state.status === 'active'
-      ? {
-          movementPreview: combat.previewCombatMovement(state),
-          attackPreview: combat.previewCombatAttacks(state),
-          rangedAttackArea: combat.previewCombatRangedArea(state),
-          availableActions,
-          skills: combat.getCombatSkills(state),
-          skillPreview: combat.previewCombatSkills(state).map((preview) => ({
-            ...preview,
-            rulesetId: state.rulesetId as NonNullable<CombatLabView['rulesetId']>,
-          })),
-        }
-      : {}),
+    ...projectSpriteActions(state, controlledSideId, availableActions),
     sides: state.sides.map(({ id, retreatHexes }) => ({
       id,
       retreatHexes: retreatHexes.map(copyHex),
     })),
     units: state.units.map((unit) => {
       const weaponReach = combat.previewCombatWeaponReach(state, unit.id);
-      const configured = battle?.units.find((config) => config.id === unit.id);
-      const profile = combatLabProfiles.find((profile) => profile.id === configured?.profileId);
+      const label = labels.get(unit.id);
       return {
         id: unit.id,
-        ...(configured === undefined || profile === undefined
-          ? {}
-          : {
-              profileId: configured.profileId,
-              name: profile.name,
-            }),
+        ...(label === undefined ? {} : { name: label.name, profileId: label.profileId }),
         sideId: unit.sideId,
         weaponId: unit.weaponId,
         ...(weaponReach === undefined ? {} : { weaponReach }),
@@ -212,4 +202,101 @@ export function projectCombatLabView(
         ? null
         : { reason: outcome.reason, winnerSideId: outcome.winnerSideId ?? null },
   };
+}
+
+function activeActivation(state: combat.BattleState): combat.CombatUnitState | undefined {
+  return state.units.find(
+    (unit) => unit.id === state.activation?.unitId && unit.status === 'active',
+  );
+}
+function controlledActivation(state: combat.BattleState, sideId: string): boolean {
+  return activeActivation(state)?.sideId === sideId;
+}
+
+function refusalDetails(
+  error: combat.CombatWeaponAttackFailure,
+): Omit<CombatLabAttackRefusal, 'targetId'> {
+  switch (error.code) {
+    case 'OUT_OF_RANGE':
+      return {
+        code: error.distance! < error.minimumRange! ? 'too-close' : 'out-of-range',
+        distance: error.distance!,
+        minimumRange: error.minimumRange!,
+        maximumRange: error.maximumRange!,
+      };
+    case 'INSUFFICIENT_ACTION_POINTS':
+    case 'INSUFFICIENT_STAMINA':
+      return {
+        code:
+          error.code === 'INSUFFICIENT_ACTION_POINTS'
+            ? 'insufficient-action-points'
+            : 'insufficient-stamina',
+        required: error.required!,
+        available: error.available!,
+      };
+    case 'BLOCKED_LINE_OF_SIGHT':
+      return { code: 'no-line-of-sight' };
+    case 'PANICKED':
+      return { code: 'panicking' };
+    case 'THREAT_NOT_AVAILABLE':
+      return { code: 'threat-not-available' };
+    case 'BATTLE_TERMINAL':
+      return { code: 'battle-resolved' };
+    case 'NOT_ACTIVE_UNIT':
+      return { code: 'not-actor-turn' };
+    default:
+      throw new Error(`Unexpected combat lab attack refusal: ${error.code}`);
+  }
+}
+
+function projectAttackRefusals(
+  state: combat.BattleState,
+  controlledSideId: string,
+): readonly CombatLabAttackRefusal[] {
+  return state.units
+    .filter((unit) => unit.status === 'active' && unit.sideId !== controlledSideId)
+    .flatMap((target) => {
+      if (state.status !== 'active')
+        return [{ targetId: target.id, code: 'battle-resolved' as const }];
+      if (!controlledActivation(state, controlledSideId))
+        return [{ targetId: target.id, code: 'not-actor-turn' as const }];
+      const error = combat.queryCombatWeaponAttack(state, target.id);
+      return error ? [{ targetId: target.id, ...refusalDetails(error) }] : [];
+    });
+}
+
+function projectSpriteActions(
+  state: combat.BattleState,
+  controlledSideId: string,
+  availableActions: NonNullable<CombatLabView['availableActions']>,
+): Partial<CombatLabView> {
+  if (!combat.isSpritePrototypeRuleset(state.rulesetId)) return {};
+  const attackRefusals = projectAttackRefusals(state, controlledSideId);
+  const skillReach = projectSkillReach(state, controlledSideId);
+  if (state.status !== 'active' || !activeActivation(state)) return { attackRefusals, skillReach };
+  const controlled = controlledActivation(state, controlledSideId);
+  return {
+    attackRefusals,
+    skillReach,
+    movementPreview: controlled ? combat.previewCombatMovementAttackAffordability(state) : [],
+    attackPreview: controlled ? combat.previewCombatAttacks(state) : [],
+    rangedAttackArea: combat.previewCombatRangedArea(state),
+    availableActions,
+    skills: combat.getCombatSkills(state),
+    skillPreview: combat.previewCombatSkills(state).map((preview) => ({
+      ...preview,
+      rulesetId: state.rulesetId as NonNullable<CombatLabView['rulesetId']>,
+    })),
+  };
+}
+
+function projectSkillReach(
+  state: combat.BattleState,
+  controlledSideId: string,
+): NonNullable<CombatLabView['skillReach']> {
+  if (!controlledActivation(state, controlledSideId)) return [];
+  return combat.previewCombatSkillReach(state, state.activation!.unitId).map((row) => ({
+    ...row,
+    cells: row.cells.map(copyHex),
+  }));
 }

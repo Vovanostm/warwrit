@@ -8,6 +8,8 @@ import {
 import { afterEach, assert, describe, expect, it } from 'vitest';
 import { decideAction, type CombatLabSession } from './routes.js';
 import { buildApp } from '../app.js';
+import { projectCombatLabView } from './projection.js';
+import { projectCombatLabReplay, type CombatLabReplay } from './replay.js';
 import {
   combatLabCatalog,
   defaultSpriteBattle,
@@ -158,6 +160,10 @@ describe('custom sprite battle server boundary', () => {
     const replay = (
       await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders })
     ).json<combat.CombatReplay>();
+    expectReadOnlySkillReach(replay);
+    expect(latest.skillReach).toEqual(
+      combat.previewCombatSkillReach(combat.replayCombat(replay).state, combat.unitId('fighter')),
+    );
     expect(replay.commands).toHaveLength(1);
     expect(replay.commands[0]).toMatchObject({ type: 'use-skill', skillId: 'shield-brace' });
     expect(
@@ -689,4 +695,203 @@ it('serves canonical technique metadata and isolated profile defaults without ch
   expect(profile.defaultSkillRanks).not.toBe(
     catalog.defaultBattle.units.find(({ profileId }) => profileId === 'W10')?.skillRanks,
   );
+});
+
+it('public session reads expose refusal facts without changing the replay', async () => {
+  const app = lab();
+  const { before, privateHeaders, url } = await createSkillDuel(app);
+  const replay = await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders });
+  expect(replay.statusCode).toBe(200);
+  const reconstructed = expectReadOnlySkillReach(replay.json<combat.CombatReplay>());
+  expect(before.skillReach).toEqual(
+    combat.previewCombatSkillReach(reconstructed.state, reconstructed.state.activation!.unitId),
+  );
+  expect(before.skillReach?.map((row) => row.skillId)).toEqual(['shield-brace', 'armor-pressure']);
+  expect(before.attackRefusals).toEqual([]);
+  expect(before.attackPreview?.map((row) => row.targetId)).toEqual(['enemy']);
+  for (let read = 0; read < 2; read += 1) {
+    const response = await app.inject({ method: 'GET', url, headers: privateHeaders });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(before);
+  }
+  const after = await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders });
+  expect(after.json()).toEqual(replay.json());
+});
+
+function expectReadOnlySkillReach(replay: combat.VersionedCombatReplay) {
+  const saved = JSON.stringify(replay);
+  const reconstructed = combat.replayCombat(JSON.parse(saved) as combat.VersionedCombatReplay);
+  const before = structuredClone(reconstructed);
+  const canonical = combat.canonicalCombatState(reconstructed.state);
+  for (let read = 0; read < 2; read++) {
+    for (const unit of reconstructed.state.units)
+      combat.previewCombatSkillReach(reconstructed.state, unit.id);
+    if (combat.isSpritePrototypeRuleset(reconstructed.state.rulesetId)) {
+      const state = reconstructed.state;
+      const view = projectCombatLabView('replay', state.sides[0].id, state, reconstructed.events);
+      const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
+      expect(view.skillReach).toEqual(
+        actor?.sideId === state.sides[0].id ? combat.previewCombatSkillReach(state, actor.id) : [],
+      );
+    }
+  }
+  expect(reconstructed).toEqual(before);
+  expect(combat.canonicalCombatState(reconstructed.state)).toBe(canonical);
+  expect(JSON.stringify(replay)).toBe(saved);
+  expect(combat.replayCombat(JSON.parse(saved) as combat.VersionedCombatReplay)).toEqual(before);
+  expect(reconstructed.commandsApplied).toBe(replay.commands.length);
+  return reconstructed;
+}
+it.each(['sprite-prototype-v1', 'sprite-prototype-v2'] as const)(
+  'preserves complete saved %s replay results while deriving empty skill geometry',
+  (rulesetId) => {
+    const base = createCustomBattleFixture('legacy-reach', skillDuel()).originalSetup();
+    const setup: combat.BattleSetup = {
+      ...base,
+      rulesetId,
+      units: base.units.map(({ skillRanks: _skills, moralePolicy: _morale, ...unit }) => unit),
+    };
+    const state = combat.startBattle(setup).state;
+    const replay: combat.CombatReplay = {
+      schemaVersion: 1,
+      setup,
+      commands: [
+        {
+          type: 'wait',
+          commandId: combat.commandId('saved-wait'),
+          actorId: state.activation!.unitId,
+          activationId: state.activation!.id,
+        },
+      ],
+    };
+    const reproduced = expectReadOnlySkillReach(replay);
+    expect(
+      combat.previewCombatSkillReach(reproduced.state, reproduced.state.activation!.unitId),
+    ).toEqual([]);
+  },
+);
+it('preserves supported schema2 bridge replay without inventing a sprite schema3', () => {
+  const base = createCustomBattleFixture('schema2-reach', skillDuel()).originalSetup();
+  const setup: combat.BattleSetupV2 = {
+    ...base,
+    schemaVersion: 2,
+    rulesetId: 'm1-domain-bridge-v2',
+    units: base.units.map(
+      ({ skillRanks: _skills, moralePolicy: _morale, trainedMelee: _trained, ...unit }) => ({
+        ...unit,
+        weaponId: 'spear',
+        initialPools: {
+          health: unit.attributes.health,
+          armor: unit.attributes.armor,
+          stamina: unit.attributes.stamina,
+          morale: unit.attributes.morale,
+        },
+      }),
+    ),
+  };
+  const state = combat.startBattleV2(setup).state;
+  expectReadOnlySkillReach({
+    schemaVersion: 2,
+    setup,
+    commands: [
+      {
+        type: 'wait',
+        commandId: combat.commandId('bridge-wait'),
+        actorId: state.activation!.unitId,
+        activationId: state.activation!.id,
+      },
+    ],
+  });
+});
+
+const unitNames = (view: CombatLabView) => view.units.map(({ id, name }) => [id, name]);
+
+it('retains every mill label through authenticated reads, orders and export-only reconstruction', async () => {
+  const app = lab();
+  const created = await app.inject({
+    method: 'POST',
+    url: '/dev/combat-lab',
+    headers,
+    payload: { version: 1, requestId: 'names', scenarioId: SPRITE_COMBAT_LAB_SCENARIO },
+  });
+  expect(created.statusCode).toBe(201);
+  let view = created.json<CombatLabView>();
+  const names = unitNames(view);
+  expect(names).toContainEqual(['opponent-1', 'Волк 1']);
+  expect(names).toContainEqual(['opponent-2', 'Волк 2']);
+  const privateHeaders = {
+    ...headers,
+    'x-combat-lab-capability': created.headers['x-combat-lab-capability'] as string,
+  };
+  const url = `/dev/combat-lab/${view.sessionId}`;
+  for (let read = 0; read < 2; read++) {
+    expect((await app.inject({ method: 'GET', url, headers: privateHeaders })).json()).toEqual(
+      view,
+    );
+  }
+  let actions = 0;
+  while (view.status === 'active' && actions < 300) {
+    assert(view.activation);
+    const accepted = await app.inject({
+      method: 'POST',
+      url: `${url}/actions`,
+      headers: privateHeaders,
+      payload: {
+        version: 1,
+        requestId: `names-${actions}`,
+        sessionId: view.sessionId,
+        battleId: view.battleId,
+        expectedViewRevision: view.viewRevision,
+        activationId: view.activation.id,
+        actorId: view.activation.actorId,
+        intent: { type: 'autoplay' },
+      },
+    });
+    expect(accepted.statusCode).toBe(200);
+    view = (
+      await app.inject({ method: 'GET', url, headers: privateHeaders })
+    ).json<CombatLabView>();
+    expect(unitNames(view)).toEqual(names);
+    actions++;
+    if (view.units.some((unit) => unit.profileId === 'B001' && unit.status !== 'active')) break;
+  }
+  expect(actions).toBeGreaterThan(0);
+  expect(view.units.some((unit) => unit.profileId === 'B001' && unit.status !== 'active')).toBe(
+    true,
+  );
+  const response = await app.inject({
+    method: 'GET',
+    url: `${url}/replay`,
+    headers: privateHeaders,
+  });
+  expect(response.statusCode).toBe(200);
+  // Only JSON bytes survive this boundary; no session or separately retained config is supplied.
+  const downloaded = JSON.parse(JSON.stringify(response.json())) as CombatLabReplay;
+  const before = structuredClone(downloaded);
+  const restored = projectCombatLabReplay(downloaded);
+  expect(unitNames(restored)).toEqual(unitNames(view));
+  expect(restored.units.map(({ id, status }) => [id, status])).toEqual(
+    view.units.map(({ id, status }) => [id, status]),
+  );
+  const { labPresentation, ...legacy } = downloaded;
+  expect(labPresentation?.units).toHaveLength(12);
+  expect(JSON.stringify(labPresentation)).not.toContain(privateHeaders['x-combat-lab-capability']);
+  expect(Object.keys(labPresentation!).sort()).toEqual([
+    'battle',
+    'controlledSideId',
+    'units',
+    'version',
+  ]);
+  expect(
+    labPresentation!.units.every(
+      (unit) => Object.keys(unit).sort().join(',') === 'id,name,profileId',
+    ),
+  ).toBe(true);
+  const canonical = combat.replayCombat(legacy);
+  expect(combat.replayCombat(downloaded)).toEqual(canonical);
+  expect(canonical.commandsApplied).toBe(downloaded.commands.length);
+  expect(projectCombatLabReplay(legacy).units.every((unit) => unit.name === undefined)).toBe(true);
+  expect(projectCombatLabReplay(downloaded)).toEqual(restored);
+  expect(downloaded).toEqual(before);
+  expect((await app.inject({ method: 'GET', url: `${url}/replay`, headers })).statusCode).toBe(404);
 });

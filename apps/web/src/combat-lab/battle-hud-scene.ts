@@ -23,6 +23,7 @@ export function useBattleScene(
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<Awaited<ReturnType<typeof mountSpriteBattleScene>> | null>(null);
+  const pendingFocus = useRef<string | null>(null);
   const [tooltipInput, setTooltipInput] = useState<'pointer' | 'keyboard'>('pointer');
   const [sceneError, setSceneError] = useState('');
   const [night, setNight] = useState(false);
@@ -92,6 +93,8 @@ export function useBattleScene(
             latest.selectedSkillId,
           );
           readyScene.setHighlightedUnit(latest.initiativeHover);
+          if (pendingFocus.current) readyScene.focusUnit(pendingFocus.current);
+          pendingFocus.current = null;
           setSceneError('');
         }),
       )
@@ -103,6 +106,7 @@ export function useBattleScene(
       abort.abort();
       sceneRef.current?.destroy();
       sceneRef.current = null;
+      pendingFocus.current = null;
     };
   }, [view.sessionId, view.battleId]);
   useEffect(() => {
@@ -114,6 +118,10 @@ export function useBattleScene(
 
   return {
     canvasRef,
+    focusUnit: (id: string) => {
+      if (sceneRef.current) sceneRef.current.focusUnit(id);
+      else pendingFocus.current = id;
+    },
     night,
     setNight,
     fullGrid,

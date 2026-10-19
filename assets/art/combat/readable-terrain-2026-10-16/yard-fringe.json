@@ -1,0 +1,10 @@
+{
+  "id": "combat-readable-yard-fringe",
+  "prompt": "Use case: style-transfer. Asset type: transparent scenery strip to extend the ruined mill yard in Warwrit tactical battlefield. Supplied first image is material/projection reference only, not something to reproduce. Create one original low ruined-yard fringe: a loosely curving uneven run of broken weathered slate fieldstones, half-fallen rough timber fence posts/rails, scattered smaller rubble and sparse dry ochre grass roots. No mill, no building, no water, no large trees, no barrels, no symbols. Three-quarter view from above with the SAME ground axes, camera elevation and upper-left lighting as the supplied mill, no perspective convergence, no isometric diamond base. About 7metres wide, low mostly below waist height, naturally irregular plan and variable gaps, ground roots feather into true transparency with no opaque ground rectangle, no rounded toy forms. Rough individual ink contours and solid black shadow undercuts with muted slate/soot/umber/ochre flat wash, credible ruined yard materials matching the reference exactly. Landscape2:1 isolated asset with complete unclipped left/right/root silhouettes, plenty of alpha margin. Keep low silhouette open and natural, not a fortress wall or ornate fantasy fence. Real transparent background. No text or UI.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-0d2356d3-95e5-4588-9446-bb48914827a3.png",
+  "references": ["assets/art/m1/places/staraya-melnitsa.png", "assets/art/m1/style/unit-c-ink.png"],
+  "status_at_generation": "Local candidate; integrated visual acceptance pending."
+}

@@ -61,6 +61,194 @@ deployment, paid-service or external-message authority. Reuse
 [warwrit-delivery's handoff fields](../../.agents/skills/warwrit-delivery/SKILL.md#handoff);
 children do not execute its publication/checkpoint steps.
 
+## Orca parallel worktrees — 2026-10-18
+
+Owner request: configure Orca so several agents build Warwrit in parallel as
+fast as correctness allows. Orca (`orca` CLI, Orca.app; not the Arcadia-only `arca` fork) gives each agent its own Git
+worktree, terminals and supervised orchestration runs (Run/Task/Dispatch,
+ask/reply, decision gates). The repository part is checked in:
+
+- [`orca.yaml`](../../orca.yaml): setup runs [`scripts/orca-setup.sh`](../../scripts/orca-setup.sh)
+  (frozen pnpm install from the global store, protocol/game-core/testkit builds,
+  private combat-lab ports in gitignored `.worktree-ports`); the agent waits for
+  setup; tabs Agent/Shell; archive runs [`scripts/orca-archive.sh`](../../scripts/orca-archive.sh),
+  which stops only that worktree's combat-lab servers; the issue command prints
+  the linked GitHub issue.
+- [`.worktreeinclude`](../../.worktreeinclude): private copies of `.env` and
+  `.claude/settings.local.json`. `node_modules` is never shared: pnpm workspace
+  links are relative (`apps/web/node_modules/@warwrit/protocol ->
+../../../../packages/protocol`), so a shared tree would compile against the
+  primary checkout's packages.
+- `pnpm dev:combat` reads `.worktree-ports`; explicit `COMBAT_*_PORT` still wins.
+  Campaign `pnpm dev`, PostgreSQL/Dex and OIDC ports stay one shared stack.
+- [`warwrit-orca`](../../.agents/skills/warwrit-orca/SKILL.md) is the coordinator
+  workflow: waves by file ownership, worker spec, review and merge order.
+
+Orca reads setup and tabs from the **new worktree's** `orca.yaml` (so from
+`main` once merged), but `.worktreeinclude` and the archive hook from the
+**primary checkout** registered in Orca. While the primary checkout stays on the
+WIP branch `codex/sprite-combat-stage1`, `.env` is not copied and archive does
+not run; combat-lab work does not need `.env`.
+
+Orca holds a personal local setup hook `pnpm install` for Warwrit. With no
+saved command-source choice a nonempty local hook means **Local only**, so the
+YAML setup is ignored until Settings → Repository → setup command source is
+**orca.yaml only** (or the local hook is cleared). Until then workers run
+`bash scripts/orca-setup.sh` themselves when `.worktree-ports` is missing.
+Repo base ref in Orca: `origin/main` (set 2026-10-18).
+
+**Research basis.** [Orca orca.yaml reference](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/model/orca-yaml.mdx)
+and [worktrees](https://www.onorca.dev/docs/model/worktrees);
+[Claude Code best practices](https://code.claude.com/docs/en/best-practices)
+(a check the agent can run, fresh-context reviewer, writer/reviewer split);
+Cognition [«Don't build multi-agents»](https://cognition.com/blog/dont-build-multi-agents)
+and its [2026 follow-up](https://cognition.com/blog/multi-agents-working):
+parallel agents with partial context make incompatible decisions, so writes stay
+single-threaded and extra agents contribute review and research;
+[parallel agents with Git worktrees (DEV)](https://dev.to/andrea_schiona/running-coding-agents-in-parallel-with-git-worktrees-4cnk)
+and [Augment: multi-agent workspace](https://www.augmentcode.com/guides/how-to-run-a-multi-agent-coding-workspace):
+worktrees move conflicts to merge time, semantic conflicts merge cleanly but
+regress, review becomes the bottleneck, practical laptop ceiling is about four
+to five active agents; [METR 2025](https://simonwillison.net/2025/Jul/12/ai-open-source-productivity/)
+shows perceived speed-up is not measured speed-up (experienced developers 19%
+slower in its early-2025 setting; METR now calls it historical).
+
+**Operating limits on this Mac (12 CPU, 36 GB, ~184 GB free on 2026-10-18):**
+up to five writer worktrees with dev servers/tests; read-only reviewers extra;
+full gates, coverage, stress and migration checks one at a time. 39 Codex
+worktrees use 31 GB; clean up released ones before large waves.
+
+Checks 2026-10-18: setup on a fresh `main` worktree PASS (install + three
+package builds, ports 23426/25426); `pnpm dev:combat` served `/combat-lab` and
+proxied `/api/dev/combat-lab/catalog` on those ports; archive stopped launcher,
+server and Vite with no leftover process. Orca's own hook execution and a
+supervised run end-to-end: NOT_RUN until `orca.yaml` is on `main`. Measured
+throughput of parallel waves: NOT_MEASURED.
+
+## Game-development workflow v2 — 2026-10-19
+
+Owner request: prepare the agent team and a working game-development workflow.
+Evidence from the first day of the 2026-10-18 pipeline: about 11 hours, five
+wave-1 slices, no commit and no PR. Time went to plan → plan review → revision
+rounds, recovery attempts that discovered the commit audit only on a rejected
+commit, and `needs-owner` stops; five parallel writers also contended for the
+same combat-lab files. v2 keeps Orca, GitHub labels, headless Codex and the
+owner merge gate and changes the flow
+([`warwrit-orca`](../../.agents/skills/warwrit-orca/SKILL.md)):
+
+- **Metric:** merged PRs with playable proof per day, reported each tick.
+- **Team:** coordinator; contract writer, evaluator and visual critic are fresh
+  read-only contexts; one builder per lane (`web`, `core`) writes.
+- **Contract instead of plan review:** one short file — scope, changes shaped
+  for the audit, data compatibility, proof per acceptance criterion, questions.
+- **Build ends in commits:** focused coverage + `pnpm check:changes` before each
+  commit; `orca-validate.sh` runs the same audit.
+- **Evaluate the running game:** the evaluator reviews the diff and plays the
+  journey in `pnpm dev:combat` with Playwright; visual diffs also get the
+  VISUAL_CRITIQUE-scored visual critic, in parallel.
+- **Fallback ladder before the owner:** restructure for audit-only failures,
+  split a one-issue finding into a follow-up slice, split oversized slices; only
+  product/rule questions reach the owner, batched per tick.
+
+Sources: Cognition, [Multi-Agents: What's Actually Working](https://cognition.com/blog/multi-agents-working)
+(parallel writer swarms fragment code; single-threaded writes, parallel reads,
+clean-context reviewer); Anthropic, [Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+(planner → generator → skeptical evaluator that plays the live app; sprint
+contracts; remove harness parts that stop being load-bearing; a retro game
+maker was playable only with the evaluator) and
+[Effective harnesses for long-running agents](https://anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+(one feature at a time, end-to-end browser testing before claiming done);
+[METR, 2026 update](https://metr.org/blog/2026-02-24-uplift-update/) (perceived
+speed-up is unreliable, so measure merged results). This section supersedes
+the plan-review stage and the parallel-writer capacity of the 2026-10-18
+pipeline below; its state, ownership and merge rules still apply.
+
+## Issue pipeline in Orca — 2026-10-18
+
+Owner decision: implement issues only through Orca orchestration — plan,
+implement, review, test, update docs, merge — with Codex agents as the main
+workers. The [`warwrit-orca`](../../.agents/skills/warwrit-orca/SKILL.md) skill
+is the coordinator procedure; its [`prompts/`](../../.agents/skills/warwrit-orca/prompts/common.md)
+are the worker briefs.
+
+- **State lives on GitHub.** Labels `agent:ready → planning → implementing →
+validating → review → pr → done`, plus `blocked` / `needs-owner`, set only by
+  [`scripts/orca-issue-state.sh`](../../scripts/orca-issue-state.sh). Orca
+  Run/Task/Dispatch records attempts; GitHub records the issue's state.
+- **The coordinator owns transitions.** Worker output is a claim. Advancing needs
+  the plan/review verdict file, the worktree diff,
+  [`scripts/orca-validate.sh`](../../scripts/orca-validate.sh) exit code
+  (rebased, clean tree, package builds, typecheck, prettier/eslint on changed
+  files, `vitest related`) and green PR CI.
+- **Fresh read-only contexts** plan-review and code-review; one Codex writer per
+  slice reuses its terminal for bounded rework (≤ 2 rounds per loop, then
+  `needs-owner`).
+- **Docs and merge.** The coordinator is the single writer of CHANGELOG,
+  CURRENT_PLAN and wiki and adds them to the PR right before merge. Merge needs
+  the owner's `agent:merge-approved` label on that PR (AGENTS hard rule 1),
+  green CI and the expected head SHA; one PR at a time.
+- **Automation.** An Orca automation "Warwrit pipeline tick" (created disabled)
+  runs one coordinator tick with the skill when a precheck finds issues in a
+  pipeline state.
+
+Sources: [Issue-Orchestrator](https://dev.to/brucebgordon/issue-orchestrator-a-software-engineering-control-plane-for-coding-agents-11ii)
+(orchestrator owns state; agent output is a claim),
+[Sortie](https://blog.serghei.pl/posts/how-i-taught-my-issue-tracker-to-dispatch-coding-agents/)
+(label-driven states reconciled each poll),
+[OpenCode issue workflow](https://gist.github.com/ppries/f07fd6316bbd45807dd7a1896555b05b)
+(plan → review → implement → review with convergence limits),
+[Addy Osmani, The Code Agent Orchestra](https://addyosmani.com/blog/code-agent-orchestra/)
+(verification is the bottleneck),
+[Augment: open-source orchestrators](https://www.augmentcode.com/tools/open-source-agent-orchestrators)
+(automated merge-conflict resolution mostly fails → serial merges), Orca
+[orchestration](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/cli/orchestration.mdx)
+and [automations](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/cli/automations.mdx).
+
+**First attempt, 2026-10-18 — failures retained.** Five Codex workers for epic
+#217 wave 1 did not start: the Codex CLI 0.146 update prompt blocked Orca
+readiness; `terminal send --interrupt` suspended a Codex process that then held
+`~/.codex/logs_2.sqlite` and blocked every other Codex; prompts pasted into
+non-ready terminals reached zsh (interrupted, no command ran, worktrees clean);
+the Claude Code auto-mode classifier refused coordinator-launched Codex with
+approvals/sandbox bypass, and a sandboxed Codex still asked for approvals.
+Organization MDM policy forbids Codex `never` approvals and full access, so
+Orca's YOLO launch flag is unusable; workers run sandboxed (`workspace-write`,
+`on-request` with the owner's `auto_review`) with the repository `.git`, pnpm
+store and Playwright cache writable via `.codex/config.toml`. Codex 0.163 is on
+PATH since 2026-10-18 (`~/.local/bin/codex` → Node 24.20 install). Prerequisites
+for the next wave: Orca Settings → Agents with YOLO off for Codex, Orca's own
+launcher (`worker-start --agent codex`) as the only launch path. Run `run_6c8d2ba11d09` tasks are blocked
+and superseded.
+
+**Headless workers — 2026-10-18 (supersedes the TUI launch path above).**
+Orca-launched interactive Codex lost the terminal foreground (`node codex`
+in its own process group, TPGID = zsh) and stopped on tty input, which also
+kept the Codex log DB locked. Workers now run `codex exec --approve-for-me`
+(workspace-write sandbox, approvals by automatic review — allowed by the MDM
+policy) via [`scripts/orca-start-worker.sh`](../../scripts/orca-start-worker.sh)
+and [`scripts/orca-codex-worker.sh`](../../scripts/orca-codex-worker.sh): a plain
+Orca terminal, a non-injected Dispatch, a brief file, a JSON-schema result and
+a `worker_done` sent by the wrapper. The coordinator is the same headless Codex
+run by [`scripts/orca-pipeline-tick.sh`](../../scripts/orca-pipeline-tick.sh)
+(one tick, lock, self-healing Run/mailbox; `--loop N` repeats in a visible Orca
+terminal). The epic's slices are in
+[`slices/epic-217.json`](../../.agents/skills/warwrit-orca/slices/epic-217.json).
+A launchd schedule was refused by the Claude Code safety classifier and is not
+used; the Orca automation stays disabled because it launches a TUI.
+
+Smoke evidence 2026-10-18 (run `run_e48b73b5c4eb`): fresh Orca worktree from
+the branch ran `orca.yaml` setup (ports 23447/25447, package builds); headless
+worker typechecked web and committed `b5d6c03` into the shared `.git` from the
+sandbox, `worker_done` succeeded reached the mailbox. A capability probe from
+the sandbox ran `orca status`, `orca orchestration task-list`, `gh pr list`,
+`gh issue view` and `git push --dry-run` with exit 0. First attempt failed on
+`--approve-for-me` + `--sandbox` (mutually exclusive) and was fixed.
+
+Checks 2026-10-18: `orca-validate.sh` on this branch PASS (rebased, clean,
+packages, typecheck, format; a formatting failure was caught first);
+`vitest related` and eslint invocations PASS on a sample file; state script
+rejects unknown states. End-to-end pipeline run: NOT_RUN.
+
 ## Loading and host limits
 
 [Official Codex documentation](https://developers.openai.com/codex/multi-agent)
@@ -107,3 +295,107 @@ Before adding concurrency or roles, use [the harness evaluation](HARNESS_EVAL.md
 with the same acceptance, model and base: correctness, conflicts, parent rework,
 wall time and actual token/cost telemetry. Use `NOT_MEASURED` for missing metrics.
 Reject a faster run with broken scope or missing proof.
+
+## Studio operating model — 2026-10-19
+
+Owner, 2026-10-19: «Да, продолжай работать автономно, ты — директор студии и
+отвечаешь за качество продукта». This section turns the Orca v2 code pipeline
+into a studio. It adds no new engine: cells are lanes and briefs on the same
+pipeline, and the owner merge gate stays.
+
+### Decision rights
+
+| Decision                                                           | Who decides                     | How it is recorded                        |
+| ------------------------------------------------------------------ | ------------------------------- | ----------------------------------------- |
+| Deploy, paid services, external messages; merge policy             | Owner                           | `agent:merge-approved` / explicit message |
+| New canon: factions, faith, magic, history, rulers, era name       | Owner                           | `## Owner decision` on the epic or wiki   |
+| Which mechanic or feature comes next; slice order                  | Studio director                 | slice plan + CURRENT_PLAN entry           |
+| Mechanic details inside an owner-chosen direction (rules, numbers) | Studio director, owner may veto | owning wiki page, «director decision»     |
+| Art and text details inside approved style, lore and references    | Director; critics must ACCEPT   | provenance / text critic record           |
+| Code structure, tests, tooling inside AGENTS limits                | Builder; evaluator must ACCEPT  | PR                                        |
+
+The owner gets one daily digest on the active epic: merged PRs with playable
+proof, open PRs, and at most three owner
+questions, each with a recommended answer.
+
+### Cells
+
+| Cell          | Lane in the slice plan | Writer                     | Gate                                                                                |
+| ------------- | ---------------------- | -------------------------- | ----------------------------------------------------------------------------------- |
+| Production    | —                      | Director                   | Board in CURRENT_PLAN top entry; daily digest                                       |
+| Game design   | — (contract input)     | Director → contract writer | Contract cites the owning [mechanics page](../wiki/mechanics/index.md)              |
+| Engineering   | `core`, `web`          | One builder per lane       | `orca-validate.sh`, evaluator plays the journey                                     |
+| Art           | `art`                  | One art builder            | [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md) loop, visual critic ACCEPT |
+| Narrative     | `text`                 | One text builder           | Text critic ACCEPT ([TEXT_CRITIQUE](TEXT_CRITIQUE.md))                              |
+| QA / playtest | — (read-only)          | Evaluator, playtest agent  | Regression journeys; bugs become issues, not chat                                   |
+
+Art and text lanes write disjoint paths (`assets/art/**`, `apps/web/src/i18n/**`)
+and may run beside `core` and `web` without raising the five-worker ceiling.
+
+### Quality bar the director enforces
+
+- Docs must match code. A mechanic page states what the current ruleset does,
+  with links to the source; a proposal that differs is history, not status.
+  First reconciliation 2026-10-19: zone of control, morale/flight/surrender,
+  telegraphed intent and height/mud/fire were already in S4 (PR157) while the
+  mechanics wiki still called them candidates.
+- Every slice ends in a played journey; screenshots are evidence, not the claim.
+- After each wave a five-line retro on the epic: lead time per slice, rework
+  rounds, critic first-pass ACCEPT rate, what changed in a skill or brief.
+
+### Order of work
+
+1. Prove the pipeline: merged PRs with playable proof per day on #217.
+2. Next core slice: [melee always connects](../work-packages/M1-MELEE-CONNECT.md),
+   owner-decided 2026-10-07 and still not implemented.
+3. Art lane with the region-compositing technique proven on the
+   [Porechye sheet](../wiki/world/map.md#крупный-план-поречья-через-codex--2026-10-09).
+4. QA hooks (`render_game_to_text`, `advanceTime`) for regression journeys with
+   the installed [develop-web-game](GAMEDEV_SKILLS.md) skill.
+5. Retro and metrics after each wave.
+
+## Workflow v3 — contract first, one issue per PR, merge on gates — 2026-10-19
+
+Owner, 2026-10-19: «Я уже сформировал план и идеи — зачем мне верифицировать
+каждый pr? На это есть тесты и агент — ревьюер», «Давай уменьшать срезы —
+один issue — один pr», «надо сначала создавать общий контракт, идею, потом
+параллелить». This is a mission-level merge permission for pipeline PRs
+(AGENTS hard rule 1) and supersedes the owner-label merge gate above.
+
+**Why v2 did not deliver** (about 36 hours, #217): no product PR merged; the one
+green PR (#229, 48 files) waited hours for the owner label; the desk slice went
+through four REWORK rounds because the art-grade visual critic required
+close-view and equal-height proofs for a UI change; slices bundled several
+issues because the audit issues all edit the same large files and there was no
+shared contract, so file ownership forced grouping and long `after` chains
+behind one core slice; six PRs went to pipeline infrastructure.
+
+**v3** ([warwrit-orca](../../.agents/skills/warwrit-orca/SKILL.md)):
+
+- **Merge on gates:** CI, `orca-validate.sh` and the tier verdicts for the
+  gated code head (later commits only evidence, CHANGELOG/CURRENT_PLAN or a
+  merge of origin/main); the coordinator merges PRs it opened for slices and epic
+  contracts; a CI fix goes back through review; `agent:blocked` on the PR or a
+  linked issue, or an owner decision, stops a PR. Infrastructure PRs outside
+  slices keep the owner gate (`agent:merge-approved`).
+- **Tiers:** D docs/tests → reviewer; L logic → reviewer + evaluator plays it;
+  U UI → evaluator judges the issue's visual criteria; V art/scene → plus the
+  full visual critic. Art proofs never block D/L/U.
+- **One issue = one slice = one PR**, about 300 changed lines without tests.
+- **Epic contract first:** one writer lands shared types, optional protocol
+  fields, stubs, seams and a task list with `[P]`/`after`; then each issue runs
+  as its own slice in parallel up to the lane limits.
+- **Reports:** state changes only, plus one daily digest.
+
+Sources: GitHub [Spec Kit](https://github.com/github/spec-kit/blob/main/spec-driven.md)
+(constitution → specify → plan → tasks with `[P]` → implement → converge);
+[BMAD method](https://dev.to/bspann/bmad-method-ai-driven-agile-development-that-actually-works-part-1-core-framework-36n1)
+(architect shards the plan into self-contained story files; one story at a
+time; adversarial QA review; fresh context per workflow);
+[Anthropic multi-agent research system](https://simonwillison.net/2025/Jun/14/multi-agent-research-system/)
+(each worker needs objective, output format, tools and clear boundaries);
+[parallel Claude Code agents](https://www.aakashx.com/blog/parallel-claude-code-agents/)
+and [Codex multi-agent coordination](https://freeacademy.ai/lessons/codex-multi-agent-coordination)
+(define shared contracts before parallel work; stubs; merge in dependency
+order); [stacked PRs for agents](https://zylos.ai/research/2026-05-21-stacked-prs-ai-agent-collaboration/)
+(small PRs under about 200 lines, sequence tasks that share files).

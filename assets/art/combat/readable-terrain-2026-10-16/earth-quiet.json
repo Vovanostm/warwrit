@@ -1,0 +1,11 @@
+{
+  "id": "combat-readable-earth-quiet",
+  "prompt": "Use case: precise-object-edit. Edit the supplied earth-worn ink ground texture into a QUIET MICRODETAIL layer for Warwrit. Preserve its original muted grey-brown/umber wash and genuinely drawn black ink outlines. REMOVE ALL wheel tracks, ruts, long grooves, roots, plants, cracks, paving lanes, big stones and recognizable clusters. Replace them with EVEN compacted fine soil, individual tiny irregular pebbles and short broken ink scuffs, widely and irregularly spaced. No feature larger than2percent of canvas width.80percent quiet bare earth. No diagonal composition, no paths, no stripes, no central focus, no high contrast large clusters, no photographic noise. It must be suitable as a seamlessly repeating fine detail texture beneath a separately authored unique yard composition, without any recognizable repeated motif. Overhead flat diffuse light from upper-left, same ink/flat-wash family and palette, fullbleed square opaque image. No characters, buildings, symbols, words, borders, interface or hexagons. Draw small clear ink marks, do not blur/smooth the drawing.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17",
+  "transparent_background": false,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-c866f2fc-da93-4442-8910-7a9625f6a372.png",
+  "references": ["assets/art/combat/readable-terrain-2026-10-16/earth-worn.png"],
+  "status_at_generation": "Local candidate; independent integrated acceptance pending."
+}

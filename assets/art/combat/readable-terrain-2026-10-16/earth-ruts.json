@@ -1,0 +1,11 @@
+{
+  "id": "combat-readable-earth-ruts",
+  "prompt": "Produce one NEW reusable square ground artwork for Warwrit, using the attached ruined mill and fighter ONLY as style/material references. Exact family: hand-drawn irregular black ink contours, directional hatch marks, flat muted slate/umber wash, grounded serious dark fantasy. Draw a 6 by 6 metre patch of old mill-yard EARTH seen straight overhead for projection by the game engine. This must be readable structured ground, NOT cracked rock, NOT a carpet of slabs, NOT a brown noise texture. About 75 percent compacted quiet earth, two broken shallow wheel ruts running loosely diagonally across it, a few small irregular embedded cobbles in narrow fragments, scattered sparse dry ochre roots/reeds along parts of the ruts. Few dark soft mud hollows; dry ground is dominant. Vary open areas and dense marks naturally. Each rut/cobble/root has confident black ink outline and short hatching, matching the detailed mill courtyard. Natural weathered materials, not photo or smooth CGI. Flat even diffuse upper-left lighting; no cast shadows from tall objects. Full bleed, NO border, NO hexagons, NO building, wheel, trees, symbols, text, people, horizon or UI. Seamless edges, irregular unobtrusive repetition. No alpha. Do not include the attached people or architecture. The earlier cracked-slate texture was rejected for lacking ruts and looking uniform; this output must visibly contain several worn directional dirt ruts and quiet earth between them.",
+  "tool": "built-in image_gen.imagegen",
+  "model": "underlying identifier not exposed",
+  "date": "2026-10-17T08:30:47.702856+00:00",
+  "transparent_background": false,
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a14483-8b5f-7773-85d5-a792395955b8/exec-a4c24fd6-bbe8-41ca-a110-63fb17d7b4cf.png",
+  "references": ["assets/art/m1/style/unit-c-ink.png", "assets/art/m1/places/staraya-melnitsa.png"],
+  "status": "Integrated candidate; independent in-scene acceptance pending."
+}

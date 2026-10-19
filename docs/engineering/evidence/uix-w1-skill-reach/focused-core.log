@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /Users/vovanostm/orca/workspaces/warwrit/uix-w1-skill-reach
+
+
+ Test Files  1 passed (1)
+      Tests  22 passed (22)
+   Start at  17:09:42
+   Duration  269ms (transform 128ms, setup 0ms, import 152ms, tests 15ms, environment 0ms)
+

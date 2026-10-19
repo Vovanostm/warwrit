@@ -1,6 +1,492 @@
 # Warwrit current delivery plan
 
-**Autonomous M1 GitHub queue — 2026-10-17, TASKS PUBLISHED / NOT IMPLEMENTED:**
+**Authorized playable-fix mission — 2026-10-19, IMPLEMENTATION IN PROGRESS:**
+Owner requested “Implement, review, merge” for the assessed fix sequence.
+Verified remote main is `b568ee25b7529fa5abeeae85e45a41bc587124bb`:
+[PR239](https://github.com/Vovanostm/warwrit/pull/239) is MERGED; #162 is CLOSED
+following PR160 delivery. These facts supersede older pending/draft receipts below.
+The isolated overview (#227) and human-opponent preset (#228) slices are in progress;
+no acceptance or merge is claimed for them. Next comes coherent combat UI, then
+#164 → #165 → #166 with #163 HP, then one real contract/battle/payment/restart
+journey from #174/#177. One journey does not close full eight-contract M1 acceptance.
+Fist parameters and assisted retreat remain an explicit owner decision; dependent
+rule changes wait. Existing dirty prototype and other writers remain preserved.
+PR178 reconciles dated documentation only; scoped formatting/link/diff checks and
+independent review are required before its expected-head merge. No new gameplay,
+full gate or visual acceptance is claimed by this documentation update.
+Scoped formatting/diff/new relative targets PASS; five unchanged historical
+absolute evidence targets are missing. The merge hook initially lacked coverage;
+one inherited zero-AP route regression ran with coverage (1 PASS/15 SKIP) for
+that hook. This is not new player acceptance.
+[Current queue amendment](M1_PRODUCTION_PLAN.md#current-amendment--2026-10-19).
+
+**PR239 merge stage / #186 combined REWORK — 2026-10-19:**
+[PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`
+has successful exact-head clean-checkout CI39290710765; main `073a02b` is
+already included. Tier L reviewer1/evaluator1 ACCEPT for `f5803e5`, coordinator
+validate EXIT0/8of8,178PASS/47SKIP,auditPASS, and published independent playable
+proof are reused on unchanged code. Later commits contain evidence/shared
+records only. No blocking PR/issue labels or unresolved threads observed.
+This shared-record commit still needs its own CI and expected-head merge;
+NOT_MERGED at writing. #207 remains OPEN for numbered field captions,
+terminal inspection cards and inherited HUD/log clipping; [proof](evidence/uix-w1-names/README.md).
+Actor foundation `c60fd5e` now has both Tier V verdicts REWORK. Visual1 is
+BLOCKED on incomplete native125/layering/marker-reference/contrast proof and
+scores inherited overview scene integration1. Combined proof rework1 may
+proceed in the sole web lane, without speculative source edits or expanding
+into assigned readability/safe-area/terminal/tooltip work. Those findings are
+still unaccepted and must clear their integration gates; the split is no waiver.
+Refs186 only; actual enemy/frame closure remains #190. Other successor
+ownership/dependencies remain unchanged. New local full gate/playtest/deploy
+NOT_RUN; performance/balance NOT_MEASURED. This dated receipt supersedes the
+pending CI/live-critic statements below, not the retained consumer limits.
+
+**Names producer #207 — 2026-10-19, published PR239; CI pending:**
+`Vovanostm/uix-w1-names`: source `796fa52`, gated
+`f5803e5da321e6f71506e8488e612e75531943e9`; fresh reviewer1 and played
+evaluator1 ACCEPT for the amended server/protocol producer. Coordinator
+validate8/8 PASS,178PASS/47SKIP,auditPASS; later commits preserve gated source.
+Evaluator36 focusedPASS,72 fresh matched baseline/candidate captures across
+1366/1440/1920,100%/native125%,day/night; passive0POST, manual first death then
+UI autobattle opponent victory R10/rev171,54 accepted UI orders. Downloaded JSON
+alone reconstructs live names/status/outcome and matches baseline canonical
+state/events/count/RNG. Unauthorized export404/foreign Origin403. Evidence-only
+`a40d901` retains reports and28 JPEGs; [proof and limits](evidence/uix-w1-names/README.md).
+[PR239](https://github.com/Vovanostm/warwrit/pull/239) uses Refs #207; issue
+remains OPEN for visible field captions, terminal
+fighter inspection and inherited log/HUD clipping. Canonical replay/rules/RNG,
+mechanics/setup/wiki contracts unchanged; no full-issue or scene acceptance.
+#186 evaluator1 REWORK retains four proof gaps: native125/matched crowd,
+complete opaque-layering/input, measured contrast, manual/AP0/reconstruction.
+No new source defect established; collect the still-live visual critic before
+combined rework1, preserving one scene writer. Desk/outcome integration gates and
+successor dependencies remain. Today **3 merged PRs with playable proof**
+(#229,#237,#238), this tick0 merges; hosted full gate/merge pending, deployment
+NOT_RUN, numeric contrast/performance/balance/capacity NOT_MEASURED.
+This dated receipt supersedes only the pending independent names gate below.
+
+**Names and actor foundation — 2026-10-19, local independent-gate handoff:**
+Scene builder settled with normal commit `c60fd5e` and clean tracked tree;
+its static activation-owned ring/chevron/projected-name foundation refs #186,
+without closing enemy/frame proof owned by #190. Coordinator validation after
+settlement ran sequentially: names producer `796fa52` plus shared-record receipts
+EXIT0/8of8,178PASS/47SKIP,auditPASS; scene `c60fd5e` EXIT0/8of8,35PASS,auditPASS.
+This supersedes the queued/interrupted names validation below. Names now needs
+fresh Tier L source review and played evaluation; scene needs fresh Tier V
+played evaluation and absolute visual critique. Full desktop/native125 matrix,
+contrast and required opaque layering/input proof remain acceptance work.
+No independent ACCEPT, PR, publication or merge is claimed. #207/#186 remain
+OPEN; producer PRs must use Refs. Caption/terminal consumers, #187 contour and
+inherited safe-area/readability/tooltip/terminal findings keep assigned owners.
+Desk/outcome integration gates and successor dependencies remain unchanged.
+Today **3 merged PRs with playable proof** (#229,#237,#238); this tick0 merges,
+0 open gameplay PRs (5 total), no owner questions. Full game gate/deployment
+NOT_RUN; performance/balance NOT_MEASURED. Local reports and contracts remain
+under `.orca/uix-w1-names/` and sibling `.orca/uix-w1-scene/`; wiki behavior
+unchanged pending delivery. Coordinator records dispatches in the local checkpoint.
+
+**Names #207 — 2026-10-19, local producer; full-contract build FAILED:**
+Normal source commit `796fa52` preserves stable duplicate server labels and
+optional replay presentation metadata. Builder reports36 focusedPASS,
+178 relatedPASS/47SKIP, preliminary validate8/8 and a played default-mill
+R11/rev177 downloaded replay retaining all12 labels; independent gates pending.
+Fallback2 sequences visible field captions and terminal fighter inspection into
+`uix-w1-name-consumers` (Tier V, after names/range-outline/outcome), recorded in
+local `.orca/pipeline/slices-local.json`. Producer PR uses `Refs #207`, never
+Closes; #207 remains OPEN until consumer acceptance. Existing scene/outcome
+ownership remains unchanged. Native125% and full baseline matrix proof remain
+required. Coordinator validation was interrupted after six checks when the
+existing scene check reservation was discovered; related-tests/audit incomplete,
+no overall pass. Names stays implementing/queued for coordinator validate and
+fresh Tier L gates after scene settlement; current #186 builder remains live.
+Today **3 merged PRs with playable proof** (#229,#237,#238); this tick0 merges,
+0 open gameplay PRs (5 total), no owner questions. No deployment or new full
+suite. Runtime behavior wiki unchanged pending delivery; report and amended
+producer contract retained locally under `.orca/uix-w1-names/`.
+
+**PR238 producer merged — 2026-10-19; single-issue successors released:**
+[PR238](https://github.com/Vovanostm/warwrit/pull/238) MERGED `073a02b` at
+15:05 UTC, expected head `3377996`, CI39271231939 SUCCESS. Tier L reviewer1
+and played evaluator1 ACCEPT for `3ea21b0`; coordinator validate8/8 PASS,
+732PASS/47SKIP,auditPASS; later commits are evidence/shared records only.
+#187 stays OPEN for contour/legend/CVD/current-selection rendering. #207
+names may plan on merged main. Before its next start, split scene into #186
+actor foundation and sequential #187 range-outline consumer; retain historical
+plan/reviews and scene integration findings, with full #186 enemy-turn proof
+still playback-owned. Desk/outcome integrated REWORK remains pending.
+Today **3 merged PRs with playable proof** (#229,#237,#238); new main
+playtest/game gates/deploy NOT_RUN. This receipt is local on the successor
+branch and supersedes only the pending producer status below.
+[Proof and limits](evidence/uix-w1-skill-reach/README.md).
+
+**UIX-05a / #187 producer — 2026-10-19, published branch / local ACCEPT; PR/CI pending:**
+`Vovanostm/uix-w1-skill-reach`, gated `3ea21b0`: optional authoritative learned-skill
+geometry on the current controlled sprite-v3 activation; legacy omission and empty
+geometry supported. No rules/costs/RNG/replay/visual changes. Fresh Tier L reviewer1
+and played evaluator1 ACCEPT; coordinator validate EXIT0/8of8,732PASS/47SKIP,auditPASS.
+Evaluator69 focusedPASS, independent baseline/candidate1440×900 day/night overview
+and close, real move/end-turn, passive0POST, UI-autobattle victoryR9/rev163 and
+actual replay downloads/reconstruction. Coordinator15 baseline-saved streams match
+canonical states, complete events and accepted counts across schemas1/2/five rulesets.
+Hosted clean-checkout full gate pending; NOT_MERGED. #187 remains open for contour,
+legend/stroke/CVD/current-selection rendering and existing integrated scene REWORK.
+Scene/names wait for producer merge; desk/outcome retain assigned integration gaps.
+Today2 merged PRs with playable proof (#229,#237). No deployment; performance/balance
+NOT_MEASURED. [Proof and limits](evidence/uix-w1-skill-reach/README.md).
+
+**PR237 producer merged — 2026-10-19; skillReach contract next:**
+[PR237](https://github.com/Vovanostm/warwrit/pull/237) MERGED `0c4b98d`
+at13:28 UTC, expected head `ca28ebd`, CI39257227488 SUCCESS. Tier L
+reviewer/evaluator ACCEPT for `c055e9a`, integrated validation8/8 PASS;
+subsequent evidence/shared records/main integrations preserve gated source.
+Merged-tree diff empty; PR/issue have no blocking label or review thread.
+This supersedes the pending statuses below. #184 stays OPEN for scene
+bands/legend/CVD/legacy acceptance. The sole eligible new slice is the #187
+skillReach producer contract on merged main; no scene source writer starts yet.
+Desk/outcome retain integrated REWORK; names waits for skillReach. Today:
+**2 merged PRs with playable proof** (#229,#237). No new main playtest/game
+checks or deployment (NOT_RUN). [Proof](evidence/uix-w1-affordability/README.md).
+Receipt local on `Vovanostm/uix-w1-skill-reach`, for its later publication.
+
+**PR237 merge stage — 2026-10-19, published producer; NOT_MERGED:**
+Prior head `7c05b14` has successful CI39253806343. Normal integration
+`1b364d3` includes main `06b32bb` (PR236 plan changes), preserving both additive
+changelog sections. Apps/packages match gated `c055e9a`; Tier L reviewer1 and
+played evaluator1 ACCEPT remain applicable. Fresh coordinator validate EXIT0,
+8/8,709PASS/47SKIP,auditPASS. Shared-record update and exact-head CI precede
+expected-head merge under v3 mission permission; no blocking PR/issue labels
+or unresolved review threads observed. #184 remains open for bands/legend/CVD
+and legacy scene rendering. SkillReach waits for this merge; desk/outcome
+REWORK and the existing writer/dependency sequence remain. New playtest and
+deployment NOT_RUN. This dated entry supersedes earlier pending-CI statuses
+only for the prior head. [Proof](evidence/uix-w1-affordability/README.md).
+
+**UIX-03a / #184 producer — 2026-10-19, published / local ACCEPT:**
+`Vovanostm/uix-w1-affordability`, gated source `c055e9a`: optional server-owned
+post-path attack affordability, legacy omission accepted. Reviewer1 and played
+evaluator1 ACCEPT; 62 focused tests,29 live boundary cases,96 matched captures
+including native125%, real move/end-turn and UI-autobattle victory R10/rev182.
+Normal merge of main `f365f60` at `59af0ab` changes no gated apps/packages;
+additive CHANGELOG/CURRENT_PLAN conflicts retain both histories. Integrated
+coordinator validate EXIT0,8/8,709PASS/47SKIP,auditPASS. Fifteen finite
+baseline-saved replay streams compare equal across schemas1/2 and five rulesets;
+paired 10,000-battle stress outputs match (duration excluded),20 deterministic
+reruns/100 replay checks PASS. Hosted clean-checkout CI pending before merge. No full-game
+acceptance or deployment; performance/balance NOT_MEASURED. #184 remains open:
+its bands/legend/CVD/rendered legacy fallback belong to uix-w2-scene after#187.
+SkillReach waits for this producer merge; names follows both producers. Desk and
+outcome retain assigned integrated REWORK. Mission-level v3 tier gates govern
+this slice; historical per-PR owner-label statements below are superseded.
+[Proof and limits](evidence/uix-w1-affordability/README.md).
+
+**PR229 / UIX-01a — 2026-10-19, MERGED; successor contract local:**
+Owner `agent:merge-approved` and exact-head CI39243122114 SUCCESS allowed the
+expected-head merge of `2508eb6` to `1665527` at 11:36 UTC. Live PR/main
+readback confirms the merge; ordinary tree diff is empty and #180 is
+CLOSED / `agent:done`. Evaluator4 ACCEPT, prior validate8/8 and playable
+proof are reused explicitly; no new main playtest/game gates (NOT_RUN).
+The next eligible producer `uix-w1-affordability` (#184 subset) starts its
+read-only contract on this main; no bands/legend acceptance or #184 closure.
+Scene waits for skillReach after affordability; names waits for both producers.
+Desk#198 and outcome#209–211 retain integrated REWORK. Pending PR230/232/233
+remain inactive; local plan overrides remain authoritative until their merge.
+Metric today: **1 merged PR with playable proof**, 0 open gameplay PRs of #217.
+This dated receipt supersedes pending/live statuses below; recorded locally on
+`Vovanostm/uix-w1-affordability` for publication with its future PR.
+[Delivered proof](evidence/uix-w1-projection/README.md).
+
+**Autonomous studio — owner decision 2026-10-19:** «Да, продолжай — хочу,
+чтобы работа велась автономно — создавались issues, обновлялись, выполнялись,
+мержились — идея есть, ориентиры есть — теперь только этап полировки. Все
+важные решения должны быть на мне.» Scope: the studio director (Claude) and the
+Orca coordinator create, update, split and close issues and slices, and merge
+PRs — including infrastructure PRs — after CI green and a fresh reviewer
+ACCEPT for the gated head (coordinator slice PRs: tier gates of warwrit-orca).
+**Owner decides** (one `## Owner questions` comment with a recommended answer):
+new canon or lore; new mechanics or changes to accepted rules, balance targets
+or ruleset semantics beyond owner-chosen directions; priorities between epics
+and scope cuts; AGENTS.md changes; deployment, paid services, external
+messages. Phase: polish of the accepted idea and references.
+
+**Orca workflow v3 — 2026-10-19, owner merge permission (mission level):**
+owner: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
+ревьюер»; «один issue — один pr»; «сначала общий контракт, идею, потом
+параллелить». PRs the coordinator opens for slices and epic contracts merge when CI,
+`orca-validate.sh` and the tier gates pass for the merged head; `agent:merge-approved` is no longer required; `agent:blocked` stops a PR.
+Epic contract first for new epics. [Owning section](AGENT_TEAM.md#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19).
+
+**PR229 merge stage — 2026-10-19, local main integration; NOT_MERGED:**
+Live `agent:merge-approved` is present. Prior head `35c117e` has successful
+CI39196517767. Normal merge of `origin/main` `6f1fbae` preserves published
+history (no force-push); only additive CHANGELOG/CURRENT_PLAN conflicts were
+resolved. Production/test source is unchanged from the accepted candidate;
+evaluator4 ACCEPT and its played proof remain applicable. Coordinator
+validate on `128fcb0` PASS8/8 (702PASS/47SKIP, audit PASS). Publication
+and exact-head hosted CI remain pending before expected-head merge.
+Desk#198/outcome#209–211 remain REWORK awaiting scene/tooltip integration;
+scene and ready successors await merged dependencies. Pending PR230/232/233
+are not active contracts in this tick. [Proof](evidence/uix-w1-projection/README.md).
+
+**UIX-01a / #180 — 2026-10-19, published PR229 / local evaluation ACCEPT:**
+`Vovanostm/uix-w1-projection` at source candidate `fa7f516`; optional ordinary
+attack refusals share core admission, and malformed preview data is rejected
+at the client boundary. Independent eval3 ACCEPT resolves the final F3 proof:
+coordinator validator8/8, clean bootstrap833PASS/47SKIP/10kstress/14DB,
+paired unchanged stress and15 saved replay cases. Before/after day/night matrix
+at1366/1440/1920 and native Chrome125% completed; all-visible privacy scope only.
+[Proof, evaluator reports and screenshots](evidence/uix-w1-projection/README.md).
+[PR229](https://github.com/Vovanostm/warwrit/pull/229), CI/owner-approved merge
+pending; no gameplay/rules/balance/visual change claimed.
+#184 affordability, #187 skillReach/scene and #207 names remain sequenced
+successors; desk rework2 is live, outcome/scene await integration.
+
+**UIX-01a / #180 — CI correction 2026-10-19, published PR229 / local ACCEPT:**
+PR229's initial CI39192938216 failed on web-test imports of server source.
+Candidate `9c92995` uses a protocol-shaped fixture and preserves all eight
+regressions; production remains unchanged from `fa7f516`. Coordinator validation
+8/8,702PASS/47SKIP,audit PASS; independent eval4 ACCEPT,25 focused PASS,
+web typecheck/input-boundary and actual mill day/night inspection/end-turn PASS.
+Earlier full bootstrap/native125%/matrix/replay proof is reused on unchanged
+production, not rerun. Current-head hosted CI and owner merge label pending.
+Desk eval3 and visual3 remain live; successors still await merged dependencies.
+[Current proof](evidence/uix-w1-projection/README.md).
+
+**Studio director — 2026-10-19, PR pending owner merge label:** owner made the
+Claude session studio director with autonomy («ты — директор студии и
+отвечаешь за качество продукта»); merge stays behind `agent:merge-approved` (still applies to infrastructure PRs; v3 above covers coordinator slice and epic-contract PRs).
+Board: **now** — Orca v2 wave 1 on #217 (metric: merged PRs with playable proof
+per day); **next** — `core-melee-connect` (#225) on lane core after
+`uix-w1-names`; art lane via [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md);
+**later** — QA hooks for regression journeys, retro per wave. Director
+playtest 2026-10-19 filed #227 (battlefield overview) and #228 (human preset
+for morale/flight/surrender). Mechanics wiki
+reconciled with S4. [Owning section](AGENT_TEAM.md#studio-operating-model--2026-10-19).
+
+**Orca game-development workflow v2 — 2026-10-19, local/PR pending:**
+Day-one result of the pipeline below: no commit or PR in about 11 hours
+(plan-review rounds, audit discovered at commit, `needs-owner` stops; PR223
+MERGED bf0ce5b moved the audit before commits and fixed the sleeping loop). v2:
+contract instead of plan review, one builder per lane (`web`, `core`), fresh
+evaluator that plays the game plus visual critic, fallback ladder before the
+owner, metric = merged PRs with playable proof per day. `uix-w1-names` (#207)
+split from projection. Wave-1 state at switch: outcome in review; desk and
+projection `needs-owner` → resume under v2; scene planning; log waits.
+[Owning section](AGENT_TEAM.md#game-development-workflow-v2--2026-10-19).
+
+**Headless Orca pipeline — 2026-10-18, MERGED (PR221) / RUNNING:**
+PR220 MERGED e001c25. Org MDM policy forbids Codex bypass/never-approval;
+Orca TUI Codex loses the foreground. Workers and coordinator now run
+`codex exec --approve-for-me` in plain Orca terminals with non-injected
+Dispatches; smoke commit + worker_done + orca/gh/push probe PASS. Owner runs
+`orca-pipeline-tick.sh --loop 20`; tick 1 started 5 wave-1 planners, tick 2
+moved three slices to plan review and stopped two on slice-plan ownership gaps
+(fixed by ownership rules, branch `claude/orca-ownership-rules`).
+[Owning section](AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18).
+
+**Orca issue pipeline — 2026-10-18, MERGED (PR220, e001c25):**
+Owner: implement through Orca orchestration (plan, implement, review, test,
+docs, merge) with Codex workers. PR219 (Orca worktree setup) MERGED 0763bc4.
+Branch `claude/orca-issue-pipeline` adds the state machine skill, prompts,
+validate/state scripts and GitHub `agent:*` labels (created). First wave-1
+launch failed before any code change (Codex update prompt/lock, permission
+classifier); run_6c8d2ba11d09 blocked. Next: owner fixes Codex CLI/permissions,
+merge this PR, label wave 1 `agent:ready`, start the coordinator.
+[Owning section](AGENT_TEAM.md#issue-pipeline-in-orca--2026-10-18).
+
+**Orca parallel worktrees — 2026-10-18, MERGED (PR219, 0763bc4):**
+Owner asked to configure Orca for fast, correct parallel agent work. Branch
+`claude/orca-parallel-setup` adds orca.yaml hooks, .worktreeinclude, private
+combat-lab ports per worktree and the `warwrit-orca` coordinator skill
+(waves by file ownership, single writer per slice, coordinator owns shared
+records, ≤5 writers, gates one at a time). Repo registered in Orca with base
+origin/main. Setup/ports/archive PASS locally; Orca hooks and supervised run
+NOT_RUN until merge (needs owner permission).
+[Owning section](AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18).
+
+**Combat readability — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
+Owner-authorized [PR160](https://github.com/Vovanostm/warwrit/pull/160) MERGED.
+Reviewed head1bb92aaaae52a6ef78573471895ccd973aba1ced,
+merge/main94bfe2558ec7ad48a2b3e2b596796131c0caacae; ordinary tree diff empty.
+[Clean CI39051364869](https://github.com/Vovanostm/warwrit/actions/runs/39051364869)
+SUCCESS820unit/47SKIP/10kstress/20determinism/100replay/14DB/coverage/66fileaudit;
+8inherited findings excluded. Source reviews DONE. Full21image+2reference visual
+ACCEPT: game all2, close3/3/2/2/2/2/2, motionN/A/criticowninputNOT_RUN;
+later outline factors independently verified equivalent. Earlier REJECT/CI FAIL retained.
+Whole sharp portraits/figures,32×16px vitals4px below feet, spacing2.6/height.28,
+connected banks, ink materials/shared edited-generated terrain and navigation merged.
+Actual main stand5336/API3036 in clean battle-camera-pan/warwrit: day/night,
+Home/keys/drag0POST/rev4, move4→5/endturn6/2POST/actorhuman3→human6,
+12bar geometry/0pick mismatches PASS. Autobattle firstR5rev100 active,
+repeat resolvedR9rev163/0terminalHUD/hotkeyPOST; editor0layer→12active/R1/1layer.
+Clean reload0renderer errors/warnings (initial favicon404 only). Main listeners
+confirmed from main checkout;5344/3044 and primary dirty WIP preserved.
+Only Markdown in this receipt; game tests NOT_RUN for the closeout itself.
+No campaign write/deploy/paid service/fullM1/balance/FPS claim. Minor rut/fire
+repetition remains nonblocking polish. [Merged result](../wiki/battlefield-test-maps.md#поставка-pr160-в-main--2026-10-17).
+
+**Combat readability — 2026-10-17, HISTORICAL / AUTHORED MATERIAL AND NARROW BANK:**
+Correction after d185b71 REJECT: ink-yard-earth, authored plate material masks,
+connected0.78–0.88radius top/banks, physical field UV, true-alpha ruined-yard
+fringes outside canonical field and on existing blocked cells. Rules/centres/
+spacing2.6/height.28/grid/picks/feet and deliberate navigation preserved.
+Source review DONE; types/lint/content114/geometry5 PASS. Fresh20profiles/
+3maps/3desktop/day-night/dense/maxzoom/overlays/extremes/explicit0-1-2 PASS;
+12bars32×16gap4,0pick mismatches,0inspection/navigationPOST. Actual move12→13,
+36field/54queue readings match; terminalR4rev83/0HUD/hotkeyPOST; editor0layer→
+restart12active/R1/1layer PASS. Full21image+2reference absolute visual ACCEPT
+on published ee3103a: game all2, close3/3/2/2/2/2/2, motionN/A,
+criticowninputNOT_RUN. Clean reload0renderer errors/warnings. Normal66fileaudit
+PASS (8inherited excluded); CI39046615446 bootstrap/coverage PASS, qualityFAIL
+on tintUnitEdge cyclomatic6/CRAP42 with fresh coverage. Local equivalent boolean
+factor reviewed for all8states; types/lint/markers4 PASS. Visual behavior unchanged;
+new-head publication/CI/merge/main journey pending. Same draftPR160/maina934355;
+parent sole source/wiki integrator. Second CI39048861412 on73a4d40 FAIL at
+boundaryCRAP30 despite bootstrap/coverage PASS. Move common emphasized IDs
+once per refresh; independent source equivalence/lifecycle readback DONE.
+Types/lint/markers4/day-night-day1/12/1 outlines PASS. Fresh local coverage
+820PASS/47SKIP and explicitly main-based66file audit PASS (8inherited excluded);
+first default1fileaudit was insufficient and repeated with pinnedmain.
+New-head CI/merge pending. Native main remainsa934355. No fullM1/balance/FPS claim.
+[Owning result](../wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+
+**Combat readability — 2026-10-17, HISTORICAL d185b71 / FULL VISUAL REJECT:**
+[PR160](https://github.com/Vovanostm/warwrit/pull/160) remains draft and unmerged.
+Published head793ebd3 passed cleanCI39034184313:820unit/47skipped,10kstress,
+20determinism/100replay,14DB,coverage and57-file audit (8inherited excluded).
+Complete independent visual review REJECT: game2/2/1/1/2/2/1,
+close3/3/1/1/2/2/1. Ground repetition/place transition, faint night bodies,
+flat-looking heights and repeated small fires remain material findings on79.
+An interrupted prior pass was BLOCKED, not acceptance. Explicit archers on0/1/2
+and their bars/picks were captured and read back; layers remain visually behind
+opaque figures. Current local correction uses fixed-world-size paving/soil selected by a finite
+yard/path composition; a native1672×941 plate supplies broad palette only.
+Direct full-field stretching was rejected in author previews. Surface-normal
+lighting/height contours,512/128night edges and varied existing fires are integrated.
+Connected geometry, spacing2.6/height.28, picks/feet/rules/bounds are preserved.
+Two source findings (steep-bank exclusion/shared outline disposal) fixed;
+independent source readback DONE. Fresh maps/desktop/day-night/geometry/layers/
+inspection/navigation/extremes/explicit0-1-2 captures PASS. Types/lint PASS;
+actual move4→5/poolsR3rev55/terminalR8rev152/restart12 and shared-outline
+remove/readd/disposal probe PASS. Clean reload0renderer errors/warnings;
+content112 and16focused PASS (initial concurrent timeout, isolated repeat
+2.78s PASS without changed limits). Normal main-based61-file precommit audit
+PASS (8inherited excluded, no bypass). Full current visual review completed:
+all21images+2references, REJECT game2/2/1/2/2/2/1, close3/3/1/2/2/2/1;
+motionN/A, criticowninputNOT_RUN. Night improved to2; geometric paving,
+fine uniform soil, mill/field join and visually flat0/1/2 remain blockers.
+Claimed inspected-target dock occlusion is disputed: selected central beast
+is fully visible in max-zoom-day; lower occluded creatures are other units.
+Do not alter deliberate navigation from that unsupported claim.
+Repeated rendering/integration1 requires a technique change, then full re-review.
+Current-head CI/publication NOT_RUN; live PR head793ebd3, maina934355.
+Owner-authorized expected-head merge and main journey remain unexecuted.
+Parent owns source/wiki/PR160 integration; unrelated primary WIP preserved.
+[Owning result](../wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+
+**Combat readability — 2026-10-17, HISTORICAL16c2811 / CORRECTION REQUIRED:**
+Current game candidate16c2811 in codex/combat-readability, worktree
+combat-live-queue/warwrit, [PR160](https://github.com/Vovanostm/warwrit/pull/160).
+Main a934355/PR159 is integrated; primary dirty WIP preserved. Whole portraits,
+32×16px strips4px below feet, spacing2.6/.28 connected surface, shared generated
+terrain, authored yard/ink ruts and night correction are published. Source findings
+closed on the reviewed delta; types/lint/content105/main-based44-file audit and
+browser geometry/layers/navigation/extreme apron coverage PASS. Current complete
+16c2811 visual REJECT2/2/1/2/2/2/1: repeating ground/joins, place transition,
+close-ground softness; units/night/layers accepted in scope. Technique correction
+required; a narrow portrait pass cannot accept the full scene.
+[CI39019195821](https://github.com/Vovanostm/warwrit/actions/runs/39019195821)
+FAILED at quality audit:2newrenderer complexity findings; bootstrap/coverage
+passed. Local sampler normalization/types/lint/45fileaudit PASS, newCI pending.
+08c2800 CI39016754146 SUCCESS is historical; no current visual ACCEPT or merge. Owner explicitly authorized this mission's expected-head merge;
+remaining: current visual acceptance, successful final CI, merge and main journey.
+Local technique correction now adds3-source seamless ink earth and a zoom-dependent
+authored-yard fade; ordinary world sampling restored. Correct-checkout source
+readback DONE; types/lint/content107/main-based45file audit PASS. Reopened browser:
+shader/20profiles/3fields/desktop/day-night/12bar32×16gap4/0picks/4extremes/0navigationPOST
+PASS. Real move4→5;R3/rev55 all3pools/30field/57queue match; terminal repeat
+R8/rev152,0queue/dock/bars/POST; editor0→restart12/R1/1layer PASS. First attempt
+was closed-session NOT_RUN; current full visual review running, performance
+NOT_MEASURED. Local correction differs from published16c2811; publication pending.
+Wiki lead/index updated at owner request; dated history below is retained.
+[Current owner-facing state](../wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
+
+**Combat readability combined with current main — 2026-10-17, LOCAL / FINAL REVIEW:**
+PR160 now integrates main a934355/PR159. CleanCI39014594194 on b5a193c
+SUCCESS820/47SKIP/10kstress/14DB/41audit. Later extreme-bound source
+counterexample confirmed; reference-coordinate bounds correction is local,
+four extreme corner drags/apron coverage/0POST and23camera/types PASS;
+new-head CI pending. Full visual review in progress. Preserve fixed-optical-centre
+perspective/bounds and connected height surfaces; share spacing2.6/height.28
+across terrain/grid/picks/feet. Full HUD/vitals/sharp sprites remain integrated;
+field strips measured32×16px with4px gap at both perspective depths.
+New irregular material blending replaces hex-edged mud/fire patches.
+820coverage/47SKIPPED,27camera/geometry/types PASS; initial integration audit
+found dead inverse/duplicate export and stale coverage complexity, corrected;
+main-based52file audit PASS before final shader delta. Browser shader first
+failed on reserved GLSL word, fixed; repeat compiled with no errors.
+Fresh combined captures/independent reviews/current-head CI/merge pending.
+Owner explicitly authorized PR/review/merge for this mission.
+[Combined result](../wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+
+**Combat readability and reusable terrain — 2026-10-17, ACTIVE / ACCEPTANCE PENDING:**
+Parent owns one common integration/PR/review/authorized merge in
+codex/combat-readability, combat-live-queue/warwrit; primary dirty WIP preserved.
+Both authorized forks released writes: portrait4px inset and bar32×16CSSpx,
+exact4px foot gap, no arms/callouts. Narrow portrait source/visual ACCEPT;
+bar dense visual REJECT drove physical spacing2.6 replacing1.4. Canonical
+combat coordinates/rules unchanged; figure size retained. Actor action focus4.8,
+portrait/log focus, Home overview and activation follow now integrated locally.
+Current full source review found Home-focus, inactive-unit and pending-focus
+edge cases; corrected, current browser keyboard/navigation0POST and source
+readback DONE. Strict main-based audit34files PASS after bounded key-handler
+complexity correction; current29focused/types/lint/format PASS.
+Earlier terminalR8/rev151/editor layer lifecycle and actual pool agreement
+remain finite historical evidence. Full visual78e80c6 REJECT(2/2/1/2/1/2/1):
+box-like heights, grainy ground, tiny fire footprint. New ink earth/sloped
+banks/fire integrated564db69, draftPR160. Repeat critic BLOCKED/timebox with
+residual terrain findings; actual backdrop-off probe found culled bank faces,
+winding corrected. Two-scale texture mix and exact boundary-outline stamping
+now local; source readback DONE, full815coverage/types/lint PASS. InitialCI
+bootstrapPASS/coverage512timeoutFAIL; no limit changes. Current absolute review
+on6a63481 REJECT2/2/1/1/2/2/1; its cleanCI39006720822 SUCCESS.
+Current local correction: unit-only full-resolution sampling, clearer night
+figures, irregular feathered field margin and varied fire placements. Current
+source readback DONE; geometry/types/lint/main-based40file audit PASS. Full
+absolute re-review/newCI/merge pending. No deployment or fullM1 claim.
+[Current engineering correction](../wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
+Latest c50ba37 full visual REJECT2/2/2/1/2/2/1: native sharpness accepted,
+overview/night/composition/fire repetition remain blockers. Local technique
+correction frames deployed forces, preserves fixed mill scale, switches unit
+sampling/night treatment by projected size, and uses3original fire artworks.
+Source readback DONE, framing5/content104/types/lint/main-based44audit PASS;
+full fresh image packet under forces-framing-20261017 now in absolute critique.
+Current-head CI/publication/merge pending. Owner merge authorization covers
+this mission/PR160; auto-merge/deployment remain unauthorized.
+The historical activation follows:
+
+Owner rejects current sprite softness, indistinct cell materials, cramped grid
+and clipped/misaligned initiative images despite previous finite acceptance.
+New outcome: larger readable cells, intact sharp figures/portraits, three
+health/armor/morale rows under top icons and battlefield feet; reusable finite
+terrain rendering driven by canonical map cells rather than mill photograph.
+Parent owns codex/combat-readability in combat-live-queue/warwrit basedmain5915ad0,
+renderer/terrain/field bars/docs. Isolated combat-status-hud writer owns upper
+portraits/vital presentation/CSS; two read-only investigators cover sampling
+and primary-source design research. Primary dirty WIP preserved.
+Rules/occupancy/AP/range/replay and Babylon choice unchanged. No new terrain
+mechanics or framework; existing plain/mud/fire/blocked/height only.
+First playable on3036/5336, then all20-profile and generated-map/dense day/night
+journeys, independent strict source+visual rejection loop. Implementation,
+current acceptance, final CI/publication/merge NOT_RUN at activation.
+Local implementation now integrates both isolated writers; all20 profiles/3maps
+launched through editor imports. First source and strict visual review REJECT;
+confirmed framing/prop/UV/footer defects corrected, dense bars/terrain/night
+technique revision in progress. Focused37/types/lint and809unit coverage PASS;
+first complexity audit FAIL, being corrected without gate changes. No current
+visual acceptance or publication/merge claimed.
+[Owning requirements](../wiki/battlefield-test-maps.md#читаемость-бойцов-и-единый-рендер-поля--2026-10-16).
+
+**Historical autonomous M1 GitHub queue — 2026-10-17, TASKS PUBLISHED / NOT IMPLEMENTED:**
 Owner requested audit and GitHub task creation, not dispatch or new code.
 [Parent161](https://github.com/Vovanostm/warwrit/issues/161) and16children162–177
 have pinned evidence, ownership/dependencies, executable DoD and mandatory wiki

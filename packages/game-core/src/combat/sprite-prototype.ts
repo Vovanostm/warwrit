@@ -18,6 +18,7 @@ import {
   type CombatUnitState,
   type Hex,
   type UnitId,
+  type CombatFailure,
 } from './types.js';
 
 // Warwrit-specific bounded multi-resource Dijkstra; algorithm shape informed by
@@ -299,6 +300,27 @@ export function previewCombatMovement(state: BattleState): readonly CombatMoveme
   return movementField(state);
 }
 
+/** Nominal post-path resource quote; survival, reaction RNG and targets are separate. */
+export function previewCombatMovementAttackAffordability(
+  state: BattleState,
+): readonly (CombatMovementPreview & { readonly attackAffordableAfter: boolean })[] {
+  if (!isPrototype(state) || state.status !== 'active' || state.activation === null) return [];
+  const actor = activeActor(state);
+  const weapon = weaponProfile(combatRules(state.rulesetId), actor.weaponId);
+  const capable = ordinaryCombatAttackFailure(state, actor) === undefined;
+  const actionPoints = state.activation.remainingActionPoints;
+  return previewCombatMovement(state).map((movement) => ({
+    ...movement,
+    attackAffordableAfter:
+      capable &&
+      combatAttackResourceFailure(
+        weapon,
+        actionPoints - movement.actionPointCost,
+        actor.stamina - movement.staminaCost,
+      ) === undefined,
+  }));
+}
+
 export function preparePrototypeMove(
   state: BattleState,
   destination: Hex,
@@ -356,6 +378,112 @@ export function prototypeLineOfSight(state: BattleState, from: Hex, to: Hex): bo
   return true;
 }
 
+export interface CombatWeaponAttackFailure extends CombatFailure {
+  readonly distance?: number;
+  readonly minimumRange?: number;
+  readonly maximumRange?: number;
+  readonly required?: { readonly actionPoints: number; readonly stamina: number };
+  readonly available?: { readonly actionPoints: number; readonly stamina: number };
+}
+
+export function ordinaryCombatAttackFailure(
+  state: BattleState,
+  actor: CombatUnitState,
+): CombatWeaponAttackFailure | undefined {
+  if (isCombatPanicked(state, actor))
+    return { code: 'PANICKED', message: 'Panicked units must escape or surrender' };
+  if (isSpriteS4Ruleset(state.rulesetId) && actor.threatProfile === 'mill-slam')
+    return { code: 'THREAT_NOT_AVAILABLE', message: 'Mill slam requires a visible preparation' };
+  return undefined;
+}
+
+/** Shared resource policy; movement quotes supply nominal post-path pools. */
+export function combatAttackResourceFailure(
+  weapon: WeaponProfile,
+  actionPoints: number,
+  stamina: number,
+): CombatWeaponAttackFailure | undefined {
+  const diagnostic = {
+    required: { actionPoints: weapon.actionPointCost, stamina: weapon.staminaCost },
+    available: { actionPoints, stamina },
+  };
+  if (weapon.actionPointCost > actionPoints)
+    return {
+      code: 'INSUFFICIENT_ACTION_POINTS',
+      message: 'Attack exceeds remaining action points',
+      ...diagnostic,
+    };
+  if (weapon.staminaCost > stamina)
+    return {
+      code: 'INSUFFICIENT_STAMINA',
+      message: 'Attack exceeds remaining stamina',
+      ...diagnostic,
+    };
+  return undefined;
+}
+
+/** Target admission in command order, including the prepared-threat override. */
+export function combatWeaponTargetFailure(
+  state: BattleState,
+  actor: CombatUnitState,
+  targetId: UnitId,
+  weapon: WeaponProfile,
+  threatExecution = false,
+): CombatWeaponAttackFailure | undefined {
+  const target = state.units.find(({ id }) => id === targetId);
+  if (!target) return { code: 'TARGET_NOT_FOUND', message: `Target ${targetId} does not exist` };
+  if (target.status !== 'active' || target.sideId === actor.sideId)
+    return { code: 'INVALID_TARGET', message: `Target ${targetId} is not an active enemy` };
+  if (isPrototype(state) && target.incorporeal === true)
+    return {
+      code: 'INVALID_TARGET',
+      message: `Target ${targetId} is incorporeal to ordinary weapons`,
+    };
+  const distance = hexDistance(actor.position, target.position);
+  if (distance < weapon.minimumRange || distance > weapon.maximumRange)
+    return {
+      code: 'OUT_OF_RANGE',
+      message: `Target ${targetId} is outside weapon range`,
+      distance,
+      minimumRange: weapon.minimumRange,
+      maximumRange: weapon.maximumRange,
+    };
+  if (
+    isPrototype(state) &&
+    (actor.weaponId === 'bow' || threatExecution) &&
+    !prototypeLineOfSight(state, actor.position, target.position)
+  )
+    return {
+      code: 'BLOCKED_LINE_OF_SIGHT',
+      message: `Target ${targetId} is blocked from bow line of sight`,
+    };
+  return combatAttackResourceFailure(
+    weapon,
+    state.activation!.remainingActionPoints,
+    actor.stamina,
+  );
+}
+
+/** Pure ordinary attack admission, without command identity or RNG. */
+export function queryCombatWeaponAttack(
+  state: BattleState,
+  targetId: UnitId,
+): CombatWeaponAttackFailure | undefined {
+  if (state.status !== 'active') return { code: 'BATTLE_TERMINAL', message: 'Battle is resolved' };
+  const actor = state.units.find(({ id }) => id === state.activation?.unitId);
+  if (!actor || actor.status !== 'active')
+    return { code: 'NOT_ACTIVE_UNIT', message: 'No active actor' };
+  return (
+    ordinaryCombatAttackFailure(state, actor) ??
+    combatWeaponTargetFailure(
+      state,
+      actor,
+      targetId,
+      weaponProfile(combatRules(state.rulesetId), actor.weaponId),
+    )
+  );
+}
+
 function canAffordAttack(
   state: BattleState,
   actor: CombatUnitState,
@@ -363,8 +491,8 @@ function canAffordAttack(
 ): boolean {
   return (
     state.activation !== null &&
-    weapon.actionPointCost <= state.activation.remainingActionPoints &&
-    weapon.staminaCost <= actor.stamina
+    combatAttackResourceFailure(weapon, state.activation.remainingActionPoints, actor.stamina) ===
+      undefined
   );
 }
 
@@ -434,16 +562,11 @@ export function previewCombatRangedArea(state: BattleState): readonly Hex[] {
 export function previewCombatAttacks(state: BattleState): readonly CombatAttackPreview[] {
   if (!isPrototype(state) || state.status !== 'active' || state.activation === null) return [];
   const actor = activeActor(state);
-  if (
-    isCombatPanicked(state, actor) ||
-    (isSpriteS4Ruleset(state.rulesetId) && actor.threatProfile === 'mill-slam')
-  )
-    return [];
   const rules = combatRules(state.rulesetId);
   const weapon = weaponProfile(rules, actor.weaponId);
   if (!canAffordAttack(state, actor, weapon)) return [];
   return validAttackTargets(state, actor)
-    .filter((target) => withinAttackRange(state, actor, target.position, weapon))
+    .filter((target) => queryCombatWeaponAttack(state, target.id) === undefined)
     .map((target) => {
       return {
         targetId: target.id,
