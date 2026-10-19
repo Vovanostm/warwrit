@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Prepare accepted unarmed and immobile company combat
+
+- 2026-10-20, branch `codex/company-profile-164`, local: owner authorized
+  implementation/review/merge and approved provisional fists plus independent
+  mobility restrictions. Append source amendment to CONTRACTS_M1_DERIVATIVE and
+  link it from combat/weapons wiki; reserve the cohesive #164 implementation in
+  CURRENT_PLAN. [Accepted source](docs/content/CONTRACTS_M1_DERIVATIVE.md#owner-decision--provisional-fists-and-independent-retreat-2026-10-20).
+  Condition-to-incapacitated mapping still pending; rescue/transport unresolved.
+  Source/docs only at this checkpoint; code/tests/browser/acceptance NOT_RUN.
+
 ### Stage names producer merge and retain actor-foundation REWORK
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-names`, published

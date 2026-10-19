@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**Company profile #164 — 2026-10-20, LOCAL IMPLEMENTATION START:**
+Owner approved provisional fists range1/damage6/AP2/stamina8/no penetration/no
+weapon-skill XP and no independent move/retreat for immobile members.
+Source amendment is in [contract provenance](../content/CONTRACTS_M1_DERIVATIVE.md#owner-decision--provisional-fists-and-independent-retreat-2026-10-20).
+Branch `codex/company-profile-164`, base `b568ee2`; one core writer owns the
+cohesive projection/setup/legality/binding/reload/practice/server/UI slice.
+#163 implementation waits for the shared projection/protocol ownership to clear.
+The critical-bleed incapacity classifier awaits a specific owner answer; source
+preparation found no authoritative existing mapping. Assisted transport remains
+unresolved. No new implementation/tests/browser/acceptance/merge claimed yet.
+
 **PR239 merge stage / #186 combined REWORK — 2026-10-19:**
 [PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`
 has successful exact-head clean-checkout CI39290710765; main `073a02b` is
