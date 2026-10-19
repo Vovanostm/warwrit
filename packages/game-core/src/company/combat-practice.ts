@@ -95,6 +95,11 @@ interface DerivedInteraction {
   };
 }
 
+type LeadershipAttack = Pick<
+  DerivedInteraction,
+  'sourceEventId' | 'characterId' | 'attackerId' | 'defenderId' | 'receiptOrdinal'
+>;
+
 export interface CombatPracticeStartSnapshot {
   readonly sourceId: string;
   readonly startReceiptOrdinal: number;
@@ -120,6 +125,14 @@ export function isOpposingEncounterSide(
   const unit = binding.setup.units.find((candidate) => candidate.id === unitId);
   requirePhysical(own.length > 0 && unit, 'INVALID_SOURCE');
   return !ownSideIds.has(unit.sideId);
+}
+
+interface QualifyingPracticeAttack {
+  readonly ordinal: number;
+  readonly tick: string;
+  readonly commandId: string;
+  readonly unitId: string;
+  readonly characterId: string;
 }
 
 /**
@@ -164,16 +177,32 @@ export function deriveCombatPracticeProfile(input: {
   )
     return { status: 'NOT_READY', residuals: Object.freeze(['PROFILE_INVALID']) };
 
+  const { actionStarts, qualifyingAttacks } = derivePracticeActions(journal, input.receiptTicks);
+  const leaderId = effectiveLeaderId(input.root.lifecycle);
+
+  const leadershipCycles = deriveLeadershipCycles(
+    qualifyingAttacks,
+    leaderId,
+    journal.binding.setup.battleId,
+  );
+
+  return {
+    status: 'READY',
+    profile: Object.freeze({
+      version: COMBAT_PRACTICE_PROFILE_VERSION,
+      profileId: input.profileId,
+      bindingId: journal.binding.bindingId,
+      challengeLevel: input.challengeLevel,
+      actionStarts: Object.freeze(actionStarts),
+      leadershipCycles: Object.freeze(leadershipCycles),
+    }),
+  };
+}
+
+function derivePracticeActions(journal: CombatReceiptJournal, receiptTicks: readonly string[]) {
   const participants = new Map(journal.binding.participants.map((entry) => [entry.unitId, entry]));
   const actionStarts: CombatPracticeProfile['actionStarts'][number][] = [];
-  const qualifyingAttacks: {
-    readonly ordinal: number;
-    readonly tick: string;
-    readonly commandId: string;
-    readonly unitId: string;
-    readonly characterId: string;
-  }[] = [];
-  const leaderId = effectiveLeaderId(input.root.lifecycle);
+  const qualifyingAttacks: QualifyingPracticeAttack[] = [];
 
   for (let ordinal = 1; ordinal < journal.receipts.length; ordinal += 1) {
     const receipt = journal.receipts[ordinal]!;
@@ -185,12 +214,12 @@ export function deriveCombatPracticeProfile(input: {
       actionStarts.push({
         activationId: command.activationId,
         unitId: command.actorId,
-        startedAt: input.receiptTicks[ordinal]!,
+        startedAt: receiptTicks[ordinal]!,
         startReceiptOrdinal: ordinal,
       });
       continue;
     }
-    if (command.type !== 'attack' || participant.projection.weapon.skillId === null) continue;
+    if (command.type !== 'attack') continue;
     const event = receipt.transition.events.find(
       (entry): entry is AttackResolvedEvent => entry.type === 'attack.resolved',
     );
@@ -200,21 +229,30 @@ export function deriveCombatPracticeProfile(input: {
       !isOpposingEncounterSide(journal.binding, journal.companyId, event.targetId)
     )
       continue;
-    actionStarts.push({
-      activationId: command.activationId,
-      unitId: command.actorId,
-      startedAt: input.receiptTicks[ordinal]!,
-      startReceiptOrdinal: ordinal,
-    });
     qualifyingAttacks.push({
       ordinal,
-      tick: input.receiptTicks[ordinal]!,
+      tick: receiptTicks[ordinal]!,
       commandId: command.commandId,
       unitId: command.actorId,
       characterId: participant.projection.characterId,
     });
+    if (participant.projection.weapon.skillId === null) continue;
+    actionStarts.push({
+      activationId: command.activationId,
+      unitId: command.actorId,
+      startedAt: receiptTicks[ordinal]!,
+      startReceiptOrdinal: ordinal,
+    });
   }
 
+  return { actionStarts, qualifyingAttacks };
+}
+
+function deriveLeadershipCycles(
+  qualifyingAttacks: QualifyingPracticeAttack[],
+  leaderId: string,
+  battleId: string,
+): CombatPracticeProfile['leadershipCycles'] {
   qualifyingAttacks.sort(
     (left, right) =>
       compareDecimalTicks(left.tick, right.tick) ||
@@ -232,7 +270,7 @@ export function deriveCombatPracticeProfile(input: {
       continue;
     }
     if (first.characterId === action.characterId || first.ordinal >= action.ordinal) continue;
-    const cycleId = `leadership-cycle-${journal.binding.setup.battleId}-${first.ordinal}-${action.ordinal}`;
+    const cycleId = `leadership-cycle-${battleId}-${first.ordinal}-${action.ordinal}`;
     leadershipCycles.push({
       cycleId,
       commanderId: leaderId,
@@ -245,17 +283,7 @@ export function deriveCombatPracticeProfile(input: {
     first = undefined;
   }
 
-  return {
-    status: 'READY',
-    profile: Object.freeze({
-      version: COMBAT_PRACTICE_PROFILE_VERSION,
-      profileId: input.profileId,
-      bindingId: journal.binding.bindingId,
-      challengeLevel: input.challengeLevel,
-      actionStarts: Object.freeze(actionStarts),
-      leadershipCycles: Object.freeze(leadershipCycles),
-    }),
-  };
+  return leadershipCycles;
 }
 
 function compareDecimalTicks(left: string, right: string): number {
@@ -313,6 +341,7 @@ export function deriveCombatPracticeReceipt(
     validatedJournal.binding.participants.map((participant) => [participant.unitId, participant]),
   );
   const interactions: DerivedInteraction[] = [];
+  const leadershipAttacks: LeadershipAttack[] = [];
   const usedStarts = new Set<string>();
   for (let ordinal = 1; ordinal <= receiptIndex; ordinal += 1) {
     const receipt = validatedJournal.receipts[ordinal]!;
@@ -343,6 +372,15 @@ export function deriveCombatPracticeReceipt(
       validatedJournal.companyId,
       event.targetId,
     );
+    if (attacker?.companyId === validatedJournal.companyId && externalDefender) {
+      leadershipAttacks.push({
+        sourceEventId,
+        characterId: attacker.projection.characterId,
+        attackerId: attacker.projection.characterId,
+        defenderId: defender?.projection.characterId ?? event.targetId,
+        receiptOrdinal: ordinal,
+      });
+    }
     if (
       attacker?.companyId === validatedJournal.companyId &&
       externalDefender &&
@@ -429,9 +467,8 @@ export function deriveCombatPracticeReceipt(
         (!index || cycles[index - 1]!.endReceiptOrdinal < cycle.startReceiptOrdinal),
       'INVALID_SOURCE',
     );
-    const threats = interactions.filter(
+    const threats = leadershipAttacks.filter(
       (entry) =>
-        entry.methodId === 'weapon-attack' &&
         entry.receiptOrdinal >= cycle.startReceiptOrdinal &&
         entry.receiptOrdinal <= cycle.endReceiptOrdinal &&
         entry.characterId !== leaderId &&
@@ -768,6 +805,7 @@ export function prepareCombatPracticeEffects(
     journal.binding.participants.map((participant) => [participant.unitId, participant]),
   );
   const interactions: DerivedInteraction[] = [];
+  const leadershipAttacks: LeadershipAttack[] = [];
   for (let receiptIndex = 1; receiptIndex < journal.receipts.length; receiptIndex += 1) {
     const receipt = journal.receipts[receiptIndex]!;
     const kernelCommand = receipt.kernelCommand;
@@ -796,6 +834,15 @@ export function prepareCombatPracticeEffects(
       journal.companyId,
       event.targetId,
     );
+    if (attacker?.companyId === journal.companyId && isExternalDefender) {
+      leadershipAttacks.push({
+        sourceEventId,
+        characterId: attacker.projection.characterId,
+        attackerId: attacker.projection.characterId,
+        defenderId: defender?.projection.characterId ?? event.targetId,
+        receiptOrdinal: receiptIndex,
+      });
+    }
     if (
       attacker?.companyId === journal.companyId &&
       isExternalDefender &&
@@ -878,9 +925,8 @@ export function prepareCombatPracticeEffects(
         (!index || cycles[index - 1]!.endReceiptOrdinal < cycle.startReceiptOrdinal),
       'INVALID_SOURCE',
     );
-    const cycleThreats = interactions.filter(
+    const cycleThreats = leadershipAttacks.filter(
       (entry) =>
-        entry.methodId === 'weapon-attack' &&
         entry.receiptOrdinal >= cycle.startReceiptOrdinal &&
         entry.receiptOrdinal <= cycle.endReceiptOrdinal &&
         entry.characterId !== leaderId &&

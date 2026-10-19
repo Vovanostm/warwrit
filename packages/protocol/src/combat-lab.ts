@@ -71,6 +71,7 @@ export type CombatLabSkillDefinition = Omit<CombatLabSkill, 'rank' | 'equipmentA
 };
 
 export interface CombatLabCatalog {
+  readonly presets?: readonly { readonly id: string; readonly battle: CombatLabBattleConfig }[];
   readonly skills?: readonly CombatLabSkillDefinition[];
   readonly profiles: readonly {
     readonly id: string;

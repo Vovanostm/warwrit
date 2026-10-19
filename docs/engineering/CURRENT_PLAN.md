@@ -1,5 +1,61 @@
 # Warwrit current delivery plan
 
+**Profile leadership correction implemented — 2026-10-20, LOCAL:**
+The sole writer repaired review-3's evidence loss in the profile and both practice
+consumers. A real mixed unarmed/armed subordinate regression failed before the
+fix and now passes, including leader credit, no fists weapon XP/start snapshot,
+aggregate readback and exact retry. All 28 relevant practice tests, core types,
+scoped lint/format/diff PASS. Parent owns the pending normal integration commit;
+independent review-4 is running. Broader focused coverage: 133 PASS, one existing
+mill-label reconstruction timeout (previous run PASS); failed check retained.
+Final source audit PASS without suppression or changed thresholds. Earlier
+integrated timeouts, actual UI-control proof and critical-bleed policy remain open.
+
+**Profile leadership evidence — 2026-10-20, REWORK:**
+Independent review-3 traced a concrete coupling: the fists/no-weapon-XP guard
+also removes unarmed subordinate attacks from leadership cycles, while both
+consumers derive cycle evidence only from weapon credits. Existing command-cycle
+admission has no weapon-skill prerequisite. One core writer now corrects profile,
+receipt and effects evidence together and adds a mixed-subordinate regression.
+The parent decomposition passed 133 focused tests, core types and scoped lint;
+that result does not waive the newly identified behavior defect. Normal merge
+commit and persistent playable evaluation remain pending. Owner critical-bleed
+classification and rescue/transport gaps remain separate and unresolved.
+
+**Profile practice correction — 2026-10-20, LOCAL / NOT ACCEPTED:**
+The merge audit's exact introduced finding was practice-profile complexity
+(CRAP31.1), not only imported preset coverage as initially suspected. Its existing
+leadership-cycle sorting/pairing is now a private helper with unchanged behavior.
+117 focused tests, core typecheck and scoped lint/format PASS. Independent source
+review and normal commit audit pending; the earlier integrated three-timeout
+failure remains unresolved. This is the only profile source change during the
+current main integration, correcting the earlier unchanged-source statement.
+
+**Profile integrated coverage — 2026-10-20, FAIL / NOT ACCEPTED:**
+Merged working tree against main `eb98dd2`: related coverage with one worker
+completed with 771 PASS, 48 SKIP and three 5-second timeouts (generated combat
+properties, exact world movement and authored free movement). The prior legacy
+preview/setup failures did not recur. No threshold or expectation changed;
+coverage was retained even on failure to feed the normal commit audit.
+Initial merge-commit audits failed on imported preset coverage; no hook bypass.
+Normal merge audit and real persistent/browser evaluation remain pending.
+
+**Profile compatibility correction committed — 2026-10-20, LOCAL / NOT ACCEPTED:**
+`ba9b1462330668a888d1e1655db6c11f54b590ee` contains the five-path source
+correction reviewed as ACCEPT in review-2; the committed delta matches that review.
+Normal commit audit PASS. The earlier failed full gate and two focused timeouts
+remain unresolved; fresh integrated and playable checks are pending. Main
+`eb98dd2` is being integrated, preserving both dated histories and the preset
+producer. No profile source changed during this integration. Critical-bleed
+attack/defence still awaits an owner decision; rescue/transport remains undefined.
+
+**Human preset delivery readback — 2026-10-20, MERGED:**
+[PR240](https://github.com/Vovanostm/warwrit/pull/240) merged as
+`eb98dd2180a98fa6a544f03327585df3abd282b9`; PR CI39334291071 and main
+CI39335721903 SUCCESS. Gated source9534bf7 passed independent source/playable
+review and integrated validation8/8. #228 remains OPEN for the picker.
+This corrects the older pending publication receipts below.
+
 **Profile correction — 2026-10-20, LOCAL / NOT ACCEPTED:**
 Integrated gate at `74e1da1`: six failures, 766 PASS, 48 SKIP; four timeouts,
 legacy capability preview crash and newly supported ruleset assertion. Audit
@@ -36,6 +92,29 @@ move/retreat. Rescue/assisted transport remains unresolved. #164 stays OPEN;
 Documentation-only main1b1e088 integrated, keeping both dated histories. PR178
 is MERGED, PR CI39324349645/main CI39326177324 SUCCESS; old pending receipts
 below are historical. No publication or merge of #164 is claimed here.
+
+**Human preset producer — 2026-10-20, LOCAL ACCEPT / publication pending:**
+`codex/human-battle-228`, gated source `9534bf7`: detached catalog presets,
+unchanged mill default, six allies and five human opponents with current S4 rules.
+Independent source reviewer and played evaluator ACCEPT; coordinator validate8/8
+before main integration;17focused tests PASS. Two actual UI seeds produced2/1
+surrenders; a manual withdrawal produced a reaction;3UI downloads reconstruct
+state/RNG/events and12/56/1live checkpoints. Default reset/reload/restart retained.
+[Proof and exact limits](evidence/core-preset-deserters/README.md). Main integration
+changed documentation only; integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending. #228 stays
+OPEN for the sequenced catalog picker. #227 full-field geometry and controls pass,
+but evaluator2/visual1 reject unreadable overview figures and native125 HUD
+collisions; sole web writer now corrects overview presentation and layout.
+Profile#164 is in implementation; critical-bleed attack/defence classification
+still awaits the owner. Rescue/assisted transport remains explicitly unresolved.
+This receipt supersedes preparation-only statements below, not their history.
+
+**PR178 delivery readback — 2026-10-20, MERGED:**
+[PR178](https://github.com/Vovanostm/warwrit/pull/178) merged as
+`1b1e088b0c45c2a052c976448f1d7ebb869b61cb`; exact-head CI39324349645 and
+main CI39326177324 SUCCESS. Independent docs review ACCEPT for95069eb and
+2621a2a; validate5/5 and53new links/anchors PASS. This corrects earlier pending
+publication/CI receipts. No gameplay acceptance is inferred from this docs merge.
 
 **Profile #164 owner decision — 2026-10-20, APPROVED / NOT IMPLEMENTED:**
 Owner accepted provisional fists: range1, damage6, cost2AP/8stamina, no armour
@@ -76,6 +155,15 @@ cohesive projection/setup/legality/binding/reload/practice/server/UI slice.
 The critical-bleed incapacity classifier awaits a specific owner answer; source
 preparation found no authoritative existing mapping. Assisted transport remains
 unresolved. No new implementation/tests/browser/acceptance/merge claimed yet.
+
+**Human battle preset — 2026-10-19, LOCAL / implementation starting:**
+Owner authorized implementation, review and merge of the fix sequence.
+`codex/human-battle-228` owns the #228 server catalog producer using existing
+human profiles and current S4 rules. The existing mill remains the default;
+editor selection follows the producer merge and release of the web lane.
+No future melee/bow rule change is required to demonstrate current human
+morale/escape/reactions. Source, gameplay and independent acceptance NOT_RUN.
+Coordinator owns shared records; #227 camera is the independent web writer.
 
 **PR239 merge stage / #186 combined REWORK — 2026-10-19:**
 [PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`

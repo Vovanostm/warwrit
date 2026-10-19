@@ -9,6 +9,56 @@ requests.
 
 ## Unreleased
 
+### Preserve leadership evidence from real unarmed attacks
+
+- 2026-10-20, branch `codex/company-profile-164`, local: fix the confirmed
+  fists/leadership coupling in the practice profile and both receipt/effects
+  consumers. Retain verified opposing attack evidence independently of weapon
+  credit; keep all existing source/time/membership checks and exclude fists
+  from weapon XP and weapon start snapshots. One real mixed-subordinate
+  regression failed before and passed after the fix, including exact retry.
+  28 practice tests, core typecheck and scoped lint/format/diff PASS. Broader
+  focused coverage: 133 PASS, one existing mill-label timeout; final source
+  audit PASS. Independent review, normal commit and whole-profile playable
+  acceptance pending; no gate failure was waived.
+  [Owning behavior and remaining limits](docs/wiki/combat.md#company-profile-implementation--2026-10-20).
+
+### Record the fists and leadership evidence defect before delivery
+
+- 2026-10-20, branch `codex/company-profile-164`, local REWORK:
+  independent review found fists excluded from leadership evidence along with
+  weapon XP, contrary to the existing separate command-cycle admission rule.
+  Assign one cohesive correction across profile/receipt/effects in
+  `company/combat-practice.ts` and the existing public practice specs. The
+  earlier helper extraction passed 133 focused tests but is not acceptance of
+  this defect. Source repair, normal commit and playable proof remain pending.
+  [Current delivery status](docs/engineering/CURRENT_PLAN.md).
+
+### Separate leadership-cycle calculation from practice profile construction
+
+- 2026-10-20, branch `codex/company-profile-164`, local: combined coverage
+  exposed a new complexity finding in `deriveCombatPracticeProfile` after the
+  fists restriction. Move the existing sorting/pairing into a private helper,
+  preserving qualification, chronology and returned data. Ten relevant test
+  files: 117 PASS; game-core typecheck and scoped lint/format PASS. Independent
+  source review and normal commit audit pending. No new practice rule.
+  [Profile behavior and acceptance limits](docs/wiki/combat.md#company-profile-implementation--2026-10-20).
+
+### Integrate the merged human preset with corrected company profiles
+
+- 2026-10-20, branch `codex/company-profile-164`, local: integrate main
+  `eb98dd2` after correction `ba9b146`; preserve both additive documentation
+  histories. The five-path compatibility correction matches independent
+  review-2 ACCEPT and normal commit audit PASS. Profile integrated/playable
+  acceptance remains pending; prior failures and owner-rule gaps stay explicit.
+  [Current delivery status](docs/engineering/CURRENT_PLAN.md).
+  Integrated related coverage: 771 PASS, 48 SKIP, three timeouts; gate FAIL.
+  Initial merge audit failed on imported preset coverage; combined coverage
+  refreshed without threshold changes or hook bypass. Final acceptance pending.
+- [PR240](https://github.com/Vovanostm/warwrit/pull/240) is MERGED at
+  `eb98dd2`, with PR CI39334291071 and main CI39335721903 SUCCESS.
+  This corrects older pending receipts; #228 remains OPEN for its picker.
+
 ### Keep company capability rules isolated from historical combat
 
 - 2026-10-20, branch `codex/company-profile-164`, local correction: integrated
@@ -40,6 +90,22 @@ requests.
   concurrent timeouts remain inconclusive. Critical-bleed attack/defence
   classification and rescue/transport remain explicit gaps; #164 not closed.
   CURRENT_PLAN, m1-spec and local playtest updated with this local status.
+
+### Add the human-opponent preset producer and playable evidence
+
+- 2026-10-20, branch `codex/human-battle-228`, local: implement #228 catalog
+  presets in server `custom-battle.ts` and optional protocol metadata. The new
+  human band demonstrates existing morale/surrender/withdrawal behavior;
+  defaults, rules, AI and replay formats remain unchanged. Independent source
+  review and played evaluation ACCEPT9534bf7;17focused tests and prior
+  coordinator validate8/8PASS. Two UI seeds surrendered2/1 opponents, manual
+  withdrawal reaction and3downloaded replay checks passed; default reset and
+  restoration passed. [Evidence and remaining picker](docs/engineering/evidence/core-preset-deserters/README.md).
+  Integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending; no whole#228/scene acceptance.
+  Updated battlefield wiki and CURRENT_PLAN; no migrations or dependencies.
+- Dated correction: documentation PR178 is MERGED at1b1e088; PR CI39324349645
+  and main CI39326177324 SUCCESS. Earlier pending receipts remain historical.
+  #227 visual/playable REWORK and #164 classifier/rescue limits stay explicit.
 
 ### Record the approved bounded profile policy
 
@@ -76,6 +142,15 @@ requests.
   CURRENT_PLAN. [Accepted source](docs/content/CONTRACTS_M1_DERIVATIVE.md#owner-decision--provisional-fists-and-independent-retreat-2026-10-20).
   Condition-to-incapacitated mapping still pending; rescue/transport unresolved.
   Source/docs only at this checkpoint; code/tests/browser/acceptance NOT_RUN.
+
+### Prepare a human-opponent battle preset
+
+- 2026-10-19, branch `codex/human-battle-228`, local: owner requested
+  implementation, review and merge of the playable fix sequence. The #228
+  contract reuses current human profiles and S4 morale/escape/reaction rules,
+  preserves the mill default and adds compatible server catalog presets before
+  the sequential editor picker. Implementation and gameplay checks NOT_RUN.
+  Parent coordinates shared records; no rule or lore change is authorized here.
 
 ### Stage names producer merge and retain actor-foundation REWORK
 
