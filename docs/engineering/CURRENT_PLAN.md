@@ -1,5 +1,28 @@
 # Warwrit current delivery plan
 
+**Names producer #207 — 2026-10-19, local Tier L ACCEPT; publication/CI next:**
+`Vovanostm/uix-w1-names`: source `796fa52`, gated
+`f5803e5da321e6f71506e8488e612e75531943e9`; fresh reviewer1 and played
+evaluator1 ACCEPT for the amended server/protocol producer. Coordinator
+validate8/8 PASS,178PASS/47SKIP,auditPASS; later commits preserve gated source.
+Evaluator36 focusedPASS,72 fresh matched baseline/candidate captures across
+1366/1440/1920,100%/native125%,day/night; passive0POST, manual first death then
+UI autobattle opponent victory R10/rev171,54 accepted UI orders. Downloaded JSON
+alone reconstructs live names/status/outcome and matches baseline canonical
+state/events/count/RNG. Unauthorized export404/foreign Origin403. Evidence-only
+`a40d901` retains reports and28 JPEGs; [proof and limits](evidence/uix-w1-names/README.md).
+PR must use Refs #207; issue remains OPEN for visible field captions, terminal
+fighter inspection and inherited log/HUD clipping. Canonical replay/rules/RNG,
+mechanics/setup/wiki contracts unchanged; no full-issue or scene acceptance.
+#186 evaluator1 REWORK retains four proof gaps: native125/matched crowd,
+complete opaque-layering/input, measured contrast, manual/AP0/reconstruction.
+No new source defect established; collect the still-live visual critic before
+combined rework1, preserving one scene writer. Desk/outcome integration gates and
+successor dependencies remain. Today **3 merged PRs with playable proof**
+(#229,#237,#238), this tick0 merges; hosted full gate/merge pending, deployment
+NOT_RUN, numeric contrast/performance/balance/capacity NOT_MEASURED.
+This dated receipt supersedes only the pending independent names gate below.
+
 **Names and actor foundation — 2026-10-19, local independent-gate handoff:**
 Scene builder settled with normal commit `c60fd5e` and clean tracked tree;
 its static activation-owned ring/chevron/projected-name foundation refs #186,

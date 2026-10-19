@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Publish stable fighter-label and replay-presentation producer proof
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local producer
+  `796fa52`, publication/PR/CI pending, refs #207. Server/protocol retain detached
+  full-roster duplicate labels and optional replay presentation metadata; canonical
+  replay/history/RNG/rules and authorization unchanged. Tier L reviewer1 and
+  played evaluator1 ACCEPT for `f5803e5`; coordinator validate8/8 PASS,
+  178PASS/47SKIP,auditPASS. Evaluator36 focusedPASS,72 matched before/after
+  captures across three desktop sizes and genuine125%, day/night; real manual
+  first death then autobattle to R10/rev171 and downloaded-only reconstruction
+  match live/baseline canonical results. Evidence-only commit `a40d901` retains
+  reports and28 small JPEGs. [Proof and limits](docs/engineering/evidence/uix-w1-names/README.md).
+  #207 remains OPEN: field captions, terminal inspection and inherited HUD/log
+  clipping belong to sequenced consumer/layout owners. Actor foundation #186
+  evaluator1 REWORK: missing native125/matched crowd, full layering/input,
+  contrast and manual/AP0/reconstruction proof; no new source defect established.
+  Combined rework waits for its live visual critic; no concurrent source writer.
+  Updated CURRENT_PLAN; mechanics/setup/wiki contracts unchanged by this producer
+  receipt. Hosted full gate pending; new local full suite/deploy NOT_RUN,
+  numeric contrast/performance/balance/capacity NOT_MEASURED.
+
 ### Advance names and actor foundation to independent tier gates
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local
