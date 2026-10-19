@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Route names consumer gaps without claiming full issue acceptance
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local source
+  `796fa52`, refs [#207](https://github.com/Vovanostm/warwrit/issues/207):
+  server-owned duplicate labels and optional replay presentation metadata are
+  committed; full-contract builder outcome is FAILED, not acceptance.
+  Builder reports focused36PASS, related178PASS/47SKIP and validator8/8;
+  these are worker claims, not coordinator gates. Builder played the default
+  mill to R11/rev177 and reconstructed the downloaded replay with all12 labels.
+  Visible field captions and terminal fighter inspection are sequenced into
+  `uix-w1-name-consumers` (Tier V, after names/range-outline/outcome) in local
+  `.orca/pipeline/slices-local.json`; producer PR must use Refs, never Closes.
+  Native125% and the complete baseline matrix still need independent proof.
+  Coordinator validation was interrupted after six checks to respect the scene
+  worker's existing serial reservation; related-tests/audit did not complete,
+  so no validation pass is claimed. Fresh validate and Tier L review/evaluation
+  wait for scene settlement. No PR, merge, deployment or full-issue acceptance.
+  Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md); wiki behavior is
+  unchanged pending delivery. Local report: `.orca/uix-w1-names/report.md`.
+
 ### Record PR238 merge and release single-issue successors
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local receipt of

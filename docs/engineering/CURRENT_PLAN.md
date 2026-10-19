@@ -1,5 +1,24 @@
 # Warwrit current delivery plan
 
+**Names #207 — 2026-10-19, local producer; full-contract build FAILED:**
+Normal source commit `796fa52` preserves stable duplicate server labels and
+optional replay presentation metadata. Builder reports36 focusedPASS,
+178 relatedPASS/47SKIP, preliminary validate8/8 and a played default-mill
+R11/rev177 downloaded replay retaining all12 labels; independent gates pending.
+Fallback2 sequences visible field captions and terminal fighter inspection into
+`uix-w1-name-consumers` (Tier V, after names/range-outline/outcome), recorded in
+local `.orca/pipeline/slices-local.json`. Producer PR uses `Refs #207`, never
+Closes; #207 remains OPEN until consumer acceptance. Existing scene/outcome
+ownership remains unchanged. Native125% and full baseline matrix proof remain
+required. Coordinator validation was interrupted after six checks when the
+existing scene check reservation was discovered; related-tests/audit incomplete,
+no overall pass. Names stays implementing/queued for coordinator validate and
+fresh Tier L gates after scene settlement; current #186 builder remains live.
+Today **3 merged PRs with playable proof** (#229,#237,#238); this tick0 merges,
+0 open gameplay PRs (5 total), no owner questions. No deployment or new full
+suite. Runtime behavior wiki unchanged pending delivery; report and amended
+producer contract retained locally under `.orca/uix-w1-names/`.
+
 **PR238 producer merged — 2026-10-19; single-issue successors released:**
 [PR238](https://github.com/Vovanostm/warwrit/pull/238) MERGED `073a02b` at
 15:05 UTC, expected head `3377996`, CI39271231939 SUCCESS. Tier L reviewer1
