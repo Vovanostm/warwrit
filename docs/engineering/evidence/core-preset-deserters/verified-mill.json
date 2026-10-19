@@ -1,0 +1,79 @@
+{
+  "name": "mill",
+  "seed": 20261009,
+  "commands": 4,
+  "checkpoints": 1,
+  "finalLiveMatched": true,
+  "round": 1,
+  "revision": 4,
+  "status": "active",
+  "random": {
+    "algorithm": "xorshift32-v1",
+    "value": 20261009,
+    "draws": 0
+  },
+  "reactions": [],
+  "panic": [],
+  "roster": [
+    {
+      "id": "human-1",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "human-2",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "human-3",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "human-4",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "human-5",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "human-6",
+      "status": "active",
+      "morale": 100
+    },
+    {
+      "id": "opponent-1",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "opponent-2",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "opponent-3",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "opponent-4",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "opponent-5",
+      "status": "active",
+      "morale": 80
+    },
+    {
+      "id": "opponent-6",
+      "status": "active",
+      "morale": 80
+    }
+  ]
+}

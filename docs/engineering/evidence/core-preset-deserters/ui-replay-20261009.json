@@ -1,0 +1,4368 @@
+{
+  "schemaVersion": 1,
+  "setup": {
+    "schemaVersion": 1,
+    "rulesetId": "sprite-prototype-v3",
+    "battleId": "7f5ac7f4-74e2-4f8a-a829-cce1ac89ccfa",
+    "seed": 20261009,
+    "map": {
+      "hexes": [
+        {
+          "q": 0,
+          "r": 0
+        },
+        {
+          "q": 1,
+          "r": 0
+        },
+        {
+          "q": 2,
+          "r": 0
+        },
+        {
+          "q": 3,
+          "r": 0
+        },
+        {
+          "q": 4,
+          "r": 0
+        },
+        {
+          "q": 5,
+          "r": 0
+        },
+        {
+          "q": 6,
+          "r": 0
+        },
+        {
+          "q": 7,
+          "r": 0
+        },
+        {
+          "q": 8,
+          "r": 0
+        },
+        {
+          "q": 9,
+          "r": 0
+        },
+        {
+          "q": 10,
+          "r": 0
+        },
+        {
+          "q": 11,
+          "r": 0
+        },
+        {
+          "q": 12,
+          "r": 0
+        },
+        {
+          "q": 13,
+          "r": 0
+        },
+        {
+          "q": 14,
+          "r": 0
+        },
+        {
+          "q": 0,
+          "r": 1
+        },
+        {
+          "q": 1,
+          "r": 1
+        },
+        {
+          "q": 2,
+          "r": 1
+        },
+        {
+          "q": 3,
+          "r": 1
+        },
+        {
+          "q": 4,
+          "r": 1
+        },
+        {
+          "q": 5,
+          "r": 1
+        },
+        {
+          "q": 6,
+          "r": 1
+        },
+        {
+          "q": 7,
+          "r": 1
+        },
+        {
+          "q": 8,
+          "r": 1
+        },
+        {
+          "q": 9,
+          "r": 1
+        },
+        {
+          "q": 10,
+          "r": 1
+        },
+        {
+          "q": 11,
+          "r": 1
+        },
+        {
+          "q": 12,
+          "r": 1
+        },
+        {
+          "q": 13,
+          "r": 1
+        },
+        {
+          "q": 14,
+          "r": 1
+        },
+        {
+          "q": 0,
+          "r": 2
+        },
+        {
+          "q": 1,
+          "r": 2
+        },
+        {
+          "q": 2,
+          "r": 2
+        },
+        {
+          "q": 3,
+          "r": 2
+        },
+        {
+          "q": 4,
+          "r": 2
+        },
+        {
+          "q": 5,
+          "r": 2
+        },
+        {
+          "q": 6,
+          "r": 2
+        },
+        {
+          "q": 7,
+          "r": 2
+        },
+        {
+          "q": 8,
+          "r": 2
+        },
+        {
+          "q": 9,
+          "r": 2
+        },
+        {
+          "q": 10,
+          "r": 2
+        },
+        {
+          "q": 11,
+          "r": 2
+        },
+        {
+          "q": 12,
+          "r": 2
+        },
+        {
+          "q": 13,
+          "r": 2
+        },
+        {
+          "q": 14,
+          "r": 2
+        },
+        {
+          "q": 0,
+          "r": 3
+        },
+        {
+          "q": 1,
+          "r": 3
+        },
+        {
+          "q": 2,
+          "r": 3
+        },
+        {
+          "q": 3,
+          "r": 3
+        },
+        {
+          "q": 4,
+          "r": 3
+        },
+        {
+          "q": 5,
+          "r": 3
+        },
+        {
+          "q": 6,
+          "r": 3
+        },
+        {
+          "q": 7,
+          "r": 3
+        },
+        {
+          "q": 8,
+          "r": 3
+        },
+        {
+          "q": 9,
+          "r": 3
+        },
+        {
+          "q": 10,
+          "r": 3
+        },
+        {
+          "q": 11,
+          "r": 3
+        },
+        {
+          "q": 12,
+          "r": 3
+        },
+        {
+          "q": 13,
+          "r": 3
+        },
+        {
+          "q": 14,
+          "r": 3
+        },
+        {
+          "q": 0,
+          "r": 4
+        },
+        {
+          "q": 1,
+          "r": 4
+        },
+        {
+          "q": 2,
+          "r": 4
+        },
+        {
+          "q": 3,
+          "r": 4
+        },
+        {
+          "q": 4,
+          "r": 4
+        },
+        {
+          "q": 5,
+          "r": 4
+        },
+        {
+          "q": 6,
+          "r": 4
+        },
+        {
+          "q": 7,
+          "r": 4
+        },
+        {
+          "q": 8,
+          "r": 4
+        },
+        {
+          "q": 9,
+          "r": 4
+        },
+        {
+          "q": 10,
+          "r": 4
+        },
+        {
+          "q": 11,
+          "r": 4
+        },
+        {
+          "q": 12,
+          "r": 4
+        },
+        {
+          "q": 13,
+          "r": 4
+        },
+        {
+          "q": 14,
+          "r": 4
+        },
+        {
+          "q": 0,
+          "r": 5
+        },
+        {
+          "q": 1,
+          "r": 5
+        },
+        {
+          "q": 2,
+          "r": 5
+        },
+        {
+          "q": 3,
+          "r": 5
+        },
+        {
+          "q": 4,
+          "r": 5
+        },
+        {
+          "q": 5,
+          "r": 5
+        },
+        {
+          "q": 6,
+          "r": 5
+        },
+        {
+          "q": 7,
+          "r": 5
+        },
+        {
+          "q": 8,
+          "r": 5
+        },
+        {
+          "q": 9,
+          "r": 5
+        },
+        {
+          "q": 10,
+          "r": 5
+        },
+        {
+          "q": 11,
+          "r": 5
+        },
+        {
+          "q": 12,
+          "r": 5
+        },
+        {
+          "q": 13,
+          "r": 5
+        },
+        {
+          "q": 14,
+          "r": 5
+        },
+        {
+          "q": 0,
+          "r": 6
+        },
+        {
+          "q": 1,
+          "r": 6
+        },
+        {
+          "q": 2,
+          "r": 6
+        },
+        {
+          "q": 3,
+          "r": 6
+        },
+        {
+          "q": 4,
+          "r": 6
+        },
+        {
+          "q": 5,
+          "r": 6
+        },
+        {
+          "q": 6,
+          "r": 6
+        },
+        {
+          "q": 7,
+          "r": 6
+        },
+        {
+          "q": 8,
+          "r": 6
+        },
+        {
+          "q": 9,
+          "r": 6
+        },
+        {
+          "q": 10,
+          "r": 6
+        },
+        {
+          "q": 11,
+          "r": 6
+        },
+        {
+          "q": 12,
+          "r": 6
+        },
+        {
+          "q": 13,
+          "r": 6
+        },
+        {
+          "q": 14,
+          "r": 6
+        },
+        {
+          "q": 0,
+          "r": 7
+        },
+        {
+          "q": 1,
+          "r": 7
+        },
+        {
+          "q": 2,
+          "r": 7
+        },
+        {
+          "q": 3,
+          "r": 7
+        },
+        {
+          "q": 4,
+          "r": 7
+        },
+        {
+          "q": 5,
+          "r": 7
+        },
+        {
+          "q": 6,
+          "r": 7
+        },
+        {
+          "q": 7,
+          "r": 7
+        },
+        {
+          "q": 8,
+          "r": 7
+        },
+        {
+          "q": 9,
+          "r": 7
+        },
+        {
+          "q": 10,
+          "r": 7
+        },
+        {
+          "q": 11,
+          "r": 7
+        },
+        {
+          "q": 12,
+          "r": 7
+        },
+        {
+          "q": 13,
+          "r": 7
+        },
+        {
+          "q": 14,
+          "r": 7
+        },
+        {
+          "q": 0,
+          "r": 8
+        },
+        {
+          "q": 1,
+          "r": 8
+        },
+        {
+          "q": 2,
+          "r": 8
+        },
+        {
+          "q": 3,
+          "r": 8
+        },
+        {
+          "q": 4,
+          "r": 8
+        },
+        {
+          "q": 5,
+          "r": 8
+        },
+        {
+          "q": 6,
+          "r": 8
+        },
+        {
+          "q": 7,
+          "r": 8
+        },
+        {
+          "q": 8,
+          "r": 8
+        },
+        {
+          "q": 9,
+          "r": 8
+        },
+        {
+          "q": 10,
+          "r": 8
+        },
+        {
+          "q": 11,
+          "r": 8
+        },
+        {
+          "q": 12,
+          "r": 8
+        },
+        {
+          "q": 13,
+          "r": 8
+        },
+        {
+          "q": 14,
+          "r": 8
+        },
+        {
+          "q": 0,
+          "r": 9
+        },
+        {
+          "q": 1,
+          "r": 9
+        },
+        {
+          "q": 2,
+          "r": 9
+        },
+        {
+          "q": 3,
+          "r": 9
+        },
+        {
+          "q": 4,
+          "r": 9
+        },
+        {
+          "q": 5,
+          "r": 9
+        },
+        {
+          "q": 6,
+          "r": 9
+        },
+        {
+          "q": 7,
+          "r": 9
+        },
+        {
+          "q": 8,
+          "r": 9
+        },
+        {
+          "q": 9,
+          "r": 9
+        },
+        {
+          "q": 10,
+          "r": 9
+        },
+        {
+          "q": 11,
+          "r": 9
+        },
+        {
+          "q": 12,
+          "r": 9
+        },
+        {
+          "q": 13,
+          "r": 9
+        },
+        {
+          "q": 14,
+          "r": 9
+        },
+        {
+          "q": 0,
+          "r": 10
+        },
+        {
+          "q": 1,
+          "r": 10
+        },
+        {
+          "q": 2,
+          "r": 10
+        },
+        {
+          "q": 3,
+          "r": 10
+        },
+        {
+          "q": 4,
+          "r": 10
+        },
+        {
+          "q": 5,
+          "r": 10
+        },
+        {
+          "q": 6,
+          "r": 10
+        },
+        {
+          "q": 7,
+          "r": 10
+        },
+        {
+          "q": 8,
+          "r": 10
+        },
+        {
+          "q": 9,
+          "r": 10
+        },
+        {
+          "q": 10,
+          "r": 10
+        },
+        {
+          "q": 11,
+          "r": 10
+        },
+        {
+          "q": 12,
+          "r": 10
+        },
+        {
+          "q": 13,
+          "r": 10
+        },
+        {
+          "q": 14,
+          "r": 10
+        }
+      ],
+      "blocked": [
+        {
+          "q": 8,
+          "r": 2
+        },
+        {
+          "q": 7,
+          "r": 3
+        },
+        {
+          "q": 7,
+          "r": 7
+        },
+        {
+          "q": 8,
+          "r": 8
+        }
+      ],
+      "tiles": [
+        {
+          "q": 0,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 7,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 0,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 0,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 0,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 0,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 0,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 0,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 7,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 1,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 1,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 1,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 1,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 1,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 1,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 2,
+          "height": 0,
+          "terrain": "mud"
+        },
+        {
+          "q": 7,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 2,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 2,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 2,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 2,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 2,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 2,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 3,
+          "height": 0,
+          "terrain": "mud"
+        },
+        {
+          "q": 7,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 3,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 3,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 3,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 3,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 3,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 3,
+          "height": 1,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 4,
+          "height": 0,
+          "terrain": "mud"
+        },
+        {
+          "q": 7,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 4,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 5,
+          "height": 0,
+          "terrain": "mud"
+        },
+        {
+          "q": 7,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 5,
+          "height": 0,
+          "terrain": "fire"
+        },
+        {
+          "q": 9,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 5,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 6,
+          "height": 0,
+          "terrain": "mud"
+        },
+        {
+          "q": 7,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 6,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 7,
+          "height": 0,
+          "terrain": "mud"
+        },
+        {
+          "q": 7,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 7,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 8,
+          "height": 0,
+          "terrain": "mud"
+        },
+        {
+          "q": 7,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 8,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 7,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 9,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 0,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 1,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 2,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 3,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 4,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 5,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 6,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 7,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 8,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 9,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 10,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 11,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 12,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 13,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        },
+        {
+          "q": 14,
+          "r": 10,
+          "height": 0,
+          "terrain": "plain"
+        }
+      ]
+    },
+    "sides": [
+      {
+        "id": "human",
+        "retreatHexes": [
+          {
+            "q": 0,
+            "r": 0
+          },
+          {
+            "q": 0,
+            "r": 1
+          },
+          {
+            "q": 0,
+            "r": 2
+          },
+          {
+            "q": 0,
+            "r": 3
+          },
+          {
+            "q": 0,
+            "r": 4
+          },
+          {
+            "q": 0,
+            "r": 5
+          },
+          {
+            "q": 0,
+            "r": 6
+          },
+          {
+            "q": 0,
+            "r": 7
+          },
+          {
+            "q": 0,
+            "r": 8
+          },
+          {
+            "q": 0,
+            "r": 9
+          },
+          {
+            "q": 0,
+            "r": 10
+          }
+        ]
+      },
+      {
+        "id": "opponent",
+        "retreatHexes": [
+          {
+            "q": 14,
+            "r": 0
+          },
+          {
+            "q": 14,
+            "r": 1
+          },
+          {
+            "q": 14,
+            "r": 2
+          },
+          {
+            "q": 14,
+            "r": 3
+          },
+          {
+            "q": 14,
+            "r": 4
+          },
+          {
+            "q": 14,
+            "r": 5
+          },
+          {
+            "q": 14,
+            "r": 6
+          },
+          {
+            "q": 14,
+            "r": 7
+          },
+          {
+            "q": 14,
+            "r": 8
+          },
+          {
+            "q": 14,
+            "r": 9
+          },
+          {
+            "q": 14,
+            "r": 10
+          }
+        ]
+      }
+    ],
+    "units": [
+      {
+        "id": "human-1",
+        "sideId": "human",
+        "position": {
+          "q": 2,
+          "r": 2
+        },
+        "weaponId": "sword-shield",
+        "skillRanks": {
+          "shield-brace": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 80,
+          "armor": 36,
+          "defense": 24,
+          "initiative": 55,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "human-2",
+        "sideId": "human",
+        "position": {
+          "q": 4,
+          "r": 2
+        },
+        "weaponId": "spear",
+        "skillRanks": {
+          "reach-thrust": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 75,
+          "armor": 20,
+          "defense": 18,
+          "initiative": 60,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "human-3",
+        "sideId": "human",
+        "position": {
+          "q": 2,
+          "r": 5
+        },
+        "weaponId": "bow",
+        "skillRanks": {
+          "aimed-shot": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 65,
+          "armor": 12,
+          "defense": 12,
+          "initiative": 65,
+          "accuracy": 30,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "human-4",
+        "sideId": "human",
+        "position": {
+          "q": 4,
+          "r": 5
+        },
+        "weaponId": "raider",
+        "skillRanks": {
+          "armor-pressure": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 85,
+          "armor": 30,
+          "defense": 20,
+          "initiative": 53,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "human-5",
+        "sideId": "human",
+        "position": {
+          "q": 2,
+          "r": 8
+        },
+        "weaponId": "spear",
+        "skillRanks": {
+          "reach-thrust": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 85,
+          "armor": 28,
+          "defense": 14,
+          "initiative": 50,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "human-6",
+        "sideId": "human",
+        "position": {
+          "q": 4,
+          "r": 8
+        },
+        "weaponId": "sword-shield",
+        "skillRanks": {
+          "shield-brace": 1,
+          "rally": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 90,
+          "armor": 34,
+          "defense": 22,
+          "initiative": 62,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 100
+        }
+      },
+      {
+        "id": "opponent-1",
+        "sideId": "opponent",
+        "position": {
+          "q": 11,
+          "r": 2
+        },
+        "weaponId": "sword-shield",
+        "skillRanks": {
+          "shield-brace": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 80,
+          "armor": 36,
+          "defense": 24,
+          "initiative": 55,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "opponent-2",
+        "sideId": "opponent",
+        "position": {
+          "q": 13,
+          "r": 2
+        },
+        "weaponId": "spear",
+        "skillRanks": {
+          "reach-thrust": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 75,
+          "armor": 20,
+          "defense": 18,
+          "initiative": 60,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "opponent-3",
+        "sideId": "opponent",
+        "position": {
+          "q": 11,
+          "r": 5
+        },
+        "weaponId": "bow",
+        "skillRanks": {
+          "aimed-shot": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 65,
+          "armor": 12,
+          "defense": 12,
+          "initiative": 65,
+          "accuracy": 30,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "opponent-4",
+        "sideId": "opponent",
+        "position": {
+          "q": 13,
+          "r": 5
+        },
+        "weaponId": "sword-shield",
+        "skillRanks": {
+          "shield-brace": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 80,
+          "armor": 36,
+          "defense": 24,
+          "initiative": 55,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 80
+        }
+      },
+      {
+        "id": "opponent-5",
+        "sideId": "opponent",
+        "position": {
+          "q": 11,
+          "r": 8
+        },
+        "weaponId": "spear",
+        "skillRanks": {
+          "reach-thrust": 1
+        },
+        "trainedMelee": true,
+        "moralePolicy": "human",
+        "attributes": {
+          "health": 75,
+          "armor": 20,
+          "defense": 18,
+          "initiative": 60,
+          "accuracy": 25,
+          "stamina": 100,
+          "morale": 80
+        }
+      }
+    ]
+  },
+  "commands": [
+    {
+      "commandId": "human:f4e99b55-cbd7-4a77-b49d-eb0305c09016",
+      "activationId": "1:human-3",
+      "actorId": "human-3",
+      "type": "move",
+      "to": {
+        "q": 3,
+        "r": 5
+      }
+    },
+    {
+      "commandId": "human:707b8372-8c02-4a67-a918-7fb727eebddb",
+      "activationId": "1:human-3",
+      "actorId": "human-3",
+      "type": "wait"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 8,
+        "r": 6
+      },
+      "commandId": "ai:1:opponent-3:2:tactical-approach:human-6",
+      "activationId": "1:opponent-3",
+      "actorId": "opponent-3"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:1:opponent-3:3:tactical-wait",
+      "activationId": "1:opponent-3",
+      "actorId": "opponent-3"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 7,
+        "r": 6
+      },
+      "commandId": "human:83719b10-d09e-442c-9391-bcc8d9c20632",
+      "activationId": "1:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:1:human-6:5",
+      "actorId": "human-6",
+      "activationId": "1:human-6"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 5,
+        "r": 5
+      },
+      "commandId": "human:ff2e9070-4325-47cc-b54e-3f45fa14e572",
+      "activationId": "1:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:1:human-2:7",
+      "actorId": "human-2",
+      "activationId": "1:human-2"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 9,
+        "r": 4
+      },
+      "commandId": "ai:1:opponent-2:8:tactical-approach:human-6",
+      "activationId": "1:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:1:opponent-2:9:tactical-wait",
+      "activationId": "1:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 8,
+        "r": 7
+      },
+      "commandId": "ai:1:opponent-5:10:tactical-approach:human-6",
+      "activationId": "1:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:1:opponent-5:11:tactical-wait",
+      "activationId": "1:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 4,
+        "r": 4
+      },
+      "commandId": "human:3b63266a-5dec-450b-af7f-db165efcff5c",
+      "activationId": "1:human-1",
+      "actorId": "human-1"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:1:human-1:13",
+      "actorId": "human-1",
+      "activationId": "1:human-1"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 7,
+        "r": 5
+      },
+      "commandId": "ai:1:opponent-1:14:tactical-approach:human-6",
+      "activationId": "1:opponent-1",
+      "actorId": "opponent-1"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:1:opponent-1:15:tactical-wait",
+      "activationId": "1:opponent-1",
+      "actorId": "opponent-1"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 10,
+        "r": 4
+      },
+      "commandId": "ai:1:opponent-4:16:tactical-approach:human-2",
+      "activationId": "1:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:1:opponent-4:17:tactical-wait",
+      "activationId": "1:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 6,
+        "r": 5
+      },
+      "commandId": "human:240d860a-1a3b-4fcd-a50d-4ee833f7633d",
+      "activationId": "1:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:1:human-4:19",
+      "actorId": "human-4",
+      "activationId": "1:human-4"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 5,
+        "r": 6
+      },
+      "commandId": "human:85652af6-fd6e-475b-80b4-3928a0df5505",
+      "activationId": "1:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:68c28377-8d58-44b4-8dae-815e99c9f325",
+      "activationId": "1:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "aimed-shot",
+      "targetId": "opponent-1",
+      "commandId": "human:2d810a77-43b1-48ed-a728-48cf076915c8",
+      "activationId": "2:human-3",
+      "actorId": "human-3"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:2:human-3:23",
+      "actorId": "human-3",
+      "activationId": "2:human-3"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "aimed-shot",
+      "targetId": "human-5",
+      "commandId": "ai:2:opponent-3:24:skill:aimed-shot:human-5",
+      "activationId": "2:opponent-3",
+      "actorId": "opponent-3"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:2:opponent-3:25:tactical-wait",
+      "activationId": "2:opponent-3",
+      "actorId": "opponent-3"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-3",
+      "commandId": "human:29699002-c7fb-4f73-aa6c-612e850f524d",
+      "activationId": "2:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:c20ff472-49eb-4ff0-b10b-e5af176c8fb1",
+      "activationId": "2:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "opponent-1",
+      "commandId": "human:59f9f22f-2932-44d6-8933-e884aa998fa9",
+      "activationId": "2:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:2:human-2:29",
+      "actorId": "human-2",
+      "activationId": "2:human-2"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "human-6",
+      "commandId": "ai:2:opponent-2:30:skill:reach-thrust:human-6",
+      "activationId": "2:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:2:opponent-2:31:tactical-wait",
+      "activationId": "2:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "human-6",
+      "commandId": "ai:2:opponent-5:32:skill:reach-thrust:human-6",
+      "activationId": "2:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:2:opponent-5:33:tactical-wait",
+      "activationId": "2:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 7,
+        "r": 4
+      },
+      "commandId": "human:7ed422d9-2ca3-4495-be21-389f2d7870f9",
+      "activationId": "2:human-1",
+      "actorId": "human-1"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:2:human-1:35",
+      "actorId": "human-1",
+      "activationId": "2:human-1"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "shield-brace",
+      "targetId": "opponent-1",
+      "commandId": "ai:2:opponent-1:36:shield-brace",
+      "activationId": "2:opponent-1",
+      "actorId": "opponent-1"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:2:opponent-1:37:tactical-wait",
+      "activationId": "2:opponent-1",
+      "actorId": "opponent-1"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 9,
+        "r": 3
+      },
+      "commandId": "ai:2:opponent-4:38:tactical-approach:human-1",
+      "activationId": "2:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 8,
+        "r": 3
+      },
+      "commandId": "ai:2:opponent-4:39:tactical-approach:human-1",
+      "activationId": "2:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:2:opponent-4:40:tactical-wait",
+      "activationId": "2:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-1",
+      "commandId": "human:6c8e38e2-b2e7-4cff-a8b5-e99b3e470c1e",
+      "activationId": "2:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:db586e54-14b6-4488-af38-3de3a203064e",
+      "activationId": "2:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "opponent-1",
+      "commandId": "human:062c65c0-6c60-42a4-b1e1-cf2ebd72b767",
+      "activationId": "2:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:2:human-5:44",
+      "actorId": "human-5",
+      "activationId": "2:human-5"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "aimed-shot",
+      "targetId": "opponent-1",
+      "commandId": "human:a8597ca6-52b2-45c4-adc2-3ee25fd11b4e",
+      "activationId": "3:human-3",
+      "actorId": "human-3"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:3:human-3:46",
+      "actorId": "human-3",
+      "activationId": "3:human-3"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "aimed-shot",
+      "targetId": "human-5",
+      "commandId": "ai:3:opponent-3:47:skill:aimed-shot:human-5",
+      "activationId": "3:opponent-3",
+      "actorId": "opponent-3"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:3:opponent-3:48:tactical-wait",
+      "activationId": "3:opponent-3",
+      "actorId": "opponent-3"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-3",
+      "commandId": "human:7c22e123-60de-4e83-a4ac-3f929088d265",
+      "activationId": "3:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:f6787b0a-cd9a-404c-bb96-575edc084284",
+      "activationId": "3:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "opponent-1",
+      "commandId": "human:1e9e0065-3260-40bd-b1e5-4e1ce0798d7d",
+      "activationId": "3:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:3:human-2:52",
+      "actorId": "human-2",
+      "activationId": "3:human-2"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 8,
+        "r": 4
+      },
+      "commandId": "ai:3:opponent-2:53:tactical-move:human-1",
+      "activationId": "3:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "attack",
+      "targetId": "human-1",
+      "commandId": "ai:3:opponent-2:54:tactical-attack:human-1",
+      "activationId": "3:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:3:opponent-2:55:tactical-wait",
+      "activationId": "3:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "human-6",
+      "commandId": "ai:3:opponent-5:56:skill:reach-thrust:human-6",
+      "activationId": "3:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:3:opponent-5:57:tactical-wait",
+      "activationId": "3:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-2",
+      "commandId": "human:6740d405-35a1-48a1-b462-097585bfd0a7",
+      "activationId": "3:human-1",
+      "actorId": "human-1"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:9a35aa8d-6efa-4274-ad83-503f01f440ac",
+      "activationId": "3:human-1",
+      "actorId": "human-1"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "shield-brace",
+      "targetId": "opponent-1",
+      "commandId": "ai:3:opponent-1:60:shield-brace",
+      "activationId": "3:opponent-1",
+      "actorId": "opponent-1"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:3:opponent-1:61:tactical-wait",
+      "activationId": "3:opponent-1",
+      "actorId": "opponent-1"
+    },
+    {
+      "type": "attack",
+      "targetId": "human-1",
+      "commandId": "ai:3:opponent-4:62:tactical-attack:human-1",
+      "activationId": "3:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:3:opponent-4:63:tactical-wait",
+      "activationId": "3:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-1",
+      "commandId": "human:6f0b9338-b6ad-40b0-8080-a3b53569b2d3",
+      "activationId": "3:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:9d5f8344-faf1-4c33-8a09-2f802b715e04",
+      "activationId": "3:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "opponent-1",
+      "commandId": "human:90bb0ced-9b9e-4ec7-aff0-bafaaeae5246",
+      "activationId": "3:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:3:human-5:67",
+      "actorId": "human-5",
+      "activationId": "3:human-5"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-3",
+      "commandId": "human:4148c561-2ca8-4c2f-8fe9-24ff0cf12b7d",
+      "activationId": "4:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:7fb3ec15-f117-4721-97d3-815f351ef7a3",
+      "activationId": "4:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "aimed-shot",
+      "targetId": "opponent-1",
+      "commandId": "human:c0996ed5-3b04-4dd2-a636-9df5c8b6f552",
+      "activationId": "4:human-3",
+      "actorId": "human-3"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:4:human-3:71",
+      "actorId": "human-3",
+      "activationId": "4:human-3"
+    },
+    {
+      "type": "attack",
+      "targetId": "human-1",
+      "commandId": "ai:4:opponent-2:72:tactical-attack:human-1",
+      "activationId": "4:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:4:opponent-2:73:tactical-wait",
+      "activationId": "4:opponent-2",
+      "actorId": "opponent-2"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "opponent-1",
+      "commandId": "human:4dbb5c9a-eb95-40d4-a4c7-4908a53ebbac",
+      "activationId": "4:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:4:human-2:75",
+      "actorId": "human-2",
+      "activationId": "4:human-2"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "aimed-shot",
+      "targetId": "human-5",
+      "commandId": "ai:4:opponent-3:76:skill:aimed-shot:human-5",
+      "activationId": "4:opponent-3",
+      "actorId": "opponent-3"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:4:opponent-3:77:tactical-wait",
+      "activationId": "4:opponent-3",
+      "actorId": "opponent-3"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "human-6",
+      "commandId": "ai:4:opponent-5:78:skill:reach-thrust:human-6",
+      "activationId": "4:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:4:opponent-5:79:tactical-wait",
+      "activationId": "4:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-1",
+      "commandId": "human:6cf5f7dc-5bb2-40c2-bea2-acab7dd9793f",
+      "activationId": "4:human-1",
+      "actorId": "human-1"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:ebea7e55-0ffd-4a35-8be0-1df68169e77a",
+      "activationId": "4:human-1",
+      "actorId": "human-1"
+    },
+    {
+      "type": "attack",
+      "targetId": "human-1",
+      "commandId": "ai:4:opponent-4:82:tactical-attack:human-1",
+      "activationId": "4:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:4:opponent-4:83:tactical-wait",
+      "activationId": "4:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 7,
+        "r": 5
+      },
+      "commandId": "human:ae21e06f-4660-43bb-a5d4-ae8a8a5a2926",
+      "activationId": "4:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-2",
+      "commandId": "human:934dd05b-07a2-48cd-80fc-a5c30ccd66ce",
+      "activationId": "4:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:4:human-4:86",
+      "actorId": "human-4",
+      "activationId": "4:human-4"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 6,
+        "r": 6
+      },
+      "commandId": "human:699afeb7-c325-4a51-bcce-af8f7f735088",
+      "activationId": "4:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "defend",
+      "commandId": "human:d6117a8e-24ea-45d9-83d3-11d20bea53be",
+      "activationId": "4:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-3",
+      "commandId": "human:34a43d1e-f0fc-423e-8a3b-f8d13356c97b",
+      "activationId": "5:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 8,
+        "r": 6
+      },
+      "commandId": "human:f6cfdfc4-57fa-4ab8-856f-a1c2bdda3eb4",
+      "activationId": "5:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:5:human-6:91",
+      "actorId": "human-6",
+      "activationId": "5:human-6"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 4,
+        "r": 4
+      },
+      "commandId": "human:b8eb85ea-da7d-451d-b117-b4d67d728bf4",
+      "activationId": "5:human-3",
+      "actorId": "human-3"
+    },
+    {
+      "type": "defend",
+      "commandId": "human:ea573cad-e9c7-479d-9a58-8022787f7173",
+      "activationId": "5:human-3",
+      "actorId": "human-3"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 6,
+        "r": 4
+      },
+      "commandId": "human:cb743674-dade-4c46-9646-0a16949f5da1",
+      "activationId": "5:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "defend",
+      "commandId": "human:067cecaf-d11f-46ae-a7f8-7fba0a3db5f6",
+      "activationId": "5:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "attack",
+      "targetId": "human-6",
+      "commandId": "ai:5:opponent-5:96:tactical-attack:human-6",
+      "activationId": "5:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:5:opponent-5:97:tactical-wait",
+      "activationId": "5:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "attack",
+      "targetId": "human-1",
+      "commandId": "ai:5:opponent-4:98:tactical-attack:human-1",
+      "activationId": "5:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:5:opponent-4:99:tactical-wait",
+      "activationId": "5:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-2",
+      "commandId": "human:4fee02ad-5f22-4c06-af68-10258137e581",
+      "activationId": "5:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:52bb9cbf-4199-4f7b-8ff5-fd811ebe1f50",
+      "activationId": "5:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "surrender",
+      "actorId": "opponent-2",
+      "activationId": "5:opponent-2",
+      "commandId": "ai:5:opponent-2:102:panic"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "shield-brace",
+      "targetId": "human-1",
+      "commandId": "human:820a5491-a498-4c32-9b41-0819d08c70e1",
+      "activationId": "5:human-1",
+      "actorId": "human-1"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:cdd482de-cae5-44bc-b5e1-3eba75446352",
+      "activationId": "5:human-1",
+      "actorId": "human-1"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 7,
+        "r": 6
+      },
+      "commandId": "human:2eb25b91-15e9-46e9-907c-3a83ffad1202",
+      "activationId": "5:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-5",
+      "commandId": "human:e7b11a2b-d534-4d91-b090-472d2c79cdd4",
+      "activationId": "5:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:5:human-5:107",
+      "actorId": "human-5",
+      "activationId": "5:human-5"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-5",
+      "commandId": "human:5bc10e23-77df-4e25-b820-f4ccc87bd21c",
+      "activationId": "6:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:0b4552a9-e69d-44e3-9805-b2598a577f76",
+      "activationId": "6:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 4,
+        "r": 6
+      },
+      "commandId": "human:2d1b8344-a271-4af6-9b0b-e003111eb6bd",
+      "activationId": "6:human-3",
+      "actorId": "human-3"
+    },
+    {
+      "type": "defend",
+      "commandId": "human:25436b85-d253-452f-9ca1-c3cd9c7e9ce8",
+      "activationId": "6:human-3",
+      "actorId": "human-3"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-4",
+      "commandId": "human:c151b110-334e-4369-af45-f9029ea1658c",
+      "activationId": "6:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:e3a0c478-dd58-425a-a4c1-3a8b21b930e8",
+      "activationId": "6:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "attack",
+      "targetId": "human-1",
+      "commandId": "ai:6:opponent-4:114:tactical-attack:human-1",
+      "activationId": "6:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 7,
+        "r": 4
+      },
+      "commandId": "ai:6:opponent-4:115:tactical-approach:human-2",
+      "activationId": "6:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "ai:6:opponent-4:116:tactical-wait",
+      "activationId": "6:opponent-4",
+      "actorId": "opponent-4"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 9,
+        "r": 7
+      },
+      "commandId": "ai:6:opponent-5:117:tactical-move:human-6",
+      "activationId": "6:opponent-5",
+      "actorId": "opponent-5"
+    },
+    {
+      "type": "flee",
+      "actorId": "opponent-5",
+      "activationId": "6:opponent-5",
+      "commandId": "ai:6:opponent-5:118:panic"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "armor-pressure",
+      "targetId": "opponent-4",
+      "commandId": "human:a5446fd3-3b3a-42be-867c-549fedf79b8a",
+      "activationId": "6:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:6:human-4:120",
+      "actorId": "human-4",
+      "activationId": "6:human-4"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "reach-thrust",
+      "targetId": "opponent-4",
+      "commandId": "human:22d39d1b-647a-47a7-b35d-9293ecf3640b",
+      "activationId": "6:human-5",
+      "actorId": "human-5"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:6:human-5:122",
+      "actorId": "human-5",
+      "activationId": "6:human-5"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 11,
+        "r": 4
+      },
+      "commandId": "human:781c4214-1541-44d0-b88f-e63b71744180",
+      "activationId": "7:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:834b9f3e-c0a8-483e-921a-b70813c0b142",
+      "activationId": "7:human-6",
+      "actorId": "human-6"
+    },
+    {
+      "type": "use-skill",
+      "skillId": "aimed-shot",
+      "targetId": "opponent-4",
+      "commandId": "human:40e639f3-d151-4d84-bdd2-fa9f624d56f6",
+      "activationId": "7:human-3",
+      "actorId": "human-3"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:7:human-3:126",
+      "actorId": "human-3",
+      "activationId": "7:human-3"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-4",
+      "commandId": "human:42dbc67f-7dcb-48d0-b232-36a910e90f33",
+      "activationId": "7:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "wait",
+      "commandId": "human:87b173a1-6202-489b-969a-d54df837eb3f",
+      "activationId": "7:human-2",
+      "actorId": "human-2"
+    },
+    {
+      "type": "attack",
+      "targetId": "opponent-4",
+      "commandId": "human:e13dc845-db60-49de-a491-a002f4077fcf",
+      "activationId": "7:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "move",
+      "to": {
+        "q": 8,
+        "r": 4
+      },
+      "commandId": "human:bdaf5394-bc59-414a-93b6-d5fba1c2171a",
+      "activationId": "7:human-4",
+      "actorId": "human-4"
+    },
+    {
+      "type": "wait",
+      "commandId": "auto:7:human-4:131",
+      "actorId": "human-4",
+      "activationId": "7:human-4"
+    },
+    {
+      "type": "surrender",
+      "actorId": "opponent-5",
+      "activationId": "7:opponent-5",
+      "commandId": "ai:7:opponent-5:132:panic"
+    }
+  ],
+  "labPresentation": {
+    "version": 1,
+    "controlledSideId": "human",
+    "battle": {
+      "version": 1,
+      "name": "Банда дезертиров",
+      "seed": 20261009,
+      "map": {
+        "name": "Развалины мельницы",
+        "tiles": [
+          {
+            "q": 0,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 0,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 0,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 0,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 0,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 0,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 0,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 1,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 1,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 1,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 1,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 1,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 1,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 2,
+            "height": 0,
+            "terrain": "mud",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": true
+          },
+          {
+            "q": 9,
+            "r": 2,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 2,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 2,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 2,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 2,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 2,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 3,
+            "height": 0,
+            "terrain": "mud",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": true
+          },
+          {
+            "q": 8,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 3,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 3,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 3,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 3,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 3,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 3,
+            "height": 1,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 4,
+            "height": 0,
+            "terrain": "mud",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 4,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 5,
+            "height": 0,
+            "terrain": "mud",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 5,
+            "height": 0,
+            "terrain": "fire",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 5,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 6,
+            "height": 0,
+            "terrain": "mud",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 6,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 7,
+            "height": 0,
+            "terrain": "mud",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": true
+          },
+          {
+            "q": 8,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 7,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 8,
+            "height": 0,
+            "terrain": "mud",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": true
+          },
+          {
+            "q": 9,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 8,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 9,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 0,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 1,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 2,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 3,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 4,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 5,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 6,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 7,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 8,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 9,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 10,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 11,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 12,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 13,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          },
+          {
+            "q": 14,
+            "r": 10,
+            "height": 0,
+            "terrain": "plain",
+            "blocked": false
+          }
+        ]
+      },
+      "units": [
+        {
+          "id": "human-1",
+          "profileId": "W01",
+          "sideId": "human",
+          "position": {
+            "q": 2,
+            "r": 2
+          },
+          "skillRanks": {
+            "shield-brace": 1
+          }
+        },
+        {
+          "id": "human-2",
+          "profileId": "W04",
+          "sideId": "human",
+          "position": {
+            "q": 4,
+            "r": 2
+          },
+          "skillRanks": {
+            "reach-thrust": 1
+          }
+        },
+        {
+          "id": "human-3",
+          "profileId": "W05",
+          "sideId": "human",
+          "position": {
+            "q": 2,
+            "r": 5
+          },
+          "skillRanks": {
+            "aimed-shot": 1
+          }
+        },
+        {
+          "id": "human-4",
+          "profileId": "W02",
+          "sideId": "human",
+          "position": {
+            "q": 4,
+            "r": 5
+          },
+          "skillRanks": {
+            "armor-pressure": 1
+          }
+        },
+        {
+          "id": "human-5",
+          "profileId": "W09",
+          "sideId": "human",
+          "position": {
+            "q": 2,
+            "r": 8
+          },
+          "skillRanks": {
+            "reach-thrust": 1
+          }
+        },
+        {
+          "id": "human-6",
+          "profileId": "W10",
+          "sideId": "human",
+          "position": {
+            "q": 4,
+            "r": 8
+          },
+          "skillRanks": {
+            "shield-brace": 1,
+            "rally": 1
+          }
+        },
+        {
+          "id": "opponent-1",
+          "profileId": "W01",
+          "sideId": "opponent",
+          "position": {
+            "q": 11,
+            "r": 2
+          },
+          "skillRanks": {
+            "shield-brace": 1
+          }
+        },
+        {
+          "id": "opponent-2",
+          "profileId": "W04",
+          "sideId": "opponent",
+          "position": {
+            "q": 13,
+            "r": 2
+          },
+          "skillRanks": {
+            "reach-thrust": 1
+          }
+        },
+        {
+          "id": "opponent-3",
+          "profileId": "W05",
+          "sideId": "opponent",
+          "position": {
+            "q": 11,
+            "r": 5
+          },
+          "skillRanks": {
+            "aimed-shot": 1
+          }
+        },
+        {
+          "id": "opponent-4",
+          "profileId": "W01",
+          "sideId": "opponent",
+          "position": {
+            "q": 13,
+            "r": 5
+          },
+          "skillRanks": {
+            "shield-brace": 1
+          }
+        },
+        {
+          "id": "opponent-5",
+          "profileId": "W04",
+          "sideId": "opponent",
+          "position": {
+            "q": 11,
+            "r": 8
+          },
+          "skillRanks": {
+            "reach-thrust": 1
+          }
+        }
+      ]
+    },
+    "units": [
+      {
+        "id": "human-1",
+        "profileId": "W01",
+        "name": "Меч + щит 1"
+      },
+      {
+        "id": "human-2",
+        "profileId": "W04",
+        "name": "Копьё 1"
+      },
+      {
+        "id": "human-3",
+        "profileId": "W05",
+        "name": "Лук 1"
+      },
+      {
+        "id": "human-4",
+        "profileId": "W02",
+        "name": "Топор + щит"
+      },
+      {
+        "id": "human-5",
+        "profileId": "W09",
+        "name": "Алебарда"
+      },
+      {
+        "id": "human-6",
+        "profileId": "W10",
+        "name": "Командир"
+      },
+      {
+        "id": "opponent-1",
+        "profileId": "W01",
+        "name": "Меч + щит 2"
+      },
+      {
+        "id": "opponent-2",
+        "profileId": "W04",
+        "name": "Копьё 2"
+      },
+      {
+        "id": "opponent-3",
+        "profileId": "W05",
+        "name": "Лук 2"
+      },
+      {
+        "id": "opponent-4",
+        "profileId": "W01",
+        "name": "Меч + щит 3"
+      },
+      {
+        "id": "opponent-5",
+        "profileId": "W04",
+        "name": "Копьё 3"
+      }
+    ]
+  }
+}
