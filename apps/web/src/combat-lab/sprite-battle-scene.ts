@@ -44,7 +44,7 @@ import { createBattleBackdropMaterial } from './battle-backdrop.js';
 import { mountBattleTerrain } from './battle-terrain.js';
 import { mountBattleScenery } from './battle-scenery.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
-import { battleFrameBounds } from './battle-framing.js';
+import { battleFrameBounds, battleCameraLimits } from './battle-framing.js';
 import { mountBattleFieldVitals } from './battle-field-vitals.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
@@ -72,6 +72,7 @@ const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 interface SpriteBattleScene {
   setHighlightedUnit(id: string | null): void;
   focusUnit(id: string): void;
+  showOverview(): void;
   update(
     view: CombatLabView,
     selectedUnitId: string | null,
@@ -976,18 +977,15 @@ export async function mountSpriteBattleScene(
     } else if (currentView.movementPreview?.some(({ to }) => HEX_KEY(to) === HEX_KEY(target.hex)))
       callbacks.onAct({ type: 'move', to: target.hex });
   };
+  const cameraLimits = { maxZoom: 17, bounds: { ...mapBounds } };
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
     perspective,
-    // The apron is camera-facing: clamp in its reference-image coordinates.
-    bounds: {
-      minX: mapBounds.minX - 10,
-      maxX: mapBounds.maxX + 10,
-      minZ: mapBounds.minZ - 10,
-      maxZ: mapBounds.maxZ + 10,
+    bounds: cameraLimits.bounds,
+    get maxZoom() {
+      return cameraLimits.maxZoom;
     },
     minZoom: 2.2,
-    maxZoom: 17,
     pick: pickAt,
     pickGround: (x, y) => {
       const hit = scene.pick(
@@ -1023,7 +1021,22 @@ export async function mountSpriteBattleScene(
     );
     return { viewport, safeTop, safeBottom };
   };
-  const frameBattle = () => {
+  const projectedField = scene.meshes
+    .filter((mesh) => mesh.name.startsWith('ground:'))
+    .flatMap((mesh) => {
+      const vertices = mesh.getVerticesData(VertexBuffer.PositionKind)!;
+      const world = mesh.computeWorldMatrix(true);
+      return Array.from({ length: vertices.length / 3 }, (_, index) =>
+        project(Vector3.TransformCoordinates(Vector3.FromArray(vertices, index * 3), world)),
+      );
+    });
+  const fieldBounds = {
+    minX: Math.min(...projectedField.map((point) => point.x)),
+    maxX: Math.max(...projectedField.map((point) => point.x)),
+    minZ: Math.min(...projectedField.map((point) => point.z)),
+    maxZ: Math.max(...projectedField.map((point) => point.z)),
+  };
+  const overviewBounds = () => {
     const { viewport, safeTop, safeBottom } = cameraOpening();
     const figures = currentView.units
       .filter((unit) => unit.status === 'active')
@@ -1032,32 +1045,62 @@ export async function mountSpriteBattleScene(
         const factor = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
         const point = AXIAL_TO_WORLD(unit.position);
         const y = groundYFor(unit.position);
-        const foot = project({ ...point, y });
-        const height = (art.footY - art.visibleBounds[1]) * factor;
-        const head = project({
-          x: point.x,
-          y: y + height * Math.cos(CAMERA_ELEVATION),
-          z: point.z + height * Math.sin(CAMERA_ELEVATION),
-        });
+        const corners = [art.visibleBounds[0], art.visibleBounds[2]].flatMap((edgeX) =>
+          [art.visibleBounds[1], art.visibleBounds[3], art.footY].map((edgeY) => {
+            const up = (art.footY - edgeY) * factor;
+            return project({
+              x: point.x + (edgeX - art.footX) * factor,
+              y: y + up * Math.cos(CAMERA_ELEVATION),
+              z: point.z + up * Math.sin(CAMERA_ELEVATION),
+            });
+          }),
+        );
         return {
-          x: foot.x,
-          bottom: foot.z * Math.sin(CAMERA_ELEVATION),
-          top: head.z * Math.sin(CAMERA_ELEVATION),
+          minX: Math.min(...corners.map((corner) => corner.x)),
+          maxX: Math.max(...corners.map((corner) => corner.x)),
+          bottom: Math.min(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
+          top: Math.max(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
         };
       });
-    camera.fit(
-      battleFrameBounds({
-        mapBounds,
-        figures,
-        width: viewport.width,
-        height: viewport.height,
-        safeTop,
-        safeBottom,
-      }),
-      0,
+    const frame = battleFrameBounds({
+      mapBounds: fieldBounds,
+      figures,
+      width: viewport.width,
+      height: viewport.height,
+      safeTop,
+      safeBottom,
+    });
+    if (!frame) return null;
+    const limits = battleCameraLimits(frame, viewport.width, viewport.height);
+    cameraLimits.maxZoom = limits.maxZoom;
+    Object.assign(cameraLimits.bounds, limits.bounds);
+    // Extend only the quiet camera-facing apron; projected artwork/terrain stay registered.
+    const base = terrain.apron.getBoundingInfo().boundingBox.extendSize;
+    terrain.apron.scaling.set(
+      ((limits.bounds.maxX - limits.bounds.minX) * apronScale) / (2 * base.x),
+      1,
+      ((limits.bounds.maxZ - limits.bounds.minZ) * apronScale * Math.sin(CAMERA_ELEVATION)) /
+        (2 * base.z),
     );
+    const up =
+      ((limits.bounds.minZ + limits.bounds.maxZ) / 2 - centerZ) * Math.sin(CAMERA_ELEVATION);
+    terrain.apron.position.set(
+      (limits.bounds.minX + limits.bounds.maxX) / 2,
+      up * apronScale * Math.cos(CAMERA_ELEVATION) - apronDepth * Math.sin(CAMERA_ELEVATION),
+      centerZ +
+        up * apronScale * Math.sin(CAMERA_ELEVATION) +
+        apronDepth * Math.cos(CAMERA_ELEVATION),
+    );
+    // Apron x must use the same reference projection as its vertical displacement.
+    terrain.apron.position.x =
+      perspective.targetX + (terrain.apron.position.x - perspective.targetX) * apronScale;
+    return frame;
   };
-  let focusedId: string | null | undefined = initialView.activation?.actorId;
+  const frameBattle = () => {
+    const bounds = overviewBounds();
+    if (bounds) camera.fit(bounds, 0);
+  };
+  let focusedId: string | null = null;
   const focusUnit = (id: string) => {
     const unit = currentView.units.find((candidate) => candidate.id === id);
     if (!unit) return;
@@ -1096,14 +1139,17 @@ export async function mountSpriteBattleScene(
   const battleSurface = canvas.closest('.battle-view')!;
   const modifiedKey = (event: KeyboardEvent) =>
     [event.altKey, event.ctrlKey, event.metaKey].some(Boolean);
-  const showOverview = (event: KeyboardEvent) => {
+  const showOverview = () => {
+    focusedId = null;
+    cameraMoved = false;
+    frameBattle();
+  };
+  const onOverviewKey = (event: KeyboardEvent) => {
     const target = event.target as HTMLElement | null;
     const editable = target?.closest('input, textarea, select, [contenteditable="true"]');
     if ([modifiedKey(event), editable, event.code !== 'Home'].some(Boolean)) return;
     event.preventDefault();
-    focusedId = null;
-    cameraMoved = false;
-    frameBattle();
+    showOverview();
   };
   const markKey = (event: KeyboardEvent) => {
     if (modifiedKey(event)) return;
@@ -1126,9 +1172,9 @@ export async function mountSpriteBattleScene(
     if (Math.hypot(event.clientX - cameraPress.x, event.clientY - cameraPress.y) > 5)
       cameraMoved = true;
   };
-  canvas.addEventListener('wheel', markWheel, { passive: true });
+  canvas.addEventListener('wheel', markWheel, { passive: true, capture: true });
   canvas.addEventListener('keydown', markKey);
-  battleSurface.addEventListener('keydown', showOverview as EventListener);
+  battleSurface.addEventListener('keydown', onOverviewKey as EventListener);
   canvas.addEventListener('pointerdown', rememberCameraPress);
   canvas.addEventListener('pointerup', releaseCameraPress);
   canvas.addEventListener('pointercancel', releaseCameraPress);
@@ -1141,10 +1187,13 @@ export async function mountSpriteBattleScene(
   renderEvents(initialView);
   const resizeObserver = new ResizeObserver(() => {
     engine.resize();
+    overviewBounds();
     if (!cameraMoved) frameDefault();
     clearHover();
   });
   resizeObserver.observe(canvas);
+  for (const band of battleSurface.querySelectorAll('.battle-initiative, .battle-action-dock'))
+    resizeObserver.observe(band);
   engine.runRenderLoop(() => {
     if (!scene.isDisposed) scene.render();
   });
@@ -1161,9 +1210,9 @@ export async function mountSpriteBattleScene(
     canvas.removeEventListener('keydown', clearHover);
     canvas.removeEventListener('contextmenu', preventContextMenu);
     resizeObserver.disconnect();
-    canvas.removeEventListener('wheel', markWheel);
+    canvas.removeEventListener('wheel', markWheel, true);
     canvas.removeEventListener('keydown', markKey);
-    battleSurface.removeEventListener('keydown', showOverview as EventListener);
+    battleSurface.removeEventListener('keydown', onOverviewKey as EventListener);
     canvas.removeEventListener('pointerdown', rememberCameraPress);
     canvas.removeEventListener('pointerup', releaseCameraPress);
     canvas.removeEventListener('pointercancel', releaseCameraPress);
@@ -1201,6 +1250,7 @@ export async function mountSpriteBattleScene(
   };
   return {
     focusUnit,
+    showOverview,
     setHighlightedUnit(id) {
       if (destroyed || highlightedId === id) return;
       highlightedId = id;

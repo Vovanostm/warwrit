@@ -634,3 +634,10 @@ it('shows one actor card without a duplicate inspection or neutral terrain badge
   expect(other).toContain('Высота +1');
   expect(other).toContain('Огонь');
 });
+
+it('offers a separate accessible field overview without conflating the grid toggle', () => {
+  const html = render();
+  expect(html).toContain('aria-label="Обзор поля"');
+  expect(html).toContain('Обзор поля (Home)');
+  expect(html).toContain('aria-label="Показать всю сетку"');
+});

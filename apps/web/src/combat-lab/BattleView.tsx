@@ -37,6 +37,7 @@ export function BattleView(props: BattleViewProps) {
   const {
     canvasRef,
     focusUnit,
+    showOverview,
     night,
     setNight,
     fullGrid,
@@ -107,6 +108,15 @@ export function BattleView(props: BattleViewProps) {
       </div>
       <BattleHeading view={view} />
       <div className="battle-utilities">
+        <button
+          className="battle-control battle-control--utility"
+          type="button"
+          aria-label="Обзор поля"
+          title="Обзор поля (Home)"
+          onClick={showOverview}
+        >
+          Home
+        </button>
         <button
           className="battle-control battle-control--utility"
           type="button"
