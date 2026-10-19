@@ -9,7 +9,7 @@ Epic contract first for new epics. [Owning section](AGENT_TEAM.md#workflow-v3--c
 
 **Studio director — 2026-10-19, PR pending owner merge label:** owner made the
 Claude session studio director with autonomy («ты — директор студии и
-отвечаешь за качество продукта»); merge stays behind `agent:merge-approved` (merge clause superseded by workflow v3 above).
+отвечаешь за качество продукта»); merge stays behind `agent:merge-approved` (still applies to infrastructure PRs; v3 above covers coordinator slice and epic-contract PRs).
 Board: **now** — Orca v2 wave 1 on #217 (metric: merged PRs with playable proof
 per day); **next** — `core-melee-connect` (#225) on lane core after
 `uix-w1-names`; art lane via [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md);
