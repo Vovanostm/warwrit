@@ -90,8 +90,8 @@
       "wave": 2,
       "slice": "core-melee-connect",
       "issues": [225],
-      "after": ["uix-w1-names"],
-      "note": "Studio director 2026-10-19: owner decision 2026-10-07 (trained melee always deals damage). Re-baseline M1-MELEE-CONNECT on the sprite S4 rules (engine/reaction/damage-preview), new versioned ruleset, preview = resolution, old replays untouched. Forecast copy in BattleForecast.tsx is a follow-up after uix-w2-input.",
+      "after": ["uix-w1-names", "uix-w2-log"],
+      "note": "Studio director 2026-10-19: owner decision 2026-10-07 (trained melee always deals damage). Re-baseline M1-MELEE-CONNECT on the sprite S4 rules (engine/reaction/damage-preview), new versioned ruleset, preview = resolution, old replays untouched. Forecast copy in BattleForecast.tsx is a follow-up after uix-w2-input. After uix-w2-log: both own packages/protocol/src/combat-lab.ts and apps/server/src/combat-lab/projection.ts.",
       "ownership": [
         "packages/game-core/src/combat/",
         "packages/protocol/src/combat-lab.ts",
@@ -99,7 +99,8 @@
         "docs/work-packages/M1-MELEE-CONNECT.md",
         "docs/wiki/mechanics/melee.md (coordinator)"
       ],
-      "lane": "core"
+      "lane": "core",
+      "tier": "L"
     },
     {
       "wave": 2,
@@ -204,9 +205,67 @@
     },
     {
       "wave": 4,
+      "slice": "core-preset-deserters",
+      "issues": [228],
+      "after": ["core-melee-connect", "uix-w4-bow", "uix-w2-log"],
+      "lane": "core",
+      "tier": "L",
+      "note": "Producer for #228 (PR says Refs #228, not Closes): adds the «Банда дезертиров» preset and an optional catalog presets field; existing profiles and S4 rules only. Studio director 2026-10-19.",
+      "ownership": [
+        "apps/server/src/combat-lab/custom-battle.ts",
+        "apps/server/src/combat-lab/custom-battle.test.ts",
+        "packages/protocol/src/combat-lab.ts (optional catalog presets field only)"
+      ]
+    },
+    {
+      "wave": 5,
+      "slice": "uix-preset-picker",
+      "issues": [228],
+      "after": ["core-preset-deserters", "uix-w1-outcome"],
+      "lane": "web",
+      "tier": "U",
+      "note": "Consumer for #228 (closes it): editor picker for catalog presets next to the current scenario.",
+      "ownership": [
+        "apps/web/src/combat-lab/BattleEditor.tsx (preset picker only)",
+        "apps/web/src/combat-lab/editor-model.ts",
+        "apps/web/src/combat-lab/session-lifecycle.ts (catalog shape only)"
+      ]
+    },
+    {
+      "wave": 3,
+      "slice": "uix-overview-zoom",
+      "issues": [227],
+      "after": ["uix-w3-camera", "uix-w3-playback", "uix-w3-tooltips", "uix-w1-outcome"],
+      "lane": "web",
+      "tier": "V",
+      "note": "Studio director 2026-10-19 (playtest): zoom-out limit fits the 15x11 field between HUD bands; overview key/button and return to the actor.",
+      "ownership": [
+        "apps/web/src/combat-lab/sprite-battle-scene.ts (camera zoom options and overview command only)",
+        "apps/web/src/combat-lab/battle-framing.ts",
+        "apps/web/src/combat-lab/BattleView.tsx (overview button only)",
+        "apps/web/src/combat-lab/battle-hud-scene.ts (overview handle only)"
+      ]
+    },
+    {
+      "wave": 4,
+      "slice": "qa-game-hooks",
+      "issues": [235],
+      "after": ["uix-w3-playback", "uix-w2-log"],
+      "lane": "web",
+      "tier": "L",
+      "note": "Studio director 2026-10-19: dev-only render_game_to_text/advanceTime for regression runs with openai-develop-web-game.",
+      "ownership": [
+        "apps/web/src/combat-lab/controller.ts",
+        "apps/web/src/combat-lab/game-hooks.ts (new)",
+        "apps/web/src/combat-lab/CombatLab.tsx (hook registration and autoplay timer)",
+        "apps/web/src/combat-lab/autoplay.ts"
+      ]
+    },
+    {
+      "wave": 4,
       "slice": "uix-w4-scale",
       "issues": [179],
-      "after": ["uix-w3-playback", "uix-w3-camera"],
+      "after": ["uix-w3-playback", "uix-w3-camera", "uix-overview-zoom"],
       "ownership": [
         "apps/web/src/combat-lab/battle-layout.ts",
         "apps/web/src/combat-lab/sprite-battle-scene.ts",
@@ -231,14 +290,15 @@
       "wave": 4,
       "slice": "uix-w4-bow",
       "issues": [218],
-      "after": ["uix-w1-projection", "core-melee-connect"],
-      "note": "Owner chose B (bow 3 AP) as a new versioned ruleset; replay/stress/forecast checks. Sequenced after core-melee-connect (studio director 2026-10-19): one ruleset bump at a time; may share its new ruleset version.",
+      "after": ["uix-w1-projection", "core-melee-connect", "uix-w2-log"],
+      "note": "Owner chose B (bow 3 AP) as a new versioned ruleset; replay/stress/forecast checks. Sequenced after core-melee-connect (studio director 2026-10-19): one ruleset bump at a time; may share its new ruleset version. Lane corrected to core (owns game-core/server), studio director 2026-10-19.",
       "ownership": [
         "packages/game-core/src/combat/",
         "apps/server/src/combat-lab/",
         "docs/wiki/mechanics/ranged.md (coordinator)"
       ],
-      "lane": "web"
+      "lane": "core",
+      "tier": "L"
     },
     {
       "wave": 5,
