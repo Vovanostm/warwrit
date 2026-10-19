@@ -1,5 +1,21 @@
 # Warwrit current delivery plan
 
+**PR229 / UIX-01a — 2026-10-19, MERGED; successor contract local:**
+Owner `agent:merge-approved` and exact-head CI39243122114 SUCCESS allowed the
+expected-head merge of `2508eb6` to `1665527` at 11:36 UTC. Live PR/main
+readback confirms the merge; ordinary tree diff is empty and #180 is
+CLOSED / `agent:done`. Evaluator4 ACCEPT, prior validate8/8 and playable
+proof are reused explicitly; no new main playtest/game gates (NOT_RUN).
+The next eligible producer `uix-w1-affordability` (#184 subset) starts its
+read-only contract on this main; no bands/legend acceptance or #184 closure.
+Scene waits for skillReach after affordability; names waits for both producers.
+Desk#198 and outcome#209–211 retain integrated REWORK. Pending PR230/232/233
+remain inactive; local plan overrides remain authoritative until their merge.
+Metric today: **1 merged PR with playable proof**, 0 open gameplay PRs of #217.
+This dated receipt supersedes pending/live statuses below; recorded locally on
+`Vovanostm/uix-w1-affordability` for publication with its future PR.
+[Delivered proof](evidence/uix-w1-projection/README.md).
+
 **PR229 merge stage — 2026-10-19, local main integration; NOT_MERGED:**
 Live `agent:merge-approved` is present. Prior head `35c117e` has successful
 CI39196517767. Normal merge of `origin/main` `6f1fbae` preserves published

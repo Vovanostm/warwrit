@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Record PR229 merge and start the affordability producer contract
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-affordability`, local
+  receipt of merged [PR229](https://github.com/Vovanostm/warwrit/pull/229)
+  from `Vovanostm/uix-w1-projection`: expected head `2508eb6`, merge/main
+  `1665527`, owner `agent:merge-approved` present, exact-head
+  [CI39243122114](https://github.com/Vovanostm/warwrit/actions/runs/39243122114)
+  SUCCESS, no blocking review threads; ordinary merged-tree diff empty.
+  #180 is CLOSED / `agent:done`; evaluator4 ACCEPT and existing played proof
+  are reused, not rerun. No new game checks or main playtest: NOT_RUN.
+  Pipeline tick starts only the #184 producer contract on this branch;
+  bands/legend/visual acceptance and issue closure remain with uix-w2-scene.
+  Updated CURRENT_PLAN, owning wiki and
+  [proof receipt](docs/engineering/evidence/uix-w1-projection/README.md).
+  Projection worktree removed with archive hooks after preserving local reports;
+  desk/outcome REWORK and successor dependencies remain. No deployment.
+
 ### Integrate current main before the approved PR229 merge
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-projection`, local

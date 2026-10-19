@@ -2522,6 +2522,16 @@ apps/packages не изменены относительно принятого 
 validate на `128fcb0` PASS8/8 (702PASS/47SKIP, audit PASS). Публикация
 и hosted CI нового head ожидаются; merge NOT_RUN.
 
+Поставка 2026-10-19: [PR229](https://github.com/Vovanostm/warwrit/pull/229)
+MERGED `1665527` (11:36 UTC), expected head `2508eb6`, owner
+`agent:merge-approved`, exact-head CI39243122114 SUCCESS. Прочитаны live
+PR/main и CLOSED / `agent:done` #180; обычный diff деревьев пуст, blocking
+review threads нет. Eval4 ACCEPT и прежний playable proof переиспользованы;
+новый main playtest/game gates NOT_RUN, deployment не выполнялся. Это
+датированное дополнение заменяет pending-статусы выше. #184/#187/#207 остаются
+последующими срезами; запущен только contract producer #184. Запись пока
+local в `Vovanostm/uix-w1-affordability`.
+
 **PREVIEW-01:** прогноз связан с ruleset/revision/activation/actor/action/target.
 Смена любого входа инвалидирует его. Запрос предпросмотра не изменяет
 состояние, боевой RNG, журнал или инициативу. Старый прогноз не может
