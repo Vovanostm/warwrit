@@ -9,6 +9,100 @@ requests.
 
 ## Unreleased
 
+### Stage names producer merge and retain actor-foundation REWORK
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, published
+  [PR239](https://github.com/Vovanostm/warwrit/pull/239), merge stage:
+  head `902d2e8` has successful clean-checkout CI39290710765; branch contains
+  current main `073a02b`, no integration needed. Tier L reviewer/evaluator
+  ACCEPT for gated `f5803e5` and coordinator validate8/8 remain applicable:
+  later commits contain evidence and these shared records only. No blocking
+  labels or unresolved review threads observed. This record needs exact-head
+  CI before expected-head merge; it does not claim that merge has happened.
+  #207 stays OPEN for visible captions, terminal cards and inherited layout
+  limits; [producer proof](docs/engineering/evidence/uix-w1-names/README.md).
+  #186 visual1 now settled REWORK/BLOCKED on `c60fd5e`: missing native125,
+  loaded layering/input, marker comparison and contrast proof, plus inherited
+  overview scene-integration score1. Combined proof rework1 is next; inherited
+  readability/safe-area/terminal/tooltip allocations remain unaccepted and
+  cannot be waived by the foundation split. Updated CURRENT_PLAN; no mechanics,
+  setup or wiki behavior change. New local full gate/playtest/deploy NOT_RUN;
+  performance/balance NOT_MEASURED.
+
+### Publish stable fighter-label and replay-presentation producer proof
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, published producer
+  `796fa52` in [PR239](https://github.com/Vovanostm/warwrit/pull/239), CI/merge
+  pending, refs #207. Server/protocol retain detached
+  full-roster duplicate labels and optional replay presentation metadata; canonical
+  replay/history/RNG/rules and authorization unchanged. Tier L reviewer1 and
+  played evaluator1 ACCEPT for `f5803e5`; coordinator validate8/8 PASS,
+  178PASS/47SKIP,auditPASS. Evaluator36 focusedPASS,72 matched before/after
+  captures across three desktop sizes and genuine125%, day/night; real manual
+  first death then autobattle to R10/rev171 and downloaded-only reconstruction
+  match live/baseline canonical results. Evidence-only commit `a40d901` retains
+  reports and28 small JPEGs. [Proof and limits](docs/engineering/evidence/uix-w1-names/README.md).
+  #207 remains OPEN: field captions, terminal inspection and inherited HUD/log
+  clipping belong to sequenced consumer/layout owners. Actor foundation #186
+  evaluator1 REWORK: missing native125/matched crowd, full layering/input,
+  contrast and manual/AP0/reconstruction proof; no new source defect established.
+  Combined rework waits for its live visual critic; no concurrent source writer.
+  Updated CURRENT_PLAN; mechanics/setup/wiki contracts unchanged by this producer
+  receipt. Hosted full gate pending; new local full suite/deploy NOT_RUN,
+  numeric contrast/performance/balance/capacity NOT_MEASURED.
+
+### Advance names and actor foundation to independent tier gates
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local
+  coordinator receipt for names producer `796fa52` and scene foundation
+  `c60fd5e` on `Vovanostm/uix-w1-scene`, refs #207/#186 without closure.
+  After exact scene worker settlement, coordinator validators ran sequentially:
+  names EXIT0/8of8 (178 relatedPASS/47SKIP), scene EXIT0/8of8 (35PASS);
+  both audits PASS and tracked trees clean. This supersedes the interrupted
+  names validation status below; worker smoke is not independent acceptance.
+  Names advances to Tier L reviewer/evaluator; scene to Tier V evaluator/visual
+  critic. Full desktop/native125, contrast and applicable layered-scene proof
+  remain gate work, not a waived requirement. Captions/terminal naming and
+  inherited scene/tooltip findings retain their existing owners and sequencing.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the gate handoff;
+  no PR/publication/merge/deployment or full-issue acceptance in this receipt.
+  Local contracts/reports remain under each slice's ignored `.orca/` directory;
+  wiki behavior is unchanged pending delivery. Today three merged playable
+  producers (#229/#237/#238); this tick zero merges.
+
+### Route names consumer gaps without claiming full issue acceptance
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local source
+  `796fa52`, refs [#207](https://github.com/Vovanostm/warwrit/issues/207):
+  server-owned duplicate labels and optional replay presentation metadata are
+  committed; full-contract builder outcome is FAILED, not acceptance.
+  Builder reports focused36PASS, related178PASS/47SKIP and validator8/8;
+  these are worker claims, not coordinator gates. Builder played the default
+  mill to R11/rev177 and reconstructed the downloaded replay with all12 labels.
+  Visible field captions and terminal fighter inspection are sequenced into
+  `uix-w1-name-consumers` (Tier V, after names/range-outline/outcome) in local
+  `.orca/pipeline/slices-local.json`; producer PR must use Refs, never Closes.
+  Native125% and the complete baseline matrix still need independent proof.
+  Coordinator validation was interrupted after six checks to respect the scene
+  worker's existing serial reservation; related-tests/audit did not complete,
+  so no validation pass is claimed. Fresh validate and Tier L review/evaluation
+  wait for scene settlement. No PR, merge, deployment or full-issue acceptance.
+  Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md); wiki behavior is
+  unchanged pending delivery. Local report: `.orca/uix-w1-names/report.md`.
+
+### Record PR238 merge and release single-issue successors
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local receipt of
+  merged [PR238](https://github.com/Vovanostm/warwrit/pull/238): expected
+  head `3377996`, merge/main `073a02b`, exact-head CI39271231939 SUCCESS.
+  Tier L reviewer1 and played evaluator1 ACCEPT for `3ea21b0`; coordinator
+  validate8/8,732PASS/47SKIP,auditPASS; later evidence/shared-record paths PASS.
+  #187 remains OPEN for its rendered contour. Names #207 may plan on merged
+  main; the former scene #186/#187 scope is split before its next start under
+  workflow v3, preserving its old plan and all assigned integration findings.
+  [Existing proof](docs/engineering/evidence/uix-w1-skill-reach/README.md) is
+  reused; new main playtest/game gates/deployment NOT_RUN.
+
 ### Supply current learned-skill geometry for the scene consumer
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-skill-reach`, published

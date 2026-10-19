@@ -1,5 +1,104 @@
 # Warwrit current delivery plan
 
+**PR239 merge stage / #186 combined REWORK — 2026-10-19:**
+[PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`
+has successful exact-head clean-checkout CI39290710765; main `073a02b` is
+already included. Tier L reviewer1/evaluator1 ACCEPT for `f5803e5`, coordinator
+validate EXIT0/8of8,178PASS/47SKIP,auditPASS, and published independent playable
+proof are reused on unchanged code. Later commits contain evidence/shared
+records only. No blocking PR/issue labels or unresolved threads observed.
+This shared-record commit still needs its own CI and expected-head merge;
+NOT_MERGED at writing. #207 remains OPEN for numbered field captions,
+terminal inspection cards and inherited HUD/log clipping; [proof](evidence/uix-w1-names/README.md).
+Actor foundation `c60fd5e` now has both Tier V verdicts REWORK. Visual1 is
+BLOCKED on incomplete native125/layering/marker-reference/contrast proof and
+scores inherited overview scene integration1. Combined proof rework1 may
+proceed in the sole web lane, without speculative source edits or expanding
+into assigned readability/safe-area/terminal/tooltip work. Those findings are
+still unaccepted and must clear their integration gates; the split is no waiver.
+Refs186 only; actual enemy/frame closure remains #190. Other successor
+ownership/dependencies remain unchanged. New local full gate/playtest/deploy
+NOT_RUN; performance/balance NOT_MEASURED. This dated receipt supersedes the
+pending CI/live-critic statements below, not the retained consumer limits.
+
+**Names producer #207 — 2026-10-19, published PR239; CI pending:**
+`Vovanostm/uix-w1-names`: source `796fa52`, gated
+`f5803e5da321e6f71506e8488e612e75531943e9`; fresh reviewer1 and played
+evaluator1 ACCEPT for the amended server/protocol producer. Coordinator
+validate8/8 PASS,178PASS/47SKIP,auditPASS; later commits preserve gated source.
+Evaluator36 focusedPASS,72 fresh matched baseline/candidate captures across
+1366/1440/1920,100%/native125%,day/night; passive0POST, manual first death then
+UI autobattle opponent victory R10/rev171,54 accepted UI orders. Downloaded JSON
+alone reconstructs live names/status/outcome and matches baseline canonical
+state/events/count/RNG. Unauthorized export404/foreign Origin403. Evidence-only
+`a40d901` retains reports and28 JPEGs; [proof and limits](evidence/uix-w1-names/README.md).
+[PR239](https://github.com/Vovanostm/warwrit/pull/239) uses Refs #207; issue
+remains OPEN for visible field captions, terminal
+fighter inspection and inherited log/HUD clipping. Canonical replay/rules/RNG,
+mechanics/setup/wiki contracts unchanged; no full-issue or scene acceptance.
+#186 evaluator1 REWORK retains four proof gaps: native125/matched crowd,
+complete opaque-layering/input, measured contrast, manual/AP0/reconstruction.
+No new source defect established; collect the still-live visual critic before
+combined rework1, preserving one scene writer. Desk/outcome integration gates and
+successor dependencies remain. Today **3 merged PRs with playable proof**
+(#229,#237,#238), this tick0 merges; hosted full gate/merge pending, deployment
+NOT_RUN, numeric contrast/performance/balance/capacity NOT_MEASURED.
+This dated receipt supersedes only the pending independent names gate below.
+
+**Names and actor foundation — 2026-10-19, local independent-gate handoff:**
+Scene builder settled with normal commit `c60fd5e` and clean tracked tree;
+its static activation-owned ring/chevron/projected-name foundation refs #186,
+without closing enemy/frame proof owned by #190. Coordinator validation after
+settlement ran sequentially: names producer `796fa52` plus shared-record receipts
+EXIT0/8of8,178PASS/47SKIP,auditPASS; scene `c60fd5e` EXIT0/8of8,35PASS,auditPASS.
+This supersedes the queued/interrupted names validation below. Names now needs
+fresh Tier L source review and played evaluation; scene needs fresh Tier V
+played evaluation and absolute visual critique. Full desktop/native125 matrix,
+contrast and required opaque layering/input proof remain acceptance work.
+No independent ACCEPT, PR, publication or merge is claimed. #207/#186 remain
+OPEN; producer PRs must use Refs. Caption/terminal consumers, #187 contour and
+inherited safe-area/readability/tooltip/terminal findings keep assigned owners.
+Desk/outcome integration gates and successor dependencies remain unchanged.
+Today **3 merged PRs with playable proof** (#229,#237,#238); this tick0 merges,
+0 open gameplay PRs (5 total), no owner questions. Full game gate/deployment
+NOT_RUN; performance/balance NOT_MEASURED. Local reports and contracts remain
+under `.orca/uix-w1-names/` and sibling `.orca/uix-w1-scene/`; wiki behavior
+unchanged pending delivery. Coordinator records dispatches in the local checkpoint.
+
+**Names #207 — 2026-10-19, local producer; full-contract build FAILED:**
+Normal source commit `796fa52` preserves stable duplicate server labels and
+optional replay presentation metadata. Builder reports36 focusedPASS,
+178 relatedPASS/47SKIP, preliminary validate8/8 and a played default-mill
+R11/rev177 downloaded replay retaining all12 labels; independent gates pending.
+Fallback2 sequences visible field captions and terminal fighter inspection into
+`uix-w1-name-consumers` (Tier V, after names/range-outline/outcome), recorded in
+local `.orca/pipeline/slices-local.json`. Producer PR uses `Refs #207`, never
+Closes; #207 remains OPEN until consumer acceptance. Existing scene/outcome
+ownership remains unchanged. Native125% and full baseline matrix proof remain
+required. Coordinator validation was interrupted after six checks when the
+existing scene check reservation was discovered; related-tests/audit incomplete,
+no overall pass. Names stays implementing/queued for coordinator validate and
+fresh Tier L gates after scene settlement; current #186 builder remains live.
+Today **3 merged PRs with playable proof** (#229,#237,#238); this tick0 merges,
+0 open gameplay PRs (5 total), no owner questions. No deployment or new full
+suite. Runtime behavior wiki unchanged pending delivery; report and amended
+producer contract retained locally under `.orca/uix-w1-names/`.
+
+**PR238 producer merged — 2026-10-19; single-issue successors released:**
+[PR238](https://github.com/Vovanostm/warwrit/pull/238) MERGED `073a02b` at
+15:05 UTC, expected head `3377996`, CI39271231939 SUCCESS. Tier L reviewer1
+and played evaluator1 ACCEPT for `3ea21b0`; coordinator validate8/8 PASS,
+732PASS/47SKIP,auditPASS; later commits are evidence/shared records only.
+#187 stays OPEN for contour/legend/CVD/current-selection rendering. #207
+names may plan on merged main. Before its next start, split scene into #186
+actor foundation and sequential #187 range-outline consumer; retain historical
+plan/reviews and scene integration findings, with full #186 enemy-turn proof
+still playback-owned. Desk/outcome integrated REWORK remains pending.
+Today **3 merged PRs with playable proof** (#229,#237,#238); new main
+playtest/game gates/deploy NOT_RUN. This receipt is local on the successor
+branch and supersedes only the pending producer status below.
+[Proof and limits](evidence/uix-w1-skill-reach/README.md).
+
 **UIX-05a / #187 producer — 2026-10-19, published branch / local ACCEPT; PR/CI pending:**
 `Vovanostm/uix-w1-skill-reach`, gated `3ea21b0`: optional authoritative learned-skill
 geometry on the current controlled sprite-v3 activation; legacy omission and empty

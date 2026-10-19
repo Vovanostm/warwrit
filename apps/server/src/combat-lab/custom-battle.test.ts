@@ -9,6 +9,7 @@ import { afterEach, assert, describe, expect, it } from 'vitest';
 import { decideAction, type CombatLabSession } from './routes.js';
 import { buildApp } from '../app.js';
 import { projectCombatLabView } from './projection.js';
+import { projectCombatLabReplay, type CombatLabReplay } from './replay.js';
 import {
   combatLabCatalog,
   defaultSpriteBattle,
@@ -801,4 +802,96 @@ it('preserves supported schema2 bridge replay without inventing a sprite schema3
       },
     ],
   });
+});
+
+const unitNames = (view: CombatLabView) => view.units.map(({ id, name }) => [id, name]);
+
+it('retains every mill label through authenticated reads, orders and export-only reconstruction', async () => {
+  const app = lab();
+  const created = await app.inject({
+    method: 'POST',
+    url: '/dev/combat-lab',
+    headers,
+    payload: { version: 1, requestId: 'names', scenarioId: SPRITE_COMBAT_LAB_SCENARIO },
+  });
+  expect(created.statusCode).toBe(201);
+  let view = created.json<CombatLabView>();
+  const names = unitNames(view);
+  expect(names).toContainEqual(['opponent-1', 'Волк 1']);
+  expect(names).toContainEqual(['opponent-2', 'Волк 2']);
+  const privateHeaders = {
+    ...headers,
+    'x-combat-lab-capability': created.headers['x-combat-lab-capability'] as string,
+  };
+  const url = `/dev/combat-lab/${view.sessionId}`;
+  for (let read = 0; read < 2; read++) {
+    expect((await app.inject({ method: 'GET', url, headers: privateHeaders })).json()).toEqual(
+      view,
+    );
+  }
+  let actions = 0;
+  while (view.status === 'active' && actions < 300) {
+    assert(view.activation);
+    const accepted = await app.inject({
+      method: 'POST',
+      url: `${url}/actions`,
+      headers: privateHeaders,
+      payload: {
+        version: 1,
+        requestId: `names-${actions}`,
+        sessionId: view.sessionId,
+        battleId: view.battleId,
+        expectedViewRevision: view.viewRevision,
+        activationId: view.activation.id,
+        actorId: view.activation.actorId,
+        intent: { type: 'autoplay' },
+      },
+    });
+    expect(accepted.statusCode).toBe(200);
+    view = (
+      await app.inject({ method: 'GET', url, headers: privateHeaders })
+    ).json<CombatLabView>();
+    expect(unitNames(view)).toEqual(names);
+    actions++;
+    if (view.units.some((unit) => unit.profileId === 'B001' && unit.status !== 'active')) break;
+  }
+  expect(actions).toBeGreaterThan(0);
+  expect(view.units.some((unit) => unit.profileId === 'B001' && unit.status !== 'active')).toBe(
+    true,
+  );
+  const response = await app.inject({
+    method: 'GET',
+    url: `${url}/replay`,
+    headers: privateHeaders,
+  });
+  expect(response.statusCode).toBe(200);
+  // Only JSON bytes survive this boundary; no session or separately retained config is supplied.
+  const downloaded = JSON.parse(JSON.stringify(response.json())) as CombatLabReplay;
+  const before = structuredClone(downloaded);
+  const restored = projectCombatLabReplay(downloaded);
+  expect(unitNames(restored)).toEqual(unitNames(view));
+  expect(restored.units.map(({ id, status }) => [id, status])).toEqual(
+    view.units.map(({ id, status }) => [id, status]),
+  );
+  const { labPresentation, ...legacy } = downloaded;
+  expect(labPresentation?.units).toHaveLength(12);
+  expect(JSON.stringify(labPresentation)).not.toContain(privateHeaders['x-combat-lab-capability']);
+  expect(Object.keys(labPresentation!).sort()).toEqual([
+    'battle',
+    'controlledSideId',
+    'units',
+    'version',
+  ]);
+  expect(
+    labPresentation!.units.every(
+      (unit) => Object.keys(unit).sort().join(',') === 'id,name,profileId',
+    ),
+  ).toBe(true);
+  const canonical = combat.replayCombat(legacy);
+  expect(combat.replayCombat(downloaded)).toEqual(canonical);
+  expect(canonical.commandsApplied).toBe(downloaded.commands.length);
+  expect(projectCombatLabReplay(legacy).units.every((unit) => unit.name === undefined)).toBe(true);
+  expect(projectCombatLabReplay(downloaded)).toEqual(restored);
+  expect(downloaded).toEqual(before);
+  expect((await app.inject({ method: 'GET', url: `${url}/replay`, headers })).statusCode).toBe(404);
 });
