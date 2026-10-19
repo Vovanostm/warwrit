@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Resume the playable fix sequence with field overview
+
+- 2026-10-19, branch `codex/battle-overview-227`, local: owner requested
+  implementation, review and merge of the assessed fix sequence. Start #227
+  full-field overview before the preserved actor/desk/outcome integration to
+  remove an acceptance prerequisite; one web writer, existing work retained.
+  Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with mission scope
+  and PR239's verified merge into `b568ee2` (main CI39296247123 successful).
+  Camera code, gameplay and new visual acceptance remain NOT_RUN at this entry.
+
 ### Stage names producer merge and retain actor-foundation REWORK
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-names`, published

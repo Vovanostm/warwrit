@@ -1,5 +1,20 @@
 # Warwrit current delivery plan
 
+**Fix sequence authorized — 2026-10-19, LOCAL / implementation starting:**
+Owner requested “Implement, review, merge” for the assessed fix sequence:
+understandable combat, persistent encounter integration, then one contract and
+recovery journey. This authorizes reviewed, checked merges for this mission;
+deployment and purchases remain outside scope. Coordinator owns shared records.
+
+Live main `b568ee2` includes PR239 and its successful main CI39296247123;
+this supersedes the pending merge status below. Existing actor/desk/outcome
+work remains preserved and unaccepted. [#227](https://github.com/Vovanostm/warwrit/issues/227)
+now comes first because full-field overview is itself an integration blocker.
+Branch `codex/battle-overview-227` owns camera fit, overview controls and relevant
+regressions. One web writer; the #228 human-preset contract is an independent
+read-only preparation. Existing UI and persistent-world requirements remain.
+Camera implementation, new gameplay and independent visual acceptance: NOT_RUN.
+
 **PR239 merge stage / #186 combined REWORK — 2026-10-19:**
 [PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`
 has successful exact-head clean-checkout CI39290710765; main `073a02b` is
