@@ -375,8 +375,8 @@ behind one core slice; six PRs went to pipeline infrastructure.
 - **Merge on gates:** CI, `orca-validate.sh` and the tier verdicts for the
   merged head SHA; the coordinator merges PRs it opened for slices and epic
   contracts; a CI fix goes back through review; `agent:blocked` on the PR or a
-  linked issue, or an owner decision, stops a PR. Infrastructure PRs are merged
-  by the owner or the studio director.
+  linked issue, or an owner decision, stops a PR. Infrastructure PRs outside
+  slices keep the owner gate (`agent:merge-approved`).
 - **Tiers:** D docs/tests → reviewer; L logic → reviewer + evaluator plays it;
   U UI → evaluator judges the issue's visual criteria; V art/scene → plus the
   full visual critic. Art proofs never block D/L/U.
