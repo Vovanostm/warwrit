@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Advance names and actor foundation to independent tier gates
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local
+  coordinator receipt for names producer `796fa52` and scene foundation
+  `c60fd5e` on `Vovanostm/uix-w1-scene`, refs #207/#186 without closure.
+  After exact scene worker settlement, coordinator validators ran sequentially:
+  names EXIT0/8of8 (178 relatedPASS/47SKIP), scene EXIT0/8of8 (35PASS);
+  both audits PASS and tracked trees clean. This supersedes the interrupted
+  names validation status below; worker smoke is not independent acceptance.
+  Names advances to Tier L reviewer/evaluator; scene to Tier V evaluator/visual
+  critic. Full desktop/native125, contrast and applicable layered-scene proof
+  remain gate work, not a waived requirement. Captions/terminal naming and
+  inherited scene/tooltip findings retain their existing owners and sequencing.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the gate handoff;
+  no PR/publication/merge/deployment or full-issue acceptance in this receipt.
+  Local contracts/reports remain under each slice's ignored `.orca/` directory;
+  wiki behavior is unchanged pending delivery. Today three merged playable
+  producers (#229/#237/#238); this tick zero merges.
+
 ### Route names consumer gaps without claiming full issue acceptance
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-names`, local source

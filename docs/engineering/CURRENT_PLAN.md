@@ -1,5 +1,25 @@
 # Warwrit current delivery plan
 
+**Names and actor foundation — 2026-10-19, local independent-gate handoff:**
+Scene builder settled with normal commit `c60fd5e` and clean tracked tree;
+its static activation-owned ring/chevron/projected-name foundation refs #186,
+without closing enemy/frame proof owned by #190. Coordinator validation after
+settlement ran sequentially: names producer `796fa52` plus shared-record receipts
+EXIT0/8of8,178PASS/47SKIP,auditPASS; scene `c60fd5e` EXIT0/8of8,35PASS,auditPASS.
+This supersedes the queued/interrupted names validation below. Names now needs
+fresh Tier L source review and played evaluation; scene needs fresh Tier V
+played evaluation and absolute visual critique. Full desktop/native125 matrix,
+contrast and required opaque layering/input proof remain acceptance work.
+No independent ACCEPT, PR, publication or merge is claimed. #207/#186 remain
+OPEN; producer PRs must use Refs. Caption/terminal consumers, #187 contour and
+inherited safe-area/readability/tooltip/terminal findings keep assigned owners.
+Desk/outcome integration gates and successor dependencies remain unchanged.
+Today **3 merged PRs with playable proof** (#229,#237,#238); this tick0 merges,
+0 open gameplay PRs (5 total), no owner questions. Full game gate/deployment
+NOT_RUN; performance/balance NOT_MEASURED. Local reports and contracts remain
+under `.orca/uix-w1-names/` and sibling `.orca/uix-w1-scene/`; wiki behavior
+unchanged pending delivery. Coordinator records dispatches in the local checkpoint.
+
 **Names #207 — 2026-10-19, local producer; full-contract build FAILED:**
 Normal source commit `796fa52` preserves stable duplicate server labels and
 optional replay presentation metadata. Builder reports36 focusedPASS,
