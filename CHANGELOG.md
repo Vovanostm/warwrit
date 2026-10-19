@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Record the approved bounded profile policy
+
+- 2026-10-20, branch `codex/combat-wiki-checkpoint-20261017`, local:
+  record the direct owner answer for #164 in CURRENT_PLAN/M1_PRODUCTION_PLAN:
+  provisional fists range1/damage6/2AP/8stamina, no penetration or weapon XP;
+  immobile members cannot independently move/retreat, assisted transport unresolved.
+  [Decision](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952)
+  was published and read back exactly. Implementation remains pending.
+  Prior documentation head `95069eb` independently ACCEPTED; validate5/5,
+  scoped format/diff and53new links/anchors PASS. PR178 exact-head CI pending.
+
 ### Reconcile the M1 queue with delivered combat changes
 
 - 2026-10-19, branch `codex/combat-wiki-checkpoint-20261017`, local correction

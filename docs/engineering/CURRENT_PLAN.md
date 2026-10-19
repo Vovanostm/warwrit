@@ -1,5 +1,14 @@
 # Warwrit current delivery plan
 
+**Profile #164 owner decision — 2026-10-20, APPROVED / NOT IMPLEMENTED:**
+Owner accepted provisional fists: range1, damage6, cost2AP/8stamina, no armour
+penetration or weapon-skill XP. Immobile members cannot move or retreat
+independently and remain on the field; rescue/assisted transport remains undefined.
+[Direct decision recorded on #164](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952).
+This supersedes the pending-policy statement in the 19 October receipt below.
+PR178 documentation review ACCEPT for `95069eb`; coordinator validate5/5 PASS,
+53 new links/anchors checked with no errors. Publication and exact-head CI pending.
+
 **Authorized playable-fix mission — 2026-10-19, IMPLEMENTATION IN PROGRESS:**
 Owner requested “Implement, review, merge” for the assessed fix sequence.
 Verified remote main is `b568ee25b7529fa5abeeae85e45a41bc587124bb`:

@@ -13,7 +13,9 @@ full-field overview and understandable combat → human opponent scenario →
 #164 profiles / #163 canonical HP → #165 persistent mechanics → #166 battle UI →
 one real contract/battle/consequences/payment/restart journey from #174/#177.
 The one-route milestone does not replace the full eight-contract acceptance.
-Fist parameters and assisted retreat require the pending owner decision.
+Amendment 2026-10-20: the [owner approved provisional fists](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952)
+(range1, damage6, 2AP/8stamina, no armour penetration/weapon-skill XP).
+Immobile members cannot independently move/retreat; assisted transport remains undefined.
 The current overview and preset branches are implementation in progress, not
 accepted or merged. No new gameplay or full gate ran for this documentation update.
 Live assignments and actual check results belong to [CURRENT_PLAN](CURRENT_PLAN.md).
