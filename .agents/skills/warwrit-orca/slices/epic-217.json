@@ -204,7 +204,7 @@
       "lane": "web"
     },
     {
-      "wave": 3,
+      "wave": 4,
       "slice": "core-preset-deserters",
       "issues": [228],
       "after": ["core-melee-connect", "uix-w4-bow", "uix-w2-log"],
@@ -218,7 +218,7 @@
       ]
     },
     {
-      "wave": 4,
+      "wave": 5,
       "slice": "uix-preset-picker",
       "issues": [228],
       "after": ["core-preset-deserters", "uix-w1-outcome"],
@@ -290,7 +290,7 @@
       "wave": 4,
       "slice": "uix-w4-bow",
       "issues": [218],
-      "after": ["uix-w1-projection", "core-melee-connect"],
+      "after": ["uix-w1-projection", "core-melee-connect", "uix-w2-log"],
       "note": "Owner chose B (bow 3 AP) as a new versioned ruleset; replay/stress/forecast checks. Sequenced after core-melee-connect (studio director 2026-10-19): one ruleset bump at a time; may share its new ruleset version. Lane corrected to core (owns game-core/server), studio director 2026-10-19.",
       "ownership": [
         "packages/game-core/src/combat/",
