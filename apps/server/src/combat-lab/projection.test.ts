@@ -392,3 +392,93 @@ it('never restores insufficient resources and refreshes exhausted movement activ
   );
   expect(view.movementPreview).toEqual([]);
 });
+
+function expectSkillReach(fixture: ReturnType<typeof duel>) {
+  const { state, events, battle } = fixture;
+  const before = structuredClone(fixture);
+  const view = projectDuel(fixture);
+  expect(view.skillReach).toEqual(combat.previewCombatSkillReach(state, state.activation!.unitId));
+  expect(view.skillReach!.length).toBeGreaterThan(0);
+  for (const row of view.skillReach!) {
+    expect(Object.keys(row).sort()).toEqual(
+      [
+        'actorId',
+        'activationId',
+        'revision',
+        'skillId',
+        'minimumRange',
+        'maximumRange',
+        'cells',
+      ].sort(),
+    );
+    expect(row).toMatchObject({
+      actorId: view.activation!.actorId,
+      activationId: view.activation!.id,
+      revision: view.viewRevision,
+    });
+    for (const cell of row.cells) expect(Object.keys(cell).sort()).toEqual(['q', 'r']);
+  }
+  expect(projectCombatLabView('session', 'opponent', state, events, battle).skillReach).toEqual([]);
+  expect(projectDuel(fixture)).toEqual(view);
+  const cell = view.skillReach!.flatMap((row) => row.cells)[0];
+  if (cell) (cell as { q: number }).q = 999;
+  expect(fixture).toEqual(before);
+  expect(projectDuel(fixture).skillReach).toEqual(
+    combat.previewCombatSkillReach(state, state.activation!.unitId),
+  );
+}
+it('projects all current learned skills and refreshes origin/revision after accepted movement and actor changes', () => {
+  const fixture = duel('W08', { q: 8, r: 5 });
+  expectSkillReach(fixture);
+  const move = combat.applyCombatCommand(fixture.state, {
+    type: 'move',
+    commandId: combat.commandId('reach-move'),
+    actorId: fixture.state.activation!.unitId,
+    activationId: fixture.state.activation!.id,
+    to: { q: 3, r: 4 },
+  });
+  assert(move.ok);
+  const moved = { ...fixture, state: move.state, events: [...fixture.events, ...move.events] };
+  expectSkillReach(moved);
+  expect(projectDuel(moved).skillReach).not.toEqual(projectDuel(fixture).skillReach);
+  const wait = combat.applyCombatCommand(move.state, {
+    type: 'wait',
+    commandId: combat.commandId('reach-wait'),
+    actorId: move.state.activation!.unitId,
+    activationId: move.state.activation!.id,
+  });
+  assert(wait.ok);
+  expect(
+    projectDuel({ ...moved, state: wait.state, events: [...moved.events, ...wait.events] })
+      .skillReach,
+  ).toEqual([]);
+});
+it('emits empty sprite reach for legacy, terminal, missing and inactive actors and preserves explicit empty capability cells', () => {
+  const fixture = duel('W08', { q: 8, r: 5 });
+  for (const patch of [
+    { activation: null },
+    { status: 'resolved' as const, activation: null },
+    { activation: { ...fixture.state.activation!, unitId: combat.unitId('missing') } },
+    { units: fixture.state.units.map((unit) => ({ ...unit, status: 'dead' as const })) },
+    { units: fixture.state.units.map(({ skillRanks: _ranks, ...unit }) => unit) },
+    { rulesetId: 'sprite-prototype-v1' as const },
+    { rulesetId: 'sprite-prototype-v2' as const },
+  ])
+    expect(projectDuel(fixture, { ...fixture.state, ...patch }).skillReach).toEqual([]);
+  const incapable = {
+    ...fixture.state,
+    units: fixture.state.units.map((unit) => ({ ...unit, threatProfile: 'mill-slam' as const })),
+  };
+  expect(projectDuel(fixture, incapable).skillReach).toEqual(
+    combat.previewCombatSkillReach(incapable, incapable.activation!.unitId),
+  );
+  expect(projectDuel(fixture, incapable).skillReach!.every((row) => row.cells.length === 0)).toBe(
+    true,
+  );
+  const historic = createCombatLabFixture('reach-m0');
+  const start = historic.start();
+  expect(
+    projectCombatLabView('session', historic.controlledSideId, start.state, start.events)
+      .skillReach,
+  ).toBeUndefined();
+});

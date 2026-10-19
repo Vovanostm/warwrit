@@ -234,3 +234,156 @@ it('rejects malformed affordability before transport admission, including termin
     }
   }
 });
+
+function skillReachView(): CombatLabView {
+  const view = viewFixture();
+  return {
+    ...view,
+    rulesetId: 'sprite-prototype-v3',
+    units: view.units.map((unit) =>
+      unit.id === 'human-1' ? { ...unit, skillRanks: { 'aimed-shot': 2 } } : unit,
+    ),
+    skills: [
+      {
+        skillId: 'aimed-shot',
+        name: 'Прицельный выстрел',
+        rank: 2,
+        target: 'enemy',
+        minimumRange: 2,
+        maximumRange: 4,
+        actionPointCost: 4,
+        staminaCost: 24,
+        duration: 'instant',
+        description: '',
+        equipmentAvailable: true,
+      },
+    ],
+    skillReach: [
+      {
+        actorId: 'human-1',
+        activationId: 'activation-1',
+        revision: 1,
+        skillId: 'aimed-shot',
+        minimumRange: 2,
+        maximumRange: 4,
+        cells: [{ q: 4, r: 5 }],
+      },
+    ],
+  };
+}
+async function rejectsReach(payload: unknown) {
+  expect(isCombatLabView(payload)).toBe(false);
+  await expect(readSessionView(new Response(JSON.stringify(payload)), 'session')).rejects.toThrow(
+    'invalid view',
+  );
+}
+it('admits optional, empty and signed skill geometry without computing range or LOS', async () => {
+  const view = skillReachView();
+  const row = view.skillReach![0]!;
+  const negative = { q: -7, r: -3 };
+  for (const payload of [
+    view,
+    { ...view, skillReach: undefined },
+    { ...view, skillReach: [] },
+    { ...view, skillReach: [{ ...row, cells: [] }] },
+    {
+      ...view,
+      map: { ...view.map, hexes: [...view.map.hexes, negative] },
+      skillReach: [{ ...row, cells: [negative] }],
+    },
+    ...['m0-prototype-v1', 'sprite-prototype-v1', 'sprite-prototype-v2'].flatMap((rulesetId) =>
+      [undefined, []].map((skillReach) => ({
+        ...view,
+        rulesetId,
+        scenarioId: rulesetId === 'm0-prototype-v1' ? 'm0-3v3-v1' : view.scenarioId,
+        skillReach,
+      })),
+    ),
+    { ...view, status: 'resolved', activation: null, skillReach: [] },
+  ]) {
+    const parsed = JSON.parse(JSON.stringify(payload));
+    expect(isCombatLabView(parsed)).toBe(true);
+    await expect(readSessionView(new Response(JSON.stringify(parsed)), 'session')).resolves.toEqual(
+      parsed,
+    );
+  }
+});
+it('rejects every malformed reach row and cell through the real reader', async () => {
+  const view = skillReachView();
+  const row = view.skillReach![0]!;
+  for (const skillReach of [
+    null,
+    {},
+    'bad',
+    [null],
+    [[]],
+    [42],
+    [row, row],
+    ...Object.keys(row).map((key) => [{ ...row, [key]: undefined }]),
+    ...['', 'foreign'].map((actorId) => [{ ...row, actorId }]),
+    ...['', 'stale'].map((activationId) => [{ ...row, activationId }]),
+    ...[-1, 0, 2, 1.5, Number.MAX_SAFE_INTEGER + 1].map((revision) => [{ ...row, revision }]),
+    ...['unknown', 'rally'].map((skillId) => [{ ...row, skillId }]),
+    ...[-1, 1.5, Number.MAX_SAFE_INTEGER + 1, 5].map((minimumRange) => [{ ...row, minimumRange }]),
+    [{ ...row, maximumRange: 1 }],
+    [{ ...row, maximumRange: 5 }],
+    [{ ...row, targetId: 'hidden' }],
+    ...[
+      null,
+      {},
+      [null],
+      [[]],
+      [{ q: 4 }],
+      [{ q: 4, r: 5, extra: 1 }],
+      [{ q: 4.1, r: 5 }],
+      [{ q: 999, r: 5 }],
+      [{ q: 4, r: Number.MAX_SAFE_INTEGER + 1 }],
+      [row.cells[0], row.cells[0]],
+    ].map((cells) => [{ ...row, cells }]),
+  ])
+    await rejectsReach({ ...view, skillReach });
+  for (const value of [NaN, Infinity, -Infinity]) {
+    expect(isCombatLabView({ ...view, skillReach: [{ ...row, revision: value }] })).toBe(false);
+    expect(isCombatLabView({ ...view, skillReach: [{ ...row, minimumRange: value }] })).toBe(false);
+    expect(
+      isCombatLabView({ ...view, skillReach: [{ ...row, cells: [{ q: value, r: 5 }] }] }),
+    ).toBe(false);
+  }
+});
+it('rejects mismatched reach context and malformed companions safely on both scenarios and terminal views', async () => {
+  const view = skillReachView();
+  for (const patch of [
+    { activation: null },
+    { activation: [] },
+    { activation: { id: '', actorId: 'human-1' } },
+    { activation: { ...view.activation!, actorId: 'opponent-1' } },
+    { units: view.units.filter((unit) => unit.id !== 'human-1') },
+    { units: view.units.map((unit) => ({ ...unit, status: 'dead' })) },
+    { units: view.units.map((unit) => ({ ...unit, sideId: 'foreign' })) },
+    { skills: undefined },
+    { skills: [] },
+    { skills: null },
+    { skills: {} },
+    { skills: [null] },
+    { skills: [{ ...view.skills![0], minimumRange: -1 }] },
+    { skills: [{ ...view.skills![0], maximumRange: 3 }] },
+    { units: [null] },
+    { units: {} },
+    { map: { ...view.map, hexes: [null] } },
+    { map: { ...view.map, blocked: [null] } },
+    { map: { ...view.map, blocked: view.skillReach![0]!.cells } },
+  ]) {
+    for (const scenarioId of ['m0-3v3-v1', 'sprite-6v6-v1']) {
+      const payload = { ...view, ...patch, scenarioId };
+      await rejectsReach(payload);
+      await rejectsReach({ ...payload, status: 'resolved' });
+    }
+  }
+  for (const rulesetId of [
+    undefined,
+    'm0-prototype-v1',
+    'sprite-prototype-v1',
+    'sprite-prototype-v2',
+  ])
+    await rejectsReach({ ...view, rulesetId });
+});
