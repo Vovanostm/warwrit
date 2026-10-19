@@ -3,7 +3,7 @@ name: warwrit-orca
 description: Run Warwrit GitHub issues through the Orca game-development workflow (v2) — contract, single-writer build per lane, deterministic validation, fresh evaluator with live playtest and visual critic, PR/CI, owner-approved merge — with headless Codex workers in their own worktrees. Use for one coordinator tick (scripts/orca-pipeline-tick.sh) or when the owner asks to implement issues through Orca.
 ---
 
-# Warwrit game-development workflow in Orca (v2, 2026-10-19)
+# Warwrit game-development workflow in Orca (v3, 2026-10-19)
 
 [AGENTS.md](../../../AGENTS.md) and [AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#game-development-workflow-v2--2026-10-19)
 stay authoritative. Use the `orca` CLI (Orca.app, Git repos); `arca` is a
@@ -15,14 +15,15 @@ removed. Each tick report states the metric.
 
 ## Team
 
-| Role          | Context          | Writes                                              | Brief                                                  |
-| ------------- | ---------------- | --------------------------------------------------- | ------------------------------------------------------ |
-| Coordinator   | one tick, fresh  | labels, briefs, #217 notes                          | this skill                                             |
-| Contract      | fresh, read-only | `.orca/<slice>/contract.md`                         | [contract](prompts/contract.md)                        |
-| Builder       | one per **lane** | source, tests, commits                              | [build](prompts/build.md), [rework](prompts/rework.md) |
-| Evaluator     | fresh, read-only | `.orca/<slice>/eval-N.md`                           | [evaluate](prompts/evaluate.md)                        |
-| Visual critic | fresh, read-only | `.orca/<slice>/visual-N.md`                         | [visual](prompts/visual.md)                            |
-| Owner         | human            | `agent:merge-approved`, `## Owner decision` on #217 | —                                                      |
+| Role           | Context           | Writes                                                        | Brief                                                  |
+| -------------- | ----------------- | ------------------------------------------------------------- | ------------------------------------------------------ |
+| Coordinator    | one tick, fresh   | labels, briefs, #217 notes                                    | this skill                                             |
+| Contract       | fresh, read-only  | `.orca/<slice>/contract.md`                                   | [contract](prompts/contract.md)                        |
+| Builder        | one per **lane**  | source, tests, commits                                        | [build](prompts/build.md), [rework](prompts/rework.md) |
+| Evaluator      | fresh, read-only  | `.orca/<slice>/eval-N.md`                                     | [evaluate](prompts/evaluate.md)                        |
+| Visual critic  | fresh, read-only  | `.orca/<slice>/visual-N.md`                                   | [visual](prompts/visual.md)                            |
+| Epic architect | fresh, one writer | epic contract PR: interfaces, stubs, ownership map, task list | [epic-contract](prompts/epic-contract.md)              |
+| Owner          | human             | `## Owner decision` on the epic; `agent:blocked` stops a PR   | —                                                      |
 
 All workers append [common rules](prompts/common.md). Research basis:
 [AGENT_TEAM](../../../docs/engineering/AGENT_TEAM.md#game-development-workflow-v2--2026-10-19).
@@ -51,8 +52,19 @@ All workers append [common rules](prompts/common.md). Research basis:
 - **The coordinator is the single writer of shared records** (`CHANGELOG.md`,
   `docs/engineering/CURRENT_PLAN.md`, wiki) and adds them to the PR branch
   right before merge.
-- **Merge only with `agent:merge-approved`** on the PR, set by the owner; one PR
-  at a time, expected head SHA. Without it, stop at `agent:pr`.
+- **Merge after the gates, without waiting for the owner.** Owner decision
+  2026-10-19: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
+  ревьюер». The coordinator merges a PR when CI is green, `orca-validate.sh`
+  exits 0 and the gates of its tier (below) are ACCEPT; one PR at a time,
+  expected head SHA. `agent:blocked` on a PR or an owner decision stops it.
+- **One issue = one slice = one PR**, about 300 changed lines or less without
+  tests. A slice or local override that lists several issues is split before
+  its next start; an in-flight slice finishes only if its PR stays within that
+  size, otherwise its remaining issues become follow-up slices.
+- **Contract first, then parallel.** A new epic starts with one epic contract
+  PR (shared interfaces, optional protocol fields, stubs, file ownership map,
+  task list marking parallel `[P]` and sequential issues); story slices start
+  after it merges and code against it.
 - **Ownership is resolved by the coordinator first** (`ownership_rules` in the
   slice plan): tests of owned modules belong to the slice; a file no active
   slice owns may be added (comment it on the issue); a file owned by an active
@@ -109,16 +121,17 @@ repo id are in the tick prompt. Work from the coordinator worktree.
 | [planning]     | a section is missing or the contract asks an open rule question                          | one contract revision with the gap; a rule question → `needs-owner`                                                                                                                                                                          |
 | [implementing] | builder done, new commits on the branch, clean tree                                      | → [validating]; run `bash scripts/orca-validate.sh <worktree>`                                                                                                                                                                               |
 | [implementing] | builder failed                                                                           | fallback ladder                                                                                                                                                                                                                              |
-| [validating]   | exit 0                                                                                   | start the evaluator (and the visual critic for visual diffs) in parallel; → [review]                                                                                                                                                         |
+| [validating]   | exit 0                                                                                   | start the gates of the slice tier (below) in parallel; → [review]                                                                                                                                                                            |
 | [validating]   | exit ≠ 0                                                                                 | rework brief with the failing `.orca/validate-*.log` excerpts; → [implementing]                                                                                                                                                              |
 | [review]       | `eval-N.md` starts `VERDICT: ACCEPT` and, if run, `visual-N.md` starts `VERDICT: ACCEPT` | copy small JPEG evidence to `docs/engineering/evidence/<slice>/`, commit, push, `gh pr create` (one `Closes #N` per issue, proof, checks, risks); → [pr]                                                                                     |
 | [review]       | any `REWORK`                                                                             | rework brief with all findings; → [implementing]                                                                                                                                                                                             |
 | [pr]           | CI failed                                                                                | rework brief with the failing job log excerpt; push again                                                                                                                                                                                    |
-| [pr]           | CI green and PR has `agent:merge-approved`                                               | rebase on origin/main if behind (re-run validate), add the CHANGELOG/CURRENT_PLAN entry commit, push, wait CI, `gh pr merge --merge --match-head-commit <sha>`; → [done]; `orca worktree rm --worktree id:<repo>::<path> --run-hooks --json` |
+| [pr]           | CI green, tier gates ACCEPT, no `agent:blocked`                                          | rebase on origin/main if behind (re-run validate), add the CHANGELOG/CURRENT_PLAN entry commit, push, wait CI, `gh pr merge --merge --match-head-commit <sha>`; → [done]; `orca worktree rm --worktree id:<repo>::<path> --run-hooks --json` |
 
-4. **Report.** Post one short comment on epic #217 only if something changed:
-   slice → state, PR links, and the metric (merged with playable proof today,
-   open PRs, slices waiting on the owner). Then stop.
+4. **Report.** Comment on the epic only when a slice changes state or a PR
+   merges, at most three lines. Once a day post the digest: merged PRs with
+   playable proof, open PRs, at most three owner questions with a recommended
+   answer. Then stop.
 
 Slices started before v2: `plan.md` with an approving `plan-review-N.md`
 counts as the contract, and `review-N.md` counts as `eval-N.md`. A `needs-owner`
@@ -126,6 +139,28 @@ slice whose issues are back in `agent:ready` resumes from its existing
 worktree, applying the latest owner decision; never recreate the worktree.
 
 Move issue labels only with `bash scripts/orca-issue-state.sh <state> <issues…>`.
+
+## Gate tiers (v3)
+
+| Tier | Change                                               | Gates before merge                                                      |
+| ---- | ---------------------------------------------------- | ----------------------------------------------------------------------- |
+| D    | docs, tests, tooling, prompts                        | CI, validate, fresh reviewer (`warwrit-review`)                         |
+| L    | game-core / server logic, protocol (optional fields) | CI, validate, reviewer + evaluator plays the changed journey            |
+| U    | HUD / UI in an existing layout                       | CI, validate, evaluator plays it and checks the issue's visual criteria |
+| V    | art assets, scene rendering, new visual elements     | as U + visual critic with the full VISUAL_CRITIQUE rubric               |
+
+Close-view sheets, equal-height comparisons and layer proofs belong to tier V;
+their absence is never a REWORK reason for tiers D, L or U.
+
+## Epic contract (v3)
+
+For a new epic the coordinator first starts the epic architect
+([brief](prompts/epic-contract.md)) in one worktree. Its PR (tier D/L) adds the
+shared types, optional protocol fields, stubs that compile and fail visibly,
+the file ownership map and `.orca/epics/<epic>/tasks.md` with one line per issue
+(`[P]` parallel or `after:`). After it merges, every issue becomes its own slice
+in `slices-local.json` with the ownership from the map, and up to the lane
+limits run in parallel.
 
 ## Fallback ladder
 

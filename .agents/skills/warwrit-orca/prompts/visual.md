@@ -8,8 +8,10 @@ Inputs are images, not conclusions: `.orca/{{SLICE}}/shots/` and
 `.orca/{{SLICE}}/eval-shots/` (current), the references named in the rubric and
 AGENTS.md (`assets/art/m1/style/unit-c-ink.png`, the relevant
 `assets/art/m1/places/` scene, `assets/art/combat/stage1-2026-10-09/ui-reference-*.png`).
-Issues: {{ISSUES}}. Score every criterion; ACCEPT only when every criterion
-scores at least 2.
+Issues: {{ISSUES}}. This brief runs only for tier V (art assets, scene
+rendering, new visual elements). Score every applicable criterion; ACCEPT only
+when each scores at least 2. A criterion about another asset type or a proof
+format the change cannot have is N/A, not a failure.
 
 Write `.orca/{{SLICE}}/visual-{{ROUND}}.md` starting with `VERDICT: ACCEPT` or
 `VERDICT: REWORK`, then the score table and, per failing criterion, the visible

@@ -21,6 +21,10 @@ about 80 lines, with exactly these sections:
    do not answer, each with a recommended answer; "none" if none. Anything
    outside ownership is listed here too.
 
+One issue per slice. Code against the epic contract
+(`.orca/epics/<epic>/contract.md`) when it exists. If the change would exceed
+about 300 changed lines without tests, list the split under `## Questions`.
+
 If `.orca/{{SLICE}}/plan.md` or earlier review files exist, reuse them and fix
 what they flagged instead of starting over.
 Set `report_path` to `.orca/{{SLICE}}/contract.md` in your final answer.

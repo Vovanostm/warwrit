@@ -1,5 +1,12 @@
 # Warwrit current delivery plan
 
+**Orca workflow v3 — 2026-10-19, owner merge permission (mission level):**
+owner: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
+ревьюер»; «один issue — один pr»; «сначала общий контракт, идею, потом
+параллелить». Pipeline PRs merge when CI, `orca-validate.sh` and the tier gates
+pass; `agent:merge-approved` is no longer required; `agent:blocked` stops a PR.
+Epic contract first for new epics. [Owning section](AGENT_TEAM.md#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19).
+
 **PR229 merge stage — 2026-10-19, local main integration; NOT_MERGED:**
 Live `agent:merge-approved` is present. Prior head `35c117e` has successful
 CI39196517767. Normal merge of `origin/main` `6f1fbae` preserves published
