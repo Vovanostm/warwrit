@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### QA hooks slice for regression journeys (#231)
+
+- 2026-10-19, branch `claude/epic-217-slice-qa-hooks` (stacked on PR230),
+  published (PR pending owner merge): owner asked for an issue and slice for
+  `render_game_to_text` and `advanceTime` in the combat-lab client so the
+  installed `openai-develop-web-game` skill can run regression journeys.
+  Opened #231 and slice `qa-lab-hooks` (lane web, wave 4, after `uix-w2-log`
+  and `uix-w3-playback`, which owns the paced enemy-turn timers the hook must
+  step) in [epic-217.json](.agents/skills/warwrit-orca/slices/epic-217.json).
+  Check: `after` closure script, 0 unsequenced overlaps. Plan only.
+
 ### Slices for #227 and #228; slice plan sequenced without shared writers
 
 - 2026-10-19, branch `claude/epic-217-slices-227-228`, published (PR pending

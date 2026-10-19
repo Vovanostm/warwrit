@@ -6,7 +6,8 @@ web, wave 4 after camera/scene/tooltips) added to
 [epic-217.json](../../.agents/skills/warwrit-orca/slices/epic-217.json); the
 coordinator's local splits folded in; 15 shared-file overlaps sequenced
 (`uix-w2-log` now after `core-melee-connect`). After the owner merges:
-`scripts/orca-issue-state.sh ready 227 228`. Daily digest on #217.
+`scripts/orca-issue-state.sh ready 227 228`. QA hooks: #231, slice
+`qa-lab-hooks` (web, wave 4 after playback), stacked PR. Daily digest on #217.
 
 **Studio director — 2026-10-19, PR226 MERGED 6f1fbae:** owner made the
 Claude session studio director with autonomy («ты — директор студии и

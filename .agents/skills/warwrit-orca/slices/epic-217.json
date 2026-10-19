@@ -364,6 +364,23 @@
         "apps/web/src/combat-lab/unit-vitals.css"
       ],
       "lane": "web"
+    },
+    {
+      "wave": 4,
+      "slice": "qa-lab-hooks",
+      "issues": [231],
+      "note": "Studio director 2026-10-19: window.render_game_to_text (JSON from the client's received projection only: round, turn owner, mode, units with label/side/hex/vitals/AP/status, selection, targets and refusal reasons, recent log, coordinate note) and window.advanceTime(ms) stepping the client's playback/autoplay/poll timers through one injectable clock; dev build only, unchanged behaviour without the hook. After uix-w3-playback, which introduces the paced enemy-turn timeline and owns these files. Proof: openai-develop-web-game client against pnpm dev:combat, text state matches screenshots at each step, same seed gives the same text twice, no console errors. No progress.md.",
+      "ownership": [
+        "apps/web/src/combat-lab/qa-hooks.ts (new)",
+        "apps/web/src/combat-lab/CombatLab.tsx (QA hook install only)",
+        "apps/web/src/combat-lab/controller.ts (injectable clock only)",
+        "apps/web/src/combat-lab/autoplay.ts (injectable clock only)",
+        "scripts/qa/combat-lab/ (new: action payloads for the skill client)",
+        "apps/web/src/combat-lab/README.md (QA hooks section)",
+        "matching *.test.ts(x) files"
+      ],
+      "after": ["uix-w2-log", "uix-w3-playback"],
+      "lane": "web"
     }
   ]
 }
