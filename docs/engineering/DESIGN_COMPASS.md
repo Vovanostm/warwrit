@@ -42,7 +42,7 @@ stories, XCOM-quality presentation, and a world that remembers what bands did.
 | People | Kingdom Come: Deliverance II | Rulers and patrons with their own right and their own shame                                                                                                                                                                      |
 | Combat | Battle Brothers              | Zone of control, morale with panic/flight, fatigue, armour with its own durability, formation skills. **First priority (owner 2026-10-08): zone of control and morale with flight/surrender**; armour decided; rest _candidates_ |
 | Combat | Into the Breach              | Big threats telegraph intent; push/displace as real options. **Telegraphed creature intent is first priority**; push is a _candidate_                                                                                            |
-| Combat | XCOM 2                       | Presentation only: preview, pacing, feedback, camera beats ([details](../wiki/battlefield-test-maps.md#шесть-опор-качества))                                                                                                     |
+| Combat | XCOM 2                       | Presentation only: preview, pacing, feedback, camera beats ([details](../wiki/battlefield-test-maps.md#качество-боя-как-это-сделано-в-xcom--2026-10-07))                                                                         |
 | Combat | Jagged Alliance 3            | Mercenaries with character and personal talents                                                                                                                                                                                  |
 
 Already decided for combat: Battle Brothers spirit; trained melee always deals
