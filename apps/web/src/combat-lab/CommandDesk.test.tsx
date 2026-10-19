@@ -141,3 +141,20 @@ it('cancels armed confirmation on another command or Escape callback', () => {
   p.hotkeyActions.current['4']!.run();
   expect(p.act).not.toHaveBeenCalled();
 });
+
+it('keeps historical V1 observations without optional hints or previews usable and confirms conservatively', () => {
+  vi.useFakeTimers();
+  const older = { ...view };
+  delete older.ruleHints;
+  delete older.attackPreview;
+  delete older.availableActions;
+  const p = { ...props(), view: older };
+  const html = renderToStaticMarkup(<CommandDesk {...p} />);
+  expect(html).toContain('Цена не опубликована');
+  expect(html).toContain('Цель недоступна для атаки');
+  expect(html).not.toContain('data-ready="true"');
+  p.hotkeyActions.current['4']!.run();
+  expect(p.act).not.toHaveBeenCalled();
+  p.hotkeyActions.current['4']!.run();
+  expect(p.act).toHaveBeenCalledExactlyOnceWith({ type: 'wait' }, 'Завершение хода');
+});

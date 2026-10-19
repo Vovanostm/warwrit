@@ -54,8 +54,7 @@
   outline-offset: 3px;
 }
 .battle-view .battle-control--icon[data-ready='true']:not([aria-disabled='true']) {
-  outline: 2px solid var(--battle-gold);
-  outline-offset: -4px;
+  box-shadow: inset 0 0 0 2px var(--battle-gold);
 }
 .battle-unavailable-mark {
   position: absolute;
@@ -216,9 +215,9 @@
   justify-self: center;
   width: min(100%, 720px);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 124px;
-  gap: 10px 16px;
-  padding: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  padding: 8px;
   border: 1px solid var(--battle-border);
   border-radius: var(--battle-radius);
   background: var(--battle-panel);
@@ -226,10 +225,11 @@
   pointer-events: auto;
 }
 .battle-order-guidance {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   grid-column: 1 / -1;
   grid-row: 1;
-  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 16px;
   align-items: center;
   gap: 8px;
   font-size: 12px;
@@ -298,31 +298,39 @@
 .battle-command-group,
 .battle-ability-dock {
   display: grid;
-  grid-row: 2;
   align-content: start;
-  gap: 8px;
   min-width: 0;
 }
 .battle-command-group {
   grid-column: 1;
+  grid-row: 2;
 }
 .battle-ability-dock {
-  grid-column: 2;
+  grid-column: 1;
+  grid-row: 3;
 }
 .battle-command-group > small,
 .battle-ability-dock > small {
-  color: var(--battle-muted);
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.07em;
+  display: none;
 }
 .battle-view .combat-lab-actions,
 .battle-skill-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: start;
   gap: 8px;
+}
+/* Keep the five commands on one baseline, including genuine browser zoom. */
+.battle-view .combat-lab-actions {
+  display: grid;
+  grid-template-columns: 0.8fr 1.1fr 0.9fr 1.15fr 1.05fr;
+  gap: 4px;
+}
+.battle-skill-list {
+  min-height: 99px;
+  overflow-x: auto;
+  padding: 5px;
+  margin: -5px;
 }
 .battle-control-slot {
   display: block;
@@ -404,12 +412,12 @@
 }
 .battle-feedback-row {
   grid-column: 1 / -1;
-  grid-row: 3;
+  grid-row: 4;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  min-height: 16px;
+  min-height: 28px;
   color: var(--battle-muted);
   font-size: 11px;
   line-height: 1.4;
@@ -474,10 +482,10 @@
 @media (max-width: 1350px) {
   .battle-view {
     --battle-edge: 16px;
-    --battle-icon-size: 52px;
+    --battle-icon-size: 56px;
   }
   .battle-dock-orders {
-    column-gap: 16px;
+    column-gap: 6px;
   }
   .battle-view .battle-control--icon .combat-icon {
     width: 30px;
@@ -535,7 +543,7 @@
     500 18px/1.2 system-ui,
     sans-serif;
   color: var(--battle-muted);
-  min-height: 2.4em;
+  min-height: 1.2em;
   overflow-wrap: normal;
 }
 .battle-command,
@@ -543,7 +551,8 @@
   text-align: center;
 }
 .battle-command {
-  width: 100px;
+  min-width: 0;
+  width: 100%;
 }
 .battle-ability-slot {
   width: 124px;
