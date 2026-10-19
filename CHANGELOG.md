@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Studio operating model, mechanics reconciled with S4, art lane, melee slice
+
+- 2026-10-19, branch `claude/studio-operating-model`, published (PR pending
+  owner merge label): owner «продолжай работать автономно, ты — директор
+  студии и отвечаешь за качество продукта». Added the
+  [studio operating model](docs/engineering/AGENT_TEAM.md#studio-operating-model--2026-10-19)
+  (decision rights, cells/lanes, daily digest, quality bar, retro, order of
+  work). Director's audit found the mechanics wiki behind the code: zone of
+  control, morale/flight/surrender, telegraphed intent and height/mud/fire are
+  already in sprite S4 (PR157) — pages and the index now say so with source
+  links; melee-always-connects (owner 2026-10-07) is still not implemented.
+  Added the [warwrit-art](.agents/skills/warwrit-art/SKILL.md) skill with
+  `scripts/composite.py` (crop/paste/diff; smoke PASS). Opened issue #225 and
+  slice `core-melee-connect` (lane core, after `uix-w1-names`;
+  `uix-w4-bow` now after it). Docs/plan only; no game code changed.
+
 ### Switch the Orca pipeline to game-development workflow v2
 
 - 2026-10-19, originating branch `claude/orca-workflow-v2`, local/PR pending:

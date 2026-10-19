@@ -1,5 +1,14 @@
 # Warwrit current delivery plan
 
+**Studio director — 2026-10-19, PR pending owner merge label:** owner made the
+Claude session studio director with autonomy («ты — директор студии и
+отвечаешь за качество продукта»); merge stays behind `agent:merge-approved`.
+Board: **now** — Orca v2 wave 1 on #217 (metric: merged PRs with playable proof
+per day); **next** — `core-melee-connect` (#225) on lane core after
+`uix-w1-names`; art lane via [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md);
+**later** — QA hooks for regression journeys, retro per wave. Mechanics wiki
+reconciled with S4. [Owning section](AGENT_TEAM.md#studio-operating-model--2026-10-19).
+
 **Orca game-development workflow v2 — 2026-10-19, local/PR pending:**
 Day-one result of the pipeline below: no commit or PR in about 11 hours
 (plan-review rounds, audit discovered at commit, `needs-owner` stops; PR223

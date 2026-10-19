@@ -295,3 +295,61 @@ Before adding concurrency or roles, use [the harness evaluation](HARNESS_EVAL.md
 with the same acceptance, model and base: correctness, conflicts, parent rework,
 wall time and actual token/cost telemetry. Use `NOT_MEASURED` for missing metrics.
 Reject a faster run with broken scope or missing proof.
+
+## Studio operating model — 2026-10-19
+
+Owner, 2026-10-19: «Да, продолжай работать автономно, ты — директор студии и
+отвечаешь за качество продукта». This section turns the Orca v2 code pipeline
+into a studio. It adds no new engine: cells are lanes and briefs on the same
+pipeline, and the owner merge gate stays.
+
+### Decision rights
+
+| Decision                                                           | Who decides                     | How it is recorded                        |
+| ------------------------------------------------------------------ | ------------------------------- | ----------------------------------------- |
+| Merge, deploy, paid services, external messages                    | Owner                           | `agent:merge-approved` / explicit message |
+| New canon: factions, faith, magic, history, rulers, era name       | Owner                           | `## Owner decision` on the epic or wiki   |
+| Which mechanic or feature comes next; slice order                  | Studio director                 | slice plan + CURRENT_PLAN entry           |
+| Mechanic details inside an owner-chosen direction (rules, numbers) | Studio director, owner may veto | owning wiki page, «director decision»     |
+| Art and text details inside approved style, lore and references    | Director; critics must ACCEPT   | provenance / text critic record           |
+| Code structure, tests, tooling inside AGENTS limits                | Builder; evaluator must ACCEPT  | PR                                        |
+
+The owner gets one daily digest on the active epic: merged PRs with playable
+proof, open PRs waiting for `agent:merge-approved`, and at most three owner
+questions, each with a recommended answer.
+
+### Cells
+
+| Cell          | Lane in the slice plan | Writer                     | Gate                                                                                |
+| ------------- | ---------------------- | -------------------------- | ----------------------------------------------------------------------------------- |
+| Production    | —                      | Director                   | Board in CURRENT_PLAN top entry; daily digest                                       |
+| Game design   | — (contract input)     | Director → contract writer | Contract cites the owning [mechanics page](../wiki/mechanics/index.md)              |
+| Engineering   | `core`, `web`          | One builder per lane       | `orca-validate.sh`, evaluator plays the journey                                     |
+| Art           | `art`                  | One art builder            | [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md) loop, visual critic ACCEPT |
+| Narrative     | `text`                 | One text builder           | Text critic ACCEPT ([TEXT_CRITIQUE](TEXT_CRITIQUE.md))                              |
+| QA / playtest | — (read-only)          | Evaluator, playtest agent  | Regression journeys; bugs become issues, not chat                                   |
+
+Art and text lanes write disjoint paths (`assets/art/**`, `apps/web/src/i18n/**`)
+and may run beside `core` and `web` without raising the five-worker ceiling.
+
+### Quality bar the director enforces
+
+- Docs must match code. A mechanic page states what the current ruleset does,
+  with links to the source; a proposal that differs is history, not status.
+  First reconciliation 2026-10-19: zone of control, morale/flight/surrender,
+  telegraphed intent and height/mud/fire were already in S4 (PR157) while the
+  mechanics wiki still called them candidates.
+- Every slice ends in a played journey; screenshots are evidence, not the claim.
+- After each wave a five-line retro on the epic: lead time per slice, rework
+  rounds, critic first-pass ACCEPT rate, what changed in a skill or brief.
+
+### Order of work
+
+1. Prove the pipeline: merged PRs with playable proof per day on #217.
+2. Next core slice: [melee always connects](../work-packages/M1-MELEE-CONNECT.md),
+   owner-decided 2026-10-07 and still not implemented.
+3. Art lane with the region-compositing technique proven on the
+   [Porechye sheet](../wiki/world/map.md#крупный-план-поречья-через-codex--2026-10-09).
+4. QA hooks (`render_game_to_text`, `advanceTime`) for regression journeys with
+   the installed [develop-web-game](GAMEDEV_SKILLS.md) skill.
+5. Retro and metrics after each wave.
