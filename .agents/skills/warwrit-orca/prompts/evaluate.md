@@ -18,6 +18,6 @@ Read-only for source; fresh context. You are a skeptical player and reviewer.
    {{OWNERSHIP}}, or missing proof. Each: file:line or play step,
    counterexample, smallest fix. No style preferences.
 
-Write `.orca/{{SLICE}}/eval-{{ROUND}}.md` starting with `VERDICT: ACCEPT` or
-`VERDICT: REWORK`, then the findings and what you played.
+Write `.orca/{{SLICE}}/eval-{{ROUND}}.md` whose first line is
+`VERDICT: ACCEPT <head-sha>` or `VERDICT: REWORK <head-sha>`, then the findings and what you played.
 Set `report_path` to that file in your final answer.

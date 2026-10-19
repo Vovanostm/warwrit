@@ -13,7 +13,7 @@ rendering, new visual elements). Score every applicable criterion; ACCEPT only
 when each scores at least 2. A criterion about another asset type or a proof
 format the change cannot have is N/A, not a failure.
 
-Write `.orca/{{SLICE}}/visual-{{ROUND}}.md` starting with `VERDICT: ACCEPT` or
-`VERDICT: REWORK`, then the score table and, per failing criterion, the visible
+Write `.orca/{{SLICE}}/visual-{{ROUND}}.md` whose first line is
+`VERDICT: ACCEPT <head-sha>` or `VERDICT: REWORK <head-sha>`, then the score table and, per failing criterion, the visible
 defect and the smallest change.
 Set `report_path` to that file in your final answer.
