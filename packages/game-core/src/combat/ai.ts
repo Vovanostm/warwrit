@@ -282,8 +282,8 @@ export function chooseAiCommand(
 
   const retreat =
     doctrine === 'survivor' &&
-    combatActionAllowed(actor, 'retreat') &&
-    combatActionAllowed(actor, 'move') &&
+    combatActionAllowed(state, actor, 'retreat') &&
+    combatActionAllowed(state, actor, 'move') &&
     shouldRetreat(actor, rules)
       ? survivorRetreatCommand(state, actor, rules)
       : undefined;
@@ -300,7 +300,7 @@ export function chooseAiCommand(
     }
   }
   const target = affordableLegacyTarget(state, actor, weapon);
-  if (target !== undefined && combatActionAllowed(actor, 'attack')) {
+  if (target !== undefined && combatActionAllowed(state, actor, 'attack')) {
     return {
       type: 'attack',
       targetId: target.id,
@@ -312,7 +312,7 @@ export function chooseAiCommand(
     state.rulesetId === SPRITE_PROTOTYPE_RULESET_ID
       ? prototypeMovementTowardEnemy(state, actor)
       : movementTowardEnemy(state, actor);
-  if (movement !== undefined && combatActionAllowed(actor, 'move')) {
+  if (movement !== undefined && combatActionAllowed(state, actor, 'move')) {
     return {
       type: 'move',
       to: movement.to,
@@ -323,7 +323,7 @@ export function chooseAiCommand(
   if (
     state.activation.remainingActionPoints >= rules.defend.actionPointCost &&
     actor.stamina >= rules.defend.staminaCost &&
-    combatActionAllowed(actor, 'defend')
+    combatActionAllowed(state, actor, 'defend')
   ) {
     return { type: 'defend', ...commandBase(state, 'defend') };
   }

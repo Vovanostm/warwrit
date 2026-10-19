@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Keep company capability rules isolated from historical combat
+
+- 2026-10-20, branch `codex/company-profile-164`, local correction: integrated
+  validation reproduced a legacy preview crash from an unrelated capabilities
+  field and an insufficient schema-1 bridge-v3 setup guard. Restrict capability
+  execution/assertion to bridge-v3 and reject bridge rulesets in the old setup
+  entrypoint. Existing privacy/setup tests now cover these boundaries, including
+  legacy false capabilities that must not alter actions. No approved rule changed.
+  Focused 34 tests, core typecheck and scoped lint PASS. Four prior timeout cases
+  rerun sequentially: three PASS, unchanged world navigation still times out at
+  5 seconds. After browser cleanup, broader checks: 183 PASS, two timeouts
+  (world navigation and legacy fixture run); leader-death now PASS. Independent
+  staged source delta ACCEPT; whole #164 remains unaccepted. Full integrated gate remains FAIL (766 PASS, six failures initially;
+  audit then lacked coverage). No check threshold was increased.
+  [Profile behavior and remaining proof](docs/wiki/combat.md#company-profile-implementation--2026-10-20).
+
 ### Implement versioned company combat profiles
 
 - 2026-10-20, branch `codex/company-profile-164`, local source9eee0ce:

@@ -1,5 +1,23 @@
 # Warwrit current delivery plan
 
+**Profile correction — 2026-10-20, LOCAL / NOT ACCEPTED:**
+Integrated gate at `74e1da1`: six failures, 766 PASS, 48 SKIP; four timeouts,
+legacy capability preview crash and newly supported ruleset assertion. Audit
+failed because that run emitted no coverage file. Parent fixed version isolation
+and old setup admission; focused 34 tests, core types and scoped lint PASS.
+Sequential timeout rerun: three PASS; unchanged world-navigation test still
+exceeds 5 seconds. After browser cleanup: 183 PASS, two timeouts (world
+navigation and legacy fixture run); leader-death now PASS. Independent staged
+source delta ACCEPT, with exact commit comparison required. No thresholds changed. Independent source delta and final
+integrated/playable proof remain pending; prior source ACCEPT is insufficient.
+
+Actual retained campaign upgrade admitted all three allies including unarmed
+Mora into HUNT-03 against three raiders. Browser initially showed our actor but
+no command controls, then inactivity advanced to defeat at round 7/revision 56.
+Cause is unproved; no manual-command or payment success is claimed. This world's
+result is retained. Candidate app stopped; PostgreSQL/Dex retained. Independent
+isolated runtime evaluation remains pending, as does critical-bleed owner answer.
+
 **Company profile #164 — 2026-10-20, LOCAL SOURCE / acceptance pending:**
 Normal source commit `9eee0ce` on `codex/company-profile-164` implements the
 versioned bridge-v3 fists/capability path through projection, whole-party binding,

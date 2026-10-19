@@ -290,11 +290,21 @@ const COMPANY_COMBAT_RULES_V3: CombatRules = {
   ],
 };
 
-export function combatActionAllowed(unit: CombatUnitState, intent: CombatCommand['type']): boolean {
-  if (!unit.capabilities) return true;
-  return (
-    !(intent in unit.capabilities) || unit.capabilities[intent as keyof typeof unit.capabilities]
-  );
+export function combatActionAllowed(
+  state: Pick<BattleState, 'rulesetId'>,
+  unit: CombatUnitState,
+  intent: CombatCommand['type'],
+): boolean {
+  if (state.rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID) return true;
+  switch (intent) {
+    case 'move':
+    case 'attack':
+    case 'defend':
+    case 'retreat':
+      return unit.capabilities?.[intent] === true;
+    default:
+      return true;
+  }
 }
 
 export function combatRules(rulesetId: CombatRulesetId): CombatRules {
