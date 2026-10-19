@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+**Autonomous studio — owner decision 2026-10-19:** «Да, продолжай — хочу,
+чтобы работа велась автономно — создавались issues, обновлялись, выполнялись,
+мержились — идея есть, ориентиры есть — теперь только этап полировки. Все
+важные решения должны быть на мне.» Scope: the studio director (Claude) and the
+Orca coordinator create, update, split and close issues and slices, and merge
+PRs — including infrastructure PRs — after CI green and a fresh reviewer
+ACCEPT for the gated head (coordinator slice PRs: tier gates of warwrit-orca).
+**Owner decides** (one `## Owner questions` comment with a recommended answer):
+new canon or lore; new mechanics or changes to accepted rules, balance targets
+or ruleset semantics beyond owner-chosen directions; priorities between epics
+and scope cuts; AGENTS.md changes; deployment, paid services, external
+messages. Phase: polish of the accepted idea and references.
+
 **Orca workflow v3 — 2026-10-19, owner merge permission (mission level):**
 owner: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
 ревьюер»; «один issue — один pr»; «сначала общий контракт, идею, потом
