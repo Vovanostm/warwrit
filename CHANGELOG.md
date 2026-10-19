@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Add the human-opponent preset producer and playable evidence
+
+- 2026-10-20, branch `codex/human-battle-228`, local: implement #228 catalog
+  presets in server `custom-battle.ts` and optional protocol metadata. The new
+  human band demonstrates existing morale/surrender/withdrawal behavior;
+  defaults, rules, AI and replay formats remain unchanged. Independent source
+  review and played evaluation ACCEPT9534bf7;17focused tests and prior
+  coordinator validate8/8PASS. Two UI seeds surrendered2/1 opponents, manual
+  withdrawal reaction and3downloaded replay checks passed; default reset and
+  restoration passed. [Evidence and remaining picker](docs/engineering/evidence/core-preset-deserters/README.md).
+  Integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending; no whole#228/scene acceptance.
+  Updated battlefield wiki and CURRENT_PLAN; no migrations or dependencies.
+- Dated correction: documentation PR178 is MERGED at1b1e088; PR CI39324349645
+  and main CI39326177324 SUCCESS. Earlier pending receipts remain historical.
+  #227 visual/playable REWORK and #164 classifier/rescue limits stay explicit.
+
 ### Record the approved bounded profile policy
 
 - 2026-10-20, branch `codex/combat-wiki-checkpoint-20261017`, local:
@@ -34,6 +50,15 @@ requests.
   failed on missing coverage; one inherited zero-AP route test ran with coverage
   (1 PASS, 15 SKIP) to satisfy that hook. Independent review pending; full gate
   and browser NOT_RUN. No code, migrations or deployment.
+
+### Prepare a human-opponent battle preset
+
+- 2026-10-19, branch `codex/human-battle-228`, local: owner requested
+  implementation, review and merge of the playable fix sequence. The #228
+  contract reuses current human profiles and S4 morale/escape/reaction rules,
+  preserves the mill default and adds compatible server catalog presets before
+  the sequential editor picker. Implementation and gameplay checks NOT_RUN.
+  Parent coordinates shared records; no rule or lore change is authorized here.
 
 ### Stage names producer merge and retain actor-foundation REWORK
 

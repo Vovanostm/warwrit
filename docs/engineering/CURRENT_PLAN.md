@@ -1,5 +1,28 @@
 # Warwrit current delivery plan
 
+**Human preset producer — 2026-10-20, LOCAL ACCEPT / publication pending:**
+`codex/human-battle-228`, gated source `9534bf7`: detached catalog presets,
+unchanged mill default, six allies and five human opponents with current S4 rules.
+Independent source reviewer and played evaluator ACCEPT; coordinator validate8/8
+before main integration;17focused tests PASS. Two actual UI seeds produced2/1
+surrenders; a manual withdrawal produced a reaction;3UI downloads reconstruct
+state/RNG/events and12/56/1live checkpoints. Default reset/reload/restart retained.
+[Proof and exact limits](evidence/core-preset-deserters/README.md). Main integration
+changed documentation only; integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending. #228 stays
+OPEN for the sequenced catalog picker. #227 full-field geometry and controls pass,
+but evaluator2/visual1 reject unreadable overview figures and native125 HUD
+collisions; sole web writer now corrects overview presentation and layout.
+Profile#164 is in implementation; critical-bleed attack/defence classification
+still awaits the owner. Rescue/assisted transport remains explicitly unresolved.
+This receipt supersedes preparation-only statements below, not their history.
+
+**PR178 delivery readback — 2026-10-20, MERGED:**
+[PR178](https://github.com/Vovanostm/warwrit/pull/178) merged as
+`1b1e088b0c45c2a052c976448f1d7ebb869b61cb`; exact-head CI39324349645 and
+main CI39326177324 SUCCESS. Independent docs review ACCEPT for95069eb and
+2621a2a; validate5/5 and53new links/anchors PASS. This corrects earlier pending
+publication/CI receipts. No gameplay acceptance is inferred from this docs merge.
+
 **Profile #164 owner decision — 2026-10-20, APPROVED / NOT IMPLEMENTED:**
 Owner accepted provisional fists: range1, damage6, cost2AP/8stamina, no armour
 penetration or weapon-skill XP. Immobile members cannot move or retreat
@@ -28,6 +51,15 @@ absolute evidence targets are missing. The merge hook initially lacked coverage;
 one inherited zero-AP route regression ran with coverage (1 PASS/15 SKIP) for
 that hook. This is not new player acceptance.
 [Current queue amendment](M1_PRODUCTION_PLAN.md#current-amendment--2026-10-19).
+
+**Human battle preset — 2026-10-19, LOCAL / implementation starting:**
+Owner authorized implementation, review and merge of the fix sequence.
+`codex/human-battle-228` owns the #228 server catalog producer using existing
+human profiles and current S4 rules. The existing mill remains the default;
+editor selection follows the producer merge and release of the web lane.
+No future melee/bow rule change is required to demonstrate current human
+morale/escape/reactions. Source, gameplay and independent acceptance NOT_RUN.
+Coordinator owns shared records; #227 camera is the independent web writer.
 
 **PR239 merge stage / #186 combined REWORK — 2026-10-19:**
 [PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`

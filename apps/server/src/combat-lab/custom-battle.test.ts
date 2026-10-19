@@ -3,6 +3,7 @@ import {
   SPRITE_COMBAT_LAB_SCENARIO,
   type CombatLabAction,
   type CombatLabBattleConfig,
+  type CombatLabCatalog,
   type CombatLabView,
 } from '@warwrit/protocol';
 import { afterEach, assert, describe, expect, it } from 'vitest';
@@ -89,6 +90,62 @@ afterEach(async () => {
 });
 
 describe('custom sprite battle server boundary', () => {
+  it('serves detached editable mill and human presets through the ordinary create route', async () => {
+    const baseline = defaultSpriteBattle();
+    const catalog = combatLabCatalog();
+    expect(catalog.defaultBattle).toEqual(baseline);
+    expect(catalog.presets?.map(({ id }) => id)).toEqual(['ruined-mill', 'deserter-band']);
+    expect(catalog.presets?.[0]?.battle).toEqual(baseline);
+    const deserters = catalog.presets![1]!.battle;
+    expect(deserters.name).toBe('Банда дезертиров');
+    expect(deserters.seed).toBe(baseline.seed);
+    expect(deserters.map).toEqual(baseline.map);
+    expect(deserters.units.filter((unit) => unit.sideId === 'human')).toEqual(
+      baseline.units.filter((unit) => unit.sideId === 'human'),
+    );
+    expect(
+      deserters.units.filter((unit) => unit.sideId === 'opponent').map((unit) => unit.profileId),
+    ).toEqual(['W01', 'W04', 'W05', 'W01', 'W04']);
+    // Mutating any draft must leave its siblings, subsequent catalogs and the default intact.
+    const before = structuredClone(catalog);
+    expect(catalog.defaultBattle.map).not.toBe(catalog.presets![0]!.battle.map);
+    expect(catalog.presets![0]!.battle.map).not.toBe(deserters.map);
+    expect(catalog.defaultBattle.units[0]).not.toBe(deserters.units[0]);
+    for (const battle of [
+      catalog.defaultBattle,
+      ...catalog.presets!.map((preset) => preset.battle),
+    ]) {
+      const editable = battle as unknown as {
+        map: { tiles: { terrain: string }[] };
+        units: { position: { q: number }; skillRanks: Record<string, number> }[];
+      };
+      editable.map.tiles[0]!.terrain = 'fire';
+      editable.units[0]!.position.q = 9;
+      editable.units[0]!.skillRanks['shield-brace'] = 3;
+    }
+    expect(combatLabCatalog()).toEqual(before);
+    expect(defaultSpriteBattle()).toEqual(baseline);
+    const app = lab();
+    const response = await app.inject({ method: 'GET', url: '/dev/combat-lab/catalog', headers });
+    expect(response.statusCode).toBe(200);
+    const served = response.json<CombatLabCatalog>();
+    expect(served).toEqual(before);
+    for (const { id, battle } of served.presets!) {
+      expect(isCustomBattle(battle)).toBe(true);
+      const created = await app.inject({
+        method: 'POST',
+        url: '/dev/combat-lab',
+        headers,
+        payload: { version: 1, requestId: id, scenarioId: SPRITE_COMBAT_LAB_SCENARIO, battle },
+      });
+      expect(created.statusCode).toBe(201);
+      const view = created.json<CombatLabView>();
+      expect(view.battle).toEqual(createCustomBattleFixture('expected', battle).battle);
+      expect(view.units).toHaveLength(battle.units.length);
+      expect(view.rulesetId).toBe('sprite-prototype-v3');
+    }
+  });
+
   it('publishes weapon inspection for both sides separately from the lawful active attack', async () => {
     const { before } = await createSkillDuel(lab());
     expect(before.units.find((unit) => unit.id === 'fighter')?.weaponReach).toEqual(
