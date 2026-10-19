@@ -58,7 +58,7 @@ fi
 printf 'MAILBOX=%s\nRUN=%s\nREPO_ID=%s\n' "$MAILBOX" "$RUN" "$repo_id" > "$env_file"
 
 stamp="$(date +%Y%m%dT%H%M%S)"
-prompt="You are the Warwrit pipeline coordinator. Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for $repo, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json. Orca run: $RUN. Orca repo id: $repo_id. Your mailbox handle is already in ORCA_TERMINAL_HANDLE. Read the skill completely first, then act and stop when nothing more can advance in this tick. Never merge without the owner's agent:merge-approved label. End with a short status summary."
+prompt="You are the Warwrit pipeline coordinator. Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for $repo, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json. Orca run: $RUN. Orca repo id: $repo_id. Your mailbox handle is already in ORCA_TERMINAL_HANDLE. Read the skill completely first, then act and stop when nothing more can advance in this tick. Merge only as the skill's Gate tiers allow (owner decision 2026-10-19); never merge a PR labelled agent:blocked. End with a short status summary."
 codex exec --approve-for-me -C "$coord" \
   --add-dir "$HOME/orca/workspaces/warwrit" --add-dir "$(cd "$(git rev-parse --git-common-dir)" && pwd -P)" \
   --add-dir "$HOME/Library/pnpm" \

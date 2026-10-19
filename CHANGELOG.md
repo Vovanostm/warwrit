@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Orca workflow v3: contract first, one issue per PR, merge on gates
+
+- 2026-10-19, branch `claude/orca-workflow-v3`, published: owner removed the
+  per-PR owner merge gate («На это есть тесты и агент — ревьюер»), asked for one
+  issue per PR and a shared contract before parallel work. `warwrit-orca` now
+  merges on CI + validate + tier gates (D/L/U/V; art-grade visual critique only
+  for art and scene), splits multi-issue slices, starts new epics with an epic
+  contract PR ([prompt](.agents/skills/warwrit-orca/prompts/epic-contract.md)),
+  reports state changes plus a daily digest; tick prompt updated. Diagnosis of
+  v2 and sources in [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19).
+
 ### Studio operating model, mechanics reconciled with S4, art lane, melee slice
 
 - 2026-10-19, branch `claude/studio-operating-model`, published (PR pending

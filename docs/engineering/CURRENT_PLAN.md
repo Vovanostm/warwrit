@@ -1,5 +1,12 @@
 # Warwrit current delivery plan
 
+**Orca workflow v3 — 2026-10-19, owner merge permission (mission level):**
+owner: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
+ревьюер»; «один issue — один pr»; «сначала общий контракт, идею, потом
+параллелить». Pipeline PRs merge when CI, `orca-validate.sh` and the tier gates
+pass; `agent:merge-approved` is no longer required; `agent:blocked` stops a PR.
+Epic contract first for new epics. [Owning section](AGENT_TEAM.md#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19).
+
 **Studio director — 2026-10-19, PR pending owner merge label:** owner made the
 Claude session studio director with autonomy («ты — директор студии и
 отвечаешь за качество продукта»); merge stays behind `agent:merge-approved`.
