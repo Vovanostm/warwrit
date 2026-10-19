@@ -1,5 +1,53 @@
 # Warwrit current delivery plan
 
+**Company profile #164 — 2026-10-20, LOCAL SOURCE / acceptance pending:**
+Normal source commit `9eee0ce` on `codex/company-profile-164` implements the
+versioned bridge-v3 fists/capability path through projection, whole-party binding,
+strict saved-state readers, practice/physical application, server JOIN and private
+control hints. Historical rulesets remain dispatched separately; no migration.
+Author final152focused tests, core/protocol/testkit/server/web typechecks and
+scoped lint/format/audit PASS. Mixed PostgreSQL JOIN/reload/replay passed before
+final reader/type corrections; exact final DB and historical terminal reruns
+remain pending. Earlier concurrent timeouts are not passes or proven defects.
+Independent review, played mixed-party/terminal/process-restart proof and clean
+integrated gate are pending. Critical-bleed attack/defence classification still
+awaits owner answer; code currently preserves attacks/defence and prohibits only
+move/retreat. Rescue/assisted transport remains unresolved. #164 stays OPEN;
+#163 shared projection work is sequenced after this slice's source corrections.
+[Behavior and limits](../wiki/combat.md#company-profile-implementation--2026-10-20).
+Documentation-only main1b1e088 integrated, keeping both dated histories. PR178
+is MERGED, PR CI39324349645/main CI39326177324 SUCCESS; old pending receipts
+below are historical. No publication or merge of #164 is claimed here.
+
+**Profile #164 owner decision — 2026-10-20, APPROVED / NOT IMPLEMENTED:**
+Owner accepted provisional fists: range1, damage6, cost2AP/8stamina, no armour
+penetration or weapon-skill XP. Immobile members cannot move or retreat
+independently and remain on the field; rescue/assisted transport remains undefined.
+[Direct decision recorded on #164](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952).
+This supersedes the pending-policy statement in the 19 October receipt below.
+PR178 documentation review ACCEPT for `95069eb`; coordinator validate5/5 PASS,
+53 new links/anchors checked with no errors. Publication and exact-head CI pending.
+
+**Authorized playable-fix mission — 2026-10-19, IMPLEMENTATION IN PROGRESS:**
+Owner requested “Implement, review, merge” for the assessed fix sequence.
+Verified remote main is `b568ee25b7529fa5abeeae85e45a41bc587124bb`:
+[PR239](https://github.com/Vovanostm/warwrit/pull/239) is MERGED; #162 is CLOSED
+following PR160 delivery. These facts supersede older pending/draft receipts below.
+The isolated overview (#227) and human-opponent preset (#228) slices are in progress;
+no acceptance or merge is claimed for them. Next comes coherent combat UI, then
+#164 → #165 → #166 with #163 HP, then one real contract/battle/payment/restart
+journey from #174/#177. One journey does not close full eight-contract M1 acceptance.
+Fist parameters and assisted retreat remain an explicit owner decision; dependent
+rule changes wait. Existing dirty prototype and other writers remain preserved.
+PR178 reconciles dated documentation only; scoped formatting/link/diff checks and
+independent review are required before its expected-head merge. No new gameplay,
+full gate or visual acceptance is claimed by this documentation update.
+Scoped formatting/diff/new relative targets PASS; five unchanged historical
+absolute evidence targets are missing. The merge hook initially lacked coverage;
+one inherited zero-AP route regression ran with coverage (1 PASS/15 SKIP) for
+that hook. This is not new player acceptance.
+[Current queue amendment](M1_PRODUCTION_PLAN.md#current-amendment--2026-10-19).
+
 **Company profile #164 — 2026-10-20, LOCAL IMPLEMENTATION START:**
 Owner approved provisional fists range1/damage6/AP2/stamina8/no penetration/no
 weapon-skill XP and no independent move/retreat for immobile members.
@@ -476,6 +524,33 @@ technique revision in progress. Focused37/types/lint and809unit coverage PASS;
 first complexity audit FAIL, being corrected without gate changes. No current
 visual acceptance or publication/merge claimed.
 [Owning requirements](../wiki/battlefield-test-maps.md#читаемость-бойцов-и-единый-рендер-поля--2026-10-16).
+
+**Historical autonomous M1 GitHub queue — 2026-10-17, TASKS PUBLISHED / NOT IMPLEMENTED:**
+Owner requested audit and GitHub task creation, not dispatch or new code.
+[Parent161](https://github.com/Vovanostm/warwrit/issues/161) and16children162–177
+have pinned evidence, ownership/dependencies, executable DoD and mandatory wiki
+closeout; published bodies read back exactly. Baseline main a934355, main
+CI39008291834 SUCCESS. Source/CI audit only; new gameplay/full gate/visual critique
+NOT_RUN, balance/FPS NOT_MEASURED. #8 retained; #6 renderer contest superseded
+by ADR0006. PR160/134 failed CI and old animation PR129 are not silently accepted.
+Start with162 gate/163 actual HP defect/164 profiles, reserve all shared paths;
+165persistent bridge →166HUD, then tactics/recovery/device and final177journey.
+Only GPT-6.1 Sol/GPT-6 Luna. Existing active PR160 writer/primary WIP preserved.
+[Owning queue](M1_PRODUCTION_PLAN.md#current-github-execution-queue--2026-10-17).
+Documentation amendment is local on codex/combat-wiki-checkpoint-20261017;
+GitHub task publication is not merge/deploy/paid-service or agent-launch permission.
+
+**Combat delivery readback — 2026-10-17, VERIFIED SNAPSHOT:**
+Live GitHub and clean local main agree at a934355; PR157/158/159 are MERGED,
+all three merge commits are ancestors and reviewed-head/merge tree diffs empty.
+PR160 remains OPEN/DRAFT at16c2811; CI39019195821 FAILURE at check:changes
+(complexity/CRAP), current full visual acceptance PENDING in its owner's record.
+Next: PR160 owner resolves gate/current visual acceptance before merge/main journey.
+No new browser battle/full gate/visual critique in this readback (NOT_RUN).
+Primary WIP and other writers preserved. This documentation amendment is local
+on codex/combat-wiki-checkpoint-20261017, not a new game delivery or PR160 merge.
+[Full dated readback](../wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
+
 **Battle perspective and bounds — 2026-10-17, MERGED / MAIN JOURNEY PASS:**
 Owner-authorized [PR159](https://github.com/Vovanostm/warwrit/pull/159) MERGED:
 reviewed6533ae7d3a1123a32285f09582b3813475a20dd8,
