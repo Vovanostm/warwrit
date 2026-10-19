@@ -2,8 +2,15 @@ import { assert, describe, expect, it } from 'vitest';
 import * as combat from '@warwrit/game-core';
 import { createCombatLabFixture } from './scenario.js';
 import { projectCombatLabView } from './projection.js';
-import { createCustomBattleFixture, defaultSpriteBattle, isCustomBattle } from './custom-battle.js';
+import {
+  createCustomBattleFixture,
+  defaultSpriteBattle,
+  isCustomBattle,
+  combatLabProfiles,
+} from './custom-battle.js';
 import type { CombatLabBattleConfig } from '@warwrit/protocol';
+import { createCombatLabPresentation } from './presentation.js';
+import { projectCombatLabReplay, type CombatLabReplay } from './replay.js';
 
 describe('projectCombatLabView initiative forecast', () => {
   it('projects the core forecast only while a future round can occur', () => {
@@ -481,4 +488,107 @@ it('emits empty sprite reach for legacy, terminal, missing and inactive actors a
     projectCombatLabView('session', historic.controlledSideId, start.state, start.events)
       .skillReach,
   ).toBeUndefined();
+});
+
+it('numbers the complete mill roster in setup order and preserves labels for every status', () => {
+  const battle = defaultSpriteBattle();
+  const fixture = createCustomBattleFixture('names-mill', battle);
+  const { state, events } = fixture.start();
+  const before = structuredClone({ state, events, battle });
+  const project = (current = state) =>
+    projectCombatLabView('names', 'human', current, events, battle);
+  const names = project().units.map(({ id, name }) => [id, name]);
+  expect(new Set(names.map((row) => row[1])).size).toBe(12);
+  expect(names).toContainEqual(['opponent-1', 'Волк 1']);
+  expect(names).toContainEqual(['opponent-2', 'Волк 2']);
+  for (const status of ['active', 'dead', 'surrendered', 'retreated'] as const) {
+    const changed = {
+      ...state,
+      units: state.units.map((unit) => (unit.id === 'opponent-1' ? { ...unit, status } : unit)),
+    };
+    expect(project(changed).units.map(({ id, name }) => [id, name])).toEqual(names);
+  }
+  expect({ state, events, battle }).toEqual(before);
+});
+
+it('counts matching names across sides without sorting IDs or changing singleton labels', () => {
+  const template = defaultSpriteBattle();
+  const battle: CombatLabBattleConfig = {
+    ...template,
+    units: [
+      { ...template.units[0]!, id: 'z-first', profileId: 'B001' },
+      { ...template.units[6]!, id: 'a-second', profileId: 'B001' },
+      template.units[1]!,
+    ],
+  };
+  const fixture = createCustomBattleFixture('cross-side-names', battle);
+  const { state, events } = fixture.start();
+  const view = projectCombatLabView('names', 'human', state, events, battle);
+  expect(view.units.find(({ id }) => id === 'z-first')?.name).toBe('Волк 1');
+  expect(view.units.find(({ id }) => id === 'a-second')?.name).toBe('Волк 2');
+  expect(view.units.find(({ id }) => id === template.units[1]!.id)?.name).toBe('Копьё');
+});
+
+it('owns snapshot values independently of the accepted draft and later catalogue wording', () => {
+  const battle = defaultSpriteBattle();
+  const fixture = createCustomBattleFixture('saved-names', battle);
+  const { state, events } = fixture.start();
+  const snapshot = createCombatLabPresentation(battle, 'human');
+  const saved = structuredClone(snapshot);
+  const profile = combatLabProfiles.find(({ id }) => id === 'B001')!;
+  const originalName = profile.name;
+  try {
+    profile.name = 'Лук';
+    (battle.map.tiles[0]! as { terrain: string }).terrain = 'fire';
+    (battle.units[6]! as { profileId: string }).profileId = 'W01';
+    const view = projectCombatLabView('names', 'human', state, events, snapshot.battle, snapshot);
+    expect(view.units.find(({ id }) => id === 'opponent-1')?.name).toBe('Волк 1');
+    const exported: CombatLabReplay = {
+      schemaVersion: 1,
+      setup: fixture.originalSetup(),
+      commands: [],
+      labPresentation: snapshot,
+    };
+    expect(
+      projectCombatLabReplay(JSON.parse(JSON.stringify(exported)) as CombatLabReplay).units,
+    ).toEqual(view.units);
+    expect(snapshot).toEqual(saved);
+  } finally {
+    profile.name = originalName;
+  }
+});
+
+it('rejects malformed presentation membership and labels at the reconstruction boundary', () => {
+  const battle = defaultSpriteBattle();
+  const fixture = createCustomBattleFixture('bad-names', battle);
+  const presentation = createCombatLabPresentation(battle, 'human');
+  const replay: CombatLabReplay = {
+    schemaVersion: 1,
+    setup: fixture.originalSetup(),
+    commands: [],
+    labPresentation: presentation,
+  };
+  for (const patch of [
+    null,
+    { ...presentation, version: 2 },
+    { ...presentation, controlledSideId: 'outsider' },
+    { ...presentation, units: null },
+    { ...presentation, units: presentation.units.slice(1) },
+    { ...presentation, units: [presentation.units[0], ...presentation.units.slice(0, -1)] },
+    {
+      ...presentation,
+      units: [{ ...presentation.units[0], id: 'outsider' }, ...presentation.units.slice(1)],
+    },
+    ...[
+      null,
+      { id: presentation.units[0]!.id, name: '' },
+      { id: presentation.units[0]!.id, name: '  ' },
+      { id: presentation.units[0]!.id, name: 7 },
+    ].map((unit) => ({ ...presentation, units: [unit, ...presentation.units.slice(1)] })),
+  ]) {
+    const malformed = { ...replay, labPresentation: patch } as CombatLabReplay;
+    const before = structuredClone(malformed);
+    expect(() => projectCombatLabReplay(malformed)).toThrow();
+    expect(malformed).toEqual(before);
+  }
 });
