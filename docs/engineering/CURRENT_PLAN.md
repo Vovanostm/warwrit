@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+**PR237 merge stage — 2026-10-19, published producer; NOT_MERGED:**
+Prior head `7c05b14` has successful CI39253806343. Normal integration
+`1b364d3` includes main `06b32bb` (PR236 plan changes), preserving both additive
+changelog sections. Apps/packages match gated `c055e9a`; Tier L reviewer1 and
+played evaluator1 ACCEPT remain applicable. Fresh coordinator validate EXIT0,
+8/8,709PASS/47SKIP,auditPASS. Shared-record update and exact-head CI precede
+expected-head merge under v3 mission permission; no blocking PR/issue labels
+or unresolved review threads observed. #184 remains open for bands/legend/CVD
+and legacy scene rendering. SkillReach waits for this merge; desk/outcome
+REWORK and the existing writer/dependency sequence remain. New playtest and
+deployment NOT_RUN. This dated entry supersedes earlier pending-CI statuses
+only for the prior head. [Proof](evidence/uix-w1-affordability/README.md).
+
 **UIX-03a / #184 producer — 2026-10-19, published / local ACCEPT:**
 `Vovanostm/uix-w1-affordability`, gated source `c055e9a`: optional server-owned
 post-path attack affordability, legacy omission accepted. Reviewer1 and played

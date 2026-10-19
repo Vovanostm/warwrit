@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Reconcile PR237 with the latest slice plan before merge
+
+- 2026-10-19, originating branch `Vovanostm/uix-w1-affordability`, published
+  producer PR [237](https://github.com/Vovanostm/warwrit/pull/237), merge pending.
+  Prior head `7c05b14` passed CI39253806343. Normal main integration
+  `1b364d3` includes `06b32bb` (PR236 slice plan); the only conflict was
+  additive CHANGELOG entries, both retained. Gated apps/packages are unchanged
+  from `c055e9a`; Tier L reviewer1 and played evaluator1 ACCEPT remain applicable.
+  Fresh coordinator validator on `1b364d3`: EXIT0,8/8,709PASS/47SKIP,auditPASS.
+  Evidence-only and shared-record path checks PASS. New-head hosted CI must pass
+  before expected-head merge; no deployment or new playtest claimed.
+  #184 stays open for the downstream bands/legend/CVD/legacy scene consumer.
+  [Proof and limits](docs/engineering/evidence/uix-w1-affordability/README.md).
+
 ### Restore the post-movement attack affordability producer
 
 - 2026-10-19, originating branch `Vovanostm/uix-w1-affordability`, published
