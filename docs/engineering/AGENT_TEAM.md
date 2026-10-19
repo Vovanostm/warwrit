@@ -307,7 +307,7 @@ pipeline, and the owner merge gate stays.
 
 | Decision                                                           | Who decides                     | How it is recorded                        |
 | ------------------------------------------------------------------ | ------------------------------- | ----------------------------------------- |
-| Merge, deploy, paid services, external messages                    | Owner                           | `agent:merge-approved` / explicit message |
+| Deploy, paid services, external messages; merge policy             | Owner                           | `agent:merge-approved` / explicit message |
 | New canon: factions, faith, magic, history, rulers, era name       | Owner                           | `## Owner decision` on the epic or wiki   |
 | Which mechanic or feature comes next; slice order                  | Studio director                 | slice plan + CURRENT_PLAN entry           |
 | Mechanic details inside an owner-chosen direction (rules, numbers) | Studio director, owner may veto | owning wiki page, «director decision»     |
@@ -315,7 +315,7 @@ pipeline, and the owner merge gate stays.
 | Code structure, tests, tooling inside AGENTS limits                | Builder; evaluator must ACCEPT  | PR                                        |
 
 The owner gets one daily digest on the active epic: merged PRs with playable
-proof, open PRs waiting for `agent:merge-approved`, and at most three owner
+proof, open PRs, and at most three owner
 questions, each with a recommended answer.
 
 ### Cells
@@ -353,3 +353,49 @@ and may run beside `core` and `web` without raising the five-worker ceiling.
 4. QA hooks (`render_game_to_text`, `advanceTime`) for regression journeys with
    the installed [develop-web-game](GAMEDEV_SKILLS.md) skill.
 5. Retro and metrics after each wave.
+
+## Workflow v3 — contract first, one issue per PR, merge on gates — 2026-10-19
+
+Owner, 2026-10-19: «Я уже сформировал план и идеи — зачем мне верифицировать
+каждый pr? На это есть тесты и агент — ревьюер», «Давай уменьшать срезы —
+один issue — один pr», «надо сначала создавать общий контракт, идею, потом
+параллелить». This is a mission-level merge permission for pipeline PRs
+(AGENTS hard rule 1) and supersedes the owner-label merge gate above.
+
+**Why v2 did not deliver** (about 36 hours, #217): no product PR merged; the one
+green PR (#229, 48 files) waited hours for the owner label; the desk slice went
+through four REWORK rounds because the art-grade visual critic required
+close-view and equal-height proofs for a UI change; slices bundled several
+issues because the audit issues all edit the same large files and there was no
+shared contract, so file ownership forced grouping and long `after` chains
+behind one core slice; six PRs went to pipeline infrastructure.
+
+**v3** ([warwrit-orca](../../.agents/skills/warwrit-orca/SKILL.md)):
+
+- **Merge on gates:** CI, `orca-validate.sh` and the tier verdicts for the
+  gated code head (later commits only evidence, CHANGELOG/CURRENT_PLAN or a
+  merge of origin/main); the coordinator merges PRs it opened for slices and epic
+  contracts; a CI fix goes back through review; `agent:blocked` on the PR or a
+  linked issue, or an owner decision, stops a PR. Infrastructure PRs outside
+  slices keep the owner gate (`agent:merge-approved`).
+- **Tiers:** D docs/tests → reviewer; L logic → reviewer + evaluator plays it;
+  U UI → evaluator judges the issue's visual criteria; V art/scene → plus the
+  full visual critic. Art proofs never block D/L/U.
+- **One issue = one slice = one PR**, about 300 changed lines without tests.
+- **Epic contract first:** one writer lands shared types, optional protocol
+  fields, stubs, seams and a task list with `[P]`/`after`; then each issue runs
+  as its own slice in parallel up to the lane limits.
+- **Reports:** state changes only, plus one daily digest.
+
+Sources: GitHub [Spec Kit](https://github.com/github/spec-kit/blob/main/spec-driven.md)
+(constitution → specify → plan → tasks with `[P]` → implement → converge);
+[BMAD method](https://dev.to/bspann/bmad-method-ai-driven-agile-development-that-actually-works-part-1-core-framework-36n1)
+(architect shards the plan into self-contained story files; one story at a
+time; adversarial QA review; fresh context per workflow);
+[Anthropic multi-agent research system](https://simonwillison.net/2025/Jun/14/multi-agent-research-system/)
+(each worker needs objective, output format, tools and clear boundaries);
+[parallel Claude Code agents](https://www.aakashx.com/blog/parallel-claude-code-agents/)
+and [Codex multi-agent coordination](https://freeacademy.ai/lessons/codex-multi-agent-coordination)
+(define shared contracts before parallel work; stubs; merge in dependency
+order); [stacked PRs for agents](https://zylos.ai/research/2026-05-21-stacked-prs-ai-agent-collaboration/)
+(small PRs under about 200 lines, sequence tasks that share files).

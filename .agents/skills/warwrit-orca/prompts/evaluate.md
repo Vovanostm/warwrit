@@ -9,11 +9,15 @@ Read-only for source; fresh context. You are a skeptical player and reviewer.
    contract's `## Proof` as a player would — click, hover, end turn, finish the
    battle. Capture your own 1440x900 day and night screenshots under
    `.orca/{{SLICE}}/eval-shots/`. Stop the dev server.
+   For tier U, judge the issue's visual acceptance criteria yourself from your
+   screenshots (readable at 1440x900, day and night, nothing hidden or
+   overlapping); there is no separate visual critic.
+
 3. Findings are only: reproduced defects (with the steps), unmet acceptance
    criteria, rule/privacy/replay violations, edits outside ownership
    {{OWNERSHIP}}, or missing proof. Each: file:line or play step,
    counterexample, smallest fix. No style preferences.
 
-Write `.orca/{{SLICE}}/eval-{{ROUND}}.md` starting with `VERDICT: ACCEPT` or
-`VERDICT: REWORK`, then the findings and what you played.
+Write `.orca/{{SLICE}}/eval-{{ROUND}}.md` whose first line is
+`VERDICT: ACCEPT <head-sha>` or `VERDICT: REWORK <head-sha>`, then the findings and what you played.
 Set `report_path` to that file in your final answer.

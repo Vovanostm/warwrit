@@ -1,5 +1,25 @@
 # Warwrit current delivery plan
 
+**Autonomous studio — owner decision 2026-10-19:** «Да, продолжай — хочу,
+чтобы работа велась автономно — создавались issues, обновлялись, выполнялись,
+мержились — идея есть, ориентиры есть — теперь только этап полировки. Все
+важные решения должны быть на мне.» Scope: the studio director (Claude) and the
+Orca coordinator create, update, split and close issues and slices, and merge
+PRs — including infrastructure PRs — after CI green and a fresh reviewer
+ACCEPT for the gated head (coordinator slice PRs: tier gates of warwrit-orca).
+**Owner decides** (one `## Owner questions` comment with a recommended answer):
+new canon or lore; new mechanics or changes to accepted rules, balance targets
+or ruleset semantics beyond owner-chosen directions; priorities between epics
+and scope cuts; AGENTS.md changes; deployment, paid services, external
+messages. Phase: polish of the accepted idea and references.
+
+**Orca workflow v3 — 2026-10-19, owner merge permission (mission level):**
+owner: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
+ревьюер»; «один issue — один pr»; «сначала общий контракт, идею, потом
+параллелить». PRs the coordinator opens for slices and epic contracts merge when CI,
+`orca-validate.sh` and the tier gates pass for the merged head; `agent:merge-approved` is no longer required; `agent:blocked` stops a PR.
+Epic contract first for new epics. [Owning section](AGENT_TEAM.md#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19).
+
 **PR229 merge stage — 2026-10-19, local main integration; NOT_MERGED:**
 Live `agent:merge-approved` is present. Prior head `35c117e` has successful
 CI39196517767. Normal merge of `origin/main` `6f1fbae` preserves published
@@ -38,7 +58,7 @@ Desk eval3 and visual3 remain live; successors still await merged dependencies.
 
 **Studio director — 2026-10-19, PR pending owner merge label:** owner made the
 Claude session studio director with autonomy («ты — директор студии и
-отвечаешь за качество продукта»); merge stays behind `agent:merge-approved`.
+отвечаешь за качество продукта»); merge stays behind `agent:merge-approved` (still applies to infrastructure PRs; v3 above covers coordinator slice and epic-contract PRs).
 Board: **now** — Orca v2 wave 1 on #217 (metric: merged PRs with playable proof
 per day); **next** — `core-melee-connect` (#225) on lane core after
 `uix-w1-names`; art lane via [warwrit-art](../../.agents/skills/warwrit-art/SKILL.md);

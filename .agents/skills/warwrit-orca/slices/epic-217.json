@@ -8,7 +8,9 @@
   "ownership_rules": [
     "A slice owns the *.test.ts(x) files of the modules it owns.",
     "The coordinator may extend a slice's ownership to a file no active slice owns; record it on the issue. A file owned by an active slice is resolved by sequencing with `after`, not by a second writer.",
-    "Only conflicts that sequencing cannot resolve, or product/rule questions, go to agent:needs-owner."
+    "Only conflicts that sequencing cannot resolve, or product/rule questions, go to agent:needs-owner.",
+    "v3 (2026-10-19): one issue per slice and per PR; a slice listing several issues is split before its next start.",
+    "v3: merge after CI, validate and the tier gates (SKILL «Gate tiers»); agent:merge-approved is not required (owner decision 2026-10-19)."
   ],
   "slices": [
     {
