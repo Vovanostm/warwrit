@@ -307,6 +307,55 @@ log was not retained; parent-confirmed persisted coverage remains78PASS/13files.
 This evidence distinction is preserved until the clean integrated validator.
 Source is frozen for a normal commit; no fresh playable acceptance is claimed.
 
+## Committed source and lab capture pass — 2026-10-20
+
+Normal commit1c73d845ea95a7bf525d6280d8ceb5de1a795474 completed without bypass;
+tree was clean. Final affected source review ACCEPT precedes the commit.
+The existing saved ruined-mill diagnostic was started through ordinary UI with
+12units and heights0/1/2.29current frames cover overview, archer, spear on2,
+halberd, wolf on1, B053, day/night, full-grid off/on and hover/pin comparisons.
+Capture observations report0combatPOST, viewport/document1600×1000 and scrollY0.
+Parent inspected overview and height2-spear frames. Independent visual verdict
+and the fresh persistent journey remain pending.
+
+The first initiative locator click timed out because its animated element did
+not settle. An ordinary mouse click at the observed button centre succeeded;
+no force click, CSS override or state injection was used. This runner limitation
+is retained and is not a demonstrated player input defect. Grid off still shows
+actor/reach/movement cues; no universal all-overlay-off control is claimed.
+Local evidence: .orca/persistent-hud-166/evaluator-prep/lab/matrix-1c73d84/,
+including observations.json and capture-output.txt. Earlier DB1–4 remain intact.
+
+## Fifth persistent fixture and adjacent crowd — 2026-10-20
+
+Fresh DB5 used ordinary ACCEPT/HELP/JOIN/JOIN and both real company rosters.
+It reached hostile victory117, proof0 and completed terminal effects. Native
+journal/events/final-state replay matches exactly.13account commands were
+accepted, all from the owner, including6manual waits; wait revision10 is present.
+The actual passive inspection interval14:00:33.924–34.141UTC contains0account
+commands;11accepted commands follow the active reload at14:00:34.394UTC.
+Owner/helper screenshots were captured at different times/revisions and are
+not a simultaneous projection comparison. These are local fixtures, not new
+external OIDC evidence.
+
+The helper's fixed-pointer precondition never found a legal preview; its retry
+loop starved ordinary actions. The owner continued, but this is a harness
+failure and the right-click/helper-action check remains NOT_RUN. A later
+continuation reached an already terminal view and sent0commands; terminal
+resume was correctly absent. Preserve DB5 and all failed driver output.
+No victory or reward/payment claim follows from this defeat. Local evidence:
+.orca/persistent-hud-166/evaluator-prep/journey-db5-2026-10-20T13-59-11.883Z/,
+including correlation.json and the terminal/native records.
+
+The ordinary lab editor then placed4existing units in adjacent cells: archer
+(6,5)height0, spear(7,5)height2, halberd(6,6)height0 and B053(7,6)height1.
+Six day/night/grid/hover frames retain whole figures between the HUD and0POST;
+small silhouette gaps remain at the actual supported scale, so body overlap
+is not claimed. Local evidence: .orca/persistent-hud-166/evaluator-prep/lab/crowd-1c73d84/.
+Independent absolute visual verdict is pending. The next bounded live check
+must prove an accepted helper action and real right-click; use a finite failed
+precondition fallback and bounded projected-update wait to avoid starvation.
+
 ## Remaining acceptance
 
 Execute a fast

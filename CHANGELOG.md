@@ -31,7 +31,11 @@ requests.
   regression retained in the shared view. Final affected source review ACCEPT
   and normal audit PASS after bounded corrections; retained coverage78PASS,
   author final80PASS report lacks its raw log. No bypass, final gameplay
-  acceptance or publication is claimed.
+  acceptance or publication is claimed. Normal source commit1c73d845 completed;
+  current lab29-frame and adjacent-crowd capture passes have0combatPOST.
+  DB5 defeat117/native replay confirms owner manual/reload/inspection behavior;
+  helper/right-click proof remains open after a recorded driver failure.
+  Final visual/playable review remains pending.
   [Evidence and remaining gates](docs/engineering/evidence/persistent-hud/README.md).
 
 ### Deliver the bridge and start the persistent commander interface — 2026-10-20

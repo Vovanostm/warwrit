@@ -32,9 +32,14 @@ against main1f37cb6a: no new dead code, complexity or duplication. Consumed
 health-cap regression is preserved in the shared view; unused renderer removed.
 Parent retained coverage78PASS/13files; final author report80PASS/13files has
 no retained raw log and is not substituted for that evidence. Author web/server
-types PASS. Source is frozen for normal commit. Next: execute crowded layering
-and fresh real UI/reconnect/terminal evidence on the committed source. No fifth
-fixture has started; integrated gate/publication/merge remain NOT_RUN.
+types PASS. Normal source commit1c73d845 completed with a clean tree. Actual
+lab29-frame day/night/grid/height0–2/long-weapon/large-creature capture pass is
+complete with0combatPOST; six ordinary adjacent-crowd frames add height0/1/2
+and hover evidence. DB5 defeat117 replays exactly:13owner commands,6manual
+waits,0commands during inspection and11accepted after reload. Helper driver
+starvation leaves helper/right-click proof open; no victory/payment claim.
+Independent full visual verdict and bounded follow-up live checks are pending.
+Integrated gate/publication/merge remain NOT_RUN.
 [HUD behavior, failed runs and current checks](evidence/persistent-hud/README.md).
 
 **Bounded bridge ready to publish — 2026-10-20, LOCAL:**
