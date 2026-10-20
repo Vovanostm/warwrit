@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Preserve the profile reviews and played evidence for publication
+
+- 2026-10-20, branch `codex/company-profile-164`, local: retain bounded source
+  reviews, both persistent-play reports and two browser captures in the
+  [profile evidence](docs/engineering/evidence/core-company-profile/README.md).
+  Reports keep failed attempts and policy/UI/payment limits. No new execution,
+  code change, full acceptance or merge is claimed by copying this evidence.
+
 ### Recover continuous profile proof and successful local validation
 
 - 2026-10-20, branch `codex/company-profile-164`, local: record recovered
