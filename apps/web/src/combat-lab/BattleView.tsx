@@ -139,19 +139,21 @@ export function BattleView(props: BattleViewProps) {
         </button>
         {menu}
       </div>
-      <BattleInitiative
-        view={view}
-        selectedUnitId={selectedUnitId}
-        onSelectUnit={(id) => {
-          onSelectUnit(id);
-          focusUnit(id);
-        }}
-        isAttackable={isAttackable}
-        setInitiativePointer={setInitiativePointer}
-        setInitiativeFocus={setInitiativeFocus}
-        setHoveredTarget={setHoveredTarget}
-      />
-      <BattleThreats view={view} />
+      <div className="battle-top-band">
+        <BattleInitiative
+          view={view}
+          selectedUnitId={selectedUnitId}
+          onSelectUnit={(id) => {
+            onSelectUnit(id);
+            focusUnit(id);
+          }}
+          isAttackable={isAttackable}
+          setInitiativePointer={setInitiativePointer}
+          setInitiativeFocus={setInitiativeFocus}
+          setHoveredTarget={setHoveredTarget}
+        />
+        <BattleThreats view={view} />
+      </div>
       <BattleOutcome view={view} busy={busy} onRestart={onRestart} onEditor={onEditor} />
       <BattleForecast
         view={view}

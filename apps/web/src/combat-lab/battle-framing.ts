@@ -2,6 +2,12 @@ import { CAMERA_ELEVATION, type GroundBounds } from '../renderer/three-quarter-c
 
 type FigureBounds = { minX: number; maxX: number; bottom: number; top: number };
 
+/** Stable field identity, distinct from the changing activation order. */
+export function battleUnitMarker(units: readonly { id: string }[], id: string) {
+  const index = units.findIndex((unit) => unit.id === id);
+  return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[index] ?? String(index + 1);
+}
+
 /** Fit the full reference-image field and silhouettes into the measured HUD opening. */
 export function battleFrameBounds({
   mapBounds,
@@ -53,33 +59,4 @@ export function battleCameraLimits(frame: GroundBounds, width: number, height: n
       maxZ: z + halfDepth + 2,
     },
   };
-}
-
-/** Separate each inspectable portrait, retaining a leader to the unchanged world foot. */
-export function overviewPortraitPositions(
-  points: readonly { x: number; y: number }[],
-  width: number,
-  top: number,
-  bottom: number,
-) {
-  const slots = Array.from({ length: Math.max(1, Math.floor((bottom - top) / 48)) }, (_, row) =>
-    Array.from({ length: Math.max(1, Math.floor((width - 16) / 40)) }, (_, column) => ({
-      x: 8 + column * 40,
-      y: top + row * 48,
-    })),
-  ).flat();
-  const placed: { x: number; y: number }[] = [];
-  for (const point of points) {
-    const distance = (slot: { x: number; y: number }) =>
-      (slot.x + 18 - point.x) ** 2 + (slot.y + 58 - point.y) ** 2;
-    const nearest = slots
-      .toSorted((a, b) => distance(a) - distance(b))
-      .find((slot) =>
-        placed.every(
-          (other) => Math.abs(slot.x - other.x) >= 40 || Math.abs(slot.y - other.y) >= 48,
-        ),
-      );
-    placed.push(nearest ?? { x: point.x - 18, y: point.y - 58 });
-  }
-  return placed;
 }

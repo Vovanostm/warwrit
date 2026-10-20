@@ -1012,14 +1012,14 @@ export async function mountSpriteBattleScene(
     const surface = canvas.closest('.battle-view') ?? canvas.parentElement!;
     const safeTop = Math.max(
       24,
-      ...[...surface.querySelectorAll('.battle-initiative')].map(
-        (node) => node.getBoundingClientRect().bottom - viewport.top + 16,
+      ...[...surface.querySelectorAll('.battle-top-band')].map(
+        (node) => node.getBoundingClientRect().bottom - viewport.top + 8,
       ),
     );
     const safeBottom = Math.min(
       viewport.height - 24,
       ...[...surface.querySelectorAll('.battle-action-dock')].map(
-        (node) => node.getBoundingClientRect().top - viewport.top - 44,
+        (node) => node.getBoundingClientRect().top - viewport.top - 8,
       ),
     );
     return { viewport, safeTop, safeBottom };
@@ -1195,7 +1195,7 @@ export async function mountSpriteBattleScene(
     clearHover();
   });
   resizeObserver.observe(canvas);
-  for (const band of battleSurface.querySelectorAll('.battle-initiative, .battle-action-dock'))
+  for (const band of battleSurface.querySelectorAll('.battle-top-band, .battle-action-dock'))
     resizeObserver.observe(band);
   engine.runRenderLoop(() => {
     if (!scene.isDisposed) scene.render();

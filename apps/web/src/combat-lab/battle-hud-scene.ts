@@ -151,19 +151,27 @@ function useTooltipAnchor(battleViewRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const root = battleViewRef.current;
     const card = root?.querySelector('.battle-acting-unit');
+    const dock = root?.querySelector('.battle-action-dock');
+    const top = root?.querySelector('.battle-top-band');
     if (!root || !card) return;
     const placeTooltip = () => {
-      const bounds = card.getBoundingClientRect();
+      const bounds = (dock ?? card).getBoundingClientRect();
       root.style.setProperty('--battle-tooltip-left', `${bounds.left}px`);
       root.style.setProperty(
         '--battle-tooltip-bottom',
         `${window.innerHeight - bounds.top + 12}px`,
       );
       root.style.setProperty('--battle-tooltip-width', `${Math.min(264, bounds.width)}px`);
+      root.style.setProperty(
+        '--battle-safe-top',
+        `${(top?.getBoundingClientRect().bottom ?? 132) + 12}px`,
+      );
     };
     const observer = new ResizeObserver(placeTooltip);
     observer.observe(root);
-    observer.observe(card);
+    root
+      .querySelectorAll('.battle-acting-unit, .battle-action-dock, .battle-top-band')
+      .forEach((band) => observer.observe(band));
     window.addEventListener('resize', placeTooltip);
     placeTooltip();
     return () => {

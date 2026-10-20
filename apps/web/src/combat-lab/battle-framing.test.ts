@@ -1,10 +1,6 @@
 import { Matrix, NullEngine, Scene, Vector3, VertexBuffer } from '@babylonjs/core';
-import { describe, expect, it, vi } from 'vitest';
-import {
-  battleCameraLimits,
-  battleFrameBounds,
-  overviewPortraitPositions,
-} from './battle-framing.js';
+import { expect, it, vi } from 'vitest';
+import { battleCameraLimits, battleFrameBounds } from './battle-framing.js';
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { createBattleTerrain, createBattleSurface } from '../renderer/battle-terrain.js';
@@ -146,19 +142,3 @@ it.each([
     ).toBeNull();
   },
 );
-
-describe('overview portraits', () => {
-  it('keeps adjacent participants separately inspectable inside the desktop width', () => {
-    const points = Array.from({ length: 12 }, () => ({ x: 980, y: 230 }));
-    const placed = overviewPortraitPositions(points, 1024, 130, 430);
-    expect(placed).toHaveLength(12);
-    placed.forEach((point, index) => {
-      expect(point.x).toBeGreaterThanOrEqual(8);
-      expect(point.x + 36).toBeLessThanOrEqual(1024);
-      expect(point.y).toBeGreaterThanOrEqual(130);
-      placed.slice(index + 1).forEach((other) => {
-        expect(Math.abs(point.x - other.x) >= 40 || Math.abs(point.y - other.y) >= 48).toBe(true);
-      });
-    });
-  });
-});
