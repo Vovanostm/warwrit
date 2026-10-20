@@ -25,12 +25,13 @@ import type {
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import {
+  actorBadgePlacement,
   opaqueSpritePixel,
   eventLabelUp,
   avoidAnchorOverlap,
   type LabelBox,
 } from './sprite-scene-geometry.js';
-import { markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
+import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
 import { spriteForUnit } from './sprite-art.js';
 import {
@@ -217,6 +218,10 @@ export async function mountSpriteBattleScene(
       edge.scaling.set(body.scaling.x * outlineScale, body.scaling.y * outlineScale, 1);
     }
   });
+  const actorMarkerLabels: Mesh[] = [];
+  let retainedActorKey: string | null = null;
+  let actorPlacementKey = '';
+  let actorMarker: ReturnType<typeof createActorMarker> | null = null;
   const eventLabels: Mesh[] = [];
   const statusMarkers: Mesh[] = [];
   const threatLabels: Mesh[] = [];
@@ -267,6 +272,8 @@ export async function mountSpriteBattleScene(
   // Register the painted perimeter around the HUD's free central play area.
   // Grid axes, sprite scale and foot pivots remain unchanged.
   background.isPickable = false;
+  // Transparent decoration draws before group-zero tactical cues and actor plaques.
+  background.alphaIndex = 0;
   const placeTexture = texture(millFieldUrl);
   const groundMaterial = createBattleBackdropMaterial(scene, placeTexture);
   groundMaterial.setColor3('tint', initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White());
@@ -564,15 +571,11 @@ export async function mountSpriteBattleScene(
     renderedEventRevision = view.viewRevision;
     for (const mesh of eventLabels.splice(0)) mesh.dispose(false, true);
     const labels = eventFeedback(view, previousRevision);
-    const reserved = [...unitMeshes.values(), ...threatLabels]
+    const reserved = [...unitMeshes.values(), ...threatLabels, ...actorMarkerLabels]
       .filter((mesh) => mesh.isEnabled())
-      .map((mesh) => ({
-        x: mesh.position.x,
-        up: Vector3.Dot(mesh.position, upAxis),
-        halfWidth: mesh.getBoundingInfo().boundingBox.extendSize.x,
-        halfHeight: mesh.getBoundingInfo().boundingBox.extendSize.y,
-      }));
+      .map(labelBox);
     for (const [id, text] of labels) placeEventLabel(view, id, text, reserved);
+    actorPlacementKey = '';
   };
   const eventAnchor = (unit: BattleUnit, mesh: Mesh) => {
     if (unit.status !== 'active') {
@@ -752,7 +755,7 @@ export async function mountSpriteBattleScene(
     blocked: blockedBorderMaterial.emissiveColor,
     friendly: friendlyRingMaterial.emissiveColor,
     enemy: enemyRingMaterial.emissiveColor,
-    actor: actorRingMaterial.emissiveColor,
+    inspection: actorRingMaterial.emissiveColor,
     path: pathMaterial.emissiveColor,
     movement: movementEdgeMaterial.emissiveColor,
     combined: combinedEdge,
@@ -784,6 +787,171 @@ export async function mountSpriteBattleScene(
       });
     cellGrid.paint(styles);
   };
+
+  const actorReservations = (foot: Vector3, pixelsPerWorld: number): LabelBox[] => {
+    const footImage = project(foot);
+    const imageScale = (project(foot.add(upAxis)).z - footImage.z) * Math.sin(CAMERA_ELEVATION);
+    const inActorPlane = (center: Vector3, halfWidth: number, halfHeight: number): LabelBox => {
+      const image = project(center);
+      const corner = project(
+        center.add(new Vector3(halfWidth, 0, 0)).add(upAxis.scale(halfHeight)),
+      );
+      return {
+        x: foot.x + (image.x - footImage.x) / imageScale,
+        up:
+          Vector3.Dot(foot, upAxis) +
+          ((image.z - footImage.z) * Math.sin(CAMERA_ELEVATION)) / imageScale,
+        halfWidth: (corner.x - image.x) / imageScale,
+        halfHeight: ((corner.z - image.z) * Math.sin(CAMERA_ELEVATION)) / imageScale,
+      };
+    };
+    const bodies = currentView.units
+      .filter((unit) => unit.status === 'active')
+      .map((unit) => {
+        const art = spriteForUnit(unit);
+        const scale = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
+        const point = AXIAL_TO_WORLD(unit.position);
+        const [left, top, right, lower] = art.visibleBounds;
+        const center = new Vector3(
+          point.x + ((left + right) / 2 - art.footX) * scale,
+          groundYFor(unit.position),
+          point.z,
+        ).add(upAxis.scale((art.footY - (top + lower) / 2) * scale));
+        return inActorPlane(center, ((right - left) * scale) / 2, ((lower - top) * scale) / 2);
+      });
+    const vitals = [...unitMeshes.keys()]
+      .map((id) => scene.getMeshByName(`unit-vitals:${id}`) as Mesh)
+      .filter((mesh) => mesh?.isEnabled());
+    const labels = [
+      ...fixedLabels,
+      ...heightLabels,
+      ...statusMarkers,
+      ...threatLabels,
+      ...eventLabels,
+      ...vitals,
+    ]
+      .filter((mesh) => mesh.isEnabled())
+      .map((mesh) => {
+        const box = labelBox(mesh);
+        return inActorPlane(mesh.position, box.halfWidth, box.halfHeight);
+      });
+    const viewport = scene.activeCamera!.viewport.toGlobal(
+      engine.getRenderWidth(),
+      engine.getRenderHeight(),
+    );
+    const projected = Vector3.Project(
+      foot,
+      Matrix.Identity(),
+      scene.getTransformMatrix(),
+      viewport,
+    );
+    const rect = canvas.getBoundingClientRect();
+    const screenX = (projected.x * rect.width) / engine.getRenderWidth();
+    const screenY = (projected.y * rect.height) / engine.getRenderHeight();
+    const hud = [
+      ...canvas
+        .closest('.battle-view')!
+        .querySelectorAll(
+          '.battle-top-band, .battle-action-dock, .battle-target-forecast, .battle-unit-card, .battle-overview-unit',
+        ),
+    ]
+      .filter((node) => node.getClientRects().length > 0)
+      .map((node) => {
+        const box = node.getBoundingClientRect();
+        return {
+          x: foot.x + ((box.left + box.right) / 2 - rect.left - screenX) / pixelsPerWorld,
+          up:
+            Vector3.Dot(foot, upAxis) +
+            (screenY - ((box.top + box.bottom) / 2 - rect.top)) / pixelsPerWorld,
+          halfWidth: box.width / pixelsPerWorld / 2,
+          halfHeight: box.height / pixelsPerWorld / 2,
+        };
+      });
+    return [...bodies, ...labels, ...hud];
+  };
+  const labelBox = (mesh: Mesh): LabelBox => ({
+    x: mesh.position.x,
+    up: Vector3.Dot(mesh.position, upAxis),
+    halfWidth: mesh.getBoundingInfo().boundingBox.extendSize.x * mesh.scaling.x,
+    halfHeight: mesh.getBoundingInfo().boundingBox.extendSize.y * mesh.scaling.y,
+  });
+  const placeActorMarker = () => {
+    if (!actorMarker || !scene.activeCamera) return;
+    const { descriptor, badge, ring, width } = actorMarker;
+    const unit = currentView.units.find(({ id }) => id === descriptor.id)!;
+    const art = spriteForUnit(unit);
+    const scale = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
+    const point = AXIAL_TO_WORLD(unit.position);
+    const foot = new Vector3(point.x, groundYFor(unit.position), point.z);
+    const projectedFoot = project(foot);
+    const imageScale = (project(foot.add(upAxis)).z - projectedFoot.z) * Math.sin(CAMERA_ELEVATION);
+    const pixelsPerWorld = (imageScale * canvas.clientHeight) / (2 * scene.activeCamera.orthoTop!);
+    badge.scaling.set(width / pixelsPerWorld, 34 / pixelsPerWorld, 1);
+    const footUp = Vector3.Dot(foot, upAxis);
+    const halfHeight = 17 / pixelsPerWorld;
+    const reserved = actorReservations(foot, pixelsPerWorld);
+    const placementKey = JSON.stringify([
+      scene.activeCamera.getViewMatrix().updateFlag,
+      scene.activeCamera.getProjectionMatrix().updateFlag,
+      canvas.clientWidth,
+      canvas.clientHeight,
+      reserved,
+    ]);
+    if (actorPlacementKey === placementKey) return;
+    actorPlacementKey = placementKey;
+    const { viewport, safeTop, safeBottom } = cameraOpening();
+    const projected = Vector3.Project(
+      foot,
+      Matrix.Identity(),
+      scene.getTransformMatrix(),
+      scene.activeCamera.viewport.toGlobal(engine.getRenderWidth(), engine.getRenderHeight()),
+    );
+    const screenX = (projected.x * viewport.width) / engine.getRenderWidth();
+    const screenY = (projected.y * viewport.height) / engine.getRenderHeight();
+    const opening = {
+      x: foot.x,
+      up: footUp + (screenY - (safeTop + safeBottom) / 2) / pixelsPerWorld,
+      // A downward chevron stays centred on its actual owner, never another body.
+      halfWidth: Math.min(screenX - 8, viewport.width - screenX - 8) / pixelsPerWorld,
+      halfHeight: (safeBottom - safeTop) / 2 / pixelsPerWorld,
+    };
+    const minimumUp = footUp + (art.footY - art.visibleBounds[1]) * scale + halfHeight + 0.08;
+    const placement = actorBadgePlacement(
+      {
+        x: foot.x,
+        up: minimumUp,
+        halfWidth: width / pixelsPerWorld / 2,
+        halfHeight,
+      },
+      reserved,
+      opening,
+      minimumUp,
+    );
+    ring.position.copyFrom(foot);
+    ring.position.y += 0.13;
+    applyActorBadgePlacement(badge, placement, foot, upAxis);
+  };
+  // Vitals and ground-linked DOM letters must be laid out before reservations are read.
+  scene.onBeforeCameraRenderObservable.add(() => placeActorMarker());
+  const clearActorMarker = () => {
+    actorMarker?.dispose();
+    actorMarker = null;
+    actorMarkerLabels.length = 0;
+  };
+  const syncActorMarker = (descriptor: ReturnType<typeof markerPlan>['actor']) => {
+    actorPlacementKey = '';
+    const key = actorMarkerKey(descriptor, currentView.controlledSideId);
+    if (retainedActorKey !== key) {
+      clearActorMarker();
+      retainedActorKey = key;
+      if (descriptor) {
+        actorMarker = createActorMarker(scene, descriptor, currentView.controlledSideId);
+        actorMarkerLabels.push(actorMarker.badge);
+      }
+    }
+    placeActorMarker();
+  };
+
   const updateMarkers = () => {
     clearPreviewMarkers();
     updateHeightLabels();
@@ -796,6 +964,7 @@ export async function mountSpriteBattleScene(
       showFullGrid,
     });
     refreshFigureMarkers(plan);
+    syncActorMarker(plan.actor);
     applyCellStyles(plan.cells);
   };
 
@@ -906,7 +1075,12 @@ export async function mountSpriteBattleScene(
         ),
         targetY: (targetPoint.y * rect.height) / engine.getRenderHeight(),
       };
-      const reserved = [...unitMeshes.values(), ...eventLabels, ...threatLabels]
+      const reserved = [
+        ...unitMeshes.values(),
+        ...eventLabels,
+        ...threatLabels,
+        ...actorMarkerLabels,
+      ]
         .filter((mesh) => mesh.isEnabled())
         .map((mesh) => {
           const corners = mesh.getBoundingInfo().boundingBox.vectorsWorld.map((corner) => {
@@ -1072,6 +1246,7 @@ export async function mountSpriteBattleScene(
       height: viewport.height,
       safeTop,
       safeBottom,
+      badge: actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
     });
     if (!frame) return null;
     const limits = battleCameraLimits(frame, viewport.width, viewport.height);
@@ -1109,8 +1284,12 @@ export async function mountSpriteBattleScene(
     if (!unit) return;
     const { viewport, safeTop, safeBottom } = cameraOpening();
     const point = AXIAL_TO_WORLD(unit.position);
-    const zoom = 4.8;
+    const badgeHeight = Number(unit.id === actorMarker?.descriptor.id) * 34;
     const height = spriteDisplayHeight(spriteForUnit(unit).id) * SPRITE_PRESENTATION_SCALE * 0.45;
+    const zoom = Math.max(
+      4.8,
+      (height * viewport.height) / Math.max(1, safeBottom - safeTop - badgeHeight - 28),
+    );
     const middle = project({
       x: point.x,
       y: groundYFor(unit.position) + height * Math.cos(CAMERA_ELEVATION),
@@ -1118,7 +1297,9 @@ export async function mountSpriteBattleScene(
     });
     const up = middle.z * Math.sin(CAMERA_ELEVATION);
     const centerUp =
-      up + (((safeTop + safeBottom) / 2 - viewport.height / 2) * 2 * zoom) / viewport.height;
+      up +
+      (((safeTop + badgeHeight + safeBottom) / 2 - viewport.height / 2) * 2 * zoom) /
+        viewport.height;
     camera.fit(
       {
         minX: middle.x,
@@ -1183,11 +1364,13 @@ export async function mountSpriteBattleScene(
   canvas.addEventListener('pointercancel', releaseCameraPress);
   canvas.addEventListener('pointermove', markDrag);
   frameDefault();
+  scene.updateTransformMatrix(true);
   canvas.setAttribute('aria-label', 'Поле боя с выбором бойца или клетки');
 
   unitMeshesForView(initialView);
   updateMarkers();
   renderEvents(initialView);
+  frameDefault();
   const resizeObserver = new ResizeObserver(() => {
     engine.resize();
     overviewBounds();
@@ -1220,6 +1403,7 @@ export async function mountSpriteBattleScene(
     canvas.removeEventListener('pointerup', releaseCameraPress);
     canvas.removeEventListener('pointercancel', releaseCameraPress);
     canvas.removeEventListener('pointermove', markDrag);
+    clearActorMarker();
     fieldVitals.destroy();
     camera.dispose();
     engine.stopRenderLoop();
@@ -1275,6 +1459,101 @@ export async function mountSpriteBattleScene(
       followActivation(previousActor);
     },
     destroy,
+  };
+}
+
+/** Keep a failed overhead placement explicit instead of drawing an overlapping plaque. */
+function applyActorBadgePlacement(
+  badge: Mesh,
+  placement: LabelBox | null,
+  foot: Vector3,
+  upAxis: Vector3,
+) {
+  badge.setEnabled(placement !== null);
+  badge.metadata.actorBadgePlacement = placement ? 'placed' : 'no-overhead-space';
+  if (!placement) return;
+  badge.position.copyFrom(foot.add(upAxis.scale(placement.up - Vector3.Dot(foot, upAxis))));
+  badge.position.x = placement.x;
+  badge.computeWorldMatrix(true);
+}
+
+/** One static composite; group zero draws after ground cues and before opaque figures. */
+function createActorMarker(
+  scene: Scene,
+  descriptor: NonNullable<ReturnType<typeof markerPlan>['actor']>,
+  controlledSideId: string,
+) {
+  const side = descriptor.sideId === controlledSideId ? '#9bb9c2' : '#cf927c';
+  const badgeTexture = new DynamicTexture('actor-name', { width: 1024, height: 68 }, scene, false);
+  const context = badgeTexture.getContext() as unknown as CanvasRenderingContext2D;
+  context.font = 'bold 28px sans-serif';
+  const width = Math.ceil(context.measureText(descriptor.name).width / 2) + 24;
+  const textureWidth = width * 2;
+  badgeTexture.scaleTo(textureWidth, 68);
+  context.fillStyle = '#171b1c';
+  context.fillRect(1, 1, textureWidth - 2, 44);
+  context.strokeStyle = side;
+  context.lineWidth = 3;
+  context.strokeRect(2, 2, textureWidth - 4, 42);
+  context.font = 'bold 28px sans-serif';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillStyle = '#f4ead5';
+  context.fillText(descriptor.name, textureWidth / 2, 23);
+  context.beginPath();
+  context.moveTo(textureWidth / 2 - 12, 48);
+  context.lineTo(textureWidth / 2, 61);
+  context.lineTo(textureWidth / 2 + 12, 48);
+  context.strokeStyle = '#171b1c';
+  context.lineWidth = 10;
+  context.stroke();
+  context.strokeStyle = side;
+  context.lineWidth = 5;
+  context.stroke();
+  badgeTexture.update();
+  const ringTexture = new DynamicTexture('actor-foot-ring', 128, scene, false);
+  const ringContext = ringTexture.getContext() as unknown as CanvasRenderingContext2D;
+  ringContext.beginPath();
+  ringContext.arc(64, 64, 51, 0, 2 * Math.PI);
+  ringContext.strokeStyle = '#171b1c';
+  ringContext.lineWidth = 16;
+  ringContext.stroke();
+  ringContext.strokeStyle = side;
+  ringContext.lineWidth = 7;
+  ringContext.stroke();
+  ringTexture.update();
+  const makePlane = (name: string, texture: DynamicTexture) => {
+    texture.hasAlpha = true;
+    const material = new StandardMaterial(name, scene);
+    material.diffuseTexture = texture;
+    material.useAlphaFromDiffuseTexture = true;
+    material.disableLighting = true;
+    material.emissiveColor = Color3.White();
+    material.disableDepthWrite = true;
+    material.backFaceCulling = false;
+    material.specularColor = Color3.Black();
+    const mesh = MeshBuilder.CreatePlane(name, { size: 1 }, scene);
+    mesh.material = material;
+    mesh.renderingGroupId = 0;
+    mesh.alphaIndex = 100;
+    mesh.isPickable = false;
+    mesh.metadata = { actorMarkerId: descriptor.id };
+    return mesh;
+  };
+  const badge = makePlane('actor-chevron-name', badgeTexture);
+  badge.rotation.x = CAMERA_ELEVATION;
+  const ring = makePlane('actor-foot-ring', ringTexture);
+  ring.rotation.x = Math.PI / 2;
+  ring.scaling.set(1.05, 1.05, 1);
+  return {
+    descriptor,
+    badge,
+    ring,
+    width,
+    dispose() {
+      badge.dispose(false, true);
+      ring.dispose(false, true);
+    },
   };
 }
 

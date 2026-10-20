@@ -27,7 +27,7 @@ type Border =
   | 'blocked'
   | 'friendly'
   | 'enemy'
-  | 'actor'
+  | 'inspection'
   | 'path'
   | 'movement'
   | 'combined'
@@ -89,7 +89,6 @@ function unitCells(view: MarkerView, selection: Selection, cue: Cue) {
   for (const unit of view.units) {
     if (unit.status !== 'active') continue;
     cue(unit.position, null, unit.sideId === view.controlledSideId ? 'friendly' : 'enemy', 1);
-    if (unit.id === view.activation?.actorId) cue(unit.position, 'preview', 'actor', 5);
     if (unit.id === selection.selectedId) cue(unit.position, 'selection', 'path', 8);
   }
 }
@@ -142,7 +141,7 @@ function inspection(
     selection.hoveredTarget?.hex ??
     view.units.find(({ id }) => id === selection.highlightedId)?.position;
   if (!hex) return;
-  cue(hex, cells.get(key(hex))?.fill ?? 'preview', 'actor', 10);
+  cue(hex, cells.get(key(hex))?.fill ?? 'preview', 'inspection', 10);
 }
 
 /** Resolve only presentation priorities; legal commands remain the public preview's authority. */
@@ -179,6 +178,7 @@ export function markerPlan(
   inspection(view, selection, cells, cue);
   return {
     cells,
+    actor: actingUnitMarker(view),
     attackableIds: new Set(acting ? previews.map(({ targetId }) => targetId) : []),
     hoveredUnitId: selection.hoveredTarget?.unitId ?? selection.highlightedId,
   };
@@ -195,4 +195,20 @@ export function unitEdgeTone(
   if (unit.status !== 'active') return base;
   if (unit.id === hoveredId) return 'hover';
   return unit.sideId !== view.controlledSideId && attackableIds.has(unit.id) ? 'target' : base;
+}
+
+/** Activation identity is independent of inspection, action points and controlled side. */
+function actingUnitMarker(view: Pick<CombatLabView, 'status' | 'activation' | 'units'>) {
+  if (view.status !== 'active') return null;
+  const unit = view.units.find(({ id }) => id === view.activation?.actorId);
+  if (unit?.status !== 'active') return null;
+  return { id: unit.id, name: unit.name ?? unit.id, sideId: unit.sideId, position: unit.position };
+}
+
+/** Position changes move retained geometry; only projected identity/name/side redraw its texture. */
+export function actorMarkerKey(
+  actor: ReturnType<typeof actingUnitMarker>,
+  controlledSideId: string,
+) {
+  return actor ? JSON.stringify([actor.id, actor.name, actor.sideId, controlledSideId]) : null;
 }

@@ -9,6 +9,89 @@ requests.
 
 ## Unreleased
 
+### Actor backdrop correction and integrated checks — 2026-10-20, LOCAL
+
+- Normal source commit6eb5263 fixes the reproduced ruined-mill/name draw-order
+  collision. Current source-reloaded native100/125 day/night Home/close captures
+  show the full projected name; diagnostic raised crowd remains separately
+  attributed. Coordinator validation EXIT0/8of8,47relatedPASS and auditPASS.
+  Prior independent input/geometry ACCEPT47178752 remains attributable to its
+  unchanged boundaries; absolute visual ACCEPT6eb5263, all applicable criteria2.
+  [Proof and limits](docs/engineering/evidence/uix-actor-foundation/README.md). The builder
+  reported a scheduling breach: its passing commit hook ran while the check
+  window was WAIT. This is retained as a failed worker obligation, not erased by
+  passing checks. Parent subsequently ran integrated validation alone.
+  Refs186 only; enemy intermediate-frame agreement remains190. No PR/merge yet.
+  Branch `codex/actor-integration-186`; local.
+  [Current record](docs/engineering/CURRENT_PLAN.md).
+
+### Record the reproduced backdrop overlap before actor delivery
+
+- 2026-10-20, branch `codex/actor-integration-186`, local REWORK: integrated
+  validation8/8 and47related tests pass, but author and fresh independent
+  native125 Home images both show the mill obscuring actor name text. Preserve
+  the failure and its source ordering lead for a bounded correction; complete
+  reference-sheet framing is repaired. [Current plan](docs/engineering/CURRENT_PLAN.md).
+  No visual ACCEPT, publication or merge is claimed.
+
+### Integrate the corrected actor marker with the merged company profile
+
+- 2026-10-20, branch `codex/actor-integration-186`, local: preserve actor
+  correction bba8d24b while merging actual main137faf88; only additive shared
+  records conflicted. Corrected containment has47relatedPASS and author native
+  100/125 longer-name proof; independent affected play/absolute visual gates
+  remain pending. [Current plan](docs/engineering/CURRENT_PLAN.md).
+- PR241 is merged with successful PR/main CI and actual-main mixed-company
+  PostgreSQL JOIN/retry/reload smoke (1PASS/13filteredSKIP); rescue/transport
+  and downstream payment/browser journey remain unresolved. No deployment.
+
+### Correct the remaining actor placement boundary
+
+- 2026-10-20, branch `codex/actor-integration-186`, local: independent play
+  reached final-AP transition, casualty/threat and terminal176/restart; long-name
+  actor and representative input proof remain incomplete. Parent's reproduced
+  clamp/collision counterexample returns to the original builder. Prior source
+  and runtime evidence retained; no live regression, visual ACCEPT or merge
+  claimed. [Current scope](docs/engineering/CURRENT_PLAN.md).
+
+### Retain the actor placement review finding
+
+- 2026-10-20, branch `codex/actor-integration-186`, local: source review found
+  that final viewport clamping can restore a badge/reservation overlap. The
+  public-helper counterexample reproduced; parent live manifestation NOT_RUN.
+  Correction and independent affected-play/absolute-visual acceptance remain
+  pending. Existing actor checks stay historical evidence, not approval of this
+  defect. [Current delivery boundary](docs/engineering/CURRENT_PLAN.md).
+
+### Validate the integrated actor foundation
+
+- 2026-10-20, branch `codex/actor-integration-186`, local source `b38e08b5`:
+  the activation-owned ring/name now uses current HUD/vitals/letter reservations
+  and full badge bounds in overview/actor fit. Author 21 focused/46 related tests,
+  types/lint/format/normal audit PASS; parent validator EXIT0, 8/8 PASS. Native
+  100/125 day/night smoke, passive 0 POST and actual final-AP transition passed.
+  [Behavior and limits](docs/wiki/battlefield-test-maps.md#маркер-действующего-бойца--2026-10-20).
+  Independent played/absolute visual acceptance and publication remain pending;
+  Refs186, #190 still owns enemy/frame agreement. No rules or migrations changed.
+- Delivery correction: overview main CI39378757951 SUCCESS after PR244 merge;
+  [actual-main readback](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+
+### Integrate the acting-fighter cue with the delivered overview
+
+- 2026-10-20, branch `codex/actor-integration-186`, local: activate preserved
+  Refs186 foundation on accepted overview mainfe3bcdb4. One web writer owns
+  actor scene/marker/geometry and focused regressions; preserve full-field fit,
+  ground-linked letters and bounded HUD while correcting current reservations
+  and complete badge bounds. Implementation/integrated acceptance pending;
+  #190 still owns enemy/frame agreement. Parent updates CURRENT_PLAN and the
+  existing battlefield wiki at result closeout; no game-rule or migration change.
+- Delivery correction: [PR244](https://github.com/Vovanostm/warwrit/pull/244)
+  mergedfe3bcdb4, #227 CLOSED/agent:done, exact-head CI39377607667 SUCCESS.
+  Candidate/merged trees match; normal human6v5 end-turn/reload and actual-main
+  reload retained full state/revision3 with0passivePOST and11targets.
+  [Evidence and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+  Main CI pending; no full UI/M1, campaign-payment or deployment acceptance.
+
 ### Accept the approved company profile on current main
 
 - 2026-10-20, branch `codex/company-profile-164`, local: independent policy

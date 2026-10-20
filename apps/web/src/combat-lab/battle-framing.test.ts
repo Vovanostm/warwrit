@@ -55,6 +55,7 @@ it.each([
       height,
       safeTop,
       safeBottom,
+      badge: { width: 260, height: 34 },
     })!;
     const engine = new NullEngine({
       renderWidth: width,
@@ -92,9 +93,9 @@ it.each([
           scene.getTransformMatrix(),
           scene.activeCamera!.viewport.toGlobal(width, height),
         );
-        expect(pixel.x).toBeGreaterThanOrEqual(16 - 0.01);
-        expect(pixel.x).toBeLessThanOrEqual(width - 16 + 0.01);
-        expect(pixel.y).toBeGreaterThanOrEqual(safeTop + 8 - 0.01);
+        expect(pixel.x - 130).toBeGreaterThanOrEqual(-0.01);
+        expect(pixel.x + 130).toBeLessThanOrEqual(width + 0.01);
+        expect(pixel.y - 34).toBeGreaterThanOrEqual(safeTop + 8 - 0.01);
         expect(pixel.y).toBeLessThanOrEqual(safeBottom - 20 + 0.01);
       }
       expect(scene.activeCamera!.orthoTop).toBeGreaterThan(17);

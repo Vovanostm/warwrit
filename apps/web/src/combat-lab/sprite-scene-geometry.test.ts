@@ -1,6 +1,11 @@
 import { expect, it } from 'vitest';
 import { SPRITE_MASK_SIZE } from './sprite-outline.js';
-import { opaqueSpritePixel, eventLabelUp, avoidAnchorOverlap } from './sprite-scene-geometry.js';
+import {
+  opaqueSpritePixel,
+  eventLabelUp,
+  avoidAnchorOverlap,
+  actorBadgePlacement,
+} from './sprite-scene-geometry.js';
 
 it('samples only original artwork with flipped UV rows and the existing opacity threshold', () => {
   const mask = new Uint8ClampedArray(SPRITE_MASK_SIZE ** 2 * 4);
@@ -43,4 +48,51 @@ it('shifts a field anchor without changing its horizontal and target coordinates
     y: 100,
     targetY: 280,
   });
+});
+
+it('places the measured actor badge above neighbouring weapons, bodies and reserved labels', () => {
+  const badge = { x: 0, up: 1.5, halfWidth: 0.8, halfHeight: 0.2 };
+  const reserved = [
+    { x: 0.5, up: 1.6, halfWidth: 0.4, halfHeight: 0.6 },
+    { x: 0, up: 2.7, halfWidth: 0.9, halfHeight: 0.3 },
+    { x: 3, up: 4, halfWidth: 0.4, halfHeight: 5 },
+  ];
+  const placed = actorBadgePlacement(badge, reserved)!;
+  expect(placed.up).toBeCloseTo(3.28);
+  expect(placed.x).toBe(badge.x);
+  expect(actorBadgePlacement(badge, [...reserved].reverse())).toEqual(placed);
+  expect(actorBadgePlacement(badge, [])).toEqual(badge);
+  for (const box of reserved.slice(0, 2))
+    expect(placed.up - box.up).toBeGreaterThan(placed.halfHeight + box.halfHeight);
+});
+
+it('contains the entire badge and recomputes placement when reservation geometry changes', () => {
+  const badge = { x: 9.5, up: 4, halfWidth: 2, halfHeight: 0.5 };
+  const opening = { x: 5, up: 5, halfWidth: 5, halfHeight: 3 };
+  const first = actorBadgePlacement(badge, [], opening);
+  expect(first).toEqual({ ...badge, x: 8 });
+  const changed = actorBadgePlacement(
+    badge,
+    [{ x: 8, up: 4, halfWidth: 1, halfHeight: 1 }],
+    opening,
+  )!;
+  expect(changed.up).toBeCloseTo(5.58);
+  const top = actorBadgePlacement({ ...badge, up: 20 }, [], opening)!;
+  expect(top.up + top.halfHeight).toBe(8);
+  expect(top.x + top.halfWidth).toBe(10);
+  const bottom = actorBadgePlacement({ ...badge, x: -20, up: -20 }, [], opening)!;
+  expect(bottom.up - bottom.halfHeight).toBe(2);
+  expect(bottom.x - bottom.halfWidth).toBe(0);
+});
+
+it('rechecks final contained actor badge candidates and reports when overhead space is unavailable', () => {
+  const badge = { x: 0, up: 8, halfWidth: 2, halfHeight: 2 };
+  const opening = { x: 0, up: 0, halfWidth: 10, halfHeight: 10 };
+  const placed = actorBadgePlacement(badge, [badge], opening)!;
+  expect(Math.abs(placed.up - 8)).toBeGreaterThanOrEqual(4);
+  expect(Math.abs(placed.up) + placed.halfHeight).toBeLessThanOrEqual(10);
+  expect(Math.abs(placed.x) + placed.halfWidth).toBeLessThanOrEqual(10);
+  // A real overhead cue cannot use that lower gap if it falls below its owner's head.
+  expect(actorBadgePlacement(badge, [badge], opening, badge.up)).toBeNull();
+  expect(actorBadgePlacement(badge, [opening], opening)).toBeNull();
 });

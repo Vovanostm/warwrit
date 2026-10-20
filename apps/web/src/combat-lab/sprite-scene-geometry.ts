@@ -66,3 +66,47 @@ export function avoidAnchorOverlap(
   }
   return result;
 }
+
+/** Try the preferred overhead position and reservation edges; validate after containment. */
+export function actorBadgePlacement(
+  badge: LabelBox,
+  reserved: readonly LabelBox[],
+  opening?: LabelBox,
+  minimumUp = opening ? -Infinity : badge.up,
+): LabelBox | null {
+  const clamp = (value: number, center: number, room: number) =>
+    Math.max(center - room, Math.min(center + room, value));
+  const contained = (up: number): LabelBox =>
+    opening
+      ? {
+          ...badge,
+          x: clamp(badge.x, opening.x, opening.halfWidth - badge.halfWidth),
+          up: clamp(up, opening.up, opening.halfHeight - badge.halfHeight),
+        }
+      : { ...badge, up };
+  const candidates = [
+    badge.up,
+    ...reserved.flatMap((box) => [
+      box.up + box.halfHeight + badge.halfHeight + 0.08,
+      box.up - box.halfHeight - badge.halfHeight - 0.08,
+    ]),
+  ].sort((a, b) => {
+    const above = Number(b >= badge.up) - Number(a >= badge.up);
+    return above || Math.abs(a - badge.up) - Math.abs(b - badge.up);
+  });
+  return (
+    candidates
+      .map(contained)
+      .find(
+        (candidate) =>
+          candidate.up >= minimumUp &&
+          (!opening ||
+            (badge.halfWidth <= opening.halfWidth && badge.halfHeight <= opening.halfHeight)) &&
+          reserved.every(
+            (box) =>
+              Math.abs(candidate.x - box.x) >= badge.halfWidth + box.halfWidth ||
+              Math.abs(candidate.up - box.up) >= badge.halfHeight + box.halfHeight,
+          ),
+      ) ?? null
+  );
+}
