@@ -11,7 +11,9 @@ about 80 lines, with exactly these sections:
 2. `## Changes` — files and functions to change on current main (issue links
    may point to older commits), each with a reason. Shape new logic as small
    functions, hooks and sub-components so each stays within the commit audit
-   (`pnpm check:changes`: cyclomatic/cognitive complexity, CRAP).
+   (`pnpm check:changes`: cyclomatic/cognitive complexity, CRAP). If a function
+   you must change is already near those limits, plan a behaviour-preserving
+   restructure commit with its own tests first, then the feature commit.
 3. `## Data` — protocol/projection changes (optional fields only) and
    compatibility with old replays and projections; "none" if none.
 4. `## Proof` — every acceptance criterion of every issue → how it is proven:

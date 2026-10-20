@@ -11,7 +11,9 @@ AGENTS.md (`assets/art/m1/style/unit-c-ink.png`, the relevant
 Issues: {{ISSUES}}. This brief runs only for tier V (art assets, scene
 rendering, new visual elements). Score every applicable criterion; ACCEPT only
 when each scores at least 2. A criterion about another asset type or a proof
-format the change cannot have is N/A, not a failure.
+format the change cannot have is N/A, not a failure. A missing capture is
+`VERDICT: BLOCKED_ENV <head-sha>` naming the capture; the coordinator has the
+evaluator take it. REWORK is only for a visible defect.
 
 Write `.orca/{{SLICE}}/visual-{{ROUND}}.md` whose first line is
 `VERDICT: ACCEPT <head-sha>` or `VERDICT: REWORK <head-sha>`, then the score table and, per failing criterion, the visible
