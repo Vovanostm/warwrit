@@ -1,5 +1,21 @@
 # Warwrit current delivery plan
 
+**Overview retained-inspection correction — 2026-10-20, LOCAL REWORK:**
+Independent evaluator4 rejected source5124298c: in the continuous fight,
+casualty inspection plus the real threat at native125 leaves an89.3CSSpx-high
+field; clicking ally A selects enemy J. Log-open proof alone missed this state.
+All12 opening pointer/keyboard targets, manual move/attack, passive0POST and
+real victory/reload at revision138 passed within that report's scope. The local
+correction bounds inspection to200px with scrolling, a persistent name/HP/status
+heading and keyboard access. Author first continuous casualty-state readback
+keeps all ten marker centres distinct; fresh independent acceptance is pending.
+Visual round3 was stopped without a verdict after this reproduced blocker;
+its partial run is not acceptance. Reuse the independent critic on corrected
+current images. Parent owns shared docs; no merge or full UI acceptance.
+The separate #163 health-cap writer starts from merged eb98dd2 in its own
+checkout, source-only until the parent grants a check window; #164 remains
+pending the critical-bleed policy, with rescue/transport excluded.
+
 **Overview second rework — 2026-10-20, LOCAL / independent gates pending:**
 Normal commit `5124298c` replaces displaced overview portraits with compact
 lettered ground markers and the same letters in initiative. Measured initiative/

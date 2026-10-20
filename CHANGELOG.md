@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Retain the continuous-play overview blocker before correction
+
+- 2026-10-20, branch `codex/battle-overview-227`, local: evaluator4 reproduced
+  #227 wrong-target selection when a retained casualty inspection collapses the
+  native125 overview. Source5124298c remains REWORK; log-open checks alone do
+  not accept it. Opening12 pointer/keyboard targets, manual move/attack and
+  actual victory/reload at revision138 passed in the bounded journey.
+  The correction bounds inspection to a scrollable200px right card and keeps
+  name/HP/status in its sticky heading, including keyboard access. No rules or
+  art change. Author type/lint checks and first continuous casualty-state
+  readback pass; independent affected-state and absolute review remain pending.
+  Visual3 was stopped without verdict, and fresh affected-state plus absolute
+  review remain required. Local reports `.orca/uix-overview-zoom/eval-4.md`
+  and eval4-shots retain the failed state. #163 proceeds independently in its
+  reserved checkout; #164 owner policy remains pending. No merge claimed.
+
 ### Keep overview identities, threats and commands visible together
 
 - 2026-10-20, branch `codex/battle-overview-227`, local `5124298c`: replace

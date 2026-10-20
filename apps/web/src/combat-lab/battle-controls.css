@@ -667,6 +667,30 @@
 }
 
 /* Inspection keeps full pool labels below the portrait in the reserved narrow card. */
+.battle-inspected-unit {
+  min-height: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.battle-inspected-unit .battle-card-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  gap: 4px;
+  padding-bottom: 8px;
+  background: #182225;
+  box-shadow: 0 0 0 12px #182225;
+}
+.battle-inspected-unit .battle-card-header h2 {
+  margin: 0;
+  font:
+    bold 20px/1.2 Georgia,
+    serif;
+  overflow-wrap: normal;
+}
 .battle-inspected-unit .battle-card-main {
   display: block;
 }
@@ -677,9 +701,7 @@
   margin: 0 0 8px 8px;
 }
 .battle-inspected-unit .battle-card-data h2 {
-  min-height: 80px;
-  overflow-wrap: normal;
-  hyphens: none;
+  display: none;
 }
 .battle-inspected-unit .battle-resource {
   clear: both;
