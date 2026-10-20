@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+**Canonical HP #163 — 2026-10-20, LOCAL ACCEPT / publication pending:**
+Frozen74b22f8 has independent source review2 and playable evaluator ACCEPT.
+One real two-company battle proved38/60 and53/60 across existing/fresh/reloaded/
+reconnected views, HTTP and real room. Actual API restart/browser reopen preserved
+revision35 before its normal deadline. Parent validator EXIT0/8of8,
+208PASS/47SKIP,auditPASS; named real DB/SDK test1PASS/12filteredSKIP.
+The evaluator completed all gameplay assertions but runner cleanup exited13;
+that FAIL and earlier fixture/probe failures remain recorded, not recast as PASS.
+[Evidence, scope and rollout compatibility](evidence/core-pools/README.md).
+No full M1/terminal/payment/design acceptance; hosted CI and merge still pending.
+#227 remains in independent review; its source writer released the disjoint
+#228 editor picker. PR241 still awaits critical-bleed policy. Rescue is excluded.
+
 **HP transport correction — 2026-10-20, LOCAL / runtime test PASS:**
 Source be263a3 committed with normal audit PASS and33 focused tests/types.
 Independent review R1 found a race in its newly added transport test. The local

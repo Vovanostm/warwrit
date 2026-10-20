@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Accept canonical persistent HP through reconnect and restart
+
+- 2026-10-20, branch `codex/health-cap-163`, local source74b22f8:
+  independent source and playable reviews ACCEPT #163. Real company38/60 and
+  ally53/60 retain matching HTTP/room values and consumed bars across existing,
+  fresh, reloaded, reconnected and application-reopened views at revision35.
+  Parent validator8/8 PASS,208 tests PASS/47 SKIP,audit PASS. Final evaluator
+  assertions passed before deadline; its runner later exited13 during obsolete
+  SDK cleanup, retained as FAIL. Hosted CI/publication/merge pending.
+  [Evidence, compatibility and limits](docs/engineering/evidence/core-pools/README.md).
+  Updated the existing battlefield wiki/CURRENT_PLAN; no migrations, rules,
+  replay or dependencies changed. New reader/producer rollout must be coordinated.
+
 ### Make the health-cap transport proof observe the real AI worker
 
 - 2026-10-20, branch `codex/health-cap-163`, local: independent review R1
