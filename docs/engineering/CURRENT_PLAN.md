@@ -1,5 +1,27 @@
 # Warwrit current delivery plan
 
+**Range contour187 — 2026-10-20, LOCAL / source review ACCEPT:**
+Sole web writer in `codex/combat-range-187` at actual main7a7f1f18 replaces
+weapon/combined fills with the supplied reach union boundary. Selected skills
+require exact current actor/activation/revision/skill geometry. Parent owns
+shared records; no gameplay/producer rule changes.
+
+Independent source review ACCEPT after correcting stale mesh bounds and
+unwanted internal movement edges. The renderer grid supports independent
+fill/border; sprite-reach-contour.ts owns mesh/cache/observer lifecycle. Earlier
+audit failures exposed uncovered grid/callback code, corrected by existing grid
+coverage and complete contour lifecycle extraction. Current5-file focused
+coverage24PASS; the observer test first failed on Babylon's retained/deferred
+observer bookkeeping and was corrected to check baseline cleanup. Stale generated
+protocol declarations were rebuilt without encounter source changes. Final web
+types, scoped TS/TSX lint and source formatting PASS. Normal commit audit is
+next; no bypass. CSS has no ESLint configuration; its formatting check passed.
+
+Integrated validator, actual browser/native125%/CVD/day-night and absolute visual
+acceptance remain pending. #184 follows separately. Parent248/server diagnosis
+retains DB6 failure; one explicit-tick diagnostic now owns the serial check window. Full sprint/M1
+remain partial; current HUD code comes from merged PR247.
+
 **Persistent HUD hosted integration correction — 2026-10-20, PUBLISHED / REWORK:**
 PR247 correction72da1e3 passes clean local validator8/8,252PASS/49SKIP.
 Hosted CI39444350305 passes global dead-code,932unit tests/49SKIP and combat

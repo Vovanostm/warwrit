@@ -238,9 +238,6 @@
 .battle-range-legend i[data-zone='move'] {
   background: #92bbb8;
 }
-.battle-range-legend i[data-zone='both'] {
-  background: #c2d697;
-}
 .battle-range-legend small {
   margin-left: auto;
   font: inherit;

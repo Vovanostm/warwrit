@@ -48,6 +48,26 @@ export interface ScreenBox {
   readonly top: number;
   readonly bottom: number;
 }
+
+const HEX_NEIGHBOURS = [
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [0, -1],
+  [1, -1],
+  [1, 0],
+] as const;
+
+/** Return only sides on the perimeter of a hex-cell union, in terrain-corner order. */
+export function exposedHexSides(cells: readonly { readonly q: number; readonly r: number }[]) {
+  const cellKeys = new Set(cells.map(({ q, r }) => `${q},${r}`));
+  return cells.flatMap((hex) =>
+    HEX_NEIGHBOURS.flatMap(([dq, dr], side) =>
+      cellKeys.has(`${hex.q + dq},${hex.r + dr}`) ? [] : [{ hex, side }],
+    ),
+  );
+}
+
 export function avoidAnchorOverlap(
   anchor: { readonly x: number; readonly y: number; readonly targetY: number },
   reserved: readonly ScreenBox[],

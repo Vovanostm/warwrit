@@ -28,6 +28,7 @@ import {
   type LabelBox,
 } from './sprite-scene-geometry.js';
 import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
+import { createReachContour } from './sprite-reach-contour.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
 import { spriteForUnit } from './sprite-art.js';
 import {
@@ -371,9 +372,6 @@ export async function mountSpriteBattleScene(
   movementAreaMaterial.disableLighting = true;
   movementAreaMaterial.emissiveColor = new Color3(0.25, 0.45, 0.5);
   movementAreaMaterial.alpha = 0.13;
-  const movementEdgeMaterial = new StandardMaterial('reachable-movement-edge', scene);
-  movementEdgeMaterial.disableLighting = true;
-  movementEdgeMaterial.emissiveColor = new Color3(0.61, 0.8, 0.8);
   const targetMaterial = new StandardMaterial('attack-target', scene);
   targetMaterial.disableLighting = true;
   targetMaterial.emissiveColor = new Color3(0.83, 0.48, 0.29);
@@ -649,24 +647,17 @@ export async function mountSpriteBattleScene(
   };
 
   const previewMeshes: Mesh[] = [];
-  const shotAreaMaterial = new StandardMaterial('ranged-shot-area', scene);
-  shotAreaMaterial.disableLighting = true;
-  shotAreaMaterial.emissiveColor = new Color3(0.67, 0.48, 0.22);
-  shotAreaMaterial.alpha = 0.13;
-  const shotAreaEdgeMaterial = new StandardMaterial('ranged-area-muted-ochre', scene);
-  shotAreaEdgeMaterial.disableLighting = true;
-  shotAreaEdgeMaterial.emissiveColor = new Color3(0.92, 0.73, 0.4);
+  const reachContourMaterial = new StandardMaterial('weapon-skill-reach-contour', scene);
+  reachContourMaterial.disableLighting = true;
+  reachContourMaterial.emissiveColor = new Color3(0.92, 0.73, 0.4);
+  reachContourMaterial.backFaceCulling = false;
+  reachContourMaterial.disableDepthWrite = true;
   const pathMaterial = new StandardMaterial('route-ochre', scene);
   pathMaterial.disableLighting = true;
   pathMaterial.emissiveColor = new Color3(0.86, 0.71, 0.42);
   const threatMaterial = new StandardMaterial('prepared-threat-rust', scene);
   threatMaterial.disableLighting = true;
   threatMaterial.emissiveColor = new Color3(0.89, 0.32, 0.18);
-  const combinedAreaMaterial = new StandardMaterial('movement-and-reach', scene);
-  combinedAreaMaterial.disableLighting = true;
-  combinedAreaMaterial.emissiveColor = new Color3(0.44, 0.55, 0.35);
-  combinedAreaMaterial.alpha = 0.13;
-  const combinedEdge = new Color3(0.76, 0.84, 0.59);
   const targetFill = new StandardMaterial('target-cell-wash', scene);
   targetFill.disableLighting = true;
   targetFill.emissiveColor = targetMaterial.emissiveColor;
@@ -791,8 +782,6 @@ export async function mountSpriteBattleScene(
     preview: previewMaterial,
     selection: selectionMaterial,
     movement: movementAreaMaterial,
-    combined: combinedAreaMaterial,
-    shot: shotAreaMaterial,
     target: targetFill,
     threat: threatFill,
   };
@@ -803,9 +792,6 @@ export async function mountSpriteBattleScene(
     enemy: enemyRingMaterial.emissiveColor,
     inspection: actorRingMaterial.emissiveColor,
     path: pathMaterial.emissiveColor,
-    movement: movementEdgeMaterial.emissiveColor,
-    combined: combinedEdge,
-    shot: shotAreaEdgeMaterial.emissiveColor,
     target: targetMaterial.emissiveColor,
     threat: threatMaterial.emissiveColor,
   };
@@ -828,11 +814,18 @@ export async function mountSpriteBattleScene(
     for (const [key, style] of cells)
       styles.set(key, {
         fill: style.fill ? fillMaterials[style.fill] : null,
-        border: borderColours[style.border],
+        border: style.border ? borderColours[style.border] : null,
         priority: style.priority,
       });
     cellGrid.paint(styles);
   };
+
+  const reachContour = createReachContour(
+    scene,
+    reachContourMaterial,
+    terrain.terrainByHex,
+    canvas,
+  );
 
   const actorReservations = (foot: Vector3, pixelsPerWorld: number): LabelBox[] => {
     const footImage = project(foot);
@@ -1012,6 +1005,7 @@ export async function mountSpriteBattleScene(
     refreshFigureMarkers(plan);
     syncActorMarker(plan.actor);
     applyCellStyles(plan.cells);
+    reachContour.setCells(plan.reachCells);
   };
 
   const pickFrom = (hit: PickingInfo | null) => {
@@ -1451,6 +1445,7 @@ export async function mountSpriteBattleScene(
     canvas.removeEventListener('pointermove', markDrag);
     clearActorMarker();
     fieldVitals.destroy();
+    reachContour.dispose();
     camera.dispose();
     engine.stopRenderLoop();
     scene.dispose();

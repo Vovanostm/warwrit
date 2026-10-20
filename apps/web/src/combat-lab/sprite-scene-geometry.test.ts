@@ -5,6 +5,7 @@ import {
   eventLabelUp,
   avoidAnchorOverlap,
   actorBadgePlacement,
+  exposedHexSides,
 } from './sprite-scene-geometry.js';
 
 it('samples only original artwork with flipped UV rows and the existing opacity threshold', () => {
@@ -15,6 +16,17 @@ it('samples only original artwork with flipped UV rows and the existing opacity 
   expect(opaqueSpritePixel(mask, { x: 1, y: 0 })).toBe(false);
   expect(opaqueSpritePixel(mask, { x: 0.5, y: 0.5 })).toBe(false);
   expect(opaqueSpritePixel(mask, { x: -1, y: 2 })).toBe(true);
+});
+
+it('returns only exposed sides for a reach-cell union', () => {
+  const adjacent = exposedHexSides([
+    { q: 0, r: 0 },
+    { q: 1, r: 0 },
+  ]);
+  expect(adjacent).toHaveLength(10);
+  expect(adjacent).not.toContainEqual({ hex: { q: 0, r: 0 }, side: 5 });
+  expect(adjacent).not.toContainEqual({ hex: { q: 1, r: 0 }, side: 2 });
+  expect(exposedHexSides([{ q: 0, r: 0 }])).toHaveLength(6);
 });
 
 it('moves feedback above reserved figures but retains the finite placement bound', () => {

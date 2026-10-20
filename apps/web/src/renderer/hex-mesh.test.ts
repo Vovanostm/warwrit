@@ -181,7 +181,7 @@ it('scales connected terrain layout while keeping surface texture UVs normalized
   }
 });
 
-it('draws shared grid edges once and recolours fixed cell geometry instead of stacking markers', () => {
+it('draws shared edges once, supports borderless area fills, and recolours fixed geometry', () => {
   const engine = new NullEngine();
   const scene = new Scene(engine);
   try {
@@ -199,11 +199,19 @@ it('draws shared grid edges once and recolours fixed cell geometry instead of st
     const cyan = Color3.FromHexString('#92bbb8');
     const gold = Color3.FromHexString('#dfb867');
     const fill = new StandardMaterial('wash', scene);
+    const areaFill = new Map<string, BattleCellStyle>([
+      ['0,0', { fill, border: null, priority: 3 }],
+      ['1,0', { fill: null, border: null, priority: 3 }],
+    ]);
     const styles = new Map<string, BattleCellStyle>([
       ['0,0', { fill, border: cyan, priority: 3 }],
       ['1,0', { fill: null, border: gold, priority: 8 }],
     ]);
     const geometryIds = scene.meshes.map((mesh) => mesh.uniqueId);
+    grid.paint(areaFill);
+    expect(borders.getVerticesData(VertexBuffer.ColorKind)?.every((value) => value === 0)).toBe(
+      true,
+    );
     grid.paint(styles);
     const colours = borders.getVerticesData(VertexBuffer.ColorKind)!;
     for (const [channel, expected] of [gold.r, gold.g, gold.b, 1].entries()) {

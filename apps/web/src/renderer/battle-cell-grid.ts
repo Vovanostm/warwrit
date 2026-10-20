@@ -14,7 +14,7 @@ import { createBattleSurface, type BattleTerrainCell } from './battle-terrain.js
 type GridTile = CombatLabHex & { readonly height: number };
 export interface BattleCellStyle {
   readonly fill: Material | null;
-  readonly border: Color3;
+  readonly border: Color3 | null;
   readonly priority: number;
 }
 
@@ -108,14 +108,14 @@ export function createBattleCellGrid(
       for (const edge of edgeList) {
         const style = edge.cells
           .map((cell) => styles.get(cell))
-          .filter((value): value is BattleCellStyle => value !== undefined)
+          .filter((value): value is BattleCellStyle => value !== undefined && value.border !== null)
           .sort((a, b) => b.priority - a.priority)[0];
         for (let vertex = 0; vertex < 4; vertex++) {
           colours.push(
-            style?.border.r ?? 0,
-            style?.border.g ?? 0,
-            style?.border.b ?? 0,
-            style ? 1 : 0,
+            style?.border?.r ?? 0,
+            style?.border?.g ?? 0,
+            style?.border?.b ?? 0,
+            style?.border ? 1 : 0,
           );
         }
       }
