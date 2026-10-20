@@ -1,5 +1,12 @@
 # Warwrit current delivery plan
 
+**Bridge integration — 2026-10-20, LOCAL:**
+Normal correction commitd82d0eb passes the audit and combines with actual
+main6b5b1b03 (actor PR245). Only additive documentation sections conflict;
+both histories are retained. Gameplay source is unchanged by this integration.
+Independent source/test and retained-terminal recovery ACCEPT precede the
+clean integrated validator and hosted CI; publication/merge pending.
+
 **Retained terminal recovered — 2026-10-20, LOCAL:**
 Independent recovery ACCEPT for d618b3a9 plus the one-line repository correction.
 Victory61 now persists both pre-fix READY roots, including helper revision1→1
@@ -85,6 +92,85 @@ existing wolf hunt/actual roster, canonical tactical rules, unavailable unmapped
 abilities and pending unsupported surrender without proof/payment. #166 retains
 HUD migration. Actor186 keeps its separate lab-scene writer. Parent owns shared
 records and serial check windows; implementation/acceptance of #165 NOT_RUN.
+
+**Actor backdrop correction and integrated checks — 2026-10-20, LOCAL:**
+Normal source commit6eb5263 fixes the reproduced ruined-mill/name draw-order
+collision. Current source-reloaded native100/125 day/night Home/close captures
+show the full projected name; diagnostic raised crowd remains separately
+attributed. Coordinator validation EXIT0/8of8,47relatedPASS and auditPASS.
+Prior independent input/geometry ACCEPT47178752 remains attributable to its
+unchanged boundaries; current absolute visual ACCEPT6eb5263 scores every
+applicable marker criterion2. [Retained proof and limits](evidence/uix-actor-foundation/README.md). The builder
+reported a scheduling breach: its passing commit hook ran while the check
+window was WAIT. This is retained as a failed worker obligation, not erased by
+passing checks. Parent subsequently ran integrated validation alone.
+Refs186 only; enemy intermediate-frame agreement remains190. No PR/merge yet.
+
+**Actor backdrop overlap — 2026-10-20, LOCAL REWORK:**
+Integrated actor47178752 passed coordinator validation8/8 with47related tests.
+Parent then personally inspected both author and fresh independent native125
+Home images: mill pixels cover the left portion of the acting fighter's name.
+Enabled/placed metadata is insufficient. The full reference sheet is now framed;
+source lead is transparent backdrop alpha ordering, not new art or gameplay.
+Original builder will correct this bounded rendering defect after evaluator
+settlement. Independent final placement/play/absolute visual acceptance and
+publication remain pending; earlier passes do not close this visible defect.
+
+**Actor correction and merged profile — 2026-10-20:**
+Local actor correction `bba8d24b` fixes the reproduced containment collision,
+keeps the chevron centred above its owner, and explicitly hides a plaque when
+no valid overhead space exists. Author 47 related tests, types/lint/format/audit
+PASS; actual longer-name native100/125 Home/close smoke passed. Independent
+input/placement readback and absolute visual acceptance remain pending. Integrate
+actual main `137faf88` with additive document histories; actor code is unchanged.
+PR241 is MERGED; PR39383402818 and main39384644400 CI SUCCESS. Actual-main
+isolated PostgreSQL mixed-company JOIN/retry/reload test PASS (1/13 filtered
+SKIP), migrations PASS; owned database removed. Rescue/transport and downstream
+payment/terminal-browser proof remain excluded. No full M1 acceptance.
+
+**Actor review settled / correction active — 2026-10-20, LOCAL REWORK:**
+Independent pass reached actual finalAP4→6, casualty55, threat72 and terminal176
+with marker clearing/restart. It retains finite long-name/input evidence gaps;
+no new live defect reproduced. Parent's separate clamp counterexample remains
+open. Same builder owns its bounded correction and affected proof; evaluator
+resources23033/25033/browser/profile were cleaned. No actor publication/merge.
+Owner also resolved profile164 (attack/defence allowed, movement/retreat blocked)
+and bounded bridge165 scope; PR241 now publishes its accepted candidate.
+
+**Actor placement correction — 2026-10-20, LOCAL / review pending:**
+Parent reproduced a helper-level containment defect on sourceb38e08b5: clamping
+an upward-displaced name back into the opening can restore a reserved-area
+overlap despite free space. Counterexample and minimum correction are retained
+in `.orca/uix-w1-scene/parent-source-review.md`; parent live manifestation is
+NOT_RUN. Independent evaluator is playing the frozen source; no production
+edit until settlement. Refs186 remains unaccepted and unpublished. The same
+builder will fix confirmed findings, followed by affected independent readback
+and the absolute visual gate. Prior passing checks do not close this finding.
+
+**Actor foundation integrated — 2026-10-20, LOCAL / independent gates pending:**
+Source `b38e08b5` combines preserved actor work with merged overview `fe3bcdb4`.
+Current HUD/vitals/letter reservations now precede placement; full badge bounds
+participate in camera fit. Author checks: 21 focused and 46 related tests PASS,
+web types/lint/format and normal audit PASS. Parent validator EXIT0, 8/8 PASS.
+Author native 100/125 day/night opening/Home/actor-close smoke and actual final-AP
+transition passed; passive inputs produced 0 action POST. Independent played and
+absolute visual review remain NOT_RUN. Refs186 only; #190 remains separate.
+Overview main CI39378757951 is now SUCCESS, superseding the pending receipt below.
+Profile241 and bridge165 still await the two pending owner answers; no new rule.
+
+**Overview delivered / actor integration active — 2026-10-20:**
+[PR244](https://github.com/Vovanostm/warwrit/pull/244) merged `fe3bcdb4`;
+#227 CLOSED/agent:done, PR CI39377607667 SUCCESS. Candidate/merged trees match;
+actual-main human6v5 end-turn/reload retained revision3 and identical GET state,
+11targets,0passivePOST. [Readback](evidence/uix-overview-zoom/main-readback.md).
+Main CI pending. This supersedes earlier publication-pending overview receipts.
+Sole web writer now integrates preserved actor foundationc60fd5e on accepted
+main in `codex/actor-integration-186`: activation-owned static ring/chevron/name,
+current reservation ordering and complete badge fit. Refs186 only; #190 retains
+enemy/frame agreement. Parent owns shared records and all delivery gates.
+Actor integration checks/independent playable/visual acceptance are NOT_RUN.
+Profile241 and bridge165 still await the pending critical-bleed/scope answers;
+approved fists and immobility remain, rescue/transport remains excluded.
 
 **Profile241 accepted locally — 2026-10-20, publication/CI pending:**
 Approved-policy source readback ACCEPTbc4d88e; current head a9207d76 adds only

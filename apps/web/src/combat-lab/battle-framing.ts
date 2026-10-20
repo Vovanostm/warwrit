@@ -16,6 +16,7 @@ export function battleFrameBounds({
   height,
   safeTop,
   safeBottom,
+  badge,
 }: {
   mapBounds: GroundBounds;
   figures: readonly FigureBounds[];
@@ -23,19 +24,22 @@ export function battleFrameBounds({
   height: number;
   safeTop: number;
   safeBottom: number;
+  badge?: { readonly width: number; readonly height: number } | undefined;
 }): GroundBounds | null {
   // Fixed CSS-pixel strips extend 20px below feet and 16px to either side.
-  const top = Math.max(0, safeTop) + 8;
+  const top = Math.max(0, safeTop) + 8 + (badge?.height ?? 0);
   const bottom = Math.min(height, safeBottom) - 20;
-  if (width <= 32 || height <= 0 || bottom <= top) return null;
+  const horizontalPadding = Math.max(32, badge?.width ?? 0);
+  if (width <= horizontalPadding || height <= 0 || bottom <= top) return null;
   const sin = Math.sin(CAMERA_ELEVATION);
   const low = Math.min(mapBounds.minZ * sin, ...figures.map((figure) => figure.bottom));
-  const high = Math.max(mapBounds.maxZ * sin, ...figures.map((figure) => figure.top));
+  const high =
+    Math.max(mapBounds.maxZ * sin, ...figures.map((figure) => figure.top)) + (badge ? 0.08 : 0);
   const minX = Math.min(mapBounds.minX, ...figures.map((figure) => figure.minX));
   const maxX = Math.max(mapBounds.maxX, ...figures.map((figure) => figure.maxX));
   const zoom = Math.max(
     ((high - low) * height) / (2 * (bottom - top)),
-    ((maxX - minX) * height) / (2 * (width - 32)),
+    ((maxX - minX) * height) / (2 * (width - horizontalPadding)),
     0.01,
   );
   const upCenter = (low + high) / 2 + (((top + bottom) / 2 - height / 2) * 2 * zoom) / height;
