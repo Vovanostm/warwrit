@@ -9,6 +9,78 @@ requests.
 
 ## Unreleased
 
+### Align persistent HUD integration expectations — 2026-10-20, LOCAL / REWORK
+
+- `codex/persistent-hud-166`, [PR247](https://github.com/Vovanostm/warwrit/pull/247):
+  CI39444350305 reaches real PostgreSQL checks after932unitPASS/49SKIP and
+  combat stress, then finds two obsolete exact public-shape assertions.
+  Correct only the finite approved room/unit expectations in the existing
+  integration tests; preserve private-field rejection and durable replay checks.
+  Independent actual-diff review ACCEPT; isolated PG17 regression2PASS/13filteredSKIP
+  after reproduced failures. Scoped types/format PASS. No production rule
+  change or migration. [Evidence](docs/engineering/evidence/persistent-hud/README.md).
+
+### Finish legacy art cleanup after hosted verification — 2026-10-20, PUBLISHED / REWORK
+
+- `codex/persistent-hud-166`, [PR247](https://github.com/Vovanostm/warwrit/pull/247):
+  first CI39442491652 fails on unused BATTLE_ART/unitSprite after the legacy
+  renderer removal. Remove only their unreachable block/imports in renderer/art.ts;
+  preserve live map art and shared sprite presentation. Independent source trace
+  confirms consumer boundaries; actual-diff review ACCEPT. Scoped format/web types
+  and corrected global dead-code EXIT0; integrated/hosted correction checks and
+  merge pending. No gate bypass.
+  [Evidence](docs/engineering/evidence/persistent-hud/README.md).
+
+### Connect persistent combat to the shared presentation — 2026-10-20, LOCAL
+
+- `codex/persistent-hud-166`: add finite public rendering fields/readers and a
+  web-local adapter for the shared commander scene. Preserve private AP/quotes,
+  unknown limits, actual ownership and the separate lab controller.
+- Real browser admission exposed a strict-reader rejection of `weaponId`;
+  correction12focused tests/types/format PASS. First corrected render exists,
+  but fullscreen, readability and turn-label defects remain; no accepted player
+  action or independent visual ACCEPT yet. Preserve both failed test journeys.
+  Frozen review also identifies realtime reach-list validation, lost weapon
+  identity and known-cap tooltip regression. Corrected candidate:51focused
+  tests/types/format PASS and independent source review ACCEPT; third-fixture
+  runtime proved attack7 with updated UI/native evidence, then status text
+  blocked overview. Correct notice/AFK layout and replace the invisible fists
+  placeholder with a source-linked W01 derivative; final acceptance remains pending.
+  Fourth-fixture move7/attack11 accepted before interrupted harness/AFK loss120.
+  Subsequent display-only review confirms compact grid/body-lock corrections;
+  Actor HP/armor and a target scroll cue now appear in refreshed display-only
+  frames. The unreachable legacy renderer is removed with its consumed-cap
+  regression retained in the shared view. Final affected source review ACCEPT
+  and normal audit PASS after bounded corrections; retained coverage78PASS,
+  author final80PASS report lacks its raw log. No bypass, final gameplay
+  acceptance or publication is claimed. Normal source commit1c73d845 completed;
+  current lab29-frame and adjacent-crowd capture passes have0combatPOST.
+  DB5 defeat117/native replay confirms owner manual/reload/inspection behavior;
+  helper/right-click proof remains open after a recorded driver failure.
+  Lab absolute visual ACCEPT; final playable review remains pending. Integrated
+  validation250PASS/49SKIP and7/8steps PASS; ten format failures corrected by
+  the repository formatter without behavior changes. Corrected clean validator
+  onb4689ed6 EXIT0/8of8,250PASS/49SKIP. DB6 victory40 confirms both accounts'
+  right-click attacks, owner manual end,29accepted commands, exact replay and1proof.
+  Final independent playable/absolute visual ACCEPT; publication/CI/merge pending.
+  [Evidence and remaining gates](docs/engineering/evidence/persistent-hud/README.md).
+
+### Deliver the bridge and start the persistent commander interface — 2026-10-20
+
+- `codex/tactical-bridge-165`, MERGED [PR246](https://github.com/Vovanostm/warwrit/pull/246)
+  as1f37cb6a. Exact-head CI39405429269 SUCCESS:911PASS/49SKIP,10000stress,
+  16realDB/auth,migrations,coverage/audit. Independent source/recovery ACCEPT;
+  actual-main retained46 replay and both persisted roots match. #165 CLOSED.
+  [Readback and limits](docs/engineering/evidence/core-tactical-bridge/main-readback.md).
+- Follow-up readback: main CI39406551033 SUCCESS; canonical supporting M1
+  Notes now include the dated bridge delivery, with exact native readback and
+  existing Purpose/status preserved. This documentation update is local on
+  `codex/persistent-hud-166`.
+- `codex/persistent-hud-166`, local: activate the approved shared commander
+  presentation on that actual main. One coupled writer; parent owns records
+  and final gates. Implementation/playable/visual acceptance pending; no new
+  combat rules, continuous autoplay, payment or full-M1 claim.
+
 ### Accept the integrated persistent bridge — 2026-10-20, LOCAL
 
 - `codex/tactical-bridge-165`, integrated5221ebe3: coordinator validator8/8,

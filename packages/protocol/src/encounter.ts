@@ -220,6 +220,24 @@ export interface EncounterPublicUnitDto {
   readonly health: number;
   /** Canonical visible cap; absent means unknown, never infer it from current HP. */
   readonly maximumHealth?: number;
+  /** Actual combatant weapon class used only to choose matching established sprite art. */
+  readonly weaponId?: 'bow' | 'great-weapon' | 'raider' | 'spear' | 'sword-shield' | 'fists';
+  /** Public card values and visible combat states; never the source unit record. */
+  readonly armor?: number;
+  readonly stamina?: number;
+  readonly morale?: number;
+  readonly guarding?: boolean;
+  readonly panicking?: boolean;
+  readonly threat?: {
+    readonly targetId: string;
+    readonly damage: { readonly minimum: number; readonly maximum: number };
+    readonly responseReceived: boolean;
+  } | null;
+  readonly weaponReach?: {
+    readonly minimumRange: number;
+    readonly maximumRange: number;
+    readonly cells: readonly Readonly<{ q: number; r: number }>[];
+  };
   readonly status: 'active' | 'dead' | 'retreated' | 'surrendered';
 }
 
@@ -231,13 +249,27 @@ export interface EncounterPublicProjectionDto {
   readonly round: number;
   readonly activationId: string | null;
   readonly actorUnitId: string | null;
+  /** Canonical current queue and cursor; optional for older projection readers. */
+  readonly initiativeOrder?: readonly string[];
+  readonly turnIndex?: number;
+  readonly nextRoundInitiative?: { readonly round: number; readonly unitIds: readonly string[] };
   readonly deadlineAt: string | null;
   readonly units: readonly EncounterPublicUnitDto[];
   /** Public board geometry. Optional only for compatibility with older responses. */
   readonly map?: {
     readonly hexes: readonly Readonly<{ q: number; r: number }>[];
     readonly blocked: readonly Readonly<{ q: number; r: number }>[];
+    readonly tiles?: readonly Readonly<{
+      q: number;
+      r: number;
+      height: 0 | 1 | 2;
+      terrain: 'plain' | 'mud' | 'fire';
+    }>[];
   };
+  readonly outcome?: {
+    readonly reason: 'last-side-standing' | 'round-limit';
+    readonly winnerSideId: string | null;
+  } | null;
 }
 
 export interface EncounterRoomTicketDto {

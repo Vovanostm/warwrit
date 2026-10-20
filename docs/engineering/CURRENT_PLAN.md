@@ -1,5 +1,51 @@
 # Warwrit current delivery plan
 
+**Persistent HUD hosted integration correction — 2026-10-20, PUBLISHED / REWORK:**
+PR247 correction72da1e3 passes clean local validator8/8,252PASS/49SKIP.
+Hosted CI39444350305 passes global dead-code,932unit tests/49SKIP and combat
+stress, then fails2of16real PostgreSQL/auth tests: two exact public-field
+assertions still describe the pre-HUD projection/room schema. Independent
+contract review ACCEPT and isolated fail-before/PASS-after2tests confirm the
+strict correction. No production leak or hosted full-gate PASS is inferred. Source writer owns only the integration
+test, parent owns records; retained DB6 is untouched. Coverage/audit NOT_RUN in
+this hosted attempt. [Evidence](evidence/persistent-hud/README.md).
+
+**Persistent HUD published / hosted cleanup — 2026-10-20:**
+[PR247](https://github.com/Vovanostm/warwrit/pull/247), head62350aff, is open.
+First hosted CI39442491652 fails global dead-code: two legacy battle-art exports
+became unused when the old renderer was removed. One writer removes only that
+unreachable art.ts block; live map/shared combat assets remain. Actual correction
+review ACCEPT, scoped format/web types PASS and global dead-code EXIT0. Scoped local
+validator8/8 and independent source/playable/absolute visual ACCEPT retain their
+reported scope; the hosted full gate is not yet passed. No merge/deploy/bypass.
+[Failure and correction](evidence/persistent-hud/README.md).
+
+**Persistent HUD accepted / ready to publish — 2026-10-20, LOCAL:**
+#166 in `codex/persistent-hud-166` uses actual main1f37cb6a (bridge PR246).
+Source commit1c73d845 plus exact formatter-only correctionb4689ed6: shared
+fullscreen scene/queue/cards/icon commands, finite public rendering data and
+private server-owned quotes. Fists retain approved W01 art; actual authority,
+unknown resource maxima and lab/persistent control separation remain explicit.
+Primary dirty prototype is untouched; one source writer, parent-owned records.
+
+Independent source, playable and absolute visual ACCEPT. Current display,
+29lab frames,6adjacent-crowd frames and actual DB5/DB6 images score2 in every
+applicable visual criterion (motion N/A). DB6 real two-company victory40 has
+29accepted commands, owner/helper right-click attacks7/10, owner manualwait8,
+exact replay and1proof. DB5 proves passive inspection0commands and11accepted
+after reload. Its6waits include autoplay; onlywait10 is explicitly manual.
+All earlier failed fixtures and harness corrections remain documented.
+
+Corrected clean integrated validator onb4689ed6 EXIT0/8of8,250PASS/49SKIP,
+packages/types/format/lint/audit PASS. Earlier format-only failure retained.
+Owner “Implement, review, merge” authorizes #166 after hosted clean CI and
+expected-head checks. Publication, hosted CI and merge pending. Next after
+actual-main readback: retained DB6 can support the already-approved representative
+contract→payment→restart proof (#174/#177); none of those follow-up actions ran.
+Unmapped skills, rescue/transport, unsupported surrender and durable acknowledged
+outcome/history remain bounded limitations. Full sprint/M1 remain PARTIAL.
+[Owning behavior, actual checks and failures](evidence/persistent-hud/README.md).
+
 **Bounded bridge ready to publish — 2026-10-20, LOCAL:**
 Integrated5221ebe3 on main6b5b1b03 passes coordinator validator8/8,
 793PASS/49SKIP and normal audit. Independent frozen source/test and actual

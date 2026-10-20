@@ -1,4 +1,4 @@
-import type { CombatLabView } from '@warwrit/protocol';
+import type { Unit } from './battle-presentation.js';
 
 export interface StaticSpriteArt {
   readonly id: string;
@@ -265,6 +265,20 @@ const byWeapon: Readonly<Record<string, SpriteId>> = {
   bow: 'W05',
 };
 
+const UNARMED_W01: StaticSpriteArt = {
+  id: 'W01-unarmed',
+  url: new URL(
+    '../../../../assets/art/combat/stage1-2026-10-09/roster/w01-unarmed/sprite.png',
+    import.meta.url,
+  ).href,
+  width: 1240,
+  height: 1269,
+  bodyHeight: 1241,
+  footX: 639,
+  footY: 1207.5,
+  visibleBounds: [284, 14, 685, 1249],
+};
+
 const creatureNames: ReadonlyArray<readonly [RegExp, SpriteId]> = [
   [/wolf|волк/i, 'B001'],
   [/bear|медвед/i, 'B002'],
@@ -278,14 +292,30 @@ const creatureNames: ReadonlyArray<readonly [RegExp, SpriteId]> = [
   [/mill|мельнич/i, 'B053'],
 ];
 
-export function spriteForUnit(unit: CombatLabView['units'][number]): StaticSpriteArt {
+const UNKNOWN_COMBATANT: StaticSpriteArt = {
+  id: 'unknown-combatant',
+  url: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 512%22%3E%3Cpath fill=%22%231d201f%22 stroke=%22%23b4a990%22 stroke-width=%228%22 d=%22M128 22c-39 0-65 34-65 76s26 73 65 73 65-31 65-73-26-76-65-76Zm-75 180L20 440h66l16-109 11 159h43l11-159 16 109h66l-33-238-39-28H99Z%22/%3E%3C/svg%3E',
+  width: 256,
+  height: 512,
+  bodyHeight: 418,
+  footX: 128,
+  footY: 486,
+  visibleBounds: [16, 16, 240, 496],
+};
+
+export function spriteForUnit(unit: Unit): StaticSpriteArt {
   const identity = `${unit.profileId ?? ''} ${unit.name ?? ''} ${unit.id}`;
+  if (unit.weaponId === 'fists') return UNARMED_W01;
   const token = identity.toUpperCase().match(/\b(?:W\d{2}|B\d{3})\b/)?.[0] as SpriteId | undefined;
-  const id =
-    token && token in art
-      ? token
-      : unit.sideId === 'human'
-        ? (byWeapon[unit.weaponId] ?? 'W01')
-        : (creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001');
-  return { id, ...art[id] };
+  if (token && token in art) return { id: token, ...art[token] };
+  if (unit.visualKind === 'human') {
+    if (!unit.weaponId) return UNKNOWN_COMBATANT;
+    const id = byWeapon[unit.weaponId];
+    return id ? { id, ...art[id] } : UNKNOWN_COMBATANT;
+  }
+  if (unit.visualKind === 'creature') {
+    const id = creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
+    return { id, ...art[id] };
+  }
+  return UNKNOWN_COMBATANT;
 }

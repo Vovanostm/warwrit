@@ -1,6 +1,7 @@
 import { BattleCost } from './BattleCost.js';
-import type { CombatLabView, CombatLabSkillId } from '@warwrit/protocol';
-import type { Unit } from './BattleUnitCard.js';
+import type { CombatLabSkillId } from '@warwrit/protocol';
+import type { BattlePresentationView } from './battle-presentation.js';
+import type { Unit } from './battle-presentation.js';
 
 export function BattleGuidance({
   view,
@@ -10,7 +11,7 @@ export function BattleGuidance({
   reachNote,
   selectedSkillId,
 }: {
-  view: CombatLabView;
+  view: BattlePresentationView;
   status: string;
   reachUnit: Unit | undefined;
   reach: Unit['weaponReach'] | undefined;

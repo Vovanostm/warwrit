@@ -2,6 +2,9 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it } from 'vitest';
 import type { CombatLabView } from '@warwrit/protocol';
 import { BattleView } from './BattleView.js';
+import { BattleHeading } from './BattleHeading.js';
+import { UnitCard } from './BattleUnitCard.js';
+import { fromCombatLabView } from './battle-presentation.js';
 
 const view: CombatLabView = {
   version: 1,
@@ -124,6 +127,26 @@ const render = (observation = view) =>
     />,
   );
 
+it('labels control by the permitted fighters rather than an allied side id', () => {
+  const base = fromCombatLabView(view);
+  const sharedView = {
+    ...base,
+    controlledUnitIds: ['W01'],
+    activation: { ...base.activation!, actorId: 'B001' },
+    units: base.units.map((unit) =>
+      unit.id === 'B001' ? { ...unit, sideId: 'another-company' } : unit,
+    ),
+  };
+  const actor = sharedView.units.find((unit) => unit.id === 'B001');
+  const card = renderToStaticMarkup(<UnitCard unit={actor} actor view={sharedView} />);
+  const heading = renderToStaticMarkup(<BattleHeading view={sharedView} />);
+
+  expect(card).toContain('Ход другого участника');
+  expect(card).not.toContain('Ход противника');
+  expect(heading).toContain('Под вашим управлением: 1');
+  expect(heading).toContain('остальные участники: 1');
+});
+
 it('shows the approved command desk from observed resources and server attack previews', () => {
   const html = render();
   for (const text of [
@@ -166,7 +189,7 @@ it('places canonical health, armor and morale bars under each full portrait', ()
   expect(healthIndex).toBeGreaterThanOrEqual(0);
   expect(armorIndex).toBeGreaterThan(healthIndex);
   expect(moraleIndex).toBeGreaterThan(armorIndex);
-  expect(html.match(/class="unit-vital" data-resource=/g)).toHaveLength(6);
+  expect(html.match(/class="unit-vital" data-resource=/g)).toHaveLength(8);
   expect(html).toContain('title="Здоровье: 9/31"');
   expect(html).toContain('title="Броня: 4/11"');
   expect(html).toContain('title="Мораль: 70/90"');
@@ -299,6 +322,31 @@ it('explains defeat from the controlled side while enemies remain active', () =>
   expect(html).toContain('<h2>Поражение</h2>');
   expect(html).toContain('В вашем отряде не осталось бойцов в строю.');
   expect(html).not.toContain('У противника не осталось бойцов в строю.');
+});
+
+it('keeps terminal outcome neutral when the viewer side is not known', () => {
+  const html = renderToStaticMarkup(
+    <BattleView
+      view={{
+        ...fromCombatLabView(view),
+        status: 'resolved',
+        activation: null,
+        controlledSideId: '',
+        viewerSideKnown: false,
+        outcome: { reason: 'last-side-standing', winnerSideId: 'opponent' },
+      }}
+      selectedUnitId={null}
+      selectedHex={null}
+      onSelectUnit={() => {}}
+      onSelectHex={() => {}}
+    />,
+  );
+  expect(html).toContain('<h2>Бой завершён</h2>');
+  expect(html).toContain(
+    'Победившая сторона определена; принадлежность вашей компании неизвестна.',
+  );
+  expect(html).not.toContain('<h2>Поражение</h2>');
+  expect(html).not.toContain('В вашем отряде не осталось бойцов в строю.');
 });
 
 it('keeps acting authority independent of the inspected enemy and accepts parent commands/menu', () => {
@@ -644,8 +692,13 @@ it('shows one actor card without a duplicate inspection or neutral terrain badge
   expect(html).not.toContain('aria-label="Состояние: Щитник"');
   expect(html).not.toContain('Высота +0');
   expect(html).not.toContain('ЛКМ — осмотр');
+  const actorStart = html.indexOf('aria-label="Действующий боец"');
+  const actorCard = html.slice(actorStart, html.indexOf('</section>', actorStart));
+  expect(actorCard).toContain('data-resource="health"');
+  expect(actorCard).toContain('data-resource="armor"');
   const other = render();
   expect(other).toContain('aria-label="Состояние: Волк"');
+  expect(other).toContain('↓ Ресурсы и состояния ниже');
   expect(other).toContain('Высота +1');
   expect(other).toContain('Огонь');
 });

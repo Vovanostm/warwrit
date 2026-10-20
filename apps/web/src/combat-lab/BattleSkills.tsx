@@ -1,10 +1,11 @@
 import { BattleCost } from './BattleCost.js';
 import { useRef, useState } from 'react';
-import type { CombatLabView, CombatLabSkillId } from '@warwrit/protocol';
+import type { CombatLabSkillId } from '@warwrit/protocol';
+import type { BattlePresentationView } from './battle-presentation.js';
 import { CombatIcon } from './CombatIcon.js';
 import { combatSkillReasonText } from './controller.js';
 interface Props {
-  view: CombatLabView;
+  view: BattlePresentationView;
   selectedSkillId: CombatLabSkillId | null;
   onSelectSkill: ((id: CombatLabSkillId) => void) | undefined;
   skillDisabledReason: string;
@@ -13,8 +14,8 @@ interface Props {
 const targetReasons = new Set(['INVALID_TARGET', 'OUT_OF_RANGE', 'BLOCKED_LINE_OF_SIGHT']);
 
 function unavailableSkillReason(
-  view: CombatLabView,
-  skill: NonNullable<CombatLabView['skills']>[number],
+  view: BattlePresentationView,
+  skill: NonNullable<BattlePresentationView['skills']>[number],
 ): string {
   if (!skill.equipmentAvailable) return 'Текущее снаряжение не подходит для этого приёма.';
   const previews = view.skillPreview?.filter((row) => row.skillId === skill.skillId) ?? [];
@@ -27,7 +28,7 @@ function unavailableSkillReason(
 export function BattleSkills({ view, selectedSkillId, onSelectSkill, skillDisabledReason }: Props) {
   const [moreSkills, setMoreSkills] = useState(false);
   const moreSkillsButtonRef = useRef<HTMLButtonElement>(null);
-  const renderSkillSlot = (skill: NonNullable<CombatLabView['skills']>[number]) => {
+  const renderSkillSlot = (skill: NonNullable<BattlePresentationView['skills']>[number]) => {
     const reason = skillDisabledReason || unavailableSkillReason(view, skill);
     return (
       <span className="battle-ability-slot battle-control-slot" key={skill.skillId}>

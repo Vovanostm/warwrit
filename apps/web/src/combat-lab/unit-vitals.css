@@ -6,6 +6,17 @@
   padding: 4px 5px 5px;
   pointer-events: none;
 }
+.battle-acting-unit .unit-vitals {
+  display: flex;
+  gap: 8px;
+  padding: 5px 0 0;
+}
+.battle-acting-unit .unit-vital {
+  grid-template-columns: 19px minmax(0, 1fr) 18px;
+  gap: 2px;
+  height: 12px;
+  flex: 1;
+}
 .unit-vital {
   display: grid;
   grid-template-columns: 18px minmax(0, 1fr) 18px;

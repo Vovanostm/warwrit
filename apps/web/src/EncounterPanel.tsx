@@ -5,6 +5,7 @@ import type {
   EncounterControlGrantDto,
   EncounterPublicProjectionDto,
 } from '@warwrit/protocol';
+import type { CombatLabAction, CombatLabHex } from '@warwrit/protocol';
 
 import {
   startEncounterConnection,
@@ -12,12 +13,16 @@ import {
   type EncounterConnectionStatus,
   type EncounterScope,
 } from './encounter/connection.js';
-import { BattleField } from './renderer/BattleField.js';
+import { BattleView } from './combat-lab/BattleView.js';
+import { toEncounterBattlePresentation } from './encounter/battle-presentation.js';
+import { EncounterCommandDesk } from './encounter/EncounterCommandDesk.js';
+import { EncounterLiveLane } from './encounter/EncounterLiveLane.js';
+import { inspectEncounterUnit } from './encounter/selection.js';
+import { encounterUnitLabel } from './encounter/unit-label.js';
 import { LeadershipChoice } from './encounter/LeadershipChoice.js';
 import {
   canIssueEncounterIntent,
   encounterConditionAllows,
-  neutralUnitLabel,
   readEncounterCommandResponse,
   retainedSelection,
 } from './renderer/projection.js';
@@ -46,13 +51,6 @@ const statusLabels: Record<EncounterConnectionStatus, string> = {
   failed: 'Не удалось восстановить бой',
 };
 
-const HOSTILE_LABELS: Readonly<Record<string, string>> = {
-  'world.raider.old-mill.front.01': 'Налётчик с топором',
-  'world.raider.old-mill.bow.01': 'Налётчик-лучник',
-  'world.raider.old-mill.heavy.01': 'Налётчик с двуручником',
-};
-
-/** Our people by name, known hostiles by kind, the other company's people neutrally. */
 /** Wall-clock milliseconds refreshed every `intervalMs`, or null when not ticking. */
 function useWallClock(intervalMs: number | null): number | null {
   const [now, setNow] = useState(() => Date.now());
@@ -62,26 +60,6 @@ function useWallClock(intervalMs: number | null): number | null {
     return () => clearInterval(id);
   }, [intervalMs]);
   return intervalMs === null ? null : now;
-}
-
-function unitLabel(
-  unit: { readonly id: string; readonly sideId: string },
-  ourNames: Readonly<Record<string, string>>,
-): string {
-  return (
-    ourNames[unit.id] ??
-    HOSTILE_LABELS[unit.id] ??
-    (unit.id.startsWith('world.wolf.')
-      ? unit.id.includes('.leader.')
-        ? 'Вожак волков'
-        : 'Волк'
-      : unit.id.startsWith('world.beast.')
-        ? 'Огромный зверь'
-        : undefined) ??
-    (unit.sideId === 'first-hunt-companies'
-      ? 'Боец второй компании'
-      : neutralUnitLabel(unit as never))
-  );
 }
 
 function healthLabel(unit: EncounterPublicProjectionDto['units'][number]): string {
@@ -99,6 +77,8 @@ export function EncounterPanel(props: {
 }) {
   const [state, setState] = useState<EncounterPanelState>(initialState);
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
+  const [inspectedUnitId, setInspectedUnitId] = useState<string | null>(null);
+  const [inspectedHex, setInspectedHex] = useState<CombatLabHex | null>(null);
   const [selectedTargetId, setSelectedTargetId] = useState('');
   const [destinationKey, setDestinationKey] = useState('');
   const [connectionGeneration, setConnectionGeneration] = useState(0);
@@ -197,15 +177,22 @@ export function EncounterPanel(props: {
   const currentScopeKey = `${props.scope.accountId}:${props.scope.companyId}`;
   const scopedState = state.scopeKey === currentScopeKey ? state : undefined;
   const projection = scopedState?.projection;
-  const actorActions = scopedState?.grant?.actorActions;
+  const currentGrant =
+    projection !== undefined &&
+    scopedState?.grant !== undefined &&
+    scopedState.grant.encounterId === projection.encounterId &&
+    scopedState.grant.revision === projection.revision
+      ? scopedState.grant
+      : undefined;
+  const actorActions = currentGrant?.actorActions;
   const conditionAllows = (intent: EncounterCommandDto['intent']['type']) =>
     encounterConditionAllows(
-      scopedState?.grant,
+      currentGrant,
       projection?.activationId,
       projection?.actorUnitId,
       intent,
     );
-  const selectable = new Set(scopedState?.grant?.controllableUnitIds ?? []);
+  const selectable = new Set(currentGrant?.controllableUnitIds ?? []);
   const actorUnitId = projection?.actorUnitId ?? null;
   const canIssue =
     projection !== undefined &&
@@ -217,8 +204,7 @@ export function EncounterPanel(props: {
   const actorIsOurs =
     projection !== undefined &&
     actorUnitId !== null &&
-    scopedState?.grant?.revision === projection.revision &&
-    scopedState.grant.controllableUnitIds.includes(actorUnitId);
+    currentGrant?.controllableUnitIds.includes(actorUnitId) === true;
   // When the server hands our unit the turn, select it so its actions appear at once.
   useEffect(() => {
     if (actorIsOurs && actorUnitId !== null && selectedRef.current !== actorUnitId)
@@ -231,13 +217,39 @@ export function EncounterPanel(props: {
       ? Math.max(0, Math.ceil((Date.parse(projection.deadlineAt) - clock) / 1000))
       : null;
   const ourNames = props.unitNames ?? {};
-  const actorLabel = actorUnit ? unitLabel(actorUnit, ourNames) : 'участник вне открытой сводки';
+  const actorLabel = actorUnit
+    ? encounterUnitLabel(actorUnit, ourNames)
+    : 'участник вне открытой сводки';
+  const presentation = projection
+    ? toEncounterBattlePresentation(
+        projection,
+        currentGrant,
+        (unit) => encounterUnitLabel(unit, ourNames),
+        Object.keys(ourNames),
+      )
+    : undefined;
+  const isFullscreen = presentation !== undefined;
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const root = document.documentElement;
+    const body = document.body;
+    const rootOverflow = root.style.overflow;
+    const bodyOverflow = body.style.overflow;
+    root.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    return () => {
+      root.style.overflow = rootOverflow;
+      body.style.overflow = bodyOverflow;
+    };
+  }, [isFullscreen]);
   const pendingCommand = scopedState?.pendingCommand;
   const tactical =
-    scopedState?.grant?.revision === projection?.revision &&
-    scopedState?.grant?.tactical?.activationId === projection?.activationId &&
-    scopedState?.grant?.tactical?.actorId === actorUnitId
-      ? scopedState.grant.tactical
+    projection !== undefined &&
+    projection.actorUnitId !== null &&
+    currentGrant?.tactical !== undefined &&
+    currentGrant.tactical.activationId === projection.activationId &&
+    currentGrant.tactical.actorId === actorUnitId
+      ? currentGrant.tactical
       : undefined;
   const movePreview = tactical?.moves.find(
     (move) => `${move.to.q},${move.to.r}` === destinationKey,
@@ -263,6 +275,8 @@ export function EncounterPanel(props: {
         const key = `${q},${r}`;
         return !blockedHexes.has(key) && !occupiedHexes.has(key);
       }) ?? []);
+  const destination = moveDestinations.find(({ q, r }) => `${q},${r}` === destinationKey) ?? null;
+  const selectedTarget = attackTargets.find((unit) => unit.id === selectedTargetId);
   useEffect(() => {
     if (!attackTargets.some((unit) => unit.id === selectedTargetId))
       setSelectedTargetId(attackTargets[0]?.id ?? '');
@@ -277,7 +291,10 @@ export function EncounterPanel(props: {
   if (props.hideWhenIdle && scopedState?.status === 'no-active') return null;
 
   return (
-    <section className="encounter-panel" aria-label="Активное сражение">
+    <section
+      className={`encounter-panel${presentation ? ' encounter-panel--fullscreen' : ''}`}
+      aria-label="Активное сражение"
+    >
       <div className="encounter-panel-heading">
         <div>
           <p className="eyebrow">Состояние компании</p>
@@ -291,10 +308,24 @@ export function EncounterPanel(props: {
         </span>
       </div>
 
-      {scopedState?.message && (
+      {!presentation && scopedState?.message && (
         <p className="encounter-message" role="status">
           {scopedState.message}
         </p>
+      )}
+      {isFullscreen && (
+        <EncounterLiveLane
+          status={scopedState?.status ?? 'discovering'}
+          statusLabel={statusLabels[scopedState?.status ?? 'discovering']}
+          battleActive={projection?.status === 'active'}
+          {...(scopedState?.message !== undefined ? { message: scopedState.message } : {})}
+          {...(scopedState?.grant !== undefined ? { grant: scopedState.grant } : {})}
+          resumePending={scopedState?.resumePending === true}
+          commandPending={scopedState?.commandPending === true}
+          {...(pendingCommand !== undefined ? { pendingCommand } : {})}
+          onResume={() => void requestResume()}
+          onRetry={(command) => void submitIntent(command)}
+        />
       )}
       {scopedState?.status === 'no-active' && (
         <p className="encounter-empty">Сохранённая компания сейчас не участвует в бою.</p>
@@ -315,192 +346,109 @@ export function EncounterPanel(props: {
                 ? 'Сервер пока не назначил следующий ход.'
                 : actorIsOurs
                   ? `Ваш ход · ${actorLabel}${secondsLeft === null ? '' : ` · осталось ${secondsLeft} с`}`
-                  : `Ход другой стороны · ${actorLabel}`}
+                  : `Ход другого участника · ${actorLabel}`}
           </p>
-          {scopedState?.grant?.selfAfk === true && (
-            <div className="encounter-afk" role="status">
-              <p>Вы отмечены сервером как бездействующий участник.</p>
-              {scopedState.grant.resumeRequestedAfterEpoch !== null &&
-              scopedState.grant.resumeRequestedAfterEpoch !== undefined ? (
-                <p>Запрос на возвращение принят; он подействует после следующего хода.</p>
-              ) : (
-                <button
-                  className="quiet-action"
-                  type="button"
-                  disabled={scopedState.resumePending || scopedState.status !== 'connected'}
-                  onClick={() => void requestResume()}
-                >
-                  {scopedState.resumePending ? 'Отправляем запрос…' : 'Вернуться к управлению'}
-                </button>
-              )}
-            </div>
-          )}
-          {scopedState?.grant?.selfAfk === false && (
-            <p className="state-note">Сервер не считает вас бездействующим участником.</p>
-          )}
-          {scopedState?.grant?.selfAfk === undefined && scopedState?.status === 'connected' && (
-            <p className="state-note">Состояние бездействия недоступно в этой версии службы.</p>
-          )}
-          <BattleField
-            projection={projection}
-            ownUnitIds={Object.keys(ourNames)}
-            selectedUnitId={selectedUnitId}
-            targetUnitId={canIssue && selectedTargetId !== '' ? selectedTargetId : null}
-            destination={
-              canIssue && destinationKey !== ''
-                ? {
-                    q: Number(destinationKey.split(',')[0]),
-                    r: Number(destinationKey.split(',')[1]),
+          {presentation && (
+            <BattleView
+              view={presentation}
+              selectedUnitId={
+                presentation.units.some((unit) => unit.id === inspectedUnitId)
+                  ? inspectedUnitId
+                  : selectedUnitId
+              }
+              selectedHex={
+                presentation.units.some((unit) => unit.id === inspectedUnitId)
+                  ? null
+                  : (inspectedHex ?? movePreview?.to ?? null)
+              }
+              busy={scopedState?.commandPending === true}
+              onSelectUnit={(unitId) => {
+                const selection = inspectEncounterUnit(
+                  unitId,
+                  new Set(attackTargets.map((unit) => unit.id)),
+                  actorIsOurs ? actorUnitId : null,
+                );
+                setInspectedUnitId(selection.inspectedUnitId);
+                setInspectedHex(null);
+                if (selection.targetUnitId) setSelectedTargetId(selection.targetUnitId);
+                else if (
+                  projection.units.some(
+                    (unit) => unit.id === unitId && unit.sideId !== actorUnit?.sideId,
+                  )
+                )
+                  setSelectedTargetId('');
+                if (selection.commandUnitId) updateUnitSelection(selection.commandUnitId);
+              }}
+              onSelectHex={(hex: CombatLabHex) => {
+                setInspectedUnitId(null);
+                setInspectedHex(hex);
+                if (moveDestinations.some((move) => move.q === hex.q && move.r === hex.r))
+                  setDestinationKey(`${hex.q},${hex.r}`);
+              }}
+              onAct={(action: CombatLabAction['intent']) => {
+                if (!canIssue) return;
+                if (
+                  action.type === 'move' &&
+                  moveDestinations.some(
+                    (move) => move.q === action.to.q && move.r === action.to.r,
+                  ) &&
+                  (!tactical ||
+                    tactical.moves.some(
+                      (move) => move.to.q === action.to.q && move.to.r === action.to.r,
+                    )) &&
+                  conditionAllows('move')
+                )
+                  void submitIntent({ type: 'move', to: action.to });
+                if (
+                  action.type === 'attack' &&
+                  attackTargets.some((unit) => unit.id === action.targetId) &&
+                  (!tactical ||
+                    tactical.attacks.some((attack) => attack.targetId === action.targetId)) &&
+                  conditionAllows('attack')
+                )
+                  void submitIntent({ type: 'attack', targetId: action.targetId });
+              }}
+              selectedSkillId={null}
+            >
+              {canIssue && (
+                <EncounterCommandDesk
+                  targetId={selectedTarget?.id ?? ''}
+                  targetLabel={
+                    selectedTarget ? encounterUnitLabel(selectedTarget, ourNames) : 'Выберите цель'
                   }
-                : null
-            }
-            onPickUnit={(unitId) => {
-              if (attackTargets.some((unit) => unit.id === unitId)) setSelectedTargetId(unitId);
-              else if (selectable.has(unitId)) updateUnitSelection(unitId);
-            }}
-            onPickHex={({ q, r }) => {
-              if (moveDestinations.some((hex) => hex.q === q && hex.r === r))
-                setDestinationKey(`${q},${r}`);
-            }}
-          />
-          {canIssue && (
-            <div className="encounter-actions" aria-label="Команды текущего участника">
-              <p className="encounter-actions-hint">
-                Ход {actorLabel}: щёлкните врага или клетку на поле, затем выберите действие.
-                Дальность и затраты проверяет сервер.
-              </p>
-              {tactical && (
-                <p className="state-note">
-                  Очки действий: {tactical.actionPoints} · выносливость: {tactical.stamina}.
-                  Изученные приёмы недоступны.
-                </p>
+                  destination={destination}
+                  destinationLabel={
+                    destination ? `клетка ${destination.q}, ${destination.r}` : 'Выберите клетку'
+                  }
+                  {...(attackPreview ? { attackCost: attackPreview } : {})}
+                  {...(movePreview ? { moveCost: movePreview } : {})}
+                  attackAllowed={
+                    Boolean(selectedTarget) &&
+                    (!tactical || Boolean(attackPreview)) &&
+                    conditionAllows('attack')
+                  }
+                  moveAllowed={
+                    destination !== null &&
+                    (!tactical || Boolean(movePreview)) &&
+                    conditionAllows('move')
+                  }
+                  defendAllowed={conditionAllows('defend')}
+                  waitAllowed={conditionAllows('wait')}
+                  retreatAllowed={conditionAllows('retreat')}
+                  autoplayAllowed={Boolean(tactical) && conditionAllows('autoplay')}
+                  fleeAllowed={Boolean(tactical) && conditionAllows('flee')}
+                  surrenderAllowed={Boolean(tactical) && conditionAllows('surrender')}
+                  {...(actorActions && actorActions.permittedIntents.length < 5
+                    ? {
+                        feedback:
+                          'Состояние бойца ограничивает доступные действия. Переноска и спасение пока недоступны.',
+                      }
+                    : {})}
+                  busy={Boolean(scopedState?.commandPending)}
+                  onAct={(intent) => void submitIntent(intent)}
+                />
               )}
-              {attackPreview && (
-                <p className="state-note">
-                  Атака: {attackPreview.actionPointCost} ОД · {attackPreview.staminaCost}{' '}
-                  выносливости · шанс {attackPreview.hitChance}% · урон здоровью при попадании{' '}
-                  {attackPreview.damage.health.minimum}–{attackPreview.damage.health.maximum}.
-                </p>
-              )}
-              {movePreview && (
-                <p className="state-note">
-                  Путь: {movePreview.path.length} клеток · {movePreview.actionPointCost} ОД ·{' '}
-                  {movePreview.staminaCost} выносливости · огонь: {movePreview.fireDamage} ·
-                  ответных атак: {movePreview.reactionCount}.
-                </p>
-              )}
-              {attackTargets.length > 0 && (
-                <div className="encounter-action-row">
-                  <select
-                    aria-label="Цель другой стороны"
-                    value={selectedTargetId}
-                    onChange={(event) => setSelectedTargetId(event.currentTarget.value)}
-                  >
-                    {attackTargets.map((unit) => (
-                      <option key={unit.id} value={unit.id}>
-                        {unitLabel(unit, ourNames)} · {healthLabel(unit)}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    className="primary-action button-action"
-                    type="button"
-                    disabled={!selectedTargetId || !conditionAllows('attack')}
-                    onClick={() =>
-                      void submitIntent({ type: 'attack', targetId: selectedTargetId })
-                    }
-                  >
-                    Атаковать
-                  </button>
-                </div>
-              )}
-              {moveDestinations.length > 0 && (
-                <div className="encounter-action-row">
-                  <select
-                    aria-label="Клетка для перемещения"
-                    value={destinationKey}
-                    onChange={(event) => setDestinationKey(event.currentTarget.value)}
-                  >
-                    {moveDestinations.map(({ q, r }) => (
-                      <option key={`${q},${r}`} value={`${q},${r}`}>
-                        клетка {q}, {r}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    className="button-action"
-                    type="button"
-                    disabled={!destinationKey || !conditionAllows('move')}
-                    onClick={() => {
-                      const [q, r] = destinationKey.split(',').map(Number);
-                      void submitIntent({ type: 'move', to: { q: q!, r: r! } });
-                    }}
-                  >
-                    Переместиться
-                  </button>
-                </div>
-              )}
-              {actorActions && actorActions.permittedIntents.length < 5 && (
-                <p className="state-note">
-                  Состояние бойца ограничивает доступные действия. Переноска и спасение пока
-                  недоступны.
-                </p>
-              )}
-              {tactical && (
-                <div className="encounter-action-row">
-                  <button
-                    className="button-action"
-                    type="button"
-                    onClick={() => void submitIntent({ type: 'autoplay' })}
-                  >
-                    Автобой: одно действие
-                  </button>
-                  {conditionAllows('flee') && (
-                    <button
-                      className="button-action"
-                      type="button"
-                      onClick={() => void submitIntent({ type: 'flee' })}
-                    >
-                      Бежать
-                    </button>
-                  )}
-                  {conditionAllows('surrender') && (
-                    <button
-                      className="button-action"
-                      type="button"
-                      onClick={() => void submitIntent({ type: 'surrender' })}
-                    >
-                      Сдаться
-                    </button>
-                  )}
-                </div>
-              )}
-              <div className="encounter-action-row">
-                <button
-                  className="button-action"
-                  type="button"
-                  disabled={!conditionAllows('defend')}
-                  onClick={() => void submitIntent({ type: 'defend' })}
-                >
-                  Защищаться
-                </button>
-                <button
-                  className="button-action"
-                  type="button"
-                  onClick={() => void submitIntent({ type: 'wait' })}
-                >
-                  Ждать (конец хода)
-                </button>
-                <button
-                  className="button-action"
-                  type="button"
-                  disabled={!conditionAllows('retreat')}
-                  onClick={() => void submitIntent({ type: 'retreat' })}
-                >
-                  Отступить
-                </button>
-              </div>
-            </div>
+            </BattleView>
           )}
           <ul className="encounter-roster" aria-label="Открытая сводка участников">
             {projection.units.map((unit) => {
@@ -515,7 +463,7 @@ export function EncounterPanel(props: {
                     onClick={() => updateUnitSelection(unit.id)}
                   >
                     <span>
-                      {unitLabel(unit, ourNames)}
+                      {encounterUnitLabel(unit, ourNames)}
                       {unit.id in ourNames ? ' · ваш' : ''}
                     </span>
                     <span>
@@ -547,7 +495,7 @@ export function EncounterPanel(props: {
               Команды появятся, когда сервер подтвердит ваш ход и право управления.
             </p>
           )}
-          {pendingCommand && (
+          {!presentation && pendingCommand && (
             <div className="encounter-command-pending" role="status">
               <p>
                 {scopedState.commandPending
@@ -565,7 +513,7 @@ export function EncounterPanel(props: {
               )}
             </div>
           )}
-          {scopedState?.message && (
+          {!presentation && scopedState?.message && (
             <p className="encounter-message" role="status">
               {scopedState.message}
             </p>

@@ -1,13 +1,10 @@
 import type { ReactNode } from 'react';
-import type {
-  CombatLabAction,
-  CombatLabHex,
-  CombatLabView,
-  CombatLabSkillId,
-} from '@warwrit/protocol';
+import type { CombatLabAction, CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
+import type { BattlePresentationView } from './battle-presentation.js';
+import type { CombatLabView } from '@warwrit/protocol';
 
 export interface BattleViewProps {
-  readonly view: CombatLabView;
+  readonly view: BattlePresentationView | CombatLabView;
   readonly selectedUnitId: string | null;
   readonly selectedHex: CombatLabHex | null;
   readonly onSelectUnit: (id: string) => void;

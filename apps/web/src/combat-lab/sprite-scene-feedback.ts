@@ -1,6 +1,6 @@
-import type { CombatLabEvent, CombatLabView } from '@warwrit/protocol';
-type FeedbackView = Pick<CombatLabView, 'units' | 'events' | 'viewRevision' | 'skills'>;
-type BattleUnit = CombatLabView['units'][number];
+import type { CombatLabEvent } from '@warwrit/protocol';
+import type { BattlePresentationView, Unit as BattleUnit } from './battle-presentation.js';
+type FeedbackView = Pick<BattlePresentationView, 'units' | 'events' | 'viewRevision' | 'skills'>;
 const feedbackText: Partial<Record<CombatLabEvent['type'], string>> = {
   'unit.died': 'ПОГИБ',
   'unit.surrendered': 'СДАЛСЯ',
@@ -59,7 +59,7 @@ function eventText(
 function duplicatesThreatBadge(unit: BattleUnit, event: CombatLabEvent): boolean {
   if (unit.status !== 'active' || !unit.threat) return false;
   if (event.targetId !== null && event.targetId !== unit.threat.targetId) return false;
-  return event.type === (unit.threat.retargeted ? 'threat.retargeted' : 'threat.prepared');
+  return event.type === (unit.threat.retargeted === true ? 'threat.retargeted' : 'threat.prepared');
 }
 function eventSubject(event: CombatLabEvent): string | null {
   return event.type.startsWith('threat.') && event.type !== 'threat.executed'
@@ -71,7 +71,7 @@ export function eventFeedback(
   previousRevision: number | null,
 ): Map<string, string> {
   const labels = new Map<string, string>();
-  for (const event of view.events) {
+  for (const event of view.events ?? []) {
     const fresh =
       previousRevision === null
         ? event.revision === view.viewRevision

@@ -85,13 +85,18 @@ describe('public encounter projection', () => {
     });
     expect(Object.keys(projection.map ?? {}).sort()).toEqual(['blocked', 'hexes']);
     expect(Object.keys(projection.units[0] ?? {}).sort()).toEqual([
+      'armor',
+      'guarding',
       'health',
       'id',
       'maximumHealth',
+      'morale',
       'q',
       'r',
       'sideId',
+      'stamina',
       'status',
+      'weaponId',
     ]);
     expect(
       projection.units.map(({ health, maximumHealth }) => ({ health, maximumHealth })),
@@ -99,6 +104,11 @@ describe('public encounter projection', () => {
       encounter.state.units.map((unit) => ({ health: 20, maximumHealth: unit.attributes.health })),
     );
     expect(projection.units[0]).toMatchObject({ health: 20, maximumHealth: 60 });
+    expect(projection.units[0]).toMatchObject({ armor: 40, stamina: 80, morale: 100 });
+    expect(projection.units[0]?.weaponId).toBe('sword-shield');
+    expect(projection.units[0]).not.toHaveProperty('maximumArmor');
+    expect(projection.units[0]).not.toHaveProperty('maximumStamina');
+    expect(projection.units[0]).not.toHaveProperty('maximumMorale');
     expect(projection.units[0]).not.toBe(encounter.state.units[0]);
     expect(projection.units[0]).not.toHaveProperty('attributes');
     expect(projection).not.toHaveProperty('seed');
@@ -127,13 +137,18 @@ describe('public encounter projection', () => {
     ).toBeUndefined();
     for (const unit of toEncounterPublicProjection(v3).units) {
       expect(Object.keys(unit).sort()).toEqual([
+        'armor',
+        'guarding',
         'health',
         'id',
         'maximumHealth',
+        'morale',
         'q',
         'r',
         'sideId',
+        'stamina',
         'status',
+        'weaponId',
       ]);
     }
 

@@ -2639,7 +2639,7 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         };
         const secondRoom = await joinClient();
         const roomProjection = room.state.toJSON() as Record<string, unknown>;
-        const allowedPublicRoomFields = new Set([
+        const allowedPublicRoomFields = [
           'version',
           'encounterId',
           'revision',
@@ -2648,11 +2648,16 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           'activationId',
           'actorUnitId',
           'deadlineAt',
+          'initiativeOrder',
+          'turnIndex',
+          'nextRound',
+          'nextRoundUnitIds',
+          'outcomeReason',
+          'winnerSideId',
           'map',
           'units',
-        ]);
-        for (const field of Object.keys(roomProjection))
-          expect(allowedPublicRoomFields.has(field)).toBe(true);
+        ];
+        expect(Object.keys(roomProjection).sort()).toEqual(allowedPublicRoomFields.toSorted());
         for (const privateField of [
           'setup',
           'seed',
@@ -2784,14 +2789,30 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           r: unit.position.r,
           health: unit.health,
           maximumHealth: unit.attributes.health,
+          armor: unit.armor,
+          stamina: unit.stamina,
+          morale: unit.morale,
+          guarding: unit.guarding,
+          weaponId: unit.weaponId,
           status: unit.status,
+        }));
+        const expectedRoomUnits = expectedUnits.map((unit) => ({
+          ...unit,
+          panicking: false,
+          threatTargetId: '',
+          threatDamageMinimum: 0,
+          threatDamageMaximum: 0,
+          threatResponseReceived: false,
+          weaponReachMinimum: 0,
+          weaponReachMaximum: 0,
+          weaponReachCells: [],
         }));
         expect(expectedUnits.every((unit) => unit.maximumHealth === 70)).toBe(true);
         const assertSnapshot = async (joined: typeof room) => {
           expect(Date.now()).toBeLessThan(damagedDeadline);
           await expect.poll(() => joined.state.revision).toBe(damaged!.revision);
           expect([...joined.state.units.values()].map((unit) => unit.toJSON())).toEqual(
-            expectedUnits,
+            expectedRoomUnits,
           );
           const response = await app!.inject({
             method: 'GET',
@@ -3050,15 +3071,32 @@ it.skipIf(connectionString === undefined)(
       expect(privateAccess).toBeDefined();
       for (const unit of privateAccess!.projection.units) {
         expect(Object.keys(unit).sort()).toEqual([
+          'armor',
+          'guarding',
           'health',
           'id',
           'maximumHealth',
+          'morale',
           'q',
           'r',
           'sideId',
+          'stamina',
           'status',
+          'weaponId',
         ]);
       }
+      const unarmedSetupUnit = setup.units.find((unit) => unit.weaponId === 'fists');
+      if (unarmedSetupUnit === undefined) throw new Error('unarmed fixture unit is missing');
+      const publicUnarmedUnit = privateAccess!.projection.units.find(
+        (unit) => unit.id === unarmedSetupUnit.id,
+      );
+      expect(publicUnarmedUnit).toMatchObject({
+        armor: unarmedSetupUnit.initialPools.armor,
+        guarding: false,
+        morale: unarmedSetupUnit.initialPools.morale,
+        stamina: unarmedSetupUnit.initialPools.stamina,
+        weaponId: 'fists',
+      });
       expect(JSON.stringify(privateAccess!.projection)).not.toContain('capabilities');
       expect(
         await readEncounterAccess(database, randomUUID(), admission.encounter_id),

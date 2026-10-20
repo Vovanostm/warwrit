@@ -10,14 +10,15 @@ import { BattleOutcome } from './BattleOutcome.js';
 import { BattleSkills } from './BattleSkills.js';
 import { useRef } from 'react';
 import type { BattleViewProps } from './battle-view-props.js';
+import { fromCombatLabView, isBattlePresentationView } from './battle-presentation.js';
 
 import { Icon, UnitCard } from './BattleUnitCard.js';
 import './battle-view.css';
 import './battle-controls.css';
 
 export function BattleView(props: BattleViewProps) {
+  const view = isBattlePresentationView(props.view) ? props.view : fromCombatLabView(props.view);
   const {
-    view,
     selectedUnitId,
     selectedHex,
     onSelectUnit,

@@ -7,13 +7,12 @@ import {
   Vector3,
   type Scene,
 } from '@babylonjs/core';
-import type { CombatLabView } from '@warwrit/protocol';
+import type { BattlePresentationView, Unit } from './battle-presentation.js';
 import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { battleUnitMarker } from './battle-framing.js';
 import { unitVitalPools } from './unit-vitals.js';
 import './battle-field-vitals.css';
 
-type Unit = CombatLabView['units'][number];
 const COLORS = ['#e29c8e', '#b5d7e5', '#e6cf8f'] as const;
 const WIDTH = 32;
 const HEIGHT = 16;
@@ -23,23 +22,41 @@ function drawPools(texture: DynamicTexture, unit: Unit, element: HTMLElement) {
   const context = texture.getContext() as unknown as CanvasRenderingContext2D;
   context.clearRect(0, 0, 96, 48);
   element.replaceChildren();
-  unitVitalPools(unit).forEach((pool, index) => {
-    const y = index * 16;
-    context.fillStyle = '#0d1717';
-    context.fillRect(0, y, 96, 14);
-    context.fillStyle = COLORS[index]!;
-    context.fillRect(2, y + 2, Math.round((92 * pool.percent) / 100), 10);
-    // Fixed order plus distinct track patterns preserve identity without colour alone.
-    context.fillStyle = '#101b1b99';
-    if (index > 0) for (let x = 8; x < 94; x += 12) context.fillRect(x, y + 2, index, 10);
-    const row = document.createElement('span');
-    row.dataset['resource'] = pool.key;
-    row.dataset['current'] = String(pool.current);
-    row.dataset['maximum'] = String(pool.maximum);
-    row.textContent = `${pool.label}: ${pool.current}/${pool.maximum}`;
-    element.append(row);
-  });
+  for (const [index, pool] of unitVitalPools(unit).entries()) {
+    drawPoolBar(context, pool.percent, index);
+    element.append(poolLabel(pool));
+  }
   texture.update();
+}
+
+function drawPoolBar(
+  context: CanvasRenderingContext2D,
+  percent: number | undefined,
+  index: number,
+) {
+  const y = index * 16;
+  context.fillStyle = '#0d1717';
+  context.fillRect(0, y, 96, 14);
+  context.fillStyle = COLORS[index]!;
+  if (percent !== undefined) context.fillRect(2, y + 2, Math.round((92 * percent) / 100), 10);
+  // Fixed order plus distinct track patterns preserve identity without colour alone.
+  context.fillStyle = '#101b1b99';
+  if (index > 0) for (let x = 8; x < 94; x += 12) context.fillRect(x, y + 2, index, 10);
+}
+
+function poolLabel(pool: ReturnType<typeof unitVitalPools>[number]) {
+  const row = document.createElement('span');
+  row.dataset['resource'] = pool.key;
+  row.dataset['current'] = String(pool.current);
+  if (pool.maximum !== undefined) row.dataset['maximum'] = String(pool.maximum);
+  row.textContent = poolReading(pool);
+  return row;
+}
+
+function poolReading(pool: ReturnType<typeof unitVitalPools>[number]) {
+  if (pool.current === undefined) return `${pool.label}: неизвестно`;
+  if (pool.maximum === undefined) return `${pool.label}: ${pool.current} · максимум неизвестен`;
+  return `${pool.label}: ${pool.current}/${pool.maximum}`;
 }
 
 /** Foot-sorted world strips: directly under their owner, behind foreground figures. */
@@ -129,7 +146,7 @@ export function mountBattleFieldVitals(
     }
   });
   return {
-    update(view: CombatLabView) {
+    update(view: BattlePresentationView) {
       layer.hidden = view.status !== 'active';
       const active = new Set(
         view.units.filter((unit) => unit.status === 'active').map((unit) => unit.id),
@@ -162,7 +179,11 @@ export function mountBattleFieldVitals(
   };
 }
 
-function updatePortraitState(portrait: HTMLButtonElement, unit: Unit, view: CombatLabView) {
+function updatePortraitState(
+  portrait: HTMLButtonElement,
+  unit: Unit,
+  view: BattlePresentationView,
+) {
   const ally = unit.sideId === view.controlledSideId;
   const marker = battleUnitMarker(view.units, unit.id);
   portrait.textContent = marker;

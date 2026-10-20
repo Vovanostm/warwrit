@@ -1,4 +1,4 @@
-import type { CombatLabView } from '@warwrit/protocol';
+import type { BattlePresentationView } from './battle-presentation.js';
 import { eventText, unitStatus } from './battle-hud-format.js';
 export function BattleLog({
   view,
@@ -6,20 +6,20 @@ export function BattleLog({
   selectedUnitId,
   onSelectUnit,
 }: {
-  view: CombatLabView;
+  view: BattlePresentationView;
   status: string;
   selectedUnitId: string | null;
   onSelectUnit: (id: string) => void;
 }) {
   return (
     <details className="battle-log">
-      <summary>События боя ({view.events.length})</summary>
+      <summary>События боя ({view.events?.length ?? 0})</summary>
       <div className="battle-log-content">
         <p className="battle-status-line">{status}</p>
-        <p>15 × 11 гексов · без сохранения кампании</p>
-        {view.omittedEventPrefix > 0 && <p>Ранние события: {view.omittedEventPrefix}</p>}
+        <p>{view.sourceNote ?? view.label}</p>
+        {(view.omittedEventPrefix ?? 0) > 0 && <p>Ранние события: {view.omittedEventPrefix}</p>}
         <ol>
-          {view.events.map((event) => (
+          {(view.events ?? []).map((event) => (
             <li key={event.id}>{eventText(view, event)}</li>
           ))}
         </ol>

@@ -46,6 +46,12 @@ export function toEncounterPublicProjection(
   encounter: EncounterStoredRow,
 ): EncounterPublicProjectionDto {
   const activation = encounter.state.activation;
+  const state = encounter.state as combat.BattleState;
+  const tactical = state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+  const nextRound = tactical ? combat.previewCombatInitiative(state) : undefined;
+  const nextRoundInitiative = nextRound
+    ? { round: nextRound.round, unitIds: [...nextRound.unitIds] }
+    : undefined;
   return {
     version: 1,
     encounterId: encounter.id,
@@ -54,19 +60,48 @@ export function toEncounterPublicProjection(
     round: encounter.state.round,
     activationId: activation?.id ?? null,
     actorUnitId: activation?.unitId ?? null,
+    initiativeOrder: state.initiativeOrder,
+    turnIndex: state.turnIndex,
+    ...(nextRoundInitiative ? { nextRoundInitiative } : {}),
     deadlineAt: encounter.deadline_at?.toISOString() ?? null,
     map: {
       hexes: encounter.setup.map.hexes.toSorted(combat.compareHex).map(({ q, r }) => ({ q, r })),
       blocked: encounter.setup.map.blocked
         .toSorted(combat.compareHex)
         .map(({ q, r }) => ({ q, r })),
+      ...(encounter.setup.map.tiles === undefined
+        ? {}
+        : {
+            tiles: encounter.setup.map.tiles.toSorted(combat.compareHex).map((tile) => ({
+              q: tile.q,
+              r: tile.r,
+              height: tile.height,
+              terrain: tile.terrain,
+            })),
+          }),
     },
+    ...(state.outcome === undefined
+      ? { outcome: null }
+      : {
+          outcome: {
+            reason: state.outcome.reason,
+            winnerSideId: state.outcome.winnerSideId ?? null,
+          },
+        }),
     units: encounter.state.units.map((unit) => {
       combat.invariant(
         encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
           unit.status !== 'surrendered',
         'Sprite prototype status cannot enter a V1 encounter projection',
       );
+      const reach = tactical ? combat.previewCombatWeaponReach(state, unit.id) : undefined;
+      const weaponReach = reach
+        ? {
+            minimumRange: reach.minimumRange,
+            maximumRange: reach.maximumRange,
+            cells: reach.cells.map(({ q, r }) => ({ q, r })),
+          }
+        : undefined;
       return {
         id: unit.id,
         sideId: unit.sideId,
@@ -74,6 +109,24 @@ export function toEncounterPublicProjection(
         r: unit.position.r,
         health: unit.health,
         maximumHealth: unit.attributes.health,
+        weaponId: unit.weaponId,
+        armor: unit.armor,
+        stamina: unit.stamina,
+        morale: unit.morale,
+        guarding: unit.guarding,
+        ...(tactical
+          ? {
+              panicking: combat.isCombatPanicked(state, unit),
+              threat: unit.threat
+                ? {
+                    targetId: unit.threat.targetId,
+                    damage: unit.threat.damage,
+                    responseReceived: unit.threat.responseReceived,
+                  }
+                : null,
+              ...(weaponReach ? { weaponReach } : {}),
+            }
+          : {}),
         status: unit.status,
       };
     }),

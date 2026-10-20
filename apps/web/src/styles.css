@@ -374,6 +374,7 @@ h1 {
   color: #c58c75;
 }
 .encounter-summary,
+.encounter-outcome,
 .encounter-empty,
 .encounter-message,
 .encounter-readonly-note {

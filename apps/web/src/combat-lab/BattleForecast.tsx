@@ -1,17 +1,18 @@
-import type { CombatLabView, CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
-import { Icon, type Unit } from './BattleUnitCard.js';
+import type { CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
+import type { BattlePresentationView, Unit } from './battle-presentation.js';
+import { Icon } from './BattleUnitCard.js';
 import { damageRange } from './battle-hud-format.js';
 import { combatSkillReasonText } from './controller.js';
 interface Props {
-  view: CombatLabView;
+  view: BattlePresentationView;
   blockedCell: CombatLabHex | undefined;
   selectedSkillId: CombatLabSkillId | null;
-  forecastSkill: NonNullable<CombatLabView['skillPreview']>[number] | undefined;
-  forecastAttack: NonNullable<CombatLabView['attackPreview']>[number] | undefined;
-  forecastMove: NonNullable<CombatLabView['movementPreview']>[number] | undefined;
+  forecastSkill: NonNullable<BattlePresentationView['skillPreview']>[number] | undefined;
+  forecastAttack: NonNullable<BattlePresentationView['attackPreview']>[number] | undefined;
+  forecastMove: NonNullable<BattlePresentationView['movementPreview']>[number] | undefined;
   target: Unit | undefined;
   attackId: string | null | undefined;
-  remainingAP: number;
+  remainingAP: number | undefined;
   activeActor: Unit | undefined;
 }
 export function BattleForecast({
@@ -127,29 +128,39 @@ function MoveDetails({
               <small>ОД</small>
             </strong>
             <span>цена пути</span>
-            <strong>
-              {remainingAP}
-              <small>ОД</small>
-            </strong>
-            <span>останется</span>
+            {remainingAP !== undefined && (
+              <>
+                <strong>
+                  {remainingAP}
+                  <small>ОД</small>
+                </strong>
+                <span>останется</span>
+              </>
+            )}
           </div>
-          <div
-            className="battle-move-pips"
-            aria-label={`Будет потрачено ${forecastMove.actionPointCost} ОД, останется ${remainingAP} из ${view.activation?.actionPoints.maximum ?? 0}`}
-          >
-            {Array.from({ length: view.activation?.actionPoints.maximum ?? 0 }, (_, index) => (
-              <i
-                key={index}
-                data-ap={
-                  index < forecastMove.actionPointCost
-                    ? 'spent'
-                    : index < (view.activation?.actionPoints.current ?? 0)
-                      ? 'remaining'
-                      : 'empty'
-                }
-              />
-            ))}
-          </div>
+          {view.activation?.actionPoints?.maximum !== undefined && (
+            <div
+              className="battle-move-pips"
+              aria-label={
+                remainingAP === undefined
+                  ? `Будет потрачено ${forecastMove.actionPointCost} ОД`
+                  : `Будет потрачено ${forecastMove.actionPointCost} ОД, останется ${remainingAP} из ${view.activation.actionPoints.maximum}`
+              }
+            >
+              {Array.from({ length: view.activation.actionPoints.maximum }, (_, index) => (
+                <i
+                  key={index}
+                  data-ap={
+                    index < forecastMove.actionPointCost
+                      ? 'spent'
+                      : index < (view.activation?.actionPoints?.current ?? 0)
+                        ? 'remaining'
+                        : 'empty'
+                  }
+                />
+              ))}
+            </div>
+          )}
           <p className="battle-path">
             {forecastMove.path.length}{' '}
             {forecastMove.path.length === 1
@@ -177,7 +188,8 @@ function MoveDetails({
           )}
           {(forecastMove.fireDamage ?? 0) > 0 && (
             <p className="battle-danger-warning">
-              {activeActor && (forecastMove.fireDamage ?? 0) >= activeActor.pools.health.current
+              {activeActor?.pools.health?.current !== undefined &&
+              (forecastMove.fireDamage ?? 0) >= activeActor.pools.health.current
                 ? 'Боец погибнет на пути и не достигнет клетки.'
                 : `Огонь: −${forecastMove.fireDamage} здоровья.`}
             </p>

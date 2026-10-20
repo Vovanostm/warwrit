@@ -22,6 +22,7 @@ import { executeEncounterCommand } from './executor.js';
 import {
   EncounterRoomState,
   EncounterMapHexStateSchema,
+  EncounterMapTileStateSchema,
   EncounterUnitStateSchema,
   type EncounterRoomState as EncounterRoomStateType,
 } from './room-state.js';
@@ -31,6 +32,8 @@ interface EncounterRoomAuth extends ActiveSessionPrincipal {
 }
 
 const roomsByEncounter = new Map<string, Set<EncounterRoom>>();
+
+type PublicUnit = EncounterPublicProjectionDto['units'][number];
 
 type EncounterRoomClient = Client<{
   auth: EncounterRoomAuth;
@@ -240,30 +243,97 @@ export class EncounterRoom extends Room<{
     this.state.activationId = projection.activationId ?? '';
     this.state.actorUnitId = projection.actorUnitId ?? '';
     this.state.deadlineAt = projection.deadlineAt ?? '';
+    this.applyInitiative(projection);
+    this.applyOutcome(projection);
+    this.applyMap(projection);
+    this.applyUnits(projection);
+  }
+
+  private applyInitiative(projection: EncounterPublicProjectionDto): void {
+    this.state.initiativeOrder.clear();
+    for (const id of projection.initiativeOrder ?? []) this.state.initiativeOrder.push(id);
+    this.state.turnIndex = projection.turnIndex ?? 0;
+    this.state.nextRound = projection.nextRoundInitiative?.round ?? 0;
+    this.state.nextRoundUnitIds.clear();
+    for (const id of projection.nextRoundInitiative?.unitIds ?? [])
+      this.state.nextRoundUnitIds.push(id);
+  }
+
+  private applyOutcome(projection: EncounterPublicProjectionDto): void {
+    this.state.outcomeReason = projection.outcome?.reason ?? '';
+    this.state.winnerSideId = projection.outcome?.winnerSideId ?? '';
+  }
+
+  private applyMap(projection: EncounterPublicProjectionDto): void {
     this.state.map.hexes.clear();
     this.state.map.blocked.clear();
+    this.state.map.tiles.clear();
     for (const hex of projection.map?.hexes ?? []) {
       this.state.map.hexes.push(new EncounterMapHexStateSchema({ q: hex.q, r: hex.r }));
     }
     for (const hex of projection.map?.blocked ?? []) {
       this.state.map.blocked.push(new EncounterMapHexStateSchema({ q: hex.q, r: hex.r }));
     }
-    this.state.units.clear();
-    for (const unit of projection.units) {
-      this.state.units.set(
-        unit.id,
-        new EncounterUnitStateSchema({
-          id: unit.id,
-          sideId: unit.sideId,
-          q: unit.q,
-          r: unit.r,
-          health: unit.health,
-          maximumHealth: unit.maximumHealth ?? 0,
-          status: unit.status,
-        }),
-      );
+    for (const tile of projection.map?.tiles ?? []) {
+      this.state.map.tiles.push(new EncounterMapTileStateSchema(tile));
     }
   }
+
+  private applyUnits(projection: EncounterPublicProjectionDto): void {
+    this.state.units.clear();
+    for (const unit of projection.units) this.state.units.set(unit.id, roomUnitState(unit));
+  }
+}
+
+function roomUnitState(unit: PublicUnit): InstanceType<typeof EncounterUnitStateSchema> {
+  return new EncounterUnitStateSchema({
+    id: unit.id,
+    sideId: unit.sideId,
+    q: unit.q,
+    r: unit.r,
+    health: unit.health,
+    status: unit.status,
+    ...unitResourceFields(unit),
+    ...unitConditionFields(unit),
+    ...unitThreatFields(unit),
+    ...unitWeaponReachFields(unit),
+  });
+}
+
+function unitResourceFields(unit: PublicUnit) {
+  return {
+    weaponId: unit.weaponId ?? '',
+    maximumHealth: unit.maximumHealth ?? 0,
+    armor: unit.armor ?? 0,
+    stamina: unit.stamina ?? 0,
+    morale: unit.morale ?? 0,
+  };
+}
+
+function unitConditionFields(unit: PublicUnit) {
+  return {
+    guarding: unit.guarding ?? false,
+    panicking: unit.panicking ?? false,
+  };
+}
+
+function unitThreatFields(unit: PublicUnit) {
+  return {
+    threatTargetId: unit.threat?.targetId ?? '',
+    threatDamageMinimum: unit.threat?.damage.minimum ?? 0,
+    threatDamageMaximum: unit.threat?.damage.maximum ?? 0,
+    threatResponseReceived: unit.threat?.responseReceived ?? false,
+  };
+}
+
+function unitWeaponReachFields(unit: PublicUnit) {
+  return {
+    weaponReachMinimum: unit.weaponReach?.minimumRange ?? 0,
+    weaponReachMaximum: unit.weaponReach?.maximumRange ?? 0,
+    weaponReachCells: (unit.weaponReach?.cells ?? []).map(
+      ({ q, r }) => new EncounterMapHexStateSchema({ q, r }),
+    ),
+  };
 }
 
 export async function refreshEncounterRoomProjections(encounterId: string): Promise<void> {
