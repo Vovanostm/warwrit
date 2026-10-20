@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**Pickup248 accepted for publication — 2026-10-21, LOCAL:**
+Source f439db7 and evidence af7963e5 retain independent source and recovered-save
+browser ACCEPT: both accounts show no impossible destination/control,0POST,
+11canonical collections unchanged. Focused real-PG coverage2PASS/14filteredSKIP,
+normal auditPASS, clean validator8/8PASS (41relatedPASS/31SKIP). Earlier fixture,
+clock, invocation and capture failures remain in the owning record; none proves
+a production food defect. DB6 remains overloaded with its trophy on the ground.
+DB7 is prepared but unstarted until actual-main integration. Publication/hosted
+CI/merge remain pending; owner mission authorizes merge after those gates.
+[Current results and limits](evidence/persistent-hud/main-readback.md).
+
 **Retained DB6 recovered into isolated clone — 2026-10-20, LOCAL:**
 Original disposable container disappeared after host interruption; its surviving
 PG17 anonymous volume was mounted read-only and copied to a separate durable

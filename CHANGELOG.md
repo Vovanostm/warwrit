@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Accept the pickup projection on the recovered save — 2026-10-21, LOCAL
+
+- `codex/representative-hunt-recovery`, issue248: independent source and live
+  recovered-DB6 evaluation ACCEPT on f439db7. Both accounts have no impossible
+  pickup target/control,0POST,11canonical collections unchanged. Focused real-PG
+  coverage2PASS/14filteredSKIP, normal auditPASS, clean validator8/8PASS.
+  DB6 stays overloaded; payment/restart and separate DB7 remain unproven.
+  Preserve earlier failed checks and captures in the
+  [owning record](docs/engineering/evidence/persistent-hud/main-readback.md).
+
 ### Preserve retained hunt recovery evidence — 2026-10-20, LOCAL
 
 - `codex/representative-hunt-recovery`: recover DB6 into an isolated durable
