@@ -1,5 +1,49 @@
 # Warwrit current delivery plan
 
+**Retained terminal recovered — 2026-10-20, LOCAL:**
+Independent recovery ACCEPT for d618b3a9 plus the one-line repository correction.
+Victory61 now persists both pre-fix READY roots, including helper revision1→1
+with five practice facts, both releases/completions and one proof. Exact early/
+terminal retries and another actual SIGKILL/restart leave all roots/counts unchanged.
+The earlier failure remains below; equal revision is not a no-op company root.
+The permanent PostgreSQL17 regression passes1/14filteredSKIP; server types,
+scoped lint/format PASS. Independent frozen source/test review ACCEPT. Integration
+and delivery gates remain pending. [Evidence](evidence/core-tactical-bridge/README.md).
+
+**Bridge runtime recovery / persistence correction — 2026-10-20, REWORK:**
+Independent current-source victory53 passed real terminal-commit-before-effects
+SIGKILL/restart, both releases/completions, one proof, exact early/terminal retries
+and a second settled restart. Supplementary victory61 exposed a separate P1:
+a READY helper company validly keeps lifecycle revision1→1, but the repository
+requires strict increase and rolls back both releases/proof. The owner casualty
+is not the cause. Independent source diagnosis confirms finalization may change
+binding/morale without a lifecycle increment. One writer owns only repository.ts
+and the real-PostgreSQL regression; preserve whole-root lock/evidence/receipt
+checks and permit non-decreasing lifecycle revision. Previous reaction correction
+ACCEPT remains scoped; bridge delivery is blocked on this correction/recovery.
+[Evidence](evidence/core-tactical-bridge/README.md). No new gameplay policy.
+
+**Actor marker delivered — 2026-10-20, MERGED:**
+[PR245](https://github.com/Vovanostm/warwrit/pull/245) merged6b5b1b03 after
+independent played/absolute visual ACCEPT and CI39399738137 SUCCESS:
+899PASS/48SKIP,10000stress,15realDB/auth,coverage/audit. Reviewed/tested/merged
+trees match. Actual-main smoke verifies marker ownership through inspection,
+Home and four real End-turn commands; full name visible day/night. The inherited
+reload observer failed; no new reload PASS is claimed. [Readback](evidence/uix-actor-foundation/main-readback.md).
+Issue186 remains open for190 enemy intermediate frames; no full-M1 acceptance.
+
+**Reaction correction independently reviewed — 2026-10-20, LOCAL:**
+Normal commit `d618b3a9` corrects the stale reaction coefficient and implicit-start
+consumption defects. Independent source re-review ACCEPT: the original reaction
+probes pass, and all 42 retained evaluator commands replay exactly; both company
+preparations are READY, released/completed once, with matching terminal pools and
+exact finalize retry. This is pure reconstruction, not fresh persisted recovery.
+Author focused coverage199PASS/1existingSKIP, types/lint/format/audit PASS;
+retained author46 reconstruction unchanged. Fresh independent PostgreSQL/browser
+reaction and terminal-interruption evaluation is running. Integrated validation,
+publication, CI and merge remain pending. [Current evidence](evidence/core-tactical-bridge/README.md).
+Owner decisions remain settled; no payment, skill mapping, custody or rescue claim.
+
 **Bounded bridge audit and integrated checks — 2026-10-20, LOCAL:**
 Normal source commit743ae5d closes the four introduced audit findings. Current
 focused coverage197PASS/1existingSKIP; types/lint/format/normal audit PASS.

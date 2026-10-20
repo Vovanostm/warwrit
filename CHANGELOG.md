@@ -9,6 +9,40 @@ requests.
 
 ## Unreleased
 
+### Recover valid terminal effects without a lifecycle increment — 2026-10-20
+
+- `codex/tactical-bridge-165`, local: the company repository accepts an equal
+  lifecycle revision while preserving identity, evidence, whole-root locking and
+  receipt guards. Independent recovery of retained victory61 saves both exact
+  prepared roots, releases/completes both companies and issues one proof.
+  Early/terminal retries and another process restart preserve roots/counts.
+  Helper1→1 includes five practice facts; no-op/zero-practice wording is corrected.
+  Permanent PostgreSQL17 regression1PASS/14filteredSKIP, server types and
+  scoped lint/format PASS; final delivery gates pending.
+  [Evidence and limits](docs/engineering/evidence/core-tactical-bridge/README.md).
+
+### Persistent recovery finding and actor delivery — 2026-10-20
+
+- `codex/tactical-bridge-165`, local REWORK: independent victory53 proves real
+  terminal crash recovery, once-only effects/proof and settled restart. Separate
+  victory61 exposes a strict lifecycle-revision guard rejecting valid helper1→1
+  settlement. Correct the repository boundary and retain evidence/atomic guards;
+  publication/merge pending. [Bridge evidence](docs/engineering/evidence/core-tactical-bridge/README.md).
+- `codex/actor-integration-186`, MERGED PR245/6b5b1b03: played/visual ACCEPT,
+  CI39399738137 SUCCESS (899PASS/48SKIP,10000stress,15realDB/auth). Actual-main
+  marker/inspection/turn/day-night smoke PASS; reload observer failure retained.
+  [Readback](docs/engineering/evidence/uix-actor-foundation/main-readback.md).
+  Enemy frames remain190; no deployment/full-M1 claim.
+
+### Reaction correction independently reviewed — 2026-10-20, LOCAL
+
+- Branch `codex/tactical-bridge-165`: normal correction `d618b3a9` receives
+  independent source ACCEPT. Retained evaluator42 replay and both READY company
+  roots, terminal pools, one completion and exact finalize retry verified at the
+  pure boundary. Author199PASS/1existingSKIP and normal audit remain attributed.
+  Fresh persisted recovery, integrated validation and publication/merge pending.
+  [Evidence and limits](docs/engineering/evidence/core-tactical-bridge/README.md).
+
 ### Bounded bridge audit and integrated checks — 2026-10-20, LOCAL
 
 - Normal source commit743ae5d closes the four introduced audit findings. Current

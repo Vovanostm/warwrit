@@ -273,13 +273,14 @@ function makeFirstHuntJoinActor(worldId: string, mixed = false): FirstHuntJoinAc
 async function seedFirstHuntJoinScenario(
   database: (typeof databases)[number],
   mixed = false,
+  worldId = randomUUID(),
+  encountersEnabled = mixed,
 ): Promise<{
   readonly worldId: string;
   readonly owner: FirstHuntJoinActor;
   readonly helper: FirstHuntJoinActor;
   readonly app: ReturnType<typeof buildApp>;
 }> {
-  const worldId = randomUUID();
   const owner = makeFirstHuntJoinActor(worldId, mixed);
   const helper = makeFirstHuntJoinActor(worldId);
   for (const [actor, subject] of [
@@ -350,7 +351,7 @@ async function seedFirstHuntJoinScenario(
   const app = buildApp({
     identity: { config: config.identity!, database },
     company: { database, worldId },
-    ...(mixed ? { encounters: { database } } : {}),
+    ...(encountersEnabled ? { encounters: { database } } : {}),
   });
   apps.push(app);
   return { worldId, owner, helper, app };
@@ -726,6 +727,175 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
             .transaction()
             .execute((transaction) => loadCompanyAggregate(transaction, worldId, actor.companyId));
           expect(state?.encounter.active).toBeNull();
+        }
+      } finally {
+        await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+      }
+    },
+    120_000,
+  );
+
+  it.skipIf(connectionString === undefined)(
+    'releases a bound company whose lifecycle revision stays unchanged after a FIRST HUNT victory',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const scenario = await seedFirstHuntJoinScenario(
+        database,
+        false,
+        'first-hunt-terminal-lifecycle-equality',
+        true,
+      );
+      const { owner, helper, worldId, app } = scenario;
+      try {
+        for (const actor of [owner, helper]) {
+          const read = await app.inject({
+            method: 'GET',
+            url: '/contracts/first-hunt',
+            headers: actor.headers,
+          });
+          const joined = await app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: actor.headers,
+            payload: {
+              schemaVersion: 1,
+              commandId: randomUUID(),
+              expectedPublicRevision: read.json().publicRevision,
+              type: 'JOIN',
+              payload: { instanceId: 'ci.m1.raider-standard.01' },
+            },
+          });
+          expect(joined.statusCode, joined.body).toBe(200);
+        }
+        const { encounter_id: encounterId } = await database
+          .selectFrom('encounter_admissions')
+          .select('encounter_id')
+          .where('world_id', '=', worldId)
+          .executeTakeFirstOrThrow();
+        const revisionsBeforeTerminal = await database
+          .transaction()
+          .execute(async (transaction) => {
+            const ownerState = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+            const helperState = await loadCompanyAggregate(transaction, worldId, helper.companyId);
+            if (!ownerState || !helperState) throw new Error('FIRST HUNT company state is missing');
+            return {
+              owner: ownerState.economy.lifecycle.revision,
+              helper: helperState.economy.lifecycle.revision,
+            };
+          });
+
+        for (let step = 0; step < 400; step += 1) {
+          const row = await database
+            .selectFrom('encounters')
+            .select(['status', 'state', 'deadline_at', 'activation_id'])
+            .where('id', '=', encounterId)
+            .executeTakeFirstOrThrow();
+          if (row.status === 'resolved') break;
+          const state = row.state as combat.BattleState;
+          let advancedByAi = false;
+          for (const wake of await listDueEncounterAiWakes(
+            database,
+            new Date(Date.now() + 60_000),
+          )) {
+            if (wake.encounterId !== encounterId) continue;
+            await executeEncounterAiWake(database, wake);
+            advancedByAi = true;
+          }
+          if (advancedByAi) continue;
+
+          const activation = state.activation;
+          if (activation === null) throw new Error('active FIRST HUNT has no activation');
+          let controller: FirstHuntJoinActor | undefined;
+          let actorActions:
+            | NonNullable<
+                Awaited<ReturnType<typeof readEncounterAccess>>
+              >['controlGrant']['actorActions']
+            | undefined;
+          for (const actor of [owner, helper]) {
+            const access = await readEncounterAccess(database, actor.accountId, encounterId);
+            if (access?.controlGrant.actorActions?.actorId !== activation.unitId) continue;
+            controller = actor;
+            actorActions = access.controlGrant.actorActions;
+            break;
+          }
+          if (!controller || !actorActions) {
+            throw new Error('FIRST HUNT activation has no company owner or due hostile AI wake');
+          }
+          const proposed = combat.chooseTacticalCombatCommand(state);
+          const intent =
+            proposed.type === 'move'
+              ? { type: 'move', to: proposed.to }
+              : proposed.type === 'attack'
+                ? { type: 'attack', targetId: proposed.targetId }
+                : { type: proposed.type };
+          const response = await app.inject({
+            method: 'POST',
+            url: '/encounters/commands',
+            headers: controller.headers,
+            payload: {
+              version: 1,
+              encounterId,
+              commandId: randomUUID(),
+              expectedRevision: state.revision,
+              activationId: actorActions.activationId,
+              actorId: actorActions.actorId,
+              intent,
+            },
+          });
+          expect(
+            response.statusCode,
+            JSON.stringify({ actorId: actorActions.actorId, proposed, response: response.body }),
+          ).toBe(200);
+          expect(response.json()).toMatchObject({ status: 'accepted' });
+        }
+
+        const terminal = await database
+          .selectFrom('encounters')
+          .select(['status', 'state'])
+          .where('id', '=', encounterId)
+          .executeTakeFirstOrThrow();
+        expect(terminal.status).toBe('resolved');
+        expect((terminal.state as combat.BattleState).outcome).toMatchObject({
+          reason: 'last-side-standing',
+          winnerSideId: 'first-hunt-companies',
+        });
+        expect(await applyPendingFirstHuntTerminalEffects(database)).toContain(encounterId);
+        expect(await applyPendingFirstHuntTerminalEffects(database)).not.toContain(encounterId);
+
+        const settled = await database.transaction().execute(async (transaction) => {
+          const ownerState = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+          const helperState = await loadCompanyAggregate(transaction, worldId, helper.companyId);
+          const admission = await transaction
+            .selectFrom('encounter_admissions')
+            .select('effects_applied_at')
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirstOrThrow();
+          const receipts = await transaction
+            .selectFrom('company_receipts')
+            .select(['company_id', 'response'])
+            .where('world_id', '=', worldId)
+            .where('company_id', 'in', [owner.companyId, helper.companyId])
+            .execute();
+          if (!ownerState || !helperState) throw new Error('FIRST HUNT company state is missing');
+          return { ownerState, helperState, admission, receipts };
+        });
+        expect(settled.admission.effects_applied_at).not.toBeNull();
+        const unchangedCompany = [
+          { before: revisionsBeforeTerminal.owner, state: settled.ownerState },
+          { before: revisionsBeforeTerminal.helper, state: settled.helperState },
+        ].find(({ before, state }) => before === state.economy.lifecycle.revision);
+        expect(unchangedCompany).toBeDefined();
+        expect(unchangedCompany?.state.encounter.active).toBeNull();
+        expect(unchangedCompany?.state.encounter.completed).toHaveLength(1);
+        for (const actor of [owner, helper]) {
+          expect(
+            settled.receipts.filter(
+              (receipt) =>
+                receipt.company_id === actor.companyId &&
+                (receipt.response as { readonly type?: string }).type === 'FIRST_HUNT_TERMINAL',
+            ),
+          ).toHaveLength(1);
         }
       } finally {
         await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
