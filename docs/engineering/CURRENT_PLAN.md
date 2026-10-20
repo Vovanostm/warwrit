@@ -1,5 +1,42 @@
 # Warwrit current delivery plan
 
+**Range187 delivered / affordability184 active — 2026-10-21:**
+PR250 merged b0eeb8e87c0a198f05e5d44d0f8ef9d73ae8a05b; reviewed source
+be8efd5, published89ee9afa, tested mergeb65db183 and actual main contents match.
+CI39512315650 attempt2/job118941637716 SUCCESS:937unitPASS/49SKIP,
+10000stress,16realPG/auth,migrations,coverage/audit. Attempt1 passed bootstrap
+but coverage timed out in unchanged world movement test (936PASS/1FAIL/49SKIP);
+isolated diagnostic1PASS and one unchanged-head rerun passed. No gate weakened.
+Independent source/playable/absolute visual ACCEPT; #187 CLOSED/agent:done.
+[Delivery evidence](evidence/range-187/README.md).
+
+#184 starts from this actual main in codex/combat-affordability-184. One web
+writer owns marker/rendering/legend and existing tests; parent owns shared
+records. Server attackAffordableAfter is the only classifier; preserve187 reach
+contour, selected-skill suppression and legacy single-band fallback. Source-only
+window while pickup248 integrates; no parallel heavy checks or gameplay.
+#228 is already delivered by merged PR240/243 and is not a remaining task.
+Existing outcome209–211 work remains retained for later integration; sprint/M1
+are PARTIAL. No new policy, deployment or full-journey claim.
+
+**Range contour187 — 2026-10-20, LOCAL / source, playable and visual ACCEPT:**
+Source `be8efd51709983b62733fa0436d02d975bc3eae5` on actual main7a7f1f18
+separates movement fill from weapon/selected-skill exterior boundaries.
+Independent source and browser ACCEPT; author24focusedPASS, normal auditPASS,
+parent integrated validator8/8PASS with51related tests. Real baseline passive
+inspection sent0POST;18ordinary End Turn actions reached legal aimed-shot at
+revision56, followed by0POST during its capture matrix. Native Chrome125%,
+day/night/CVD and inspected-scene2CSSpx floor are covered; stale/empty live
+substitution and arbitrary terrain are not claimed.
+
+Absolute visual critic ACCEPT on2026-10-21: all applicable criteria2, motion
+N/A, all62images inspected. Hosted CI and merge remain pending. Owner mission
+“Implement, review, merge” authorizes this slice after those gates. #184 follows
+separately. Pickup248 retains the failed DB6; its elapsed-tick regression exposed
+a helper static-food fixture gap, now being corrected without changing food or
+carrying policy. Full sprint/M1 remain partial.
+[Current checks, failures and playable evidence](evidence/range-187/README.md).
+
 **Pickup248 accepted for publication — 2026-10-21, LOCAL:**
 Source f439db7 and evidence af7963e5 retain independent source and recovered-save
 browser ACCEPT: both accounts show no impossible destination/control,0POST,

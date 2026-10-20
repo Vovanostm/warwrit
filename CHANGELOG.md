@@ -9,6 +9,33 @@ requests.
 
 ## Unreleased
 
+### Deliver the separate reach boundary — 2026-10-21, MERGED
+
+- `codex/combat-range-187`, [PR250](https://github.com/Vovanostm/warwrit/pull/250)
+  merged b0eeb8e8; reviewed/tested/main contents match. Source/playable/absolute
+  visual ACCEPT and CI39512315650 attempt2 SUCCESS:937unitPASS/49SKIP,
+  10000stress,16PG/auth,migrations,coverage/audit. The first coverage timeout
+  in unchanged world movement passed isolated and one unchanged-head retry;
+  no test or gate weakened. #184 consumer follows with server-owned bands.
+  [Evidence](docs/engineering/evidence/range-187/README.md).
+
+### Separate movement fill and reach boundary — 2026-10-20, LOCAL
+
+- `codex/combat-range-187`, [issue187](https://github.com/Vovanostm/warwrit/issues/187):
+  replace weapon/combined fills with the exterior contour of supplied cells.
+  Selected skills require current actor/activation/revision/skill geometry;
+  absent or stale data never falls back to weapon reach. Remove combined legend;
+  keep server legality, costs and replay unchanged.
+- Independent source review ACCEPT after mesh-bounds and borderless-fill fixes.
+  Initial audit failures led to a cohesive contour lifecycle module and reuse
+  of existing grid tests; current focused coverage24PASS. Stale package outputs
+  were rebuilt without encounter source changes. Final web types, scoped TS/TSX
+  lint and source formatting PASS. Normal audit and parent validator8/8PASS (51related tests); independent browser
+  ACCEPT, including actual aimed-shot selection and passive0POST. Absolute visual
+  ACCEPT on2026-10-21: all applicable criteria2, motion N/A,62images inspected.
+  Hosted CI and merge remain pending. [Current evidence](docs/engineering/evidence/range-187/README.md).
+  [Behavior and check history](docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
+
 ### Accept the pickup projection on the recovered save — 2026-10-21, LOCAL
 
 - `codex/representative-hunt-recovery`, issue248: independent source and live
