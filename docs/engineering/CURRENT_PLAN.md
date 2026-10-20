@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+**Human preset picker — 2026-10-20, LOCAL / source checks complete:**
+Owner authorized implement/review/merge. `codex/preset-picker-228` starts from
+merged PR240 (`eb98dd2`) and changes only BattleEditor and its existing tests.
+The explicit load action validates and clones an existing catalog preset into
+an unsaved draft; selection alone changes nothing. Mill reset and existing saved
+loads/start flow remain. Five component tests, web types, scoped lint/format/diff
+PASS; normal audit/commit and independent browser acceptance are pending.
+The harness skips browser effects; it does not prove storage/layout/gameplay.
+#227 source is frozen at `ff40f304`; its writer released the lane and independent
+replay/visual review continue in a separate checkout. Parent owns shared docs,
+integration, validator, played acceptance, CI and merge; no full issue closure.
+[Picker behavior and limits](../wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
+
 **Human preset producer — 2026-10-20, LOCAL ACCEPT / publication pending:**
 `codex/human-battle-228`, gated source `9534bf7`: detached catalog presets,
 unchanged mill default, six allies and five human opponents with current S4 rules.

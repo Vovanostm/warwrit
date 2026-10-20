@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Expose the existing human battle preset in the editor
+
+- 2026-10-20, branch `codex/preset-picker-228`, local: #228 now has an explicit
+  catalog preset selector/load action in BattleEditor. It validates and clones
+  the unsaved draft; mill reset, saved drafts and the normal launch remain.
+  No CSS, catalog content, rules, dependencies or migrations changed. Producer
+  PR240 is merged at eb98dd2. Five component tests, web types, scoped lint/format
+  and diff PASS; initial test-selector/lint failures were corrected. Normal
+  commit audit and independent browser acceptance remain pending at this entry.
+  [Behavior and proof limits](docs/wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
+
 ### Add the human-opponent preset producer and playable evidence
 
 - 2026-10-20, branch `codex/human-battle-228`, local: implement #228 catalog
