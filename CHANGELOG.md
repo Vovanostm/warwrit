@@ -20,8 +20,10 @@ requests.
   Initial audit failures led to a cohesive contour lifecycle module and reuse
   of existing grid tests; current focused coverage24PASS. Stale package outputs
   were rebuilt without encounter source changes. Final web types, scoped TS/TSX
-  lint and source formatting PASS. Normal commit audit and integrated
-  playable/visual acceptance remain pending.
+  lint and source formatting PASS. Normal audit and parent validator8/8PASS (51related tests); independent browser
+  ACCEPT, including actual aimed-shot selection and passive0POST. Absolute visual
+  ACCEPT on2026-10-21: all applicable criteria2, motion N/A,62images inspected.
+  Hosted CI and merge remain pending. [Current evidence](docs/engineering/evidence/range-187/README.md).
   [Behavior and check history](docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
 
 ### Align persistent HUD integration expectations — 2026-10-20, LOCAL / REWORK

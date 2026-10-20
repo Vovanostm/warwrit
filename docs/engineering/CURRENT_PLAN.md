@@ -1,26 +1,22 @@
 # Warwrit current delivery plan
 
-**Range contour187 — 2026-10-20, LOCAL / source review ACCEPT:**
-Sole web writer in `codex/combat-range-187` at actual main7a7f1f18 replaces
-weapon/combined fills with the supplied reach union boundary. Selected skills
-require exact current actor/activation/revision/skill geometry. Parent owns
-shared records; no gameplay/producer rule changes.
+**Range contour187 — 2026-10-20, LOCAL / source, playable and visual ACCEPT:**
+Source `be8efd51709983b62733fa0436d02d975bc3eae5` on actual main7a7f1f18
+separates movement fill from weapon/selected-skill exterior boundaries.
+Independent source and browser ACCEPT; author24focusedPASS, normal auditPASS,
+parent integrated validator8/8PASS with51related tests. Real baseline passive
+inspection sent0POST;18ordinary End Turn actions reached legal aimed-shot at
+revision56, followed by0POST during its capture matrix. Native Chrome125%,
+day/night/CVD and inspected-scene2CSSpx floor are covered; stale/empty live
+substitution and arbitrary terrain are not claimed.
 
-Independent source review ACCEPT after correcting stale mesh bounds and
-unwanted internal movement edges. The renderer grid supports independent
-fill/border; sprite-reach-contour.ts owns mesh/cache/observer lifecycle. Earlier
-audit failures exposed uncovered grid/callback code, corrected by existing grid
-coverage and complete contour lifecycle extraction. Current5-file focused
-coverage24PASS; the observer test first failed on Babylon's retained/deferred
-observer bookkeeping and was corrected to check baseline cleanup. Stale generated
-protocol declarations were rebuilt without encounter source changes. Final web
-types, scoped TS/TSX lint and source formatting PASS. Normal commit audit is
-next; no bypass. CSS has no ESLint configuration; its formatting check passed.
-
-Integrated validator, actual browser/native125%/CVD/day-night and absolute visual
-acceptance remain pending. #184 follows separately. Parent248/server diagnosis
-retains DB6 failure; one explicit-tick diagnostic now owns the serial check window. Full sprint/M1
-remain partial; current HUD code comes from merged PR247.
+Absolute visual critic ACCEPT on2026-10-21: all applicable criteria2, motion
+N/A, all62images inspected. Hosted CI and merge remain pending. Owner mission
+“Implement, review, merge” authorizes this slice after those gates. #184 follows
+separately. Pickup248 retains the failed DB6; its elapsed-tick regression exposed
+a helper static-food fixture gap, now being corrected without changing food or
+carrying policy. Full sprint/M1 remain partial.
+[Current checks, failures and playable evidence](evidence/range-187/README.md).
 
 **Persistent HUD hosted integration correction — 2026-10-20, PUBLISHED / REWORK:**
 PR247 correction72da1e3 passes clean local validator8/8,252PASS/49SKIP.
