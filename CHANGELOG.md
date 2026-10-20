@@ -9,6 +9,100 @@ requests.
 
 ## Unreleased
 
+### Accept the integrated persistent bridge — 2026-10-20, LOCAL
+
+- `codex/tactical-bridge-165`, integrated5221ebe3: coordinator validator8/8,
+  793PASS/49SKIP and normal audit PASS. Independent source/test and actual
+  retained-terminal recovery ACCEPT; PostgreSQL17 regression1PASS/14filteredSKIP.
+  Current actor main is retained. Publication, hosted CI and merge pending;
+  no full-HUD, payment or full-M1 claim.
+  [Evidence](docs/engineering/evidence/core-tactical-bridge/README.md).
+
+### Integrate the accepted bridge correction with current main — 2026-10-20
+
+- `codex/tactical-bridge-165`, local: combine correctiond82d0eb and actor
+  main6b5b1b03, preserving additive changelog/plan/wiki histories. No production
+  conflict or migration; normal correction audit PASS, independent source/test
+  and retained-terminal recovery ACCEPT. Final integrated checks pending.
+  [Current plan](docs/engineering/CURRENT_PLAN.md).
+
+### Recover valid terminal effects without a lifecycle increment — 2026-10-20
+
+- `codex/tactical-bridge-165`, local: the company repository accepts an equal
+  lifecycle revision while preserving identity, evidence, whole-root locking and
+  receipt guards. Independent recovery of retained victory61 saves both exact
+  prepared roots, releases/completes both companies and issues one proof.
+  Early/terminal retries and another process restart preserve roots/counts.
+  Helper1→1 includes five practice facts; no-op/zero-practice wording is corrected.
+  Permanent PostgreSQL17 regression1PASS/14filteredSKIP, server types and
+  scoped lint/format PASS; final delivery gates pending.
+  [Evidence and limits](docs/engineering/evidence/core-tactical-bridge/README.md).
+
+### Persistent recovery finding and actor delivery — 2026-10-20
+
+- `codex/tactical-bridge-165`, local REWORK: independent victory53 proves real
+  terminal crash recovery, once-only effects/proof and settled restart. Separate
+  victory61 exposes a strict lifecycle-revision guard rejecting valid helper1→1
+  settlement. Correct the repository boundary and retain evidence/atomic guards;
+  publication/merge pending. [Bridge evidence](docs/engineering/evidence/core-tactical-bridge/README.md).
+- `codex/actor-integration-186`, MERGED PR245/6b5b1b03: played/visual ACCEPT,
+  CI39399738137 SUCCESS (899PASS/48SKIP,10000stress,15realDB/auth). Actual-main
+  marker/inspection/turn/day-night smoke PASS; reload observer failure retained.
+  [Readback](docs/engineering/evidence/uix-actor-foundation/main-readback.md).
+  Enemy frames remain190; no deployment/full-M1 claim.
+
+### Reaction correction independently reviewed — 2026-10-20, LOCAL
+
+- Branch `codex/tactical-bridge-165`: normal correction `d618b3a9` receives
+  independent source ACCEPT. Retained evaluator42 replay and both READY company
+  roots, terminal pools, one completion and exact finalize retry verified at the
+  pure boundary. Author199PASS/1existingSKIP and normal audit remain attributed.
+  Fresh persisted recovery, integrated validation and publication/merge pending.
+  [Evidence and limits](docs/engineering/evidence/core-tactical-bridge/README.md).
+
+### Bounded bridge audit and integrated checks — 2026-10-20, LOCAL
+
+- Normal source commit743ae5d closes the four introduced audit findings. Current
+  focused coverage197PASS/1existingSKIP; types/lint/format/normal audit PASS.
+  Coordinator validation on that clean commit EXIT0/8of8,791PASS/48SKIP.
+  Read-only replay of the retained46-command journey matches both final company
+  roots. Independent source review REWORK743ae5d reproduced stale reaction skill
+  coefficients blocking supported terminal settlement, and rejected implicit
+  reaction starts in the full-journal consumer. Independent real wolf victory42
+  with5reactions also stays bound/pending after restart, proof0. Its sanitized
+  rows are retained; exact runtime cause remains to isolate. Correction,
+  publication, CI and merge remain pending. Earlier failed checks retain their history.
+  Owner decisions are settled; no new skills, custody, rescue or6v6 rules.
+  Branch `codex/tactical-bridge-165`; local.
+  [Current record](docs/engineering/CURRENT_PLAN.md).
+
+### Connect the bounded persistent wolf hunt to tactical combat
+
+- 2026-10-20, branch `codex/tactical-bridge-165`, local: implement explicit
+  bridge-v4/projection4 across core setup/replay/AI, company profiles/binding/
+  consequences, authenticated encounter executor/private protocol and minimal
+  persistent consumer. Preserve old versions, fists and condition restrictions;
+  unavailable unmapped skills and unsupported disposition stay explicit.
+  [Behavior and limitations](docs/wiki/combat.md#persistent-tactical-wolf-hunt--2026-10-20).
+- Author real two-company6v3 journey reached victory46, exact retries, active
+  process restart12 and once-only effects/one proof. 196focusedPASS/1SKIP;
+  normal audit findings are being corrected, no bypass. Independent evaluation,
+  integrated gate, publication/merge, payment and final HUD remain pending.
+  No migration, dependency or authored world-content change.
+
+### Start the approved persistent tactical bridge after profile delivery
+
+- 2026-10-20, branch `codex/tactical-bridge-165`, local: activate #165 on
+  actual merged profile main137faf88, with the owner's bounded wolf-hunt scope.
+  One core writer owns the coupled bridge/protocol/executor consumers; actor
+  lab-scene work stays separate. Implementation and acceptance pending.
+- Delivery readback: [PR241](https://github.com/Vovanostm/warwrit/pull/241)
+  merged137faf88 after source ACCEPT,validator8/8 and CI39383402818 SUCCESS:
+  893PASS/48SKIP,10000stress,15realDB/auth,coverage/audit. Merged tree matches
+  the checked candidate. Main CI39384644400 SUCCESS; real PostgreSQL mixed
+  JOIN/retry/reload smoke1PASS/13filteredSKIP; #164 CLOSED. Rescue/transport excluded,
+  payment/terminal-browser journey remains downstream.
+
 ### Actor backdrop correction and integrated checks — 2026-10-20, LOCAL
 
 - Normal source commit6eb5263 fixes the reproduced ruined-mill/name draw-order

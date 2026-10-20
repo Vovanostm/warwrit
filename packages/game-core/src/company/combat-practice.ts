@@ -1,3 +1,4 @@
+import { M1_DOMAIN_BRIDGE_V4_RULESET_ID } from '../combat/setup-v2.js';
 import type { AttackResolvedEvent, CombatEvent } from '../combat/types.js';
 import { canonicalJson, id, unsigned } from './input.js';
 import { prepareCombatConsequences } from './combat-consequences.js';
@@ -209,8 +210,7 @@ function derivePracticeActions(journal: CombatReceiptJournal, receiptTicks: read
     const command = receipt.kernelCommand;
     if (command === null) continue;
     const participant = participants.get(command.actorId);
-    if (participant?.companyId !== journal.companyId) continue;
-    if (command.type === 'defend') {
+    if (command.type === 'defend' && participant?.companyId === journal.companyId) {
       actionStarts.push({
         activationId: command.activationId,
         unitId: command.actorId,
@@ -219,30 +219,29 @@ function derivePracticeActions(journal: CombatReceiptJournal, receiptTicks: read
       });
       continue;
     }
-    if (command.type !== 'attack') continue;
-    const event = receipt.transition.events.find(
-      (entry): entry is AttackResolvedEvent => entry.type === 'attack.resolved',
-    );
-    if (
-      event?.attackerId !== command.actorId ||
-      event.targetId !== command.targetId ||
-      !isOpposingEncounterSide(journal.binding, journal.companyId, event.targetId)
-    )
-      continue;
-    qualifyingAttacks.push({
-      ordinal,
-      tick: receiptTicks[ordinal]!,
-      commandId: command.commandId,
-      unitId: command.actorId,
-      characterId: participant.projection.characterId,
-    });
-    if (participant.projection.weapon.skillId === null) continue;
-    actionStarts.push({
-      activationId: command.activationId,
-      unitId: command.actorId,
-      startedAt: receiptTicks[ordinal]!,
-      startReceiptOrdinal: ordinal,
-    });
+    const events = practiceAttackEvents(receipt, journal.binding.setup.rulesetId);
+    for (const event of events) {
+      const attacker = participants.get(event.attackerId);
+      if (
+        attacker?.companyId !== journal.companyId ||
+        !isOpposingEncounterSide(journal.binding, journal.companyId, event.targetId)
+      )
+        continue;
+      qualifyingAttacks.push({
+        ordinal,
+        tick: receiptTicks[ordinal]!,
+        commandId: command.commandId,
+        unitId: event.attackerId,
+        characterId: attacker.projection.characterId,
+      });
+      if (!attackStartsPractice(command, event, attacker)) continue;
+      actionStarts.push({
+        activationId: command.activationId,
+        unitId: command.actorId,
+        startedAt: receiptTicks[ordinal]!,
+        startReceiptOrdinal: ordinal,
+      });
+    }
   }
 
   return { actionStarts, qualifyingAttacks };
@@ -337,105 +336,12 @@ export function deriveCombatPracticeReceipt(
     );
     starts.set(start.activationId, start);
   }
-  const participantByUnit = new Map(
-    validatedJournal.binding.participants.map((participant) => [participant.unitId, participant]),
-  );
-  const interactions: DerivedInteraction[] = [];
-  const leadershipAttacks: LeadershipAttack[] = [];
-  const usedStarts = new Set<string>();
-  for (let ordinal = 1; ordinal <= receiptIndex; ordinal += 1) {
-    const receipt = validatedJournal.receipts[ordinal]!;
-    const kernelCommand = receipt.kernelCommand;
-    if (kernelCommand?.type !== 'attack') continue;
-    const before = validatedJournal.receipts[ordinal - 1]!.transition.state;
-    const event = receipt.transition.events.find(
-      (entry): entry is AttackResolvedEvent => entry.type === 'attack.resolved',
-    );
-    requirePhysical(
-      event &&
-        event.attackerId === kernelCommand.actorId &&
-        event.targetId === kernelCommand.targetId,
-      'INVALID_SOURCE',
-    );
-    const eventIndex = receipt.transition.events.indexOf(event as CombatEvent);
-    const sourceEventId = receipt.sourceEventIds[eventIndex];
-    requirePhysical(sourceEventId, 'INVALID_SOURCE');
-    const attacker = participantByUnit.get(event.attackerId);
-    const defender = participantByUnit.get(event.targetId);
-    const externalAttacker = isOpposingEncounterSide(
-      validatedJournal.binding,
-      validatedJournal.companyId,
-      event.attackerId,
-    );
-    const externalDefender = isOpposingEncounterSide(
-      validatedJournal.binding,
-      validatedJournal.companyId,
-      event.targetId,
-    );
-    if (attacker?.companyId === validatedJournal.companyId && externalDefender) {
-      leadershipAttacks.push({
-        sourceEventId,
-        characterId: attacker.projection.characterId,
-        attackerId: attacker.projection.characterId,
-        defenderId: defender?.projection.characterId ?? event.targetId,
-        receiptOrdinal: ordinal,
-      });
-    }
-    if (
-      attacker?.companyId === validatedJournal.companyId &&
-      externalDefender &&
-      attacker.projection.weapon.skillId !== null
-    ) {
-      const start = starts.get(kernelCommand.activationId);
-      requirePhysical(start?.unitId === kernelCommand.actorId, 'INVALID_SOURCE');
-      usedStarts.add(kernelCommand.activationId);
-      interactions.push({
-        sourceEventId,
-        characterId: attacker.projection.characterId,
-        skillId: attacker.projection.weapon.skillId,
-        methodId: 'weapon-attack',
-        outcome: event.hit ? 'SUCCESS' : 'MEANINGFUL_FAILURE',
-        startedAt: start.startedAt,
-        attackerId: attacker.projection.characterId,
-        defenderId: defender?.projection.characterId ?? event.targetId,
-        weaponProfile: attacker.projection.weapon.profileId,
-        activationId: kernelCommand.activationId,
-        receiptOrdinal: ordinal,
-        startReceiptOrdinal: start.startReceiptOrdinal,
-      });
-    }
-    if (
-      defender?.companyId === validatedJournal.companyId &&
-      externalAttacker &&
-      before.units.find((unit) => unit.id === event.targetId)?.guarding
-    ) {
-      const defend = validatedJournal.receipts
-        .slice(1, ordinal)
-        .toReversed()
-        .find(
-          (entry) =>
-            entry.kernelCommand?.type === 'defend' &&
-            entry.kernelCommand.actorId === event.targetId,
-        );
-      requirePhysical(defend?.kernelCommand?.type === 'defend', 'INVALID_SOURCE');
-      const start = starts.get(defend.kernelCommand.activationId);
-      requirePhysical(start?.unitId === event.targetId, 'INVALID_SOURCE');
-      usedStarts.add(defend.kernelCommand.activationId);
-      interactions.push({
-        sourceEventId,
-        characterId: defender.projection.characterId,
-        skillId: 'defense',
-        methodId: 'guard-interaction',
-        outcome: 'SUCCESS',
-        startedAt: start.startedAt,
-        attackerId: attacker?.projection.characterId ?? event.attackerId,
-        defenderId: defender.projection.characterId,
-        activationId: defend.kernelCommand.activationId,
-        receiptOrdinal: ordinal,
-        startReceiptOrdinal: start.startReceiptOrdinal,
-      });
-    }
-  }
+  const { interactions, leadershipAttacks, usedStarts } = collectPracticeStrikes({
+    journal: validatedJournal,
+    receiptIndex,
+    receiptTicks,
+    starts,
+  });
   for (const start of starts.values()) {
     if (usedStarts.has(start.activationId)) continue;
     const command = validatedJournal.receipts[start.startReceiptOrdinal]?.kernelCommand;
@@ -542,13 +448,18 @@ export function deriveCombatPracticeReceipt(
           ? currentPerson?.aptitudeBySkill[interaction.skillId]
           : undefined);
       const atTick = receiptTicks[receiptIndex]!;
+      // Source authority stays at admission even when the receipt root has advanced.
       requirePhysical(
         levelAtStart !== undefined &&
           Number.isSafeInteger(aptitudeAtStartBps) &&
           aptitudeAtStartBps! > 0 &&
           context.companyId === root.lifecycle.companyId &&
           context.worldId === root.lifecycle.worldId &&
-          context.canonicalRevision === root.lifecycle.revision &&
+          validatedJournal.binding.participants.some(
+            (participant) =>
+              participant.companyId === root.lifecycle.companyId &&
+              participant.revision === context.canonicalRevision,
+          ) &&
           context.atTick === atTick,
         'INVALID_SOURCE',
       );
@@ -751,6 +662,204 @@ function character(root: MaterializedCompanyState, characterId: string) {
   return root.lifecycle.characters.find((entry) => entry.identity.characterId === characterId);
 }
 
+type PracticeStrikeInput = {
+  readonly journal: CombatReceiptJournal;
+  readonly receiptIndex: number;
+  readonly receiptTicks: readonly string[];
+  readonly starts: ReadonlyMap<string, CombatPracticeProfile['actionStarts'][number]>;
+};
+
+function collectPracticeStrikes(input: PracticeStrikeInput) {
+  const participantByUnit = new Map(
+    input.journal.binding.participants.map((participant) => [participant.unitId, participant]),
+  );
+  const interactions: DerivedInteraction[] = [];
+  const leadershipAttacks: LeadershipAttack[] = [];
+  const usedStarts = new Set<string>();
+  for (let ordinal = 1; ordinal <= input.receiptIndex; ordinal += 1) {
+    const strikes = collectReceiptPracticeStrikes(input, ordinal, participantByUnit);
+    interactions.push(...strikes.interactions);
+    leadershipAttacks.push(...strikes.leadershipAttacks);
+    for (const interaction of strikes.interactions) usedStarts.add(interaction.activationId);
+  }
+  return { interactions, leadershipAttacks, usedStarts };
+}
+
+function collectReceiptPracticeStrikes(
+  input: PracticeStrikeInput,
+  ordinal: number,
+  participantByUnit: ReadonlyMap<string, CombatReceiptJournal['binding']['participants'][number]>,
+) {
+  const { journal: validatedJournal, receiptTicks, starts } = input;
+  const interactions: DerivedInteraction[] = [];
+  const leadershipAttacks: LeadershipAttack[] = [];
+  const receipt = validatedJournal.receipts[ordinal]!;
+  const kernelCommand = receipt.kernelCommand;
+  if (!kernelCommand) return { interactions, leadershipAttacks };
+  const tactical = validatedJournal.binding.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+  for (const event of practiceAttackEvents(receipt, validatedJournal.binding.setup.rulesetId)) {
+    requirePhysical(
+      tactical ||
+        (kernelCommand.type === 'attack' &&
+          event.attackerId === kernelCommand.actorId &&
+          event.targetId === kernelCommand.targetId),
+      'INVALID_SOURCE',
+    );
+    const eventIndex = receipt.transition.events.indexOf(event as CombatEvent);
+    const sourceEventId = receipt.sourceEventIds[eventIndex];
+    requirePhysical(sourceEventId, 'INVALID_SOURCE');
+    const attacker = participantByUnit.get(event.attackerId);
+    const defender = participantByUnit.get(event.targetId);
+    const externalAttacker = isOpposingEncounterSide(
+      validatedJournal.binding,
+      validatedJournal.companyId,
+      event.attackerId,
+    );
+    const externalDefender = isOpposingEncounterSide(
+      validatedJournal.binding,
+      validatedJournal.companyId,
+      event.targetId,
+    );
+    if (attacker?.companyId === validatedJournal.companyId && externalDefender) {
+      leadershipAttacks.push({
+        sourceEventId,
+        characterId: attacker.projection.characterId,
+        attackerId: attacker.projection.characterId,
+        defenderId: defender?.projection.characterId ?? event.targetId,
+        receiptOrdinal: ordinal,
+      });
+    }
+    const strike = {
+      validatedJournal,
+      ordinal,
+      receiptTick: receiptTicks[ordinal]!,
+      starts,
+      kernelCommand,
+      event,
+      sourceEventId,
+      attacker,
+      defender,
+      externalAttacker,
+      externalDefender,
+      tactical,
+    };
+    for (const interaction of [
+      weaponPracticeInteraction(strike),
+      guardPracticeInteraction(strike),
+    ]) {
+      if (!interaction) continue;
+      interactions.push(interaction);
+    }
+  }
+  return { interactions, leadershipAttacks };
+}
+
+type PracticeStrike = {
+  readonly validatedJournal: CombatReceiptJournal;
+  readonly ordinal: number;
+  readonly receiptTick: string;
+  readonly starts: ReadonlyMap<string, CombatPracticeProfile['actionStarts'][number]>;
+  readonly kernelCommand: NonNullable<CombatReceiptJournal['receipts'][number]['kernelCommand']>;
+  readonly event: AttackResolvedEvent;
+  readonly sourceEventId: string;
+  readonly attacker: CombatReceiptJournal['binding']['participants'][number] | undefined;
+  readonly defender: CombatReceiptJournal['binding']['participants'][number] | undefined;
+  readonly externalAttacker: boolean;
+  readonly externalDefender: boolean;
+  readonly tactical: boolean;
+};
+
+function weaponPracticeInteraction(input: PracticeStrike): DerivedInteraction | undefined {
+  const {
+    validatedJournal,
+    ordinal,
+    starts,
+    kernelCommand,
+    event,
+    sourceEventId,
+    attacker,
+    defender,
+    externalDefender,
+    tactical,
+  } = input;
+  if (
+    attacker?.companyId !== validatedJournal.companyId ||
+    !externalDefender ||
+    attacker.projection.weapon.skillId === null
+  )
+    return undefined;
+  const reactive =
+    tactical && (kernelCommand.type !== 'attack' || kernelCommand.actorId !== event.attackerId);
+  const actionId = reactive
+    ? `${kernelCommand.activationId}:reaction:${event.attackerId}`
+    : kernelCommand.activationId;
+  const start = reactive
+    ? {
+        unitId: event.attackerId,
+        startedAt: input.receiptTick,
+        startReceiptOrdinal: ordinal,
+      }
+    : starts.get(actionId);
+  requirePhysical(start?.unitId === event.attackerId, 'INVALID_SOURCE');
+  return {
+    sourceEventId,
+    characterId: attacker.projection.characterId,
+    skillId: attacker.projection.weapon.skillId,
+    methodId: 'weapon-attack',
+    outcome: event.hit ? 'SUCCESS' : 'MEANINGFUL_FAILURE',
+    startedAt: start.startedAt,
+    attackerId: attacker.projection.characterId,
+    defenderId: defender?.projection.characterId ?? event.targetId,
+    weaponProfile: attacker.projection.weapon.profileId,
+    activationId: actionId,
+    receiptOrdinal: ordinal,
+    startReceiptOrdinal: start.startReceiptOrdinal,
+  };
+}
+
+function guardPracticeInteraction(input: PracticeStrike): DerivedInteraction | undefined {
+  const {
+    validatedJournal,
+    ordinal,
+    starts,
+    event,
+    sourceEventId,
+    attacker,
+    defender,
+    externalAttacker,
+  } = input;
+  const before = validatedJournal.receipts[ordinal - 1]!.transition.state;
+  if (
+    defender?.companyId !== validatedJournal.companyId ||
+    !externalAttacker ||
+    !before.units.find((unit) => unit.id === event.targetId)?.guarding
+  )
+    return undefined;
+  const defend = validatedJournal.receipts
+    .slice(1, ordinal)
+    .toReversed()
+    .find(
+      (entry) =>
+        entry.kernelCommand?.type === 'defend' && entry.kernelCommand.actorId === event.targetId,
+    );
+  requirePhysical(defend?.kernelCommand?.type === 'defend', 'INVALID_SOURCE');
+  const start = starts.get(defend.kernelCommand.activationId);
+  requirePhysical(start?.unitId === event.targetId, 'INVALID_SOURCE');
+  return {
+    sourceEventId,
+    characterId: defender.projection.characterId,
+    skillId: 'defense',
+    methodId: 'guard-interaction',
+    outcome: 'SUCCESS',
+    startedAt: start.startedAt,
+    attackerId: attacker?.projection.characterId ?? event.attackerId,
+    defenderId: defender.projection.characterId,
+    activationId: defend.kernelCommand.activationId,
+    receiptOrdinal: ordinal,
+    startReceiptOrdinal: start.startReceiptOrdinal,
+  };
+}
+
 /** G09: compose only adapter-issued credits whose proof is present in replayed G06 history. */
 export function prepareCombatPracticeEffects(
   initialRoot: MaterializedCompanyState,
@@ -801,103 +910,14 @@ export function prepareCombatPracticeEffects(
     starts.set(start.activationId, start);
   }
 
-  const participantByUnit = new Map(
-    journal.binding.participants.map((participant) => [participant.unitId, participant]),
-  );
-  const interactions: DerivedInteraction[] = [];
-  const leadershipAttacks: LeadershipAttack[] = [];
-  for (let receiptIndex = 1; receiptIndex < journal.receipts.length; receiptIndex += 1) {
-    const receipt = journal.receipts[receiptIndex]!;
-    const kernelCommand = receipt.kernelCommand;
-    if (kernelCommand?.type !== 'attack') continue;
-    const before = journal.receipts[receiptIndex - 1]!.transition.state;
-    const event = receipt.transition.events.find(
-      (entry): entry is AttackResolvedEvent => entry.type === 'attack.resolved',
-    );
-    requirePhysical(event, 'INVALID_SOURCE');
-    const eventIndex = receipt.transition.events.indexOf(event as CombatEvent);
-    requirePhysical(
-      event.attackerId === kernelCommand.actorId && event.targetId === kernelCommand.targetId,
-      'INVALID_SOURCE',
-    );
-    const sourceEventId = receipt.sourceEventIds[eventIndex];
-    requirePhysical(sourceEventId, 'INVALID_SOURCE');
-    const attacker = participantByUnit.get(event.attackerId);
-    const defender = participantByUnit.get(event.targetId);
-    const isExternalAttacker = isOpposingEncounterSide(
-      journal.binding,
-      journal.companyId,
-      event.attackerId,
-    );
-    const isExternalDefender = isOpposingEncounterSide(
-      journal.binding,
-      journal.companyId,
-      event.targetId,
-    );
-    if (attacker?.companyId === journal.companyId && isExternalDefender) {
-      leadershipAttacks.push({
-        sourceEventId,
-        characterId: attacker.projection.characterId,
-        attackerId: attacker.projection.characterId,
-        defenderId: defender?.projection.characterId ?? event.targetId,
-        receiptOrdinal: receiptIndex,
-      });
-    }
-    if (
-      attacker?.companyId === journal.companyId &&
-      isExternalDefender &&
-      attacker.projection.weapon.skillId !== null
-    ) {
-      const start = starts.get(kernelCommand.activationId);
-      requirePhysical(start?.unitId === kernelCommand.actorId, 'INVALID_SOURCE');
-      requirePhysical(character(initialRoot, attacker.projection.characterId), 'INVALID_SOURCE');
-      interactions.push({
-        sourceEventId,
-        characterId: attacker.projection.characterId,
-        skillId: attacker.projection.weapon.skillId,
-        methodId: 'weapon-attack',
-        outcome: event.hit ? 'SUCCESS' : 'MEANINGFUL_FAILURE',
-        startedAt: start.startedAt,
-        attackerId: attacker.projection.characterId,
-        defenderId: defender?.projection.characterId ?? event.targetId,
-        weaponProfile: attacker.projection.weapon.profileId,
-        activationId: kernelCommand.activationId,
-        receiptOrdinal: receiptIndex,
-        startReceiptOrdinal: start.startReceiptOrdinal,
-      });
-    }
-    if (defender?.companyId === journal.companyId && isExternalAttacker) {
-      const wasGuarding = before.units.find((unit) => unit.id === event.targetId)?.guarding;
-      if (wasGuarding) {
-        const defend = journal.receipts
-          .slice(1, receiptIndex)
-          .toReversed()
-          .find(
-            (entry) =>
-              entry.kernelCommand?.type === 'defend' &&
-              entry.kernelCommand.actorId === event.targetId,
-          );
-        requirePhysical(defend?.kernelCommand?.type === 'defend', 'INVALID_SOURCE');
-        const start = starts.get(defend.kernelCommand.activationId);
-        requirePhysical(start?.unitId === event.targetId, 'INVALID_SOURCE');
-        requirePhysical(character(initialRoot, defender.projection.characterId), 'INVALID_SOURCE');
-        interactions.push({
-          sourceEventId,
-          characterId: defender.projection.characterId,
-          skillId: 'defense',
-          methodId: 'guard-interaction',
-          outcome: 'SUCCESS',
-          startedAt: start.startedAt,
-          attackerId: attacker?.projection.characterId ?? event.attackerId,
-          defenderId: defender.projection.characterId,
-          activationId: defend.kernelCommand.activationId,
-          receiptOrdinal: receiptIndex,
-          startReceiptOrdinal: starts.get(defend.kernelCommand.activationId)!.startReceiptOrdinal,
-        });
-      }
-    }
-  }
-
+  const { interactions, leadershipAttacks } = collectPracticeStrikes({
+    journal,
+    receiptIndex: journal.receipts.length - 1,
+    receiptTicks: journal.receipts.map(() => context.atTick),
+    starts,
+  });
+  for (const interaction of interactions)
+    requirePhysical(character(initialRoot, interaction.characterId), 'INVALID_SOURCE');
   const leaderId = effectiveLeaderId(initialRoot.lifecycle);
   const cycles = [...profile.leadershipCycles].sort(
     (left, right) => left.endReceiptOrdinal - right.endReceiptOrdinal,
@@ -1038,7 +1058,8 @@ export function prepareCombatPracticeEffects(
           canonicalJson(fact.proof) === canonicalJson(expectedProof),
         'INVALID_SOURCE',
       );
-      if (interaction.methodId !== 'command-cycle') usedStarts.add(interaction.activationId);
+      if (interaction.methodId !== 'command-cycle' && starts.has(interaction.activationId))
+        usedStarts.add(interaction.activationId);
       root = preparePracticeCredit(root, command, trustedContext);
     }
   }
@@ -1052,4 +1073,26 @@ export function prepareCombatPracticeEffects(
     root,
     credits: interactions.length,
   });
+}
+
+function practiceAttackEvents(
+  receipt: CombatReceiptJournal['receipts'][number],
+  ruleset: string,
+): readonly AttackResolvedEvent[] {
+  const strikes = receipt.transition.events.filter(
+    (event): event is AttackResolvedEvent => event.type === 'attack.resolved',
+  );
+  if (ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID) return strikes;
+  return receipt.kernelCommand?.type === 'attack' ? strikes.slice(0, 1) : [];
+}
+function attackStartsPractice(
+  command: NonNullable<CombatReceiptJournal['receipts'][number]['kernelCommand']>,
+  event: AttackResolvedEvent,
+  attacker: CombatReceiptJournal['binding']['participants'][number],
+): boolean {
+  return (
+    attacker.projection.weapon.skillId !== null &&
+    command.type === 'attack' &&
+    command.actorId === event.attackerId
+  );
 }

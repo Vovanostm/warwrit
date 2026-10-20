@@ -29,7 +29,7 @@ const command = fc.record({
 });
 
 const invalidValues: Record<string, readonly unknown[]> = {
-  version: [0, 2, '1', undefined],
+  version: [0, 99, '1', undefined],
   encounterId: ['', 'not-a-uuid', '00000000-0000-0000-0000-000000000000', 7],
   commandId: ['', 'x'.repeat(129), 1, null],
   expectedRevision: [-1, 1.5, Number.MAX_SAFE_INTEGER + 1, '1'],
@@ -89,4 +89,36 @@ describe('private encounter control grant request guard', () => {
     ])
       expect(isEncounterControlGrantRequestDto(value)).toBe(false);
   });
+});
+
+it('allows strict v2 tactical intents while preserving the v1 guard', () => {
+  const base = fc.sample(command, { numRuns: 1, seed: 1 })[0]!;
+  for (const intent of [
+    { type: 'autoplay' },
+    { type: 'flee' },
+    { type: 'surrender' },
+    { type: 'use-skill', skillId: 'rally', targetId: 'ally' },
+    { type: 'prepare-threat', targetId: 'enemy' },
+  ]) {
+    expect(isEncounterCommandDto({ ...base, version: 2, intent })).toBe(true);
+    expect(isEncounterCommandDto({ ...base, version: 1, intent })).toBe(false);
+    expect(isEncounterCommandDto({ ...base, version: 2, intent: { ...intent, rank: 3 } })).toBe(
+      false,
+    );
+  }
+  expect(
+    isEncounterCommandDto({
+      ...base,
+      version: 2,
+      intent: { type: 'use-skill', skillId: 'unknown' },
+    }),
+  ).toBe(false);
+});
+
+it('rejects coerced or missing tactical skill identifiers', () => {
+  const base = fc.sample(command, { numRuns: 1, seed: 1 })[0]!;
+  for (const skillId of [['shield-brace'], {}, null, undefined, 3])
+    expect(
+      isEncounterCommandDto({ ...base, version: 2, intent: { type: 'use-skill', skillId } }),
+    ).toBe(false);
 });

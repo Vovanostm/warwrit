@@ -63,7 +63,8 @@ export function toEncounterPublicProjection(
     },
     units: encounter.state.units.map((unit) => {
       combat.invariant(
-        unit.status !== 'surrendered',
+        encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+          unit.status !== 'surrendered',
         'Sprite prototype status cannot enter a V1 encounter projection',
       );
       return {
@@ -101,6 +102,7 @@ export function toEncounterControlGrant(
     revision: encounter.revision,
     controllableUnitIds: [...participant.unit_ids],
     ...actorActions(encounter, participant.unit_ids),
+    ...tacticalPreview(encounter, participant.unit_ids),
     ...(typeof participant.afk === 'boolean' ? { selfAfk: participant.afk } : {}),
     ...(participant.resume_requested_after_epoch === null ||
     Number.isSafeInteger(participant.resume_requested_after_epoch)
@@ -116,7 +118,8 @@ function actorActions(
   const state = encounter.state as combat.BattleState;
   const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
   if (
-    state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+    (state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID) ||
     !state.activation ||
     !actor?.capabilities ||
     !ownedIds.includes(actor.id)
@@ -127,9 +130,57 @@ function actorActions(
     actorActions: {
       activationId: state.activation.id,
       actorId: actor.id,
-      permittedIntents: (['move', 'attack', 'defend', 'wait', 'retreat'] as const).filter(
-        (intent) => intent === 'wait' || capabilities[intent],
-      ),
+      permittedIntents: [
+        ...(['move', 'attack', 'defend', 'wait', 'retreat'] as const).filter(
+          (intent) =>
+            intent === 'wait' ||
+            (capabilities[intent] &&
+              (!combat.isCombatPanicked(state, actor) || intent === 'retreat')),
+        ),
+        ...(state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
+          ? [
+              'autoplay' as const,
+              ...(combat.isCombatPanicked(state, actor) &&
+              combat.combatActionAllowed(state, actor, 'flee')
+                ? ['flee' as const]
+                : []),
+              ...(combat.canCombatSurrender(state, actor) ? ['surrender' as const] : []),
+            ]
+          : []),
+      ],
+    },
+  };
+}
+
+function tacticalPreview(
+  encounter: EncounterStoredRow,
+  ownedIds: readonly string[],
+): Pick<EncounterControlGrantDto, 'tactical'> {
+  const state = encounter.state;
+  const activation = state.activation;
+  const actor = state.units.find((unit) => unit.id === activation?.unitId);
+  if (
+    state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    !activation ||
+    !actor ||
+    !ownedIds.includes(actor.id)
+  )
+    return {};
+  return {
+    tactical: {
+      activationId: activation.id,
+      actorId: actor.id,
+      actionPoints: activation.remainingActionPoints,
+      stamina: actor.stamina,
+      moves: combat.previewCombatMovement(state).map((move) => ({
+        to: move.to,
+        path: move.path,
+        actionPointCost: move.actionPointCost,
+        staminaCost: move.staminaCost,
+        fireDamage: move.fireDamage,
+        reactionCount: move.reactions?.length ?? 0,
+      })),
+      attacks: combat.previewCombatAttacks(state),
     },
   };
 }

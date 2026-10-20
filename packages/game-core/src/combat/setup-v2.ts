@@ -2,6 +2,7 @@ import {
   validateUnitIdentity,
   validateUnitPosition,
   validateCombatMap,
+  validateCombatTiles,
   createUnitAdmission,
   validateInteger,
 } from './setup-validation.js';
@@ -20,11 +21,16 @@ export const M1_DOMAIN_BRIDGE_RULESET_ID = 'm1-domain-bridge-v1' as const;
 export const M1_DOMAIN_BRIDGE_V2_RULESET_ID = 'm1-domain-bridge-v2' as const;
 export const M1_DOMAIN_BRIDGE_V3_RULESET_ID = 'm1-domain-bridge-v3' as const;
 
+export const M1_DOMAIN_BRIDGE_V4_RULESET_ID = 'm1-domain-bridge-v4' as const;
+
 export function validateCombatCapabilities(
   value: CombatCapabilities | undefined,
   rulesetId: string,
 ): void {
-  if (rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID) {
+  if (
+    rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
+    rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID
+  ) {
     invariant(value === undefined, 'Capabilities require bridge-v3');
     return;
   }
@@ -62,7 +68,8 @@ export interface BattleSetupV2 {
   readonly rulesetId:
     | typeof M1_DOMAIN_BRIDGE_RULESET_ID
     | typeof M1_DOMAIN_BRIDGE_V2_RULESET_ID
-    | typeof M1_DOMAIN_BRIDGE_V3_RULESET_ID;
+    | typeof M1_DOMAIN_BRIDGE_V3_RULESET_ID
+    | typeof M1_DOMAIN_BRIDGE_V4_RULESET_ID;
   readonly seed: number;
   readonly map: CombatMap;
   readonly sides: readonly [CombatSideSetup, CombatSideSetup];
@@ -114,7 +121,8 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
   invariant(
     setup.rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID ||
       setup.rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
-      setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+      setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID,
     `V2 battle setup ruleset must be ${M1_DOMAIN_BRIDGE_RULESET_ID} or ${M1_DOMAIN_BRIDGE_V2_RULESET_ID}`,
   );
   invariant(setup.battleId.length > 0, 'Battle id must not be empty');
@@ -125,6 +133,8 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
     `V2 battle must contain ${V2_UNIT_LIMITS.minimum}-${V2_UNIT_LIMITS.maximum} real units`,
   );
 
+  const tactical = setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+  if (tactical) validateCombatTiles(setup.map);
   const { mapKeys, blockedKeys } = validateCombatMap(setup.map);
   const { sideIds, unitIds, occupied, unitsPerSide } = createUnitAdmission(
     setup.sides,
@@ -133,17 +143,22 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
   );
   for (const unit of setup.units) {
     validateUnitIdentity(unit, unitIds, sideIds);
-    invariant(
-      unit.trainedMelee === undefined && unit.incorporeal === undefined,
-      'Prototype combat traits require sprite-prototype-v1',
-    );
+    if (tactical) {
+      validatePersistentTacticalInputs(unit);
+    } else {
+      invariant(
+        unit.trainedMelee === undefined && unit.incorporeal === undefined,
+        'Prototype combat traits require sprite-prototype-v1',
+      );
+    }
     unitsPerSide.set(unit.sideId, (unitsPerSide.get(unit.sideId) ?? 0) + 1);
 
     validateUnitPosition(unit, mapKeys, blockedKeys, occupied);
 
     invariant(
       (M0_WEAPON_IDS as readonly string[]).includes(unit.weaponId) ||
-        (setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID && unit.weaponId === 'fists'),
+        ((setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || tactical) &&
+          unit.weaponId === 'fists'),
       `Unsupported V2 weapon profile: ${unit.weaponId}`,
     );
     validateCombatCapabilities(unit.capabilities, setup.rulesetId);
@@ -155,4 +170,25 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
   }
 
   return setup;
+}
+
+/** The bounded campaign bridge has no accepted skill/trait mapping. */
+export function validatePersistentTacticalInputs(unit: CombatUnitSetup): void {
+  invariant(
+    unit.skillRanks !== null &&
+      typeof unit.skillRanks === 'object' &&
+      !Array.isArray(unit.skillRanks) &&
+      Object.keys(unit.skillRanks).length === 0,
+    'Unmapped campaign skills are unavailable',
+  );
+  invariant(
+    unit.trainedMelee === undefined &&
+      unit.incorporeal === undefined &&
+      unit.threatProfile === undefined,
+    'Unmapped campaign traits are unavailable',
+  );
+  invariant(
+    ['human', 'beast', 'steady'].includes(unit.moralePolicy ?? ''),
+    'Tactical bridge requires a morale policy',
+  );
 }

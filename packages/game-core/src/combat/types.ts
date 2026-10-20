@@ -30,7 +30,8 @@ export type CombatRulesetId =
   | typeof SPRITE_PROTOTYPE_V3_RULESET_ID
   | 'm1-domain-bridge-v1'
   | 'm1-domain-bridge-v2'
-  | 'm1-domain-bridge-v3';
+  | 'm1-domain-bridge-v3'
+  | 'm1-domain-bridge-v4';
 export type WeaponId = (typeof M0_WEAPON_IDS)[number] | 'fists';
 export interface CombatCapabilities {
   readonly move: boolean;

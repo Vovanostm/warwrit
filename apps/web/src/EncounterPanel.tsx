@@ -233,10 +233,23 @@ export function EncounterPanel(props: {
   const ourNames = props.unitNames ?? {};
   const actorLabel = actorUnit ? unitLabel(actorUnit, ourNames) : 'участник вне открытой сводки';
   const pendingCommand = scopedState?.pendingCommand;
+  const tactical =
+    scopedState?.grant?.revision === projection?.revision &&
+    scopedState?.grant?.tactical?.activationId === projection?.activationId &&
+    scopedState?.grant?.tactical?.actorId === actorUnitId
+      ? scopedState.grant.tactical
+      : undefined;
+  const movePreview = tactical?.moves.find(
+    (move) => `${move.to.q},${move.to.r}` === destinationKey,
+  );
+  const attackPreview = tactical?.attacks.find((attack) => attack.targetId === selectedTargetId);
   const attackTargets =
     actorUnit && projection
       ? projection.units.filter(
-          (unit) => unit.status === 'active' && unit.sideId !== actorUnit.sideId,
+          (unit) =>
+            unit.status === 'active' &&
+            unit.sideId !== actorUnit.sideId &&
+            (!tactical || tactical.attacks.some((attack) => attack.targetId === unit.id)),
         )
       : [];
   const blockedHexes = new Set((projection?.map?.blocked ?? []).map(({ q, r }) => `${q},${r}`));
@@ -244,11 +257,12 @@ export function EncounterPanel(props: {
     projection?.units.filter((unit) => unit.status === 'active').map(({ q, r }) => `${q},${r}`) ??
       [],
   );
-  const moveDestinations =
-    projection?.map?.hexes.filter(({ q, r }) => {
-      const key = `${q},${r}`;
-      return !blockedHexes.has(key) && !occupiedHexes.has(key);
-    }) ?? [];
+  const moveDestinations = tactical
+    ? tactical.moves.map((move) => move.to)
+    : (projection?.map?.hexes.filter(({ q, r }) => {
+        const key = `${q},${r}`;
+        return !blockedHexes.has(key) && !occupiedHexes.has(key);
+      }) ?? []);
   useEffect(() => {
     if (!attackTargets.some((unit) => unit.id === selectedTargetId))
       setSelectedTargetId(attackTargets[0]?.id ?? '');
@@ -355,6 +369,26 @@ export function EncounterPanel(props: {
                 Ход {actorLabel}: щёлкните врага или клетку на поле, затем выберите действие.
                 Дальность и затраты проверяет сервер.
               </p>
+              {tactical && (
+                <p className="state-note">
+                  Очки действий: {tactical.actionPoints} · выносливость: {tactical.stamina}.
+                  Изученные приёмы недоступны.
+                </p>
+              )}
+              {attackPreview && (
+                <p className="state-note">
+                  Атака: {attackPreview.actionPointCost} ОД · {attackPreview.staminaCost}{' '}
+                  выносливости · шанс {attackPreview.hitChance}% · урон здоровью при попадании{' '}
+                  {attackPreview.damage.health.minimum}–{attackPreview.damage.health.maximum}.
+                </p>
+              )}
+              {movePreview && (
+                <p className="state-note">
+                  Путь: {movePreview.path.length} клеток · {movePreview.actionPointCost} ОД ·{' '}
+                  {movePreview.staminaCost} выносливости · огонь: {movePreview.fireDamage} ·
+                  ответных атак: {movePreview.reactionCount}.
+                </p>
+              )}
               {attackTargets.length > 0 && (
                 <div className="encounter-action-row">
                   <select
@@ -412,6 +446,35 @@ export function EncounterPanel(props: {
                   недоступны.
                 </p>
               )}
+              {tactical && (
+                <div className="encounter-action-row">
+                  <button
+                    className="button-action"
+                    type="button"
+                    onClick={() => void submitIntent({ type: 'autoplay' })}
+                  >
+                    Автобой: одно действие
+                  </button>
+                  {conditionAllows('flee') && (
+                    <button
+                      className="button-action"
+                      type="button"
+                      onClick={() => void submitIntent({ type: 'flee' })}
+                    >
+                      Бежать
+                    </button>
+                  )}
+                  {conditionAllows('surrender') && (
+                    <button
+                      className="button-action"
+                      type="button"
+                      onClick={() => void submitIntent({ type: 'surrender' })}
+                    >
+                      Сдаться
+                    </button>
+                  )}
+                </div>
+              )}
               <div className="encounter-action-row">
                 <button
                   className="button-action"
@@ -460,7 +523,9 @@ export function EncounterPanel(props: {
                         ? healthLabel(unit)
                         : unit.status === 'dead'
                           ? 'Погиб'
-                          : 'Отступил'}
+                          : unit.status === 'surrendered'
+                            ? 'Сдался'
+                            : 'Отступил'}
                       {canSelect ? ' · можно выбрать' : ' · выбор недоступен'}
                     </span>
                   </button>
@@ -529,18 +594,18 @@ export function EncounterPanel(props: {
     const grant = grantRef.current;
     const sender = commandSenderRef.current;
     const retry = 'commandId' in intentOrCommand;
-    const command = retry
+    const command: EncounterCommandDto | undefined = retry
       ? intentOrCommand
       : projection && grant && projection.actorUnitId
-        ? {
-            version: 1 as const,
+        ? ({
+            ...encounterIntentVersion(grant),
             encounterId: projection.encounterId,
             commandId: crypto.randomUUID(),
             expectedRevision: projection.revision,
             activationId: projection.activationId!,
             actorId: projection.actorUnitId,
             intent: intentOrCommand,
-          }
+          } as EncounterCommandDto)
         : undefined;
     if (
       !command ||
@@ -659,4 +724,8 @@ export function EncounterPanel(props: {
       }));
     }
   }
+}
+
+function encounterIntentVersion(grant: EncounterControlGrantDto): { version: 1 | 2 } {
+  return { version: grant.tactical ? 2 : 1 };
 }

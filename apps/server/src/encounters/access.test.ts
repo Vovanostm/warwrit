@@ -146,5 +146,29 @@ describe('public encounter projection', () => {
         },
       }),
     ).toThrow('Sprite prototype status cannot enter a V1 encounter projection');
+    const v4Setup: combat.BattleSetupV2 = {
+      ...v3Setup,
+      rulesetId: combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+      units: v3Setup.units.map((unit) => ({ ...unit, moralePolicy: 'human', skillRanks: {} })),
+    };
+    const v4 = { ...encounter, setup: v4Setup, state: combat.startBattleV2(v4Setup).state };
+    const v4Actor = v4.state.activation!.unitId;
+    expect(toEncounterControlGrant(v4, { unit_ids: ['foreign'] })?.tactical).toBeUndefined();
+    const grant4 = toEncounterControlGrant(v4, { unit_ids: [v4Actor] });
+    expect(grant4?.tactical).toMatchObject({
+      actorId: v4Actor,
+      activationId: v4.state.activation!.id,
+      actionPoints: 4,
+      moves: [],
+    });
+    const surrendered = toEncounterPublicProjection({
+      ...v4,
+      state: {
+        ...v4.state,
+        units: v4.state.units.map((unit) => ({ ...unit, status: 'surrendered' })),
+      },
+    });
+    expect(surrendered.units.every((unit) => unit.status === 'surrendered')).toBe(true);
+    expect(surrendered).not.toHaveProperty('tactical');
   });
 });

@@ -9,7 +9,7 @@ export function validateInteger(value: number, name: string, minimum = 0): void 
   );
 }
 
-export function validateHex(value: Hex, name: string): void {
+function validateHex(value: Hex, name: string): void {
   invariant(
     Number.isSafeInteger(value.q) && Number.isSafeInteger(value.r),
     `${name} coordinates must be safe integers`,
@@ -101,4 +101,21 @@ export function validateUnitPosition(
     phase === 'setup' ? `Multiple units occupy ${key}` : `Active units overlap at ${key}`,
   );
   occupied.add(key);
+}
+
+export function validateCombatTiles(map: CombatMap): void {
+  const mapKeys = new Set(map.hexes.map(hexKey));
+  const tileKeys = new Set<string>();
+  for (const [index, tile] of (map.tiles ?? []).entries()) {
+    validateHex(tile, `map.tiles[${index}]`);
+    const key = hexKey(tile);
+    invariant(mapKeys.has(key), `Terrain tile ${key} must exist in the battle map`);
+    invariant(!tileKeys.has(key), `Terrain tile ${key} must be unique`);
+    tileKeys.add(key);
+    invariant([0, 1, 2].includes(tile.height), `Terrain tile ${key} height must be 0, 1 or 2`);
+    invariant(
+      ['plain', 'mud', 'fire'].includes(tile.terrain),
+      `Terrain tile ${key} has an unknown terrain`,
+    );
+  }
 }

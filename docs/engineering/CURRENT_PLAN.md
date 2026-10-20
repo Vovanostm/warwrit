@@ -1,5 +1,106 @@
 # Warwrit current delivery plan
 
+**Bounded bridge ready to publish — 2026-10-20, LOCAL:**
+Integrated5221ebe3 on main6b5b1b03 passes coordinator validator8/8,
+793PASS/49SKIP and normal audit. Independent frozen source/test and actual
+terminal recovery ACCEPT; focused real PostgreSQL17 regression1PASS/14filteredSKIP.
+Owner mission “Implement, review, merge” authorizes this bounded delivery after
+successful hosted CI and expected-head checks. Full HUD/payment/M1 remain open.
+[Evidence](evidence/core-tactical-bridge/README.md).
+
+**Bridge integration — 2026-10-20, LOCAL:**
+Normal correction commitd82d0eb passes the audit and combines with actual
+main6b5b1b03 (actor PR245). Only additive documentation sections conflict;
+both histories are retained. Gameplay source is unchanged by this integration.
+Independent source/test and retained-terminal recovery ACCEPT precede the
+clean integrated validator and hosted CI; publication/merge pending.
+
+**Retained terminal recovered — 2026-10-20, LOCAL:**
+Independent recovery ACCEPT for d618b3a9 plus the one-line repository correction.
+Victory61 now persists both pre-fix READY roots, including helper revision1→1
+with five practice facts, both releases/completions and one proof. Exact early/
+terminal retries and another actual SIGKILL/restart leave all roots/counts unchanged.
+The earlier failure remains below; equal revision is not a no-op company root.
+The permanent PostgreSQL17 regression passes1/14filteredSKIP; server types,
+scoped lint/format PASS. Independent frozen source/test review ACCEPT. Integration
+and delivery gates remain pending. [Evidence](evidence/core-tactical-bridge/README.md).
+
+**Bridge runtime recovery / persistence correction — 2026-10-20, REWORK:**
+Independent current-source victory53 passed real terminal-commit-before-effects
+SIGKILL/restart, both releases/completions, one proof, exact early/terminal retries
+and a second settled restart. Supplementary victory61 exposed a separate P1:
+a READY helper company validly keeps lifecycle revision1→1, but the repository
+requires strict increase and rolls back both releases/proof. The owner casualty
+is not the cause. Independent source diagnosis confirms finalization may change
+binding/morale without a lifecycle increment. One writer owns only repository.ts
+and the real-PostgreSQL regression; preserve whole-root lock/evidence/receipt
+checks and permit non-decreasing lifecycle revision. Previous reaction correction
+ACCEPT remains scoped; bridge delivery is blocked on this correction/recovery.
+[Evidence](evidence/core-tactical-bridge/README.md). No new gameplay policy.
+
+**Actor marker delivered — 2026-10-20, MERGED:**
+[PR245](https://github.com/Vovanostm/warwrit/pull/245) merged6b5b1b03 after
+independent played/absolute visual ACCEPT and CI39399738137 SUCCESS:
+899PASS/48SKIP,10000stress,15realDB/auth,coverage/audit. Reviewed/tested/merged
+trees match. Actual-main smoke verifies marker ownership through inspection,
+Home and four real End-turn commands; full name visible day/night. The inherited
+reload observer failed; no new reload PASS is claimed. [Readback](evidence/uix-actor-foundation/main-readback.md).
+Issue186 remains open for190 enemy intermediate frames; no full-M1 acceptance.
+
+**Reaction correction independently reviewed — 2026-10-20, LOCAL:**
+Normal commit `d618b3a9` corrects the stale reaction coefficient and implicit-start
+consumption defects. Independent source re-review ACCEPT: the original reaction
+probes pass, and all 42 retained evaluator commands replay exactly; both company
+preparations are READY, released/completed once, with matching terminal pools and
+exact finalize retry. This is pure reconstruction, not fresh persisted recovery.
+Author focused coverage199PASS/1existingSKIP, types/lint/format/audit PASS;
+retained author46 reconstruction unchanged. Fresh independent PostgreSQL/browser
+reaction and terminal-interruption evaluation is running. Integrated validation,
+publication, CI and merge remain pending. [Current evidence](evidence/core-tactical-bridge/README.md).
+Owner decisions remain settled; no payment, skill mapping, custody or rescue claim.
+
+**Bounded bridge audit and integrated checks — 2026-10-20, LOCAL:**
+Normal source commit743ae5d closes the four introduced audit findings. Current
+focused coverage197PASS/1existingSKIP; types/lint/format/normal audit PASS.
+Coordinator validation on that clean commit EXIT0/8of8,791PASS/48SKIP.
+Read-only replay of the retained46-command journey matches both final company
+roots. Independent source review REWORK743ae5d: reaction credits use a stale
+admission skill level after prior progress, blocking supported settlement;
+the full-journal consumer also rejects implicit reaction starts. Pure
+reproductions are in .orca/core-tactical-bridge/review-1.md. Independent real play also REWORK: supported wolf victory42 with5reactions
+keeps both companies bound and issues no proof, including after restart.
+Evaluator cleanup removed its disposable DB; sanitized42-command rows remain
+in .orca/core-tactical-bridge/eval-runtime/ for pure reconstruction. Exact cause
+of that runtime failure still needs isolation. Correction, publication,
+CI and merge remain pending. Earlier failed checks retain their history.
+Owner decisions are settled; no new skills, custody, rescue or6v6 rules.
+
+**Bounded bridge165 author journey — 2026-10-20, LOCAL / audit pending:**
+New wolf-hunt admission uses bridge-v4/projection4, actual roster, canonical
+private movement/attack quotes and durable V2/requested-autoplay commands.
+Author real two-company6v3 journey reached victory46, exact retries, active
+process restart12 and once-only company effects/one proof. No payment, terminal
+crash-window, mapped skills, new terrain content or independent acceptance.
+196focusedPASS/1preexistingSKIP; normal audit first lacked coverage, then found
+new cycles/duplication/complexity. Corrected version guards and finite practice
+owner restructuring are under final audit/reconstruction; no bypass or commit
+claimed yet. [Owning behavior](../wiki/combat.md#persistent-tactical-wolf-hunt--2026-10-20).
+Parent owns integrated validation/review/publication; #166 retains HUD migration.
+
+**Profile delivered / tactical bridge active — 2026-10-20:**
+[PR241](https://github.com/Vovanostm/warwrit/pull/241) merged137faf88. Checked and
+merged trees match; CI39383402818 SUCCESS (893PASS/48SKIP,10000stress,15realDB/auth,
+coverage/audit). Owner policy and independent readback ACCEPT are retained in the
+[profile packet](evidence/core-company-profile/README.md). Actual-main profile
+smoke PASS (real PostgreSQL mixed JOIN/retry/reload,1PASS/13filteredSKIP) and
+main CI39384644400 SUCCESS; #164 CLOSED/agent:done. No payment/terminal-browser
+or full-M1 claim.
+One core writer starts #165 from that actual main in codex/tactical-bridge-165:
+existing wolf hunt/actual roster, canonical tactical rules, unavailable unmapped
+abilities and pending unsupported surrender without proof/payment. #166 retains
+HUD migration. Actor186 keeps its separate lab-scene writer. Parent owns shared
+records and serial check windows; implementation/acceptance of #165 NOT_RUN.
+
 **Actor backdrop correction and integrated checks — 2026-10-20, LOCAL:**
 Normal source commit6eb5263 fixes the reproduced ruined-mill/name draw-order
 collision. Current source-reloaded native100/125 day/night Home/close captures
@@ -78,6 +179,7 @@ enemy/frame agreement. Parent owns shared records and all delivery gates.
 Actor integration checks/independent playable/visual acceptance are NOT_RUN.
 Profile241 and bridge165 still await the pending critical-bleed/scope answers;
 approved fists and immobility remain, rescue/transport remains excluded.
+
 **Profile241 accepted locally — 2026-10-20, publication/CI pending:**
 Approved-policy source readback ACCEPTbc4d88e; current head a9207d76 adds only
 the owner's decision/documents. Coordinator validator EXIT0/8of8,

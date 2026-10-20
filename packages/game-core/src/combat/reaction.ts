@@ -1,7 +1,9 @@
+import { isTacticalV3Ruleset } from './rules.js';
 import { isSpriteS4Ruleset } from './rules.js';
 import { hexDistance } from './hex.js';
 import {
   combatAttackDamage,
+  combatActionAllowed,
   combatGuardedDamage,
   combatHitChance,
   combatRules,
@@ -10,13 +12,7 @@ import {
   SPRITE_PROTOTYPE_FIRE_DAMAGE,
 } from './rules.js';
 import { isCombatPanicked } from './rules.js';
-import {
-  SPRITE_PROTOTYPE_V3_RULESET_ID,
-  type BattleState,
-  type CombatUnitState,
-  type Hex,
-  type UnitId,
-} from './types.js';
+import { type BattleState, type CombatUnitState, type Hex, type UnitId } from './types.js';
 
 export interface CombatReactionPreview {
   readonly attackerId: UnitId;
@@ -38,6 +34,7 @@ export function combatReactionControllers(
     .filter(
       (unit) =>
         unit.status === 'active' &&
+        combatActionAllowed(state, unit, 'attack') &&
         unit.sideId !== mover.sideId &&
         unit.incorporeal !== true &&
         unit.weaponId !== 'bow' &&
@@ -96,7 +93,7 @@ export function previewCombatReactions(
     }
     const entersFire =
       state.map.tiles?.find((tile) => tile.q === to.q && tile.r === to.r)?.terrain === 'fire';
-    if (state.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID && entersFire) {
+    if (isTacticalV3Ruleset(state.rulesetId) && entersFire) {
       minimumHealth = Math.max(0, minimumHealth - SPRITE_PROTOTYPE_FIRE_DAMAGE);
       maximumHealth = Math.max(0, maximumHealth - SPRITE_PROTOTYPE_FIRE_DAMAGE);
     }

@@ -590,7 +590,7 @@ export async function persistFirstHuntTerminalCompanyTransition(
   if (
     before.worldId !== after.worldId ||
     before.companyId !== after.companyId ||
-    BigInt(after.revision) <= BigInt(before.revision) ||
+    BigInt(after.revision) < BigInt(before.revision) ||
     // A terminal outcome need not change what the company publicly knows.
     BigInt(after.knowledge.revision) < BigInt(before.knowledge.revision) ||
     !Number.isSafeInteger(input.terminalRevision) ||
