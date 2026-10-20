@@ -45,7 +45,6 @@ export function BattleGuidance({
           <span className="battle-range-legend" aria-label="Обозначения зон">
             <i data-zone="move" aria-hidden="true" /> Движение
             <i data-zone="weapon" aria-hidden="true" /> Оружие
-            <i data-zone="both" aria-hidden="true" /> Обе зоны
           </span>
         </>
       )}

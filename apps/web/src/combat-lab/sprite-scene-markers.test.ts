@@ -40,6 +40,7 @@ const view = {
   status: 'active' as const,
   controlledSideId: 'human',
   units: [actor, enemy],
+  viewRevision: 4,
   activation: { id: 'activation', actorId: 'actor', actionPoints: { current: 4, maximum: 4 } },
   movementPreview: [
     {
@@ -55,13 +56,19 @@ const view = {
   attackPreview: [{ targetId: 'enemy', hitChance: 80, actionPointCost: 2, staminaCost: 1 }],
 };
 
-it('combines public movement and passive reach, while legal targets and map boundaries keep their own authority', () => {
+it('fills movement cells and keeps passive weapon reach as a separate exterior contour', () => {
   const plan = markerPlan(view, tiles, selection);
-  expect(plan.cells.get('1,0')).toEqual({ fill: 'combined', border: 'combined', priority: 4 });
+  expect(plan.cells.get('1,0')).toEqual({ fill: 'movement', border: null, priority: 3 });
+  expect(plan.reachCells).toEqual(actor.weaponReach?.cells);
   expect(plan.cells.get('2,0')).toEqual({ fill: 'target', border: 'target', priority: 6 });
   expect(plan.cells.get('3,0')).toEqual({ fill: null, border: 'blocked', priority: 2 });
   expect(plan.cells.has('8,8')).toBe(false);
   expect([...plan.attackableIds]).toEqual(['enemy']);
+});
+
+it('keeps the explicit grid when movement fill is shown with full-grid enabled', () => {
+  const plan = markerPlan(view, tiles, { ...selection, showFullGrid: true });
+  expect(plan.cells.get('1,0')).toEqual({ fill: 'movement', border: 'grid', priority: 3 });
 });
 
 it('keeps passive inspection reach at AP zero without presenting attacks or movement as legal', () => {
@@ -70,8 +77,9 @@ it('keeps passive inspection reach at AP zero without presenting attacks or move
     tiles,
     { ...selection, selectedId: 'actor' },
   );
-  expect(plan.cells.get('1,0')).toEqual({ fill: 'shot', border: 'shot', priority: 4 });
-  expect(plan.cells.get('2,0')).toEqual({ fill: 'shot', border: 'shot', priority: 4 });
+  expect(plan.cells.has('1,0')).toBe(false);
+  expect(plan.cells.get('2,0')?.fill).toBeNull();
+  expect(plan.reachCells).toEqual(actor.weaponReach?.cells);
   expect([...plan.attackableIds]).toEqual([]);
 });
 
@@ -89,6 +97,20 @@ it('skill mode uses only matching legal previews and preserves threat then hover
   };
   const skillView = {
     ...view,
+    skillReach: [
+      {
+        actorId: 'actor',
+        activationId: 'activation',
+        revision: 4,
+        skillId: 'aimed-shot' as const,
+        minimumRange: 2,
+        maximumRange: 4,
+        cells: [
+          { q: 1, r: 0 },
+          { q: 2, r: 0 },
+        ],
+      },
+    ],
     units: [threatening, enemy],
     skillPreview: [
       {
@@ -137,6 +159,10 @@ it('skill mode uses only matching legal previews and preserves threat then hover
     selectedCell: enemy.position,
   };
   const threat = markerPlan(skillView, tiles, aimed);
+  expect(threat.reachCells).toEqual([
+    { q: 1, r: 0 },
+    { q: 2, r: 0 },
+  ]);
   expect(threat.cells.has('1,0')).toBe(false);
   expect(threat.cells.get('2,0')).toEqual({ fill: 'threat', border: 'threat', priority: 9 });
   const hover = markerPlan(skillView, tiles, {
@@ -151,6 +177,30 @@ it('skill mode uses only matching legal previews and preserves threat then hover
     aimed,
   );
   expect([...refused.attackableIds]).toEqual([]);
+});
+
+it('suppresses stale, missing and empty selected-skill geometry without weapon fallback', () => {
+  const selectionForSkill = { ...selection, selectedSkill: 'aimed-shot' as const };
+  const row = {
+    actorId: 'actor',
+    activationId: 'activation',
+    revision: 4,
+    skillId: 'aimed-shot' as const,
+    minimumRange: 2,
+    maximumRange: 4,
+    cells: [{ q: 1, r: 0 }],
+  };
+  for (const skillReach of [
+    null,
+    [],
+    [{ ...row, revision: 3 }],
+    [{ ...row, activationId: 'previous-activation' }],
+    [{ ...row, actorId: 'enemy' }],
+    [{ ...row, cells: [] }],
+  ]) {
+    const candidateView = skillReach ? { ...view, skillReach } : view;
+    expect(markerPlan(candidateView, tiles, selectionForSkill).reachCells).toEqual([]);
+  }
 });
 
 it('silhouette hover wins over attack tint only for living units', () => {

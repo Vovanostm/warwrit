@@ -6,6 +6,8 @@ type MarkerView = Pick<
   | 'status'
   | 'controlledSideId'
   | 'activation'
+  | 'viewRevision'
+  | 'skillReach'
   | 'attackPreview'
   | 'skillPreview'
   | 'units'
@@ -21,25 +23,15 @@ interface Selection {
   readonly highlightedId: string | null;
   readonly showFullGrid: boolean;
 }
-type Fill = 'preview' | 'selection' | 'movement' | 'combined' | 'shot' | 'target' | 'threat';
+type Fill = 'preview' | 'selection' | 'movement' | 'target' | 'threat';
 type Border =
-  | 'grid'
-  | 'blocked'
-  | 'friendly'
-  | 'enemy'
-  | 'inspection'
-  | 'path'
-  | 'movement'
-  | 'combined'
-  | 'shot'
-  | 'target'
-  | 'threat';
+  'grid' | 'blocked' | 'friendly' | 'enemy' | 'inspection' | 'path' | 'target' | 'threat';
 interface CellStyle {
   readonly fill: Fill | null;
-  readonly border: Border;
+  readonly border: Border | null;
   readonly priority: number;
 }
-type Cue = (hex: CombatLabHex, fill: Fill | null, border: Border, priority: number) => void;
+type Cue = (hex: CombatLabHex, fill: Fill | null, border: Border | null, priority: number) => void;
 
 function playerTurn(view: MarkerView, actor: Unit | undefined): boolean {
   if (view.status !== 'active' || actor?.status !== 'active') return false;
@@ -77,6 +69,21 @@ function reachForUnit(
   if (unit.weaponReach) return unit.weaponReach.cells;
   return unit.id === actor?.id ? (view.rangedAttackArea ?? []) : [];
 }
+function selectedSkillReach(
+  view: MarkerView,
+  actor: Unit | undefined,
+  selection: Selection,
+): readonly CombatLabHex[] {
+  if (!selection.selectedSkill || view.status !== 'active' || actor?.status !== 'active') return [];
+  const row = view.skillReach?.find(
+    (candidate) =>
+      candidate.actorId === actor.id &&
+      candidate.activationId === view.activation?.id &&
+      candidate.revision === view.viewRevision &&
+      candidate.skillId === selection.selectedSkill,
+  );
+  return row?.cells.length ? row.cells : [];
+}
 function baseCells(
   tiles: readonly (CombatLabHex & { readonly blocked: boolean })[],
   full: boolean,
@@ -100,20 +107,9 @@ function threatCells(view: MarkerView, cue: Cue) {
       cue(unit.threat.targetHex, 'threat', 'threat', 9);
   }
 }
-function reachCells(reach: readonly CombatLabHex[], movement: ReadonlySet<string>, cue: Cue) {
-  for (const hex of reach) {
-    const combined = movement.has(key(hex));
-    cue(hex, combined ? 'combined' : 'shot', combined ? 'combined' : 'shot', 4);
-  }
-}
-function legalMovement(
-  view: MarkerView,
-  selection: Selection,
-  reach: ReadonlySet<string>,
-  cue: Cue,
-) {
+function legalMovement(view: MarkerView, selection: Selection, cue: Cue) {
   for (const preview of movementCells(view, selection)) {
-    if (!reach.has(key(preview.to))) cue(preview.to, 'movement', 'movement', 3);
+    cue(preview.to, 'movement', selection.showFullGrid ? 'grid' : null, 3);
   }
 }
 function selectedPath(view: MarkerView, selection: Selection, cue: Cue) {
@@ -165,22 +161,21 @@ export function markerPlan(
   const actor = view.units.find(({ id }) => id === view.activation?.actorId);
   const acting = playerTurn(view, actor);
   const previews = targetPreviews(view, selection.selectedSkill);
-  const reach = weaponReach(view, actor, selection);
-  const movement = new Set(
-    acting ? movementCells(view, selection).map((preview) => key(preview.to)) : [],
-  );
+  const reachCells = selection.selectedSkill
+    ? selectedSkillReach(view, actor, selection)
+    : weaponReach(view, actor, selection);
   baseCells(tiles, selection.showFullGrid, cue);
   unitCells(view, selection, cue);
   threatCells(view, cue);
-  reachCells(reach, movement, cue);
   if (acting && actor) {
-    legalMovement(view, selection, new Set(reach.map(key)), cue);
+    legalMovement(view, selection, cue);
     selectedPath(view, selection, cue);
     legalTargets(view, previews, cue);
   }
   inspection(view, selection, cells, cue);
   return {
     cells,
+    reachCells,
     actor: actingUnitMarker(view),
     attackableIds: new Set(acting ? previews.map(({ targetId }) => targetId) : []),
     hoveredUnitId: selection.hoveredTarget?.unitId ?? selection.highlightedId,
