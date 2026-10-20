@@ -1,5 +1,38 @@
 # Warwrit current delivery plan
 
+**Persistent HUD delivered / representative recovery active — 2026-10-20:**
+[PR247](https://github.com/Vovanostm/warwrit/pull/247) merged7a7f1f18;
+#166 CLOSED/agent:done. Reviewed662d676, tested merge0ef9c136 and actual-main
+contents match. CI39446960412 SUCCESS:932unitPASS/49SKIP,10000stress,
+16realPG/auth,migrations,coverage/audit. Independent source/playable/absolute
+visual ACCEPT and both hosted corrections are retained in the
+[delivery readback](evidence/persistent-hud/main-readback.md).
+
+Continue the already-approved representative #174/#177 path from retained DB6
+wolf victory40 on actual main. Sole evaluator owns its local DB/services/browser;
+parent owns records in `codex/representative-hunt-recovery`. Next: ordinary
+pickup→present→actual process kill/restart→same saved result. No new rules,
+source reset, seed or retained player DB mutation. Accounts/starting company
+state are test fixtures; new external OIDC/company-creation/travel proof is not
+claimed. #174/#177 remain OPEN; full sprint/M1 remain PARTIAL. Native actual-main
+readback preserves battle40/companies/proof1; browser reload reached login after
+fixture sessions expired during CI. Fresh same-account fixture sessions precede
+the payment/restart continuation; canonical game state is not reseeded. Airtable
+Notes updated/read back exactly; Empirical remains storage-blocked/NOT_WRITTEN.
+The renewed synthetic sessions restore both same-company UIs with captured
+canonical tables unchanged; no new authentication proof. Runtime source remains
+7a7f1f18; main CI39449025408 pending.
+
+Separately, #187 consumer is active in clean `codex/combat-range-187` at7a7f1f18,
+checkout `codex-tactical-bridge-165` (historical directory name). One web writer
+owns scene/geometry/markers/guidance/styles; parent owns shared records. Only
+weapon/selected-skill union boundary and legend, reusing merged producers.
+#184 bands follow separately. Source-only window while the retained payment
+journey runs; no concurrent heavy checks or runtime changes. New consumer
+implementation/acceptance remains pending. A preparatory report from stale
+primary b44f5c1 was rejected and replaced with an exact-current-checkout brief;
+no edit was made from the stale report.
+
 **Persistent HUD hosted integration correction — 2026-10-20, PUBLISHED / REWORK:**
 PR247 correction72da1e3 passes clean local validator8/8,252PASS/49SKIP.
 Hosted CI39444350305 passes global dead-code,932unit tests/49SKIP and combat

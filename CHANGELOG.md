@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Deliver the persistent commander and continue the hunt — 2026-10-20
+
+- `codex/persistent-hud-166`, MERGED [PR247](https://github.com/Vovanostm/warwrit/pull/247)
+  as7a7f1f18 after current source/playable/absolute visual ACCEPT. Final hosted
+  CI39446960412 SUCCESS:932unitPASS/49SKIP,10000stress,16PG/auth,migrations,
+  coverage/audit; exact reviewed/tested/merged contents match. #166 CLOSED.
+  [Delivery and limits](docs/engineering/evidence/persistent-hud/main-readback.md).
+- `codex/representative-hunt-recovery`, LOCAL: activate only the approved
+  representative wolf-trophy→payment→restart check for #174/#177 using retained
+  DB6. Fixture provenance and broader recovery/content/owner-test gaps remain
+  explicit; no full-M1 or deployment claim. Runtime result pending.
+
 ### Align persistent HUD integration expectations — 2026-10-20, LOCAL / REWORK
 
 - `codex/persistent-hud-166`, [PR247](https://github.com/Vovanostm/warwrit/pull/247):
