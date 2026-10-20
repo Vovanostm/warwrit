@@ -1,5 +1,23 @@
 # Warwrit current delivery plan
 
+**Range contour187 — 2026-10-20, LOCAL / source, playable and visual ACCEPT:**
+Source `be8efd51709983b62733fa0436d02d975bc3eae5` on actual main7a7f1f18
+separates movement fill from weapon/selected-skill exterior boundaries.
+Independent source and browser ACCEPT; author24focusedPASS, normal auditPASS,
+parent integrated validator8/8PASS with51related tests. Real baseline passive
+inspection sent0POST;18ordinary End Turn actions reached legal aimed-shot at
+revision56, followed by0POST during its capture matrix. Native Chrome125%,
+day/night/CVD and inspected-scene2CSSpx floor are covered; stale/empty live
+substitution and arbitrary terrain are not claimed.
+
+Absolute visual critic ACCEPT on2026-10-21: all applicable criteria2, motion
+N/A, all62images inspected. Hosted CI and merge remain pending. Owner mission
+“Implement, review, merge” authorizes this slice after those gates. #184 follows
+separately. Pickup248 retains the failed DB6; its elapsed-tick regression exposed
+a helper static-food fixture gap, now being corrected without changing food or
+carrying policy. Full sprint/M1 remain partial.
+[Current checks, failures and playable evidence](evidence/range-187/README.md).
+
 **Persistent HUD hosted integration correction — 2026-10-20, PUBLISHED / REWORK:**
 PR247 correction72da1e3 passes clean local validator8/8,252PASS/49SKIP.
 Hosted CI39444350305 passes global dead-code,932unit tests/49SKIP and combat

@@ -5278,3 +5278,30 @@ validator 8/8 PASS. Это авторский проход: независимы
 игровая/визуальная оценка успешны. Проверка actual main подтвердила маркер,
 осмотр, Home и смену хода днём/ночью. Ошибка вспомогательного reload-наблюдателя
 сохранена как NOT_RUN нового reload, а не успех. [Readback](../engineering/evidence/uix-actor-foundation/main-readback.md).
+
+## Range boundary consumer — 2026-10-20
+
+Local `codex/combat-range-187` implements [issue187](https://github.com/Vovanostm/warwrit/issues/187):
+movement keeps its fill, while weapon reach becomes an ochre exterior contour
+of the server-supplied cell union, without internal edges or a third combined
+fill/legend item. Selected skill geometry must match actor, activation, revision
+and skill; absent/stale/empty geometry hides the contour instead of showing
+weapon fallback. No client legality, cost or range rule is introduced.
+
+Independent source review ACCEPT after correcting stale mesh bounds and truly
+borderless movement when the full grid is off. Existing grid/path/target cues
+remain. Initial focused18tests passed; web types first failed because generated
+protocol outputs were stale, then passed after dependency rebuilds. Initial
+audit rejected uncovered grid code and contour callbacks. The whole contour
+lifecycle now lives in sprite-reach-contour.ts, with current5-file focused
+coverage24PASS: translated terrain bounds, exterior edges, order-independent
+cache, camera/viewport width updates, empty clearing and observer disposal.
+The observer regression first failed against Babylon's retained/deferred
+observer bookkeeping, then passed with baseline cleanup checked. No audit
+threshold was changed. Final web types, scoped TS/TSX lint and source formatting
+PASS. CSS is outside ESLint configuration; its formatting check passed. Normal
+commit audit remains pending.
+
+Browser sizes/native125%, day/night, CVD, passive-input and absolute visual
+checks are NOT_RUN for this new consumer; source code alone is not accepted
+delivery. #184 affordability bands remain a separate slice.

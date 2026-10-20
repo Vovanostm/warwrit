@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Separate movement fill and reach boundary — 2026-10-20, LOCAL
+
+- `codex/combat-range-187`, [issue187](https://github.com/Vovanostm/warwrit/issues/187):
+  replace weapon/combined fills with the exterior contour of supplied cells.
+  Selected skills require current actor/activation/revision/skill geometry;
+  absent or stale data never falls back to weapon reach. Remove combined legend;
+  keep server legality, costs and replay unchanged.
+- Independent source review ACCEPT after mesh-bounds and borderless-fill fixes.
+  Initial audit failures led to a cohesive contour lifecycle module and reuse
+  of existing grid tests; current focused coverage24PASS. Stale package outputs
+  were rebuilt without encounter source changes. Final web types, scoped TS/TSX
+  lint and source formatting PASS. Normal audit and parent validator8/8PASS (51related tests); independent browser
+  ACCEPT, including actual aimed-shot selection and passive0POST. Absolute visual
+  ACCEPT on2026-10-21: all applicable criteria2, motion N/A,62images inspected.
+  Hosted CI and merge remain pending. [Current evidence](docs/engineering/evidence/range-187/README.md).
+  [Behavior and check history](docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
+
 ### Align persistent HUD integration expectations — 2026-10-20, LOCAL / REWORK
 
 - `codex/persistent-hud-166`, [PR247](https://github.com/Vovanostm/warwrit/pull/247):
