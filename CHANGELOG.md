@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Deliver canonical pickup targets — 2026-10-21, MERGED
+
+- `codex/representative-hunt-recovery`, [PR251](https://github.com/Vovanostm/warwrit/pull/251)
+  merged7b9a1dca; reviewed/tested/main contents match. CI39515766544 SUCCESS:
+  937unitPASS/50SKIP,10000stress,17realPG/auth,migrations,coverage/audit.
+  Independent source and recovered-save runtime ACCEPT; no impossible targets
+  offered, original failed DB6 preserved. Separate DB7 payment/restart follows;
+  broader174/177 remain partial. [Record](docs/engineering/evidence/persistent-hud/main-readback.md).
+
 ### Distinguish movement affordability — 2026-10-21, LOCAL
 
 - `codex/combat-affordability-184`: solid move+attack and hatched movement-only
@@ -19,6 +28,14 @@ requests.
   web typecheck, format, scoped TS/TSX lint and `check:changes` pass. Independent
   gameplay/visual review and publication remain pending.
   [Owning behavior](docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
+
+### Integrate pickup correction with merged range — 2026-10-21, LOCAL
+
+- `codex/representative-hunt-recovery`: c5acd803 combines actual range main
+  b0eeb8e8 with unchanged accepted pickup sourcef439db7. Both document histories
+  retained; normal auditPASS, clean union validator8/8PASS,41relatedPASS/31SKIP.
+  Hosted pickup gate/merge and separate payment journey remain pending.
+  [Evidence](docs/engineering/evidence/persistent-hud/main-readback.md).
 
 ### Deliver the separate reach boundary — 2026-10-21, MERGED
 
@@ -46,6 +63,52 @@ requests.
   ACCEPT on2026-10-21: all applicable criteria2, motion N/A,62images inspected.
   Hosted CI and merge remain pending. [Current evidence](docs/engineering/evidence/range-187/README.md).
   [Behavior and check history](docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
+
+### Accept the pickup projection on the recovered save — 2026-10-21, LOCAL
+
+- `codex/representative-hunt-recovery`, issue248: independent source and live
+  recovered-DB6 evaluation ACCEPT on f439db7. Both accounts have no impossible
+  pickup target/control,0POST,11canonical collections unchanged. Focused real-PG
+  coverage2PASS/14filteredSKIP, normal auditPASS, clean validator8/8PASS.
+  DB6 stays overloaded; payment/restart and separate DB7 remain unproven.
+  Preserve earlier failed checks and captures in the
+  [owning record](docs/engineering/evidence/persistent-hud/main-readback.md).
+
+### Preserve retained hunt recovery evidence — 2026-10-20, LOCAL
+
+- `codex/representative-hunt-recovery`: recover DB6 into an isolated durable
+  clone after the disposable container disappeared. Native saved identities,
+  encounter40, companies, receipts and proof match; original volume untouched.
+  Pickup/payment/browser continuation remains pending. Retain the exact food
+  regression failure and unresolved terminal settlement in the
+  [owning record](docs/engineering/evidence/persistent-hud/main-readback.md).
+
+### Align trophy pickup offers with canonical admission — 2026-10-20, LOCAL
+
+- `codex/representative-hunt-recovery`, [issue248](https://github.com/Vovanostm/warwrit/issues/248):
+  a real UI pickup rejected CAPACITY because its offered container had room but
+  the party was already overloaded. Reuse existing pure pickup admission for
+  the target projection; no carrying-rule or migration change. Frozen source/test
+  independent review ACCEPT; final real-PG focused coverage2PASS/14filteredSKIP
+  on2026-10-21. Exact fractional food/retry assertions retain unchanged ration
+  quantity and one terminal receipt. Normal audit and clean validator8/8PASS (41relatedPASS/31SKIP);
+  independent runtime delivery remains pending. Preserve failed DB6 and receipt; a separate valid-load
+  fixture must prove its own journey. [Evidence](docs/engineering/evidence/persistent-hud/main-readback.md).
+
+### Deliver the persistent commander and continue the hunt — 2026-10-20
+
+- `codex/persistent-hud-166`, MERGED [PR247](https://github.com/Vovanostm/warwrit/pull/247)
+  as7a7f1f18 after current source/playable/absolute visual ACCEPT. Final hosted
+  CI39446960412 SUCCESS:932unitPASS/49SKIP,10000stress,16PG/auth,migrations,
+  coverage/audit; exact reviewed/tested/merged contents match. #166 CLOSED.
+  [Delivery and limits](docs/engineering/evidence/persistent-hud/main-readback.md).
+- `codex/representative-hunt-recovery`, LOCAL: activate only the approved
+  representative wolf-trophy→payment→restart check for #174/#177 using retained
+  DB6. Fixture provenance and broader recovery/content/owner-test gaps remain
+  explicit; no full-M1 or deployment claim. Session renewal preserved canonical
+  game state; ordinary trophy pickup rejected409/CAPACITY despite the offered
+  destination. No partial mutation; payment/restart remain NOT_RUN. Read-only
+  diagnosis is active, and main CI39449025408 is now SUCCESS.
 
 ### Align persistent HUD integration expectations — 2026-10-20, LOCAL / REWORK
 

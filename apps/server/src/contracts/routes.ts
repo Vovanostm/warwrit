@@ -76,7 +76,7 @@ export function registerFirstHuntRoutes(
     await ensureFirstHuntGenesis(database, worldId);
     const response = await database.transaction().execute(async (transaction) => {
       const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
-      return readHuntView(transaction, worldId, companyId, profile);
+      return readHuntView(transaction, worldId, accountId, companyId, profile);
     });
     reply.header('cache-control', 'no-store');
     return response;
@@ -93,7 +93,7 @@ export function registerFirstHuntRoutes(
       const hunts: FirstHuntReadResponseDto[] = [];
       for (const profile of HUNT_PROFILES) {
         if (profile.instanceId === FIRST_HUNT_INSTANCE_ID) continue;
-        const view = await readHuntView(transaction, worldId, companyId, profile);
+        const view = await readHuntView(transaction, worldId, accountId, companyId, profile);
         if (!view?.contract) continue;
         if (profile.needsMillWorkerClues && !unlocked && view.contract.yourRole === 'NONE')
           continue;
@@ -680,6 +680,7 @@ async function executeContractCommand(input: {
 async function readHuntView(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
+  accountId: string,
   companyId: string | undefined,
   profile: HuntProfile,
 ): Promise<FirstHuntReadResponseDto | null> {
@@ -773,7 +774,8 @@ async function readHuntView(
             (role === 'OWNER' || role === 'HELPER') &&
             proof?.ground_item !== null &&
             proof?.ground_item !== undefined &&
-            admission?.effects_applied_at !== null &&
+            admission !== undefined &&
+            admission.effects_applied_at !== null &&
             encounter?.status === 'resolved' &&
             currentAggregate &&
             isAtArea(
@@ -788,7 +790,14 @@ async function readHuntView(
                 character.presence.location.areaId === profile.objectiveLocation.areaId &&
                 canPerform(character, 'travel'),
             )
-              ? firstHuntPickupTargets(currentAggregate, companyId, profile)
+              ? firstHuntPickupTargets(
+                  currentAggregate,
+                  accountId,
+                  companyId,
+                  profile,
+                  admission.encounter_id,
+                  proof.ground_item,
+                )
               : [],
           yourProof,
         }
@@ -933,8 +942,11 @@ function proofSourceId(encounterId: string): string {
 
 function firstHuntPickupTargets(
   state: CompanyCombatAggregateState,
+  accountId: string,
   companyId: string,
   profile: HuntProfile,
+  encounterId: string,
+  groundItem: unknown,
 ): readonly FirstHuntPickupTargetDto[] {
   const physical = state.economy.physical;
   if (!physical) return [];
@@ -964,7 +976,22 @@ function firstHuntPickupTargets(
         container.location.kind === 'AT' &&
         container.location.siteId === profile.objectiveLocation.siteId &&
         container.location.areaId === profile.objectiveLocation.areaId &&
-        availableContainerG(physical, container.containerId) >= proofDefinition.weightG
+        availableContainerG(physical, container.containerId) >= proofDefinition.weightG &&
+        prepareFirstHuntProofPickup({
+          previous: state,
+          accountId,
+          request: {
+            schemaVersion: 1,
+            commandId: 'first-hunt-pickup-target-preview',
+            expectedPublicRevision: state.economy.lifecycle.knowledge.revision,
+            type: 'PICKUP',
+            payload: { instanceId: profile.instanceId, toContainerId: container.containerId },
+          },
+          worldId: state.economy.lifecycle.worldId,
+          campaignTick: state.economy.lifecycle.campaignTick,
+          encounterId,
+          groundItem,
+        }).kind === 'PREPARED'
       );
     })
     .toSorted((left, right) =>
