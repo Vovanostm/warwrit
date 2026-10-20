@@ -1,7 +1,7 @@
 # Company profile acceptance evidence
 
 Source: `d3975cf3e293df2e6fc699b48a0c28e7f0b41a16`, after compatibility
-`ba9b146`. Later changes are documentation only. This is a pending delivery for
+`ba9b146`. Until the current-main integration below, later changes were documentation only. This is a pending delivery for
 #164, not full issue closure or a merged result.
 
 - [Initial source review](review-1.md), [compatibility correction](review-2.md)
@@ -32,3 +32,26 @@ no-independent-retreat rule and provisional fists parameters are recorded on
 [issue164](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952).
 Rescue/transport remains unresolved and outside this implementation. No merge
 until the remaining applicable policy and delivery gates are satisfied.
+
+## Current-main integration — 2026-10-20
+
+Actual main3c934c16 (merged HP242 and picker243) integrated by normal
+mergefbe225a; production merged without manual changes. Parent validator
+EXIT0/8of8,784 PASS/48 SKIP. Two obsolete six-field public-unit test assertions
+needed the exact seven-field allowlist including canonical maximumHealth.
+The [independent integration review](review-main-integration.md) found the second
+assertion in the database case. The named real PostgreSQL mixed JOIN/reload
+regression failed before correction, then passed1/13filteredSKIP after it;
+private capabilities/foreign accounts, durable replay and JOIN retry remain checked.
+Server typecheck/lint and normal commit audit PASS. [Correction review](review-main-correction.md)
+ACCEPT0fa34ed; source/rule semantics unchanged by that test correction.
+
+Initial merge hook failed from stale coverage; the failed combined test did not
+produce its coverage file, causing the next hook failure. Corrected related
+coverage then passed and the normal merge hook passed without bypass. Original
+CI39351771449 SUCCESS applies to795c842; refreshed hosted CI is pending for this
+integration. Earlier profile/HP playable proofs retain their original heads;
+no new full integrated battle, payment or terminal-browser claim. Parent removed
+only its disposable profile164-maincheck-20261020-0515 database environment.
+Old strict readers reject the new HP key; producer/new-reader rollout must remain
+coordinated. Critical-bleed remains PENDING_OWNER, rescue/transport excluded.

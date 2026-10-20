@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Accept the profile integration test correction
+
+- 2026-10-20, branch `codex/company-profile-164`, local: independent correction
+  review ACCEPT0fa34ed after the named real-DB FAIL-before/PASS-after proof;
+  preserve both integration reports and executed limits in the
+  [profile evidence](docs/engineering/evidence/core-company-profile/README.md).
+  Normal audit/server types/lint PASS; existing draft PR241 awaits refreshed CI
+  and owner critical-bleed policy. No production rule or migration change.
+
 ### Preserve public-field privacy in the merged profile database proof
 
 - 2026-10-20, branch `codex/company-profile-164`, local: independent review of

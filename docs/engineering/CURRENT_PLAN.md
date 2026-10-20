@@ -1,5 +1,13 @@
 # Warwrit current delivery plan
 
+**Profile integration review — 2026-10-20, LOCAL ACCEPT / draft retained:**
+Independent [correction review](evidence/core-company-profile/review-main-correction.md)
+ACCEPT0fa34ed closes the real-DB public-field assertion defect. Parent mixed
+JOIN/reload test FAIL-before/PASS-after, server types/lint and normal audit PASS.
+Parent validator EXIT0/8of8 atfbe225a remains the pre-correction integrated check;
+only the reviewed test and records changed afterward. Publish this revision to
+existing draft PR241 for refreshed CI; critical-bleed policy still blocks merge.
+
 **Profile integration correction — 2026-10-20, LOCAL / review pending:**
 Normal mergefbe225a has parent validator EXIT0/8of8 (784 PASS/48 SKIP).
 Independent integration review found a second obsolete six-field assertion in
