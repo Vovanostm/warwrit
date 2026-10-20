@@ -1,5 +1,25 @@
 # Warwrit current delivery plan
 
+**Picker #228 — 2026-10-20, LOCAL ACCEPT / publication pending:**
+Gated source049b6cb6 has independent Tier U ACCEPT: ordinary catalog selection,
+explicit load, edit/save/restore, native100/125, human battles with2/1surrenders,
+manual withdrawal reaction, restart/reload and mill restoration. Parent integrated
+main434d4a1a as403193f with additive document reconciliation only; editor source
+unchanged. Integrated validator EXIT0/8of8,5relatedPASS,normal auditPASS.
+[Evidence and finite limits](evidence/uix-preset-picker/README.md). CI/merge pending;
+this does not accept the whole scene. Overviewff40f304 played gate ACCEPT;
+visual5 scores2 but remains BLOCKED on missing controlled layer comparisons.
+One read-only evaluator supplies those inputs on its frozen source.
+
+**HP #163 — 2026-10-20, MERGED and clean-main smoke ACCEPT:**
+[PR242](https://github.com/Vovanostm/warwrit/pull/242) merged434d4a1a; #163 CLOSED.
+PR CI39366985666 and main CI39367809181 SUCCESS. Independent actual-main smoke
+EXIT0 confirms accepted controls and53/60,38/60 HTTP/browser/bar agreement after
+fresh entry/reload. [Readback](evidence/core-pools/main-readback.md). Prior cleanup
+FAIL13 remains recorded. Coordinated producer/reader rollout remains required;
+no deployment or contract/payment acceptance. PR241 still waits for the pending
+critical-bleed decision; #165 scope question and rescue/transport gap remain open.
+
 **Human preset picker — 2026-10-20, LOCAL / source checks complete:**
 Owner authorized implement/review/merge. `codex/preset-picker-228` starts from
 merged PR240 (`eb98dd2`) and changes only BattleEditor and its existing tests.

@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Accept the human preset picker and record merged canonical HP
+
+- 2026-10-20, branch `codex/preset-picker-228`, local: independent Tier U ACCEPT
+  for049b6cb6; normal catalog loading, saved drafts, native125 and two real human
+  battles demonstrate2/1surrenders and an actual withdrawal reaction. Integrate
+  main434d4a1a through403193f, preserving both document histories and unchanged
+  editor code. Parent validator8/8,5relatedPASS,normal auditPASS. Publication/CI/
+  merge pending. [Evidence](docs/engineering/evidence/uix-preset-picker/README.md).
+  Update owning battlefield wiki/CURRENT_PLAN; no rules, migrations or dependencies.
+- Delivery correction: [PR242](https://github.com/Vovanostm/warwrit/pull/242)
+  is merged434d4a1a; #163 CLOSED, PR/main CI SUCCESS. Actual clean-main HP smoke
+  ACCEPT/EXIT0; damaged53/60 and38/60 survive fresh/reloaded views with HTTP/bar
+  agreement. [Readback](docs/engineering/evidence/core-pools/main-readback.md).
+  Earlier FAIL13 is retained. Overview visual5 still needs layer proof; profile
+  policy and #165 scope remain pending. No full-M1 or deployment claim.
+
 ### Expose the existing human battle preset in the editor
 
 - 2026-10-20, branch `codex/preset-picker-228`, local: #228 now has an explicit
