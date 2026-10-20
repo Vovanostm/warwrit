@@ -224,6 +224,59 @@ describe('authenticated encounter re-entry', () => {
     connection.close();
   });
 
+  it('keeps HTTP and same-revision reconnect caps without inferring or retaining a maximum', async () => {
+    const observed = observer();
+    const { room, onStateChange, onDrop, onReconnect } = makeRoom();
+    const unit = room.state as unknown as { units: Map<string, Record<string, unknown>> };
+    unit.units.set('unit-a', { ...publicProjection.units[0], health: 20, maximumHealth: 60 });
+    const baseFetcher = encounterFetcher();
+    const connection = await connectEncounter({
+      scope: { accountId: 'account-a', companyId: 'company-a' },
+      signal: new AbortController().signal,
+      observer: observed,
+      apiUrl: '/api',
+      realtimeUrl: 'ws://localhost:5173/colyseus',
+      fetcher: async (input) =>
+        String(input).endsWith('/projection')
+          ? jsonResponse({ ...publicProjection, units: [...unit.units.values()] })
+          : baseFetcher(input),
+      createClient: () => ({
+        reconnect: async () => room,
+        consumeSeatReservation: async () => room,
+      }),
+    });
+    await flushConnectionTasks();
+    expect(observed.onProjection).toHaveBeenCalledWith(
+      expect.objectContaining({
+        units: [expect.objectContaining({ health: 20, maximumHealth: 60 })],
+      }),
+    );
+    for (const maximumHealth of [0, undefined, 60]) {
+      unit.units.set('unit-a', {
+        ...publicProjection.units[0],
+        health: 20,
+        ...(maximumHealth === undefined ? {} : { maximumHealth }),
+      });
+      onStateChange.emit();
+      expect(observed.onProjection).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          units: [expect.objectContaining({ health: 20 })],
+        }),
+      );
+      const calls = vi.mocked(observed.onProjection).mock.calls;
+      expect(calls.at(-1)?.[0]?.units[0]?.maximumHealth).toBe(maximumHealth || undefined);
+    }
+    onDrop.emit();
+    onReconnect.emit();
+    await flushConnectionTasks();
+    expect(observed.statuses.at(-1)).toBe('connected');
+    expect(observed.onControlGrant).toHaveBeenLastCalledWith(
+      expect.objectContaining({ controllableUnitIds: ['unit-a'] }),
+    );
+    expect(observed.errors).toEqual([]);
+    connection.close();
+  });
+
   it('closes a connected room, listeners, grant and reconnect token on normal disposal', async () => {
     callbackMocks.unbinds.length = 0;
     const observed = observer();

@@ -20,6 +20,48 @@ requests.
   commit audit and independent browser acceptance remain pending at this entry.
   [Behavior and proof limits](docs/wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
 
+### Accept canonical persistent HP through reconnect and restart
+
+- 2026-10-20, branch `codex/health-cap-163`, local source74b22f8:
+  independent source and playable reviews ACCEPT #163. Real company38/60 and
+  ally53/60 retain matching HTTP/room values and consumed bars across existing,
+  fresh, reloaded, reconnected and application-reopened views at revision35.
+  Parent validator8/8 PASS,208 tests PASS/47 SKIP,audit PASS. Final evaluator
+  assertions passed before deadline; its runner later exited13 during obsolete
+  SDK cleanup, retained as FAIL. Hosted CI/publication/merge pending.
+  [Evidence, compatibility and limits](docs/engineering/evidence/core-pools/README.md).
+  Updated the existing battlefield wiki/CURRENT_PLAN; no migrations, rules,
+  replay or dependencies changed. New reader/producer rollout must be coordinated.
+
+### Make the health-cap transport proof observe the real AI worker
+
+- 2026-10-20, branch `codex/health-cap-163`, local: independent review R1
+  found a race in the new DB regression, not a production HP defect. The test
+  now observes the app worker and chooses a damaged human-turn checkpoint
+  without a due AI wake; all comparisons finish before its normal deadline.
+  A rejected WebSocket close code caused the first run to fail; the pinned
+  reconnect code fixes it. Final isolated PostgreSQL/SDK test PASS (1 test,
+  12 unrelated skipped): revision8, raider67/70, two clients, HTTP, actual
+  reconnect, app/DB reopen and replay. Earlier failures remain recorded.
+  Original source be263a3 passed normal audit/commit and33 focused tests/types;
+  corrected test commit/re-review and browser acceptance remain pending.
+  Producer/new-reader rollout must be coordinated: old strict HTTP readers
+  reject the extra field. No deployment or merge claimed.
+
+### Preserve canonical health ratios when joining an ongoing encounter
+
+- 2026-10-20, branch `codex/health-cap-163`, local: #163 fixes the renderer's
+  client-history denominator. Protocol/HTTP/Colyseus carry only canonical
+  maximumHealth; absent/invalid caps remain unknown. The persistent bar and
+  health text consume the same snapshot. Projection/room/connection/scene
+  regressions pass:33 focused tests, protocol/server/web types, scoped lint/format
+  and diff. Old-renderer negative control fails as expected; the corrected
+  renderer passes. One lint import-style error was fixed. Normal audit/commit
+  and real DB/reconnect/browser/independent gates remain pending (runtime
+  NOT_RUN). Rules,
+  replay history, migrations and combat-lab are unchanged. No merge claimed.
+  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
+
 ### Add the human-opponent preset producer and playable evidence
 
 - 2026-10-20, branch `codex/human-battle-228`, local: implement #228 catalog

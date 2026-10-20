@@ -8,6 +8,8 @@ export const EncounterUnitStateSchema = schema(
     r: t.number(),
     health: t.number(),
     status: t.string(),
+    /** Zero is the transport sentinel for an unknown cap. */
+    maximumHealth: t.number(),
   },
   'EncounterUnitState',
 );

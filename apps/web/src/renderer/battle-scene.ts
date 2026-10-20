@@ -50,8 +50,6 @@ interface RenderedUnit {
   readonly ringMaterial: StandardMaterial;
   readonly bar: TransformNode;
   readonly healthFill: Mesh;
-  /** Highest health seen; the public projection carries no maximum. */
-  peakHealth: number;
   unit: EncounterRenderUnit;
 }
 
@@ -285,11 +283,18 @@ export async function mountEncounterScene(
           ? RING_COLORS.target
           : RING_COLORS[role];
     rendered.ring.setEnabled(!fallen);
-    rendered.peakHealth = Math.max(rendered.peakHealth, unit.health, 1);
-    const share = Math.max(0, Math.min(1, unit.health / rendered.peakHealth));
+    const maximum = unit.maximumHealth;
+    const known =
+      maximum !== undefined &&
+      Number.isSafeInteger(maximum) &&
+      maximum > 0 &&
+      Number.isSafeInteger(unit.health) &&
+      unit.health >= 0 &&
+      unit.health <= maximum;
+    const share = known ? unit.health / maximum : 0;
     rendered.healthFill.scaling.x = Math.max(share, 0.001);
     rendered.healthFill.position.x = -(1 - share) * 0.35;
-    rendered.bar.setEnabled(!fallen);
+    rendered.bar.setEnabled(!fallen && known);
   };
 
   const createUnit = (unit: EncounterRenderUnit): RenderedUnit => {
@@ -337,7 +342,7 @@ export async function mountEncounterScene(
     fillMaterial.disableLighting = true;
     fillMaterial.emissiveColor = new Color3(0.66, 0.2, 0.15);
     healthFill.material = fillMaterial;
-    return { root, sprite, ring, ringMaterial, bar, healthFill, peakHealth: unit.health, unit };
+    return { root, sprite, ring, ringMaterial, bar, healthFill, unit };
   };
 
   const reconcile = (next: EncounterRenderProjection) => {
