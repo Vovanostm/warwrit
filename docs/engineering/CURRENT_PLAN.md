@@ -1,5 +1,35 @@
 # Warwrit current delivery plan
 
+**Affordability184 source ready — 2026-10-21, LOCAL:**
+Sole web writer implements supplied true/false bands with solid/internal hatch,
+legacy generic fallback and present-only legend;187 contour preserved. Author
+20focused v8 coverage/typecheck/format/scoped TS lintPASS after fixture-priority/
+hatch-edge corrections. First audit found introduced hatch-geometry complexity;
+same-file helper extraction brought final `check:changes` to zero new code-health
+findings. Independent frozen review and actual rendered journey/CVD/visual gates
+remain pending; no publication or visual acceptance is claimed. Pickup PR251
+hosted CI runs separately.
+[Owning behavior](../wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
+
+**Range187 delivered / affordability184 active — 2026-10-21:**
+PR250 merged b0eeb8e87c0a198f05e5d44d0f8ef9d73ae8a05b; reviewed source
+be8efd5, published89ee9afa, tested mergeb65db183 and actual main contents match.
+CI39512315650 attempt2/job118941637716 SUCCESS:937unitPASS/49SKIP,
+10000stress,16realPG/auth,migrations,coverage/audit. Attempt1 passed bootstrap
+but coverage timed out in unchanged world movement test (936PASS/1FAIL/49SKIP);
+isolated diagnostic1PASS and one unchanged-head rerun passed. No gate weakened.
+Independent source/playable/absolute visual ACCEPT; #187 CLOSED/agent:done.
+[Delivery evidence](evidence/range-187/README.md).
+
+#184 starts from this actual main in codex/combat-affordability-184. One web
+writer owns marker/rendering/legend and existing tests; parent owns shared
+records. Server attackAffordableAfter is the only classifier; preserve187 reach
+contour, selected-skill suppression and legacy single-band fallback. Source-only
+window while pickup248 integrates; no parallel heavy checks or gameplay.
+#228 is already delivered by merged PR240/243 and is not a remaining task.
+Existing outcome209–211 work remains retained for later integration; sprint/M1
+are PARTIAL. No new policy, deployment or full-journey claim.
+
 **Range contour187 — 2026-10-20, LOCAL / source, playable and visual ACCEPT:**
 Source `be8efd51709983b62733fa0436d02d975bc3eae5` on actual main7a7f1f18
 separates movement fill from weapon/selected-skill exterior boundaries.

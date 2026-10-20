@@ -235,8 +235,12 @@
   background: var(--battle-gold);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
-.battle-range-legend i[data-zone='move'] {
+.battle-range-legend i[data-zone='move'],
+.battle-range-legend i[data-zone='move-attack'] {
   background: #92bbb8;
+}
+.battle-range-legend i[data-zone='move-only'] {
+  background: repeating-linear-gradient(135deg, #26393b 0 1px, #92bbb8 1px 3px);
 }
 .battle-range-legend small {
   margin-left: auto;

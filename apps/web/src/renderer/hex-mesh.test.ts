@@ -189,7 +189,8 @@ it('draws shared edges once, supports borderless area fills, and recolours fixed
       { q: 0, r: 0, height: 0 },
       { q: 1, r: 0, height: 0 },
     ];
-    const grid = createBattleCellGrid(scene, tiles, createBattleTerrain(tiles));
+    const terrain = createBattleTerrain(tiles);
+    const grid = createBattleCellGrid(scene, tiles, terrain);
     const borders = scene.getMeshByName('tactical-grid') as Mesh;
     expect(borders.getTotalVertices()).toBe(11 * 4);
     expect(scene.meshes.filter((mesh) => mesh.name.startsWith('cell-fill:'))).toHaveLength(2);
@@ -200,15 +201,34 @@ it('draws shared edges once, supports borderless area fills, and recolours fixed
     const gold = Color3.FromHexString('#dfb867');
     const fill = new StandardMaterial('wash', scene);
     const areaFill = new Map<string, BattleCellStyle>([
-      ['0,0', { fill, border: null, priority: 3 }],
+      ['0,0', { fill, border: null, priority: 3, hatch: true }],
       ['1,0', { fill: null, border: null, priority: 3 }],
     ]);
     const styles = new Map<string, BattleCellStyle>([
-      ['0,0', { fill, border: cyan, priority: 3 }],
+      ['0,0', { fill, border: cyan, priority: 3, hatch: true }],
       ['1,0', { fill: null, border: gold, priority: 8 }],
     ]);
     const geometryIds = scene.meshes.map((mesh) => mesh.uniqueId);
     grid.paint(areaFill);
+    const hatch = scene.getMeshByName('cell-hatch:0,0') as Mesh;
+    const hatchColor = (hatch.material as StandardMaterial).emissiveColor;
+    expect(hatch.isEnabled()).toBe(true);
+    expect(hatch.getTotalVertices()).toBeGreaterThan(0);
+    expect(hatchColor.r).toBeCloseTo(hatchColor.g, 6);
+    expect(hatchColor.g).toBeCloseTo(hatchColor.b, 6);
+    const hatchPositions = hatch.getVerticesData(VertexBuffer.PositionKind)!;
+    const corners = terrain.get('0,0')!.corners;
+    for (let index = 0; index < hatchPositions.length; index += 3) {
+      const point = { x: hatchPositions[index]!, z: hatchPositions[index + 2]! };
+      const sides = corners.map((start, side) => {
+        const end = corners[(side + 1) % corners.length]!;
+        return (end.x - start.x) * (point.z - start.z) - (end.z - start.z) * (point.x - start.x);
+      });
+      expect(sides.every((value) => value >= -1e-6) || sides.every((value) => value <= 1e-6)).toBe(
+        true,
+      );
+    }
+    expect(borders.getTotalVertices()).toBe(11 * 4);
     expect(borders.getVerticesData(VertexBuffer.ColorKind)?.every((value) => value === 0)).toBe(
       true,
     );
@@ -219,7 +239,9 @@ it('draws shared edges once, supports borderless area fills, and recolours fixed
     }
     expect(scene.getMeshByName('cell-fill:0,0')?.isEnabled()).toBe(true);
     expect(scene.getMeshByName('cell-fill:1,0')?.isEnabled()).toBe(false);
+    expect(hatch.isEnabled()).toBe(true);
     grid.paint(new Map());
+    expect(hatch.isEnabled()).toBe(false);
     expect(borders.getVerticesData(VertexBuffer.ColorKind)?.every((value) => value === 0)).toBe(
       true,
     );

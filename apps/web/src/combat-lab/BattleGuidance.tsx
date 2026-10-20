@@ -2,6 +2,7 @@ import { BattleCost } from './BattleCost.js';
 import type { CombatLabSkillId } from '@warwrit/protocol';
 import type { BattlePresentationView } from './battle-presentation.js';
 import type { Unit } from './battle-presentation.js';
+import { movementBandSummary } from './sprite-scene-markers.js';
 
 export function BattleGuidance({
   view,
@@ -20,6 +21,7 @@ export function BattleGuidance({
 }) {
   if (view.status !== 'active') return <div className="battle-order-guidance">{status}</div>;
   const skill = view.skills?.find(({ skillId }) => skillId === selectedSkillId);
+  const movementBands = movementBandSummary(view);
   return (
     <div className="battle-order-guidance" role="status">
       {skill ? (
@@ -43,7 +45,21 @@ export function BattleGuidance({
             </span>
           )}
           <span className="battle-range-legend" aria-label="Обозначения зон">
-            <i data-zone="move" aria-hidden="true" /> Движение
+            {movementBands.generic && (
+              <>
+                <i data-zone="move" aria-hidden="true" /> Движение
+              </>
+            )}
+            {movementBands.moveAttack && (
+              <>
+                <i data-zone="move-attack" aria-hidden="true" /> Дойти и атаковать
+              </>
+            )}
+            {movementBands.movementOnly && (
+              <>
+                <i data-zone="move-only" aria-hidden="true" /> Только движение
+              </>
+            )}
             <i data-zone="weapon" aria-hidden="true" /> Оружие
           </span>
         </>

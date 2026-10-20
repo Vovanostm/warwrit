@@ -23,7 +23,8 @@ interface Selection {
   readonly highlightedId: string | null;
   readonly showFullGrid: boolean;
 }
-type Fill = 'preview' | 'selection' | 'movement' | 'target' | 'threat';
+type Fill =
+  'preview' | 'selection' | 'movement' | 'movement-attack' | 'movement-only' | 'target' | 'threat';
 type Border =
   'grid' | 'blocked' | 'friendly' | 'enemy' | 'inspection' | 'path' | 'target' | 'threat';
 interface CellStyle {
@@ -46,8 +47,39 @@ function targetPreviews(
   if (!skill) return view.attackPreview ?? [];
   return view.skillPreview?.filter((preview) => preview.skillId === skill && preview.legal) ?? [];
 }
+export interface MovementBandSummary {
+  readonly generic: boolean;
+  readonly moveAttack: boolean;
+  readonly movementOnly: boolean;
+}
+
+/** Classify only complete server-owned affordability rows; legacy or mixed rows stay generic. */
+export function movementBandSummary(
+  view: Pick<BattlePresentationView, 'movementPreview'>,
+): MovementBandSummary {
+  const rows = view.movementPreview ?? [];
+  if (!rows.length) return { generic: false, moveAttack: false, movementOnly: false };
+  if (!rows.every((row) => typeof row.attackAffordableAfter === 'boolean'))
+    return { generic: true, moveAttack: false, movementOnly: false };
+  return {
+    generic: false,
+    moveAttack: rows.some((row) => row.attackAffordableAfter === true),
+    movementOnly: rows.some((row) => row.attackAffordableAfter === false),
+  };
+}
+
 function movementCells(view: MarkerView, selection: Selection) {
-  return selection.selectedSkill ? [] : (view.movementPreview ?? []);
+  if (selection.selectedSkill) return [];
+  const rows = view.movementPreview ?? [];
+  const bands = movementBandSummary(view);
+  return rows.map((preview) => ({
+    ...preview,
+    band: bands.generic
+      ? ('movement' as const)
+      : preview.attackAffordableAfter === true
+        ? ('movement-attack' as const)
+        : ('movement-only' as const),
+  }));
 }
 function weaponReach(
   view: MarkerView,
@@ -109,7 +141,7 @@ function threatCells(view: MarkerView, cue: Cue) {
 }
 function legalMovement(view: MarkerView, selection: Selection, cue: Cue) {
   for (const preview of movementCells(view, selection)) {
-    cue(preview.to, 'movement', selection.showFullGrid ? 'grid' : null, 3);
+    cue(preview.to, preview.band, selection.showFullGrid ? 'grid' : null, 3);
   }
 }
 function selectedPath(view: MarkerView, selection: Selection, cue: Cue) {

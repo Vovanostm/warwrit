@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Distinguish movement affordability — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`: solid move+attack and hatched movement-only
+  cells use supplied server booleans; incomplete legacy rows use one generic
+  band. Legend shows present categories; retain187 reach and other marker cues.
+  Initial fixture/hatch test failures corrected; hatch geometry extracted after
+  the first audit found introduced complexity. Final focused coverage20/20,
+  web typecheck, format, scoped TS/TSX lint and `check:changes` pass. Independent
+  gameplay/visual review and publication remain pending.
+  [Owning behavior](docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
+
+### Deliver the separate reach boundary — 2026-10-21, MERGED
+
+- `codex/combat-range-187`, [PR250](https://github.com/Vovanostm/warwrit/pull/250)
+  merged b0eeb8e8; reviewed/tested/main contents match. Source/playable/absolute
+  visual ACCEPT and CI39512315650 attempt2 SUCCESS:937unitPASS/49SKIP,
+  10000stress,16PG/auth,migrations,coverage/audit. The first coverage timeout
+  in unchanged world movement passed isolated and one unchanged-head retry;
+  no test or gate weakened. #184 consumer follows with server-owned bands.
+  [Evidence](docs/engineering/evidence/range-187/README.md).
+
 ### Separate movement fill and reach boundary — 2026-10-20, LOCAL
 
 - `codex/combat-range-187`, [issue187](https://github.com/Vovanostm/warwrit/issues/187):
