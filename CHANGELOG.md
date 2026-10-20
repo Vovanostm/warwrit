@@ -9,6 +9,52 @@ requests.
 
 ## Unreleased
 
+### Accept the picker clean-build correction
+
+- 2026-10-20, branch `codex/preset-picker-228`, published PR243 with local
+  correction38c57915: independent correction review ACCEPT; production journey
+  acceptance retained, validator8/8 and5tests PASS, no server/core files in web
+  compilation inputs. [Review](docs/engineering/evidence/uix-preset-picker/review-ci-1.md).
+  CI39369463852 remains FAILED; correction publication/new CI and merge pending.
+
+### Remove the picker test dependency on server implementation
+
+- 2026-10-20, branch `codex/preset-picker-228`, local correction to PR243:
+  CI39369463852 failed the clean parallel build because BattleEditor.test
+  imported the server catalog and its undeclared game-core dependency into web.
+  Use an independent two-fighter DTO fixture for replacement/cloning/guard tests;
+  actual six-versus-five catalog behavior remains covered by the accepted browser
+  journey. Production code, package dependencies and build gates are unchanged.
+  Five focused tests, web types, scoped lint/format/diff PASS; independent
+  correction review and integrated validator are pending at this entry.
+
+### Accept the human preset picker and record merged canonical HP
+
+- 2026-10-20, branch `codex/preset-picker-228`, local: independent Tier U ACCEPT
+  for049b6cb6; normal catalog loading, saved drafts, native125 and two real human
+  battles demonstrate2/1surrenders and an actual withdrawal reaction. Integrate
+  main434d4a1a through403193f, preserving both document histories and unchanged
+  editor code. Parent validator8/8,5relatedPASS,normal auditPASS. Publication/CI/
+  merge pending. [Evidence](docs/engineering/evidence/uix-preset-picker/README.md).
+  Update owning battlefield wiki/CURRENT_PLAN; no rules, migrations or dependencies.
+- Delivery correction: [PR242](https://github.com/Vovanostm/warwrit/pull/242)
+  is merged434d4a1a; #163 CLOSED, PR/main CI SUCCESS. Actual clean-main HP smoke
+  ACCEPT/EXIT0; damaged53/60 and38/60 survive fresh/reloaded views with HTTP/bar
+  agreement. [Readback](docs/engineering/evidence/core-pools/main-readback.md).
+  Earlier FAIL13 is retained. Overview visual5 still needs layer proof; profile
+  policy and #165 scope remain pending. No full-M1 or deployment claim.
+
+### Expose the existing human battle preset in the editor
+
+- 2026-10-20, branch `codex/preset-picker-228`, local: #228 now has an explicit
+  catalog preset selector/load action in BattleEditor. It validates and clones
+  the unsaved draft; mill reset, saved drafts and the normal launch remain.
+  No CSS, catalog content, rules, dependencies or migrations changed. Producer
+  PR240 is merged at eb98dd2. Five component tests, web types, scoped lint/format
+  and diff PASS; initial test-selector/lint failures were corrected. Normal
+  commit audit and independent browser acceptance remain pending at this entry.
+  [Behavior and proof limits](docs/wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
+
 ### Accept canonical persistent HP through reconnect and restart
 
 - 2026-10-20, branch `codex/health-cap-163`, local source74b22f8:

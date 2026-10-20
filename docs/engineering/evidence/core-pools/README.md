@@ -48,3 +48,14 @@ terminal/payment paths are NOT_RUN; existing unit specifications cover the
 presentation variants. Canvas controls, broader M1, balance, performance and
 visual-design acceptance are not claimed. The primary dirty prototype and
 other worktrees were preserved.
+
+## Actual merged-main readback — 2026-10-20
+
+[PR242](https://github.com/Vovanostm/warwrit/pull/242) merged as
+`434d4a1a03a2b6832d4f84895d8799b17d42a9d9`; #163 is closed. PR CI39366985666
+and main CI39367809181 SUCCESS. The merge tree equals the reviewed publication.
+Independent [clean-main smoke](main-readback.md) ACCEPT, runner EXIT0:
+ordinary controls accepted, damaged53/60 and38/60 and consumed bar fills match
+HTTP in existing/fresh/reloaded clients at revision18. Its new services stopped;
+disposable DB retained. Prior evaluator cleanup FAIL13 remains historical.
+No deployment or broader campaign/payment acceptance is claimed.

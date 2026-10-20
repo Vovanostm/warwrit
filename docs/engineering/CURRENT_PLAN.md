@@ -1,5 +1,52 @@
 # Warwrit current delivery plan
 
+**Picker PR243 correction — 2026-10-20, LOCAL ACCEPT / CI pending:**
+Independent [correction review](evidence/uix-preset-picker/review-ci-1.md)
+ACCEPT38c57915; unchanged production retains Tier U ACCEPT049b6cb6.
+Parent validator EXIT0/8of8,5tests PASS; web compile inputs contain no server/core.
+Failed CI39369463852 is retained; publish this corrected head and require fresh
+hosted success before expected-head merge. No production or dependency change.
+
+**Picker PR243 — 2026-10-20, CI correction in progress:**
+CI39369463852 failed the clean parallel build: the new web test pulled in server
+source and an undeclared core dependency. Parent replaces that import with an
+independent DTO fixture; production picker and accepted browser journey remain
+unchanged. Five focused tests, web types and scoped lint/format/diff PASS; validator and
+independent correction review must pass before publication/CI retry. This supersedes the earlier pending-CI receipt.
+
+**Picker #228 — 2026-10-20, LOCAL ACCEPT / publication pending:**
+Gated source049b6cb6 has independent Tier U ACCEPT: ordinary catalog selection,
+explicit load, edit/save/restore, native100/125, human battles with2/1surrenders,
+manual withdrawal reaction, restart/reload and mill restoration. Parent integrated
+main434d4a1a as403193f with additive document reconciliation only; editor source
+unchanged. Integrated validator EXIT0/8of8,5relatedPASS,normal auditPASS.
+[Evidence and finite limits](evidence/uix-preset-picker/README.md). CI/merge pending;
+this does not accept the whole scene. Overviewff40f304 played gate ACCEPT;
+visual5 scores2 but remains BLOCKED on missing controlled layer comparisons.
+One read-only evaluator supplies those inputs on its frozen source.
+
+**HP #163 — 2026-10-20, MERGED and clean-main smoke ACCEPT:**
+[PR242](https://github.com/Vovanostm/warwrit/pull/242) merged434d4a1a; #163 CLOSED.
+PR CI39366985666 and main CI39367809181 SUCCESS. Independent actual-main smoke
+EXIT0 confirms accepted controls and53/60,38/60 HTTP/browser/bar agreement after
+fresh entry/reload. [Readback](evidence/core-pools/main-readback.md). Prior cleanup
+FAIL13 remains recorded. Coordinated producer/reader rollout remains required;
+no deployment or contract/payment acceptance. PR241 still waits for the pending
+critical-bleed decision; #165 scope question and rescue/transport gap remain open.
+
+**Human preset picker — 2026-10-20, LOCAL / source checks complete:**
+Owner authorized implement/review/merge. `codex/preset-picker-228` starts from
+merged PR240 (`eb98dd2`) and changes only BattleEditor and its existing tests.
+The explicit load action validates and clones an existing catalog preset into
+an unsaved draft; selection alone changes nothing. Mill reset and existing saved
+loads/start flow remain. Five component tests, web types, scoped lint/format/diff
+PASS; normal audit/commit and independent browser acceptance are pending.
+The harness skips browser effects; it does not prove storage/layout/gameplay.
+#227 source is frozen at `ff40f304`; its writer released the lane and independent
+replay/visual review continue in a separate checkout. Parent owns shared docs,
+integration, validator, played acceptance, CI and merge; no full issue closure.
+[Picker behavior and limits](../wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
+
 **Canonical HP #163 — 2026-10-20, LOCAL ACCEPT / publication pending:**
 Frozen74b22f8 has independent source review2 and playable evaluator ACCEPT.
 One real two-company battle proved38/60 and53/60 across existing/fresh/reloaded/
