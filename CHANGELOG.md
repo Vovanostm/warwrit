@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Retain accepted overview proof and current delivery readback
+
+- 2026-10-20, branch `codex/battle-overview-227`, local: retain played eval5 and
+  full absolute visual6 ACCEPTff40f304, eleven controlled layer pairs, earlier
+  REWORK and runtime-coordination correction in the
+  [evidence packet](docs/engineering/evidence/uix-overview-zoom/README.md).
+  Main3c934c16 integrated throughbbbc91d without overview source changes;
+  parent validator8/8,33relatedPASS,auditPASS; combined223PASS/47SKIP.
+  Owning battlefield wiki/CURRENT_PLAN updated; publication/CI/merge pending.
+- Delivery correction: picker PR243 merged3c934c16, #228 CLOSED, PR/main CI
+  SUCCESS and bounded actual-main6v5/reload smoke passed with explicit probe
+  limits. Profile PR241 draft9f18c548 has integration correction ACCEPT and
+  CI39374767374 SUCCESS (888/48SKIP,10000stress,15DB/auth,audit); owner policy
+  remains pending. No profile merge, full-M1 or deployment acceptance claimed.
+
 ### Accept the full-field overview and retained inspection
 
 - 2026-10-20, branch `codex/battle-overview-227`, local: played eval5 and full

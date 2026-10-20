@@ -1,5 +1,24 @@
 # Warwrit current delivery plan
 
+**Overview delivery gate — 2026-10-20, LOCAL ACCEPT / publication pending:**
+Gatedff40f304 has played eval5 and full absolute visual6 ACCEPT, all applicable
+scores2. Actual main3c934c16 integrated asbbbc91d; overview source unchanged.
+Parent validator EXIT0/8of8,33relatedPASS,normal auditPASS; combined imported-main
+coverage223PASS/47SKIP. [Evidence/history/limits](evidence/uix-overview-zoom/README.md).
+Publish and require hosted CI before expected-head merge; no whole UI/M1 claim.
+Actor186 remains prepared and activates only after actual overview merge.
+
+**Delivered picker / pending profile — 2026-10-20:**
+[PR243](https://github.com/Vovanostm/warwrit/pull/243) merged3c934c16; #228 CLOSED,
+corrected PR CI39370786684/main CI39371853005 SUCCESS. Actual-main6v5 load/start/
+wait/reload retained session/revision3; [probe limits](evidence/uix-preset-picker/main-readback.md).
+[PR241](https://github.com/Vovanostm/warwrit/pull/241) remains DRAFT9f18c548:
+current-main integration reviewed, test correction ACCEPT0fa34ed, real mixed
+JOIN/reload FAIL-before/PASS-after; new CI39374767374 SUCCESS (888PASS/48SKIP,
+10000stress,15DB/auth,audit). Critical-bleed policy still awaits owner; #165 bounded
+scope question and rescue/transport gap remain. These receipts supersede earlier
+pending-CI statuses only; no profile merge, deployment or full M1 claim.
+
 **Overview #227 — 2026-10-20, LOCAL ACCEPT / integration checks pending:**
 Played eval5 and absolute visual6 ACCEPTff40f304; all applicable visual scores2.
 Continuous casualty/threat targeting and actual victory149/reload pass. Eleven
