@@ -1,7 +1,7 @@
 # Persistent tactical wolf hunt — #165
 
-2026-10-20, `codex/tactical-bridge-165`, local source `d618b3a9`, base
-`137faf88`. Owner mission “Implement, review, merge” authorizes delivery after
+2026-10-20, `codex/tactical-bridge-165`, integrated candidate `5221ebe3`, base
+`6b5b1b03`; reaction correction `d618b3a9`, terminal correction `d82d0eb9`. Owner mission “Implement, review, merge” authorizes delivery after
 review and gates. Publication, hosted CI and merge are pending.
 
 New ordinary wolf-hunt admission uses bridge-v4/projection4 with actual company
@@ -12,6 +12,16 @@ unavailable; unsupported surrender/escape dispositions remain pending without
 proof or payment. Critical bleeding allows attack/defence and denies movement
 and independent retreat. Fists retain the approved provisional values; rescue
 and transport remain unresolved. No migrations, dependency or hunt-content change.
+
+## Integrated delivery gate
+
+The clean integrated candidate `5221ebe3` passed the parent validator8/8:
+current-main ancestry/clean tree, packages/types/format/lint, related coverage
+793PASS/49SKIP and normal audit. Earlier local counts below retain their original
+heads. Imported actor source is unchanged; only additive documentation conflicts
+were resolved. Normal correction and integration commits passed their audit.
+Hosted clean-checkout CI, publication and expected-head merge are next; no local
+repeat of the full hosted gate. Check log: .orca/bridge-integrated-validation.log.
 
 ## Checks and correction
 

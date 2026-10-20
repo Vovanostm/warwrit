@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Accept the integrated persistent bridge — 2026-10-20, LOCAL
+
+- `codex/tactical-bridge-165`, integrated5221ebe3: coordinator validator8/8,
+  793PASS/49SKIP and normal audit PASS. Independent source/test and actual
+  retained-terminal recovery ACCEPT; PostgreSQL17 regression1PASS/14filteredSKIP.
+  Current actor main is retained. Publication, hosted CI and merge pending;
+  no full-HUD, payment or full-M1 claim.
+  [Evidence](docs/engineering/evidence/core-tactical-bridge/README.md).
+
 ### Integrate the accepted bridge correction with current main — 2026-10-20
 
 - `codex/tactical-bridge-165`, local: combine correctiond82d0eb and actor

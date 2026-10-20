@@ -1,5 +1,13 @@
 # Warwrit current delivery plan
 
+**Bounded bridge ready to publish — 2026-10-20, LOCAL:**
+Integrated5221ebe3 on main6b5b1b03 passes coordinator validator8/8,
+793PASS/49SKIP and normal audit. Independent frozen source/test and actual
+terminal recovery ACCEPT; focused real PostgreSQL17 regression1PASS/14filteredSKIP.
+Owner mission “Implement, review, merge” authorizes this bounded delivery after
+successful hosted CI and expected-head checks. Full HUD/payment/M1 remain open.
+[Evidence](evidence/core-tactical-bridge/README.md).
+
 **Bridge integration — 2026-10-20, LOCAL:**
 Normal correction commitd82d0eb passes the audit and combines with actual
 main6b5b1b03 (actor PR245). Only additive documentation sections conflict;
