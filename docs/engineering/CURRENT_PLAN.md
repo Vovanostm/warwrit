@@ -1,5 +1,32 @@
 # Warwrit current delivery plan
 
+**Profile recovered acceptance — 2026-10-20, LOCAL / POLICY PENDING:**
+Unchanged source `d3975cf`, documentation head `a6b5734`: evaluator3 ACCEPT for
+approved behavior in one continuous two-company encounter. Browser Wait and
+active reload/control passed; authenticated API delivered 10 fists and 13 armed
+attacks, victory round 7 / revision 88, once-only wounds/practice/world proof and exact
+combat/JOIN retries across an application restart. Saved complete persisted rows
+match. Fists produced no weapon XP/start snapshots. Payment and terminal-screen
+browser acceptance are NOT_RUN; the attempted terminal browser failed to start.
+The report was recovered after host reboot from retained evidence, without a new
+battle. Local evidence: .orca/core-company-profile/eval-3.md and eval3-shots/.
+Post-reboot isolated timeout cases 41/41 PASS; coordinator validator EXIT 0 / 8 of 8,
+775 PASS/48 SKIP, audit PASS. This supersedes earlier incomplete continuous proof
+and local validator failures for this unchanged source; their history remains.
+Hosted clean-checkout gate is NOT_RUN for this branch. Critical-bleed attack/defence
+still awaits the owner; rescue/transport remains excluded and unresolved. #164
+is not closed or merged. Owner-authorized mission continues after these gates.
+
+**Playable quality checkpoint — 2026-10-20, REWORK:**
+The recovered #227 writer retains sole source ownership. Frozen 94c723c2 evidence
+and an independent read-only quality audit confirm threat-banner obstruction;
+expanded-log placement and obvious marker-to-cell association require acceptance
+on the corrected scene. Apply [DESIGN_COMPASS](DESIGN_COMPASS.md) and the full
+visual rubric to integrated day/night, 100/125% desktop play. The inspected terminal
+card has clear hierarchy, but this does not accept the whole scene or campaign.
+Balance, enjoyment, pacing and performance remain NOT_MEASURED. No new art/rule
+or framework is required to resolve these bounded findings.
+
 **Profile persistent evaluation — 2026-10-20, LOCAL / REWORK:**
 Committed head `d3975cf` includes main `eb98dd2`, compatibility corrections and
 leadership repair. Independent review-4 ACCEPT matches the committed two-path
@@ -187,7 +214,7 @@ Coordinator owns shared records; #227 camera is the independent web writer.
 [PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`
 has successful exact-head clean-checkout CI39290710765; main `073a02b` is
 already included. Tier L reviewer1/evaluator1 ACCEPT for `f5803e5`, coordinator
-validate EXIT0/8of8,178PASS/47SKIP,auditPASS, and published independent playable
+validate EXIT 0 / 8 of 8,178PASS/47SKIP,auditPASS, and published independent playable
 proof are reused on unchanged code. Later commits contain evidence/shared
 records only. No blocking PR/issue labels or unresolved threads observed.
 This shared-record commit still needs its own CI and expected-head merge;
@@ -233,7 +260,7 @@ Scene builder settled with normal commit `c60fd5e` and clean tracked tree;
 its static activation-owned ring/chevron/projected-name foundation refs #186,
 without closing enemy/frame proof owned by #190. Coordinator validation after
 settlement ran sequentially: names producer `796fa52` plus shared-record receipts
-EXIT0/8of8,178PASS/47SKIP,auditPASS; scene `c60fd5e` EXIT0/8of8,35PASS,auditPASS.
+EXIT 0 / 8 of 8,178PASS/47SKIP,auditPASS; scene `c60fd5e` EXIT 0 / 8 of 8,35PASS,auditPASS.
 This supersedes the queued/interrupted names validation below. Names now needs
 fresh Tier L source review and played evaluation; scene needs fresh Tier V
 played evaluation and absolute visual critique. Full desktop/native125 matrix,
@@ -286,7 +313,7 @@ branch and supersedes only the pending producer status below.
 `Vovanostm/uix-w1-skill-reach`, gated `3ea21b0`: optional authoritative learned-skill
 geometry on the current controlled sprite-v3 activation; legacy omission and empty
 geometry supported. No rules/costs/RNG/replay/visual changes. Fresh Tier L reviewer1
-and played evaluator1 ACCEPT; coordinator validate EXIT0/8of8,732PASS/47SKIP,auditPASS.
+and played evaluator1 ACCEPT; coordinator validate EXIT 0 / 8 of 8,732PASS/47SKIP,auditPASS.
 Evaluator69 focusedPASS, independent baseline/candidate1440×900 day/night overview
 and close, real move/end-turn, passive0POST, UI-autobattle victoryR9/rev163 and
 actual replay downloads/reconstruction. Coordinator15 baseline-saved streams match
@@ -394,7 +421,7 @@ are not active contracts in this tick. [Proof](evidence/uix-w1-projection/README
 `Vovanostm/uix-w1-projection` at source candidate `fa7f516`; optional ordinary
 attack refusals share core admission, and malformed preview data is rejected
 at the client boundary. Independent eval3 ACCEPT resolves the final F3 proof:
-coordinator validator8/8, clean bootstrap833PASS/47SKIP/10kstress/14DB,
+coordinator validator 8/8, clean bootstrap833PASS/47SKIP/10kstress/14DB,
 paired unchanged stress and15 saved replay cases. Before/after day/night matrix
 at1366/1440/1920 and native Chrome125% completed; all-visible privacy scope only.
 [Proof, evaluator reports and screenshots](evidence/uix-w1-projection/README.md).

@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Recover continuous profile proof and successful local validation
+
+- 2026-10-20, branch `codex/company-profile-164`, local: record recovered
+  evaluator3 ACCEPT for the same encounter's 10 fists / 13 armed attacks, terminal
+  wounds/practice, exact retries and unchanged persisted rows after restart.
+  Post-reboot isolated 41/41 and coordinator validator 8/8 (775 PASS/48 SKIP,
+  audit PASS) supersede earlier incomplete proof/timeouts on unchanged source.
+  Updated combat/weapons wiki and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  with payment/terminal-UI NOT_RUN, pending critical-bleed policy and unresolved
+  rescue/transport; no source, rule or migration changed. #164 remains open.
+  Record independent UI/UX findings for the existing overview rework; no full
+  scene, balance or M1 acceptance is inferred. Hosted branch CI remains NOT_RUN.
+
 ### Record persistent profile evaluation and remaining acceptance
 
 - 2026-10-20, branch `codex/company-profile-164`, local: record source ACCEPT
@@ -211,7 +224,7 @@ requests.
   coordinator receipt for names producer `796fa52` and scene foundation
   `c60fd5e` on `Vovanostm/uix-w1-scene`, refs #207/#186 without closure.
   After exact scene worker settlement, coordinator validators ran sequentially:
-  names EXIT0/8of8 (178 relatedPASS/47SKIP), scene EXIT0/8of8 (35PASS);
+  names EXIT 0 / 8 of 8 (178 relatedPASS/47SKIP), scene EXIT 0 / 8 of 8 (35PASS);
   both audits PASS and tracked trees clean. This supersedes the interrupted
   names validation status below; worker smoke is not independent acceptance.
   Names advances to Tier L reviewer/evaluator; scene to Tier V evaluator/visual
@@ -230,7 +243,7 @@ requests.
   `796fa52`, refs [#207](https://github.com/Vovanostm/warwrit/issues/207):
   server-owned duplicate labels and optional replay presentation metadata are
   committed; full-contract builder outcome is FAILED, not acceptance.
-  Builder reports focused36PASS, related178PASS/47SKIP and validator8/8;
+  Builder reports focused36PASS, related178PASS/47SKIP and validator 8/8;
   these are worker claims, not coordinator gates. Builder played the default
   mill to R11/rev177 and reconstructed the downloaded replay with all12 labels.
   Visible field captions and terminal fighter inspection are sequenced into
@@ -314,7 +327,7 @@ requests.
   UI-autobattle victory R10/rev182 (93 accepted orders; terminal0 extra).
   Main `f365f60` integrated by normal merge `59af0ab`; only additive shared-doc
   conflicts resolved, both histories retained, gated apps/packages unchanged.
-  Coordinator integrated validate EXIT0/8of8,709PASS/47SKIP,auditPASS.
+  Coordinator integrated validate EXIT 0 / 8 of 8,709PASS/47SKIP,auditPASS.
   Fifteen baseline-saved replay streams on schemas1/2 and five rulesets produce
   identical canonical states, complete events and accepted-command counts.
   Paired 10,000-battle stress matches every deterministic output (duration excluded);
@@ -404,7 +417,7 @@ requests.
   `apps/server/src/combat-lab/`, `apps/web/src/combat-lab/view-validation{,.test}.ts`.
   #184 was extracted by normal revert for reuse in its own slice; #187/#207
   remain downstream. No rules/RNG/replay/migration change. Independent eval3
-  ACCEPT, validator8/8 and clean bootstrap PASS (833PASS/47SKIP,10kstress,
+  ACCEPT, validator 8/8 and clean bootstrap PASS (833PASS/47SKIP,10kstress,
   14DB); paired stress and15 saved replay streams equal. Native125% and all
   three day/night source pairs captured. CI/merge pending; privacy is limited
   to the all-visible lab. [Proof and limits](docs/engineering/evidence/uix-w1-projection/README.md).
@@ -766,7 +779,7 @@ requests.
 
 - 2026-10-17, branches `codex/combat-portrait-fit` → `codex/combat-readability`,
   local integration: give every portrait a4CSSpx art inset while preserving
-  the full measured silhouette/aspect and130px cards. All20 profiles across
+  the full measured silhouette/aspect and 130px cards. All20 profiles across
   3desktop sizes passed72bounds checks (minimum5px including frame); actor,
   forecast, inspection and actualDPR2 also passed with0actionPOST. Independent
   narrow source/visual review ACCEPT. Also ignore modifier shortcuts when
