@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Accept the approved company profile on current main
+
+- 2026-10-20, branch `codex/company-profile-164`, local: independent policy
+  readback ACCEPTbc4d88e; combined validator EXIT0/8of8,781PASS/48SKIP on
+  a9207d76. Profile production is unchanged from the previously reviewed draft;
+  current overview main is integrated. [Evidence and retained limits](docs/engineering/evidence/core-company-profile/README.md).
+  Publication/fresh CI/merge pending; no new payment or terminal-browser claim.
+
 ### Resolve the company-profile policy and bounded bridge scope
 
 - 2026-10-20, branch `codex/company-profile-164`, local: record the owner's

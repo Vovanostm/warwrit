@@ -1,5 +1,14 @@
 # Warwrit current delivery plan
 
+**Profile241 accepted locally — 2026-10-20, publication/CI pending:**
+Approved-policy source readback ACCEPTbc4d88e; current head a9207d76 adds only
+the owner's decision/documents. Coordinator validator EXIT0/8of8,
+781PASS/48SKIP. Prior continuous company fight/retry/process-restart evidence
+remains attributed to unchanged profile production. Publish once, require fresh
+hosted CI, then expected-head merge. [Evidence](evidence/core-company-profile/README.md).
+Rescue/transport and downstream payment/terminal-browser journey remain open;
+#165 now has approved bounded scope and awaits this actual merge.
+
 **Owner decisions resolved — 2026-10-20, LOCAL / PR241 delivery resumes:**
 Direct owner reply retains attack/defence under critical bleeding and forbids
 move/independent retreat. Existing projection3 already matches; no new gameplay

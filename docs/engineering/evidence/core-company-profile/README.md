@@ -67,3 +67,9 @@ with fresh coverage for changed imported paths; the initial stale-coverage audit
 failure is retained locally. Combined validation, independent readback and new
 hosted CI are pending. The last published head remains9f18c548, CI39374767374
 SUCCESS. No new payment or terminal-browser acceptance is claimed.
+
+Final local gate on a9207d76: coordinator validator EXIT0,8/8 PASS,
+781 tests PASS/48 SKIP. [Independent approved-policy readback](review-approved-policy.md)
+ACCEPTbc4d88e confirms unchanged profile production, exact capability matrix and
+binding/reload enforcement. Later evidence records are documentation only.
+Publish this accepted candidate and require fresh exact-head CI before merge.
