@@ -4,7 +4,7 @@ PR244 merged `fe3bcdb43a0edcd364d4d337fcce1cd894abeff0` from published
 `697ec1ff2a4c98bcfd175183c749fd91effd983f`; merged and candidate trees match.
 Issue227 is CLOSED/agent:done. PR CI39377607667 SUCCESS; clean verification,
 883 unit tests PASS/47 SKIP, stress/migrations, coverage and audit completed.
-Main CI is pending at this receipt. Existing played eval5 and absolute visual6
+Main CI39378757951 also completed SUCCESS; its actual log was read. Existing played eval5 and absolute visual6
 ACCEPT apply to unchanged overview production code.
 
 Parent used ordinary editor selection/load/start of Банда дезертиров on API23420,

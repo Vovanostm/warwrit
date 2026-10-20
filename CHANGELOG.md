@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Validate the integrated actor foundation
+
+- 2026-10-20, branch `codex/actor-integration-186`, local source `b38e08b5`:
+  the activation-owned ring/name now uses current HUD/vitals/letter reservations
+  and full badge bounds in overview/actor fit. Author 21 focused/46 related tests,
+  types/lint/format/normal audit PASS; parent validator EXIT0, 8/8 PASS. Native
+  100/125 day/night smoke, passive 0 POST and actual final-AP transition passed.
+  [Behavior and limits](docs/wiki/battlefield-test-maps.md#маркер-действующего-бойца--2026-10-20).
+  Independent played/absolute visual acceptance and publication remain pending;
+  Refs186, #190 still owns enemy/frame agreement. No rules or migrations changed.
+- Delivery correction: overview main CI39378757951 SUCCESS after PR244 merge;
+  [actual-main readback](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+
 ### Integrate the acting-fighter cue with the delivered overview
 
 - 2026-10-20, branch `codex/actor-integration-186`, local: activate preserved

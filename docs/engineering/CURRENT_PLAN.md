@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**Actor foundation integrated — 2026-10-20, LOCAL / independent gates pending:**
+Source `b38e08b5` combines preserved actor work with merged overview `fe3bcdb4`.
+Current HUD/vitals/letter reservations now precede placement; full badge bounds
+participate in camera fit. Author checks: 21 focused and 46 related tests PASS,
+web types/lint/format and normal audit PASS. Parent validator EXIT0, 8/8 PASS.
+Author native 100/125 day/night opening/Home/actor-close smoke and actual final-AP
+transition passed; passive inputs produced 0 action POST. Independent played and
+absolute visual review remain NOT_RUN. Refs186 only; #190 remains separate.
+Overview main CI39378757951 is now SUCCESS, superseding the pending receipt below.
+Profile241 and bridge165 still await the two pending owner answers; no new rule.
+
 **Overview delivered / actor integration active — 2026-10-20:**
 [PR244](https://github.com/Vovanostm/warwrit/pull/244) merged `fe3bcdb4`;
 #227 CLOSED/agent:done, PR CI39377607667 SUCCESS. Candidate/merged trees match;
