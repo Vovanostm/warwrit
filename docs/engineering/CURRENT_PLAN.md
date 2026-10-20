@@ -1,5 +1,32 @@
 # Warwrit current delivery plan
 
+**Overview second rework — 2026-10-20, LOCAL / independent gates pending:**
+Normal commit `5124298c` replaces displaced overview portraits with compact
+lettered ground markers and the same letters in initiative. Measured initiative/
+threat space, a scrolling log column and dock/forecast bounds address confirmed
+obstruction; log deliberately replaces inspection until collapsed. Author 33
+focused tests, web types, scoped lint/format/diff and normal audit PASS; earlier
+two audit findings were corrected without weakening checks. Ordinary browser
+proof: four native100/125 fit/hit samples, ten active dense-state targets with
+zero marker intersections, manual move/wait and passive revision preservation.
+New twelve-letter opening and fresh integrated/absolute visual acceptance remain
+pending. Eval3/visual2 retain REWORK for frozen94c723c2, not this new source.
+[Behavior and limits](../wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+DESIGN_COMPASS governs actual target/actor/cell/action clarity; no balance,
+enjoyment, performance or full UI-epic acceptance is inferred from this work.
+
+**Profile delivery checkpoint — 2026-10-20, PUBLISHED DRAFT / needs owner:**
+[PR241](https://github.com/Vovanostm/warwrit/pull/241), head `795c842`, is draft.
+Clean-checkout CI39351771449 SUCCESS: 880 PASS/48 SKIP, 10000 stress battles,
+15 real DB checks and coverage/audit. Independent approved-behavior evaluation
+confirmed one encounter's fists/armed attacks, terminal practice/wounds, exact
+combat/JOIN retries and unchanged persisted rows after application restart.
+Critical-bleed attack/defence policy awaits the owner; approved fists and
+immobility stay unchanged, rescue/transport remains excluded. Payment and
+terminal-browser acceptance are NOT_RUN. #164 remains OPEN/agent:needs-owner;
+this supersedes older local-failure statuses only. Picker#228 contract is prepared
+from merged PR240 and waits for the sole overview web lane to finish.
+
 **Overview #227 — 2026-10-20, LOCAL REWORK / acceptance pending:**
 Source `94c723c2` preserves full-field fit and adds inspectable existing-art
 portraits at overview, compact resource detail and separated desktop HUD lanes.

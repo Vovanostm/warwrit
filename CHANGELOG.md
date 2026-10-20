@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Keep overview identities, threats and commands visible together
+
+- 2026-10-20, branch `codex/battle-overview-227`, local `5124298c`: replace
+  displaced portrait cards with stable lettered foot markers shared with
+  initiative; measure the threat/initiative band, reserve a scrolling log column,
+  and constrain forecasts above the dock. Confirmed banner obstruction and
+  native125 marker collisions motivated the changes. No art, rules, dependencies
+  or migrations changed. Author 33 focused tests, types/lint/format and normal
+  audit PASS; four ordinary browser fit/hit samples and manual/passive commands
+  recorded. Fresh independent gameplay/absolute visual gates remain pending.
+  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+- Delivery readback: profile [PR241](https://github.com/Vovanostm/warwrit/pull/241)
+  is a published draft at795c842; CI39351771449 PASS (880/48 skipped,10000 stress,
+  15 DB,audit). Its policy decision still blocks merge; #164 is needs-owner.
+
 ### Make full-field overview inspectable and separate crowded controls
 
 - 2026-10-20, branch `codex/battle-overview-227`, local: source `94c723c2`
