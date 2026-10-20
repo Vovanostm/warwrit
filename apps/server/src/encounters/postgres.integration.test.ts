@@ -40,6 +40,7 @@ import { firstHuntTimeoutCommandId } from './admission.js';
 import { startEncounterAiWorker } from './ai-worker.js';
 import { applyPendingFirstHuntTerminalEffects } from './effects.js';
 import { EncounterRoomState } from './room-state.js';
+import { refreshEncounterRoomProjections } from './room.js';
 
 const connectionString = process.env['WARWRIT_ENCOUNTER_DATABASE_URL'];
 const databases =
@@ -2345,7 +2346,8 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
       const issuer = `encounter-realtime-test-${accountId}`;
       let encounterId: string | undefined;
       let app: ReturnType<typeof buildApp> | undefined;
-      let leaveRoom: (() => Promise<void>) | undefined;
+      const joinedRooms: Array<{ leave(): Promise<unknown> }> = [];
+      let restartedDatabase: ReturnType<typeof createDatabase> | undefined;
       await database
         .insertInto('identity_accounts')
         .values({ id: accountId, issuer, subject: 'owner' })
@@ -2372,12 +2374,14 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           ENCOUNTER_REALTIME_PORT: String(roomPort),
           ENCOUNTER_FIXTURES: '1',
         });
-        app = buildApp({
-          logger: false,
-          identity: { config: config.identity!, database },
-          encounters: { database, fixtureAdmission: true },
-          encounterRealtime: { host: config.host, port: roomPort },
-        });
+        const openApp = (connection: typeof database) =>
+          buildApp({
+            logger: false,
+            identity: { config: config.identity!, database: connection },
+            encounters: { database: connection, fixtureAdmission: true },
+            encounterRealtime: { host: config.host, port: roomPort },
+          });
+        app = openApp(database);
         await app.ready();
         const fixture = await createFixtureEncounter(database, accountId);
         encounterId = fixture.encounterId;
@@ -2393,11 +2397,27 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         expect(ticket).toMatchObject({ name: 'encounter' });
         const roomClient = new Client(`http://127.0.0.1:${roomPort}`, { headers: { cookie } });
         const room = await roomClient.consumeSeatReservation(ticket, EncounterRoomState);
-        leaveRoom = async () => {
-          await room.leave();
-        };
+        joinedRooms.push(room);
         await new Promise<void>((resolve) => room.onStateChange.once(() => resolve()));
         expect(room.state.encounterId).toBe(encounterId);
+        const joinClient = async () => {
+          const response = await app!.inject({
+            method: 'POST',
+            url: `/encounters/${encounterId}/room-ticket`,
+            headers: { cookie, origin: 'http://127.0.0.1:3107' },
+            payload: { version: 1 },
+          });
+          expect(response.statusCode, response.body).toBe(200);
+          const client = new Client(`http://127.0.0.1:${roomPort}`, { headers: { cookie } });
+          const joined = await client.consumeSeatReservation(
+            response.json() as SeatReservation,
+            EncounterRoomState,
+          );
+          joinedRooms.push(joined);
+          await new Promise<void>((resolve) => joined.onStateChange.once(() => resolve()));
+          return joined;
+        };
+        const secondRoom = await joinClient();
         const roomProjection = room.state.toJSON() as Record<string, unknown>;
         const allowedPublicRoomFields = new Set([
           'version',
@@ -2473,11 +2493,100 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         await revisionUpdated;
         expect(room.state.revision).toBe(1);
         expect(room.state.units.get('human-shield')).toMatchObject({ q: -1, r: 0 });
-        await room.leave();
-        leaveRoom = undefined;
+        // Use only accepted commands on the freshly created fixture to reach damaged HP.
+        let damaged: combat.BattleState | undefined;
+        for (let step = 0; step < 80; step += 1) {
+          const saved = await sql<{
+            state: combat.BattleState;
+          }>`select state from encounters where id = ${encounterId}`.execute(database);
+          const state = saved.rows[0]!.state;
+          if (state.units.some((unit) => unit.health > 0 && unit.health < unit.attributes.health)) {
+            damaged = state;
+            break;
+          }
+          const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
+          if (!actor || !state.activation) throw new Error('Fixture ended before damage');
+          if (actor.sideId === 'human') {
+            const command = combat.chooseAiCommand(state);
+            const intent =
+              command.type === 'move'
+                ? { type: 'move' as const, to: command.to }
+                : command.type === 'attack'
+                  ? { type: 'attack' as const, targetId: command.targetId }
+                  : { type: command.type };
+            const response = await app.inject({
+              method: 'POST',
+              url: '/encounters/commands',
+              headers: { cookie, origin: 'http://127.0.0.1:3107' },
+              payload: {
+                version: 1,
+                encounterId,
+                commandId: randomUUID(),
+                expectedRevision: state.revision,
+                activationId: state.activation.id,
+                actorId: actor.id,
+                intent,
+              },
+            });
+            expect(response.json()).toMatchObject({ status: 'accepted' });
+          } else {
+            let committed: EncounterCommandResponse | undefined;
+            await expect
+              .poll(async () => {
+                const wake = (await listDueEncounterAiWakes(database)).find(
+                  (entry) => entry.encounterId === encounterId,
+                );
+                if (wake) committed = await executeEncounterAiWake(database, wake);
+                return committed?.status;
+              })
+              .toBe('accepted');
+            await refreshEncounterRoomProjections(encounterId);
+          }
+        }
+        if (!damaged) throw new Error('Legal fixture commands did not reach damaged HP');
+        const expectedUnits = damaged.units.map((unit) => ({
+          id: unit.id,
+          sideId: unit.sideId,
+          q: unit.position.q,
+          r: unit.position.r,
+          health: unit.health,
+          maximumHealth: unit.attributes.health,
+          status: unit.status,
+        }));
+        const assertSnapshot = async (joined: typeof room) => {
+          await expect.poll(() => joined.state.revision).toBe(damaged!.revision);
+          expect([...joined.state.units.values()].map((unit) => unit.toJSON())).toEqual(
+            expectedUnits,
+          );
+          const response = await app!.inject({
+            method: 'GET',
+            url: `/encounters/${encounterId}/projection`,
+            headers: { cookie },
+          });
+          expect(response.statusCode, response.body).toBe(200);
+          expect(response.json().revision).toBe(damaged!.revision);
+          expect(response.json().units).toEqual(expectedUnits);
+        };
+        await assertSnapshot(room);
+        await assertSnapshot(secondRoom);
+        const reconnected = new Promise<void>((resolve) => room.onReconnect.once(resolve));
+        room.reconnection.minUptime = 0;
+        room.connection.close(1001);
+        await reconnected;
+        await assertSnapshot(room);
+        // A fresh client and a reopened application/DB connection must keep that denominator.
+        await assertSnapshot(await joinClient());
+        for (const joined of joinedRooms.splice(0)) await joined.leave();
+        await app.close();
+        restartedDatabase = createDatabase(connectionString!);
+        app = openApp(restartedDatabase);
+        await app.ready();
+        await assertSnapshot(await joinClient());
+        expect(await verifyEncounterReplay(restartedDatabase, encounterId)).toBe(true);
       } finally {
-        await leaveRoom?.();
+        for (const joined of joinedRooms) await joined.leave();
         await app?.close();
+        await restartedDatabase?.destroy();
         if (encounterId !== undefined) {
           await database
             .deleteFrom('encounter_receipts')
@@ -2508,6 +2617,7 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         await database.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
       }
     },
+    30_000,
   );
 
   it.skipIf(connectionString === undefined)(

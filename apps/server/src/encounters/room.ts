@@ -258,6 +258,7 @@ export class EncounterRoom extends Room<{
           q: unit.q,
           r: unit.r,
           health: unit.health,
+          maximumHealth: unit.maximumHealth ?? 0,
           status: unit.status,
         }),
       );

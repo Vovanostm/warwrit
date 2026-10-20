@@ -1,5 +1,17 @@
 # Warwrit current delivery plan
 
+**Canonical encounter HP — 2026-10-20, LOCAL / focused checks PASS:**
+Independent #163 implementation on `codex/health-cap-163` starts from merged
+main eb98dd2 (PR240). Public HTTP/Colyseus units now carry the canonical health
+maximum; the persistent renderer removes client-history inference and keeps
+legacy/invalid maximums explicitly unknown. Focused33 tests, protocol/server/web types, scoped lint/format and diff checks
+PASS. The renderer regression fails against old code and passes on the fix.
+Normal audit/commit, real DB/reconnect, damaged-company browser and independent
+acceptance remain pending; runtime gates are NOT_RUN. No rules, replay, migrations or lab
+HUD changes. Parent owns shared docs and delivery; the profile241 draft still
+awaits the critical-bleed policy, and the overview writer keeps its own files.
+[Owning behavior and limits](../wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
+
 **Human preset producer — 2026-10-20, LOCAL ACCEPT / publication pending:**
 `codex/human-battle-228`, gated source `9534bf7`: detached catalog presets,
 unchanged mill default, six allies and five human opponents with current S4 rules.

@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Preserve canonical health ratios when joining an ongoing encounter
+
+- 2026-10-20, branch `codex/health-cap-163`, local: #163 fixes the renderer's
+  client-history denominator. Protocol/HTTP/Colyseus carry only canonical
+  maximumHealth; absent/invalid caps remain unknown. The persistent bar and
+  health text consume the same snapshot. Projection/room/connection/scene
+  regressions pass:33 focused tests, protocol/server/web types, scoped lint/format
+  and diff. Old-renderer negative control fails as expected; the corrected
+  renderer passes. One lint import-style error was fixed. Normal audit/commit
+  and real DB/reconnect/browser/independent gates remain pending (runtime
+  NOT_RUN). Rules,
+  replay history, migrations and combat-lab are unchanged. No merge claimed.
+  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
+
 ### Add the human-opponent preset producer and playable evidence
 
 - 2026-10-20, branch `codex/human-battle-228`, local: implement #228 catalog
