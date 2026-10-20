@@ -15,7 +15,7 @@ import {
   type BattleSetupV2,
 } from '@warwrit/game-core';
 import { ensureFirstHuntGenesis } from '../contracts/first-hunt-runtime.js';
-import { Client, type SeatReservation } from '@colyseus/sdk';
+import { Client, CloseCode, type SeatReservation } from '@colyseus/sdk';
 import type { EncounterCommandResponse } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { sql } from 'kysely';
@@ -40,7 +40,6 @@ import { firstHuntTimeoutCommandId } from './admission.js';
 import { startEncounterAiWorker } from './ai-worker.js';
 import { applyPendingFirstHuntTerminalEffects } from './effects.js';
 import { EncounterRoomState } from './room-state.js';
-import { refreshEncounterRoomProjections } from './room.js';
 
 const connectionString = process.env['WARWRIT_ENCOUNTER_DATABASE_URL'];
 const databases =
@@ -2338,6 +2337,7 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
   it.skipIf(connectionString === undefined)(
     'starts and closes the Colyseus listener with the authenticated Fastify room-ticket flow',
     async () => {
+      const retainFixture = process.env['WARWRIT_KEEP_HEALTH_CAP_FIXTURE'] === '1';
       const [database] = databases;
       if (database === undefined) throw new Error('database missing');
       const accountId = randomUUID();
@@ -2495,18 +2495,30 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         expect(room.state.units.get('human-shield')).toMatchObject({ q: -1, r: 0 });
         // Use only accepted commands on the freshly created fixture to reach damaged HP.
         let damaged: combat.BattleState | undefined;
+        let damagedDeadline = 0;
         for (let step = 0; step < 80; step += 1) {
           const saved = await sql<{
             state: combat.BattleState;
-          }>`select state from encounters where id = ${encounterId}`.execute(database);
-          const state = saved.rows[0]!.state;
-          if (state.units.some((unit) => unit.health > 0 && unit.health < unit.attributes.health)) {
-            damaged = state;
-            break;
-          }
+            deadline_at: Date | null;
+            ai_wake_at: Date | null;
+          }>`select state, deadline_at, ai_wake_at from encounters where id = ${encounterId}`.execute(
+            database,
+          );
+          const current = saved.rows[0]!;
+          const state = current.state;
           const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
           if (!actor || !state.activation) throw new Error('Fixture ended before damage');
           if (actor.sideId === 'human') {
+            expect(current.ai_wake_at).toBeNull();
+            if (current.deadline_at === null) throw new Error('Human deadline missing');
+            expect(Date.now()).toBeLessThan(current.deadline_at.getTime());
+            if (
+              state.units.some((unit) => unit.health > 0 && unit.health < unit.attributes.health)
+            ) {
+              damaged = state;
+              damagedDeadline = current.deadline_at.getTime();
+              break;
+            }
             const command = combat.chooseAiCommand(state);
             const intent =
               command.type === 'move'
@@ -2530,17 +2542,18 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
             });
             expect(response.json()).toMatchObject({ status: 'accepted' });
           } else {
-            let committed: EncounterCommandResponse | undefined;
+            // The app's real worker owns AI execution; it may already have advanced.
             await expect
-              .poll(async () => {
-                const wake = (await listDueEncounterAiWakes(database)).find(
-                  (entry) => entry.encounterId === encounterId,
-                );
-                if (wake) committed = await executeEncounterAiWake(database, wake);
-                return committed?.status;
-              })
-              .toBe('accepted');
-            await refreshEncounterRoomProjections(encounterId);
+              .poll(
+                () =>
+                  database
+                    .selectFrom('encounters')
+                    .select(['revision', 'activation_id'])
+                    .where('id', '=', encounterId!)
+                    .executeTakeFirstOrThrow(),
+                { timeout: 5_000 },
+              )
+              .not.toEqual({ revision: state.revision, activation_id: state.activation.id });
           }
         }
         if (!damaged) throw new Error('Legal fixture commands did not reach damaged HP');
@@ -2553,7 +2566,9 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           maximumHealth: unit.attributes.health,
           status: unit.status,
         }));
+        expect(expectedUnits.every((unit) => unit.maximumHealth === 70)).toBe(true);
         const assertSnapshot = async (joined: typeof room) => {
+          expect(Date.now()).toBeLessThan(damagedDeadline);
           await expect.poll(() => joined.state.revision).toBe(damaged!.revision);
           expect([...joined.state.units.values()].map((unit) => unit.toJSON())).toEqual(
             expectedUnits,
@@ -2566,12 +2581,13 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           expect(response.statusCode, response.body).toBe(200);
           expect(response.json().revision).toBe(damaged!.revision);
           expect(response.json().units).toEqual(expectedUnits);
+          expect(Date.now()).toBeLessThan(damagedDeadline);
         };
         await assertSnapshot(room);
         await assertSnapshot(secondRoom);
         const reconnected = new Promise<void>((resolve) => room.onReconnect.once(resolve));
         room.reconnection.minUptime = 0;
-        room.connection.close(1001);
+        room.connection.close(CloseCode.MAY_TRY_RECONNECT);
         await reconnected;
         await assertSnapshot(room);
         // A fresh client and a reopened application/DB connection must keep that denominator.
@@ -2583,38 +2599,57 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         await app.ready();
         await assertSnapshot(await joinClient());
         expect(await verifyEncounterReplay(restartedDatabase, encounterId)).toBe(true);
+        expect(Date.now()).toBeLessThan(damagedDeadline);
+        process.stdout.write(
+          'health-cap transport checkpoint ' +
+            JSON.stringify({
+              encounterId,
+              revision: damaged.revision,
+              activationId: damaged.activation?.id,
+              deadlineAt: new Date(damagedDeadline).toISOString(),
+              units: expectedUnits,
+              twoClients: true,
+              reconnect: true,
+              appReopen: true,
+              replay: true,
+              retained: retainFixture,
+            }) +
+            '\n',
+        );
       } finally {
         for (const joined of joinedRooms) await joined.leave();
         await app?.close();
         await restartedDatabase?.destroy();
-        if (encounterId !== undefined) {
+        if (!retainFixture) {
+          if (encounterId !== undefined) {
+            await database
+              .deleteFrom('encounter_receipts')
+              .where('encounter_id', '=', encounterId)
+              .execute();
+            await database
+              .deleteFrom('encounter_events')
+              .where('encounter_id', '=', encounterId)
+              .execute();
+            await database
+              .deleteFrom('encounter_commands')
+              .where('encounter_id', '=', encounterId)
+              .execute();
+            await database
+              .deleteFrom('encounter_ai_controllers')
+              .where('encounter_id', '=', encounterId)
+              .execute();
+            await database
+              .deleteFrom('encounter_participants')
+              .where('encounter_id', '=', encounterId)
+              .execute();
+            await database.deleteFrom('encounters').where('id', '=', encounterId).execute();
+          }
           await database
-            .deleteFrom('encounter_receipts')
-            .where('encounter_id', '=', encounterId)
+            .deleteFrom('identity_sessions')
+            .where('token_digest', '=', tokenDigest)
             .execute();
-          await database
-            .deleteFrom('encounter_events')
-            .where('encounter_id', '=', encounterId)
-            .execute();
-          await database
-            .deleteFrom('encounter_commands')
-            .where('encounter_id', '=', encounterId)
-            .execute();
-          await database
-            .deleteFrom('encounter_ai_controllers')
-            .where('encounter_id', '=', encounterId)
-            .execute();
-          await database
-            .deleteFrom('encounter_participants')
-            .where('encounter_id', '=', encounterId)
-            .execute();
-          await database.deleteFrom('encounters').where('id', '=', encounterId).execute();
+          await database.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
         }
-        await database
-          .deleteFrom('identity_sessions')
-          .where('token_digest', '=', tokenDigest)
-          .execute();
-        await database.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
       }
     },
     30_000,

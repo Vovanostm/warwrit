@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Make the health-cap transport proof observe the real AI worker
+
+- 2026-10-20, branch `codex/health-cap-163`, local: independent review R1
+  found a race in the new DB regression, not a production HP defect. The test
+  now observes the app worker and chooses a damaged human-turn checkpoint
+  without a due AI wake; all comparisons finish before its normal deadline.
+  A rejected WebSocket close code caused the first run to fail; the pinned
+  reconnect code fixes it. Final isolated PostgreSQL/SDK test PASS (1 test,
+  12 unrelated skipped): revision8, raider67/70, two clients, HTTP, actual
+  reconnect, app/DB reopen and replay. Earlier failures remain recorded.
+  Original source be263a3 passed normal audit/commit and33 focused tests/types;
+  corrected test commit/re-review and browser acceptance remain pending.
+  Producer/new-reader rollout must be coordinated: old strict HTTP readers
+  reject the extra field. No deployment or merge claimed.
+
 ### Preserve canonical health ratios when joining an ongoing encounter
 
 - 2026-10-20, branch `codex/health-cap-163`, local: #163 fixes the renderer's

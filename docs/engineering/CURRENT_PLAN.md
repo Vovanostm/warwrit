@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**HP transport correction — 2026-10-20, LOCAL / runtime test PASS:**
+Source be263a3 committed with normal audit PASS and33 focused tests/types.
+Independent review R1 found a race in its newly added transport test. The local
+correction observes the real AI worker and compares a stable human turn before
+its normal deadline. Final isolated PostgreSQL/SDK run PASS: revision8,
+raider67/70, two clients/HTTP, real reconnect, app/DB reopen and replay. The first
+run's invalid close-code failure is retained. Corrected test commit/re-review,
+parent validator, actual damaged-company browser acceptance and PR/CI/merge
+remain pending. Producer and reader must ship together; old strict readers
+reject the new field. Prior pending receipts below retain their dated scope.
+
 **Canonical encounter HP — 2026-10-20, LOCAL / focused checks PASS:**
 Independent #163 implementation on `codex/health-cap-163` starts from merged
 main eb98dd2 (PR240). Public HTTP/Colyseus units now carry the canonical health
