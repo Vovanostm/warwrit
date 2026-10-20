@@ -37,7 +37,10 @@ requests.
   helper/right-click proof remains open after a recorded driver failure.
   Lab absolute visual ACCEPT; final playable review remains pending. Integrated
   validation250PASS/49SKIP and7/8steps PASS; ten format failures corrected by
-  the repository formatter without behavior changes. Corrected gate pending.
+  the repository formatter without behavior changes. Corrected clean validator
+  onb4689ed6 EXIT0/8of8,250PASS/49SKIP. DB6 victory40 confirms both accounts'
+  right-click attacks, owner manual end,29accepted commands, exact replay and1proof.
+  Final independent playable/absolute visual ACCEPT; publication/CI/merge pending.
   [Evidence and remaining gates](docs/engineering/evidence/persistent-hud/README.md).
 
 ### Deliver the bridge and start the persistent commander interface — 2026-10-20

@@ -1,7 +1,9 @@
 # W01 unarmed derivative — 2026-10-20
 
-Origin: `codex/persistent-hud-166`, issue #166. Local candidate; integrated visual
-acceptance is pending. The persistent battle's generic outlined fallback made
+Origin: `codex/persistent-hud-166`, issue #166. Local accepted asset;
+2026-10-20 independent display/body-height and actual persistent scene review
+ACCEPT, all applicable visual criteria2 (motion N/A). Publication is pending.
+See the [HUD evidence](../../../../../../docs/engineering/evidence/persistent-hud/README.md). The persistent battle's generic outlined fallback made
 an admitted unarmed fighter effectively invisible. This is a presentation of the
 approved fists profile, not new equipment, mechanics or character lore.
 

@@ -1,7 +1,7 @@
 # Persistent commander presentation — #166
 
 2026-10-20, `codex/persistent-hud-166`, base main `1f37cb6a`.
-Status: LOCAL; source review and normal audit ACCEPT, playable acceptance and publication pending.
+Status: LOCAL ACCEPT; source, playable and absolute visual reviews accepted; publication/hosted CI/merge pending.
 The owner mission authorizes implementation, review and checked merge.
 
 ## Scope and authority
@@ -379,12 +379,71 @@ Correction to the early brief: the6native wait commands include one-step autopla
 only wait10 is proven to be the manual End Turn button. This distinction is
 retained in DB5 RESULT.md and the corrected current checkpoint.
 
+## Corrected integrated gate — 2026-10-20
+
+Normal formatting commitb4689ed6c7cc0b02fab193a279a46119b8ed9276 is clean.
+Coordinator validator EXIT0:8/8steps PASS,250tests PASS/49SKIP across35passed
+and7skipped files. Packages, types, format, lint and normal audit PASS.
+Logs: .orca/persistent-hud-166/integrated-corrected.log and .orca/validate-*.log;
+the first failed-format run is retained separately in integrated-first/.
+This is the local integration gate, not the hosted bootstrap/stress/migration
+pipeline. The bounded helper/right-click follow-up is released on this source.
+
+## Sixth fixture closes helper/right-click inputs — 2026-10-20
+
+Fresh DB6 onb4689ed6 reached company victory40:6allies alive,3wolves dead,
+29accepted account commands (owner14/helper15). Native events/final-state replay
+matches exactly; terminal effects applied once and one proof exists. Ordinary
+right-click attacks map to accepted owner revision7 and helper revision10,
+respectively140ms and142ms after the logged UI input. Explicit owner End Turn
+maps to wait8,106ms after input. Both roles have0driver failures and0unchanged-pool
+observation deadlines. No direct command HTTP, state injection, forced clicks or
+deadline changes were used. Autoplay buttons each request one action.
+
+The early helper manualDone flag was inaccurate: its right-click replaced a
+planned wait slot. Raw logs and input-correlation.json establish no explicit
+helper End Turn click; its accepted waits came through one-step autoplay.
+Owner manual proof remains valid here and in DB5. This bookkeeping correction
+does not alter the accepted attack receipts or claim extra manual actions.
+
+Both terminal viewports were captured at the actual resolution and show victory,
+6in formation/0dead versus0in formation/3dead; terminal AFK/resume controls are
+absent. Parent inspected the owner image. The inherited access lifecycle can
+remove an unbound terminal projection on refresh/reconnect; durable acknowledged
+outcome/history is not implemented or claimed by #166. Source reviewer confirmed
+this is existing access/discovery behavior, not a new HUD regression.
+
+Together with DB5's passive inspection/manual/reload evidence and the lab matrix,
+this closes the finite missing runtime inputs. Independent evaluator gives
+bounded HUD166 playable ACCEPT. Payment, fresh process-crash recovery, new external OIDC and full M1
+remain outside these checks. DB6 is retained for the approved representative
+contract/payment/restart follow-up; no such follow-up action has run here.
+Local evidence: .orca/persistent-hud-166/evaluator-prep/journey-db6-2026-10-20T14-27-41.753Z/,
+including input-correlation.json, terminal-summary.json, terminal-owner.png and
+terminal-helper.png. All earlier databases and failure records remain preserved.
+
+## Final independent acceptance — 2026-10-20
+
+Independent source ACCEPT covers the frozen implementation and affected final
+corrections. Independent evaluator gives bounded playable ACCEPT from the actual
+DB5/DB6/lab journeys. The separate visual critic inspected the current display,
+29lab frames,6adjacent-crowd frames, DB5real owned turns and both DB6terminal
+images against the approved references. Final absolute visual/playable ACCEPT:
+silhouette, pose, rendering, palette, materials, props/lore and scene/HUD
+integration each2; motion N/A for this no-new-animation slice. No material
+terminal defect: both victory panels are readable and unobstructed by combat
+commands/tooltips. Prior failed passes remain historical evidence above.
+
+Owner mission “Implement, review, merge” authorizes this checked #166 delivery.
+The corrected local validator is8/8 PASS; hosted clean gate and expected-head
+merge still precede delivery. No payment, full-M1, new OIDC, fresh crash-recovery,
+capacity or durable outcome-history acceptance is inferred.
+
 ## Remaining acceptance
 
-Execute a fast
-ordinary browser admission and legal HUD action before the unchanged deadline.
-Follow with current frozen-source review, independent real input/reconnect/
-terminal evaluation and absolute visual review. Final integrated validation,
+Publish the checked candidate and require hosted CI, expected-head merge and
+actual-main readback.
+Local integrated validation PASS does not substitute for the hosted clean gate;
 publication, hosted CI, merge and actual-main readback are NOT_RUN for #166.
 The [bridge recovery evidence](../core-tactical-bridge/README.md) retains its
 separate scope and cannot substitute for these HUD checks.

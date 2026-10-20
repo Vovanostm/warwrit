@@ -1,48 +1,30 @@
 # Warwrit current delivery plan
 
-**Persistent HUD source reviewed / playable checks pending — 2026-10-20, LOCAL:**
-[PR246](https://github.com/Vovanostm/warwrit/pull/246) remains merged1f37cb6a;
-exact-head CI39405429269 and main CI39406551033 SUCCESS. Its retained46-command
-readback matches both company roots; no fresh browser/restart is claimed for
-that main readback. [Bridge delivery](evidence/core-tactical-bridge/main-readback.md).
+**Persistent HUD accepted / ready to publish — 2026-10-20, LOCAL:**
+#166 in `codex/persistent-hud-166` uses actual main1f37cb6a (bridge PR246).
+Source commit1c73d845 plus exact formatter-only correctionb4689ed6: shared
+fullscreen scene/queue/cards/icon commands, finite public rendering data and
+private server-owned quotes. Fists retain approved W01 art; actual authority,
+unknown resource maxima and lab/persistent control separation remain explicit.
+Primary dirty prototype is untouched; one source writer, parent-owned records.
 
-#166 uses isolated `uix-w1-scene`, branch `codex/persistent-hud-166`, base1f37cb6a.
-Primary dirty prototype remains untouched. Observable outcome: the actual wolf
-hunt opens the shared fullscreen commander interface with truthful quotes,
-queue/cards, targeting, camera and reconnect. Existing roster, fists/critical
-bleeding decisions and one requested autoplay action remain unchanged; unmapped
-abilities, rescue/transport and unsupported surrender retain their stated gaps.
+Independent source, playable and absolute visual ACCEPT. Current display,
+29lab frames,6adjacent-crowd frames and actual DB5/DB6 images score2 in every
+applicable visual criterion (motion N/A). DB6 real two-company victory40 has
+29accepted commands, owner/helper right-click attacks7/10, owner manualwait8,
+exact replay and1proof. DB5 proves passive inspection0commands and11accepted
+after reload. Its6waits include autoplay; onlywait10 is explicitly manual.
+All earlier failed fixtures and harness corrections remain documented.
 
-One author owns source; parent owns documents/integration and serial check
-scheduling. Corrected projection/presentation/control source received independent
-ACCEPT. Real DB3 attack7 and DB4 move7/attack11 have native evidence, but both
-journeys were interrupted and ended in loss120; neither establishes the full
-manual/reconnect journey. All four databases and failure histories are retained.
-
-Current display-only1600/1024 day/night frames show the compact dock, actor
-HP/armor and target scroll cue. Wheel input reveals target resources without
-moving the scene/page. Independent DISPLAY-ONLY fit/art ACCEPT scores every
-applicable criterion2. Full layering/playable/absolute visual acceptance remains
-pending; synthetic display control is not authority proof. Refreshed captures
-and body-height comparisons are in the linked evidence record.
-
-Final affected source review ACCEPT covers room serialization, finite command
-payloads, old-mill environment setup and active AFK notices. Normal audit PASS
-against main1f37cb6a: no new dead code, complexity or duplication. Consumed
-health-cap regression is preserved in the shared view; unused renderer removed.
-Parent retained coverage78PASS/13files; final author report80PASS/13files has
-no retained raw log and is not substituted for that evidence. Author web/server
-types PASS. Normal source commit1c73d845 completed with a clean tree. Actual
-lab29-frame day/night/grid/height0–2/long-weapon/large-creature capture pass is
-complete with0combatPOST; six ordinary adjacent-crowd frames add height0/1/2
-and hover evidence. DB5 defeat117 replays exactly:13owner commands,6waits
-(one explicitly manual),0commands during inspection and11accepted after reload. Helper driver
-starvation leaves helper/right-click proof open; no victory/payment claim.
-Current lab visual ACCEPT: all applicable scores2; overall166 still needs
-helper/right-click and terminal-view proof. Integrated validator250PASS/49SKIP,
-7/8steps PASS; only formatting failed. Exact formatter-only correction complete;
-corrected validator/publication/merge pending.
-[HUD behavior, failed runs and current checks](evidence/persistent-hud/README.md).
+Corrected clean integrated validator onb4689ed6 EXIT0/8of8,250PASS/49SKIP,
+packages/types/format/lint/audit PASS. Earlier format-only failure retained.
+Owner “Implement, review, merge” authorizes #166 after hosted clean CI and
+expected-head checks. Publication, hosted CI and merge pending. Next after
+actual-main readback: retained DB6 can support the already-approved representative
+contract→payment→restart proof (#174/#177); none of those follow-up actions ran.
+Unmapped skills, rescue/transport, unsupported surrender and durable acknowledged
+outcome/history remain bounded limitations. Full sprint/M1 remain PARTIAL.
+[Owning behavior, actual checks and failures](evidence/persistent-hud/README.md).
 
 **Bounded bridge ready to publish — 2026-10-20, LOCAL:**
 Integrated5221ebe3 on main6b5b1b03 passes coordinator validator8/8,
