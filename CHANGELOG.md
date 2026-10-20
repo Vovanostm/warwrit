@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Keep the profile draft compatible with merged overview
+
+- 2026-10-20, branch `codex/company-profile-164`, local: integrate mainfe3bcdb4
+  after PR244, preserving both additive documentation histories. Profile source
+  and its pending critical-bleed policy are unchanged; no production conflicts,
+  migrations or rescue/transport rule. Earlier reviewed profile tests/CI remain
+  attributed to their heads; new combined runtime/CI NOT_RUN. Normal integration
+  audit PASS after 25 existing initiative-related tests. Initial audit lacked
+  current imported HUD coverage; Istanbul combines fresh results with prior
+  unchanged-source coverage and discards changed-source entries. No threshold
+  or hook bypass. [Current plan](docs/engineering/CURRENT_PLAN.md).
+- Overview delivery is merged: PR244/fe3bcdb4, #227 CLOSED, PR39377607667 and
+  main39378757951 CI SUCCESS; actual-main6v5 state/revision3 survives reload.
+  [Readback and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+
 ### Accept the profile integration test correction
 
 - 2026-10-20, branch `codex/company-profile-164`, local: independent correction
@@ -161,6 +176,90 @@ requests.
   concurrent timeouts remain inconclusive. Critical-bleed attack/defence
   classification and rescue/transport remain explicit gaps; #164 not closed.
   CURRENT_PLAN, m1-spec and local playtest updated with this local status.
+
+### Retain accepted overview proof and current delivery readback
+
+- 2026-10-20, branch `codex/battle-overview-227`, local: retain played eval5 and
+  full absolute visual6 ACCEPTff40f304, eleven controlled layer pairs, earlier
+  REWORK and runtime-coordination correction in the
+  [evidence packet](docs/engineering/evidence/uix-overview-zoom/README.md).
+  Main3c934c16 integrated throughbbbc91d without overview source changes;
+  parent validator8/8,33relatedPASS,auditPASS; combined223PASS/47SKIP.
+  Owning battlefield wiki/CURRENT_PLAN updated; publication/CI/merge pending.
+- Delivery correction: picker PR243 merged3c934c16, #228 CLOSED, PR/main CI
+  SUCCESS and bounded actual-main6v5/reload smoke passed with explicit probe
+  limits. Profile PR241 draft9f18c548 has integration correction ACCEPT and
+  CI39374767374 SUCCESS (888/48SKIP,10000stress,15DB/auth,audit); owner policy
+  remains pending. No profile merge, full-M1 or deployment acceptance claimed.
+
+### Accept the full-field overview and retained inspection
+
+- 2026-10-20, branch `codex/battle-overview-227`, local: played eval5 and full
+  absolute visual6 ACCEPTff40f304. Complete field, grounded letter/queue linkage
+  and a bounded scrolling casualty card preserve ten actual survivor selections
+  during a real threat; normal battle reached victory149 and retained reload.
+  Eleven controlled ground-overlay pairs close the prior missing archer/height
+  evidence; no opaque-body crossing was reproduced. Scores2; remaining polish
+  and diagnostic/performance limits are retained in the evidence packet.
+  Integrate main3c934c16 with additive document reconciliation only; overview
+  source is unchanged. Combined validator/hosted CI/publication/merge pending.
+  Parent owns shared records and preserves earlier REWORK/interrupted attempts.
+
+### Retain the continuous-play overview blocker before correction
+
+- 2026-10-20, branch `codex/battle-overview-227`, local: evaluator4 reproduced
+  #227 wrong-target selection when a retained casualty inspection collapses the
+  native125 overview. Source5124298c remains REWORK; log-open checks alone do
+  not accept it. Opening12 pointer/keyboard targets, manual move/attack and
+  actual victory/reload at revision138 passed in the bounded journey.
+  The correction bounds inspection to a scrollable200px right card and keeps
+  name/HP/status in its sticky heading, including keyboard access. No rules or
+  art change. Author type/lint checks and first continuous casualty-state
+  readback pass; independent affected-state and absolute review remain pending.
+  Visual3 was stopped without verdict, and fresh affected-state plus absolute
+  review remain required. Local reports `.orca/uix-overview-zoom/eval-4.md`
+  and eval4-shots retain the failed state. #163 proceeds independently in its
+  reserved checkout; #164 owner policy remains pending. No merge claimed.
+
+### Keep overview identities, threats and commands visible together
+
+- 2026-10-20, branch `codex/battle-overview-227`, local `5124298c`: replace
+  displaced portrait cards with stable lettered foot markers shared with
+  initiative; measure the threat/initiative band, reserve a scrolling log column,
+  and constrain forecasts above the dock. Confirmed banner obstruction and
+  native125 marker collisions motivated the changes. No art, rules, dependencies
+  or migrations changed. Author 33 focused tests, types/lint/format and normal
+  audit PASS; four ordinary browser fit/hit samples and manual/passive commands
+  recorded. Fresh independent gameplay/absolute visual gates remain pending.
+  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+- Delivery readback: profile [PR241](https://github.com/Vovanostm/warwrit/pull/241)
+  is a published draft at795c842; CI39351771449 PASS (880/48 skipped,10000 stress,
+  15 DB,audit). Its policy decision still blocks merge; #164 is needs-owner.
+
+### Make full-field overview inspectable and separate crowded controls
+
+- 2026-10-20, branch `codex/battle-overview-227`, local: source `94c723c2`
+  adds existing-art overview portraits tied to unchanged feet, click-to-focus,
+  scale-aware resource detail and separate utility/command/skill lanes. This
+  addresses #227 evaluator/visual findings after full-field fit alone failed.
+  Changes are in combat-lab framing, vitals, scene and controls. Author 33
+  focused tests, web types, scoped lint/format and normal audit passed.
+  Initial evidence used cache-busting source interception; ordinary-runtime
+  independent evaluation and absolute visual acceptance remain pending.
+  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+- Delivery correction: [PR240](https://github.com/Vovanostm/warwrit/pull/240)
+  is merged as `eb98dd2`; PR CI39334291071 and main CI39335721903 succeeded.
+  #228 remains open for its picker. Earlier pending receipts are historical.
+
+### Resume the playable fix sequence with field overview
+
+- 2026-10-19, branch `codex/battle-overview-227`, local: owner requested
+  implementation, review and merge of the assessed fix sequence. Start #227
+  full-field overview before the preserved actor/desk/outcome integration to
+  remove an acceptance prerequisite; one web writer, existing work retained.
+  Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with mission scope
+  and PR239's verified merge into `b568ee2` (main CI39296247123 successful).
+  Camera code, gameplay and new visual acceptance remain NOT_RUN at this entry.
 
 ### Accept the picker clean-build correction
 

@@ -88,6 +88,19 @@
   color: #d0d7ca;
   text-shadow: 0 1px 2px #000;
 }
+.battle-top-band {
+  position: absolute;
+  top: 18px;
+  left: 200px;
+  right: 268px;
+  display: grid;
+  gap: 6px;
+  z-index: 4;
+}
+.battle-top-band .battle-initiative {
+  position: relative;
+  inset: auto;
+}
 .battle-initiative {
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr) 28px;
@@ -586,23 +599,24 @@
   font-size: 11px;
 }
 .battle-log {
+  color: #c6d2ba;
+}
+.battle-log summary {
   position: absolute;
   left: 26px;
   bottom: 2px;
   z-index: 10;
-  color: #c6d2ba;
-}
-.battle-log summary {
   cursor: pointer;
   font-size: 10px;
   text-shadow: 0 1px 2px #000;
 }
 .battle-log-content {
   position: absolute;
-  bottom: 24px;
-  left: 0;
-  width: min(650px, 70vw);
-  max-height: 55vh;
+  bottom: 20px;
+  right: var(--battle-edge);
+  z-index: 10;
+  width: var(--battle-card-width);
+  max-height: 216px;
   overflow: auto;
   padding: 18px;
   background: #172b2df7;
@@ -790,31 +804,19 @@
 }
 
 .battle-threat-strip {
-  position: absolute;
-  top: 132px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  max-width: 660px;
   pointer-events: none;
 }
 .battle-threat-strip > div {
-  display: grid;
-  grid-template-columns: 24px 1fr;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 3px 9px;
-  padding: 10px 15px;
+  padding: 6px 10px;
   background: #271e1bea;
   border: 1px solid #a86d50;
   border-radius: 7px;
   box-shadow: 0 3px 14px #09090780;
   color: #ead5b7;
-}
-.battle-threat-strip svg {
-  grid-row: span 3;
-  width: 24px;
-  fill: none;
-  stroke: #db9474;
-  stroke-width: 1.5;
 }
 .battle-threat-strip strong {
   font-size: 13px;
@@ -823,7 +825,7 @@
   font-size: 12px;
 }
 .battle-threat-strip small {
-  grid-column: 2;
+  flex-basis: 100%;
   font-size: 11px;
   color: #cdb9a0;
 }
