@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+**Actor backdrop correction and integrated checks — 2026-10-20, LOCAL:**
+Normal source commit6eb5263 fixes the reproduced ruined-mill/name draw-order
+collision. Current source-reloaded native100/125 day/night Home/close captures
+show the full projected name; diagnostic raised crowd remains separately
+attributed. Coordinator validation EXIT0/8of8,47relatedPASS and auditPASS.
+Prior independent input/geometry ACCEPT47178752 remains attributable to its
+unchanged boundaries; current absolute visual ACCEPT6eb5263 scores every
+applicable marker criterion2. [Retained proof and limits](evidence/uix-actor-foundation/README.md). The builder
+reported a scheduling breach: its passing commit hook ran while the check
+window was WAIT. This is retained as a failed worker obligation, not erased by
+passing checks. Parent subsequently ran integrated validation alone.
+Refs186 only; enemy intermediate-frame agreement remains190. No PR/merge yet.
+
 **Actor backdrop overlap — 2026-10-20, LOCAL REWORK:**
 Integrated actor47178752 passed coordinator validation8/8 with47related tests.
 Parent then personally inspected both author and fresh independent native125

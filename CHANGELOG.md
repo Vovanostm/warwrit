@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Actor backdrop correction and integrated checks — 2026-10-20, LOCAL
+
+- Normal source commit6eb5263 fixes the reproduced ruined-mill/name draw-order
+  collision. Current source-reloaded native100/125 day/night Home/close captures
+  show the full projected name; diagnostic raised crowd remains separately
+  attributed. Coordinator validation EXIT0/8of8,47relatedPASS and auditPASS.
+  Prior independent input/geometry ACCEPT47178752 remains attributable to its
+  unchanged boundaries; absolute visual ACCEPT6eb5263, all applicable criteria2.
+  [Proof and limits](docs/engineering/evidence/uix-actor-foundation/README.md). The builder
+  reported a scheduling breach: its passing commit hook ran while the check
+  window was WAIT. This is retained as a failed worker obligation, not erased by
+  passing checks. Parent subsequently ran integrated validation alone.
+  Refs186 only; enemy intermediate-frame agreement remains190. No PR/merge yet.
+  Branch `codex/actor-integration-186`; local.
+  [Current record](docs/engineering/CURRENT_PLAN.md).
+
 ### Record the reproduced backdrop overlap before actor delivery
 
 - 2026-10-20, branch `codex/actor-integration-186`, local REWORK: integrated
