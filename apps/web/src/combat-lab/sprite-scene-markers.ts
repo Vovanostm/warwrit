@@ -1,7 +1,8 @@
-import type { CombatLabHex, CombatLabSkillId, CombatLabView } from '@warwrit/protocol';
+import type { CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
+import type { BattlePresentationView, Unit } from './battle-presentation.js';
 
 type MarkerView = Pick<
-  CombatLabView,
+  BattlePresentationView,
   | 'status'
   | 'controlledSideId'
   | 'activation'
@@ -11,7 +12,6 @@ type MarkerView = Pick<
   | 'movementPreview'
   | 'rangedAttackArea'
 >;
-type Unit = CombatLabView['units'][number];
 const key = ({ q, r }: CombatLabHex) => `${q},${r}`;
 interface Selection {
   readonly selectedId: string | null;
@@ -43,7 +43,7 @@ type Cue = (hex: CombatLabHex, fill: Fill | null, border: Border, priority: numb
 
 function playerTurn(view: MarkerView, actor: Unit | undefined): boolean {
   if (view.status !== 'active' || actor?.status !== 'active') return false;
-  return actor.sideId === view.controlledSideId && (view.activation?.actionPoints.current ?? 0) > 0;
+  return actor.sideId === view.controlledSideId && (view.activation?.actionPoints?.current ?? 0) > 0;
 }
 function targetPreviews(
   view: MarkerView,
@@ -94,7 +94,8 @@ function unitCells(view: MarkerView, selection: Selection, cue: Cue) {
 }
 function threatCells(view: MarkerView, cue: Cue) {
   for (const unit of view.units) {
-    if (unit.status === 'active' && unit.threat) cue(unit.threat.targetHex, 'threat', 'threat', 9);
+    if (unit.status === 'active' && unit.threat?.targetHex)
+      cue(unit.threat.targetHex, 'threat', 'threat', 9);
   }
 }
 function reachCells(reach: readonly CombatLabHex[], movement: ReadonlySet<string>, cue: Cue) {
@@ -198,7 +199,7 @@ export function unitEdgeTone(
 }
 
 /** Activation identity is independent of inspection, action points and controlled side. */
-function actingUnitMarker(view: Pick<CombatLabView, 'status' | 'activation' | 'units'>) {
+function actingUnitMarker(view: Pick<BattlePresentationView, 'status' | 'activation' | 'units'>) {
   if (view.status !== 'active') return null;
   const unit = view.units.find(({ id }) => id === view.activation?.actorId);
   if (unit?.status !== 'active') return null;

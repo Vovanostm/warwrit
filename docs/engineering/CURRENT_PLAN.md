@@ -1,22 +1,41 @@
 # Warwrit current delivery plan
 
-**Persistent HUD active / bridge delivered — 2026-10-20:**
-[PR246](https://github.com/Vovanostm/warwrit/pull/246) merged1f37cb6a after
-independent source/playable recovery ACCEPT and exact-head CI39405429269 SUCCESS:
-911PASS/49SKIP,10000combat stress,16real database/auth tests,migrations,coverage/audit.
-Reviewed/synthetic-merge/actual-main trees match; #165 CLOSED. Actual-main
-read-only replay of retained46 and both saved company roots matches exactly;
-no fresh browser/restart is claimed for that readback. Main CI is running.
-[Delivery record](evidence/core-tactical-bridge/main-readback.md).
+**Persistent HUD source reviewed / playable checks pending — 2026-10-20, LOCAL:**
+[PR246](https://github.com/Vovanostm/warwrit/pull/246) remains merged1f37cb6a;
+exact-head CI39405429269 and main CI39406551033 SUCCESS. Its retained46-command
+readback matches both company roots; no fresh browser/restart is claimed for
+that main readback. [Bridge delivery](evidence/core-tactical-bridge/main-readback.md).
 
-Next approved observable outcome: the real wolf-hunt encounter opens the shared
-fullscreen commander interface with authoritative quotes, matching hover/target,
-queue/cards, camera and reconnect. #166 uses the existing isolated uix-w1-scene
-checkout on `codex/persistent-hud-166`, base1f37cb6a; primary dirty prototype remains
-untouched. One implementation writer owns the coupled presentation/protocol/readers;
-parent retains shared documents/integration. No new mechanics, skill mappings,
-custody, rescue or continuous autoplay; first path retains one requested action.
-Source implementation and current independent visual/playable acceptance NOT_RUN.
+#166 uses isolated `uix-w1-scene`, branch `codex/persistent-hud-166`, base1f37cb6a.
+Primary dirty prototype remains untouched. Observable outcome: the actual wolf
+hunt opens the shared fullscreen commander interface with truthful quotes,
+queue/cards, targeting, camera and reconnect. Existing roster, fists/critical
+bleeding decisions and one requested autoplay action remain unchanged; unmapped
+abilities, rescue/transport and unsupported surrender retain their stated gaps.
+
+One author owns source; parent owns documents/integration and serial check
+scheduling. Corrected projection/presentation/control source received independent
+ACCEPT. Real DB3 attack7 and DB4 move7/attack11 have native evidence, but both
+journeys were interrupted and ended in loss120; neither establishes the full
+manual/reconnect journey. All four databases and failure histories are retained.
+
+Current display-only1600/1024 day/night frames show the compact dock, actor
+HP/armor and target scroll cue. Wheel input reveals target resources without
+moving the scene/page. Independent DISPLAY-ONLY fit/art ACCEPT scores every
+applicable criterion2. Full layering/playable/absolute visual acceptance remains
+pending; synthetic display control is not authority proof. Refreshed captures
+and body-height comparisons are in the linked evidence record.
+
+Final affected source review ACCEPT covers room serialization, finite command
+payloads, old-mill environment setup and active AFK notices. Normal audit PASS
+against main1f37cb6a: no new dead code, complexity or duplication. Consumed
+health-cap regression is preserved in the shared view; unused renderer removed.
+Parent retained coverage78PASS/13files; final author report80PASS/13files has
+no retained raw log and is not substituted for that evidence. Author web/server
+types PASS. Source is frozen for normal commit. Next: execute crowded layering
+and fresh real UI/reconnect/terminal evidence on the committed source. No fifth
+fixture has started; integrated gate/publication/merge remain NOT_RUN.
+[HUD behavior, failed runs and current checks](evidence/persistent-hud/README.md).
 
 **Bounded bridge ready to publish — 2026-10-20, LOCAL:**
 Integrated5221ebe3 on main6b5b1b03 passes coordinator validator8/8,

@@ -1,7 +1,7 @@
-import type { CombatLabView } from '@warwrit/protocol';
+import type { BattlePresentationView, Unit } from './battle-presentation.js';
 import { spriteForUnit } from './sprite-art.js';
+import { UnitVitals } from './UnitVitals.js';
 import { poolLabels, unitStatus } from './battle-hud-format.js';
-export type Unit = CombatLabView['units'][number];
 const iconPaths = {
   health: 'M14 24 4 14Q-1 3 8 4q4 0 6 5 2-5 6-5 9-1 4 10Z',
   armor: 'M14 3 5 7v8q1 7 9 10 8-3 9-10V7ZM14 6v15',
@@ -37,7 +37,7 @@ function PanicState({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   return (
@@ -60,7 +60,7 @@ function ThreatState({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   return (
@@ -84,13 +84,14 @@ function ShakenState({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   const rules = view.ruleHints;
   const shaken =
     rules !== undefined &&
     unit.status === 'active' &&
+    unit.pools.morale !== undefined &&
     unit.pools.morale.current <= rules.hit.shakenMoraleThreshold;
   return (
     <>
@@ -113,13 +114,14 @@ function ExhaustedState({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   const rules = view.ruleHints;
   const exhausted =
     rules !== undefined &&
     unit.status === 'active' &&
+    unit.pools.stamina?.maximum !== undefined &&
     unit.pools.stamina.current * 100 <=
       unit.pools.stamina.maximum * rules.hit.lowStaminaThresholdPercent;
   return (
@@ -142,7 +144,7 @@ function GuardState({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   return (
@@ -171,25 +173,25 @@ function WoundState({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   return (
     <>
       {' '}
-      {unit.wounds.length > 0 && (
+      {(unit.wounds?.length ?? 0) > 0 && (
         <span
-          title={`Ранения: ${unit.wounds.map((w) => (w === 'severe' ? 'тяжёлое' : 'лёгкое')).join(', ')}`}
-          aria-label={`Ранений: ${unit.wounds.length}`}
+          title={`Ранения: ${unit.wounds!.map((w) => (w === 'severe' ? 'тяжёлое' : 'лёгкое')).join(', ')}`}
+          aria-label={`Ранений: ${unit.wounds!.length}`}
         >
           <Icon name="wound" />
-          {!compact && `Ранений: ${unit.wounds.length}`}
+          {!compact && `Ранений: ${unit.wounds!.length}`}
         </span>
       )}
     </>
   );
 }
-function StatusState({ unit }: { unit: Unit; view: CombatLabView; compact?: boolean }) {
+function StatusState({ unit }: { unit: Unit; view: BattlePresentationView; compact?: boolean }) {
   return <> {unit.status !== 'active' && <span>{unitStatus[unit.status]}</span>}</>;
 }
 function MoraleState({
@@ -197,7 +199,7 @@ function MoraleState({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   return (
@@ -206,7 +208,10 @@ function MoraleState({
       {!compact && (
         <span title="Наблюдаемое значение морали">
           <Icon name="morale" />
-          Мораль {unit.pools.morale.current}/{unit.pools.morale.maximum}
+          Мораль {unit.pools.morale?.current ?? '—'}
+          {unit.pools.morale?.maximum === undefined
+            ? ' · максимум неизвестен'
+            : `/${unit.pools.morale.maximum}`}
         </span>
       )}
     </>
@@ -218,7 +223,7 @@ function TerrainState({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   const tile = view.map.tiles?.find(({ q, r }) => q === unit.position.q && r === unit.position.r);
@@ -241,7 +246,7 @@ export function UnitStates({
   compact = false,
 }: {
   unit: Unit;
-  view: CombatLabView;
+  view: BattlePresentationView;
   compact?: boolean;
 }) {
   return (
@@ -265,7 +270,7 @@ export function UnitCard({
 }: {
   unit: Unit | undefined;
   actor?: boolean;
-  view: CombatLabView;
+  view: BattlePresentationView;
 }) {
   const points = actor ? view.activation?.actionPoints : undefined;
   return (
@@ -276,88 +281,145 @@ export function UnitCard({
         actor ? 'Действующий боец' : unit ? `Состояние: ${unit.name ?? unit.id}` : 'Осмотр бойца'
       }
     >
-      <div className="battle-card-header">
-        <span>{cardHeading(view, unit, actor)}</span>
-        {!actor && unit && (
-          <>
-            <h2>{unit.name ?? unit.id}</h2>
-            <span>
-              {poolLabels.health} {unit.pools.health.current}/{unit.pools.health.maximum}
-              {' · '}
-              {unitStatus[unit.status]}
-            </span>
-          </>
-        )}
-        {points && (
-          <div
-            className="battle-action-points"
-            aria-label={`Очки действий: ${points.current} из ${points.maximum}`}
-          >
-            <span className="battle-ap-pips" aria-hidden="true">
-              {Array.from({ length: points.maximum }, (_, i) => (
-                <i key={i} data-filled={i < points.current} />
-              ))}
-            </span>
-            <b>
-              ОД {points.current}/{points.maximum}
-            </b>
-          </div>
-        )}
-      </div>
-      {unit ? (
-        <>
-          <div className="battle-card-main">
-            <Portrait unit={unit} />
-            <div className="battle-card-data">
-              <h2>{unit.name ?? unit.id}</h2>
-              <dl className="battle-pools">
-                {(actor ? (['stamina'] as const) : (['health', 'armor', 'stamina'] as const)).map(
-                  (key) => (
-                    <div className="battle-resource" data-resource={key} key={key}>
-                      <Icon name={key} />
-                      <dt>{poolLabels[key]}</dt>
-                      <dd>
-                        <strong>{unit.pools[key].current}</strong>
-                        <small>/{unit.pools[key].maximum}</small>
-                      </dd>
-                      <span className="battle-resource-track">
-                        <i
-                          style={{
-                            width: resourceWidth(unit.pools[key]),
-                          }}
-                        />
-                      </span>
-                    </div>
-                  ),
-                )}
-              </dl>
-            </div>
-          </div>
-          <UnitStates unit={unit} view={view} />
-        </>
-      ) : (
-        <p className="battle-empty-inspection">
-          Наведите на портрет или фигуру.
-          <br />
-          ЛКМ закрепляет осмотр.
-        </p>
-      )}
+      <UnitCardHeader unit={unit} actor={actor} view={view} points={points} />
+      <UnitCardContents unit={unit} actor={actor} view={view} />
     </section>
   );
 }
 
-function cardHeading(view: CombatLabView, unit: Unit | undefined, actor: boolean | undefined) {
+function UnitCardHeader({
+  unit,
+  actor,
+  view,
+  points,
+}: {
+  unit: Unit | undefined;
+  actor: boolean | undefined;
+  view: BattlePresentationView;
+  points: { current: number; maximum?: number } | undefined;
+}) {
+  return (
+    <div className="battle-card-header">
+      <span>{cardHeading(view, unit, actor)}</span>
+      {!actor && unit && <InspectionCardHeading unit={unit} />}
+      {points && <ActionPointReading points={points} />}
+    </div>
+  );
+}
+
+function InspectionCardHeading({ unit }: { unit: Unit }) {
+  return (
+    <>
+      <h2>{unit.name ?? unit.id}</h2>
+      <small className="battle-inspection-scroll-cue">↓ Ресурсы и состояния ниже</small>
+      <span>
+        {poolLabels.health} {unit.pools.health?.current ?? '—'}
+        {unit.pools.health?.maximum === undefined ? '' : `/${unit.pools.health.maximum}`}
+        {' · '}
+        {unitStatus[unit.status]}
+      </span>
+    </>
+  );
+}
+
+function ActionPointReading({ points }: { points: { current: number; maximum?: number } }) {
+  return (
+    <div
+      className="battle-action-points"
+      aria-label={`Очки действий: ${points.current}${points.maximum === undefined ? ', максимум неизвестен' : ` из ${points.maximum}`}`}
+    >
+      {points.maximum !== undefined && (
+        <span className="battle-ap-pips" aria-hidden="true">
+          {Array.from({ length: points.maximum }, (_, i) => (
+            <i key={i} data-filled={i < points.current} />
+          ))}
+        </span>
+      )}
+      <b>
+        ОД {points.current}
+        {points.maximum === undefined ? ' · максимум неизвестен' : `/${points.maximum}`}
+      </b>
+    </div>
+  );
+}
+
+function UnitCardContents({
+  unit,
+  actor,
+  view,
+}: {
+  unit: Unit | undefined;
+  actor: boolean | undefined;
+  view: BattlePresentationView;
+}) {
+  if (!unit) {
+    return (
+      <p className="battle-empty-inspection">
+        Наведите на портрет или фигуру.
+        <br />
+        ЛКМ закрепляет осмотр.
+      </p>
+    );
+  }
+  return (
+    <>
+      <div className="battle-card-main">
+        <Portrait unit={unit} />
+        <div className="battle-card-data">
+          <h2>{unit.name ?? unit.id}</h2>
+          <UnitPoolList unit={unit} actor={actor} />
+        </div>
+      </div>
+      {actor && <UnitVitals unit={unit} includeMorale={false} />}
+      <UnitStates unit={unit} view={view} />
+    </>
+  );
+}
+
+function UnitPoolList({ unit, actor }: { unit: Unit; actor: boolean | undefined }) {
+  const keys = actor ? (['stamina'] as const) : (['health', 'armor', 'stamina'] as const);
+  return (
+    <dl className="battle-pools">
+      {keys
+        .filter((key) => unit.pools[key] !== undefined)
+        .map((key) => {
+          const pool = unit.pools[key]!;
+          return (
+            <div className="battle-resource" data-resource={key} key={key}>
+              <Icon name={key} />
+              <dt>{poolLabels[key]}</dt>
+              <dd>
+                <strong>{pool.current}</strong>
+                {pool.maximum !== undefined && <small>/{pool.maximum}</small>}
+              </dd>
+              <span className="battle-resource-track">
+                <i style={{ width: resourceWidth(pool) }} />
+              </span>
+            </div>
+          );
+        })}
+    </dl>
+  );
+}
+
+function cardHeading(
+  view: BattlePresentationView,
+  unit: Unit | undefined,
+  actor: boolean | undefined,
+) {
   return actor
     ? view.status === 'resolved'
       ? 'Бой завершён'
-      : unit?.sideId === view.controlledSideId
-        ? 'Ваш ход'
-        : 'Ход противника'
+      : unit === undefined
+        ? 'Ожидается следующий ход'
+        : view.controlledUnitIds.includes(unit.id)
+          ? 'Ваш ход'
+          : 'Ход другого участника'
     : unit
       ? `${unit.sideId === view.controlledSideId ? 'Союзник' : 'Противник'} · осмотр`
       : 'Осмотр бойца';
 }
 
-function resourceWidth(pool: { current: number; maximum: number }) {
-  return `${pool.maximum > 0 ? Math.max(0, Math.min(100, (100 * pool.current) / pool.maximum)) : 0}%`;
+function resourceWidth(pool: { current: number; maximum?: number }) {
+  return `${pool.maximum !== undefined && pool.maximum > 0 ? Math.max(0, Math.min(100, (100 * pool.current) / pool.maximum)) : 0}%`;
 }

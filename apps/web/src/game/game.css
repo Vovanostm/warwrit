@@ -599,6 +599,123 @@
   background: var(--panel);
 }
 
+.game-battle:has(.encounter-panel--fullscreen) {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: hidden;
+  padding: 0;
+  background: #101112;
+  overscroll-behavior: none;
+}
+
+.game-battle .encounter-panel--fullscreen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: #101112;
+}
+
+.game-battle .encounter-panel--fullscreen > .battle-view {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.encounter-panel--fullscreen .encounter-panel-heading,
+.encounter-panel--fullscreen .encounter-summary,
+.encounter-panel--fullscreen .encounter-turn,
+.encounter-panel--fullscreen .encounter-roster {
+  display: none;
+}
+
+.encounter-panel--fullscreen .leadership-choice {
+  position: absolute;
+  z-index: 20;
+  top: 5.5rem;
+  left: 50%;
+  width: min(30rem, calc(100% - 2rem));
+  max-height: calc(100% - 7rem);
+  margin: 0;
+  overflow: auto;
+  transform: translateX(-50%);
+}
+
+.encounter-panel--fullscreen .encounter-live-lane {
+  position: absolute;
+  z-index: 20;
+  top: 11rem;
+  right: 1rem;
+  display: grid;
+  gap: 0.55rem;
+  width: min(20rem, calc(100% - 2rem));
+  max-width: 20rem;
+  pointer-events: none;
+}
+
+.encounter-panel--fullscreen .encounter-live-lane > * {
+  margin: 0;
+}
+
+.encounter-panel--fullscreen .encounter-live-lane > .encounter-status {
+  justify-self: end;
+  width: fit-content;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.encounter-panel--fullscreen
+  .encounter-live-lane
+  > :is(.encounter-message, .encounter-afk, .encounter-command-pending) {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.encounter-panel--fullscreen .encounter-live-lane > .state-note {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.encounter-panel--fullscreen .encounter-live-lane .encounter-afk {
+  pointer-events: auto;
+}
+
+.encounter-panel--fullscreen .encounter-live-lane .encounter-command-pending {
+  pointer-events: auto;
+}
+
+.encounter-panel--fullscreen .encounter-live-lane .encounter-status {
+  text-align: left;
+}
+
+.encounter-panel--fullscreen .battle-command-group > .battle-secondary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  width: min(24rem, 100%);
+  max-width: 100%;
+}
+
+.encounter-panel--fullscreen .battle-secondary-actions > .battle-control {
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+  white-space: normal;
+}
+
 .game-side .first-hunt h2 {
   margin: 0.2rem 0 0.6rem;
   font-family: Georgia, 'Times New Roman', serif;

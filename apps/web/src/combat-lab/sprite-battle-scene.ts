@@ -16,12 +16,8 @@ import {
   VertexBuffer,
   type AbstractMesh,
 } from '@babylonjs/core';
-import type {
-  CombatLabAction,
-  CombatLabHex,
-  CombatLabSkillId,
-  CombatLabView,
-} from '@warwrit/protocol';
+import type { CombatLabAction, CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
+import type { BattlePresentationView, Unit as BattleUnit } from './battle-presentation.js';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import {
@@ -67,7 +63,6 @@ const b023FixtureUrl = new URL(
 // Leave room for adjacent full figures without changing their proportions or pivots.
 const SPRITE_PRESENTATION_SCALE = 0.82;
 const AXIAL_TO_WORLD = battleHexToWorld;
-type BattleUnit = CombatLabView['units'][number];
 const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
 interface SpriteBattleScene {
@@ -75,7 +70,7 @@ interface SpriteBattleScene {
   focusUnit(id: string): void;
   showOverview(): void;
   update(
-    view: CombatLabView,
+    view: BattlePresentationView,
     selectedUnitId: string | null,
     selectedHex: CombatLabHex | null,
     night: boolean,
@@ -91,9 +86,75 @@ export interface BattleFieldTarget {
   readonly anchor?: { readonly x: number; readonly y: number; readonly targetY: number };
 }
 
+type SceneMapBounds = Readonly<{ minX: number; maxX: number; minZ: number; maxZ: number }>;
+type ScenePerspective = Readonly<{ targetX: number; distance: number }>;
+
+function mountBattleEnvironment({
+  scene,
+  sceneEnvironment,
+  tiles,
+  mapBounds,
+  perspective,
+  centerZ,
+  initialNight,
+  texture,
+}: {
+  scene: Scene;
+  sceneEnvironment: BattlePresentationView['sceneEnvironment'];
+  tiles: ReturnType<typeof tilesFor>;
+  mapBounds: SceneMapBounds;
+  perspective: ScenePerspective;
+  centerZ: number;
+  initialNight: boolean;
+  texture: (url: string, sharp?: boolean) => Texture;
+}) {
+  const backdropDepth = 40;
+  if (sceneEnvironment !== 'old-mill') {
+    return { apronDepth: backdropDepth + 1, setNight: (_night: boolean) => {} };
+  }
+
+  // Keep the authored mill perimeter in its original projected position and outside the field.
+  const backgroundWidth = 35.7;
+  const backgroundHeight = (backgroundWidth * 941) / 1672;
+  const backgroundX = mapBounds.minX + backgroundWidth * 0.59;
+  const backgroundUp = backgroundHeight * 0.38 + 4;
+  const background = MeshBuilder.CreatePlane(
+    'old-mill-battlefield',
+    { width: backgroundWidth, height: backgroundHeight },
+    scene,
+  );
+  background.rotation.x = CAMERA_ELEVATION;
+  const backdropScale = (perspective.distance + backdropDepth) / perspective.distance;
+  const backdropUp = backgroundUp - (centerZ + 2) * Math.sin(CAMERA_ELEVATION);
+  background.scaling.set(backdropScale, backdropScale, 1);
+  background.position.set(
+    perspective.targetX + (backgroundX - 1.1 - perspective.targetX) * backdropScale,
+    backdropUp * backdropScale * Math.cos(CAMERA_ELEVATION) -
+      backdropDepth * Math.sin(CAMERA_ELEVATION),
+    centerZ +
+      backdropUp * backdropScale * Math.sin(CAMERA_ELEVATION) +
+      backdropDepth * Math.cos(CAMERA_ELEVATION),
+  );
+  background.isPickable = false;
+  background.alphaIndex = 0;
+  const groundMaterial = createBattleBackdropMaterial(scene, texture(millFieldUrl));
+  groundMaterial.setColor3('tint', initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White());
+  background.material = groundMaterial;
+  const scenery = mountBattleScenery(scene, tiles);
+  scenery.setNight(initialNight);
+
+  return {
+    apronDepth: backdropDepth + 1,
+    setNight(night: boolean) {
+      groundMaterial.setColor3('tint', night ? new Color3(0.32, 0.4, 0.53) : Color3.White());
+      scenery.setNight(night);
+    },
+  };
+}
+
 export async function mountSpriteBattleScene(
   canvas: HTMLCanvasElement,
-  initialView: CombatLabView,
+  initialView: BattlePresentationView,
   selectedUnitId: string | null,
   selectedHex: CombatLabHex | null,
   callbacks: {
@@ -243,41 +304,16 @@ export async function mountSpriteBattleScene(
     }
     return result;
   };
-  // Extracted scenery keeps the authored projection without a rectangular ground image. Tile and
-  // foot anchors occupy the open courtyard; perimeter architecture is scenery.
-  const backgroundWidth = 35.7;
-  const backgroundHeight = (backgroundWidth * 941) / 1672;
-  const backgroundX = mapBounds.minX + backgroundWidth * 0.59;
-  const backgroundUp = backgroundHeight * 0.38 + 4;
-  const background = MeshBuilder.CreatePlane(
-    'old-mill-battlefield',
-    { width: backgroundWidth, height: backgroundHeight },
+  const environment = mountBattleEnvironment({
     scene,
-  );
-  background.rotation.x = CAMERA_ELEVATION;
-  // Keep the painting at its authored image coordinates, behind all tactical geometry.
-  // Moving the frustum window rather than the optical centre prevents parallax drift.
-  const backdropDepth = 40;
-  const backdropScale = (perspective.distance + backdropDepth) / perspective.distance;
-  const backdropUp = backgroundUp - (centerZ + 2) * Math.sin(CAMERA_ELEVATION);
-  background.scaling.set(backdropScale, backdropScale, 1);
-  background.position.set(
-    perspective.targetX + (backgroundX - 1.1 - perspective.targetX) * backdropScale,
-    backdropUp * backdropScale * Math.cos(CAMERA_ELEVATION) -
-      backdropDepth * Math.sin(CAMERA_ELEVATION),
-    centerZ +
-      backdropUp * backdropScale * Math.sin(CAMERA_ELEVATION) +
-      backdropDepth * Math.cos(CAMERA_ELEVATION),
-  );
-  // Register the painted perimeter around the HUD's free central play area.
-  // Grid axes, sprite scale and foot pivots remain unchanged.
-  background.isPickable = false;
-  // Transparent decoration draws before group-zero tactical cues and actor plaques.
-  background.alphaIndex = 0;
-  const placeTexture = texture(millFieldUrl);
-  const groundMaterial = createBattleBackdropMaterial(scene, placeTexture);
-  groundMaterial.setColor3('tint', initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White());
-  background.material = groundMaterial;
+    sceneEnvironment: initialView.sceneEnvironment,
+    tiles: initialTiles,
+    mapBounds,
+    perspective,
+    centerZ,
+    initialNight,
+    texture,
+  });
 
   const addRootedFixture = () => {
     if (initialView.units.some((unit) => spriteForUnit(unit).id === 'B023')) {
@@ -360,10 +396,8 @@ export async function mountSpriteBattleScene(
     crop: new Vector4(0, 0, 1, 1),
     amount: 1,
   });
-  const scenery = mountBattleScenery(scene, initialTiles);
-  scenery.setNight(initialNight);
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
-  const apronDepth = backdropDepth + 1;
+  const apronDepth = environment.apronDepth;
   const apronScale = (perspective.distance + apronDepth) / perspective.distance;
   terrain.apron.rotation.x = CAMERA_ELEVATION - Math.PI / 2;
   terrain.apron.scaling.set(apronScale, 1, apronScale * Math.sin(CAMERA_ELEVATION));
@@ -500,7 +534,7 @@ export async function mountSpriteBattleScene(
     marker.scaling.set(0.55, 0.75, 1);
     marker.renderingGroupId = 0;
   };
-  const removeAbsentUnits = (view: CombatLabView) => {
+  const removeAbsentUnits = (view: BattlePresentationView) => {
     const liveIds = new Set(view.units.map(({ id }) => id));
     for (const [id, mesh] of unitMeshes) {
       if (liveIds.has(id)) continue;
@@ -556,7 +590,7 @@ export async function mountSpriteBattleScene(
     material.alpha = 1;
     if (!standing) addStatusMarker(unit, x, z, groundHeight);
   };
-  const unitMeshesForView = (view: CombatLabView) => {
+  const unitMeshesForView = (view: BattlePresentationView) => {
     for (const marker of statusMarkers.splice(0)) marker.dispose(false, true);
     removeAbsentUnits(view);
     for (const unit of view.units) syncUnit(unit);
@@ -565,7 +599,7 @@ export async function mountSpriteBattleScene(
 
   const upAxis = new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION));
   let renderedEventRevision: number | null = null;
-  const renderEvents = (view: CombatLabView) => {
+  const renderEvents = (view: BattlePresentationView) => {
     if (renderedEventRevision === view.viewRevision) return;
     const previousRevision = renderedEventRevision;
     renderedEventRevision = view.viewRevision;
@@ -587,7 +621,12 @@ export async function mountSpriteBattleScene(
       up: mesh.getBoundingInfo().boundingBox.extendSize.y + (unit.threat ? 0.65 : 0.23),
     };
   };
-  const placeEventLabel = (view: CombatLabView, id: string, text: string, reserved: LabelBox[]) => {
+  const placeEventLabel = (
+    view: BattlePresentationView,
+    id: string,
+    text: string,
+    reserved: LabelBox[],
+  ) => {
     const unit = view.units.find(({ id: unitId }) => unitId === id);
     const mesh = unitMeshes.get(id);
     if (!unit || !mesh) return;
@@ -696,11 +735,13 @@ export async function mountSpriteBattleScene(
     target: { x: number; z: number },
     groundY: number,
   ) => {
+    const targetHex = threat.targetHex;
+    if (!targetHex) return new Vector3(target.x, groundY + 0.28, target.z + 0.45);
     const threatenedUnit = currentView.units.find(
       (candidate) =>
         candidate.id === threat.targetId &&
         candidate.status === 'active' &&
-        HEX_KEY(candidate.position) === HEX_KEY(threat.targetHex),
+        HEX_KEY(candidate.position) === HEX_KEY(targetHex),
     );
     const threatenedFigure = threatenedUnit && unitMeshes.get(threatenedUnit.id);
     return threatenedFigure
@@ -712,26 +753,31 @@ export async function mountSpriteBattleScene(
       : new Vector3(target.x, groundY + 0.28, target.z + 0.45);
   };
   const renderThreat = (unit: BattleUnit) => {
+    if (unit.status !== 'active' || !unit.threat) return;
+    const figure = unitMeshes.get(unit.id);
+    if (!figure) return;
+    renderThreatVisual(unit, figure);
+  };
+  const renderThreatVisual = (unit: BattleUnit, figure: Mesh) => {
     const threat = unit.threat;
-    if (unit.status !== 'active' || !threat) return;
+    if (!threat) return;
+    const label = threat.retargeted === true ? 'Новое наведение' : 'Готовит удар';
+    const labelPosition = figure.position.add(
+      new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION)).scale(
+        figure.getBoundingInfo().boundingBox.extendSize.y + 0.25,
+      ),
+    );
+    if (!threat.targetHex) {
+      addLabel(scene, threatLabels, label, labelPosition, 'danger');
+      return;
+    }
     const origin = AXIAL_TO_WORLD(unit.position);
     const target = AXIAL_TO_WORLD(threat.targetHex);
     const groundY = groundYFor(threat.targetHex);
     const start = new Vector3(origin.x, 0.19 + groundYFor(unit.position), origin.z);
     const end = new Vector3(target.x, groundY + 0.19, target.z);
     drawThreatArrow(unit.id, start, end);
-    const figure = unitMeshes.get(unit.id)!;
-    addLabel(
-      scene,
-      threatLabels,
-      threat.retargeted ? 'Новое наведение' : 'Готовит удар',
-      figure.position.add(
-        new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION)).scale(
-          figure.getBoundingInfo().boundingBox.extendSize.y + 0.25,
-        ),
-      ),
-      'danger',
-    );
+    addLabel(scene, threatLabels, label, labelPosition, 'danger');
     const damageAnchor = threatDamageAnchor(threat, target, groundY);
     addLabel(
       scene,
@@ -1424,9 +1470,8 @@ export async function mountSpriteBattleScene(
       : { clear: new Color4(0.075, 0.067, 0.057, 1), intensity: 0.98, ground: Color3.White() };
     scene.clearColor = values.clear;
     light.intensity = values.intensity;
-    groundMaterial.setColor3('tint', values.ground);
+    environment.setNight(night);
     terrain.setNight(night);
-    scenery.setNight(night);
   };
   const followActivation = (previousActor: string | undefined) => {
     const actorId = currentView.activation?.actorId;
@@ -1610,7 +1655,7 @@ function addLabel(
   collection.push(label);
 }
 
-function tilesFor(view: CombatLabView) {
+function tilesFor(view: BattlePresentationView) {
   if (view.map.tiles) return view.map.tiles;
   const blocked = new Set(view.map.blocked.map(HEX_KEY));
   return view.map.hexes.map((hex) => ({

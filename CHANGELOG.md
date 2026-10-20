@@ -9,6 +9,31 @@ requests.
 
 ## Unreleased
 
+### Connect persistent combat to the shared presentation — 2026-10-20, LOCAL
+
+- `codex/persistent-hud-166`: add finite public rendering fields/readers and a
+  web-local adapter for the shared commander scene. Preserve private AP/quotes,
+  unknown limits, actual ownership and the separate lab controller.
+- Real browser admission exposed a strict-reader rejection of `weaponId`;
+  correction12focused tests/types/format PASS. First corrected render exists,
+  but fullscreen, readability and turn-label defects remain; no accepted player
+  action or independent visual ACCEPT yet. Preserve both failed test journeys.
+  Frozen review also identifies realtime reach-list validation, lost weapon
+  identity and known-cap tooltip regression. Corrected candidate:51focused
+  tests/types/format PASS and independent source review ACCEPT; third-fixture
+  runtime proved attack7 with updated UI/native evidence, then status text
+  blocked overview. Correct notice/AFK layout and replace the invisible fists
+  placeholder with a source-linked W01 derivative; final acceptance remains pending.
+  Fourth-fixture move7/attack11 accepted before interrupted harness/AFK loss120.
+  Subsequent display-only review confirms compact grid/body-lock corrections;
+  Actor HP/armor and a target scroll cue now appear in refreshed display-only
+  frames. The unreachable legacy renderer is removed with its consumed-cap
+  regression retained in the shared view. Final affected source review ACCEPT
+  and normal audit PASS after bounded corrections; retained coverage78PASS,
+  author final80PASS report lacks its raw log. No bypass, final gameplay
+  acceptance or publication is claimed.
+  [Evidence and remaining gates](docs/engineering/evidence/persistent-hud/README.md).
+
 ### Deliver the bridge and start the persistent commander interface — 2026-10-20
 
 - `codex/tactical-bridge-165`, MERGED [PR246](https://github.com/Vovanostm/warwrit/pull/246)
@@ -16,6 +41,10 @@ requests.
   16realDB/auth,migrations,coverage/audit. Independent source/recovery ACCEPT;
   actual-main retained46 replay and both persisted roots match. #165 CLOSED.
   [Readback and limits](docs/engineering/evidence/core-tactical-bridge/main-readback.md).
+- Follow-up readback: main CI39406551033 SUCCESS; canonical supporting M1
+  Notes now include the dated bridge delivery, with exact native readback and
+  existing Purpose/status preserved. This documentation update is local on
+  `codex/persistent-hud-166`.
 - `codex/persistent-hud-166`, local: activate the approved shared commander
   presentation on that actual main. One coupled writer; parent owns records
   and final gates. Implementation/playable/visual acceptance pending; no new

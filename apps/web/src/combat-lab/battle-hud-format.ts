@@ -1,4 +1,5 @@
-import type { CombatLabView } from '@warwrit/protocol';
+import type { CombatLabEvent } from '@warwrit/protocol';
+import type { BattlePresentationView } from './battle-presentation.js';
 export const unitStatus = {
   active: 'В строю',
   dead: 'Погиб',
@@ -42,8 +43,8 @@ export const damageRange = ({
   readonly maximum: number;
 }) => (minimum === maximum ? `${minimum}` : `${minimum}–${maximum}`);
 
-type Event = CombatLabView['events'][number];
-function eventSubject(view: CombatLabView, event: Event): string | undefined {
+type Event = CombatLabEvent;
+function eventSubject(view: BattlePresentationView, event: Event): string | undefined {
   const actor = view.units.find(({ id }) => id === event.unitId);
   const target = view.units.find(({ id }) => id === event.targetId);
   if (['threat.prepared', 'threat.retargeted', 'threat.cancelled'].includes(event.type)) {
@@ -58,7 +59,7 @@ const skillNames: Record<string, string> = {
   'aimed-shot': 'Прицельный выстрел',
   rally: 'Собраться',
 };
-function eventSkill(view: CombatLabView, event: Event): string {
+function eventSkill(view: BattlePresentationView, event: Event): string {
   if (event.type !== 'skill.used') return '';
   const skill = view.skills?.find((candidate) => candidate.skillId === event.skillId);
   const name = skill?.name ?? skillNames[event.skillId ?? ''] ?? 'Приём';
@@ -75,7 +76,7 @@ function eventDamage(event: Event): string {
   if (event.armorDamage !== null && event.armorDamage > 0) return ` · броня −${event.armorDamage}`;
   return '';
 }
-export function eventText(view: CombatLabView, event: Event): string {
+export function eventText(view: BattlePresentationView, event: Event): string {
   const subject = eventSubject(view, event);
   return `${eventLabels[event.type] ?? 'Событие'}${subject ? ` · ${subject}` : ''}${eventSkill(view, event)}${eventOutcome(event)}${eventDamage(event)}`;
 }

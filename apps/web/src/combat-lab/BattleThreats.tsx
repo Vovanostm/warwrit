@@ -1,5 +1,5 @@
-import type { CombatLabView } from '@warwrit/protocol';
-export function BattleThreats({ view }: { view: CombatLabView }) {
+import type { BattlePresentationView } from './battle-presentation.js';
+export function BattleThreats({ view }: { view: BattlePresentationView }) {
   return (
     <>
       {' '}
@@ -17,11 +17,13 @@ export function BattleThreats({ view }: { view: CombatLabView }) {
                       {unit.name ?? unit.id} → {victim?.name ?? threat.targetId}
                     </strong>
                     <span>
-                      Удар {threat.damage.minimum}–{threat.damage.maximum} до брони · клетка{' '}
-                      {threat.targetHex.q}, {threat.targetHex.r}
+                      Удар {threat.damage.minimum}–{threat.damage.maximum} до брони
+                      {threat.targetHex && ` · клетка ${threat.targetHex.q}, ${threat.targetHex.r}`}
                     </span>
                     <small>
-                      {threat.retargeted
+                      {threat.retargeted === undefined
+                        ? 'Наведение может измениться'
+                        : threat.retargeted
                         ? 'Наведение изменено · больше не сменит цель'
                         : 'Может сменить цель один раз'}{' '}
                       ·{' '}

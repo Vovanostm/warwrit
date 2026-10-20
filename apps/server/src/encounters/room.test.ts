@@ -51,6 +51,7 @@ function projection(
       {
         id: 'human-shield',
         sideId: 'human',
+        weaponId: 'sword-shield',
         q,
         r: 0,
         health: 20,
@@ -178,6 +179,7 @@ describe('EncounterRoom projection ordering', () => {
     vi.mocked(readEncounterAccess).mockResolvedValue(access(0, 0));
     await room.onJoin(client);
     expect(room.state.units.get('human-shield')).toMatchObject({ health: 20, maximumHealth: 60 });
+    expect(room.state.units.get('human-shield')?.weaponId).toBe('sword-shield');
     for (const cap of [80, undefined, 60]) {
       vi.mocked(readEncounterAccess).mockResolvedValue({
         ...access(1, 0),

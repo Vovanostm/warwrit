@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   diffRenderUnits,
-  neutralUnitLabel,
   readEncounterControlGrant,
   encounterConditionAllows,
   readEncounterProjection,
@@ -45,6 +44,76 @@ describe('encounter projection boundary', () => {
     expect(readEncounterProjection(source, 'another-encounter')).toBeUndefined();
   });
 
+  it('copies the persistent encounter HUD facts without inventing resource caps', () => {
+    const source = {
+      ...activeProjection(),
+      initiativeOrder: ['unit-a', 'unit-b'],
+      turnIndex: 1,
+      nextRoundInitiative: { round: 3, unitIds: ['unit-b', 'unit-a'] },
+      outcome: null,
+      map: {
+        hexes: [
+          { q: 0, r: 0 },
+          { q: 1, r: 0 },
+        ],
+        blocked: [],
+        tiles: [{ q: 0, r: 0, height: 1, terrain: 'mud' }],
+      },
+      units: [
+        {
+          id: 'unit-a',
+          sideId: 'side-a',
+          q: 0,
+          r: 0,
+          health: 7,
+          status: 'active',
+          weaponId: 'fists',
+          armor: 3,
+          stamina: 5,
+          morale: 2,
+          guarding: true,
+          panicking: false,
+          threat: {
+            targetId: 'unit-b',
+            damage: { minimum: 2, maximum: 4 },
+            responseReceived: false,
+          },
+          weaponReach: { minimumRange: 1, maximumRange: 2, cells: [{ q: 1, r: 0 }] },
+        },
+        { id: 'unit-b', sideId: 'side-b', q: 1, r: 0, health: 8, status: 'active' },
+      ],
+    };
+    const projection = readEncounterProjection(source)!;
+
+    expect(projection.initiativeOrder).toEqual(['unit-a', 'unit-b']);
+    expect(projection.nextRoundInitiative?.unitIds).toEqual(['unit-b', 'unit-a']);
+    expect(projection.outcome).toBeNull();
+    expect(projection.map?.tiles).toEqual([{ q: 0, r: 0, height: 1, terrain: 'mud' }]);
+    expect(projection.units[0]).toMatchObject({
+      weaponId: 'fists',
+      armor: 3,
+      stamina: 5,
+      morale: 2,
+      guarding: true,
+    });
+    expect(
+      readEncounterProjection({
+        ...source,
+        units: [{ ...source.units[0], weaponId: 'crossbow' }, source.units[1]],
+      }),
+    ).toBeUndefined();
+    expect(projection.units[0]?.maximumHealth).toBeUndefined();
+    expect(projection.units[0]?.threat?.damage).toEqual({ minimum: 2, maximum: 4 });
+    expect(Object.isFrozen(projection.units[0]?.weaponReach?.cells)).toBe(true);
+    expect(readEncounterProjection({ ...source, turnIndex: 2 })).toBeUndefined();
+    expect(
+      readEncounterProjection({
+        ...source,
+        units: [{ ...source.units[0], maximumHealth: 6 }, source.units[1]],
+      })?.units[0]?.maximumHealth,
+    ).toBeUndefined();
+  });
+
   it('copies reflected Colyseus maps and converts positions without fixture assumptions', () => {
     const reflected = {
       version: 1,
@@ -72,7 +141,57 @@ describe('encounter projection boundary', () => {
       worldZ: -Math.sqrt(3) / 2,
     });
     expect(renderProjection?.units[0]).not.toHaveProperty('characterClass');
-    expect(neutralUnitLabel(projection!.units[0]!)).toBe('Участник стороны unfamiliar-side');
+  });
+
+  it('detaches iterable reflected weapon reach cells and preserves their coordinates', () => {
+    const cells = new Set([
+      { q: 1, r: 0 },
+      { q: 0, r: 1 },
+    ]);
+    const reflected = {
+      version: 1,
+      encounterId: 'encounter-1',
+      revision: 4,
+      status: 'active',
+      round: 2,
+      activationId: '',
+      actorUnitId: '',
+      deadlineAt: '',
+      units: new Map([
+        [
+          'unit-a',
+          {
+            id: 'unit-a',
+            sideId: 'side-a',
+            q: 0,
+            r: 0,
+            health: 10,
+            maximumHealth: 20,
+            weaponId: 'fists',
+            weaponReachMinimum: 1,
+            weaponReachMaximum: 1,
+            weaponReachCells: cells,
+            status: 'active',
+          },
+        ],
+      ]),
+    };
+
+    const projection = readRoomProjection(reflected, 'encounter-1');
+
+    expect(projection?.units[0]).toMatchObject({
+      weaponId: 'fists',
+      weaponReach: {
+        minimumRange: 1,
+        maximumRange: 1,
+        cells: [
+          { q: 1, r: 0 },
+          { q: 0, r: 1 },
+        ],
+      },
+    });
+    expect(projection?.units[0]?.weaponReach?.cells).not.toBe(cells);
+    expect(Object.isFrozen(projection?.units[0]?.weaponReach?.cells)).toBe(true);
   });
 
   it('normalizes optional caps identically without rejecting combat facts or retaining old caps', () => {
@@ -98,6 +217,7 @@ describe('encounter projection boundary', () => {
           {
             id: 'unit-a',
             sideId: 'side-a',
+            weaponId: 'fists',
             q: 0,
             r: 0,
             health: 20,
@@ -114,6 +234,7 @@ describe('encounter projection boundary', () => {
       const expected = cap === 60 || cap === 80 ? cap : undefined;
       expect(http.units[0]?.maximumHealth).toBe(expected);
       expect(http.units[0]?.health).toBe(20);
+      expect(http.units[0]?.weaponId).toBe('fists');
       expect(room).toEqual(http);
       const next = toEncounterRenderProjection(http).units;
       expect(diffRenderUnits(previous, next).updated).toEqual(

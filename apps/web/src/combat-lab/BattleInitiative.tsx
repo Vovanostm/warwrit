@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CombatLabView } from '@warwrit/protocol';
-import { Portrait, UnitStates, type Unit } from './BattleUnitCard.js';
+import type { BattlePresentationView, Unit } from './battle-presentation.js';
+import { Portrait, UnitStates } from './BattleUnitCard.js';
 import { unitStatus } from './battle-hud-format.js';
 import { UnitVitals } from './UnitVitals.js';
 import { battleUnitMarker } from './battle-framing.js';
 
 interface Props {
-  view: CombatLabView;
+  view: BattlePresentationView;
   selectedUnitId: string | null;
   onSelectUnit: (id: string) => void;
   isAttackable: (unit: Unit) => boolean | undefined;
@@ -40,8 +40,8 @@ export function BattleInitiative(props: Props) {
     };
   }, [view.status, view.viewRevision]);
   if (view.status !== 'active') return null;
-  const upcoming = view.initiativeOrder
-    .slice(view.turnIndex)
+  const upcoming = (view.initiativeOrder ?? [])
+    .slice(view.turnIndex ?? 0)
     .filter((id) => view.units.some((unit) => unit.id === id && unit.status === 'active'));
   const forecast = view.nextRoundInitiative;
   return (
@@ -182,7 +182,8 @@ function InitiativeTooltip({ unit, attackable }: { unit: Unit; attackable: boole
     <span className="battle-initiative-tip" role="tooltip">
       <strong>{unit.name ?? unit.id}</strong>
       <span>
-        {unitStatus[unit.status]} · инициатива {unit.initiative}
+        {unitStatus[unit.status]}
+        {unit.initiative === undefined ? '' : ` · инициатива ${unit.initiative}`}
       </span>
       {attackable && <span>Можно атаковать</span>}
     </span>

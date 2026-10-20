@@ -12,7 +12,13 @@ packages correspond to the unchanged integrated source. Read-only reconstruction
 from the original authentic admitted roots and46 persisted commands verifies
 native replay and both READY terminal roots exactly equal the saved company
 roots. No state mutation, new browser journey, new crash or payment is claimed.
-Main CI39406551033 was still running at this readback.
+Main CI39406551033 subsequently completed SUCCESS on the same actual main.
+
+The canonical supporting M1 record `recZhUoTiwT7kIc8s` received a dated
+2026-10-20 delivery amendment. Native readback matched the appended Notes
+exactly; existing Purpose and Working/Supporting status were preserved.
+It records the settled owner rules, bridge delivery and remaining HUD/payment/
+full-M1 limits without changing gameplay canon.
 
 Local evidence in the codex-tactical-bridge-165 checkout:
 .orca/bridge-pr-ci.log, .orca/bridge-main-readback.log and

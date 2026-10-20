@@ -615,8 +615,10 @@
   width: 68px;
 }
 .battle-command-label {
-  font-size: 12px;
-  overflow-wrap: anywhere;
+  font-size: 10px;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 .battle-action-cost {
   font-size: 11px;
@@ -690,6 +692,11 @@
     bold 20px/1.2 Georgia,
     serif;
   overflow-wrap: normal;
+}
+.battle-inspection-scroll-cue {
+  color: var(--battle-muted);
+  font-size: 10px;
+  letter-spacing: 0;
 }
 .battle-inspected-unit .battle-card-main {
   display: block;

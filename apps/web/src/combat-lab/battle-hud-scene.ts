@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { mountSpriteBattleScene, type BattleFieldTarget } from './sprite-battle-scene.js';
 import type { BattleViewProps } from './battle-view-props.js';
+import type { BattlePresentationView } from './battle-presentation.js';
+
 export function useBattleScene(
   {
-    view,
+    view: normalizedView,
     selectedUnitId,
     selectedHex,
     onSelectUnit,
@@ -11,10 +13,8 @@ export function useBattleScene(
     onAct,
     onRefusal,
     selectedSkillId = null,
-  }: Pick<
-    BattleViewProps,
-    'view' | 'selectedUnitId' | 'selectedHex' | 'onSelectUnit' | 'onSelectHex'
-  > & {
+  }: Pick<BattleViewProps, 'selectedUnitId' | 'selectedHex' | 'onSelectUnit' | 'onSelectHex'> & {
+    view: BattlePresentationView;
     onAct: BattleViewProps['onAct'];
     onRefusal: BattleViewProps['onRefusal'];
     selectedSkillId: BattleViewProps['selectedSkillId'];
@@ -39,7 +39,7 @@ export function useBattleScene(
   const latestCallbacks = useRef({ onSelectUnit, onSelectHex, onAct, onRefusal });
   latestCallbacks.current = { onSelectUnit, onSelectHex, onAct, onRefusal };
   const latestSceneView = useRef({
-    view,
+    view: normalizedView,
     selectedUnitId,
     selectedHex,
     night,
@@ -48,7 +48,7 @@ export function useBattleScene(
     selectedSkillId,
   });
   latestSceneView.current = {
-    view,
+    view: normalizedView,
     selectedUnitId,
     selectedHex,
     night,
@@ -58,7 +58,6 @@ export function useBattleScene(
   };
 
   useTooltipAnchor(battleViewRef);
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -68,7 +67,7 @@ export function useBattleScene(
     const abort = new AbortController();
     void mountSpriteBattleScene(
       canvas,
-      view,
+      normalizedView,
       selectedUnitId,
       selectedHex,
       {
@@ -112,10 +111,17 @@ export function useBattleScene(
       pendingFocus.current = null;
       pendingOverview.current = false;
     };
-  }, [view.sessionId, view.battleId]);
+  }, [normalizedView.sceneKey]);
   useEffect(() => {
-    sceneRef.current?.update(view, selectedUnitId, selectedHex, night, fullGrid, selectedSkillId);
-  }, [view, selectedUnitId, selectedHex, night, fullGrid, selectedSkillId]);
+    sceneRef.current?.update(
+      normalizedView,
+      selectedUnitId,
+      selectedHex,
+      night,
+      fullGrid,
+      selectedSkillId,
+    );
+  }, [normalizedView, selectedUnitId, selectedHex, night, fullGrid, selectedSkillId]);
   useEffect(() => {
     sceneRef.current?.setHighlightedUnit(initiativeHover);
   }, [initiativeHover]);
