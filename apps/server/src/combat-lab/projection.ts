@@ -7,9 +7,10 @@ import {
   type CombatLabBattleConfig,
   type CombatLabAttackRefusal,
   type CombatLabHex,
+  type CombatLabReplayPresentation,
   type CombatLabView,
 } from '@warwrit/protocol';
-import { combatLabProfiles } from './custom-battle.js';
+import { createCombatLabPresentation } from './presentation.js';
 
 const copyHex = ({ q, r }: CombatLabHex): CombatLabHex => ({ q, r });
 const pool = (current: number, maximum: number) => ({ current, maximum });
@@ -21,6 +22,7 @@ export function projectCombatLabView(
   state: combat.BattleState,
   journal: readonly combat.CombatEvent[],
   battle?: CombatLabBattleConfig,
+  presentation?: CombatLabReplayPresentation,
 ): CombatLabView {
   combat.invariant(
     state.rulesetId === 'm0-prototype-v1' || combat.isSpritePrototypeRuleset(state.rulesetId),
@@ -37,6 +39,11 @@ export function projectCombatLabView(
   combat.invariant(
     journal.at(-1)?.revision === state.revision,
     'Journal must match current revision',
+  );
+  const labels = new Map(
+    (presentation ?? (battle && createCombatLabPresentation(battle, controlledSideId)))?.units.map(
+      (unit) => [unit.id, unit],
+    ),
   );
   const rules = combat.combatRules(state.rulesetId);
   const ordinaryGuard = { ...state.units[0]!, guarding: true };
@@ -134,16 +141,10 @@ export function projectCombatLabView(
     })),
     units: state.units.map((unit) => {
       const weaponReach = combat.previewCombatWeaponReach(state, unit.id);
-      const configured = battle?.units.find((config) => config.id === unit.id);
-      const profile = combatLabProfiles.find((profile) => profile.id === configured?.profileId);
+      const label = labels.get(unit.id);
       return {
         id: unit.id,
-        ...(configured === undefined || profile === undefined
-          ? {}
-          : {
-              profileId: configured.profileId,
-              name: profile.name,
-            }),
+        ...(label === undefined ? {} : { name: label.name, profileId: label.profileId }),
         sideId: unit.sideId,
         weaponId: unit.weaponId,
         ...(weaponReach === undefined ? {} : { weaponReach }),

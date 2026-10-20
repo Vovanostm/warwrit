@@ -1,0 +1,190 @@
+{
+  "name": "20261010",
+  "seed": 20261010,
+  "commands": 146,
+  "checkpoints": 56,
+  "finalLiveMatched": true,
+  "round": 8,
+  "revision": 146,
+  "status": "resolved",
+  "outcome": {
+    "reason": "last-side-standing",
+    "winnerSideId": "human"
+  },
+  "random": {
+    "algorithm": "xorshift32-v1",
+    "value": 1734552053,
+    "draws": 85
+  },
+  "reactions": [
+    {
+      "command": {
+        "commandId": "human:892acb73-a943-4d69-ab6c-cda6003a00d0",
+        "activationId": "2:human-3",
+        "actorId": "human-3",
+        "type": "move",
+        "to": {
+          "q": 8,
+          "r": 3
+        }
+      },
+      "revision": 22,
+      "attacks": [
+        {
+          "type": "attack.resolved",
+          "battleId": "99e0cacd-f8de-4b3e-b399-2d67b505d1ec",
+          "revision": 23,
+          "attackerId": "opponent-1",
+          "targetId": "human-3",
+          "hitChance": 100,
+          "roll": 22,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "command": {
+        "type": "move",
+        "to": {
+          "q": 7,
+          "r": 4
+        },
+        "commandId": "ai:2:opponent-1:40:tactical-move:human-3",
+        "activationId": "2:opponent-1",
+        "actorId": "opponent-1"
+      },
+      "revision": 40,
+      "attacks": [
+        {
+          "type": "attack.resolved",
+          "battleId": "99e0cacd-f8de-4b3e-b399-2d67b505d1ec",
+          "revision": 41,
+          "attackerId": "human-6",
+          "targetId": "opponent-1",
+          "hitChance": 100,
+          "roll": 88,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "command": {
+        "type": "move",
+        "to": {
+          "q": 7,
+          "r": 5
+        },
+        "commandId": "human:11ed0bb7-2698-41c3-b7b2-ebb3e1a5f998",
+        "activationId": "3:human-6",
+        "actorId": "human-6"
+      },
+      "revision": 49,
+      "attacks": [
+        {
+          "type": "attack.resolved",
+          "battleId": "99e0cacd-f8de-4b3e-b399-2d67b505d1ec",
+          "revision": 50,
+          "attackerId": "opponent-5",
+          "targetId": "human-6",
+          "hitChance": 100,
+          "roll": 34,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "command": {
+        "type": "move",
+        "to": {
+          "q": 8,
+          "r": 5
+        },
+        "commandId": "ai:4:opponent-2:76:tactical-move:human-4",
+        "activationId": "4:opponent-2",
+        "actorId": "opponent-2"
+      },
+      "revision": 76,
+      "attacks": [
+        {
+          "type": "attack.resolved",
+          "battleId": "99e0cacd-f8de-4b3e-b399-2d67b505d1ec",
+          "revision": 77,
+          "attackerId": "human-4",
+          "targetId": "opponent-2",
+          "hitChance": 100,
+          "roll": 93,
+          "hit": true
+        }
+      ]
+    }
+  ],
+  "panic": [
+    {
+      "command": {
+        "type": "surrender",
+        "actorId": "opponent-3",
+        "activationId": "7:opponent-3",
+        "commandId": "ai:7:opponent-3:137:panic"
+      },
+      "revision": 137,
+      "morale": 0
+    }
+  ],
+  "roster": [
+    {
+      "id": "human-1",
+      "status": "active",
+      "morale": 58
+    },
+    {
+      "id": "human-2",
+      "status": "active",
+      "morale": 58
+    },
+    {
+      "id": "human-3",
+      "status": "dead",
+      "morale": 48
+    },
+    {
+      "id": "human-4",
+      "status": "active",
+      "morale": 58
+    },
+    {
+      "id": "human-5",
+      "status": "active",
+      "morale": 38
+    },
+    {
+      "id": "human-6",
+      "status": "active",
+      "morale": 58
+    },
+    {
+      "id": "opponent-1",
+      "status": "dead",
+      "morale": 40
+    },
+    {
+      "id": "opponent-2",
+      "status": "dead",
+      "morale": 30
+    },
+    {
+      "id": "opponent-3",
+      "status": "surrendered",
+      "morale": 0
+    },
+    {
+      "id": "opponent-4",
+      "status": "dead",
+      "morale": 8
+    },
+    {
+      "id": "opponent-5",
+      "status": "dead",
+      "morale": 0
+    }
+  ]
+}

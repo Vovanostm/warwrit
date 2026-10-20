@@ -65,3 +65,22 @@ it('places the measured actor badge above neighbouring weapons, bodies and reser
   for (const box of reserved.slice(0, 2))
     expect(placed.up - box.up).toBeGreaterThan(placed.halfHeight + box.halfHeight);
 });
+
+it('contains the entire badge and recomputes placement when reservation geometry changes', () => {
+  const badge = { x: 9.5, up: 4, halfWidth: 2, halfHeight: 0.5 };
+  const opening = { x: 5, up: 5, halfWidth: 5, halfHeight: 3 };
+  const first = actorBadgePlacement(badge, [], opening);
+  expect(first).toEqual({ ...badge, x: 8 });
+  const changed = actorBadgePlacement(
+    badge,
+    [{ x: 8, up: 4, halfWidth: 1, halfHeight: 1 }],
+    opening,
+  );
+  expect(changed.up).toBeCloseTo(5.58);
+  const top = actorBadgePlacement({ ...badge, up: 20 }, [], opening);
+  expect(top.up + top.halfHeight).toBe(8);
+  expect(top.x + top.halfWidth).toBe(10);
+  const bottom = actorBadgePlacement({ ...badge, x: -20, up: -20 }, [], opening);
+  expect(bottom.up - bottom.halfHeight).toBe(2);
+  expect(bottom.x - bottom.halfWidth).toBe(0);
+});

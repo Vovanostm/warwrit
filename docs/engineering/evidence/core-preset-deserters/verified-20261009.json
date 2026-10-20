@@ -1,0 +1,135 @@
+{
+  "name": "20261009",
+  "seed": 20261009,
+  "commands": 133,
+  "checkpoints": 12,
+  "finalLiveMatched": true,
+  "round": 7,
+  "revision": 133,
+  "status": "resolved",
+  "outcome": {
+    "reason": "last-side-standing",
+    "winnerSideId": "human"
+  },
+  "random": {
+    "algorithm": "xorshift32-v1",
+    "value": 589921015,
+    "draws": 77
+  },
+  "reactions": [
+    {
+      "command": {
+        "type": "move",
+        "to": {
+          "q": 9,
+          "r": 7
+        },
+        "commandId": "ai:6:opponent-5:117:tactical-move:human-6",
+        "activationId": "6:opponent-5",
+        "actorId": "opponent-5"
+      },
+      "revision": 117,
+      "attacks": [
+        {
+          "type": "attack.resolved",
+          "battleId": "7f5ac7f4-74e2-4f8a-a829-cce1ac89ccfa",
+          "revision": 118,
+          "attackerId": "human-6",
+          "targetId": "opponent-5",
+          "hitChance": 100,
+          "roll": 25,
+          "hit": true
+        }
+      ]
+    }
+  ],
+  "panic": [
+    {
+      "command": {
+        "type": "surrender",
+        "actorId": "opponent-2",
+        "activationId": "5:opponent-2",
+        "commandId": "ai:5:opponent-2:102:panic"
+      },
+      "revision": 102,
+      "morale": 16
+    },
+    {
+      "command": {
+        "type": "flee",
+        "actorId": "opponent-5",
+        "activationId": "6:opponent-5",
+        "commandId": "ai:6:opponent-5:118:panic"
+      },
+      "revision": 118,
+      "morale": 16
+    },
+    {
+      "command": {
+        "type": "surrender",
+        "actorId": "opponent-5",
+        "activationId": "7:opponent-5",
+        "commandId": "ai:7:opponent-5:132:panic"
+      },
+      "revision": 132,
+      "morale": 0
+    }
+  ],
+  "roster": [
+    {
+      "id": "human-1",
+      "status": "dead",
+      "morale": 40
+    },
+    {
+      "id": "human-2",
+      "status": "active",
+      "morale": 62
+    },
+    {
+      "id": "human-3",
+      "status": "active",
+      "morale": 62
+    },
+    {
+      "id": "human-4",
+      "status": "active",
+      "morale": 62
+    },
+    {
+      "id": "human-5",
+      "status": "active",
+      "morale": 50
+    },
+    {
+      "id": "human-6",
+      "status": "active",
+      "morale": 74
+    },
+    {
+      "id": "opponent-1",
+      "status": "dead",
+      "morale": 44
+    },
+    {
+      "id": "opponent-2",
+      "status": "surrendered",
+      "morale": 16
+    },
+    {
+      "id": "opponent-3",
+      "status": "dead",
+      "morale": 30
+    },
+    {
+      "id": "opponent-4",
+      "status": "dead",
+      "morale": 4
+    },
+    {
+      "id": "opponent-5",
+      "status": "surrendered",
+      "morale": 0
+    }
+  ]
+}

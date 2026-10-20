@@ -25,7 +25,11 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-function projection(revision: number, q: number): EncounterPublicProjectionDto {
+function projection(
+  revision: number,
+  q: number,
+  maximumHealth: number | undefined,
+): EncounterPublicProjectionDto {
   return {
     version: 1,
     encounterId: '11111111-1111-4111-8111-111111111111',
@@ -43,13 +47,23 @@ function projection(revision: number, q: number): EncounterPublicProjectionDto {
       ],
       blocked: [{ q: 0, r: 0 }],
     },
-    units: [{ id: 'human-shield', sideId: 'human', q, r: 0, health: 10, status: 'active' }],
+    units: [
+      {
+        id: 'human-shield',
+        sideId: 'human',
+        q,
+        r: 0,
+        health: 20,
+        ...(maximumHealth === undefined ? {} : { maximumHealth }),
+        status: 'active',
+      },
+    ],
   };
 }
 
 function access(revision: number, q: number) {
   return {
-    projection: projection(revision, q),
+    projection: projection(revision, q, 60),
     controlGrant: {
       version: 1 as const,
       encounterId: '11111111-1111-4111-8111-111111111111',
@@ -71,10 +85,14 @@ describe('EncounterRoom projection ordering', () => {
     const newerRead = deferred<EncounterPublicProjectionDto | undefined>();
     vi.mocked(readEncounterAccess)
       .mockReturnValueOnce(
-        olderRead.promise.then((value) => value && access(value.revision, value.units[0]!.q)),
+        olderRead.promise.then(
+          (value) => value && { ...access(value.revision, value.units[0]!.q), projection: value },
+        ),
       )
       .mockReturnValueOnce(
-        newerRead.promise.then((value) => value && access(value.revision, value.units[0]!.q)),
+        newerRead.promise.then(
+          (value) => value && { ...access(value.revision, value.units[0]!.q), projection: value },
+        ),
       );
     vi.mocked(isSessionTokenActive).mockResolvedValue(true);
 
@@ -91,13 +109,18 @@ describe('EncounterRoom projection ordering', () => {
 
     const delayedRefresh = room.refreshCommittedProjection();
     const newerRefresh = room.refreshCommittedProjection();
-    newerRead.resolve(projection(2, 0));
+    newerRead.resolve(projection(2, 0, 80));
     await newerRefresh;
-    olderRead.resolve(projection(1, -1));
+    olderRead.resolve(projection(1, -1, 60));
     await delayedRefresh;
 
     expect(room.state.revision).toBe(2);
-    expect(room.state.units.get('human-shield')).toMatchObject({ q: 0, r: 0 });
+    expect(room.state.units.get('human-shield')).toMatchObject({
+      q: 0,
+      r: 0,
+      health: 20,
+      maximumHealth: 80,
+    });
     room.onDispose();
   });
 
@@ -139,6 +162,33 @@ describe('EncounterRoom projection ordering', () => {
       encounterId,
       false,
     );
+    room.onDispose();
+  });
+
+  it('copies the current cap on join, cap-only refresh and reconnect, clearing unknown', async () => {
+    vi.mocked(isSessionTokenActive).mockResolvedValue(true);
+    const room = new EncounterRoom({} as never);
+    const encounterId = '11111111-1111-4111-8111-111111111111';
+    const client = {
+      auth: { accountId: 'owner', tokenDigest: 'token', encounterId },
+      leave: vi.fn(),
+    } as never;
+    room.onCreate({ encounterId });
+    room.clients.push(client);
+    vi.mocked(readEncounterAccess).mockResolvedValue(access(0, 0));
+    await room.onJoin(client);
+    expect(room.state.units.get('human-shield')).toMatchObject({ health: 20, maximumHealth: 60 });
+    for (const cap of [80, undefined, 60]) {
+      vi.mocked(readEncounterAccess).mockResolvedValue({
+        ...access(1, 0),
+        projection: projection(1, 0, cap),
+      });
+      await room.refreshCommittedProjection();
+      expect(room.state.units.get('human-shield')?.maximumHealth).toBe(cap ?? 0);
+    }
+    await room.onReconnect(client);
+    expect(room.state.units.get('human-shield')).toMatchObject({ health: 20, maximumHealth: 60 });
+    expect(client).not.toHaveProperty('controllableUnitIds');
     room.onDispose();
   });
 

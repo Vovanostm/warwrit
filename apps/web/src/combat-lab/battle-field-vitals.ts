@@ -9,6 +9,7 @@ import {
 } from '@babylonjs/core';
 import type { CombatLabView } from '@warwrit/protocol';
 import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
+import { battleUnitMarker } from './battle-framing.js';
 import { unitVitalPools } from './unit-vitals.js';
 import './battle-field-vitals.css';
 
@@ -42,11 +43,24 @@ function drawPools(texture: DynamicTexture, unit: Unit, element: HTMLElement) {
 }
 
 /** Foot-sorted world strips: directly under their owner, behind foreground figures. */
-export function mountBattleFieldVitals(canvas: HTMLCanvasElement, scene: Scene) {
+export function mountBattleFieldVitals(
+  canvas: HTMLCanvasElement,
+  scene: Scene,
+  onInspect: (id: string) => void,
+) {
   const layer = document.createElement('div');
   layer.className = 'battle-field-vitals';
   canvas.insertAdjacentElement('afterend', layer);
   const makeStrip = (unit: Unit) => {
+    const portrait = document.createElement('button');
+    portrait.type = 'button';
+    portrait.hidden = true;
+    portrait.className = 'battle-overview-unit';
+    portrait.dataset['unitId'] = unit.id;
+    portrait.title = `${unit.name ?? unit.id} · Осмотреть и приблизить`;
+    portrait.setAttribute('aria-label', portrait.title);
+    portrait.onclick = () => onInspect(unit.id);
+    layer.append(portrait);
     const element = document.createElement('div');
     element.className = 'battle-field-vital';
     element.dataset['unitId'] = unit.id;
@@ -76,7 +90,7 @@ export function mountBattleFieldVitals(canvas: HTMLCanvasElement, scene: Scene) 
     mesh.isPickable = false;
     // The scene creates unit meshes before updating their field readouts.
     const source = scene.getMeshByName(`unit:${unit.id}`)!;
-    return { element, texture, mesh, source };
+    return { element, texture, mesh, source, portrait };
   };
   const strips = new Map<string, ReturnType<typeof makeStrip>>();
   const observer = scene.onBeforeCameraRenderObservable.add((camera) => {
@@ -84,7 +98,17 @@ export function mountBattleFieldVitals(canvas: HTMLCanvasElement, scene: Scene) 
       scene.getEngine().getRenderWidth(),
       scene.getEngine().getRenderHeight(),
     );
-    for (const [id, { mesh, source }] of strips) {
+    const entries = [...strips];
+    const reference = entries[0]?.[1].source.metadata.combatFoot as Vector3 | undefined;
+    const projected = (point: Vector3) =>
+      Vector3.Project(point, Matrix.Identity(), scene.getTransformMatrix(), viewport);
+    const overview = isOverviewScale(
+      reference,
+      projected,
+      canvas.clientHeight / scene.getEngine().getRenderHeight(),
+    );
+    canvas.closest('.battle-view')?.classList.toggle('battle-overview', overview);
+    for (const [id, { mesh, source, portrait }] of entries) {
       const foot = source.metadata.combatFoot as Vector3;
       const screen = (point: Vector3) =>
         Vector3.Project(point, Matrix.Identity(), scene.getTransformMatrix(), viewport);
@@ -94,6 +118,11 @@ export function mountBattleFieldVitals(canvas: HTMLCanvasElement, scene: Scene) 
         (Math.hypot(above.x - base.x, above.y - base.y) * canvas.clientHeight) /
         scene.getEngine().getRenderHeight();
       const worldPerPixel = 1 / pixelsPerWorld;
+      mesh.setEnabled(!overview && !layer.hidden);
+      portrait.hidden = !overview;
+      // Anchor centre is the actual projected foot. Never displace it into another cell.
+      portrait.style.left = `${(base.x * canvas.clientWidth) / scene.getEngine().getRenderWidth()}px`;
+      portrait.style.top = `${(base.y * canvas.clientHeight) / scene.getEngine().getRenderHeight()}px`;
       mesh.position.copyFrom(foot.subtract(UP.scale((HEIGHT / 2 + 4) * worldPerPixel)));
       mesh.scaling.set(WIDTH * worldPerPixel, HEIGHT * worldPerPixel, 1);
       mesh.metadata = { combatUnitId: id, combatFoot: foot };
@@ -110,6 +139,7 @@ export function mountBattleFieldVitals(canvas: HTMLCanvasElement, scene: Scene) 
         .forEach(([id, strip]) => {
           strip.mesh.dispose(false, true);
           strip.element.remove();
+          strip.portrait.remove();
           strips.delete(id);
         });
       for (const unit of view.units.filter((unit) => active.has(unit.id))) {
@@ -118,6 +148,7 @@ export function mountBattleFieldVitals(canvas: HTMLCanvasElement, scene: Scene) 
           strip = makeStrip(unit);
           strips.set(unit.id, strip);
         }
+        updatePortraitState(strip.portrait, unit, view);
         strip.mesh.setEnabled(view.status === 'active');
         drawPools(strip.texture, unit, strip.element);
       }
@@ -129,4 +160,27 @@ export function mountBattleFieldVitals(canvas: HTMLCanvasElement, scene: Scene) 
       strips.clear();
     },
   };
+}
+
+function updatePortraitState(portrait: HTMLButtonElement, unit: Unit, view: CombatLabView) {
+  const ally = unit.sideId === view.controlledSideId;
+  const marker = battleUnitMarker(view.units, unit.id);
+  portrait.textContent = marker;
+  portrait.title = unitInspectionTitle(unit, marker, ally);
+  portrait.setAttribute('aria-label', portrait.title);
+  portrait.dataset['side'] = ally ? 'human' : 'opponent';
+  portrait.setAttribute('aria-current', unit.id === view.activation?.actorId ? 'step' : 'false');
+}
+
+function unitInspectionTitle(unit: Unit, marker: string, ally: boolean) {
+  return `Метка ${marker} · ${ally ? 'Союзник' : 'Противник'} · ${unit.name ?? unit.id} · клетка ${unit.position.q}, ${unit.position.r} · Осмотреть и приблизить`;
+}
+
+function isOverviewScale(
+  foot: Vector3 | undefined,
+  project: (point: Vector3) => Vector3,
+  pixelScale: number,
+) {
+  if (!foot) return false;
+  return project(foot.add(UP)).subtract(project(foot)).length() * pixelScale < 30;
 }

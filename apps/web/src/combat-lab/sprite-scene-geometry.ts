@@ -68,12 +68,30 @@ export function avoidAnchorOverlap(
 }
 
 /** Measured world-plane rectangles include the chevron, weapons and reserved labels. */
-export function actorBadgePlacement(badge: LabelBox, reserved: readonly LabelBox[]): LabelBox {
+export function actorBadgePlacement(
+  badge: LabelBox,
+  reserved: readonly LabelBox[],
+  opening?: LabelBox,
+): LabelBox {
+  const contained = opening
+    ? {
+        ...badge,
+        x: Math.max(
+          opening.x - opening.halfWidth + badge.halfWidth,
+          Math.min(opening.x + opening.halfWidth - badge.halfWidth, badge.x),
+        ),
+      }
+    : badge;
   let up = badge.up;
   for (const box of [...reserved].sort((a, b) => a.up + a.halfHeight - (b.up + b.halfHeight))) {
-    if (Math.abs(badge.x - box.x) >= badge.halfWidth + box.halfWidth) continue;
+    if (Math.abs(contained.x - box.x) >= badge.halfWidth + box.halfWidth) continue;
     if (Math.abs(up - box.up) >= badge.halfHeight + box.halfHeight + 0.08) continue;
     up = box.up + box.halfHeight + badge.halfHeight + 0.08;
   }
-  return { ...badge, up };
+  if (opening)
+    up = Math.max(
+      opening.up - opening.halfHeight + badge.halfHeight,
+      Math.min(opening.up + opening.halfHeight - badge.halfHeight, up),
+    );
+  return { ...contained, up };
 }

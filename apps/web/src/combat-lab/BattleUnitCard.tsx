@@ -271,12 +271,23 @@ export function UnitCard({
   return (
     <section
       className={`battle-unit-card ${actor ? 'battle-acting-unit' : 'battle-inspected-unit'}`}
+      tabIndex={actor ? undefined : 0}
       aria-label={
         actor ? 'Действующий боец' : unit ? `Состояние: ${unit.name ?? unit.id}` : 'Осмотр бойца'
       }
     >
       <div className="battle-card-header">
         <span>{cardHeading(view, unit, actor)}</span>
+        {!actor && unit && (
+          <>
+            <h2>{unit.name ?? unit.id}</h2>
+            <span>
+              {poolLabels.health} {unit.pools.health.current}/{unit.pools.health.maximum}
+              {' · '}
+              {unitStatus[unit.status]}
+            </span>
+          </>
+        )}
         {points && (
           <div
             className="battle-action-points"

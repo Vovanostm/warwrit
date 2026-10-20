@@ -45,7 +45,7 @@ import { createBattleBackdropMaterial } from './battle-backdrop.js';
 import { mountBattleTerrain } from './battle-terrain.js';
 import { mountBattleScenery } from './battle-scenery.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
-import { battleFrameBounds } from './battle-framing.js';
+import { battleFrameBounds, battleCameraLimits } from './battle-framing.js';
 import { mountBattleFieldVitals } from './battle-field-vitals.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
@@ -73,6 +73,7 @@ const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 interface SpriteBattleScene {
   setHighlightedUnit(id: string | null): void;
   focusUnit(id: string): void;
+  showOverview(): void;
   update(
     view: CombatLabView,
     selectedUnitId: string | null,
@@ -216,7 +217,6 @@ export async function mountSpriteBattleScene(
       const body = unitMeshes.get(id)!;
       edge.scaling.set(body.scaling.x * outlineScale, body.scaling.y * outlineScale, 1);
     }
-    placeActorMarker();
   });
   const actorMarkerLabels: Mesh[] = [];
   let retainedActorKey: string | null = null;
@@ -374,7 +374,10 @@ export async function mountSpriteBattleScene(
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
   const groundYFor = (hex: CombatLabHex) =>
     (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
-  const fieldVitals = mountBattleFieldVitals(canvas, scene);
+  const fieldVitals = mountBattleFieldVitals(canvas, scene, (id) => {
+    callbacks.onSelectUnit(id);
+    focusUnit(id);
+  });
   const heightLabels: Mesh[] = [];
   initialTiles
     .filter((tile) => tile.height > 0)
@@ -817,10 +820,19 @@ export async function mountSpriteBattleScene(
     const vitals = [...unitMeshes.keys()]
       .map((id) => scene.getMeshByName(`unit-vitals:${id}`) as Mesh)
       .filter((mesh) => mesh?.isEnabled());
-    const labels = [...threatLabels, ...eventLabels, ...vitals].map((mesh) => {
-      const box = labelBox(mesh);
-      return inActorPlane(mesh.position, box.halfWidth, box.halfHeight);
-    });
+    const labels = [
+      ...fixedLabels,
+      ...heightLabels,
+      ...statusMarkers,
+      ...threatLabels,
+      ...eventLabels,
+      ...vitals,
+    ]
+      .filter((mesh) => mesh.isEnabled())
+      .map((mesh) => {
+        const box = labelBox(mesh);
+        return inActorPlane(mesh.position, box.halfWidth, box.halfHeight);
+      });
     const viewport = scene.activeCamera!.viewport.toGlobal(
       engine.getRenderWidth(),
       engine.getRenderHeight(),
@@ -838,19 +850,21 @@ export async function mountSpriteBattleScene(
       ...canvas
         .closest('.battle-view')!
         .querySelectorAll(
-          '.battle-initiative, .battle-action-dock, .battle-target-forecast, .battle-unit-card',
+          '.battle-top-band, .battle-action-dock, .battle-target-forecast, .battle-unit-card, .battle-overview-unit',
         ),
-    ].map((node) => {
-      const box = node.getBoundingClientRect();
-      return {
-        x: foot.x + ((box.left + box.right) / 2 - rect.left - screenX) / pixelsPerWorld,
-        up:
-          Vector3.Dot(foot, upAxis) +
-          (screenY - ((box.top + box.bottom) / 2 - rect.top)) / pixelsPerWorld,
-        halfWidth: box.width / pixelsPerWorld / 2,
-        halfHeight: box.height / pixelsPerWorld / 2,
-      };
-    });
+    ]
+      .filter((node) => node.getClientRects().length > 0)
+      .map((node) => {
+        const box = node.getBoundingClientRect();
+        return {
+          x: foot.x + ((box.left + box.right) / 2 - rect.left - screenX) / pixelsPerWorld,
+          up:
+            Vector3.Dot(foot, upAxis) +
+            (screenY - ((box.top + box.bottom) / 2 - rect.top)) / pixelsPerWorld,
+          halfWidth: box.width / pixelsPerWorld / 2,
+          halfHeight: box.height / pixelsPerWorld / 2,
+        };
+      });
     return [...bodies, ...labels, ...hud];
   };
   const labelBox = (mesh: Mesh): LabelBox => ({
@@ -861,14 +875,6 @@ export async function mountSpriteBattleScene(
   });
   const placeActorMarker = () => {
     if (!actorMarker || !scene.activeCamera) return;
-    const cameraKey = [
-      scene.activeCamera.getViewMatrix().updateFlag,
-      scene.activeCamera.getProjectionMatrix().updateFlag,
-      canvas.clientWidth,
-      canvas.clientHeight,
-    ].join(':');
-    if (actorPlacementKey === cameraKey) return;
-    actorPlacementKey = cameraKey;
     const { descriptor, badge, ring, width } = actorMarker;
     const unit = currentView.units.find(({ id }) => id === descriptor.id)!;
     const art = spriteForUnit(unit);
@@ -881,6 +887,31 @@ export async function mountSpriteBattleScene(
     badge.scaling.set(width / pixelsPerWorld, 34 / pixelsPerWorld, 1);
     const footUp = Vector3.Dot(foot, upAxis);
     const halfHeight = 17 / pixelsPerWorld;
+    const reserved = actorReservations(foot, pixelsPerWorld);
+    const placementKey = JSON.stringify([
+      scene.activeCamera.getViewMatrix().updateFlag,
+      scene.activeCamera.getProjectionMatrix().updateFlag,
+      canvas.clientWidth,
+      canvas.clientHeight,
+      reserved,
+    ]);
+    if (actorPlacementKey === placementKey) return;
+    actorPlacementKey = placementKey;
+    const { viewport, safeTop, safeBottom } = cameraOpening();
+    const projected = Vector3.Project(
+      foot,
+      Matrix.Identity(),
+      scene.getTransformMatrix(),
+      scene.activeCamera.viewport.toGlobal(engine.getRenderWidth(), engine.getRenderHeight()),
+    );
+    const screenX = (projected.x * viewport.width) / engine.getRenderWidth();
+    const screenY = (projected.y * viewport.height) / engine.getRenderHeight();
+    const opening = {
+      x: foot.x + (viewport.width / 2 - screenX) / pixelsPerWorld,
+      up: footUp + (screenY - (safeTop + safeBottom) / 2) / pixelsPerWorld,
+      halfWidth: (viewport.width / 2 - 8) / pixelsPerWorld,
+      halfHeight: (safeBottom - safeTop) / 2 / pixelsPerWorld,
+    };
     const placement = actorBadgePlacement(
       {
         x: foot.x,
@@ -888,13 +919,17 @@ export async function mountSpriteBattleScene(
         halfWidth: width / pixelsPerWorld / 2,
         halfHeight,
       },
-      actorReservations(foot, pixelsPerWorld),
+      reserved,
+      opening,
     );
     badge.position.copyFrom(foot.add(upAxis.scale(placement.up - footUp)));
+    badge.position.x = placement.x;
     ring.position.copyFrom(foot);
     ring.position.y += 0.13;
     badge.computeWorldMatrix(true);
   };
+  // Vitals and ground-linked DOM letters must be laid out before reservations are read.
+  scene.onBeforeCameraRenderObservable.add(() => placeActorMarker());
   const clearActorMarker = () => {
     actorMarker?.dispose();
     actorMarker = null;
@@ -1116,18 +1151,15 @@ export async function mountSpriteBattleScene(
     } else if (currentView.movementPreview?.some(({ to }) => HEX_KEY(to) === HEX_KEY(target.hex)))
       callbacks.onAct({ type: 'move', to: target.hex });
   };
+  const cameraLimits = { maxZoom: 17, bounds: { ...mapBounds } };
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
     perspective,
-    // The apron is camera-facing: clamp in its reference-image coordinates.
-    bounds: {
-      minX: mapBounds.minX - 10,
-      maxX: mapBounds.maxX + 10,
-      minZ: mapBounds.minZ - 10,
-      maxZ: mapBounds.maxZ + 10,
+    bounds: cameraLimits.bounds,
+    get maxZoom() {
+      return cameraLimits.maxZoom;
     },
     minZoom: 2.2,
-    maxZoom: 17,
     pick: pickAt,
     pickGround: (x, y) => {
       const hit = scene.pick(
@@ -1151,19 +1183,34 @@ export async function mountSpriteBattleScene(
     const surface = canvas.closest('.battle-view') ?? canvas.parentElement!;
     const safeTop = Math.max(
       24,
-      ...[...surface.querySelectorAll('.battle-initiative')].map(
-        (node) => node.getBoundingClientRect().bottom - viewport.top + 16,
+      ...[...surface.querySelectorAll('.battle-top-band')].map(
+        (node) => node.getBoundingClientRect().bottom - viewport.top + 8,
       ),
     );
     const safeBottom = Math.min(
       viewport.height - 24,
       ...[...surface.querySelectorAll('.battle-action-dock')].map(
-        (node) => node.getBoundingClientRect().top - viewport.top - 44,
+        (node) => node.getBoundingClientRect().top - viewport.top - 8,
       ),
     );
     return { viewport, safeTop, safeBottom };
   };
-  const frameBattle = () => {
+  const projectedField = scene.meshes
+    .filter((mesh) => mesh.name.startsWith('ground:'))
+    .flatMap((mesh) => {
+      const vertices = mesh.getVerticesData(VertexBuffer.PositionKind)!;
+      const world = mesh.computeWorldMatrix(true);
+      return Array.from({ length: vertices.length / 3 }, (_, index) =>
+        project(Vector3.TransformCoordinates(Vector3.FromArray(vertices, index * 3), world)),
+      );
+    });
+  const fieldBounds = {
+    minX: Math.min(...projectedField.map((point) => point.x)),
+    maxX: Math.max(...projectedField.map((point) => point.x)),
+    minZ: Math.min(...projectedField.map((point) => point.z)),
+    maxZ: Math.max(...projectedField.map((point) => point.z)),
+  };
+  const overviewBounds = () => {
     const { viewport, safeTop, safeBottom } = cameraOpening();
     const figures = currentView.units
       .filter((unit) => unit.status === 'active')
@@ -1172,57 +1219,73 @@ export async function mountSpriteBattleScene(
         const factor = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
         const point = AXIAL_TO_WORLD(unit.position);
         const y = groundYFor(unit.position);
-        const foot = project({ ...point, y });
-        const height = (art.footY - art.visibleBounds[1]) * factor;
-        const head = project({
-          x: point.x,
-          y: y + height * Math.cos(CAMERA_ELEVATION),
-          z: point.z + height * Math.sin(CAMERA_ELEVATION),
-        });
-        const badgeTop =
-          unit.id === actorMarker?.descriptor.id
-            ? project(
-                actorMarker.badge.position.add(
-                  upAxis.scale(labelBox(actorMarker.badge).halfHeight),
-                ),
-              ).z * Math.sin(CAMERA_ELEVATION)
-            : -Infinity;
+        const corners = [art.visibleBounds[0], art.visibleBounds[2]].flatMap((edgeX) =>
+          [art.visibleBounds[1], art.visibleBounds[3], art.footY].map((edgeY) => {
+            const up = (art.footY - edgeY) * factor;
+            return project({
+              x: point.x + (edgeX - art.footX) * factor,
+              y: y + up * Math.cos(CAMERA_ELEVATION),
+              z: point.z + up * Math.sin(CAMERA_ELEVATION),
+            });
+          }),
+        );
         return {
-          x: foot.x,
-          bottom: foot.z * Math.sin(CAMERA_ELEVATION),
-          top: Math.max(head.z * Math.sin(CAMERA_ELEVATION), badgeTop),
+          minX: Math.min(...corners.map((corner) => corner.x)),
+          maxX: Math.max(...corners.map((corner) => corner.x)),
+          bottom: Math.min(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
+          top: Math.max(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
         };
       });
-    camera.fit(
-      battleFrameBounds({
-        mapBounds,
-        figures,
-        width: viewport.width,
-        height: viewport.height,
-        safeTop,
-        safeBottom,
-      }),
-      0,
+    const frame = battleFrameBounds({
+      mapBounds: fieldBounds,
+      figures,
+      width: viewport.width,
+      height: viewport.height,
+      safeTop,
+      safeBottom,
+      badge: actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
+    });
+    if (!frame) return null;
+    const limits = battleCameraLimits(frame, viewport.width, viewport.height);
+    cameraLimits.maxZoom = limits.maxZoom;
+    Object.assign(cameraLimits.bounds, limits.bounds);
+    // Extend only the quiet camera-facing apron; projected artwork/terrain stay registered.
+    const base = terrain.apron.getBoundingInfo().boundingBox.extendSize;
+    terrain.apron.scaling.set(
+      ((limits.bounds.maxX - limits.bounds.minX) * apronScale) / (2 * base.x),
+      1,
+      ((limits.bounds.maxZ - limits.bounds.minZ) * apronScale * Math.sin(CAMERA_ELEVATION)) /
+        (2 * base.z),
     );
+    const up =
+      ((limits.bounds.minZ + limits.bounds.maxZ) / 2 - centerZ) * Math.sin(CAMERA_ELEVATION);
+    terrain.apron.position.set(
+      (limits.bounds.minX + limits.bounds.maxX) / 2,
+      up * apronScale * Math.cos(CAMERA_ELEVATION) - apronDepth * Math.sin(CAMERA_ELEVATION),
+      centerZ +
+        up * apronScale * Math.sin(CAMERA_ELEVATION) +
+        apronDepth * Math.cos(CAMERA_ELEVATION),
+    );
+    // Apron x must use the same reference projection as its vertical displacement.
+    terrain.apron.position.x =
+      perspective.targetX + (terrain.apron.position.x - perspective.targetX) * apronScale;
+    return frame;
   };
-  let focusedId: string | null | undefined = initialView.activation?.actorId;
+  const frameBattle = () => {
+    const bounds = overviewBounds();
+    if (bounds) camera.fit(bounds, 0);
+  };
+  let focusedId: string | null = null;
   const focusUnit = (id: string) => {
     const unit = currentView.units.find((candidate) => candidate.id === id);
     if (!unit) return;
     const { viewport, safeTop, safeBottom } = cameraOpening();
     const point = AXIAL_TO_WORLD(unit.position);
-    const zoom = 4.8;
-    const footUp = Vector3.Dot(new Vector3(point.x, groundYFor(unit.position), point.z), upAxis);
-    const markerHeight =
-      unit.id === actorMarker?.descriptor.id
-        ? (Vector3.Dot(actorMarker.badge.position, upAxis) +
-            labelBox(actorMarker.badge).halfHeight -
-            footUp) /
-          2
-        : 0;
-    const height = Math.max(
-      markerHeight,
-      spriteDisplayHeight(spriteForUnit(unit).id) * SPRITE_PRESENTATION_SCALE * 0.45,
+    const badgeHeight = Number(unit.id === actorMarker?.descriptor.id) * 34;
+    const height = spriteDisplayHeight(spriteForUnit(unit).id) * SPRITE_PRESENTATION_SCALE * 0.45;
+    const zoom = Math.max(
+      4.8,
+      (height * viewport.height) / Math.max(1, safeBottom - safeTop - badgeHeight - 28),
     );
     const middle = project({
       x: point.x,
@@ -1231,7 +1294,9 @@ export async function mountSpriteBattleScene(
     });
     const up = middle.z * Math.sin(CAMERA_ELEVATION);
     const centerUp =
-      up + (((safeTop + safeBottom) / 2 - viewport.height / 2) * 2 * zoom) / viewport.height;
+      up +
+      (((safeTop + badgeHeight + safeBottom) / 2 - viewport.height / 2) * 2 * zoom) /
+        viewport.height;
     camera.fit(
       {
         minX: middle.x,
@@ -1255,14 +1320,17 @@ export async function mountSpriteBattleScene(
   const battleSurface = canvas.closest('.battle-view')!;
   const modifiedKey = (event: KeyboardEvent) =>
     [event.altKey, event.ctrlKey, event.metaKey].some(Boolean);
-  const showOverview = (event: KeyboardEvent) => {
+  const showOverview = () => {
+    focusedId = null;
+    cameraMoved = false;
+    frameBattle();
+  };
+  const onOverviewKey = (event: KeyboardEvent) => {
     const target = event.target as HTMLElement | null;
     const editable = target?.closest('input, textarea, select, [contenteditable="true"]');
     if ([modifiedKey(event), editable, event.code !== 'Home'].some(Boolean)) return;
     event.preventDefault();
-    focusedId = null;
-    cameraMoved = false;
-    frameBattle();
+    showOverview();
   };
   const markKey = (event: KeyboardEvent) => {
     if (modifiedKey(event)) return;
@@ -1285,9 +1353,9 @@ export async function mountSpriteBattleScene(
     if (Math.hypot(event.clientX - cameraPress.x, event.clientY - cameraPress.y) > 5)
       cameraMoved = true;
   };
-  canvas.addEventListener('wheel', markWheel, { passive: true });
+  canvas.addEventListener('wheel', markWheel, { passive: true, capture: true });
   canvas.addEventListener('keydown', markKey);
-  battleSurface.addEventListener('keydown', showOverview as EventListener);
+  battleSurface.addEventListener('keydown', onOverviewKey as EventListener);
   canvas.addEventListener('pointerdown', rememberCameraPress);
   canvas.addEventListener('pointerup', releaseCameraPress);
   canvas.addEventListener('pointercancel', releaseCameraPress);
@@ -1302,10 +1370,13 @@ export async function mountSpriteBattleScene(
   frameDefault();
   const resizeObserver = new ResizeObserver(() => {
     engine.resize();
+    overviewBounds();
     if (!cameraMoved) frameDefault();
     clearHover();
   });
   resizeObserver.observe(canvas);
+  for (const band of battleSurface.querySelectorAll('.battle-top-band, .battle-action-dock'))
+    resizeObserver.observe(band);
   engine.runRenderLoop(() => {
     if (!scene.isDisposed) scene.render();
   });
@@ -1322,9 +1393,9 @@ export async function mountSpriteBattleScene(
     canvas.removeEventListener('keydown', clearHover);
     canvas.removeEventListener('contextmenu', preventContextMenu);
     resizeObserver.disconnect();
-    canvas.removeEventListener('wheel', markWheel);
+    canvas.removeEventListener('wheel', markWheel, true);
     canvas.removeEventListener('keydown', markKey);
-    battleSurface.removeEventListener('keydown', showOverview as EventListener);
+    battleSurface.removeEventListener('keydown', onOverviewKey as EventListener);
     canvas.removeEventListener('pointerdown', rememberCameraPress);
     canvas.removeEventListener('pointerup', releaseCameraPress);
     canvas.removeEventListener('pointercancel', releaseCameraPress);
@@ -1363,6 +1434,7 @@ export async function mountSpriteBattleScene(
   };
   return {
     focusUnit,
+    showOverview,
     setHighlightedUnit(id) {
       if (destroyed || highlightedId === id) return;
       highlightedId = id;

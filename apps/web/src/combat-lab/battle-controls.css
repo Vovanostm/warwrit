@@ -443,7 +443,14 @@
 }
 .battle-target-forecast {
   left: var(--battle-edge);
-  top: 156px;
+  top: auto;
+  bottom: var(--battle-tooltip-bottom, 220px);
+  max-height: max(
+    80px,
+    calc(100% - var(--battle-tooltip-bottom, 220px) - var(--battle-safe-top, 144px))
+  );
+  overflow: auto;
+  pointer-events: auto;
 }
 @media (max-width: 1350px) {
   .battle-view {
@@ -563,4 +570,139 @@
   min-height: 22px;
   margin-top: 4px;
   padding-top: 4px;
+}
+
+/* Reserve finite desktop lanes at the native125 1024px CSS viewport. */
+.battle-top-band {
+  left: 194px;
+  right: 268px;
+}
+.battle-view .battle-top-band .battle-initiative {
+  inset: auto;
+}
+.battle-overview .initiative-unit.battle-control,
+.battle-overview .initiative-unit.battle-control[aria-current='step'] {
+  height: 90px;
+  min-height: 90px;
+}
+.battle-overview .initiative-unit .unit-vitals {
+  display: none;
+}
+.battle-action-dock {
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 12px;
+}
+.battle-action-dock:has(.battle-inspected-unit) {
+  grid-template-columns: 220px minmax(0, 1fr) 220px;
+}
+.battle-view:has(.battle-log[open]) .battle-action-dock {
+  grid-template-columns: 220px minmax(0, 1fr) 220px;
+}
+.battle-view:has(.battle-log[open]) .battle-inspected-unit {
+  display: none;
+}
+.battle-log-content {
+  width: 220px;
+}
+.battle-dock-orders {
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 16px;
+}
+.battle-view .combat-lab-actions {
+  gap: 8px;
+}
+.battle-command {
+  width: 68px;
+}
+.battle-command-label {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.battle-action-cost {
+  font-size: 11px;
+}
+.battle-view .battle-control-slot {
+  flex-shrink: 0;
+}
+.battle-skill-list {
+  flex-wrap: wrap;
+}
+.battle-ability-slot .battle-action-cost {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.battle-view .initiative-unit .battle-field-key {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--battle-border);
+  border-radius: 50%;
+  background: #17282b;
+  color: var(--battle-ink);
+  font:
+    600 12px/1 system-ui,
+    sans-serif;
+}
+.battle-view .initiative-unit[data-side='opponent'] .battle-field-key {
+  transform: none;
+  border-radius: 2px;
+  border-color: #e0a78a;
+  background: #382720;
+}
+.battle-acting-unit .battle-card-main {
+  gap: 8px;
+}
+.battle-overview .battle-board-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 40%, transparent 22%, #111c21b8 85%);
+}
+
+/* Inspection keeps full pool labels below the portrait in the reserved narrow card. */
+.battle-inspected-unit {
+  min-height: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.battle-inspected-unit .battle-card-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  gap: 4px;
+  padding-bottom: 8px;
+  background: #182225;
+  box-shadow: 0 0 0 12px #182225;
+}
+.battle-inspected-unit .battle-card-header h2 {
+  margin: 0;
+  font:
+    bold 20px/1.2 Georgia,
+    serif;
+  overflow-wrap: normal;
+}
+.battle-inspected-unit .battle-card-main {
+  display: block;
+}
+.battle-inspected-unit .battle-portrait {
+  float: right;
+  width: 48px;
+  height: 76px;
+  margin: 0 0 8px 8px;
+}
+.battle-inspected-unit .battle-card-data h2 {
+  display: none;
+}
+.battle-inspected-unit .battle-resource {
+  clear: both;
 }

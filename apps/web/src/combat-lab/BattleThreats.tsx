@@ -1,5 +1,4 @@
 import type { CombatLabView } from '@warwrit/protocol';
-import { Icon } from './BattleUnitCard.js';
 export function BattleThreats({ view }: { view: CombatLabView }) {
   return (
     <>
@@ -14,7 +13,6 @@ export function BattleThreats({ view }: { view: CombatLabView }) {
                 const victim = view.units.find((candidate) => candidate.id === threat.targetId);
                 return (
                   <div key={unit.id}>
-                    <Icon name="wound" />
                     <strong>
                       {unit.name ?? unit.id} → {victim?.name ?? threat.targetId}
                     </strong>

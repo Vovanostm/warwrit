@@ -55,11 +55,23 @@ export interface CombatLabBattleConfig {
   readonly map: { readonly name: string; readonly tiles: readonly CombatLabTile[] };
   readonly units: readonly CombatLabCustomUnit[];
 }
+/** Optional lab-only export metadata; canonical replay schemas remain unchanged. */
+export interface CombatLabReplayPresentation {
+  readonly version: 1;
+  readonly controlledSideId: string;
+  readonly battle?: CombatLabBattleConfig;
+  readonly units: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly profileId?: string;
+  }[];
+}
 export type CombatLabSkillDefinition = Omit<CombatLabSkill, 'rank' | 'equipmentAvailable'> & {
   readonly equipment: readonly CombatLabView['units'][number]['weaponId'][];
 };
 
 export interface CombatLabCatalog {
+  readonly presets?: readonly { readonly id: string; readonly battle: CombatLabBattleConfig }[];
   readonly skills?: readonly CombatLabSkillDefinition[];
   readonly profiles: readonly {
     readonly id: string;

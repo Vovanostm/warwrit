@@ -1,10 +1,52 @@
-/* The visible tracks are foot-sorted with the figures; this is their accessible readout. */
+/* Close-view tracks remain foot-sorted in the world; this is their accessible readout. */
 .battle-field-vitals {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.battle-field-vital {
   position: absolute;
   width: 1px;
   height: 1px;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-  pointer-events: none;
+}
+/* Numbered ground anchors replace displaced portraits and crossing leader lines.
+   Full existing portraits are available by deliberately inspecting/focusing a fighter. */
+.battle-view .battle-overview-unit {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 14px;
+  padding: 0;
+  border: 1px solid #b7d4d3;
+  border-radius: 50%;
+  background: #17282b;
+  color: #fff5da;
+  font:
+    600 12px/1 system-ui,
+    sans-serif;
+  pointer-events: auto;
+  box-shadow: 0 1px 2px #000;
+}
+.battle-view .battle-overview-unit[data-side='opponent'] {
+  border-color: #e0a78a;
+  border-radius: 2px;
+  background: #382720;
+}
+.battle-overview-unit[aria-current='step'] {
+  outline: 2px solid #d4bb82;
+  outline-offset: 1px;
+}
+.battle-view .battle-overview-unit:hover,
+.battle-view .battle-overview-unit:focus-visible {
+  z-index: 1;
+  background: #5a5037;
+}
+.battle-overview-unit[hidden] {
+  display: none;
 }

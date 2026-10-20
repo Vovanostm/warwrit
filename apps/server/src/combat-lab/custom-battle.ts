@@ -85,10 +85,31 @@ export function defaultSpriteBattle(): CombatLabBattleConfig {
 }
 
 export function combatLabCatalog(): CombatLabCatalog {
+  const deserters = defaultSpriteBattle();
+  const opponentProfiles = ['W01', 'W04', 'W05', 'W01', 'W04'];
+  const deserterBattle: CombatLabBattleConfig = {
+    ...deserters,
+    name: 'Банда дезертиров',
+    units: [
+      ...deserters.units.filter((unit) => unit.sideId === 'human'),
+      ...deserters.units
+        .filter((unit) => unit.sideId === 'opponent')
+        .slice(0, opponentProfiles.length)
+        .map((unit, index) => ({
+          ...unit,
+          profileId: opponentProfiles[index]!,
+          skillRanks: { ...defaultSkillRanks[opponentProfiles[index]!] },
+        })),
+    ],
+  };
   return {
     profiles: combatLabProfiles,
     skills: combat.COMBAT_SKILLS,
     defaultBattle: defaultSpriteBattle(),
+    presets: [
+      { id: 'ruined-mill', battle: defaultSpriteBattle() },
+      { id: 'deserter-band', battle: deserterBattle },
+    ],
   };
 }
 

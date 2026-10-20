@@ -3,6 +3,7 @@ import type { CombatLabView } from '@warwrit/protocol';
 import { Portrait, UnitStates, type Unit } from './BattleUnitCard.js';
 import { unitStatus } from './battle-hud-format.js';
 import { UnitVitals } from './UnitVitals.js';
+import { battleUnitMarker } from './battle-framing.js';
 
 interface Props {
   view: CombatLabView;
@@ -146,7 +147,7 @@ function InitiativeUnit({
       data-unit-id={id}
       data-side={unit.sideId === view.controlledSideId ? 'human' : 'opponent'}
       data-forecast={forecast || undefined}
-      aria-label={label}
+      aria-label={`${label} · Метка ${battleUnitMarker(view.units, id)}`}
       aria-current={currentStep}
       aria-pressed={selectedUnitId === id}
       data-attackable={attackable ? 'true' : undefined}
@@ -161,7 +162,13 @@ function InitiativeUnit({
     >
       <Portrait unit={unit} />
       <UnitVitals unit={unit} />
-      <span className="battle-side-mark" aria-label={side} title={side} />
+      <span
+        className="battle-side-mark battle-field-key"
+        aria-label={side}
+        title="Метка бойца на поле"
+      >
+        {battleUnitMarker(view.units, id)}
+      </span>
       <b className="battle-order-number">{index + 1}</b>
       {current && <span className="battle-turn-now">ХОД</span>}
       <UnitStates unit={unit} view={view} compact />

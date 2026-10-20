@@ -1,57 +1,145 @@
-import { expect, it } from 'vitest';
-import { battleFrameBounds } from './battle-framing.js';
-import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
+import { Matrix, NullEngine, Scene, Vector3, VertexBuffer } from '@babylonjs/core';
+import { expect, it, vi } from 'vitest';
+import { battleCameraLimits, battleFrameBounds } from './battle-framing.js';
+import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
+import { projectCameraPoint } from '../renderer/camera-projection.js';
+import { createBattleTerrain, createBattleSurface } from '../renderer/battle-terrain.js';
+import { BATTLE_LAYOUT } from './battle-layout.js';
 
 it.each([
-  [1280, 720],
-  [1440, 900],
-  [1920, 1080],
-])('keeps deployed silhouettes between HUD panels at %sx%s', (width, height) => {
-  const bounds = battleFrameBounds({
-    mapBounds: { minX: 0, maxX: 26.6, minZ: 0, maxZ: 12.2 },
-    figures: [
-      { x: 0, bottom: 2, top: 4 },
-      { x: 26.6, bottom: 8, top: 10.4 },
-    ],
-    width,
-    height,
-    safeTop: 192,
-    safeBottom: height - 230,
-  });
-  const sin = Math.sin(CAMERA_ELEVATION),
-    zoom = ((bounds.maxZ - bounds.minZ) * sin) / 2,
-    center = ((bounds.maxZ + bounds.minZ) * sin) / 2;
-  const screenY = (up: number) => height / 2 - ((up - center) * height) / (2 * zoom);
-  expect(screenY(10.4)).toBeGreaterThanOrEqual(192 - 0.01);
-  expect(screenY(2)).toBeLessThanOrEqual(height - 230 + 0.01);
-  expect(((zoom * width) / height) * 2).toBeGreaterThan(26.6);
-});
-it('frames a terminal battle with no standing units without invalid camera values', () => {
-  const bounds = battleFrameBounds({
-    mapBounds: { minX: 0, maxX: 26.6, minZ: 0, maxZ: 12.2 },
-    figures: [],
-    width: 1280,
-    height: 720,
-    safeTop: 24,
-    safeBottom: 696,
-  });
-  expect(Object.values(bounds).every(Number.isFinite)).toBe(true);
-  expect(bounds.maxZ).toBeGreaterThan(bounds.minZ);
-});
+  [1440, 900, 192, 650],
+  [1280, 800, 192, 550],
+  // CSS viewport at genuine native 125%; band bounds vary with text wrapping.
+  [1152, 720, 192, 445],
+  [1024, 640, 192, 345],
+])(
+  'fits the field and edge silhouettes after actual camera clamping at %sx%s',
+  (width, height, safeTop, safeBottom) => {
+    const terrain = createBattleTerrain(
+      Array.from({ length: 165 }, (_, i) => ({ q: i % 15, r: Math.floor(i / 15), height: i % 3 })),
+      BATTLE_LAYOUT,
+    );
+    const reference = { targetX: 24.7, targetZ: 11.26, distance: 16 * BATTLE_LAYOUT.spacing };
+    const geometryEngine = new NullEngine();
+    const geometryScene = new Scene(geometryEngine);
+    const field = [...terrain.values()].flatMap((cell, index) => {
+      const mesh = createBattleSurface(`ground:${index}`, cell, geometryScene);
+      const positions = mesh.getVerticesData(VertexBuffer.PositionKind)!;
+      const world = mesh.computeWorldMatrix(true);
+      return Array.from({ length: positions.length / 3 }, (_, i) =>
+        Vector3.TransformCoordinates(Vector3.FromArray(positions, i * 3), world),
+      );
+    });
+    geometryScene.dispose();
+    geometryEngine.dispose();
+    // Large figure at the extreme edge, including the full weapon width/head/foot.
+    const figures = [new Vector3(-4, 0, 0), new Vector3(1, 5, 5), new Vector3(51, 3, 25)];
+    const projected = field.map((point) => projectCameraPoint(point, reference, CAMERA_ELEVATION));
+    const projectedFigures = figures.map((point) =>
+      projectCameraPoint(point, reference, CAMERA_ELEVATION),
+    );
+    const bounds = battleFrameBounds({
+      mapBounds: {
+        minX: Math.min(...projected.map((p) => p.x)),
+        maxX: Math.max(...projected.map((p) => p.x)),
+        minZ: Math.min(...projected.map((p) => p.z)),
+        maxZ: Math.max(...projected.map((p) => p.z)),
+      },
+      figures: projectedFigures.map((p) => ({
+        minX: p.x,
+        maxX: p.x,
+        bottom: p.z * Math.sin(CAMERA_ELEVATION),
+        top: p.z * Math.sin(CAMERA_ELEVATION),
+      })),
+      width,
+      height,
+      safeTop,
+      safeBottom,
+      badge: { width: 260, height: 34 },
+    })!;
+    const engine = new NullEngine({
+      renderWidth: width,
+      renderHeight: height,
+      textureSize: 128,
+      deterministicLockstep: false,
+      lockstepMaxSteps: 4,
+    });
+    const scene = new Scene(engine);
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe() {}
+        disconnect() {}
+      },
+    );
+    const canvas = {
+      addEventListener() {},
+      removeEventListener() {},
+      clientHeight: height,
+    } as unknown as HTMLCanvasElement;
+    const camera = mountThreeQuarterCamera(scene, engine, canvas, {
+      ...battleCameraLimits(bounds, width, height),
+      minZoom: 2.2,
+      perspective: reference,
+      onPick() {},
+    });
+    try {
+      camera.fit(bounds, 0);
+      scene.render();
+      for (const point of [...field, ...figures]) {
+        const pixel = Vector3.Project(
+          point,
+          Matrix.Identity(),
+          scene.getTransformMatrix(),
+          scene.activeCamera!.viewport.toGlobal(width, height),
+        );
+        expect(pixel.x - 130).toBeGreaterThanOrEqual(-0.01);
+        expect(pixel.x + 130).toBeLessThanOrEqual(width + 0.01);
+        expect(pixel.y - 34).toBeGreaterThanOrEqual(safeTop + 8 - 0.01);
+        expect(pixel.y).toBeLessThanOrEqual(safeBottom - 20 + 0.01);
+      }
+      expect(scene.activeCamera!.orthoTop).toBeGreaterThan(17);
+    } finally {
+      camera.dispose();
+      scene.dispose();
+      engine.dispose();
+      vi.unstubAllGlobals();
+    }
+  },
+);
 
-it('keeps empty map margins from shrinking the forces in overview', () => {
+it('includes empty map margins and terminal battles with no standing figures', () => {
   const bounds = battleFrameBounds({
     mapBounds: { minX: 0, maxX: 100, minZ: 0, maxZ: 20 },
-    figures: [
-      { x: 25, bottom: 2, top: 4 },
-      { x: 35, bottom: 4, top: 6 },
-    ],
+    figures: [],
     width: 1440,
     height: 900,
-    safeTop: 192,
-    safeBottom: 650,
-  });
-  const zoom = ((bounds.maxZ - bounds.minZ) * Math.sin(CAMERA_ELEVATION)) / 2;
-  expect((bounds.minX + bounds.maxX) / 2).toBe(30);
-  expect((zoom * 2 * 1440) / 900).toBeLessThan(25);
+    safeTop: 24,
+    safeBottom: 876,
+  })!;
+  expect(Object.values(bounds).every(Number.isFinite)).toBe(true);
+  expect(bounds.minX).toBe(50);
+  expect(((bounds.maxZ - bounds.minZ) * Math.sin(CAMERA_ELEVATION) * 1440) / 900).toBeGreaterThan(
+    100,
+  );
 });
+
+it.each([
+  [1280, 800, 500, 400],
+  [1280, 800, 400, 420],
+  [0, 0, 0, 0],
+])(
+  'does not invent usable space for overlapping HUD bands',
+  (width, height, safeTop, safeBottom) => {
+    expect(
+      battleFrameBounds({
+        mapBounds: { minX: 0, maxX: 10, minZ: 0, maxZ: 10 },
+        figures: [],
+        width,
+        height,
+        safeTop,
+        safeBottom,
+      }),
+    ).toBeNull();
+  },
+);
