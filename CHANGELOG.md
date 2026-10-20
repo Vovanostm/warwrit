@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Record persistent profile evaluation and remaining acceptance
+
+- 2026-10-20, branch `codex/company-profile-164`, local: record source ACCEPT
+  and normal commit `d3975cf`, real mixed admission/attacks/restriction rejection,
+  active restart and a separate no-attack terminal/restart. Evaluator2 REWORK
+  retains the missing same-journey practice/terminal/combat-retry proof and
+  pending critical-bleed policy. The first terminal failure came from the
+  fixture's ineligible STATIC food container; a fresh PARTY_SUPPLY fixture
+  completed. No game source or rule changed, no failed gate was waived.
+  [Exact checks and limits](docs/engineering/CURRENT_PLAN.md).
+
 ### Preserve leadership evidence from real unarmed attacks
 
 - 2026-10-20, branch `codex/company-profile-164`, local: fix the confirmed

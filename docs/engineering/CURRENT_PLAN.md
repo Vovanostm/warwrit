@@ -1,5 +1,23 @@
 # Warwrit current delivery plan
 
+**Profile persistent evaluation — 2026-10-20, LOCAL / REWORK:**
+Committed head `d3975cf` includes main `eb98dd2`, compatibility corrections and
+leadership repair. Independent review-4 ACCEPT matches the committed two-path
+267-addition/33-deletion delta; normal commit audit and package rebuild PASS.
+Evaluator2: mixed JOIN and historical terminal DB regressions each PASS. A real
+mixed party accepted fists/armed attacks, rejected immobile move/retreat without
+mutation and preserved revision14/state/replay across a process restart. Browser
+Wait succeeded; earlier missing controls were not reproduced or diagnosed.
+The first fixture stored rations in an ineligible STATIC container; its failed
+terminal result is preserved. A fresh PARTY_SUPPLY fixture completed both company
+consequences once at revision91 and retained them across restart, but its manual
+turn timed out: it contains no company attacks. These separate runs do not prove
+attack-linked terminal practice together. Evaluator2 therefore remains REWORK:
+repeat one supplied, timely controlled attack-to-terminal journey, exact combat
+retry and active browser reconnect. No speculative source repair is required.
+Earlier integrated gate remains FAIL; critical-bleed classification awaits owner;
+rescue/transport remains undefined. Evidence: local .orca/core-company-profile/eval-2.md.
+
 **Profile leadership correction implemented — 2026-10-20, LOCAL:**
 The sole writer repaired review-3's evidence loss in the profile and both practice
 consumers. A real mixed unarmed/armed subordinate regression failed before the
