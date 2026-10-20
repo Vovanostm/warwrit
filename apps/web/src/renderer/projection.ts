@@ -40,9 +40,10 @@ function isSafeInteger(value: unknown): value is number {
 
 function readUnit(value: unknown): EncounterPublicUnitDto | undefined {
   if (!isRecord(value)) return undefined;
-  const { id, sideId, q, r, health, status } = value;
+  const { id, sideId, q, r, health, maximumHealth, status } = value;
+  const hasMaximum = Object.hasOwn(value, 'maximumHealth');
   if (
-    Object.keys(value).length !== 6 ||
+    Object.keys(value).length !== 6 + Number(hasMaximum) ||
     typeof id !== 'string' ||
     id.length === 0 ||
     typeof sideId !== 'string' ||
@@ -50,6 +51,7 @@ function readUnit(value: unknown): EncounterPublicUnitDto | undefined {
     !isSafeInteger(q) ||
     !isSafeInteger(r) ||
     !isSafeInteger(health) ||
+    health < 0 ||
     !['active', 'dead', 'retreated'].includes(String(status))
   )
     return undefined;
@@ -59,6 +61,9 @@ function readUnit(value: unknown): EncounterPublicUnitDto | undefined {
     q,
     r,
     health,
+    ...(isSafeInteger(maximumHealth) && maximumHealth > 0 && maximumHealth >= health
+      ? { maximumHealth }
+      : {}),
     status: status as EncounterPublicUnitDto['status'],
   });
 }
@@ -210,6 +215,7 @@ export function readRoomProjection(
       q: raw['q'],
       r: raw['r'],
       health: raw['health'],
+      maximumHealth: raw['maximumHealth'],
       status: raw['status'],
     });
   }
@@ -390,7 +396,12 @@ export function diffRenderUnits(
     if (old.q !== unit.q || old.r !== unit.r) {
       moved.push({ id: unit.id, from: { q: old.q, r: old.r }, to: { q: unit.q, r: unit.r } });
     }
-    if (old.sideId !== unit.sideId || old.health !== unit.health || old.status !== unit.status)
+    if (
+      old.sideId !== unit.sideId ||
+      old.health !== unit.health ||
+      old.maximumHealth !== unit.maximumHealth ||
+      old.status !== unit.status
+    )
       updated.push(unit);
   }
   for (const unit of previous) if (!newById.has(unit.id)) removed.push(unit.id);

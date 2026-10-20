@@ -151,8 +151,8 @@ function EditorMessages({
         </p>
       )}
       {importErrors.length > 0 && (
-        <section className="battle-editor-errors" role="alert" aria-label="Ошибки импорта">
-          <h3>Файл не применён</h3>
+        <section className="battle-editor-errors" role="alert" aria-label="Ошибки загрузки">
+          <h3>Черновик не заменён</h3>
           <ul>
             {importErrors.map((error) => (
               <li key={error}>{error}</li>
@@ -169,14 +169,69 @@ function EditorMessages({
   );
 }
 
-/** Local battle and map draft editor; all imports are validated before onChange. */
-export function BattleEditor({ catalog, value, onChange, disabled = false }: BattleEditorProps) {
-  const [inspectedHex, setInspectedHex] = useState<CombatLabHex | null>(null);
-  const [tool, setTool] = useState({
+function initialEditorTool(catalog: CombatLabCatalog) {
+  return {
     brush: 'plain' as EditorBrush,
     sideId: 'human' as CombatLabCustomUnit['sideId'],
     profileId: catalog.profiles[0]?.id ?? '',
-  });
+  };
+}
+
+function PresetPicker({
+  catalog,
+  presetId,
+  disabled,
+  onSelect,
+  onLoad,
+}: {
+  readonly catalog: CombatLabCatalog;
+  readonly presetId: string;
+  readonly disabled: boolean;
+  readonly onSelect: (id: string) => void;
+  readonly onLoad: (battle: CombatLabBattleConfig) => void;
+}) {
+  const presets = catalog.presets ?? [];
+  if (presets.length === 0) return null;
+  const selectedPreset = presets.find(({ id }) => id === presetId);
+  return (
+    <>
+      <section className="battle-editor-meta" aria-label="Сценарии из каталога">
+        <label>
+          Сценарий для загрузки
+          <select
+            value={presetId}
+            disabled={disabled}
+            onChange={(event) => onSelect(event.target.value)}
+          >
+            <option value="">Выберите сценарий</option>
+            {presets.map(({ id, battle }) => (
+              <option key={id} value={id}>
+                {battle.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="button"
+          disabled={disabled || selectedPreset === undefined}
+          onClick={() => {
+            if (!disabled && selectedPreset !== undefined) onLoad(selectedPreset.battle);
+          }}
+        >
+          Загрузить сценарий
+        </button>
+      </section>
+      <p className="battle-editor-local-note">
+        Загрузка заменит текущий черновик состава и карты. Бой начнётся по кнопке «Начать бой».
+      </p>
+    </>
+  );
+}
+
+/** Local battle and map draft editor; all imports are validated before onChange. */
+export function BattleEditor({ catalog, value, onChange, disabled = false }: BattleEditorProps) {
+  const [inspectedHex, setInspectedHex] = useState<CombatLabHex | null>(null);
+  const [tool, setTool] = useState(initialEditorTool(catalog));
   const { brush, sideId, profileId } = tool;
   const setBrush = (brush: EditorBrush) => setTool((current) => ({ ...current, brush }));
   const setSideId = (sideId: CombatLabCustomUnit['sideId']) =>
@@ -184,6 +239,7 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   const setProfileId = (profileId: string) => setTool((current) => ({ ...current, profileId }));
   const [savedDrafts, setSavedDrafts] = useState<SavedDrafts>({});
   const [savedName, setSavedName] = useState('');
+  const [presetId, setPresetId] = useState('');
   const [notice, setNotice] = useState('');
   const [importErrors, setImportErrors] = useState<string[]>([]);
   const battleInput = useRef<HTMLInputElement>(null);
@@ -320,9 +376,24 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   }
 
   function resetDefault(): void {
-    onChange(catalog.defaultBattle);
+    onChange(structuredClone(catalog.defaultBattle));
+    setInspectedHex(null);
+    setPresetId('');
     setImportErrors([]);
     setNotice(`Восстановлен сценарий «${catalog.defaultBattle.name}».`);
+  }
+
+  function loadPreset(battle: CombatLabBattleConfig): void {
+    const validation = validateBattleDraft(battle, catalog);
+    if (validation.length > 0) {
+      setImportErrors(validation);
+      setNotice('Сценарий не загружен: данные каталога не прошли проверку.');
+      return;
+    }
+    onChange(structuredClone(battle));
+    setInspectedHex(null);
+    setImportErrors([]);
+    setNotice(`Сценарий «${battle.name}» загружен в черновик. Можно изменить его и начать бой.`);
   }
 
   return (
@@ -369,6 +440,14 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
           />
         </div>
       </header>
+
+      <PresetPicker
+        catalog={catalog}
+        presetId={presetId}
+        disabled={disabled}
+        onSelect={setPresetId}
+        onLoad={loadPreset}
+      />
 
       <div className="battle-editor-layout">
         <section className="battle-editor-board-panel" aria-label="Поле боя 15 на 11">
