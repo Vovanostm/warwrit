@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Finish legacy art cleanup after hosted verification — 2026-10-20, PUBLISHED / REWORK
+
+- `codex/persistent-hud-166`, [PR247](https://github.com/Vovanostm/warwrit/pull/247):
+  first CI39442491652 fails on unused BATTLE_ART/unitSprite after the legacy
+  renderer removal. Remove only their unreachable block/imports in renderer/art.ts;
+  preserve live map art and shared sprite presentation. Independent source trace
+  confirms consumer boundaries; actual-diff review ACCEPT. Scoped format/web types
+  and corrected global dead-code EXIT0; integrated/hosted correction checks and
+  merge pending. No gate bypass.
+  [Evidence](docs/engineering/evidence/persistent-hud/README.md).
+
 ### Connect persistent combat to the shared presentation — 2026-10-20, LOCAL
 
 - `codex/persistent-hud-166`: add finite public rendering fields/readers and a

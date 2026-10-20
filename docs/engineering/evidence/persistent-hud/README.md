@@ -1,7 +1,7 @@
 # Persistent commander presentation — #166
 
 2026-10-20, `codex/persistent-hud-166`, base main `1f37cb6a`.
-Status: LOCAL ACCEPT; source, playable and absolute visual reviews accepted; publication/hosted CI/merge pending.
+Status: PUBLISHED as PR247; source/playable/visual accepted; first hosted gate failed on unused legacy art exports, correction in progress.
 The owner mission authorizes implementation, review and checked merge.
 
 ## Scope and authority
@@ -438,6 +438,31 @@ Owner mission “Implement, review, merge” authorizes this checked #166 delive
 The corrected local validator is8/8 PASS; hosted clean gate and expected-head
 merge still precede delivery. No payment, full-M1, new OIDC, fresh crash-recovery,
 capacity or durable outcome-history acceptance is inferred.
+
+## First hosted gate — PR247, 2026-10-20
+
+[PR247](https://github.com/Vovanostm/warwrit/pull/247) published reviewed head
+62350affd4dfd391c925b36a43420bdd1a7d307a against main1f37cb6a. Hosted run
+39442491652 FAIL in the global dead-code step: BATTLE_ART and unitSprite in
+renderer/art.ts have no consumers after legacy renderer removal. The scoped
+changed-file audit had not included this previously untouched file. Full unit,
+stress, migration and hosted coverage/audit steps are NOT_RUN for this attempt.
+Format, lint, architecture and released-migration guard passed.
+
+Independent source trace confirms the battle-only block/imports are unused;
+map/site/tree exports and shared sprite-art have live separate consumers.
+The source writer owns only the finite dead-code removal. SupplyShop's three
+unused-prop advisories are unrelated and are not changed. No gate suppression,
+asset removal, new renderer or gameplay behavior is needed. Prior playable
+acceptance remains attributable to the unchanged live presentation. Failure log:
+.orca/persistent-hud-166/ci-failure.log.
+
+Correction: the unused block/imports are removed without changing live exports
+or assets. Independent actual-diff review versus62350aff ACCEPT; author scoped
+Prettier and web typecheck PASS. Parent global `pnpm check:dead-code` EXIT0,
+retaining only the three nonfatal SupplyShop advisories. Raw log:
+.orca/persistent-hud-166/global-dead-code-corrected.log. Clean correction-commit
+validation and a fresh hosted run remain pending; no full-gate PASS is inferred.
 
 ## Remaining acceptance
 

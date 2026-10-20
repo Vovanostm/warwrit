@@ -1,5 +1,15 @@
 # Warwrit current delivery plan
 
+**Persistent HUD published / hosted cleanup — 2026-10-20:**
+[PR247](https://github.com/Vovanostm/warwrit/pull/247), head62350aff, is open.
+First hosted CI39442491652 fails global dead-code: two legacy battle-art exports
+became unused when the old renderer was removed. One writer removes only that
+unreachable art.ts block; live map/shared combat assets remain. Actual correction
+review ACCEPT, scoped format/web types PASS and global dead-code EXIT0. Scoped local
+validator8/8 and independent source/playable/absolute visual ACCEPT retain their
+reported scope; the hosted full gate is not yet passed. No merge/deploy/bypass.
+[Failure and correction](evidence/persistent-hud/README.md).
+
 **Persistent HUD accepted / ready to publish — 2026-10-20, LOCAL:**
 #166 in `codex/persistent-hud-166` uses actual main1f37cb6a (bridge PR246).
 Source commit1c73d845 plus exact formatter-only correctionb4689ed6: shared
