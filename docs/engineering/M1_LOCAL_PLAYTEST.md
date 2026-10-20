@@ -74,3 +74,16 @@ after a command), confusing texts, and any money that looks wrong.
   interface; wages accrue as debt shown in **Отряд**. There is no shop: rations
   are only the starting stock, so use camps on long trips.
 - Mac performance and frame rate are `NOT_MEASURED`.
+
+## Profile correction in progress — 2026-10-20
+
+Local source9eee0ce adds real fists and co-located immobile members in persistent
+combat; it does not yet supersede main's unavailable-profile behavior. Fists use
+range1, base damage6,2AP/8stamina, no penetration or weapon-skill XP. An immobile
+member cannot move/retreat independently. Critical-bleed attack/defence policy
+awaits the owner; rescue/transport remains unavailable.
+
+Author focused tests/types passed. Final mixed-party browser, terminal and real
+process-restart acceptance remain pending; see [combat profile status](../wiki/combat.md#company-profile-implementation--2026-10-20).
+The dated2026-10-02 gaps above are historical, not a current inventory of all UI
+features (for example, food purchase has since been delivered).

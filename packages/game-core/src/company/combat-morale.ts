@@ -1,6 +1,9 @@
 import { combatRules } from '../combat/rules.js';
 import { projectCharacterCombat } from './combat-projection.js';
-import type { CharacterCombatProjection } from './combat-projection.js';
+import type {
+  CharacterCombatProjection,
+  CharacterCombatProjectionV3,
+} from './combat-projection.js';
 import { natural } from './input.js';
 import { person } from './lifecycle-state.js';
 import { fieldPartyStatus } from './membership.js';
@@ -29,12 +32,34 @@ export interface CharacterCombatMoraleProjection extends CombatBase {
   readonly morale: CombatMoraleSnapshot;
 }
 
+export interface CharacterCombatMoraleProjectionV3 extends Omit<
+  CharacterCombatProjectionV3,
+  'attributes' | 'current'
+> {
+  readonly attributes: CharacterCombatProjectionV3['attributes'] & { readonly morale: number };
+  readonly current: CharacterCombatProjectionV3['current'] & { readonly morale: number };
+  readonly morale: CombatMoraleSnapshot;
+}
+
 /** G04 only: a frozen projection, not encounter admission or a persistent write. */
 export function projectCharacterCombatWithMorale(
   root: MaterializedCompanyState,
   characterId: string,
-): CharacterCombatMoraleProjection {
-  const projection = projectCharacterCombat(root, characterId);
+): CharacterCombatMoraleProjection;
+export function projectCharacterCombatWithMorale(
+  root: MaterializedCompanyState,
+  characterId: string,
+  version: 3,
+): CharacterCombatMoraleProjectionV3;
+export function projectCharacterCombatWithMorale(
+  root: MaterializedCompanyState,
+  characterId: string,
+  version?: 3,
+): CharacterCombatMoraleProjection | CharacterCombatMoraleProjectionV3 {
+  const projection =
+    version === 3
+      ? projectCharacterCombat(root, characterId, 3)
+      : projectCharacterCombat(root, characterId);
   const vitals = physicalVitals(root.physical, characterId);
   const persistentBefore = vitals.morale;
   requirePhysical(
@@ -52,7 +77,7 @@ export function projectCharacterCombatWithMorale(
   );
   return ownPhysical({
     ...projection,
-    schemaVersion: 2,
+    schemaVersion: version === 3 ? 3 : 2,
     attributes: { ...projection.attributes, morale: maximumTactical },
     current: { ...projection.current, morale: actualInitialTactical },
     morale: {
@@ -64,7 +89,7 @@ export function projectCharacterCombatWithMorale(
       leader,
       overflowModifier: party.moraleModifier,
     },
-  });
+  }) as CharacterCombatMoraleProjection | CharacterCombatMoraleProjectionV3;
 }
 
 /** C01 correction: only the actual tactical change persists, never the nominal aura. */

@@ -337,7 +337,12 @@ async function executeContractCommand(input: {
         return reject('NOT_AVAILABLE', contract.revision);
       const atIssuer = isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId);
       const atObjective =
-        isAtArea(state, terms.objectiveLocation.siteId, terms.objectiveLocation.areaId) &&
+        isAtArea(
+          state,
+          terms.objectiveLocation.siteId,
+          terms.objectiveLocation.areaId,
+          commandType === 'JOIN',
+        ) &&
         state.encounter.active === null &&
         !state.economy.lifecycle.parties.some((party) => party.location.kind === 'TRANSIT');
       if (commandType === 'PICKUP' || commandType === 'PRESENT') {
@@ -778,8 +783,6 @@ async function readHuntView(
             ) &&
             currentAggregate.economy.lifecycle.characters.some(
               (character) =>
-                character.presence.availability === 'AVAILABLE' &&
-                character.presence.encounterBindingId === null &&
                 character.presence.location.kind === 'AT' &&
                 character.presence.location.siteId === profile.objectiveLocation.siteId &&
                 character.presence.location.areaId === profile.objectiveLocation.areaId &&
@@ -878,6 +881,7 @@ function isAtArea(
   state: Awaited<ReturnType<typeof loadCompanyAggregate>> & {},
   siteId: string,
   areaId: string,
+  allowImmobile = false,
 ): boolean {
   if (!state) return false;
   const lifecycle = state.economy.lifecycle;
@@ -893,7 +897,10 @@ function isAtArea(
           character.presence.location.kind === 'AT' &&
           character.presence.location.siteId === siteId &&
           character.presence.location.areaId === areaId &&
-          canPerform(character, 'travel'),
+          (allowImmobile
+            ? character.presence.availability === 'AVAILABLE' &&
+              character.presence.encounterBindingId === null
+            : canPerform(character, 'travel')),
       )
     );
   });

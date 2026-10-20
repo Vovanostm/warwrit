@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
   applyCombatCommand,
+  advanceCombatAutoplay,
+  chooseAiCommand,
   battleId,
   canonicalCombatState,
   commandId,
@@ -212,4 +214,87 @@ describe('combat V2 runtime', () => {
     } as unknown as VersionedCombatReplay;
     expect(() => replayCombat(unsupported)).toThrow(/Unsupported combat replay schemaVersion: 99/);
   });
+});
+
+it('bridge-v3 retains immobile targets, rejects forbidden actions atomically and replays fists', () => {
+  const base = setupV2();
+  const setup: BattleSetupV2 = {
+    ...base,
+    rulesetId: 'm1-domain-bridge-v3',
+    sides: [{ ...base.sides[0], retreatHexes: [{ q: 0, r: 0 }] }, base.sides[1]],
+    units: base.units.map((entry, index) => ({
+      ...entry,
+      weaponId: index === 0 ? 'fists' : entry.weaponId,
+      attributes: { ...entry.attributes, initiative: index === 0 ? 120 : 20, accuracy: 100 },
+      initialPools: { ...entry.initialPools, stamina: 80 },
+      capabilities: { move: false, attack: index === 0, defend: index === 0, retreat: false },
+    })),
+  };
+  const started = startBattleV2(setup);
+  const state = started.state;
+  expect(state.activation?.unitId).toBe(setup.units[0]!.id);
+  for (const intent of [
+    { type: 'move' as const, to: { q: -1, r: 0 } },
+    { type: 'retreat' as const },
+  ]) {
+    const rejected = applyCombatCommand(state, {
+      ...intent,
+      commandId: commandId('forbidden'),
+      actorId: state.activation!.unitId,
+      activationId: state.activation!.id,
+    });
+    expect(rejected).toMatchObject({ ok: false, error: { code: 'ACTION_NOT_AVAILABLE' } });
+    expect(rejected.state).toBe(state);
+    expect(rejected.state.random.draws).toBe(0);
+  }
+  const attack = {
+    type: 'attack' as const,
+    commandId: commandId('fists'),
+    actorId: state.activation!.unitId,
+    activationId: state.activation!.id,
+    targetId: setup.units[1]!.id,
+  };
+  const hit = applyCombatCommand(state, attack);
+  expect(hit.ok).toBe(true);
+  if (!hit.ok) throw new Error(hit.error.code);
+  expect(hit.events).toContainEqual(
+    expect.objectContaining({
+      type: 'unit.damaged',
+      rawDamage: 6,
+      armorAbsorbed: 5,
+      healthDamage: 1,
+      armorDamage: 5,
+    }),
+  );
+  expect(hit.state.activation?.remainingActionPoints).toBe(2);
+  expect(hit.state.units[0]!.stamina).toBe(72);
+  expect(
+    canonicalCombatState(replayCombat({ schemaVersion: 2, setup, commands: [attack] }).state),
+  ).toBe(canonicalCombatState(hit.state));
+  expect(() => startBattleV2({ ...setup, rulesetId: 'm1-domain-bridge-v2' })).toThrow();
+  expect(() =>
+    startBattleV2({
+      ...setup,
+      units: setup.units.map(({ capabilities: _capabilities, ...entry }) => entry),
+    }),
+  ).toThrow();
+});
+
+it('wait-only bridge-v3 actors remain targetable and autoplay terminates at the round limit', () => {
+  const base = setupV2();
+  const setup: BattleSetupV2 = {
+    ...base,
+    rulesetId: 'm1-domain-bridge-v3',
+    units: base.units.map((unit) => ({
+      ...unit,
+      capabilities: { move: false, attack: false, defend: false, retreat: false },
+    })),
+  };
+  const started = startBattleV2(setup);
+  expect(chooseAiCommand(started.state, 'survivor').type).toBe('wait');
+  const result = advanceCombatAutoplay(started.state, 'resolved');
+  expect(result.state.status).toBe('resolved');
+  expect(result.state.outcome?.reason).toBe('round-limit');
+  expect(result.state.units.every((unit) => unit.status === 'active')).toBe(true);
+  expect(result.commands.every((command) => command.type === 'wait')).toBe(true);
 });

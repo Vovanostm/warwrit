@@ -91,32 +91,37 @@ it('resolves the real fixture deterministically with truthful detached projectio
   });
 });
 
-it('retains original setup and detaches allowlisted views without canonical/private fields', () => {
-  const original = fixture.originalSetup();
-  const copy = fixture.originalSetup();
-  Object.assign(copy.units[0]!.attributes, { health: 999 });
-  Object.assign(copy.map.hexes[0]!, { q: 999 });
-  Object.assign(copy, { seed: 999 });
-  expect(fixture.originalSetup()).toEqual(original);
-  const transition = fixture.start();
-  const unit = transition.state.units[0]!;
-  const tile = transition.state.map.hexes[0]!;
-  const privateFields = {
-    capabilities: 'secret',
-    privateCompany: 'secret',
-    hiddenFate: 'secret',
-    relations: 'secret',
-  };
-  for (const input of [transition.state, unit, unit.position, tile, transition.events[0]!]) {
-    Object.assign(input, privateFields);
-  }
-  const view = viewOf(transition);
-  const serialized = JSON.stringify(view);
-  expect(serialized).not.toMatch(forbidden);
-  Object.assign(unit.position, { q: 99 });
-  Object.assign(tile, { r: 99 });
-  expect(JSON.stringify(view)).toBe(serialized);
-  Object.assign(view.units[0]!.position, { q: 88 });
-  expect(unit.position.q).toBe(99);
-  expect(fixture.originalSetup()).toEqual(original);
-});
+it.each(['secret', { move: false, attack: false, defend: false, retreat: false }])(
+  'retains original setup and detaches allowlisted views without canonical/private fields (%j)',
+  (capabilities) => {
+    const original = fixture.originalSetup();
+    const copy = fixture.originalSetup();
+    Object.assign(copy.units[0]!.attributes, { health: 999 });
+    Object.assign(copy.map.hexes[0]!, { q: 999 });
+    Object.assign(copy, { seed: 999 });
+    expect(fixture.originalSetup()).toEqual(original);
+    const transition = fixture.start();
+    const baseline = viewOf(transition);
+    const unit = transition.state.units[0]!;
+    const tile = transition.state.map.hexes[0]!;
+    const privateFields = {
+      capabilities,
+      privateCompany: 'secret',
+      hiddenFate: 'secret',
+      relations: 'secret',
+    };
+    for (const input of [transition.state, unit, unit.position, tile, transition.events[0]!]) {
+      Object.assign(input, privateFields);
+    }
+    const view = viewOf(transition);
+    expect(view).toEqual(baseline);
+    const serialized = JSON.stringify(view);
+    expect(serialized).not.toMatch(forbidden);
+    Object.assign(unit.position, { q: 99 });
+    Object.assign(tile, { r: 99 });
+    expect(JSON.stringify(view)).toBe(serialized);
+    Object.assign(view.units[0]!.position, { q: 88 });
+    expect(unit.position.q).toBe(99);
+    expect(fixture.originalSetup()).toEqual(original);
+  },
+);

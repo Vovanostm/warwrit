@@ -16,7 +16,7 @@ import {
   type CombatUnitState,
   type UnitId,
   type Hex,
-  type WeaponId,
+  type M0_WEAPON_IDS,
   type CombatFailureCode,
 } from './types.js';
 
@@ -24,7 +24,7 @@ export interface CombatSkillDefinition {
   readonly skillId: CombatSkillId;
   readonly name: string;
   readonly target: 'self' | 'enemy' | 'ally';
-  readonly equipment: readonly WeaponId[];
+  readonly equipment: readonly (typeof M0_WEAPON_IDS)[number][];
   readonly minimumRange: number;
   readonly maximumRange: number;
   readonly actionPointCost: number;
@@ -127,7 +127,13 @@ export function getCombatSkills(
     const rank = actor.skillRanks?.[skill.skillId];
     return rank === undefined
       ? []
-      : [{ ...skill, rank, equipmentAvailable: skill.equipment.includes(actor.weaponId) }];
+      : [
+          {
+            ...skill,
+            rank,
+            equipmentAvailable: skill.equipment.some((weaponId) => weaponId === actor.weaponId),
+          },
+        ];
   });
 }
 export function combatSkillWeapon(

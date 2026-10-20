@@ -125,7 +125,9 @@ export function CompanyPanel(props: {
               {body &&
                 status === 'AVAILABLE' &&
                 !carried.some((item) => item.equippedBy !== null && item.slot === 'MAIN_HAND') && (
-                  <p className="person-warning">Без оружия в руках в бой не выйти.</p>
+                  <p className="person-warning">
+                    Без оружия боец сражается кулаками: слабый удар, без оружейного опыта.
+                  </p>
                 )}
             </li>
           );

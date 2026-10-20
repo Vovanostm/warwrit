@@ -304,6 +304,38 @@ Working amounts (provisional balance 0.1, same profile style as FIRST HUNT):
   an incapacitated member is present but may only wait or retreat. A party is
   no longer refused combat because one member is unarmed.
 
+## Owner decision — provisional fists and independent retreat, 2026-10-20
+
+The owner accepted the bounded #164 profile: fists range 1, base damage 6,
+cost 2 AP / 8 stamina, no armour penetration and no weapon-skill XP.
+Unarmed means genuinely absent weapon equipment, never a fallback for an invalid
+loadout. Every actual joining member remains represented; no free gear is created.
+
+An immobile member cannot move or retreat independently and remains on the field.
+Rescue and assisted transport are explicitly unresolved; no automatic carrying,
+teleportation, death or capture follows from this gap. The earlier wait/retreat
+rule is capability-qualified. The condition-to-incapacitated mapping is a separate
+pending decision; travel denial alone does not prove inability to attack/defend.
+
+[Direct owner reply recorded on #164](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952).
+These are provisional accepted rules, not a statement that code or player acceptance
+has been delivered. Historical replay and equipped binding behavior must remain intact.
+
+## Owner decision — critical bleeding and first tactical bridge, 2026-10-20
+
+The owner directly approved attack and defence for a critically bleeding member;
+movement and independent retreat remain forbidden. This resolves the critical-bleed
+classification question above without defining another incapacitating condition.
+The existing projection3 capability matrix already matches this decision. Fists,
+historical rules and the unresolved rescue/transport boundary stay unchanged.
+
+For #165, the owner approved the first persistent journey using the existing wolf
+hunt and actual company roster. Abilities without an accepted campaign-to-tactical
+mapping remain unavailable. Unsupported surrender outcomes retain pending effects
+and cannot produce completion proof or payment. This does not approve invented
+six-hostile content, skill ranks, custody or transport rules. Implementation and
+journey acceptance remain separate from this decision.
+
 ## Owner decision — ordinary contract working profile, 2026-10-02
 
 The owner accepted («Принять профиль») this bounded runtime profile for the

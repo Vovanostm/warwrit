@@ -1,12 +1,17 @@
 import { assertNever, compareCodeUnits, invariant } from '../primitives.js';
 import { hexDistance } from './hex.js';
-import { M1_DOMAIN_BRIDGE_RULESET_ID, M1_DOMAIN_BRIDGE_V2_RULESET_ID } from './setup-v2.js';
+import {
+  M1_DOMAIN_BRIDGE_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+} from './setup-v2.js';
 import {
   M0_COMBAT_RULESET_ID,
   SPRITE_PROTOTYPE_RULESET_ID,
   SPRITE_PROTOTYPE_V2_RULESET_ID,
   SPRITE_PROTOTYPE_V3_RULESET_ID,
   type CombatRulesetId,
+  type CombatCommand,
   type UnitId,
   type CombatUnitState,
   type BattleState,
@@ -264,6 +269,44 @@ export function combatGuardedDamage(
     : rawDamage;
 }
 
+const COMPANY_COMBAT_RULES_V3: CombatRules = {
+  ...COMBAT_RULES_V1,
+  id: M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+  weapons: [
+    ...COMBAT_RULES_V1.weapons,
+    {
+      id: 'fists',
+      minimumRange: 1,
+      maximumRange: 1,
+      actionPointCost: 2,
+      staminaCost: 8,
+      baseDamage: 6,
+      damageVariance: 0,
+      accuracyModifier: 0,
+      armorPenetrationPercent: 0,
+      armorDamagePercent: 100,
+      defenseModifier: 0,
+    },
+  ],
+};
+
+export function combatActionAllowed(
+  state: Pick<BattleState, 'rulesetId'>,
+  unit: CombatUnitState,
+  intent: CombatCommand['type'],
+): boolean {
+  if (state.rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID) return true;
+  switch (intent) {
+    case 'move':
+    case 'attack':
+    case 'defend':
+    case 'retreat':
+      return unit.capabilities?.[intent] === true;
+    default:
+      return true;
+  }
+}
+
 export function combatRules(rulesetId: CombatRulesetId): CombatRules {
   invariant(
     rulesetId === COMBAT_RULES_V1.id ||
@@ -271,9 +314,11 @@ export function combatRules(rulesetId: CombatRulesetId): CombatRules {
       rulesetId === SPRITE_PROTOTYPE_V2_RULESET_ID ||
       rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID ||
       rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID ||
-      rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+      rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
+      rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID,
     `Unknown combat ruleset: ${rulesetId}`,
   );
+  if (rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID) return COMPANY_COMBAT_RULES_V3;
   if (rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID) return SPRITE_PROTOTYPE_V3_RULES;
   if (rulesetId === SPRITE_PROTOTYPE_V2_RULESET_ID) return SPRITE_PROTOTYPE_V2_RULES;
   return rulesetId === SPRITE_PROTOTYPE_RULES.id ? SPRITE_PROTOTYPE_RULES : COMBAT_RULES_V1;
@@ -291,6 +336,7 @@ export function compareCombatUnitIds(
       // ast-grep-ignore: implicit-locale-compare — preserve their recorded ordering.
       return left.localeCompare(right);
     case M1_DOMAIN_BRIDGE_V2_RULESET_ID:
+    case M1_DOMAIN_BRIDGE_V3_RULESET_ID:
     case SPRITE_PROTOTYPE_RULESET_ID:
     case SPRITE_PROTOTYPE_V2_RULESET_ID:
     case SPRITE_PROTOTYPE_V3_RULESET_ID:

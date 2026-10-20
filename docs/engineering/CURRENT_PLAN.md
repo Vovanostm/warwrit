@@ -1,5 +1,17 @@
 # Warwrit current delivery plan
 
+**Actor correction and merged profile — 2026-10-20:**
+Local actor correction `bba8d24b` fixes the reproduced containment collision,
+keeps the chevron centred above its owner, and explicitly hides a plaque when
+no valid overhead space exists. Author 47 related tests, types/lint/format/audit
+PASS; actual longer-name native100/125 Home/close smoke passed. Independent
+input/placement readback and absolute visual acceptance remain pending. Integrate
+actual main `137faf88` with additive document histories; actor code is unchanged.
+PR241 is MERGED; PR39383402818 and main39384644400 CI SUCCESS. Actual-main
+isolated PostgreSQL mixed-company JOIN/retry/reload test PASS (1/13 filtered
+SKIP), migrations PASS; owned database removed. Rescue/transport and downstream
+payment/terminal-browser proof remain excluded. No full M1 acceptance.
+
 **Actor review settled / correction active — 2026-10-20, LOCAL REWORK:**
 Independent pass reached actual finalAP4→6, casualty55, threat72 and terminal176
 with marker clearing/restart. It retains finite long-name/input evidence gaps;
@@ -43,6 +55,212 @@ enemy/frame agreement. Parent owns shared records and all delivery gates.
 Actor integration checks/independent playable/visual acceptance are NOT_RUN.
 Profile241 and bridge165 still await the pending critical-bleed/scope answers;
 approved fists and immobility remain, rescue/transport remains excluded.
+**Profile241 accepted locally — 2026-10-20, publication/CI pending:**
+Approved-policy source readback ACCEPTbc4d88e; current head a9207d76 adds only
+the owner's decision/documents. Coordinator validator EXIT0/8of8,
+781PASS/48SKIP. Prior continuous company fight/retry/process-restart evidence
+remains attributed to unchanged profile production. Publish once, require fresh
+hosted CI, then expected-head merge. [Evidence](evidence/core-company-profile/README.md).
+Rescue/transport and downstream payment/terminal-browser journey remain open;
+#165 now has approved bounded scope and awaits this actual merge.
+
+**Owner decisions resolved — 2026-10-20, LOCAL / PR241 delivery resumes:**
+Direct owner reply retains attack/defence under critical bleeding and forbids
+move/independent retreat. Existing projection3 already matches; no new gameplay
+code is required for this decision. Rescue/transport stays unresolved. Profile
+headbc4d88e includes actual mainfe3bcdb4; combined validation and independent
+source readback precede publication and expected-head merge of PR241.
+The owner also approves #165 first path: existing wolf hunt, actual roster,
+unmapped abilities unavailable, unsupported surrender effects pending without
+proof/payment. It activates after #164 merges. No further approval of these
+same questions is needed. Actor186 remains separately under review; full journey
+and M1 acceptance are not claimed.
+
+**Profile / overview integration — 2026-10-20, LOCAL / policy pending:**
+Current main `fe3bcdb4` (PR244) is integrated into the existing profile draft;
+only additive CHANGELOG/CURRENT_PLAN histories conflicted. No profile behavior,
+rule or production conflict changed. Overview PR/main CI and actual-main smoke
+passed; [readback](evidence/uix-overview-zoom/main-readback.md). Profile source
+retains independent ACCEPT0fa34ed and published CI39374767374; this combined
+revision has not been published or independently replayed. Critical-bleed policy
+still awaits the owner, #165 scope remains pending, rescue/transport excluded.
+Normal integration audit PASS. Fresh 25 initiative-related tests cover imported
+HUD code; Istanbul merged those results with prior unchanged-source coverage,
+discarding coverage for the ten changed source paths. Initial audit failed on
+missing current InitiativeUnit coverage; no source fix or threshold change.
+New combined full validation/runtime remains NOT_RUN; earlier profile proof is reused.
+
+**Profile integration review — 2026-10-20, LOCAL ACCEPT / draft retained:**
+Independent [correction review](evidence/core-company-profile/review-main-correction.md)
+ACCEPT0fa34ed closes the real-DB public-field assertion defect. Parent mixed
+JOIN/reload test FAIL-before/PASS-after, server types/lint and normal audit PASS.
+Parent validator EXIT0/8of8 atfbe225a remains the pre-correction integrated check;
+only the reviewed test and records changed afterward. Publish this revision to
+existing draft PR241 for refreshed CI; critical-bleed policy still blocks merge.
+
+**Profile integration correction — 2026-10-20, LOCAL / review pending:**
+Normal mergefbe225a has parent validator EXIT0/8of8 (784 PASS/48 SKIP).
+Independent integration review found a second obsolete six-field assertion in
+mixed-company PostgreSQL proof. The named real-DB regression failed before the
+correction, then passed (1 PASS/13 filtered SKIP) with the exact seven-field public
+allowlist. Private capability, foreign-account, retry and durable replay checks
+remain. Production is unchanged. Independent correction readback is pending;
+critical-bleed policy still blocks PR241 merge. No broader runtime acceptance.
+
+**Profile main integration — 2026-10-20, LOCAL / policy pending:**
+Integrate actual main3c934c16 (merged HP242 and picker243) into the existing
+PR241 branch. Production merges automatically; preserve both additive document
+histories. Critical-bleed policy is unchanged and remains PENDING_OWNER; no
+rescue/transport rule is added. Combined related coverage:784 PASS/48 SKIP after correcting the stale public-field
+assertion; focused privacy test/lint PASS. Normal audit/commit, integrated validator
+and review are pending; prior profile/HP journeys retain their original heads.
+No PR241 publication or merge is claimed for this local integration.
+
+**Picker PR243 delivery — 2026-10-20, MERGED / main smoke passed:**
+[PR243](https://github.com/Vovanostm/warwrit/pull/243) merged3c934c16; #228 CLOSED.
+Corrected PR CI39370786684 and main CI39371853005 SUCCESS. Actual-main browser
+load/start/end-turn/reload retained the same6v5 battle at revision3; no alerts.
+[Readback and probe limits](evidence/uix-preset-picker/main-readback.md).
+Initial failed CI and probe mistakes remain recorded. Whole-scene, payment and
+full-M1 acceptance are excluded; overview still awaits its absolute visual gate.
+
+**Profile recovered acceptance — 2026-10-20, LOCAL / POLICY PENDING:**
+Unchanged source `d3975cf`, documentation head `a6b5734`: evaluator3 ACCEPT for
+approved behavior in one continuous two-company encounter. Browser Wait and
+active reload/control passed; authenticated API delivered 10 fists and 13 armed
+attacks, victory round 7 / revision 88, once-only wounds/practice/world proof and exact
+combat/JOIN retries across an application restart. Saved complete persisted rows
+match. Fists produced no weapon XP/start snapshots. Payment and terminal-screen
+browser acceptance are NOT_RUN; the attempted terminal browser failed to start.
+The report was recovered after host reboot from retained evidence, without a new
+battle. Local evidence: .orca/core-company-profile/eval-3.md and eval3-shots/.
+Post-reboot isolated timeout cases 41/41 PASS; coordinator validator EXIT 0 / 8 of 8,
+775 PASS/48 SKIP, audit PASS. This supersedes earlier incomplete continuous proof
+and local validator failures for this unchanged source; their history remains.
+Hosted clean-checkout gate is NOT_RUN for this branch. Critical-bleed attack/defence
+still awaits the owner; rescue/transport remains excluded and unresolved. #164
+is not closed or merged. Owner-authorized mission continues after these gates.
+
+**Playable quality checkpoint — 2026-10-20, REWORK:**
+The recovered #227 writer retains sole source ownership. Frozen 94c723c2 evidence
+and an independent read-only quality audit confirm threat-banner obstruction;
+expanded-log placement and obvious marker-to-cell association require acceptance
+on the corrected scene. Apply [DESIGN_COMPASS](DESIGN_COMPASS.md) and the full
+visual rubric to integrated day/night, 100/125% desktop play. The inspected terminal
+card has clear hierarchy, but this does not accept the whole scene or campaign.
+Balance, enjoyment, pacing and performance remain NOT_MEASURED. No new art/rule
+or framework is required to resolve these bounded findings.
+
+**Profile persistent evaluation — 2026-10-20, LOCAL / REWORK:**
+Committed head `d3975cf` includes main `eb98dd2`, compatibility corrections and
+leadership repair. Independent review-4 ACCEPT matches the committed two-path
+267-addition/33-deletion delta; normal commit audit and package rebuild PASS.
+Evaluator2: mixed JOIN and historical terminal DB regressions each PASS. A real
+mixed party accepted fists/armed attacks, rejected immobile move/retreat without
+mutation and preserved revision14/state/replay across a process restart. Browser
+Wait succeeded; earlier missing controls were not reproduced or diagnosed.
+The first fixture stored rations in an ineligible STATIC container; its failed
+terminal result is preserved. A fresh PARTY_SUPPLY fixture completed both company
+consequences once at revision91 and retained them across restart, but its manual
+turn timed out: it contains no company attacks. These separate runs do not prove
+attack-linked terminal practice together. Evaluator2 therefore remains REWORK:
+repeat one supplied, timely controlled attack-to-terminal journey, exact combat
+retry and active browser reconnect. No speculative source repair is required.
+Earlier integrated gate remains FAIL; critical-bleed classification awaits owner;
+rescue/transport remains undefined. Evidence: local .orca/core-company-profile/eval-2.md.
+
+**Profile leadership correction implemented — 2026-10-20, LOCAL:**
+The sole writer repaired review-3's evidence loss in the profile and both practice
+consumers. A real mixed unarmed/armed subordinate regression failed before the
+fix and now passes, including leader credit, no fists weapon XP/start snapshot,
+aggregate readback and exact retry. All 28 relevant practice tests, core types,
+scoped lint/format/diff PASS. Parent owns the pending normal integration commit;
+independent review-4 is running. Broader focused coverage: 133 PASS, one existing
+mill-label reconstruction timeout (previous run PASS); failed check retained.
+Final source audit PASS without suppression or changed thresholds. Earlier
+integrated timeouts, actual UI-control proof and critical-bleed policy remain open.
+
+**Profile leadership evidence — 2026-10-20, REWORK:**
+Independent review-3 traced a concrete coupling: the fists/no-weapon-XP guard
+also removes unarmed subordinate attacks from leadership cycles, while both
+consumers derive cycle evidence only from weapon credits. Existing command-cycle
+admission has no weapon-skill prerequisite. One core writer now corrects profile,
+receipt and effects evidence together and adds a mixed-subordinate regression.
+The parent decomposition passed 133 focused tests, core types and scoped lint;
+that result does not waive the newly identified behavior defect. Normal merge
+commit and persistent playable evaluation remain pending. Owner critical-bleed
+classification and rescue/transport gaps remain separate and unresolved.
+
+**Profile practice correction — 2026-10-20, LOCAL / NOT ACCEPTED:**
+The merge audit's exact introduced finding was practice-profile complexity
+(CRAP31.1), not only imported preset coverage as initially suspected. Its existing
+leadership-cycle sorting/pairing is now a private helper with unchanged behavior.
+117 focused tests, core typecheck and scoped lint/format PASS. Independent source
+review and normal commit audit pending; the earlier integrated three-timeout
+failure remains unresolved. This is the only profile source change during the
+current main integration, correcting the earlier unchanged-source statement.
+
+**Profile integrated coverage — 2026-10-20, FAIL / NOT ACCEPTED:**
+Merged working tree against main `eb98dd2`: related coverage with one worker
+completed with 771 PASS, 48 SKIP and three 5-second timeouts (generated combat
+properties, exact world movement and authored free movement). The prior legacy
+preview/setup failures did not recur. No threshold or expectation changed;
+coverage was retained even on failure to feed the normal commit audit.
+Initial merge-commit audits failed on imported preset coverage; no hook bypass.
+Normal merge audit and real persistent/browser evaluation remain pending.
+
+**Profile compatibility correction committed — 2026-10-20, LOCAL / NOT ACCEPTED:**
+`ba9b1462330668a888d1e1655db6c11f54b590ee` contains the five-path source
+correction reviewed as ACCEPT in review-2; the committed delta matches that review.
+Normal commit audit PASS. The earlier failed full gate and two focused timeouts
+remain unresolved; fresh integrated and playable checks are pending. Main
+`eb98dd2` is being integrated, preserving both dated histories and the preset
+producer. No profile source changed during this integration. Critical-bleed
+attack/defence still awaits an owner decision; rescue/transport remains undefined.
+
+**Human preset delivery readback — 2026-10-20, MERGED:**
+[PR240](https://github.com/Vovanostm/warwrit/pull/240) merged as
+`eb98dd2180a98fa6a544f03327585df3abd282b9`; PR CI39334291071 and main
+CI39335721903 SUCCESS. Gated source9534bf7 passed independent source/playable
+review and integrated validation8/8. #228 remains OPEN for the picker.
+This corrects the older pending publication receipts below.
+
+**Profile correction — 2026-10-20, LOCAL / NOT ACCEPTED:**
+Integrated gate at `74e1da1`: six failures, 766 PASS, 48 SKIP; four timeouts,
+legacy capability preview crash and newly supported ruleset assertion. Audit
+failed because that run emitted no coverage file. Parent fixed version isolation
+and old setup admission; focused 34 tests, core types and scoped lint PASS.
+Sequential timeout rerun: three PASS; unchanged world-navigation test still
+exceeds 5 seconds. After browser cleanup: 183 PASS, two timeouts (world
+navigation and legacy fixture run); leader-death now PASS. Independent staged
+source delta ACCEPT, with exact commit comparison required. No thresholds changed. Independent source delta and final
+integrated/playable proof remain pending; prior source ACCEPT is insufficient.
+
+Actual retained campaign upgrade admitted all three allies including unarmed
+Mora into HUNT-03 against three raiders. Browser initially showed our actor but
+no command controls, then inactivity advanced to defeat at round 7/revision 56.
+Cause is unproved; no manual-command or payment success is claimed. This world's
+result is retained. Candidate app stopped; PostgreSQL/Dex retained. Independent
+isolated runtime evaluation remains pending, as does critical-bleed owner answer.
+
+**Company profile #164 — 2026-10-20, LOCAL SOURCE / acceptance pending:**
+Normal source commit `9eee0ce` on `codex/company-profile-164` implements the
+versioned bridge-v3 fists/capability path through projection, whole-party binding,
+strict saved-state readers, practice/physical application, server JOIN and private
+control hints. Historical rulesets remain dispatched separately; no migration.
+Author final152focused tests, core/protocol/testkit/server/web typechecks and
+scoped lint/format/audit PASS. Mixed PostgreSQL JOIN/reload/replay passed before
+final reader/type corrections; exact final DB and historical terminal reruns
+remain pending. Earlier concurrent timeouts are not passes or proven defects.
+Independent review, played mixed-party/terminal/process-restart proof and clean
+integrated gate are pending. Critical-bleed attack/defence classification still
+awaits owner answer; code currently preserves attacks/defence and prohibits only
+move/retreat. Rescue/assisted transport remains unresolved. #164 stays OPEN;
+#163 shared projection work is sequenced after this slice's source corrections.
+[Behavior and limits](../wiki/combat.md#company-profile-implementation--2026-10-20).
+Documentation-only main1b1e088 integrated, keeping both dated histories. PR178
+is MERGED, PR CI39324349645/main CI39326177324 SUCCESS; old pending receipts
+below are historical. No publication or merge of #164 is claimed here.
 
 **Overview delivery gate — 2026-10-20, LOCAL ACCEPT / publication pending:**
 Gatedff40f304 has played eval5 and full absolute visual6 ACCEPT, all applicable
@@ -281,6 +499,17 @@ one inherited zero-AP route regression ran with coverage (1 PASS/15 SKIP) for
 that hook. This is not new player acceptance.
 [Current queue amendment](M1_PRODUCTION_PLAN.md#current-amendment--2026-10-19).
 
+**Company profile #164 — 2026-10-20, LOCAL IMPLEMENTATION START:**
+Owner approved provisional fists range1/damage6/AP2/stamina8/no penetration/no
+weapon-skill XP and no independent move/retreat for immobile members.
+Source amendment is in [contract provenance](../content/CONTRACTS_M1_DERIVATIVE.md#owner-decision--provisional-fists-and-independent-retreat-2026-10-20).
+Branch `codex/company-profile-164`, base `b568ee2`; one core writer owns the
+cohesive projection/setup/legality/binding/reload/practice/server/UI slice.
+#163 implementation waits for the shared projection/protocol ownership to clear.
+The critical-bleed incapacity classifier awaits a specific owner answer; source
+preparation found no authoritative existing mapping. Assisted transport remains
+unresolved. No new implementation/tests/browser/acceptance/merge claimed yet.
+
 **Human battle preset — 2026-10-19, LOCAL / implementation starting:**
 Owner authorized implementation, review and merge of the fix sequence.
 `codex/human-battle-228` owns the #228 server catalog producer using existing
@@ -294,7 +523,7 @@ Coordinator owns shared records; #227 camera is the independent web writer.
 [PR239](https://github.com/Vovanostm/warwrit/pull/239) prior head `902d2e8`
 has successful exact-head clean-checkout CI39290710765; main `073a02b` is
 already included. Tier L reviewer1/evaluator1 ACCEPT for `f5803e5`, coordinator
-validate EXIT0/8of8,178PASS/47SKIP,auditPASS, and published independent playable
+validate EXIT 0 / 8 of 8,178PASS/47SKIP,auditPASS, and published independent playable
 proof are reused on unchanged code. Later commits contain evidence/shared
 records only. No blocking PR/issue labels or unresolved threads observed.
 This shared-record commit still needs its own CI and expected-head merge;
@@ -340,7 +569,7 @@ Scene builder settled with normal commit `c60fd5e` and clean tracked tree;
 its static activation-owned ring/chevron/projected-name foundation refs #186,
 without closing enemy/frame proof owned by #190. Coordinator validation after
 settlement ran sequentially: names producer `796fa52` plus shared-record receipts
-EXIT0/8of8,178PASS/47SKIP,auditPASS; scene `c60fd5e` EXIT0/8of8,35PASS,auditPASS.
+EXIT 0 / 8 of 8,178PASS/47SKIP,auditPASS; scene `c60fd5e` EXIT 0 / 8 of 8,35PASS,auditPASS.
 This supersedes the queued/interrupted names validation below. Names now needs
 fresh Tier L source review and played evaluation; scene needs fresh Tier V
 played evaluation and absolute visual critique. Full desktop/native125 matrix,
@@ -393,7 +622,7 @@ branch and supersedes only the pending producer status below.
 `Vovanostm/uix-w1-skill-reach`, gated `3ea21b0`: optional authoritative learned-skill
 geometry on the current controlled sprite-v3 activation; legacy omission and empty
 geometry supported. No rules/costs/RNG/replay/visual changes. Fresh Tier L reviewer1
-and played evaluator1 ACCEPT; coordinator validate EXIT0/8of8,732PASS/47SKIP,auditPASS.
+and played evaluator1 ACCEPT; coordinator validate EXIT 0 / 8 of 8,732PASS/47SKIP,auditPASS.
 Evaluator69 focusedPASS, independent baseline/candidate1440×900 day/night overview
 and close, real move/end-turn, passive0POST, UI-autobattle victoryR9/rev163 and
 actual replay downloads/reconstruction. Coordinator15 baseline-saved streams match
@@ -501,7 +730,7 @@ are not active contracts in this tick. [Proof](evidence/uix-w1-projection/README
 `Vovanostm/uix-w1-projection` at source candidate `fa7f516`; optional ordinary
 attack refusals share core admission, and malformed preview data is rejected
 at the client boundary. Independent eval3 ACCEPT resolves the final F3 proof:
-coordinator validator8/8, clean bootstrap833PASS/47SKIP/10kstress/14DB,
+coordinator validator 8/8, clean bootstrap833PASS/47SKIP/10kstress/14DB,
 paired unchanged stress and15 saved replay cases. Before/after day/night matrix
 at1366/1440/1920 and native Chrome125% completed; all-visible privacy scope only.
 [Proof, evaluator reports and screenshots](evidence/uix-w1-projection/README.md).

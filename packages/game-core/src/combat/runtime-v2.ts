@@ -24,6 +24,7 @@ function materializeUnit(unit: CombatUnitSetupV2): CombatUnitState {
   const { initialPools, ...setup } = unit;
   return {
     ...setup,
+    ...(unit.capabilities ? { capabilities: { ...unit.capabilities } } : {}),
     position: copyHex(unit.position),
     attributes: { ...unit.attributes },
     health: initialPools.health,

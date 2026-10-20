@@ -10,6 +10,7 @@ import { startBattleV2 } from '../combat/runtime-v2.js';
 import {
   M1_DOMAIN_BRIDGE_RULESET_ID,
   M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   type BattleSetupV2,
 } from '../combat/setup-v2.js';
 import { isCompanyFinanceShape, validateEconomy } from './economy-state.js';
@@ -439,67 +440,16 @@ function bindingShape(value: unknown): boolean {
     !isExactInteger(value['atTick']) ||
     !locationShape(value['location']) ||
     !Array.isArray(value['participants']) ||
-    !value['participants'].every(
-      (entry) =>
-        shape(entry, [
-          'companyId',
-          'partyId',
-          'revision',
-          'physicalPolicyVersion',
-          'unitId',
-          'sideId',
-          'position',
-          'projection',
-          'vitals',
-          'equipment',
-        ]) &&
-        ['companyId', 'partyId', 'physicalPolicyVersion', 'unitId', 'sideId'].every((key) =>
-          isEntityId(entry[key]),
-        ) &&
-        isExactInteger(entry['revision']) &&
-        hexShape(entry['position']) &&
-        projectionShape(entry['projection']) &&
-        vitalsShapeForBinding(entry['vitals']) &&
-        Array.isArray(entry['equipment']) &&
-        entry['equipment'].every(itemShapeForEncounter),
-    ) ||
+    !value['participants'].every(bindingParticipantShape) ||
     !setupV2Shape(value['setup']) ||
     !transitionShape(value['initial']) ||
+    !bindingVersionsMatch(value) ||
     !Number.isSafeInteger(value['lastAppliedRevision']) ||
-    (worldBinding &&
-      (!Array.isArray(value['worldParticipants']) ||
-        value['worldParticipants'].length === 0 ||
-        !value['worldParticipants'].every(
-          (entry) =>
-            shape(entry, [
-              'entityId',
-              'sourceId',
-              'unitId',
-              'sideId',
-              'position',
-              'weaponId',
-              'attributes',
-              'initialPools',
-            ]) &&
-            ['entityId', 'sourceId', 'unitId', 'sideId', 'weaponId'].every((key) =>
-              isEntityId(entry[key]),
-            ) &&
-            entry['entityId'] === entry['unitId'] &&
-            hexShape(entry['position']) &&
-            shape(entry['attributes'], [
-              'accuracy',
-              'armor',
-              'defense',
-              'health',
-              'initiative',
-              'morale',
-              'stamina',
-            ]) &&
-            Object.values(entry['attributes']).every(Number.isSafeInteger) &&
-            shape(entry['initialPools'], ['health', 'armor', 'stamina', 'morale']) &&
-            Object.values(entry['initialPools']).every(Number.isSafeInteger),
-        ))) ||
-    (worldBinding && !worldBindingMembersMatch(value))
+    (worldBinding && !worldParticipantsShape(value['worldParticipants'])) ||
+    ((worldBinding ||
+      (value['setup'] as Record<string, unknown>)['rulesetId'] ===
+        M1_DOMAIN_BRIDGE_V3_RULESET_ID) &&
+      !worldBindingMembersMatch(value))
   )
     return false;
   try {
@@ -512,9 +462,86 @@ function bindingShape(value: unknown): boolean {
   return true;
 }
 
+function combatUnitValuesShape(entry: Record<string, unknown>): boolean {
+  return (
+    shape(entry['attributes'], [
+      'accuracy',
+      'armor',
+      'defense',
+      'health',
+      'initiative',
+      'morale',
+      'stamina',
+    ]) &&
+    Object.values(entry['attributes']).every(Number.isSafeInteger) &&
+    shape(entry['initialPools'], ['health', 'armor', 'stamina', 'morale']) &&
+    Object.values(entry['initialPools']).every(Number.isSafeInteger)
+  );
+}
+
+function worldParticipantsShape(value: unknown): boolean {
+  return !(
+    !Array.isArray(value) ||
+    value.length === 0 ||
+    !value.every(
+      (entry) =>
+        shape(entry, [
+          'entityId',
+          'sourceId',
+          'unitId',
+          'sideId',
+          'position',
+          'weaponId',
+          'attributes',
+          'initialPools',
+        ]) &&
+        ['entityId', 'sourceId', 'unitId', 'sideId', 'weaponId'].every((key) =>
+          isEntityId(entry[key]),
+        ) &&
+        entry['entityId'] === entry['unitId'] &&
+        hexShape(entry['position']) &&
+        combatUnitValuesShape(entry),
+    )
+  );
+}
+
+function bindingParticipantShape(entry: unknown): boolean {
+  return (
+    shape(entry, [
+      'companyId',
+      'partyId',
+      'revision',
+      'physicalPolicyVersion',
+      'unitId',
+      'sideId',
+      'position',
+      'projection',
+      'vitals',
+      'equipment',
+    ]) &&
+    ['companyId', 'partyId', 'physicalPolicyVersion', 'unitId', 'sideId'].every((key) =>
+      isEntityId(entry[key]),
+    ) &&
+    isExactInteger(entry['revision']) &&
+    hexShape(entry['position']) &&
+    projectionShape(entry['projection']) &&
+    vitalsShapeForBinding(entry['vitals']) &&
+    Array.isArray(entry['equipment']) &&
+    entry['equipment'].every(itemShapeForEncounter)
+  );
+}
+
+function bindingVersionsMatch(value: Record<string, unknown>): boolean {
+  const setup = value['setup'] as Record<string, unknown>;
+  const v3 = setup['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID;
+  return (value['participants'] as Record<string, unknown>[]).every(
+    (entry) => ((entry['projection'] as Record<string, unknown>)['schemaVersion'] === 3) === v3,
+  );
+}
+
 function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
   const participants = value['participants'];
-  const worldParticipants = value['worldParticipants'];
+  const worldParticipants = value['worldParticipants'] ?? [];
   const setup = value['setup'];
   if (
     !Array.isArray(participants) ||
@@ -556,6 +583,7 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
         weaponId: weapon['profileId'],
         attributes: projection['attributes'],
         initialPools: projection['current'],
+        ...(projection['schemaVersion'] === 3 ? { capabilities: projection['capabilities'] } : {}),
       }) === canonicalJson(setupUnit)
     );
   });
@@ -574,6 +602,9 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
         weaponId: participant['weaponId'],
         attributes: participant['attributes'],
         initialPools: participant['initialPools'],
+        ...(setup['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+          ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
+          : {}),
       }) === canonicalJson(setupUnit)
     );
   });
@@ -588,44 +619,49 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
   }
 }
 
+function battleGeometryShape(value: Record<string, unknown>): boolean {
+  return (
+    mapShape(value['map']) &&
+    Array.isArray(value['sides']) &&
+    value['sides'].length === 2 &&
+    value['sides'].every(
+      (entry) =>
+        shape(entry, ['id', 'retreatHexes']) &&
+        isEntityId(entry['id']) &&
+        Array.isArray(entry['retreatHexes']) &&
+        entry['retreatHexes'].every(hexShape),
+    )
+  );
+}
+
 function setupV2Shape(value: unknown): boolean {
   if (
     !shape(value, ['schemaVersion', 'battleId', 'rulesetId', 'seed', 'map', 'sides', 'units']) ||
     value['schemaVersion'] !== 2 ||
     !isEntityId(value['battleId']) ||
     (value['rulesetId'] !== M1_DOMAIN_BRIDGE_RULESET_ID &&
-      value['rulesetId'] !== M1_DOMAIN_BRIDGE_V2_RULESET_ID) ||
+      value['rulesetId'] !== M1_DOMAIN_BRIDGE_V2_RULESET_ID &&
+      value['rulesetId'] !== M1_DOMAIN_BRIDGE_V3_RULESET_ID) ||
     !Number.isSafeInteger(value['seed']) ||
-    !mapShape(value['map']) ||
-    !Array.isArray(value['sides']) ||
-    value['sides'].length !== 2 ||
-    !value['sides'].every(
-      (entry) =>
-        shape(entry, ['id', 'retreatHexes']) &&
-        isEntityId(entry['id']) &&
-        Array.isArray(entry['retreatHexes']) &&
-        entry['retreatHexes'].every(hexShape),
-    ) ||
+    !battleGeometryShape(value) ||
     !Array.isArray(value['units']) ||
     !value['units'].every(
       (entry) =>
-        shape(entry, ['id', 'sideId', 'position', 'weaponId', 'attributes', 'initialPools']) &&
+        shape(entry, [
+          'id',
+          'sideId',
+          'position',
+          'weaponId',
+          'attributes',
+          'initialPools',
+          ...(value['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID ? ['capabilities'] : []),
+        ]) &&
+        capabilitiesShape(entry['capabilities'], value['rulesetId']) &&
         isEntityId(entry['id']) &&
         isEntityId(entry['sideId']) &&
         hexShape(entry['position']) &&
         isEntityId(entry['weaponId']) &&
-        shape(entry['attributes'], [
-          'accuracy',
-          'armor',
-          'defense',
-          'health',
-          'initiative',
-          'morale',
-          'stamina',
-        ]) &&
-        Object.values(entry['attributes']).every(Number.isSafeInteger) &&
-        shape(entry['initialPools'], ['health', 'armor', 'stamina', 'morale']) &&
-        Object.values(entry['initialPools']).every(Number.isSafeInteger),
+        combatUnitValuesShape(entry),
     )
   )
     return false;
@@ -717,18 +753,9 @@ function battleStateShape(value: unknown): boolean {
     !isEntityId(value['battleId']) ||
     !isEntityId(value['rulesetId']) ||
     !Number.isSafeInteger(value['seed']) ||
-    !mapShape(value['map']) ||
-    !Array.isArray(value['sides']) ||
-    value['sides'].length !== 2 ||
-    !value['sides'].every(
-      (entry) =>
-        shape(entry, ['id', 'retreatHexes']) &&
-        isEntityId(entry['id']) &&
-        Array.isArray(entry['retreatHexes']) &&
-        entry['retreatHexes'].every(hexShape),
-    ) ||
+    !battleGeometryShape(value) ||
     !Array.isArray(value['units']) ||
-    !value['units'].every(battleUnitShape) ||
+    !value['units'].every((unit) => battleUnitShape(unit, value['rulesetId'])) ||
     !shape(value['random'], ['algorithm', 'value', 'draws']) ||
     value['random']['algorithm'] !== 'xorshift32-v1' ||
     !Number.isSafeInteger(value['random']['value']) ||
@@ -764,7 +791,14 @@ function battleStateShape(value: unknown): boolean {
   return true;
 }
 
-function battleUnitShape(value: unknown): boolean {
+function capabilitiesShape(value: unknown, rulesetId: unknown): boolean {
+  return rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+    ? shape(value, ['move', 'attack', 'defend', 'retreat']) &&
+        Object.values(value).every((entry) => typeof entry === 'boolean')
+    : value === undefined;
+}
+
+function battleUnitShape(value: unknown, rulesetId: unknown): boolean {
   return (
     shape(value, [
       'id',
@@ -779,7 +813,9 @@ function battleUnitShape(value: unknown): boolean {
       'guarding',
       'status',
       'wounds',
+      ...(rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ? ['capabilities'] : []),
     ]) &&
+    capabilitiesShape(value['capabilities'], rulesetId) &&
     isEntityId(value['id']) &&
     isEntityId(value['sideId']) &&
     hexShape(value['position']) &&
@@ -929,11 +965,16 @@ function projectionShape(value: unknown): boolean {
       'attributes',
       'current',
       'morale',
+      ...(plainObject(value) && value['schemaVersion'] === 3 ? ['capabilities'] : []),
     ]) &&
-    value['schemaVersion'] === 2 &&
+    (value['schemaVersion'] === 2 || value['schemaVersion'] === 3) &&
+    capabilitiesShape(value['capabilities'], value['combatRulesetId']) &&
     isEntityId(value['catalogueVersion']) &&
     isEntityId(value['domainRulesetId']) &&
-    value['combatRulesetId'] === 'm1-domain-bridge-v1' &&
+    value['combatRulesetId'] ===
+      (value['schemaVersion'] === 3
+        ? M1_DOMAIN_BRIDGE_V3_RULESET_ID
+        : M1_DOMAIN_BRIDGE_RULESET_ID) &&
     isEntityId(value['characterId']) &&
     projectionEquipmentShape(value) &&
     isEntityIdList(value['conditionIds']) &&
@@ -956,21 +997,33 @@ function projectionShape(value: unknown): boolean {
 
 function projectionEquipmentShape(value: Record<string, unknown>): boolean {
   return (
-    shape(value['weapon'], [
-      'itemId',
-      'requiredOffHandItemId',
-      'definitionId',
-      'profileId',
-      'skillId',
-    ]) &&
-    isEntityId(value['weapon']['itemId']) &&
-    (value['weapon']['requiredOffHandItemId'] === null ||
-      isEntityId(value['weapon']['requiredOffHandItemId'])) &&
-    isEntityId(value['weapon']['definitionId']) &&
-    ['bow', 'great-weapon', 'raider', 'spear', 'sword-shield'].includes(
-      value['weapon']['profileId'] as string,
-    ) &&
-    isEntityId(value['weapon']['skillId']) &&
+    ((value['schemaVersion'] === 3 &&
+      shape(value['weapon'], [
+        'profileId',
+        'itemId',
+        'definitionId',
+        'requiredOffHandItemId',
+        'skillId',
+      ]) &&
+      value['weapon']['profileId'] === 'fists' &&
+      ['itemId', 'definitionId', 'requiredOffHandItemId', 'skillId'].every(
+        (key) => (value['weapon'] as Record<string, unknown>)[key] === null,
+      )) ||
+      (shape(value['weapon'], [
+        'itemId',
+        'requiredOffHandItemId',
+        'definitionId',
+        'profileId',
+        'skillId',
+      ]) &&
+        isEntityId(value['weapon']['itemId']) &&
+        (value['weapon']['requiredOffHandItemId'] === null ||
+          isEntityId(value['weapon']['requiredOffHandItemId'])) &&
+        isEntityId(value['weapon']['definitionId']) &&
+        ['bow', 'great-weapon', 'raider', 'spear', 'sword-shield'].includes(
+          value['weapon']['profileId'] as string,
+        ) &&
+        isEntityId(value['weapon']['skillId']))) &&
     Array.isArray(value['armor']) &&
     value['armor'].every(
       (entry) =>

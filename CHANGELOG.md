@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Integrate the corrected actor marker with the merged company profile
+
+- 2026-10-20, branch `codex/actor-integration-186`, local: preserve actor
+  correction bba8d24b while merging actual main137faf88; only additive shared
+  records conflicted. Corrected containment has47relatedPASS and author native
+  100/125 longer-name proof; independent affected play/absolute visual gates
+  remain pending. [Current plan](docs/engineering/CURRENT_PLAN.md).
+- PR241 is merged with successful PR/main CI and actual-main mixed-company
+  PostgreSQL JOIN/retry/reload smoke (1PASS/13filteredSKIP); rescue/transport
+  and downstream payment/browser journey remain unresolved. No deployment.
+
 ### Correct the remaining actor placement boundary
 
 - 2026-10-20, branch `codex/actor-integration-186`, local: independent play
@@ -55,6 +66,192 @@ requests.
   reload retained full state/revision3 with0passivePOST and11targets.
   [Evidence and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
   Main CI pending; no full UI/M1, campaign-payment or deployment acceptance.
+
+### Accept the approved company profile on current main
+
+- 2026-10-20, branch `codex/company-profile-164`, local: independent policy
+  readback ACCEPTbc4d88e; combined validator EXIT0/8of8,781PASS/48SKIP on
+  a9207d76. Profile production is unchanged from the previously reviewed draft;
+  current overview main is integrated. [Evidence and retained limits](docs/engineering/evidence/core-company-profile/README.md).
+  Publication/fresh CI/merge pending; no new payment or terminal-browser claim.
+
+### Resolve the company-profile policy and bounded bridge scope
+
+- 2026-10-20, branch `codex/company-profile-164`, local: record the owner's
+  critical-bleed decision (attack/defence allowed, movement/retreat denied) and
+  bounded #165 wolf-hunt scope. Existing projection3 matches the policy; no
+  rule-code or migration change. Rescue, skill mapping and unsupported custody
+  remain explicit limits. [Source amendment](docs/content/CONTRACTS_M1_DERIVATIVE.md#owner-decision--critical-bleeding-and-first-tactical-bridge-2026-10-20)
+  and [wounds wiki](docs/wiki/mechanics/wounds.md) updated. Combined validation,
+  independent readback, current CI and PR241 merge remain pending.
+
+### Keep the profile draft compatible with merged overview
+
+- 2026-10-20, branch `codex/company-profile-164`, local: integrate mainfe3bcdb4
+  after PR244, preserving both additive documentation histories. Profile source
+  and its pending critical-bleed policy are unchanged; no production conflicts,
+  migrations or rescue/transport rule. Earlier reviewed profile tests/CI remain
+  attributed to their heads; new combined runtime/CI NOT_RUN. Normal integration
+  audit PASS after 25 existing initiative-related tests. Initial audit lacked
+  current imported HUD coverage; Istanbul combines fresh results with prior
+  unchanged-source coverage and discards changed-source entries. No threshold
+  or hook bypass. [Current plan](docs/engineering/CURRENT_PLAN.md).
+- Overview delivery is merged: PR244/fe3bcdb4, #227 CLOSED, PR39377607667 and
+  main39378757951 CI SUCCESS; actual-main6v5 state/revision3 survives reload.
+  [Readback and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+
+### Accept the profile integration test correction
+
+- 2026-10-20, branch `codex/company-profile-164`, local: independent correction
+  review ACCEPT0fa34ed after the named real-DB FAIL-before/PASS-after proof;
+  preserve both integration reports and executed limits in the
+  [profile evidence](docs/engineering/evidence/core-company-profile/README.md).
+  Normal audit/server types/lint PASS; existing draft PR241 awaits refreshed CI
+  and owner critical-bleed policy. No production rule or migration change.
+
+### Preserve public-field privacy in the merged profile database proof
+
+- 2026-10-20, branch `codex/company-profile-164`, local: independent review of
+  mergefbe225a found the second obsolete six-field assertion in the mixed real
+  JOIN/reload database regression. The isolated PostgreSQL test failed before
+  correction and passed afterward (1 PASS/13 filtered SKIP). Check the exact
+  seven public fields including canonical maximumHealth; retain capability and
+  foreign-account exclusion, JOIN retry and durable replay proof. No production
+  change. Integrated parent validator onfbe225a passed8/8 (784 PASS/48 SKIP);
+  correction readback is pending, and critical-bleed policy still blocks merge.
+  [Current plan](docs/engineering/CURRENT_PLAN.md).
+
+### Integrate current main into the pending company-profile draft
+
+- 2026-10-20, branch `codex/company-profile-164`, local: integrate main3c934c16
+  with HP242 and picker243; production auto-merges, additive plan/changelog
+  histories are retained. No policy change: critical-bleed attack/defence still
+  awaits the owner, rescue/transport is excluded. Combined validation/review
+  pending; the published PR241 head is unchanged at this entry.
+  Initial merge audit failed with stale coverage; refreshed related tests found
+  one obsolete six-field privacy assertion (783 PASS/48 SKIP). Correct it to the
+  exact seven-field public allowlist including accepted maximumHealth, retaining
+  capability privacy. Production code is unchanged. Corrected combined related coverage:784 PASS/48 SKIP;
+  focused corrected privacy test and lint PASS. Normal audit/commit pending.
+- Delivery correction: [PR243](https://github.com/Vovanostm/warwrit/pull/243)
+  merged3c934c16; #228 CLOSED, corrected PR/main CI SUCCESS. Actual-main normal
+  load/start/end-turn/reload retains the same6v5 session/revision3 with no alerts.
+  [Readback and instrumentation limits](docs/engineering/evidence/uix-preset-picker/main-readback.md).
+  Earlier CI failure/probe limitations remain; no full-scene or M1 acceptance.
+
+### Preserve the profile reviews and played evidence for publication
+
+- 2026-10-20, branch `codex/company-profile-164`, local: retain bounded source
+  reviews, both persistent-play reports and two browser captures in the
+  [profile evidence](docs/engineering/evidence/core-company-profile/README.md).
+  Reports keep failed attempts and policy/UI/payment limits. No new execution,
+  code change, full acceptance or merge is claimed by copying this evidence.
+
+### Recover continuous profile proof and successful local validation
+
+- 2026-10-20, branch `codex/company-profile-164`, local: record recovered
+  evaluator3 ACCEPT for the same encounter's 10 fists / 13 armed attacks, terminal
+  wounds/practice, exact retries and unchanged persisted rows after restart.
+  Post-reboot isolated 41/41 and coordinator validator 8/8 (775 PASS/48 SKIP,
+  audit PASS) supersede earlier incomplete proof/timeouts on unchanged source.
+  Updated combat/weapons wiki and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  with payment/terminal-UI NOT_RUN, pending critical-bleed policy and unresolved
+  rescue/transport; no source, rule or migration changed. #164 remains open.
+  Record independent UI/UX findings for the existing overview rework; no full
+  scene, balance or M1 acceptance is inferred. Hosted branch CI remains NOT_RUN.
+
+### Record persistent profile evaluation and remaining acceptance
+
+- 2026-10-20, branch `codex/company-profile-164`, local: record source ACCEPT
+  and normal commit `d3975cf`, real mixed admission/attacks/restriction rejection,
+  active restart and a separate no-attack terminal/restart. Evaluator2 REWORK
+  retains the missing same-journey practice/terminal/combat-retry proof and
+  pending critical-bleed policy. The first terminal failure came from the
+  fixture's ineligible STATIC food container; a fresh PARTY_SUPPLY fixture
+  completed. No game source or rule changed, no failed gate was waived.
+  [Exact checks and limits](docs/engineering/CURRENT_PLAN.md).
+
+### Preserve leadership evidence from real unarmed attacks
+
+- 2026-10-20, branch `codex/company-profile-164`, local: fix the confirmed
+  fists/leadership coupling in the practice profile and both receipt/effects
+  consumers. Retain verified opposing attack evidence independently of weapon
+  credit; keep all existing source/time/membership checks and exclude fists
+  from weapon XP and weapon start snapshots. One real mixed-subordinate
+  regression failed before and passed after the fix, including exact retry.
+  28 practice tests, core typecheck and scoped lint/format/diff PASS. Broader
+  focused coverage: 133 PASS, one existing mill-label timeout; final source
+  audit PASS. Independent review, normal commit and whole-profile playable
+  acceptance pending; no gate failure was waived.
+  [Owning behavior and remaining limits](docs/wiki/combat.md#company-profile-implementation--2026-10-20).
+
+### Record the fists and leadership evidence defect before delivery
+
+- 2026-10-20, branch `codex/company-profile-164`, local REWORK:
+  independent review found fists excluded from leadership evidence along with
+  weapon XP, contrary to the existing separate command-cycle admission rule.
+  Assign one cohesive correction across profile/receipt/effects in
+  `company/combat-practice.ts` and the existing public practice specs. The
+  earlier helper extraction passed 133 focused tests but is not acceptance of
+  this defect. Source repair, normal commit and playable proof remain pending.
+  [Current delivery status](docs/engineering/CURRENT_PLAN.md).
+
+### Separate leadership-cycle calculation from practice profile construction
+
+- 2026-10-20, branch `codex/company-profile-164`, local: combined coverage
+  exposed a new complexity finding in `deriveCombatPracticeProfile` after the
+  fists restriction. Move the existing sorting/pairing into a private helper,
+  preserving qualification, chronology and returned data. Ten relevant test
+  files: 117 PASS; game-core typecheck and scoped lint/format PASS. Independent
+  source review and normal commit audit pending. No new practice rule.
+  [Profile behavior and acceptance limits](docs/wiki/combat.md#company-profile-implementation--2026-10-20).
+
+### Integrate the merged human preset with corrected company profiles
+
+- 2026-10-20, branch `codex/company-profile-164`, local: integrate main
+  `eb98dd2` after correction `ba9b146`; preserve both additive documentation
+  histories. The five-path compatibility correction matches independent
+  review-2 ACCEPT and normal commit audit PASS. Profile integrated/playable
+  acceptance remains pending; prior failures and owner-rule gaps stay explicit.
+  [Current delivery status](docs/engineering/CURRENT_PLAN.md).
+  Integrated related coverage: 771 PASS, 48 SKIP, three timeouts; gate FAIL.
+  Initial merge audit failed on imported preset coverage; combined coverage
+  refreshed without threshold changes or hook bypass. Final acceptance pending.
+- [PR240](https://github.com/Vovanostm/warwrit/pull/240) is MERGED at
+  `eb98dd2`, with PR CI39334291071 and main CI39335721903 SUCCESS.
+  This corrects older pending receipts; #228 remains OPEN for its picker.
+
+### Keep company capability rules isolated from historical combat
+
+- 2026-10-20, branch `codex/company-profile-164`, local correction: integrated
+  validation reproduced a legacy preview crash from an unrelated capabilities
+  field and an insufficient schema-1 bridge-v3 setup guard. Restrict capability
+  execution/assertion to bridge-v3 and reject bridge rulesets in the old setup
+  entrypoint. Existing privacy/setup tests now cover these boundaries, including
+  legacy false capabilities that must not alter actions. No approved rule changed.
+  Focused 34 tests, core typecheck and scoped lint PASS. Four prior timeout cases
+  rerun sequentially: three PASS, unchanged world navigation still times out at
+  5 seconds. After browser cleanup, broader checks: 183 PASS, two timeouts
+  (world navigation and legacy fixture run); leader-death now PASS. Independent
+  staged source delta ACCEPT; whole #164 remains unaccepted. Full integrated gate remains FAIL (766 PASS, six failures initially;
+  audit then lacked coverage). No check threshold was increased.
+  [Profile behavior and remaining proof](docs/wiki/combat.md#company-profile-implementation--2026-10-20).
+
+### Implement versioned company combat profiles
+
+- 2026-10-20, branch `codex/company-profile-164`, local source9eee0ce:
+  implement owner-approved fists and co-located immobile party admission through
+  game-core projection/setup/legality/binding/readers/physical/practice, server
+  contract and encounter adapters, and private web controls. Fists create no
+  gear or weapon XP; malformed equipped loadouts still reject. New nested v3
+  dispatch preserves historical rules; no migration/dependency change.
+  [Owning behavior and limits](docs/wiki/combat.md#company-profile-implementation--2026-10-20).
+  Author152focused tests, affected typechecks, lint/format/audit PASS. Real mixed
+  JOIN/reload passed before final corrections; final DB/old terminal reruns,
+  independent review, browser and process-restart proof pending. Earlier
+  concurrent timeouts remain inconclusive. Critical-bleed attack/defence
+  classification and rescue/transport remain explicit gaps; #164 not closed.
+  CURRENT_PLAN, m1-spec and local playtest updated with this local status.
 
 ### Retain accepted overview proof and current delivery readback
 
@@ -270,6 +467,16 @@ requests.
   (1 PASS, 15 SKIP) to satisfy that hook. Independent review pending; full gate
   and browser NOT_RUN. No code, migrations or deployment.
 
+### Prepare accepted unarmed and immobile company combat
+
+- 2026-10-20, branch `codex/company-profile-164`, local: owner authorized
+  implementation/review/merge and approved provisional fists plus independent
+  mobility restrictions. Append source amendment to CONTRACTS_M1_DERIVATIVE and
+  link it from combat/weapons wiki; reserve the cohesive #164 implementation in
+  CURRENT_PLAN. [Accepted source](docs/content/CONTRACTS_M1_DERIVATIVE.md#owner-decision--provisional-fists-and-independent-retreat-2026-10-20).
+  Condition-to-incapacitated mapping still pending; rescue/transport unresolved.
+  Source/docs only at this checkpoint; code/tests/browser/acceptance NOT_RUN.
+
 ### Prepare a human-opponent battle preset
 
 - 2026-10-19, branch `codex/human-battle-228`, local: owner requested
@@ -327,7 +534,7 @@ requests.
   coordinator receipt for names producer `796fa52` and scene foundation
   `c60fd5e` on `Vovanostm/uix-w1-scene`, refs #207/#186 without closure.
   After exact scene worker settlement, coordinator validators ran sequentially:
-  names EXIT0/8of8 (178 relatedPASS/47SKIP), scene EXIT0/8of8 (35PASS);
+  names EXIT 0 / 8 of 8 (178 relatedPASS/47SKIP), scene EXIT 0 / 8 of 8 (35PASS);
   both audits PASS and tracked trees clean. This supersedes the interrupted
   names validation status below; worker smoke is not independent acceptance.
   Names advances to Tier L reviewer/evaluator; scene to Tier V evaluator/visual
@@ -346,7 +553,7 @@ requests.
   `796fa52`, refs [#207](https://github.com/Vovanostm/warwrit/issues/207):
   server-owned duplicate labels and optional replay presentation metadata are
   committed; full-contract builder outcome is FAILED, not acceptance.
-  Builder reports focused36PASS, related178PASS/47SKIP and validator8/8;
+  Builder reports focused36PASS, related178PASS/47SKIP and validator 8/8;
   these are worker claims, not coordinator gates. Builder played the default
   mill to R11/rev177 and reconstructed the downloaded replay with all12 labels.
   Visible field captions and terminal fighter inspection are sequenced into
@@ -430,7 +637,7 @@ requests.
   UI-autobattle victory R10/rev182 (93 accepted orders; terminal0 extra).
   Main `f365f60` integrated by normal merge `59af0ab`; only additive shared-doc
   conflicts resolved, both histories retained, gated apps/packages unchanged.
-  Coordinator integrated validate EXIT0/8of8,709PASS/47SKIP,auditPASS.
+  Coordinator integrated validate EXIT 0 / 8 of 8,709PASS/47SKIP,auditPASS.
   Fifteen baseline-saved replay streams on schemas1/2 and five rulesets produce
   identical canonical states, complete events and accepted-command counts.
   Paired 10,000-battle stress matches every deterministic output (duration excluded);
@@ -520,7 +727,7 @@ requests.
   `apps/server/src/combat-lab/`, `apps/web/src/combat-lab/view-validation{,.test}.ts`.
   #184 was extracted by normal revert for reuse in its own slice; #187/#207
   remain downstream. No rules/RNG/replay/migration change. Independent eval3
-  ACCEPT, validator8/8 and clean bootstrap PASS (833PASS/47SKIP,10kstress,
+  ACCEPT, validator 8/8 and clean bootstrap PASS (833PASS/47SKIP,10kstress,
   14DB); paired stress and15 saved replay streams equal. Native125% and all
   three day/night source pairs captured. CI/merge pending; privacy is limited
   to the all-visible lab. [Proof and limits](docs/engineering/evidence/uix-w1-projection/README.md).
@@ -882,7 +1089,7 @@ requests.
 
 - 2026-10-17, branches `codex/combat-portrait-fit` → `codex/combat-readability`,
   local integration: give every portrait a4CSSpx art inset while preserving
-  the full measured silhouette/aspect and130px cards. All20 profiles across
+  the full measured silhouette/aspect and 130px cards. All20 profiles across
   3desktop sizes passed72bounds checks (minimum5px including frame); actor,
   forecast, inspection and actualDPR2 also passed with0actionPOST. Independent
   narrow source/visual review ACCEPT. Also ignore modifier shortcuts when
