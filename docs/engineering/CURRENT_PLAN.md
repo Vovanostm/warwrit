@@ -1,5 +1,14 @@
 # Warwrit current delivery plan
 
+**Profile integration correction — 2026-10-20, LOCAL / review pending:**
+Normal mergefbe225a has parent validator EXIT0/8of8 (784 PASS/48 SKIP).
+Independent integration review found a second obsolete six-field assertion in
+mixed-company PostgreSQL proof. The named real-DB regression failed before the
+correction, then passed (1 PASS/13 filtered SKIP) with the exact seven-field public
+allowlist. Private capability, foreign-account, retry and durable replay checks
+remain. Production is unchanged. Independent correction readback is pending;
+critical-bleed policy still blocks PR241 merge. No broader runtime acceptance.
+
 **Profile main integration — 2026-10-20, LOCAL / policy pending:**
 Integrate actual main3c934c16 (merged HP242 and picker243) into the existing
 PR241 branch. Production merges automatically; preserve both additive document

@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Preserve public-field privacy in the merged profile database proof
+
+- 2026-10-20, branch `codex/company-profile-164`, local: independent review of
+  mergefbe225a found the second obsolete six-field assertion in the mixed real
+  JOIN/reload database regression. The isolated PostgreSQL test failed before
+  correction and passed afterward (1 PASS/13 filtered SKIP). Check the exact
+  seven public fields including canonical maximumHealth; retain capability and
+  foreign-account exclusion, JOIN retry and durable replay proof. No production
+  change. Integrated parent validator onfbe225a passed8/8 (784 PASS/48 SKIP);
+  correction readback is pending, and critical-bleed policy still blocks merge.
+  [Current plan](docs/engineering/CURRENT_PLAN.md).
+
 ### Integrate current main into the pending company-profile draft
 
 - 2026-10-20, branch `codex/company-profile-164`, local: integrate main3c934c16

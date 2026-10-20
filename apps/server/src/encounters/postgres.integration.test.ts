@@ -2878,9 +2878,17 @@ it.skipIf(connectionString === undefined)(
         admission.encounter_id,
       );
       expect(privateAccess).toBeDefined();
-      expect(privateAccess!.projection.units.every((unit) => Object.keys(unit).length === 6)).toBe(
-        true,
-      );
+      for (const unit of privateAccess!.projection.units) {
+        expect(Object.keys(unit).sort()).toEqual([
+          'health',
+          'id',
+          'maximumHealth',
+          'q',
+          'r',
+          'sideId',
+          'status',
+        ]);
+      }
       expect(JSON.stringify(privateAccess!.projection)).not.toContain('capabilities');
       expect(
         await readEncounterAccess(database, randomUUID(), admission.encounter_id),
