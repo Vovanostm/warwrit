@@ -1,5 +1,12 @@
 # Warwrit current delivery plan
 
+**Picker PR243 — 2026-10-20, CI correction in progress:**
+CI39369463852 failed the clean parallel build: the new web test pulled in server
+source and an undeclared core dependency. Parent replaces that import with an
+independent DTO fixture; production picker and accepted browser journey remain
+unchanged. Five focused tests, web types and scoped lint/format/diff PASS; validator and
+independent correction review must pass before publication/CI retry. This supersedes the earlier pending-CI receipt.
+
 **Picker #228 — 2026-10-20, LOCAL ACCEPT / publication pending:**
 Gated source049b6cb6 has independent Tier U ACCEPT: ordinary catalog selection,
 explicit load, edit/save/restore, native100/125, human battles with2/1surrenders,

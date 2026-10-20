@@ -4,7 +4,6 @@ import type * as React from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import { afterEach, expect, it, vi } from 'vitest';
 import type { CombatLabBattleConfig, CombatLabCatalog } from '@warwrit/protocol';
-import { combatLabCatalog } from '../../../server/src/combat-lab/custom-battle.js';
 import { BattleEditor } from './BattleEditor.js';
 import type { BattleEditorProps } from './BattleEditor.js';
 import { createEmptyTiles } from './editor-model.js';
@@ -89,7 +88,7 @@ function editor(catalog: CombatLabCatalog) {
   };
 }
 
-it('keeps editor cells keyboard-addressable and identifies occupied and blocked cells', () => {
+function editorCatalog(): CombatLabCatalog {
   const battle: CombatLabBattleConfig = {
     version: 1,
     name: 'Бой',
@@ -115,13 +114,30 @@ it('keeps editor cells keyboard-addressable and identifies occupied and blocked 
       },
     ],
   };
-  const catalog: CombatLabCatalog = {
+  return {
     profiles: [
       { id: 'sword', name: 'Мечник', kind: 'human', weaponId: 'sword-shield' },
       { id: 'wolf', name: 'Волк', kind: 'creature', weaponId: 'raider' },
     ],
     defaultBattle: battle,
+    presets: [
+      { id: 'default', battle },
+      {
+        id: 'human-duel',
+        battle: {
+          ...structuredClone(battle),
+          name: 'Учебный поединок',
+          seed: 42,
+          units: battle.units.map((unit) => ({ ...unit, profileId: 'sword' })),
+        },
+      },
+    ],
   };
+}
+
+it('keeps editor cells keyboard-addressable and identifies occupied and blocked cells', () => {
+  const catalog = editorCatalog();
+  const battle = catalog.defaultBattle;
   const html = renderToStaticMarkup(
     <BattleEditor catalog={catalog} value={battle} onChange={() => undefined} />,
   );
@@ -137,9 +153,9 @@ it('keeps editor cells keyboard-addressable and identifies occupied and blocked 
 });
 
 it('loads the exact catalog preset only on explicit load, detaches edits and keeps mill reset', () => {
-  const catalog = combatLabCatalog();
+  const catalog = editorCatalog();
   const original = structuredClone(catalog);
-  const source = catalog.presets!.find(({ id }) => id === 'deserter-band')!.battle;
+  const source = catalog.presets!.find(({ id }) => id === 'human-duel')!.battle;
   const fetch = vi.fn();
   vi.stubGlobal('fetch', fetch);
   const test = editor(catalog);
@@ -147,15 +163,13 @@ it('loads the exact catalog preset only on explicit load, detaches edits and kee
   expect(test.value).toEqual(catalog.defaultBattle);
   expect(control(tree, 'button', 'Загрузить сценарий').props.disabled).toBe(true);
   control(tree, 'select', 'Выберите сценарий').props.onChange!({
-    target: { value: 'deserter-band' },
+    target: { value: 'human-duel' },
   });
   tree = test.render();
   expect(test.onChange).not.toHaveBeenCalled();
   expect(control(tree, 'button', 'Загрузить сценарий').props.disabled).toBe(false);
   control(tree, 'button', 'Загрузить сценарий').props.onClick!();
   expect(test.value).toEqual(source);
-  expect(test.value.units.filter(({ sideId }) => sideId === 'human')).toHaveLength(6);
-  expect(test.value.units.filter(({ sideId }) => sideId === 'opponent')).toHaveLength(5);
   expect(
     test.value.units.every(
       ({ profileId }) => catalog.profiles.find(({ id }) => id === profileId)?.kind === 'human',
@@ -169,11 +183,11 @@ it('loads the exact catalog preset only on explicit load, detaches edits and kee
   const name = control(control(tree, 'label', 'Название боя'), 'input');
   name.props.onChange!({ target: { value: 'Мой бой' } });
   tree = test.render();
-  control(tree, 'button', 'aria-label="Убрать Меч + щит"').props.onClick!();
+  control(tree, 'button', 'aria-label="Убрать Мечник"').props.onClick!();
   expect(test.value.name).toBe('Мой бой');
-  expect(test.value.units).toHaveLength(10);
+  expect(test.value.units).toHaveLength(1);
   tree = test.render();
-  expect(control(tree, 'select', 'Выберите сценарий').props.value).toBe('deserter-band');
+  expect(control(tree, 'select', 'Выберите сценарий').props.value).toBe('human-duel');
   control(tree, 'button', 'Загрузить сценарий').props.onClick!();
   expect(test.value).toEqual(source);
   expect(catalog).toEqual(original);
@@ -188,7 +202,7 @@ it('loads the exact catalog preset only on explicit load, detaches edits and kee
 it.each([undefined, []])(
   'keeps the legacy draft and reset usable without presets (%s)',
   (presets) => {
-    const { presets: _presets, ...catalog } = combatLabCatalog();
+    const { presets: _presets, ...catalog } = editorCatalog();
     const test = editor(presets === undefined ? catalog : { ...catalog, presets });
     const tree = test.render();
     expect(renderToStaticMarkup(tree)).not.toContain('Сценарий для загрузки');
@@ -201,10 +215,10 @@ it.each([undefined, []])(
 );
 
 it('rejects invalid or unavailable presets and prevents replacement while disabled', () => {
-  const catalog = combatLabCatalog();
+  const catalog = editorCatalog();
   const test = editor(catalog);
   control(test.render(), 'select', 'Выберите сценарий').props.onChange!({
-    target: { value: 'deserter-band' },
+    target: { value: 'human-duel' },
   });
   const disabled = test.render({ disabled: true });
   expect(control(disabled, 'select', 'Выберите сценарий').props.disabled).toBe(true);
@@ -213,7 +227,7 @@ it('rejects invalid or unavailable presets and prevents replacement while disabl
   expect(test.onChange).not.toHaveBeenCalled();
   const invalid = {
     ...catalog,
-    presets: [{ id: 'deserter-band', battle: { ...catalog.presets![1]!.battle, units: [] } }],
+    presets: [{ id: 'human-duel', battle: { ...catalog.presets![1]!.battle, units: [] } }],
   };
   control(test.render({ catalog: invalid }), 'button', 'Загрузить сценарий').props.onClick!();
   expect(test.onChange).not.toHaveBeenCalled();

@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Remove the picker test dependency on server implementation
+
+- 2026-10-20, branch `codex/preset-picker-228`, local correction to PR243:
+  CI39369463852 failed the clean parallel build because BattleEditor.test
+  imported the server catalog and its undeclared game-core dependency into web.
+  Use an independent two-fighter DTO fixture for replacement/cloning/guard tests;
+  actual six-versus-five catalog behavior remains covered by the accepted browser
+  journey. Production code, package dependencies and build gates are unchanged.
+  Five focused tests, web types, scoped lint/format/diff PASS; independent
+  correction review and integrated validator are pending at this entry.
+
 ### Accept the human preset picker and record merged canonical HP
 
 - 2026-10-20, branch `codex/preset-picker-228`, local: independent Tier U ACCEPT
