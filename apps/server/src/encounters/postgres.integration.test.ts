@@ -6,6 +6,7 @@ import {
   FIRST_HUNT_ALLIED_SLOTS,
   FIRST_HUNT_COMBAT_MAP,
   FIRST_HUNT_HOSTILE_GENESIS,
+  FIRST_HUNT_PROOF_ID,
   FIRST_HUNT_RETREAT_HEXES,
   M1_DOMAIN_BRIDGE_V2_RULESET_ID,
   battleId,
@@ -19,7 +20,7 @@ import { Client, CloseCode, type SeatReservation } from '@colyseus/sdk';
 import type { EncounterCommandResponse } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { sql } from 'kysely';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 
 import { createDatabase, createDatabaseReadinessProbe } from '../db/database.js';
 import { buildApp } from '../app.js';
@@ -151,7 +152,12 @@ function createWorldHostileSetup(encounterId: string): BattleSetupV2 {
   };
 }
 
-function makeFirstHuntJoinActor(worldId: string, mixed = false): FirstHuntJoinActor {
+function makeFirstHuntJoinActor(
+  worldId: string,
+  mixed = false,
+  overloadedPartySupply = false,
+  carriedPartyRations?: number,
+): FirstHuntJoinActor {
   const accountId = randomUUID();
   const companyId = randomUUID();
   const partyId = randomUUID();
@@ -256,6 +262,78 @@ function makeFirstHuntJoinActor(worldId: string, mixed = false): FirstHuntJoinAc
       },
     });
   }
+  if (overloadedPartySupply || carriedPartyRations !== undefined) {
+    const current = initial.economy;
+    const physical = current.physical;
+    if (!physical) throw new Error('FIRST HUNT join fixture physical state is missing');
+    const containers = physical.containers.map((container) =>
+      container.containerId === 'fixture-supply'
+        ? {
+            ...container,
+            kind: 'PARTY_SUPPLY' as const,
+            carrier: { kind: 'PARTY' as const, id: partyId },
+          }
+        : container,
+    );
+    const rationItems = physical.items.filter(
+      (item) =>
+        item.containerId === 'fixture-supply' &&
+        item.definitionId === 'ration' &&
+        item.tombstone === null,
+    );
+    const rationQuantities = new Map<string, number>();
+    if (carriedPartyRations !== undefined) {
+      const availableRations = rationItems.reduce((sum, item) => sum + item.quantity, 0);
+      if (
+        !Number.isSafeInteger(carriedPartyRations) ||
+        carriedPartyRations <= 0 ||
+        carriedPartyRations > availableRations
+      )
+        throw new Error('FIRST HUNT carried ration fixture quantity is invalid');
+      let remaining = carriedPartyRations;
+      for (const item of rationItems.toSorted((left, right) =>
+        left.itemId.localeCompare(right.itemId),
+      )) {
+        const quantity = Math.min(item.quantity, remaining);
+        rationQuantities.set(item.itemId, quantity);
+        remaining -= quantity;
+      }
+    }
+    const carryOnlyFixtureRations = (items: typeof physical.items) =>
+      items.flatMap((item) => {
+        const quantity = rationQuantities.get(item.itemId);
+        if (quantity === undefined) return [item];
+        return quantity === 0 ? [] : [{ ...item, quantity }];
+      });
+    initial = combat.readCompanyCombatAggregateState({
+      ...initial,
+      economy: {
+        ...current,
+        physical: {
+          ...physical,
+          containers,
+          ...(carriedPartyRations === undefined
+            ? {}
+            : { items: carryOnlyFixtureRations(physical.items) }),
+          knowledge: {
+            ...physical.knowledge,
+            containerSnapshots: physical.knowledge.containerSnapshots.map((container) =>
+              container.containerId === 'fixture-supply'
+                ? {
+                    ...container,
+                    kind: 'PARTY_SUPPLY' as const,
+                    carrier: { kind: 'PARTY' as const, id: partyId },
+                  }
+                : container,
+            ),
+            ...(carriedPartyRations === undefined
+              ? {}
+              : { itemSnapshots: carryOnlyFixtureRations(physical.knowledge.itemSnapshots) }),
+          },
+        },
+      },
+    });
+  }
   return {
     accountId,
     companyId,
@@ -275,14 +353,16 @@ async function seedFirstHuntJoinScenario(
   mixed = false,
   worldId = randomUUID(),
   encountersEnabled = mixed,
+  overloadedOwner = false,
+  helperCarriedPartyRations?: number,
 ): Promise<{
   readonly worldId: string;
   readonly owner: FirstHuntJoinActor;
   readonly helper: FirstHuntJoinActor;
   readonly app: ReturnType<typeof buildApp>;
 }> {
-  const owner = makeFirstHuntJoinActor(worldId, mixed);
-  const helper = makeFirstHuntJoinActor(worldId);
+  const owner = makeFirstHuntJoinActor(worldId, mixed, overloadedOwner);
+  const helper = makeFirstHuntJoinActor(worldId, false, false, helperCarriedPartyRations);
   for (const [actor, subject] of [
     [owner, 'owner'],
     [helper, 'helper'],
@@ -369,6 +449,88 @@ async function setFirstHuntWorldTick(
     .set({ epoch_ms: String(Date.now() - elapsedTicks * 21_600 - 1_000) })
     .where('world_id', '=', worldId)
     .executeTakeFirstOrThrow();
+}
+
+function freezeCampaignClock(): () => void {
+  vi.useFakeTimers({ toFake: ['Date'], now: Date.now() });
+  return () => vi.useRealTimers();
+}
+
+async function playFirstHuntToVictory(
+  database: (typeof databases)[number],
+  app: ReturnType<typeof buildApp>,
+  encounterId: string,
+  actors: readonly [FirstHuntJoinActor, FirstHuntJoinActor],
+): Promise<void> {
+  for (let step = 0; step < 400; step += 1) {
+    const row = await database
+      .selectFrom('encounters')
+      .select(['status', 'state'])
+      .where('id', '=', encounterId)
+      .executeTakeFirstOrThrow();
+    if (row.status === 'resolved') break;
+    const state = row.state as combat.BattleState;
+    let advancedByAi = false;
+    for (const wake of await listDueEncounterAiWakes(database, new Date(Date.now() + 60_000))) {
+      if (wake.encounterId !== encounterId) continue;
+      await executeEncounterAiWake(database, wake);
+      advancedByAi = true;
+    }
+    if (advancedByAi) continue;
+
+    const activation = state.activation;
+    if (activation === null) throw new Error('active FIRST HUNT has no activation');
+    let controller: FirstHuntJoinActor | undefined;
+    let actorActions:
+      | NonNullable<Awaited<ReturnType<typeof readEncounterAccess>>>['controlGrant']['actorActions']
+      | undefined;
+    for (const actor of actors) {
+      const access = await readEncounterAccess(database, actor.accountId, encounterId);
+      if (access?.controlGrant.actorActions?.actorId !== activation.unitId) continue;
+      controller = actor;
+      actorActions = access.controlGrant.actorActions;
+      break;
+    }
+    if (!controller || !actorActions)
+      throw new Error('FIRST HUNT activation has no company owner or due hostile AI wake');
+    const proposed = combat.chooseTacticalCombatCommand(state);
+    const intent =
+      proposed.type === 'move'
+        ? { type: 'move', to: proposed.to }
+        : proposed.type === 'attack'
+          ? { type: 'attack', targetId: proposed.targetId }
+          : { type: proposed.type };
+    const response = await app.inject({
+      method: 'POST',
+      url: '/encounters/commands',
+      headers: controller.headers,
+      payload: {
+        version: 1,
+        encounterId,
+        commandId: randomUUID(),
+        expectedRevision: state.revision,
+        activationId: actorActions.activationId,
+        actorId: actorActions.actorId,
+        intent,
+      },
+    });
+    expect(
+      response.statusCode,
+      JSON.stringify({ actorId: actorActions.actorId, proposed, response: response.body }),
+    ).toBe(200);
+    expect(response.json()).toMatchObject({ status: 'accepted' });
+  }
+
+  const terminal = await database
+    .selectFrom('encounters')
+    .select(['status', 'state'])
+    .where('id', '=', encounterId)
+    .executeTakeFirstOrThrow();
+  expect(terminal.status).toBe('resolved');
+  expect((terminal.state as combat.BattleState).outcome).toMatchObject({
+    reason: 'last-side-standing',
+    winnerSideId: 'first-hunt-companies',
+  });
 }
 
 function relocateFirstHuntJoinCompany(
@@ -745,8 +907,10 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         false,
         'first-hunt-terminal-lifecycle-equality',
         true,
+        true,
       );
       const { owner, helper, worldId, app } = scenario;
+      let restoreCampaignClock: (() => void) | undefined;
       try {
         for (const actor of [owner, helper]) {
           const read = await app.inject({
@@ -773,6 +937,34 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           .select('encounter_id')
           .where('world_id', '=', worldId)
           .executeTakeFirstOrThrow();
+        const [clock, admission] = await Promise.all([
+          database
+            .selectFrom('world_campaign_clocks')
+            .select(['epoch_ms', 'starting_tick'])
+            .where('world_id', '=', worldId)
+            .executeTakeFirstOrThrow(),
+          database
+            .selectFrom('encounter_admissions')
+            .select('binding')
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirstOrThrow(),
+        ]);
+        const admissionTick = (admission.binding as { readonly atTick?: unknown }).atTick;
+        if (typeof admissionTick !== 'string')
+          throw new Error('FIRST HUNT admission tick is missing');
+        restoreCampaignClock = freezeCampaignClock();
+        await setFirstHuntWorldTick(database, worldId, Number(admissionTick), clock.starting_tick);
+        const clockAtAdmission = await database
+          .selectFrom('world_campaign_clocks')
+          .select(['epoch_ms', 'starting_tick'])
+          .where('world_id', '=', worldId)
+          .executeTakeFirstOrThrow();
+        expect(
+          combat.campaignTickAt(
+            combat.createCampaignClock(clockAtAdmission.epoch_ms, clockAtAdmission.starting_tick),
+            String(Date.now()),
+          ),
+        ).toBe(admissionTick);
         const revisionsBeforeTerminal = await database
           .transaction()
           .execute(async (transaction) => {
@@ -785,81 +977,7 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
             };
           });
 
-        for (let step = 0; step < 400; step += 1) {
-          const row = await database
-            .selectFrom('encounters')
-            .select(['status', 'state', 'deadline_at', 'activation_id'])
-            .where('id', '=', encounterId)
-            .executeTakeFirstOrThrow();
-          if (row.status === 'resolved') break;
-          const state = row.state as combat.BattleState;
-          let advancedByAi = false;
-          for (const wake of await listDueEncounterAiWakes(
-            database,
-            new Date(Date.now() + 60_000),
-          )) {
-            if (wake.encounterId !== encounterId) continue;
-            await executeEncounterAiWake(database, wake);
-            advancedByAi = true;
-          }
-          if (advancedByAi) continue;
-
-          const activation = state.activation;
-          if (activation === null) throw new Error('active FIRST HUNT has no activation');
-          let controller: FirstHuntJoinActor | undefined;
-          let actorActions:
-            | NonNullable<
-                Awaited<ReturnType<typeof readEncounterAccess>>
-              >['controlGrant']['actorActions']
-            | undefined;
-          for (const actor of [owner, helper]) {
-            const access = await readEncounterAccess(database, actor.accountId, encounterId);
-            if (access?.controlGrant.actorActions?.actorId !== activation.unitId) continue;
-            controller = actor;
-            actorActions = access.controlGrant.actorActions;
-            break;
-          }
-          if (!controller || !actorActions) {
-            throw new Error('FIRST HUNT activation has no company owner or due hostile AI wake');
-          }
-          const proposed = combat.chooseTacticalCombatCommand(state);
-          const intent =
-            proposed.type === 'move'
-              ? { type: 'move', to: proposed.to }
-              : proposed.type === 'attack'
-                ? { type: 'attack', targetId: proposed.targetId }
-                : { type: proposed.type };
-          const response = await app.inject({
-            method: 'POST',
-            url: '/encounters/commands',
-            headers: controller.headers,
-            payload: {
-              version: 1,
-              encounterId,
-              commandId: randomUUID(),
-              expectedRevision: state.revision,
-              activationId: actorActions.activationId,
-              actorId: actorActions.actorId,
-              intent,
-            },
-          });
-          expect(
-            response.statusCode,
-            JSON.stringify({ actorId: actorActions.actorId, proposed, response: response.body }),
-          ).toBe(200);
-          expect(response.json()).toMatchObject({ status: 'accepted' });
-        }
-
-        const terminal = await database
-          .selectFrom('encounters')
-          .select(['status', 'state'])
-          .where('id', '=', encounterId)
-          .executeTakeFirstOrThrow();
-        expect(terminal.status).toBe('resolved');
-        expect((terminal.state as combat.BattleState).outcome).toMatchObject({
-          reason: 'last-side-standing',
-          winnerSideId: 'first-hunt-companies',
-        });
+        await playFirstHuntToVictory(database, app, encounterId, [owner, helper]);
         expect(await applyPendingFirstHuntTerminalEffects(database)).toContain(encounterId);
         expect(await applyPendingFirstHuntTerminalEffects(database)).not.toContain(encounterId);
 
@@ -897,7 +1015,324 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
             ),
           ).toHaveLength(1);
         }
+
+        await setFirstHuntWorldTick(
+          database,
+          worldId,
+          Number(settled.ownerState.economy.lifecycle.campaignTick),
+          owner.initial.economy.lifecycle.campaignTick,
+        );
+        const ownerRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: owner.headers,
+        });
+        const helperRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: helper.headers,
+        });
+        expect(ownerRead.statusCode, ownerRead.body).toBe(200);
+        expect(helperRead.statusCode, helperRead.body).toBe(200);
+        const ownerPickupTargets =
+          (ownerRead.json().contract?.pickupTargets as readonly { containerId: string }[]) ?? [];
+        const helperPickupTargets =
+          (helperRead.json().contract?.pickupTargets as readonly { containerId: string }[]) ?? [];
+        expect(ownerPickupTargets.some((target) => target.containerId === 'fixture-supply')).toBe(
+          false,
+        );
+        expect(helperPickupTargets.some((target) => target.containerId === 'fixture-supply')).toBe(
+          true,
+        );
+
+        const beforeRejectedPickup = await database.transaction().execute(async (transaction) => {
+          const company = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+          const proof = await transaction
+            .selectFrom('world_proof_claims')
+            .select(['ground_item', 'custodian_company_id'])
+            .where('world_id', '=', worldId)
+            .where('source_id', '=', `encounter:${encounterId}:terminal`)
+            .executeTakeFirstOrThrow();
+          if (!company) throw new Error('FIRST HUNT company state is missing');
+          return { company, proof };
+        });
+        const rejectedPickup = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: {
+            schemaVersion: 1,
+            commandId: randomUUID(),
+            expectedPublicRevision: ownerRead.json().publicRevision,
+            type: 'PICKUP',
+            payload: {
+              instanceId: 'ci.m1.raider-standard.01',
+              toContainerId: 'fixture-supply',
+            },
+          },
+        });
+        expect(rejectedPickup.statusCode, rejectedPickup.body).toBe(409);
+        expect(rejectedPickup.json()).toMatchObject({ ok: false, code: 'CAPACITY' });
+        const afterRejectedPickup = await database.transaction().execute(async (transaction) => {
+          const company = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+          const proof = await transaction
+            .selectFrom('world_proof_claims')
+            .select(['ground_item', 'custodian_company_id'])
+            .where('world_id', '=', worldId)
+            .where('source_id', '=', `encounter:${encounterId}:terminal`)
+            .executeTakeFirstOrThrow();
+          if (!company) throw new Error('FIRST HUNT company state is missing');
+          return { company, proof };
+        });
+        expect(afterRejectedPickup.company.economy.lifecycle.revision).toBe(
+          beforeRejectedPickup.company.economy.lifecycle.revision,
+        );
+        expect(afterRejectedPickup.company.economy.physical).toEqual(
+          beforeRejectedPickup.company.economy.physical,
+        );
+        expect(
+          afterRejectedPickup.company.economy.physical?.items.some(
+            (item) => item.itemId === FIRST_HUNT_PROOF_ID,
+          ),
+        ).toBe(false);
+        expect(afterRejectedPickup.proof).toEqual(beforeRejectedPickup.proof);
       } finally {
+        restoreCampaignClock?.();
+        await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+      }
+    },
+    120_000,
+  );
+
+  it.skipIf(connectionString === undefined)(
+    'settles carried helper food after an elapsed FIRST HUNT tick and applies terminal effects once',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const scenario = await seedFirstHuntJoinScenario(
+        database,
+        false,
+        'first-hunt-terminal-elapsed-food',
+        true,
+        true,
+        30,
+      );
+      const { owner, helper, worldId, app } = scenario;
+      let restoreCampaignClock: (() => void) | undefined;
+      try {
+        for (const actor of [owner, helper]) {
+          const read = await app.inject({
+            method: 'GET',
+            url: '/contracts/first-hunt',
+            headers: actor.headers,
+          });
+          const joined = await app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: actor.headers,
+            payload: {
+              schemaVersion: 1,
+              commandId: randomUUID(),
+              expectedPublicRevision: read.json().publicRevision,
+              type: 'JOIN',
+              payload: { instanceId: 'ci.m1.raider-standard.01' },
+            },
+          });
+          expect(joined.statusCode, joined.body).toBe(200);
+        }
+
+        const { encounter_id: encounterId } = await database
+          .selectFrom('encounter_admissions')
+          .select('encounter_id')
+          .where('world_id', '=', worldId)
+          .executeTakeFirstOrThrow();
+        const [clock, admission] = await Promise.all([
+          database
+            .selectFrom('world_campaign_clocks')
+            .select(['epoch_ms', 'starting_tick'])
+            .where('world_id', '=', worldId)
+            .executeTakeFirstOrThrow(),
+          database
+            .selectFrom('encounter_admissions')
+            .select('binding')
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirstOrThrow(),
+        ]);
+        const admissionTick = (admission.binding as { readonly atTick?: unknown }).atTick;
+        if (typeof admissionTick !== 'string')
+          throw new Error('FIRST HUNT admission tick is missing');
+        restoreCampaignClock = freezeCampaignClock();
+        await setFirstHuntWorldTick(
+          database,
+          worldId,
+          Number(admissionTick) + 1,
+          clock.starting_tick,
+        );
+        const elapsedClock = await database
+          .selectFrom('world_campaign_clocks')
+          .select(['epoch_ms', 'starting_tick'])
+          .where('world_id', '=', worldId)
+          .executeTakeFirstOrThrow();
+        expect(
+          combat.campaignTickAt(
+            combat.createCampaignClock(elapsedClock.epoch_ms, elapsedClock.starting_tick),
+            String(Date.now()),
+          ),
+        ).toBe(String(BigInt(admissionTick) + 1n));
+
+        const helperRationsBefore = helper.initial.economy
+          .physical!.items.filter(
+            (item) =>
+              item.containerId === 'fixture-supply' &&
+              item.definitionId === 'ration' &&
+              item.tombstone === null,
+          )
+          .reduce((sum, item) => sum + item.quantity, 0);
+        expect(helperRationsBefore).toBe(30);
+        expect(
+          helper.initial.economy.physical?.containers.find(
+            (container) => container.containerId === 'fixture-supply',
+          ),
+        ).toMatchObject({
+          kind: 'PARTY_SUPPLY',
+          carrier: { kind: 'PARTY', id: helper.partyId },
+        });
+        const helperBeforeElapsedSettlement = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, helper.companyId));
+        if (!helperBeforeElapsedSettlement)
+          throw new Error('FIRST HUNT helper company state is missing before elapsed settlement');
+        const helperRationsAtAdmission = helperBeforeElapsedSettlement.economy
+          .physical!.items.filter(
+            (item) =>
+              item.containerId === 'fixture-supply' &&
+              item.definitionId === 'ration' &&
+              item.tombstone === null,
+          )
+          .reduce((sum, item) => sum + item.quantity, 0);
+        const helperFoodCarryAtAdmission =
+          helperBeforeElapsedSettlement.economy.physical?.foodCarry ?? [];
+        const helperBoundMembershipIds = helper.initial.economy.lifecycle.memberships
+          .filter((membership) => {
+            const character = helper.initial.economy.lifecycle.characters.find(
+              (candidate) => candidate.identity.characterId === membership.characterId,
+            );
+            return (
+              membership.endedAt === null && character?.presence.fieldPartyId === helper.partyId
+            );
+          })
+          .map((membership) => membership.membershipId)
+          .toSorted((left, right) => left.localeCompare(right));
+        expect(helperBoundMembershipIds).toHaveLength(3);
+        expect(helperFoodCarryAtAdmission).toEqual(
+          helperBoundMembershipIds.map((membershipId) => ({ membershipId, tickUnits: '1' })),
+        );
+        expect(helperRationsAtAdmission).toBe(27);
+        await playFirstHuntToVictory(database, app, encounterId, [owner, helper]);
+        const firstSettlementAttempt = await applyPendingFirstHuntTerminalEffects(database);
+        if (!firstSettlementAttempt.includes(encounterId)) {
+          const admissionAfterFirstAttempt = await database
+            .selectFrom('encounter_admissions')
+            .select('effects_applied_at')
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirstOrThrow();
+          if (admissionAfterFirstAttempt.effects_applied_at === null) {
+            // A terminal company that can continue waits for its owner to name a successor.
+            for (const actor of [owner, helper]) {
+              const leadership = await app.inject({
+                method: 'GET',
+                url: `/encounters/${encounterId}/leadership`,
+                headers: actor.headers,
+              });
+              expect(leadership.statusCode, leadership.body).toBe(200);
+              const view = leadership.json();
+              if (!view.required) continue;
+              expect(view.candidates.length).toBeGreaterThan(0);
+              const chosen = await app.inject({
+                method: 'POST',
+                url: `/encounters/${encounterId}/leadership`,
+                headers: actor.headers,
+                payload: {
+                  version: 1,
+                  candidateId: view.candidates[0].characterId,
+                  mode: 'PERMANENT',
+                },
+              });
+              expect(chosen.statusCode, chosen.body).toBe(202);
+            }
+            expect(await applyPendingFirstHuntTerminalEffects(database)).toContain(encounterId);
+          }
+        }
+        const settled = await database.transaction().execute(async (transaction) => {
+          const helperState = await loadCompanyAggregate(transaction, worldId, helper.companyId);
+          const admission = await transaction
+            .selectFrom('encounter_admissions')
+            .select('effects_applied_at')
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirstOrThrow();
+          const receipts = await transaction
+            .selectFrom('company_receipts')
+            .select('response')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', helper.companyId)
+            .execute();
+          if (!helperState) throw new Error('FIRST HUNT helper company state is missing');
+          return { helperState, admission, receipts };
+        });
+        const settledHelper = settled.helperState;
+        expect(settled.admission.effects_applied_at).not.toBeNull();
+        expect(settledHelper.encounter.active).toBeNull();
+        expect(settledHelper.encounter.completed).toHaveLength(1);
+        expect(
+          settled.receipts.filter(
+            (receipt) =>
+              (receipt.response as { readonly type?: string }).type === 'FIRST_HUNT_TERMINAL',
+          ),
+        ).toHaveLength(1);
+        const helperRationsAfter = settledHelper.economy
+          .physical!.items.filter(
+            (item) =>
+              item.containerId === 'fixture-supply' &&
+              item.definitionId === 'ration' &&
+              item.tombstone === null,
+          )
+          .reduce((sum, item) => sum + item.quantity, 0);
+        expect(settledHelper.economy.physical?.foodCarry).toEqual(
+          helperBoundMembershipIds.map((membershipId) => ({ membershipId, tickUnits: '2' })),
+        );
+        expect(helperRationsAfter).toBe(27);
+        expect(settledHelper.economy.lifecycle.campaignTick).toBe(
+          String(BigInt(admissionTick) + 1n),
+        );
+        expect(await applyPendingFirstHuntTerminalEffects(database)).not.toContain(encounterId);
+        const helperAfterRetry = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, helper.companyId));
+        if (!helperAfterRetry)
+          throw new Error('FIRST HUNT helper company state is missing after retry');
+        expect(helperAfterRetry.economy.physical).toEqual(settledHelper.economy.physical);
+        const [terminalAdmission, terminalReceipts] = await Promise.all([
+          database
+            .selectFrom('encounter_admissions')
+            .select('effects_applied_at')
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirstOrThrow(),
+          database
+            .selectFrom('company_receipts')
+            .select('response')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', helper.companyId)
+            .execute(),
+        ]);
+        expect(terminalAdmission.effects_applied_at).not.toBeNull();
+        expect(
+          terminalReceipts.filter(
+            (receipt) =>
+              (receipt.response as { readonly type?: string }).type === 'FIRST_HUNT_TERMINAL',
+          ),
+        ).toHaveLength(1);
+      } finally {
+        restoreCampaignClock?.();
         await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
       }
     },
