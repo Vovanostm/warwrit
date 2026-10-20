@@ -35,7 +35,9 @@ requests.
   current lab29-frame and adjacent-crowd capture passes have0combatPOST.
   DB5 defeat117/native replay confirms owner manual/reload/inspection behavior;
   helper/right-click proof remains open after a recorded driver failure.
-  Final visual/playable review remains pending.
+  Lab absolute visual ACCEPT; final playable review remains pending. Integrated
+  validation250PASS/49SKIP and7/8steps PASS; ten format failures corrected by
+  the repository formatter without behavior changes. Corrected gate pending.
   [Evidence and remaining gates](docs/engineering/evidence/persistent-hud/README.md).
 
 ### Deliver the bridge and start the persistent commander interface — 2026-10-20

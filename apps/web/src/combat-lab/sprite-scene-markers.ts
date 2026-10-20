@@ -43,7 +43,9 @@ type Cue = (hex: CombatLabHex, fill: Fill | null, border: Border, priority: numb
 
 function playerTurn(view: MarkerView, actor: Unit | undefined): boolean {
   if (view.status !== 'active' || actor?.status !== 'active') return false;
-  return actor.sideId === view.controlledSideId && (view.activation?.actionPoints?.current ?? 0) > 0;
+  return (
+    actor.sideId === view.controlledSideId && (view.activation?.actionPoints?.current ?? 0) > 0
+  );
 }
 function targetPreviews(
   view: MarkerView,

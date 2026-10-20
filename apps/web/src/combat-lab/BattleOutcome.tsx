@@ -58,7 +58,10 @@ function outcomeDescription(view: BattlePresentationView) {
 
 function outcomeSideIds(view: BattlePresentationView): (string | undefined)[] {
   if (view.viewerSideKnown === false) return (view.sides ?? []).map((side) => side.id);
-  return [view.controlledSideId, (view.sides ?? []).find((side) => side.id !== view.controlledSideId)?.id];
+  return [
+    view.controlledSideId,
+    (view.sides ?? []).find((side) => side.id !== view.controlledSideId)?.id,
+  ];
 }
 
 function OutcomeSide({

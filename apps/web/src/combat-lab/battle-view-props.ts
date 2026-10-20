@@ -1,9 +1,5 @@
 import type { ReactNode } from 'react';
-import type {
-  CombatLabAction,
-  CombatLabHex,
-  CombatLabSkillId,
-} from '@warwrit/protocol';
+import type { CombatLabAction, CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
 import type { BattlePresentationView } from './battle-presentation.js';
 import type { CombatLabView } from '@warwrit/protocol';
 

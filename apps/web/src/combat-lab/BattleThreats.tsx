@@ -24,8 +24,8 @@ export function BattleThreats({ view }: { view: BattlePresentationView }) {
                       {threat.retargeted === undefined
                         ? 'Наведение может измениться'
                         : threat.retargeted
-                        ? 'Наведение изменено · больше не сменит цель'
-                        : 'Может сменить цель один раз'}{' '}
+                          ? 'Наведение изменено · больше не сменит цель'
+                          : 'Может сменить цель один раз'}{' '}
                       ·{' '}
                       {threat.responseReceived
                         ? 'Ответный ход прошёл'

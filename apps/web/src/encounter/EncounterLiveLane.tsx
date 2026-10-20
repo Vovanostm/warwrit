@@ -29,14 +29,14 @@ export function EncounterLiveLane({
       <span className={`encounter-status encounter-status-${status}`} role="status">
         {statusLabel}
       </span>
-      {message && <p className="encounter-message" role="status">{message}</p>}
+      {message && (
+        <p className="encounter-message" role="status">
+          {message}
+        </p>
+      )}
       <ParticipantActivity status={status} active={battleActive} selfAfk={grant?.selfAfk} />
       {pendingCommand && (
-        <PendingCommand
-          pending={commandPending}
-          command={pendingCommand}
-          onRetry={onRetry}
-        />
+        <PendingCommand pending={commandPending} command={pendingCommand} onRetry={onRetry} />
       )}
       {battleActive && grant?.selfAfk === true && (
         <ResumeNotice

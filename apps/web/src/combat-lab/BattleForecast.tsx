@@ -138,25 +138,29 @@ function MoveDetails({
               </>
             )}
           </div>
-          {view.activation?.actionPoints?.maximum !== undefined && <div
-            className="battle-move-pips"
-            aria-label={remainingAP === undefined
-              ? `Будет потрачено ${forecastMove.actionPointCost} ОД`
-              : `Будет потрачено ${forecastMove.actionPointCost} ОД, останется ${remainingAP} из ${view.activation.actionPoints.maximum}`}
-          >
-            {Array.from({ length: view.activation.actionPoints.maximum }, (_, index) => (
-              <i
-                key={index}
-                data-ap={
-                  index < forecastMove.actionPointCost
-                    ? 'spent'
-                    : index < (view.activation?.actionPoints?.current ?? 0)
-                      ? 'remaining'
-                      : 'empty'
-                }
-              />
-            ))}
-          </div>}
+          {view.activation?.actionPoints?.maximum !== undefined && (
+            <div
+              className="battle-move-pips"
+              aria-label={
+                remainingAP === undefined
+                  ? `Будет потрачено ${forecastMove.actionPointCost} ОД`
+                  : `Будет потрачено ${forecastMove.actionPointCost} ОД, останется ${remainingAP} из ${view.activation.actionPoints.maximum}`
+              }
+            >
+              {Array.from({ length: view.activation.actionPoints.maximum }, (_, index) => (
+                <i
+                  key={index}
+                  data-ap={
+                    index < forecastMove.actionPointCost
+                      ? 'spent'
+                      : index < (view.activation?.actionPoints?.current ?? 0)
+                        ? 'remaining'
+                        : 'empty'
+                  }
+                />
+              ))}
+            </div>
+          )}
           <p className="battle-path">
             {forecastMove.path.length}{' '}
             {forecastMove.path.length === 1
@@ -184,7 +188,8 @@ function MoveDetails({
           )}
           {(forecastMove.fireDamage ?? 0) > 0 && (
             <p className="battle-danger-warning">
-              {activeActor?.pools.health?.current !== undefined && (forecastMove.fireDamage ?? 0) >= activeActor.pools.health.current
+              {activeActor?.pools.health?.current !== undefined &&
+              (forecastMove.fireDamage ?? 0) >= activeActor.pools.health.current
                 ? 'Боец погибнет на пути и не достигнет клетки.'
                 : `Огонь: −${forecastMove.fireDamage} здоровья.`}
             </p>

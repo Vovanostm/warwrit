@@ -17,9 +17,7 @@ import './battle-view.css';
 import './battle-controls.css';
 
 export function BattleView(props: BattleViewProps) {
-  const view = isBattlePresentationView(props.view)
-    ? props.view
-    : fromCombatLabView(props.view);
+  const view = isBattlePresentationView(props.view) ? props.view : fromCombatLabView(props.view);
   const {
     selectedUnitId,
     selectedHex,

@@ -13,9 +13,10 @@ export function unitVitalPools(unit: UnitPools): readonly {
     const pool = unit.pools[key];
     const current = pool?.current;
     const maximum = pool?.maximum;
-    const percent = current !== undefined && maximum !== undefined && maximum > 0
-      ? Math.max(0, Math.min(100, (current / maximum) * 100))
-      : undefined;
+    const percent =
+      current !== undefined && maximum !== undefined && maximum > 0
+        ? Math.max(0, Math.min(100, (current / maximum) * 100))
+        : undefined;
     return {
       key,
       label: key === 'health' ? 'Здр' : key === 'armor' ? 'Брн' : 'Мор',

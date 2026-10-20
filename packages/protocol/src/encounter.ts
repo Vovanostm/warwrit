@@ -236,7 +236,7 @@ export interface EncounterPublicUnitDto {
   readonly weaponReach?: {
     readonly minimumRange: number;
     readonly maximumRange: number;
-    readonly cells: readonly Readonly<{ q: number; r: number }> [];
+    readonly cells: readonly Readonly<{ q: number; r: number }>[];
   };
   readonly status: 'active' | 'dead' | 'retreated' | 'surrendered';
 }

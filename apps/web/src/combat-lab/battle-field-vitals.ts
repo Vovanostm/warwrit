@@ -179,7 +179,11 @@ export function mountBattleFieldVitals(
   };
 }
 
-function updatePortraitState(portrait: HTMLButtonElement, unit: Unit, view: BattlePresentationView) {
+function updatePortraitState(
+  portrait: HTMLButtonElement,
+  unit: Unit,
+  view: BattlePresentationView,
+) {
   const ally = unit.sideId === view.controlledSideId;
   const marker = battleUnitMarker(view.units, unit.id);
   portrait.textContent = marker;

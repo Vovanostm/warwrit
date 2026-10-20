@@ -331,7 +331,7 @@ including observations.json and capture-output.txt. Earlier DB1–4 remain intac
 Fresh DB5 used ordinary ACCEPT/HELP/JOIN/JOIN and both real company rosters.
 It reached hostile victory117, proof0 and completed terminal effects. Native
 journal/events/final-state replay matches exactly.13account commands were
-accepted, all from the owner, including6manual waits; wait revision10 is present.
+accepted, all from the owner, including6wait commands; revision10 is the explicitly manual End Turn.
 The actual passive inspection interval14:00:33.924–34.141UTC contains0account
 commands;11accepted commands follow the active reload at14:00:34.394UTC.
 Owner/helper screenshots were captured at different times/revisions and are
@@ -355,6 +355,29 @@ is not claimed. Local evidence: .orca/persistent-hud-166/evaluator-prep/lab/crow
 Independent absolute visual verdict is pending. The next bounded live check
 must prove an accepted helper action and real right-click; use a finite failed
 precondition fallback and bounded projected-update wait to avoid starvation.
+
+## Integrated validation and visual readback — 2026-10-20
+
+The independent critic accepted the current full lab art/layering/HUD evidence:
+all applicable scores2, motion N/A. The adjacent4-unit setup closes the ordinary
+crowded-case gap; small silhouette gaps at supported scale are observed, not
+filled by changing art or geometry. The real DB5 owner/helper images also show
+no material visual defect. Overall acceptance still requires the remaining
+helper/right-click and terminal-view proof. There is no universal all-overlay-off
+control; the available grid/hover/pin comparisons support the absolute assessment,
+with limited all-overlay pixel-differential evidence.
+
+Coordinator validator on clean f234495 EXIT1:7/8steps PASS,250tests PASS/49SKIP,
+package builds, types, lint and audit PASS; formatting failed in10source files.
+The sole source writer applied only the repository formatter. Parent comparison
+confirms each changed file exactly equals Prettier applied to HEAD; scoped format
+and formatter AST-preservation checks PASS. No behavior changed. Original logs
+remain .orca/validate-*.log and .orca/persistent-hud-166/integrated-validation.log;
+copy the failed-gate logs before the corrected integrated rerun.
+
+Correction to the early brief: the6native wait commands include one-step autoplay;
+only wait10 is proven to be the manual End Turn button. This distinction is
+retained in DB5 RESULT.md and the corrected current checkpoint.
 
 ## Remaining acceptance
 
