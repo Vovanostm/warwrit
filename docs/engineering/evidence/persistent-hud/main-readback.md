@@ -267,3 +267,16 @@ collections unchanged through auth renewal/reloads. Clean live card captures
 replace the earlier post-shutdown fetch-error framing; both attempts retain
 accurate attribution. [Runtime report](pickup-248-runtime.md). DB7 remains
 unstarted until actual-main integration. Hosted CI/publication/merge pending.
+
+### Range integration and publication boundary — 2026-10-21
+
+Merged actual mainb0eeb8e8 (PR250) into pickup branch as c5acd803. Only additive
+CHANGELOG/CURRENT_PLAN sections conflicted; both histories retained. Production
+and regression sources exactly match accepted f439db7. Normal merge auditPASS;
+clean union validator EXIT0,8/8PASS,41relatedPASS/31SKIP. Focused real-PG2PASS
+and recovered-save runtime ACCEPT remain attributed to the unchanged source.
+Logs: .orca/persistent-hud-166/pg-248/union-validation.log and integration-commit.log.
+Airtable supporting M1 Notes appended/read back exactly after range delivery;
+other fields unchanged. Issue161 and PR250 exact native readbackPASS. Empirical
+remains storage-blocked/NOT_WRITTEN. Pickup publication/hosted CI/merge follow;
+DB7 remains unstarted and full174/177/M1 partial.

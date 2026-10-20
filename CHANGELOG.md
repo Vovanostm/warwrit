@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Integrate pickup correction with merged range — 2026-10-21, LOCAL
+
+- `codex/representative-hunt-recovery`: c5acd803 combines actual range main
+  b0eeb8e8 with unchanged accepted pickup sourcef439db7. Both document histories
+  retained; normal auditPASS, clean union validator8/8PASS,41relatedPASS/31SKIP.
+  Hosted pickup gate/merge and separate payment journey remain pending.
+  [Evidence](docs/engineering/evidence/persistent-hud/main-readback.md).
+
 ### Deliver the separate reach boundary — 2026-10-21, MERGED
 
 - `codex/combat-range-187`, [PR250](https://github.com/Vovanostm/warwrit/pull/250)

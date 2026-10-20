@@ -1,5 +1,14 @@
 # Warwrit current delivery plan
 
+**Pickup248 integrated and ready to publish — 2026-10-21, LOCAL:**
+Actual range mainb0eeb8e8 merged as c5acd803; only additive status-document
+conflicts, both histories preserved. Accepted pickup sourcef439db7 unchanged.
+Normal auditPASS and clean union validator8/8PASS,41relatedPASS/31SKIP.
+Source and saved-state browser ACCEPT plus focused real-PG2PASS retain their
+recorded boundaries. Publish this head, run hosted gate, expected-head merge,
+then DB7 lawful payment/restart. No deployment/fullM1 claim.
+[Owning record](evidence/persistent-hud/main-readback.md).
+
 **Range187 delivered / affordability184 active — 2026-10-21:**
 PR250 merged b0eeb8e87c0a198f05e5d44d0f8ef9d73ae8a05b; reviewed source
 be8efd5, published89ee9afa, tested mergeb65db183 and actual main contents match.
