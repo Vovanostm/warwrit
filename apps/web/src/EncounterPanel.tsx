@@ -83,6 +83,12 @@ function unitLabel(
   );
 }
 
+function healthLabel(unit: EncounterPublicProjectionDto['units'][number]): string {
+  return unit.maximumHealth === undefined
+    ? `Здоровье ${unit.health} · максимум неизвестен`
+    : `Здоровье ${unit.health}/${unit.maximumHealth}`;
+}
+
 export function EncounterPanel(props: {
   readonly hideWhenIdle?: boolean;
   readonly unitNames?: Readonly<Record<string, string>>;
@@ -349,7 +355,7 @@ export function EncounterPanel(props: {
                   >
                     {attackTargets.map((unit) => (
                       <option key={unit.id} value={unit.id}>
-                        {unitLabel(unit, ourNames)} · {unit.health} здоровья
+                        {unitLabel(unit, ourNames)} · {healthLabel(unit)}
                       </option>
                     ))}
                   </select>
@@ -434,7 +440,7 @@ export function EncounterPanel(props: {
                     </span>
                     <span>
                       {unit.status === 'active'
-                        ? `Здоровье ${unit.health}`
+                        ? healthLabel(unit)
                         : unit.status === 'dead'
                           ? 'Погиб'
                           : 'Отступил'}
