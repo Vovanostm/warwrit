@@ -155,7 +155,7 @@ it('places canonical health, armor and morale bars under each full portrait', ()
   const html = render(zeroArmorView);
   const portraitIndex = html.indexOf('class="battle-portrait"');
   const firstVitalsIndex = html.indexOf('class="unit-vitals"', portraitIndex);
-  const sideMarkIndex = html.indexOf('class="battle-side-mark"', firstVitalsIndex);
+  const sideMarkIndex = html.indexOf('class="battle-side-mark battle-field-key"', firstVitalsIndex);
   const firstVitalResources = html.slice(firstVitalsIndex, sideMarkIndex);
   const healthIndex = firstVitalResources.indexOf('data-resource="health"');
   const armorIndex = firstVitalResources.indexOf('data-resource="armor"');
@@ -172,6 +172,14 @@ it('places canonical health, armor and morale bars under each full portrait', ()
   expect(html).toContain('title="Мораль: 70/90"');
   expect(html).toContain('title="Броня: 0/0"');
   expect(html).toContain('style="width:0%"');
+});
+
+it('keeps field identity distinct from the changing activation order', () => {
+  const html = render({ ...view, turnIndex: 1 });
+  expect(html).toContain('class="battle-side-mark battle-field-key"');
+  expect(html).toContain('Метка B');
+  expect(html).toMatch(/class="battle-side-mark battle-field-key"[^>]*>B<\/span>/);
+  expect(html).toContain('class="battle-order-number">1</b>');
 });
 
 it('retains fallback inspection, utilities and honestly unavailable ability slots', () => {
@@ -241,6 +249,13 @@ it('exposes the declared cell and fresh response warning from canonical threat s
   expect(html).toContain('Удар 20–30 до брони · клетка 0, 0');
   expect(html).toContain('больше не сменит цель');
   expect(html).toContain('До удара — ваш ответный ход');
+  // Both regions must share the one measured stack, including a newly announced threat.
+  const bandStart = html.indexOf('class="battle-top-band"');
+  const threatEnd = html.indexOf('</aside>', html.indexOf('class="battle-threat-strip"'));
+  const stack = html.slice(bandStart, threatEnd + '</aside>'.length);
+  expect(stack).toContain('class="battle-initiative"');
+  expect(stack).toContain('class="battle-threat-strip"');
+  expect(html.slice(threatEnd + '</aside>'.length)).toMatch(/^<\/div>/);
 });
 
 it('distinguishes surrendered from dead and shows a visible terminal result with restart', () => {
@@ -633,4 +648,11 @@ it('shows one actor card without a duplicate inspection or neutral terrain badge
   expect(other).toContain('aria-label="Состояние: Волк"');
   expect(other).toContain('Высота +1');
   expect(other).toContain('Огонь');
+});
+
+it('offers a separate accessible field overview without conflating the grid toggle', () => {
+  const html = render();
+  expect(html).toContain('aria-label="Обзор поля"');
+  expect(html).toContain('Обзор поля (Home)');
+  expect(html).toContain('aria-label="Показать всю сетку"');
 });
