@@ -1,7 +1,7 @@
 # Persistent commander presentation — #166
 
 2026-10-20, `codex/persistent-hud-166`, base main `1f37cb6a`.
-Status: PUBLISHED as PR247; source/playable/visual accepted; strict PostgreSQL expectation correction passes locally, refreshed hosted gate and merge pending.
+Status: MERGED as PR247 /7a7f1f18; source/playable/visual accepted, final hosted CI39446960412 SUCCESS. See [delivery readback](main-readback.md).
 The owner mission authorizes implementation, review and checked merge.
 
 ## Scope and authority
@@ -489,12 +489,16 @@ pg-shape-after.log and pg-shape-final.log. The dedicated disposable PG17 was
 removed; retained DB6 and accepted live presentation are unchanged. No merge or
 next gameplay yet; fresh hosted verification follows the normal commit.
 
-## Remaining acceptance
+## Delivery and remaining scope
 
-Publish the checked candidate and require hosted CI, expected-head merge and
-actual-main readback.
-Local integrated validation PASS does not substitute for the hosted clean gate;
-publication is complete; hosted full-gate success, merge and actual-main readback
-are still pending for #166.
-The [bridge recovery evidence](../core-tactical-bridge/README.md) retains its
-separate scope and cannot substitute for these HUD checks.
+Final correction662d676 passes clean local validator8/8,252PASS/49SKIP and
+normal audit. Hosted CI39446960412/job118711312428 SUCCESS on synthetic
+merge0ef9c136:932unitPASS/49SKIP,10000stress,16realPG/auth,migrations,
+coverage/audit. No checks were weakened. The reviewed, hosted and actual merged
+contents match; PR247 merged7a7f1f18, #166 CLOSED/agent:done.
+[Actual delivery and readback](main-readback.md).
+
+The accepted cycle remains bounded to persistent presentation and the recorded
+wolf-hunt journeys. Payment/restart representative proof continues separately;
+no new external OIDC, full #174/#177, durable outcome history, capacity or full M1
+acceptance is inferred. Previous failed checks above remain history.
