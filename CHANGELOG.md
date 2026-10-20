@@ -21,7 +21,9 @@ requests.
 - `scripts/orca-play.sh` starts, health-checks and stops the combat lab and
   kills orphaned servers on the worktree ports; gates report `BLOCKED_ENV`
   outside the rework budget; evaluators take missing proof themselves.
-- The pre-commit hook refreshes focused coverage before the audit;
+- The pre-commit hook refreshes focused coverage before the audit (local
+  `core.hooksPath` reset to the relative `scripts/git-hooks`, so each worktree
+  runs its own hook instead of the primary checkout's);
   `scripts/orca-metrics.sh` feeds the daily digest.
 - Checks: `orca-play.sh` start/status/stop with ports freed; digest stable on
   two runs; metrics on 4 days of logs; `bash -n`/`sh -n`; Prettier. Effects on
