@@ -1,5 +1,22 @@
 # Warwrit current delivery plan
 
+**Profile main integration — 2026-10-20, LOCAL / policy pending:**
+Integrate actual main3c934c16 (merged HP242 and picker243) into the existing
+PR241 branch. Production merges automatically; preserve both additive document
+histories. Critical-bleed policy is unchanged and remains PENDING_OWNER; no
+rescue/transport rule is added. Combined related coverage:784 PASS/48 SKIP after correcting the stale public-field
+assertion; focused privacy test/lint PASS. Normal audit/commit, integrated validator
+and review are pending; prior profile/HP journeys retain their original heads.
+No PR241 publication or merge is claimed for this local integration.
+
+**Picker PR243 delivery — 2026-10-20, MERGED / main smoke passed:**
+[PR243](https://github.com/Vovanostm/warwrit/pull/243) merged3c934c16; #228 CLOSED.
+Corrected PR CI39370786684 and main CI39371853005 SUCCESS. Actual-main browser
+load/start/end-turn/reload retained the same6v5 battle at revision3; no alerts.
+[Readback and probe limits](evidence/uix-preset-picker/main-readback.md).
+Initial failed CI and probe mistakes remain recorded. Whole-scene, payment and
+full-M1 acceptance are excluded; overview still awaits its absolute visual gate.
+
 **Profile recovered acceptance — 2026-10-20, LOCAL / POLICY PENDING:**
 Unchanged source `d3975cf`, documentation head `a6b5734`: evaluator3 ACCEPT for
 approved behavior in one continuous two-company encounter. Browser Wait and
@@ -137,6 +154,89 @@ move/retreat. Rescue/assisted transport remains unresolved. #164 stays OPEN;
 Documentation-only main1b1e088 integrated, keeping both dated histories. PR178
 is MERGED, PR CI39324349645/main CI39326177324 SUCCESS; old pending receipts
 below are historical. No publication or merge of #164 is claimed here.
+
+**Picker PR243 correction — 2026-10-20, LOCAL ACCEPT / CI pending:**
+Independent [correction review](evidence/uix-preset-picker/review-ci-1.md)
+ACCEPT38c57915; unchanged production retains Tier U ACCEPT049b6cb6.
+Parent validator EXIT0/8of8,5tests PASS; web compile inputs contain no server/core.
+Failed CI39369463852 is retained; publish this corrected head and require fresh
+hosted success before expected-head merge. No production or dependency change.
+
+**Picker PR243 — 2026-10-20, CI correction in progress:**
+CI39369463852 failed the clean parallel build: the new web test pulled in server
+source and an undeclared core dependency. Parent replaces that import with an
+independent DTO fixture; production picker and accepted browser journey remain
+unchanged. Five focused tests, web types and scoped lint/format/diff PASS; validator and
+independent correction review must pass before publication/CI retry. This supersedes the earlier pending-CI receipt.
+
+**Picker #228 — 2026-10-20, LOCAL ACCEPT / publication pending:**
+Gated source049b6cb6 has independent Tier U ACCEPT: ordinary catalog selection,
+explicit load, edit/save/restore, native100/125, human battles with2/1surrenders,
+manual withdrawal reaction, restart/reload and mill restoration. Parent integrated
+main434d4a1a as403193f with additive document reconciliation only; editor source
+unchanged. Integrated validator EXIT0/8of8,5relatedPASS,normal auditPASS.
+[Evidence and finite limits](evidence/uix-preset-picker/README.md). CI/merge pending;
+this does not accept the whole scene. Overviewff40f304 played gate ACCEPT;
+visual5 scores2 but remains BLOCKED on missing controlled layer comparisons.
+One read-only evaluator supplies those inputs on its frozen source.
+
+**HP #163 — 2026-10-20, MERGED and clean-main smoke ACCEPT:**
+[PR242](https://github.com/Vovanostm/warwrit/pull/242) merged434d4a1a; #163 CLOSED.
+PR CI39366985666 and main CI39367809181 SUCCESS. Independent actual-main smoke
+EXIT0 confirms accepted controls and53/60,38/60 HTTP/browser/bar agreement after
+fresh entry/reload. [Readback](evidence/core-pools/main-readback.md). Prior cleanup
+FAIL13 remains recorded. Coordinated producer/reader rollout remains required;
+no deployment or contract/payment acceptance. PR241 still waits for the pending
+critical-bleed decision; #165 scope question and rescue/transport gap remain open.
+
+**Human preset picker — 2026-10-20, LOCAL / source checks complete:**
+Owner authorized implement/review/merge. `codex/preset-picker-228` starts from
+merged PR240 (`eb98dd2`) and changes only BattleEditor and its existing tests.
+The explicit load action validates and clones an existing catalog preset into
+an unsaved draft; selection alone changes nothing. Mill reset and existing saved
+loads/start flow remain. Five component tests, web types, scoped lint/format/diff
+PASS; normal audit/commit and independent browser acceptance are pending.
+The harness skips browser effects; it does not prove storage/layout/gameplay.
+#227 source is frozen at `ff40f304`; its writer released the lane and independent
+replay/visual review continue in a separate checkout. Parent owns shared docs,
+integration, validator, played acceptance, CI and merge; no full issue closure.
+[Picker behavior and limits](../wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
+
+**Canonical HP #163 — 2026-10-20, LOCAL ACCEPT / publication pending:**
+Frozen74b22f8 has independent source review2 and playable evaluator ACCEPT.
+One real two-company battle proved38/60 and53/60 across existing/fresh/reloaded/
+reconnected views, HTTP and real room. Actual API restart/browser reopen preserved
+revision35 before its normal deadline. Parent validator EXIT0/8of8,
+208PASS/47SKIP,auditPASS; named real DB/SDK test1PASS/12filteredSKIP.
+The evaluator completed all gameplay assertions but runner cleanup exited13;
+that FAIL and earlier fixture/probe failures remain recorded, not recast as PASS.
+[Evidence, scope and rollout compatibility](evidence/core-pools/README.md).
+No full M1/terminal/payment/design acceptance; hosted CI and merge still pending.
+#227 remains in independent review; its source writer released the disjoint
+#228 editor picker. PR241 still awaits critical-bleed policy. Rescue is excluded.
+
+**HP transport correction — 2026-10-20, LOCAL / runtime test PASS:**
+Source be263a3 committed with normal audit PASS and33 focused tests/types.
+Independent review R1 found a race in its newly added transport test. The local
+correction observes the real AI worker and compares a stable human turn before
+its normal deadline. Final isolated PostgreSQL/SDK run PASS: revision8,
+raider67/70, two clients/HTTP, real reconnect, app/DB reopen and replay. The first
+run's invalid close-code failure is retained. Corrected test commit/re-review,
+parent validator, actual damaged-company browser acceptance and PR/CI/merge
+remain pending. Producer and reader must ship together; old strict readers
+reject the new field. Prior pending receipts below retain their dated scope.
+
+**Canonical encounter HP — 2026-10-20, LOCAL / focused checks PASS:**
+Independent #163 implementation on `codex/health-cap-163` starts from merged
+main eb98dd2 (PR240). Public HTTP/Colyseus units now carry the canonical health
+maximum; the persistent renderer removes client-history inference and keeps
+legacy/invalid maximums explicitly unknown. Focused33 tests, protocol/server/web types, scoped lint/format and diff checks
+PASS. The renderer regression fails against old code and passes on the fix.
+Normal audit/commit, real DB/reconnect, damaged-company browser and independent
+acceptance remain pending; runtime gates are NOT_RUN. No rules, replay, migrations or lab
+HUD changes. Parent owns shared docs and delivery; the profile241 draft still
+awaits the critical-bleed policy, and the overview writer keeps its own files.
+[Owning behavior and limits](../wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
 
 **Human preset producer — 2026-10-20, LOCAL ACCEPT / publication pending:**
 `codex/human-battle-228`, gated source `9534bf7`: detached catalog presets,

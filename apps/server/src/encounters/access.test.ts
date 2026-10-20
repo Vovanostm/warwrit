@@ -48,7 +48,7 @@ describe('public encounter projection', () => {
             defense: 6,
             morale: 100,
           },
-          initialPools: { health: 60, armor: 40, stamina: 80, morale: 100 },
+          initialPools: { health: 40, armor: 40, stamina: 80, morale: 100 },
         },
         {
           id: combat.unitId(hostile.entityId),
@@ -65,7 +65,10 @@ describe('public encounter projection', () => {
       id: encounterId,
       schema_version: combat.COMBAT_V2_SCHEMA_VERSION,
       setup,
-      state: started.state,
+      state: {
+        ...started.state,
+        units: started.state.units.map((unit) => ({ ...unit, health: 20 })),
+      },
       revision: started.state.revision,
       status: started.state.status,
       activation_id: started.state.activation?.id ?? null,
@@ -84,11 +87,20 @@ describe('public encounter projection', () => {
     expect(Object.keys(projection.units[0] ?? {}).sort()).toEqual([
       'health',
       'id',
+      'maximumHealth',
       'q',
       'r',
       'sideId',
       'status',
     ]);
+    expect(
+      projection.units.map(({ health, maximumHealth }) => ({ health, maximumHealth })),
+    ).toEqual(
+      encounter.state.units.map((unit) => ({ health: 20, maximumHealth: unit.attributes.health })),
+    );
+    expect(projection.units[0]).toMatchObject({ health: 20, maximumHealth: 60 });
+    expect(projection.units[0]).not.toBe(encounter.state.units[0]);
+    expect(projection.units[0]).not.toHaveProperty('attributes');
     expect(projection).not.toHaveProperty('seed');
     expect(projection).not.toHaveProperty('sides');
     expect(projection).not.toHaveProperty('controllableUnitIds');
@@ -113,9 +125,17 @@ describe('public encounter projection', () => {
     expect(
       toEncounterControlGrant(encounter, { unit_ids: [actorId] })?.actorActions,
     ).toBeUndefined();
-    expect(
-      toEncounterPublicProjection(v3).units.every((unit) => Object.keys(unit).length === 6),
-    ).toBe(true);
+    for (const unit of toEncounterPublicProjection(v3).units) {
+      expect(Object.keys(unit).sort()).toEqual([
+        'health',
+        'id',
+        'maximumHealth',
+        'q',
+        'r',
+        'sideId',
+        'status',
+      ]);
+    }
 
     expect(() =>
       toEncounterPublicProjection({

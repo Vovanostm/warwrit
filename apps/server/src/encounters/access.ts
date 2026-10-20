@@ -72,6 +72,7 @@ export function toEncounterPublicProjection(
         q: unit.position.q,
         r: unit.position.r,
         health: unit.health,
+        maximumHealth: unit.attributes.health,
         status: unit.status,
       };
     }),

@@ -142,6 +142,8 @@ export interface EncounterPublicUnitDto {
   readonly q: number;
   readonly r: number;
   readonly health: number;
+  /** Canonical visible cap; absent means unknown, never infer it from current HP. */
+  readonly maximumHealth?: number;
   readonly status: 'active' | 'dead' | 'retreated';
 }
 

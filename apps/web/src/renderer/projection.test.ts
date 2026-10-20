@@ -75,6 +75,60 @@ describe('encounter projection boundary', () => {
     expect(neutralUnitLabel(projection!.units[0]!)).toBe('Участник стороны unfamiliar-side');
   });
 
+  it('normalizes optional caps identically without rejecting combat facts or retaining old caps', () => {
+    let previous = toEncounterRenderProjection(readEncounterProjection(activeProjection())!).units;
+    for (const cap of [
+      60,
+      80,
+      undefined,
+      null,
+      0,
+      -1,
+      1.5,
+      NaN,
+      Infinity,
+      Number.MAX_SAFE_INTEGER + 1,
+      '60',
+      19,
+      60,
+    ]) {
+      const source = {
+        ...activeProjection(),
+        units: [
+          {
+            id: 'unit-a',
+            sideId: 'side-a',
+            q: 0,
+            r: 0,
+            health: 20,
+            status: 'active',
+            ...(cap === undefined ? {} : { maximumHealth: cap }),
+          },
+        ],
+      };
+      const http = readEncounterProjection(source)!;
+      const room = readRoomProjection(
+        { ...source, units: new Map([['unit-a', source.units[0]]]) },
+        'encounter-1',
+      );
+      const expected = cap === 60 || cap === 80 ? cap : undefined;
+      expect(http.units[0]?.maximumHealth).toBe(expected);
+      expect(http.units[0]?.health).toBe(20);
+      expect(room).toEqual(http);
+      const next = toEncounterRenderProjection(http).units;
+      expect(diffRenderUnits(previous, next).updated).toEqual(
+        previous[0]?.maximumHealth !== expected || previous[0]?.health !== 20 ? next : [],
+      );
+      expect(Object.isFrozen(next[0])).toBe(true);
+      source.units[0]!.health = 1;
+      expect(http.units[0]?.health).toBe(20);
+      expect(
+        readEncounterProjection({ ...source, units: [{ ...source.units[0], attributes: {} }] }),
+      ).toBeUndefined();
+      previous = next;
+    }
+  });
+
   it('reads a reflected room map whose arrays are iterable schema objects', () => {
     // ArraySchema is iterable but not an Array; rejecting it froze every live patch.
     class IterableHexes {

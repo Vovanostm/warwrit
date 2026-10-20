@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Integrate current main into the pending company-profile draft
+
+- 2026-10-20, branch `codex/company-profile-164`, local: integrate main3c934c16
+  with HP242 and picker243; production auto-merges, additive plan/changelog
+  histories are retained. No policy change: critical-bleed attack/defence still
+  awaits the owner, rescue/transport is excluded. Combined validation/review
+  pending; the published PR241 head is unchanged at this entry.
+  Initial merge audit failed with stale coverage; refreshed related tests found
+  one obsolete six-field privacy assertion (783 PASS/48 SKIP). Correct it to the
+  exact seven-field public allowlist including accepted maximumHealth, retaining
+  capability privacy. Production code is unchanged. Corrected combined related coverage:784 PASS/48 SKIP;
+  focused corrected privacy test and lint PASS. Normal audit/commit pending.
+- Delivery correction: [PR243](https://github.com/Vovanostm/warwrit/pull/243)
+  merged3c934c16; #228 CLOSED, corrected PR/main CI SUCCESS. Actual-main normal
+  load/start/end-turn/reload retains the same6v5 session/revision3 with no alerts.
+  [Readback and instrumentation limits](docs/engineering/evidence/uix-preset-picker/main-readback.md).
+  Earlier CI failure/probe limitations remain; no full-scene or M1 acceptance.
+
 ### Preserve the profile reviews and played evidence for publication
 
 - 2026-10-20, branch `codex/company-profile-164`, local: retain bounded source
@@ -122,6 +140,94 @@ requests.
   concurrent timeouts remain inconclusive. Critical-bleed attack/defence
   classification and rescue/transport remain explicit gaps; #164 not closed.
   CURRENT_PLAN, m1-spec and local playtest updated with this local status.
+
+### Accept the picker clean-build correction
+
+- 2026-10-20, branch `codex/preset-picker-228`, published PR243 with local
+  correction38c57915: independent correction review ACCEPT; production journey
+  acceptance retained, validator8/8 and5tests PASS, no server/core files in web
+  compilation inputs. [Review](docs/engineering/evidence/uix-preset-picker/review-ci-1.md).
+  CI39369463852 remains FAILED; correction publication/new CI and merge pending.
+
+### Remove the picker test dependency on server implementation
+
+- 2026-10-20, branch `codex/preset-picker-228`, local correction to PR243:
+  CI39369463852 failed the clean parallel build because BattleEditor.test
+  imported the server catalog and its undeclared game-core dependency into web.
+  Use an independent two-fighter DTO fixture for replacement/cloning/guard tests;
+  actual six-versus-five catalog behavior remains covered by the accepted browser
+  journey. Production code, package dependencies and build gates are unchanged.
+  Five focused tests, web types, scoped lint/format/diff PASS; independent
+  correction review and integrated validator are pending at this entry.
+
+### Accept the human preset picker and record merged canonical HP
+
+- 2026-10-20, branch `codex/preset-picker-228`, local: independent Tier U ACCEPT
+  for049b6cb6; normal catalog loading, saved drafts, native125 and two real human
+  battles demonstrate2/1surrenders and an actual withdrawal reaction. Integrate
+  main434d4a1a through403193f, preserving both document histories and unchanged
+  editor code. Parent validator8/8,5relatedPASS,normal auditPASS. Publication/CI/
+  merge pending. [Evidence](docs/engineering/evidence/uix-preset-picker/README.md).
+  Update owning battlefield wiki/CURRENT_PLAN; no rules, migrations or dependencies.
+- Delivery correction: [PR242](https://github.com/Vovanostm/warwrit/pull/242)
+  is merged434d4a1a; #163 CLOSED, PR/main CI SUCCESS. Actual clean-main HP smoke
+  ACCEPT/EXIT0; damaged53/60 and38/60 survive fresh/reloaded views with HTTP/bar
+  agreement. [Readback](docs/engineering/evidence/core-pools/main-readback.md).
+  Earlier FAIL13 is retained. Overview visual5 still needs layer proof; profile
+  policy and #165 scope remain pending. No full-M1 or deployment claim.
+
+### Expose the existing human battle preset in the editor
+
+- 2026-10-20, branch `codex/preset-picker-228`, local: #228 now has an explicit
+  catalog preset selector/load action in BattleEditor. It validates and clones
+  the unsaved draft; mill reset, saved drafts and the normal launch remain.
+  No CSS, catalog content, rules, dependencies or migrations changed. Producer
+  PR240 is merged at eb98dd2. Five component tests, web types, scoped lint/format
+  and diff PASS; initial test-selector/lint failures were corrected. Normal
+  commit audit and independent browser acceptance remain pending at this entry.
+  [Behavior and proof limits](docs/wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
+
+### Accept canonical persistent HP through reconnect and restart
+
+- 2026-10-20, branch `codex/health-cap-163`, local source74b22f8:
+  independent source and playable reviews ACCEPT #163. Real company38/60 and
+  ally53/60 retain matching HTTP/room values and consumed bars across existing,
+  fresh, reloaded, reconnected and application-reopened views at revision35.
+  Parent validator8/8 PASS,208 tests PASS/47 SKIP,audit PASS. Final evaluator
+  assertions passed before deadline; its runner later exited13 during obsolete
+  SDK cleanup, retained as FAIL. Hosted CI/publication/merge pending.
+  [Evidence, compatibility and limits](docs/engineering/evidence/core-pools/README.md).
+  Updated the existing battlefield wiki/CURRENT_PLAN; no migrations, rules,
+  replay or dependencies changed. New reader/producer rollout must be coordinated.
+
+### Make the health-cap transport proof observe the real AI worker
+
+- 2026-10-20, branch `codex/health-cap-163`, local: independent review R1
+  found a race in the new DB regression, not a production HP defect. The test
+  now observes the app worker and chooses a damaged human-turn checkpoint
+  without a due AI wake; all comparisons finish before its normal deadline.
+  A rejected WebSocket close code caused the first run to fail; the pinned
+  reconnect code fixes it. Final isolated PostgreSQL/SDK test PASS (1 test,
+  12 unrelated skipped): revision8, raider67/70, two clients, HTTP, actual
+  reconnect, app/DB reopen and replay. Earlier failures remain recorded.
+  Original source be263a3 passed normal audit/commit and33 focused tests/types;
+  corrected test commit/re-review and browser acceptance remain pending.
+  Producer/new-reader rollout must be coordinated: old strict HTTP readers
+  reject the extra field. No deployment or merge claimed.
+
+### Preserve canonical health ratios when joining an ongoing encounter
+
+- 2026-10-20, branch `codex/health-cap-163`, local: #163 fixes the renderer's
+  client-history denominator. Protocol/HTTP/Colyseus carry only canonical
+  maximumHealth; absent/invalid caps remain unknown. The persistent bar and
+  health text consume the same snapshot. Projection/room/connection/scene
+  regressions pass:33 focused tests, protocol/server/web types, scoped lint/format
+  and diff. Old-renderer negative control fails as expected; the corrected
+  renderer passes. One lint import-style error was fixed. Normal audit/commit
+  and real DB/reconnect/browser/independent gates remain pending (runtime
+  NOT_RUN). Rules,
+  replay history, migrations and combat-lab are unchanged. No merge claimed.
+  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
 
 ### Add the human-opponent preset producer and playable evidence
 
