@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Record the reproduced backdrop overlap before actor delivery
+
+- 2026-10-20, branch `codex/actor-integration-186`, local REWORK: integrated
+  validation8/8 and47related tests pass, but author and fresh independent
+  native125 Home images both show the mill obscuring actor name text. Preserve
+  the failure and its source ordering lead for a bounded correction; complete
+  reference-sheet framing is repaired. [Current plan](docs/engineering/CURRENT_PLAN.md).
+  No visual ACCEPT, publication or merge is claimed.
+
 ### Integrate the corrected actor marker with the merged company profile
 
 - 2026-10-20, branch `codex/actor-integration-186`, local: preserve actor

@@ -1,5 +1,15 @@
 # Warwrit current delivery plan
 
+**Actor backdrop overlap — 2026-10-20, LOCAL REWORK:**
+Integrated actor47178752 passed coordinator validation8/8 with47related tests.
+Parent then personally inspected both author and fresh independent native125
+Home images: mill pixels cover the left portion of the acting fighter's name.
+Enabled/placed metadata is insufficient. The full reference sheet is now framed;
+source lead is transparent backdrop alpha ordering, not new art or gameplay.
+Original builder will correct this bounded rendering defect after evaluator
+settlement. Independent final placement/play/absolute visual acceptance and
+publication remain pending; earlier passes do not close this visible defect.
+
 **Actor correction and merged profile — 2026-10-20:**
 Local actor correction `bba8d24b` fixes the reproduced containment collision,
 keeps the chevron centred above its owner, and explicitly hides a plaque when

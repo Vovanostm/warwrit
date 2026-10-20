@@ -272,6 +272,8 @@ export async function mountSpriteBattleScene(
   // Register the painted perimeter around the HUD's free central play area.
   // Grid axes, sprite scale and foot pivots remain unchanged.
   background.isPickable = false;
+  // Transparent decoration draws before group-zero tactical cues and actor plaques.
+  background.alphaIndex = 0;
   const placeTexture = texture(millFieldUrl);
   const groundMaterial = createBattleBackdropMaterial(scene, placeTexture);
   groundMaterial.setColor3('tint', initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White());
