@@ -1,5 +1,17 @@
 # Warwrit current delivery plan
 
+**Owner decisions resolved — 2026-10-20, LOCAL / PR241 delivery resumes:**
+Direct owner reply retains attack/defence under critical bleeding and forbids
+move/independent retreat. Existing projection3 already matches; no new gameplay
+code is required for this decision. Rescue/transport stays unresolved. Profile
+headbc4d88e includes actual mainfe3bcdb4; combined validation and independent
+source readback precede publication and expected-head merge of PR241.
+The owner also approves #165 first path: existing wolf hunt, actual roster,
+unmapped abilities unavailable, unsupported surrender effects pending without
+proof/payment. It activates after #164 merges. No further approval of these
+same questions is needed. Actor186 remains separately under review; full journey
+and M1 acceptance are not claimed.
+
 **Profile / overview integration — 2026-10-20, LOCAL / policy pending:**
 Current main `fe3bcdb4` (PR244) is integrated into the existing profile draft;
 only additive CHANGELOG/CURRENT_PLAN histories conflicted. No profile behavior,

@@ -55,3 +55,15 @@ no new full integrated battle, payment or terminal-browser claim. Parent removed
 only its disposable profile164-maincheck-20261020-0515 database environment.
 Old strict readers reject the new HP key; producer/new-reader rollout must remain
 coordinated. Critical-bleed remains PENDING_OWNER, rescue/transport excluded.
+
+## Owner policy resolved and overview integration — 2026-10-20
+
+Direct owner approval resolves critical bleeding: attack/defence allowed,
+movement/independent retreat forbidden. This supersedes PENDING_OWNER above.
+Projection3 already matches; no policy code change. Rescue/transport remains
+unresolved. Actual mainfe3bcdb4 merged normally asbc4d88e; profile production
+is unchanged. Imported initiative-related checks25PASS and normal audit passed
+with fresh coverage for changed imported paths; the initial stale-coverage audit
+failure is retained locally. Combined validation, independent readback and new
+hosted CI are pending. The last published head remains9f18c548, CI39374767374
+SUCCESS. No new payment or terminal-browser acceptance is claimed.

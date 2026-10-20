@@ -321,6 +321,21 @@ pending decision; travel denial alone does not prove inability to attack/defend.
 These are provisional accepted rules, not a statement that code or player acceptance
 has been delivered. Historical replay and equipped binding behavior must remain intact.
 
+## Owner decision — critical bleeding and first tactical bridge, 2026-10-20
+
+The owner directly approved attack and defence for a critically bleeding member;
+movement and independent retreat remain forbidden. This resolves the critical-bleed
+classification question above without defining another incapacitating condition.
+The existing projection3 capability matrix already matches this decision. Fists,
+historical rules and the unresolved rescue/transport boundary stay unchanged.
+
+For #165, the owner approved the first persistent journey using the existing wolf
+hunt and actual company roster. Abilities without an accepted campaign-to-tactical
+mapping remain unavailable. Unsupported surrender outcomes retain pending effects
+and cannot produce completion proof or payment. This does not approve invented
+six-hostile content, skill ranks, custody or transport rules. Implementation and
+journey acceptance remain separate from this decision.
+
 ## Owner decision — ordinary contract working profile, 2026-10-02
 
 The owner accepted («Принять профиль») this bounded runtime profile for the

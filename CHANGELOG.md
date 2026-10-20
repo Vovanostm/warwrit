@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Resolve the company-profile policy and bounded bridge scope
+
+- 2026-10-20, branch `codex/company-profile-164`, local: record the owner's
+  critical-bleed decision (attack/defence allowed, movement/retreat denied) and
+  bounded #165 wolf-hunt scope. Existing projection3 matches the policy; no
+  rule-code or migration change. Rescue, skill mapping and unsupported custody
+  remain explicit limits. [Source amendment](docs/content/CONTRACTS_M1_DERIVATIVE.md#owner-decision--critical-bleeding-and-first-tactical-bridge-2026-10-20)
+  and [wounds wiki](docs/wiki/mechanics/wounds.md) updated. Combined validation,
+  independent readback, current CI and PR241 merge remain pending.
+
 ### Keep the profile draft compatible with merged overview
 
 - 2026-10-20, branch `codex/company-profile-164`, local: integrate mainfe3bcdb4
