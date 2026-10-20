@@ -691,8 +691,11 @@ describe('sprite prototype combat', () => {
 
   it('preserves the old m0 setup gate and does not accept arbitrary m1 rulesets', () => {
     expect(() =>
-      startBattle({ ...setup(), rulesetId: 'm1-domain-bridge-v3' } as unknown as BattleSetup),
+      startBattle({ ...setup(), rulesetId: 'm1-domain-bridge-v99' } as unknown as BattleSetup),
     ).toThrow(/Unknown combat ruleset/);
+    expect(() =>
+      startBattle({ ...setup(), rulesetId: 'm1-domain-bridge-v3' } as unknown as BattleSetup),
+    ).toThrow(/Battle setup ruleset must match/);
     expect(() =>
       startBattle({ ...setup(), rulesetId: 'm1-domain-bridge-v1' } as unknown as BattleSetup),
     ).toThrow(/Battle setup ruleset must match/);

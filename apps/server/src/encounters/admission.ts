@@ -300,7 +300,7 @@ export async function admitFirstHuntInTransaction(input: {
     setup: {
       schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
       battleId: combat.battleId(encounterId),
-      rulesetId: combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+      rulesetId: combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
       seed: world.seed,
       map: profile.combatMap,
       sides: [

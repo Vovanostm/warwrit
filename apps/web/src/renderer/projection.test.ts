@@ -4,6 +4,7 @@ import {
   diffRenderUnits,
   neutralUnitLabel,
   readEncounterControlGrant,
+  encounterConditionAllows,
   readEncounterProjection,
   readRoomProjection,
   retainedSelection,
@@ -210,4 +211,49 @@ describe('encounter projection boundary', () => {
       [],
     );
   });
+});
+
+it('reads only detached actor-scoped intent hints and rejects foreign or raw capability data', () => {
+  const value = {
+    version: 1,
+    encounterId: 'encounter-1',
+    revision: 4,
+    controllableUnitIds: ['unit-a'],
+    actorActions: {
+      activationId: '4:unit-a',
+      actorId: 'unit-a',
+      permittedIntents: ['attack', 'defend', 'wait'],
+    },
+  };
+  const grant = readEncounterControlGrant(value, 'encounter-1');
+  expect(grant?.actorActions?.permittedIntents).toEqual(['attack', 'defend', 'wait']);
+  value.actorActions.permittedIntents.push('move');
+  expect(grant?.actorActions?.permittedIntents).not.toContain('move');
+  expect(
+    readEncounterControlGrant(
+      { ...value, actorActions: { ...value.actorActions, actorId: 'foreign' } },
+      'encounter-1',
+    ),
+  ).toBeUndefined();
+  expect(
+    readEncounterControlGrant(
+      { ...value, actorActions: { ...value.actorActions, capabilities: { move: false } } },
+      'encounter-1',
+    ),
+  ).toBeUndefined();
+});
+
+it('binds condition controls to the actor and activation without making hints authority', () => {
+  const grant = {
+    version: 1 as const,
+    encounterId: 'encounter-1',
+    revision: 4,
+    controllableUnitIds: ['unit-a'],
+    actorActions: { activationId: '4:a', actorId: 'unit-a', permittedIntents: ['wait' as const] },
+  };
+  expect(encounterConditionAllows(undefined, null, null, 'move')).toBe(true);
+  expect(encounterConditionAllows(grant, '4:a', 'unit-a', 'wait')).toBe(true);
+  expect(encounterConditionAllows(grant, '4:a', 'unit-a', 'move')).toBe(false);
+  expect(encounterConditionAllows(grant, '3:a', 'unit-a', 'wait')).toBe(false);
+  expect(encounterConditionAllows(grant, '4:a', 'foreign', 'wait')).toBe(false);
 });

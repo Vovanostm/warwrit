@@ -773,6 +773,7 @@ export function prepareConsumeCombatAggregate(
               : kernelCommand.type === 'defend'
                 ? 'defense'
                 : undefined;
+          if (kernelCommand.type === 'attack' && skillId === null) continue;
           const aptitudeAtStartBps = skillId ? character.aptitudeBySkill[skillId] : undefined;
           requirePhysical(
             skillId &&

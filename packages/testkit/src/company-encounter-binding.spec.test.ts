@@ -582,3 +582,55 @@ describe('G06 — trusted sequential receipt preparation, not applied effects', 
     expect(initial.journal.binding.lastAppliedRevision).toBe(0);
   });
 });
+
+it('binds the entire mixed v3 party and reloads its strict aggregate without invented gear', () => {
+  const f = fixture();
+  const first = f.sources[0]!;
+  const unarmed = first.root.lifecycle.characters.find(
+    (entry) => entry.identity.characterId === 'a-worker-0',
+  )!;
+  let root = {
+    ...first.root,
+    physical: {
+      ...first.root.physical,
+      items: first.root.physical.items.map((item) =>
+        item.equipped?.characterId === unarmed.identity.characterId &&
+        item.equipped.slots.includes('MAIN_HAND')
+          ? { ...item, equipped: null }
+          : item,
+      ),
+    },
+  };
+  root = withLoadedConditions(
+    root,
+    { 'a-worker-0': ['critical-bleed'] },
+    'critical',
+  ) as typeof root;
+  f.sources[0] = { ...first, root };
+  const evidence = {
+    ...f.evidence,
+    setup: { ...f.evidence.setup, rulesetId: 'm1-domain-bridge-v3' as const },
+  };
+  const binding = prepareEncounterBinding(f.sources, f.request, evidence);
+  expect(binding.participants).toHaveLength(
+    f.evidence.parties.flatMap((entry) => entry.members).length,
+  );
+  expect(
+    binding.participants.find((entry) => entry.projection.characterId === 'a-worker-0')!.projection,
+  ).toMatchObject({
+    weapon: { profileId: 'fists', skillId: null },
+    capabilities: { move: false, retreat: false },
+  });
+  const aggregate = {
+    economy: root,
+    learning: createCompanyLearningState(),
+    social: createSocialState(),
+    encounter: createCombatEncounterApplication(),
+  };
+  const begun = prepareBeginCombatAggregate(aggregate, f.sources, f.request, evidence);
+  expect(begun.kind).toBe('PREPARED');
+  if (begun.kind !== 'PREPARED') throw new Error('begin rejected');
+  expect(readCompanyCombatAggregateState(JSON.parse(JSON.stringify(begun.next)))).toEqual(
+    begun.next,
+  );
+});

@@ -1,3 +1,4 @@
+import { M1_DOMAIN_BRIDGE_V3_RULESET_ID, validateCombatCapabilities } from './setup-v2.js';
 import {
   validateUnitIdentity,
   validateUnitPosition,
@@ -20,6 +21,7 @@ import { findPath, hexDistance, hexEquals, hexKey } from './hex.js';
 import { createRandomState, drawRandomInt } from './random.js';
 import {
   combatAttackDamage,
+  combatActionAllowed,
   combatGuardedDamage,
   isSpritePrototypeRuleset,
   combatHitChance,
@@ -37,7 +39,7 @@ import {
   prototypeMovementStep,
   SPRITE_PROTOTYPE_FIRE_DAMAGE,
 } from './sprite-prototype.js';
-import { COMBAT_SCHEMA_VERSION } from './types.js';
+import { COMBAT_SCHEMA_VERSION, M0_COMBAT_RULESET_ID } from './types.js';
 import {
   canCombatSurrender,
   createCombatThreat,
@@ -191,7 +193,11 @@ function validateSetup(setup: BattleSetup, rules: CombatRules): void {
   );
   invariant(setup.battleId.length > 0, 'Battle id must not be empty');
   invariant(Number.isSafeInteger(setup.seed), 'Battle seed must be a safe integer');
-  invariant(setup.rulesetId === rules.id, 'Battle setup ruleset must match the selected rules');
+  invariant(
+    (rules.id === M0_COMBAT_RULESET_ID || isSpritePrototypeRuleset(rules.id)) &&
+      setup.rulesetId === rules.id,
+    'Battle setup ruleset must match the selected rules',
+  );
   invariant(setup.sides.length === rules.sides, `M0 requires exactly ${rules.sides} sides`);
   invariant(
     setup.units.length >= rules.units.minimum && setup.units.length <= rules.units.maximum,
@@ -1585,6 +1591,9 @@ export function applyCombatCommand(
   ) {
     return failure(state, 'PANICKED', 'Panicked units must escape or surrender');
   }
+  if (!combatActionAllowed(state, actor, command.type)) {
+    return failure(state, 'ACTION_NOT_AVAILABLE', 'This action is unavailable to this participant');
+  }
   if (command.type === 'attack') {
     const invalid = ordinaryCombatAttackFailure(state, actor);
     if (invalid) return failure(state, invalid.code, invalid.message);
@@ -1668,6 +1677,9 @@ export function assertBattleState(state: BattleState): void {
 
   const activePositions = new Set<string>();
   for (const unit of state.units) {
+    if (state.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID)
+      validateCombatCapabilities(unit.capabilities, state.rulesetId);
+    weaponProfile(rules, unit.weaponId);
     assertUnitPools(unit, rules);
     if (unit.status === 'active') {
       invariant(unit.health > 0, `${unit.id} cannot be active without health`);
