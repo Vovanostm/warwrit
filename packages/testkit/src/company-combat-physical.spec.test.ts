@@ -7,6 +7,8 @@ import {
   COMBAT_RECEIPT_TIME_VERSION,
   chooseAiCommand,
   previewCombatMovement,
+  initialSkillProgress,
+  skillLevel,
   canonicalCombatState,
   admitPractice,
   creditProgression,
@@ -46,6 +48,9 @@ import {
 } from '@warwrit/game-core';
 import type {
   CombatCommand,
+  CombatReceiptApplication,
+  CombatPracticeStartSnapshot,
+  TrustedCombatPracticeCredit,
   CombatReceiptJournal,
   EncounterPositionEvidence,
   FinanceEvidence,
@@ -3838,71 +3843,252 @@ it('credits one leadership cycle from unarmed and armed subordinates without fis
   expect(retry.next).toBe(consumed.next);
 });
 
-it('credits an actual v4 departure reaction once without treating the moving actor as attacker', () => {
-  const original = fixture(10000, true);
-  const evidence = {
-    ...original.evidence,
-    setup: { ...original.evidence.setup, rulesetId: 'm1-domain-bridge-v4' as const },
-  };
-  const binding = prepareEncounterBinding(original.sources, original.request, evidence);
-  const f = {
-    ...original,
-    binding,
-    evidence,
-    journal: createCombatReceiptJournal(binding, original.root.lifecycle.companyId),
-  };
-  let journal = accept(f, f.journal, binding.initial, null);
-  let reacted = false;
-  for (let index = 0; index < 12 && !reacted; index++) {
-    const state = journal.receipts.at(-1)!.transition.state;
-    const actor = state.units.find((unit) => unit.id === state.activation!.unitId)!;
-    const move =
-      actor.sideId === 'b-side'
-        ? previewCombatMovement(state).find((option) =>
-            option.reactions?.some((reaction) => reaction.attackerId.startsWith('a-')),
-          )
-        : undefined;
-    const base = {
-      commandId: commandId(`reaction-proof-${index}`),
-      activationId: state.activation!.id,
-      actorId: actor.id,
+it.each([false, true])(
+  'consumes actual v4 reactions through both practice boundaries (preceding level gain: %s)',
+  (precedingGain) => {
+    const original = fixture(10000, true);
+    if (precedingGain) {
+      const source = original.sources[0]!;
+      const root = {
+        ...source.root,
+        lifecycle: {
+          ...source.root.lifecycle,
+          characters: source.root.lifecycle.characters.map((person) =>
+            person.identity.characterId === 'a-worker-0'
+              ? {
+                  ...person,
+                  skills: {
+                    ...person.skills,
+                    blades: {
+                      ...initialSkillProgress(0, 'reaction-near-level'),
+                      amount: { milliXp: '9999', carry: '0' },
+                    },
+                  },
+                }
+              : person,
+          ),
+        },
+      };
+      original.sources[0] = { ...source, root };
+      original.root = root;
+    }
+    const evidence = {
+      ...original.evidence,
+      setup: { ...original.evidence.setup, rulesetId: 'm1-domain-bridge-v4' as const },
     };
-    const command: CombatCommand = move
-      ? { ...base, type: 'move', to: move.to }
-      : { ...base, type: 'wait' };
-    const result = applyCombatCommand(state, command);
-    if (!result.ok) throw new Error(result.error.code);
-    journal = accept(f, journal, { state: result.state, events: result.events }, command);
-    reacted = result.events.some(
-      (event) => event.type === 'attack.resolved' && event.attackerId.startsWith('a-'),
+    const binding = prepareEncounterBinding(original.sources, original.request, evidence);
+    const f = {
+      ...original,
+      binding,
+      evidence,
+      journal: createCombatReceiptJournal(binding, original.root.lifecycle.companyId),
+    };
+    let journal = accept(f, f.journal, binding.initial, null);
+    let reacted = false;
+    let attacked = false;
+    for (let index = 0; index < 12 && !reacted; index++) {
+      const state = journal.receipts.at(-1)!.transition.state;
+      const actor = state.units.find((unit) => unit.id === state.activation!.unitId)!;
+      const move =
+        actor.sideId === 'b-side'
+          ? previewCombatMovement(state).find((option) =>
+              option.reactions?.some((reaction) => reaction.attackerId.startsWith('a-')),
+            )
+          : undefined;
+      const base = {
+        commandId: commandId(`reaction-proof-${index}`),
+        activationId: state.activation!.id,
+        actorId: actor.id,
+      };
+      const attack = precedingGain && actor.id === 'a-worker-0-unit' && !attacked;
+      const command: CombatCommand = move
+        ? { ...base, type: 'move', to: move.to }
+        : attack
+          ? { ...base, type: 'attack', targetId: unitId('b-leader-unit') }
+          : { ...base, type: 'wait' };
+      if (attack) attacked = true;
+      const result = applyCombatCommand(state, command);
+      if (!result.ok) throw new Error(result.error.code);
+      journal = accept(f, journal, { state: result.state, events: result.events }, command);
+      reacted = result.events.some(
+        (event) =>
+          event.type === 'attack.resolved' &&
+          event.attackerId !== command.actorId &&
+          event.attackerId.startsWith('a-'),
+      );
+    }
+    expect(reacted).toBe(true);
+    const receiptTicks = journal.receipts.map(() => f.root.lifecycle.campaignTick);
+    const produced = deriveCombatPracticeProfile({
+      root: f.root,
+      journal,
+      receiptTicks,
+      profileId: 'reaction-profile',
+      challengeLevel: 3,
+    });
+    if (produced.status !== 'READY') throw new Error('reaction profile unavailable');
+    const begun = prepareBeginCombatAggregate(
+      {
+        economy: f.root,
+        learning: createCompanyLearningState(),
+        social: createSocialState(),
+        encounter: createCombatEncounterApplication(),
+      },
+      f.sources,
+      f.request,
+      evidence,
     );
-  }
-  expect(reacted).toBe(true);
-  const receiptTicks = journal.receipts.map(() => f.root.lifecycle.campaignTick);
-  const produced = deriveCombatPracticeProfile({
-    root: f.root,
-    journal,
-    receiptTicks,
-    profileId: 'reaction-profile',
-    challengeLevel: 3,
-  });
-  if (produced.status !== 'READY') throw new Error('reaction profile unavailable');
-  const input = {
-    root: f.root,
-    journal,
-    receiptIndex: journal.receipts.length - 1,
-    profile: produced.profile,
-    receiptTicks,
-    savedStarts: [],
-    context: combatContext(f, { financeFacts: [], physicalFacts: [] }),
-  };
-  const credits = prepareCombatPracticeCredits(input);
-  expect(
-    credits.some(
-      (credit) =>
-        credit.command.payload.skillId === 'blades' &&
-        credit.command.payload.characterId.startsWith('a-'),
-    ),
-  ).toBe(true);
-  expect(prepareCombatPracticeCredits(input)).toEqual(credits);
-});
+    if (begun.kind !== 'PREPARED') throw new Error(begun.error);
+    let current = begun.next;
+    const applications: CombatReceiptApplication[] = [];
+    const allCredits: TrustedCombatPracticeCredit[] = [];
+    const ctx = combatContext(f, { financeFacts: [], physicalFacts: [] }) as CombatOwnerContext;
+    for (let ordinal = 0; ordinal < journal.receipts.length; ordinal++) {
+      const receipt = journal.receipts[ordinal]!;
+      const savedStarts: CombatPracticeStartSnapshot[] = [
+        ...current.encounter.active!.practiceStartSnapshots,
+      ];
+      for (const start of produced.profile.actionStarts.filter(
+        (start) => start.startReceiptOrdinal === ordinal,
+      )) {
+        const participant = binding.participants.find((p) => p.unitId === start.unitId)!;
+        const person = current.economy.lifecycle.characters.find(
+          (p) => p.identity.characterId === participant.projection.characterId,
+        )!;
+        const skillId =
+          receipt.kernelCommand?.type === 'defend'
+            ? 'defense'
+            : participant.projection.weapon.skillId!;
+        savedStarts.push({
+          sourceId: start.activationId,
+          startReceiptOrdinal: ordinal,
+          characterId: person.identity.characterId,
+          skillId,
+          levelAtStart: skillLevel(person.skills[skillId]!),
+          aptitudeAtStartBps: person.aptitudeBySkill[skillId]!,
+        });
+      }
+      const credits =
+        ordinal === 0
+          ? []
+          : prepareCombatPracticeCredits({
+              root: current.economy as MaterializedCompanyState,
+              journal,
+              receiptIndex: ordinal,
+              profile: produced.profile,
+              receiptTicks,
+              savedStarts,
+              context: ctx,
+            });
+      if (ordinal === journal.receipts.length - 1) {
+        const armedReactions = credits.filter(
+          (credit) => credit.command.payload.methodId === 'weapon-attack',
+        );
+        expect(armedReactions).toHaveLength(2);
+        expect(
+          armedReactions.find((credit) => credit.command.payload.characterId === 'a-worker-0')!
+            .context.practiceFacts![0]!.levelAtStart,
+        ).toBe(precedingGain ? 2 : 0);
+      }
+      allCredits.push(...credits);
+      applications.push({
+        time: {
+          version: COMBAT_RECEIPT_TIME_VERSION,
+          id: `reaction-time-${ordinal}`,
+          sourceEventId: receipt.request.sourceEventId!,
+          battleId: binding.setup.battleId,
+          receiptId: receipt.request.payload.receiptId,
+          revision: receipt.transition.state.revision,
+          atTick: f.root.lifecycle.campaignTick,
+        },
+        context: ctx,
+        learning: { intervals: [] },
+        practiceCredits: credits,
+      });
+      const applied = prepareConsumeCombatAggregate(current, {
+        journal: {
+          ...journal,
+          receipts: journal.receipts.slice(0, ordinal + 1),
+          proposedLastAppliedRevision: receipt.transition.state.revision,
+        },
+        applications: applications.slice(),
+        practiceProfile: produced.profile,
+      });
+      expect(applied.kind, applied.kind === 'REJECTED' ? applied.error : undefined).toBe(
+        'PREPARED',
+      );
+      if (applied.kind !== 'PREPARED') throw new Error(applied.error);
+      current = applied.next;
+    }
+    expect(() =>
+      prepareCombatPracticeCredits({
+        root: current.economy as MaterializedCompanyState,
+        journal,
+        receiptIndex: journal.receipts.length - 1,
+        profile: produced.profile,
+        receiptTicks,
+        savedStarts: current.encounter.active!.practiceStartSnapshots,
+        context: { ...ctx, canonicalRevision: '999' as typeof ctx.canonicalRevision },
+      }),
+    ).toThrow('INVALID_SOURCE');
+    const physical = prepareCombatPhysicalEffects(f.root, journal);
+    const consequences = prepareCombatConsequences(f.root, physical, journal, ctx);
+    const before = canonicalJson(f.root);
+    const applyFull = (profile = produced.profile) =>
+      prepareCombatPracticeEffects(
+        f.root,
+        physical,
+        consequences,
+        journal,
+        ctx,
+        profile,
+        allCredits,
+      );
+    const full = applyFull();
+    expect(full.credits).toBe(precedingGain ? 4 : 2);
+    for (const id of ['a-worker-0', 'a-worker-1']) {
+      const person = full.root.lifecycle.characters.find((p) => p.identity.characterId === id)!;
+      const progress = person.skills['blades'];
+      if (progress === undefined || typeof progress === 'number')
+        throw new Error('Expected exact blades progress');
+      expect(BigInt(progress.amount.milliXp)).toBeGreaterThan(
+        id === 'a-worker-0' && precedingGain ? 9999n : 0n,
+      );
+      expect(person.skills).toEqual(
+        current.economy.lifecycle.characters.find((p) => p.identity.characterId === id)!.skills,
+      );
+    }
+    expect(applyFull()).toEqual(full);
+    const retry = prepareConsumeCombatAggregate(current, {
+      journal,
+      applications,
+      practiceProfile: produced.profile,
+    });
+    expect(retry.kind).toBe('PREPARED');
+    if (retry.kind !== 'PREPARED') throw new Error(retry.error);
+    expect(retry.replayed).toBe(true);
+    expect(retry.next).toEqual(current);
+    const unusedStart = {
+      activationId: journal.receipts[1]!.kernelCommand!.activationId,
+      unitId: unitId('a-leader-unit'),
+      startedAt: f.root.lifecycle.campaignTick,
+      startReceiptOrdinal: 1,
+    };
+    expect(() =>
+      applyFull({
+        ...produced.profile,
+        actionStarts: [...produced.profile.actionStarts, unusedStart],
+      }),
+    ).toThrow('INVALID_SOURCE');
+    expect(() =>
+      applyFull({
+        ...produced.profile,
+        actionStarts: [
+          ...produced.profile.actionStarts,
+          { ...unusedStart, activationId: 'fabricated-reaction-start' },
+        ],
+      }),
+    ).toThrow('INVALID_SOURCE');
+    expect(canonicalJson(f.root)).toBe(before);
+  },
+);

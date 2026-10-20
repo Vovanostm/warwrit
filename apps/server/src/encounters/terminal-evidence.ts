@@ -343,7 +343,7 @@ export function prepareFirstHuntTerminalEvidence(input: {
     if (index > 0) {
       try {
         practiceCredits = combat.prepareCombatPracticeCredits({
-          root: materialized(previous),
+          root: stateRoot,
           journal,
           receiptIndex: index,
           profile: practiceProfile,

@@ -448,13 +448,18 @@ export function deriveCombatPracticeReceipt(
           ? currentPerson?.aptitudeBySkill[interaction.skillId]
           : undefined);
       const atTick = receiptTicks[receiptIndex]!;
+      // Source authority stays at admission even when the receipt root has advanced.
       requirePhysical(
         levelAtStart !== undefined &&
           Number.isSafeInteger(aptitudeAtStartBps) &&
           aptitudeAtStartBps! > 0 &&
           context.companyId === root.lifecycle.companyId &&
           context.worldId === root.lifecycle.worldId &&
-          context.canonicalRevision === root.lifecycle.revision &&
+          validatedJournal.binding.participants.some(
+            (participant) =>
+              participant.companyId === root.lifecycle.companyId &&
+              participant.revision === context.canonicalRevision,
+          ) &&
           context.atTick === atTick,
         'INVALID_SOURCE',
       );
@@ -1053,7 +1058,8 @@ export function prepareCombatPracticeEffects(
           canonicalJson(fact.proof) === canonicalJson(expectedProof),
         'INVALID_SOURCE',
       );
-      if (interaction.methodId !== 'command-cycle') usedStarts.add(interaction.activationId);
+      if (interaction.methodId !== 'command-cycle' && starts.has(interaction.activationId))
+        usedStarts.add(interaction.activationId);
       root = preparePracticeCredit(root, command, trustedContext);
     }
   }

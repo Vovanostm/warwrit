@@ -1,5 +1,21 @@
 # Warwrit current delivery plan
 
+**Bounded bridge audit and integrated checks — 2026-10-20, LOCAL:**
+Normal source commit743ae5d closes the four introduced audit findings. Current
+focused coverage197PASS/1existingSKIP; types/lint/format/normal audit PASS.
+Coordinator validation on that clean commit EXIT0/8of8,791PASS/48SKIP.
+Read-only replay of the retained46-command journey matches both final company
+roots. Independent source review REWORK743ae5d: reaction credits use a stale
+admission skill level after prior progress, blocking supported settlement;
+the full-journal consumer also rejects implicit reaction starts. Pure
+reproductions are in .orca/core-tactical-bridge/review-1.md. Independent real play also REWORK: supported wolf victory42 with5reactions
+keeps both companies bound and issues no proof, including after restart.
+Evaluator cleanup removed its disposable DB; sanitized42-command rows remain
+in .orca/core-tactical-bridge/eval-runtime/ for pure reconstruction. Exact cause
+of that runtime failure still needs isolation. Correction, publication,
+CI and merge remain pending. Earlier failed checks retain their history.
+Owner decisions are settled; no new skills, custody, rescue or6v6 rules.
+
 **Bounded bridge165 author journey — 2026-10-20, LOCAL / audit pending:**
 New wolf-hunt admission uses bridge-v4/projection4, actual roster, canonical
 private movement/attack quotes and durable V2/requested-autoplay commands.

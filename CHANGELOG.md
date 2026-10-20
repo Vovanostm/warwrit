@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Bounded bridge audit and integrated checks — 2026-10-20, LOCAL
+
+- Normal source commit743ae5d closes the four introduced audit findings. Current
+  focused coverage197PASS/1existingSKIP; types/lint/format/normal audit PASS.
+  Coordinator validation on that clean commit EXIT0/8of8,791PASS/48SKIP.
+  Read-only replay of the retained46-command journey matches both final company
+  roots. Independent source review REWORK743ae5d reproduced stale reaction skill
+  coefficients blocking supported terminal settlement, and rejected implicit
+  reaction starts in the full-journal consumer. Independent real wolf victory42
+  with5reactions also stays bound/pending after restart, proof0. Its sanitized
+  rows are retained; exact runtime cause remains to isolate. Correction,
+  publication, CI and merge remain pending. Earlier failed checks retain their history.
+  Owner decisions are settled; no new skills, custody, rescue or6v6 rules.
+  Branch `codex/tactical-bridge-165`; local.
+  [Current record](docs/engineering/CURRENT_PLAN.md).
+
 ### Connect the bounded persistent wolf hunt to tactical combat
 
 - 2026-10-20, branch `codex/tactical-bridge-165`, local: implement explicit
