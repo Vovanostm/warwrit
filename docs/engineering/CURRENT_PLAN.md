@@ -8,7 +8,9 @@ companies, receipts, proof and ownership. Original volume untouched; no reseed.
 Browser/pickup/payment continuation still pending. #248 exact food regression
 now handles the lawful successor-choice prerequisite; the worker-race
 explanation was rejected. Final exact food/retry coverage2PASS/14filteredSKIP,
-independent source ACCEPT. Commit/integration/runtime/publication gates pending.
+independent source ACCEPT. Normal commit f439db7/auditPASS and clean validator
+8/8PASS (41relatedPASS/31SKIP). Independent recovered-DB6/current-source UI
+readback is active, followed by separateDB7. Publication/merge pending.
 [Recovery and check boundaries](evidence/persistent-hud/main-readback.md).
 
 **Persistent HUD delivered / representative recovery active — 2026-10-20:**

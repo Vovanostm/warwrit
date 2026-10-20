@@ -252,3 +252,18 @@ removed transactionally and verified absent in the owned test DB; retained
 DB6/DB7 untouched. [Final checks](pickup-248-checks.md) and
 [independent source review](pickup-248-review.md). Normal commit audit, integrated
 validator, current-source browser evaluation, hosted CI and merge remain pending.
+
+Source frozen as f439db7fed3e39b7f7d22633800f8592f7f299cc; normal audit PASS
+with8inherited findings excluded and reported semantic-attribution fallback.
+Independent exact-source stamp ACCEPT. Clean parent validator EXIT0,8/8steps
+PASS,41relatedPASS/31SKIP. The two focused real-PG cases above remain separate
+executed evidence. Evaluator now owns the exclusive runtime window for recovered
+DB6 target readback and a distinct lawful DB7 payment/restart journey; these
+checks are not yet passed. No published pickup PR or merge yet.
+
+Independent saved-state evaluation **ACCEPT** on f439db7: both recovered DB6
+accounts expose no impossible pickup destination/button,0POST; all11canonical
+collections unchanged through auth renewal/reloads. Clean live card captures
+replace the earlier post-shutdown fetch-error framing; both attempts retain
+accurate attribution. [Runtime report](pickup-248-runtime.md). DB7 remains
+unstarted until actual-main integration. Hosted CI/publication/merge pending.

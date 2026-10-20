@@ -26,7 +26,8 @@ requests.
   the target projection; no carrying-rule or migration change. Frozen source/test
   independent review ACCEPT; final real-PG focused coverage2PASS/14filteredSKIP
   on2026-10-21. Exact fractional food/retry assertions retain unchanged ration
-  quantity and one terminal receipt. Audit/integration/runtime delivery pending. Preserve failed DB6 and receipt; a separate valid-load
+  quantity and one terminal receipt. Normal audit and clean validator8/8PASS (41relatedPASS/31SKIP);
+  independent runtime delivery remains pending. Preserve failed DB6 and receipt; a separate valid-load
   fixture must prove its own journey. [Evidence](docs/engineering/evidence/persistent-hud/main-readback.md).
 
 ### Deliver the persistent commander and continue the hunt — 2026-10-20
