@@ -1,8 +1,10 @@
+import { isTacticalV3Ruleset } from './rules.js';
 import { invariant } from '../primitives.js';
 import { chooseAiCommand } from './ai.js';
 import { compareHex, hexDistance, hexKey } from './hex.js';
 import {
   combatRules,
+  combatActionAllowed,
   compareCombatUnitIds,
   isCombatPanicked,
   isSpritePrototypeRuleset,
@@ -18,7 +20,6 @@ import {
   type CombatMovementPreview,
 } from './sprite-prototype.js';
 import {
-  SPRITE_PROTOTYPE_V3_RULESET_ID,
   commandId,
   type BattleState,
   type CombatCommand,
@@ -144,7 +145,7 @@ function tacticalAttackOptions(
   const normal = previewCombatAttacks(state).map((attack) =>
     tacticalAttack(state, actor, attack, move),
   );
-  if (state.rulesetId !== SPRITE_PROTOTYPE_V3_RULESET_ID) return normal;
+  if (!isTacticalV3Ruleset(state.rulesetId)) return normal;
   const skills = previewCombatSkills(state).flatMap((skill) => {
     if (
       !skill.legal ||
@@ -290,7 +291,7 @@ function holdAgainstKiting(state: BattleState, actor: CombatUnitState): boolean 
 function tacticalHoldCommand(state: BattleState, actor: CombatUnitState): CombatCommand {
   invariant(state.activation !== null, 'Tactical hold requires an activation');
   const rules = combatRules(state.rulesetId);
-  if (state.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID) {
+  if (isTacticalV3Ruleset(state.rulesetId)) {
     const brace = previewCombatSkills(state).find(
       (skill) => skill.skillId === 'shield-brace' && skill.legal,
     );
@@ -310,7 +311,8 @@ function tacticalHoldCommand(state: BattleState, actor: CombatUnitState): Combat
         ...commandBase(state, 'shield-brace'),
       };
   }
-  return !actor.guarding &&
+  return combatActionAllowed(state, actor, 'defend') &&
+    !actor.guarding &&
     state.activation.remainingActionPoints >= rules.defend.actionPointCost &&
     actor.stamina >= rules.defend.staminaCost
     ? { type: 'defend', ...commandBase(state, 'tactical-defend') }
@@ -473,7 +475,7 @@ export function chooseTacticalCombatCommand(state: BattleState): CombatCommand {
   const special = choosePrototypeSpecialCommand(state);
   if (special !== undefined) return special;
   const actor = activeActor(state);
-  const v3 = state.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID;
+  const v3 = isTacticalV3Ruleset(state.rulesetId);
   const rescue = v3 ? rescuePanickedAlly(state) : undefined;
   if (rescue !== undefined) return rescue;
   const attacks = tacticalAttackOptions(state, actor);

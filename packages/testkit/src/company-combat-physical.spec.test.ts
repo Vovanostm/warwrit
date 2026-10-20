@@ -6,6 +6,7 @@ import {
   COMPANY_RULESET_ID,
   COMBAT_RECEIPT_TIME_VERSION,
   chooseAiCommand,
+  previewCombatMovement,
   canonicalCombatState,
   admitPractice,
   creditProgression,
@@ -3535,77 +3536,86 @@ describe('G10 — atomic combat company aggregate', () => {
   });
 });
 
-it('applies two fists receipts and physical pools without weapon XP or action-start snapshots', () => {
-  const original = fixture(100, true);
-  const root = {
-    ...original.root,
-    physical: {
-      ...original.root.physical,
-      items: original.root.physical.items.map((item) =>
-        item.equipped?.characterId === 'a-leader' &&
-        item.equipped.slots.some((slot) => slot === 'MAIN_HAND' || slot === 'OFF_HAND')
-          ? { ...item, equipped: null }
-          : item,
-      ),
-    },
-  };
-  const sources = [{ ...original.sources[0]!, root }, original.sources[1]!];
-  const evidence = {
-    ...original.evidence,
-    setup: { ...original.evidence.setup, rulesetId: 'm1-domain-bridge-v3' as const },
-  };
-  const binding = prepareEncounterBinding(sources, original.request, evidence);
-  const f = {
-    ...original,
-    root,
-    sources,
-    evidence,
-    binding,
-    journal: createCombatReceiptJournal(binding, root.lifecycle.companyId),
-  };
-  let journal = accept(f, f.journal, binding.initial, null);
-  expect(binding.initial.state.activation?.unitId).toBe('a-leader-unit');
-  for (let index = 0; index < 2; index++) {
-    const state = journal.receipts.at(-1)!.transition.state;
-    const command: CombatCommand = {
-      type: 'attack',
-      commandId: commandId(`fists-${index}`),
-      activationId: state.activation!.id,
-      actorId: state.activation!.unitId,
-      targetId: unitId('b-leader-unit'),
+it.each([3, 4] as const)(
+  'applies two v%s fists receipts and physical pools without weapon XP or action-start snapshots',
+  (version) => {
+    const original = fixture(100, true);
+    const root = {
+      ...original.root,
+      physical: {
+        ...original.root.physical,
+        items: original.root.physical.items.map((item) =>
+          item.equipped?.characterId === 'a-leader' &&
+          item.equipped.slots.some((slot) => slot === 'MAIN_HAND' || slot === 'OFF_HAND')
+            ? { ...item, equipped: null }
+            : item,
+        ),
+      },
     };
-    const result = applyCombatCommand(state, command);
-    if (!result.ok) throw new Error(result.error.code);
-    journal = accept(f, journal, { state: result.state, events: result.events }, command);
-  }
-  const produced = deriveCombatPracticeProfile({
-    root,
-    journal,
-    receiptTicks: journal.receipts.map(() => root.lifecycle.campaignTick),
-    profileId: 'fists-proof',
-    challengeLevel: 3,
-  });
-  expect(produced.status).toBe('READY');
-  if (produced.status !== 'READY') throw new Error('profile not ready');
-  expect(produced.profile.actionStarts).toEqual([]);
-  const physical = prepareCombatPhysicalEffects(root, journal);
-  const ctx = combatContext(f, { financeFacts: [], physicalFacts: [] });
-  const consequences = prepareCombatConsequences(root, physical, journal, ctx);
-  const practice = prepareCombatPracticeEffects(
-    root,
-    physical,
-    consequences,
-    journal,
-    ctx,
-    produced.profile,
-    [],
-  );
-  expect(practice.credits).toBe(0);
-  expect(practice.root.lifecycle.characters.map((entry) => entry.skills)).toEqual(
-    root.lifecycle.characters.map((entry) => entry.skills),
-  );
-  expect(prepareCombatPhysicalEffects(root, JSON.parse(JSON.stringify(journal)))).toEqual(physical);
-});
+    const sources = [{ ...original.sources[0]!, root }, original.sources[1]!];
+    const evidence = {
+      ...original.evidence,
+      setup: {
+        ...original.evidence.setup,
+        rulesetId:
+          version === 4 ? ('m1-domain-bridge-v4' as const) : ('m1-domain-bridge-v3' as const),
+      },
+    };
+    const binding = prepareEncounterBinding(sources, original.request, evidence);
+    const f = {
+      ...original,
+      root,
+      sources,
+      evidence,
+      binding,
+      journal: createCombatReceiptJournal(binding, root.lifecycle.companyId),
+    };
+    let journal = accept(f, f.journal, binding.initial, null);
+    expect(binding.initial.state.activation?.unitId).toBe('a-leader-unit');
+    for (let index = 0; index < 2; index++) {
+      const state = journal.receipts.at(-1)!.transition.state;
+      const command: CombatCommand = {
+        type: 'attack',
+        commandId: commandId(`fists-${index}`),
+        activationId: state.activation!.id,
+        actorId: state.activation!.unitId,
+        targetId: unitId('b-leader-unit'),
+      };
+      const result = applyCombatCommand(state, command);
+      if (!result.ok) throw new Error(result.error.code);
+      journal = accept(f, journal, { state: result.state, events: result.events }, command);
+    }
+    const produced = deriveCombatPracticeProfile({
+      root,
+      journal,
+      receiptTicks: journal.receipts.map(() => root.lifecycle.campaignTick),
+      profileId: 'fists-proof',
+      challengeLevel: 3,
+    });
+    expect(produced.status).toBe('READY');
+    if (produced.status !== 'READY') throw new Error('profile not ready');
+    expect(produced.profile.actionStarts).toEqual([]);
+    const physical = prepareCombatPhysicalEffects(root, journal);
+    const ctx = combatContext(f, { financeFacts: [], physicalFacts: [] });
+    const consequences = prepareCombatConsequences(root, physical, journal, ctx);
+    const practice = prepareCombatPracticeEffects(
+      root,
+      physical,
+      consequences,
+      journal,
+      ctx,
+      produced.profile,
+      [],
+    );
+    expect(practice.credits).toBe(0);
+    expect(practice.root.lifecycle.characters.map((entry) => entry.skills)).toEqual(
+      root.lifecycle.characters.map((entry) => entry.skills),
+    );
+    expect(prepareCombatPhysicalEffects(root, JSON.parse(JSON.stringify(journal)))).toEqual(
+      physical,
+    );
+  },
+);
 
 it('derives equipped practice credits from the public validated receipt producer', () => {
   const f = aggregateFixture();
@@ -3826,4 +3836,73 @@ it('credits one leadership cycle from unarmed and armed subordinates without fis
   if (retry.kind !== 'PREPARED') throw new Error(retry.error);
   expect(retry.replayed).toBe(true);
   expect(retry.next).toBe(consumed.next);
+});
+
+it('credits an actual v4 departure reaction once without treating the moving actor as attacker', () => {
+  const original = fixture(10000, true);
+  const evidence = {
+    ...original.evidence,
+    setup: { ...original.evidence.setup, rulesetId: 'm1-domain-bridge-v4' as const },
+  };
+  const binding = prepareEncounterBinding(original.sources, original.request, evidence);
+  const f = {
+    ...original,
+    binding,
+    evidence,
+    journal: createCombatReceiptJournal(binding, original.root.lifecycle.companyId),
+  };
+  let journal = accept(f, f.journal, binding.initial, null);
+  let reacted = false;
+  for (let index = 0; index < 12 && !reacted; index++) {
+    const state = journal.receipts.at(-1)!.transition.state;
+    const actor = state.units.find((unit) => unit.id === state.activation!.unitId)!;
+    const move =
+      actor.sideId === 'b-side'
+        ? previewCombatMovement(state).find((option) =>
+            option.reactions?.some((reaction) => reaction.attackerId.startsWith('a-')),
+          )
+        : undefined;
+    const base = {
+      commandId: commandId(`reaction-proof-${index}`),
+      activationId: state.activation!.id,
+      actorId: actor.id,
+    };
+    const command: CombatCommand = move
+      ? { ...base, type: 'move', to: move.to }
+      : { ...base, type: 'wait' };
+    const result = applyCombatCommand(state, command);
+    if (!result.ok) throw new Error(result.error.code);
+    journal = accept(f, journal, { state: result.state, events: result.events }, command);
+    reacted = result.events.some(
+      (event) => event.type === 'attack.resolved' && event.attackerId.startsWith('a-'),
+    );
+  }
+  expect(reacted).toBe(true);
+  const receiptTicks = journal.receipts.map(() => f.root.lifecycle.campaignTick);
+  const produced = deriveCombatPracticeProfile({
+    root: f.root,
+    journal,
+    receiptTicks,
+    profileId: 'reaction-profile',
+    challengeLevel: 3,
+  });
+  if (produced.status !== 'READY') throw new Error('reaction profile unavailable');
+  const input = {
+    root: f.root,
+    journal,
+    receiptIndex: journal.receipts.length - 1,
+    profile: produced.profile,
+    receiptTicks,
+    savedStarts: [],
+    context: combatContext(f, { financeFacts: [], physicalFacts: [] }),
+  };
+  const credits = prepareCombatPracticeCredits(input);
+  expect(
+    credits.some(
+      (credit) =>
+        credit.command.payload.skillId === 'blades' &&
+        credit.command.payload.characterId.startsWith('a-'),
+    ),
+  ).toBe(true);
+  expect(prepareCombatPracticeCredits(input)).toEqual(credits);
 });

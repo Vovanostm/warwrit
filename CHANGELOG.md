@@ -9,6 +9,33 @@ requests.
 
 ## Unreleased
 
+### Connect the bounded persistent wolf hunt to tactical combat
+
+- 2026-10-20, branch `codex/tactical-bridge-165`, local: implement explicit
+  bridge-v4/projection4 across core setup/replay/AI, company profiles/binding/
+  consequences, authenticated encounter executor/private protocol and minimal
+  persistent consumer. Preserve old versions, fists and condition restrictions;
+  unavailable unmapped skills and unsupported disposition stay explicit.
+  [Behavior and limitations](docs/wiki/combat.md#persistent-tactical-wolf-hunt--2026-10-20).
+- Author real two-company6v3 journey reached victory46, exact retries, active
+  process restart12 and once-only effects/one proof. 196focusedPASS/1SKIP;
+  normal audit findings are being corrected, no bypass. Independent evaluation,
+  integrated gate, publication/merge, payment and final HUD remain pending.
+  No migration, dependency or authored world-content change.
+
+### Start the approved persistent tactical bridge after profile delivery
+
+- 2026-10-20, branch `codex/tactical-bridge-165`, local: activate #165 on
+  actual merged profile main137faf88, with the owner's bounded wolf-hunt scope.
+  One core writer owns the coupled bridge/protocol/executor consumers; actor
+  lab-scene work stays separate. Implementation and acceptance pending.
+- Delivery readback: [PR241](https://github.com/Vovanostm/warwrit/pull/241)
+  merged137faf88 after source ACCEPT,validator8/8 and CI39383402818 SUCCESS:
+  893PASS/48SKIP,10000stress,15realDB/auth,coverage/audit. Merged tree matches
+  the checked candidate. Main CI39384644400 SUCCESS; real PostgreSQL mixed
+  JOIN/retry/reload smoke1PASS/13filteredSKIP; #164 CLOSED. Rescue/transport excluded,
+  payment/terminal-browser journey remains downstream.
+
 ### Accept the approved company profile on current main
 
 - 2026-10-20, branch `codex/company-profile-164`, local: independent policy

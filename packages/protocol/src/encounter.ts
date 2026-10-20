@@ -38,8 +38,11 @@ export interface EncounterControlGrantDto {
   readonly actorActions?: {
     readonly activationId: string;
     readonly actorId: string;
-    readonly permittedIntents: readonly ('move' | 'attack' | 'defend' | 'wait' | 'retreat')[];
+    readonly permittedIntents: readonly (
+      'move' | 'attack' | 'defend' | 'wait' | 'retreat' | 'flee' | 'surrender' | 'autoplay'
+    )[];
   };
+  readonly tactical?: EncounterTacticalPreviewDto;
   /** Activation epoch after which the caller's resume request may take effect. */
   readonly resumeRequestedAfterEpoch?: number | null;
 }
@@ -54,17 +57,60 @@ export function isEncounterControlGrantRequestDto(
   );
 }
 
-export interface EncounterCommandDto {
-  readonly version: typeof ENCOUNTER_PROTOCOL_VERSION;
+interface EncounterCommandBase {
   readonly encounterId: string;
   readonly commandId: string;
   readonly expectedRevision: number;
   readonly activationId: string;
   readonly actorId: string;
-  readonly intent:
-    | { readonly type: 'move'; readonly to: Readonly<{ q: number; r: number }> }
-    | { readonly type: 'attack'; readonly targetId: string }
-    | { readonly type: 'defend' | 'wait' | 'retreat' };
+}
+
+type EncounterLegacyIntent =
+  | { readonly type: 'move'; readonly to: Readonly<{ q: number; r: number }> }
+  | { readonly type: 'attack'; readonly targetId: string }
+  | { readonly type: 'defend' | 'wait' | 'retreat' };
+export type EncounterSkillId =
+  'shield-brace' | 'armor-pressure' | 'reach-thrust' | 'aimed-shot' | 'rally';
+export type EncounterCommandDto = EncounterCommandBase &
+  (
+    | { readonly version: 1; readonly intent: EncounterLegacyIntent }
+    | {
+        readonly version: 2;
+        readonly intent:
+          | EncounterLegacyIntent
+          | {
+              readonly type: 'use-skill';
+              readonly skillId: EncounterSkillId;
+              readonly targetId?: string;
+            }
+          | { readonly type: 'prepare-threat' | 'retarget-threat'; readonly targetId: string }
+          | { readonly type: 'flee' | 'surrender' | 'execute-threat' | 'autoplay' };
+      }
+  );
+
+export interface EncounterTacticalPreviewDto {
+  readonly activationId: string;
+  readonly actorId: string;
+  readonly actionPoints: number;
+  readonly stamina: number;
+  readonly moves: readonly {
+    readonly to: Readonly<{ q: number; r: number }>;
+    readonly path: readonly Readonly<{ q: number; r: number }>[];
+    readonly actionPointCost: number;
+    readonly staminaCost: number;
+    readonly fireDamage: number;
+    readonly reactionCount: number;
+  }[];
+  readonly attacks: readonly {
+    readonly targetId: string;
+    readonly hitChance: number;
+    readonly actionPointCost: number;
+    readonly staminaCost: number;
+    readonly damage: {
+      readonly health: { readonly minimum: number; readonly maximum: number };
+      readonly armor: { readonly minimum: number; readonly maximum: number };
+    };
+  }[];
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -81,7 +127,7 @@ export function isEncounterCommandDto(value: unknown): value is EncounterCommand
   if (
     !isRecord(value) ||
     Object.keys(value).length !== 7 ||
-    value['version'] !== ENCOUNTER_PROTOCOL_VERSION ||
+    (value['version'] !== 1 && value['version'] !== 2) ||
     !isEncounterId(value['encounterId']) ||
     !isId(value['commandId']) ||
     !Number.isSafeInteger(value['expectedRevision']) ||
@@ -92,7 +138,13 @@ export function isEncounterCommandDto(value: unknown): value is EncounterCommand
   )
     return false;
 
-  const intent = value['intent'];
+  return (
+    validLegacyIntent(value['intent']) ||
+    (value['version'] === 2 && validTacticalIntent(value['intent']))
+  );
+}
+
+function validLegacyIntent(intent: Record<string, unknown>): boolean {
   switch (intent['type']) {
     case 'move':
       return (
@@ -107,6 +159,30 @@ export function isEncounterCommandDto(value: unknown): value is EncounterCommand
     case 'defend':
     case 'wait':
     case 'retreat':
+      return Object.keys(intent).length === 1;
+    default:
+      return false;
+  }
+}
+
+function validTacticalIntent(intent: Record<string, unknown>): boolean {
+  switch (intent['type']) {
+    case 'use-skill':
+      return (
+        typeof intent['skillId'] === 'string' &&
+        ['shield-brace', 'armor-pressure', 'reach-thrust', 'aimed-shot', 'rally'].includes(
+          intent['skillId'],
+        ) &&
+        Object.keys(intent).every((key) => ['type', 'skillId', 'targetId'].includes(key)) &&
+        (!Object.hasOwn(intent, 'targetId') || isId(intent['targetId']))
+      );
+    case 'prepare-threat':
+    case 'retarget-threat':
+      return Object.keys(intent).length === 2 && isId(intent['targetId']);
+    case 'flee':
+    case 'surrender':
+    case 'execute-threat':
+    case 'autoplay':
       return Object.keys(intent).length === 1;
     default:
       return false;
@@ -144,7 +220,7 @@ export interface EncounterPublicUnitDto {
   readonly health: number;
   /** Canonical visible cap; absent means unknown, never infer it from current HP. */
   readonly maximumHealth?: number;
-  readonly status: 'active' | 'dead' | 'retreated';
+  readonly status: 'active' | 'dead' | 'retreated' | 'surrendered';
 }
 
 export interface EncounterPublicProjectionDto {
@@ -186,4 +262,60 @@ export interface EncounterLeadershipDto {
     readonly candidateId: string;
     readonly mode: 'PERMANENT' | 'ACTING' | 'REGENCY';
   };
+}
+
+/** Strict transport reader for derived, actor-private previews; contains no combat rules. */
+export function isEncounterTacticalPreviewDto(
+  value: unknown,
+): value is EncounterTacticalPreviewDto {
+  const exact = (item: unknown, keys: readonly string[]): item is Record<string, unknown> =>
+    isRecord(item) &&
+    Object.keys(item).length === keys.length &&
+    keys.every((key) => Object.hasOwn(item, key));
+  const natural = (item: unknown): item is number =>
+    Number.isSafeInteger(item) && (item as number) >= 0;
+  const hex = (item: unknown): boolean =>
+    exact(item, ['q', 'r']) && Number.isSafeInteger(item['q']) && Number.isSafeInteger(item['r']);
+  const range = (item: unknown): boolean =>
+    exact(item, ['minimum', 'maximum']) &&
+    natural(item['minimum']) &&
+    natural(item['maximum']) &&
+    item['minimum'] <= item['maximum'];
+  return (
+    exact(value, ['activationId', 'actorId', 'actionPoints', 'stamina', 'moves', 'attacks']) &&
+    isId(value['activationId']) &&
+    isId(value['actorId']) &&
+    natural(value['actionPoints']) &&
+    natural(value['stamina']) &&
+    Array.isArray(value['moves']) &&
+    value['moves'].every(
+      (move) =>
+        exact(move, [
+          'to',
+          'path',
+          'actionPointCost',
+          'staminaCost',
+          'fireDamage',
+          'reactionCount',
+        ]) &&
+        hex(move['to']) &&
+        Array.isArray(move['path']) &&
+        move['path'].length > 0 &&
+        move['path'].every(hex) &&
+        ['actionPointCost', 'staminaCost', 'fireDamage', 'reactionCount'].every((key) =>
+          natural(move[key]),
+        ),
+    ) &&
+    Array.isArray(value['attacks']) &&
+    value['attacks'].every(
+      (attack) =>
+        exact(attack, ['targetId', 'hitChance', 'actionPointCost', 'staminaCost', 'damage']) &&
+        isId(attack['targetId']) &&
+        ['hitChance', 'actionPointCost', 'staminaCost'].every((key) => natural(attack[key])) &&
+        (attack['hitChance'] as number) <= 100 &&
+        exact(attack['damage'], ['health', 'armor']) &&
+        range(attack['damage']['health']) &&
+        range(attack['damage']['armor']),
+    )
+  );
 }

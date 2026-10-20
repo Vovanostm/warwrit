@@ -216,69 +216,73 @@ describe('combat V2 runtime', () => {
   });
 });
 
-it('bridge-v3 retains immobile targets, rejects forbidden actions atomically and replays fists', () => {
-  const base = setupV2();
-  const setup: BattleSetupV2 = {
-    ...base,
-    rulesetId: 'm1-domain-bridge-v3',
-    sides: [{ ...base.sides[0], retreatHexes: [{ q: 0, r: 0 }] }, base.sides[1]],
-    units: base.units.map((entry, index) => ({
-      ...entry,
-      weaponId: index === 0 ? 'fists' : entry.weaponId,
-      attributes: { ...entry.attributes, initiative: index === 0 ? 120 : 20, accuracy: 100 },
-      initialPools: { ...entry.initialPools, stamina: 80 },
-      capabilities: { move: false, attack: index === 0, defend: index === 0, retreat: false },
-    })),
-  };
-  const started = startBattleV2(setup);
-  const state = started.state;
-  expect(state.activation?.unitId).toBe(setup.units[0]!.id);
-  for (const intent of [
-    { type: 'move' as const, to: { q: -1, r: 0 } },
-    { type: 'retreat' as const },
-  ]) {
-    const rejected = applyCombatCommand(state, {
-      ...intent,
-      commandId: commandId('forbidden'),
+it.each([3, 4] as const)(
+  'bridge-v%s retains immobile targets, rejects forbidden actions atomically and replays fists',
+  (version) => {
+    const base = setupV2();
+    const setup: BattleSetupV2 = {
+      ...base,
+      rulesetId: version === 4 ? 'm1-domain-bridge-v4' : 'm1-domain-bridge-v3',
+      sides: [{ ...base.sides[0], retreatHexes: [{ q: 0, r: 0 }] }, base.sides[1]],
+      units: base.units.map((entry, index) => ({
+        ...entry,
+        weaponId: index === 0 ? 'fists' : entry.weaponId,
+        attributes: { ...entry.attributes, initiative: index === 0 ? 120 : 20, accuracy: 100 },
+        initialPools: { ...entry.initialPools, stamina: 80 },
+        capabilities: { move: false, attack: index === 0, defend: index === 0, retreat: false },
+        ...(version === 4 ? { skillRanks: {}, moralePolicy: 'human' as const } : {}),
+      })),
+    };
+    const started = startBattleV2(setup);
+    const state = started.state;
+    expect(state.activation?.unitId).toBe(setup.units[0]!.id);
+    for (const intent of [
+      { type: 'move' as const, to: { q: -1, r: 0 } },
+      { type: 'retreat' as const },
+    ]) {
+      const rejected = applyCombatCommand(state, {
+        ...intent,
+        commandId: commandId('forbidden'),
+        actorId: state.activation!.unitId,
+        activationId: state.activation!.id,
+      });
+      expect(rejected).toMatchObject({ ok: false, error: { code: 'ACTION_NOT_AVAILABLE' } });
+      expect(rejected.state).toBe(state);
+      expect(rejected.state.random.draws).toBe(0);
+    }
+    const attack = {
+      type: 'attack' as const,
+      commandId: commandId('fists'),
       actorId: state.activation!.unitId,
       activationId: state.activation!.id,
-    });
-    expect(rejected).toMatchObject({ ok: false, error: { code: 'ACTION_NOT_AVAILABLE' } });
-    expect(rejected.state).toBe(state);
-    expect(rejected.state.random.draws).toBe(0);
-  }
-  const attack = {
-    type: 'attack' as const,
-    commandId: commandId('fists'),
-    actorId: state.activation!.unitId,
-    activationId: state.activation!.id,
-    targetId: setup.units[1]!.id,
-  };
-  const hit = applyCombatCommand(state, attack);
-  expect(hit.ok).toBe(true);
-  if (!hit.ok) throw new Error(hit.error.code);
-  expect(hit.events).toContainEqual(
-    expect.objectContaining({
-      type: 'unit.damaged',
-      rawDamage: 6,
-      armorAbsorbed: 5,
-      healthDamage: 1,
-      armorDamage: 5,
-    }),
-  );
-  expect(hit.state.activation?.remainingActionPoints).toBe(2);
-  expect(hit.state.units[0]!.stamina).toBe(72);
-  expect(
-    canonicalCombatState(replayCombat({ schemaVersion: 2, setup, commands: [attack] }).state),
-  ).toBe(canonicalCombatState(hit.state));
-  expect(() => startBattleV2({ ...setup, rulesetId: 'm1-domain-bridge-v2' })).toThrow();
-  expect(() =>
-    startBattleV2({
-      ...setup,
-      units: setup.units.map(({ capabilities: _capabilities, ...entry }) => entry),
-    }),
-  ).toThrow();
-});
+      targetId: setup.units[1]!.id,
+    };
+    const hit = applyCombatCommand(state, attack);
+    expect(hit.ok).toBe(true);
+    if (!hit.ok) throw new Error(hit.error.code);
+    expect(hit.events).toContainEqual(
+      expect.objectContaining({
+        type: 'unit.damaged',
+        rawDamage: 6,
+        armorAbsorbed: 5,
+        healthDamage: 1,
+        armorDamage: 5,
+      }),
+    );
+    expect(hit.state.activation?.remainingActionPoints).toBe(2);
+    expect(hit.state.units[0]!.stamina).toBe(72);
+    expect(
+      canonicalCombatState(replayCombat({ schemaVersion: 2, setup, commands: [attack] }).state),
+    ).toBe(canonicalCombatState(hit.state));
+    expect(() => startBattleV2({ ...setup, rulesetId: 'm1-domain-bridge-v2' })).toThrow();
+    expect(() =>
+      startBattleV2({
+        ...setup,
+        units: setup.units.map(({ capabilities: _capabilities, ...entry }) => entry),
+      }),
+    ).toThrow();
+  },
+);
 
 it('wait-only bridge-v3 actors remain targetable and autoplay terminates at the round limit', () => {
   const base = setupV2();
@@ -297,4 +301,96 @@ it('wait-only bridge-v3 actors remain targetable and autoplay terminates at the 
   expect(result.state.outcome?.reason).toBe('round-limit');
   expect(result.state.units.every((unit) => unit.status === 'active')).toBe(true);
   expect(result.commands.every((command) => command.type === 'wait')).toBe(true);
+});
+
+it('keeps v4 terrain, canonical preview costs, capabilities and replay without changing v3', async () => {
+  const core = await import('../index.js');
+  const legacy = setupV2();
+  const setup: BattleSetupV2 = {
+    ...legacy,
+    rulesetId: core.M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+    map: { ...legacy.map, tiles: [{ q: -1, r: 0, height: 1, terrain: 'mud' }] },
+    units: legacy.units.map((entry, index) => ({
+      ...entry,
+      weaponId: index === 0 ? 'fists' : entry.weaponId,
+      initialPools: { ...entry.initialPools, stamina: 70 },
+      capabilities: { move: true, attack: true, defend: true, retreat: true },
+      skillRanks: {},
+      moralePolicy: index === 0 ? 'human' : 'beast',
+    })),
+  };
+  expect(() =>
+    startBattleV2({
+      ...setup,
+      units: setup.units.map((unit, index) =>
+        index === 0 ? { ...unit, skillRanks: { rally: 1 } } : unit,
+      ),
+    }),
+  ).toThrow('Unmapped campaign skills are unavailable');
+  const before = JSON.stringify(setup);
+  const initial = startBattleV2(setup).state;
+  expect(initial.activation?.remainingActionPoints).toBe(4);
+  expect(initial.map.tiles).toEqual(setup.map.tiles);
+  expect(core.getCombatSkills(initial, initial.units[0]!.id)).toEqual([]);
+  const move = core
+    .previewCombatMovement(initial)
+    .find((option) => option.to.q === -1 && option.to.r === 0)!;
+  expect(move).toMatchObject({ actionPointCost: 3, staminaCost: 9 });
+  const command = {
+    type: 'move' as const,
+    commandId: commandId('weighted-path'),
+    activationId: initial.activation!.id,
+    actorId: initial.activation!.unitId,
+    to: move.to,
+  };
+  const accepted = applyCombatCommand(initial, command);
+  expect(accepted.ok).toBe(true);
+  if (!accepted.ok) throw new Error('previewed move rejected');
+  expect(accepted.state.activation?.remainingActionPoints).toBe(1);
+  expect(accepted.state.units.find((entry) => entry.id === command.actorId)?.stamina).toBe(71);
+  expect(
+    core.verifyCombatReplay(
+      { schemaVersion: 2, setup: JSON.parse(before), commands: [command] },
+      accepted.state,
+    ).matches,
+  ).toBe(true);
+  expect(JSON.stringify(setup)).toBe(before);
+  const immobile = {
+    ...initial,
+    units: initial.units.map((entry) =>
+      entry.id === initial.activation!.unitId
+        ? { ...entry, capabilities: { move: false, attack: true, defend: true, retreat: false } }
+        : entry,
+    ),
+  };
+  const panickedSetup: BattleSetupV2 = {
+    ...setup,
+    units: setup.units.map((unit, index) =>
+      index === 0
+        ? {
+            ...unit,
+            capabilities: { move: false, attack: true, defend: true, retreat: false },
+            initialPools: { ...unit.initialPools, morale: 10 },
+          }
+        : unit,
+    ),
+  };
+  const panicked = startBattleV2(panickedSetup).state;
+  const automatic = core.chooseTacticalCombatCommand(panicked);
+  expect(automatic.type).toBe('wait');
+  expect(applyCombatCommand(panicked, automatic).ok).toBe(true);
+  expect(core.previewCombatMovement(immobile)).toEqual([]);
+  expect(applyCombatCommand(immobile, { ...command, type: 'flee' })).toMatchObject({
+    ok: false,
+    state: immobile,
+  });
+  const oldSetup: BattleSetupV2 = {
+    ...setup,
+    rulesetId: core.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+    units: setup.units.map(({ skillRanks: _ranks, moralePolicy: _policy, ...entry }) => entry),
+  };
+  const oldState = startBattleV2(oldSetup).state;
+  expect(oldState.map.tiles).toBeUndefined();
+  expect(core.getCombatSkills(oldState, oldState.units[0]!.id)).toEqual([]);
+  expect(core.combatRules(oldState.rulesetId).recovery.staminaPerActivation).toBe(18);
 });

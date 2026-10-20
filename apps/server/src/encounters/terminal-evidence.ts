@@ -391,6 +391,16 @@ export function prepareFirstHuntTerminalEvidence(input: {
     leaderUnit !== undefined &&
     kernelState.units.find((unit) => unit.id === leaderUnit.unitId)?.health === 0;
 
+  if (
+    kernelState.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
+    kernelState.units.some(
+      (unit) =>
+        unit.status === 'surrendered' ||
+        (unit.sideId !== 'first-hunt-companies' && unit.status === 'retreated'),
+    )
+  )
+    return notReady('TERMINAL_DISPOSITION_EVIDENCE_MISSING');
+
   const terminalSourceEventId = `encounter:${input.encounterId}:terminal`;
   const dispositions = active.binding.participants
     .filter((entry) => entry.companyId === input.companyId)

@@ -1,3 +1,4 @@
+import { isEncounterTacticalPreviewDto } from '@warwrit/protocol';
 import type {
   EncounterControlGrantDto,
   EncounterCommandDto,
@@ -52,7 +53,7 @@ function readUnit(value: unknown): EncounterPublicUnitDto | undefined {
     !isSafeInteger(r) ||
     !isSafeInteger(health) ||
     health < 0 ||
-    !['active', 'dead', 'retreated'].includes(String(status))
+    !['active', 'dead', 'retreated', 'surrendered'].includes(String(status))
   )
     return undefined;
   return Object.freeze({
@@ -290,7 +291,9 @@ function readActorActions(
     !ids.includes(value['actorId']) ||
     !Array.isArray(value['permittedIntents']) ||
     !value['permittedIntents'].every((intent) =>
-      ['move', 'attack', 'defend', 'wait', 'retreat'].includes(intent),
+      ['move', 'attack', 'defend', 'wait', 'retreat', 'flee', 'surrender', 'autoplay'].includes(
+        intent,
+      ),
     ) ||
     new Set(value['permittedIntents']).size !== value['permittedIntents'].length ||
     !value['permittedIntents'].includes('wait')
@@ -312,9 +315,17 @@ export function readEncounterControlGrant(
   const hasSelfAfk = Object.hasOwn(value, 'selfAfk');
   const hasResumeEpoch = Object.hasOwn(value, 'resumeRequestedAfterEpoch');
   const actorActions = readActorActions(value['actorActions'], ids);
+  const hasTactical = Object.hasOwn(value, 'tactical');
+  const tactical = readTacticalGrant(value['tactical'], actorActions);
+  if (hasTactical && !tactical) return undefined;
+
   if (
     Object.keys(value).length !==
-      4 + Number(hasSelfAfk) + Number(hasResumeEpoch) + Number(actorActions !== undefined) ||
+      4 +
+        Number(hasSelfAfk) +
+        Number(hasResumeEpoch) +
+        Number(actorActions !== undefined) +
+        Number(hasTactical) ||
     hasSelfAfk !== hasResumeEpoch ||
     actorActions === null ||
     Object.keys(value).some(
@@ -326,6 +337,7 @@ export function readEncounterControlGrant(
           'controllableUnitIds',
           'selfAfk',
           'actorActions',
+          'tactical',
           'resumeRequestedAfterEpoch',
         ].includes(key),
     ) ||
@@ -344,6 +356,7 @@ export function readEncounterControlGrant(
     revision: value['revision'],
     controllableUnitIds: Object.freeze([...ids]) as readonly string[],
     ...(actorActions ? { actorActions } : {}),
+    ...(tactical ? { tactical } : {}),
     ...(hasSelfAfk ? { selfAfk: value['selfAfk'] as boolean } : {}),
     ...(hasResumeEpoch
       ? { resumeRequestedAfterEpoch: value['resumeRequestedAfterEpoch'] as number | null }
@@ -472,6 +485,16 @@ export function encounterConditionAllows(
   return (
     actions.activationId === activationId &&
     actions.actorId === actorId &&
-    actions.permittedIntents.includes(intent)
+    actions.permittedIntents.some((permitted) => permitted === intent)
   );
+}
+
+function readTacticalGrant(
+  value: unknown,
+  actions: EncounterControlGrantDto['actorActions'] | null,
+): EncounterControlGrantDto['tactical'] {
+  if (!isEncounterTacticalPreviewDto(value) || !actions) return undefined;
+  if (value.activationId !== actions.activationId || value.actorId !== actions.actorId)
+    return undefined;
+  return structuredClone(value);
 }

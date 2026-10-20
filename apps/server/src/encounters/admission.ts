@@ -279,6 +279,7 @@ export async function admitFirstHuntInTransaction(input: {
       morale: hostile.attributes['morale']!,
       stamina: hostile.attributes['stamina']!,
     },
+    ...(profile.instanceId === 'ci.m1.wolf-trail.01' ? { moralePolicy: 'beast' as const } : {}),
     initialPools: {
       health: hostile.currentPools['health']!,
       armor: hostile.currentPools['armor']!,
@@ -300,7 +301,10 @@ export async function admitFirstHuntInTransaction(input: {
     setup: {
       schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
       battleId: combat.battleId(encounterId),
-      rulesetId: combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      rulesetId:
+        profile.instanceId === 'ci.m1.wolf-trail.01'
+          ? combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
+          : combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
       seed: world.seed,
       map: profile.combatMap,
       sides: [

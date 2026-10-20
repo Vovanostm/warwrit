@@ -1,3 +1,4 @@
+import { combatActionAllowed, isTacticalV3Ruleset } from './rules.js';
 import { previewWeaponDamage } from './damage-preview.js';
 import { compareHex, hexDistance, hexKey } from './hex.js';
 import {
@@ -10,7 +11,6 @@ import {
 import { prototypeLineOfSight } from './sprite-prototype.js';
 import {
   COMBAT_SKILL_IDS,
-  SPRITE_PROTOTYPE_V3_RULESET_ID,
   type BattleState,
   type CombatSkillId,
   type CombatUnitState,
@@ -120,7 +120,7 @@ export function getCombatSkills(
   state: BattleState,
   actorId?: UnitId,
 ): readonly LearnedCombatSkill[] {
-  if (state.rulesetId !== SPRITE_PROTOTYPE_V3_RULESET_ID) return [];
+  if (!isTacticalV3Ruleset(state.rulesetId)) return [];
   const actor = state.units.find((unit) => unit.id === (actorId ?? state.activation?.unitId));
   if (!actor) return [];
   return COMBAT_SKILLS.flatMap((skill) => {
@@ -178,6 +178,8 @@ function skillActorFailure(
 ): CombatFailureCode | undefined {
   if (state.status !== 'active') return 'BATTLE_TERMINAL';
   if (state.activation?.unitId !== actor.id || actor.status !== 'active') return 'NOT_ACTIVE_UNIT';
+  if (!combatActionAllowed(state, actor, skill.skillId === 'shield-brace' ? 'defend' : 'attack'))
+    return 'ACTION_NOT_AVAILABLE';
   if (isCombatPanicked(state, actor)) return 'PANICKED';
   if (!skill.equipmentAvailable || actor.threatProfile !== undefined) return 'SKILL_NOT_AVAILABLE';
   return undefined;
@@ -234,8 +236,7 @@ export interface CombatSkillReach {
 }
 
 function skillReachActor(state: BattleState, actorId: UnitId): CombatUnitState | undefined {
-  if (state.rulesetId !== SPRITE_PROTOTYPE_V3_RULESET_ID || state.status !== 'active')
-    return undefined;
+  if (!isTacticalV3Ruleset(state.rulesetId) || state.status !== 'active') return undefined;
   if (state.activation?.unitId !== actorId) return undefined;
   return state.units.find((unit) => unit.id === actorId && unit.status === 'active');
 }

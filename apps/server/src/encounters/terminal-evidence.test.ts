@@ -5,8 +5,28 @@ import { describe, expect, it } from 'vitest';
 import { prepareFirstHuntTerminalEvidence } from './terminal-evidence.js';
 import type { TerminalCommandRow } from './terminal-evidence.js';
 
-function resolvedBattle(killLeader = false) {
-  const fixture = createCompanyCombatAggregateFixture(false, killLeader ? 100 : 10_000);
+function resolvedBattle(killLeader = false, retreatVersion?: 3 | 4, leaderHealth = 100) {
+  let fixture = createCompanyCombatAggregateFixture(false, killLeader ? leaderHealth : 10_000);
+  if (retreatVersion) {
+    const evidence = {
+      ...fixture.f.evidence,
+      setup: {
+        ...fixture.f.evidence.setup,
+        rulesetId:
+          retreatVersion === 4
+            ? combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
+            : combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      },
+    };
+    const begun = combat.prepareBeginCombatAggregate(
+      fixture.state,
+      fixture.f.sources,
+      fixture.f.request,
+      evidence,
+    );
+    if (begun.kind !== 'PREPARED') throw new Error('Retreat fixture admission failed');
+    fixture = { ...fixture, begun };
+  }
   const companyId = fixture.f.root.lifecycle.companyId;
   const leaderId =
     fixture.f.root.lifecycle.company?.actingLeaderId ??
@@ -48,6 +68,27 @@ function resolvedBattle(killLeader = false) {
                   : 'aggressive'
                 : 'aggressive',
             );
+    if (retreatVersion) {
+      const base = {
+        commandId: combat.commandId(`retreat-proof-${state.revision}`),
+        activationId: state.activation!.id,
+        actorId: actor.id,
+      };
+      const exits = state.sides.find((side) => side.id === actor.sideId)!.retreatHexes;
+      const onExit = exits.some((exit) => coreHexEqual(exit, actor.position));
+      const freeExit = exits.find(
+        (exit) =>
+          !state.units.some(
+            (unit) => unit.status === 'active' && coreHexEqual(unit.position, exit),
+          ),
+      );
+      command =
+        actor.sideId === 'a-side' || (!freeExit && !onExit)
+          ? { ...base, type: 'wait' }
+          : onExit
+            ? { ...base, type: 'retreat' }
+            : { ...base, type: 'move', to: freeExit! };
+    }
     let transition = combat.applyCombatCommand(state, command);
     if (!transition.ok && command.type === 'attack') {
       const target = state.units.find((unit) => unit.id === leaderUnit.unitId)!;
@@ -96,8 +137,8 @@ function resolvedBattle(killLeader = false) {
   return { fixture, state, commandRows };
 }
 
-function terminalInput(killLeader = false) {
-  const battle = resolvedBattle(killLeader);
+function terminalInput(killLeader = false, retreatVersion?: 3 | 4, leaderHealth = 100) {
+  const battle = resolvedBattle(killLeader, retreatVersion, leaderHealth);
   const active = battle.fixture.begun.binding;
   const companyId = battle.fixture.f.root.lifecycle.companyId;
   const partyId = active.participants.find(
@@ -200,6 +241,39 @@ describe('FIRST HUNT terminal evidence composition', () => {
     expect(prepared).toEqual({ status: 'NOT_READY', residuals: ['ENCOUNTER_REPLAY_INVALID'] });
   });
 
+  it('ends a company through the existing resolver after its party dies without a successor', () => {
+    // The source fixture supplies one HP before admission; every death and receipt is replayed.
+    const { battle, input } = terminalInput(true, undefined, 1);
+    const leader = input.previous.encounter.active!.binding.participants.find(
+      (participant) => participant.projection.characterId === 'a-leader',
+    )!;
+    expect(battle.state.units.find((unit) => unit.id === leader.unitId)?.health).toBe(0);
+    const before = combat.canonicalStateJson(input.previous);
+    expect(
+      battle.state.units
+        .filter((unit) => unit.sideId === leader.sideId)
+        .every((unit) => unit.health === 0),
+    ).toBe(true);
+    const prepared = prepareFirstHuntTerminalEvidence(input);
+    expect(prepared.status).toBe('READY');
+    if (prepared.status !== 'READY') throw new Error(prepared.residuals.join(','));
+    expect(prepared.finalize.leadership?.command).toMatchObject({
+      type: 'ResolveLeadership',
+      actorRef: { kind: 'SYSTEM', id: 'encounter-runtime' },
+      payload: { mode: 'ACTING' },
+    });
+    expect(prepared.finalize.leadership?.context.facts).toContainEqual(
+      expect.objectContaining({ kind: 'CRISIS', leaderId: 'a-leader', reason: 'LEADER_DIED' }),
+    );
+    expect(prepared.finalState.economy.lifecycle.company?.runStatus).toBe('GAME_OVER');
+    expect(prepared.finalState.encounter.active).toBeNull();
+    expect(prepared.finalState.encounter.completed).toHaveLength(1);
+    expect(combat.readCompanyCombatAggregateState(prepared.finalState)).toEqual(
+      prepared.finalState,
+    );
+    expect(combat.canonicalStateJson(input.previous)).toBe(before);
+  }, 15_000);
+
   // NOT_RUN: the generic fixture needs a long target-combat simulation to force a durable death.
   // Keep the intended residual assertion visible until a small authentic V2 fixture is available.
   it.skip('leaves leadership unresolved when the bound leader dies', () => {
@@ -221,3 +295,25 @@ describe('FIRST HUNT terminal evidence composition', () => {
     });
   });
 });
+
+function coreHexEqual(a: { q: number; r: number }, b: { q: number; r: number }): boolean {
+  return a.q === b.q && a.r === b.r;
+}
+
+it('preserves historical retreat settlement but leaves new tactical hostile retreat pending', () => {
+  for (const version of [3, 4] as const) {
+    const { battle, input } = terminalInput(false, version);
+    expect(
+      battle.state.units
+        .filter((unit) => unit.sideId === 'b-side')
+        .every((unit) => unit.status === 'retreated'),
+    ).toBe(true);
+    const result = prepareFirstHuntTerminalEvidence(input);
+    if (version === 3) expect(result.status, JSON.stringify(result)).toBe('READY');
+    else
+      expect(result).toEqual({
+        status: 'NOT_READY',
+        residuals: ['TERMINAL_DISPOSITION_EVIDENCE_MISSING'],
+      });
+  }
+}, 15_000);

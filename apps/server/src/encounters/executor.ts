@@ -107,10 +107,7 @@ async function replayMatches(
       encounter.setup.rulesetId === combat.M0_COMBAT_RULESET_ID;
     const companyBindingEncounter =
       encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
-      encounter.setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION &&
-      (encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_RULESET_ID ||
-        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
-        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID);
+      isPersistentEncounterSetup(encounter.setup);
     if (
       (!fixtureEncounter && !companyBindingEncounter) ||
       encounter.setup.battleId !== encounter.id ||
@@ -245,7 +242,7 @@ async function replayMatches(
         return false;
       if (
         row.source_kind === 'system_ai' &&
-        JSON.stringify(combat.chooseAiCommand(sourceReplayState, actorController!.doctrine)) !==
+        JSON.stringify(chooseEncounterAi(sourceReplayState, actorController!.doctrine)) !==
           JSON.stringify(row.command)
       )
         return false;
@@ -462,7 +459,18 @@ export async function prepareCompanyTerminalEvidence(
   });
 }
 
+function chooseEncounterAi(
+  state: combat.BattleState,
+  doctrine: combat.AiDoctrine,
+): combat.CombatCommand {
+  return state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
+    ? combat.chooseTacticalCombatCommand(state)
+    : combat.chooseAiCommand(state, doctrine);
+}
+
 function bodyDigest(command: EncounterCommandDto): Buffer {
+  if (command.version === 2)
+    return createHash('sha256').update(combat.canonicalJson(command)).digest();
   return createHash('sha256')
     .update(
       JSON.stringify([
@@ -793,7 +801,24 @@ function toCombatCommand(dto: EncounterCommandDto): combat.CombatCommand {
     case 'move':
       return { ...base, type: 'move', to: combat.hex(dto.intent.to.q, dto.intent.to.r) };
     case 'attack':
-      return { ...base, type: 'attack', targetId: combat.unitId(dto.intent.targetId) };
+    case 'prepare-threat':
+    case 'retarget-threat':
+      return { ...base, type: dto.intent.type, targetId: combat.unitId(dto.intent.targetId) };
+    case 'use-skill':
+      return {
+        ...base,
+        type: 'use-skill',
+        skillId: dto.intent.skillId,
+        ...(dto.intent.targetId === undefined
+          ? {}
+          : { targetId: combat.unitId(dto.intent.targetId) }),
+      };
+    case 'flee':
+    case 'surrender':
+    case 'execute-threat':
+      return { ...base, type: dto.intent.type };
+    case 'autoplay':
+      throw new TypeError('Autoplay must resolve under the encounter lock');
     case 'defend':
     case 'wait':
     case 'retreat':
@@ -981,7 +1006,15 @@ export async function executeEncounterCommand(
       if (commandTick === null) return rejected('CONFLICT');
     }
 
-    const command = toCombatCommand(dto);
+    if (dto.version === 2 && state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID)
+      return rejected('INVALID_COMMAND');
+    const command =
+      dto.intent.type === 'autoplay'
+        ? {
+            ...combat.chooseTacticalCombatCommand(state),
+            commandId: combat.commandId(dto.commandId),
+          }
+        : toCombatCommand(dto);
     const acceptedResponse = await persistTransition(transaction, encounter, command, {
       kind: 'account',
       accountId,
@@ -1132,10 +1165,7 @@ export async function executeEncounterAiWake(
       controller?.admission_source === 'fixture';
     const worldHostileAi =
       encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
-      encounter.setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION &&
-      (encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_RULESET_ID ||
-        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
-        encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID) &&
+      isPersistentEncounterSetup(encounter.setup) &&
       controller?.admission_source === 'world_hostile';
     const admissionAuthority = await sql<{ readonly accepted: boolean }>`
       select ${aiWakeAdmissionAuthority(
@@ -1151,7 +1181,7 @@ export async function executeEncounterAiWake(
       !(await replayMatches(transaction, encounter))
     )
       return undefined;
-    const command = combat.chooseAiCommand(encounter.state, controller.doctrine);
+    const command = chooseEncounterAi(encounter.state, controller.doctrine);
     const nowMs = Date.now();
     const commandTick = worldHostileAi
       ? await campaignTickAtRequest(transaction, encounter.world_id ?? WORLD_ID, nowMs)
@@ -1313,4 +1343,16 @@ export async function verifyEncounterReplay(
       const encounter = encounterResult.rows[0];
       return encounter === undefined ? false : replayMatches(transaction, encounter);
     });
+}
+
+function isPersistentEncounterSetup(setup: EncounterStoredRow['setup']): boolean {
+  return (
+    setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION &&
+    [
+      combat.M1_DOMAIN_BRIDGE_RULESET_ID,
+      combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID,
+      combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+    ].some((id) => id === setup.rulesetId)
+  );
 }

@@ -13,6 +13,7 @@ import {
   huntProfile,
   M1_DOMAIN_BRIDGE_V2_RULESET_ID,
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   parseCompanyCommand,
   PHYSICAL_POLICY_VERSION,
   prepareConsumeCombatAggregate,
@@ -535,7 +536,8 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
   if (
     setup.schemaVersion !== COMBAT_V2_SCHEMA_VERSION ||
     (setup.rulesetId !== M1_DOMAIN_BRIDGE_V2_RULESET_ID &&
-      setup.rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID) ||
+      setup.rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
+      setup.rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID) ||
     setup.units.length !== state.units.length ||
     !(await verifyEncounterReplayRow(transaction, encounter))
   )

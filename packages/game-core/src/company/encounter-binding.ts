@@ -1,10 +1,15 @@
 import { startBattleV2 } from '../combat/runtime-v2.js';
-import { M1_DOMAIN_BRIDGE_V3_RULESET_ID, type BattleSetupV2 } from '../combat/setup-v2.js';
+import {
+  M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  type BattleSetupV2,
+} from '../combat/setup-v2.js';
 import type { BattleId, Hex, SideId, UnitId } from '../combat/types.js';
 import {
   projectCharacterCombatWithMorale,
   type CharacterCombatMoraleProjection,
   type CharacterCombatMoraleProjectionV3,
+  type CharacterCombatMoraleProjectionV4,
 } from './combat-morale.js';
 import { canPerform, sameLocation, validateLifecycleGraph } from './lifecycle-state.js';
 import type { AtLocation, LifecycleContext } from './lifecycle-types.js';
@@ -59,6 +64,7 @@ export interface EncounterWorldParticipant {
   readonly weaponId: BattleSetupV2['units'][number]['weaponId'];
   readonly attributes: BattleSetupV2['units'][number]['attributes'];
   readonly initialPools: BattleSetupV2['units'][number]['initialPools'];
+  readonly moralePolicy?: 'human' | 'beast' | 'steady';
 }
 
 /** Legacy evidence bytes remain company-only; world bindings require their own version. */
@@ -87,7 +93,10 @@ type FrozenBindingBase = {
     readonly unitId: UnitId;
     readonly sideId: SideId;
     readonly position: Hex;
-    readonly projection: CharacterCombatMoraleProjection | CharacterCombatMoraleProjectionV3;
+    readonly projection:
+      | CharacterCombatMoraleProjection
+      | CharacterCombatMoraleProjectionV3
+      | CharacterCombatMoraleProjectionV4;
     readonly vitals: ReturnType<typeof physicalVitals>;
     readonly equipment: readonly ReturnType<
       typeof ownPhysical<MaterializedCompanyState['physical']['items'][number]>
@@ -181,7 +190,8 @@ export function prepareEncounterBinding(
       requirePhysical(placements.length === 1, 'INVALID_SOURCE');
       const placement = placements[0]!;
       claim(units, placement.unitId);
-      const v3 = evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID;
+      const v4 = evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+      const v3 = evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || v4;
       requirePhysical(
         v3
           ? character.presence.availability === 'AVAILABLE' &&
@@ -191,7 +201,7 @@ export function prepareEncounterBinding(
         'INCOMPATIBLE_ACTIVITY',
       );
       const projection = v3
-        ? projectCharacterCombatWithMorale(root, characterId, 3)
+        ? projectCharacterCombatWithMorale(root, characterId, v4 ? 4 : 3)
         : projectCharacterCombatWithMorale(root, characterId);
       const equipment = root.physical.items.filter(
         (item) => item.tombstone === null && item.equipped?.characterId === characterId,
@@ -248,7 +258,13 @@ export function prepareEncounterBinding(
     weaponId: participant.projection.weapon.profileId,
     attributes: participant.projection.attributes,
     initialPools: participant.projection.current,
-    ...(participant.projection.schemaVersion === 3
+    ...(participant.projection.schemaVersion === 4
+      ? {
+          skillRanks: participant.projection.skillRanks,
+          moralePolicy: participant.projection.moralePolicy,
+        }
+      : {}),
+    ...(participant.projection.schemaVersion === 3 || participant.projection.schemaVersion === 4
       ? { capabilities: participant.projection.capabilities }
       : {}),
   }));
@@ -259,7 +275,11 @@ export function prepareEncounterBinding(
     weaponId: participant.weaponId,
     attributes: participant.attributes,
     initialPools: participant.initialPools,
-    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
+      ? { skillRanks: {}, moralePolicy: participant.moralePolicy }
+      : {}),
+    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
       ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
       : {}),
   }));

@@ -11,6 +11,7 @@ import {
   M1_DOMAIN_BRIDGE_RULESET_ID,
   M1_DOMAIN_BRIDGE_V2_RULESET_ID,
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   type BattleSetupV2,
 } from '../combat/setup-v2.js';
 import { isCompanyFinanceShape, validateEconomy } from './economy-state.js';
@@ -446,10 +447,7 @@ function bindingShape(value: unknown): boolean {
     !bindingVersionsMatch(value) ||
     !Number.isSafeInteger(value['lastAppliedRevision']) ||
     (worldBinding && !worldParticipantsShape(value['worldParticipants'])) ||
-    ((worldBinding ||
-      (value['setup'] as Record<string, unknown>)['rulesetId'] ===
-        M1_DOMAIN_BRIDGE_V3_RULESET_ID) &&
-      !worldBindingMembersMatch(value))
+    (bindingNeedsMemberMatch(value) && !worldBindingMembersMatch(value))
   )
     return false;
   try {
@@ -494,10 +492,13 @@ function worldParticipantsShape(value: unknown): boolean {
           'weaponId',
           'attributes',
           'initialPools',
+          ...(plainObject(entry) && Object.hasOwn(entry, 'moralePolicy') ? ['moralePolicy'] : []),
         ]) &&
         ['entityId', 'sourceId', 'unitId', 'sideId', 'weaponId'].every((key) =>
           isEntityId(entry[key]),
         ) &&
+        (entry['moralePolicy'] === undefined ||
+          ['human', 'beast', 'steady'].includes(entry['moralePolicy'] as string)) &&
         entry['entityId'] === entry['unitId'] &&
         hexShape(entry['position']) &&
         combatUnitValuesShape(entry),
@@ -533,9 +534,14 @@ function bindingParticipantShape(entry: unknown): boolean {
 
 function bindingVersionsMatch(value: Record<string, unknown>): boolean {
   const setup = value['setup'] as Record<string, unknown>;
-  const v3 = setup['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID;
+  const expected =
+    setup['rulesetId'] === M1_DOMAIN_BRIDGE_V4_RULESET_ID
+      ? 4
+      : setup['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+        ? 3
+        : 2;
   return (value['participants'] as Record<string, unknown>[]).every(
-    (entry) => ((entry['projection'] as Record<string, unknown>)['schemaVersion'] === 3) === v3,
+    (entry) => (entry['projection'] as Record<string, unknown>)['schemaVersion'] === expected,
   );
 }
 
@@ -583,7 +589,12 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
         weaponId: weapon['profileId'],
         attributes: projection['attributes'],
         initialPools: projection['current'],
-        ...(projection['schemaVersion'] === 3 ? { capabilities: projection['capabilities'] } : {}),
+        ...(projection['schemaVersion'] === 4
+          ? { skillRanks: projection['skillRanks'], moralePolicy: projection['moralePolicy'] }
+          : {}),
+        ...(projection['schemaVersion'] === 3 || projection['schemaVersion'] === 4
+          ? { capabilities: projection['capabilities'] }
+          : {}),
       }) === canonicalJson(setupUnit)
     );
   });
@@ -602,7 +613,11 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
         weaponId: participant['weaponId'],
         attributes: participant['attributes'],
         initialPools: participant['initialPools'],
-        ...(setup['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+        ...(setup['rulesetId'] === M1_DOMAIN_BRIDGE_V4_RULESET_ID
+          ? { skillRanks: {}, moralePolicy: participant['moralePolicy'] }
+          : {}),
+        ...(setup['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+        setup['rulesetId'] === M1_DOMAIN_BRIDGE_V4_RULESET_ID
           ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
           : {}),
       }) === canonicalJson(setupUnit)
@@ -621,7 +636,7 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
 
 function battleGeometryShape(value: Record<string, unknown>): boolean {
   return (
-    mapShape(value['map']) &&
+    mapShape(value['map'], value['rulesetId'] === M1_DOMAIN_BRIDGE_V4_RULESET_ID) &&
     Array.isArray(value['sides']) &&
     value['sides'].length === 2 &&
     value['sides'].every(
@@ -641,7 +656,8 @@ function setupV2Shape(value: unknown): boolean {
     !isEntityId(value['battleId']) ||
     (value['rulesetId'] !== M1_DOMAIN_BRIDGE_RULESET_ID &&
       value['rulesetId'] !== M1_DOMAIN_BRIDGE_V2_RULESET_ID &&
-      value['rulesetId'] !== M1_DOMAIN_BRIDGE_V3_RULESET_ID) ||
+      value['rulesetId'] !== M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
+      value['rulesetId'] !== M1_DOMAIN_BRIDGE_V4_RULESET_ID) ||
     !Number.isSafeInteger(value['seed']) ||
     !battleGeometryShape(value) ||
     !Array.isArray(value['units']) ||
@@ -654,9 +670,14 @@ function setupV2Shape(value: unknown): boolean {
           'weaponId',
           'attributes',
           'initialPools',
-          ...(value['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID ? ['capabilities'] : []),
+          ...(value['rulesetId'] === M1_DOMAIN_BRIDGE_V4_RULESET_ID
+            ? ['capabilities', 'skillRanks', 'moralePolicy']
+            : value['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+              ? ['capabilities']
+              : []),
         ]) &&
         capabilitiesShape(entry['capabilities'], value['rulesetId']) &&
+        tacticalProjectionFieldsShape(entry, value['rulesetId']) &&
         isEntityId(entry['id']) &&
         isEntityId(entry['sideId']) &&
         hexShape(entry['position']) &&
@@ -792,7 +813,8 @@ function battleStateShape(value: unknown): boolean {
 }
 
 function capabilitiesShape(value: unknown, rulesetId: unknown): boolean {
-  return rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+  return rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+    rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
     ? shape(value, ['move', 'attack', 'defend', 'retreat']) &&
         Object.values(value).every((entry) => typeof entry === 'boolean')
     : value === undefined;
@@ -813,9 +835,14 @@ function battleUnitShape(value: unknown, rulesetId: unknown): boolean {
       'guarding',
       'status',
       'wounds',
-      ...(rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ? ['capabilities'] : []),
+      ...(rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
+        ? ['capabilities', 'skillRanks', 'moralePolicy']
+        : rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID
+          ? ['capabilities']
+          : []),
     ]) &&
     capabilitiesShape(value['capabilities'], rulesetId) &&
+    tacticalProjectionFieldsShape(value, rulesetId) &&
     isEntityId(value['id']) &&
     isEntityId(value['sideId']) &&
     hexShape(value['position']) &&
@@ -842,9 +869,24 @@ function battleUnitShape(value: unknown, rulesetId: unknown): boolean {
     )
   );
 }
-function mapShape(value: unknown): boolean {
+function mapShape(value: unknown, tactical = false): boolean {
   return (
-    shape(value, ['hexes', 'blocked']) &&
+    shape(value, [
+      'hexes',
+      'blocked',
+      ...(tactical && plainObject(value) && Object.hasOwn(value, 'tiles') ? ['tiles'] : []),
+    ]) &&
+    (!plainObject(value) ||
+      value['tiles'] === undefined ||
+      (Array.isArray(value['tiles']) &&
+        value['tiles'].every(
+          (tile) =>
+            shape(tile, ['q', 'r', 'height', 'terrain']) &&
+            Number.isSafeInteger(tile['q']) &&
+            Number.isSafeInteger(tile['r']) &&
+            [0, 1, 2].includes(tile['height'] as number) &&
+            ['plain', 'mud', 'fire'].includes(tile['terrain'] as string),
+        ))) &&
     Array.isArray(value['hexes']) &&
     value['hexes'].every(hexShape) &&
     Array.isArray(value['blocked']) &&
@@ -965,16 +1007,11 @@ function projectionShape(value: unknown): boolean {
       'attributes',
       'current',
       'morale',
-      ...(plainObject(value) && value['schemaVersion'] === 3 ? ['capabilities'] : []),
+      ...projectionAdditionalKeys(value),
     ]) &&
-    (value['schemaVersion'] === 2 || value['schemaVersion'] === 3) &&
-    capabilitiesShape(value['capabilities'], value['combatRulesetId']) &&
+    projectionVersionShape(value) &&
     isEntityId(value['catalogueVersion']) &&
     isEntityId(value['domainRulesetId']) &&
-    value['combatRulesetId'] ===
-      (value['schemaVersion'] === 3
-        ? M1_DOMAIN_BRIDGE_V3_RULESET_ID
-        : M1_DOMAIN_BRIDGE_RULESET_ID) &&
     isEntityId(value['characterId']) &&
     projectionEquipmentShape(value) &&
     isEntityIdList(value['conditionIds']) &&
@@ -997,7 +1034,7 @@ function projectionShape(value: unknown): boolean {
 
 function projectionEquipmentShape(value: Record<string, unknown>): boolean {
   return (
-    ((value['schemaVersion'] === 3 &&
+    (((value['schemaVersion'] === 3 || value['schemaVersion'] === 4) &&
       shape(value['weapon'], [
         'profileId',
         'itemId',
@@ -1074,5 +1111,47 @@ function moraleProjectionShape(value: unknown): boolean {
     isEntityId(leader['effectiveLeaderId']) &&
     isEntityIdList(leader['contributingPerkIds']) &&
     Number.isSafeInteger(leader['startingMorale'])
+  );
+}
+
+/** Frozen v4 campaign inputs deliberately have no mapped learned actions. */
+function tacticalProjectionFieldsShape(
+  value: Record<string, unknown>,
+  rulesetId: unknown,
+): boolean {
+  return (
+    rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    (shape(value['skillRanks'], []) &&
+      ['human', 'beast', 'steady'].includes(value['moralePolicy'] as string))
+  );
+}
+
+function bindingNeedsMemberMatch(value: Record<string, unknown>): boolean {
+  const ruleset = (value['setup'] as Record<string, unknown>)['rulesetId'];
+  return (
+    value['version'] === FIRST_HUNT_WORLD_BINDING_VERSION ||
+    ruleset === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+    ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID
+  );
+}
+function projectionAdditionalKeys(value: unknown): readonly string[] {
+  if (!plainObject(value)) return [];
+  if (value['schemaVersion'] === 4) return ['capabilities', 'skillRanks', 'moralePolicy'];
+  return value['schemaVersion'] === 3 ? ['capabilities'] : [];
+}
+function projectionVersionShape(value: Record<string, unknown>): boolean {
+  const version = value['schemaVersion'];
+  const expected =
+    version === 4
+      ? M1_DOMAIN_BRIDGE_V4_RULESET_ID
+      : version === 3
+        ? M1_DOMAIN_BRIDGE_V3_RULESET_ID
+        : M1_DOMAIN_BRIDGE_RULESET_ID;
+  return (
+    [2, 3, 4].includes(version as number) &&
+    value['combatRulesetId'] === expected &&
+    capabilitiesShape(value['capabilities'], expected) &&
+    tacticalProjectionFieldsShape(value, expected) &&
+    (version !== 4 || value['moralePolicy'] === 'human')
   );
 }

@@ -1,5 +1,5 @@
 import { previewWeaponDamage } from './damage-preview.js';
-import { isSpriteS4Ruleset } from './rules.js';
+import { combatActionAllowed, isSpriteS4Ruleset } from './rules.js';
 import { isCombatPanicked } from './rules.js';
 import { compareHex, hexDistance, hexEquals, hexNeighbors } from './hex.js';
 import { combatReactionControllers } from './reaction.js';
@@ -182,7 +182,11 @@ export function choosePanicCombatCommand(state: BattleState): CombatCommand | un
   if (actor === undefined || state.activation === null || !isCombatPanicked(state, actor))
     return undefined;
   return {
-    type: canCombatSurrender(state, actor) ? 'surrender' : 'flee',
+    type: canCombatSurrender(state, actor)
+      ? 'surrender'
+      : combatActionAllowed(state, actor, 'flee')
+        ? 'flee'
+        : 'wait',
     actorId: actor.id,
     activationId: state.activation.id,
     commandId: commandId(`ai:${state.activation.id}:${state.revision}:panic`),

@@ -187,8 +187,12 @@ function validateCompanyBinding(root: MaterializedCompanyState, journal: CombatR
         participant.revision === root.lifecycle.revision &&
         participant.physicalPolicyVersion === root.physical.policyVersion &&
         canonicalJson(
-          participant.projection.schemaVersion === 3
-            ? projectCharacterCombatWithMorale(root, characterId, 3)
+          participant.projection.schemaVersion === 3 || participant.projection.schemaVersion === 4
+            ? projectCharacterCombatWithMorale(
+                root,
+                characterId,
+                participant.projection.schemaVersion as 3 | 4,
+              )
             : projectCharacterCombatWithMorale(root, characterId),
         ) === canonicalJson(participant.projection) &&
         canonicalJson(physicalVitals(root.physical, characterId)) ===
@@ -219,8 +223,18 @@ function validateBoundUnits(binding: FrozenEncounterBinding): void {
         unit.weaponId === participant.projection.weapon.profileId &&
         canonicalJson(unit.capabilities ?? null) ===
           canonicalJson(
-            participant.projection.schemaVersion === 3 ? participant.projection.capabilities : null,
+            participant.projection.schemaVersion === 3 || participant.projection.schemaVersion === 4
+              ? participant.projection.capabilities
+              : null,
           ) &&
+        canonicalJson(unit.skillRanks ?? null) ===
+          canonicalJson(
+            participant.projection.schemaVersion === 4 ? participant.projection.skillRanks : null,
+          ) &&
+        unit.moralePolicy ===
+          (participant.projection.schemaVersion === 4
+            ? participant.projection.moralePolicy
+            : undefined) &&
         canonicalJson(unit.attributes) === canonicalJson(participant.projection.attributes) &&
         canonicalJson(unit.initialPools) === canonicalJson(participant.projection.current),
       'INVALID_SOURCE',

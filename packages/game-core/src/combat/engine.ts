@@ -1,10 +1,16 @@
-import { M1_DOMAIN_BRIDGE_V3_RULESET_ID, validateCombatCapabilities } from './setup-v2.js';
+import { isTacticalV3Ruleset } from './rules.js';
+import {
+  M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  validateCombatCapabilities,
+  validatePersistentTacticalInputs,
+} from './setup-v2.js';
 import {
   validateUnitIdentity,
   validateUnitPosition,
   validateCombatMap,
+  validateCombatTiles,
   createUnitAdmission,
-  validateHex,
   validateInteger,
 } from './setup-validation.js';
 import {
@@ -14,7 +20,7 @@ import {
   validateCombatSkillRanks,
 } from './skills.js';
 import { isSpriteS4Ruleset } from './rules.js';
-import { SPRITE_PROTOTYPE_V3_RULESET_ID, type UseSkillCommand } from './types.js';
+import { type UseSkillCommand } from './types.js';
 import { combatReactionControllers } from './reaction.js';
 import { assertNever, invariant } from '../primitives.js';
 import { findPath, hexDistance, hexEquals, hexKey } from './hex.js';
@@ -181,7 +187,7 @@ function validateSetupAttributes(
   );
   invariant(validateCombatSkillRanks(unit.skillRanks), 'Invalid combat skill ranks');
   invariant(
-    unit.skillRanks === undefined || rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID,
+    unit.skillRanks === undefined || isTacticalV3Ruleset(rulesetId),
     'Skills require sprite-prototype-v3',
   );
 }
@@ -210,22 +216,7 @@ function validateSetup(setup: BattleSetup, rules: CombatRules): void {
       isSpritePrototypeRuleset(setup.rulesetId),
       'Terrain tiles require sprite-prototype-v1',
     );
-    const tileKeys = new Set<string>();
-    for (const [index, tile] of setup.map.tiles.entries()) {
-      validateHex(tile, `map.tiles[${index}]`);
-      const key = hexKey(tile);
-      invariant(mapKeys.has(key), `Terrain tile ${key} must exist in the battle map`);
-      invariant(!tileKeys.has(key), `Terrain tile ${key} must be unique`);
-      tileKeys.add(key);
-      invariant(
-        tile.height === 0 || tile.height === 1 || tile.height === 2,
-        `Terrain tile ${key} height must be 0, 1 or 2`,
-      );
-      invariant(
-        tile.terrain === 'plain' || tile.terrain === 'mud' || tile.terrain === 'fire',
-        `Terrain tile ${key} has an unknown terrain`,
-      );
-    }
+    validateCombatTiles(setup.map);
   }
 
   const { sideIds, unitIds, occupied, unitsPerSide } = createUnitAdmission(
@@ -1034,10 +1025,9 @@ function resolveCombatStrike(
       weapon,
     );
     const remainingHealth = Math.max(0, target.health - healthDamage);
-    const actualHealthDamage =
-      state.rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID
-        ? target.health - remainingHealth
-        : healthDamage;
+    const actualHealthDamage = isTacticalV3Ruleset(state.rulesetId)
+      ? target.health - remainingHealth
+      : healthDamage;
     const remainingArmor = Math.max(0, target.armor - armorDamage);
     let damagedTarget: CombatUnitState = {
       ...target,
@@ -1675,10 +1665,10 @@ export function assertBattleState(state: BattleState): void {
     invariant(mapKeys.has(blocked), `Blocked state hex ${blocked} must exist on the map`);
   }
 
+  if (state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID) validateCombatTiles(state.map);
   const activePositions = new Set<string>();
   for (const unit of state.units) {
-    if (state.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID)
-      validateCombatCapabilities(unit.capabilities, state.rulesetId);
+    assertUnitVersionState(unit, state.rulesetId);
     weaponProfile(rules, unit.weaponId);
     assertUnitPools(unit, rules);
     if (unit.status === 'active') {
@@ -1723,4 +1713,22 @@ export function assertBattleState(state: BattleState): void {
       );
     }
   }
+}
+
+function assertUnitVersionState(unit: CombatUnitState, rulesetId: BattleState['rulesetId']): void {
+  if (rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID)
+    validateCombatCapabilities(unit.capabilities, rulesetId);
+  if (rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID) assertPersistentTacticalUnit(unit);
+}
+
+function assertPersistentTacticalUnit(unit: CombatUnitState): void {
+  validatePersistentTacticalInputs(unit);
+  invariant(
+    ['active', 'dead', 'retreated', 'surrendered'].includes(unit.status),
+    'Invalid combat status',
+  );
+  invariant(
+    unit.reactionSpent === undefined || typeof unit.reactionSpent === 'boolean',
+    'Invalid reaction state',
+  );
 }

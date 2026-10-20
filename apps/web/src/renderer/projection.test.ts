@@ -257,3 +257,53 @@ it('binds condition controls to the actor and activation without making hints au
   expect(encounterConditionAllows(grant, '3:a', 'unit-a', 'wait')).toBe(false);
   expect(encounterConditionAllows(grant, '4:a', 'foreign', 'wait')).toBe(false);
 });
+
+it('accepts only account-owned activation previews and detaches their quoted paths', () => {
+  const source = {
+    version: 1,
+    encounterId: 'encounter-1',
+    revision: 4,
+    controllableUnitIds: ['unit-a'],
+    actorActions: {
+      activationId: 'turn-a',
+      actorId: 'unit-a',
+      permittedIntents: ['move', 'wait', 'autoplay'],
+    },
+    tactical: {
+      activationId: 'turn-a',
+      actorId: 'unit-a',
+      actionPoints: 4,
+      stamina: 80,
+      moves: [
+        {
+          to: { q: 1, r: 0 },
+          path: [{ q: 1, r: 0 }],
+          actionPointCost: 1,
+          staminaCost: 4,
+          fireDamage: 0,
+          reactionCount: 0,
+        },
+      ],
+      attacks: [
+        {
+          targetId: 'unit-b',
+          hitChance: 70,
+          actionPointCost: 3,
+          staminaCost: 12,
+          damage: { health: { minimum: 1, maximum: 6 }, armor: { minimum: 0, maximum: 2 } },
+        },
+      ],
+    },
+  };
+  const grant = readEncounterControlGrant(source, 'encounter-1');
+  expect(grant?.tactical?.moves[0]?.actionPointCost).toBe(1);
+  source.tactical.moves[0]!.path[0]!.q = 3;
+  expect(grant?.tactical?.moves[0]?.path[0]?.q).toBe(1);
+  for (const tactical of [
+    { ...source.tactical, actorId: 'foreign-unit' },
+    { ...source.tactical, activationId: 'old-turn' },
+    { ...source.tactical, seed: 19 },
+    { ...source.tactical, moves: [{ ...source.tactical.moves[0], skillRanks: {} }] },
+  ])
+    expect(readEncounterControlGrant({ ...source, tactical }, 'encounter-1')).toBeUndefined();
+});

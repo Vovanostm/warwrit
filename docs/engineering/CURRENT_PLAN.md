@@ -1,5 +1,31 @@
 # Warwrit current delivery plan
 
+**Bounded bridge165 author journey — 2026-10-20, LOCAL / audit pending:**
+New wolf-hunt admission uses bridge-v4/projection4, actual roster, canonical
+private movement/attack quotes and durable V2/requested-autoplay commands.
+Author real two-company6v3 journey reached victory46, exact retries, active
+process restart12 and once-only company effects/one proof. No payment, terminal
+crash-window, mapped skills, new terrain content or independent acceptance.
+196focusedPASS/1preexistingSKIP; normal audit first lacked coverage, then found
+new cycles/duplication/complexity. Corrected version guards and finite practice
+owner restructuring are under final audit/reconstruction; no bypass or commit
+claimed yet. [Owning behavior](../wiki/combat.md#persistent-tactical-wolf-hunt--2026-10-20).
+Parent owns integrated validation/review/publication; #166 retains HUD migration.
+
+**Profile delivered / tactical bridge active — 2026-10-20:**
+[PR241](https://github.com/Vovanostm/warwrit/pull/241) merged137faf88. Checked and
+merged trees match; CI39383402818 SUCCESS (893PASS/48SKIP,10000stress,15realDB/auth,
+coverage/audit). Owner policy and independent readback ACCEPT are retained in the
+[profile packet](evidence/core-company-profile/README.md). Actual-main profile
+smoke PASS (real PostgreSQL mixed JOIN/retry/reload,1PASS/13filteredSKIP) and
+main CI39384644400 SUCCESS; #164 CLOSED/agent:done. No payment/terminal-browser
+or full-M1 claim.
+One core writer starts #165 from that actual main in codex/tactical-bridge-165:
+existing wolf hunt/actual roster, canonical tactical rules, unavailable unmapped
+abilities and pending unsupported surrender without proof/payment. #166 retains
+HUD migration. Actor186 keeps its separate lab-scene writer. Parent owns shared
+records and serial check windows; implementation/acceptance of #165 NOT_RUN.
+
 **Profile241 accepted locally — 2026-10-20, publication/CI pending:**
 Approved-policy source readback ACCEPTbc4d88e; current head a9207d76 adds only
 the owner's decision/documents. Coordinator validator EXIT0/8of8,

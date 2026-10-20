@@ -2,7 +2,12 @@ import { invariant } from '../primitives.js';
 import { assertBattleState, effectiveInitiative } from './engine.js';
 import { createRandomState } from './random.js';
 import { combatRules, compareCombatUnitIds } from './rules.js';
-import { validateBattleSetupV2, type BattleSetupV2, type CombatUnitSetupV2 } from './setup-v2.js';
+import {
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  validateBattleSetupV2,
+  type BattleSetupV2,
+  type CombatUnitSetupV2,
+} from './setup-v2.js';
 import { COMBAT_SCHEMA_VERSION } from './types.js';
 import type {
   ActivationStartedEvent,
@@ -25,6 +30,7 @@ function materializeUnit(unit: CombatUnitSetupV2): CombatUnitState {
   return {
     ...setup,
     ...(unit.capabilities ? { capabilities: { ...unit.capabilities } } : {}),
+    ...(unit.skillRanks ? { skillRanks: { ...unit.skillRanks } } : {}),
     position: copyHex(unit.position),
     attributes: { ...unit.attributes },
     health: initialPools.health,
@@ -80,6 +86,9 @@ export function startBattleV2(setup: BattleSetupV2): CombatTransition {
     map: {
       hexes: setup.map.hexes.map(copyHex),
       blocked: setup.map.blocked.map(copyHex),
+      ...(setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID && setup.map.tiles !== undefined
+        ? { tiles: setup.map.tiles.map((tile) => ({ ...tile })) }
+        : {}),
     },
     sides: [
       { id: setup.sides[0].id, retreatHexes: setup.sides[0].retreatHexes.map(copyHex) },

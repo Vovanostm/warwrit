@@ -6,6 +6,7 @@ import { invariant } from '../primitives.js';
 import { compareHex, hexDistance, hexKey, hexNeighbors } from './hex.js';
 import {
   isSpritePrototypeRuleset,
+  combatActionAllowed,
   combatHitChance,
   combatRules,
   compareCombatUnitIds,
@@ -297,6 +298,7 @@ export function findPrototypeAttackRoute(state: BattleState): PrototypeAttackRou
 
 export function previewCombatMovement(state: BattleState): readonly CombatMovementPreview[] {
   if (!isPrototype(state)) return [];
+  if (state.activation && !combatActionAllowed(state, activeActor(state), 'move')) return [];
   return movementField(state);
 }
 
@@ -390,6 +392,8 @@ export function ordinaryCombatAttackFailure(
   state: BattleState,
   actor: CombatUnitState,
 ): CombatWeaponAttackFailure | undefined {
+  if (!combatActionAllowed(state, actor, 'attack'))
+    return { code: 'ACTION_NOT_AVAILABLE', message: 'Attack is unavailable to this participant' };
   if (isCombatPanicked(state, actor))
     return { code: 'PANICKED', message: 'Panicked units must escape or surrender' };
   if (isSpriteS4Ruleset(state.rulesetId) && actor.threatProfile === 'mill-slam')

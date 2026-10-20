@@ -73,3 +73,16 @@ Final local gate on a9207d76: coordinator validator EXIT0,8/8 PASS,
 ACCEPTbc4d88e confirms unchanged profile production, exact capability matrix and
 binding/reload enforcement. Later evidence records are documentation only.
 Publish this accepted candidate and require fresh exact-head CI before merge.
+
+## Actual main closeout — 2026-10-20
+
+PR241 merged as `137faf881a639f70fb35bee28ffa61a825afdc12`; PR CI39383402818
+and main CI39384644400 SUCCESS. The checked and actual merged trees match.
+On that clean main checkout, isolated PostgreSQL migrations and the existing
+`admits a mixed unarmed company` JOIN/retry/reload integration test passed:
+1 PASS,13 filtered SKIP. The owned compose project was removed afterward.
+Local execution log: codex-company-profile-164/.orca/core-company-profile/main-db-check-current.log.
+[#164 closure readback](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6285584520)
+confirms CLOSED/agent:done. This bounded smoke supplements the attributed
+continuous fight/restart evidence above; it does not prove payment, terminal
+browser acceptance, rescue/transport or the successor tactical bridge.
