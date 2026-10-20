@@ -1,5 +1,23 @@
 # Warwrit current delivery plan
 
+**Persistent HUD active / bridge delivered — 2026-10-20:**
+[PR246](https://github.com/Vovanostm/warwrit/pull/246) merged1f37cb6a after
+independent source/playable recovery ACCEPT and exact-head CI39405429269 SUCCESS:
+911PASS/49SKIP,10000combat stress,16real database/auth tests,migrations,coverage/audit.
+Reviewed/synthetic-merge/actual-main trees match; #165 CLOSED. Actual-main
+read-only replay of retained46 and both saved company roots matches exactly;
+no fresh browser/restart is claimed for that readback. Main CI is running.
+[Delivery record](evidence/core-tactical-bridge/main-readback.md).
+
+Next approved observable outcome: the real wolf-hunt encounter opens the shared
+fullscreen commander interface with authoritative quotes, matching hover/target,
+queue/cards, camera and reconnect. #166 uses the existing isolated uix-w1-scene
+checkout on `codex/persistent-hud-166`, base1f37cb6a; primary dirty prototype remains
+untouched. One implementation writer owns the coupled presentation/protocol/readers;
+parent retains shared documents/integration. No new mechanics, skill mappings,
+custody, rescue or continuous autoplay; first path retains one requested action.
+Source implementation and current independent visual/playable acceptance NOT_RUN.
+
 **Bounded bridge ready to publish — 2026-10-20, LOCAL:**
 Integrated5221ebe3 on main6b5b1b03 passes coordinator validator8/8,
 793PASS/49SKIP and normal audit. Independent frozen source/test and actual

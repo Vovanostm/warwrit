@@ -2,7 +2,9 @@
 
 2026-10-20, `codex/tactical-bridge-165`, integrated candidate `5221ebe3`, base
 `6b5b1b03`; reaction correction `d618b3a9`, terminal correction `d82d0eb9`. Owner mission “Implement, review, merge” authorizes delivery after
-review and gates. Publication, hosted CI and merge are pending.
+review and gates. [PR246](https://github.com/Vovanostm/warwrit/pull/246) is now
+MERGED1f37cb6a; [actual-main readback](main-readback.md) supersedes the earlier
+pending delivery statuses below.
 
 New ordinary wolf-hunt admission uses bridge-v4/projection4 with actual company
 members, 4 AP, canonical movement/attack quotes, reactions, tactical opponents

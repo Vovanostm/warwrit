@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Deliver the bridge and start the persistent commander interface — 2026-10-20
+
+- `codex/tactical-bridge-165`, MERGED [PR246](https://github.com/Vovanostm/warwrit/pull/246)
+  as1f37cb6a. Exact-head CI39405429269 SUCCESS:911PASS/49SKIP,10000stress,
+  16realDB/auth,migrations,coverage/audit. Independent source/recovery ACCEPT;
+  actual-main retained46 replay and both persisted roots match. #165 CLOSED.
+  [Readback and limits](docs/engineering/evidence/core-tactical-bridge/main-readback.md).
+- `codex/persistent-hud-166`, local: activate the approved shared commander
+  presentation on that actual main. One coupled writer; parent owns records
+  and final gates. Implementation/playable/visual acceptance pending; no new
+  combat rules, continuous autoplay, payment or full-M1 claim.
+
 ### Accept the integrated persistent bridge — 2026-10-20, LOCAL
 
 - `codex/tactical-bridge-165`, integrated5221ebe3: coordinator validator8/8,
