@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+**Retained DB6 recovered into isolated clone — 2026-10-20, LOCAL:**
+Original disposable container disappeared after host interruption; its surviving
+PG17 anonymous volume was mounted read-only and copied to a separate durable
+volume. Clone WAL recovery/native readback matches retained encounter40, both
+companies, receipts, proof and ownership. Original volume untouched; no reseed.
+Browser/pickup/payment continuation still pending. #248 exact food regression
+now handles the lawful successor-choice prerequisite; the worker-race
+explanation was rejected. Final exact food/retry coverage2PASS/14filteredSKIP,
+independent source ACCEPT. Commit/integration/runtime/publication gates pending.
+[Recovery and check boundaries](evidence/persistent-hud/main-readback.md).
+
 **Persistent HUD delivered / representative recovery active — 2026-10-20:**
 [PR247](https://github.com/Vovanostm/warwrit/pull/247) merged7a7f1f18;
 #166 CLOSED/agent:done. Reviewed662d676, tested merge0ef9c136 and actual-main
@@ -21,7 +32,33 @@ the payment/restart continuation; canonical game state is not reseeded. Airtable
 Notes updated/read back exactly; Empirical remains storage-blocked/NOT_WRITTEN.
 The renewed synthetic sessions restore both same-company UIs with captured
 canonical tables unchanged; no new authentication proof. Runtime source remains
-7a7f1f18; main CI39449025408 pending.
+7a7f1f18; main CI39449025408 SUCCESS.
+
+The first ordinary trophy pickup rejected409/CAPACITY at public revision4;
+the UI had offered fixture-supply with101.5kg free container space. Native
+readback confirms the proof remains on the ground and company/items/wallets
+are unchanged. Pickup/payment/process restart is not passed. Read-only diagnosis
+confirms134800g carried against90000g party capacity; the1500g proof would
+increase overload. Canonical rejection is correct; target projection only
+checks container space. One source investigation owns the minimal projection
+fix; evaluator seeks lawful existing unloading/consumption. No reseed or
+fixture repair may hide this failure.
+
+[Pickup correction248](https://github.com/Vovanostm/warwrit/issues/248) now owns
+contracts/routes.ts and one real-PG regression in encounters/postgres.integration.test.ts.
+Reuse existing pure pickup preparation; no duplicated load rule or capacity
+relaxation. Frozen source/test independent review ACCEPT; focused real-PG
+regression and delivery remain pending. Fail-before reproduces the offered-target
+assertion. A correctly placed elapsed-tick diagnostic now isolates the earlier
+terminal failures: helper food was in STATIC storage rather than carried
+supplies. Independent review confirms a fixture precondition gap, not a food
+policy defect. The corrected tests preserve the unchanged-lifecycle case and
+separately check elapsed time with valid carried food; checks/review are active. Existing UI
+has no unloading command; consuming enough food would take31campaign days.
+Retain DB6/failed receipt unchanged. A separate DB7 will start with valid
+production-like supplies for fresh lawful battle→pickup→payment→restart proof;
+this cannot establish recovery of DB6 or erase its failure. Preparation only
+until serial check/runtime windows are released.
 
 Separately, #187 consumer is active in clean `codex/combat-range-187` at7a7f1f18,
 checkout `codex-tactical-bridge-165` (historical directory name). One web writer
@@ -32,6 +69,11 @@ journey runs; no concurrent heavy checks or runtime changes. New consumer
 implementation/acceptance remains pending. A preparatory report from stale
 primary b44f5c1 was rejected and replaced with an exact-current-checkout brief;
 no edit was made from the stale report.
+
+Next core work is tracked separately in [bow implementation249](https://github.com/Vovanostm/warwrit/issues/249),
+following the already-approved3AP decision218. It has not started; current
+4AP rules remain until a new compatible tactical ruleset is delivered. Trained
+melee225 follows with its refreshed contract; no repeated owner question.
 
 **Persistent HUD hosted integration correction — 2026-10-20, PUBLISHED / REWORK:**
 PR247 correction72da1e3 passes clean local validator8/8,252PASS/49SKIP.

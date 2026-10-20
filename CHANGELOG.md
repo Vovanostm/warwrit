@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Preserve retained hunt recovery evidence — 2026-10-20, LOCAL
+
+- `codex/representative-hunt-recovery`: recover DB6 into an isolated durable
+  clone after the disposable container disappeared. Native saved identities,
+  encounter40, companies, receipts and proof match; original volume untouched.
+  Pickup/payment/browser continuation remains pending. Retain the exact food
+  regression failure and unresolved terminal settlement in the
+  [owning record](docs/engineering/evidence/persistent-hud/main-readback.md).
+
+### Align trophy pickup offers with canonical admission — 2026-10-20, LOCAL
+
+- `codex/representative-hunt-recovery`, [issue248](https://github.com/Vovanostm/warwrit/issues/248):
+  a real UI pickup rejected CAPACITY because its offered container had room but
+  the party was already overloaded. Reuse existing pure pickup admission for
+  the target projection; no carrying-rule or migration change. Frozen source/test
+  independent review ACCEPT; final real-PG focused coverage2PASS/14filteredSKIP
+  on2026-10-21. Exact fractional food/retry assertions retain unchanged ration
+  quantity and one terminal receipt. Audit/integration/runtime delivery pending. Preserve failed DB6 and receipt; a separate valid-load
+  fixture must prove its own journey. [Evidence](docs/engineering/evidence/persistent-hud/main-readback.md).
+
 ### Deliver the persistent commander and continue the hunt — 2026-10-20
 
 - `codex/persistent-hud-166`, MERGED [PR247](https://github.com/Vovanostm/warwrit/pull/247)
@@ -19,7 +39,10 @@ requests.
 - `codex/representative-hunt-recovery`, LOCAL: activate only the approved
   representative wolf-trophy→payment→restart check for #174/#177 using retained
   DB6. Fixture provenance and broader recovery/content/owner-test gaps remain
-  explicit; no full-M1 or deployment claim. Runtime result pending.
+  explicit; no full-M1 or deployment claim. Session renewal preserved canonical
+  game state; ordinary trophy pickup rejected409/CAPACITY despite the offered
+  destination. No partial mutation; payment/restart remain NOT_RUN. Read-only
+  diagnosis is active, and main CI39449025408 is now SUCCESS.
 
 ### Align persistent HUD integration expectations — 2026-10-20, LOCAL / REWORK
 
