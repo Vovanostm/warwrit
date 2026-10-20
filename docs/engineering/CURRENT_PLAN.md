@@ -1,5 +1,12 @@
 # Warwrit current delivery plan
 
+**Picker PR243 correction — 2026-10-20, LOCAL ACCEPT / CI pending:**
+Independent [correction review](evidence/uix-preset-picker/review-ci-1.md)
+ACCEPT38c57915; unchanged production retains Tier U ACCEPT049b6cb6.
+Parent validator EXIT0/8of8,5tests PASS; web compile inputs contain no server/core.
+Failed CI39369463852 is retained; publish this corrected head and require fresh
+hosted success before expected-head merge. No production or dependency change.
+
 **Picker PR243 — 2026-10-20, CI correction in progress:**
 CI39369463852 failed the clean parallel build: the new web test pulled in server
 source and an undeclared core dependency. Parent replaces that import with an

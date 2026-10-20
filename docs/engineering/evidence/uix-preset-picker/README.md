@@ -28,3 +28,15 @@ No migration, dependency, core rule or new art change. Whole-scene acceptance,
 performance and the campaign contract/payment/restart journey are not proved by
 this UI slice. #227 keeps its separate visual gate. Full raw evidence remains
 local at `.orca/uix-preset-picker/eval1-shots/`; no browser profiles are published.
+
+## Clean-build correction — 2026-10-20
+
+First hosted CI39369463852 FAILED: the new test's server-catalog import pulled
+an undeclared core dependency into the concurrent web build. Correction38c57915
+uses an independent two-fighter public DTO fixture; production source is
+unchanged. [Independent correction review](review-ci-1.md) ACCEPT, prior Tier U
+production acceptance retained. Parent validator EXIT0/8of8, five tests PASS;
+web compilation input list contains zero server/core paths. No build/gate or
+package dependency changed. Fresh hosted CI is pending. The reviewer launcher
+initially lacked its ignored resume wrapper; no agent started, the wrapper was
+restored and the existing dispatch completed normally.

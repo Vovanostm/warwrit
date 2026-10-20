@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Accept the picker clean-build correction
+
+- 2026-10-20, branch `codex/preset-picker-228`, published PR243 with local
+  correction38c57915: independent correction review ACCEPT; production journey
+  acceptance retained, validator8/8 and5tests PASS, no server/core files in web
+  compilation inputs. [Review](docs/engineering/evidence/uix-preset-picker/review-ci-1.md).
+  CI39369463852 remains FAILED; correction publication/new CI and merge pending.
+
 ### Remove the picker test dependency on server implementation
 
 - 2026-10-20, branch `codex/preset-picker-228`, local correction to PR243:
