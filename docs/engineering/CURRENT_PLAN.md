@@ -1,5 +1,15 @@
 # Warwrit current delivery plan
 
+**Persistent HUD hosted integration correction — 2026-10-20, PUBLISHED / REWORK:**
+PR247 correction72da1e3 passes clean local validator8/8,252PASS/49SKIP.
+Hosted CI39444350305 passes global dead-code,932unit tests/49SKIP and combat
+stress, then fails2of16real PostgreSQL/auth tests: two exact public-field
+assertions still describe the pre-HUD projection/room schema. Independent
+contract review ACCEPT and isolated fail-before/PASS-after2tests confirm the
+strict correction. No production leak or hosted full-gate PASS is inferred. Source writer owns only the integration
+test, parent owns records; retained DB6 is untouched. Coverage/audit NOT_RUN in
+this hosted attempt. [Evidence](evidence/persistent-hud/README.md).
+
 **Persistent HUD published / hosted cleanup — 2026-10-20:**
 [PR247](https://github.com/Vovanostm/warwrit/pull/247), head62350aff, is open.
 First hosted CI39442491652 fails global dead-code: two legacy battle-art exports

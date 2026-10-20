@@ -1,7 +1,7 @@
 # Persistent commander presentation — #166
 
 2026-10-20, `codex/persistent-hud-166`, base main `1f37cb6a`.
-Status: PUBLISHED as PR247; source/playable/visual accepted; first hosted gate failed on unused legacy art exports, correction in progress.
+Status: PUBLISHED as PR247; source/playable/visual accepted; strict PostgreSQL expectation correction passes locally, refreshed hosted gate and merge pending.
 The owner mission authorizes implementation, review and checked merge.
 
 ## Scope and authority
@@ -464,11 +464,37 @@ retaining only the three nonfatal SupplyShop advisories. Raw log:
 .orca/persistent-hud-166/global-dead-code-corrected.log. Clean correction-commit
 validation and a fresh hosted run remain pending; no full-gate PASS is inferred.
 
+## Corrected-art hosted gate — 2026-10-20
+
+Normal correction commit72da1e3d8c7573b8a1116e0089c50f5beda05cd0 passes
+clean coordinator validation8/8,252PASS/49SKIP (36passed/7skipped files).
+Log: .orca/persistent-hud-166/integrated-cleanup.log.
+Hosted CI39444350305/job118702191243 passes dead-code and unit932PASS/49SKIP,
+then combat stress. The real PostgreSQL/auth suite reports14PASS/2FAIL:
+room-ticket listener public-field allowlist and mixed-company JOIN unit exact
+keys still expect the pre-HUD public shape. Hosted coverage/audit NOT_RUN.
+Failure log: .orca/persistent-hud-166/ci-cleanup.log.
+
+Correction is confined to those existing tests after independent confirmation
+of the intended finite public schema. No broader allowlist, removed privacy
+assertion or production fix is justified by this failure alone. Isolated
+fail-before/PASS-after completed on PostgreSQL17: initial2FAIL/13filteredSKIP;
+first correction1PASS/1FAIL exposed one further old expected-unit comparison;
+final2PASS/13filteredSKIP. Strict independent HTTP and room expectations preserve
+the actual damaged pools, maximumHealth70, both listeners, reconnect, fresh client
+and application/DB reload. Room defaults are explicit; private-field and foreign
+account rejection remain. Independent final actual-diff review ACCEPT. Author
+server types/scoped format/diff PASS. Logs: .orca/persistent-hud-166/pg-shape-before.log,
+pg-shape-after.log and pg-shape-final.log. The dedicated disposable PG17 was
+removed; retained DB6 and accepted live presentation are unchanged. No merge or
+next gameplay yet; fresh hosted verification follows the normal commit.
+
 ## Remaining acceptance
 
 Publish the checked candidate and require hosted CI, expected-head merge and
 actual-main readback.
 Local integrated validation PASS does not substitute for the hosted clean gate;
-publication, hosted CI, merge and actual-main readback are NOT_RUN for #166.
+publication is complete; hosted full-gate success, merge and actual-main readback
+are still pending for #166.
 The [bridge recovery evidence](../core-tactical-bridge/README.md) retains its
 separate scope and cannot substitute for these HUD checks.

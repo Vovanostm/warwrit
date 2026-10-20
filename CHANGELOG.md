@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Align persistent HUD integration expectations — 2026-10-20, LOCAL / REWORK
+
+- `codex/persistent-hud-166`, [PR247](https://github.com/Vovanostm/warwrit/pull/247):
+  CI39444350305 reaches real PostgreSQL checks after932unitPASS/49SKIP and
+  combat stress, then finds two obsolete exact public-shape assertions.
+  Correct only the finite approved room/unit expectations in the existing
+  integration tests; preserve private-field rejection and durable replay checks.
+  Independent actual-diff review ACCEPT; isolated PG17 regression2PASS/13filteredSKIP
+  after reproduced failures. Scoped types/format PASS. No production rule
+  change or migration. [Evidence](docs/engineering/evidence/persistent-hud/README.md).
+
 ### Finish legacy art cleanup after hosted verification — 2026-10-20, PUBLISHED / REWORK
 
 - `codex/persistent-hud-166`, [PR247](https://github.com/Vovanostm/warwrit/pull/247):
