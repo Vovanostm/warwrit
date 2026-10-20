@@ -87,3 +87,16 @@ Author focused tests/types passed. Final mixed-party browser, terminal and real
 process-restart acceptance remain pending; see [combat profile status](../wiki/combat.md#company-profile-implementation--2026-10-20).
 The dated2026-10-02 gaps above are historical, not a current inventory of all UI
 features (for example, food purchase has since been delivered).
+
+## Delivered profile and persistent HUD — 2026-10-20
+
+The earlier policy-pending/local-only profile note is superseded by merged
+PR241 and the owner's explicit decision: critical bleeding permits attack and
+defence while movement and independent retreat are forbidden. Fists retain
+range1/damage6/2AP/8stamina and no weapon-skill XP. Rescue/transport remains
+undefined. The bounded wolf hunt uses the tactical bridge from PR246 and the
+shared fullscreen commander from merged PR247. Unmapped abilities remain
+unavailable; unsupported surrender outcomes remain pending without payment.
+[Current delivery and proof boundaries](evidence/persistent-hud/main-readback.md).
+The representative trophy/payment/restart check is in progress, not full M1
+or a new external sign-in/company-creation acceptance.

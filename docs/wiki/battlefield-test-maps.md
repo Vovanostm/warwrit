@@ -5226,6 +5226,15 @@ integrated validator8/8,250PASS/49SKIP, types/lint/format/audit PASS. Публи
 hosted CI и merge ещё ожидаются; full M1 не заявлена.
 [Результаты и оставшаяся проверка](../engineering/evidence/persistent-hud/README.md).
 
+### Поставка постоянного Пульта — 2026-10-20
+
+PR247 слит как7a7f1f18; #166 закрыта после независимой source/playable/visual
+приёмки и CI39446960412 SUCCESS (932unit/49SKIP,10000stress,16PG/auth,
+coverage/audit). Исправлены выявленные hosted-проверками мёртвые exports и
+устаревшие точные ожидания публичной проекции; приватные данные не раскрыты.
+[Readback и границы](../engineering/evidence/persistent-hud/main-readback.md).
+Путь выплаты и перезапуска продолжается отдельно; полный спринт и M1 не закрыты.
+
 ## Маркер действующего бойца — 2026-10-20
 
 Локальная интеграция `b38e08b5`, ветка `codex/actor-integration-186`: кольцо у ног

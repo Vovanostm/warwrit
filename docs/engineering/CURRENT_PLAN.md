@@ -1,5 +1,33 @@
 # Warwrit current delivery plan
 
+**Pickup248 integrated and ready to publish — 2026-10-21, LOCAL:**
+Actual range mainb0eeb8e8 merged as c5acd803; only additive status-document
+conflicts, both histories preserved. Accepted pickup sourcef439db7 unchanged.
+Normal auditPASS and clean union validator8/8PASS,41relatedPASS/31SKIP.
+Source and saved-state browser ACCEPT plus focused real-PG2PASS retain their
+recorded boundaries. Publish this head, run hosted gate, expected-head merge,
+then DB7 lawful payment/restart. No deployment/fullM1 claim.
+[Owning record](evidence/persistent-hud/main-readback.md).
+
+**Range187 delivered / affordability184 active — 2026-10-21:**
+PR250 merged b0eeb8e87c0a198f05e5d44d0f8ef9d73ae8a05b; reviewed source
+be8efd5, published89ee9afa, tested mergeb65db183 and actual main contents match.
+CI39512315650 attempt2/job118941637716 SUCCESS:937unitPASS/49SKIP,
+10000stress,16realPG/auth,migrations,coverage/audit. Attempt1 passed bootstrap
+but coverage timed out in unchanged world movement test (936PASS/1FAIL/49SKIP);
+isolated diagnostic1PASS and one unchanged-head rerun passed. No gate weakened.
+Independent source/playable/absolute visual ACCEPT; #187 CLOSED/agent:done.
+[Delivery evidence](evidence/range-187/README.md).
+
+#184 starts from this actual main in codex/combat-affordability-184. One web
+writer owns marker/rendering/legend and existing tests; parent owns shared
+records. Server attackAffordableAfter is the only classifier; preserve187 reach
+contour, selected-skill suppression and legacy single-band fallback. Source-only
+window while pickup248 integrates; no parallel heavy checks or gameplay.
+#228 is already delivered by merged PR240/243 and is not a remaining task.
+Existing outcome209–211 work remains retained for later integration; sprint/M1
+are PARTIAL. No new policy, deployment or full-journey claim.
+
 **Range contour187 — 2026-10-20, LOCAL / source, playable and visual ACCEPT:**
 Source `be8efd51709983b62733fa0436d02d975bc3eae5` on actual main7a7f1f18
 separates movement fill from weapon/selected-skill exterior boundaries.
@@ -17,6 +45,94 @@ separately. Pickup248 retains the failed DB6; its elapsed-tick regression expose
 a helper static-food fixture gap, now being corrected without changing food or
 carrying policy. Full sprint/M1 remain partial.
 [Current checks, failures and playable evidence](evidence/range-187/README.md).
+
+**Pickup248 accepted for publication — 2026-10-21, LOCAL:**
+Source f439db7 and evidence af7963e5 retain independent source and recovered-save
+browser ACCEPT: both accounts show no impossible destination/control,0POST,
+11canonical collections unchanged. Focused real-PG coverage2PASS/14filteredSKIP,
+normal auditPASS, clean validator8/8PASS (41relatedPASS/31SKIP). Earlier fixture,
+clock, invocation and capture failures remain in the owning record; none proves
+a production food defect. DB6 remains overloaded with its trophy on the ground.
+DB7 is prepared but unstarted until actual-main integration. Publication/hosted
+CI/merge remain pending; owner mission authorizes merge after those gates.
+[Current results and limits](evidence/persistent-hud/main-readback.md).
+
+**Retained DB6 recovered into isolated clone — 2026-10-20, LOCAL:**
+Original disposable container disappeared after host interruption; its surviving
+PG17 anonymous volume was mounted read-only and copied to a separate durable
+volume. Clone WAL recovery/native readback matches retained encounter40, both
+companies, receipts, proof and ownership. Original volume untouched; no reseed.
+Browser/pickup/payment continuation still pending. #248 exact food regression
+now handles the lawful successor-choice prerequisite; the worker-race
+explanation was rejected. Final exact food/retry coverage2PASS/14filteredSKIP,
+independent source ACCEPT. Normal commit f439db7/auditPASS and clean validator
+8/8PASS (41relatedPASS/31SKIP). Independent recovered-DB6/current-source UI
+readback is active, followed by separateDB7. Publication/merge pending.
+[Recovery and check boundaries](evidence/persistent-hud/main-readback.md).
+
+**Persistent HUD delivered / representative recovery active — 2026-10-20:**
+[PR247](https://github.com/Vovanostm/warwrit/pull/247) merged7a7f1f18;
+#166 CLOSED/agent:done. Reviewed662d676, tested merge0ef9c136 and actual-main
+contents match. CI39446960412 SUCCESS:932unitPASS/49SKIP,10000stress,
+16realPG/auth,migrations,coverage/audit. Independent source/playable/absolute
+visual ACCEPT and both hosted corrections are retained in the
+[delivery readback](evidence/persistent-hud/main-readback.md).
+
+Continue the already-approved representative #174/#177 path from retained DB6
+wolf victory40 on actual main. Sole evaluator owns its local DB/services/browser;
+parent owns records in `codex/representative-hunt-recovery`. Next: ordinary
+pickup→present→actual process kill/restart→same saved result. No new rules,
+source reset, seed or retained player DB mutation. Accounts/starting company
+state are test fixtures; new external OIDC/company-creation/travel proof is not
+claimed. #174/#177 remain OPEN; full sprint/M1 remain PARTIAL. Native actual-main
+readback preserves battle40/companies/proof1; browser reload reached login after
+fixture sessions expired during CI. Fresh same-account fixture sessions precede
+the payment/restart continuation; canonical game state is not reseeded. Airtable
+Notes updated/read back exactly; Empirical remains storage-blocked/NOT_WRITTEN.
+The renewed synthetic sessions restore both same-company UIs with captured
+canonical tables unchanged; no new authentication proof. Runtime source remains
+7a7f1f18; main CI39449025408 SUCCESS.
+
+The first ordinary trophy pickup rejected409/CAPACITY at public revision4;
+the UI had offered fixture-supply with101.5kg free container space. Native
+readback confirms the proof remains on the ground and company/items/wallets
+are unchanged. Pickup/payment/process restart is not passed. Read-only diagnosis
+confirms134800g carried against90000g party capacity; the1500g proof would
+increase overload. Canonical rejection is correct; target projection only
+checks container space. One source investigation owns the minimal projection
+fix; evaluator seeks lawful existing unloading/consumption. No reseed or
+fixture repair may hide this failure.
+
+[Pickup correction248](https://github.com/Vovanostm/warwrit/issues/248) now owns
+contracts/routes.ts and one real-PG regression in encounters/postgres.integration.test.ts.
+Reuse existing pure pickup preparation; no duplicated load rule or capacity
+relaxation. Frozen source/test independent review ACCEPT; focused real-PG
+regression and delivery remain pending. Fail-before reproduces the offered-target
+assertion. A correctly placed elapsed-tick diagnostic now isolates the earlier
+terminal failures: helper food was in STATIC storage rather than carried
+supplies. Independent review confirms a fixture precondition gap, not a food
+policy defect. The corrected tests preserve the unchanged-lifecycle case and
+separately check elapsed time with valid carried food; checks/review are active. Existing UI
+has no unloading command; consuming enough food would take31campaign days.
+Retain DB6/failed receipt unchanged. A separate DB7 will start with valid
+production-like supplies for fresh lawful battle→pickup→payment→restart proof;
+this cannot establish recovery of DB6 or erase its failure. Preparation only
+until serial check/runtime windows are released.
+
+Separately, #187 consumer is active in clean `codex/combat-range-187` at7a7f1f18,
+checkout `codex-tactical-bridge-165` (historical directory name). One web writer
+owns scene/geometry/markers/guidance/styles; parent owns shared records. Only
+weapon/selected-skill union boundary and legend, reusing merged producers.
+#184 bands follow separately. Source-only window while the retained payment
+journey runs; no concurrent heavy checks or runtime changes. New consumer
+implementation/acceptance remains pending. A preparatory report from stale
+primary b44f5c1 was rejected and replaced with an exact-current-checkout brief;
+no edit was made from the stale report.
+
+Next core work is tracked separately in [bow implementation249](https://github.com/Vovanostm/warwrit/issues/249),
+following the already-approved3AP decision218. It has not started; current
+4AP rules remain until a new compatible tactical ruleset is delivered. Trained
+melee225 follows with its refreshed contract; no repeated owner question.
 
 **Persistent HUD hosted integration correction — 2026-10-20, PUBLISHED / REWORK:**
 PR247 correction72da1e3 passes clean local validator8/8,252PASS/49SKIP.

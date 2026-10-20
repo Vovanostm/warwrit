@@ -50,3 +50,21 @@ rubric criteria score2, motion N/A. The critic inspected all62 current PNGs,
 including close/crowd/CVD and the corrected equal-body-height reference sheet.
 [Scored report](visual-review.md). Publication and merge remain pending.
 #184 affordability bands remain separate. Broader sprint and full M1 are partial.
+
+## Published and merged — 2026-10-21
+
+[PR250](https://github.com/Vovanostm/warwrit/pull/250) merged as
+b0eeb8e87c0a198f05e5d44d0f8ef9d73ae8a05b at2026-10-20T23:30:01Z.
+Published89ee9afa and synthetic mergeb65db183 have identical contents; actual
+main also matches. Fresh reviews/threads/blocked-label readback clear; expected
+head used. Issue187 CLOSED/agent:done. Earlier pending statuses are historical.
+
+CI39512315650 attempt1 passed clean bootstrap then coverage failed on an
+unchanged world movement test's5000ms timeout:936PASS/1FAIL/49SKIP; final audit
+NOT_RUN. Isolated direct coverage passed1/9filteredSKIP (1.93s tests). Exactly
+one unchanged-head failed-job retry, attempt2/job118941637716, passed every
+step:937unitPASS/49SKIP,10000stress,16realPG/auth,migrations,coverage and audit.
+No assertions/timeouts/thresholds were changed. Private logs remain
+.orca/range187/hosted-attempt{1,2}.log and world-timeout-focused.log.
+The prior source/playable/visual acceptance applies to the unchanged source.
+No fresh post-merge browser run or arbitrary-terrain guarantee is inferred.
