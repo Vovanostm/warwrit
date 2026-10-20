@@ -1,5 +1,24 @@
 # Warwrit current delivery plan
 
+**Actor review settled / correction active — 2026-10-20, LOCAL REWORK:**
+Independent pass reached actual finalAP4→6, casualty55, threat72 and terminal176
+with marker clearing/restart. It retains finite long-name/input evidence gaps;
+no new live defect reproduced. Parent's separate clamp counterexample remains
+open. Same builder owns its bounded correction and affected proof; evaluator
+resources23033/25033/browser/profile were cleaned. No actor publication/merge.
+Owner also resolved profile164 (attack/defence allowed, movement/retreat blocked)
+and bounded bridge165 scope; PR241 now publishes its accepted candidate.
+
+**Actor placement correction — 2026-10-20, LOCAL / review pending:**
+Parent reproduced a helper-level containment defect on sourceb38e08b5: clamping
+an upward-displaced name back into the opening can restore a reserved-area
+overlap despite free space. Counterexample and minimum correction are retained
+in `.orca/uix-w1-scene/parent-source-review.md`; parent live manifestation is
+NOT_RUN. Independent evaluator is playing the frozen source; no production
+edit until settlement. Refs186 remains unaccepted and unpublished. The same
+builder will fix confirmed findings, followed by affected independent readback
+and the absolute visual gate. Prior passing checks do not close this finding.
+
 **Actor foundation integrated — 2026-10-20, LOCAL / independent gates pending:**
 Source `b38e08b5` combines preserved actor work with merged overview `fe3bcdb4`.
 Current HUD/vitals/letter reservations now precede placement; full badge bounds

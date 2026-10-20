@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Correct the remaining actor placement boundary
+
+- 2026-10-20, branch `codex/actor-integration-186`, local: independent play
+  reached final-AP transition, casualty/threat and terminal176/restart; long-name
+  actor and representative input proof remain incomplete. Parent's reproduced
+  clamp/collision counterexample returns to the original builder. Prior source
+  and runtime evidence retained; no live regression, visual ACCEPT or merge
+  claimed. [Current scope](docs/engineering/CURRENT_PLAN.md).
+
+### Retain the actor placement review finding
+
+- 2026-10-20, branch `codex/actor-integration-186`, local: source review found
+  that final viewport clamping can restore a badge/reservation overlap. The
+  public-helper counterexample reproduced; parent live manifestation NOT_RUN.
+  Correction and independent affected-play/absolute-visual acceptance remain
+  pending. Existing actor checks stay historical evidence, not approval of this
+  defect. [Current delivery boundary](docs/engineering/CURRENT_PLAN.md).
+
 ### Validate the integrated actor foundation
 
 - 2026-10-20, branch `codex/actor-integration-186`, local source `b38e08b5`:

@@ -907,26 +907,27 @@ export async function mountSpriteBattleScene(
     const screenX = (projected.x * viewport.width) / engine.getRenderWidth();
     const screenY = (projected.y * viewport.height) / engine.getRenderHeight();
     const opening = {
-      x: foot.x + (viewport.width / 2 - screenX) / pixelsPerWorld,
+      x: foot.x,
       up: footUp + (screenY - (safeTop + safeBottom) / 2) / pixelsPerWorld,
-      halfWidth: (viewport.width / 2 - 8) / pixelsPerWorld,
+      // A downward chevron stays centred on its actual owner, never another body.
+      halfWidth: Math.min(screenX - 8, viewport.width - screenX - 8) / pixelsPerWorld,
       halfHeight: (safeBottom - safeTop) / 2 / pixelsPerWorld,
     };
+    const minimumUp = footUp + (art.footY - art.visibleBounds[1]) * scale + halfHeight + 0.08;
     const placement = actorBadgePlacement(
       {
         x: foot.x,
-        up: footUp + (art.footY - art.visibleBounds[1]) * scale + halfHeight + 0.08,
+        up: minimumUp,
         halfWidth: width / pixelsPerWorld / 2,
         halfHeight,
       },
       reserved,
       opening,
+      minimumUp,
     );
-    badge.position.copyFrom(foot.add(upAxis.scale(placement.up - footUp)));
-    badge.position.x = placement.x;
     ring.position.copyFrom(foot);
     ring.position.y += 0.13;
-    badge.computeWorldMatrix(true);
+    applyActorBadgePlacement(badge, placement, foot, upAxis);
   };
   // Vitals and ground-linked DOM letters must be laid out before reservations are read.
   scene.onBeforeCameraRenderObservable.add(() => placeActorMarker());
@@ -1457,6 +1458,21 @@ export async function mountSpriteBattleScene(
     },
     destroy,
   };
+}
+
+/** Keep a failed overhead placement explicit instead of drawing an overlapping plaque. */
+function applyActorBadgePlacement(
+  badge: Mesh,
+  placement: LabelBox | null,
+  foot: Vector3,
+  upAxis: Vector3,
+) {
+  badge.setEnabled(placement !== null);
+  badge.metadata.actorBadgePlacement = placement ? 'placed' : 'no-overhead-space';
+  if (!placement) return;
+  badge.position.copyFrom(foot.add(upAxis.scale(placement.up - Vector3.Dot(foot, upAxis))));
+  badge.position.x = placement.x;
+  badge.computeWorldMatrix(true);
 }
 
 /** One static composite; group zero draws after ground cues and before opaque figures. */
