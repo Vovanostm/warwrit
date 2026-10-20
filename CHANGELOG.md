@@ -11,7 +11,7 @@ requests.
 
 ### One coordinator, one issue per PR — 2026-10-21, PUBLISHED
 
-- `claude/orchestration-governance`: owner request «Fix issues. Implement» after
+- `claude/orchestration-governance`, [PR252](https://github.com/Vovanostm/warwrit/pull/252): owner request «Fix issues. Implement» after
   the 2026-10-20 audit. The audit found two coordinators on one queue (a Codex
   desktop mission took the Orca lock on 2026-10-19 while the loop stopped),
   stale `agent:*` labels on #217, merged PRs of 700–3700 lines against the
