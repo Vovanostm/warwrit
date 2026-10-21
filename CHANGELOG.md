@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Recover persistent bow terminal proof — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  round 1 worker failed; preserve staged explicit wolf GET/success test fix and
+  report. Both JOINs now succeed; two isolated-PG runs reach move/shot/replay/retry,
+  then fail at `apps/server/src/encounters/terminal-evidence.ts:149`. Fixture
+  versus production cause remains unestablished; supported terminal proof is open.
+- Author server typecheck/lint PASS; normal commit refused after refreshed
+  coverage (93 audit findings / 5 clone groups). Earlier audit PASS does not
+  supersede this failure. Allocate ordinary round 2 of 2 to root-cause repair
+  and legitimate related current-source coverage with isolated PG available to
+  the normal hook; no guard, assertion, audit or scope waiver.
+- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md); coordinator commits
+  only shared records, leaving both staged worker files for the sole successor.
+  Scoped formatting/diff/readback checks; coordinator game checks NOT_RUN.
+  Fresh validate/Tier L/CI/PR/merge remain pending; no new rule or deployment.
+
 ### Consolidate persistent bow gate rework — 2026-10-21, PUBLISHED
 
 - `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):

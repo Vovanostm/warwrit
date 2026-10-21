@@ -9,29 +9,32 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 Queue: epic #217 plus existing local handover overrides; no new milestone.
 Previously delivered: PR257/#256 merged `d8a04196`, CI `39602921979` SUCCESS,
 validator 9/9 and Tier L ACCEPT; lab acceptance stays separate from #249.
-#249: source `0a38a99b`, pushed clean head `cd487a8e`; retained `e68025b9`
-and ordinary main merge `ba9d47f3` preserved. No open slice PR.
-Source review-1 and evaluator eval-1 both REWORK, same test defect:
-GET reads default raider revision before wolf JOIN; real PG 409 STALE_REVISION,
-1 FAIL / 23 filtered SKIP. Later authored PG assertions were never reached.
-Evaluator settled failed and was acknowledged/released; runtime/DB cleaned.
-Independent native V5 admission → 1 AP move → 3 AP/16-stamina shot, actual
-process restart/exact retry/foreign-actor refusal, genuine old V4 continuation
-and unchanged seven replay baselines passed within eval-1's stated limits.
-Complete day/night rendered move journeys, native 2 AP refusal and supported
-terminal completion/proof/idempotency remain unproven; no acceptance waiver.
-Round 1 combined rework allocated to `task_58d39c57c365`, dispatched after this
-records commit: explicit wolf GET/success checks only in the encounter PG test,
-finite isolated-PG rerun, normal audited commit and report. No production defect
-is established; newly exposed failures require a precise ownership handoff.
-Historical validator 9/9, 671 PASS / 52 SKIP, scope 239 is not a post-fix gate.
-Next: builder settlement, coordinator validate, fresh Tier L reviewer/evaluator;
-publication/CI/merge wait for all criteria. Owning reports remain at the slice's
-`.orca/core-bow-three-ap/{review-1,eval-1,report}.md` (local evidence paths).
+#249: committed source `0a38a99b`, pushed head `3fb0368f`; retained WIP and
+ordinary main merge preserved. No open slice PR; acceptance remains incomplete.
+Round 1 builder settled failed; exact report/result/native dispatch matched,
+recorded, acknowledged and released. Two files remain staged and preserved:
+`apps/server/src/encounters/postgres.integration.test.ts` and the slice report.
+Explicit wolf GET/success checks fix both JOINs. Two real isolated-PG attempts
+now reach V5 move/shot/replay/retry but fail at `terminal-evidence.ts:149`:
+practice action start is not bound to a capable company character. Exact cause
+(fixture or production) remains unestablished; no guard/assertion was weakened.
+Author server types/lint PASS; normal commit failed after refreshed coverage:
+93 audit findings / 5 clone groups. Earlier explicit audit PASS is superseded.
+Round 2 of 2 assigned to `task_f363b29d1678`: diagnose native binding/practice
+inputs, fix the smallest proved owned cause, then finite isolated-PG regression
+and legitimate related coverage/normal hook with the owned database available.
+One core writer; no competing heavy/runtime checks. No rule question is known.
+Historical validator 9/9 and scope 239 are not post-fix gates. Independent
+Tier L review/evaluation must repeat after a clean normal committed result.
+Prior eval-1 native V5 move/shot/restart/retry and genuine V4 continuation retain
+their stated limits. Supported terminal/proof/retry, native 2 AP refusal and
+complete rendered day/night move journeys remain unproven; no acceptance waiver.
+Owning evidence: `.orca/core-bow-three-ap/{report,review-1,eval-1}.md` and
+`rework1-{pg,pg-repro,commit}.log` in that directory; no new wiki behavior claim.
 #184 remains needs-owner at `3963215b`; existing B1 evidence question pending.
 #231 stays first next web slice after #184; other dependencies unchanged.
-Infrastructure PR258 is outside slice merge authority. No blocked label removed.
-This tick: 0 merged PRs with playable proof. No game checks by coordinator;
+Infrastructure PR258 remains outside slice merge authority. No blocked label removed.
+This tick: 0 merged PRs with playable proof. Coordinator game checks NOT_RUN;
 no new rule, migration, deployment, balance measurement or full-M1 claim.
 
 ## Dated history
