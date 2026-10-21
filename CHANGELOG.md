@@ -9,6 +9,37 @@ requests.
 
 ## Unreleased
 
+### Preserve OIDC fix, isolate rollback blocker and advance editor proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-oidc-count-isolation-272`, [#272](https://github.com/Vovanostm/warwrit/issues/272):
+  normal commit `37f35c6b` changes only the OIDC integration test (18 additions,
+  16 removals). One issuer-scoped query includes the rejected /wrong issuer
+  and account-owned sessions; original rejection/login/logout/expiry assertions
+  and ordinary parallel workers remain. This fixes the global-count race;
+  full acceptance and Tier L gates remain pending.
+- Wrong-issuer account and separate session mutations each fail the intended
+  count assertion, then restore: PASS. Server typecheck, changed-file format
+  and ordinary commit audit PASS. Two fresh private PostgreSQL eight-file
+  parallel-suite attempts each fail the existing world-route rollback case
+  with deadlock detected (59 PASS / 1 FAIL); five consecutive passes unmet.
+  Full logs/report remain local at codex-oidc-count-isolation-272/.orca/core-oidc-count-isolation/.
+- Engineering fallback under existing delegation: separate [#282](https://github.com/Vovanostm/warwrit/issues/282)
+  gets a dedicated read-only contract; #272 waits it without resetting scope or
+  weakening proof. Preserve rollback serialization/receipt/clock assertions,
+  default parallelism and OIDC's ordinary concurrent identity writers.
+  Native failed worker settlement recorded before acknowledgment/release;
+  private Compose containers/volumes/network directly confirmed absent.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #271's exclusive
+  runtime permit for independent Tier U after that cleanup; source review has
+  no confirmed defect, complete browser verdict pending. External supervision
+  status is attributed context only; one coordinator and existing scope/gates
+  remain. #267 staged WIP/budgets and original aggregate acceptance retained.
+  Daily work already complete. This tick: 0 merged PRs with playable proof.
+- Source and records published for continuation; no PR/merge or completed
+  player feature claimed. Full verify/stress/migration suites/build NOT_RUN;
+  performance NOT_MEASURED. No production auth, schema, migration, rule,
+  protocol, replay, renderer, dependency, setup or API change; wiki unchanged.
+
 ### Assign isolated OIDC core work alongside editor source work — 2026-10-22, PUBLISHED
 
 - `Vovanostm/codex-oidc-count-isolation-272`: accepted the existing five-section
