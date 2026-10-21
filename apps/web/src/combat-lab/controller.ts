@@ -5,6 +5,8 @@ import {
   type CombatLabView,
 } from '@warwrit/protocol';
 
+import { messageFor, responseCode, type ActiveSession } from './session-transport.js';
+
 const rejectionCodes = new Set([
   'INVALID_REQUEST',
   'UNAUTHORIZED',
@@ -112,4 +114,74 @@ export function commonCombatLabReason(state: {
   if (state.resolved) return 'Бой завершён';
   if (!state.controlling) return 'Ход противника';
   return '';
+}
+
+/** Mutable cells stay owned by CombatLab; callbacks read their current values at invocation. */
+export interface CombatLabSessionPorts {
+  readonly generation: { current: number };
+  readonly sessionRef: { current: ActiveSession | null };
+  readonly sessionAbort: { current: AbortController | null };
+  readonly pendingRef: { current: object | null };
+  readonly deletingRef: { current: boolean };
+  readonly sessionLostRef: { current: boolean };
+  readonly installSession: (next: ActiveSession | null) => void;
+  readonly stopAutoplay: () => void;
+  readonly setDeleting: (value: boolean) => void;
+  readonly setSessionLost: (value: boolean) => void;
+  readonly setPending: (value: null) => void;
+  readonly setNotice: (value: string) => void;
+}
+
+/** The same finite callbacks are used by the mounted client and controller tests. */
+export function createCombatLabSessionCallbacks(apiBaseUrl: string, ports: CombatLabSessionPorts) {
+  const capabilityHeader = 'x-combat-lab-capability';
+  const applyLatest = (incoming: CombatLabView, expectedGeneration: number) => {
+    if (ports.generation.current !== expectedGeneration) return;
+    const current = ports.sessionRef.current;
+    if (current === null || current.id !== incoming.sessionId) return;
+    const view = latestCombatLabView(current.view, incoming);
+    if (view !== current.view) ports.installSession({ ...current, view });
+  };
+
+  const endBattle = async (): Promise<boolean> => {
+    ports.stopAutoplay();
+    const current = ports.sessionRef.current;
+    if (current === null) return true;
+    if (ports.deletingRef.current || ports.pendingRef.current !== null) return false;
+    ports.setDeleting(true);
+    ports.deletingRef.current = true;
+    const controller = ports.sessionAbort.current;
+    let removed = false;
+    try {
+      const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}`, {
+        method: 'DELETE',
+        headers: { [capabilityHeader]: current.capability },
+        ...(controller === null ? {} : { signal: controller.signal }),
+      });
+      if (response.ok || response.status === 404) {
+        ports.generation.current += 1;
+        ports.sessionAbort.current?.abort();
+        ports.installSession(null);
+        removed = true;
+        ports.sessionLostRef.current = false;
+        ports.setSessionLost(false);
+        ports.pendingRef.current = null;
+        ports.setPending(null);
+        ports.setNotice(
+          response.status === 404 ? messageFor('NOT_FOUND') : 'Диагностическая сессия завершена.',
+        );
+      } else {
+        ports.setNotice(
+          messageFor(responseCode(await response.json().catch(() => null), `${response.status}`)),
+        );
+      }
+    } catch {
+      ports.setNotice('Удаление не подтверждено. Сессия остаётся на сервере, пока он работает.');
+    } finally {
+      ports.deletingRef.current = false;
+      ports.setDeleting(false);
+    }
+    return removed;
+  };
+  return { applyLatest, endBattle };
 }
