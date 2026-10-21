@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Bound the menu extraction contract — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu`, [#262](https://github.com/Vovanostm/warwrit/issues/262):
+  coordinator verified the initial read-only contract, native settled dispatch
+  and structured result, recorded before acknowledgment, then released it.
+  Its static inspection reports a scope/complexity conflict: menu-only cannot
+  satisfy the explicit component limit; broader movement may exceed 300 lines.
+  These estimates are not measured coverage or a passing commit audit.
+- Under the owner's engineering delegation, retain every acceptance criterion
+  and request the single permitted contract revision with exact bounded child
+  ownership, sequencing and proof. #262 stays planning; no source builder or
+  speculative child issues started. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  records the live revision and next action; no product/rule question or waiver.
+- Coordinator records only, published on this branch; source unchanged.
+  Documentation format/diff/local-link checks accompany the commit. New game
+  tests/typecheck/validation/build/browser checks NOT_RUN; performance
+  NOT_MEASURED. No rule, protocol, replay, migration or dependency change.
+  No wiki/setup/API contract change. Daily work already complete; 0 merged PRs
+  with playable proof this tick; prior PR266 delivery remains unchanged.
+
 ### Deliver editor extraction and prepare menu contract — 2026-10-21, MERGED
 
 - Origin `Vovanostm/qa-hooks-editor`: [PR266](https://github.com/Vovanostm/warwrit/pull/266)

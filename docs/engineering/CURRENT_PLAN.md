@@ -7,6 +7,43 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local overrides; no new milestone.
+This tick: 0 merged PRs with playable proof; merge NOT_RUN.
+Latest delivery remains [PR266/#261](https://github.com/Vovanostm/warwrit/pull/266),
+merged `61a91600`; prior independent editor/day/night proof remains unchanged.
+#262 initial contract received: exact native completed/succeeded settlement,
+structured result and full five-section contract matched; source tree clean.
+Recorded before acknowledgment; settled dispatch released (no owned resource).
+Contract names a technical scope conflict: menu-only does not meet the explicit
+CombatLab complexity criterion; combined extraction may exceed 300 source lines.
+[Coordinator decision](https://github.com/Vovanostm/warwrit/issues/262#issuecomment-6322839606):
+retain all acceptance; define finite R2 child boundaries before any builder.
+#262 remains planning, one permitted read-only contract revision live:
+`task_e8e8addb77df` / `ctx_99551a5b1565`, dedicated `qa-hooks-menu` worktree.
+Worker writes only `.orca/qa-hooks-menu/contract.md`; coordinator owns records.
+No source implementation, child issue creation, acceptance waiver or owner question.
+#231 remains open; #263–#265 and #190 playback prerequisites are preserved.
+Core #225 retains its log prerequisite; no second lane writer or heavy check.
+Infrastructure PR134/129 still have failed CI and remain outside slice authority.
+Daily scout/digest already complete; no duplicate daily work or epic comment
+because the slice remains in planning.
+New game tests/typecheck/validator/build/browser checks NOT_RUN this tick;
+contract worker's static health findings are estimates, not measured CRAP proof.
+Performance NOT_MEASURED; no rule, protocol, replay, migration or full-M1 claim.
+Next: consume revision, create exact bounded children if needed, then start
+only an actionable contract/build under the existing one-writer lane limit.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous #261 delivery and #262 contract checkpoint — 2026-10-21 (superseded above):**
+
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local overrides; no new milestone.
 This tick: 1 merged PR with playable proof, [PR266](https://github.com/Vovanostm/warwrit/pull/266).
 #261 R1 merged as `61a91600` at expected head `747576ec`; issue closed/done.
 Hosted clean-checkout CI `39643349522` and PR scope SUCCESS at that exact head.
@@ -30,8 +67,6 @@ New game tests/validator/full suites/build NOT_RUN this tick; prior proof reused
 for unchanged gated source. Performance/balance NOT_MEASURED; no full-M1 claim.
 Next: consume #262 contract, check its five sections and scope, then sole web builder.
 Wrapper releases its own lease when this single tick returns.
-
-## Dated history
 
 **Previous #261 publication checkpoint — 2026-10-21 (superseded above):**
 
