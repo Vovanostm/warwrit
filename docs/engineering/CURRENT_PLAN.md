@@ -1,5 +1,31 @@
 # Warwrit current delivery plan
 
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; current tick holds the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plan plus its existing local handover overrides. No new milestone.
+Open slice PR: [#255](https://github.com/Vovanostm/warwrit/pull/255), issue #254,
+branch `codex/join-lock-order-254`. Gated head `cd77d1d6` has fresh Tier L source
+and persistent-JOIN evaluator ACCEPT, coordinator validator 9/9 PASS; builder
+real-PG 64 PASS / 15 SKIP and evaluator 7 PASS / 16 filtered SKIP.
+Both UI JOIN commands and preceding ACCEPT/HELP returned 200; one admission,
+two accounts, replay and reload passed. UI retry NOT_RUN; native retry PASS.
+Next: require green hosted CI on the corrected head and tracked proof before
+expected-head merge. Earlier hosted failures remain failures.
+Web lane: #184 rework round 1 builder is live; overview hatches must remain
+readable at night and in monochrome before fresh Tier V evaluation/visual gates.
+#231 is the first next web slice after #184. #249 waits for #254 and must be
+split below the source-line limit before its builder starts. Other retained
+slices keep their predecessor/acceptance dependencies; no overlapping writer.
+Blockers: corrected-head hosted CI for #254; #184 visual rework and fresh gates.
+This tick: 0 merged PRs with playable proof so far. No deployment or full-M1 claim.
+[JOIN proof and limits](evidence/join-lock-order-254/README.md).
+
+## Dated history
+
 **JOIN lock order254 — 2026-10-21, LOCAL / implementation active:**
 Parent owns `contracts/routes.ts` and the existing encounter PostgreSQL integration
 regression on `codex/join-lock-order-254`, base actual main7b9a1dca. DB7 ordinary

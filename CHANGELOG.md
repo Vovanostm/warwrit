@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Refresh JOIN delivery gates after hosted audit failure — 2026-10-21, LOCAL
+
+- `codex/join-lock-order-254`, [PR255](https://github.com/Vovanostm/warwrit/pull/255):
+  separate the exact ownership reread from account locking and cover it without
+  PostgreSQL so the hosted audit can measure that rule. Affects
+  `apps/server/src/contracts/routes.ts` and its existing encounter integration
+  tests; no migration, lock-order, authorization, retry or game-rule change.
+- Gated head `cd77d1d6`: normal commit audit and coordinator validator 9/9 PASS;
+  builder real-PG related coverage 64 PASS / 15 SKIP. Fresh reviewer and actual
+  persistent JOIN evaluator ACCEPT; evaluator real-PG 7 PASS / 16 filtered SKIP,
+  four UI commands 200, one admission/two accounts, replay/reload readbacks PASS.
+  Old hosted and narrow-coverage audit failures remain recorded. Corrected-head
+  hosted CI, publication and merge pending; no deployment or full-M1 claim.
+  [Evidence and limits](docs/engineering/evidence/join-lock-order-254/README.md).
+
 ### Correct participating-account lock order — 2026-10-21, LOCAL
 
 - `codex/join-lock-order-254`, [issue254](https://github.com/Vovanostm/warwrit/issues/254):
