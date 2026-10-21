@@ -280,3 +280,14 @@ Airtable supporting M1 Notes appended/read back exactly after range delivery;
 other fields unchanged. Issue161 and PR250 exact native readbackPASS. Empirical
 remains storage-blocked/NOT_WRITTEN. Pickup publication/hosted CI/merge follow;
 DB7 remains unstarted and full174/177/M1 partial.
+
+### Pickup251 merged — 2026-10-21
+
+[PR251](https://github.com/Vovanostm/warwrit/pull/251) merged7b9a1dca at
+2026-10-20T23:44:08Z. Published5c68fb83, tested merge373d1d31 and actual main
+contents match. CI39515766544/job118947421724 SUCCESS:937unitPASS/50SKIP,
+10000stress,17realPG/auth,migrations,coverage/audit. Fresh reviews/threads and
+blocked labels clear; expected head used. #248 CLOSED/agent:done. Raw hosted
+log: .orca/persistent-hud-166/pg-248/pr251-hosted.log. Existing saved-state
+ACCEPT remains scoped; DB7 payment/restart still NOT_RUN at merge readback.
+Range main CI39515412105 SUCCESS was also read back.

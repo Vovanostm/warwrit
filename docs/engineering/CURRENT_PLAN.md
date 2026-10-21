@@ -7,6 +7,79 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus local handover overrides; no new milestone.
+Delivered this tick: [PR259](https://github.com/Vovanostm/warwrit/pull/259), #249,
+merged `19d2c296` at expected `00c8bbcb`; final CI `39627369734` and scope SUCCESS,
+validator 9/9 PASS, 671 PASS / 52 SKIP, 239 source lines, fresh Tier L ACCEPT.
+#249 closed/done; #218 decision closed with wiki/CHANGELOG/implementation links.
+Finished #249 worktree removed after no-unpushed/clean checks and native proof
+retention in coordinator `.orca/pipeline/retained/core-bow-three-ap/`.
+[Persistent bow proof and limits](evidence/core-bow-three-ap/README.md).
+#184: fresh Tier V evaluator and absolute visual ACCEPT frozen `f589f94c`;
+all applicable visual scores 2. B1 closes with eight verified level/0→1→2
+intersection on/off pairs, unchanged figures/HUD/camera and native actions.
+Ordinary mill manual input and round 11 victory, native125/CVD/viewport proof
+retain their finite boundaries. No third source rework or acceptance waiver.
+Main `19d2c296` integrated as `e0c77057`; only shared status records conflicted,
+both histories retained. Normal merge audit PASS, integrated validator 9/9 PASS,
+48 related tests, scope 272; accepted #184 source/tests unchanged.
+[Affordability proof, scores and JPEGs](evidence/uix-affordability-bands/README.md).
+Publication: one PR for #184 on `codex/combat-affordability-184`; final hosted CI
+and merge remain pending. Later commits contain only evidence/shared records.
+#231 is first next web slice after #184. Core #225 retains its log dependency;
+other ready slices keep their ownership and prerequisites.
+Daily scout/digest already settled/posted; no duplicate scout or digest.
+Metric: 1 merged PR with playable proof this tick. Balance/performance
+NOT_MEASURED; no auto-merge, deployment or full-M1 acceptance.
+Infrastructure PR134/129 remain outside slice merge authority.
+Next: require exact-head hosted CI/scope and native blocked checks for #184,
+then expected-head merge; start #231 only after #184 frees the web lane.
+
+## Dated history
+
+**Pre-integration pipeline snapshots — 2026-10-21 (superseded above):**
+
+Queue: epic #217 plus existing local overrides; no new milestone.
+Delivered earlier: PR255/#254 and PR257/#256 are merged; no new merge this tick.
+Core #249: pushed `63ce897e`, fresh source review ACCEPT; independent Tier L
+persistent evaluator remains live. Playable acceptance and PR/CI remain pending.
+Web #184: retained source `5599c8f1`, previously pushed head `3963215b`.
+Coordinator decision under the 2026-10-21 evidence/process delegation: resume
+at validating, then one bounded read-only supported-layout evidence attempt.
+B1 actual silhouette/annotation intersection across level/0→1→2 crowds remains
+unproven. No third source rework, acceptance waiver or new rule is authorized.
+Earlier evaluator ACCEPT/visual REWORK covers `06479a47` only; current-source
+validator and fresh Tier V evaluator/absolute visual ACCEPT remain required.
+Heavy checks/runtime startup queue behind the live #249 evaluator and daily scout.
+#231 remains the first next web slice after #184; other dependencies are preserved.
+Daily main scout is queued for isolated read-only play; findings need later triage.
+Infrastructure PR134 and PR129 are outside slice merge authority and have failed CI.
+Next: settle #249's playable result, run #184 validation after the heavy-work slot
+is free, then collect missing evidence and repeat its affected Tier V gates.
+No auto-merge, deployment or full-M1 acceptance is claimed.
+This tick: 0 merged PRs with playable proof.
+
+Queue: epic #217 plus existing local handover overrides; no new milestone.
+Delivered earlier: PR255/#254, merged `0adcff2e`; issue closed/done.
+Open slice [PR257](https://github.com/Vovanostm/warwrit/pull/257), #256:
+code `1105189d` has fresh Tier L source and playable ACCEPT, day/night
+4 → 3 → 0 AP and unchanged 16-stamina shot; seven old replay baselines match.
+Main `4e83842a` integrated as `a0dd20c0`; additive CHANGELOG conflict only,
+both histories preserved. Integrated validator 9/9 PASS; scope 118 source lines.
+Prior published-head CI `39598354029` SUCCESS; final integrated-head CI pending.
+[Tracked proof and limits](evidence/core-bow-lab/README.md).
+Web #184: `needs-owner`, pushed `3963215b`, source `5599c8f1`; rework 2/2 failed
+on missing B1 actual silhouette/annotation intersection across level/0→1→2
+crowds. No source defect established. Earlier ACCEPT/REWORK covers `06479a47`
+only; current validator/Tier V gates NOT_RUN. Existing epic owner question
+recommends one bounded evidence-only evaluator attempt; decision pending.
+#231 is first next web slice after #184. #249 waits for #256 merge, then gets
+a fresh contract for company/binding/persistent admission/save/restart.
+Retained pushed `e68025b9` is untouched. Other slices retain ownership/dependencies.
+Infrastructure PR258 requires separate owner merge permission; it is outside slices.
+Next: green final integrated-head CI, native blocked-label check, expected-head
+merge #257, then contract #249. No auto-merge or deployment is authorized.
+This tick: 0 merged PRs with playable proof so far; no full-M1 claim.
+
 Delivered earlier: PR255/#254 and PR257/#256. This tick: 0 merged PRs with
 playable proof so far. Infrastructure PR134/129 remain outside slice authority.
 #249: fresh source and playable Tier L ACCEPT at `63ce897e`; evidence retains
@@ -102,6 +175,26 @@ omitted the actual world row; preserve this limitation and the initial JOIN fail
 Synthetic accounts/company/start location do not prove externalOIDC, creation or
 travel. Full174/177/sprint/M1 remain PARTIAL. Native logs/snapshots remain private.
 
+**Affordability184 hatch correction — 2026-10-21, LOCAL / source ACCEPT:**
+Independent source re-review accepts both corrections: finite strips are clipped
+per existing cell-fill triangle and follow its plane at +0.013; the regression
+checks translated q4,r0 and raised q14,r2 containment, vertex and centroid heights.
+Three-file focused coverage21/21PASS, web types, format, scoped lint, normal audit
+(zero new findings) and diff check PASS. Earlier failed attempts remain in local
+`.orca/affordability184/correction-checks-2026-10-21.log`. Current source supersedes
+the REWORK below; rendered/browser/day-night/CVD/absolute visual acceptance remains
+pending. Normal commit and clean integrated validator are next, followed by exclusive
+runtime evaluation. No publication, merge or player acceptance claimed.
+
+**Affordability184 geometry correction — 2026-10-21, REWORK:**
+Source49548eb4 (integratedcdbe99a) passes author20focused coverage/types/lint/
+format/normal audit; independent direct-source default-board scan finds short
+hatch chords escaping cells and perimeter-only hatchY disagreeing with actual
+raised-center terrain. Source-only correction must clip finite strips against
+existing surface triangles; rendered severity is NOT_MEASURED. DB7 has the
+exclusive runtime window on clean merged7b9a1dca; no local heavy checks until
+release. Bow249 also source-only in separate worktree. Parent owns records.
+
 **Pickup248 delivered / payment journey and bow249 active — 2026-10-21:**
 PR251 merged7b9a1dcaf23c8a08fe16783ae910bd42113ef6a2; published5c68fb83,
 tested merge373d1d31 and actual main contents match. CI39515766544/job118947421724
@@ -117,6 +210,17 @@ one core writer starts approved3AP ordinary bow in new compatible rules only;
 old active encounters/replays retain4AP. No tests while the evaluator's runtime
 window is active. Affordability184 source49548eb4 is under independent review;
 no rendered acceptance yet. Full sprint/M1 remain PARTIAL.
+
+**Affordability184 source ready — 2026-10-21, LOCAL:**
+Sole web writer implements supplied true/false bands with solid/internal hatch,
+legacy generic fallback and present-only legend;187 contour preserved. Author
+20focused v8 coverage/typecheck/format/scoped TS lintPASS after fixture-priority/
+hatch-edge corrections. First audit found introduced hatch-geometry complexity;
+same-file helper extraction brought final `check:changes` to zero new code-health
+findings. Independent frozen review and actual rendered journey/CVD/visual gates
+remain pending; no publication or visual acceptance is claimed. Pickup PR251
+hosted CI runs separately.
+[Owning behavior](../wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
 
 **Pickup248 integrated and ready to publish — 2026-10-21, LOCAL:**
 Actual range mainb0eeb8e8 merged as c5acd803; only additive status-document

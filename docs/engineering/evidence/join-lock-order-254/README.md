@@ -90,3 +90,14 @@ CAS, replay and atomic exact retries are preserved. No migration or rule change.
 Original full-resolution screenshots, native readbacks and runtime logs remain
 local in `.orca/core-join-lock/`; the two JPEGs and verdicts above are the small
 tracked proof packet. No credentials, cookies or session data are published.
+
+## Merge readback — 2026-10-21, MERGED
+
+PR #255 merged as `0adcff2e06344ce823f9631ff346248de666ebc4` at
+11:15:29 UTC. Exact published head `9857d0fa` passed CI 39588879033 and both
+scope checks; reviewer/evaluator ACCEPT still cover code `cd77d1d6`.
+The coordinator checked that subsequent commits contain only this evidence
+packet and CHANGELOG/CURRENT_PLAN, with scope 71/300, no blocked label on PR
+or issue, no unresolved review thread, and main fully integrated. Expected-head
+merge succeeded; native PR MERGED and issue CLOSED were read back, then #254
+was relabelled done. No runtime rerun or deployment is claimed by this readback.

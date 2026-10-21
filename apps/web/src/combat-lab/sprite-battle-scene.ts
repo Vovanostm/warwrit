@@ -782,6 +782,8 @@ export async function mountSpriteBattleScene(
     preview: previewMaterial,
     selection: selectionMaterial,
     movement: movementAreaMaterial,
+    'movement-attack': movementAreaMaterial,
+    'movement-only': movementAreaMaterial,
     target: targetFill,
     threat: threatFill,
   };
@@ -816,6 +818,7 @@ export async function mountSpriteBattleScene(
         fill: style.fill ? fillMaterials[style.fill] : null,
         border: style.border ? borderColours[style.border] : null,
         priority: style.priority,
+        hatch: style.fill === 'movement-only',
       });
     cellGrid.paint(styles);
   };

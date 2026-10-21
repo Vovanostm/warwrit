@@ -66,6 +66,81 @@ it('fills movement cells and keeps passive weapon reach as a separate exterior c
   expect([...plan.attackableIds]).toEqual(['enemy']);
 });
 
+it('uses only complete server affordability booleans for two distinct movement fills', () => {
+  const rows = [
+    view.movementPreview![0]!,
+    {
+      to: { q: 2, r: 0 },
+      path: [
+        { q: 0, r: 0 },
+        { q: 1, r: 0 },
+        { q: 2, r: 0 },
+      ],
+      actionPointCost: 2,
+      staminaCost: 2,
+      attackAffordableAfter: false,
+    },
+  ];
+  const plan = markerPlan(
+    {
+      ...view,
+      attackPreview: [],
+      movementPreview: [{ ...rows[0]!, attackAffordableAfter: true }, rows[1]!],
+    },
+    tiles,
+    selection,
+  );
+  expect(plan.cells.get('1,0')?.fill).toBe('movement-attack');
+  expect(plan.cells.get('2,0')?.fill).toBe('movement-only');
+  expect(plan.cells.get('1,0')?.border).toBeNull();
+});
+
+it('uses one generic movement fill for omitted or mixed affordability fields', () => {
+  const movementPreview = [
+    view.movementPreview![0]!,
+    {
+      to: { q: 2, r: 0 },
+      path: [
+        { q: 0, r: 0 },
+        { q: 1, r: 0 },
+        { q: 2, r: 0 },
+      ],
+      actionPointCost: 2,
+      staminaCost: 2,
+      attackAffordableAfter: false,
+    },
+  ];
+  for (const rows of [
+    movementPreview,
+    [
+      { ...movementPreview[0]!, attackAffordableAfter: true },
+      { ...movementPreview[1]!, attackAffordableAfter: undefined },
+    ],
+  ]) {
+    const plan = markerPlan(
+      { ...view, attackPreview: [], movementPreview: rows },
+      tiles,
+      selection,
+    );
+    expect(plan.cells.get('1,0')?.fill).toBe('movement');
+    expect(plan.cells.get('2,0')?.fill).toBe('movement');
+  }
+});
+
+it('keeps the selected path above the classified movement fill', () => {
+  const plan = markerPlan(
+    {
+      ...view,
+      attackPreview: [],
+      movementPreview: [{ ...view.movementPreview![0]!, attackAffordableAfter: true }],
+    },
+    tiles,
+    { ...selection, selectedCell: { q: 1, r: 0 } },
+  );
+
+  expect(plan.cells.get('1,0')).toEqual({ fill: 'selection', border: 'path', priority: 8 });
+});
+
 it('keeps the explicit grid when movement fill is shown with full-grid enabled', () => {
   const plan = markerPlan(view, tiles, { ...selection, showFullGrid: true });
   expect(plan.cells.get('1,0')).toEqual({ fill: 'movement', border: 'grid', priority: 3 });

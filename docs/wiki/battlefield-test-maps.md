@@ -5314,3 +5314,58 @@ commit audit remains pending.
 Browser sizes/native125%, day/night, CVD, passive-input and absolute visual
 checks are NOT_RUN for this new consumer; source code alone is not accepted
 delivery. #184 affordability bands remain a separate slice.
+
+### Range delivery correction — 2026-10-21
+
+PR250 merged b0eeb8e8 after independent source, actual browser and absolute
+visual ACCEPT (all applicable criteria2, motion N/A,62current images).
+CI39512315650 attempt2 SUCCESS:937unitPASS/49SKIP,10000stress,16realPG/auth,
+migrations,coverage/audit. The first unchanged-world-test coverage timeout and
+its isolated/pass-once retry are retained. Reviewed/tested/main contents match.
+Default mill, actual aimed-shot selection, native125%, day/night/CVD and passive
+0POST were checked; arbitrary terrain/live stale-response substitution remain
+unclaimed. Earlier local/pending statuses above are historical.
+[Current evidence](../engineering/evidence/range-187/README.md).
+
+## Movement affordability bands — 2026-10-21, LOCAL
+
+Issue184 consumer in codex/combat-affordability-184 reads only complete server
+attackAffordableAfter booleans: true uses a solid wash (“Дойти и атаковать”),
+false an internal neutral hatch (“Только движение”). Missing or mixed rows
+remain one generic “Движение” band. The legend lists only present categories;
+selected skills suppress movement, and grid/path/target priorities plus the187
+exterior reach contour are preserved. No client cost or legality calculation.
+
+Final focused coverage20/20, web typecheck, Prettier and scoped TS/TSX lint pass;
+CSS has no ESLint configuration. Initial fixture-priority and hatch-edge test
+failures were corrected. The first normal audit found hatch-geometry complexity;
+same-file helper extraction yielded zero new code-health findings on final
+`check:changes`. Independent source review, actual move/attack, native 125%/
+day/night/CVD/legacy rendering and absolute visual acceptance remain pending.
+This is implementation, not accepted delivery.
+
+### Исправление геометрии штриховки — 2026-10-21, LOCAL
+
+Повторная независимая проверка исходников ACCEPT. Полосы ограничены ячейкой
+и отдельно разбиты по треугольникам существующей поверхности `cell-fill`;
+каждая часть следует её плоскости с отступом0,013. Регрессия проверяет
+перенесённую q4,r0 и поднятую q14,r2: границы, высоты вершин и центроиды
+треугольников. Три сфокусированных файла coverage21/21PASS; web typecheck,
+format, scoped ESLint, нормальный аудит и diff-check PASS. Предыдущие ошибки
+сохранены в локальном `.orca/affordability184/correction-checks-2026-10-21.log`.
+Браузерный путь, фактическая видимость/контраст, day/night/CVD и абсолютная
+визуальная приёмка остаются NOT_RUN/NOT_MEASURED. Это исправление исходников,
+не завершённая игровая приёмка #184.
+
+### Overview hatch rework — 2026-10-21, LOCAL
+
+Evaluator round 1 reproduced unreadable movement-only hatching at ordinary
+night/monochrome overview. Source `25a432f8` widens and separates the strokes
+and increases their achromatic ground contrast without changing cell clipping,
+height interpolation, server booleans or #187 reach. Builder's 21 focused
+coverage tests, types, lint, format and normal audit pass; 65 actual default-mill
+captures cover day/night, native 100%/125%, CVD, raised cells and selected skill.
+Coordinator validator passed 9/9 before integrating JOIN main. Fresh integrated
+validation and independent evaluator/absolute visual ACCEPT remain pending;
+legacy live substitution and measured performance remain NOT_RUN/NOT_MEASURED.
+Local evidence: `.orca/uix-affordability-bands/report.md`.

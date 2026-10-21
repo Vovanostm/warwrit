@@ -9,6 +9,188 @@ requests.
 
 ## Unreleased
 
+### Publish accepted affordability bands — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
+  fresh Tier V evaluator and absolute visual ACCEPT for `f589f94c`; every
+  applicable visual criterion scores 2. B1 actual silhouette/annotation
+  intersection is established by eight stable level/0→1→2 on/off pairs.
+  Mill manual move/attack/turn and round 11 victory, viewport/native125/CVD
+  proof and earlier failed attempts retain their stated boundaries.
+- Main `19d2c296` integrated through normal merge `e0c77057`; only shared status
+  documents conflicted, both histories preserved. Normal merge audit PASS;
+  coordinator integrated validator exit 0, 9/9 PASS, 48 related tests,
+  source scope 272. Accepted web game source/tests unchanged after the gates.
+  Evidence commits `39f8c0b2`/`dacbb47b` and this shared-record receipt add no
+  game code. [Proof, scored review and JPEGs](docs/engineering/evidence/uix-affordability-bands/README.md).
+- Publish one PR closing only #184; final hosted CI and merge remain pending.
+  PR259/#249 delivered this tick; #249 closed/done and #218 closed with the
+  original decision/implementation links. Finished worktree removed after
+  native proof retention and clean/no-unpushed checks. One merged PR with
+  playable proof; [live queue](docs/engineering/CURRENT_PLAN.md).
+  No deployment, new rule, balance/performance measurement or full-M1 claim.
+
+### Accept affordability evidence and integrate delivered bow — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`, #184: independent Tier V evaluator and
+  absolute visual critic ACCEPT frozen `f589f94c`; every applicable visual score
+  is 2. Supported level/0→1→2 crowds establish actual B1 silhouette/annotation
+  intersections with eight verified on/off pairs. Actual mill manual input and
+  round 11 victory, viewport/native125/CVD proof and limits are retained in
+  [evidence](docs/engineering/evidence/uix-affordability-bands/README.md).
+- Evidence-only commit `39f8c0b2` follows shared-record receipts. Integrate merged
+  PR259 main `19d2c296` by ordinary merge; only CHANGELOG/CURRENT_PLAN conflicted,
+  both histories retained. Incoming main contains the delivered persistent bow;
+  accepted #184 game source/tests are unchanged. Normal integrated validator
+  and hosted CI are pending; no publication, merge or acceptance waiver here.
+
+### Deliver persistent bow and reconcile the pipeline — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`: coordinator status-only receipt for
+  [PR259](https://github.com/Vovanostm/warwrit/pull/259), #249, now MERGED as
+  `19d2c296` from expected head `00c8bbcb`. Final hosted clean-checkout CI
+  `39627369734` and PR scope SUCCESS; integrated validator 9/9 PASS,
+  671 PASS / 52 SKIP, 239 source lines. Independent Tier L review and playable
+  ACCEPT retain their exact gated head and fixture limits. The earlier pending
+  entries remain history. No new game check or source change in this receipt.
+- #249 is closed/done; decision #218 is closed with the original B decision,
+  wiki/CHANGELOG record and separate implementation links. Native evidence is
+  retained in coordinator `.orca/pipeline/retained/core-bow-three-ap/`.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records one merged PR with
+  playable proof this tick and the still-live #184 Tier V gates. Shared records
+  are the only changed paths; accepted game source is frozen. #231 and other
+  slices keep their prerequisites; no new milestone or deployment.
+- Local bookkeeping assertion compared incompatible ranges and failed; a shell
+  command continued to the already-authorized expected-head merge. Corrected
+  direct main-parent source equality and evidence/records-only range checks
+  PASS, and native GitHub readback confirms the expected merge and closed #249.
+  No failed assertion is treated as a pass; all merge gates had passed separately.
+
+### Dispatch fresh affordability gates and settle daily scout — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
+  integrated validator `74ea6cc3` passed 9/9, 48 tests, scope 272. Fresh Tier V
+  evaluator `task_de4f4b0e9d20` and absolute visual critic `task_e8ed7898463d`
+  dispatched on `f589f94c`; B1 evidence remains pending. This receipt changes
+  only CHANGELOG/CURRENT_PLAN, preserving the frozen game source and all gates.
+- Daily scout completed actual pinned-main `46fe0c33` mill and deserter preset
+  journeys with day/night screenshots, both round 7 victories. No new finding
+  outside 54 open issues; no new issue created. Report/result/native settlement
+  read, recorded/acknowledged/released; browser/runtime cleanup recorded.
+  Local timing samples overlap coordinator validation and are not accepted
+  performance/capacity measurements. Private proof remains in coordinator
+  `.orca/scout/2026-10-21/`; no duplicate report added.
+- [PR259](https://github.com/Vovanostm/warwrit/pull/259) remains open at `00c8bbcb`,
+  PR scope SUCCESS and final clean-checkout CI running. Merge NOT_RUN;
+  0 merged PRs with playable proof this tick. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  No migration, deployment, balance or full-M1 acceptance claim.
+
+### Validate affordability evidence continuation — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
+  integrate actual main `46fe0c33` as `74ea6cc3`. Only CHANGELOG/CURRENT_PLAN
+  conflict; both histories preserved. Source `5599c8f1` is unchanged, scope 272.
+  Normal main-based coordinator validator exit 0, 9/9 PASS; fresh Tier V
+  evaluator and absolute visual critic are next for the bounded B1 proof attempt.
+- Preserve two failed default merge audits (17 CRAP findings): the normal hook
+  refreshed only staged incoming-main coverage, omitting retained branch code.
+  Manual focused coverage 21 PASS did not repair the hook's next overwrite.
+  Normal incoming-main audit against branch parent HEAD PASS; subsequent normal
+  validator against origin/main refreshes and audits the complete slice, PASS.
+  No hook, threshold, assertion, source or accepted rule was weakened.
+- [PR259](https://github.com/Vovanostm/warwrit/pull/259) for #249 is open at
+  `00c8bbcb`, fresh Tier L ACCEPT retained; final hosted full CI/merge pending.
+  Daily scout plays pinned main; performance during local validation overlap
+  is NOT_MEASURED for acceptance. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  #184 visual acceptance/CI remain pending; #231 waits. No migration/deployment
+  or full-M1 claim. This tick: 0 merged PRs with playable proof.
+
+### Resume affordability evidence under owner delegation — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
+  coordinator applies the owner's 2026-10-21 evidence/process delegation to the
+  existing B1 question. Retain source `5599c8f1`; resume validation, then one
+  bounded read-only supported-layout evidence attempt. No third source rework,
+  acceptance waiver, rule or rendering change.
+- Current-source validation and fresh Tier V gates remain NOT_RUN; the actual
+  silhouette/annotation intersection remains unproven. Earlier gate results
+  apply only to `06479a47`. Heavy work queues behind the live #249 evaluator and
+  daily main scout. This documentation-only update needs no game tests.
+  [Current queue and limits](docs/engineering/CURRENT_PLAN.md).
+
+### Preserve final affordability rework and evidence blocker — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, issue #184: rework 2 changes the existing
+  terrain-clipped hatch shader to projected-width-capped broken ink with dark
+  support. Source `5599c8f1`, report `9e47fd82`; renderer and existing hex-mesh
+  regression only. Server classification, costs, replay and layering unchanged.
+- Builder reports 21 focused coverage tests, web types, scoped lint/format and
+  normal audit PASS; 272 source lines, 71 fresh captures and 12 overlay pairs.
+  B1 actual silhouette/annotation intersection in the required level/height-step
+  crowd remains unproven. No body-crossing defect is established. Current-source
+  coordinator validation and fresh evaluator/visual gates: NOT_RUN.
+- Budget 2/2 exhausted; fallback steps 1–3 do not apply to this non-audit,
+  one-issue proof gap. Move to needs-owner with a recommended single bounded
+  evidence-only evaluator attempt, preserving every acceptance criterion.
+  Prior `06479a47` evaluator ACCEPT and visual REWORK are retained history.
+  Owning local report: `.orca/uix-affordability-bands/report.md`.
+  [Checkpoint](docs/engineering/CURRENT_PLAN.md). No PR, merge or deployment.
+
+### Integrate accepted JOIN and affordability rework — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`: ordinary merge of actual main `0adcff2e`
+  retains both document histories. [PR255](https://github.com/Vovanostm/warwrit/pull/255)
+  is MERGED on 2026-10-21 after CI 39588879033 SUCCESS at `9857d0fa`, fresh
+  Tier L gates and validator 9/9 PASS; issue #254 is closed/done. Earlier
+  pending/failure entries remain dated history. [JOIN readback](docs/engineering/evidence/join-lock-order-254/README.md).
+- #184 source `25a432f8` addresses evaluator F1 in renderer `battle-cell-grid.ts`:
+  wider separated achromatic hatches preserve clipping and server classification.
+  Builder: 21 focused coverage tests, types/lint/format/normal audit PASS and
+  65 current captures. Coordinator validator 9/9 PASS before JOIN integration;
+  union validation and fresh Tier V gates remain pending. No visual acceptance,
+  #184 publication, migration or deployment claimed. Local report:
+  `.orca/uix-affordability-bands/report.md`.
+
+### Correct affordability hatch terrain geometry — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`: correct independently reproduced short-chord
+  escape/reversal and terrain-height mismatch in `battle-cell-grid.ts`. Clip each
+  finite strip to the actual fill triangles and lift each fragment by0.013.
+  Existing hex-mesh regression covers translated/raised cells and seam centroids.
+  Independent source ACCEPT; focused coverage21/21PASS, web types, format, scoped
+  lint, normal audit and diff check PASS. Earlier attempts remain in local
+  `.orca/affordability184/correction-checks-2026-10-21.log`; browser/visual acceptance
+  pending. [Behavior](docs/wiki/battlefield-test-maps.md).
+
+### Correct movement hatch geometry before acceptance — 2026-10-21, LOCAL / REWORK
+
+- `codex/combat-affordability-184`: independent source scan reproduces escaping
+  short strokes and height disagreement with the default stepped surface in
+  source49548eb4. The author is correcting clipping/terrain conformance without
+  changing costs or canonical geometry. Rendered severity NOT_MEASURED; review
+  and visual acceptance remain pending. Earlier author checks are not geometry
+  acceptance. DB7 owns the runtime window; correction checks wait for release.
+
+### Deliver canonical pickup targets — 2026-10-21, MERGED
+
+- `codex/representative-hunt-recovery`, [PR251](https://github.com/Vovanostm/warwrit/pull/251)
+  merged7b9a1dca; reviewed/tested/main contents match. CI39515766544 SUCCESS:
+  937unitPASS/50SKIP,10000stress,17realPG/auth,migrations,coverage/audit.
+  Independent source and recovered-save runtime ACCEPT; no impossible targets
+  offered, original failed DB6 preserved. Separate DB7 payment/restart follows;
+  broader174/177 remain partial. [Record](docs/engineering/evidence/persistent-hud/main-readback.md).
+
+### Distinguish movement affordability — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`: solid move+attack and hatched movement-only
+  cells use supplied server booleans; incomplete legacy rows use one generic
+  band. Legend shows present categories; retain187 reach and other marker cues.
+  Initial fixture/hatch test failures corrected; hatch geometry extracted after
+  the first audit found introduced complexity. Final focused coverage20/20,
+  web typecheck, format, scoped TS/TSX lint and `check:changes` pass. Independent
+  gameplay/visual review and publication remain pending.
+  [Owning behavior](docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
+
 ### Publish persistent bow successor — 2026-10-21, PUBLISHED
 
 - `codex/bow-three-ap-249`, [PR259](https://github.com/Vovanostm/warwrit/pull/259):
