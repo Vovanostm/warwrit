@@ -192,7 +192,10 @@ function reachCompanions(view: Partial<CombatLabView>): boolean {
   );
 }
 function reachContext(view: Partial<CombatLabView>): boolean {
-  if (view.scenarioId !== SPRITE_COMBAT_LAB_SCENARIO || view.rulesetId !== 'sprite-prototype-v3')
+  if (
+    view.scenarioId !== SPRITE_COMBAT_LAB_SCENARIO ||
+    (view.rulesetId !== 'sprite-prototype-v3' && view.rulesetId !== 'sprite-prototype-v4')
+  )
     return false;
   if (view.status !== 'active' || !isRecord(view.activation)) return false;
   if (typeof view.activation.id !== 'string' || view.activation.id.length === 0) return false;

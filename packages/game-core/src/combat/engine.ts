@@ -2,6 +2,7 @@ import { isTacticalV3Ruleset } from './rules.js';
 import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
   validateCombatCapabilities,
   validatePersistentTacticalInputs,
 } from './setup-v2.js';
@@ -1665,7 +1666,11 @@ export function assertBattleState(state: BattleState): void {
     invariant(mapKeys.has(blocked), `Blocked state hex ${blocked} must exist on the map`);
   }
 
-  if (state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID) validateCombatTiles(state.map);
+  if (
+    state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+  )
+    validateCombatTiles(state.map);
   const activePositions = new Set<string>();
   for (const unit of state.units) {
     assertUnitVersionState(unit, state.rulesetId);
@@ -1716,9 +1721,14 @@ export function assertBattleState(state: BattleState): void {
 }
 
 function assertUnitVersionState(unit: CombatUnitState, rulesetId: BattleState['rulesetId']): void {
-  if (rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID)
+  if (
+    rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+    rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+  )
     validateCombatCapabilities(unit.capabilities, rulesetId);
-  if (rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID) assertPersistentTacticalUnit(unit);
+  if (rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID || rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID)
+    assertPersistentTacticalUnit(unit);
 }
 
 function assertPersistentTacticalUnit(unit: CombatUnitState): void {

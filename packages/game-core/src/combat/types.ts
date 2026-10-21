@@ -9,6 +9,7 @@ export const COMBAT_SCHEMA_VERSION = 1 as const;
 export const M0_COMBAT_RULESET_ID = 'm0-prototype-v1' as const;
 export const SPRITE_PROTOTYPE_RULESET_ID = 'sprite-prototype-v1' as const;
 export const SPRITE_PROTOTYPE_V3_RULESET_ID = 'sprite-prototype-v3' as const;
+export const SPRITE_PROTOTYPE_V4_RULESET_ID = 'sprite-prototype-v4' as const;
 export const COMBAT_SKILL_IDS = [
   'shield-brace',
   'armor-pressure',
@@ -28,10 +29,12 @@ export type CombatRulesetId =
   | typeof SPRITE_PROTOTYPE_RULESET_ID
   | typeof SPRITE_PROTOTYPE_V2_RULESET_ID
   | typeof SPRITE_PROTOTYPE_V3_RULESET_ID
+  | typeof SPRITE_PROTOTYPE_V4_RULESET_ID
   | 'm1-domain-bridge-v1'
   | 'm1-domain-bridge-v2'
   | 'm1-domain-bridge-v3'
-  | 'm1-domain-bridge-v4';
+  | 'm1-domain-bridge-v4'
+  | 'm1-domain-bridge-v5';
 export type WeaponId = (typeof M0_WEAPON_IDS)[number] | 'fists';
 export interface CombatCapabilities {
   readonly move: boolean;
@@ -96,7 +99,8 @@ export interface BattleSetup {
     | LegacyCombatRulesetId
     | typeof SPRITE_PROTOTYPE_RULESET_ID
     | typeof SPRITE_PROTOTYPE_V2_RULESET_ID
-    | typeof SPRITE_PROTOTYPE_V3_RULESET_ID;
+    | typeof SPRITE_PROTOTYPE_V3_RULESET_ID
+    | typeof SPRITE_PROTOTYPE_V4_RULESET_ID;
   readonly seed: number;
   readonly map: CombatMap;
   readonly sides: readonly [CombatSideSetup, CombatSideSetup];
