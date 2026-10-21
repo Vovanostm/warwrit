@@ -7,6 +7,45 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local overrides; no new milestone.
+Previous tick delivered PR260 / #184, merged main `b9dc49fc`; proof and limits
+remain in [affordability evidence](evidence/uix-affordability-bands/README.md).
+This tick: 0 merged PRs with playable proof; no new implementation or PR.
+#231 contract complete: all five required sections read; native worker
+`task_3a83c1a67be6` / `ctx_424e8503d0c2` succeeded, recorded, acknowledged,
+and released (no owned resource). Original contract retained in coordinator
+`.orca/pipeline/retained/qa-game-hooks/contract.md` and original worktree.
+Coordinator decision: split the estimated oversized change into one-issue PRs:
+[#261](https://github.com/Vovanostm/warwrit/issues/261) editor/reasons →
+[#262](https://github.com/Vovanostm/warwrit/issues/262) menu →
+[#263](https://github.com/Vovanostm/warwrit/issues/263) action/poll seams →
+[#264](https://github.com/Vovanostm/warwrit/issues/264) usable text/clock hooks.
+[#265](https://github.com/Vovanostm/warwrit/issues/265) binds existing playback
+only after #264 and #190; #190 retains creation of the presentation.
+#231 stays open as aggregate until every original criterion is proven;
+absence of paced playback is explicit, no acceptance waiver or new game rule.
+#261 ready → planning: dedicated `qa-hooks-editor`, base `b9dc49fc`, read-only
+contract `task_7011cc31ca93` / `ctx_0b7514f5a6d8`; no source builder yet.
+Each child measures actual source scope before widening; no blanket refactor.
+Evaluator may adapt only a local `output/qa-game-hooks/` runner copy;
+installed skill files remain under their own ownership.
+Core #225 remains dependency-gated by log work; other ready slices preserved.
+Daily scout/digest already completed; infrastructure PR134/129 remain outside
+slice merge authority. Gameplay/typecheck/production checks NOT_RUN this tick;
+no changed source, migration, deployment or full-M1 acceptance.
+Next: inspect #261 contract, then one web builder if finite scope/audit proof
+are ready. Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Previous tick checkpoint — 2026-10-21 (superseded above):**
+
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local overrides; no new milestone.
 Delivered this tick: [PR260](https://github.com/Vovanostm/warwrit/pull/260), #184,
 merged `b9dc49fc` at expected `c3772f98`; final CI `39633442903` and scope
 `39633442871` SUCCESS. Tier V evaluator and visual ACCEPT at `f589f94c`;
@@ -28,8 +67,6 @@ Metric: 1 merged PR with playable proof this tick. Infrastructure PR134/129
 remain outside slice merge authority. No auto-merge, deployment or full-M1 claim.
 Next: finish #231 contract, check every required section and any necessary split,
 then start one builder when the contract is ready. Gameplay checks for #231 NOT_RUN.
-
-## Dated history
 
 **Pre-merge affordability checkpoint — 2026-10-21 (superseded above):**
 

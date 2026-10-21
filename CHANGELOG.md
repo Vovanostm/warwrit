@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Split QA hooks into bounded delivery slices — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-game-hooks`: coordinator accepted the five-section #231
+  contract and created #261–#265 under the owner engineering delegation.
+  Preserve original #231 acceptance; the parent stays open until all child
+  proof, including actual paced playback after #190, passes. No rule change.
+- Dedicated #261 worktree starts only the read-only editor/reason extraction
+  contract. Other children are sequenced to preserve one web writer; actual
+  source scope must be measured before widening. Evaluator runner adaptation
+  is local only; installed skill and #190 source ownership remain intact.
+- Original worker result/native settlement recorded before acknowledgment and
+  release. This entry and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  are coordinator records only; implementation/gameplay/typecheck/production
+  checks NOT_RUN, performance NOT_MEASURED. Documentation format/link/diff
+  checks accompany the normal commit. This tick: 0 merged PRs with playable
+  proof. No migration, deployment, acceptance waiver or full-M1 claim.
+
 ### Deliver affordability bands and prepare QA hooks — 2026-10-21
 
 - `codex/combat-affordability-184`, [PR260](https://github.com/Vovanostm/warwrit/pull/260),
