@@ -7,32 +7,32 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus local handover overrides; no new milestone.
-Delivered earlier: PR255/#254 and PR257/#256; 0 merged PRs with playable proof
-this tick. [PR259](https://github.com/Vovanostm/warwrit/pull/259), #249, open at
-`00c8bbcb`: fresh source/playable Tier L ACCEPT for `63ce897e`, integrated
-validator 9/9 PASS, 671 PASS / 52 SKIP, scope 239; final hosted CI pending.
-Persistent day/night move/shot, atomic 2 AP refusal, genuine V4 continuation,
-real V5 restart/retry and supported terminal/proof/idempotency accepted.
-[Tracked #249 proof](https://github.com/Vovanostm/warwrit/blob/codex/bow-three-ap-249/docs/engineering/evidence/core-bow-three-ap/README.md).
-#184: source `5599c8f1` unchanged; actual main `46fe0c33` integrated as
-`74ea6cc3`, status-only conflicts with both histories preserved. Normal slice
-validator exit 0, 9/9 PASS, 48 tests; scope 272. Incoming-main normal merge audit PASS
-against branch parent after two staged-main coverage failures (retained in logs).
-No hook/threshold bypass; final validator uses ordinary origin/main baseline.
-Coordinator evidence/process delegation resumes one bounded read-only B1
-supported-layout attempt; fresh evaluator eval-3 and absolute visual-2 live
-on gated `f589f94c` (later receipt changes only these two shared records).
-B1 silhouette/annotation intersection is still unproven. No third source
-rework, acceptance waiver, #184 PR or visual ACCEPT is claimed.
-#231 remains first next web slice after #184; other dependencies unchanged.
-Daily scout completed mill/deserter day/night journeys on pinned `46fe0c33`,
-both round 7 victories; no new findings outside 54 open issues. Recorded,
-acknowledged/released; private proof in coordinator `.orca/scout/2026-10-21/`.
-Performance during validation overlap is NOT_MEASURED for acceptance.
-Infrastructure PR134/129 are outside slice merge authority. No auto-merge,
-deployment, balance measurement or full-M1 acceptance.
-Next: consume #184 gates; require final-head green CI/blocked checks for #249,
-then expected-head merge under the skill. Tick wrapper retains/releases lease.
+Delivered this tick: [PR259](https://github.com/Vovanostm/warwrit/pull/259), #249,
+merged `19d2c296` at expected head `00c8bbcb`; final CI `39627369734` SUCCESS,
+PR scope SUCCESS, validator 9/9 PASS (671 PASS / 52 SKIP), source scope 239.
+Fresh Tier L source/playable ACCEPT at `63ce897e`; later commits contain only
+main integration, evidence and shared records. No blocked labels or review threads.
+New persistent wolf admissions use bridge-v5: 4 → 3 → 0 AP move/shot,
+16-stamina shot, atomic refusal, real restart/retry, old V4 continuation and
+supported terminal/proof/idempotency accepted within recorded fixture limits.
+[Proof and limits](https://github.com/Vovanostm/warwrit/blob/19d2c2962425f44886c07b838a0597d99119dd2d/docs/engineering/evidence/core-bow-three-ap/README.md).
+#249 closed/done; #218 decision closed with wiki/CHANGELOG/implementation links.
+Native proof retained in coordinator `.orca/pipeline/retained/core-bow-three-ap/`.
+Earlier deliveries: PR255/#254 and PR257/#256.
+#184: unchanged source `5599c8f1`, main `46fe0c33` integrated as `74ea6cc3`;
+validator 9/9 PASS, 48 tests, scope 272. Two staged-main audit failures remain
+recorded; normal incoming-main audit and ordinary main-based validator PASS.
+Fresh Tier V eval-3 and absolute visual-2 remain live on gated `f589f94c`;
+B1 silhouette/annotation evidence pending. Only shared records advance here.
+No third source rework, acceptance waiver, #184 PR or visual ACCEPT is claimed.
+#231 is first next web slice after #184. Core #225 retains its log dependency;
+other ready slices retain their ownership and prerequisites.
+Daily scout settled: mill/deserter day/night journeys, round 7 victories,
+no new findings. Daily digest already posted; no duplicate scout or digest.
+Metric: 1 merged PR with playable proof this tick. Balance/performance
+NOT_MEASURED; no auto-merge, deployment or full-M1 acceptance.
+Infrastructure PR134/129 remain outside slice merge authority.
+Next: consume #184 gates, then deliver or follow the applicable fallback.
 
 ## Dated history
 

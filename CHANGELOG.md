@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Deliver persistent bow and reconcile the pipeline — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`: coordinator status-only receipt for
+  [PR259](https://github.com/Vovanostm/warwrit/pull/259), #249, now MERGED as
+  `19d2c296` from expected head `00c8bbcb`. Final hosted clean-checkout CI
+  `39627369734` and PR scope SUCCESS; integrated validator 9/9 PASS,
+  671 PASS / 52 SKIP, 239 source lines. Independent Tier L review and playable
+  ACCEPT retain their exact gated head and fixture limits. The earlier pending
+  entries remain history. No new game check or source change in this receipt.
+- #249 is closed/done; decision #218 is closed with the original B decision,
+  wiki/CHANGELOG record and separate implementation links. Native evidence is
+  retained in coordinator `.orca/pipeline/retained/core-bow-three-ap/`.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records one merged PR with
+  playable proof this tick and the still-live #184 Tier V gates. Shared records
+  are the only changed paths; accepted game source is frozen. #231 and other
+  slices keep their prerequisites; no new milestone or deployment.
+- Local bookkeeping assertion compared incompatible ranges and failed; a shell
+  command continued to the already-authorized expected-head merge. Corrected
+  direct main-parent source equality and evidence/records-only range checks
+  PASS, and native GitHub readback confirms the expected merge and closed #249.
+  No failed assertion is treated as a pass; all merge gates had passed separately.
+
 ### Dispatch fresh affordability gates and settle daily scout — 2026-10-21, PUBLISHED
 
 - `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
