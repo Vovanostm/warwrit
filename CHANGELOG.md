@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Consolidate persistent bow gate rework — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  evaluator eval-1 REWORK at `cd487a8e` confirms source review's wrong-contract
+  revision read (real PG 1 FAIL / 23 filtered SKIP). Both findings share one
+  bounded rework round; a single builder task fixes explicit wolf GET/success
+  checks and reruns the finite regression without changing production guards.
+- Preserve evaluator's native V5 move/shot, restart/retry, genuine old V4
+  continuation and seven replay baseline evidence with their limits. Supported
+  terminal effects/proof/retry, native 2 AP refusal and complete day/night
+  rendered move journeys remain unproven; fresh Tier L gates must finish them.
+  Evaluator cleaned its isolated runtime/DB; settlement recorded and released.
+- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and local dispatch
+  checkpoint for the one-tick continuation. Documentation-only commit; scoped
+  formatting/diff/readback checked, game checks NOT_RUN by coordinator.
+  No source change, acceptance waiver, migration, merge or deployment.
+
 ### Record persistent bow test rework — 2026-10-21, LOCAL
 
 - `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):

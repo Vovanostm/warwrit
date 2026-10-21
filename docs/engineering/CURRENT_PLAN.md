@@ -7,31 +7,32 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local handover overrides; no new milestone.
-Previously delivered: PR257/#256 merged `d8a04196`, exact-head CI `39602921979`
-SUCCESS, validator 9/9 and Tier L ACCEPT; lab proof remains separate from #249.
-#249: committed/pushed source `0a38a99b`, reviewed head `759546e9`;
-ordinary main merge `ba9d47f3` preserves retained `e68025b9` and delivered #256.
-Historical coordinator validator 9/9 PASS, 671 PASS / 52 SKIP, scope 239;
-these checks did not establish persistent acceptance.
-Fresh source review: REWORK. In the new PG regression the contract GET reads
-its default raider revision, then JOIN targets the wolf contract; evaluator's
-isolated migrated-PG run reproduces 409 / STALE_REVISION before admission
-(1 FAIL / 23 SKIP). This is a test defect; no production defect established.
-Smallest fix: read the explicit wolf instance immediately before each actor's
-JOIN and assert GET success, preserving the revision guard and later assertions.
-Evaluator `ctx_b0d3b5b27952` remains live on the unchanged source; guidance sent
-to finish its finite current-head evaluation and retain actual limits.
-Round 1 rework brief is queued, not dispatched; collect all evaluator findings
-before starting the sole builder. No rework budget spent by this preparation.
-Persistent move/shot/restart, genuine old-active and terminal acceptance remain
-unproven. Fresh gates follow the fix; publication, CI and merge are pending.
-Owning reports: `.orca/core-bow-three-ap/{review-1,eval-1,report}.md` in the
-slice worktree; eval-1 is pending. No full suites or runtime checks by this tick.
-#184 remains needs-owner, pushed `3963215b`; rework 2/2 B1 overlap evidence
-unproven. Existing owner question is pending; no extra attempt or waiver.
-#231 remains first next web slice after #184; other dependencies unchanged.
+Previously delivered: PR257/#256 merged `d8a04196`, CI `39602921979` SUCCESS,
+validator 9/9 and Tier L ACCEPT; lab acceptance stays separate from #249.
+#249: source `0a38a99b`, pushed clean head `cd487a8e`; retained `e68025b9`
+and ordinary main merge `ba9d47f3` preserved. No open slice PR.
+Source review-1 and evaluator eval-1 both REWORK, same test defect:
+GET reads default raider revision before wolf JOIN; real PG 409 STALE_REVISION,
+1 FAIL / 23 filtered SKIP. Later authored PG assertions were never reached.
+Evaluator settled failed and was acknowledged/released; runtime/DB cleaned.
+Independent native V5 admission → 1 AP move → 3 AP/16-stamina shot, actual
+process restart/exact retry/foreign-actor refusal, genuine old V4 continuation
+and unchanged seven replay baselines passed within eval-1's stated limits.
+Complete day/night rendered move journeys, native 2 AP refusal and supported
+terminal completion/proof/idempotency remain unproven; no acceptance waiver.
+Round 1 combined rework allocated to `task_58d39c57c365`, dispatched after this
+records commit: explicit wolf GET/success checks only in the encounter PG test,
+finite isolated-PG rerun, normal audited commit and report. No production defect
+is established; newly exposed failures require a precise ownership handoff.
+Historical validator 9/9, 671 PASS / 52 SKIP, scope 239 is not a post-fix gate.
+Next: builder settlement, coordinator validate, fresh Tier L reviewer/evaluator;
+publication/CI/merge wait for all criteria. Owning reports remain at the slice's
+`.orca/core-bow-three-ap/{review-1,eval-1,report}.md` (local evidence paths).
+#184 remains needs-owner at `3963215b`; existing B1 evidence question pending.
+#231 stays first next web slice after #184; other dependencies unchanged.
 Infrastructure PR258 is outside slice merge authority. No blocked label removed.
-This tick: 0 merged PRs with playable proof. No deployment or full-M1 claim.
+This tick: 0 merged PRs with playable proof. No game checks by coordinator;
+no new rule, migration, deployment, balance measurement or full-M1 claim.
 
 ## Dated history
 
