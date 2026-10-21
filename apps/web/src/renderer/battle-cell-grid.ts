@@ -108,7 +108,8 @@ function clipHatchBand(start: Vector3, end: Vector3, corners: readonly Vector3[]
   const dx = end.x - start.x;
   const dz = end.z - start.z;
   const length = Math.hypot(dx, dz);
-  const halfWidth = 0.009;
+  // Keep strokes resolved at the mill overview, including native browser 125%.
+  const halfWidth = 0.04;
   if (length < halfWidth * 2) return [];
   const along = new Vector3(dx / length, 0, dz / length);
   const across = new Vector3(-along.z, 0, along.x).scale(halfWidth);
@@ -159,7 +160,7 @@ function createMovementHatch(
   const levels = surface.corners.map(({ x, z }) => x + z);
   const minimum = Math.min(...levels);
   const maximum = Math.max(...levels);
-  const pitch = 0.22;
+  const pitch = 0.42;
   const triangles = surfaceTriangles(fill);
   for (let level = Math.ceil(minimum / pitch) * pitch; level < maximum; level += pitch) {
     const line = hatchIntersections(surface.corners, level);
@@ -263,7 +264,7 @@ export function createBattleCellGrid(
 
   const hatchMaterial = new StandardMaterial('movement-only-hatch', scene);
   hatchMaterial.disableLighting = true;
-  hatchMaterial.emissiveColor = new Color3(0.16, 0.16, 0.16);
+  hatchMaterial.emissiveColor = new Color3(0.68, 0.68, 0.68);
   hatchMaterial.disableDepthWrite = true;
   hatchMaterial.backFaceCulling = false;
   hatchMaterial.alpha = 0.78;
