@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Correct participating-account lock order — 2026-10-21, LOCAL
+
+- `codex/join-lock-order-254`, [issue254](https://github.com/Vovanostm/warwrit/issues/254):
+  DB7 helper JOIN deadlocked against an account-before-company transaction.
+  Lock the complete discovered account set before company rows and revalidate
+  ownership; preserve admission rules, receipts and sorted company locking.
+  Old source reproduced500/40P01; corrected real-PG coverage1PASS/16filteredSKIP.
+  Independent source ACCEPT; server types/lint/normal audit PASS. Integrated and
+  hosted gates pending. No migration/deployment.
+  [Evidence](docs/engineering/evidence/join-lock-order-254/README.md).
+
 ### Integrate pickup correction with merged range — 2026-10-21, LOCAL
 
 - `codex/representative-hunt-recovery`: c5acd803 combines actual range main

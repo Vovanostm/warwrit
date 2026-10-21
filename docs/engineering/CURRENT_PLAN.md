@@ -1,5 +1,26 @@
 # Warwrit current delivery plan
 
+**JOIN lock order254 — 2026-10-21, LOCAL / implementation active:**
+Parent owns `contracts/routes.ts` and the existing encounter PostgreSQL integration
+regression on `codex/join-lock-order-254`, base actual main7b9a1dca. DB7 ordinary
+helper JOIN failed500/40P01 before one offered retry completed the approved hunt.
+Discover all participating accounts before locking any; lock them deterministically,
+revalidate ownership, then preserve sorted company locks and contract recheck.
+Real-PG controlled contention reproduces500/40P01 before and passes after
+(1PASS/16filteredSKIP); independent source ACCEPT, server types/lint/audit PASS.
+[Evidence and limits](evidence/join-lock-order-254/README.md).
+Owner mission “Implement, review, merge” authorizes delivery after existing gates.
+No new rules, migrations, blanket retries, deployment, or retained-save reset.
+[Issue254](https://github.com/Vovanostm/warwrit/issues/254).
+
+DB7 subsequently completed actual battle52, trophy pickup and full80000000Q
+payment to the unique current bearer under frozen HUNT02 terms; helper funds
+unchanged. A second actual API crash/restart retained the target HUNT02 row plus
+11 earlier captured groups exactly, both UI reloads paid with0POST. First crash
+omitted the actual world row; preserve this limitation and the initial JOIN failure.
+Synthetic accounts/company/start location do not prove externalOIDC, creation or
+travel. Full174/177/sprint/M1 remain PARTIAL. Native logs/snapshots remain private.
+
 **Pickup248 integrated and ready to publish — 2026-10-21, LOCAL:**
 Actual range mainb0eeb8e8 merged as c5acd803; only additive status-document
 conflicts, both histories preserved. Accepted pickup sourcef439db7 unchanged.
