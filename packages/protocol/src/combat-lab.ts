@@ -207,7 +207,11 @@ export interface CombatLabView extends CombatLabViewRequest {
   readonly controlledSideId: string;
   readonly viewRevision: number;
   readonly rulesetId?:
-    'm0-prototype-v1' | 'sprite-prototype-v1' | 'sprite-prototype-v2' | 'sprite-prototype-v3';
+    | 'm0-prototype-v1'
+    | 'sprite-prototype-v1'
+    | 'sprite-prototype-v2'
+    | 'sprite-prototype-v3'
+    | 'sprite-prototype-v4';
   readonly status: 'active' | 'resolved';
   readonly round: number;
   readonly nextRoundInitiative?: { readonly round: number; readonly unitIds: readonly string[] };

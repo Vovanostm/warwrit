@@ -410,3 +410,61 @@ and [Codex multi-agent coordination](https://freeacademy.ai/lessons/codex-multi-
 (define shared contracts before parallel work; stubs; merge in dependency
 order); [stacked PRs for agents](https://zylos.ai/research/2026-05-21-stacked-prs-ai-agent-collaboration/)
 (small PRs under about 200 lines, sequence tasks that share files).
+
+## Pipeline evidence review — 2026-10-21
+
+Owner request 2026-10-21: improve the pipeline by best agentic practice, every
+change proven with sources. Baseline from `scripts/orca-metrics.sh 4` and the
+coordinator/worker logs under `~/orca/workspaces/warwrit/` (untracked), measured
+2026-10-21 for 2026-10-17 to 2026-10-21:
+
+| Measure                    | Value                                            |
+| -------------------------- | ------------------------------------------------ |
+| Merged PRs (all writers)   | 25                                               |
+| Coordinator ticks          | 91, 128.2M input tokens (mean 1.4M per tick)     |
+| Worker runs                | 111: 85 succeeded, 20 failed, 6 without a result |
+| Worker input tokens        | 622.3M                                           |
+| Gate verdicts              | 25 REWORK, 12 ACCEPT                             |
+| Input tokens per merged PR | 30.0M (desktop-mission tokens NOT_MEASURED)      |
+
+Sampled failure causes: the commit audit (cognitive complexity/CRAP of
+`CommandDesk` and `BattleOutcome`, and a missing `coverage/coverage-final.json`)
+blocked builders at least seven times; evaluators could not reach the lab
+(refused ports, a busy shared gate) and returned REWORK for missing proof; gate
+findings were often missing evidence matrices rather than product defects.
+
+| Change                                                                                                 | Failure it addresses                                                                                                                               | Source                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `orca-state-digest.sh`: the tick runs the model only on changed state, heartbeat 3 h                   | 1.4M tokens per tick, also when nothing could advance                                                                                              | [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) (2024-12-19): simplest solution, deterministic workflows for fixed steps                                                                                                         |
+| Tick gets a state snapshot and re-reads only what it changes                                           | each tick re-reads GitHub and Orca in full                                                                                                         | [Effective context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) (2025-09-29): context is a finite resource; keep references and load just in time                                                                          |
+| Pre-commit hook refreshes focused coverage                                                             | audit failed on a missing coverage file (reproduced)                                                                                               | measured failure; [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) (2025-11-26): leave a clean, committable state each session                                                                |
+| `orca-play.sh` boots, health-checks and stops the lab; exit 3 = `BLOCKED_ENV`                          | refused ports; orphaned node servers kept ports after stop (reproduced)                                                                            | Effective harnesses: an init script plus a basic end-to-end check at session start; test as a human user would with browser automation                                                                                                                                        |
+| Evaluator takes missing proof itself; REWORK only for defects; `BLOCKED_ENV` outside the rework budget | 25 REWORK vs 12 ACCEPT, many for proof gaps                                                                                                        | Effective harnesses: verify end to end before marking a feature passing; [multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) (2025-06-13): clear objective, output format and boundaries per subagent                            |
+| Contract plans a behaviour-preserving restructure commit before touching complex functions             | repeated complexity/CRAP commit failures                                                                                                           | measured failure; Effective harnesses: one feature at a time with commits that can be reverted                                                                                                                                                                                |
+| `orca-metrics.sh` in the daily digest                                                                  | no measurement of whether a pipeline change helped                                                                                                 | multi-agent research system: token usage explained about 80% of performance variance; start evaluation with small samples; Building effective agents: add complexity only when it demonstrably improves outcomes                                                              |
+| `core.hooksPath` set back to the relative `scripts/git-hooks` (local Git config, not tracked)          | the shared config pointed every worktree at the primary checkout's hook, 185 commits behind main, so hook fixes never reached workers (reproduced) | measured failure; [git-config `core.hooksPath`](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corehooksPath): a relative path is taken relative to where hooks run, and [githooks](https://git-scm.com/docs/githooks) runs them from the working-tree root |
+| Mailbox probe recreates a terminal that lost its stable pane                                           | `orchestration check` failed with `stable_pane_required` (reproduced)                                                                              | measured failure                                                                                                                                                                                                                                                              |
+
+Headless workers keep using `codex exec --json` with `--output-schema` and
+`-o`; its `turn.completed` events carry the token usage the metrics read
+([Codex non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode)).
+Expected effect, to be re-measured with `orca-metrics.sh` after the next wave:
+fewer coordinator tokens per merged PR, fewer failed builder runs, and a lower
+REWORK share. Until then these are hypotheses, not results.
+
+**Amendment — 2026-10-21, self-driving backlog.** Owner: «Продолжай. Обнови
+задачи, настрой автоматизацию - необходимо чтобы проект разрабатывался и
+улучшался, оптимизировался!». After the takeover the coordinator escalated an
+evidence question on #184 to the owner and sprint #161 (#167–#177) had no
+pipeline labels, so lanes could fall idle with work open. The skill now:
+refills a free lane with the highest-priority uncovered issue and splits large
+issues into child issues ([Effective harnesses](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents):
+each session picks the highest-priority unfinished feature from a tracked list);
+decides evidence and process questions itself under the owner's delegation;
+runs a daily scout that plays main and files at most three findings (same
+source: test as a human user would with browser automation); and records daily
+metrics, opening a `pipeline` issue when failures rise two days in a row
+([Building effective agents](https://www.anthropic.com/engineering/building-effective-agents):
+add complexity only when it demonstrably improves outcomes). The loop restarts
+itself when a tick checks out a newer tick script, and polls every 10 minutes
+because an unchanged state costs only the digest.

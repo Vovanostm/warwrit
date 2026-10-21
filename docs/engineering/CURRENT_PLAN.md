@@ -7,6 +7,30 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local overrides; no new milestone.
+Previously delivered: PR255/#254 and PR257/#256; no new merge this tick.
+Core #249: fresh source and playable Tier L ACCEPT at `63ce897e`.
+Persistent day/night step/shot, atomic 2 AP refusal, real restart/retry,
+genuine old V4 continuation and supported terminal/proof/idempotency pass.
+Main `46fe0c33` integrated as `16cedf56`; CHANGELOG-only conflict preserved
+both histories. Current integrated validator is running; PR/CI pending.
+Web #184: source `5599c8f1` unchanged, main integration is in progress.
+Coordinator delegation decision resumes validation, then one bounded read-only
+supported-layout B1 attempt and fresh Tier V gates. B1 intersection remains
+unproven; no third source rework or acceptance waiver is authorized.
+Current-source validation and fresh evaluator/absolute visual ACCEPT pending.
+#231 remains the first next web slice after #184; other dependencies unchanged.
+Daily scout is playing pinned main `46fe0c33`; triage follows its settlement.
+Heavy validators run serially after scout startup. Performance during overlap
+is NOT_MEASURED for acceptance. Infrastructure PR134/129 remain outside scope.
+Next: publish accepted #249 proof, validate integrated heads, launch #184 gates.
+No auto-merge, deployment, balance or full-M1 acceptance is claimed.
+This tick: 0 merged PRs with playable proof.
+
+## Dated history
+
+**Pre-integration pipeline snapshots — 2026-10-21 (superseded above):**
+
+Queue: epic #217 plus existing local overrides; no new milestone.
 Delivered earlier: PR255/#254 and PR257/#256 are merged; no new merge this tick.
 Core #249: pushed `63ce897e`, fresh source review ACCEPT; independent Tier L
 persistent evaluator remains live. Playable acceptance and PR/CI remain pending.
@@ -26,7 +50,27 @@ is free, then collect missing evidence and repeat its affected Tier V gates.
 No auto-merge, deployment or full-M1 acceptance is claimed.
 This tick: 0 merged PRs with playable proof.
 
-## Dated history
+Queue: epic #217 plus existing local handover overrides; no new milestone.
+Delivered earlier: PR255/#254, merged `0adcff2e`; issue closed/done.
+Open slice [PR257](https://github.com/Vovanostm/warwrit/pull/257), #256:
+code `1105189d` has fresh Tier L source and playable ACCEPT, day/night
+4 → 3 → 0 AP and unchanged 16-stamina shot; seven old replay baselines match.
+Main `4e83842a` integrated as `a0dd20c0`; additive CHANGELOG conflict only,
+both histories preserved. Integrated validator 9/9 PASS; scope 118 source lines.
+Prior published-head CI `39598354029` SUCCESS; final integrated-head CI pending.
+[Tracked proof and limits](evidence/core-bow-lab/README.md).
+Web #184: `needs-owner`, pushed `3963215b`, source `5599c8f1`; rework 2/2 failed
+on missing B1 actual silhouette/annotation intersection across level/0→1→2
+crowds. No source defect established. Earlier ACCEPT/REWORK covers `06479a47`
+only; current validator/Tier V gates NOT_RUN. Existing epic owner question
+recommends one bounded evidence-only evaluator attempt; decision pending.
+#231 is first next web slice after #184. #249 waits for #256 merge, then gets
+a fresh contract for company/binding/persistent admission/save/restart.
+Retained pushed `e68025b9` is untouched. Other slices retain ownership/dependencies.
+Infrastructure PR258 requires separate owner merge permission; it is outside slices.
+Next: green final integrated-head CI, native blocked-label check, expected-head
+merge #257, then contract #249. No auto-merge or deployment is authorized.
+This tick: 0 merged PRs with playable proof so far; no full-M1 claim.
 
 **JOIN lock order254 — 2026-10-21, LOCAL / implementation active:**
 Parent owns `contracts/routes.ts` and the existing encounter PostgreSQL integration

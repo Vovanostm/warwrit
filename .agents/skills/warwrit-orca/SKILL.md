@@ -23,6 +23,7 @@ removed. Each tick report states the metric.
 | Reviewer       | fresh, read-only  | `.orca/<slice>/review-N.md`                                   | [review](prompts/review.md)                            |
 | Evaluator      | fresh, read-only  | `.orca/<slice>/eval-N.md`                                     | [evaluate](prompts/evaluate.md)                        |
 | Visual critic  | fresh, read-only  | `.orca/<slice>/visual-N.md`                                   | [visual](prompts/visual.md)                            |
+| Scout          | fresh, read-only  | `.orca/scout/<date>/finding-N.md`                             | [scout](prompts/scout.md)                              |
 | Epic architect | fresh, one writer | epic contract PR: interfaces, stubs, ownership map, task list | [epic-contract](prompts/epic-contract.md)              |
 | Owner          | human             | `## Owner decision` on the epic; `agent:blocked` stops a PR   | —                                                      |
 
@@ -56,6 +57,15 @@ All workers append [common rules](prompts/common.md). Research basis:
   [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md); see Gate tiers.
 - **Change technique before asking the owner.** A failure goes through the
   fallback ladder below; `needs-owner` is only for product/rule questions.
+- **Owner delegation (2026-10-21):** «У тебя есть все полномочия по реализации -
+  не спрашивай по мелочам». Evidence, proof format, process, sequencing,
+  splitting and engineering choices are coordinator decisions: decide, write
+  `Coordinator decision: …` in at most three lines on the issue, continue.
+  `needs-owner` stays for game rules, canon, money, deployment, paid services
+  and merges outside this skill.
+- **The project never idles.** When a lane is free the coordinator refills it
+  from the backlog; once a day it measures the pipeline and sends a scout to
+  play main and find the next improvements (below).
 - **The coordinator is the single writer of shared records** (`CHANGELOG.md`,
   `docs/engineering/CURRENT_PLAN.md`, wiki) and adds them to the PR branch
   right before merge.
@@ -87,6 +97,8 @@ All workers append [common rules](prompts/common.md). Research basis:
 
 ## Inputs
 
+- Backlog: open issues of epic #217 and sprint #161 (#167–#177), then any open
+  issue with a `P0`–`P2` label, `agent:triage` findings once triaged.
 - Slice plan: [`slices/epic-217.json`](slices/epic-217.json) — `lanes`, and per
   slice wave, name, lane, issues, ownership, `after`, notes and optional
   `tier` (D/L/U/V). A slice that spans tiers gets the union of their gates.
@@ -138,7 +150,20 @@ repo id are in the tick prompt. Work from the coordinator worktree.
      `orca worktree rm` after checking it holds no unpushed commits;
    - an open coordinator-made PR that a merged PR superseded: close it with a
      link to the merged PR.
-3. **Advance each slice** whose condition holds (labels in brackets):
+     Every tick also re-reads each `needs-owner` slice: when its question is not
+     a game-rule, canon, money or deployment question, decide it under the owner
+     delegation and resume the slice at the state its files prove.
+3. **Refill.** For each lane with no slice in [ready], [planning] or
+   [implementing] and a free worker slot, take the highest-priority backlog
+   issue that no slice covers and that is not `agent:blocked`/`needs-owner`:
+   `P0` before `P1` before `P2`, epic #217 and sprint #161 first, older first.
+   Add a one-issue slice to `.orca/pipeline/slices-local.json` (lane `core` for
+   game-core/server/protocol work, else `web`; tier by Gate tiers; ownership
+   from the contract's `## Changes`) and set [ready]. When the contract says the
+   issue needs more than one PR, create the child issues it lists (`Part of
+#N`, acceptance criteria copied), slice each, and keep the parent open until
+   its children are done.
+4. **Advance each slice** whose condition holds (labels in brackets):
 
 | From           | Condition                                                                                                                                          | Action                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -150,14 +175,28 @@ repo id are in the tick prompt. Work from the coordinator worktree.
 | [validating]   | exit 0                                                                                                                                             | start the gates of the slice tier (below) in parallel; → [review]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | [validating]   | exit ≠ 0                                                                                                                                           | rework brief with the failing `.orca/validate-*.log` excerpts; → [implementing]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | [review]       | every verdict file the tier needs (D: review; L: review + eval; U: eval; V: eval + visual) starts `VERDICT: ACCEPT` and names the current head SHA | copy small JPEG evidence to `docs/engineering/evidence/<slice>/` and commit it (evidence-only commit after the gated SHA is allowed), push, `gh pr create` (one `Closes #N` per issue, proof, checks, risks); → [pr]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| [review]       | any `BLOCKED_ENV`                                                                                                                                  | fix the environment it names (`scripts/orca-play.sh`, ports, missing capture) and re-run only that gate; this does not use the rework budget, but the same `BLOCKED_ENV` twice goes to fallback step 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | [review]       | any `REWORK`                                                                                                                                       | rework brief with all findings; → [implementing]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | [pr]           | CI failed                                                                                                                                          | rework brief with the failing job log excerpt; → [implementing] (the fix goes through validate and review again)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | [pr]           | CI green, tier verdicts ACCEPT for the gated SHA, no `agent:blocked` on PR or issues                                                               | if behind, `git merge origin/main` (no rebase, no force-push), re-run validate (a non-trivial conflict goes back to [review]); run `gh pr view <N> --json body --jq .body > .orca/<slice>/pr-body.md && bash scripts/check-pr-scope.sh origin/main .orca/<slice>/pr-body.md` (exit ≠ 0: fallback ladder step 3); record `pre=$(git rev-parse HEAD)`; add the CHANGELOG/CURRENT_PLAN commit; assert `git diff --name-only <gated-sha>..<evidence-commit>` ⊆ `docs/engineering/evidence/<slice>/` and `git diff --name-only $pre..HEAD` ⊆ {CHANGELOG.md, docs/engineering/CURRENT_PLAN.md}; push, wait CI, `gh pr merge --merge --match-head-commit <sha>`; → [done]; `orca worktree rm --worktree id:<repo>::<path> --run-hooks --json` |
 
-4. **Report.** Comment on the epic only when a slice changes state or a PR
+5. **Daily** (once per calendar day; marker `.orca/pipeline/daily/<date>`):
+   - `bash scripts/orca-metrics.sh 1 > .orca/pipeline/metrics/<date>.txt`;
+     compare with the previous day. If failed worker runs or the REWORK share
+     rose two days in a row, open one issue labelled `pipeline` with both
+     numbers and one proposed change (pipeline PRs keep the owner merge gate).
+   - Scout: when a worker slot is free, start [scout](prompts/scout.md) with
+     `{{DATE}}`. On a later tick triage its `finding-N.md` files: skip
+     duplicates of open issues, create at most three issues per day with
+     their P label and acceptance criteria, and add them to the backlog.
+6. **Report.** Comment on the epic only when a slice changes state or a PR
    merges, at most three lines. Once a day post the digest: merged PRs with
-   playable proof, open PRs, at most three owner questions with a recommended
-   answer. Then stop.
+   playable proof, open PRs, the output of `bash scripts/orca-metrics.sh 1`,
+   at most three owner questions with a recommended answer. Then stop.
+
+`scripts/orca-pipeline-tick.sh` runs the model only when
+`scripts/orca-state-digest.sh` differs from the state the last tick left (or
+after 3 hours); the snapshot it passes is `.orca/pipeline/digest-before.txt`.
 
 Slices started before v2: `plan.md` with an approving `plan-review-N.md`
 counts as the contract, and for those slices only `review-N.md` counts as
@@ -198,7 +237,7 @@ briefs cite the tracked contract.
 ## Fallback ladder
 
 Rework rounds per slice: at most 2 (validate, CI and every gate verdict — review, eval,
-visual — share the budget). When a build fails or the budget is spent, take the first step
+visual — share the budget; `BLOCKED_ENV` does not count). When a build fails or the budget is spent, take the first step
 that applies, once each, before `needs-owner`:
 
 1. **Audit-only failure** (complexity/CRAP/unused code of the slice's own
