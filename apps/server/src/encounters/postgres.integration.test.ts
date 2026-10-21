@@ -16,6 +16,7 @@ import {
   type BattleSetupV2,
 } from '@warwrit/game-core';
 import { ensureFirstHuntGenesis } from '../contracts/first-hunt-runtime.js';
+import { contractOwnershipMatches } from '../contracts/routes.js';
 import { Client, CloseCode, type SeatReservation } from '@colyseus/sdk';
 import type { EncounterCommandResponse } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
@@ -49,6 +50,39 @@ const databases =
     ? []
     : [createDatabase(connectionString), createDatabase(connectionString)];
 const apps: ReturnType<typeof buildApp>[] = [];
+
+describe('contract ownership reread', () => {
+  const owner = { company_id: 'company-owner', account_id: 'account-owner' };
+  const helper = { company_id: 'company-helper', account_id: 'account-helper' };
+  const observed = [owner, helper];
+
+  it.each([
+    { name: 'unchanged pairs in a different order', owners: [helper, owner], accepted: true },
+    { name: 'a missing participant', owners: [helper], accepted: false },
+    { name: 'an added participant', owners: [owner, helper, owner], accepted: false },
+    {
+      name: 'a reassigned participant with the same row count',
+      owners: [owner, { ...helper, account_id: 'replacement-account' }],
+      accepted: false,
+    },
+    {
+      name: 'a substituted company with the same account',
+      owners: [owner, { ...helper, company_id: 'replacement-company' }],
+      accepted: false,
+    },
+  ])('$name', ({ owners, accepted }) => {
+    expect(contractOwnershipMatches(observed, owners, owner.account_id, owner.company_id)).toBe(
+      accepted,
+    );
+  });
+
+  it('requires the caller to own its company even when every observed pair survives', () => {
+    expect(contractOwnershipMatches(observed, observed, helper.account_id, owner.company_id)).toBe(
+      false,
+    );
+    expect(contractOwnershipMatches([], [], owner.account_id, owner.company_id)).toBe(false);
+  });
+});
 
 interface FirstHuntJoinActor {
   readonly accountId: string;
@@ -3593,4 +3627,184 @@ it.skipIf(connectionString === undefined)(
     }
   },
   60_000,
+);
+
+it.skipIf(connectionString === undefined)(
+  'admits JOIN while another participant holds its account before locking its company',
+  async () => {
+    const database = databases[0]!;
+    const competingDatabase = databases[1]!;
+    const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(database, true);
+    let signalAccountLocked!: (pid: number) => void;
+    let rejectAccountLock!: (error: unknown) => void;
+    const accountLocked = new Promise<number>((resolve, reject) => {
+      signalAccountLocked = resolve;
+      rejectAccountLock = reject;
+    });
+    let requestCompanyLock!: () => void;
+    const companyLockRequested = new Promise<void>((resolve) => {
+      requestCompanyLock = resolve;
+    });
+    let competing: Promise<unknown> | undefined;
+    let joining: Promise<{ statusCode: number; body: string; json: () => unknown }> | undefined;
+    try {
+      const ownerRead = await app.inject({
+        method: 'GET',
+        url: '/contracts/first-hunt',
+        headers: owner.headers,
+      });
+      const accepted = await app.inject({
+        method: 'POST',
+        url: '/contracts/commands',
+        headers: owner.headers,
+        payload: {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: ownerRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        },
+      });
+      expect(accepted.statusCode, accepted.body).toBe(200);
+      const command = {
+        schemaVersion: 1,
+        commandId: randomUUID(),
+        expectedPublicRevision: accepted.json().publicRevision,
+        type: 'JOIN',
+        payload: { instanceId: 'ci.m1.raider-standard.01' },
+      };
+      // Real account -> company locking, matching ordinary account-scoped operations.
+      // The competitor is a native SQL transaction, not a simulated HTTP response.
+      competing = competingDatabase.transaction().execute(async (transaction) => {
+        await transaction
+          .selectFrom('identity_accounts')
+          .select('id')
+          .where('id', '=', owner.accountId)
+          .forUpdate()
+          .executeTakeFirstOrThrow();
+        const process = await sql<{ pid: number }>`select pg_backend_pid() as pid`.execute(
+          transaction,
+        );
+        signalAccountLocked(process.rows[0]!.pid);
+        await companyLockRequested;
+        await transaction
+          .selectFrom('company_snapshots')
+          .select('company_id')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', owner.companyId)
+          .forUpdate()
+          .executeTakeFirstOrThrow();
+      });
+      // Attach a rejection handler immediately; failures still appear in the settled result below.
+      void competing.catch(rejectAccountLock);
+      const ownerPid = await accountLocked;
+      joining = app
+        .inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: command,
+        })
+        .then((response) => response);
+      await vi.waitFor(
+        async () => {
+          const blocked = await sql<{ pid: number }>`
+          select pid from pg_stat_activity
+          where ${ownerPid} = any(pg_blocking_pids(pid))
+        `.execute(database);
+          expect(blocked.rows).toHaveLength(1);
+        },
+        { timeout: 5000, interval: 10 },
+      );
+      // Old JOIN already holds the company here and waits on the owner's FK account lock.
+      // Fixed JOIN waits on the account before touching either company.
+      requestCompanyLock();
+      const [competitor, join] = await Promise.allSettled([competing, joining]);
+      expect(competitor).toMatchObject({ status: 'fulfilled' });
+      expect(join.status).toBe('fulfilled');
+      if (join.status !== 'fulfilled') throw join.reason;
+      expect(join.value.statusCode, join.value.body).toBe(200);
+      const admission = await database
+        .selectFrom('encounter_admissions')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .execute();
+      expect(admission).toHaveLength(1);
+      const encounterId = admission[0]!.encounter_id;
+      const participants = await database
+        .selectFrom('encounter_participants')
+        .select('account_id')
+        .where('encounter_id', '=', encounterId)
+        .execute();
+      expect(participants.map((participant) => participant.account_id).sort()).toEqual(
+        [owner.accountId, helper.accountId].sort(),
+      );
+      expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
+      const roots = await database
+        .selectFrom('company_snapshots')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .orderBy('company_id')
+        .execute();
+      const contract = await database
+        .selectFrom('contract_instances')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .orderBy('instance_id')
+        .execute();
+      const retry = await app.inject({
+        method: 'POST',
+        url: '/contracts/commands',
+        headers: helper.headers,
+        payload: command,
+      });
+      expect(retry.statusCode).toBe(200);
+      expect(retry.json()).toEqual(join.value.json());
+      const conflicting = await app.inject({
+        method: 'POST',
+        url: '/contracts/commands',
+        headers: helper.headers,
+        payload: { ...command, expectedPublicRevision: '999' },
+      });
+      expect(conflicting.statusCode).toBe(409);
+      expect(conflicting.json()).toMatchObject({ ok: false, code: 'INVALID_COMMAND' });
+      expect(
+        await database
+          .selectFrom('company_receipts')
+          .select('receipt_id')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', helper.companyId)
+          .where('command_id', '=', command.commandId)
+          .execute(),
+      ).toHaveLength(1);
+      expect(
+        await database
+          .selectFrom('encounter_admissions')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .execute(),
+      ).toEqual(admission);
+      expect(
+        await database
+          .selectFrom('company_snapshots')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .orderBy('company_id')
+          .execute(),
+      ).toEqual(roots);
+      expect(
+        await database
+          .selectFrom('contract_instances')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .orderBy('instance_id')
+          .execute(),
+      ).toEqual(contract);
+    } finally {
+      requestCompanyLock();
+      await Promise.allSettled([competing, joining]);
+      await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+    }
+  },
+  15000,
 );

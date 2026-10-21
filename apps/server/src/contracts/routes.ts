@@ -122,6 +122,66 @@ export function registerFirstHuntRoutes(
   });
 }
 
+type ContractOwner = Pick<DatabaseSchema['company_account_owners'], 'company_id' | 'account_id'>;
+
+/** Discovery grants no authority: every observed pair and the caller must survive the reread. */
+export function contractOwnershipMatches(
+  observedOwners: readonly ContractOwner[],
+  owners: readonly ContractOwner[],
+  callerAccountId: string,
+  callerCompanyId: string,
+): boolean {
+  return (
+    owners.length === observedOwners.length &&
+    owners.some(
+      (owner) => owner.company_id === callerCompanyId && owner.account_id === callerAccountId,
+    ) &&
+    observedOwners.every((observed) =>
+      owners.some(
+        (owner) =>
+          owner.company_id === observed.company_id && owner.account_id === observed.account_id,
+      ),
+    )
+  );
+}
+
+/** Account FK locks must precede every participating company lock, including other owners. */
+async function lockContractAccounts(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  callerAccountId: string,
+  callerCompanyId: string,
+  companyIds: readonly string[],
+): Promise<boolean> {
+  const observedOwners = await transaction
+    .selectFrom('company_account_owners')
+    .select(['company_id', 'account_id'])
+    .where('world_id', '=', worldId)
+    .where('company_id', 'in', [...companyIds])
+    .execute();
+  if (observedOwners.length !== companyIds.length) return false;
+  const accountIds = [
+    ...new Set([callerAccountId, ...observedOwners.map((owner) => owner.account_id)]),
+  ];
+  const accounts = await transaction
+    .selectFrom('identity_accounts')
+    .select('id')
+    .where('id', 'in', accountIds)
+    .orderBy('id', 'asc')
+    .forUpdate()
+    .execute();
+  if (accounts.length !== accountIds.length) return false;
+  const owners = await transaction
+    .selectFrom('company_account_owners')
+    .select(['company_id', 'account_id'])
+    .where('world_id', '=', worldId)
+    .where('company_id', 'in', [...companyIds])
+    .orderBy('company_id', 'asc')
+    .forUpdate()
+    .execute();
+  return contractOwnershipMatches(observedOwners, owners, callerAccountId, callerCompanyId);
+}
+
 async function executeContractCommand(input: {
   readonly database: Kysely<DatabaseSchema>;
   readonly worldId: string;
@@ -146,13 +206,6 @@ async function executeContractCommand(input: {
         code,
       });
 
-      const account = await transaction
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!account) return reject('NOT_AUTHORIZED');
       const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
       if (!companyId) return reject('NOT_AUTHORIZED');
 
@@ -167,6 +220,10 @@ async function executeContractCommand(input: {
           ...(observedContract.helper_company_id ? [observedContract.helper_company_id] : []),
         ]),
       ].toSorted(compareIds);
+      if (
+        !(await lockContractAccounts(transaction, worldId, accountId, companyId, lockedCompanyIds))
+      )
+        return reject('NOT_AUTHORIZED', observedContract.revision);
       for (const lockedCompanyId of lockedCompanyIds) {
         if (!(await lockCompanyAggregate(transaction, worldId, lockedCompanyId)))
           return reject('NOT_AUTHORIZED', observedContract.revision);

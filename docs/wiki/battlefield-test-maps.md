@@ -5356,3 +5356,16 @@ format, scoped ESLint, нормальный аудит и diff-check PASS. Пр�
 Браузерный путь, фактическая видимость/контраст, day/night/CVD и абсолютная
 визуальная приёмка остаются NOT_RUN/NOT_MEASURED. Это исправление исходников,
 не завершённая игровая приёмка #184.
+
+### Overview hatch rework — 2026-10-21, LOCAL
+
+Evaluator round 1 reproduced unreadable movement-only hatching at ordinary
+night/monochrome overview. Source `25a432f8` widens and separates the strokes
+and increases their achromatic ground contrast without changing cell clipping,
+height interpolation, server booleans or #187 reach. Builder's 21 focused
+coverage tests, types, lint, format and normal audit pass; 65 actual default-mill
+captures cover day/night, native 100%/125%, CVD, raised cells and selected skill.
+Coordinator validator passed 9/9 before integrating JOIN main. Fresh integrated
+validation and independent evaluator/absolute visual ACCEPT remain pending;
+legacy live substitution and measured performance remain NOT_RUN/NOT_MEASURED.
+Local evidence: `.orca/uix-affordability-bands/report.md`.

@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Integrate accepted JOIN and affordability rework — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`: ordinary merge of actual main `0adcff2e`
+  retains both document histories. [PR255](https://github.com/Vovanostm/warwrit/pull/255)
+  is MERGED on 2026-10-21 after CI 39588879033 SUCCESS at `9857d0fa`, fresh
+  Tier L gates and validator 9/9 PASS; issue #254 is closed/done. Earlier
+  pending/failure entries remain dated history. [JOIN readback](docs/engineering/evidence/join-lock-order-254/README.md).
+- #184 source `25a432f8` addresses evaluator F1 in renderer `battle-cell-grid.ts`:
+  wider separated achromatic hatches preserve clipping and server classification.
+  Builder: 21 focused coverage tests, types/lint/format/normal audit PASS and
+  65 current captures. Coordinator validator 9/9 PASS before JOIN integration;
+  union validation and fresh Tier V gates remain pending. No visual acceptance,
+  #184 publication, migration or deployment claimed. Local report:
+  `.orca/uix-affordability-bands/report.md`.
+
 ### Correct affordability hatch terrain geometry — 2026-10-21, LOCAL
 
 - `codex/combat-affordability-184`: correct independently reproduced short-chord
@@ -48,6 +63,33 @@ requests.
   web typecheck, format, scoped TS/TSX lint and `check:changes` pass. Independent
   gameplay/visual review and publication remain pending.
   [Owning behavior](docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
+
+### Refresh JOIN delivery gates after hosted audit failure — 2026-10-21, LOCAL
+
+- `codex/join-lock-order-254`, [PR255](https://github.com/Vovanostm/warwrit/pull/255):
+  separate the exact ownership reread from account locking and cover it without
+  PostgreSQL so the hosted audit can measure that rule. Affects
+  `apps/server/src/contracts/routes.ts` and its existing encounter integration
+  tests; no migration, lock-order, authorization, retry or game-rule change.
+- Gated head `cd77d1d6`: normal commit audit and coordinator validator 9/9 PASS;
+  builder real-PG related coverage 64 PASS / 15 SKIP. Fresh reviewer and actual
+  persistent JOIN evaluator ACCEPT; evaluator real-PG 7 PASS / 16 filtered SKIP,
+  four UI commands 200, one admission/two accounts, replay/reload readbacks PASS.
+  Old hosted and narrow-coverage audit failures remain recorded. Corrected-head
+  hosted CI, publication and merge pending; no deployment or full-M1 claim.
+  [Evidence and limits](docs/engineering/evidence/join-lock-order-254/README.md).
+
+### Correct participating-account lock order — 2026-10-21, LOCAL
+
+- `codex/join-lock-order-254`, [issue254](https://github.com/Vovanostm/warwrit/issues/254):
+  DB7 helper JOIN deadlocked against an account-before-company transaction.
+  Lock the complete discovered account set before company rows and revalidate
+  ownership; preserve admission rules, receipts and sorted company locking.
+  Old source reproduced500/40P01; corrected real-PG coverage1PASS/16filteredSKIP.
+  Independent source ACCEPT; server types/lint/normal audit PASS. Clean integrated
+  validator8/8 with realPG58PASS/15SKIP; first PG-omitted audit failure retained.
+  Hosted gate pending. No migration/deployment.
+  [Evidence](docs/engineering/evidence/join-lock-order-254/README.md).
 
 ### One coordinator, one issue per PR — 2026-10-21, PUBLISHED
 

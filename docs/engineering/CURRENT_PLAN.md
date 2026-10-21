@@ -1,5 +1,56 @@
 # Warwrit current delivery plan
 
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; current tick holds the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus the existing local handover overrides. No new milestone.
+Delivered this tick: [PR255](https://github.com/Vovanostm/warwrit/pull/255),
+JOIN issue #254, merged `0adcff2e` after exact-head CI 39588879033 SUCCESS,
+validator 9/9 PASS and fresh Tier L reviewer/evaluator ACCEPT. Issue closed/done.
+The evaluator proved four UI commands 200, one admission/two accounts,
+replay/reload and seven real-PG tests; UI retry NOT_RUN, native retry PASS.
+Web lane: #184 source `25a432f8` corrects overview hatch readability; 21 focused
+coverage tests, types/lint/format and normal audit PASS. Builder retained 65
+current day/night, native 125%, CVD, raised and selected-skill captures.
+Validator passed 9/9 before the JOIN merge. Integrating actual main changes
+only status-document conflicts; both histories retained. Revalidate this union,
+then fresh Tier V evaluator and absolute visual critic. No acceptance inferred.
+#231 remains first next web slice after #184. #249's JOIN prerequisite is done;
+split its 305-line WIP before starting a builder. Preserve pushed `e68025b9`.
+Other retained slices remain dependency/ownership-gated; no overlapping writer.
+Open pipeline PRs: none after PR255; infrastructure PR253 keeps the owner gate.
+Blockers: #184 fresh integrated validator/gates; #249 bounded split and replay proof.
+This tick: 1 merged PR with playable proof. No deployment or full-M1 claim.
+[JOIN proof](evidence/join-lock-order-254/README.md).
+
+## Dated history
+
+**JOIN lock order254 — 2026-10-21, LOCAL / implementation active:**
+Parent owns `contracts/routes.ts` and the existing encounter PostgreSQL integration
+regression on `codex/join-lock-order-254`, base actual main7b9a1dca. DB7 ordinary
+helper JOIN failed500/40P01 before one offered retry completed the approved hunt.
+Discover all participating accounts before locking any; lock them deterministically,
+revalidate ownership, then preserve sorted company locks and contract recheck.
+Real-PG controlled contention reproduces500/40P01 before and passes after
+(1PASS/16filteredSKIP); independent source ACCEPT, server types/lint/audit PASS.
+Committed7f3568a passes clean validator8/8 with realPG58PASS/15SKIP; initial
+PG-omitted coverage/audit failure retained. Ready to publish; hosted gate pending.
+[Evidence and limits](evidence/join-lock-order-254/README.md).
+Owner mission “Implement, review, merge” authorizes delivery after existing gates.
+No new rules, migrations, blanket retries, deployment, or retained-save reset.
+[Issue254](https://github.com/Vovanostm/warwrit/issues/254).
+
+DB7 subsequently completed actual battle52, trophy pickup and full80000000Q
+payment to the unique current bearer under frozen HUNT02 terms; helper funds
+unchanged. A second actual API crash/restart retained the target HUNT02 row plus
+11 earlier captured groups exactly, both UI reloads paid with0POST. First crash
+omitted the actual world row; preserve this limitation and the initial JOIN failure.
+Synthetic accounts/company/start location do not prove externalOIDC, creation or
+travel. Full174/177/sprint/M1 remain PARTIAL. Native logs/snapshots remain private.
+
 **Affordability184 hatch correction — 2026-10-21, LOCAL / source ACCEPT:**
 Independent source re-review accepts both corrections: finite strips are clipped
 per existing cell-fill triangle and follow its plane at +0.013; the regression
