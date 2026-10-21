@@ -16,7 +16,8 @@ deployment, migration, Orca call, delegation or hook bypass was performed.
 - `4942771b`: normal audited commit of binding regressions, finite bridge
   predicates and PostgreSQL test typing corrections. Final report commit also
   restores the G05 documentation comment to its public function; no behavior change.
-- Full production diff against `origin/main`: 241 changed source lines in 11
+  Report/source-comment commit `97195383` also passed the normal hook.
+- Full production diff against `origin/main`: 239 changed source lines in 11
   files (including the final comment move), below 300. Tests/docs excluded by
   the same scope policy. No exception or split is required at this size.
 - Combat core, lab/protocol/web TypeScript paths match main exactly. No new
