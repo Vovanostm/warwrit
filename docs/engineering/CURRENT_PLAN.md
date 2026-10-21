@@ -4,6 +4,42 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 and existing local overrides; no new milestone.
+This tick: 0 merged PRs with playable proof; merge NOT_RUN.
+#273 review → PR: [PR #281](https://github.com/Vovanostm/warwrit/pull/281),
+branch `Vovanostm/qa-hooks-session-callbacks`; frozen source `a6b35143`.
+Independent Tier U ACCEPT: 48 focused tests PASS and actual day/night
+mill victories, 1440×900, including session/transport/keyboard/control guards.
+Exact native settlement/result/report matched, recorded before acknowledgment;
+settled evaluator released (no owned resource). No reclaimable worker.
+Coordinator validator exit 0, 9/9 PASS, 75 related tests PASS; scope 137.
+Ordinary changed-code audit PASS; five inherited findings explicitly remain.
+[Contract, full verdict and ten JPEGs](evidence/qa-hooks-session-callbacks/README.md).
+Try: seed 20261009, mill, start/select/move/menu/one-step/replay/autoplay,
+stop/manual order/restart/editor return/result, in day and night.
+Existing behavior preserved; no rule/protocol/replay/renderer/migration change.
+Later commits add only evidence and CHANGELOG/CURRENT_PLAN; source frozen.
+Hosted CI pending at publication; no merge or player-feature delivery claimed.
+#271 waits this merge and the free sole web slot; prepared contract retained.
+#267 two-file staged candidate and recovery budget preserved; #268 follows.
+Final component cyclomatic ≤20 AND cognitive ≤15 remains on #269 AND #262;
+remaining #263 stays after R2; #231 remains open. No acceptance waiver.
+Core #225 retains log prerequisite; other ready slices retain dependencies.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+Other open PRs retain their existing authority; no unrelated merge attempted.
+Independent opponent-pause/root-unmount checks NOT_RUN; see verdict limits.
+Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+Next: hosted CI and exact-head scope/blocked-label checks, then merge on gates.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous #273 validation/evaluator checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 and existing local slice overrides; no new milestone.
 This tick: 0 merged PRs with playable proof; merge NOT_RUN.
 #273: normal source commit `a6b3514388828c5d9db79232df03486a2f72b4a2`;
@@ -32,8 +68,6 @@ Full verify/stress/migrations/production build NOT_RUN; performance NOT_MEASURED
 No rules, protocol, replay, renderer, dependency, migration or setup change.
 Next: read exact evaluator settlement/verdict, then open the PR only on Tier U ACCEPT.
 Wrapper releases its own lease when this one tick returns.
-
-## Dated history
 
 **Previous validation/evaluator dispatch checkpoint — 2026-10-21 (superseded above):**
 

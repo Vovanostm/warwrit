@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-session-callbacks`, [PR #281](https://github.com/Vovanostm/warwrit/pull/281),
+  closes only #273 after its gates. Independent Tier U ACCEPT for frozen
+  `a6b35143`: 48 focused tests PASS, actual day/night mill victories at 1440×900,
+  and session/transport/disabled/keyboard guards. Existing callbacks and player
+  behavior preserved; 137 source additions plus removals, tests excluded.
+- Coordinator validator exit 0, 9/9 PASS, 75 related tests PASS; scope 137 PASS.
+  Normal changed-code audit PASS with five inherited findings retained.
+  Exact native evaluator task/dispatch/result/full verdict matched, recorded
+  before acknowledgment and release (no owned resource).
+- [Owning contract, independent verdict and ten JPEGs](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+  now tracked; later commits change only evidence and coordinator records.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records publication and
+  remaining hosted-CI/exact-head/blocked-label gates. Merge NOT_RUN; 0 merged
+  PRs with playable proof this tick. #271 remains next after this merge; #267
+  staged WIP/budgets preserved. #269 AND #262 final component limits remain;
+  #263/#231 stay open. Daily work already complete, not repeated.
+- Independent opponent-pause/root-unmount proof NOT_RUN; full limitations in
+  verdict. Full verify/stress/migrations/build NOT_RUN locally; performance
+  NOT_MEASURED. No rule, protocol, replay, renderer, dependency, migration,
+  setup or API behavior change; existing wiki contracts unchanged.
+
 ### Validate finite session callbacks and hand off Tier U — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-session-callbacks`, [#273](https://github.com/Vovanostm/warwrit/issues/273):
