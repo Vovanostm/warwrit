@@ -6,7 +6,6 @@ import {
   type CombatLabCatalog,
   type CombatLabHex,
   type CombatLabSkillId,
-  type CombatLabView,
 } from '@warwrit/protocol';
 import { BattleView } from './BattleView.js';
 import { BattleEditor } from './BattleEditor.js';
@@ -14,7 +13,7 @@ import { validateBattleDraft } from './editor-model.js';
 import {
   commonCombatLabReason,
   handleCombatLabActionReply,
-  latestCombatLabView,
+  createCombatLabSessionCallbacks,
 } from './controller.js';
 import {
   startSessionAttempt,
@@ -165,13 +164,20 @@ export function CombatLab() {
     return () => controller.abort();
   }, []);
 
-  const applyLatest = (incoming: CombatLabView, expectedGeneration: number) => {
-    if (generation.current !== expectedGeneration) return;
-    const current = sessionRef.current;
-    if (current === null || current.id !== incoming.sessionId) return;
-    const view = latestCombatLabView(current.view, incoming);
-    if (view !== current.view) installSession({ ...current, view });
-  };
+  const { applyLatest, endBattle } = createCombatLabSessionCallbacks(apiBaseUrl, {
+    generation,
+    sessionRef,
+    sessionAbort,
+    pendingRef,
+    deletingRef,
+    sessionLostRef,
+    installSession,
+    stopAutoplay,
+    setDeleting,
+    setSessionLost,
+    setPending,
+    setNotice,
+  });
 
   const refreshLatest = (current: ActiveSession, expectedGeneration: number) => {
     if (latestRead.current !== null) return latestRead.current;
@@ -432,47 +438,6 @@ export function CombatLab() {
       },
       act,
     });
-  };
-
-  const endBattle = async (): Promise<boolean> => {
-    stopAutoplay();
-    const current = sessionRef.current;
-    if (current === null) return true;
-    if (deletingRef.current || pendingRef.current !== null) return false;
-    setDeleting(true);
-    deletingRef.current = true;
-    const controller = sessionAbort.current;
-    let removed = false;
-    try {
-      const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}`, {
-        method: 'DELETE',
-        headers: { [capabilityHeader]: current.capability },
-        ...(controller === null ? {} : { signal: controller.signal }),
-      });
-      if (response.ok || response.status === 404) {
-        generation.current += 1;
-        sessionAbort.current?.abort();
-        installSession(null);
-        removed = true;
-        sessionLostRef.current = false;
-        setSessionLost(false);
-        pendingRef.current = null;
-        setPending(null);
-        setNotice(
-          response.status === 404 ? messageFor('NOT_FOUND') : 'Диагностическая сессия завершена.',
-        );
-      } else {
-        setNotice(
-          messageFor(responseCode(await response.json().catch(() => null), `${response.status}`)),
-        );
-      }
-    } catch {
-      setNotice('Удаление не подтверждено. Сессия остаётся на сервере, пока он работает.');
-    } finally {
-      deletingRef.current = false;
-      setDeleting(false);
-    }
-    return removed;
   };
 
   const restartBattle = () =>
