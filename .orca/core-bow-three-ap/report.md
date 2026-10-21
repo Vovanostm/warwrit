@@ -277,7 +277,6 @@ Proposed shared-record update: record this local test-only fix, both terminal
 failures and unfinished acceptance; preserve original failing evidence. No push,
 PR, merge, rebase, reset, Orca call, delegation, deployment or paid action occurred.
 
-
 ## Round 2 bounded rework — 2026-10-21
 
 Sole source/runtime writer in the existing dedicated checkout; started at
@@ -329,7 +328,7 @@ Original hostile-wake assertions remain intact. Logs: `rework2-pg.log`,
 ### Finite author result and limits
 
 Fresh PostgreSQL 17.11 container `warwrit-bow249-rework2-f363b29d`, database
-`bow249_rework2_f363b29d`, private loopback port32778. Native version/database
+`bow249_rework2_f363b29d`, private loopback port 32778. Native version/database
 identity was checked before applying only the 14 existing up migrations;
 `rework2-migrate.log`: PASS, pending none. No new migration or migration suite.
 The owned database stays available through the normal hook, with
@@ -337,11 +336,11 @@ The owned database stays available through the normal hook, with
 
 Finite test command: `pnpm exec vitest run
 apps/server/src/encounters/postgres.integration.test.ts -t 'freezes bridge v5'`
-with that disposable URL. `rework2-pg-final.log`: 1 PASS /23 filtered SKIP.
+with that disposable URL. `rework2-pg-final.log`: 1 PASS / 23 filtered SKIP.
 Added native one-proof/one-terminal-receipt-per-company/completed-root checks,
 plus a second terminal-effects call and exact original shot retry comparing
 unchanged complete roots/receipts/proof rows. Final `rework2-pg-proof.log`:
-1 PASS /23 filtered SKIP. This reaches every original assertion and establishes
+1 PASS / 23 filtered SKIP. This reaches every original assertion and establishes
 supported terminal completion/proof/idempotency at the author integration-test
 boundary. Company victory is produced only by actual legal commands. The
 connection reopen remains different from a true process restart.
@@ -350,20 +349,58 @@ Server typecheck, scoped ESLint, scoped Prettier and ordinary diff check: PASS
 before final closeout. Initial post-edit `pnpm check:changes` PASS on its default
 2-file scope (`rework2-first-audit.log`); this is not the normal hook's main-base
 gate. Related current-source coverage and normal audited commit results follow.
-All prior rework1 failures, including93 findings/5 clone groups, remain history;
+All prior rework1 failures, including 93 findings/5 clone groups, remain history;
 no old coverage was restored, no audit base/threshold/hook/exclusion changed.
-Production source scope remains239 lines against origin/main; no new production
+Production source scope remains 239 lines against origin/main; no new production
 change or unrelated complexity restructuring was needed for the fixture defect.
 
 No rendered output changed, and this round's override restricts runtime work to
 the finite defect proof: screenshots/browser smoke NOT_RUN; prior images retain
-their original limitations and are not relabeled as fresh evidence. Native2 AP
+their original limitations and are not relabeled as fresh evidence. Native 2 AP
 browser refusal and complete rendered day/night move journeys remain for fresh
 independent Tier L gates, alongside independent terminal/proof/retry acceptance.
 Coordinator validator/full gates/CI NOT_RUN here. No author acceptance waiver,
 balance measurement, migration change, deployment or issue closure.
 
-Proposed parent CHANGELOG amendment: local round2 corrects invalid bow fixture
+Proposed parent CHANGELOG amendment: local round 2 corrects invalid bow fixture
 through the existing public opening producer, preserves the guard and all
-Round1 assertions, and adds native supported-terminal proof/retry regressions;
+Round 1 assertions, and adds native supported-terminal proof/retry regressions;
 independent playable acceptance and coordinator gates remain pending.
+
+
+### Final coverage, normal commits and cleanup
+
+- Related current-source coverage: **84 files PASS / 6 files SKIP; 689 tests
+  PASS / 34 SKIP**, 61.22 s (`rework2-related-coverage.log`). Ran `vitest related
+  --run --coverage --mode coverage` with the PG URL, targeting all six changed
+  company production modules, the two owned testkit specifications, encounter
+  access/admission/executor/terminal-evidence, the PG regression and contracts
+  executor. This is finite dependency-selected coverage, not the full suite.
+  The V5 test also passed in that source-alias coverage run.
+- Final server typecheck and scoped ESLint: PASS (`rework2-types-final.log`,
+  `rework2-lint.log`); scoped Prettier and ordinary diff check PASS.
+- **Normal source/test commit `5d87f0e1`**: PASS. The hook refreshed its own
+  related coverage with the owned PG URL and live database; no failed-focused-test
+  warning. The hook then pinned its usual main merge-base `d8a04196`, audited
+  22 changed files and reported **no new issues**, 29 inherited findings
+  excluded (`rework2-commit.log`). Its displayed whole-scope 27 complexity
+  findings / 5 clone groups are not new gate failures. No threshold, exclusion,
+  hook or audit-base override was introduced. The earlier Round 1 hook failure
+  remains recorded and preserved; current source coverage supersedes only its
+  zero-coverage artifact, not its historical failed outcome. No coverage copied
+  or restored; no unnecessary production refactor made to influence coverage.
+- Confirmed production source diff against `origin/main`: **239 changed lines**,
+  unchanged by this test-only round, under the 300-line limit. The temporary
+  diagnostic changes are absent; production source is unchanged from the parent.
+- After the normal audited commit completed, removed only
+  `warwrit-bow249-rework2-f363b29d` with its anonymous volume. Exact-name container
+  readback is empty. Test-owned cleanup ran; no other database/runtime touched.
+- Report-only closeout accompanies the next normal documentation commit. Shared
+  CHANGELOG/CURRENT_PLAN/wiki remain parent-owned; proposed entry is above.
+
+Builder outcome: **succeeded within the bounded rework scope**, with the original
+staged files now normally committed and a clean test-only fix. Independent
+acceptance remains open: coordinator validation and fresh Tier L rendered
+journeys/native 2 AP refusal/terminal-proof-retry review must run on the new head.
+This author proof is not an ACCEPT, process-restart proof or permission to
+publish/merge. No new rule question or ownership blocker remains.
