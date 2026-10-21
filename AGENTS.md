@@ -246,7 +246,7 @@ contract already cites them works from that contract. Preserve the named
 original source-archive limitation; do not reconstruct the catalogue again or
 reopen superseded interview blockers.
 
-Implementation, tests and PR updates are authorized. Merge, auto-merge, deployment and paid provisioning require separate permission. One owner plus ChatGPT agents; one writer per slice. Server target: Yandex Cloud 2 cores / 4 GB; available client: MacBook + Chrome. These are constraints, not measured capacity.
+Implementation, tests, PR updates and merges on gates (hard rule 1) are authorized. Auto-merge, admin merge, deployment and paid provisioning require separate permission. One owner plus ChatGPT agents; one writer per slice. Server target: Yandex Cloud 2 cores / 4 GB; available client: MacBook + Chrome. These are constraints, not measured capacity.
 
 ## Language and context budget
 

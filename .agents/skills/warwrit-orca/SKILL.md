@@ -183,7 +183,7 @@ repo id are in the tick prompt. Work from the coordinator worktree.
    - `bash scripts/orca-metrics.sh 1 > .orca/pipeline/metrics/<date>.txt`;
      compare with the previous day. If failed worker runs or the REWORK share
      rose two days in a row, open one issue labelled `pipeline` with both
-     numbers and one proposed change (pipeline PRs keep the owner merge gate).
+     numbers and one proposed change (an infrastructure PR: it merges on gates with a fresh `review` ACCEPT).
    - Scout: when a worker slot is free, start [scout](prompts/scout.md) with
      `{{DATE}}`. On a later tick triage its `finding-N.md` files: skip
      duplicates of open issues, create at most three issues per day with
