@@ -23,6 +23,53 @@ requests.
   round and maps REJECT/BLOCKED to REWORK/BLOCKED_ENV.
 - Checks: Prettier. Effect NOT_MEASURED.
 
+### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-session-callbacks`, [PR #281](https://github.com/Vovanostm/warwrit/pull/281),
+  closes only #273 after its gates. Independent Tier U ACCEPT for frozen
+  `a6b35143`: 48 focused tests PASS, actual day/night mill victories at 1440×900,
+  and session/transport/disabled/keyboard guards. Existing callbacks and player
+  behavior preserved; 137 source additions plus removals, tests excluded.
+- Coordinator validator exit 0, 9/9 PASS, 75 related tests PASS; scope 137 PASS.
+  Normal changed-code audit PASS with five inherited findings retained.
+  Exact native evaluator task/dispatch/result/full verdict matched, recorded
+  before acknowledgment and release (no owned resource).
+- [Owning contract, independent verdict and ten JPEGs](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+  now tracked; later commits change only evidence and coordinator records.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records publication and
+  remaining hosted-CI/exact-head/blocked-label gates. Merge NOT_RUN; 0 merged
+  PRs with playable proof this tick. #271 remains next after this merge; #267
+  staged WIP/budgets preserved. #269 AND #262 final component limits remain;
+  #263/#231 stay open. Daily work already complete, not repeated.
+- Independent opponent-pause/root-unmount proof NOT_RUN; full limitations in
+  verdict. Full verify/stress/migrations/build NOT_RUN locally; performance
+  NOT_MEASURED. No rule, protocol, replay, renderer, dependency, migration,
+  setup or API behavior change; existing wiki contracts unchanged.
+
+### Validate finite session callbacks and hand off Tier U — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-session-callbacks`, [#273](https://github.com/Vovanostm/warwrit/issues/273):
+  expose existing `applyLatest`/`endBattle` through finite typed ports for real
+  production-callback tests before #267. Preserve ref ownership, DELETE/restart
+  ordering, notices, retry/poll/autoplay and player controls. Normal source
+  commit `a6b35143`: three owned source/test paths, 137 changed source lines.
+- Coordinator validator exit 0, 9/9 PASS: ancestry, clean tree, scope, package
+  builds, typecheck, format, lint, 75 related tests and ordinary audit. Builder
+  also reports 48 focused tests and day/night mill victory; independent Tier U
+  acceptance is pending on task `task_840ad97b96c0`, frozen source `a6b35143`.
+  Exact native builder settlement and structured result matched the full local
+  contract/report before acknowledgment and release (no owned resource).
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the playable journey,
+  evaluator handoff and sequence. Local contract/report and validator logs stay
+  in the dedicated worktree under `.orca/`; source and records are published
+  for continuation. PR/merge NOT_RUN; this tick has 0 merged PRs with playable
+  proof. #271 follows this merge; #267 WIP/budgets and #231 acceptance remain.
+  Final CombatLab 20/15 gate stays on #269 AND #262; no waiver or duplicate daily work.
+- Full verify/stress/migrations/production build NOT_RUN; performance NOT_MEASURED.
+  No migration, rule, replay, protocol, renderer, dependency, setup or API change;
+  wiki contracts are unchanged. The branch is published; independent player
+  acceptance and full M1 delivery remain unclaimed.
+
 ### Publish accepted editor extraction — 2026-10-21, PUBLISHED
 
 - `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261),
