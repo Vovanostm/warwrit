@@ -47,3 +47,7 @@ while read -r ref stamp; do
   found=1
 done < <(git for-each-ref --sort=-committerdate --format='%(refname:short) %(committerdate:unix)' refs/remotes/origin)
 [[ "$found" -eq 1 ]] || printf 'none\n'
+
+printf '\n## Coordinator lease (AGENTS.md "Orchestration")\n'
+lease="$HOME/orca/workspaces/warwrit/pipeline-coordinator/.orca/pipeline/tick.lock/owner.txt"
+if [[ -f "$lease" ]]; then head -n 3 "$lease"; else printf 'free\n'; fi

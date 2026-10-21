@@ -29,11 +29,26 @@ repo="Vovanostm/warwrit"
 coord="${1:-$HOME/orca/workspaces/warwrit/pipeline-coordinator}"
 state="$coord/.orca/pipeline"
 mkdir -p "$state/ticks"
+# The lock is also the coordinator lease (AGENTS.md "Orchestration"): another
+# coordinator, such as a desktop mission, writes its own owner.txt here and the
+# tick then stays out until that owner releases it. Only a lock left by a dead
+# tick process, or an empty legacy lock older than 90 minutes, is reclaimed.
 lock="$state/tick.lock"
-if ! mkdir "$lock" 2>/dev/null; then
-  if [[ -n "$(find "$lock" -maxdepth 0 -mmin +90 2>/dev/null)" ]]; then rmdir "$lock" && mkdir "$lock"; else echo 'tick already running'; exit 0; fi
+me="orca-pipeline-tick pid=$$"
+take_lock() { mkdir "$lock" 2>/dev/null && printf '%s\n' "$me" > "$lock/owner.txt"; }
+if ! take_lock; then
+  owner="$(head -n 1 "$lock/owner.txt" 2>/dev/null || true)"
+  if [[ "$owner" == "orca-pipeline-tick pid="* ]] && ! kill -0 "${owner##*pid=}" 2>/dev/null; then
+    rm -rf "$lock"
+  elif [[ -z "$owner" && -n "$(find "$lock" -maxdepth 0 -mmin +90 2>/dev/null)" ]]; then
+    rm -rf "$lock"
+  else
+    echo "coordinator lease held by: ${owner:-an unfinished tick} ($lock/owner.txt)"
+    exit 0
+  fi
+  take_lock || { echo 'tick lock taken concurrently'; exit 0; }
 fi
-trap 'rmdir "$lock"' EXIT
+trap '[[ "$(head -n 1 "$lock/owner.txt" 2>/dev/null)" == "$me" ]] && rm -rf "$lock"' EXIT
 
 cd "$coord" || exit 1
 git fetch -q origin && git checkout -q --detach origin/main || exit 1
