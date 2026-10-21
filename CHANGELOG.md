@@ -20,8 +20,15 @@ requests.
 - warwrit-orca: main red first (rerun failed jobs once, then a `P0` issue that
   is refilled first and blocks other merges); status block rewritten in place
   with the owner's own words as scope.
-- Checks: current plan PASS (28 lines); a 45-line block and a missing block
-  FAIL; `bash -n`; Prettier.
+- Independent review REWORK on 2a8d6ba8 fixed: a deleted or empty status
+  block (history headings only) now fails, `##` inside code fences is ignored,
+  the block must name the coordinator, the step runs even after a scope
+  failure; main-red is its own step 2a and a condition of the merge row, the
+  fix PR is exempt, PRs failing only on the main-red test are held, not
+  reworked.
+- Checks: current plan PASS (28 lines); deleted block, empty block, fenced
+  45-line block, block without coordinator and missing file FAIL; `bash -n`;
+  Prettier.
 
 ### Publish accepted editor extraction — 2026-10-21, PUBLISHED
 
