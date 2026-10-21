@@ -20,7 +20,11 @@ admission defaults retain their existing behavior.
 - Coordinator validator: exit 0, 9/9 PASS at `1105189d`; 118 changed source
   lines. Builder related coverage: 812 PASS / 51 SKIP, normal audit PASS.
   These are inspected executed logs, not fresh coordinator test reruns here.
-- Hosted CI and merge: pending publication. No deployment or migration.
+- Pre-integration hosted CI `39598354029` SUCCESS on published `f764b847`.
+- Integrated main `4e83842a` through normal merge `a0dd20c0`; only additive
+  CHANGELOG conflict resolved, both histories retained. No game source conflict.
+  Fresh coordinator validator exit 0, 9/9 PASS on the integrated head.
+  Final integrated-head hosted CI and merge remain pending; no deployment or migration.
 
 ## Screenshots
 
