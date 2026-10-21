@@ -4,6 +4,7 @@ import type {
   CharacterCombatProjection,
   CharacterCombatProjectionV3,
   CharacterCombatProjectionV4,
+  CharacterCombatProjectionV5,
 } from './combat-projection.js';
 import { natural } from './input.js';
 import { person } from './lifecycle-state.js';
@@ -51,6 +52,15 @@ export interface CharacterCombatMoraleProjectionV4 extends Omit<
   readonly morale: CombatMoraleSnapshot;
 }
 
+export interface CharacterCombatMoraleProjectionV5 extends Omit<
+  CharacterCombatProjectionV5,
+  'attributes' | 'current'
+> {
+  readonly attributes: CharacterCombatProjectionV5['attributes'] & { readonly morale: number };
+  readonly current: CharacterCombatProjectionV5['current'] & { readonly morale: number };
+  readonly morale: CombatMoraleSnapshot;
+}
+
 /** G04 only: a frozen projection, not encounter admission or a persistent write. */
 export function projectCharacterCombatWithMorale(
   root: MaterializedCompanyState,
@@ -69,16 +79,25 @@ export function projectCharacterCombatWithMorale(
 export function projectCharacterCombatWithMorale(
   root: MaterializedCompanyState,
   characterId: string,
-  version: 3 | 4,
-): CharacterCombatMoraleProjectionV3 | CharacterCombatMoraleProjectionV4;
+  version: 5,
+): CharacterCombatMoraleProjectionV5;
 export function projectCharacterCombatWithMorale(
   root: MaterializedCompanyState,
   characterId: string,
-  version?: 3 | 4,
+  version: 3 | 4 | 5,
+):
+  | CharacterCombatMoraleProjectionV3
+  | CharacterCombatMoraleProjectionV4
+  | CharacterCombatMoraleProjectionV5;
+export function projectCharacterCombatWithMorale(
+  root: MaterializedCompanyState,
+  characterId: string,
+  version?: 3 | 4 | 5,
 ):
   | CharacterCombatMoraleProjection
   | CharacterCombatMoraleProjectionV3
-  | CharacterCombatMoraleProjectionV4 {
+  | CharacterCombatMoraleProjectionV4
+  | CharacterCombatMoraleProjectionV5 {
   const projection =
     version !== undefined
       ? projectCharacterCombat(root, characterId, version)
@@ -115,7 +134,8 @@ export function projectCharacterCombatWithMorale(
   }) as
     | CharacterCombatMoraleProjection
     | CharacterCombatMoraleProjectionV3
-    | CharacterCombatMoraleProjectionV4;
+    | CharacterCombatMoraleProjectionV4
+    | CharacterCombatMoraleProjectionV5;
 }
 
 /** C01 correction: only the actual tactical change persists, never the nominal aura. */

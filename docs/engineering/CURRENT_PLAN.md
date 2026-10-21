@@ -6,29 +6,78 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
-Queue: epic #217 plus existing local handover overrides; no new milestone.
-Delivered earlier: PR255/#254, merged `0adcff2e`; issue closed/done.
-Open slice [PR257](https://github.com/Vovanostm/warwrit/pull/257), #256:
-code `1105189d` has fresh Tier L source and playable ACCEPT, day/night
-4 → 3 → 0 AP and unchanged 16-stamina shot; seven old replay baselines match.
-Main `4e83842a` integrated as `a0dd20c0`; additive CHANGELOG conflict only,
-both histories preserved. Integrated validator 9/9 PASS; scope 118 source lines.
-Prior published-head CI `39598354029` SUCCESS; final integrated-head CI pending.
-[Tracked proof and limits](evidence/core-bow-lab/README.md).
-Web #184: `needs-owner`, pushed `3963215b`, source `5599c8f1`; rework 2/2 failed
-on missing B1 actual silhouette/annotation intersection across level/0→1→2
-crowds. No source defect established. Earlier ACCEPT/REWORK covers `06479a47`
-only; current validator/Tier V gates NOT_RUN. Existing epic owner question
-recommends one bounded evidence-only evaluator attempt; decision pending.
-#231 is first next web slice after #184. #249 waits for #256 merge, then gets
-a fresh contract for company/binding/persistent admission/save/restart.
-Retained pushed `e68025b9` is untouched. Other slices retain ownership/dependencies.
-Infrastructure PR258 requires separate owner merge permission; it is outside slices.
-Next: green final integrated-head CI, native blocked-label check, expected-head
-merge #257, then contract #249. No auto-merge or deployment is authorized.
-This tick: 0 merged PRs with playable proof so far; no full-M1 claim.
+Queue: epic #217 plus local handover overrides; no new milestone.
+Delivered earlier: PR255/#254 and PR257/#256. This tick: 0 merged PRs with
+playable proof so far. Infrastructure PR134/129 remain outside slice authority.
+#249: fresh source and playable Tier L ACCEPT at `63ce897e`; evidence retains
+rendered day/night 4 → 3 → 0 AP, 16-stamina shot, atomic 2 AP refusal,
+real V5 process restart/retry, genuine old-active V4 continuation and supported
+terminal/proof/idempotency. Evaluator finite 61 PASS; fixture limits retained.
+Main `46fe0c33` integrated as `16cedf56`: CHANGELOG-only conflict, both histories
+preserved; no post-gate game source/test change. Normal merge audit PASS.
+Integrated coordinator validator exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
+239 source lines. [PR259](https://github.com/Vovanostm/warwrit/pull/259) is open; PR scope SUCCESS,
+final hosted full gate/merge pending.
+[Accepted proof and limits](evidence/core-bow-three-ap/README.md).
+#184: source `5599c8f1` unchanged, main integrated as `74ea6cc3`; normal
+main-based validator is running. Merge audit against branch parent PASS after
+two staged-main coverage failures; 21 focused tests PASS, no hook weakened.
+Prior coordinator evidence/process decision resumes one bounded read-only B1
+supported-layout attempt, then fresh Tier V evaluator and absolute visual gates.
+B1 intersection remains unproven; no third source rework or acceptance waiver.
+#231 stays first next web slice after #184; other dependencies unchanged.
+Daily scout is playing pinned main `46fe0c33`; triage follows its settlement.
+Local validators are serial after scout startup; performance during overlap
+is NOT_MEASURED for acceptance. No auto-merge, deployment or full-M1 claim.
+Next: final-head green CI/blocked-label checks for #249, then expected-head
+merge; finish #184 validator and start its fresh read-only Tier V gates.
 
 ## Dated history
+
+**Prior #249 gate checkpoint — 2026-10-21 (superseded above):**
+
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local handover overrides; no new milestone.
+Previously delivered: PR257/#256 merged `d8a04196`, CI `39602921979` SUCCESS,
+validator 9/9 and Tier L ACCEPT; lab acceptance stays separate from #249.
+#249: round 2 settled succeeded at clean `482f8daa`, source/test commit `5d87f0e1`;
+retained WIP/main history preserved. Worker recorded, acknowledged and released.
+Root cause was invalid synthetic archery preparation: the sword fixture lacked
+archery aptitude. The test now uses the public CreateCompany opening producer
+for the bow leader; original terminal guard and earlier assertions remain intact.
+Author isolated PG terminal/proof/exact retry: 1 PASS / 23 filtered SKIP;
+related current-source coverage: 689 PASS / 34 SKIP, normal commit audit PASS.
+Earlier stale-revision, terminal-evidence and audit failures remain history.
+Coordinator validator on `482f8daa`: exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
+source scope 239 lines. Coordinator PG NOT_RUN; evaluator owns fresh isolated DB.
+#249 implementing → validating → review. Fresh Tier L reviewer
+`task_6b33a6c81ce3` and evaluator `task_37b385ba7c4e` are live;
+source is frozen, only coordinator CHANGELOG/CURRENT_PLAN may advance.
+Evaluator must complete rendered day/night move/shot, native 2 AP refusal,
+supported terminal/proof/retry and saved-version/restart/old-active checks.
+Prior eval-1 proof retains its stated limits; no independent ACCEPT yet.
+Owning evidence: `.orca/core-bow-three-ap/{report,review-1,eval-1}.md`,
+`rework2-*` logs and pending `{review-2,eval-2}.md` in the dedicated worktree.
+No open slice PR; full integrated gate/hosted CI/publication/merge remain pending.
+#184 remains needs-owner at `3963215b`; existing B1 evidence question pending.
+#231 stays first next web slice after #184; other dependencies unchanged.
+Infrastructure PR258 remains outside slice merge authority. No blocked label removed.
+This tick: 0 merged PRs with playable proof; no new rule, migration, deployment,
+balance measurement or full-M1 claim. Next tick consumes the two gate settlements.
+
+**Persistent bow contract/integration — 2026-10-21, LOCAL:**
+Fresh contract has all required sections and no open product question. Contract
+writer performed source/scope reading only; executable checks NOT_RUN. Ordinary
+main integration has source conflicts in already-delivered combat/lab tests and
+replay/runtime files. One builder receives those integration paths plus remaining
+company/persistent ownership; no new core/lab feature delta is authorized.
+Previous pipeline snapshots describing PR257 as pending are superseded by the
+merged status above; their underlying evidence and reasons remain in history.
 
 **JOIN lock order254 — 2026-10-21, LOCAL / implementation active:**
 Parent owns `contracts/routes.ts` and the existing encounter PostgreSQL integration
@@ -52,6 +101,22 @@ unchanged. A second actual API crash/restart retained the target HUNT02 row plus
 omitted the actual world row; preserve this limitation and the initial JOIN failure.
 Synthetic accounts/company/start location do not prove externalOIDC, creation or
 travel. Full174/177/sprint/M1 remain PARTIAL. Native logs/snapshots remain private.
+
+**Pickup248 delivered / payment journey and bow249 active — 2026-10-21:**
+PR251 merged7b9a1dcaf23c8a08fe16783ae910bd42113ef6a2; published5c68fb83,
+tested merge373d1d31 and actual main contents match. CI39515766544/job118947421724
+SUCCESS:937unitPASS/50SKIP,10000stress,17realPG/auth,migrations,coverage/audit.
+Independent source/saved-state runtime ACCEPT; #248 CLOSED/agent:done.
+Range main CI39515412105 also SUCCESS. [Pickup record](evidence/persistent-hud/main-readback.md).
+
+The prepared DB7 now uses actual merged main for a separate lawful
+contract→battle→pickup→payment→SIGKILL/restart journey. Synthetic account/company/
+starting-location fixtures remain explicit; DB6 failure and original volume
+remain untouched. No payment/restart PASS yet. In isolated codex/bow-three-ap-249,
+one core writer starts approved3AP ordinary bow in new compatible rules only;
+old active encounters/replays retain4AP. No tests while the evaluator's runtime
+window is active. Affordability184 source49548eb4 is under independent review;
+no rendered acceptance yet. Full sprint/M1 remain PARTIAL.
 
 **Pickup248 integrated and ready to publish — 2026-10-21, LOCAL:**
 Actual range mainb0eeb8e8 merged as c5acd803; only additive status-document

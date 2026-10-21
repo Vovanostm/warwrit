@@ -7,7 +7,7 @@ import type { TerminalCommandRow } from './terminal-evidence.js';
 
 function resolvedBattle(
   killLeader = false,
-  retreatVersion?: 3 | 4,
+  retreatVersion?: 3 | 4 | 5,
   leaderHealth = 100,
   reactionGain = false,
 ) {
@@ -18,9 +18,11 @@ function resolvedBattle(
       setup: {
         ...fixture.f.evidence.setup,
         rulesetId:
-          retreatVersion === 4
-            ? combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
-            : combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+          retreatVersion === 5
+            ? combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+            : retreatVersion === 4
+              ? combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
+              : combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
       },
     };
     const begun = combat.prepareBeginCombatAggregate(
@@ -214,7 +216,7 @@ function resolvedBattle(
 
 function terminalInput(
   killLeader = false,
-  retreatVersion?: 3 | 4,
+  retreatVersion?: 3 | 4 | 5,
   leaderHealth = 100,
   reactionGain = false,
 ) {
@@ -420,7 +422,7 @@ function coreHexEqual(a: { q: number; r: number }, b: { q: number; r: number }):
 }
 
 it('preserves historical retreat settlement but leaves new tactical hostile retreat pending', () => {
-  for (const version of [3, 4] as const) {
+  for (const version of [3, 4, 5] as const) {
     const { battle, input } = terminalInput(false, version);
     expect(
       battle.state.units

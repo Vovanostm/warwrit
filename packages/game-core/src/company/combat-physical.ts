@@ -187,11 +187,13 @@ function validateCompanyBinding(root: MaterializedCompanyState, journal: CombatR
         participant.revision === root.lifecycle.revision &&
         participant.physicalPolicyVersion === root.physical.policyVersion &&
         canonicalJson(
-          participant.projection.schemaVersion === 3 || participant.projection.schemaVersion === 4
+          participant.projection.schemaVersion === 3 ||
+            participant.projection.schemaVersion === 4 ||
+            participant.projection.schemaVersion === 5
             ? projectCharacterCombatWithMorale(
                 root,
                 characterId,
-                participant.projection.schemaVersion as 3 | 4,
+                participant.projection.schemaVersion as 3 | 4 | 5,
               )
             : projectCharacterCombatWithMorale(root, characterId),
         ) === canonicalJson(participant.projection) &&
@@ -223,16 +225,20 @@ function validateBoundUnits(binding: FrozenEncounterBinding): void {
         unit.weaponId === participant.projection.weapon.profileId &&
         canonicalJson(unit.capabilities ?? null) ===
           canonicalJson(
-            participant.projection.schemaVersion === 3 || participant.projection.schemaVersion === 4
+            participant.projection.schemaVersion === 3 ||
+              participant.projection.schemaVersion === 4 ||
+              participant.projection.schemaVersion === 5
               ? participant.projection.capabilities
               : null,
           ) &&
         canonicalJson(unit.skillRanks ?? null) ===
           canonicalJson(
-            participant.projection.schemaVersion === 4 ? participant.projection.skillRanks : null,
+            participant.projection.schemaVersion === 4 || participant.projection.schemaVersion === 5
+              ? participant.projection.skillRanks
+              : null,
           ) &&
         unit.moralePolicy ===
-          (participant.projection.schemaVersion === 4
+          (participant.projection.schemaVersion === 4 || participant.projection.schemaVersion === 5
             ? participant.projection.moralePolicy
             : undefined) &&
         canonicalJson(unit.attributes) === canonicalJson(participant.projection.attributes) &&

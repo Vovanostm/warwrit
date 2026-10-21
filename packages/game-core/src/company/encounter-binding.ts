@@ -2,6 +2,7 @@ import { startBattleV2 } from '../combat/runtime-v2.js';
 import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
   type BattleSetupV2,
 } from '../combat/setup-v2.js';
 import type { BattleId, Hex, SideId, UnitId } from '../combat/types.js';
@@ -10,6 +11,7 @@ import {
   type CharacterCombatMoraleProjection,
   type CharacterCombatMoraleProjectionV3,
   type CharacterCombatMoraleProjectionV4,
+  type CharacterCombatMoraleProjectionV5,
 } from './combat-morale.js';
 import { canPerform, sameLocation, validateLifecycleGraph } from './lifecycle-state.js';
 import type { AtLocation, LifecycleContext } from './lifecycle-types.js';
@@ -96,7 +98,8 @@ type FrozenBindingBase = {
     readonly projection:
       | CharacterCombatMoraleProjection
       | CharacterCombatMoraleProjectionV3
-      | CharacterCombatMoraleProjectionV4;
+      | CharacterCombatMoraleProjectionV4
+      | CharacterCombatMoraleProjectionV5;
     readonly vitals: ReturnType<typeof physicalVitals>;
     readonly equipment: readonly ReturnType<
       typeof ownPhysical<MaterializedCompanyState['physical']['items'][number]>
@@ -120,6 +123,10 @@ export type FrozenEncounterBinding =
 function claim(ids: Set<string>, id: string): void {
   requirePhysical(isEntityId(id) && !ids.has(id), 'INVALID_SOURCE');
   ids.add(id);
+}
+
+function isTacticalBridgeRuleset(ruleset: BattleSetupV2['rulesetId']): boolean {
+  return ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID || ruleset === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
 }
 
 /** G05: one detached candidate; no locks, root writes, settlement or public activation. */
@@ -190,7 +197,9 @@ export function prepareEncounterBinding(
       requirePhysical(placements.length === 1, 'INVALID_SOURCE');
       const placement = placements[0]!;
       claim(units, placement.unitId);
-      const v4 = evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+      const v4 =
+        evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+        evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
       const v3 = evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || v4;
       requirePhysical(
         v3
@@ -201,7 +210,11 @@ export function prepareEncounterBinding(
         'INCOMPATIBLE_ACTIVITY',
       );
       const projection = v3
-        ? projectCharacterCombatWithMorale(root, characterId, v4 ? 4 : 3)
+        ? projectCharacterCombatWithMorale(
+            root,
+            characterId,
+            evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ? 5 : v4 ? 4 : 3,
+          )
         : projectCharacterCombatWithMorale(root, characterId);
       const equipment = root.physical.items.filter(
         (item) => item.tombstone === null && item.equipped?.characterId === characterId,
@@ -258,16 +271,19 @@ export function prepareEncounterBinding(
     weaponId: participant.projection.weapon.profileId,
     attributes: participant.projection.attributes,
     initialPools: participant.projection.current,
-    ...(participant.projection.schemaVersion === 4
+    ...(participant.projection.schemaVersion === 4 || participant.projection.schemaVersion === 5
       ? {
           skillRanks: participant.projection.skillRanks,
           moralePolicy: participant.projection.moralePolicy,
         }
       : {}),
-    ...(participant.projection.schemaVersion === 3 || participant.projection.schemaVersion === 4
+    ...(participant.projection.schemaVersion === 3 ||
+    participant.projection.schemaVersion === 4 ||
+    participant.projection.schemaVersion === 5
       ? { capabilities: participant.projection.capabilities }
       : {}),
   }));
+  const tacticalWorld = isTacticalBridgeRuleset(evidence.setup.rulesetId);
   const worldUnits = worldParticipants.map((participant) => ({
     id: participant.unitId,
     sideId: participant.sideId,
@@ -275,11 +291,8 @@ export function prepareEncounterBinding(
     weaponId: participant.weaponId,
     attributes: participant.attributes,
     initialPools: participant.initialPools,
-    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
-      ? { skillRanks: {}, moralePolicy: participant.moralePolicy }
-      : {}),
-    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
-    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
+    ...(tacticalWorld ? { skillRanks: {}, moralePolicy: participant.moralePolicy } : {}),
+    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || tacticalWorld
       ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
       : {}),
   }));

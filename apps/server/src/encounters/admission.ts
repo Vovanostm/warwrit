@@ -303,7 +303,7 @@ export async function admitFirstHuntInTransaction(input: {
       battleId: combat.battleId(encounterId),
       rulesetId:
         profile.instanceId === 'ci.m1.wolf-trail.01'
-          ? combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
+          ? combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
           : combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
       seed: world.seed,
       map: profile.combatMap,
