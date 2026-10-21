@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Validate persistent bow source and prepare independent gates — 2026-10-21, LOCAL
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  company projection 5, strict binding/save/receipt consumers and new wolf
+  admission use already delivered bridge-v5. Normal main integration preserves
+  legacy active rules/replays and JOIN lock order; no new migration or rule.
+- Source `0a38a99b` is committed and clean, scope 239 lines. Coordinator
+  validator exit 0, 9/9 PASS; related tests 671 PASS / 52 SKIP, audit PASS.
+  Builder's native lab step/shot is author proof only. Actual PG attempt failed
+  before admission because the disposable DB lacked its existing schema;
+  persistent restart/old-active/terminal proof remains NOT_RUN.
+- Fresh independent Tier L gates are next, including isolated test-schema setup
+  with existing migrations only. Hosted CI/publication/merge remain pending;
+  no #249/#218 closure, deployment, balance or full-M1 claim.
+  [Current checkpoint](docs/engineering/CURRENT_PLAN.md); owning builder report
+  is tracked at `.orca/core-bow-three-ap/report.md`.
+
 ### Start persistent bow successor integration — 2026-10-21, LOCAL
 
 - `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):

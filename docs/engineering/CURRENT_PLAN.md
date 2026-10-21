@@ -8,22 +8,25 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local handover overrides; no new milestone.
 Previously delivered: PR257/#256 merged `d8a04196`, exact-head CI `39602921979`
-SUCCESS, integrated validator 9/9 PASS, scope 118, Tier L ACCEPT.
-Lab day/night 4 → 3 → 0 AP and 16-stamina shot; seven old baselines match.
-#249: fresh contract consumed; sole core builder task `task_73dc0817b72c`
-continues branch `codex/bow-three-ap-249` in `codex-company-profile-164`.
-Contract path: `.orca/core-bow-three-ap/contract.md` in that worktree.
-Remaining source measured 190 lines before integration; final scope NOT_RUN.
-Ordinary main integration is in progress; retained `e68025b9` is preserved.
-Coordinator resolved/staged shared records, retaining both histories; builder
-must resolve source conflicts and commit normally, preserving delivered #256.
-Persistent admission/move/shot/save/restart and old-active continuation proof,
-current integrated audit/validator and fresh Tier L gates remain NOT_RUN.
+SUCCESS, validator 9/9 and Tier L ACCEPT; lab proof remains separate from #249.
+#249: builder settled, source committed through `0a38a99b`, clean tree;
+ordinary main merge `ba9d47f3` preserves retained `e68025b9` and delivered #256.
+Source scope 239 lines. Coordinator validator exit 0, 9/9 PASS;
+related tests 671 PASS / 52 SKIP; normal audit and scoped types/lint PASS.
+Builder's lab step/shot proof is author evidence only. Its actual PG attempt
+failed before admission: isolated database lacked `identity_accounts` schema.
+Persistent admission/move/shot/restart, genuine old-active continuation and
+terminal/effects runtime proof remain NOT_RUN; no independent acceptance yet.
+Next: fresh Tier L source review and playable evaluation; evaluator may apply
+existing schema only to its new disposable isolated test DB, without changing
+migration files or touching retained/shared data. No rework budget spent on
+this environment repair. Publication, CI and merge remain pending.
+Owning report: `.orca/core-bow-three-ap/report.md` in the dedicated worktree;
+contract: `.orca/core-bow-three-ap/contract.md` there.
 #184 remains needs-owner, pushed `3963215b`; rework 2/2 B1 overlap evidence
 unproven. Existing owner question is pending; no extra attempt or waiver.
-#231 remains first next web slice after #184; other dependencies are unchanged.
+#231 remains first next web slice after #184; other dependencies unchanged.
 Infrastructure PR258 is outside slice merge authority. No blocked label removed.
-Next: builder commits and report, coordinator validator, independent Tier L gates.
 This tick: 0 merged PRs with playable proof. No deployment or full-M1 claim.
 
 ## Dated history
