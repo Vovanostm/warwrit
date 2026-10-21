@@ -22,6 +22,7 @@ export const M1_DOMAIN_BRIDGE_V2_RULESET_ID = 'm1-domain-bridge-v2' as const;
 export const M1_DOMAIN_BRIDGE_V3_RULESET_ID = 'm1-domain-bridge-v3' as const;
 
 export const M1_DOMAIN_BRIDGE_V4_RULESET_ID = 'm1-domain-bridge-v4' as const;
+export const M1_DOMAIN_BRIDGE_V5_RULESET_ID = 'm1-domain-bridge-v5' as const;
 
 export function validateCombatCapabilities(
   value: CombatCapabilities | undefined,
@@ -29,7 +30,8 @@ export function validateCombatCapabilities(
 ): void {
   if (
     rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
-    rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID
+    rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
+    rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID
   ) {
     invariant(value === undefined, 'Capabilities require bridge-v3');
     return;
@@ -69,7 +71,8 @@ export interface BattleSetupV2 {
     | typeof M1_DOMAIN_BRIDGE_RULESET_ID
     | typeof M1_DOMAIN_BRIDGE_V2_RULESET_ID
     | typeof M1_DOMAIN_BRIDGE_V3_RULESET_ID
-    | typeof M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+    | typeof M1_DOMAIN_BRIDGE_V4_RULESET_ID
+    | typeof M1_DOMAIN_BRIDGE_V5_RULESET_ID;
   readonly seed: number;
   readonly map: CombatMap;
   readonly sides: readonly [CombatSideSetup, CombatSideSetup];
@@ -122,7 +125,8 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
     setup.rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID ||
       setup.rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
       setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
-      setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+      setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+      setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID,
     `V2 battle setup ruleset must be ${M1_DOMAIN_BRIDGE_RULESET_ID} or ${M1_DOMAIN_BRIDGE_V2_RULESET_ID}`,
   );
   invariant(setup.battleId.length > 0, 'Battle id must not be empty');
@@ -133,7 +137,9 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
     `V2 battle must contain ${V2_UNIT_LIMITS.minimum}-${V2_UNIT_LIMITS.maximum} real units`,
   );
 
-  const tactical = setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+  const tactical =
+    setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
   if (tactical) validateCombatTiles(setup.map);
   const { mapKeys, blockedKeys } = validateCombatMap(setup.map);
   const { sideIds, unitIds, occupied, unitsPerSide } = createUnitAdmission(

@@ -2,27 +2,31 @@
 
 ## Pipeline status — 2026-10-21
 
-Coordinator: Orca pipeline, run `run_bae7056fac91`; current tick holds the lease.
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
-Queue: epic #217 plan plus its existing local handover overrides. No new milestone.
-Open slice PR: [#255](https://github.com/Vovanostm/warwrit/pull/255), issue #254,
-branch `codex/join-lock-order-254`. Gated head `cd77d1d6` has fresh Tier L source
-and persistent-JOIN evaluator ACCEPT, coordinator validator 9/9 PASS; builder
-real-PG 64 PASS / 15 SKIP and evaluator 7 PASS / 16 filtered SKIP.
-Both UI JOIN commands and preceding ACCEPT/HELP returned 200; one admission,
-two accounts, replay and reload passed. UI retry NOT_RUN; native retry PASS.
-Next: require green hosted CI on the corrected head and tracked proof before
-expected-head merge. Earlier hosted failures remain failures.
-Web lane: #184 rework round 1 builder is live; overview hatches must remain
-readable at night and in monochrome before fresh Tier V evaluation/visual gates.
-#231 is the first next web slice after #184. #249 waits for #254 and must be
-split below the source-line limit before its builder starts. Other retained
-slices keep their predecessor/acceptance dependencies; no overlapping writer.
-Blockers: corrected-head hosted CI for #254; #184 visual rework and fresh gates.
-This tick: 0 merged PRs with playable proof so far. No deployment or full-M1 claim.
-[JOIN proof and limits](evidence/join-lock-order-254/README.md).
+Queue: epic #217 plus existing local handover overrides; no new milestone.
+Delivered earlier: PR255/#254, merged `0adcff2e`; issue closed/done.
+Open slice [PR257](https://github.com/Vovanostm/warwrit/pull/257), #256:
+code `1105189d` has fresh Tier L source and playable ACCEPT, day/night
+4 → 3 → 0 AP and unchanged 16-stamina shot; seven old replay baselines match.
+Main `4e83842a` integrated as `a0dd20c0`; additive CHANGELOG conflict only,
+both histories preserved. Integrated validator 9/9 PASS; scope 118 source lines.
+Prior published-head CI `39598354029` SUCCESS; final integrated-head CI pending.
+[Tracked proof and limits](evidence/core-bow-lab/README.md).
+Web #184: `needs-owner`, pushed `3963215b`, source `5599c8f1`; rework 2/2 failed
+on missing B1 actual silhouette/annotation intersection across level/0→1→2
+crowds. No source defect established. Earlier ACCEPT/REWORK covers `06479a47`
+only; current validator/Tier V gates NOT_RUN. Existing epic owner question
+recommends one bounded evidence-only evaluator attempt; decision pending.
+#231 is first next web slice after #184. #249 waits for #256 merge, then gets
+a fresh contract for company/binding/persistent admission/save/restart.
+Retained pushed `e68025b9` is untouched. Other slices retain ownership/dependencies.
+Infrastructure PR258 requires separate owner merge permission; it is outside slices.
+Next: green final integrated-head CI, native blocked-label check, expected-head
+merge #257, then contract #249. No auto-merge or deployment is authorized.
+This tick: 0 merged PRs with playable proof so far; no full-M1 claim.
 
 ## Dated history
 

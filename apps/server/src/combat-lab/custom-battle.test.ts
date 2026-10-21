@@ -142,7 +142,7 @@ describe('custom sprite battle server boundary', () => {
       const view = created.json<CombatLabView>();
       expect(view.battle).toEqual(createCustomBattleFixture('expected', battle).battle);
       expect(view.units).toHaveLength(battle.units.length);
-      expect(view.rulesetId).toBe('sprite-prototype-v3');
+      expect(view.rulesetId).toBe('sprite-prototype-v4');
     }
   });
 
@@ -163,10 +163,149 @@ describe('custom sprite battle server boundary', () => {
     expect(before.attackPreview?.map((preview) => preview.targetId)).toEqual(['enemy']);
   });
 
+  it('accepts a supplied one AP move then the previewed three AP bow shot in one activation', async () => {
+    const app = lab();
+    const template = defaultSpriteBattle();
+    const battle = {
+      ...template,
+      map: {
+        ...template.map,
+        tiles: template.map.tiles.map((tile) => ({
+          ...tile,
+          blocked: false,
+          height: 0 as const,
+          terrain: 'plain' as const,
+        })),
+      },
+      units: [
+        { id: 'archer', profileId: 'W05', sideId: 'human' as const, position: { q: 3, r: 5 } },
+        { id: 'target', profileId: 'W02', sideId: 'opponent' as const, position: { q: 6, r: 5 } },
+      ],
+    };
+    const created = await app.inject({
+      method: 'POST',
+      url: '/dev/combat-lab',
+      headers,
+      payload: {
+        version: 1,
+        requestId: 'bow-cost-preview',
+        scenarioId: SPRITE_COMBAT_LAB_SCENARIO,
+        battle,
+      },
+    });
+    expect(created.statusCode).toBe(201);
+    const before = created.json<CombatLabView>();
+    assert(before.activation);
+    expect(before.rulesetId).toBe('sprite-prototype-v4');
+    const bowRule = before.ruleHints?.weapons.find(({ id }) => id === 'bow');
+    const preview = before.attackPreview?.find(({ targetId }) => targetId === 'target');
+    expect(bowRule).toEqual({ id: 'bow', actionPointCost: 3, staminaCost: 16 });
+    expect(preview).toMatchObject({
+      actionPointCost: bowRule!.actionPointCost,
+      staminaCost: bowRule!.staminaCost,
+    });
+
+    const privateHeaders = {
+      ...headers,
+      'x-combat-lab-capability': created.headers['x-combat-lab-capability'] as string,
+    };
+    const url = `/dev/combat-lab/${before.sessionId}`;
+    const send = async (
+      view: CombatLabView,
+      requestId: string,
+      intent: CombatLabAction['intent'],
+    ) => {
+      assert(view.activation);
+      return app.inject({
+        method: 'POST',
+        url: `${url}/actions`,
+        headers: privateHeaders,
+        payload: {
+          version: 1,
+          requestId,
+          sessionId: view.sessionId,
+          battleId: view.battleId,
+          expectedViewRevision: view.viewRevision,
+          activationId: view.activation.id,
+          actorId: view.activation.actorId,
+          intent,
+        },
+      });
+    };
+    expect(before.activation.actionPoints.current).toBe(4);
+    const step = before.movementPreview!.find(({ to }) => to.q === 4 && to.r === 5)!;
+    expect(step).toMatchObject({ actionPointCost: 1, attackAffordableAfter: true });
+    expect(
+      before.movementPreview!.some(
+        (row) => row.actionPointCost > 1 && row.attackAffordableAfter === false,
+      ),
+    ).toBe(true);
+    const movedResponse = await send(before, 'bow-step', { type: 'move', to: step.to });
+    expect(movedResponse.statusCode).toBe(200);
+    const moved = (
+      await app.inject({ method: 'GET', url, headers: privateHeaders })
+    ).json<CombatLabView>();
+    expect(moved.activation).toMatchObject({
+      id: before.activation.id,
+      actorId: 'archer',
+      actionPoints: { current: 3 },
+    });
+    expect(moved.attackPreview).toContainEqual(
+      expect.objectContaining({ targetId: 'target', actionPointCost: 3, staminaCost: 16 }),
+    );
+    const accepted = await send(moved, 'bow-shot', { type: 'attack', targetId: 'target' });
+    expect(accepted.statusCode).toBe(200);
+    const after = (
+      await app.inject({ method: 'GET', url, headers: privateHeaders })
+    ).json<CombatLabView>();
+    const downloaded = (
+      await app.inject({ method: 'GET', url: `${url}/replay`, headers: privateHeaders })
+    ).json<CombatLabReplay>();
+    const replay = JSON.parse(JSON.stringify(downloaded)) as CombatLabReplay;
+    const [moveCommand, shotCommand] = replay.commands;
+    expect(moveCommand).toMatchObject({
+      type: 'move',
+      activationId: before.activation.id,
+      actorId: 'archer',
+      to: step.to,
+    });
+    expect(shotCommand).toMatchObject({
+      type: 'attack',
+      activationId: before.activation.id,
+      actorId: 'archer',
+      targetId: 'target',
+    });
+    assert(replay.schemaVersion === 1);
+    const initial = combat.startBattle(replay.setup);
+    const moveResult = combat.applyCombatCommand(initial.state, moveCommand!);
+    assert(moveResult.ok);
+    const shotResult = combat.applyCombatCommand(moveResult.state, shotCommand!);
+    assert(shotResult.ok);
+    expect(shotResult.state.activation).toMatchObject({
+      id: before.activation.id,
+      remainingActionPoints: 0,
+    });
+    expect(
+      moveResult.state.units.find(({ id }) => id === 'archer')!.stamina -
+        shotResult.state.units.find(({ id }) => id === 'archer')!.stamina,
+    ).toBe(16);
+    expect(shotResult.events).toContainEqual(
+      expect.objectContaining({ type: 'attack.resolved', attackerId: 'archer' }),
+    );
+    const restored = projectCombatLabReplay(replay);
+    expect(restored.ruleHints).toEqual(after.ruleHints);
+    expect(restored.attackPreview).toEqual(after.attackPreview);
+    expect(restored.movementPreview).toEqual(after.movementPreview);
+    const movedReplay = { ...replay, commands: [moveCommand!] };
+    const restoredMove = projectCombatLabReplay(movedReplay);
+    expect(restoredMove.attackPreview).toEqual(moved.attackPreview);
+    expect(restoredMove.movementPreview).toEqual(moved.movementPreview);
+  });
+
   it('accepts a learned skill once and rejects changed retries and stale revisions', async () => {
     const app = lab();
     const { before, privateHeaders, url, action } = await createSkillDuel(app);
-    expect(before.rulesetId).toBe('sprite-prototype-v3');
+    expect(before.rulesetId).toBe('sprite-prototype-v4');
     const payload = action('brace', { type: 'use-skill', skillId: 'shield-brace' });
     const accepted = await app.inject({
       method: 'POST',

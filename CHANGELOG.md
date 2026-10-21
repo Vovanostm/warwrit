@@ -24,6 +24,69 @@ requests.
 - Rationale and sources: [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#pipeline-evidence-review--2026-10-21).
   Checks: `bash -n`, Prettier. Effect on throughput NOT_MEASURED.
 
+### Integrate bow lab with current pipeline main — 2026-10-21, PUBLISHED
+
+- `Vovanostm/core-bow-lab-256`, [PR257](https://github.com/Vovanostm/warwrit/pull/257):
+  integrate actual main `4e83842a` through normal merge `a0dd20c0`; preserve
+  both CHANGELOG histories. No game source conflict or new rule. Integrated
+  coordinator validator 9/9 PASS; source scope 118 lines, Tier L ACCEPT retained
+  for unchanged code `1105189d`. Earlier published-head CI `39598354029` SUCCESS;
+  final integrated-head CI and expected-head merge remain pending.
+- Correct [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) to the actual #184
+  needs-owner state and existing B1 evidence question after rework 2/2; no new
+  attempt or acceptance waiver. #249 waits for #256, #231 for #184.
+  [Bow proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+  No migration/deployment; persistent activation remains #249, NOT_RUN here.
+
+### Independent bow lab acceptance and publication — 2026-10-21, PUBLISHED
+
+- `Vovanostm/core-bow-lab-256`, issue #256: preserve fresh Tier L source and
+  playable ACCEPT plus small day/night JPEG proof. Code `1105189d` is unchanged;
+  the later `81328bc` commit changes only CHANGELOG/CURRENT_PLAN. Real editor
+  journeys establish AP 4 → 3 → 0, unchanged 16-stamina shot and same activation;
+  seven released replay baselines and completed mill replay independently match.
+- Existing coordinator validator 9/9 PASS and builder coverage 812 PASS / 51 SKIP
+  remain actual executed results; no test rerun for this evidence/docs update.
+  [PR257](https://github.com/Vovanostm/warwrit/pull/257) is open; hosted CI
+  and merge remain pending. Persistent acceptance remains #249; balance NOT_MEASURED. No migration or deployment.
+  [Proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+
+### Compatible bow core/lab and refreshed gates — 2026-10-21, LOCAL
+
+- `Vovanostm/core-bow-lab-256`, [#256](https://github.com/Vovanostm/warwrit/issues/256)
+  split from #249: sprite v4 / bridge v5 ordinary bow costs 3 AP; new lab battles
+  select v4. Preserve 16 stamina, range/damage/special actions, released replay
+  bytes and existing persistent selectors. Affects combat core, lab projection
+  contract/routes, protocol and web view validation. No migration or new rule.
+- Builder's real day/night editor → 1 AP step → 3 AP shot has native resource
+  and replay readback; focused coverage 812 PASS / 51 SKIP, normal commit audit
+  PASS. Coordinator validator 9/9 PASS on `1105189d`; scope 118 source lines.
+  Independent Tier L reviewer/evaluator are live; hosted CI, PR and merge are
+  NOT_RUN. Persistent activation/restart remains successor #249; balance is
+  NOT_MEASURED. [Owning behavior](apps/server/src/combat-lab/README.md#sprite-v4-ordinary-bow--2026-10-21).
+- #184 evaluator ACCEPT at `06479a47` does not override visual REWORK:
+  rendering-language score 1 and missing tight height-step crowd evidence.
+  Second bounded rework is live; fresh gates required. Existing reports and
+  earlier failures retained. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+
+### Split the bow delivery and checkpoint the tick — 2026-10-21, LOCAL
+
+- `Vovanostm/core-bow-lab-256`: fallback step 3 splits retained #249 WIP
+  (305 changed source lines) into [#256](https://github.com/Vovanostm/warwrit/issues/256)
+  compatible combat/lab support, then #249 company/binding/persistent adapters.
+  Each keeps its own issue/PR and worktree; no scope waiver or source reset.
+  The local slice overrides and issue comments own ordering/ownership. Contract
+  writer only is active for #256; implementation, replay and playable proof are
+  NOT_RUN here. Existing 3 AP owner decision is unchanged.
+- [PR255](https://github.com/Vovanostm/warwrit/pull/255) is MERGED as `0adcff2e`
+  after exact-head CI 39588879033 SUCCESS, validator 9/9 and fresh Tier L ACCEPT;
+  #254 closed/done, finished worktree removed after evidence retention. Earlier
+  pending entries remain history. No new runtime test is claimed by this record.
+- #184 pushed head `06479a47` integrates actual main with status-only conflicts
+  resolved retaining both histories; union validator 9/9 PASS. Fresh evaluator
+  and absolute visual critic are live; visual acceptance and CI remain pending.
+  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+
 ### Evidence-based Orca pipeline fixes — 2026-10-21, PUBLISHED
 
 - `claude/orca-pipeline-evidence` (stacked on PR252): owner request to improve
