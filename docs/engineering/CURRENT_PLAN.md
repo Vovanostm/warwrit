@@ -1,37 +1,73 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-21
+## Pipeline status — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
-Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
-.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
-.agents/skills/warwrit-orca/slices/epic-217.json.”
-Queue: epic #217 plus existing local overrides; no new milestone.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 and existing local overrides; no new milestone.
 This tick: 0 merged PRs with playable proof; merge NOT_RUN.
-#261 R1: independent Tier U ACCEPT for frozen `4523f609`; no findings.
-Evaluator played invalid/reset/start once/day/night/return/reset at 1440×900;
-42 focused tests PASS. Favicon 404 matches baseline, no introduced console error.
-Coordinator validator exit 0, 9/9 PASS, 64 related tests PASS, source scope 182.
-Exact settled dispatch/result/report recorded before acknowledgment and release.
-[Contract, independent verdict and JPEG proof](evidence/qa-hooks-editor/README.md).
-Try: default mill editor, seed 20261009, empty name blocks Start; reset/start,
-inspect day/night, menu → editor, reset. Existing behavior is preserved.
-Source branch: `Vovanostm/qa-hooks-editor`; evidence and records are pushed.
-Review → PR publication closes only #261; hosted CI/merge remain pending.
-Later commits add only evidence or CHANGELOG/CURRENT_PLAN; gated source frozen.
-#231 stays open; #262–#265 retain their predecessor sequence, no next writer.
-Original parent contract retained in coordinator `.orca/pipeline/retained/qa-game-hooks/`.
-Core #225 retains its log prerequisite; other ready slices retain dependencies.
-Daily scout/digest already complete; no duplicate daily work.
-Infrastructure PR134/129 remain outside slice merge authority.
-Local full verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
-No rules, protocol, replay, renderer, dependencies or migration change in R1.
-No acceptance waiver, deployment or full-M1 claim.
-Next: exact-head hosted CI/scope, live blocked-label checks, then the skill's
-expected-head merge and #261 cleanup before the next web child starts.
+#273 review → PR: [PR #281](https://github.com/Vovanostm/warwrit/pull/281),
+branch `Vovanostm/qa-hooks-session-callbacks`; frozen source `a6b35143`.
+Independent Tier U ACCEPT: 48 focused tests PASS and actual day/night
+mill victories, 1440×900, including session/transport/keyboard/control guards.
+Exact native settlement/result/report matched, recorded before acknowledgment;
+settled evaluator released (no owned resource). No reclaimable worker.
+Coordinator validator exit 0, 9/9 PASS, 75 related tests PASS; scope 137.
+Ordinary changed-code audit PASS; five inherited findings explicitly remain.
+[Contract, full verdict and ten JPEGs](evidence/qa-hooks-session-callbacks/README.md).
+Try: seed 20261009, mill, start/select/move/menu/one-step/replay/autoplay,
+stop/manual order/restart/editor return/result, in day and night.
+Existing behavior preserved; no rule/protocol/replay/renderer/migration change.
+Later commits add only evidence and CHANGELOG/CURRENT_PLAN; source frozen.
+Hosted CI pending at publication; no merge or player-feature delivery claimed.
+#271 waits this merge and the free sole web slot; prepared contract retained.
+#267 two-file staged candidate and recovery budget preserved; #268 follows.
+Final component cyclomatic ≤20 AND cognitive ≤15 remains on #269 AND #262;
+remaining #263 stays after R2; #231 remains open. No acceptance waiver.
+Core #225 retains log prerequisite; other ready slices retain dependencies.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+Other open PRs retain their existing authority; no unrelated merge attempted.
+Independent opponent-pause/root-unmount checks NOT_RUN; see verdict limits.
+Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+Next: hosted CI and exact-head scope/blocked-label checks, then merge on gates.
 Wrapper releases its own lease when this single tick returns.
 
 ## Dated history
+
+**Previous #273 validation/evaluator checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 and existing local slice overrides; no new milestone.
+This tick: 0 merged PRs with playable proof; merge NOT_RUN.
+#273: normal source commit `a6b3514388828c5d9db79232df03486a2f72b4a2`;
+three owned source/test paths, 137 source additions plus removals, clean tree.
+Existing latest-view/session-end callbacks now use finite typed ports in controller;
+CombatLab retains mutable refs, request order, timers and player behavior.
+Exact native builder settlement/result/report matched before acknowledgment;
+worker-release returned retained/no_owned_resource; no cleanup remains.
+Coordinator validator exit 0: 9/9 PASS, including 75 related tests and audit.
+Independent Tier U evaluator task `task_840ad97b96c0` has the frozen source head;
+actual ACCEPT, independent journey and PR publication remain pending.
+Contract/report/validator logs: local `.orca/qa-hooks-session-callbacks/` and
+`.orca/validate-*.log` in the dedicated `qa-hooks-session-callbacks` worktree.
+Try: seed 20261009, ordinary mill at 1440×900, start/select/move/attack,
+menu/one-step/replay/autoplay/stop/manual order/restart/editor/result, day/night.
+Builder smoke reached victory; it does not replace independent acceptance.
+Branch: `Vovanostm/qa-hooks-session-callbacks`; source/records published
+for continuation. No slice PR opened or merged in this tick.
+#271 is next after #273 merge and the sole web slot is free; no builder yet.
+#267 staged WIP and recovery budget are preserved; #268 follows it.
+Final CombatLab cyclomatic ≤20 AND cognitive ≤15 remains on #269 AND #262;
+remaining #263 stays after R2; #231 remains open. No acceptance waiver.
+Daily metrics/scout/digest already complete on 2026-10-22; no duplicate run.
+Infrastructure PRs #274/#270/#134/#129 are outside this slice's merge path.
+Full verify/stress/migrations/production build NOT_RUN; performance NOT_MEASURED.
+No rules, protocol, replay, renderer, dependency, migration or setup change.
+Next: read exact evaluator settlement/verdict, then open the PR only on Tier U ACCEPT.
+Wrapper releases its own lease when this one tick returns.
 
 **Previous validation/evaluator dispatch checkpoint — 2026-10-21 (superseded above):**
 
