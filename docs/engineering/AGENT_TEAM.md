@@ -451,3 +451,20 @@ Headless workers keep using `codex exec --json` with `--output-schema` and
 Expected effect, to be re-measured with `orca-metrics.sh` after the next wave:
 fewer coordinator tokens per merged PR, fewer failed builder runs, and a lower
 REWORK share. Until then these are hypotheses, not results.
+
+**Amendment — 2026-10-21, self-driving backlog.** Owner: «Продолжай. Обнови
+задачи, настрой автоматизацию - необходимо чтобы проект разрабатывался и
+улучшался, оптимизировался!». After the takeover the coordinator escalated an
+evidence question on #184 to the owner and sprint #161 (#167–#177) had no
+pipeline labels, so lanes could fall idle with work open. The skill now:
+refills a free lane with the highest-priority uncovered issue and splits large
+issues into child issues ([Effective harnesses](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents):
+each session picks the highest-priority unfinished feature from a tracked list);
+decides evidence and process questions itself under the owner's delegation;
+runs a daily scout that plays main and files at most three findings (same
+source: test as a human user would with browser automation); and records daily
+metrics, opening a `pipeline` issue when failures rise two days in a row
+([Building effective agents](https://www.anthropic.com/engineering/building-effective-agents):
+add complexity only when it demonstrably improves outcomes). The loop restarts
+itself when a tick checks out a newer tick script, and polls every 10 minutes
+because an unchanged state costs only the digest.

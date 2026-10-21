@@ -7,6 +7,8 @@ set -uo pipefail
 run="$1" mailbox="$2" epic="${3:-217}"
 repo="Vovanostm/warwrit"
 
+# A new calendar day wakes one tick for the daily metrics and scout.
+echo "day $(date +%F)"
 echo "main $(git ls-remote origin refs/heads/main | cut -c1-12)"
 gh issue list -R "$repo" --state open --limit 200 --json number,labels,updatedAt \
   --jq '.[] | select(any(.labels[]; .name | startswith("agent:"))) | "issue \(.number) \([.labels[].name] | sort | join(",")) \(.updatedAt)"'

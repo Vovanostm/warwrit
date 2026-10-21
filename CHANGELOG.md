@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Self-driving Orca backlog — 2026-10-21, PUBLISHED
+
+- `claude/orca-self-driving`: owner request «Продолжай. Обнови задачи, настрой
+  автоматизацию - необходимо чтобы проект разрабатывался и улучшался,
+  оптимизировался!».
+- warwrit-orca: lane refill from epic #217, sprint #161 and P-labelled issues;
+  large issues split into child issues; owner delegation for evidence/process
+  questions and a `needs-owner` recheck; daily metrics with a `pipeline` issue
+  on a two-day regression; daily scout (`prompts/scout.md`) that plays main and
+  files at most three findings.
+- `orca-pipeline-tick.sh --loop` restarts on a newer script and polls every 10
+  minutes; the digest includes the date so a new day wakes one tick.
+- Rationale and sources: [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#pipeline-evidence-review--2026-10-21).
+  Checks: `bash -n`, Prettier. Effect on throughput NOT_MEASURED.
+
 ### Integrate bow lab with current pipeline main — 2026-10-21, PUBLISHED
 
 - `Vovanostm/core-bow-lab-256`, [PR257](https://github.com/Vovanostm/warwrit/pull/257):
