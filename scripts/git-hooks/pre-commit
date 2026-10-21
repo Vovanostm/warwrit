@@ -26,4 +26,14 @@ if [ -z "${FALLOW_AUDIT_BASE:-}" ] && base="$(git merge-base origin/main HEAD 2>
   export FALLOW_AUDIT_BASE="$base"
 fi
 
+# The audit scores CRAP from coverage. Refresh focused coverage for the staged
+# code so a missing or stale coverage file never fails or skews the commit
+# (Orca builders failed on a missing file; see docs/engineering/AGENT_TEAM.md).
+code="$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx|mjs|js)$' || true)"
+if [ -n "$code" ] || [ ! -f coverage/coverage-final.json ]; then
+  # shellcheck disable=SC2086
+  pnpm --silent exec vitest related --run --coverage --mode coverage --passWithNoTests ${code:-package.json} >/dev/null 2>&1 ||
+    echo "pre-commit: focused tests failed; the audit uses the coverage they produced." >&2
+fi
+
 exec pnpm --silent check:changes
