@@ -33,33 +33,140 @@ function hatchIntersections(corners: readonly Vector3[], level: number) {
   return points.length === 2 ? (points as [Vector3, Vector3]) : null;
 }
 
-function appendHatchBand(start: Vector3, end: Vector3, positions: number[], indices: number[]) {
-  const direction = end.subtract(start);
-  const endInset = direction.normalize().scale(0.05);
-  const halfWidth = new Vector3(-direction.z, 0, direction.x).normalize().scale(0.009);
-  const innerStart = start.add(endInset);
-  const innerEnd = end.subtract(endInset);
-  const first = positions.length / 3;
-  for (const point of [
-    innerStart.subtract(halfWidth).add(new Vector3(0, 0.038, 0)),
-    innerEnd.subtract(halfWidth).add(new Vector3(0, 0.038, 0)),
-    innerEnd.add(halfWidth).add(new Vector3(0, 0.038, 0)),
-    innerStart.add(halfWidth).add(new Vector3(0, 0.038, 0)),
-  ])
-    positions.push(point.x, point.y, point.z);
-  indices.push(first, first + 1, first + 2, first, first + 2, first + 3);
+interface SurfaceTriangle {
+  readonly a: Vector3;
+  readonly b: Vector3;
+  readonly c: Vector3;
 }
 
-function createMovementHatch(scene: Scene, cellKey: string, surface: BattleTerrainCell) {
+function surfaceTriangles(surface: Mesh): SurfaceTriangle[] {
+  const positions = surface.getVerticesData(VertexBuffer.PositionKind)!;
+  const indices = surface.getIndices()!;
+  const matrix = surface.computeWorldMatrix(true);
+  const vertex = (index: number) =>
+    Vector3.TransformCoordinates(Vector3.FromArray(positions, index * 3), matrix);
+  const triangles: SurfaceTriangle[] = [];
+  for (let index = 0; index < indices.length; index += 3)
+    triangles.push({
+      a: vertex(indices[index]!),
+      b: vertex(indices[index + 1]!),
+      c: vertex(indices[index + 2]!),
+    });
+  return triangles;
+}
+
+function heightOnTriangle(point: Vector3, { a, b, c }: SurfaceTriangle): number | null {
+  const denominator = (b.z - c.z) * (a.x - c.x) + (c.x - b.x) * (a.z - c.z);
+  if (Math.abs(denominator) < 1e-12) return null;
+  const wa = ((b.z - c.z) * (point.x - c.x) + (c.x - b.x) * (point.z - c.z)) / denominator;
+  const wb = ((c.z - a.z) * (point.x - c.x) + (a.x - c.x) * (point.z - c.z)) / denominator;
+  const wc = 1 - wa - wb;
+  return Math.min(wa, wb, wc) >= -1e-7 ? wa * a.y + wb * b.y + wc * c.y : null;
+}
+
+function polygonArea(points: readonly Vector3[]): number {
+  let area = 0;
+  for (let index = 0; index < points.length; index++) {
+    const current = points[index]!;
+    const next = points[(index + 1) % points.length]!;
+    area += current.x * next.z - next.x * current.z;
+  }
+  return area / 2;
+}
+
+function clipPolygon(subject: readonly Vector3[], clipper: readonly Vector3[]): Vector3[] {
+  let clipped = [...subject];
+  const orientation = Math.sign(polygonArea(clipper)) || 1;
+  for (let side = 0; side < clipper.length && clipped.length; side++) {
+    const edgeStart = clipper[side]!;
+    const edgeEnd = clipper[(side + 1) % clipper.length]!;
+    const input = clipped;
+    clipped = [];
+    let previous = input[input.length - 1]!;
+    let previousDistance =
+      orientation *
+      ((edgeEnd.x - edgeStart.x) * (previous.z - edgeStart.z) -
+        (edgeEnd.z - edgeStart.z) * (previous.x - edgeStart.x));
+    for (const current of input) {
+      const currentDistance =
+        orientation *
+        ((edgeEnd.x - edgeStart.x) * (current.z - edgeStart.z) -
+          (edgeEnd.z - edgeStart.z) * (current.x - edgeStart.x));
+      if (previousDistance >= -1e-8 !== currentDistance >= -1e-8) {
+        const amount = previousDistance / (previousDistance - currentDistance);
+        clipped.push(Vector3.Lerp(previous, current, amount));
+      }
+      if (currentDistance >= -1e-8) clipped.push(current);
+      previous = current;
+      previousDistance = currentDistance;
+    }
+  }
+  return clipped;
+}
+
+function clipHatchBand(start: Vector3, end: Vector3, corners: readonly Vector3[]): Vector3[] {
+  const dx = end.x - start.x;
+  const dz = end.z - start.z;
+  const length = Math.hypot(dx, dz);
+  const halfWidth = 0.009;
+  if (length < halfWidth * 2) return [];
+  const along = new Vector3(dx / length, 0, dz / length);
+  const across = new Vector3(-along.z, 0, along.x).scale(halfWidth);
+  const extension =
+    Math.max(...corners.map(({ x, z }) => Math.hypot(x - start.x, z - start.z))) + 1;
+  const farStart = start.subtract(along.scale(extension));
+  const farEnd = end.add(along.scale(extension));
+  const band = [
+    new Vector3(farStart.x - across.x, 0, farStart.z - across.z),
+    new Vector3(farEnd.x - across.x, 0, farEnd.z - across.z),
+    new Vector3(farEnd.x + across.x, 0, farEnd.z + across.z),
+    new Vector3(farStart.x + across.x, 0, farStart.z + across.z),
+  ];
+  const clipped = clipPolygon(band, corners);
+  return clipped.length >= 3 && Math.abs(polygonArea(clipped)) >= halfWidth * halfWidth
+    ? clipped
+    : [];
+}
+
+function appendHatchPolygon(
+  polygon: readonly Vector3[],
+  triangles: readonly SurfaceTriangle[],
+  positions: number[],
+  indices: number[],
+) {
+  for (const triangle of triangles) {
+    const fragment = clipPolygon(polygon, [triangle.a, triangle.b, triangle.c]);
+    if (fragment.length < 3 || Math.abs(polygonArea(fragment)) < 1e-12) continue;
+    const heights = fragment.map((point) => heightOnTriangle(point, triangle));
+    if (heights.some((height) => height === null)) continue;
+    const first = positions.length / 3;
+    for (const [index, point] of fragment.entries()) {
+      positions.push(point.x, heights[index]! + 0.013, point.z);
+    }
+    for (let index = 1; index < fragment.length - 1; index++)
+      indices.push(first, first + index, first + index + 1);
+  }
+}
+
+function createMovementHatch(
+  scene: Scene,
+  cellKey: string,
+  surface: BattleTerrainCell,
+  fill: Mesh,
+) {
   const positions: number[] = [];
   const indices: number[] = [];
   const levels = surface.corners.map(({ x, z }) => x + z);
   const minimum = Math.min(...levels);
   const maximum = Math.max(...levels);
   const pitch = 0.22;
+  const triangles = surfaceTriangles(fill);
   for (let level = Math.ceil(minimum / pitch) * pitch; level < maximum; level += pitch) {
     const line = hatchIntersections(surface.corners, level);
-    if (line) appendHatchBand(line[0], line[1], positions, indices);
+    if (line) {
+      const polygon = clipHatchBand(line[0], line[1], surface.corners);
+      appendHatchPolygon(polygon, triangles, positions, indices);
+    }
   }
   const hatch = new Mesh(`cell-hatch:${cellKey}`, scene);
   const data = new VertexData();
@@ -100,7 +207,7 @@ export function createBattleCellGrid(
     fill.alphaIndex = 1;
     fill.setEnabled(false);
     fills.set(cellKey, fill);
-    hatches.set(cellKey, createMovementHatch(scene, cellKey, surface));
+    hatches.set(cellKey, createMovementHatch(scene, cellKey, surface, fill));
     for (let side = 0; side < 6; side++) {
       const [dq, dr] = neighbours[side]!;
       const neighbourKey = key({ q: tile.q + dq, r: tile.r + dr });

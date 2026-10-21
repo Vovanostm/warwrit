@@ -22,6 +22,25 @@ function worldVertices(mesh: Mesh): Vector3[] {
   );
 }
 
+function meshSurfaceHeight(
+  vertices: readonly Vector3[],
+  indices: ArrayLike<number>,
+  point: Vector3,
+): number | null {
+  for (let index = 0; index < indices.length; index += 3) {
+    const a = vertices[indices[index]!]!;
+    const b = vertices[indices[index + 1]!]!;
+    const c = vertices[indices[index + 2]!]!;
+    const denominator = (b.z - c.z) * (a.x - c.x) + (c.x - b.x) * (a.z - c.z);
+    if (Math.abs(denominator) < 1e-12) continue;
+    const wa = ((b.z - c.z) * (point.x - c.x) + (c.x - b.x) * (point.z - c.z)) / denominator;
+    const wb = ((c.z - a.z) * (point.x - c.x) + (a.x - c.x) * (point.z - c.z)) / denominator;
+    const wc = 1 - wa - wb;
+    if (Math.min(wa, wb, wc) >= -1e-5) return wa * a.y + wb * b.y + wc * c.y;
+  }
+  return null;
+}
+
 it('tiles all six neighbours edge-to-edge and aligns the visible border with picking', () => {
   const engine = new NullEngine();
   const scene = new Scene(engine);
@@ -249,6 +268,69 @@ it('draws shared edges once, supports borderless area fills, and recolours fixed
     expect(scene.meshes.every((mesh) => mesh.renderingGroupId === 0 && !mesh.isPickable)).toBe(
       true,
     );
+  } finally {
+    scene.dispose();
+    engine.dispose();
+  }
+});
+
+it('clips translated hatches to their cell and follows raised fill triangles', () => {
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  try {
+    const tiles = Array.from({ length: 11 }, (_, r) =>
+      Array.from({ length: 15 }, (_, q) => ({ q, r, height: q >= 10 && r <= 3 ? 1 : 0 })),
+    ).flat();
+    const terrain = createBattleTerrain(tiles, { spacing: 2.6, heightStep: 0.28 });
+    createBattleCellGrid(scene, tiles, terrain);
+
+    for (const hex of [
+      { q: 4, r: 0 },
+      { q: 14, r: 2 },
+    ]) {
+      const cellKey = `${hex.q},${hex.r}`;
+      const hatch = scene.getMeshByName(`cell-hatch:${cellKey}`) as Mesh;
+      const fill = scene.getMeshByName(`cell-fill:${cellKey}`) as Mesh;
+      const positions = hatch.getVerticesData(VertexBuffer.PositionKind)!;
+      const corners = terrain.get(cellKey)!.corners;
+      const fillVertices = worldVertices(fill);
+      const fillIndices = fill.getIndices()!;
+      expect(positions.length).toBeGreaterThan(0);
+
+      for (let index = 0; index < positions.length; index += 3) {
+        const point = new Vector3(positions[index]!, positions[index + 1]!, positions[index + 2]!);
+        const sides = corners.map((start, side) => {
+          const end = corners[(side + 1) % corners.length]!;
+          return (end.x - start.x) * (point.z - start.z) - (end.z - start.z) * (point.x - start.x);
+        });
+        expect(
+          sides.every((value) => value >= -1e-5) || sides.every((value) => value <= 1e-5),
+          `hatch vertex escaped ${cellKey} at ${point.toString()}: ${sides.join(', ')}`,
+        ).toBe(true);
+        const surfaceHeight = meshSurfaceHeight(fillVertices, fillIndices, point);
+        expect(
+          surfaceHeight,
+          `missing fill height for ${cellKey} at ${point.toString()}`,
+        ).not.toBeNull();
+        expect(point.y).toBeCloseTo(surfaceHeight! + 0.013, 5);
+      }
+
+      const hatchIndices = hatch.getIndices()!;
+      for (let index = 0; index < hatchIndices.length; index += 3) {
+        const vertices = [0, 1, 2].map((corner) => {
+          const offset = hatchIndices[index + corner]! * 3;
+          return new Vector3(positions[offset]!, positions[offset + 1]!, positions[offset + 2]!);
+        });
+        const point = new Vector3(
+          vertices.reduce((sum, vertex) => sum + vertex.x, 0) / 3,
+          vertices.reduce((sum, vertex) => sum + vertex.y, 0) / 3,
+          vertices.reduce((sum, vertex) => sum + vertex.z, 0) / 3,
+        );
+        const surfaceHeight = meshSurfaceHeight(fillVertices, fillIndices, point);
+        expect(surfaceHeight).not.toBeNull();
+        expect(point.y).toBeCloseTo(surfaceHeight! + 0.013, 5);
+      }
+    }
   } finally {
     scene.dispose();
     engine.dispose();

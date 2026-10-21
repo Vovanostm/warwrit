@@ -1,5 +1,25 @@
 # Warwrit current delivery plan
 
+**Affordability184 hatch correction — 2026-10-21, LOCAL / source ACCEPT:**
+Independent source re-review accepts both corrections: finite strips are clipped
+per existing cell-fill triangle and follow its plane at +0.013; the regression
+checks translated q4,r0 and raised q14,r2 containment, vertex and centroid heights.
+Three-file focused coverage21/21PASS, web types, format, scoped lint, normal audit
+(zero new findings) and diff check PASS. Earlier failed attempts remain in local
+`.orca/affordability184/correction-checks-2026-10-21.log`. Current source supersedes
+the REWORK below; rendered/browser/day-night/CVD/absolute visual acceptance remains
+pending. Normal commit and clean integrated validator are next, followed by exclusive
+runtime evaluation. No publication, merge or player acceptance claimed.
+
+**Affordability184 geometry correction — 2026-10-21, REWORK:**
+Source49548eb4 (integratedcdbe99a) passes author20focused coverage/types/lint/
+format/normal audit; independent direct-source default-board scan finds short
+hatch chords escaping cells and perimeter-only hatchY disagreeing with actual
+raised-center terrain. Source-only correction must clip finite strips against
+existing surface triangles; rendered severity is NOT_MEASURED. DB7 has the
+exclusive runtime window on clean merged7b9a1dca; no local heavy checks until
+release. Bow249 also source-only in separate worktree. Parent owns records.
+
 **Pickup248 delivered / payment journey and bow249 active — 2026-10-21:**
 PR251 merged7b9a1dcaf23c8a08fe16783ae910bd42113ef6a2; published5c68fb83,
 tested merge373d1d31 and actual main contents match. CI39515766544/job118947421724

@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Correct affordability hatch terrain geometry — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`: correct independently reproduced short-chord
+  escape/reversal and terrain-height mismatch in `battle-cell-grid.ts`. Clip each
+  finite strip to the actual fill triangles and lift each fragment by0.013.
+  Existing hex-mesh regression covers translated/raised cells and seam centroids.
+  Independent source ACCEPT; focused coverage21/21PASS, web types, format, scoped
+  lint, normal audit and diff check PASS. Earlier attempts remain in local
+  `.orca/affordability184/correction-checks-2026-10-21.log`; browser/visual acceptance
+  pending. [Behavior](docs/wiki/battlefield-test-maps.md).
+
+### Correct movement hatch geometry before acceptance — 2026-10-21, LOCAL / REWORK
+
+- `codex/combat-affordability-184`: independent source scan reproduces escaping
+  short strokes and height disagreement with the default stepped surface in
+  source49548eb4. The author is correcting clipping/terrain conformance without
+  changing costs or canonical geometry. Rendered severity NOT_MEASURED; review
+  and visual acceptance remain pending. Earlier author checks are not geometry
+  acceptance. DB7 owns the runtime window; correction checks wait for release.
+
 ### Deliver canonical pickup targets — 2026-10-21, MERGED
 
 - `codex/representative-hunt-recovery`, [PR251](https://github.com/Vovanostm/warwrit/pull/251)

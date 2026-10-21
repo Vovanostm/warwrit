@@ -5343,3 +5343,16 @@ same-file helper extraction yielded zero new code-health findings on final
 `check:changes`. Independent source review, actual move/attack, native 125%/
 day/night/CVD/legacy rendering and absolute visual acceptance remain pending.
 This is implementation, not accepted delivery.
+
+### Исправление геометрии штриховки — 2026-10-21, LOCAL
+
+Повторная независимая проверка исходников ACCEPT. Полосы ограничены ячейкой
+и отдельно разбиты по треугольникам существующей поверхности `cell-fill`;
+каждая часть следует её плоскости с отступом0,013. Регрессия проверяет
+перенесённую q4,r0 и поднятую q14,r2: границы, высоты вершин и центроиды
+треугольников. Три сфокусированных файла coverage21/21PASS; web typecheck,
+format, scoped ESLint, нормальный аудит и diff-check PASS. Предыдущие ошибки
+сохранены в локальном `.orca/affordability184/correction-checks-2026-10-21.log`.
+Браузерный путь, фактическая видимость/контраст, day/night/CVD и абсолютная
+визуальная приёмка остаются NOT_RUN/NOT_MEASURED. Это исправление исходников,
+не завершённая игровая приёмка #184.
