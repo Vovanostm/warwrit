@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Integrate bow lab with current pipeline main — 2026-10-21, PUBLISHED
+
+- `Vovanostm/core-bow-lab-256`, [PR257](https://github.com/Vovanostm/warwrit/pull/257):
+  integrate actual main `4e83842a` through normal merge `a0dd20c0`; preserve
+  both CHANGELOG histories. No game source conflict or new rule. Integrated
+  coordinator validator 9/9 PASS; source scope 118 lines, Tier L ACCEPT retained
+  for unchanged code `1105189d`. Earlier published-head CI `39598354029` SUCCESS;
+  final integrated-head CI and expected-head merge remain pending.
+- Correct [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) to the actual #184
+  needs-owner state and existing B1 evidence question after rework 2/2; no new
+  attempt or acceptance waiver. #249 waits for #256, #231 for #184.
+  [Bow proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+  No migration/deployment; persistent activation remains #249, NOT_RUN here.
+
 ### Independent bow lab acceptance and publication — 2026-10-21, PUBLISHED
 
 - `Vovanostm/core-bow-lab-256`, issue #256: preserve fresh Tier L source and
