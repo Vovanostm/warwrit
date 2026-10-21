@@ -1,5 +1,32 @@
 # Warwrit current delivery plan
 
+## Status (rewritten in place) — 2026-10-21
+
+- **Coordinator:** the Orca pipeline ([warwrit-orca](../../.agents/skills/warwrit-orca/SKILL.md)),
+  headless Codex coordinator ticks and Codex workers, since 2026-10-21 03:20 MSK.
+  Owner: «Останови codex, сделай orca координатором». The Codex desktop mission
+  `01a1556c` coordinated from 2026-10-19 23:41 until the owner stopped it.
+- **Scope:** epic #217 (combat UI audit) and sprint #161 (M1 local alpha queue).
+  Slice plan: `slices/epic-217.json` plus the coordinator's `slices-local.json`.
+- **Merge:** pipeline slice PRs merge on gates (owner decision 2026-10-19,
+  [AGENT_TEAM v3](AGENT_TEAM.md#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19));
+  infrastructure PRs need the owner.
+- **Active slices:** #254 deadlock fix in PR #255 (CI running); #184 movement
+  bands on `codex/combat-affordability-184`, waiting for evaluation and visual
+  critique; #249 bow 3 AP as a work-in-progress commit on `codex/bow-three-ap-249`,
+  likely to be split; #231 QA hooks next when the web lane frees.
+- **Open PRs:** #253 pipeline improvements (owner-approved, merges after CI),
+  #255; #230 and #232 are superseded; #134 and #129 are stale.
+- **Blockers:** none for the coordinator. #249 must prove that old replays still
+  replay before merge.
+- **Next step:** merge #253, start the tick loop, then merge #255, evaluate
+  #184, split #249 and contract #231.
+- **Baseline metrics (2026-10-17 to 21):** 30 M input tokens per merged PR,
+  25 REWORK against 12 ACCEPT verdicts; re-measure after the first wave with
+  `scripts/orca-metrics.sh`.
+
+## History
+
 **Pickup248 integrated and ready to publish — 2026-10-21, LOCAL:**
 Actual range mainb0eeb8e8 merged as c5acd803; only additive status-document
 conflicts, both histories preserved. Accepted pickup sourcef439db7 unchanged.
