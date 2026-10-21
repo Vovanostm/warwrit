@@ -15,7 +15,8 @@ source lines. Fresh Tier L source and playable ACCEPT: real day/night editor
 → 1 AP step → 3 AP ordinary shot, unchanged 16 stamina, old replay compatibility,
 and completed mill battle/replay. Later `81328bc` changes only shared records.
 [Tracked proof and limits](evidence/core-bow-lab/README.md).
-Next: publish this slice, require green hosted CI, then expected-head merge.
+[PR257](https://github.com/Vovanostm/warwrit/pull/257) is open. Next: require
+green hosted CI, then expected-head merge. No auto-merge is enabled.
 Web #184: evaluator ACCEPT on `06479a47`, exact 6/29 bands, round-12 victory,
 native 125% and 22 overlay pairs. Absolute visual critic REWORK: ink treatment
 scores 1; tight group across height 0/1/2 evidence missing. Round-2 builder
@@ -23,7 +24,7 @@ live; old ACCEPT does not cover the forthcoming source. Fresh gates follow.
 #231 remains first next web slice after #184. #249 follows #256 for company,
 binding and persistent activation/restart proof; retained pushed `e68025b9`
 is untouched. Released versions/replays and persistent defaults stay unchanged.
-Open slice PRs: none. Infrastructure PR253 retains its separate owner merge gate.
+Open slice PR: #257. Infrastructure PR253 retains its separate owner merge gate.
 Blockers: #184 visual rework and fresh gates; #256 hosted CI;
 #249 predecessor. Other slices retain dependency and ownership gates.
 This tick: 0 merged PRs with playable proof. No migration, deployment or M1 claim.
