@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Preserve final affordability rework and evidence blocker — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`, issue #184: rework 2 changes the existing
+  terrain-clipped hatch shader to projected-width-capped broken ink with dark
+  support. Source `5599c8f1`, report `9e47fd82`; renderer and existing hex-mesh
+  regression only. Server classification, costs, replay and layering unchanged.
+- Builder reports 21 focused coverage tests, web types, scoped lint/format and
+  normal audit PASS; 272 source lines, 71 fresh captures and 12 overlay pairs.
+  B1 actual silhouette/annotation intersection in the required level/height-step
+  crowd remains unproven. No body-crossing defect is established. Current-source
+  coordinator validation and fresh evaluator/visual gates: NOT_RUN.
+- Budget 2/2 exhausted; fallback steps 1–3 do not apply to this non-audit,
+  one-issue proof gap. Move to needs-owner with a recommended single bounded
+  evidence-only evaluator attempt, preserving every acceptance criterion.
+  Prior `06479a47` evaluator ACCEPT and visual REWORK are retained history.
+  Owning local report: `.orca/uix-affordability-bands/report.md`.
+  [Checkpoint](docs/engineering/CURRENT_PLAN.md). No PR, merge or deployment.
+
 ### Integrate accepted JOIN and affordability rework — 2026-10-21, LOCAL
 
 - `codex/combat-affordability-184`: ordinary merge of actual main `0adcff2e`

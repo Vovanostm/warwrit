@@ -2,29 +2,35 @@
 
 ## Pipeline status — 2026-10-21
 
-Coordinator: Orca pipeline, run `run_bae7056fac91`; current tick holds the lease.
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
-Queue: epic #217 plus the existing local handover overrides. No new milestone.
-Delivered this tick: [PR255](https://github.com/Vovanostm/warwrit/pull/255),
-JOIN issue #254, merged `0adcff2e` after exact-head CI 39588879033 SUCCESS,
-validator 9/9 PASS and fresh Tier L reviewer/evaluator ACCEPT. Issue closed/done.
-The evaluator proved four UI commands 200, one admission/two accounts,
-replay/reload and seven real-PG tests; UI retry NOT_RUN, native retry PASS.
-Web lane: #184 source `25a432f8` corrects overview hatch readability; 21 focused
-coverage tests, types/lint/format and normal audit PASS. Builder retained 65
-current day/night, native 125%, CVD, raised and selected-skill captures.
-Validator passed 9/9 before the JOIN merge. Integrating actual main changes
-only status-document conflicts; both histories retained. Revalidate this union,
-then fresh Tier V evaluator and absolute visual critic. No acceptance inferred.
-#231 remains first next web slice after #184. #249's JOIN prerequisite is done;
-split its 305-line WIP before starting a builder. Preserve pushed `e68025b9`.
-Other retained slices remain dependency/ownership-gated; no overlapping writer.
-Open pipeline PRs: none after PR255; infrastructure PR253 keeps the owner gate.
-Blockers: #184 fresh integrated validator/gates; #249 bounded split and replay proof.
-This tick: 1 merged PR with playable proof. No deployment or full-M1 claim.
-[JOIN proof](evidence/join-lock-order-254/README.md).
+Queue: epic #217 plus existing local overrides; no new milestone.
+Delivered earlier: PR255 / #254, merge `0adcff2e`, issue closed/done.
+Open slice PR: [PR257](https://github.com/Vovanostm/warwrit/pull/257), #256,
+head `f764b847`; fresh Tier L source/playable ACCEPT, validator 9/9 PASS,
+118 source lines. Hosted CI 39598354029 remains IN_PROGRESS; merge waits.
+#249 follows #256; retained pushed `e68025b9` remains untouched.
+Web #184: source `5599c8f1`, report head `9e47fd82`, clean; final normal
+rework 2 reported FAILED. Broken ink / projected stroke cap implemented;
+builder reports 21 focused tests/types/lint/audit PASS, 272 source lines,
+71 new captures and 12 overlay pairs. These are builder results, not acceptance.
+B1 remains unproven: a genuine long-weapon/large-silhouette intersection with
+hatches in a tight crowd at one level and across height 0/1/2.
+No rendering defect is established by that missing evidence. Prior evaluator
+ACCEPT / visual REWORK concern `06479a47`; current-source validator and fresh
+Tier V gates are NOT_RUN. No PR or visual acceptance is claimed for #184.
+Fallback: audit-only recovery does not apply; one-issue slice cannot be split
+by issue. Rework budget 2/2 spent; #184 moves to needs-owner under ladder 4.
+Recommended decision: one bounded evidence-only evaluator attempt using a
+supported layout, followed by current-head validation and fresh Tier V gates;
+retain every layering criterion, source invariant and earlier failure.
+#231 remains first next web slice after #184. Other slices retain dependencies
+and ownership constraints. Infrastructure PR253 needs separate owner approval.
+This tick: 0 merged PRs with playable proof. No migration/deployment/M1 claim.
+Local owning report: `.orca/uix-affordability-bands/report.md`.
+[Earlier JOIN proof](evidence/join-lock-order-254/README.md).
 
 ## Dated history
 
