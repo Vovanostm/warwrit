@@ -53,3 +53,40 @@ connection, skipped real-PG tests and failed audit on missing coverage; its logs
 are retained as `integrated-validation-without-pg.log`. The unchanged-source rerun
 is `integrated-validation-pg.log`. Final Promise-barrier regression also passes
 coverage1/16filteredSKIP. No gate was weakened. Hosted gate and merge pending.
+
+## Fresh pipeline gates and audit correction — 2026-10-21, LOCAL
+
+Gated head `cd77d1d666f9f2d38c95a793261788ef5b0ca9db`, source correction
+`d9918b54`, includes actual main `19b9ed62`. Hosted failures on prior heads
+remain failures; this corrected head still requires fresh hosted CI.
+The account-lock helper now delegates the exact ownership comparison to a
+pure helper with six independent cases that also run when PostgreSQL is absent.
+Authorization, complete sorted account locks, sorted company locks, contract
+CAS, replay and atomic exact retries are preserved. No migration or rule change.
+
+- Normal source/report commits and changed-code audit PASS. Builder related
+  real-PG coverage: 64 PASS / 15 SKIP. A narrower coverage invocation failed
+  audit on an unchanged pickup function; unfiltered related coverage and audit
+  passed. The original hosted missing-coverage failure is retained.
+- Coordinator clean validator: 9/9 PASS on the gated head, including scope.
+  Current scope: 71 changed source lines without tests, one `Closes #254`.
+- Fresh [source review](review-2.md): ACCEPT for the gated head. Reviewer
+  runtime checks were NOT_RUN.
+- Fresh [persistent evaluation](eval-2.md): ACCEPT for the same head.
+  Seven real-PG ownership/contention tests PASS / 16 filtered SKIP. Through
+  visible controls, owner ACCEPT, helper HELP and both JOIN commands returned 200. One battle admitted exactly two accounts; durable replay and reload
+  readbacks passed without duplicate JOIN or admission. Parent inspected the
+  [owner ready state](09-owner-join.jpg) and
+  [helper battle after reload](15-helper-refreshed-battle.jpg).
+- UI retry was NOT_RUN because no retry control was offered; native exact retry
+  and conflicting-body rejection passed. Synthetic accounts, sessions, company
+  and starting location are test setup: external OIDC, creation and travel are
+  not proven. Battle completion, payment and crash recovery were NOT_RUN here.
+- Evaluator services, disposable databases/volumes and contexts were cleaned up.
+  Retained DB6/DB7 were untouched. Backend-only correction requires Tier L;
+  no visual critic is required. Full M1 and absence of every possible deadlock
+  are not claimed. Current corrected-head hosted CI and merge remain pending.
+
+Original full-resolution screenshots, native readbacks and runtime logs remain
+local in `.orca/core-join-lock/`; the two JPEGs and verdicts above are the small
+tracked proof packet. No credentials, cookies or session data are published.
