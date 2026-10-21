@@ -5,12 +5,14 @@ import {
   M1_DOMAIN_BRIDGE_V2_RULESET_ID,
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
 } from './setup-v2.js';
 import {
   M0_COMBAT_RULESET_ID,
   SPRITE_PROTOTYPE_RULESET_ID,
   SPRITE_PROTOTYPE_V2_RULESET_ID,
   SPRITE_PROTOTYPE_V3_RULESET_ID,
+  SPRITE_PROTOTYPE_V4_RULESET_ID,
   type CombatRulesetId,
   type CombatCommand,
   type UnitId,
@@ -234,8 +236,23 @@ export const SPRITE_PROTOTYPE_V3_RULES: CombatRules = {
   id: SPRITE_PROTOTYPE_V3_RULESET_ID,
 };
 
+const BOW_THREE_AP_WEAPONS = COMBAT_RULES_V1.weapons.map((weapon) =>
+  weapon.id === 'bow' ? { ...weapon, actionPointCost: 3 } : weapon,
+);
+
+export const SPRITE_PROTOTYPE_V4_RULES: CombatRules = {
+  ...SPRITE_PROTOTYPE_V3_RULES,
+  id: SPRITE_PROTOTYPE_V4_RULESET_ID,
+  weapons: BOW_THREE_AP_WEAPONS,
+};
+
 export function isTacticalV3Ruleset(id: CombatRulesetId): boolean {
-  return id === SPRITE_PROTOTYPE_V3_RULESET_ID || id === M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+  return (
+    id === SPRITE_PROTOTYPE_V3_RULESET_ID ||
+    id === SPRITE_PROTOTYPE_V4_RULESET_ID ||
+    id === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    id === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+  );
 }
 
 export function isSpriteS4Ruleset(id: CombatRulesetId): boolean {
@@ -295,6 +312,16 @@ const COMPANY_COMBAT_RULES_V3: CombatRules = {
   ],
 };
 
+const COMPANY_COMBAT_RULES_V5: CombatRules = {
+  ...COMPANY_COMBAT_RULES_V3,
+  id: M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  weapons: [
+    ...BOW_THREE_AP_WEAPONS,
+    ...COMPANY_COMBAT_RULES_V3.weapons.filter(({ id }) => id === 'fists'),
+  ],
+  recovery: SPRITE_PROTOTYPE_V3_RULES.recovery,
+};
+
 export function combatActionAllowed(
   state: Pick<BattleState, 'rulesetId'>,
   unit: CombatUnitState,
@@ -302,7 +329,8 @@ export function combatActionAllowed(
 ): boolean {
   if (
     state.rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
-    state.rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID
+    state.rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
+    state.rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID
   )
     return true;
   switch (intent) {
@@ -313,7 +341,8 @@ export function combatActionAllowed(
       return unit.capabilities?.[intent] === true;
     default:
       return (
-        state.rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+        (state.rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
+          state.rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID) ||
         tacticalCapabilityAllowed(unit, intent)
       );
   }
@@ -339,10 +368,12 @@ export function combatRules(rulesetId: CombatRulesetId): CombatRules {
       rulesetId === SPRITE_PROTOTYPE_RULES.id ||
       rulesetId === SPRITE_PROTOTYPE_V2_RULESET_ID ||
       rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID ||
+      rulesetId === SPRITE_PROTOTYPE_V4_RULESET_ID ||
       rulesetId === M1_DOMAIN_BRIDGE_RULESET_ID ||
       rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
       rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
-      rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+      rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+      rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID,
     `Unknown combat ruleset: ${rulesetId}`,
   );
   if (rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID)
@@ -351,7 +382,9 @@ export function combatRules(rulesetId: CombatRulesetId): CombatRules {
       id: rulesetId,
       recovery: SPRITE_PROTOTYPE_V3_RULES.recovery,
     };
+  if (rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID) return COMPANY_COMBAT_RULES_V5;
   if (rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID) return COMPANY_COMBAT_RULES_V3;
+  if (rulesetId === SPRITE_PROTOTYPE_V4_RULESET_ID) return SPRITE_PROTOTYPE_V4_RULES;
   if (rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID) return SPRITE_PROTOTYPE_V3_RULES;
   if (rulesetId === SPRITE_PROTOTYPE_V2_RULESET_ID) return SPRITE_PROTOTYPE_V2_RULES;
   return rulesetId === SPRITE_PROTOTYPE_RULES.id ? SPRITE_PROTOTYPE_RULES : COMBAT_RULES_V1;
@@ -371,9 +404,11 @@ export function compareCombatUnitIds(
     case M1_DOMAIN_BRIDGE_V2_RULESET_ID:
     case M1_DOMAIN_BRIDGE_V3_RULESET_ID:
     case M1_DOMAIN_BRIDGE_V4_RULESET_ID:
+    case M1_DOMAIN_BRIDGE_V5_RULESET_ID:
     case SPRITE_PROTOTYPE_RULESET_ID:
     case SPRITE_PROTOTYPE_V2_RULESET_ID:
     case SPRITE_PROTOTYPE_V3_RULESET_ID:
+    case SPRITE_PROTOTYPE_V4_RULESET_ID:
       return compareCodeUnits(left, right);
     default:
       return assertNever(rulesetId);

@@ -74,7 +74,9 @@ function commandFor(action: CombatLabAction, state: combat.BattleState): combat.
       };
     case 'autoplay': {
       const chosen =
-        state.rulesetId === 'sprite-prototype-v2' || state.rulesetId === 'sprite-prototype-v3'
+        state.rulesetId === 'sprite-prototype-v2' ||
+        state.rulesetId === 'sprite-prototype-v3' ||
+        state.rulesetId === 'sprite-prototype-v4'
           ? combat.chooseTacticalCombatCommand(state)
           : combat.chooseAiCommand(state);
       return { ...chosen, ...base };
@@ -170,7 +172,8 @@ function advanceCombatLabOpponent(session: CombatLabSession): CombatLabSession {
             activationId: next.state.activation.id,
           }
         : next.state.rulesetId === 'sprite-prototype-v2' ||
-            next.state.rulesetId === 'sprite-prototype-v3'
+            next.state.rulesetId === 'sprite-prototype-v3' ||
+            next.state.rulesetId === 'sprite-prototype-v4'
           ? combat.chooseTacticalCombatCommand(next.state)
           : combat.chooseAiCommand(next.state));
     const prepared = prepareTransition(next, command);

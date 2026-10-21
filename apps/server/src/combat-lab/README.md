@@ -112,3 +112,21 @@ independent of turn ownership/AP/stamina. Blocked cells are excluded and bows
 retain canonical LOS. This is inspection, not attack admission: only
 `attackPreview` permits an ordinary current target. No RNG/state/replay change.
 [Journey and current integration limits](../../../../docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13).
+
+## Sprite v4 ordinary bow — 2026-10-21
+
+Issue #256 selects `sprite-prototype-v4` for new default, preset and custom lab
+battles. An archer can use a supplied 1 AP movement preview, retain the same
+activation at 3 AP, then fire an ordinary bow shot for 3 AP and 16 stamina.
+Range, damage and special skills are inherited unchanged; aimed shot still
+requires 4 AP and 24 stamina. Core/server projections own costs, affordability,
+range, LOS and refusal reasons; the web validator accepts v3 and v4 geometry.
+
+Released sprite v1–v3 and bridge v1–v4 setups and replays retain their recorded
+rules and serialization. Core adds bridge v5 support, while persistent admission
+and saved battle selectors remain on their existing versions until #249.
+Transport/replay schemas, capabilities, scheduler and retry boundaries are unchanged.
+Local focused regressions include replay bytes captured from main `0adcff2e`,
+resource refusal atomicity and deterministic new-version tactical replay.
+Independent acceptance, hosted CI and integrated delivery remain coordinator-owned;
+this amendment does not claim persistent acceptance or measured balance.
