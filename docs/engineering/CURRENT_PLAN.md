@@ -8,6 +8,8 @@ Discover all participating accounts before locking any; lock them deterministica
 revalidate ownership, then preserve sorted company locks and contract recheck.
 Real-PG controlled contention reproduces500/40P01 before and passes after
 (1PASS/16filteredSKIP); independent source ACCEPT, server types/lint/audit PASS.
+Committed7f3568a passes clean validator8/8 with realPG58PASS/15SKIP; initial
+PG-omitted coverage/audit failure retained. Ready to publish; hosted gate pending.
 [Evidence and limits](evidence/join-lock-order-254/README.md).
 Owner mission “Implement, review, merge” authorizes delivery after existing gates.
 No new rules, migrations, blanket retries, deployment, or retained-save reset.

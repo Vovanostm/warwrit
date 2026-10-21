@@ -46,4 +46,10 @@ The competitor is a real SQL account→company transaction, not a second HTTP GE
 The JOIN itself uses the authenticated HTTP route. Native `pg_blocking_pids`
 provides the scheduling barrier; no mocked SQL or random-delay race is used.
 This proves the reported cycle, not absence of all possible database deadlocks.
-Integrated validator, hosted gate and merge remain pending.
+Final source commit `7f3568a6f4dfbde48cc96cc4fced1fa7edcd3caa` passes the
+clean integrated validator8/8 with the dedicated PG database:58relatedPASS,
+15unrelatedSKIP, normal auditPASS. Initial validator7/8 omitted the database
+connection, skipped real-PG tests and failed audit on missing coverage; its logs
+are retained as `integrated-validation-without-pg.log`. The unchanged-source rerun
+is `integrated-validation-pg.log`. Final Promise-barrier regression also passes
+coverage1/16filteredSKIP. No gate was weakened. Hosted gate and merge pending.

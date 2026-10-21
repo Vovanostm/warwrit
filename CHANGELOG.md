@@ -16,8 +16,9 @@ requests.
   Lock the complete discovered account set before company rows and revalidate
   ownership; preserve admission rules, receipts and sorted company locking.
   Old source reproduced500/40P01; corrected real-PG coverage1PASS/16filteredSKIP.
-  Independent source ACCEPT; server types/lint/normal audit PASS. Integrated and
-  hosted gates pending. No migration/deployment.
+  Independent source ACCEPT; server types/lint/normal audit PASS. Clean integrated
+  validator8/8 with realPG58PASS/15SKIP; first PG-omitted audit failure retained.
+  Hosted gate pending. No migration/deployment.
   [Evidence](docs/engineering/evidence/join-lock-order-254/README.md).
 
 ### Integrate pickup correction with merged range — 2026-10-21, LOCAL
