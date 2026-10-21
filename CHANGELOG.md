@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Start bounded editor extraction — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-game-hooks`: coordinator records the accepted five-section
+  [#261](https://github.com/Vovanostm/warwrit/issues/261) R1 contract and
+  planning → implementing transition in the dedicated `qa-hooks-editor` worktree.
+  Estimated 220–275 source lines include removals; actual scope remains pending.
+  One web builder owns only CombatLab/controller editor/reason extraction and
+  matching tests, preserving behavior, feedback priority and normal audit.
+- Exact native contract settlement/result matched, recorded before acknowledgment,
+  then released (no owned resource). #231 stays open; #262–#265 retain sequencing.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names the active builder and
+  next validation/Tier U gate. Shared records are the only changes on this branch.
+- Contract/clean-base/ownership checks passed; documentation format/link/diff
+  checks accompany this commit. Implementation/game tests/audit/typecheck/browser
+  checks NOT_RUN by coordinator; no playable acceptance or merge this tick.
+  Daily scout/digest already complete. No migration, deployment or rule change.
+
 ### Split QA hooks into bounded delivery slices — 2026-10-21, PUBLISHED
 
 - `Vovanostm/qa-game-hooks`: coordinator accepted the five-section #231

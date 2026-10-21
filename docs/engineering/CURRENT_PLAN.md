@@ -7,6 +7,44 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local overrides; no new milestone.
+This tick: 0 merged PRs with playable proof; no new implementation acceptance.
+#261 contract received: exact native completed/succeeded dispatch and result
+matched; all five required sections and every acceptance criterion read.
+Contract worker recorded before acknowledgment, then released (no owned resource).
+Estimated scope 220–275 changed source lines including removals;
+actual source scope and implementation checks remain pending.
+#261 planning → implementing: sole web builder `task_77c7f9a3fcec` /
+`ctx_d9e8fdd18679`, dedicated `qa-hooks-editor`, base `b9dc49fc`.
+Only CombatLab editor/reason extraction and matching tests; existing behavior,
+feedback priority and normal audit preserved. No hooks, rules or new visuals.
+Try after implementation: mill editor validation/reset/start, then day/night
+battlefield at 1440×900. No new playable result is claimed this tick.
+#231 remains open as aggregate; #262–#265 retain their predecessor sequence.
+Original contract retained at coordinator `.orca/pipeline/retained/qa-game-hooks/`.
+No second web source writer, gate worker, scout or heavy job started.
+Core #225 retains the log prerequisite; other ready slices keep their dependencies.
+Daily scout/digest already complete; no duplicate daily work.
+Infrastructure PR134/129 remain outside slice merge authority; no merge attempted.
+Coordinator checks: contract/result/native settlement, clean target base and
+run worker ownership; documentation format/link/diff checks accompany this record.
+Game tests, audit, typecheck, validation and browser checks NOT_RUN by coordinator;
+builder evidence and independent Tier U evaluation remain required.
+No migration, deployment, acceptance waiver or full-M1 claim.
+Next: consume builder settlement, inspect commits/dirty state and actual scope,
+then run coordinator validation before independent Tier U evaluation.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous contract checkpoint — 2026-10-21 (superseded above):**
+
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local overrides; no new milestone.
 Previous tick delivered PR260 / #184, merged main `b9dc49fc`; proof and limits
 remain in [affordability evidence](evidence/uix-affordability-bands/README.md).
 This tick: 0 merged PRs with playable proof; no new implementation or PR.
@@ -34,8 +72,6 @@ slice merge authority. Gameplay/typecheck/production checks NOT_RUN this tick;
 no changed source, migration, deployment or full-M1 acceptance.
 Next: inspect #261 contract, then one web builder if finite scope/audit proof
 are ready. Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Previous tick checkpoint — 2026-10-21 (superseded above):**
 
