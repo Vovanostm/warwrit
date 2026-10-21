@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Record persistent bow test rework — 2026-10-21, LOCAL
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  fresh source review REWORK at `759546e9`; the new encounter PG regression
+  reads the default raider revision before a wolf JOIN. Evaluator's isolated
+  migrated-PG run fails with 409 / STALE_REVISION (1 FAIL / 23 SKIP), before
+  admission. No production defect or persistent acceptance is established.
+- Queue the bounded test fix: GET the explicit wolf contract for each actor and
+  assert success before JOIN, preserving all revision guards and later checks.
+  Evaluator remains live; collect its verdict before dispatching round 1 rework.
+  No source changed or rework budget spent. Earlier validator 9/9 PASS remains
+  historical; no game checks rerun by this coordinator tick.
+- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with the exact failure,
+  ownership and pending gates. Source, persistent restart/old-active/terminal
+  proof, PR/CI/merge remain unaccepted; no new rule, migration or deployment.
+
 ### Validate persistent bow source and prepare independent gates — 2026-10-21, LOCAL
 
 - `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):

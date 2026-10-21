@@ -9,20 +9,24 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 Queue: epic #217 plus existing local handover overrides; no new milestone.
 Previously delivered: PR257/#256 merged `d8a04196`, exact-head CI `39602921979`
 SUCCESS, validator 9/9 and Tier L ACCEPT; lab proof remains separate from #249.
-#249: builder settled, source committed through `0a38a99b`, clean tree;
+#249: committed/pushed source `0a38a99b`, reviewed head `759546e9`;
 ordinary main merge `ba9d47f3` preserves retained `e68025b9` and delivered #256.
-Source scope 239 lines. Coordinator validator exit 0, 9/9 PASS;
-related tests 671 PASS / 52 SKIP; normal audit and scoped types/lint PASS.
-Builder's lab step/shot proof is author evidence only. Its actual PG attempt
-failed before admission: isolated database lacked `identity_accounts` schema.
-Persistent admission/move/shot/restart, genuine old-active continuation and
-terminal/effects runtime proof remain NOT_RUN; no independent acceptance yet.
-Next: fresh Tier L source review and playable evaluation; evaluator may apply
-existing schema only to its new disposable isolated test DB, without changing
-migration files or touching retained/shared data. No rework budget spent on
-this environment repair. Publication, CI and merge remain pending.
-Owning report: `.orca/core-bow-three-ap/report.md` in the dedicated worktree;
-contract: `.orca/core-bow-three-ap/contract.md` there.
+Historical coordinator validator 9/9 PASS, 671 PASS / 52 SKIP, scope 239;
+these checks did not establish persistent acceptance.
+Fresh source review: REWORK. In the new PG regression the contract GET reads
+its default raider revision, then JOIN targets the wolf contract; evaluator's
+isolated migrated-PG run reproduces 409 / STALE_REVISION before admission
+(1 FAIL / 23 SKIP). This is a test defect; no production defect established.
+Smallest fix: read the explicit wolf instance immediately before each actor's
+JOIN and assert GET success, preserving the revision guard and later assertions.
+Evaluator `ctx_b0d3b5b27952` remains live on the unchanged source; guidance sent
+to finish its finite current-head evaluation and retain actual limits.
+Round 1 rework brief is queued, not dispatched; collect all evaluator findings
+before starting the sole builder. No rework budget spent by this preparation.
+Persistent move/shot/restart, genuine old-active and terminal acceptance remain
+unproven. Fresh gates follow the fix; publication, CI and merge are pending.
+Owning reports: `.orca/core-bow-three-ap/{review-1,eval-1,report}.md` in the
+slice worktree; eval-1 is pending. No full suites or runtime checks by this tick.
 #184 remains needs-owner, pushed `3963215b`; rework 2/2 B1 overlap evidence
 unproven. Existing owner question is pending; no extra attempt or waiver.
 #231 remains first next web slice after #184; other dependencies unchanged.
