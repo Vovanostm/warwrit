@@ -6,25 +6,30 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
-Queue: epic #217 plus existing local overrides; no new milestone.
-Previously delivered: PR255/#254 and PR257/#256; no new merge this tick.
-Core #249: fresh source and playable Tier L ACCEPT at `63ce897e`.
-Persistent day/night step/shot, atomic 2 AP refusal, real restart/retry,
-genuine old V4 continuation and supported terminal/proof/idempotency pass.
-Main `46fe0c33` integrated as `16cedf56`; CHANGELOG-only conflict preserved
-both histories. Current integrated validator is running; PR/CI pending.
-Web #184: source `5599c8f1` unchanged, main integration is in progress.
-Coordinator delegation decision resumes validation, then one bounded read-only
-supported-layout B1 attempt and fresh Tier V gates. B1 intersection remains
-unproven; no third source rework or acceptance waiver is authorized.
-Current-source validation and fresh evaluator/absolute visual ACCEPT pending.
-#231 remains the first next web slice after #184; other dependencies unchanged.
-Daily scout is playing pinned main `46fe0c33`; triage follows its settlement.
-Heavy validators run serially after scout startup. Performance during overlap
-is NOT_MEASURED for acceptance. Infrastructure PR134/129 remain outside scope.
-Next: publish accepted #249 proof, validate integrated heads, launch #184 gates.
-No auto-merge, deployment, balance or full-M1 acceptance is claimed.
-This tick: 0 merged PRs with playable proof.
+Queue: epic #217 plus local handover overrides; no new milestone.
+Delivered earlier: PR255/#254 and PR257/#256; 0 merged PRs with playable proof
+this tick. [PR259](https://github.com/Vovanostm/warwrit/pull/259), #249, open at
+`00c8bbcb`: fresh source/playable Tier L ACCEPT for `63ce897e`, integrated
+validator 9/9 PASS, 671 PASS / 52 SKIP, scope 239; final hosted CI pending.
+Persistent day/night move/shot, atomic 2 AP refusal, genuine V4 continuation,
+real V5 restart/retry and supported terminal/proof/idempotency accepted.
+[Tracked #249 proof](https://github.com/Vovanostm/warwrit/blob/codex/bow-three-ap-249/docs/engineering/evidence/core-bow-three-ap/README.md).
+#184: source `5599c8f1` unchanged; actual main `46fe0c33` integrated as
+`74ea6cc3`, status-only conflicts with both histories preserved. Normal slice
+validator exit 0, 9/9 PASS; scope 272. Incoming-main normal merge audit PASS
+against branch parent after two staged-main coverage failures (retained in logs).
+No hook/threshold bypass; final validator uses ordinary origin/main baseline.
+Coordinator evidence/process delegation resumes one bounded read-only B1
+supported-layout attempt; fresh evaluator eval-3 and absolute visual-2 follow.
+B1 silhouette/annotation intersection is still unproven. No third source
+rework, acceptance waiver, #184 PR or visual ACCEPT is claimed.
+#231 remains first next web slice after #184; other dependencies unchanged.
+Daily scout is live on pinned main `46fe0c33`; later settlement/triage pending.
+Performance during validation overlap is NOT_MEASURED for acceptance.
+Infrastructure PR134/129 are outside slice merge authority. No auto-merge,
+deployment, balance measurement or full-M1 acceptance.
+Next: launch #184 gates; require final-head green CI/blocked checks for #249,
+then expected-head merge under the skill. Tick wrapper retains/releases lease.
 
 ## Dated history
 

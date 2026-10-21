@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Validate affordability evidence continuation — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
+  integrate actual main `46fe0c33` as `74ea6cc3`. Only CHANGELOG/CURRENT_PLAN
+  conflict; both histories preserved. Source `5599c8f1` is unchanged, scope 272.
+  Normal main-based coordinator validator exit 0, 9/9 PASS; fresh Tier V
+  evaluator and absolute visual critic are next for the bounded B1 proof attempt.
+- Preserve two failed default merge audits (17 CRAP findings): the normal hook
+  refreshed only staged incoming-main coverage, omitting retained branch code.
+  Manual focused coverage 21 PASS did not repair the hook's next overwrite.
+  Normal incoming-main audit against branch parent HEAD PASS; subsequent normal
+  validator against origin/main refreshes and audits the complete slice, PASS.
+  No hook, threshold, assertion, source or accepted rule was weakened.
+- [PR259](https://github.com/Vovanostm/warwrit/pull/259) for #249 is open at
+  `00c8bbcb`, fresh Tier L ACCEPT retained; final hosted full CI/merge pending.
+  Daily scout plays pinned main; performance during local validation overlap
+  is NOT_MEASURED for acceptance. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  #184 visual acceptance/CI remain pending; #231 waits. No migration/deployment
+  or full-M1 claim. This tick: 0 merged PRs with playable proof.
+
 ### Resume affordability evidence under owner delegation — 2026-10-21, PUBLISHED
 
 - `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
