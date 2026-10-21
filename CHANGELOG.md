@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Deliver editor extraction and prepare menu contract — 2026-10-21, MERGED
+
+- Origin `Vovanostm/qa-hooks-editor`: [PR266](https://github.com/Vovanostm/warwrit/pull/266)
+  / #261 merged as `61a91600` from expected head `747576ec`; issue closed/done.
+  The owner-authorized pipeline merge followed Tier U ACCEPT at `4523f609`,
+  validator exit 0 (9/9 PASS, 64 related tests), scope 182 and exact-head hosted
+  clean-checkout CI `39643349522` plus PR scope SUCCESS. Postgate commits change
+  only evidence/shared records; normal main merge has identical content.
+- Behavior-preserving R1 retains editor validation/start/reset and reason priority.
+  Independent evaluator: 42 focused tests PASS and actual invalid/reset/start
+  once/day/night/return/reset at 1440×900. Favicon 404 matches baseline.
+  [Owning evidence and merge receipt](docs/engineering/evidence/qa-hooks-editor/README.md).
+- Documentation receipt on `Vovanostm/qa-hooks-menu`: reconcile #261 closed/done,
+  retain native proof, remove its clean fully pushed worktree, and start only
+  #262's read-only R2 contract from merged main. #231 remains open; subsequent
+  children and #190 playback keep their prerequisites. No source change in #262.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records one merged PR with
+  playable proof this tick, two unrelated infrastructure PRs, and the next gate.
+- New game checks/full suites/build NOT_RUN this tick: unchanged-source proof
+  reused; documentation receives format/diff/link checks. No rule, protocol,
+  replay, migration, dependency or deployment change; no new owner question.
+  Performance/balance NOT_MEASURED. No full-M1 acceptance claim.
+
 ### Publish accepted editor extraction — 2026-10-21, PUBLISHED
 
 - `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261),

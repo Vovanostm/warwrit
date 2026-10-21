@@ -34,3 +34,20 @@ migrations/build were NOT_RUN locally for this R1. Full battle victory, hooks,
 deterministic clock/playback and full #231 acceptance are outside this child.
 Performance and balance NOT_MEASURED. No rules, protocol, replay, renderer,
 dependency or migration changes; no deployment or full-M1 claim.
+
+## Delivery receipt — 2026-10-21
+
+[PR266](https://github.com/Vovanostm/warwrit/pull/266) merged as
+`61a91600afeb33c6195e174d87e687c48416e694` at expected head
+`747576ec228735323229cd178134b0b0fa136d71`. Hosted clean-checkout CI
+`39643349522` and PR scope SUCCESS; final native head, blocked-label and
+unresolved-review checks passed. Source remained identical to the accepted
+`4523f609`; only evidence/shared records followed it. Normal merge content
+matches the PR head. #261 is closed/done; #231 remains open.
+
+The clean fully pushed slice worktree was removed after native `.orca/qa-hooks-editor/`
+and worker results were retained in the coordinator's
+`.orca/pipeline/retained/qa-hooks-editor/`. Earlier local paths above identify
+capture origin; the retained copy is now their local location. No new game
+checks were run in this delivery tick. Shared records continue on the separate
+`Vovanostm/qa-hooks-menu` branch; its worker writes only the next contract.
