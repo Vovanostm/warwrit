@@ -102,3 +102,28 @@ authorization/CAS/retry and the real forced-contention regression. Affected path
 are the two owned source/test files. No migration or deployment. Append final
 check/commit results below to the existing JOIN evidence and changelog entry;
 the worker did not edit shared records.
+
+## Committed result and handoff
+
+Source and initial report committed normally as
+`d9918b544bda84d74c8831034ecdd599e7c164f3`
+(`fix(contracts): separate and test JOIN ownership reread`). The unmodified
+pre-commit hook ran its audit against actual main and passed: no issues in
+6 changed files, 7 inherited findings excluded (`commit-source.log`).
+
+Before committing this final report update, refreshed focused related coverage
+on that committed source with all three database URL variables explicitly unset:
+6 PASS / 73 filtered or database-dependent SKIP, 1 passed file / 11 skipped
+(`committed-ownership-coverage.log`). Command: the related-coverage command above
+with `-t 'contract ownership reread'`. Normal audit pinned to actual main then
+PASSed again, no issues in 6 changed files, 10 inherited findings excluded
+(`committed-audit-without-pg.log`). This supplies current committed-source proof
+that the fix survives the hosted gate's PG-omitted coverage condition; it does
+not replace the two real-PG executions recorded above.
+
+The remaining change after the source commit is this report only. Local report
+links, scoped diff and whitespace were read back. Logs named here are local
+untracked evidence in `.orca/core-join-lock/`; no credentials were retained.
+Next: parent validates this committed result, schedules fresh reviewer/evaluator,
+and supplies the tier L persistent JOIN playable gate. No publication or merge
+has been performed by this worker.
