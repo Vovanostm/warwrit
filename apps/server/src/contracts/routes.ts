@@ -122,6 +122,29 @@ export function registerFirstHuntRoutes(
   });
 }
 
+type ContractOwner = Pick<DatabaseSchema['company_account_owners'], 'company_id' | 'account_id'>;
+
+/** Discovery grants no authority: every observed pair and the caller must survive the reread. */
+export function contractOwnershipMatches(
+  observedOwners: readonly ContractOwner[],
+  owners: readonly ContractOwner[],
+  callerAccountId: string,
+  callerCompanyId: string,
+): boolean {
+  return (
+    owners.length === observedOwners.length &&
+    owners.some(
+      (owner) => owner.company_id === callerCompanyId && owner.account_id === callerAccountId,
+    ) &&
+    observedOwners.every((observed) =>
+      owners.some(
+        (owner) =>
+          owner.company_id === observed.company_id && owner.account_id === observed.account_id,
+      ),
+    )
+  );
+}
+
 /** Account FK locks must precede every participating company lock, including other owners. */
 async function lockContractAccounts(
   transaction: Transaction<DatabaseSchema>,
@@ -156,18 +179,7 @@ async function lockContractAccounts(
     .orderBy('company_id', 'asc')
     .forUpdate()
     .execute();
-  return (
-    owners.length === observedOwners.length &&
-    owners.some(
-      (owner) => owner.company_id === callerCompanyId && owner.account_id === callerAccountId,
-    ) &&
-    observedOwners.every((observed) =>
-      owners.some(
-        (owner) =>
-          owner.company_id === observed.company_id && owner.account_id === observed.account_id,
-      ),
-    )
-  );
+  return contractOwnershipMatches(observedOwners, owners, callerAccountId, callerCompanyId);
 }
 
 async function executeContractCommand(input: {

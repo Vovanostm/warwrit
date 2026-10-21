@@ -16,6 +16,7 @@ import {
   type BattleSetupV2,
 } from '@warwrit/game-core';
 import { ensureFirstHuntGenesis } from '../contracts/first-hunt-runtime.js';
+import { contractOwnershipMatches } from '../contracts/routes.js';
 import { Client, CloseCode, type SeatReservation } from '@colyseus/sdk';
 import type { EncounterCommandResponse } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
@@ -49,6 +50,39 @@ const databases =
     ? []
     : [createDatabase(connectionString), createDatabase(connectionString)];
 const apps: ReturnType<typeof buildApp>[] = [];
+
+describe('contract ownership reread', () => {
+  const owner = { company_id: 'company-owner', account_id: 'account-owner' };
+  const helper = { company_id: 'company-helper', account_id: 'account-helper' };
+  const observed = [owner, helper];
+
+  it.each([
+    { name: 'unchanged pairs in a different order', owners: [helper, owner], accepted: true },
+    { name: 'a missing participant', owners: [helper], accepted: false },
+    { name: 'an added participant', owners: [owner, helper, owner], accepted: false },
+    {
+      name: 'a reassigned participant with the same row count',
+      owners: [owner, { ...helper, account_id: 'replacement-account' }],
+      accepted: false,
+    },
+    {
+      name: 'a substituted company with the same account',
+      owners: [owner, { ...helper, company_id: 'replacement-company' }],
+      accepted: false,
+    },
+  ])('$name', ({ owners, accepted }) => {
+    expect(contractOwnershipMatches(observed, owners, owner.account_id, owner.company_id)).toBe(
+      accepted,
+    );
+  });
+
+  it('requires the caller to own its company even when every observed pair survives', () => {
+    expect(contractOwnershipMatches(observed, observed, helper.account_id, owner.company_id)).toBe(
+      false,
+    );
+    expect(contractOwnershipMatches([], [], owner.account_id, owner.company_id)).toBe(false);
+  });
+});
 
 interface FirstHuntJoinActor {
   readonly accountId: string;
