@@ -27,6 +27,11 @@ import { createDatabase, createDatabaseReadinessProbe } from '../db/database.js'
 import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
 import { loadCompanyAggregate } from '../company/repository.js';
+import {
+  createOpeningAggregate,
+  issueOpeningOption,
+  openingOptionView,
+} from '../company/opening.js';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 import {
   createFixtureEncounter,
@@ -382,13 +387,79 @@ function makeFirstHuntJoinActor(
   };
 }
 
+// Generate skill/aptitude profiles through the public opening preparer. The combat
+// fixture deliberately models only blades/defense/leadership, so changing its gear
+// alone does not make it a valid archery-practice fixture. This is pre-admission
+// fixture assembly, not an onboarding/acquisition/travel acceptance claim.
+function openingBowSkills(actor: FirstHuntJoinActor) {
+  const lifecycle = actor.initial.economy.lifecycle;
+  const leaderId = lifecycle.company!.currentLeaderId;
+  const issued = issueOpeningOption(new Date(), lifecycle.worldId, lifecycle.campaignTick);
+  const evidence = {
+    ...issued.evidence,
+    companyId: lifecycle.companyId,
+    leaderId,
+    partyId: actor.partyId,
+  };
+  const initial = createOpeningAggregate(evidence, []).economy.lifecycle;
+  const opening = openingOptionView(evidence).opening;
+  const request = {
+    schemaVersion: combat.COMPANY_COMMAND_SCHEMA_VERSION,
+    commandId: evidence.id,
+    sourceEventId: evidence.sourceEventId,
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    actorRef: { kind: 'PLAYER' as const, id: actor.accountId },
+    expectedRevision: initial.knowledge.revision,
+    campaignTick: initial.campaignTick,
+    rulesetId: combat.COMPANY_RULESET_ID,
+    type: 'CreateCompany',
+    payload: {
+      worldId: lifecycle.worldId,
+      companyId: lifecycle.companyId,
+      candidateSetId: evidence.id,
+      originId: evidence.originId,
+      cultureId: evidence.cultureId,
+      homelandId: evidence.location.siteId,
+      familyStoryId: evidence.familyStoryId,
+      leaderInput: { ...opening.leaderDefaults, birthName: 'Bow fixture' },
+      selectedCandidateIds: evidence.candidates
+        .slice(0, 2)
+        .map((candidate) => candidate.characterId),
+      name: 'Bow fixture',
+      bannerId: evidence.originId,
+    },
+  };
+  const result = combat.prepareCompanyLifecycle(initial, request, {
+    worldId: initial.worldId,
+    companyId: initial.companyId,
+    principal: request.actorRef,
+    publicRevision: initial.knowledge.revision,
+    canonicalRevision: initial.revision,
+    atTick: initial.campaignTick,
+    completeGraph: true,
+    contactIds: initial.characters.map((person) => person.identity.characterId),
+    facts: [evidence],
+  });
+  if (result.kind !== 'PREPARED') throw new Error(`Bow opening rejected: ${result.error}`);
+  return lifecycle.characters.map((person) => {
+    const generated = result.next.characters.find(
+      (entry) => entry.identity.characterId === person.identity.characterId,
+    );
+    return generated && person.identity.characterId === leaderId
+      ? { ...person, skills: generated.skills, aptitudeBySkill: generated.aptitudeBySkill }
+      : person;
+  });
+}
+
 // Lawful pre-admission fixture: retained item owners/IDs, a two-hand bow in place of
-// each equipped sword, shields stowed, and normal supplies at the wolf objective.
+// the leader's sword, their shield stowed, and normal supplies at the wolf objective.
 function bowHuntActor(actor: FirstHuntJoinActor): FirstHuntJoinActor {
   const physical = actor.initial.economy.physical!;
   const loadout = (items: typeof physical.items) =>
     items.map((item) => {
-      if (!item.equipped) return item;
+      if (item.equipped?.characterId !== actor.initial.economy.lifecycle.company!.currentLeaderId)
+        return item;
       if (item.definitionId === 'shield') return { ...item, equipped: null };
       return item.definitionId === 'sword'
         ? {
@@ -402,6 +473,7 @@ function bowHuntActor(actor: FirstHuntJoinActor): FirstHuntJoinActor {
     ...actor.initial,
     economy: {
       ...actor.initial.economy,
+      lifecycle: { ...actor.initial.economy.lifecycle, characters: openingBowSkills(actor) },
       physical: {
         ...physical,
         items: loadout(physical.items),
@@ -3870,9 +3942,10 @@ it.skipIf(connectionString === undefined)(
       for (const actor of [owner, helper]) {
         const read = await app.inject({
           method: 'GET',
-          url: '/contracts/first-hunt',
+          url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
           headers: actor.headers,
         });
+        expect(read.statusCode, read.body).toBe(200);
         const joined = await app.inject({
           method: 'POST',
           url: '/contracts/commands',
@@ -3929,7 +4002,12 @@ it.skipIf(connectionString === undefined)(
         for (const actor of [owner, helper]) {
           const access = await readEncounterAccess(database, actor.accountId, encounterId);
           const tactical = access?.controlGrant.tactical;
-          if (!tactical || tactical.actionPoints !== 4) continue;
+          if (
+            !tactical ||
+            tactical.actionPoints !== 4 ||
+            state.units.find((unit) => unit.id === tactical.actorId)?.weaponId !== 'bow'
+          )
+            continue;
           const move = tactical.moves.find((option) => {
             if (option.actionPointCost !== 1) return false;
             const trial = combat.applyCombatCommand(state, {
@@ -3998,6 +4076,34 @@ it.skipIf(connectionString === undefined)(
           break;
         }
         if (shotReceipt) break;
+        // Other owned fighters retain their original swords. Advance their turns
+        // with native waits until the opening-generated bow leader can act.
+        const waiting = [owner, helper].find((actor) =>
+          savedBinding.participants.some(
+            (participant) =>
+              participant.companyId === actor.companyId &&
+              participant.unitId === state.activation?.unitId,
+          ),
+        );
+        if (waiting) {
+          const waited = await app.inject({
+            method: 'POST',
+            url: '/encounters/commands',
+            headers: waiting.headers,
+            payload: {
+              version: 1,
+              encounterId,
+              commandId: randomUUID(),
+              expectedRevision: state.revision,
+              activationId: state.activation!.id,
+              actorId: state.activation!.unitId,
+              intent: { type: 'wait' },
+            },
+          });
+          expect(waited.statusCode, waited.body).toBe(200);
+          expect(waited.json().status).toBe('accepted');
+          continue;
+        }
         const wakes = (
           await listDueEncounterAiWakes(database, new Date(Date.now() + 60_000))
         ).filter((wake) => wake.encounterId === encounterId);
@@ -4051,9 +4157,47 @@ it.skipIf(connectionString === undefined)(
       expect((terminal.binding as combat.FrozenEncounterBinding).setup.rulesetId).toBe(
         combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID,
       );
+      const terminalRows = async () => ({
+        proofs: await database
+          .selectFrom('world_proof_claims')
+          .selectAll()
+          .where('encounter_id', '=', encounterId)
+          .execute(),
+        receipts: await database
+          .selectFrom('company_receipts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .orderBy('company_id')
+          .orderBy('command_id')
+          .execute(),
+        roots: await database
+          .selectFrom('company_snapshots')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .orderBy('company_id')
+          .execute(),
+      });
+      const settled = await terminalRows();
+      expect(settled.proofs).toHaveLength(1);
+      for (const actor of [owner, helper]) {
+        const root = await database
+          .transaction()
+          .execute((tx) => loadCompanyAggregate(tx, worldId, actor.companyId));
+        expect(root?.encounter.active).toBeNull();
+        expect(root?.encounter.completed).toHaveLength(1);
+        expect(
+          settled.receipts.filter(
+            (receipt) =>
+              receipt.company_id === actor.companyId &&
+              (receipt.response as { type?: string }).type === 'FIRST_HUNT_TERMINAL',
+          ),
+        ).toHaveLength(1);
+      }
+      expect(await applyPendingFirstHuntTerminalEffects(database)).not.toContain(encounterId);
       expect(await executeEncounterCommand(database, controller!.accountId, shotRequest!)).toEqual(
         shotReceipt,
       );
+      expect(await terminalRows()).toEqual(settled);
     } finally {
       restoreClock();
       await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);

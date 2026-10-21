@@ -1,5 +1,8 @@
 # #249 persistent bow builder — 2026-10-21
 
+The original builder record below is preserved as history. The latest result is
+in **Round 2 bounded rework** at the end of this report; acceptance remains open.
+
 Task `task_73dc0817b72c`; branch `codex/bow-three-ap-249`, dedicated checkout
 `codex-company-profile-164`. Source is implemented and normally committed;
 **full acceptance is incomplete (BLOCKED_ENV / NOT_RUN persistent proof)**.
@@ -156,3 +159,211 @@ continuation evaluator. Inspect new PG assertions before relying on them; they
 are unexecuted beyond fixture setup. Follow with validator and independent Tier L
 source review on the final committed head; publish only after required acceptance.
 There is no new product/rules question and no source-scope waiver.
+
+## Round 1 bounded rework — 2026-10-21
+
+Dispatch `task_58d39c57c365`; sole core builder/runtime owner. Started from clean
+`codex/bow-three-ap-249` HEAD `3fb0368f`, the coordinator's additional records
+commit after the brief's `cd487a8e`. Retained source/commits were not rewritten.
+Read AGENTS.md, full contract, original report, review-1 and settled eval-1,
+#249 body/comments, current plan/changelog and technology baseline. The graph
+indexes another checkout at an old revision; direct source was used.
+
+### Applied fix
+
+Only the authored `freezes bridge v5` test changed: each actor now reads
+`/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01` immediately before JOIN and
+asserts HTTP 200. JOIN still uses that response's `publicRevision`. Every existing
+admission, command, save/replay, retry and terminal assertion remains intact.
+No production path, guard, migration, fixture aptitude, journal or battle state
+was changed. Shared records/wiki remain coordinator-owned.
+
+### Actual isolated execution and new failure
+
+Created disposable PostgreSQL 17.11 container
+`warwrit-bow249-rework1-58d39c57`, database `bow249_rework1_58d39c57`, user
+`bow249_rework1`, private mapping `127.0.0.1:32776 -> 5432`. Verified its identity
+before writes. Applied the repository's 14 existing up migrations using
+`pnpm exec tsx apps/server/src/db/migrate.ts up`: PASS, pending none.
+This was isolated schema setup, not a migration suite or migration-file edit.
+
+Ran exactly:
+
+```text
+WARWRIT_ENCOUNTER_DATABASE_URL=<owned disposable database> pnpm exec vitest run apps/server/src/encounters/postgres.integration.test.ts -t 'freezes bridge v5'
+```
+
+First run: **FAIL, 1 failed / 23 filtered skips**, 8.54 s. Repeated once without
+source changes to reproduce: **FAIL, 1 failed / 23 filtered skips**, 7.92 s.
+Both explicit wolf GETs and both ordinary JOINs returned 200. Execution passed
+the V5 setup/state/binding/projection5 assertions, native supplied 1 AP move then
+3 AP/16-stamina shot in the same activation, connection-reopen replay/exact retry/
+single-receipt assertions, active lookup and saved setup/version assertions.
+The existing lawful command helper reached its asserted company victory.
+These are author test results; connection reopen is not process restart and
+server injection is not browser input.
+
+Both runs then throw at `postgres.integration.test.ts:4044`, the call to
+`applyPendingFirstHuntTerminalEffects`, before the final effects/replay/retry
+assertions. Exact error:
+
+```text
+TypeError: Combat practice action start is not bound to a capable company character
+startSnapshotsForReceipt — apps/server/src/encounters/terminal-evidence.ts:149
+prepareFirstHuntTerminalEvidence — terminal-evidence.ts:302
+prepareCompanyTerminalEvidence — encounters/executor.ts:445
+applyFirstHuntTerminalEffectsInTransaction — contracts/executor.ts:613
+```
+
+This is a new reproducible terminal-evidence boundary, separate from the fixed
+stale-revision defect. The guard requires a bound participant/company character,
+a skill and positive safe-integer aptitude. Which prerequisite fails and whether
+the underlying cause is fixture data or production logic are **NOT_ESTABLISHED**.
+No unsupported-retreat classification is inferred from this stack. No guard or
+assertion was weakened; no terminal state was manufactured. Further correction
+requires an explicit coordinator assignment; this worker stops source changes
+at the requested two-line test fix. Supported terminal effects/completion/proof
+and their exact retry remain unproven.
+
+### Checks, evidence and cleanup
+
+- Server typecheck (`pnpm --filter @warwrit/server typecheck`): PASS.
+- ESLint on the changed test: PASS; scoped Prettier and `git diff --check`: PASS.
+- `FALLOW_AUDIT_BASE=d8a04196bcbcb13948b5a16e9874dfe08e1cdf5e pnpm check:changes`:
+  PASS, no new changed-file issues; 34 inherited findings excluded. Existing
+  syntactic-attribution warning remains; it is not a semantic-proof claim.
+- Normal `git commit -m 'test: read wolf revision before bow hunt JOIN'`:
+  **FAIL, exit 1; no commit created**. The hook ran its focused related coverage,
+  then `check:changes` failed with 93 complexity findings and 5 clone groups
+  (80 inherited findings excluded). Its refreshed coverage reports many existing
+  production functions as 0% tested. No failed-focused-test warning was emitted;
+  the hook hides that runner's output, so no additional test count is claimed.
+  The earlier explicit audit PASS used the pre-hook coverage file and does not
+  supersede this final audit failure. The hook ran without the PG URL; integration
+  cases requiring that variable were not fresh real-PG coverage proof.
+  No coverage was restored, fabricated or regenerated outside the hook, and no
+  audit base, threshold or hook was weakened to obtain a commit.
+- No smoke/browser, full verify, standalone coverage, stress, migration suite,
+  duplicate validator, independent review/evaluation, CI or publication was run.
+  Hook-owned focused coverage ran during the refused normal commit only.
+- Original `pg-attempt.log`, `eval-pg.log`, review-1 and eval-1 were preserved.
+  New local logs: `rework1-migrate.log`, `rework1-pg.log`,
+  `rework1-pg-repro.log`, `rework1-typecheck.log`, `rework1-lint.log`,
+  `rework1-audit.log`, `rework1-commit.log`; paths are relative to
+  `.orca/core-bow-three-ap/` and
+  untracked local evidence, not committed links.
+- Test-owned cleanup ran on both failures. Removed only this round's named
+  disposable container and anonymous volumes; filtered container readback empty.
+  No shared runtime/database or previous evaluator environment was reused.
+
+Prior independent eval-1 V5 move/shot, true restart/retry/foreign-actor refusal,
+genuine old V4 continuation and 14 + 47 focused PASS retain their original limits;
+they are not this worker's new checks. Native V5 2 AP durable denial/browser
+refusal, independently repeated complete day/night rendered move/shot journeys,
+and supported terminal completion/proof/retry still require fresh Tier L gates.
+The evaluator's hostile-leader retreat is an existing unsupported disposition;
+its helper-authenticated move is not rendered input. Author acceptance is not
+granted. No art/Tier V expansion, balance measurement or #249/#218 closure.
+
+Coordinator handoff / **outcome failed**: the requested revision-read fix and this
+report are staged locally; HEAD remains `3fb0368f`, because the normal commit was
+refused. The full finite PG regression is red at the reproduced terminal-evidence
+boundary above. Two blockers need coordinator assignment: investigate that
+boundary within explicitly granted source ownership, and reserve/authorize a
+legitimate focused-coverage/audit resolution for the retained production diff
+before retrying the normal commit. No hook bypass is requested or permitted.
+Then rerun the finite regression and fresh independent Tier L gates.
+Proposed shared-record update: record this local test-only fix, both terminal
+failures and unfinished acceptance; preserve original failing evidence. No push,
+PR, merge, rebase, reset, Orca call, delegation, deployment or paid action occurred.
+
+
+## Round 2 bounded rework — 2026-10-21
+
+Sole source/runtime writer in the existing dedicated checkout; started at
+`6109930d` (parent records-only closeout over `3fb0368f`). Preserved both staged
+Round 1 files, all prior assertions and parent records. Read full contract,
+report, review-1/eval-1, both rework1 PG logs and the refused commit log. The
+available graph indexes a different old checkout; native source is authoritative.
+No delegation, Orca call, shared-document edit, push, merge, reset or rebase.
+
+### Exact guard diagnosis and smallest fixture correction
+
+Diagnostic-only enrichment of the existing exception captured native receipt 8:
+unit/character `0030570b-2072-4938-9f07-f1b8dd699072`, bound company
+`1ad03d48-eeaa-4247-aa57-673810e79a1f`, native attack command
+`ee56e821-0f9c-4957-9339-d068777cc25d` against `world.wolf.bereznyak.02`,
+activation `1:0030570b-2072-4938-9f07-f1b8dd699072`. Participant and character
+exist; skillId is `archery`; `aptitudeAtStartBps` is undefined. Native character
+aptitudes contain exactly blades/defense/leadership at 10000. The failing input
+is missing archery aptitude, not a V5 version selector, foreign character or
+unsupported terminal disposition. `rework2-diagnostic.log` preserves that failure.
+The diagnostic exception change was removed byte-for-byte; production source
+is unchanged by this round.
+
+Source provenance: `company-combat-aggregate-fixture.ts:addCombatSkills` models
+only blades/defense/leadership. The new test's previous sword-to-bow replacement
+therefore lacked archery-practice preparation. Production opening
+`company/opening.ts:prepareOpening` generates enabled-skill aptitudes and exact
+leader skill progress from its accepted opening profile. The fixture now uses
+existing `issueOpeningOption`, `createOpeningAggregate`, `openingOptionView`
+and public `prepareCompanyLifecycle(CreateCompany)` to generate the leader's
+skill/aptitude profile, retaining its original skill source binding. There are
+no hand-assigned aptitude/skill numbers. Only that leader receives a bow with
+its existing item identity/owner; its shield is stowed. Other fighters retain
+the original sword fixtures and their existing profiles. This is explicit
+pre-admission synthetic fixture composition, not proof of onboarding, purchase,
+equipment acquisition or travel. No canonical encounter state, command journal,
+response, policy or grant was altered.
+
+Intermediate attempts remain failures: first opening call omitted required
+payload company/world IDs (INVALID_COMMAND, fixed); generating profiles for all
+fighters exposed missing exact archery progress on non-archer candidate templates
+(INVALID_STATE during receipt consumption). Limiting bows to the generated
+leader avoids inventing skill grants. Its first iteration encountered another
+owned sword activation and correctly refused the old hostile-wake-only helper
+assumption; ordinary authenticated waits now advance those other owned turns.
+Original hostile-wake assertions remain intact. Logs: `rework2-pg.log`,
+`rework2-pg-fixed.log`, `rework2-consume-diagnostic.log`, `rework2-pg-leader.log`.
+
+### Finite author result and limits
+
+Fresh PostgreSQL 17.11 container `warwrit-bow249-rework2-f363b29d`, database
+`bow249_rework2_f363b29d`, private loopback port32778. Native version/database
+identity was checked before applying only the 14 existing up migrations;
+`rework2-migrate.log`: PASS, pending none. No new migration or migration suite.
+The owned database stays available through the normal hook, with
+`WARWRIT_ENCOUNTER_DATABASE_URL` in its environment.
+
+Finite test command: `pnpm exec vitest run
+apps/server/src/encounters/postgres.integration.test.ts -t 'freezes bridge v5'`
+with that disposable URL. `rework2-pg-final.log`: 1 PASS /23 filtered SKIP.
+Added native one-proof/one-terminal-receipt-per-company/completed-root checks,
+plus a second terminal-effects call and exact original shot retry comparing
+unchanged complete roots/receipts/proof rows. Final `rework2-pg-proof.log`:
+1 PASS /23 filtered SKIP. This reaches every original assertion and establishes
+supported terminal completion/proof/idempotency at the author integration-test
+boundary. Company victory is produced only by actual legal commands. The
+connection reopen remains different from a true process restart.
+
+Server typecheck, scoped ESLint, scoped Prettier and ordinary diff check: PASS
+before final closeout. Initial post-edit `pnpm check:changes` PASS on its default
+2-file scope (`rework2-first-audit.log`); this is not the normal hook's main-base
+gate. Related current-source coverage and normal audited commit results follow.
+All prior rework1 failures, including93 findings/5 clone groups, remain history;
+no old coverage was restored, no audit base/threshold/hook/exclusion changed.
+Production source scope remains239 lines against origin/main; no new production
+change or unrelated complexity restructuring was needed for the fixture defect.
+
+No rendered output changed, and this round's override restricts runtime work to
+the finite defect proof: screenshots/browser smoke NOT_RUN; prior images retain
+their original limitations and are not relabeled as fresh evidence. Native2 AP
+browser refusal and complete rendered day/night move journeys remain for fresh
+independent Tier L gates, alongside independent terminal/proof/retry acceptance.
+Coordinator validator/full gates/CI NOT_RUN here. No author acceptance waiver,
+balance measurement, migration change, deployment or issue closure.
+
+Proposed parent CHANGELOG amendment: local round2 corrects invalid bow fixture
+through the existing public opening producer, preserves the guard and all
+Round1 assertions, and adds native supported-terminal proof/retry regressions;
+independent playable acceptance and coordinator gates remain pending.
