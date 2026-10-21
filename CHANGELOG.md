@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Split the bow delivery and checkpoint the tick — 2026-10-21, LOCAL
+
+- `Vovanostm/core-bow-lab-256`: fallback step 3 splits retained #249 WIP
+  (305 changed source lines) into [#256](https://github.com/Vovanostm/warwrit/issues/256)
+  compatible combat/lab support, then #249 company/binding/persistent adapters.
+  Each keeps its own issue/PR and worktree; no scope waiver or source reset.
+  The local slice overrides and issue comments own ordering/ownership. Contract
+  writer only is active for #256; implementation, replay and playable proof are
+  NOT_RUN here. Existing 3 AP owner decision is unchanged.
+- [PR255](https://github.com/Vovanostm/warwrit/pull/255) is MERGED as `0adcff2e`
+  after exact-head CI 39588879033 SUCCESS, validator 9/9 and fresh Tier L ACCEPT;
+  #254 closed/done, finished worktree removed after evidence retention. Earlier
+  pending entries remain history. No new runtime test is claimed by this record.
+- #184 pushed head `06479a47` integrates actual main with status-only conflicts
+  resolved retaining both histories; union validator 9/9 PASS. Fresh evaluator
+  and absolute visual critic are live; visual acceptance and CI remain pending.
+  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+
 ### Refresh JOIN delivery gates after hosted audit failure — 2026-10-21, LOCAL
 
 - `codex/join-lock-order-254`, [PR255](https://github.com/Vovanostm/warwrit/pull/255):

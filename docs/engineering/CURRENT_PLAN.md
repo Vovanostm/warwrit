@@ -2,26 +2,32 @@
 
 ## Pipeline status — 2026-10-21
 
-Coordinator: Orca pipeline, run `run_bae7056fac91`; current tick holds the lease.
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
-Queue: epic #217 plan plus its existing local handover overrides. No new milestone.
-Open slice PR: [#255](https://github.com/Vovanostm/warwrit/pull/255), issue #254,
-branch `codex/join-lock-order-254`. Gated head `cd77d1d6` has fresh Tier L source
-and persistent-JOIN evaluator ACCEPT, coordinator validator 9/9 PASS; builder
-real-PG 64 PASS / 15 SKIP and evaluator 7 PASS / 16 filtered SKIP.
-Both UI JOIN commands and preceding ACCEPT/HELP returned 200; one admission,
-two accounts, replay and reload passed. UI retry NOT_RUN; native retry PASS.
-Next: require green hosted CI on the corrected head and tracked proof before
-expected-head merge. Earlier hosted failures remain failures.
-Web lane: #184 rework round 1 builder is live; overview hatches must remain
-readable at night and in monochrome before fresh Tier V evaluation/visual gates.
-#231 is the first next web slice after #184. #249 waits for #254 and must be
-split below the source-line limit before its builder starts. Other retained
-slices keep their predecessor/acceptance dependencies; no overlapping writer.
-Blockers: corrected-head hosted CI for #254; #184 visual rework and fresh gates.
-This tick: 0 merged PRs with playable proof so far. No deployment or full-M1 claim.
+Queue: epic #217 plus local handover overrides; no new milestone.
+Delivered: [PR255](https://github.com/Vovanostm/warwrit/pull/255), JOIN #254,
+merged `0adcff2e` after exact-head CI 39588879033 SUCCESS, validator 9/9 PASS,
+fresh Tier L reviewer/evaluator ACCEPT. #254 is closed/done; worktree removed
+only after clean/no-unpushed-commit check and local evidence retention.
+Web #184: pushed `06479a47` integrates actual JOIN main; only status-document
+conflicts, both histories retained. Integrated validator 9/9 PASS. Fresh
+round-2 evaluator and absolute visual critic are live on that frozen head.
+Builder's 65 current captures and four equal-height reference sheets supplied;
+no independent visual acceptance, PR or merge yet. #231 follows when web frees.
+Core split: [#256](https://github.com/Vovanostm/warwrit/issues/256) first delivers
+compatible combat versions and the playable lab 1 AP move + 3 AP bow shot.
+Fresh dedicated worktree `core-bow-lab-256`; read-only contract writer live.
+[Original #249](https://github.com/Vovanostm/warwrit/issues/249) follows #256
+for company/binding/persistent-adapter activation and saved-version proof.
+Retained pushed WIP `e68025b9` is untouched. Split avoids the measured 305-line
+scope without a waiver; old rules/replays and persistent defaults stay unchanged
+until each corresponding accepted implementation. No new rule or migration.
+Open slice PRs: none. Infrastructure PR253 still requires its separate owner gate.
+Blockers: #184 independent gates/CI; #256 contract/build/gates; #249 predecessor.
+Other retained slices keep dependency/ownership gates; no overlapping writer.
+This tick: 1 merged PR with playable proof. Deployment/full M1 not claimed.
 [JOIN proof and limits](evidence/join-lock-order-254/README.md).
 
 ## Dated history
