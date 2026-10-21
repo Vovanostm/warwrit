@@ -63,3 +63,148 @@ Next: coordinator validator, independent evaluator/visual critic against committ
 Blockers: none established by the builder; independent gates remain pending.
 
 Cleanup: native zoom restored to 100% and DPR 1, vision emulation reset to none, only browser session `rework184` closed, builder runtime stopped with SIGINT (exit 130 expected). Neither assigned port has a listener (`rework-1-stopped-ports.log` is empty). Removed only the builder-created disposable profile after closing it; evaluator profiles/evidence and all other runtimes remain untouched.
+
+# Rework 2 — 2026-10-21, local author result
+
+Starting checkpoint: clean `codex/combat-affordability-184` at
+`06479a473bf26c998243e83fd27563c78e0d8256`. Sole web writer; coordinator owns
+shared records. Read AGENTS, both complete contracts, full `visual-1.md` and
+`eval-2.md`, issue #184 body/comments, ART_LORE_POLICY, ADR-0003 and technology
+handoff. Viewed the named sword overview/close/night-monochrome and raised-night
+images, the critic's close comparison, approved unit/mill and day/night UI references.
+Graph index points at another older checkout; used the permitted source fallback.
+
+## F1 change and unchanged boundaries
+
+`battle-cell-grid.ts` now shades the existing clipped hatch strips with a static
+achromatic ink shader. Screen derivatives cap the light core at close scale
+(0.55 pixel half-width plus a 0.5 pixel antialias transition); a wider dark support
+separates it from earth. Staggered broken marks and varying ink weight replace the
+uniform pale bars. Overview geometry retains its original 0.08 world width and
+0.42 pitch; this is not a global opacity reduction. The geometry/shader share one
+pitch constant. Extracting that constant after captures generates the same GLSL
+numeric literals; final coverage/types/lint/format/audit were rerun afterwards.
+
+Existing cell/fill-triangle clipping and height interpolation, +0.013 clearance,
+nonpickable ground/group 0, disabled depth writes and figure/group 1 ownership
+remain unchanged. No scene wiring, figures, HUD, independent ochre reach, marker
+classification/priority, selected-skill suppression or legacy fallback changed.
+No client rule arithmetic, server/core/protocol, migrations or dependencies changed.
+`hex-mesh.test.ts` now checks the hatch shader's alpha/depth/culling contract;
+existing translated/raised containment and triangle-height checks remain intact.
+`battle-movement-hatch.ts` still does not exist; no extra module was necessary.
+
+## Fresh visual and native evidence
+
+All 71 fresh PNGs are under `.orca/uix-affordability-bands/rework-2-shots/`.
+Every earlier report, log and image is preserved. Current authoritative F1 frames:
+
+- `sword-overview-native{100,125}-{day,night}-{none,achromatopsia}-{1366x768,1440x900,1920x1080}.png`:
+  24 overview frames, all three output dimensions, day/night and monochrome.
+- `sword-detail-native{100,125}-{day,night}-{none,achromatopsia}.png`: eight genuine
+  close frames. These supersede the earlier exploratory files named `sword-close-*`,
+  whose camera could return to overview during HUD changes; those files remain.
+- `native125-settings.png` visibly shows Chrome Appearance / Page zoom 125%.
+  Actual native readbacks: 1093 x 614, 1152 x 720, 1536 x 864 / DPR 1.25 for
+  output 1366 x 768, 1440 x 900, 1920 x 1080 respectively. No CSS/page-scale zoom.
+  Settings, matrices and close readbacks: `rework-2-native125-settings.log`,
+  `rework-2-native{100,125}-matrix.log`, `rework-2-close.log`.
+
+Two ordinary untouched-mill journeys each used real right-click bow movement to
+(6,1), mouse commander End Turn and canvas-focused spear `4`. Each reached sword
+revision 10, **6 true / 29 false**, AP 4/4. Six total real action POSTs across the
+two default battles; visual intervals add zero. Sword matrices and final close
+matrix retain revision 10 and unchanged POST count. Logs:
+`rework-2-sword-retry.log`, `rework-2-sword-second-journey.log`, matrix/close logs.
+This repeats the affected visual boundary, not eval-2's complete round-12 victory.
+That earlier gameplay proof is preserved and is not relabelled as fresh execution.
+
+Author inspection: final close frames replace broad pale bars with fine broken
+strokes; night/monochrome overview retains the patterned/unpatterned distinction.
+No absolute visual ACCEPT is claimed. Final native renderer readback reports
+ShaderMaterial ready=true, alpha blending=true, disableDepthWrite=true and every
+hatch nonpickable/group 0 (`rework-2-readback.json`, `rework-2-final-readback.log`).
+
+## B1 — partial new evidence; mandatory overlap/intersection remains open
+
+Through supported editor buttons/selects and cell Enter controls, removed the
+original roster, cleared terrain and placed 12 actors on adjacent cells:
+allies bow (6,4), halberd (6,5), sword (7,4), great axe (5,5), spear (7,5),
+commander (5,4); opponents mill creature (6,6), bear (5,6), grave guard (7,6),
+halberd (8,4), spear (8,3), great axe (7,3). Started the level-zero battle normally.
+Then used actual Height 1/2 brushes: q6, r2..7 = 1; q7/q8, r2..7 = 2; q5 remains 0.
+Started that actual 0 -> 1 -> 2 battle normally. Both stayed revision 0 with no
+battle action POSTs. Draft exports and exact editor/native readbacks:
+`rework-2-{level,steps}-draft.json`, `rework-2-editor-{level,steps}.log`,
+`rework-2-level-start.log`, `rework-2-step-pairs.log`.
+
+Twelve on/off pairs are retained in `rework-2-readback.json`. The diagnostic pauses
+rendering and changes only overlay visibility, then restores it and the render
+loop. Every pair compares figure position/scale/rotation/material ID/depth/alpha/
+visibility/group, HUD and camera view/projection unchanged; revision/POST boundaries
+also match. Canonical state, figure materials/depth/position were never modified.
+Representative useful frames for **each** of `crowd-level` and `crowd-steps`:
+
+- `*-overview-day-grid-off-{on,off}.png` and `*-overview-night-grid-on-{on,off}.png`;
+- `*-group-day-grid-off-{on,off}.png` and `*-group-night-grid-on-{on,off}.png`.
+
+The `group` frames show all 12 adjacent actors at a closer inspectable scale.
+Earlier `crowd-level-close-*` attempts returned to overview; `crowd-steps-detail-*`
+are too tightly cropped. Preserve them as attempts; use `group` for the group view.
+
+**Exact remaining gap:** these layouts still show separated opaque silhouettes;
+I did not establish a long weapon/large opaque silhouette genuinely intersecting
+a projected hatch/ground contour. Therefore they do not close B1's required tight
+*overlapping* group / intersection proof, and no body-crossing defect is claimed.
+The editor rejects occupied-cell placement (actual notice retained in
+`rework-2-editor-steps.log`); `editor-model.ts:56` / `editor-actions.ts:57` enforce
+one actor per hex. It exposes no subcell positioning, presentation spacing, scale
+or camera-rotation controls. Existing presentation is fixed at spacing 2.6,
+50-degree camera elevation and 0.82 sprite scale; no such source was changed to
+manufacture overlap. This bounded supported-editor attempt did not supply the
+intersection; impossibility for every possible legal layout is NOT_PROVEN.
+Parent must supply a stronger supported layout or explicitly settle a different
+fixture boundary before claiming B1 or visual acceptance.
+
+## Checks, reservation, scope and limits
+
+The required core startup marker was read before any package runtime build/test/
+coverage/audit. It reported SUCCESS at 11:56:36 UTC; the core evaluator had completed
+startup builds and released the slot. Checks ran serially in this worktree only.
+
+- Final three-file focused v8 coverage: **21/21 PASS**, `rework-2-final-coverage.log`.
+- Web typecheck, scoped two-file ESLint and Prettier: **PASS**,
+  `rework-2-final-{types,lint,format}.log`.
+- Fresh `pnpm check:changes`: **PASS**, zero new findings; inherited CSS advisories
+  and syntactic-attribution notice retained in `rework-2-final-audit.log`.
+- Ordinary diff check: **PASS**. Full branch source scope including this rework:
+  **272 / 300 changed lines excluding tests** before normal commit. No exception.
+- Full suites, parent validator, stress, migration checks, fresh live legacy/replay
+  substitution, fresh complete victory, independent evaluator and absolute visual
+  re-run: **NOT_RUN**, intentionally parent-owned or unaffected retained evidence.
+  Fresh deuteranopia/protanopia matrix: **NOT_RUN**; previous accepted captures
+  remain, current monochrome captures address the affected F1 risk.
+  FPS/performance and exhaustive opaque-pixel occlusion: **NOT_MEASURED**.
+
+Tool/attempt limits preserved: initial wrapper npm cache EPERM (used installed CLI
+without changing cache ownership), observer timing before first response, incorrect
+End Turn/grid labels, one local helper syntax error and exploratory camera framing.
+The corrected helpers/matrices/readbacks supersede failed attempts, not their logs.
+No source gate was weakened. No delegation, Orca command, external writes,
+push/PR/merge/rebase/reset/deploy or shared-record edits occurred.
+
+Cleanup: Chrome zoom restored to 100%, vision emulation to none, native readback
+1440 x 900 / DPR 1. Owned persistent browser (including Settings tab) closed;
+private API 23663 / web 25663 runtime stopped with SIGINT (expected exit 130).
+
+## Proposed coordinator-owned record update
+
+2026-10-21, codex/combat-affordability-184, LOCAL: replace broad uniform movement
+stripes with projected-width-capped, broken achromatic ink and dark support inside
+unchanged terrain-clipped geometry. 21 focused coverage tests, web types, lint,
+format and fresh audit pass; total source scope 272 / 300. Retain 71 fresh frames,
+exact 6/29 journeys, real 125% settings/native readbacks and 12 unchanged on/off
+pairs. B1 has new real adjacent level/0->1->2 editor evidence but still lacks an
+actual overlapping silhouette/annotation intersection. Parent evaluator/absolute
+critic gates and publication remain pending; do not record visual ACCEPT or close
+#184 from this author result. F2/F3 polish deliberately remains outside this fix.

@@ -230,11 +230,12 @@ it('draws shared edges once, supports borderless area fills, and recolours fixed
     const geometryIds = scene.meshes.map((mesh) => mesh.uniqueId);
     grid.paint(areaFill);
     const hatch = scene.getMeshByName('cell-hatch:0,0') as Mesh;
-    const hatchColor = (hatch.material as StandardMaterial).emissiveColor;
     expect(hatch.isEnabled()).toBe(true);
     expect(hatch.getTotalVertices()).toBeGreaterThan(0);
-    expect(hatchColor.r).toBeCloseTo(hatchColor.g, 6);
-    expect(hatchColor.g).toBeCloseTo(hatchColor.b, 6);
+    expect(hatch.material?.getClassName()).toBe('ShaderMaterial');
+    expect(hatch.material?.needAlphaBlending()).toBe(true);
+    expect(hatch.material?.disableDepthWrite).toBe(true);
+    expect(hatch.material?.backFaceCulling).toBe(false);
     const hatchPositions = hatch.getVerticesData(VertexBuffer.PositionKind)!;
     const corners = terrain.get('0,0')!.corners;
     for (let index = 0; index < hatchPositions.length; index += 3) {

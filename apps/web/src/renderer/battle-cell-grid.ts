@@ -2,6 +2,7 @@ import {
   Color3,
   Mesh,
   StandardMaterial,
+  ShaderMaterial,
   Vector3,
   VertexBuffer,
   VertexData,
@@ -12,6 +13,7 @@ import type { CombatLabHex } from '@warwrit/protocol';
 import { createBattleSurface, type BattleTerrainCell } from './battle-terrain.js';
 
 type GridTile = CombatLabHex & { readonly height: number };
+const hatchPitch = 0.42;
 export interface BattleCellStyle {
   readonly fill: Material | null;
   readonly border: Color3 | null;
@@ -160,7 +162,7 @@ function createMovementHatch(
   const levels = surface.corners.map(({ x, z }) => x + z);
   const minimum = Math.min(...levels);
   const maximum = Math.max(...levels);
-  const pitch = 0.42;
+  const pitch = hatchPitch;
   const triangles = surfaceTriangles(fill);
   for (let level = Math.ceil(minimum / pitch) * pitch; level < maximum; level += pitch) {
     const line = hatchIntersections(surface.corners, level);
@@ -262,13 +264,43 @@ export function createBattleCellGrid(
   material.transparencyMode = StandardMaterial.MATERIAL_ALPHABLEND;
   borders.material = material;
 
-  const hatchMaterial = new StandardMaterial('movement-only-hatch', scene);
-  hatchMaterial.disableLighting = true;
-  hatchMaterial.emissiveColor = new Color3(0.68, 0.68, 0.68);
+  // The clipped strips still own terrain/depth. Shade fine broken ink inside them:
+  // derivatives cap close strokes in screen pixels without fading overview marks.
+  const hatchMaterial = new ShaderMaterial(
+    'movement-only-hatch',
+    scene,
+    {
+      vertexSource: `precision highp float;
+        attribute vec3 position;
+        uniform mat4 worldViewProjection;
+        varying vec2 ground;
+        void main() {
+          ground = position.xz;
+          gl_Position = worldViewProjection * vec4(position, 1.0);
+        }`,
+      fragmentSource: `#extension GL_OES_standard_derivatives : enable
+        precision highp float;
+        varying vec2 ground;
+        void main() {
+          float level = (ground.x + ground.y) / ${hatchPitch};
+          float stroke = floor(level + 0.5);
+          float along = ground.x - ground.y;
+          float distance = abs(level - stroke) * ${hatchPitch} * 0.707107;
+          float pixel = max(fwidth(distance), 0.00001);
+          float grain = 0.85 + 0.15 * sin(along * 31.0 + stroke * 7.0);
+          float core = 1.0 - smoothstep(min(0.022, pixel * 0.55) * grain,
+            min(0.022, pixel * 0.55) * grain + pixel * 0.5, distance);
+          float support = 1.0 - smoothstep(min(0.034, pixel * 1.1),
+            min(0.034, pixel * 1.1) + pixel * 0.5, distance);
+          float dash = fract(along / 0.9 + stroke * 0.37);
+          float ink = 1.0 - smoothstep(0.68, 0.78, dash);
+          gl_FragColor = vec4(vec3(mix(0.08, 0.62, core)), support * ink * 0.85);
+        }`,
+    },
+    { attributes: ['position'], uniforms: ['worldViewProjection'], needAlphaBlending: true },
+  );
   hatchMaterial.disableDepthWrite = true;
   hatchMaterial.backFaceCulling = false;
-  hatchMaterial.alpha = 0.78;
-  hatchMaterial.transparencyMode = StandardMaterial.MATERIAL_ALPHABLEND;
   for (const hatch of hatches.values()) hatch.material = hatchMaterial;
 
   return {
