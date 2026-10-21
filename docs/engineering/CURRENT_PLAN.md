@@ -16,9 +16,12 @@ terminal/proof/idempotency. Evaluator finite 61 PASS; fixture limits retained.
 Main `46fe0c33` integrated as `16cedf56`: CHANGELOG-only conflict, both histories
 preserved; no post-gate game source/test change. Normal merge audit PASS.
 Integrated coordinator validator exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
-239 source lines. One #249 PR publication is next; hosted full gate/merge pending.
+239 source lines. [PR259](https://github.com/Vovanostm/warwrit/pull/259) is open; PR scope SUCCESS,
+final hosted full gate/merge pending.
 [Accepted proof and limits](evidence/core-bow-three-ap/README.md).
-#184: source `5599c8f1` unchanged; actual-main integration/validation in progress.
+#184: source `5599c8f1` unchanged, main integrated as `74ea6cc3`; normal
+main-based validator is running. Merge audit against branch parent PASS after
+two staged-main coverage failures; 21 focused tests PASS, no hook weakened.
 Prior coordinator evidence/process decision resumes one bounded read-only B1
 supported-layout attempt, then fresh Tier V evaluator and absolute visual gates.
 B1 intersection remains unproven; no third source rework or acceptance waiver.
@@ -26,7 +29,8 @@ B1 intersection remains unproven; no third source rework or acceptance waiver.
 Daily scout is playing pinned main `46fe0c33`; triage follows its settlement.
 Local validators are serial after scout startup; performance during overlap
 is NOT_MEASURED for acceptance. No auto-merge, deployment or full-M1 claim.
-Next: publish #249 with proof, run #184 validator, start its read-only gates.
+Next: final-head green CI/blocked-label checks for #249, then expected-head
+merge; finish #184 validator and start its fresh read-only Tier V gates.
 
 ## Dated history
 

@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Publish persistent bow successor — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`, [PR259](https://github.com/Vovanostm/warwrit/pull/259):
+  retain fresh source/playable Tier L ACCEPT for `63ce897e`, small day/night
+  JPEGs and full reports. Main merge `16cedf56` changes no accepted game source;
+  evidence-only `9134029e` and coordinator records preserve the gate boundary.
+  Integrated validator 9/9 PASS, 671 PASS / 52 SKIP, scope 239; PR scope SUCCESS.
+  Final hosted clean-checkout CI remains pending; merge NOT_RUN.
+- #184 integrated main as `74ea6cc3`, status-only conflicts preserved. Two merge
+  audits failed because staged incoming-main coverage omitted retained branch
+  code; 21 focused tests PASS. Normal incoming-main audit against branch parent
+  PASS; normal main-based slice validator is running, with no weakened hook.
+  Fresh Tier V proof remains pending. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  No migration, deployment, balance measurement or full-M1 claim.
+
 ### Accept persistent bow journey and integrate pipeline main — 2026-10-21, LOCAL
 
 - `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
