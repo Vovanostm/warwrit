@@ -125,11 +125,11 @@ function claim(ids: Set<string>, id: string): void {
   ids.add(id);
 }
 
-/** G05: one detached candidate; no locks, root writes, settlement or public activation. */
 function isTacticalBridgeRuleset(ruleset: BattleSetupV2['rulesetId']): boolean {
   return ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID || ruleset === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
 }
 
+/** G05: one detached candidate; no locks, root writes, settlement or public activation. */
 export function prepareEncounterBinding(
   sources: readonly EncounterCompanySource[],
   request: { readonly bindingId: string; readonly battleId: BattleId },
