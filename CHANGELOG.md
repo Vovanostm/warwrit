@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Validate the persistent bow fixture repair — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  round 2 normally commits the explicit wolf revision read and valid bow-leader
+  preparation through the public CreateCompany opening producer (`5d87f0e1`),
+  then the report (`482f8daa`). The synthetic sword fixture lacked archery
+  aptitude; no production guard, rule or assertion was weakened. Add native
+  supported-terminal completion/proof/exact-retry assertions. Earlier failures
+  remain recorded in the slice report and logs.
+- Author isolated PostgreSQL regression 1 PASS / 23 filtered SKIP, related
+  current-source coverage 689 PASS / 34 SKIP and normal commit audit PASS.
+  Coordinator validator at clean `482f8daa`: exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
+  scope 239 source lines. Coordinator PG NOT_RUN; fresh independent evaluator
+  owns its disposable database and complete persistent rendered/refusal/terminal
+  acceptance. Source reviewer and evaluator round 2 are live; no ACCEPT yet.
+- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and local dispatch
+  checkpoint; publish retained commits and records. No new source change in this
+  records commit. Full integrated gate/hosted CI/PR/merge remain pending;
+  no migration, deployment, balance or full-M1 claim. #184/#231 remain gated.
+
 ### Recover persistent bow terminal proof — 2026-10-21, PUBLISHED
 
 - `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):

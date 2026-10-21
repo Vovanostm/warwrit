@@ -9,33 +9,30 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 Queue: epic #217 plus existing local handover overrides; no new milestone.
 Previously delivered: PR257/#256 merged `d8a04196`, CI `39602921979` SUCCESS,
 validator 9/9 and Tier L ACCEPT; lab acceptance stays separate from #249.
-#249: committed source `0a38a99b`, pushed head `3fb0368f`; retained WIP and
-ordinary main merge preserved. No open slice PR; acceptance remains incomplete.
-Round 1 builder settled failed; exact report/result/native dispatch matched,
-recorded, acknowledged and released. Two files remain staged and preserved:
-`apps/server/src/encounters/postgres.integration.test.ts` and the slice report.
-Explicit wolf GET/success checks fix both JOINs. Two real isolated-PG attempts
-now reach V5 move/shot/replay/retry but fail at `terminal-evidence.ts:149`:
-practice action start is not bound to a capable company character. Exact cause
-(fixture or production) remains unestablished; no guard/assertion was weakened.
-Author server types/lint PASS; normal commit failed after refreshed coverage:
-93 audit findings / 5 clone groups. Earlier explicit audit PASS is superseded.
-Round 2 of 2 assigned to `task_f363b29d1678`: diagnose native binding/practice
-inputs, fix the smallest proved owned cause, then finite isolated-PG regression
-and legitimate related coverage/normal hook with the owned database available.
-One core writer; no competing heavy/runtime checks. No rule question is known.
-Historical validator 9/9 and scope 239 are not post-fix gates. Independent
-Tier L review/evaluation must repeat after a clean normal committed result.
-Prior eval-1 native V5 move/shot/restart/retry and genuine V4 continuation retain
-their stated limits. Supported terminal/proof/retry, native 2 AP refusal and
-complete rendered day/night move journeys remain unproven; no acceptance waiver.
-Owning evidence: `.orca/core-bow-three-ap/{report,review-1,eval-1}.md` and
-`rework1-{pg,pg-repro,commit}.log` in that directory; no new wiki behavior claim.
+#249: round 2 settled succeeded at clean `482f8daa`, source/test commit `5d87f0e1`;
+retained WIP/main history preserved. Worker recorded, acknowledged and released.
+Root cause was invalid synthetic archery preparation: the sword fixture lacked
+archery aptitude. The test now uses the public CreateCompany opening producer
+for the bow leader; original terminal guard and earlier assertions remain intact.
+Author isolated PG terminal/proof/exact retry: 1 PASS / 23 filtered SKIP;
+related current-source coverage: 689 PASS / 34 SKIP, normal commit audit PASS.
+Earlier stale-revision, terminal-evidence and audit failures remain history.
+Coordinator validator on `482f8daa`: exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
+source scope 239 lines. Coordinator PG NOT_RUN; evaluator owns fresh isolated DB.
+#249 implementing → validating → review. Fresh Tier L reviewer
+`task_6b33a6c81ce3` and evaluator `task_37b385ba7c4e` are live;
+source is frozen, only coordinator CHANGELOG/CURRENT_PLAN may advance.
+Evaluator must complete rendered day/night move/shot, native 2 AP refusal,
+supported terminal/proof/retry and saved-version/restart/old-active checks.
+Prior eval-1 proof retains its stated limits; no independent ACCEPT yet.
+Owning evidence: `.orca/core-bow-three-ap/{report,review-1,eval-1}.md`,
+`rework2-*` logs and pending `{review-2,eval-2}.md` in the dedicated worktree.
+No open slice PR; full integrated gate/hosted CI/publication/merge remain pending.
 #184 remains needs-owner at `3963215b`; existing B1 evidence question pending.
 #231 stays first next web slice after #184; other dependencies unchanged.
 Infrastructure PR258 remains outside slice merge authority. No blocked label removed.
-This tick: 0 merged PRs with playable proof. Coordinator game checks NOT_RUN;
-no new rule, migration, deployment, balance measurement or full-M1 claim.
+This tick: 0 merged PRs with playable proof; no new rule, migration, deployment,
+balance measurement or full-M1 claim. Next tick consumes the two gate settlements.
 
 ## Dated history
 
