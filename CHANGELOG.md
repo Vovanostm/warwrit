@@ -58,6 +58,26 @@ requests.
   and absolute visual critic are live; visual acceptance and CI remain pending.
   [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
 
+### Evidence-based Orca pipeline fixes — 2026-10-21, PUBLISHED
+
+- `claude/orca-pipeline-evidence` (stacked on PR252): owner request to improve
+  the pipeline by best agentic practice with proof. Baseline, failure causes,
+  sources and expected effects are in
+  [AGENT_TEAM § Pipeline evidence review](docs/engineering/AGENT_TEAM.md#pipeline-evidence-review--2026-10-21).
+- Event-driven coordinator: `scripts/orca-state-digest.sh` + tick skip when the
+  state is unchanged (3-hour heartbeat); the mailbox probe recreates a terminal
+  that lost its stable pane.
+- `scripts/orca-play.sh` starts, health-checks and stops the combat lab and
+  kills orphaned servers on the worktree ports; gates report `BLOCKED_ENV`
+  outside the rework budget; evaluators take missing proof themselves.
+- The pre-commit hook refreshes focused coverage before the audit (local
+  `core.hooksPath` reset to the relative `scripts/git-hooks`, so each worktree
+  runs its own hook instead of the primary checkout's);
+  `scripts/orca-metrics.sh` feeds the daily digest.
+- Checks: `orca-play.sh` start/status/stop with ports freed; digest stable on
+  two runs; metrics on 4 days of logs; `bash -n`/`sh -n`; Prettier. Effects on
+  the next wave NOT_MEASURED.
+
 ### Refresh JOIN delivery gates after hosted audit failure — 2026-10-21, LOCAL
 
 - `codex/join-lock-order-254`, [PR255](https://github.com/Vovanostm/warwrit/pull/255):
