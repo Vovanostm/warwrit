@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Deliver bow lab and prepare persistent successor — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`: record actual merged predecessor
+  [PR257](https://github.com/Vovanostm/warwrit/pull/257), merge `d8a04196`;
+  final-head CI `39602921979` SUCCESS, integrated validator 9/9 PASS and fresh
+  Tier L source/playable ACCEPT for unchanged code `1105189d`. #256 closed/done;
+  clean finished worktree removed after local evidence retention.
+- This branch retains WIP source `e68025b9`; only coordinator records change here.
+  Fresh #249 contract must inspect current main before company/binding and
+  persistent admission/save/restart work; that acceptance remains NOT_RUN.
+  Earlier WIP audit remains NOT_RUN; no new game test executed for these records.
+- [Current checkpoint](docs/engineering/CURRENT_PLAN.md) records #184 needs-owner
+  and its existing evidence-only recovery question. No additional attempt,
+  migration, deployment or full-M1 claim.
+
 ### Deliver canonical pickup targets — 2026-10-21, MERGED
 
 - `codex/representative-hunt-recovery`, [PR251](https://github.com/Vovanostm/warwrit/pull/251)

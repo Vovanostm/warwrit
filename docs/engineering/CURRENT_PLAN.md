@@ -1,5 +1,31 @@
 # Warwrit current delivery plan
 
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local handover overrides; no new milestone.
+Delivered this tick: [PR257](https://github.com/Vovanostm/warwrit/pull/257), #256,
+merged `d8a04196` after final-head CI `39602921979` SUCCESS, integrated validator
+9/9 PASS, scope 118 and Tier L source/playable ACCEPT for unchanged `1105189d`.
+Real lab day/night step → ordinary shot: 4 → 3 → 0 AP, 16-stamina shot;
+seven old replay baselines match. #256 CLOSED / agent:done.
+Successor #249: existing branch `codex/bow-three-ap-249`, retained WIP source
+`e68025b9`; read-only fresh contract is next. No implementation starts this tick.
+This checkout has not integrated the new main yet; contract must inspect actual
+main and preserve retained WIP through ordinary integration, no reset/rebase.
+Persistent company/binding/admission/save/restart acceptance remains NOT_RUN.
+Web #184 remains needs-owner at pushed `3963215b`; B1 actual silhouette/annotation
+intersection in level/0→1→2 crowds remains unproven after rework 2/2.
+Existing epic question recommends bounded evidence recovery; decision pending.
+#231 is the first next web slice after #184; other queue dependencies remain.
+Infrastructure PR258 is outside slice merge authority. No blocked label removed.
+Metric this tick: 1 merged PR with playable proof. No deployment or full-M1 claim.
+
+## Dated history
+
 **Pickup248 delivered / payment journey and bow249 active — 2026-10-21:**
 PR251 merged7b9a1dcaf23c8a08fe16783ae910bd42113ef6a2; published5c68fb83,
 tested merge373d1d31 and actual main contents match. CI39515766544/job118947421724
