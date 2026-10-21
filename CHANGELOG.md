@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Accept rollback-isolation contract and preserve runtime ownership — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, [#282](https://github.com/Vovanostm/warwrit/issues/282):
+  coordinator accepted the complete read-only contract after exact native
+  Task/Dispatch/result readback. Shared destructive-DDL exposure is traced;
+  the actual deadlock cycle remains unproven. Local contract is
+  core-world-rollback-isolation/.orca/core-world-rollback-isolation/contract.md.
+- Proposed change owns only world/routes.integration.test.ts: isolate the
+  destructive rollback case, preserve all receipt/clock/locking assertions,
+  capture native deadlock diagnosis and require five real parallel passes.
+  Source implementation and all new game/DB/validator checks NOT_RUN.
+  #282 remains planning until live #271 evaluator releases the checks/runtime
+  slot; #272 retains `37f35c6b`, its five-pass requirement and Tier L gates.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation,
+  preserved #267 WIP/budget and broader visual discovery on existing
+  #179/#201/#188/#189 without adding #271 conditions. Contract worker settled,
+  recorded before acknowledgment and released (no owned resource).
+  Records only are published; no source, API/setup/wiki contract or migration
+  change. No PR/merge; 0 merged PRs with playable proof this tick.
+  Daily work already complete and not repeated; visual acceptance unclaimed.
+
 ### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-session-callbacks`, [PR #281](https://github.com/Vovanostm/warwrit/pull/281),
