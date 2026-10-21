@@ -32,8 +32,10 @@ reports retain those local paths as provenance; they are not repository links.
 Two exploratory unstable step-close pairs are explicitly excluded.
 
 Coordinator validator on integrated `74ea6cc3`: 9/9 PASS, 48 related tests,
-272 source lines. Integration with newly merged persistent bow main and final
-hosted clean-checkout CI remain pending. Live legacy substitution and fresh
+272 source lines. Ordinary merge of persistent bow main `19d2c296` is `e0c77057`; only
+CHANGELOG/CURRENT_PLAN conflicted and both histories were retained. Integrated
+coordinator validator on that head exits 0, 9/9 PASS; final hosted clean-checkout
+CI remains pending. Live legacy substitution and fresh
 fatigue admission NOT_RUN here; inherited producer and focused regression proof
 retain their original boundaries. No exhaustive pixel-proof, performance/balance
 measurement, new game rule, deployment or full-M1 acceptance is claimed.
