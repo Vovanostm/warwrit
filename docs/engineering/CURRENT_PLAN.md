@@ -16,19 +16,22 @@ real V5 restart/retry and supported terminal/proof/idempotency accepted.
 [Tracked #249 proof](https://github.com/Vovanostm/warwrit/blob/codex/bow-three-ap-249/docs/engineering/evidence/core-bow-three-ap/README.md).
 #184: source `5599c8f1` unchanged; actual main `46fe0c33` integrated as
 `74ea6cc3`, status-only conflicts with both histories preserved. Normal slice
-validator exit 0, 9/9 PASS; scope 272. Incoming-main normal merge audit PASS
+validator exit 0, 9/9 PASS, 48 tests; scope 272. Incoming-main normal merge audit PASS
 against branch parent after two staged-main coverage failures (retained in logs).
 No hook/threshold bypass; final validator uses ordinary origin/main baseline.
 Coordinator evidence/process delegation resumes one bounded read-only B1
-supported-layout attempt; fresh evaluator eval-3 and absolute visual-2 follow.
+supported-layout attempt; fresh evaluator eval-3 and absolute visual-2 live
+on gated `f589f94c` (later receipt changes only these two shared records).
 B1 silhouette/annotation intersection is still unproven. No third source
 rework, acceptance waiver, #184 PR or visual ACCEPT is claimed.
 #231 remains first next web slice after #184; other dependencies unchanged.
-Daily scout is live on pinned main `46fe0c33`; later settlement/triage pending.
+Daily scout completed mill/deserter day/night journeys on pinned `46fe0c33`,
+both round 7 victories; no new findings outside 54 open issues. Recorded,
+acknowledged/released; private proof in coordinator `.orca/scout/2026-10-21/`.
 Performance during validation overlap is NOT_MEASURED for acceptance.
 Infrastructure PR134/129 are outside slice merge authority. No auto-merge,
 deployment, balance measurement or full-M1 acceptance.
-Next: launch #184 gates; require final-head green CI/blocked checks for #249,
+Next: consume #184 gates; require final-head green CI/blocked checks for #249,
 then expected-head merge under the skill. Tick wrapper retains/releases lease.
 
 ## Dated history

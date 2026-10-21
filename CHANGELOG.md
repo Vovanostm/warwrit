@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Dispatch fresh affordability gates and settle daily scout — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
+  integrated validator `74ea6cc3` passed 9/9, 48 tests, scope 272. Fresh Tier V
+  evaluator `task_de4f4b0e9d20` and absolute visual critic `task_e8ed7898463d`
+  dispatched on `f589f94c`; B1 evidence remains pending. This receipt changes
+  only CHANGELOG/CURRENT_PLAN, preserving the frozen game source and all gates.
+- Daily scout completed actual pinned-main `46fe0c33` mill and deserter preset
+  journeys with day/night screenshots, both round 7 victories. No new finding
+  outside 54 open issues; no new issue created. Report/result/native settlement
+  read, recorded/acknowledged/released; browser/runtime cleanup recorded.
+  Local timing samples overlap coordinator validation and are not accepted
+  performance/capacity measurements. Private proof remains in coordinator
+  `.orca/scout/2026-10-21/`; no duplicate report added.
+- [PR259](https://github.com/Vovanostm/warwrit/pull/259) remains open at `00c8bbcb`,
+  PR scope SUCCESS and final clean-checkout CI running. Merge NOT_RUN;
+  0 merged PRs with playable proof this tick. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  No migration, deployment, balance or full-M1 acceptance claim.
+
 ### Validate affordability evidence continuation — 2026-10-21, PUBLISHED
 
 - `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
