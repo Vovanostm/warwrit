@@ -468,3 +468,12 @@ metrics, opening a `pipeline` issue when failures rise two days in a row
 add complexity only when it demonstrably improves outcomes). The loop restarts
 itself when a tick checks out a newer tick script, and polls every 10 minutes
 because an unchanged state costs only the digest.
+
+**Amendment — 2026-10-21, owner merge gate removed.** Owner: «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr». Every
+PR, including infrastructure, merges on gates: green CI with `PR scope`, the
+expected head SHA, and an independent reviewer ACCEPT for infrastructure PRs.
+The `agent:merge-approved` label is no longer required. Auto-merge, admin
+merge, force-push, deployment and paid services keep their separate owner
+permission. The owner applied this change with `.claude/owner-gate-off.sh`
+because the agent's auto-mode classifier refuses agents removing their own
+merge gate.

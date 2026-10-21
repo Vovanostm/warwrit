@@ -205,12 +205,13 @@ or publication so the relevant documentation accompanies the change.
 
 These restate rules owned by the sections below. Check them before every write.
 
-1. Merge only with explicit owner permission for that PR, or for a mission whose
-   scope names the issues, epic or sprint, quoted verbatim with its date in the
-   PR or an issue comment (see [Orchestration](#orchestration)). An agent's own
-   plan, note or status entry is never permission. Auto-merge, deployment and
-   paid provisioning always need their own separate permission. Never
-   force-push a shared branch.
+1. Merge a PR on gates without asking the owner (owner decision 2026-10-21:
+   «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr»): green CI including `PR scope`, the expected head SHA, and for
+   infrastructure PRs (agents, skills, scripts, CI) an independent reviewer
+   ACCEPT for that head. Auto-merge, admin merge, deployment and paid
+   provisioning always need their own separate owner permission; an agent's own
+   plan, note or status entry is never that permission. Never force-push a
+   shared branch.
 2. One writer per slice and per shared path. Never revert or overwrite another
    agent's work; stop and report instead.
 3. `game-core` stays pure: no runtime dependencies, no I/O, time and randomness
