@@ -23,6 +23,7 @@ step() {
 
 step rebased test "$(git rev-list --count HEAD..origin/main)" -eq 0
 step clean-tree test -z "$(git status --porcelain --untracked-files=no)"
+step scope bash scripts/check-pr-scope.sh origin/main
 step packages pnpm --filter @warwrit/protocol --filter @warwrit/game-core --filter @warwrit/testkit build
 step typecheck pnpm typecheck
 if [[ -n "$changed" ]]; then

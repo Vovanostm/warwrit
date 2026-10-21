@@ -187,6 +187,8 @@ validating → review → pr → done`, plus `blocked` / `needs-owner`, set only
   CURRENT_PLAN and wiki and adds them to the PR right before merge. Merge needs
   the owner's `agent:merge-approved` label on that PR (AGENTS hard rule 1),
   green CI and the expected head SHA; one PR at a time.
+  _Superseded for pipeline slice PRs by [workflow v3](#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19)
+  (merge on gates); infrastructure PRs keep this label gate._
 - **Automation.** An Orca automation "Warwrit pipeline tick" (created disabled)
   runs one coordinator tick with the skill when a precheck finds issues in a
   pipeline state.
@@ -386,6 +388,15 @@ behind one core slice; six PRs went to pipeline infrastructure.
   fields, stubs, seams and a task list with `[P]`/`after`; then each issue runs
   as its own slice in parallel up to the lane limits.
 - **Reports:** state changes only, plus one daily digest.
+
+**Amendment — 2026-10-21, one coordinator.** An audit found that a Codex desktop
+mission took the coordinator lock on 2026-10-19 23:41 and ran sprint #161 while
+the Orca loop stopped, so nobody reconciled #217 labels and PRs of 700–3700 lines
+merged. [AGENTS.md § Orchestration](../../AGENTS.md#orchestration) now owns the
+rules: one lease holder, mission scope quoted verbatim, one issue per PR checked
+by [`check-pr-scope.sh`](../../scripts/check-pr-scope.sh), handover before
+stopping. The tick script now honours a foreign lease; before, it ignored the lock after
+90 minutes and could run beside the other coordinator.
 
 Sources: GitHub [Spec Kit](https://github.com/github/spec-kit/blob/main/spec-driven.md)
 (constitution → specify → plan → tasks with `[P]` → implement → converge);

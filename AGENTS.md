@@ -4,45 +4,11 @@ Applies repository-wide; read stricter directory instructions before editing.
 
 ## Dark fantasy, shared visual style and lore
 
-Owner policy — 2026-10-04:
-
-- Treat Warwrit as serious, grounded dark fantasy. Preserve the approved
-  ink/flat-wash direction in [ADR-0006](docs/architecture/0006-m1-renderer-babylon.md).
-  Start art work by viewing `assets/art/m1/style/unit-c-ink.png` and the relevant
-  `assets/art/m1/places/` scene; use existing building art for credible materials.
-  Similar genre mood does not authorize copying franchise art.
-- Give all artists the same inspected, source-linked reference and constraints.
-  Match irregular ink contours, strong shadow masses, weathered stone/timber,
-  muted slate/soot/umber/ochre and restrained rust accents across map, places,
-  units and UI. Reject cute rounded silhouettes, toy castles, pristine pale
-  masonry, vivid lawns, glossy surfaces and unrelated visual styles. Dark fantasy
-  requires credible forms and material character, not just a darker filter.
-- Preserve one approved projection per view: shared ground axes, verticals,
-  aspect, foot/gate pivots and light direction for towns, roads, trees and parties.
-  Do not squash already projected sprites again or mirror their baked lighting.
-  Keep roots and entrances grounded with irregular natural contact; retain
-  readable paths, labels and targets in both day and night.
-- Read the relevant place/contract sources before drawing or writing. Use
-  [the M1 source map](docs/wiki/m1-spec.md) and
-  [contract provenance](docs/content/CONTRACTS_M1_DERIVATIVE.md) as pointers,
-  respecting canonical authority. Keep the same place identity, geography,
-  construction, condition, names and symbols across map, visits and narrative;
-  the dangerous ruined old mill must not become a working picturesque mill.
-  Do not invent factions, gods, magic, witnesses or historical events for mood.
-  Weathering does not make every inhabited settlement abandoned or ruined.
-- Owner amendment — 2026-10-07: Warwrit is an MMO with a large world of several
-  duchies at war with each other (Witcher analogy, no franchise copying). Use
-  [the world page](docs/wiki/world/index.md) and
-  [writing rules](docs/wiki/world/writing.md) for lore and player text; the
-  ban above still applies to anything those pages do not define.
-- Keep one current reference set and the exact asset prompts/provenance with the
-  consuming assets. Compare proposed art with established assets before batch
-  production; a new worktree or artist does not reset accepted style or lore.
-- The independent playable critic must compare current integrated day/night,
-  overview and close views with those references and applicable lore, as well as
-  the actual journey. A style/lore conflict is an acceptance defect. Fix material
-  findings and repeat the review before claiming completion; palette-only,
-  isolated-asset or green-build approval does not accept the game scene.
+Owner policy — 2026-10-04, amended 2026-10-07: Warwrit is serious, grounded dark
+fantasy in an MMO world of warring duchies. Before any art, scene, UI-art, lore
+or player-text work read the full policy in
+[ART_LORE_POLICY](docs/engineering/ART_LORE_POLICY.md); a style or lore conflict
+is an acceptance defect.
 
 ## Desktop viewport and mobile orientation
 
@@ -144,6 +110,41 @@ documents only, uncommitted code in `/private/tmp` and an exhausted time box:
 - Committed documents link only to tracked files. Name untracked local evidence
   by path without a link.
 
+## Orchestration
+
+Owner request — 2026-10-21, after an audit found two coordinators (the Orca
+pipeline and a Codex desktop mission) on one queue, stale `agent:*` labels,
+PRs of 700–3700 lines and a status file nobody could read:
+
+- **One coordinator at a time.** The coordinator is either the Orca pipeline
+  ([warwrit-orca](.agents/skills/warwrit-orca/SKILL.md)) or one named owner
+  mission. It holds the lease
+  `~/orca/workspaces/warwrit/pipeline-coordinator/.orca/pipeline/tick.lock/owner.txt`
+  (first line: who; then the owner's words and scope) and names itself in the
+  `CURRENT_PLAN` status block. Every other agent is a worker or read-only
+  reviewer: it does not tick, relabel, merge or write shared records. A new
+  coordinator starts only after the old one hands over or the owner names it.
+- **The coordinator owns issue state.** It keeps `agent:*` labels true for its
+  queue, closes or relabels an issue when its PR merges, and reconciles labels,
+  open PRs and worktrees at least once per delivered PR.
+- **One issue = one PR.** About 300 changed source lines without tests, one
+  `Closes #N`; [`scripts/check-pr-scope.sh`](scripts/check-pr-scope.sh) enforces
+  it in CI and in `orca-validate.sh`. Larger work is split into issues first;
+  only the owner adds the `scope:owner-approved` label for an exception.
+- **A mission's scope is the owner's words.** Record them verbatim with the date
+  and the issue/epic/sprint list they cover. Work outside that list, or a new
+  milestone, needs a new owner instruction; do not widen it from plans or notes.
+- **Hand over before stopping.** Waiting for CI or a worker is not stopping.
+  Before a session ends or yields the queue, commit and push work in progress to
+  its branch (a `wip:` commit on a work branch is fine; if the commit audit
+  blocks it, use `--no-verify` there only and make the PR head pass), write a five-line handoff
+  on the issue (branch, head, done, next, blockers) and release or transfer the
+  lease. A worktree belongs to one slice; never reuse it for another issue.
+- **Readable records.** `CURRENT_PLAN` starts with a status block of at most 40
+  lines (coordinator, scope, open PRs, blockers, next step), rewritten in place;
+  dated history goes below it or to an archive. Write plain prose with spaces
+  between numbers and words; put measurements in the linked evidence.
+
 ## File-first project record
 
 Record substantive requirements, decisions, plans and results in their owning
@@ -204,9 +205,12 @@ or publication so the relevant documentation accompanies the change.
 
 These restate rules owned by the sections below. Check them before every write.
 
-1. Merge only with explicit owner permission for that PR or mission, recorded in
-   CURRENT_PLAN or the PR. Auto-merge, deployment and paid provisioning always
-   need their own separate permission. Never force-push a shared branch.
+1. Merge only with explicit owner permission for that PR, or for a mission whose
+   scope names the issues, epic or sprint, quoted verbatim with its date in the
+   PR or an issue comment (see [Orchestration](#orchestration)). An agent's own
+   plan, note or status entry is never permission. Auto-merge, deployment and
+   paid provisioning always need their own separate permission. Never
+   force-push a shared branch.
 2. One writer per slice and per shared path. Never revert or overwrite another
    agent's work; stop and report instead.
 3. `game-core` stays pure: no runtime dependencies, no I/O, time and randomness
@@ -218,6 +222,8 @@ These restate rules owned by the sections below. Check them before every write.
    owner grants permission.
 7. Report what actually ran. A tool failure, a skipped check or missing evidence is
    `NOT_RUN`/`NOT_MEASURED`, never a pass.
+8. One coordinator at a time holds the lease; other agents do not tick, relabel
+   or merge. Commit and push work in progress before a session stops.
 
 Best-effort guards back rules 1 and 4: command prefix rules in `.codex/rules/`
 and `.claude/settings.json`, and `pnpm check:migrations` in pull-request CI.
@@ -228,11 +234,14 @@ Prefix matching is incomplete; the guards do not replace these rules.
 Latest explicit owner decision > canonical Airtable decisions/GDD > accepted ADRs > active work-package contract > executable specifications > implementation > historical drafts. Preserve accepted history with dated amendments; never turn a proposal or a test plan into an approved decision or a passed check.
 
 The single operational entry is `docs/engineering/CURRENT_PLAN.md`: active slice,
-activation prerequisite, issue/contract and source records. Read it and the full
-active work-package contract before editing. GitHub is authoritative for live
+activation prerequisite, issue/contract and source records. Read its status block
+and the full active work-package contract before editing; read older history
+only when the task needs it. GitHub is authoritative for live
 refs, comments, merge status and CI; a document saying “ready” is not proof.
 Canonical product memory: Airtable base `apph3bj1NyVrfJeLM` and Empirical tag
-`Warwrit`. Read full Notes plus dated Purpose amendments. Preserve the named
+`Warwrit`. Read full Notes plus dated Purpose amendments when a task sets or
+interprets game rules or a milestone contract; a worker on an issue whose
+contract already cites them works from that contract. Preserve the named
 original source-archive limitation; do not reconstruct the catalogue again or
 reopen superseded interview blockers.
 

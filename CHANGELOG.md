@@ -49,6 +49,37 @@ requests.
   gameplay/visual review and publication remain pending.
   [Owning behavior](docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
 
+### One coordinator, one issue per PR — 2026-10-21, PUBLISHED
+
+- `claude/orchestration-governance`, [PR252](https://github.com/Vovanostm/warwrit/pull/252): owner request «Fix issues. Implement» after
+  the 2026-10-20 audit. The audit found two coordinators on one queue (a Codex
+  desktop mission took the Orca lock on 2026-10-19 while the loop stopped),
+  stale `agent:*` labels on #217, merged PRs of 700–3700 lines against the
+  300-line slice rule, and contradictory merge rules across AGENTS.md,
+  AGENT_TEAM and warwrit-delivery.
+- New [AGENTS.md § Orchestration](AGENTS.md#orchestration) and hard rule 8: one
+  lease holder, mission scope quoted verbatim, the coordinator owns issue
+  state, handover before stopping, a 40-line `CURRENT_PLAN` status block. Hard
+  rule 1 no longer accepts an agent's own status entry as permission.
+- New [`scripts/check-pr-scope.sh`](scripts/check-pr-scope.sh) and the `PR scope`
+  workflow (≤ 300 source lines without tests, one `Closes #N`; owner label
+  `scope:owner-approved` for exceptions); `orca-validate.sh` runs it.
+- `orca-pipeline-tick.sh` honours a foreign lease and reclaims only a dead
+  tick's lock; before, it ran beside the other coordinator after 90 minutes.
+  `pnpm agent:status` prints the lease owner.
+- warwrit-orca reconcile now closes merged-but-open issues, fixes orphan
+  `agent:pr`/`agent:review`, keeps abandoned staged work, removes finished
+  worktrees and closes superseded PRs. warwrit-delivery and warwrit-context
+  follow the new merge rule and read or write Airtable/Empirical only for rule
+  or milestone work.
+- The art and lore owner policy moved verbatim to
+  [ART_LORE_POLICY](docs/engineering/ART_LORE_POLICY.md) with a pointer in
+  AGENTS.md.
+- Not done here: rewriting `CURRENT_PLAN` into the status block (the active
+  mission owns that file) and relabelling #217 issues (its coordinator's duty).
+  Checks: scope script on PR247's range FAIL (3641 lines) as expected; body and
+  lease cases tested by hand; `bash -n` and Prettier on changed files.
+
 ### Integrate pickup correction with merged range — 2026-10-21, LOCAL
 
 - `codex/representative-hunt-recovery`: c5acd803 combines actual range main

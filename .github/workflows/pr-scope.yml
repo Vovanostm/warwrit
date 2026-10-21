@@ -1,0 +1,33 @@
+name: PR scope
+
+# One issue = one PR (AGENTS.md "Orchestration"). A small separate job so that
+# adding or removing the owner's exception label re-runs only this check.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+
+concurrency:
+  group: pr-scope-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  scope:
+    name: One issue per pull request
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Check size and linked issues
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          SCOPE_EXCEPTION: ${{ contains(github.event.pull_request.labels.*.name, 'scope:owner-approved') && '1' || '' }}
+        run: |
+          printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/pr-body.md"
+          bash scripts/check-pr-scope.sh "origin/${{ github.base_ref }}" "$RUNNER_TEMP/pr-body.md"

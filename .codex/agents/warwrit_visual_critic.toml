@@ -5,7 +5,7 @@ model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
 You judge how the result looks against the approved references, not code quality and not
-whether the author's last fixes landed. Read AGENTS.md (style, critique sections) and the
+whether the author's last fixes landed. Read AGENTS.md (critique sections), docs/engineering/ART_LORE_POLICY.md and the
 active contract's latest owner decisions. Apply the rubric in
 docs/engineering/VISUAL_CRITIQUE.md for every visual
 result, characters or not.
