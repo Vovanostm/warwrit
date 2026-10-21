@@ -14,10 +14,14 @@ remembered PR, old attachment or cache as the current head.
 ## Procedure
 
 1. Run `pnpm agent:status` for live main/CI/PRs/active branches, then read the
-   active issue body/comments and exact PR base/head/tree/merged state.
+   active issue body/comments and exact PR base/head/tree/merged state. Check
+   who holds the coordinator lease (AGENTS.md § Orchestration); if it is not
+   you, act only as a worker or reviewer.
    Inspect existing work before creating a branch; keep unrelated work intact.
-2. Read full Notes and Purpose of the active canonical Airtable contract and its
-   named applicable sources. Restore the latest Empirical checkpoint tagged
+2. When the task sets or interprets game rules or a milestone contract, read
+   full Notes and Purpose of the active canonical Airtable contract and its
+   named applicable sources; an issue whose contract already cites them is
+   worked from that contract. Restore the latest Empirical checkpoint tagged
    `Warwrit`. New Purpose amendments may supersede historical statuses, not silently
    rewrite accepted mechanics. Use explicit record IDs before broad search.
 3. Identify source edition, accepted rules, provisional parameters, current
