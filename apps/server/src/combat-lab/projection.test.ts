@@ -10,7 +10,8 @@ import {
 } from './custom-battle.js';
 import type { CombatLabBattleConfig } from '@warwrit/protocol';
 import { createCombatLabPresentation } from './presentation.js';
-import { projectCombatLabReplay, type CombatLabReplay } from './replay.js';
+import { projectCombatLabReplay, exportCombatLabReplay, type CombatLabReplay } from './replay.js';
+import { prepareTransition, type CombatLabSession } from './routes.js';
 
 describe('projectCombatLabView initiative forecast', () => {
   it('projects the core forecast only while a future round can occur', () => {
@@ -116,53 +117,82 @@ function projectDuel(fixture: ReturnType<typeof duel>, state = fixture.state) {
   return projectCombatLabView('session', 'human', state, fixture.events, fixture.battle);
 }
 
-it('matches command refusal precedence and exposes only controlled resource diagnostics', () => {
-  const fixture = duel();
-  const actor = fixture.state.units.find((unit) => unit.id === 'actor')!;
-  for (const [ap, stamina, expected] of [
-    [2, 0, 'insufficient-action-points'],
-    [4, 0, 'insufficient-stamina'],
-  ] as const) {
-    const state = {
-      ...fixture.state,
-      activation: { ...fixture.state.activation!, remainingActionPoints: ap },
-      units: fixture.state.units.map((unit) =>
-        unit.id === actor.id ? { ...unit, stamina } : { ...unit, stamina: 73 },
-      ),
+it.each(['W01', 'W05'])(
+  'matches %s command refusal precedence and exposes only controlled resource diagnostics',
+  (profile) => {
+    const fixture = duel(profile);
+    const actor = fixture.state.units.find((unit) => unit.id === 'actor')!;
+    for (const [ap, stamina, expected] of [
+      [2, 100, 'insufficient-action-points'],
+      [4, profile === 'W05' ? 15 : 0, 'insufficient-stamina'],
+    ] as const) {
+      const state = {
+        ...fixture.state,
+        activation: { ...fixture.state.activation!, remainingActionPoints: ap },
+        units: fixture.state.units.map((unit) =>
+          unit.id === actor.id ? { ...unit, stamina } : { ...unit, stamina: 73 },
+        ),
+      };
+      const view = projectDuel(fixture, state);
+      const weapon = combat.weaponProfile(combat.combatRules(state.rulesetId), actor.weaponId);
+      expect(view.attackRefusals).toEqual([
+        {
+          targetId: 'target',
+          code: expected,
+          required: { actionPoints: weapon.actionPointCost, stamina: weapon.staminaCost },
+          available: { actionPoints: ap, stamina },
+        },
+      ]);
+      const before = structuredClone(state);
+      const result = combat.applyCombatCommand(state, {
+        type: 'attack',
+        commandId: combat.commandId('reject'),
+        actorId: actor.id,
+        activationId: state.activation!.id,
+        targetId: combat.unitId('target'),
+      });
+      assert(!result.ok);
+      expect(result.error.code).toBe(
+        ap === 2 ? 'INSUFFICIENT_ACTION_POINTS' : 'INSUFFICIENT_STAMINA',
+      );
+      expect(result.state).toEqual(before);
+      if (profile === 'W05') {
+        const session: CombatLabSession = {
+          originalSetup: createCustomBattleFixture('refused-bow', fixture.battle).originalSetup(),
+          controlledSideId: 'human',
+          capability: Buffer.alloc(32),
+          state,
+          journal: fixture.events,
+          commands: [],
+          replayBytes: 0,
+          decisions: new Map(),
+        };
+        const saved = exportCombatLabReplay(session);
+        expect(
+          prepareTransition(session, {
+            type: 'attack',
+            commandId: combat.commandId('refused-bow'),
+            actorId: actor.id,
+            activationId: state.activation!.id,
+            targetId: combat.unitId('target'),
+          }),
+        ).toEqual({ code: 'INVALID_ACTION' });
+        expect(session.state).toEqual(before);
+        expect(exportCombatLabReplay(session)).toEqual(saved);
+        expect(session.commands).toEqual([]);
+        expect(projectDuel(fixture, state).attackRefusals?.[0]?.code).toBe(expected);
+      }
+    }
+    const far = duel('W01', { q: 8, r: 5 });
+    const empty = {
+      ...far.state,
+      activation: { ...far.state.activation!, remainingActionPoints: 0 },
     };
-    const view = projectDuel(fixture, state);
-    const weapon = combat.weaponProfile(combat.combatRules(state.rulesetId), actor.weaponId);
-    expect(view.attackRefusals).toEqual([
-      {
-        targetId: 'target',
-        code: expected,
-        required: { actionPoints: weapon.actionPointCost, stamina: weapon.staminaCost },
-        available: { actionPoints: ap, stamina },
-      },
+    expect(projectDuel(far, empty).attackRefusals).toEqual([
+      { targetId: 'target', code: 'out-of-range', distance: 5, minimumRange: 1, maximumRange: 1 },
     ]);
-    const before = structuredClone(state);
-    const result = combat.applyCombatCommand(state, {
-      type: 'attack',
-      commandId: combat.commandId('reject'),
-      actorId: actor.id,
-      activationId: state.activation!.id,
-      targetId: combat.unitId('target'),
-    });
-    assert(!result.ok);
-    expect(result.error.code).toBe(
-      ap === 2 ? 'INSUFFICIENT_ACTION_POINTS' : 'INSUFFICIENT_STAMINA',
-    );
-    expect(result.state).toEqual(before);
-  }
-  const far = duel('W01', { q: 8, r: 5 });
-  const empty = {
-    ...far.state,
-    activation: { ...far.state.activation!, remainingActionPoints: 0 },
-  };
-  expect(projectDuel(far, empty).attackRefusals).toEqual([
-    { targetId: 'target', code: 'out-of-range', distance: 5, minimumRange: 1, maximumRange: 1 },
-  ]);
-});
+  },
+);
 
 it('keeps LOS refusals free of blocker information and ahead of resources', () => {
   const fixture = duel('W08', { q: 6, r: 5 });
@@ -231,7 +261,7 @@ it('covers admitted controlled B053, panic, opponent and terminal partitions', (
 });
 
 it('quotes ordinary attack affordability on every movement destination', () => {
-  for (const profile of ['W01', 'W08']) {
+  for (const profile of ['W01', 'W05', 'W08']) {
     const fixture = duel(profile, { q: 8, r: 5 });
     const before = structuredClone(fixture);
     const movements = projectDuel(fixture).movementPreview!;
@@ -241,9 +271,7 @@ it('quotes ordinary attack affordability on every movement destination', () => {
     expect(fixture).toEqual(before);
     expect(movements.length).toBeGreaterThan(0);
     for (const movement of movements) {
-      expect(movement.attackAffordableAfter).toBe(
-        profile === 'W01' && movement.actionPointCost === 1,
-      );
+      expect(movement.attackAffordableAfter).toBe(movement.actionPointCost === 1);
     }
   }
 });

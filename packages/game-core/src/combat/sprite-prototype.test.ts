@@ -9,6 +9,7 @@ import {
   createHexagon,
   M0_COMBAT_RULESET_ID,
   previewCombatAttacks,
+  queryCombatWeaponAttack,
   previewCombatMovement,
   previewCombatRangedArea,
   previewCombatWeaponReach,
@@ -173,7 +174,11 @@ describe('sprite prototype combat', () => {
       }
 
       expect(previews).toContainEqual(
-        expect.objectContaining({ targetId: unitId('beta-1'), actionPointCost: 3, staminaCost: 16 }),
+        expect.objectContaining({
+          targetId: unitId('beta-1'),
+          actionPointCost: 3,
+          staminaCost: 16,
+        }),
       );
       const shot = command(moved.state, { type: 'attack', targetId: unitId('beta-1') });
       expect(shot.activationId).toBe(activationId);
@@ -221,8 +226,12 @@ describe('sprite prototype combat', () => {
     ] as const;
     for (const { state, code } of cases) {
       const before = JSON.stringify(state);
+      expect(previewCombatAttacks(state)).toEqual([]);
+      expect(queryCombatWeaponAttack(state, unitId('beta-1'))).toMatchObject({ code });
       const rejected = applyCombatCommand(state, { ...attack, activationId: state.activation!.id });
       expect(rejected).toMatchObject({ ok: false, error: { code }, state });
+      expect(rejected).not.toHaveProperty('events');
+      expect(rejected.state).toBe(state);
       expect(rejected.state.random).toEqual(state.random);
       expect(JSON.stringify(state)).toBe(before);
     }

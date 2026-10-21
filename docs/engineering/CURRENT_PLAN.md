@@ -7,24 +7,58 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local handover overrides; no new milestone.
-Delivered this tick: [PR257](https://github.com/Vovanostm/warwrit/pull/257), #256,
-merged `d8a04196` after final-head CI `39602921979` SUCCESS, integrated validator
-9/9 PASS, scope 118 and Tier L source/playable ACCEPT for unchanged `1105189d`.
-Real lab day/night step → ordinary shot: 4 → 3 → 0 AP, 16-stamina shot;
-seven old replay baselines match. #256 CLOSED / agent:done.
-Successor #249: existing branch `codex/bow-three-ap-249`, retained WIP source
-`e68025b9`; read-only fresh contract is next. No implementation starts this tick.
-This checkout has not integrated the new main yet; contract must inspect actual
-main and preserve retained WIP through ordinary integration, no reset/rebase.
-Persistent company/binding/admission/save/restart acceptance remains NOT_RUN.
-Web #184 remains needs-owner at pushed `3963215b`; B1 actual silhouette/annotation
-intersection in level/0→1→2 crowds remains unproven after rework 2/2.
-Existing epic question recommends bounded evidence recovery; decision pending.
-#231 is the first next web slice after #184; other queue dependencies remain.
+Previously delivered: PR257/#256 merged `d8a04196`, exact-head CI `39602921979`
+SUCCESS, integrated validator 9/9 PASS, scope 118, Tier L ACCEPT.
+Lab day/night 4 → 3 → 0 AP and 16-stamina shot; seven old baselines match.
+#249: fresh contract consumed; sole core builder task `task_73dc0817b72c`
+continues branch `codex/bow-three-ap-249` in `codex-company-profile-164`.
+Contract path: `.orca/core-bow-three-ap/contract.md` in that worktree.
+Remaining source measured 190 lines before integration; final scope NOT_RUN.
+Ordinary main integration is in progress; retained `e68025b9` is preserved.
+Coordinator resolved/staged shared records, retaining both histories; builder
+must resolve source conflicts and commit normally, preserving delivered #256.
+Persistent admission/move/shot/save/restart and old-active continuation proof,
+current integrated audit/validator and fresh Tier L gates remain NOT_RUN.
+#184 remains needs-owner, pushed `3963215b`; rework 2/2 B1 overlap evidence
+unproven. Existing owner question is pending; no extra attempt or waiver.
+#231 remains first next web slice after #184; other dependencies are unchanged.
 Infrastructure PR258 is outside slice merge authority. No blocked label removed.
-Metric this tick: 1 merged PR with playable proof. No deployment or full-M1 claim.
+Next: builder commits and report, coordinator validator, independent Tier L gates.
+This tick: 0 merged PRs with playable proof. No deployment or full-M1 claim.
 
 ## Dated history
+
+**Persistent bow contract/integration — 2026-10-21, LOCAL:**
+Fresh contract has all required sections and no open product question. Contract
+writer performed source/scope reading only; executable checks NOT_RUN. Ordinary
+main integration has source conflicts in already-delivered combat/lab tests and
+replay/runtime files. One builder receives those integration paths plus remaining
+company/persistent ownership; no new core/lab feature delta is authorized.
+Previous pipeline snapshots describing PR257 as pending are superseded by the
+merged status above; their underlying evidence and reasons remain in history.
+
+**JOIN lock order254 — 2026-10-21, LOCAL / implementation active:**
+Parent owns `contracts/routes.ts` and the existing encounter PostgreSQL integration
+regression on `codex/join-lock-order-254`, base actual main7b9a1dca. DB7 ordinary
+helper JOIN failed500/40P01 before one offered retry completed the approved hunt.
+Discover all participating accounts before locking any; lock them deterministically,
+revalidate ownership, then preserve sorted company locks and contract recheck.
+Real-PG controlled contention reproduces500/40P01 before and passes after
+(1PASS/16filteredSKIP); independent source ACCEPT, server types/lint/audit PASS.
+Committed7f3568a passes clean validator8/8 with realPG58PASS/15SKIP; initial
+PG-omitted coverage/audit failure retained. Ready to publish; hosted gate pending.
+[Evidence and limits](evidence/join-lock-order-254/README.md).
+Owner mission “Implement, review, merge” authorizes delivery after existing gates.
+No new rules, migrations, blanket retries, deployment, or retained-save reset.
+[Issue254](https://github.com/Vovanostm/warwrit/issues/254).
+
+DB7 subsequently completed actual battle52, trophy pickup and full80000000Q
+payment to the unique current bearer under frozen HUNT02 terms; helper funds
+unchanged. A second actual API crash/restart retained the target HUNT02 row plus
+11 earlier captured groups exactly, both UI reloads paid with0POST. First crash
+omitted the actual world row; preserve this limitation and the initial JOIN failure.
+Synthetic accounts/company/start location do not prove externalOIDC, creation or
+travel. Full174/177/sprint/M1 remain PARTIAL. Native logs/snapshots remain private.
 
 **Pickup248 delivered / payment journey and bow249 active — 2026-10-21:**
 PR251 merged7b9a1dcaf23c8a08fe16783ae910bd42113ef6a2; published5c68fb83,

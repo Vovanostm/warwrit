@@ -137,6 +137,7 @@ describe('canonical combat autoplay', () => {
       JSON.stringify({ schemaVersion: 1, setup: tacticalSetup, commands: first.commands }),
     ) as Parameters<typeof replayCombat>[0];
     const replayed = replayCombat(replay);
+    expect(replayed.events).toEqual([...startBattle(tacticalSetup).events, ...first.events]);
     expect(replayed.state.random).toEqual(first.state.random);
     expect(canonicalCombatState(replayed.state)).toBe(canonicalCombatState(first.state));
   });

@@ -70,8 +70,8 @@ export function canonicalCombatState(state: BattleState): string {
       .map((unit) => ({
         ...canonicalUnit(unit),
         ...(state.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
-        state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
-        || state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+        state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+        state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
           ? { capabilities: unit.capabilities }
           : {}),
         ...(isTacticalV3Ruleset(state.rulesetId)

@@ -88,7 +88,8 @@ export function startBattleV2(setup: BattleSetupV2): CombatTransition {
       hexes: setup.map.hexes.map(copyHex),
       blocked: setup.map.blocked.map(copyHex),
       ...((setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-        setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID) && setup.map.tiles !== undefined
+        setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID) &&
+      setup.map.tiles !== undefined
         ? { tiles: setup.map.tiles.map((tile) => ({ ...tile })) }
         : {}),
     },

@@ -643,6 +643,7 @@ it.each([3, 4, 5] as const)(
       expect(
         binding.participants.every(
           (entry) =>
+            (entry.projection.schemaVersion === 4 || entry.projection.schemaVersion === 5) &&
             entry.projection.schemaVersion === version &&
             entry.projection.combatRulesetId === evidence.setup.rulesetId &&
             JSON.stringify(entry.projection.skillRanks) === '{}',

@@ -112,7 +112,7 @@ describe('finite battle skills', () => {
     expect(quote).toMatchObject({ legal: true, actionPointCost: 4, staminaCost: 24 });
 
     const move = previewCombatMovement(initial).find(
-      (option) => option.to.q === 1 && option.to.r === 0,
+      (option) => option.to.q === -1 && option.to.r === 0,
     )!;
     const moved = applyCombatCommand(initial, {
       type: 'move',
@@ -124,7 +124,11 @@ describe('finite battle skills', () => {
     expect(moved.ok).toBe(true);
     if (!moved.ok) throw new Error(moved.error.code);
     expect(moved.state.activation?.remainingActionPoints).toBe(3);
-    expect(previewCombatSkills(moved.state).find((row) => row.skillId === 'aimed-shot')).toMatchObject({
+    expect(
+      previewCombatSkills(moved.state).find(
+        (row) => row.skillId === 'aimed-shot' && row.targetId === targetId,
+      ),
+    ).toMatchObject({
       legal: false,
       reason: 'INSUFFICIENT_ACTION_POINTS',
       actionPointCost: 4,

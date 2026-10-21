@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Start persistent bow successor integration — 2026-10-21, LOCAL
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  consume the fresh five-section contract after merged #256/PR257. Remaining
+  company/binding and persistent adapter scope measures 190 source lines before
+  integration; final scope, audit and persistent acceptance remain NOT_RUN.
+- Begin ordinary integration of main `d8a04196`, preserving retained `e68025b9`.
+  Coordinator reconciles both shared-record histories; the sole core builder
+  owns outstanding source conflicts and must preserve delivered #256 replay,
+  runtime and lab regressions. No reset, rebase, source waiver or new rule.
+- Builder task `task_73dc0817b72c` owns normal audited commits and finite persistent
+  admission/move/shot/save/restart proof. Coordinator validation, fresh Tier L
+  gates, publication and merge remain pending. Documentation readback/diff and
+  formatting are the only coordinator checks this tick; game checks NOT_RUN.
+  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+
 ### Deliver bow lab and prepare persistent successor — 2026-10-21, PUBLISHED
 
 - `codex/bow-three-ap-249`: record actual merged predecessor
@@ -32,6 +48,147 @@ requests.
   Independent source and recovered-save runtime ACCEPT; no impossible targets
   offered, original failed DB6 preserved. Separate DB7 payment/restart follows;
   broader174/177 remain partial. [Record](docs/engineering/evidence/persistent-hud/main-readback.md).
+
+### Integrate bow lab with current pipeline main — 2026-10-21, PUBLISHED
+
+- `Vovanostm/core-bow-lab-256`, [PR257](https://github.com/Vovanostm/warwrit/pull/257):
+  integrate actual main `4e83842a` through normal merge `a0dd20c0`; preserve
+  both CHANGELOG histories. No game source conflict or new rule. Integrated
+  coordinator validator 9/9 PASS; source scope 118 lines, Tier L ACCEPT retained
+  for unchanged code `1105189d`. Earlier published-head CI `39598354029` SUCCESS;
+  final integrated-head CI and expected-head merge remain pending.
+- Correct [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) to the actual #184
+  needs-owner state and existing B1 evidence question after rework 2/2; no new
+  attempt or acceptance waiver. #249 waits for #256, #231 for #184.
+  [Bow proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+  No migration/deployment; persistent activation remains #249, NOT_RUN here.
+
+### Independent bow lab acceptance and publication — 2026-10-21, PUBLISHED
+
+- `Vovanostm/core-bow-lab-256`, issue #256: preserve fresh Tier L source and
+  playable ACCEPT plus small day/night JPEG proof. Code `1105189d` is unchanged;
+  the later `81328bc` commit changes only CHANGELOG/CURRENT_PLAN. Real editor
+  journeys establish AP 4 → 3 → 0, unchanged 16-stamina shot and same activation;
+  seven released replay baselines and completed mill replay independently match.
+- Existing coordinator validator 9/9 PASS and builder coverage 812 PASS / 51 SKIP
+  remain actual executed results; no test rerun for this evidence/docs update.
+  [PR257](https://github.com/Vovanostm/warwrit/pull/257) is open; hosted CI
+  and merge remain pending. Persistent acceptance remains #249; balance NOT_MEASURED. No migration or deployment.
+  [Proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+
+### Compatible bow core/lab and refreshed gates — 2026-10-21, LOCAL
+
+- `Vovanostm/core-bow-lab-256`, [#256](https://github.com/Vovanostm/warwrit/issues/256)
+  split from #249: sprite v4 / bridge v5 ordinary bow costs 3 AP; new lab battles
+  select v4. Preserve 16 stamina, range/damage/special actions, released replay
+  bytes and existing persistent selectors. Affects combat core, lab projection
+  contract/routes, protocol and web view validation. No migration or new rule.
+- Builder's real day/night editor → 1 AP step → 3 AP shot has native resource
+  and replay readback; focused coverage 812 PASS / 51 SKIP, normal commit audit
+  PASS. Coordinator validator 9/9 PASS on `1105189d`; scope 118 source lines.
+  Independent Tier L reviewer/evaluator are live; hosted CI, PR and merge are
+  NOT_RUN. Persistent activation/restart remains successor #249; balance is
+  NOT_MEASURED. [Owning behavior](apps/server/src/combat-lab/README.md#sprite-v4-ordinary-bow--2026-10-21).
+- #184 evaluator ACCEPT at `06479a47` does not override visual REWORK:
+  rendering-language score 1 and missing tight height-step crowd evidence.
+  Second bounded rework is live; fresh gates required. Existing reports and
+  earlier failures retained. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+
+### Split the bow delivery and checkpoint the tick — 2026-10-21, LOCAL
+
+- `Vovanostm/core-bow-lab-256`: fallback step 3 splits retained #249 WIP
+  (305 changed source lines) into [#256](https://github.com/Vovanostm/warwrit/issues/256)
+  compatible combat/lab support, then #249 company/binding/persistent adapters.
+  Each keeps its own issue/PR and worktree; no scope waiver or source reset.
+  The local slice overrides and issue comments own ordering/ownership. Contract
+  writer only is active for #256; implementation, replay and playable proof are
+  NOT_RUN here. Existing 3 AP owner decision is unchanged.
+- [PR255](https://github.com/Vovanostm/warwrit/pull/255) is MERGED as `0adcff2e`
+  after exact-head CI 39588879033 SUCCESS, validator 9/9 and fresh Tier L ACCEPT;
+  #254 closed/done, finished worktree removed after evidence retention. Earlier
+  pending entries remain history. No new runtime test is claimed by this record.
+- #184 pushed head `06479a47` integrates actual main with status-only conflicts
+  resolved retaining both histories; union validator 9/9 PASS. Fresh evaluator
+  and absolute visual critic are live; visual acceptance and CI remain pending.
+  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+
+### Evidence-based Orca pipeline fixes — 2026-10-21, PUBLISHED
+
+- `claude/orca-pipeline-evidence` (stacked on PR252): owner request to improve
+  the pipeline by best agentic practice with proof. Baseline, failure causes,
+  sources and expected effects are in
+  [AGENT_TEAM § Pipeline evidence review](docs/engineering/AGENT_TEAM.md#pipeline-evidence-review--2026-10-21).
+- Event-driven coordinator: `scripts/orca-state-digest.sh` + tick skip when the
+  state is unchanged (3-hour heartbeat); the mailbox probe recreates a terminal
+  that lost its stable pane.
+- `scripts/orca-play.sh` starts, health-checks and stops the combat lab and
+  kills orphaned servers on the worktree ports; gates report `BLOCKED_ENV`
+  outside the rework budget; evaluators take missing proof themselves.
+- The pre-commit hook refreshes focused coverage before the audit (local
+  `core.hooksPath` reset to the relative `scripts/git-hooks`, so each worktree
+  runs its own hook instead of the primary checkout's);
+  `scripts/orca-metrics.sh` feeds the daily digest.
+- Checks: `orca-play.sh` start/status/stop with ports freed; digest stable on
+  two runs; metrics on 4 days of logs; `bash -n`/`sh -n`; Prettier. Effects on
+  the next wave NOT_MEASURED.
+
+### Refresh JOIN delivery gates after hosted audit failure — 2026-10-21, LOCAL
+
+- `codex/join-lock-order-254`, [PR255](https://github.com/Vovanostm/warwrit/pull/255):
+  separate the exact ownership reread from account locking and cover it without
+  PostgreSQL so the hosted audit can measure that rule. Affects
+  `apps/server/src/contracts/routes.ts` and its existing encounter integration
+  tests; no migration, lock-order, authorization, retry or game-rule change.
+- Gated head `cd77d1d6`: normal commit audit and coordinator validator 9/9 PASS;
+  builder real-PG related coverage 64 PASS / 15 SKIP. Fresh reviewer and actual
+  persistent JOIN evaluator ACCEPT; evaluator real-PG 7 PASS / 16 filtered SKIP,
+  four UI commands 200, one admission/two accounts, replay/reload readbacks PASS.
+  Old hosted and narrow-coverage audit failures remain recorded. Corrected-head
+  hosted CI, publication and merge pending; no deployment or full-M1 claim.
+  [Evidence and limits](docs/engineering/evidence/join-lock-order-254/README.md).
+
+### Correct participating-account lock order — 2026-10-21, LOCAL
+
+- `codex/join-lock-order-254`, [issue254](https://github.com/Vovanostm/warwrit/issues/254):
+  DB7 helper JOIN deadlocked against an account-before-company transaction.
+  Lock the complete discovered account set before company rows and revalidate
+  ownership; preserve admission rules, receipts and sorted company locking.
+  Old source reproduced500/40P01; corrected real-PG coverage1PASS/16filteredSKIP.
+  Independent source ACCEPT; server types/lint/normal audit PASS. Clean integrated
+  validator8/8 with realPG58PASS/15SKIP; first PG-omitted audit failure retained.
+  Hosted gate pending. No migration/deployment.
+  [Evidence](docs/engineering/evidence/join-lock-order-254/README.md).
+
+### One coordinator, one issue per PR — 2026-10-21, PUBLISHED
+
+- `claude/orchestration-governance`, [PR252](https://github.com/Vovanostm/warwrit/pull/252): owner request «Fix issues. Implement» after
+  the 2026-10-20 audit. The audit found two coordinators on one queue (a Codex
+  desktop mission took the Orca lock on 2026-10-19 while the loop stopped),
+  stale `agent:*` labels on #217, merged PRs of 700–3700 lines against the
+  300-line slice rule, and contradictory merge rules across AGENTS.md,
+  AGENT_TEAM and warwrit-delivery.
+- New [AGENTS.md § Orchestration](AGENTS.md#orchestration) and hard rule 8: one
+  lease holder, mission scope quoted verbatim, the coordinator owns issue
+  state, handover before stopping, a 40-line `CURRENT_PLAN` status block. Hard
+  rule 1 no longer accepts an agent's own status entry as permission.
+- New [`scripts/check-pr-scope.sh`](scripts/check-pr-scope.sh) and the `PR scope`
+  workflow (≤ 300 source lines without tests, one `Closes #N`; owner label
+  `scope:owner-approved` for exceptions); `orca-validate.sh` runs it.
+- `orca-pipeline-tick.sh` honours a foreign lease and reclaims only a dead
+  tick's lock; before, it ran beside the other coordinator after 90 minutes.
+  `pnpm agent:status` prints the lease owner.
+- warwrit-orca reconcile now closes merged-but-open issues, fixes orphan
+  `agent:pr`/`agent:review`, keeps abandoned staged work, removes finished
+  worktrees and closes superseded PRs. warwrit-delivery and warwrit-context
+  follow the new merge rule and read or write Airtable/Empirical only for rule
+  or milestone work.
+- The art and lore owner policy moved verbatim to
+  [ART_LORE_POLICY](docs/engineering/ART_LORE_POLICY.md) with a pointer in
+  AGENTS.md.
+- Not done here: rewriting `CURRENT_PLAN` into the status block (the active
+  mission owns that file) and relabelling #217 issues (its coordinator's duty).
+  Checks: scope script on PR247's range FAIL (3641 lines) as expected; body and
+  lease cases tested by hand; `bash -n` and Prettier on changed files.
 
 ### Integrate pickup correction with merged range — 2026-10-21, LOCAL
 

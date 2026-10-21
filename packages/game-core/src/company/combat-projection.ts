@@ -105,6 +105,12 @@ function owned<T>(value: T): T {
   return copy as T;
 }
 
+function tacticalProjectionVersion(version: 4 | 5) {
+  return version === 5
+    ? { schemaVersion: 5 as const, combatRulesetId: M1_DOMAIN_BRIDGE_V5_RULESET_ID }
+    : { schemaVersion: 4 as const, combatRulesetId: M1_DOMAIN_BRIDGE_V4_RULESET_ID };
+}
+
 function equippedArmor(
   root: MaterializedCompanyState,
   characterId: string,
@@ -180,7 +186,11 @@ export function projectCharacterCombat(
   root: MaterializedCompanyState,
   characterId: string,
   version?: 3 | 4 | 5,
-): CharacterCombatProjection | CharacterCombatProjectionV3 | CharacterCombatProjectionV4 | CharacterCombatProjectionV5 {
+):
+  | CharacterCombatProjection
+  | CharacterCombatProjectionV3
+  | CharacterCombatProjectionV4
+  | CharacterCombatProjectionV5 {
   const character = person(root.lifecycle, characterId);
   const weapon = equippedWeaponContext(root, characterId);
   const unarmed =
@@ -276,9 +286,7 @@ export function projectCharacterCombat(
     return version === 4 || version === 5
       ? owned({
           ...projected,
-          schemaVersion: version,
-          combatRulesetId:
-            version === 5 ? M1_DOMAIN_BRIDGE_V5_RULESET_ID : M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+          ...tacticalProjectionVersion(version),
           skillRanks: {},
           moralePolicy: 'human',
         })

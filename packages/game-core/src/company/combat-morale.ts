@@ -85,7 +85,10 @@ export function projectCharacterCombatWithMorale(
   root: MaterializedCompanyState,
   characterId: string,
   version: 3 | 4 | 5,
-): CharacterCombatMoraleProjectionV3 | CharacterCombatMoraleProjectionV4 | CharacterCombatMoraleProjectionV5;
+):
+  | CharacterCombatMoraleProjectionV3
+  | CharacterCombatMoraleProjectionV4
+  | CharacterCombatMoraleProjectionV5;
 export function projectCharacterCombatWithMorale(
   root: MaterializedCompanyState,
   characterId: string,

@@ -273,7 +273,9 @@ export function prepareEncounterBinding(
           moralePolicy: participant.projection.moralePolicy,
         }
       : {}),
-    ...(participant.projection.schemaVersion === 3 || participant.projection.schemaVersion === 4 || participant.projection.schemaVersion === 5
+    ...(participant.projection.schemaVersion === 3 ||
+    participant.projection.schemaVersion === 4 ||
+    participant.projection.schemaVersion === 5
       ? { capabilities: participant.projection.capabilities }
       : {}),
   }));
@@ -284,12 +286,13 @@ export function prepareEncounterBinding(
     weaponId: participant.weaponId,
     attributes: participant.attributes,
     initialPools: participant.initialPools,
-    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID || evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
       ? { skillRanks: {}, moralePolicy: participant.moralePolicy }
       : {}),
     ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
-    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
-    || evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
       ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
       : {}),
   }));

@@ -93,7 +93,7 @@ export function toEncounterPublicProjection(
     units: encounter.state.units.map((unit) => {
       combat.invariant(
         encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-        encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+          encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
           unit.status !== 'surrendered',
         'Sprite prototype status cannot enter a V1 encounter projection',
       );

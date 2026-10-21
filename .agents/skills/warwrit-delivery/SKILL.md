@@ -25,8 +25,11 @@ writers or regenerate already approved source catalogues.
 ## Merge only when authorized
 
 Before merging read live head/base, reviews, unresolved threads and applicable
-CI evidence. Require no unresolved blocking defect and explicit permission for
-this PR. Pass the expected head SHA to the merge operation. Do not dismiss a
+CI evidence, including the `PR scope` check. Require no unresolved blocking
+defect and permission under AGENTS hard rule 1: the owner's words for this PR,
+or a quoted mission scope that names its issue, or the
+[warwrit-orca](../warwrit-orca/SKILL.md) merge-on-gates rule for pipeline slice
+PRs. Pass the expected head SHA to the merge operation. Do not dismiss a
 review or force a ref to bypass a failure. Read back merged status, actual merge
 SHA/tree, default-branch ref and linked issue state. A failed tool call is not a
 merge. Auto-merge, deployment and purchases are separate operations.
@@ -45,9 +48,16 @@ Author vs external review / limitations:
 One next step:
 ```
 
-Write/read back the issue or PR, canonical Airtable checkpoint and an Empirical
-`Warwrit` event. Preserve older dated evidence as history. Do not announce full
-WP-02 or M1 complete because one slice passed.
+Write/read back the issue or PR; close the issue the PR delivered or relabel it
+with what is left. Update the canonical Airtable checkpoint and an Empirical
+`Warwrit` event at a milestone or when the owner asks, not for every slice.
+Preserve older dated evidence as history. Do not announce a milestone or M1
+complete because one slice passed.
+
+Before the session stops (not while waiting for CI), follow
+[AGENTS.md § Orchestration](../../../AGENTS.md#orchestration): push work in
+progress, leave the five-line handoff on the issue and release or transfer the
+coordinator lease.
 
 ## Next AI task
 

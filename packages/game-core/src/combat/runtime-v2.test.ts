@@ -14,6 +14,7 @@ import {
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   M1_DOMAIN_BRIDGE_V5_RULESET_ID,
   previewCombatAttacks,
+  queryCombatWeaponAttack,
   previewCombatMovement,
   M1_DOMAIN_BRIDGE_RULESET_ID,
   M1_DOMAIN_BRIDGE_V2_RULESET_ID,
@@ -148,7 +149,11 @@ describe('combat V2 runtime', () => {
         return;
       }
       expect(previews).toContainEqual(
-        expect.objectContaining({ targetId: unitId('beta-1'), actionPointCost: shotCost, staminaCost: 16 }),
+        expect.objectContaining({
+          targetId: unitId('beta-1'),
+          actionPointCost: shotCost,
+          staminaCost: 16,
+        }),
       );
       const shotCommand = {
         type: 'attack' as const,
@@ -177,8 +182,12 @@ describe('combat V2 runtime', () => {
       ] as const;
       for (const { state, code } of atomicCases) {
         const before = JSON.stringify(state);
+        expect(previewCombatAttacks(state)).toEqual([]);
+        expect(queryCombatWeaponAttack(state, unitId('beta-1'))).toMatchObject({ code });
         const rejected = applyCombatCommand(state, shotCommand);
         expect(rejected).toMatchObject({ ok: false, error: { code }, state });
+        expect(rejected).not.toHaveProperty('events');
+        expect(rejected.state).toBe(state);
         expect(rejected.state.random).toEqual(state.random);
         expect(JSON.stringify(state)).toBe(before);
       }
@@ -186,7 +195,11 @@ describe('combat V2 runtime', () => {
       expect(accepted.ok).toBe(true);
       if (!accepted.ok) throw new Error(accepted.error.code);
       expect(unit(accepted.state, 'alpha-1').stamina).toBe(80);
-      const replayed = replayCombat({ schemaVersion: 2, setup, commands: [moveCommand, shotCommand] });
+      const replayed = replayCombat({
+        schemaVersion: 2,
+        setup,
+        commands: [moveCommand, shotCommand],
+      });
       expect(replayed.state.random).toEqual(accepted.state.random);
       expect(canonicalCombatState(replayed.state)).toBe(canonicalCombatState(accepted.state));
     },
@@ -326,13 +339,13 @@ describe('combat V2 runtime', () => {
   });
 });
 
-it.each([3, 4] as const)(
+it.each([3, 4, 5] as const)(
   'bridge-v%s retains immobile targets, rejects forbidden actions atomically and replays fists',
   (version) => {
     const base = setupV2();
     const setup: BattleSetupV2 = {
       ...base,
-      rulesetId: version === 4 ? 'm1-domain-bridge-v4' : 'm1-domain-bridge-v3',
+      rulesetId: `m1-domain-bridge-v${version}`,
       sides: [{ ...base.sides[0], retreatHexes: [{ q: 0, r: 0 }] }, base.sides[1]],
       units: base.units.map((entry, index) => ({
         ...entry,
@@ -340,7 +353,7 @@ it.each([3, 4] as const)(
         attributes: { ...entry.attributes, initiative: index === 0 ? 120 : 20, accuracy: 100 },
         initialPools: { ...entry.initialPools, stamina: 80 },
         capabilities: { move: false, attack: index === 0, defend: index === 0, retreat: false },
-        ...(version === 4 ? { skillRanks: {}, moralePolicy: 'human' as const } : {}),
+        ...(version >= 4 ? { skillRanks: {}, moralePolicy: 'human' as const } : {}),
       })),
     };
     const started = startBattleV2(setup);
@@ -413,97 +426,100 @@ it('wait-only bridge-v3 actors remain targetable and autoplay terminates at the 
   expect(result.commands.every((command) => command.type === 'wait')).toBe(true);
 });
 
-it('keeps v4 terrain, canonical preview costs, capabilities and replay without changing v3', async () => {
-  const core = await import('../index.js');
-  const legacy = setupV2();
-  const setup: BattleSetupV2 = {
-    ...legacy,
-    rulesetId: core.M1_DOMAIN_BRIDGE_V4_RULESET_ID,
-    map: { ...legacy.map, tiles: [{ q: -1, r: 0, height: 1, terrain: 'mud' }] },
-    units: legacy.units.map((entry, index) => ({
-      ...entry,
-      weaponId: index === 0 ? 'fists' : entry.weaponId,
-      initialPools: { ...entry.initialPools, stamina: 70 },
-      capabilities: { move: true, attack: true, defend: true, retreat: true },
-      skillRanks: {},
-      moralePolicy: index === 0 ? 'human' : 'beast',
-    })),
-  };
-  expect(() =>
-    startBattleV2({
+it.each([M1_DOMAIN_BRIDGE_V4_RULESET_ID, M1_DOMAIN_BRIDGE_V5_RULESET_ID])(
+  'keeps %s terrain, canonical preview costs, capabilities and replay without changing v3',
+  async (rulesetId) => {
+    const core = await import('../index.js');
+    const legacy = setupV2();
+    const setup: BattleSetupV2 = {
+      ...legacy,
+      rulesetId,
+      map: { ...legacy.map, tiles: [{ q: -1, r: 0, height: 1, terrain: 'mud' }] },
+      units: legacy.units.map((entry, index) => ({
+        ...entry,
+        weaponId: index === 0 ? 'fists' : entry.weaponId,
+        initialPools: { ...entry.initialPools, stamina: 70 },
+        capabilities: { move: true, attack: true, defend: true, retreat: true },
+        skillRanks: {},
+        moralePolicy: index === 0 ? 'human' : 'beast',
+      })),
+    };
+    expect(() =>
+      startBattleV2({
+        ...setup,
+        units: setup.units.map((unit, index) =>
+          index === 0 ? { ...unit, skillRanks: { rally: 1 } } : unit,
+        ),
+      }),
+    ).toThrow('Unmapped campaign skills are unavailable');
+    const before = JSON.stringify(setup);
+    const initial = startBattleV2(setup).state;
+    expect(initial.activation?.remainingActionPoints).toBe(4);
+    expect(initial.map.tiles).toEqual(setup.map.tiles);
+    expect(core.getCombatSkills(initial, initial.units[0]!.id)).toEqual([]);
+    const move = core
+      .previewCombatMovement(initial)
+      .find((option) => option.to.q === -1 && option.to.r === 0)!;
+    expect(move).toMatchObject({ actionPointCost: 3, staminaCost: 9 });
+    const command = {
+      type: 'move' as const,
+      commandId: commandId('weighted-path'),
+      activationId: initial.activation!.id,
+      actorId: initial.activation!.unitId,
+      to: move.to,
+    };
+    const accepted = applyCombatCommand(initial, command);
+    expect(accepted.ok).toBe(true);
+    if (!accepted.ok) throw new Error('previewed move rejected');
+    expect(accepted.state.activation?.remainingActionPoints).toBe(1);
+    expect(accepted.state.units.find((entry) => entry.id === command.actorId)?.stamina).toBe(71);
+    expect(
+      core.verifyCombatReplay(
+        { schemaVersion: 2, setup: JSON.parse(before), commands: [command] },
+        accepted.state,
+      ).matches,
+    ).toBe(true);
+    expect(JSON.stringify(setup)).toBe(before);
+    const immobile = {
+      ...initial,
+      units: initial.units.map((entry) =>
+        entry.id === initial.activation!.unitId
+          ? { ...entry, capabilities: { move: false, attack: true, defend: true, retreat: false } }
+          : entry,
+      ),
+    };
+    const panickedSetup: BattleSetupV2 = {
       ...setup,
       units: setup.units.map((unit, index) =>
-        index === 0 ? { ...unit, skillRanks: { rally: 1 } } : unit,
+        index === 0
+          ? {
+              ...unit,
+              capabilities: { move: false, attack: true, defend: true, retreat: false },
+              initialPools: { ...unit.initialPools, morale: 10 },
+            }
+          : unit,
       ),
-    }),
-  ).toThrow('Unmapped campaign skills are unavailable');
-  const before = JSON.stringify(setup);
-  const initial = startBattleV2(setup).state;
-  expect(initial.activation?.remainingActionPoints).toBe(4);
-  expect(initial.map.tiles).toEqual(setup.map.tiles);
-  expect(core.getCombatSkills(initial, initial.units[0]!.id)).toEqual([]);
-  const move = core
-    .previewCombatMovement(initial)
-    .find((option) => option.to.q === -1 && option.to.r === 0)!;
-  expect(move).toMatchObject({ actionPointCost: 3, staminaCost: 9 });
-  const command = {
-    type: 'move' as const,
-    commandId: commandId('weighted-path'),
-    activationId: initial.activation!.id,
-    actorId: initial.activation!.unitId,
-    to: move.to,
-  };
-  const accepted = applyCombatCommand(initial, command);
-  expect(accepted.ok).toBe(true);
-  if (!accepted.ok) throw new Error('previewed move rejected');
-  expect(accepted.state.activation?.remainingActionPoints).toBe(1);
-  expect(accepted.state.units.find((entry) => entry.id === command.actorId)?.stamina).toBe(71);
-  expect(
-    core.verifyCombatReplay(
-      { schemaVersion: 2, setup: JSON.parse(before), commands: [command] },
-      accepted.state,
-    ).matches,
-  ).toBe(true);
-  expect(JSON.stringify(setup)).toBe(before);
-  const immobile = {
-    ...initial,
-    units: initial.units.map((entry) =>
-      entry.id === initial.activation!.unitId
-        ? { ...entry, capabilities: { move: false, attack: true, defend: true, retreat: false } }
-        : entry,
-    ),
-  };
-  const panickedSetup: BattleSetupV2 = {
-    ...setup,
-    units: setup.units.map((unit, index) =>
-      index === 0
-        ? {
-            ...unit,
-            capabilities: { move: false, attack: true, defend: true, retreat: false },
-            initialPools: { ...unit.initialPools, morale: 10 },
-          }
-        : unit,
-    ),
-  };
-  const panicked = startBattleV2(panickedSetup).state;
-  const automatic = core.chooseTacticalCombatCommand(panicked);
-  expect(automatic.type).toBe('wait');
-  expect(applyCombatCommand(panicked, automatic).ok).toBe(true);
-  expect(core.previewCombatMovement(immobile)).toEqual([]);
-  expect(applyCombatCommand(immobile, { ...command, type: 'flee' })).toMatchObject({
-    ok: false,
-    state: immobile,
-  });
-  const oldSetup: BattleSetupV2 = {
-    ...setup,
-    rulesetId: core.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
-    units: setup.units.map(({ skillRanks: _ranks, moralePolicy: _policy, ...entry }) => entry),
-  };
-  const oldState = startBattleV2(oldSetup).state;
-  expect(oldState.map.tiles).toBeUndefined();
-  expect(core.getCombatSkills(oldState, oldState.units[0]!.id)).toEqual([]);
-  expect(core.combatRules(oldState.rulesetId).recovery.staminaPerActivation).toBe(18);
-});
+    };
+    const panicked = startBattleV2(panickedSetup).state;
+    const automatic = core.chooseTacticalCombatCommand(panicked);
+    expect(automatic.type).toBe('wait');
+    expect(applyCombatCommand(panicked, automatic).ok).toBe(true);
+    expect(core.previewCombatMovement(immobile)).toEqual([]);
+    expect(applyCombatCommand(immobile, { ...command, type: 'flee' })).toMatchObject({
+      ok: false,
+      state: immobile,
+    });
+    const oldSetup: BattleSetupV2 = {
+      ...setup,
+      rulesetId: core.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      units: setup.units.map(({ skillRanks: _ranks, moralePolicy: _policy, ...entry }) => entry),
+    };
+    const oldState = startBattleV2(oldSetup).state;
+    expect(oldState.map.tiles).toBeUndefined();
+    expect(core.getCombatSkills(oldState, oldState.units[0]!.id)).toEqual([]);
+    expect(core.combatRules(oldState.rulesetId).recovery.staminaPerActivation).toBe(18);
+  },
+);
 
 it('replays deterministic bridge-v5 bow tactical autoplay with retained terrain and RNG draws', () => {
   const base = setupV2();
@@ -538,6 +554,7 @@ it('replays deterministic bridge-v5 bow tactical autoplay with retained terrain 
     JSON.stringify({ schemaVersion: 2, setup, commands: first.commands }),
   ) as CombatReplayV2;
   const replayed = replayCombat(replay);
+  expect(replayed.events).toEqual([...startBattleV2(setup).events, ...first.events]);
   expect(replayed.state.random).toEqual(first.state.random);
   expect(canonicalCombatState(replayed.state)).toBe(canonicalCombatState(first.state));
 });

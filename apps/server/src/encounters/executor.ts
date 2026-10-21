@@ -463,7 +463,8 @@ function chooseEncounterAi(
   state: combat.BattleState,
   doctrine: combat.AiDoctrine,
 ): combat.CombatCommand {
-  return state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID || state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+  return state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
     ? combat.chooseTacticalCombatCommand(state)
     : combat.chooseAiCommand(state, doctrine);
 }

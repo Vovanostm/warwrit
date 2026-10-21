@@ -1,4 +1,7 @@
-import { M1_DOMAIN_BRIDGE_V4_RULESET_ID, M1_DOMAIN_BRIDGE_V5_RULESET_ID } from '../combat/setup-v2.js';
+import {
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+} from '../combat/setup-v2.js';
 import type { AttackResolvedEvent, CombatEvent } from '../combat/types.js';
 import { canonicalJson, id, unsigned } from './input.js';
 import { prepareCombatConsequences } from './combat-consequences.js';

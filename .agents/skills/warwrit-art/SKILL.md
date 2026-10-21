@@ -5,7 +5,7 @@ description: Produce or fix a Warwrit raster asset (map sheet, place scene, conc
 
 # Warwrit art lane
 
-[AGENTS.md](../../../AGENTS.md) art and lore policy, [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md)
+[ART_LORE_POLICY](../../../docs/engineering/ART_LORE_POLICY.md), [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md)
 and the studio [decision rights](../../../docs/engineering/AGENT_TEAM.md#decision-rights)
 govern. Worked example with all five passes:
 [Porechye close view](../../../docs/wiki/world/map.md#крупный-план-поречья-через-codex--2026-10-09)

@@ -29,11 +29,26 @@ repo="Vovanostm/warwrit"
 coord="${1:-$HOME/orca/workspaces/warwrit/pipeline-coordinator}"
 state="$coord/.orca/pipeline"
 mkdir -p "$state/ticks"
+# The lock is also the coordinator lease (AGENTS.md "Orchestration"): another
+# coordinator, such as a desktop mission, writes its own owner.txt here and the
+# tick then stays out until that owner releases it. Only a lock left by a dead
+# tick process, or an empty legacy lock older than 90 minutes, is reclaimed.
 lock="$state/tick.lock"
-if ! mkdir "$lock" 2>/dev/null; then
-  if [[ -n "$(find "$lock" -maxdepth 0 -mmin +90 2>/dev/null)" ]]; then rmdir "$lock" && mkdir "$lock"; else echo 'tick already running'; exit 0; fi
+me="orca-pipeline-tick pid=$$"
+take_lock() { mkdir "$lock" 2>/dev/null && printf '%s\n' "$me" > "$lock/owner.txt"; }
+if ! take_lock; then
+  owner="$(head -n 1 "$lock/owner.txt" 2>/dev/null || true)"
+  if [[ "$owner" == "orca-pipeline-tick pid="* ]] && ! kill -0 "${owner##*pid=}" 2>/dev/null; then
+    rm -rf "$lock"
+  elif [[ -z "$owner" && -n "$(find "$lock" -maxdepth 0 -mmin +90 2>/dev/null)" ]]; then
+    rm -rf "$lock"
+  else
+    echo "coordinator lease held by: ${owner:-an unfinished tick} ($lock/owner.txt)"
+    exit 0
+  fi
+  take_lock || { echo 'tick lock taken concurrently'; exit 0; }
 fi
-trap 'rmdir "$lock"' EXIT
+trap '[[ "$(head -n 1 "$lock/owner.txt" 2>/dev/null)" == "$me" ]] && rm -rf "$lock"' EXIT
 
 cd "$coord" || exit 1
 git fetch -q origin && git checkout -q --detach origin/main || exit 1
@@ -42,7 +57,14 @@ git fetch -q origin && git checkout -q --detach origin/main || exit 1
 env_file="$state/coordinator.env"
 [[ -f "$env_file" ]] && . "$env_file"
 repo_id="$(orca repo list --json | python3 -I -c 'import json,sys;print([r["id"] for r in json.load(sys.stdin)["result"]["repos"] if r["path"].endswith("/learn/warwrit")][0])')"
-if [[ -z "${MAILBOX:-}" ]] || ! orca terminal show --terminal "$MAILBOX" --json >/dev/null 2>&1; then
+# A mailbox terminal can survive an Orca restart without a stable pane, and then
+# `check` fails with stable_pane_required; probe the call workers depend on.
+mailbox_ok() {
+  [[ -n "${MAILBOX:-}" && -n "${RUN:-}" ]] &&
+    ORCA_TERMINAL_HANDLE="$MAILBOX" orca orchestration check --run "$RUN" --peek --json 2>/dev/null |
+    python3 -I -c 'import json,sys; sys.exit(0 if json.load(sys.stdin).get("ok") else 1)'
+}
+if ! mailbox_ok; then
   MAILBOX="$(orca terminal create --worktree "id:$repo_id::$coord" --title 'pipeline mailbox' \
     --command "echo 'Warwrit pipeline coordinator mailbox; input is ignored.'; exec cat >/dev/null" --json \
     | python3 -I -c 'import json,sys;print(json.load(sys.stdin)["result"]["terminal"]["handle"])')"
@@ -57,12 +79,24 @@ else
 fi
 printf 'MAILBOX=%s\nRUN=%s\nREPO_ID=%s\n' "$MAILBOX" "$RUN" "$repo_id" > "$env_file"
 
+# Event-driven tick: skip the model when nothing it could act on changed since
+# the last successful tick, except for a heartbeat every 3 hours.
+digest="$state/digest.txt"
+now_state="$(bash scripts/orca-state-digest.sh "$RUN" "$MAILBOX")"
+if [[ -f "$digest" && "$now_state" == "$(cat "$digest")" && -z "$(find "$digest" -mmin +180 2>/dev/null)" ]]; then
+  echo "tick skipped: state unchanged since $(date -r "$digest" +%H:%M)"
+  exit 0
+fi
+printf '%s\n' "$now_state" > "$state/digest-before.txt"
+
 stamp="$(date +%Y%m%dT%H%M%S)"
-prompt="You are the Warwrit pipeline coordinator. Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for $repo, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json. Orca run: $RUN. Orca repo id: $repo_id. Your mailbox handle is already in ORCA_TERMINAL_HANDLE. Read the skill completely first, then act and stop when nothing more can advance in this tick. Merge only as the skill's Gate tiers allow (owner decision 2026-10-19); never merge a PR labelled agent:blocked. End with a short status summary."
+prompt="You are the Warwrit pipeline coordinator. Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for $repo, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json. Orca run: $RUN. Orca repo id: $repo_id. Your mailbox handle is already in ORCA_TERMINAL_HANDLE. Read the skill completely first. The current state snapshot is $state/digest-before.txt; re-read from GitHub or Orca only what you are about to change. Then act and stop when nothing more can advance in this tick. Merge only as the skill's Gate tiers allow (owner decision 2026-10-19); never merge a PR labelled agent:blocked. End with a short status summary."
 codex exec --approve-for-me -C "$coord" \
   --add-dir "$HOME/orca/workspaces/warwrit" --add-dir "$(cd "$(git rev-parse --git-common-dir)" && pwd -P)" \
   --add-dir "$HOME/Library/pnpm" \
   -o "$state/ticks/$stamp.md" --json "$prompt" > "$state/ticks/$stamp.jsonl" 2> "$state/ticks/$stamp.err"
 code=$?
+# Remember the state this tick left behind, so the next tick runs only on news.
+(( code == 0 )) && bash scripts/orca-state-digest.sh "$RUN" "$MAILBOX" > "$digest"
 echo "tick $stamp exit $code: $state/ticks/$stamp.md"
 exit "$code"

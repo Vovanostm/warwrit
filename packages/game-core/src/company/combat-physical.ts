@@ -188,8 +188,8 @@ function validateCompanyBinding(root: MaterializedCompanyState, journal: CombatR
         participant.physicalPolicyVersion === root.physical.policyVersion &&
         canonicalJson(
           participant.projection.schemaVersion === 3 ||
-          participant.projection.schemaVersion === 4 ||
-          participant.projection.schemaVersion === 5
+            participant.projection.schemaVersion === 4 ||
+            participant.projection.schemaVersion === 5
             ? projectCharacterCombatWithMorale(
                 root,
                 characterId,
@@ -226,8 +226,8 @@ function validateBoundUnits(binding: FrozenEncounterBinding): void {
         canonicalJson(unit.capabilities ?? null) ===
           canonicalJson(
             participant.projection.schemaVersion === 3 ||
-            participant.projection.schemaVersion === 4 ||
-            participant.projection.schemaVersion === 5
+              participant.projection.schemaVersion === 4 ||
+              participant.projection.schemaVersion === 5
               ? participant.projection.capabilities
               : null,
           ) &&
