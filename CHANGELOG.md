@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Deliver affordability bands and prepare QA hooks — 2026-10-21
+
+- `codex/combat-affordability-184`, [PR260](https://github.com/Vovanostm/warwrit/pull/260),
+  MERGED as `b9dc49fc` at expected `c3772f98`: server-derived solid/hatch bands
+  and honest legend delivered for #184. Tier V evaluator/visual ACCEPT,
+  every applicable score 2; integrated validator 9/9, 48 tests, scope 272;
+  hosted CI `39633442903` and scope `39633442871` SUCCESS. Issue closed/done;
+  native evidence retained before worktree removal. Earlier pending entries
+  are superseded. [Proof and limits](docs/engineering/evidence/uix-affordability-bands/README.md).
+- `Vovanostm/qa-game-hooks`, LOCAL: coordinator records delivery and prepares
+  the dedicated #231 contract from actual merged main, following owner priority.
+  No hook implementation or new gameplay verification yet (NOT_RUN).
+  Exact post-gate diff passed after narrowing an overly broad assertion that
+  included the incoming-main lab README; accepted source/tests stayed unchanged.
+  [Current queue](docs/engineering/CURRENT_PLAN.md). No migration or deployment.
+
 ### Publish accepted affordability bands — 2026-10-21, PUBLISHED
 
 - `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):

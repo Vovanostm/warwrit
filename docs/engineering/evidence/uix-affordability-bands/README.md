@@ -39,3 +39,13 @@ CI remains pending. Live legacy substitution and fresh
 fatigue admission NOT_RUN here; inherited producer and focused regression proof
 retain their original boundaries. No exhaustive pixel-proof, performance/balance
 measurement, new game rule, deployment or full-M1 acceptance is claimed.
+
+## Delivery readback — 2026-10-21
+
+[PR260](https://github.com/Vovanostm/warwrit/pull/260) merged as `b9dc49fc`
+at expected head `c3772f98`. Hosted CI `39633442903` and scope `39633442871`
+completed SUCCESS; the integrated validator and both Tier V verdicts above
+remain the accepted boundaries. #184 is closed with `agent:done`.
+Native PNGs, logs and failed attempts were retained before worktree removal
+under coordinator `.orca/pipeline/retained/uix-affordability-bands/`.
+This dated readback supersedes the pending-delivery statements above.
