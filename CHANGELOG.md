@@ -18,8 +18,8 @@ requests.
   hosted CI `39633442903` and scope `39633442871` SUCCESS. Issue closed/done;
   native evidence retained before worktree removal. Earlier pending entries
   are superseded. [Proof and limits](docs/engineering/evidence/uix-affordability-bands/README.md).
-- `Vovanostm/qa-game-hooks`, LOCAL: coordinator records delivery and prepares
-  the dedicated #231 contract from actual merged main, following owner priority.
+- `Vovanostm/qa-game-hooks`, PUBLISHED: coordinator records delivery and starts
+  the dedicated read-only #231 contract from actual merged main, following owner priority.
   No hook implementation or new gameplay verification yet (NOT_RUN).
   Exact post-gate diff passed after narrowing an overly broad assertion that
   included the incoming-main lab README; accepted source/tests stayed unchanged.

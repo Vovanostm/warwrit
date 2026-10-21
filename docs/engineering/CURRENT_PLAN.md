@@ -18,7 +18,8 @@ all applicable scores 2, integrated validator exit 0 / 9 of 9 PASS, 48 tests,
 Try: start the mill in `pnpm dev:combat`, select the sword fighter, inspect solid
 move-plus-attack cells and hatched move-only cells; day/night and legend follow.
 #231: dedicated `qa-game-hooks` worktree on merged main `b9dc49fc`;
-contract preparation is the next web action under the owner-priority override.
+read-only contract worker `task_3a83c1a67be6` / `ctx_424e8503d0c2` is live.
+State: planning under the owner-priority override; no builder yet.
 Ownership: CombatLab/controller/qa-hooks and their tests; README documentation
 is available because no other active slice owns it. No feature implementation yet.
 Core #225 retains the log dependency; other ready slices keep their prerequisites.
