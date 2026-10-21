@@ -69,6 +69,10 @@ All workers append [common rules](prompts/common.md). Research basis:
 - **The coordinator is the single writer of shared records** (`CHANGELOG.md`,
   `docs/engineering/CURRENT_PLAN.md`, wiki) and adds them to the PR branch
   right before merge.
+  The `CURRENT_PLAN` status block is rewritten in place, at most 40 non-empty
+  lines (`scripts/check-current-plan.sh` in CI); tick logs go to the tick files,
+  not there. Its scope line quotes the owner's words (`Owner: «…»`), never the
+  tick prompt.
 - **Merge after the gates, without waiting for the owner.** Owner decision
   2026-10-19: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
   ревьюер». The coordinator merges a PR when CI is green, `orca-validate.sh`
@@ -150,6 +154,11 @@ repo id are in the tick prompt. Work from the coordinator worktree.
      `orca worktree rm` after checking it holds no unpushed commits;
    - an open coordinator-made PR that a merged PR superseded: close it with a
      link to the merged PR.
+     **Main red first:** when the newest CI run on main failed, rerun its failed
+     jobs once (`gh run rerun <id> --failed`). If it fails again or the log shows
+     a real defect, open or reuse one `P0` issue with the failing test, a log
+     excerpt and the suspected cause, refill it before anything else, and merge
+     no other PR until main is green.
      Every tick also re-reads each `needs-owner` slice: when its question is not
      a game-rule, canon, money or deployment question, decide it under the owner
      delegation and resume the slice at the state its files prove.

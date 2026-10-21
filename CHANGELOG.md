@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Readable status block and main-red rule — 2026-10-22, PUBLISHED
+
+- `claude/plan-check-main-red`: owner «да» to the 2026-10-22 proposal after
+  main went red on a shared-database race in `oidc.integration.test.ts`
+  ([#272](https://github.com/Vovanostm/warwrit/issues/272)) and the coordinator
+  wrote tick logs and the tick prompt as «owner scope» into `CURRENT_PLAN`.
+- `scripts/check-current-plan.sh` in the `PR scope` workflow: the status block
+  (first `##` section) has at most 40 non-empty lines.
+- warwrit-orca: main red first (rerun failed jobs once, then a `P0` issue that
+  is refilled first and blocks other merges); status block rewritten in place
+  with the owner's own words as scope.
+- Checks: current plan PASS (28 lines); a 45-line block and a missing block
+  FAIL; `bash -n`; Prettier.
+
 ### Publish accepted editor extraction — 2026-10-21, PUBLISHED
 
 - `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261),
