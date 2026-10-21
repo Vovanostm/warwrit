@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Resume affordability evidence under owner delegation — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
+  coordinator applies the owner's 2026-10-21 evidence/process delegation to the
+  existing B1 question. Retain source `5599c8f1`; resume validation, then one
+  bounded read-only supported-layout evidence attempt. No third source rework,
+  acceptance waiver, rule or rendering change.
+- Current-source validation and fresh Tier V gates remain NOT_RUN; the actual
+  silhouette/annotation intersection remains unproven. Earlier gate results
+  apply only to `06479a47`. Heavy work queues behind the live #249 evaluator and
+  daily main scout. This documentation-only update needs no game tests.
+  [Current queue and limits](docs/engineering/CURRENT_PLAN.md).
+
 ### Preserve final affordability rework and evidence blocker — 2026-10-21, PUBLISHED
 
 - `codex/combat-affordability-184`, issue #184: rework 2 changes the existing

@@ -2,35 +2,29 @@
 
 ## Pipeline status — 2026-10-21
 
-Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease.
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local overrides; no new milestone.
-Delivered earlier: PR255 / #254, merge `0adcff2e`, issue closed/done.
-Open slice PR: [PR257](https://github.com/Vovanostm/warwrit/pull/257), #256,
-head `f764b847`; fresh Tier L source/playable ACCEPT, validator 9/9 PASS,
-118 source lines. Hosted CI 39598354029 remains IN_PROGRESS; merge waits.
-#249 follows #256; retained pushed `e68025b9` remains untouched.
-Web #184: source `5599c8f1`, report head `9e47fd82`, clean; final normal
-rework 2 reported FAILED. Broken ink / projected stroke cap implemented;
-builder reports 21 focused tests/types/lint/audit PASS, 272 source lines,
-71 new captures and 12 overlay pairs. These are builder results, not acceptance.
-B1 remains unproven: a genuine long-weapon/large-silhouette intersection with
-hatches in a tight crowd at one level and across height 0/1/2.
-No rendering defect is established by that missing evidence. Prior evaluator
-ACCEPT / visual REWORK concern `06479a47`; current-source validator and fresh
-Tier V gates are NOT_RUN. No PR or visual acceptance is claimed for #184.
-Fallback: audit-only recovery does not apply; one-issue slice cannot be split
-by issue. Rework budget 2/2 spent; #184 moves to needs-owner under ladder 4.
-Recommended decision: one bounded evidence-only evaluator attempt using a
-supported layout, followed by current-head validation and fresh Tier V gates;
-retain every layering criterion, source invariant and earlier failure.
-#231 remains first next web slice after #184. Other slices retain dependencies
-and ownership constraints. Infrastructure PR253 needs separate owner approval.
-This tick: 0 merged PRs with playable proof. No migration/deployment/M1 claim.
-Local owning report: `.orca/uix-affordability-bands/report.md`.
-[Earlier JOIN proof](evidence/join-lock-order-254/README.md).
+Delivered earlier: PR255/#254 and PR257/#256 are merged; no new merge this tick.
+Core #249: pushed `63ce897e`, fresh source review ACCEPT; independent Tier L
+persistent evaluator remains live. Playable acceptance and PR/CI remain pending.
+Web #184: retained source `5599c8f1`, previously pushed head `3963215b`.
+Coordinator decision under the 2026-10-21 evidence/process delegation: resume
+at validating, then one bounded read-only supported-layout evidence attempt.
+B1 actual silhouette/annotation intersection across level/0→1→2 crowds remains
+unproven. No third source rework, acceptance waiver or new rule is authorized.
+Earlier evaluator ACCEPT/visual REWORK covers `06479a47` only; current-source
+validator and fresh Tier V evaluator/absolute visual ACCEPT remain required.
+Heavy checks/runtime startup queue behind the live #249 evaluator and daily scout.
+#231 remains the first next web slice after #184; other dependencies are preserved.
+Daily main scout is queued for isolated read-only play; findings need later triage.
+Infrastructure PR134 and PR129 are outside slice merge authority and have failed CI.
+Next: settle #249's playable result, run #184 validation after the heavy-work slot
+is free, then collect missing evidence and repeat its affected Tier V gates.
+No auto-merge, deployment or full-M1 acceptance is claimed.
+This tick: 0 merged PRs with playable proof.
 
 ## Dated history
 
