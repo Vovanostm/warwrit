@@ -7,6 +7,41 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local overrides; no new milestone.
+This tick: 0 merged PRs with playable proof; merge NOT_RUN.
+#261 R1: independent Tier U ACCEPT for frozen `4523f609`; no findings.
+Evaluator played invalid/reset/start once/day/night/return/reset at 1440×900;
+42 focused tests PASS. Favicon 404 matches baseline, no introduced console error.
+Coordinator validator exit 0, 9/9 PASS, 64 related tests PASS, source scope 182.
+Exact settled dispatch/result/report recorded before acknowledgment and release.
+[Contract, independent verdict and JPEG proof](evidence/qa-hooks-editor/README.md).
+Try: default mill editor, seed 20261009, empty name blocks Start; reset/start,
+inspect day/night, menu → editor, reset. Existing behavior is preserved.
+Source branch: `Vovanostm/qa-hooks-editor`; evidence and records are pushed.
+Review → PR publication closes only #261; hosted CI/merge remain pending.
+Later commits add only evidence or CHANGELOG/CURRENT_PLAN; gated source frozen.
+#231 stays open; #262–#265 retain their predecessor sequence, no next writer.
+Original parent contract retained in coordinator `.orca/pipeline/retained/qa-game-hooks/`.
+Core #225 retains its log prerequisite; other ready slices retain dependencies.
+Daily scout/digest already complete; no duplicate daily work.
+Infrastructure PR134/129 remain outside slice merge authority.
+Local full verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
+No rules, protocol, replay, renderer, dependencies or migration change in R1.
+No acceptance waiver, deployment or full-M1 claim.
+Next: exact-head hosted CI/scope, live blocked-label checks, then the skill's
+expected-head merge and #261 cleanup before the next web child starts.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous validation/evaluator dispatch checkpoint — 2026-10-21 (superseded above):**
+
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local overrides; no new milestone.
 This tick: 0 merged PRs with playable proof; no merge attempted.
 #261 R1 committed locally as `4523f609`, four owned source/test files,
 182 changed source lines. Editor/validation/start/reset and shared reason
@@ -34,8 +69,6 @@ No acceptance waiver, deployment or full-M1 claim.
 Next tick: consume `.orca/qa-hooks-editor/eval-1.md` and native settlement;
 ACCEPT permits evidence/PR/CI, REWORK goes through the shared fallback budget.
 Wrapper releases its own lease when this single tick returns.
-
-## Dated history
 
 **Previous builder dispatch checkpoint — 2026-10-21 (superseded above):**
 

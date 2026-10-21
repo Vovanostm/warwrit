@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Publish accepted editor extraction — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261),
+  finite R1 child of #231: independent Tier U ACCEPT for frozen `4523f609`.
+  Editor/validation/start/reset and feedback priority remain unchanged after
+  the bounded extraction; four owned source/test files, 182 source lines.
+- Evaluator independently played invalid/reset/start once/day/night/return/reset
+  at 1440×900 and ran 42 focused tests PASS. Favicon 404 matches main baseline;
+  no introduced console/page error or visual regression found. Coordinator
+  validator exit 0, 9/9 PASS, 64 related tests PASS. Exact native settlement,
+  result and full verdict matched, recorded, acknowledged and released.
+- [Owning contract, verdict and JPEG proof](docs/engineering/evidence/qa-hooks-editor/README.md)
+  retained on the PR branch; later commits contain only evidence/shared records.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records review → PR and the
+  remaining exact-head CI/scope/blocked-label/merge gates. Hosted CI and merge
+  pending; this tick has 0 merged PRs with playable proof. #231 stays open and
+  #262–#265 preserve sequencing. No duplicate daily scout/digest.
+- Local full verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
+  No rule, protocol, replay, renderer, dependency, migration or deployment change.
+  No wiki/setup/API behavior contract changed; no full-M1 acceptance claim.
+
 ### Validate editor extraction and dispatch Tier U — 2026-10-21, PUBLISHED
 
 - `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261):
