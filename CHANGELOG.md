@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Validate visible editor Start and schedule independent proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, [#271](https://github.com/Vovanostm/warwrit/issues/271):
+  source `f98040f9` moves the single existing Start/reset/feedback group before
+  the long editor, retaining guards, current draft and transport. Guarded ready
+  feedback, normal-flow spacing and keyboard focus address first-screen
+  discoverability. Only two editor functions, guard assertions and action CSS;
+  36 source additions plus removals. No mobile layout or new game rule.
+- Coordinator validator exit 0, all 9 gates PASS, 9 related tests PASS, scope 36.
+  Normal commit/audit PASS; 5 inherited findings and styling advisories retained.
+  Full builder contract/report and clean commit matched exact native settlement
+  before acknowledgment and release (no owned resource). Builder default/preset/
+  result-return, actual payload, pending/invalid, keyboard and day/night journeys
+  are local author evidence; independent Tier U acceptance remains pending.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records evaluator
+  `task_b9107798fb76`, frozen source and the serial resource handoff: #272 gets
+  exclusive checks/DB while #271 evaluator reads source; its browser permit
+  follows exact #272 settlement and cleanup. Contract/report/shots remain local
+  under `.orca/codex-uix-start-action-271/` in the dedicated worktree.
+  Source and records are published for continuation; PR/merge NOT_RUN and
+  0 merged PRs with playable proof this tick. #267 WIP/budgets preserved;
+  #269/#262 final 20/15 limits remain. Daily work already complete.
+- No protocol, replay, renderer, migration, dependency, setup or API change;
+  existing wiki contracts unchanged. Full verify/stress/migrations/build NOT_RUN;
+  performance NOT_MEASURED. No independent player acceptance claimed.
+
 ### Merge session callbacks and assign visible editor Start — 2026-10-22, PUBLISHED
 
 - `Vovanostm/codex-uix-start-action-271` records the pipeline tick and the
