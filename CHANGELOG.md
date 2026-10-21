@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Accept persistent bow journey and integrate pipeline main — 2026-10-21, LOCAL
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  independent source and playable Tier L ACCEPT at `63ce897e`. Real rendered
+  day/night 4 → 3 → 0 AP, 16-stamina shot, atomic 2 AP refusal, V5 process
+  restart/retry, genuine old-active V4 continuation and supported terminal
+  settlement/proof/idempotency pass. Finite evaluator checks: 61 PASS; earlier
+  failures and synthetic pre-admission fixture limits remain recorded.
+- Integrate actual main `46fe0c33` as `16cedf56`; only CHANGELOG conflicted,
+  both histories retained, accepted game source/tests unchanged. Integrated
+  coordinator validator exit 0, 9/9 PASS, 671 PASS / 52 SKIP; source scope 239.
+  Normal merge audit PASS. [Proof](docs/engineering/evidence/core-bow-three-ap/README.md)
+  is being retained with review/evaluation and small day/night JPEGs.
+- Publish one PR for #249 next; hosted full clean-checkout gate and merge are
+  pending. #184 remains validating after evidence/process delegation; fresh
+  Tier V gates required. No migration, deployment, new rule, balance measurement
+  or full-M1 claim. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+
 ### Self-driving Orca backlog — 2026-10-21, PUBLISHED
 
 - `claude/orca-self-driving`: owner request «Продолжай. Обнови задачи, настрой

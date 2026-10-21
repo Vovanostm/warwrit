@@ -6,6 +6,38 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus local handover overrides; no new milestone.
+Delivered earlier: PR255/#254 and PR257/#256. This tick: 0 merged PRs with
+playable proof so far. Infrastructure PR134/129 remain outside slice authority.
+#249: fresh source and playable Tier L ACCEPT at `63ce897e`; evidence retains
+rendered day/night 4 → 3 → 0 AP, 16-stamina shot, atomic 2 AP refusal,
+real V5 process restart/retry, genuine old-active V4 continuation and supported
+terminal/proof/idempotency. Evaluator finite 61 PASS; fixture limits retained.
+Main `46fe0c33` integrated as `16cedf56`: CHANGELOG-only conflict, both histories
+preserved; no post-gate game source/test change. Normal merge audit PASS.
+Integrated coordinator validator exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
+239 source lines. One #249 PR publication is next; hosted full gate/merge pending.
+[Accepted proof and limits](evidence/core-bow-three-ap/README.md).
+#184: source `5599c8f1` unchanged; actual-main integration/validation in progress.
+Prior coordinator evidence/process decision resumes one bounded read-only B1
+supported-layout attempt, then fresh Tier V evaluator and absolute visual gates.
+B1 intersection remains unproven; no third source rework or acceptance waiver.
+#231 stays first next web slice after #184; other dependencies unchanged.
+Daily scout is playing pinned main `46fe0c33`; triage follows its settlement.
+Local validators are serial after scout startup; performance during overlap
+is NOT_MEASURED for acceptance. No auto-merge, deployment or full-M1 claim.
+Next: publish #249 with proof, run #184 validator, start its read-only gates.
+
+## Dated history
+
+**Prior #249 gate checkpoint — 2026-10-21 (superseded above):**
+
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local handover overrides; no new milestone.
 Previously delivered: PR257/#256 merged `d8a04196`, CI `39602921979` SUCCESS,
 validator 9/9 and Tier L ACCEPT; lab acceptance stays separate from #249.
@@ -33,8 +65,6 @@ No open slice PR; full integrated gate/hosted CI/publication/merge remain pendin
 Infrastructure PR258 remains outside slice merge authority. No blocked label removed.
 This tick: 0 merged PRs with playable proof; no new rule, migration, deployment,
 balance measurement or full-M1 claim. Next tick consumes the two gate settlements.
-
-## Dated history
 
 **Persistent bow contract/integration — 2026-10-21, LOCAL:**
 Fresh contract has all required sections and no open product question. Contract
