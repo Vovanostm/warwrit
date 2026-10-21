@@ -4,6 +4,9 @@ import {
   ENCOUNTER_BINDING_VERSION,
   FIRST_HUNT_WORLD_BINDING_VERSION,
   M1_DOMAIN_BRIDGE_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
   applyCombatCommand,
   battleId,
   canonicalCombatState,
@@ -583,7 +586,7 @@ describe('G06 — trusted sequential receipt preparation, not applied effects', 
   });
 });
 
-it.each([3, 4] as const)(
+it.each([3, 4, 5] as const)(
   'binds the entire mixed v%s party and reloads its strict aggregate without invented gear',
   (version) => {
     const f = fixture();
@@ -614,10 +617,14 @@ it.each([3, 4] as const)(
       setup: {
         ...f.evidence.setup,
         rulesetId:
-          version === 4 ? ('m1-domain-bridge-v4' as const) : ('m1-domain-bridge-v3' as const),
+          version === 5
+            ? M1_DOMAIN_BRIDGE_V5_RULESET_ID
+            : version === 4
+              ? M1_DOMAIN_BRIDGE_V4_RULESET_ID
+              : M1_DOMAIN_BRIDGE_V3_RULESET_ID,
         map: {
           ...f.evidence.setup.map,
-          ...(version === 4
+          ...(version >= 4
             ? {
                 tiles: [
                   {
@@ -632,11 +639,12 @@ it.each([3, 4] as const)(
       },
     };
     const binding = prepareEncounterBinding(f.sources, f.request, evidence);
-    if (version === 4)
+    if (version >= 4)
       expect(
         binding.participants.every(
           (entry) =>
-            entry.projection.schemaVersion === 4 &&
+            entry.projection.schemaVersion === version &&
+            entry.projection.combatRulesetId === evidence.setup.rulesetId &&
             JSON.stringify(entry.projection.skillRanks) === '{}',
         ),
       ).toBe(true);
@@ -662,7 +670,7 @@ it.each([3, 4] as const)(
     expect(readCompanyCombatAggregateState(JSON.parse(JSON.stringify(begun.next)))).toEqual(
       begun.next,
     );
-    if (version === 4) {
+    if (version >= 4) {
       expect(begun.binding.setup.map.tiles).toEqual(evidence.setup.map.tiles);
       for (const patch of [
         { q: 0.5 },

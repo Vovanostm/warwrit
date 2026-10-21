@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Deliver canonical pickup targets — 2026-10-21, MERGED
+
+- `codex/representative-hunt-recovery`, [PR251](https://github.com/Vovanostm/warwrit/pull/251)
+  merged7b9a1dca; reviewed/tested/main contents match. CI39515766544 SUCCESS:
+  937unitPASS/50SKIP,10000stress,17realPG/auth,migrations,coverage/audit.
+  Independent source and recovered-save runtime ACCEPT; no impossible targets
+  offered, original failed DB6 preserved. Separate DB7 payment/restart follows;
+  broader174/177 remain partial. [Record](docs/engineering/evidence/persistent-hud/main-readback.md).
+
 ### Integrate pickup correction with merged range — 2026-10-21, LOCAL
 
 - `codex/representative-hunt-recovery`: c5acd803 combines actual range main

@@ -253,7 +253,7 @@ export function createCustomBattleFixture(id: string, config: CombatLabBattleCon
   const { tiles } = input.map;
   const setup: combat.BattleSetup = {
     schemaVersion: 1,
-    rulesetId: 'sprite-prototype-v3',
+    rulesetId: 'sprite-prototype-v4',
     battleId: combat.battleId(id),
     seed: input.seed,
     map: {

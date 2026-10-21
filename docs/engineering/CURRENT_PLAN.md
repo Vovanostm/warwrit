@@ -1,5 +1,21 @@
 # Warwrit current delivery plan
 
+**Pickup248 delivered / payment journey and bow249 active — 2026-10-21:**
+PR251 merged7b9a1dcaf23c8a08fe16783ae910bd42113ef6a2; published5c68fb83,
+tested merge373d1d31 and actual main contents match. CI39515766544/job118947421724
+SUCCESS:937unitPASS/50SKIP,10000stress,17realPG/auth,migrations,coverage/audit.
+Independent source/saved-state runtime ACCEPT; #248 CLOSED/agent:done.
+Range main CI39515412105 also SUCCESS. [Pickup record](evidence/persistent-hud/main-readback.md).
+
+The prepared DB7 now uses actual merged main for a separate lawful
+contract→battle→pickup→payment→SIGKILL/restart journey. Synthetic account/company/
+starting-location fixtures remain explicit; DB6 failure and original volume
+remain untouched. No payment/restart PASS yet. In isolated codex/bow-three-ap-249,
+one core writer starts approved3AP ordinary bow in new compatible rules only;
+old active encounters/replays retain4AP. No tests while the evaluator's runtime
+window is active. Affordability184 source49548eb4 is under independent review;
+no rendered acceptance yet. Full sprint/M1 remain PARTIAL.
+
 **Pickup248 integrated and ready to publish — 2026-10-21, LOCAL:**
 Actual range mainb0eeb8e8 merged as c5acd803; only additive status-document
 conflicts, both histories preserved. Accepted pickup sourcef439db7 unchanged.

@@ -1,5 +1,9 @@
 import { isTacticalV3Ruleset } from './rules.js';
-import { M1_DOMAIN_BRIDGE_V3_RULESET_ID, M1_DOMAIN_BRIDGE_V4_RULESET_ID } from './setup-v2.js';
+import {
+  M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+} from './setup-v2.js';
 import { isSpriteS4Ruleset } from './rules.js';
 import { invariant } from '../primitives.js';
 import { applyCombatCommand, assertBattleState, startBattle } from './engine.js';
@@ -52,7 +56,8 @@ export function canonicalCombatState(state: BattleState): string {
     map: {
       hexes: state.map.hexes.toSorted(compareHex),
       blocked: state.map.blocked.toSorted(compareHex),
-      ...(isSpritePrototypeRuleset(state.rulesetId)
+      ...(isSpritePrototypeRuleset(state.rulesetId) ||
+      state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
         ? { tiles: (state.map.tiles ?? []).toSorted(compareHex) }
         : {}),
     },
@@ -66,6 +71,7 @@ export function canonicalCombatState(state: BattleState): string {
         ...canonicalUnit(unit),
         ...(state.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
         state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID
+        || state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
           ? { capabilities: unit.capabilities }
           : {}),
         ...(isTacticalV3Ruleset(state.rulesetId)

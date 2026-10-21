@@ -1,4 +1,4 @@
-import { M1_DOMAIN_BRIDGE_V4_RULESET_ID } from '../combat/setup-v2.js';
+import { M1_DOMAIN_BRIDGE_V4_RULESET_ID, M1_DOMAIN_BRIDGE_V5_RULESET_ID } from '../combat/setup-v2.js';
 import type { AttackResolvedEvent, CombatEvent } from '../combat/types.js';
 import { canonicalJson, id, unsigned } from './input.js';
 import { prepareCombatConsequences } from './combat-consequences.js';
@@ -696,7 +696,9 @@ function collectReceiptPracticeStrikes(
   const receipt = validatedJournal.receipts[ordinal]!;
   const kernelCommand = receipt.kernelCommand;
   if (!kernelCommand) return { interactions, leadershipAttacks };
-  const tactical = validatedJournal.binding.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+  const tactical =
+    validatedJournal.binding.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    validatedJournal.binding.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
   for (const event of practiceAttackEvents(receipt, validatedJournal.binding.setup.rulesetId)) {
     requirePhysical(
       tactical ||
@@ -1082,7 +1084,8 @@ function practiceAttackEvents(
   const strikes = receipt.transition.events.filter(
     (event): event is AttackResolvedEvent => event.type === 'attack.resolved',
   );
-  if (ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID) return strikes;
+  if (ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID || ruleset === M1_DOMAIN_BRIDGE_V5_RULESET_ID)
+    return strikes;
   return receipt.kernelCommand?.type === 'attack' ? strikes.slice(0, 1) : [];
 }
 function attackStartsPractice(

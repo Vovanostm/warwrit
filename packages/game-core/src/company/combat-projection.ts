@@ -2,6 +2,7 @@ import {
   M1_DOMAIN_BRIDGE_RULESET_ID,
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
 } from '../combat/setup-v2.js';
 import type { WeaponId, CombatCapabilities } from '../combat/types.js';
 import { COMPANY_CATALOGUE } from './definitions.js';
@@ -90,6 +91,14 @@ export interface CharacterCombatProjectionV4 extends Omit<
   readonly moralePolicy: 'human';
 }
 
+export interface CharacterCombatProjectionV5 extends Omit<
+  CharacterCombatProjectionV4,
+  'schemaVersion' | 'combatRulesetId'
+> {
+  readonly schemaVersion: 5;
+  readonly combatRulesetId: typeof M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+}
+
 function owned<T>(value: T): T {
   const copy = snapshotJson(value);
   requirePhysical(copy !== undefined, 'INVALID_STATE');
@@ -160,17 +169,22 @@ export function projectCharacterCombat(
 export function projectCharacterCombat(
   root: MaterializedCompanyState,
   characterId: string,
-  version: 3 | 4,
-): CharacterCombatProjectionV3 | CharacterCombatProjectionV4;
+  version: 5,
+): CharacterCombatProjectionV5;
 export function projectCharacterCombat(
   root: MaterializedCompanyState,
   characterId: string,
-  version?: 3 | 4,
-): CharacterCombatProjection | CharacterCombatProjectionV3 | CharacterCombatProjectionV4 {
+  version: 3 | 4 | 5,
+): CharacterCombatProjectionV3 | CharacterCombatProjectionV4 | CharacterCombatProjectionV5;
+export function projectCharacterCombat(
+  root: MaterializedCompanyState,
+  characterId: string,
+  version?: 3 | 4 | 5,
+): CharacterCombatProjection | CharacterCombatProjectionV3 | CharacterCombatProjectionV4 | CharacterCombatProjectionV5 {
   const character = person(root.lifecycle, characterId);
   const weapon = equippedWeaponContext(root, characterId);
   const unarmed =
-    (version === 3 || version === 4) &&
+    (version === 3 || version === 4 || version === 5) &&
     !root.physical.items.some(
       (item) =>
         item.tombstone === null &&
@@ -244,7 +258,7 @@ export function projectCharacterCombat(
       stamina: Math.min(vitals.currentStamina, maximumStamina),
     },
   };
-  if (version === 3 || version === 4) {
+  if (version === 3 || version === 4 || version === 5) {
     const immobile = conditions.some(({ definition }) => definition.id === 'critical-bleed');
     const projected: CharacterCombatProjectionV3 = {
       ...base,
@@ -259,11 +273,12 @@ export function projectCharacterCombat(
       },
       capabilities: { move: !immobile, attack: true, defend: true, retreat: !immobile },
     };
-    return version === 4
+    return version === 4 || version === 5
       ? owned({
           ...projected,
-          schemaVersion: 4,
-          combatRulesetId: M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+          schemaVersion: version,
+          combatRulesetId:
+            version === 5 ? M1_DOMAIN_BRIDGE_V5_RULESET_ID : M1_DOMAIN_BRIDGE_V4_RULESET_ID,
           skillRanks: {},
           moralePolicy: 'human',
         })

@@ -84,8 +84,8 @@ No production encounter, campaign storage, migration or captive custody is added
 
 ## Sprite v3 — 2026-10-13
 
-New custom sessions choose `sprite-prototype-v3`; replay dispatch retains the
-recorded v1/v2 semantics. Units accept a finite skill-rank map (five known IDs,
+New custom sessions choose `sprite-prototype-v4` (bow3 AP,16 stamina); replay
+dispatch retains each recorded version, including v1/v2/v3 bow4 AP. Units accept a finite skill-rank map (five known IDs,
 integer ranks1–3). Canonical use-skill commands validate learned rank, equipment,
 actor/side/target, AP/stamina/range/LOS and terminal/panic state before mutation.
 

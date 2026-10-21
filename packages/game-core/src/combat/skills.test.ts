@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { startBattle, applyCombatCommand } from './engine.js';
 import { createHexagon } from './hex.js';
+import { previewCombatMovement } from './sprite-prototype.js';
 import {
   previewCombatSkills,
   previewCombatSkillReach,
@@ -15,6 +16,7 @@ import {
   sideId,
   commandId,
   SPRITE_PROTOTYPE_V3_RULESET_ID,
+  SPRITE_PROTOTYPE_V4_RULESET_ID,
   type BattleSetup,
   type BattleState,
   type CombatCommand,
@@ -37,11 +39,12 @@ const targetId = unitId('target');
 function setup(
   weaponId: WeaponId = 'bow',
   skillRanks: CombatSkillRanks = { 'aimed-shot': 2 },
+  rulesetId: BattleSetup['rulesetId'] = SPRITE_PROTOTYPE_V3_RULESET_ID,
 ): BattleSetup {
   return {
     schemaVersion: 1,
     battleId: battleId('skills'),
-    rulesetId: SPRITE_PROTOTYPE_V3_RULESET_ID,
+    rulesetId,
     seed: 31,
     map: { hexes: createHexagon(4), blocked: [] },
     sides: [
@@ -100,6 +103,41 @@ function command(
   };
 }
 describe('finite battle skills', () => {
+  it('keeps aimed-shot at four AP and twenty-four stamina under the new bow profile', () => {
+    const initialSetup = setup('bow', { 'aimed-shot': 2 }, SPRITE_PROTOTYPE_V4_RULESET_ID);
+    const initial = startBattle(initialSetup).state;
+    const quote = previewCombatSkills(initial).find(
+      (row) => row.skillId === 'aimed-shot' && row.targetId === targetId,
+    )!;
+    expect(quote).toMatchObject({ legal: true, actionPointCost: 4, staminaCost: 24 });
+
+    const move = previewCombatMovement(initial).find(
+      (option) => option.to.q === 1 && option.to.r === 0,
+    )!;
+    const moved = applyCombatCommand(initial, {
+      type: 'move',
+      to: move.to,
+      actorId,
+      activationId: initial.activation!.id,
+      commandId: commandId('aimed-after-step-move'),
+    });
+    expect(moved.ok).toBe(true);
+    if (!moved.ok) throw new Error(moved.error.code);
+    expect(moved.state.activation?.remainingActionPoints).toBe(3);
+    expect(previewCombatSkills(moved.state).find((row) => row.skillId === 'aimed-shot')).toMatchObject({
+      legal: false,
+      reason: 'INSUFFICIENT_ACTION_POINTS',
+      actionPointCost: 4,
+      staminaCost: 24,
+    });
+    const rejected = applyCombatCommand(moved.state, command(moved.state, 'aimed-shot'));
+    expect(rejected).toMatchObject({
+      ok: false,
+      error: { code: 'INSUFFICIENT_ACTION_POINTS' },
+      state: moved.state,
+    });
+  });
+
   it('preview matches strike resources/damage and deterministic replay', () => {
     const initial = setup();
     const state = startBattle(initial).state;

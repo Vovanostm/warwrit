@@ -283,6 +283,7 @@ it('admits optional, empty and signed skill geometry without computing range or 
   const negative = { q: -7, r: -3 };
   for (const payload of [
     view,
+    { ...view, rulesetId: 'sprite-prototype-v4' },
     { ...view, skillReach: undefined },
     { ...view, skillReach: [] },
     { ...view, skillReach: [{ ...row, cells: [] }] },

@@ -5,6 +5,7 @@ import {
   battleId,
   commandId,
   chooseAiCommand,
+  combatRules,
   createHexagon,
   M0_COMBAT_RULESET_ID,
   previewCombatAttacks,
@@ -12,7 +13,10 @@ import {
   previewCombatRangedArea,
   previewCombatWeaponReach,
   verifyCombatReplay,
+  weaponProfile,
   SPRITE_PROTOTYPE_RULESET_ID,
+  SPRITE_PROTOTYPE_V3_RULESET_ID,
+  SPRITE_PROTOTYPE_V4_RULESET_ID,
   startBattle,
   unitId,
   type BattleSetup,
@@ -113,6 +117,117 @@ function command(state: BattleState, input: TestCommand): CombatCommand {
 }
 
 describe('sprite prototype combat', () => {
+  it.each([
+    [SPRITE_PROTOTYPE_V3_RULESET_ID, 4, false],
+    [SPRITE_PROTOTYPE_V4_RULESET_ID, 3, true],
+  ] as const)(
+    '%s keeps its bow AP profile through a same-activation move and shot',
+    (rulesetId, shotCost, canShootAfterMoving) => {
+      const base = setup({
+        actorWeapon: 'bow',
+        actorPosition: { q: 0, r: 0 },
+        targetPosition: { q: 0, r: 3 },
+        hexes: createHexagon(4),
+        actorStamina: 100,
+      });
+      const initial = startBattle({ ...base, rulesetId }).state;
+      expect(initial.activation?.unitId).toBe(unitId('alpha-1'));
+      expect(initial.activation?.remainingActionPoints).toBe(4);
+      const activationId = initial.activation!.id;
+      const move = previewCombatMovement(initial).find(
+        (option) => option.to.q === 1 && option.to.r === 0,
+      )!;
+      expect(move).toMatchObject({ actionPointCost: 1, staminaCost: 4 });
+      const moved = applyCombatCommand(initial, command(initial, { type: 'move', to: move.to }));
+      expect(moved.ok).toBe(true);
+      if (!moved.ok) throw new Error(moved.error.code);
+      expect(moved.state.activation).toMatchObject({ id: activationId, remainingActionPoints: 3 });
+      expect(moved.state.units.find((entry) => entry.id === unitId('alpha-1'))?.stamina).toBe(96);
+
+      const weapon = weaponProfile(combatRules(rulesetId), 'bow');
+      expect(weapon).toMatchObject({
+        actionPointCost: shotCost,
+        staminaCost: 16,
+        minimumRange: 1,
+        maximumRange: 4,
+        baseDamage: 18,
+        damageVariance: 4,
+        accuracyModifier: 0,
+        armorPenetrationPercent: 20,
+        armorDamagePercent: 50,
+        defenseModifier: -8,
+      });
+      const previews = previewCombatAttacks(moved.state);
+      if (!canShootAfterMoving) {
+        expect(previews).toEqual([]);
+        const rejected = applyCombatCommand(
+          moved.state,
+          command(moved.state, { type: 'attack', targetId: unitId('beta-1') }),
+        );
+        expect(rejected).toMatchObject({
+          ok: false,
+          error: { code: 'INSUFFICIENT_ACTION_POINTS' },
+          state: moved.state,
+        });
+        return;
+      }
+
+      expect(previews).toContainEqual(
+        expect.objectContaining({ targetId: unitId('beta-1'), actionPointCost: 3, staminaCost: 16 }),
+      );
+      const shot = command(moved.state, { type: 'attack', targetId: unitId('beta-1') });
+      expect(shot.activationId).toBe(activationId);
+      const accepted = applyCombatCommand(moved.state, shot);
+      expect(accepted.ok).toBe(true);
+      if (!accepted.ok) throw new Error(accepted.error.code);
+      expect(accepted.state.units.find((entry) => entry.id === unitId('alpha-1'))?.stamina).toBe(
+        80,
+      );
+    },
+  );
+
+  it('rejects new-profile bow shots at two AP or fifteen stamina without mutating state or RNG', () => {
+    const base = setup({
+      actorWeapon: 'bow',
+      actorPosition: { q: 0, r: 0 },
+      targetPosition: { q: 0, r: 3 },
+      hexes: createHexagon(4),
+      actorStamina: 100,
+    });
+    const initial = startBattle({ ...base, rulesetId: SPRITE_PROTOTYPE_V4_RULESET_ID }).state;
+    const move = previewCombatMovement(initial).find(
+      (option) => option.to.q === 1 && option.to.r === 0,
+    )!;
+    const moved = applyCombatCommand(initial, command(initial, { type: 'move', to: move.to }));
+    if (!moved.ok) throw new Error(moved.error.code);
+    const attack = command(moved.state, { type: 'attack', targetId: unitId('beta-1') });
+    const cases = [
+      {
+        state: {
+          ...moved.state,
+          activation: { ...moved.state.activation!, remainingActionPoints: 2 },
+        },
+        code: 'INSUFFICIENT_ACTION_POINTS',
+      },
+      {
+        state: {
+          ...moved.state,
+          units: moved.state.units.map((entry) =>
+            entry.id === unitId('alpha-1') ? { ...entry, stamina: 15 } : entry,
+          ),
+        },
+        code: 'INSUFFICIENT_STAMINA',
+      },
+    ] as const;
+    for (const { state, code } of cases) {
+      const before = JSON.stringify(state);
+      const rejected = applyCombatCommand(state, { ...attack, activationId: state.activation!.id });
+      expect(rejected).toMatchObject({ ok: false, error: { code }, state });
+      expect(rejected.state.random).toEqual(state.random);
+      expect(JSON.stringify(state)).toBe(before);
+    }
+  });
+
   it('inspects one-, two- and four-hex weapons independently of turn resources without mutation', () => {
     for (const [actorWeapon, maximumRange] of [
       ['sword-shield', 1],

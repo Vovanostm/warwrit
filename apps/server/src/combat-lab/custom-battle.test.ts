@@ -142,7 +142,7 @@ describe('custom sprite battle server boundary', () => {
       const view = created.json<CombatLabView>();
       expect(view.battle).toEqual(createCustomBattleFixture('expected', battle).battle);
       expect(view.units).toHaveLength(battle.units.length);
-      expect(view.rulesetId).toBe('sprite-prototype-v3');
+      expect(view.rulesetId).toBe('sprite-prototype-v4');
     }
   });
 
@@ -163,10 +163,83 @@ describe('custom sprite battle server boundary', () => {
     expect(before.attackPreview?.map((preview) => preview.targetId)).toEqual(['enemy']);
   });
 
+  it('derives the new bow cost from the response and accepts the previewed attack', async () => {
+    const app = lab();
+    const template = defaultSpriteBattle();
+    const battle = {
+      ...template,
+      map: {
+        ...template.map,
+        tiles: template.map.tiles.map((tile) => ({
+          ...tile,
+          blocked: false,
+          height: 0 as const,
+          terrain: 'plain' as const,
+        })),
+      },
+      units: [
+        { id: 'archer', profileId: 'W05', sideId: 'human' as const, position: { q: 3, r: 5 } },
+        { id: 'target', profileId: 'W02', sideId: 'opponent' as const, position: { q: 6, r: 5 } },
+      ],
+    };
+    const created = await app.inject({
+      method: 'POST',
+      url: '/dev/combat-lab',
+      headers,
+      payload: {
+        version: 1,
+        requestId: 'bow-cost-preview',
+        scenarioId: SPRITE_COMBAT_LAB_SCENARIO,
+        battle,
+      },
+    });
+    expect(created.statusCode).toBe(201);
+    const before = created.json<CombatLabView>();
+    assert(before.activation);
+    expect(before.rulesetId).toBe('sprite-prototype-v4');
+    const bowRule = before.ruleHints?.weapons.find(({ id }) => id === 'bow');
+    const preview = before.attackPreview?.find(({ targetId }) => targetId === 'target');
+    expect(bowRule).toEqual({ id: 'bow', actionPointCost: 3, staminaCost: 16 });
+    expect(preview).toMatchObject({
+      actionPointCost: bowRule!.actionPointCost,
+      staminaCost: bowRule!.staminaCost,
+    });
+
+    const privateHeaders = {
+      ...headers,
+      'x-combat-lab-capability': created.headers['x-combat-lab-capability'] as string,
+    };
+    const accepted = await app.inject({
+      method: 'POST',
+      url: `/dev/combat-lab/${before.sessionId}/actions`,
+      headers: privateHeaders,
+      payload: {
+        version: 1,
+        requestId: 'bow-cost-accepted',
+        sessionId: before.sessionId,
+        battleId: before.battleId,
+        expectedViewRevision: before.viewRevision,
+        activationId: before.activation.id,
+        actorId: before.activation.actorId,
+        intent: { type: 'attack', targetId: 'target' },
+      },
+    });
+    expect(accepted.statusCode).toBe(200);
+    const after = accepted.json<CombatLabView>();
+    const archerBefore = before.units.find(({ id }) => id === 'archer')!;
+    const archerAfter = after.units.find(({ id }) => id === 'archer')!;
+    expect(archerBefore.pools.stamina.current - archerAfter.pools.stamina.current).toBe(
+      bowRule!.staminaCost,
+    );
+    expect(after.activation?.actionPoints.current).toBe(
+      before.activation.actionPoints.current - preview!.actionPointCost,
+    );
+  });
+
   it('accepts a learned skill once and rejects changed retries and stale revisions', async () => {
     const app = lab();
     const { before, privateHeaders, url, action } = await createSkillDuel(app);
-    expect(before.rulesetId).toBe('sprite-prototype-v3');
+    expect(before.rulesetId).toBe('sprite-prototype-v4');
     const payload = action('brace', { type: 'use-skill', skillId: 'shield-brace' });
     const accepted = await app.inject({
       method: 'POST',

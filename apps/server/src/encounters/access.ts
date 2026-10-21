@@ -47,7 +47,9 @@ export function toEncounterPublicProjection(
 ): EncounterPublicProjectionDto {
   const activation = encounter.state.activation;
   const state = encounter.state as combat.BattleState;
-  const tactical = state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID;
+  const tactical =
+    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID;
   const nextRound = tactical ? combat.previewCombatInitiative(state) : undefined;
   const nextRoundInitiative = nextRound
     ? { round: nextRound.round, unitIds: [...nextRound.unitIds] }
@@ -91,6 +93,7 @@ export function toEncounterPublicProjection(
     units: encounter.state.units.map((unit) => {
       combat.invariant(
         encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+        encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
           unit.status !== 'surrendered',
         'Sprite prototype status cannot enter a V1 encounter projection',
       );
@@ -172,7 +175,8 @@ function actorActions(
   const actor = state.units.find((unit) => unit.id === state.activation?.unitId);
   if (
     (state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
-      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID) ||
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID) ||
     !state.activation ||
     !actor?.capabilities ||
     !ownedIds.includes(actor.id)
@@ -190,7 +194,8 @@ function actorActions(
             (capabilities[intent] &&
               (!combat.isCombatPanicked(state, actor) || intent === 'retreat')),
         ),
-        ...(state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
+        ...(state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+        state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
           ? [
               'autoplay' as const,
               ...(combat.isCombatPanicked(state, actor) &&
@@ -213,7 +218,8 @@ function tacticalPreview(
   const activation = state.activation;
   const actor = state.units.find((unit) => unit.id === activation?.unitId);
   if (
-    state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    (state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID) ||
     !activation ||
     !actor ||
     !ownedIds.includes(actor.id)

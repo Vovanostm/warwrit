@@ -7,15 +7,22 @@ import {
   battleId,
   canonicalCombatState,
   commandId,
+  combatRules,
   COMBAT_SCHEMA_VERSION,
   COMBAT_V2_SCHEMA_VERSION,
   createHexagon,
+  M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  previewCombatAttacks,
+  previewCombatMovement,
   M1_DOMAIN_BRIDGE_RULESET_ID,
   M1_DOMAIN_BRIDGE_V2_RULESET_ID,
   replayCombat,
   sideId,
   startBattleV2,
+  chooseTacticalCombatCommand,
   unitId,
+  weaponProfile,
   type BattleSetupV2,
   type CombatReplayV2,
   type VersionedCombatReplay,
@@ -82,6 +89,109 @@ function unit(state: ReturnType<typeof startBattleV2>['state'], id: string) {
 }
 
 describe('combat V2 runtime', () => {
+  it.each([
+    [M1_DOMAIN_BRIDGE_V4_RULESET_ID, 4, false],
+    [M1_DOMAIN_BRIDGE_V5_RULESET_ID, 3, true],
+  ] as const)(
+    '%s keeps its bow AP profile through a same-activation move and shot',
+    (rulesetId, shotCost, canShootAfterMoving) => {
+      const base = setupV2();
+      const setup: BattleSetupV2 = {
+        ...base,
+        rulesetId,
+        units: base.units.map((unit, index) => ({
+          ...unit,
+          weaponId: index === 0 ? 'bow' : 'raider',
+          attributes: { ...unit.attributes, stamina: 100 },
+          initialPools: { ...unit.initialPools, stamina: 100 },
+          capabilities: { move: true, attack: true, defend: true, retreat: true },
+          skillRanks: {},
+          moralePolicy: index === 0 ? 'human' : 'beast',
+        })),
+      };
+      const initial = startBattleV2(setup).state;
+      expect(weaponProfile(combatRules(rulesetId), 'bow').actionPointCost).toBe(shotCost);
+      expect(initial.activation?.unitId).toBe(unitId('alpha-1'));
+      expect(initial.activation?.remainingActionPoints).toBe(4);
+      const activationId = initial.activation!.id;
+      const move = previewCombatMovement(initial).find(
+        (option) => option.to.q === -1 && option.to.r === 0,
+      )!;
+      expect(move).toMatchObject({ actionPointCost: 1, staminaCost: 4 });
+      const moveCommand = {
+        type: 'move' as const,
+        commandId: commandId('bow-three-ap-step'),
+        actorId: initial.activation!.unitId,
+        activationId,
+        to: move.to,
+      };
+      const moved = applyCombatCommand(initial, moveCommand);
+      expect(moved.ok).toBe(true);
+      if (!moved.ok) throw new Error(moved.error.code);
+      expect(moved.state.activation).toMatchObject({ id: activationId, remainingActionPoints: 3 });
+      expect(unit(moved.state, 'alpha-1').stamina).toBe(96);
+      const previews = previewCombatAttacks(moved.state);
+      if (!canShootAfterMoving) {
+        expect(previews).toEqual([]);
+        const rejected = applyCombatCommand(moved.state, {
+          type: 'attack',
+          commandId: commandId('historical-bow-three-ap-rejected'),
+          actorId: unitId('alpha-1'),
+          activationId,
+          targetId: unitId('beta-1'),
+        });
+        expect(rejected).toMatchObject({
+          ok: false,
+          error: { code: 'INSUFFICIENT_ACTION_POINTS' },
+          state: moved.state,
+        });
+        return;
+      }
+      expect(previews).toContainEqual(
+        expect.objectContaining({ targetId: unitId('beta-1'), actionPointCost: shotCost, staminaCost: 16 }),
+      );
+      const shotCommand = {
+        type: 'attack' as const,
+        commandId: commandId('bow-three-ap-shot'),
+        actorId: unitId('alpha-1'),
+        activationId,
+        targetId: unitId('beta-1'),
+      };
+      const atomicCases = [
+        {
+          state: {
+            ...moved.state,
+            activation: { ...moved.state.activation!, remainingActionPoints: 2 },
+          },
+          code: 'INSUFFICIENT_ACTION_POINTS',
+        },
+        {
+          state: {
+            ...moved.state,
+            units: moved.state.units.map((entry) =>
+              entry.id === unitId('alpha-1') ? { ...entry, stamina: 15 } : entry,
+            ),
+          },
+          code: 'INSUFFICIENT_STAMINA',
+        },
+      ] as const;
+      for (const { state, code } of atomicCases) {
+        const before = JSON.stringify(state);
+        const rejected = applyCombatCommand(state, shotCommand);
+        expect(rejected).toMatchObject({ ok: false, error: { code }, state });
+        expect(rejected.state.random).toEqual(state.random);
+        expect(JSON.stringify(state)).toBe(before);
+      }
+      const accepted = applyCombatCommand(moved.state, shotCommand);
+      expect(accepted.ok).toBe(true);
+      if (!accepted.ok) throw new Error(accepted.error.code);
+      expect(unit(accepted.state, 'alpha-1').stamina).toBe(80);
+      const replayed = replayCombat({ schemaVersion: 2, setup, commands: [moveCommand, shotCommand] });
+      expect(replayed.state.random).toEqual(accepted.state.random);
+      expect(canonicalCombatState(replayed.state)).toBe(canonicalCombatState(accepted.state));
+    },
+  );
+
   it('uses current pools before initiative, then applies activation recovery', () => {
     const started = startBattleV2(setupV2());
 
@@ -393,4 +503,41 @@ it('keeps v4 terrain, canonical preview costs, capabilities and replay without c
   expect(oldState.map.tiles).toBeUndefined();
   expect(core.getCombatSkills(oldState, oldState.units[0]!.id)).toEqual([]);
   expect(core.combatRules(oldState.rulesetId).recovery.staminaPerActivation).toBe(18);
+});
+
+it('replays deterministic bridge-v5 bow tactical autoplay with retained terrain and RNG draws', () => {
+  const base = setupV2();
+  const setup: BattleSetupV2 = {
+    ...base,
+    battleId: battleId('bridge-v5-tactical-bow'),
+    rulesetId: M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+    map: { ...base.map, tiles: [{ q: 0, r: 0, height: 0, terrain: 'mud' }] },
+    units: base.units.map((unit, index) => ({
+      ...unit,
+      position: index === 0 ? { q: -1, r: 0 } : { q: 1, r: 0 },
+      weaponId: index === 0 ? 'bow' : 'raider',
+      attributes: { ...unit.attributes, stamina: 100 },
+      initialPools: { ...unit.initialPools, stamina: 100 },
+      capabilities: { move: true, attack: true, defend: true, retreat: true },
+      skillRanks: {},
+      moralePolicy: index === 0 ? 'human' : 'beast',
+    })),
+  };
+  const initial = startBattleV2(setup).state;
+  const firstCommand = chooseTacticalCombatCommand(initial);
+  expect(applyCombatCommand(initial, firstCommand).ok).toBe(true);
+
+  const first = advanceCombatAutoplay(initial, 'resolved');
+  const repeated = advanceCombatAutoplay(initial, 'resolved');
+  expect(first.stoppedBecause).toBe('resolved');
+  expect(first.commands.length).toBeLessThan(combatRules(setup.rulesetId).limits.maximumCommands);
+  expect(first.commands[0]).toEqual(firstCommand);
+  expect(repeated).toEqual(first);
+  expect(first.state.random.draws).toBeGreaterThan(0);
+  const replay = JSON.parse(
+    JSON.stringify({ schemaVersion: 2, setup, commands: first.commands }),
+  ) as CombatReplayV2;
+  const replayed = replayCombat(replay);
+  expect(replayed.state.random).toEqual(first.state.random);
+  expect(canonicalCombatState(replayed.state)).toBe(canonicalCombatState(first.state));
 });

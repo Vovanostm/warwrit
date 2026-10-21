@@ -176,6 +176,33 @@ describe('public encounter projection', () => {
       actionPoints: 4,
       moves: [],
     });
+    const v5Setup: combat.BattleSetupV2 = {
+      ...v4Setup,
+      rulesetId: combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+      units: v4Setup.units.map((unit, index) =>
+        index === 0
+          ? { ...unit, weaponId: 'bow' }
+          : { ...unit, position: { q: -1, r: -1 } },
+      ),
+    };
+    const v5 = { ...encounter, setup: v5Setup, state: combat.startBattleV2(v5Setup).state };
+    const v5Actor = v5.state.activation!.unitId;
+    const grant5 = toEncounterControlGrant(v5, { unit_ids: [v5Actor] });
+    expect(grant5?.actorActions).toMatchObject({
+      actorId: v5Actor,
+      activationId: v5.state.activation!.id,
+      permittedIntents: expect.arrayContaining(['attack', 'defend', 'wait', 'autoplay']),
+    });
+    expect(grant5?.actorActions?.permittedIntents).not.toContain('move');
+    expect(grant5?.tactical?.attacks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          targetId: v5Setup.units[1]!.id,
+          actionPointCost: 3,
+          staminaCost: 16,
+        }),
+      ]),
+    );
     const surrendered = toEncounterPublicProjection({
       ...v4,
       state: {
