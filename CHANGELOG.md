@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Accept selection/autoplay contract and assign build — 2026-10-22, LOCAL
+
+- `Vovanostm/qa-hooks-selection-autoplay`, [#267](https://github.com/Vovanostm/warwrit/issues/267):
+  accepted the complete five-section child A contract under the existing #262
+  engineering split. Exact native completed task/dispatch/result/report matched,
+  recorded before acknowledgment and release; clean source base `61a91600`.
+- Sole web builder assigned only CombatLab.tsx and allocated tests; controller.ts
+  stays read-only. Preserve guards, synchronous refs and 550 ms / 750 ms timers;
+  estimate 175–215 source additions plus removals, hard stop 300. Candidate
+  scope/complexity NOT_MEASURED; code and runtime acceptance NOT_RUN.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records builder/scout tasks,
+  current dependencies and daily metrics: 10 rolling-day merges, at least 5 with
+  recorded play proof; 0 failed worker runs versus 5 previously, no regression
+  trigger. #262 and #231 remain open; #268/#269 and #263–#265 retain sequencing.
+  This tick has 0 merges; no new rule, migration, deployment or acceptance waiver.
+- Documentation diff/format/link checks accompany the normal commit; game tests,
+  coverage, validation, typecheck and browser NOT_RUN by coordinator. No wiki,
+  setup or API contract changed. Native dispatch and handoff follow this push.
+
 ### Publish accepted editor extraction — 2026-10-21, PUBLISHED
 
 - `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261),

@@ -1,5 +1,46 @@
 # Warwrit current delivery plan
 
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local overrides; no new milestone.
+This tick: 0 merged PRs with playable proof; merge NOT_RUN.
+#261 is closed/done after PR266 merged as `61a91600`; worktree removed.
+#267 contract accepted: all five sections, no rule question, exact completed
+contract dispatch/result/report recorded before acknowledgment and release.
+Own only CombatLab.tsx and its allocated tests; controller.ts is read-only.
+Selection/autoplay extraction preserves synchronous refs, guards and timers.
+Prepared sole web builder `task_a523ed66089d`; starts after these records push.
+Native dispatch/liveness and five-line handoff belong to #267 and checkpoint.
+Branch: `Vovanostm/qa-hooks-selection-autoplay`, source base `61a91600`.
+Observable target: unchanged selection, Escape, manual orders, one-step and
+start/stop in ordinary mill seed 20261009 at 1440×900, day and night.
+Contract estimate 175–215 source additions plus removals; actual NOT_MEASURED.
+Hard stop 300; normal audit and every changed function's measured gate remain.
+No candidate implementation, audit acceptance or runtime acceptance yet.
+#268 → #269 wait; #262 stays open until all children and final 20/15 pass.
+#263–#265 keep their dependencies; #231 remains open, no feature hooks yet.
+Local contract: `.orca/qa-hooks-selection-autoplay/contract.md` in its worktree.
+Parent allocation: coordinator `.orca/pipeline/retained/qa-hooks-menu/contract.md`.
+Other ready slices retain sequencing; core #225 waits for its log prerequisite.
+Daily metrics: 10 merged PRs in rolling 24 h, 0 failed worker runs versus 5
+previously; no two-day regression trigger. At least 5 have recorded play proof
+(PR255, PR257, PR259, PR260, PR266); other PRs not recounted for play proof.
+Daily read-only scout `task_701f2b2aece6` assigned; triage only after settlement.
+Infrastructure PR134/129 stay outside slice merge authority; snapshot CI failed.
+Checks: contract/ownership/clean-base/native settlement PASS; code tests,
+coverage, typecheck, validation and browser NOT_RUN; performance NOT_MEASURED.
+No wiki/setup/API, rule, replay, migration, deployment or acceptance change.
+Next: builder settlement → coordinator validate → fresh Tier U evaluator.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous editor publication checkpoint — 2026-10-21 (superseded above):**
+
 ## Pipeline status — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
@@ -30,8 +71,6 @@ No acceptance waiver, deployment or full-M1 claim.
 Next: exact-head hosted CI/scope, live blocked-label checks, then the skill's
 expected-head merge and #261 cleanup before the next web child starts.
 Wrapper releases its own lease when this single tick returns.
-
-## Dated history
 
 **Previous validation/evaluator dispatch checkpoint — 2026-10-21 (superseded above):**
 
