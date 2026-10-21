@@ -7,28 +7,27 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus local handover overrides; no new milestone.
-Delivered: [PR255](https://github.com/Vovanostm/warwrit/pull/255), JOIN #254,
-merged `0adcff2e` after exact-head CI 39588879033 SUCCESS, validator 9/9 PASS,
-fresh Tier L reviewer/evaluator ACCEPT. #254 is closed/done; worktree removed
-only after clean/no-unpushed-commit check and local evidence retention.
-Web #184: pushed `06479a47` integrates actual JOIN main; only status-document
-conflicts, both histories retained. Integrated validator 9/9 PASS. Fresh
-round-2 evaluator and absolute visual critic are live on that frozen head.
-Builder's 65 current captures and four equal-height reference sheets supplied;
-no independent visual acceptance, PR or merge yet. #231 follows when web frees.
-Core split: [#256](https://github.com/Vovanostm/warwrit/issues/256) first delivers
-compatible combat versions and the playable lab 1 AP move + 3 AP bow shot.
-Fresh dedicated worktree `core-bow-lab-256`; read-only contract writer live.
-[Original #249](https://github.com/Vovanostm/warwrit/issues/249) follows #256
-for company/binding/persistent-adapter activation and saved-version proof.
-Retained pushed WIP `e68025b9` is untouched. Split avoids the measured 305-line
-scope without a waiver; old rules/replays and persistent defaults stay unchanged
-until each corresponding accepted implementation. No new rule or migration.
-Open slice PRs: none. Infrastructure PR253 still requires its separate owner gate.
-Blockers: #184 independent gates/CI; #256 contract/build/gates; #249 predecessor.
-Other retained slices keep dependency/ownership gates; no overlapping writer.
-This tick: 1 merged PR with playable proof. Deployment/full M1 not claimed.
-[JOIN proof and limits](evidence/join-lock-order-254/README.md).
+Delivered earlier: [PR255](https://github.com/Vovanostm/warwrit/pull/255), JOIN
+#254, merged `0adcff2e` after CI, validator and Tier L ACCEPT; issue closed/done.
+Core [#256](https://github.com/Vovanostm/warwrit/issues/256): source `1105189d`,
+branch `Vovanostm/core-bow-lab-256`, coordinator validator 9/9 PASS, scope 118
+changed source lines. New lab sprite v4 / core bridge v5 support ordinary bow
+3 AP with unchanged 16 stamina, range and damage. Builder's real day/night
+editor → 1 AP step → 3 AP shot and replay/resource readback are author proof;
+fresh Tier L reviewer and evaluator are live. No PR, hosted CI or merge yet.
+[Owning behavior contract](../../apps/server/src/combat-lab/README.md#sprite-v4-ordinary-bow--2026-10-21).
+Web #184: evaluator ACCEPT on `06479a47`, exact 6/29 bands, round-12 victory,
+native 125% and 22 overlay pairs. Absolute visual critic REWORK: ink treatment
+scores 1; tight group across height 0/1/2 evidence missing. Round-2 builder
+live; old ACCEPT does not cover the forthcoming source. Fresh gates follow.
+#231 remains first next web slice after #184. #249 follows #256 for company,
+binding and persistent activation/restart proof; retained pushed `e68025b9`
+is untouched. Released versions/replays and persistent defaults stay unchanged.
+Open slice PRs: none. Infrastructure PR253 retains its separate owner merge gate.
+Blockers: #184 visual rework and fresh gates; #256 independent gates and CI;
+#249 predecessor. Other slices retain dependency and ownership gates.
+This tick: 0 merged PRs with playable proof. No migration, deployment or M1 claim.
+[Earlier JOIN proof and limits](evidence/join-lock-order-254/README.md).
 
 ## Dated history
 

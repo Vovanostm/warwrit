@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Compatible bow core/lab and refreshed gates — 2026-10-21, LOCAL
+
+- `Vovanostm/core-bow-lab-256`, [#256](https://github.com/Vovanostm/warwrit/issues/256)
+  split from #249: sprite v4 / bridge v5 ordinary bow costs 3 AP; new lab battles
+  select v4. Preserve 16 stamina, range/damage/special actions, released replay
+  bytes and existing persistent selectors. Affects combat core, lab projection
+  contract/routes, protocol and web view validation. No migration or new rule.
+- Builder's real day/night editor → 1 AP step → 3 AP shot has native resource
+  and replay readback; focused coverage 812 PASS / 51 SKIP, normal commit audit
+  PASS. Coordinator validator 9/9 PASS on `1105189d`; scope 118 source lines.
+  Independent Tier L reviewer/evaluator are live; hosted CI, PR and merge are
+  NOT_RUN. Persistent activation/restart remains successor #249; balance is
+  NOT_MEASURED. [Owning behavior](apps/server/src/combat-lab/README.md#sprite-v4-ordinary-bow--2026-10-21).
+- #184 evaluator ACCEPT at `06479a47` does not override visual REWORK:
+  rendering-language score 1 and missing tight height-step crowd evidence.
+  Second bounded rework is live; fresh gates required. Existing reports and
+  earlier failures retained. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+
 ### Split the bow delivery and checkpoint the tick — 2026-10-21, LOCAL
 
 - `Vovanostm/core-bow-lab-256`: fallback step 3 splits retained #249 WIP
