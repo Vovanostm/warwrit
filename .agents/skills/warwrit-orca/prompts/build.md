@@ -22,7 +22,11 @@ staged-only work counts as a failed build.
    1440x900 day and night screenshots under `.orca/{{SLICE}}/shots/` (plus
    colour-vision emulation when an issue asks for it). Then
    `bash scripts/orca-play.sh stop`.
-6. Write `.orca/{{SLICE}}/report.md`: commits, every acceptance criterion with
+6. When the slice changes player-facing text, write `.orca/{{SLICE}}/text.md`:
+   every changed line in the order the player sees it, with screen and
+   speaker, Russian and English, and the mechanics facts it must match (the
+   text critic's input).
+7. Write `.orca/{{SLICE}}/report.md`: commits, every acceptance criterion with
    its proof, checks with exact results (NOT_RUN where skipped), proposed
    CHANGELOG entry, risks. Do not push or open a PR.
    Set `report_path` to `.orca/{{SLICE}}/report.md` in your final answer.

@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Text tier for the Orca pipeline — 2026-10-22, PUBLISHED
+
+- `claude/orca-text-tier`: the 2026-10-22 text critique (owner question «Качество
+  … текстов на высоком уровне?») rejected the campaign, first-hunt and combat
+  UI text; follow-ups #275–#279 need the text critic, but the pipeline had no
+  text gate. New tier T (as U + text critic, `prompts/text.md`); builders of
+  text slices write `.orca/<slice>/text.md` as the critic's input.
+- Checks: Prettier. Effect NOT_MEASURED.
+
 ### Publish accepted editor extraction — 2026-10-21, PUBLISHED
 
 - `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261),
