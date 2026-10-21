@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Assign isolated OIDC core work alongside editor source work — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-oidc-count-isolation-272`: accepted the existing five-section
+  [#272](https://github.com/Vovanostm/warwrit/issues/272) contract and assigned
+  the sole core builder while #271 retains its own web writer. Main 857b0491
+  fast-forward integration PASS; the owned auth test is unchanged by integration.
+  Source editing is disjoint; checks, DB lifecycle and ordinary commit await
+  an explicit coordinator permit after #271 settlement and runtime cleanup.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) distinguishes direct one-tick
+  authority from the attributed product-scope relay, retains #267 WIP/budgets
+  and original #269/#262/#263/#231 acceptance. No new milestone or merge authority.
+  Builder must preserve wrong-issuer/session mutation detection and prove five
+  parallel real-PostgreSQL suite passes. Tests, source commit, validate and Tier L
+  reviewer/evaluator NOT_RUN at handoff; implementation is not acceptance.
+- Documentation-only coordinator change: scoped diff/format/link readback;
+  full verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED. Daily
+  work already complete; 0 merged PRs with playable proof this tick. No schema,
+  migration, rule, replay, protocol, dependency, API or wiki contract change.
+
 ### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-session-callbacks`, [PR #281](https://github.com/Vovanostm/warwrit/pull/281),

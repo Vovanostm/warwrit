@@ -2,6 +2,45 @@
 
 ## Pipeline status — 2026-10-22
 
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
+Execution authority: owner 2026-10-22 asked for exactly one epic #217 pipeline tick.
+Product focus, owner words relayed by existing mailbox 2026-10-22:
+«Сначала довести только боёвку и её UI/UX до принятого качества».
+The attributed relay is scope context; it grants no new merge/deploy authority.
+Queue: epic #217 and existing local overrides; no new milestone.
+This tick: 0 merged PRs with playable proof; merge NOT_RUN.
+Prior tick merged #273/PR281 as 857b0491; its tracked proof is below.
+#271 sole web builder `task_a63cd9cb21f9` remains live on its own branch.
+Outcome: existing Start/readiness visible in the first desktop editor viewport.
+Try after acceptance: /combat-lab at 1440×900 without scrolling, default/preset.
+Builder source/independent Tier U acceptance still pending; no usable claim yet.
+#272 accepted five-section contract; core builder `task_51028a34338a` assigned
+in dedicated `Vovanostm/codex-oidc-count-isolation-272`, main 857b0491 integrated.
+Owns only auth/oidc.integration.test.ts; disjoint source editing can advance now.
+Checks/DB lifecycle/normal commit wait for coordinator's explicit local permit;
+#271 holds the serialized runtime/check slot until exact settlement/cleanup.
+Permit path: local .orca/core-oidc-count-isolation/checks-permit.txt.
+Required: wrong-issuer account and session mutations, five parallel real-PG
+suite passes, normal audit, then validate and fresh Tier L reviewer/evaluator.
+All #272 checks and source commit currently NOT_RUN; no game behavior changes.
+Local contracts/reports live in each dedicated .orca slice directory.
+#267 staged two-file candidate/budgets retained; follows #271, then #268/#269.
+Final component cyclomatic ≤20 AND cognitive ≤15 stays on #269 AND #262;
+remaining #263/#231 acceptance preserved. No waiver or duplicate source writer.
+Core #225 retains log prerequisite; remaining ready slices keep dependencies.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+Infrastructure PRs retain their separate owner merge gate; none changed here.
+Full verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
+Next: exact #271 settlement/cleanup, then grant #272 checks and validate/gate #271.
+Records are published on the #272 branch; main keeps its last merged checkpoint.
+Wrapper releases its own lease when this one tick returns.
+
+## Dated history
+
+**Previous #273 publication checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 and existing local overrides; no new milestone.
@@ -31,8 +70,6 @@ Independent opponent-pause/root-unmount checks NOT_RUN; see verdict limits.
 Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
 Next: hosted CI and exact-head scope/blocked-label checks, then merge on gates.
 Wrapper releases its own lease when this single tick returns.
-
-## Dated history
 
 **Previous #273 validation/evaluator checkpoint (superseded above):**
 
