@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Preserve final affordability rework and evidence blocker — 2026-10-21, LOCAL
+### Preserve final affordability rework and evidence blocker — 2026-10-21, PUBLISHED
 
 - `codex/combat-affordability-184`, issue #184: rework 2 changes the existing
   terrain-clipped hatch shader to projected-width-capped broken ink with dark
