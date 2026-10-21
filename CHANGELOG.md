@@ -16,6 +16,11 @@ requests.
   UI text; follow-ups #275–#279 need the text critic, but the pipeline had no
   text gate. New tier T (as U + text critic, `prompts/text.md`); builders of
   text slices write `.orca/<slice>/text.md` as the critic's input.
+- Independent review REWORK on d6417d5a fixed: rework refreshes `text.md`
+  (build steps 3–6); tier T always writes it; a missing/stale input is a
+  step-6-only rework outside the budget; tier lists (budget, evaluator, close
+  views, slice plan, epic contract) include T; the critic reads its previous
+  round and maps REJECT/BLOCKED to REWORK/BLOCKED_ENV.
 - Checks: Prettier. Effect NOT_MEASURED.
 
 ### Publish accepted editor extraction — 2026-10-21, PUBLISHED

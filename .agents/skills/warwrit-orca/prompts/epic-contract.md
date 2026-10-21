@@ -16,7 +16,7 @@ parallel without inventing shared contracts independently.
    two issues no longer edit the same function). No feature behaviour. Give every exported stub a focused test so the
    commit audit sees a caller.
 4. Write `docs/engineering/epics/{{EPIC}}/tasks.md` (tracked): one line per issue — slice name,
-   lane, ownership, `[P]` or `after: <slice>`, tier (D/L/U/V), expected size.
+   lane, ownership, `[P]` or `after: <slice>`, tier (D/L/U/V/T), expected size.
    Any issue larger than about 300 changed lines is split into two lines.
 5. Commit with focused coverage and `pnpm check:changes`, run
    `bash scripts/orca-validate.sh`, write `.orca/epic-{{EPIC}}-contract/report.md`.

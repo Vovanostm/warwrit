@@ -22,7 +22,7 @@ staged-only work counts as a failed build.
    1440x900 day and night screenshots under `.orca/{{SLICE}}/shots/` (plus
    colour-vision emulation when an issue asks for it). Then
    `bash scripts/orca-play.sh stop`.
-6. When the slice changes player-facing text, write `.orca/{{SLICE}}/text.md`:
+6. For a tier T slice, or whenever player-facing text changes, write `.orca/{{SLICE}}/text.md`:
    every changed line in the order the player sees it, with screen and
    speaker, Russian and English, and the mechanics facts it must match (the
    text critic's input).
