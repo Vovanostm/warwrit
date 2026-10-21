@@ -4,7 +4,7 @@
 # worktree with the warwrit-orca skill. A lock prevents overlapping ticks and
 # every tick re-reads GitHub and Orca state.
 # Usage: scripts/orca-pipeline-tick.sh [coordinator-worktree]
-#        scripts/orca-pipeline-tick.sh --loop [minutes]   (visible loop in an Orca terminal)
+#        scripts/orca-pipeline-tick.sh --loop [minutes]   (visible loop in a terminal; default 10)
 set -uo pipefail
 # The loop keeps the Mac awake while it runs, ticks again as soon as a worker
 # reports, and counts the interval in wall-clock time: macOS `sleep` stops
@@ -17,10 +17,18 @@ if [[ "${1:-}" == "--loop" ]]; then
     (. "$env_file" && ORCA_TERMINAL_HANDLE="$MAILBOX" orca orchestration check --run "$RUN" --peek --json 2>/dev/null) \
       | python3 -I -c 'import json,sys;m=json.load(sys.stdin)["result"]["messages"];sys.exit(0 if any(x["created_at"]>sys.argv[1] for x in m) else 1)' "$1"
   }
+  # Each tick checks out origin/main, which can update this script; restart the
+  # loop on the new version instead of running a stale one until someone notices.
+  self_version="$(stat -f %m "$0" 2>/dev/null || stat -c %Y "$0")"
   while true; do
     started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
     bash "$0"
-    next=$(( $(date +%s) + ${2:-20} * 60 ))
+    if [[ "$(stat -f %m "$0" 2>/dev/null || stat -c %Y "$0")" != "$self_version" ]]; then
+      echo "loop: script changed on main, restarting"
+      exec bash "$0" --loop "${2:-10}"
+    fi
+    # An unchanged state costs only the digest, so the loop can look often.
+    next=$(( $(date +%s) + ${2:-10} * 60 ))
     while (( $(date +%s) < next )) && ! mail_since "$started"; do sleep 60; done
   done
 fi
