@@ -8,32 +8,31 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus local handover overrides; no new milestone.
 Delivered this tick: [PR259](https://github.com/Vovanostm/warwrit/pull/259), #249,
-merged `19d2c296` at expected head `00c8bbcb`; final CI `39627369734` SUCCESS,
-PR scope SUCCESS, validator 9/9 PASS (671 PASS / 52 SKIP), source scope 239.
-Fresh Tier L source/playable ACCEPT at `63ce897e`; later commits contain only
-main integration, evidence and shared records. No blocked labels or review threads.
-New persistent wolf admissions use bridge-v5: 4 → 3 → 0 AP move/shot,
-16-stamina shot, atomic refusal, real restart/retry, old V4 continuation and
-supported terminal/proof/idempotency accepted within recorded fixture limits.
-[Proof and limits](https://github.com/Vovanostm/warwrit/blob/19d2c2962425f44886c07b838a0597d99119dd2d/docs/engineering/evidence/core-bow-three-ap/README.md).
+merged `19d2c296` at expected `00c8bbcb`; final CI `39627369734` and scope SUCCESS,
+validator 9/9 PASS, 671 PASS / 52 SKIP, 239 source lines, fresh Tier L ACCEPT.
 #249 closed/done; #218 decision closed with wiki/CHANGELOG/implementation links.
-Native proof retained in coordinator `.orca/pipeline/retained/core-bow-three-ap/`.
-Earlier deliveries: PR255/#254 and PR257/#256.
-#184: unchanged source `5599c8f1`, main `46fe0c33` integrated as `74ea6cc3`;
-validator 9/9 PASS, 48 tests, scope 272. Two staged-main audit failures remain
-recorded; normal incoming-main audit and ordinary main-based validator PASS.
-Fresh Tier V eval-3 and absolute visual-2 ACCEPT gated `f589f94c`; B1 closes
-with eight unchanged on/off pairs over actual level/0/1/2 intersections.
-Reports and JPEGs retained; main `19d2c296` integration is in progress.
-Integrated validator and final hosted CI/publication are pending; no waiver.
+Finished #249 worktree removed after no-unpushed/clean checks and native proof
+retention in coordinator `.orca/pipeline/retained/core-bow-three-ap/`.
+[Persistent bow proof and limits](evidence/core-bow-three-ap/README.md).
+#184: fresh Tier V evaluator and absolute visual ACCEPT frozen `f589f94c`;
+all applicable visual scores 2. B1 closes with eight verified level/0→1→2
+intersection on/off pairs, unchanged figures/HUD/camera and native actions.
+Ordinary mill manual input and round 11 victory, native125/CVD/viewport proof
+retain their finite boundaries. No third source rework or acceptance waiver.
+Main `19d2c296` integrated as `e0c77057`; only shared status records conflicted,
+both histories retained. Normal merge audit PASS, integrated validator 9/9 PASS,
+48 related tests, scope 272; accepted #184 source/tests unchanged.
+[Affordability proof, scores and JPEGs](evidence/uix-affordability-bands/README.md).
+Publication: one PR for #184 on `codex/combat-affordability-184`; final hosted CI
+and merge remain pending. Later commits contain only evidence/shared records.
 #231 is first next web slice after #184. Core #225 retains its log dependency;
-other ready slices retain their ownership and prerequisites.
-Daily scout settled: mill/deserter day/night journeys, round 7 victories,
-no new findings. Daily digest already posted; no duplicate scout or digest.
+other ready slices keep their ownership and prerequisites.
+Daily scout/digest already settled/posted; no duplicate scout or digest.
 Metric: 1 merged PR with playable proof this tick. Balance/performance
 NOT_MEASURED; no auto-merge, deployment or full-M1 acceptance.
 Infrastructure PR134/129 remain outside slice merge authority.
-Next: finish #184 integrated validator, publish its one-issue PR, require CI.
+Next: require exact-head hosted CI/scope and native blocked checks for #184,
+then expected-head merge; start #231 only after #184 frees the web lane.
 
 ## Dated history
 

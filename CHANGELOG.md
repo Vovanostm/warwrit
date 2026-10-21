@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Publish accepted affordability bands — 2026-10-21, PUBLISHED
+
+- `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):
+  fresh Tier V evaluator and absolute visual ACCEPT for `f589f94c`; every
+  applicable visual criterion scores 2. B1 actual silhouette/annotation
+  intersection is established by eight stable level/0→1→2 on/off pairs.
+  Mill manual move/attack/turn and round 11 victory, viewport/native125/CVD
+  proof and earlier failed attempts retain their stated boundaries.
+- Main `19d2c296` integrated through normal merge `e0c77057`; only shared status
+  documents conflicted, both histories preserved. Normal merge audit PASS;
+  coordinator integrated validator exit 0, 9/9 PASS, 48 related tests,
+  source scope 272. Accepted web game source/tests unchanged after the gates.
+  Evidence commits `39f8c0b2`/`dacbb47b` and this shared-record receipt add no
+  game code. [Proof, scored review and JPEGs](docs/engineering/evidence/uix-affordability-bands/README.md).
+- Publish one PR closing only #184; final hosted CI and merge remain pending.
+  PR259/#249 delivered this tick; #249 closed/done and #218 closed with the
+  original decision/implementation links. Finished worktree removed after
+  native proof retention and clean/no-unpushed checks. One merged PR with
+  playable proof; [live queue](docs/engineering/CURRENT_PLAN.md).
+  No deployment, new rule, balance/performance measurement or full-M1 claim.
+
 ### Accept affordability evidence and integrate delivered bow — 2026-10-21, LOCAL
 
 - `codex/combat-affordability-184`, #184: independent Tier V evaluator and
