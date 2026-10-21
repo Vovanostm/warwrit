@@ -11,7 +11,11 @@ import {
 import { BattleView } from './BattleView.js';
 import { BattleEditor } from './BattleEditor.js';
 import { validateBattleDraft } from './editor-model.js';
-import { handleCombatLabActionReply, latestCombatLabView } from './controller.js';
+import {
+  commonCombatLabReason,
+  handleCombatLabActionReply,
+  latestCombatLabView,
+} from './controller.js';
 import {
   startSessionAttempt,
   admittedBattleDraft,
@@ -529,22 +533,14 @@ export function CombatLab() {
     setSelectedSkillId(null);
   }, [session?.id, session?.view.activation?.id]);
   const controlling = view !== null && !sessionLost && canControl(view);
-  const commonReason = sessionLost
-    ? 'Бой недоступен'
-    : autoplay
-      ? 'Автобой включён — остановите для ручного приказа'
-      : deleting
-        ? 'Завершаем бой'
-        : pending
-          ? pending.uncertain
-            ? 'Результат не подтверждён'
-            : 'Ожидается ответ'
-          : view?.status === 'resolved'
-            ? 'Бой завершён'
-            : !controlling
-              ? 'Ход противника'
-              : '';
-  const draftErrors = catalog && draftBattle ? validateBattleDraft(draftBattle, catalog) : [];
+  const commonReason = commonCombatLabReason({
+    sessionLost,
+    autoplay,
+    deleting,
+    pending,
+    resolved: view?.status === 'resolved',
+    controlling,
+  });
 
   return (
     <main className={`combat-lab-page${session ? ' combat-lab-page--fighting' : ''}`}>
@@ -556,53 +552,16 @@ export function CombatLab() {
       )}
       {!session && <p>Выберите бойцов, настройте поле и начните бой.</p>}
       {!session && (
-        <section aria-label="Настройка боя">
-          {catalogLoading && <p role="status">Загружаются бойцы и карты…</p>}
-          {catalog && draftBattle && (
-            <>
-              <BattleEditor
-                catalog={catalog}
-                value={draftBattle}
-                onChange={setDraftBattle}
-                disabled={starting || startUnresolved}
-              />
-              <p className="battle-editor-note">
-                Мельничная тварь предупреждает о тяжёлом ударе. Паника заставляет бежать; людям
-                можно сдаться, если безопасный выход перекрыт.
-              </p>
-            </>
-          )}
-          {!catalogLoading && !catalog && !notice && <p role="alert">Редактор боя недоступен.</p>}
-          <button
-            type="button"
-            onClick={() => void startBattle()}
-            disabled={
-              !catalog ||
-              !draftBattle ||
-              catalogLoading ||
-              starting ||
-              startUnresolved ||
-              draftErrors.length > 0
-            }
-          >
-            {starting ? 'Начинаем бой…' : 'Начать бой'}
-          </button>
-          {draftErrors.length > 0 && (
-            <ul className="battle-editor-errors">
-              {draftErrors.map((error) => (
-                <li key={error}>{error}</li>
-              ))}
-            </ul>
-          )}
-          <button
-            type="button"
-            onClick={() => setDraftBattle(catalog?.defaultBattle ?? null)}
-            disabled={!catalog || starting || startUnresolved}
-          >
-            Вернуть исходную карту и состав
-          </button>
-          {startUnresolved && <p role="alert">{notice}</p>}
-        </section>
+        <CombatLabEditor
+          catalog={catalog}
+          draft={draftBattle}
+          loading={catalogLoading}
+          starting={starting}
+          unresolved={startUnresolved}
+          notice={notice}
+          onChange={setDraftBattle}
+          onStart={() => void startBattle()}
+        />
       )}
       {notice && !startUnresolved && !session && <p role="status">{notice}</p>}
       {view && (
@@ -744,5 +703,80 @@ export function CombatLab() {
         </>
       )}
     </main>
+  );
+}
+
+interface CombatLabEditorProps {
+  readonly catalog: CombatLabCatalog | null;
+  readonly draft: CombatLabBattleConfig | null;
+  readonly loading: boolean;
+  readonly starting: boolean;
+  readonly unresolved: boolean;
+  readonly notice: string;
+  readonly onChange: (draft: CombatLabBattleConfig | null) => void;
+  readonly onStart: () => void;
+}
+
+export function CombatLabEditor(props: CombatLabEditorProps) {
+  const { catalog, draft, loading, starting, unresolved, notice, onChange } = props;
+  return (
+    <section aria-label="Настройка боя">
+      {loading && <p role="status">Загружаются бойцы и карты…</p>}
+      {catalog && draft && (
+        <>
+          <BattleEditor
+            catalog={catalog}
+            value={draft}
+            onChange={onChange}
+            disabled={starting || unresolved}
+          />
+          <p className="battle-editor-note">
+            Мельничная тварь предупреждает о тяжёлом ударе. Паника заставляет бежать; людям можно
+            сдаться, если безопасный выход перекрыт.
+          </p>
+        </>
+      )}
+      {!loading && !catalog && !notice && <p role="alert">Редактор боя недоступен.</p>}
+      <CombatLabEditorActions {...props} />
+    </section>
+  );
+}
+
+function CombatLabEditorActions({
+  catalog,
+  draft,
+  loading,
+  starting,
+  unresolved,
+  notice,
+  onChange,
+  onStart,
+}: CombatLabEditorProps) {
+  const draftErrors = catalog && draft ? validateBattleDraft(draft, catalog) : [];
+  return (
+    <>
+      <button
+        type="button"
+        onClick={onStart}
+        disabled={!catalog || !draft || loading || starting || unresolved || draftErrors.length > 0}
+      >
+        {starting ? 'Начинаем бой…' : 'Начать бой'}
+      </button>
+      {draftErrors.length > 0 && (
+        <ul className="battle-editor-errors">
+          {draftErrors.map((error) => (
+            <li key={error}>{error}</li>
+          ))}
+        </ul>
+      )}
+      <button
+        type="button"
+        onClick={() => onChange(catalog?.defaultBattle ?? null)}
+        disabled={!catalog || starting || unresolved}
+      >
+        Вернуть исходную карту и состав
+      </button>
+      {unresolved && <p role="alert">{notice}</p>}
+    </>
   );
 }

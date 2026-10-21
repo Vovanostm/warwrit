@@ -9,6 +9,97 @@ requests.
 
 ## Unreleased
 
+### Publish accepted editor extraction — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261),
+  finite R1 child of #231: independent Tier U ACCEPT for frozen `4523f609`.
+  Editor/validation/start/reset and feedback priority remain unchanged after
+  the bounded extraction; four owned source/test files, 182 source lines.
+- Evaluator independently played invalid/reset/start once/day/night/return/reset
+  at 1440×900 and ran 42 focused tests PASS. Favicon 404 matches main baseline;
+  no introduced console/page error or visual regression found. Coordinator
+  validator exit 0, 9/9 PASS, 64 related tests PASS. Exact native settlement,
+  result and full verdict matched, recorded, acknowledged and released.
+- [Owning contract, verdict and JPEG proof](docs/engineering/evidence/qa-hooks-editor/README.md)
+  retained on the PR branch; later commits contain only evidence/shared records.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records review → PR and the
+  remaining exact-head CI/scope/blocked-label/merge gates. Hosted CI and merge
+  pending; this tick has 0 merged PRs with playable proof. #231 stays open and
+  #262–#265 preserve sequencing. No duplicate daily scout/digest.
+- Local full verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
+  No rule, protocol, replay, renderer, dependency, migration or deployment change.
+  No wiki/setup/API behavior contract changed; no full-M1 acceptance claim.
+
+### Validate editor extraction and dispatch Tier U — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-hooks-editor`, [#261](https://github.com/Vovanostm/warwrit/issues/261):
+  behavior-preserving editor/start/reset/validation and feedback-reason extraction
+  committed normally as `4523f609`; four owned files, 182 changed source lines.
+  Focused builder tests 42 PASS; coordinator validator exit 0, 9/9 gates PASS,
+  64 related tests PASS, clean tree and scope PASS. No audit thresholds changed.
+- Builder performed invalid/reset/start/return and 1440×900 day/night mill smoke;
+  favicon 404 is explicit, independent baseline classification remains pending.
+  Exact native task/dispatch/result/report recorded before acknowledgment and
+  release (no owned resource). #261 advances to review; fresh Tier U evaluator
+  `task_4e10f35af809` / `ctx_b7066392e440` is live on frozen `4523f609`.
+- Source WIP and coordinator-only records are pushed for continuation; no PR,
+  independent ACCEPT or merge yet. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  names the next gate and retains prior dispatch history. #231 remains open;
+  #262–#265 preserve sequencing. Daily work already complete, no duplicate scout.
+  This tick: 0 merged PRs with playable proof. Full verify/stress/migrations/build
+  NOT_RUN; performance NOT_MEASURED. No rule, protocol, replay, migration,
+  deployment or full-M1 claim. No wiki/setup/API behavior contract changed.
+
+### Start bounded editor extraction — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-game-hooks`: coordinator records the accepted five-section
+  [#261](https://github.com/Vovanostm/warwrit/issues/261) R1 contract and
+  planning → implementing transition in the dedicated `qa-hooks-editor` worktree.
+  Estimated 220–275 source lines include removals; actual scope remains pending.
+  One web builder owns only CombatLab/controller editor/reason extraction and
+  matching tests, preserving behavior, feedback priority and normal audit.
+- Exact native contract settlement/result matched, recorded before acknowledgment,
+  then released (no owned resource). #231 stays open; #262–#265 retain sequencing.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names the active builder and
+  next validation/Tier U gate. Shared records are the only changes on this branch.
+- Contract/clean-base/ownership checks passed; documentation format/link/diff
+  checks accompany this commit. Implementation/game tests/audit/typecheck/browser
+  checks NOT_RUN by coordinator; no playable acceptance or merge this tick.
+  Daily scout/digest already complete. No migration, deployment or rule change.
+
+### Split QA hooks into bounded delivery slices — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-game-hooks`: coordinator accepted the five-section #231
+  contract and created #261–#265 under the owner engineering delegation.
+  Preserve original #231 acceptance; the parent stays open until all child
+  proof, including actual paced playback after #190, passes. No rule change.
+- Dedicated #261 worktree starts only the read-only editor/reason extraction
+  contract. Other children are sequenced to preserve one web writer; actual
+  source scope must be measured before widening. Evaluator runner adaptation
+  is local only; installed skill and #190 source ownership remain intact.
+- Original worker result/native settlement recorded before acknowledgment and
+  release. This entry and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  are coordinator records only; implementation/gameplay/typecheck/production
+  checks NOT_RUN, performance NOT_MEASURED. Documentation format/link/diff
+  checks accompany the normal commit. This tick: 0 merged PRs with playable
+  proof. No migration, deployment, acceptance waiver or full-M1 claim.
+
+### Deliver affordability bands and prepare QA hooks — 2026-10-21
+
+- `codex/combat-affordability-184`, [PR260](https://github.com/Vovanostm/warwrit/pull/260),
+  MERGED as `b9dc49fc` at expected `c3772f98`: server-derived solid/hatch bands
+  and honest legend delivered for #184. Tier V evaluator/visual ACCEPT,
+  every applicable score 2; integrated validator 9/9, 48 tests, scope 272;
+  hosted CI `39633442903` and scope `39633442871` SUCCESS. Issue closed/done;
+  native evidence retained before worktree removal. Earlier pending entries
+  are superseded. [Proof and limits](docs/engineering/evidence/uix-affordability-bands/README.md).
+- `Vovanostm/qa-game-hooks`, PUBLISHED: coordinator records delivery and starts
+  the dedicated read-only #231 contract from actual merged main, following owner priority.
+  No hook implementation or new gameplay verification yet (NOT_RUN).
+  Exact post-gate diff passed after narrowing an overly broad assertion that
+  included the incoming-main lab README; accepted source/tests stayed unchanged.
+  [Current queue](docs/engineering/CURRENT_PLAN.md). No migration or deployment.
+
 ### Publish accepted affordability bands — 2026-10-21, PUBLISHED
 
 - `codex/combat-affordability-184`, [#184](https://github.com/Vovanostm/warwrit/issues/184):

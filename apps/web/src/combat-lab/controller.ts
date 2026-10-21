@@ -93,3 +93,23 @@ export function latestCombatLabView(
   }
   return current;
 }
+
+/** Shared presentation feedback; command authority remains with the server. */
+export function commonCombatLabReason(state: {
+  readonly sessionLost: boolean;
+  readonly autoplay: boolean;
+  readonly deleting: boolean;
+  readonly pending: { readonly uncertain: boolean } | null;
+  readonly resolved: boolean;
+  readonly controlling: boolean;
+}): string {
+  if (state.sessionLost) return 'Бой недоступен';
+  if (state.autoplay) return 'Автобой включён — остановите для ручного приказа';
+  if (state.deleting) return 'Завершаем бой';
+  if (state.pending) {
+    return state.pending.uncertain ? 'Результат не подтверждён' : 'Ожидается ответ';
+  }
+  if (state.resolved) return 'Бой завершён';
+  if (!state.controlling) return 'Ход противника';
+  return '';
+}

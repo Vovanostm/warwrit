@@ -6,7 +6,11 @@ import type {
   CombatLabBattleConfig,
   CombatLabCatalog,
 } from '@warwrit/protocol';
-import { handleCombatLabActionReply, latestCombatLabView } from './controller.js';
+import {
+  commonCombatLabReason,
+  handleCombatLabActionReply,
+  latestCombatLabView,
+} from './controller.js';
 import { executeFieldCommand, canIssueManualCommand } from './field-command.js';
 import { commandSelection, commandReasons } from './command-availability.js';
 import { isCombatLabView } from './view-validation.js';
@@ -762,3 +766,48 @@ it('rejects malformed initiative forecasts before admitting a session response',
     ).rejects.toThrow('invalid view');
   }
 });
+
+it.each([
+  [{ sessionLost: true }, 'Бой недоступен'],
+  [{ sessionLost: false }, 'Автобой включён — остановите для ручного приказа'],
+  [{ sessionLost: false, autoplay: false }, 'Завершаем бой'],
+  [{ sessionLost: false, autoplay: false, deleting: false }, 'Результат не подтверждён'],
+  [
+    { sessionLost: false, autoplay: false, deleting: false, pending: { uncertain: false } },
+    'Ожидается ответ',
+  ],
+  [{ sessionLost: false, autoplay: false, deleting: false, pending: null }, 'Бой завершён'],
+])(
+  'preserves the highest priority common reason with lower reasons present (%j)',
+  (patch, expected) => {
+    expect(
+      commonCombatLabReason({
+        autoplay: true,
+        deleting: true,
+        pending: { uncertain: true },
+        resolved: true,
+        controlling: false,
+        ...patch,
+      }),
+    ).toBe(expected);
+  },
+);
+
+it.each([
+  [false, 'Ход противника'],
+  [true, ''],
+])(
+  'keeps no-view/uncontrollable and all-clear common feedback (controlling=%s)',
+  (controlling, expected) => {
+    expect(
+      commonCombatLabReason({
+        sessionLost: false,
+        autoplay: false,
+        deleting: false,
+        pending: null,
+        resolved: false,
+        controlling,
+      }),
+    ).toBe(expected);
+  },
+);
