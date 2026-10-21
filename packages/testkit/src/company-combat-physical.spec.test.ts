@@ -15,6 +15,7 @@ import {
   progressionLevel,
   ENCOUNTER_BINDING_VERSION,
   M1_DOMAIN_BRIDGE_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V5_RULESET_ID,
   applyCombatCommand,
   battleId,
   canonicalJson,
@@ -610,6 +611,43 @@ function characterForUnit(f: ReturnType<typeof fixture>, id: string) {
 }
 
 describe('G07 — prepared physical combat effects', () => {
+  it('reprojects and prepares physical effects from a bridge-v5 public binding', () => {
+    const f = fixture();
+    const evidence = {
+      ...f.evidence,
+      setup: { ...f.evidence.setup, rulesetId: M1_DOMAIN_BRIDGE_V5_RULESET_ID },
+    };
+    const binding = prepareEncounterBinding(f.sources, f.request, evidence);
+    const v5 = {
+      ...f,
+      evidence,
+      binding,
+      journal: createCombatReceiptJournal(binding, f.root.lifecycle.companyId),
+    };
+    expect(binding.participants.every(({ projection }) => projection.schemaVersion === 5)).toBe(
+      true,
+    );
+    expect(
+      binding.setup.units.every(
+        (unit) =>
+          unit.capabilities !== undefined &&
+          unit.skillRanks !== undefined &&
+          unit.moralePolicy === 'human',
+      ),
+    ).toBe(true);
+
+    let journal = accept(v5, v5.journal, binding.initial, null);
+    if (journal.receipts.at(-1)!.transition.state.activation?.unitId !== unitId('a-leader-unit'))
+      journal = nextDefend(v5, journal);
+    journal = nextDefend(v5, journal);
+    const prepared = prepareCombatPhysicalEffects(f.root, journal);
+    expect(prepared.status).toBe('PREPARED');
+    expect(prepared.root.physical.vitals[0]).toMatchObject({
+      currentHealth: 60,
+      currentStamina: 72,
+    });
+  });
+
   it('persists verified pools, including the initial clamp, and replays deterministically', () => {
     const f = fixture();
     const unchanged = canonicalJson(f.root);

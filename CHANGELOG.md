@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Accept affordability evidence and integrate delivered bow — 2026-10-21, LOCAL
+
+- `codex/combat-affordability-184`, #184: independent Tier V evaluator and
+  absolute visual critic ACCEPT frozen `f589f94c`; every applicable visual score
+  is 2. Supported level/0→1→2 crowds establish actual B1 silhouette/annotation
+  intersections with eight verified on/off pairs. Actual mill manual input and
+  round 11 victory, viewport/native125/CVD proof and limits are retained in
+  [evidence](docs/engineering/evidence/uix-affordability-bands/README.md).
+- Evidence-only commit `39f8c0b2` follows shared-record receipts. Integrate merged
+  PR259 main `19d2c296` by ordinary merge; only CHANGELOG/CURRENT_PLAN conflicted,
+  both histories retained. Incoming main contains the delivered persistent bow;
+  accepted #184 game source/tests are unchanged. Normal integrated validator
+  and hosted CI are pending; no publication, merge or acceptance waiver here.
+
 ### Deliver persistent bow and reconcile the pipeline — 2026-10-21, PUBLISHED
 
 - `codex/combat-affordability-184`: coordinator status-only receipt for
@@ -156,6 +170,39 @@ requests.
   gameplay/visual review and publication remain pending.
   [Owning behavior](docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
 
+### Publish persistent bow successor — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`, [PR259](https://github.com/Vovanostm/warwrit/pull/259):
+  retain fresh source/playable Tier L ACCEPT for `63ce897e`, small day/night
+  JPEGs and full reports. Main merge `16cedf56` changes no accepted game source;
+  evidence-only `9134029e` and coordinator records preserve the gate boundary.
+  Integrated validator 9/9 PASS, 671 PASS / 52 SKIP, scope 239; PR scope SUCCESS.
+  Final hosted clean-checkout CI remains pending; merge NOT_RUN.
+- #184 integrated main as `74ea6cc3`, status-only conflicts preserved. Two merge
+  audits failed because staged incoming-main coverage omitted retained branch
+  code; 21 focused tests PASS. Normal incoming-main audit against branch parent
+  PASS; normal main-based slice validator is running, with no weakened hook.
+  Fresh Tier V proof remains pending. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  No migration, deployment, balance measurement or full-M1 claim.
+
+### Accept persistent bow journey and integrate pipeline main — 2026-10-21, LOCAL
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  independent source and playable Tier L ACCEPT at `63ce897e`. Real rendered
+  day/night 4 → 3 → 0 AP, 16-stamina shot, atomic 2 AP refusal, V5 process
+  restart/retry, genuine old-active V4 continuation and supported terminal
+  settlement/proof/idempotency pass. Finite evaluator checks: 61 PASS; earlier
+  failures and synthetic pre-admission fixture limits remain recorded.
+- Integrate actual main `46fe0c33` as `16cedf56`; only CHANGELOG conflicted,
+  both histories retained, accepted game source/tests unchanged. Integrated
+  coordinator validator exit 0, 9/9 PASS, 671 PASS / 52 SKIP; source scope 239.
+  Normal merge audit PASS. [Proof](docs/engineering/evidence/core-bow-three-ap/README.md)
+  is being retained with review/evaluation and small day/night JPEGs.
+- Publish one PR for #249 next; hosted full clean-checkout gate and merge are
+  pending. #184 remains validating after evidence/process delegation; fresh
+  Tier V gates required. No migration, deployment, new rule, balance measurement
+  or full-M1 claim. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+
 ### Self-driving Orca backlog — 2026-10-21, PUBLISHED
 
 - `claude/orca-self-driving`: owner request «Продолжай. Обнови задачи, настрой
@@ -170,6 +217,133 @@ requests.
   minutes; the digest includes the date so a new day wakes one tick.
 - Rationale and sources: [AGENT_TEAM](docs/engineering/AGENT_TEAM.md#pipeline-evidence-review--2026-10-21).
   Checks: `bash -n`, Prettier. Effect on throughput NOT_MEASURED.
+
+### Validate the persistent bow fixture repair — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  round 2 normally commits the explicit wolf revision read and valid bow-leader
+  preparation through the public CreateCompany opening producer (`5d87f0e1`),
+  then the report (`482f8daa`). The synthetic sword fixture lacked archery
+  aptitude; no production guard, rule or assertion was weakened. Add native
+  supported-terminal completion/proof/exact-retry assertions. Earlier failures
+  remain recorded in the slice report and logs.
+- Author isolated PostgreSQL regression 1 PASS / 23 filtered SKIP, related
+  current-source coverage 689 PASS / 34 SKIP and normal commit audit PASS.
+  Coordinator validator at clean `482f8daa`: exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
+  scope 239 source lines. Coordinator PG NOT_RUN; fresh independent evaluator
+  owns its disposable database and complete persistent rendered/refusal/terminal
+  acceptance. Source reviewer and evaluator round 2 are live; no ACCEPT yet.
+- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and local dispatch
+  checkpoint; publish retained commits and records. No new source change in this
+  records commit. Full integrated gate/hosted CI/PR/merge remain pending;
+  no migration, deployment, balance or full-M1 claim. #184/#231 remain gated.
+
+### Recover persistent bow terminal proof — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  round 1 worker failed; preserve staged explicit wolf GET/success test fix and
+  report. Both JOINs now succeed; two isolated-PG runs reach move/shot/replay/retry,
+  then fail at `apps/server/src/encounters/terminal-evidence.ts:149`. Fixture
+  versus production cause remains unestablished; supported terminal proof is open.
+- Author server typecheck/lint PASS; normal commit refused after refreshed
+  coverage (93 audit findings / 5 clone groups). Earlier audit PASS does not
+  supersede this failure. Allocate ordinary round 2 of 2 to root-cause repair
+  and legitimate related current-source coverage with isolated PG available to
+  the normal hook; no guard, assertion, audit or scope waiver.
+- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md); coordinator commits
+  only shared records, leaving both staged worker files for the sole successor.
+  Scoped formatting/diff/readback checks; coordinator game checks NOT_RUN.
+  Fresh validate/Tier L/CI/PR/merge remain pending; no new rule or deployment.
+
+### Consolidate persistent bow gate rework — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  evaluator eval-1 REWORK at `cd487a8e` confirms source review's wrong-contract
+  revision read (real PG 1 FAIL / 23 filtered SKIP). Both findings share one
+  bounded rework round; a single builder task fixes explicit wolf GET/success
+  checks and reruns the finite regression without changing production guards.
+- Preserve evaluator's native V5 move/shot, restart/retry, genuine old V4
+  continuation and seven replay baseline evidence with their limits. Supported
+  terminal effects/proof/retry, native 2 AP refusal and complete day/night
+  rendered move journeys remain unproven; fresh Tier L gates must finish them.
+  Evaluator cleaned its isolated runtime/DB; settlement recorded and released.
+- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and local dispatch
+  checkpoint for the one-tick continuation. Documentation-only commit; scoped
+  formatting/diff/readback checked, game checks NOT_RUN by coordinator.
+  No source change, acceptance waiver, migration, merge or deployment.
+
+### Record persistent bow test rework — 2026-10-21, LOCAL
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  fresh source review REWORK at `759546e9`; the new encounter PG regression
+  reads the default raider revision before a wolf JOIN. Evaluator's isolated
+  migrated-PG run fails with 409 / STALE_REVISION (1 FAIL / 23 SKIP), before
+  admission. No production defect or persistent acceptance is established.
+- Queue the bounded test fix: GET the explicit wolf contract for each actor and
+  assert success before JOIN, preserving all revision guards and later checks.
+  Evaluator remains live; collect its verdict before dispatching round 1 rework.
+  No source changed or rework budget spent. Earlier validator 9/9 PASS remains
+  historical; no game checks rerun by this coordinator tick.
+- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with the exact failure,
+  ownership and pending gates. Source, persistent restart/old-active/terminal
+  proof, PR/CI/merge remain unaccepted; no new rule, migration or deployment.
+
+### Validate persistent bow source and prepare independent gates — 2026-10-21, LOCAL
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  company projection 5, strict binding/save/receipt consumers and new wolf
+  admission use already delivered bridge-v5. Normal main integration preserves
+  legacy active rules/replays and JOIN lock order; no new migration or rule.
+- Source `0a38a99b` is committed and clean, scope 239 lines. Coordinator
+  validator exit 0, 9/9 PASS; related tests 671 PASS / 52 SKIP, audit PASS.
+  Builder's native lab step/shot is author proof only. Actual PG attempt failed
+  before admission because the disposable DB lacked its existing schema;
+  persistent restart/old-active/terminal proof remains NOT_RUN.
+- Fresh independent Tier L gates are next, including isolated test-schema setup
+  with existing migrations only. Hosted CI/publication/merge remain pending;
+  no #249/#218 closure, deployment, balance or full-M1 claim.
+  [Current checkpoint](docs/engineering/CURRENT_PLAN.md); owning builder report
+  is tracked at `.orca/core-bow-three-ap/report.md`.
+
+### Start persistent bow successor integration — 2026-10-21, LOCAL
+
+- `codex/bow-three-ap-249`, [#249](https://github.com/Vovanostm/warwrit/issues/249):
+  consume the fresh five-section contract after merged #256/PR257. Remaining
+  company/binding and persistent adapter scope measures 190 source lines before
+  integration; final scope, audit and persistent acceptance remain NOT_RUN.
+- Begin ordinary integration of main `d8a04196`, preserving retained `e68025b9`.
+  Coordinator reconciles both shared-record histories; the sole core builder
+  owns outstanding source conflicts and must preserve delivered #256 replay,
+  runtime and lab regressions. No reset, rebase, source waiver or new rule.
+- Builder task `task_73dc0817b72c` owns normal audited commits and finite persistent
+  admission/move/shot/save/restart proof. Coordinator validation, fresh Tier L
+  gates, publication and merge remain pending. Documentation readback/diff and
+  formatting are the only coordinator checks this tick; game checks NOT_RUN.
+  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+
+### Deliver bow lab and prepare persistent successor — 2026-10-21, PUBLISHED
+
+- `codex/bow-three-ap-249`: record actual merged predecessor
+  [PR257](https://github.com/Vovanostm/warwrit/pull/257), merge `d8a04196`;
+  final-head CI `39602921979` SUCCESS, integrated validator 9/9 PASS and fresh
+  Tier L source/playable ACCEPT for unchanged code `1105189d`. #256 closed/done;
+  clean finished worktree removed after local evidence retention.
+- This branch retains WIP source `e68025b9`; only coordinator records change here.
+  Fresh #249 contract must inspect current main before company/binding and
+  persistent admission/save/restart work; that acceptance remains NOT_RUN.
+  Earlier WIP audit remains NOT_RUN; no new game test executed for these records.
+- [Current checkpoint](docs/engineering/CURRENT_PLAN.md) records #184 needs-owner
+  and its existing evidence-only recovery question. No additional attempt,
+  migration, deployment or full-M1 claim.
+
+### Deliver canonical pickup targets — 2026-10-21, MERGED
+
+- `codex/representative-hunt-recovery`, [PR251](https://github.com/Vovanostm/warwrit/pull/251)
+  merged7b9a1dca; reviewed/tested/main contents match. CI39515766544 SUCCESS:
+  937unitPASS/50SKIP,10000stress,17realPG/auth,migrations,coverage/audit.
+  Independent source and recovered-save runtime ACCEPT; no impossible targets
+  offered, original failed DB6 preserved. Separate DB7 payment/restart follows;
+  broader174/177 remain partial. [Record](docs/engineering/evidence/persistent-hud/main-readback.md).
 
 ### Integrate bow lab with current pipeline main — 2026-10-21, PUBLISHED
 

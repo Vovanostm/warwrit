@@ -97,7 +97,8 @@ represented by twenty statistical fixture profiles.
 
 ## Sprite v3 — 2026-10-13
 
-New battles use `sprite-prototype-v3`. Grid, routes, movement/shot fills, threat
+New battles use `sprite-prototype-v4` with response-derived bow3 AP costs.
+Historical sessions retain their recorded rules. Grid, routes, movement/shot fills, threat
 markers and all ground rings draw before figures. Alpha-aware body picking
 follows the same stable entity order as rendering; transparent PNG margins
 remain ground input. Height0/1/2 tops and exposed textured faces use the same

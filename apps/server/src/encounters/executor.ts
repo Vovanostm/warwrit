@@ -463,7 +463,8 @@ function chooseEncounterAi(
   state: combat.BattleState,
   doctrine: combat.AiDoctrine,
 ): combat.CombatCommand {
-  return state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID
+  return state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
     ? combat.chooseTacticalCombatCommand(state)
     : combat.chooseAiCommand(state, doctrine);
 }
@@ -1006,7 +1007,11 @@ export async function executeEncounterCommand(
       if (commandTick === null) return rejected('CONFLICT');
     }
 
-    if (dto.version === 2 && state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID)
+    if (
+      dto.version === 2 &&
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    )
       return rejected('INVALID_COMMAND');
     const command =
       dto.intent.type === 'autoplay'
@@ -1353,6 +1358,7 @@ function isPersistentEncounterSetup(setup: EncounterStoredRow['setup']): boolean
       combat.M1_DOMAIN_BRIDGE_V2_RULESET_ID,
       combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
       combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID,
+      combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID,
     ].some((id) => id === setup.rulesetId)
   );
 }

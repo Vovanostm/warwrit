@@ -22,9 +22,10 @@ Earlier deliveries: PR255/#254 and PR257/#256.
 #184: unchanged source `5599c8f1`, main `46fe0c33` integrated as `74ea6cc3`;
 validator 9/9 PASS, 48 tests, scope 272. Two staged-main audit failures remain
 recorded; normal incoming-main audit and ordinary main-based validator PASS.
-Fresh Tier V eval-3 and absolute visual-2 remain live on gated `f589f94c`;
-B1 silhouette/annotation evidence pending. Only shared records advance here.
-No third source rework, acceptance waiver, #184 PR or visual ACCEPT is claimed.
+Fresh Tier V eval-3 and absolute visual-2 ACCEPT gated `f589f94c`; B1 closes
+with eight unchanged on/off pairs over actual level/0/1/2 intersections.
+Reports and JPEGs retained; main `19d2c296` integration is in progress.
+Integrated validator and final hosted CI/publication are pending; no waiver.
 #231 is first next web slice after #184. Core #225 retains its log dependency;
 other ready slices retain their ownership and prerequisites.
 Daily scout settled: mill/deserter day/night journeys, round 7 victories,
@@ -32,7 +33,7 @@ no new findings. Daily digest already posted; no duplicate scout or digest.
 Metric: 1 merged PR with playable proof this tick. Balance/performance
 NOT_MEASURED; no auto-merge, deployment or full-M1 acceptance.
 Infrastructure PR134/129 remain outside slice merge authority.
-Next: consume #184 gates, then deliver or follow the applicable fallback.
+Next: finish #184 integrated validator, publish its one-issue PR, require CI.
 
 ## Dated history
 
@@ -79,6 +80,78 @@ Infrastructure PR258 requires separate owner merge permission; it is outside sli
 Next: green final integrated-head CI, native blocked-label check, expected-head
 merge #257, then contract #249. No auto-merge or deployment is authorized.
 This tick: 0 merged PRs with playable proof so far; no full-M1 claim.
+
+Delivered earlier: PR255/#254 and PR257/#256. This tick: 0 merged PRs with
+playable proof so far. Infrastructure PR134/129 remain outside slice authority.
+#249: fresh source and playable Tier L ACCEPT at `63ce897e`; evidence retains
+rendered day/night 4 → 3 → 0 AP, 16-stamina shot, atomic 2 AP refusal,
+real V5 process restart/retry, genuine old-active V4 continuation and supported
+terminal/proof/idempotency. Evaluator finite 61 PASS; fixture limits retained.
+Main `46fe0c33` integrated as `16cedf56`: CHANGELOG-only conflict, both histories
+preserved; no post-gate game source/test change. Normal merge audit PASS.
+Integrated coordinator validator exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
+239 source lines. [PR259](https://github.com/Vovanostm/warwrit/pull/259) is open; PR scope SUCCESS,
+final hosted full gate/merge pending.
+[Accepted proof and limits](evidence/core-bow-three-ap/README.md).
+#184: source `5599c8f1` unchanged, main integrated as `74ea6cc3`; normal
+main-based validator is running. Merge audit against branch parent PASS after
+two staged-main coverage failures; 21 focused tests PASS, no hook weakened.
+Prior coordinator evidence/process decision resumes one bounded read-only B1
+supported-layout attempt, then fresh Tier V evaluator and absolute visual gates.
+B1 intersection remains unproven; no third source rework or acceptance waiver.
+#231 stays first next web slice after #184; other dependencies unchanged.
+Daily scout is playing pinned main `46fe0c33`; triage follows its settlement.
+Local validators are serial after scout startup; performance during overlap
+is NOT_MEASURED for acceptance. No auto-merge, deployment or full-M1 claim.
+Next: final-head green CI/blocked-label checks for #249, then expected-head
+merge; finish #184 validator and start its fresh read-only Tier V gates.
+
+## Dated history
+
+**Prior #249 gate checkpoint — 2026-10-21 (superseded above):**
+
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local handover overrides; no new milestone.
+Previously delivered: PR257/#256 merged `d8a04196`, CI `39602921979` SUCCESS,
+validator 9/9 and Tier L ACCEPT; lab acceptance stays separate from #249.
+#249: round 2 settled succeeded at clean `482f8daa`, source/test commit `5d87f0e1`;
+retained WIP/main history preserved. Worker recorded, acknowledged and released.
+Root cause was invalid synthetic archery preparation: the sword fixture lacked
+archery aptitude. The test now uses the public CreateCompany opening producer
+for the bow leader; original terminal guard and earlier assertions remain intact.
+Author isolated PG terminal/proof/exact retry: 1 PASS / 23 filtered SKIP;
+related current-source coverage: 689 PASS / 34 SKIP, normal commit audit PASS.
+Earlier stale-revision, terminal-evidence and audit failures remain history.
+Coordinator validator on `482f8daa`: exit 0, 9/9 PASS, 671 PASS / 52 SKIP;
+source scope 239 lines. Coordinator PG NOT_RUN; evaluator owns fresh isolated DB.
+#249 implementing → validating → review. Fresh Tier L reviewer
+`task_6b33a6c81ce3` and evaluator `task_37b385ba7c4e` are live;
+source is frozen, only coordinator CHANGELOG/CURRENT_PLAN may advance.
+Evaluator must complete rendered day/night move/shot, native 2 AP refusal,
+supported terminal/proof/retry and saved-version/restart/old-active checks.
+Prior eval-1 proof retains its stated limits; no independent ACCEPT yet.
+Owning evidence: `.orca/core-bow-three-ap/{report,review-1,eval-1}.md`,
+`rework2-*` logs and pending `{review-2,eval-2}.md` in the dedicated worktree.
+No open slice PR; full integrated gate/hosted CI/publication/merge remain pending.
+#184 remains needs-owner at `3963215b`; existing B1 evidence question pending.
+#231 stays first next web slice after #184; other dependencies unchanged.
+Infrastructure PR258 remains outside slice merge authority. No blocked label removed.
+This tick: 0 merged PRs with playable proof; no new rule, migration, deployment,
+balance measurement or full-M1 claim. Next tick consumes the two gate settlements.
+
+**Persistent bow contract/integration — 2026-10-21, LOCAL:**
+Fresh contract has all required sections and no open product question. Contract
+writer performed source/scope reading only; executable checks NOT_RUN. Ordinary
+main integration has source conflicts in already-delivered combat/lab tests and
+replay/runtime files. One builder receives those integration paths plus remaining
+company/persistent ownership; no new core/lab feature delta is authorized.
+Previous pipeline snapshots describing PR257 as pending are superseded by the
+merged status above; their underlying evidence and reasons remain in history.
 
 **JOIN lock order254 — 2026-10-21, LOCAL / implementation active:**
 Parent owns `contracts/routes.ts` and the existing encounter PostgreSQL integration

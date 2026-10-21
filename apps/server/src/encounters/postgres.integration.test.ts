@@ -27,6 +27,11 @@ import { createDatabase, createDatabaseReadinessProbe } from '../db/database.js'
 import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
 import { loadCompanyAggregate } from '../company/repository.js';
+import {
+  createOpeningAggregate,
+  issueOpeningOption,
+  openingOptionView,
+} from '../company/opening.js';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 import {
   createFixtureEncounter,
@@ -382,6 +387,113 @@ function makeFirstHuntJoinActor(
   };
 }
 
+// Generate skill/aptitude profiles through the public opening preparer. The combat
+// fixture deliberately models only blades/defense/leadership, so changing its gear
+// alone does not make it a valid archery-practice fixture. This is pre-admission
+// fixture assembly, not an onboarding/acquisition/travel acceptance claim.
+function openingBowSkills(actor: FirstHuntJoinActor) {
+  const lifecycle = actor.initial.economy.lifecycle;
+  const leaderId = lifecycle.company!.currentLeaderId;
+  const issued = issueOpeningOption(new Date(), lifecycle.worldId, lifecycle.campaignTick);
+  const evidence = {
+    ...issued.evidence,
+    companyId: lifecycle.companyId,
+    leaderId,
+    partyId: actor.partyId,
+  };
+  const initial = createOpeningAggregate(evidence, []).economy.lifecycle;
+  const opening = openingOptionView(evidence).opening;
+  const request = {
+    schemaVersion: combat.COMPANY_COMMAND_SCHEMA_VERSION,
+    commandId: evidence.id,
+    sourceEventId: evidence.sourceEventId,
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    actorRef: { kind: 'PLAYER' as const, id: actor.accountId },
+    expectedRevision: initial.knowledge.revision,
+    campaignTick: initial.campaignTick,
+    rulesetId: combat.COMPANY_RULESET_ID,
+    type: 'CreateCompany',
+    payload: {
+      worldId: lifecycle.worldId,
+      companyId: lifecycle.companyId,
+      candidateSetId: evidence.id,
+      originId: evidence.originId,
+      cultureId: evidence.cultureId,
+      homelandId: evidence.location.siteId,
+      familyStoryId: evidence.familyStoryId,
+      leaderInput: { ...opening.leaderDefaults, birthName: 'Bow fixture' },
+      selectedCandidateIds: evidence.candidates
+        .slice(0, 2)
+        .map((candidate) => candidate.characterId),
+      name: 'Bow fixture',
+      bannerId: evidence.originId,
+    },
+  };
+  const result = combat.prepareCompanyLifecycle(initial, request, {
+    worldId: initial.worldId,
+    companyId: initial.companyId,
+    principal: request.actorRef,
+    publicRevision: initial.knowledge.revision,
+    canonicalRevision: initial.revision,
+    atTick: initial.campaignTick,
+    completeGraph: true,
+    contactIds: initial.characters.map((person) => person.identity.characterId),
+    facts: [evidence],
+  });
+  if (result.kind !== 'PREPARED') throw new Error(`Bow opening rejected: ${result.error}`);
+  return lifecycle.characters.map((person) => {
+    const generated = result.next.characters.find(
+      (entry) => entry.identity.characterId === person.identity.characterId,
+    );
+    return generated && person.identity.characterId === leaderId
+      ? { ...person, skills: generated.skills, aptitudeBySkill: generated.aptitudeBySkill }
+      : person;
+  });
+}
+
+// Lawful pre-admission fixture: retained item owners/IDs, a two-hand bow in place of
+// the leader's sword, their shield stowed, and normal supplies at the wolf objective.
+function bowHuntActor(actor: FirstHuntJoinActor): FirstHuntJoinActor {
+  const physical = actor.initial.economy.physical!;
+  const loadout = (items: typeof physical.items) =>
+    items.map((item) => {
+      if (item.equipped?.characterId !== actor.initial.economy.lifecycle.company!.currentLeaderId)
+        return item;
+      if (item.definitionId === 'shield') return { ...item, equipped: null };
+      return item.definitionId === 'sword'
+        ? {
+            ...item,
+            definitionId: 'bow',
+            equipped: { ...item.equipped, slots: ['MAIN_HAND', 'OFF_HAND'] as const },
+          }
+        : item;
+    });
+  const initial = combat.readCompanyCombatAggregateState({
+    ...actor.initial,
+    economy: {
+      ...actor.initial.economy,
+      lifecycle: { ...actor.initial.economy.lifecycle, characters: openingBowSkills(actor) },
+      physical: {
+        ...physical,
+        items: loadout(physical.items),
+        knowledge: {
+          ...physical.knowledge,
+          itemSnapshots: loadout(physical.knowledge.itemSnapshots),
+        },
+      },
+    },
+  });
+  return {
+    ...actor,
+    initial: relocateFirstHuntJoinCompany(initial, {
+      kind: 'AT',
+      siteId: 'bereznyak',
+      areaId: 'bereznyak-green',
+    }),
+  };
+}
+
 async function seedFirstHuntJoinScenario(
   database: (typeof databases)[number],
   mixed = false,
@@ -389,14 +501,17 @@ async function seedFirstHuntJoinScenario(
   encountersEnabled = mixed,
   overloadedOwner = false,
   helperCarriedPartyRations?: number,
+  wolfHunt = false,
 ): Promise<{
   readonly worldId: string;
   readonly owner: FirstHuntJoinActor;
   readonly helper: FirstHuntJoinActor;
   readonly app: ReturnType<typeof buildApp>;
 }> {
-  const owner = makeFirstHuntJoinActor(worldId, mixed, overloadedOwner);
-  const helper = makeFirstHuntJoinActor(worldId, false, false, helperCarriedPartyRations);
+  const ownerFixture = makeFirstHuntJoinActor(worldId, mixed, overloadedOwner);
+  const helperFixture = makeFirstHuntJoinActor(worldId, false, false, helperCarriedPartyRations);
+  const owner = wolfHunt ? bowHuntActor(ownerFixture) : ownerFixture;
+  const helper = wolfHunt ? bowHuntActor(helperFixture) : helperFixture;
   for (const [actor, subject] of [
     [owner, 'owner'],
     [helper, 'helper'],
@@ -450,7 +565,7 @@ async function seedFirstHuntJoinScenario(
     .updateTable('contract_instances')
     .set({ owner_company_id: owner.companyId, helper_company_id: helper.companyId, revision: '1' })
     .where('world_id', '=', worldId)
-    .where('instance_id', '=', 'ci.m1.raider-standard.01')
+    .where('instance_id', '=', wolfHunt ? 'ci.m1.wolf-trail.01' : 'ci.m1.raider-standard.01')
     .executeTakeFirstOrThrow();
   const config = loadServerConfig({
     DATABASE_URL: connectionString,
@@ -3807,4 +3922,286 @@ it.skipIf(connectionString === undefined)(
     }
   },
   15000,
+);
+
+it.skipIf(connectionString === undefined)(
+  'freezes bridge v5 through real wolf JOIN, move and bow shot, durable retry and terminal effects',
+  async () => {
+    const database = databases[0]!;
+    const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(
+      database,
+      false,
+      randomUUID(),
+      true,
+      false,
+      undefined,
+      true,
+    );
+    const restoreClock = freezeCampaignClock();
+    try {
+      for (const actor of [owner, helper]) {
+        const read = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+          headers: actor.headers,
+        });
+        expect(read.statusCode, read.body).toBe(200);
+        const joined = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: actor.headers,
+          payload: {
+            schemaVersion: 1,
+            commandId: randomUUID(),
+            expectedPublicRevision: read.json().publicRevision,
+            type: 'JOIN',
+            payload: { instanceId: 'ci.m1.wolf-trail.01' },
+          },
+        });
+        expect(joined.statusCode, joined.body).toBe(200);
+      }
+      const admission = await database
+        .selectFrom('encounter_admissions')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      const encounterId = admission.encounter_id;
+      const saved = await database
+        .selectFrom('encounters')
+        .selectAll()
+        .where('id', '=', encounterId)
+        .executeTakeFirstOrThrow();
+      const savedSetup = saved.setup as combat.BattleSetupV2;
+      const savedBinding = admission.binding as combat.FrozenEncounterBinding;
+      expect(savedSetup.rulesetId).toBe(combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID);
+      expect((saved.state as combat.BattleState).rulesetId).toBe(savedSetup.rulesetId);
+      expect(savedBinding.setup.rulesetId).toBe(savedSetup.rulesetId);
+      for (const actor of [owner, helper]) {
+        const root = await database
+          .transaction()
+          .execute((tx) => loadCompanyAggregate(tx, worldId, actor.companyId));
+        expect(root?.encounter.active?.binding).toEqual(admission.binding);
+        expect(
+          root?.encounter.active?.binding.participants.every(
+            ({ projection }) =>
+              projection.schemaVersion === 5 && projection.combatRulesetId === savedSetup.rulesetId,
+          ),
+        ).toBe(true);
+      }
+      let shotReceipt: EncounterCommandResponse | undefined;
+      let shotRequest: Parameters<typeof executeEncounterCommand>[2] | undefined;
+      let controller: FirstHuntJoinActor | undefined;
+      // Advance actual hostile AI wakes; never replace setup, state, policies or journals.
+      for (let step = 0; step < 40 && !shotReceipt; step += 1) {
+        const row = await database
+          .selectFrom('encounters')
+          .selectAll()
+          .where('id', '=', encounterId)
+          .executeTakeFirstOrThrow();
+        const state = row.state as combat.BattleState;
+        for (const actor of [owner, helper]) {
+          const access = await readEncounterAccess(database, actor.accountId, encounterId);
+          const tactical = access?.controlGrant.tactical;
+          if (
+            !tactical ||
+            tactical.actionPoints !== 4 ||
+            state.units.find((unit) => unit.id === tactical.actorId)?.weaponId !== 'bow'
+          )
+            continue;
+          const move = tactical.moves.find((option) => {
+            if (option.actionPointCost !== 1) return false;
+            const trial = combat.applyCombatCommand(state, {
+              commandId: combat.commandId('choose-supplied-step'),
+              activationId: tactical.activationId,
+              actorId: combat.unitId(tactical.actorId),
+              type: 'move',
+              to: option.to,
+            });
+            return trial.ok && combat.previewCombatAttacks(trial.state).length > 0;
+          });
+          if (!move) continue;
+          controller = actor;
+          const moved = await app.inject({
+            method: 'POST',
+            url: '/encounters/commands',
+            headers: actor.headers,
+            payload: {
+              version: 1,
+              encounterId,
+              commandId: randomUUID(),
+              expectedRevision: state.revision,
+              activationId: tactical.activationId,
+              actorId: tactical.actorId,
+              intent: { type: 'move', to: move.to },
+            },
+          });
+          expect(moved.statusCode, moved.body).toBe(200);
+          expect(moved.json().status).toBe('accepted');
+          const afterMove = await readEncounterAccess(database, actor.accountId, encounterId);
+          const grant = afterMove!.controlGrant.tactical!;
+          expect(grant).toMatchObject({
+            actionPoints: 3,
+            activationId: tactical.activationId,
+            actorId: tactical.actorId,
+          });
+          const shot = grant.attacks[0]!;
+          expect(shot).toMatchObject({ actionPointCost: 3, staminaCost: 16 });
+          shotRequest = {
+            version: 1,
+            encounterId,
+            commandId: randomUUID(),
+            expectedRevision: moved.json().revision,
+            activationId: grant.activationId,
+            actorId: grant.actorId,
+            intent: { type: 'attack', targetId: shot.targetId },
+          };
+          const attacked = await app.inject({
+            method: 'POST',
+            url: '/encounters/commands',
+            headers: actor.headers,
+            payload: shotRequest,
+          });
+          expect(attacked.statusCode, attacked.body).toBe(200);
+          shotReceipt = attacked.json<EncounterCommandResponse>();
+          expect(shotReceipt.status).toBe('accepted');
+          const shotState = await database
+            .selectFrom('encounters')
+            .select('state')
+            .where('id', '=', encounterId)
+            .executeTakeFirstOrThrow();
+          expect(
+            (shotState.state as combat.BattleState).units.find((unit) => unit.id === grant.actorId)!
+              .stamina,
+          ).toBe(grant.stamina - 16);
+          break;
+        }
+        if (shotReceipt) break;
+        // Other owned fighters retain their original swords. Advance their turns
+        // with native waits until the opening-generated bow leader can act.
+        const waiting = [owner, helper].find((actor) =>
+          savedBinding.participants.some(
+            (participant) =>
+              participant.companyId === actor.companyId &&
+              participant.unitId === state.activation?.unitId,
+          ),
+        );
+        if (waiting) {
+          const waited = await app.inject({
+            method: 'POST',
+            url: '/encounters/commands',
+            headers: waiting.headers,
+            payload: {
+              version: 1,
+              encounterId,
+              commandId: randomUUID(),
+              expectedRevision: state.revision,
+              activationId: state.activation!.id,
+              actorId: state.activation!.unitId,
+              intent: { type: 'wait' },
+            },
+          });
+          expect(waited.statusCode, waited.body).toBe(200);
+          expect(waited.json().status).toBe('accepted');
+          continue;
+        }
+        const wakes = (
+          await listDueEncounterAiWakes(database, new Date(Date.now() + 60_000))
+        ).filter((wake) => wake.encounterId === encounterId);
+        expect(
+          wakes.length,
+          'fixture must reach an owned bow activation via real AI',
+        ).toBeGreaterThan(0);
+        for (const wake of wakes) await executeEncounterAiWake(database, wake);
+      }
+      expect(shotRequest).toBeDefined();
+      expect(controller).toBeDefined();
+      const reopened = createDatabase(connectionString!);
+      try {
+        expect(await verifyEncounterReplay(reopened, encounterId)).toBe(true);
+        expect(
+          await executeEncounterCommand(reopened, controller!.accountId, shotRequest!),
+        ).toEqual(shotReceipt);
+        const receipts = await reopened
+          .selectFrom('encounter_receipts')
+          .selectAll()
+          .where('encounter_id', '=', encounterId)
+          .where('command_id', '=', shotRequest!.commandId)
+          .execute();
+        expect(receipts).toHaveLength(1);
+        const active = await app.inject({
+          method: 'GET',
+          url: '/encounters/active',
+          headers: controller!.headers,
+        });
+        expect(active.statusCode, active.body).toBe(200);
+        expect(active.json().encounterId).toBe(encounterId);
+        const reloaded = await reopened
+          .selectFrom('encounters')
+          .select(['setup', 'state'])
+          .where('id', '=', encounterId)
+          .executeTakeFirstOrThrow();
+        expect(reloaded.setup).toEqual(saved.setup);
+        expect((reloaded.state as combat.BattleState).rulesetId).toBe(savedSetup.rulesetId);
+      } finally {
+        await reopened.destroy();
+      }
+      await playFirstHuntToVictory(database, app, encounterId, [owner, helper]);
+      await applyPendingFirstHuntTerminalEffects(database);
+      expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
+      const terminal = await database
+        .selectFrom('encounter_admissions')
+        .selectAll()
+        .where('encounter_id', '=', encounterId)
+        .executeTakeFirstOrThrow();
+      expect(terminal.effects_applied_at).not.toBeNull();
+      expect((terminal.binding as combat.FrozenEncounterBinding).setup.rulesetId).toBe(
+        combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+      );
+      const terminalRows = async () => ({
+        proofs: await database
+          .selectFrom('world_proof_claims')
+          .selectAll()
+          .where('encounter_id', '=', encounterId)
+          .execute(),
+        receipts: await database
+          .selectFrom('company_receipts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .orderBy('company_id')
+          .orderBy('command_id')
+          .execute(),
+        roots: await database
+          .selectFrom('company_snapshots')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .orderBy('company_id')
+          .execute(),
+      });
+      const settled = await terminalRows();
+      expect(settled.proofs).toHaveLength(1);
+      for (const actor of [owner, helper]) {
+        const root = await database
+          .transaction()
+          .execute((tx) => loadCompanyAggregate(tx, worldId, actor.companyId));
+        expect(root?.encounter.active).toBeNull();
+        expect(root?.encounter.completed).toHaveLength(1);
+        expect(
+          settled.receipts.filter(
+            (receipt) =>
+              receipt.company_id === actor.companyId &&
+              (receipt.response as { type?: string }).type === 'FIRST_HUNT_TERMINAL',
+          ),
+        ).toHaveLength(1);
+      }
+      expect(await applyPendingFirstHuntTerminalEffects(database)).not.toContain(encounterId);
+      expect(await executeEncounterCommand(database, controller!.accountId, shotRequest!)).toEqual(
+        shotReceipt,
+      );
+      expect(await terminalRows()).toEqual(settled);
+    } finally {
+      restoreClock();
+      await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+    }
+  },
+  60_000,
 );
