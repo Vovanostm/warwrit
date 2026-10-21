@@ -548,6 +548,10 @@ function bindingVersionsMatch(value: Record<string, unknown>): boolean {
   );
 }
 
+function isTacticalBridgeRuleset(ruleset: unknown): boolean {
+  return ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID || ruleset === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+}
+
 function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
   const participants = value['participants'];
   const worldParticipants = value['worldParticipants'] ?? [];
@@ -618,13 +622,11 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
         weaponId: participant['weaponId'],
         attributes: participant['attributes'],
         initialPools: participant['initialPools'],
-        ...(setup['rulesetId'] === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-        setup['rulesetId'] === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+        ...(isTacticalBridgeRuleset(setup['rulesetId'])
           ? { skillRanks: {}, moralePolicy: participant['moralePolicy'] }
           : {}),
         ...(setup['rulesetId'] === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
-        setup['rulesetId'] === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-        setup['rulesetId'] === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+        isTacticalBridgeRuleset(setup['rulesetId'])
           ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
           : {}),
       }) === canonicalJson(setupUnit)

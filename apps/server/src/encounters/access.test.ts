@@ -180,9 +180,7 @@ describe('public encounter projection', () => {
       ...v4Setup,
       rulesetId: combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID,
       units: v4Setup.units.map((unit, index) =>
-        index === 0
-          ? { ...unit, weaponId: 'bow' }
-          : { ...unit, position: { q: -1, r: -1 } },
+        index === 0 ? { ...unit, weaponId: 'bow' } : { ...unit, position: { q: -1, r: -1 } },
       ),
     };
     const v5 = { ...encounter, setup: v5Setup, state: combat.startBattleV2(v5Setup).state };

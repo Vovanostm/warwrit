@@ -126,6 +126,10 @@ function claim(ids: Set<string>, id: string): void {
 }
 
 /** G05: one detached candidate; no locks, root writes, settlement or public activation. */
+function isTacticalBridgeRuleset(ruleset: BattleSetupV2['rulesetId']): boolean {
+  return ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID || ruleset === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+}
+
 export function prepareEncounterBinding(
   sources: readonly EncounterCompanySource[],
   request: { readonly bindingId: string; readonly battleId: BattleId },
@@ -279,6 +283,7 @@ export function prepareEncounterBinding(
       ? { capabilities: participant.projection.capabilities }
       : {}),
   }));
+  const tacticalWorld = isTacticalBridgeRuleset(evidence.setup.rulesetId);
   const worldUnits = worldParticipants.map((participant) => ({
     id: participant.unitId,
     sideId: participant.sideId,
@@ -286,13 +291,8 @@ export function prepareEncounterBinding(
     weaponId: participant.weaponId,
     attributes: participant.attributes,
     initialPools: participant.initialPools,
-    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
-      ? { skillRanks: {}, moralePolicy: participant.moralePolicy }
-      : {}),
-    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
-    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-    evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    ...(tacticalWorld ? { skillRanks: {}, moralePolicy: participant.moralePolicy } : {}),
+    ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || tacticalWorld
       ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
       : {}),
   }));

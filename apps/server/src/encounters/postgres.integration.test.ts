@@ -3933,9 +3933,7 @@ it.skipIf(connectionString === undefined)(
           const move = tactical.moves.find((option) => {
             if (option.actionPointCost !== 1) return false;
             const trial = combat.applyCombatCommand(state, {
-              schemaVersion: 1,
               commandId: combat.commandId('choose-supplied-step'),
-              battleId: state.battleId,
               activationId: tactical.activationId,
               actorId: combat.unitId(tactical.actorId),
               type: 'move',
