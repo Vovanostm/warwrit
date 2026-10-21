@@ -8,6 +8,47 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 plus existing local overrides; no new milestone.
 This tick: 0 merged PRs with playable proof; merge NOT_RUN.
+Latest delivered proof remains [PR266/#261](https://github.com/Vovanostm/warwrit/pull/266),
+merged `61a91600`; no new player-visible acceptance this tick.
+#262 revised contract verified against native completed/succeeded settlement,
+structured result and full five-section contract; tracked source clean.
+Result recorded before acknowledgment, then worker released (no owned resource).
+[Coordinator split](https://github.com/Vovanostm/warwrit/issues/262#issuecomment-6322988759):
+#267 selection/autoplay → #268 session/editor → #269 menu and final complexity.
+Each child has one issue/PR, exclusive ownership and a 300-source-line stop,
+counting additions plus removals; copied criteria and exact proof remain explicit.
+#262 is ready as aggregate only, after #269; never close it before all child
+proof and final CombatLab cyclomatic ≤20 / cognitive ≤15 pass normal audit.
+#267 is planning in fresh dedicated `qa-hooks-selection-autoplay` from `61a91600`;
+read-only contract `task_2f2201ee4d12` / `ctx_ebacc8b8adf3` is natively live.
+It writes only `.orca/qa-hooks-selection-autoplay/contract.md`; no source builder.
+Full R2 allocation retained at coordinator `.orca/pipeline/retained/qa-hooks-menu/contract.md`.
+Local overrides/checkpoint preserve #267 → #268 → #269 → #262 → #263–#265;
+#231 stays open and #265 still waits for #190 actual paced playback.
+Try after implementation: ordinary mill seed 20261009, selection/Escape,
+one-step and autoplay start/stop at 1440×900 in day/night; proof remains pending.
+Core #225 retains its log prerequisite; no second lane writer or heavy job.
+Daily scout/digest already complete; no duplicate daily work.
+Infrastructure PR134/129 remain outside slice merge authority.
+Shared records published on `Vovanostm/qa-hooks-menu`; new child branch has base only.
+Game tests/typecheck/validation/audit acceptance/browser/build NOT_RUN this tick;
+performance and candidate complexity NOT_MEASURED. No waiver or full-M1 claim.
+No rule, protocol, replay, migration, dependency, wiki/setup/API behavior change.
+Next: verify #267 contract settlement, then sole web builder if actionable;
+#268/#269 remain dependency-gated. Wrapper releases its lease when this tick returns.
+
+## Dated history
+
+**Previous #262 contract revision checkpoint — 2026-10-21 (superseded above):**
+
+## Pipeline status — 2026-10-21
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 plus existing local overrides; no new milestone.
+This tick: 0 merged PRs with playable proof; merge NOT_RUN.
 Latest delivery remains [PR266/#261](https://github.com/Vovanostm/warwrit/pull/266),
 merged `61a91600`; prior independent editor/day/night proof remains unchanged.
 #262 initial contract received: exact native completed/succeeded settlement,
@@ -32,8 +73,6 @@ Performance NOT_MEASURED; no rule, protocol, replay, migration or full-M1 claim.
 Next: consume revision, create exact bounded children if needed, then start
 only an actionable contract/build under the existing one-writer lane limit.
 Wrapper releases its own lease when this single tick returns.
-
-## Dated history
 
 **Previous #261 delivery and #262 contract checkpoint — 2026-10-21 (superseded above):**
 

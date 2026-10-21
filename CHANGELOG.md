@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Split the menu contract into bounded children — 2026-10-21, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu`, [#262](https://github.com/Vovanostm/warwrit/issues/262):
+  coordinator verified the sole contract revision against exact native settlement,
+  structured result and the full five-section contract, recorded before ack,
+  then released the settled worker. Clean source preserved; no acceptance waiver.
+- Created [#267](https://github.com/Vovanostm/warwrit/issues/267) selection/autoplay,
+  [#268](https://github.com/Vovanostm/warwrit/issues/268) session/editor and
+  [#269](https://github.com/Vovanostm/warwrit/issues/269) menu/final complexity,
+  in that order. One issue/PR and at most 300 source additions plus removals each;
+  copied original criteria, exclusive ownership and focused/runtime proof remain.
+  #262 stays open until all children and final CombatLab 20/15 plus normal audit
+  pass; #263–#265 and #190 retain sequencing. No new rules or product question.
+- #267 ready → planning: fresh dedicated `qa-hooks-selection-autoplay`, base
+  `61a91600`, natively live read-only contract task `task_2f2201ee4d12` /
+  `ctx_ebacc8b8adf3`. No source builder or new playable acceptance. Local overrides
+  and retained full allocation are in coordinator `.orca/pipeline/`.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exact next gates.
+- Coordinator records only; documentation format/diff/tracked-link checks
+  accompany this commit. Game tests/typecheck/validation/audit acceptance/browser/
+  build NOT_RUN; performance and candidate complexity NOT_MEASURED. No rule,
+  protocol, replay, migration, dependency or wiki/setup/API behavior change.
+  Daily work already complete; 0 merged PRs with playable proof this tick.
+
 ### Bound the menu extraction contract — 2026-10-21, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu`, [#262](https://github.com/Vovanostm/warwrit/issues/262):
