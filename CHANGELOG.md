@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Merge session callbacks and assign visible editor Start — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271` records the pipeline tick and the
+  accepted #271 contract assignment after merging [PR #281](https://github.com/Vovanostm/warwrit/pull/281).
+  #273 is MERGED as `857b0491` at expected head `c872eab4`, closed/done.
+  Tier U ACCEPT, coordinator validate exit 0 (9/9 PASS), source scope 137,
+  final-head clean-checkout CI and PR scope PASS; later commits were evidence
+  and shared records only. No unresolved review or blocked label at merge.
+- [Owning contract, verdict and played day/night proof](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+  remain tracked. Local evidence retained; clean fully-pushed worktree removed.
+  This tick delivered 1 merged PR with playable proof; it preserves behavior
+  and does not claim a new player feature or full-M1 acceptance.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names #271's bounded sole web
+  builder task and P0 #272's disjoint core contract reservation. #271 starts
+  from merged main; #272 source/DB work awaits accepted contract and resource
+  handoff. #267 staged WIP/budgets and #269 AND #262 final gate are preserved.
+  Both implementations and their independent gates remain pending.
+- Documentation closeout: ordinary scoped diff, formatting and tracked links
+  checked; no setup/API/wiki contract change. No repeated game suite for this
+  records-only commit; full verify/stress/migrations/build NOT_RUN locally,
+  performance NOT_MEASURED. Daily work is already complete, not duplicated.
+  No rules, replay, protocol, renderer, dependency or migration change.
+
 ### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-session-callbacks`, [PR #281](https://github.com/Vovanostm/warwrit/pull/281),

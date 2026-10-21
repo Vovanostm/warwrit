@@ -4,6 +4,45 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: epic #217 and local overrides; P0 #272 refills the free core lane.
+This tick: 1 merged PR with playable proof, [PR #281](https://github.com/Vovanostm/warwrit/pull/281).
+#273 merged as `857b0491`, expected PR head `c872eab4`; issue closed/done.
+Tier U ACCEPT for source `a6b35143`; validate exit 0, 9/9 PASS, scope 137.
+Final-head clean-checkout CI and PR-scope checks PASS; no blocked labels,
+unresolved threads or change-request reviews. No source changed after gating.
+[Contract, verdict and day/night proof](evidence/qa-hooks-session-callbacks/README.md).
+Try: mill seed 20261009 at 1440×900, start/move/menu/one-step/replay,
+autoplay/stop/manual order/restart/editor/result; both modes reached victory.
+Local evidence retained under coordinator `.orca/pipeline/retained/qa-hooks-session-callbacks/`;
+clean fully-pushed slice worktree removed through Orca after merge readback.
+#271 accepted contract, dedicated `Vovanostm/codex-uix-start-action-271`,
+fast-forwarded to merged main. Builder task `task_a63cd9cb21f9` assigned;
+sole web writer owns only editor action functions, guard tests and bounded CSS.
+Outcome: visible Start/readiness in the first existing desktop editor viewport.
+Try after implementation: default mill, loaded preset, result → editor without scroll.
+Implementation, focused checks and independent Tier U remain pending.
+#272 contract-only assignment to the requesting owner-session worker;
+only `apps/server/src/auth/oidc.integration.test.ts`, own dedicated branch.
+No source/PG work before accepted contract and explicit resource handoff.
+Five parallel-PG runs and mutation proof remain required; Tier L retained.
+#267 staged two-file candidate/budgets preserved; follows #271, then #268.
+Final component cyclomatic ≤20 AND cognitive ≤15 stays on #269 AND #262;
+remaining #263/#231 acceptance preserved. No waiver or second coordinator.
+Daily metrics/scout/digest already complete. Other PRs retain existing authority.
+Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+No rules, replay, protocol, renderer, dependency or migration change this tick.
+Next: consume #271 builder and #272 contract; validate/gate each in its turn.
+Current records published on the #271 branch; main retains its last merged status.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous #273 premerge checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 and existing local overrides; no new milestone.
 This tick: 0 merged PRs with playable proof; merge NOT_RUN.
 #273 review → PR: [PR #281](https://github.com/Vovanostm/warwrit/pull/281),
@@ -31,8 +70,6 @@ Independent opponent-pause/root-unmount checks NOT_RUN; see verdict limits.
 Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
 Next: hosted CI and exact-head scope/blocked-label checks, then merge on gates.
 Wrapper releases its own lease when this single tick returns.
-
-## Dated history
 
 **Previous #273 validation/evaluator checkpoint (superseded above):**
 
