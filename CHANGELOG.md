@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Independent bow lab acceptance and publication — 2026-10-21, LOCAL
+
+- `Vovanostm/core-bow-lab-256`, issue #256: preserve fresh Tier L source and
+  playable ACCEPT plus small day/night JPEG proof. Code `1105189d` is unchanged;
+  the later `81328bc` commit changes only CHANGELOG/CURRENT_PLAN. Real editor
+  journeys establish AP 4 → 3 → 0, unchanged 16-stamina shot and same activation;
+  seven released replay baselines and completed mill replay independently match.
+- Existing coordinator validator 9/9 PASS and builder coverage 812 PASS / 51 SKIP
+  remain actual executed results; no test rerun for this evidence/docs update.
+  Hosted CI and merge are pending publication. Persistent acceptance remains
+  #249; balance NOT_MEASURED. No migration or deployment.
+  [Proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+
 ### Compatible bow core/lab and refreshed gates — 2026-10-21, LOCAL
 
 - `Vovanostm/core-bow-lab-256`, [#256](https://github.com/Vovanostm/warwrit/issues/256)

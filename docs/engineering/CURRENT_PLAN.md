@@ -9,13 +9,13 @@ Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
 Queue: epic #217 plus local handover overrides; no new milestone.
 Delivered earlier: [PR255](https://github.com/Vovanostm/warwrit/pull/255), JOIN
 #254, merged `0adcff2e` after CI, validator and Tier L ACCEPT; issue closed/done.
-Core [#256](https://github.com/Vovanostm/warwrit/issues/256): source `1105189d`,
+Core [#256](https://github.com/Vovanostm/warwrit/issues/256): code `1105189d`,
 branch `Vovanostm/core-bow-lab-256`, coordinator validator 9/9 PASS, scope 118
-changed source lines. New lab sprite v4 / core bridge v5 support ordinary bow
-3 AP with unchanged 16 stamina, range and damage. Builder's real day/night
-editor → 1 AP step → 3 AP shot and replay/resource readback are author proof;
-fresh Tier L reviewer and evaluator are live. No PR, hosted CI or merge yet.
-[Owning behavior contract](../../apps/server/src/combat-lab/README.md#sprite-v4-ordinary-bow--2026-10-21).
+source lines. Fresh Tier L source and playable ACCEPT: real day/night editor
+→ 1 AP step → 3 AP ordinary shot, unchanged 16 stamina, old replay compatibility,
+and completed mill battle/replay. Later `81328bc` changes only shared records.
+[Tracked proof and limits](evidence/core-bow-lab/README.md).
+Next: publish this slice, require green hosted CI, then expected-head merge.
 Web #184: evaluator ACCEPT on `06479a47`, exact 6/29 bands, round-12 victory,
 native 125% and 22 overlay pairs. Absolute visual critic REWORK: ink treatment
 scores 1; tight group across height 0/1/2 evidence missing. Round-2 builder
@@ -24,7 +24,7 @@ live; old ACCEPT does not cover the forthcoming source. Fresh gates follow.
 binding and persistent activation/restart proof; retained pushed `e68025b9`
 is untouched. Released versions/replays and persistent defaults stay unchanged.
 Open slice PRs: none. Infrastructure PR253 retains its separate owner merge gate.
-Blockers: #184 visual rework and fresh gates; #256 independent gates and CI;
+Blockers: #184 visual rework and fresh gates; #256 hosted CI;
 #249 predecessor. Other slices retain dependency and ownership gates.
 This tick: 0 merged PRs with playable proof. No migration, deployment or M1 claim.
 [Earlier JOIN proof and limits](evidence/join-lock-order-254/README.md).

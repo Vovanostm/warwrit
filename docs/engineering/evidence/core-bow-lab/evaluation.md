@@ -28,18 +28,19 @@ Used an isolated Playwright CLI session `bow256-eval1`, **1440×900**, only web2
 2. Returned through the UI to the real editor. Removed the twelve default units, clicked “Очистить карту”, placed W05 “Лук” on the human side at (3,5) and W02 “Топор + щит” at (6,5). Native create request confirms flat plain height-0 unblocked tiles and those profiles/positions. No imported fabricated server state. Evidence: `editor-fixture.png`, `editor-fixture.txt`, `day-create-native.txt`.
 3. Selected (4,5) on the rendered field, inspected the supplied preview (1 AP/4 stamina, 3 AP remaining), and clicked ordinary “Переместиться”. Selected the target and inspected 3 AP/16 stamina ordinary attack; clicked “Атаковать”. Repeated from a newly created editor battle in native night mode (“Дневной свет” pressed).
 
-| Native journey | Day | Night |
-| --- | --- | --- |
-| Session/battle | `36804fa5-79a4-44a9-8a1d-d8120a781e8a` | `c9cbbd3c-81ac-4fa6-a649-7746c2358983` |
-| Move request ID | `e19db7c3-48be-4380-9308-f14e6f925a0f` | `f66c1a9b-0c43-4317-92be-f4fdfebb1530` |
-| Shot request ID | `989824ed-d57c-4607-94e1-fb06d8b4a44c` | `f5de668f-e765-4cc9-96c6-94e0912e512e` |
-| Both accepted commands' actor / activation | `human-1` / `1:human-1` | `human-1` / `1:human-1` |
-| AP from downloaded command prefixes | **4 → 3 → 0** | **4 → 3 → 0** |
-| Stamina from downloaded command prefixes | **100 → 96 → 80** | **100 → 96 → 80** |
+| Native journey                             | Day                                    | Night                                  |
+| ------------------------------------------ | -------------------------------------- | -------------------------------------- |
+| Session/battle                             | `36804fa5-79a4-44a9-8a1d-d8120a781e8a` | `c9cbbd3c-81ac-4fa6-a649-7746c2358983` |
+| Move request ID                            | `e19db7c3-48be-4380-9308-f14e6f925a0f` | `f66c1a9b-0c43-4317-92be-f4fdfebb1530` |
+| Shot request ID                            | `989824ed-d57c-4607-94e1-fb06d8b4a44c` | `f5de668f-e765-4cc9-96c6-94e0912e512e` |
+| Both accepted commands' actor / activation | `human-1` / `1:human-1`                | `human-1` / `1:human-1`                |
+| AP from downloaded command prefixes        | **4 → 3 → 0**                          | **4 → 3 → 0**                          |
+| Stamina from downloaded command prefixes   | **100 → 96 → 80**                      | **100 → 96 → 80**                      |
 
 Native move responses have revision 1, same activation and 3 AP. Each shot response is accepted at view revision 6 because the existing scheduler performs end-turn/opponent actions and starts round 2. Therefore the response's recovered 90 stamina/4 AP is not misreported as the shot debit. Downloaded replays bind the first two `human:<requestId>` commands to activation `1:human-1`; replaying those actual prefixes yields exactly 0 AP and 80 stamina after `attack.resolved`. The shot alone debits **16 stamina**. Both full exported prefixes JSON-roundtrip to matching canonical state and RNG. Evidence: `{day,night}-{create,move,shot}-native.txt`, `{day,night}-replay.json`, `{day,night}-replay-readback.json`, `read-native-replays.mjs`.
 
 Own captures under `eval-1-shots/`:
+
 - Day: `day-before.png`, `day-step-preview.png`, `day-3ap-preview.png`, `day-shot-log.png`.
 - Night: `night-before.png`, `night-step-preview.png`, `night-3ap-preview.png`, `night-shot-log.png`; accompanying snapshots record native night mode.
 - At the exercised desktop viewport, resource/cost text and target identity are readable and the movement/attack controls accept ordinary input. This is Tier L usability inspection, not Tier V art/asset acceptance or a general visual redesign review.
