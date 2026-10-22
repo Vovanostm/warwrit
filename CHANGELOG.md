@@ -9,6 +9,35 @@ requests.
 
 ## Unreleased
 
+### Retain partial battle sizing and allocate HUD stability rework — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: retain ordinary source head `514943b7`,
+  198 source additions plus deletions in layout, sprite catalogue/scene and
+  terrain. Catalogue-derived spacing is 1.80; figure sizes stay unchanged.
+  Correct visible-bound interpretation and B025/B053 support anchors;
+  procedural ground and initial squad framing use shared geometry.
+- Author validator 9/9 and 83 related tests PASS. Genuine 1440 × 900 initial
+  day/night author measurement: W01 84.7247 CSS px, six allies and nearest wolves.
+  Local report: `.orca/uix-w4-scale/report.md` in the dedicated checkout.
+  Native exposed-cell hover/CVD evidence is retained with failed attempts;
+  remaining original diagnostics, compatibility and independent Tier V are open.
+  Coordinator read the complete report/logs, clean tree and exact failed Dispatch;
+  game tests, measurements and runtime were NOT_RUN again in this tick.
+- Genuine 1366 × 768 at 125% fails: `.battle-overview` changes initiative height,
+  HUD ResizeObserver refits the camera, and scale mode alternates. Coordinator
+  extends ownership only to initiative outer-height rules in `battle-controls.css`,
+  disjoint from frozen #214 skill rules; vitals code/30 px threshold stay read-only.
+  Rework 1 also removes the optional PNG decoder previously directed for removal;
+  catalogue/mutation tests and actual alpha measurements remain. No budget reset,
+  widened game rule, acceptance waiver or independent visual ACCEPT.
+- Branch and these records published as WIP; no #179 PR or merge. Original full
+  matrix/AC, normal audit, <=300 source lines and Tier V remain required.
+  #285 waits the exclusive runtime slot; PR #287's hosted failure remains unresolved.
+  [Owning wiki](docs/wiki/battlefield-test-maps.md) and
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) record actual limits and next step.
+  No protocol/replay/schema/dependency/deployment change; full suites NOT_RUN,
+  performance NOT_MEASURED. This tick: 0 merged PRs with playable proof.
+
 ### Publish accepted selection and autoplay extraction — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`, [PR #286](https://github.com/Vovanostm/warwrit/pull/286),

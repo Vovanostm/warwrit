@@ -6,6 +6,42 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof; no merge or acceptance waiver.
+#179: retained source `514943b7`, ordinary commits, 198 source lines; Tier V pending.
+Try `/combat-lab` → default mill, seed 20261009 → Start before Overview.
+Author 1440 × 900 initial day/night: W01 84.7247 CSS px; six allies + nearest wolves.
+Author validator 9/9 and 83 related tests PASS; coordinator did not rerun them.
+Author native hovers cover 165 exposed cells; failed probes/remaining AC retained.
+1366 × 768 at genuine 125% FAIL: initiative height and camera refit oscillate.
+Coordinator extends #179 ownership only to initiative outer-height CSS;
+`battle-field-vitals.ts` and its 30 px threshold remain read-only.
+Rework 1 resumes retained source: stable HUD geometry, remove optional PNG decoder,
+complete original final-head matrix/AC; normal audit, <=300 source lines, full Tier V.
+#214 source frozen in its own checkout; integrate accepted #179 before its final gates.
+#285 contract accepted, proposed isolated-test lifecycle; build waits #179 runtime.
+#272 PR #287 retains failed hosted CI; #285 causality is NOT_PROVEN, no merge.
+#268 contract accepted, waits sole web builder; #269 AND #262 keep final 20/15 limits.
+Infrastructure PRs #274/#280 retain REWORK; no fresh ACCEPT or merge.
+Source/checks/runtime remain single-writer and serialized; no competing heavy run.
+Records published on `Vovanostm/uix-w4-scale`; no #179 PR or independent acceptance.
+Owning wiki: [battlefield test maps](../wiki/battlefield-test-maps.md).
+Local evidence: uix-w4-scale/.orca/uix-w4-scale/report.md, untracked in its checkout.
+Daily metrics/scout/triage/digest already complete; no duplicate daily work.
+New game tests/typecheck/browser/full suites NOT_RUN by this coordinator tick.
+No rules/protocol/replay/schema/dependency/deployment change; performance NOT_MEASURED.
+Next: rework #179, then coordinator validation and independent evaluator + visual critic.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**2026-10-22 superseded published checkpoint:**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof so far; final hosted CI pending.
 #267: [PR #286](https://github.com/Vovanostm/warwrit/pull/286), Tier U ACCEPT at `de77fa3d`.
 Source frozen `9ccabbd9`; production `b2520b1b`, callback tests `cc98765f`.
@@ -30,8 +66,6 @@ No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
 Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
 Next: final-head CI/expected-head merge for #286; exclusive #272 proof resume.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 
