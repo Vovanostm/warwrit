@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Publish independent session and editor proof — 2026-10-22, LOCAL
+
+- `Vovanostm/qa-hooks-session-editor`, #268: owner-requested #262/#231 extraction
+  and issue-recorded pure autoplay/disabled allocation preserve the existing
+  player journey. Source `973e036a`, independent Tier U ACCEPT at `46514ddb`,
+  source scope 256/300; [contract, full retained proof, verdict and 20 JPEGs](docs/engineering/evidence/qa-hooks-session-editor/README.md).
+- Coordinator validator exit 0, all nine gates PASS; evaluator 62 focused tests,
+  typecheck/lint/format, genuine day/night round-8 victories and fresh mounted
+  lifecycle/guards/timers PASS. Direct 25-PID/port cleanup verified before handback.
+  Normal evidence commit hook PASS; final-head hosted CI remains required.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) reconciles #293's settled
+  `79a5e407` candidate, coordinator validation 9/9 and fresh full Tier V workers;
+  author matrix is not acceptance. Short native readability and E1/E2/E3 stay open.
+  PR #292 attempts 4–8 now satisfy five consecutive full hosted passes; matched
+  timing remains NOT_MEASURED and blocks merge. No source or acceptance waiver.
+- #269 AND #262 final 20/15 and all parent gates remain required. New coordinator
+  gameplay/full suites NOT_RUN; performance NOT_MEASURED. No setup/API/wiki,
+  rule/protocol/replay/schema/migration/dependency change. Publication/merge pending.
+
 ### Gate the owner-scope prompt and reconcile coordinator records — 2026-10-22, PUBLISHED
 
 - `claude/tick-prompt-owner-scope`, [PR #291](https://github.com/Vovanostm/warwrit/pull/291),

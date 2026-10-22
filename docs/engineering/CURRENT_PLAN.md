@@ -6,36 +6,30 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#268 fallback 1 FAILED normal commit audit 28/23; staged 170/300 preserved, no commit.
-Read-only repair accepted: allocate ONLY pure autoplay button + four disabled outputs.
-Full original proof in contract-before-allocation-repair.md retained; estimate 261–285 only.
-#268 task_d854a68fe213 / ctx_157a800f31f3 native live, sole web writer/checks/runtime.
-Ordinary rework 2/last round; fallback 1 consumed, no reset/bypass/threshold waiver.
-Normal commit/audit, <=300 and fresh mounted/day-night/Tier U remain mandatory.
-Residual #269 menu/panel/close callbacks and final 20/15 on BOTH #269 AND #262 remain.
-#293 native live source-only contract task_2f395cc0bafb / ctx_b2b952fc35c3.
-Fresh clean-main uix-179-desktop-composition worktree; no rejected parent code copied.
-Coordinator removed engineering after #268 for this disjoint source boundary.
-Its builder still waits explicit sole web/checks/runtime grant; no implementation now.
-Direct cleanup: all 15 recorded PIDs absent, ports 23492/25492 clear, no play.pid before handback.
-Original #293/#179 full AC/DoD/Tier V/E1/E2/E3 and <=300 unchanged.
-#179 source `989669ef`, failed rounds and #214 integration gates stay frozen.
-#285 / PR #292 `cf6a6fb5`: full hosted CI attempts 1+2 SUCCESS retained as history.
-Attempt 3 FAILED: coverage world-free-movement timed out in 5000 ms; consecutive 0/5.
-One unchanged-candidate diagnostic attempt 4 requested; no code/test-limit changes.
-Three matched baseline/candidate samples, median<=1.20x: NOT_MEASURED.
-Original Tier L/AC and historical-null-cause limits retained; no merge.
-#272 / PR #287 retains failed encounter CI and original mutation/five-pass/Tier L gates.
-#290 / PR #291 source `a198ef98`: fresh independent Tier D ACCEPT.
-Coordinator setup PASS, validator exit 0/all 6 applicable gates PASS, scope 2/300.
-Only CHANGELOG/CURRENT_PLAN records follow; final-head hosted CI still required.
-CURRENT_PLAN now has one status block and actual owner delegation; rejection guard deferred.
-Main newest CI `39759317709` at `65d7466b` SUCCESS.
-Two live workers: #268 writer/runtime and #293 read-only contract; no competing heavy gate.
+#268 independent Tier U ACCEPT at `46514ddb`; source `973e036a`, scope 256/300.
+Coordinator validator exit 0, all nine gates PASS; evaluator 62 focused tests PASS.
+Fresh mounted lifecycle/guards/timers and genuine day/night round-8 victories PASS.
+Evidence: docs/engineering/evidence/qa-hooks-session-editor/README.md.
+Evidence and shared records prepared for normal commit and publication; hosted CI required.
+#269 menu/shared-close residual and final 20/15 on BOTH #269 AND #262 remain.
+#293 builder settled at `79a5e407`, source `ea1c50af`; clean committed candidate.
+Coordinator directly verified 16 owned PIDs absent, ports 23789/25789 clear, no play.pid.
+Coordinator validator exit 0, all nine gates PASS; source 266/300, author proof only.
+Full independent Tier V visual task_b37306f5ef59 / ctx_9a459ba954c2 is live, image-only.
+Evaluator task_9ede14b4978d / ctx_fb235a28e1c8 is live, source-only until exact grant.
+Coordinator owns the short #268 publication commit slot; evaluator receives runtime afterward.
+Short 1366 × 768 / 125% readability advisory remains material and unaccepted.
+Full #293/#179 E1/E2/E3 and all applicable absolute scores >=2 remain mandatory.
+#179 failed 2/2 and supplemental history retained; #214 source stays frozen.
+#285 / PR #292 unchanged `cf6a6fb5`: attempts 4–8 SUCCESS, five-pass gate met.
+Three matched hosted timing pairs and median <=1.20x remain NOT_MEASURED; no merge.
+Timing worker task_3e267191423a / ctx_fcb470379cd7 is live, GitHub reads only.
+#272 / PR #287 retains failed encounter CI and original gates; no merge eligibility.
+Main newest CI `39768260648` at `f5a73f33` SUCCESS.
 Daily metrics/scout/triage/digest already complete; no repeat.
-Coordinator gameplay/browser/full suites NOT_RUN; performance NOT_MEASURED.
+New coordinator gameplay/full suites NOT_RUN; performance NOT_MEASURED.
 No game-rule/API/protocol/replay/schema/migration/dependency change.
-Next: #268 measured result, #293 contract, PR #291 final CI and PR #292 hosted proof/timing.
+Next: publish #268, grant evaluator runtime, await independent gates and timing evidence.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
