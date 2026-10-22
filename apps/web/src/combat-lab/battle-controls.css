@@ -147,7 +147,7 @@
 }
 .battle-action-dock {
   position: absolute;
-  inset: auto var(--battle-edge) 20px;
+  inset: auto var(--battle-edge) 8px;
   display: grid;
   grid-template-columns: var(--battle-card-width) minmax(0, 1fr) var(--battle-card-width);
   gap: 16px;
@@ -191,8 +191,8 @@
   width: min(100%, 720px);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 24px;
-  padding: 12px;
+  gap: 4px 12px;
+  padding: 6px;
   border: 1px solid var(--battle-border);
   border-radius: var(--battle-radius);
   background: var(--battle-panel);
@@ -400,22 +400,23 @@
 }
 .battle-view .initiative-unit.battle-control {
   padding: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 64px 64px;
+  grid-template-rows: 64px 18px;
   align-items: stretch;
-  min-width: 74px;
-  height: 130px;
-  min-height: 130px;
-  flex: 0 0 74px;
-  max-width: 74px;
+  min-width: 130px;
+  height: 84px;
+  min-height: 84px;
+  flex: 0 0 130px;
+  max-width: 130px;
   border-color: var(--battle-border);
   border-radius: var(--battle-radius);
   background: #202e31;
 }
 .battle-view .initiative-unit.battle-control[aria-current='step'] {
-  flex-basis: 74px;
-  max-width: 74px;
-  height: 130px;
+  flex-basis: 130px;
+  max-width: 130px;
+  height: 84px;
   border-color: var(--battle-gold);
   background: #3c3e31;
 }
@@ -575,23 +576,16 @@
 
 /* Reserve finite desktop lanes at the native125 1024px CSS viewport. */
 .battle-top-band {
+  top: 8px;
   left: 194px;
   right: 268px;
 }
 .battle-view .battle-top-band .battle-initiative {
   inset: auto;
 }
-.battle-overview .initiative-unit.battle-control,
-.battle-overview .initiative-unit.battle-control[aria-current='step'] {
-  height: 90px;
-  min-height: 90px;
-}
-.battle-overview .initiative-unit .unit-vitals {
-  display: none;
-}
 .battle-action-dock {
   grid-template-columns: 220px minmax(0, 1fr);
-  gap: 12px;
+  gap: 8px;
 }
 .battle-action-dock:has(.battle-inspected-unit) {
   grid-template-columns: 220px minmax(0, 1fr) 220px;
@@ -607,7 +601,7 @@
 }
 .battle-dock-orders {
   grid-template-columns: max-content minmax(0, 1fr);
-  column-gap: 16px;
+  column-gap: 8px;
 }
 .battle-view .combat-lab-actions {
   gap: 8px;

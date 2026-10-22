@@ -19,7 +19,7 @@ import {
 import type { CombatLabAction, CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
 import type { BattlePresentationView, Unit as BattleUnit } from './battle-presentation.js';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
-import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
+import { mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import {
   actorBadgePlacement,
   opaqueSpritePixel,
@@ -30,7 +30,7 @@ import {
 import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { createReachContour } from './sprite-reach-contour.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
-import { spriteDisplayHeight, spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
+import { spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
 import {
   SPRITE_MASK_SIZE,
   SPRITE_VISUAL_SIZE,
@@ -62,6 +62,7 @@ const b023FixtureUrl = new URL(
 ).href;
 
 const AXIAL_TO_WORLD = battleHexToWorld;
+const CAMERA_ELEVATION = Math.PI / 6;
 const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
 interface SpriteBattleScene {
@@ -139,7 +140,7 @@ function mountBattleEnvironment({
   const groundMaterial = createBattleBackdropMaterial(scene, texture(millFieldUrl));
   groundMaterial.setColor3('tint', initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White());
   background.material = groundMaterial;
-  const scenery = mountBattleScenery(scene, tiles);
+  const scenery = mountBattleScenery(scene, tiles, CAMERA_ELEVATION);
   scenery.setNight(initialNight);
 
   return {
@@ -391,6 +392,7 @@ export async function mountSpriteBattleScene(
     reference: new Vector2(perspective.targetX, perspective.distance),
     crop: new Vector4(0, 0, 1, 1),
     amount: 1,
+    elevation: CAMERA_ELEVATION,
   });
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
   const apronDepth = environment.apronDepth;
@@ -406,10 +408,15 @@ export async function mountSpriteBattleScene(
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
   const groundYFor = (hex: CombatLabHex) =>
     (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
-  const fieldVitals = mountBattleFieldVitals(canvas, scene, (id) => {
-    callbacks.onSelectUnit(id);
-    focusUnit(id);
-  });
+  const fieldVitals = mountBattleFieldVitals(
+    canvas,
+    scene,
+    (id) => {
+      callbacks.onSelectUnit(id);
+      focusUnit(id);
+    },
+    CAMERA_ELEVATION,
+  );
   const heightLabels: Mesh[] = [];
   initialTiles
     .filter((tile) => tile.height > 0)
@@ -1250,22 +1257,23 @@ export async function mountSpriteBattleScene(
     minZ: Math.min(...projectedField.map((point) => point.z)),
     maxZ: Math.max(...projectedField.map((point) => point.z)),
   };
-  const overviewBounds = () => {
+  const overviewBounds = (units = currentView.units, fullField = true) => {
     const { viewport, safeTop, safeBottom } = cameraOpening();
-    const figures = currentView.units
+    const figures = units
       .filter((unit) => unit.status === 'active')
       .map((unit) => spriteFigureBounds(unit, groundYFor(unit.position), project));
     const frame = battleFrameBounds({
-      mapBounds: fieldBounds,
+      mapBounds: spriteFrameMapBounds(fullField, fieldBounds, figures),
       figures,
       width: viewport.width,
       height: viewport.height,
       safeTop,
       safeBottom,
       badge: actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
+      elevation: CAMERA_ELEVATION,
     });
-    if (!frame) return null;
-    const limits = battleCameraLimits(frame, viewport.width, viewport.height);
+    if (!frame || !fullField) return frame;
+    const limits = battleCameraLimits(frame, viewport.width, viewport.height, CAMERA_ELEVATION);
     cameraLimits.maxZoom = limits.maxZoom;
     Object.assign(cameraLimits.bounds, limits.bounds);
     // Extend only the quiet camera-facing apron; projected artwork/terrain stay registered.
@@ -1290,41 +1298,21 @@ export async function mountSpriteBattleScene(
       perspective.targetX + (terrain.apron.position.x - perspective.targetX) * apronScale;
     return frame;
   };
+  let overview = false;
   const frameBattle = () => {
-    const bounds = overviewBounds();
+    const bounds = overviewBounds(
+      overview ? currentView.units : initialFrameUnits(currentView),
+      overview,
+    );
     if (bounds) camera.fit(bounds, 0);
   };
   let focusedId: string | null = null;
   const focusUnit = (id: string) => {
     const unit = currentView.units.find((candidate) => candidate.id === id);
     if (!unit) return;
-    const { viewport, safeTop, safeBottom } = cameraOpening();
-    const point = AXIAL_TO_WORLD(unit.position);
-    const badgeHeight = Number(unit.id === actorMarker?.descriptor.id) * 34;
-    const height = spriteDisplayHeight(spriteForUnit(unit).id) * 0.82 * 0.45;
-    const zoom = Math.max(
-      4.8,
-      (height * viewport.height) / Math.max(1, safeBottom - safeTop - badgeHeight - 28),
-    );
-    const middle = project({
-      x: point.x,
-      y: groundYFor(unit.position) + height * Math.cos(CAMERA_ELEVATION),
-      z: point.z + height * Math.sin(CAMERA_ELEVATION),
-    });
-    const up = middle.z * Math.sin(CAMERA_ELEVATION);
-    const centerUp =
-      up +
-      (((safeTop + badgeHeight + safeBottom) / 2 - viewport.height / 2) * 2 * zoom) /
-        viewport.height;
-    camera.fit(
-      {
-        minX: middle.x,
-        maxX: middle.x,
-        minZ: (centerUp - zoom) / Math.sin(CAMERA_ELEVATION),
-        maxZ: (centerUp + zoom) / Math.sin(CAMERA_ELEVATION),
-      },
-      0,
-    );
+    const bounds = overviewBounds([unit], false);
+    if (!bounds) return;
+    camera.fit(bounds, 0);
     focusedId = id;
     cameraMoved = false;
   };
@@ -1342,6 +1330,7 @@ export async function mountSpriteBattleScene(
   const showOverview = () => {
     focusedId = null;
     cameraMoved = false;
+    overview = true;
     frameBattle();
   };
   const onOverviewKey = (event: KeyboardEvent) => {
@@ -1379,6 +1368,7 @@ export async function mountSpriteBattleScene(
   canvas.addEventListener('pointerup', releaseCameraPress);
   canvas.addEventListener('pointercancel', releaseCameraPress);
   canvas.addEventListener('pointermove', markDrag);
+  overviewBounds();
   frameDefault();
   scene.updateTransformMatrix(true);
   canvas.setAttribute('aria-label', 'Поле боя с выбором бойца или клетки');
@@ -1624,6 +1614,37 @@ function addLabel(
   label.isPickable = false;
   label.renderingGroupId = 2;
   collection.push(label);
+}
+
+/** Subjects for the first frame only; proximity here is presentation-space distance. */
+export function initialFrameUnits(view: BattlePresentationView) {
+  const standing = view.units.filter((unit) => unit.status === 'active');
+  const allies = standing.filter((unit) => unit.sideId === view.controlledSideId);
+  if (!allies.length) return standing;
+  const enemies = standing.filter((unit) => unit.sideId !== view.controlledSideId);
+  const nearest = allies.map((ally) => {
+    const origin = AXIAL_TO_WORLD(ally.position);
+    const distance = (unit: BattleUnit) => {
+      const point = AXIAL_TO_WORLD(unit.position);
+      return Math.hypot(point.x - origin.x, point.z - origin.z);
+    };
+    return [...enemies].sort((a, b) => distance(a) - distance(b))[0];
+  });
+  return standing.filter((unit) => allies.includes(unit) || nearest.includes(unit));
+}
+
+export function spriteFrameMapBounds(
+  fullField: boolean,
+  field: SceneMapBounds,
+  figures: readonly ReturnType<typeof spriteFigureBounds>[],
+): SceneMapBounds {
+  if (fullField || !figures.length) return field;
+  return {
+    minX: Math.min(...figures.map((figure) => figure.minX)),
+    maxX: Math.max(...figures.map((figure) => figure.maxX)),
+    minZ: Math.min(...figures.map((figure) => figure.bottom)) / Math.sin(CAMERA_ELEVATION),
+    maxZ: Math.max(...figures.map((figure) => figure.top)) / Math.sin(CAMERA_ELEVATION),
+  };
 }
 
 export function spriteFigureBounds(

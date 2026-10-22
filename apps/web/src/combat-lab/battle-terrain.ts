@@ -26,7 +26,7 @@ import {
   type BattleTerrainCell,
 } from '../renderer/battle-terrain.js';
 import { naturalTextureShader } from '../renderer/terrain-material.js';
-import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
+import { CAMERA_ELEVATION as DEFAULT_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { BATTLE_HEX_RADIUS, BATTLE_LAYOUT, battleHexToWorld } from './battle-layout.js';
 
 const GROUND_TEXTURE_WORLD_SIZE = 5.6;
@@ -39,6 +39,7 @@ type GroundComposition = {
   readonly reference: Vector2;
   readonly crop: Vector4;
   readonly amount: number;
+  readonly elevation?: number | undefined;
 };
 
 type Palette = { readonly day: Color3; readonly night: Color3 };
@@ -52,6 +53,7 @@ function groundMaterial(
   earthTextures: { readonly base: Texture; readonly detail: Texture },
   composition: GroundComposition,
 ): ShaderMaterial {
+  const CAMERA_ELEVATION = composition.elevation ?? DEFAULT_ELEVATION;
   const result = new ShaderMaterial(
     name,
     scene,
@@ -219,6 +221,7 @@ export function mountBattleTerrain(
   readonly terrainByHex: ReadonlyMap<string, BattleTerrainCell>;
   setNight(night: boolean): void;
 } {
+  const CAMERA_ELEVATION = composition?.elevation ?? DEFAULT_ELEVATION;
   const terrainByHex = createTerrainMap(tiles, BATTLE_LAYOUT);
   const textures = new Map<string, Texture>();
   const dirtTexture = textureFor(dirt, scene, textures);
