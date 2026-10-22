@@ -2038,225 +2038,34 @@ describe('authenticated world travel (PostgreSQL)', () => {
   it.skipIf(database === undefined)(
     'serializes rollback against route receipts and preserves all campaign clock rows on down/up',
     async () => {
-      const db = requireDatabase();
       if (connectionString === undefined) throw new Error('World travel test database missing');
-      const actor = makeSyntheticCompany(db);
-      const writer = new Client({
-        connectionString,
-        application_name: 'warwrit-travel-rollback-race-writer',
-      });
-      const rollback = new Client({
-        connectionString,
-        application_name: 'warwrit-travel-rollback-race-down',
-      });
-      let writerInTransaction = false;
-      let rollbackAttempt:
-        Promise<{ readonly error: { readonly code?: string } | null }> | undefined;
-      let restoreMigrationsNeeded = false;
+      const isolated = await createRollbackDatabase(connectionString);
+      const { db, writer, rollback } = isolated;
+      const ownedApps: ReturnType<typeof buildApp>[] = [];
+      let actor: SyntheticCompany | undefined;
       let fixtureCleaned = false;
-
       try {
+        actor = makeSyntheticCompany(db, isolated.connectionString, ownedApps);
         await seedSyntheticCompany(db, actor);
-        await Promise.all([writer.connect(), rollback.connect()]);
-        await writer.query('begin');
-        writerInTransaction = true;
-        const writerPid = Number(
-          (await writer.query('select pg_backend_pid() as pid')).rows[0]?.pid,
-        );
-        const segmentId = randomUUID();
-        const commandId = randomUUID();
-        await writer.query(
-          `insert into public.world_party_routes (
-             world_id, company_id, party_id, route_epoch, segment_id,
-             profile_id, region_version, status, accepted_route
-           ) values ($1, $2, $3, '1', $4, 'safe-travel-alpha-v1', 'fixture', 'IN_TRANSIT', $5::jsonb)`,
-          [
-            actor.worldId,
-            actor.companyId,
-            actor.partyId,
-            segmentId,
-            JSON.stringify({ kind: 'race' }),
-          ],
-        );
-        await writer.query(
-          `insert into public.world_route_receipts (
-             world_id, company_id, command_id, account_id, request_key, response,
-             resulting_public_revision
-           ) values ($1, $2, $3, $4, 'race-request', '{"ok":true}'::jsonb, '1')`,
-          [actor.worldId, actor.companyId, commandId, actor.accountId],
-        );
-
-        rollbackAttempt = rollback.query(worldTravelDownSql).then(
-          () => ({ error: null }),
-          (error: { readonly code?: string }) => ({ error }),
-        );
-        let blockedByWriter = false;
-        for (let attempt = 0; attempt < 100; attempt += 1) {
-          const activity = await writer.query<{
-            readonly wait_event_type: string | null;
-            readonly blocking_pids: number[];
-          }>(
-            `select wait_event_type, pg_blocking_pids(pid) as blocking_pids
-               from pg_stat_activity
-              where application_name = $1`,
-            ['warwrit-travel-rollback-race-down'],
-          );
-          const downSession = activity.rows[0];
-          if (
-            downSession?.wait_event_type === 'Lock' &&
-            downSession.blocking_pids.includes(writerPid)
-          ) {
-            blockedByWriter = true;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 10));
-        }
-        expect(blockedByWriter).toBe(true);
-        await writer.query('commit');
-        writerInTransaction = false;
-        const rejectedDown = await rollbackAttempt;
-        expect(rejectedDown.error?.code).toBe('55000');
-        expect(
-          (
-            await rollback.query<{
-              readonly route_table: string | null;
-              readonly receipt_table: string | null;
-            }>(
-              `select to_regclass('public.world_party_routes')::text as route_table,
-                      to_regclass('public.world_route_receipts')::text as receipt_table`,
-            )
-          ).rows[0],
-        ).toEqual({ route_table: 'world_party_routes', receipt_table: 'world_route_receipts' });
-        expect(
-          (
-            await rollback.query(
-              `select world_id, company_id, party_id, segment_id
-                 from public.world_party_routes
-                where world_id = $1 and company_id = $2 and party_id = $3`,
-              [actor.worldId, actor.companyId, actor.partyId],
-            )
-          ).rows,
-        ).toEqual([
-          {
-            world_id: actor.worldId,
-            company_id: actor.companyId,
-            party_id: actor.partyId,
-            segment_id: segmentId,
-          },
-        ]);
-        expect(
-          (
-            await rollback.query(
-              `select world_id, company_id, command_id, account_id
-                 from public.world_route_receipts
-                where world_id = $1 and company_id = $2 and command_id = $3`,
-              [actor.worldId, actor.companyId, commandId],
-            )
-          ).rows,
-        ).toEqual([
-          {
-            world_id: actor.worldId,
-            company_id: actor.companyId,
-            command_id: commandId,
-            account_id: actor.accountId,
-          },
-        ]);
-
+        await assertRollbackSerialization(writer, rollback, actor);
         await cleanupSyntheticCompany(db, actor);
         fixtureCleaned = true;
-        const emptyTravelTables = await rollback.query<{
-          readonly routes: number;
-          readonly receipts: number;
-        }>(
-          `select (select count(*)::int from public.world_party_routes) as routes,
-                  (select count(*)::int from public.world_route_receipts) as receipts`,
-        );
-        expect(emptyTravelTables.rows[0]).toEqual({ routes: 0, receipts: 0 });
-        const clocksBefore = await readClockRows(rollback);
-        const migrationSuffix = [
-          '0008_world_travel',
-          '0009_encounter_admission_sources',
-          '0010_first_hunt_runtime',
-          '0011_encounter_leadership_choices',
-          '0012_ordinary_contracts',
-          '0013_world_hunt_states',
-          '0014_settlement_supplies',
-        ] as const;
-        const beforeDown = await runMigrations(rollback, 'status');
-        expect(beforeDown.applied.slice(-migrationSuffix.length)).toEqual(migrationSuffix);
-        for (const migrationName of [...migrationSuffix].reverse()) {
-          const down = await runMigrations(rollback, 'down');
-          if (down.applied.length > 0) restoreMigrationsNeeded = true;
-          expect(down.applied).toEqual([migrationName]);
-        }
-        const afterDown = await runMigrations(rollback, 'status');
-        for (const migrationName of migrationSuffix)
-          expect(afterDown.applied).not.toContain(migrationName);
-        expect(
-          (
-            await rollback.query<{ readonly live: string | null; readonly backup: string | null }>(
-              `select to_regclass('public.world_campaign_clocks')::text as live,
-                      to_regclass('public.world_campaign_clocks_0008_backup')::text as backup`,
-            )
-          ).rows[0],
-        ).toEqual({ live: null, backup: 'world_campaign_clocks_0008_backup' });
-        const up = await runMigrations(rollback, 'up');
-        expect(up.applied).toEqual(migrationSuffix);
-        expect(
-          (await runMigrations(rollback, 'status')).applied.slice(-migrationSuffix.length),
-        ).toEqual(migrationSuffix);
-        restoreMigrationsNeeded = false;
-        expect(await readClockRows(rollback)).toBe(clocksBefore);
-        expect(
-          (
-            await rollback.query<{ readonly backup: string | null }>(
-              `select to_regclass($1)::text as backup`,
-              ['public.world_campaign_clocks_0008_backup'],
-            )
-          ).rows[0]?.backup,
-        ).toBeNull();
-
-        await rollback.query('begin');
-        let freshInstallTransaction = true;
-        try {
-          await rollback.query(
-            `lock table public.world_campaign_clocks,
-              public.world_party_routes,
-              public.world_route_receipts in access exclusive mode`,
-          );
-          await rollback.query(
-            'alter table public.world_campaign_clocks rename to world_campaign_clocks_test_hold',
-          );
-          await rollback.query('drop table public.world_route_receipts');
-          await rollback.query('drop table public.world_party_routes');
-          await rollback.query(worldTravelUpSql);
-          const freshClock = await rollback.query<{
-            readonly world_id: string;
-            readonly epoch_ms: string;
-            readonly starting_tick: string;
-          }>(
-            `select world_id, epoch_ms, starting_tick
-               from public.world_campaign_clocks
-              order by world_id`,
-          );
-          expect(freshClock.rows).toHaveLength(1);
-          expect(freshClock.rows[0]).toMatchObject({ world_id: 'main', starting_tick: '0' });
-          expect(freshClock.rows[0]?.epoch_ms).toMatch(/^(0|[1-9][0-9]*)$/);
-          await rollback.query('rollback');
-          freshInstallTransaction = false;
-        } finally {
-          if (freshInstallTransaction) await rollback.query('rollback');
-        }
-        expect(await readClockRows(rollback)).toBe(clocksBefore);
+        await rollback.query(`
+          insert into public.world_campaign_clocks (world_id, epoch_ms, starting_tick, updated_at)
+          values ('rollback-retained-a', '1000000', '17', '2026-01-02T03:04:05.123456Z'),
+                 ('rollback-retained-b', '2000000', '29', '2026-02-03T04:05:06.654321Z')
+        `);
+        await assertClockMigrationRoundTrip(rollback);
       } finally {
-        if (writerInTransaction) await writer.query('rollback');
-        if (rollbackAttempt) {
-          const result = await rollbackAttempt;
-          if (result.error === null) await rollback.query(worldTravelUpSql);
+        try {
+          if (actor && !fixtureCleaned) await cleanupSyntheticCompany(db, actor);
+        } finally {
+          try {
+            await Promise.all(ownedApps.map((app) => app.close()));
+          } finally {
+            await disposeRollbackDatabase(isolated);
+          }
         }
-        if (restoreMigrationsNeeded) await runMigrations(rollback, 'up');
-        await Promise.allSettled([writer.end(), rollback.end()]);
-        if (!fixtureCleaned) await cleanupSyntheticCompany(db, actor);
       }
     },
   );
@@ -2904,6 +2713,279 @@ function requireDatabase(): Kysely<DatabaseSchema> {
   return database;
 }
 
+interface RollbackDatabase {
+  readonly name: string;
+  readonly connectionString: string;
+  readonly admin: Client;
+  readonly db: Kysely<DatabaseSchema>;
+  readonly writer: Client;
+  readonly rollback: Client;
+}
+
+async function createRollbackDatabase(sourceConnectionString: string): Promise<RollbackDatabase> {
+  const name = `warwrit_rollback_${randomUUID().replaceAll('-', '')}`;
+  const url = new URL(sourceConnectionString);
+  url.pathname = `/${name}`;
+  const isolated: RollbackDatabase = {
+    name,
+    connectionString: url.href,
+    admin: new Client({ connectionString: sourceConnectionString }),
+    db: createDatabase(url.href),
+    writer: new Client({
+      connectionString: url.href,
+      application_name: 'warwrit-travel-rollback-race-writer',
+    }),
+    rollback: new Client({
+      connectionString: url.href,
+      application_name: 'warwrit-travel-rollback-race-down',
+    }),
+  };
+  let created = false;
+  try {
+    await isolated.admin.connect();
+    await isolated.admin.query(`create database "${name}"`);
+    created = true;
+    await isolated.writer.connect();
+    await isolated.rollback.connect();
+    await runMigrations(isolated.rollback, 'up');
+    return isolated;
+  } catch (error) {
+    await disposeRollbackDatabase(isolated, created);
+    throw error;
+  }
+}
+
+async function disposeRollbackDatabase(isolated: RollbackDatabase, created = true): Promise<void> {
+  try {
+    try {
+      await isolated.writer.end();
+    } finally {
+      try {
+        await isolated.rollback.end();
+      } finally {
+        await isolated.db.destroy();
+      }
+    }
+  } finally {
+    try {
+      if (created) await isolated.admin.query(`drop database "${isolated.name}"`);
+    } finally {
+      await isolated.admin.end();
+    }
+  }
+}
+
+async function assertRollbackSerialization(
+  writer: Client,
+  rollback: Client,
+  actor: SyntheticCompany,
+): Promise<void> {
+  let writerInTransaction = false;
+  let rollbackAttempt: Promise<{ readonly error: { readonly code?: string } | null }> | undefined;
+  try {
+    await writer.query('begin');
+    writerInTransaction = true;
+    const writerPid = Number((await writer.query('select pg_backend_pid() as pid')).rows[0]?.pid);
+    const segmentId = randomUUID();
+    const commandId = randomUUID();
+    await writer.query(
+      `insert into public.world_party_routes (
+         world_id, company_id, party_id, route_epoch, segment_id,
+         profile_id, region_version, status, accepted_route
+       ) values ($1, $2, $3, '1', $4, 'safe-travel-alpha-v1', 'fixture', 'IN_TRANSIT', $5::jsonb)`,
+      [actor.worldId, actor.companyId, actor.partyId, segmentId, JSON.stringify({ kind: 'race' })],
+    );
+    await writer.query(
+      `insert into public.world_route_receipts (
+         world_id, company_id, command_id, account_id, request_key, response,
+         resulting_public_revision
+       ) values ($1, $2, $3, $4, 'race-request', '{"ok":true}'::jsonb, '1')`,
+      [actor.worldId, actor.companyId, commandId, actor.accountId],
+    );
+
+    rollbackAttempt = rollback.query(worldTravelDownSql).then(
+      () => ({ error: null }),
+      (error: { readonly code?: string }) => ({ error }),
+    );
+    let blockedByWriter = false;
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      const activity = await writer.query<{
+        readonly wait_event_type: string | null;
+        readonly blocking_pids: number[];
+      }>(
+        `select wait_event_type, pg_blocking_pids(pid) as blocking_pids
+           from pg_stat_activity
+          where application_name = $1`,
+        ['warwrit-travel-rollback-race-down'],
+      );
+      const downSession = activity.rows[0];
+      if (
+        downSession?.wait_event_type === 'Lock' &&
+        downSession.blocking_pids.includes(writerPid)
+      ) {
+        blockedByWriter = true;
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    expect(blockedByWriter).toBe(true);
+    await writer.query('commit');
+    writerInTransaction = false;
+    const rejectedDown = await rollbackAttempt;
+    expect(rejectedDown.error?.code).toBe('55000');
+    expect(
+      (
+        await rollback.query<{
+          readonly route_table: string | null;
+          readonly receipt_table: string | null;
+        }>(
+          `select to_regclass('public.world_party_routes')::text as route_table,
+                  to_regclass('public.world_route_receipts')::text as receipt_table`,
+        )
+      ).rows[0],
+    ).toEqual({ route_table: 'world_party_routes', receipt_table: 'world_route_receipts' });
+    expect(
+      (
+        await rollback.query(
+          `select world_id, company_id, party_id, segment_id
+             from public.world_party_routes
+            where world_id = $1 and company_id = $2 and party_id = $3`,
+          [actor.worldId, actor.companyId, actor.partyId],
+        )
+      ).rows,
+    ).toEqual([
+      {
+        world_id: actor.worldId,
+        company_id: actor.companyId,
+        party_id: actor.partyId,
+        segment_id: segmentId,
+      },
+    ]);
+    expect(
+      (
+        await rollback.query(
+          `select world_id, company_id, command_id, account_id
+             from public.world_route_receipts
+            where world_id = $1 and company_id = $2 and command_id = $3`,
+          [actor.worldId, actor.companyId, commandId],
+        )
+      ).rows,
+    ).toEqual([
+      {
+        world_id: actor.worldId,
+        company_id: actor.companyId,
+        command_id: commandId,
+        account_id: actor.accountId,
+      },
+    ]);
+  } finally {
+    try {
+      if (writerInTransaction) await writer.query('rollback');
+    } finally {
+      if (rollbackAttempt) {
+        const result = await rollbackAttempt;
+        if (result.error === null) await rollback.query(worldTravelUpSql);
+      }
+    }
+  }
+}
+
+async function assertClockMigrationRoundTrip(rollback: Client): Promise<void> {
+  let restoreMigrationsNeeded = false;
+  try {
+    const emptyTravelTables = await rollback.query<{
+      readonly routes: number;
+      readonly receipts: number;
+    }>(
+      `select (select count(*)::int from public.world_party_routes) as routes,
+              (select count(*)::int from public.world_route_receipts) as receipts`,
+    );
+    expect(emptyTravelTables.rows[0]).toEqual({ routes: 0, receipts: 0 });
+    const clocksBefore = await readClockRows(rollback);
+    const migrationSuffix = [
+      '0008_world_travel',
+      '0009_encounter_admission_sources',
+      '0010_first_hunt_runtime',
+      '0011_encounter_leadership_choices',
+      '0012_ordinary_contracts',
+      '0013_world_hunt_states',
+      '0014_settlement_supplies',
+    ] as const;
+    const beforeDown = await runMigrations(rollback, 'status');
+    expect(beforeDown.applied.slice(-migrationSuffix.length)).toEqual(migrationSuffix);
+    for (const migrationName of [...migrationSuffix].reverse()) {
+      const down = await runMigrations(rollback, 'down');
+      if (down.applied.length > 0) restoreMigrationsNeeded = true;
+      expect(down.applied).toEqual([migrationName]);
+    }
+    const afterDown = await runMigrations(rollback, 'status');
+    for (const migrationName of migrationSuffix)
+      expect(afterDown.applied).not.toContain(migrationName);
+    expect(
+      (
+        await rollback.query<{ readonly live: string | null; readonly backup: string | null }>(
+          `select to_regclass('public.world_campaign_clocks')::text as live,
+                  to_regclass('public.world_campaign_clocks_0008_backup')::text as backup`,
+        )
+      ).rows[0],
+    ).toEqual({ live: null, backup: 'world_campaign_clocks_0008_backup' });
+    const up = await runMigrations(rollback, 'up');
+    expect(up.applied).toEqual(migrationSuffix);
+    expect(
+      (await runMigrations(rollback, 'status')).applied.slice(-migrationSuffix.length),
+    ).toEqual(migrationSuffix);
+    restoreMigrationsNeeded = false;
+    expect(await readClockRows(rollback)).toBe(clocksBefore);
+    expect(
+      (
+        await rollback.query<{ readonly backup: string | null }>(
+          `select to_regclass($1)::text as backup`,
+          ['public.world_campaign_clocks_0008_backup'],
+        )
+      ).rows[0]?.backup,
+    ).toBeNull();
+
+    await assertFreshTravelInstall(rollback);
+    expect(await readClockRows(rollback)).toBe(clocksBefore);
+  } finally {
+    if (restoreMigrationsNeeded) await runMigrations(rollback, 'up');
+  }
+}
+
+async function assertFreshTravelInstall(rollback: Client): Promise<void> {
+  await rollback.query('begin');
+  let freshInstallTransaction = true;
+  try {
+    await rollback.query(
+      `lock table public.world_campaign_clocks,
+        public.world_party_routes,
+        public.world_route_receipts in access exclusive mode`,
+    );
+    await rollback.query(
+      'alter table public.world_campaign_clocks rename to world_campaign_clocks_test_hold',
+    );
+    await rollback.query('drop table public.world_route_receipts');
+    await rollback.query('drop table public.world_party_routes');
+    await rollback.query(worldTravelUpSql);
+    const freshClock = await rollback.query<{
+      readonly world_id: string;
+      readonly epoch_ms: string;
+      readonly starting_tick: string;
+    }>(
+      `select world_id, epoch_ms, starting_tick
+         from public.world_campaign_clocks
+        order by world_id`,
+    );
+    expect(freshClock.rows).toHaveLength(1);
+    expect(freshClock.rows[0]).toMatchObject({ world_id: 'main', starting_tick: '0' });
+    expect(freshClock.rows[0]?.epoch_ms).toMatch(/^(0|[1-9][0-9]*)$/);
+    await rollback.query('rollback');
+    freshInstallTransaction = false;
+  } finally {
+    if (freshInstallTransaction) await rollback.query('rollback');
+  }
+}
+
 async function readClockRows(client: Client): Promise<string> {
   const result = await client.query<{ readonly clock_rows: string }>(
     `select coalesce(
@@ -2932,7 +3014,11 @@ async function clockRowsFor(db: Kysely<DatabaseSchema>, actor: SyntheticCompany)
     .execute();
 }
 
-function makeSyntheticCompany(db: Kysely<DatabaseSchema>): SyntheticCompany {
+function makeSyntheticCompany(
+  db: Kysely<DatabaseSchema>,
+  fixtureConnectionString = connectionString,
+  appRegistry = apps,
+): SyntheticCompany {
   const worldId = randomUUID();
   const companyId = randomUUID();
   const accountId = randomUUID();
@@ -3019,7 +3105,7 @@ function makeSyntheticCompany(db: Kysely<DatabaseSchema>): SyntheticCompany {
     });
   }
   const appConfig = loadServerConfig({
-    DATABASE_URL: connectionString,
+    DATABASE_URL: fixtureConnectionString,
     OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
     OIDC_CLIENT_ID: 'warwrit-local',
     OIDC_CLIENT_SECRET: 'local-only-secret',
@@ -3032,7 +3118,7 @@ function makeSyntheticCompany(db: Kysely<DatabaseSchema>): SyntheticCompany {
     identity: { config: appConfig.identity!, database: withRollbackInjection(db) },
     company: { database: withRollbackInjection(db), worldId },
   });
-  apps.push(app);
+  appRegistry.push(app);
   return {
     worldId,
     companyId,
