@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Resume retained extraction with real callback coverage — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-selection-autoplay`, #267: retained 159-line extraction
+  committed normally at `b2520b1b` after merged callback and Start prerequisites.
+  Focused 49 tests, typecheck, scoped lint/format, normal audit and validator
+  9/9 PASS. Required normal-refresh callback proof FAIL: only 10 consumer tests
+  selected; production applyLatest/endBattle remain uncovered. Runtime, mounted
+  lifecycle, day/night and independent Tier U NOT_RUN; stash and patch retained.
+- Coordinator allocates the existing second rework round to relocate real
+  callback regressions into the changed consumer test boundary with all assertions
+  preserved. No production/tool change or proof waiver; original budgets and
+  final #269 AND #262 component 20/15 remain. Full local owning report and
+  amendment: `.orca/qa-hooks-selection-autoplay/` in the dedicated worktree.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md): #214 complete contract accepted
+  and queued behind #267; #282 CI pending, #272 follows it. PR #274 hosted CI
+  fails bridge-v5 terminal effects assertion. No setup/API/wiki contract change.
+  Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+
 ### Integrate prerequisites before retained selection extraction — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`, #267: ordinary main `df540c2c`

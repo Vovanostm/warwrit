@@ -3,6 +3,39 @@
 ## Pipeline status — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: #217 and existing overrides; no new milestone.
+This tick: 0 merged PRs with playable proof so far.
+#267: retained extraction committed normally as `b2520b1b`, 159 source lines.
+Focused 49 tests, web typecheck, scoped lint/format, normal audit and validator
+9/9 PASS. Required normal-refresh callback coverage FAIL: related selection
+runs 10 CombatLab tests; applyLatest/endBattle have zero hits.
+Builder runtime/mounted/day-night smoke and independent Tier U NOT_RUN.
+Coordinator allocates rework round 2: relocate existing production callback
+regressions into the changed consumer test boundary, preserving every assertion.
+No production/tool change, duplicated tests, artificial imports or coverage waiver.
+Normal hook and validator must both execute the real callbacks after refresh.
+Same dedicated worktree; one exclusive web/checks/runtime writer; stash retained.
+Final CombatLab 20/15 remains on #269 AND #262; #268 follows #267.
+#214 refreshed five-section contract accepted; all original Tier V gates retained.
+It waits for #267 settlement and explicit web-slot allocation; source NOT_RUN.
+#282 / PR #284: independent Tier D ACCEPT, validator 9/9 PASS; hosted CI pending.
+#272 remains ready after #282 with its original count mutation and fresh Tier L.
+PR #274 CI FAIL: bridge-v5 terminal effects_applied_at null; no merge permitted.
+PR #280 hosted CI pending; fresh infrastructure reviewer remains required.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+No deployment, full scene/art/M1 or new canon acceptance claimed.
+Next: bounded #267 round 2; #284 final CI; #214 stays queued.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous coordinator checkpoint:**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Scope: epic #217 and existing local overrides; exactly one pipeline tick.
 This tick: 1 merged PR with playable proof, [PR #283](https://github.com/Vovanostm/warwrit/pull/283).
 #271 merged as `df540c2c`, expected head `3a97b679`; issue closed/done.
@@ -32,8 +65,6 @@ Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
 No setup/API/wiki/rule/protocol/replay/renderer or migration contract changed.
 Next: apply retained #267 stash and resume same allocation; #284 awaits CI.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Pre-resume branch records (historical):**
 
