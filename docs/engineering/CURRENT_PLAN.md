@@ -3,6 +3,43 @@
 ## Pipeline status — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope: “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
+#272 / PR #287 head `c07b88d9`: CI failed, no merge.
+Run `39715279402`: encounter PostgreSQL v5 wolf test, line 4156,
+`effects_applied_at` null; that stage passed 24 tests and failed 1.
+OIDC source `37f35c6b`, accepted Tier L proof and validator 9/9 retained.
+[OIDC contract and evidence](evidence/core-oidc-count-isolation/README.md).
+Existing P0 #285 already describes this exact assertion failure on another PR.
+Coordinator decision: reuse #285; shared-database causality is not proven here.
+#285 dedicated branch `Vovanostm/core-integration-db-isolation`, base `c62ad2d0`.
+Read-only contract task `task_645d4bafb0dd` / dispatch `ctx_67f743b05304` live.
+Own only `.orca/core-integration-db-isolation/contract.md`; source NOT_RUN.
+Setup deferred to preserve #179 exclusive checks/hooks/runtime allocation.
+All #285 AC retained: file isolation, disposal, parallelism, <=20% duration,
+five full CI passes; contract must name ownership or split before source build.
+#179 sole live web builder `task_1af575ec832f`; clean feature `6ce7f587` observed.
+Coordinator directed removal of the newly added optional bespoke PNG decoder;
+retain public catalogue fit/upward-step/widened-B001/unchanged-height assertions,
+actual alpha >=64 browser measurements and all original AC/DoD/full Tier V.
+#214 remains frozen pending #179; #268 accepted contract waits for web slot.
+#269 AND #262 final component 20/15; #263/#231 remain open.
+#274/#280 retain unresolved REWORK; green CI alone permits no merge.
+No duplicate daily metrics/scout/triage/digest or new issue.
+Local game tests/typecheck/build/DB/browser NOT_RUN; performance NOT_MEASURED.
+No game rules, setup implementation, protocol, replay, schema or migration change.
+Next: #285 contract; #179 normal follow-up commit/proof and full Tier V.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Previous checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -30,8 +67,6 @@ No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
 Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
 Next: final-head CI/expected-head merge for #286; exclusive #272 proof resume.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 

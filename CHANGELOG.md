@@ -9,6 +9,31 @@ requests.
 
 ## Unreleased
 
+### Route encounter CI failure to existing isolation issue — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`: one owner-requested pipeline tick;
+  #272 / PR #287 at `c07b88d9` remains unmerged after native CI run
+  `39715279402` failed the encounter v5 wolf terminal-effects assertion at
+  `postgres.integration.test.ts:4156` (`effects_applied_at` null, 24 pass / 1 fail).
+  Existing #285 already reports this exact failure; no duplicate issue and no
+  independently proven shared-database cause. OIDC source and Tier L proof remain.
+- Coordinator activates #285 as a dedicated Tier L read-only contract, retaining
+  every original criterion, including <=20% integration duration and five full
+  CI passes. Setup, source, checks and runtime are deferred while #179 owns its
+  exclusive slot; contract must establish minimal ownership and shared-script
+  sequencing before any implementation. No #285 fix or acceptance is claimed.
+- Native #179 builder remains live, feature `6ce7f587` clean at observation.
+  Coordinator directs removal of the newly added optional bespoke PNG byte
+  decoder through a normal follow-up commit; preserve catalogue fit/upward-step/
+  widened-B001/unchanged-height regressions, browser alpha measurements and
+  original full Tier V. Existing #214 freeze and #268 queue remain.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records current continuation;
+  issue comments read back exactly, mailbox advisory recorded before ack,
+  #285 dispatch/worktree/liveness verified. Local game tests, typecheck, builds,
+  DB/browser and full suites NOT_RUN; performance NOT_MEASURED. Documentation
+  format/diff checks apply; no game-rule/API/wiki/replay/schema/migration change.
+  Zero merged PRs with playable proof; daily work already complete.
+
 ### Publish accepted selection and autoplay extraction — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`, [PR #286](https://github.com/Vovanostm/warwrit/pull/286),
