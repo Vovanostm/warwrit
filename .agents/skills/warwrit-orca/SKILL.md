@@ -79,9 +79,8 @@ All workers append [common rules](prompts/common.md). Research basis:
   exits 0 and the gates of its tier (below) are ACCEPT **for the gated code head** and main's newest `CI` run is green (or the PR closes the main-red `P0`, step 2a)
   (later commits may only add evidence, CHANGELOG/CURRENT_PLAN, or a merge of
   origin/main); one PR at a time, expected head SHA. `agent:blocked` on the PR or
-  on any linked issue, or an owner decision, stops it. Scope: PRs the
-  coordinator opens for slices and epic contracts. Infrastructure PRs outside
-  slices keep the owner gate (`agent:merge-approved`).
+  on any linked issue, or an owner decision, stops it. Scope: every PR. Infrastructure PRs outside slices also need a fresh
+  `review` ACCEPT for their head (owner decision 2026-10-21).
 - **One issue = one slice = one PR**, about 300 changed lines or less without
   tests. A slice or local override that lists several issues is split before
   its next start; for an open PR already over the limit see the end of the
@@ -196,7 +195,7 @@ repo id are in the tick prompt. Work from the coordinator worktree.
    - `bash scripts/orca-metrics.sh 1 > .orca/pipeline/metrics/<date>.txt`;
      compare with the previous day. If failed worker runs or the REWORK share
      rose two days in a row, open one issue labelled `pipeline` with both
-     numbers and one proposed change (pipeline PRs keep the owner merge gate).
+     numbers and one proposed change (an infrastructure PR: it merges on gates with a fresh `review` ACCEPT).
    - Scout: when a worker slot is free, start [scout](prompts/scout.md) with
      `{{DATE}}`. On a later tick triage its `finding-N.md` files: skip
      duplicates of open issues, create at most three issues per day with
