@@ -6,32 +6,31 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#179 independent evaluator 1 REWORK at `97c3e000`; full local eval-1.md retained.
-Native day/night first death → victory, Restart/Editor/reentry, geometry/input pass;
-short native 1366 × 768 / 125% figure/contact readability fails.
-New current equal-height/game-scale comparison and actual journey packet supplied;
-exact historical state, all-overlay pairs and ten original baseline rows remain open.
-Coordinator verified all 19 recorded PIDs absent, 23319/25319 clear, no play.pid.
-Exact settlement recorded before release/ack; no evaluator runtime remains.
-Full absolute visual critic 2 task_3b42ff2f371e / ctx_e28925b578ec is live;
-images only, fresh scores from the new packet, no runtime/checks/source writes.
-Repeated scene-integration 1 requires a technique change; images alone cannot fix it.
-Source `989669ef` remains frozen, 298/300; original 2/2 and consumed supplemental retained.
-No further source round, cap reset, numerical waiver, PR or #179/#214 acceptance.
-#285 previously allocated ONE supplemental global-exit repair is now live:
-task_2d0f34212d50 / ctx_a47bc6d7642f, sole core writer/exclusive checks/DB/runtime.
-Only integration-global-setup.ts and integration-database.test.ts may change;
-retain prior nonzero status, rethrow original cleanup error, real child regression.
-Original failed 2/2, <=300 source lines, normal audit and fresh Tier L retained.
-Historical encounter null cause UNPROVEN; hosted <=20% timing NOT_MEASURED;
-five full CI NOT_RUN. #272 / PR #287 lacks green CI; no merge eligibility.
-#214 source frozen pending #179; #268 waits checks/runtime. Final #269 AND #262 20/15 retained.
-Main CI `39751131136` at `ff2f5f96` is SUCCESS; no PR advanced to merge this tick.
-Lanes covered; daily metrics/scout/triage/digest already complete.
-New game tests/typecheck/validate/browser/full gates NOT_RUN by coordinator;
-prior validator 9/9 and 73 related tests retained, not rerun. Performance NOT_MEASURED.
+#179 recovery contract settled; repeated scene integration 1 requires technique change.
+Coordinator adopted [#293](https://github.com/Vovanostm/warwrit/issues/293):
+independent desktop HUD opening, initial fit and body/ground composition.
+#293 ready after #268 source release AND positive checks/runtime handback;
+fresh current-main worktree/contract, <=300 changed source lines, full Tier V.
+Design estimate 172 additions + 88 removals is not a measured implementation.
+#179 ready as aggregate parent after #293 merge; original nine AC/every DoD retained.
+Frozen original worktree/source `989669ef`, 298/300; failed 2/2 plus supplemental retained.
+No further old-branch tuning round, reset, numeric waiver or premature parent merge.
+Reduced catalogue/registration remainder needs a fresh delivery worktree and contract.
+#179 integration and all gates precede #214 integration and its own repeated gates.
+Full visual 2: BLOCKED_ENV plus scene integration 1, other applicable criteria >=2.
+Exact historical rejected state, all-ground-overlay pairs and ten baseline rows open.
+Retained design: uix-w4-scale/.orca/uix-w4-scale/contract-fit-recovery.md (local).
+#268 task_723e5b9418b1 / ctx_49237691842e is sole live web builder/checks/runtime owner.
+Final component 20/15 remains on #269 AND #262; aggregate parents stay open.
+#285 / PR #292 `cf6a6fb5`: local Tier L 4/validator/scope accepted; hosted full CI 1/5 PASS.
+Full CI attempt 2 requested sequentially; matched timing NOT_MEASURED, five passes required.
+#272 / PR #287 retains failed encounter CI and original mutation/five-pass/Tier L gates.
+PR #291 green CI alone does not establish its independent reviewer gate; no merge.
+Main newest CI `39759317709` at `65d7466b` SUCCESS.
+Lane queues covered; daily metrics/scout/triage/digest already complete, no repeat.
+New game tests/typecheck/validate/browser/full gates NOT_RUN; performance NOT_MEASURED.
 No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
-Next: settle bounded #285 repair and visual 2; route confirmed defects within source limits.
+Next: #268 settlement/cleanup, then #293 contract; PR #292 sequential hosted proof/timing.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history

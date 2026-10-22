@@ -9,6 +9,31 @@ requests.
 
 ## Unreleased
 
+### Split desktop composition from rejected sizing delivery — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: under the existing engineering delegation,
+  accepted the read-only recovery design and created prerequisite
+  [#293](https://github.com/Vovanostm/warwrit/issues/293). It owns one cohesive
+  HUD opening / initial fit / body-ground composition boundary on a fresh main
+  branch after #268 source and positive runtime handback. Parent #179 stays
+  open for catalogue sizing, registration and full integrated acceptance;
+  #214 remains frozen until #179 merges and its own gates repeat.
+- Original source `989669ef`, 298/300 changed lines, both failed ordinary
+  rounds and the consumed supplemental remain frozen. No new parent tuning
+  round or acceptance waiver. Child estimate 172 additions + 88 removals is
+  design only; its actual <=300 diff, original affected AC/DoD and full
+  independent Tier V remain mandatory. Exact historical rejected state,
+  all-ground-overlay pairs and ten original baseline rows remain blockers.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and the existing
+  [sizing specification](docs/wiki/battlefield-test-maps.md) record the split.
+  Exact recovery settlement recorded/released/acked. #268 is the sole live
+  builder and checks/runtime owner. Main CI 39759317709 SUCCESS; PR #292 initial
+  CI PASS (1/5); full attempt 2 requested sequentially. Matched timing
+  NOT_MEASURED and the remaining consecutive full CI passes stay mandatory.
+  No merge: 0 merged PRs with playable proof this tick. Documentation format,
+  scoped diff and links checked; new game tests/typecheck/validate/browser/full
+  gates NOT_RUN. No source/setup/API/rule/replay/migration/dependency change.
+
 ### Settle sizing evaluation and release bounded teardown repair — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: independent evaluator REWORK at `97c3e000`.
