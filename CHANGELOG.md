@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Revalidate visible Start against current main — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, [PR #283](https://github.com/Vovanostm/warwrit/pull/283):
+  ordinary merge of current main `fc5d642d`; changelog-only conflict resolved
+  retaining both histories. No source conflict or change to accepted UI code
+  `f98040f9`; later changes are evidence, records and the main merge.
+- Coordinator revalidation at integrated `98cbb077`: exit 0, 9/9 PASS,
+  nine related tests PASS. Scope remains 36 source lines, excluding tests.
+  Tier U ACCEPT and independent played proof remain valid for unchanged code.
+  Final hosted CI and expected-head merge remain pending; 0 merges this tick.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #282's clean author
+  commits and pending independent Tier D review, #272's separate acceptance,
+  and retained #267 WIP. Attributed agent scope expansion is recorded locally
+  as unverified authority; no new milestone activated. No API/setup/wiki change.
+  Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+
 ### Integrate current merge authority before Start delivery — 2026-10-22, LOCAL
 
 - `Vovanostm/codex-uix-start-action-271`, [PR #283](https://github.com/Vovanostm/warwrit/pull/283):
