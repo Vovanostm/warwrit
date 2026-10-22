@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Measure matched integration command wall times — 2026-10-23, PUBLISHED
+
+- `Vovanostm/core-hosted-integration-timing`, #295, Refs #285: a manual
+  `workflow_dispatch` harness times the unchanged `pnpm test:migrations` for
+  three sequential baseline/candidate pairs. Baseline
+  `65d7466bb5bd34ae04ad0ef8e252b5d8808fa5a0`, candidate
+  `cf6a6fb544bca5e553704225f1b6d104ae903298`. Each sample is its own clean
+  checkout and a new disposable PostgreSQL. Medians are reported only when all
+  three pairs are valid; the timing result is PASS only when the candidate
+  median is at most 1.20 times the baseline median.
+- Ordinary CI, bootstrap, packages, tests, migrations and dependencies are
+  unchanged. Hosted dispatch and the six measured timings remain NOT_MEASURED
+  until the workflow is on main. Published as a pull request; not merged.
+
 ### #293 merged — 2026-10-23, MERGED
 
 - [PR #299](https://github.com/Vovanostm/warwrit/pull/299) merge `19e62633` closed #293.
