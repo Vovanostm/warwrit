@@ -35,8 +35,23 @@ requests.
   No setup/API/wiki/rule/replay/schema/migration/dependency change; full local
   verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED.
 
-### Cut coordinator tick context — 2026-10-22, LOCAL
+### Tick prompt is not owner scope — 2026-10-22, PUBLISHED
 
+- `claude/tick-prompt-owner-scope`, #290: the coordinator wrote status blocks in
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) whose scope line quotes the
+  tick prompt as the owner's words, against
+  [warwrit-orca](.agents/skills/warwrit-orca/SKILL.md). The prompt in
+  `scripts/orca-pipeline-tick.sh` now says it is the tick script, never owner
+  scope, and that CURRENT_PLAN keeps exactly one status block. CURRENT_PLAN is
+  left to its single writer, the coordinator.
+- A `scripts/check-current-plan.sh` rule rejecting "Perform exactly ONE tick" is
+  deferred to a follow-up on #290: it would fail every PR's "PR scope" job until
+  main's CURRENT_PLAN is clean. Checks: `bash -n` on the script and
+  `scripts/check-pr-scope.sh`; effect on ticks NOT_MEASURED until ticks run on main.
+
+### Cut coordinator tick context — 2026-10-22, MERGED
+
+- Merged 2026-10-22 as [PR #289](https://github.com/Vovanostm/warwrit/pull/289) (65d7466b).
 - `claude/orca-coordinator-context`, #288: coordinator cost. Measured
   2026-10-21/22: 100 ticks, 181.9M input of which 11.0M uncached, versus 5.5M
   uncached for all workers. Per-call context climbed from 27k to 110–125k tokens
