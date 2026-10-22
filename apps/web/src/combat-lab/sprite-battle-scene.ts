@@ -19,7 +19,7 @@ import {
 import type { CombatLabAction, CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
 import type { BattlePresentationView, Unit as BattleUnit } from './battle-presentation.js';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
-import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
+import { mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import {
   actorBadgePlacement,
   opaqueSpritePixel,
@@ -30,7 +30,7 @@ import {
 import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { createReachContour } from './sprite-reach-contour.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
-import { spriteForUnit } from './sprite-art.js';
+import { spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
 import {
   SPRITE_MASK_SIZE,
   SPRITE_VISUAL_SIZE,
@@ -61,9 +61,8 @@ const b023FixtureUrl = new URL(
   import.meta.url,
 ).href;
 
-// Leave room for adjacent full figures without changing their proportions or pivots.
-const SPRITE_PRESENTATION_SCALE = 0.82;
 const AXIAL_TO_WORLD = battleHexToWorld;
+const CAMERA_ELEVATION = Math.PI / 6;
 const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
 interface SpriteBattleScene {
@@ -141,7 +140,7 @@ function mountBattleEnvironment({
   const groundMaterial = createBattleBackdropMaterial(scene, texture(millFieldUrl));
   groundMaterial.setColor3('tint', initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White());
   background.material = groundMaterial;
-  const scenery = mountBattleScenery(scene, tiles);
+  const scenery = mountBattleScenery(scene, tiles, CAMERA_ELEVATION);
   scenery.setNight(initialNight);
 
   return {
@@ -253,11 +252,11 @@ export async function mountSpriteBattleScene(
   const unitPresentationModes = [
     {
       sampling: Texture.BILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.62, 0.67, 0.78)],
+      colors: [Color3.White(), new Color3(0.46, 0.5, 0.58)],
     },
     {
       sampling: Texture.TRILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.76, 0.8, 0.9)],
+      colors: [Color3.White(), new Color3(0.4, 0.44, 0.52)],
     },
   ];
   scene.onBeforeCameraRenderObservable.add((camera) => {
@@ -393,6 +392,7 @@ export async function mountSpriteBattleScene(
     reference: new Vector2(perspective.targetX, perspective.distance),
     crop: new Vector4(0, 0, 1, 1),
     amount: 1,
+    elevation: CAMERA_ELEVATION,
   });
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
   const apronDepth = environment.apronDepth;
@@ -408,10 +408,15 @@ export async function mountSpriteBattleScene(
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
   const groundYFor = (hex: CombatLabHex) =>
     (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
-  const fieldVitals = mountBattleFieldVitals(canvas, scene, (id) => {
-    callbacks.onSelectUnit(id);
-    focusUnit(id);
-  });
+  const fieldVitals = mountBattleFieldVitals(
+    canvas,
+    scene,
+    (id) => {
+      callbacks.onSelectUnit(id);
+      focusUnit(id);
+    },
+    CAMERA_ELEVATION,
+  );
   const heightLabels: Mesh[] = [];
   initialTiles
     .filter((tile) => tile.height > 0)
@@ -551,15 +556,11 @@ export async function mountSpriteBattleScene(
   };
   const syncUnit = (unit: BattleUnit) => {
     const sprite = spriteForUnit(unit);
-    const factor = (spriteDisplayHeight(sprite.id) * SPRITE_PRESENTATION_SCALE) / sprite.bodyHeight;
-    const width = sprite.width * factor;
-    const height = sprite.height * factor;
+    const { width, height, anchorX, footY } = spriteGeometry(sprite);
     let mesh = unitMeshes.get(unit.id);
     let material = unitMaterials.get(unit.id);
     if (!mesh || !material) ({ mesh, material } = createUnitMeshes(unit, sprite, width, height));
 
-    const anchorX = (sprite.footX / sprite.width - 0.5) * width;
-    const footY = (sprite.footY - sprite.height / 2) * factor;
     const { x, z } = AXIAL_TO_WORLD(unit.position);
     const groundHeight = groundYFor(unit.position);
     mesh.rotation.x = CAMERA_ELEVATION;
@@ -851,7 +852,7 @@ export async function mountSpriteBattleScene(
       .filter((unit) => unit.status === 'active')
       .map((unit) => {
         const art = spriteForUnit(unit);
-        const scale = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
+        const scale = spriteScale(art);
         const point = AXIAL_TO_WORLD(unit.position);
         const [left, top, right, lower] = art.visibleBounds;
         const center = new Vector3(
@@ -922,7 +923,7 @@ export async function mountSpriteBattleScene(
     const { descriptor, badge, ring, width } = actorMarker;
     const unit = currentView.units.find(({ id }) => id === descriptor.id)!;
     const art = spriteForUnit(unit);
-    const scale = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
+    const scale = spriteScale(art);
     const point = AXIAL_TO_WORLD(unit.position);
     const foot = new Vector3(point.x, groundYFor(unit.position), point.z);
     const projectedFoot = project(foot);
@@ -1228,15 +1229,15 @@ export async function mountSpriteBattleScene(
     const viewport = canvas.getBoundingClientRect();
     const surface = canvas.closest('.battle-view') ?? canvas.parentElement!;
     const safeTop = Math.max(
-      24,
+      16,
       ...[...surface.querySelectorAll('.battle-top-band')].map(
-        (node) => node.getBoundingClientRect().bottom - viewport.top + 8,
+        (node) => node.getBoundingClientRect().bottom - viewport.top + 4,
       ),
     );
     const safeBottom = Math.min(
-      viewport.height - 24,
+      viewport.height - 16,
       ...[...surface.querySelectorAll('.battle-action-dock')].map(
-        (node) => node.getBoundingClientRect().top - viewport.top - 8,
+        (node) => node.getBoundingClientRect().top - viewport.top - 4,
       ),
     );
     return { viewport, safeTop, safeBottom };
@@ -1256,43 +1257,24 @@ export async function mountSpriteBattleScene(
     minZ: Math.min(...projectedField.map((point) => point.z)),
     maxZ: Math.max(...projectedField.map((point) => point.z)),
   };
-  const overviewBounds = () => {
+  // fallow-ignore-next-line complexity
+  const overviewBounds = (units = currentView.units, fullField = true) => {
     const { viewport, safeTop, safeBottom } = cameraOpening();
-    const figures = currentView.units
+    const figures = units
       .filter((unit) => unit.status === 'active')
-      .map((unit) => {
-        const art = spriteForUnit(unit);
-        const factor = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
-        const point = AXIAL_TO_WORLD(unit.position);
-        const y = groundYFor(unit.position);
-        const corners = [art.visibleBounds[0], art.visibleBounds[2]].flatMap((edgeX) =>
-          [art.visibleBounds[1], art.visibleBounds[3], art.footY].map((edgeY) => {
-            const up = (art.footY - edgeY) * factor;
-            return project({
-              x: point.x + (edgeX - art.footX) * factor,
-              y: y + up * Math.cos(CAMERA_ELEVATION),
-              z: point.z + up * Math.sin(CAMERA_ELEVATION),
-            });
-          }),
-        );
-        return {
-          minX: Math.min(...corners.map((corner) => corner.x)),
-          maxX: Math.max(...corners.map((corner) => corner.x)),
-          bottom: Math.min(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
-          top: Math.max(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
-        };
-      });
+      .map((unit) => spriteFigureBounds(unit, groundYFor(unit.position), project));
     const frame = battleFrameBounds({
-      mapBounds: fieldBounds,
+      mapBounds: spriteFrameMapBounds(fullField, fieldBounds, figures),
       figures,
       width: viewport.width,
       height: viewport.height,
       safeTop,
       safeBottom,
-      badge: actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
+      badge: focusedId && actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
+      elevation: CAMERA_ELEVATION,
     });
-    if (!frame) return null;
-    const limits = battleCameraLimits(frame, viewport.width, viewport.height);
+    if (!frame || !fullField) return frame;
+    const limits = battleCameraLimits(frame, viewport.width, viewport.height, CAMERA_ELEVATION);
     cameraLimits.maxZoom = limits.maxZoom;
     Object.assign(cameraLimits.bounds, limits.bounds);
     // Extend only the quiet camera-facing apron; projected artwork/terrain stay registered.
@@ -1317,41 +1299,28 @@ export async function mountSpriteBattleScene(
       perspective.targetX + (terrain.apron.position.x - perspective.targetX) * apronScale;
     return frame;
   };
+  let overview = false;
   const frameBattle = () => {
-    const bounds = overviewBounds();
-    if (bounds) camera.fit(bounds, 0);
+    const bounds = overviewBounds(
+      overview ? currentView.units : initialFrameUnits(currentView),
+      overview,
+    );
+    if (!bounds) return;
+    if (overview) {
+      camera.fit(bounds, 0);
+      return;
+    }
+    const mid = (bounds.minZ + bounds.maxZ) / 2;
+    const half = ((bounds.maxZ - bounds.minZ) / 2) * 0.86;
+    camera.fit({ ...bounds, minZ: mid - half, maxZ: mid + half }, 0);
   };
   let focusedId: string | null = null;
   const focusUnit = (id: string) => {
     const unit = currentView.units.find((candidate) => candidate.id === id);
     if (!unit) return;
-    const { viewport, safeTop, safeBottom } = cameraOpening();
-    const point = AXIAL_TO_WORLD(unit.position);
-    const badgeHeight = Number(unit.id === actorMarker?.descriptor.id) * 34;
-    const height = spriteDisplayHeight(spriteForUnit(unit).id) * SPRITE_PRESENTATION_SCALE * 0.45;
-    const zoom = Math.max(
-      4.8,
-      (height * viewport.height) / Math.max(1, safeBottom - safeTop - badgeHeight - 28),
-    );
-    const middle = project({
-      x: point.x,
-      y: groundYFor(unit.position) + height * Math.cos(CAMERA_ELEVATION),
-      z: point.z + height * Math.sin(CAMERA_ELEVATION),
-    });
-    const up = middle.z * Math.sin(CAMERA_ELEVATION);
-    const centerUp =
-      up +
-      (((safeTop + badgeHeight + safeBottom) / 2 - viewport.height / 2) * 2 * zoom) /
-        viewport.height;
-    camera.fit(
-      {
-        minX: middle.x,
-        maxX: middle.x,
-        minZ: (centerUp - zoom) / Math.sin(CAMERA_ELEVATION),
-        maxZ: (centerUp + zoom) / Math.sin(CAMERA_ELEVATION),
-      },
-      0,
-    );
+    const bounds = overviewBounds([unit], false);
+    if (!bounds) return;
+    camera.fit(bounds, 0);
     focusedId = id;
     cameraMoved = false;
   };
@@ -1369,6 +1338,7 @@ export async function mountSpriteBattleScene(
   const showOverview = () => {
     focusedId = null;
     cameraMoved = false;
+    overview = true;
     frameBattle();
   };
   const onOverviewKey = (event: KeyboardEvent) => {
@@ -1406,6 +1376,7 @@ export async function mountSpriteBattleScene(
   canvas.addEventListener('pointerup', releaseCameraPress);
   canvas.addEventListener('pointercancel', releaseCameraPress);
   canvas.addEventListener('pointermove', markDrag);
+  overviewBounds();
   frameDefault();
   scene.updateTransformMatrix(true);
   canvas.setAttribute('aria-label', 'Поле боя с выбором бойца или клетки');
@@ -1418,7 +1389,6 @@ export async function mountSpriteBattleScene(
     engine.resize();
     overviewBounds();
     if (!cameraMoved) frameDefault();
-    clearHover();
   });
   resizeObserver.observe(canvas);
   for (const band of battleSurface.querySelectorAll('.battle-top-band, .battle-action-dock'))
@@ -1653,6 +1623,56 @@ function addLabel(
   collection.push(label);
 }
 
+export function initialFrameUnits(view: BattlePresentationView) {
+  const standing = view.units.filter((u) => u.status === 'active');
+  const allies = standing.filter((u) => u.sideId === view.controlledSideId);
+  if (!allies.length) return standing;
+  const enemies = standing.filter((u) => u.sideId !== view.controlledSideId);
+  const nearest = allies.map((ally) => {
+    const o = AXIAL_TO_WORLD(ally.position);
+    return [...enemies].sort((a, b) => {
+      const pa = AXIAL_TO_WORLD(a.position);
+      const pb = AXIAL_TO_WORLD(b.position);
+      return Math.hypot(pa.x - o.x, pa.z - o.z) - Math.hypot(pb.x - o.x, pb.z - o.z);
+    })[0];
+  });
+  return standing.filter((u) => allies.includes(u) || nearest.includes(u));
+}
+
+export function spriteFrameMapBounds(
+  fullField: boolean,
+  field: SceneMapBounds,
+  figures: readonly ReturnType<typeof spriteFigureBounds>[],
+): SceneMapBounds {
+  if (fullField || !figures.length) return field;
+  const sin = Math.sin(CAMERA_ELEVATION);
+  return {
+    minX: Math.min(...figures.map((f) => f.minX)),
+    maxX: Math.max(...figures.map((f) => f.maxX)),
+    minZ: Math.min(...figures.map((f) => f.bottom)) / sin,
+    maxZ: Math.max(...figures.map((f) => f.top)) / sin,
+  };
+}
+
+export function spriteFigureBounds(
+  unit: BattleUnit,
+  groundY: number,
+  project: (point: { x: number; y: number; z: number }) => { x: number; z: number },
+) {
+  const point = AXIAL_TO_WORLD(unit.position);
+  const sin = Math.sin(CAMERA_ELEVATION);
+  const cos = Math.cos(CAMERA_ELEVATION);
+  const corners = spriteGeometry(spriteForUnit(unit)).corners.map(({ x, up }) =>
+    project({ x: point.x + x, y: groundY + up * cos, z: point.z + up * sin }),
+  );
+  return {
+    minX: Math.min(...corners.map((c) => c.x)),
+    maxX: Math.max(...corners.map((c) => c.x)),
+    bottom: Math.min(...corners.map((c) => c.z)) * sin,
+    top: Math.max(...corners.map((c) => c.z)) * sin,
+  };
+}
+
 function tilesFor(view: BattlePresentationView) {
   if (view.map.tiles) return view.map.tiles;
   const blocked = new Set(view.map.blocked.map(HEX_KEY));
@@ -1662,11 +1682,6 @@ function tilesFor(view: BattlePresentationView) {
     terrain: 'plain' as const,
     blocked: blocked.has(HEX_KEY(hex)),
   }));
-}
-
-function spriteDisplayHeight(id: string): number {
-  if (id.startsWith('W')) return 1.4;
-  return ({ B001: 0.73, B053: 1.62, B002: 1.62 } as Record<string, number>)[id] ?? 1.23;
 }
 
 const labelStyles = {

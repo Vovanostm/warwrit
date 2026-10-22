@@ -17,7 +17,7 @@
    Full existing portraits are available by deliberately inspecting/focusing a fighter. */
 .battle-view .battle-overview-unit {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 4px);
   display: grid;
   place-items: center;
   width: 16px;

@@ -8,7 +8,7 @@ import {
   type Scene,
 } from '@babylonjs/core';
 import type { BattlePresentationView, Unit } from './battle-presentation.js';
-import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
+import { CAMERA_ELEVATION as DEFAULT_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { battleUnitMarker } from './battle-framing.js';
 import { unitVitalPools } from './unit-vitals.js';
 import './battle-field-vitals.css';
@@ -16,7 +16,6 @@ import './battle-field-vitals.css';
 const COLORS = ['#e29c8e', '#b5d7e5', '#e6cf8f'] as const;
 const WIDTH = 32;
 const HEIGHT = 16;
-const UP = new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION));
 
 function drawPools(texture: DynamicTexture, unit: Unit, element: HTMLElement) {
   const context = texture.getContext() as unknown as CanvasRenderingContext2D;
@@ -64,7 +63,9 @@ export function mountBattleFieldVitals(
   canvas: HTMLCanvasElement,
   scene: Scene,
   onInspect: (id: string) => void,
+  CAMERA_ELEVATION = DEFAULT_ELEVATION,
 ) {
+  const UP = new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION));
   const layer = document.createElement('div');
   layer.className = 'battle-field-vitals';
   canvas.insertAdjacentElement('afterend', layer);
@@ -123,6 +124,7 @@ export function mountBattleFieldVitals(
       reference,
       projected,
       canvas.clientHeight / scene.getEngine().getRenderHeight(),
+      UP,
     );
     canvas.closest('.battle-view')?.classList.toggle('battle-overview', overview);
     for (const [id, { mesh, source, portrait }] of entries) {
@@ -201,6 +203,7 @@ function isOverviewScale(
   foot: Vector3 | undefined,
   project: (point: Vector3) => Vector3,
   pixelScale: number,
+  UP: Vector3,
 ) {
   if (!foot) return false;
   return project(foot.add(UP)).subtract(project(foot)).length() * pixelScale < 30;
