@@ -210,7 +210,7 @@ were edited. The latest allocation supersedes the old build task ID.
   the original error identity and the full nested cleanup error.
 - Hook evidence can use an explicit test-only directory, preserving the original
   author's/evaluator's logs. Only four allocated source/test paths changed in
-  rework; aggregate issue source scope remains below 300 (201 lines at this stage).
+  rework; aggregate issue source scope is 200/300 lines per the validator.
 
 ### Executed checks before commit
 
@@ -259,3 +259,54 @@ No production/assertion/parallelism change; new-head Tier L and hosted AC pendin
 CURRENT_PLAN/wiki: replace the source-fix blocker with the committed replacement
 head after handoff; retain both historical REWORK verdicts, all #272/#282 proof,
 <=20% timing and five full CI requirements; do not declare overall acceptance.
+
+### Rework settlement
+
+- Commit `9ea84fcf` — `test: retain ambiguous database allocations and await client
+errors (#285)` — includes the four-path fix/regressions and this report's rework
+  record. Normal pre-commit refreshed related coverage against the explicit private
+  disposable PG and passed the main-based audit (zero new findings). No hook bypass.
+  Original report was already tracked despite git's ignored-directory warning;
+  commit readback confirmed all five intended paths. No unrelated path staged.
+- `bash scripts/orca-validate.sh`: exit 0, all 9 gates PASS at `9ea84fcf`: ancestry,
+  clean tree, scope **200/300**, packages, typecheck, format, lint, related tests,
+  audit. PostgreSQL was stopped/removed before validation. Its related-tests count
+  was 1 PASS / 12 SKIP without DB and rounded 0% ordinary coverage; that is not new
+  DB proof. Retain the separate 13/13 real-PG focused result above. Private validator
+  output is rework-1-evidence/validate.log; normal `.orca/validate-*.log` detail.
+- Brief Playwright smoke at the private combat-lab URL, default mill, 6 controlled
+  / 6 opponents: started battle, selected actual Night Scene, defended with the
+  archer (commander became active), ended commander turn (spearman became active).
+  New screenshots preserve all prior images: shots/rework1-mill-day.png and
+  shots/rework1-mill-night.png, both visually read and independently checked as
+  1440×900 PNGs. HUD and tested inputs were readable/usable. No visual change or
+  full visual acceptance claimed; no fresh persistent or victory/effects proof.
+  Only console error: favicon.ico 404. Browser close exit 0; play stop exit 0 / STOPPED.
+- Owned PG17 project `warwrit-285-rework1` and exact resources were declared in
+  rework-1-evidence/resources.md before launch. Final SQL (before Compose removal)
+  returned **owned_databases=0, owned_sessions=0, remaining_admin_sessions=0**.
+  Raw SQL is retained in rework-1-evidence/sql-cleanup.log. Compose down removed
+  its container/network/volume; final project-labelled inventories are empty.
+  No unrelated resource stopped and no retained/default database used.
+- Normal-check descendant inventory: 28 PIDs; runtime/browser plus attached
+  keepalive: 16 PIDs. Final exact readback: **44/44 absent**. Owned keepalive PID
+  2500 was identified against the pre-browser snapshot and explicitly terminated
+  after play stop; attached session exited 143. All 18 recorded ports absent:
+  23065, 25065, 32805, 54232, 54235, 54245, 54618, 54632, 54637, 55834, 55847,
+  55860, 56322, 56334, 56349, 57553, 57565, 57577. lsof exit 1 with empty output
+  for each. `final-cleanup.json` retains exact PIDs/ports/readback. Earlier short
+  test process PIDs were not measured; no claim of exhaustive historical PID
+  tracking. One direct shell ps call was denied; Python subprocess ps readback
+  succeeded and supplied the final native observations.
+- Final documentation closeout only follows this source commit; source and
+  validator-tested behavior remain unchanged. Report readback/diff/format checked;
+  normal report commit finishes the rework. Shared files remain coordinator-owned.
+
+Handoff: branch Vovanostm/core-integration-db-isolation, source `9ea84fcf`, local
+only; both gate findings addressed with real-PG regressions, audit and validator
+PASS; all owned runtime settled. Next: fresh independent Tier L gates at replacement
+head, then coordinator-hosted matched timing and five complete CI runs. Original
+#285 AC remain mandatory and NOT_PROVEN overall; publication/merge NOT_RUN.
+
+Explicit report formatting check initially flagged one multiline inline-code
+indentation in the new settlement paragraph; corrected with Prettier, final PASS.
