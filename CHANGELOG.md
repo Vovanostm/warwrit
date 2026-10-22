@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Validate database lifecycle rework and request fresh Tier L — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  rework 1/2 source `9ea84fcf`, report `2824c81f`, source scope 200/300. Exact
+  generated database targets enter the cleanup ledger before CREATE; Client error
+  events reject the awaited lifecycle operation; failed cleanup retains both
+  original and complete cleanup errors. Four allocated source/test paths changed;
+  no production, assertion, worker-count or default-parallelism change.
+- Author real PostgreSQL regressions cover committed CREATE with lost reply for
+  empty/template/clone allocations, SQL existence before cleanup, absence after,
+  another run's surviving database and real cleanup-error identity: 13 PASS.
+  These repair the reproduced round-1 findings; fresh independent acceptance is
+  still required. Local owning report: core-integration-db-isolation/.orca/
+  core-integration-db-isolation/report.md (tracked on this branch).
+- Coordinator verified native settlement and clean committed source; validator
+  at `2824c81f` exit 0, all 9 gates PASS. Related 1 PASS / 12 SKIP without DB
+  supplies no fresh database proof. All 44 declared PIDs absent, all 18 ports
+  clear and labelled Compose inventories empty before exclusive slot transfer.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh round-2 Tier L
+  review/evaluation allocation. Preserve historical REWORK/eight-file/60-test
+  evidence, #272 accepted proof and #282 assertions; hosted <=20% timing remains
+  NOT_MEASURED, five full CI runs NOT_RUN. WIP branch checkpoint publication only;
+  no PR, merge or player-acceptance claim; 0 merged PRs with playable proof.
+  No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
+  Full local verify/stress/migrations/browser NOT_RUN by coordinator this tick.
+
 ### Reproduce database cleanup failure and schedule bounded rework — 2026-10-22, LOCAL
 
 - `Vovanostm/core-integration-db-isolation`, #285: owner-requested single tick
