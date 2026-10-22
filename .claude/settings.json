@@ -13,11 +13,7 @@
       "Bash(gh pr merge * --admin*)",
       "Bash(gh pr merge --admin*)"
     ],
-    "ask": [
-      "Bash(gh pr merge *)",
-      "Bash(git push *--force-with-lease*)",
-      "Edit(apps/server/migrations/**)"
-    ]
+    "ask": ["Bash(git push *--force-with-lease*)", "Edit(apps/server/migrations/**)"]
   },
   "hooks": {
     "SessionStart": [

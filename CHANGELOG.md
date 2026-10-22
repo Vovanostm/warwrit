@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Integrate current merge authority before Start delivery — 2026-10-22, LOCAL
+
+- `Vovanostm/codex-uix-start-action-271`, [PR #283](https://github.com/Vovanostm/warwrit/pull/283):
+  merge current main `fc5d642d` by ordinary merge before the expected-head gate.
+  Preserve both changelog histories; only the changelog needed conflict resolution.
+  No source conflict or change to accepted `f98040f9` UI behavior.
+  Revalidation and hosted CI for the integrated candidate remain pending.
+
 ### Publish first-viewport combat Start proof — 2026-10-22, PUBLISHED
 
 - `Vovanostm/codex-uix-start-action-271`, #271: the existing Start action and
@@ -75,6 +83,14 @@ requests.
   records-only commit; full verify/stress/migrations/build NOT_RUN locally,
   performance NOT_MEASURED. Daily work is already complete, not duplicated.
   No rules, replay, protocol, renderer, dependency or migration change.
+
+### Owner merge gate removed — 2026-10-21, PUBLISHED
+
+- `claude/owner-gate-off`: owner decision «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr». AGENTS.md hard rule 1,
+  warwrit-orca, warwrit-delivery, AGENT_TEAM and the `.codex/rules` header now
+  let every PR merge on gates (green CI with `PR scope`, expected head SHA,
+  independent reviewer ACCEPT for infrastructure PRs) without an owner message.
+  Auto-merge, admin merge, force-push, deployment and paid services unchanged.
 
 ### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
 
