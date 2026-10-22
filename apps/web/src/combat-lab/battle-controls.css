@@ -576,12 +576,19 @@
 
 /* Reserve finite desktop lanes at the native125 1024px CSS viewport. */
 .battle-top-band {
-  top: 4px;
   left: 194px;
   right: 268px;
 }
 .battle-view .battle-top-band .battle-initiative {
   inset: auto;
+}
+.battle-overview .initiative-unit.battle-control,
+.battle-overview .initiative-unit.battle-control[aria-current='step'] {
+  height: 84px;
+  min-height: 84px;
+}
+.battle-overview .initiative-unit .unit-vitals {
+  display: none;
 }
 .battle-action-dock {
   grid-template-columns: 220px minmax(0, 1fr);

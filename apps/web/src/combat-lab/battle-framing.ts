@@ -49,13 +49,12 @@ export function battleFrameBounds({
 }
 
 /** Battle-local containment admits the overview, including its off-centre HUD opening. */
-export function tightenInitialFrame(bounds: GroundBounds, factor = 0.86): GroundBounds {
-  const mid = (bounds.minZ + bounds.maxZ) / 2;
-  const half = ((bounds.maxZ - bounds.minZ) / 2) * factor;
-  return { ...bounds, minZ: mid - half, maxZ: mid + half };
-}
-
-export function battleCameraLimits(frame: GroundBounds, width: number, height: number, elevation = CAMERA_ELEVATION) {
+export function battleCameraLimits(
+  frame: GroundBounds,
+  width: number,
+  height: number,
+  elevation = CAMERA_ELEVATION,
+) {
   const maxZoom = Math.max(17, ((frame.maxZ - frame.minZ) * Math.sin(elevation)) / 2);
   const halfWidth = (maxZoom * width) / height;
   const halfDepth = maxZoom / Math.sin(elevation);

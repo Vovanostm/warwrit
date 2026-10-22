@@ -12,7 +12,11 @@ import { CAMERA_ELEVATION as DEFAULT_ELEVATION } from '../renderer/three-quarter
 import { battleHexToWorld } from './battle-layout.js';
 
 /** Decorative ruined-yard roots sit outside the canonical field, never on a traversable cell. */
-export function mountBattleScenery(scene: Scene, tiles: readonly CombatLabHex[], CAMERA_ELEVATION = DEFAULT_ELEVATION) {
+export function mountBattleScenery(
+  scene: Scene,
+  tiles: readonly CombatLabHex[],
+  CAMERA_ELEVATION = DEFAULT_ELEVATION,
+) {
   const minQ = Math.min(...tiles.map((tile) => tile.q));
   const maxQ = Math.max(...tiles.map((tile) => tile.q));
   const minR = Math.min(...tiles.map((tile) => tile.r));

@@ -42,7 +42,7 @@ import { createBattleBackdropMaterial } from './battle-backdrop.js';
 import { mountBattleTerrain } from './battle-terrain.js';
 import { mountBattleScenery } from './battle-scenery.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
-import { battleFrameBounds, battleCameraLimits, tightenInitialFrame } from './battle-framing.js';
+import { battleFrameBounds, battleCameraLimits } from './battle-framing.js';
 import { mountBattleFieldVitals } from './battle-field-vitals.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
@@ -408,10 +408,15 @@ export async function mountSpriteBattleScene(
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
   const groundYFor = (hex: CombatLabHex) =>
     (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
-  const fieldVitals = mountBattleFieldVitals(canvas, scene, (id) => {
-    callbacks.onSelectUnit(id);
-    focusUnit(id);
-  }, CAMERA_ELEVATION);
+  const fieldVitals = mountBattleFieldVitals(
+    canvas,
+    scene,
+    (id) => {
+      callbacks.onSelectUnit(id);
+      focusUnit(id);
+    },
+    CAMERA_ELEVATION,
+  );
   const heightLabels: Mesh[] = [];
   initialTiles
     .filter((tile) => tile.height > 0)
@@ -1301,7 +1306,13 @@ export async function mountSpriteBattleScene(
       overview,
     );
     if (!bounds) return;
-    camera.fit(overview ? bounds : tightenInitialFrame(bounds), 0);
+    if (overview) {
+      camera.fit(bounds, 0);
+      return;
+    }
+    const mid = (bounds.minZ + bounds.maxZ) / 2;
+    const half = ((bounds.maxZ - bounds.minZ) / 2) * 0.86;
+    camera.fit({ ...bounds, minZ: mid - half, maxZ: mid + half }, 0);
   };
   let focusedId: string | null = null;
   const focusUnit = (id: string) => {
