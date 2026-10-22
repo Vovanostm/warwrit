@@ -23,7 +23,9 @@ Author five default-parallel eight-file runs PASS 60/60 each; cleanup positive.
 Live bounded resume `task_93e6f5312ecf` / `ctx_ec6905bd6d89`; #268 follows.
 Safe owned-WIP preservation/main integration; same scope and normal audit.
 #269 AND #262 final component 20/15 and remaining #263/#231 gates stay required.
-#214 remains in combat scope; read-only bounded contract allocation under inspection.
+#214 read-only retained-contract refresh: `task_cfa9df48704d` / `ctx_95dd2d01b14a`.
+Technical after #212 removed; before inactive #198/#212, source waits #267.
+Own dedicated worktree; full issue proof and independent visual rubric retained.
 Daily metrics/scout/triage/digest complete; no duplicate daily work.
 Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
 No setup/API/wiki/rule/protocol/replay/renderer or migration contract changed.

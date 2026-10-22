@@ -22,6 +22,9 @@ requests.
   exit 0, all 9 gates PASS; final-head hosted CI pending;
   #272 keeps its own mutation/five-pass/Tier L gates. #267 WIP/budgets preserved;
   bounded resume task `task_93e6f5312ecf` is live after both prerequisites merged.
+  #214 technical ownership ordering moves before inactive #198/#212; dedicated
+  read-only retained-contract refresh `task_cfa9df48704d`, no source/runtime.
+  Full original issue proof and visual rubric remain; builder waits #267.
   [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
   No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
 
