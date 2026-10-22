@@ -2,7 +2,7 @@ import { Children, isValidElement, type ReactElement, type ReactNode } from 'rea
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it, vi } from 'vitest';
 import type { CombatLabCatalog } from '@warwrit/protocol';
-import { CombatLabEditor } from './CombatLab.js';
+import { CombatLab, CombatLabEditor } from './CombatLab.js';
 import { BattleEditor } from './BattleEditor.js';
 import { createEmptyTiles } from './editor-model.js';
 
@@ -130,4 +130,14 @@ it('blocks start while loading even with a retained catalog and draft', () => {
     true,
     false,
   ]);
+});
+
+// Server rendering checks initial composition only; mounted effects are browser proof.
+it('starts with the editor loading and no selected battle or autoplay controls', () => {
+  const html = renderToStaticMarkup(<CombatLab />);
+  expect(html).toContain('Загружаются бойцы и карты…');
+  expect(html).toContain('Лаборатория боя');
+  expect(html).not.toContain('combat-lab-page--fighting');
+  expect(html).not.toContain('Меню боя');
+  expect(html).not.toContain('Начать автобой');
 });
