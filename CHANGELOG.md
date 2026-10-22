@@ -35,6 +35,10 @@ requests.
   #293 prepares its disjoint source-only contract ahead; its writer waits the
   sole web/runtime slot. PR #291 fresh independent D ACCEPT and coordinator
   validator exit0/all6 applicable gates PASS; final-head hosted CI still required.
+- Later hosted result supersedes the earlier pending status: PR #292 attempt 3
+  FAILED coverage world-free-movement (5000 ms timeout), so consecutive count is
+  0/5. Two earlier passes remain historical; one unchanged diagnostic attempt 4
+  was requested, with no code/test-limit change or acceptance waiver.
 
 ### Resume failed initialization extraction through bounded audit fallback — 2026-10-22, PUBLISHED
 

@@ -6,27 +6,28 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#268 fallback1 FAILED normal commit audit 28/23; staged170/300 preserved, no commit.
+#268 fallback 1 FAILED normal commit audit 28/23; staged 170/300 preserved, no commit.
 Read-only repair accepted: allocate ONLY pure autoplay button + four disabled outputs.
-Full original proof in contract-before-allocation-repair.md retained; estimate261–285 only.
+Full original proof in contract-before-allocation-repair.md retained; estimate 261–285 only.
 #268 task_d854a68fe213 / ctx_157a800f31f3 native live, sole web writer/checks/runtime.
-Ordinary rework2/last round; fallback1 consumed, no reset/bypass/threshold waiver.
+Ordinary rework 2/last round; fallback 1 consumed, no reset/bypass/threshold waiver.
 Normal commit/audit, <=300 and fresh mounted/day-night/Tier U remain mandatory.
-Residual #269 menu/panel/close callbacks and final20/15 on BOTH #269 AND #262 remain.
+Residual #269 menu/panel/close callbacks and final 20/15 on BOTH #269 AND #262 remain.
 #293 native live source-only contract task_2f395cc0bafb / ctx_b2b952fc35c3.
 Fresh clean-main uix-179-desktop-composition worktree; no rejected parent code copied.
-Coordinator removed engineering after268 for this disjoint source boundary.
+Coordinator removed engineering after #268 for this disjoint source boundary.
 Its builder still waits explicit sole web/checks/runtime grant; no implementation now.
-Direct cleanup: all15 recorded PIDs absent,23492/25492clear,no play.pid before handback.
+Direct cleanup: all 15 recorded PIDs absent, ports 23492/25492 clear, no play.pid before handback.
 Original #293/#179 full AC/DoD/Tier V/E1/E2/E3 and <=300 unchanged.
 #179 source `989669ef`, failed rounds and #214 integration gates stay frozen.
-#285 / PR #292 `cf6a6fb5`: full hosted CI attempts1+2 SUCCESS, consecutive2/5.
-Attempt3 native IN_PROGRESS, same SHA; five passes and matched timing remain required.
+#285 / PR #292 `cf6a6fb5`: full hosted CI attempts 1+2 SUCCESS retained as history.
+Attempt 3 FAILED: coverage world-free-movement timed out in 5000 ms; consecutive 0/5.
+One unchanged-candidate diagnostic attempt 4 requested; no code/test-limit changes.
 Three matched baseline/candidate samples, median<=1.20x: NOT_MEASURED.
 Original Tier L/AC and historical-null-cause limits retained; no merge.
 #272 / PR #287 retains failed encounter CI and original mutation/five-pass/Tier L gates.
 #290 / PR #291 source `a198ef98`: fresh independent Tier D ACCEPT.
-Coordinator setup PASS, validator exit0/all6 applicable gates PASS, scope2/300.
+Coordinator setup PASS, validator exit 0/all 6 applicable gates PASS, scope 2/300.
 Only CHANGELOG/CURRENT_PLAN records follow; final-head hosted CI still required.
 CURRENT_PLAN now has one status block and actual owner delegation; rejection guard deferred.
 Main newest CI `39759317709` at `65d7466b` SUCCESS.
