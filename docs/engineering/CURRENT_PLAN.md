@@ -2,6 +2,38 @@
 
 ## Pipeline status — 2026-10-22
 
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Scope: epic #217 and existing local overrides; exactly one pipeline tick.
+This tick: 1 merged PR with playable proof, [PR #283](https://github.com/Vovanostm/warwrit/pull/283).
+#271 merged as `df540c2c`, expected head `3a97b679`; issue closed/done.
+Tier U ACCEPT, validator 9/9, scope 36, final-head CI and PR scope PASS.
+[Contract, independent verdict and captures](evidence/uix-editor-primary-start/README.md).
+Try `/combat-lab`: Start/readiness at scrollY=0; default mill, loaded deserters,
+keyboard/mouse, invalid/pending guards, real result → editor; day/night proven.
+Local proof retained; clean fully-pushed #271 worktree removed through Orca.
+#282: [PR #284](https://github.com/Vovanostm/warwrit/pull/284), Tier D ACCEPT at `d553215b`.
+Ordinary integration of main `df540c2c`; only coordinator records conflicted.
+Both histories preserved; accepted world-test source unchanged.
+Integrated validation and final-head hosted CI are pending; no #282 merge yet.
+[Contract, report and independent review](evidence/core-world-rollback-isolation/README.md).
+Author five default-parallel eight-file runs PASS 60/60 each; cleanup positive.
+#272 retains separate mutation/five-pass/Tier L gates after #282.
+#267 preserves two staged files and budgets; #273 and #271 prerequisites merged.
+Resume its bounded existing extraction after safe main integration; #268 follows.
+#269 AND #262 final component 20/15 and remaining #263/#231 gates stay required.
+#214 remains in combat scope; read-only bounded contract allocation under inspection.
+Daily metrics/scout/triage/digest complete; no duplicate daily work.
+Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+No setup/API/wiki/rule/protocol/replay/renderer or migration contract changed.
+Next: revalidate/publish #284 integration; resume #267, then independent gates.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Pre-integration branch checkpoints (historical):**
+
+## Pipeline status — 2026-10-22
+
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 and existing local overrides; no new milestone.
@@ -31,9 +63,40 @@ Full verify/stress/migrations/browser NOT_RUN here; performance NOT_MEASURED.
 Next: hosted CI/expected-head checks, merge only on gates, then dependency resume.
 Wrapper releases its lease when this single tick returns.
 
+**Previous #282 validation/review dispatch checkpoint (superseded above):**
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: #217 and existing local overrides; no new milestone activated.
+[PR #283](https://github.com/Vovanostm/warwrit/pull/283), #271: Tier U ACCEPT at `f98040f9`.
+[Contract, verdict and fifteen captures](evidence/uix-editor-primary-start/README.md).
+Try `/combat-lab`, seed 20261009: visible Start, Tab/Enter, mill result,
+return to editor, load deserters and launch; readiness/error and guards retained.
+Independent real mill/deserter victories, day/night 1440 × 900 and bounded
+1366 × 768 proof remain valid; source is unchanged after its gated head.
+Integrated main `fc5d642d` by ordinary merge `98cbb077`; only CHANGELOG conflicted.
+Both histories retained; coordinator revalidation exit 0, 9/9 PASS, nine tests.
+Scope 36, normal audit PASS; final hosted CI and exact-head merge pending.
+This tick: 0 merged PRs with playable proof so far.
+#282 builder settled successfully: source `961ff8e3` / `2557e2df`, clean tree.
+Native deadlock: 0011 FK-bearing table DROP vs encounter-command INSERT.
+Isolated rollback DB preserves receipt/clock/down-up/fresh-install assertions.
+Builder five consecutive default-parallel runs: 60/60 each, no skips;
+private-resource cleanup positively recorded. This is author evidence.
+Coordinator integrated validation and fresh Tier D review are next for #282.
+#272 waits #282; original count mutation and fresh Tier L gates remain.
+#267's two staged files and budgets retained; waits #271 merge; #268 follows.
+#269 AND #262 final component 20/15 limits remain; #263/#231 stay open.
+Agent mailbox claims broader production scope; attributed locally, not verified
+as an owner instruction here. Existing mission remains authoritative.
+Daily metrics/scout/triage/digest complete; no duplicate daily work.
+Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+No deployment, full scene/art/M1/balance or new canon acceptance claimed.
+Next: final CI for #283; validate #282 and dispatch its independent reviewer.
+Wrapper releases its own lease when this single tick returns.
+
 ## Dated history
 
-**Previous #282 validation/review dispatch checkpoint (superseded above):**
+**Previous #271 publication / #282 builder handoff:**
 
 ## Pipeline status — 2026-10-22
 
@@ -72,6 +135,35 @@ Next: exact fresh #282 verdict and #283 final CI; merge only on applicable gates
 Wrapper releases its own lease when this single tick returns.
 
 **Previous #282 contract / #271 evaluator checkpoint:**
+Queue: #217 and existing local overrides; no new milestone.
+#271: independent Tier U ACCEPT, frozen source `f98040f9`; proof published for PR.
+[Contract, verdict and fifteen evaluator captures](evidence/uix-editor-primary-start/README.md).
+Start/readiness now precede the editor; original launch/reset guards retained.
+Try `/combat-lab`, seed 20261009: Start at scrollY=0, Tab/Enter, complete mill,
+return to editor, load deserters and launch by mouse; invalid/pending guards hold.
+Actual round-8 mill and round-10 deserter victories, day/night at 1440 × 900;
+1366 × 768 bounded fit, genuine request/draft equality, result-return/reset proven.
+Exact native evaluator task/dispatch/result/full verdict matched before ack;
+settled evaluator released: no owned resource. Runtime/browser cleanup positive.
+Coordinator validator exit 0, 9/9 PASS, nine related tests PASS; scope 36.
+Normal audit PASS, five inherited findings retained. No redundant checks this tick.
+Hosted CI and merge remain pending; 0 merged PRs with playable proof.
+#282 accepted contract advances to sole core builder and exclusive checks/DB slot.
+Baseline PostgreSQL deadlock DETAIL must precede bounded test-only isolation.
+Dedicated proof checkout at unchanged #272 commit `37f35c6b` keeps delivery separate;
+only #282 source commits enter it for five ordinary parallel eight-file passes.
+#272 stays ready after #282; original five-pass/mutation/Tier L gates retained.
+#267 two staged files and budgets preserved, waits #271; #268 follows it.
+#269 AND #262 final component 20/15 limits remain; #263/#231 stay open.
+Other ready slices retain prerequisites; #225 still waits log work.
+Snapshot reused for unchanged PRs/queue; infrastructure owner gates unchanged.
+Daily metrics/scout/triage/digest already complete; no duplicate daily work.
+Full verify/stress/migrations/production build NOT_RUN locally;
+performance NOT_MEASURED; full scene/art/M1/balance acceptance unclaimed.
+Next: publish #271 proof/PR, inspect hosted CI; consume #282 builder next tick.
+Wrapper releases its own lease when this single tick returns.
+
+**Previous #273 publication checkpoint (superseded above):**
 
 ## Pipeline status — 2026-10-22
 
@@ -106,6 +198,38 @@ Next: #271 settlement/cleanup, transfer slot, #282 baseline diagnosis and builde
 Wrapper releases its own lease when this single tick returns.
 
 **Previous callback publication checkpoint (superseded above):**
+Queue: epic #217 and local overrides; P0 #272 refills the free core lane.
+This tick: 1 merged PR with playable proof, [PR #281](https://github.com/Vovanostm/warwrit/pull/281).
+#273 merged as `857b0491`, expected PR head `c872eab4`; issue closed/done.
+Tier U ACCEPT for source `a6b35143`; validate exit 0, 9/9 PASS, scope 137.
+Final-head clean-checkout CI and PR-scope checks PASS; no blocked labels,
+unresolved threads or change-request reviews. No source changed after gating.
+[Contract, verdict and day/night proof](evidence/qa-hooks-session-callbacks/README.md).
+Try: mill seed 20261009 at 1440×900, start/move/menu/one-step/replay,
+autoplay/stop/manual order/restart/editor/result; both modes reached victory.
+Local evidence retained under coordinator `.orca/pipeline/retained/qa-hooks-session-callbacks/`;
+clean fully-pushed slice worktree removed through Orca after merge readback.
+#271 accepted contract, dedicated `Vovanostm/codex-uix-start-action-271`,
+fast-forwarded to merged main. Builder task `task_a63cd9cb21f9` assigned;
+sole web writer owns only editor action functions, guard tests and bounded CSS.
+Outcome: visible Start/readiness in the first existing desktop editor viewport.
+Try after implementation: default mill, loaded preset, result → editor without scroll.
+Implementation, focused checks and independent Tier U remain pending.
+#272 contract-only assignment to the requesting owner-session worker;
+only `apps/server/src/auth/oidc.integration.test.ts`, own dedicated branch.
+No source/PG work before accepted contract and explicit resource handoff.
+Five parallel-PG runs and mutation proof remain required; Tier L retained.
+#267 staged two-file candidate/budgets preserved; follows #271, then #268.
+Final component cyclomatic ≤20 AND cognitive ≤15 stays on #269 AND #262;
+remaining #263/#231 acceptance preserved. No waiver or second coordinator.
+Daily metrics/scout/digest already complete. Other PRs retain existing authority.
+Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+No rules, replay, protocol, renderer, dependency or migration change this tick.
+Next: consume #271 builder and #272 contract; validate/gate each in its turn.
+Current records published on the #271 branch; main retains its last merged status.
+Wrapper releases its own lease when this single tick returns.
+
+**Previous #273 premerge checkpoint (superseded above):**
 
 ## Pipeline status — 2026-10-22
 
