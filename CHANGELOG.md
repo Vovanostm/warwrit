@@ -9,6 +9,13 @@ requests.
 
 ## Unreleased
 
+### Integrate current main for rollback isolation gates — 2026-10-22, LOCAL
+
+- `Vovanostm/core-world-rollback-isolation`, #282: ordinary merge of main
+  `fc5d642d` retains both changelog histories; only the changelog conflicted.
+  Accepted source commits `961ff8e3` and `2557e2df` are unchanged.
+  Coordinator validation and fresh Tier D review remain pending.
+
 ### Accept rollback-isolation contract and preserve runtime ownership — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-world-rollback-isolation`, [#282](https://github.com/Vovanostm/warwrit/issues/282):
@@ -29,6 +36,14 @@ requests.
   Records only are published; no source, API/setup/wiki contract or migration
   change. No PR/merge; 0 merged PRs with playable proof this tick.
   Daily work already complete and not repeated; visual acceptance unclaimed.
+
+### Owner merge gate removed — 2026-10-21, PUBLISHED
+
+- `claude/owner-gate-off`: owner decision «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr». AGENTS.md hard rule 1,
+  warwrit-orca, warwrit-delivery, AGENT_TEAM and the `.codex/rules` header now
+  let every PR merge on gates (green CI with `PR scope`, expected head SHA,
+  independent reviewer ACCEPT for infrastructure PRs) without an owner message.
+  Auto-merge, admin merge, force-push, deployment and paid services unchanged.
 
 ### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
 
