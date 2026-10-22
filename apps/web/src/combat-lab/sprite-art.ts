@@ -13,6 +13,33 @@ export interface StaticSpriteArt {
   readonly visibleBounds: readonly [number, number, number, number];
 }
 
+export function spriteDisplayHeight(id: string): number {
+  if (id.startsWith('W')) return 1.4;
+  return ({ B001: 0.73, B053: 1.62, B002: 1.62 } as Record<string, number>)[id] ?? 1.23;
+}
+
+export function spriteScale(art: StaticSpriteArt): number {
+  return (spriteDisplayHeight(art.id) * 0.82) / art.bodyHeight;
+}
+
+/** Existing padded anatomy and foot corners, relative to the unchanged support pivot. */
+export function spriteGeometry(art: StaticSpriteArt) {
+  const factor = spriteScale(art);
+  const width = art.width * factor;
+  return {
+    width,
+    height: art.height * factor,
+    anchorX: (art.footX / art.width - 0.5) * width,
+    footY: (art.footY - art.height / 2) * factor,
+    corners: [art.visibleBounds[0], art.visibleBounds[2]].flatMap((x) =>
+      [art.visibleBounds[1], art.visibleBounds[3], art.footY].map((y) => ({
+        x: (x - art.footX) * factor,
+        up: (art.footY - y) * factor,
+      })),
+    ),
+  };
+}
+
 // For unanchored creatures, alpha bounds at >=25% opacity provide a provisional
 // comparative body height and foot baseline; in-game creature scale remains unmeasured.
 const art = {
