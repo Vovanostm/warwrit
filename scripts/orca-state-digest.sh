@@ -25,3 +25,11 @@ for wt in "$HOME"/orca/workspaces/warwrit/*/; do
   printf 'worktree %s %s dirty=%s\n' "$(basename "$wt")" "$(git -C "$wt" rev-parse --short=12 HEAD 2>/dev/null)" \
     "$(git -C "$wt" status --porcelain --untracked-files=no 2>/dev/null | wc -l | tr -d ' ')"
 done
+# Active slices from the coordinator checkpoint, so a tick rarely reads it whole.
+python3 -I - .orca/pipeline/checkpoint.json <<'PY' 2>/dev/null || echo "checkpoint unreadable"
+import json, sys
+for s in json.load(open(sys.argv[1])).get("slices", []):
+    if s.get("state") not in ("done", "ready"):
+        fields = " ".join(f"{k}={s[k]}" for k in ("phase", "task", "dispatch", "head", "pr") if s.get(k))
+        print(f"slice {s.get('slice')} {s.get('state')} issues={s.get('issues')} {fields}".rstrip())
+PY

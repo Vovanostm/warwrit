@@ -98,6 +98,15 @@ All workers append [common rules](prompts/common.md). Research basis:
   evidence stays in worktree files referenced by path. Tick scratch files go
   under `.orca/pipeline/ticks/<stamp>/` only; durable coordinator state is
   `checkpoint.json` and `slices-local.json`.
+- **Small tick context.** Every command output is resent with each later model
+  call of the tick, so read each file once and query state narrowly (`jq` for
+  one slice, `gh --jq` for fields or the last comments). `checkpoint.json` holds
+  live state only: `run`, `recorded_at`, `workflow`, `last_tick`, `notes` (live
+  cross-slice facts), `runtime_owner`, `exclusive_checks_owner`,
+  `validation_reservation` and slices not [done]. Before each tick
+  `scripts/orca-checkpoint-compact.sh` moves other keys, [done] slices, [ready]
+  slice history and all but the last 3 entries of a slice's lists to
+  `.orca/pipeline/archive/checkpoint-history.jsonl`.
 
 ## Inputs
 
