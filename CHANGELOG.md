@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Record partial independent overlay evidence without acceptance — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`: coordinator records only, no game code.
+  [#293 evidence update](https://github.com/Vovanostm/warwrit/issues/293#issuecomment-6342072230)
+  records the saved evaluator E1 JSON: 12 overlay pairs preserve invariants,
+  restore flags and have no command posts; six crowd end turns reach revision 18.
+  This corrects the earlier missing-input status, not image or gate acceptance.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) retains one status block and
+  actual owner scope. Full Tier V, E1 correctness, E2/E3, visual V1/V2 and
+  stationary inspection loss remain open. Exact evaluator stays live/exclusive;
+  #269/#295 wait and #214 is frozen. No label transition or merge; 0 merged PRs
+  with playable proof. Main CI SUCCESS; daily work already complete.
+- Documentation diff/status checks PASS; code audit is skipped by the normal
+  Markdown-only hook. New gameplay/browser/full suites NOT_RUN, matched timing
+  NOT_MEASURED. No setup/API/wiki/game-rule/schema/migration change.
+
 ### Preserve reproduced inspection loss for the sole rework writer — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu-controls`: coordinator records only, no game code.

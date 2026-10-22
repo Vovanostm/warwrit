@@ -8,32 +8,30 @@ Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; every candidate retains its own gates.
 Prior #294 / #268 merge `7444199d` retained; #268 remains done.
 Proof: docs/engineering/evidence/qa-hooks-session-editor/README.md.
-#269 complete five-section contract accepted; native succeeded worker settled.
-Release returned no_owned_resource; delivery acknowledged; source unchanged.
-Dedicated branch `Vovanostm/qa-hooks-menu-controls`, source/setup/checks/runtime NOT_RUN.
-#269 AND #262 retain final 20/15, full original mounted/journey/audit proof.
-#293 evaluator task_9ede14b4978d / ctx_fb235a28e1c8 is native live/exact.
-It remains sole local checks/browser/runtime owner; no competing work granted.
-Saved day/night traces reproduce inspection loss on HUD-only resize.
-Coordinator read traces/source; fresh browser reproduction NOT_RUN.
+#269 complete five-section contract accepted; builder waits #293 handback.
+#269 AND #262 retain final 20/15 and full original mounted/journey/audit proof.
+#293 evaluator task_9ede14b4978d / ctx_fb235a28e1c8 remains native live/exact.
+It retains exclusive local checks/browser/runtime; no source or resource transfer.
+Coordinator read E1 JSON: 4 default plus 8 crowd/archer overlay pairs.
+All 12 preserve invariants, restore flags and show no command posts.
+Crowd trace has six end turns through revision 18; images are not accepted by JSON.
+E1 image correctness/flag-selection completeness and E2/E3 remain unaccepted.
+Record: https://github.com/Vovanostm/warwrit/issues/293#issuecomment-6342072230.
+Saved day/night traces reproduce stationary inspection loss on HUD-only resize.
 Rework after positive evaluator cleanup must preserve legitimate invalidation.
 Visual round 1 BLOCKED_ENV: scene integration 1, night values 1; unaccepted.
-All #293/#179 E1/E2/E3 and absolute scores >=2 stay required; no waiver.
+Full Tier V and all original #293/#179 acceptance remain mandatory.
 #179 failed-round history retained; #214 source stays frozen.
 #295 contract accepted; build/setup/checks wait exclusive #293 handback.
 #285 / PR #292 unchanged `cf6a6fb5`: five hosted candidate passes retained.
 Three matched complete-command timing pairs and median <=1.20x NOT_MEASURED.
 #272 / PR #287 retains failed encounter CI and original gates; no merge.
-Main CI `39780175546`, attempt 1 at `7444199d`, FAILED in bridge v5 integration.
-Observed TERMINAL_DISPOSITION_EVIDENCE_MISSING at executor.ts:625 → test:4149.
-Cause UNPROVEN; reuse P0 #285, separate observed failure from old null assertion.
-One failed-job retry completed: attempt 2 SUCCESS, same `7444199d`; cause not fixed.
-Read-only diagnosis names three residual branches; exact selected branch UNPROVEN.
-Keep the terminal-evidence guard; isolated trace needed before any repair.
+Main CI `39780175546` at `7444199d`, attempt 2 SUCCESS; cause UNPROVEN.
+Prior terminal disposition failure remains tracked by P0 #285; no repair claimed.
 Daily metrics/scout/triage/digest already complete; no repeat.
 New coordinator gameplay/full suites NOT_RUN; performance NOT_MEASURED.
 No game-rule/API/protocol/replay/schema/migration/dependency change.
-Next: #293 evaluation/positive cleanup, then fix hover loss plus visual V1/V2; timing blocked.
+Next: evaluator settlement and positive cleanup, then sole-writer visual/hover rework.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
