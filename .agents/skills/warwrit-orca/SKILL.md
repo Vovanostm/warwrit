@@ -70,10 +70,14 @@ All workers append [common rules](prompts/common.md). Research basis:
 - **The coordinator is the single writer of shared records** (`CHANGELOG.md`,
   `docs/engineering/CURRENT_PLAN.md`, wiki) and adds them to the PR branch
   right before merge.
+  The `CURRENT_PLAN` status block is rewritten in place, at most 40 non-empty
+  lines (`scripts/check-current-plan.sh` in CI); tick logs go to the tick files,
+  not there. Its scope line quotes the owner's words (`Owner: «…»`), never the
+  tick prompt.
 - **Merge after the gates, without waiting for the owner.** Owner decision
   2026-10-19: «зачем мне верифицировать каждый pr? На это есть тесты и агент —
   ревьюер». The coordinator merges a PR when CI is green, `orca-validate.sh`
-  exits 0 and the gates of its tier (below) are ACCEPT **for the gated code head**
+  exits 0 and the gates of its tier (below) are ACCEPT **for the gated code head** and main's newest `CI` run is green (or the PR closes the main-red `P0`, step 2a)
   (later commits may only add evidence, CHANGELOG/CURRENT_PLAN, or a merge of
   origin/main); one PR at a time, expected head SHA. `agent:blocked` on the PR or
   on any linked issue, or an owner decision, stops it. Scope: every PR. Infrastructure PRs outside slices also need a fresh
@@ -153,6 +157,14 @@ repo id are in the tick prompt. Work from the coordinator worktree.
      Every tick also re-reads each `needs-owner` slice: when its question is not
      a game-rule, canon, money or deployment question, decide it under the owner
      delegation and resume the slice at the state its files prove.
+     2a. **Main red first.** Read the newest run of the `CI` workflow on main
+     (`gh run list --branch main --workflow CI --limit 1`). If it failed, rerun
+     its failed jobs once (`gh run rerun <id> --failed`). If it fails again or
+     the log shows a real defect, open or reuse one `P0` issue with the failing
+     test, a log excerpt and the suspected cause; it takes the next free lane
+     before any other refill. While main is red, merge only the PR that closes
+     that `P0`, and hold — do not rework — a PR whose CI fails only on the same
+     main-red test.
 3. **Refill.** For each lane with no slice in [ready], [planning] or
    [implementing] and a free worker slot, take the highest-priority backlog
    issue that no slice covers and that is not `agent:blocked`/`needs-owner`:
@@ -178,7 +190,7 @@ repo id are in the tick prompt. Work from the coordinator worktree.
 | [review]       | any `BLOCKED_ENV`                                                                                                                                                  | fix the environment it names (`scripts/orca-play.sh`, ports, missing capture) and re-run only that gate (a missing or stale `text.md` is a step-6-only rework for the builder); this does not use the rework budget, but the same `BLOCKED_ENV` twice goes to fallback step 4                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | [review]       | any `REWORK`                                                                                                                                                       | rework brief with all findings; → [implementing]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | [pr]           | CI failed                                                                                                                                                          | rework brief with the failing job log excerpt; → [implementing] (the fix goes through validate and review again)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| [pr]           | CI green, tier verdicts ACCEPT for the gated SHA, no `agent:blocked` on PR or issues                                                                               | if behind, `git merge origin/main` (no rebase, no force-push), re-run validate (a non-trivial conflict goes back to [review]); run `gh pr view <N> --json body --jq .body > .orca/<slice>/pr-body.md && bash scripts/check-pr-scope.sh origin/main .orca/<slice>/pr-body.md` (exit ≠ 0: fallback ladder step 3); record `pre=$(git rev-parse HEAD)`; add the CHANGELOG/CURRENT_PLAN commit; assert `git diff --name-only <gated-sha>..<evidence-commit>` ⊆ `docs/engineering/evidence/<slice>/` and `git diff --name-only $pre..HEAD` ⊆ {CHANGELOG.md, docs/engineering/CURRENT_PLAN.md}; push, wait CI, `gh pr merge --merge --match-head-commit <sha>`; → [done]; `orca worktree rm --worktree id:<repo>::<path> --run-hooks --json` |
+| [pr]           | CI green, tier verdicts ACCEPT for the gated SHA, no `agent:blocked` on PR or issues, main's newest `CI` run green or this PR closes the main-red `P0`             | if behind, `git merge origin/main` (no rebase, no force-push), re-run validate (a non-trivial conflict goes back to [review]); run `gh pr view <N> --json body --jq .body > .orca/<slice>/pr-body.md && bash scripts/check-pr-scope.sh origin/main .orca/<slice>/pr-body.md` (exit ≠ 0: fallback ladder step 3); record `pre=$(git rev-parse HEAD)`; add the CHANGELOG/CURRENT_PLAN commit; assert `git diff --name-only <gated-sha>..<evidence-commit>` ⊆ `docs/engineering/evidence/<slice>/` and `git diff --name-only $pre..HEAD` ⊆ {CHANGELOG.md, docs/engineering/CURRENT_PLAN.md}; push, wait CI, `gh pr merge --merge --match-head-commit <sha>`; → [done]; `orca worktree rm --worktree id:<repo>::<path> --run-hooks --json` |
 
 5. **Daily** (once per calendar day; marker `.orca/pipeline/daily/<date>`):
    - `bash scripts/orca-metrics.sh 1 > .orca/pipeline/metrics/<date>.txt`;

@@ -48,41 +48,14 @@ interface PendingAction {
   readonly uncertain: boolean;
 }
 
-export function CombatLab() {
-  const [catalog, setCatalog] = useState<CombatLabCatalog | null>(null);
-  const [draftBattle, setDraftBattle] = useState<CombatLabBattleConfig | null>(null);
-  const [catalogLoading, setCatalogLoading] = useState(true);
-  const [session, setSession] = useState<ActiveSession | null>(null);
-  const [starting, setStarting] = useState(false);
-  const [startUnresolved, setStartUnresolved] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+function useCombatLabSelection(session: ActiveSession | null) {
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [selectedHex, setSelectedHex] = useState<CombatLabHex | null>(null);
-  const [pending, setPending] = useState<PendingAction | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSkillId, setSelectedSkillId] = useState<CombatLabSkillId | null>(null);
   const selectedSkillRef = useRef<CombatLabSkillId | null>(null);
   selectedSkillRef.current = selectedSkillId;
-  const [autoplay, setAutoplay] = useState(false);
-  const autoplayRef = useRef(false);
-  const autoplayAction = useRef<() => void>(() => {});
-  const stopAutoplay = () => {
-    autoplayRef.current = false;
-    setAutoplay(false);
-  };
-  const [notice, setNotice] = useState('');
-  const [sessionLost, setSessionLost] = useState(false);
-  const view = session?.view ?? null;
   const hotkeyActions = useRef<Record<string, { reason: string; run: () => unknown }>>({});
-  const generation = useRef(0);
-  const startingRef = useRef(false);
-  const pendingRef = useRef<PendingAction | null>(null);
-  const sessionRef = useRef<ActiveSession | null>(null);
-  const sessionAbort = useRef<AbortController | null>(null);
-  const createAbort = useRef<AbortController | null>(null);
-  const latestRead = useRef<Promise<void> | null>(null);
-  const deletingRef = useRef(false);
-  const sessionLostRef = useRef(false);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -99,6 +72,112 @@ export function CombatLab() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+
+  useEffect(() => {
+    setSelectedSkillId(null);
+  }, [session?.id, session?.view.activation?.id]);
+
+  return {
+    selectedUnitId,
+    setSelectedUnitId,
+    selectedHex,
+    setSelectedHex,
+    menuOpen,
+    setMenuOpen,
+    selectedSkillId,
+    setSelectedSkillId,
+    selectedSkillRef,
+    hotkeyActions,
+  };
+}
+
+interface CombatLabAutoplayInputs {
+  readonly session: ActiveSession | null;
+  readonly pending: PendingAction | null;
+  readonly sessionLost: boolean;
+  readonly deleting: boolean;
+  readonly setSelectedSkillId: (skillId: CombatLabSkillId | null) => void;
+}
+
+function useCombatLabAutoplay({
+  session,
+  pending,
+  sessionLost,
+  deleting,
+  setSelectedSkillId,
+}: CombatLabAutoplayInputs) {
+  const [autoplay, setAutoplay] = useState(false);
+  const autoplayRef = useRef(false);
+  const autoplayAction = useRef<() => void>(() => {});
+  const stopAutoplay = () => {
+    autoplayRef.current = false;
+    setAutoplay(false);
+  };
+  const view = session?.view ?? null;
+
+  useEffect(() => {
+    const continuation = autoplayContinuation({
+      enabled: autoplay,
+      view,
+      sessionLost,
+      deleting,
+      pending,
+    });
+    if (continuation === 'stopped') stopAutoplay();
+    if (continuation !== 'ready') return;
+    const timer = setTimeout(() => {
+      if (autoplayRef.current) autoplayAction.current();
+    }, 550);
+    return () => clearTimeout(timer);
+  }, [autoplay, session, pending, sessionLost, deleting]);
+
+  const toggleAutoplay = () => {
+    if (autoplayRef.current) stopAutoplay();
+    else {
+      setSelectedSkillId(null);
+      autoplayRef.current = true;
+      setAutoplay(true);
+    }
+  };
+
+  return { autoplay, setAutoplay, autoplayRef, autoplayAction, stopAutoplay, toggleAutoplay };
+}
+
+export function CombatLab() {
+  const [catalog, setCatalog] = useState<CombatLabCatalog | null>(null);
+  const [draftBattle, setDraftBattle] = useState<CombatLabBattleConfig | null>(null);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [session, setSession] = useState<ActiveSession | null>(null);
+  const [starting, setStarting] = useState(false);
+  const [startUnresolved, setStartUnresolved] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [pending, setPending] = useState<PendingAction | null>(null);
+  const [notice, setNotice] = useState('');
+  const [sessionLost, setSessionLost] = useState(false);
+  const {
+    selectedUnitId,
+    setSelectedUnitId,
+    selectedHex,
+    setSelectedHex,
+    menuOpen,
+    setMenuOpen,
+    selectedSkillId,
+    setSelectedSkillId,
+    selectedSkillRef,
+    hotkeyActions,
+  } = useCombatLabSelection(session);
+  const { autoplay, autoplayRef, autoplayAction, stopAutoplay, toggleAutoplay } =
+    useCombatLabAutoplay({ session, pending, sessionLost, deleting, setSelectedSkillId });
+  const view = session?.view ?? null;
+  const generation = useRef(0);
+  const startingRef = useRef(false);
+  const pendingRef = useRef<PendingAction | null>(null);
+  const sessionRef = useRef<ActiveSession | null>(null);
+  const sessionAbort = useRef<AbortController | null>(null);
+  const createAbort = useRef<AbortController | null>(null);
+  const latestRead = useRef<Promise<void> | null>(null);
+  const deletingRef = useRef(false);
+  const sessionLostRef = useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -478,25 +557,6 @@ export function CombatLab() {
       },
       act,
     );
-  useEffect(() => {
-    const continuation = autoplayContinuation({
-      enabled: autoplay,
-      view,
-      sessionLost,
-      deleting,
-      pending,
-    });
-    if (continuation === 'stopped') stopAutoplay();
-    if (continuation !== 'ready') return;
-    const timer = setTimeout(() => {
-      if (autoplayRef.current) autoplayAction.current();
-    }, 550);
-    return () => clearTimeout(timer);
-  }, [autoplay, session, pending, sessionLost, deleting]);
-
-  useEffect(() => {
-    setSelectedSkillId(null);
-  }, [session?.id, session?.view.activation?.id]);
   const controlling = view !== null && !sessionLost && canControl(view);
   const commonReason = commonCombatLabReason({
     sessionLost,
@@ -568,14 +628,7 @@ export function CombatLab() {
                   title={autoplay ? 'Остановить автобой' : 'Начать автобой'}
                   aria-pressed={autoplay}
                   disabled={!autoplay && (!controlling || pending !== null || deleting)}
-                  onClick={() => {
-                    if (autoplayRef.current) stopAutoplay();
-                    else {
-                      setSelectedSkillId(null);
-                      autoplayRef.current = true;
-                      setAutoplay(true);
-                    }
-                  }}
+                  onClick={toggleAutoplay}
                 >
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d={autoplay ? 'M8 5v14M16 5v14' : 'M8 5l11 7-11 7z'} />
