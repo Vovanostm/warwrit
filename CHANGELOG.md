@@ -9,6 +9,34 @@ requests.
 
 ## Unreleased
 
+### Settle final sizing recovery and refill isolated-DB lane — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: exact final rework-2 failed settlement accepted;
+  ordinary candidate `0638d7be`, report `f9c14f28`, source scope 244/300 preserved.
+  Author validator 9/9 and 67 related tests PASS; native W01 93.0184 px and
+  12-row input evidence are author results, not independent Tier V acceptance.
+  Camera/figure 30-degree projection conflicts with 50-degree vitals/scenery and
+  terrain reference; original compatibility, baseline/layering proof and all
+  original AC/DoD remain open. Local report: uix-w4-scale/.orca/uix-w4-scale/report.md.
+- Coordinator verified all 19 captured owned PIDs absent, ports 23319/25319
+  without listeners and no play.pid; acknowledged and released exact dispatch.
+  Two permitted rework rounds are spent: needs-owner requests a scoped recovery
+  exception for vitals/scenery and owned terrain/scene wiring/tests, retaining
+  300 source lines and full Tier V. Engineering correction itself needs no new
+  game rule. No third attempt, acceptance waiver, PR or merge was performed.
+- #285 accepted per-file PostgreSQL contract advanced to its first core builder
+  `task_a480dc850e8f` / `ctx_a599968c758c`, in its dedicated worktree. Exclusive
+  checks/hooks/DB/runtime allocated; source ownership is four new integration
+  scripts, package test:migrations, integration-mode Vitest config and lifecycle
+  test. All-eight-file isolation, parallelism, <=20% hosted timing and five full
+  CI passes remain required; no production-effects/auth/migration change granted.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the handoff and limits.
+  #268 queued; #214 frozen; PR #287 failed CI and #274/#280 REWORK retained from
+  supplied snapshot. Daily work already complete. This tick: 0 merged PRs with
+  playable proof. Coordinator game tests/typecheck/runtime/validation NOT_RUN;
+  process/port, native dispatch, scoped source/report and documentation readbacks
+  performed. No new setup/API/wiki/rule/replay/schema/dependency contract change.
+
 ### Settle sizing rework and allocate final optics correction — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: exact rework-1 native failed settlement,
