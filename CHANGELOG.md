@@ -9,6 +9,34 @@ requests.
 
 ## Unreleased
 
+### Merge rollback isolation and queue independent workflow review — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-oidc-count-isolation-272`: coordinator closeout after
+  [PR #284](https://github.com/Vovanostm/warwrit/pull/284), #282, MERGED as
+  `00117aa1` at expected `6e4dcf61`. Fresh Tier D ACCEPT for `d553215b`,
+  integrated validator exit 0 (9/9), final CI and PR scope SUCCESS; native
+  PR/main/closed issue readback PASS, issue relabelled done. Only the world-route
+  integration test changed; no player-feature delivery: 1 merge, 0 played merges.
+- [Merged contract, report and independent review](https://github.com/Vovanostm/warwrit/blob/00117aa12aebac83f2f9888dd2b8faf9e1c98589/docs/engineering/evidence/core-world-rollback-isolation/README.md)
+  preserve proof boundaries: author five real parallel passes (60/60 each),
+  reviewer runtime NOT_RUN, validator related tests 3 PASS/11 SKIP without DB.
+  Raw evidence copied to coordinator retention before clean, fully-pushed
+  slice removal; dedicated unpushed proof checkout retained.
+- #272 source `37f35c6b` stays published and ready; prerequisite #282 is merged.
+  Main integration preview found only record conflicts and was aborted before
+  checks; no new source delivery. Fresh mutations, five passes and Tier L remain
+  after #267 releases the exclusive checks/DB slot. No waiver or budget reset.
+- #214 local contract/write set now reuses the existing BattleView five-skill
+  public-component test and owns readable skill-local label/slot/overflow CSS;
+  no duplicate suite, general HUD change or second web writer. Implementation,
+  tests and runtime NOT_RUN; queued behind #267 with Tier V unchanged.
+- [PR #280](https://github.com/Vovanostm/warwrit/pull/280) gains a fresh read-only
+  Tier D reviewer at `33c663e6`, task `task_e1de7fef3358`; main integration,
+  validate and merge pending. Proposed workflow is not active before merge.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exact continuation.
+  Documentation-only closeout: no new game tests; full suites/build NOT_RUN,
+  performance NOT_MEASURED. Existing API/setup/wiki contracts unaffected.
+
 ### Preserve OIDC fix, isolate rollback blocker and advance editor proof — 2026-10-22, PUBLISHED
 
 - `Vovanostm/codex-oidc-count-isolation-272`, [#272](https://github.com/Vovanostm/warwrit/issues/272):

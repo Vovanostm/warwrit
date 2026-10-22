@@ -2,6 +2,45 @@
 
 ## Pipeline status — 2026-10-22
 
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: #217 and existing local overrides; no new milestone.
+This tick: 1 merged PR, 0 merged PRs with playable proof (test-only delivery).
+[PR #284](https://github.com/Vovanostm/warwrit/pull/284), #282: MERGED as `00117aa1`.
+Expected head `6e4dcf61`, final CI and PR scope SUCCESS; issue CLOSED/agent:done.
+Fresh Tier D ACCEPT at `d553215b`; integrated validator exit 0, 9/9 PASS.
+Only evidence, coordinator records and ordinary main integration followed gating.
+[Contract, author proof and independent verdict](https://github.com/Vovanostm/warwrit/blob/00117aa12aebac83f2f9888dd2b8faf9e1c98589/docs/engineering/evidence/core-world-rollback-isolation/README.md).
+Author five default-parallel eight-file runs: 60/60 each, zero skips.
+Reviewer runtime NOT_RUN; validator 3 PASS/11 SKIP is not real DB proof.
+Raw evidence retained under coordinator `.orca/pipeline/retained/core-world-rollback-isolation/`;
+clean fully-pushed slice worktree removed through Orca; unpushed proof tree retained.
+#272 remains ready at preserved source `37f35c6b`; #282 prerequisite is now merged.
+Actual main integration, fresh mutations/five-pass proof and Tier L gates remain.
+Integration preview had records-only conflicts; preview aborted before checks.
+No source conflict or new source delivery; records closeout stays on #272 branch.
+Checks/DB slot remains with live #267 rework 2 `task_e3858e939bfa` / `ctx_fb98605d0e4b`.
+No duplicate builder, audit waiver, recovery-budget reset or parallel heavy checks.
+#267 source and exact stash/patch retained; mounted journey/Tier U still pending.
+#214 contract/write set amended: reuse existing BattleView five-skill regression;
+readable skill-local labels/slot/overflow CSS belongs to #214; no duplicate suite.
+Its source waits #267 settlement and explicit web-slot allocation; Tier V retained.
+[PR #280](https://github.com/Vovanostm/warwrit/pull/280): green CI alone is insufficient.
+Fresh read-only Tier D reviewer `task_e1de7fef3358` / `ctx_1042b94b7b92` live at `33c663e6`.
+Own dedicated worktree; no checks/runtime. Main integration and validate pending.
+#268 follows #267; final component 20/15 stays on #269 AND #262; #263/#231 stay open.
+Daily metrics/scout/triage/digest already complete; no duplicate daily work.
+Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+No production/rule/replay/schema/API/setup/wiki behavior changed this tick.
+Next: consume #267/reviewer results; transfer checks slot, then resume #272 proof.
+This single tick returns; wrapper releases its own lease.
+
+## Dated history
+
+**Previous #272 branch checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 and local overrides; no new milestone.
@@ -40,8 +79,6 @@ Full verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
 Next: #271 independent journey verdict and #282 bounded contract; then resume #272.
 Records published on #272 branch; main retains its last merged checkpoint.
 Wrapper releases its own lease when this one tick returns.
-
-## Dated history
 
 **Previous #272 builder assignment (superseded above):**
 
