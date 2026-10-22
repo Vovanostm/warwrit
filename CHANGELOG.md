@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Settle sizing rework and allocate final optics correction — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: exact rework-1 native failed settlement,
+  result and full report verified; dispatch released, mail recorded before ack.
+  Current clean published head `5083854b`, source `1c199e94`, scope 231/300.
+  Author validator 9/9 and 66 tests retained as author evidence. Coordinator
+  live readback confirms 15 owned PIDs absent, private ports clear and no play.pid.
+- Final rework 2 changes owned scene composition/optics technique for measured
+  foreground expansion (Overview FOV 2.776 radians); no accepted hatch/renderer
+  change, sprite resizing or threshold workaround. Preserve all original AC/DoD,
+  base-frame 80 px and full independent Tier V. Programmatic replay boundary is
+  already decided; no new import feature. Missing tiles, original before matrix,
+  exact layer cases and independent gates remain open; no source acceptance.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and the
+  [owning wiki](docs/wiki/battlefield-test-maps.md) record this bounded allocation.
+  #285/#268 remain deferred; PR #287 CI failure and #274/#280 REWORK unchanged
+  from supplied snapshot. This tick: 0 merged PRs with playable proof.
+  Documentation-only coordinator change; new game checks/browser/full suites
+  NOT_RUN, performance NOT_MEASURED; no setup/API/rule/replay/schema change.
+
 ### Clarify existing replay compatibility proof — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: under delegated engineering authority,

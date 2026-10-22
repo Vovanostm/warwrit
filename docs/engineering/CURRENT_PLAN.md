@@ -7,6 +7,41 @@ Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
+#179 rework 1 settled FAILED; exact native task/dispatch/result matched, released.
+Actual branch head `5083854b`, source `1c199e94`; clean, already pushed; scope 231/300.
+Author validator 9/9 and 66 tests reported; coordinator did not rerun game checks.
+Author native 12-row matrix, 165/165 day/night and victories retained as author proof.
+All 15 owned PIDs absent, 23319/25319 clear, play.pid absent at live readback.
+Coordinator decision: final rework 2 changes scene composition/optics technique;
+measured Overview FOV 2.776 radians and ground/apron expansion are the source lead.
+Preserve base 1440 W01 >=80 px, unchanged sizes, original AC/DoD and full Tier V.
+Task `task_4649ca190196` owns the next sole web/checks/runtime slot.
+Try `/combat-lab` → unchanged mill seed 20261009 → Start, then Overview, day/night.
+Replay compatibility uses existing programmatic reader; no new import feature.
+Absent-tiles proof, original before matrix and exact remaining layer cases stay open.
+No evaluator/visual ACCEPT or #179 PR; #214 stays frozen awaiting accepted integration.
+#285 contract accepted, build deferred; #272 PR #287 retains failed snapshot CI.
+#268 accepted contract waits sole web writer; #269 AND #262 retain final 20/15 limits.
+Infrastructure #274/#280 retain REWORK; no merge without fresh gates.
+Owning wiki: [battlefield test maps](../wiki/battlefield-test-maps.md).
+Local contract/report/proof: uix-w4-scale/.orca/uix-w4-scale/ in its own checkout.
+Daily metrics/scout/triage/digest complete; no duplicate daily work or refill.
+Coordinator game tests/typecheck/browser/full suites NOT_RUN; performance NOT_MEASURED.
+No setup/API/rule/protocol/replay/schema/dependency/deployment change.
+Next: final bounded #179 rework, coordinator validation, then full independent Tier V.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**2026-10-22 superseded rework-1 live checkpoint:**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
 #179 rework 1: sole builder `task_e0403f2dd2fc` / `ctx_f847a9fec5b8` is live.
 Try `/combat-lab` → default mill, seed 20261009 → Start before Overview;
 then supported editor near/far diagnostic, including genuine 1366 × 768 at 125%.
@@ -36,8 +71,6 @@ new game tests/typecheck/browser/full suites NOT_RUN, performance NOT_MEASURED.
 No rule/protocol/replay/schema/dependency/setup/API/deployment change.
 Next: complete #179 rework, validate, then full independent Tier V.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **2026-10-22 superseded rework-allocation checkpoint:**
 
