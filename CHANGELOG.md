@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Gate the owner-scope prompt and reconcile coordinator records — 2026-10-22, PUBLISHED
+
+- `claude/tick-prompt-owner-scope`, [PR #291](https://github.com/Vovanostm/warwrit/pull/291),
+  #290: source `a198ef98` independently ACCEPTed; coordinator setup PASS and
+  validator exit 0, all 6 applicable gates PASS. Scope 2/300 and one closing issue;
+  shell syntax/diff checks PASS. No TypeScript diff, so related tests/lint/audit
+  are NOT_RUN by validator. End-to-end coordinator/model compliance NOT_RUN.
+- Coordinator-only CHANGELOG/CURRENT_PLAN follow the gated source. The current
+  plan now has one active status block, actual owner delegation and preserved
+  history. The rejection guard remains a separate follow-up; final-head hosted
+  CI and merge pending. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md).
+- #268 ordinary rework 2 follows a source-grounded pure autoplay/disabled
+  allocation repair; staged 170/300 preserved, normal audit/<=300/full Tier U
+  still required. Final #269 AND #26220/15, consumed fallback 1 and last ordinary
+  round unchanged. #293's disjoint source-only contract prepares ahead; its
+  source/runtime grant waits the sole web slot. Prior source/failure evidence kept.
+- PR #292 unchanged `cf6a6fb5`: historical two CI passes, then attempt 3 failed
+  coverage world-free-movement with a 5000 ms timeout; consecutive count 0/5.
+  One unchanged-candidate diagnostic attempt 4 requested without code/test-limit
+  changes; five passes/matched timing remain required. 0 merged PRs with playable
+  proof this tick. No game-rule/API/protocol/replay/schema/migration/dependency
+  change; gameplay/full suites NOT_RUN, performance NOT_MEASURED.
+
 ### Publish accepted selection and autoplay extraction — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`, [PR #286](https://github.com/Vovanostm/warwrit/pull/286),
@@ -35,8 +58,23 @@ requests.
   No setup/API/wiki/rule/replay/schema/migration/dependency change; full local
   verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED.
 
-### Cut coordinator tick context — 2026-10-22, LOCAL
+### Tick prompt is not owner scope — 2026-10-22, PUBLISHED
 
+- `claude/tick-prompt-owner-scope`, #290: the coordinator wrote status blocks in
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) whose scope line quotes the
+  tick prompt as the owner's words, against
+  [warwrit-orca](.agents/skills/warwrit-orca/SKILL.md). The prompt in
+  `scripts/orca-pipeline-tick.sh` now says it is the tick script, never owner
+  scope, and that CURRENT_PLAN keeps exactly one status block. CURRENT_PLAN is
+  left to its single writer, the coordinator.
+- A `scripts/check-current-plan.sh` rule rejecting "Perform exactly ONE tick" is
+  deferred to a follow-up on #290: it would fail every PR's "PR scope" job until
+  main's CURRENT_PLAN is clean. Checks: `bash -n` on the script and
+  `scripts/check-pr-scope.sh`; effect on ticks NOT_MEASURED until ticks run on main.
+
+### Cut coordinator tick context — 2026-10-22, MERGED
+
+- Merged 2026-10-22 as [PR #289](https://github.com/Vovanostm/warwrit/pull/289) (65d7466b).
 - `claude/orca-coordinator-context`, #288: coordinator cost. Measured
   2026-10-21/22: 100 ticks, 181.9M input of which 11.0M uncached, versus 5.5M
   uncached for all workers. Per-call context climbed from 27k to 110–125k tokens
