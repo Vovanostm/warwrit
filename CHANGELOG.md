@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Preserve remaining sizing defects during rework — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: coordinator processed two read-only advisory
+  messages at `e56df630`. Source pan-limit/apron finding is closed; author reports
+  60 stable samples per phase and 12 native viewport/zoom/day-night input rows,
+  with 0 action POST and revision 4 unchanged. These are author results, not
+  independent Tier V acceptance; final-head validation NOT_RUN by coordinator.
+- Advisory visual scores remain 1 for short-screen silhouette/scene readability
+  and night value, and 0 for supported-editor diagnostic scene integration with
+  stretched foreground triangles. Night inspection-card clipping is reported;
+  cause/inherited status unproven. Optical foreground magnification is a source
+  lead, not identification of the pictured mesh/shader. Existing builder receives
+  measured geometry/composition correction; no accepted #184 hatch change,
+  unowned HUD edit, new rework round, source-cap or original-acceptance waiver.
+- [Owning wiki](docs/wiki/battlefield-test-maps.md) and
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) retain these blockers.
+  Builder remains live with sole checks/runtime slot; #285/#268 wait.
+  PR #287 CI failure and infrastructure #274/#280 REWORK still block merge.
+  Daily work already complete. This tick: 0 merged PRs with playable proof;
+  game tests/typecheck/browser/full suites NOT_RUN, performance NOT_MEASURED.
+  Documentation-only coordinator change; no setup/API/rule/replay/schema change.
+
 ### Retain partial battle sizing and allocate HUD stability rework — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: retain ordinary source head `514943b7`,
