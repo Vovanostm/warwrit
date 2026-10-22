@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Preserve reproduced inspection loss for the sole rework writer — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`: coordinator records only, no game code.
+  [#293 handoff](https://github.com/Vovanostm/warwrit/issues/293#issuecomment-6341761424)
+  records evaluator day/night traces of stationary inspection disappearing on
+  HUD resize and the source observer clearing hover. Coordinator read the saved
+  traces/source; fresh browser reproduction NOT_RUN. Preserve legitimate
+  invalidation when the sole writer repairs this after evaluator cleanup.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) keeps one status block,
+  actual owner scope, full Tier V/E1/E2/E3 and visual V1/V2. Exact evaluator
+  remains live and exclusive; #269/#295 wait, #214 frozen. Latest main CI
+  SUCCESS; no candidate meets all merge gates, 0 merged PRs with playable proof.
+- Documentation diff and status-block check PASS; normal Markdown-only commit
+  hook skips code audit by design. Game tests/full suites NOT_RUN, timing
+  NOT_MEASURED. No setup/API/wiki/game-rule/schema/migration changes.
+
 ### Record recovered main CI without claiming a repair — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu-controls`: coordinator records only. Native main

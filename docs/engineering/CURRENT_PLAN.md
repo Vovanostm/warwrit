@@ -14,6 +14,9 @@ Dedicated branch `Vovanostm/qa-hooks-menu-controls`, source/setup/checks/runtime
 #269 AND #262 retain final 20/15, full original mounted/journey/audit proof.
 #293 evaluator task_9ede14b4978d / ctx_fb235a28e1c8 is native live/exact.
 It remains sole local checks/browser/runtime owner; no competing work granted.
+Saved day/night traces reproduce inspection loss on HUD-only resize.
+Coordinator read traces/source; fresh browser reproduction NOT_RUN.
+Rework after positive evaluator cleanup must preserve legitimate invalidation.
 Visual round 1 BLOCKED_ENV: scene integration 1, night values 1; unaccepted.
 All #293/#179 E1/E2/E3 and absolute scores >=2 stay required; no waiver.
 #179 failed-round history retained; #214 source stays frozen.
@@ -30,7 +33,7 @@ Keep the terminal-evidence guard; isolated trace needed before any repair.
 Daily metrics/scout/triage/digest already complete; no repeat.
 New coordinator gameplay/full suites NOT_RUN; performance NOT_MEASURED.
 No game-rule/API/protocol/replay/schema/migration/dependency change.
-Next: #293 evaluation/positive cleanup, then next exclusive writer; timing still blocked.
+Next: #293 evaluation/positive cleanup, then fix hover loss plus visual V1/V2; timing blocked.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
