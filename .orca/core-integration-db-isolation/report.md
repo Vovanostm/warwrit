@@ -310,3 +310,100 @@ head, then coordinator-hosted matched timing and five complete CI runs. Original
 
 Explicit report formatting check initially flagged one multiline inline-code
 indentation in the new settlement paragraph; corrected with Prettier, final PASS.
+
+## Final rework 2/2 — 2026-10-22 (task_aa091f52cfec)
+
+Starting HEAD `7765c0f7`, source `9ea84fcf`; clean dedicated persistent worktree.
+Read AGENTS, complete contract/report, review-2 and eval-2, live #285 and comments,
+ADR-0003 and technology handoff. Context/delivery skills applied. The MCP graph
+indexes another checkout and older head; installed dependencies and current files
+are the source authority. Fetch plus ordinary merge origin/main exited 0, already
+up to date; current CHANGELOG/CURRENT_PLAN read after integration. No rebase.
+Only the assigned lifecycle helper, its tests and this append-only report change;
+all previous evidence and coordinator-owned records are preserved.
+
+### Reproduction boundary and minimal repair
+
+Installed pg 8.23.0 client.js `_handleErrorMessage` / `_handleErrorEvent` emits idle
+FATAL separately; `end()` awaits connection end with a resolve-only promise.
+connection.js sends Terminate and half-closes its writable stream. Inspected
+installed typings and retained official Client documentation as well.
+
+The new real-PG relay holds only frontend Terminate, then uses a separate real
+admin connection to `pg_terminate_backend` the exact BackendKeyData PID. It forwards
+unmodified actual PostgreSQL messages, including FATAL 57P01. DROP CommandComplete
+(or the actual query ErrorResponse) followed by ReadyForQuery and then Terminate
+establishes query settlement before shutdown. No driver, query, transaction,
+production code or dependency is mocked or replaced.
+
+- First harness attempt (`red.log`) failed its own FATAL-boundary assertion: the
+  relay's default half-close behavior closed the response side too early. This is
+  not evidence for the claimed defect. No implementation was changed on that basis.
+- Corrected half-open relay (`red-boundary.log`): 2 FAIL, 13 selected-out. Actual
+  FATAL boundary reached in both cases. After successful DROP, helper returned
+  success despite FATAL. After read-only DROP failed with actual PG 25006, it
+  returned only 25006 and lost the distinct 57P01. No failed acknowledged DROP or
+  orphan is claimed; the reproduced defect is lost shutdown error reporting.
+- `withClient` now records error objects through completed closure, records the
+  caught action or end rejection, then determines its outcome. One retained error
+  is rethrown unchanged; distinct errors form AggregateError in observation order.
+  Set identity deduplicates the same error seen through both event and await.
+  `end()` remains awaited before return/rethrow, preserving template clone/drop
+  ordering. Exact-name ledger-before-CREATE and cleanup membership are unchanged.
+- Corrected boundary regression: 2 PASS / 13 selected-out. It expects 57P01 alone
+  or the original query failure 25006 followed by distinct 57P01, checks uniqueness,
+  and queries pg_stat_activity after return to verify the targeted backend is gone.
+  Final cleanup confirms every exact owned database/session absent. Existing
+  lost-CREATE empty/template/clone and other-run-survival regressions remain intact.
+
+### New-head author checks
+
+Fresh evidence directory: `.orca/core-integration-db-isolation/rework-2-evidence/`.
+Resource declaration `resources.md` preceded creation of NEW private PG17 project
+`warwrit-285-rework2`, exact container/network/volume named there. Loopback PG port
+32803. No retained/default database, URLs or secrets were used in logs.
+
+- First-edit audit after test edit PASS (upstream-based audit); first helper edit
+  audit against origin/main PASS, zero new findings. Final main-based audit below
+  uses the fresh real-PG focused coverage; no audit configuration weakened.
+- A process-sampling wrapper was denied `ps` before its first coverage invocation
+  produced output. That invocation is NOT_RUN, empty log retained; read-only native
+  process inspection confirmed no surviving test descendants. The wrapper now
+  records process-sampling limits instead of abandoning its child. No test failure
+  or passing coverage is inferred from that runner failure.
+- Final full focused lifecycle file: **15 PASS / 0 SKIP**, exit 0, 6.73 s, including
+  both new shutdown cases and all prior lifecycle/hook/lost-reply regressions.
+  Command: explicit private INTEGRATION_LIFECYCLE_DATABASE_URL and fresh evidence
+  directory; `pnpm exec vitest run apps/server/src/db/integration-database.test.ts
+  --coverage --mode coverage --coverage.include 'scripts/integration*.ts'
+  --coverage.include 'apps/server/src/db/migrator.ts' --reporter verbose`.
+  Real V8 coverage: statements 85.71% (108/126), branches 80% (24/30), functions
+  88.88% (32/36), lines 85.96% (98/114). Real child hook coverage is not aggregated.
+- Typecheck/lint/format/audit, normal commits, validation, day/night smoke and
+  positive final resource cleanup are recorded in the settlement below after run.
+
+### Acceptance limits and proposed coordinator records
+
+Assigned lifecycle shutdown rework is locally repaired with real-PG evidence;
+**#285 is not accepted**. Eval-2's independent 13 PASS and eight migrated databases,
+default parallelism/disposal, native **59 PASS / 1 FAIL** are historical evidence,
+not new-head acceptance. Its unchanged encounter assertion at line 4156 still
+blocks acceptance: effects_applied_at was null after victory; subsequent terminal
+proof/root/receipt/idempotency assertions were NOT_RUN. Cause, including shared-DB
+attribution, remains UNPROVEN. No encounter/auth/production/migration/assertion,
+timeout, retry, worker-count, parallelism or extra source path change is made.
+No additional test:migrations/full verify/stress/bootstrap/hosted CI was run.
+Separate coordinator-owned diagnosis must settle the encounter boundary before
+any correction. No diagnostic agent was launched or runtime shared by this worker.
+All original AC and Tier L remain; matched hosted <=20% timing NOT_MEASURED and
+five consecutive full CI NOT_RUN, coordinator-owned. #272 and #282 proof retained.
+
+Proposed CHANGELOG Unreleased (coordinator-only): “2026-10-22,
+Vovanostm/core-integration-db-isolation, LOCAL, #285 final rework: reproduce and
+retain real Client FATAL through completed closure, including prior action error,
+without duplicating identical errors; 15 focused real-PG lifecycle checks PASS.
+No production/assertion/parallelism change. Encounter null-effects acceptance
+blocker and original hosted timing/five-CI/Tier L requirements remain unresolved.”
+Proposed CURRENT_PLAN/wiki: record replacement source head and fresh author
+shutdown proof, preserve both previous rounds, request independent new-head review,
+and retain separately owned encounter diagnosis. Shared records remain read-only.

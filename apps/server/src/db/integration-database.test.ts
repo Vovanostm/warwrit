@@ -93,6 +93,39 @@ describe('owned integration databases', () => {
     },
   );
 
+  it.skipIf(source === undefined).each([false, true])(
+    'retains shutdown FATAL after DROP settles (prior query failure: %s)',
+    async (readOnly) => {
+      const run = createDatabaseRun(source);
+      const url = await createEmptyDatabase(run);
+      const proxy = await terminateOnClose(source!);
+      const input = new URL(proxy.url);
+      if (readOnly) input.searchParams.set('options', '-c default_transaction_read_only=on');
+      run.sourceUrl = input.href;
+      try {
+        const failure = await dropDatabase(run, url).catch((error: unknown) => error);
+        expect(proxy.observed()).toEqual({ settled: true, terminated: true, fatal: true });
+        const errors = failure instanceof AggregateError ? failure.errors : [failure];
+        expect(errors.map((error) => error?.code)).toEqual(
+          readOnly ? ['25006', '57P01'] : ['57P01'],
+        );
+        expect(new Set(errors).size).toBe(errors.length);
+        // withClient must await actual closure, even when reporting the FATAL.
+        await withClient(source!, async (client) => {
+          expect(
+            (await client.query('select pid from pg_stat_activity where pid = $1', [proxy.pid()]))
+              .rows,
+          ).toEqual([]);
+        });
+      } finally {
+        run.sourceUrl = source!;
+        await disposeDatabases(run);
+        await proxy.close();
+      }
+      await expectAbsent(source!, run.databases);
+    },
+  );
+
   it.skipIf(source === undefined)(
     'clones clean migrations and confines identical keys and down/up',
     async () => {
@@ -429,6 +462,71 @@ async function dropCreateReply(sourceUrl: string) {
     url: url.href,
     dropped: () => dropped,
     close: async () => {
+      for (const socket of sockets) socket.destroy();
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    },
+  };
+}
+
+// Hold the real frontend Terminate, then ask PG to send a real idle-session FATAL.
+// Seeing Terminate proves the awaited DROP has already settled and end() began.
+async function terminateOnClose(sourceUrl: string) {
+  const direct = new URL(sourceUrl);
+  const sockets = new Set<Socket>();
+  let pid = 0;
+  let settled = false;
+  let queryResponse = false;
+  let terminated = false;
+  let fatal = false;
+  let termination: Promise<unknown> | undefined;
+  const server = createServer({ allowHalfOpen: true }, (downstream) => {
+    const upstream = connect({ host: direct.hostname, port: Number(direct.port) });
+    for (const socket of [downstream, upstream]) {
+      sockets.add(socket);
+      socket.on('error', () => {});
+      socket.on('close', () => sockets.delete(socket));
+    }
+    downstream.on('close', () => upstream.destroy());
+    downstream.on('data', (chunk: Buffer) => {
+      if (chunk.length === 5 && chunk[0] === 88) {
+        terminated = true;
+        termination = withClient(sourceUrl, (client) =>
+          client.query('select pg_terminate_backend($1)', [pid]),
+        );
+        void termination.catch(() => {});
+      } else upstream.write(chunk);
+    });
+    let buffered = Buffer.alloc(0);
+    upstream.on('data', (chunk: Buffer) => {
+      buffered = Buffer.concat([buffered, chunk]);
+      while (buffered.length >= 5) {
+        const size = buffered.readInt32BE(1) + 1;
+        if (buffered.length < size) return;
+        const message = buffered.subarray(0, size);
+        buffered = buffered.subarray(size);
+        if (message[0] === 75) pid = message.readInt32BE(5);
+        if (message[0] === 67 && message.subarray(5).toString() === 'DROP DATABASE\0')
+          queryResponse = true;
+        if (message[0] === 69 && !terminated) queryResponse = true;
+        if (message[0] === 90 && queryResponse) settled = true;
+        if (message[0] === 69 && terminated) fatal = message.includes(Buffer.from('57P01'));
+        downstream.write(message);
+      }
+    });
+    upstream.on('end', () => downstream.end());
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address();
+  if (!address || typeof address === 'string') throw new Error('Missing shutdown proxy port');
+  const url = new URL(sourceUrl);
+  url.port = String(address.port);
+  process.stdout.write(`[shutdown-proxy] port ${address.port}\n`);
+  return {
+    url: url.href,
+    pid: () => pid,
+    observed: () => ({ settled, terminated, fatal }),
+    close: async () => {
+      await termination;
       for (const socket of sockets) socket.destroy();
       await new Promise<void>((resolve) => server.close(() => resolve()));
     },

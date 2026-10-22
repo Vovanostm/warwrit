@@ -26,14 +26,25 @@ function validateSourceUrl(sourceUrl: string): void {
 
 async function withClient<T>(url: string, action: (client: Client) => Promise<T>): Promise<T> {
   const client = new Client({ connectionString: url });
-  // pg emits Client errors separately from rejecting the active query. Keep
-  // the listener through end(), and route idle/transport errors to this await.
-  const failure = new Promise<never>((_resolve, reject) => client.on('error', reject));
+  // pg's end() resolves even after an idle-session FATAL. Retain events until
+  // closure completes; the race alone cannot report errors after it settles.
+  const errors = new Set<unknown>();
+  const failure = new Promise<never>((_resolve, reject) =>
+    client.on('error', (error) => {
+      errors.add(error);
+      reject(error);
+    }),
+  );
+  let result: T | undefined;
   try {
-    return await Promise.race([connectAndAct(client, action), failure]);
-  } finally {
-    await client.end();
+    result = await Promise.race([connectAndAct(client, action), failure]);
+  } catch (error) {
+    errors.add(error);
   }
+  await client.end().catch((error: unknown) => errors.add(error));
+  if (errors.size === 1) throw [...errors][0];
+  if (errors.size > 1) throw new AggregateError(errors, 'Integration action and closure failed');
+  return result as T;
 }
 
 async function connectAndAct<T>(
