@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Record main-red retry and accept the menu contract — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`: coordinator-only records correct the
+  previous in-progress main status. [CI 39780175546](https://github.com/Vovanostm/warwrit/actions/runs/39780175546),
+  attempt 1 at merged `7444199d`, failed bridge v5 terminal effects with
+  `TERMINAL_DISPOSITION_EVIDENCE_MISSING` (`executor.ts:625` → `effects.ts:121/142`
+  → integration test:4149). Exact job log read; cause UNPROVEN, distinct from
+  the older null assertion. [P0 #285 tracking](https://github.com/Vovanostm/warwrit/issues/285#issuecomment-6341180666)
+  retains candidate #292's five hosted passes and all timing/Tier L gates.
+- One failed-job retry requested, attempt 2 running at readback; unrelated
+  merges held while main is red. #269's full five-section contract accepted
+  against current source/issue, native succeeded settlement verified, worker
+  released with no owned resource and delivery acknowledged. Source unchanged;
+  full #269 AND #262 complexity, audit and mounted day/night proof retained.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) rewrites one status block;
+  #293 remains exclusive checks/runtime owner, #295 implementation waits
+  handback/main-red priority. Daily work not repeated. Scoped diff/status and
+  plan checks PASS; normal Markdown commit hook applies. New game/browser/full
+  suites NOT_RUN; timing/performance NOT_MEASURED; 0 merged playable PRs this
+  tick. Records published on the continuation branch, not merged #269 delivery.
+  No setup/API/wiki, game-rule/protocol/replay/schema/migration/dependency change.
+
 ### Merge accepted session/editor extraction and resume contracts — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu-controls`: coordinator records accompany the next
