@@ -16,7 +16,6 @@ import './battle-field-vitals.css';
 const COLORS = ['#e29c8e', '#b5d7e5', '#e6cf8f'] as const;
 const WIDTH = 32;
 const HEIGHT = 16;
-const UP = new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION));
 
 function drawPools(texture: DynamicTexture, unit: Unit, element: HTMLElement) {
   const context = texture.getContext() as unknown as CanvasRenderingContext2D;
@@ -64,7 +63,9 @@ export function mountBattleFieldVitals(
   canvas: HTMLCanvasElement,
   scene: Scene,
   onInspect: (id: string) => void,
+  elevation = CAMERA_ELEVATION,
 ) {
+  const UP = new Vector3(0, Math.cos(elevation), Math.sin(elevation));
   const layer = document.createElement('div');
   layer.className = 'battle-field-vitals';
   canvas.insertAdjacentElement('afterend', layer);
@@ -101,7 +102,7 @@ export function mountBattleFieldVitals(
     material.backFaceCulling = false;
     const mesh = MeshBuilder.CreatePlane(`unit-vitals:${unit.id}`, { size: 1 }, scene);
     mesh.material = material;
-    mesh.rotation.x = CAMERA_ELEVATION;
+    mesh.rotation.x = elevation;
     mesh.renderingGroupId = 1;
     mesh.alphaIndex = 2;
     mesh.isPickable = false;
@@ -123,6 +124,7 @@ export function mountBattleFieldVitals(
       reference,
       projected,
       canvas.clientHeight / scene.getEngine().getRenderHeight(),
+      UP,
     );
     canvas.closest('.battle-view')?.classList.toggle('battle-overview', overview);
     for (const [id, { mesh, source, portrait }] of entries) {
@@ -201,6 +203,7 @@ function isOverviewScale(
   foot: Vector3 | undefined,
   project: (point: Vector3) => Vector3,
   pixelScale: number,
+  UP: Vector3,
 ) {
   if (!foot) return false;
   return project(foot.add(UP)).subtract(project(foot)).length() * pixelScale < 30;

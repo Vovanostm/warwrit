@@ -12,7 +12,11 @@ import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { battleHexToWorld } from './battle-layout.js';
 
 /** Decorative ruined-yard roots sit outside the canonical field, never on a traversable cell. */
-export function mountBattleScenery(scene: Scene, tiles: readonly CombatLabHex[]) {
+export function mountBattleScenery(
+  scene: Scene,
+  tiles: readonly CombatLabHex[],
+  elevation = CAMERA_ELEVATION,
+) {
   const minQ = Math.min(...tiles.map((tile) => tile.q));
   const maxQ = Math.max(...tiles.map((tile) => tile.q));
   const minR = Math.min(...tiles.map((tile) => tile.r));
@@ -40,11 +44,11 @@ export function mountBattleScenery(scene: Scene, tiles: readonly CombatLabHex[])
     const height = (width * 887) / 1774;
     const rootOffset = height * 0.3;
     const mesh = MeshBuilder.CreatePlane(`yard-fringe:${index}`, { width, height }, scene);
-    mesh.rotation.x = CAMERA_ELEVATION;
+    mesh.rotation.x = elevation;
     mesh.position.set(
       point.x,
-      rootOffset * Math.cos(CAMERA_ELEVATION),
-      point.z + rootOffset * Math.sin(CAMERA_ELEVATION),
+      rootOffset * Math.cos(elevation),
+      point.z + rootOffset * Math.sin(elevation),
     );
     mesh.material = material;
     mesh.isPickable = false;

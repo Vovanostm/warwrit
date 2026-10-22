@@ -39,6 +39,7 @@ type GroundComposition = {
   readonly reference: Vector2;
   readonly crop: Vector4;
   readonly amount: number;
+  readonly elevation?: number;
 };
 
 type Palette = { readonly day: Color3; readonly night: Color3 };
@@ -52,6 +53,7 @@ function groundMaterial(
   earthTextures: { readonly base: Texture; readonly detail: Texture },
   composition: GroundComposition,
 ): ShaderMaterial {
+  const elevation = composition.elevation ?? CAMERA_ELEVATION;
   const result = new ShaderMaterial(
     name,
     scene,
@@ -79,9 +81,9 @@ function groundMaterial(
           vec2 point=abs(cellPoint);
           float edge=max(point.x,point.x*0.5+point.y*0.8660254)/${BATTLE_LAYOUT.spacing / 2};
           float coverage=(1.0-smoothstep(0.60,1.05,edge+(landNoise(groundUv*9.0)-0.5)*0.28))*(1.0-smoothstep(0.95,1.0,edge))*blendSurface;
-          float imageScale=siteReference.y/max(dot(ray,vec3(0.0,-${Math.sin(CAMERA_ELEVATION)},${Math.cos(CAMERA_ELEVATION)})),0.001);
+          float imageScale=siteReference.y/max(dot(ray,vec3(0.0,-${Math.sin(elevation)},${Math.cos(elevation)})),0.001);
           vec2 imagePoint=vec2(siteReference.x+ray.x*imageScale,
-            dot(ray,vec3(0.0,${Math.cos(CAMERA_ELEVATION)},${Math.sin(CAMERA_ELEVATION)}))*imageScale);
+            dot(ray,vec3(0.0,${Math.cos(elevation)},${Math.sin(elevation)}))*imageScale);
           vec2 siteUv=(imagePoint-siteCenter)/siteSize+0.5;
           float siteEdge=min(min(siteUv.x,1.0-siteUv.x),min(siteUv.y,1.0-siteUv.y));
           float siteCoverage=smoothstep(0.0,0.14,siteEdge+(landNoise(groundUv*0.8)-0.5)*0.04)*smoothstep(0.0,0.03,siteEdge);
@@ -219,6 +221,7 @@ export function mountBattleTerrain(
   readonly terrainByHex: ReadonlyMap<string, BattleTerrainCell>;
   setNight(night: boolean): void;
 } {
+  const elevation = composition?.elevation ?? CAMERA_ELEVATION;
   const terrainByHex = createTerrainMap(tiles, BATTLE_LAYOUT);
   const textures = new Map<string, Texture>();
   const dirtTexture = textureFor(dirt, scene, textures);
@@ -345,11 +348,11 @@ export function mountBattleTerrain(
         },
         scene,
       );
-      rubble.rotation.x = CAMERA_ELEVATION;
+      rubble.rotation.x = elevation;
       rubble.position.set(
         point.x,
-        groundY + visibleCenterOffset * Math.cos(CAMERA_ELEVATION),
-        point.z + visibleCenterOffset * Math.sin(CAMERA_ELEVATION),
+        groundY + visibleCenterOffset * Math.cos(elevation),
+        point.z + visibleCenterOffset * Math.sin(elevation),
       );
       rubble.material = rubbleMaterial;
       rubble.isPickable = false;
@@ -380,11 +383,11 @@ export function mountBattleTerrain(
         },
         scene,
       );
-      ember.rotation.x = CAMERA_ELEVATION;
+      ember.rotation.x = elevation;
       ember.position.set(
         point.x + (((variant >>> 12) % 9) - 4) * 0.04,
-        groundY + ((0.36 * emberScale) / 0.86) * Math.cos(CAMERA_ELEVATION),
-        point.z + ((-0.42 + 0.36 * Math.sin(CAMERA_ELEVATION)) * emberScale) / 0.86,
+        groundY + ((0.36 * emberScale) / 0.86) * Math.cos(elevation),
+        point.z + ((-0.42 + 0.36 * Math.sin(elevation)) * emberScale) / 0.86,
       );
       ember.material = emberMaterials[variant % emberMaterials.length]!;
       ember.isPickable = false;

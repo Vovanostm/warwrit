@@ -151,7 +151,7 @@ function mountBattleEnvironment({
   const groundMaterial = createBattleBackdropMaterial(scene, texture(millFieldUrl));
   groundMaterial.setColor3('tint', initialNight ? new Color3(0.32, 0.4, 0.53) : Color3.White());
   background.material = groundMaterial;
-  const scenery = mountBattleScenery(scene, tiles);
+  const scenery = mountBattleScenery(scene, tiles, CAMERA_ELEVATION);
   scenery.setNight(initialNight);
 
   return {
@@ -404,6 +404,7 @@ export async function mountSpriteBattleScene(
     reference: new Vector2(perspective.targetX, perspective.distance),
     crop: new Vector4(0, 0, 1, 1),
     amount: 1,
+    elevation: CAMERA_ELEVATION,
   });
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
   const apronDepth = environment.apronDepth;
@@ -419,10 +420,15 @@ export async function mountSpriteBattleScene(
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
   const groundYFor = (hex: CombatLabHex) =>
     (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
-  const fieldVitals = mountBattleFieldVitals(canvas, scene, (id) => {
-    callbacks.onSelectUnit(id);
-    focusUnit(id);
-  });
+  const fieldVitals = mountBattleFieldVitals(
+    canvas,
+    scene,
+    (id) => {
+      callbacks.onSelectUnit(id);
+      focusUnit(id);
+    },
+    CAMERA_ELEVATION,
+  );
   const heightLabels: Mesh[] = [];
   initialTiles
     .filter((tile) => tile.height > 0)

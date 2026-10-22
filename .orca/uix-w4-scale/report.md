@@ -1,3 +1,5 @@
+Current supplemental recovery: projection correction demonstrated locally; source scope 298/300, original acceptance and full Tier V remain open. See appended supplemental section; both earlier failed reworks remain history.
+
 Current rework 2: FAILED on an ownership boundary; committed candidate 0638d7be, source scope 244/300, validator 9/9 PASS; mixed 30/50-degree consumers prevent acceptance. See Rework 2 final handback below. Earlier failures and stale-head statements are retained history.
 
 Current rework 1: FAILED overall; committed source `1c199e94`, current/upstream `f623336a`, validator 9/9 PASS, runtime/browser cleanup PASS. See the appended **Rework 1 final result** for every criterion, remaining blockers and coordinator handback. The prior failed report below is retained history.
@@ -701,3 +703,76 @@ Head/source: 0638d7be candidate; last stable entry source 1c199e94; source 244/3
 Done: lower/longer technique, W01 93.0184 px, native 12 rows/contact; validator 9/9.
 Next: explicit ownership decision for projection propagation and baseline proof.
 Blockers: vitals/scenery read-only, terrain reference mismatch, remaining original proof and full Tier V; all owned runtime/browser PIDs stopped.
+
+
+## One supplemental shared-projection recovery — 2026-10-22
+
+Permit first line: `GRANTED task_3c736b835ddd`, verified before checks/runtime.
+Entry head `51d2b783` contains coordinator-only records after pre-allocation
+`57b0c154`; source `0638d7be` and both failed ordinary reworks are preserved.
+Branch/worktree unchanged; clean entry; no reset/rebase/recreation/push/GitHub
+write/Orca call/agent spawn/shared-record edit. Full contract including amendments,
+live #179 body/comments, current record blocks, art policy and visual rubric read.
+Graph index is stale: warwrit root /Users/vovanostm/learn/warwrit, b44f5c1e;
+direct source is authoritative. This is the single supplemental allowance from
+issuecomment-6335026671, not a third ordinary round or a budget reset.
+
+### Finite correction demonstrated before ordinary commit
+
+Vitals and scenery accept explicit elevation with their legacy 50-degree default.
+Terrain composition accepts optional elevation, defaulting to 50 for shader axes,
+rubble roots and fire planes. Scene passes its existing 30-degree angle to all.
+No figure/catalogue/layout/32 px/4 px/30 px threshold, renderer/framing, art,
+rules, commands, RNG, replay serialization, dependency or #214 change.
+Total source additions + deletions against c62ad2d0: **298 / 300**, including
+all retained work. Four source paths changed in this recovery, 54 changed lines.
+
+Real default mill 6x6, seed20261009, native1440x900/100%, Start BEFORE camera:
+W01 alpha>=64 height **93.0184383504 CSS px** day/night, six allies present.
+Supplemental initial measurement uses the mounted mesh/camera and source-image
+canvas alpha scan, excludes PNG margins; no decoder or injected gameplay.
+Evidence: supplemental-initial-results.json; shots/supplemental-default-initial-*.png.
+Default Overview and supported near/far large-creature editor Overview day/night:
+supplemental-views-results.json and corresponding shots/supplemental-*.png.
+Supported crowded archer/long spear/bear/mill creature/height-step journey:
+supplemental-layering-results.json, paired grid on/off, portrait hover ring,
+actual inspection/tooltip/log interaction, revision0->0 and 0 action POST.
+No independent visual verdict inferred from these captures.
+
+Mounted measurement supplemental-projection-results.json: camera/figures/vitals/
+fringe all30 degrees; terrain axes (0,-0.5,0.8660254), (0,0.8660254,0.5).
+Six strips measure32.0000007–32.0000020 px by15.9999998–16.0000004 px;
+foot gap3.999988–4.000011 px. Legacy default50 and explicit30 are also tested
+through real Babylon NullEngine mounted vitals/scenery/terrain, with adapter-only
+DOM/canvas substitutes. Tests cover32x16/4 px, the unchanged30 px switch, rooted
+scenery/rubble, fire planes and shader projection axes.
+
+### First focused checks and preserved failures
+
+Runtime/browser positively stopped before checks:16 captured owned PIDs absent.
+Private ports23319/25319 were empty before launch; supplemental-before-start.json.
+First projection-test attempt failed: scenery Float32 root drift1.84e-6 exceeded
+an overly strict new1e-6 test tolerance; DOM disposal fixture lacked
+removeEventListener. Corrected fixture/tolerance1e-5;4/4 PASS on retry.
+First typecheck failed only the test canvas HTMLCanvasElement/ICanvas annotation;
+corrected to the engine createCanvas return type. Retry PASS.
+Related public tests with real coverage: **73 PASS in8 files**;
+supplemental-related.log. Normal main-based coverage-fed audit PASS, no new issues
+in16 changed files; inherited finding remains normally excluded, no audit config
+or acceptance assertion changed. First ESLint failed type-only ShaderMaterial
+import; corrected; final lint/format/commit outcomes follow below.
+All failed logs retained under supplemental-*.log. Full verify/stress/migrations/
+bootstrap/production build NOT_RUN. Coordinator validation and full independent
+Tier V NOT_RUN here. Short-viewport readability/night score1 remains material.
+
+### Shared-record proposal (coordinator writes only)
+
+Unreleased: 2026-10-22, Vovanostm/uix-w4-scale, LOCAL, #179 supplemental recovery:
+propagate the existing scene projection into vitals/scenery/terrain with legacy
+50-degree defaults; actual default Start W01 remains93.0184 px, native strips
+32x16 with4 px gap. Scope298/300, ordinary hook/affected checks to be recorded
+below; all original missing baseline/proof and independent Tier V remain open.
+CURRENT_PLAN/wiki: supersede mixed30/50 source blocker only after this commit;
+do not mark #179 source/evidence complete or visually accepted, retain both
+failed reworks and short-viewport/night findings, #214 frozen. No setup/API/
+protocol/rule/migration/dependency change. Worker has not edited shared records.
