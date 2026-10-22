@@ -7,6 +7,45 @@ Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
+#285 source `0b0c44eb`, report `9896b585`; normal commits, source 176/300.
+[Build report and actual proof limits](../../.orca/core-integration-db-isolation/report.md).
+Four lifecycle scripts isolate migrated template, file clones and migration smoke;
+`test:migrations` selects eight files, maxWorkers 2/default parallelism unchanged.
+Author evidence: nine real-PG lifecycle checks, two native integration files,
+1440×900 day/night control smoke; no persistent victory/effects acceptance.
+Coordinator validator at `9896b585`: exit 0, all nine gates PASS.
+Related test result 1 PASS / 8 SKIP without DB; adds no real-PG proof.
+Coordinator directly found all 16 reported PIDs absent and three ports clear.
+Author SQL zero-leftovers claim lacks saved raw log; independently repeat cleanup.
+Next: fresh Tier L reviewer plus evaluator; evaluator alone owns checks/DB/runtime.
+Repeat full eight-file/migration smoke and persistent victory/effects journey.
+Lost-CREATE-reply cleanup advisory is unexecuted; fresh reviewer must assess it.
+Matched hosted <=20% timing and five complete CI passes remain NOT_MEASURED/NOT_RUN.
+#272 / [PR #287](https://github.com/Vovanostm/warwrit/pull/287), `c07b88d9`: CI failed;
+OIDC accepted source/proof retained; #282 rollback regression remains unchanged.
+Shared-database causality and leadership-choice lead remain UNPROVEN.
+#179 frozen after failed rework 2/2; existing supplemental-recovery question open.
+No third source attempt, criterion waiver or duplicate slice allocated here.
+#214 source frozen pending #179; #268 contract accepted, exclusive checks queued.
+#269 AND #262 final component 20/15; #263/#231 remain open.
+#274/#280 unresolved REWORK; green snapshot CI permits no merge.
+Existing ready/planning backlog prevents refill; daily work already complete.
+No PR/merge or game-rule/API/wiki/protocol/replay/schema/migration change.
+Full local verify/stress/migration suite NOT_RUN by coordinator this tick.
+Next tick consumes independent gates; source/proof defects follow fallback budget.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Previous checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
 #285 complete five-section contract accepted; native worker succeeded/released.
 Contract: core-integration-db-isolation/.orca/core-integration-db-isolation/contract.md.
 Implementation waits for #179 exclusive checks/hooks/runtime cleanup.
@@ -36,8 +75,6 @@ Local game tests/typecheck/build/DB/browser NOT_RUN; performance NOT_MEASURED.
 No game-rule/API/wiki/protocol/replay/schema/migration implementation changed.
 Next: #179 author settlement/cleanup, then #285 build and #268 web sequencing.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 

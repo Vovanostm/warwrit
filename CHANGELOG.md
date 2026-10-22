@@ -9,6 +9,31 @@ requests.
 
 ## Unreleased
 
+### Advance file-isolation implementation to independent gates — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285: source `0b0c44eb`, report
+  `9896b585`; branch checkpoint only, no PR or merge. Owner-requested single tick
+  verifies exact native settlement and normal commits, records/acknowledges both
+  messages and releases the settled builder. Source scope 176/300.
+- Four integration lifecycle scripts, integration-only Vitest hooks and
+  `test:migrations` now allocate a migrated template, one database per selected
+  file and isolated migration smoke. All eight files selected; worker count and
+  existing assertions unchanged. No production or released migration changed.
+- [Build report](.orca/core-integration-db-isolation/report.md): nine real-PG
+  lifecycle checks and two native integration files are author evidence;
+  coordinator validator exit 0, 9/9 PASS at `9896b585`. Related test result
+  1 PASS / 8 SKIP without a DB is not additional database proof. Direct coordinator
+  readback found all 16 reported PIDs absent and three ports clear. SQL cleanup
+  raw log missing; independently repeat. Lost-CREATE-reply cleanup advisory
+  retained for fresh reviewer, not reproduced or accepted.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) schedules fresh Tier L review
+  and exclusive evaluator checks/runtime. Full eight-file/migration and persistent
+  victory/effects proof pending; matched hosted <=20% timing NOT_MEASURED and five
+  full CI runs NOT_RUN. #272/#282 proofs retained, PR #287 CI failed; #179 remains
+  at its existing recovery-cap question. No new issue, duplicate daily work or
+  criterion waiver. Zero merged PRs with playable proof; no rule/API/wiki/replay/
+  schema/dependency change. Full local verify/stress suites NOT_RUN.
+
 ### Accept isolation contract and retain exact CI blocker — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`: owner-requested single pipeline tick
