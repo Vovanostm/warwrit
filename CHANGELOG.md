@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Accept session/editor contract without starting another builder — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-oidc-count-isolation-272`: coordinator accepts the complete
+  five-section [#268](https://github.com/Vovanostm/warwrit/issues/268) contract
+  in dedicated `qa-hooks-session-editor/.orca/qa-hooks-session-editor/contract.md`.
+  Native task/dispatch/sender/worktree and structured result matched; source
+  clean at merged main `c62ad2d0`. Settlement recorded before acknowledgement;
+  settled dispatch released with no owned resource. No product question.
+- #268 remains planning until #214 releases the sole web build slot; setup,
+  implementation and its checks/runtime NOT_RUN. Original Tier U/scope 300 and
+  final #269 AND #262 component 20/15 remain. #272 evaluator stays source-only
+  until #214 runtime cleanup; #274/#280 unresolved REWORK still blocks merge.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) updates current continuation.
+  Exactly one tick: 0 merged PRs, 0 merged with playable proof; daily work already
+  complete. Documentation-only normal commit; no game checks required or run.
+  No setup/API/wiki/rule/protocol/replay/migration change; performance NOT_MEASURED.
+
 ### Merge selection extraction and prepare session contract — 2026-10-22, PUBLISHED
 
 - `Vovanostm/codex-oidc-count-isolation-272`: closeout for [PR #286](https://github.com/Vovanostm/warwrit/pull/286),

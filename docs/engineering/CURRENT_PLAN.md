@@ -5,7 +5,7 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 and existing local overrides; no new milestone.
-This tick: 1 merged PR with playable proof: #286, expected head `eb6e57b2`.
+This tick: 0 merged PRs; 0 merged PRs with playable proof; no acceptance waiver.
 #272: retained OIDC source `37f35c6b`, integrated frozen head `c8b6c308`.
 Fresh author mutations each fail the original account/session equality and restore.
 Five ordinary parallel eight-file PostgreSQL runs PASS 60/60 each, zero skips.
@@ -26,7 +26,8 @@ Tier U ACCEPT `de77fa3d`, frozen source `9ccabbd9`, scope 159, validate 9/9.
 Final-head CI and PR scope SUCCESS; issue CLOSED/done, proof retained locally.
 Clean fully-pushed worktree removed through Orca; no unique commit discarded.
 Tracked proof is on merged main; this #272 branch awaits ordinary integration.
-#268 contract: `task_a862f659e76e` / `ctx_5c8ffeb5121c`, read-only in own checkout.
+#268 five-section contract accepted; exact native settlement recorded/acked/released.
+Contract: `.orca/qa-hooks-session-editor/contract.md` in its own clean checkout.
 Setup deferred while #214 owns checks/runtime; no second web builder.
 Final component 20/15 remains on #269 AND #262.
 #262/#263/#231 remain open; #179 follows reserved #214 before camera/playback.
@@ -34,7 +35,7 @@ Final component 20/15 remains on #269 AND #262.
 Daily metrics/scout/triage/digest complete; no duplicate daily work.
 No rule/auth/schema/released migration/dependency/setup/API/wiki contract change.
 Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
-Next: #214 settlement/cleanup, then #272 evaluator runtime; review #268 contract.
+Next: #214 settlement/cleanup, then #272 evaluator runtime; #268 waits web slot.
 Integrate merged main into #272 after its live gate settles, then revalidate.
 Wrapper releases its lease when this single tick returns.
 
