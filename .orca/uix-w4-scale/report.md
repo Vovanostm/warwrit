@@ -1,4 +1,4 @@
-Current supplemental recovery: projection correction demonstrated locally; source scope 298/300, original acceptance and full Tier V remain open. See appended supplemental section; both earlier failed reworks remain history.
+Current supplemental recovery: FAILED overall acceptance, bounded source correction committed at 989669ef (298/300); focused checks and refreshed author journeys pass, but original baseline/rejected-state and full Tier V remain incomplete. See final supplemental handback below; both failed ordinary reworks remain preserved.
 
 Current rework 2: FAILED on an ownership boundary; committed candidate 0638d7be, source scope 244/300, validator 9/9 PASS; mixed 30/50-degree consumers prevent acceptance. See Rework 2 final handback below. Earlier failures and stale-head statements are retained history.
 
@@ -727,7 +727,7 @@ rules, commands, RNG, replay serialization, dependency or #214 change.
 Total source additions + deletions against c62ad2d0: **298 / 300**, including
 all retained work. Four source paths changed in this recovery, 54 changed lines.
 
-Real default mill 6x6, seed20261009, native1440x900/100%, Start BEFORE camera:
+Real default mill 6x6, seed 20261009, native 1440x900/100%, Start BEFORE camera:
 W01 alpha>=64 height **93.0184383504 CSS px** day/night, six allies present.
 Supplemental initial measurement uses the mounted mesh/camera and source-image
 canvas alpha scan, excludes PNG margins; no decoder or injected gameplay.
@@ -736,43 +736,138 @@ Default Overview and supported near/far large-creature editor Overview day/night
 supplemental-views-results.json and corresponding shots/supplemental-*.png.
 Supported crowded archer/long spear/bear/mill creature/height-step journey:
 supplemental-layering-results.json, paired grid on/off, portrait hover ring,
-actual inspection/tooltip/log interaction, revision0->0 and 0 action POST.
+actual inspection/tooltip/log interaction, revision 0->0 and 0 action POST.
 No independent visual verdict inferred from these captures.
 
 Mounted measurement supplemental-projection-results.json: camera/figures/vitals/
-fringe all30 degrees; terrain axes (0,-0.5,0.8660254), (0,0.8660254,0.5).
-Six strips measure32.0000007–32.0000020 px by15.9999998–16.0000004 px;
-foot gap3.999988–4.000011 px. Legacy default50 and explicit30 are also tested
+fringe all 30 degrees; terrain axes (0,-0.5,0.8660254), (0,0.8660254,0.5).
+Six strips measure 32.0000007–32.0000020 px by 15.9999998–16.0000004 px;
+foot gap 3.999988–4.000011 px. Legacy default 50 and explicit 30 are also tested
 through real Babylon NullEngine mounted vitals/scenery/terrain, with adapter-only
-DOM/canvas substitutes. Tests cover32x16/4 px, the unchanged30 px switch, rooted
+DOM/canvas substitutes. Tests cover 32 x 16/4 px, the unchanged 30 px switch, rooted
 scenery/rubble, fire planes and shader projection axes.
 
 ### First focused checks and preserved failures
 
-Runtime/browser positively stopped before checks:16 captured owned PIDs absent.
-Private ports23319/25319 were empty before launch; supplemental-before-start.json.
-First projection-test attempt failed: scenery Float32 root drift1.84e-6 exceeded
-an overly strict new1e-6 test tolerance; DOM disposal fixture lacked
-removeEventListener. Corrected fixture/tolerance1e-5;4/4 PASS on retry.
+Runtime/browser positively stopped before checks: 16 captured owned PIDs absent.
+Private ports 23319/25319 were empty before launch; supplemental-before-start.json.
+First projection-test attempt failed: scenery Float32 root drift 1.84e-6 exceeded
+an overly strict new 1e-6 test tolerance; DOM disposal fixture lacked
+removeEventListener. Corrected fixture/tolerance 1e-5;4/4 PASS on retry.
 First typecheck failed only the test canvas HTMLCanvasElement/ICanvas annotation;
 corrected to the engine createCanvas return type. Retry PASS.
-Related public tests with real coverage: **73 PASS in8 files**;
+Related public tests with real coverage: **73 PASS in 8 files**;
 supplemental-related.log. Normal main-based coverage-fed audit PASS, no new issues
-in16 changed files; inherited finding remains normally excluded, no audit config
+in 16 changed files; inherited finding remains normally excluded, no audit config
 or acceptance assertion changed. First ESLint failed type-only ShaderMaterial
 import; corrected; final lint/format/commit outcomes follow below.
 All failed logs retained under supplemental-*.log. Full verify/stress/migrations/
 bootstrap/production build NOT_RUN. Coordinator validation and full independent
-Tier V NOT_RUN here. Short-viewport readability/night score1 remains material.
+Tier V NOT_RUN here. Short-viewport readability/night score 1 remains material.
 
 ### Shared-record proposal (coordinator writes only)
 
 Unreleased: 2026-10-22, Vovanostm/uix-w4-scale, LOCAL, #179 supplemental recovery:
 propagate the existing scene projection into vitals/scenery/terrain with legacy
 50-degree defaults; actual default Start W01 remains93.0184 px, native strips
-32x16 with4 px gap. Scope298/300, ordinary hook/affected checks to be recorded
+32 x 16 with 4 px gap. Scope298/300, ordinary hook/affected checks to be recorded
 below; all original missing baseline/proof and independent Tier V remain open.
 CURRENT_PLAN/wiki: supersede mixed30/50 source blocker only after this commit;
 do not mark #179 source/evidence complete or visually accepted, retain both
 failed reworks and short-viewport/night findings, #214 frozen. No setup/API/
 protocol/rule/migration/dependency change. Worker has not edited shared records.
+
+
+## Supplemental final handback — local correction, original acceptance incomplete
+
+**Outcome: FAILED overall; do not close #179 or claim source/evidence complete.**
+Ordinary source commit **989669ef**, parent 51d2b783; source 298/300 against
+c62ad2d0, no further source changes. Full independent visual/evaluator gates are
+coordinator-owned, NOT_RUN here. Existing short-viewport readability/night 1
+remains material after propagation: current 1366x768/native 125 captures still show
+small actor bodies under large markers. This report does not overrule that critic,
+invent a universal 80 px rule for every viewport, or authorize more source tuning.
+
+### Original AC/DoD at the corrected source
+
+All PASS entries below are **author evidence**, not visual ACCEPT. Local evidence
+paths are relative to .orca/uix-w4-scale; none of the new shots is an old baseline.
+
+| Original criterion | Actual corrected-source result / remaining limit |
+| --- | --- |
+| AC1 B002/B053 <=90%, near/far day/night | PASS author: B002 0.8784605664–0.8784605843; B053 0.7526865654–0.7526865814. Supported-editor heights 0/1/2, actual source alpha>=64 through mounted camera, unscaled captures; supplemental-final-close-h{0,1,2}-results.json,72 close shots. |
+| AC2 adjacent bears, real hovers | PASS author: r2/r8 pairs day/night; opaque bounding gaps 23.8659464/17.9811143 CSS px, both intended native bear hovers in all 4 rows. supplemental-final-adjacent-retry-results.json. First duplicate forecast-button locator failure retained. |
+| AC3 W01 >=35%, depth delta <=5% | PASS author: 0.3844210722–0.3844210737, maximum absolute delta 1.51e-9 across near/far/heights/phases. Heights/display mapping/0.82 unchanged. |
+| Original base 1440 initial W01 >=80 px | PASS author: 93.0184383504 CSS px day/night before ANY camera input, unchanged default mill/seed; supplemental-initial-results.json. Six allies and nearest wolves visible. Independent readability remains open. |
+| AC4 contact inside hex/offset <=25% radius | PASS approximate author: 36 figure/row/height cases, maximum ground-plane offset/radius 0.181937089; chosen source paw/boot landmarks all inside hex. supplemental-final-contact-plane-results.json. These are retained manual anatomical estimates transformed anew, not calibrated exact paw truth. B025/B053 source/support history above preserved; no new art or pivot edit. |
+| AC5 whole squad/nearest enemies and return | PASS author base Start, all 12 candidate input rows, actual portrait/Overview/pan/wheel. Full-field edge containment after Overview/return differs only 2.49e-7 world units, unchanged apron; supplemental-edge-pan-results.json. This does not accept short-screen target readability. |
+| AC6 all 165 native hovers,0 action POST,stable revision | PASS author day 165/165 and night 165/165, zero final selected-case mismatches,0 action POST, revision 4->4. supplemental-final-hover-{adaptive,night}-results.json. All actual attempts retained, including opaque/covered probe failures before exposed alternatives. |
+| Shared seams/raised cells/transparent borders/boundary | PASS selected native probes: q9/r5 and q10/r5 seam sides, q14/r10 outer edge and exposed sprite-border points. q0/r0 outer point is offscreen in both initial seam runs (retained failures); actual native drag then exposes it and native q0/r0 succeeds day/night, revision 4. supplemental-boundary-zero-results.json. No callback/state injection. |
+| AC7 complete catalogue/mutation | PASS public fit/minimal-upward 0.05/widened-B001/restored-fit/unchanged-height regressions in 73 related tests and normal commit coverage. Ordinary git diff confirms sprite-art.ts, battle-layout.ts and assets/art unchanged since 1c199e94; existing 22/22 browser alpha widths therefore apply to identical catalogue/art/scale inputs only. They are not new camera or baseline shots. No PNG decoder. |
+| AC8 full continuous ground and layers | Procedural-ground route retained; public real-ray/centre/corner/rubble tests PASS. Current full 165 grid day/night, height close views, boundary shots and ground-on/off crowded long-spear/bear/mill-creature captures exist. Shared 30-degree terrain/shader/scenery axes measured. No sampled ground cue crosses the inspected opaque bodies; no exhaustive visual score or whole-scene acceptance claimed. |
+| AC9 CVD |24 default/large-creature/grid native CDP captures plus 12 crowded/height-step/grid on/off captures, day/night and all 3 requested deficiency modes.0 action POST; crowd revision 0->0. supplemental-final-cvd-retry-results.json, supplemental-crowd-cvd-results.json. First default CVD duplicate forecast-button failure retained; critic readability NOT_RUN. |
+| Genuine12-row100/125 candidate matrix | PASS author input/visibility:1366x768/1440x900/1920x1080 x native Chrome Page zoom 100/125 x day/night. CSS/DPR 125 are1093x614/1152x720/1536x864 with DPR1.25, visualViewport.scale 1; actual HUD opening recorded. All 6 allies visible, human-1 native hover in all 12, Home/button equivalence, portrait focus, pan/wheel, visible focus, revision 4->4 and0 action POST. supplemental-final-matrix-results.json. No CSS/screenshot/device-scale substitute. |
+| Native 125 short-viewport stability | PASS author:60 consecutive IDENTICAL RAF samples each phase, initiative 130 px, HUD171.600006..387.550018, camera zoom 13.4033043483, CSS1093x614/DPR 1.25. supplemental-final-stability-retry-results.json. First reload probe raced restored-session mounting and timed out on detached/disabled editor control; retained. Successful retry used stable native editor navigation. |
+| Original before-image matrix | **INCOMPLETE**: retained prior report describes only original c62ad2d0 base 1440 day/night; no new original baseline was executed or relabelled in this recovery. Other10 original rows remain NOT_RUN. Later feature/rework/candidate shots remain their actual sources. No other checkout was changed/launched. |
+| Keyboard/reduced-motion/state | PASS author: mouse vs1–5 command results equivalent; Space equals wait. no-preference/reduce x day/night: portrait click/Enter and Home/button equivalent, all WASD/arrow variants move and stop on release, Escape closes menu; revision 4 unchanged,0 camera action POST. supplemental-key-equivalence-results.json, supplemental-reduced-motion-results.json. |
+| Pin/hover/initiative linkage and tooltip/log | PASS sampled actual journeys: native spear-body hover then click pins selected=spear; its initiative aria-pressed=true. Portrait bear hover changes mounted bear outline from target [1,.69,.46] to hover [1,.91,.68] while pin remains spear, revision 0,0 action POST. Day/night visible command tooltip with open log stays inside viewport. supplemental-linkage-results.json, supplemental-portrait-linkage-results.json. Portrait hover uses separate native linkage; the field-hover hook remains null there and is not relabelled as a field hover. |
+| Exact historical owner-rejected archer state | **NOT_RUN**: prior handback identifies codex-clipboard-6235d07a-f2cb-4ea9-80c9-4aa77ed53945.png but lacks bytes/setup. New crowded archer/long-weapon/large-creature/height/ring shots are supplemental cases, not that original state. Required full absolute layering verdict stays open. |
+| Manual first death then autoplay outcome | PASS author actual default journeys:22 manual move/attack/wait steps -> first dead opponent-1 at round 3/revision 56 -> autoplay -> human last-side-standing victory round 10/revision 187,6 opponents dead. Night: supplemental-manual-night + outcome-night-complete-results.json. Verified day: supplemental-manual-day-verified (light=day) + outcome-day-verified-results.json. Real movement start/contact/end captures supplied. Earlier25-second polls returned active round 7/revision 135, not an outcome; retained. Ambiguous/failed later day retries are not accepted day evidence. |
+| Terminal/log/control overlap | PASS sampled actual terminal journeys day/night with log closed/open: Restart/Editor buttons visible and reached by real pointer,0 action POST, revision 187 unchanged. supplemental-terminal-results.json. No command tooltip exists in terminal state; its count 0 is recorded, not a missing visible tooltip silently accepted. Active tooltip/log proof is the separate linkage journey above. |
+| Supported programmatic legacy replay/projection | PASS existing production public-boundary regressions: schema2 bridge replay and authenticated export-only reconstruction, including actual legacy without labPresentation and replayCombat equality;2 PASS,16 unselected, supplemental-replay-tests.log. No new replay UI or replay bytes passed to draft importer. Browser replay-upload remains unreachable by existing design. |
+| Absent optional map.tiles | PASS existing public scene fallback: actual default projection read, only optional map.tiles omitted, fromCombatLabView -> mountSpriteBattleScene in an isolated evidence page.165 pickable flat cells/12 units,4 rubble cells match4 blocked cells, no missing hex, input unchanged,0 onAct; day/night captures. supplemental-missing-tiles-results.json. This explicitly proves the public fallback, not a native draft import or fabricated accepted gameplay. |
+| Full independent Tier V | **NOT_RUN**, coordinator-owned. Equal-alpha-height close/game-scale sheet shots/supplemental-reference-comparison.png; all actual default/Overview/close/crowd/CVD/movement/terminal inputs supplied. References remain unit-c-ink.png, buildings/mill.png, stage1 ui-reference-day/night/mill/melee.png. No independent agent spawned by worker, no absolute score/ACCEPT assumed. Static sprites have no clips; real movement evidence is retained. |
+| Delivery/records/gates | Ordinary source 989669ef, scope 298/300, focused checks PASS. No push/PR/merge/shared record write; coordinator validation/CI/PR scope/full Tier V pending. Proposals below only; #214 frozen. Original source baseline ancestry unchanged, live-main integration belongs to coordinator. |
+
+### Final checks, retained failure details and cleanup
+
+Source commit normal pre-commit hook PASS, generating related coverage again and
+running main-based fallow audit; no bypass/waiver. Explicit focused checks:
+web typecheck PASS on retry; scoped ESLint PASS on retry; Prettier PASS; related
+coverage73/73 PASS in 8 files; normal main audit PASS. Replay 2 PASS/16 unselected.
+No source changed after those checks. Full verify/stress/migrations/bootstrap,
+production build and coordinator validator NOT_RUN; performance NOT_MEASURED.
+
+Additional retained proof failures/limits: adjacent and first CVD locators matched
+real and forecast initiative duplicates; retries use first actual queue button.
+First day/night autoplay polls ended active round 7; an attempted later day reset
+hit terminal/menu duplicate Editor buttons. The unverified "day" retry/outcome
+files are not day evidence; a later explicit light=day fresh default run and
+complete terminal poll supply the verified result. First stability reload raced
+asynchronous restored-session mounting, leaving a detached/disabled editor
+locator; health remained 200 and native snapshot showed the restored crowd.
+Stable native navigation retry passed. Earlier seam q0/r0 miss remains alongside
+successful dragged-boundary proof. Favicon404 is the sole recorded browser error;
+no app exception was turned into a pass. All ordinary commits/logs preserved.
+
+No runtime beside tests/typecheck/lint/audit/hooks. Browser uix179supp and existing
+private launcher closed. **supplemental-cleanup.json clean=true**: all **32**
+captured owned PIDs across both launches absent,23319/25319 have no listeners,
+no .orca/play.pid. No unrelated process or browser was stopped. Original shared
+launcher log copied before first start, pre-proof start and final stop, preserving
+new failed results independently. No Docker resource was created by this worker.
+
+### Coordinator record proposal and exact remaining handoff
+
+CHANGELOG Unreleased:2026-10-22, Vovanostm/uix-w4-scale, LOCAL, #179: source 989669ef
+propagates scene 30 degrees into vitals/scenery/terrain while legacy callers retain
+50 degrees. Fixed 32 x 16 readouts/four-pixel gap/30 px threshold/figure sizes/catalogue
+spacing preserved. Source 298/300; normal hook/73 related tests/typecheck/lint/
+format/audit PASS; replay 2 PASS. Native 12 candidate rows/165+165 hovers/contact/
+36 CVD captures/first-death->victory/public missing-tiles fallback supplied.
+No acceptance: original 10 baseline rows and exact rejected-state reproduction
+missing, short-viewport/night 1 material, coordinator validation/full Tier V pending.
+
+CURRENT_PLAN/wiki: record ONE supplemental correction as locally committed,
+retaining both failed reworks and original AC/DoD. Mixed 30/50 source defect is
+corrected; original proof and visual acceptance are NOT complete. No permission
+for another source round, numeric/style waiver, renderer/framing/layout expansion,
+PR/merge or #214 thaw is implied. Setup/API/core/protocol/replay-format/rules/
+RNG/dependency/migration contracts unchanged. Worker wrote none of those records.
+
+Five-line handoff (local only; coordinator owns external write/publication):
+Branch: Vovanostm/uix-w4-scale, dedicated existing checkout, no worker push.
+Head/source:989669ef source; final report commit follows; source 298/300.
+Done: finite shared-projection correction + ordinary hook + focused/native proof above.
+Next: coordinator validation and full independent Tier V; route missing original baseline/rejected-state inputs and material short-screen verdict without a cap reset.
+Blockers: original 10 baseline rows, exact historical rejected-state input, short-viewport/night 1 and independent acceptance;32 owned PIDs / 2 ports positively clean.
