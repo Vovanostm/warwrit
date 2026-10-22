@@ -23,6 +23,14 @@ requests.
   unchanged. Hosted dispatch and the six measured timings remain NOT_MEASURED
   until the workflow is on main. Published as a pull request; not merged.
 
+### #293 merged — 2026-10-23, MERGED
+
+- [PR #299](https://github.com/Vovanostm/warwrit/pull/299) merge `19e62633` closed #293.
+  Owner disposition 2026-10-23: merge at `720bf05c` without the missing E2
+  clipboard archive. Independent visual scores on that head were all at least 2;
+  the verdict had been BLOCKED only for that missing file. E3 before rows were
+  captured locally at `c62ad2d0` and were not committed.
+
 ### Rework #293 desktop HUD opening fit — 2026-10-22, LOCAL
 
 - `Vovanostm/uix-179-desktop-composition-rework`, #293 Part of #179: technique
