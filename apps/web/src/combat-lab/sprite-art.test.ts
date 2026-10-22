@@ -87,3 +87,41 @@ it('derives the minimal upward 0.05 spacing from every catalogue silhouette and 
       12,
     );
 });
+
+it.each([
+  [
+    'B002',
+    [
+      [175, 1000],
+      [540, 970],
+      [766, 1105],
+      [1120, 1010],
+    ],
+  ],
+  [
+    'B003',
+    [
+      [280, 1140],
+      [520, 980],
+      [740, 865],
+      [1070, 875],
+    ],
+  ],
+  [
+    'B017',
+    [
+      [160, 965],
+      [505, 865],
+      [858, 1100],
+      [1110, 1005],
+    ],
+  ],
+] as const)(
+  'anchors %s to the observed paw support rather than its lowest pixel',
+  async (id, paws) => {
+    const { spriteCatalogue } = await import('./sprite-art.js');
+    const art = spriteCatalogue().find((entry) => entry.id === id)!;
+    expect(art.footX).toBe(paws.reduce((sum, [x]) => sum + x, 0) / paws.length);
+    expect(art.footY).toBe(paws.reduce((sum, [, y]) => sum + y, 0) / paws.length);
+  },
+);

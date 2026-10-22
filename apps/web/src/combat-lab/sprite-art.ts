@@ -167,8 +167,8 @@ const art = {
     height: 1254,
     bodyHeight: 951,
     alphaWidth: 1133,
-    footX: 634.5,
-    footY: 1121,
+    footX: 650.25,
+    footY: 1021.25,
     visibleBounds: [62, 163, 1146, 964],
   },
   B003: {
@@ -180,8 +180,8 @@ const art = {
     height: 1254,
     bodyHeight: 1024,
     alphaWidth: 1150,
-    footX: 635.5,
-    footY: 1164,
+    footX: 652.5,
+    footY: 965,
     visibleBounds: [53, 133, 1164, 1037],
   },
   B017: {
@@ -193,8 +193,8 @@ const art = {
     height: 1254,
     bodyHeight: 950,
     alphaWidth: 1137,
-    footX: 641,
-    footY: 1134,
+    footX: 658.25,
+    footY: 983.75,
     visibleBounds: [66, 177, 1150, 963],
   },
   B019: {
