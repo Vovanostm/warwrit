@@ -360,7 +360,8 @@ production code or dependency is mocked or replaced.
 
 Fresh evidence directory: `.orca/core-integration-db-isolation/rework-2-evidence/`.
 Resource declaration `resources.md` preceded creation of NEW private PG17 project
-`warwrit-285-rework2`, exact container/network/volume named there. Loopback PG port 32803. No retained/default database, URLs or secrets were used in logs.
+`warwrit-285-rework2`, exact container/network/volume named there. Loopback PG port
+32803. No retained/default database, URLs or secrets were used in logs.
 
 - First-edit audit after test edit PASS (upstream-based audit); first helper edit
   audit against origin/main PASS, zero new findings. Final main-based audit below
@@ -374,8 +375,8 @@ Resource declaration `resources.md` preceded creation of NEW private PG17 projec
   both new shutdown cases and all prior lifecycle/hook/lost-reply regressions.
   Command: explicit private INTEGRATION_LIFECYCLE_DATABASE_URL and fresh evidence
   directory; `pnpm exec vitest run apps/server/src/db/integration-database.test.ts
---coverage --mode coverage --coverage.include 'scripts/integration*.ts'
---coverage.include 'apps/server/src/db/migrator.ts' --reporter verbose`.
+  --coverage --mode coverage --coverage.include 'scripts/integration*.ts'
+  --coverage.include 'apps/server/src/db/migrator.ts' --reporter verbose`.
   Real V8 coverage: statements 85.71% (108/126), branches 80% (24/30), functions
   88.88% (32/36), lines 85.96% (98/114). Real child hook coverage is not aggregated.
 - Typecheck/lint/format/audit, normal commits, validation, day/night smoke and
@@ -410,7 +411,7 @@ and retain separately owned encounter diagnosis. Shared records remain read-only
 ### Final rework settlement and positive cleanup
 
 - Source commit **`83372b0b`**, `test: retain client errors through database closure
-(#285)`, contains exactly the helper, lifecycle tests and appended report.
+  (#285)`, contains exactly the helper, lifecycle tests and appended report.
   Normal pre-commit refreshed focused coverage against the private PG allocation
   and passed the main-based audit: zero new dead-code, complexity or duplication
   findings. No bypass, threshold change, push or external write. The audit retains
@@ -559,3 +560,52 @@ Source scope 219/300, normal audit/commit required; no acceptance waiver. Retain
 original failed 2/2 history, historical null-effects cause UNPROVEN and hosted
 timing/five-CI requirements. Request fresh independent Tier L after positive
 resource cleanup. No push/PR/GitHub write, Orca command or subagent in this pass.
+
+### Supplemental settlement and positive cleanup
+
+- Source commit **`b4d033c`**, `test: fail CLI when global database teardown
+rejects (#285)`: exactly the two allocated source/test paths and this report.
+  Normal pre-commit refreshed focused coverage with the explicit disposable PG
+  allocation and passed main-based audit, zero new dead-code/complexity/duplication
+  findings. No --no-verify, threshold bypass, publication or other source round.
+  The existing syntactic-attribution warning is retained in raw audit logs.
+- Relevant server typecheck, corrected complete scripts/config typecheck,
+  changed-file ESLint/Prettier and final explicit pnpm check:changes all **PASS**.
+  The initial incomplete tsc failure is retained, not counted as a pass.
+  Git staging initially hit the sandbox's shared worktree index.lock restriction;
+  authorized filesystem escalation allowed the same exact staging/normal commit.
+  Git emitted its ignored-directory warning while successfully staging the tracked
+  report; staged-path readback confirmed only the three intended paths.
+- Final SQL **before project removal** returned **databases [] / sessions []**:
+  all non-system databases except this project's explicit admin source, and all
+  other database sessions. This is broader than a prefix-only orphan check.
+  Child-specific exact-name recoveries preserve pre/post SQL state; no prefix
+  deletion, unrelated database operation or retained/default database was used.
+- Compose down **exit 0**, exact container/network/volume removed. Independent
+  final project-label inventories for containers/networks/volumes each exit 0
+  with empty output. Final exact native PID readback: **145/145 recorded PIDs
+  absent**. All six recorded listening ports are clear (lsof exit 1, empty
+  stdout/stderr): **32886, 56897, 56909, 56921, 56942, 56950**.
+  Evidence: supplemental-evidence/final-sql.stdout.log and final-cleanup.json.
+  Sampled descendants/ports are recorded; short-lived unsampled resources are not
+  claimed exhaustively enumerated. Container namespace PID is identified only as
+  such, with its absence established by container inventory. No unrelated process
+  was stopped. No browser/game runtime was started and none needs teardown.
+- Twelve unique child global-probe directories are retained: three RED, three
+  GREEN, three in focused lifecycle and three from the mandatory normal commit
+  hook. Every full child stdout/stderr, actual exit, SQL ledger/precondition and
+  recovery artifact remains; global-results.json is a convenient readback of
+  those actual results. No extra whole-game/native migration run occurred.
+- Final report-only normal commit records this settlement. Source remains
+  b4d033c; no further test/build round is needed for that documentation closeout.
+  Prior report content/evidence is preserved; shared records remain untouched.
+  Orca validator and fresh independent Tier L **NOT_RUN** by this worker; those
+  remain coordinator/evaluator-owned next steps. All original unresolved criteria
+  above still apply. No push, PR, GitHub write, merge, deployment or subagent.
+
+Handoff: bounded supplemental repair locally succeeded at source **b4d033c**,
+source scope **219/300**, focused real-PG **19 PASS**, sequential static/audit
+checks and normal commit PASS, positive disposable resource cleanup complete.
+Coordinator can allocate fresh validation and independent Tier L; the historical
+terminal-effects cause remains UNPROVEN, hosted <=20% timing NOT_MEASURED and
+five full CI NOT_RUN. This is not acceptance of #285 or a rework-budget reset.
