@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Preserve failed audit candidate and repair allocation — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, coordinator records for #268: fallback1 failed
+  normal commit audit at CombatLab 28/23. Staged source 170/300 and tests remain
+  without an implementation commit. Author 51 tests/typecheck/lint/format PASS;
+  validator clean-tree FAIL; refreshed mounted/Tier U NOT_RUN.
+- #268 returns to planning: source-only task_2a4c749917d7 proposes a finite
+  audit-feasible B/C boundary. No source edit, recovery/budget reset, bypass or
+  acceptance waiver. Full proof, consumed fallback1/rework1 and final #269 AND
+  #262 component20/15 remain; #293 waits. Original/new evidence preserved.
+- PR #292 unchanged `cf6a6fb5`: hosted full CI attempts1+2 PASS, third native
+  IN_PROGRESS; five passes and matched timing remain required. PR #291 unchanged
+  `a198ef98` gets fresh independent Tier D review in a dedicated checkout;
+  setup/validator NOT_RUN, no merge. Main CI green.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) retains one active status
+  block and actual owner delegation; dated records use historical headings.
+  [Owning wiki](docs/wiki/battlefield-test-maps.md) records the #268 blocker.
+  Documentation checks only; no coordinator game checks or player acceptance.
+  This tick: 0 merged PRs with playable proof. No setup/API/rule/replay/schema/
+  migration/dependency change; performance NOT_MEASURED.
+
 ### Resume failed initialization extraction through bounded audit fallback — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, coordinator continuation for #268: exact failed

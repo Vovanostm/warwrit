@@ -6,41 +6,40 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#179 recovery contract settled; repeated scene integration 1 requires technique change.
-Coordinator adopted [#293](https://github.com/Vovanostm/warwrit/issues/293):
-independent desktop HUD opening, initial fit and body/ground composition.
-#293 ready after #268 source release AND positive checks/runtime handback;
-fresh current-main worktree/contract, <=300 changed source lines, full Tier V.
-Design estimate 172 additions + 88 removals is not a measured implementation.
-#179 ready as aggregate parent after #293 merge; original nine AC/every DoD retained.
-Frozen original worktree/source `989669ef`, 298/300; failed 2/2 plus supplemental retained.
-No further old-branch tuning round, reset, numeric waiver or premature parent merge.
-Reduced catalogue/registration remainder needs a fresh delivery worktree and contract.
-#179 integration and all gates precede #214 integration and its own repeated gates.
-Full visual 2: BLOCKED_ENV plus scene integration 1, other applicable criteria >=2.
-Exact historical rejected state, all-ground-overlay pairs and ten baseline rows open.
-Retained design: uix-w4-scale/.orca/uix-w4-scale/contract-fit-recovery.md (local).
-#268 initial build failed normal audit at 28/24; staged source 132/300 preserved.
-Fresh task_9aecfc25a843 / ctx_2e570f62f6b4 is sole web builder/checks/runtime owner.
-Audit-only fallback 1: existing installSession/restore/unmount initialization bodies only.
-Same three paths, <=300 source, normal audit/commit, full Tier U; C menu remains #269.
-Final component 20/15 remains on #269 AND #262; aggregate parents stay open.
-#285 / PR #292 `cf6a6fb5`: local Tier L 4/validator/scope accepted; hosted full CI 1/5 PASS.
-Full CI attempt 2 native in progress; matched timing NOT_MEASURED, five passes required.
+#268 fallback1 settled FAILED: ordinary commit audit 28/23; no implementation commit.
+Staged CombatLab.tsx / CombatLab.test.tsx source 170/300 preserved at `65d7466b`.
+Author 51 tests/typecheck/lint/format PASS; validator clean-tree FAIL.
+Fresh mounted/day-night/Tier U NOT_RUN; previous smoke remains historical only.
+Coordinator decision: repair the B/C engineering allocation before another build.
+#268 planning: contract task_2a4c749917d7 / ctx_751671f2fd9c native live.
+Only local contract.md writes; no source/checks/runtime permission.
+Original contract-before-allocation-repair.md, staged code and reports retained.
+Rework1 and consumed audit fallback1 unchanged; no bypass or extra recovery.
+Final CombatLab20/15 stays on BOTH #269 AND #262; original mounted proof mandatory.
+#293 waits #268 delivery/source release and positive runtime handback.
+#179 source `989669ef` and failed rounds frozen; #214 waits integration.
+#285 / PR #292 `cf6a6fb5`: full hosted CI attempts1+2 SUCCESS, consecutive2/5.
+Attempt3 native IN_PROGRESS, same SHA, one full attempt at a time.
+Three matched baseline/candidate timing samples, median<=1.20x: NOT_MEASURED.
+Original Tier L/AC and historical-null-cause limits retained; no merge.
 #272 / PR #287 retains failed encounter CI and original mutation/five-pass/Tier L gates.
-PR #291 green CI alone does not establish its independent reviewer gate; no merge.
+#290 / PR #291 `a198ef98`: independent Tier D reviewer task_2969e4d8c192 live.
+Dedicated pipeline-owner-scope-290 checkout; source-only local verdict.
+Reviewer ACCEPT and coordinator setup/validator required; green CI alone insufficient.
 Main newest CI `39759317709` at `65d7466b` SUCCESS.
-Lane queues covered; daily metrics/scout/triage/digest already complete, no repeat.
-New game tests/typecheck/validate/browser/full gates NOT_RUN; performance NOT_MEASURED.
+Two read-only workers; local checks/runtime unassigned. No uncovered eligible backlog.
+Daily metrics/scout/triage/digest already complete; no repeat.
+One active status block; historical tick-prompt quotations are not owner scope.
+Coordinator game checks/browser/full gates NOT_RUN; performance NOT_MEASURED.
 No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
-Next: #268 settlement/cleanup, then #293 contract; PR #292 sequential hosted proof/timing.
+Next: consume #268 contract/#290 review; continue PR #292 hosted proof/timing.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
@@ -77,7 +76,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -112,7 +111,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -146,7 +145,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -183,7 +182,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -221,7 +220,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -256,7 +255,7 @@ Wrapper releases its lease when this single tick returns.
 
 **2026-10-22 superseded rework-1 live checkpoint:**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -295,7 +294,7 @@ Wrapper releases its lease when this single tick returns.
 
 **2026-10-22 superseded rework-allocation checkpoint:**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -329,7 +328,7 @@ Wrapper releases its lease when this single tick returns.
 
 **2026-10-22 superseded published checkpoint:**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -362,7 +361,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -402,7 +401,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Scope: epic #217 and existing local overrides; exactly one pipeline tick.
@@ -436,7 +435,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Pre-integration branch checkpoints (historical):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -499,7 +498,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous coordinator checkpoint:**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Scope: epic #217 and existing local overrides; exactly one pipeline tick.
@@ -534,7 +533,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Pre-resume branch records (historical):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -603,11 +602,11 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous editor publication checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 **Previous #271 publication / #282 builder handoff:**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -674,7 +673,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous #273 publication checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -740,7 +739,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous #273 premerge checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -774,7 +773,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous #273 validation/evaluator checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -809,7 +808,7 @@ Wrapper releases its own lease when this one tick returns.
 
 **Previous validation/evaluator dispatch checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -846,7 +845,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous builder dispatch checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -882,7 +881,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous contract checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -919,7 +918,7 @@ are ready. Wrapper releases its lease when this single tick returns.
 
 **Previous tick checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -950,7 +949,7 @@ then start one builder when the contract is ready. Gameplay checks for #231 NOT_
 
 **Pre-merge affordability checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -1057,7 +1056,7 @@ merge; finish #184 validator and start its fresh read-only Tier V gates.
 
 **Prior #249 gate checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
