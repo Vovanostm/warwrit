@@ -9,6 +9,31 @@ requests.
 
 ## Unreleased
 
+### Reproduce database cleanup failure and schedule bounded rework — 2026-10-22, LOCAL
+
+- `Vovanostm/core-integration-db-isolation`, #285: owner-requested single tick
+  records independent Tier L evaluator REWORK at `284efd79`. A real PostgreSQL
+  CREATE reply dropped by a private TCP proxy reproduced the missing cleanup
+  ledger entry and unhandled Client error. This supersedes the earlier source
+  risk's UNEXECUTED status; no implementation fix or acceptance claimed here.
+- Evaluator ran all eight native integration files / 60 tests and nine lifecycle
+  checks successfully, observed migration status, overlap and per-file disposal,
+  and played the mill through move/bow and round-7 victory with day/night captures.
+  Persistent encounter assertions and browser lab smoke remain separate evidence.
+  Local verdict/evidence: core-integration-db-isolation/.orca/
+  core-integration-db-isolation/eval-1.md and eval-1-evidence/ (untracked).
+- Exact native settlement/result verified, recorded before acknowledgement and
+  released. Coordinator independently found 18 owned PIDs absent, seven ports
+  clear and empty labelled Compose inventories. First rework 1/2 is allocated
+  inside the existing seven-path ownership, preserving exact-name cleanup,
+  original errors/assertions, ordinary audit, <=300 source lines and Tier L.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) holds the operational handoff.
+  Matched hosted <=20% duration NOT_MEASURED and five full CI runs NOT_RUN remain
+  mandatory. Source unchanged `0b0c44eb`; no PR/merge, zero merged PRs with playable
+  proof. Coordinator game checks/runtime NOT_RUN; documentation checks only.
+  No rule, API, wiki, schema, replay, migration or dependency change. Existing
+  #179 cap question, #272/#282 proof, #274/#280 REWORK and daily marker retained.
+
 ### Queue isolation rework after independent source review — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`, #285: fresh Tier L source reviewer
