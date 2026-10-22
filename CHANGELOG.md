@@ -13,20 +13,22 @@ requests.
 
 - `claude/tick-prompt-owner-scope`, [PR #291](https://github.com/Vovanostm/warwrit/pull/291),
   #290: source `a198ef98` independently ACCEPTed; coordinator setup PASS and
-  validator exit0, all6 applicable gates PASS. Scope2/300 and one closing issue;
+  validator exit 0, all 6 applicable gates PASS. Scope 2/300 and one closing issue;
   shell syntax/diff checks PASS. No TypeScript diff, so related tests/lint/audit
   are NOT_RUN by validator. End-to-end coordinator/model compliance NOT_RUN.
 - Coordinator-only CHANGELOG/CURRENT_PLAN follow the gated source. The current
   plan now has one active status block, actual owner delegation and preserved
   history. The rejection guard remains a separate follow-up; final-head hosted
   CI and merge pending. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md).
-- #268 ordinary rework2 follows a source-grounded pure autoplay/disabled
-  allocation repair; staged170/300 preserved, normal audit/<=300/full Tier U
-  still required. Final #269 AND #26220/15, consumed fallback1 and last ordinary
+- #268 ordinary rework 2 follows a source-grounded pure autoplay/disabled
+  allocation repair; staged 170/300 preserved, normal audit/<=300/full Tier U
+  still required. Final #269 AND #26220/15, consumed fallback 1 and last ordinary
   round unchanged. #293's disjoint source-only contract prepares ahead; its
   source/runtime grant waits the sole web slot. Prior source/failure evidence kept.
-- PR #292 unchanged `cf6a6fb5`: hosted full CI2/5 PASS, attempt3 IN_PROGRESS;
-  five passes/matched timing still outstanding. 0 merged PRs with playable
+- PR #292 unchanged `cf6a6fb5`: historical two CI passes, then attempt 3 failed
+  coverage world-free-movement with a 5000 ms timeout; consecutive count 0/5.
+  One unchanged-candidate diagnostic attempt 4 requested without code/test-limit
+  changes; five passes/matched timing remain required. 0 merged PRs with playable
   proof this tick. No game-rule/API/protocol/replay/schema/migration/dependency
   change; gameplay/full suites NOT_RUN, performance NOT_MEASURED.
 
