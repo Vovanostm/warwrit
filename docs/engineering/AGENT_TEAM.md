@@ -188,7 +188,7 @@ validating → review → pr → done`, plus `blocked` / `needs-owner`, set only
   the owner's `agent:merge-approved` label on that PR (AGENTS hard rule 1),
   green CI and the expected head SHA; one PR at a time.
   _Superseded for pipeline slice PRs by [workflow v3](#workflow-v3--contract-first-one-issue-per-pr-merge-on-gates--2026-10-19)
-  (merge on gates); infrastructure PRs keep this label gate._
+  (merge on gates); since 2026-10-21 every PR merges on gates, see the amendment at the end._
 - **Automation.** An Orca automation "Warwrit pipeline tick" (created disabled)
   runs one coordinator tick with the skill when a precheck finds issues in a
   pipeline state.
@@ -303,18 +303,18 @@ Reject a faster run with broken scope or missing proof.
 Owner, 2026-10-19: «Да, продолжай работать автономно, ты — директор студии и
 отвечаешь за качество продукта». This section turns the Orca v2 code pipeline
 into a studio. It adds no new engine: cells are lanes and briefs on the same
-pipeline, and the owner merge gate stays.
+pipeline, and the owner merge gate stays (until 2026-10-21; see the amendment at the end).
 
 ### Decision rights
 
-| Decision                                                           | Who decides                     | How it is recorded                        |
-| ------------------------------------------------------------------ | ------------------------------- | ----------------------------------------- |
-| Deploy, paid services, external messages; merge policy             | Owner                           | `agent:merge-approved` / explicit message |
-| New canon: factions, faith, magic, history, rulers, era name       | Owner                           | `## Owner decision` on the epic or wiki   |
-| Which mechanic or feature comes next; slice order                  | Studio director                 | slice plan + CURRENT_PLAN entry           |
-| Mechanic details inside an owner-chosen direction (rules, numbers) | Studio director, owner may veto | owning wiki page, «director decision»     |
-| Art and text details inside approved style, lore and references    | Director; critics must ACCEPT   | provenance / text critic record           |
-| Code structure, tests, tooling inside AGENTS limits                | Builder; evaluator must ACCEPT  | PR                                        |
+| Decision                                                           | Who decides                     | How it is recorded                      |
+| ------------------------------------------------------------------ | ------------------------------- | --------------------------------------- |
+| Deploy, paid services, external messages; merge policy             | Owner                           | `## Owner decision` / explicit message  |
+| New canon: factions, faith, magic, history, rulers, era name       | Owner                           | `## Owner decision` on the epic or wiki |
+| Which mechanic or feature comes next; slice order                  | Studio director                 | slice plan + CURRENT_PLAN entry         |
+| Mechanic details inside an owner-chosen direction (rules, numbers) | Studio director, owner may veto | owning wiki page, «director decision»   |
+| Art and text details inside approved style, lore and references    | Director; critics must ACCEPT   | provenance / text critic record         |
+| Code structure, tests, tooling inside AGENTS limits                | Builder; evaluator must ACCEPT  | PR                                      |
 
 The owner gets one daily digest on the active epic: merged PRs with playable
 proof, open PRs, and at most three owner
@@ -378,8 +378,7 @@ behind one core slice; six PRs went to pipeline infrastructure.
   gated code head (later commits only evidence, CHANGELOG/CURRENT_PLAN or a
   merge of origin/main); the coordinator merges PRs it opened for slices and epic
   contracts; a CI fix goes back through review; `agent:blocked` on the PR or a
-  linked issue, or an owner decision, stops a PR. Infrastructure PRs outside
-  slices keep the owner gate (`agent:merge-approved`).
+  linked issue, or an owner decision, stops a PR. Infrastructure PRs outside slices kept the owner gate (`agent:merge-approved`) until 2026-10-21; see the amendment at the end.
 - **Tiers:** D docs/tests → reviewer; L logic → reviewer + evaluator plays it;
   U UI → evaluator judges the issue's visual criteria; V art/scene → plus the
   full visual critic. Art proofs never block D/L/U.
@@ -468,3 +467,12 @@ metrics, opening a `pipeline` issue when failures rise two days in a row
 add complexity only when it demonstrably improves outcomes). The loop restarts
 itself when a tick checks out a newer tick script, and polls every 10 minutes
 because an unchanged state costs only the digest.
+
+**Amendment — 2026-10-21, owner merge gate removed.** Owner: «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr». Every
+PR, including infrastructure, merges on gates: green CI with `PR scope`, the
+expected head SHA, and an independent reviewer ACCEPT for infrastructure PRs.
+The `agent:merge-approved` label is no longer required. Auto-merge, admin
+merge, force-push, deployment and paid services keep their separate owner
+permission. The owner applied this change with `.claude/owner-gate-off.sh`
+because the agent's auto-mode classifier refuses agents removing their own
+merge gate.
