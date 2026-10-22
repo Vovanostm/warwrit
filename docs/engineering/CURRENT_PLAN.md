@@ -11,13 +11,15 @@ This tick: 0 merged PRs with playable proof; no acceptance waiver.
 Author focused 27 tests, typecheck/lint/format/audit and eight day/night captures PASS.
 Native builder settlement matched; clean tree and positive owned PID/port cleanup.
 Ordinary main `c62ad2d0` integration has shared-record conflicts only; histories retained.
-Coordinator validation pending; full viewport/zoom/contrast and Tier V not accepted.
+Coordinator validation at `205c5db7`: exit 0, all 9 gates PASS; related 49 tests.
+Full viewport/zoom/contrast and Tier V not accepted.
 Try `/combat-lab`, default mill seed 20261009: advance existing actors for five labels.
 #214 source freezes while #179 scene contract proceeds before final visual acceptance.
-#179 retains catalogue-derived spacing, original AC/DoD and full Tier V; no new rules.
+#179 read-only contract `task_92d118d9672f` / `ctx_3b8cfa1957b9` is live.
+It retains catalogue-derived spacing, original AC/DoD and full Tier V; no new rules.
 Broad hatch advisory requires exact scene-owner evidence; no #214 ownership expansion.
-#272 reviewer ACCEPT `72b6e4eb`; evaluator `task_76a6f1551b25` source-only until permit.
-After #214 validation, #272 gets exclusive checks/runtime for retained Tier L gate.
+#272 reviewer ACCEPT `72b6e4eb`; evaluator `task_76a6f1551b25` is next runtime owner.
+Its task-specific permit follows this record commit; no competing heavy checks.
 #268 accepted contract waits for web/runtime allocation; no competing builder.
 #267 PR #286 is present in current main `c62ad2d0`; no merge performed this tick.
 #269 AND #262 retain final component 20/15; #262/#263/#231 stay open.
@@ -25,7 +27,7 @@ PRs #274/#280 retain unresolved REWORK; green snapshot CI permits no merge.
 Daily metrics/scout/triage/digest complete; no duplicate daily work.
 No setup/API/rule/protocol/replay/schema/migration/dependency change.
 Full verify/stress/migrations/production build NOT_RUN; performance NOT_MEASURED.
-Next: coordinator validate #214; #179 contract and #272 evaluator runtime.
+Next: settle #179 contract and #272 evaluator; keep #214 source frozen.
 Wrapper releases its own lease when this one tick returns.
 
 ## Dated history

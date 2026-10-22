@@ -5369,3 +5369,22 @@ Coordinator validator passed 9/9 before integrating JOIN main. Fresh integrated
 validation and independent evaluator/absolute visual ACCEPT remain pending;
 legacy live substitution and measured performance remain NOT_RUN/NOT_MEASURED.
 Local evidence: `.orca/uix-affordability-bands/report.md`.
+
+### Подписи пяти приёмов: локальный кандидат #214 — 2026-10-22
+
+Ветка `Vovanostm/uix-w1-skill-names`, source `97c43aa8`: под иконками
+появились пять коротких имён; полные названия остались в tooltip и доступном
+имени. Изменены только BattleSkills, локальные стили слотов и существующий
+публичный тест BattleView. Правила, цены и admission не менялись.
+Автор: 27 focused-тестов, web typecheck, lint/format и обычный audit PASS;
+восемь кадров 1440 × 900 день/ночь и конечные проверки ввода — author smoke.
+Координатор: обычная интеграция main `c62ad2d0` в `205c5db7`, validator exit 0,
+9/9 PASS, 49 related-тестов. Runtime автора остановлен, его PID отсутствуют.
+Полная матрица viewport/genuine zoom, contrast/CVD и независимый Tier V
+остаются NOT_RUN/NOT_MEASURED; это не визуальная приёмка и не merge.
+Координатор снял цикл порядка: исходник #214 заморожен, контракт сцены #179
+идёт перед его финальной визуальной приёмкой. Исходные AC/DoD и все оценки
+критика сохраняются; новые механики и расширение владельца #214 не утверждены.
+Локальные contract/report/screenshots: `uix-w1-skill-names/.orca/uix-w1-skill-names/`
+и `output/playwright/skill214-*` в том же worktree. Текущая очередь —
+[CURRENT_PLAN](../engineering/CURRENT_PLAN.md).

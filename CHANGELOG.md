@@ -21,14 +21,15 @@ requests.
   and private ports without listeners. Full matrix/contrast and Tier V remain
   unaccepted, not replaced by author smoke.
 - Ordinary main `c62ad2d0` integration conflicts only in shared records;
-  both histories preserved. Coordinator validation is pending. Coordinator
+  both histories preserved. Coordinator validation at `205c5db7`: exit 0, all
+  nine gates PASS, related 49 tests. Coordinator
   decision removes the #179-after-#214 scheduling cycle: source stays frozen,
   #179 scene contract precedes #214 final full visual gate. Original catalogue
   spacing, ownership and all acceptance criteria stay required; no score waiver
   or wider #214 source work. Exact hatch finding is routed to its scene owner.
 - [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation.
   Owning local contract/report: `.orca/uix-w1-skill-names/` in the dedicated
-  worktree. Battlefield wiki update follows actual acceptance evidence; no
+  worktree. Battlefield wiki records this local candidate and pending gates; no
   player acceptance or merge claimed. No setup/API/rule/protocol/replay/schema/
   migration/dependency change; full suites/production build NOT_RUN,
   performance NOT_MEASURED. This tick: 0 merged PRs with playable proof.
