@@ -384,6 +384,27 @@ requests.
   [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
   No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
 
+### Readable status block and main-red rule — 2026-10-22, PUBLISHED
+
+- `claude/plan-check-main-red`: owner «да» to the 2026-10-22 proposal after
+  main went red on a shared-database race in `oidc.integration.test.ts`
+  ([#272](https://github.com/Vovanostm/warwrit/issues/272)) and the coordinator
+  wrote tick logs and the tick prompt as «owner scope» into `CURRENT_PLAN`.
+- `scripts/check-current-plan.sh` in the `PR scope` workflow: the status block
+  (first `##` section) has at most 40 non-empty lines.
+- warwrit-orca: main red first (rerun failed jobs once, then a `P0` issue that
+  is refilled first and blocks other merges); status block rewritten in place
+  with the owner's own words as scope.
+- Independent review REWORK on 2a8d6ba8 fixed: a deleted or empty status
+  block (history headings only) now fails, `##` inside code fences is ignored,
+  the block must name the coordinator, the step runs even after a scope
+  failure; main-red is its own step 2a and a condition of the merge row, the
+  fix PR is exempt, PRs failing only on the main-red test are held, not
+  reworked.
+- Checks: current plan PASS (28 lines); deleted block, empty block, fenced
+  45-line block, block without coordinator and missing file FAIL; `bash -n`;
+  Prettier.
+
 ### Publish independently reviewed rollback isolation — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-world-rollback-isolation`, #282: test-only disposable database
@@ -407,6 +428,20 @@ requests.
   existing wiki contracts unchanged. Full verify/stress/migrations/browser
   NOT_RUN here; performance NOT_MEASURED. Raw native logs remain local in the
   slice worktree under `.orca/core-world-rollback-isolation/`.
+
+### Text tier for the Orca pipeline — 2026-10-22, PUBLISHED
+
+- `claude/orca-text-tier`: the 2026-10-22 text critique (owner question «Качество
+  … текстов на высоком уровне?») rejected the campaign, first-hunt and combat
+  UI text; follow-ups #275–#279 need the text critic, but the pipeline had no
+  text gate. New tier T (as U + text critic, `prompts/text.md`); builders of
+  text slices write `.orca/<slice>/text.md` as the critic's input.
+- Independent review REWORK on d6417d5a fixed: rework refreshes `text.md`
+  (build steps 3–6); tier T always writes it; a missing/stale input is a
+  step-6-only rework outside the budget; tier lists (budget, evaluator, close
+  views, slice plan, epic contract) include T; the critic reads its previous
+  round and maps REJECT/BLOCKED to REWORK/BLOCKED_ENV.
+- Checks: Prettier. Effect NOT_MEASURED.
 
 ### Validate rollback DB isolation and dispatch fresh review — 2026-10-22, PUBLISHED
 

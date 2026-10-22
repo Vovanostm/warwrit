@@ -31,3 +31,7 @@ jobs:
         run: |
           printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/pr-body.md"
           bash scripts/check-pr-scope.sh "origin/${{ github.base_ref }}" "$RUNNER_TEMP/pr-body.md"
+
+      - name: Keep the CURRENT_PLAN status block readable
+        if: ${{ !cancelled() }}
+        run: bash scripts/check-current-plan.sh
