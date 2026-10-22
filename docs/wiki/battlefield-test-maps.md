@@ -2461,6 +2461,13 @@ uix-w4-scale/.orca/uix-w4-scale/contract-fit-recovery.md.
 приёмка #179/#214 не заявлена. Координатор записал settlement до release/ack;
 #268 — единственный живой builder и владелец checks/runtime. Новых агентов нет.
 
+Позднее в том же тике получен failed settlement #268: normal commit audit
+CombatLab 28/24, staged 132/300 без commit. После прямой проверки 15 PID/двух
+портов/no play.pid свежему builder task_9aecfc25a843 передан audit-only fallback 1:
+только существующие installSession/restore/unmount initialization bodies, те же
+три файла и исходные семантика/порядок/guards. Обычный commit/audit, лимит 300,
+полный Tier U и финальный 20/15 на #269 И #262 сохранены; #293 по-прежнему ждёт.
+
 **2026-10-22 — evaluator 1 завершён REWORK; новый визуальный пакет.**
 
 Независимый evaluator на `97c3e000` подтвердил живой путь мельницы днём и ночью:

@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Resume failed initialization extraction through bounded audit fallback — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, coordinator continuation for #268: exact failed
+  builder settlement recorded/released/acked. Staged source 132/300 retained;
+  no implementation commit. Normal audit fails at CombatLab 28/24, validator
+  clean-tree fails. Author 51 focused tests/typecheck/lint/format and day/night
+  victories are retained evidence, not new coordinator checks or acceptance.
+- Under engineering delegation, audit-only fallback 1 once extends B only to
+  existing installSession, restore effect and unmount cleanup in an explicit
+  local initialization-lifecycle hook. Original order/dependencies/ref/storage
+  mutations, three-path ownership, <=300 source, ordinary audit/commit and
+  full Tier U remain. #269 menu controls and final #269 AND #262 20/15 stay
+  separate. [Decision](https://github.com/Vovanostm/warwrit/issues/268#issuecomment-6338431498).
+- Direct cleanup: 15 recorded PIDs absent, ports 23492/25492 clear, no play.pid.
+  Fresh headless task_9aecfc25a843 owns source and exclusive checks/runtime;
+  #293 waits #268. PR #292 second full CI is native in progress at the same
+  head, first full pass retained. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  and owning wiki updated; documentation checks only. No coordinator game
+  checks, merge or player acceptance; 0 merged PRs with playable proof.
+
 ### Split desktop composition from rejected sizing delivery — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: under the existing engineering delegation,

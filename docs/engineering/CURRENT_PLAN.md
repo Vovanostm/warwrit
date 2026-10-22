@@ -20,10 +20,13 @@ Reduced catalogue/registration remainder needs a fresh delivery worktree and con
 Full visual 2: BLOCKED_ENV plus scene integration 1, other applicable criteria >=2.
 Exact historical rejected state, all-ground-overlay pairs and ten baseline rows open.
 Retained design: uix-w4-scale/.orca/uix-w4-scale/contract-fit-recovery.md (local).
-#268 task_723e5b9418b1 / ctx_49237691842e is sole live web builder/checks/runtime owner.
+#268 initial build failed normal audit at 28/24; staged source 132/300 preserved.
+Fresh task_9aecfc25a843 / ctx_2e570f62f6b4 is sole web builder/checks/runtime owner.
+Audit-only fallback 1: existing installSession/restore/unmount initialization bodies only.
+Same three paths, <=300 source, normal audit/commit, full Tier U; C menu remains #269.
 Final component 20/15 remains on #269 AND #262; aggregate parents stay open.
 #285 / PR #292 `cf6a6fb5`: local Tier L 4/validator/scope accepted; hosted full CI 1/5 PASS.
-Full CI attempt 2 requested sequentially; matched timing NOT_MEASURED, five passes required.
+Full CI attempt 2 native in progress; matched timing NOT_MEASURED, five passes required.
 #272 / PR #287 retains failed encounter CI and original mutation/five-pass/Tier L gates.
 PR #291 green CI alone does not establish its independent reviewer gate; no merge.
 Main newest CI `39759317709` at `65d7466b` SUCCESS.
