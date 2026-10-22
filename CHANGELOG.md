@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Merge visible Start and integrate rollback candidate — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`: [PR #283](https://github.com/Vovanostm/warwrit/pull/283)
+  merged as `df540c2c` at expected `3a97b679`; #271 closed/done. Final-head CI,
+  scope and independent Tier U proof PASS; 1 merged PR with playable proof this tick.
+  [Contract/verdict/captures](docs/engineering/evidence/uix-editor-primary-start/README.md)
+  remain tracked; local proof retained and fully-pushed clean worktree removed.
+- Ordinary merge of that main into [PR #284](https://github.com/Vovanostm/warwrit/pull/284)
+  preserves both record histories; only CHANGELOG/CURRENT_PLAN conflicted.
+  Accepted #282 test source unchanged. Integrated validator at `5b6a3e6a`
+  exit 0, all 9 gates PASS; final-head hosted CI pending;
+  #272 keeps its own mutation/five-pass/Tier L gates. #267 WIP/budgets preserved;
+  bounded resume task `task_93e6f5312ecf` is live after both prerequisites merged.
+  #214 technical ownership ordering moves before inactive #198/#212; dedicated
+  read-only retained-contract refresh `task_cfa9df48704d`, no source/runtime.
+  Full original issue proof and visual rubric remain; builder waits #267.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
+  No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
+
 ### Readable status block and main-red rule — 2026-10-22, PUBLISHED
 
 - `claude/plan-check-main-red`: owner «да» to the 2026-10-22 proposal after
@@ -29,6 +48,84 @@ requests.
 - Checks: current plan PASS (28 lines); deleted block, empty block, fenced
   45-line block, block without coordinator and missing file FAIL; `bash -n`;
   Prettier.
+
+### Publish independently reviewed rollback isolation — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, #282: test-only disposable database
+  isolates destructive rollback from ordinary concurrent identity/encounter
+  writers. Preserve writer/down blocking, SQLSTATE 55000, exact route/receipt
+  identities, complete retained clocks and migration/fresh-install assertions.
+  Source `961ff8e3` / `2557e2df`; integrated frozen head `d553215b`.
+- Fresh Tier D reviewer ACCEPT based on source and retained native evidence;
+  reviewer tests/runtime NOT_RUN. Author baseline identifies 0011 DROP versus
+  encounter INSERT lock cycle; five ordinary parallel eight-file runs each
+  PASS 60/60, zero skips; two deliberate lifecycle failures clean up. Normal
+  commits/audits PASS. Coordinator validate exit 0, 9/9 PASS; related tests
+  3 PASS/11 SKIP without DB URLs are not database acceptance.
+- [Contract, author report and independent verdict](docs/engineering/evidence/core-world-rollback-isolation/README.md)
+  accompany publication. Later commits only evidence/coordinator records;
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records hosted-CI/merge gates.
+  No merge or player-feature delivery claimed; 0 merged PRs with playable proof
+  this tick. #272 retains separate mutation/Tier L gates after #282; #271 waits
+  PR #283 CI; #267 WIP/budgets preserved; no duplicate daily work.
+- No production/auth/rule/replay/schema/released migration/setup/API change;
+  existing wiki contracts unchanged. Full verify/stress/migrations/browser
+  NOT_RUN here; performance NOT_MEASURED. Raw native logs remain local in the
+  slice worktree under `.orca/core-world-rollback-isolation/`.
+
+### Validate rollback DB isolation and dispatch fresh review — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, [#282](https://github.com/Vovanostm/warwrit/issues/282):
+  source commits `961ff8e3` / `2557e2df` extract rollback phases and isolate
+  destructive test DDL in one disposable database. Only the owned world-route
+  integration test changes; production/auth/released migrations stay unchanged.
+  Native baseline identifies 0011 FK-table DROP versus encounter-command INSERT.
+- Builder evidence: focused real DB checks, two intentional failure-cleanup
+  probes, typecheck/format and both normal audits PASS; five consecutive
+  default-parallel eight-file runs each 60/60 PASS, zero skips, combined proof
+  `d118029f`. Native URL readback retains shared primary OIDC/company/encounter
+  and separate FIRST HUNT; all owned DB/client/container/volume/network cleanup
+  recorded. Author evidence does not substitute for the fresh reviewer.
+- Ordinary main integration `d553215b` preserves both changelog histories;
+  no source conflict. Coordinator validator exit 0, 9/9 PASS, scope 0 non-test
+  source lines. Related tests: 3 PASS / 11 SKIP without DB URLs, explicitly
+  separate from the builder's actual database runs. Fresh Tier D reviewer
+  `task_3458072eeedf` is live on that frozen head; no verdict or PR yet.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the exact handoff,
+  pending #283 final CI, preserved #267 WIP and independent #272 mutation/Tier L
+  gates. Local contract/report/proof: `.orca/core-world-rollback-isolation/`
+  in the dedicated worktree. Source and records published for continuation;
+  no #282 merge or player-feature completion claimed, 0 merges this tick.
+  Full verify/stress/migration suite/build/browser NOT_RUN for this Tier D;
+  test-helper complexity and performance NOT_MEASURED. No API/setup/wiki change.
+
+### Integrate current main for rollback isolation gates — 2026-10-22, LOCAL
+
+- `Vovanostm/core-world-rollback-isolation`, #282: ordinary merge of main
+  `fc5d642d` retains both changelog histories; only the changelog conflicted.
+  Accepted source commits `961ff8e3` and `2557e2df` are unchanged.
+  Coordinator validation and fresh Tier D review remain pending.
+
+### Accept rollback-isolation contract and preserve runtime ownership — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, [#282](https://github.com/Vovanostm/warwrit/issues/282):
+  coordinator accepted the complete read-only contract after exact native
+  Task/Dispatch/result readback. Shared destructive-DDL exposure is traced;
+  the actual deadlock cycle remains unproven. Local contract is
+  core-world-rollback-isolation/.orca/core-world-rollback-isolation/contract.md.
+- Proposed change owns only world/routes.integration.test.ts: isolate the
+  destructive rollback case, preserve all receipt/clock/locking assertions,
+  capture native deadlock diagnosis and require five real parallel passes.
+  Source implementation and all new game/DB/validator checks NOT_RUN.
+  #282 remains planning until live #271 evaluator releases the checks/runtime
+  slot; #272 retains `37f35c6b`, its five-pass requirement and Tier L gates.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation,
+  preserved #267 WIP/budget and broader visual discovery on existing
+  #179/#201/#188/#189 without adding #271 conditions. Contract worker settled,
+  recorded before acknowledgment and released (no owned resource).
+  Records only are published; no source, API/setup/wiki contract or migration
+  change. No PR/merge; 0 merged PRs with playable proof this tick.
+  Daily work already complete and not repeated; visual acceptance unclaimed.
 
 ### Revalidate visible Start against current main — 2026-10-22, PUBLISHED
 
