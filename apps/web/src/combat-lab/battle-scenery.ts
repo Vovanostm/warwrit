@@ -8,11 +8,15 @@ import {
 } from '@babylonjs/core';
 import type { CombatLabHex } from '@warwrit/protocol';
 import fringeUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/yard-fringe.png';
-import { CAMERA_ELEVATION } from '../renderer/three-quarter-camera.js';
+import { CAMERA_ELEVATION as DEFAULT_ELEVATION } from '../renderer/three-quarter-camera.js';
 import { battleHexToWorld } from './battle-layout.js';
 
 /** Decorative ruined-yard roots sit outside the canonical field, never on a traversable cell. */
-export function mountBattleScenery(scene: Scene, tiles: readonly CombatLabHex[]) {
+export function mountBattleScenery(
+  scene: Scene,
+  tiles: readonly CombatLabHex[],
+  CAMERA_ELEVATION = DEFAULT_ELEVATION,
+) {
   const minQ = Math.min(...tiles.map((tile) => tile.q));
   const maxQ = Math.max(...tiles.map((tile) => tile.q));
   const minR = Math.min(...tiles.map((tile) => tile.r));

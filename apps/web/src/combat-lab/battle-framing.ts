@@ -17,6 +17,7 @@ export function battleFrameBounds({
   safeTop,
   safeBottom,
   badge,
+  elevation = CAMERA_ELEVATION,
 }: {
   mapBounds: GroundBounds;
   figures: readonly FigureBounds[];
@@ -25,13 +26,14 @@ export function battleFrameBounds({
   safeTop: number;
   safeBottom: number;
   badge?: { readonly width: number; readonly height: number } | undefined;
+  elevation?: number | undefined;
 }): GroundBounds | null {
   // Fixed CSS-pixel strips extend 20px below feet and 16px to either side.
   const top = Math.max(0, safeTop) + 8 + (badge?.height ?? 0);
   const bottom = Math.min(height, safeBottom) - 20;
   const horizontalPadding = Math.max(32, badge?.width ?? 0);
   if (width <= horizontalPadding || height <= 0 || bottom <= top) return null;
-  const sin = Math.sin(CAMERA_ELEVATION);
+  const sin = Math.sin(elevation);
   const low = Math.min(mapBounds.minZ * sin, ...figures.map((figure) => figure.bottom));
   const high =
     Math.max(mapBounds.maxZ * sin, ...figures.map((figure) => figure.top)) + (badge ? 0.08 : 0);
@@ -48,10 +50,15 @@ export function battleFrameBounds({
 }
 
 /** Battle-local containment admits the overview, including its off-centre HUD opening. */
-export function battleCameraLimits(frame: GroundBounds, width: number, height: number) {
-  const maxZoom = Math.max(17, ((frame.maxZ - frame.minZ) * Math.sin(CAMERA_ELEVATION)) / 2);
+export function battleCameraLimits(
+  frame: GroundBounds,
+  width: number,
+  height: number,
+  elevation = CAMERA_ELEVATION,
+) {
+  const maxZoom = Math.max(17, ((frame.maxZ - frame.minZ) * Math.sin(elevation)) / 2);
   const halfWidth = (maxZoom * width) / height;
-  const halfDepth = maxZoom / Math.sin(CAMERA_ELEVATION);
+  const halfDepth = maxZoom / Math.sin(elevation);
   const x = (frame.minX + frame.maxX) / 2;
   const z = (frame.minZ + frame.maxZ) / 2;
   return {

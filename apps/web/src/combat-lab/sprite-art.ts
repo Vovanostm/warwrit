@@ -13,7 +13,7 @@ export interface StaticSpriteArt {
   readonly visibleBounds: readonly [number, number, number, number];
 }
 
-export function spriteDisplayHeight(id: string): number {
+function spriteDisplayHeight(id: string): number {
   if (id.startsWith('W')) return 1.4;
   return ({ B001: 0.73, B053: 1.62, B002: 1.62 } as Record<string, number>)[id] ?? 1.23;
 }
