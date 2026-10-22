@@ -28,8 +28,8 @@ Before merging read live head/base, reviews, unresolved threads and applicable
 CI evidence, including the `PR scope` check. Require no unresolved blocking
 defect and permission under AGENTS hard rule 1: the owner's words for this PR,
 or a quoted mission scope that names its issue, or the
-[warwrit-orca](../warwrit-orca/SKILL.md) merge-on-gates rule for pipeline slice
-PRs. Pass the expected head SHA to the merge operation. Do not dismiss a
+[warwrit-orca](../warwrit-orca/SKILL.md) merge-on-gates rule, which since 2026-10-21 covers every PR
+(infrastructure PRs also need an independent reviewer ACCEPT). Pass the expected head SHA to the merge operation. Do not dismiss a
 review or force a ref to bypass a failure. Read back merged status, actual merge
 SHA/tree, default-branch ref and linked issue state. A failed tool call is not a
 merge. Auto-merge, deployment and purchases are separate operations.
