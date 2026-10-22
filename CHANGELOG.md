@@ -153,6 +153,27 @@ requests.
   [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
   No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
 
+### Readable status block and main-red rule — 2026-10-22, PUBLISHED
+
+- `claude/plan-check-main-red`: owner «да» to the 2026-10-22 proposal after
+  main went red on a shared-database race in `oidc.integration.test.ts`
+  ([#272](https://github.com/Vovanostm/warwrit/issues/272)) and the coordinator
+  wrote tick logs and the tick prompt as «owner scope» into `CURRENT_PLAN`.
+- `scripts/check-current-plan.sh` in the `PR scope` workflow: the status block
+  (first `##` section) has at most 40 non-empty lines.
+- warwrit-orca: main red first (rerun failed jobs once, then a `P0` issue that
+  is refilled first and blocks other merges); status block rewritten in place
+  with the owner's own words as scope.
+- Independent review REWORK on 2a8d6ba8 fixed: a deleted or empty status
+  block (history headings only) now fails, `##` inside code fences is ignored,
+  the block must name the coordinator, the step runs even after a scope
+  failure; main-red is its own step 2a and a condition of the merge row, the
+  fix PR is exempt, PRs failing only on the main-red test are held, not
+  reworked.
+- Checks: current plan PASS (28 lines); deleted block, empty block, fenced
+  45-line block, block without coordinator and missing file FAIL; `bash -n`;
+  Prettier.
+
 ### Publish independently reviewed rollback isolation — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-world-rollback-isolation`, #282: test-only disposable database
