@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Owner merge gate removed — 2026-10-21, PUBLISHED
+
+- `claude/owner-gate-off`: owner decision «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr». AGENTS.md hard rule 1,
+  warwrit-orca, warwrit-delivery, AGENT_TEAM and the `.codex/rules` header now
+  let every PR merge on gates (green CI with `PR scope`, expected head SHA,
+  independent reviewer ACCEPT for infrastructure PRs) without an owner message.
+  Auto-merge, admin merge, force-push, deployment and paid services unchanged.
+
 ### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-session-callbacks`, [PR #281](https://github.com/Vovanostm/warwrit/pull/281),
