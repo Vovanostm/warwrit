@@ -19,7 +19,11 @@ import {
 import type { CombatLabAction, CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
 import type { BattlePresentationView, Unit as BattleUnit } from './battle-presentation.js';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
-import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
+import {
+  CAMERA_ELEVATION,
+  mountThreeQuarterCamera,
+  type GroundBounds,
+} from '../renderer/three-quarter-camera.js';
 import {
   actorBadgePlacement,
   opaqueSpritePixel,
@@ -1268,14 +1272,7 @@ export async function mountSpriteBattleScene(
         );
       });
     const frame = battleFrameBounds({
-      mapBounds: fullField
-        ? fieldBounds
-        : {
-            minX: Math.min(...figures.map((f) => f.minX)),
-            maxX: Math.max(...figures.map((f) => f.maxX)),
-            minZ: Math.min(...figures.map((f) => f.bottom)) / Math.sin(CAMERA_ELEVATION),
-            maxZ: Math.max(...figures.map((f) => f.top)) / Math.sin(CAMERA_ELEVATION),
-          },
+      mapBounds: spriteFrameMapBounds(fullField, fieldBounds, figures),
       figures,
       width: viewport.width,
       height: viewport.height,
@@ -1283,7 +1280,7 @@ export async function mountSpriteBattleScene(
       safeBottom,
       badge: actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
     });
-    if (!frame) return null;
+    if (!frame || !fullField) return frame;
     const limits = battleCameraLimits(frame, viewport.width, viewport.height);
     cameraLimits.maxZoom = limits.maxZoom;
     Object.assign(cameraLimits.bounds, limits.bounds);
@@ -1679,6 +1676,20 @@ function initialFrameUnits(view: BattlePresentationView) {
   return allies.length
     ? [...new Set([...allies, ...nearest.filter((unit) => unit !== undefined)])]
     : standing;
+}
+
+export function spriteFrameMapBounds(
+  fullField: boolean,
+  field: GroundBounds,
+  figures: readonly ReturnType<typeof spriteFigureBounds>[],
+): GroundBounds {
+  if (fullField) return field;
+  return {
+    minX: Math.min(...figures.map((f) => f.minX)),
+    maxX: Math.max(...figures.map((f) => f.maxX)),
+    minZ: Math.min(...figures.map((f) => f.bottom)) / Math.sin(CAMERA_ELEVATION),
+    maxZ: Math.max(...figures.map((f) => f.top)) / Math.sin(CAMERA_ELEVATION),
+  };
 }
 
 function spriteFigureBounds(
