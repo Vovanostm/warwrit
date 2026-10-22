@@ -319,3 +319,39 @@ export function spriteForUnit(unit: Unit): StaticSpriteArt {
   }
   return UNKNOWN_COMBATANT;
 }
+
+/** Complete render catalogue, including public human derivatives and fallback. */
+export function spriteCatalogue(): readonly StaticSpriteArt[] {
+  return [
+    ...Object.entries(art).map(([id, entry]) => ({ id, ...entry })),
+    UNARMED_W01,
+    UNKNOWN_COMBATANT,
+  ];
+}
+
+function spriteDisplayHeight(id: string): number {
+  if (id.startsWith('W')) return 1.4;
+  return ({ B001: 0.73, B053: 1.62, B002: 1.62 } as Record<string, number>)[id] ?? 1.23;
+}
+
+export function spriteScale(sprite: StaticSpriteArt): number {
+  return (spriteDisplayHeight(sprite.id) * 0.82) / sprite.bodyHeight;
+}
+
+/** Local billboard coordinates, shared by placement, reservations and framing. */
+export function spriteGeometry(sprite: StaticSpriteArt) {
+  const factor = spriteScale(sprite);
+  const [left, top, right, bottom] = sprite.visibleBounds;
+  return {
+    width: sprite.width * factor,
+    height: sprite.height * factor,
+    anchorX: (sprite.footX / sprite.width - 0.5) * sprite.width * factor,
+    footY: (sprite.footY - sprite.height / 2) * factor,
+    corners: [left, right].flatMap((x) =>
+      [top, bottom, sprite.footY].map((y) => ({
+        x: (x - sprite.footX) * factor,
+        up: (sprite.footY - y) * factor,
+      })),
+    ),
+  };
+}

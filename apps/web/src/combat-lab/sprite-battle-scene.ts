@@ -30,7 +30,7 @@ import {
 import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { createReachContour } from './sprite-reach-contour.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
-import { spriteForUnit } from './sprite-art.js';
+import { spriteForUnit, spriteScale, spriteGeometry } from './sprite-art.js';
 import {
   SPRITE_MASK_SIZE,
   SPRITE_VISUAL_SIZE,
@@ -61,8 +61,6 @@ const b023FixtureUrl = new URL(
   import.meta.url,
 ).href;
 
-// Leave room for adjacent full figures without changing their proportions or pivots.
-const SPRITE_PRESENTATION_SCALE = 0.82;
 const AXIAL_TO_WORLD = battleHexToWorld;
 const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
@@ -551,15 +549,11 @@ export async function mountSpriteBattleScene(
   };
   const syncUnit = (unit: BattleUnit) => {
     const sprite = spriteForUnit(unit);
-    const factor = (spriteDisplayHeight(sprite.id) * SPRITE_PRESENTATION_SCALE) / sprite.bodyHeight;
-    const width = sprite.width * factor;
-    const height = sprite.height * factor;
+    const { width, height, anchorX, footY } = spriteGeometry(sprite);
     let mesh = unitMeshes.get(unit.id);
     let material = unitMaterials.get(unit.id);
     if (!mesh || !material) ({ mesh, material } = createUnitMeshes(unit, sprite, width, height));
 
-    const anchorX = (sprite.footX / sprite.width - 0.5) * width;
-    const footY = (sprite.footY - sprite.height / 2) * factor;
     const { x, z } = AXIAL_TO_WORLD(unit.position);
     const groundHeight = groundYFor(unit.position);
     mesh.rotation.x = CAMERA_ELEVATION;
@@ -851,7 +845,7 @@ export async function mountSpriteBattleScene(
       .filter((unit) => unit.status === 'active')
       .map((unit) => {
         const art = spriteForUnit(unit);
-        const scale = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
+        const scale = spriteScale(art);
         const point = AXIAL_TO_WORLD(unit.position);
         const [left, top, right, lower] = art.visibleBounds;
         const center = new Vector3(
@@ -922,7 +916,7 @@ export async function mountSpriteBattleScene(
     const { descriptor, badge, ring, width } = actorMarker;
     const unit = currentView.units.find(({ id }) => id === descriptor.id)!;
     const art = spriteForUnit(unit);
-    const scale = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
+    const scale = spriteScale(art);
     const point = AXIAL_TO_WORLD(unit.position);
     const foot = new Vector3(point.x, groundYFor(unit.position), point.z);
     const projectedFoot = project(foot);
@@ -1262,25 +1256,12 @@ export async function mountSpriteBattleScene(
       .filter((unit) => unit.status === 'active')
       .map((unit) => {
         const art = spriteForUnit(unit);
-        const factor = (spriteDisplayHeight(art.id) * SPRITE_PRESENTATION_SCALE) / art.bodyHeight;
-        const point = AXIAL_TO_WORLD(unit.position);
-        const y = groundYFor(unit.position);
-        const corners = [art.visibleBounds[0], art.visibleBounds[2]].flatMap((edgeX) =>
-          [art.visibleBounds[1], art.visibleBounds[3], art.footY].map((edgeY) => {
-            const up = (art.footY - edgeY) * factor;
-            return project({
-              x: point.x + (edgeX - art.footX) * factor,
-              y: y + up * Math.cos(CAMERA_ELEVATION),
-              z: point.z + up * Math.sin(CAMERA_ELEVATION),
-            });
-          }),
+        return spriteFigureBounds(
+          art,
+          AXIAL_TO_WORLD(unit.position),
+          groundYFor(unit.position),
+          project,
         );
-        return {
-          minX: Math.min(...corners.map((corner) => corner.x)),
-          maxX: Math.max(...corners.map((corner) => corner.x)),
-          bottom: Math.min(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
-          top: Math.max(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
-        };
       });
     const frame = battleFrameBounds({
       mapBounds: fieldBounds,
@@ -1328,7 +1309,7 @@ export async function mountSpriteBattleScene(
     const { viewport, safeTop, safeBottom } = cameraOpening();
     const point = AXIAL_TO_WORLD(unit.position);
     const badgeHeight = Number(unit.id === actorMarker?.descriptor.id) * 34;
-    const height = spriteDisplayHeight(spriteForUnit(unit).id) * SPRITE_PRESENTATION_SCALE * 0.45;
+    const height = spriteScale(spriteForUnit(unit)) * spriteForUnit(unit).bodyHeight * 0.45;
     const zoom = Math.max(
       4.8,
       (height * viewport.height) / Math.max(1, safeBottom - safeTop - badgeHeight - 28),
@@ -1664,9 +1645,25 @@ function tilesFor(view: BattlePresentationView) {
   }));
 }
 
-function spriteDisplayHeight(id: string): number {
-  if (id.startsWith('W')) return 1.4;
-  return ({ B001: 0.73, B053: 1.62, B002: 1.62 } as Record<string, number>)[id] ?? 1.23;
+function spriteFigureBounds(
+  art: ReturnType<typeof spriteForUnit>,
+  point: { x: number; z: number },
+  groundY: number,
+  project: (point: { x: number; y: number; z: number }) => { x: number; z: number },
+) {
+  const corners = spriteGeometry(art).corners.map(({ x, up }) =>
+    project({
+      x: point.x + x,
+      y: groundY + up * Math.cos(CAMERA_ELEVATION),
+      z: point.z + up * Math.sin(CAMERA_ELEVATION),
+    }),
+  );
+  return {
+    minX: Math.min(...corners.map((corner) => corner.x)),
+    maxX: Math.max(...corners.map((corner) => corner.x)),
+    bottom: Math.min(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
+    top: Math.max(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
+  };
 }
 
 const labelStyles = {
