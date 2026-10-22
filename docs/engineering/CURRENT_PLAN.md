@@ -3,6 +3,45 @@
 ## Pipeline status — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Scope: epic #217 and existing local slices, one tick; Owner (2026-10-21):
+«У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
+Main `ff2f5f96`: newest hosted CI `39751131136` SUCCESS.
+#285 supplemental source `b4d033ca`, report `f41b926c`, scope 219/300.
+Returned global teardown preserves prior failure status, sets failure on real
+cleanup rejection and rethrows the original error; author 19 real-PG tests PASS.
+Real child control/failure/prior-status exits 0/1/7; author initial incomplete
+script typecheck failed, corrected complete script program PASS.
+Ordinary main integration `fbf8ec9a`: no conflicts; original source preserved.
+Coordinator validator at `fbf8ec9a`: exit 0, all 9 checks PASS.
+Related 1 PASS / 18 SKIP without DB supplies no fresh PostgreSQL acceptance.
+Direct cleanup: 145 recorded PIDs absent, six ports clear, project Docker empty.
+Fresh independent Tier L round 4 is next; reviewer source-only,
+evaluator exclusive checks/DB/browser/runtime. No further source round granted.
+Owning contract/report: .orca/core-integration-db-isolation/ in its worktree.
+Historical encounter terminal-effects-null cause UNPROVEN; original invocation
+branch trace, persistent effects/replay/idempotency remain required.
+Matched hosted <=20% timing NOT_MEASURED; five full CI runs NOT_RUN.
+#272 / PR #287 held for existing encounter CI failure; #282 assertions retained.
+#179 evaluator REWORK; visual round 2 live, images only; source frozen 298/300.
+Original full Tier V, short native-125% legibility and missing comparison rows
+remain required; no new source allowance or acceptance waiver.
+#214 waits merged #179; #268 accepted contract waits exclusive checks/runtime.
+#269 AND #262 final component 20/15 and #263/#231 residual gates retained.
+Both lanes already have covered work; daily metrics/scout/digest complete.
+#274/#280 are already merged on main; no gate-compliance claim from that fact.
+No setup/API/wiki/game-rule/protocol/replay/schema/migration/dependency change.
+Coordinator game/browser/full verify/stress/migrations NOT_RUN this tick.
+Next: allocate fresh #285 gates, then settle returned verdicts in a later tick.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Previous checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -35,8 +74,6 @@ No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
 Coordinator browser/full verify/stress/migrations NOT_RUN this tick.
 Next: settle fresh #285 gates and original invocation diagnosis, then web slot.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 

@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Validate global teardown exit propagation — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  supplemental source `b4d033ca`, report `f41b926c`, total source 219/300.
+  Returned global teardown preserves nonzero process status, sets failure on real
+  disposal rejection and rethrows the original error. Author 19 real-PG lifecycle
+  tests PASS, including actual global-only child exits 0/1/7. Initial incomplete
+  script typecheck failed; corrected complete script program and normal audit PASS.
+- Ordinary merge of main `ff2f5f96` at `fbf8ec9a` has no conflicts. Coordinator
+  validator exit 0, all 9 checks PASS; related 1 PASS / 18 SKIP without DB is not
+  fresh database acceptance. Direct native cleanup confirms 145 recorded PIDs
+  absent, six ports clear and empty project-labelled Docker inventories.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh independent Tier L
+  round 4 allocation; reviewer source-only, evaluator exclusive runtime. Full
+  owning contract/report and earlier evidence remain under the dedicated worktree's
+  .orca/core-integration-db-isolation/ (local paths). No new source round granted.
+  Original failed 2/2 history, historical encounter null-effects cause UNPROVEN,
+  matched hosted <=20% timing NOT_MEASURED and five full CI NOT_RUN remain required.
+- WIP branch publication only, no #285 PR/merge or whole-issue acceptance. This
+  tick: 0 merged PRs with playable proof. #272/PR #287 remains held for its existing
+  encounter failure. #179 evaluator REWORK and live image-only visual round 2
+  retain full Tier V; #214 waits #179, #268 waits exclusive checks/runtime.
+  Daily work already complete. No setup/API/wiki/game-rule/protocol/replay/schema,
+  migration or dependency change; coordinator full verify/stress/migrations and
+  browser NOT_RUN. Documentation diff/format/readback checked before publication.
+
 ### Validate final database closure rework and resume engineering queue — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
