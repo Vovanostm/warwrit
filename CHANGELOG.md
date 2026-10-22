@@ -9,6 +9,41 @@ requests.
 
 ## Unreleased
 
+### Publish local isolation gates and advance independent web work — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  fresh independent reviewer4 and local evaluator4 ACCEPT at `0ffa146d`;
+  source `b4d033ca`, 219/300. [Tracked evidence](docs/engineering/evidence/core-integration-db-isolation/README.md)
+  includes complete contract, both verdicts and genuine day/night/victory JPEGs.
+  Independent 19 lifecycle PASS, global-only child exits 0/1/7; one complete
+  native smoke/eight-file 60/60 PASS with distinct migrated clones, default
+  overlap/disposal and original persistent wolf effects/replay/idempotency.
+  Coordinator directly verified 950 recorded PIDs absent, 21 ports clear,
+  empty project-labelled Docker inventories and no play.pid before slot transfer.
+- Existing coordinator validator at `fbf8ec9a`: exit 0, all 9 PASS; source unchanged.
+  Evidence and coordinator records alone follow gated head. Publication enables
+  required hosted proof, not whole-issue acceptance or merge: historical
+  intermittent null-effects cause UNPROVEN, three matched hosted <=20% samples
+  NOT_MEASURED and five complete consecutive CI NOT_RUN. #272/PR #287 held;
+  #282 nested rollback/transaction assertions preserved. Main advanced through
+  separately merged #289; newest main CI was in progress when checked.
+- #179 independent full visual2 settled BLOCKED_ENV plus visible REWORK,
+  repeated scene integration1 at native1366x768/125. Same-state all-overlays-off,
+  exact historical rejected state and ten baseline rows remain missing. Source
+  frozen989669ef at298/300; no new source round, cap reset or AC/Tier V waiver.
+  Coordinator engineering decision allocates only read-only technique/split
+  contract task_ef3fb77b5feb, actual HUD opening/camera fit/body-ground hierarchy.
+- #268 accepted contract advances to sole web builder task_723e5b9418b1 with
+  exclusive local checks/runtime; original three paths/<=300/normal audits/Tier U.
+  Only coordinator publication audit uses existing coverage alongside source work;
+  no coordinator test or runtime is allocated. #214 waits179; final component20/15
+  remains on BOTH269 AND262; #263/#231 original gates retained. Native state and
+  five-line issue handoffs are read back; [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  is rewritten with the current queue. Daily work already complete, no duplicate
+  scout/digest. This tick:0 merged PRs with playable proof; no production/rule/API,
+  protocol/replay/schema/migration/dependency change. New coordinator game tests,
+  full verify/stress/migrations/browser NOT_RUN; performance NOT_MEASURED.
+
 ### Validate global teardown exit propagation — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:

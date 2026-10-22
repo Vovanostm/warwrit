@@ -3,36 +3,38 @@
 ## Pipeline status — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
-Scope: epic #217 and existing local slices, one tick; Owner (2026-10-21):
+Scope: epic #217 and existing local slices, exactly one tick. Owner (2026-10-21):
 «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-Main `ff2f5f96`: newest hosted CI `39751131136` SUCCESS.
-#285 supplemental source `b4d033ca`, report `f41b926c`, scope 219/300.
-Returned global teardown preserves prior failure status, sets failure on real
-cleanup rejection and rethrows the original error; author 19 real-PG tests PASS.
-Real child control/failure/prior-status exits 0/1/7; author initial incomplete
-script typecheck failed, corrected complete script program PASS.
-Ordinary main integration `fbf8ec9a`: no conflicts; original source preserved.
-Coordinator validator at `fbf8ec9a`: exit 0, all 9 checks PASS.
-Related 1 PASS / 18 SKIP without DB supplies no fresh PostgreSQL acceptance.
-Direct cleanup: 145 recorded PIDs absent, six ports clear, project Docker empty.
-Fresh independent Tier L round 4 is next; reviewer source-only,
-evaluator exclusive checks/DB/browser/runtime. No further source round granted.
-Owning contract/report: .orca/core-integration-db-isolation/ in its worktree.
-Historical encounter terminal-effects-null cause UNPROVEN; original invocation
-branch trace, persistent effects/replay/idempotency remain required.
-Matched hosted <=20% timing NOT_MEASURED; five full CI runs NOT_RUN.
-#272 / PR #287 held for existing encounter CI failure; #282 assertions retained.
-#179 evaluator REWORK; visual round 2 live, images only; source frozen 298/300.
-Original full Tier V, short native-125% legibility and missing comparison rows
-remain required; no new source allowance or acceptance waiver.
-#214 waits merged #179; #268 accepted contract waits exclusive checks/runtime.
-#269 AND #262 final component 20/15 and #263/#231 residual gates retained.
-Both lanes already have covered work; daily metrics/scout/digest complete.
-#274/#280 are already merged on main; no gate-compliance claim from that fact.
-No setup/API/wiki/game-rule/protocol/replay/schema/migration/dependency change.
-Coordinator game/browser/full verify/stress/migrations NOT_RUN this tick.
-Next: allocate fresh #285 gates, then settle returned verdicts in a later tick.
+#285 source `b4d033ca`, gated `0ffa146d`, source scope 219/300.
+Fresh independent reviewer4 and local evaluator4 ACCEPT at the exact gated head.
+[Contract, verdicts, author history and real captures](evidence/core-integration-db-isolation/README.md).
+Independent 19 real-PG lifecycle PASS, global-only child exits 0/1/7;
+one native smoke + eight-file 60/60 PASS, two-file default overlap, SQL disposal.
+Original persistent wolf JOIN/victory/effects/replay/receipts/idempotency PASS.
+Real mill day/night move/bow/end-turn and genuine round-7 victory played.
+Passing original effects invocation is traced; historical null cause UNPROVEN.
+Coordinator directly rechecked 950 recorded PIDs absent, 21 ports clear,
+project Docker inventories empty, no play.pid before local runtime transfer.
+Validator at `fbf8ec9a`: exit 0, all 9 PASS; only records preceded gated head.
+Evidence/records-only publication now enables mandatory hosted proof for #285.
+Matched hosted median <=20% timing NOT_MEASURED; five complete CI NOT_RUN.
+Main moved to `65d7466b` (merged infrastructure #289); newest CI was in progress.
+No merge while main CI, issue AC or expected-head gates are incomplete.
+#272 / PR #287 remains held for existing encounter failure; #282 retained.
+#179 full visual2 BLOCKED_ENV plus repeated scene-integration score 1:
+native 1366x768/125% body/equipment readability requires a technique change.
+All-overlay pairs, exact historical rejected state and ten baseline rows missing.
+Source frozen `989669ef`, 298/300; original two reworks/supplemental exhausted.
+Read-only fit/decomposition contract live: `task_ef3fb77b5feb`; no source allowance.
+#268 sole web builder `task_723e5b9418b1` live, exclusive local checks/runtime.
+Original contract, three paths, normal audit, <=300 and Tier U remain required.
+Coordinator evidence commit uses only existing-coverage audit; no test/runtime.
+#214 waits #179; #269 AND #262 final 20/15 and #263/#231 residual gates remain.
+Both lanes have covered work; daily metrics/scout/triage/digest already complete.
+No production/API/wiki/game-rule/protocol/replay/schema/migration change.
+Coordinator new game/full verify/stress/migrations/browser NOT_RUN this tick.
+Next: hosted #285 proof; settle #179 contract and #268 build in later ticks.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
