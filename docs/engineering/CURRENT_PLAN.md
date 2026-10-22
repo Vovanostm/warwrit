@@ -6,6 +6,42 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
+#285 evaluator3 local ACCEPT at `d02e2b4f`: fresh15 lifecycle PASS,
+one complete native60/60 PASS; SQL proves eight migrated clones/default overlap
+and disposal. Mill day/night move/bow/end-turn/round7 victory sampled.
+Historical eval2 terminal-effects null remains unresolved; cause UNPROVEN.
+Reviewer3 REWORK: global-only teardown rejection may leave CLI exit0;
+source risk UNEXECUTED, needs a bounded real global-only child-Vitest probe.
+Original2/2 source rounds exhausted; NO third source attempt authorized.
+Hosted matched <=20% timing NOT_MEASURED; five full CI NOT_RUN.
+Exact evaluator settlement recorded/acked/released; coordinator directly verified
+27 recorded PIDs absent,10ports clear and empty labelled Docker inventories.
+#285 source stays committed/pushed `83372b0b`, records head `d02e2b4f`; no PR.
+#179 existing supplemental allowance now allocated to `task_3c736b835ddd`:
+one shared-projection recovery, sole web builder/exclusive checks/runtime.
+Source `0638d7be`, current scope244/300; add vitals/scenery projection propagation
+and owned scene/terrain wiring/tests. Original2round history is not reset.
+All original AC/DoD,80px,32px vitals,30px threshold and full TierV retained.
+Short-viewport readability/night1 and incomplete original proof stay unresolved.
+#214 frozen pending179; #268 waits its web turn; final269 AND26220/15 retained.
+#272/PR287 failed CI; #274/#280 REWORK; none meets merge gates.
+Lanes already covered; daily work complete, no duplicate metrics/scout/digest.
+No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+Coordinator game tests/typecheck/runtime/validate NOT_RUN this tick.
+Next:179 finite correction; then285 global-only reproduction and fallback decision.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Previous checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no state transition or eligible merge.
 #179: failed rework 2/2 retained; source `0638d7be`, scope 244/300, no PR.
 Camera/figure 30-degree vs vitals/scenery/terrain 50-degree mismatch remains.
@@ -34,8 +70,6 @@ New process listing was sandbox-denied; no process-cleanup proof claimed this ti
 Documentation-only diff/format/link/readback checks; no gameplay contract change.
 Next: #285 builder result; existing #179 cap-exception question before source work.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 

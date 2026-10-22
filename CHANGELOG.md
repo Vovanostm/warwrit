@@ -9,6 +9,33 @@ requests.
 
 ## Unreleased
 
+### Settle isolated-DB evaluator and resume allocated projection recovery — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`: one coordinator tick settles #285 evaluator3 local
+  ACCEPT at `d02e2b4f`:15 real-PG lifecycle tests and one native60/60 run PASS,
+  SQL-proven eight migrated clones/default overlap/disposal and played mill
+  day/night move/bow/end-turn/round7 victory. Full local verdict remains at
+  core-integration-db-isolation/.orca/core-integration-db-isolation/eval-3.md.
+  Historical eval2 null-effects failure remains unresolved, exact cause UNPROVEN;
+  reviewer3 global-only cleanup exit-status risk remains UNEXECUTED/REWORK.
+  Original2/2 source cap is spent; no third source attempt. Matched hosted <=20%
+  timing NOT_MEASURED and five full CI NOT_RUN; no #285 PR or acceptance.
+- Coordinator independently confirmed27 recorded PIDs absent,10ports clear and
+  empty project-labelled Docker inventories; settlement recorded before ack and
+  settled dispatch released. The already recorded #179 engineering decision
+  (issuecomment-6335026671) now allocates ONE supplemental shared-projection
+  recovery to task_3c736b835ddd, sole web builder/exclusive checks/runtime.
+  Source0638d7be/scope244/300 preserved; ownership adds vitals/scenery propagation
+  and owned scene/terrain wiring/tests. Original failed rounds, all AC/DoD,
+  numerical constraints, short-viewport findings and full TierV remain required.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and existing
+  [sizing checkpoint](docs/wiki/battlefield-test-maps.md) record the superseding
+  recovery allocation. No game/source edit by coordinator, no duplicate scout,
+  new product rule, setup/API/protocol/replay/schema/migration/dependency change.
+  Coordinator game checks/runtime/validate NOT_RUN; no merge, 0 merged PRs with
+  playable proof this tick. Documentation diff/format/readback checked before
+  normal commit/publication; independent #179 acceptance remains pending.
+
 ### Reconcile sizing recovery cap without resetting failed work — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: mailbox requested reconciliation of delegated
