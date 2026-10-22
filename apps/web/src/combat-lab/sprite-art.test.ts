@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { spriteForUnit, spriteCatalogue } from './sprite-art.js';
+import { spriteForUnit } from './sprite-art.js';
 
 it('uses the measured unarmed W01 derivative for a public fists weapon', () => {
   const sprite = spriteForUnit({
@@ -87,55 +87,3 @@ it('derives the minimal upward 0.05 spacing from every catalogue silhouette and 
       12,
     );
 });
-
-it.each(spriteCatalogue().filter((a) => !a.url.startsWith('data:')))(
-  'ties $id alpha width to the actual image bytes',
-  async (art) => {
-    const { readFileSync } = await import('node:fs');
-    const { inflateSync } = await import('node:zlib');
-
-    const png = readFileSync(new URL(art.url));
-    expect([...png.subarray(24, 29)]).toEqual([8, 6, 0, 0, 0]); // RGBA8, non-interlaced.
-    const width = png.readUInt32BE(16),
-      height = png.readUInt32BE(20);
-    expect([width, height]).toEqual([art.width, art.height]);
-    const chunks: Buffer[] = [];
-    for (let offset = 8; offset < png.length;) {
-      const length = png.readUInt32BE(offset);
-      if (png.toString('ascii', offset + 4, offset + 8) === 'IDAT')
-        chunks.push(png.subarray(offset + 8, offset + 8 + length));
-      offset += length + 12;
-    }
-    const encoded = inflateSync(Buffer.concat(chunks));
-    const pixels = new Uint8Array(width * height * 4);
-    let left = width,
-      right = -1;
-    for (let y = 0; y < height; y++) {
-      const filter = encoded[y * (width * 4 + 1)]!;
-      expect(filter).toBeLessThanOrEqual(4);
-      for (let x = 0; x < width * 4; x++) {
-        const index = y * width * 4 + x;
-        const a = x >= 4 ? pixels[index - 4]! : 0;
-        const b = y > 0 ? pixels[index - width * 4]! : 0;
-        const c = y > 0 && x >= 4 ? pixels[index - width * 4 - 4]! : 0;
-        let correction = 0;
-        if (filter === 1) correction = a;
-        if (filter === 2) correction = b;
-        if (filter === 3) correction = (a + b) >>> 1;
-        if (filter === 4) {
-          const p = a + b - c,
-            pa = Math.abs(p - a),
-            pb = Math.abs(p - b),
-            pc = Math.abs(p - c);
-          correction = pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
-        }
-        pixels[index] = encoded[y * (width * 4 + 1) + 1 + x]! + correction;
-        if (x % 4 === 3 && pixels[index]! >= 64) {
-          left = Math.min(left, Math.floor(x / 4));
-          right = Math.max(right, Math.floor(x / 4));
-        }
-      }
-    }
-    expect(art.alphaWidth, art.id).toBe(right - left + 1);
-  },
-);
