@@ -10,14 +10,14 @@ This tick: 0 merged PRs with playable proof; no acceptance waiver.
 Coordinator validator exit 0, all nine gates PASS; evaluator 62 focused tests PASS.
 Fresh mounted lifecycle/guards/timers and genuine day/night round-8 victories PASS.
 Evidence: docs/engineering/evidence/qa-hooks-session-editor/README.md.
-Evidence and shared records prepared for normal commit and publication; hosted CI required.
+PR #294 published with evidence and shared records; normal commit hooks PASS, hosted CI pending.
 #269 menu/shared-close residual and final 20/15 on BOTH #269 AND #262 remain.
 #293 builder settled at `79a5e407`, source `ea1c50af`; clean committed candidate.
 Coordinator directly verified 16 owned PIDs absent, ports 23789/25789 clear, no play.pid.
 Coordinator validator exit 0, all nine gates PASS; source 266/300, author proof only.
 Full independent Tier V visual task_b37306f5ef59 / ctx_9a459ba954c2 is live, image-only.
-Evaluator task_9ede14b4978d / ctx_fb235a28e1c8 is live, source-only until exact grant.
-Coordinator owns the short #268 publication commit slot; evaluator receives runtime afterward.
+Evaluator task_9ede14b4978d / ctx_fb235a28e1c8 is live with exclusive checks/browser/runtime.
+Exact task grant followed coordinator normal evidence commit; source remains frozen and pushed.
 Short 1366 × 768 / 125% readability advisory remains material and unaccepted.
 Full #293/#179 E1/E2/E3 and all applicable absolute scores >=2 remain mandatory.
 #179 failed 2/2 and supplemental history retained; #214 source stays frozen.
@@ -29,7 +29,7 @@ Main newest CI `39768260648` at `f5a73f33` SUCCESS.
 Daily metrics/scout/triage/digest already complete; no repeat.
 New coordinator gameplay/full suites NOT_RUN; performance NOT_MEASURED.
 No game-rule/API/protocol/replay/schema/migration/dependency change.
-Next: publish #268, grant evaluator runtime, await independent gates and timing evidence.
+Next: PR #294 hosted CI, full independent #293 gates and matched #292 timing evidence.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history

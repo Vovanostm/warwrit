@@ -9,9 +9,9 @@ requests.
 
 ## Unreleased
 
-### Publish independent session and editor proof — 2026-10-22, LOCAL
+### Publish independent session and editor proof — 2026-10-22, PUBLISHED
 
-- `Vovanostm/qa-hooks-session-editor`, #268: owner-requested #262/#231 extraction
+- `Vovanostm/qa-hooks-session-editor`, [PR #294](https://github.com/Vovanostm/warwrit/pull/294), #268: owner-requested #262/#231 extraction
   and issue-recorded pure autoplay/disabled allocation preserve the existing
   player journey. Source `973e036a`, independent Tier U ACCEPT at `46514ddb`,
   source scope 256/300; [contract, full retained proof, verdict and 20 JPEGs](docs/engineering/evidence/qa-hooks-session-editor/README.md).
@@ -26,7 +26,8 @@ requests.
   timing remains NOT_MEASURED and blocks merge. No source or acceptance waiver.
 - #269 AND #262 final 20/15 and all parent gates remain required. New coordinator
   gameplay/full suites NOT_RUN; performance NOT_MEASURED. No setup/API/wiki,
-  rule/protocol/replay/schema/migration/dependency change. Publication/merge pending.
+  rule/protocol/replay/schema/migration/dependency change. Published as PR #294;
+  final-head hosted CI and merge pending.
 
 ### Gate the owner-scope prompt and reconcile coordinator records — 2026-10-22, PUBLISHED
 
