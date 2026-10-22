@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Preserve bounded projection correction and allocate teardown probe — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: ordinary source `989669ef` and handback
+  `bcb7ccc8`, 298/300 source lines. Explicit scene projection now reaches vitals,
+  scenery and terrain; legacy defaults and figure/vitals dimensions retained.
+  Seven owned source/test paths changed. Author 73 related tests, replay 2,
+  typecheck/lint/format/normal audit PASS; current 12-row input matrix,
+  165+165 native hovers and first-death-to-victory journeys recorded.
+  These are author results, not independent acceptance. Overall worker FAILED;
+  original ten baseline rows, historical rejected-state reproduction and material
+  short-viewport/night critique remain open. Full Tier V and validation pending.
+- Coordinator directly confirmed all 32 recorded PIDs absent, two ports clear
+  and no play.pid; recorded settlement before ack and released exact dispatch.
+  Engineering decision: continue with proof/validation/gates on frozen source,
+  without another source round, cap reset or acceptance waiver. Existing #285
+  global-only teardown reproduction now owns exclusive checks/DB/runtime:
+  task_2f9f3633ff75 / ctx_44bdb7e379f2. Original 2/2 cap, reviewer REWORK,
+  historical null failure and hosted timing/five-CI requirements remain unchanged.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and existing
+  [sizing checkpoint](docs/wiki/battlefield-test-maps.md) record the handback.
+  New evidence stays at uix-w4-scale/.orca/uix-w4-scale/report.md and the
+  supplemental evidence paths named there; no untracked evidence links added.
+  No new game/source edit by coordinator or setup/API/rules/replay/schema/
+  migration/dependency change. Coordinator game checks/validate NOT_RUN;
+  performance NOT_MEASURED. No PR/merge; 0 merged PRs with playable proof this tick.
+
 ### Settle isolated-DB evaluator and resume allocated projection recovery — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`: one coordinator tick settles #285 evaluator 3 local

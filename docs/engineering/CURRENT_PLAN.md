@@ -7,6 +7,43 @@ Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
+#179 supplemental source `989669ef`, handback `bcb7ccc8`, scope 298/300.
+Shared projection correction committed; overall worker outcome FAILED.
+Try default mill 6×6, seed 20261009, Start before camera input, day/night.
+Author: 73 related tests, replay 2, typecheck/lint/format/normal audit PASS;
+12 candidate viewport/zoom rows, 165+165 hovers and real victories recorded.
+Those are author results; no independent Tier V acceptance is claimed.
+Original ten baseline rows and exact historical rejected-state reproduction missing;
+short-viewport readability/night score 1 remains material; all original AC/DoD retained.
+Coordinator verified 32 owned PIDs absent, two ports clear, no play.pid.
+Source frozen: both ordinary reworks and the one supplemental allowance retained.
+Proof-only continuation queues coordinator validation then independent Tier V;
+no additional source round, numerical/style waiver or ownership expansion.
+#285 global-only teardown probe `task_2f9f3633ff75` / `ctx_44bdb7e379f2` is live.
+Exclusive checks/DB/runtime; current source `83372b0b`, head `d02e2b4f` frozen.
+Reviewer 3 REWORK remains; evaluator 3 local ACCEPT does not settle it.
+Historical terminal-effects null cause UNPROVEN; hosted <=20% timing NOT_MEASURED;
+five full CI NOT_RUN. Original 2/2 source cap retained, no third source attempt.
+#179 validation/Tier V and #268 builder checks wait for positive probe cleanup.
+#214 source frozen pending #179; final #269 AND #262 component 20/15 retained.
+#272 / PR #287 failed CI; #274/#280 REWORK; none meets merge gates.
+Lanes covered; daily work complete, no duplicate metrics/scout/digest.
+No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+Coordinator game tests/typecheck/runtime/validate NOT_RUN this tick.
+Next: settle bounded #285 probe, apply fallback; validate/gate frozen #179.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Previous checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
 #285 evaluator 3 local ACCEPT at `d02e2b4f`: fresh 15 lifecycle PASS,
 one complete native 60/60 PASS; SQL proves eight migrated clones/default overlap
 and disposal. Mill day/night move/bow/end-turn/round 7 victory sampled.
@@ -31,8 +68,6 @@ No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
 Coordinator game tests/typecheck/runtime/validate NOT_RUN this tick.
 Next: #179 finite correction; then #285 global-only reproduction and fallback decision.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 
