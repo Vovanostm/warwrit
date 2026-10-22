@@ -147,16 +147,16 @@
 }
 .battle-action-dock {
   position: absolute;
-  inset: auto var(--battle-edge) 8px;
+  inset: auto var(--battle-edge) 4px;
   display: grid;
   grid-template-columns: var(--battle-card-width) minmax(0, 1fr) var(--battle-card-width);
-  gap: 16px;
+  gap: 8px;
   align-items: end;
   pointer-events: none;
 }
 .battle-unit-card {
-  min-height: 216px;
-  padding: 12px;
+  min-height: 0;
+  padding: 8px 10px;
   border: 1px solid var(--battle-border);
   border-radius: var(--battle-radius);
   background: var(--battle-panel);
@@ -191,8 +191,8 @@
   width: min(100%, 720px);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px 12px;
-  padding: 6px;
+  gap: 2px 8px;
+  padding: 4px;
   border: 1px solid var(--battle-border);
   border-radius: var(--battle-radius);
   background: var(--battle-panel);
@@ -557,12 +557,12 @@
 
 /* The actor's pools already live immediately below their initiative portrait. */
 .battle-acting-unit {
-  min-height: 148px;
+  min-height: 0;
 }
 .battle-acting-unit .battle-portrait {
-  width: 64px;
-  height: 80px;
-  flex: 0 0 64px;
+  width: 48px;
+  height: 60px;
+  flex: 0 0 48px;
 }
 .battle-acting-unit .battle-card-data h2 {
   min-height: 0;
@@ -576,7 +576,7 @@
 
 /* Reserve finite desktop lanes at the native125 1024px CSS viewport. */
 .battle-top-band {
-  top: 8px;
+  top: 4px;
   left: 194px;
   right: 268px;
 }

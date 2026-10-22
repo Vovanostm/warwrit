@@ -42,7 +42,7 @@ import { createBattleBackdropMaterial } from './battle-backdrop.js';
 import { mountBattleTerrain } from './battle-terrain.js';
 import { mountBattleScenery } from './battle-scenery.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
-import { battleFrameBounds, battleCameraLimits } from './battle-framing.js';
+import { battleFrameBounds, battleCameraLimits, tightenInitialFrame } from './battle-framing.js';
 import { mountBattleFieldVitals } from './battle-field-vitals.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
@@ -252,11 +252,11 @@ export async function mountSpriteBattleScene(
   const unitPresentationModes = [
     {
       sampling: Texture.BILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.62, 0.67, 0.78)],
+      colors: [Color3.White(), new Color3(0.46, 0.5, 0.58)],
     },
     {
       sampling: Texture.TRILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.76, 0.8, 0.9)],
+      colors: [Color3.White(), new Color3(0.4, 0.44, 0.52)],
     },
   ];
   scene.onBeforeCameraRenderObservable.add((camera) => {
@@ -1229,15 +1229,15 @@ export async function mountSpriteBattleScene(
     const viewport = canvas.getBoundingClientRect();
     const surface = canvas.closest('.battle-view') ?? canvas.parentElement!;
     const safeTop = Math.max(
-      24,
+      16,
       ...[...surface.querySelectorAll('.battle-top-band')].map(
-        (node) => node.getBoundingClientRect().bottom - viewport.top + 8,
+        (node) => node.getBoundingClientRect().bottom - viewport.top + 4,
       ),
     );
     const safeBottom = Math.min(
-      viewport.height - 24,
+      viewport.height - 16,
       ...[...surface.querySelectorAll('.battle-action-dock')].map(
-        (node) => node.getBoundingClientRect().top - viewport.top - 8,
+        (node) => node.getBoundingClientRect().top - viewport.top - 4,
       ),
     );
     return { viewport, safeTop, safeBottom };
@@ -1257,6 +1257,7 @@ export async function mountSpriteBattleScene(
     minZ: Math.min(...projectedField.map((point) => point.z)),
     maxZ: Math.max(...projectedField.map((point) => point.z)),
   };
+  // fallow-ignore-next-line complexity -- mount-local framing closure; coverage is via public scene/framing tests
   const overviewBounds = (units = currentView.units, fullField = true) => {
     const { viewport, safeTop, safeBottom } = cameraOpening();
     const figures = units
@@ -1269,7 +1270,7 @@ export async function mountSpriteBattleScene(
       height: viewport.height,
       safeTop,
       safeBottom,
-      badge: actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
+      badge: focusedId && actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
       elevation: CAMERA_ELEVATION,
     });
     if (!frame || !fullField) return frame;
@@ -1304,7 +1305,8 @@ export async function mountSpriteBattleScene(
       overview ? currentView.units : initialFrameUnits(currentView),
       overview,
     );
-    if (bounds) camera.fit(bounds, 0);
+    if (!bounds) return;
+    camera.fit(overview ? bounds : tightenInitialFrame(bounds), 0);
   };
   let focusedId: string | null = null;
   const focusUnit = (id: string) => {
@@ -1381,7 +1383,6 @@ export async function mountSpriteBattleScene(
     engine.resize();
     overviewBounds();
     if (!cameraMoved) frameDefault();
-    clearHover();
   });
   resizeObserver.observe(canvas);
   for (const band of battleSurface.querySelectorAll('.battle-top-band, .battle-action-dock'))

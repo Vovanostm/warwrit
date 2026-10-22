@@ -1,6 +1,14 @@
 import { Matrix, NullEngine, Scene, Vector3, VertexBuffer } from '@babylonjs/core';
 import { expect, it, vi } from 'vitest';
-import { battleCameraLimits, battleFrameBounds } from './battle-framing.js';
+import { battleCameraLimits, battleFrameBounds, tightenInitialFrame } from './battle-framing.js';
+
+it('tightens initial depth without shifting the frame centre', () => {
+  const bounds = { minX: 3, maxX: 3, minZ: 0, maxZ: 10 };
+  const tight = tightenInitialFrame(bounds, 0.86);
+  expect((tight.minZ + tight.maxZ) / 2).toBe(5);
+  expect(tight.maxZ - tight.minZ).toBeCloseTo(8.6, 12);
+  expect(tightenInitialFrame(bounds)).toEqual(tightenInitialFrame(bounds, 0.86));
+});
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { createBattleTerrain, createBattleSurface } from '../renderer/battle-terrain.js';
@@ -99,7 +107,7 @@ it.each([
         );
         expect(pixel.x - 130).toBeGreaterThanOrEqual(-0.01);
         expect(pixel.x + 130).toBeLessThanOrEqual(width + 0.01);
-        expect(pixel.y - 34).toBeGreaterThanOrEqual(safeTop + 8 - 0.01);
+        expect(pixel.y - 34).toBeGreaterThanOrEqual(safeTop + 4 - 0.01);
         expect(pixel.y).toBeLessThanOrEqual(safeBottom - 20 + 0.01);
       }
       expect(scene.activeCamera!.orthoTop).toBeGreaterThan(17);
