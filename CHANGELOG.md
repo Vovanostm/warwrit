@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Accept isolation contract and retain exact CI blocker — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`: owner-requested single pipeline tick
+  accepts #285's complete five-section contract after exact native settlement,
+  result and live-issue readback. Contract worker released (`no_owned_resource`).
+  Finite proposed lifecycle-script/config/test ownership is recorded in local
+  slice overrides; implementation waits for #179 exclusive checks/runtime cleanup.
+  Existing CI enables two integration files, proposed isolation enables eight;
+  shared-database causality and the <=20% timing target remain unproven.
+  All original disposal, parallelism, five full CI and Tier L gates remain.
+- [PR #287](https://github.com/Vovanostm/warwrit/pull/287) native `c07b88d9`
+  remains OPEN/red. Advisory leadership-choice pause is an unproven diagnostic
+  lead for the null terminal timestamp, not a diagnosed cause or production fix.
+  Preserve the assertion; next owned rerun observes admission/revision/leadership
+  state. Original #272 proof and merged #282 rollback regression stay intact.
+- Recorded/acknowledged four mailbox messages; forwarded sampled short-desktop
+  day/night readability concerns to the sole #179 builder. No final Tier V
+  verdict or repeated measurement is claimed. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  retains all original criteria, exclusive runtime ownership and deferred slices.
+  No new worker, issue, label change or daily repeat; 0 merged PRs with playable
+  proof. Local game tests/typecheck/build/DB/browser NOT_RUN, performance
+  NOT_MEASURED; no setup implementation/API/wiki/game-rule/replay/migration change.
+  Initial Markdown format check failed; formatting corrected before commit.
+  The pnpm wrapper materialized pinned dependencies automatically during that
+  check; no source or lockfile change and no setup/runtime/DB command ran.
+
 ### Resume interrupted coordinator checkpoint — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`: owner-requested single pipeline tick
