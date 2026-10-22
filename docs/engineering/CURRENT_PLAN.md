@@ -5,7 +5,7 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 and existing local overrides; no new milestone.
-This tick: 0 merged PRs with playable proof; no merge performed.
+This tick: 1 merged PR with playable proof: #286, expected head `eb6e57b2`.
 #272: retained OIDC source `37f35c6b`, integrated frozen head `c8b6c308`.
 Fresh author mutations each fail the original account/session equality and restore.
 Five ordinary parallel eight-file PostgreSQL runs PASS 60/60 each, zero skips.
@@ -13,24 +13,29 @@ Owned container/volume/network cleanup reports NONE; tracked tree clean.
 Earlier rollback failures remain history; merged #282 supplied the prerequisite.
 Coordinator validator exit 0, all 9 gates PASS; original audit/parallelism retained.
 Related-test skips without database URLs are separate from author real-DB proof.
-Fresh Tier L review: `task_eb9a0c4c1d9e` / `ctx_5dd3c3f8300a`, source-only.
+Fresh Tier L reviewer ACCEPT at `72b6e4eb`; independent tests/runtime NOT_RUN.
 Fresh evaluator: `task_76a6f1551b25` / `ctx_da63469c8338`, source/evidence first.
-Both live; no verdict/acceptance yet. Evaluator runtime waits #214 cleanup.
+Evaluator remains live/source-only; runtime waits #214 cleanup and exact settlement.
 Full local contract/report/native logs: `.orca/core-oidc-count-isolation/`
 in dedicated `codex-oidc-count-isolation-272`; proof has no production mutation.
 #214 builder `task_e41051b3b529` now has its task-specific checks/runtime permit.
 Sole web writer; full issue proof and independent Tier V gates remain required.
 Read-only source advisory is not a gate ACCEPT or measured visual fit.
-#267: [PR #286](https://github.com/Vovanostm/warwrit/pull/286), final-head CI running.
+#267: [PR #286](https://github.com/Vovanostm/warwrit/pull/286), merged as `c62ad2d0`.
 Tier U ACCEPT `de77fa3d`, frozen source `9ccabbd9`, scope 159, validate 9/9.
-Published proof remains on #286; that directory is absent on this #272 branch.
-#268 follows #267; final component 20/15 remains on #269 AND #262.
+Final-head CI and PR scope SUCCESS; issue CLOSED/done, proof retained locally.
+Clean fully-pushed worktree removed through Orca; no unique commit discarded.
+Tracked proof is on merged main; this #272 branch awaits ordinary integration.
+#268 contract: `task_a862f659e76e` / `ctx_5c8ffeb5121c`, read-only in own checkout.
+Setup deferred while #214 owns checks/runtime; no second web builder.
+Final component 20/15 remains on #269 AND #262.
 #262/#263/#231 remain open; #179 follows reserved #214 before camera/playback.
 #274/#280 retain unresolved REWORK; green CI alone does not permit merge.
 Daily metrics/scout/triage/digest complete; no duplicate daily work.
 No rule/auth/schema/released migration/dependency/setup/API/wiki contract change.
 Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
-Next: #286 final CI; #214 settlement/cleanup, then #272 evaluator runtime permit.
+Next: #214 settlement/cleanup, then #272 evaluator runtime; review #268 contract.
+Integrate merged main into #272 after its live gate settles, then revalidate.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history

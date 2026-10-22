@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Merge selection extraction and prepare session contract — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-oidc-count-isolation-272`: closeout for [PR #286](https://github.com/Vovanostm/warwrit/pull/286),
+  #267, merged at expected `eb6e57b2` as `c62ad2d0`. Final-head CI and PR scope
+  SUCCESS; fresh Tier U ACCEPT at `de77fa3d`, coordinator validate 9/9 PASS,
+  scope 159/300, only evidence/records after gating. Native PR/main/closed issue
+  readback PASS; label done. 1 merged PR with playable proof this tick.
+  [Merged contract/verdict/day-night captures](https://github.com/Vovanostm/warwrit/blob/c62ad2d021c836563da9bef5827003387c29a273/docs/engineering/evidence/qa-hooks-selection-autoplay/README.md).
+  Local native proof retained before Orca removed the clean, fully-pushed tree;
+  final component 20/15 and remaining #269/#262/#263/#231 acceptance stay open.
+- #272 fresh source/evidence reviewer ACCEPT at `72b6e4eb`; exact native
+  settlement and complete verdict/result recorded before acknowledgement and
+  release. Reviewer tests/runtime NOT_RUN; Tier L evaluator remains live and
+  waits #214 cleanup/settlement for runtime permission. Later #272 commits only
+  coordinator records; ordinary integration of merged main and revalidation
+  remain after the live gate. No #272 PR/merge or independent runtime pass claimed.
+- #268 ready → planning in its own checkout from merged main `c62ad2d0`:
+  read-only contract `task_a862f659e76e` / `ctx_5c8ffeb5121c`. Coordinator defers
+  setup until #214 releases the exclusive checks/runtime slot; no second builder
+  or acceptance waiver. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) is the
+  continuation; existing setup/API/wiki contracts unchanged. Docs-only normal
+  commit; full local suites/build NOT_RUN, performance NOT_MEASURED.
+
+
 ### Validate fresh OIDC proof and allocate independent gates — 2026-10-22, PUBLISHED
 
 - `Vovanostm/codex-oidc-count-isolation-272`, [#272](https://github.com/Vovanostm/warwrit/issues/272):
