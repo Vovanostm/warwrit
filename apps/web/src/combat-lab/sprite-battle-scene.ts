@@ -20,7 +20,7 @@ import type { CombatLabAction, CombatLabHex, CombatLabSkillId } from '@warwrit/p
 import type { BattlePresentationView, Unit as BattleUnit } from './battle-presentation.js';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
 import {
-  CAMERA_ELEVATION,
+  CAMERA_ELEVATION as FRAME_ELEVATION,
   mountThreeQuarterCamera,
   type GroundBounds,
 } from '../renderer/three-quarter-camera.js';
@@ -91,6 +91,14 @@ export interface BattleFieldTarget {
 
 type SceneMapBounds = Readonly<{ minX: number; maxX: number; minZ: number; maxZ: number }>;
 type ScenePerspective = Readonly<{ targetX: number; distance: number }>;
+// A lower, longer lens keeps the squad legible without near-plane ground expansion.
+const CAMERA_ELEVATION = Math.PI / 6;
+const FRAME_DEPTH_SCALE = Math.sin(CAMERA_ELEVATION) / Math.sin(FRAME_ELEVATION);
+
+/** Convert ground-equivalent depth between scene and framing reference planes. */
+export function spriteFrameDepth(bounds: GroundBounds, scale: number): GroundBounds {
+  return { ...bounds, minZ: bounds.minZ * scale, maxZ: bounds.maxZ * scale };
+}
 
 function mountBattleEnvironment({
   scene,
@@ -229,9 +237,8 @@ export async function mountSpriteBattleScene(
   const perspective = {
     targetX: (mapBounds.minX + mapBounds.maxX) / 2,
     targetZ: centerZ,
-    // A closer optical centre preserves the near squad at readable scale while
-    // the existing HUD-aware frame retains the far allies and nearest enemies.
-    distance: 4 * BATTLE_LAYOUT.spacing,
+    // Keep the whole field well ahead of the optical centre, with a longer lens.
+    distance: 16 * BATTLE_LAYOUT.spacing,
   };
   const project = (point: { x: number; y: number; z: number }) =>
     projectCameraPoint(point, perspective, CAMERA_ELEVATION);
@@ -1272,7 +1279,10 @@ export async function mountSpriteBattleScene(
         );
       });
     const frame = battleFrameBounds({
-      mapBounds: spriteFrameMapBounds(fullField, fieldBounds, figures),
+      mapBounds: spriteFrameDepth(
+        spriteFrameMapBounds(fullField, fieldBounds, figures),
+        FRAME_DEPTH_SCALE,
+      ),
       figures,
       width: viewport.width,
       height: viewport.height,
@@ -1280,8 +1290,11 @@ export async function mountSpriteBattleScene(
       safeBottom,
       badge: actorMarker ? { width: actorMarker.width, height: 34 } : undefined,
     });
-    if (!frame || !fullField) return frame;
+    if (!frame) return frame;
+    const sceneFrame = spriteFrameDepth(frame, 1 / FRAME_DEPTH_SCALE);
+    if (!fullField) return sceneFrame;
     const limits = battleCameraLimits(frame, viewport.width, viewport.height);
+    Object.assign(limits.bounds, spriteFrameDepth(limits.bounds, 1 / FRAME_DEPTH_SCALE));
     cameraLimits.maxZoom = limits.maxZoom;
     Object.assign(cameraLimits.bounds, limits.bounds);
     // Extend only the quiet camera-facing apron; projected artwork/terrain stay registered.
@@ -1304,7 +1317,7 @@ export async function mountSpriteBattleScene(
     // Apron x must use the same reference projection as its vertical displacement.
     terrain.apron.position.x =
       perspective.targetX + (terrain.apron.position.x - perspective.targetX) * apronScale;
-    return frame;
+    return sceneFrame;
   };
   const frameBattle = () => {
     const bounds = overviewBounds();
