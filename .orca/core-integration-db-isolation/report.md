@@ -34,15 +34,15 @@ below. Normal pre-commit hooks are required; no bypass or threshold change.
 
 ## Acceptance mapping
 
-| Criterion | Actual proof | Remaining limits |
-| --- | --- | --- |
-| AC1: migrated database per file | Real-PG lifecycle tests verify 14 applied migrations / zero pending, distinct clones, clean template and identical independent fixture keys. Global setup test allocates eight distinct path mappings. Native supplies + company-transition run: 2 files / 2 tests PASS in 3.50 s, separate ready/disposed database names. | Full native eight-file run NOT_RUN by allocation; current_database/migration status for every native file remains coordinator proof. |
-| AC1: destructive operations confined | Real down/up plus `DROP SCHEMA public CASCADE` in one clone leaves another clone's schema/data intact; source/unowned URL drops rejected. | Unchanged migration-smoke wrapper and original #282 nested rollback scenario NOT_RUN; coordinator schedules migration suite. |
-| AC1: disposal and failure propagation | Real worker probes pass, intentional test failure, intentional collection failure, and intentional cleanup failure; child exits 0/1 as expected and pg_database/pg_stat_activity show no probe leftovers. Real read-only PostgreSQL DROP errors form AggregateError for both owned databases; late global setup failure disposes all clones/template. Pool-close output precedes disposed output. | Abrupt kill containment source-reviewed only, NOT_RUN. Native all-eight disposal not claimed. |
-| AC2: parallelism/assertions | maxWorkers 2/default file parallelism unchanged. Two generated worker files log ready before either disposal; identical fixture inserts succeed. Native focused two-file logs overlap. No existing test/production/migration source edited. | CI duration <=20% NOT_MEASURED. Three matched baseline/candidate hosted samples and raw medians remain mandatory. |
-| AC3: five consecutive full CI runs | NOT_RUN; no hosted CI scheduled or mutations authorized. | Coordinator schedules five complete non-overlapping final-head runs; any failure breaks streak. |
-| AC4: #272/#282 disposition | Existing #282 world rollback source untouched. #272 accepted unmerged PR #287 source/evidence untouched; not cherry-picked or rewritten. | No issue closure. Coordinator integrates #272 and decides residual scope from hosted proof. Existing null terminal-effects cause remains UNPROVEN; no production-effects fix. |
-| Tier L | Author lifecycle and two native files proven locally. | Independent reviewer/evaluator, persistent JOIN→move/bow→victory→effects/replay/idempotency and final-head hosted gates remain coordinator-owned NOT_RUN. Combat-lab captures are smoke only. |
+| Criterion                             | Actual proof                                                                                                                                                                                                                                                                                                                                                                                      | Remaining limits                                                                                                                                                                              |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AC1: migrated database per file       | Real-PG lifecycle tests verify 14 applied migrations / zero pending, distinct clones, clean template and identical independent fixture keys. Global setup test allocates eight distinct path mappings. Native supplies + company-transition run: 2 files / 2 tests PASS in 3.50 s, separate ready/disposed database names.                                                                        | Full native eight-file run NOT_RUN by allocation; current_database/migration status for every native file remains coordinator proof.                                                          |
+| AC1: destructive operations confined  | Real down/up plus `DROP SCHEMA public CASCADE` in one clone leaves another clone's schema/data intact; source/unowned URL drops rejected.                                                                                                                                                                                                                                                         | Unchanged migration-smoke wrapper and original #282 nested rollback scenario NOT_RUN; coordinator schedules migration suite.                                                                  |
+| AC1: disposal and failure propagation | Real worker probes pass, intentional test failure, intentional collection failure, and intentional cleanup failure; child exits 0/1 as expected and pg_database/pg_stat_activity show no probe leftovers. Real read-only PostgreSQL DROP errors form AggregateError for both owned databases; late global setup failure disposes all clones/template. Pool-close output precedes disposed output. | Abrupt kill containment source-reviewed only, NOT_RUN. Native all-eight disposal not claimed.                                                                                                 |
+| AC2: parallelism/assertions           | maxWorkers 2/default file parallelism unchanged. Two generated worker files log ready before either disposal; identical fixture inserts succeed. Native focused two-file logs overlap. No existing test/production/migration source edited.                                                                                                                                                       | CI duration <=20% NOT_MEASURED. Three matched baseline/candidate hosted samples and raw medians remain mandatory.                                                                             |
+| AC3: five consecutive full CI runs    | NOT_RUN; no hosted CI scheduled or mutations authorized.                                                                                                                                                                                                                                                                                                                                          | Coordinator schedules five complete non-overlapping final-head runs; any failure breaks streak.                                                                                               |
+| AC4: #272/#282 disposition            | Existing #282 world rollback source untouched. #272 accepted unmerged PR #287 source/evidence untouched; not cherry-picked or rewritten.                                                                                                                                                                                                                                                          | No issue closure. Coordinator integrates #272 and decides residual scope from hosted proof. Existing null terminal-effects cause remains UNPROVEN; no production-effects fix.                 |
+| Tier L                                | Author lifecycle and two native files proven locally.                                                                                                                                                                                                                                                                                                                                             | Independent reviewer/evaluator, persistent JOIN→move/bow→victory→effects/replay/idempotency and final-head hosted gates remain coordinator-owned NOT_RUN. Combat-lab captures are smoke only. |
 
 ## Checks and observed failures
 
@@ -63,18 +63,18 @@ below. Normal pre-commit hooks are required; no bypass or threshold change.
   process.stdout.write; changed-file lint PASS.
 - Latest focused lifecycle: 1 file, **9 PASS / 0 SKIP**, exit 0, 6.02 s.
   Command: `INTEGRATION_LIFECYCLE_DATABASE_URL=<owned disposable PG> pnpm exec
-  vitest run apps/server/src/db/integration-database.test.ts --coverage --mode
-  coverage --coverage.include 'scripts/integration*.ts' --coverage.include
-  'apps/server/src/db/migrator.ts'`. Real measured scope: statements 84.54%
+vitest run apps/server/src/db/integration-database.test.ts --coverage --mode
+coverage --coverage.include 'scripts/integration*.ts' --coverage.include
+'apps/server/src/db/migrator.ts'`. Real measured scope: statements 84.54%
   (93/110), branches 76.92% (20/26), functions 90.32% (28/31), lines 84.15% (85/101).
   Child-process hooks execute for real but their V8 coverage is not aggregated.
 - Native focused command: `DATABASE_URL=<owned disposable PG> pnpm exec vitest run
-  --mode integration apps/server/src/company/supplies.integration.test.ts
-  apps/server/src/contracts/company-transition.integration.test.ts --reporter
-  verbose`: exit 0, 2 files / 2 tests PASS, 3.50 s. Both files bound to different
+--mode integration apps/server/src/company/supplies.integration.test.ts
+apps/server/src/contracts/company-transition.integration.test.ts --reporter
+verbose`: exit 0, 2 files / 2 tests PASS, 3.50 s. Both files bound to different
   databases before collection; each emitted disposal.
 - `pnpm --filter @warwrit/server typecheck`: PASS. Scoped `tsc --noEmit --strict
-  --target ES2023 --module NodeNext --moduleResolution NodeNext --skipLibCheck`
+--target ES2023 --module NodeNext --moduleResolution NodeNext --skipLibCheck`
   on four scripts plus Vitest config: PASS. Changed-file ESLint and Prettier: PASS.
 - Full verify, combat stress, test:migrations, bootstrap, hosted timing, five CI:
   **NOT_RUN / NOT_MEASURED**, deliberately reserved for coordinator.
@@ -120,3 +120,52 @@ unrelated fixture/clock/batch defects. No causality or runtime saving is claimed
 <=20% remains a real risk. Admin account requires CREATE DATABASE and owned-drop
 privileges. Source URL must be explicitly supplied against disposable infrastructure.
 Coordinator owns remaining full gates, shared records and publication.
+
+## Final local delivery and cleanup
+
+- Feature commit: `0b0c44eb` — `test: isolate PostgreSQL integration databases per file (#285)`.
+  Normal pre-commit refreshed focused coverage with the real-PG allocation and
+  passed audit against `c62ad2d0`: zero new dead code, complexity or duplication.
+  No `--no-verify`. Final report-only commit follows this feature; source remains
+  the feature commit's seven-path implementation.
+- `bash scripts/orca-validate.sh`: **exit 0, 9/9 PASS** at `0b0c44eb`: rebased,
+  clean-tree, scope, packages, typecheck, format, lint, related-tests, audit.
+  Scope **176/300 source additions + deletions**, excluding tests/docs.
+  Validation ran after PostgreSQL shutdown and before browser runtime. Its related
+  test result was **1 PASS / 8 SKIP**, because real-PG URL was deliberately unset;
+  it is not additional database proof. Its ordinary coverage had 0% rounded
+  coverage (1/25,858 statements); retain the separate real-PG result above.
+- Playwright skill smoke: private URL `http://127.0.0.1:25065/combat-lab`.
+  Default “Старая мельница” / “Развалины мельницы” launched with 6 controlled and
+  6 opposing units. Set actual viewport 1440×900; saved and visually read both
+  `shots/mill-day.png` and `shots/mill-night.png` under this report directory.
+  PNG dimensions independently read as 1440×900 for both. Selected night using
+  “Ночная сцена”; clicked “Защищаться”, observed archer defence and commander
+  activation; clicked “Завершить ход”, observed spearman activation. No win,
+  persistent JOIN or terminal-effects acceptance is claimed. Only console error
+  observed: favicon.ico 404; Babylon WebGL2 initialized normally. No colour-vision
+  emulation requested. These untracked screenshots are ordinary smoke evidence.
+- Browser tooling environment: wrapper was not executable, so invoked it with
+  `bash`. Default npm cache was unwritable; used this lane's private `.orca`
+  npm cache without changing global permissions. Initial runtime returned READY
+  but its launcher shell exited and navigation hit connection refused; restarted
+  with an attached tail session, then completed the smoke. This was an environment
+  lifecycle recovery, not a source change or test retry workaround.
+- Database cleanup before validation: explicit SQL returned **owned_databases=0**
+  and **owned_sessions=0**. Compose down exited 0 and removed only the declared
+  project container, volume and network. Label-filtered inventories subsequently
+  returned no containers/volumes/networks. Port 32797 had no listener (lsof exit 1,
+  expected absence). No unrelated container was stopped.
+- Browser/runtime cleanup: `playwright-cli -s=warwrit-285 close` exited 0;
+  `bash scripts/orca-play.sh stop` exited 0 / STOPPED. Attached tail session
+  explicitly ended with Ctrl-C (exit 130). Runtime launcher PID 13891; node
+  descendants 14014, 14015, 14054, 14084 (web), 14090 (API), 14099 (esbuild).
+  Initial detached launcher PID 12790 was already absent. Owned Playwright daemon
+  PID 13298; Chrome/helper descendants 13302, 13343, 13344, 13348, 13363, 13528, 14502. Read-only process-tree checks captured executable names only; final exact
+  PID check returned **0 of these 16 PIDs present**, and ports 23065, 25065 and
+  32797 had no listeners. No owned active runtime remains. Local cache/evidence
+  files remain in this persistent worktree; no database volume remains.
+- Shared CHANGELOG, CURRENT_PLAN and wiki stayed read-only for this worker;
+  proposed records above are ready for the coordinator. No publication performed.
+  Full eight-file/migration smoke, timings, five hosted CI runs and independent
+  Tier L gates remain **NOT_RUN / NOT_MEASURED** and mandatory.
