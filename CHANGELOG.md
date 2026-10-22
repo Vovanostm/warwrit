@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Accept scale contract and correct hatch advisory — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w1-skill-names`: coordinator accepted the complete #179
+  five-section contract against the live issue and exact native worker result;
+  settled worker released. Dedicated base `c62ad2d0` remains clean, source
+  implementation NOT_RUN. The 290-line estimate preserves the catalogue
+  formula, every original AC/DoD and full Tier V; builder waits for the live
+  #272 evaluator's exclusive runtime and positive cleanup.
+- Messages `msg_8ae0fc7bcc8f` and `msg_d3fa896a166f` report the same independent
+  critic's correction after reading #184 source/acceptance evidence: full-cell
+  interrupted movement-only hatch is accepted semantic feedback. Advice to
+  remove/localize it and the failed-tuning claim are withdrawn; no new renderer
+  defect or acceptance dependency is established. Original integrated matrix
+  still applies. Sampled #214 labels have no material finding; full ACCEPT is pending;
+  eight captures remain source `97c43aa8`, not integrated `205c5db7` proof.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and the existing
+  [battlefield wiki](docs/wiki/battlefield-test-maps.md) retain this correction
+  alongside the earlier advisory. #214 stays frozen pending #179 integration;
+  #274/#280 retain REWORK. This tick: 0 merged PRs with playable proof.
+  Documentation-only diff/readback checked; new game checks/runtime/full suites
+  NOT_RUN, performance NOT_MEASURED. No game, API or migration contract change.
+
 ### Preserve skill names and remove visual scheduling cycle — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w1-skill-names`, #214: normally committed `97c43aa8` adds

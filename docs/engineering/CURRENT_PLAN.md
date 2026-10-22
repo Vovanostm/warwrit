@@ -7,27 +7,29 @@ Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#214 source `97c43aa8` normally committed; three owned paths, 19 source lines.
-Author focused 27 tests, typecheck/lint/format/audit and eight day/night captures PASS.
-Native builder settlement matched; clean tree and positive owned PID/port cleanup.
-Ordinary main `c62ad2d0` integration has shared-record conflicts only; histories retained.
-Coordinator validation at `205c5db7`: exit 0, all 9 gates PASS; related 49 tests.
-Full viewport/zoom/contrast and Tier V not accepted.
-Try `/combat-lab`, default mill seed 20261009: advance existing actors for five labels.
-#214 source freezes while #179 scene contract proceeds before final visual acceptance.
-#179 read-only contract `task_92d118d9672f` / `ctx_3b8cfa1957b9` is live.
-It retains catalogue-derived spacing, original AC/DoD and full Tier V; no new rules.
-Broad hatch advisory requires exact scene-owner evidence; no #214 ownership expansion.
-#272 reviewer ACCEPT `72b6e4eb`; evaluator `task_76a6f1551b25` is next runtime owner.
-Its task-specific permit follows this record commit; no competing heavy checks.
-#268 accepted contract waits for web/runtime allocation; no competing builder.
-#267 PR #286 is present in current main `c62ad2d0`; no merge performed this tick.
-#269 AND #262 retain final component 20/15; #262/#263/#231 stay open.
-PRs #274/#280 retain unresolved REWORK; green snapshot CI permits no merge.
+#179 complete 59-line, five-section contract accepted against live issue;
+`task_92d118d9672f` / `ctx_3b8cfa1957b9` settled successfully and released.
+Dedicated clean base `c62ad2d0`; finite 290-source-line estimate, no rule question.
+Original catalogue formula, all AC/DoD and full Tier V remain required.
+Local contract: uix-w4-scale/.orca/uix-w4-scale/contract.md in its own worktree.
+#179 remains planning: builder waits for #272 exclusive checks/runtime cleanup.
+#272 evaluator `task_76a6f1551b25` / `ctx_da63469c8338` is natively live;
+reviewer ACCEPT retained; no duplicate evaluator or competing checks/runtime.
+#214 source `97c43aa8` frozen; main integration `205c5db7`, records only after it.
+Prior coordinator validate 9/9 and 49 related tests PASS; not rerun this tick.
+Try `/combat-lab`, default mill seed 20261009: advance actors for five skill names.
+Eight author captures are from `97c43aa8`, not final integrated-head evidence.
+Independent critic corrected hatch advice after #184 source/acceptance evidence:
+full-cell interrupted movement-only strokes are accepted semantic feedback.
+Remove/localize-hatch and failed-tuning advice withdrawn; no new renderer gate.
+Five labels have no material finding in sampled 1440 captures; not full ACCEPT.
+After #179 merge, integrate normally and repeat original #214 full Tier V/matrix.
+#268 accepted contract waits for web/runtime; #269 AND #262 keep final 20/15.
+#262/#263/#231 stay open; #274/#280 unresolved REWORK prevents merge.
 Daily metrics/scout/triage/digest complete; no duplicate daily work.
-No setup/API/rule/protocol/replay/schema/migration/dependency change.
-Full verify/stress/migrations/production build NOT_RUN; performance NOT_MEASURED.
-Next: settle #179 contract and #272 evaluator; keep #214 source frozen.
+No source/setup/API/rule/protocol/replay/schema/migration/dependency change.
+Game checks/runtime/full suites/build NOT_RUN; performance NOT_MEASURED.
+Next: settle #272 evaluator and positively clean runtime, then allocate #179 builder.
 Wrapper releases its own lease when this one tick returns.
 
 ## Dated history
