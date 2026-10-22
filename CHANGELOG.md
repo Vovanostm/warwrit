@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Preserve skill names and remove visual scheduling cycle — 2026-10-22, LOCAL
+### Preserve skill names and remove visual scheduling cycle — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w1-skill-names`, #214: normally committed `97c43aa8` adds
   five readable short names beneath learned-skill icons, preserving full
@@ -26,7 +26,7 @@ requests.
   decision removes the #179-after-#214 scheduling cycle: source stays frozen,
   #179 scene contract precedes #214 final full visual gate. Original catalogue
   spacing, ownership and all acceptance criteria stay required; no score waiver
-  or wider #214 source work. Exact hatch finding is routed to its scene owner.
+  or wider #214 source work. Hatch advisory awaits precise source-owner routing.
 - [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation.
   Owning local contract/report: `.orca/uix-w1-skill-names/` in the dedicated
   worktree. Battlefield wiki records this local candidate and pending gates; no
