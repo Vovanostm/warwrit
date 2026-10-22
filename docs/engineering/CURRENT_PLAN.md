@@ -6,6 +6,44 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
+#179 independent evaluator 1 REWORK at `97c3e000`; full local eval-1.md retained.
+Native day/night first death → victory, Restart/Editor/reentry, geometry/input pass;
+short native 1366 × 768 / 125% figure/contact readability fails.
+New current equal-height/game-scale comparison and actual journey packet supplied;
+exact historical state, all-overlay pairs and ten original baseline rows remain open.
+Coordinator verified all 19 recorded PIDs absent, 23319/25319 clear, no play.pid.
+Exact settlement recorded before release/ack; no evaluator runtime remains.
+Full absolute visual critic 2 task_3b42ff2f371e / ctx_e28925b578ec is live;
+images only, fresh scores from the new packet, no runtime/checks/source writes.
+Repeated scene-integration 1 requires a technique change; images alone cannot fix it.
+Source `989669ef` remains frozen, 298/300; original 2/2 and consumed supplemental retained.
+No further source round, cap reset, numerical waiver, PR or #179/#214 acceptance.
+#285 previously allocated ONE supplemental global-exit repair is now live:
+task_2d0f34212d50 / ctx_a47bc6d7642f, sole core writer/exclusive checks/DB/runtime.
+Only integration-global-setup.ts and integration-database.test.ts may change;
+retain prior nonzero status, rethrow original cleanup error, real child regression.
+Original failed 2/2, <=300 source lines, normal audit and fresh Tier L retained.
+Historical encounter null cause UNPROVEN; hosted <=20% timing NOT_MEASURED;
+five full CI NOT_RUN. #272 / PR #287 lacks green CI; no merge eligibility.
+#214 source frozen pending #179; #268 waits checks/runtime. Final #269 AND #262 20/15 retained.
+Main CI `39751131136` at `ff2f5f96` is SUCCESS; no PR advanced to merge this tick.
+Lanes covered; daily metrics/scout/triage/digest already complete.
+New game tests/typecheck/validate/browser/full gates NOT_RUN by coordinator;
+prior validator 9/9 and 73 related tests retained, not rerun. Performance NOT_MEASURED.
+No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+Next: settle bounded #285 repair and visual 2; route confirmed defects within source limits.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Previous checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and existing one-issue local slices; exactly one tick.
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
 #179 remains in review; visual critic 1 settled BLOCKED_ENV at `97c3e000`.
 Full absolute rubric: scene integration 1 at 1366 × 768 / native 125%, day/night;
 other inspected style scores at least 2. Repeated failure requires a technique change.
@@ -34,8 +72,6 @@ No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
 Next: settle evaluator; then route its findings and the independent visual failure,
 and transfer checks/runtime only after direct positive cleanup.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 

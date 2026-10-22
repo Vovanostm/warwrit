@@ -9,6 +9,35 @@ requests.
 
 ## Unreleased
 
+### Settle sizing evaluation and release bounded teardown repair — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: independent evaluator REWORK at `97c3e000`.
+  Default day/night manual first death through victory, real terminal Restart,
+  Editor/reentry and finite geometry/input checks pass; short native
+  1366 × 768 / 125% figure/contact readability remains defective. New comparison
+  and journey captures exist; exact historical state, all-overlay pairs and ten
+  original baseline rows remain incomplete. Local full report:
+  uix-w4-scale/.orca/uix-w4-scale/eval-1.md.
+- Exact failed task/dispatch/result recorded before release/ack. Coordinator
+  directly verified 19 recorded PIDs absent, two ports clear, no play.pid and
+  clean tracked tree. Full absolute visual critic 2 now reads the new image
+  packet only. Source `989669ef` stays frozen at 298/300; both ordinary failed
+  reworks and the consumed supplemental allowance remain. No further source
+  round, acceptance waiver or #179/#214 completion.
+- Previously allocated #285 supplemental global-hook exit-status repair now
+  owns the sole checks/DB/runtime slot, task_2d0f34212d50 / ctx_a47bc6d7642f.
+  Only global setup and its real lifecycle regression may change; preserve any
+  earlier nonzero status and the original cleanup error. Original 2/2 history,
+  <=300 source lines, ordinary audit and fresh Tier L retained. Historical
+  encounter-null cause UNPROVEN; matched hosted <=20% timing NOT_MEASURED and
+  five full CI NOT_RUN remain mandatory. #268 waits; no parallel heavy checks.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and existing
+  [sizing specification](docs/wiki/battlefield-test-maps.md) retain the result.
+  Main CI 39751131136 at `ff2f5f96` SUCCESS. No merge: 0 merged PRs with playable
+  proof this tick. Coordinator game tests/typecheck/validate/browser/full gates
+  NOT_RUN; prior 9/9 and 73 tests are reviewed evidence, not new executions.
+  No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+
 ### Record independent sizing visual blocker — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: full independent absolute visual critique
