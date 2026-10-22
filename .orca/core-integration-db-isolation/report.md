@@ -407,3 +407,58 @@ blocker and original hosted timing/five-CI/Tier L requirements remain unresolved
 Proposed CURRENT_PLAN/wiki: record replacement source head and fresh author
 shutdown proof, preserve both previous rounds, request independent new-head review,
 and retain separately owned encounter diagnosis. Shared records remain read-only.
+
+### Final rework settlement and positive cleanup
+
+- Source commit **`83372b0b`**, `test: retain client errors through database closure
+  (#285)`, contains exactly the helper, lifecycle tests and appended report.
+  Normal pre-commit refreshed focused coverage against the private PG allocation
+  and passed the main-based audit: zero new dead-code, complexity or duplication
+  findings. No bypass, threshold change, push or external write. The audit retains
+  its existing syntactic-attribution warning, not a new source finding.
+- Server typecheck, strict ES2023/NodeNext scripts/config typecheck, changed-file
+  ESLint and Prettier all **PASS**. Final explicit `pnpm check:changes` against
+  origin/main with measured real-PG coverage **PASS**, zero new findings.
+- With PostgreSQL stopped/removed, `bash scripts/orca-validate.sh` at `83372b0b`
+  exited **0**, **9/9 PASS**: ancestry, clean tree, scope, packages, typecheck,
+  format, lint, related tests and audit. Total issue scope **211/300 source
+  additions/deletions**, excluding tests/docs. Private copies of every validator
+  log are in rework-2-evidence/validate-*.log. Its related tests are **1 PASS /
+  14 SKIP** without DB, ordinary coverage rounded 0% (1/25,858 statements); these
+  skips are not fresh DB acceptance. The separate **15/15 real-PG** result above
+  is the lifecycle proof. Full migration suite was not run in this rework.
+- Playwright CLI session `warwrit-285-rework2`: default mill battle, unchanged
+  map/roster/seed, **6 controlled / 6 opposing**. Actual viewport 1440×900;
+  fresh `rework-2-evidence/mill-day.png` and `mill-night.png` both visually read
+  and PNG dimensions independently confirmed **1440×900**. Clicked Night Scene,
+  then Defend: archer yielded to commander. End Turn activated spearman; own
+  DOM readbacks retained. HUD/initiative/resources and tested inputs readable.
+  Only console error favicon.ico 404; Babylon WebGL2 initialized. Ordinary smoke,
+  no visual acceptance or new persistent JOIN/victory/effects proof claimed.
+- Final SQL **before** Compose removal: **owned_databases=0, owned_sessions=0,
+  remaining_admin_sessions=0**. Query includes all non-system databases except
+  this private instance's source database, not just a name prefix. Saved SQL and
+  readback: rework-2-evidence/cleanup.sql and sql-cleanup.log. Compose down exited
+  0, removed the declared container/network/volume only. Final label-filtered
+  container/network/volume inventories all exited 0 with empty output.
+- Browser close exited **0**; `orca-play.sh stop` exited **0 / STOPPED**. Guarded
+  native inspection identified the exact keepalive tail **7977** under owned
+  shell **7640**; terminated that tail only, attached runtime settled **143**.
+  Final exact native process readback: **136/136 recorded owned PIDs absent**.
+  All **14** recorded ports have no listener (lsof exit 1, empty output):
+  **23065, 25065, 32803, 50292, 50299, 50899, 50905, 51621, 51629, 52514,
+  52527, 52540, 52565, 52573**. Detailed result: rework-2-evidence/final-cleanup.json.
+  Recorded sets include sampled check/commit/validation/browser/runtime children;
+  short-lived unsampled historical processes are not claimed exhaustively tracked.
+  No owned active runtime or disposable database resources remain.
+- Documentation closeout: appended only this owning report, checked actual scoped
+  diff, read back new sections, preserved all previous reports/evidence. Proposed
+  shared entries above remain for the coordinator. This final report-only commit
+  follows the source commit with normal hooks; source is unchanged after validation.
+
+Handoff: assigned lifecycle shutdown rework locally succeeded at source
+`83372b0b`, normal commit/audit/validate and positive cleanup complete. Overall
+**#285 acceptance remains blocked** by the untouched encounter terminal-effects
+failure and remaining original independent Tier L/hosted timing/five-CI gates.
+Coordinator owns diagnosis, shared records and any publication. No push, merge,
+deployment or external mutation was performed; no new full-suite run allocated.
