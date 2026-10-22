@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Merge accepted session/editor extraction and resume contracts — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`: coordinator records accompany the next
+  one-issue continuation; #269 source implementation remains NOT_RUN.
+  [PR #294](https://github.com/Vovanostm/warwrit/pull/294) / #268 is MERGED as
+  `7444199d` at exact head `68b10aac`: green hosted CI, scope 256/300,
+  independent Tier U ACCEPT `46514ddb` and coordinator validator 9/9 PASS.
+  [Retained contract, verdict and day/night playable proof](docs/engineering/evidence/qa-hooks-session-editor/README.md)
+  supersede the older pending-merge status; all #269 AND #262 final gates remain.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) rewrites its single status
+  block with the actual owner scope: #269 source-only contract live on fresh
+  merged main; #295 complete contract accepted, implementation waits the
+  exclusive #293 evaluator. #293 visual BLOCKED_ENV and material scores of 1
+  remain unaccepted. #285 timing is NOT_MEASURED; #272 failed CI still blocks.
+- Issue #268 closed and relabelled done; its clean worktree had no unpushed
+  commits before Orca removal. Exact GitHub/Orca readbacks and scope check PASS;
+  new main CI is in progress. No new game tests/browser/full suites ran this
+  tick; performance NOT_MEASURED. No new rule/API/protocol/replay/schema,
+  migration, dependency or setup contract change. One merged PR with playable
+  proof this tick; this continuation branch is not a merged #269 result.
+
 ### Publish independent session and editor proof — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-session-editor`, [PR #294](https://github.com/Vovanostm/warwrit/pull/294), #268: owner-requested #262/#231 extraction
