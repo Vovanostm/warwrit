@@ -15,12 +15,13 @@ requests.
   change after visual-1 scene integration 1 — focus-only overhead badge reservation,
   milder initial-frame span (0.86), night unit emissive darkened (far mode no longer
   brighter), HUD opening margins, dock compaction, no clearHover on HUD resize.
-- Source budget 300/300 against main (tests excluded). Focused framing/scene tests
-  and typecheck PASS. Independent visual-4 scores every applicable criterion ≥2 at
-  AC1 short/125 including night value/palette; E1/E2/E3 archival inputs remain
-  required for full ACCEPT (E2 exact clipboard and E3 `c62ad2d0` before rows still
-  missing after search). Hover-after-dock-resize drops fixed by not clearing hover
-  on ResizeObserver.
+- Source budget **290/300** against main (tests excluded). Focused framing/scene
+  tests and typecheck PASS. Independent visual-4 scores every applicable criterion
+  ≥2 at AC1 short/125 including night value/palette; E1 on/off pairs captured on
+  rework head. E2 exact `codex-clipboard-6235d07a…` PNG/state remains **NOT_FOUND**
+  after bounded workspace/evidence/codex/GitHub search; E3 `c62ad2d0` before rows
+  **NOT_RUN** until baseline capture. Hover-after-dock-resize drops fixed by not
+  clearing hover on ResizeObserver.
 - No rules/protocol/replay/schema/migration/dependency/art catalogue change.
 
 ### Publish independent session and editor proof — 2026-10-22, PUBLISHED
