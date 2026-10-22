@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Record recovered main CI without claiming a repair — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`: coordinator records only. Native main
+  [CI 39780175546](https://github.com/Vovanostm/warwrit/actions/runs/39780175546),
+  attempt 2 at unchanged `7444199d`, is SUCCESS. Preserve attempt 1's terminal
+  disposition failure and P0 #285; cause remains UNPROVEN, no repair claimed.
+- Read-only diagnosis advisory distinguishes the throw from a normal-return
+  leadership wait and the older null assertion. Three residual branches remain
+  hypotheses; selected encounter/company, ruleset, unit statuses and exact error
+  need an isolated trace before any fixture/policy correction. Guard retained.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) keeps one status block and
+  actual owner scope. Native #293 evaluator remains live and exclusive;
+  #269/#295 accepted contracts await handback. PR #292 timing remains
+  NOT_MEASURED, all original gates retained. No label transition, new worker or
+  merge; 0 merged PRs with playable proof. Daily work already complete.
+- Scoped diff, plan check and normal Markdown commit hook are the only local
+  checks for these records; new game/browser/full suites NOT_RUN. No setup,
+  API/wiki, game-rule/protocol/replay/schema/migration/dependency change.
+  Published continuation records accompany #269; its implementation is pending.
+
 ### Record main-red retry and accept the menu contract — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu-controls`: coordinator-only records correct the

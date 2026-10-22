@@ -5,7 +5,7 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
-This tick: 0 merged PRs with playable proof; unrelated merges held for main red.
+This tick: 0 merged PRs with playable proof; every candidate retains its own gates.
 Prior #294 / #268 merge `7444199d` retained; #268 remains done.
 Proof: docs/engineering/evidence/qa-hooks-session-editor/README.md.
 #269 complete five-section contract accepted; native succeeded worker settled.
@@ -17,18 +17,20 @@ It remains sole local checks/browser/runtime owner; no competing work granted.
 Visual round 1 BLOCKED_ENV: scene integration 1, night values 1; unaccepted.
 All #293/#179 E1/E2/E3 and absolute scores >=2 stay required; no waiver.
 #179 failed-round history retained; #214 source stays frozen.
-#295 contract accepted; build/setup/checks wait handback and main-red priority.
+#295 contract accepted; build/setup/checks wait exclusive #293 handback.
 #285 / PR #292 unchanged `cf6a6fb5`: five hosted candidate passes retained.
 Three matched complete-command timing pairs and median <=1.20x NOT_MEASURED.
 #272 / PR #287 retains failed encounter CI and original gates; no merge.
 Main CI `39780175546`, attempt 1 at `7444199d`, FAILED in bridge v5 integration.
 Observed TERMINAL_DISPOSITION_EVIDENCE_MISSING at executor.ts:625 → test:4149.
 Cause UNPROVEN; reuse P0 #285, separate observed failure from old null assertion.
-One failed-job rerun requested; attempt 2 running at readback. Hold unrelated merges.
+One failed-job retry completed: attempt 2 SUCCESS, same `7444199d`; cause not fixed.
+Read-only diagnosis names three residual branches; exact selected branch UNPROVEN.
+Keep the terminal-evidence guard; isolated trace needed before any repair.
 Daily metrics/scout/triage/digest already complete; no repeat.
 New coordinator gameplay/full suites NOT_RUN; performance NOT_MEASURED.
 No game-rule/API/protocol/replay/schema/migration/dependency change.
-Next: main retry/diagnosis, #293 evaluation/cleanup, then next exclusive writer.
+Next: #293 evaluation/positive cleanup, then next exclusive writer; timing still blocked.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
