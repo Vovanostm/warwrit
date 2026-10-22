@@ -7,29 +7,29 @@ Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 evaluator3 local ACCEPT at `d02e2b4f`: fresh15 lifecycle PASS,
-one complete native60/60 PASS; SQL proves eight migrated clones/default overlap
-and disposal. Mill day/night move/bow/end-turn/round7 victory sampled.
-Historical eval2 terminal-effects null remains unresolved; cause UNPROVEN.
-Reviewer3 REWORK: global-only teardown rejection may leave CLI exit0;
+#285 evaluator 3 local ACCEPT at `d02e2b4f`: fresh 15 lifecycle PASS,
+one complete native 60/60 PASS; SQL proves eight migrated clones/default overlap
+and disposal. Mill day/night move/bow/end-turn/round 7 victory sampled.
+Historical eval 2 terminal-effects null remains unresolved; cause UNPROVEN.
+Reviewer3 REWORK: global-only teardown rejection may leave CLI exit 0;
 source risk UNEXECUTED, needs a bounded real global-only child-Vitest probe.
-Original2/2 source rounds exhausted; NO third source attempt authorized.
+Original 2/2 source rounds exhausted; NO third source attempt authorized.
 Hosted matched <=20% timing NOT_MEASURED; five full CI NOT_RUN.
 Exact evaluator settlement recorded/acked/released; coordinator directly verified
-27 recorded PIDs absent,10ports clear and empty labelled Docker inventories.
+27 recorded PIDs absent, 10 ports clear and empty labelled Docker inventories.
 #285 source stays committed/pushed `83372b0b`, records head `d02e2b4f`; no PR.
 #179 existing supplemental allowance now allocated to `task_3c736b835ddd`:
-one shared-projection recovery, sole web builder/exclusive checks/runtime.
-Source `0638d7be`, current scope244/300; add vitals/scenery projection propagation
-and owned scene/terrain wiring/tests. Original2round history is not reset.
-All original AC/DoD,80px,32px vitals,30px threshold and full TierV retained.
-Short-viewport readability/night1 and incomplete original proof stay unresolved.
-#214 frozen pending179; #268 waits its web turn; final269 AND26220/15 retained.
-#272/PR287 failed CI; #274/#280 REWORK; none meets merge gates.
+dispatch `ctx_13a40baae66c`, sole web builder/exclusive checks/runtime.
+Source `0638d7be`, current scope 244/300; add vitals/scenery projection propagation
+and owned scene/terrain wiring/tests. Original two-round history is not reset.
+All original AC/DoD, 80 px, 32 px vitals, 30 px threshold and full Tier V retained.
+Short-viewport readability/night 1 and incomplete original proof stay unresolved.
+#214 frozen pending #179; #268 waits its web turn; final #269 AND #262 component 20/15 retained.
+#272 / PR #287 failed CI; #274/#280 REWORK; none meets merge gates.
 Lanes already covered; daily work complete, no duplicate metrics/scout/digest.
 No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
 Coordinator game tests/typecheck/runtime/validate NOT_RUN this tick.
-Next:179 finite correction; then285 global-only reproduction and fallback decision.
+Next: #179 finite correction; then #285 global-only reproduction and fallback decision.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
