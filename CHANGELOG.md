@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Publish first-viewport combat Start proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, #271: the existing Start action and
+  readiness/error feedback now precede the editor. Frozen source `f98040f9`,
+  36 source additions plus removals excluding tests; launch/reset guards retained.
+- Independent Tier U ACCEPT: real round-8 mill and round-10 deserter victories,
+  first viewport/default/preset/result return, actual draft/request equality,
+  keyboard focus/Enter, invalid and duplicate-pending guards; 1440 × 900 day/night,
+  bounded 1366 × 768 fit. Runtime/browser cleanup positively confirmed.
+  [Contract, full verdict and evaluator captures](docs/engineering/evidence/uix-editor-primary-start/README.md).
+- Coordinator validator exit 0, 9/9 PASS, nine related tests PASS; normal audit
+  PASS with five inherited findings retained. No duplicate test rerun this tick.
+  Hosted CI and merge pending after publication; 0 merged PRs with playable proof so far.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records sole core/check-slot
+  handoff to #282 and preserved #272/#267 dependencies. Full verify/stress/migrations/
+  production build NOT_RUN locally; performance NOT_MEASURED. Full scene/art/M1
+  acceptance unclaimed. No API/setup/wiki/rule/protocol/replay/renderer change.
+
 ### Validate visible editor Start and schedule independent proof — 2026-10-22, PUBLISHED
 
 - `Vovanostm/codex-uix-start-action-271`, [#271](https://github.com/Vovanostm/warwrit/issues/271):

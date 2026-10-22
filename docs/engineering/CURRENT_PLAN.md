@@ -2,39 +2,34 @@
 
 ## Pipeline status — 2026-10-22
 
-Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
-Queue: epic #217 and existing local overrides; no new milestone.
-This tick: 0 merged PRs with playable proof; merge NOT_RUN.
-#271 implementing → review: normal source commit `f98040f9`, 3 owned files,
-36 source additions plus removals; sole web builder settled and released
-(no owned resource). Exact native result/report/clean commit matched before ack.
-Existing single Start/reset/feedback group now precedes the long editor;
-ready feedback uses the existing start guard, normal flow and keyboard focus.
-Try: `/combat-lab`, scrollY=0, default mill or loaded deserter preset;
-Start, play to result, return to editor. Existing mouse/keyboard guards remain.
-Coordinator validate exit 0, all 9 gates PASS, 9 related tests PASS; scope 36.
-Normal audit PASS; 5 inherited findings and styling advisories retained.
-Local contract/report/shots: `.orca/codex-uix-start-action-271/` in its
-own `codex-uix-start-action-271` worktree; source frozen at `f98040f9`.
-Independent Tier U: task `task_b9107798fb76`, dispatch `ctx_5f841ceaf482`;
-source review may run now; browser/runtime waits for the coordinator permit.
-#272 remains implementing; its live sole core builder `task_51028a34338a`
-now holds the exclusive checks/DB slot after #271 validation/runtime cleanup.
-Two local mutation proofs and five real parallel PG-suite passes are pending;
-its one-file WIP is preserved. No concurrent test/build/runtime jobs allowed.
-Next: settle #272 and confirm owned-resource cleanup, then grant #271 runtime
-permit; full independent Tier U ACCEPT is required before #271 PR publication.
-#267 staged two-file candidate and recovery budget retained; then #268/#269.
-Final component cyclomatic ≤20 AND cognitive ≤15 stays on #269 AND #262;
-remaining #263 stays after R2; #231 remains open. No acceptance waiver.
-Core #225 retains log prerequisite; other ready slices retain dependencies.
-Daily metrics/scout/digest already complete; no duplicate daily work.
-Other open PRs retain existing authority; no unrelated merge attempted.
-Source/records published on `Vovanostm/codex-uix-start-action-271` for continuation.
-No rule, protocol, replay, renderer, migration, dependency or setup change.
-Independent browser acceptance, full verify/stress/migrations/build NOT_RUN;
-performance NOT_MEASURED. Builder journeys do not replace independent proof.
+Queue: #217 and existing local overrides; no new milestone.
+#271: independent Tier U ACCEPT, frozen source `f98040f9`; proof published for PR.
+[Contract, verdict and fifteen evaluator captures](evidence/uix-editor-primary-start/README.md).
+Start/readiness now precede the editor; original launch/reset guards retained.
+Try `/combat-lab`, seed 20261009: Start at scrollY=0, Tab/Enter, complete mill,
+return to editor, load deserters and launch by mouse; invalid/pending guards hold.
+Actual round-8 mill and round-10 deserter victories, day/night at 1440 × 900;
+1366 × 768 bounded fit, genuine request/draft equality, result-return/reset proven.
+Exact native evaluator task/dispatch/result/full verdict matched before ack;
+settled evaluator released: no owned resource. Runtime/browser cleanup positive.
+Coordinator validator exit 0, 9/9 PASS, nine related tests PASS; scope 36.
+Normal audit PASS, five inherited findings retained. No redundant checks this tick.
+Hosted CI and merge remain pending; 0 merged PRs with playable proof.
+#282 accepted contract advances to sole core builder and exclusive checks/DB slot.
+Baseline PostgreSQL deadlock DETAIL must precede bounded test-only isolation.
+Dedicated proof checkout at unchanged #272 commit `37f35c6b` keeps delivery separate;
+only #282 source commits enter it for five ordinary parallel eight-file passes.
+#272 stays ready after #282; original five-pass/mutation/Tier L gates retained.
+#267 two staged files and budgets preserved, waits #271; #268 follows it.
+#269 AND #262 final component 20/15 limits remain; #263/#231 stay open.
+Other ready slices retain prerequisites; #225 still waits log work.
+Snapshot reused for unchanged PRs/queue; infrastructure owner gates unchanged.
+Daily metrics/scout/triage/digest already complete; no duplicate daily work.
+Full verify/stress/migrations/production build NOT_RUN locally;
+performance NOT_MEASURED; full scene/art/M1/balance acceptance unclaimed.
+Next: publish #271 proof/PR, inspect hosted CI; consume #282 builder next tick.
 Wrapper releases its own lease when this single tick returns.
 
 ## Dated history
