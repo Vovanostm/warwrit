@@ -25,5 +25,13 @@ export default async function setup(project: TestProject): Promise<() => Promise
   } catch (error) {
     return disposeAfterFailure(run, error);
   }
-  return () => disposeDatabases(run);
+  return async () => {
+    try {
+      await disposeDatabases(run);
+    } catch (error) {
+      // Vitest logs global teardown errors without failing an otherwise green CLI.
+      if (!process.exitCode || process.exitCode === '0') process.exitCode = 1;
+      throw error;
+    }
+  };
 }

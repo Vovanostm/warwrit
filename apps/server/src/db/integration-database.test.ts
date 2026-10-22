@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createServer, connect, type Socket } from 'node:net';
 import { promisify } from 'node:util';
@@ -287,6 +287,146 @@ describe('owned integration databases', () => {
       });
     },
   );
+  it.skipIf(source === undefined)(
+    'rethrows the identical real global disposal error and sets the process status',
+    async () => {
+      vi.stubEnv('DATABASE_URL', source);
+      let run: DatabaseRun | undefined;
+      const project = {
+        globTestFiles: async () => ({ testFiles: [] }),
+        provide: (_key: string, value: { run: DatabaseRun }) => {
+          run = value.run;
+        },
+      } as unknown as TestProject;
+      const teardown = await setup(project);
+      const lifecycle = await vi.importActual<Lifecycle>(
+        '../../../../scripts/integration-database.js',
+      );
+      let original: unknown;
+      const spy = vi.spyOn(lifecycle, 'disposeDatabases').mockImplementation(async (input) => {
+        try {
+          await disposeDatabases(input);
+        } catch (error) {
+          original = error;
+          throw error;
+        }
+      });
+      const previous = process.exitCode;
+      const readOnly = new URL(source!);
+      readOnly.searchParams.set('options', '-c default_transaction_read_only=on');
+      run!.sourceUrl = readOnly.href;
+      process.exitCode = 0;
+      try {
+        const failure = await teardown().catch((error: unknown) => error);
+        expect(spy).toHaveBeenCalledOnce();
+        expect(failure).toBeInstanceOf(AggregateError);
+        expect(failure).toBe(original);
+        expect((failure as AggregateError).errors[0].code).toBe('25006');
+        expect(process.exitCode).toBe(1);
+      } finally {
+        process.exitCode = previous;
+        spy.mockRestore();
+        run!.sourceUrl = source!;
+        await disposeDatabases(run!);
+        await expectAbsent(source!, run!.databases);
+      }
+    },
+  );
+  it.skipIf(source === undefined).each([0, 1, 7])(
+    'propagates real global-only cleanup failure to the CLI (status %s)',
+    async (status) => {
+      const evidence = resolve(
+        process.env['INTEGRATION_LIFECYCLE_EVIDENCE_DIRECTORY'] ??
+          '.orca/core-integration-db-isolation',
+      );
+      await mkdir(evidence, { recursive: true });
+      const directory = await mkdtemp(`${evidence}/global-probe-${status}-`);
+      const adminRun = createDatabaseRun(source);
+      const adminUrl = await createEmptyDatabase(adminRun);
+      const owned = createDatabaseRun(source);
+      try {
+        await writeGlobalProbe(directory, status);
+        let code = 0;
+        const result = await promisify(execFile)(
+          process.execPath,
+          [
+            resolve('node_modules/vitest/vitest.mjs'),
+            'run',
+            '--config',
+            `${directory}/vitest.config.mjs`,
+            '--reporter=verbose',
+            '--disableConsoleIntercept',
+          ],
+          { env: { ...process.env, DATABASE_URL: adminUrl } },
+        ).catch((error) => {
+          code = error.code;
+          return error as { stdout: string; stderr: string };
+        });
+        await writeFile(`${directory}/stdout.log`, result.stdout);
+        await writeFile(`${directory}/stderr.log`, result.stderr);
+        await writeFile(`${directory}/exit.json`, JSON.stringify({ code }));
+        const observation = JSON.parse(await readFile(`${directory}/observation.json`, 'utf8'));
+        owned.databases = observation.names.map((name: string) => {
+          const url = new URL(source!);
+          url.pathname = `/${name}`;
+          return url.href;
+        });
+        expect(observation.failedTests).toBe(0);
+        expect(observation.sessions).toEqual([]);
+        expect(observation.databases).toEqual([{ datname: observation.names[0] }]);
+        expect(result.stdout.match(/\[integration-db\] disposed/gu) ?? []).toHaveLength(2);
+        if (status !== 0) {
+          const failure = JSON.parse(await readFile(`${directory}/failure.json`, 'utf8'));
+          expect(failure).toEqual({
+            name: 'AggregateError',
+            message: 'Integration database cleanup failed',
+            codes: ['25006', '25006', '25006'],
+            exitCode: status,
+          });
+          expect(result.stderr).toContain(
+            'error during close AggregateError: Integration database cleanup failed',
+          );
+        } else {
+          expect(result.stderr).toBe('');
+          await expectAbsent(source!, owned.databases);
+        }
+        expect(code).toBe(status);
+      } finally {
+        // An independent connection to the unchanged working source recovers only
+        // this child ledger, even when its own admin database default is read-only.
+        await withClient(source!, async (client) => {
+          const names = owned.databases.map((url) => new URL(url).pathname.slice(1));
+          const before = (
+            await client.query('select datname from pg_database where datname = any($1)', [names])
+          ).rows;
+          await client.query(
+            `ALTER DATABASE ${client.escapeIdentifier(new URL(adminUrl).pathname.slice(1))} RESET default_transaction_read_only`,
+          );
+          await disposeDatabases(owned);
+          await expectAbsent(source!, owned.databases);
+          await writeFile(
+            `${directory}/recovery.json`,
+            JSON.stringify({
+              before,
+              databases: (
+                await client.query('select datname from pg_database where datname = any($1)', [
+                  names,
+                ])
+              ).rows,
+              sessions: (
+                await client.query(
+                  'select datname, pid from pg_stat_activity where datname = any($1)',
+                  [names],
+                )
+              ).rows,
+            }),
+          );
+        });
+        await disposeDatabases(adminRun);
+        await expectAbsent(source!, adminRun.databases);
+      }
+    },
+  );
   it
     .skipIf(source === undefined)
     .each(['pass', 'test-failure', 'collection-failure', 'cleanup-failure'])(
@@ -531,4 +671,72 @@ async function terminateOnClose(sourceUrl: string) {
       await new Promise<void>((resolve) => server.close(() => resolve()));
     },
   };
+}
+
+async function writeGlobalProbe(directory: string, status: number): Promise<void> {
+  await writeFile(
+    `${directory}/vitest.config.mjs`,
+    `export default ${JSON.stringify({
+      test: {
+        include: [`${directory}/*.integration.test.ts`],
+        globalSetup: [`${directory}/global.ts`],
+        setupFiles: [resolve('scripts/integration-file-setup.ts')],
+        maxWorkers: 2,
+        sequence: { hooks: 'stack' },
+      },
+    })}`,
+  );
+  const fixture = `
+    import { Client } from 'pg';
+    import { afterAll, expect, it } from 'vitest';
+    const client = new Client({ connectionString: process.env.DATABASE_URL });
+    afterAll(() => client.end());
+    it('uses a migrated private clone', async () => {
+      await client.connect();
+      expect((await client.query('select count(*)::int as n from schema_migrations')).rows[0].n).toBe(14);
+      await client.query('create table global_probe (id text primary key)');
+      await client.query("insert into global_probe values ('same-key')");
+      expect((await client.query('select id from global_probe')).rows).toEqual([{ id: 'same-key' }]);
+    });
+  `;
+  for (const side of ['left', 'right'])
+    await writeFile(`${directory}/${side}.integration.test.ts`, fixture);
+  await writeFile(
+    `${directory}/global.ts`,
+    `
+    import { writeFileSync } from 'node:fs';
+    import { Client } from 'pg';
+    import setup from ${JSON.stringify(resolve('scripts/integration-global-setup.ts'))};
+    export default async function globalProbe(project) {
+      const teardown = await setup(project);
+      const { run } = project.getProvidedContext().integrationDatabases;
+      const names = run.databases.map(url => new URL(url).pathname.slice(1));
+      return async () => {
+        const admin = new Client({ connectionString: process.env.DATABASE_URL });
+        await admin.connect();
+        try {
+          const databases = (await admin.query('select datname from pg_database where datname = any($1)', [names])).rows;
+          const sessions = (await admin.query('select datname, pid from pg_stat_activity where datname = any($1)', [names])).rows;
+          const failedTests = project.vitest.state.getCountOfFailedTests();
+          writeFileSync(${JSON.stringify(`${directory}/observation.json`)}, JSON.stringify({ names, databases, sessions, failedTests }));
+          if (failedTests || sessions.length || databases.length !== 1 || databases[0].datname !== names[0])
+            throw new Error('Global-only probe requires passing tests and disposed clones');
+          if (${status} !== 0) {
+            const name = (await admin.query('select current_database() as name')).rows[0].name;
+            await admin.query('ALTER DATABASE ' + admin.escapeIdentifier(name) + ' SET default_transaction_read_only = on');
+          }
+        } finally { await admin.end(); }
+        if (${status} === 7) process.exitCode = 7;
+        try { await teardown(); }
+        catch (error) {
+          writeFileSync(${JSON.stringify(`${directory}/failure.json`)}, JSON.stringify({
+            name: error.name, message: error.message,
+            codes: error.errors.map(item => item.code), exitCode: process.exitCode,
+          }));
+          throw error;
+        }
+      };
+    }
+  `,
+  );
 }

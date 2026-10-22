@@ -360,8 +360,7 @@ production code or dependency is mocked or replaced.
 
 Fresh evidence directory: `.orca/core-integration-db-isolation/rework-2-evidence/`.
 Resource declaration `resources.md` preceded creation of NEW private PG17 project
-`warwrit-285-rework2`, exact container/network/volume named there. Loopback PG port
-32803. No retained/default database, URLs or secrets were used in logs.
+`warwrit-285-rework2`, exact container/network/volume named there. Loopback PG port 32803. No retained/default database, URLs or secrets were used in logs.
 
 - First-edit audit after test edit PASS (upstream-based audit); first helper edit
   audit against origin/main PASS, zero new findings. Final main-based audit below
@@ -375,8 +374,8 @@ Resource declaration `resources.md` preceded creation of NEW private PG17 projec
   both new shutdown cases and all prior lifecycle/hook/lost-reply regressions.
   Command: explicit private INTEGRATION_LIFECYCLE_DATABASE_URL and fresh evidence
   directory; `pnpm exec vitest run apps/server/src/db/integration-database.test.ts
-  --coverage --mode coverage --coverage.include 'scripts/integration*.ts'
-  --coverage.include 'apps/server/src/db/migrator.ts' --reporter verbose`.
+--coverage --mode coverage --coverage.include 'scripts/integration*.ts'
+--coverage.include 'apps/server/src/db/migrator.ts' --reporter verbose`.
   Real V8 coverage: statements 85.71% (108/126), branches 80% (24/30), functions
   88.88% (32/36), lines 85.96% (98/114). Real child hook coverage is not aggregated.
 - Typecheck/lint/format/audit, normal commits, validation, day/night smoke and
@@ -411,7 +410,7 @@ and retain separately owned encounter diagnosis. Shared records remain read-only
 ### Final rework settlement and positive cleanup
 
 - Source commit **`83372b0b`**, `test: retain client errors through database closure
-  (#285)`, contains exactly the helper, lifecycle tests and appended report.
+(#285)`, contains exactly the helper, lifecycle tests and appended report.
   Normal pre-commit refreshed focused coverage against the private PG allocation
   and passed the main-based audit: zero new dead-code, complexity or duplication
   findings. No bypass, threshold change, push or external write. The audit retains
@@ -462,3 +461,101 @@ Handoff: assigned lifecycle shutdown rework locally succeeded at source
 failure and remaining original independent Tier L/hosted timing/five-CI gates.
 Coordinator owns diagnosis, shared records and any publication. No push, merge,
 deployment or external mutation was performed; no new full-suite run allocated.
+
+## Allocated supplemental teardown repair — 2026-10-22
+
+This is the ONE previously allocated engineering supplemental pass, released by
+the coordinator after direct #179 evaluator cleanup confirmation. Original failed
+rework 2/2 history is retained, without reset or acceptance waiver. Starting clean
+branch `Vovanostm/core-integration-db-isolation`, HEAD `d02e2b4f`, prior source
+`83372b0b`. Read complete contract including amendment, global-teardown-probe.md
+and actual executable probe/exit artifacts, review-3.md, eval-3.md, this complete
+report, live #285 body/comments, AGENTS, current status/changelog, ADR-0003 and
+technology handoff. Context/delivery skills applied within the narrower worker
+allocation. Graph inventory points to a different checkout/older head; local
+source and installed pg/Vitest/Node typings are proof. No integration is needed
+against the existing local origin/main ancestor; no fetch/rebase/ref replacement.
+
+### Minimal repair and executable proof
+
+Only `scripts/integration-global-setup.ts` and the existing lifecycle test change.
+The returned teardown still awaits all-target disposal. On rejection it establishes
+exit 1 only when the process has no nonzero status, then rethrows the same caught
+object. No helper/file hook, production logic, original assertion, configuration,
+dependency, timeout, retry or default parallelism changes. Total branch source
+additions/deletions excluding tests/docs: **219/300** (previously 211).
+
+The tracked regression derives from the preserved actual global-only probe. Each
+child receives a separately owned empty admin database inside the NEW disposable
+PG17 project. Real setup migrates a template and creates two clones; real file
+hooks dispose both clones. Before injecting failure, SQL and Vitest state must
+prove passing tests, zero clone sessions and exactly the template remaining.
+Only then does real ALTER DATABASE enable read-only transactions for that child's
+admin database; neither the worker context nor run.sourceUrl is changed. Real
+DROP attempts reject for every ledger target with PG **25006**. The wrapper only
+records and rethrows the original aggregate; it does not assign a failure status.
+A separate preservation case establishes existing exit 7 before calling teardown.
+
+- RED before repair: control **exit 0**, actual global-only failure **exit 0**,
+  existing status case **exit 7**; 2 passing checks / 1 failing regression. The
+  failure's missing status assertion fails, while full child logs independently
+  retain the actual zero exit. Exact ledger recovery completed in every case.
+- GREEN after repair: **4 PASS / 15 selected-out**, exit 0. Real child exits
+  **0 / 1 / 7**, each with two passing tests and two real file disposals. Failure
+  objects retain AggregateError name/message and all three real 25006 errors.
+- Direct real-PG teardown check wraps (rather than replaces) the actual disposal
+  function, observes its original rejected object, asserts strict identity at
+  the teardown boundary, checks 25006 and exit 1, and restores process status.
+  No mock rejection/query/transaction supplies this proof.
+- Full focused lifecycle regression: **19 PASS / 0 SKIP**, exit 0, **9.52 s**.
+  Includes all 15 prior tests, lost committed CREATE replies, settled DROP/FATAL,
+  identical-key/destructive isolation, partial setup and four existing child-hook
+  scenarios. Focused V8 measurement only for lifecycle scripts/migrator supports
+  the ordinary audit: statements 112/130, branches 26/34, functions 32/36,
+  lines 102/118. Child-process coverage is not aggregated.
+
+New untracked evidence is private under
+`.orca/core-integration-db-isolation/supplemental-evidence/`: red-global and
+green-global stdout/stderr/exit, lifecycle-focused stdout/stderr/exit, and unique
+`global-probe-{0,1,7}-*` directories. Each retains generated config/fixtures, full
+child stdout/stderr, actual exit.json, SQL observation/ownership names, original
+cleanup diagnostic/status and exact-ledger recovery.json. Earlier evidence and
+verdicts are preserved. Disposable admin database defaults are reset through the
+unchanged working source connection; only exact recorded names are dropped.
+
+### Sequential focused checks and documentation closeout
+
+- First edit test audit PASS (upstream scope); first source-edit audit explicitly
+  against origin/main PASS, zero new findings. Fresh final audit follows below.
+- Server typecheck PASS. Initial script-only tsc invocation failed TS2664/TS2345
+  because its program omitted the file hook's vitest module import. Corrected
+  check includes the existing four lifecycle scripts plus Vitest config, as in
+  prior passes: strict ES2023/NodeNext typecheck PASS, no source correction needed.
+- Changed-file ESLint/Prettier, final ordinary audit and normal commit results
+  are recorded in settlement. No threshold/config/hook bypass is authorized.
+- Full verify, whole-repository coverage, stress, test:migrations, migration suite,
+  bootstrap, hosted CI and duplicate game/browser smoke: **NOT_RUN** in this pass.
+  Fresh independent Tier L and coordinator validation remain later gate owners.
+- Shared CHANGELOG/CURRENT_PLAN/wiki are coordinator-only and remain untouched;
+  this report is the owning documentation update, with proposal below.
+
+### Remaining original criteria / proposed coordinator record
+
+This locally repairs only the reproduced global-teardown CLI failure boundary;
+**#285 acceptance remains NOT_PROVEN**. Original failed rework history, reviewer-3
+REWORK and independent evaluator-3's bounded ACCEPT remain historical evidence
+until fresh Tier L reassessment. Earlier encounter terminal-effects-null failure
+remains unresolved, its cause **UNPROVEN**; no production fix is authorized here.
+Matched hosted <=20% timing **NOT_MEASURED**; three matched hosted samples and
+five full CI runs **NOT_RUN**, still mandatory. #272/#282 assertions/dispositions
+and original eight-file/default-parallelism requirements are retained.
+
+Proposed coordinator CHANGELOG/CURRENT_PLAN/wiki record: 2026-10-22,
+Vovanostm/core-integration-db-isolation, LOCAL, #285 allocated supplemental repair:
+returned global teardown preserves nonzero exit status, establishes failing status
+on real disposal rejection and rethrows its original error. New real global-only
+CLI control/failure/prior-status exits 0/1/7; focused real-PG lifecycle 19 PASS.
+Source scope 219/300, normal audit/commit required; no acceptance waiver. Retain
+original failed 2/2 history, historical null-effects cause UNPROVEN and hosted
+timing/five-CI requirements. Request fresh independent Tier L after positive
+resource cleanup. No push/PR/GitHub write, Orca command or subagent in this pass.
