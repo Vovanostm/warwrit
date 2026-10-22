@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Clarify existing replay compatibility proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: under delegated engineering authority,
+  distinguish programmatic historical replay reconstruction from the editor's
+  battle-draft import. Existing reader/export/test source confirms the boundary;
+  an invalid-format draft rejection is not a sizing regression. Check absent
+  tiles separately through the supported draft/scene or public projection path,
+  explicitly retaining unreachable UI proof and missing-tiles work as open.
+- No new import feature, ownership expansion, rework-budget reset or acceptance
+  waiver. Sole rework-1 builder remains live; original AC/DoD and full Tier V
+  remain. Author first-death/autoplay victory is advisory, not independent proof.
+  [Owning wiki](docs/wiki/battlefield-test-maps.md) and
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) record the decision.
+- This tick: 0 merged PRs with playable proof; snapshot PR #287 CI failure and
+  #274/#280 REWORK unchanged. Mail recorded before acknowledgement; exact native
+  builder liveness and clean branch read. New game tests/typecheck/browser/full
+  suites NOT_RUN; performance NOT_MEASURED. Daily work already complete.
+  Documentation-only change; runtime/API/replay/rule/schema contracts unchanged.
+
 ### Preserve remaining sizing defects during rework — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: coordinator processed two read-only advisory

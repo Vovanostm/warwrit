@@ -10,16 +10,16 @@ This tick: 0 merged PRs with playable proof; no acceptance waiver.
 #179 rework 1: sole builder `task_e0403f2dd2fc` / `ctx_f847a9fec5b8` is live.
 Try `/combat-lab` → default mill, seed 20261009 → Start before Overview;
 then supported editor near/far diagnostic, including genuine 1366 × 768 at 125%.
-Source `e56df630` retains full-field pan limits/apron during initial squad fit.
-Source reviewer closes that finding; author reports 60 stable samples per phase
-and a 12-row input matrix with 0 action POST and unchanged revision 4.
-These are advisory/author results; final-head coordinator validation NOT_RUN.
-Read-only visual advisory still scores short-screen silhouette/scene readability 1,
-night value 1; supported-editor ground distortion scores scene integration 0.
-Reported night inspection-card clipping has unproven cause and inherited status.
-Optical near-ground expansion is a source lead; pictured mesh/shader cause unproven.
-Coordinator directed measured geometry/composition technique correction to the
-existing builder; no accepted #184 hatch change or unowned HUD edit authorized.
+Source `1c199e94`; published records `f623336a` at initial tick readback.
+Author journey advisory: manual first death R3/rev56, then autoplay victory
+R10/rev187; not independent runtime acceptance. Source tree was clean.
+Coordinator decision: historical replay proof uses existing programmatic
+`projectCombatLabReplay` / `replayCombat`, not the editor draft importer.
+Use supported draft/scene entry or public projection fallback for absent tiles;
+missing-tiles proof remains open. No new replay-import feature or gate waiver.
+Verified reader/export/test source; new tests/browser/measurements NOT_RUN.
+Prior short-screen readability/night value 1 and diagnostic integration 0 remain
+unresolved; reported clipping and pictured mesh cause remain unproven.
 Retain original AC/DoD, base-frame W01 80 px, <=300 source lines and full Tier V.
 Full independent evaluator + absolute visual critic remain pending; no #179 PR.
 #214 source stays frozen; integrate accepted #179 before repeating its final gates.
