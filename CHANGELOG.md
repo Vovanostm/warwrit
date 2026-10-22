@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Publish independently reviewed rollback isolation — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, #282: test-only disposable database
+  isolates destructive rollback from ordinary concurrent identity/encounter
+  writers. Preserve writer/down blocking, SQLSTATE 55000, exact route/receipt
+  identities, complete retained clocks and migration/fresh-install assertions.
+  Source `961ff8e3` / `2557e2df`; integrated frozen head `d553215b`.
+- Fresh Tier D reviewer ACCEPT based on source and retained native evidence;
+  reviewer tests/runtime NOT_RUN. Author baseline identifies 0011 DROP versus
+  encounter INSERT lock cycle; five ordinary parallel eight-file runs each
+  PASS 60/60, zero skips; two deliberate lifecycle failures clean up. Normal
+  commits/audits PASS. Coordinator validate exit 0, 9/9 PASS; related tests
+  3 PASS/11 SKIP without DB URLs are not database acceptance.
+- [Contract, author report and independent verdict](docs/engineering/evidence/core-world-rollback-isolation/README.md)
+  accompany publication. Later commits only evidence/coordinator records;
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records hosted-CI/merge gates.
+  No merge or player-feature delivery claimed; 0 merged PRs with playable proof
+  this tick. #272 retains separate mutation/Tier L gates after #282; #271 waits
+  PR #283 CI; #267 WIP/budgets preserved; no duplicate daily work.
+- No production/auth/rule/replay/schema/released migration/setup/API change;
+  existing wiki contracts unchanged. Full verify/stress/migrations/browser
+  NOT_RUN here; performance NOT_MEASURED. Raw native logs remain local in the
+  slice worktree under `.orca/core-world-rollback-isolation/`.
+
 ### Validate rollback DB isolation and dispatch fresh review — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-world-rollback-isolation`, [#282](https://github.com/Vovanostm/warwrit/issues/282):
