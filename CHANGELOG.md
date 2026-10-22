@@ -9,6 +9,35 @@ requests.
 
 ## Unreleased
 
+### Validate frozen sizing and settle global teardown reproduction — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: ordinary integration of main `0f85a9d0`
+  at `41d42136`, with no source conflict. Frozen correction `989669ef` remains
+  298/300 source lines. Coordinator validator exit 0, all 9 gates and 73
+  related tests PASS. Independent evaluator and full visual critic are next;
+  original AC/DoD, missing baseline/rejected-state proof and material short-window
+  findings remain open. The preparation agent relays the owner's approval of
+  the same supplemental pass already consumed, not another source allowance.
+- #285's bounded real global-only probe at `d02e2b4f` confirms reviewer 3:
+  control and failure each pass 2 tests and exit 0, despite real PostgreSQL
+  cleanup 25006/AggregateError after successful file disposal in the failure case.
+  Complete local report: core-integration-db-isolation/.orca/core-integration-db-isolation/global-teardown-probe.md.
+  Coordinator directly verified 19 recorded PIDs absent, port 32885 clear and
+  empty project-labelled Docker inventories; exact settlement recorded/acked/released.
+- Coordinator fallback 4 decision under delegated engineering authority queues
+  ONE supplemental repair of global-hook failure exit propagation plus its real
+  lifecycle regression, after #179 runtime cleanup. Original failed 2/2 history,
+  <=300 source lines, ordinary audit and fresh Tier L retained. No source edit
+  or new repair run this tick. Historical encounter null cause UNPROVEN; matched
+  hosted <=20% timing NOT_MEASURED and five full CI NOT_RUN remain required.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and existing
+  [sizing checkpoint](docs/wiki/battlefield-test-maps.md) retain the boundaries.
+  #274 is now merged on GitHub; this tick did not verify its prior merge gates.
+  #214 frozen; #268 waits runtime; final #269 AND #262 20/15 acceptance unchanged.
+  No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+  Full verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
+  No PR merged by this tick: 0 merged PRs with playable proof.
+
 ### Preserve bounded projection correction and allocate teardown probe — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: ordinary source `989669ef` and handback
