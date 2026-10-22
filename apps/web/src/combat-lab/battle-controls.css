@@ -359,7 +359,7 @@
   right: 0;
   padding: 12px;
   display: grid;
-  grid-template-columns: repeat(4, var(--battle-icon-size));
+  grid-template-columns: repeat(4, 120px);
   gap: 8px;
   z-index: 15;
 }
@@ -629,6 +629,16 @@
 }
 .battle-skill-list {
   flex-wrap: wrap;
+}
+.battle-ability-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120px;
+}
+.battle-ability-slot > .battle-command-label {
+  font-size: 18px;
+  white-space: nowrap;
 }
 .battle-ability-slot .battle-action-cost {
   flex-direction: column;

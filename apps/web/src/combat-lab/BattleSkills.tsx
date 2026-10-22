@@ -13,6 +13,12 @@ interface Props {
 
 const targetReasons = new Set(['INVALID_TARGET', 'OUT_OF_RANGE', 'BLOCKED_LINE_OF_SIGHT']);
 
+function shortSkillName(skill: NonNullable<BattlePresentationView['skills']>[number]): string {
+  if (skill.skillId === 'aimed-shot') return 'Прицельный';
+  if (skill.skillId === 'armor-pressure') return 'Удар в броню';
+  return skill.name;
+}
+
 function unavailableSkillReason(
   view: BattlePresentationView,
   skill: NonNullable<BattlePresentationView['skills']>[number],
@@ -49,6 +55,7 @@ export function BattleSkills({ view, selectedSkillId, onSelectSkill, skillDisabl
           <CombatIcon name={skillIcons[skill.skillId]} />
           <b className="battle-skill-rank">{skill.rank}</b>
         </button>
+        <span className="battle-command-label">{shortSkillName(skill)}</span>
         <BattleCost cost={skill} />
         <span id={`skill-${skill.skillId}`} className="battle-command-tooltip" role="tooltip">
           <strong>

@@ -483,9 +483,16 @@ it('renders learned skills with ranks and canonical costs, plus overflow instead
     'aimed-shot',
     'rally',
   ] as const;
+  const skillNames = {
+    'shield-brace': 'Упор щитом',
+    'armor-pressure': 'Удар по броне',
+    'reach-thrust': 'Дальний укол',
+    'aimed-shot': 'Прицельный выстрел',
+    rally: 'Собраться',
+  };
   const skills = skillIds.map((skillId) => ({
     skillId,
-    name: skillId,
+    name: skillNames[skillId],
     rank: 2 as const,
     target: 'enemy' as const,
     minimumRange: 1,
@@ -517,9 +524,15 @@ it('renders learned skills with ranks and canonical costs, plus overflow instead
       onSelectHex={() => {}}
     />,
   );
-  expect(html).toContain('shield-brace · ранг 2');
+  for (const label of ['Упор щитом', 'Удар в броню', 'Дальний укол', 'Прицельный', 'Собраться'])
+    expect(html).toContain(`<span class="battle-command-label">${label}</span>`);
+  for (const name of Object.values(skillNames)) {
+    expect(html).toContain(`aria-label="${name} · ранг 2"`);
+    expect(html).toContain(`${name} · ранг 2</strong>`);
+  }
   expect(html).toContain('2 ОД · 7 сил');
   expect(html).toContain('Ещё +1');
+  expect(html).toContain('class="battle-skills-overflow" hidden=""');
   expect(html).not.toContain('ещё не реализован');
 });
 
