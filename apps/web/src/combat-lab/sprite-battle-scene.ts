@@ -408,15 +408,10 @@ export async function mountSpriteBattleScene(
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
   const groundYFor = (hex: CombatLabHex) =>
     (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
-  const fieldVitals = mountBattleFieldVitals(
-    canvas,
-    scene,
-    (id) => {
-      callbacks.onSelectUnit(id);
-      focusUnit(id);
-    },
-    CAMERA_ELEVATION,
-  );
+  const fieldVitals = mountBattleFieldVitals(canvas, scene, (id) => {
+    callbacks.onSelectUnit(id);
+    focusUnit(id);
+  }, CAMERA_ELEVATION);
   const heightLabels: Mesh[] = [];
   initialTiles
     .filter((tile) => tile.height > 0)
@@ -1257,7 +1252,7 @@ export async function mountSpriteBattleScene(
     minZ: Math.min(...projectedField.map((point) => point.z)),
     maxZ: Math.max(...projectedField.map((point) => point.z)),
   };
-  // fallow-ignore-next-line complexity -- mount-local framing closure; coverage is via public scene/framing tests
+  // fallow-ignore-next-line complexity
   const overviewBounds = (units = currentView.units, fullField = true) => {
     const { viewport, safeTop, safeBottom } = cameraOpening();
     const figures = units
@@ -1617,21 +1612,20 @@ function addLabel(
   collection.push(label);
 }
 
-/** Subjects for the first frame only; proximity here is presentation-space distance. */
 export function initialFrameUnits(view: BattlePresentationView) {
-  const standing = view.units.filter((unit) => unit.status === 'active');
-  const allies = standing.filter((unit) => unit.sideId === view.controlledSideId);
+  const standing = view.units.filter((u) => u.status === 'active');
+  const allies = standing.filter((u) => u.sideId === view.controlledSideId);
   if (!allies.length) return standing;
-  const enemies = standing.filter((unit) => unit.sideId !== view.controlledSideId);
+  const enemies = standing.filter((u) => u.sideId !== view.controlledSideId);
   const nearest = allies.map((ally) => {
-    const origin = AXIAL_TO_WORLD(ally.position);
-    const distance = (unit: BattleUnit) => {
-      const point = AXIAL_TO_WORLD(unit.position);
-      return Math.hypot(point.x - origin.x, point.z - origin.z);
-    };
-    return [...enemies].sort((a, b) => distance(a) - distance(b))[0];
+    const o = AXIAL_TO_WORLD(ally.position);
+    return [...enemies].sort((a, b) => {
+      const pa = AXIAL_TO_WORLD(a.position);
+      const pb = AXIAL_TO_WORLD(b.position);
+      return Math.hypot(pa.x - o.x, pa.z - o.z) - Math.hypot(pb.x - o.x, pb.z - o.z);
+    })[0];
   });
-  return standing.filter((unit) => allies.includes(unit) || nearest.includes(unit));
+  return standing.filter((u) => allies.includes(u) || nearest.includes(u));
 }
 
 export function spriteFrameMapBounds(
@@ -1640,11 +1634,12 @@ export function spriteFrameMapBounds(
   figures: readonly ReturnType<typeof spriteFigureBounds>[],
 ): SceneMapBounds {
   if (fullField || !figures.length) return field;
+  const sin = Math.sin(CAMERA_ELEVATION);
   return {
-    minX: Math.min(...figures.map((figure) => figure.minX)),
-    maxX: Math.max(...figures.map((figure) => figure.maxX)),
-    minZ: Math.min(...figures.map((figure) => figure.bottom)) / Math.sin(CAMERA_ELEVATION),
-    maxZ: Math.max(...figures.map((figure) => figure.top)) / Math.sin(CAMERA_ELEVATION),
+    minX: Math.min(...figures.map((f) => f.minX)),
+    maxX: Math.max(...figures.map((f) => f.maxX)),
+    minZ: Math.min(...figures.map((f) => f.bottom)) / sin,
+    maxZ: Math.max(...figures.map((f) => f.top)) / sin,
   };
 }
 
@@ -1654,18 +1649,16 @@ export function spriteFigureBounds(
   project: (point: { x: number; y: number; z: number }) => { x: number; z: number },
 ) {
   const point = AXIAL_TO_WORLD(unit.position);
+  const sin = Math.sin(CAMERA_ELEVATION);
+  const cos = Math.cos(CAMERA_ELEVATION);
   const corners = spriteGeometry(spriteForUnit(unit)).corners.map(({ x, up }) =>
-    project({
-      x: point.x + x,
-      y: groundY + up * Math.cos(CAMERA_ELEVATION),
-      z: point.z + up * Math.sin(CAMERA_ELEVATION),
-    }),
+    project({ x: point.x + x, y: groundY + up * cos, z: point.z + up * sin }),
   );
   return {
-    minX: Math.min(...corners.map((corner) => corner.x)),
-    maxX: Math.max(...corners.map((corner) => corner.x)),
-    bottom: Math.min(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
-    top: Math.max(...corners.map((corner) => corner.z)) * Math.sin(CAMERA_ELEVATION),
+    minX: Math.min(...corners.map((c) => c.x)),
+    maxX: Math.max(...corners.map((c) => c.x)),
+    bottom: Math.min(...corners.map((c) => c.z)) * sin,
+    top: Math.max(...corners.map((c) => c.z)) * sin,
   };
 }
 

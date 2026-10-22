@@ -49,7 +49,6 @@ export function battleFrameBounds({
 }
 
 /** Battle-local containment admits the overview, including its off-centre HUD opening. */
-/** Milder initial pull keeps short openings readable without cropping the squad. */
 export function tightenInitialFrame(bounds: GroundBounds, factor = 0.86): GroundBounds {
   const mid = (bounds.minZ + bounds.maxZ) / 2;
   const half = ((bounds.maxZ - bounds.minZ) / 2) * factor;
