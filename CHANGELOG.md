@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Reconcile sizing recovery cap without resetting failed work — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: mailbox requested reconciliation of delegated
+  engineering fallback with the exhausted two-round cap. Coordinator retained
+  the existing supplemental-recovery question: failure is not audit-only, the
+  slice has one issue and 244/300 source lines, and projection propagation alone
+  leaves original composition and integrated proof unresolved. No independently
+  deliverable child is established; no duplicate issue, cap reset or third source
+  attempt. Existing candidate `0638d7be`, original AC/DoD and full Tier V remain.
+- #285 keeps its sole live builder and exclusive checks/hooks/DB/runtime.
+  Source read at clean `0b0c44eb` confirms inventory is appended after CREATE;
+  lost-success-response cleanup remains an UNEXECUTED advisory, forwarded to the
+  existing author within the original partial-setup-failure contract. No new
+  production/auth/migration ownership or acceptance waiver.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and the existing
+  [wiki sizing checkpoint](docs/wiki/battlefield-test-maps.md) record the decision
+  and remaining limits. Two status messages recorded before acknowledgment;
+  no slice-state transition, settlement, new worker, eligible merge or daily rerun.
+  This tick: 0 merged PRs with playable proof. Game tests/typecheck/runtime/validate
+  NOT_RUN; performance NOT_MEASURED. Process listing denied by sandbox, no new
+  cleanup claim. Markdown format, scoped diff, local links and native handoff
+  readback checked at publication. No setup/API/game-rule/replay/schema change.
+
 ### Settle final sizing recovery and refill isolated-DB lane — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: exact final rework-2 failed settlement accepted;
