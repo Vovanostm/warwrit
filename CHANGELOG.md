@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Record independent sizing visual blocker — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w4-scale`, #179: full independent absolute visual critique
+  at `97c3e000` returned BLOCKED_ENV. Scene integration scored 1 at
+  1366 × 768 / native 125% in day/night; other inspected style criteria scored
+  at least 2. Repeated small-window readability failure requires a technique
+  change; missing images alone cannot resolve that finding.
+- Current-head equal-height comparison, exact historical rejected archer state,
+  all-ground-overlays on/off pairs and ten original baseline rows remain open.
+  Complete local report: uix-w4-scale/.orca/uix-w4-scale/visual-1.md.
+  Exact failed task/dispatch/result matched; settlement recorded before release
+  and acknowledgment. Capture requirements forwarded to the existing evaluator.
+- Frozen source `989669ef`, scope 298/300 and both failed ordinary reworks plus
+  the consumed supplemental pass remain unchanged. Evaluator 1 retains the
+  exclusive checks/browser/runtime slot; no further source round or acceptance.
+  #285 supplemental repair and #268 wait for its positive cleanup; #214 frozen.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and the existing
+  [sizing specification](docs/wiki/battlefield-test-maps.md) record this result.
+- This tick: 0 merged PRs with playable proof. Main's newest CI at `ff2f5f96`
+  was in progress; no merge attempted. Prior validation 9/9 and 73 related tests
+  retained, not rerun. New game tests/typecheck/validate/browser/full gates
+  NOT_RUN; performance NOT_MEASURED. No setup/API/rule/protocol/replay/schema/
+  migration/dependency contract changed. Documentation-only normal commit/push.
+
 ### Validate frozen sizing and settle global teardown reproduction — 2026-10-22, PUBLISHED
 
 - `Vovanostm/uix-w4-scale`, #179: ordinary integration of main `0f85a9d0`

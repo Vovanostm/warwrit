@@ -4,36 +4,35 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
-Queue: epic #217 and the existing one-issue local slices; exactly one tick.
+Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#179 source `989669ef`, handback `bcb7ccc8`, scope 298/300 remains frozen.
-Ordinary main `0f85a9d0` integration at `41d42136`, no source conflict.
-Coordinator validator exit 0: all 9 gates PASS, 73 related tests PASS.
+#179 remains in review; visual critic 1 settled BLOCKED_ENV at `97c3e000`.
+Full absolute rubric: scene integration 1 at 1366 × 768 / native 125%, day/night;
+other inspected style scores at least 2. Repeated failure requires a technique change.
+Missing current-head comparison, exact rejected archer state, all-overlay pairs
+and ten original baseline rows remain open; extra images alone do not fix score 1.
+Local report: uix-w4-scale/.orca/uix-w4-scale/visual-1.md.
+Exact failed settlement recorded, released and acknowledged; inputs forwarded.
+Evaluator 1 task_19db80c1bbb3 / ctx_6c1b16438ad4 remains live/exclusive;
+only its existing evaluation/captures/cleanup continue. No source round allocated.
+Source `989669ef` stays frozen, scope 298/300; normal reworks 2/2 and
+consumed supplemental history retained. Full original AC/DoD and Tier V required.
+Prior coordinator validation at `41d42136`: exit 0, 9/9 and 73 related tests PASS.
 Try default mill 6×6, seed 20261009, Start before camera input, day/night.
-Next: independent evaluator and full absolute visual critic at integrated head;
-only the evaluator owns checks/browser/runtime; visual critic reads images only.
-Original AC/DoD, baseline rows, rejected-state and short-viewport findings remain.
-Preparation agent relays owner approval of the SAME already-used supplemental pass;
-this does not allocate another pass or reset either failed ordinary rework.
-Terminal/tooltip/log advisory is partial image evidence, not full Tier V ACCEPT;
-Restart/Editor clicks and reentry still require actual independent execution.
-#285 global-only probe confirms reviewer 3: 2 tests PASS, real file disposal,
-then PG 25006 cleanup AggregateError with child exit 0; control also exits 0.
-Coordinator directly verified 19 PIDs absent, port 32885 clear, Docker inventories empty.
-Fallback 4 is engineering process under the owner's delegation: queue ONE bounded
-supplemental global-teardown exit-status repair, preserving the exhausted 2/2 history.
-Only existing global hook and lifecycle regression ownership; <=300 source lines,
-normal audit and fresh Tier L; no source attempt before #179 runtime cleanup.
+This is an unfinished visual result; short-viewport readability remains defective.
+#285 bounded global-hook repair waits positive evaluator runtime cleanup;
+original 2/2 history, <=300 source lines, normal audit and fresh Tier L retained.
 Historical encounter null cause UNPROVEN; hosted <=20% timing NOT_MEASURED;
-five full CI NOT_RUN. Reviewer REWORK remains; #272/#282 assertions retained.
-#214 source frozen pending #179; #268 waits checks/runtime and its web turn.
+five full CI NOT_RUN. #272 / PR #287 lacks green CI; no merge eligibility.
+#214 source frozen pending #179; #268 waits its web/checks/runtime turn.
 Final #269 AND #262 component 20/15 retained; no parent acceptance.
-#272 / PR #287 CI failure remains; #280 REWORK. #274 merged on GitHub as `0f85a9d0`;
-merge authority/gates were not checked by this tick; main CI was in progress.
+Main CI `39751131136` at `ff2f5f96` was in progress at this tick's read.
+No PR eligible for merge; PR #280's prior REWORK retained from the supplied state.
 Lanes covered; daily metrics/scout/triage/digest already complete.
-No game-rule/setup/API/protocol/replay/schema/migration/dependency change.
-Full verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
-Next: settle #179 full Tier V; then bounded #285 repair and unchanged hosted proof.
+New game tests/typecheck/validate/browser/full gates NOT_RUN this tick.
+No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+Next: settle evaluator; then route its findings and the independent visual failure,
+and transfer checks/runtime only after direct positive cleanup.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
