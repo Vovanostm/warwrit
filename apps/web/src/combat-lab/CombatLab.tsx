@@ -687,6 +687,7 @@ export function CombatLabEditor(props: CombatLabEditorProps) {
   return (
     <section aria-label="Настройка боя">
       {loading && <p role="status">Загружаются бойцы и карты…</p>}
+      <CombatLabEditorActions {...props} />
       {catalog && draft && (
         <>
           <BattleEditor
@@ -702,7 +703,6 @@ export function CombatLabEditor(props: CombatLabEditorProps) {
         </>
       )}
       {!loading && !catalog && !notice && <p role="alert">Редактор боя недоступен.</p>}
-      <CombatLabEditorActions {...props} />
     </section>
   );
 }
@@ -718,15 +718,14 @@ function CombatLabEditorActions({
   onStart,
 }: CombatLabEditorProps) {
   const draftErrors = catalog && draft ? validateBattleDraft(draft, catalog) : [];
+  const startDisabled =
+    !catalog || !draft || loading || starting || unresolved || draftErrors.length > 0;
   return (
-    <>
-      <button
-        type="button"
-        onClick={onStart}
-        disabled={!catalog || !draft || loading || starting || unresolved || draftErrors.length > 0}
-      >
+    <div className="combat-lab-actions" role="group" aria-label="Запуск боя">
+      <button type="button" className="combat-lab-start" onClick={onStart} disabled={startDisabled}>
         {starting ? 'Начинаем бой…' : 'Начать бой'}
       </button>
+      {!startDisabled && <p role="status">Бой готов к запуску.</p>}
       {draftErrors.length > 0 && (
         <ul className="battle-editor-errors">
           {draftErrors.map((error) => (
@@ -742,6 +741,6 @@ function CombatLabEditorActions({
         Вернуть исходную карту и состав
       </button>
       {unresolved && <p role="alert">{notice}</p>}
-    </>
+    </div>
   );
 }
