@@ -78,6 +78,7 @@ it.each([
   if (message) expect(html).toContain(message);
   else expect(html).not.toContain('Редактор боя недоступен.');
   expect(html).not.toContain('Название боя');
+  expect(html).not.toContain('Бой готов к запуску.');
   expect(buttons(tree).map(({ props }) => props.disabled)).toEqual([true, resetDisabled]);
 });
 
@@ -89,6 +90,7 @@ it('renders the valid draft and forwards edits, start and exact catalog reset', 
   expect(html).toContain('Название боя');
   expect(html).toContain('Мельничная тварь предупреждает о тяжёлом ударе.');
   expect(html).not.toContain('battle-editor-errors');
+  expect(html).toContain('Бой готов к запуску.');
   expect(buttons(tree).map(({ props }) => props.disabled)).toEqual([false, false]);
   const battleEditor = elements(tree).find((element) => element.type === BattleEditor)!;
   const next = { ...catalog.defaultBattle, seed: 20261009 };
@@ -102,6 +104,7 @@ it('renders the valid draft and forwards edits, start and exact catalog reset', 
 it('keeps invalid draft feedback and blocks only start', () => {
   const tree = editor({ draft: { ...catalog.defaultBattle, name: '' } });
   expect(renderToStaticMarkup(tree)).toContain('Укажите название боя длиной до 80 символов.');
+  expect(renderToStaticMarkup(tree)).not.toContain('Бой готов к запуску.');
   expect(buttons(tree).map(({ props }) => props.disabled)).toEqual([true, false]);
 });
 
@@ -116,11 +119,13 @@ it.each([
     true,
   );
   expect(html).toContain(label);
+  expect(html).not.toContain('Бой готов к запуску.');
   if ('notice' in patch) expect(html).toContain(`<p role="alert">${patch.notice}</p>`);
   else expect(html).not.toContain('role="alert"');
 });
 
 it('blocks start while loading even with a retained catalog and draft', () => {
+  expect(renderToStaticMarkup(editor({ loading: true }))).not.toContain('Бой готов к запуску.');
   expect(buttons(editor({ loading: true })).map(({ props }) => props.disabled)).toEqual([
     true,
     false,

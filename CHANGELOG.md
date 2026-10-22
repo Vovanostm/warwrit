@@ -23,6 +23,97 @@ requests.
   round and maps REJECT/BLOCKED to REWORK/BLOCKED_ENV.
 - Checks: Prettier. Effect NOT_MEASURED.
 
+### Revalidate visible Start against current main — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, [PR #283](https://github.com/Vovanostm/warwrit/pull/283):
+  ordinary merge of current main `fc5d642d`; changelog-only conflict resolved
+  retaining both histories. No source conflict or change to accepted UI code
+  `f98040f9`; later changes are evidence, records and the main merge.
+- Coordinator revalidation at integrated `98cbb077`: exit 0, 9/9 PASS,
+  nine related tests PASS. Scope remains 36 source lines, excluding tests.
+  Tier U ACCEPT and independent played proof remain valid for unchanged code.
+  Final hosted CI and expected-head merge remain pending; 0 merges this tick.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #282's clean author
+  commits and pending independent Tier D review, #272's separate acceptance,
+  and retained #267 WIP. Attributed agent scope expansion is recorded locally
+  as unverified authority; no new milestone activated. No API/setup/wiki change.
+  Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+
+### Integrate current merge authority before Start delivery — 2026-10-22, LOCAL
+
+- `Vovanostm/codex-uix-start-action-271`, [PR #283](https://github.com/Vovanostm/warwrit/pull/283):
+  merge current main `fc5d642d` by ordinary merge before the expected-head gate.
+  Preserve both changelog histories; only the changelog needed conflict resolution.
+  No source conflict or change to accepted `f98040f9` UI behavior.
+  Revalidation and hosted CI for the integrated candidate remain pending.
+
+### Publish first-viewport combat Start proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, #271: the existing Start action and
+  readiness/error feedback now precede the editor. Frozen source `f98040f9`,
+  36 source additions plus removals excluding tests; launch/reset guards retained.
+- Independent Tier U ACCEPT: real round-8 mill and round-10 deserter victories,
+  first viewport/default/preset/result return, actual draft/request equality,
+  keyboard focus/Enter, invalid and duplicate-pending guards; 1440 × 900 day/night,
+  bounded 1366 × 768 fit. Runtime/browser cleanup positively confirmed.
+  [Contract, full verdict and evaluator captures](docs/engineering/evidence/uix-editor-primary-start/README.md).
+- Coordinator validator exit 0, 9/9 PASS, nine related tests PASS; normal audit
+  PASS with five inherited findings retained. No duplicate test rerun this tick.
+  Hosted CI and merge pending after publication; 0 merged PRs with playable proof so far.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records sole core/check-slot
+  handoff to #282 and preserved #272/#267 dependencies. Full verify/stress/migrations/
+  production build NOT_RUN locally; performance NOT_MEASURED. Full scene/art/M1
+  acceptance unclaimed. No API/setup/wiki/rule/protocol/replay/renderer change.
+
+### Validate visible editor Start and schedule independent proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, [#271](https://github.com/Vovanostm/warwrit/issues/271):
+  source `f98040f9` moves the single existing Start/reset/feedback group before
+  the long editor, retaining guards, current draft and transport. Guarded ready
+  feedback, normal-flow spacing and keyboard focus address first-screen
+  discoverability. Only two editor functions, guard assertions and action CSS;
+  36 source additions plus removals. No mobile layout or new game rule.
+- Coordinator validator exit 0, all 9 gates PASS, 9 related tests PASS, scope 36.
+  Normal commit/audit PASS; 5 inherited findings and styling advisories retained.
+  Full builder contract/report and clean commit matched exact native settlement
+  before acknowledgment and release (no owned resource). Builder default/preset/
+  result-return, actual payload, pending/invalid, keyboard and day/night journeys
+  are local author evidence; independent Tier U acceptance remains pending.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records evaluator
+  `task_b9107798fb76`, frozen source and the serial resource handoff: #272 gets
+  exclusive checks/DB while #271 evaluator reads source; its browser permit
+  follows exact #272 settlement and cleanup. Contract/report/shots remain local
+  under `.orca/codex-uix-start-action-271/` in the dedicated worktree.
+  Source and records are published for continuation; PR/merge NOT_RUN and
+  0 merged PRs with playable proof this tick. #267 WIP/budgets preserved;
+  #269/#262 final 20/15 limits remain. Daily work already complete.
+- No protocol, replay, renderer, migration, dependency, setup or API change;
+  existing wiki contracts unchanged. Full verify/stress/migrations/build NOT_RUN;
+  performance NOT_MEASURED. No independent player acceptance claimed.
+
+### Merge session callbacks and assign visible editor Start — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271` records the pipeline tick and the
+  accepted #271 contract assignment after merging [PR #281](https://github.com/Vovanostm/warwrit/pull/281).
+  #273 is MERGED as `857b0491` at expected head `c872eab4`, closed/done.
+  Tier U ACCEPT, coordinator validate exit 0 (9/9 PASS), source scope 137,
+  final-head clean-checkout CI and PR scope PASS; later commits were evidence
+  and shared records only. No unresolved review or blocked label at merge.
+- [Owning contract, verdict and played day/night proof](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+  remain tracked. Local evidence retained; clean fully-pushed worktree removed.
+  This tick delivered 1 merged PR with playable proof; it preserves behavior
+  and does not claim a new player feature or full-M1 acceptance.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names #271's bounded sole web
+  builder task and P0 #272's disjoint core contract reservation. #271 starts
+  from merged main; #272 source/DB work awaits accepted contract and resource
+  handoff. #267 staged WIP/budgets and #269 AND #262 final gate are preserved.
+  Both implementations and their independent gates remain pending.
+- Documentation closeout: ordinary scoped diff, formatting and tracked links
+  checked; no setup/API/wiki contract change. No repeated game suite for this
+  records-only commit; full verify/stress/migrations/build NOT_RUN locally,
+  performance NOT_MEASURED. Daily work is already complete, not duplicated.
+  No rules, replay, protocol, renderer, dependency or migration change.
+
 ### Owner merge gate removed — 2026-10-21, PUBLISHED
 
 - `claude/owner-gate-off`: owner decision «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr». AGENTS.md hard rule 1,
