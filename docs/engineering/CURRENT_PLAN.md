@@ -6,33 +6,35 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#268 fallback1 settled FAILED: ordinary commit audit 28/23; no implementation commit.
-Staged CombatLab.tsx / CombatLab.test.tsx source 170/300 preserved at `65d7466b`.
-Author 51 tests/typecheck/lint/format PASS; validator clean-tree FAIL.
-Fresh mounted/day-night/Tier U NOT_RUN; previous smoke remains historical only.
-Coordinator decision: repair the B/C engineering allocation before another build.
-#268 planning: contract task_2a4c749917d7 / ctx_751671f2fd9c native live.
-Only local contract.md writes; no source/checks/runtime permission.
-Original contract-before-allocation-repair.md, staged code and reports retained.
-Rework1 and consumed audit fallback1 unchanged; no bypass or extra recovery.
-Final CombatLab20/15 stays on BOTH #269 AND #262; original mounted proof mandatory.
-#293 waits #268 delivery/source release and positive runtime handback.
-#179 source `989669ef` and failed rounds frozen; #214 waits integration.
+#268 fallback1 FAILED normal commit audit 28/23; staged170/300 preserved, no commit.
+Read-only repair accepted: allocate ONLY pure autoplay button + four disabled outputs.
+Full original proof in contract-before-allocation-repair.md retained; estimate261–285 only.
+#268 task_d854a68fe213 / ctx_157a800f31f3 native live, sole web writer/checks/runtime.
+Ordinary rework2/last round; fallback1 consumed, no reset/bypass/threshold waiver.
+Normal commit/audit, <=300 and fresh mounted/day-night/Tier U remain mandatory.
+Residual #269 menu/panel/close callbacks and final20/15 on BOTH #269 AND #262 remain.
+#293 native live source-only contract task_2f395cc0bafb / ctx_b2b952fc35c3.
+Fresh clean-main uix-179-desktop-composition worktree; no rejected parent code copied.
+Coordinator removed engineering after268 for this disjoint source boundary.
+Its builder still waits explicit sole web/checks/runtime grant; no implementation now.
+Direct cleanup: all15 recorded PIDs absent,23492/25492clear,no play.pid before handback.
+Original #293/#179 full AC/DoD/Tier V/E1/E2/E3 and <=300 unchanged.
+#179 source `989669ef`, failed rounds and #214 integration gates stay frozen.
 #285 / PR #292 `cf6a6fb5`: full hosted CI attempts1+2 SUCCESS, consecutive2/5.
-Attempt3 native IN_PROGRESS, same SHA, one full attempt at a time.
-Three matched baseline/candidate timing samples, median<=1.20x: NOT_MEASURED.
+Attempt3 native IN_PROGRESS, same SHA; five passes and matched timing remain required.
+Three matched baseline/candidate samples, median<=1.20x: NOT_MEASURED.
 Original Tier L/AC and historical-null-cause limits retained; no merge.
 #272 / PR #287 retains failed encounter CI and original mutation/five-pass/Tier L gates.
-#290 / PR #291 `a198ef98`: independent Tier D reviewer task_2969e4d8c192 live.
-Dedicated pipeline-owner-scope-290 checkout; source-only local verdict.
-Reviewer ACCEPT and coordinator setup/validator required; green CI alone insufficient.
+#290 / PR #291 source `a198ef98`: fresh independent Tier D ACCEPT.
+Coordinator setup PASS, validator exit0/all6 applicable gates PASS, scope2/300.
+Only CHANGELOG/CURRENT_PLAN records follow; final-head hosted CI still required.
+CURRENT_PLAN now has one status block and actual owner delegation; rejection guard deferred.
 Main newest CI `39759317709` at `65d7466b` SUCCESS.
-Two read-only workers; local checks/runtime unassigned. No uncovered eligible backlog.
+Two live workers: #268 writer/runtime and #293 read-only contract; no competing heavy gate.
 Daily metrics/scout/triage/digest already complete; no repeat.
-One active status block; historical tick-prompt quotations are not owner scope.
-Coordinator game checks/browser/full gates NOT_RUN; performance NOT_MEASURED.
-No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
-Next: consume #268 contract/#290 review; continue PR #292 hosted proof/timing.
+Coordinator gameplay/browser/full suites NOT_RUN; performance NOT_MEASURED.
+No game-rule/API/protocol/replay/schema/migration/dependency change.
+Next: #268 measured result, #293 contract, PR #291 final CI and PR #292 hosted proof/timing.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history

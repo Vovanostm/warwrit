@@ -29,6 +29,12 @@ requests.
   Documentation checks only; no coordinator game checks or player acceptance.
   This tick: 0 merged PRs with playable proof. No setup/API/rule/replay/schema/
   migration/dependency change; performance NOT_MEASURED.
+- Later in the same tick: the repaired contract was accepted; only the pure
+  autoplay button and four disabled outputs moved from inactive C's allocation
+  to B. Ordinary rework2/last round is native live, not another fallback grant.
+  #293 prepares its disjoint source-only contract ahead; its writer waits the
+  sole web/runtime slot. PR #291 fresh independent D ACCEPT and coordinator
+  validator exit0/all6 applicable gates PASS; final-head hosted CI still required.
 
 ### Resume failed initialization extraction through bounded audit fallback — 2026-10-22, PUBLISHED
 
