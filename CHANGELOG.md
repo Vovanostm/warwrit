@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Validate fresh OIDC proof and allocate independent gates — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-oidc-count-isolation-272`, [#272](https://github.com/Vovanostm/warwrit/issues/272):
+  retain original test source `37f35c6b` at integrated `c8b6c308`. Fresh wrong-issuer
+  account and owned-account session mutations each fail the intended count
+  equality and restore; five ordinary parallel eight-file PostgreSQL runs each
+  PASS 60/60, zero skips. Native cleanup reports no owned containers, volumes or
+  networks; tracked source clean. Earlier failed proof remains dated history.
+- Coordinator validation exit 0, all 9 gates PASS. Related-test skips without DB
+  URLs do not replace author real-DB acceptance. Fresh independent Tier L reviewer
+  `task_eb9a0c4c1d9e` and evaluator `task_76a6f1551b25` are live; no verdict yet.
+  Evaluator reads evidence first; runtime waits #214 positive cleanup/settlement.
+  #214 receives its task-specific checks/runtime permit after #272 cleanup and
+  validation; sole web source writer, full Tier V unchanged. Its advisory source
+  review is not visual acceptance. #267 PR #286 remains on final-head CI;
+  #274/#280 retain REWORK; 0 merged PRs with playable proof this tick.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exact continuation.
+  Local contract/report/scripts/native logs stay under `.orca/core-oidc-count-isolation/`
+  in the dedicated #272 checkout. Only coordinator records change in this commit;
+  Markdown hook skips code audit by its existing rule. No production/auth/schema/
+  released migration/dependency/setup/API/wiki contract change. Full local suites,
+  build and performance remain NOT_RUN / NOT_MEASURED.
+
+
 ### Integrate rollback prerequisite before OIDC proof resume — 2026-10-22, LOCAL
 
 - `Vovanostm/codex-oidc-count-isolation-272`, #272: ordinary integration of
