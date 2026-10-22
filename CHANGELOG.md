@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Publish accepted selection and autoplay extraction — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-selection-autoplay`, [PR #286](https://github.com/Vovanostm/warwrit/pull/286),
+  #267: independent Tier U ACCEPT at `de77fa3d`, source frozen `9ccabbd9`.
+  Extraction `b2520b1b` and callback regression relocation `cc98765f` preserve
+  controls, refs, 550/750 ms timers, guards and transport. Scope 159/300.
+- [Contract, complete author history, independent verdict and eleven JPEG captures](docs/engineering/evidence/qa-hooks-selection-autoplay/README.md)
+  accompany publication. Coordinator validate exit 0, 9/9 PASS; 49 related tests,
+  callback hits 10/17 after ordinary refresh. Evaluator independently passed
+  49 focused tests and genuine day/night mill victories, real mounted
+  selection/reset, 549+1 timing, React-only unmount/listener cleanup,
+  held-response/replacement and reachable failure/admission states.
+- Opponent-view browser row unreachable through ordinary synchronous routes:
+  current source + existing production-policy regression, per documented
+  proof-format decision. Internal ref ordering remains source-only where stated;
+  baseline console comparison NOT_RUN, initial favicon 404 retained without
+  inherited-error claim. Owned runtime/browser stopped; tracked tree clean.
+- Only evidence and coordinator records follow gated head. Hosted final-head CI
+  and merge pending; 0 merged PRs with playable proof so far this tick.
+  #272 retains mutation/five real parallel-pass/Tier L gates; #214 next web slot.
+  #268/#269/#262/#263/#231 remain open; final component 20/15 still required on
+  #269 AND #262. Infrastructure #274/#280 unresolved REWORK blocks merge.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation.
+  No setup/API/wiki/rule/replay/schema/migration/dependency change; full local
+  verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED.
+
 ### Retain initial sizing evidence and sequence existing P0 — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`: coordinator processed two preparation
