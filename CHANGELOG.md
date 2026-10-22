@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Integrate rollback prerequisite before OIDC proof resume — 2026-10-22, LOCAL
+
+- `Vovanostm/codex-oidc-count-isolation-272`, #272: ordinary integration of
+  merged #282/main `00117aa1`; only coordinator CHANGELOG/CURRENT_PLAN conflicts,
+  both histories retained. OIDC source `37f35c6b` unchanged, original scoped
+  account/session assertions and default parallelism retained. Required fresh
+  mutations, five real parallel runs, normal audit and independent Tier L
+  remain NOT_RUN in this continuation; no proof waiver or budget reset.
+- #267 PR #286 has independent Tier U ACCEPT and published day/night proof;
+  final-head hosted CI pending, 0 merged PRs with playable proof this tick.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records next allocation;
+  #214 keeps full Tier V and #269 AND #262 keep final component 20/15.
+  Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
+  No production/auth/schema/released migration/setup/API/wiki change.
+
 ### Merge rollback isolation and queue independent workflow review — 2026-10-22, PUBLISHED
 
 - `Vovanostm/codex-oidc-count-isolation-272`: coordinator closeout after
@@ -89,6 +104,202 @@ requests.
   full verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED. Daily
   work already complete; 0 merged PRs with playable proof this tick. No schema,
   migration, rule, replay, protocol, dependency, API or wiki contract change.
+
+### Merge visible Start and integrate rollback candidate — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`: [PR #283](https://github.com/Vovanostm/warwrit/pull/283)
+  merged as `df540c2c` at expected `3a97b679`; #271 closed/done. Final-head CI,
+  scope and independent Tier U proof PASS; 1 merged PR with playable proof this tick.
+  [Contract/verdict/captures](docs/engineering/evidence/uix-editor-primary-start/README.md)
+  remain tracked; local proof retained and fully-pushed clean worktree removed.
+- Ordinary merge of that main into [PR #284](https://github.com/Vovanostm/warwrit/pull/284)
+  preserves both record histories; only CHANGELOG/CURRENT_PLAN conflicted.
+  Accepted #282 test source unchanged. Integrated validator at `5b6a3e6a`
+  exit 0, all 9 gates PASS; final-head hosted CI pending;
+  #272 keeps its own mutation/five-pass/Tier L gates. #267 WIP/budgets preserved;
+  bounded resume task `task_93e6f5312ecf` is live after both prerequisites merged.
+  #214 technical ownership ordering moves before inactive #198/#212; dedicated
+  read-only retained-contract refresh `task_cfa9df48704d`, no source/runtime.
+  Full original issue proof and visual rubric remain; builder waits #267.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
+  No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
+
+### Publish independently reviewed rollback isolation — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, #282: test-only disposable database
+  isolates destructive rollback from ordinary concurrent identity/encounter
+  writers. Preserve writer/down blocking, SQLSTATE 55000, exact route/receipt
+  identities, complete retained clocks and migration/fresh-install assertions.
+  Source `961ff8e3` / `2557e2df`; integrated frozen head `d553215b`.
+- Fresh Tier D reviewer ACCEPT based on source and retained native evidence;
+  reviewer tests/runtime NOT_RUN. Author baseline identifies 0011 DROP versus
+  encounter INSERT lock cycle; five ordinary parallel eight-file runs each
+  PASS 60/60, zero skips; two deliberate lifecycle failures clean up. Normal
+  commits/audits PASS. Coordinator validate exit 0, 9/9 PASS; related tests
+  3 PASS/11 SKIP without DB URLs are not database acceptance.
+- [Contract, author report and independent verdict](docs/engineering/evidence/core-world-rollback-isolation/README.md)
+  accompany publication. Later commits only evidence/coordinator records;
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records hosted-CI/merge gates.
+  No merge or player-feature delivery claimed; 0 merged PRs with playable proof
+  this tick. #272 retains separate mutation/Tier L gates after #282; #271 waits
+  PR #283 CI; #267 WIP/budgets preserved; no duplicate daily work.
+- No production/auth/rule/replay/schema/released migration/setup/API change;
+  existing wiki contracts unchanged. Full verify/stress/migrations/browser
+  NOT_RUN here; performance NOT_MEASURED. Raw native logs remain local in the
+  slice worktree under `.orca/core-world-rollback-isolation/`.
+
+### Validate rollback DB isolation and dispatch fresh review — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, [#282](https://github.com/Vovanostm/warwrit/issues/282):
+  source commits `961ff8e3` / `2557e2df` extract rollback phases and isolate
+  destructive test DDL in one disposable database. Only the owned world-route
+  integration test changes; production/auth/released migrations stay unchanged.
+  Native baseline identifies 0011 FK-table DROP versus encounter-command INSERT.
+- Builder evidence: focused real DB checks, two intentional failure-cleanup
+  probes, typecheck/format and both normal audits PASS; five consecutive
+  default-parallel eight-file runs each 60/60 PASS, zero skips, combined proof
+  `d118029f`. Native URL readback retains shared primary OIDC/company/encounter
+  and separate FIRST HUNT; all owned DB/client/container/volume/network cleanup
+  recorded. Author evidence does not substitute for the fresh reviewer.
+- Ordinary main integration `d553215b` preserves both changelog histories;
+  no source conflict. Coordinator validator exit 0, 9/9 PASS, scope 0 non-test
+  source lines. Related tests: 3 PASS / 11 SKIP without DB URLs, explicitly
+  separate from the builder's actual database runs. Fresh Tier D reviewer
+  `task_3458072eeedf` is live on that frozen head; no verdict or PR yet.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the exact handoff,
+  pending #283 final CI, preserved #267 WIP and independent #272 mutation/Tier L
+  gates. Local contract/report/proof: `.orca/core-world-rollback-isolation/`
+  in the dedicated worktree. Source and records published for continuation;
+  no #282 merge or player-feature completion claimed, 0 merges this tick.
+  Full verify/stress/migration suite/build/browser NOT_RUN for this Tier D;
+  test-helper complexity and performance NOT_MEASURED. No API/setup/wiki change.
+
+### Integrate current main for rollback isolation gates — 2026-10-22, LOCAL
+
+- `Vovanostm/core-world-rollback-isolation`, #282: ordinary merge of main
+  `fc5d642d` retains both changelog histories; only the changelog conflicted.
+  Accepted source commits `961ff8e3` and `2557e2df` are unchanged.
+  Coordinator validation and fresh Tier D review remain pending.
+
+### Accept rollback-isolation contract and preserve runtime ownership — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, [#282](https://github.com/Vovanostm/warwrit/issues/282):
+  coordinator accepted the complete read-only contract after exact native
+  Task/Dispatch/result readback. Shared destructive-DDL exposure is traced;
+  the actual deadlock cycle remains unproven. Local contract is
+  core-world-rollback-isolation/.orca/core-world-rollback-isolation/contract.md.
+- Proposed change owns only world/routes.integration.test.ts: isolate the
+  destructive rollback case, preserve all receipt/clock/locking assertions,
+  capture native deadlock diagnosis and require five real parallel passes.
+  Source implementation and all new game/DB/validator checks NOT_RUN.
+  #282 remains planning until live #271 evaluator releases the checks/runtime
+  slot; #272 retains `37f35c6b`, its five-pass requirement and Tier L gates.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation,
+  preserved #267 WIP/budget and broader visual discovery on existing
+  #179/#201/#188/#189 without adding #271 conditions. Contract worker settled,
+  recorded before acknowledgment and released (no owned resource).
+  Records only are published; no source, API/setup/wiki contract or migration
+  change. No PR/merge; 0 merged PRs with playable proof this tick.
+  Daily work already complete and not repeated; visual acceptance unclaimed.
+
+### Revalidate visible Start against current main — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, [PR #283](https://github.com/Vovanostm/warwrit/pull/283):
+  ordinary merge of current main `fc5d642d`; changelog-only conflict resolved
+  retaining both histories. No source conflict or change to accepted UI code
+  `f98040f9`; later changes are evidence, records and the main merge.
+- Coordinator revalidation at integrated `98cbb077`: exit 0, 9/9 PASS,
+  nine related tests PASS. Scope remains 36 source lines, excluding tests.
+  Tier U ACCEPT and independent played proof remain valid for unchanged code.
+  Final hosted CI and expected-head merge remain pending; 0 merges this tick.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #282's clean author
+  commits and pending independent Tier D review, #272's separate acceptance,
+  and retained #267 WIP. Attributed agent scope expansion is recorded locally
+  as unverified authority; no new milestone activated. No API/setup/wiki change.
+  Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
+
+### Integrate current merge authority before Start delivery — 2026-10-22, LOCAL
+
+- `Vovanostm/codex-uix-start-action-271`, [PR #283](https://github.com/Vovanostm/warwrit/pull/283):
+  merge current main `fc5d642d` by ordinary merge before the expected-head gate.
+  Preserve both changelog histories; only the changelog needed conflict resolution.
+  No source conflict or change to accepted `f98040f9` UI behavior.
+  Revalidation and hosted CI for the integrated candidate remain pending.
+
+### Publish first-viewport combat Start proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, #271: the existing Start action and
+  readiness/error feedback now precede the editor. Frozen source `f98040f9`,
+  36 source additions plus removals excluding tests; launch/reset guards retained.
+- Independent Tier U ACCEPT: real round-8 mill and round-10 deserter victories,
+  first viewport/default/preset/result return, actual draft/request equality,
+  keyboard focus/Enter, invalid and duplicate-pending guards; 1440 × 900 day/night,
+  bounded 1366 × 768 fit. Runtime/browser cleanup positively confirmed.
+  [Contract, full verdict and evaluator captures](docs/engineering/evidence/uix-editor-primary-start/README.md).
+- Coordinator validator exit 0, 9/9 PASS, nine related tests PASS; normal audit
+  PASS with five inherited findings retained. No duplicate test rerun this tick.
+  Hosted CI and merge pending after publication; 0 merged PRs with playable proof so far.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records sole core/check-slot
+  handoff to #282 and preserved #272/#267 dependencies. Full verify/stress/migrations/
+  production build NOT_RUN locally; performance NOT_MEASURED. Full scene/art/M1
+  acceptance unclaimed. No API/setup/wiki/rule/protocol/replay/renderer change.
+
+### Validate visible editor Start and schedule independent proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271`, [#271](https://github.com/Vovanostm/warwrit/issues/271):
+  source `f98040f9` moves the single existing Start/reset/feedback group before
+  the long editor, retaining guards, current draft and transport. Guarded ready
+  feedback, normal-flow spacing and keyboard focus address first-screen
+  discoverability. Only two editor functions, guard assertions and action CSS;
+  36 source additions plus removals. No mobile layout or new game rule.
+- Coordinator validator exit 0, all 9 gates PASS, 9 related tests PASS, scope 36.
+  Normal commit/audit PASS; 5 inherited findings and styling advisories retained.
+  Full builder contract/report and clean commit matched exact native settlement
+  before acknowledgment and release (no owned resource). Builder default/preset/
+  result-return, actual payload, pending/invalid, keyboard and day/night journeys
+  are local author evidence; independent Tier U acceptance remains pending.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records evaluator
+  `task_b9107798fb76`, frozen source and the serial resource handoff: #272 gets
+  exclusive checks/DB while #271 evaluator reads source; its browser permit
+  follows exact #272 settlement and cleanup. Contract/report/shots remain local
+  under `.orca/codex-uix-start-action-271/` in the dedicated worktree.
+  Source and records are published for continuation; PR/merge NOT_RUN and
+  0 merged PRs with playable proof this tick. #267 WIP/budgets preserved;
+  #269/#262 final 20/15 limits remain. Daily work already complete.
+- No protocol, replay, renderer, migration, dependency, setup or API change;
+  existing wiki contracts unchanged. Full verify/stress/migrations/build NOT_RUN;
+  performance NOT_MEASURED. No independent player acceptance claimed.
+
+### Merge session callbacks and assign visible editor Start — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-uix-start-action-271` records the pipeline tick and the
+  accepted #271 contract assignment after merging [PR #281](https://github.com/Vovanostm/warwrit/pull/281).
+  #273 is MERGED as `857b0491` at expected head `c872eab4`, closed/done.
+  Tier U ACCEPT, coordinator validate exit 0 (9/9 PASS), source scope 137,
+  final-head clean-checkout CI and PR scope PASS; later commits were evidence
+  and shared records only. No unresolved review or blocked label at merge.
+- [Owning contract, verdict and played day/night proof](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+  remain tracked. Local evidence retained; clean fully-pushed worktree removed.
+  This tick delivered 1 merged PR with playable proof; it preserves behavior
+  and does not claim a new player feature or full-M1 acceptance.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names #271's bounded sole web
+  builder task and P0 #272's disjoint core contract reservation. #271 starts
+  from merged main; #272 source/DB work awaits accepted contract and resource
+  handoff. #267 staged WIP/budgets and #269 AND #262 final gate are preserved.
+  Both implementations and their independent gates remain pending.
+- Documentation closeout: ordinary scoped diff, formatting and tracked links
+  checked; no setup/API/wiki contract change. No repeated game suite for this
+  records-only commit; full verify/stress/migrations/build NOT_RUN locally,
+  performance NOT_MEASURED. Daily work is already complete, not duplicated.
+  No rules, replay, protocol, renderer, dependency or migration change.
+
+### Owner merge gate removed — 2026-10-21, PUBLISHED
+
+- `claude/owner-gate-off`: owner decision «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr». AGENTS.md hard rule 1,
+  warwrit-orca, warwrit-delivery, AGENT_TEAM and the `.codex/rules` header now
+  let every PR merge on gates (green CI with `PR scope`, expected head SHA,
+  independent reviewer ACCEPT for infrastructure PRs) without an owner message.
+  Auto-merge, admin merge, force-push, deployment and paid services unchanged.
 
 ### Publish accepted session callback prerequisite — 2026-10-22, PUBLISHED
 
