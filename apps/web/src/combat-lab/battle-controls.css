@@ -401,22 +401,22 @@
 .battle-view .initiative-unit.battle-control {
   padding: 0;
   display: grid;
-  grid-template-columns: 64px 64px;
-  grid-template-rows: 64px 18px;
+  grid-template-columns: 74px;
+  grid-template-rows: 52px 16px;
   align-items: stretch;
-  min-width: 130px;
-  height: 84px;
-  min-height: 84px;
-  flex: 0 0 130px;
-  max-width: 130px;
+  min-width: 74px;
+  height: 72px;
+  min-height: 72px;
+  flex: 0 0 74px;
+  max-width: 74px;
   border-color: var(--battle-border);
   border-radius: var(--battle-radius);
   background: #202e31;
 }
 .battle-view .initiative-unit.battle-control[aria-current='step'] {
-  flex-basis: 130px;
-  max-width: 130px;
-  height: 84px;
+  flex-basis: 74px;
+  max-width: 74px;
+  height: 72px;
   border-color: var(--battle-gold);
   background: #3c3e31;
 }
@@ -498,7 +498,7 @@
   border-style: dashed;
 }
 .battle-view .initiative-unit[aria-current='step'] .battle-portrait {
-  height: 64px;
+  height: 48px;
 }
 .battle-view .battle-round-divider span {
   font-size: 10px;
@@ -584,8 +584,8 @@
 }
 .battle-overview .initiative-unit.battle-control,
 .battle-overview .initiative-unit.battle-control[aria-current='step'] {
-  height: 84px;
-  min-height: 84px;
+  height: 72px;
+  min-height: 72px;
 }
 .battle-overview .initiative-unit .unit-vitals {
   display: none;

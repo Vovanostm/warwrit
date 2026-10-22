@@ -15,7 +15,8 @@ requests.
   change after visual-1 scene integration 1 — focus-only overhead badge reservation,
   milder initial-frame span (0.86), night unit emissive darkened (far mode no longer
   brighter), HUD opening margins, dock compaction, no clearHover on HUD resize.
-- Source budget **299/300** against main (tests excluded). Focused framing/scene
+- Source budget **291/300** against main (tests excluded). Initiative cards are 74px
+  wide so six queue portraits fit at 1366×768 / 125%. Focused framing/scene
   tests and typecheck PASS. Independent visual-4 scores every applicable criterion
   ≥2 at AC1 short/125 including night value/palette; E1 on/off pairs captured on
   rework head. E2 exact `codex-clipboard-6235d07a…` PNG/state remains **NOT_FOUND**
