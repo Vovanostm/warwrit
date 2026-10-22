@@ -25,14 +25,15 @@ No duplicate builder, audit waiver, recovery-budget reset or parallel heavy chec
 #214 contract/write set amended: reuse existing BattleView five-skill regression;
 readable skill-local labels/slot/overflow CSS belongs to #214; no duplicate suite.
 Its source waits #267 settlement and explicit web-slot allocation; Tier V retained.
-[PR #280](https://github.com/Vovanostm/warwrit/pull/280): green CI alone is insufficient.
-Fresh read-only Tier D reviewer `task_e1de7fef3358` / `ctx_1042b94b7b92` live at `33c663e6`.
-Own dedicated worktree; no checks/runtime. Main integration and validate pending.
+[PR #280](https://github.com/Vovanostm/warwrit/pull/280): fresh Tier D REWORK at `33c663e6`.
+Blocking: changed-lines brief conflicts with full-screen text required by critic.
+Later `e4780547` integrates main; affected prompts unchanged, fresh ACCEPT absent.
+Reviewer settled/released; author fix, coordinator validate and re-review pending.
 #268 follows #267; final component 20/15 stays on #269 AND #262; #263/#231 stay open.
 Daily metrics/scout/triage/digest already complete; no duplicate daily work.
 Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
 No production/rule/replay/schema/API/setup/wiki behavior changed this tick.
-Next: consume #267/reviewer results; transfer checks slot, then resume #272 proof.
+Next: consume #267 result, transfer checks slot, resume #272 proof; #280 awaits fix.
 This single tick returns; wrapper releases its own lease.
 
 ## Dated history

@@ -30,9 +30,12 @@ requests.
   public-component test and owns readable skill-local label/slot/overflow CSS;
   no duplicate suite, general HUD change or second web writer. Implementation,
   tests and runtime NOT_RUN; queued behind #267 with Tier V unchanged.
-- [PR #280](https://github.com/Vovanostm/warwrit/pull/280) gains a fresh read-only
-  Tier D reviewer at `33c663e6`, task `task_e1de7fef3358`; main integration,
-  validate and merge pending. Proposed workflow is not active before merge.
+- [PR #280](https://github.com/Vovanostm/warwrit/pull/280): fresh Tier D reviewer
+  REWORK at `33c663e6`: changed-lines producer/brief conflicts with required
+  full-screen player text; metrics also omit text verdicts (nonblocking). Later
+  `e4780547` integrates main without changing the affected prompts. Exact native
+  settlement/report verified before ack and worker release; tests/runtime NOT_RUN.
+  Author fix, coordinator validate and fresh ACCEPT remain; no merge or Tier T activation.
   [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exact continuation.
   Documentation-only closeout: no new game tests; full suites/build NOT_RUN,
   performance NOT_MEASURED. Existing API/setup/wiki contracts unaffected.
