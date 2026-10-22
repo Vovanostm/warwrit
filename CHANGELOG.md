@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Publish accepted OIDC test isolation — 2026-10-22, PUBLISHED
+
+- `Vovanostm/codex-oidc-count-isolation-272`, #272: replace global rejection
+  counts with one finite test-owned issuer query, including the attempted
+  wrong issuer and sessions joined to owned accounts; original assertions and
+  ordinary parallelism remain. No production authentication change.
+- [Contract, author history, independent verdicts and day/night proof](docs/engineering/evidence/core-oidc-count-isolation/README.md):
+  reviewer ACCEPT `72b6e4eb`, evaluator ACCEPT `6db7dd20`; source `37f35c6b`
+  unchanged. Author account/session mutations fail the preserved equality and
+  restore; five consecutive real PostgreSQL parallel runs PASS 60/60 each.
+  Evaluator inspected those logs and independently played mill to round-8
+  victory; independent OIDC auth runtime NOT_RUN.
+- Ordinary main `c62ad2d0` integration `30a38904` conflicts only in coordinator
+  records; both histories retained. Validator exit 0, 9/9 PASS; related OIDC
+  skips without DB and does not replace author proof. Positive browser PID/port
+  cleanup confirmed. This commit is being published; final CI/merge pending; no waiver.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #179 next sole web
+  allocation and frozen #214. Complete ignored native proof is retained in the
+  coordinator before cleanup. No setup/API/wiki/rule/replay/schema/migration/
+  dependency change; full local integrated suites NOT_RUN, performance NOT_MEASURED.
+- Record-update automation initially could not locate the merged history marker;
+  conflict resolution had succeeded, but the status rewrite was NOT_RUN then.
+  This entry and the new status block correct that record before publication.
+
 ### Publish accepted selection and autoplay extraction — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`, [PR #286](https://github.com/Vovanostm/warwrit/pull/286),

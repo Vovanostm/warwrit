@@ -3,6 +3,36 @@
 ## Pipeline status — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Scope: owner-requested exactly one tick, epic #217 and existing local overrides.
+This tick: 0 merged PRs with playable proof so far.
+#272 source `37f35c6b` unchanged; Tier L reviewer/evaluator ACCEPT.
+Reviewer `72b6e4eb`; evaluator `6db7dd20`; current-main integration `30a38904`.
+Author mutations detect account/session writes; five parallel PostgreSQL runs PASS 60/60.
+Evaluator independently played mill to round-8 victory; auth logs inspected, not rerun.
+[Contract, author proof, independent verdicts and captures](evidence/core-oidc-count-isolation/README.md).
+Integration validator exit 0, all 9 steps PASS; related OIDC case skips without DB.
+Positive cleanup: PID 31643 absent; private ports 23611/25611 no listeners.
+Ordinary main `c62ad2d0` integration: only records conflicted, both histories kept.
+Tracked proof and coordinator records only after integration; publishing PR, final CI pending.
+#179 accepted contract; allocated next sole web builder task `task_1af575ec832f`.
+Original four paths/tests, full catalogue formula/all AC/DoD/Tier V, <=300 source lines.
+#214 source frozen `97c43aa8`; integrate merged #179 before full Tier V.
+#268 waits visible work; #269 AND #262 retain final component 20/15.
+#263/#231 remain open; no aggregate acceptance claim.
+PRs #274/#280 retain unresolved REWORK; green CI alone permits no merge.
+Daily metrics/scout/triage/digest already complete; no duplicate daily work.
+No production auth/rule/protocol/replay/schema/migration/dependency change.
+Full local integrated suites NOT_RUN; performance NOT_MEASURED.
+Next: publish #272 and merge only on live final-head gates; launch #179 builder.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous checkpoints (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
