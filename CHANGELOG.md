@@ -28,20 +28,6 @@ requests.
   [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
   No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
 
-### Text tier for the Orca pipeline — 2026-10-22, PUBLISHED
-
-- `claude/orca-text-tier`: the 2026-10-22 text critique (owner question «Качество
-  … текстов на высоком уровне?») rejected the campaign, first-hunt and combat
-  UI text; follow-ups #275–#279 need the text critic, but the pipeline had no
-  text gate. New tier T (as U + text critic, `prompts/text.md`); builders of
-  text slices write `.orca/<slice>/text.md` as the critic's input.
-- Independent review REWORK on d6417d5a fixed: rework refreshes `text.md`
-  (build steps 3–6); tier T always writes it; a missing/stale input is a
-  step-6-only rework outside the budget; tier lists (budget, evaluator, close
-  views, slice plan, epic contract) include T; the critic reads its previous
-  round and maps REJECT/BLOCKED to REWORK/BLOCKED_ENV.
-- Checks: Prettier. Effect NOT_MEASURED.
-
 ### Publish independently reviewed rollback isolation — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-world-rollback-isolation`, #282: test-only disposable database
@@ -65,6 +51,20 @@ requests.
   existing wiki contracts unchanged. Full verify/stress/migrations/browser
   NOT_RUN here; performance NOT_MEASURED. Raw native logs remain local in the
   slice worktree under `.orca/core-world-rollback-isolation/`.
+
+### Text tier for the Orca pipeline — 2026-10-22, PUBLISHED
+
+- `claude/orca-text-tier`: the 2026-10-22 text critique (owner question «Качество
+  … текстов на высоком уровне?») rejected the campaign, first-hunt and combat
+  UI text; follow-ups #275–#279 need the text critic, but the pipeline had no
+  text gate. New tier T (as U + text critic, `prompts/text.md`); builders of
+  text slices write `.orca/<slice>/text.md` as the critic's input.
+- Independent review REWORK on d6417d5a fixed: rework refreshes `text.md`
+  (build steps 3–6); tier T always writes it; a missing/stale input is a
+  step-6-only rework outside the budget; tier lists (budget, evaluator, close
+  views, slice plan, epic contract) include T; the critic reads its previous
+  round and maps REJECT/BLOCKED to REWORK/BLOCKED_ENV.
+- Checks: Prettier. Effect NOT_MEASURED.
 
 ### Validate rollback DB isolation and dispatch fresh review — 2026-10-22, PUBLISHED
 
