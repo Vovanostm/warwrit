@@ -14,7 +14,7 @@ Author mounted timing/admission/held-response/day-night victory proof retained;
 independent Tier U must resolve remaining skill/reset/listener/state cases.
 Main `00117aa1` ordinary integration: changelog conflict only, both histories kept.
 Coordinator validation at `9ccabbd9`: exit 0, all 9 gates PASS; related 49 tests.
-Fresh independent Tier U task `task_99c8547e4ba0` is prepared for this frozen code.
+Fresh independent Tier U `task_99c8547e4ba0` / `ctx_a1732d6d1a89` is live.
 Only coordinator records may follow; no PR/ACCEPT yet.
 Local owning contract/report/screenshots: qa-hooks-selection-autoplay/.orca/qa-hooks-selection-autoplay/.
 #271 PR #283 and #282 PR #284 are merged; #272 retains its separate proof.
@@ -24,7 +24,8 @@ Checks/runtime scheduling remains exclusive; no competing heavy run.
 #268 follows #267; final component 20/15 remains on #269 AND #262.
 #263/#231 and original playback gates remain open; no scope expansion.
 PR #280 remains REWORK/CI red; PR #274 CI green at `684b7ba3`.
-Fresh source-only #274 review `task_d4e88e8f4222`; no competing checks/runtime.
+Fresh source-only #274 review `task_d4e88e8f4222` / `ctx_35682339cb66` is live.
+Both native dispatches are in_progress/live; no competing checks/runtime.
 Daily metrics/scout/triage/digest already complete; no duplicate daily work.
 Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
 No setup/API/wiki/protocol/replay/rule/migration contract change.

@@ -20,14 +20,15 @@ requests.
 - Ordinary main `00117aa1` integration preserves both changelog histories;
   only the changelog conflicted, no source conflict. Coordinator validation at
   `9ccabbd9`: exit 0, all 9 gates PASS, related 49 tests. Fresh Tier U task
-  `task_99c8547e4ba0` is prepared; no ACCEPT/PR yet. Local owning proof:
+  `task_99c8547e4ba0` / `ctx_a1732d6d1a89` is live; no ACCEPT/PR yet. Local proof:
   `.orca/qa-hooks-selection-autoplay/` in its dedicated worktree.
 - [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records queue and gates.
   Final component 20/15 remains on #269 AND #262; #268 follows #267.
   #272 preserves original mutation/five-pass/Tier L after merged #282.
   No setup/API/wiki/rule/migration change; full local suites NOT_RUN,
   performance NOT_MEASURED. Fresh source-only PR #274 review allocated at
-  `684b7ba3` (`task_d4e88e8f4222`); validator/runtime still pending there.
+  `684b7ba3` (`task_d4e88e8f4222` / `ctx_35682339cb66`) is live;
+  validator/runtime still pending there.
   This tick: 0 merged PRs with playable proof.
 
 ### Resume retained extraction with real callback coverage — 2026-10-22, PUBLISHED
