@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Merge visible Start and integrate rollback candidate — 2026-10-22, LOCAL
+### Merge visible Start and integrate rollback candidate — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-world-rollback-isolation`: [PR #283](https://github.com/Vovanostm/warwrit/pull/283)
   merged as `df540c2c` at expected `3a97b679`; #271 closed/done. Final-head CI,
@@ -18,8 +18,10 @@ requests.
   remain tracked; local proof retained and fully-pushed clean worktree removed.
 - Ordinary merge of that main into [PR #284](https://github.com/Vovanostm/warwrit/pull/284)
   preserves both record histories; only CHANGELOG/CURRENT_PLAN conflicted.
-  Accepted #282 test source unchanged. Integrated validation/hosted CI pending;
-  #272 keeps its own mutation/five-pass/Tier L gates. #267 WIP/budgets preserved.
+  Accepted #282 test source unchanged. Integrated validator at `5b6a3e6a`
+  exit 0, all 9 gates PASS; final-head hosted CI pending;
+  #272 keeps its own mutation/five-pass/Tier L gates. #267 WIP/budgets preserved;
+  bounded resume task `task_93e6f5312ecf` is live after both prerequisites merged.
   [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
   No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
 

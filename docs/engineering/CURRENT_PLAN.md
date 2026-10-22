@@ -14,12 +14,14 @@ Local proof retained; clean fully-pushed #271 worktree removed through Orca.
 #282: [PR #284](https://github.com/Vovanostm/warwrit/pull/284), Tier D ACCEPT at `d553215b`.
 Ordinary integration of main `df540c2c`; only coordinator records conflicted.
 Both histories preserved; accepted world-test source unchanged.
-Integrated validation and final-head hosted CI are pending; no #282 merge yet.
+Integrated validation at `5b6a3e6a`: exit 0, all 9 gates PASS.
+Final-head hosted CI is pending; no #282 merge yet.
 [Contract, report and independent review](evidence/core-world-rollback-isolation/README.md).
 Author five default-parallel eight-file runs PASS 60/60 each; cleanup positive.
 #272 retains separate mutation/five-pass/Tier L gates after #282.
 #267 preserves two staged files and budgets; #273 and #271 prerequisites merged.
-Resume its bounded existing extraction after safe main integration; #268 follows.
+Live bounded resume `task_93e6f5312ecf` / `ctx_ec6905bd6d89`; #268 follows.
+Safe owned-WIP preservation/main integration; same scope and normal audit.
 #269 AND #262 final component 20/15 and remaining #263/#231 gates stay required.
 #214 remains in combat scope; read-only bounded contract allocation under inspection.
 Daily metrics/scout/triage/digest complete; no duplicate daily work.
