@@ -2038,28 +2038,34 @@ describe('authenticated world travel (PostgreSQL)', () => {
   it.skipIf(database === undefined)(
     'serializes rollback against route receipts and preserves all campaign clock rows on down/up',
     async () => {
-      const db = requireDatabase();
       if (connectionString === undefined) throw new Error('World travel test database missing');
-      const actor = makeSyntheticCompany(db);
-      const writer = new Client({
-        connectionString,
-        application_name: 'warwrit-travel-rollback-race-writer',
-      });
-      const rollback = new Client({
-        connectionString,
-        application_name: 'warwrit-travel-rollback-race-down',
-      });
+      const isolated = await createRollbackDatabase(connectionString);
+      const { db, writer, rollback } = isolated;
+      const ownedApps: ReturnType<typeof buildApp>[] = [];
+      let actor: SyntheticCompany | undefined;
       let fixtureCleaned = false;
       try {
+        actor = makeSyntheticCompany(db, isolated.connectionString, ownedApps);
         await seedSyntheticCompany(db, actor);
-        await Promise.all([writer.connect(), rollback.connect()]);
         await assertRollbackSerialization(writer, rollback, actor);
         await cleanupSyntheticCompany(db, actor);
         fixtureCleaned = true;
+        await rollback.query(`
+          insert into public.world_campaign_clocks (world_id, epoch_ms, starting_tick, updated_at)
+          values ('rollback-retained-a', '1000000', '17', '2026-01-02T03:04:05.123456Z'),
+                 ('rollback-retained-b', '2000000', '29', '2026-02-03T04:05:06.654321Z')
+        `);
         await assertClockMigrationRoundTrip(rollback);
       } finally {
-        await Promise.allSettled([writer.end(), rollback.end()]);
-        if (!fixtureCleaned) await cleanupSyntheticCompany(db, actor);
+        try {
+          if (actor && !fixtureCleaned) await cleanupSyntheticCompany(db, actor);
+        } finally {
+          try {
+            await Promise.all(ownedApps.map((app) => app.close()));
+          } finally {
+            await disposeRollbackDatabase(isolated);
+          }
+        }
       }
     },
   );
@@ -2707,6 +2713,68 @@ function requireDatabase(): Kysely<DatabaseSchema> {
   return database;
 }
 
+interface RollbackDatabase {
+  readonly name: string;
+  readonly connectionString: string;
+  readonly admin: Client;
+  readonly db: Kysely<DatabaseSchema>;
+  readonly writer: Client;
+  readonly rollback: Client;
+}
+
+async function createRollbackDatabase(sourceConnectionString: string): Promise<RollbackDatabase> {
+  const name = `warwrit_rollback_${randomUUID().replaceAll('-', '')}`;
+  const url = new URL(sourceConnectionString);
+  url.pathname = `/${name}`;
+  const isolated: RollbackDatabase = {
+    name,
+    connectionString: url.href,
+    admin: new Client({ connectionString: sourceConnectionString }),
+    db: createDatabase(url.href),
+    writer: new Client({
+      connectionString: url.href,
+      application_name: 'warwrit-travel-rollback-race-writer',
+    }),
+    rollback: new Client({
+      connectionString: url.href,
+      application_name: 'warwrit-travel-rollback-race-down',
+    }),
+  };
+  let created = false;
+  try {
+    await isolated.admin.connect();
+    await isolated.admin.query(`create database "${name}"`);
+    created = true;
+    await isolated.writer.connect();
+    await isolated.rollback.connect();
+    await runMigrations(isolated.rollback, 'up');
+    return isolated;
+  } catch (error) {
+    await disposeRollbackDatabase(isolated, created);
+    throw error;
+  }
+}
+
+async function disposeRollbackDatabase(isolated: RollbackDatabase, created = true): Promise<void> {
+  try {
+    try {
+      await isolated.writer.end();
+    } finally {
+      try {
+        await isolated.rollback.end();
+      } finally {
+        await isolated.db.destroy();
+      }
+    }
+  } finally {
+    try {
+      if (created) await isolated.admin.query(`drop database "${isolated.name}"`);
+    } finally {
+      await isolated.admin.end();
+    }
+  }
+}
+
 async function assertRollbackSerialization(
   writer: Client,
   rollback: Client,
@@ -2811,10 +2879,13 @@ async function assertRollbackSerialization(
       },
     ]);
   } finally {
-    if (writerInTransaction) await writer.query('rollback');
-    if (rollbackAttempt) {
-      const result = await rollbackAttempt;
-      if (result.error === null) await rollback.query(worldTravelUpSql);
+    try {
+      if (writerInTransaction) await writer.query('rollback');
+    } finally {
+      if (rollbackAttempt) {
+        const result = await rollbackAttempt;
+        if (result.error === null) await rollback.query(worldTravelUpSql);
+      }
     }
   }
 }
@@ -2943,7 +3014,11 @@ async function clockRowsFor(db: Kysely<DatabaseSchema>, actor: SyntheticCompany)
     .execute();
 }
 
-function makeSyntheticCompany(db: Kysely<DatabaseSchema>): SyntheticCompany {
+function makeSyntheticCompany(
+  db: Kysely<DatabaseSchema>,
+  fixtureConnectionString = connectionString,
+  appRegistry = apps,
+): SyntheticCompany {
   const worldId = randomUUID();
   const companyId = randomUUID();
   const accountId = randomUUID();
@@ -3030,7 +3105,7 @@ function makeSyntheticCompany(db: Kysely<DatabaseSchema>): SyntheticCompany {
     });
   }
   const appConfig = loadServerConfig({
-    DATABASE_URL: connectionString,
+    DATABASE_URL: fixtureConnectionString,
     OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
     OIDC_CLIENT_ID: 'warwrit-local',
     OIDC_CLIENT_SECRET: 'local-only-secret',
@@ -3043,7 +3118,7 @@ function makeSyntheticCompany(db: Kysely<DatabaseSchema>): SyntheticCompany {
     identity: { config: appConfig.identity!, database: withRollbackInjection(db) },
     company: { database: withRollbackInjection(db), worldId },
   });
-  apps.push(app);
+  appRegistry.push(app);
   return {
     worldId,
     companyId,
