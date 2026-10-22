@@ -27,8 +27,12 @@ requests.
   #272 preserves original mutation/five-pass/Tier L after merged #282.
   No setup/API/wiki/rule/migration change; full local suites NOT_RUN,
   performance NOT_MEASURED. Fresh source-only PR #274 review allocated at
-  `684b7ba3` (`task_d4e88e8f4222` / `ctx_35682339cb66`) is live;
-  validator/runtime still pending there.
+  `684b7ba3` settled REWORK: stale main-CI evidence risk and tilde-fence
+  status-length bypass. Exact settlement/report recorded, ack/release complete;
+  source-only review, runtime NOT_RUN. Existing author fixes before fresh gates.
+  #267 proof-format clarification uses current server source and existing policy
+  regression for unreachable opponent-view browser state; all reachable mounted
+  and day/night criteria retained. Local contract appendix records the decision.
   This tick: 0 merged PRs with playable proof.
 
 ### Resume retained extraction with real callback coverage — 2026-10-22, PUBLISHED

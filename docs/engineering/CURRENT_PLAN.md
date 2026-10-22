@@ -24,8 +24,10 @@ Checks/runtime scheduling remains exclusive; no competing heavy run.
 #268 follows #267; final component 20/15 remains on #269 AND #262.
 #263/#231 and original playback gates remain open; no scope expansion.
 PR #280 remains REWORK/CI red; PR #274 CI green at `684b7ba3`.
-Fresh source-only #274 review `task_d4e88e8f4222` / `ctx_35682339cb66` is live.
-Both native dispatches are in_progress/live; no competing checks/runtime.
+Fresh #274 review REWORK at `684b7ba3`: stale main-CI evidence, tilde-fence bypass.
+Exact settlement/report recorded, acknowledged and released; existing author fixes.
+#267 opponent-view proof uses source + existing policy regression where unreachable;
+all reachable mounted and independent day/night criteria remain unchanged.
 Daily metrics/scout/triage/digest already complete; no duplicate daily work.
 Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
 No setup/API/wiki/protocol/replay/rule/migration contract change.
