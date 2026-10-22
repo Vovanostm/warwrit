@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Queue isolation rework after independent source review — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285: fresh Tier L source reviewer
+  returned REWORK at `284efd79`. In `scripts/integration-database.ts`, a committed
+  CREATE with a failed acknowledgement can escape the cleanup ledger, which is
+  updated only after success. This is an independently traced source risk;
+  reproduction NOT_RUN. Reserve only exact run-owned targets before CREATE and
+  retain original errors in the next bounded rework; no source fix in this tick.
+- Exact task/dispatch/sender/result and full verdict were checked, recorded before
+  acknowledgement, then released. Local verdict path:
+  core-integration-db-isolation/.orca/core-integration-db-isolation/review-1.md.
+  Evaluator `task_cf926bbb6c7d` / `ctx_c4c26582a636` remains live with exclusive
+  checks/DB/browser/runtime; finding forwarded. Combine all gate findings after
+  its settlement and positive cleanup before starting the first rework.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records this one-tick handoff.
+  Source remains `0b0c44eb`, scope 176/300; prior validator exit 0 / 9 gates PASS
+  is retained evidence. New coordinator game tests/typecheck/validator/runtime
+  NOT_RUN. Original full eight-file cleanup/persistent journey, matched hosted
+  <=20% timing and five full CI runs remain outstanding; no acceptance waiver.
+  No issue-state transition, PR or merge; 0 merged PRs with playable proof.
+  #179 recovery cap, #214/#268 queue, #272 failed CI and #274/#280 REWORK retained;
+  daily work already complete. No setup/API/wiki/rule/protocol/replay/schema/
+  migration/dependency contract changed. Documentation commit publication only.
+
 ### Advance file-isolation implementation to independent gates — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`, #285: source `0b0c44eb`, report
