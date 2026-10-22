@@ -9,9 +9,9 @@ requests.
 
 ## Unreleased
 
-### Agents close browsers, skip idle MCP servers and use the lightest stand — 2026-10-22, LOCAL
+### Agents close browsers, skip idle MCP servers and use the lightest stand — 2026-10-22, PUBLISHED
 
-- `claude/agent-resource-hygiene`. Owner request 2026-10-22: agents close the
+- `claude/agent-resource-hygiene`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298), #297. Owner request 2026-10-22: agents close the
   browser and MCP after checking the game and use lightweight stands. Measured
   that day: three forgotten `playwright-cli` browsers (about 2 GB) and 46 idle
   `chrome-devtools-mcp` processes (about 2.4 GB).
