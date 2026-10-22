@@ -9,6 +9,31 @@ requests.
 
 ## Unreleased
 
+### Resume OIDC proof and allocate visible skill names — 2026-10-22, PUBLISHED
+
+- `Vovanostm/uix-w1-skill-names`, #214: accepted complete contract and clean
+  fast-forward to main `00117aa1`; sole web builder `task_e41051b3b529` allocated
+  only BattleSkills.tsx, skill-local CSS and existing BattleView test case.
+  Source-only phase while #272 owns checks; explicit task permit is required
+  before checks, hooks or runtime. Original five names, readable labels,
+  full projected tooltips, viewport/zoom matrix and independent Tier V remain.
+  Implementation/checks/runtime/acceptance are not claimed by this handoff.
+- #272 ordinary integration `c8b6c308` pushed, scoped source `37f35c6b` retained;
+  only shared records conflicted, both histories preserved. Live proof task
+  `task_f24f4df0dbf0` owns the exclusive check/private DB slot for two fresh
+  mutations and five ordinary parallel eight-file runs; original Tier L and
+  all assertions retained, no budget reset or proof waiver.
+- #267 [PR #286](https://github.com/Vovanostm/warwrit/pull/286) published with
+  Tier U ACCEPT `de77fa3d`, validator 9/9 and scope 159/300; independent
+  day/night victories, reachable mounted lifecycle and 49 tests PASS.
+  Final-head hosted CI pending; 0 merged PRs with playable proof so far.
+  Evidence is published on that PR and is not yet in this branch.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records precise continuation.
+  #269 AND #262 keep final component 20/15; #274/#280 remain REWORK.
+  Daily work already complete. No setup/API/wiki/rule/protocol/replay/schema/
+  migration/dependency change here; full local suites/build NOT_RUN,
+  performance NOT_MEASURED. Existing battlefield wiki changes wait actual #214.
+
 ### Merge visible Start and integrate rollback candidate — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-world-rollback-isolation`: [PR #283](https://github.com/Vovanostm/warwrit/pull/283)

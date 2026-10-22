@@ -3,6 +3,44 @@
 ## Pipeline status — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof so far; #286 final CI pending.
+#267 [PR #286](https://github.com/Vovanostm/warwrit/pull/286): Tier U ACCEPT `de77fa3d`.
+Frozen source `9ccabbd9`, evidence `bdd38c48`, coordinator records `eb6e57b2`.
+Validator 9/9, scope 159/300, one closing issue and independent 49 tests PASS.
+Independent day/night mill victories and reachable mounted lifecycle accepted;
+opponent-view row uses source + production regression where unreachable.
+Source-only ref ordering and missing baseline console comparison stay explicit.
+Evidence directory is on #286, not yet present on this #214 branch.
+#272 source `37f35c6b` retained; ordinary main integration `c8b6c308` pushed.
+Only shared records conflicted; both histories preserved, no source conflict.
+Live core proof `task_f24f4df0dbf0` / `ctx_c698a3c02952` owns checks/private DB.
+Fresh two mutations and five ordinary parallel eight-file passes remain pending.
+No weakened assertions/parallelism, rework reset or Tier L waiver.
+#214 accepted contract, clean fast-forward to main `00117aa1`; sole web builder
+`task_e41051b3b529` / `ctx_9b8839d8d004` allocated visible learned-skill names.
+Source-only phase; all checks/hooks/runtime wait for explicit task permit after #272.
+Only BattleSkills.tsx, skill-local CSS and existing BattleView test case owned.
+Original full viewport/zoom proof, evaluator + visual rubric and wiki update remain.
+#214 labels use retained aliases/full projected tooltip; no new content or rules.
+#179 follows #214 before inactive #201/playback; original Tier V required.
+#268 follows #267; final CombatLab 20/15 remains on #269 AND #262.
+#262/#263/#231 remain open; #274/#280 unresolved REWORK blocks merge.
+Daily metrics/scout/triage/digest complete; no duplicate daily work.
+No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change here.
+Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
+Next: #286 final CI/expected-head merge; settle #272, grant #214 check slot.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+**Previous checkpoint (superseded above):**
+
+## Pipeline status — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Scope: epic #217 and existing local overrides; exactly one pipeline tick.
 This tick: 1 merged PR with playable proof, [PR #283](https://github.com/Vovanostm/warwrit/pull/283).
 #271 merged as `df540c2c`, expected head `3a97b679`; issue closed/done.
@@ -32,7 +70,7 @@ No setup/API/wiki/rule/protocol/replay/renderer or migration contract changed.
 Next: revalidate/publish #284 integration; resume #267, then independent gates.
 Wrapper releases its lease when this single tick returns.
 
-## Dated history
+
 
 **Pre-integration branch checkpoints (historical):**
 
