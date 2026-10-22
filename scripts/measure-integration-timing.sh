@@ -78,10 +78,10 @@ on_exit() {
 }
 capture_job() {
   local payload name=${TIMING_JOB_NAME:-Measure integration command} attempt; printf 'NOT_REPORTED\n' > "$results/job.json"
-  [[ -n "${GITHUB_REPOSITORY:-}" && -n "${GITHUB_RUN_ID:-}" && -n "${GH_TOKEN:-${GITHUB_TOKEN:-}}" ]] || return 0; command -v gh >/dev/null 2>&1 || return 0; export GH_TOKEN="${GH_TOKEN:-$GITHUB_TOKEN}"
+  [[ -n "${GITHUB_REPOSITORY:-}" && -n "${GITHUB_RUN_ID:-}" && -n "${GH_TOKEN:-${GITHUB_TOKEN:-}}" ]] || return 0; command -v gh >/dev/null 2>&1 || return 0
   for attempt in 1 2 3 4 5; do
-    payload=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/attempts/${GITHUB_RUN_ATTEMPT}/jobs" \
-      --jq --arg job_name "$name" '[.jobs[] | select(.name == $job_name) | {id,run_id,run_attempt,name,runner_id,runner_name,runner_group_id,runner_group_name,labels,started_at,html_url}]' \
+    payload=$(GH_TOKEN="${GH_TOKEN:-$GITHUB_TOKEN}" gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/attempts/${GITHUB_RUN_ATTEMPT:-1}/jobs" 2>>"$results/job-api.log" |
+      jq --arg job_name "$name" '[.jobs[] | select(.name == $job_name) | {id,run_id,run_attempt,name,runner_id,runner_name,runner_group_id,runner_group_name,labels,started_at,html_url}]' \
       2>>"$results/job-api.log" || true); [[ -n "$payload" ]] && printf '%s\n' "$payload" > "$results/job.json"
     jq -e 'type=="array" and length==1 and .[0].id!=null and .[0].runner_id!=null and .[0].runner_name!=null' "$results/job.json" >/dev/null 2>&1 && break; sleep 2
   done; [[ -f "$results/job-api.log" ]] && redact_file "$results/job-api.log"
@@ -100,7 +100,7 @@ prepare_sample() {
   fi; redact_file "$dir/checkout.log"; git -C "$dest" rev-parse HEAD > "$dir/checkout-sha.txt" || return 1; git -C "$dest" status --porcelain > "$dir/git-status.txt" || return 1
   git -C "$dest" diff --stat > "$dir/git-diff.txt" || return 1; [[ "$(cat "$dir/checkout-sha.txt")" == "$sha" && ! -s "$dir/git-status.txt" && ! -s "$dir/git-diff.txt" ]] || return 1
   node --input-type=module -e 'import {readFileSync} from "node:fs"; const p=JSON.parse(readFileSync(process.argv[1],"utf8")); process.stdout.write(p.scripts["test:migrations"] + "\n")' "$dest/package.json" > "$dir/package-script.txt" || return 1
-  if ! (set -euo pipefail; cd "$dest"; corepack enable; corepack prepare pnpm@11.25.0 --activate
+  if ! (set -euo pipefail; unset GH_TOKEN GITHUB_TOKEN ACTIONS_RUNTIME_TOKEN; cd "$dest"; corepack enable; corepack prepare pnpm@11.25.0 --activate
     pnpm install --frozen-lockfile; pnpm --filter @warwrit/protocol run build && pnpm --filter @warwrit/game-core run build && pnpm --filter @warwrit/testkit run build; git diff --quiet && git diff --cached --quiet) >"$dir/prepare.log" 2>&1; then
     redact_file "$dir/prepare.log"; return 1
   fi; redact_file "$dir/prepare.log"
@@ -180,7 +180,7 @@ job_ok() {
   jq -e 'type=="array" and length==1 and .[0].id!=null and .[0].runner_id!=null and .[0].runner_name!=null' "$results/job.json" >/dev/null 2>&1
 }
 summarize() {
-  local id verdict=PASS valid=1 lines baseline_median candidate_median ratio; lines=$(awk 'END { print NR+0 }' "$results/order.txt" 2>/dev/null || echo 0); [[ "$lines" -eq 6 && ! -f "$results/interrupted.txt" ]] || valid=0; job_ok || valid=0
+  local id verdict=NOT_MEASURED valid=1 lines baseline_median candidate_median ratio; lines=$(awk 'END { print NR+0 }' "$results/order.txt" 2>/dev/null || echo 0); [[ "$lines" -eq 6 && ! -f "$results/interrupted.txt" ]] || valid=0; job_ok || valid=0
   {
     printf '# Integration timing\n\nHarness %s\n\nRun %s\n\n' "$(field "$results/harness-sha.txt")" "$(field "$results/run-url.txt")"
     if job_ok; then jq -r '.[0] | "Job \(.id) runner \(.runner_id) \(.runner_name)\n"' "$results/job.json"; else printf 'Job NOT_REPORTED\n\n'; fi
