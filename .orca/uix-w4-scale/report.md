@@ -781,7 +781,7 @@ protocol/rule/migration/dependency change. Worker has not edited shared records.
 ## Supplemental final handback — local correction, original acceptance incomplete
 
 **Outcome: FAILED overall; do not close #179 or claim source/evidence complete.**
-Ordinary source commit **989669ef**, parent 51d2b783; source 298/300 against
+Ordinary source commit **989669ef**, parent 824afc5a; source 298/300 against
 c62ad2d0, no further source changes. Full independent visual/evaluator gates are
 coordinator-owned, NOT_RUN here. Existing short-viewport readability/night 1
 remains material after propagation: current 1366x768/native 125 captures still show
@@ -867,7 +867,19 @@ RNG/dependency/migration contracts unchanged. Worker wrote none of those records
 
 Five-line handoff (local only; coordinator owns external write/publication):
 Branch: Vovanostm/uix-w4-scale, dedicated existing checkout, no worker push.
-Head/source:989669ef source; final report commit follows; source 298/300.
+Head/source: 989669ef source; final report commit follows; source 298/300.
 Done: finite shared-projection correction + ordinary hook + focused/native proof above.
 Next: coordinator validation and full independent Tier V; route missing original baseline/rejected-state inputs and material short-screen verdict without a cap reset.
-Blockers: original 10 baseline rows, exact historical rejected-state input, short-viewport/night 1 and independent acceptance;32 owned PIDs / 2 ports positively clean.
+Blockers: original 10 baseline rows, exact historical rejected-state input, short-viewport/night 1 and independent acceptance; 32 owned PIDs / 2 ports positively clean.
+
+
+Final repository readback: coordinator-only shared-record commit 824afc5a arrived
+between entry 51d2b783 and source 989669ef; actual source parent is 824afc5a.
+Worker commits 989669ef/614a954a touch only the seven owned source/test paths and
+this report; coordinator CHANGELOG/CURRENT_PLAN/wiki diff is preserved separately.
+The report Prettier invocation matched no substantive file because .orca is
+ignored; report style is NOT_RUN by Prettier, ordinary diff/readback PASS.
+Source/test Prettier PASS is the explicit scoped check recorded above.
+Tracked report staging emitted the .orca ignore warning but staged successfully;
+ordinary report commit 614a954a succeeded. This metadata correction is another
+normal documentation commit; no source, gate or failed result is changed.
