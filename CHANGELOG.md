@@ -9,6 +9,38 @@ requests.
 
 ## Unreleased
 
+### Validate final database closure rework and resume engineering queue — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  final rework 2/2 source `83372b0b`, report `05bca4f3`, 211/300 source lines.
+  Real PostgreSQL regressions reproduce lost shutdown FATAL after settled DROP,
+  including prior query failure; helper retains distinct errors through completed
+  closure and preserves identity. Author 15/15 real-PG lifecycle checks PASS;
+  no production/assertion/worker-count/default-parallelism change.
+- Coordinator validator at `05bca4f3`: exit 0, all 9 gates PASS. Related tests
+  1 PASS / 14 SKIP without DB are not fresh PG acceptance. Native settlement and
+  ordinary source commits verified; all 136 declared PIDs absent, 14 ports clear,
+  and labelled Docker inventories empty before exclusive runtime transfer.
+- Independent source-only diagnosis is committed at
+  .orca/core-integration-db-isolation/terminal-effects-diagnosis.md.
+  The previous eight-file 59 PASS / 1 FAIL is retained: null terminal effects at
+  unchanged encounter line 4156 remains unexplained. Batch selection, outer guard
+  or leadership deferral require the original invocation's branch trace before
+  cleanup. Leadership is a lead, not a reproduced cause or authorized fix.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh Tier L round 3
+  reviewer/evaluator allocation, exclusive runtime and preserved #272/#282 proof.
+  Original hosted <=20% timing NOT_MEASURED and five full CI NOT_RUN remain gates.
+  Under 2026-10-21 engineering delegation, #179's process-only recovery question
+  is resolved: one supplemental shared-projection correction, total <=300, all
+  original AC/DoD and full Tier V; original two failed reworks remain recorded.
+  #179 waits #285 cleanup; #214 waits #179, #268 its web turn. No acceptance waiver.
+- Published WIP branch only; no #285 PR/merge or player acceptance, 0 merged PRs
+  with playable proof this tick. #274/#280 unresolved REWORK still blocks merge.
+  Daily work already complete; no duplicate scout/metrics/digest. Coordinator
+  browser/full verify/stress/migrations NOT_RUN; hosted timing NOT_MEASURED.
+  Documentation format/diff/readback checked. No setup/API/wiki/game-rule,
+  protocol/replay/schema/migration/dependency contract changed.
+
 ### Retain isolated encounter failure and queue final lifecycle rework — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
