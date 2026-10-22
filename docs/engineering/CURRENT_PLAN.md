@@ -11,7 +11,7 @@ This tick: 0 merged PRs with playable proof; no acceptance waiver.
 Run `39715279402`: encounter PostgreSQL v5 wolf test, line 4156,
 `effects_applied_at` null; that stage passed 24 tests and failed 1.
 OIDC source `37f35c6b`, accepted Tier L proof and validator 9/9 retained.
-[OIDC contract and evidence](evidence/core-oidc-count-isolation/README.md).
+[OIDC contract and evidence in PR #287](https://github.com/Vovanostm/warwrit/pull/287).
 Existing P0 #285 already describes this exact assertion failure on another PR.
 Coordinator decision: reuse #285; shared-database causality is not proven here.
 #285 dedicated branch `Vovanostm/core-integration-db-isolation`, base `c62ad2d0`.
@@ -20,10 +20,12 @@ Own only `.orca/core-integration-db-isolation/contract.md`; source NOT_RUN.
 Setup deferred to preserve #179 exclusive checks/hooks/runtime allocation.
 All #285 AC retained: file isolation, disposal, parallelism, <=20% duration,
 five full CI passes; contract must name ownership or split before source build.
-#179 sole live web builder `task_1af575ec832f`; clean feature `6ce7f587` observed.
+#179 sole live web builder `task_1af575ec832f`; clean head `514943b7` observed.
 Coordinator directed removal of the newly added optional bespoke PNG decoder;
 retain public catalogue fit/upward-step/widened-B001/unchanged-height assertions,
 actual alpha >=64 browser measurements and all original AC/DoD/full Tier V.
+Two new advisories recorded/acked and relayed to the existing #179 builder:
+initial-fit pan-limit risk (browser NOT_RUN), provisional ground detail concern.
 #214 remains frozen pending #179; #268 accepted contract waits for web slot.
 #269 AND #262 final component 20/15; #263/#231 remain open.
 #274/#280 retain unresolved REWORK; green CI alone permits no merge.

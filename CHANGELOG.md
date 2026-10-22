@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Resume interrupted coordinator checkpoint — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`: owner-requested single pipeline tick
+  completes the interrupted documentation correction below. The new OIDC proof
+  link points to unmerged PR #287, where that evidence exists; historical records
+  remain intact. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) retains #285's
+  live read-only contract and #179's sole builder/checks/runtime allocation.
+- Recorded and acknowledged two #179 advisories before relaying to its existing
+  dispatch: possible initial-fit/full-field pan-limit overwrite (sender source
+  review; browser NOT_RUN), and provisional ground detail concerns (cause
+  unverified). Original full Tier V and size/depth/matrix criteria remain.
+  Clean #179 head `514943b7` observed; no evaluator acceptance is claimed.
+- Native PR #287 still has failed final-head CI at `c07b88d9`; #274/#280 retain
+  REWORK. No PR merged, no duplicate worker or daily work. Markdown format,
+  scoped diff and changed-section local links checked; local game tests,
+  typecheck, build, DB/browser and full suites NOT_RUN; performance NOT_MEASURED.
+  No source, setup/API/wiki/game-rule/replay/schema/migration contract changed.
+
 ### Route encounter CI failure to existing isolation issue — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`: one owner-requested pipeline tick;
@@ -32,7 +50,9 @@ requests.
   #285 dispatch/worktree/liveness verified. Local game tests, typecheck, builds,
   DB/browser and full suites NOT_RUN; performance NOT_MEASURED. Documentation
   format/diff checks apply; no game-rule/API/wiki/replay/schema/migration change.
-  Zero merged PRs with playable proof; daily work already complete.
+  Initial local-link check failed: OIDC evidence exists only on unmerged #287;
+  corrected the new status link to that PR. Zero merged PRs with playable proof;
+  daily work already complete.
 
 ### Publish accepted selection and autoplay extraction — 2026-10-22, PUBLISHED
 
