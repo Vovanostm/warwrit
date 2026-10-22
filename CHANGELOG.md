@@ -22,7 +22,11 @@ requests.
   without listeners and no play.pid; acknowledged and released exact dispatch.
   Two permitted rework rounds are spent: needs-owner requests a scoped recovery
   exception for vitals/scenery and owned terrain/scene wiring/tests, retaining
-  300 source lines and full Tier V. Engineering correction itself needs no new
+  300 source lines and full Tier V. Late read-only critic advisory additionally
+  scores native 1366×768/125 day/night readability 1 and night value 1; small
+  initial actors/large markers persist with stable camera. Coordinator did not
+  repeat these measurements; angle consistency alone cannot close original DoD.
+  Engineering correction itself needs no new
   game rule. No third attempt, acceptance waiver, PR or merge was performed.
 - #285 accepted per-file PostgreSQL contract advanced to its first core builder
   `task_a480dc850e8f` / `ctx_a599968c758c`, in its dedicated worktree. Exclusive

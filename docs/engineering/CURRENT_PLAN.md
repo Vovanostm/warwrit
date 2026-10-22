@@ -13,6 +13,8 @@ Local full report: uix-w4-scale/.orca/uix-w4-scale/report.md.
 Author measures W01 93.0184 px and current 12-row input matrix; not remeasured here.
 Camera/figures use 30 degrees while vitals/scenery/terrain reference uses 50.
 All original AC/DoD and full independent Tier V remain open; no PR/merge.
+Late critic advisory: native 1366×768/125 day/night readability 1, night value 1;
+small initial actors/large markers persist despite stability. Not remeasured here.
 State needs-owner: only the explicit two-round recovery cap needs an exception;
 projection propagation itself is a concrete engineering correction, not a rule question.
 Recommended supplemental scope: vitals/scenery, owned terrain/scene wiring and tests;
