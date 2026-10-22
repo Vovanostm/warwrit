@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Retain initial sizing evidence and sequence existing P0 — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-selection-autoplay`: coordinator processed two preparation
+  messages for existing [#179](https://github.com/Vovanostm/warwrit/issues/179#issuecomment-6330520609).
+  Independent critic reports W01 A 18±5 px / C 19±5 px in the initial 1440×900
+  frame against wiki D3 80 px; width ratio about 25±8% is less certain.
+  Coordinator checked native evaluator Start/seed/viewport → screenshot → later
+  Overview ordering, and current D3 text; pixel measurements were not repeated.
+  This is inherited sizing debt, not a claimed #267 extraction regression or
+  full visual verdict.
+- Under delegated sequencing authority, local pipeline overrides put #179 after
+  reserved #214 and before inactive #201/playback owners. No source start,
+  numerical spacing decision, new mechanic, ownership expansion or acceptance
+  waiver. Original catalogue-derived spacing, AC/DoD and full Tier V remain.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the queue; the issue
+  comment was read back exactly after one write. First comparison incorrectly
+  stripped its trailing newline; corrected comparison PASS.
+- #267 evaluator remains live with the exclusive checks/runtime slot; #272
+  waits next for checks, #214 for the next web result. PRs #274 and #280 have
+  green snapshot CI but unresolved REWORK, so neither merges. Daily work was
+  already complete; no duplicate scout. This tick: 0 merged PRs with playable
+  proof. Game tests/typecheck/runtime NOT_RUN, performance NOT_MEASURED.
+  No setup/API/wiki/game-rule/protocol/replay/migration contract changed.
+
 ### Validate selection extraction after callback discovery repair — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`, #267: normal test commit `cc98765f`

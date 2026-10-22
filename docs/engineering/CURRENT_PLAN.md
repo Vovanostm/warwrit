@@ -22,12 +22,16 @@ Local owning contract/report/screenshots: qa-hooks-selection-autoplay/.orca/qa-h
 Checks/runtime scheduling remains exclusive; no competing heavy run.
 #214 complete contract accepted, queued behind #267; full Tier V retained.
 #268 follows #267; final component 20/15 remains on #269 AND #262.
-#263/#231 and original playback gates remain open; no scope expansion.
-PR #280 remains REWORK/CI red; PR #274 CI green at `684b7ba3`.
+PRs #280 (`e4780547`) and #274 (`684b7ba3`) have green CI in the snapshot;
+both remain REWORK without fresh ACCEPT. Neither can merge.
 Fresh #274 review REWORK at `684b7ba3`: stale main-CI evidence, tilde-fence bypass.
-Exact settlement/report recorded, acknowledged and released; existing author fixes.
 #267 opponent-view proof uses source + existing policy regression where unreachable;
 all reachable mounted and independent day/night criteria remain unchanged.
+#179 retains reported initial W01 heights of 18±5 / 19±5 px against D3 80 px.
+Native Start-before-Overview screenshot provenance checked; pixels not remeasured.
+Coordinator order: #179 after reserved #214, before inactive #201/playback.
+Original spacing derivation, ownership, AC and full Tier V remain required.
+No new worker/runtime or label transition; local overrides retain this order.
 Daily metrics/scout/triage/digest already complete; no duplicate daily work.
 Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
 No setup/API/wiki/protocol/replay/rule/migration contract change.
