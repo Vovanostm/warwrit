@@ -2,7 +2,13 @@ import { Children, isValidElement, type ReactElement, type ReactNode } from 'rea
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, expect, it, vi } from 'vitest';
 import type { CombatLabBattleConfig, CombatLabCatalog, CombatLabView } from '@warwrit/protocol';
-import { CombatLab, CombatLabEditor } from './CombatLab.js';
+import {
+  CombatLab,
+  CombatLabEditor,
+  CombatLabEditorShell,
+  CombatLabAutoplayToggle,
+  combatLabMenuDisabled,
+} from './CombatLab.js';
 import { BattleEditor } from './BattleEditor.js';
 import { createEmptyTiles } from './editor-model.js';
 import { createCombatLabSessionCallbacks, type CombatLabSessionPorts } from './controller.js';
@@ -132,6 +138,89 @@ it('blocks start while loading even with a retained catalog and draft', () => {
     true,
     false,
   ]);
+});
+
+it.each([false, true])(
+  'preserves shell order and notice placement (unresolved=%s)',
+  (unresolved) => {
+    const props = {
+      catalog,
+      draft: catalog.defaultBattle,
+      loading: false,
+      starting: false,
+      unresolved,
+      notice: 'Состояние запроса',
+      onChange: vi.fn(),
+      onStart: vi.fn(),
+    };
+    const tree = CombatLabEditorShell(props);
+    const html = renderToStaticMarkup(tree);
+    expect(html).toBe(
+      '<p class="eyebrow">Тренировочный бой · кампания не меняется</p>' +
+        '<h1>Лаборатория боя</h1><p>Выберите бойцов, настройте поле и начните бой.</p>' +
+        renderToStaticMarkup(<CombatLabEditor {...props} />) +
+        (unresolved ? '' : '<p role="status">Состояние запроса</p>'),
+    );
+    const child = Children.toArray(tree.props.children).find(
+      (node) => isValidElement(node) && node.type === CombatLabEditor,
+    ) as ReactElement<Parameters<typeof CombatLabEditor>[0]>;
+    expect(child.props).toEqual(props);
+    if (!unresolved) {
+      buttons(tree)[0]!.props.onClick!();
+      buttons(tree)[1]!.props.onClick!();
+      expect(props.onStart).toHaveBeenCalledExactlyOnceWith();
+      expect(props.onChange).toHaveBeenCalledExactlyOnceWith(catalog.defaultBattle);
+    }
+  },
+);
+
+it.each([
+  ['idle', {}, [false, false, false, false]],
+  ['opponent/lost/terminal', { controlling: false }, [false, false, true, true]],
+  ['pending', { hasPending: true }, [true, true, true, true]],
+  ['deleting', { deleting: true }, [true, true, true, true]],
+  ['starting', { starting: true }, [false, true, false, false]],
+  ['unresolved', { startUnresolved: true }, [false, true, false, false]],
+  ['running', { autoplay: true }, [false, false, true, false]],
+  [
+    'running while blocked',
+    { autoplay: true, controlling: false, hasPending: true, deleting: true },
+    [true, true, true, false],
+  ],
+])('preserves the five menu disabled uses: %s', (_name, patch, expected) => {
+  const state = combatLabMenuDisabled({
+    autoplay: false,
+    controlling: true,
+    hasPending: false,
+    deleting: false,
+    starting: false,
+    startUnresolved: false,
+    ...patch,
+  });
+  expect(state).toEqual({
+    replayDisabled: expected[0],
+    restartDisabled: expected[1],
+    stepDisabled: expected[2],
+    autoplayDisabled: expected[3],
+  });
+});
+
+it.each([
+  [false, false, 'Начать автобой', 'M8 5l11 7-11 7z'],
+  [false, true, 'Начать автобой', 'M8 5l11 7-11 7z'],
+  [true, false, 'Остановить автобой', 'M8 5v14M16 5v14'],
+])('preserves autoplay button markup and callback (%s/%s)', (autoplay, disabled, label, path) => {
+  const onToggle = vi.fn();
+  const button = CombatLabAutoplayToggle({ autoplay, disabled, onToggle });
+  expect(renderToStaticMarkup(button)).toBe(
+    '<button class="battle-control battle-control--utility" type="button"' +
+      ` aria-label="${label}" title="${label}" aria-pressed="${autoplay}"` +
+      (disabled ? ' disabled=""' : '') +
+      `><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"></path></svg></button>`,
+  );
+  expect(button.props.onClick).toBe(onToggle);
+  button.props.onClick();
+  expect(onToggle).toHaveBeenCalledExactlyOnceWith();
 });
 
 // Server rendering checks initial composition only; mounted effects are browser proof.
