@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Validate selection extraction after callback discovery repair — 2026-10-22, LOCAL
+### Validate selection extraction after callback discovery repair — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`, #267: normal test commit `cc98765f`
   relocates existing production callback regressions with all assertions intact;
@@ -18,14 +18,17 @@ requests.
   Source scope 159/300. Mounted timing, admission and day/night victory smoke
   are author evidence; independent Tier U retains all unmeasured cases.
 - Ordinary main `00117aa1` integration preserves both changelog histories;
-  only the changelog conflicted, no source conflict. Coordinator validation
-  and fresh Tier U remain pending. Local owning contract/report/screenshots:
+  only the changelog conflicted, no source conflict. Coordinator validation at
+  `9ccabbd9`: exit 0, all 9 gates PASS, related 49 tests. Fresh Tier U task
+  `task_99c8547e4ba0` is prepared; no ACCEPT/PR yet. Local owning proof:
   `.orca/qa-hooks-selection-autoplay/` in its dedicated worktree.
 - [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records queue and gates.
   Final component 20/15 remains on #269 AND #262; #268 follows #267.
   #272 preserves original mutation/five-pass/Tier L after merged #282.
   No setup/API/wiki/rule/migration change; full local suites NOT_RUN,
-  performance NOT_MEASURED. This tick: 0 merged PRs with playable proof.
+  performance NOT_MEASURED. Fresh source-only PR #274 review allocated at
+  `684b7ba3` (`task_d4e88e8f4222`); validator/runtime still pending there.
+  This tick: 0 merged PRs with playable proof.
 
 ### Resume retained extraction with real callback coverage — 2026-10-22, PUBLISHED
 

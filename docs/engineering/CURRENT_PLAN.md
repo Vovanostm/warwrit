@@ -3,7 +3,9 @@
 ## Pipeline status — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
-Owner scope: one tick for epic #217 and existing local overrides.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
 #267 normal test commit `cc98765f` repairs callback test discovery;
 production extraction `b2520b1b` unchanged, source scope 159/300.
@@ -11,7 +13,9 @@ Author 49 tests, ordinary audit and validator 9/9 PASS; callback hits 10/17.
 Author mounted timing/admission/held-response/day-night victory proof retained;
 independent Tier U must resolve remaining skill/reset/listener/state cases.
 Main `00117aa1` ordinary integration: changelog conflict only, both histories kept.
-Coordinator integrated validation then fresh Tier U are next.
+Coordinator validation at `9ccabbd9`: exit 0, all 9 gates PASS; related 49 tests.
+Fresh independent Tier U task `task_99c8547e4ba0` is prepared for this frozen code.
+Only coordinator records may follow; no PR/ACCEPT yet.
 Local owning contract/report/screenshots: qa-hooks-selection-autoplay/.orca/qa-hooks-selection-autoplay/.
 #271 PR #283 and #282 PR #284 are merged; #272 retains its separate proof.
 #272 ready: original mutation and five consecutive parallel DB passes, Tier L.
@@ -19,11 +23,12 @@ Checks/runtime scheduling remains exclusive; no competing heavy run.
 #214 complete contract accepted, queued behind #267; full Tier V retained.
 #268 follows #267; final component 20/15 remains on #269 AND #262.
 #263/#231 and original playback gates remain open; no scope expansion.
-PR #280 remains REWORK/CI red; PR #274 CI green, fresh review not established.
+PR #280 remains REWORK/CI red; PR #274 CI green at `684b7ba3`.
+Fresh source-only #274 review `task_d4e88e8f4222`; no competing checks/runtime.
 Daily metrics/scout/triage/digest already complete; no duplicate daily work.
 Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
 No setup/API/wiki/protocol/replay/rule/migration contract change.
-Next: integrated validation, independent #267 gate, then queued lane work.
+Next: settle independent #267 and #274 gates; grant #272 proof slot when free.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
