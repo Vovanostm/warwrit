@@ -35,6 +35,27 @@ requests.
   No setup/API/wiki/rule/replay/schema/migration/dependency change; full local
   verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED.
 
+### Cut coordinator tick context — 2026-10-22, LOCAL
+
+- `claude/orca-coordinator-context`, #288: coordinator cost. Measured
+  2026-10-21/22: 100 ticks, 181.9M input of which 11.0M uncached, versus 5.5M
+  uncached for all workers. Per-call context climbed from 27k to 110–125k tokens
+  within a tick, mostly from whole-file reads of the skill and a 397 KB
+  `checkpoint.json` holding 134 history keys and 19 finished slices.
+- New `scripts/orca-checkpoint-compact.sh` runs before every tick and removes
+  tick records, worker receipts, old history entries and finished-slice detail
+  (400 KB → 122 KB on a copy of the live file); removed parts go to
+  `.orca/pipeline/archive/checkpoint-history.jsonl`. The digest lists active
+  slices, the tick prompt asks for narrow reads, and `scripts/orca-metrics.sh`
+  reports uncached input and output separately. Rule in
+  [warwrit-orca](.agents/skills/warwrit-orca/SKILL.md) § Principles.
+- Review: independent critic REWORK on `64da03fe` (ownership lists trimmed,
+  [ready] rework budget and findings dropped); fixed by removing only known
+  history keys. Checks: compaction run twice on a copy (second run no-op; all
+  `ownership`, rework-round and pending-findings keys kept), digest and metrics
+  run against live state, `bash -n` on changed scripts. Effect on tokens per
+  tick NOT_MEASURED until ticks run on main.
+
 ### Retain initial sizing evidence and sequence existing P0 — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-selection-autoplay`: coordinator processed two preparation
