@@ -42,13 +42,17 @@ requests.
   uncached for all workers. Per-call context climbed from 27k to 110–125k tokens
   within a tick, mostly from whole-file reads of the skill and a 397 KB
   `checkpoint.json` holding 134 history keys and 19 finished slices.
-- New `scripts/orca-checkpoint-compact.sh` runs before every tick and keeps live
-  state only (397 KB → 61 KB on a copy of the live file); removed parts go to
+- New `scripts/orca-checkpoint-compact.sh` runs before every tick and removes
+  tick records, worker receipts, old history entries and finished-slice detail
+  (400 KB → 122 KB on a copy of the live file); removed parts go to
   `.orca/pipeline/archive/checkpoint-history.jsonl`. The digest lists active
   slices, the tick prompt asks for narrow reads, and `scripts/orca-metrics.sh`
   reports uncached input and output separately. Rule in
   [warwrit-orca](.agents/skills/warwrit-orca/SKILL.md) § Principles.
-- Checks: compaction run twice on a copy (second run no-op), digest and metrics
+- Review: independent critic REWORK on `64da03fe` (ownership lists trimmed,
+  [ready] rework budget and findings dropped); fixed by removing only known
+  history keys. Checks: compaction run twice on a copy (second run no-op; all
+  `ownership`, rework-round and pending-findings keys kept), digest and metrics
   run against live state, `bash -n` on changed scripts. Effect on tokens per
   tick NOT_MEASURED until ticks run on main.
 

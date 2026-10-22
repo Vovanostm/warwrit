@@ -103,9 +103,12 @@ All workers append [common rules](prompts/common.md). Research basis:
   one slice, `gh --jq` for fields or the last comments). `checkpoint.json` holds
   live state only: `run`, `recorded_at`, `workflow`, `last_tick`, `notes` (live
   cross-slice facts), `runtime_owner`, `exclusive_checks_owner`,
-  `validation_reservation` and slices not [done]. Before each tick
-  `scripts/orca-checkpoint-compact.sh` moves other keys, [done] slices, [ready]
-  slice history and all but the last 3 entries of a slice's lists to
+  `validation_reservation` and the slices. Before each tick
+  `scripts/orca-checkpoint-compact.sh` moves other top-level keys, per-tick
+  slice keys (`tick*`), worker receipts (`*_release`, `*_result`, `*_readback`,
+  `*_launch`, `*_observation`), all but the last 3 entries of `*_history`,
+  `advisories` and mail lists, and all of a [done] slice except
+  `slice, state, issues, pr, branch, head` to
   `.orca/pipeline/archive/checkpoint-history.jsonl`.
 
 ## Inputs

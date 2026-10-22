@@ -4,23 +4,22 @@
 # tick history and finished slices multiplies coordinator tokens. Removed parts
 # (whole finished slices, dropped keys and older list entries) are appended to
 # archive/checkpoint-history.jsonl.
-# Live state: the keys below, slices not [done], and the newest entries of
-# each list in a slice. A [ready] slice keeps only what restarting it needs;
-# its findings live on the issue and in the slice worktree.
+# Live state: the keys below and every slice field except known history: lists
+# of past rounds keep their newest entries, per-tick records and worker
+# launch/release receipts go; a [done] slice keeps a stub for `after` checks.
 # Usage: scripts/orca-checkpoint-compact.sh <pipeline-state-dir>
 set -euo pipefail
 state="$1"
 [[ -f "$state/checkpoint.json" ]] || exit 0
 mkdir -p "$state/archive"
 python3 -I - "$state/checkpoint.json" "$state/archive/checkpoint-history.jsonl" <<'PY'
-import datetime, json, os, sys
+import datetime, json, os, re, sys
 path, archive = sys.argv[1], sys.argv[2]
 KEEP = {"run", "recorded_at", "workflow", "slices", "last_tick", "notes",
         "runtime_owner", "exclusive_checks_owner", "validation_reservation"}
-READY_KEEP = {"slice", "state", "phase", "issues", "lane", "tier", "after",
-              "ownership", "note", "branch", "head", "worktree", "pr",
-              "pushed_head", "handoff", "children", "wave", "rework_round",
-              "contract", "blocked", "needs_owner"}
+DONE_STUB = ("slice", "state", "issues", "pr", "branch", "head")
+HISTORY_LIST = re.compile(r"_history$|^advisories$|mail")
+RECEIPT = re.compile(r"^tick|_(release|result|readback|launch|observation)$")
 LIST_TAIL = 3
 
 checkpoint = json.load(open(path))
@@ -28,15 +27,13 @@ removed_keys = {k: v for k, v in checkpoint.items() if k not in KEEP}
 kept, removed_slices = [], []
 for s in checkpoint.get("slices", []):
     if s.get("state") == "done":
-        removed_slices.append(s)
-        continue
-    if s.get("state") == "ready":
-        removed = {k: v for k, v in s.items() if k not in READY_KEEP}
-        live = {k: v for k, v in s.items() if k in READY_KEEP}
+        removed = {k: v for k, v in s.items() if k not in DONE_STUB}
+        live = {k: v for k, v in s.items() if k in DONE_STUB}
     else:
-        removed = {k: v[:-LIST_TAIL] for k, v in s.items()
-                   if isinstance(v, list) and k not in ("issues", "after") and len(v) > LIST_TAIL}
-        live = {k: (v[-LIST_TAIL:] if k in removed else v) for k, v in s.items()}
+        removed = {k: v for k, v in s.items() if RECEIPT.search(k)}
+        removed.update({k: v[:-LIST_TAIL] for k, v in s.items() if k not in removed
+                        and isinstance(v, list) and HISTORY_LIST.search(k) and len(v) > LIST_TAIL})
+        live = {k: (v[-LIST_TAIL:] if k in removed else v) for k, v in s.items() if not RECEIPT.search(k)}
     if removed:
         removed_slices.append({"slice": s.get("slice"), "removed": removed})
     kept.append(live)
@@ -52,6 +49,8 @@ tmp = path + ".tmp"
 with open(tmp, "w") as out:
     json.dump(compact, out, indent=1)
     out.write("\n")
+    out.flush()
+    os.fsync(out.fileno())
 before = os.path.getsize(path)
 os.replace(tmp, path)
 print(f"checkpoint compacted: {before} -> {os.path.getsize(path)} bytes; history in {archive}")
