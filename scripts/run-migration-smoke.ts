@@ -4,6 +4,7 @@ import {
   createDatabaseRun,
   createEmptyDatabase,
   disposeDatabases,
+  disposeAfterFailure,
 } from './integration-database.js';
 
 const run = createDatabaseRun(process.env['DATABASE_URL']);
@@ -21,6 +22,7 @@ try {
     child.once('error', reject);
     child.once('exit', (code) => resolve(code ?? 1));
   });
-} finally {
-  await disposeDatabases(run);
+} catch (error) {
+  await disposeAfterFailure(run, error);
 }
+await disposeDatabases(run);

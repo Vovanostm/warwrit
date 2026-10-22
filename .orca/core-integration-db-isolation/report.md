@@ -169,3 +169,93 @@ Coordinator owns remaining full gates, shared records and publication.
   proposed records above are ready for the coordinator. No publication performed.
   Full eight-file/migration smoke, timings, five hosted CI runs and independent
   Tier L gates remain **NOT_RUN / NOT_MEASURED** and mandatory.
+
+## Rework 1/2 — 2026-10-22 (task_247470b6567e)
+
+This section supersedes the original implementation's cleanup claim for ambiguous
+CREATE acknowledgements. Starting HEAD `1c11cbba`; feature source was `0b0c44eb`.
+Both complete verdicts at `284efd79`, accepted contract, original report and live
+#285 body/comments were read. Fetch plus ordinary merge of origin/main completed
+with “Already up to date”; current CHANGELOG/CURRENT_PLAN were read afterward.
+The graph indexes another checkout/head, so current source is the authority.
+No shared records, original evaluator evidence, #272 source or #282/assertions
+were edited. The latest allocation supersedes the old build task ID.
+
+### Reproduction and fix
+
+- Reused the private evaluator reproducer as a lead, implementing a small test-only
+  TCP relay with Node's existing net API. It forwards real PG17 wire messages and
+  drops precisely the CREATE CommandComplete after PostgreSQL commits. No driver,
+  query, transaction or assertion is faked; no dependency or proxy framework.
+- First red run: 3 failed / 9 selected-out, 2 uncaught Client errors. Its clone
+  fixture initially crossed run ownership and was corrected before judging that
+  path. Corrected red run: all 3 allocation cases failed, 3 unhandled Client errors.
+  `red.log`, `red-corrected-fixture.log` and `red-orphans.sql.log` retain the actual
+  failures. The red-run orphan databases were contained by removal of this new
+  disposable Compose project, then it was freshly recreated; no name/prefix sweep.
+- Generated exact URLs now enter the run ledger before CREATE and remain there
+  after ambiguous transport failure. Existing exact-membership DROP IF EXISTS
+  cleanup removes them; other runs' databases remain untouched.
+- Client error events reject the awaited lifecycle operation, with their listener
+  retained through client.end(). Connection/action sequencing has its own small
+  helper. Original transport errors reach callers; no process-level error observer
+  or suppression was added.
+- Global setup and the migration wrapper share failure cleanup: successful cleanup
+  rethrows the original object; failed cleanup throws AggregateError containing
+  the original object first and the complete cleanup failure second (also cause).
+  Successful smoke-child exit handling remains unchanged.
+- Tests cover empty/template/clone committed CREATE with lost reply, SQL existence
+  before disposal and database/session absence afterward, plus another run's
+  surviving database. A real read-only PG cleanup failure retains code 25006,
+  the original error identity and the full nested cleanup error.
+- Hook evidence can use an explicit test-only directory, preserving the original
+  author's/evaluator's logs. Only four allocated source/test paths changed in
+  rework; aggregate issue source scope remains below 300 (201 lines at this stage).
+
+### Executed checks before commit
+
+- First-edit check:changes after each edited file: test PASS; helper FAIL for its
+  temporarily unused disposeAfterFailure export before consumers were edited;
+  global setup and migration-wrapper audits PASS. No thresholds changed.
+- Focused new regressions: 4 PASS / 9 selected-out, exit 0. Full lifecycle coverage:
+  13 PASS / 0 SKIP, exit 0, 7.31 s; final cause-field revision rerun: 13 PASS / 0
+  SKIP, exit 0, 6.75 s. Final measured statements 85.34% (99/116), branches 76.92%
+  (20/26), functions 91.17% (31/34), lines 84.90% (90/106). Child hooks run for real;
+  their coverage is not aggregated. Logs: rework-1-evidence/lifecycle-coverage*.log.
+- Server typecheck and scoped strict NodeNext tsc for the four lifecycle scripts
+  plus Vitest config PASS. Changed-file ESLint initially rejected cause pointing
+  to the original error inside the cleanup catch; corrected cause to the caught
+  cleanup error, preserving both errors and asserting their identities; lint and
+  Prettier then PASS. Final ordinary audit against main PASS, zero new dead-code,
+  complexity or duplication findings. The audit reports its existing syntactic
+  attribution warning; no tool configuration changed.
+- Normal commit/hook, validator, smoke and final cleanup are recorded below once
+  executed. New check evidence is private under rework-1-evidence/; no URLs or
+  credentials are printed in those logs.
+
+### Acceptance and limits retained
+
+AC1: new real-PG failure-boundary proof above supplements the original lifecycle
+and evaluator's historical eight-file/60-test disposal evidence; it does not make
+that evaluation fresh at the replacement head. AC2: worker limit 2, default
+parallelism, timeouts/retries and all existing assertions unchanged; matched
+hosted <=20% duration is still NOT_MEASURED (three matched samples required).
+AC3: five consecutive complete hosted CI runs NOT_RUN, coordinator-owned and
+mandatory. AC4: #272 remains outside this branch; original accepted evidence and
+#282's nested rollback/competing-writer/clock/receipt assertions remain intact.
+The prior evaluator persistent JOIN → move/bow → victory → effects/replay/
+idempotency journey and 60 tests are historical proof only. Fresh independent
+Tier L review/evaluation are required at the new head. No full verify, stress,
+bootstrap, test:migrations or hosted run is allocated or run in this rework.
+No production, migration, auth, replay, game rule, dependency or UI change.
+
+### Proposed coordinator documentation update (not a shared-file write)
+
+CHANGELOG: 2026-10-22, Vovanostm/core-integration-db-isolation, LOCAL, #285 rework:
+reserve exact database targets before CREATE, await Client transport errors and
+retain original plus cleanup failures; three real committed/lost-reply cases and
+real cleanup-error retention pass with all existing lifecycle probes (13 total).
+No production/assertion/parallelism change; new-head Tier L and hosted AC pending.
+CURRENT_PLAN/wiki: replace the source-fix blocker with the committed replacement
+head after handoff; retain both historical REWORK verdicts, all #272/#282 proof,
+<=20% timing and five full CI requirements; do not declare overall acceptance.

@@ -26,12 +26,22 @@ function validateSourceUrl(sourceUrl: string): void {
 
 async function withClient<T>(url: string, action: (client: Client) => Promise<T>): Promise<T> {
   const client = new Client({ connectionString: url });
+  // pg emits Client errors separately from rejecting the active query. Keep
+  // the listener through end(), and route idle/transport errors to this await.
+  const failure = new Promise<never>((_resolve, reject) => client.on('error', reject));
   try {
-    await client.connect();
-    return await action(client);
+    return await Promise.race([connectAndAct(client, action), failure]);
   } finally {
     await client.end();
   }
+}
+
+async function connectAndAct<T>(
+  client: Client,
+  action: (client: Client) => Promise<T>,
+): Promise<T> {
+  await client.connect();
+  return action(client);
 }
 
 function ownedName(run: DatabaseRun, url: string): string {
@@ -43,9 +53,10 @@ async function allocateDatabase(run: DatabaseRun, template: string): Promise<str
   const name = `ww_integration_${randomUUID().replaceAll('-', '')}`;
   const url = new URL(run.sourceUrl);
   url.pathname = `/${name}`;
+  // Reserve before CREATE: a lost reply can hide a committed allocation.
+  run.databases.push(url.href);
   await withClient(run.sourceUrl, async (client) => {
     await client.query(`CREATE DATABASE "${name}" TEMPLATE "${template}"`);
-    run.databases.push(url.href);
   });
   return url.href;
 }
@@ -82,4 +93,15 @@ export async function disposeDatabases(run: DatabaseRun): Promise<void> {
     }
   }
   if (errors.length) throw new AggregateError(errors, 'Integration database cleanup failed');
+}
+
+export async function disposeAfterFailure(run: DatabaseRun, error: unknown): Promise<never> {
+  try {
+    await disposeDatabases(run);
+  } catch (cleanupError) {
+    throw new AggregateError([error, cleanupError], 'Integration setup and cleanup failed', {
+      cause: cleanupError,
+    });
+  }
+  throw error;
 }

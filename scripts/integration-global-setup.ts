@@ -4,6 +4,7 @@ import {
   createDatabaseRun,
   createMigratedTemplate,
   disposeDatabases,
+  disposeAfterFailure,
   type DatabaseRun,
 } from './integration-database.js';
 
@@ -22,8 +23,7 @@ export default async function setup(project: TestProject): Promise<() => Promise
     for (const path of testFiles) files[path] = await cloneDatabase(run, template);
     project.provide('integrationDatabases', { run, files });
   } catch (error) {
-    await disposeDatabases(run);
-    throw error;
+    return disposeAfterFailure(run, error);
   }
   return () => disposeDatabases(run);
 }

@@ -1,6 +1,7 @@
 import { execFile } from 'node:child_process';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { createServer, connect, type Socket } from 'node:net';
 import { promisify } from 'node:util';
 import { Client } from 'pg';
 import type { TestProject } from 'vitest/node';
@@ -17,6 +18,7 @@ interface Lifecycle {
   cloneDatabase: (run: DatabaseRun, template: string) => Promise<string>;
   dropDatabase: (run: DatabaseRun, url: string) => Promise<void>;
   disposeDatabases: (run: DatabaseRun) => Promise<void>;
+  disposeAfterFailure: (run: DatabaseRun, error: unknown) => Promise<never>;
 }
 
 // These test-only scripts live outside the server compiler's rootDir.
@@ -26,6 +28,7 @@ const {
   createEmptyDatabase,
   createMigratedTemplate,
   disposeDatabases,
+  disposeAfterFailure,
   dropDatabase,
 } = await vi.importActual<Lifecycle>('../../../../scripts/integration-database.js');
 const { default: setup } = await import(
@@ -47,6 +50,48 @@ describe('owned integration databases', () => {
       );
     }
   });
+
+  it.skipIf(source === undefined).each(['empty', 'template', 'clone'])(
+    'retains exact ownership after a committed %s CREATE loses its reply',
+    async (kind) => {
+      const direct = createDatabaseRun(source);
+      const sentinel = await createEmptyDatabase(direct);
+      const proxy = await dropCreateReply(source!);
+      const run = createDatabaseRun(source);
+      const template = kind === 'clone' ? await createMigratedTemplate(run) : undefined;
+      run.sourceUrl = proxy.url;
+      const previous = run.databases.length;
+      try {
+        const allocation =
+          kind === 'clone'
+            ? cloneDatabase(run, template!)
+            : kind === 'template'
+              ? createMigratedTemplate(run)
+              : createEmptyDatabase(run);
+        await expect(allocation).rejects.toThrow('Connection terminated unexpectedly');
+        expect(proxy.dropped()).toBe(true);
+        expect(run.databases).toHaveLength(previous + 1);
+        const name = new URL(run.databases.at(-1)!).pathname.slice(1);
+        await withClient(source!, async (client) => {
+          expect(
+            (await client.query('select datname from pg_database where datname = $1', [name])).rows,
+          ).toEqual([{ datname: name }]);
+        });
+        await disposeDatabases(run);
+        await expectAbsent(source!, run.databases);
+        // Another run's database must survive exact-name cleanup.
+        await withClient(sentinel, async (client) => {
+          expect((await client.query('select current_database() as name')).rows[0]?.name).toBe(
+            new URL(sentinel).pathname.slice(1),
+          );
+        });
+      } finally {
+        await disposeDatabases(run);
+        await disposeDatabases(direct);
+        await proxy.close();
+      }
+    },
+  );
 
   it.skipIf(source === undefined)(
     'clones clean migrations and confines identical keys and down/up',
@@ -149,6 +194,33 @@ describe('owned integration databases', () => {
   );
 
   it.skipIf(source === undefined)(
+    'preserves the original failure and real PostgreSQL cleanup failure',
+    async () => {
+      const run = createDatabaseRun(source);
+      const url = await createEmptyDatabase(run);
+      const original = new Error('original allocation failure');
+      try {
+        const readOnly = new URL(run.sourceUrl);
+        readOnly.searchParams.set('options', '-c default_transaction_read_only=on');
+        const failure = await disposeAfterFailure(
+          { ...run, sourceUrl: readOnly.href },
+          original,
+        ).catch((error: unknown) => error);
+        expect(failure).toBeInstanceOf(AggregateError);
+        const aggregate = failure as AggregateError;
+        expect(aggregate.cause).toBe(aggregate.errors[1]);
+        expect(aggregate.errors[0]).toBe(original);
+        expect(aggregate.errors[1]).toBeInstanceOf(AggregateError);
+        expect(aggregate.errors[1].errors[0].code).toBe('25006');
+      } finally {
+        await disposeDatabases(run);
+      }
+      await expectAbsent(source!, [url]);
+      await expect(disposeAfterFailure(run, original)).rejects.toBe(original);
+    },
+  );
+
+  it.skipIf(source === undefined)(
     'provides eight clean file clones and disposes partial setup on failure',
     async () => {
       vi.stubEnv('DATABASE_URL', source);
@@ -187,7 +259,10 @@ describe('owned integration databases', () => {
     .each(['pass', 'test-failure', 'collection-failure', 'cleanup-failure'])(
     'runs actual worker hooks and cleans after %s',
     async (scenario) => {
-      const evidence = resolve('.orca/core-integration-db-isolation');
+      const evidence = resolve(
+        process.env['INTEGRATION_LIFECYCLE_EVIDENCE_DIRECTORY'] ??
+          '.orca/core-integration-db-isolation',
+      );
       await mkdir(evidence, { recursive: true });
       const directory = await mkdtemp(`${evidence}/hook-probe-`);
       try {
@@ -303,4 +378,59 @@ async function withClient<T>(url: string, action: (client: Client) => Promise<T>
   } finally {
     await client.end();
   }
+}
+
+// Real PG wire traffic; discard only the committed CREATE's CommandComplete.
+async function dropCreateReply(sourceUrl: string) {
+  const direct = new URL(sourceUrl);
+  const sockets = new Set<Socket>();
+  let dropped = false;
+  const server = createServer((downstream) => {
+    const upstream = connect({ host: direct.hostname, port: Number(direct.port) });
+    for (const socket of [downstream, upstream]) {
+      sockets.add(socket);
+      socket.on('error', () => {});
+      socket.on('close', () => {
+        sockets.delete(socket);
+        downstream.destroy();
+        upstream.destroy();
+      });
+    }
+    downstream.pipe(upstream);
+    let buffered = Buffer.alloc(0);
+    upstream.on('data', (chunk: Buffer) => {
+      buffered = Buffer.concat([buffered, chunk]);
+      while (buffered.length >= 5) {
+        const size = buffered.readInt32BE(1) + 1;
+        if (buffered.length < size) return;
+        const message = buffered.subarray(0, size);
+        buffered = buffered.subarray(size);
+        if (
+          !dropped &&
+          message[0] === 67 &&
+          message.subarray(5).toString() === 'CREATE DATABASE\0'
+        ) {
+          dropped = true;
+          downstream.destroy();
+          upstream.destroy();
+          return;
+        }
+        downstream.write(message);
+      }
+    });
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address();
+  if (!address || typeof address === 'string') throw new Error('Missing private proxy port');
+  const url = new URL(sourceUrl);
+  url.port = String(address.port);
+  process.stdout.write(`[lost-create-proxy] port ${address.port}\n`);
+  return {
+    url: url.href,
+    dropped: () => dropped,
+    close: async () => {
+      for (const socket of sockets) socket.destroy();
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    },
+  };
 }
