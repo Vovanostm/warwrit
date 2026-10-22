@@ -113,7 +113,7 @@ function mountBattleEnvironment({
   }
 
   // Keep the authored mill perimeter in its original projected position and outside the field.
-  const backgroundWidth = 35.7;
+  const backgroundWidth = BATTLE_LAYOUT.spacing * (35.7 / 2.6);
   const backgroundHeight = (backgroundWidth * 941) / 1672;
   const backgroundX = mapBounds.minX + backgroundWidth * 0.59;
   const backgroundUp = backgroundHeight * 0.38 + 4;
@@ -225,7 +225,9 @@ export async function mountSpriteBattleScene(
   const perspective = {
     targetX: (mapBounds.minX + mapBounds.maxX) / 2,
     targetZ: centerZ,
-    distance: 16 * BATTLE_LAYOUT.spacing,
+    // A closer optical centre preserves the near squad at readable scale while
+    // the existing HUD-aware frame retains the far allies and nearest enemies.
+    distance: 4 * BATTLE_LAYOUT.spacing,
   };
   const project = (point: { x: number; y: number; z: number }) =>
     projectCameraPoint(point, perspective, CAMERA_ELEVATION);
@@ -383,7 +385,7 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
-  const groundCompositionWidth = mapBounds.maxX - mapBounds.minX + 40;
+  const groundCompositionWidth = mapBounds.maxX - mapBounds.minX + BATTLE_LAYOUT.spacing * 16;
   const terrain = mountBattleTerrain(scene, initialTiles, initialNight, {
     texture: texture(siteGroundUrl),
     center: new Vector2(perspective.targetX, 0),
@@ -847,7 +849,9 @@ export async function mountSpriteBattleScene(
         const art = spriteForUnit(unit);
         const scale = spriteScale(art);
         const point = AXIAL_TO_WORLD(unit.position);
-        const [left, top, right, lower] = art.visibleBounds;
+        const [left, top, width, height] = art.visibleBounds;
+        const right = left + width;
+        const lower = top + height;
         const center = new Vector3(
           point.x + ((left + right) / 2 - art.footX) * scale,
           groundYFor(unit.position),
@@ -1250,9 +1254,9 @@ export async function mountSpriteBattleScene(
     minZ: Math.min(...projectedField.map((point) => point.z)),
     maxZ: Math.max(...projectedField.map((point) => point.z)),
   };
-  const overviewBounds = () => {
+  const overviewBounds = (units = currentView.units, fullField = true) => {
     const { viewport, safeTop, safeBottom } = cameraOpening();
-    const figures = currentView.units
+    const figures = units
       .filter((unit) => unit.status === 'active')
       .map((unit) => {
         const art = spriteForUnit(unit);
@@ -1264,7 +1268,14 @@ export async function mountSpriteBattleScene(
         );
       });
     const frame = battleFrameBounds({
-      mapBounds: fieldBounds,
+      mapBounds: fullField
+        ? fieldBounds
+        : {
+            minX: Math.min(...figures.map((f) => f.minX)),
+            maxX: Math.max(...figures.map((f) => f.maxX)),
+            minZ: Math.min(...figures.map((f) => f.bottom)) / Math.sin(CAMERA_ELEVATION),
+            maxZ: Math.max(...figures.map((f) => f.top)) / Math.sin(CAMERA_ELEVATION),
+          },
       figures,
       width: viewport.width,
       height: viewport.height,
@@ -1338,7 +1349,11 @@ export async function mountSpriteBattleScene(
   };
   const frameDefault = () => {
     if (focusedId) focusUnit(focusedId);
-    else frameBattle();
+    else {
+      overviewBounds();
+      const bounds = overviewBounds(initialFrameUnits(currentView), false);
+      if (bounds) camera.fit(bounds, 0);
+    }
   };
   let cameraMoved = false;
   const markWheel = (event: WheelEvent) => {
@@ -1643,6 +1658,23 @@ function tilesFor(view: BattlePresentationView) {
     terrain: 'plain' as const,
     blocked: blocked.has(HEX_KEY(hex)),
   }));
+}
+
+function initialFrameUnits(view: BattlePresentationView) {
+  const standing = view.units.filter((unit) => unit.status === 'active');
+  const allies = standing.filter((unit) => view.controlledUnitIds.includes(unit.id));
+  const enemies = standing.filter((unit) => !view.controlledUnitIds.includes(unit.id));
+  const nearest = allies.map((ally) => {
+    const from = AXIAL_TO_WORLD(ally.position);
+    return enemies.toSorted((a, b) => {
+      const pa = AXIAL_TO_WORLD(a.position),
+        pb = AXIAL_TO_WORLD(b.position);
+      return Math.hypot(pa.x - from.x, pa.z - from.z) - Math.hypot(pb.x - from.x, pb.z - from.z);
+    })[0];
+  });
+  return allies.length
+    ? [...new Set([...allies, ...nearest.filter((unit) => unit !== undefined)])]
+    : standing;
 }
 
 function spriteFigureBounds(
