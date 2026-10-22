@@ -1314,6 +1314,7 @@ export async function mountSpriteBattleScene(
     if (bounds) camera.fit(bounds, 0);
   };
   let focusedId: string | null = null;
+  let overviewRequested = false;
   const focusUnit = (id: string) => {
     const unit = currentView.units.find((candidate) => candidate.id === id);
     if (!unit) return;
@@ -1345,10 +1346,12 @@ export async function mountSpriteBattleScene(
       0,
     );
     focusedId = id;
+    overviewRequested = false;
     cameraMoved = false;
   };
   const frameDefault = () => {
     if (focusedId) focusUnit(focusedId);
+    else if (overviewRequested) frameBattle();
     else {
       overviewBounds();
       const bounds = overviewBounds(initialFrameUnits(currentView), false);
@@ -1363,6 +1366,7 @@ export async function mountSpriteBattleScene(
   const modifiedKey = (event: KeyboardEvent) =>
     [event.altKey, event.ctrlKey, event.metaKey].some(Boolean);
   const showOverview = () => {
+    overviewRequested = true;
     focusedId = null;
     cameraMoved = false;
     frameBattle();
