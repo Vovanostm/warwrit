@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Agents close browsers, skip idle MCP servers and use the lightest stand — 2026-10-22, LOCAL
+
+- `claude/agent-resource-hygiene`. Owner request 2026-10-22: agents close the
+  browser and MCP after checking the game and use lightweight stands. Measured
+  that day: three forgotten `playwright-cli` browsers (about 2 GB) and 46 idle
+  `chrome-devtools-mcp` processes (about 2.4 GB).
+- New [`scripts/agent-cleanup.sh`](scripts/agent-cleanup.sh) closes one named
+  `playwright-cli` session and this worktree's lab, exit 1 on leftovers; new
+  [`scripts/codex-lean-mcp.sh`](scripts/codex-lean-mcp.sh) keeps the user's
+  unused MCP servers out of headless `codex exec` (children about 475 → 95 MB,
+  same input tokens). `orca-codex-worker.sh` sets `PLAYWRIGHT_CLI_SESSION=warwrit-<task>`
+  and always runs the cleanup; `orca-pipeline-tick.sh` uses the lean flags.
+- Rules: [AGENTS.md § Browsers, MCP servers and test stands](AGENTS.md#browsers-mcp-servers-and-test-stands)
+  and hard rule 9, [stand ladder](docs/engineering/LOCAL_DEVELOPMENT.md#test-stands),
+  Orca skill and `common`/`build`/`evaluate`/`scout` briefs, README; evidence
+  and sources in [AGENT_TEAM](docs/engineering/AGENT_TEAM.md).
+- Checks: cleanup closed a real headless session (7 processes) and left others;
+  lean and default `codex exec` runs compared; `bash -n` and Prettier pass.
+  shellcheck NOT_RUN (not installed); a full Orca wave with these scripts NOT_RUN.
+
 ### Publish independent session and editor proof — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-session-editor`, [PR #294](https://github.com/Vovanostm/warwrit/pull/294), #268: owner-requested #262/#231 extraction

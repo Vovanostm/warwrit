@@ -21,7 +21,8 @@ staged-only work counts as a failed build.
    the private URL), default mill battle, with the `playwright` skill. Save
    1440x900 day and night screenshots under `.orca/{{SLICE}}/shots/` (plus
    colour-vision emulation when an issue asks for it). Then
-   `bash scripts/orca-play.sh stop`.
+   `bash scripts/agent-cleanup.sh`. Skip this step when the slice changes no
+   rendered output and its focused tests prove the criteria.
 6. For a tier T slice, or whenever player-facing text changes, write `.orca/{{SLICE}}/text.md`:
    every changed line in the order the player sees it, with screen and
    speaker, Russian and English, and the mechanics facts it must match (the

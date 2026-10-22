@@ -145,6 +145,35 @@ PRs of 700–3700 lines and a status file nobody could read:
   dated history goes below it or to an archive. Write plain prose with spaces
   between numbers and words; put measurements in the linked evidence.
 
+## Browsers, MCP servers and test stands
+
+Owner request — 2026-10-22: «агенты после работы с игрой закрывали браузер, mcp
+и бережно относились к ресурсам — открыть браузер, проверить, закрыть». On that
+day the Mac held three forgotten `playwright-cli` browsers (about 2 GB) and
+about 2.4 GB of idle browser MCP servers.
+
+- **Smallest stand first.** Check a change on the lightest stand that exercises
+  it ([stand ladder](docs/engineering/LOCAL_DEVELOPMENT.md#test-stands)): a
+  focused Vitest file, then a component rendered in Node, then the in-memory
+  combat lab, and the full `pnpm dev` + database stack only for journeys,
+  persistence or sign-in. When no stand reaches the part, a slice may add a
+  small one (a lab preset, a fixture, one Vite page); no Storybook-style
+  framework without a measured need.
+- **Open, check, close.** Use the `playwright-cli` skill, headless, with one
+  named session per task (`-s=<task>` or `PLAYWRIGHT_CLI_SESSION`; Orca workers
+  get `warwrit-<task>`). Batch the checks, save screenshots to files, then close
+  the session and stop the stand in the same step:
+  `bash scripts/agent-cleanup.sh <session>` (exit 1 names what is left). Headed
+  browsers never time out; use them only when the owner watches. Never
+  `close-all` or `kill-all`: other projects' agents share the daemon. Claude
+  Code's built-in browser: `preview_stop` the server and close the tab.
+- **No idle MCP servers.** Do not add MCP servers for browser work; one browser
+  path per agent. Headless pipeline runs start Codex without the user's unused
+  MCP servers ([`scripts/codex-lean-mcp.sh`](scripts/codex-lean-mcp.sh)).
+- **Report only after cleanup.** A dev server, browser or watcher an agent
+  started is not left running after its report, unless the owner asked to keep
+  it for play; then say how to stop it.
+
 ## File-first project record
 
 Record substantive requirements, decisions, plans and results in their owning
@@ -225,6 +254,8 @@ These restate rules owned by the sections below. Check them before every write.
    `NOT_RUN`/`NOT_MEASURED`, never a pass.
 8. One coordinator at a time holds the lease; other agents do not tick, relabel
    or merge. Commit and push work in progress before a session stops.
+9. Close what you open: browser session, dev server and stand before reporting
+   (`scripts/agent-cleanup.sh`); never close other agents' sessions.
 
 Best-effort guards back rules 1 and 4: command prefix rules in `.codex/rules/`
 and `.claude/settings.json`, and `pnpm check:migrations` in pull-request CI.

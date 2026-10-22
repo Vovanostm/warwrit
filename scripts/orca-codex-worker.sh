@@ -12,11 +12,18 @@ out="$root/.orca/runs/$task"
 mkdir -p "$out"
 schema="$root/.agents/skills/warwrit-orca/worker-result.schema.json"
 
-codex exec --approve-for-me -C "$root" \
+# One named headless browser per task; the briefs' playwright-cli calls pick it up.
+export PLAYWRIGHT_CLI_SESSION="warwrit-$task"
+lean=()
+while IFS= read -r arg; do lean+=("$arg"); done < <(bash "$root/scripts/codex-lean-mcp.sh")
+
+codex exec --approve-for-me -C "$root" ${lean[@]+"${lean[@]}"} \
   --add-dir "$common" --add-dir "$HOME/Library/pnpm" --add-dir "$HOME/Library/Caches/ms-playwright" \
   --output-schema "$schema" -o "$out/result.json" --json - < "$brief" \
   > "$out/events.jsonl" 2> "$out/stderr.log"
 code=$?
+# Close whatever the worker left open, even after a crash; the log keeps leftovers.
+bash "$root/scripts/agent-cleanup.sh" "$PLAYWRIGHT_CLI_SESSION" > "$out/cleanup.log" 2>&1
 
 { IFS= read -r outcome; IFS= read -r summary; IFS= read -r files; IFS= read -r report; } < <(python3 -I - "$out/result.json" "$code" <<'PY'
 import json, sys

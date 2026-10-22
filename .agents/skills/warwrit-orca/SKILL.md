@@ -143,6 +143,14 @@ It opens a plain Orca terminal, binds a Dispatch to it and runs
 result. Logs: `<worktree>/.orca/runs/<task-id>/`. Briefs must say "do not call
 `orca`"; the wrapper reports.
 
+Resources (owner request 2026-10-22, [AGENTS.md](../../../AGENTS.md#browsers-mcp-servers-and-test-stands)):
+the wrapper and the tick start Codex without the user's unused MCP servers
+(`scripts/codex-lean-mcp.sh`; keep more with `WARWRIT_AGENT_MCP`), give each
+worker the headless browser session `warwrit-<task-id>` and, after Codex exits,
+run `scripts/agent-cleanup.sh` for it. A `LEFTOVER` line in
+`.orca/runs/<task-id>/cleanup.log` is a pipeline defect to fix, not a slice
+finding.
+
 ## One tick (what to do, in order)
 
 Environment: `ORCA_TERMINAL_HANDLE` is the coordinator mailbox; the run id and
