@@ -9,6 +9,34 @@ requests.
 
 ## Unreleased
 
+### Retain isolated encounter failure and queue final lifecycle rework — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  evaluator round 2 REWORK at `0998c1d5`; source `9ea84fcf` unchanged, 200/300.
+  Independent 13 real-PG lifecycle tests PASS. SQL confirms eight distinct
+  migrated databases, default parallel execution and per-file/global disposal.
+- Native migration suite: 59 PASS / 1 FAIL / 0 SKIP. The unchanged encounter
+  terminal-effects assertion at line 4156 still fails after victory; later
+  terminal proof/root/receipt/idempotency assertions NOT_RUN. Shared-database
+  causality and the remaining fixture/clock/batch cause remain UNPROVEN.
+  Mill day/night move/bow and round-7 victory are sampled browser evidence only.
+- Reviewer round 2 REWORK identifies lost Client error during awaited end();
+  source risk UNEXECUTED. Queue final rework 2/2 within the same seven paths,
+  retaining all original AC/Tier L, normal audit and <=300 source-line scope.
+  Remaining encounter failure needs separately bounded diagnosis; no production
+  or assertion change is authorized by this lifecycle allocation.
+- Exact evaluator settlement verified and recorded before acknowledgment.
+  Coordinator directly checked all 23 recorded PIDs absent, six ports clear,
+  and empty project-labelled Docker container/network/volume inventories.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exclusive runtime
+  handoff and queue. Verdict/evidence remain in the dedicated worktree under
+  .orca/core-integration-db-isolation/eval-2.md and eval-2-evidence/ (local paths).
+- WIP branch publication only; no PR/merge or acceptance. Matched hosted <=20%
+  timing NOT_MEASURED; five full CI runs NOT_RUN. #272/#282 evidence retained.
+  Coordinator tests/typecheck/validate/browser NOT_RUN this tick; documentation
+  format/diff/readback checked before publication. No setup/API/wiki/game rule,
+  protocol/replay/schema/migration/dependency change.
+
 ### Validate database lifecycle rework and request fresh Tier L — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
