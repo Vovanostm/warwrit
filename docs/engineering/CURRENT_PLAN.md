@@ -2,6 +2,46 @@
 
 ## Pipeline status — 2026-10-22
 
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
+Queue: #217 and existing local overrides; no new milestone activated.
+This tick: 0 merged PRs with playable proof; no merge attempted.
+[#282](https://github.com/Vovanostm/warwrit/issues/282): implementing → validating → review.
+Source `961ff8e3` / `2557e2df`, integrated `d553215b`; only owned test changes.
+Native baseline: 0011 FK-bearing table DROP vs encounter-command INSERT.
+Rollback/55000/receipts/all clocks/down-up/fresh-install assertions retained;
+only that destructive test uses its own disposable database.
+Builder proof: five default-parallel eight-file runs, 60/60 each, zero skips;
+focused DB checks and two intentional failure probes PASS; cleanup positive.
+Author evidence remains distinct from independent review; #272 not accepted.
+Coordinator validator at `d553215b`: exit 0, 9/9 PASS; scope 0 non-test lines.
+Related tests 3 PASS / 11 SKIP without DB URLs; actual DB proof is above.
+Fresh Tier D reviewer `task_3458072eeedf` / `ctx_9afe4a2d87cb` is live,
+frozen head `d553215b946ad937f78aff6144529de889b71905`; report only, no runtime.
+Local contract/report/proof: `.orca/core-world-rollback-isolation/` in its worktree.
+Branch `Vovanostm/core-world-rollback-isolation` published for continuation.
+[PR #283](https://github.com/Vovanostm/warwrit/pull/283), #271: Tier U ACCEPT retained;
+main integrated without source conflict; validator again 9/9 PASS, nine tests.
+Final head `3a97b679`; native PR readback matches, scope PASS, CI running.
+Try `/combat-lab`: Start/readiness above editor, Tab/Enter, mill/deserter result
+and editor return; independent day/night 1440 × 900 plus bounded fit recorded.
+#272 stays ready after #282; its own count-mutation/fresh Tier L gates remain.
+#267 two staged files/budgets preserved, waits #271 merge; #268 follows.
+#269 AND #262 final component 20/15 limits remain; #263/#231 stay open.
+Agent mailbox claims broader production scope; attributed locally, unverified
+as owner authority here. No new milestone or canon decision activated.
+Daily metrics/scout/triage/digest already complete; no duplicate daily work.
+Full verify/stress/migration suite/build NOT_RUN locally; performance NOT_MEASURED.
+No deployment, #282 player-feature delivery or full scene/art/M1 acceptance.
+Next: exact fresh #282 verdict and #283 final CI; merge only on applicable gates.
+Wrapper releases its own lease when this single tick returns.
+
+## Dated history
+
+**Previous #282 contract / #271 evaluator checkpoint:**
+
+## Pipeline status — 2026-10-22
+
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
 Queue: epic #217 and existing local overrides; no new milestone.
@@ -31,8 +71,6 @@ No game checks, runtime, DB, validator or full suites run this tick: NOT_RUN.
 Only coordinator records changed; no source/setup/API/wiki contract change.
 Next: #271 settlement/cleanup, transfer slot, #282 baseline diagnosis and builder.
 Wrapper releases its own lease when this single tick returns.
-
-## Dated history
 
 **Previous callback publication checkpoint (superseded above):**
 

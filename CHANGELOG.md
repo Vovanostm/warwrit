@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Validate rollback DB isolation and dispatch fresh review — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-world-rollback-isolation`, [#282](https://github.com/Vovanostm/warwrit/issues/282):
+  source commits `961ff8e3` / `2557e2df` extract rollback phases and isolate
+  destructive test DDL in one disposable database. Only the owned world-route
+  integration test changes; production/auth/released migrations stay unchanged.
+  Native baseline identifies 0011 FK-table DROP versus encounter-command INSERT.
+- Builder evidence: focused real DB checks, two intentional failure-cleanup
+  probes, typecheck/format and both normal audits PASS; five consecutive
+  default-parallel eight-file runs each 60/60 PASS, zero skips, combined proof
+  `d118029f`. Native URL readback retains shared primary OIDC/company/encounter
+  and separate FIRST HUNT; all owned DB/client/container/volume/network cleanup
+  recorded. Author evidence does not substitute for the fresh reviewer.
+- Ordinary main integration `d553215b` preserves both changelog histories;
+  no source conflict. Coordinator validator exit 0, 9/9 PASS, scope 0 non-test
+  source lines. Related tests: 3 PASS / 11 SKIP without DB URLs, explicitly
+  separate from the builder's actual database runs. Fresh Tier D reviewer
+  `task_3458072eeedf` is live on that frozen head; no verdict or PR yet.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the exact handoff,
+  pending #283 final CI, preserved #267 WIP and independent #272 mutation/Tier L
+  gates. Local contract/report/proof: `.orca/core-world-rollback-isolation/`
+  in the dedicated worktree. Source and records published for continuation;
+  no #282 merge or player-feature completion claimed, 0 merges this tick.
+  Full verify/stress/migration suite/build/browser NOT_RUN for this Tier D;
+  test-helper complexity and performance NOT_MEASURED. No API/setup/wiki change.
+
 ### Integrate current main for rollback isolation gates — 2026-10-22, LOCAL
 
 - `Vovanostm/core-world-rollback-isolation`, #282: ordinary merge of main
