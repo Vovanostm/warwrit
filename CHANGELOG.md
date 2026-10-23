@@ -9,6 +9,13 @@ requests.
 
 ## Unreleased
 
+### Allocate owner-approved targeted repairs — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-outcome-inspection-209`: owner answered «Разрешить адресные исправления» for additional #209/#297/#179 corrections after exhausted rounds. Native reply `msg_01a16acb-2962-7543-ba3c-7b4afcca410b` at 2026-10-23T22:04:21.731Z was read directly; retain original failures, technique changes and fresh independent acceptance. This supersedes the earlier procedural source freeze only for explicitly allocated repairs.
+- First allocation: task `task_e91cec22e863`, outcome CSS opaque boundary/backing for evaluator 3's 1.666:1 contrast defect. #179/#297 remain queued; #309 yields priority. Full U/T/V, E2 archive/state, original AC/DoD and all merge gates remain; no budget reset or acceptance waiver.
+- Daily scout settled with no new findings; direct cleanup confirmed 27 absent PIDs, two free ports and no private PID file/profile. Main CI 40015365287 SUCCESS. New repair/validate/browser gates NOT_RUN; no PR merged this tick.
+- Updated the [current plan](docs/engineering/CURRENT_PLAN.md) and existing [terminal HUD record](docs/wiki/battlefield-test-maps.md#итоговый-hud-завершённого-боя--2026-10-13). Docs-only allocation; status guard (23 non-empty lines) and diff whitespace checks PASS.
+
 ### Record #209 failed acceptance and hand the lane to #305 — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-outcome-inspection-209`: docs-only settlement of
