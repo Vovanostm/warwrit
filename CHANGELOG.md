@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### #179 independent visual gate requires rework — 2026-10-23, PUBLISHED
+
+- `Vovanostm/uix-179-catalogue-integration`: record the independent catalogue-1
+  critique at `01858b0`. Night value/palette scores 1 at game scale; other
+  applicable scores are 2–3. Visible result is REWORK, alongside BLOCKED_ENV
+  for the exact E2 archive and bounded overlay/journey capture gaps. A change
+  in night figure tonal treatment is required; no source round or waiver is
+  allocated by this status update. Report: `.orca/uix-w4-scale/visual-catalogue-1.md`.
+- Coordinator recorded the failed settlement before release/ack, forwarded
+  finite capture gaps to the live evaluator and retained its exclusive runtime
+  reservation. #269 remaining Tier U and #297 rework wait positive cleanup.
+  Original #179 acceptance and failed 2/2 plus supplemental history remain.
+- Only CHANGELOG and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) change.
+  Status-block and ordinary diff checks PASS; new game tests, validation,
+  browser runs and full gates NOT_RUN. Main CI `39938555273` is green; no
+  PR merged or player acceptance claimed. Published records only.
+
 ### #179 catalogue integration ready for independent gates — 2026-10-23, LOCAL
 
 - `Vovanostm/uix-179-catalogue-integration`, #179 after merged #293: derive

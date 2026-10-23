@@ -5,24 +5,27 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Main `cf3b2901`; newest hosted CI `39938555273` is green.
-#179 catalogue integration: committed source `5cafdadb`, handback `da4a280c`,
-branch `Vovanostm/uix-179-catalogue-integration`; source scope 159/300.
-Coordinator validator exit 0: all nine gates PASS, 99 related tests.
+#179 branch `Vovanostm/uix-179-catalogue-integration`; source `5cafdadb` frozen.
+Prior coordinator validator: exit 0, nine gates and 99 related tests PASS.
 Try default mill 6×6, seed 20261009 → Start, before camera input, day/night.
-Author native matrix and real day/night journeys are in the local slice report;
-these are not independent acceptance. Direct 18-PID/two-port cleanup verified.
-Next: independent evaluator and full absolute Tier V visual critic; source frozen.
-#179 stays open: AC6 strict hover/seam proof PARTIAL; exact E2 archive absent.
-Original AC/DoD, failed 2/2 plus consumed supplemental history remain in force.
-#214 stays frozen until #179 integration and its own repeated gates.
-#269 source merged as PR #302; remaining full original Tier U proof waits runtime.
-Parent #262 remains open; no final #269/#262 acceptance or #263 unblock.
-Open PR #298 at `57541c35`: reviewer REWORK; rework waits exclusive checks.
-Older PR #129/#134 failures retained; no PR is eligible for merge this tick.
+Independent visual catalogue-1 at `01858b0`: BLOCKED_ENV plus visible REWORK.
+Night value/palette scores 1 at game scale; other applicable scores are 2–3.
+A figure-specific night tonal approach is required; no new source round allocated.
+Local critic report: `.orca/uix-w4-scale/visual-catalogue-1.md`.
+AC6 strict hover/seam proof remains PARTIAL.
+Missing inputs: exact E2 archive/state, bounded E1 pairs and journey captures.
+Critic settlement recorded before release and ack; release: no_owned_resource.
+Evaluator `task_4d2cb6679bc9` / `ctx_7eabd62414ec` remains live and exclusive.
+Next: finish its bounded evidence and verify owned-runtime cleanup; gaps forwarded.
+Then route consolidated findings through the fallback ladder; no acceptance waiver.
+Original #179 AC/DoD, failed 2/2 and consumed supplemental history retained.
+#214 frozen; #269 source merged PR #302, full original Tier U proof pending.
+Parent #262 stays open; no #263 unblock or final #269/#262 acceptance.
+Open PR #298 at `57541c35`: reviewer REWORK; #297 repair waits runtime handback.
+Older open PR #129/#134 failures retained; no PR eligible for merge this tick.
 Daily metrics/scout/triage/digest already complete; no duplicate daily action.
-No rules, API, protocol, replay, schema, migration or dependency change.
-Hosted candidate CI, full verify/stress/migrations and independent gates NOT_RUN.
-This tick: 0 merged PRs with playable proof. No acceptance waiver.
+This tick: documentation checks only; game tests/validate/browser/full gates NOT_RUN.
+This tick: 0 merged PRs with playable proof. No game/API/schema contract change.
 
 ## Dated history
 
