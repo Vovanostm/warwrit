@@ -2,6 +2,31 @@
 
 ## Pipeline status — 2026-10-23
 
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and the existing one-issue local slices.
+Main `cf3b2901`; newest CI `39938555273` SUCCESS.
+#297 / PR #298: rework 1 settled, source `d5995350`; main integrated.
+Five failure paths fixed; author 56 isolated shell assertions and audit PASS.
+Coordinator corrected cleanup instructions; validation and fresh Tier D review next.
+Actual resource savings NOT_MEASURED; real full Orca wave NOT_RUN.
+#262/#269 are closed by owner disposition; #303 closed with independent
+candidate/baseline day/night menu journeys ACCEPT on merged PR #302.
+Pending/deleting/lost-session NOT_REACHED; opponent turn not observed.
+PR #304 remains open, green CI; fresh infrastructure reviewer still required.
+#179 remains in review: resource strip/body overlap and night value 1 retained;
+E2 archive BLOCKED_ENV, AC6 proof partial. Source frozen; original 2/2 history
+and consumed supplemental allowance retained. No acceptance or budget waiver.
+#214 waits for #179. #263 dependency is now clear; contract preparation may start.
+No game runtime allocated. Settled #297 checks reservation released to validation.
+Daily metrics/scout/digest already complete; no duplicate daily run.
+This tick: zero merged PRs with playable proof. No merge eligible yet.
+Next: validate #297, fresh reviewer, then CI; prepare #263 contract in its own checkout.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-23
+
 Coordinator: continuing the open-issue queue. Owner scope (2026-10-21):
 «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Main is `690d140b`. #272 closed by PR #287. #285 closed by PR #292.
@@ -11,8 +36,6 @@ Main is `690d140b`. #272 closed by PR #287. #285 closed by PR #292.
 The mounted mill journey is NOT_RUN. Parent #262 stays open.
 #179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
 Next: publish #269, run its mounted check, then merge on green CI.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 

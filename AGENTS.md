@@ -163,13 +163,18 @@ about 2.4 GB of idle browser MCP servers.
   named session per task (`-s=<task>` or `PLAYWRIGHT_CLI_SESSION`; Orca workers
   get `warwrit-<task>`). Batch the checks, save screenshots to files, then close
   the session and stop the stand in the same step:
-  `bash scripts/agent-cleanup.sh <session>` (exit 1 names what is left). Headed
+  `bash scripts/agent-cleanup.sh <session>`. Only the coordinator-assigned lab
+  owner sets `WARWRIT_LAB_OWNER=<session>` on the wrapper or cleanup invocation;
+  without that matching grant cleanup closes only the named browser. Inspection
+  or cleanup failure returns nonzero and must be reported. Headed
   browsers never time out; use them only when the owner watches. Never
   `close-all` or `kill-all`: other projects' agents share the daemon. Claude
   Code's built-in browser: `preview_stop` the server and close the tab.
 - **No idle MCP servers.** Do not add MCP servers for browser work; one browser
   path per agent. Headless pipeline runs start Codex without the user's unused
   MCP servers ([`scripts/codex-lean-mcp.sh`](scripts/codex-lean-mcp.sh)).
+  Discovery, decoding, unsupported override or verification failure blocks launch;
+  explicit `WARWRIT_AGENT_MCP` keeps are logged. Global config stays unchanged.
 - **Report only after cleanup.** A dev server, browser or watcher an agent
   started is not left running after its report, unless the owner asked to keep
   it for play; then say how to stop it.

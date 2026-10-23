@@ -197,7 +197,10 @@ The combat lab runs per worktree on private ports with in-memory battles; drive
 it with one headless `playwright-cli` session named after the task, batch the
 checks, save screenshots to files and close it with
 [`scripts/agent-cleanup.sh`](../../scripts/agent-cleanup.sh), which also stops
-this worktree's lab and exits 1 when something is still running. A new stand
+the lab only when the coordinator grants `WARWRIT_LAB_OWNER=<session>` to
+the runtime owner. Pass that grant to the worker wrapper or cleanup invocation;
+read-only workers sharing the checkout do not receive it. Inspection errors and
+leftovers return nonzero. A new stand
 (lab preset, fixture or one Vite page) belongs to the slice that needs it.
 
 ## Combat implementation rules

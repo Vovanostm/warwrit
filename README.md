@@ -43,7 +43,9 @@ The bootstrap installs the pinned package manager and dependencies, starts Postg
 
 Agents and quick checks: pick the lightest [test stand](docs/engineering/LOCAL_DEVELOPMENT.md#test-stands)
 that exercises the change, and close the browser and stand afterwards with
-`bash scripts/agent-cleanup.sh <playwright-session>`.
+`bash scripts/agent-cleanup.sh <playwright-session>`. Only the assigned lab
+owner sets `WARWRIT_LAB_OWNER=<playwright-session>` to stop its lab; other
+workers close only their named browser session.
 
 Copy `.env.example` to `.env` for local overrides. The default Docker database URL is already documented there.
 

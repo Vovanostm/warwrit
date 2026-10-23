@@ -507,3 +507,13 @@ Limits: the MCP servers of interactive hosts (Codex app, Cursor) come from the
 owner's global configs and are not changed by this repository; the token
 saving of `codex-lean-mcp.sh` is zero in the run measured (RAM and start-up
 only). Effect on pipeline failures: NOT_MEASURED until the next wave.
+
+**Correction — 2026-10-23, #297 rework.** The measurements above describe the
+original author run, not this candidate. Only the coordinator-assigned runtime
+owner receives `WARWRIT_LAB_OWNER=<session>`; other readers close only their
+named browser. Cleanup and inspection failures produce a failed worker settlement
+with a log path while preserving the source verdict separately. Normal exits and
+TERM/HUP/INT use one finalizer. MCP discovery, decoding, unsupported overrides
+and verification errors block launch; explicit keeps are logged. The 56 isolated
+shell assertions passed in the builder report; real resource savings and a full
+wave on the reworked candidate remain NOT_MEASURED/NOT_RUN.
