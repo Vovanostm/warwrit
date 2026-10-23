@@ -4,6 +4,32 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and existing one-issue local slices.
+Main `25dd9a48`: newest CI `40015365287` SUCCESS.
+#297 / PR #298: blocked; source `d2272625`, review 3 REWORK, 2/2 exhausted.
+Read-only recovery completed: no independent split establishes a fresh budget.
+Coordinator retains the freeze; proposed lifecycle replacement is not allocated.
+Report: infra-297-resource-review/.orca/infra-resource-hygiene/recovery-contract.md.
+No additional source round, rule question or acceptance waiver.
+Core #225/#218 remain behind existing log/melee dependencies.
+#209 remains implementing, sole web writer and checks/runtime owner.
+#305 read-only contract live: task_41456478ab8f; no checks/runtime.
+#263 remains open for sequential #305 → #306 → #307 and original acceptance.
+#179 stays blocked with overlap/night/archive findings and exhausted history.
+#262/#269/#303 remain closed; prior menu proof is unchanged.
+Daily metrics/scout/triage/digest already complete; no duplicate daily run.
+This tick: 0 merged PRs with playable proof; no source or game behavior change.
+Checks: record diff and status-block guard only; game tests/validate NOT_RUN.
+Resource savings NOT_MEASURED; no candidate infrastructure acceptance.
+Next: settle #209 and #305; #297 remains frozen pending a valid recovery allowance.
+Wrapper releases the lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-23
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and the existing one-issue local slices.
 Main `25dd9a48`: documentation PR #304 merged on exact-head Tier D ACCEPT,
 coordinator validation exit 0 and green CI/scope. No game-code merge this tick.
@@ -25,8 +51,6 @@ child #305 starts its contract next; no concurrent source writer on shared paths
 Daily metrics/scout/digest already complete; no duplicate daily run.
 This tick: one documentation PR merged; zero merged PRs with new playable proof.
 Next: settle #297 rework 2 and run fresh gates; advance the #305 child contract.
-
-## Dated history
 
 ### Historical checkpoint — 2026-10-23
 

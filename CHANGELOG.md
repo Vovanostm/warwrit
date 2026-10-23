@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Retain #297 freeze after recovery assessment — 2026-10-23, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  read-only recovery found no independent split that grants a new implementation
+  budget. Coordinator retains source `d2272625`, review 3 REWORK and consumed
+  2/2 reworks; issue and PR are blocked. The proposed lifecycle supervisor is
+  unimplemented. Late-signal successful settlement remains unresolved.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) corrects stale rework-2 status,
+  preserves #209 exclusive checks/runtime and records #305 read-only planning.
+  Recovery report is local at `.orca/infra-resource-hygiene/recovery-contract.md`.
+  Source unchanged; diff/status-block checks only. New game tests and validate
+  NOT_RUN; resource savings NOT_MEASURED. No merge or new playable acceptance.
+
 ### Reconcile pipeline and #297 resource ownership — 2026-10-23, PUBLISHED
 
 - `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
