@@ -57,7 +57,6 @@ Daily metrics/scout/triage/digest complete; no duplicate daily action.
 Coordinator game tests/validate/browser/full gates NOT_RUN this tick.
 This tick: 0 merged PRs with playable proof. No game/API/schema contract change.
 
-
 ### Historical checkpoint — 2026-10-23
 
 Coordinator: continuing the open-issue queue. Owner scope (2026-10-21):
