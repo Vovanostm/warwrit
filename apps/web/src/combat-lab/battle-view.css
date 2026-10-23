@@ -894,11 +894,12 @@
   display: none;
 }
 .battle-view .battle-outcome-panel .battle-control,
-.battle-view .battle-outcome-summary,
+.battle-view .battle-control.battle-outcome-summary,
 .battle-outcome-inspection {
   font-size: 18px;
+  border-color: #84948b;
 }
-.battle-view .battle-outcome-summary {
+.battle-view .battle-control.battle-outcome-summary {
   position: absolute;
   z-index: 6;
   top: var(--battle-safe-top, 144px);
@@ -939,7 +940,7 @@
   overflow-wrap: anywhere;
 }
 .battle-view .battle-outcome-panel button:focus-visible,
-.battle-view .battle-outcome-summary:focus-visible {
+.battle-view .battle-control.battle-outcome-summary:focus-visible {
   outline: 3px solid #f3d99d;
   outline-offset: 3px;
 }
