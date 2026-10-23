@@ -207,6 +207,22 @@ async function completeLogin(
   });
 }
 
+function countTestIdentities() {
+  return sql<{
+    readonly accounts: string;
+    readonly sessions: string;
+  }>`
+    with test_accounts as (
+      select id from identity_accounts
+      where issuer in (${issuer}, ${`${issuer}/wrong`})
+    )
+    select
+      (select count(*)::text from test_accounts) as accounts,
+      (select count(*)::text from identity_sessions
+        join test_accounts on test_accounts.id = identity_sessions.account_id) as sessions
+  `.execute(database!);
+}
+
 describe.skipIf(testDatabaseUrl === undefined)('OIDC over PostgreSQL integration', () => {
   beforeAll(async () => {
     const server = createServer(handleIssuerRequest);
@@ -276,14 +292,7 @@ describe.skipIf(testDatabaseUrl === undefined)('OIDC over PostgreSQL integration
     expect(secondSession.statusCode).toBe(200);
     expect(firstSession.json().accountId).toBe(secondSession.json().accountId);
 
-    const identityCountsBeforeRejections = await sql<{
-      readonly accounts: string;
-      readonly sessions: string;
-    }>`
-      select
-        (select count(*)::text from identity_accounts) as accounts,
-        (select count(*)::text from identity_sessions) as sessions
-    `.execute(database!);
+    const identityCountsBeforeRejections = await countTestIdentities();
     const replay = await completeLogin(first, { sub: 'parallel-account' });
     expect(replay.statusCode).toBe(400);
     expect(hasSessionCookie(replay)).toBe(false);
@@ -337,14 +346,7 @@ describe.skipIf(testDatabaseUrl === undefined)('OIDC over PostgreSQL integration
       expect(callback.statusCode).toBe(400);
       expect(hasSessionCookie(callback)).toBe(false);
     }
-    const identityCountsAfterRejections = await sql<{
-      readonly accounts: string;
-      readonly sessions: string;
-    }>`
-      select
-        (select count(*)::text from identity_accounts) as accounts,
-        (select count(*)::text from identity_sessions) as sessions
-    `.execute(database!);
+    const identityCountsAfterRejections = await countTestIdentities();
     expect(identityCountsAfterRejections.rows[0]).toEqual(identityCountsBeforeRejections.rows[0]);
 
     const expiredToken = randomBytes(32).toString('base64url');

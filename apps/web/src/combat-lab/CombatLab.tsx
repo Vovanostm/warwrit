@@ -344,6 +344,134 @@ export function combatLabMenuDisabled({
   };
 }
 
+export function afterMenuClose(closeMenu: (open: boolean) => void, action: () => void) {
+  return () => {
+    closeMenu(false);
+    action();
+  };
+}
+
+interface CombatLabMenuPanelProps {
+  readonly replayDisabled: boolean;
+  readonly restartDisabled: boolean;
+  readonly stepDisabled: boolean;
+  readonly onDownload: () => void;
+  readonly onRestart: () => void;
+  readonly onEditor: () => void;
+  readonly onStep: () => void;
+}
+
+function CombatLabMenuPanel({
+  replayDisabled,
+  restartDisabled,
+  stepDisabled,
+  onDownload,
+  onRestart,
+  onEditor,
+  onStep,
+}: CombatLabMenuPanelProps) {
+  return (
+    <div className="battle-menu-panel" aria-label="Меню боя">
+      <strong>Управление боем</strong>
+      <button
+        className="battle-control"
+        type="button"
+        disabled={replayDisabled}
+        onClick={onDownload}
+      >
+        Скачать запись боя
+      </button>
+      <button
+        className="battle-control"
+        type="button"
+        disabled={restartDisabled}
+        onClick={onRestart}
+      >
+        Начать заново
+      </button>
+      <button className="battle-control" type="button" disabled={replayDisabled} onClick={onEditor}>
+        К редактору
+      </button>
+      <div className="battle-autoplay" aria-label="Автобой">
+        <button className="battle-control" type="button" disabled={stepDisabled} onClick={onStep}>
+          Один шаг
+        </button>
+      </div>
+      <small>
+        ЛКМ — осмотр · ПКМ — приказ
+        <br />
+        Тянуть ЛКМ — камера · колесо — масштаб · портрет — к бойцу
+        <br />
+        WASD / стрелки — камера · Home — обзор
+      </small>
+    </div>
+  );
+}
+
+interface CombatLabMenuProps {
+  readonly menuOpen: boolean;
+  readonly autoplay: boolean;
+  readonly replayDisabled: boolean;
+  readonly restartDisabled: boolean;
+  readonly stepDisabled: boolean;
+  readonly autoplayDisabled: boolean;
+  readonly onToggleMenu: () => void;
+  readonly onToggleAutoplay: () => void;
+  readonly onDownload: () => void;
+  readonly onRestart: () => void;
+  readonly onEditor: () => void;
+  readonly onStep: () => void;
+}
+
+export function CombatLabMenu({
+  menuOpen,
+  autoplay,
+  replayDisabled,
+  restartDisabled,
+  stepDisabled,
+  autoplayDisabled,
+  onToggleMenu,
+  onToggleAutoplay,
+  onDownload,
+  onRestart,
+  onEditor,
+  onStep,
+}: CombatLabMenuProps) {
+  return (
+    <>
+      <CombatLabAutoplayToggle
+        autoplay={autoplay}
+        disabled={autoplayDisabled}
+        onToggle={onToggleAutoplay}
+      />
+      <div className="battle-menu">
+        <button
+          className="battle-control battle-control--utility"
+          type="button"
+          aria-label="Меню боя"
+          aria-expanded={menuOpen}
+          onClick={onToggleMenu}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 6h14M5 12h14M5 18h14" />
+          </svg>
+        </button>
+        {menuOpen && (
+          <CombatLabMenuPanel
+            replayDisabled={replayDisabled}
+            restartDisabled={restartDisabled}
+            stepDisabled={stepDisabled}
+            onDownload={onDownload}
+            onRestart={onRestart}
+            onEditor={onEditor}
+            onStep={onStep}
+          />
+        )}
+      </div>
+    </>
+  );
+}
+
 export function CombatLab() {
   const {
     session,
@@ -736,6 +864,8 @@ export function CombatLab() {
     starting,
     startUnresolved,
   });
+  const restartFromControls = afterMenuClose(setMenuOpen, () => void restartBattle());
+  const editorFromControls = afterMenuClose(setMenuOpen, () => void endBattle());
 
   return (
     <main className={`combat-lab-page${session ? ' combat-lab-page--fighting' : ''}`}>
@@ -773,87 +903,23 @@ export function CombatLab() {
               });
             }}
             busy={deleting || pending !== null || starting || startUnresolved}
-            onRestart={() => {
-              setMenuOpen(false);
-              void restartBattle();
-            }}
-            onEditor={() => {
-              setMenuOpen(false);
-              void endBattle();
-            }}
+            onRestart={restartFromControls}
+            onEditor={editorFromControls}
             menu={
-              <>
-                <CombatLabAutoplayToggle
-                  autoplay={autoplay}
-                  disabled={menuDisabled.autoplayDisabled}
-                  onToggle={toggleAutoplay}
-                />
-                <div className="battle-menu">
-                  <button
-                    className="battle-control battle-control--utility"
-                    type="button"
-                    aria-label="Меню боя"
-                    aria-expanded={menuOpen}
-                    onClick={() => setMenuOpen(!menuOpen)}
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M5 6h14M5 12h14M5 18h14" />
-                    </svg>
-                  </button>
-                  {menuOpen && (
-                    <div className="battle-menu-panel" aria-label="Меню боя">
-                      <strong>Управление боем</strong>
-                      <button
-                        className="battle-control"
-                        type="button"
-                        disabled={menuDisabled.replayDisabled}
-                        onClick={() => void downloadReplay()}
-                      >
-                        Скачать запись боя
-                      </button>
-                      <button
-                        className="battle-control"
-                        type="button"
-                        disabled={menuDisabled.restartDisabled}
-                        onClick={() => {
-                          setMenuOpen(false);
-                          void restartBattle();
-                        }}
-                      >
-                        Начать заново
-                      </button>
-                      <button
-                        className="battle-control"
-                        type="button"
-                        disabled={menuDisabled.replayDisabled}
-                        onClick={() => {
-                          setMenuOpen(false);
-                          void endBattle();
-                        }}
-                      >
-                        К редактору
-                      </button>
-                      <div className="battle-autoplay" aria-label="Автобой">
-                        <button
-                          className="battle-control"
-                          type="button"
-                          disabled={menuDisabled.stepDisabled}
-                          onClick={() => autoplayAction.current()}
-                        >
-                          Один шаг
-                        </button>
-                      </div>
-                      <small>
-                        ЛКМ — осмотр · ПКМ — приказ
-                        <br />
-                        Тянуть ЛКМ — камера · колесо — масштаб · портрет — к бойцу
-                        <br />
-                        WASD / стрелки — камера · Home — обзор
-                      </small>
-                    </div>
-                  )}
-                </div>
-              </>
+              <CombatLabMenu
+                menuOpen={menuOpen}
+                autoplay={autoplay}
+                replayDisabled={menuDisabled.replayDisabled}
+                restartDisabled={menuDisabled.restartDisabled}
+                stepDisabled={menuDisabled.stepDisabled}
+                autoplayDisabled={menuDisabled.autoplayDisabled}
+                onToggleMenu={() => setMenuOpen(!menuOpen)}
+                onToggleAutoplay={toggleAutoplay}
+                onDownload={() => void downloadReplay()}
+                onRestart={restartFromControls}
+                onEditor={editorFromControls}
+                onStep={() => autoplayAction.current()}
+              />
             }
           >
             <CommandDesk

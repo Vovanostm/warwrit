@@ -7,6 +7,8 @@ import {
   CombatLabEditor,
   CombatLabEditorShell,
   CombatLabAutoplayToggle,
+  CombatLabMenu,
+  afterMenuClose,
   combatLabMenuDisabled,
 } from './CombatLab.js';
 import { BattleEditor } from './BattleEditor.js';
@@ -174,35 +176,71 @@ it.each([false, true])(
   },
 );
 
-it.each([
-  ['idle', {}, [false, false, false, false]],
-  ['opponent/lost/terminal', { controlling: false }, [false, false, true, true]],
-  ['pending', { hasPending: true }, [true, true, true, true]],
-  ['deleting', { deleting: true }, [true, true, true, true]],
-  ['starting', { starting: true }, [false, true, false, false]],
-  ['unresolved', { startUnresolved: true }, [false, true, false, false]],
-  ['running', { autoplay: true }, [false, false, true, false]],
-  [
-    'running while blocked',
-    { autoplay: true, controlling: false, hasPending: true, deleting: true },
-    [true, true, true, false],
-  ],
-])('preserves the five menu disabled uses: %s', (_name, patch, expected) => {
-  const state = combatLabMenuDisabled({
+function menu(patch: Partial<Parameters<typeof CombatLabMenu>[0]> = {}) {
+  return CombatLabMenu({
+    menuOpen: true,
     autoplay: false,
-    controlling: true,
-    hasPending: false,
-    deleting: false,
-    starting: false,
-    startUnresolved: false,
+    replayDisabled: false,
+    restartDisabled: false,
+    stepDisabled: false,
+    autoplayDisabled: false,
+    onToggleMenu: vi.fn(),
+    onToggleAutoplay: vi.fn(),
+    onDownload: vi.fn(),
+    onRestart: vi.fn(),
+    onEditor: vi.fn(),
+    onStep: vi.fn(),
     ...patch,
   });
+}
+
+const idleMenu = {
+  autoplay: false,
+  controlling: true,
+  hasPending: false,
+  deleting: false,
+  starting: false,
+  startUnresolved: false,
+};
+
+it.each([
+  ['idle', idleMenu, [false, false, false, false]],
+  ['opponent', { ...idleMenu, controlling: false }, [false, false, true, true]],
+  ['pending', { ...idleMenu, hasPending: true }, [true, true, true, true]],
+  ['deleting', { ...idleMenu, deleting: true }, [true, true, true, true]],
+  ['starting', { ...idleMenu, starting: true }, [false, true, false, false]],
+  ['unresolved', { ...idleMenu, startUnresolved: true }, [false, true, false, false]],
+  ['lost', { ...idleMenu, controlling: false }, [false, false, true, true]],
+  ['terminal', { ...idleMenu, controlling: false }, [false, false, true, true]],
+  ['running-autoplay', { ...idleMenu, autoplay: true }, [false, false, true, false]],
+  [
+    'running while blocked',
+    { ...idleMenu, autoplay: true, controlling: false, hasPending: true, deleting: true },
+    [true, true, true, false],
+  ],
+])('preserves menu controls for %s', (_name, input, expected) => {
+  const state = combatLabMenuDisabled(input);
   expect(state).toEqual({
     replayDisabled: expected[0],
     restartDisabled: expected[1],
     stepDisabled: expected[2],
     autoplayDisabled: expected[3],
   });
+  const tree = menu({
+    autoplay: input.autoplay,
+    replayDisabled: state.replayDisabled,
+    restartDisabled: state.restartDisabled,
+    stepDisabled: state.stepDisabled,
+    autoplayDisabled: state.autoplayDisabled,
+  });
+  expect(buttons(tree).map(({ props }) => Boolean(props.disabled))).toEqual([
+    state.autoplayDisabled,
+    false,
+    state.replayDisabled,
+    state.restartDisabled,
+    state.replayDisabled,
+    state.stepDisabled,
+  ]);
 });
 
 it.each([
@@ -221,6 +259,70 @@ it.each([
   expect(button.props.onClick).toBe(onToggle);
   button.props.onClick();
   expect(onToggle).toHaveBeenCalledExactlyOnceWith();
+});
+
+it('keeps menu markup, help and open or closed panel order', () => {
+  const closed = renderToStaticMarkup(menu({ menuOpen: false }));
+  expect(closed).toContain('aria-label="Меню боя" aria-expanded="false"');
+  expect(closed).toContain('M5 6h14M5 12h14M5 18h14');
+  expect(closed).toContain('Начать автобой');
+  expect(closed).not.toContain('Управление боем');
+  expect(closed).not.toContain('Один шаг');
+  const open = renderToStaticMarkup(menu({ menuOpen: true, autoplay: true }));
+  expect(open).toContain('aria-expanded="true"');
+  expect(open).toContain('Остановить автобой');
+  expect(open).toContain('M8 5v14M16 5v14');
+  expect(open.indexOf('battle-control--utility')).toBeLessThan(open.indexOf('battle-menu-panel'));
+  expect(open.indexOf('Скачать запись боя')).toBeLessThan(open.indexOf('Начать заново'));
+  expect(open.indexOf('Начать заново')).toBeLessThan(open.indexOf('К редактору'));
+  expect(open.indexOf('К редактору')).toBeLessThan(open.indexOf('Один шаг'));
+  expect(open).toContain('ЛКМ — осмотр · ПКМ — приказ');
+  expect(open).toContain('Тянуть ЛКМ — камера · колесо — масштаб · портрет — к бойцу');
+  expect(open).toContain('WASD / стрелки — камера · Home — обзор');
+  expect(open).toContain('aria-label="Автобой"');
+});
+
+it('forwards menu actions once and closes before restart or editor', () => {
+  const onToggleMenu = vi.fn();
+  const onToggleAutoplay = vi.fn();
+  const onDownload = vi.fn();
+  const onStep = vi.fn();
+  const order: string[] = [];
+  const onRestart = afterMenuClose(
+    () => order.push('close'),
+    () => order.push('restart'),
+  );
+  const onEditor = afterMenuClose(
+    () => order.push('close'),
+    () => order.push('editor'),
+  );
+  const tree = menu({
+    onToggleMenu,
+    onToggleAutoplay,
+    onDownload,
+    onRestart,
+    onEditor,
+    onStep,
+  });
+  const [autoplay, menuButton, download, restart, editor, step] = buttons(tree);
+  expect(autoplay!.props.onClick).toBe(onToggleAutoplay);
+  expect(menuButton!.props.onClick).toBe(onToggleMenu);
+  expect(download!.props.onClick).toBe(onDownload);
+  expect(restart!.props.onClick).toBe(onRestart);
+  expect(editor!.props.onClick).toBe(onEditor);
+  expect(step!.props.onClick).toBe(onStep);
+  autoplay!.props.onClick!();
+  menuButton!.props.onClick!();
+  download!.props.onClick!();
+  step!.props.onClick!();
+  expect(order).toEqual([]);
+  expect(onToggleAutoplay).toHaveBeenCalledOnce();
+  expect(onToggleMenu).toHaveBeenCalledOnce();
+  expect(onDownload).toHaveBeenCalledOnce();
+  expect(onStep).toHaveBeenCalledOnce();
+  restart!.props.onClick!();
+  editor!.props.onClick!();
+  expect(order).toEqual(['close', 'restart', 'close', 'editor']);
 });
 
 // Server rendering checks initial composition only; mounted effects are browser proof.
