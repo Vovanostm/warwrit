@@ -124,3 +124,83 @@ Consistency corrections к существующим PR docs/instructions/body:
 
 Изменения shared records и этих docs здесь запрещены; это handoff координатору,
 а не заявление о завершённой независимой приёмке #297.
+
+## Rework 2 / 2 — 2026-10-23
+
+Исходный head: `32ddbe4ae7500b7c9cb3e70d143b91dac55778ea`, ветка
+`Vovanostm/infra-297-resource-review`; уже содержит main `25dd9a48` и записи
+координатора. Дерево до работы чистое. Прочитаны AGENTS, полный issue #297
+(body/comments), contract и review-2.md. Все предыдущие результаты выше остаются
+историей; этот проход исправляет только единственный P2 из review 2.
+
+`scripts/agent-cleanup.sh` теперь сохраняет stdout `lsof` в `holders`, stderr
+в отдельном временном файле, exit status отдельно. Непустой stderr означает
+UNVERIFIED даже при exit 1 и пустом stdout; исходная диагностика выводится в
+stderr, cleanup завершается ненулевым кодом без CLEAN. Пустой no-match exit 1
+без stderr остаётся успешным. Ошибка создания файла диагностики также закрывает
+проверку с failure; после проверки временный файл удаляется.
+
+`scripts/infra-resource-hygiene.test.sh` расширяет существующий isolated regression:
+новый stub возвращает пустой stdout, diagnostic stderr и exit 1; старый exit 2
+сохранён. Проверяются отказ CLEAN и сохранение diagnostics, успешный silent
+no-match, а также обе ветки settlement через неизменённый worker. При ошибке
+inspection worker возвращает failed, хранит диагностику в cleanup.log и оставляет
+исходный result.json с succeeded. Thresholds, tick identity/mail/start-worker
+advisories и прочие source/shared paths не менялись.
+
+### Проверки этого прохода
+
+- До source fix: `bash scripts/infra-resource-hygiene.test.sh` — ожидаемый FAIL,
+  exit 1 на `lab inspect-fail-1 stays failed`; воспроизведён false CLEAN на stub.
+- После source fix: та же команда — PASS, exit 0, 63 assertions. Fixture:
+  `.orca/infra-resource-hygiene/fixtures.sPquPK/`. Новые сохранённые случаи:
+  `evidence/lab-no-match/` и `evidence/lab-inspect-fail-1/`, включая trace,
+  message, runs/task/result.json и runs/task/cleanup.log.
+- `bash -n scripts/agent-cleanup.sh scripts/infra-resource-hygiene.test.sh` — PASS.
+- `git diff --check` — PASS. Normal commit audit и scope будут записаны ниже
+  после source commit; hooks и лимиты не ослаблялись.
+
+No-live-runtime boundary: все browser/lab/Codex/MCP/Orca/lsof операции regression
+заменены fixture stubs; cleanup против реальных ресурсов не запускался. Все
+fixture workers завершились; signal cases проверили отсутствие owned stub child.
+Реальные browser, lab, Codex, MCP, DB, dev stand, setup/install, smoke-play, build
+и full suites — NOT_RUN. Реальная экономия ресурсов — NOT_MEASURED. Это авторская
+проверка конечных stub cases, не source acceptance и не runtime acceptance.
+Independent final-head review, coordinator validation и hosted CI остаются
+координатору. Push, merge, branch switch и реальные Orca calls не выполнялись.
+
+### Предлагаемые shared-record entries для координатора
+
+CHANGELOG Unreleased, 2026-10-23, branch `Vovanostm/infra-297-resource-review`,
+LOCAL: #297 / PR #298 rework 2 исправляет P2 false CLEAN при `lsof` exit 1 с
+diagnostic stderr. Изменены только cleanup и существующий shell regression;
+silent no-match exit 1 остаётся успешным. 63 isolated assertions и Bash syntax
+PASS; source head, normal audit и scope приведены в дополнении ниже. Fresh
+independent review/validation/CI ещё требуются; live runtime NOT_RUN, ресурсные
+измерения NOT_MEASURED.
+
+CURRENT_PLAN: rework 2 локально закоммичен на source head из дополнения ниже;
+координатору переданы scoped fix, regression и отчёт. Следующий шаг — fresh Tier D
+review и оставшиеся coordinator gates. Приёмка source/runtime не заявляется;
+shared records в этом проходе не редактировались.
+
+### Source commit и окончательные локальные проверки rework 2
+
+- Exact source head: `a8f7d935a8c817f65fc6729ebcf0f9f2e3b61fc9`,
+  `fix(agents): reject lsof inspection diagnostics`. Normal commit exit 0;
+  только `scripts/agent-cleanup.sh` и `scripts/infra-resource-hygiene.test.sh`.
+- Normal pre-commit `pnpm --silent check:changes` — PASS, no new issues,
+  dead code / complexity / duplication: 0. Audit сообщил warnings о пяти
+  package entry points вне root и syntactic attribution из-за несовместимых
+  semantic identities base/head. Эти ограничения сохранены, audit не отключался.
+- `bash scripts/check-pr-scope.sh origin/main .orca/infra-resource-hygiene/pr-body.md`
+  после source commit — PASS, exit 0: 211 / 300 source lines, closes 1, refs 0.
+  Лимит не менялся; существующий локальный PR body использован только для issue
+  count, его исторические runtime claims не стали доказательствами этого прохода.
+- Working/staged `git diff --check` — PASS. Прямое чтение обоих новых cleanup.log
+  подтверждает UNVERIFIED + исходную diagnostic в failed case и CLEAN в no-match.
+  После source commit единственный tracked diff — дополнение этого отчёта.
+- Отчёт следует отдельным normal docs-only commit; его последующий HEAD не меняет
+  exact source head выше. Статус результата LOCAL, NOT_PUSHED, NOT_MERGED.
+  Final-head independent ACCEPT отсутствует; предыдущий REWORK не заменяется
+  авторским утверждением о приёмке. No-live-runtime boundary остаётся в силе.
