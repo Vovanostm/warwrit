@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Settle #209 critics and #179 source preparation — 2026-10-24, PUBLISHED
+
+- `Vovanostm/uix-179-catalogue-integration`: coordinator records only. #209
+  text round 4 ACCEPT at frozen `024ce8ae`; visual round 4 BLOCKED_ENV with
+  field-scale/night readability and retained tooltip overlap still failing.
+  Reference comparison, exact E2 layering state and terminal-defeat evidence
+  remain missing. The live evaluator retains exclusive runtime/checks.
+- Owner-authorized #179 source preparation settled PENDING_EXCLUSIVE_CHECKS.
+  Four tracked files remain LOCAL and uncommitted: `sprite-art.ts`,
+  `sprite-battle-scene.ts`, `battle-field-vitals.ts` and its test under
+  `apps/web/src/combat-lab/`. Prepared visible-bottom strip positioning and
+  figure-only night tone mapping require validation; author source count 199/300.
+  Checks NOT_RUN; new runtime results NOT_MEASURED. This is not a completed build.
+- Three exact settlements recorded before release/ack; no owned worker resources
+  were released by Orca. Findings forwarded to the existing evaluator. Preserve
+  blocked labels, original budgets, E2/AC6 limits and full tier acceptance.
+  #297 checks and #309 builder remain queued. Main CI SUCCESS; no merge.
+- Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) in place, one status
+  block. Ordinary documentation diff and status-block check PASS; game checks
+  NOT_RUN because #209 owns runtime/checks. Evidence remains local in
+  `.orca/uix-w4-scale/targeted-source-1.md` and the #209 `text-4.md`/`visual-4.md`
+  reports. No game-rule, setup, API, protocol, replay or migration change.
+
 ### Allocate targeted #179 source preparation — 2026-10-24, PUBLISHED
 
 - `Vovanostm/uix-179-catalogue-integration`: owner reply «Разрешить адресные

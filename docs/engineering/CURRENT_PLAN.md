@@ -4,24 +4,25 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-24): «Разрешить адресные исправления» for #209/#297/#179.
-Native owner reply `msg_01a16acb-2962-7543-ba3c-7b4afcca410b` rechecked directly.
+Owner reply: `msg_01a16acb-2962-7543-ba3c-7b4afcca410b`; allocation retained.
 Main `25dd9a48`; CI `40015365287` SUCCESS. This tick: 0 merged PRs with playable proof.
-#209 published `024ce8ae`; validate 9/9 and 68 tests PASS, then docs-only changes.
-Fresh U/T/V round 4 live; evaluator owns exclusive runtime/checks in its own worktree.
-#179: one additional targeted source-only allocation in this preserved worktree.
-Separate visible-bottom resource-strip anchoring from anatomical support/sorting.
-Correct confirmed night body-value failure through a technique change; no new content.
-Original four source paths plus `battle-field-vitals.ts` and matching tests only.
-Practical framing corrections require an existing confirmed case inside those paths.
-No setup, tests, audit, browser, runtime, commit or push grant to this source-only worker.
-Prepare source and necessary regressions; retain WIP until explicit checks handoff.
-Inherited agent:blocked remains; original 2/2, supplemental failures and full Tier V retained.
-Exact E2 archive/state and AC6 evidence limits remain; no acceptance waiver.
-#297 prepared source awaits exclusive checks; issue and PR #298 remain blocked.
-#309 builder remains queued; #214 stays frozen pending accepted #179 integration.
-Try default mill 6 × 6, seed 20261009 → Start, day/night; repair proof is NOT_RUN.
+#209 frozen published head `024ce8ae`: text round 4 ACCEPT, all eight scores >= 2.
+Visual round 4 BLOCKED_ENV; field scale, night values and tooltip collision still fail.
+Missing reference comparison, exact E2 layering state and terminal-defeat readback remain.
+Evaluator round 4 is live and retains exclusive runtime/checks; findings forwarded.
+#179 source preparation settled FAILED / PENDING_EXCLUSIVE_CHECKS at `441730b7`.
+Four tracked source/test paths remain uncommitted under the source-only allocation.
+Prepared visible-bottom strip anchor preserves anatomical support and sorting.
+Prepared figure-only night tone mapping is unverified; author source count 199/300.
+Tests/audit/runtime NOT_RUN; new clearance and night-value results NOT_MEASURED.
+Inherited agent:blocked, original 2/2, supplemental history, E2/AC6 and full Tier V retained.
+#297 source preparation also awaits exclusive checks; issue and PR #298 remain blocked.
+#309 builder queued; #214 frozen pending accepted #179 integration.
+Try default mill 6 × 6, seed 20261009 → Start, day/night; new repair is not accepted.
+Three settlements recorded, released (no_owned_resource) and acknowledged.
 Daily metrics/scout/digest already complete; no duplicate daily action.
-Next: settle #209 gates and source preparation, then transfer runtime after direct cleanup.
+Next: settle #209 evaluator and verify cleanup before allocating #179/#297 checks.
+Only coordinator records published this tick; source WIP preserved, no new source round.
 Wrapper releases the lease on return; no merge or deployment this tick.
 
 ## Dated history
