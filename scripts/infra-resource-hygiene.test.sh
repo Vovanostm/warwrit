@@ -9,7 +9,8 @@ repo, root = map(pathlib.Path, sys.argv[1:])
 (root / 'scripts').mkdir()
 (root / 'bin').mkdir()
 (root / 'common').mkdir()
-for name in ('agent-cleanup.sh', 'codex-lean-mcp.sh', 'orca-codex-worker.sh', 'orca-pipeline-tick.sh'):
+for name in ('agent-cleanup.sh', 'codex-lean-mcp.sh', 'orca-codex-worker.sh',
+             'orca-codex-worker.py', 'orca-pipeline-tick.sh'):
     shutil.copy(repo / 'scripts' / name, root / 'scripts' / name)
 (root / '.worktree-ports').write_text('COMBAT_API_PORT=12345\nCOMBAT_WEB_PORT=12346\n')
 (root / 'brief').write_text('stub task\n')
@@ -17,6 +18,60 @@ for name in ('agent-cleanup.sh', 'codex-lean-mcp.sh', 'orca-codex-worker.sh', 'o
 def script(path, text):
     path.write_text('#!/usr/bin/env bash\nset -eu\n' + text)
     path.chmod(0o755)
+
+# Instrument only the fixture interpreter; the production owner has no test hooks.
+script(root / 'bin/python3', '''if [[ "${2:-}" == */orca-codex-worker.py ]]; then
+  shift
+  exec "$REAL_PYTHON" -I "$FIXTURE/worker-harness.py" "$@"
+fi
+exec "$REAL_PYTHON" "$@"
+''')
+(root / 'worker-harness.py').write_text('''import builtins, json, os, pathlib, runpy, signal, sys, time
+root = pathlib.Path(os.environ['FIXTURE'])
+mode = os.environ.get('PAUSE_AT', '')
+def event(text):
+    with open(os.environ['TRACE'], 'a') as log: log.write(text + '\\n')
+def pause(stage):
+    if mode != stage: return
+    event(stage + '-ready')
+    deadline = time.monotonic() + 8
+    while not (root / 'release-stage').exists():
+        if time.monotonic() > deadline: raise RuntimeError('fixture barrier timeout: ' + stage)
+        time.sleep(0.01)
+original_load = json.load
+def load(stream, *args, **kwargs):
+    value = original_load(stream, *args, **kwargs)
+    if str(stream.name).endswith('/result.json'): pause('decoder')
+    return value
+json.load = load
+original_signal = signal.signal
+def register(number, handler):
+    def observed(sig, frame):
+        handler(sig, frame)
+        event('handled-' + str(sig))
+    return original_signal(number, observed)
+signal.signal = register
+original_mask = signal.pthread_sigmask
+def mask(how, signals):
+    if how == signal.SIG_BLOCK: pause('boundary')
+    previous = original_mask(how, signals)
+    if how == signal.SIG_BLOCK: pause('pending')
+    return previous
+signal.pthread_sigmask = mask
+original_pending = signal.sigpending
+def pending():
+    snapshot = original_pending()
+    pause('committed')
+    return snapshot
+signal.sigpending = pending
+original_print = builtins.print
+def output(*args, **kwargs):
+    if args and str(args[0]).startswith('worker task:'): pause('delivered')
+    return original_print(*args, **kwargs)
+builtins.print = output
+sys.argv = sys.argv[1:]
+runpy.run_path(sys.argv[0], run_name='__main__')
+''')
 
 script(root / 'bin/git', '''case "$*" in
   'rev-parse --show-toplevel') echo "$FIXTURE" ;;
@@ -84,7 +139,18 @@ case "$*" in
   'repo list --json') echo '{"result":{"repos":[{"id":"stub-repo","path":"/learn/warwrit"}]}}' ;;
   'orchestration check '*) echo '{"ok":true}' ;;
   'orchestration run-use '*) echo '{}' ;;
-  'orchestration send '*) printf '%s\\0' "$@" > "$FIXTURE/message"; exit "${SEND_EXIT:-0}" ;;
+  'orchestration send '*)
+    echo $$ > "$FIXTURE/transport.pid"
+    if [[ "${PAUSE_AT:-}" == transport-before ]]; then
+      echo transport-before-ready >> "$TRACE"
+      while [[ ! -f "$FIXTURE/release-stage" ]]; do sleep 0.01; done
+    fi
+    printf '%s\\0' "$@" > "$FIXTURE/message"
+    if [[ "${PAUSE_AT:-}" == transport-after ]]; then
+      echo transport-after-ready >> "$TRACE"
+      while [[ ! -f "$FIXTURE/release-stage" ]]; do sleep 0.01; done
+    fi
+    exit "${SEND_EXIT:-0}" ;;
   *) echo 'unexpected orca command' >&2; exit 90 ;;
 esac
 ''')
@@ -103,7 +169,7 @@ fi
 exec bash "$FIXTURE/scripts/cleanup-candidate.sh" "$@"
 ''')
 env = dict(os.environ, PATH=str(root / 'bin') + ':' + os.environ['PATH'],
-           FIXTURE=str(root), TRACE=str(root / 'trace'))
+           FIXTURE=str(root), TRACE=str(root / 'trace'), REAL_PYTHON=sys.executable)
 for key in ('WARWRIT_LAB_OWNER', 'WARWRIT_AGENT_MCP', 'PLAYWRIGHT_CLI_SESSION'):
     env.pop(key, None)
 
@@ -115,6 +181,8 @@ def reset():
     (root / 'trace').write_text('')
     (root / 'message').unlink(missing_ok=True)
     (root / 'stub-child.pid').unlink(missing_ok=True)
+    (root / 'transport.pid').unlink(missing_ok=True)
+    (root / 'release-stage').unlink(missing_ok=True)
     shutil.rmtree(root / '.orca/runs', ignore_errors=True)
 
 def snapshot(label):
@@ -274,6 +342,69 @@ outcome, body = message()
 check(p.returncode == 143 and outcome == 'failed' and trace().count('\ncleanup\n') == 1,
       'signal during finalization cannot settle success or repeat cleanup')
 snapshot('signal-during-cleanup')
+
+# Both sides of the commit boundary, and delivery whose acknowledgement may be
+# lost. Readiness/handler acknowledgements replace timing sleeps in these cases.
+cases = [('decoder', sig, 'failed', 0) for sig in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT)]
+cases += [('boundary', signal.SIGTERM, 'failed', 0),
+          ('pending', signal.SIGTERM, 'failed', 0),
+          ('committed', signal.SIGTERM, 'succeeded', 0),
+          ('transport-before', signal.SIGTERM, 'succeeded', 0),
+          ('transport-after', signal.SIGTERM, 'succeeded', 13),
+          ('delivered', signal.SIGTERM, 'succeeded', 0)]
+for stage, sig, expected, send_exit in cases:
+    reset()
+    log_path = root / f'{stage}-{sig.name}.log'
+    with log_path.open('w') as log:
+        p = subprocess.Popen(['/bin/bash', str(root / 'scripts/orca-codex-worker.sh'),
+                              'task', 'dispatch', 'handle', str(root / 'brief')], cwd=root,
+                             env=dict(env, PAUSE_AT=stage, SEND_EXIT=str(send_exit)), stdout=log, stderr=log)
+        try:
+            await_trace(stage + '-ready')
+            before = (root / '.orca/runs/task/result.json').read_bytes()
+            check(trace().count('\ncleanup\n') == 1, stage + ' starts after exactly one cleanup')
+            p.send_signal(sig)
+            if stage not in ('pending', 'committed', 'delivered'):
+                await_trace('handled-' + str(int(sig)))
+            if stage == 'decoder' and sig == signal.SIGTERM:
+                p.send_signal(signal.SIGHUP)
+                await_trace('handled-' + str(int(signal.SIGHUP)))
+            if stage in ('decoder', 'boundary', 'pending', 'committed', 'transport-before'):
+                check(not (root / 'message').exists(), stage + ' cannot dispatch across a held barrier')
+            (root / 'release-stage').touch()
+            p.wait(timeout=5)
+        finally:
+            (root / 'release-stage').touch()
+            if p.poll() is None:
+                p.send_signal(signal.SIGTERM)
+                try: p.wait(timeout=3)
+                except subprocess.TimeoutExpired:
+                    if (root / 'transport.pid').exists():
+                        try: os.kill(int((root / 'transport.pid').read_text()), signal.SIGKILL)
+                        except ProcessLookupError: pass
+                    p.kill()
+                    p.wait()
+    outcome, body = message()
+    args = (root / 'message').read_text().split('\0')
+    expected_body = ('interrupted (exit ' + str(128 + sig) + ')') in body if expected == 'failed' else 'interrupted' not in body
+    check(p.returncode == 128 + sig and outcome == expected
+          and args[args.index('--subject') + 1] == 'codex exec ' + expected
+          and expected_body,
+          stage + ' derives settlement consistently and preserves cancellation/transport exit')
+    check(trace().count('orca orchestration send ') == 1 and trace().count('\ncleanup\n') == 1
+          and (root / '.orca/runs/task/result.json').read_bytes() == before
+          and args[args.index('--files-modified') + 1] == 'scripts/example.sh'
+          and args[args.index('--report-path') + 1] == str(root / 'proof.md'),
+          stage + ' retains source and decoded paths, sends once and cleans once')
+    if stage in ('committed', 'transport-before', 'transport-after'):
+        check('UNVERIFIED delivery' in log_path.read_text() and 'no retry' in log_path.read_text(),
+              stage + ' records ambiguous delivery without a second send')
+    if stage == 'delivered':
+        check('Signal after transport' in log_path.read_text(), 'delivered settlement cannot be recalled')
+    try: os.kill(int((root / 'transport.pid').read_text()), 0)
+    except ProcessLookupError: pass
+    else: raise AssertionError('owned transport stub survived settlement')
+    snapshot(stage + '-' + sig.name)
 reset()
 r = run('orca-pipeline-tick.sh', str(root))
 check(r.returncode == 0 and any(line.startswith('codex exec ') for line in trace().splitlines()) and 'mcp_servers.unused.enabled=false' in trace(),

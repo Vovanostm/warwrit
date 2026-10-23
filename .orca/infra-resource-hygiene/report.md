@@ -204,3 +204,23 @@ shared records в этом проходе не редактировались.
   exact source head выше. Статус результата LOCAL, NOT_PUSHED, NOT_MERGED.
   Final-head independent ACCEPT отсутствует; предыдущий REWORK не заменяется
   авторским утверждением о приёмке. No-live-runtime boundary остаётся в силе.
+
+## Targeted continuation 1 — 2026-10-24, LOCAL
+
+Owner-authorized continuation preserves the prepared wrapper/Python/regression
+replacement after review 3. One lifecycle owner waits for its child and cleanup,
+decodes all result fields, then commits one cancellation-aware settlement;
+post-commit transport uncertainty is nonzero/UNVERIFIED without retry.
+Both shell syntax checks, isolated Python compilation, the existing stub
+regression (101 assertions) and ordinary diff checks PASS. Cumulative source
+size is 267 / 300 against local merge base `25dd9a48`; the historical preparation
+estimate remains unchanged. No further source correction was needed.
+
+Detailed semantics, executed commands, fixture/resource readback, exact resulting
+commit and proposed coordinator entry are recorded in the local report at
+`.orca/infra-resource-hygiene/targeted-continuation-1.md`. Evidence fixture:
+`.orca/infra-resource-hygiene/fixtures.MrvT3A/`. No live resources were opened;
+live cleanup/full wave NOT_RUN and savings NOT_MEASURED. This is author proof,
+not independent acceptance. Original 2/2, review 3 REWORK and inherited blocked
+labels remain; coordinator validate, fresh Tier D review and CI are still required.
+No shared-record edits, publication or merge are part of this continuation.
