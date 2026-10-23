@@ -10,17 +10,18 @@ Main `25dd9a48`: newest CI `40015365287` SUCCESS.
 #297 / PR #298: targeted repair committed normally at `0b7f593e`.
 Author syntax, 101 isolated assertions, normal audit and scope 267/300 PASS.
 Coordinator validate: rebased, clean tree, scope, packages and typecheck PASS;
-format failed on this status document; coordinator formatting correction applied.
-Full validation retry and fresh Tier D review are next; final-head CI pending.
+format initially failed on this document; correction and full retry PASS (exit 0).
+Fresh Tier D review is allocated next; final-head CI pending.
 Review 3 REWORK, exhausted 2/2 and issue/PR agent:blocked remain in force.
 Real resource savings NOT_MEASURED; live cleanup/full wave NOT_RUN.
-#179 partial source `0a10e16f` retained; read-only composition contract running.
+#179 partial source `0a10e16f` retained; composition contract complete.
+#310 is the independent combat-area framing prerequisite; contract preparation next.
 #209 source `024ce8ae` frozen pending #179 terminal death-label obstruction repair.
 #309 and #263 children queued behind targeted repairs; core #225 waits its dependency.
 No game runtime allocated; #297 owns sequential checks until review handback.
 Daily metrics/scout/triage/digest already complete; no duplicate daily run.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-Next: independent #297 review after validation; settle #179 composition contract.
+Next: independent #297 review and #310 contract; retain all parent acceptance gates.
 Wrapper releases the lease when this single tick returns.
 
 ## Dated history

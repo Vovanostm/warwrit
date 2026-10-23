@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Complete the targeted #297 settlement repair — 2026-10-24, LOCAL
+### Complete the targeted #297 settlement repair — 2026-10-24, PUBLISHED
 
 - `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
   source `0b7f593e` replaces stale shell settlement snapshots with a finite
@@ -19,10 +19,15 @@ requests.
 - Changed worker shell/Python and isolated regression; author syntax, 101
   assertions, normal commit audit and 267/300 scope PASS. Coordinator validation
   passed rebased/clean/scope/packages/typecheck but failed CURRENT_PLAN format;
-  this records-only correction addresses that failure before the retry.
+  records-only correction and full retry PASS (exit 0).
 - [Current plan](docs/engineering/CURRENT_PLAN.md) records the pending fresh
   Tier D review, final-head CI and inherited issue/PR blocks. Live cleanup/full
   wave NOT_RUN; resource savings NOT_MEASURED. Not merged or player-accepted.
+- The completed #179 composition contract exceeds its 18-line remainder;
+  [#310](https://github.com/Vovanostm/warwrit/issues/310) is a separate usable
+  combat-area framing prerequisite. Coordinator selects an explicit utility,
+  preserving full-field Home and Inspect arrival camera. No parent budget reset,
+  block removal or acceptance waiver; parent sources remain frozen.
 
 ### Allocate #297 source preparation alongside #209 — 2026-10-24, PUBLISHED
 
