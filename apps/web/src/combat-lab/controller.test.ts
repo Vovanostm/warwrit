@@ -159,6 +159,31 @@ it('keeps manual admission and command reasons tied to actor state rather than i
   );
 });
 
+it('sends no manual command while autoplay, pending, deleting, lost, opponent or terminal', () => {
+  const ready = { autoplay: false, pending: false, deleting: false, sessionLost: false };
+  const human = playableView();
+  const opponent = {
+    ...human,
+    activation: { ...human.activation!, actorId: 'enemy' },
+  };
+  const terminal = { ...human, status: 'resolved' as const };
+  const blocked = [
+    [human, { ...ready, autoplay: true }],
+    [human, { ...ready, pending: true }],
+    [human, { ...ready, deleting: true }],
+    [human, { ...ready, sessionLost: true }],
+    [opponent, ready],
+    [terminal, ready],
+  ] as const;
+  for (const [current, flags] of blocked) expect(canIssueManualCommand(current, flags)).toBe(false);
+  const effects = fieldEffects();
+  for (const [current, flags] of blocked) {
+    if (canIssueManualCommand(current, flags))
+      executeFieldCommand(current, { type: 'attack', targetId: 'enemy' }, null, effects);
+  }
+  expect(effects.act).not.toHaveBeenCalled();
+});
+
 it('rejects malformed or foreign transport views while retaining valid scenario boundaries', async () => {
   const current = view(1);
   expect(isCombatLabView(current)).toBe(true);

@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Extract the combat-lab battle menu — 2026-10-23, PUBLISHED
+
+- `Vovanostm/qa-269-menu-extract`, #269, part of #262: the battle menu JSX now
+  lives in `CombatLabMenu`, `CombatLabMenuPanel`, and `CombatLabAutoplayToggle`.
+  `menuOpen` stays in the selection hook. Restart and editor close the menu
+  before their lifecycle callbacks. Download and one step leave it open.
+  Disabled predicates are unchanged.
+- Source budget 226/300 against main. Focused `CombatLab.test.tsx` and
+  `controller.test.ts` 67 PASS, web typecheck PASS, eslint and prettier PASS,
+  `pnpm check:changes` PASS. Measured complexity: `CombatLab` 13/13,
+  `combatLabMenuDisabled` 11/5, `CombatLabMenu` 2/9. Per-function CRAP scores
+  were NOT_MEASURED; the audit passed without printing them. The independent
+  mounted mill journey is NOT_RUN.
+- [PR #287](https://github.com/Vovanostm/warwrit/pull/287) merged as `690d140b`
+  and closed #272. The earlier "CI pending / not merged" line for that pull
+  request is superseded. Parent #262 stays open.
+
 ### Update #272 onto the isolated main — 2026-10-23, PUBLISHED
 
 - [PR #292](https://github.com/Vovanostm/warwrit/pull/292) merged as `e0c8cb2e`
