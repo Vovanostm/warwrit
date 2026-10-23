@@ -337,7 +337,7 @@ export function mountBattleTerrain(
     ground.metadata = { combatHex: { q: tile.q, r: tile.r } };
 
     if (tile.blocked) {
-      const rubbleWidth = 3;
+      const rubbleWidth = BATTLE_LAYOUT.spacing * (3 / 2.6);
       const rubbleHeight = rubbleWidth * 0.5;
       const visibleCenterOffset = 0.3 * rubbleHeight;
       const rubble = MeshBuilder.CreatePlane(

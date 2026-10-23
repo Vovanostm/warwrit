@@ -30,7 +30,7 @@ import {
 import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { createReachContour } from './sprite-reach-contour.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
-import { spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
+import { spriteForUnit, spriteGeometry, spriteRectangle, spriteScale } from './sprite-art.js';
 import {
   SPRITE_MASK_SIZE,
   SPRITE_VISUAL_SIZE,
@@ -113,11 +113,12 @@ function mountBattleEnvironment({
     return { apronDepth: backdropDepth + 1, setNight: (_night: boolean) => {} };
   }
 
-  // Keep the authored mill perimeter in its original projected position and outside the field.
-  const backgroundWidth = 35.7;
+  // Retain the calibrated perimeter outside the procedural field as cell spacing changes.
+  const layoutScale = BATTLE_LAYOUT.spacing / 2.6;
+  const backgroundWidth = 35.7 * layoutScale;
   const backgroundHeight = (backgroundWidth * 941) / 1672;
   const backgroundX = mapBounds.minX + backgroundWidth * 0.59;
-  const backgroundUp = backgroundHeight * 0.38 + 4;
+  const backgroundUp = backgroundHeight * 0.38 + 4 * layoutScale;
   const background = MeshBuilder.CreatePlane(
     'old-mill-battlefield',
     { width: backgroundWidth, height: backgroundHeight },
@@ -125,10 +126,10 @@ function mountBattleEnvironment({
   );
   background.rotation.x = CAMERA_ELEVATION;
   const backdropScale = (perspective.distance + backdropDepth) / perspective.distance;
-  const backdropUp = backgroundUp - (centerZ + 2) * Math.sin(CAMERA_ELEVATION);
+  const backdropUp = backgroundUp - (centerZ + 2 * layoutScale) * Math.sin(CAMERA_ELEVATION);
   background.scaling.set(backdropScale, backdropScale, 1);
   background.position.set(
-    perspective.targetX + (backgroundX - 1.1 - perspective.targetX) * backdropScale,
+    perspective.targetX + (backgroundX - 1.1 * layoutScale - perspective.targetX) * backdropScale,
     backdropUp * backdropScale * Math.cos(CAMERA_ELEVATION) -
       backdropDepth * Math.sin(CAMERA_ELEVATION),
     centerZ +
@@ -384,7 +385,8 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
-  const groundCompositionWidth = mapBounds.maxX - mapBounds.minX + 40;
+  const groundCompositionWidth =
+    mapBounds.maxX - mapBounds.minX + 40 * (BATTLE_LAYOUT.spacing / 2.6);
   const terrain = mountBattleTerrain(scene, initialTiles, initialNight, {
     texture: texture(siteGroundUrl),
     center: new Vector2(perspective.targetX, 0),
@@ -854,13 +856,13 @@ export async function mountSpriteBattleScene(
         const art = spriteForUnit(unit);
         const scale = spriteScale(art);
         const point = AXIAL_TO_WORLD(unit.position);
-        const [left, top, right, lower] = art.visibleBounds;
+        const { left, top, right, bottom } = spriteRectangle(art);
         const center = new Vector3(
           point.x + ((left + right) / 2 - art.footX) * scale,
           groundYFor(unit.position),
           point.z,
-        ).add(upAxis.scale((art.footY - (top + lower) / 2) * scale));
-        return inActorPlane(center, ((right - left) * scale) / 2, ((lower - top) * scale) / 2);
+        ).add(upAxis.scale((art.footY - (top + bottom) / 2) * scale));
+        return inActorPlane(center, ((right - left) * scale) / 2, ((bottom - top) * scale) / 2);
       });
     const vitals = [...unitMeshes.keys()]
       .map((id) => scene.getMeshByName(`unit-vitals:${id}`) as Mesh)

@@ -59,8 +59,9 @@ it.each(['W01', 'B002', 'B053'])(
         const project = (point: { x: number; y: number; z: number }) =>
           projectCameraPoint(point, { targetX: 24, targetZ: 11, distance: 41.6 }, CAMERA_ELEVATION);
         const bounds = spriteFigureBounds(unit, groundY, project);
-        for (const x of [art.visibleBounds[0], art.visibleBounds[2]]) {
-          for (const y of [art.visibleBounds[1], art.visibleBounds[3], art.footY]) {
+        const [left, top, width, height] = art.visibleBounds;
+        for (const x of [left, left + width]) {
+          for (const y of [top, top + height, art.footY]) {
             const up = (art.footY - y) * scale;
             const point = project({
               x: foot.x + (x - art.footX) * scale,

@@ -19,7 +19,9 @@ it.each([
     expect(geometry.anchorX).toBe((art.footX / art.width - 0.5) * (art.width * scale));
     expect(geometry.footY).toBe((art.footY - art.height / 2) * scale);
     expect(geometry.corners).toHaveLength(6);
-    const [left, top, right, bottom] = art.visibleBounds;
+    const [left, top, width, height] = art.visibleBounds;
+    const right = left + width;
+    const bottom = top + height;
     expect(geometry.corners).toEqual([
       { x: (left - art.footX) * scale, up: (art.footY - top) * scale },
       { x: (left - art.footX) * scale, up: (art.footY - bottom) * scale },
@@ -53,4 +55,13 @@ it('uses the measured unarmed W01 derivative for a public fists weapon', () => {
     visibleBounds: [284, 14, 685, 1249],
   });
   expect(sprite.url).toContain('/roster/w01-unarmed/sprite.png');
+});
+
+it('keeps the complete W01 padded rectangle rather than treating its width as an endpoint', () => {
+  const art = spriteForUnit({ id: 'W01' } as never);
+  expect(art.visibleBounds).toEqual([234, 14, 759, 1251]);
+  const factor = spriteScale(art);
+  expect(Math.max(...spriteGeometry(art).corners.map(({ x }) => x))).toBe(
+    (993 - art.footX) * factor,
+  );
 });
