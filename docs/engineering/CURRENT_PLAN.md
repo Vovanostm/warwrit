@@ -6,25 +6,23 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-24): «Разрешить адресные исправления» for #209/#297/#179.
 Owner reply: `msg_01a16acb-2962-7543-ba3c-7b4afcca410b`; original failure history retained.
 Main `25dd9a48`; CI `40015365287` SUCCESS. This tick: 0 merged PRs with playable proof.
-#209 frozen head `024ce8ae`: evaluator 4 REWORK, text ACCEPT, visual BLOCKED_ENV.
-Independent affected contrast passes: minimum sampled perimeter/terrain 3.416929:1.
-Native 125% terminal death label is obscured by utilities; scene owner is #179.
-Fresh real victory/defeat and comparison evidence supplied; prior absent-defeat limit superseded.
-Exact E2/archive/all-overlay and other stated accessibility limits remain unproven.
-Evaluator settled; coordinator directly verified 22 PIDs, two ports, PID file/profile absent.
-#179 targeted continuation allocated: preserved visible-bottom/night WIP plus framing/label fixes.
-Write scope: original four scene/catalogue paths, battle-field-vitals.ts and matching tests.
-One worker receives exclusive checks/runtime and normal audited commits; source cap remains 300.
-Prepared source was 199/300; fresh checks/runtime results remain NOT_RUN/NOT_MEASURED.
+#179 continuation settled FAILED with a bounded partial candidate, source `f9fa1403`.
+Separate visible-bottom readouts, figure-only night values and HUD-aware event labels.
+Author checks: 30 focused tests, web typecheck, lint, format and normal audit PASS.
+Author source count 282/300; real victory/defeat and finite native captures recorded.
+F1 framing remains defective; exact #209 inspection sequence is not integrated.
+Some final 1440-named images actually measured 1366 and do not prove 1440 acceptance.
 Inherited agent:blocked, original 2/2/supplemental, full Tier V, E2 and AC6 remain.
-#297 prepared source and blocked PR #298 wait the next exclusive check slot.
-#309 builder queued; #214 frozen pending accepted #179 integration.
-Try default mill 6 × 6, seed 20261009 → Start → victory → Inspect field, native 125%.
-Keep arrival camera, pin human-2 and move pointer away; day/night exposes the label collision.
-Next: settle the bounded #179 continuation, verify cleanup, then validate and fresh gates.
-Daily metrics/scout/digest complete; no repeated daily action or acceptance waiver.
-Coordinator records only published this tick; no game-code merge or deployment.
-Wrapper releases its lease on return; the assigned worker continues independently.
+Coordinator directly verified 19 PIDs absent, ports 23963/25963 refused, pidfile/profile absent.
+#209 stays frozen at `024ce8ae`: eval REWORK, text ACCEPT, visual BLOCKED_ENV.
+#297 receives the next exclusive focused checks/normal-commit continuation for prepared WIP.
+PR #298 and #297 retain blocked labels; fresh Tier D review/validate/CI remain required.
+#309 builder remains queued; #214 waits accepted #179 integration.
+Try default mill 6 × 6, seed 20261009 → Start, day/night at native 100% and 125%.
+The #179 partial candidate is runnable but not independently accepted or merged.
+Next: #297 focused completion; read-only #179 composition contract for adjacent UI ownership.
+Daily metrics/scout/digest complete; no repeat or acceptance waiver.
+Wrapper releases the lease on return; dispatched workers continue independently.
 
 ## Dated history
 

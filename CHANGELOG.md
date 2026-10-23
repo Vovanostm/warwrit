@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Preserve partial #179 repair and transfer checks to #297 — 2026-10-24, PUBLISHED
+
+- `Vovanostm/uix-179-catalogue-integration`: source `f9fa1403` separates visible
+  sprite bottoms from anatomical support, adjusts figure-only night values and
+  places upright event labels clear of HUD/body bounds. Owner-authorized targeted
+  fixes retain original failure history, blocked labels and full Tier V.
+- Worker reports 30 focused tests, web typecheck, scoped lint/format and normal
+  audit PASS; cumulative source 282/300. Author victory/defeat and finite native
+  captures are recorded in `.orca/uix-w4-scale/targeted-continuation-1.md`.
+  F1 framing, integrated #209 inspection, exact E2/AC6 and independent acceptance
+  remain unresolved; mislabeled final 1440 captures are explicitly excluded.
+- Coordinator directly confirmed 19 runtime PIDs absent, both private ports
+  refused and pidfile/profile absent. Next allocation is #297's preserved source
+  continuation, with exclusive focused checks and ordinary commits; fresh Tier D
+  gates and CI are still required. No merge, deployment or acceptance is claimed.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) retains one status block.
+
 ### Transfer checks to the bounded #179 continuation — 2026-10-24, PUBLISHED
 
 - `Vovanostm/uix-179-catalogue-integration`: coordinator records for the owner's
