@@ -143,10 +143,7 @@ function useCombatLabAutoplay({
   return { autoplay, setAutoplay, autoplayRef, autoplayAction, stopAutoplay, toggleAutoplay };
 }
 
-export function CombatLab() {
-  const [catalog, setCatalog] = useState<CombatLabCatalog | null>(null);
-  const [draftBattle, setDraftBattle] = useState<CombatLabBattleConfig | null>(null);
-  const [catalogLoading, setCatalogLoading] = useState(true);
+function useCombatLabSessionState() {
   const [session, setSession] = useState<ActiveSession | null>(null);
   const [starting, setStarting] = useState(false);
   const [startUnresolved, setStartUnresolved] = useState(false);
@@ -154,21 +151,25 @@ export function CombatLab() {
   const [pending, setPending] = useState<PendingAction | null>(null);
   const [notice, setNotice] = useState('');
   const [sessionLost, setSessionLost] = useState(false);
-  const {
-    selectedUnitId,
-    setSelectedUnitId,
-    selectedHex,
-    setSelectedHex,
-    menuOpen,
-    setMenuOpen,
-    selectedSkillId,
-    setSelectedSkillId,
-    selectedSkillRef,
-    hotkeyActions,
-  } = useCombatLabSelection(session);
-  const { autoplay, autoplayRef, autoplayAction, stopAutoplay, toggleAutoplay } =
-    useCombatLabAutoplay({ session, pending, sessionLost, deleting, setSelectedSkillId });
-  const view = session?.view ?? null;
+  return {
+    session,
+    setSession,
+    starting,
+    setStarting,
+    startUnresolved,
+    setStartUnresolved,
+    deleting,
+    setDeleting,
+    pending,
+    setPending,
+    notice,
+    setNotice,
+    sessionLost,
+    setSessionLost,
+  };
+}
+
+function useCombatLabSessionRefs() {
   const generation = useRef(0);
   const startingRef = useRef(false);
   const pendingRef = useRef<PendingAction | null>(null);
@@ -179,6 +180,26 @@ export function CombatLab() {
   const deletingRef = useRef(false);
   const sessionLostRef = useRef(false);
 
+  return {
+    generation,
+    startingRef,
+    pendingRef,
+    sessionRef,
+    sessionAbort,
+    createAbort,
+    latestRead,
+    deletingRef,
+    sessionLostRef,
+  };
+}
+
+function useCombatLabEditorState(
+  sessionRef: { current: ActiveSession | null },
+  setNotice: (notice: string) => void,
+) {
+  const [catalog, setCatalog] = useState<CombatLabCatalog | null>(null);
+  const [draftBattle, setDraftBattle] = useState<CombatLabBattleConfig | null>(null);
+  const [catalogLoading, setCatalogLoading] = useState(true);
   useEffect(() => {
     const controller = new AbortController();
     void loadCombatLabCatalog(apiBaseUrl, controller.signal)
@@ -198,6 +219,32 @@ export function CombatLab() {
     return () => controller.abort();
   }, []);
 
+  return { catalog, draftBattle, setDraftBattle, catalogLoading };
+}
+
+interface CombatLabSessionLifecycleInputs {
+  readonly autoplayRef: { current: boolean };
+  readonly generation: { current: number };
+  readonly createAbort: { current: AbortController | null };
+  readonly sessionAbort: { current: AbortController | null };
+  readonly sessionRef: { current: ActiveSession | null };
+  readonly setSession: (session: ActiveSession | null) => void;
+  readonly setDraftBattle: (battle: CombatLabBattleConfig) => void;
+  readonly setSelectedUnitId: (id: string | null) => void;
+  readonly setNotice: (notice: string) => void;
+}
+
+function useCombatLabSessionLifecycle({
+  autoplayRef,
+  generation,
+  createAbort,
+  sessionAbort,
+  sessionRef,
+  setSession,
+  setDraftBattle,
+  setSelectedUnitId,
+  setNotice,
+}: CombatLabSessionLifecycleInputs) {
   useEffect(
     () => () => {
       autoplayRef.current = false;
@@ -242,6 +289,120 @@ export function CombatLab() {
     });
     return () => controller.abort();
   }, []);
+
+  return { installSession };
+}
+
+interface CombatLabAutoplayToggleProps {
+  readonly autoplay: boolean;
+  readonly disabled: boolean;
+  readonly onToggle: () => void;
+}
+
+export function CombatLabAutoplayToggle({
+  autoplay,
+  disabled,
+  onToggle,
+}: CombatLabAutoplayToggleProps) {
+  return (
+    <button
+      className="battle-control battle-control--utility"
+      type="button"
+      aria-label={autoplay ? 'Остановить автобой' : 'Начать автобой'}
+      title={autoplay ? 'Остановить автобой' : 'Начать автобой'}
+      aria-pressed={autoplay}
+      disabled={disabled}
+      onClick={onToggle}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d={autoplay ? 'M8 5v14M16 5v14' : 'M8 5l11 7-11 7z'} />
+      </svg>
+    </button>
+  );
+}
+
+export function combatLabMenuDisabled({
+  autoplay,
+  controlling,
+  hasPending,
+  deleting,
+  starting,
+  startUnresolved,
+}: {
+  readonly autoplay: boolean;
+  readonly controlling: boolean;
+  readonly hasPending: boolean;
+  readonly deleting: boolean;
+  readonly starting: boolean;
+  readonly startUnresolved: boolean;
+}) {
+  return {
+    replayDisabled: deleting || hasPending,
+    restartDisabled: deleting || hasPending || starting || startUnresolved,
+    stepDisabled: autoplay || !controlling || hasPending || deleting,
+    autoplayDisabled: !autoplay && (!controlling || hasPending || deleting),
+  };
+}
+
+export function CombatLab() {
+  const {
+    session,
+    setSession,
+    starting,
+    setStarting,
+    startUnresolved,
+    setStartUnresolved,
+    deleting,
+    setDeleting,
+    pending,
+    setPending,
+    notice,
+    setNotice,
+    sessionLost,
+    setSessionLost,
+  } = useCombatLabSessionState();
+  const {
+    selectedUnitId,
+    setSelectedUnitId,
+    selectedHex,
+    setSelectedHex,
+    menuOpen,
+    setMenuOpen,
+    selectedSkillId,
+    setSelectedSkillId,
+    selectedSkillRef,
+    hotkeyActions,
+  } = useCombatLabSelection(session);
+  const { autoplay, autoplayRef, autoplayAction, stopAutoplay, toggleAutoplay } =
+    useCombatLabAutoplay({ session, pending, sessionLost, deleting, setSelectedSkillId });
+  const view = session?.view ?? null;
+  const {
+    generation,
+    startingRef,
+    pendingRef,
+    sessionRef,
+    sessionAbort,
+    createAbort,
+    latestRead,
+    deletingRef,
+    sessionLostRef,
+  } = useCombatLabSessionRefs();
+  const { catalog, draftBattle, setDraftBattle, catalogLoading } = useCombatLabEditorState(
+    sessionRef,
+    setNotice,
+  );
+
+  const { installSession } = useCombatLabSessionLifecycle({
+    autoplayRef,
+    generation,
+    createAbort,
+    sessionAbort,
+    sessionRef,
+    setSession,
+    setDraftBattle,
+    setSelectedUnitId,
+    setNotice,
+  });
 
   const { applyLatest, endBattle } = createCombatLabSessionCallbacks(apiBaseUrl, {
     generation,
@@ -567,17 +728,19 @@ export function CombatLab() {
     controlling,
   });
 
+  const menuDisabled = combatLabMenuDisabled({
+    autoplay,
+    controlling,
+    hasPending: pending !== null,
+    deleting,
+    starting,
+    startUnresolved,
+  });
+
   return (
     <main className={`combat-lab-page${session ? ' combat-lab-page--fighting' : ''}`}>
       {!session && (
-        <>
-          <p className="eyebrow">Тренировочный бой · кампания не меняется</p>
-          <h1>Лаборатория боя</h1>
-        </>
-      )}
-      {!session && <p>Выберите бойцов, настройте поле и начните бой.</p>}
-      {!session && (
-        <CombatLabEditor
+        <CombatLabEditorShell
           catalog={catalog}
           draft={draftBattle}
           loading={catalogLoading}
@@ -588,7 +751,6 @@ export function CombatLab() {
           onStart={() => void startBattle()}
         />
       )}
-      {notice && !startUnresolved && !session && <p role="status">{notice}</p>}
       {view && (
         <>
           <BattleView
@@ -621,19 +783,11 @@ export function CombatLab() {
             }}
             menu={
               <>
-                <button
-                  className="battle-control battle-control--utility"
-                  type="button"
-                  aria-label={autoplay ? 'Остановить автобой' : 'Начать автобой'}
-                  title={autoplay ? 'Остановить автобой' : 'Начать автобой'}
-                  aria-pressed={autoplay}
-                  disabled={!autoplay && (!controlling || pending !== null || deleting)}
-                  onClick={toggleAutoplay}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d={autoplay ? 'M8 5v14M16 5v14' : 'M8 5l11 7-11 7z'} />
-                  </svg>
-                </button>
+                <CombatLabAutoplayToggle
+                  autoplay={autoplay}
+                  disabled={menuDisabled.autoplayDisabled}
+                  onToggle={toggleAutoplay}
+                />
                 <div className="battle-menu">
                   <button
                     className="battle-control battle-control--utility"
@@ -652,7 +806,7 @@ export function CombatLab() {
                       <button
                         className="battle-control"
                         type="button"
-                        disabled={deleting || pending !== null}
+                        disabled={menuDisabled.replayDisabled}
                         onClick={() => void downloadReplay()}
                       >
                         Скачать запись боя
@@ -660,7 +814,7 @@ export function CombatLab() {
                       <button
                         className="battle-control"
                         type="button"
-                        disabled={deleting || pending !== null || starting || startUnresolved}
+                        disabled={menuDisabled.restartDisabled}
                         onClick={() => {
                           setMenuOpen(false);
                           void restartBattle();
@@ -671,7 +825,7 @@ export function CombatLab() {
                       <button
                         className="battle-control"
                         type="button"
-                        disabled={deleting || pending !== null}
+                        disabled={menuDisabled.replayDisabled}
                         onClick={() => {
                           setMenuOpen(false);
                           void endBattle();
@@ -683,7 +837,7 @@ export function CombatLab() {
                         <button
                           className="battle-control"
                           type="button"
-                          disabled={autoplay || !controlling || pending !== null || deleting}
+                          disabled={menuDisabled.stepDisabled}
                           onClick={() => autoplayAction.current()}
                         >
                           Один шаг
@@ -733,6 +887,18 @@ interface CombatLabEditorProps {
   readonly notice: string;
   readonly onChange: (draft: CombatLabBattleConfig | null) => void;
   readonly onStart: () => void;
+}
+
+export function CombatLabEditorShell(props: CombatLabEditorProps) {
+  return (
+    <>
+      <p className="eyebrow">Тренировочный бой · кампания не меняется</p>
+      <h1>Лаборатория боя</h1>
+      <p>Выберите бойцов, настройте поле и начните бой.</p>
+      <CombatLabEditor {...props} />
+      {props.notice && !props.unresolved && <p role="status">{props.notice}</p>}
+    </>
+  );
 }
 
 export function CombatLabEditor(props: CombatLabEditorProps) {
