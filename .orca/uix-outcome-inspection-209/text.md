@@ -31,8 +31,8 @@ Independent T verdict: NOT_RUN by this worker; coordinator-owned gate remains.
 The owner-authorized repair starts from coordinator head e3f089c6 and changes
 only outcome CSS outer strokes. All Russian runtime strings, English review
 translations, order, projected facts and unknown-observation behavior above are
-unchanged from source cc197d6 / evaluated head 3e2b7fac. The exact new code head
-and final check receipts are recorded in report.md's targeted-repair section.
+unchanged from source cc197d6 / evaluated head 3e2b7fac. Current CSS code head: a2e5b770afb3c7e725feaad2dafc3ba00e8b8a0a.
+Final check receipts are recorded in report.md's targeted-repair section.
 Fresh screenshots: local `targeted-repair-1/shots/after-*`; actual victory
 R8/rev163 and human-1 final observations. Prior text 3 ACCEPT remains history;
 fresh independent T (and U/V) acceptance for this composition is pending.

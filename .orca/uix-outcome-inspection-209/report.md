@@ -291,3 +291,26 @@ terrain; no action POST or input overlap regression observed. Focused checks PAS
 owned runtime fully cleaned; original failed rounds, #179/E2 and fresh independent
 U/T/V holds retained. No publication, PR or merge.” Coordinator owns integration
 into CHANGELOG/CURRENT_PLAN/wiki; those paths are untouched.
+
+### Committed result and validation handoff
+
+- Exact repair code head: **a2e5b770afb3c7e725feaad2dafc3ba00e8b8a0a**.
+  Normal source commit exited 0, audit PASS (`targeted-repair-1/commit-code.log`).
+  Initial multi-path `git add` returned 1 because `.orca` is ignored, although the
+  three already tracked paths were staged; direct normal commit then succeeded.
+  No force-add of proof/profile files and no hook bypass.
+- Required `bash scripts/orca-validate.sh` ran once on that clean committed head:
+  **exit 1**, eight PASS / one FAIL. Rebased, clean-tree, scope (261/300), packages,
+  typecheck, lint, related-tests (68 PASS / 2 files), audit all PASS. **Format FAIL
+  only for `docs/engineering/CURRENT_PLAN.md`**, a coordinator-owned file inherited
+  from the starting authority commit. Log: `targeted-repair-1/validate.log`;
+  exact warning copied to `targeted-repair-1/validate-format.log`. It was not edited
+  or bypassed. No repeated validation or unrelated formatting repair.
+- Shared-record proposal correction: include that mandatory validation exits 1
+  for CURRENT_PLAN formatting; do not describe the whole gate as green. Coordinator
+  must format its owned document and rerun validation before publication, then
+  obtain fresh independent U/T/V with all original #179/E2 holds retained.
+- **Worker outcome: failed for the required validation gate outside ownership.**
+  The bounded CSS repair itself and finite affected proof succeeded; no further
+  source work is proposed. This final documentation commit changes no source.
+  Runtime remains fully stopped; local proof is retained; no push/PR/relabel/merge.
