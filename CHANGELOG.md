@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Settle #179 evaluation and resume #297 repair — 2026-10-23, PUBLISHED
+
+- `Vovanostm/uix-179-catalogue-integration`: independent catalogue evaluation
+  at `4b7c26e9` is REWORK: B002 resource strip overlaps 352/512 sampled opaque
+  body pixels. Support placement and visible-bottom readout anchoring need
+  separate treatment; this record allocates no additional #179 source round.
+  Evaluator completed day/night victories, 12 native viewport/zoom rows,
+  132/132 body probes, E1 pairs and original baseline comparisons. AC6 remains
+  PARTIAL (20 nonliteral hits per light, all 165 cells reachable); E2 remains
+  BLOCKED_ENV. Visual night value 1 and original acceptance/history remain.
+- Exact failed settlement recorded before native release/ack; direct coordinator
+  unsandboxed queries found all 21 recorded PIDs absent and both owned ports
+  clear; no play.pid. Private profile removal is evaluator receipt evidence.
+  Report: `.orca/uix-w4-scale/eval-catalogue-1.md` (untracked local evidence).
+- #297 / PR #298 rework 1 starts after that handback: five independent reviewer
+  findings, four existing shell scripts plus isolated regression, exclusive
+  focused checks and no real browser/lab/MCP runtime. The coordinator's known
+  main wrapper launches the worker, avoiding the unsafe candidate wrapper.
+  #269 full Tier U stays queued; #179/#214 source stays frozen.
+- Only CHANGELOG and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) change
+  on this branch. Documentation checks PASS; coordinator game tests, validation,
+  browser and full gates NOT_RUN. Main CI green; zero merged PRs with playable
+  proof this tick. Published records only; no source fix or acceptance claimed.
+
 ### #179 independent visual gate requires rework — 2026-10-23, PUBLISHED
 
 - `Vovanostm/uix-179-catalogue-integration`: record the independent catalogue-1

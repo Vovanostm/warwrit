@@ -6,25 +6,29 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Main `cf3b2901`; newest hosted CI `39938555273` is green.
 #179 branch `Vovanostm/uix-179-catalogue-integration`; source `5cafdadb` frozen.
-Prior coordinator validator: exit 0, nine gates and 99 related tests PASS.
 Try default mill 6×6, seed 20261009 → Start, before camera input, day/night.
-Independent visual catalogue-1 at `01858b0`: BLOCKED_ENV plus visible REWORK.
-Night value/palette scores 1 at game scale; other applicable scores are 2–3.
-A figure-specific night tonal approach is required; no new source round allocated.
-Local critic report: `.orca/uix-w4-scale/visual-catalogue-1.md`.
-AC6 strict hover/seam proof remains PARTIAL.
-Missing inputs: exact E2 archive/state, bounded E1 pairs and journey captures.
-Critic settlement recorded before release and ack; release: no_owned_resource.
-Evaluator `task_4d2cb6679bc9` / `ctx_7eabd62414ec` remains live and exclusive.
-Next: finish its bounded evidence and verify owned-runtime cleanup; gaps forwarded.
-Then route consolidated findings through the fallback ladder; no acceptance waiver.
+Independent evaluator catalogue-1 at `4b7c26e9`: REWORK.
+B002 strip overlaps 352/512 sampled opaque-body pixels; support and visible-bottom
+anchors need separate ownership. No additional source attempt is allocated.
+Evaluator completed genuine day/night victories, all 12 native viewport/zoom rows,
+132/132 body probes, overlay pairs and original baseline comparisons.
+AC6 strict literal-coordinate proof remains PARTIAL: 20 nonliteral hits per light;
+all 165 cells were reachable. Exact E2 archive/state remains BLOCKED_ENV.
+Independent visual night value/palette 1 and full original Tier V gates retained.
+Local reports: `.orca/uix-w4-scale/{eval,visual}-catalogue-1.md`.
+Evaluator failed settlement recorded before release/ack; native release no_owned_resource.
+Coordinator verified 21 owned PIDs absent, ports 23963/25963 clear, no play.pid.
 Original #179 AC/DoD, failed 2/2 and consumed supplemental history retained.
-#214 frozen; #269 source merged PR #302, full original Tier U proof pending.
+#214 frozen; #269 source merged PR #302, full original Tier U proof queued.
 Parent #262 stays open; no #263 unblock or final #269/#262 acceptance.
-Open PR #298 at `57541c35`: reviewer REWORK; #297 repair waits runtime handback.
-Older open PR #129/#134 failures retained; no PR eligible for merge this tick.
-Daily metrics/scout/triage/digest already complete; no duplicate daily action.
-This tick: documentation checks only; game tests/validate/browser/full gates NOT_RUN.
+#297 / PR #298: rework 1/2 live, task `task_3920bac13d25` / `ctx_692608b7b341`.
+Its sole core writer owns four shell scripts and one isolated shell regression;
+five reviewer findings, exclusive focused checks, no real browser/lab/MCP runtime.
+Known-main wrapper launches it; reviewed unsafe candidate is not executed.
+Next: settle #297, then validate/fresh Tier D/CI; allocate #269 checks afterward.
+PR #298 still has REWORK; older PR #129/#134 failures retained; no merge eligible.
+Daily metrics/scout/triage/digest complete; no duplicate daily action.
+Coordinator game tests/validate/browser/full gates NOT_RUN this tick.
 This tick: 0 merged PRs with playable proof. No game/API/schema contract change.
 
 ## Dated history
