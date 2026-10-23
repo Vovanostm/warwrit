@@ -32,6 +32,9 @@ requests.
   owns local checks/browser/runtime; #269 waits. Task-local launch PATH selects
   verified Codex 0.163.0; tracked scripts/global config are unchanged. Persistent
   wrapper PATH and fail-closed identity handling remain a follow-up.
+- Records checks: status block 30/40 and scoped diff PASS. The normal commit
+  audit passed after pinned `pnpm install --frozen-lockfile`; the initial hook
+  failed on missing fallow. No hook bypass.
 - [Current plan](docs/engineering/CURRENT_PLAN.md) has one updated status block;
   historical entries from both branches are retained. No game/setup/API/wiki,
   rules/protocol/replay/schema/migration contract changes. New game/full suites

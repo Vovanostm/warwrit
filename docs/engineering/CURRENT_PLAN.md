@@ -13,13 +13,13 @@ Five consecutive full hosted passes and original Tier L proof retained separatel
 New main CI 39931065055 at `e0c8cb2e` was in progress at reconciliation.
 #292 coordinator validator exit 1: main already contained its merge; rebased failed.
 Clean-tree/scope/packages/typecheck passed; this is not a full validator PASS.
-Old #293 evaluator failed79a5e407 settlement verified, recorded and acknowledged.
-All 25 recorded PIDs absent, ports23789/25789 clear, no play.pid; reservation released.
+Old #293 evaluator failure at `79a5e407`: settlement verified, recorded and acknowledged.
+All 25 recorded PIDs absent, ports 23789 / 25789 clear, no play.pid; reservation released.
 Clean/pushed old #293/#295 worktrees removed; #293 reports retained locally.
 #295 untracked evidence backup NOT_RUN after broken profile symlink; no source lost.
 #179 fresh catalogue contract task_efc996f2bb57 / ctx_873c972c166b live/read-only.
 Worktree uix-179-catalogue-integration; source/checks/runtime NOT_GRANTED.
-Original #179 AC/DoD, failed2/2+supplemental and full Tier V remain required.
+Original #179 AC/DoD, failed 2/2 rounds plus supplemental and full Tier V remain required.
 #214 frozen; #293 merge does not establish #179/#214 acceptance.
 #269 contract accepted; source waits scout cleanup and P0 contract sequencing.
 Final #269 AND #262 20/15, ordinary audit and full mounted day/night proof retained.
@@ -27,7 +27,7 @@ Final #269 AND #262 20/15, ordinary audit and full mounted day/night proof retai
 Daily metrics: 7 merged / 12 workers, 9 succeeded / 3 failed; no two-day rise proven.
 Daily scout task_0b7875e8f181 / ctx_c86674217d0f live; sole checks/browser/runtime owner.
 Daily findings triage awaits scout; no new findings or player acceptance claimed.
-Original run/mailbox restored; task-local Codex0.163 PATH used, global config unchanged.
+Original run/mailbox restored; task-local Codex 0.163.0 PATH used, global config unchanged.
 Persistent wrapper PATH/fail-closed identity prevention is a follow-up, not implemented.
 No new game-rule/API/protocol/replay/schema/migration/dependency change.
 Next: settle scout/contract, positive runtime cleanup, then allocate one web builder.
@@ -81,7 +81,6 @@ New coordinator gameplay/full suites NOT_RUN; performance NOT_MEASURED.
 No game-rule/API/protocol/replay/schema/migration/dependency change.
 Next: evaluator settlement and positive cleanup, then sole-writer visual/hover rework.
 Wrapper releases its lease when this single tick returns.
-
 
 **Previous checkpoint (superseded above):**
 
