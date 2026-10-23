@@ -142,3 +142,10 @@ retaining full-field Overview; exact #209 Inspect field/pin sequence cannot run
 without its frozen source integration. E2/AC6/full independent Tier V remain.
 Details, failed probes, final commit receipt and coordinator-only record proposal:
 [targeted-continuation-1](targeted-continuation-1.md). No publication or merge.
+
+Normal source/report commit `f9fa1403d7a242ac8ccb7ed646ddc22a4801ce47` passed
+its existing related-coverage/audit hook; local only, no push. The companion
+report receipt corrects later mislabeled 1440 captures to their actual
+1366 × 768 dimensions. Earlier verified native rows remain distinct. No source
+WIP or owned runtime remains; the overall result stays FAILED for F1 and the
+integrated #209 readback boundary, not an audit or cleanup failure.

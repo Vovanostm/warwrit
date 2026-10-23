@@ -40,7 +40,8 @@ Cumulative ordinary diff versus actual merge-base
 218 additions + 64 removals, tests excluded. No battle-layout/terrain edit in this
 continuation; their inherited cumulative hunks remain. No framing-policy change.
 
-Commit/check closeout is appended below after normal hooks and direct cleanup.
+Source commit: `f9fa1403d7a242ac8ccb7ed646ddc22a4801ce47`, normal hooks PASS;
+local only, not pushed. Final receipt is committed separately with the report.
 
 ## Focused execution
 
@@ -131,8 +132,8 @@ body-reservation refinement is checked separately in the final readback below.
 
 1. **F1 is not fixed.** Full-field Overview already uses nearly all available
    width: `framing.json`, real terminal defeat, at native 1366/125 field x12.70
-   through 1080.10 within 1093 CSS px; surviving B025 padded height26.85 px.
-   At 1440/100 the field spans x12.00–1428.00 and B025 height35.57 px. A closer fit
+   through 1080.10 within 1093 CSS px; surviving B025 padded height 26.85 px.
+   At 1440/100 the field spans x12.00–1428.00 and B025 height 35.57 px. A closer fit
    would crop the full field; enlarging the figure would violate fixed scales.
    No such change was made. The smallest distinct composition route is a useful
    combat-area frame separate from Home/Overview, exposed through the scene
@@ -182,9 +183,10 @@ critic review; it is not asserted to be an ideal composition or exact #209 proof
 A temporary three-horizontal-candidate variation was discarded without changing
 other WIP; the committed version uses the verified vertical placement.
 
-`terminal-final.json` repeats the real R8/rev163 arrival at both configurations
-with the body reservations. The later supplemental images whose filename says
-`label-final-1440-100` / `label-final-native-1440-100` actually measured 1366×768
+`terminal-final.json` repeats the real R8/rev163 arrival with the body
+reservations. Its native 125% rows are correct; its filenames
+`final-terminal-arrival-1440-100`, and the later supplemental filenames
+`label-final-1440-100` / `label-final-native-1440-100`, actually measured 1366×768
 CSS at native 100% and are **not 1440 proof**: after the comparison tab, Chrome
 reported 1440×987 window bounds but retained a 1366×855 outer window. Explicit
 window-target retry also retained those actual dimensions; both receipts are
@@ -201,7 +203,7 @@ This is an author viewing aid, not a visual verdict.
 
 **Cleanup PASS:** `continuation-1/cleanup.json`. Private browser closed normally;
 Ctrl+C ended the owned lab launcher. All 19 recorded owned PIDs are absent,
-23963/25963 have no lsof listeners (exit1, empty stdout/stderr), TCP connectEx61,
+23963/25963 have no lsof listeners (exit 1, empty stdout/stderr), TCP connectEx 61,
 `.orca/play.pid` absent and the exact owned `continuation-1/profile` removed only
 after process/port absence. No post-stop SIGTERM was needed. The older retained
 profiles, sibling processes and worktrees were untouched. Browser Page zoom was
@@ -222,5 +224,9 @@ restored to 100%. No private runtime remains owned by this continuation.
   this continuation adds/removes **123 source + 23 test lines** versus starting
   HEAD, including preserved preparation. No shared record is part of this diff.
 
-Normal pre-commit hooks will refresh their existing related coverage and audit;
-actual commit outcome is recorded in the final receipt. No bypass is permitted.
+Normal pre-commit hooks refreshed their existing related coverage and the
+correct-base audit: **PASS**, commit **f9fa1403d7a242ac8ccb7ed646ddc22a4801ce47**
+(`continuation-commit.log`, exit 0). Hook test output is intentionally suppressed
+by the existing hook, so no extra test count is invented. No bypass was used.
+A companion documentation-only normal commit records this receipt; source stays
+unchanged. No push, external issue update, shared-record write or merge ran.
