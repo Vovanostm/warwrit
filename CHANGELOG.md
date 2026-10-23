@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Reconcile pipeline and #297 resource ownership — 2026-10-23, LOCAL
+### Reconcile pipeline and #297 resource ownership — 2026-10-23, PUBLISHED
 
 - `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
   rework 1 fixes five reviewer failure paths: explicit lab ownership, failed
@@ -19,14 +19,16 @@ requests.
 - Cleanup instructions in AGENTS, README, Orca common/evaluate briefs and the
   [stand ladder](docs/engineering/LOCAL_DEVELOPMENT.md#test-stands) now describe
   the matching runtime-owner grant. Historical measurements remain historical.
-  Fresh independent review, coordinator validation and candidate CI are pending;
+  Coordinator validation PASS at `5e4db27b` (six applicable steps); fresh
+  independent review is live and candidate CI is pending;
   actual resource savings NOT_MEASURED; full real Orca wave NOT_RUN.
 - Native closure of #262/#269/#303 supersedes the stale review hold. PR #302
   merged as `cf3b2901`; independent candidate/baseline day/night journey ACCEPT
   is recorded on #303. Pending/deleting/lost-session were NOT_REACHED and
   opponent turn was not seen. #179 retains its overlap, night-value and archive
   blockers. [Current status](docs/engineering/CURRENT_PLAN.md) records the resumed
-  Orca queue; this tick has zero merged PRs with playable proof.
+  Orca queue; #263 contract and #304 documentation reviewer are live.
+  This tick has zero merged PRs with playable proof.
 
 ### Agents close browsers, skip idle MCP servers and use the lightest stand — 2026-10-22, PUBLISHED
 
