@@ -7,6 +7,10 @@ import type {
   CombatLabCatalog,
 } from '@warwrit/protocol';
 import {
+  admitCombatLabAction,
+  markCombatLabActionUncertain,
+  settleCombatLabActionReply,
+  type CombatLabActionPorts,
   commonCombatLabReason,
   handleCombatLabActionReply,
   latestCombatLabView,
@@ -313,6 +317,198 @@ const fieldEffects = () => ({
   selectMovement: vi.fn(),
   selectTarget: vi.fn(),
   act: vi.fn(),
+});
+
+const submittedAction: CombatLabAction = {
+  version: 1,
+  sessionId: 'session',
+  battleId: 'battle',
+  requestId: 'original-request',
+  expectedViewRevision: 1,
+  activationId: 'activation',
+  actorId: 'actor',
+  intent: { type: 'wait' },
+};
+
+function actionPorts() {
+  return {
+    sessionRef: { current: { id: 'session', capability: 'capability', view: playableView() } },
+    pendingRef: { current: null },
+    deletingRef: { current: false },
+    generation: { current: 1 },
+    setPending: vi.fn(),
+    setNotice: vi.fn(),
+    stopAutoplay: vi.fn(),
+    setSelectedSkillId: vi.fn(),
+  } satisfies CombatLabActionPorts;
+}
+
+it('reserves an action synchronously and blocks competing new orders or a different retry body', () => {
+  const ports = actionPorts();
+  const body = JSON.stringify(submittedAction);
+  const admitted = admitCombatLabAction(ports, body, 'Wait', false)!;
+  const competing = [
+    admitCombatLabAction(ports, body, 'Another order', false),
+    admitCombatLabAction(ports, `${body} `, 'Different bytes', true),
+  ];
+  expect({
+    admitted,
+    pending: ports.pendingRef.current,
+    effects: ports.setPending.mock.calls,
+    notice: ports.setNotice.mock.calls,
+    competing,
+  }).toEqual({
+    admitted: {
+      current: ports.sessionRef.current,
+      flight: { body, description: 'Wait', uncertain: false },
+    },
+    pending: { body, description: 'Wait', uncertain: false },
+    effects: [[{ body, description: 'Wait', uncertain: false }]],
+    notice: [['']],
+    competing: [null, null],
+  });
+});
+
+it.each(['missing session', 'deleting', 'terminal', 'opponent'])(
+  'refuses a new action while %s without changing pending or notice',
+  (reason) => {
+    const ports: CombatLabActionPorts = actionPorts();
+    if (reason === 'missing session') ports.sessionRef.current = null;
+    if (reason === 'deleting') ports.deletingRef.current = true;
+    if (reason === 'terminal')
+      ports.sessionRef.current = {
+        ...ports.sessionRef.current!,
+        view: { ...playableView(), status: 'resolved' },
+      };
+    if (reason === 'opponent')
+      ports.sessionRef.current = {
+        ...ports.sessionRef.current!,
+        view: { ...playableView(), activation: null },
+      };
+    expect({
+      result: admitCombatLabAction(ports, JSON.stringify(submittedAction), 'Wait', false),
+      pending: ports.pendingRef.current,
+      pendingCalls: vi.mocked(ports.setPending).mock.calls,
+      noticeCalls: vi.mocked(ports.setNotice).mock.calls,
+    }).toEqual({
+      result: null,
+      pending: null,
+      pendingCalls: [],
+      noticeCalls: [],
+    });
+  },
+);
+
+it.each([
+  'Ответ неизвестен. Повтор отправит то же действие с тем же идентификатором.',
+  'Сервер не подтвердил результат. Повтор отправит то же действие с тем же ID.',
+  'Ответ на действие не подтвержден. Повтор отправит то же действие с тем же ID.',
+  'Доставка неизвестна. Повторить можно только то же действие с тем же ID.',
+])('retains exact pending bytes and selection on uncertainty: %s', (notice) => {
+  const ports = actionPorts();
+  const body = JSON.stringify(submittedAction, null, 2);
+  const { flight } = admitCombatLabAction(ports, body, 'Original order', false)!;
+  markCombatLabActionUncertain(ports, flight, notice);
+  expect({
+    pending: ports.pendingRef.current,
+    state: ports.setPending.mock.lastCall,
+    notice: ports.setNotice.mock.lastCall,
+    stops: ports.stopAutoplay.mock.calls.length,
+    selection: ports.setSelectedSkillId.mock.calls,
+  }).toEqual({
+    pending: { body, description: 'Original order', uncertain: true },
+    state: [{ body, description: 'Original order', uncertain: true }],
+    notice: [notice],
+    stops: 1,
+    selection: [],
+  });
+});
+
+it.each(['active', 'resolved'] as const)(
+  'retries the original body after the view becomes %s',
+  (status) => {
+    const ports: CombatLabActionPorts = actionPorts();
+    const body = JSON.stringify(submittedAction, null, 2);
+    const { flight } = admitCombatLabAction(ports, body, 'Original order', false)!;
+    markCombatLabActionUncertain(ports, flight, 'Delivery unknown');
+    ports.sessionRef.current = { ...ports.sessionRef.current!, view: { ...view(8), status } };
+    const retry = admitCombatLabAction(ports, flight.body, flight.description, true)!;
+    expect({
+      body: retry.flight.body,
+      requestId: JSON.parse(retry.flight.body).requestId,
+      capability: retry.current.capability,
+      pending: ports.pendingRef.current,
+    }).toEqual({
+      body,
+      requestId: 'original-request',
+      capability: 'capability',
+      pending: { body, description: 'Original order', uncertain: false },
+    });
+  },
+);
+
+it.each([
+  [{ status: 'accepted' }, 1, 1, [[null]], ''],
+  [{ status: 'accepted' }, 2, 0, [[null]], ''],
+  [
+    { status: 'rejected', code: 'INVALID_ACTION' },
+    2,
+    1,
+    [],
+    'Такое действие сейчас недоступно. Состояние боя обновлено.',
+  ],
+] as const)(
+  'settles %j using the current revision %s after deferred refresh',
+  async (outcome, revision, stops, selection, notice) => {
+    const ports = actionPorts();
+    admitCombatLabAction(ports, JSON.stringify(submittedAction), 'Wait', false);
+    let finishRefresh!: () => void;
+    const refresh = new Promise<void>((resolve) => {
+      finishRefresh = resolve;
+    });
+    const reply = handleCombatLabActionReply(
+      200,
+      {
+        ...submittedAction,
+        ...outcome,
+        viewRevision: 2,
+      },
+      submittedAction,
+      () => refresh,
+    );
+    ports.sessionRef.current = {
+      ...ports.sessionRef.current,
+      view: { ...playableView(), viewRevision: revision },
+    };
+    finishRefresh();
+    const settled = await reply;
+    if (settled.status === 'uncertain') throw new Error('Expected a verified acknowledgement');
+    settleCombatLabActionReply(ports, settled, submittedAction, 1);
+    expect({
+      pending: ports.pendingRef.current,
+      state: ports.setPending.mock.lastCall,
+      notice: ports.setNotice.mock.lastCall,
+      stops: ports.stopAutoplay.mock.calls.length,
+      selection: ports.setSelectedSkillId.mock.calls,
+    }).toEqual({
+      pending: null,
+      state: [null],
+      notice: [notice],
+      stops,
+      selection,
+    });
+  },
+);
+
+it('does not clear a replacement generation pending action', () => {
+  const ports = actionPorts();
+  const { flight } = admitCombatLabAction(ports, JSON.stringify(submittedAction), 'Wait', false)!;
+  ports.generation.current = 2;
+  settleCombatLabActionReply(ports, { status: 'accepted' }, submittedAction, 1);
+  expect({ pending: ports.pendingRef.current, writes: ports.setPending.mock.calls }).toEqual({
+    pending: flight,
+    writes: [[flight]],
+  });
 });
 
 it('renders current command feedback and keeps menu or aimed-skill shortcuts disabled without altering inspection', () => {

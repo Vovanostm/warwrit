@@ -4,24 +4,27 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
-Queue: epic #217 and existing one-issue slices; one tick, no scope expansion.
+Queue: epic #217 and its existing slices, including #263's test prerequisite #309.
 Main `25dd9a48`: latest CI `40015365287` successful.
-#305 build failed before commit: preserved 169 changed source lines in three files.
-Worker reports 82 focused tests, web typecheck, lint and format PASS;
-normal audit FAIL: submitAction CRAP 210, focused coverage 0%.
-Coordinator decision: fallback step 1, fresh audit-restructure builder;
-retain existing patch and exact #305 scope, normal audit and <=300 source lines.
-No #306 transport or #307 polling extraction, new dependencies or audit waiver.
-Checks/runtime assigned exclusively to #305 after direct cleanup verification.
-Independent Tier L, validation, browser proof and CI remain pending.
-#263 stays open; #306/#307 wait for #305; original H1/H2 remain binding.
-#179 and #209 remain blocked/frozen; PR #298 and #297 remain blocked.
-Open PRs from supplied snapshot: #298 blocked; #129/#134 failed CI, no merge.
-Daily metrics/digest already posted; scout waits for runtime release.
+#305 fallback step 1 settled FAILED: actual submitAction still has 0% coverage,
+CRAP 210. Worker reports 82 tests, web typecheck, scoped lint/format PASS.
+The preserved 169-source-line patch is a published WIP snapshot, not delivery.
+WIP commit hook NOT_RUN under AGENTS orchestration handoff exception;
+executed normal audit FAIL remains binding before any PR publication.
+Coordinator decision: isolate the missing DOM-backed test capability as #309.
+#309 Tier D contract writer is live; root dependency/new mounted-test ownership
+is isolated from #305. No production recovery or budget reset authorized.
+#305 is ready but frozen behind #309; #306/#307 and original H1/H2 remain pending.
+#305 coordinator validation, independent Tier L, browser proof and CI NOT_RUN.
+Daily scout on main owns private checks/runtime; #309 contract is read-only.
+Direct #305 process/port cleanup verified before transfer; no source discarded.
+#179/#209 and #297/PR #298 remain blocked; no blocked labels removed.
+Other open PRs in the supplied snapshot: #129/#134 failed CI, no merge.
+Daily metrics/digest already posted; scout findings await later triage.
 This tick: 0 merged PRs with playable proof. No player acceptance claimed.
-Next: settle the fresh #305 builder, then validate and obtain Tier L gates.
-No rules, API, protocol, replay, schema or migration changes.
-Wrapper releases its lease when this tick returns; builder retains its slice.
+Next: settle #309 contract and daily scout; build only after runtime handback.
+No game rules, API, protocol, replay, schema or migration changed this tick.
+Wrapper releases its lease when this tick returns; workers retain their slices.
 
 ## Dated history
 

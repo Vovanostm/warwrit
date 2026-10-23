@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Preserve #305 WIP and isolate its mounted-test prerequisite — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-admission`; owner orchestration handoff policy
+  requires preserving unfinished work before the tick stops. The existing
+  `CombatLab.tsx` / `controller.ts` admission, uncertainty and settled-reply
+  extraction plus `controller.test.ts` are published as WIP only. The source
+  remains frozen and unaccepted; no normal source delivery commit is claimed.
+- Fallback step 1 made no source changes. Worker reports 82 focused tests,
+  web typecheck and scoped lint/format PASS; executed normal audit FAIL:
+  `submitAction` CRAP 210 at 0% focused coverage. WIP commit hook NOT_RUN via
+  the AGENTS orchestration exception; the normal audit must pass before a PR.
+  Coordinator directly verified no prior lane processes or private listeners.
+- Coordinator allocated [#309](https://github.com/Vovanostm/warwrit/issues/309)
+  as an isolated Tier D prerequisite: supported DOM test environment and a
+  real mounted POST-boundary regression on main. Its read-only contract is
+  started; dependency/configuration implementation is NOT_RUN. Original #305
+  recovery budget, source freeze, <=300 source lines and parent #263/H1/H2
+  remain binding. #306/#307 wait; no gate is waived.
+- Daily scout started on main with exclusive private runtime; metrics/digest
+  were already posted. No merge this tick. #305 validation, browser acceptance,
+  independent Tier L and candidate CI are NOT_RUN. See
+  [current status](docs/engineering/CURRENT_PLAN.md) and
+  [#305](https://github.com/Vovanostm/warwrit/issues/305). No setup/API/wiki
+  behavior contract changed; setup capability remains proposed in #309.
+
+
 ### Resume #305 after the commit-audit failure — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-admission`; coordinator fallback step 1 under the

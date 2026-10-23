@@ -2,10 +2,84 @@ import {
   COMBAT_LAB_VERSION,
   type CombatLabAcknowledgement,
   type CombatLabAction,
+  type CombatLabSkillId,
   type CombatLabView,
 } from '@warwrit/protocol';
 
 import { messageFor, responseCode, type ActiveSession } from './session-transport.js';
+import { canControl } from './command-availability.js';
+
+export interface PendingAction {
+  readonly body: string;
+  readonly description: string;
+  readonly uncertain: boolean;
+}
+
+export interface CombatLabActionPorts {
+  readonly sessionRef: { current: ActiveSession | null };
+  readonly pendingRef: { current: PendingAction | null };
+  readonly deletingRef: { current: boolean };
+  readonly generation: { current: number };
+  readonly setPending: (value: PendingAction | null) => void;
+  readonly setNotice: (value: string) => void;
+  readonly stopAutoplay: () => void;
+  readonly setSelectedSkillId: (value: CombatLabSkillId | null) => void;
+}
+
+/** Reserve synchronously; retries retain their serialized command even after the view changes. */
+export function admitCombatLabAction(
+  ports: CombatLabActionPorts,
+  requestBody: string,
+  description: string,
+  retry: boolean,
+) {
+  const current = ports.sessionRef.current;
+  const existing = ports.pendingRef.current;
+  if (
+    current === null ||
+    ports.deletingRef.current ||
+    (existing !== null && (!retry || existing.body !== requestBody)) ||
+    (!retry && !canControl(current.view))
+  )
+    return null;
+  const flight: PendingAction = { body: requestBody, description, uncertain: false };
+  ports.pendingRef.current = flight;
+  ports.setPending(flight);
+  ports.setNotice('');
+  return { current, flight };
+}
+
+export function markCombatLabActionUncertain(
+  ports: CombatLabActionPorts,
+  flight: PendingAction,
+  notice: string,
+) {
+  const uncertain = { ...flight, uncertain: true };
+  ports.stopAutoplay();
+  ports.pendingRef.current = uncertain;
+  ports.setPending(uncertain);
+  ports.setNotice(notice);
+}
+
+export function settleCombatLabActionReply(
+  ports: CombatLabActionPorts,
+  outcome: Exclude<CombatLabActionReplyOutcome, { readonly status: 'uncertain' }>,
+  action: CombatLabAction,
+  expectedGeneration: number,
+) {
+  if (outcome.status !== 'accepted') ports.stopAutoplay();
+  if (
+    outcome.status === 'accepted' &&
+    ports.sessionRef.current?.view.viewRevision === action.expectedViewRevision
+  )
+    ports.stopAutoplay();
+  if (outcome.status === 'accepted') ports.setSelectedSkillId(null);
+  ports.setNotice(outcome.status === 'rejected' ? messageFor(outcome.code) : '');
+  if (ports.generation.current === expectedGeneration) {
+    ports.pendingRef.current = null;
+    ports.setPending(null);
+  }
+}
 
 const rejectionCodes = new Set([
   'INVALID_REQUEST',
