@@ -20,15 +20,18 @@ requests.
   [stand ladder](docs/engineering/LOCAL_DEVELOPMENT.md#test-stands) now describe
   the matching runtime-owner grant. Historical measurements remain historical.
   Coordinator validation PASS at `5e4db27b` (six applicable steps); fresh
-  independent review is live and candidate CI is pending;
+  independent review 2 found one remaining P2: lsof exit 1 with diagnostics can
+  falsely certify CLEAN. Rework 2 is allocated; candidate CI is not acceptance;
   actual resource savings NOT_MEASURED; full real Orca wave NOT_RUN.
 - Native closure of #262/#269/#303 supersedes the stale review hold. PR #302
   merged as `cf3b2901`; independent candidate/baseline day/night journey ACCEPT
   is recorded on #303. Pending/deleting/lost-session were NOT_REACHED and
   opponent turn was not seen. #179 retains its overlap, night-value and archive
   blockers. [Current status](docs/engineering/CURRENT_PLAN.md) records the resumed
-  Orca queue; #263 contract and #304 documentation reviewer are live.
-  This tick has zero merged PRs with playable proof.
+  Orca queue. #263 contract completed; sequential children #305, #306 and #307
+  retain original acceptance and the source limit. #304 merged as `25dd9a48`
+  after exact-head independent ACCEPT, validation exit 0 and green CI/scope.
+  This tick merged one documentation PR and zero PRs with new playable proof.
 
 ### Agents close browsers, skip idle MCP servers and use the lightest stand — 2026-10-22, PUBLISHED
 
@@ -49,6 +52,21 @@ requests.
 - Checks: cleanup closed a real headless session (7 processes) and left others;
   lean and default `codex exec` runs compared; `bash -n` and Prettier pass.
   shellcheck NOT_RUN (not installed); a full Orca wave with these scripts NOT_RUN.
+
+### Close #262 and #269; the full play-through is #303 — 2026-10-23, PUBLISHED
+
+- Owner decision 2026-10-23: close #269 and #262. Menu extraction is on main
+  `cf3b2901` ([PR #302](https://github.com/Vovanostm/warwrit/pull/302)). The
+  complexity criterion is the `CombatLab` component: 13/13, CRAP 13.0, measured
+  with 67 focused tests. `submitAction`, `poll`, `act` and `request` stay with
+  #263.
+- Independent full play-through ACCEPT on `cf3b2901` against baseline
+  `690d140b`: day and night, seed 20261009, 1440×900. Every step matched,
+  including menu close order, refused manual orders during autoplay, one
+  delete then one create on restart, and a round-8 victory. Opponent turn,
+  pending, deleting and lost-session were NOT_REACHED on both sides. Evidence
+  is local under each worktree's `.orca/eval-269/`.
+  [#303](https://github.com/Vovanostm/warwrit/issues/303) records that result.
 
 ### Extract the combat-lab battle menu — 2026-10-23, PUBLISHED
 

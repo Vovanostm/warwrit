@@ -5,27 +5,40 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and the existing one-issue local slices.
-Main `cf3b2901`; newest CI `39938555273` SUCCESS.
-#297 / PR #298: rework 1 settled, source `d5995350`; main integrated.
-Five failure paths fixed; author 56 isolated shell assertions and audit PASS.
-Coordinator validation PASS at `5e4db27b`; fresh Tier D review 2 is live.
-PR #298 updated; candidate CI pending.
-Actual resource savings NOT_MEASURED; real full Orca wave NOT_RUN.
-#262/#269 are closed by owner disposition; #303 closed with independent
-candidate/baseline day/night menu journeys ACCEPT on merged PR #302.
-Pending/deleting/lost-session NOT_REACHED; opponent turn not observed.
-PR #304 remains open, green CI; independent documentation review is live.
-#179 remains in review: resource strip/body overlap and night value 1 retained;
-E2 archive BLOCKED_ENV, AC6 proof partial. Source frozen; original 2/2 history
-and consumed supplemental allowance retained. No acceptance or budget waiver.
-#214 waits for #179. #263 read-only contract is live in its own new checkout.
-No game runtime allocated. #297 reviewer owns one isolated shell check;
-#263 contract and #304 reviewer have no checks/runtime grant.
+Main `25dd9a48`: documentation PR #304 merged on exact-head Tier D ACCEPT,
+coordinator validation exit 0 and green CI/scope. No game-code merge this tick.
+#297 / PR #298: rework 1 settled; original five findings pass 56 isolated checks.
+Validation at `5e4db27b` PASS. Review 2 found one remaining P2: lsof exit 1
+with diagnostics can falsely certify CLEAN. Rework 2 targets cleanup and its
+existing regression only; source scope, normal audit and fresh Tier D retained.
+Real resource savings NOT_MEASURED; real full Orca wave NOT_RUN.
+#262/#269/#303 CLOSED and agent:done. Merged menu source `cf3b2901` has
+independent baseline/candidate day/night ACCEPT; pending/deleting/lost-session
+NOT_REACHED, opponent turn not observed. Merged source worktree evidence archived.
+#263 contract complete; estimated scope requires sequential #305 → #306 → #307.
+Parent remains open; original AC and H1/H2 retained. No parent builder.
+#179 remains unaccepted: resource strip/body overlap and night value 1 retained;
+E2 archive BLOCKED_ENV, AC6 partial. Source frozen; original 2/2 history and
+consumed supplemental allowance retained. #214 waits; no acceptance waiver.
+No real game runtime allocated. #297 rework owns focused isolated checks;
+child #305 starts its contract next; no concurrent source writer on shared paths.
 Daily metrics/scout/digest already complete; no duplicate daily run.
-This tick: zero merged PRs with playable proof. No merge eligible yet.
-Next: settle the three workers, route their verdicts, then advance on full gates.
+This tick: one documentation PR merged; zero merged PRs with new playable proof.
+Next: settle #297 rework 2 and run fresh gates; advance the #305 child contract.
 
 ## Dated history
+
+### Historical checkpoint — 2026-10-23
+
+Coordinator: cursor-session qa-269-close. Owner (2026-10-23): close #269 and
+#262, and put the remaining proof in a new issue. Also (2026-10-21):
+«У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Main is `cf3b2901`. #269 closed (PR #302). #262 closed. #272, #285, #293 and
+#295 are closed. `CombatLab` is 13/13, CRAP 13.0.
+Full play-through ACCEPT on `cf3b2901` against `690d140b`, day and night.
+#303 records it. #263 is next.
+#179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
+Next: start #263.
 
 ### Historical checkpoint — 2026-10-23
 
