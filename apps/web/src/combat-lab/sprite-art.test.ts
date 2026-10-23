@@ -75,6 +75,8 @@ it('resolves every catalogue profile and preserves public weapon, creature and f
     [{ id: 'human', visualKind: 'human' }, 'unknown-combatant'],
     [{ id: 'human', visualKind: 'human', weaponId: 'unrecognized' }, 'unknown-combatant'],
     [{ id: 'bear', visualKind: 'creature' }, 'B002'],
+    [{ id: 'fighter', name: 'B053' }, 'B053'],
+    [{ id: 'unknown', profileId: 'W04', name: 'B002' }, 'W04'],
     [{ id: 'unrecognized', visualKind: 'creature' }, 'B001'],
     [{ id: 'unrecognized' }, 'unknown-combatant'],
     [{ id: 'B053', weaponId: 'fists' }, 'W01-unarmed'],

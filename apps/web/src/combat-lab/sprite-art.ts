@@ -356,8 +356,12 @@ const UNKNOWN_COMBATANT: StaticSpriteArt = {
   visibleBounds: [9, 12, 247, 488],
 };
 
+function spriteIdentity(unit: Unit): string {
+  return [unit.profileId, unit.name, unit.id].join(' ');
+}
+
 function spriteProfile(unit: Unit): SpriteId | undefined {
-  const identity = `${unit.profileId ?? ''} ${unit.name ?? ''} ${unit.id}`;
+  const identity = spriteIdentity(unit);
   const token = identity.toUpperCase().match(/\b(?:W\d{2}|B\d{3})\b/)?.[0] as SpriteId | undefined;
   if (token && token in art) return token;
   if (unit.visualKind === 'human') return byWeapon[unit.weaponId ?? ''];

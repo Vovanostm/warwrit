@@ -1315,10 +1315,10 @@ export async function mountSpriteBattleScene(
   const focusUnit = (id: string) => {
     const unit = currentView.units.find((candidate) => candidate.id === id);
     if (!unit) return;
+    focusedId = id;
     const bounds = overviewBounds([unit], false);
     if (!bounds) return;
     camera.fit(bounds, 0);
-    focusedId = id;
     cameraMoved = false;
   };
   const frameDefault = () => {
