@@ -1,29 +1,32 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-23
+## Pipeline status — 2026-10-24
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices.
 Main: `25dd9a48`; newest CI `40015365287` is green.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#209 source `cc197d6`, report `050f2ee`: collapse the result and inspect the final field.
+#209 is blocked at evaluated head `3e2b7fac`; source remains frozen, rework 2/2 exhausted.
 Try default mill, 6 × 6, seed 20261009; victory → «Осмотреть поле» → reopen.
-Coordinator validate at `050f2ee`: all nine steps PASS; 250 source lines.
-Builder outcome FAILED for incomplete proof; inherited rework 2/2 remains exhausted.
-Source frozen. Next allocation is independent U evaluator, T text critic and V visual critic.
-Only evaluator owns sequential setup/browser/runtime; critics read source/images and write reports.
-Fresh baseline checkout: `eval-209-before-25dd9a48`, source fixed at main `25dd9a48`.
-Current-main before matrix, manual-first-death and remaining accessibility proof are pending.
-Author's 12 candidate configurations and victory are evidence, not independent acceptance.
-All 27 builder PIDs, both listeners, PID file and owned profile absent at handback.
-#211/#210 and #263 children #305–#307 remain queued behind this proof allocation.
+Evaluator 3: functional journey and 12 actual before/after configurations verified;
+REWORK for daytime boundary contrast 1.666:1 against terrain (required 3:1).
+Text 3 ACCEPT; visual 3 BLOCKED_ENV with material scene findings; full U/T/V not accepted.
+Current-main matrix and manual-first-death are now supplied; remaining accessibility,
+scene/archive and opaque-layering requirements remain explicit, not waived.
+Proposed recovery: bounded opaque outer backing/stroke in outcome CSS;
+not audit-only or a valid independent split; no third source round allocated.
+Coordinator verified all 29 evaluator PIDs, four listeners and both PID files absent.
+#305 is implementing on `Vovanostm/qa-action-admission`, baseline `25dd9a48`.
+Builder `task_d6a698c3d761` / `ctx_1342d8118f20` owns web and focused checks/runtime.
+Only admission/uncertainty/settled-reply extraction; original #263 and H1/H2 retained.
+#306/#307, #211/#210 remain queued. Daily scout waits for positive runtime cleanup.
+Daily metrics and digest were posted; #308 records the pipeline trend follow-up.
+Open PRs: #298 blocked; #134/#129 have failed checks in supplied snapshot.
+#179 remains blocked: scene readability/night values, tooltip overlap and archive/state gap.
 #297 / PR #298 remains blocked after review 3 REWORK; source frozen, no valid split.
-#179 remains blocked: body/strip overlap, night score 1 and E2 archive/state gap.
-Its scene ownership, exhausted rounds and original acceptance remain in force.
-Daily metrics/scout/digest already complete; no duplicate daily run.
-No PR or merge for #209; coordinator browser and final full gates NOT_RUN.
-Next: settle independent proof gates; preserve missing evidence and reproduced defects separately.
+No merge; no new coordinator game tests/validate/browser/full gates this tick.
+Next: settle #305 builder; retain #209 recovery proposal and original acceptance holds.
 Wrapper releases the lease when this single tick returns.
 
 ## Dated history

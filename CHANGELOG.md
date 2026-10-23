@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Record #209 failed acceptance and hand the lane to #305 — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-outcome-inspection-209`: docs-only settlement of
+  independent evaluation at `3e2b7fac`. The actual victory, final inspection,
+  manual-first-death and 12 current-main before/after configurations were
+  exercised. Evaluator 3 is REWORK: daytime boundary-to-terrain contrast
+  1.666:1 misses 3:1. Text 3 ACCEPT does not replace full U/T/V acceptance;
+  visual 3 BLOCKED_ENV and material scene findings remain.
+- [#209](https://github.com/Vovanostm/warwrit/issues/209) is blocked, source
+  frozen with rework 2/2 exhausted. The narrow outer backing/stroke proposal
+  is retained without allocating a third source round. Original scene/archive,
+  opaque-layering and accessibility obligations remain; no acceptance waiver.
+- Coordinator directly verified all 29 recorded PIDs, four listeners and both
+  play PID files absent; worker settlement released and acknowledged. The web
+  lane and focused checks/runtime passed to #305, task `task_d6a698c3d761`.
+  Original #263/H1/H2 retained; daily scout waits for runtime handover.
+- Updated the [current plan](docs/engineering/CURRENT_PLAN.md) and existing
+  [terminal HUD record](docs/wiki/battlefield-test-maps.md#итоговый-hud-завершённого-боя--2026-10-13).
+  Documentation checks: status-block guard and diff whitespace PASS.
+  New game tests, validate, browser and full gates NOT_RUN by coordinator.
+  No game-code change, PR merge, schema change or player acceptance.
+
 ### Freeze #209 source and allocate independent proof — 2026-10-23, LOCAL
 
 - Branch `Vovanostm/uix-outcome-inspection-209`, source `cc197d6`, report
