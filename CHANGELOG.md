@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Retain menu acceptance after an external merge — 2026-10-23, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`, coordinator records only: external
+  [PR #302](https://github.com/Vovanostm/warwrit/pull/302) merged source
+  `ac1a7b67` as `cf3b2901`. Hosted PR CI and scope passed. The mounted ACCEPT
+  comment reports a subset of the required journey; no full exact-head Tier U
+  evaluator report was found. The merge is a source fact, not a new gate pass.
+- Reopen [#269](https://github.com/Vovanostm/warwrit/issues/269) in review for
+  its original independent proof. Keep #262 open and the conjunctive #269 AND
+  #262 acceptance before #263–#265. No acceptance waiver or new source work.
+  Keep the merged source worktree for evaluation; retain the contract locally
+  before retiring its clean/pushed superseded planning worktree.
+- #179 remains fresh/live at observed `e4b1cb88` and retains exclusive
+  checks/runtime. PR #298 retains REWORK at `57541c35`. Latest main CI
+  `39938555273` on `cf3b2901` was in progress. No merge or new gate worker.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) rewrites the single status
+  block. This publication changes only these two shared records; no owning wiki,
+  setup, API, game-rule, protocol, replay, schema or migration contract changes.
+  New game tests/typecheck/validate/browser/full gates NOT_RUN; zero newly
+  verified merged PRs with playable proof in this tick.
+
 ### Queue resource-hygiene rework — 2026-10-23, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu-controls`, coordinator records only: independent

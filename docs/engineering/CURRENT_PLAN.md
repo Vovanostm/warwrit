@@ -5,29 +5,28 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
-This tick: 0 coordinator merges and 0 merged PRs with playable proof.
-Main `690d140b`; newest CI `39933066795` completed SUCCESS.
-#179 builder `task_96dfd69282fb` / `ctx_c9a41a06c5b1` remains live.
-Sole four-module web writer and exclusive focused checks/hooks/browser/runtime owner.
-Try default mill 6×6, seed 20261009 → Start before camera input; integration unfinished.
-Original #179 AC/DoD/full Tier V, failed 2/2 plus consumed supplemental history retained.
-Exact historical E2 clipboard/state remains missing; no acceptance waiver.
-#214 frozen; #269 accepted contract waits web/checks/runtime handback.
-Final #269 AND #262 component 20/15 and mounted proof remain required.
-PR #298 / #297 head `57541c35`: independent Tier D reviewer settled REWORK.
-Five static defects: cross-task lab stop, false CLEAN after failed inspection,
-hidden cleanup failure, unrestricted MCP fallback, termination bypassing cleanup.
-Review report: infra-297-resource-review/.orca/infra-resource-hygiene/review-1.md.
-Concrete findings posted on PR #298; syntax/diff checks PASS, runtime cases NOT_RUN.
-Exact successful reviewer task settlement verified, recorded before release and ack.
-Release returned retained/no_owned_resource; no process action or resource claim.
-Rework queued until #179 exclusive checks handback; no new source round allocated.
-PR #298 cannot merge: fresh ACCEPT and coordinator validation remain required.
-Core #225 waits #206/#204 sequencing; no uncovered eligible core refill.
+This tick: 0 coordinator merges and 0 newly verified merged PRs with playable proof.
+External PR #302 merged source `ac1a7b67` as main `cf3b2901`.
+PR CI and PR scope SUCCESS; newest main CI `39938555273` was in progress.
+#269 reopened in review: the mounted ACCEPT comment covers only a subset.
+Full original independent Tier U journey and final #269 AND #262 gates remain.
+No exact-head full evaluator report found; no coordinator acceptance or waiver.
+#262 stays open; #263–#265 retain their original sequence and acceptance hold.
+Keep merged #269 source in `qa-269-menu-extract` for its future evaluator.
+Retain its contract under coordinator `.orca/pipeline/retained/qa-hooks-menu-controls/`.
+Retire the superseded planning worktree only after its docs are pushed.
+#179 `task_96dfd69282fb` / `ctx_c9a41a06c5b1` is fresh/live at observed `e4b1cb88`.
+It retains sole web source ownership and exclusive checks/hooks/browser/runtime.
+Original #179 AC/DoD/Tier V, failed rounds and missing historical E2 remain.
+Try default mill 6×6, seed 20261009 → Start before camera input; unfinished.
+#214 frozen. PR #298 / #297 at `57541c35` retains independent Tier D REWORK.
+Five static cleanup/MCP defects remain; no fresh ACCEPT or validation this tick.
+No new builder, evaluator or runtime transfer before positive #179 handback.
+Core #225 waits #206/#204; no eligible uncovered core refill.
 Daily metrics/scout/triage/digest already complete; no duplicate daily work.
-New coordinator game tests/typecheck/validate/browser/full gates NOT_RUN.
-Records only: no game-rule/API/protocol/replay/schema/migration/dependency change.
-Next: positive #179 handback, then allocate bounded #298 rework and #269 turn.
+New game tests/typecheck/validate/browser/full gates NOT_RUN.
+Records only; no game-rule/API/protocol/replay/schema/migration/dependency change.
+Next: positive #179 handback, then #269 full evaluation and bounded #298 rework.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
