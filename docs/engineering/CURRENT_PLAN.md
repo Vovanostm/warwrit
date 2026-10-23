@@ -7,9 +7,10 @@ Coordinator: cursor-session qa-269-close. Owner (2026-10-23): close #269 and
 «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Main is `cf3b2901`. #269 closed (PR #302). #262 closed. #272, #285, #293 and
 #295 are closed. `CombatLab` is 13/13, CRAP 13.0.
-The full play-through is #303 and does not block #263. #263 is next.
+Full play-through ACCEPT on `cf3b2901` against `690d140b`, day and night.
+#303 records it. #263 is next.
 #179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
-Next: play #303, then start #263.
+Next: start #263.
 
 ## Dated history
 

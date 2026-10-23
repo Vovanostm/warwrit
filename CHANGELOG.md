@@ -16,9 +16,13 @@ requests.
   complexity criterion is the `CombatLab` component: 13/13, CRAP 13.0, measured
   with 67 focused tests. `submitAction`, `poll`, `act` and `request` stay with
   #263.
-- The unfinished full mill play-through is
-  [#303](https://github.com/Vovanostm/warwrit/issues/303). It does not block
-  #263. A partial mounted check had already accepted `ac1a7b67`.
+- Independent full play-through ACCEPT on `cf3b2901` against baseline
+  `690d140b`: day and night, seed 20261009, 1440×900. Every step matched,
+  including menu close order, refused manual orders during autoplay, one
+  delete then one create on restart, and a round-8 victory. Opponent turn,
+  pending, deleting and lost-session were NOT_REACHED on both sides. Evidence
+  is local under each worktree's `.orca/eval-269/`.
+  [#303](https://github.com/Vovanostm/warwrit/issues/303) records that result.
 
 ### Extract the combat-lab battle menu — 2026-10-23, PUBLISHED
 
