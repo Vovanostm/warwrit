@@ -1,6 +1,32 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-23
+## Pipeline status — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Owner (2026-10-23): «Разрешить адресные исправления» for #209, #297 and #179.
+Queue: epic #217 and existing one-issue local slices; prior failures retained.
+Main `25dd9a48`: newest CI `40015365287` SUCCESS.
+#209 targeted CSS repair remains live; sole web writer and exclusive checks/runtime.
+#297 / PR #298: source-only core repair allocated alongside #209.
+Own worker wrapper, optional finite Python decision owner and existing regression.
+No tests, audit, commit or runtime for #297 until checks are explicitly transferred.
+The normal hook can start coverage; source preparation is not a completed build.
+Review 3 late-signal REWORK, exhausted 2/2 and both agent:blocked labels remain.
+Source preparation report: infra-297-resource-review/.orca/infra-resource-hygiene/targeted-source-1.md.
+Full Tier D validate, fresh independent review and CI remain mandatory.
+#179 stays blocked; next web repair after #209, with original evidence holds.
+#309 contract accepted, queued behind immediate targeted repairs.
+#263 and its children retain original acceptance; core #225 waits log dependency.
+Daily metrics/scout/triage/digest already complete; no duplicate daily run.
+This tick: 0 merged PRs with playable proof; no playable acceptance or waiver.
+Checks: record diff/status guard only; game tests/validate NOT_RUN.
+Next: source preparation for #297; settle #209 before transferring checks/runtime.
+Wrapper releases the lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-23
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
@@ -24,7 +50,7 @@ Resource savings NOT_MEASURED; no candidate infrastructure acceptance.
 Next: settle #209 and #305; #297 remains frozen pending a valid recovery allowance.
 Wrapper releases the lease when this single tick returns.
 
-## Dated history
+
 
 ### Historical checkpoint — 2026-10-23
 

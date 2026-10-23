@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Allocate #297 source preparation alongside #209 — 2026-10-24, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  verified owner permission «Разрешить адресные исправления» supplements the
+  exhausted 2/2 budget. The coordinator allocates the late-signal settlement
+  repair in the existing wrapper and regression, with one optional finite
+  Python decision owner; no independent split or budget reset.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records source-only core work
+  alongside #209, which retains exclusive checks/runtime. Tests, audit and
+  commits for the source worker wait for an explicit checks grant because the
+  normal commit hook may run coverage. Source preparation is not a finished build.
+- Review 3 REWORK and both inherited `agent:blocked` labels remain. Fresh Tier D
+  review, validate and CI are still required. Documentation diff/status guard
+  PASS; game tests/validate NOT_RUN; resource savings NOT_MEASURED. No merge.
+
 ### Retain #297 freeze after recovery assessment — 2026-10-23, PUBLISHED
 
 - `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
