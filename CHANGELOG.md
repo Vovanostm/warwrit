@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### #179 catalogue integration ready for independent gates — 2026-10-23, LOCAL
+
+- `Vovanostm/uix-179-catalogue-integration`, #179 after merged #293: derive
+  cell spacing from every sprite's measured alpha width (currently 1.8),
+  preserve figure sizes, fix rectangle extents/support anchors, and register
+  perimeter/earth/rubble in that layout. Initial fit uses the complete safe
+  frame; unit focus no longer depends on prior focus state. Affected source:
+  combat-lab sprite-art, battle-layout, sprite-battle-scene, battle-terrain.
+- Source `5cafdadb`, clean handback `da4a280c`, 159/300 changed source lines.
+  Coordinator validation exit 0, nine gates and 99 related tests PASS; direct
+  18-PID/two-port runtime cleanup PASS. Author native day/night evidence is
+  local; independent Tier V and hosted candidate CI are NOT_RUN. AC6 strict
+  hover/seam proof remains PARTIAL; E2 exact archive remains BLOCKED_ENV.
+  #179 stays open, #214 frozen, original failed rounds/AC/DoD retained.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records the next gates;
+  local report path: `.orca/uix-w4-scale/report.md`. No game rules, protocol,
+  replay, schema, migration or dependency change; not merged or accepted.
+
 ### Extract the combat-lab battle menu — 2026-10-23, PUBLISHED
 
 - `Vovanostm/qa-269-menu-extract`, #269, part of #262: the battle menu JSX now

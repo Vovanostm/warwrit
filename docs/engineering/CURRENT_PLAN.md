@@ -2,6 +2,32 @@
 
 ## Pipeline status — 2026-10-23
 
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Main `cf3b2901`; newest hosted CI `39938555273` is green.
+#179 catalogue integration: committed source `5cafdadb`, handback `da4a280c`,
+branch `Vovanostm/uix-179-catalogue-integration`; source scope 159/300.
+Coordinator validator exit 0: all nine gates PASS, 99 related tests.
+Try default mill 6×6, seed 20261009 → Start, before camera input, day/night.
+Author native matrix and real day/night journeys are in the local slice report;
+these are not independent acceptance. Direct 18-PID/two-port cleanup verified.
+Next: independent evaluator and full absolute Tier V visual critic; source frozen.
+#179 stays open: AC6 strict hover/seam proof PARTIAL; exact E2 archive absent.
+Original AC/DoD, failed 2/2 plus consumed supplemental history remain in force.
+#214 stays frozen until #179 integration and its own repeated gates.
+#269 source merged as PR #302; remaining full original Tier U proof waits runtime.
+Parent #262 remains open; no final #269/#262 acceptance or #263 unblock.
+Open PR #298 at `57541c35`: reviewer REWORK; rework waits exclusive checks.
+Older PR #129/#134 failures retained; no PR is eligible for merge this tick.
+Daily metrics/scout/triage/digest already complete; no duplicate daily action.
+No rules, API, protocol, replay, schema, migration or dependency change.
+Hosted candidate CI, full verify/stress/migrations and independent gates NOT_RUN.
+This tick: 0 merged PRs with playable proof. No acceptance waiver.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-23
+
 Coordinator: continuing the open-issue queue. Owner scope (2026-10-21):
 «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Main is `690d140b`. #272 closed by PR #287. #285 closed by PR #292.
@@ -11,8 +37,6 @@ Main is `690d140b`. #272 closed by PR #287. #285 closed by PR #292.
 The mounted mill journey is NOT_RUN. Parent #262 stays open.
 #179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
 Next: publish #269, run its mounted check, then merge on green CI.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 
