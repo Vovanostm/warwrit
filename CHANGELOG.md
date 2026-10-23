@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Advance catalogue integration and resource review — 2026-10-23, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`, coordinator records only: one Orca tick
+  under the existing owner delegation. External [PR #287](https://github.com/Vovanostm/warwrit/pull/287)
+  merged as `690d140b`, closing #272; final-head CI/scope were green. Issue
+  relabelled done and clean/pushed worktree removed. This tick made no merge;
+  newest main CI was in progress, not accepted.
+- #179's five-section reduced-remainder contract accepted after merged #293;
+  initial integration builder owns four combat-lab modules/tests and exclusive
+  focused checks/runtime. All original AC/DoD, failed 2/2 plus consumed
+  supplemental history and final full Tier V remain; exact E2 archive/state
+  is still missing, with no waiver. #214 frozen; #269 source waits its turn.
+- [PR #298 / #297](https://github.com/Vovanostm/warwrit/pull/298), infrastructure
+  head `57541c35`: started fresh read-only Tier D reviewer in a dedicated
+  checkout. Reviewer verdict and coordinator validation remain pending; green
+  hosted CI/scope alone do not authorize merge.
+- Daily scout completed real mill/deserter victories at `e0c8cb2e`, day
+  1440×900 only; no new findings beyond open issues. Coordinator directly
+  verified all 16 recorded PIDs, two ports, play.pid and browser profile absent
+  before transferring runtime. New coordinator game checks and full gates
+  NOT_RUN; no game rules, API, replay, schema, migration or dependencies changed.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) holds the single live status;
+  native worker receipts/contracts remain local in their `.orca/` directories.
+
 ### Recover and reconcile the existing pipeline — 2026-10-23, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu-controls`: coordinator records only. Reconciles

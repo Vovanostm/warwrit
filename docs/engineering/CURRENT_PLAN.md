@@ -5,6 +5,39 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices; exactly one tick.
+This tick: 0 coordinator merges and 0 merged PRs with playable proof.
+External PR #287 merged `690d140b`; #272 closed, relabelled done; clean/pushed worktree removed.
+PR #287 final-head CI and PR scope SUCCESS; retained Tier L acceptance, no new validator run.
+Main CI `39933066795` at `690d140b` was in progress at reconciliation; no merge eligibility claimed.
+#179 reduced remainder contract accepted after merged #293 / PR #299.
+Sole web builder `task_96dfd69282fb` / `ctx_c9a41a06c5b1` live in uix-179-catalogue-integration.
+Owns only sprite-art, battle-layout, sprite-battle-scene, battle-terrain and matching tests.
+Exclusive focused checks/hooks/browser/runtime belong to that builder after direct scout cleanup.
+Try default mill 6×6, seed 20261009 → Start before camera input; current integration is unfinished.
+Original #179 AC/DoD/full Tier V, failed 2/2 plus consumed supplemental history remain required.
+Exact historical E2 clipboard/state still missing; no reconstruction or acceptance waiver.
+#214 frozen pending #179; #269 accepted contract waits the web/checks/runtime turn.
+Final #269 AND #262 component 20/15 retained; no parent acceptance.
+PR #298 / #297 adopted as infrastructure Tier D, head `57541c35`; hosted CI/scope green.
+Fresh read-only reviewer `task_e0678a1ea001` / `ctx_306dca2117c2` live; no runtime/check allocation.
+Reviewer ACCEPT and coordinator validate still required before any merge.
+Daily scout settled: real mill round-8 and deserter round-7 victories at `e0c8cb2e`, day 1440×900 only.
+No new findings outside existing issues; pauses already covered by #175; no new issue created.
+Direct 16-PID/2-port/play.pid/profile absence verified; mail recorded/released/acknowledged.
+Daily metrics/digest were already posted; scout triage now complete; no duplicate daily report.
+Core backlog #225 waits #206/#204 sequencing; uncovered #275–#279 are web/text, no core refill.
+New game tests/typecheck/validate/browser/full gates NOT_RUN by coordinator this tick.
+No setup/API/game-rule/protocol/replay/schema/migration/dependency change delivered.
+Next: settle builder and independent reviewer, validate/gate exact heads; keep #179 proof limits.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-23, 09:19 UTC
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and existing one-issue local slices; exactly one tick.
 This tick: 0 merged PRs with playable proof; external merges reconciled below.
 #293 / PR #299 merged `19e62633`; #295 / PR #301 merged `625c9774`.
 #285 / PR #292 merged externally `e0c8cb2e`; all three closed issues labelled done.
@@ -32,8 +65,6 @@ Persistent wrapper PATH/fail-closed identity prevention is a follow-up, not impl
 No new game-rule/API/protocol/replay/schema/migration/dependency change.
 Next: settle scout/contract, positive runtime cleanup, then allocate one web builder.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 ### Checkpoint before recovery — 2026-10-23
 
