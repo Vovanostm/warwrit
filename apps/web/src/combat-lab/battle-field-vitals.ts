@@ -142,7 +142,9 @@ export function mountBattleFieldVitals(
       // Anchor centre is the actual projected foot. Never displace it into another cell.
       portrait.style.left = `${(base.x * canvas.clientWidth) / scene.getEngine().getRenderWidth()}px`;
       portrait.style.top = `${(base.y * canvas.clientHeight) / scene.getEngine().getRenderHeight()}px`;
-      mesh.position.copyFrom(foot.subtract(UP.scale((HEIGHT / 2 + 4) * worldPerPixel)));
+      // Keep ownership/sorting at the support point, but clear the painted feet.
+      const visibleBottom = (source.metadata.combatVisibleBottom as Vector3 | undefined) ?? foot;
+      mesh.position.copyFrom(visibleBottom.subtract(UP.scale((HEIGHT / 2 + 4) * worldPerPixel)));
       mesh.scaling.set(WIDTH * worldPerPixel, HEIGHT * worldPerPixel, 1);
       mesh.metadata = { combatUnitId: id, combatFoot: foot };
     }

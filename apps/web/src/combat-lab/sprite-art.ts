@@ -30,6 +30,8 @@ export function spriteGeometry(art: StaticSpriteArt) {
     height: art.height * factor,
     anchorX: (art.footX / art.width - 0.5) * width,
     footY: (art.footY - art.height / 2) * factor,
+    // The painted feet can extend below the anatomical support centre.
+    visibleBottomUp: (art.footY - bottom) * factor,
     corners: [left, right].flatMap((x) =>
       [top, bottom, art.footY].map((y) => ({
         x: (x - art.footX) * factor,

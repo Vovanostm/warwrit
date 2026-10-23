@@ -126,3 +126,19 @@ Isolated absent-tiles and 23 replay/projection/action tests are attributed to th
 **Resource cleanup PASS**, `cleanup.json`: named session `PLAYWRIGHT_CLI_SESSION=warwrit-179-catalogue` closed; dedicated profile `.orca/uix-w4-scale/chrome-profile` lock removed. Final launcher 513, web listener 891/port 25963, API listener 953/port 23963; browser-owned PIDs [49166,13074,49194,49178,49170,49171,49172], CLI daemon 49165. All 18 recorded current/previous owned PIDs are ABSENT, both private ports have no lsof listeners and socket connect returns ECONNREFUSED (61), `.orca/play.pid` absent. `bash scripts/orca-play.sh stop` ran and returned STOPPED after the owning PTY was closed; this avoids the observed cross-command sandbox signal restriction. No other browser/session/process was closed.
 
 Final status: **BUILD COMPLETE, LOCAL / NOT_PUSHED / NOT_ACCEPTED**. Source is committed and integrated on ordinary main cf3b2901; all nine local validation gates PASS, 99 related tests. Missing E2, strict AC6/seam proof and independent full Tier V remain open; coordinator must not close #179 or unfreeze #214 on this author result. Final report-only commit adds no game behavior; runtime evidence identifies source 5cafdadb.
+
+## Targeted continuation 1 — 2026-10-24
+
+Owner-authorized continuation of the preserved source packet, starting at
+32b63fb6; original 2/2/supplemental history and inherited blocked state retained.
+Partial candidate: separate visible-bottom strips, body-only night tone mapping,
+and upright event-label HUD/body reservations; cumulative source 282/300.
+Focused 30 tests, web typecheck, scoped lint/format and correct-base audit PASS.
+Native initial/Overview/close day/night, 36 near/far/height strip measurements,
+real R8/rev163 victory and manual first death R6/rev92 → defeat R15/rev223 recorded.
+All 19 owned PIDs absent, ports 23963/25963 clear, owned PID file/profile removed.
+**FAILED overall:** F1 needs a separate useful combat-area interaction while
+retaining full-field Overview; exact #209 Inspect field/pin sequence cannot run
+without its frozen source integration. E2/AC6/full independent Tier V remain.
+Details, failed probes, final commit receipt and coordinator-only record proposal:
+[targeted-continuation-1](targeted-continuation-1.md). No publication or merge.

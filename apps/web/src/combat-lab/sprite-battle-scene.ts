@@ -3,6 +3,7 @@ import {
   Color4,
   DynamicTexture,
   HemisphericLight,
+  ImageProcessingConfiguration,
   Mesh,
   MeshBuilder,
   Matrix,
@@ -250,23 +251,19 @@ export async function mountSpriteBattleScene(
   contactMaterial.specularColor = Color3.Black();
   contactMaterial.alpha = 0.32;
   const fixedLabels: Mesh[] = [];
-  const unitPresentationModes = [
-    {
-      sampling: Texture.BILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.46, 0.5, 0.58)],
-    },
-    {
-      sampling: Texture.TRILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.4, 0.44, 0.52)],
-    },
-  ];
+  // Keep baked ink/midtones; compress night highlights in linear light instead
+  // of multiplying the already-dark painting (especially at distant sampling).
+  const unitImageProcessing = new ImageProcessingConfiguration();
+  unitImageProcessing.toneMappingType = ImageProcessingConfiguration.TONEMAPPING_STANDARD;
+  unitImageProcessing.toneMappingEnabled = initialNight;
+  unitImageProcessing.exposure = initialNight ? 0.8 : 1;
+  const unitSamplingModes = [Texture.BILINEAR_SAMPLINGMODE, Texture.TRILINEAR_SAMPLINGMODE];
   scene.onBeforeCameraRenderObservable.add((camera) => {
     const pixelsPerWorld = canvas.clientHeight / (2 * camera.orthoTop!);
-    const presentation = unitPresentationModes[Number(pixelsPerWorld < 64)]!;
+    const sampling = unitSamplingModes[Number(pixelsPerWorld < 64)]!;
     for (const [id, material] of unitMaterials) {
       const art = material.diffuseTexture as Texture;
-      if (art.samplingMode !== presentation.sampling) art.updateSamplingMode(presentation.sampling);
-      material.emissiveColor = presentation.colors[Number(isNight)]!;
+      if (art.samplingMode !== sampling) art.updateSamplingMode(sampling);
       const far = Number(pixelsPerWorld < 64);
       const edge = unitEdges.get(id)!;
       (edge.material as StandardMaterial).diffuseTexture = unitOutlineTextures.get(id)![far]!;
@@ -468,6 +465,8 @@ export async function mountSpriteBattleScene(
     const material = new StandardMaterial(`unit-art:${unit.id}`, scene);
     material.disableLighting = true;
     material.linkEmissiveWithDiffuse = true;
+    material.emissiveColor = Color3.White();
+    material.imageProcessingConfiguration = unitImageProcessing;
     material.diffuseTexture = texture(sprite.url, true);
     material.useAlphaFromDiffuseTexture = true;
     material.disableDepthWrite = true;
@@ -558,7 +557,7 @@ export async function mountSpriteBattleScene(
   };
   const syncUnit = (unit: BattleUnit) => {
     const sprite = spriteForUnit(unit);
-    const { width, height, anchorX, footY } = spriteGeometry(sprite);
+    const { width, height, anchorX, footY, visibleBottomUp } = spriteGeometry(sprite);
     let mesh = unitMeshes.get(unit.id);
     let material = unitMaterials.get(unit.id);
     if (!mesh || !material) ({ mesh, material } = createUnitMeshes(unit, sprite, width, height));
@@ -576,6 +575,11 @@ export async function mountSpriteBattleScene(
       combatUnitId: unit.id,
       combatHex: unit.position,
       combatFoot: new Vector3(x, groundHeight, z),
+      combatVisibleBottom: new Vector3(
+        x,
+        groundHeight + visibleBottomUp * Math.cos(CAMERA_ELEVATION),
+        z + visibleBottomUp * Math.sin(CAMERA_ELEVATION),
+      ),
     };
     const edge = unitEdges.get(unit.id)!;
     edge.metadata = { combatUnitId: unit.id, combatFoot: mesh.metadata.combatFoot };
@@ -647,6 +651,8 @@ export async function mountSpriteBattleScene(
       ),
       'event',
     );
+    const label = eventLabels.at(-1)!;
+    label.metadata = { eventAnchor: label.position.clone() };
   };
 
   const previewMeshes: Mesh[] = [];
@@ -920,6 +926,82 @@ export async function mountSpriteBattleScene(
     halfWidth: mesh.getBoundingInfo().boundingBox.extendSize.x * mesh.scaling.x,
     halfHeight: mesh.getBoundingInfo().boundingBox.extendSize.y * mesh.scaling.y,
   });
+  const placeEventLabels = () => {
+    // Event badges are upright annotations, not ground plaques. Reflow from
+    // their original anchors as the camera or native browser zoom changes.
+    const eventViewport = scene.activeCamera!.viewport.toGlobal(
+      engine.getRenderWidth(),
+      engine.getRenderHeight(),
+    );
+    const rect = canvas.getBoundingClientRect();
+    const screen = (point: Vector3) => {
+      const p = Vector3.Project(
+        point,
+        Matrix.Identity(),
+        scene.getTransformMatrix(),
+        eventViewport,
+      );
+      return {
+        x: (p.x * rect.width) / eventViewport.width,
+        y: (p.y * rect.height) / eventViewport.height,
+      };
+    };
+    const eventReserved = [
+      ...canvas
+        .closest('.battle-view')!
+        .querySelectorAll(
+          '.battle-utilities, .battle-top-band, .battle-action-dock, .battle-outcome-summary, .battle-outcome-inspection, .battle-target-forecast, .battle-unit-card',
+        ),
+    ]
+      .filter((node) => node.getClientRects().length > 0)
+      .map((node) => {
+        const box = node.getBoundingClientRect();
+        return {
+          x: (box.left + box.right) / 2 - rect.left,
+          up: rect.top - (box.top + box.bottom) / 2,
+          halfWidth: box.width / 2 + 4,
+          halfHeight: box.height / 2 + 4,
+        };
+      });
+    for (const unit of currentView.units.filter((unit) => unit.status === 'active')) {
+      const foot = unitMeshes.get(unit.id)!.metadata.combatFoot as Vector3;
+      const points = spriteGeometry(spriteForUnit(unit)).corners.map(({ x, up }) =>
+        screen(foot.add(new Vector3(x, 0, 0)).add(upAxis.scale(up))),
+      );
+      const left = Math.min(...points.map((p) => p.x));
+      const right = Math.max(...points.map((p) => p.x));
+      const top = Math.min(...points.map((p) => p.y));
+      const bottom = Math.max(...points.map((p) => p.y));
+      eventReserved.push({
+        x: (left + right) / 2,
+        up: -(top + bottom) / 2,
+        halfWidth: (right - left) / 2,
+        halfHeight: (bottom - top) / 2,
+      });
+    }
+    for (const label of eventLabels) {
+      const anchor = label.metadata.eventAnchor as Vector3;
+      const p = screen(anchor);
+      const scale = p.y - screen(anchor.add(upAxis)).y;
+      const size = label.getBoundingInfo().boundingBox.extendSize;
+      const placement = actorBadgePlacement(
+        { x: p.x, up: -p.y, halfWidth: size.x * scale, halfHeight: size.y * scale },
+        eventReserved,
+        {
+          x: rect.width / 2,
+          up: -rect.height / 2,
+          halfWidth: rect.width / 2 - 8,
+          halfHeight: rect.height / 2 - 8,
+        },
+      );
+      label.position.copyFrom(anchor);
+      if (placement) {
+        label.position.addInPlace(new Vector3((placement.x - p.x) / scale, 0, 0));
+        label.position.addInPlace(upAxis.scale((placement.up + p.y) / scale));
+        eventReserved.push(placement);
+      }
+    }
+  };
   const placeActorMarker = () => {
     if (!actorMarker || !scene.activeCamera) return;
     const { descriptor, badge, ring, width } = actorMarker;
@@ -977,7 +1059,10 @@ export async function mountSpriteBattleScene(
     applyActorBadgePlacement(badge, placement, foot, upAxis);
   };
   // Vitals and ground-linked DOM letters must be laid out before reservations are read.
-  scene.onBeforeCameraRenderObservable.add(() => placeActorMarker());
+  scene.onBeforeCameraRenderObservable.add(() => {
+    placeEventLabels();
+    placeActorMarker();
+  });
   const clearActorMarker = () => {
     actorMarker?.dispose();
     actorMarker = null;
@@ -1426,6 +1511,8 @@ export async function mountSpriteBattleScene(
   const updateLighting = (night: boolean) => {
     if (isNight === night) return;
     isNight = night;
+    unitImageProcessing.toneMappingEnabled = night;
+    unitImageProcessing.exposure = night ? 0.8 : 1;
     const values = night
       ? {
           clear: new Color4(0.025, 0.031, 0.044, 1),
