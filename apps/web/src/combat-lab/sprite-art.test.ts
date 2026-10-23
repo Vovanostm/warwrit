@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
+import { spriteCatalogue, spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
 
 it.each([
   ['W01', 'sword-shield', 'human', 1.4, 1236],
@@ -64,4 +64,20 @@ it('keeps the complete W01 padded rectangle rather than treating its width as an
   expect(Math.max(...spriteGeometry(art).corners.map(({ x }) => x))).toBe(
     (993 - art.footX) * factor,
   );
+});
+
+it('resolves every catalogue profile and preserves public weapon, creature and fallback routing', () => {
+  for (const art of spriteCatalogue().filter(({ id }) => /^W\d{2}$|^B\d{3}$/.test(id))) {
+    expect(spriteForUnit({ id: art.id } as never)).toEqual(art);
+  }
+  for (const [unit, id] of [
+    [{ id: 'human', visualKind: 'human', weaponId: 'bow' }, 'W05'],
+    [{ id: 'human', visualKind: 'human' }, 'unknown-combatant'],
+    [{ id: 'human', visualKind: 'human', weaponId: 'unrecognized' }, 'unknown-combatant'],
+    [{ id: 'bear', visualKind: 'creature' }, 'B002'],
+    [{ id: 'unrecognized', visualKind: 'creature' }, 'B001'],
+    [{ id: 'unrecognized' }, 'unknown-combatant'],
+    [{ id: 'B053', weaponId: 'fists' }, 'W01-unarmed'],
+  ] as const)
+    expect(spriteForUnit(unit as never).id).toBe(id);
 });

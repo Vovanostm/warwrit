@@ -356,21 +356,20 @@ const UNKNOWN_COMBATANT: StaticSpriteArt = {
   visibleBounds: [9, 12, 247, 488],
 };
 
-export function spriteForUnit(unit: Unit): StaticSpriteArt {
+function spriteProfile(unit: Unit): SpriteId | undefined {
   const identity = `${unit.profileId ?? ''} ${unit.name ?? ''} ${unit.id}`;
-  if (unit.weaponId === 'fists') return UNARMED_W01;
   const token = identity.toUpperCase().match(/\b(?:W\d{2}|B\d{3})\b/)?.[0] as SpriteId | undefined;
-  if (token && token in art) return { id: token, ...art[token] };
-  if (unit.visualKind === 'human') {
-    if (!unit.weaponId) return UNKNOWN_COMBATANT;
-    const id = byWeapon[unit.weaponId];
-    return id ? { id, ...art[id] } : UNKNOWN_COMBATANT;
-  }
-  if (unit.visualKind === 'creature') {
-    const id = creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
-    return { id, ...art[id] };
-  }
-  return UNKNOWN_COMBATANT;
+  if (token && token in art) return token;
+  if (unit.visualKind === 'human') return byWeapon[unit.weaponId ?? ''];
+  if (unit.visualKind === 'creature')
+    return creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
+  return undefined;
+}
+
+export function spriteForUnit(unit: Unit): StaticSpriteArt {
+  if (unit.weaponId === 'fists') return UNARMED_W01;
+  const id = spriteProfile(unit);
+  return id ? { id, ...art[id] } : UNKNOWN_COMBATANT;
 }
 
 /** Every roster entry plus the public unarmed derivative and unknown fallback. */
