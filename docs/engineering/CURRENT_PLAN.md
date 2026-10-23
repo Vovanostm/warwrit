@@ -7,6 +7,31 @@ Owner scope (2026-10-21): «У тебя есть все полномочия п�
 Owner (2026-10-23): «Разрешить адресные исправления» for #209, #297 and #179.
 Queue: epic #217 and existing one-issue local slices; prior failures retained.
 Main `25dd9a48`: newest CI `40015365287` SUCCESS.
+#297 / PR #298: targeted repair committed normally at `0b7f593e`.
+Author syntax, 101 isolated assertions, normal audit and scope 267/300 PASS.
+Coordinator validate: rebased, clean tree, scope, packages and typecheck PASS;
+format failed on this status document; coordinator formatting correction applied.
+Full validation retry and fresh Tier D review are next; final-head CI pending.
+Review 3 REWORK, exhausted 2/2 and issue/PR agent:blocked remain in force.
+Real resource savings NOT_MEASURED; live cleanup/full wave NOT_RUN.
+#179 partial source `0a10e16f` retained; read-only composition contract running.
+#209 source `024ce8ae` frozen pending #179 terminal death-label obstruction repair.
+#309 and #263 children queued behind targeted repairs; core #225 waits its dependency.
+No game runtime allocated; #297 owns sequential checks until review handback.
+Daily metrics/scout/triage/digest already complete; no duplicate daily run.
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
+Next: independent #297 review after validation; settle #179 composition contract.
+Wrapper releases the lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Owner (2026-10-23): «Разрешить адресные исправления» for #209, #297 and #179.
+Queue: epic #217 and existing one-issue local slices; prior failures retained.
+Main `25dd9a48`: newest CI `40015365287` SUCCESS.
 #209 targeted CSS repair remains live; sole web writer and exclusive checks/runtime.
 #297 / PR #298: source-only core repair allocated alongside #209.
 Own worker wrapper, optional finite Python decision owner and existing regression.
@@ -23,8 +48,6 @@ This tick: 0 merged PRs with playable proof; no playable acceptance or waiver.
 Checks: record diff/status guard only; game tests/validate NOT_RUN.
 Next: source preparation for #297; settle #209 before transferring checks/runtime.
 Wrapper releases the lease when this single tick returns.
-
-## Dated history
 
 ### Historical checkpoint — 2026-10-23
 
@@ -49,8 +72,6 @@ Checks: record diff and status-block guard only; game tests/validate NOT_RUN.
 Resource savings NOT_MEASURED; no candidate infrastructure acceptance.
 Next: settle #209 and #305; #297 remains frozen pending a valid recovery allowance.
 Wrapper releases the lease when this single tick returns.
-
-
 
 ### Historical checkpoint — 2026-10-23
 
