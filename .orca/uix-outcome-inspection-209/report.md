@@ -160,3 +160,134 @@ and no uncommitted source work or owned runtime left behind.
 Documentation closeout initially hit sandbox `index.lock: Operation not permitted`
 (exit128); the same scoped add/normal commit was retried with filesystem elevation.
 This is an environment failure, not a hook bypass or automatic-review rejection.
+
+## Owner-authorized targeted contrast repair 1 — 2026-10-24 Moscow
+
+**LOCAL; source repair and author proof complete, independent acceptance pending.**
+This is the one additional CSS allocation from owner «Разрешить адресные
+исправления», native reply `msg_01a16acb-2962-7543-ba3c-7b4afcca410b`, as recorded
+by coordinator commit `e3f089c661bc`. Original 2/2, consumed supplemental history,
+evaluator-3 F1 and visual-3 findings remain recorded above and in their reports;
+this section supersedes neither their verdicts nor the full U/T/V contract.
+Starting checkout was clean at e3f089c6; no rebase, push, PR or shared-record edit.
+
+### Scope and technique
+
+Only `apps/web/src/combat-lab/battle-view.css` outcome summary/inspection selectors
+change: two opaque outer strokes, 2px pale `#c1c4b5` over 5px dark `#080d0e`;
+keyboard-focused summary extends the dark backing to 8px behind its existing
+3px focus outline. Box shadows do not enlarge layout or pointer hit areas.
+Existing border, fill, typography, positioning, strings, TS/TSX and scene stay
+unchanged. This adds 11 CSS lines; cumulative source scope is **261** additions
+plus deletions against 25dd9a48, excluding tests (BattleOutcome 173, BattleView 9,
+CSS 79). No new product rules, dependencies, assets or migrations.
+
+All new evidence is under local path
+`.orca/uix-outcome-inspection-209/targeted-repair-1/`; these local proof paths are
+not links to tracked files. `capture.js` reuses the existing evaluator's browser
+journey and read-only projection/scene-coordinate probes. No runtime CSS/game
+state injection, screenshot retouching, new fixture or scene modification.
+
+### Fresh affected proof
+
+- Untouched default mill, 6 × 6, seed 20261009, UI Start/autoplay: actual victory
+  **R8/rev163**, five survivors/seven dead (`victory-result.json`). Before-edit
+  captures are retained; the initial live-arrival summary was at y30 because of
+  the existing tooltip safe-top observer. After a normal retained-session reload,
+  summary x633.46/y144 matches evaluator F1's left-mid-edge y164 composition.
+  The historical `eval-shots/after-close-day-grid-off.png` remains the exact old
+  failing comparator; the new arrival image is not falsely called that baseline.
+- `capture100-result.json` and `capture125-result.json`: 28 final full-viewport
+  captures, day/night, overview/close, ordinary/keyboard-focused summary and
+  inspection, log/menu/reopened result. 1440×900 at 100%; physical 1366×768 at native
+  Chrome 125%, effective 1093×614/DPR 1.25. `native-zoom125-visible.png` and
+  `finish-browser.log` record the actual Appearance control and restoration 100%.
+- FIELD hover → click/pin → pointer away resolves human-1 in all four affected
+  light/viewport rows; supplied health 44/80, armor 0/36, stamina 52/100,
+  morale 46/100, one minor wound remain. Native Tab reaches summary; Enter reopens
+  identical result; Space collapses again. Camera overview/wheel, light, log and
+  menu remain reachable. Both intervals are real GET 163→163 with **0 action POST**;
+  canvas/scene/engine identities remain equal. No lifecycle writes in this packet.
+- Inspection/log minimum gap **400.8 CSS px**, before decorative stroke extent;
+  even the 5px backing leaves 395.8px. Expanded footer stays visible and unchanged.
+  Author viewed final day close ordinary, night close focus, 1366/native125 night
+  log and reopened result against unit-c-ink, ruined-mill and day/night references.
+  No new input obstruction was observed; scene-readability defects remain #179.
+
+### Raster contrast, including actual terrain
+
+`contrast.json`, produced by `measure.py`, records all **128** exact edge sample
+pairs across 16 affected captures (four mid-edges × two components), RGB values,
+coordinates, ordinary/focused state and both individual tone-to-terrain ratios.
+This measures the visible two-tone perimeter against actual adjacent terrain;
+its reported composite ratio is the more distinct of the two visible tones at
+that location, not the old border-to-own-fill ratio. Finite samples do not prove
+every camera, every antialiased corner or unrelated icon/portrait boundaries.
+
+- Minimum composite perimeter/terrain: **3.4169:1**; minimum pale stroke/dark
+  backing: **11.0131:1**; focus/backing: **14.1710:1**.
+- Exact worst sample: `shots/after-1440-100-day-close-ordinary.png`, summary left,
+  pale(632,164)=193/196/181, backing(629,164)=8/13/14,
+  terrain(626,164)=118/94/71. Pale/terrain **3.4169:1**, backing/terrain **3.2231:1**.
+  Both sides of the new perimeter independently exceed 3:1 at the reported F1 area.
+- Changed text remains 18px; computed solid foreground against sampled raster fill
+  minimum **10.4978:1**. This is not a claim about every antialiased glyph pixel;
+  expanded text is unchanged and evaluator-3's finite 7.601:1 remains historical.
+
+The first candidate (2px existing border plus dark stroke) failed terrain samples;
+its PNGs/measurements remain in `candidate-1/`. Its first sample implementation
+also rounded fractional right-edge coordinates onto antialiasing; final sampling
+uses the pixel containing the stated stroke-centre coordinate (floor), for both
+sides. Final explicit pale+dark outer strokes retain original component geometry.
+No further tuning or new source allocation is claimed.
+
+### Checks, failures and cleanup
+
+Node 24.20.0/pnpm 11.25.0. Sequential focused checks: `pnpm check:changes` exits 0
+(`audit.log`, `audit-final.log`, `audit-final-stroke.log`); scoped Prettier exits 0
+(`format-css.log`, `format-final-css.log`); web typecheck exits 0 (`typecheck.log`).
+No standalone BattleView test was needed for the CSS-only repair. Full verify,
+stress and migrations NOT_RUN. Normal commit and post-commit standard validate
+results are appended below; no audit bypass or coverage/config manipulation.
+
+Tool/probe failures retained: initial navigation raced lab readiness and returned
+ERR_CONNECTION_REFUSED, then normal navigation succeeded; first post-reload
+Home-key/hover probe timed out; a diagnostic used visible text Home instead of
+accessible name «Обзор поля» and timed out. Final UI overview-button click plus
+settled coordinate probe succeeded. No failed probe counted as PASS. Sandbox ps
+required read-only elevation; no approval rejection. Source audit had only
+inherited advisory styling findings, no blocking issue.
+
+Cleanup: `resources.json`, `cleanup.json`, `cleanup.log`. Owned launcher 89840,
+web 90333 / API 90339, Playwright session `repair209t1` daemon 89995 / Chrome 90004,
+profile `targeted-repair-1/browser-profile`; **all 18 recorded PIDs absent**.
+Normal browser close and lab stop exited 0; three exact recorded server-wrapper
+survivors 90260/90270/90301 received SIGTERM, then absence was verified. Ports 23618
+and 25618: lsof exit 1, empty stdout/stderr; `.orca/play.pid` absent; no matching
+session/profile processes. Profile removed only after absence checks; retained
+launcher terminal exited. No sibling process or resource was stopped.
+
+### Unchanged evidence and retained holds
+
+Evaluator-3 `eval-3/matrix-after100.json`, `matrix-after125.json`,
+`before-after-state.json`, `lifecycle-manual-result.json`, `replay.log` and
+`presentation-result.json` support unchanged JS/replay/lifecycle behavior only;
+they do not accept this new composition. No unchanged 12-row matrix, fixture,
+replay/lifecycle or manual-first-death journey was rerun. Text strings are
+unchanged; text packet provenance is refreshed for the eventual independent critic.
+
+Fresh independent U/T/V: **NOT_RUN / coordinator-owned**. Prior text 3 ACCEPT is
+not a new-head verdict. #179/E2 exact rejected-archer archive/state, full opaque
+layering/crowd/height packet, terminal-defeat comparison, night readability and
+tooltip overlap remain held. Screen-reader speech, full menu keyboard traversal,
+unrelated icon/portrait contrast and frame-by-frame reduced motion retain their
+prior NOT_RUN/NOT_MEASURED limits. No full original AC/DoD acceptance or merge.
+
+Coordinator shared-record proposal: “2026-10-24, Vovanostm/uix-outcome-inspection-209,
+LOCAL: owner-authorized #209 targeted repair 1 adds opaque pale/dark outer strokes
+to summary/inspection; cumulative 261 source lines. Actual mill victory R8/rev163,
+affected day/night 100%/native 125% proof and finite raster minimum 3.4169:1 against
+terrain; no action POST or input overlap regression observed. Focused checks PASS,
+owned runtime fully cleaned; original failed rounds, #179/E2 and fresh independent
+U/T/V holds retained. No publication, PR or merge.” Coordinator owns integration
+into CHANGELOG/CURRENT_PLAN/wiki; those paths are untouched.

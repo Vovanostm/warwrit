@@ -932,6 +932,12 @@
   background: #182225;
   color: #eee8d7;
 }
+.battle-view .battle-control.battle-outcome-summary,
+.battle-outcome-inspection {
+  box-shadow:
+    0 0 0 2px #c1c4b5,
+    0 0 0 5px #080d0e;
+}
 .battle-outcome-inspection p {
   margin: 2px 0;
 }
@@ -943,6 +949,11 @@
 .battle-view .battle-control.battle-outcome-summary:focus-visible {
   outline: 3px solid #f3d99d;
   outline-offset: 3px;
+}
+.battle-view .battle-control.battle-outcome-summary:focus-visible {
+  box-shadow:
+    0 0 0 2px #c1c4b5,
+    0 0 0 8px #080d0e;
 }
 
 .battle-turn-acted {
