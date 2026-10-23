@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Resume #305 after the commit-audit failure — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-admission`; coordinator fallback step 1 under the
+  owner delegation. The builder preserved an uncommitted 169-source-line
+  admission/uncertainty/reply extraction in `CombatLab.tsx` and `controller.ts`,
+  plus `controller.test.ts`. This documentation checkpoint is published;
+  implementation remains LOCAL and incomplete, with no gameplay acceptance.
+- Worker reports 82 focused tests, web typecheck, lint and format PASS, but
+  normal audit FAIL: `submitAction` CRAP 210 at 0% focused coverage. A fresh
+  builder must supply real coverage and only the necessary owned restructuring;
+  normal audit, <=300 source lines and original #263/H1/H2 contracts remain.
+  No transport/poll extraction, dependency change or weakened check is allowed.
+- Coordinator verified no listeners on 23685/25685, no play.pid or lane check
+  process before resource handover. Validation, independent Tier L, browser
+  acceptance and candidate CI are NOT_RUN. Main CI `40015365287` is successful.
+  See [current status](docs/engineering/CURRENT_PLAN.md) and
+  [#305](https://github.com/Vovanostm/warwrit/issues/305).
+
+
 ### Close #262 and #269; the full play-through is #303 — 2026-10-23, PUBLISHED
 
 - Owner decision 2026-10-23: close #269 and #262. Menu extraction is on main

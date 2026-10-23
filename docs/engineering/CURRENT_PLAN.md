@@ -1,6 +1,31 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-23
+## Pipeline status — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and existing one-issue slices; one tick, no scope expansion.
+Main `25dd9a48`: latest CI `40015365287` successful.
+#305 build failed before commit: preserved 169 changed source lines in three files.
+Worker reports 82 focused tests, web typecheck, lint and format PASS;
+normal audit FAIL: submitAction CRAP 210, focused coverage 0%.
+Coordinator decision: fallback step 1, fresh audit-restructure builder;
+retain existing patch and exact #305 scope, normal audit and <=300 source lines.
+No #306 transport or #307 polling extraction, new dependencies or audit waiver.
+Checks/runtime assigned exclusively to #305 after direct cleanup verification.
+Independent Tier L, validation, browser proof and CI remain pending.
+#263 stays open; #306/#307 wait for #305; original H1/H2 remain binding.
+#179 and #209 remain blocked/frozen; PR #298 and #297 remain blocked.
+Open PRs from supplied snapshot: #298 blocked; #129/#134 failed CI, no merge.
+Daily metrics/digest already posted; scout waits for runtime release.
+This tick: 0 merged PRs with playable proof. No player acceptance claimed.
+Next: settle the fresh #305 builder, then validate and obtain Tier L gates.
+No rules, API, protocol, replay, schema or migration changes.
+Wrapper releases its lease when this tick returns; builder retains its slice.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-23
 
 Coordinator: cursor-session qa-269-close. Owner (2026-10-23): close #269 and
 #262, and put the remaining proof in a new issue. Also (2026-10-21):
@@ -12,7 +37,6 @@ Full play-through ACCEPT on `cf3b2901` against `690d140b`, day and night.
 #179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
 Next: start #263.
 
-## Dated history
 
 **Previous checkpoint (superseded above):**
 
