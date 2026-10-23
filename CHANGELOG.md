@@ -9,6 +9,87 @@ requests.
 
 ## Unreleased
 
+### Recover and reconcile the existing pipeline — 2026-10-23, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`: coordinator records only. Reconciles
+  externally merged [#299](https://github.com/Vovanostm/warwrit/pull/299) / #293,
+  [#301](https://github.com/Vovanostm/warwrit/pull/301) / #295 and
+  [#292](https://github.com/Vovanostm/warwrit/pull/292) / #285 (`e0c8cb2e`).
+  Closed issue labels now read `agent:done`; the old failed evaluator settlement
+  remains historical, not a new acceptance or a reset of #179's rework budget.
+- The original Orca run/mailbox and wrapper lease continue. Direct cleanup found
+  all 25 old evaluator PIDs absent, both ports clear and no play.pid. The
+  settled worker release returned `retained/no_owned_resource`; old mail was
+  recorded before acknowledgment. Clean, fully pushed #293/#295 worktrees were
+  removed. A local evidence copy hit a broken Chrome-profile symlink after
+  copying #293 reports; #295's untracked backup was NOT_RUN. No source was lost.
+- Hosted timing artifact 39874638529 confirms six successful samples and median
+  ratio 1.127081; five complete hosted passes and independent Tier L evidence
+  remain distinct. This tick's #292 validator exited 1 on `rebased` because main
+  already contained the external merge; clean-tree/scope/packages/typecheck
+  passed. This is not reported as a successful validator or a source defect.
+- Fresh read-only #179 catalogue contract and today's main scout are live. Scout
+  owns local checks/browser/runtime; #269 waits. Task-local launch PATH selects
+  verified Codex 0.163.0; tracked scripts/global config are unchanged. Persistent
+  wrapper PATH and fail-closed identity handling remain a follow-up.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) has one updated status block;
+  historical entries from both branches are retained. No game/setup/API/wiki,
+  rules/protocol/replay/schema/migration contract changes. New game/full suites
+  NOT_RUN; no PR merged by this tick, 0 merged PRs with playable proof this tick.
+
+### Bring #285 onto main after the timing gate — 2026-10-23, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285: hosted timing run
+  [39874638529](https://github.com/Vovanostm/warwrit/actions/runs/39874638529)
+  on harness `625c9774` (PR #301, closes #295). Baseline median 63.66s
+  (`65d7466bb5bd34ae04ad0ef8e252b5d8808fa5a0`), candidate median 71.75s
+  (`cf6a6fb544bca5e553704225f1b6d104ae903298`), ratio 1.127081, result PASS.
+  All six samples exited 0. Artifact `integration-timing-39874638529-1`.
+- Full CI on `cf6a6fb5`, run `39760378548`, attempts 4 through 8 succeeded in a
+  row. Attempt 3 failed a unit-test timeout in
+  `packages/testkit/src/world-free-movement.spec.test.ts`, not an integration
+  assertion.
+- This merge updates the branch onto main `625c9774`. CI on the merge head is
+  pending. Not merged.
+
+### Measure matched integration command wall times — 2026-10-23, PUBLISHED
+
+- `Vovanostm/core-hosted-integration-timing`, #295, Refs #285: a manual
+  `workflow_dispatch` harness times the unchanged `pnpm test:migrations` for
+  three sequential baseline/candidate pairs. Baseline
+  `65d7466bb5bd34ae04ad0ef8e252b5d8808fa5a0`, candidate
+  `cf6a6fb544bca5e553704225f1b6d104ae903298`. Each sample is its own clean
+  checkout and a new disposable PostgreSQL. Medians are reported only when all
+  three pairs are valid; the timing result is PASS only when the candidate
+  median is at most 1.20 times the baseline median.
+- Ordinary CI, bootstrap, packages, tests, migrations and dependencies are
+  unchanged. Hosted dispatch and the six measured timings remain NOT_MEASURED
+  until the workflow is on main. Published as a pull request; not merged.
+
+### #293 merged — 2026-10-23, MERGED
+
+- [PR #299](https://github.com/Vovanostm/warwrit/pull/299) merge `19e62633` closed #293.
+  Owner disposition 2026-10-23: merge at `720bf05c` without the missing E2
+  clipboard archive. Independent visual scores on that head were all at least 2;
+  the verdict had been BLOCKED only for that missing file. E3 before rows were
+  captured locally at `c62ad2d0` and were not committed.
+
+### Rework #293 desktop HUD opening fit — 2026-10-22, LOCAL
+
+- `Vovanostm/uix-179-desktop-composition-rework`, #293 Part of #179: technique
+  change after visual-1 scene integration 1 — focus-only overhead badge reservation,
+  milder initial-frame span (0.86), night unit emissive darkened (far mode no longer
+  brighter), HUD opening margins, dock compaction, no clearHover on HUD resize.
+- Source budget **291/300** against main (tests excluded). Initiative cards are 74px
+  wide so six queue portraits fit at 1366×768 / 125%. Focused framing/scene
+  tests and typecheck PASS. Independent visual-4 scores every applicable criterion
+  ≥2 at AC1 short/125 including night value/palette; E1 on/off pairs captured on
+  rework head. E2 exact `codex-clipboard-6235d07a…` PNG/state remains **NOT_FOUND**
+  after bounded workspace/evidence/codex/GitHub search; E3 `c62ad2d0` before rows
+  **NOT_RUN** until baseline capture. Hover-after-dock-resize drops fixed by not
+  clearing hover on ResizeObserver.
+- No rules/protocol/replay/schema/migration/dependency/art catalogue change.
+
 ### Record partial independent overlay evidence without acceptance — 2026-10-22, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu-controls`: coordinator records only, no game code.
@@ -146,6 +227,298 @@ requests.
   changes; five passes/matched timing remain required. 0 merged PRs with playable
   proof this tick. No game-rule/API/protocol/replay/schema/migration/dependency
   change; gameplay/full suites NOT_RUN, performance NOT_MEASURED.
+
+### Publish local isolation gates and advance independent web work — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  fresh independent reviewer4 and local evaluator4 ACCEPT at `0ffa146d`;
+  source `b4d033ca`, 219/300. [Tracked evidence](docs/engineering/evidence/core-integration-db-isolation/README.md)
+  includes complete contract, both verdicts and genuine day/night/victory JPEGs.
+  Independent 19 lifecycle PASS, global-only child exits 0/1/7; one complete
+  native smoke/eight-file 60/60 PASS with distinct migrated clones, default
+  overlap/disposal and original persistent wolf effects/replay/idempotency.
+  Coordinator directly verified 950 recorded PIDs absent, 21 ports clear,
+  empty project-labelled Docker inventories and no play.pid before slot transfer.
+- Existing coordinator validator at `fbf8ec9a`: exit 0, all 9 PASS; source unchanged.
+  Evidence and coordinator records alone follow gated head. Publication enables
+  required hosted proof, not whole-issue acceptance or merge: historical
+  intermittent null-effects cause UNPROVEN, three matched hosted <=20% samples
+  NOT_MEASURED and five complete consecutive CI NOT_RUN. #272/PR #287 held;
+  #282 nested rollback/transaction assertions preserved. Main advanced through
+  separately merged #289; newest main CI was in progress when checked.
+- #179 independent full visual2 settled BLOCKED_ENV plus visible REWORK,
+  repeated scene integration1 at native1366x768/125. Same-state all-overlays-off,
+  exact historical rejected state and ten baseline rows remain missing. Source
+  frozen989669ef at298/300; no new source round, cap reset or AC/Tier V waiver.
+  Coordinator engineering decision allocates only read-only technique/split
+  contract task_ef3fb77b5feb, actual HUD opening/camera fit/body-ground hierarchy.
+- #268 accepted contract advances to sole web builder task_723e5b9418b1 with
+  exclusive local checks/runtime; original three paths/<=300/normal audits/Tier U.
+  Only coordinator publication audit uses existing coverage alongside source work;
+  no coordinator test or runtime is allocated. #214 waits179; final component20/15
+  remains on BOTH269 AND262; #263/#231 original gates retained. Native state and
+  five-line issue handoffs are read back; [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  is rewritten with the current queue. Daily work already complete, no duplicate
+  scout/digest. This tick:0 merged PRs with playable proof; no production/rule/API,
+  protocol/replay/schema/migration/dependency change. New coordinator game tests,
+  full verify/stress/migrations/browser NOT_RUN; performance NOT_MEASURED.
+
+### Validate global teardown exit propagation — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  supplemental source `b4d033ca`, report `f41b926c`, total source 219/300.
+  Returned global teardown preserves nonzero process status, sets failure on real
+  disposal rejection and rethrows the original error. Author 19 real-PG lifecycle
+  tests PASS, including actual global-only child exits 0/1/7. Initial incomplete
+  script typecheck failed; corrected complete script program and normal audit PASS.
+- Ordinary merge of main `ff2f5f96` at `fbf8ec9a` has no conflicts. Coordinator
+  validator exit 0, all 9 checks PASS; related 1 PASS / 18 SKIP without DB is not
+  fresh database acceptance. Direct native cleanup confirms 145 recorded PIDs
+  absent, six ports clear and empty project-labelled Docker inventories.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh independent Tier L
+  round 4 allocation; reviewer source-only, evaluator exclusive runtime. Full
+  owning contract/report and earlier evidence remain under the dedicated worktree's
+  .orca/core-integration-db-isolation/ (local paths). No new source round granted.
+  Original failed 2/2 history, historical encounter null-effects cause UNPROVEN,
+  matched hosted <=20% timing NOT_MEASURED and five full CI NOT_RUN remain required.
+- WIP branch publication only, no #285 PR/merge or whole-issue acceptance. This
+  tick: 0 merged PRs with playable proof. #272/PR #287 remains held for its existing
+  encounter failure. #179 evaluator REWORK and live image-only visual round 2
+  retain full Tier V; #214 waits #179, #268 waits exclusive checks/runtime.
+  Daily work already complete. No setup/API/wiki/game-rule/protocol/replay/schema,
+  migration or dependency change; coordinator full verify/stress/migrations and
+  browser NOT_RUN. Documentation diff/format/readback checked before publication.
+
+### Validate final database closure rework and resume engineering queue — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  final rework 2/2 source `83372b0b`, report `05bca4f3`, 211/300 source lines.
+  Real PostgreSQL regressions reproduce lost shutdown FATAL after settled DROP,
+  including prior query failure; helper retains distinct errors through completed
+  closure and preserves identity. Author 15/15 real-PG lifecycle checks PASS;
+  no production/assertion/worker-count/default-parallelism change.
+- Coordinator validator at `05bca4f3`: exit 0, all 9 gates PASS. Related tests
+  1 PASS / 14 SKIP without DB are not fresh PG acceptance. Native settlement and
+  ordinary source commits verified; all 136 declared PIDs absent, 14 ports clear,
+  and labelled Docker inventories empty before exclusive runtime transfer.
+- Independent source-only diagnosis is committed at
+  .orca/core-integration-db-isolation/terminal-effects-diagnosis.md.
+  The previous eight-file 59 PASS / 1 FAIL is retained: null terminal effects at
+  unchanged encounter line 4156 remains unexplained. Batch selection, outer guard
+  or leadership deferral require the original invocation's branch trace before
+  cleanup. Leadership is a lead, not a reproduced cause or authorized fix.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh Tier L round 3
+  reviewer/evaluator allocation, exclusive runtime and preserved #272/#282 proof.
+  Original hosted <=20% timing NOT_MEASURED and five full CI NOT_RUN remain gates.
+  Under 2026-10-21 engineering delegation, #179's process-only recovery question
+  is resolved: one supplemental shared-projection correction, total <=300, all
+  original AC/DoD and full Tier V; original two failed reworks remain recorded.
+  #179 waits #285 cleanup; #214 waits #179, #268 its web turn. No acceptance waiver.
+- Published WIP branch only; no #285 PR/merge or player acceptance, 0 merged PRs
+  with playable proof this tick. #274/#280 unresolved REWORK still blocks merge.
+  Daily work already complete; no duplicate scout/metrics/digest. Coordinator
+  browser/full verify/stress/migrations NOT_RUN; hosted timing NOT_MEASURED.
+  Documentation format/diff/readback checked. No setup/API/wiki/game-rule,
+  protocol/replay/schema/migration/dependency contract changed.
+
+### Retain isolated encounter failure and queue final lifecycle rework — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  evaluator round 2 REWORK at `0998c1d5`; source `9ea84fcf` unchanged, 200/300.
+  Independent 13 real-PG lifecycle tests PASS. SQL confirms eight distinct
+  migrated databases, default parallel execution and per-file/global disposal.
+- Native migration suite: 59 PASS / 1 FAIL / 0 SKIP. The unchanged encounter
+  terminal-effects assertion at line 4156 still fails after victory; later
+  terminal proof/root/receipt/idempotency assertions NOT_RUN. Shared-database
+  causality and the remaining fixture/clock/batch cause remain UNPROVEN.
+  Mill day/night move/bow and round-7 victory are sampled browser evidence only.
+- Reviewer round 2 REWORK identifies lost Client error during awaited end();
+  source risk UNEXECUTED. Queue final rework 2/2 within the same seven paths,
+  retaining all original AC/Tier L, normal audit and <=300 source-line scope.
+  Remaining encounter failure needs separately bounded diagnosis; no production
+  or assertion change is authorized by this lifecycle allocation.
+- Exact evaluator settlement verified and recorded before acknowledgment.
+  Coordinator directly checked all 23 recorded PIDs absent, six ports clear,
+  and empty project-labelled Docker container/network/volume inventories.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exclusive runtime
+  handoff and queue. Verdict/evidence remain in the dedicated worktree under
+  .orca/core-integration-db-isolation/eval-2.md and eval-2-evidence/ (local paths).
+- WIP branch publication only; no PR/merge or acceptance. Matched hosted <=20%
+  timing NOT_MEASURED; five full CI runs NOT_RUN. #272/#282 evidence retained.
+  Coordinator tests/typecheck/validate/browser NOT_RUN this tick; documentation
+  format/diff/readback checked before publication. No setup/API/wiki/game rule,
+  protocol/replay/schema/migration/dependency change.
+
+### Validate database lifecycle rework and request fresh Tier L — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
+  rework 1/2 source `9ea84fcf`, report `2824c81f`, source scope 200/300. Exact
+  generated database targets enter the cleanup ledger before CREATE; Client error
+  events reject the awaited lifecycle operation; failed cleanup retains both
+  original and complete cleanup errors. Four allocated source/test paths changed;
+  no production, assertion, worker-count or default-parallelism change.
+- Author real PostgreSQL regressions cover committed CREATE with lost reply for
+  empty/template/clone allocations, SQL existence before cleanup, absence after,
+  another run's surviving database and real cleanup-error identity: 13 PASS.
+  These repair the reproduced round-1 findings; fresh independent acceptance is
+  still required. Local owning report: core-integration-db-isolation/.orca/
+  core-integration-db-isolation/report.md (tracked on this branch).
+- Coordinator verified native settlement and clean committed source; validator
+  at `2824c81f` exit 0, all 9 gates PASS. Related 1 PASS / 12 SKIP without DB
+  supplies no fresh database proof. All 44 declared PIDs absent, all 18 ports
+  clear and labelled Compose inventories empty before exclusive slot transfer.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh round-2 Tier L
+  review/evaluation allocation. Preserve historical REWORK/eight-file/60-test
+  evidence, #272 accepted proof and #282 assertions; hosted <=20% timing remains
+  NOT_MEASURED, five full CI runs NOT_RUN. WIP branch checkpoint publication only;
+  no PR, merge or player-acceptance claim; 0 merged PRs with playable proof.
+  No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
+  Full local verify/stress/migrations/browser NOT_RUN by coordinator this tick.
+
+### Reproduce database cleanup failure and schedule bounded rework — 2026-10-22, LOCAL
+
+- `Vovanostm/core-integration-db-isolation`, #285: owner-requested single tick
+  records independent Tier L evaluator REWORK at `284efd79`. A real PostgreSQL
+  CREATE reply dropped by a private TCP proxy reproduced the missing cleanup
+  ledger entry and unhandled Client error. This supersedes the earlier source
+  risk's UNEXECUTED status; no implementation fix or acceptance claimed here.
+- Evaluator ran all eight native integration files / 60 tests and nine lifecycle
+  checks successfully, observed migration status, overlap and per-file disposal,
+  and played the mill through move/bow and round-7 victory with day/night captures.
+  Persistent encounter assertions and browser lab smoke remain separate evidence.
+  Local verdict/evidence: core-integration-db-isolation/.orca/
+  core-integration-db-isolation/eval-1.md and eval-1-evidence/ (untracked).
+- Exact native settlement/result verified, recorded before acknowledgement and
+  released. Coordinator independently found 18 owned PIDs absent, seven ports
+  clear and empty labelled Compose inventories. First rework 1/2 is allocated
+  inside the existing seven-path ownership, preserving exact-name cleanup,
+  original errors/assertions, ordinary audit, <=300 source lines and Tier L.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) holds the operational handoff.
+  Matched hosted <=20% duration NOT_MEASURED and five full CI runs NOT_RUN remain
+  mandatory. Source unchanged `0b0c44eb`; no PR/merge, zero merged PRs with playable
+  proof. Coordinator game checks/runtime NOT_RUN; documentation checks only.
+  No rule, API, wiki, schema, replay, migration or dependency change. Existing
+  #179 cap question, #272/#282 proof, #274/#280 REWORK and daily marker retained.
+
+### Queue isolation rework after independent source review — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285: fresh Tier L source reviewer
+  returned REWORK at `284efd79`. In `scripts/integration-database.ts`, a committed
+  CREATE with a failed acknowledgement can escape the cleanup ledger, which is
+  updated only after success. This is an independently traced source risk;
+  reproduction NOT_RUN. Reserve only exact run-owned targets before CREATE and
+  retain original errors in the next bounded rework; no source fix in this tick.
+- Exact task/dispatch/sender/result and full verdict were checked, recorded before
+  acknowledgement, then released. Local verdict path:
+  core-integration-db-isolation/.orca/core-integration-db-isolation/review-1.md.
+  Evaluator `task_cf926bbb6c7d` / `ctx_c4c26582a636` remains live with exclusive
+  checks/DB/browser/runtime; finding forwarded. Combine all gate findings after
+  its settlement and positive cleanup before starting the first rework.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records this one-tick handoff.
+  Source remains `0b0c44eb`, scope 176/300; prior validator exit 0 / 9 gates PASS
+  is retained evidence. New coordinator game tests/typecheck/validator/runtime
+  NOT_RUN. Original full eight-file cleanup/persistent journey, matched hosted
+  <=20% timing and five full CI runs remain outstanding; no acceptance waiver.
+  No issue-state transition, PR or merge; 0 merged PRs with playable proof.
+  #179 recovery cap, #214/#268 queue, #272 failed CI and #274/#280 REWORK retained;
+  daily work already complete. No setup/API/wiki/rule/protocol/replay/schema/
+  migration/dependency contract changed. Documentation commit publication only.
+
+### Advance file-isolation implementation to independent gates — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285: source `0b0c44eb`, report
+  `9896b585`; branch checkpoint only, no PR or merge. Owner-requested single tick
+  verifies exact native settlement and normal commits, records/acknowledges both
+  messages and releases the settled builder. Source scope 176/300.
+- Four integration lifecycle scripts, integration-only Vitest hooks and
+  `test:migrations` now allocate a migrated template, one database per selected
+  file and isolated migration smoke. All eight files selected; worker count and
+  existing assertions unchanged. No production or released migration changed.
+- [Build report](.orca/core-integration-db-isolation/report.md): nine real-PG
+  lifecycle checks and two native integration files are author evidence;
+  coordinator validator exit 0, 9/9 PASS at `9896b585`. Related test result
+  1 PASS / 8 SKIP without a DB is not additional database proof. Direct coordinator
+  readback found all 16 reported PIDs absent and three ports clear. SQL cleanup
+  raw log missing; independently repeat. Lost-CREATE-reply cleanup advisory
+  retained for fresh reviewer, not reproduced or accepted.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) schedules fresh Tier L review
+  and exclusive evaluator checks/runtime. Full eight-file/migration and persistent
+  victory/effects proof pending; matched hosted <=20% timing NOT_MEASURED and five
+  full CI runs NOT_RUN. #272/#282 proofs retained, PR #287 CI failed; #179 remains
+  at its existing recovery-cap question. No new issue, duplicate daily work or
+  criterion waiver. Zero merged PRs with playable proof; no rule/API/wiki/replay/
+  schema/dependency change. Full local verify/stress suites NOT_RUN.
+
+### Accept isolation contract and retain exact CI blocker — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`: owner-requested single pipeline tick
+  accepts #285's complete five-section contract after exact native settlement,
+  result and live-issue readback. Contract worker released (`no_owned_resource`).
+  Finite proposed lifecycle-script/config/test ownership is recorded in local
+  slice overrides; implementation waits for #179 exclusive checks/runtime cleanup.
+  Existing CI enables two integration files, proposed isolation enables eight;
+  shared-database causality and the <=20% timing target remain unproven.
+  All original disposal, parallelism, five full CI and Tier L gates remain.
+- [PR #287](https://github.com/Vovanostm/warwrit/pull/287) native `c07b88d9`
+  remains OPEN/red. Advisory leadership-choice pause is an unproven diagnostic
+  lead for the null terminal timestamp, not a diagnosed cause or production fix.
+  Preserve the assertion; next owned rerun observes admission/revision/leadership
+  state. Original #272 proof and merged #282 rollback regression stay intact.
+- Recorded/acknowledged four mailbox messages; forwarded sampled short-desktop
+  day/night readability concerns to the sole #179 builder. No final Tier V
+  verdict or repeated measurement is claimed. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  retains all original criteria, exclusive runtime ownership and deferred slices.
+  No new worker, issue, label change or daily repeat; 0 merged PRs with playable
+  proof. Local game tests/typecheck/build/DB/browser NOT_RUN, performance
+  NOT_MEASURED; no setup implementation/API/wiki/game-rule/replay/migration change.
+  Initial Markdown format check failed; formatting corrected before commit.
+  The pnpm wrapper materialized pinned dependencies automatically during that
+  check; no source or lockfile change and no setup/runtime/DB command ran.
+
+### Resume interrupted coordinator checkpoint — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`: owner-requested single pipeline tick
+  completes the interrupted documentation correction below. The new OIDC proof
+  link points to unmerged PR #287, where that evidence exists; historical records
+  remain intact. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) retains #285's
+  live read-only contract and #179's sole builder/checks/runtime allocation.
+- Recorded and acknowledged two #179 advisories before relaying to its existing
+  dispatch: possible initial-fit/full-field pan-limit overwrite (sender source
+  review; browser NOT_RUN), and provisional ground detail concerns (cause
+  unverified). Original full Tier V and size/depth/matrix criteria remain.
+  Clean #179 head `514943b7` observed; no evaluator acceptance is claimed.
+- Native PR #287 still has failed final-head CI at `c07b88d9`; #274/#280 retain
+  REWORK. No PR merged, no duplicate worker or daily work. Markdown format,
+  scoped diff and changed-section local links checked; local game tests,
+  typecheck, build, DB/browser and full suites NOT_RUN; performance NOT_MEASURED.
+  No source, setup/API/wiki/game-rule/replay/schema/migration contract changed.
+
+### Route encounter CI failure to existing isolation issue — 2026-10-22, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`: one owner-requested pipeline tick;
+  #272 / PR #287 at `c07b88d9` remains unmerged after native CI run
+  `39715279402` failed the encounter v5 wolf terminal-effects assertion at
+  `postgres.integration.test.ts:4156` (`effects_applied_at` null, 24 pass / 1 fail).
+  Existing #285 already reports this exact failure; no duplicate issue and no
+  independently proven shared-database cause. OIDC source and Tier L proof remain.
+- Coordinator activates #285 as a dedicated Tier L read-only contract, retaining
+  every original criterion, including <=20% integration duration and five full
+  CI passes. Setup, source, checks and runtime are deferred while #179 owns its
+  exclusive slot; contract must establish minimal ownership and shared-script
+  sequencing before any implementation. No #285 fix or acceptance is claimed.
+- Native #179 builder remains live, feature `6ce7f587` clean at observation.
+  Coordinator directs removal of the newly added optional bespoke PNG byte
+  decoder through a normal follow-up commit; preserve catalogue fit/upward-step/
+  widened-B001/unchanged-height regressions, browser alpha measurements and
+  original full Tier V. Existing #214 freeze and #268 queue remain.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records current continuation;
+  issue comments read back exactly, mailbox advisory recorded before ack,
+  #285 dispatch/worktree/liveness verified. Local game tests, typecheck, builds,
+  DB/browser and full suites NOT_RUN; performance NOT_MEASURED. Documentation
+  format/diff checks apply; no game-rule/API/wiki/replay/schema/migration change.
+  Initial local-link check failed: OIDC evidence exists only on unmerged #287;
+  corrected the new status link to that PR. Zero merged PRs with playable proof;
+  daily work already complete.
 
 ### Publish accepted selection and autoplay extraction — 2026-10-22, PUBLISHED
 

@@ -1,6 +1,54 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-22
+## Pipeline status — 2026-10-23
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and existing one-issue local slices; exactly one tick.
+This tick: 0 merged PRs with playable proof; external merges reconciled below.
+#293 / PR #299 merged `19e62633`; #295 / PR #301 merged `625c9774`.
+#285 / PR #292 merged externally `e0c8cb2e`; all three closed issues labelled done.
+Timing artifact 39874638529: six exits 0, medians 63.66s / 71.75s, ratio 1.127081 PASS.
+Five consecutive full hosted passes and original Tier L proof retained separately.
+New main CI 39931065055 at `e0c8cb2e` was in progress at reconciliation.
+#292 coordinator validator exit 1: main already contained its merge; rebased failed.
+Clean-tree/scope/packages/typecheck passed; this is not a full validator PASS.
+Old #293 evaluator failed79a5e407 settlement verified, recorded and acknowledged.
+All 25 recorded PIDs absent, ports23789/25789 clear, no play.pid; reservation released.
+Clean/pushed old #293/#295 worktrees removed; #293 reports retained locally.
+#295 untracked evidence backup NOT_RUN after broken profile symlink; no source lost.
+#179 fresh catalogue contract task_efc996f2bb57 / ctx_873c972c166b live/read-only.
+Worktree uix-179-catalogue-integration; source/checks/runtime NOT_GRANTED.
+Original #179 AC/DoD, failed2/2+supplemental and full Tier V remain required.
+#214 frozen; #293 merge does not establish #179/#214 acceptance.
+#269 contract accepted; source waits scout cleanup and P0 contract sequencing.
+Final #269 AND #262 20/15, ordinary audit and full mounted day/night proof retained.
+#272 / PR #287 externally updated to `5b2c3a50`; its current gates must be read anew.
+Daily metrics: 7 merged / 12 workers, 9 succeeded / 3 failed; no two-day rise proven.
+Daily scout task_0b7875e8f181 / ctx_c86674217d0f live; sole checks/browser/runtime owner.
+Daily findings triage awaits scout; no new findings or player acceptance claimed.
+Original run/mailbox restored; task-local Codex0.163 PATH used, global config unchanged.
+Persistent wrapper PATH/fail-closed identity prevention is a follow-up, not implemented.
+No new game-rule/API/protocol/replay/schema/migration/dependency change.
+Next: settle scout/contract, positive runtime cleanup, then allocate one web builder.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+### Checkpoint before recovery — 2026-10-23
+
+Coordinator: continuing the open-issue queue. Owner scope (2026-10-21):
+«У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Main is `625c9774`. #293 closed by PR #299. #295 closed by PR #301.
+Hosted timing run `39874638529`: baseline median 63.66s, candidate median 71.75s,
+ratio 1.127081, result PASS. Six samples, all exits 0.
+#285 / PR #292 is updated onto that main. CI on `cf6a6fb5` attempts 4–8
+succeeded in a row (run `39760378548`). CI on the merge head is pending.
+#272 / PR #287 stays unmerged until this isolation change is on main.
+#179 stays open. No game-rule, API, protocol, replay, schema or migration change.
+Next: green CI on this head, then merge PR #292 and update PR #287.
+
+### Coordinator checkpoint before recovery — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
@@ -34,7 +82,6 @@ No game-rule/API/protocol/replay/schema/migration/dependency change.
 Next: evaluator settlement and positive cleanup, then sole-writer visual/hover rework.
 Wrapper releases its lease when this single tick returns.
 
-## Dated history
 
 **Previous checkpoint (superseded above):**
 
