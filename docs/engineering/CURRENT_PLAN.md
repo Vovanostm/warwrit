@@ -7,21 +7,23 @@ Owner scope (2026-10-21): «У тебя есть все полномочия п�
 Queue: epic #217 and existing one-issue local slices.
 Main: `25dd9a48`; newest CI `40015365287` is green.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#297 / PR #298: rework 2 source `a8f7d935`, report head `d2272625`.
-Coordinator validation: all six applicable steps PASS; author 63 shell assertions PASS.
-Fresh independent Tier D review 3 is running; CI and acceptance remain pending.
-#209 is next for a visible result: after victory, collapse the outcome and inspect the field.
-The old #209/#211/#210 bundle is split into sequential one-issue slices.
-Its worktree `uix-w1-outcome`, commits and failed-gate history are preserved.
-#209 read-only contract is running on current main; no new source round granted yet.
-#211 and #210 follow #209. #263 children #305–#307 stay queued.
-#179: source frozen, B002 strip/body overlap and night value score 1 remain.
-E2 archive/state is BLOCKED_ENV; original two reworks and supplemental remain consumed.
-No new source allowance, proof waiver or parent acceptance for #179.
-#262/#269/#303 are closed; no claim that unreachable menu states were proven.
+#209 contract accepted: after victory, collapse the outcome and inspect the field.
+Allocate its inherited pending rework 2/2; prior failed rounds remain consumed.
+Only result components/styles/tests, at most 300 source lines; no scene or menu work.
+U + T + V gates and original acceptance remain required; no candidate acceptance yet.
+#209 owns the web writer, sequential checks and its own runtime for this allocation.
+#211 and #210 follow #209. #263 children #305–#307 remain queued.
+#297 / PR #298: review 3 REWORK at `d2272625`; rework 2/2 exhausted.
+A late signal after cleanup can still dispatch a successful worker result.
+Reviewer ran 63 isolated assertions successfully; the late signal case was NOT_RUN.
+Source frozen; read-only recovery contract must propose a finite technique/split decision.
+No third source round, real runtime or checks allocated to that reader.
+Prior coordinator validation passed six applicable checks; it does not override REWORK.
+#179 remains frozen: body/strip overlap, night score 1 and E2 archive/state gap.
+Its exhausted rounds, scene ownership and original acceptance remain in force.
 Daily metrics/scout/digest already recorded; no duplicate daily run.
-No live game runtime, full suites or resource measurements in this tick.
-Next: settle #297 reviewer and #209 contract; apply their exact-head results.
+Coordinator game tests, browser and full gates NOT_RUN; resource savings NOT_MEASURED.
+Next: settle #209 builder and #297 recovery proposal; validate only completed clean commits.
 Wrapper releases the lease when this single tick returns.
 
 ## Dated history

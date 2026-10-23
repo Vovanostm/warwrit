@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Allocate the remaining #209 round; hold #298 after review — 2026-10-23, PUBLISHED
+
+- Branch `Vovanostm/uix-outcome-inspection-209`: the five-section contract for
+  [#209](https://github.com/Vovanostm/warwrit/issues/209) is accepted. Allocate
+  its already queued rework 2/2 to adapting the isolated result inspection to
+  current main; preserve all earlier failures and the U + T + V gates. This is
+  an allocation, not implemented or accepted gameplay. #211/#210 stay separate.
+- [PR #298](https://github.com/Vovanostm/warwrit/pull/298), #297: fresh reviewer
+  REWORK at `d2272625` identifies a late interruption window before settlement.
+  Existing 63 isolated assertions passed; that timing case was NOT_RUN. Two
+  source reworks are consumed. Allocate only a read-only finite recovery
+  proposal, with no new source round or check/runtime grant.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) keeps one status block and
+  the owner scope quote. #179 defects and exhausted budget remain unchanged.
+  Coordinator game checks/browser/full gates NOT_RUN; no merge or resource
+  measurement is claimed. This supersedes the preceding pending-review status.
+
 ### Resume #297 review and split the outcome bundle — 2026-10-23, PUBLISHED
 
 - Branch `Vovanostm/uix-outcome-inspection-209`: coordinator sequencing under
