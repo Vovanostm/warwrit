@@ -360,13 +360,25 @@ function spriteIdentity(unit: Unit): string {
   return [unit.profileId, unit.name, unit.id].join(' ');
 }
 
+function profileToken(identity: string): SpriteId | undefined {
+  const token = identity.toUpperCase().match(/\b(?:W\d{2}|B\d{3})\b/)?.[0] as SpriteId | undefined;
+  return token && token in art ? token : undefined;
+}
+
+function weaponProfile(weaponId: Unit['weaponId']): SpriteId | undefined {
+  return weaponId ? byWeapon[weaponId] : undefined;
+}
+
+function creatureProfile(identity: string): SpriteId {
+  return creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
+}
+
 function spriteProfile(unit: Unit): SpriteId | undefined {
   const identity = spriteIdentity(unit);
-  const token = identity.toUpperCase().match(/\b(?:W\d{2}|B\d{3})\b/)?.[0] as SpriteId | undefined;
-  if (token && token in art) return token;
-  if (unit.visualKind === 'human') return byWeapon[unit.weaponId ?? ''];
-  if (unit.visualKind === 'creature')
-    return creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
+  const token = profileToken(identity);
+  if (token) return token;
+  if (unit.visualKind === 'human') return weaponProfile(unit.weaponId);
+  if (unit.visualKind === 'creature') return creatureProfile(identity);
   return undefined;
 }
 

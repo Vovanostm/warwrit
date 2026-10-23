@@ -4,12 +4,13 @@
 
 Coordinator: continuing the open-issue queue. Owner scope (2026-10-21):
 «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
-Main is `e0c8cb2e`. #285 closed by PR #292. #293 closed by PR #299.
-#295 closed by PR #301. Timing ratio 1.127081, PASS.
-#272 / PR #287 is updated onto that main. The OIDC test counts only its own
-issuer. CI on this head is pending.
-#179 stays open. No game-rule, API, protocol, replay, schema or migration change.
-Next: green CI on this head, then merge PR #287.
+Main is `690d140b`. #272 closed by PR #287. #285 closed by PR #292.
+#293 closed by PR #299. #295 closed by PR #301.
+#269 menu extraction is on `Vovanostm/qa-269-menu-extract` at `e7bcff84`,
+226/300 source lines. Focused tests, typecheck, lint, and check:changes PASS.
+The mounted mill journey is NOT_RUN. Parent #262 stays open.
+#179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
+Next: publish #269, run its mounted check, then merge on green CI.
 
 ## Dated history
 
