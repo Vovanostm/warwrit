@@ -5419,7 +5419,7 @@ validation and independent evaluator/absolute visual ACCEPT remain pending;
 legacy live substitution and measured performance remain NOT_RUN/NOT_MEASURED.
 Local evidence: `.orca/uix-affordability-bands/report.md`.
 
-### #209: адресное исправление контраста — 2026-10-24, LOCAL
+### #209: адресное исправление контраста — 2026-10-24, PUBLISHED
 
 Ветка `Vovanostm/uix-outcome-inspection-209`, код `a2e5b770`: сводка итога
 и осмотр получили непрозрачную светлую/тёмную обводку; суммарный scope 261/300.
@@ -5428,7 +5428,8 @@ Local evidence: `.orca/uix-affordability-bands/report.md`.
 0 action POST. Это авторские измерения, не независимая приёмка.
 
 Авторский validate: восемь шагов PASS, format FAIL только в общем CURRENT_PLAN.
-Координатор исправляет форматирование и записи; повторный validate ожидается.
+Координатор исправил форматирование и записи: validate на `3e93b13f` PASS,
+9/9 шагов, 68 related tests. Назначены свежие независимые U/T/V round 4.
 Все 18 записанных PID отсутствуют, два порта свободны, PID-файл и профиль удалены
 по прямой проверке координатора. История 2/2, полная U/T/V-приёмка и блокировки
 #179/E2 сохранены. Для проверки: mill 6 × 6, seed 20261009 → победа →

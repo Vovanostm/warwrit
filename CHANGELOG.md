@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Record targeted #209 repair and clear shared format blocker — 2026-10-24, LOCAL
+### Record targeted #209 repair and clear shared format blocker — 2026-10-24, PUBLISHED
 
 - `Vovanostm/uix-outcome-inspection-209`: owner-authorized CSS repair `a2e5b770`
   adds an opaque pale/dark perimeter to outcome summary and inspection, 261/300
@@ -18,7 +18,8 @@ requests.
   3.4169:1 against terrain. These are author results, not independent acceptance.
 - Author validation passed eight steps and failed only CURRENT_PLAN formatting.
   Coordinator rewrites/formats its single status block and records the result in
-  [the owning wiki](docs/wiki/battlefield-test-maps.md). Fresh validation pending;
+  [the owning wiki](docs/wiki/battlefield-test-maps.md). Coordinator validation at
+  `3e93b13f` passed all nine steps, including 68 related tests; fresh U/T/V queued;
   original failed rounds, full U/T/V and #179 scene/archive holds remain.
 - Both workers settled; #297 source preparation is preserved pending exclusive
   checks. Direct #209 cleanup confirms 18 PIDs absent, two ports free, no profile

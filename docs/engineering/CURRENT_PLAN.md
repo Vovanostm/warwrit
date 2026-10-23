@@ -9,7 +9,7 @@ Main `25dd9a48`; CI `40015365287` SUCCESS. This tick: 0 merged PRs with playable
 #209 targeted CSS source `a2e5b770`, evidence `4f37c76f`: opaque pale/dark perimeter.
 Author reports victory R8/rev163, 0 inspection action POST, sampled minimum 3.4169:1.
 Author validation: eight steps PASS; only coordinator CURRENT_PLAN format FAIL.
-Coordinator corrects shared records/formatting; fresh validation is pending.
+Coordinator corrected shared records/formatting; validation at `3e93b13f` PASS, 9/9.
 Direct cleanup: 18 recorded PIDs absent, ports 23618/25618 free, no PID file/profile.
 Full U/T/V, original AC/DoD and #179 scene/E2 exact archive/state holds remain.
 Try mill 6 × 6, seed 20261009; victory → «Осмотреть поле», inspect and reopen.
@@ -18,9 +18,9 @@ PR #298 and #297 stay blocked; pending exclusive checks and fresh Tier D review.
 #179 targeted repair authorized, queued; inherited blocked label and findings retained.
 #305 frozen; #309 contract accepted, builder queued behind targeted repairs.
 Open PRs #298/#134/#129 have no merge eligibility in the supplied snapshot.
-Coordinator owns exclusive validation; no game runtime is currently allocated.
+Fresh U/T/V round 4 queued; evaluator `task_2d02d98ea4d2` owns next private runtime.
 Daily metrics/scout/digest complete; no duplicate daily report or scout.
-Next: validate #209, then launch fresh evaluator, visual and text gates.
+Next: settle fresh gates; then allocate #179 measured repair and #297 exclusive checks.
 No merge, deployment, acceptance waiver or new game-rule decision.
 Wrapper releases the lease on return; workers do not own the queue.
 
