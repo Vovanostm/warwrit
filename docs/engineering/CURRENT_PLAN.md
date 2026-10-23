@@ -2,6 +2,32 @@
 
 ## Pipeline status — 2026-10-23
 
+Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and existing one-issue local slices.
+Main: `25dd9a48`; newest CI `40015365287` was in progress at this tick's read.
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
+#297 / PR #298: rework 2 source `a8f7d935`, report head `d2272625`.
+Coordinator validation: all six applicable steps PASS; author 63 shell assertions PASS.
+Fresh independent Tier D review 3 is running; CI and acceptance remain pending.
+#209 is next for a visible result: after victory, collapse the outcome and inspect the field.
+The old #209/#211/#210 bundle is split into sequential one-issue slices.
+Its worktree `uix-w1-outcome`, commits and failed-gate history are preserved.
+#209 gets a read-only contract on current main; no new source round granted yet.
+#211 and #210 follow #209. #263 children #305–#307 stay queued.
+#179: source frozen, B002 strip/body overlap and night value score 1 remain.
+E2 archive/state is BLOCKED_ENV; original two reworks and supplemental remain consumed.
+No new source allowance, proof waiver or parent acceptance for #179.
+#262/#269/#303 are closed; no claim that unreachable menu states were proven.
+Daily metrics/scout/digest already recorded; no duplicate daily run.
+No live game runtime, full suites or resource measurements in this tick.
+Next: settle #297 reviewer and #209 contract; apply their exact-head results.
+Wrapper releases the lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-23
+
 Coordinator: cursor-session qa-269-close. Owner (2026-10-23): close #269 and
 #262, and put the remaining proof in a new issue. Also (2026-10-21):
 «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
@@ -11,8 +37,6 @@ Full play-through ACCEPT on `cf3b2901` against `690d140b`, day and night.
 #303 records it. #263 is next.
 #179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
 Next: start #263.
-
-## Dated history
 
 **Previous checkpoint (superseded above):**
 

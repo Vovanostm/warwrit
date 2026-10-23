@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Resume #297 review and split the outcome bundle — 2026-10-23, LOCAL
+
+- Branch `Vovanostm/uix-outcome-inspection-209`: coordinator sequencing under
+  the existing owner delegation prioritizes the visible final-field inspection
+  in [#209](https://github.com/Vovanostm/warwrit/issues/209). The old three-issue
+  bundle is split into #209, #211 and #210, in that order; retained source and
+  failed-gate history are not reset. Only a read-only contract is allocated.
+- [PR #298](https://github.com/Vovanostm/warwrit/pull/298), #297: source
+  `a8f7d935` rejects lsof diagnostics even on exit 1. Coordinator validation
+  on `d2272625` passed all six applicable steps; author reports 63 isolated
+  assertions. Fresh Tier D review and final CI remain pending. Live runtime
+  NOT_RUN; resource savings NOT_MEASURED. No merge or gameplay acceptance.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) has one rewritten status
+  block with the owner quote; #179 defects, proof gaps and exhausted budget
+  remain explicit. #305–#307 stay queued behind the visible result.
+
 ### Close #262 and #269; the full play-through is #303 — 2026-10-23, PUBLISHED
 
 - Owner decision 2026-10-23: close #269 and #262. Menu extraction is on main
