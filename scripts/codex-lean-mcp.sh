@@ -1,17 +1,43 @@
 #!/usr/bin/env bash
-# Print `codex exec` arguments that keep the user's unused MCP servers from
-# starting for a headless pipeline run. Each enabled server costs a resident
-# node process (browser MCPs about 50 MB each) for the whole run although the
-# briefs use the playwright-cli skill, gh and git. One `-c` / `key=false` pair
-# per line; servers that cannot be overridden (plugin-provided) are skipped.
-# Keep servers by name: WARWRIT_AGENT_MCP="codebase-memory-mcp other".
+# Print one -c / key=false argument per line. Kept servers are explicitly named
+# by WARWRIT_AGENT_MCP (default codebase-memory-mcp). Never change global config.
 set -uo pipefail
 keep=" ${WARWRIT_AGENT_MCP-codebase-memory-mcp} "
-names="$(codex mcp list --json 2>/dev/null \
-  | python3 -I -c 'import json,sys;[print(s["name"]) for s in json.load(sys.stdin) if s.get("enabled")]' 2>/dev/null)"
+listing="$(codex mcp list --json)" || { echo 'MCP discovery failed' >&2; exit 1; }
+names="$(python3 -I -c '
+import json,re,sys
+servers=json.load(sys.stdin)
+assert isinstance(servers,list), "expected MCP server array"
+for s in servers:
+    assert isinstance(s,dict) and isinstance(s.get("enabled"),bool), "invalid MCP entry"
+    assert isinstance(s.get("name"),str) and re.fullmatch(r"[A-Za-z0-9_.-]+",s["name"]), "invalid MCP name"
+for s in servers:
+    if s["enabled"]: print(s["name"])
+' <<< "$listing")" || { echo 'MCP decoder failed' >&2; exit 1; }
 for name in $names; do
-  [[ "$keep" == *" $name "* ]] && continue
-  # A -c key for a server config.toml does not define makes codex refuse to start.
-  codex -c "mcp_servers.$name.enabled=false" mcp list --json > /dev/null 2>&1 || continue
+  if [[ "$keep" == *" $name "* ]]; then
+    echo "MCP intentionally kept enabled: $name" >&2
+    continue
+  fi
+  diagnostic="$(codex -c "mcp_servers.$name.enabled=false" mcp list --json 2>&1)"
+  status=$?
+  if (( status != 0 )); then
+    printf '%s\n' "$diagnostic" >&2
+    if [[ "$diagnostic" == *'missing field `command`'* && "$diagnostic" == *"mcp_servers.$name"* ]]; then
+      echo "MCP unsupported override: $name; refusing to leave it enabled" >&2
+    else
+      echo "MCP override probe failed: $name (exit $status)" >&2
+    fi
+    exit 1
+  fi
+  if ! python3 -I -c '
+import json,sys
+servers=json.load(sys.stdin)
+assert isinstance(servers,list), "expected MCP probe array"
+assert any(s["name"] == sys.argv[1] and s.get("enabled") is False for s in servers), "MCP override did not disable server"
+' "$name" <<< "$diagnostic"; then
+    echo "MCP probe decoder/disable verification failed: $name" >&2
+    exit 1
+  fi
   printf -- '-c\nmcp_servers.%s.enabled=false\n' "$name"
 done

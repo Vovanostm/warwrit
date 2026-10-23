@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# Close what an agent opened for a check: its playwright-cli browser session and
-# this worktree's combat lab. Never touches other sessions or other worktrees.
-# Exit 1 lists what is still running so the agent (or its wrapper) sees it.
-# Usage: scripts/agent-cleanup.sh [playwright-session]  (default: $PLAYWRIGHT_CLI_SESSION)
+# Close one task browser. Stop the lab only with an explicit current-task grant:
+# WARWRIT_LAB_OWNER=<session> scripts/agent-cleanup.sh <session>.
+# Never infer lab ownership from shared worktree ports. Exit 1 on failed checks.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 2
 session="${1:-${PLAYWRIGHT_CLI_SESSION:-}}"
@@ -14,22 +13,39 @@ pwcli() {
 }
 
 if [[ -n "$session" ]]; then
-  pwcli -s="$session" close > /dev/null 2>&1 || true
-  # `list` prints "- <name>:" then "  - status: open" for every live browser.
-  if pwcli list 2>/dev/null | grep -A1 -F -- "- $session:" | grep -q 'status: open'; then
+  if ! pwcli -s="$session" close; then
+    echo "UNVERIFIED browser close failed for $session" >&2
+    left=1
+  fi
+  listing="$(pwcli list)"
+  status=$?
+  if (( status != 0 )); then
+    printf '%s\n' "$listing" >&2
+    echo "UNVERIFIED browser listing failed (exit $status)" >&2
+    left=1
+  elif awk -v header="- $session:" '$0 == header { found=1; next } found { exit($0 !~ /status: open/) } END { if (!found) exit 1 }' <<< "$listing"; then
     echo "LEFTOVER playwright-cli session $session is still open"
     left=1
   fi
 fi
 
-if [[ -f .worktree-ports ]]; then
-  bash scripts/orca-play.sh stop > /dev/null
-  # shellcheck disable=SC1091
-  . ./.worktree-ports
-  holders="$(lsof -nP -tiTCP:"$COMBAT_API_PORT" -tiTCP:"$COMBAT_WEB_PORT" -sTCP:LISTEN 2>/dev/null | tr '\n' ' ')"
-  if [[ -n "$holders" ]]; then
-    echo "LEFTOVER ports $COMBAT_API_PORT/$COMBAT_WEB_PORT held by pid $holders"
+if [[ -n "$session" && "${WARWRIT_LAB_OWNER:-}" == "$session" ]]; then
+  if [[ ! -f .worktree-ports ]]; then
+    echo "UNVERIFIED owned lab has no .worktree-ports" >&2
     left=1
+  else
+    bash scripts/orca-play.sh stop || left=1
+    # shellcheck disable=SC1091
+    . ./.worktree-ports
+    holders="$(lsof -nP -tiTCP:"$COMBAT_API_PORT" -tiTCP:"$COMBAT_WEB_PORT" -sTCP:LISTEN)"
+    status=$?
+    if (( status > 1 )); then
+      echo "UNVERIFIED lab port inspection failed (exit $status)" >&2
+      left=1
+    elif [[ -n "$holders" ]]; then
+      echo "LEFTOVER ports $COMBAT_API_PORT/$COMBAT_WEB_PORT held by pid $holders"
+      left=1
+    fi
   fi
 fi
 
