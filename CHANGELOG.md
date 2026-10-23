@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Queue resource-hygiene rework — 2026-10-23, PUBLISHED
+
+- `Vovanostm/qa-hooks-menu-controls`, coordinator records only: independent
+  Tier D review of [PR #298 / #297](https://github.com/Vovanostm/warwrit/pull/298#issuecomment-6362301506)
+  at `57541c35` returned REWORK: cross-task lab stop, failed browser inspection
+  reported CLEAN, omitted cleanup failure, MCP discovery failure enabling all
+  servers, and wrapper termination skipping cleanup. Findings are static
+  counterexamples; reviewer syntax/diff checks PASS, runtime regressions NOT_RUN.
+- Exact successful task/dispatch settlement was verified against the local
+  result and report, recorded before release and acknowledgment. Release was
+  `retained/no_owned_resource`, with no process action. Rework waits #179's
+  exclusive checks/runtime handback; no builder or new source round allocated.
+- Latest main CI `39933066795` at `690d140b` completed SUCCESS. PR #298 still
+  needs fixes, fresh exact-head ACCEPT and coordinator validation. #179 remains
+  live; #269 waits; original acceptance and failed-round history are retained.
+- Zero merges and zero merged PRs with playable proof this tick. New coordinator
+  game checks/typecheck/validate/browser/full gates NOT_RUN. Daily work already
+  complete; no duplicate digest/scout. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  rewrites the single live block and retains dated history. No owning wiki,
+  setup/API/game-rule/protocol/replay/schema/migration contract changes.
+
 ### Advance catalogue integration and resource review — 2026-10-23, PUBLISHED
 
 - `Vovanostm/qa-hooks-menu-controls`, coordinator records only: one Orca tick
