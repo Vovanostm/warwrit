@@ -4,26 +4,24 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-24): «Разрешить адресные исправления» for #209/#297/#179.
-The owner answered the question about additional targeted fixes after exhausted two rounds;
-keep failure history, change technique for repeated defects, require fresh independent acceptance.
-Native owner reply: `msg_01a16acb-2962-7543-ba3c-7b4afcca410b`, 2026-10-23T22:04:21.731Z.
+Original 2/2 and supplemental failures remain; fresh independent acceptance required.
 Main `25dd9a48`; CI `40015365287` SUCCESS. This tick: 0 merged PRs with playable proof.
-#209: allocate task `task_e91cec22e863`, one bounded opaque boundary/backing CSS repair.
-Existing branch `Vovanostm/uix-outcome-inspection-209`; prior evaluated code `3e2b7fac`.
-Only outcome selectors in `battle-view.css`; no scene/vitals/TS/player-text changes.
-Try mill 6 × 6, seed 20261009; victory → «Осмотреть поле», inspect, day/night close/overview.
-Evaluator 3 found boundary-to-terrain 1.666:1; target meaningful boundaries ≥3:1.
-Original 2/2 and consumed supplemental failures retained; this is an explicit extra allocation.
-Full fresh U/T/V, original AC/DoD and #179 E2 exact archive/state acceptance holds remain.
-#179 and #297 repairs authorized but queued; their blocked labels remain until their allocation.
-PR #298 remains blocked. No merge, acceptance waiver, deployment or paid-service permission.
-#305 frozen; #309 contract accepted, builder queued behind the targeted repairs.
-Daily scout settled: two reported victories, 0 new findings; existing #175 covers autoplay pauses.
-Coordinator directly confirmed all 27 scout PIDs absent, both ports free, no PID file/profile.
-Task `task_e91cec22e863` reserves web and focused checks/private runtime after scout cleanup.
-Daily metrics/digest already posted; no duplicate scout or daily report.
-New source repair, validation and independent acceptance are pending, not PASS.
-Next: launch bounded #209 builder, then validate and fresh independent gates after settlement.
+#209 targeted CSS source `a2e5b770`, evidence `4f37c76f`: opaque pale/dark perimeter.
+Author reports victory R8/rev163, 0 inspection action POST, sampled minimum 3.4169:1.
+Author validation: eight steps PASS; only coordinator CURRENT_PLAN format FAIL.
+Coordinator corrects shared records/formatting; fresh validation is pending.
+Direct cleanup: 18 recorded PIDs absent, ports 23618/25618 free, no PID file/profile.
+Full U/T/V, original AC/DoD and #179 scene/E2 exact archive/state holds remain.
+Try mill 6 × 6, seed 20261009; victory → «Осмотреть поле», inspect and reopen.
+#297 source preparation settled: three dirty source/test paths retained, all checks NOT_RUN.
+PR #298 and #297 stay blocked; pending exclusive checks and fresh Tier D review.
+#179 targeted repair authorized, queued; inherited blocked label and findings retained.
+#305 frozen; #309 contract accepted, builder queued behind targeted repairs.
+Open PRs #298/#134/#129 have no merge eligibility in the supplied snapshot.
+Coordinator owns exclusive validation; no game runtime is currently allocated.
+Daily metrics/scout/digest complete; no duplicate daily report or scout.
+Next: validate #209, then launch fresh evaluator, visual and text gates.
+No merge, deployment, acceptance waiver or new game-rule decision.
 Wrapper releases the lease on return; workers do not own the queue.
 
 ## Dated history
@@ -56,7 +54,6 @@ Open PRs: #298 blocked; #134/#129 have failed checks in supplied snapshot.
 No merge; no new coordinator game tests/validate/browser/full gates this tick.
 Next: settle #305 builder; retain #209 recovery proposal and original acceptance holds.
 Wrapper releases the lease when this single tick returns.
-
 
 ### Historical checkpoint — 2026-10-23
 

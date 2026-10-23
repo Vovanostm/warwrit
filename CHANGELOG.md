@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Record targeted #209 repair and clear shared format blocker — 2026-10-24, LOCAL
+
+- `Vovanostm/uix-outcome-inspection-209`: owner-authorized CSS repair `a2e5b770`
+  adds an opaque pale/dark perimeter to outcome summary and inspection, 261/300
+  cumulative source lines. Author reports actual mill victory R8/rev163,
+  unchanged inspection revision and zero action POST; finite raster minimum
+  3.4169:1 against terrain. These are author results, not independent acceptance.
+- Author validation passed eight steps and failed only CURRENT_PLAN formatting.
+  Coordinator rewrites/formats its single status block and records the result in
+  [the owning wiki](docs/wiki/battlefield-test-maps.md). Fresh validation pending;
+  original failed rounds, full U/T/V and #179 scene/archive holds remain.
+- Both workers settled; #297 source preparation is preserved pending exclusive
+  checks. Direct #209 cleanup confirms 18 PIDs absent, two ports free, no profile
+  or PID file. No game rules, schema, migrations or dependencies changed; no merge.
+
 ### Allocate owner-approved targeted repairs — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-outcome-inspection-209`: owner answered «Разрешить адресные исправления» for additional #209/#297/#179 corrections after exhausted rounds. Native reply `msg_01a16acb-2962-7543-ba3c-7b4afcca410b` at 2026-10-23T22:04:21.731Z was read directly; retain original failures, technique changes and fresh independent acceptance. This supersedes the earlier procedural source freeze only for explicitly allocated repairs.
