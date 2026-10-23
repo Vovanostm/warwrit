@@ -4,26 +4,27 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-24): «Разрешить адресные исправления» for #209/#297/#179.
-Owner reply: `msg_01a16acb-2962-7543-ba3c-7b4afcca410b`; allocation retained.
+Owner reply: `msg_01a16acb-2962-7543-ba3c-7b4afcca410b`; original failure history retained.
 Main `25dd9a48`; CI `40015365287` SUCCESS. This tick: 0 merged PRs with playable proof.
-#209 frozen published head `024ce8ae`: text round 4 ACCEPT, all eight scores >= 2.
-Visual round 4 BLOCKED_ENV; field scale, night values and tooltip collision still fail.
-Missing reference comparison, exact E2 layering state and terminal-defeat readback remain.
-Evaluator round 4 is live and retains exclusive runtime/checks; findings forwarded.
-#179 source preparation settled FAILED / PENDING_EXCLUSIVE_CHECKS at `441730b7`.
-Four tracked source/test paths remain uncommitted under the source-only allocation.
-Prepared visible-bottom strip anchor preserves anatomical support and sorting.
-Prepared figure-only night tone mapping is unverified; author source count 199/300.
-Tests/audit/runtime NOT_RUN; new clearance and night-value results NOT_MEASURED.
-Inherited agent:blocked, original 2/2, supplemental history, E2/AC6 and full Tier V retained.
-#297 source preparation also awaits exclusive checks; issue and PR #298 remain blocked.
+#209 frozen head `024ce8ae`: evaluator 4 REWORK, text ACCEPT, visual BLOCKED_ENV.
+Independent affected contrast passes: minimum sampled perimeter/terrain 3.416929:1.
+Native 125% terminal death label is obscured by utilities; scene owner is #179.
+Fresh real victory/defeat and comparison evidence supplied; prior absent-defeat limit superseded.
+Exact E2/archive/all-overlay and other stated accessibility limits remain unproven.
+Evaluator settled; coordinator directly verified 22 PIDs, two ports, PID file/profile absent.
+#179 targeted continuation allocated: preserved visible-bottom/night WIP plus framing/label fixes.
+Write scope: original four scene/catalogue paths, battle-field-vitals.ts and matching tests.
+One worker receives exclusive checks/runtime and normal audited commits; source cap remains 300.
+Prepared source was 199/300; fresh checks/runtime results remain NOT_RUN/NOT_MEASURED.
+Inherited agent:blocked, original 2/2/supplemental, full Tier V, E2 and AC6 remain.
+#297 prepared source and blocked PR #298 wait the next exclusive check slot.
 #309 builder queued; #214 frozen pending accepted #179 integration.
-Try default mill 6 × 6, seed 20261009 → Start, day/night; new repair is not accepted.
-Three settlements recorded, released (no_owned_resource) and acknowledged.
-Daily metrics/scout/digest already complete; no duplicate daily action.
-Next: settle #209 evaluator and verify cleanup before allocating #179/#297 checks.
-Only coordinator records published this tick; source WIP preserved, no new source round.
-Wrapper releases the lease on return; no merge or deployment this tick.
+Try default mill 6 × 6, seed 20261009 → Start → victory → Inspect field, native 125%.
+Keep arrival camera, pin human-2 and move pointer away; day/night exposes the label collision.
+Next: settle the bounded #179 continuation, verify cleanup, then validate and fresh gates.
+Daily metrics/scout/digest complete; no repeated daily action or acceptance waiver.
+Coordinator records only published this tick; no game-code merge or deployment.
+Wrapper releases its lease on return; the assigned worker continues independently.
 
 ## Dated history
 

@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Transfer checks to the bounded #179 continuation — 2026-10-24, PUBLISHED
+
+- `Vovanostm/uix-179-catalogue-integration`: coordinator records for the owner's
+  targeted corrections. #209 evaluator 4 at `024ce8ae` is REWORK: independent
+  contrast measurements pass (minimum sampled 3.416929:1), but native 125%
+  utility controls obscure the terminal death label. Fresh victory/defeat and
+  comparison evidence supersedes the earlier absent-defeat limitation; full
+  Tier V and exact E2/archive/all-overlay limits remain.
+- Coordinator verified all 22 recorded runtime PIDs absent, both ports empty,
+  and PID file/browser profile absent before allocating #179 exclusive checks.
+  The continuation preserves four dirty source/test paths, finishes the separate
+  visible-bottom/night technique and addresses retained framing/event-label
+  findings inside existing scene ownership; no source budget reset or waiver.
+- Prepared source count 199/300 is author-reported; new candidate checks and
+  runtime measurements NOT_RUN/NOT_MEASURED at allocation. Blocked labels,
+  original failed rounds, E2/AC6 and fresh independent gates stay required.
+  #297 remains queued. Local briefs/reports are under `.orca/uix-w4-scale/`;
+  #209 report is `.orca/uix-outcome-inspection-209/eval-4.md` in its worktree.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) has one rewritten status block.
+  Documentation/status checks PASS; publication contains records only, not source
+  acceptance. No setup/API/game-rule/protocol/replay/schema change or merge.
+
 ### Settle #209 critics and #179 source preparation — 2026-10-24, PUBLISHED
 
 - `Vovanostm/uix-179-catalogue-integration`: coordinator records only. #209
