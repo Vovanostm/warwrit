@@ -1308,13 +1308,8 @@ export async function mountSpriteBattleScene(
       overview,
     );
     if (!bounds) return;
-    if (overview) {
-      camera.fit(bounds, 0);
-      return;
-    }
-    const mid = (bounds.minZ + bounds.maxZ) / 2;
-    const half = ((bounds.maxZ - bounds.minZ) / 2) * 0.86;
-    camera.fit({ ...bounds, minZ: mid - half, maxZ: mid + half }, 0);
+    // The measured safe frame already includes every silhouette; tightening it crops allies.
+    camera.fit(bounds, 0);
   };
   let focusedId: string | null = null;
   const focusUnit = (id: string) => {
