@@ -9,6 +9,102 @@ requests.
 
 ## Unreleased
 
+### Bring #285 onto main after the timing gate — 2026-10-23, PUBLISHED
+
+- `Vovanostm/core-integration-db-isolation`, #285: hosted timing run
+  [39874638529](https://github.com/Vovanostm/warwrit/actions/runs/39874638529)
+  on harness `625c9774` (PR #301, closes #295). Baseline median 63.66s
+  (`65d7466bb5bd34ae04ad0ef8e252b5d8808fa5a0`), candidate median 71.75s
+  (`cf6a6fb544bca5e553704225f1b6d104ae903298`), ratio 1.127081, result PASS.
+  All six samples exited 0. Artifact `integration-timing-39874638529-1`.
+- Full CI on `cf6a6fb5`, run `39760378548`, attempts 4 through 8 succeeded in a
+  row. Attempt 3 failed a unit-test timeout in
+  `packages/testkit/src/world-free-movement.spec.test.ts`, not an integration
+  assertion.
+- This merge updates the branch onto main `625c9774`. CI on the merge head is
+  pending. Not merged.
+
+### Measure matched integration command wall times — 2026-10-23, PUBLISHED
+
+- `Vovanostm/core-hosted-integration-timing`, #295, Refs #285: a manual
+  `workflow_dispatch` harness times the unchanged `pnpm test:migrations` for
+  three sequential baseline/candidate pairs. Baseline
+  `65d7466bb5bd34ae04ad0ef8e252b5d8808fa5a0`, candidate
+  `cf6a6fb544bca5e553704225f1b6d104ae903298`. Each sample is its own clean
+  checkout and a new disposable PostgreSQL. Medians are reported only when all
+  three pairs are valid; the timing result is PASS only when the candidate
+  median is at most 1.20 times the baseline median.
+- Ordinary CI, bootstrap, packages, tests, migrations and dependencies are
+  unchanged. Hosted dispatch and the six measured timings remain NOT_MEASURED
+  until the workflow is on main. Published as a pull request; not merged.
+
+### #293 merged — 2026-10-23, MERGED
+
+- [PR #299](https://github.com/Vovanostm/warwrit/pull/299) merge `19e62633` closed #293.
+  Owner disposition 2026-10-23: merge at `720bf05c` without the missing E2
+  clipboard archive. Independent visual scores on that head were all at least 2;
+  the verdict had been BLOCKED only for that missing file. E3 before rows were
+  captured locally at `c62ad2d0` and were not committed.
+
+### Rework #293 desktop HUD opening fit — 2026-10-22, LOCAL
+
+- `Vovanostm/uix-179-desktop-composition-rework`, #293 Part of #179: technique
+  change after visual-1 scene integration 1 — focus-only overhead badge reservation,
+  milder initial-frame span (0.86), night unit emissive darkened (far mode no longer
+  brighter), HUD opening margins, dock compaction, no clearHover on HUD resize.
+- Source budget **291/300** against main (tests excluded). Initiative cards are 74px
+  wide so six queue portraits fit at 1366×768 / 125%. Focused framing/scene
+  tests and typecheck PASS. Independent visual-4 scores every applicable criterion
+  ≥2 at AC1 short/125 including night value/palette; E1 on/off pairs captured on
+  rework head. E2 exact `codex-clipboard-6235d07a…` PNG/state remains **NOT_FOUND**
+  after bounded workspace/evidence/codex/GitHub search; E3 `c62ad2d0` before rows
+  **NOT_RUN** until baseline capture. Hover-after-dock-resize drops fixed by not
+  clearing hover on ResizeObserver.
+- No rules/protocol/replay/schema/migration/dependency/art catalogue change.
+
+### Publish independent session and editor proof — 2026-10-22, PUBLISHED
+
+- `Vovanostm/qa-hooks-session-editor`, [PR #294](https://github.com/Vovanostm/warwrit/pull/294), #268: owner-requested #262/#231 extraction
+  and issue-recorded pure autoplay/disabled allocation preserve the existing
+  player journey. Source `973e036a`, independent Tier U ACCEPT at `46514ddb`,
+  source scope 256/300; [contract, full retained proof, verdict and 20 JPEGs](docs/engineering/evidence/qa-hooks-session-editor/README.md).
+- Coordinator validator exit 0, all nine gates PASS; evaluator 62 focused tests,
+  typecheck/lint/format, genuine day/night round-8 victories and fresh mounted
+  lifecycle/guards/timers PASS. Direct 25-PID/port cleanup verified before handback.
+  Normal evidence commit hook PASS; final-head hosted CI remains required.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) reconciles #293's settled
+  `79a5e407` candidate, coordinator validation 9/9 and fresh full Tier V workers;
+  author matrix is not acceptance. Short native readability and E1/E2/E3 stay open.
+  PR #292 attempts 4–8 now satisfy five consecutive full hosted passes; matched
+  timing remains NOT_MEASURED and blocks merge. No source or acceptance waiver.
+- #269 AND #262 final 20/15 and all parent gates remain required. New coordinator
+  gameplay/full suites NOT_RUN; performance NOT_MEASURED. No setup/API/wiki,
+  rule/protocol/replay/schema/migration/dependency change. Published as PR #294;
+  final-head hosted CI and merge pending.
+
+### Gate the owner-scope prompt and reconcile coordinator records — 2026-10-22, PUBLISHED
+
+- `claude/tick-prompt-owner-scope`, [PR #291](https://github.com/Vovanostm/warwrit/pull/291),
+  #290: source `a198ef98` independently ACCEPTed; coordinator setup PASS and
+  validator exit 0, all 6 applicable gates PASS. Scope 2/300 and one closing issue;
+  shell syntax/diff checks PASS. No TypeScript diff, so related tests/lint/audit
+  are NOT_RUN by validator. End-to-end coordinator/model compliance NOT_RUN.
+- Coordinator-only CHANGELOG/CURRENT_PLAN follow the gated source. The current
+  plan now has one active status block, actual owner delegation and preserved
+  history. The rejection guard remains a separate follow-up; final-head hosted
+  CI and merge pending. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md).
+- #268 ordinary rework 2 follows a source-grounded pure autoplay/disabled
+  allocation repair; staged 170/300 preserved, normal audit/<=300/full Tier U
+  still required. Final #269 AND #26220/15, consumed fallback 1 and last ordinary
+  round unchanged. #293's disjoint source-only contract prepares ahead; its
+  source/runtime grant waits the sole web slot. Prior source/failure evidence kept.
+- PR #292 unchanged `cf6a6fb5`: historical two CI passes, then attempt 3 failed
+  coverage world-free-movement with a 5000 ms timeout; consecutive count 0/5.
+  One unchanged-candidate diagnostic attempt 4 requested without code/test-limit
+  changes; five passes/matched timing remain required. 0 merged PRs with playable
+  proof this tick. No game-rule/API/protocol/replay/schema/migration/dependency
+  change; gameplay/full suites NOT_RUN, performance NOT_MEASURED.
+
 ### Publish local isolation gates and advance independent web work — 2026-10-22, PUBLISHED
 
 - `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
@@ -326,6 +422,42 @@ requests.
   [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation.
   No setup/API/wiki/rule/replay/schema/migration/dependency change; full local
   verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED.
+
+### Tick prompt is not owner scope — 2026-10-22, PUBLISHED
+
+- `claude/tick-prompt-owner-scope`, #290: the coordinator wrote status blocks in
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) whose scope line quotes the
+  tick prompt as the owner's words, against
+  [warwrit-orca](.agents/skills/warwrit-orca/SKILL.md). The prompt in
+  `scripts/orca-pipeline-tick.sh` now says it is the tick script, never owner
+  scope, and that CURRENT_PLAN keeps exactly one status block. CURRENT_PLAN is
+  left to its single writer, the coordinator.
+- A `scripts/check-current-plan.sh` rule rejecting "Perform exactly ONE tick" is
+  deferred to a follow-up on #290: it would fail every PR's "PR scope" job until
+  main's CURRENT_PLAN is clean. Checks: `bash -n` on the script and
+  `scripts/check-pr-scope.sh`; effect on ticks NOT_MEASURED until ticks run on main.
+
+### Cut coordinator tick context — 2026-10-22, MERGED
+
+- Merged 2026-10-22 as [PR #289](https://github.com/Vovanostm/warwrit/pull/289) (65d7466b).
+- `claude/orca-coordinator-context`, #288: coordinator cost. Measured
+  2026-10-21/22: 100 ticks, 181.9M input of which 11.0M uncached, versus 5.5M
+  uncached for all workers. Per-call context climbed from 27k to 110–125k tokens
+  within a tick, mostly from whole-file reads of the skill and a 397 KB
+  `checkpoint.json` holding 134 history keys and 19 finished slices.
+- New `scripts/orca-checkpoint-compact.sh` runs before every tick and removes
+  tick records, worker receipts, old history entries and finished-slice detail
+  (400 KB → 122 KB on a copy of the live file); removed parts go to
+  `.orca/pipeline/archive/checkpoint-history.jsonl`. The digest lists active
+  slices, the tick prompt asks for narrow reads, and `scripts/orca-metrics.sh`
+  reports uncached input and output separately. Rule in
+  [warwrit-orca](.agents/skills/warwrit-orca/SKILL.md) § Principles.
+- Review: independent critic REWORK on `64da03fe` (ownership lists trimmed,
+  [ready] rework budget and findings dropped); fixed by removing only known
+  history keys. Checks: compaction run twice on a copy (second run no-op; all
+  `ownership`, rework-round and pending-findings keys kept), digest and metrics
+  run against live state, `bash -n` on changed scripts. Effect on tokens per
+  tick NOT_MEASURED until ticks run on main.
 
 ### Retain initial sizing evidence and sequence existing P0 — 2026-10-22, PUBLISHED
 

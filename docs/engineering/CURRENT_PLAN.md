@@ -1,340 +1,312 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-22
+## Pipeline status — 2026-10-23
 
-Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
-Scope: epic #217 and existing local slices, exactly one tick. Owner (2026-10-21):
+Coordinator: continuing the open-issue queue. Owner scope (2026-10-21):
 «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
-This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 source `b4d033ca`, gated `0ffa146d`, source scope 219/300.
-Fresh independent reviewer4 and local evaluator4 ACCEPT at the exact gated head.
-[Contract, verdicts, author history and real captures](evidence/core-integration-db-isolation/README.md).
-Independent 19 real-PG lifecycle PASS, global-only child exits 0/1/7;
-one native smoke + eight-file 60/60 PASS, two-file default overlap, SQL disposal.
-Original persistent wolf JOIN/victory/effects/replay/receipts/idempotency PASS.
-Real mill day/night move/bow/end-turn and genuine round-7 victory played.
-Passing original effects invocation is traced; historical null cause UNPROVEN.
-Coordinator directly rechecked 950 recorded PIDs absent, 21 ports clear,
-project Docker inventories empty, no play.pid before local runtime transfer.
-Validator at `fbf8ec9a`: exit 0, all 9 PASS; only records preceded gated head.
-Evidence/records-only publication now enables mandatory hosted proof for #285.
-Matched hosted median <=20% timing NOT_MEASURED; five complete CI NOT_RUN.
-Main moved to `65d7466b` (merged infrastructure #289); newest CI was in progress.
-No merge while main CI, issue AC or expected-head gates are incomplete.
-#272 / PR #287 remains held for existing encounter failure; #282 retained.
-#179 full visual2 BLOCKED_ENV plus repeated scene-integration score 1:
-native 1366x768/125% body/equipment readability requires a technique change.
-All-overlay pairs, exact historical rejected state and ten baseline rows missing.
-Source frozen `989669ef`, 298/300; original two reworks/supplemental exhausted.
-Read-only fit/decomposition contract live: `task_ef3fb77b5feb`; no source allowance.
-#268 sole web builder `task_723e5b9418b1` live, exclusive local checks/runtime.
-Original contract, three paths, normal audit, <=300 and Tier U remain required.
-Coordinator evidence commit uses only existing-coverage audit; no test/runtime.
-#214 waits #179; #269 AND #262 final 20/15 and #263/#231 residual gates remain.
-Both lanes have covered work; daily metrics/scout/triage/digest already complete.
-No production/API/wiki/game-rule/protocol/replay/schema/migration change.
-Coordinator new game/full verify/stress/migrations/browser NOT_RUN this tick.
-Next: hosted #285 proof; settle #179 contract and #268 build in later ticks.
-Wrapper releases its lease when this single tick returns.
+Main is `625c9774`. #293 closed by PR #299. #295 closed by PR #301.
+Hosted timing run `39874638529`: baseline median 63.66s, candidate median 71.75s,
+ratio 1.127081, result PASS. Six samples, all exits 0.
+#285 / PR #292 is updated onto that main. CI on `cf6a6fb5` attempts 4–8
+succeeded in a row (run `39760378548`). CI on the merge head is pending.
+#272 / PR #287 stays unmerged until this isolation change is on main.
+#179 stays open. No game-rule, API, protocol, replay, schema or migration change.
+Next: green CI on this head, then merge PR #292 and update PR #287.
 
 ## Dated history
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and existing one-issue local slices; exactly one tick.
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
+#179 remains in review; visual critic 1 settled BLOCKED_ENV at `97c3e000`.
+Full absolute rubric: scene integration 1 at 1366 × 768 / native 125%, day/night;
+other inspected style scores at least 2. Repeated failure requires a technique change.
+Missing current-head comparison, exact rejected archer state, all-overlay pairs
+and ten original baseline rows remain open; extra images alone do not fix score 1.
+Local report: uix-w4-scale/.orca/uix-w4-scale/visual-1.md.
+Exact failed settlement recorded, released and acknowledged; inputs forwarded.
+Evaluator 1 task_19db80c1bbb3 / ctx_6c1b16438ad4 remains live/exclusive;
+only its existing evaluation/captures/cleanup continue. No source round allocated.
+Source `989669ef` stays frozen, scope 298/300; normal reworks 2/2 and
+consumed supplemental history retained. Full original AC/DoD and Tier V required.
+Prior coordinator validation at `41d42136`: exit 0, 9/9 and 73 related tests PASS.
+Try default mill 6×6, seed 20261009, Start before camera input, day/night.
+This is an unfinished visual result; short-viewport readability remains defective.
+#285 bounded global-hook repair waits positive evaluator runtime cleanup;
+original 2/2 history, <=300 source lines, normal audit and fresh Tier L retained.
+Historical encounter null cause UNPROVEN; hosted <=20% timing NOT_MEASURED;
+five full CI NOT_RUN. #272 / PR #287 lacks green CI; no merge eligibility.
+#214 source frozen pending #179; #268 waits its web/checks/runtime turn.
+Final #269 AND #262 component 20/15 retained; no parent acceptance.
+Main CI `39751131136` at `ff2f5f96` was in progress at this tick's read.
+No PR eligible for merge; PR #280's prior REWORK retained from the supplied state.
+Lanes covered; daily metrics/scout/triage/digest already complete.
+New game tests/typecheck/validate/browser/full gates NOT_RUN this tick.
+No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+Next: settle evaluator; then route its findings and the independent visual failure,
+and transfer checks/runtime only after direct positive cleanup.
+Wrapper releases its lease when this single tick returns.
+
+**Previous checkpoint (superseded above):**
+
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 final rework 2/2: source `83372b0b`, report `05bca4f3`, scope 211/300.
-Normal commits retain Client errors through completed closure, including both
-original query failure and distinct shutdown FATAL; author 15 real-PG tests PASS.
-Coordinator validate at `05bca4f3`: exit 0, all 9 gates PASS;
-related 1 PASS / 14 SKIP without DB supplies no fresh database acceptance.
-Coordinator directly confirmed all 136 recorded PIDs absent, 14 ports clear,
-and empty project-labelled Docker container/network/volume inventories.
-Exact builder and diagnostic settlements recorded/acked/released.
-Fresh Tier L round 3 reviewer and evaluator are the next gate owners;
-reviewer source-only, evaluator exclusive checks/DB/browser/runtime.
-Diagnostic report: .orca/core-integration-db-isolation/terminal-effects-diagnosis.md.
-Existing native 59 PASS / 1 FAIL at encounter line 4156 remains a blocker.
-Batch omission, outer guard and leadership deferral are distinct possible paths;
-leadership is a source-supported lead, exact cause/correction UNPROVEN.
-Capture the original invocation branch before cleanup; no production fix,
-assertion weakening or inherited green claim is authorized.
-Matched hosted <=20% timing NOT_MEASURED; five full CI runs NOT_RUN.
-#272 / PR #287 retains failed CI blocker; #282 regression unchanged.
-Coordinator resolves #179 engineering recovery question under owner delegation:
-one supplemental shared-projection correction, <=300 total, original full Tier V.
-#179 planning, source frozen until #285 gate cleanup; #214 waits #179;
-#268 waits its web turn; #269 AND #262 final component 20/15 remains required.
-#274/#280 unresolved REWORK; no merge. Covered lanes prevent refill.
-Daily work already complete; no duplicate metrics/scout/digest.
-No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
-Coordinator browser/full verify/stress/migrations NOT_RUN this tick.
-Next: settle fresh #285 gates and original invocation diagnosis, then web slot.
+#179 supplemental source `989669ef`, handback `bcb7ccc8`, scope 298/300.
+Shared projection correction committed; overall worker outcome FAILED.
+Try default mill 6×6, seed 20261009, Start before camera input, day/night.
+Author: 73 related tests, replay 2, typecheck/lint/format/normal audit PASS;
+12 candidate viewport/zoom rows, 165+165 hovers and real victories recorded.
+Those are author results; no independent Tier V acceptance is claimed.
+Original ten baseline rows and exact historical rejected-state reproduction missing;
+short-viewport readability/night score 1 remains material; all original AC/DoD retained.
+Coordinator verified 32 owned PIDs absent, two ports clear, no play.pid.
+Source frozen: both ordinary reworks and the one supplemental allowance retained.
+Proof-only continuation queues coordinator validation then independent Tier V;
+no additional source round, numerical/style waiver or ownership expansion.
+#285 global-only teardown probe `task_2f9f3633ff75` / `ctx_44bdb7e379f2` is live.
+Exclusive checks/DB/runtime; current source `83372b0b`, head `d02e2b4f` frozen.
+Reviewer 3 REWORK remains; evaluator 3 local ACCEPT does not settle it.
+Historical terminal-effects null cause UNPROVEN; hosted <=20% timing NOT_MEASURED;
+five full CI NOT_RUN. Original 2/2 source cap retained, no third source attempt.
+#179 validation/Tier V and #268 builder checks wait for positive probe cleanup.
+#214 source frozen pending #179; final #269 AND #262 component 20/15 retained.
+#272 / PR #287 failed CI; #274/#280 REWORK; none meets merge gates.
+Lanes covered; daily work complete, no duplicate metrics/scout/digest.
+No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+Coordinator game tests/typecheck/runtime/validate NOT_RUN this tick.
+Next: settle bounded #285 probe, apply fallback; validate/gate frozen #179.
 Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 Tier L evaluator round 2 REWORK at `0998c1d5`, source `9ea84fcf` unchanged.
-Independent 13 real-PG lifecycle tests PASS; eight distinct migrated databases,
-default parallelism and per-file/global disposal confirmed by SQL observation.
-Native migration suite: 59 PASS / 1 FAIL / 0 SKIP; terminal effects remain null
-at unchanged encounters/postgres.integration.test.ts:4156 after victory.
-Later terminal proof/root/receipt/idempotency assertions NOT_RUN after failure.
-Shared-database causality and remaining fixture/clock/batch cause are UNPROVEN.
-Mill browser: day/night, move, bow and round-7 victory; sampled usability only.
-Reviewer round 2 REWORK: end-time Client error can be lost; source risk UNEXECUTED.
-Next: final rework 2/2, same seven-path ownership and <=300 source-line budget.
-Fix assigned lifecycle shutdown propagation; preserve original plus distinct errors.
-Remaining encounter failure needs a separate bounded diagnosis; no production fix
-or encounter assertion change is authorized under the lifecycle allocation.
-Evaluator settlement verified; coordinator checked all 23 recorded PIDs absent,
-six ports clear and empty project-labelled container/network/volume inventories.
-Transfer exclusive checks/DB/browser/runtime only to the new core builder.
-Fresh validate and Tier L remain required after replacement source.
-Matched hosted <=20% timing NOT_MEASURED; five full CI runs NOT_RUN.
-#272 / PR #287 remains blocked by failed CI; #282 regression unchanged.
-#179 failed rework 2/2; existing recovery-cap question, no third source attempt.
-#214 frozen pending #179; #268 waits runtime; final #269 AND #262 20/15 retained.
-#274/#280 unresolved REWORK; no merge. Covered lanes prevent refill.
-Daily work already complete; no duplicate metrics/scout/digest.
-No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
-Coordinator tests/typecheck/validate/browser/merge NOT_RUN this tick.
+#285 evaluator 3 local ACCEPT at `d02e2b4f`: fresh 15 lifecycle PASS,
+one complete native 60/60 PASS; SQL proves eight migrated clones/default overlap
+and disposal. Mill day/night move/bow/end-turn/round 7 victory sampled.
+Historical eval 2 terminal-effects null remains unresolved; cause UNPROVEN.
+Reviewer3 REWORK: global-only teardown rejection may leave CLI exit 0;
+source risk UNEXECUTED, needs a bounded real global-only child-Vitest probe.
+Original 2/2 source rounds exhausted; NO third source attempt authorized.
+Hosted matched <=20% timing NOT_MEASURED; five full CI NOT_RUN.
+Exact evaluator settlement recorded/acked/released; coordinator directly verified
+27 recorded PIDs absent, 10 ports clear and empty labelled Docker inventories.
+#285 source stays committed/pushed `83372b0b`, records head `d02e2b4f`; no PR.
+#179 existing supplemental allowance now allocated to `task_3c736b835ddd`:
+dispatch `ctx_13a40baae66c`, sole web builder/exclusive checks/runtime.
+Source `0638d7be`, current scope 244/300; add vitals/scenery projection propagation
+and owned scene/terrain wiring/tests. Original two-round history is not reset.
+All original AC/DoD, 80 px, 32 px vitals, 30 px threshold and full Tier V retained.
+Short-viewport readability/night 1 and incomplete original proof stay unresolved.
+#214 frozen pending #179; #268 waits its web turn; final #269 AND #262 component 20/15 retained.
+#272 / PR #287 failed CI; #274/#280 REWORK; none meets merge gates.
+Lanes already covered; daily work complete, no duplicate metrics/scout/digest.
+No setup/API/game-rule/protocol/replay/schema/migration/dependency change.
+Coordinator game tests/typecheck/runtime/validate NOT_RUN this tick.
+Next: #179 finite correction; then #285 global-only reproduction and fallback decision.
 Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof; no state transition or eligible merge.
+#179: failed rework 2/2 retained; source `0638d7be`, scope 244/300, no PR.
+Camera/figure 30-degree vs vitals/scenery/terrain 50-degree mismatch remains.
+Author 9/9 validator, 67 tests and current native matrix are not independent acceptance.
+Short-viewport critic readability/night value 1 and original incomplete proof remain.
+Coordinator decision: engineering delegation covers ownership, not an implicit cap reset.
+Fallback 1 is inapplicable: failure is not audit-only. Fallback 2 cannot finish
+another issue from this single-issue slice. Fallback 3 has no multi-issue or
+oversized scope; a projection-only child leaves original composition/proof open.
+No independently deliverable split is established; no duplicate issue or third attempt.
+Existing supplemental-recovery question remains; retain all original AC/DoD/Tier V.
+Recommended exception: vitals/scenery and owned terrain/scene wiring plus tests,
+within 300 source lines, without numerical/style/threshold or proof waivers.
+Full local author report: uix-w4-scale/.orca/uix-w4-scale/report.md.
+#285: sole live first builder `task_a480dc850e8f` / `ctx_a599968c758c`;
+clean committed source observed at `0b0c44eb`, exclusive checks/hooks/DB/runtime.
+Source confirms generated DB inventory follows successful CREATE; lost-success
+response cleanup is an UNEXECUTED advisory forwarded to that existing builder.
+All eight files, parallelism, <=20% hosted timing, five full CI passes and Tier L remain.
+#272 PR #287 failed CI; #274/#280 REWORK retained from supplied snapshot.
+#268 waits exclusive slot; #214 frozen; no uncovered eligible lane refill.
+Daily metrics/scout/triage/digest already complete; no duplicate daily work.
+Two status messages recorded before acknowledgment; no new settlement or release.
+No game tests/typecheck/runtime/validation run by coordinator; performance NOT_MEASURED.
+New process listing was sandbox-denied; no process-cleanup proof claimed this tick.
+Documentation-only diff/format/link/readback checks; no gameplay contract change.
+Next: #285 builder result; existing #179 cap-exception question before source work.
+Wrapper releases its lease when this single tick returns.
+
+**Previous checkpoint (superseded above):**
+
+### Historical checkpoint — 2026-10-22
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
+.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
+.agents/skills/warwrit-orca/slices/epic-217.json.”
+This tick: 0 merged PRs with playable proof; no PR meets its merge gates.
+#179: final rework 2 FAILED, source `0638d7be`, report `f9c14f28`, scope 244/300.
+WIP preserved; author validator 9/9 and 67 related tests PASS, not acceptance.
+Local full report: uix-w4-scale/.orca/uix-w4-scale/report.md.
+Author measures W01 93.0184 px and current 12-row input matrix; not remeasured here.
+Camera/figures use 30 degrees while vitals/scenery/terrain reference uses 50.
+All original AC/DoD and full independent Tier V remain open; no PR/merge.
+Late critic advisory: native 1366×768/125 day/night readability 1, night value 1;
+small initial actors/large markers persist despite stability. Not remeasured here.
+State needs-owner: only the explicit two-round recovery cap needs an exception;
+projection propagation itself is a concrete engineering correction, not a rule question.
+Recommended supplemental scope: vitals/scenery, owned terrain/scene wiring and tests;
+retain <=300 source lines, existing thresholds/dimensions, complete original proof.
+Coordinator verified all 19 captured owned PIDs absent, ports 23319/25319 empty,
+and no play.pid; exact failed settlement recorded, acknowledged and released.
+#285: accepted contract -> implementing, sole core builder `task_a480dc850e8f`,
+dispatch `ctx_a599968c758c`; dedicated core-integration-db-isolation worktree.
+Exact seven source/config/test paths allocated; exclusive checks/hooks/DB/runtime.
+All eight files, unchanged parallelism/assertions, <=20% matched hosted timing and
+five full CI passes remain required; no shared-DB root cause presumed proven.
+#272 PR #287 retains snapshot failed encounter CI; no merge or auth rewrite.
+#268 accepted contract queued behind exclusive checks/runtime; #214 stays frozen.
+#274/#280 retain unresolved REWORK; snapshot green CI does not authorize merge.
+No other eligible uncovered refill; daily metrics/scout/digest already complete.
+Coordinator game tests/typecheck/runtime/validation NOT_RUN this tick;
+owned-process/port, native dispatch, source/report and documentation checks only.
+No new setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
+Next: #285 builder settlement; resolve #179 recovery cap before another source attempt.
+Wrapper releases its lease when this single tick returns.
+
+**Previous checkpoint (superseded above):**
+
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 rework 1/2 source `9ea84fcf`, report `2824c81f`; source scope 200/300.
-Exact native successful settlement recorded, acknowledged and released.
-Exact generated targets enter the ledger before CREATE; awaited Client errors
-and original-plus-cleanup failures have real PostgreSQL regressions.
-Author: 13 lifecycle checks PASS; lost CREATE replies reproduced for empty,
-template and clone allocation. Other-run sentinel survives owned cleanup.
-Coordinator validator at `2824c81f`: exit 0, all 9 gates PASS.
-Related 1 PASS / 12 SKIP without DB is not fresh PostgreSQL acceptance.
-Coordinator checked all 44 declared PIDs absent, 18 ports clear and empty
-project-labelled Compose container/network/volume inventories.
-Next: fresh independent Tier L reviewer and evaluator, round 2; source frozen.
-Reviewer is source-only; evaluator exclusively owns checks/DB/browser/runtime.
-Repeat full eight-file disposal/parallel run and persistent encounter journey;
-play actual mill move/bow through victory with 1440×900 day/night captures.
-Prior REWORK and eight-file/60-test results are history, not new-head acceptance.
-Normal commits/audit, source <=300 and every original #285 AC remain mandatory.
-Matched hosted <=20% timing and five full CI runs remain NOT_MEASURED/NOT_RUN.
-#272 / PR #287 failed snapshot CI; accepted OIDC proof and #282 assertions retained.
-#179 failed rework 2/2, frozen source `0638d7be`; existing recovery-cap question.
-#214 frozen pending #179; #268 waits exclusive runtime; final #269 AND #262 20/15.
-#274/#280 unresolved REWORK; no merge. Ready/planning backlog prevents refill.
-Daily metrics/scout/digest already complete; no duplicate daily work.
-No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
-Coordinator full verify/stress/migrations/browser NOT_RUN this tick.
+#179 rework 1 settled FAILED; exact native task/dispatch/result matched, released.
+Actual branch head `5083854b`, source `1c199e94`; clean, already pushed; scope 231/300.
+Author validator 9/9 and 66 tests reported; coordinator did not rerun game checks.
+Author native 12-row matrix, 165/165 day/night and victories retained as author proof.
+All 15 owned PIDs absent, 23319/25319 clear, play.pid absent at live readback.
+Coordinator decision: final rework 2 changes scene composition/optics technique;
+measured Overview FOV 2.776 radians and ground/apron expansion are the source lead.
+Preserve base 1440 W01 >=80 px, unchanged sizes, original AC/DoD and full Tier V.
+Task `task_4649ca190196` owns the next sole web/checks/runtime slot.
+Try `/combat-lab` → unchanged mill seed 20261009 → Start, then Overview, day/night.
+Replay compatibility uses existing programmatic reader; no new import feature.
+Absent-tiles proof, original before matrix and exact remaining layer cases stay open.
+No evaluator/visual ACCEPT or #179 PR; #214 stays frozen awaiting accepted integration.
+#285 contract accepted, build deferred; #272 PR #287 retains failed snapshot CI.
+#268 accepted contract waits sole web writer; #269 AND #262 retain final 20/15 limits.
+Infrastructure #274/#280 retain REWORK; no merge without fresh gates.
+Owning wiki: [battlefield test maps](../wiki/battlefield-test-maps.md).
+Local contract/report/proof: uix-w4-scale/.orca/uix-w4-scale/ in its own checkout.
+Daily metrics/scout/triage/digest complete; no duplicate daily work or refill.
+Coordinator game tests/typecheck/browser/full suites NOT_RUN; performance NOT_MEASURED.
+No setup/API/rule/protocol/replay/schema/dependency/deployment change.
+Next: final bounded #179 rework, coordinator validation, then full independent Tier V.
 Wrapper releases its lease when this single tick returns.
 
-**Previous checkpoint (superseded above):**
+## Dated history
 
-## Pipeline status — 2026-10-22
+**2026-10-22 superseded rework-1 live checkpoint:**
+
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 source `0b0c44eb`, evaluated head `284efd79`; source scope 176/300.
-Independent reviewer and evaluator REWORK: lost CREATE reply leaves an owned
-PostgreSQL database outside the cleanup ledger; unhandled Client error reproduced.
-Local verdicts: core-integration-db-isolation/.orca/core-integration-db-isolation/
-review-1.md and eval-1.md. Exact settlement recorded, acknowledged and released.
-Evaluator: eight native files / 60 tests PASS; nine lifecycle checks PASS;
-14 applied / zero pending migrations per file, overlapping files, disposal observed.
-Actual mill move/bow → round-7 victory, 1440×900 day/night captures; lab smoke
-and persistent encounter/replay/effects assertions are separate proof boundaries.
-Coordinator found all 18 declared PIDs absent, seven ports clear, and empty
-label-filtered Compose container/network/volume inventories before reassignment.
-Next: first bounded rework (1/2), same seven owned paths; exact-name reservation
-before CREATE, awaited Client errors and real lost-reply regression. No prefix sweep.
-Sole core builder receives exclusive checks/DB/runtime; #268 remains queued.
-Normal commits/audit, source <=300 and fresh Tier L gates remain mandatory.
-Prior validator 9/9 retained; new source validation follows rework.
-Matched hosted <=20% timing and five full CI runs remain NOT_MEASURED/NOT_RUN.
-#272 / PR #287 failed snapshot CI; accepted OIDC proof and #282 assertions retained.
-#179 failed rework 2/2, frozen source `0638d7be`; existing recovery-cap question.
-#214 frozen pending #179; #269 AND #262 final component 20/15; #263/#231 open.
-#274/#280 unresolved REWORK; no merge. Ready/planning backlog prevents refill.
-Daily metrics/scout/digest already complete; no duplicate daily work.
-No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
-Coordinator game tests/typecheck/validator/browser NOT_RUN this tick.
+#179 rework 1: sole builder `task_e0403f2dd2fc` / `ctx_f847a9fec5b8` is live.
+Try `/combat-lab` → default mill, seed 20261009 → Start before Overview;
+then supported editor near/far diagnostic, including genuine 1366 × 768 at 125%.
+Source `1c199e94`; published records `f623336a` at initial tick readback.
+Author journey advisory: manual first death R3/rev56, then autoplay victory
+R10/rev187; not independent runtime acceptance. Source tree was clean.
+Coordinator decision: historical replay proof uses existing programmatic
+`projectCombatLabReplay` / `replayCombat`, not the editor draft importer.
+Use supported draft/scene entry or public projection fallback for absent tiles;
+missing-tiles proof remains open. No new replay-import feature or gate waiver.
+Verified reader/export/test source; new tests/browser/measurements NOT_RUN.
+Prior short-screen readability/night value 1 and diagnostic integration 0 remain
+unresolved; reported clipping and pictured mesh cause remain unproven.
+Retain original AC/DoD, base-frame W01 80 px, <=300 source lines and full Tier V.
+Full independent evaluator + absolute visual critic remain pending; no #179 PR.
+#214 source stays frozen; integrate accepted #179 before repeating its final gates.
+#285 contract accepted; build waits #179 exclusive checks/hooks/runtime cleanup.
+#272 PR #287 retains failed hosted CI; #285 causality NOT_PROVEN, no merge.
+#268 contract accepted, waits sole web builder; #269 AND #262 keep final 20/15 limits.
+Infrastructure PRs #274/#280 retain REWORK; no fresh ACCEPT or merge.
+Records on `Vovanostm/uix-w4-scale`; source/runtime ownership stays with builder.
+Owning wiki: [battlefield test maps](../wiki/battlefield-test-maps.md).
+Local evidence: uix-w4-scale/.orca/uix-w4-scale/report.md and rework1 captures.
+Daily metrics/scout/triage/digest complete; no duplicate daily work or lane refill.
+This tick: native mailbox/liveness and documentation checks only;
+new game tests/typecheck/browser/full suites NOT_RUN, performance NOT_MEASURED.
+No rule/protocol/replay/schema/dependency/setup/API/deployment change.
+Next: complete #179 rework, validate, then full independent Tier V.
 Wrapper releases its lease when this single tick returns.
 
-**Previous checkpoint (superseded above):**
+**2026-10-22 superseded rework-allocation checkpoint:**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
 .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
 .agents/skills/warwrit-orca/slices/epic-217.json.”
-This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 source `0b0c44eb`, gated head `284efd79`; source scope 176/300.
-[Build report and actual proof limits](../../.orca/core-integration-db-isolation/report.md).
-Fresh Tier L reviewer REWORK: a committed CREATE whose reply fails can escape
-cleanup because the run ledger is updated after CREATE. Source risk UNEXECUTED.
-Local verdict: core-integration-db-isolation/.orca/core-integration-db-isolation/review-1.md.
-Exact reviewer settlement recorded, acknowledged and released; no source fix yet.
-Tier L evaluator task_cf926bbb6c7d / ctx_c4c26582a636 remains live and exclusively
-owns checks/DB/browser/runtime. Finding forwarded; no concurrent source mutation.
-Next: after evaluator settlement and positive cleanup, combine all findings into
-first rework; reserve exact run-owned targets before CREATE and retain errors.
-All original AC, source limit, normal audit and fresh Tier L gates remain required.
-Existing coordinator validation at `9896b585`: exit 0, all nine gates PASS;
-related 1 PASS / 8 SKIP without DB, no new PostgreSQL proof this tick.
-Full eight-file disposal and persistent journey pending independent evaluation.
-Matched hosted <=20% timing and five full CI runs remain NOT_MEASURED/NOT_RUN.
-#272 / PR #287 `c07b88d9`: snapshot CI failed; accepted OIDC proof retained.
-#282 rollback assertions unchanged; shared-database causality remains UNPROVEN.
-#179 frozen at source `0638d7be`, failed rework 2/2; existing cap question retained.
-#214 frozen pending #179; #268 accepted contract awaits exclusive checks slot.
-#269 AND #262 final component 20/15; #263/#231 remain open.
-#274/#280 retain unresolved REWORK; green snapshot CI permits no merge.
-Existing ready/planning backlog prevents refill; daily work already complete.
-No state-label change, PR or merge; no duplicate scout or owner question.
-No setup/API/wiki/rule/protocol/replay/schema/migration/dependency change.
-Game tests/typecheck/validator/runtime NOT_RUN by coordinator this tick.
+This tick: 0 merged PRs with playable proof; no merge or acceptance waiver.
+#179: retained source `514943b7`, ordinary commits, 198 source lines; Tier V pending.
+Try `/combat-lab` → default mill, seed 20261009 → Start before Overview.
+Author 1440 × 900 initial day/night: W01 84.7247 CSS px; six allies + nearest wolves.
+Author validator 9/9 and 83 related tests PASS; coordinator did not rerun them.
+Author native hovers cover 165 exposed cells; failed probes/remaining AC retained.
+1366 × 768 at genuine 125% FAIL: initiative height and camera refit oscillate.
+Coordinator extends #179 ownership only to initiative outer-height CSS;
+`battle-field-vitals.ts` and its 30 px threshold remain read-only.
+Rework 1 resumes retained source: stable HUD geometry, remove optional PNG decoder,
+complete original final-head matrix/AC; normal audit, <=300 source lines, full Tier V.
+#214 source frozen in its own checkout; integrate accepted #179 before its final gates.
+#285 contract accepted, proposed isolated-test lifecycle; build waits #179 runtime.
+#272 PR #287 retains failed hosted CI; #285 causality is NOT_PROVEN, no merge.
+#268 contract accepted, waits sole web builder; #269 AND #262 keep final 20/15 limits.
+Infrastructure PRs #274/#280 retain REWORK; no fresh ACCEPT or merge.
+Source/checks/runtime remain single-writer and serialized; no competing heavy run.
+Records published on `Vovanostm/uix-w4-scale`; no #179 PR or independent acceptance.
+Owning wiki: [battlefield test maps](../wiki/battlefield-test-maps.md).
+Local evidence: uix-w4-scale/.orca/uix-w4-scale/report.md, untracked in its checkout.
+Daily metrics/scout/triage/digest already complete; no duplicate daily work.
+New game tests/typecheck/browser/full suites NOT_RUN by this coordinator tick.
+No rules/protocol/replay/schema/dependency/deployment change; performance NOT_MEASURED.
+Next: rework #179, then coordinator validation and independent evaluator + visual critic.
 Wrapper releases its lease when this single tick returns.
 
-**Previous checkpoint (superseded above):**
+**2026-10-22 superseded published checkpoint:**
 
-## Pipeline status — 2026-10-22
-
-Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
-Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
-.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
-.agents/skills/warwrit-orca/slices/epic-217.json.”
-This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 source `0b0c44eb`, report `9896b585`; normal commits, source 176/300.
-[Build report and actual proof limits](../../.orca/core-integration-db-isolation/report.md).
-Four lifecycle scripts isolate migrated template, file clones and migration smoke;
-`test:migrations` selects eight files, maxWorkers 2/default parallelism unchanged.
-Author evidence: nine real-PG lifecycle checks, two native integration files,
-1440×900 day/night control smoke; no persistent victory/effects acceptance.
-Coordinator validator at `9896b585`: exit 0, all nine gates PASS.
-Related test result 1 PASS / 8 SKIP without DB; adds no real-PG proof.
-Coordinator directly found all 16 reported PIDs absent and three ports clear.
-Author SQL zero-leftovers claim lacks saved raw log; independently repeat cleanup.
-Next: fresh Tier L reviewer plus evaluator; evaluator alone owns checks/DB/runtime.
-Repeat full eight-file/migration smoke and persistent victory/effects journey.
-Lost-CREATE-reply cleanup advisory is unexecuted; fresh reviewer must assess it.
-Matched hosted <=20% timing and five complete CI passes remain NOT_MEASURED/NOT_RUN.
-#272 / [PR #287](https://github.com/Vovanostm/warwrit/pull/287), `c07b88d9`: CI failed;
-OIDC accepted source/proof retained; #282 rollback regression remains unchanged.
-Shared-database causality and leadership-choice lead remain UNPROVEN.
-#179 frozen after failed rework 2/2; existing supplemental-recovery question open.
-No third source attempt, criterion waiver or duplicate slice allocated here.
-#214 source frozen pending #179; #268 contract accepted, exclusive checks queued.
-#269 AND #262 final component 20/15; #263/#231 remain open.
-#274/#280 unresolved REWORK; green snapshot CI permits no merge.
-Existing ready/planning backlog prevents refill; daily work already complete.
-No PR/merge or game-rule/API/wiki/protocol/replay/schema/migration change.
-Full local verify/stress/migration suite NOT_RUN by coordinator this tick.
-Next tick consumes independent gates; source/proof defects follow fallback budget.
-Wrapper releases its lease when this single tick returns.
-
-**Previous checkpoint (superseded above):**
-
-## Pipeline status — 2026-10-22
-
-Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
-Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
-.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
-.agents/skills/warwrit-orca/slices/epic-217.json.”
-This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#285 complete five-section contract accepted; native worker succeeded/released.
-Contract: core-integration-db-isolation/.orca/core-integration-db-isolation/contract.md.
-Implementation waits for #179 exclusive checks/hooks/runtime cleanup.
-Proposed ownership: four integration lifecycle scripts, test:migrations,
-integration-mode Vitest hooks and one focused real-PG lifecycle test.
-No source/config/checks allocation yet; stop/split before 300 source lines.
-Current native integration command enables two files; proposed isolation enables
-all eight. Shared-database causality remains unproven; no root-cause claim.
-Original disposal/default parallelism/<=20% duration/five full CI criteria remain.
-#272 / [PR #287](https://github.com/Vovanostm/warwrit/pull/287), `c07b88d9`, remains OPEN with failed CI.
-Run `39715279402`: encounter terminal effects timestamp null, 24 PASS / 1 FAIL.
-OIDC accepted source/Tier L evidence retained; no merge or speculative rerun.
-Advisory leadership-choice pause is an UNPROVEN diagnostic lead: next owned
-rerun should observe apply IDs, revisions, admission fields and leadership state.
-Preserve non-null assertion; a proven separate fixture defect needs its own slice.
-#179 sole live builder `task_1af575ec832f` retains exclusive checks/runtime.
-Forwarded sampled short-desktop/day-night readability advisory to that builder;
-reported measurements not repeated here, no universal 80 px criterion inferred.
-Full original matrix, pan limits, accepted #184 hatch and Tier V remain required.
-No final evaluator/visual ACCEPT; #214 frozen and #268 contract waits for web slot.
-#269 AND #262 final component 20/15; #263/#231 remain open.
-#274/#280 unresolved REWORK; green CI alone permits no merge.
-Existing ready/planning backlog occupies both lanes; daily work already complete.
-No new worker, issue, label change, repeated scout or epic digest.
-Checks: native settlement/result/contract and PR head/CI readback PASS.
-Local game tests/typecheck/build/DB/browser NOT_RUN; performance NOT_MEASURED.
-No game-rule/API/wiki/protocol/replay/schema/migration implementation changed.
-Next: #179 author settlement/cleanup, then #285 build and #268 web sequencing.
-Wrapper releases its lease when this single tick returns.
-
-**Previous checkpoint (superseded above):**
-
-## Pipeline status — 2026-10-22
-
-Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
-Owner scope: “Perform exactly ONE tick of the pipeline defined in
-.agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan
-.agents/skills/warwrit-orca/slices/epic-217.json.”
-This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#272 / PR #287 head `c07b88d9`: CI failed, no merge.
-Run `39715279402`: encounter PostgreSQL v5 wolf test, line 4156,
-`effects_applied_at` null; that stage passed 24 tests and failed 1.
-OIDC source `37f35c6b`, accepted Tier L proof and validator 9/9 retained.
-[OIDC contract and evidence in PR #287](https://github.com/Vovanostm/warwrit/pull/287).
-Existing P0 #285 already describes this exact assertion failure on another PR.
-Coordinator decision: reuse #285; shared-database causality is not proven here.
-#285 dedicated branch `Vovanostm/core-integration-db-isolation`, base `c62ad2d0`.
-Read-only contract task `task_645d4bafb0dd` / dispatch `ctx_67f743b05304` live.
-Own only `.orca/core-integration-db-isolation/contract.md`; source NOT_RUN.
-Setup deferred to preserve #179 exclusive checks/hooks/runtime allocation.
-All #285 AC retained: file isolation, disposal, parallelism, <=20% duration,
-five full CI passes; contract must name ownership or split before source build.
-#179 sole live web builder `task_1af575ec832f`; clean head `514943b7` observed.
-Coordinator directed removal of the newly added optional bespoke PNG decoder;
-retain public catalogue fit/upward-step/widened-B001/unchanged-height assertions,
-actual alpha >=64 browser measurements and all original AC/DoD/full Tier V.
-Two new advisories recorded/acked and relayed to the existing #179 builder:
-initial-fit pan-limit risk (browser NOT_RUN), provisional ground detail concern.
-#214 remains frozen pending #179; #268 accepted contract waits for web slot.
-#269 AND #262 final component 20/15; #263/#231 remain open.
-#274/#280 retain unresolved REWORK; green CI alone permits no merge.
-No duplicate daily metrics/scout/triage/digest or new issue.
-Local game tests/typecheck/build/DB/browser NOT_RUN; performance NOT_MEASURED.
-No game rules, setup implementation, protocol, replay, schema or migration change.
-Next: #285 contract; #179 normal follow-up commit/proof and full Tier V.
-Wrapper releases its lease when this single tick returns.
-
-**Previous checkpoint (superseded above):**
-
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -367,7 +339,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -407,7 +379,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Previous checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Scope: epic #217 and existing local overrides; exactly one pipeline tick.
@@ -441,7 +413,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Pre-integration branch checkpoints (historical):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -504,7 +476,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous coordinator checkpoint:**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Scope: epic #217 and existing local overrides; exactly one pipeline tick.
@@ -539,7 +511,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Pre-resume branch records (historical):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -608,11 +580,11 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous editor publication checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 **Previous #271 publication / #282 builder handoff:**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -679,7 +651,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous #273 publication checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -745,7 +717,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous #273 premerge checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -779,7 +751,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous #273 validation/evaluator checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -814,7 +786,7 @@ Wrapper releases its own lease when this one tick returns.
 
 **Previous validation/evaluator dispatch checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -851,7 +823,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous builder dispatch checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -887,7 +859,7 @@ Wrapper releases its own lease when this single tick returns.
 
 **Previous contract checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -924,7 +896,7 @@ are ready. Wrapper releases its lease when this single tick returns.
 
 **Previous tick checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -955,7 +927,7 @@ then start one builder when the contract is ready. Gameplay checks for #231 NOT_
 
 **Pre-merge affordability checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
@@ -1062,7 +1034,7 @@ merge; finish #184 validator and start its fresh read-only Tier V gates.
 
 **Prior #249 gate checkpoint — 2026-10-21 (superseded above):**
 
-## Pipeline status — 2026-10-21
+### Historical checkpoint — 2026-10-21
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): “Perform exactly ONE tick of the pipeline defined in
