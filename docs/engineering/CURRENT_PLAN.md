@@ -5,7 +5,7 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper owns the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and existing one-issue local slices.
-Main: `25dd9a48`; newest CI `40015365287` was in progress at this tick's read.
+Main: `25dd9a48`; newest CI `40015365287` is green.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
 #297 / PR #298: rework 2 source `a8f7d935`, report head `d2272625`.
 Coordinator validation: all six applicable steps PASS; author 63 shell assertions PASS.
@@ -13,7 +13,7 @@ Fresh independent Tier D review 3 is running; CI and acceptance remain pending.
 #209 is next for a visible result: after victory, collapse the outcome and inspect the field.
 The old #209/#211/#210 bundle is split into sequential one-issue slices.
 Its worktree `uix-w1-outcome`, commits and failed-gate history are preserved.
-#209 gets a read-only contract on current main; no new source round granted yet.
+#209 read-only contract is running on current main; no new source round granted yet.
 #211 and #210 follow #209. #263 children #305–#307 stay queued.
 #179: source frozen, B002 strip/body overlap and night value score 1 remain.
 E2 archive/state is BLOCKED_ENV; original two reworks and supplemental remain consumed.

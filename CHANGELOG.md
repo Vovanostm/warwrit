@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Resume #297 review and split the outcome bundle — 2026-10-23, LOCAL
+### Resume #297 review and split the outcome bundle — 2026-10-23, PUBLISHED
 
 - Branch `Vovanostm/uix-outcome-inspection-209`: coordinator sequencing under
   the existing owner delegation prioritizes the visible final-field inspection
