@@ -2,15 +2,15 @@
 
 ## Pipeline status — 2026-10-23
 
-Coordinator: continuing the open-issue queue. Owner scope (2026-10-21):
+Coordinator: cursor-session qa-269-close. Owner (2026-10-23): close #269 and
+#262, and put the remaining proof in a new issue. Also (2026-10-21):
 «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
-Main is `690d140b`. #272 closed by PR #287. #285 closed by PR #292.
-#293 closed by PR #299. #295 closed by PR #301.
-#269 menu extraction is on `Vovanostm/qa-269-menu-extract` at `e7bcff84`,
-226/300 source lines. Focused tests, typecheck, lint, and check:changes PASS.
-The mounted mill journey is NOT_RUN. Parent #262 stays open.
+Main is `cf3b2901`. #269 closed (PR #302). #262 closed. #272, #285, #293 and
+#295 are closed. `CombatLab` is 13/13, CRAP 13.0.
+Full play-through ACCEPT on `cf3b2901` against `690d140b`, day and night.
+#303 records it. #263 is next.
 #179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
-Next: publish #269, run its mounted check, then merge on green CI.
+Next: start #263.
 
 ## Dated history
 
