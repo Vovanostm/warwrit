@@ -155,7 +155,14 @@ export function BattleView(props: BattleViewProps) {
         />
         <BattleThreats view={view} />
       </div>
-      <BattleOutcome view={view} busy={busy} onRestart={onRestart} onEditor={onEditor} />
+      <BattleOutcome
+        key={view.sceneKey}
+        view={view}
+        inspected={inspected}
+        busy={busy}
+        onRestart={onRestart}
+        onEditor={onEditor}
+      />
       <BattleForecast
         view={view}
         blockedCell={blockedCell}

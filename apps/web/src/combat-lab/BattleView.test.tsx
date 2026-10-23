@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it } from 'vitest';
 import type { CombatLabView } from '@warwrit/protocol';
 import { BattleView } from './BattleView.js';
+import { BattleOutcome } from './BattleOutcome.js';
 import { BattleHeading } from './BattleHeading.js';
 import { UnitCard } from './BattleUnitCard.js';
 import { fromCombatLabView } from './battle-presentation.js';
@@ -216,7 +217,12 @@ it('retains fallback inspection, utilities and honestly unavailable ability slot
 });
 
 it('does not claim a winner absent a server outcome', () => {
-  expect(render()).not.toContain('Победа:');
+  for (const status of ['active', 'resolved'] as const) {
+    const html = render({ ...view, status, outcome: null });
+    expect(html).not.toContain('aria-label="Результат боя"');
+    expect(html).not.toContain('Осмотреть поле');
+    expect(html).not.toContain('<h2>Победа</h2>');
+  }
 });
 
 it('does not show active stances or a future round after battle resolution', () => {
@@ -308,6 +314,9 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
   expect(html).toContain('Сдались <b>1</b>');
   expect(html).toContain('Начать заново');
   expect(html).toContain('К редактору');
+  expect(html).toContain('Осмотреть поле');
+  expect(html).toContain('aria-expanded="true"');
+  expect(html).toMatch(/aria-controls="([^"]+)"/);
   expect(html).not.toContain('data-attackable="true"');
 });
 
@@ -708,4 +717,51 @@ it('offers a separate accessible field overview without conflating the grid togg
   expect(html).toContain('aria-label="Обзор поля"');
   expect(html).toContain('Обзор поля (Home)');
   expect(html).toContain('aria-label="Показать всю сетку"');
+});
+
+it('keeps draw disclosure available without lifecycle callbacks or complete presentation data', () => {
+  const partial = {
+    ...fromCombatLabView(view),
+    status: 'resolved' as const,
+    activation: null,
+    outcome: { reason: 'round-limit' as const, winnerSideId: null },
+    viewerSideKnown: false,
+    controlledSideId: '',
+    units: [],
+  };
+  delete partial.sides;
+  const html = renderToStaticMarkup(
+    <BattleOutcome view={partial} busy={false} onRestart={undefined} onEditor={undefined} />,
+  );
+  expect(html).toContain('<h2>Ничья</h2>');
+  expect(html).toContain('Достигнут предел раундов.');
+  expect(html).toContain('Осмотреть поле');
+  expect(html).not.toContain('Начать заново');
+  expect(html).not.toContain('К редактору');
+  expect(html).toMatch(/role="status">Ничья · Раунд 2<\/span>/);
+  const { outcome, ...absent } = partial;
+  expect(outcome.winnerSideId).toBeNull();
+  expect(
+    renderToStaticMarkup(
+      <BattleOutcome view={absent} busy={false} onRestart={undefined} onEditor={undefined} />,
+    ),
+  ).toBe('');
+});
+
+it('disables lifecycle actions while busy without disabling field inspection', () => {
+  const html = renderToStaticMarkup(
+    <BattleOutcome
+      view={{
+        ...fromCombatLabView(view),
+        status: 'resolved',
+        outcome: { reason: 'last-side-standing', winnerSideId: 'human' },
+      }}
+      busy={true}
+      onRestart={() => {}}
+      onEditor={() => {}}
+    />,
+  );
+  expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Начать заново<\/button>/);
+  expect(html).toMatch(/<button[^>]*disabled=""[^>]*>К редактору<\/button>/);
+  expect(html).toMatch(/<button(?![^>]*disabled)[^>]*>Осмотреть поле<\/button>/);
 });

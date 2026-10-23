@@ -835,8 +835,9 @@
   top: 28%;
   left: 50%;
   transform: translateX(-50%);
-  width: 420px;
-  padding: 24px;
+  width: 620px;
+  max-width: calc(100% - 48px);
+  padding: 16px;
   border: 1px solid #a28c5d;
   border-radius: 12px;
   background: linear-gradient(150deg, #222a28f5, #131a19f5);
@@ -846,8 +847,8 @@
 }
 .battle-outcome-panel > p {
   margin: 0;
-  font-size: 10px;
-  letter-spacing: 1.7px;
+  font-size: 18px;
+  letter-spacing: 0.04em;
   color: #c3b188;
 }
 .battle-outcome-panel h2 {
@@ -856,7 +857,7 @@
   font-weight: 500;
 }
 .battle-outcome-panel > small {
-  font-size: 12px;
+  font-size: 18px;
   color: #c1c4b5;
 }
 .battle-outcome-sides {
@@ -877,7 +878,7 @@
 .battle-outcome-sides span {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 18px;
   color: #c3c8ba;
 }
 .battle-outcome-sides b {
@@ -886,7 +887,61 @@
 .battle-outcome-panel footer {
   display: flex;
   justify-content: center;
+  gap: 8px;
+}
+
+.battle-outcome-panel[hidden] {
+  display: none;
+}
+.battle-view .battle-outcome-panel .battle-control,
+.battle-view .battle-outcome-summary,
+.battle-outcome-inspection {
+  font-size: 18px;
+}
+.battle-view .battle-outcome-summary {
+  position: absolute;
+  z-index: 6;
+  top: var(--battle-safe-top, 144px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #273438;
+}
+.battle-outcome-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.battle-outcome-inspection {
+  position: absolute;
+  z-index: 6;
+  left: var(--battle-edge);
+  bottom: 28px;
+  width: 440px;
+  max-width: calc(100% - 280px);
+  max-height: calc(100% - var(--battle-safe-top, 144px) - 90px);
+  overflow: auto;
+  display: flex;
+  align-items: center;
   gap: 12px;
+  padding: 12px;
+  border: 1px solid #84948b;
+  border-radius: 6px;
+  background: #182225;
+  color: #eee8d7;
+}
+.battle-outcome-inspection p {
+  margin: 2px 0;
+}
+.battle-outcome-inspection > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.battle-view .battle-outcome-panel button:focus-visible,
+.battle-view .battle-outcome-summary:focus-visible {
+  outline: 3px solid #f3d99d;
+  outline-offset: 3px;
 }
 
 .battle-turn-acted {
