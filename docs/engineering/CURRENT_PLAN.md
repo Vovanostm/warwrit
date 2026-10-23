@@ -7,23 +7,23 @@ Owner scope (2026-10-21): «У тебя есть все полномочия п�
 Queue: epic #217 and existing one-issue local slices.
 Main: `25dd9a48`; newest CI `40015365287` is green.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-#209 contract accepted: after victory, collapse the outcome and inspect the field.
-Allocate its inherited pending rework 2/2; prior failed rounds remain consumed.
-Only result components/styles/tests, at most 300 source lines; no scene or menu work.
-U + T + V gates and original acceptance remain required; no candidate acceptance yet.
-#209 owns the web writer, sequential checks and its own runtime for this allocation.
-#211 and #210 follow #209. #263 children #305–#307 remain queued.
-#297 / PR #298: review 3 REWORK at `d2272625`; rework 2/2 exhausted.
-A late signal after cleanup can still dispatch a successful worker result.
-Reviewer ran 63 isolated assertions successfully; the late signal case was NOT_RUN.
-Source frozen; read-only recovery contract must propose a finite technique/split decision.
-No third source round, real runtime or checks allocated to that reader.
-Prior coordinator validation passed six applicable checks; it does not override REWORK.
-#179 remains frozen: body/strip overlap, night score 1 and E2 archive/state gap.
-Its exhausted rounds, scene ownership and original acceptance remain in force.
-Daily metrics/scout/digest already recorded; no duplicate daily run.
-Coordinator game tests, browser and full gates NOT_RUN; resource savings NOT_MEASURED.
-Next: settle #209 builder and #297 recovery proposal; validate only completed clean commits.
+#209 source `cc197d6`, report `050f2ee`: collapse the result and inspect the final field.
+Try default mill, 6 × 6, seed 20261009; victory → «Осмотреть поле» → reopen.
+Coordinator validate at `050f2ee`: all nine steps PASS; 250 source lines.
+Builder outcome FAILED for incomplete proof; inherited rework 2/2 remains exhausted.
+Source frozen. Next allocation is independent U evaluator, T text critic and V visual critic.
+Only evaluator owns sequential setup/browser/runtime; critics read source/images and write reports.
+Fresh baseline checkout: `eval-209-before-25dd9a48`, source fixed at main `25dd9a48`.
+Current-main before matrix, manual-first-death and remaining accessibility proof are pending.
+Author's 12 candidate configurations and victory are evidence, not independent acceptance.
+All 27 builder PIDs, both listeners, PID file and owned profile absent at handback.
+#211/#210 and #263 children #305–#307 remain queued behind this proof allocation.
+#297 / PR #298 remains blocked after review 3 REWORK; source frozen, no valid split.
+#179 remains blocked: body/strip overlap, night score 1 and E2 archive/state gap.
+Its scene ownership, exhausted rounds and original acceptance remain in force.
+Daily metrics/scout/digest already complete; no duplicate daily run.
+No PR or merge for #209; coordinator browser and final full gates NOT_RUN.
+Next: settle independent proof gates; preserve missing evidence and reproduced defects separately.
 Wrapper releases the lease when this single tick returns.
 
 ## Dated history

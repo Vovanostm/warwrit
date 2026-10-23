@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Freeze #209 source and allocate independent proof — 2026-10-23, LOCAL
+
+- Branch `Vovanostm/uix-outcome-inspection-209`, source `cc197d6`, report
+  `050f2ee`: collapsible aggregate result and projection-only final inspection
+  implement [#209](https://github.com/Vovanostm/warwrit/issues/209). Four owned
+  web/test/CSS paths; 250 changed source lines. Unknown observations remain
+  unknown; scene, combat rules, protocol and migrations are unchanged.
+- Coordinator `orca-validate.sh` at `050f2ee` passed all nine steps. The author
+  reports default-mill victory R8/revision 163, 12 current candidate browser
+  configurations, lifecycle/fixture/replay checks; these are not independent
+  acceptance. Builder outcome remains FAILED for missing mandatory proof.
+- Rework 2/2 is exhausted; freeze source and allocate only independent U/T/V
+  gates. Current-main before captures, manual-first-death and remaining
+  accessibility proof are pending. Direct handback found all 27 recorded PIDs,
+  both listeners, PID file and owned profile absent. #179 scene defects remain.
+- Updated [current plan](docs/engineering/CURRENT_PLAN.md) and the existing
+  [terminal HUD record](docs/wiki/battlefield-test-maps.md#итоговый-hud-завершённого-боя--2026-10-13).
+  No PR, merge or player acceptance; final full gates NOT_RUN.
+
 ### Allocate the remaining #209 round; hold #298 after review — 2026-10-23, PUBLISHED
 
 - Branch `Vovanostm/uix-outcome-inspection-209`: the five-section contract for
