@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Allocate targeted #179 source preparation — 2026-10-24, PUBLISHED
+
+- `Vovanostm/uix-179-catalogue-integration`: owner reply «Разрешить адресные
+  исправления» explicitly permits additional #179/#209/#297 corrections.
+  Coordinator allocates one source-only #179 packet while #209 independent
+  gates read its separate frozen branch. This is preparation, not a completed build.
+- Extend the original four scene/catalogue source paths only with
+  `battle-field-vitals.ts` and matching tests: derive visible-bottom strip
+  positioning without moving anatomical support, shadows or sorting; address
+  confirmed night body-value failure with a technique change. Preserve readable
+  32 × 16 vitals and four-pixel gap, original source cap and game contracts.
+- #209 retains all runtime/checks; worker must preserve WIP without executing
+  tests, audit, browser, commit or candidate runtime. New checks NOT_RUN.
+  Original failed 2/2, supplemental history, inherited blocked label, full Tier V,
+  E2 archive/state and AC6 evidence limits remain. No merge or acceptance.
+- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) has one rewritten status block;
+  earlier status is retained as dated history. Source/evidence brief is local
+  `.orca/tasks/179-targeted-source-1.md`; runtime proof follows an explicit handoff.
+
 ### Settle #179 evaluation and resume #297 repair — 2026-10-23, PUBLISHED
 
 - `Vovanostm/uix-179-catalogue-integration`: independent catalogue evaluation
