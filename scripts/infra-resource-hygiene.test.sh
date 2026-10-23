@@ -38,6 +38,7 @@ script(root / 'bin/lsof', '''echo 'lsof' >> "$TRACE"
 case "${LAB:-}" in
   leftover) echo 98765 ;;
   inspect-fail) echo 'port inspection failed' >&2; exit 2 ;;
+  inspect-fail-1) echo 'port inspection failed with exit 1' >&2; exit 1 ;;
   *) exit 1 ;;
 esac
 ''')
@@ -141,7 +142,9 @@ r = run('agent-cleanup.sh', 'warwrit-reader', WARWRIT_LAB_OWNER='warwrit-neighbo
 check(r.returncode == 0 and 'lab stop' not in trace(), 'another task grant cannot stop neighbour lab')
 reset()
 r = run('agent-cleanup.sh', 'warwrit-task', WARWRIT_LAB_OWNER='warwrit-task')
-check(r.returncode == 0 and trace().count('lab stop') == 1, 'explicit owner stops its lab once')
+check(r.returncode == 0 and trace().count('lab stop') == 1 and 'lsof' in trace()
+      and 'CLEAN' in r.stdout and not r.stderr,
+      'explicit owner stops its lab once; empty no-match exit 1 certifies CLEAN')
 for mode, expected in [('fail', 'UNVERIFIED'), ('open', 'LEFTOVER')]:
     reset()
     r = run('agent-cleanup.sh', 'warwrit-task', BROWSER=mode)
@@ -150,10 +153,13 @@ for mode, expected in [('fail', 'UNVERIFIED'), ('open', 'LEFTOVER')]:
     if mode == 'fail':
         check('list unavailable' in r.stderr and 'close unavailable' in r.stderr,
               'close and listing diagnostics survive')
-for mode in ('leftover', 'inspect-fail', 'stop-fail'):
+for mode in ('leftover', 'inspect-fail', 'inspect-fail-1', 'stop-fail'):
     reset()
     r = run('agent-cleanup.sh', 'warwrit-task', WARWRIT_LAB_OWNER='warwrit-task', LAB=mode)
     check(r.returncode != 0 and 'CLEAN' not in r.stdout, f'lab {mode} stays failed')
+    if mode.startswith('inspect-fail'):
+        check('port inspection failed' in r.stderr and 'UNVERIFIED lab port inspection' in r.stderr,
+              f'lab {mode} preserves inspection diagnostics')
 
 for mode, diagnostic in [('enum-fail', 'discovery failed'), ('decode-fail', 'decoder failed'),
                          ('schema-fail', 'decoder failed'), ('probe-fail', 'probe failed'),
@@ -193,6 +199,25 @@ for options, expected, label in [({}, 'succeeded', 'normal worker success'),
         check('Source verdict: succeeded' in body and 'cleanup failed' in body and '/cleanup.log' in body,
               'source verdict survives separately from cleanup failure')
     snapshot(label.replace(' ', '-'))
+
+for mode, expected in [('', 'succeeded'), ('inspect-fail-1', 'failed')]:
+    reset()
+    r = run('orca-codex-worker.sh', 'task', 'dispatch', 'handle', str(root / 'brief'),
+            WARWRIT_LAB_OWNER='warwrit-task', LAB=mode)
+    outcome, body = message()
+    cleanup_log = (root / '.orca/runs/task/cleanup.log').read_text()
+    source = json.loads((root / '.orca/runs/task/result.json').read_text())
+    check(outcome == expected and (r.returncode == 0) == (expected == 'succeeded')
+          and trace().count('\ncleanup\n') == 1 and source['outcome'] == 'succeeded',
+          f'lab exit 1 {mode or "no-match"} settles {expected} and retains source verdict')
+    if mode:
+        check('Source verdict: succeeded' in body and 'cleanup failed' in body and '/cleanup.log' in body
+              and 'CLEAN' not in cleanup_log and 'port inspection failed with exit 1' in cleanup_log
+              and 'UNVERIFIED lab port inspection failed (exit 1)' in cleanup_log,
+              'lab exit 1 diagnostics survive in failed worker cleanup log')
+    else:
+        check('CLEAN' in cleanup_log, 'ordinary lab no-match remains successful through worker settlement')
+    snapshot('lab-' + (mode or 'no-match'))
 
 def await_trace(text):
     deadline = time.monotonic() + 5

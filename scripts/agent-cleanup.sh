@@ -37,13 +37,21 @@ if [[ -n "$session" && "${WARWRIT_LAB_OWNER:-}" == "$session" ]]; then
     bash scripts/orca-play.sh stop || left=1
     # shellcheck disable=SC1091
     . ./.worktree-ports
-    holders="$(lsof -nP -tiTCP:"$COMBAT_API_PORT" -tiTCP:"$COMBAT_WEB_PORT" -sTCP:LISTEN)"
-    status=$?
-    if (( status > 1 )); then
-      echo "UNVERIFIED lab port inspection failed (exit $status)" >&2
-      left=1
-    elif [[ -n "$holders" ]]; then
-      echo "LEFTOVER ports $COMBAT_API_PORT/$COMBAT_WEB_PORT held by pid $holders"
+    if inspection_errors="$(mktemp)"; then
+      holders="$(lsof -nP -tiTCP:"$COMBAT_API_PORT" -tiTCP:"$COMBAT_WEB_PORT" -sTCP:LISTEN 2> "$inspection_errors")"
+      status=$?
+      # Exit 1 means either no matches or an error; only silent no-match is clean.
+      if (( status > 1 )) || [[ -s "$inspection_errors" ]]; then
+        cat "$inspection_errors" >&2
+        echo "UNVERIFIED lab port inspection failed (exit $status)" >&2
+        left=1
+      elif [[ -n "$holders" ]]; then
+        echo "LEFTOVER ports $COMBAT_API_PORT/$COMBAT_WEB_PORT held by pid $holders"
+        left=1
+      fi
+      rm -f "$inspection_errors"
+    else
+      echo "UNVERIFIED lab port inspection could not capture diagnostics" >&2
       left=1
     fi
   fi
