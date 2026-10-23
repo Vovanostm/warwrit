@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Close #262 and #269; the full play-through is #303 — 2026-10-23, PUBLISHED
+
+- Owner decision 2026-10-23: close #269 and #262. Menu extraction is on main
+  `cf3b2901` ([PR #302](https://github.com/Vovanostm/warwrit/pull/302)). The
+  complexity criterion is the `CombatLab` component: 13/13, CRAP 13.0, measured
+  with 67 focused tests. `submitAction`, `poll`, `act` and `request` stay with
+  #263.
+- The unfinished full mill play-through is
+  [#303](https://github.com/Vovanostm/warwrit/issues/303). It does not block
+  #263. A partial mounted check had already accepted `ac1a7b67`.
+
 ### Extract the combat-lab battle menu — 2026-10-23, PUBLISHED
 
 - `Vovanostm/qa-269-menu-extract`, #269, part of #262: the battle menu JSX now
