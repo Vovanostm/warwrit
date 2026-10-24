@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Accept #306 command transport gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):
+  independent Tier L reviewer and evaluator ACCEPT at `090843b5`, superseding
+  the pending gates below. Source remains validated `804d5983`; no source changes.
+- [Evaluation](docs/engineering/evidence/qa-action-transport/eval-1.md) records
+  118 focused tests PASS, two ordinary day/night round-7 victories and three
+  browser retry probes PASS. Adjacent review and JPEGs preserve the gate evidence.
+  Coordinator validation remains exit 0, 9/9 checks, 145 related tests, scope 245/300.
+- Direct cleanup confirms all 17 owned PIDs absent, both private ports unused,
+  pidfile/profile absent; evaluator settled and runtime/checks reservations released.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records
+  [PR #313](https://github.com/Vovanostm/warwrit/pull/313), published with CI pending.
+  Full integrated game gates NOT_RUN; fresh live-main comparison NOT_RUN.
+  Parent #263, #307, H1/H2 and blocked visual acceptance remain open. No rules,
+  API/protocol, replay, schema, migration or dependency changes.
+
 ### Validate #306 transport callbacks for independent gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):

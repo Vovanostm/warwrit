@@ -6,27 +6,28 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main: `1d6df3af`; newest main CI `40062633985` PASS.
-#306: source `804d5983` committed; coordinator validation exit 0, all 9 checks PASS.
-145 related tests PASS; whole-PR source scope 245/300; clean tracked tree.
-Branch: `Vovanostm/qa-action-transport`; published checkpoint, no PR or merge yet.
-Authenticated action/retry callbacks are extracted; late POST/read JSON is guarded.
+#306: [PR #313](https://github.com/Vovanostm/warwrit/pull/313) published; PR CI pending.
+Independent Tier L reviewer and evaluator ACCEPT at `090843b5`.
+Validated source `804d5983`: coordinator exit 0, 9/9 checks, 145 related tests PASS.
+Whole-PR source scope 245/300; evidence-only successor `141c8fdd` verified.
+Authenticated submission/manual orders/exact-body retries use controller callbacks.
+Late POST/read JSON checks session generation and abort before changing state.
 Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-Author: 118 focused tests PASS, one round-7 victory with paired day/night captures.
-Author stop/terminal waits: 800 ms with no further POST; independent acceptance pending.
-Five recorded private PIDs absent, no worktree runtime matches, ports unused, pidfile absent.
-Initial sandbox process read denied; direct escalated cleanup readback succeeded.
-Independent Tier L tasks allocated: reviewer `task_b19bf2f8afe3`, evaluator `task_4ca2bc1e7db7`.
-Reviewer is source-only; evaluator owns private ports 23544/25544 and sequential checks.
-Contract/results: `.orca/qa-action-transport/contract.md`, `report.md`; gate files pending.
-Next: settle gates, verify exact-head verdicts and cleanup, then publish PR if ACCEPT.
+Evaluator: 118 focused tests PASS; two independent day/night round-7 victories.
+Network, 503 and foreign-acknowledgement retry browser probes PASS.
+[Evaluation and limits](evidence/qa-action-transport/eval-1.md); adjacent source review and JPEGs.
+Direct cleanup: 17 PIDs absent, private ports unused, pidfile/profile absent.
+Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
+Next: check PR CI, scope and expected head before merge; no merge yet.
 #307 remains dependency-held; #263 and original H1/H2 proof remain open.
-#310 remains blocked at rework 2/2; #179/#209 keep original blocked acceptance.
+#310 remains blocked at rework 2/2; #179/#209 retain original blocked acceptance.
 PR #298 / #297 remains blocked despite recorded review ACCEPT; no merge.
 Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
-Full integrated game gates NOT_RUN; no rules/protocol/schema/migration/dependency change.
-Wrapper releases its lease when this single tick returns; gate workers retain allocation.
+Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
+No rules, API/protocol, replay, schema, migration or dependency changes.
+Wrapper releases its lease when this single tick returns.
 
 ## Dated history
 
