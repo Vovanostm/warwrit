@@ -11,7 +11,7 @@ Pre-merge main CI and PR CI/scope PASS; new main CI `40062633985` IN_PROGRESS.
 Scope 169/300; 115 related tests and evaluator's 88 focused tests PASS.
 Ordinary day/night round-7 victories and three browser retry probes accepted.
 [Evaluation and limits](evidence/qa-action-admission/eval-1.md); adjacent review and JPEGs.
-#306: own `qa-action-transport` worktree based on merged main; contract allocation next.
+#306: contract writer running in its own `qa-action-transport` worktree on merged main.
 Only contract writing is allocated; source implementation waits for contract acceptance.
 #263 remains parent of sequential #305 / #306 / #307; #307 waits for #306.
 Original H1/H2, parent acceptance and consumed recovery history remain open.

@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Merge #305 and allocate #306 contract — 2026-10-24, LOCAL
+### Merge #305 and allocate #306 contract — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-transport`: records-only continuation after
   [PR #312](https://github.com/Vovanostm/warwrit/pull/312) merged as `1d6df3af`
