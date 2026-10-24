@@ -8,8 +8,9 @@ Queue: epic #217 and its existing one-issue local slices.
 Main: `25dd9a48`; latest main CI `40015365287` PASS.
 #309: mounted submit regression committed at `38d9757c`; coordinator validate 9/9 PASS.
 Focused 68 tests, genuine submitAction V8 hits, web typecheck, lint and audit PASS.
-Tier D reviewer 1 ACCEPT at `c50c0c76`; PR publication follows this records commit.
-PR CI pending; no merge or playable acceptance.
+Tier D reviewer 1 ACCEPT at `c50c0c76`; PR #311 CI and PR scope PASS at `a046ceeb`.
+Pre-merge records commit only; its CI and expected-head merge are pending.
+No playable acceptance: this Tier D change proves a mounted adapter regression.
 #305 remains frozen until #309 merges; its consumed recovery budget is unchanged.
 #263 remains the parent of sequential #305 / #306 / #307; no direct parent builder.
 #310: dependency-blocked, source frozen at `5a5b46e1`, rework 2/2 retained.
@@ -20,7 +21,8 @@ Parent #179 owns rendering/HUD/marker routing; no supplemental source round gran
 PR #298 / #297 remains blocked despite its recorded reviewer ACCEPT; no merge.
 Daily metrics, scout and digest already complete; no duplicate daily work.
 This tick: 0 merged PRs with playable proof. Browser/full game gates NOT_RUN.
-Next: read #309 PR CI; merge only when every Tier D gate is green.
+Next: merge #311 after records-head CI; then allocate #305 test-only completion.
+Original #305 production source and consumed recovery budget remain frozen.
 No production behavior, API, rules, protocol, replay, schema or migration changed.
 Wrapper releases the lease when this single tick returns.
 

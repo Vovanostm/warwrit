@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Prepare mounted-submit prerequisite for gated merge — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-mounted-submit`, [PR #311](https://github.com/Vovanostm/warwrit/pull/311):
+  CI and PR scope PASS at `a046ceeb`; main CI `40015365287` PASS. Independent
+  Tier D ACCEPT remains `c50c0c76`; subsequent changes affect only shared records.
+  Coordinator validation at source `38d9757c` remains 9/9 PASS; no source changed.
+- Pre-merge scope check PASS: 1/300 source lines and one closing issue (#309).
+  This records-only commit updates the [current plan](docs/engineering/CURRENT_PLAN.md);
+  its CI and expected-head merge are pending. The prior CI-pending status is superseded.
+  After merge, #305 may complete tests against its frozen source; no recovery budget reset.
+  New game tests, browser/playable proof and full game gates NOT_RUN this tick.
+
 ### Accept independent mounted-submit review — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-mounted-submit`, [#309](https://github.com/Vovanostm/warwrit/issues/309):
