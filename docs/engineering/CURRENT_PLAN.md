@@ -14,6 +14,9 @@ Text critic 1: BLOCKED_ENV; inventory lacks the English review translation of «
 Reports: uix-combat-area-frame/.orca/uix-combat-area-frame/{review-1,text-1}.md.
 Both settlements recorded, workers released and delivery acknowledged.
 Evaluator `task_c1cfdab1396b` remains live and solely owns runtime/checks.
+Coordinator requested a bounded handback: finish the current required row, retain evidence,
+mark unfinished proof NOT_RUN/NOT_MEASURED, clean owned resources and settle.
+Follow-up msg_7fe47b980fb7 is enqueued; worker acceptance is not yet proven.
 Next: evaluator settlement and positive cleanup, then bounded source rework 2.
 Include the inventory-only correction; it does not consume a source repair round.
 Visual critic waits repaired-source captures; no new writer allocated this tick.

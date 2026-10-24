@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Bound #310 evaluator handback before camera correction — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  coordinator requests completion of the current required evaluation row, preservation
+  of executed evidence and defects, and resource cleanup before the queued camera-limit
+  repair. Optional exploration on the rejected source is deferred. Unfinished required
+  proof remains due on the repaired candidate; no acceptance criterion is waived.
+- Follow-up is enqueued, not confirmed read. The evaluator remains live and owns
+  runtime/checks; source stays frozen, rework 1/2 and inherited blocked labels remain.
+  Main CI `40015365287` PASS; no merge or new source allocation.
+- Only shared records change. Scoped formatting, status guard and diff checks are
+  the closeout checks; new game/runtime gates NOT_RUN. The allocation remains in
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md).
+
 ### Record #310 gate findings and preserve evaluator ownership — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
