@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Accept independent mounted-submit review — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-mounted-submit`, [#309](https://github.com/Vovanostm/warwrit/issues/309):
+  independent Tier D reviewer 1 ACCEPT at `c50c0c76`, with no blocking findings.
+  This supersedes the review-pending status below; coordinator validation remains
+  9/9 PASS at source `38d9757c`. PR CI and merge remain pending.
+- Records-only update to this changelog and [current plan](docs/engineering/CURRENT_PLAN.md).
+  Reviewer did not rerun checks; no new game tests or browser proof in this tick.
+  #305 stays frozen until this prerequisite merges; existing visual blocks remain.
+
 ### Add mounted submit regression capability — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-mounted-submit`, [#309](https://github.com/Vovanostm/warwrit/issues/309):
