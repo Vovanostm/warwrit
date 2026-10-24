@@ -245,6 +245,36 @@ describe('payroll locality and refusal', () => {
     });
   });
 
+  it('rejects a separate pool wallet in another area while the carried purse and operator stay local', () => {
+    const { root } = fixture();
+    const remotePool: CompanyEconomyState = {
+      ...root,
+      finance: {
+        ...root.finance,
+        wallets: [
+          ...root.finance.wallets,
+          {
+            walletId: 'remote-pool-wallet',
+            owner: { kind: 'COMPANY', id: root.lifecycle.companyId },
+            location: { kind: 'AT', siteId: 'village', areaId: 'elsewhere' },
+            cashQ: root.finance.wallets.find((wallet) => wallet.walletId === 'purse')!.cashQ,
+          },
+        ],
+        pools: [...root.finance.pools, { poolId: 'remote-pool', walletId: 'remote-pool-wallet' }],
+      },
+    };
+    const before = canonicalJson(remotePool);
+    const result = preparePayrollAccess(remotePool, {
+      ...input(remotePool),
+      poolId: 'remote-pool',
+    });
+
+    expect({ result, unchanged: canonicalJson(remotePool) === before }).toEqual({
+      result: { kind: 'REJECTED', reason: 'CONTACT_OR_ACCESS_REQUIRED' },
+      unchanged: true,
+    });
+  });
+
   it.each([
     ['remote', { location: { kind: 'AT' as const, siteId: 'village', areaId: 'elsewhere' } }],
     [
