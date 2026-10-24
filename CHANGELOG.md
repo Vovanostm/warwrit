@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Accept #305 action admission and retry gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
+  independent reviewer and evaluator ACCEPT at `a54b65c6`. This supersedes the
+  pending independent gates below; source remains the validated `31d6fa5f`.
+- [Evaluation](docs/engineering/evidence/qa-action-admission/eval-1.md) records
+  88 focused tests PASS, ordinary day/night round-7 victories and three browser
+  retry probes PASS. Small JPEG captures and the source review accompany it.
+  Prior coordinator validation 9/9 PASS, 115 related tests and scope 169/300 remain valid.
+- Direct cleanup confirmed 17 PIDs absent, ports 23685/25685 unused, pidfile and
+  isolated browser profile absent. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  records [PR #312](https://github.com/Vovanostm/warwrit/pull/312) as published, CI pending. No new source, rules, API, protocol, replay, schema or
+  migration changes; full game gates NOT_RUN this tick. Parent #263, #306/#307,
+  H1/H2 and blocked visual acceptance remain open.
+
 ### Validate #305 mounted completion for independent gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
