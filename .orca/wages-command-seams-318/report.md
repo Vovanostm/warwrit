@@ -2,7 +2,8 @@
 
 2026-10-24. Branch: `Vovanostm/wages-command-seams-318`.
 Source base: `6a58517953766f0381f04f870c074c10f49c3b97`.
-Status: local implementation; normal commit audit pending below. No publication.
+Status: SUCCEEDED, committed local implementation. No publication; independent
+Tier L and player acceptance remain coordinator-owned.
 
 ## Inherited attempt and recovery
 
@@ -74,10 +75,18 @@ The unchanged focused executor integration run initialized and passed all 6 test
    inherited findings remain reported, without config/threshold changes.
 7. After audit-required restructuring, focused real PG integration: PASS, exit 0,
    11/11 tests, zero skips; server typecheck, scoped ESLint/Prettier and diff:
-   PASS, exit 0. Final normal commit retry and scope: pending readback.
+   PASS, exit 0. Final normal implementation commit retry: PASS, exit 0; normal hook refreshed
+   focused coverage and passed its audit with no new findings, excluding the same
+   20 inherited findings. No hook bypass, suppression or threshold change.
+   `bash scripts/check-pr-scope.sh`: PASS, exit 0, 184/300 changed source lines.
+   No PR body exists, so the PR-body issue-closure check is NOT_RUN here.
 8. Rebase, coordinator validation, game/browser runtimes, full verify, standalone
    coverage/stress/migration suites, install/setup/build: NOT_RUN, outside this
    allocation. No built-export prerequisite failed.
+
+Audit warns that base/head semantic identities differ, so new-only comparison
+uses syntactic attribution while retaining head type-aware refinement. This is
+reported as a limitation; no configuration was changed to silence it.
 
 The graph indexes another checkout at old head b44f5c1e; current source is proof.
 All checks ran sequentially. No production database was accessed; no credentials
@@ -85,18 +94,29 @@ or connection strings are retained in evidence.
 
 ## Cleanup
 
-Each focused integration process exited and reported its file database disposed;
+All five focused integration processes exited and reported their file databases disposed;
 its global teardown also removes the migrated template. Ordinary scenarios remove
 world clocks in finally, then existing cleanup removes snapshots, owners, receipts,
 audit and account fixtures with empty-table assertions. The file afterAll closes
 the database pool. No background child process, server, browser or container was
-started by this worker. Coordinator retains the exact Compose project/container
+started by this worker. Both normal commit-hook focused-test processes also
+exited; coverage mode does not allocate integration databases and its PostgreSQL
+cases are skipped, so it is not the real-PG proof above. Coordinator retains the exact Compose project/container
 `warwrit-pipeline-318` and owns its later removal; it was not stopped here.
 
 ## Commits and proposed coordinator records
 
-Normal implementation commit and final scope/audit results are recorded below
-once the hook finishes. No push, PR, merge or publication is authorized here.
+- `1a96bc5ba9d457a38f452fe3b3d18a0c74e8e30b`: inherited report-only failure,
+  preserved without rewriting history.
+- `c017d1b16984bc882ce11a868bc3e2711ad86fb2`: normal implementation commit,
+  “Выделены намерения и проверки результата обычных команд #318”; source, tests
+  and the working report. Normal hook PASS.
+- Report-only successor: “Зафиксированы результаты сборки обычных команд #318”.
+  Records the final source commit, checks and cleanup; inspect final branch HEAD
+  for its ID. Its normal Markdown-only hook skips the source audit by design;
+  the implementation head's executed normal audit above remains the evidence.
+
+No push, PR, merge or publication was performed.
 CHANGELOG/CURRENT_PLAN/wiki remain untouched under coordinator ownership.
 
 Proposed CHANGELOG entry:
