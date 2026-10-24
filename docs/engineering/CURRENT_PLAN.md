@@ -5,25 +5,23 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `96f5b2b9`; newest main CI `40058644399` PASS.
-#305: [PR #312](https://github.com/Vovanostm/warwrit/pull/312) published; CI pending.
-Independent Tier L reviewer and evaluator ACCEPT at `a54b65c6`.
-Validated source `31d6fa5f`: coordinator exit 0, 9/9 checks, 115 related tests PASS.
-Whole-PR scope 169/300; later evidence commit `441ee760` contains only slice evidence.
-Evaluator: 88 focused tests PASS; ordinary day/night round-7 victories.
-Network, 503 and mismatched-acknowledgement retry browser probes PASS.
+Main: `1d6df3af`; PR #312 merged at expected head `ebcc3f34`; #305 closed.
+Pre-merge main CI and PR CI/scope PASS; new main CI `40062633985` IN_PROGRESS.
+#305 Tier L reviewer/evaluator ACCEPT at `a54b65c6`; validation 9/9 PASS.
+Scope 169/300; 115 related tests and evaluator's 88 focused tests PASS.
+Ordinary day/night round-7 victories and three browser retry probes accepted.
 [Evaluation and limits](evidence/qa-action-admission/eval-1.md); adjacent review and JPEGs.
-Direct cleanup: 17 PIDs absent, private ports unused, pidfile/profile absent.
-Evaluator settled and acknowledged; exclusive runtime/checks reservations released.
-Next: verify PR CI, final scope and expected head before merge; no merge yet.
-#263 remains parent of sequential #305 / #306 / #307; successors await #305 merge.
+#306: own `qa-action-transport` worktree based on merged main; contract allocation next.
+Only contract writing is allocated; source implementation waits for contract acceptance.
+#263 remains parent of sequential #305 / #306 / #307; #307 waits for #306.
 Original H1/H2, parent acceptance and consumed recovery history remain open.
 #310 remains blocked at rework 2/2; minimum-zoom and full visual REWORK retained.
 #179 and #209 remain blocked with original acceptance; no new source allocation.
 PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 0 merged PRs; 0 merged PRs with playable proof so far.
-Full integrated game gates NOT_RUN this tick; no new production source changes.
+This tick: 1 merged PR with playable proof (#312); no milestone acceptance.
+No new game checks this tick; final scope and documentation checks PASS.
+Next: consume #306 contract; verify new main CI before later merges.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history

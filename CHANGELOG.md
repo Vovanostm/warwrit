@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Merge #305 and allocate #306 contract — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/qa-action-transport`: records-only continuation after
+  [PR #312](https://github.com/Vovanostm/warwrit/pull/312) merged as `1d6df3af`
+  at expected head `ebcc3f34`; #305 is closed. This supersedes its CI-pending
+  status below. Pre-merge main and PR CI/scope PASS; new main CI is in progress.
+- Existing Tier L ACCEPT, validation 9/9, 115 related tests and independent
+  day/night journeys remain the delivery evidence. Final scope check PASS,
+  169/300 source lines and one closing issue. No game checks rerun this tick.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates the #306 contract
+  on merged main under the accepted sequential split. No source, rules, API,
+  protocol, replay, schema or migration changes; parent and visual limits remain.
+  One PR with playable proof merged this tick; #306 implementation is not started.
+
 ### Accept #305 action admission and retry gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
