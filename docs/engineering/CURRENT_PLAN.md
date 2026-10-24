@@ -7,10 +7,12 @@ Owner scope (2026-10-21): «У тебя есть все полномочия п�
 Queue: epic #217 and sprint #161, with their existing one-issue slices.
 Main: `6a585179`; newest main CI `40073679092` PASS.
 [PR #314](https://github.com/Vovanostm/warwrit/pull/314) merged before this tick.
-#167: read-only PayClaims contract dispatched in its own `core-wages-167` worktree.
-Task `task_bbf422b742aa`; dispatch `ctx_e5e52d0d9eac`; source/checks/runtime not allocated.
+#167: initial read-only contract settled; all five sections and canonical finance citations present.
+Finite child split is incomplete: mixed server/UI extraction and unbounded API/projection child.
+One revision dispatched: `task_0f6ff28fe80d` / `ctx_bda6bf280480`; no source/checks/runtime grant.
 Target journey: earned wage due → Отряд → pay → wallet/claim readback → retry/reentry debits once.
-Next tick: assess full canonical finance Notes/Purpose, exact ownership and finite contract/split.
+Next: accept a source-sized child sequence, create its issues, then reserve the first bounded writer.
+Local contract: core-wages-167/.orca/core-wages-167/contract.md; no new rule question.
 No wage-payment implementation or playable acceptance is claimed.
 #225 remains dependency-held; its queue position is unchanged by parallel-reader preparation.
 #179 visual-routing report is accepted; source remains frozen at `0a10e16f`.

@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Bound the wage-payment contract split — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):
+  initial read-only contract contains all required sections and canonical finance
+  citations. Its proposed child A combines server and UI extraction; child C
+  leaves the PayClaims API/projection size unresolved. Request the single contract
+  revision allowed by the pipeline before creating children or allocating source.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records revision task
+  `task_0f6ff28fe80d`, preserving parent acceptance, #225 dependencies, all blocked
+  visual slices and the #315 hold. The existing contract remains at local path
+  core-wages-167/.orca/core-wages-167/contract.md. No new finance rule is proposed.
+- Main CI `40073679092` PASS. Initial worker settlement was recorded, acknowledged
+  and released through Orca (`retained/no_owned_resource`). Game/browser/full gates
+  NOT_RUN; 0 PRs merged, 0 merged PRs with playable proof this tick. Documentation
+  checks and publication readback are recorded in the issue handoff; no PR or
+  implementation acceptance is claimed.
+
 ### Prepare existing wage-payment contract — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):
