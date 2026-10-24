@@ -24,9 +24,15 @@ requests.
   Projector/economy/privacy tests (10), authenticated real-PG route tests (2, no
   skips), protocol build, protocol/server/web types and scoped lint/format/diff
   PASS. Initial invalid synthetic test fixture corrected before passing aggregate
-  roundtrip. Author route evidence uses Fastify.inject; independent review and
-  loopback HTTP proof pending. Normal commit hook retained. Full game gates,
-  browser/payment UI, publication and merge NOT_RUN; effort/tokens NOT_MEASURED.
+  roundtrip. Author route evidence uses Fastify.inject. Independent Sol 6.1
+  ACCEPT at first submitted implementation `b1194a94`, no material findings/code
+  rework. Parent real loopback HTTP/PG PASS: exact 993-q owed, 7-q pending,
+  986-q duePayable, owner200/anonymous401/other-account empty, repeated GET,
+  public revision and unchanged root. Two parent probe setup/fixture failures
+  were repaired without production changes. Normal hook audit PASS with
+  syntactic-attribution warning; private runtime resources disposed.
+  Pilot used one author plus one reviewer; comparative savings, effort/tokens
+  NOT_MEASURED. Full game gates, browser/payment UI, publication and merge NOT_RUN.
 
 ### Accept local workflow review — 2026-10-25, LOCAL
 

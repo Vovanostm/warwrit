@@ -14,14 +14,18 @@ Done requires exact safe projection/history, focused checks and authenticated GE
 Parent #167 payment/UI journey is outside this slice and remains unaccepted here.
 Orca/automation remain STOPPED_BY_OWNER; this author is a bounded Codex subagent.
 Publication, merge, deployment and issue closure are not part of this local completion.
-State: LOCAL implementation complete; independent code/evidence review pending.
+State: LOCAL #321 complete; independent Sol 6.1 ACCEPT at `b1194a94`, no material findings.
 Owner GET now uses allowlisted `projectCompanyEconomy` payroll and safe legacy wage totals.
 Settled/ended-service claims, exact q, pending holds and old optional responses covered.
 Checks PASS: focused projector/economy/privacy (10); real-PG route integration (2, no skips).
 Protocol build; protocol/server/web types; scoped ESLint/Prettier/diff PASS.
-Normal commit hook required, no bypass; author result in `.orca/wages-projection-321/report.md`.
+Normal commit hook PASS, no bypass; syntactic-attribution warning retained in local author report.
 [Owning wiki amendment](../wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка).
-Parent independent loopback HTTP/root readback pending; author proof is Fastify.inject + PG.
+Parent real loopback HTTP/PG PASS: exact q, owner200/anonymous401/other empty, repeat/root/revision coherence.
+One author + one reviewer; first submitted code ACCEPT, no material code rework.
+Inherited test fixture and parent probe setup fixes occurred; savings NOT_MEASURED.
+Private probe/app/PG/Compose resources disposed; filtered Docker listing empty.
+Local evidence: `.orca/wages-projection-321/{report,review}.md` and `http-readback.*`.
 Full game gate/browser/payment/UI/publication/merge NOT_RUN; tokens/elapsed NOT_MEASURED.
 
 ## Dated history
