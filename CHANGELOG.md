@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Align workflow acceptance consumers — 2026-10-25, LOCAL
+
+- Branch `codex/agent-workflow-improvements`; independent review R1/R2 on
+  `f3099e38` found stale required-contract/runtime and visual/missing-evidence
+  instructions. Review/evaluation now use assigned accepted criteria without a
+  mandatory slice file/heading; runtime commands require explicit owned resources.
+  Missing criteria/resources/proof yields non-passing BLOCKED_ENV.
+- Orca skill tier table and evaluator/visual prompts retain independent scored
+  critique for substantive visuals in U/T as well as V. Common rules apply to
+  every worker; CURRENT_PLAN distinguishes authorized local Codex work from
+  stopped Orca workers. [Owning corrections/checks](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-review-corrections--2026-10-25).
+- Counterexample read-through, scoped Markdown format/link/status/diff checks PASS.
+  Scripts unchanged; applicable fixture checks reused. Normal docs-only hook path,
+  no bypass. Independent re-review pending; game suites/pilot/publication/merge
+  NOT_RUN, savings NOT_MEASURED. No runtime/automation/GitHub mutation.
+
 ### Bound agent workflow and preserve owner stop — 2026-10-25, LOCAL
 
 - Branch `codex/agent-workflow-improvements`; owner-approved A–D and first-result

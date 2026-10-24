@@ -138,6 +138,42 @@ Base: `1c793e1676a463d8ea750a890ccb493065ffb04e`; branch
   Full bootstrap, game suites, browser/visual acceptance and pilot E NOT_RUN for
   this tooling-only slice. Independent review pending; savings NOT_MEASURED.
 
+### Independent review corrections — 2026-10-25
+
+Independent review of `f3099e38` returned REWORK: R1 found that review/evaluation
+still required the now-optional slice contract and its `## Proof` heading, and
+that evaluator runtime start/stop lacked assigned ownership. R2 found evaluator/
+tier/visual-brief wording that could waive scored visual acceptance for U/T, plus
+an incomplete missing-proof verdict boundary. These were instruction integration
+findings, not executed gameplay defects. The earlier author read-through did not
+catch these consuming-template conflicts.
+
+Review/evaluation now consume the assigned issues and accepted criteria; optional
+slice/epic contracts are used only when assigned or present and applicable. Missing
+sources/criteria are non-passing BLOCKED_ENV. Evaluation requires assigned private
+runtime/lifecycle ownership before service commands, preserves other owners'
+resources and blocks when required browser/capture/journey proof is unavailable.
+Substantive visual results in any tier, including U/T, retain the independent
+scored visual critic; table, evaluator and visual brief now agree. Common rules
+are appended to every worker brief. CURRENT_PLAN distinguishes authorized local
+Codex author/reviewer from still-stopped Orca workers.
+
+Read-through of build → review → evaluation with sufficient issue criteria and
+no slice file: PASS; no contract document/heading is needed. Evaluation with no
+assigned resources: BLOCKED_ENV before service commands. Existing-layout U with
+substantive visual changes: independent scored visual gate required. Unavailable
+required browser/capture without a code defect: non-passing BLOCKED_ENV, no
+unauthorized acquisition. Related visual/text consumers inspected narrowly;
+visual tier/resource/verdict conflict corrected, existing text missing-input
+BLOCKED_ENV preserved.
+
+Scoped Markdown formatting, local link targets, status-block and ordinary diff
+checks: PASS. Scripts unchanged; previous fixture/syntax results remain applicable
+and were not repeated. Normal documentation-only hook path applies; no bypass.
+Independent re-review pending; game suites/pilot/publication/merge NOT_RUN,
+savings NOT_MEASURED. Review report is a parent-owned local artifact, not a
+committed source link.
+
 ### Source basis and limits
 
 [Google small CLs](https://google.github.io/eng-practices/review/developer/small-cls.html)

@@ -43,8 +43,9 @@ is optional for a real dependency. Never create empty functionality or stub test
 just to satisfy caller metrics. Protocol changes need compatibility analysis;
 optional fields alone do not establish compatibility.
 
-Append [common rules](prompts/common.md) to [build](prompts/build.md) or
-[rework](prompts/rework.md). Workers do not call Orca. When explicitly activated,
+Append [common rules](prompts/common.md) to every worker brief, including review,
+evaluation and critics. Role-specific read-only/resource limits still apply.
+Workers do not call Orca. When explicitly activated,
 headless workers use `scripts/orca-start-worker.sh` and
 `scripts/orca-codex-worker.sh`; logs are `.orca/runs/<task-id>/` and structured
 results follow `worker-result.schema.json`. Do not use interactive TUI workers,
@@ -83,16 +84,21 @@ approval bypass flags or terminal interrupts that can suspend a process/lock DB.
 | ---- | ----------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | D    | docs, tests, tooling, prompts             | Fresh independent reviewer (`warwrit-review`)                                                      |
 | L    | core/server/protocol logic                | Reviewer plus evaluator plays the affected journey                                                 |
-| U    | UI in existing layout                     | Evaluator plays it and checks the issue's visual criteria                                          |
+| U    | UI in existing layout                     | Evaluator plays it; substantive visuals also require scored visual critic                          |
 | V    | art, scene rendering, new visual elements | As U plus visual critic using full [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md) |
 | T    | player-facing strings                     | As U plus text critic using full [TEXT_CRITIQUE](../../../docs/engineering/TEXT_CRITIQUE.md)       |
 
-Apply the union for mixed changes. Visual critics get current images and journey
-evidence, not the author's verdict; retain AGENTS' scoring/technique-change rule.
-Art-grade close-view/layer proofs do not apply to ordinary D/L/U work. Tooling
+Apply the union for mixed changes. Root acceptance overrides tier labels:
+substantive visual results always need independent scored visual critique,
+including U/T. Visual critics get current images and journey evidence, not the
+author's verdict; retain AGENTS' scoring/technique-change rule. Apply every
+relevant rubric criterion; asset-specific proofs may be N/A only when irrelevant
+to the actual change, never because of its tier alone. Tooling
 acceptance does not imply gameplay acceptance. Gate reports must identify the
 checked revision and limitations. `BLOCKED_ENV` and missing proof are not passes
-or automatically code defects; obtain missing proof when authorized and feasible.
+or automatically code defects. Obtain missing proof only when authorized and
+feasible inside assigned resources; otherwise report a non-passing BLOCKED_ENV
+with the source/resource/evidence gap. Never start or stop another owner's runtime.
 
 ## Bounded rework and evidence
 
