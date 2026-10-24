@@ -6,26 +6,29 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main `25dd9a48`: newest CI run `40015365287` PASS.
-#310 reviewer 2: REWORK on `0631a14b`, source `5a5b46e1` unchanged.
-R2-F1: a compact reachable fit is rejected below minimum zoom, leaving the camera unchanged.
-The finding is a source-arithmetic counterexample; runtime reproduction NOT_RUN/NOT_MEASURED.
-Reviewer settlement recorded, dispatch released and delivery acknowledged.
-Text critic 2 ACCEPT; evaluator 2 remains live and exclusively owns private runtime/checks.
-Bounded handback requested: finish the current row, preserve findings, mark unfinished proof,
-then clean up and settle. Delivery is enqueued; receipt and compliance are not yet proven.
-Visual critic waits complete current images; no visual acceptance is claimed.
-Prior coordinator validation on `f1426af3`: 9 gates PASS, including related tests and audit.
-Author reported 64 focused tests and 281/300 source lines; those are not independent acceptance.
-Source is frozen; rework budget remains 2/2, with no new source round or acceptance waiver.
-Current review: uix-combat-area-frame/.orca/uix-combat-area-frame/review-2.md.
-Next: settle evaluator, verify owned runtime cleanup, then route the combined findings
-under the fallback ladder without resetting the exhausted repair budget.
-#179/#209/#214 remain frozen; parent gates, missing E2 and budgets retained.
-#309/#305–#307 remain queued; core #225 awaits dependencies.
-PR #298 and #297 retain inherited blocked labels. No PR eligible for merge.
-This tick: 0 merged PRs with playable proof; daily metrics/scout/digest already complete.
-This tick: documentation format/status/diff checks; game/browser/full gates NOT_RUN.
-No game-rule/protocol/replay/schema/migration change. Not player-accepted.
+#310: needs-owner for one supplemental repair allocation after consumed 2/2.
+Evaluator 2 settled REWORK at `bc71317a`; source `5a5b46e1` unchanged.
+Real helper + Babylon camera probe reproduces reviewer R2-F1: a compact group
+fits at legal minimum zoom, but the explicit action rejects it and leaves the camera unchanged.
+Four fresh mill journeys pass prior terminal, forecast and border findings;
+these are scoped passes, not overall acceptance. Compact-case encounter occurrence NOT_RUN.
+Evaluator settlement recorded/released/acknowledged; 21 PIDs, two ports,
+pidfile and private browser profile directly checked absent. Runtime/checks released.
+Visual critic 1: `task_50f660ca2f56` / `ctx_1a099e0712ef`, read-only current eval-2 images.
+Text critic 2 ACCEPT remains separate; reviewer/evaluator REWORK remain open.
+Local evidence: uix-combat-area-frame/.orca/uix-combat-area-frame/eval-2.md.
+Recommended exception: one minZoom repair in battle-framing.ts and its existing test,
+recompute the opening center, retain cumulative 300 source lines and all fresh gates.
+Fallback audit-only and issue-split steps do not apply; no duplicate slice or budget reset.
+Question relayed to the owner mailbox; source remains frozen pending explicit decision.
+Prior coordinator validation: 9/9 PASS, 105 related tests; not acceptance of future repair.
+Next: collect full visual verdict and owner allocation decision, then schedule any repair.
+#179/#209/#214 frozen; parent gates, missing E2 and budgets retained.
+#309/#305–#307 queued; core #225 awaits dependencies. PR #298/#297 remain blocked.
+No PR eligible for merge. This tick: 0 merged PRs with playable proof.
+Daily metrics/scout/digest already complete; not repeated.
+This tick: documentation format/status/diff checks; new game/browser/full gates NOT_RUN.
+No game-rule/protocol/replay/schema/migration change. Not merged or player-accepted.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history

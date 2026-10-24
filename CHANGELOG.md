@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Settle #310 evaluation and request bounded repair exception — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  evaluator 2 independently reproduced the reviewer's minimum-zoom false rejection
+  using the real helper and Babylon camera. Four fresh day/night mill journeys at
+  1440×900/100% and 1366×768/native 125% pass the prior terminal, forecast and
+  utility-border findings. These scoped passes do not replace REWORK or prove
+  compact-group occurrence in an actual encounter. Local evidence:
+  uix-combat-area-frame/.orca/uix-combat-area-frame/eval-2.md.
+- Accepted settlement, release and acknowledgment completed. Direct cleanup
+  found all 21 recorded PIDs absent, both private ports clear, pidfile and
+  browser profile absent. Visual critic 1 now reads current evaluator images;
+  visual acceptance remains pending. Source and all parent freezes are retained.
+- The slice has consumed 2/2 repairs. Audit-only recovery and issue splitting
+  do not apply to this single geometry defect. Request one explicit additional
+  allocation for the minZoom correction and one existing-test regression,
+  retaining the cumulative 300-line cap and fresh gates. No new source round
+  is authorized by this record. The issue is `agent:needs-owner`.
+- Coordinator changes only CHANGELOG and
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md). Main CI PASS; new game tests,
+  browser checks and full gates NOT_RUN this tick. Scoped documentation format,
+  status and diff checks PASS. Records published; implementation not merged.
+
 ### Record #310 reviewer rejection and bound evaluator handback — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
