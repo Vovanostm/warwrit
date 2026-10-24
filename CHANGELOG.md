@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Recover #318 campaign evaluation environment — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
+  reviewer ACCEPT at `771fcb07`; evaluator round 1 BLOCKED_ENV because the combat
+  launcher clears database/OIDC configuration and omits company routes.
+  Reports remain at `.orca/wages-command-seams-318/review-1.md` and `eval-1.md`.
+  No source defect or player acceptance inferred; no source rework round charged.
+- Coordinator configured an isolated test Dex plus the existing private PostgreSQL
+  under `.orca/campaign-318/`, applied existing migrations to that disposable DB,
+  and checked campaign readiness (200), session/company GET (401), command POST
+  (403). These probes prove route availability only. All prior evaluator processes,
+  ports, profile and pidfile were absent; preflight API/web then stopped cleanly.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns only evaluator recovery;
+  containers remain coordinator-owned until settlement. Existing source validation
+  and review are retained; authenticated play, full integrated gates and merge
+  remain pending. #167 owns payroll acceptance; inherited blocks stay unchanged.
+  No source/schema/migration/protocol edits. Earlier LOCAL #318 implementation
+  was published at `771fcb07`; this entry adds the subsequent gate/environment result.
+
 ### Validate ordinary command seams for #318 — 2026-10-24, LOCAL
 
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
