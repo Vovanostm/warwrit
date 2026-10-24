@@ -3,10 +3,13 @@ import type {
   CombatLabAction,
   CombatLabView,
   CombatLabSkill,
+  CombatLabSkillId,
   CombatLabBattleConfig,
   CombatLabCatalog,
 } from '@warwrit/protocol';
 import {
+  createCombatLabActionCallbacks,
+  type PendingAction,
   admitCombatLabAction,
   markCombatLabActionUncertain,
   settleCombatLabActionReply,
@@ -24,6 +27,7 @@ import {
   admittedBattleDraft,
   readSavedSession,
 } from './session-transport.js';
+import type { ActiveSession } from './session-transport.js';
 import { createEmptyTiles } from './editor-model.js';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -999,5 +1003,310 @@ it.each([
         controlling,
       }),
     ).toBe(expected);
+  },
+);
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (error: Error) => void;
+  const promise = new Promise<T>((yes, no) => {
+    resolve = yes;
+    reject = no;
+  });
+  return { promise, resolve, reject };
+}
+
+function transportPorts() {
+  return {
+    ...actionPorts(),
+    deletingRef: { current: false as boolean },
+    sessionRef: { current: actionPorts().sessionRef.current as ActiveSession | null },
+    pendingRef: { current: null as PendingAction | null },
+    sessionAbort: { current: new AbortController() as AbortController | null },
+    sessionLostRef: { current: false },
+    autoplayRef: { current: false },
+    selectedSkillRef: { current: null as CombatLabSkillId | null },
+    setSessionLost: vi.fn(),
+    refreshLatest: vi.fn(async (_session: ActiveSession, _generation: number) => {}),
+  };
+}
+
+function acceptedReply(ports: ReturnType<typeof transportPorts>) {
+  return { ...JSON.parse(ports.pendingRef.current!.body), status: 'accepted', viewRevision: 2 };
+}
+
+it('constructs requests from replaced current refs and synchronously reserves one flight', async () => {
+  const ports = transportPorts();
+  const callbacks = createCombatLabActionCallbacks('/private', ports);
+  const post = deferred<Response>();
+  const fetch = vi.fn(() => post.promise);
+  vi.stubGlobal('fetch', fetch);
+  try {
+    ports.sessionRef.current = {
+      id: 'new-session',
+      capability: 'new-capability',
+      view: {
+        ...playableView(),
+        sessionId: 'new-session',
+        battleId: 'new-battle',
+        viewRevision: 9,
+        activation: {
+          id: 'new-activation',
+          actorId: 'actor',
+          actionPoints: { current: 4, maximum: 4 },
+        },
+      },
+    };
+    ports.sessionAbort.current = new AbortController();
+    ports.autoplayRef.current = true;
+    callbacks.act({ type: 'wait' }, 'blocked manual');
+    ports.autoplayRef.current = false;
+    ports.selectedSkillRef.current = 'aimed-shot';
+    callbacks.act({ type: 'wait' }, 'blocked skill');
+    expect({ requests: fetch.mock.calls, pending: ports.pendingRef.current }).toEqual({
+      requests: [],
+      pending: null,
+    });
+    ports.selectedSkillRef.current = null;
+    const completion = callbacks.act({ type: 'wait' }, 'current order');
+    callbacks.act({ type: 'autoplay' }, 'competing autoplay');
+    callbacks.retryAction();
+    const action = JSON.parse(ports.pendingRef.current!.body) as CombatLabAction;
+    expect(fetch.mock.calls).toEqual([
+      [
+        '/private/dev/combat-lab/new-session/actions',
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'x-combat-lab-capability': 'new-capability',
+          },
+          body: JSON.stringify({
+            version: 1,
+            sessionId: 'new-session',
+            battleId: 'new-battle',
+            requestId: action.requestId,
+            expectedViewRevision: 9,
+            activationId: 'new-activation',
+            actorId: 'actor',
+            intent: { type: 'wait' },
+          }),
+          signal: ports.sessionAbort.current.signal,
+        },
+      ],
+    ]);
+    expect(action.requestId).toMatch(/^[0-9a-f-]{36}$/u);
+    post.resolve(Response.json(acceptedReply(ports)));
+    await completion;
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it.each(['missing', 'deleting', 'terminal', 'no activation'])(
+  'blocks %s current state without a request or mutation',
+  (state) => {
+    const ports = transportPorts();
+    const callbacks = createCombatLabActionCallbacks('/private', ports);
+    const fetch = vi.fn();
+    vi.stubGlobal('fetch', fetch);
+    try {
+      if (state === 'missing') ports.sessionRef.current = null;
+      if (state === 'deleting') ports.deletingRef.current = true;
+      if (state === 'terminal')
+        ports.sessionRef.current = {
+          ...ports.sessionRef.current!,
+          view: { ...playableView(), status: 'resolved' },
+        };
+      if (state === 'no activation')
+        ports.sessionRef.current = {
+          ...ports.sessionRef.current!,
+          view: { ...playableView(), activation: null },
+        };
+      callbacks.act({ type: 'wait' }, 'blocked');
+      callbacks.retryAction();
+      expect({
+        fetch: fetch.mock.calls,
+        pending: ports.setPending.mock.calls,
+        notice: ports.setNotice.mock.calls,
+      }).toEqual({ fetch: [], pending: [], notice: [] });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  },
+);
+
+it.each(['missing controller', 'network', '503', 'unreadable', 'malformed', 'foreign'])(
+  'retains uncertainty for %s and retries exact bytes after terminal projection',
+  async (failure) => {
+    const ports = transportPorts();
+    const callbacks = createCombatLabActionCallbacks('/private', ports);
+    const post = deferred<Response>();
+    const fetch = vi.fn(() => post.promise);
+    vi.stubGlobal('fetch', fetch);
+    try {
+      if (failure === 'missing controller') ports.sessionAbort.current = null;
+      ports.refreshLatest.mockRejectedValue(new Error('Read failed'));
+      const completion = callbacks.act({ type: 'wait' }, 'original description');
+      const original = ports.pendingRef.current!;
+      if (failure === 'network') post.reject(new Error('Offline'));
+      else if (failure === 'unreadable') post.resolve(new Response('{'));
+      else if (failure === 'foreign')
+        post.resolve(Response.json({ ...acceptedReply(ports), requestId: 'foreign' }));
+      else post.resolve(Response.json({}, { status: failure === '503' ? 503 : 200 }));
+      await completion;
+      expect({
+        pending: ports.pendingRef.current,
+        state: ports.setPending.mock.lastCall,
+        stops: ports.stopAutoplay.mock.calls.length,
+        selection: ports.setSelectedSkillId.mock.calls,
+      }).toEqual({
+        pending: { ...original, uncertain: true },
+        state: [{ ...original, uncertain: true }],
+        stops: 1,
+        selection: [],
+      });
+      ports.sessionRef.current = {
+        ...ports.sessionRef.current!,
+        view: { ...view(20), status: 'resolved' },
+      };
+      ports.sessionAbort.current = new AbortController();
+      const retry = deferred<Response>();
+      fetch.mockReturnValue(retry.promise);
+      const before = fetch.mock.calls.length;
+      const retried = callbacks.retryAction();
+      callbacks.retryAction();
+      callbacks.act({ type: 'autoplay' }, 'competing');
+      expect({
+        calls: fetch.mock.calls.length,
+        request: fetch.mock.calls.at(-1),
+        pending: ports.pendingRef.current,
+      }).toEqual({
+        calls: before + 1,
+        request: [
+          '/private/dev/combat-lab/session/actions',
+          {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              'x-combat-lab-capability': 'capability',
+            },
+            body: original.body,
+            signal: ports.sessionAbort.current.signal,
+          },
+        ],
+        pending: { ...original, uncertain: false },
+      });
+      retry.resolve(Response.json(acceptedReply(ports)));
+      await retried;
+      expect(ports.pendingRef.current).toBeNull();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  },
+);
+
+it.each([
+  ['accepted', 1, 1, [[null]], ''],
+  ['accepted', 2, 0, [[null]], ''],
+  ['rejected', 2, 1, [], 'Такое действие сейчас недоступно. Состояние боя обновлено.'],
+] as const)(
+  'settles %s using revision %s read after real deferred refresh',
+  async (status, revision, stops, selection, notice) => {
+    const ports = transportPorts();
+    const refresh = deferred<void>();
+    ports.refreshLatest.mockReturnValue(refresh.promise);
+    const callbacks = createCombatLabActionCallbacks('/private', ports);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ ...acceptedReply(ports), status, code: 'INVALID_ACTION' })),
+    );
+    try {
+      const completion = callbacks.act({ type: 'wait' }, 'wait');
+      await vi.waitFor(() => expect(ports.refreshLatest).toHaveBeenCalledOnce());
+      ports.sessionRef.current = {
+        ...ports.sessionRef.current!,
+        view: { ...playableView(), viewRevision: revision },
+      };
+      refresh.resolve();
+      await completion;
+      expect({
+        pending: ports.pendingRef.current,
+        state: ports.setPending.mock.lastCall,
+        notice: ports.setNotice.mock.lastCall,
+        stops: ports.stopAutoplay.mock.calls.length,
+        selection: ports.setSelectedSkillId.mock.calls,
+      }).toEqual({ pending: null, state: [null], notice: [notice], stops, selection });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  },
+);
+
+it.each(['fetch', 'json 503', 'json 404', 'refresh', 'failed refresh', 'network catch'])(
+  'discards late %s effects after generation replacement or abort',
+  async (boundary) => {
+    for (const invalidate of ['replacement', 'abort']) {
+      const ports = transportPorts();
+      const post = deferred<Response>();
+      const json = deferred<unknown>();
+      const refresh = deferred<void>();
+      const response = new Response(null, { status: boundary === 'json 503' ? 503 : 404 });
+      const readJson = vi.spyOn(response, 'json').mockReturnValue(json.promise);
+      ports.refreshLatest.mockReturnValue(refresh.promise);
+      const fetch = vi.fn(() => post.promise);
+      vi.stubGlobal('fetch', fetch);
+      try {
+        const completion = createCombatLabActionCallbacks('/private', ports).act(
+          { type: 'wait' },
+          'old',
+        );
+        const reply = acceptedReply(ports);
+        if (boundary.startsWith('json')) {
+          post.resolve(response);
+          await vi.waitFor(() => expect(readJson).toHaveBeenCalledOnce());
+        }
+        if (boundary.includes('refresh')) {
+          post.resolve(Response.json(reply));
+          await vi.waitFor(() => expect(ports.refreshLatest).toHaveBeenCalledOnce());
+        }
+        if (invalidate === 'replacement') ports.generation.current += 1;
+        else ports.sessionAbort.current!.abort();
+        const sentinel = { body: 'replacement', description: 'new order', uncertain: false };
+        const session = { id: 'replacement', capability: 'new', view: view(30) };
+        ports.sessionRef.current = session;
+        ports.pendingRef.current = sentinel;
+        vi.clearAllMocks();
+        if (boundary === 'network catch') post.reject(new Error('Late network error'));
+        else post.resolve(Response.json(reply));
+        json.resolve(reply);
+        if (boundary === 'failed refresh') refresh.reject(new Error('Late refresh failure'));
+        else refresh.resolve();
+        await completion;
+        expect({
+          pending: ports.pendingRef.current,
+          session: ports.sessionRef.current,
+          lost: ports.sessionLostRef.current,
+          writes: [
+            ports.setPending,
+            ports.setNotice,
+            ports.setSelectedSkillId,
+            ports.stopAutoplay,
+            ports.setSessionLost,
+          ].map((effect) => effect.mock.calls),
+          fetch: fetch.mock.calls,
+          refresh: ports.refreshLatest.mock.calls,
+        }).toEqual({
+          pending: sentinel,
+          session,
+          lost: false,
+          writes: [[], [], [], [], []],
+          fetch: [],
+          refresh: [],
+        });
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    }
   },
 );

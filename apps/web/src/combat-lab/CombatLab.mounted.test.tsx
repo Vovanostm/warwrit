@@ -76,7 +76,7 @@ function sessionView(): CombatLabView {
   };
 }
 
-function deferredResponse(signal: AbortSignal) {
+function deferredResponse(signal: AbortSignal, ignoreAbort = false) {
   let resolve!: (response: Response) => void;
   let reject!: (error: Error) => void;
   let pending = true;
@@ -92,7 +92,7 @@ function deferredResponse(signal: AbortSignal) {
     detach();
     reject(new DOMException('Fixture request aborted', 'AbortError'));
   };
-  signal.addEventListener('abort', abort, { once: true });
+  if (!ignoreAbort) signal.addEventListener('abort', abort, { once: true });
   return {
     promise,
     get pending() {
@@ -101,6 +101,10 @@ function deferredResponse(signal: AbortSignal) {
     resolve(body: unknown, status = 200) {
       detach();
       resolve(Response.json(body, { status }));
+    },
+    resolveResponse(response: Response) {
+      detach();
+      resolve(response);
     },
     fail() {
       detach();
@@ -115,6 +119,7 @@ function deferredResponse(signal: AbortSignal) {
 function transportFixture(
   initial: CombatLabView,
   actions = [`POST ${sessionUrl}/actions`, `GET ${sessionUrl}`],
+  ignoreAbort = false,
 ) {
   const requests: { url: string; init: RequestInit; signal: AbortSignal }[] = [];
   const deferred: ReturnType<typeof deferredResponse>[] = [];
@@ -130,7 +135,7 @@ function transportFixture(
     requests.push({ url: String(input), init, signal });
     if (requests.length === 1) return Promise.resolve(Response.json(catalog));
     if (requests.length === 2) return Promise.resolve(Response.json(initial));
-    const response = deferredResponse(signal);
+    const response = deferredResponse(signal, ignoreAbort);
     deferred.push(response);
     return response.promise;
   });
@@ -149,8 +154,19 @@ function pendingFeedback(container: HTMLElement) {
 
 async function withMountedLab(
   transport: ReturnType<typeof transportFixture>,
-  run: (container: HTMLElement) => Promise<void>,
+  run: (container: HTMLElement, abortSession: () => void) => Promise<void>,
 ) {
+  const controllers: AbortController[] = [];
+  const NativeController = AbortController;
+  vi.stubGlobal(
+    'AbortController',
+    class extends NativeController {
+      constructor() {
+        super();
+        controllers.push(this);
+      }
+    },
+  );
   const initial = sessionView();
   const savedStorage = sessionStorage.getItem(storageKey);
   const container = document.createElement('div');
@@ -166,7 +182,10 @@ async function withMountedLab(
     await act(async () => {
       root.render(<CombatLab />);
     });
-    await run(container);
+    await run(container, () => {
+      const signal = transport.requests[2]!.signal;
+      controllers.find((controller) => controller.signal === signal)!.abort();
+    });
   } finally {
     try {
       await act(async () => {
@@ -311,7 +330,9 @@ it.each([
   const transport = transportFixture(initial, actions);
   await withMountedLab(transport, async (container) => {
     await act(async () => button(container, 'Начать автобой').click());
-    await act(async () => vi.advanceTimersByTime(550));
+    await act(async () => vi.advanceTimersByTime(549));
+    expect(transport.requests).toHaveLength(2);
+    await act(async () => vi.advanceTimersByTime(1));
     const original = transport.requests[2]!;
     await act(async () => {
       if (failure === 'network') transport.deferred[0]!.fail();
@@ -433,4 +454,151 @@ it('aborts an unresolved action on unmount without a refresh or continuation', a
     sessionUrl,
     `${sessionUrl}/actions`,
   ]);
+});
+
+function delayedJson(status: number) {
+  let resolve!: (value: unknown) => void;
+  const promise = new Promise<unknown>((done) => {
+    resolve = done;
+  });
+  const response = new Response(null, { status });
+  const json = vi.spyOn(response, 'json').mockReturnValue(promise);
+  return { response, resolve, json };
+}
+
+it.each([503, 404])(
+  'ignores a delayed POST %s body after the session is aborted',
+  async (status) => {
+    const transport = transportFixture(sessionView(), [`POST ${sessionUrl}/actions`]);
+    await withMountedLab(transport, async (container, abortSession) => {
+      await act(async () => waitButton(container).click());
+      const body = delayedJson(status);
+      await act(async () => transport.deferred[0]!.resolveResponse(body.response));
+      expect(body.json).toHaveBeenCalledOnce();
+      const before = container.textContent;
+      await act(async () => {
+        abortSession();
+        body.resolve({ code: 'NOT_FOUND' });
+      });
+      expect({ text: container.textContent, calls: transport.fetch.mock.calls.length }).toEqual({
+        text: before,
+        calls: 3,
+      });
+    });
+  },
+);
+
+it.each([
+  { status: 200, valid: false },
+  { status: 200, valid: true },
+  { status: 503, valid: false },
+])(
+  'ignores the real refresh $status JSON (valid=$valid) after abort',
+  async ({ status, valid }) => {
+    const transport = transportFixture(sessionView());
+    await withMountedLab(transport, async (container, abortSession) => {
+      await act(async () => waitButton(container).click());
+      const action = JSON.parse(String(transport.requests[2]!.init.body)) as CombatLabAction;
+      await act(async () =>
+        transport.deferred[0]!.resolve({ ...action, status: 'accepted', viewRevision: 8 }),
+      );
+      const body = delayedJson(status);
+      await act(async () => transport.deferred[1]!.resolveResponse(body.response));
+      expect(body.json).toHaveBeenCalledOnce();
+      const before = container.textContent;
+      await act(async () => {
+        abortSession();
+        body.resolve(
+          valid
+            ? { ...sessionView(), viewRevision: 8, availableActions: ['defend'] }
+            : { code: 'INVALID_ACTION' },
+        );
+      });
+      expect({ text: container.textContent, calls: transport.fetch.mock.calls.length }).toEqual({
+        text: before,
+        calls: 4,
+      });
+    });
+  },
+);
+
+it('shares the in-flight poll with action refresh and polls again 750 ms after settlement', async () => {
+  const initial = sessionView();
+  const transport = transportFixture(initial, [
+    `GET ${sessionUrl}`,
+    `POST ${sessionUrl}/actions`,
+    `GET ${sessionUrl}`,
+  ]);
+  await withMountedLab(transport, async (container) => {
+    await act(async () => vi.advanceTimersByTime(749));
+    expect(transport.requests).toHaveLength(2);
+    await act(async () => vi.advanceTimersByTime(1));
+    await act(async () => vi.advanceTimersByTime(1500));
+    expect(transport.requests).toHaveLength(3);
+    await act(async () => waitButton(container).click());
+    const action = JSON.parse(String(transport.requests[3]!.init.body)) as CombatLabAction;
+    await act(async () =>
+      transport.deferred[1]!.resolve({ ...action, status: 'accepted', viewRevision: 8 }),
+    );
+    expect({ calls: transport.requests.length, pending: pendingFeedback(container) }).toEqual({
+      calls: 4,
+      pending: 'Ожидается ответ: Завершение хода.',
+    });
+    await act(async () => transport.deferred[0]!.resolve({ ...initial, viewRevision: 8 }));
+    expect(pendingFeedback(container)).toBeNull();
+    await act(async () => vi.advanceTimersByTime(749));
+    expect(transport.requests).toHaveLength(4);
+    await act(async () => vi.advanceTimersByTime(1));
+    expect(transport.requests).toHaveLength(5);
+  });
+});
+
+it('stops an already scheduled autoplay callback and allows the next manual order', async () => {
+  const transport = transportFixture(sessionView(), [`POST ${sessionUrl}/actions`]);
+  await withMountedLab(transport, async (container) => {
+    await act(async () => button(container, 'Начать автобой').click());
+    await act(async () => vi.advanceTimersByTime(549));
+    await act(async () => button(container, 'Остановить автобой').click());
+    await act(async () => vi.advanceTimersByTime(1));
+    expect(transport.requests).toHaveLength(2);
+    await act(async () => waitButton(container).click());
+    expect(JSON.parse(String(transport.requests[2]!.init.body)).intent).toEqual({ type: 'wait' });
+  });
+});
+
+it('ignores a late POST even when the adapter does not reject on abort', async () => {
+  const transport = transportFixture(sessionView(), [`POST ${sessionUrl}/actions`], true);
+  await withMountedLab(transport, async (container, abortSession) => {
+    await act(async () => waitButton(container).click());
+    const before = container.textContent;
+    await act(async () => {
+      abortSession();
+      transport.deferred[0]!.resolve({ code: 'NOT_FOUND' }, 404);
+    });
+    expect({ text: container.textContent, calls: transport.fetch.mock.calls.length }).toEqual({
+      text: before,
+      calls: 3,
+    });
+  });
+});
+
+it.each(['POST', 'refresh'])('ignores delayed %s JSON after actual unmount', async (boundary) => {
+  const transport = transportFixture(sessionView());
+  const body = delayedJson(200);
+  await withMountedLab(transport, async (container) => {
+    await act(async () => waitButton(container).click());
+    if (boundary === 'refresh') {
+      const action = JSON.parse(String(transport.requests[2]!.init.body)) as CombatLabAction;
+      await act(async () =>
+        transport.deferred[0]!.resolve({ ...action, status: 'accepted', viewRevision: 8 }),
+      );
+    }
+    await act(async () => transport.deferred.at(-1)!.resolveResponse(body.response));
+    expect(body.json).toHaveBeenCalledOnce();
+  });
+  await act(async () => body.resolve({ code: 'INVALID_ACTION' }));
+  expect({ calls: transport.fetch.mock.calls.length, unexpected: transport.unexpected }).toEqual({
+    calls: boundary === 'POST' ? 3 : 4,
+    unexpected: [],
+  });
 });
