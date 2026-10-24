@@ -3,8 +3,9 @@
 2026-10-24, branch `Vovanostm/uix-combat-area-frame`; start `d0b0c251`, previous
 source `f1752045`, base/current origin/main `25dd9a48`. No integration was needed.
 Source commit `9bdc109` introduced finite reachable framing/forecast/border repair;
-the follow-up source commit containing this section adds enabled live mesh bounds
-and its regression. Final validator readback is recorded below after that commit.
+follow-up source commit **`5a5b46e1`** adds enabled live mesh bounds and its
+regression. Final source validation passes all nine gates; the final closeout
+commit changes this report only.
 No push, PR, merge, deployment, paid service, delegation, Orca CLI or shared-record edit.
 
 ## Defect results
@@ -90,7 +91,13 @@ All checks serial; detailed logs under `rework-2/`:
 - Scoped eslint and prettier: PASS (`lint-final.log`, `format-final.log`).
 - Normal commit `9bdc109` hook/audit: PASS (`commit.log`). Validator on that source:
   **9/9 PASS**, including related tests/coverage (`validate.log`).
-- Follow-up normal commit and final-source validator: pending checkpoint readback.
+- Follow-up normal commit **`5a5b46e1`** hook/audit: PASS (`commit-mesh.log`),
+  with one inherited finding excluded by the existing audit gate; no bypass or
+  threshold change. Final-source `bash scripts/orca-validate.sh`: **9/9 PASS**,
+  including **5 files / 105 related tests** and focused coverage; `validate-final.log`.
+  Detailed final validator logs copied to `rework-2/validator/`.
+- Final report-only closeout: scoped prettier and diff checks PASS; normal
+  documentation commit (no source change).
 - No full verify, stress, migrations, production build or whole-suite coverage run.
   The required validator and private launcher own their existing package builds and
   focused related coverage; no new CI or PR scope claim beyond local validator.
