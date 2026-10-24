@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Add mounted submit regression capability — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-mounted-submit`, [#309](https://github.com/Vovanostm/warwrit/issues/309):
+  add pinned jsdom 27.4.0 and a file-local mounted CombatLab regression because
+  #305 lacked DOM proof of the real submitAction callback. Paths: `package.json`,
+  `pnpm-lock.yaml`, `apps/web/src/combat-lab/CombatLab.mounted.test.tsx`.
+- A real wait-button click exercises authenticated POST, duplicate-click blocking,
+  pending through refresh, and teardown. Focused 68 tests, actual V8 callback and
+  POST/settlement hits, typecheck, lint, format, normal audit, and coordinator
+  validation 9/9 PASS at `38d9757c`; source scope 1/300. Review and PR CI pending.
+  This is Tier D fixture evidence; playable acceptance and #305 acceptance remain open.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) restores the Orca coordinator
+  status and routes #310's non-product question to dependency-blocked engineering
+  work. Rework 2/2, parent freezes and failed gates remain; no extra round allocated.
+  No setup, production, API, rules, protocol, replay, schema or migration changes.
+
 ### Close #262 and #269; the full play-through is #303 — 2026-10-23, PUBLISHED
 
 - Owner decision 2026-10-23: close #269 and #262. Menu extraction is on main
