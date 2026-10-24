@@ -5,29 +5,26 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `1d6df3af`; newest main CI `40062633985` PASS.
-#306: [PR #313](https://github.com/Vovanostm/warwrit/pull/313) published; PR CI pending.
-Independent Tier L reviewer and evaluator ACCEPT at `090843b5`.
-Validated source `804d5983`: coordinator exit 0, 9/9 checks, 145 related tests PASS.
-Whole-PR source scope 245/300; evidence-only successor `141c8fdd` verified.
-Authenticated submission/manual orders/exact-body retries use controller callbacks.
-Late POST/read JSON checks session generation and abort before changing state.
+Main: `99e513f5`, merge of [PR #313](https://github.com/Vovanostm/warwrit/pull/313).
+#306 closed and labelled agent:done; merged expected head `7c07db71`.
+PR CI and scope PASS; pre-merge main CI `40062633985` PASS at `1d6df3af`.
+No new main CI run observed after merge; this is not a post-merge CI claim.
+Tier L reviewer/evaluator ACCEPT at `090843b5`; later evidence/records only.
+Prior validation exit 0, 9/9 checks, 145 related tests; final scope 245/300 PASS.
+[Evaluation and limits](evidence/qa-action-transport/eval-1.md): 118 focused tests,
+two ordinary day/night round-7 victories and three browser retry probes PASS.
 Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-Evaluator: 118 focused tests PASS; two independent day/night round-7 victories.
-Network, 503 and foreign-acknowledgement retry browser probes PASS.
-[Evaluation and limits](evidence/qa-action-transport/eval-1.md); adjacent source review and JPEGs.
-Direct cleanup: 17 PIDs absent, private ports unused, pidfile/profile absent.
-Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
-Next: check PR CI, scope and expected head before merge; no merge yet.
-#307 remains dependency-held; #263 and original H1/H2 proof remain open.
+#307: read-only contract task `task_7a108238fa86`, dispatch `ctx_bb486319f80f`.
+Dedicated branch `Vovanostm/qa-action-polling` starts at merged main `99e513f5`.
+No builder, runtime or checks allocated; next tick checks all five contract sections.
+#263, H1/H2 and all consumed recovery budgets remain open and unchanged.
 #310 remains blocked at rework 2/2; #179/#209 retain original blocked acceptance.
-PR #298 / #297 remains blocked despite recorded review ACCEPT; no merge.
-Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
+PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 0 merged PRs; 0 merged PRs with playable proof.
+This tick: 1 merged PR with playable proof; no other PR merged.
 Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
-No rules, API/protocol, replay, schema, migration or dependency changes.
-Wrapper releases its lease when this single tick returns.
+This checkpoint changes records only; no rules, protocol, schema or migration changes.
+Wrapper releases its lease when this single tick returns; #307 worker retains its slice.
 
 ## Dated history
 

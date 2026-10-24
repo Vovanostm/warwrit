@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Merge #306 and start #307 contract — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling` records [PR #313](https://github.com/Vovanostm/warwrit/pull/313)
+  MERGED as `99e513f5`; #306 closed and agent:done. This supersedes pending-merge
+  entries below. Expected head `7c07db71`, PR CI/scope and pre-merge main CI passed;
+  final whole-PR scope 245/300. No post-merge main CI run observed yet.
+- Prior validation 9/9, 145 related tests and Tier L ACCEPT `090843b5` retained.
+  [Evaluation](docs/engineering/evidence/qa-action-transport/eval-1.md) records
+  118 focused tests, two day/night victories and three retry probes. Later commits
+  contain only evidence and coordinator records. One playable-proof merge this tick.
+- The existing sequential #307 now has its own worktree and read-only contract
+  task on merged main. [Current plan](docs/engineering/CURRENT_PLAN.md) names the
+  next check; no builder/runtime allocation, new game code or acceptance waiver.
+  #263/H1/H2, consumed budgets and #179/#209/#310/#297 holds remain unchanged.
+  Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
+  Local coordinator fetch hit sandbox EPERM; Orca creation refreshed main and
+  returned the verified `99e513f5` base. Documentation checks accompany this commit.
+
 ### Accept #306 command transport gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):
