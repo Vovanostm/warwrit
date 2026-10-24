@@ -9,6 +9,66 @@ requests.
 
 ## Unreleased
 
+### Accept #318 ordinary-command gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
+  Tier L reviewer ACCEPT at `771fcb07` and evaluator ACCEPT at `36b6aa5e`;
+  subsequent source diff is empty. The earlier environment blocker is resolved.
+  [Evaluation](docs/engineering/evidence/wages-command-seams-318/eval-2.md),
+  adjacent review and seven JPEGs retain the independent proof.
+- Actual authenticated company opening, equipment, begin/end camp, atomic stale
+  refusal, ordinary retry and reload passed against private PostgreSQL. Evaluator
+  reran 11 focused integration tests with zero skips. Rename/perk lack UI controls
+  and are executor-tested; ordinary retry after refusal uses a new ID.
+  Coordinator validation remains exit 0, 9/9 checks; source scope 184/300.
+- Direct cleanup confirmed all 13 named app/browser PIDs absent, private ports
+  unused and profile/pidfile absent. Both disposable Dex/PostgreSQL projects and
+  volumes were removed after settlement. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  records [PR #323](https://github.com/Vovanostm/warwrit/pull/323) published and unchanged #167 payroll/lost-response/day-night
+  acceptance. No source, schema, finance rule or API change this tick;
+  full integrated gates NOT_RUN. Existing blocked labels remain binding.
+- Coordinator allocates accepted #319 contract to the sole core builder in
+  `Vovanostm/wages-local-evidence-319` (task `task_504917a385f9`): three owned
+  payroll access/observation files, focused checks, no runtime or endpoint.
+  #321 waits for that slot; implementation results remain pending.
+
+### Recover #318 campaign evaluation environment — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
+  reviewer ACCEPT at `771fcb07`; evaluator round 1 BLOCKED_ENV because the combat
+  launcher clears database/OIDC configuration and omits company routes.
+  Reports remain at `.orca/wages-command-seams-318/review-1.md` and `eval-1.md`.
+  No source defect or player acceptance inferred; no source rework round charged.
+- Coordinator configured an isolated test Dex plus the existing private PostgreSQL
+  under `.orca/campaign-318/`, applied existing migrations to that disposable DB,
+  and checked campaign readiness (200), session/company GET (401), command POST
+  (403). These probes prove route availability only. All prior evaluator processes,
+  ports, profile and pidfile were absent; preflight API/web then stopped cleanly.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns only evaluator recovery;
+  containers remain coordinator-owned until settlement. Existing source validation
+  and review are retained; authenticated play, full integrated gates and merge
+  remain pending. #167 owns payroll acceptance; inherited blocks stay unchanged.
+  No source/schema/migration/protocol edits. Earlier LOCAL #318 implementation
+  was published at `771fcb07`; this entry adds the subsequent gate/environment result.
+
+### Validate ordinary command seams for #318 — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
+  extract ordinary intent selection and result predicates to
+  `apps/server/src/company/ordinary-command.ts` for the accepted #167 split.
+  Executor retains authorization, historical receipts, locks and persistence;
+  rename/perk/equipment/camp behavior stays covered by real PostgreSQL regressions.
+- Source `c017d1b1`, report `f47c2e2c`; 184/300 changed source lines.
+  Builder real PG tests 11/11 PASS without skips, typecheck/lint/normal audit PASS.
+  Coordinator validation exit 0, 9/9 PASS; related tests 61 PASS and 55 skipped.
+  [Build report](.orca/wages-command-seams-318/report.md) retains the initial
+  environment failure, corrected test expectations and initial audit failures.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records pending independent
+  Tier L review/playtesting and the retained #319/#321 queue. This is local
+  implementation awaiting publication; no PR, merge or player acceptance claimed.
+  Payroll and the integrated #167 journey remain pending. No finance rule,
+  protocol, schema, replay or migration changed; full integrated gates NOT_RUN.
+
 ### Confirm #307 corrected-head merge gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):

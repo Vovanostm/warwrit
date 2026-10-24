@@ -6,6 +6,7 @@ import {
 import { readPartyRoute } from '../world/repository.js';
 import { randomUUID } from 'node:crypto';
 import { readCarriedSupplyPurse } from './supplies.js';
+import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-command.js';
 import {
   prepareSupplyPurchase,
   SUPPLY_INITIAL_RATIONS,
@@ -467,30 +468,12 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     expectedRevision: publicRevision(lifecycle.knowledge.revision),
     campaignTick: campaignTick(clock.tick),
     rulesetId: COMPANY_RULESET_ID,
-    type: input.request.type === 'EndFieldCamp' ? 'EndMaintenance' : input.request.type,
-    payload:
-      input.request.type === 'BeginFieldCamp'
-        ? { partyId: party?.partyId, siteEligibilityId: campSite?.id }
-        : input.request.type === 'EndFieldCamp'
-          ? { agreementOrCampId: openCamp?.agreementId, reason: 'LEAVE' }
-          : input.request.type === 'RenameCompany'
-            ? {
-                companyId,
-                name: input.request.payload['name'],
-                bannerId: input.request.payload['bannerId'],
-              }
-            : input.request.type === 'EquipItem'
-              ? {
-                  characterId: input.request.payload['characterId'],
-                  itemId: input.request.payload['itemId'],
-                  slotId: input.request.payload['slotId'],
-                  accessEvidenceId: equipAccess?.id,
-                }
-              : {
-                  characterId: input.request.payload['characterId'],
-                  perkId: input.request.payload['perkId'],
-                  milestone: input.request.payload['milestone'],
-                },
+    ...ordinaryCommandIntent(input.request, companyId, {
+      partyId: party?.partyId,
+      openAgreementId: openCamp?.agreementId,
+      siteEligibilityId: campSite?.id,
+      accessEvidenceId: equipAccess?.id,
+    }),
   };
 
   const parsed = parseCompanyCommand(commandValue);
@@ -520,29 +503,11 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   const prepared = prepareCompanyEconomy(state.economy, parsed.command, context);
   if (prepared.kind !== 'PREPARED')
     return rejectRequest(mapDomainError(prepared.error), lifecycle.knowledge.revision);
-  const equipRequest = input.request.type === 'EquipItem' ? input.request.payload : undefined;
-  const equipped =
-    equipRequest !== undefined &&
-    prepared.next.physical?.items.find((item) => item.itemId === equipRequest.itemId)?.equipped
-      ?.characterId === equipRequest.characterId;
-  const campChanged =
-    (input.request.type === 'BeginFieldCamp' &&
-      prepared.next.finance.maintenance.some(
-        (mode) =>
-          mode.kind === 'FIELD_CAMP' && mode.partyId === party?.partyId && mode.endedAt === null,
-      )) ||
-    (input.request.type === 'EndFieldCamp' &&
-      prepared.next.finance.maintenance.some(
-        (mode) => mode.agreementId === openCamp?.agreementId && mode.endedAt !== null,
-      ));
   if (
-    prepared.replayed ||
-    prepared.receipt.requirements.length !== 0 ||
-    (input.request.type === 'EquipItem'
-      ? !equipped
-      : input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp'
-        ? !campChanged
-        : prepared.receipt.lifecycleReceipt === null || prepared.receipt.events.length === 0)
+    !ordinaryCommandSucceeded(input.request, prepared, {
+      partyId: party?.partyId,
+      openAgreementId: openCamp?.agreementId,
+    })
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
