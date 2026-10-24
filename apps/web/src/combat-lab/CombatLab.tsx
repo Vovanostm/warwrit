@@ -696,18 +696,7 @@ export function CombatLab() {
       );
       return;
     }
-    try {
-      const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}/actions`, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          [capabilityHeader]: current.capability,
-        },
-        body: requestBody,
-        signal: controller.signal,
-      });
-      if (controller.signal.aborted || generation.current !== expectedGeneration) return;
-      const reply: unknown = await response.json().catch(() => null);
+    const receiveReply = async (response: Response, reply: unknown) => {
       if (response.status >= 500) {
         markCombatLabActionUncertain(
           actionPorts,
@@ -734,6 +723,20 @@ export function CombatLab() {
         return;
       }
       settleCombatLabActionReply(actionPorts, outcome, action, expectedGeneration);
+    };
+    try {
+      const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}/actions`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          [capabilityHeader]: current.capability,
+        },
+        body: requestBody,
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted || generation.current !== expectedGeneration) return;
+      const reply: unknown = await response.json().catch(() => null);
+      await receiveReply(response, reply);
     } catch {
       if (!controller.signal.aborted && generation.current === expectedGeneration) {
         markCombatLabActionUncertain(
