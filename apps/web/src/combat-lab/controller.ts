@@ -7,6 +7,7 @@ import {
 } from '@warwrit/protocol';
 
 import { messageFor, responseCode, type ActiveSession } from './session-transport.js';
+import { isCombatLabView } from './view-validation.js';
 import { canControl } from './command-availability.js';
 
 export interface PendingAction {
@@ -382,4 +383,107 @@ export function createCombatLabActionCallbacks(
   };
 
   return { act, retryAction };
+}
+
+interface CombatLabReadPorts extends Pick<
+  CombatLabSessionPorts,
+  | 'generation'
+  | 'sessionRef'
+  | 'sessionAbort'
+  | 'pendingRef'
+  | 'deletingRef'
+  | 'sessionLostRef'
+  | 'setSessionLost'
+> {
+  readonly latestRead: { current: Promise<void> | null };
+  readonly applyLatest: (view: CombatLabView, expectedGeneration: number) => void;
+  readonly setNotice: (value: string | ((current: string) => string)) => void;
+}
+
+/** Reads share React's in-flight cell; polling owns no timer or canonical state here. */
+export function createCombatLabReadCallbacks(apiBaseUrl: string, ports: CombatLabReadPorts) {
+  const receiveView = (body: unknown, current: ActiveSession, expectedGeneration: number) => {
+    if (!isCombatLabView(body) || body.sessionId !== current.id) {
+      ports.setNotice('Сервер вернул некорректное состояние боя.');
+      return;
+    }
+    ports.applyLatest(body, expectedGeneration);
+    ports.setNotice((notice) =>
+      notice.startsWith('Сервер временно недоступен.') ||
+      notice.startsWith('Ответ получен. Запрашиваю актуальное состояние…')
+        ? ''
+        : notice,
+    );
+  };
+
+  const readLatest = async (
+    current: ActiveSession,
+    expectedGeneration: number,
+    controller: AbortController,
+  ) => {
+    const isCurrent = () =>
+      ports.generation.current === expectedGeneration && !controller.signal.aborted;
+    try {
+      const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}`, {
+        headers: { 'x-combat-lab-capability': current.capability },
+        signal: controller.signal,
+      });
+      if (!isCurrent()) return;
+      if (response.status === 404) {
+        ports.sessionLostRef.current = true;
+        ports.setSessionLost(true);
+        ports.setNotice(messageFor('NOT_FOUND'));
+        return;
+      }
+      if (!response.ok) {
+        const body: unknown = await response.json().catch(() => null);
+        if (isCurrent()) ports.setNotice(messageFor(responseCode(body, `${response.status}`)));
+        return;
+      }
+      const body: unknown = await response.json();
+      if (isCurrent()) receiveView(body, current, expectedGeneration);
+    } catch {
+      if (isCurrent()) {
+        ports.setNotice('Сервер временно недоступен. Повторное чтение продолжится автоматически.');
+      }
+    }
+  };
+
+  const refreshLatest = (current: ActiveSession, expectedGeneration: number) => {
+    if (ports.latestRead.current !== null) return ports.latestRead.current;
+    const controller = ports.sessionAbort.current;
+    if (controller === null || controller.signal.aborted) return Promise.resolve();
+    const request = readLatest(current, expectedGeneration, controller);
+    ports.latestRead.current = request;
+    void request.finally(() => {
+      if (ports.latestRead.current === request) ports.latestRead.current = null;
+    });
+    return request;
+  };
+
+  const poll = async (
+    session: ActiveSession,
+    expectedGeneration: number,
+    controller: AbortController,
+    isStopped: () => boolean,
+  ) => {
+    if (isStopped() || controller.signal.aborted) return false;
+    if (
+      ports.pendingRef.current === null &&
+      !ports.deletingRef.current &&
+      !ports.sessionLostRef.current
+    ) {
+      await refreshLatest(ports.sessionRef.current ?? session, expectedGeneration);
+    }
+    const latest = ports.sessionRef.current;
+    return (
+      !isStopped() &&
+      !controller.signal.aborted &&
+      latest?.id === session.id &&
+      latest.view.status === 'active' &&
+      !ports.sessionLostRef.current
+    );
+  };
+
+  return { refreshLatest, poll };
 }

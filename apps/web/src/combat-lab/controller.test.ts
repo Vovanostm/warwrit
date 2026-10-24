@@ -9,6 +9,8 @@ import type {
 } from '@warwrit/protocol';
 import {
   createCombatLabActionCallbacks,
+  createCombatLabReadCallbacks,
+  createCombatLabSessionCallbacks,
   type PendingAction,
   admitCombatLabAction,
   markCombatLabActionUncertain,
@@ -1307,6 +1309,295 @@ it.each(['fetch', 'json 503', 'json 404', 'refresh', 'failed refresh', 'network 
       } finally {
         vi.unstubAllGlobals();
       }
+    }
+  },
+);
+
+function readPorts() {
+  const ports = {
+    ...transportPorts(),
+    latestRead: { current: null as Promise<void> | null },
+    notice: 'Unrelated action refusal',
+    getNotice: () => ports.notice,
+    setNotice: vi.fn((value: string | ((current: string) => string)) => {
+      ports.notice = typeof value === 'string' ? value : value(ports.notice);
+    }),
+    installSession: vi.fn((session: ActiveSession | null) => {
+      ports.sessionRef.current = session;
+    }),
+    setDeleting: vi.fn(),
+  };
+  return { ...ports, ...createCombatLabSessionCallbacks('/private', ports) };
+}
+
+it.each(['success', 'failure'])(
+  'shares a read promise and preserves a replacement on old %s',
+  async (outcome) => {
+    const ports = readPorts();
+    const response = deferred<Response>();
+    const fetch = vi.fn(() => response.promise);
+    vi.stubGlobal('fetch', fetch);
+    try {
+      const { refreshLatest } = createCombatLabReadCallbacks('/private', ports);
+      const current = ports.sessionRef.current!;
+      const first = refreshLatest(current, 1);
+      expect(refreshLatest(current, 1)).toBe(first);
+      expect(fetch.mock.calls).toEqual([
+        [
+          '/private/dev/combat-lab/session',
+          {
+            headers: { 'x-combat-lab-capability': 'capability' },
+            signal: ports.sessionAbort.current!.signal,
+          },
+        ],
+      ]);
+      const replacement = Promise.resolve();
+      ports.latestRead.current = replacement;
+      if (outcome === 'success') response.resolve(Response.json(view(2)));
+      else response.reject(new Error('offline'));
+      await first;
+      expect(ports.latestRead.current).toBe(replacement);
+      ports.latestRead.current = null;
+      await refreshLatest(current, 1);
+      expect({ read: ports.latestRead.current, calls: fetch.mock.calls.length }).toEqual({
+        read: null,
+        calls: 2,
+      });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  },
+);
+
+it.each([
+  ['valid', view(2), 200, 'Unrelated action refusal', 2, false],
+  ['older', view(0), 200, 'Unrelated action refusal', 1, false],
+  [
+    'foreign battle',
+    { ...view(2), battleId: 'foreign' },
+    200,
+    'Unrelated action refusal',
+    1,
+    false,
+  ],
+  [
+    'foreign session',
+    { ...view(2), sessionId: 'foreign' },
+    200,
+    'Сервер вернул некорректное состояние боя.',
+    1,
+    false,
+  ],
+  ['malformed', {}, 200, 'Сервер вернул некорректное состояние боя.', 1, false],
+  ['lost', {}, 404, 'Бой больше недоступен. Начните заново или вернитесь к редактору.', 1, true],
+])(
+  'handles %s reads through the real session projection callback',
+  async (_name, body, status, notice, revision, lost) => {
+    const ports = readPorts();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json(body, { status })),
+    );
+    try {
+      await createCombatLabReadCallbacks('/private', ports).refreshLatest(
+        ports.sessionRef.current!,
+        1,
+      );
+      expect({
+        notice: ports.getNotice(),
+        revision: ports.sessionRef.current!.view.viewRevision,
+        lost: ports.sessionLostRef.current,
+      }).toEqual({
+        notice,
+        revision,
+        lost,
+      });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  },
+);
+
+it.each(['fetch', 'valid JSON', 'invalid JSON', 'error JSON', 'network'])(
+  'ignores stale %s completion after generation changes',
+  async (boundary) => {
+    const ports = readPorts();
+    const response = deferred<Response>();
+    const body = deferred<unknown>();
+    const reply = new Response(null, { status: boundary === 'error JSON' ? 503 : 200 });
+    vi.spyOn(reply, 'json').mockReturnValue(body.promise);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => response.promise),
+    );
+    try {
+      const pending = createCombatLabReadCallbacks('/private', ports).refreshLatest(
+        ports.sessionRef.current!,
+        1,
+      );
+      if (boundary.includes('JSON')) {
+        response.resolve(reply);
+        await Promise.resolve();
+      }
+      ports.generation.current++;
+      if (boundary === 'network') response.reject(new Error('offline'));
+      else if (boundary === 'fetch') response.resolve(Response.json({}, { status: 404 }));
+      else body.resolve(boundary === 'valid JSON' ? view(2) : { code: 'NOT_FOUND' });
+      await pending;
+      expect({
+        notices: ports.setNotice.mock.calls,
+        installs: ports.installSession.mock.calls,
+        lost: ports.setSessionLost.mock.calls,
+        read: ports.latestRead.current,
+      }).toEqual({ notices: [], installs: [], lost: [], read: null });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  },
+);
+
+it.each([
+  ['Сервер временно недоступен. Повторное чтение продолжится автоматически.', ''],
+  ['Ответ получен. Запрашиваю актуальное состояние…', ''],
+  ['Unrelated action refusal', 'Unrelated action refusal'],
+])('clears only transient read feedback: %s', async (notice, expected) => {
+  const ports = readPorts();
+  ports.setNotice(notice);
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => Response.json(view(2))),
+  );
+  try {
+    await createCombatLabReadCallbacks('/private', ports).refreshLatest(
+      ports.sessionRef.current!,
+      1,
+    );
+    expect(ports.getNotice()).toBe(expected);
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it.each([
+  [503, { code: 'NOT_FOUND' }, 'Бой больше недоступен. Начните заново или вернитесь к редактору.'],
+  [418, {}, 'Запрос завершился с кодом 418.'],
+  [503, undefined, 'Запрос завершился с кодом 503.'],
+  [200, undefined, 'Сервер временно недоступен. Повторное чтение продолжится автоматически.'],
+])(
+  'handles status %s and unreadable JSON without losing the poll loop',
+  async (status, body, notice) => {
+    const ports = readPorts();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        body === undefined ? new Response('invalid', { status }) : Response.json(body, { status }),
+      ),
+    );
+    try {
+      const callbacks = createCombatLabReadCallbacks('/private', ports);
+      const continues = await callbacks.poll(
+        ports.sessionRef.current!,
+        1,
+        ports.sessionAbort.current!,
+        () => false,
+      );
+      expect({ notice: ports.getNotice(), continues, read: ports.latestRead.current }).toEqual({
+        notice,
+        continues: true,
+        read: null,
+      });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  },
+);
+
+it.each(['missing', 'aborted'])('does not fetch with a %s session controller', async (state) => {
+  const ports = readPorts();
+  if (state === 'missing') ports.sessionAbort.current = null;
+  else ports.sessionAbort.current!.abort();
+  const fetch = vi.fn();
+  vi.stubGlobal('fetch', fetch);
+  try {
+    await createCombatLabReadCallbacks('/private', ports).refreshLatest(
+      ports.sessionRef.current!,
+      1,
+    );
+    expect({ calls: fetch.mock.calls, read: ports.latestRead.current }).toEqual({
+      calls: [],
+      read: null,
+    });
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it.each(['pending', 'uncertain', 'deleting', 'lost', 'stopped', 'aborted'])(
+  'reads current %s admission and can resume eligible polling',
+  async (state) => {
+    const ports = readPorts();
+    const current = ports.sessionRef.current!;
+    const controller = ports.sessionAbort.current!;
+    const fetch = vi.fn(async () => Response.json(view(2)));
+    vi.stubGlobal('fetch', fetch);
+    try {
+      const callbacks = createCombatLabReadCallbacks('/private', ports);
+      if (state === 'pending' || state === 'uncertain')
+        ports.pendingRef.current = {
+          body: '{}',
+          description: 'wait',
+          uncertain: state === 'uncertain',
+        };
+      if (state === 'deleting') ports.deletingRef.current = true;
+      if (state === 'lost') ports.sessionLostRef.current = true;
+      if (state === 'aborted') controller.abort();
+      const continues = await callbacks.poll(current, 1, controller, () => state === 'stopped');
+      expect({ calls: fetch.mock.calls.length, continues }).toEqual({
+        calls: 0,
+        continues: ['pending', 'uncertain', 'deleting'].includes(state),
+      });
+      if (continues) {
+        ports.pendingRef.current = null;
+        ports.deletingRef.current = false;
+        await callbacks.poll(current, 1, controller, () => false);
+        expect(fetch).toHaveBeenCalledOnce();
+      }
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  },
+);
+
+it.each(['terminal', 'lost', 'replaced', 'removed', 'stopped', 'aborted'])(
+  'rechecks %s after a deferred poll settles',
+  async (state) => {
+    const ports = readPorts();
+    const current = ports.sessionRef.current!;
+    const controller = ports.sessionAbort.current!;
+    const response = deferred<Response>();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => response.promise),
+    );
+    let stopped = false;
+    try {
+      const pending = createCombatLabReadCallbacks('/private', ports).poll(
+        current,
+        1,
+        controller,
+        () => stopped,
+      );
+      if (state === 'terminal')
+        ports.sessionRef.current = { ...current, view: { ...current.view, status: 'resolved' } };
+      if (state === 'lost') ports.sessionLostRef.current = true;
+      if (state === 'replaced') ports.sessionRef.current = { ...current, id: 'replacement' };
+      if (state === 'removed') ports.sessionRef.current = null;
+      if (state === 'stopped') stopped = true;
+      if (state === 'aborted') controller.abort();
+      response.resolve(Response.json(view(0)));
+      expect(await pending).toBe(false);
+    } finally {
+      vi.unstubAllGlobals();
     }
   },
 );
