@@ -181,6 +181,28 @@ pnpm exec fallow health --coverage coverage/coverage-final.json   # measured CRA
 Testkit and cross-package specs import built workspace exports; `typecheck` uses
 `--noEmit` and does not refresh `dist`.
 
+## Test stands
+
+Check a change on the lightest stand that exercises it; climb only when the
+lower stand cannot show the defect ([AGENTS.md](../../AGENTS.md#browsers-mcp-servers-and-test-stands)).
+
+| Stand             | Covers                                             | Start / stop                                                                  | Cost                          |
+| ----------------- | -------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------- |
+| Focused Vitest    | game-core rules, protocol, server handlers         | `pnpm exec vitest run <file>`                                                 | seconds, no browser           |
+| Component in Node | HUD and lab markup (`renderToStaticMarkup`)        | `pnpm exec vitest run apps/web/src/combat-lab/<Component>.test.tsx`           | seconds, no browser           |
+| Combat lab        | battle scene, HUD, input, editor presets           | `bash scripts/orca-play.sh start` … `bash scripts/agent-cleanup.sh <session>` | in-memory server, no DB       |
+| Full stack        | company → world → contract journey, saves, sign-in | `pnpm db:up && pnpm dev` (above); `Ctrl+C`, `pnpm db:down`                    | PostgreSQL, Dex, shared ports |
+
+The combat lab runs per worktree on private ports with in-memory battles; drive
+it with one headless `playwright-cli` session named after the task, batch the
+checks, save screenshots to files and close it with
+[`scripts/agent-cleanup.sh`](../../scripts/agent-cleanup.sh), which also stops
+the lab only when the coordinator grants `WARWRIT_LAB_OWNER=<session>` to
+the runtime owner. Pass that grant to the worker wrapper or cleanup invocation;
+read-only workers sharing the checkout do not receive it. Inspection errors and
+leftovers return nonzero. A new stand
+(lab preset, fixture or one Vite page) belongs to the slice that needs it.
+
 ## Combat implementation rules
 
 - `packages/game-core/src/combat/rules.ts` owns all provisional M0 numeric parameters.

@@ -1,6 +1,107 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-23
+## Pipeline status — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Owner (2026-10-23): «Разрешить адресные исправления» for #209, #297 and #179.
+Queue: epic #217 and existing one-issue local slices; prior failures retained.
+Main `25dd9a48`: newest CI `40015365287` SUCCESS.
+#297 / PR #298: targeted source `0b7f593e`, review 4 ACCEPT at `85685ee5`.
+Independent syntax and 101 isolated assertions PASS; fixture processes absent.
+Coordinator validation previously PASS after records-only format correction.
+PR CI still in progress at readback; inherited issue/PR agent:blocked remain.
+Review 3 REWORK and exhausted 2/2 history retained; no merge eligibility.
+Live cleanup/full wave NOT_RUN; real resource savings NOT_MEASURED.
+#310 five-section contract accepted; bounded builder task `task_0a96ffc2f960` running.
+Try after delivery: Start mill 6×6 seed 20261009, then «Участники боя»; Home restores full field.
+This journey is not implemented or player-accepted yet; all original gates remain.
+#310 owns four production files, existing focused tests and exclusive checks/private runtime.
+Preparatory extraction is optional only for a demonstrated correctness/audit need.
+#179 source `0a10e16f` and #209 `024ce8ae` remain frozen pending this prerequisite.
+#309 and #263 children queued; core #225 waits its dependencies.
+Daily metrics/scout/triage/digest already complete; no duplicate daily run.
+This tick: 0 merged PRs with playable proof; no acceptance waiver.
+Next: settle #310 build, verify commits/cleanup, validate and launch its four gates.
+Wrapper releases the lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Owner (2026-10-23): «Разрешить адресные исправления» for #209, #297 and #179.
+Queue: epic #217 and existing one-issue local slices; prior failures retained.
+Main `25dd9a48`: newest CI `40015365287` SUCCESS.
+#209 targeted CSS repair remains live; sole web writer and exclusive checks/runtime.
+#297 / PR #298: source-only core repair allocated alongside #209.
+Own worker wrapper, optional finite Python decision owner and existing regression.
+No tests, audit, commit or runtime for #297 until checks are explicitly transferred.
+The normal hook can start coverage; source preparation is not a completed build.
+Review 3 late-signal REWORK, exhausted 2/2 and both agent:blocked labels remain.
+Source preparation report: infra-297-resource-review/.orca/infra-resource-hygiene/targeted-source-1.md.
+Full Tier D validate, fresh independent review and CI remain mandatory.
+#179 stays blocked; next web repair after #209, with original evidence holds.
+#309 contract accepted, queued behind immediate targeted repairs.
+#263 and its children retain original acceptance; core #225 waits log dependency.
+Daily metrics/scout/triage/digest already complete; no duplicate daily run.
+This tick: 0 merged PRs with playable proof; no playable acceptance or waiver.
+Checks: record diff/status guard only; game tests/validate NOT_RUN.
+Next: source preparation for #297; settle #209 before transferring checks/runtime.
+Wrapper releases the lease when this single tick returns.
+
+### Historical checkpoint — 2026-10-23
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and existing one-issue local slices.
+Main `25dd9a48`: newest CI `40015365287` SUCCESS.
+#297 / PR #298: blocked; source `d2272625`, review 3 REWORK, 2/2 exhausted.
+Read-only recovery completed: no independent split establishes a fresh budget.
+Coordinator retains the freeze; proposed lifecycle replacement is not allocated.
+Report: infra-297-resource-review/.orca/infra-resource-hygiene/recovery-contract.md.
+No additional source round, rule question or acceptance waiver.
+Core #225/#218 remain behind existing log/melee dependencies.
+#209 remains implementing, sole web writer and checks/runtime owner.
+#305 read-only contract live: task_41456478ab8f; no checks/runtime.
+#263 remains open for sequential #305 → #306 → #307 and original acceptance.
+#179 stays blocked with overlap/night/archive findings and exhausted history.
+#262/#269/#303 remain closed; prior menu proof is unchanged.
+Daily metrics/scout/triage/digest already complete; no duplicate daily run.
+This tick: 0 merged PRs with playable proof; no source or game behavior change.
+Checks: record diff and status-block guard only; game tests/validate NOT_RUN.
+Resource savings NOT_MEASURED; no candidate infrastructure acceptance.
+Next: settle #209 and #305; #297 remains frozen pending a valid recovery allowance.
+Wrapper releases the lease when this single tick returns.
+
+### Historical checkpoint — 2026-10-23
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and the existing one-issue local slices.
+Main `25dd9a48`: documentation PR #304 merged on exact-head Tier D ACCEPT,
+coordinator validation exit 0 and green CI/scope. No game-code merge this tick.
+#297 / PR #298: rework 1 settled; original five findings pass 56 isolated checks.
+Validation at `5e4db27b` PASS. Review 2 found one remaining P2: lsof exit 1
+with diagnostics can falsely certify CLEAN. Rework 2 targets cleanup and its
+existing regression only; source scope, normal audit and fresh Tier D retained.
+Real resource savings NOT_MEASURED; real full Orca wave NOT_RUN.
+#262/#269/#303 CLOSED and agent:done. Merged menu source `cf3b2901` has
+independent baseline/candidate day/night ACCEPT; pending/deleting/lost-session
+NOT_REACHED, opponent turn not observed. Merged source worktree evidence archived.
+#263 contract complete; estimated scope requires sequential #305 → #306 → #307.
+Parent remains open; original AC and H1/H2 retained. No parent builder.
+#179 remains unaccepted: resource strip/body overlap and night value 1 retained;
+E2 archive BLOCKED_ENV, AC6 partial. Source frozen; original 2/2 history and
+consumed supplemental allowance retained. #214 waits; no acceptance waiver.
+No real game runtime allocated. #297 rework owns focused isolated checks;
+child #305 starts its contract next; no concurrent source writer on shared paths.
+Daily metrics/scout/digest already complete; no duplicate daily run.
+This tick: one documentation PR merged; zero merged PRs with new playable proof.
+Next: settle #297 rework 2 and run fresh gates; advance the #305 child contract.
+
+### Historical checkpoint — 2026-10-23
 
 Coordinator: cursor-session qa-269-close. Owner (2026-10-23): close #269 and
 #262, and put the remaining proof in a new issue. Also (2026-10-21):
@@ -12,7 +113,17 @@ Full play-through ACCEPT on `cf3b2901` against `690d140b`, day and night.
 #179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
 Next: start #263.
 
-## Dated history
+### Historical checkpoint — 2026-10-23
+
+Coordinator: continuing the open-issue queue. Owner scope (2026-10-21):
+«У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Main is `690d140b`. #272 closed by PR #287. #285 closed by PR #292.
+#293 closed by PR #299. #295 closed by PR #301.
+#269 menu extraction is on `Vovanostm/qa-269-menu-extract` at `e7bcff84`,
+226/300 source lines. Focused tests, typecheck, lint, and check:changes PASS.
+The mounted mill journey is NOT_RUN. Parent #262 stays open.
+#179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
+Next: publish #269, run its mounted check, then merge on green CI.
 
 **Previous checkpoint (superseded above):**
 

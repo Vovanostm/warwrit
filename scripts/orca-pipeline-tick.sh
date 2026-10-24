@@ -103,7 +103,15 @@ printf '%s\n' "$now_state" > "$state/digest-before.txt"
 
 stamp="$(date +%Y%m%dT%H%M%S)"
 prompt="You are the Warwrit pipeline coordinator. Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for $repo, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json. Orca run: $RUN. Orca repo id: $repo_id. Your mailbox handle is already in ORCA_TERMINAL_HANDLE. Read the skill completely first. The current state snapshot is $state/digest-before.txt; re-read from GitHub or Orca only what you are about to change. Every command output stays in your context for the rest of the tick, so read each file once and query state narrowly: one slice with jq from checkpoint.json or slices-local.json, single fields or the last comments with gh --jq; never print those state files, worker lists or issue threads whole. Older tick history is in $state/archive/checkpoint-history.jsonl. Then act and stop when nothing more can advance in this tick. Merge only as the skill's Gate tiers allow (owner decision 2026-10-19); never merge a PR labelled agent:blocked. This prompt is the tick script, not owner words: never quote it as owner scope; the CURRENT_PLAN scope line quotes the owner, and CURRENT_PLAN keeps exactly one status block. End with a short status summary."
-codex exec --approve-for-me -C "$coord" \
+lean=()
+if ! lean_output="$(bash scripts/codex-lean-mcp.sh 2> "$state/ticks/$stamp.mcp.log")"; then
+  echo "MCP setup failed; see $state/ticks/$stamp.mcp.log" >&2
+  exit 1
+fi
+if [[ -n "$lean_output" ]]; then
+  while IFS= read -r arg; do lean+=("$arg"); done <<< "$lean_output"
+fi
+codex exec --approve-for-me -C "$coord" ${lean[@]+"${lean[@]}"} \
   --add-dir "$HOME/orca/workspaces/warwrit" --add-dir "$(cd "$(git rev-parse --git-common-dir)" && pwd -P)" \
   --add-dir "$HOME/Library/pnpm" \
   -o "$state/ticks/$stamp.md" --json "$prompt" > "$state/ticks/$stamp.jsonl" 2> "$state/ticks/$stamp.err"

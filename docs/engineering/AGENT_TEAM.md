@@ -476,3 +476,44 @@ merge, force-push, deployment and paid services keep their separate owner
 permission. The owner applied this change with `.claude/owner-gate-off.sh`
 because the agent's auto-mode classifier refuses agents removing their own
 merge gate.
+
+**Amendment — 2026-10-22, browsers, MCP servers and test stands.** Owner:
+«необходимо, чтобы агенты после работы с игрой закрывали браузер, mcp и бережно
+относились к ресурсам - открыть браузер, проверить, закрыть. По возможности,
+делали отдельные легковесные стенды для проверки отдельных частей». Rules:
+[AGENTS.md § Browsers, MCP servers and test stands](../../AGENTS.md#browsers-mcp-servers-and-test-stands);
+stand ladder: [LOCAL_DEVELOPMENT § Test stands](LOCAL_DEVELOPMENT.md#test-stands).
+
+Measured on the owner's Mac, 2026-10-22 (`ps` RSS, `playwright-cli list`):
+
+| Observation                                                                                  | Number                                                         |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Forgotten `playwright-cli` browsers (two headed, from other projects)                        | 3 sessions, 20 Chrome processes, about 2.0 GB                  |
+| `chrome-devtools-mcp` processes across five agent hosts (Codex app, Cursor, headless worker) | 46 processes, about 2.4 GB, no browser in use                  |
+| Children of one default `codex exec` (MCP servers from `~/.codex/config.toml`)               | 8 processes, about 475 MB                                      |
+| Same run with `scripts/codex-lean-mcp.sh` flags                                              | 3 processes, about 95 MB; input tokens equal (53 039 / 53 037) |
+| `scripts/agent-cleanup.sh <session>` on an open headless session                             | 7 browser processes closed, other sessions untouched           |
+
+| Change                                                                                   | Failure it addresses                                        | Source                                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Worker wrapper names a headless session per task and runs `agent-cleanup.sh` after Codex | browsers survive the agent; headed ones never time out      | [Playwright CLI](https://playwright.dev/agent-cli/introduction): daemon keeps the browser between commands, named sessions, headless default; its bundled session guide: headless sessions close after an hour idle, headed stay open                          |
+| Close only the own session; never `close-all`/`kill-all`                                 | one daemon serves every project's agents                    | measured: `playwright-cli list` showed other projects' sessions                                                                                                                                                                                                |
+| Cleanup in the wrapper, not only in the brief                                            | MCP/browser children outlive their client after a crash     | [anthropics/claude-code#1935](https://github.com/anthropics/claude-code/issues/1935), [#22612](https://github.com/anthropics/claude-code/issues/22612), [microsoft/playwright-mcp#1568](https://github.com/microsoft/playwright-mcp/issues/1568)               |
+| `codex exec -c mcp_servers.<name>.enabled=false` for unused servers                      | every headless run starts all of the user's MCP servers     | [Codex configuration reference](https://developers.openai.com/codex/config-reference); per-profile MCP toggles were unreliable ([openai/codex#9325](https://github.com/openai/codex/issues/9325)); a `-c` key for an undefined server stops Codex (reproduced) |
+| `playwright-cli` instead of a browser MCP                                                | tool schemas and snapshots fill the context                 | Playwright CLI docs: concise output, skills loaded on demand; [Better Stack comparison](https://betterstack.com/community/guides/ai/playwright-cli-vs-mcp-browser/)                                                                                            |
+| Stand ladder: Vitest, component in Node, in-memory lab, full stack last                  | the full stack and a browser for checks a unit stand can do | [Storybook](https://storybook.js.org/): hard-to-reach states without the whole app; [Ladle](https://ladle.dev/docs/) (Vite, fast cold start); no new framework here — the combat lab and Node component tests already fill those rungs                         |
+
+Limits: the MCP servers of interactive hosts (Codex app, Cursor) come from the
+owner's global configs and are not changed by this repository; the token
+saving of `codex-lean-mcp.sh` is zero in the run measured (RAM and start-up
+only). Effect on pipeline failures: NOT_MEASURED until the next wave.
+
+**Correction — 2026-10-23, #297 rework.** The measurements above describe the
+original author run, not this candidate. Only the coordinator-assigned runtime
+owner receives `WARWRIT_LAB_OWNER=<session>`; other readers close only their
+named browser. Cleanup and inspection failures produce a failed worker settlement
+with a log path while preserving the source verdict separately. Normal exits and
+TERM/HUP/INT use one finalizer. MCP discovery, decoding, unsupported overrides
+and verification errors block launch; explicit keeps are logged. The 56 isolated
+shell assertions passed in the builder report; real resource savings and a full
+wave on the reworked candidate remain NOT_MEASURED/NOT_RUN.

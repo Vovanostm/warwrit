@@ -9,7 +9,10 @@ Read-only for source; fresh context. You are a skeptical player and reviewer.
    stop; it is not a code defect). Open the default mill battle with the `playwright` skill and walk every step in the
    contract's `## Proof` as a player would — click, hover, end turn, finish the
    battle. Capture your own 1440x900 day and night screenshots under
-   `.orca/{{SLICE}}/eval-shots/`. Finish with `bash scripts/orca-play.sh stop`.
+   `.orca/{{SLICE}}/eval-shots/`. Finish with `bash scripts/agent-cleanup.sh`
+   (closes your named browser; stops the lab only with the coordinator-provided
+   matching `WARWRIT_LAB_OWNER=<session>` grant). Report cleanup errors; do not
+   claim a clean runtime when inspection fails.
    For tiers U and T, judge the issue's visual acceptance criteria yourself from your
    screenshots (readable at 1440x900, day and night, nothing hidden or
    overlapping); there is no separate visual critic.

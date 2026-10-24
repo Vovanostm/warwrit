@@ -9,6 +9,114 @@ requests.
 
 ## Unreleased
 
+### Accept #297 review and start #310 framing — 2026-10-24, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  independent review 4 ACCEPT at `85685ee5`; syntax and 101 isolated assertions
+  PASS, fixture processes directly confirmed absent. Prior coordinator validation
+  PASS retained; CI still running at readback. Inherited issue/PR blocks and 2/2
+  history stay; no merge. Live cleanup/full wave NOT_RUN, savings NOT_MEASURED.
+- Under the existing owner delegation, [#310](https://github.com/Vovanostm/warwrit/issues/310)
+  moves from accepted contract to one bounded builder with exclusive focused
+  checks/private runtime. Existing fit mechanisms first; preparatory extraction
+  only for a demonstrated correctness or audit need. No parent budget reset.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records allocation and retained
+  #179/#209 source freeze. No feature implementation or player acceptance claimed.
+- Documentation-only closeout; status-block/format checks recorded at commit.
+  No new game tests, browser run or full gates in this coordinator tick.
+
+### Complete the targeted #297 settlement repair — 2026-10-24, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  source `0b7f593e` replaces stale shell settlement snapshots with a finite
+  Python lifecycle owner. Cleanup and complete result decoding precede the
+  cancellation-aware local decision; transport uncertainty remains nonzero
+  without retry. Owner-authorized targeted repair retains original 2/2 history.
+- Changed worker shell/Python and isolated regression; author syntax, 101
+  assertions, normal commit audit and 267/300 scope PASS. Coordinator validation
+  passed rebased/clean/scope/packages/typecheck but failed CURRENT_PLAN format;
+  records-only correction and full retry PASS (exit 0).
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records the pending fresh
+  Tier D review, final-head CI and inherited issue/PR blocks. Live cleanup/full
+  wave NOT_RUN; resource savings NOT_MEASURED. Not merged or player-accepted.
+- The completed #179 composition contract exceeds its 18-line remainder;
+  [#310](https://github.com/Vovanostm/warwrit/issues/310) is a separate usable
+  combat-area framing prerequisite. Coordinator selects an explicit utility,
+  preserving full-field Home and Inspect arrival camera. No parent budget reset,
+  block removal or acceptance waiver; parent sources remain frozen.
+
+### Allocate #297 source preparation alongside #209 — 2026-10-24, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  verified owner permission «Разрешить адресные исправления» supplements the
+  exhausted 2/2 budget. The coordinator allocates the late-signal settlement
+  repair in the existing wrapper and regression, with one optional finite
+  Python decision owner; no independent split or budget reset.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records source-only core work
+  alongside #209, which retains exclusive checks/runtime. Tests, audit and
+  commits for the source worker wait for an explicit checks grant because the
+  normal commit hook may run coverage. Source preparation is not a finished build.
+- Review 3 REWORK and both inherited `agent:blocked` labels remain. Fresh Tier D
+  review, validate and CI are still required. Documentation diff/status guard
+  PASS; game tests/validate NOT_RUN; resource savings NOT_MEASURED. No merge.
+
+### Retain #297 freeze after recovery assessment — 2026-10-23, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  read-only recovery found no independent split that grants a new implementation
+  budget. Coordinator retains source `d2272625`, review 3 REWORK and consumed
+  2/2 reworks; issue and PR are blocked. The proposed lifecycle supervisor is
+  unimplemented. Late-signal successful settlement remains unresolved.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) corrects stale rework-2 status,
+  preserves #209 exclusive checks/runtime and records #305 read-only planning.
+  Recovery report is local at `.orca/infra-resource-hygiene/recovery-contract.md`.
+  Source unchanged; diff/status-block checks only. New game tests and validate
+  NOT_RUN; resource savings NOT_MEASURED. No merge or new playable acceptance.
+
+### Reconcile pipeline and #297 resource ownership — 2026-10-23, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  rework 1 fixes five reviewer failure paths: explicit lab ownership, failed
+  inspection/cleanup settlement, fail-closed MCP setup, and signal finalization.
+  Source `d5995350`; author reports 56 isolated assertions, bash syntax and normal
+  commit audit PASS. Main `cf3b2901` integrated; normal merge audit PASS.
+- Cleanup instructions in AGENTS, README, Orca common/evaluate briefs and the
+  [stand ladder](docs/engineering/LOCAL_DEVELOPMENT.md#test-stands) now describe
+  the matching runtime-owner grant. Historical measurements remain historical.
+  Coordinator validation PASS at `5e4db27b` (six applicable steps); fresh
+  independent review 2 found one remaining P2: lsof exit 1 with diagnostics can
+  falsely certify CLEAN. Rework 2 is allocated; candidate CI is not acceptance;
+  actual resource savings NOT_MEASURED; full real Orca wave NOT_RUN.
+- Native closure of #262/#269/#303 supersedes the stale review hold. PR #302
+  merged as `cf3b2901`; independent candidate/baseline day/night journey ACCEPT
+  is recorded on #303. Pending/deleting/lost-session were NOT_REACHED and
+  opponent turn was not seen. #179 retains its overlap, night-value and archive
+  blockers. [Current status](docs/engineering/CURRENT_PLAN.md) records the resumed
+  Orca queue. #263 contract completed; sequential children #305, #306 and #307
+  retain original acceptance and the source limit. #304 merged as `25dd9a48`
+  after exact-head independent ACCEPT, validation exit 0 and green CI/scope.
+  This tick merged one documentation PR and zero PRs with new playable proof.
+
+### Agents close browsers, skip idle MCP servers and use the lightest stand — 2026-10-22, PUBLISHED
+
+- `claude/agent-resource-hygiene`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298), #297. Owner request 2026-10-22: agents close the
+  browser and MCP after checking the game and use lightweight stands. Measured
+  that day: three forgotten `playwright-cli` browsers (about 2 GB) and 46 idle
+  `chrome-devtools-mcp` processes (about 2.4 GB).
+- New [`scripts/agent-cleanup.sh`](scripts/agent-cleanup.sh) closes one named
+  `playwright-cli` session and this worktree's lab, exit 1 on leftovers; new
+  [`scripts/codex-lean-mcp.sh`](scripts/codex-lean-mcp.sh) keeps the user's
+  unused MCP servers out of headless `codex exec` (children about 475 → 95 MB,
+  same input tokens). `orca-codex-worker.sh` sets `PLAYWRIGHT_CLI_SESSION=warwrit-<task>`
+  and always runs the cleanup; `orca-pipeline-tick.sh` uses the lean flags.
+- Rules: [AGENTS.md § Browsers, MCP servers and test stands](AGENTS.md#browsers-mcp-servers-and-test-stands)
+  and hard rule 9, [stand ladder](docs/engineering/LOCAL_DEVELOPMENT.md#test-stands),
+  Orca skill and `common`/`build`/`evaluate`/`scout` briefs, README; evidence
+  and sources in [AGENT_TEAM](docs/engineering/AGENT_TEAM.md).
+- Checks: cleanup closed a real headless session (7 processes) and left others;
+  lean and default `codex exec` runs compared; `bash -n` and Prettier pass.
+  shellcheck NOT_RUN (not installed); a full Orca wave with these scripts NOT_RUN.
+
 ### Close #262 and #269; the full play-through is #303 — 2026-10-23, PUBLISHED
 
 - Owner decision 2026-10-23: close #269 and #262. Menu extraction is on main

@@ -8,7 +8,7 @@ director looking for the next most valuable improvement, not a code reviewer.
    and stop). Play the representative journey with the `playwright` skill: the
    default mill battle from first order to the end screen, then one editor
    preset. Note load time and any stutter you can measure in the browser
-   (Performance API, frame times); finish with `bash scripts/orca-play.sh stop`.
+   (Performance API, frame times); finish with `bash scripts/agent-cleanup.sh`.
 2. Compare what you see with the open issues
    (`gh issue list -R Vovanostm/warwrit --state open --limit 200`) and with
    AGENTS.md (results first, dark-fantasy style, desktop target). Skip anything
