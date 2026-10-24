@@ -9,6 +9,80 @@ requests.
 
 ## Unreleased
 
+### Accept #319 local payroll preparation gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
+  fresh reviewer and evaluator ACCEPT at `42a4f583`; the evaluator independently
+  passed 30 real producer/core tests, including distinct remote pool-wallet refusal
+  without input mutation. [Evaluation](docs/engineering/evidence/wages-local-evidence-319/eval-2.md)
+  and adjacent review preserve the exact boundary. Coordinator validation remains
+  exit 0, nine checks PASS; whole-PR source scope 296/300.
+- Both gate workers settled, acknowledged and released; direct process readback
+  found no remaining worker checks. [PR #324](https://github.com/Vovanostm/warwrit/pull/324) publishes evidence; final records-head CI is pending. #167 retains
+  authenticated API/PostgreSQL, durable retry/reload and day/night browser acceptance.
+  Full integrated gates NOT_RUN. No production rule, schema or dependency change.
+- The next core allocation is accepted #321, safe optional payroll projection and
+  retained history (task `task_c3c90d43c45e`, branch `Vovanostm/wages-projection-321`).
+  It owns four contract paths and focused checks; no runtime.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records allocation and remaining gates.
+  Existing blocked slices and #315 retain their holds.
+
+### Revalidate #319 distinct pool-wallet regression — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
+  rework 1/2 adds one regression in `apps/server/src/company/payroll-access.test.ts`
+  at `d9bdea97`. A separate remote pool wallet is refused while the carried purse
+  and operator remain local; the input stays unchanged. No production rule change.
+- Builder: 30 payroll tests, scoped lint/format, server types and normal commit audit
+  PASS. Initial formatting check failed, then passed after formatting. Coordinator
+  `orca-validate.sh` exits 0 with all nine checks PASS; source scope remains 296/300.
+  Logs remain at `.orca/validate-*.log`; local report retains all executed checks.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh round 2 reviewer
+  and evaluator at the frozen records successor. Prior reviewer REWORK and evaluator
+  ACCEPT remain historical; fresh verdicts and PR/merge are pending. Settled builder
+  acknowledged/released, direct process cleanup confirmed. #321 waits for checks.
+- Main CI `40085288476` PASS. No PR merged this tick; full integrated gates NOT_RUN.
+  #167 browser/API/PostgreSQL/recovery acceptance and inherited visual blocks remain.
+
+### Return #319 for distinct pool-wallet regression — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
+  evaluator ACCEPT at `651e6ee4`, 29 focused producer/core tests PASS;
+  independent reviewer REWORK because a separate remote requested pool wallet
+  has no regression. Existing code checks its locality; no production defect reproduced.
+- Coordinator allocates rework 1/2 to `apps/server/src/company/payroll-access.test.ts`
+  only, plus the local report: reject that remote pool with the purse/operator local
+  and prove input nonmutation. Reports remain at `.orca/wages-local-evidence-319/`.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records the gate outcomes and queue.
+- Both settled reports acknowledged/released; direct process check found no remaining
+  worker checks. #321 waits for the sole core slot. New regression, revalidation and
+  fresh gates are pending; prior validate 9/9 is not proof of the future change.
+  #167 browser/API/PostgreSQL/recovery acceptance remains pending. No game source
+  changed in this records commit; full integrated gates NOT_RUN, no PR merged.
+
+### Merge #318 and validate #319 local payroll preparation — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/wages-local-evidence-319`: implement accepted child #319 in
+  `apps/server/src/company/payroll-access.ts`, `payroll-observation.ts` and their
+  owned test. Exact local contact/purse evidence and sequential real-core Observe
+  preparations return one unsaved draft with retained allocations; no endpoint,
+  persistence, new finance policy or player text. Source scope 296/300.
+- Builder `2f6535b1`: 29 focused tests, server types, scoped lint/format and normal
+  commit audit PASS. Main merged without conflicts at `53c8e107`; coordinator
+  `orca-validate.sh` exits 0, all nine checks PASS. Initial merge hook FAIL:
+  its incoming-file coverage omitted the already-committed payroll functions.
+  Normal hook retry appended the owned payroll test to its related-test command
+  and pinned the audit to origin/main; PASS, no threshold/hook bypass.
+- [PR #323](https://github.com/Vovanostm/warwrit/pull/323) is MERGED at `1c793e16`,
+  with both checks green at expected head `ed5bd53f`, Tier L ACCEPT, and
+  [ordinary browser/API/PG proof](docs/engineering/evidence/wages-command-seams-318/eval-2.md).
+  #318 closed/relabelled done; clean fully pushed worktree removed after retaining
+  local evidence. This supersedes its pending publication status below.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh #319 review and
+  producer/core evaluation next; #321 waits for exclusive checks. Those verdicts,
+  #319 PR/merge and #167 integrated payroll/browser/recovery acceptance are pending.
+  Full integrated gates NOT_RUN. Inherited blocks and daily-work completion remain.
+
 ### Accept #318 ordinary-command gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):

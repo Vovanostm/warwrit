@@ -5,6 +5,38 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
+Main `1c793e16`: newest CI `40085288476` PASS; #318/PR #323 merged.
+#319 reviewer and evaluator round 2 ACCEPT at `42a4f583`.
+[Evaluation](evidence/wages-local-evidence-319/eval-2.md) and adjacent review preserve the boundary.
+Evaluator independently passed 30 real producer/core tests, including remote pool refusal.
+Coordinator validation exit 0, nine checks PASS; source scope 296/300.
+Try the bounded seam: `pnpm exec vitest run apps/server/src/company/payroll-access.test.ts`.
+This prepares an unsaved draft; authenticated payroll and browser acceptance remain #167.
+Evidence-only successor `b9990c86` adds the two reports; source unchanged.
+[PR #324](https://github.com/Vovanostm/warwrit/pull/324) published; final records-head CI pending.
+Next: merge only after exact-head CI/PR scope and all tier gates are green.
+Both gate workers settled, acknowledged and released; direct process check found no leftovers.
+#321 accepted contract allocated to task `task_c3c90d43c45e`; dispatch follows this records commit.
+Owns protocol company.ts, payroll-view.ts, holdings.ts and payroll-view.test.ts.
+Sole core builder and focused checks; no runtime/PostgreSQL/browser allocation.
+#321 authenticated GET/root/privacy evaluation follows implementation and validation.
+#320/#322 retain dependencies; #315 retains the visual-scope hold.
+#167 retains payment, persistence, lost-response/reload and day/night acceptance.
+#179/#209/#310 and #297/PR #298 retain inherited blocked labels and findings.
+Other snapshot PRs #129/#134 have failed checks; no transition.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Full integrated gates NOT_RUN; no milestone or player acceptance inferred.
+No finance rule, replay, schema or dependency change in this records commit.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — #318 premerge status — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and its existing one-issue local slices.
 Main: `6a585179`; newest main CI `40073679092` PASS.
 #318: source `c017d1b1`; Tier L reviewer ACCEPT `771fcb07`, evaluator ACCEPT `36b6aa5e`.
 [Evaluation](evidence/wages-command-seams-318/eval-2.md), adjacent review and seven JPEGs.
@@ -32,8 +64,6 @@ This tick: 0 merged PRs; 0 merged PRs with playable proof.
 Full integrated gates NOT_RUN this tick; no milestone acceptance inferred.
 No source, finance rule, API/protocol, replay, schema or dependency changes this tick.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 ### Historical checkpoint — #307 premerge status — 2026-10-24
 
