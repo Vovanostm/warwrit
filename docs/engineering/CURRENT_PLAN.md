@@ -6,28 +6,30 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main `25dd9a48`: newest CI run `40015365287` PASS.
-#310: needs-owner for one supplemental repair allocation after consumed 2/2.
-Evaluator 2 settled REWORK at `bc71317a`; source `5a5b46e1` unchanged.
-Real helper + Babylon camera probe reproduces reviewer R2-F1: a compact group
-fits at legal minimum zoom, but the explicit action rejects it and leaves the camera unchanged.
-Four fresh mill journeys pass prior terminal, forecast and border findings;
-these are scoped passes, not overall acceptance. Compact-case encounter occurrence NOT_RUN.
-Evaluator settlement recorded/released/acknowledged; 21 PIDs, two ports,
-pidfile and private browser profile directly checked absent. Runtime/checks released.
-Visual critic 1: `task_50f660ca2f56` / `ctx_1a099e0712ef`, read-only current eval-2 images.
-Text critic 2 ACCEPT remains separate; reviewer/evaluator REWORK remain open.
-Local evidence: uix-combat-area-frame/.orca/uix-combat-area-frame/eval-2.md.
-Recommended exception: one minZoom repair in battle-framing.ts and its existing test,
-recompute the opening center, retain cumulative 300 source lines and all fresh gates.
-Fallback audit-only and issue-split steps do not apply; no duplicate slice or budget reset.
-Question relayed to the owner mailbox; source remains frozen pending explicit decision.
-Prior coordinator validation: 9/9 PASS, 105 related tests; not acceptance of future repair.
-Next: collect full visual verdict and owner allocation decision, then schedule any repair.
+#310 stays needs-owner; source `5a5b46e1` frozen, ordinary reworks 2/2 consumed.
+All gates settled: reviewer/evaluator REWORK, text ACCEPT, visual 1 REWORK.
+Visual report targets `bc71317a`; subsequent `830bbe3a` changes only records.
+Value/palette and scene integration score 1; all required captures were available.
+V1: night figures lose interior detail; route to existing rendering/#179 owner.
+V2: small actors at native 125% need a taller HUD opening, a composition approach change.
+V3: casualty plaques need screen-readable status treatment at distant framing scales.
+V2/V3 route to parent HUD/marker ownership; no #310 scope expansion is allocated.
+Introduction of these visual defects by #310 is UNPROVEN; no parent acceptance implied.
+Reviewer/evaluator minimum-zoom false rejection remains independently open.
+The pending minZoom-only exception cannot resolve all current visual findings.
+No supplemental source authorization received; retain original budgets and freezes.
+Local evidence: uix-combat-area-frame/.orca/uix-combat-area-frame/visual-1.md.
+Visual worker settled/released/acknowledged; no runtime/checks were allocated to it.
+Prior coordinator validation: 9/9 PASS, 105 related tests; no new source validation.
+#309 accepted contract is allocated the free web lane and exclusive focused checks.
+Own only package.json, pnpm-lock.yaml and CombatLab.mounted.test.tsx; Tier D.
+No game runtime required; mounted transport proof is not playable acceptance.
+#305 remains frozen until #309 merges; its exhausted budget is unchanged.
 #179/#209/#214 frozen; parent gates, missing E2 and budgets retained.
-#309/#305–#307 queued; core #225 awaits dependencies. PR #298/#297 remain blocked.
-No PR eligible for merge. This tick: 0 merged PRs with playable proof.
-Daily metrics/scout/digest already complete; not repeated.
-This tick: documentation format/status/diff checks; new game/browser/full gates NOT_RUN.
+PR #298/#297 remain blocked; no merge eligible. Core #225 awaits dependencies.
+This tick: 0 merged PRs with playable proof. Daily metrics/scout/digest already complete.
+Next: collect #309 build; resolve #310 allocation and parent visual ownership.
+New game/browser/full gates NOT_RUN. Documentation checks recorded in CHANGELOG.
 No game-rule/protocol/replay/schema/migration change. Not merged or player-accepted.
 Wrapper releases its lease when this single tick returns.
 

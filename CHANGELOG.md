@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Settle #310 visual review and allocate #309 — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  visual 1 REWORK at `bc71317a`; value/palette and scene integration score 1.
+  Night figures lose detail, actors are too small at native 125%, and retained
+  casualty plaques are illegible. All required captures were available.
+  Local report: uix-combat-area-frame/.orca/uix-combat-area-frame/visual-1.md.
+- Coordinator records the accepted settlement, release and acknowledgment.
+  Route night values to rendering/#179 ownership and the HUD/marker approach
+  changes to their parent owners. No source allocation or parent acceptance;
+  introduction by #310 is UNPROVEN. The separate minimum-zoom rejection and
+  consumed 2/2 budget remain; its pending exception cannot resolve all findings.
+- With targeted repairs frozen and no live builder, allocate the already accepted
+  [#309](https://github.com/Vovanostm/warwrit/issues/309) contract to the free web
+  lane: only package.json, pnpm-lock.yaml and CombatLab.mounted.test.tsx, with
+  exclusive focused checks. No #305 budget reset or gameplay acceptance claim.
+- Only CHANGELOG and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) change
+  in this commit. Scoped format/status/diff checks PASS; main CI PASS.
+  New game/browser/full gates NOT_RUN. Records published; no PR merged.
+
 ### Settle #310 evaluation and request bounded repair exception — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
