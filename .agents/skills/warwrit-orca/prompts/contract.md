@@ -1,32 +1,19 @@
-# CONTRACT — {{SLICE}}
+# OPTIONAL CONTRACT — {{SLICE}}
 
 Issues: {{ISSUES}}
 Ownership: {{OWNERSHIP}}
 
-Read-only: do not edit source. Write `.orca/{{SLICE}}/contract.md`, at most
-about 80 lines, with exactly these sections:
+Use only when the existing issue/contract lacks decisive inputs and the parent
+assigns this task. Read-only source work; write only `.orca/{{SLICE}}/contract.md`.
+Reuse existing notes and source pointers rather than restarting preparation.
 
-1. `## Scope` — per issue, the player-visible result in one or two sentences,
-   and what is explicitly out of scope.
-2. `## Changes` — files and functions to change on current main (issue links
-   may point to older commits), each with a reason. Shape new logic as small
-   functions, hooks and sub-components so each stays within the commit audit
-   (`pnpm check:changes`: cyclomatic/cognitive complexity, CRAP). If a function
-   you must change is already near those limits, plan a behaviour-preserving
-   restructure commit with its own tests first, then the feature commit.
-3. `## Data` — protocol/projection changes (optional fields only) and
-   compatibility with old replays and projections; "none" if none.
-4. `## Proof` — every acceptance criterion of every issue → how it is proven:
-   focused test, command output, or the playtest step and screenshot
-   (1440x900 day and night) the evaluator will repeat.
-5. `## Questions` — only product/rule questions the issues and owner decisions
-   do not answer, each with a recommended answer; "none" if none. Anything
-   outside ownership is listed here too.
+Record outcome/non-goals; decisive criteria and regressions; source/rule owner;
+affected producer/consumers and compatibility; base/write/resource boundaries;
+proof per criterion; unresolved product/authority questions. Technical decisions
+inside accepted rules do not require a general interview. Resolve solution-changing
+uncertainties before prescribing code. Do not freeze all functions/signatures,
+require a refactor by metric or split solely by line count. Size is advisory;
+review cohesive, verifiable and reversible boundaries. Each related issue retains
+its acceptance. No mandatory section count or new independent gate.
 
-One issue per slice. Code against the epic contract
-(`docs/engineering/epics/<epic>/contract.md`) when it exists. If the change would exceed
-about 300 changed lines without tests, list the split under `## Questions`.
-
-If `.orca/{{SLICE}}/plan.md` or earlier review files exist, reuse them and fix
-what they flagged instead of starting over.
-Set `report_path` to `.orca/{{SLICE}}/contract.md` in your final answer.
+Set report_path to `.orca/{{SLICE}}/contract.md` in the final structured answer.

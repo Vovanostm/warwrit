@@ -13,8 +13,11 @@ required source or conflicting changes; never revert another agent's work.
 Use scoped edit tools and focused checks in the named worktree. Do not use a shared
 database, bootstrap cleanup or service ports unless ownership/isolation is established.
 Preserve pure deterministic core, explicit effects, privacy and stable invariants.
-Do not expand scope, spawn agents, commit, publish, merge, deploy, buy services or
-update canonical checkpoints. Parent owns integration and delivery; role is not authority.
+The assignment must name one mode: delegated editor leaves its diff to the parent;
+branch owner commits finished steps. Default to delegated editor; never mix modes.
+Do not expand scope, spawn agents, publish, merge, deploy, buy services or update
+canonical checkpoints unless explicitly assigned the relevant permitted write.
+Parent owns integration and delivery; role is not authority.
 Finish at acceptance or the assignment's time/scope limit. On failure report the
 actual result and smallest next action; retry only after a meaningful change.
 Return DONE, DONE_WITH_CONCERNS, NEEDS_CONTEXT or BLOCKED. Reuse warwrit-delivery's

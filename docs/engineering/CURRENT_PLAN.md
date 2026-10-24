@@ -1,6 +1,22 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-24
+## Workflow preparation status — 2026-10-25
+
+Coordinator: none active; Orca mission/automation remain STOPPED_BY_OWNER.
+Owner stop (2026-10-24): «Отмени автозапуск и отмени работу в orca - токены съедаются, эффективность около нулевая.»
+Current scope: local workflow improvements A–D and first-correct-result guidance.
+Owner (2026-10-25): «Хорошо. Запусти Sol 6.1 subagent for implement improvements and another subagent after for review skils, agents.md and grade them with best practices».
+Branch: `codex/agent-workflow-improvements`; base `1c793e1676a463d8ea750a890ccb493065ffb04e`.
+[Owning preparation/results](AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25).
+Implementation: local; independent review pending. Publication/merge NOT_RUN.
+No automation, worker, game server/DB, deploy or GitHub mutation authorized here.
+Gameplay pilot E NOT_RUN; savings NOT_MEASURED. Existing WIP/blocked findings retained.
+Next: independent review of the finished tooling/instruction diff; integrate only on owner authority.
+Historical snapshots below are not active instructions or current live-main proof.
+
+## Dated history
+
+### Historical pipeline snapshot before owner cancellation — 2026-10-24
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
@@ -32,8 +48,6 @@ This tick: 0 merged PRs; 0 merged PRs with playable proof.
 Full integrated gates NOT_RUN this tick; no milestone acceptance inferred.
 No source, finance rule, API/protocol, replay, schema or dependency changes this tick.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 ### Historical checkpoint — #307 premerge status — 2026-10-24
 

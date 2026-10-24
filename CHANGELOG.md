@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Bound agent workflow and preserve owner stop — 2026-10-25, LOCAL
+
+- Branch `codex/agent-workflow-improvements`; owner-approved A–D and first-result
+  guidance amend the former one-issue/300-line cap, contract/stub rituals,
+  unconditional scout/refill and historical merge-on-gates activation. Current
+  authority is centralized in AGENTS; editor/branch-owner modes are explicit.
+  [Owning preparation/results](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25)
+  retains sources, affected contracts and limits. Domain/visual acceptance stays.
+- Tick checks STOPPED_BY_OWNER before side effects and between iterations;
+  exit 20 stops looping without removing the marker. Scope reports advisory
+  size, retains task linkage and fails on missing base/diff/body. Validation
+  includes deletions/renames and shared-contract consumers; executable/config/
+  lock/unknown changes route conservatively. One owner runs relevant local checks.
+- Focused stubbed fixtures, shell syntax, status-block and TOML checks PASS;
+  scoped format/link/diff readback and normal commit audit recorded in owning
+  results. Existing CI job identity, bootstrap, commit hooks, thresholds and
+  sandbox controls are preserved (guard comment corrected only).
+  Independent review pending; gameplay pilot/full game suites/publication/merge
+  NOT_RUN, savings NOT_MEASURED. No automation, runtime, DB or GitHub writes.
+
 ### Accept #318 ordinary-command gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
