@@ -9,6 +9,34 @@ requests.
 
 ## Unreleased
 
+### Record concrete visual-repair scope blocker — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-clock-real-timers`, coordinator records only: accept the
+  five-section read-only routing report for #179/#310/#209, settle its worker,
+  acknowledge delivery and retain all source freezes. The local report is
+  uix-179-catalogue-integration/.orca/uix-w4-scale/contract-visual-routing.md.
+- Owner-visible repair: readable living figures and casualty status in the native
+  125% participants view, day/night. The report identifies retained night/event
+  repairs, compact forecast/inspection presentation, upright status readouts and
+  minimum-zoom centering. None is newly implemented or accepted this tick.
+- Reported ordinary diff: #179 282/300, leaving 18; proposed 76–118 additional
+  source lines would total 358–400. #310 needs 8–12 after 281 consumed and rework
+  2/2; #209 retains 261 with no new allocation. Full integration is estimated at
+  858–904, actual patch NOT_MEASURED. Splitting cannot justify merging a failed
+  prerequisite or hiding unmerged dependencies in a stacked PR base.
+- Request one bounded owner decision on #217: source-cap exception covering the
+  actual main-target PR, explicit one-issue/one-PR exception if combination is
+  necessary, and disposition of missing original E2 evidence. Prefer separate
+  fully gated PRs where possible; coordinator retains engineering sequencing and
+  explicit allocation ownership. No scope label, extra round or gate waiver is
+  granted by this report. E2 BLOCKED_ENV, AC6 limits and failed history remain.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) replaces the pending worker
+  status with the concrete decision. #315 stays planning and its builder held;
+  #179/#209/#310 and #297/PR #298 retain inherited blocking labels. Main CI
+  `40073679092` PASS; daily work already complete. New game/browser/full gates
+  NOT_RUN; this tick merged 0 PRs with playable proof. Scoped record checks are
+  recorded in the issue handoff after execution.
+
 ### Prioritize retained visual repair routing before H1a — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-clock-real-timers`: coordinator accepted #315's five-section

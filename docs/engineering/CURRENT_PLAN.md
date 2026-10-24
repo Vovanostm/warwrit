@@ -6,29 +6,32 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main: `6a585179`; newest main CI `40073679092` PASS.
-[PR #314](https://github.com/Vovanostm/warwrit/pull/314) merged before this tick at `6a585179`.
-#315: five-section H1a contract accepted; real timers only, estimated 140–190 source lines.
-Contract: qa-clock-real-timers/.orca/qa-clock-real-timers/contract.md (local artifact).
-Contract worker settled and delivery acknowledged; release reports no owned resource.
-#315 builder waits for the existing parent visual-routing decision; implementation NOT_RUN.
-#179: bounded read-only routing contract dispatched as `task_a3719c00ecc4`.
-Dispatch `ctx_0a0628c2597d`: exact native PTY live; completion not inferred.
-Brief: uix-179-catalogue-integration/.orca/tasks/179-visual-routing-contract.md.
-Output: same worktree, .orca/uix-w4-scale/contract-visual-routing.md (pending).
-The report must name one playable repair, exact files, integration order and authority.
-It covers retained night values, HUD opening, casualty readability and minimum zoom.
-If existing authority/cumulative caps cannot permit it, name the exact binding constraint.
-No source, checks or runtime grant; no new slice, budget reset or acceptance waiver.
-#179/#209/#310 retain inherited blocked labels, failed gates and frozen source.
-#310 rework 2/2 remains consumed; #179 retains its supplemental history.
-#297 / PR #298 remains blocked; other snapshot PRs #129/#134 have failed checks.
+[PR #314](https://github.com/Vovanostm/warwrit/pull/314) merged before this tick.
+#179 visual-routing contract accepted as a read-only engineering report.
+Worker `task_a3719c00ecc4` settled; mail acknowledged; release: no owned resource.
+Report: uix-179-catalogue-integration/.orca/uix-w4-scale/contract-visual-routing.md.
+#179 retains 282/300 source lines; proposed repair adds an estimated 76–118.
+Parent attributable total: 358–400; existing 18-line headroom cannot cover it.
+#310 minZoom correction needs 8–12 source lines; consumed 281, rework 2/2 retained.
+#209 frozen contribution is 261 source lines; no new outcome allocation.
+Whole integration estimate: 858–904 source lines; actual patch NOT_MEASURED.
+Separate gated delivery is preferred; no valid sequence established while visual prerequisites fail.
+Owner-only scope exception must cover actual main-target dependencies, never a stacked-base discount.
+A combined PR also needs explicit disposition of the one-issue/one-PR rule.
+Coordinator owns sequential integration and the explicit bounded #310 allocation.
+E2 separately lacks its original screenshot and setup/state/camera/pools/terminal provenance.
+Retain E2 BLOCKED_ENV; source-cap approval cannot substitute for that evidence.
+AC6 partial proof, original acceptance, failed rounds and full independent gates remain binding.
+#179/#209/#310 retain blocked labels and frozen source; no writer/checks/runtime grant.
+#315 contract stays accepted/planning; builder held for this concrete owner decision.
 #316/#317 and parent #264/#231/#217 acceptance remain pending.
+#297 / PR #298 remains blocked; snapshot PRs #129/#134 have failed checks.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-Next: read the routing report, decide the bounded source allocation, then resume work.
+Next: one consolidated scope/allocation and E2 question on #217; resume only its authorized portion.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
-New game/browser/full gates NOT_RUN; fresh scope/performance NOT_MEASURED.
+New game/browser/full gates NOT_RUN; repair/combined-scope measurements NOT_MEASURED.
 No rules, API/protocol, replay, schema, migration or dependency changes.
-Wrapper releases its lease when this single tick returns; read-only worker stays assigned.
+Wrapper releases its lease when this single tick returns.
 
 ## Dated history
 
