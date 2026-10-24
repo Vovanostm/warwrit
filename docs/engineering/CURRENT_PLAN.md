@@ -5,6 +5,37 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
+Main: `6a585179`; newest main CI `40073679092` PASS.
+#318: ordinary intent/result extraction committed at `c017d1b1`.
+Build report successor `f47c2e2c`; source scope 184/300, clean tree.
+Authorization, receipts, transaction and persistence remain in executor.
+[Build report](../../.orca/wages-command-seams-318/report.md) records checks and limits.
+Builder: real PostgreSQL 11/11 PASS, zero skips; types/lint/normal audit PASS.
+Coordinator validation: exit 0, all 9 steps PASS at `f47c2e2c`.
+Related coverage-mode tests: 61 PASS, 55 skipped; not the real PG proof.
+Next: independent Tier L reviewer and evaluator at the frozen records successor.
+Evaluator owns exclusive checks and private runtime after allocation.
+Coordinator retains isolated PostgreSQL project `warwrit-pipeline-318` for evaluation.
+#318 browser/player acceptance, PR and merge remain pending.
+Try after evaluation: existing company rename, perk, equipment and camp commands.
+No payroll UI/API activation; integrated payment acceptance remains on #167.
+#319/#321 contracts accepted; builders wait for the exclusive checks allocation.
+#320/#322 retain dependency ordering; #315 retains the visual-scope hold.
+#179/#209/#310 and #297/PR #298 retain inherited blocked labels and findings.
+Snapshot open PRs #129/#134 have failed checks; no transition this tick.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Full integrated game gates and browser checks NOT_RUN by coordinator.
+No rules, API/protocol, replay, schema, migration or dependency changes.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — #307 premerge status — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and its existing one-issue local slices.
 Main: `99e513f5`; newest main CI `40067442240` PASS.
 #307: independent Tier L reviewer and evaluator ACCEPT at `6485ed80`.
 Shared authenticated reads and polling continuation live in controller.ts.
@@ -31,8 +62,6 @@ This tick: 0 merged PRs; 0 merged PRs with playable proof.
 Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
 No rules, API/protocol, replay, schema, migration or dependency changes.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 ### Historical checkpoint — #305 prerequisite allocation, 2026-10-24
 

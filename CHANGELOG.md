@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Validate ordinary command seams for #318 — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
+  extract ordinary intent selection and result predicates to
+  `apps/server/src/company/ordinary-command.ts` for the accepted #167 split.
+  Executor retains authorization, historical receipts, locks and persistence;
+  rename/perk/equipment/camp behavior stays covered by real PostgreSQL regressions.
+- Source `c017d1b1`, report `f47c2e2c`; 184/300 changed source lines.
+  Builder real PG tests 11/11 PASS without skips, typecheck/lint/normal audit PASS.
+  Coordinator validation exit 0, 9/9 PASS; related tests 61 PASS and 55 skipped.
+  [Build report](.orca/wages-command-seams-318/report.md) retains the initial
+  environment failure, corrected test expectations and initial audit failures.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records pending independent
+  Tier L review/playtesting and the retained #319/#321 queue. This is local
+  implementation awaiting publication; no PR, merge or player acceptance claimed.
+  Payroll and the integrated #167 journey remain pending. No finance rule,
+  protocol, schema, replay or migration changed; full integrated gates NOT_RUN.
+
 ### Confirm #307 corrected-head merge gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
