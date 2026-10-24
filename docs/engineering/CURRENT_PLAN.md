@@ -4,32 +4,32 @@
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
-Queue: epic #217 and its existing one-issue local slices.
-Main: `99e513f5`; newest main CI `40067442240` PASS.
-#307: independent Tier L reviewer and evaluator ACCEPT at `6485ed80`.
-Shared authenticated reads and polling continuation live in controller.ts.
-React retains refs, timers and identity-safe cleanup; 750 ms polling and 550 ms autoplay preserved.
-Coordinator validation: exit 0, 9/9 checks, 187 related tests PASS; scope 197/300.
-Evaluator: 160 focused tests PASS; two ordinary day/night round-7 victories.
-No further action POST after stop/terminal waits; manual orders after stop PASS.
-Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-[Evaluation and limits](evidence/qa-action-polling/eval-1.md); adjacent review and 23 JPEGs.
-Evidence-only successor `e0895592`; normal commit audit PASS.
-Direct cleanup: all 17 named PIDs absent, private ports unused, pidfile/profile absent.
-Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
-#307: [PR #314](https://github.com/Vovanostm/warwrit/pull/314) passes corrected-head CI at `174b6cb6`.
-CI `40070438983` failed Prettier on published review/evaluation Markdown only.
-Coordinator formatted both evidence files; source and ACCEPT verdicts unchanged.
-Scoped format, single-status-block and diff checks PASS; no game checks rerun.
-Scope recheck PASS 197/300; no blocking labels or unresolved review threads.
-Next: require CI on this records-only successor, then merge with expected head.
-#263, original H1/H2 and dependent slices remain open; no parent acceptance inferred.
-#310/#179/#209 retain blocked visual acceptance; PR #298/#297 remains blocked.
-Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
+Queue: epic #217 and sprint #161, with their existing one-issue slices.
+Main: `6a585179`; newest main CI `40073679092` PASS.
+[PR #314](https://github.com/Vovanostm/warwrit/pull/314) merged before this tick.
+#167: read-only PayClaims contract dispatched in its own `core-wages-167` worktree.
+Task `task_bbf422b742aa`; dispatch `ctx_e5e52d0d9eac`; source/checks/runtime not allocated.
+Target journey: earned wage due → Отряд → pay → wallet/claim readback → retry/reentry debits once.
+Next tick: assess full canonical finance Notes/Purpose, exact ownership and finite contract/split.
+No wage-payment implementation or playable acceptance is claimed.
+#225 remains dependency-held; its queue position is unchanged by parallel-reader preparation.
+#179 visual-routing report is accepted; source remains frozen at `0a10e16f`.
+Local report: uix-179-catalogue-integration/.orca/uix-w4-scale/contract-visual-routing.md.
+Proposed #179 attributable cap 400 and #310 minZoom addition ≤12 require the pending allocation.
+#310 retains cumulative 281 source lines and rework 2/2; #209 retains 261, no new source round.
+Whole integration estimate 858–904; actual combined patch NOT_MEASURED.
+[Owner questions](https://github.com/Vovanostm/warwrit/issues/217#issuecomment-6381683434)
+cover scope/one-issue exceptions and missing original E2 screenshot/provenance.
+Only the owner adds `scope:owner-approved`; E2 BLOCKED_ENV and AC6 limits remain.
+#179/#209/#310 and #297 / PR #298 retain inherited blocking labels and failed history.
+#315 contract remains accepted/planning; its builder is held for the existing decision.
+#316/#317 and parent #264/#231/#217 acceptance remain pending.
+Snapshot PRs #129/#134 have failed checks; no transition or merge.
 Daily metrics/scout/digest already complete; no duplicate daily work.
+Runtime/checks reservations remain unallocated; one read-only worker is active.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
-Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
-No rules, API/protocol, replay, schema, migration or dependency changes.
+Game/browser/full gates NOT_RUN; no source, rule, API, replay, schema or dependency changes.
+Coordinator records are published on `Vovanostm/core-wages-167`; no PR yet.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history

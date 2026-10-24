@@ -9,6 +9,68 @@ requests.
 
 ## Unreleased
 
+### Prepare existing wage-payment contract — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):
+  allocate a read-only contract worker for the existing sprint #161 PayClaims
+  journey while #225 waits on dependencies. This follows the pipeline's parallel
+  reader rule and coordinator sequencing authority; no new finance rules or
+  source/checks/runtime allocation. Require full canonical finance Notes/Purpose,
+  exact prospective ownership and real payment/retry proof before a builder.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records one active reader,
+  task `task_bbf422b742aa`, the inherited visual blocks and #315 hold. Carry forward
+  the published coordinator records from `8a5ea33e`; their reasons and failures
+  remain intact. Native issue label/comment readback and dispatch liveness verified;
+  main CI `40073679092` PASS. Daily work was already completed.
+- Game/browser/full checks NOT_RUN for this records-only change; contract and
+  player acceptance remain pending. This tick merged 0 PRs with playable proof.
+  Scoped formatting, single-status-block and diff checks are recorded in the
+  issue handoff after execution; this branch is published, not merged.
+
+### Record concrete visual-repair scope blocker — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-clock-real-timers`, coordinator records only: accept the
+  five-section read-only routing report for #179/#310/#209, settle its worker,
+  acknowledge delivery and retain all source freezes. The local report is
+  uix-179-catalogue-integration/.orca/uix-w4-scale/contract-visual-routing.md.
+- Owner-visible repair: readable living figures and casualty status in the native
+  125% participants view, day/night. The report identifies retained night/event
+  repairs, compact forecast/inspection presentation, upright status readouts and
+  minimum-zoom centering. None is newly implemented or accepted this tick.
+- Reported ordinary diff: #179 282/300, leaving 18; proposed 76–118 additional
+  source lines would total 358–400. #310 needs 8–12 after 281 consumed and rework
+  2/2; #209 retains 261 with no new allocation. Full integration is estimated at
+  858–904, actual patch NOT_MEASURED. Splitting cannot justify merging a failed
+  prerequisite or hiding unmerged dependencies in a stacked PR base.
+- Request one bounded owner decision on #217: source-cap exception covering the
+  actual main-target PR, explicit one-issue/one-PR exception if combination is
+  necessary, and disposition of missing original E2 evidence. Prefer separate
+  fully gated PRs where possible; coordinator retains engineering sequencing and
+  explicit allocation ownership. No scope label, extra round or gate waiver is
+  granted by this report. E2 BLOCKED_ENV, AC6 limits and failed history remain.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) replaces the pending worker
+  status with the concrete decision. #315 stays planning and its builder held;
+  #179/#209/#310 and #297/PR #298 retain inherited blocking labels. Main CI
+  `40073679092` PASS; daily work already complete. New game/browser/full gates
+  NOT_RUN; this tick merged 0 PRs with playable proof. Scoped record checks are
+  recorded in the issue handoff after execution.
+
+### Prioritize retained visual repair routing before H1a — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-clock-real-timers`: coordinator accepted #315's five-section
+  real-timer contract; its builder waits for the existing #179/#209/#310 routing
+  decision. No H1a source implementation or timer acceptance is claimed.
+- A bounded read-only worker on existing #179 must resolve exact ownership,
+  integration order, retained V1/V2/V3 and minimum-zoom constraints. This follows
+  the existing engineering delegation and visible-results priority; no new source
+  allocation, slice, budget reset, blocked-label removal or gate waiver.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records the live dispatch and
+  pending result. Main CI `40073679092` PASS; PR #314 was already merged at
+  `6a585179` before this tick. Game/browser/full checks NOT_RUN for this records-only
+  handoff; this tick merged 0 PRs with playable proof. Local routing evidence
+  remains under the named worktrees' `.orca` paths.
+- Scoped Prettier, the single-status-block guard (27 lines) and diff checks PASS.
+
 ### Confirm #307 corrected-head merge gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
