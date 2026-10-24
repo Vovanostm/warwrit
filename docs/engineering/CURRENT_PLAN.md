@@ -6,32 +6,28 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main: `6a585179`; newest main CI `40073679092` PASS.
-#318: source `c017d1b1`; independent Tier L reviewer ACCEPT at `771fcb07`.
-Evaluator round 1 BLOCKED_ENV: combat runner clears database/OIDC configuration.
-Real browser reached the unavailable-book page; identity/company routes returned 404.
-Reports: `.orca/wages-command-seams-318/review-1.md` and `eval-1.md`.
-No source defect established; browser/player acceptance and merge remain pending.
-Coordinator verified all 21 reported PIDs gone, private ports and browser profile clear.
-Both settled workers acknowledged; no source rework round consumed.
-Environment recovery uses only private `.orca/campaign-318/` configuration.
-Existing test Dex has isolated project `warwrit-campaign-318`, port 23733.
-Existing PostgreSQL project `warwrit-pipeline-318` stays on port 32775.
-Ordered migrations applied to the disposable database; source migrations unchanged.
-Campaign readiness PASS: HTTP 200; auth/session and company GET 401, command POST 403.
-These unauthenticated probes prove route availability, not authenticated play.
-Preflight API/web processes stopped; evaluator receives exclusive private runtime/checks.
-Next: repeat only evaluator with campaign runner at this records-only successor.
-Try: private web :25732 → fixture login → company rename/perk/equipment/camp.
-Coordinator owns both container projects and removes them after gate settlement.
-Builder real PG 11/11 PASS; coordinator validate 9/9 PASS remain unchanged evidence.
-#167 retains integrated payroll acceptance; #319/#321 wait for exclusive checks.
+#318: source `c017d1b1`; Tier L reviewer ACCEPT `771fcb07`, evaluator ACCEPT `36b6aa5e`.
+[Evaluation](evidence/wages-command-seams-318/eval-2.md), adjacent review and seven JPEGs.
+Try: fixture login → company opening → equipment → camp → end camp → reload.
+A stale second tab gives a refusal; refresh and repeat applies one ordinary command.
+Real browser/API/PostgreSQL readbacks passed; evaluator integration tests 11/11 PASS.
+Rename/perk have no UI controls and are executor-tested; no browser claim for them.
+Same-ID executor replay is tested; ordinary UI retry uses a new ID after refusal.
+Coordinator validate exit 0, 9/9 checks; related tests 61 passed / 55 skipped.
+Whole-PR source scope 184/300. Source unchanged since independent review.
+Evaluator environment failure is resolved; no source rework round consumed.
+Direct cleanup: 13 PIDs absent, private ports unused, profile/pidfile absent.
+Settled evaluator acknowledged/released; disposable Dex/PostgreSQL projects removed.
+Next: publish evidence and PR; merge only on final-head CI including PR scope.
+#319 accepted contract is next core builder; #321 waits for the one-builder slot.
 #320/#322 retain dependencies; #315 retains the visual-scope hold.
+#167 retains full payroll, lost-response and day/night acceptance.
 #179/#209/#310 and #297/PR #298 retain inherited blocked labels and findings.
-Other snapshot open PRs #129/#134 have failed checks; no transition.
+Other snapshot PRs #129/#134 have failed checks; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
-Full integrated gates and authenticated browser checks NOT_RUN by coordinator.
-No source, finance rule, API/protocol, replay, schema or dependency changes.
+Full integrated gates NOT_RUN this tick; no milestone acceptance inferred.
+No source, finance rule, API/protocol, replay, schema or dependency changes this tick.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history

@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Accept #318 ordinary-command gates — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
+  Tier L reviewer ACCEPT at `771fcb07` and evaluator ACCEPT at `36b6aa5e`;
+  subsequent source diff is empty. The earlier environment blocker is resolved.
+  [Evaluation](docs/engineering/evidence/wages-command-seams-318/eval-2.md),
+  adjacent review and seven JPEGs retain the independent proof.
+- Actual authenticated company opening, equipment, begin/end camp, atomic stale
+  refusal, ordinary retry and reload passed against private PostgreSQL. Evaluator
+  reran 11 focused integration tests with zero skips. Rename/perk lack UI controls
+  and are executor-tested; ordinary retry after refusal uses a new ID.
+  Coordinator validation remains exit 0, 9/9 checks; source scope 184/300.
+- Direct cleanup confirmed all 13 named app/browser PIDs absent, private ports
+  unused and profile/pidfile absent. Both disposable Dex/PostgreSQL projects and
+  volumes were removed after settlement. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  records publication pending and unchanged #167 payroll/lost-response/day-night
+  acceptance. No source, schema, finance rule or API change this tick;
+  full integrated gates NOT_RUN. Existing blocked labels remain binding.
+
 ### Recover #318 campaign evaluation environment — 2026-10-24, LOCAL
 
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
