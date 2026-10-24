@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Confirm #307 corrected-head merge gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
+  corrected head `174b6cb6` passes both CI checks, superseding the formatting
+  failure below. Main `99e513f5` CI `40067442240` remains successful; branch is
+  current with main, clean and fully pushed. No blocked label or unresolved
+  review thread; scope recheck PASS at 197/300, closing only #307.
+- Independent Tier L ACCEPT at `6485ed80`, validation exit 0 and day/night
+  playable proof remain valid: later changes contain evidence/shared records only.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) requires final CI and expected-head
+  merge after this records-only commit. Merge is not yet claimed. Parent #263,
+  H1/H2 and all blocked acceptance remain open; game checks NOT_RUN this tick.
+
 ### Correct #307 published evidence formatting — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
