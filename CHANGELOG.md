@@ -9,6 +9,29 @@ requests.
 
 ## Unreleased
 
+### Merge #318 and validate #319 local payroll preparation — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/wages-local-evidence-319`: implement accepted child #319 in
+  `apps/server/src/company/payroll-access.ts`, `payroll-observation.ts` and their
+  owned test. Exact local contact/purse evidence and sequential real-core Observe
+  preparations return one unsaved draft with retained allocations; no endpoint,
+  persistence, new finance policy or player text. Source scope 296/300.
+- Builder `2f6535b1`: 29 focused tests, server types, scoped lint/format and normal
+  commit audit PASS. Main merged without conflicts at `53c8e107`; coordinator
+  `orca-validate.sh` exits 0, all nine checks PASS. Initial merge hook FAIL:
+  its incoming-file coverage omitted the already-committed payroll functions.
+  Normal hook retry appended the owned payroll test to its related-test command
+  and pinned the audit to origin/main; PASS, no threshold/hook bypass.
+- [PR #323](https://github.com/Vovanostm/warwrit/pull/323) is MERGED at `1c793e16`,
+  with both checks green at expected head `ed5bd53f`, Tier L ACCEPT, and
+  [ordinary browser/API/PG proof](docs/engineering/evidence/wages-command-seams-318/eval-2.md).
+  #318 closed/relabelled done; clean fully pushed worktree removed after retaining
+  local evidence. This supersedes its pending publication status below.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh #319 review and
+  producer/core evaluation next; #321 waits for exclusive checks. Those verdicts,
+  #319 PR/merge and #167 integrated payroll/browser/recovery acceptance are pending.
+  Full integrated gates NOT_RUN. Inherited blocks and daily-work completion remain.
+
 ### Accept #318 ordinary-command gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
