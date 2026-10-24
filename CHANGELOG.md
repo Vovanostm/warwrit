@@ -23,8 +23,8 @@ requests.
   includes deletions/renames and shared-contract consumers; executable/config/
   lock/unknown changes route conservatively. One owner runs relevant local checks.
 - Focused stubbed fixtures, shell syntax, status-block and TOML checks PASS;
-  scoped format/link/diff readback and normal commit audit recorded in owning
-  results. Existing CI job identity, bootstrap, commit hooks, thresholds and
+  scoped format/link/diff readback PASS. Normal commit audit PASS on `1346ea49`
+  (syntactic-attribution warning retained in owning results). Existing CI job identity, bootstrap, commit hooks, thresholds and
   sandbox controls are preserved (guard comment corrected only).
   Independent review pending; gameplay pilot/full game suites/publication/merge
   NOT_RUN, savings NOT_MEASURED. No automation, runtime, DB or GitHub writes.

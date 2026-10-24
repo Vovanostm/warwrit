@@ -124,12 +124,17 @@ Base: `1c793e1676a463d8ea750a890ccb493065ffb04e`; branch
 - Python `tomllib` parse of the implementer profile: PASS.
 - Pinned `pnpm install --frozen-lockfile --offline --ignore-scripts`: PASS;
   dependencies reused from local store; no dependency/lockfile changes.
-- Scoped Prettier, added local Markdown links and ordinary diff checks are read
-  back before commit. Manual read-through covers all 16 proposal counterexamples:
+- Scoped Prettier, added local Markdown links (24 targets exist) and ordinary
+  `git diff --check`: PASS. Manual read-through covers all 16 proposal counterexamples:
   WIP/old-branch/stop authority; large/multi-issue acceptance; docs/executable/
   protocol routes; environment failure; visual acceptance; changed-main evidence;
   interrupted sessions; source reuse; decisive probes; truncated errors; stale pass.
-- Normal commit-hook audit: pending first implementation commit; no bypass used.
+- Normal commit-hook audit on implementation commit `1346ea49`: PASS, 21 changed
+  files, no new dead-code/complexity/duplication findings; no bypass. Fallow warned
+  that base/head semantic identities differ, so comparison used syntactic
+  attribution (head type-aware findings still apply). This is not full semantic
+  proof. The subsequent results-only Markdown commit uses the unchanged hook's
+  documentation-only skip. No hook/threshold changes.
   Full bootstrap, game suites, browser/visual acceptance and pilot E NOT_RUN for
   this tooling-only slice. Independent review pending; savings NOT_MEASURED.
 
