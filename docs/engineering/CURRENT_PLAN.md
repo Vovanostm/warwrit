@@ -6,26 +6,25 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main `25dd9a48`: newest CI run `40015365287` PASS.
-#310 evaluator 1 settled REWORK after four real casualty-to-terminal rows.
-F1: explicit terminal framing hides five survivors behind outcome at both viewports.
-F2: visible attack forecast is omitted; ordinary target selection hides human-1.
-F3: utility border 2.56:1 fails 3:1; text 10.50:1 and 18 px pass.
-Reviewer regression must use existing ordinary-opening camera limits.
-Text inventory requires the existing grid title «Сетка» / “Grid”; no source rewrite.
-Reports: uix-combat-area-frame/.orca/uix-combat-area-frame/{eval-1,review-1,text-1}.md.
-Evaluator settlement recorded/released/acknowledged; direct PID/port/profile cleanup PASS.
-Rework 2/2 allocated to `task_c4a44e6107f9`; headless dispatch follows this checkpoint.
-Builder exclusively owns web source, focused checks and private runtime; cap 300 source lines.
-Previous source `f1752045`: 186/300; no source repair claimed by this tick.
-Next: repair all three defects, repeat affected proof, normal commit and validate.
-Then fresh reviewer/evaluator/text and full visual critic gates; no acceptance waiver.
-Existing unaffected evidence may be mapped explicitly; unreached edges remain unproved.
-#179/#209/#214 remain frozen; parent gates and budgets retained.
+#310 rework 2/2 settled succeeded; source `5a5b46e1`, report head `f1426af3`.
+Terminal framing now respects ordinary camera limits and includes enabled live planes/plaques;
+visible target forecast participates in the opening; utility border and Grid inventory repaired.
+Author reports four-row affected proof, 64 focused tests and 281/300 cumulative source lines.
+Author results are not independent acceptance. Original contract Proof rows remain required.
+Coordinator validation on `f1426af3`: all 9 gates PASS, including related tests and audit.
+Direct cleanup: 24 recorded PIDs absent, ports 23278/25278 clear, pidfile/profile absent.
+Settlement recorded, worker released and delivery acknowledged; no builder remains allocated.
+Fresh reviewer 2, evaluator 2 and text critic 2 briefs are allocated for dispatch.
+Evaluator alone owns private runtime/checks; reviewer/text are file-only readers.
+Visual critic waits evaluator's complete current images and comparison inputs.
+Source is frozen; rework budget remains 2/2, with no new source round or acceptance waiver.
+Current report: uix-combat-area-frame/.orca/uix-combat-area-frame/report.md.
+Next: settle independent gates, inspect actual verdicts and runtime cleanup, then route findings.
+#179/#209/#214 remain frozen; parent gates, missing E2 and budgets retained.
 #309/#305–#307 remain queued; core #225 awaits dependencies.
 PR #298 and #297 retain inherited blocked labels. No PR eligible for merge.
 This tick: 0 merged PRs with playable proof; daily metrics/scout/digest already complete.
-New game tests/typecheck/validate/browser checks NOT_RUN by coordinator this tick.
-Only shared records changed; scoped format/status/diff checks are closeout checks.
+Coordinator browser checks NOT_RUN; full verify/stress/migrations NOT_RUN.
 No game-rule/protocol/replay/schema/migration change. Not player-accepted.
 Wrapper releases its lease when this single tick returns.
 

@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Validate #310 rework 2 and allocate fresh gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  source `5a5b46e1` repairs the reproduced terminal-camera clamp, includes full
+  enabled live planes and visible target forecast, and raises the participants
+  utility border contrast. Changes are in `sprite-battle-scene.ts`,
+  `battle-framing.ts`, `battle-controls.css` and existing geometry tests;
+  the local text inventory now includes the existing Grid title.
+- Author reports affected four-row runtime proof and 64 focused tests. Coordinator
+  validation at report head `f1426af3` passed all nine gates; owned processes,
+  ports, pidfile and browser profile are absent. Rework 2/2 remains consumed;
+  cumulative source scope is 281/300 according to the builder's accounting.
+- Fresh reviewer/evaluator/text gates are allocated; the full visual critic waits
+  current evaluator inputs. No independent acceptance, merge or parent acceptance
+  is claimed. Full verify/stress/migrations and coordinator browser checks NOT_RUN.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) owns allocation and retained limits.
+
 ### Route three reproduced #310 defects into rework 2 — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
