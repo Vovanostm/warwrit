@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Allocate the first wage prerequisite builder — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):
+  accept bounded #318 and #321 child contracts under the existing five-child split.
+  Allocate only #318 as core builder, owning ordinary command selection/result seams
+  and their integration tests; grant sequential focused checks, no game runtime.
+  #321 waits for the same builder slot. The parent retains all four original ACs.
+- #319 contract failed with “Selected model is at capacity”; tracked source is clean
+  and no valid result exists. Record/acknowledge the failure, release the settled
+  dispatch and start a read-only contract retry without charging implementation rework.
+  Existing blocked labels, visual scope/E2 questions and #315 hold remain unchanged.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) replaces its single status block.
+  Main CI `40073679092` PASS; scoped documentation format/status/diff checks and
+  publication readback are recorded on #167. Game/browser/full gates NOT_RUN here;
+  0 PRs merged, 0 with playable proof. No wiki behavior update applies before implementation.
+
 ### Split the wage-payment journey into bounded issues — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):

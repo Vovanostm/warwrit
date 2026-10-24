@@ -6,33 +6,31 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and sprint #161, one issue per PR.
 Main: `6a585179`; newest main CI `40073679092` PASS.
-#167 revision accepted: five finite children, parent keeps all four original ACs.
+#167: accepted five-child split; parent retains all four original ACs.
 Journey: earned wage due → Отряд → pay → wallet/claim readback → retry/reentry debits once.
-#318: ordinary command intent/result seams, estimated 180 source lines.
-#319: lawful local access/observations, estimated 250 source lines.
-#320: atomic V2 PayClaims, estimated 280; waits #318/#319/#321.
-#321: safe payroll projection/history, estimated 190; protocol precedes #320.
-#322: retained client attempt, estimated 280; waits #320/#321.
-#167: final panel/integrated journey, estimated 280; waits #320/#321/#322.
-Estimates include additions/deletions; actual source sizes and audit complexity NOT_MEASURED.
-Read-only child contracts dispatched for #318/#319/#321; no source/checks/runtime grant.
-Initial #318/#319 launches used global Astra; coordinator interrupted both.
-Both failed settlements recorded/acknowledged/released; retries explicitly pin GPT-6.1 Sol.
-No contract rework charged for this coordinator launch error; original attempts remain recorded.
+#318 contract ACCEPT; sole core builder `task_743d20d246c5` is allocated.
+Writes: executor ordinary selection, ordinary-command helper, ordinary integration tests.
+Exclusive sequential focused PostgreSQL/types/lint/normal commit audit checks granted.
+Game runtime and browser allocation remain absent; no source acceptance claimed.
+#321 contract ACCEPT; safe optional payroll projection/history waits for core builder slot.
+#319 contract runner FAILED at model capacity; no valid result, tracked source clean.
+Read-only retry `task_64fdd31d76d0`; prior failure retained, no implementation rework charged.
+All three settlements recorded before acknowledgment; release returned no owned resource.
+#320 waits #318/#319/#321; #322 waits #320/#321; #167 waits the integrated path.
 Parent contract: core-wages-167/.orca/core-wages-167/contract.md.
-Next: accept child contracts, then allocate one bounded core builder and its checks.
-No wage-payment implementation, browser proof or player acceptance is claimed.
-#225 remains dependency-held; #315 builder still held for the existing visual decision.
+Child contracts: wages-command-seams-318/.orca/wages-command-seams-318/contract.md
+and wages-projection-321/.orca/wages-projection-321/contract.md.
+#225 remains dependency-held; #315 builder remains held for the visual decision.
 #179/#209/#310 and #297 / PR #298 retain blocked labels and failed history.
 [Visual scope/E2 questions](https://github.com/Vovanostm/warwrit/issues/217#issuecomment-6381683434) remain open.
 #316/#317 and parent #264/#231/#217 acceptance remain pending.
 Snapshot PRs #129/#134 retain failed checks; no transition or merge.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-Runtime/checks reservations remain unallocated; contract readers run in separate worktrees.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
-Game/browser/full gates NOT_RUN; no source, rules, API, schema or dependency change.
-Coordinator records live on `Vovanostm/core-wages-167`; publication readback goes on #167.
-Wrapper releases its lease when this single tick returns.
+Game/browser/full gates NOT_RUN by coordinator; no payment delivery claimed.
+Next: settle #318 build and #319 retry, then validate committed source before Tier L gates.
+Coordinator records live on `Vovanostm/core-wages-167`; issue handoff records publication.
+Wrapper releases its lease when this single tick returns; workers retain their slice ownership.
 
 ## Dated history
 
