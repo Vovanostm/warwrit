@@ -5,30 +5,27 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `99e513f5`; latest main CI `40067442240` PASS; #306/PR #313 merged.
-#307 builder settled at `f9d7c28b`; coordinator validation exit 0, all 9 checks and 187 related tests PASS.
-Shared authenticated reads and polling continuation now live in controller.ts.
-React retains refs, timers and identity-safe abort/cleanup; whole-PR source scope 197/300.
-Preserve initial/post-settlement 750 ms polling, 550 ms autoplay and exact-body retries.
-Builder reports 160 focused tests and two ordinary day/night round-7 victories.
+Main: `99e513f5`; newest main CI `40067442240` PASS.
+#307: independent Tier L reviewer and evaluator ACCEPT at `6485ed80`.
+Shared authenticated reads and polling continuation live in controller.ts.
+React retains refs, timers and identity-safe cleanup; 750 ms polling and 550 ms autoplay preserved.
+Coordinator validation: exit 0, 9/9 checks, 187 related tests PASS; scope 197/300.
+Evaluator: 160 focused tests PASS; two ordinary day/night round-7 victories.
+No further action POST after stop/terminal waits; manual orders after stop PASS.
 Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-Report: .orca/qa-action-polling/report.md; contract: .orca/qa-action-polling/contract.md.
-Coordinator confirmed 37 named PIDs absent, private ports unused, pidfile/profiles absent.
-Builder settlement acknowledged; release returned retained/no_owned_resource.
-Next: independent Tier L reviewer and evaluator, each reporting this branch's checkpoint head.
-Reviewer is source-only; evaluator alone owns sequential checks and private runtime 23201/25201.
-Briefs: .orca/tasks/307-review-1.md and .orca/tasks/307-eval-1.md.
-This checkpoint publishes source and records; independent gates pending, no PR or merge yet.
-#263/H1/H2 and all consumed recovery budgets remain open and unchanged.
-#310 remains blocked at rework 2/2; #179/#209 retain original blocked acceptance.
-PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
-Open PRs #129/#134 retain failed checks in supplied snapshot; no transition.
+[Evaluation and limits](evidence/qa-action-polling/eval-1.md); adjacent review and 23 JPEGs.
+Evidence-only successor `e0895592`; normal commit audit PASS.
+Direct cleanup: all 17 named PIDs absent, private ports unused, pidfile/profile absent.
+Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
+Next: publish the #307 PR, then check final CI/scope and expected head before merge.
+#263, original H1/H2 and dependent slices remain open; no parent acceptance inferred.
+#310/#179/#209 retain blocked visual acceptance; PR #298/#297 remains blocked.
+Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
-Documentation format, single status block and scoped diff checks accompany this checkpoint.
 Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
 No rules, API/protocol, replay, schema, migration or dependency changes.
-Wrapper releases its lease when this single tick returns; gate workers retain their tasks.
+Wrapper releases its lease when this single tick returns.
 
 ## Dated history
 

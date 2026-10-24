@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Accept #307 shared-read and polling gates — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/qa-action-polling`, [#307](https://github.com/Vovanostm/warwrit/issues/307):
+  independent Tier L reviewer and evaluator ACCEPT at `6485ed80`, superseding
+  the pending gates below. Source remains `67f49bf2`; no source correction.
+- [Evaluation](docs/engineering/evidence/qa-action-polling/eval-1.md) records
+  160 focused tests PASS and two ordinary day/night round-7 victories, with
+  no further POST after stop or terminal waits. Adjacent review and 23 JPEGs
+  retain the gate evidence. Coordinator validation: exit 0, 9/9 checks,
+  187 related tests PASS; whole-PR source scope 197/300.
+- Direct coordinator cleanup confirms all 17 named PIDs absent, both private
+  ports unused and pidfile/profile absent. Evaluator settled and acknowledged;
+  runtime/checks reservations released. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  records PR publication as the next delivery step; no merge yet.
+- Full integrated gates and fresh live-main comparison NOT_RUN. Parent #263,
+  H1/H2 and blocked #179/#209/#310/#297 acceptance remain open. No rules,
+  API/protocol, replay, schema, migration or dependency changes.
+
 ### Validate #307 shared reads and polling — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`, [#307](https://github.com/Vovanostm/warwrit/issues/307):
