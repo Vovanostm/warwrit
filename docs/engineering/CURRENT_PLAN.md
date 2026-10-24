@@ -6,20 +6,23 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main `25dd9a48`: newest CI run `40015365287` PASS.
-#310 source `f1752045`, report `3ab9bf99`: utility spacing and 18 px label committed.
-Cumulative source scope 186/300; source rework remains 1/2, not accepted.
-Builder reports 57 focused tests PASS; validate 8/9, inherited CURRENT_PLAN format FAIL.
-Coordinator corrected shared formatting in `c892b04`; no source rework budget consumed.
-Runtime/browser absent, private ports free, settlement recorded and released.
-Coordinator validate at `c892b04`: all 9 gates PASS, including related tests and audit.
-Fresh reviewer/evaluator/text gates allocated; visual gate waits current evaluator images.
-Repaired-source browser proof and independent acceptance remain pending.
-Evaluator alone owns private runtime/checks; all other gates are file-only readers.
+#310 source `f1752045` remains frozen; cumulative source scope 186/300, rework 1/2.
+Coordinator validation at `c892b04` passed all 9 gates; independent acceptance pending.
+Reviewer 1: REWORK at `d8d40d1c`; asymmetric opening can exceed existing camera limits.
+The counterexample uses source arithmetic; occurrence in the mill journey NOT_MEASURED.
+Text critic 1: BLOCKED_ENV; inventory lacks the English review translation of «Сетка».
+Reports: uix-combat-area-frame/.orca/uix-combat-area-frame/{review-1,text-1}.md.
+Both settlements recorded, workers released and delivery acknowledged.
+Evaluator `task_c1cfdab1396b` remains live and solely owns runtime/checks.
+Next: evaluator settlement and positive cleanup, then bounded source rework 2.
+Include the inventory-only correction; it does not consume a source repair round.
+Visual critic waits repaired-source captures; no new writer allocated this tick.
 #179/#209/#214 remain frozen; original parent gates and budgets retained.
-#309 and #305–#307 remain queued behind current repairs.
+#309 and #305–#307 remain queued behind current repairs; core #225 awaits dependencies.
 PR #298 and issue #297 retain inherited blocked labels; no merge.
 Other open PRs from snapshot: #129 and #134, failing checks; no merge eligibility.
 This tick: 0 merged PRs with playable proof. Daily work already complete.
+New game tests/typecheck/validate/browser checks NOT_RUN this tick.
 No game-rule/protocol/replay/schema/migration change. Not player-accepted.
 Wrapper releases its lease when this single tick returns.
 

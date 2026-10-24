@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Record #310 gate findings and preserve evaluator ownership — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  reviewer 1 requests reconciliation of the measured combat-area opening with
+  existing camera limits; its concrete counterexample is source arithmetic,
+  not a reproduced mill journey failure. Text critic 1 reports missing English
+  review wording for «Сетка» in the inventory; this requires no player-text change.
+- Settlements recorded, workers released, and findings forwarded to the live
+  evaluator. Source remains frozen at `f1752045`; rework remains 1/2 until a
+  new builder is allocated after evaluator settlement and positive cleanup.
+  The visual gate waits repaired-source captures. No merge or player acceptance.
+- Only shared records change. Scoped prettier, the current-plan guard and ordinary
+  diff checks PASS; the single status block has 23 non-empty lines. New game/runtime gates NOT_RUN.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) owns the next allocation.
+
 ### Repair #310 layout and unblock shared-record validation — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
