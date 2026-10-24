@@ -18,8 +18,11 @@ Whole-PR source scope 184/300. Source unchanged since independent review.
 Evaluator environment failure is resolved; no source rework round consumed.
 Direct cleanup: 13 PIDs absent, private ports unused, profile/pidfile absent.
 Settled evaluator acknowledged/released; disposable Dex/PostgreSQL projects removed.
-Next: publish evidence and PR; merge only on final-head CI including PR scope.
-#319 accepted contract is next core builder; #321 waits for the one-builder slot.
+[PR #323](https://github.com/Vovanostm/warwrit/pull/323) published; final-head CI pending.
+Next: merge only after CI including PR scope is green at the expected head.
+#319 builder task `task_504917a385f9` allocated; dispatch follows this records commit.
+Owns payroll-access/observation/tests only, exclusive focused checks, no runtime.
+#321 waits for the one-builder slot; #319 source/check results remain pending.
 #320/#322 retain dependencies; #315 retains the visual-scope hold.
 #167 retains full payroll, lost-response and day/night acceptance.
 #179/#209/#310 and #297/PR #298 retain inherited blocked labels and findings.

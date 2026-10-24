@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Accept #318 ordinary-command gates — 2026-10-24, LOCAL
+### Accept #318 ordinary-command gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
   Tier L reviewer ACCEPT at `771fcb07` and evaluator ACCEPT at `36b6aa5e`;
@@ -24,9 +24,13 @@ requests.
 - Direct cleanup confirmed all 13 named app/browser PIDs absent, private ports
   unused and profile/pidfile absent. Both disposable Dex/PostgreSQL projects and
   volumes were removed after settlement. [Current plan](docs/engineering/CURRENT_PLAN.md)
-  records publication pending and unchanged #167 payroll/lost-response/day-night
+  records [PR #323](https://github.com/Vovanostm/warwrit/pull/323) published and unchanged #167 payroll/lost-response/day-night
   acceptance. No source, schema, finance rule or API change this tick;
   full integrated gates NOT_RUN. Existing blocked labels remain binding.
+- Coordinator allocates accepted #319 contract to the sole core builder in
+  `Vovanostm/wages-local-evidence-319` (task `task_504917a385f9`): three owned
+  payroll access/observation files, focused checks, no runtime or endpoint.
+  #321 waits for that slot; implementation results remain pending.
 
 ### Recover #318 campaign evaluation environment — 2026-10-24, LOCAL
 
