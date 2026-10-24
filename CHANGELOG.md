@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Split H1 into bounded timer and text deliveries — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-hooks-text-clock`, [#264](https://github.com/Vovanostm/warwrit/issues/264):
+  accept the five-section contract and its source estimate of 540–740 lines
+  (actual patch size NOT_MEASURED). Under the existing one-issue/one-PR rule,
+  allocate sequential [#315](https://github.com/Vovanostm/warwrit/issues/315)
+  real timers, [#316](https://github.com/Vovanostm/warwrit/issues/316) manual
+  clock, and [#317](https://github.com/Vovanostm/warwrit/issues/317) text/runner proof.
+  Each retains applicable parent acceptance, Tier L gates and a 300-source-line
+  limit. Explicitly allocate existing mounted tests; no dependencies added.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records the #315 read-only
+  contract task, green post-merge main CI `40073679092`, and settled #264 worker.
+  The full local contract remains at
+  `qa-hooks-text-clock/.orca/qa-hooks-text-clock/contract.md`; tick retention is
+  `.orca/pipeline/ticks/20261024T072915Z/264-contract.md` in the coordinator.
+- This publishes coordination records, not H1 implementation. #264 remains
+  open for aggregate proof; #265/#231/#217 and blocked #179/#209/#310/#297
+  acceptance and consumed budgets remain unchanged. Scoped format, status-block
+  and diff checks accompany this documentation change; game checks, audit,
+  runtime and new playable proof NOT_RUN. No PR merged in this tick.
+
 ### Deliver R3 polling and prepare H1 contract — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-hooks-text-clock`: record [PR #314](https://github.com/Vovanostm/warwrit/pull/314)

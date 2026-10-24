@@ -5,27 +5,26 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `6a585179`; post-merge CI `40073679092` in progress; pre-merge main CI PASS.
-#307: [PR #314](https://github.com/Vovanostm/warwrit/pull/314) MERGED at `6a585179`; issue closed.
-Expected head `909ef31d` passed final CI and PR scope; no blocked labels or unresolved threads.
-Independent Tier L reviewer and evaluator ACCEPT at `6485ed80`; later commits evidence/records only.
-Validation exit 0, 9/9 checks, 187 related tests; scope recheck 197/300 PASS.
-Evaluator: 160 focused tests, two day/night round-7 victories, stop/terminal waits PASS.
-Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-[Evaluation and limits](evidence/qa-action-polling/eval-1.md); adjacent review and 23 JPEGs.
-#263 CLOSED: finite R3 AC1–3 delivered through merged PRs #312, #313 and #314.
-#264 contract task `task_f937299a6677`, dispatch `ctx_1c557fcf17e8`, allocated in `qa-hooks-text-clock`.
-Worker owns only `.orca/qa-hooks-text-clock/contract.md`; no source/checks/runtime allocation.
-Brief `.orca/tasks/264-contract.md` requires original H1 proof and a finite scope estimate/split.
-Next: accept five contract sections and resolve scope before allocating any builder.
-H1/H2, #231 and #217 remain open; R3 closure does not claim their acceptance.
-#307/#263 untracked evidence retained under coordinator `.orca/pipeline/retained/`; worktree removal requested.
-#179/#209/#310 retain original blocked visual acceptance and recovery history.
-PR #298 / #297 remains blocked despite review ACCEPT; no merge.
+Main: `6a585179`; newest main CI `40073679092` PASS.
+#307 / [PR #314](https://github.com/Vovanostm/warwrit/pull/314) merged; finite R3 parent #263 closed.
+[Retained R3 evaluation](evidence/qa-action-polling/eval-1.md) proves ordinary day/night play at its gated head.
+#264 contract complete: five sections; source estimate 540–740, actual diff NOT_MEASURED.
+Coordinator decision: three sequential Tier L child PRs, each at most 300 source lines.
+[#315](https://github.com/Vovanostm/warwrit/issues/315): shared real timers, preserving 550/750 ms cadence and safety.
+[#316](https://github.com/Vovanostm/warwrit/issues/316): deterministic dev clock and async/UI settlement, after #315.
+[#317](https://github.com/Vovanostm/warwrit/issues/317): current text snapshots and full runner proof, after #316.
+Existing mounted tests are explicitly allocated to each child that changes wiring.
+Parent #264 stays open until all original H1 criteria are proven; H2/#265/#231/#217 remain open.
+#315 read-only contract task `task_b2cdca74a790` allocated in its own `qa-clock-real-timers` worktree.
+Brief `.orca/tasks/315-contract.md`; only output `.orca/qa-clock-real-timers/contract.md`.
+No source, checks or runtime allocation; implementation, audit and gameplay proof NOT_RUN.
+#264 contract worker settled successfully, acknowledged and released (`retained/no_owned_resource`).
+Full contract retained locally in `qa-hooks-text-clock/.orca/qa-hooks-text-clock/contract.md`.
+Next: read #315 contract, confirm bounded source plan, then allocate its builder.
+#179/#209/#310 retain blocked visual acceptance and recovery history; PR #298/#297 stays blocked.
 Other open PRs #129/#134 retain failed checks from the supplied snapshot.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 1 merged PR; 1 merged PR with independent playable proof.
-Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
 No rules, API/protocol, replay, schema, migration or dependency changes.
 Wrapper releases its lease on return; next tick resumes the live contract worker.
 
