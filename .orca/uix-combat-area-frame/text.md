@@ -7,7 +7,8 @@ day/night toggle («Ночная сцена» / «Дневной свет», tit
 autoplay («Начать автобой» / «Остановить автобой»), existing «Меню боя».
 
 Rework round 1 retains the same control order and wording, with a reserved utility
-lane and an 18 px label (browser measurement pending at source checkpoint).
+lane and an 18 px CSS label. Computed browser size and fresh visual/text review
+remain NOT_MEASURED/NOT_RUN because validation hit coordinator-owned formatting.
 
 Only changed displayed line: **Участники боя**.
 Accessible name: native button text **Участники боя**. No title or shortcut added.

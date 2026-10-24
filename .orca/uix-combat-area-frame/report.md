@@ -1,22 +1,106 @@
-# #310 — rework round 1 (2026-10-24)
+# #310 — rework round 1: FAILED (ownership blocker)
 
-Source repair: `battle-controls.css` reserves one shared 420 px utility lane plus
-12 px separation from initiative, and sets only the full-text utility to 18 px.
-No control/portrait is hidden, clipped or reordered; no camera/game state code changed.
-Cumulative production budget is **186/300** (174 prior + 11 additions + 1 deletion).
-The original build report and failures are preserved below. Browser proof is pending
-at this source checkpoint; independent gates remain coordinator-owned.
+2026-10-24. Started from coordinator record `b6afb49d`, source `81e28fe7`,
+report `c218f733`; branch `Vovanostm/uix-combat-area-frame`, base `25dd9a48`.
+Source repair committed normally as **`f1752045`**. No push, PR, merge, labels,
+delegation, Orca call, shared-record edit or parent-source copy.
 
-Executed sequentially: first-edit `pnpm check:changes` PASS (CSS advisories only),
-three owned focused files **57 tests PASS**, web typecheck PASS, scoped existing
-TypeScript eslint PASS, CSS prettier PASS, `git diff --check` PASS.
-Logs: `rework-audit-first.log`, `rework-focused.log`, `rework-typecheck.log`,
-`rework-lint.log`, `rework-format.log` under this evidence directory.
+## Repair and exact blocker
 
-Proposed coordinator changelog amendment: 2026-10-24, branch
-`Vovanostm/uix-combat-area-frame`, LOCAL — #310 allocated CSS repair reserves
-utility space and uses an 18 px label; 186/300 cumulative source lines, focused
-checks pass; playable proof and independent acceptance pending at this checkpoint.
+`battle-controls.css` now reserves a shared **420 px utility lane**, with **12 px**
+separation from initiative, and sets only its direct full-text action to **18 px**
+with an unbroken full label. Utility icon buttons cannot shrink. Existing control
+order, native markup, colors, focus styling, portraits and camera code are retained.
+No z-index change, clipping/hiding workaround, mobile layout or typography redesign.
+Cumulative production budget: **186/300** (174 prior + 11 additions + 1 deletion).
+The graph index points to another checkout, so current source was read directly.
+
+The demonstrated overlap and typography findings have a committed source repair;
+**their rendered resolution is NOT_MEASURED**, not accepted. Original failures and
+all prior evidence are preserved below.
+
+`bash scripts/orca-validate.sh` on `f1752045` failed **only** its format gate:
+`[warn] docs/engineering/CURRENT_PLAN.md`. This file belongs to the coordinator and
+is explicitly excluded from this task. `git diff b6afb49d HEAD --
+docs/engineering/CURRENT_PLAN.md` is empty: the formatting failure is inherited
+from the supplied coordinator records, not introduced by this CSS repair.
+
+Per the explicit missing-ownership stop rule, the worker stopped before starting
+browser/runtime proof. **Smallest next action:** coordinator formats and commits
+its own `docs/engineering/CURRENT_PLAN.md`, then allocates continuation of validation
+and the unchanged playable Proof rows. No broader CSS/source allocation or product
+question is needed. No acceptance waiver or budget reset is proposed.
+
+## Rework acceptance readback
+
+These rows supplement, rather than replace, every original Proof row below.
+Historical browser results are not evidence for this source head.
+
+| Contract row | Actual rework evidence / remaining limit |
+| --- | --- |
+| AC1 native utility / unchanged contracts | Existing native markup, accessible full label and Home retained; existing tests pass. Pointer, Tab/Shift+Tab, Enter/Space, visible focus and actual initiative/portrait hit targets on repaired source NOT_RUN. |
+| AC1 terminal / Inspect | No camera/event code changed. Terminal arrival NOT_RUN; Inspect disclosure absent on this main-based source and remains #209 integration work. |
+| AC2 public subjects / opening / clamping | Existing geometry regressions pass, including actual plaque corners and asymmetric opening; source unchanged. Runtime casualty bounds, pinned inspection, closed/open menu/log and collapsed-opening no-op NOT_RUN. |
+| AC3 readiness / cleanup / latest intent | Existing request regressions pass. Delayed readiness, frame→Home, Home→frame, frame→portrait, restart-before-ready, exit/reentry, pan/zoom→hover/poll/activation→resize runtime sequences NOT_RUN. |
+| AC3 state boundary | Repaired-source GET bracketing, zero-POST proof and ordinary targeting/selection NOT_RUN. Original revision 4 proof below belongs to the previous head. |
+| AC4 1440×900 / 100% day | Initial, real casualty-arrival, combat-area, open-panels and Home captures NOT_RUN on repaired source. |
+| AC4 1440×900 / 100% night | Same five captures and full journey NOT_RUN on repaired source. |
+| AC4 1366×768 / native 125% day | Same five captures, viewport/DPR/native zoom and full journey NOT_RUN/NOT_MEASURED. No CSS-transform substitute. |
+| AC4 1366×768 / native 125% night | Same five captures, viewport/DPR/native zoom and full journey NOT_RUN/NOT_MEASURED. |
+| AC4 journey / terminal | Manual real casualty, Home 165-cell runtime measurement, navigation/readiness/resize, terminal arrival and restart/reentry remain NOT_RUN. |
+| AC5 commands | Focused 57 tests, normal audits and related 98 tests PASS; validator 8/9 PASS, inherited shared-document formatting FAIL. Exact commands below. |
+| AC5 reviewer / evaluator | Fresh independent gates NOT_RUN, coordinator-owned; no author acceptance. |
+| AC5 visual critic | NOT_RUN; required references/comparison sheets and all original visual rows remain. Font source is 18 px; computed 1080p size, contrast, CVD and reduced-motion results NOT_MEASURED. |
+| AC5 text critic | NOT_RUN, coordinator-owned. `text.md` retains actual unchanged order, label, accessible name and RU/EN review meaning. |
+| Retained boundaries / DoD | #310 only; #179/#209/#214 frozen, F1/F2/F3, E2 archive, AC6 and original independent gates unchanged. |
+
+## Exact checks and failures
+
+All checks ran sequentially. No full verify, stress, migration or whole-suite coverage.
+Local evidence paths below are untracked; no links to untracked files are introduced.
+
+- `pnpm agent:status`: PASS; origin/main `25dd9a48`, main CI success, no integration change.
+- First-edit `pnpm check:changes`: PASS, CSS advisory findings only;
+  `rework-audit-first.log`. Existing broader CSS advisories were not refactored.
+- `pnpm exec vitest run apps/web/src/combat-lab/battle-framing.test.ts apps/web/src/combat-lab/sprite-battle-scene.test.ts apps/web/src/combat-lab/BattleView.test.tsx`:
+  **3 files / 57 tests PASS**, `rework-focused.log`.
+- `pnpm --filter @warwrit/web typecheck`: PASS, `rework-typecheck.log`.
+- `pnpm exec eslint` on the four original owned production TypeScript files and
+  their three existing tests: PASS, `rework-lint.log`. CSS is covered by format/audit.
+- `pnpm exec prettier --check apps/web/src/combat-lab/battle-controls.css`:
+  PASS, `rework-format.log`; `git diff --check`: PASS.
+- First `git add` invocation reported ignored `.orca`; explicit force-add of only
+  the already-owned tracked report/text paths succeeded. No ignored evidence bulk-added.
+- Normal source commit hook: PASS, related coverage/audit refreshed by the hook;
+  `rework-commit.log`. No bypass, new test, suppression or weakened gate.
+- `git rebase origin/main`: already up to date.
+- `bash scripts/orca-validate.sh`: **FAIL, 8/9 gates PASS**;
+  `rework-validate.log`, `.orca/validate-format.log`. Rebased, clean tree, scope,
+  packages, typecheck, lint, related tests and audit PASS; format fails only the
+  coordinator-owned CURRENT_PLAN. Related tests: **5 files / 98 tests PASS**.
+- Browser matrix, 1080p measurement and fresh independent gates: **NOT_RUN**.
+- Final report/text scoped prettier and normal documentation commit: recorded in
+  `rework-closeout-format.log` and `rework-closeout-commit.log`.
+
+## Resources and cleanup
+
+No runtime or browser was launched in this rework: owned browser/session/profile,
+PIDs and listeners **none**. Reserved private ports remain API **23278**, web **25278**.
+No campaign DB, another worktree runtime or #297 candidate script was used.
+Direct `lsof` found neither port listening; `.orca/play.pid` and prior
+`.orca/uix-combat-area-frame/browser-profile` are absent. Initial sandbox `ps` was
+denied; the authorized read-only retry found no matching frame310/private runtime
+processes. No cleanup kill was needed. Prior build's cleanup record remains below.
+
+## Proposed coordinator changelog amendment
+
+2026-10-24 — `Vovanostm/uix-combat-area-frame` — LOCAL, NOT ACCEPTED, #310:
+`f1752045` reserves utility space and sets the full participants label to 18 px in
+allocated `battle-controls.css`; cumulative source 186/300. Focused 57 tests and
+normal audits pass; validate passes 8/9 with 98 related tests but fails inherited
+CURRENT_PLAN formatting. Coordinator must format its shared record before worker
+continuation. Rendered repair and original casualty/native-125% matrix NOT_RUN;
+fresh reviewer/evaluator/visual/text gates and parent boundaries remain open.
 
 ---
 
