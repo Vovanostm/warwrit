@@ -133,8 +133,9 @@ function transportFixture(
       return Promise.reject(new Error(`Unexpected fixture request: ${key}`));
     }
     requests.push({ url: String(input), init, signal });
-    if (requests.length === 1) return Promise.resolve(Response.json(catalog));
-    if (requests.length === 2) return Promise.resolve(Response.json(initial));
+    if (key === 'GET /api/dev/combat-lab/catalog') return Promise.resolve(Response.json(catalog));
+    if (requests.at(-2)?.url === '/api/dev/combat-lab/catalog')
+      return Promise.resolve(Response.json(initial));
     const response = deferredResponse(signal, ignoreAbort);
     deferred.push(response);
     return response.promise;
@@ -154,7 +155,7 @@ function pendingFeedback(container: HTMLElement) {
 
 async function withMountedLab(
   transport: ReturnType<typeof transportFixture>,
-  run: (container: HTMLElement, abortSession: () => void) => Promise<void>,
+  run: (container: HTMLElement, abortSession: () => void, replace: () => void) => Promise<void>,
 ) {
   const controllers: AbortController[] = [];
   const NativeController = AbortController;
@@ -182,10 +183,14 @@ async function withMountedLab(
     await act(async () => {
       root.render(<CombatLab />);
     });
-    await run(container, () => {
-      const signal = transport.requests[2]!.signal;
-      controllers.find((controller) => controller.signal === signal)!.abort();
-    });
+    await run(
+      container,
+      () => {
+        const signal = transport.requests[2]!.signal;
+        controllers.find((controller) => controller.signal === signal)!.abort();
+      },
+      () => root.render(<CombatLab key="replacement" />),
+    );
   } finally {
     try {
       await act(async () => {
@@ -544,7 +549,14 @@ it('shares the in-flight poll with action refresh and polls again 750 ms after s
       calls: 4,
       pending: 'Ожидается ответ: Завершение хода.',
     });
-    await act(async () => transport.deferred[0]!.resolve({ ...initial, viewRevision: 8 }));
+    const body = delayedJson(200);
+    await act(async () => transport.deferred[0]!.resolveResponse(body.response));
+    await act(async () => vi.advanceTimersByTime(1500));
+    expect({ calls: transport.requests.length, pending: pendingFeedback(container) }).toEqual({
+      calls: 4,
+      pending: 'Ожидается ответ: Завершение хода.',
+    });
+    await act(async () => body.resolve({ ...initial, viewRevision: 8 }));
     expect(pendingFeedback(container)).toBeNull();
     await act(async () => vi.advanceTimersByTime(749));
     expect(transport.requests).toHaveLength(4);
@@ -600,5 +612,107 @@ it.each(['POST', 'refresh'])('ignores delayed %s JSON after actual unmount', asy
   expect({ calls: transport.fetch.mock.calls.length, unexpected: transport.unexpected }).toEqual({
     calls: boundary === 'POST' ? 3 : 4,
     unexpected: [],
+  });
+});
+
+it.each(['restored terminal', 'active to terminal', 'lost'])(
+  'retains the initial tick and stops continuation for %s',
+  async (state) => {
+    const initial = sessionView();
+    const terminal: CombatLabView = {
+      ...initial,
+      status: 'resolved',
+      activation: null,
+      outcome: { winnerSideId: 'human', reason: 'last-side-standing' },
+    };
+    const transport = transportFixture(state === 'restored terminal' ? terminal : initial, [
+      `GET ${sessionUrl}`,
+    ]);
+    await withMountedLab(transport, async () => {
+      await act(async () => vi.advanceTimersByTime(749));
+      expect(transport.requests).toHaveLength(2);
+      await act(async () => vi.advanceTimersByTime(1));
+      await act(async () =>
+        transport.deferred[0]!.resolve(
+          state === 'lost' ? {} : { ...terminal, viewRevision: 8 },
+          state === 'lost' ? 404 : 200,
+        ),
+      );
+      await act(async () => vi.advanceTimersByTime(3000));
+      expect({
+        calls: transport.requests.length,
+        aborted: transport.requests[2]!.signal.aborted,
+      }).toEqual({ calls: 3, aborted: false });
+    });
+  },
+);
+
+it('cancels the initial poll timeout on unmount', async () => {
+  const transport = transportFixture(sessionView(), []);
+  await withMountedLab(transport, async () => {
+    await act(async () => vi.advanceTimersByTime(749));
+  });
+  expect(transport.requests).toHaveLength(2);
+});
+
+it('ignores deferred poll JSON after unmount even when transport ignores abort', async () => {
+  const transport = transportFixture(sessionView(), [`GET ${sessionUrl}`], true);
+  const body = delayedJson(200);
+  await withMountedLab(transport, async () => {
+    await act(async () => vi.advanceTimersByTime(750));
+    await act(async () => transport.deferred[0]!.resolveResponse(body.response));
+  });
+  await act(async () => body.resolve({ ...sessionView(), viewRevision: 8 }));
+  expect({ calls: transport.requests.length, unexpected: transport.unexpected }).toEqual({
+    calls: 3,
+    unexpected: [],
+  });
+});
+
+it('does not reinstall a deleted session when its held poll completes', async () => {
+  const transport = transportFixture(
+    sessionView(),
+    [`GET ${sessionUrl}`, `DELETE ${sessionUrl}`],
+    true,
+  );
+  await withMountedLab(transport, async (container) => {
+    await act(async () => vi.advanceTimersByTime(750));
+    await act(async () => button(container, 'Меню боя').click());
+    await act(async () => button(container, 'К редактору').click());
+    await act(async () => transport.deferred[1]!.resolve({}));
+    await act(async () => transport.deferred[0]!.resolve({ ...sessionView(), viewRevision: 8 }));
+    await act(async () => vi.advanceTimersByTime(1500));
+    expect({
+      battle: container.querySelector('button[aria-label="Завершить ход"]'),
+      storage: sessionStorage.getItem(storageKey),
+      calls: transport.requests.length,
+    }).toEqual({ battle: null, storage: null, calls: 4 });
+  });
+});
+
+it('keeps the replacement controller live when an old mounted poll completes late', async () => {
+  const transport = transportFixture(
+    sessionView(),
+    [
+      `GET ${sessionUrl}`,
+      'GET /api/dev/combat-lab/catalog',
+      `GET ${sessionUrl}`,
+      `GET ${sessionUrl}`,
+    ],
+    true,
+  );
+  await withMountedLab(transport, async (container, _abort, replace) => {
+    await act(async () => vi.advanceTimersByTime(750));
+    const oldSignal = transport.requests[2]!.signal;
+    await act(async () => replace());
+    await act(async () => transport.deferred[0]!.resolve({}, 404));
+    await act(async () => vi.advanceTimersByTime(750));
+    const replacementSignal = transport.requests[5]!.signal;
+    expect({
+      oldAborted: oldSignal.aborted,
+      replacementAborted: replacementSignal.aborted,
+      distinct: oldSignal !== replacementSignal,
+      disabled: waitButton(container).getAttribute('aria-disabled'),
+    }).toEqual({ oldAborted: true, replacementAborted: false, distinct: true, disabled: 'false' });
   });
 });
