@@ -5,32 +5,30 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `99e513f5`; newest main CI `40067442240` PASS.
-#307: independent Tier L reviewer and evaluator ACCEPT at `6485ed80`.
-Shared authenticated reads and polling continuation live in controller.ts.
-React retains refs, timers and identity-safe cleanup; 750 ms polling and 550 ms autoplay preserved.
-Coordinator validation: exit 0, 9/9 checks, 187 related tests PASS; scope 197/300.
-Evaluator: 160 focused tests PASS; two ordinary day/night round-7 victories.
-No further action POST after stop/terminal waits; manual orders after stop PASS.
-Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-[Evaluation and limits](evidence/qa-action-polling/eval-1.md); adjacent review and 23 JPEGs.
-Evidence-only successor `e0895592`; normal commit audit PASS.
-Direct cleanup: all 17 named PIDs absent, private ports unused, pidfile/profile absent.
-Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
-#307: [PR #314](https://github.com/Vovanostm/warwrit/pull/314) passes corrected-head CI at `174b6cb6`.
-CI `40070438983` failed Prettier on published review/evaluation Markdown only.
-Coordinator formatted both evidence files; source and ACCEPT verdicts unchanged.
-Scoped format, single-status-block and diff checks PASS; no game checks rerun.
-Scope recheck PASS 197/300; no blocking labels or unresolved review threads.
-Next: require CI on this records-only successor, then merge with expected head.
-#263, original H1/H2 and dependent slices remain open; no parent acceptance inferred.
-#310/#179/#209 retain blocked visual acceptance; PR #298/#297 remains blocked.
-Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
+Main: `6a585179`; newest main CI `40073679092` PASS.
+[PR #314](https://github.com/Vovanostm/warwrit/pull/314) merged before this tick at `6a585179`.
+#315: five-section H1a contract accepted; real timers only, estimated 140–190 source lines.
+Contract: qa-clock-real-timers/.orca/qa-clock-real-timers/contract.md (local artifact).
+Contract worker settled and delivery acknowledged; release reports no owned resource.
+#315 builder waits for the existing parent visual-routing decision; implementation NOT_RUN.
+#179: bounded read-only routing contract dispatched as `task_a3719c00ecc4`.
+Dispatch `ctx_0a0628c2597d`: exact native PTY live; completion not inferred.
+Brief: uix-179-catalogue-integration/.orca/tasks/179-visual-routing-contract.md.
+Output: same worktree, .orca/uix-w4-scale/contract-visual-routing.md (pending).
+The report must name one playable repair, exact files, integration order and authority.
+It covers retained night values, HUD opening, casualty readability and minimum zoom.
+If existing authority/cumulative caps cannot permit it, name the exact binding constraint.
+No source, checks or runtime grant; no new slice, budget reset or acceptance waiver.
+#179/#209/#310 retain inherited blocked labels, failed gates and frozen source.
+#310 rework 2/2 remains consumed; #179 retains its supplemental history.
+#297 / PR #298 remains blocked; other snapshot PRs #129/#134 have failed checks.
+#316/#317 and parent #264/#231/#217 acceptance remain pending.
 Daily metrics/scout/digest already complete; no duplicate daily work.
+Next: read the routing report, decide the bounded source allocation, then resume work.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
-Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
+New game/browser/full gates NOT_RUN; fresh scope/performance NOT_MEASURED.
 No rules, API/protocol, replay, schema, migration or dependency changes.
-Wrapper releases its lease when this single tick returns.
+Wrapper releases its lease when this single tick returns; read-only worker stays assigned.
 
 ## Dated history
 

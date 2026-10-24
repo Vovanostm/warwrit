@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Prioritize retained visual repair routing before H1a — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-clock-real-timers`: coordinator accepted #315's five-section
+  real-timer contract; its builder waits for the existing #179/#209/#310 routing
+  decision. No H1a source implementation or timer acceptance is claimed.
+- A bounded read-only worker on existing #179 must resolve exact ownership,
+  integration order, retained V1/V2/V3 and minimum-zoom constraints. This follows
+  the existing engineering delegation and visible-results priority; no new source
+  allocation, slice, budget reset, blocked-label removal or gate waiver.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records the live dispatch and
+  pending result. Main CI `40073679092` PASS; PR #314 was already merged at
+  `6a585179` before this tick. Game/browser/full checks NOT_RUN for this records-only
+  handoff; this tick merged 0 PRs with playable proof. Local routing evidence
+  remains under the named worktrees' `.orca` paths.
+- Scoped Prettier, the single-status-block guard (27 lines) and diff checks PASS.
+
 ### Confirm #307 corrected-head merge gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
