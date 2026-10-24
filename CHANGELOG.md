@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Allocate #306 action transport build — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-transport`: accept the five-section #306 contract
+  under the existing #263 split. Resolve its engineering ownership questions:
+  include `CombatLab.mounted.test.tsx` and only minimal post-JSON generation/abort
+  guards in `CombatLab.tsx::refreshLatest` required by late-response AC3.
+  `controller.ts` and existing CombatLab/controller tests retain their scope;
+  #307 keeps polling extraction. No acceptance or recovery-budget reset.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates builder task
+  `task_a0148fe23e8b`, exclusive private runtime and sequential focused checks.
+  [Issue decision](https://github.com/Vovanostm/warwrit/issues/306#issuecomment-6379966728)
+  records the boundary; local contract/brief are named in the plan. This is
+  published coordination only, not implemented or accepted gameplay.
+- Main CI `40062633985` PASS at `1d6df3af`; this supersedes the in-progress
+  observation below. Contract settlement read back; no source changes.
+  Documentation format, status-block and diff checks PASS. Game checks,
+  author smoke, coordinator validation and independent #306 gates NOT_RUN.
+  No rules, protocol, replay, schema, migration or dependency changes; all
+  parent H1/H2 and blocked visual/PR acceptance remain open. No PR merged this tick.
+
 ### Merge #305 and allocate #306 contract — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-transport`: records-only continuation after

@@ -5,24 +5,27 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `1d6df3af`; PR #312 merged at expected head `ebcc3f34`; #305 closed.
-Pre-merge main CI and PR CI/scope PASS; new main CI `40062633985` IN_PROGRESS.
-#305 Tier L reviewer/evaluator ACCEPT at `a54b65c6`; validation 9/9 PASS.
-Scope 169/300; 115 related tests and evaluator's 88 focused tests PASS.
-Ordinary day/night round-7 victories and three browser retry probes accepted.
-[Evaluation and limits](evidence/qa-action-admission/eval-1.md); adjacent review and JPEGs.
-#306: contract writer running in its own `qa-action-transport` worktree on merged main.
-Only contract writing is allocated; source implementation waits for contract acceptance.
-#263 remains parent of sequential #305 / #306 / #307; #307 waits for #306.
-Original H1/H2, parent acceptance and consumed recovery history remain open.
-#310 remains blocked at rework 2/2; minimum-zoom and full visual REWORK retained.
-#179 and #209 remain blocked with original acceptance; no new source allocation.
-PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
+Main: `1d6df3af`; newest main CI `40062633985` PASS; #305 / PR #312 merged.
+#306: five-section contract accepted; builder task `task_a0148fe23e8b` allocated.
+Branch: `Vovanostm/qa-action-transport`; own worktree, sole web writer.
+[Allocation decision](https://github.com/Vovanostm/warwrit/issues/306#issuecomment-6379966728):
+existing mounted tests and minimal post-JSON freshness guards belong to #306.
+Polling extraction remains #307, dependency-held until #306 merges.
+Private runtime ports 23544/25544 and sequential focused checks are exclusive to this builder.
+Contract and brief: `.orca/qa-action-transport/contract.md`, `.orca/tasks/306-build-1.md`.
+Acceptance: manual orders/retry/autoplay remain usable; late responses cannot mutate replacement sessions.
+Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
+Whole-PR source cap 300 lines; normal audit and all existing recovery limits remain binding.
+#306 implementation, tests, smoke, coordinator validation and independent Tier L gates NOT_RUN.
+Next: settle builder, verify commits/cleanup, then coordinator validation and fresh review/evaluation.
+#263 remains open; original H1/H2 and parent proof requirements remain.
+#310 stays blocked at rework 2/2; #179/#209 remain blocked with original acceptance.
+PR #298 / #297 remains blocked despite reviewer ACCEPT; no merge.
+Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 1 merged PR with playable proof (#312); no milestone acceptance.
-No new game checks this tick; final scope and documentation checks PASS.
-Next: consume #306 contract; verify new main CI before later merges.
-Wrapper releases its lease when this single tick returns.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Records only; no game rules, protocol, schema, migration or dependency changes.
+Wrapper releases its lease when this single tick returns; builder retains its slice.
 
 ## Dated history
 
