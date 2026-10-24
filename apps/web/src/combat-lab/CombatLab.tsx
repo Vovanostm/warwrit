@@ -14,15 +14,13 @@ import {
   commonCombatLabReason,
   createCombatLabSessionCallbacks,
   createCombatLabActionCallbacks,
+  createCombatLabReadCallbacks,
 } from './controller.js';
 import {
   startSessionAttempt,
   admittedBattleDraft,
-  messageFor,
-  responseCode,
   type ActiveSession,
 } from './session-transport.js';
-import { isCombatLabView } from './view-validation.js';
 import { executeFieldCommand, canIssueManualCommand } from './field-command.js';
 import { canControl } from './command-availability.js';
 import { CommandDesk } from './CommandDesk.js';
@@ -38,7 +36,6 @@ import { autoplayContinuation, runAutoplayStep } from './autoplay.js';
 import './combat-lab.css';
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
-const capabilityHeader = 'x-combat-lab-capability';
 const pollingIntervalMs = 750;
 const sessionStorageKey = 'warwrit.combat-lab.session.v1';
 
@@ -541,54 +538,18 @@ export function CombatLab() {
     setNotice,
   });
 
-  const refreshLatest = (current: ActiveSession, expectedGeneration: number) => {
-    if (latestRead.current !== null) return latestRead.current;
-    const controller = sessionAbort.current;
-    if (controller === null || controller.signal.aborted) return Promise.resolve();
-    const request = (async () => {
-      try {
-        const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}`, {
-          headers: { [capabilityHeader]: current.capability },
-          signal: controller.signal,
-        });
-        if (generation.current !== expectedGeneration || controller.signal.aborted) return;
-        if (response.status === 404) {
-          sessionLostRef.current = true;
-          setSessionLost(true);
-          setNotice(messageFor('NOT_FOUND'));
-          return;
-        }
-        if (!response.ok) {
-          const body: unknown = await response.json().catch(() => null);
-          if (generation.current !== expectedGeneration || controller.signal.aborted) return;
-          setNotice(messageFor(responseCode(body, `${response.status}`)));
-          return;
-        }
-        const body: unknown = await response.json();
-        if (generation.current !== expectedGeneration || controller.signal.aborted) return;
-        if (!isCombatLabView(body) || body.sessionId !== current.id) {
-          setNotice('Сервер вернул некорректное состояние боя.');
-          return;
-        }
-        applyLatest(body, expectedGeneration);
-        setNotice((currentNotice) =>
-          currentNotice.startsWith('Сервер временно недоступен.') ||
-          currentNotice.startsWith('Ответ получен. Запрашиваю актуальное состояние…')
-            ? ''
-            : currentNotice,
-        );
-      } catch {
-        if (!controller.signal.aborted && generation.current === expectedGeneration) {
-          setNotice('Сервер временно недоступен. Повторное чтение продолжится автоматически.');
-        }
-      }
-    })();
-    latestRead.current = request;
-    void request.finally(() => {
-      if (latestRead.current === request) latestRead.current = null;
-    });
-    return request;
-  };
+  const { refreshLatest, poll: continuePolling } = createCombatLabReadCallbacks(apiBaseUrl, {
+    generation,
+    sessionRef,
+    sessionAbort,
+    pendingRef,
+    deletingRef,
+    sessionLostRef,
+    latestRead,
+    applyLatest,
+    setSessionLost,
+    setNotice,
+  });
 
   // Keep one polling loop and request controller for a session; terminal views stop polling but
   // leave the same-session request path available for an uncertain historical retry.
@@ -600,22 +561,16 @@ export function CombatLab() {
     let stopped = false;
     let timer: ReturnType<typeof setTimeout>;
 
-    const poll = async () => {
-      if (stopped || controller.signal.aborted) return;
-      if (pendingRef.current === null && !deletingRef.current && !sessionLostRef.current) {
-        await refreshLatest(sessionRef.current ?? session, expectedGeneration);
-      }
-      const latest = sessionRef.current;
-      if (
-        !stopped &&
-        !controller.signal.aborted &&
-        latest?.id === session.id &&
-        latest.view.status === 'active' &&
-        !sessionLostRef.current
-      ) {
-        timer = setTimeout(() => void poll(), pollingIntervalMs);
-      }
-    };
+    const poll = () =>
+      continuePolling(
+        session,
+        expectedGeneration,
+        controller,
+        () => stopped,
+        () => {
+          timer = setTimeout(() => void poll(), pollingIntervalMs);
+        },
+      );
 
     timer = setTimeout(() => void poll(), pollingIntervalMs);
     return () => {

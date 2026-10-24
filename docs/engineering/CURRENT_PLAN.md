@@ -5,23 +5,26 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `1d6df3af`; newest main CI `40062633985` PASS.
-#306: [PR #313](https://github.com/Vovanostm/warwrit/pull/313) published; PR CI pending.
-Independent Tier L reviewer and evaluator ACCEPT at `090843b5`.
-Validated source `804d5983`: coordinator exit 0, 9/9 checks, 145 related tests PASS.
-Whole-PR source scope 245/300; evidence-only successor `141c8fdd` verified.
-Authenticated submission/manual orders/exact-body retries use controller callbacks.
-Late POST/read JSON checks session generation and abort before changing state.
+Main: `99e513f5`; newest main CI `40067442240` PASS.
+#307: independent Tier L reviewer and evaluator ACCEPT at `6485ed80`.
+Shared authenticated reads and polling continuation live in controller.ts.
+React retains refs, timers and identity-safe cleanup; 750 ms polling and 550 ms autoplay preserved.
+Coordinator validation: exit 0, 9/9 checks, 187 related tests PASS; scope 197/300.
+Evaluator: 160 focused tests PASS; two ordinary day/night round-7 victories.
+No further action POST after stop/terminal waits; manual orders after stop PASS.
 Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-Evaluator: 118 focused tests PASS; two independent day/night round-7 victories.
-Network, 503 and foreign-acknowledgement retry browser probes PASS.
-[Evaluation and limits](evidence/qa-action-transport/eval-1.md); adjacent source review and JPEGs.
-Direct cleanup: 17 PIDs absent, private ports unused, pidfile/profile absent.
+[Evaluation and limits](evidence/qa-action-polling/eval-1.md); adjacent review and 23 JPEGs.
+Evidence-only successor `e0895592`; normal commit audit PASS.
+Direct cleanup: all 17 named PIDs absent, private ports unused, pidfile/profile absent.
 Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
-Next: check PR CI, scope and expected head before merge; no merge yet.
-#307 remains dependency-held; #263 and original H1/H2 proof remain open.
-#310 remains blocked at rework 2/2; #179/#209 retain original blocked acceptance.
-PR #298 / #297 remains blocked despite recorded review ACCEPT; no merge.
+#307: [PR #314](https://github.com/Vovanostm/warwrit/pull/314) passes corrected-head CI at `174b6cb6`.
+CI `40070438983` failed Prettier on published review/evaluation Markdown only.
+Coordinator formatted both evidence files; source and ACCEPT verdicts unchanged.
+Scoped format, single-status-block and diff checks PASS; no game checks rerun.
+Scope recheck PASS 197/300; no blocking labels or unresolved review threads.
+Next: require CI on this records-only successor, then merge with expected head.
+#263, original H1/H2 and dependent slices remain open; no parent acceptance inferred.
+#310/#179/#209 retain blocked visual acceptance; PR #298/#297 remains blocked.
 Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.

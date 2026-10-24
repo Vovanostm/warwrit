@@ -9,6 +9,110 @@ requests.
 
 ## Unreleased
 
+### Confirm #307 corrected-head merge gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
+  corrected head `174b6cb6` passes both CI checks, superseding the formatting
+  failure below. Main `99e513f5` CI `40067442240` remains successful; branch is
+  current with main, clean and fully pushed. No blocked label or unresolved
+  review thread; scope recheck PASS at 197/300, closing only #307.
+- Independent Tier L ACCEPT at `6485ed80`, validation exit 0 and day/night
+  playable proof remain valid: later changes contain evidence/shared records only.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) requires final CI and expected-head
+  merge after this records-only commit. Merge is not yet claimed. Parent #263,
+  H1/H2 and all blocked acceptance remain open; game checks NOT_RUN this tick.
+
+### Correct #307 published evidence formatting — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
+  CI run `40070438983`, job `120802529102`, failed Prettier on the coordinator-published
+  `eval-1.md` and `review-1.md` under `docs/engineering/evidence/qa-action-polling/`.
+  Apply the existing formatter to those two files; verdicts and accepted source
+  `6485ed80` remain unchanged. This corrects evidence publication, not gameplay.
+- Scoped Prettier, single-status-block and diff checks PASS. Game checks
+  NOT_RUN for this documentation-only correction.
+  Failed CI stopped before lint/build/typecheck/unit/coverage/audit; none passed
+  in that run. Existing coordinator validation and Tier L evidence remain valid
+  for unchanged source; final corrected-head CI is still required before merge.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) retains the pending delivery,
+  parent #263/H1/H2 acceptance and all existing blocked holds. No merge claimed.
+
+### Accept #307 shared-read and polling gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`, [#307](https://github.com/Vovanostm/warwrit/issues/307):
+  independent Tier L reviewer and evaluator ACCEPT at `6485ed80`, superseding
+  the pending gates below. Source remains `67f49bf2`; no source correction.
+- [Evaluation](docs/engineering/evidence/qa-action-polling/eval-1.md) records
+  160 focused tests PASS and two ordinary day/night round-7 victories, with
+  no further POST after stop or terminal waits. Adjacent review and 23 JPEGs
+  retain the gate evidence. Coordinator validation: exit 0, 9/9 checks,
+  187 related tests PASS; whole-PR source scope 197/300.
+- Direct coordinator cleanup confirms all 17 named PIDs absent, both private
+  ports unused and pidfile/profile absent. Evaluator settled and acknowledged;
+  runtime/checks reservations released. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  records [PR #314](https://github.com/Vovanostm/warwrit/pull/314) published;
+  final PR CI pending, no merge yet.
+- Full integrated gates and fresh live-main comparison NOT_RUN. Parent #263,
+  H1/H2 and blocked #179/#209/#310/#297 acceptance remain open. No rules,
+  API/protocol, replay, schema, migration or dependency changes.
+
+### Validate #307 shared reads and polling — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`, [#307](https://github.com/Vovanostm/warwrit/issues/307):
+  extract shared authenticated reads and polling continuation into `controller.ts`;
+  `CombatLab.tsx` retains refs, timers and identity-safe abort/cleanup. Preserve
+  initial/post-settlement 750 ms polling, 550 ms autoplay and exact-body retries.
+  Whole-PR source scope 197/300; no rules, protocol, schema or dependency changes.
+- Builder source `67f49bf2`, report head `f9d7c28b`: 160 focused tests, normal
+  audits and ordinary day/night round-7 author victories reported PASS.
+  Coordinator `orca-validate.sh` exits 0, all 9 checks and 187 related tests PASS. Report and local
+  captures: `.orca/qa-action-polling/report.md`; independent Tier L gates pending.
+- Direct cleanup confirms 37 named PIDs absent (including two failed-launch
+  PIDs), private ports unused and pidfile/browser profiles absent. Builder
+  settlement acknowledged; release returned retained/no_owned_resource.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) allocates independent source
+  review and evaluation, with exclusive checks/private runtime for the evaluator.
+- Published branch checkpoint, not a PR or merged/player-accepted result.
+  Main CI `40067442240` PASS at `99e513f5`. Full integrated gates and fresh
+  live-main comparison NOT_RUN. #263/H1/H2, recovery budgets and blocked holds
+  remain unchanged. Documentation format/status/diff checks accompany this commit.
+
+### Allocate #307 shared-read and polling build — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`: accept the five-section #307 contract
+  after merged #306/PR #313. The [coordinator decision](https://github.com/Vovanostm/warwrit/issues/307#issuecomment-6380577929)
+  allocates existing `apps/web/src/combat-lab/CombatLab.mounted.test.tsx` alongside
+  CombatLab/controller source and tests, so real timer/unmount wiring can be proved.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns one web builder,
+  exclusive sequential focused checks and private ports 23201/25201. Preserve
+  initial 750 ms polling, cadence after settlement, shared-read identity/cleanup,
+  550 ms autoplay/stop and exact-body retry. Whole-PR source cap remains 300;
+  original #263/H1/H2 acceptance, consumed budgets and blocked holds remain binding.
+- Contract worker settled successfully; receipt acknowledged, release returned
+  retained/no_owned_resource. Main `99e513f5` CI `40067442240` is in progress.
+  This is a published allocation, not implemented or accepted gameplay; no PR merged.
+  Documentation format/status/diff checks accompany the commit. #307 game checks,
+  smoke, coordinator validation, independent gates and full integrated gates NOT_RUN.
+  No rules, protocol, replay, schema, migration or dependency changes.
+
+### Merge #306 and start #307 contract — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling` records [PR #313](https://github.com/Vovanostm/warwrit/pull/313)
+  MERGED as `99e513f5`; #306 closed and agent:done. This supersedes pending-merge
+  entries below. Expected head `7c07db71`, PR CI/scope and pre-merge main CI passed;
+  final whole-PR scope 245/300. No post-merge main CI run observed yet.
+- Prior validation 9/9, 145 related tests and Tier L ACCEPT `090843b5` retained.
+  [Evaluation](docs/engineering/evidence/qa-action-transport/eval-1.md) records
+  118 focused tests, two day/night victories and three retry probes. Later commits
+  contain only evidence and coordinator records. One playable-proof merge this tick.
+- The existing sequential #307 now has its own worktree and read-only contract
+  task on merged main. [Current plan](docs/engineering/CURRENT_PLAN.md) names the
+  next check; no builder/runtime allocation, new game code or acceptance waiver.
+  #263/H1/H2, consumed budgets and #179/#209/#310/#297 holds remain unchanged.
+  Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
+  Local coordinator fetch hit sandbox EPERM; Orca creation refreshed main and
+  returned the verified `99e513f5` base. Documentation checks accompany this commit.
+
 ### Accept #306 command transport gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):
