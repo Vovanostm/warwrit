@@ -11,6 +11,8 @@ requests.
 
 ### Settle #310 visual review and allocate #309 — 2026-10-24, PUBLISHED
 
+- Historical status headings are now historical checkpoints; CURRENT_PLAN has
+  exactly one live status heading. Earlier contents and evidence are retained.
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
   visual 1 REWORK at `bc71317a`; value/palette and scene integration score 1.
   Night figures lose detail, actors are too small at native 125%, and retained
