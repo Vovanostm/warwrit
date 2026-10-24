@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Allocate the combat-area utility layout repair — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  explicit camera framing of public figures and retained casualty plaques is committed.
+  Builder stopped on demonstrated initiative-control overlap and 12 px label text
+  against the 18 px requirement. Coordinator allocates `battle-controls.css` alongside
+  the existing four production paths for one bounded repair; 300 cumulative source
+  lines and all original acceptance gates remain. No parent budget reset or waiver.
+- Builder reports 57 focused tests, normal audits and validate 9/9 (98 related tests)
+  PASS; coordinator directly verified named runtime/browser processes and private
+  listeners absent. Independent acceptance, complete casualty/native-125% proof,
+  coordinator validation and PR CI are NOT_RUN. Published branch is not merged or
+  player-accepted. Local evidence: `.orca/uix-combat-area-frame/report.md`.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records sequencing and blockers.
+
 ### Close #262 and #269; the full play-through is #303 — 2026-10-23, PUBLISHED
 
 - Owner decision 2026-10-23: close #269 and #262. Menu extraction is on main
