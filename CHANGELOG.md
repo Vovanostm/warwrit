@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Correct #307 published evidence formatting — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
+  CI run `40070438983`, job `120802529102`, failed Prettier on the coordinator-published
+  `eval-1.md` and `review-1.md` under `docs/engineering/evidence/qa-action-polling/`.
+  Apply the existing formatter to those two files; verdicts and accepted source
+  `6485ed80` remain unchanged. This corrects evidence publication, not gameplay.
+- Scoped Prettier, single-status-block and diff checks PASS. Game checks
+  NOT_RUN for this documentation-only correction.
+  Failed CI stopped before lint/build/typecheck/unit/coverage/audit; none passed
+  in that run. Existing coordinator validation and Tier L evidence remain valid
+  for unchanged source; final corrected-head CI is still required before merge.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) retains the pending delivery,
+  parent #263/H1/H2 acceptance and all existing blocked holds. No merge claimed.
+
 ### Accept #307 shared-read and polling gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`, [#307](https://github.com/Vovanostm/warwrit/issues/307):

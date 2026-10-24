@@ -17,8 +17,11 @@ Try: mill start → move → attack → end turn → autoplay → stop → manua
 Evidence-only successor `e0895592`; normal commit audit PASS.
 Direct cleanup: all 17 named PIDs absent, private ports unused, pidfile/profile absent.
 Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
-#307: [PR #314](https://github.com/Vovanostm/warwrit/pull/314) published; final PR CI pending.
-Next: check final CI/scope and expected head before merge.
+#307: [PR #314](https://github.com/Vovanostm/warwrit/pull/314) awaits corrected-head CI.
+CI `40070438983` failed Prettier on published review/evaluation Markdown only.
+Coordinator formatted both evidence files; source and ACCEPT verdicts unchanged.
+Scoped format, single-status-block and diff checks PASS; no game checks rerun.
+Next: require new-head CI/scope and expected-head merge gates.
 #263, original H1/H2 and dependent slices remain open; no parent acceptance inferred.
 #310/#179/#209 retain blocked visual acceptance; PR #298/#297 remains blocked.
 Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
