@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Accept #319 local payroll preparation gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
+  fresh reviewer and evaluator ACCEPT at `42a4f583`; the evaluator independently
+  passed 30 real producer/core tests, including distinct remote pool-wallet refusal
+  without input mutation. [Evaluation](docs/engineering/evidence/wages-local-evidence-319/eval-2.md)
+  and adjacent review preserve the exact boundary. Coordinator validation remains
+  exit 0, nine checks PASS; whole-PR source scope 296/300.
+- Both gate workers settled, acknowledged and released; direct process readback
+  found no remaining worker checks. [PR #324](https://github.com/Vovanostm/warwrit/pull/324) publishes evidence; final records-head CI is pending. #167 retains
+  authenticated API/PostgreSQL, durable retry/reload and day/night browser acceptance.
+  Full integrated gates NOT_RUN. No production rule, schema or dependency change.
+- The next core allocation is accepted #321, safe optional payroll projection and
+  retained history (task `task_c3c90d43c45e`, branch `Vovanostm/wages-projection-321`).
+  It owns four contract paths and focused checks; no runtime.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records allocation and remaining gates.
+  Existing blocked slices and #315 retain their holds.
+
 ### Revalidate #319 distinct pool-wallet regression — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
