@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Accept #297 review and start #310 framing — 2026-10-24, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  independent review 4 ACCEPT at `85685ee5`; syntax and 101 isolated assertions
+  PASS, fixture processes directly confirmed absent. Prior coordinator validation
+  PASS retained; CI still running at readback. Inherited issue/PR blocks and 2/2
+  history stay; no merge. Live cleanup/full wave NOT_RUN, savings NOT_MEASURED.
+- Under the existing owner delegation, [#310](https://github.com/Vovanostm/warwrit/issues/310)
+  moves from accepted contract to one bounded builder with exclusive focused
+  checks/private runtime. Existing fit mechanisms first; preparatory extraction
+  only for a demonstrated correctness or audit need. No parent budget reset.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records allocation and retained
+  #179/#209 source freeze. No feature implementation or player acceptance claimed.
+- Documentation-only closeout; status-block/format checks recorded at commit.
+  No new game tests, browser run or full gates in this coordinator tick.
+
 ### Complete the targeted #297 settlement repair — 2026-10-24, PUBLISHED
 
 - `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):

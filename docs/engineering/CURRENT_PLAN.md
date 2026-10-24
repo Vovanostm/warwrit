@@ -7,21 +7,22 @@ Owner scope (2026-10-21): «У тебя есть все полномочия п�
 Owner (2026-10-23): «Разрешить адресные исправления» for #209, #297 and #179.
 Queue: epic #217 and existing one-issue local slices; prior failures retained.
 Main `25dd9a48`: newest CI `40015365287` SUCCESS.
-#297 / PR #298: targeted repair committed normally at `0b7f593e`.
-Author syntax, 101 isolated assertions, normal audit and scope 267/300 PASS.
-Coordinator validate: rebased, clean tree, scope, packages and typecheck PASS;
-format initially failed on this document; correction and full retry PASS (exit 0).
-Fresh Tier D review is allocated next; final-head CI pending.
-Review 3 REWORK, exhausted 2/2 and issue/PR agent:blocked remain in force.
-Real resource savings NOT_MEASURED; live cleanup/full wave NOT_RUN.
-#179 partial source `0a10e16f` retained; composition contract complete.
-#310 is the independent combat-area framing prerequisite; contract preparation next.
-#209 source `024ce8ae` frozen pending #179 terminal death-label obstruction repair.
-#309 and #263 children queued behind targeted repairs; core #225 waits its dependency.
-No game runtime allocated; #297 owns sequential checks until review handback.
+#297 / PR #298: targeted source `0b7f593e`, review 4 ACCEPT at `85685ee5`.
+Independent syntax and 101 isolated assertions PASS; fixture processes absent.
+Coordinator validation previously PASS after records-only format correction.
+PR CI still in progress at readback; inherited issue/PR agent:blocked remain.
+Review 3 REWORK and exhausted 2/2 history retained; no merge eligibility.
+Live cleanup/full wave NOT_RUN; real resource savings NOT_MEASURED.
+#310 five-section contract accepted; bounded builder task `task_0a96ffc2f960` running.
+Try after delivery: Start mill 6×6 seed 20261009, then «Участники боя»; Home restores full field.
+This journey is not implemented or player-accepted yet; all original gates remain.
+#310 owns four production files, existing focused tests and exclusive checks/private runtime.
+Preparatory extraction is optional only for a demonstrated correctness/audit need.
+#179 source `0a10e16f` and #209 `024ce8ae` remain frozen pending this prerequisite.
+#309 and #263 children queued; core #225 waits its dependencies.
 Daily metrics/scout/triage/digest already complete; no duplicate daily run.
 This tick: 0 merged PRs with playable proof; no acceptance waiver.
-Next: independent #297 review and #310 contract; retain all parent acceptance gates.
+Next: settle #310 build, verify commits/cleanup, validate and launch its four gates.
 Wrapper releases the lease when this single tick returns.
 
 ## Dated history
