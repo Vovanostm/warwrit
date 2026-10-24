@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Validate #307 shared reads and polling — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`, [#307](https://github.com/Vovanostm/warwrit/issues/307):
+  extract shared authenticated reads and polling continuation into `controller.ts`;
+  `CombatLab.tsx` retains refs, timers and identity-safe abort/cleanup. Preserve
+  initial/post-settlement 750 ms polling, 550 ms autoplay and exact-body retries.
+  Whole-PR source scope 197/300; no rules, protocol, schema or dependency changes.
+- Builder source `67f49bf2`, report head `f9d7c28b`: 160 focused tests, normal
+  audits and ordinary day/night round-7 author victories reported PASS.
+  Coordinator `orca-validate.sh` exits 0, all 9 checks and 187 related tests PASS. Report and local
+  captures: `.orca/qa-action-polling/report.md`; independent Tier L gates pending.
+- Direct cleanup confirms 37 named PIDs absent (including two failed-launch
+  PIDs), private ports unused and pidfile/browser profiles absent. Builder
+  settlement acknowledged; release returned retained/no_owned_resource.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) allocates independent source
+  review and evaluation, with exclusive checks/private runtime for the evaluator.
+- Published branch checkpoint, not a PR or merged/player-accepted result.
+  Main CI `40067442240` PASS at `99e513f5`. Full integrated gates and fresh
+  live-main comparison NOT_RUN. #263/H1/H2, recovery budgets and blocked holds
+  remain unchanged. Documentation format/status/diff checks accompany this commit.
+
 ### Allocate #307 shared-read and polling build — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`: accept the five-section #307 contract

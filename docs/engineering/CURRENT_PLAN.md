@@ -5,20 +5,20 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `99e513f5`, merged [PR #313](https://github.com/Vovanostm/warwrit/pull/313); #306 done.
-Latest main CI `40067442240` is in progress; no post-merge green claim.
-#307 contract accepted: all five sections present, no product/rule question.
-[Coordinator decision](https://github.com/Vovanostm/warwrit/issues/307#issuecomment-6380577929)
-adds existing CombatLab.mounted.test.tsx to the four assigned source/test files.
-Builder task `task_5f51a3178a48` is allocated on `Vovanostm/qa-action-polling`.
-Contract: .orca/qa-action-polling/contract.md; brief: .orca/tasks/307-build-1.md.
-Writer starts after this checkpoint is published; source build is not yet accepted.
-Exclusive sequential focused checks and private runtime ports 23201/25201 belong to #307.
-Try after build: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-Preserve initial 750 ms tick, polling after settlement, shared reads and abort cleanup.
-Preserve 550 ms autoplay/stop and exact-body retry; whole-PR source cap stays 300.
-Next: settle builder, verify commits/cleanup, coordinator validate, independent Tier L gates.
-#307 implementation, game checks, smoke and independent acceptance NOT_RUN this tick.
+Main: `99e513f5`; latest main CI `40067442240` PASS; #306/PR #313 merged.
+#307 builder settled at `f9d7c28b`; coordinator validation exit 0, all 9 checks and 187 related tests PASS.
+Shared authenticated reads and polling continuation now live in controller.ts.
+React retains refs, timers and identity-safe abort/cleanup; whole-PR source scope 197/300.
+Preserve initial/post-settlement 750 ms polling, 550 ms autoplay and exact-body retries.
+Builder reports 160 focused tests and two ordinary day/night round-7 victories.
+Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
+Report: .orca/qa-action-polling/report.md; contract: .orca/qa-action-polling/contract.md.
+Coordinator confirmed 37 named PIDs absent, private ports unused, pidfile/profiles absent.
+Builder settlement acknowledged; release returned retained/no_owned_resource.
+Next: independent Tier L reviewer and evaluator, each reporting this branch's checkpoint head.
+Reviewer is source-only; evaluator alone owns sequential checks and private runtime 23201/25201.
+Briefs: .orca/tasks/307-review-1.md and .orca/tasks/307-eval-1.md.
+This checkpoint publishes source and records; independent gates pending, no PR or merge yet.
 #263/H1/H2 and all consumed recovery budgets remain open and unchanged.
 #310 remains blocked at rework 2/2; #179/#209 retain original blocked acceptance.
 PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
@@ -28,7 +28,7 @@ This tick: 0 merged PRs; 0 merged PRs with playable proof.
 Documentation format, single status block and scoped diff checks accompany this checkpoint.
 Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
 No rules, API/protocol, replay, schema, migration or dependency changes.
-Wrapper releases its lease when this single tick returns; #307 retains its assignment.
+Wrapper releases its lease when this single tick returns; gate workers retain their tasks.
 
 ## Dated history
 
