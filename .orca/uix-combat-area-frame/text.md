@@ -6,6 +6,9 @@ grid toggle («Показать всю сетку» / «Скрыть общую 
 day/night toggle («Ночная сцена» / «Дневной свет», title «День / ночь»),
 autoplay («Начать автобой» / «Остановить автобой»), existing «Меню боя».
 
+Rework round 1 retains the same control order and wording, with a reserved utility
+lane and an 18 px label (browser measurement pending at source checkpoint).
+
 Only changed displayed line: **Участники боя**.
 Accessible name: native button text **Участники боя**. No title or shortcut added.
 English review translation: **Battle participants** (not a localized game screen).

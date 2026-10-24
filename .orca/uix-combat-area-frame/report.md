@@ -1,3 +1,25 @@
+# #310 — rework round 1 (2026-10-24)
+
+Source repair: `battle-controls.css` reserves one shared 420 px utility lane plus
+12 px separation from initiative, and sets only the full-text utility to 18 px.
+No control/portrait is hidden, clipped or reordered; no camera/game state code changed.
+Cumulative production budget is **186/300** (174 prior + 11 additions + 1 deletion).
+The original build report and failures are preserved below. Browser proof is pending
+at this source checkpoint; independent gates remain coordinator-owned.
+
+Executed sequentially: first-edit `pnpm check:changes` PASS (CSS advisories only),
+three owned focused files **57 tests PASS**, web typecheck PASS, scoped existing
+TypeScript eslint PASS, CSS prettier PASS, `git diff --check` PASS.
+Logs: `rework-audit-first.log`, `rework-focused.log`, `rework-typecheck.log`,
+`rework-lint.log`, `rework-format.log` under this evidence directory.
+
+Proposed coordinator changelog amendment: 2026-10-24, branch
+`Vovanostm/uix-combat-area-frame`, LOCAL — #310 allocated CSS repair reserves
+utility space and uses an 18 px label; 186/300 cumulative source lines, focused
+checks pass; playable proof and independent acceptance pending at this checkpoint.
+
+---
+
 # #310 — bounded build result: FAILED
 
 2026-10-24. Branch `Vovanostm/uix-combat-area-frame`, main/base `25dd9a4828be614eb0d0cda747452365770aa4c3`.

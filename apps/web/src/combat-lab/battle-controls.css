@@ -1,6 +1,7 @@
 /* One owner for battle controls. Editor defaults never style this surface. */
 .battle-view {
   --battle-edge: 20px;
+  --battle-utilities-width: 420px;
   --battle-card-width: clamp(260px, 20vw, 320px);
   --battle-radius: 6px;
   --battle-control-bg: #273438;
@@ -100,10 +101,19 @@
   position: absolute;
   top: 20px;
   right: var(--battle-edge);
+  width: var(--battle-utilities-width);
   display: flex;
   align-items: center;
   gap: 8px;
   z-index: 8;
+}
+.battle-utilities > .battle-control:not(.battle-control--utility) {
+  flex: 1;
+  font-size: 18px;
+  white-space: nowrap;
+}
+.battle-utilities .battle-control--utility {
+  flex-shrink: 0;
 }
 .battle-utilities svg {
   width: 20px;
@@ -577,7 +587,7 @@
 /* Reserve finite desktop lanes at the native125 1024px CSS viewport. */
 .battle-top-band {
   left: 194px;
-  right: 268px;
+  right: calc(var(--battle-edge) + var(--battle-utilities-width) + 12px);
 }
 .battle-view .battle-top-band .battle-initiative {
   inset: auto;
