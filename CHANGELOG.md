@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Merge #318 and validate #319 local payroll preparation — 2026-10-24, LOCAL
+### Merge #318 and validate #319 local payroll preparation — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-local-evidence-319`: implement accepted child #319 in
   `apps/server/src/company/payroll-access.ts`, `payroll-observation.ts` and their

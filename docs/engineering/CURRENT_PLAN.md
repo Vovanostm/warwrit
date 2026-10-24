@@ -19,7 +19,7 @@ Local access and observations prepare an unsaved real-core draft; no endpoint/UI
 Main merged without conflicts at `53c8e107`; coordinator validate exit 0, 9/9 PASS.
 Initial merge hook failed on incomplete focused coverage; normal retry passed.
 Retry added the owned payroll test to related coverage; no gate or threshold bypass.
-#319 independent Tier L gates are next on the frozen source; verdicts pending.
+#319 branch is published; independent Tier L gates allocated, verdicts pending.
 Evaluator gets exclusive focused producer/core checks; reviewer reads source only.
 #321 accepted contract waits for checks handback; no second core builder allocated.
 #320/#322 retain dependencies; #315 retains the visual-scope hold.
