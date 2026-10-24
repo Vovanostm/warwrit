@@ -5,32 +5,29 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `99e513f5`; newest main CI `40067442240` PASS.
-#307: independent Tier L reviewer and evaluator ACCEPT at `6485ed80`.
-Shared authenticated reads and polling continuation live in controller.ts.
-React retains refs, timers and identity-safe cleanup; 750 ms polling and 550 ms autoplay preserved.
-Coordinator validation: exit 0, 9/9 checks, 187 related tests PASS; scope 197/300.
-Evaluator: 160 focused tests PASS; two ordinary day/night round-7 victories.
-No further action POST after stop/terminal waits; manual orders after stop PASS.
+Main: `6a585179`; post-merge CI `40073679092` in progress; pre-merge main CI PASS.
+#307: [PR #314](https://github.com/Vovanostm/warwrit/pull/314) MERGED at `6a585179`; issue closed.
+Expected head `909ef31d` passed final CI and PR scope; no blocked labels or unresolved threads.
+Independent Tier L reviewer and evaluator ACCEPT at `6485ed80`; later commits evidence/records only.
+Validation exit 0, 9/9 checks, 187 related tests; scope recheck 197/300 PASS.
+Evaluator: 160 focused tests, two day/night round-7 victories, stop/terminal waits PASS.
 Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
 [Evaluation and limits](evidence/qa-action-polling/eval-1.md); adjacent review and 23 JPEGs.
-Evidence-only successor `e0895592`; normal commit audit PASS.
-Direct cleanup: all 17 named PIDs absent, private ports unused, pidfile/profile absent.
-Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
-#307: [PR #314](https://github.com/Vovanostm/warwrit/pull/314) passes corrected-head CI at `174b6cb6`.
-CI `40070438983` failed Prettier on published review/evaluation Markdown only.
-Coordinator formatted both evidence files; source and ACCEPT verdicts unchanged.
-Scoped format, single-status-block and diff checks PASS; no game checks rerun.
-Scope recheck PASS 197/300; no blocking labels or unresolved review threads.
-Next: require CI on this records-only successor, then merge with expected head.
-#263, original H1/H2 and dependent slices remain open; no parent acceptance inferred.
-#310/#179/#209 retain blocked visual acceptance; PR #298/#297 remains blocked.
-Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
+#263 CLOSED: finite R3 AC1–3 delivered through merged PRs #312, #313 and #314.
+#264 contract task `task_f937299a6677`, dispatch `ctx_1c557fcf17e8`, allocated in `qa-hooks-text-clock`.
+Worker owns only `.orca/qa-hooks-text-clock/contract.md`; no source/checks/runtime allocation.
+Brief `.orca/tasks/264-contract.md` requires original H1 proof and a finite scope estimate/split.
+Next: accept five contract sections and resolve scope before allocating any builder.
+H1/H2, #231 and #217 remain open; R3 closure does not claim their acceptance.
+#307/#263 untracked evidence retained under coordinator `.orca/pipeline/retained/`; worktree removal requested.
+#179/#209/#310 retain original blocked visual acceptance and recovery history.
+PR #298 / #297 remains blocked despite review ACCEPT; no merge.
+Other open PRs #129/#134 retain failed checks from the supplied snapshot.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 0 merged PRs; 0 merged PRs with playable proof.
+This tick: 1 merged PR; 1 merged PR with independent playable proof.
 Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
 No rules, API/protocol, replay, schema, migration or dependency changes.
-Wrapper releases its lease when this single tick returns.
+Wrapper releases its lease on return; next tick resumes the live contract worker.
 
 ## Dated history
 

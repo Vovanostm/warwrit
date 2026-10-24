@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Deliver R3 polling and prepare H1 contract — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-hooks-text-clock`: record [PR #314](https://github.com/Vovanostm/warwrit/pull/314)
+  MERGED at `6a585179` from expected head `909ef31d`; #307 closed. Final CI
+  `40072357824` and PR scope PASS; pre-merge main CI PASS. Post-merge main CI
+  `40073679092` is in progress, not a claimed pass.
+- Independent Tier L ACCEPT at `6485ed80`, coordinator validation exit 0,
+  187 related tests and scope 197/300 remain valid for unchanged source.
+  [Evaluation](docs/engineering/evidence/qa-action-polling/eval-1.md) records
+  160 focused tests and two ordinary day/night victories with stop/terminal proof.
+  Later commits contain evidence and shared records only; no new game checks run.
+- Close finite R3 parent #263 after all three child PRs #312/#313/#314 merged
+  and original AC1–3 passed. Allocate only the #264 read-only contract task
+  `task_f937299a6677` on the merged base; no H1 implementation or acceptance.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) keeps one status block.
+  Closed-worktree artifacts are retained locally before Orca removal.
+- H1/H2, #231/#217 and #179/#209/#310/#297 blocked acceptance stay separate.
+  Full integrated gates and fresh live-main comparison NOT_RUN. No rules,
+  API/protocol, replay, schema, migration or dependency changes.
+
 ### Confirm #307 corrected-head merge gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling`, [PR #314](https://github.com/Vovanostm/warwrit/pull/314):
