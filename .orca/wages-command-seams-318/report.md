@@ -1,88 +1,117 @@
-# #318 build report — blocked prerequisite
+# #318 build report — ordinary intent/result seams
 
-Date: 2026-10-24. Outcome: FAILED before source edits.
-Branch: `Vovanostm/wages-command-seams-318`.
-Base and source HEAD: `6a58517953766f0381f04f870c074c10f49c3b97`.
-The tracked worktree was clean on entry; no earlier implementation was present.
-This report is the only change. No implementation commit exists.
+2026-10-24. Branch: `Vovanostm/wages-command-seams-318`.
+Source base: `6a58517953766f0381f04f870c074c10f49c3b97`.
+Status: local implementation; normal commit audit pending below. No publication.
 
-## Blocker and next action
+## Inherited attempt and recovery
 
-The allocated real PostgreSQL integration check cannot initialize:
-`DATABASE_URL` is absent from the process environment and the worktree has no
-root `.env`. A bounded connection probe using the documented `.env.example`
-loopback endpoint, `127.0.0.1:55432`, returned `ECONNREFUSED` (exit 1).
-No production endpoint was accessed and no database credentials are recorded here.
+Preserved history: report-only commit `1a96bc5ba9d457a38f452fe3b3d18a0c74e8e30b`
+failed before source edits because `DATABASE_URL` was absent; integration setup
+exited 1 without executing tests, and the documented loopback probe returned
+`ECONNREFUSED`. That failure was environmental, not an executor regression.
+The coordinator supplied an isolated PostgreSQL 17 environment for this attempt.
+The unchanged focused executor integration run initialized and passed all 6 tests
+(exit 0); the runner disposed its isolated database.
 
-The exact allocated command,
-`pnpm exec vitest run --mode integration apps/server/src/company/executor.integration.test.ts`,
-exited 1 in global setup with `Integration mode requires explicit DATABASE_URL`.
-Vitest also printed `No test files found`; no test executed. This is an inherited
-environment failure, not an executor regression or a passing skipped test run.
+## Implementation and acceptance proof
 
-Coordinator action required: provide an explicit reachable local PostgreSQL
-`DATABASE_URL` with permission to create/drop the runner's isolated test databases,
-then resume this same lane. The runner owns migration, cloning and disposal.
-The allocation prohibits installs/setup and background runtimes, so none were started.
+- `ordinary-command.ts` exports only `ordinaryCommandIntent` and
+  `ordinaryCommandSucceeded`. Both are synchronous and use public type-only
+  package imports. The input excludes BuySupplies locally. Five explicit intent
+  cases preserve company/access/site/agreement IDs and EndFieldCamp maps to
+  EndMaintenance with reason LEAVE.
+- The result selector preserves replay/residual rejection and the original
+  equipment, camp and lifecycle predicates. Ordinary real-core/PG scenarios
+  exercise lifecycle, equipment and camp success. Invalid intent, missing item,
+  inaccessible stock, incompatible equipment slot and unavailable/duplicate camp
+  transitions return existing codes/status 409 without aggregate/receipt/audit
+  changes. Replay/residual guards are additionally preserved by source comparison;
+  individual synthetic prepared-draft branches are not claimed as runtime proof.
+- Rename and perk tests read the actual saved name/banner/perks plus receipts and
+  audit. Equipment starts unequipped, then persists the requested character/slot.
+  Camp tests read the same agreement's start/end, endedAt/knownEndedAt and saved
+  core command with EndMaintenance/LEAVE, plus public revision and camp audit.
+- Exact ordinary retry returns the original saved response after its public
+  revision is stale and trusted input time advances by a day. Saved root, receipt
+  and audit remain unchanged as parsed values. Changed-body collision is
+  IDEMPOTENCY_CONFLICT; foreign receipt access is NOT_AUTHORIZED/status 403, with
+  all domain persistence unchanged.
+- Authorization, account/root locks, parser, common envelope, receipt-before-
+  freshness ordering, time, due movement, evidence/context, error mapping and all
+  persistence remain in executor. BuySupplies and all finance/protocol/migration
+  owners are unchanged. Existing six travel/rollback/race regressions are intact.
+- Inherited payment-mode/funds/debit/rounding/history/browser AC portions remain
+  with later children and #167. This lane proves ordinary access/ownership and
+  durable retry only; it does not deliver payroll or close #167.
+- Independent Tier L reviewer/evaluator: NOT_RUN here, coordinator-owned.
+  Runtime/player acceptance and 1440×900 day/night screenshots: NOT_RUN by the
+  explicit allocation. No player-facing text changed; text.md is not applicable.
 
-## Acceptance criteria and proof
+## Checks and exact outcomes
 
-| Criterion                                                                                                    | Actual result                                     |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
-| Extract synchronous, narrowed `ordinaryCommandIntent` with five explicit cases                               | NOT_RUN; source unchanged                         |
-| Extract `ordinaryCommandSucceeded`, preserving replay/residual/equipment/camp/lifecycle predicates           | NOT_RUN; source unchanged                         |
-| Preserve executor authorization, locks, receipt ordering, clock, context and persistence                     | Source unchanged; new runtime proof NOT_RUN       |
-| Accepted rename, perk, equipment, begin/end camp effects through real PostgreSQL                             | NOT_RUN; integration global setup failed          |
-| Invalid intent, inaccessible equipment, unavailable camp and foreign ownership rejected atomically           | NOT_RUN; no new ordinary regression tests written |
-| Exact ordinary retry after stale revision/advanced time, changed-body conflict and foreign receipt refusal   | NOT_RUN                                           |
-| Existing travel regressions remain intact                                                                    | File unchanged; execution NOT_RUN                 |
-| No payroll activation, finance changes, treasury/BuySupplies extraction, protocol or unowned edits           | PASS by ordinary diff; no source files changed    |
-| At most 300 changed source lines                                                                             | 0 source lines; implementation remains pending    |
-| Independent Tier L reviewer/evaluator                                                                        | NOT_RUN; coordinator-owned                        |
-| Inherited payment modes, insufficient funds, lost HTTP response/reload, rounding/history and parent gameplay | NOT_RUN; remain with later children and #167      |
+1. `pnpm exec vitest run --mode integration apps/server/src/company/executor.integration.test.ts`:
+   baseline PASS, exit 0, 6/6 tests; new-test first run FAIL, exit 1, 9 passed/2
+   failed because test expectations incorrectly assumed a command DB column and
+   a different inaccessible-ration code. Expectations corrected from current
+   storage/core contracts, without changing production behavior.
+2. Same focused command before extraction: PASS, exit 0, 11/11 tests. After
+   extraction: PASS, exit 0, 11/11 (5 ordinary + 6 inherited), zero skips.
+3. `pnpm --filter @warwrit/server typecheck`: PASS, exit 0.
+4. `pnpm exec eslint apps/server/src/company/executor.ts apps/server/src/company/ordinary-command.ts apps/server/src/company/executor.integration.test.ts`:
+   PASS, exit 0.
+5. Required `pnpm check:changes` immediately after first editing each of the three
+   files: all three attempts FAIL, exit 2, inherited absent
+   `coverage/coverage-final.json`. No threshold or audit configuration changed;
+   the normal commit hook owns focused coverage refresh and final audit.
+6. First normal implementation commit attempt: blocked, exit 1, by two introduced
+   audit findings: ordinaryCommandIntent CRAP 42 and ordinaryCommandSucceeded
+   CRAP 90 (coverage-mode integration cases are skipped). The hook refreshed its
+   focused coverage successfully; its output excluded 20 inherited findings.
+   Restructured the two selectors into finite camp selection, complete-draft and
+   requested-effect predicates; real PG scenarios test their actual effects.
+   `pnpm check:changes` after restructuring: PASS, exit 0, no new findings;
+   inherited findings remain reported, without config/threshold changes.
+7. After audit-required restructuring, focused real PG integration: PASS, exit 0,
+   11/11 tests, zero skips; server typecheck, scoped ESLint/Prettier and diff:
+   PASS, exit 0. Final normal commit retry and scope: pending readback.
+8. Rebase, coordinator validation, game/browser runtimes, full verify, standalone
+   coverage/stress/migration suites, install/setup/build: NOT_RUN, outside this
+   allocation. No built-export prerequisite failed.
 
-## Checks and cleanup
+The graph indexes another checkout at old head b44f5c1e; current source is proof.
+All checks ran sequentially. No production database was accessed; no credentials
+or connection strings are retained in evidence.
 
-- Node `v24.20.0`, pnpm `11.25.0`: observed.
-- Installed game-core/protocol/testkit public dist entry files: present; behavioral
-  freshness NOT_MEASURED. No package build or installation performed.
-- Knowledge graph: indexes `/Users/vovanostm/learn/warwrit` at `b44f5c1e`, not this
-  checkout/base; direct source reads used instead.
-- Local PostgreSQL connection probe: FAIL, exit 1, `ECONNREFUSED`; client closed in
-  `finally` and command exited.
-- Allocated focused integration command: FAIL, exit 1 before tests; Vitest process
-  exited. Setup failed before database allocation; no child databases were created.
-- Server typecheck and scoped source ESLint: NOT_RUN; no source change.
-- Full verify, standalone coverage/stress/migration suites: NOT_RUN, outside allocation.
-- Rebase/coordinator validation/game servers/browser/screenshots: NOT_RUN, explicitly
-  delegated to coordinator/evaluator. No player-facing text changed; `text.md` not needed.
-- No background process, game server, browser or container was started or retained.
-- `pnpm check:changes`: PASS, exit 0; audit scope 0 changed code files against
-  merge-base `6a5851795376`. This provides no implementation proof.
-- Report Prettier and staged diff checks accompany the normal report-only commit.
-  No hook bypass or threshold change is permitted.
+## Cleanup
 
-## Commit
+Each focused integration process exited and reported its file database disposed;
+its global teardown also removes the migrated template. Ordinary scenarios remove
+world clocks in finally, then existing cleanup removes snapshots, owners, receipts,
+audit and account fixtures with empty-table assertions. The file afterAll closes
+the database pool. No background child process, server, browser or container was
+started by this worker. Coordinator retains the exact Compose project/container
+`warwrit-pipeline-318` and owns its later removal; it was not stopped here.
 
-Report-only commit subject: `Зафиксирован блокер PostgreSQL для #318`.
-Its commit ID is the final branch HEAD after the normal commit; inspect `git log -1`.
-The Markdown-only pre-commit path skips the source audit by design; the explicit
-change audit above ran separately. No implementation or staged-only source is retained.
+## Commits and proposed coordinator records
 
-## Proposed coordinator records
-
-Proposed CHANGELOG entry (do not claim implementation):
-2026-10-24, branch `Vovanostm/wages-command-seams-318`, LOCAL:
-#318 builder stopped before source edits because the allocated PostgreSQL runner
-lacked `DATABASE_URL`; documented loopback PostgreSQL refused connections.
-Ordinary command seams, regression proof and player acceptance remain pending.
-No finance, protocol, migration or gameplay behavior changed.
-
+Normal implementation commit and final scope/audit results are recorded below
+once the hook finishes. No push, PR, merge or publication is authorized here.
 CHANGELOG/CURRENT_PLAN/wiki remain untouched under coordinator ownership.
-No push, PR, merge or publication performed.
 
-## Risks
+Proposed CHANGELOG entry:
+2026-10-24, branch `Vovanostm/wages-command-seams-318`, LOCAL, #318:
+extracted ordinary intent selection and prepared-result predicates into
+`apps/server/src/company/ordinary-command.ts`, retaining executor authority,
+transaction and durable retry boundaries for later payroll composition.
+Real PostgreSQL regressions preserve rename/perk/equip/camp effects, atomic
+refusals and exact retry/body-conflict/foreign-account behavior. Payroll/API,
+finance rules, protocol and migrations unchanged. Independent Tier L and
+player/browser acceptance remain pending with coordinator/#167.
 
-The requested implementation is absent. Do not consume this lane as a dependency
-for payroll child C or mark #318 delivered. Resume requires the local database
-prerequisite above; no product-rule or source-ownership clarification is needed.
+## Risks and next step
+
+Behavior-preserving source extraction only; no new wage path. Coordinator must
+review/evaluate this head, integrate shared records and run its allocated delivery
+gates before publication. Original source-archive limitation is inherited and
+unchanged. No new product-rule or source-ownership blocker was found.
