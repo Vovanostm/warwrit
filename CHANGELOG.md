@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Validate #305 mounted completion for independent gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
+  normal audited integration/test commit `31d6fa5f` completes genuine mounted
+  coverage in `CombatLab.mounted.test.tsx`; production CombatLab/controller bytes
+  remain unchanged from the frozen allocation. This supersedes the integration
+  blocker below; original failures and consumed recovery budgets remain history.
+- Coordinator `orca-validate.sh` exit 0: all 9 checks PASS, 115 related tests,
+  scope 169/300 source lines. Builder reports 88 focused tests and day/night
+  ordinary mill victories; stop intervals 1070/1079 ms had no further POST.
+  One favicon 404 remains an author-smoke limitation. Independent Tier L review
+  and evaluation are pending; no playable acceptance, PR CI or merge is claimed.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns the independent gates.
+  Direct cleanup confirms all 21 recorded private processes absent and both
+  runtime ports unused before transfer. No source recovery, rules, API, protocol,
+  replay, schema, migration or setup change; full game gates NOT_RUN.
+
 ### Merge #309 and prepare test-only #305 completion — 2026-10-24, PUBLISHED
 
 - [PR #311](https://github.com/Vovanostm/warwrit/pull/311), branch

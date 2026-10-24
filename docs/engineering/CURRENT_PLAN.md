@@ -5,26 +5,25 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `96f5b2b9`, merge of PR #311; #309 closed and labelled done.
-PR #311 CI `40057987825` and PR scope PASS at `85fc298b`.
-Tier D reviewer ACCEPT `c50c0c76`; source validate 9/9 PASS at `38d9757c`.
-Mounted submit capability is merged; no browser/playable acceptance claimed.
-#305: test-only completion prepared; main integration waits a normal merge commit.
-Integration probe: 83 tests and combined audit PASS; merge hook FAIL on endBattle
-CRAP 90 / 0% after mounted-file-only coverage refresh. Merge aborted, WIP preserved.
-Production CombatLab/controller source and original recovery budget remain frozen.
-Worker may extend the mounted test and existing owned tests, then normal audit/commit.
-It receives exclusive focused checks/private runtime; no other worker is allocated.
-Independent Tier L, coordinator validation and candidate CI remain pending.
-#263 remains parent of #305 / #306 / #307; no direct parent builder.
+Main: `96f5b2b9`; newest main CI `40058644399` PASS.
+#309 / PR #311 is merged; mounted-test capability is available.
+#305: normal audited integration/test commit `31d6fa5f`; production source unchanged.
+Coordinator validation: exit 0, all 9 checks PASS, 115 related tests PASS.
+Whole-PR source scope: 169/300 lines; clean tree at validation.
+Builder reports 88 focused tests and ordinary mill day/night victories.
+Author stop intervals: 1070/1079 ms without further POST; one favicon 404.
+Author smoke is not independent acceptance; browser failure probes remain pending.
+Next gate: fresh Tier L reviewer and evaluator at the frozen candidate head.
+Reviewer is source-only; evaluator receives exclusive private runtime/checks.
+#305 source and consumed recovery budgets remain frozen; no extra source allocation.
+#263 remains parent of #305 / #306 / #307; successors wait for #305 delivery.
 #310 remains blocked at rework 2/2; minimum-zoom and full visual REWORK retained.
 #179 and #209 remain blocked with original acceptance; no extra source round granted.
 PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 1 Tier D PR merged; 0 merged PRs with playable proof.
-Browser proof, coordinator validation and full game gates NOT_RUN for #305.
-Next: launch #305 test-only worker, then settle its result in a later tick.
-No game rules, production behavior, API, protocol, replay, schema or migration changed.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Independent Tier L and candidate PR CI pending; full game gates NOT_RUN.
+No game-rule, API, protocol, replay, schema or migration change in this tick.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
