@@ -5,6 +5,41 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
+Main: `6a585179`; newest main CI `40073679092` PASS.
+#318: source `c017d1b1`; Tier L reviewer ACCEPT `771fcb07`, evaluator ACCEPT `36b6aa5e`.
+[Evaluation](evidence/wages-command-seams-318/eval-2.md), adjacent review and seven JPEGs.
+Try: fixture login → company opening → equipment → camp → end camp → reload.
+A stale second tab gives a refusal; refresh and repeat applies one ordinary command.
+Real browser/API/PostgreSQL readbacks passed; evaluator integration tests 11/11 PASS.
+Rename/perk have no UI controls and are executor-tested; no browser claim for them.
+Same-ID executor replay is tested; ordinary UI retry uses a new ID after refusal.
+Coordinator validate exit 0, 9/9 checks; related tests 61 passed / 55 skipped.
+Whole-PR source scope 184/300. Source unchanged since independent review.
+Evaluator environment failure is resolved; no source rework round consumed.
+Direct cleanup: 13 PIDs absent, private ports unused, profile/pidfile absent.
+Settled evaluator acknowledged/released; disposable Dex/PostgreSQL projects removed.
+[PR #323](https://github.com/Vovanostm/warwrit/pull/323) published; final-head CI pending.
+Next: merge only after CI including PR scope is green at the expected head.
+#319 builder task `task_504917a385f9` allocated; dispatch follows this records commit.
+Owns payroll-access/observation/tests only, exclusive focused checks, no runtime.
+#321 waits for the one-builder slot; #319 source/check results remain pending.
+#320/#322 retain dependencies; #315 retains the visual-scope hold.
+#167 retains full payroll, lost-response and day/night acceptance.
+#179/#209/#310 and #297/PR #298 retain inherited blocked labels and findings.
+Other snapshot PRs #129/#134 have failed checks; no transition.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Full integrated gates NOT_RUN this tick; no milestone acceptance inferred.
+No source, finance rule, API/protocol, replay, schema or dependency changes this tick.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — #307 premerge status — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and its existing one-issue local slices.
 Main: `99e513f5`; newest main CI `40067442240` PASS.
 #307: independent Tier L reviewer and evaluator ACCEPT at `6485ed80`.
 Shared authenticated reads and polling continuation live in controller.ts.
@@ -31,8 +66,6 @@ This tick: 0 merged PRs; 0 merged PRs with playable proof.
 Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
 No rules, API/protocol, replay, schema, migration or dependency changes.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 ### Historical checkpoint — #305 prerequisite allocation, 2026-10-24
 
