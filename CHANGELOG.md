@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Return #319 for distinct pool-wallet regression — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
+  evaluator ACCEPT at `651e6ee4`, 29 focused producer/core tests PASS;
+  independent reviewer REWORK because a separate remote requested pool wallet
+  has no regression. Existing code checks its locality; no production defect reproduced.
+- Coordinator allocates rework 1/2 to `apps/server/src/company/payroll-access.test.ts`
+  only, plus the local report: reject that remote pool with the purse/operator local
+  and prove input nonmutation. Reports remain at `.orca/wages-local-evidence-319/`.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records the gate outcomes and queue.
+- Both settled reports acknowledged/released; direct process check found no remaining
+  worker checks. #321 waits for the sole core slot. New regression, revalidation and
+  fresh gates are pending; prior validate 9/9 is not proof of the future change.
+  #167 browser/API/PostgreSQL/recovery acceptance remains pending. No game source
+  changed in this records commit; full integrated gates NOT_RUN, no PR merged.
+
 ### Merge #318 and validate #319 local payroll preparation — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-local-evidence-319`: implement accepted child #319 in

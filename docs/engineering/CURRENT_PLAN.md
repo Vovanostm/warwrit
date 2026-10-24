@@ -5,31 +5,30 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-[PR #323](https://github.com/Vovanostm/warwrit/pull/323) merged at `1c793e16`; #318 closed and agent:done.
-Both PR checks passed at expected head `ed5bd53f`; premerge main CI passed.
-Newest merged-main CI `40085288476` was running at this readback.
-Tier L reviewer/evaluator ACCEPT; ordinary browser/API/PostgreSQL proof retained.
-[Evaluation](evidence/wages-command-seams-318/eval-2.md), adjacent review and seven JPEGs.
-Try: fixture login → company opening → equipment → camp → end camp → reload.
-Stale second tab refuses; refresh and repeat applies one ordinary command.
-No payroll delivery inferred from this ordinary-command seam.
-#318 worktree removed after clean-tree/zero-unpushed checks; local evidence retained.
-#319: builder committed `2f6535b1`; source scope 296/300, 29 focused tests passed.
-Local access and observations prepare an unsaved real-core draft; no endpoint/UI.
-Main merged without conflicts at `53c8e107`; coordinator validate exit 0, 9/9 PASS.
-Initial merge hook failed on incomplete focused coverage; normal retry passed.
-Retry added the owned payroll test to related coverage; no gate or threshold bypass.
-#319 branch is published; independent Tier L gates allocated, verdicts pending.
-Evaluator gets exclusive focused producer/core checks; reviewer reads source only.
-#321 accepted contract waits for checks handback; no second core builder allocated.
+Main `1c793e16`: newest CI `40085288476` in progress at readback; no merge eligible.
+#318/PR #323 is merged; ordinary-command proof remains in its evidence directory.
+#319 gated head `651e6ee4`: evaluator ACCEPT, reviewer REWORK.
+Evaluator ran the real producer/core payroll journey: 29 focused tests PASS.
+Reviewer found missing coverage for a distinct requested pool wallet in another area.
+Existing locality tests move the carried purse; they do not cover that separate wallet.
+No production failure reproduced; smallest fix is one regression with input nonmutation.
+Reports: `.orca/wages-local-evidence-319/review-1.md` and `eval-1.md`.
+Both reports recorded and acknowledged; settled dispatches released (no owned resource).
+Direct process check found no remaining checks from either settled worker.
+Coordinator allocates rework 1/2 to the sole core builder after this records commit.
+Ownership: `apps/server/src/company/payroll-access.test.ts` and local report only.
+Exclusive focused checks; no runtime. Coordinator retains shared docs and integration.
+Previous validate exit 0 (9/9) and source scope 296/300 apply to the prior code only.
+New test, updated validation and fresh Tier L gates remain pending.
+#321 retains its accepted contract and waits for the sole core builder/checks slot.
 #320/#322 retain dependencies; #315 retains the visual-scope hold.
 #167 retains authenticated payroll, lost-response/reload and day/night acceptance.
 #179/#209/#310 and #297/PR #298 retain inherited blocked labels and findings.
 Other snapshot PRs #129/#134 have failed checks; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 1 merged PR; 1 merged PR with playable proof (ordinary commands).
-Full integrated payroll gates NOT_RUN; no milestone acceptance inferred.
-No finance rule, API/protocol, replay, schema or dependency change.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Full integrated gates NOT_RUN; no milestone or player acceptance inferred.
+No source, finance rule, API/protocol, replay, schema or dependency change this tick.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
