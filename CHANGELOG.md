@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Expose safe owner payroll snapshot — 2026-10-25, LOCAL
+
+- Branch `Vovanostm/wages-projection-321`, owner-requested completion of
+  [#321](https://github.com/Vovanostm/warwrit/issues/321): optional protocol payroll
+  block maps the existing public finance observation; holdings wage totals now
+  exclude unknown claims and use its snapshot tick. Exact q, pending versus paid,
+  and retained settled/ended-service history are preserved. No allocation rules,
+  commands, canonical storage, migrations or UI changes.
+- Affected: `packages/protocol/src/company.ts`, server `company/holdings.ts`,
+  `payroll-view.ts` and focused projection/route tests.
+  [Owning wiki result](docs/wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка)
+  and [current status](docs/engineering/CURRENT_PLAN.md#local-completion-of-321--2026-10-25).
+  Projector/economy/privacy tests (10), authenticated real-PG route tests (2, no
+  skips), protocol build, protocol/server/web types and scoped lint/format/diff
+  PASS. Initial invalid synthetic test fixture corrected before passing aggregate
+  roundtrip. Author route evidence uses Fastify.inject; independent review and
+  loopback HTTP proof pending. Normal commit hook retained. Full game gates,
+  browser/payment UI, publication and merge NOT_RUN; effort/tokens NOT_MEASURED.
+
 ### Accept local workflow review — 2026-10-25, LOCAL
 
 - Branch `codex/agent-workflow-improvements`; independent reviewer ACCEPT for

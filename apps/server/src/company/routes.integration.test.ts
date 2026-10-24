@@ -6,6 +6,9 @@ import {
   COMPANY_RULESET_ID,
   COMPANY_SCHEMA_VERSION,
   initialSkillProgress,
+  campaignTick,
+  moneyQ,
+  projectCompanyEconomy,
   projectCompanyLifecycle,
   readCompanyCombatAggregateState,
 } from '@warwrit/game-core';
@@ -43,7 +46,49 @@ describe('authenticated company read (PostgreSQL)', () => {
       const foreignSessionToken = randomUUID();
       const worldId = randomUUID();
       const companyId = randomUUID();
-      const state = createCompanyCombatAggregateFixture().state;
+      const fixture = createCompanyCombatAggregateFixture().state;
+      const state = {
+        ...fixture,
+        economy: {
+          ...fixture.economy,
+          finance: {
+            ...fixture.economy.finance,
+            claims: [
+              {
+                claimId: 'read-payroll-claim',
+                membershipId: 'service-worker-0',
+                poolId: 'local',
+                rateVersion: 'rate-worker-0',
+                dueAt: campaignTick('999'),
+                fromTick: campaignTick('998'),
+                toTick: campaignTick('999'),
+                dailyWageMilli: '13',
+                maintenanceId: null,
+                earned: [
+                  {
+                    fromTick: campaignTick('998'),
+                    toTick: campaignTick('999'),
+                    dailyWageMilli: '13',
+                    maintenanceId: null,
+                  },
+                ],
+                paidQ: moneyQ('5'),
+                reportedQ: moneyQ('13'),
+                reportedCoveredQ: moneyQ('3'),
+              },
+            ],
+            reservations: [
+              {
+                reservationId: 'read-payroll-hold',
+                walletId: 'purse',
+                claimId: 'read-payroll-claim',
+                amountQ: moneyQ('2'),
+                purpose: 'PENDING_CONFIRMATION' as const,
+              },
+            ],
+          },
+        },
+      };
       const storedState = JSON.parse(
         JSON.stringify(state)
           .replaceAll('"world"', JSON.stringify(worldId))
@@ -138,7 +183,49 @@ describe('authenticated company read (PostgreSQL)', () => {
           },
           holdings: expect.objectContaining({ cashQ: expect.stringMatching(/^[0-9]+$/u) }),
         });
-        expect(JSON.stringify(ownerRead.json())).not.toContain('finance');
+        const loaded = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId));
+        if (!loaded) throw new Error('stored company missing');
+        const observed = projectCompanyEconomy(loaded.economy, companyId)!;
+        const response = ownerRead.json();
+        expect(response.holdings.payroll).toEqual({
+          atTick: observed.finance.atTick,
+          publicRevision: response.company.revision,
+          pools: observed.finance.wallets,
+          services: observed.finance.services.map(
+            ({ membershipId, poolId, currentAgreedRateMilli, materialSupportOnly }) => ({
+              membershipId,
+              poolId,
+              currentAgreedRateMilli,
+              materialSupportOnly,
+            }),
+          ),
+          claims: [
+            {
+              claimId: 'read-payroll-claim',
+              membershipId: 'service-worker-0',
+              poolId: 'local',
+              payee: { kind: 'CHARACTER', id: 'a-worker-0' },
+              dueAt: '999',
+              estimatedQ: '13',
+              cashPaidQ: '5',
+              currentMaintenanceQ: '3',
+              pendingQ: '2',
+              unsecuredQ: '3',
+            },
+          ],
+          owedQ: '5',
+          dueQ: '5',
+          payableQ: '3',
+          duePayableQ: '3',
+        });
+        expect({ owedQ: response.holdings.wagesOwedQ, dueQ: response.holdings.wagesDueQ }).toEqual({
+          owedQ: '5',
+          dueQ: '5',
+        });
+        expect(loaded).toEqual(storedState);
+        expect(JSON.stringify(response)).not.toContain('finance');
 
         const otherAccountRead = await createdApp.inject({
           method: 'GET',

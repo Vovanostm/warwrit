@@ -1,6 +1,32 @@
 # Warwrit current delivery plan
 
-## Workflow preparation status — 2026-10-25
+## Local completion of #321 — 2026-10-25
+
+Owner: «Теперь работа будет проходить эффективнее? Попробуй применить обновления в worktree и довести суб-агентом его до завершения».
+Scope: complete existing #321 safe payroll snapshot/history locally with a Codex subagent.
+Branch: `Vovanostm/wages-projection-321`; live main readback `1c793e16`.
+Reviewed workflow commits applied by fast-forward through `d7e72847`; four existing WIP files preserved.
+Contract: issue [#321](https://github.com/Vovanostm/warwrit/issues/321); local `.orca/wages-projection-321/contract.md` and cited parent contract.
+Updated AGENTS governs process; old contract budgets/coordinator allocations are historical.
+Author owns four source/test paths, necessary route integration tests and slice documentation.
+Parent owns isolated runtime resources and independent acceptance; no concurrent heavy checks.
+Done requires exact safe projection/history, focused checks and authenticated GET/PostgreSQL readback, then independent review.
+Parent #167 payment/UI journey is outside this slice and remains unaccepted here.
+Orca/automation remain STOPPED_BY_OWNER; this author is a bounded Codex subagent.
+Publication, merge, deployment and issue closure are not part of this local completion.
+State: LOCAL implementation complete; independent code/evidence review pending.
+Owner GET now uses allowlisted `projectCompanyEconomy` payroll and safe legacy wage totals.
+Settled/ended-service claims, exact q, pending holds and old optional responses covered.
+Checks PASS: focused projector/economy/privacy (10); real-PG route integration (2, no skips).
+Protocol build; protocol/server/web types; scoped ESLint/Prettier/diff PASS.
+Normal commit hook required, no bypass; author result in `.orca/wages-projection-321/report.md`.
+[Owning wiki amendment](../wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка).
+Parent independent loopback HTTP/root readback pending; author proof is Fastify.inject + PG.
+Full game gate/browser/payment/UI/publication/merge NOT_RUN; tokens/elapsed NOT_MEASURED.
+
+## Dated history
+
+### Workflow preparation status — 2026-10-25 (completed locally)
 
 Coordinator: none active; Orca mission/automation remain STOPPED_BY_OWNER.
 Owner stop (2026-10-24): «Отмени автозапуск и отмени работу в orca - токены съедаются, эффективность около нулевая.»
@@ -16,8 +42,6 @@ Assigned local Codex implementation and independent review are authorized.
 Gameplay pilot E NOT_RUN; savings NOT_MEASURED. Existing WIP/blocked findings retained.
 Next: owner-controlled integration decision; no automatic publication, merge or restart.
 Historical snapshots below are not active instructions or current live-main proof.
-
-## Dated history
 
 ### Historical pipeline snapshot before owner cancellation — 2026-10-24
 
