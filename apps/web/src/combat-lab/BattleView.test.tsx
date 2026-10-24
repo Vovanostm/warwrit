@@ -1,3 +1,4 @@
+import { createBattleCameraRequests } from './battle-hud-scene.js';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it } from 'vitest';
 import type { CombatLabView } from '@warwrit/protocol';
@@ -707,5 +708,32 @@ it('offers a separate accessible field overview without conflating the grid togg
   const html = render();
   expect(html).toContain('aria-label="Обзор поля"');
   expect(html).toContain('Обзор поля (Home)');
+  expect(html).toMatch(/<button[^>]*type="button"[^>]*>Участники боя<\/button>/);
   expect(html).toContain('aria-label="Показать всю сетку"');
+});
+
+it('keeps only the latest camera request until readiness and clears it on scene change', () => {
+  const requests = createBattleCameraRequests();
+  const seen: string[] = [];
+  const scene = {
+    showOverview: () => seen.push('home'),
+    frameCombatArea: () => seen.push('area'),
+    focusUnit: (id: string) => seen.push(id),
+  } as unknown as Parameters<ReturnType<typeof createBattleCameraRequests>['ready']>[0];
+  const home = (ready: typeof scene) => ready.showOverview();
+  const area = (ready: typeof scene) => ready.frameCombatArea();
+  requests.request(area);
+  requests.request(home);
+  requests.ready(scene);
+  requests.request(area);
+  requests.request((ready) => ready.focusUnit('portrait'));
+  requests.clear();
+  requests.request(home);
+  requests.request(area);
+  requests.ready(scene);
+  requests.clear();
+  requests.request(area);
+  requests.clear();
+  requests.ready(scene);
+  expect(seen).toEqual(['home', 'area', 'portrait', 'area']);
 });

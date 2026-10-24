@@ -39,6 +39,7 @@ export function BattleView(props: BattleViewProps) {
     canvasRef,
     focusUnit,
     showOverview,
+    frameCombatArea,
     night,
     setNight,
     fullGrid,
@@ -117,6 +118,13 @@ export function BattleView(props: BattleViewProps) {
           onClick={showOverview}
         >
           Home
+        </button>
+        <button
+          className="battle-control battle-control--utility"
+          type="button"
+          onClick={frameCombatArea}
+        >
+          Участники боя
         </button>
         <button
           className="battle-control battle-control--utility"

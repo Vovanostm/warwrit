@@ -69,6 +69,7 @@ interface SpriteBattleScene {
   setHighlightedUnit(id: string | null): void;
   focusUnit(id: string): void;
   showOverview(): void;
+  frameCombatArea(): void;
   update(
     view: BattlePresentationView,
     selectedUnitId: string | null,
@@ -1314,6 +1315,7 @@ export async function mountSpriteBattleScene(
     const half = ((bounds.maxZ - bounds.minZ) / 2) * 0.86;
     camera.fit({ ...bounds, minZ: mid - half, maxZ: mid + half }, 0);
   };
+  let explicitCamera = false;
   let focusedId: string | null = null;
   const focusUnit = (id: string) => {
     const unit = currentView.units.find((candidate) => candidate.id === id);
@@ -1321,10 +1323,12 @@ export async function mountSpriteBattleScene(
     const bounds = overviewBounds([unit], false);
     if (!bounds) return;
     camera.fit(bounds, 0);
+    explicitCamera = false;
     focusedId = id;
     cameraMoved = false;
   };
   const frameDefault = () => {
+    if (explicitCamera) return;
     if (focusedId) focusUnit(focusedId);
     else frameBattle();
   };
@@ -1336,10 +1340,25 @@ export async function mountSpriteBattleScene(
   const modifiedKey = (event: KeyboardEvent) =>
     [event.altKey, event.ctrlKey, event.metaKey].some(Boolean);
   const showOverview = () => {
+    explicitCamera = false;
     focusedId = null;
     cameraMoved = false;
     overview = true;
     frameBattle();
+  };
+  const frameCombatArea = () => {
+    focusedId = null;
+    explicitCamera = true;
+    const opening = combatAreaOpening(canvas);
+    if (!opening) return;
+    const figures = combatAreaSubjects(currentView.units, statusMarkers, groundYFor, project);
+    const bounds = battleFrameBounds({
+      mapBounds: spriteFrameMapBounds(false, fieldBounds, figures),
+      figures,
+      ...opening,
+      elevation: CAMERA_ELEVATION,
+    });
+    if (bounds) camera.fit(bounds, 0);
   };
   const onOverviewKey = (event: KeyboardEvent) => {
     const target = event.target as HTMLElement | null;
@@ -1442,15 +1461,17 @@ export async function mountSpriteBattleScene(
     terrain.setNight(night);
   };
   const followActivation = (previousActor: string | undefined) => {
-    const actorId = currentView.activation?.actorId;
-    if (actorId && actorId !== previousActor) {
-      cameraMoved = false;
-      focusUnit(actorId);
-    }
+    const actorId = activationCameraTarget(
+      previousActor,
+      currentView.activation?.actorId,
+      explicitCamera || cameraMoved,
+    );
+    if (actorId) focusUnit(actorId);
   };
   return {
     focusUnit,
     showOverview,
+    frameCombatArea,
     setHighlightedUnit(id) {
       if (destroyed || highlightedId === id) return;
       highlightedId = id;
@@ -1718,4 +1739,73 @@ function sameFieldTarget(left: BattleFieldTarget | null, right: BattleFieldTarge
 
 function ensureMountAllowed(signal: AbortSignal | undefined): void {
   if (signal?.aborted) throw new Error('Scene mount cancelled');
+}
+
+/** Only rendered public subjects: a casualty contributes its ground plaque, not a figure. */
+export function combatAreaSubjects(
+  units: readonly BattleUnit[],
+  markers: readonly Mesh[],
+  groundY: (position: CombatLabHex) => number,
+  project: (point: { x: number; y: number; z: number }) => { x: number; z: number },
+) {
+  const figures = units
+    .filter((unit) => unit.status === 'active')
+    .map((unit) => spriteFigureBounds(unit, groundY(unit.position), project));
+  const plaques = markers
+    .filter((mesh) => mesh.isEnabled())
+    .map((mesh) => {
+      mesh.computeWorldMatrix(true);
+      const points = mesh.getBoundingInfo().boundingBox.vectorsWorld.map(project);
+      return {
+        minX: Math.min(...points.map((p) => p.x)),
+        maxX: Math.max(...points.map((p) => p.x)),
+        bottom: Math.min(...points.map((p) => p.z)) * Math.sin(CAMERA_ELEVATION),
+        top: Math.max(...points.map((p) => p.z)) * Math.sin(CAMERA_ELEVATION),
+      };
+    });
+  return [...figures, ...plaques];
+}
+
+/** Finite desktop HUD slots; borders are included by DOM rectangles. */
+export function combatAreaOpening(canvas: HTMLCanvasElement) {
+  const viewport = canvas.getBoundingClientRect();
+  const surface = canvas.closest('.battle-view')!;
+  const rectangles = (selector: string) =>
+    [...surface.querySelectorAll(selector)]
+      .filter((node) => node.checkVisibility())
+      .map((node) => node.getBoundingClientRect())
+      .filter((rect) => rect.width > 0 && rect.height > 0);
+  const top = rectangles(
+    '.battle-heading, .battle-top-band, .battle-utilities, .battle-outcome-panel',
+  );
+  const bottom = rectangles('.battle-action-dock, .battle-log summary');
+  const safeTop = Math.max(16, ...top.map((rect) => rect.bottom - viewport.top + 4));
+  const safeBottom = Math.min(
+    viewport.height - 16,
+    ...bottom.map((rect) => rect.top - viewport.top - 4),
+  );
+  const right = rectangles(
+    '.battle-menu-panel, .battle-log[open] .battle-log-content, .battle-inspected-unit',
+  ).filter((rect) => rect.bottom > viewport.top + safeTop && rect.top < viewport.top + safeBottom);
+  const safeRight = Math.min(
+    viewport.width - 16,
+    ...right.map((rect) => rect.left - viewport.left - 4),
+  );
+  if (safeTop >= safeBottom || safeRight <= 16) return null;
+  return {
+    width: viewport.width,
+    height: viewport.height,
+    safeTop,
+    safeBottom,
+    safeLeft: 16,
+    safeRight,
+  };
+}
+
+export function activationCameraTarget(
+  previous: string | undefined,
+  next: string | undefined,
+  manual: boolean,
+) {
+  return !manual && next !== previous ? next : undefined;
 }

@@ -23,8 +23,7 @@ export function useBattleScene(
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<Awaited<ReturnType<typeof mountSpriteBattleScene>> | null>(null);
-  const pendingFocus = useRef<string | null>(null);
-  const pendingOverview = useRef(false);
+  const cameraRequests = useRef(createBattleCameraRequests());
   const [tooltipInput, setTooltipInput] = useState<'pointer' | 'keyboard'>('pointer');
   const [sceneError, setSceneError] = useState('');
   const [night, setNight] = useState(false);
@@ -93,10 +92,7 @@ export function useBattleScene(
             latest.selectedSkillId,
           );
           readyScene.setHighlightedUnit(latest.initiativeHover);
-          if (pendingOverview.current) readyScene.showOverview();
-          pendingOverview.current = false;
-          if (pendingFocus.current) readyScene.focusUnit(pendingFocus.current);
-          pendingFocus.current = null;
+          cameraRequests.current.ready(readyScene);
           setSceneError('');
         }),
       )
@@ -108,8 +104,7 @@ export function useBattleScene(
       abort.abort();
       sceneRef.current?.destroy();
       sceneRef.current = null;
-      pendingFocus.current = null;
-      pendingOverview.current = false;
+      cameraRequests.current.clear();
     };
   }, [normalizedView.sceneKey]);
   useEffect(() => {
@@ -128,16 +123,9 @@ export function useBattleScene(
 
   return {
     canvasRef,
-    showOverview: () => {
-      pendingFocus.current = null;
-      if (sceneRef.current) sceneRef.current.showOverview();
-      else pendingOverview.current = true;
-    },
-    focusUnit: (id: string) => {
-      pendingOverview.current = false;
-      if (sceneRef.current) sceneRef.current.focusUnit(id);
-      else pendingFocus.current = id;
-    },
+    showOverview: () => cameraRequests.current.request((scene) => scene.showOverview()),
+    frameCombatArea: () => cameraRequests.current.request((scene) => scene.frameCombatArea()),
+    focusUnit: (id: string) => cameraRequests.current.request((scene) => scene.focusUnit(id)),
     night,
     setNight,
     fullGrid,
@@ -210,5 +198,29 @@ function useFieldInspection() {
     initiativeHover,
     setInitiativePointer,
     setInitiativeFocus,
+  };
+}
+
+/** A pending camera action belongs to this mount and is consumed exactly once. */
+export function createBattleCameraRequests() {
+  type Scene = Awaited<ReturnType<typeof mountSpriteBattleScene>>;
+  type Request = (scene: Scene) => void;
+  let scene: Scene | null = null;
+  let pending: Request | null = null;
+  return {
+    request(request: Request) {
+      if (scene) request(scene);
+      else pending = request;
+    },
+    ready(readyScene: Scene) {
+      scene = readyScene;
+      const request = pending;
+      pending = null;
+      request?.(scene);
+    },
+    clear() {
+      scene = null;
+      pending = null;
+    },
   };
 }

@@ -16,6 +16,8 @@ export function battleFrameBounds({
   height,
   safeTop,
   safeBottom,
+  safeLeft = 0,
+  safeRight = width,
   badge,
   elevation = CAMERA_ELEVATION,
 }: {
@@ -25,13 +27,17 @@ export function battleFrameBounds({
   height: number;
   safeTop: number;
   safeBottom: number;
+  safeLeft?: number;
+  safeRight?: number;
   badge?: { readonly width: number; readonly height: number } | undefined;
   elevation?: number | undefined;
 }): GroundBounds | null {
   const top = Math.max(0, safeTop) + 4 + (badge?.height ?? 0);
   const bottom = Math.min(height, safeBottom) - 20;
   const horizontalPadding = Math.max(24, badge?.width ?? 0);
-  if (width <= horizontalPadding || height <= 0 || bottom <= top) return null;
+  const left = Math.max(0, safeLeft);
+  const right = Math.min(width, safeRight);
+  if (right - left <= horizontalPadding || height <= 0 || bottom <= top) return null;
   const sin = Math.sin(elevation);
   const low = Math.min(mapBounds.minZ * sin, ...figures.map((figure) => figure.bottom));
   const high =
@@ -40,11 +46,11 @@ export function battleFrameBounds({
   const maxX = Math.max(mapBounds.maxX, ...figures.map((figure) => figure.maxX));
   const zoom = Math.max(
     ((high - low) * height) / (2 * (bottom - top)),
-    ((maxX - minX) * height) / (2 * (width - horizontalPadding)),
+    ((maxX - minX) * height) / (2 * (right - left - horizontalPadding)),
     0.01,
   );
   const upCenter = (low + high) / 2 + (((top + bottom) / 2 - height / 2) * 2 * zoom) / height;
-  const x = (minX + maxX) / 2;
+  const x = (minX + maxX) / 2 - (((left + right) / 2 - width / 2) * 2 * zoom) / height;
   return { minX: x, maxX: x, minZ: (upCenter - zoom) / sin, maxZ: (upCenter + zoom) / sin };
 }
 

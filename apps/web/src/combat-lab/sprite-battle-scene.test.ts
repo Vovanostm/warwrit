@@ -1,6 +1,10 @@
+import { NullEngine, Scene, MeshBuilder } from '@babylonjs/core';
 import { expect, it } from 'vitest';
 import {
   initialFrameUnits,
+  combatAreaSubjects,
+  combatAreaOpening,
+  activationCameraTarget,
   spriteFigureBounds,
   spriteFrameMapBounds,
 } from './sprite-battle-scene.js';
@@ -75,5 +79,113 @@ it.each(['W01', 'B002', 'B053'])(
         }
       }
     }
+  },
+);
+
+it.each([0, 0.2, 0.4])(
+  'frames live figures and actual transformed plaques on height %s',
+  (groundY) => {
+    const engine = new NullEngine();
+    const scene = new Scene(engine);
+    const units = ['active', 'dead', 'retreated', 'surrendered'].map((status, i) => ({
+      id: String(i),
+      profileId: 'W01',
+      status,
+      position: { q: 0, r: 0 },
+    }));
+    const markers = units.slice(1).map((unit, i) => {
+      const mesh = MeshBuilder.CreatePlane(unit.status, { width: 1.35, height: 0.3 }, scene);
+      mesh.rotation.x = Math.PI / 2;
+      mesh.scaling.set(0.55, 0.75, 1);
+      mesh.position.set(i - 0.34, groundY + 0.055, 0.3);
+      return mesh;
+    });
+    const project = (p: { x: number; y: number; z: number }) => ({
+      x: p.x,
+      z: p.z + p.y * Math.sqrt(3),
+    });
+    const subjects = combatAreaSubjects(units as never, markers, () => groundY, project);
+    const expected = [
+      spriteFigureBounds(units[0] as never, groundY, project),
+      ...markers.map((_, i) => ({
+        minX: i - 0.34 - (1.35 * 0.55) / 2,
+        maxX: i - 0.34 + (1.35 * 0.55) / 2,
+        bottom: (0.3 - (0.3 * 0.75) / 2 + (groundY + 0.055) * Math.sqrt(3)) / 2,
+        top: (0.3 + (0.3 * 0.75) / 2 + (groundY + 0.055) * Math.sqrt(3)) / 2,
+      })),
+    ];
+    expect(subjects).toEqual(
+      expected.map((bounds) =>
+        Object.fromEntries(
+          Object.entries(bounds).map(([key, value]) => [key, expect.closeTo(value, 6)]),
+        ),
+      ),
+    );
+    markers.forEach((mesh) => mesh.setEnabled(false));
+    expect(combatAreaSubjects([], markers, () => groundY, project)).toEqual([]);
+    scene.dispose();
+    engine.dispose();
+  },
+);
+
+it('measures visible desktop HUD borders and ignores panels outside the opening', () => {
+  const rect = (left: number, top: number, width: number, height: number, visible = true) => ({
+    checkVisibility: () => visible,
+    getBoundingClientRect: () => ({
+      left,
+      top,
+      width,
+      height,
+      right: left + width,
+      bottom: top + height,
+    }),
+  });
+  const groups = [
+    [rect(20, 30, 600, 100), rect(20, 30, 600, 800, false), rect(20, 30, 0, 800)],
+    [rect(20, 660, 1440, 240)],
+    [rect(1120, 180, 300, 300), rect(100, 700, 300, 100)],
+  ];
+  const canvas = {
+    getBoundingClientRect: () => ({ left: 20, top: 30, width: 1440, height: 900 }),
+    closest: () => ({ querySelectorAll: () => groups.shift() }),
+  };
+  expect(combatAreaOpening(canvas as never)).toEqual({
+    width: 1440,
+    height: 900,
+    safeLeft: 16,
+    safeRight: 1096,
+    safeTop: 104,
+    safeBottom: 626,
+  });
+});
+
+it('leaves the camera without a fit when HUD bands overlap', () => {
+  const rect = {
+    checkVisibility: () => true,
+    getBoundingClientRect: () => ({ left: 0, top: 100, bottom: 700, width: 100, height: 600 }),
+  };
+  const canvas = {
+    getBoundingClientRect: () => ({ left: 0, top: 0, width: 1440, height: 900 }),
+    closest: () => ({ querySelectorAll: () => [rect] }),
+  };
+  expect(combatAreaOpening(canvas as never)).toBeNull();
+});
+
+it.each([
+  ['a', 'b', false, 'b'],
+  ['a', 'b', true, undefined],
+  ['a', 'a', false, undefined],
+  ['a', undefined, false, undefined],
+  [undefined, 'a', false, 'a'],
+])(
+  'follows activation %s → %s only without manual camera intent (%s)',
+  (previous, next, manual, expected) => {
+    expect(
+      activationCameraTarget(
+        previous as string | undefined,
+        next as string | undefined,
+        manual as boolean,
+      ),
+    ).toBe(expected);
   },
 );

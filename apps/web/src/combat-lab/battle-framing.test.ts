@@ -13,10 +13,19 @@ it.each([
   [1152, 720, 192, 445],
   [1024, 640, 192, 345],
   [1440, 900, 140, 650, Math.PI / 6],
+  [1440, 900, 140, 650, Math.PI / 6, 190, 1020],
   [1092.8, 614.4, 140, 430, Math.PI / 6],
 ])(
   'fits the field and edge silhouettes after actual camera clamping at %sx%s',
-  (width, height, safeTop, safeBottom, elevation = CAMERA_ELEVATION) => {
+  (
+    width,
+    height,
+    safeTop,
+    safeBottom,
+    elevation = CAMERA_ELEVATION,
+    safeLeft = 0,
+    safeRight = width,
+  ) => {
     const terrain = createBattleTerrain(
       Array.from({ length: 165 }, (_, i) => ({ q: i % 15, r: Math.floor(i / 15), height: i % 3 })),
       BATTLE_LAYOUT,
@@ -57,6 +66,8 @@ it.each([
       height,
       safeTop,
       safeBottom,
+      safeLeft,
+      safeRight,
       badge: { width: 260, height: 34 },
       elevation,
     })!;
@@ -97,8 +108,8 @@ it.each([
           scene.getTransformMatrix(),
           scene.activeCamera!.viewport.toGlobal(width, height),
         );
-        expect(pixel.x - 130).toBeGreaterThanOrEqual(-0.01);
-        expect(pixel.x + 130).toBeLessThanOrEqual(width + 0.01);
+        expect(pixel.x - 130).toBeGreaterThanOrEqual(safeLeft - 0.01);
+        expect(pixel.x + 130).toBeLessThanOrEqual(safeRight + 0.01);
         expect(pixel.y - 34).toBeGreaterThanOrEqual(safeTop + 4 - 0.01);
         expect(pixel.y).toBeLessThanOrEqual(safeBottom - 20 + 0.01);
       }
@@ -174,3 +185,18 @@ it.each([
     ).toBeNull();
   },
 );
+
+it('rejects a collapsed horizontal opening', () => {
+  expect(
+    battleFrameBounds({
+      mapBounds: { minX: 0, maxX: 10, minZ: 0, maxZ: 10 },
+      figures: [],
+      width: 1440,
+      height: 900,
+      safeTop: 140,
+      safeBottom: 650,
+      safeLeft: 700,
+      safeRight: 710,
+    }),
+  ).toBeNull();
+});
