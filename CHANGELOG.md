@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Route three reproduced #310 defects into rework 2 — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  evaluator completed four real casualty-to-terminal rows and returned REWORK.
+  Explicit terminal framing hides survivors, the target forecast is omitted from
+  the opening, and the new utility border measures 2.56:1 against required 3:1.
+  Earlier overlap and 18 px label repairs pass; no acceptance is inferred.
+- Coordinator verified owned PIDs, ports, pidfile and profile absent, recorded and
+  released the settled evaluator, and allocated bounded rework 2/2. Include the
+  reviewer's existing-limit regression and inventory-only «Сетка» / “Grid” title.
+  Original source cap, parent freezes and all independent gates remain required.
+- Shared records only: scoped formatting, current-plan guard and diff checks are
+  the closeout checks. New game/runtime checks NOT_RUN by coordinator; main CI
+  `40015365287` PASS. No merge. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  owns allocation; evaluator evidence remains local in the slice worktree.
+
 ### Bound #310 evaluator handback before camera correction — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):

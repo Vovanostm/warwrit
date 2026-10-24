@@ -6,26 +6,26 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main `25dd9a48`: newest CI run `40015365287` PASS.
-#310 source `f1752045` remains frozen; cumulative source scope 186/300, rework 1/2.
-Coordinator validation at `c892b04` passed all 9 gates; independent acceptance pending.
-Reviewer 1: REWORK at `d8d40d1c`; asymmetric opening can exceed existing camera limits.
-The counterexample uses source arithmetic; occurrence in the mill journey NOT_MEASURED.
-Text critic 1: BLOCKED_ENV; inventory lacks the English review translation of «Сетка».
-Reports: uix-combat-area-frame/.orca/uix-combat-area-frame/{review-1,text-1}.md.
-Both settlements recorded, workers released and delivery acknowledged.
-Evaluator `task_c1cfdab1396b` remains live and solely owns runtime/checks.
-Coordinator requested a bounded handback: finish the current required row, retain evidence,
-mark unfinished proof NOT_RUN/NOT_MEASURED, clean owned resources and settle.
-Follow-up msg_7fe47b980fb7 is enqueued; worker acceptance is not yet proven.
-Next: evaluator settlement and positive cleanup, then bounded source rework 2.
-Include the inventory-only correction; it does not consume a source repair round.
-Visual critic waits repaired-source captures; no new writer allocated this tick.
-#179/#209/#214 remain frozen; original parent gates and budgets retained.
-#309 and #305–#307 remain queued behind current repairs; core #225 awaits dependencies.
-PR #298 and issue #297 retain inherited blocked labels; no merge.
-Other open PRs from snapshot: #129 and #134, failing checks; no merge eligibility.
-This tick: 0 merged PRs with playable proof. Daily work already complete.
-New game tests/typecheck/validate/browser checks NOT_RUN this tick.
+#310 evaluator 1 settled REWORK after four real casualty-to-terminal rows.
+F1: explicit terminal framing hides five survivors behind outcome at both viewports.
+F2: visible attack forecast is omitted; ordinary target selection hides human-1.
+F3: utility border 2.56:1 fails 3:1; text 10.50:1 and 18 px pass.
+Reviewer regression must use existing ordinary-opening camera limits.
+Text inventory requires the existing grid title «Сетка» / “Grid”; no source rewrite.
+Reports: uix-combat-area-frame/.orca/uix-combat-area-frame/{eval-1,review-1,text-1}.md.
+Evaluator settlement recorded/released/acknowledged; direct PID/port/profile cleanup PASS.
+Rework 2/2 allocated to `task_c4a44e6107f9`; headless dispatch follows this checkpoint.
+Builder exclusively owns web source, focused checks and private runtime; cap 300 source lines.
+Previous source `f1752045`: 186/300; no source repair claimed by this tick.
+Next: repair all three defects, repeat affected proof, normal commit and validate.
+Then fresh reviewer/evaluator/text and full visual critic gates; no acceptance waiver.
+Existing unaffected evidence may be mapped explicitly; unreached edges remain unproved.
+#179/#209/#214 remain frozen; parent gates and budgets retained.
+#309/#305–#307 remain queued; core #225 awaits dependencies.
+PR #298 and #297 retain inherited blocked labels. No PR eligible for merge.
+This tick: 0 merged PRs with playable proof; daily metrics/scout/digest already complete.
+New game tests/typecheck/validate/browser checks NOT_RUN by coordinator this tick.
+Only shared records changed; scoped format/status/diff checks are closeout checks.
 No game-rule/protocol/replay/schema/migration change. Not player-accepted.
 Wrapper releases its lease when this single tick returns.
 
