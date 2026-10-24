@@ -144,6 +144,8 @@ it('measures visible desktop HUD borders and ignores panels outside the opening'
     [rect(20, 30, 600, 100), rect(20, 30, 600, 800, false), rect(20, 30, 0, 800)],
     [rect(20, 660, 1440, 240)],
     [rect(1120, 180, 300, 300), rect(100, 700, 300, 100)],
+    [rect(40, 200, 256, 300), rect(20, 30, 600, 800, false), rect(20, 30, 0, 800)],
+    [],
   ];
   const canvas = {
     getBoundingClientRect: () => ({ left: 20, top: 30, width: 1440, height: 900 }),
@@ -152,7 +154,7 @@ it('measures visible desktop HUD borders and ignores panels outside the opening'
   expect(combatAreaOpening(canvas as never)).toEqual({
     width: 1440,
     height: 900,
-    safeLeft: 16,
+    safeLeft: 280,
     safeRight: 1096,
     safeTop: 104,
     safeBottom: 626,
@@ -189,3 +191,30 @@ it.each([
     ).toBe(expected);
   },
 );
+
+it.each([
+  ['below', { safeTop: 594 }],
+  ['left', { safeRight: 506 }],
+  ['right', { safeLeft: 934 }],
+  ['above', { safeBottom: 248 }],
+] as const)('offers the finite %s opening around the outcome', (side, edge) => {
+  const outcome = {
+    checkVisibility: () => true,
+    getBoundingClientRect: () => ({
+      left: 510,
+      right: 930,
+      top: 252,
+      bottom: 590,
+      width: 420,
+      height: 338,
+    }),
+  };
+  const canvas = {
+    getBoundingClientRect: () => ({ left: 0, top: 0, width: 1440, height: 900 }),
+    closest: () => ({
+      querySelectorAll: (selector: string) =>
+        selector === '.battle-outcome-panel' ? [outcome] : [],
+    }),
+  };
+  expect(combatAreaOpening(canvas as never, side)).toMatchObject(edge);
+});

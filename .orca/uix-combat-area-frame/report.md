@@ -1,3 +1,28 @@
+# #310 — rework round 2 (in progress)
+
+2026-10-24, branch `Vovanostm/uix-combat-area-frame`, start `d0b0c251`, source
+`f1752045`, base `25dd9a48`. One bounded repair; no parent patches or shared records.
+
+F1: finite below/left/right/above outcome openings checked against unchanged
+ordinary full-field camera limits before fitting; unsafe requests leave camera unchanged.
+F2: visible nonzero target forecast reserves its actual left boundary.
+F3: only participants utility border changed to `#84918a`.
+T1: existing title «Сетка» / “Grid” added to bilingual inventory in screen order.
+
+First-edit audits pass. Focused tests 63 pass; first typecheck failed because
+cameraLimits lacked minZoom; corrected by sharing its existing 2.2 value with the camera.
+Final checks, validator and exact browser repros pending at this source checkpoint.
+Prior independent reports and gate-1 evidence are preserved, not current affected proof.
+No push/PR/merge/deploy. Fresh independent review/evaluation/visual/text gates remain due.
+
+Coordinator docs proposal: LOCAL #310 rework 2 implements limit-aware finite framing,
+forecast avoidance and scoped border contrast; acceptance awaits fresh independent gates.
+Detailed actual proof and cleanup will be appended after validation/playthrough.
+
+---
+
+## Historical round 1 report (preserved)
+
 # #310 — rework round 1: FAILED (ownership blocker)
 
 2026-10-24. Started from coordinator record `b6afb49d`, source `81e28fe7`,

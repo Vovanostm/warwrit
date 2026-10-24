@@ -76,3 +76,24 @@ export function battleCameraLimits(
     },
   };
 }
+
+/** Accept only fits wholly inside the existing navigation envelope; never widen it. */
+export function reachableBattleFrame(
+  opening: Parameters<typeof battleFrameBounds>[0],
+  limits: ReturnType<typeof battleCameraLimits> & { minZoom: number },
+) {
+  const frame = battleFrameBounds(opening);
+  if (!frame) return null;
+  const sin = Math.sin(opening.elevation ?? CAMERA_ELEVATION);
+  const zoom = ((frame.maxZ - frame.minZ) * sin) / 2;
+  const halfWidth = (zoom * opening.width) / opening.height;
+  const outside = [
+    zoom < limits.minZoom,
+    zoom > limits.maxZoom,
+    frame.minX - halfWidth < limits.bounds.minX,
+    frame.maxX + halfWidth > limits.bounds.maxX,
+    frame.minZ < limits.bounds.minZ,
+    frame.maxZ > limits.bounds.maxZ,
+  ];
+  return outside.some(Boolean) ? null : frame;
+}

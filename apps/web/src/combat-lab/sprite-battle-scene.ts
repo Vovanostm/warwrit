@@ -42,7 +42,7 @@ import { createBattleBackdropMaterial } from './battle-backdrop.js';
 import { mountBattleTerrain } from './battle-terrain.js';
 import { mountBattleScenery } from './battle-scenery.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
-import { battleFrameBounds, battleCameraLimits } from './battle-framing.js';
+import { battleFrameBounds, battleCameraLimits, reachableBattleFrame } from './battle-framing.js';
 import { mountBattleFieldVitals } from './battle-field-vitals.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
 
@@ -1199,7 +1199,7 @@ export async function mountSpriteBattleScene(
     } else if (currentView.movementPreview?.some(({ to }) => HEX_KEY(to) === HEX_KEY(target.hex)))
       callbacks.onAct({ type: 'move', to: target.hex });
   };
-  const cameraLimits = { maxZoom: 17, bounds: { ...mapBounds } };
+  const cameraLimits = { minZoom: 2.2, maxZoom: 17, bounds: { ...mapBounds } };
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
     perspective,
@@ -1207,7 +1207,7 @@ export async function mountSpriteBattleScene(
     get maxZoom() {
       return cameraLimits.maxZoom;
     },
-    minZoom: 2.2,
+    minZoom: cameraLimits.minZoom,
     pick: pickAt,
     pickGround: (x, y) => {
       const hit = scene.pick(
@@ -1349,16 +1349,23 @@ export async function mountSpriteBattleScene(
   const frameCombatArea = () => {
     focusedId = null;
     explicitCamera = true;
-    const opening = combatAreaOpening(canvas);
-    if (!opening) return;
     const figures = combatAreaSubjects(currentView.units, statusMarkers, groundYFor, project);
-    const bounds = battleFrameBounds({
-      mapBounds: spriteFrameMapBounds(false, fieldBounds, figures),
-      figures,
-      ...opening,
-      elevation: CAMERA_ELEVATION,
-    });
-    if (bounds) camera.fit(bounds, 0);
+    for (const side of ['below', 'left', 'right', 'above'] as const) {
+      const opening = combatAreaOpening(canvas, side);
+      if (!opening) continue;
+      const bounds = reachableBattleFrame(
+        {
+          mapBounds: spriteFrameMapBounds(false, fieldBounds, figures),
+          figures,
+          ...opening,
+          elevation: CAMERA_ELEVATION,
+        },
+        cameraLimits,
+      );
+      if (!bounds) continue;
+      camera.fit(bounds, 0);
+      return;
+    }
   };
   const onOverviewKey = (event: KeyboardEvent) => {
     const target = event.target as HTMLElement | null;
@@ -1767,7 +1774,10 @@ export function combatAreaSubjects(
 }
 
 /** Finite desktop HUD slots; borders are included by DOM rectangles. */
-export function combatAreaOpening(canvas: HTMLCanvasElement) {
+export function combatAreaOpening(
+  canvas: HTMLCanvasElement,
+  side: 'below' | 'left' | 'right' | 'above' = 'below',
+) {
   const viewport = canvas.getBoundingClientRect();
   const surface = canvas.closest('.battle-view')!;
   const rectangles = (selector: string) =>
@@ -1775,9 +1785,7 @@ export function combatAreaOpening(canvas: HTMLCanvasElement) {
       .filter((node) => node.checkVisibility())
       .map((node) => node.getBoundingClientRect())
       .filter((rect) => rect.width > 0 && rect.height > 0);
-  const top = rectangles(
-    '.battle-heading, .battle-top-band, .battle-utilities, .battle-outcome-panel',
-  );
+  const top = rectangles('.battle-heading, .battle-top-band, .battle-utilities');
   const bottom = rectangles('.battle-action-dock, .battle-log summary');
   const safeTop = Math.max(16, ...top.map((rect) => rect.bottom - viewport.top + 4));
   const safeBottom = Math.min(
@@ -1791,15 +1799,29 @@ export function combatAreaOpening(canvas: HTMLCanvasElement) {
     viewport.width - 16,
     ...right.map((rect) => rect.left - viewport.left - 4),
   );
-  if (safeTop >= safeBottom || safeRight <= 16) return null;
-  return {
+  const left = rectangles('.battle-target-forecast').filter(
+    (rect) => rect.bottom > viewport.top + safeTop && rect.top < viewport.top + safeBottom,
+  );
+  const safeLeft = Math.max(16, ...left.map((rect) => rect.right - viewport.left + 4));
+  const opening = {
     width: viewport.width,
     height: viewport.height,
     safeTop,
     safeBottom,
-    safeLeft: 16,
+    safeLeft,
     safeRight,
   };
+  for (const rect of rectangles('.battle-outcome-panel')) {
+    const edges = {
+      below: { safeTop: Math.max(safeTop, rect.bottom - viewport.top + 4) },
+      above: { safeBottom: Math.min(safeBottom, rect.top - viewport.top - 4) },
+      left: { safeRight: Math.min(safeRight, rect.left - viewport.left - 4) },
+      right: { safeLeft: Math.max(safeLeft, rect.right - viewport.left + 4) },
+    };
+    Object.assign(opening, edges[side]);
+  }
+  if (opening.safeTop >= opening.safeBottom || opening.safeLeft >= opening.safeRight) return null;
+  return opening;
 }
 
 export function activationCameraTarget(

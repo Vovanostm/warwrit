@@ -7,13 +7,13 @@ day/night toggle («Ночная сцена» / «Дневной свет», tit
 autoplay («Начать автобой» / «Остановить автобой»), existing «Меню боя».
 
 Rework round 1 retains the same control order and wording, with a reserved utility
-lane and an 18 px CSS label. Computed browser size and fresh visual/text review
-remain NOT_MEASURED/NOT_RUN because validation hit coordinator-owned formatting.
+lane and an 18 px CSS label. Gate 1 subsequently measured 18 px and passing text contrast; the separate border
+repair and its current measurements are recorded in report.md.
 
 Only changed displayed line: **Участники боя**.
 Accessible name: native button text **Участники боя**. No title or shortcut added.
 English review translation: **Battle participants** (not a localized game screen).
-Surrounding review translations: Field overview (Home), Show entire grid / Hide general grid,
+Surrounding review translations: Field overview (Home), Show entire grid / Hide general grid, title: «Сетка» / “Grid”,
 Night scene / Daylight, Day / night, Start autoplay / Stop autoplay, Battle menu.
 
 Mechanics: camera-only explicit one-shot framing of public active silhouettes and enabled
@@ -22,4 +22,5 @@ plaques on occupied tiles. Does not select, order, advance time or change encoun
 No subjects uses full-field bounds; an unusable measured HUD opening leaves camera unchanged.
 Home retains full-field overview. No automatic terminal framing or Inspect disclosure added.
 
-Text critic: NOT_RUN, coordinator-owned. No historical acceptance reused.
+Text critic round 1: BLOCKED_ENV for missing Grid title translation; corrected here
+in round 2, inventory only. Fresh text verdict remains coordinator-owned.

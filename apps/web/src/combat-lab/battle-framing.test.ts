@@ -1,6 +1,6 @@
 import { Matrix, NullEngine, Scene, Vector3, VertexBuffer } from '@babylonjs/core';
 import { expect, it, vi } from 'vitest';
-import { battleCameraLimits, battleFrameBounds } from './battle-framing.js';
+import { battleCameraLimits, battleFrameBounds, reachableBattleFrame } from './battle-framing.js';
 import { CAMERA_ELEVATION, mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { createBattleTerrain, createBattleSurface } from '../renderer/battle-terrain.js';
@@ -200,3 +200,78 @@ it('rejects a collapsed horizontal opening', () => {
     }),
   ).toBeNull();
 });
+
+it.each([false, true])(
+  'keeps ordinary limits for an asymmetric action (empty subjects: %s)',
+  (empty) => {
+    const width = 1440,
+      height = 900,
+      elevation = Math.PI / 6;
+    const mapBounds = { minX: 0, maxX: 50, minZ: 0, maxZ: 20 };
+    const ordinary = {
+      mapBounds,
+      figures: [],
+      width,
+      height,
+      safeTop: 140,
+      safeBottom: 650,
+      elevation,
+    };
+    const limits = {
+      ...battleCameraLimits(battleFrameBounds(ordinary)!, width, height, elevation),
+      minZoom: 2.2,
+    };
+    const figures = empty ? [] : [{ minX: 0, maxX: 50, bottom: 0, top: 10 }];
+    const request = { ...ordinary, figures, safeLeft: 16, safeRight: 1100 };
+    expect(reachableBattleFrame(request, limits)).toBeNull();
+    const reachable = {
+      ...request,
+      mapBounds: { minX: 15, maxX: 30, minZ: 5, maxZ: 15 },
+      figures: [],
+    };
+    const frame = reachableBattleFrame(reachable, limits)!;
+    const engine = new NullEngine({
+      renderWidth: width,
+      renderHeight: height,
+      textureSize: 128,
+      deterministicLockstep: false,
+      lockstepMaxSteps: 4,
+    });
+    const scene = new Scene(engine);
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe() {}
+        disconnect() {}
+      },
+    );
+    const canvas = {
+      addEventListener() {},
+      removeEventListener() {},
+      clientHeight: height,
+    } as unknown as HTMLCanvasElement;
+    const camera = mountThreeQuarterCamera(scene, engine, canvas, {
+      ...limits,
+      elevation,
+      onPick() {},
+    });
+    try {
+      camera.fit(frame, 0);
+      scene.render();
+      const pixels = [new Vector3(15, 0, 5), new Vector3(30, 0, 15)].map((point) =>
+        Vector3.Project(
+          point,
+          Matrix.Identity(),
+          scene.getTransformMatrix(),
+          scene.activeCamera!.viewport.toGlobal(width, height),
+        ),
+      );
+      expect(pixels.every((p) => p.x >= 16 && p.x <= 1100 && p.y >= 140 && p.y <= 650)).toBe(true);
+    } finally {
+      camera.dispose();
+      scene.dispose();
+      engine.dispose();
+      vi.unstubAllGlobals();
+    }
+  },
+);
