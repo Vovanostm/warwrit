@@ -1,6 +1,6 @@
 # Agent development preparation — KISS revision
 
-Status: local workflow implementation, 2026-10-25; independent review pending.
+Status: local workflow implementation, 2026-10-25; independent reviewer ACCEPT at `a3ba1e8c`.
 The current amendment below supersedes conflicting historical process advice.
 Gameplay pilot NOT_RUN; token/time savings NOT_MEASURED. No publication or restart.
 Scope: the owner's review/simplify request, not activation of a gameplay card.
@@ -100,8 +100,8 @@ per pull request`). Parent live readback on 2026-10-25 found main unprotected an
   `scripts/bootstrap.sh` or `.github/workflows/ci.yml` changes. Broad CI optimization
   remains a separate measured task.
 
-Local fixture and actual check results are recorded below at closeout. Independent
-review pending; gameplay pilot E NOT_RUN. For the next real gameplay pilot record
+Local fixture and actual check results are recorded below. Independent review
+accepted `a3ba1e8c`; gameplay pilot E NOT_RUN. For the next real gameplay pilot record
 available total agent input/output tokens (cache separately), time to acceptance,
 substantial rework count/causes, first-submitted acceptance and later regressions.
 Missing data is NOT_MEASURED. Compare comparable tasks; one pilot cannot prove
@@ -136,7 +136,8 @@ Base: `1c793e1676a463d8ea750a890ccb493065ffb04e`; branch
   proof. The subsequent results-only Markdown commit uses the unchanged hook's
   documentation-only skip. No hook/threshold changes.
   Full bootstrap, game suites, browser/visual acceptance and pilot E NOT_RUN for
-  this tooling-only slice. Independent review pending; savings NOT_MEASURED.
+  this tooling-only slice. Review was pending at this first implementation checkpoint;
+  final acceptance is recorded below. Savings NOT_MEASURED.
 
 ### Independent review corrections — 2026-10-25
 
@@ -170,9 +171,29 @@ BLOCKED_ENV preserved.
 Scoped Markdown formatting, local link targets, status-block and ordinary diff
 checks: PASS. Scripts unchanged; previous fixture/syntax results remain applicable
 and were not repeated. Normal documentation-only hook path applies; no bypass.
-Independent re-review pending; game suites/pilot/publication/merge NOT_RUN,
+Independent re-review was pending at correction commit `a3ba1e8c`;
+game suites/pilot/publication/merge NOT_RUN,
 savings NOT_MEASURED. Review report is a parent-owned local artifact, not a
 committed source link.
+
+### Independent acceptance — 2026-10-25
+
+Independent reviewer ACCEPT for local candidate
+`a3ba1e8c6c42d377b88bf974e46754f8e73db841`. R1/R2 resolved by source read-through
+of optional-contract, assigned-resource, substantive U/T visual and unavailable-
+evidence counterexamples: all four PASS. Reviewer diff check PASS; unchanged
+script evidence reused. Bounded rubric grades: AGENTS.md 24/24; affected skills/
+prompts 24/24. These are expert judgments for the reviewed workflow, not proof
+about every untouched skill, future defects or measured savings. First-pass
+REWORK and corrections above remain history.
+
+Reviewer-owned local report (not tracked):
+`/Users/vovanostm/.codex/visualizations/2026/10/24/01a16fdd-f98f-7dd1-b902-98b2d6b1526e/warwrit-workflow-independent-review-2026-10-25.md`.
+This successor records the result only; implementation is unchanged. Scoped
+Markdown format, current status block and ordinary diff checks PASS; normal
+Markdown-only commit-hook path, no bypass. Local/unpublished status retained;
+gameplay pilot, full game gate, publication/merge NOT_RUN, savings NOT_MEASURED.
+Orca/automation remain stopped.
 
 ### Source basis and limits
 

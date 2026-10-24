@@ -8,12 +8,13 @@ Current scope: local workflow improvements A–D and first-correct-result guidan
 Owner (2026-10-25): «Хорошо. Запусти Sol 6.1 subagent for implement improvements and another subagent after for review skils, agents.md and grade them with best practices».
 Branch: `codex/agent-workflow-improvements`; base `1c793e1676a463d8ea750a890ccb493065ffb04e`.
 [Owning preparation/results](AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25).
-Implementation: local; R1/R2 review fixes applied, independent re-review pending.
+Implementation: local; independent reviewer ACCEPT at `a3ba1e8c`, R1/R2 resolved.
+Bounded rubric: AGENTS.md 24/24; affected skills/prompts 24/24.
 Publication/merge NOT_RUN.
 No automation, Orca worker, game server/DB, deploy or GitHub mutation authorized here.
 Assigned local Codex implementation and independent review are authorized.
 Gameplay pilot E NOT_RUN; savings NOT_MEASURED. Existing WIP/blocked findings retained.
-Next: independent review of the finished tooling/instruction diff; integrate only on owner authority.
+Next: owner-controlled integration decision; no automatic publication, merge or restart.
 Historical snapshots below are not active instructions or current live-main proof.
 
 ## Dated history

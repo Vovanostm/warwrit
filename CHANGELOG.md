@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Accept local workflow review — 2026-10-25, LOCAL
+
+- Branch `codex/agent-workflow-improvements`; independent reviewer ACCEPT for
+  `a3ba1e8c6c42d377b88bf974e46754f8e73db841`, R1/R2 resolved. Four instruction
+  counterexamples and reviewer diff check PASS; unchanged script evidence reused.
+  Bounded grades: AGENTS.md 24/24; affected skills/prompts 24/24. These are review
+  judgments, not measured savings or certification of untouched skills.
+- [Owning acceptance](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-acceptance--2026-10-25)
+  names the reviewer-owned local report and preserves first-pass history.
+  This docs-only successor changes no implementation. Scoped format/status/diff
+  checks PASS; normal documentation-only hook path, no bypass. Unpublished;
+  gameplay pilot/full game gate/publication/merge NOT_RUN, savings NOT_MEASURED.
+  Orca/automation remain stopped.
+
 ### Align workflow acceptance consumers — 2026-10-25, LOCAL
 
 - Branch `codex/agent-workflow-improvements`; independent review R1/R2 on
