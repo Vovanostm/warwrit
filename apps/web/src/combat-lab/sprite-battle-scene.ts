@@ -1349,7 +1349,12 @@ export async function mountSpriteBattleScene(
   const frameCombatArea = () => {
     focusedId = null;
     explicitCamera = true;
-    const figures = combatAreaSubjects(currentView.units, statusMarkers, groundYFor, project);
+    const figures = combatAreaSubjects(
+      currentView.units,
+      [...statusMarkers, ...unitMeshes.values()],
+      groundYFor,
+      project,
+    );
     for (const side of ['below', 'left', 'right', 'above'] as const) {
       const opening = combatAreaOpening(canvas, side);
       if (!opening) continue;
@@ -1751,14 +1756,14 @@ function ensureMountAllowed(signal: AbortSignal | undefined): void {
 /** Only rendered public subjects: a casualty contributes its ground plaque, not a figure. */
 export function combatAreaSubjects(
   units: readonly BattleUnit[],
-  markers: readonly Mesh[],
+  meshes: readonly Mesh[],
   groundY: (position: CombatLabHex) => number,
   project: (point: { x: number; y: number; z: number }) => { x: number; z: number },
 ) {
   const figures = units
     .filter((unit) => unit.status === 'active')
     .map((unit) => spriteFigureBounds(unit, groundY(unit.position), project));
-  const plaques = markers
+  const footprints = meshes
     .filter((mesh) => mesh.isEnabled())
     .map((mesh) => {
       mesh.computeWorldMatrix(true);
@@ -1770,7 +1775,7 @@ export function combatAreaSubjects(
         top: Math.max(...points.map((p) => p.z)) * Math.sin(CAMERA_ELEVATION),
       };
     });
-  return [...figures, ...plaques];
+  return [...figures, ...footprints];
 }
 
 /** Finite desktop HUD slots; borders are included by DOM rectangles. */

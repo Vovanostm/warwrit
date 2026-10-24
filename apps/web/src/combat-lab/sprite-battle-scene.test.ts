@@ -218,3 +218,22 @@ it.each([
   };
   expect(combatAreaOpening(canvas as never, side)).toMatchObject(edge);
 });
+
+it('includes the full enabled live plane as well as padded figure bounds', () => {
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  const plane = MeshBuilder.CreatePlane('unit:commander', { width: 6, height: 2 }, scene);
+  const unit = { id: 'commander', profileId: 'W10', status: 'active', position: { q: 0, r: 0 } };
+  const subjects = combatAreaSubjects(
+    [unit] as never,
+    [plane],
+    () => 0,
+    (p) => ({ x: p.x, z: p.y }),
+  );
+  expect([
+    Math.min(...subjects.map((s) => s.minX)),
+    Math.max(...subjects.map((s) => s.maxX)),
+  ]).toEqual([-3, 3]);
+  scene.dispose();
+  engine.dispose();
+});

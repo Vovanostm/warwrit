@@ -1,23 +1,138 @@
-# #310 — rework round 2 (in progress)
+# #310 — rework round 2: local author repair complete
 
-2026-10-24, branch `Vovanostm/uix-combat-area-frame`, start `d0b0c251`, source
-`f1752045`, base `25dd9a48`. One bounded repair; no parent patches or shared records.
+2026-10-24, branch `Vovanostm/uix-combat-area-frame`; start `d0b0c251`, previous
+source `f1752045`, base/current origin/main `25dd9a48`. No integration was needed.
+Source commit `9bdc109` introduced finite reachable framing/forecast/border repair;
+the follow-up source commit containing this section adds enabled live mesh bounds
+and its regression. Final validator readback is recorded below after that commit.
+No push, PR, merge, deployment, paid service, delegation, Orca CLI or shared-record edit.
 
-F1: finite below/left/right/above outcome openings checked against unchanged
-ordinary full-field camera limits before fitting; unsafe requests leave camera unchanged.
-F2: visible nonzero target forecast reserves its actual left boundary.
-F3: only participants utility border changed to `#84918a`.
-T1: existing title «Сетка» / “Grid” added to bilingual inventory in screen order.
+## Defect results
 
-First-edit audits pass. Focused tests 63 pass; first typecheck failed because
-cameraLimits lacked minZoom; corrected by sharing its existing 2.2 value with the camera.
-Final checks, validator and exact browser repros pending at this source checkpoint.
-Prior independent reports and gate-1 evidence are preserved, not current affected proof.
-No push/PR/merge/deploy. Fresh independent review/evaluation/visual/text gates remain due.
+- **F1 — author PASS.** The action tries the finite below/left/right/above outcome
+  openings and accepts only a fit wholly within the existing ordinary full-field
+  camera envelope, including minimum/maximum zoom. It does not replace those limits
+  with limits computed from the requested opening. An unreachable fit leaves the
+  camera unchanged. It includes padded figures plus actual enabled live sprite-plane
+  and casualty-plaque world corners; disabled dead figures remain excluded.
+  Actual terminal mill seed 20261009, round 10/revision 189: all five survivors and
+  retained plaques fit left of the outcome at both viewports, day/night, with zero
+  measured HUD intersections or offscreen subjects. All four GET brackets are
+  identical and contain zero action POSTs. Evidence: `rework-2/terminal-matrix.log`.
+- **F2 — author PASS.** The visible nonzero `.battle-target-forecast` rectangle
+  contributes the left safe bound; hidden/zero-area rectangles are ignored.
+  Default mill round 2/revision 29, axe/shield active, Wolf 1 pointer-selected without
+  attack: all four viewport/light rows have zero HUD intersections/offscreen subjects,
+  identical GET state and zero action POSTs. Evidence: `rework-2/forecast.log`.
+- **F3 — author PASS.** Only the participants utility boundary changes to `#84918a`.
+  At 1920×1080/100%, DPR 1, computed border `rgb(132,145,138)` against fill
+  `rgb(39,52,56)` measures **3.914:1**; text remains **10.498:1**, **18 px**,
+  line-height 23.4 px. Evidence: `rework-2/contrast.log` and its screenshot.
+- **T1 — inventory corrected.** Existing grid TITLE «Сетка» / “Grid” appears in
+  screen order in `text.md`. No player-facing wording or localization rewrite.
 
-Coordinator docs proposal: LOCAL #310 rework 2 implements limit-aware finite framing,
-forecast avoidance and scoped border contrast; acceptance awaits fresh independent gates.
-Detailed actual proof and cleanup will be appended after validation/playthrough.
+## Current affected measurements and images
+
+Real encounter GETs and browser-native zoom were used; no mocked server state,
+CSS zoom or transform substitution. The two exact affected states were each replayed
+across all four rows, rather than claiming four fresh complete encounters. Native
+125% readback is 1.25; physical 1366×768 gives CSS 1093×614, canvas 1092.8×614.4,
+DPR 1.25 and visualViewport scale 1. The 1440×900/100% rows have DPR 1.
+
+| Case (same bounds day/night) | Actual subject envelope, CSS px: left/right/top/bottom | Result |
+| --- | --- | --- |
+| Terminal, 1440×900/100% | 28.00 / 494.00 / 316.70 / 651.18 | Clear of outcome x=510–930 and all measured HUD |
+| Terminal, 1366×768/125% | 28.68 / 320.69 / 236.51 / 446.39 | Clear of outcome x=336.4–756.4 and all measured HUD |
+| Forecast, 1440×900/100% | 292.00 / 1412.00 / 195.93 / 598.07 | Clear of forecast and all measured HUD |
+| Forecast, 1366×768/125% | 307.97 / 1044.50 / 121.60 / 386.40 | Clear of forecast and all measured HUD |
+
+Current images are under `rework-2/shots/`: each four-row prefix has
+`-terminal-framed.png`, `-default-target-forecast-framed.png`, `-active-home.png`
+and `-keyboard-frame.png`; typography is `1920x1080-100-utility-contrast.png`.
+They are author evidence for a fresh evaluator/full visual critic, not independent
+acceptance. Numeric logs include every projected subject and visible HUD rectangle.
+The terminal envelope includes 13 enabled subject meshes (five live planes and
+retained rendered plaques); no marker was hidden to improve the composition.
+
+## Acceptance / retained proof mapping
+
+All original issue AC and contract Proof rows remain due; the following distinguishes
+current affected proof from prior evidence on unchanged boundaries.
+
+| Boundary | Evidence and remaining limits |
+| --- | --- |
+| AC1 utility, keyboard, Home | Current `rework-2/input.log`: four rows, Tab/Shift+Tab, Enter/Space identical framing, visible focus (2 CSS px at 100%, 1.6 at 125%); pointer/keyboard Home project all 165 terrain cells inside viewport. All GET states identical, zero action POSTs. |
+| AC1 terminal arrival | Real manually reached casualty round 4/revision 61 followed by autoplay to round 10/revision 189; `terminal-arrival-2.log` records unchanged arrival camera before any terminal framing. This was at `9bdc109`; the follow-up changes only the explicit action's subject list, not terminal/update/default-fit paths. Gate-1 four-row arrival evidence is also retained on these unchanged paths. Inspect disclosure is still absent and remains #209 integration work. |
+| AC2 geometry/clamp/fallback | Current existing tests initialize camera limits from ordinary full-field framing, reject the reviewer's asymmetric unreachable request both with subjects and no-subject full-field fallback, then project an accepted asymmetric request through the real clamped camera without replacing limits. Existing transformed plaque, same-tile, height 0/1/2, W01/B002/B053 and collapsed-opening regressions retained. Added full enabled live-plane boundary case. |
+| AC2 visible panels | Current F1/F2 matrix above. At `9bdc109`, real casualty/open log/menu/pinned portrait proof in `casualty-input-proof.log` has zero intersections. After live-plane inclusion, these exact panel compositions were not replayed: NOT_RUN on final source, fresh evaluator must cover them. Gate-1 panel evidence is historical only. |
+| AC3 camera intent/state | Current four-row `input.log`: manual pan/wheel retained after settled polling; resize retains zoom without stale fit; Home/input and zero-POST state proof pass. F2 pointer targeting separately exercised. |
+| AC3 readiness/reentry | Gate-1 `readiness-2.log`, `reentry.log`, activation logs remain evidence for unchanged `battle-hud-scene.ts` request queue/abort/disposal and unchanged scene activation/resize guards. Those files/paths are identical to `f1752045`; they are not claimed as current affected geometry proof. Current terminal restart exercised once (`restart.log`), but delayed-readiness/reentry/activation matrix NOT_RUN again. |
+| AC4 full journey matrix | Gate-1 four independently played casualty-to-terminal rows preserved in `eval-1.md`. This rework reran exact F1/F2 and Home/input four-row matrices; it does not claim the entire original journey matrix was independently repeated. Current active-Home captures are named as such, not initial-state captures. |
+| AC5 visual/accessibility | Current F3 and visible keyboard focus measured. Gate-1 CVD/reduced-motion/comparison sheets map to unchanged assets, renderer, sprite size, grounding and UI wording; changed framing/border require fresh affected assessment. Full rubric/independent visual ACCEPT remains coordinator-owned and pending. |
+| AC5 text | Inventory T1 repaired; fresh text verdict pending. Existing source wording and order unchanged. |
+| Unreached edges | Runtime collapsed-opening safe no-op, no-subject and retreated/surrendered states remain NOT_REACHED/NOT_RUN; source regressions are not runtime proof. Missing E2 archive, parent AC6, #179/#209/#214 gates and budgets unchanged. |
+
+## Checks, source scope and failures
+
+Cumulative source budget **281/300**: prior 186 + first repair commit 82 + follow-up
+13 additions/deletions; tests excluded. Only owned `sprite-battle-scene.ts`,
+`battle-framing.ts`, `battle-controls.css` and the two existing geometry tests changed
+in this round, plus owned report/text. `BattleView.tsx`, `battle-hud-scene.ts` and
+`BattleView.test.tsx` are unchanged in this round. No renderer/rules/protocol/server/
+migration/parent patch, threshold change, audit suppression or hook bypass.
+
+All checks serial; detailed logs under `rework-2/`:
+
+- First-edit `pnpm check:changes` for every changed code file: PASS; audits report
+  no new dead code, complexity or duplication issue. CSS advisories retained.
+- Three focused existing test files: final **64 tests PASS** (`focused-final.log`).
+- `pnpm --filter @warwrit/web typecheck`: PASS (`typecheck-mesh.log`).
+- Scoped eslint and prettier: PASS (`lint-final.log`, `format-final.log`).
+- Normal commit `9bdc109` hook/audit: PASS (`commit.log`). Validator on that source:
+  **9/9 PASS**, including related tests/coverage (`validate.log`).
+- Follow-up normal commit and final-source validator: pending checkpoint readback.
+- No full verify, stress, migrations, production build or whole-suite coverage run.
+  The required validator and private launcher own their existing package builds and
+  focused related coverage; no new CI or PR scope claim beyond local validator.
+
+Preserved failures/diagnostics: first typecheck failed because cameraLimits lacked
+minZoom; its existing 2.2 value is now shared with the camera. `red.log` is an early
+passing focused run, not evidence of a red regression. Initial terminal attempt had
+~4 px of full commander plane behind outcome at 1440; actual live meshes were added
+instead of tuning padding. Vite retained the old mounted scene once; page reload
+then measured the final implementation. `terminal-matrix-attempt-1.log`,
+`terminal-before-remount.log`, `forecast-attempt-1.log` and `attempt-1/` images remain.
+The first terminal polling window ended at round 8; the next reached the real result.
+No failed measurement is presented as a pass. Browser console: favicon 404, no
+observed application exception. Initial restricted `ps` failed; approved read-only
+process inspection supplied cleanup evidence.
+
+## Private resources and cleanup
+
+Only in-memory lab API **23278**, web **25278**, `DATABASE_URL=''`,
+`ENCOUNTER_FIXTURES=0`; Playwright session **rework310r2**, private profile
+`rework-2/browser-profile`. No campaign DB or another runtime.
+`browser-close.log` and `lab-stop.log` record shutdown. Stop left three positively
+identified owned pnpm/tsx ancestors **82318, 82321, 82375**, terminated with TERM.
+Direct final `ps` traversal finds **zero recorded PIDs or descendants** present;
+both private-port lsof calls return exit 1/no listeners. The private profile was
+removed only after browser absence was verified; direct filesystem readback shows
+profile and `.orca/play.pid` absent. Evidence: `cleanup-processes-final.json`,
+`processes-before-stop.json`, `processes-after-stop.json`, `cleanup-files.json`,
+`port-23278-final.log`, `port-25278-final.log`. No residual process or unrelated kill.
+
+## Proposed coordinator documentation update / next step
+
+“2026-10-24, Vovanostm/uix-combat-area-frame, LOCAL: #310 rework 2/2 repairs terminal
+framing under ordinary camera limits, includes visible forecast and full live-plane
+bounds, and raises only the participants border to 3.91:1. Author exact F1/F2 four-row
+and Home/input/state proof passes; T1 inventory corrected; cumulative source 281/300.
+Private runtime/browser fully stopped. Fresh reviewer/evaluator/full visual/text gates
+remain required; parent freezes, missing E2, original AC/Proof rows and budgets retained.”
+
+Coordinator owns shared CHANGELOG/CURRENT_PLAN/wiki and fresh independent gates.
+Review final source plus repaired images above; do not convert author proof or
+unchanged-boundary evidence mapping into independent/player acceptance.
 
 ---
 
