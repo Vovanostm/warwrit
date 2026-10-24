@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Record #310 reviewer rejection and bound evaluator handback — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  reviewer 2 returned REWORK on `0631a14b`. A compact group can fit at the
+  minimum camera zoom, but the explicit action rejects the smaller requested
+  zoom and leaves the camera unchanged. This is a source-arithmetic finding;
+  runtime reproduction remains NOT_RUN/NOT_MEASURED. The local report is
+  uix-combat-area-frame/.orca/uix-combat-area-frame/review-2.md.
+- Reviewer settlement is recorded, released and acknowledged. Text critic 2
+  ACCEPT stands separately. The live evaluator was asked to finish its current
+  row, preserve evidence and clean up; receipt/compliance and cleanup are not
+  yet verified. It retains exclusive runtime/checks. Visual acceptance is absent.
+- Coordinator updates only these records; source stays frozen and rework 2/2
+  remains consumed. Route the combined findings after evaluator settlement,
+  with all original Proof rows and parent freezes retained. Main CI remains
+  PASS; new game/browser/full gates NOT_RUN. Scoped documentation format,
+  status-block (25 non-empty lines) and diff checks PASS. Not merged.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) owns the current allocation.
+
 ### Validate #310 rework 2 and allocate fresh gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
