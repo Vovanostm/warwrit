@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Revalidate #319 distinct pool-wallet regression — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
+  rework 1/2 adds one regression in `apps/server/src/company/payroll-access.test.ts`
+  at `d9bdea97`. A separate remote pool wallet is refused while the carried purse
+  and operator remain local; the input stays unchanged. No production rule change.
+- Builder: 30 payroll tests, scoped lint/format, server types and normal commit audit
+  PASS. Initial formatting check failed, then passed after formatting. Coordinator
+  `orca-validate.sh` exits 0 with all nine checks PASS; source scope remains 296/300.
+  Logs remain at `.orca/validate-*.log`; local report retains all executed checks.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh round 2 reviewer
+  and evaluator at the frozen records successor. Prior reviewer REWORK and evaluator
+  ACCEPT remain historical; fresh verdicts and PR/merge are pending. Settled builder
+  acknowledged/released, direct process cleanup confirmed. #321 waits for checks.
+- Main CI `40085288476` PASS. No PR merged this tick; full integrated gates NOT_RUN.
+  #167 browser/API/PostgreSQL/recovery acceptance and inherited visual blocks remain.
+
 ### Return #319 for distinct pool-wallet regression — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
