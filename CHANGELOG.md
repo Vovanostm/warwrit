@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Recover the local #318 database prerequisite — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):
+  #318 stopped before source changes at report-only commit `1a96bc5b` because
+  integration setup lacked DATABASE_URL and the documented loopback service refused
+  connections. No tests ran; the failed setup remains recorded.
+- Start isolated local PostgreSQL project `warwrit-pipeline-318` on port 32775;
+  container health and SQL SELECT 1 PASS. Resume the same bounded #318 build and
+  sequential checks; no source rework charged, game/runtime acceptance still pending.
+  Coordinator owns project cleanup after settlement; existing data is untouched.
+- Accept #319's five-section contract with public imports and 250-line source estimate;
+  #319 and #321 wait for the core builder. Existing visual blocks and #315 hold persist.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) replaces its single status block.
+  Main CI PASS; documentation checks/publication readback are recorded on #167.
+  Game/browser/full gates NOT_RUN; no behavior/wiki update before implementation.
+  This tick delivers 0 merged PRs and 0 merged PRs with playable proof.
+
 ### Allocate the first wage prerequisite builder — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):

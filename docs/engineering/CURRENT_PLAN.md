@@ -8,18 +8,18 @@ Queue: epic #217 and sprint #161, one issue per PR.
 Main: `6a585179`; newest main CI `40073679092` PASS.
 #167: accepted five-child split; parent retains all four original ACs.
 Journey: earned wage due → Отряд → pay → wallet/claim readback → retry/reentry debits once.
-#318 contract ACCEPT; sole core builder `task_743d20d246c5` is allocated.
-Writes: executor ordinary selection, ordinary-command helper, ordinary integration tests.
-Exclusive sequential focused PostgreSQL/types/lint/normal commit audit checks granted.
-Game runtime and browser allocation remain absent; no source acceptance claimed.
-#321 contract ACCEPT; safe optional payroll projection/history waits for core builder slot.
-#319 contract runner FAILED at model capacity; no valid result, tracked source clean.
-Read-only retry `task_64fdd31d76d0`; prior failure retained, no implementation rework charged.
-All three settlements recorded before acknowledgment; release returned no owned resource.
+#318 first build FAILED before source edits: no DATABASE_URL, loopback connection refused.
+Report-only commit `1a96bc5b`; focused integration setup failed, no tests executed.
+Coordinator started isolated local PostgreSQL project `warwrit-pipeline-318`, port 32775.
+Container health and SQL SELECT 1 PASS; integration behavior remains unverified.
+#318 resumed as sole core builder `task_41183aece35d`; no source rework charged.
+Same three owned files and exclusive sequential focused checks; no game/browser runtime.
+Coordinator owns container cleanup after settlement; runner owns its isolated test databases.
+#319 contract ACCEPT: all five sections, public imports and bounded 250-line estimate.
+#319 and accepted #321 wait for the sole core builder; no source allocation.
+Both prior workers settled, recorded before acknowledgment and released with no owned resource.
 #320 waits #318/#319/#321; #322 waits #320/#321; #167 waits the integrated path.
-Parent contract: core-wages-167/.orca/core-wages-167/contract.md.
-Child contracts: wages-command-seams-318/.orca/wages-command-seams-318/contract.md
-and wages-projection-321/.orca/wages-projection-321/contract.md.
+Contracts/reports remain in the named slices under .orca; no prerequisite is player acceptance.
 #225 remains dependency-held; #315 builder remains held for the visual decision.
 #179/#209/#310 and #297 / PR #298 retain blocked labels and failed history.
 [Visual scope/E2 questions](https://github.com/Vovanostm/warwrit/issues/217#issuecomment-6381683434) remain open.
@@ -28,9 +28,9 @@ Snapshot PRs #129/#134 retain failed checks; no transition or merge.
 Daily metrics/scout/digest already complete; no duplicate daily work.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
 Game/browser/full gates NOT_RUN by coordinator; no payment delivery claimed.
-Next: settle #318 build and #319 retry, then validate committed source before Tier L gates.
+Next: settle resumed #318, dispose its local PostgreSQL, then validate committed source.
 Coordinator records live on `Vovanostm/core-wages-167`; issue handoff records publication.
-Wrapper releases its lease when this single tick returns; workers retain their slice ownership.
+Wrapper releases its lease when this single tick returns; worker retains slice ownership.
 
 ## Dated history
 
