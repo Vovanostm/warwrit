@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  COMBAT_LAB_VERSION,
   type CombatLabAction,
   type CombatLabBattleConfig,
   type CombatLabCatalog,
@@ -11,13 +10,10 @@ import { BattleView } from './BattleView.js';
 import { BattleEditor } from './BattleEditor.js';
 import { validateBattleDraft } from './editor-model.js';
 import {
-  admitCombatLabAction,
-  markCombatLabActionUncertain,
-  settleCombatLabActionReply,
   type PendingAction,
   commonCombatLabReason,
-  handleCombatLabActionReply,
   createCombatLabSessionCallbacks,
+  createCombatLabActionCallbacks,
 } from './controller.js';
 import {
   startSessionAttempt,
@@ -563,12 +559,13 @@ export function CombatLab() {
           return;
         }
         if (!response.ok) {
-          setNotice(
-            messageFor(responseCode(await response.json().catch(() => null), `${response.status}`)),
-          );
+          const body: unknown = await response.json().catch(() => null);
+          if (generation.current !== expectedGeneration || controller.signal.aborted) return;
+          setNotice(messageFor(responseCode(body, `${response.status}`)));
           return;
         }
         const body: unknown = await response.json();
+        if (generation.current !== expectedGeneration || controller.signal.aborted) return;
         if (!isCombatLabView(body) || body.sessionId !== current.id) {
           setNotice('Сервер вернул некорректное состояние боя.');
           return;
@@ -665,7 +662,7 @@ export function CombatLab() {
     });
   };
 
-  const actionPorts = {
+  const { act, retryAction } = createCombatLabActionCallbacks(apiBaseUrl, {
     sessionRef,
     pendingRef,
     deletingRef,
@@ -674,105 +671,13 @@ export function CombatLab() {
     setNotice,
     stopAutoplay,
     setSelectedSkillId,
-  };
-
-  const submitAction = async (action: CombatLabAction, description: string, retryBody?: string) => {
-    const requestBody = retryBody ?? JSON.stringify(action);
-    const admitted = admitCombatLabAction(
-      actionPorts,
-      requestBody,
-      description,
-      retryBody !== undefined,
-    );
-    if (admitted === null) return;
-    const { current, flight } = admitted;
-    const expectedGeneration = generation.current;
-    const controller = sessionAbort.current;
-    if (controller === null) {
-      markCombatLabActionUncertain(
-        actionPorts,
-        flight,
-        'Ответ неизвестен. Повтор отправит то же действие с тем же идентификатором.',
-      );
-      return;
-    }
-    try {
-      const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}/actions`, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          [capabilityHeader]: current.capability,
-        },
-        body: requestBody,
-        signal: controller.signal,
-      });
-      if (controller.signal.aborted || generation.current !== expectedGeneration) return;
-      const reply: unknown = await response.json().catch(() => null);
-      if (response.status >= 500) {
-        markCombatLabActionUncertain(
-          actionPorts,
-          flight,
-          'Сервер не подтвердил результат. Повтор отправит то же действие с тем же ID.',
-        );
-        return;
-      }
-      if (response.status === 404) {
-        sessionLostRef.current = true;
-        setSessionLost(true);
-      }
-      const action = JSON.parse(requestBody) as CombatLabAction;
-      const outcome = await handleCombatLabActionReply(response.status, reply, action, () =>
-        refreshLatest(current, expectedGeneration),
-      );
-      if (controller.signal.aborted || generation.current !== expectedGeneration) return;
-      if (outcome.status === 'uncertain') {
-        markCombatLabActionUncertain(
-          actionPorts,
-          flight,
-          'Ответ на действие не подтвержден. Повтор отправит то же действие с тем же ID.',
-        );
-        return;
-      }
-      settleCombatLabActionReply(actionPorts, outcome, action, expectedGeneration);
-    } catch {
-      if (!controller.signal.aborted && generation.current === expectedGeneration) {
-        markCombatLabActionUncertain(
-          actionPorts,
-          flight,
-          'Доставка неизвестна. Повторить можно только то же действие с тем же ID.',
-        );
-      }
-    }
-  };
-
-  const act = (intent: CombatLabAction['intent'], description: string) => {
-    if (autoplayRef.current && intent.type !== 'autoplay') return;
-    if (selectedSkillRef.current && intent.type !== 'use-skill' && intent.type !== 'autoplay')
-      return;
-    const view = sessionRef.current?.view;
-    if (view?.activation === null || view?.activation === undefined) return;
-    void submitAction(
-      {
-        version: COMBAT_LAB_VERSION,
-        sessionId: view.sessionId,
-        battleId: view.battleId,
-        requestId: crypto.randomUUID(),
-        expectedViewRevision: view.viewRevision,
-        activationId: view.activation.id,
-        actorId: view.activation.actorId,
-        intent,
-      },
-      description,
-    );
-  };
-
-  const retryAction = () => {
-    const flight = pendingRef.current;
-    const current = sessionRef.current;
-    if (flight === null || current === null || !flight.uncertain) return;
-    const action = JSON.parse(flight.body) as CombatLabAction;
-    void submitAction(action, flight.description, flight.body);
-  };
+    sessionAbort,
+    sessionLostRef,
+    autoplayRef,
+    selectedSkillRef,
+    setSessionLost,
+    refreshLatest,
+  });
 
   const actOnField = (intent: CombatLabAction['intent']) => {
     const current = sessionRef.current?.view;

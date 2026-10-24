@@ -259,3 +259,127 @@ export function createCombatLabSessionCallbacks(apiBaseUrl: string, ports: Comba
   };
   return { applyLatest, endBattle };
 }
+
+interface CombatLabActionTransportPorts extends CombatLabActionPorts {
+  readonly sessionAbort: { current: AbortController | null };
+  readonly sessionLostRef: { current: boolean };
+  readonly autoplayRef: { current: boolean };
+  readonly selectedSkillRef: { current: CombatLabSkillId | null };
+  readonly setSessionLost: (value: boolean) => void;
+  readonly refreshLatest: (current: ActiveSession, expectedGeneration: number) => Promise<void>;
+}
+
+export function createCombatLabActionCallbacks(
+  apiBaseUrl: string,
+  actionPorts: CombatLabActionTransportPorts,
+) {
+  const submitAction = async (action: CombatLabAction, description: string, retryBody?: string) => {
+    const requestBody = retryBody ?? JSON.stringify(action);
+    const admitted = admitCombatLabAction(
+      actionPorts,
+      requestBody,
+      description,
+      retryBody !== undefined,
+    );
+    if (admitted === null) return;
+    const { current, flight } = admitted;
+    const expectedGeneration = actionPorts.generation.current;
+    const controller = actionPorts.sessionAbort.current;
+    if (controller === null) {
+      markCombatLabActionUncertain(
+        actionPorts,
+        flight,
+        'Ответ неизвестен. Повтор отправит то же действие с тем же идентификатором.',
+      );
+      return;
+    }
+    const isCurrent = () =>
+      !controller.signal.aborted && actionPorts.generation.current === expectedGeneration;
+    const receiveReply = async (response: Response, reply: unknown) => {
+      if (response.status >= 500) {
+        markCombatLabActionUncertain(
+          actionPorts,
+          flight,
+          'Сервер не подтвердил результат. Повтор отправит то же действие с тем же ID.',
+        );
+        return;
+      }
+      if (response.status === 404) {
+        actionPorts.sessionLostRef.current = true;
+        actionPorts.setSessionLost(true);
+      }
+      const action = JSON.parse(requestBody) as CombatLabAction;
+      const outcome = await handleCombatLabActionReply(response.status, reply, action, () =>
+        actionPorts.refreshLatest(current, expectedGeneration),
+      );
+      if (!isCurrent()) return;
+      if (outcome.status === 'uncertain') {
+        markCombatLabActionUncertain(
+          actionPorts,
+          flight,
+          'Ответ на действие не подтвержден. Повтор отправит то же действие с тем же ID.',
+        );
+        return;
+      }
+      settleCombatLabActionReply(actionPorts, outcome, action, expectedGeneration);
+    };
+    try {
+      const response = await fetch(`${apiBaseUrl}/dev/combat-lab/${current.id}/actions`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-combat-lab-capability': current.capability,
+        },
+        body: requestBody,
+        signal: controller.signal,
+      });
+      if (!isCurrent()) return;
+      const reply: unknown = await response.json().catch(() => null);
+      if (!isCurrent()) return;
+      await receiveReply(response, reply);
+    } catch {
+      if (isCurrent()) {
+        markCombatLabActionUncertain(
+          actionPorts,
+          flight,
+          'Доставка неизвестна. Повторить можно только то же действие с тем же ID.',
+        );
+      }
+    }
+  };
+
+  const act = (intent: CombatLabAction['intent'], description: string) => {
+    if (actionPorts.autoplayRef.current && intent.type !== 'autoplay') return;
+    if (
+      actionPorts.selectedSkillRef.current &&
+      intent.type !== 'use-skill' &&
+      intent.type !== 'autoplay'
+    )
+      return;
+    const view = actionPorts.sessionRef.current?.view;
+    if (view?.activation === null || view?.activation === undefined) return;
+    return submitAction(
+      {
+        version: COMBAT_LAB_VERSION,
+        sessionId: view.sessionId,
+        battleId: view.battleId,
+        requestId: crypto.randomUUID(),
+        expectedViewRevision: view.viewRevision,
+        activationId: view.activation.id,
+        actorId: view.activation.actorId,
+        intent,
+      },
+      description,
+    );
+  };
+
+  const retryAction = () => {
+    const flight = actionPorts.pendingRef.current;
+    const current = actionPorts.sessionRef.current;
+    if (flight === null || current === null || !flight.uncertain) return;
+    const action = JSON.parse(flight.body) as CombatLabAction;
+    return submitAction(action, flight.description, flight.body);
+  };
+
+  return { act, retryAction };
+}

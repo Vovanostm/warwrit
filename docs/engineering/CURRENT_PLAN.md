@@ -5,25 +5,28 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `96f5b2b9`; newest main CI `40058644399` PASS.
-#305: [PR #312](https://github.com/Vovanostm/warwrit/pull/312) published; CI pending.
-Independent Tier L reviewer and evaluator ACCEPT at `a54b65c6`.
-Validated source `31d6fa5f`: coordinator exit 0, 9/9 checks, 115 related tests PASS.
-Whole-PR scope 169/300; later evidence commit `441ee760` contains only slice evidence.
-Evaluator: 88 focused tests PASS; ordinary day/night round-7 victories.
-Network, 503 and mismatched-acknowledgement retry browser probes PASS.
-[Evaluation and limits](evidence/qa-action-admission/eval-1.md); adjacent review and JPEGs.
+Main: `1d6df3af`; newest main CI `40062633985` PASS.
+#306: [PR #313](https://github.com/Vovanostm/warwrit/pull/313) published; PR CI pending.
+Independent Tier L reviewer and evaluator ACCEPT at `090843b5`.
+Validated source `804d5983`: coordinator exit 0, 9/9 checks, 145 related tests PASS.
+Whole-PR source scope 245/300; evidence-only successor `141c8fdd` verified.
+Authenticated submission/manual orders/exact-body retries use controller callbacks.
+Late POST/read JSON checks session generation and abort before changing state.
+Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
+Evaluator: 118 focused tests PASS; two independent day/night round-7 victories.
+Network, 503 and foreign-acknowledgement retry browser probes PASS.
+[Evaluation and limits](evidence/qa-action-transport/eval-1.md); adjacent source review and JPEGs.
 Direct cleanup: 17 PIDs absent, private ports unused, pidfile/profile absent.
-Evaluator settled and acknowledged; exclusive runtime/checks reservations released.
-Next: verify PR CI, final scope and expected head before merge; no merge yet.
-#263 remains parent of sequential #305 / #306 / #307; successors await #305 merge.
-Original H1/H2, parent acceptance and consumed recovery history remain open.
-#310 remains blocked at rework 2/2; minimum-zoom and full visual REWORK retained.
-#179 and #209 remain blocked with original acceptance; no new source allocation.
-PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
+Evaluator settled/acknowledged; exclusive runtime/checks reservations released.
+Next: check PR CI, scope and expected head before merge; no merge yet.
+#307 remains dependency-held; #263 and original H1/H2 proof remain open.
+#310 remains blocked at rework 2/2; #179/#209 retain original blocked acceptance.
+PR #298 / #297 remains blocked despite recorded review ACCEPT; no merge.
+Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 0 merged PRs; 0 merged PRs with playable proof so far.
-Full integrated game gates NOT_RUN this tick; no new production source changes.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
+No rules, API/protocol, replay, schema, migration or dependency changes.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
@@ -384,7 +387,7 @@ Wrapper releases its own lease when this single tick returns.
 
 ## Dated history
 
-## Pipeline status — 2026-10-22
+### Historical pipeline checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in
@@ -4664,7 +4667,7 @@ open localhost:5293 restored the retained company with 800 crowns. Capture:
 `output/playwright/route-visibility-main-merged.png`. Scoped documentation format
 and diff checks passed; unrelated local terrain/art/wiki/skill changes retained.
 
-## Pipeline status — 2026-10-22
+### Historical pipeline checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Scope: owner-requested exactly one tick, epic #217 and existing local overrides.
@@ -4690,7 +4693,7 @@ Full local integrated suites NOT_RUN; performance NOT_MEASURED.
 Next: publish #272 and merge only on live final-head gates; launch #179 builder.
 Wrapper releases its own lease when this single tick returns.
 
-## Pipeline status — 2026-10-22
+### Historical pipeline checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 
@@ -4729,7 +4732,7 @@ No setup/API/wiki/protocol/replay/rule/migration contract change.
 Next: settle independent #267 and #274 gates; grant #272 proof slot when free.
 Wrapper releases its lease when this single tick returns.
 
-## Pipeline status — 2026-10-22
+### Historical pipeline checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -4772,7 +4775,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Pre-integration branch checkpoints (historical):**
 
-## Pipeline status — 2026-10-22
+### Historical pipeline checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -4810,7 +4813,7 @@ This single tick returns; wrapper releases its own lease.
 
 **Previous #272 branch checkpoint (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical pipeline checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”
@@ -4853,7 +4856,7 @@ Wrapper releases its own lease when this one tick returns.
 
 **Previous #272 builder assignment (superseded above):**
 
-## Pipeline status — 2026-10-22
+### Historical pipeline checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Execution authority: owner 2026-10-22 asked for exactly one epic #217 pipeline tick.
@@ -4922,7 +4925,7 @@ Wrapper releases its lease when this single tick returns.
 
 **Pre-integration branch checkpoints (historical):**
 
-## Pipeline status — 2026-10-22
+### Historical pipeline checkpoint — 2026-10-22
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-22): “Perform exactly ONE tick of the pipeline defined in .agents/skills/warwrit-orca/SKILL.md for Vovanostm/warwrit, using the slice plan .agents/skills/warwrit-orca/slices/epic-217.json.”

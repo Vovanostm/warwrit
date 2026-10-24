@@ -9,6 +9,78 @@ requests.
 
 ## Unreleased
 
+### Accept #306 command transport gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):
+  independent Tier L reviewer and evaluator ACCEPT at `090843b5`, superseding
+  the pending gates below. Source remains validated `804d5983`; no source changes.
+- [Evaluation](docs/engineering/evidence/qa-action-transport/eval-1.md) records
+  118 focused tests PASS, two ordinary day/night round-7 victories and three
+  browser retry probes PASS. Adjacent review and JPEGs preserve the gate evidence.
+  Coordinator validation remains exit 0, 9/9 checks, 145 related tests, scope 245/300.
+- Direct cleanup confirms all 17 owned PIDs absent, both private ports unused,
+  pidfile/profile absent; evaluator settled and runtime/checks reservations released.
+  [Current plan](docs/engineering/CURRENT_PLAN.md) records
+  [PR #313](https://github.com/Vovanostm/warwrit/pull/313), published with CI pending.
+  Full integrated game gates NOT_RUN; fresh live-main comparison NOT_RUN.
+  Parent #263, #307, H1/H2 and blocked visual acceptance remain open. No rules,
+  API/protocol, replay, schema, migration or dependency changes.
+
+### Validate #306 transport callbacks for independent gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):
+  source commits `a7e6b359` / `804d5983` extract authenticated submission/manual
+  orders/exact-body retries into `controller.ts`; `CombatLab.tsx` retains refs
+  and rejects stale POST/read JSON completion. This implements the accepted
+  #263 R3b allocation; mounted/controller tests cover actual async boundaries.
+- Coordinator `orca-validate.sh` exit 0, all 9 checks PASS, 145 related tests,
+  whole-PR scope 245/300. Builder reports 118 focused tests, normal audited
+  commits and one ordinary round-7 victory with paired day/night captures;
+  800 ms stop/terminal waits issued no further POST. Independent acceptance pending.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh Tier L review
+  and evaluation. Five recorded PIDs absent, no worktree runtime process matches,
+  private ports unused and pidfile absent; initial sandbox `ps` denied, direct
+  escalated readback succeeded. Build report: `.orca/qa-action-transport/report.md`.
+- Published branch checkpoint, no PR/merge or player acceptance. #307, #263/H1/H2
+  and blocked visual acceptance remain open. Full integrated gates NOT_RUN;
+  no rules, API/protocol, replay, schema, migration or dependency changes.
+
+### Allocate #306 action transport build — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-transport`: accept the five-section #306 contract
+  under the existing #263 split. Resolve its engineering ownership questions:
+  include `CombatLab.mounted.test.tsx` and only minimal post-JSON generation/abort
+  guards in `CombatLab.tsx::refreshLatest` required by late-response AC3.
+  `controller.ts` and existing CombatLab/controller tests retain their scope;
+  #307 keeps polling extraction. No acceptance or recovery-budget reset.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates builder task
+  `task_a0148fe23e8b`, exclusive private runtime and sequential focused checks.
+  [Issue decision](https://github.com/Vovanostm/warwrit/issues/306#issuecomment-6379966728)
+  records the boundary; local contract/brief are named in the plan. This is
+  published coordination only, not implemented or accepted gameplay.
+- Main CI `40062633985` PASS at `1d6df3af`; this supersedes the in-progress
+  observation below. Contract settlement read back; no source changes.
+  Documentation format, status-block and diff checks PASS. Game checks,
+  author smoke, coordinator validation and independent #306 gates NOT_RUN.
+  No rules, protocol, replay, schema, migration or dependency changes; all
+  parent H1/H2 and blocked visual/PR acceptance remain open. No PR merged this tick.
+
+### Merge #305 and allocate #306 contract — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-transport`: records-only continuation after
+  [PR #312](https://github.com/Vovanostm/warwrit/pull/312) merged as `1d6df3af`
+  at expected head `ebcc3f34`; #305 is closed. This supersedes its CI-pending
+  status below. Pre-merge main and PR CI/scope PASS; new main CI is in progress.
+- Existing Tier L ACCEPT, validation 9/9, 115 related tests and independent
+  day/night journeys remain the delivery evidence. Final scope check PASS,
+  169/300 source lines and one closing issue. No game checks rerun this tick.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates the #306 contract
+  on merged main under the accepted sequential split. No source, rules, API,
+  protocol, replay, schema or migration changes; parent and visual limits remain.
+  One PR with playable proof merged this tick; #306 implementation is not started.
+- Final readback initially failed: inherited history contained extra pipeline-status
+  headings. Renamed those historical headings; one-current-status readback now PASS.
+
 ### Accept #305 action admission and retry gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
