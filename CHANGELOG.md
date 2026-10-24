@@ -9,6 +9,44 @@ requests.
 
 ## Unreleased
 
+### Prepare mounted-submit prerequisite for gated merge — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-mounted-submit`, [PR #311](https://github.com/Vovanostm/warwrit/pull/311):
+  CI and PR scope PASS at `a046ceeb`; main CI `40015365287` PASS. Independent
+  Tier D ACCEPT remains `c50c0c76`; subsequent changes affect only shared records.
+  Coordinator validation at source `38d9757c` remains 9/9 PASS; no source changed.
+- Pre-merge scope check PASS: 1/300 source lines and one closing issue (#309).
+  This records-only commit updates the [current plan](docs/engineering/CURRENT_PLAN.md);
+  its CI and expected-head merge are pending. The prior CI-pending status is superseded.
+  After merge, #305 may complete tests against its frozen source; no recovery budget reset.
+  New game tests, browser/playable proof and full game gates NOT_RUN this tick.
+
+### Accept independent mounted-submit review — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-mounted-submit`, [#309](https://github.com/Vovanostm/warwrit/issues/309):
+  independent Tier D reviewer 1 ACCEPT at `c50c0c76`, with no blocking findings.
+  This supersedes the review-pending status below; coordinator validation remains
+  9/9 PASS at source `38d9757c`. PR CI and merge remain pending.
+- Records-only update to this changelog and [current plan](docs/engineering/CURRENT_PLAN.md).
+  Reviewer did not rerun checks; no new game tests or browser proof in this tick.
+  #305 stays frozen until this prerequisite merges; existing visual blocks remain.
+
+### Add mounted submit regression capability — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-mounted-submit`, [#309](https://github.com/Vovanostm/warwrit/issues/309):
+  add pinned jsdom 27.4.0 and a file-local mounted CombatLab regression because
+  #305 lacked DOM proof of the real submitAction callback. Paths: `package.json`,
+  `pnpm-lock.yaml`, `apps/web/src/combat-lab/CombatLab.mounted.test.tsx`.
+- A real wait-button click exercises authenticated POST, duplicate-click blocking,
+  pending through refresh, and teardown. Focused 68 tests, actual V8 callback and
+  POST/settlement hits, typecheck, lint, format, normal audit, and coordinator
+  validation 9/9 PASS at `38d9757c`; source scope 1/300. Review and PR CI pending.
+  This is Tier D fixture evidence; playable acceptance and #305 acceptance remain open.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) restores the Orca coordinator
+  status and routes #310's non-product question to dependency-blocked engineering
+  work. Rework 2/2, parent freezes and failed gates remain; no extra round allocated.
+  No setup, production, API, rules, protocol, replay, schema or migration changes.
+
 ### Close #262 and #269; the full play-through is #303 — 2026-10-23, PUBLISHED
 
 - Owner decision 2026-10-23: close #269 and #262. Menu extraction is on main
