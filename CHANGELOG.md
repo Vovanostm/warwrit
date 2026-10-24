@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Allocate #307 shared-read and polling build — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-polling`: accept the five-section #307 contract
+  after merged #306/PR #313. The [coordinator decision](https://github.com/Vovanostm/warwrit/issues/307#issuecomment-6380577929)
+  allocates existing `apps/web/src/combat-lab/CombatLab.mounted.test.tsx` alongside
+  CombatLab/controller source and tests, so real timer/unmount wiring can be proved.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns one web builder,
+  exclusive sequential focused checks and private ports 23201/25201. Preserve
+  initial 750 ms polling, cadence after settlement, shared-read identity/cleanup,
+  550 ms autoplay/stop and exact-body retry. Whole-PR source cap remains 300;
+  original #263/H1/H2 acceptance, consumed budgets and blocked holds remain binding.
+- Contract worker settled successfully; receipt acknowledged, release returned
+  retained/no_owned_resource. Main `99e513f5` CI `40067442240` is in progress.
+  This is a published allocation, not implemented or accepted gameplay; no PR merged.
+  Documentation format/status/diff checks accompany the commit. #307 game checks,
+  smoke, coordinator validation, independent gates and full integrated gates NOT_RUN.
+  No rules, protocol, replay, schema, migration or dependency changes.
+
 ### Merge #306 and start #307 contract — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-polling` records [PR #313](https://github.com/Vovanostm/warwrit/pull/313)

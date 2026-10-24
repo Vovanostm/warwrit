@@ -5,26 +5,30 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `99e513f5`, merge of [PR #313](https://github.com/Vovanostm/warwrit/pull/313).
-#306 closed and labelled agent:done; merged expected head `7c07db71`.
-PR CI and scope PASS; pre-merge main CI `40062633985` PASS at `1d6df3af`.
-No new main CI run observed after merge; this is not a post-merge CI claim.
-Tier L reviewer/evaluator ACCEPT at `090843b5`; later evidence/records only.
-Prior validation exit 0, 9/9 checks, 145 related tests; final scope 245/300 PASS.
-[Evaluation and limits](evidence/qa-action-transport/eval-1.md): 118 focused tests,
-two ordinary day/night round-7 victories and three browser retry probes PASS.
-Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-#307: read-only contract task `task_7a108238fa86`, dispatch `ctx_bb486319f80f`.
-Dedicated branch `Vovanostm/qa-action-polling` starts at merged main `99e513f5`.
-No builder, runtime or checks allocated; next tick checks all five contract sections.
-#263, H1/H2 and all consumed recovery budgets remain open and unchanged.
+Main: `99e513f5`, merged [PR #313](https://github.com/Vovanostm/warwrit/pull/313); #306 done.
+Latest main CI `40067442240` is in progress; no post-merge green claim.
+#307 contract accepted: all five sections present, no product/rule question.
+[Coordinator decision](https://github.com/Vovanostm/warwrit/issues/307#issuecomment-6380577929)
+adds existing CombatLab.mounted.test.tsx to the four assigned source/test files.
+Builder task `task_5f51a3178a48` is allocated on `Vovanostm/qa-action-polling`.
+Contract: .orca/qa-action-polling/contract.md; brief: .orca/tasks/307-build-1.md.
+Writer starts after this checkpoint is published; source build is not yet accepted.
+Exclusive sequential focused checks and private runtime ports 23201/25201 belong to #307.
+Try after build: mill start → move → attack → end turn → autoplay → stop → manual order → result.
+Preserve initial 750 ms tick, polling after settlement, shared reads and abort cleanup.
+Preserve 550 ms autoplay/stop and exact-body retry; whole-PR source cap stays 300.
+Next: settle builder, verify commits/cleanup, coordinator validate, independent Tier L gates.
+#307 implementation, game checks, smoke and independent acceptance NOT_RUN this tick.
+#263/H1/H2 and all consumed recovery budgets remain open and unchanged.
 #310 remains blocked at rework 2/2; #179/#209 retain original blocked acceptance.
 PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
+Open PRs #129/#134 retain failed checks in supplied snapshot; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
-This tick: 1 merged PR with playable proof; no other PR merged.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Documentation format, single status block and scoped diff checks accompany this checkpoint.
 Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
-This checkpoint changes records only; no rules, protocol, schema or migration changes.
-Wrapper releases its lease when this single tick returns; #307 worker retains its slice.
+No rules, API/protocol, replay, schema, migration or dependency changes.
+Wrapper releases its lease when this single tick returns; #307 retains its assignment.
 
 ## Dated history
 
