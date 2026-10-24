@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Split the wage-payment journey into bounded issues — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):
+  accept revision 1 after the missing sizing was supplied. Create children #318–#322
+  for ordinary-command seams, lawful observations, atomic PayClaims, safe projection
+  and retained client attempts. Serialize protocol through #321 before #320;
+  retain all four original parent acceptance criteria and its final playable panel.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records three read-only child
+  contract allocations. Source estimates are planning bounds, not measured diffs;
+  no source/checks/runtime grant or wage-payment acceptance. Existing #225 dependencies,
+  blocked visual/infra slices and #315 hold remain intact. Issue bodies, dependencies
+  and ready labels were natively read back after creation.
+- Correct a coordinator launch error: the first #318/#319 workers inherited global
+  Astra. Interrupt those read-only processes, record their failed settlements,
+  acknowledge/release them, and retry with an explicit GPT-6.1 Sol scratch launcher.
+  No tracked launcher change and no contract rework-budget reset; failed attempts
+  remain in tick records. Correct shell PATH quoting before the replacement agents start.
+  Main CI `40073679092` PASS; game/browser/full gates NOT_RUN.
+- Documentation formatting, single-status-block, diff, normal commit and publication
+  outcomes are recorded in the issue handoff. No wiki behavior update applies yet:
+  this is contract decomposition, not implementation. 0 PRs merged with playable proof.
+
 ### Bound the wage-payment contract split — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/core-wages-167`, [#167](https://github.com/Vovanostm/warwrit/issues/167):
