@@ -9,6 +9,102 @@ requests.
 
 ## Unreleased
 
+### Accept #305 action admission and retry gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
+  independent reviewer and evaluator ACCEPT at `a54b65c6`. This supersedes the
+  pending independent gates below; source remains the validated `31d6fa5f`.
+- [Evaluation](docs/engineering/evidence/qa-action-admission/eval-1.md) records
+  88 focused tests PASS, ordinary day/night round-7 victories and three browser
+  retry probes PASS. Small JPEG captures and the source review accompany it.
+  Prior coordinator validation 9/9 PASS, 115 related tests and scope 169/300 remain valid.
+- Direct cleanup confirmed 17 PIDs absent, ports 23685/25685 unused, pidfile and
+  isolated browser profile absent. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  records [PR #312](https://github.com/Vovanostm/warwrit/pull/312) as published, CI pending. No new source, rules, API, protocol, replay, schema or
+  migration changes; full game gates NOT_RUN this tick. Parent #263, #306/#307,
+  H1/H2 and blocked visual acceptance remain open.
+
+### Validate #305 mounted completion for independent gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
+  normal audited integration/test commit `31d6fa5f` completes genuine mounted
+  coverage in `CombatLab.mounted.test.tsx`; production CombatLab/controller bytes
+  remain unchanged from the frozen allocation. This supersedes the integration
+  blocker below; original failures and consumed recovery budgets remain history.
+- Coordinator `orca-validate.sh` exit 0: all 9 checks PASS, 115 related tests,
+  scope 169/300 source lines. Builder reports 88 focused tests and day/night
+  ordinary mill victories; stop intervals 1070/1079 ms had no further POST.
+  One favicon 404 remains an author-smoke limitation. Independent Tier L review
+  and evaluation are pending; no playable acceptance, PR CI or merge is claimed.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns the independent gates.
+  Direct cleanup confirms all 21 recorded private processes absent and both
+  runtime ports unused before transfer. No source recovery, rules, API, protocol,
+  replay, schema, migration or setup change; full game gates NOT_RUN.
+
+### Merge #309 and prepare test-only #305 completion — 2026-10-24, PUBLISHED
+
+- [PR #311](https://github.com/Vovanostm/warwrit/pull/311), branch
+  `Vovanostm/qa-mounted-submit`, MERGED as `96f5b2b9` on 2026-10-24; #309 closed.
+  CI `40057987825` and PR scope PASS at `85fc298b`; independent Tier D ACCEPT
+  `c50c0c76`, source validation 9/9 PASS, and records-only successors verified.
+  This supersedes prior pending-merge entries. Playable proof NOT_RUN: Tier D only.
+- Branch `Vovanostm/qa-action-admission` prepares integration and preserves both
+  branches' history. Coordinator prepares one test-only completion allocation for
+  #305 using `CombatLab.mounted.test.tsx`; production source stays frozen at the
+  preserved WIP, and consumed recovery budgets remain unchanged. No new source
+  recovery, #306/#307 work or acceptance waiver. Independent Tier L still required.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) records the merged prerequisite
+  and next allocation. Documentation conflicts only; no production-source conflict.
+  Scoped format/status/diff checks PASS. Integration probe: 83 focused tests and
+  combined normal audit PASS, but merge pre-commit refreshed only the newly staged
+  mounted file and failed on `endBattle` CRAP 90 / 0%. Merge was aborted; production
+  WIP is preserved. Worker must resolve genuine coverage and commit normally; no bypass.
+  Browser and independent Tier L NOT_RUN.
+  Existing blocked labels, canon and API/protocol/replay/schema contracts unchanged.
+
+### Preserve #305 WIP and isolate its mounted-test prerequisite — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-admission`; owner orchestration handoff policy
+  requires preserving unfinished work before the tick stops. The existing
+  `CombatLab.tsx` / `controller.ts` admission, uncertainty and settled-reply
+  extraction plus `controller.test.ts` are published as WIP only. The source
+  remains frozen and unaccepted; no normal source delivery commit is claimed.
+- Fallback step 1 made no source changes. Worker reports 82 focused tests,
+  web typecheck and scoped lint/format PASS; executed normal audit FAIL:
+  `submitAction` CRAP 210 at 0% focused coverage. WIP commit hook NOT_RUN via
+  the AGENTS orchestration exception; the normal audit must pass before a PR.
+  Coordinator directly verified no prior lane processes or private listeners.
+- Coordinator allocated [#309](https://github.com/Vovanostm/warwrit/issues/309)
+  as an isolated Tier D prerequisite: supported DOM test environment and a
+  real mounted POST-boundary regression on main. Its read-only contract is
+  started; dependency/configuration implementation is NOT_RUN. Original #305
+  recovery budget, source freeze, <=300 source lines and parent #263/H1/H2
+  remain binding. #306/#307 wait; no gate is waived.
+- Daily scout started on main with exclusive private runtime; metrics/digest
+  were already posted. No merge this tick. #305 validation, browser acceptance,
+  independent Tier L and candidate CI are NOT_RUN. See
+  [current status](docs/engineering/CURRENT_PLAN.md) and
+  [#305](https://github.com/Vovanostm/warwrit/issues/305). No setup/API/wiki
+  behavior contract changed; setup capability remains proposed in #309.
+
+### Resume #305 after the commit-audit failure — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-admission`; coordinator fallback step 1 under the
+  owner delegation. The builder preserved an uncommitted 169-source-line
+  admission/uncertainty/reply extraction in `CombatLab.tsx` and `controller.ts`,
+  plus `controller.test.ts`. This documentation checkpoint is published;
+  implementation remains LOCAL and incomplete, with no gameplay acceptance.
+- Worker reports 82 focused tests, web typecheck, lint and format PASS, but
+  normal audit FAIL: `submitAction` CRAP 210 at 0% focused coverage. A fresh
+  builder must supply real coverage and only the necessary owned restructuring;
+  normal audit, <=300 source lines and original #263/H1/H2 contracts remain.
+  No transport/poll extraction, dependency change or weakened check is allowed.
+- Coordinator verified no listeners on 23685/25685, no play.pid or lane check
+  process before resource handover. Validation, independent Tier L, browser
+  acceptance and candidate CI are NOT_RUN. Main CI `40015365287` is successful.
+  See [current status](docs/engineering/CURRENT_PLAN.md) and
+  [#305](https://github.com/Vovanostm/warwrit/issues/305).
+
 ### Prepare mounted-submit prerequisite for gated merge — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-mounted-submit`, [PR #311](https://github.com/Vovanostm/warwrit/pull/311):

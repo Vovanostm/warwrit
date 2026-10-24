@@ -11,6 +11,10 @@ import { BattleView } from './BattleView.js';
 import { BattleEditor } from './BattleEditor.js';
 import { validateBattleDraft } from './editor-model.js';
 import {
+  admitCombatLabAction,
+  markCombatLabActionUncertain,
+  settleCombatLabActionReply,
+  type PendingAction,
   commonCombatLabReason,
   handleCombatLabActionReply,
   createCombatLabSessionCallbacks,
@@ -41,12 +45,6 @@ const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
 const capabilityHeader = 'x-combat-lab-capability';
 const pollingIntervalMs = 750;
 const sessionStorageKey = 'warwrit.combat-lab.session.v1';
-
-interface PendingAction {
-  readonly body: string;
-  readonly description: string;
-  readonly uncertain: boolean;
-}
 
 function useCombatLabSelection(session: ActiveSession | null) {
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
@@ -667,29 +665,35 @@ export function CombatLab() {
     });
   };
 
+  const actionPorts = {
+    sessionRef,
+    pendingRef,
+    deletingRef,
+    generation,
+    setPending,
+    setNotice,
+    stopAutoplay,
+    setSelectedSkillId,
+  };
+
   const submitAction = async (action: CombatLabAction, description: string, retryBody?: string) => {
-    const current = sessionRef.current;
     const requestBody = retryBody ?? JSON.stringify(action);
-    const existing = pendingRef.current;
-    if (
-      current === null ||
-      deletingRef.current ||
-      (existing !== null && (retryBody === undefined || existing.body !== requestBody)) ||
-      (retryBody === undefined && !canControl(current.view))
-    )
-      return;
-    const flight: PendingAction = { body: requestBody, description, uncertain: false };
-    pendingRef.current = flight;
-    setPending(flight);
-    setNotice('');
+    const admitted = admitCombatLabAction(
+      actionPorts,
+      requestBody,
+      description,
+      retryBody !== undefined,
+    );
+    if (admitted === null) return;
+    const { current, flight } = admitted;
     const expectedGeneration = generation.current;
     const controller = sessionAbort.current;
     if (controller === null) {
-      const uncertain = { ...flight, uncertain: true };
-      stopAutoplay();
-      pendingRef.current = uncertain;
-      setPending(uncertain);
-      setNotice('Ответ неизвестен. Повтор отправит то же действие с тем же идентификатором.');
+      markCombatLabActionUncertain(
+        actionPorts,
+        flight,
+        'Ответ неизвестен. Повтор отправит то же действие с тем же идентификатором.',
+      );
       return;
     }
     try {
@@ -705,11 +709,11 @@ export function CombatLab() {
       if (controller.signal.aborted || generation.current !== expectedGeneration) return;
       const reply: unknown = await response.json().catch(() => null);
       if (response.status >= 500) {
-        const uncertain = { ...flight, uncertain: true };
-        stopAutoplay();
-        pendingRef.current = uncertain;
-        setPending(uncertain);
-        setNotice('Сервер не подтвердил результат. Повтор отправит то же действие с тем же ID.');
+        markCombatLabActionUncertain(
+          actionPorts,
+          flight,
+          'Сервер не подтвердил результат. Повтор отправит то же действие с тем же ID.',
+        );
         return;
       }
       if (response.status === 404) {
@@ -722,32 +726,21 @@ export function CombatLab() {
       );
       if (controller.signal.aborted || generation.current !== expectedGeneration) return;
       if (outcome.status === 'uncertain') {
-        const uncertain = { ...flight, uncertain: true };
-        stopAutoplay();
-        pendingRef.current = uncertain;
-        setPending(uncertain);
-        setNotice('Ответ на действие не подтвержден. Повтор отправит то же действие с тем же ID.');
+        markCombatLabActionUncertain(
+          actionPorts,
+          flight,
+          'Ответ на действие не подтвержден. Повтор отправит то же действие с тем же ID.',
+        );
         return;
       }
-      if (outcome.status !== 'accepted') stopAutoplay();
-      if (
-        outcome.status === 'accepted' &&
-        sessionRef.current?.view.viewRevision === action.expectedViewRevision
-      )
-        stopAutoplay();
-      if (outcome.status === 'accepted') setSelectedSkillId(null);
-      setNotice(outcome.status === 'rejected' ? messageFor(outcome.code) : '');
-      if (generation.current === expectedGeneration) {
-        pendingRef.current = null;
-        setPending(null);
-      }
+      settleCombatLabActionReply(actionPorts, outcome, action, expectedGeneration);
     } catch {
       if (!controller.signal.aborted && generation.current === expectedGeneration) {
-        const uncertain = { ...flight, uncertain: true };
-        stopAutoplay();
-        pendingRef.current = uncertain;
-        setPending(uncertain);
-        setNotice('Доставка неизвестна. Повторить можно только то же действие с тем же ID.');
+        markCombatLabActionUncertain(
+          actionPorts,
+          flight,
+          'Доставка неизвестна. Повторить можно только то же действие с тем же ID.',
+        );
       }
     }
   };

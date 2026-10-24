@@ -5,28 +5,54 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `25dd9a48`; latest main CI `40015365287` PASS.
-#309: mounted submit regression committed at `38d9757c`; coordinator validate 9/9 PASS.
-Focused 68 tests, genuine submitAction V8 hits, web typecheck, lint and audit PASS.
-Tier D reviewer 1 ACCEPT at `c50c0c76`; PR #311 CI and PR scope PASS at `a046ceeb`.
-Pre-merge records commit only; its CI and expected-head merge are pending.
-No playable acceptance: this Tier D change proves a mounted adapter regression.
-#305 remains frozen until #309 merges; its consumed recovery budget is unchanged.
-#263 remains the parent of sequential #305 / #306 / #307; no direct parent builder.
-#310: dependency-blocked, source frozen at `5a5b46e1`, rework 2/2 retained.
-Minimum-zoom review/eval REWORK and full visual REWORK remain open.
-Its pending question is engineering sequencing, not an owner product decision.
-Parent #179 owns rendering/HUD/marker routing; no supplemental source round granted.
-#179 and #209 retain their blocked labels and all original acceptance requirements.
-PR #298 / #297 remains blocked despite its recorded reviewer ACCEPT; no merge.
-Daily metrics, scout and digest already complete; no duplicate daily work.
-This tick: 0 merged PRs with playable proof. Browser/full game gates NOT_RUN.
-Next: merge #311 after records-head CI; then allocate #305 test-only completion.
-Original #305 production source and consumed recovery budget remain frozen.
-No production behavior, API, rules, protocol, replay, schema or migration changed.
-Wrapper releases the lease when this single tick returns.
+Main: `96f5b2b9`; newest main CI `40058644399` PASS.
+#305: [PR #312](https://github.com/Vovanostm/warwrit/pull/312) published; CI pending.
+Independent Tier L reviewer and evaluator ACCEPT at `a54b65c6`.
+Validated source `31d6fa5f`: coordinator exit 0, 9/9 checks, 115 related tests PASS.
+Whole-PR scope 169/300; later evidence commit `441ee760` contains only slice evidence.
+Evaluator: 88 focused tests PASS; ordinary day/night round-7 victories.
+Network, 503 and mismatched-acknowledgement retry browser probes PASS.
+[Evaluation and limits](evidence/qa-action-admission/eval-1.md); adjacent review and JPEGs.
+Direct cleanup: 17 PIDs absent, private ports unused, pidfile/profile absent.
+Evaluator settled and acknowledged; exclusive runtime/checks reservations released.
+Next: verify PR CI, final scope and expected head before merge; no merge yet.
+#263 remains parent of sequential #305 / #306 / #307; successors await #305 merge.
+Original H1/H2, parent acceptance and consumed recovery history remain open.
+#310 remains blocked at rework 2/2; minimum-zoom and full visual REWORK retained.
+#179 and #209 remain blocked with original acceptance; no new source allocation.
+PR #298 / #297 remains blocked despite recorded reviewer ACCEPT; no merge.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+This tick: 0 merged PRs; 0 merged PRs with playable proof so far.
+Full integrated game gates NOT_RUN this tick; no new production source changes.
+Wrapper releases its lease when this single tick returns.
 
 ## Dated history
+
+### Historical checkpoint — #305 prerequisite allocation, 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper owns the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and its existing slices, including #263's test prerequisite #309.
+Main `25dd9a48`: latest CI `40015365287` successful.
+#305 fallback step 1 settled FAILED: actual submitAction still has 0% coverage,
+CRAP 210. Worker reports 82 tests, web typecheck, scoped lint/format PASS.
+The preserved 169-source-line patch is a published WIP snapshot, not delivery.
+WIP commit hook NOT_RUN under AGENTS orchestration handoff exception;
+executed normal audit FAIL remains binding before any PR publication.
+Coordinator decision: isolate the missing DOM-backed test capability as #309.
+#309 Tier D contract writer is live; root dependency/new mounted-test ownership
+is isolated from #305. No production recovery or budget reset authorized.
+#305 is ready but frozen behind #309; #306/#307 and original H1/H2 remain pending.
+#305 coordinator validation, independent Tier L, browser proof and CI NOT_RUN.
+Daily scout on main owns private checks/runtime; #309 contract is read-only.
+Direct #305 process/port cleanup verified before transfer; no source discarded.
+#179/#209 and #297/PR #298 remain blocked; no blocked labels removed.
+Other open PRs in the supplied snapshot: #129/#134 failed CI, no merge.
+Daily metrics/digest already posted; scout findings await later triage.
+This tick: 0 merged PRs with playable proof. No player acceptance claimed.
+Next: settle #309 contract and daily scout; build only after runtime handback.
+No game rules, API, protocol, replay, schema or migration changed this tick.
+Wrapper releases its lease when this tick returns; workers retain their slices.
 
 ### Historical checkpoint — 2026-10-23
 

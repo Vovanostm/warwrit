@@ -98,9 +98,13 @@ function deferredResponse(signal: AbortSignal) {
     get pending() {
       return pending;
     },
-    resolve(body: CombatLabAcknowledgement | CombatLabView) {
+    resolve(body: unknown, status = 200) {
       detach();
-      resolve(Response.json(body));
+      resolve(Response.json(body, { status }));
+    },
+    fail() {
+      detach();
+      reject(new TypeError('Network unavailable'));
     },
     cancel() {
       if (pending) abort();
@@ -108,16 +112,14 @@ function deferredResponse(signal: AbortSignal) {
   };
 }
 
-function transportFixture(initial: CombatLabView) {
+function transportFixture(
+  initial: CombatLabView,
+  actions = [`POST ${sessionUrl}/actions`, `GET ${sessionUrl}`],
+) {
   const requests: { url: string; init: RequestInit; signal: AbortSignal }[] = [];
   const deferred: ReturnType<typeof deferredResponse>[] = [];
   const unexpected: string[] = [];
-  const expected = [
-    `GET /api/dev/combat-lab/catalog`,
-    `GET ${sessionUrl}`,
-    `POST ${sessionUrl}/actions`,
-    `GET ${sessionUrl}`,
-  ];
+  const expected = [`GET /api/dev/combat-lab/catalog`, `GET ${sessionUrl}`, ...actions];
   const fetch = vi.fn((input: RequestInfo | URL, init: RequestInit = {}) => {
     const key = `${init.method ?? 'GET'} ${String(input)}`;
     const signal = init.signal;
@@ -145,9 +147,11 @@ function pendingFeedback(container: HTMLElement) {
   return container.querySelector('.battle-pending-status')?.textContent ?? null;
 }
 
-it('submits one real wait command and keeps it pending through acknowledgement and refresh', async () => {
+async function withMountedLab(
+  transport: ReturnType<typeof transportFixture>,
+  run: (container: HTMLElement) => Promise<void>,
+) {
   const initial = sessionView();
-  const transport = transportFixture(initial);
   const savedStorage = sessionStorage.getItem(storageKey);
   const container = document.createElement('div');
   document.body.append(container);
@@ -162,6 +166,42 @@ it('submits one real wait command and keeps it pending through acknowledgement a
     await act(async () => {
       root.render(<CombatLab />);
     });
+    await run(container);
+  } finally {
+    try {
+      await act(async () => {
+        root.unmount();
+        for (const request of transport.deferred) request.cancel();
+        await Promise.allSettled(transport.deferred.map((request) => request.promise));
+      });
+      expect({
+        aborted: transport.requests.map(({ signal }) => signal.aborted),
+        pending: transport.deferred.filter((request) => request.pending).length,
+        timers: vi.getTimerCount(),
+        unexpected: transport.unexpected,
+        dom: container.childElementCount,
+      }).toEqual({
+        aborted: transport.requests.map(() => true),
+        pending: 0,
+        timers: 0,
+        unexpected: [],
+        dom: 0,
+      });
+    } finally {
+      vi.useRealTimers();
+      vi.unstubAllGlobals();
+      vi.restoreAllMocks();
+      if (savedStorage === null) sessionStorage.removeItem(storageKey);
+      else sessionStorage.setItem(storageKey, savedStorage);
+      container.remove();
+    }
+  }
+}
+
+it('submits one real wait command and keeps it pending through acknowledgement and refresh', async () => {
+  const initial = sessionView();
+  const transport = transportFixture(initial);
+  await withMountedLab(transport, async (container) => {
     expect(waitButton(container).getAttribute('aria-disabled')).toBe('false');
     expect(new Headers(transport.requests[1]!.init.headers).get('x-combat-lab-capability')).toBe(
       capability,
@@ -248,33 +288,149 @@ it('submits one real wait command and keeps it pending through acknowledgement a
       defendDisabled: 'false',
       calls: 4,
     });
-  } finally {
-    try {
-      await act(async () => {
-        root.unmount();
-        for (const request of transport.deferred) request.cancel();
-        await Promise.allSettled(transport.deferred.map((request) => request.promise));
-      });
-      expect({
-        aborted: transport.requests.map(({ signal }) => signal.aborted),
-        pending: transport.deferred.filter((request) => request.pending).length,
-        timers: vi.getTimerCount(),
-        unexpected: transport.unexpected,
-        dom: container.childElementCount,
-      }).toEqual({
-        aborted: transport.requests.map(() => true),
-        pending: 0,
-        timers: 0,
-        unexpected: [],
-        dom: 0,
-      });
-    } finally {
-      vi.useRealTimers();
-      vi.unstubAllGlobals();
-      vi.restoreAllMocks();
-      if (savedStorage === null) sessionStorage.removeItem(storageKey);
-      else sessionStorage.setItem(storageKey, savedStorage);
-      container.remove();
+  });
+});
+
+function button(container: HTMLElement, label: string): HTMLButtonElement {
+  const found = [...container.querySelectorAll('button')].find(
+    (candidate) => (candidate.getAttribute('aria-label') ?? candidate.textContent) === label,
+  );
+  if (!found) throw new Error(`Missing button: ${label}`);
+  return found;
+}
+
+it.each([
+  ['network', 'Доставка неизвестна. Повторить можно только то же действие с тем же ID.'],
+  ['5xx', 'Сервер не подтвердил результат. Повтор отправит то же действие с тем же ID.'],
+  ['unmatched', 'Ответ на действие не подтвержден. Повтор отправит то же действие с тем же ID.'],
+])('stops autoplay after %s and retries identical bytes only once', async (failure, notice) => {
+  const initial = sessionView();
+  const actions = [`POST ${sessionUrl}/actions`];
+  if (failure === 'unmatched') actions.push(`GET ${sessionUrl}`);
+  actions.push(`POST ${sessionUrl}/actions`, `GET ${sessionUrl}`);
+  const transport = transportFixture(initial, actions);
+  await withMountedLab(transport, async (container) => {
+    await act(async () => button(container, 'Начать автобой').click());
+    await act(async () => vi.advanceTimersByTime(550));
+    const original = transport.requests[2]!;
+    await act(async () => {
+      if (failure === 'network') transport.deferred[0]!.fail();
+      else
+        transport.deferred[0]!.resolve(
+          { status: 'accepted', requestId: 'foreign' },
+          failure === '5xx' ? 503 : 200,
+        );
+    });
+    if (failure === 'unmatched') {
+      await act(async () =>
+        transport.deferred[1]!.resolve({
+          ...initial,
+          viewRevision: 8,
+          activation: { ...initial.activation!, id: 'activation-8' },
+        }),
+      );
     }
-  }
+    expect({
+      notice: container.querySelector('.battle-dock-notice')?.textContent,
+      autoplay: button(container, 'Начать автобой').getAttribute('aria-pressed'),
+      disabled: waitButton(container).getAttribute('aria-disabled'),
+    }).toEqual({ notice, autoplay: 'false', disabled: 'true' });
+    const beforeRetry = transport.requests.length;
+    await act(async () => vi.advanceTimersByTime(1000));
+    expect(transport.requests).toHaveLength(beforeRetry);
+    const retry = button(container, 'Повторить тот же запрос');
+    await act(async () => {
+      retry.click();
+      retry.click();
+      waitButton(container).click();
+    });
+    const retried = transport.requests.at(-1)!;
+    expect({
+      calls: transport.requests.length,
+      body: retried.init.body,
+      headers: retried.init.headers,
+      signal: retried.signal,
+    }).toEqual({
+      calls: beforeRetry + 1,
+      body: original.init.body,
+      headers: original.init.headers,
+      signal: original.signal,
+    });
+    const action = JSON.parse(String(original.init.body)) as CombatLabAction;
+    await act(async () =>
+      transport.deferred.at(-1)!.resolve(
+        {
+          version: 1,
+          requestId: action.requestId,
+          status: 'rejected',
+          code: 'STALE_VIEW',
+        } satisfies CombatLabAcknowledgement,
+        409,
+      ),
+    );
+    await act(async () => transport.deferred.at(-1)!.resolve({ ...initial, viewRevision: 9 }));
+    expect({
+      pending: pendingFeedback(container),
+      disabled: waitButton(container).getAttribute('aria-disabled'),
+      notice: container.querySelector('.battle-dock-notice')?.textContent,
+    }).toEqual({
+      pending: null,
+      disabled: 'false',
+      notice: 'Ход изменился до отправки. Состояние обновлено.',
+    });
+  });
+});
+
+it('settles a lost-session rejection and returns to the editor after DELETE 404', async () => {
+  const transport = transportFixture(sessionView(), [
+    `POST ${sessionUrl}/actions`,
+    `GET ${sessionUrl}`,
+    `DELETE ${sessionUrl}`,
+  ]);
+  await withMountedLab(transport, async (container) => {
+    await act(async () => waitButton(container).click());
+    const action = JSON.parse(String(transport.requests[2]!.init.body)) as CombatLabAction;
+    await act(async () =>
+      transport.deferred[0]!.resolve(
+        {
+          version: 1,
+          requestId: action.requestId,
+          status: 'rejected',
+          code: 'NOT_FOUND',
+        } satisfies CombatLabAcknowledgement,
+        404,
+      ),
+    );
+    await act(async () => transport.deferred[1]!.resolve({ code: 'NOT_FOUND' }, 404));
+    expect({
+      pending: pendingFeedback(container),
+      disabled: waitButton(container).getAttribute('aria-disabled'),
+    }).toEqual({ pending: null, disabled: 'true' });
+    await act(async () => button(container, 'Меню боя').click());
+    await act(async () => button(container, 'К редактору').click());
+    expect(new Headers(transport.requests[4]!.init.headers).get('x-combat-lab-capability')).toBe(
+      capability,
+    );
+    await act(async () => transport.deferred[2]!.resolve({ code: 'NOT_FOUND' }, 404));
+    await act(async () => vi.advanceTimersByTime(1500));
+    expect({
+      battle: container.querySelector('button[aria-label="Завершить ход"]'),
+      storage: sessionStorage.getItem(storageKey),
+      calls: transport.requests.length,
+      aborted: transport.requests[2]!.signal.aborted,
+    }).toEqual({ battle: null, storage: null, calls: 5, aborted: true });
+  });
+});
+
+it('aborts an unresolved action on unmount without a refresh or continuation', async () => {
+  const transport = transportFixture(sessionView(), [`POST ${sessionUrl}/actions`]);
+  await withMountedLab(transport, async (container) => {
+    await act(async () => waitButton(container).click());
+    expect(transport.deferred[0]!.pending).toBe(true);
+  });
+  expect(transport.requests.map(({ url }) => url)).toEqual([
+    '/api/dev/combat-lab/catalog',
+    sessionUrl,
+    `${sessionUrl}/actions`,
+  ]);
 });
