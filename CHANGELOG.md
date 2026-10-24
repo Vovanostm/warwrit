@@ -9,7 +9,7 @@ requests.
 
 ## Unreleased
 
-### Repair #310 layout and unblock shared-record validation — 2026-10-24, LOCAL
+### Repair #310 layout and unblock shared-record validation — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
   source `f1752045` reserves utility space and sets the full participants label to
@@ -20,8 +20,10 @@ requests.
   Coordinator corrects that formatting and records the failure without consuming
   another source repair round. Shared-record closeout uses scoped prettier write/check,
   the existing status guard and ordinary diff review before commit/publication.
-- Coordinator validate and independent reviewer/evaluator/visual/text verdicts are
-  pending. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) owns current sequencing.
+- Coordinator validate at `c892b04` passed all 9 gates after the shared-document fix.
+  Fresh reviewer/evaluator/text gates are allocated; the visual gate waits current
+  evaluator images. Source is published but not merged or player-accepted.
+  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) owns current sequencing.
 
 ### Allocate the combat-area utility layout repair — 2026-10-24, PUBLISHED
 

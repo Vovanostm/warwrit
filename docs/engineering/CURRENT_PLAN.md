@@ -9,10 +9,12 @@ Main `25dd9a48`: newest CI run `40015365287` PASS.
 #310 source `f1752045`, report `3ab9bf99`: utility spacing and 18 px label committed.
 Cumulative source scope 186/300; source rework remains 1/2, not accepted.
 Builder reports 57 focused tests PASS; validate 8/9, inherited CURRENT_PLAN format FAIL.
-Coordinator corrects its shared document; no source rework budget consumed.
+Coordinator corrected shared formatting in `c892b04`; no source rework budget consumed.
 Runtime/browser absent, private ports free, settlement recorded and released.
-Next: coordinator validate, then fresh reviewer/evaluator/visual/text gates.
-Repaired-source browser proof and independent gates remain NOT_RUN.
+Coordinator validate at `c892b04`: all 9 gates PASS, including related tests and audit.
+Fresh reviewer/evaluator/text gates allocated; visual gate waits current evaluator images.
+Repaired-source browser proof and independent acceptance remain pending.
+Evaluator alone owns private runtime/checks; all other gates are file-only readers.
 #179/#209/#214 remain frozen; original parent gates and budgets retained.
 #309 and #305–#307 remain queued behind current repairs.
 PR #298 and issue #297 retain inherited blocked labels; no merge.
