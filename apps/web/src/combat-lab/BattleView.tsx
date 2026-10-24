@@ -119,11 +119,7 @@ export function BattleView(props: BattleViewProps) {
         >
           Home
         </button>
-        <button
-          className="battle-control battle-control--utility"
-          type="button"
-          onClick={frameCombatArea}
-        >
+        <button className="battle-control" type="button" onClick={frameCombatArea}>
           Участники боя
         </button>
         <button
