@@ -6,22 +6,19 @@ Coordinator: Orca pipeline, run `run_bae7056fac91`; tick wrapper holds the lease
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
 Main `25dd9a48`: newest CI run `40015365287` PASS.
-#310 source `81e28fe7`, report `c218f733`: camera action committed, not accepted.
-Builder reports 57 focused tests and validate 9/9 PASS (98 related tests).
-Its browser proof found utility/initiative overlap and 12 px text at 1080p.
-Coordinator directly verified named runtime/browser processes and listeners absent.
-Bounded CSS ownership allocated; repair round 1/2 is next, cumulative source cap 300.
-No other web writer, checks or runtime may overlap that repair.
-#179/#209/#214 source remains frozen; all original parent gates and budgets retained.
+#310 source `f1752045`, report `3ab9bf99`: utility spacing and 18 px label committed.
+Cumulative source scope 186/300; source rework remains 1/2, not accepted.
+Builder reports 57 focused tests PASS; validate 8/9, inherited CURRENT_PLAN format FAIL.
+Coordinator corrects its shared document; no source rework budget consumed.
+Runtime/browser absent, private ports free, settlement recorded and released.
+Next: coordinator validate, then fresh reviewer/evaluator/visual/text gates.
+Repaired-source browser proof and independent gates remain NOT_RUN.
+#179/#209/#214 remain frozen; original parent gates and budgets retained.
 #309 and #305–#307 remain queued behind current repairs.
 PR #298 and issue #297 retain inherited blocked labels; no merge.
-Next useful evaluator may prove the reviewed #297 lifecycle with a pinned wrapper
-and explicit browser/lab grant; source repair must finish first.
 Other open PRs from snapshot: #129 and #134, failing checks; no merge eligibility.
-This tick: 0 merged PRs with playable proof. Daily work was already complete.
-Coordinator validation, CI for #310 and fresh independent gates: NOT_RUN.
+This tick: 0 merged PRs with playable proof. Daily work already complete.
 No game-rule/protocol/replay/schema/migration change. Not player-accepted.
-Next: bounded #310 repair, then coordinator validation and independent gates.
 Wrapper releases its lease when this single tick returns.
 
 ## Dated history
@@ -37,8 +34,6 @@ Full play-through ACCEPT on `cf3b2901` against `690d140b`, day and night.
 #303 records it. #263 is next.
 #179 stays open. No game-rule, API, protocol, replay, schema, or migration change.
 Next: start #263.
-
-
 
 **Previous checkpoint (superseded above):**
 

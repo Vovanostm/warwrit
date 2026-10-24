@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Repair #310 layout and unblock shared-record validation — 2026-10-24, LOCAL
+
+- Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
+  source `f1752045` reserves utility space and sets the full participants label to
+  18 px in `battle-controls.css`; cumulative source scope 186/300. Rendered repair
+  and the casualty/native-125% matrix remain NOT_RUN; original parent gates remain.
+- Builder reports 57 focused tests and normal audits PASS; validation passed 8/9
+  with 98 related tests but failed inherited coordinator-owned CURRENT_PLAN formatting.
+  Coordinator corrects that formatting and records the failure without consuming
+  another source repair round. Shared-record closeout uses scoped prettier write/check,
+  the existing status guard and ordinary diff review before commit/publication.
+- Coordinator validate and independent reviewer/evaluator/visual/text verdicts are
+  pending. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) owns current sequencing.
+
 ### Allocate the combat-area utility layout repair — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/uix-combat-area-frame`, [#310](https://github.com/Vovanostm/warwrit/issues/310):
