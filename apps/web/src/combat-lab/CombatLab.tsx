@@ -561,11 +561,16 @@ export function CombatLab() {
     let stopped = false;
     let timer: ReturnType<typeof setTimeout>;
 
-    const poll = async () => {
-      if (await continuePolling(session, expectedGeneration, controller, () => stopped)) {
-        timer = setTimeout(() => void poll(), pollingIntervalMs);
-      }
-    };
+    const poll = () =>
+      continuePolling(
+        session,
+        expectedGeneration,
+        controller,
+        () => stopped,
+        () => {
+          timer = setTimeout(() => void poll(), pollingIntervalMs);
+        },
+      );
 
     timer = setTimeout(() => void poll(), pollingIntervalMs);
     return () => {

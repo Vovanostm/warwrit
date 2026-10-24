@@ -1495,13 +1495,19 @@ it.each([
     );
     try {
       const callbacks = createCombatLabReadCallbacks('/private', ports);
-      const continues = await callbacks.poll(
+      const scheduleNext = vi.fn();
+      await callbacks.poll(
         ports.sessionRef.current!,
         1,
         ports.sessionAbort.current!,
         () => false,
+        scheduleNext,
       );
-      expect({ notice: ports.getNotice(), continues, read: ports.latestRead.current }).toEqual({
+      expect({
+        notice: ports.getNotice(),
+        continues: scheduleNext.mock.calls.length > 0,
+        read: ports.latestRead.current,
+      }).toEqual({
         notice,
         continues: true,
         read: null,
@@ -1551,7 +1557,9 @@ it.each(['pending', 'uncertain', 'deleting', 'lost', 'stopped', 'aborted'])(
       if (state === 'deleting') ports.deletingRef.current = true;
       if (state === 'lost') ports.sessionLostRef.current = true;
       if (state === 'aborted') controller.abort();
-      const continues = await callbacks.poll(current, 1, controller, () => state === 'stopped');
+      const scheduleNext = vi.fn();
+      await callbacks.poll(current, 1, controller, () => state === 'stopped', scheduleNext);
+      const continues = scheduleNext.mock.calls.length > 0;
       expect({ calls: fetch.mock.calls.length, continues }).toEqual({
         calls: 0,
         continues: ['pending', 'uncertain', 'deleting'].includes(state),
@@ -1559,7 +1567,7 @@ it.each(['pending', 'uncertain', 'deleting', 'lost', 'stopped', 'aborted'])(
       if (continues) {
         ports.pendingRef.current = null;
         ports.deletingRef.current = false;
-        await callbacks.poll(current, 1, controller, () => false);
+        await callbacks.poll(current, 1, controller, () => false, scheduleNext);
         expect(fetch).toHaveBeenCalledOnce();
       }
     } finally {
@@ -1581,11 +1589,13 @@ it.each(['terminal', 'lost', 'replaced', 'removed', 'stopped', 'aborted'])(
     );
     let stopped = false;
     try {
+      const scheduleNext = vi.fn();
       const pending = createCombatLabReadCallbacks('/private', ports).poll(
         current,
         1,
         controller,
         () => stopped,
+        scheduleNext,
       );
       if (state === 'terminal')
         ports.sessionRef.current = { ...current, view: { ...current.view, status: 'resolved' } };
@@ -1595,9 +1605,25 @@ it.each(['terminal', 'lost', 'replaced', 'removed', 'stopped', 'aborted'])(
       if (state === 'stopped') stopped = true;
       if (state === 'aborted') controller.abort();
       response.resolve(Response.json(view(0)));
-      expect(await pending).toBe(false);
+      await pending;
+      expect(scheduleNext).not.toHaveBeenCalled();
     } finally {
       vi.unstubAllGlobals();
     }
   },
 );
+
+it('reschedules a paused poll synchronously so cleanup cannot precede timeout installation', async () => {
+  const ports = readPorts();
+  ports.pendingRef.current = { body: '{}', description: 'wait', uncertain: true };
+  const scheduleNext = vi.fn();
+  const iteration = createCombatLabReadCallbacks('/private', ports).poll(
+    ports.sessionRef.current!,
+    1,
+    ports.sessionAbort.current!,
+    () => false,
+    scheduleNext,
+  );
+  expect(scheduleNext).toHaveBeenCalledOnce();
+  await iteration;
+});

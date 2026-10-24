@@ -466,8 +466,9 @@ export function createCombatLabReadCallbacks(apiBaseUrl: string, ports: CombatLa
     expectedGeneration: number,
     controller: AbortController,
     isStopped: () => boolean,
+    scheduleNext: () => void,
   ) => {
-    if (isStopped() || controller.signal.aborted) return false;
+    if (isStopped() || controller.signal.aborted) return;
     if (
       ports.pendingRef.current === null &&
       !ports.deletingRef.current &&
@@ -476,13 +477,14 @@ export function createCombatLabReadCallbacks(apiBaseUrl: string, ports: CombatLa
       await refreshLatest(ports.sessionRef.current ?? session, expectedGeneration);
     }
     const latest = ports.sessionRef.current;
-    return (
+    if (
       !isStopped() &&
       !controller.signal.aborted &&
       latest?.id === session.id &&
       latest.view.status === 'active' &&
       !ports.sessionLostRef.current
-    );
+    )
+      scheduleNext();
   };
 
   return { refreshLatest, poll };
