@@ -22,6 +22,8 @@ requests.
   on merged main under the accepted sequential split. No source, rules, API,
   protocol, replay, schema or migration changes; parent and visual limits remain.
   One PR with playable proof merged this tick; #306 implementation is not started.
+- Final readback initially failed: inherited history contained extra pipeline-status
+  headings. Renamed those historical headings; one-current-status readback now PASS.
 
 ### Accept #305 action admission and retry gates — 2026-10-24, PUBLISHED
 
