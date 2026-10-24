@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Validate #306 transport callbacks for independent gates — 2026-10-24, PUBLISHED
+
+- Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):
+  source commits `a7e6b359` / `804d5983` extract authenticated submission/manual
+  orders/exact-body retries into `controller.ts`; `CombatLab.tsx` retains refs
+  and rejects stale POST/read JSON completion. This implements the accepted
+  #263 R3b allocation; mounted/controller tests cover actual async boundaries.
+- Coordinator `orca-validate.sh` exit 0, all 9 checks PASS, 145 related tests,
+  whole-PR scope 245/300. Builder reports 118 focused tests, normal audited
+  commits and one ordinary round-7 victory with paired day/night captures;
+  800 ms stop/terminal waits issued no further POST. Independent acceptance pending.
+- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh Tier L review
+  and evaluation. Five recorded PIDs absent, no worktree runtime process matches,
+  private ports unused and pidfile absent; initial sandbox `ps` denied, direct
+  escalated readback succeeded. Build report: `.orca/qa-action-transport/report.md`.
+- Published branch checkpoint, no PR/merge or player acceptance. #307, #263/H1/H2
+  and blocked visual acceptance remain open. Full integrated gates NOT_RUN;
+  no rules, API/protocol, replay, schema, migration or dependency changes.
+
 ### Allocate #306 action transport build — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/qa-action-transport`: accept the five-section #306 contract

@@ -5,27 +5,28 @@
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
 Queue: epic #217 and its existing one-issue local slices.
-Main: `1d6df3af`; newest main CI `40062633985` PASS; #305 / PR #312 merged.
-#306: five-section contract accepted; builder task `task_a0148fe23e8b` allocated.
-Branch: `Vovanostm/qa-action-transport`; own worktree, sole web writer.
-[Allocation decision](https://github.com/Vovanostm/warwrit/issues/306#issuecomment-6379966728):
-existing mounted tests and minimal post-JSON freshness guards belong to #306.
-Polling extraction remains #307, dependency-held until #306 merges.
-Private runtime ports 23544/25544 and sequential focused checks are exclusive to this builder.
-Contract and brief: `.orca/qa-action-transport/contract.md`, `.orca/tasks/306-build-1.md`.
-Acceptance: manual orders/retry/autoplay remain usable; late responses cannot mutate replacement sessions.
+Main: `1d6df3af`; newest main CI `40062633985` PASS.
+#306: source `804d5983` committed; coordinator validation exit 0, all 9 checks PASS.
+145 related tests PASS; whole-PR source scope 245/300; clean tracked tree.
+Branch: `Vovanostm/qa-action-transport`; published checkpoint, no PR or merge yet.
+Authenticated action/retry callbacks are extracted; late POST/read JSON is guarded.
 Try: mill start → move → attack → end turn → autoplay → stop → manual order → result.
-Whole-PR source cap 300 lines; normal audit and all existing recovery limits remain binding.
-#306 implementation, tests, smoke, coordinator validation and independent Tier L gates NOT_RUN.
-Next: settle builder, verify commits/cleanup, then coordinator validation and fresh review/evaluation.
-#263 remains open; original H1/H2 and parent proof requirements remain.
-#310 stays blocked at rework 2/2; #179/#209 remain blocked with original acceptance.
-PR #298 / #297 remains blocked despite reviewer ACCEPT; no merge.
+Author: 118 focused tests PASS, one round-7 victory with paired day/night captures.
+Author stop/terminal waits: 800 ms with no further POST; independent acceptance pending.
+Five recorded private PIDs absent, no worktree runtime matches, ports unused, pidfile absent.
+Initial sandbox process read denied; direct escalated cleanup readback succeeded.
+Independent Tier L tasks allocated: reviewer `task_b19bf2f8afe3`, evaluator `task_4ca2bc1e7db7`.
+Reviewer is source-only; evaluator owns private ports 23544/25544 and sequential checks.
+Contract/results: `.orca/qa-action-transport/contract.md`, `report.md`; gate files pending.
+Next: settle gates, verify exact-head verdicts and cleanup, then publish PR if ACCEPT.
+#307 remains dependency-held; #263 and original H1/H2 proof remain open.
+#310 remains blocked at rework 2/2; #179/#209 keep original blocked acceptance.
+PR #298 / #297 remains blocked despite recorded review ACCEPT; no merge.
 Other open PRs #129/#134 have failed checks in the supplied snapshot; no transition.
 Daily metrics/scout/digest already complete; no duplicate daily work.
 This tick: 0 merged PRs; 0 merged PRs with playable proof.
-Records only; no game rules, protocol, schema, migration or dependency changes.
-Wrapper releases its lease when this single tick returns; builder retains its slice.
+Full integrated game gates NOT_RUN; no rules/protocol/schema/migration/dependency change.
+Wrapper releases its lease when this single tick returns; gate workers retain allocation.
 
 ## Dated history
 
