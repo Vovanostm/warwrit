@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Settlement areas and intentional visits
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner approved the
+  [area UX proposal](docs/wiki/world/map.md#общие-зоны-и-намерение-посетить--реализация-2026-10-26).
+  Bereznyak/Brod now use one dry outskirts polygon each instead of three road
+  circles. Boundary candidate plans are trimmed and compared by travel time;
+  passive nearby Enter works without prior selection and never interrupts
+  ordinary travel. Explicit Visit starts travel and opens the scene on arrival;
+  a new ground/place order cancels intent. Return preserves world position.
+- Native browser testing found an old-frame timestamp preceding immediate Visit
+  startup; the controller now clamps negative frame elapsed time and preserves
+  monotonic frame time. Twenty focused scenarios/types and scoped lint PASS;
+  full native flow rerun PASS without page errors. Critic/commit audit pending.
+  Core/server/save/dependencies/art unchanged; no external operations.
+
 ### Settlement area UX recommendation
 
 - 2026-10-26, branch `codex/world-map-painted`, local documentation: owner

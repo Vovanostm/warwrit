@@ -8,73 +8,62 @@ import {
 } from '@warwrit/game-core';
 import { type Pixel } from './porechye-navigation.js';
 
-export interface PlaceApproach {
-  readonly name: string;
-  readonly center: PointFp;
-  readonly radiusFp: number;
-}
 export interface PlaceEntry {
   readonly name: string;
-  // Convex footprint traced around the inhabited yards, excluding the river.
+  // Convex, connected dry outskirts traced on the existing painting.
   readonly footprint: readonly PointFp[];
-  readonly approaches: readonly PlaceApproach[];
+  readonly anchor: PointFp;
   readonly image: string;
 }
 
-// Stand-only annotations of the existing district painting, not access policy.
+// Local stand areas, not canonical server access rules or individual roof collisions.
 export function placeEntries(
   point: (p: Pixel) => PointFp,
-  fpPerPixel: number,
   offset: Pixel = [0, 0],
 ): readonly PlaceEntry[] {
   const at = (p: Pixel) => point([p[0] + offset[0], p[1] + offset[1]]);
-  const approach = (name: string, p: Pixel, radius: number): PlaceApproach => ({
-    name,
-    center: at(p),
-    radiusFp: radius * fpPerPixel,
-  });
+  const outline = (points: readonly Pixel[]) => points.map(at);
   return [
     {
       name: 'Березняк',
-      footprint: [
-        [145, 170],
-        [235, 172],
-        [260, 210],
-        [248, 255],
-        [175, 255],
-        [135, 225],
-      ].map((p) => at(p as unknown as Pixel)),
-      approaches: [
-        approach('Западная дорога', [125, 198], 14),
-        approach('Восточная дорога', [265, 228], 14),
-        approach('Дорога от моста', [265, 275], 14),
-      ],
+      footprint: outline([
+        [120, 170],
+        [240, 160],
+        [280, 205],
+        [280, 265],
+        [230, 285],
+        [150, 275],
+        [118, 230],
+      ]),
+      anchor: at([195, 220]),
       image: 'bereznyak-painting.png',
     },
     {
       name: 'Каменный Брод',
-      footprint: [
-        [1060, 285],
-        [1195, 285],
-        [1248, 340],
-        [1240, 425],
-        [1115, 440],
-        [1065, 400],
-        [1035, 340],
-      ].map((p) => at(p as unknown as Pixel)),
-      approaches: [
-        approach('Северная дорога', [1120, 270], 14),
-        approach('Восточная дорога', [1255, 383], 14),
-        approach('У каменного моста', [1157, 441], 10),
-      ],
+      footprint: outline([
+        [1040, 275],
+        [1195, 270],
+        [1270, 330],
+        [1260, 435],
+        [1160, 450],
+        [1080, 435],
+        [1020, 365],
+      ]),
+      anchor: at([1125, 365]),
       image: 'kamenny-brod-painting.png',
     },
   ];
 }
 
-const distance = (a: PointFp, b: PointFp) => Math.hypot(a.xFp - b.xFp, a.zFp - b.zFp);
 const compile = (field: NavigationField, path: readonly PointFp[]) =>
   compileMovementPlan({ field, path, startedAtMs: '0', movementEpoch: '0', planId: 'place-entry' });
+const distance = (a: PointFp, b: PointFp) => Math.hypot(a.xFp - b.xFp, a.zFp - b.zFp);
+const cross = (a: PointFp, b: PointFp, p: PointFp) =>
+  (b.xFp - a.xFp) * (p.zFp - a.zFp) - (b.zFp - a.zFp) * (p.xFp - a.xFp);
+const interpolate = (a: PointFp, b: PointFp, t: number): PointFp => ({
+  xFp: a.xFp + (b.xFp - a.xFp) * t,
+  zFp: a.zFp + (b.zFp - a.zFp) * t,
+});
 
 function clearSegment(field: NavigationField, from: PointFp, to: PointFp): boolean {
   if (distance(from, to) === 0) return isContinuousPointWalkable(field, from);
@@ -87,52 +76,68 @@ function clearSegment(field: NavigationField, from: PointFp, to: PointFp): boole
   }
 }
 
-function insideFootprint(outline: readonly PointFp[], p: PointFp): boolean {
-  const sides = outline.map((a, i) => {
-    const b = outline[(i + 1) % outline.length]!;
-    return (b.xFp - a.xFp) * (p.zFp - a.zFp) - (b.zFp - a.zFp) * (p.xFp - a.xFp);
-  });
-  return sides.every((s) => s >= 0) || sides.every((s) => s <= 0);
-}
-
-function atApproach(field: NavigationField, approach: PlaceApproach, p: PointFp) {
-  return (
-    distance(p, approach.center) <= approach.radiusFp && clearSegment(field, p, approach.center)
+function insideFootprint(entry: PlaceEntry, p: PointFp): boolean {
+  const outline = entry.footprint;
+  const orientation = Math.sign(cross(outline[0]!, outline[1]!, entry.anchor));
+  return outline.every(
+    (a, i) => orientation * cross(a, outline[(i + 1) % outline.length]!, p) >= 0,
   );
 }
 
 export function canEnterPlace(field: NavigationField, entry: PlaceEntry, p: PointFp): boolean {
+  if (!insideFootprint(entry, p)) return false;
   if (!isContinuousPointWalkable(field, p)) return false;
-  if (insideFootprint(entry.footprint, p))
-    return entry.approaches.some((a) => clearSegment(field, p, a.center));
-  return entry.approaches.some((a) => atApproach(field, a, p));
+  return clearSegment(field, p, entry.anchor);
 }
 
-// First intersection along a path segment, inset by 1fp before integer rounding.
-function circleEntry(from: PointFp, to: PointFp, approach: PlaceApproach): PointFp | undefined {
-  const radius = approach.radiusFp - 1;
-  const dx = to.xFp - from.xFp,
-    dz = to.zFp - from.zFp;
-  const x = from.xFp - approach.center.xFp,
-    z = from.zFp - approach.center.zFp;
-  const a = dx * dx + dz * dz,
-    b = 2 * (x * dx + z * dz);
-  const c = x * x + z * z - radius * radius;
-  if (c <= 0) return from;
-  const discriminant = b * b - 4 * a * c;
-  if (a === 0 || discriminant < 0) return undefined;
-  const t = (-b - Math.sqrt(discriminant)) / (2 * a);
-  if (t < 0 || t > 1) return undefined;
-  return { xFp: Math.round(from.xFp + t * dx), zFp: Math.round(from.zFp + t * dz) };
+// Move just inside the polygon before integer quantization. It does not move the party.
+function insetPoint(entry: PlaceEntry, p: PointFp): PointFp {
+  const d = distance(p, entry.anchor);
+  const inside = interpolate(p, entry.anchor, Math.min(1, 2 / Math.max(d, 1)));
+  return { xFp: Math.round(inside.xFp), zFp: Math.round(inside.zFp) };
 }
 
-function approachPath(field: NavigationField, path: readonly PointFp[], approach: PlaceApproach) {
+function edgeProjection(a: PointFp, b: PointFp, p: PointFp): number {
+  const dx = b.xFp - a.xFp,
+    dz = b.zFp - a.zFp;
+  return Math.max(
+    0,
+    Math.min(1, ((p.xFp - a.xFp) * dx + (p.zFp - a.zFp) * dz) / (dx * dx + dz * dz)),
+  );
+}
+
+function arrivalTargets(entry: PlaceEntry, start: PointFp): readonly PointFp[] {
+  return entry.footprint.flatMap((a, i) => {
+    const b = entry.footprint[(i + 1) % entry.footprint.length]!;
+    // Uniform edge samples plus the start's nearest point on each edge. No gates.
+    return [0, 0.25, 0.5, 0.75, edgeProjection(a, b, start)].map((t) =>
+      insetPoint(entry, interpolate(a, b, t)),
+    );
+  });
+}
+
+function segmentEntry(entry: PlaceEntry, from: PointFp, to: PointFp): PointFp | undefined {
+  const outline = entry.footprint;
+  const orientation = Math.sign(cross(outline[0]!, outline[1]!, entry.anchor));
+  let enter = 0,
+    exit = 1;
+  for (let i = 0; i < outline.length; i++) {
+    const a = outline[i]!,
+      b = outline[(i + 1) % outline.length]!;
+    const before = orientation * cross(a, b, from),
+      after = orientation * cross(a, b, to);
+    if (before < 0 && after < 0) return undefined;
+    if (before < 0) enter = Math.max(enter, before / (before - after));
+    if (after < 0) exit = Math.min(exit, before / (before - after));
+  }
+  if (enter > exit) return undefined;
+  return insetPoint(entry, interpolate(from, to, enter));
+}
+
+function arrivalPath(field: NavigationField, entry: PlaceEntry, path: readonly PointFp[]) {
   for (let i = 1; i < path.length; i++) {
-    const from = path[i - 1]!,
-      to = path[i]!;
-    const hit = circleEntry(from, to, approach);
-    if (hit && atApproach(field, approach, hit)) return [...path.slice(0, i), hit];
-    if (atApproach(field, approach, to)) return path.slice(0, i + 1);
+    const hit = segmentEntry(entry, path[i - 1]!, path[i]!);
+    if (hit && canEnterPlace(field, entry, hit)) return [...path.slice(0, i), hit];
   }
   return path;
 }
@@ -141,15 +146,16 @@ export function planPlaceArrival(
   field: NavigationField,
   entry: PlaceEntry,
   start: PointFp,
-): { approach: PlaceApproach; goal: PointFp; plan: ContinuousMovementPlan } | undefined {
+): { goal: PointFp; plan: ContinuousMovementPlan } | undefined {
   let best: ReturnType<typeof planPlaceArrival>;
-  for (const approach of entry.approaches) {
-    const path = findTravelPath(field, start, approach.center);
+  for (const target of arrivalTargets(entry, start)) {
+    if (!canEnterPlace(field, entry, target)) continue;
+    const path = findTravelPath(field, start, target);
     if (!path || path.length < 2) continue;
-    const trimmed = approachPath(field, path, approach);
+    const trimmed = arrivalPath(field, entry, path);
     const plan = compile(field, trimmed);
     if (!best || BigInt(plan.totalDurationUs) < BigInt(best.plan.totalDurationUs))
-      best = { approach, goal: trimmed.at(-1)!, plan };
+      best = { goal: trimmed.at(-1)!, plan };
   }
   return best;
 }

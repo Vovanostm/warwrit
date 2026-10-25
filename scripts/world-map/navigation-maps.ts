@@ -11,7 +11,7 @@ const current = {
   pixel: previous.pixel,
   places: district.places.map((place, i) => ({ ...place, major: i < 5 })),
   samples: district.samples,
-  entries: placeEntries(previous.point, previous.SHEET.fpPerPixel),
+  entries: placeEntries(previous.point),
   image: 'porechye-v2/porechye-regional-v4.png',
   note: 'Поречье v2 · эскиз округа 2,4 × 1,6 км. Время движения пока тестовое.',
 };
@@ -39,7 +39,7 @@ export const mapProfiles = {
     point: atlas.atlasPoint,
     pixel: atlas.atlasPixel,
     places: atlas.atlasPlaces,
-    entries: placeEntries(atlas.atlasPoint, atlas.ATLAS_SHEET.fpPerPixel, [1536, 1024]),
+    entries: placeEntries(atlas.atlasPoint, [1536, 1024]),
     samples: atlas.atlasSamples,
     image: 'porechye-atlas-v1/atlas-v5.png',
     note: 'Атлас · 7,2 × 4,8 км · 34 места. 24 новых места и контракта — предложения.',

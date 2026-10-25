@@ -70,7 +70,8 @@ let running = false;
 let lastFrame = 0;
 let destinationName: string | undefined;
 let selectedEntry: PlaceEntry | undefined;
-let chosenApproach: string | undefined;
+let nearbyEntry: PlaceEntry | undefined;
+let visitIntent: PlaceEntry | undefined;
 
 function polygon(points: readonly PointFp[], group: string, colour?: string) {
   const shape = document.createElementNS(svgNS, 'polygon');
@@ -173,37 +174,32 @@ function alreadyAtPlace(target: PointFp) {
 
 function drawEntryZones() {
   element('entry-zones').replaceChildren();
-  if (!selectedEntry) return;
-  polygon(selectedEntry.footprint, 'entry-zones');
-  for (const approach of selectedEntry.approaches) {
-    const circle = document.createElementNS(svgNS, 'circle');
-    const [x, y] = pixel(approach.center);
-    circle.setAttribute('cx', String(x));
-    circle.setAttribute('cy', String(y));
-    circle.setAttribute('r', String(approach.radiusFp / SHEET.fpPerPixel));
-    circle.classList.toggle('chosen', approach.name === chosenApproach);
-    element('entry-zones').append(circle);
-  }
+  const entry = selectedEntry ?? nearbyEntry;
+  if (entry) polygon(entry.footprint, 'entry-zones');
 }
 
-function visitableEntry() {
-  if (!selectedEntry || running) return undefined;
-  return canEnterPlace(field, selectedEntry, markerPosition) ? selectedEntry : undefined;
+function refreshNearby() {
+  const next = mapInfo.entries.find((entry) => canEnterPlace(field, entry, markerPosition));
+  if (next === nearbyEntry) return;
+  nearbyEntry = next;
+  element('nearby-place').toggleAttribute('hidden', !next);
+  element('nearby-title').textContent = next ? `Вы у поселения: ${next.name}` : '';
+  drawEntryZones();
 }
 
 function updateEntryControls() {
   element('entry-controls').toggleAttribute('hidden', !selectedEntry);
-  const available = !!visitableEntry();
-  element<HTMLButtonElement>('enter-place').disabled = !available;
-  element('entry-status').textContent = available
-    ? 'Отряд у поселения. Можно войти.'
-    : `Дойдите до подхода${chosenApproach ? `: ${chosenApproach}` : ' к поселению'}. Круги — зоны входа.`;
+  play.textContent = selectedEntry ? 'Идти к окраине' : 'Идти';
+  element('entry-status').textContent = selectedEntry
+    ? 'Переход к окраине и вход по прибытии. Новый приказ на землю отменит визит.'
+    : '';
 }
 
 const visit = element<HTMLDialogElement>('place-visit');
-element('enter-place').addEventListener('click', () => {
-  const entry = visitableEntry();
-  if (!entry) return;
+function openVisit(entry: PlaceEntry) {
+  if (!canEnterPlace(field, entry, markerPosition)) return;
+  visitIntent = undefined;
+  if (running) pauseJourney();
   heldPanKeys.clear();
   zoomTarget = undefined;
   element('visit-title').textContent = entry.name;
@@ -211,6 +207,22 @@ element('enter-place').addEventListener('click', () => {
   element<HTMLImageElement>('visit-image').src =
     `../../assets/art/m1/places/settlements-v2/${entry.image}`;
   visit.showModal();
+}
+
+element('nearby-enter').addEventListener('click', () => {
+  if (nearbyEntry) openVisit(nearbyEntry);
+});
+element('visit-place').addEventListener('click', () => {
+  if (!selectedEntry) return;
+  if (canEnterPlace(field, selectedEntry, markerPosition)) {
+    openVisit(selectedEntry);
+    return;
+  }
+  start = markerPosition;
+  calculateRoute();
+  if (!plan) return;
+  visitIntent = selectedEntry;
+  startJourney();
 });
 visit.addEventListener('close', () => map.focus({ preventScroll: true }));
 
@@ -232,8 +244,8 @@ function clearRouteHere(target: PointFp) {
 function clearDestination() {
   destinationName = undefined;
   selectedEntry = undefined;
-  chosenApproach = undefined;
-  element('entry-zones').replaceChildren();
+  visitIntent = undefined;
+  drawEntryZones();
   updateEntryControls();
   element<HTMLSelectElement>('place').value = '';
   element('place-description').textContent =
@@ -329,6 +341,7 @@ function updateParty(p: PointFp) {
   );
   markerPosition = p;
   moveMarker('party', p);
+  refreshNearby();
 }
 
 function drawRoute() {
@@ -341,6 +354,7 @@ function drawRoute() {
   moveMarker('from-marker', start);
   moveMarker('party', start);
   markerPosition = start;
+  refreshNearby();
   element('to-marker').setAttribute('visibility', 'visible');
   moveMarker('to-marker', goal);
 }
@@ -362,7 +376,6 @@ function createArrivalPlan(entry: PlaceEntry) {
   const arrival = planPlaceArrival(field, entry, start);
   if (!arrival) throw new Error('Нет доступного подхода к поселению.');
   goal = arrival.goal;
-  chosenApproach = arrival.approach.name;
   return arrival.plan;
 }
 
@@ -401,7 +414,7 @@ function calculateRoute() {
   }
   showRouteMetrics();
   play.disabled = !plan;
-  play.textContent = 'Идти';
+  updateEntryControls();
   drawRoute();
   showSurface(start);
   updateProgress();
@@ -614,45 +627,51 @@ element('goal').addEventListener('click', () => setMode('goal'));
 element<HTMLInputElement>('night').addEventListener('change', (event) =>
   map.classList.toggle('night', (event.target as HTMLInputElement).checked),
 );
-play.addEventListener('click', () => {
+function startJourney() {
   if (!plan) return;
   if (elapsed >= Number(plan.arrivesAtMs)) elapsed = 0;
   running = true;
-  updateEntryControls();
   lastFrame = performance.now();
   stop.disabled = false;
   play.disabled = true;
-  status.textContent = 'Отряд в пути. Скорость меняется при переходе границ зон.';
-});
-stop.addEventListener('click', () => {
+  status.textContent = visitIntent
+    ? `Отряд идёт посетить ${visitIntent.name}. Поселение откроется по прибытии.`
+    : 'Отряд в пути. Скорость меняется при переходе границ зон.';
+}
+play.addEventListener('click', startJourney);
+function pauseJourney() {
   running = false;
   play.disabled = false;
   stop.disabled = true;
   play.textContent = 'Продолжить';
-  status.textContent = 'Отряд остановлен. Можно продолжить этот путь.';
-  updateEntryControls();
-});
+  status.textContent = visitIntent
+    ? `Визит в ${visitIntent.name} приостановлен. «Продолжить» возобновит его.`
+    : 'Отряд остановлен. Можно продолжить этот путь.';
+}
+stop.addEventListener('click', pauseJourney);
 
 function arrive() {
   running = false;
   play.disabled = !!selectedEntry;
   stop.disabled = true;
   play.textContent = selectedEntry ? 'Прибыли' : 'Повторить';
-  updateEntryControls();
-  status.textContent = selectedEntry
-    ? `У поселения: ${selectedEntry.name}. Нажмите «Войти», чтобы посетить его.`
-    : destinationName
-      ? `Отряд прибыл: ${destinationName}.`
-      : 'Отряд прибыл в выбранную точку.';
+  status.textContent = destinationName
+    ? `Отряд прибыл: ${destinationName}.`
+    : 'Отряд прибыл в выбранную точку.';
+  const entry = visitIntent;
+  visitIntent = undefined;
+  if (entry) openVisit(entry);
 }
 
 function animate(now: number) {
-  animateZoom(now - lastFrame);
-  animateKeyboardPan(now - lastFrame);
+  // A click can start travel after this frame's timestamp was captured.
+  const elapsedMs = Math.max(0, now - lastFrame);
+  animateZoom(elapsedMs);
+  animateKeyboardPan(elapsedMs);
   if (running && plan) {
     elapsed = Math.min(
       Number(plan.arrivesAtMs),
-      elapsed + ((now - lastFrame) * Number(rate.value)) / walkingTimeScale,
+      elapsed + (elapsedMs * Number(rate.value)) / walkingTimeScale,
     );
     const p = positionAt(plan, String(Math.floor(elapsed)));
     const current = { xFp: Number(p.xMicroFp) / 65536, zFp: Number(p.zMicroFp) / 65536 };
@@ -663,7 +682,7 @@ function animate(now: number) {
       arrive();
     }
   }
-  lastFrame = now;
+  lastFrame = Math.max(lastFrame, now);
   requestAnimationFrame(animate);
 }
 

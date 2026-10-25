@@ -131,7 +131,7 @@ test('every selectable place has a reachable arrival point, including the bank o
 // The atlas is one continuous region; tile edges are not artificial barriers.
 const atlasField = buildNavigationField(atlasRegion);
 
-test('both map scales stop west/east Bereznyak journeys at the corresponding outskirts', () => {
+test('both map scales reach the settlement boundary from roads and fields without targeting its center', () => {
   const journeys = ([mapProfiles.v2, mapProfiles.atlas] as const).map((map, i) => {
     const field = i ? atlasField : regionalField;
     const offset = i ? [1536, 1024] : [0, 0];
@@ -140,6 +140,7 @@ test('both map scales stop west/east Bereznyak journeys at the corresponding out
       [
         [60, 190],
         [400, 225],
+        [195, 120],
       ] as const
     ).map((p) => {
       const arrival = planPlaceArrival(
@@ -147,39 +148,42 @@ test('both map scales stop west/east Bereznyak journeys at the corresponding out
         entry,
         map.point([p[0] + offset[0]!, p[1] + offset[1]!]),
       )!;
-      const [x] = map.pixel(arrival.goal);
+      const [x, y] = map.pixel(arrival.goal);
       return {
-        approach: arrival.approach.name,
         canVisit: canEnterPlace(field, entry, arrival.goal),
-        stopsOutsideYards: p[0] < 195 ? x < 135 + offset[0]! : x > 260 + offset[0]!,
+        stopsAtOutskirts: Math.hypot(x - 195 - offset[0]!, y - 220 - offset[1]!) > 50,
       };
     });
   });
-  const expected = [
-    { approach: 'Западная дорога', canVisit: true, stopsOutsideYards: true },
-    { approach: 'Восточная дорога', canVisit: true, stopsOutsideYards: true },
-  ];
+  const expected = Array.from({ length: 3 }, () => ({ canVisit: true, stopsAtOutskirts: true }));
   assert.deepEqual(journeys, [expected, expected]);
 });
 
-test('weighted arrival prefers a farther road approach over the nearest forest approach', () => {
+test('the whole dry village area is visitable, including field-facing edges outside the former approach circles', () => {
   const entry = mapProfiles.atlas.entries[0]!;
-  const start = atlasPoint([1731, 1164]); // District [195,140], north of the yards.
-  const nearest = [...entry.approaches].sort(
-    (a, b) =>
-      Math.hypot(a.center.xFp - start.xFp, a.center.zFp - start.zFp) -
-      Math.hypot(b.center.xFp - start.xFp, b.center.zFp - start.zFp),
-  )[0]!;
-  const arrival = planPlaceArrival(atlasField, entry, start)!;
-  const west = planPlaceArrival(atlasField, { ...entry, approaches: [nearest] }, start)!;
   assert.deepEqual(
-    {
-      nearest: nearest.name,
-      chosen: arrival.approach.name,
-      faster: BigInt(arrival.plan.totalDurationUs) < BigInt(west.plan.totalDurationUs),
-    },
-    { nearest: 'Западная дорога', chosen: 'Восточная дорога', faster: true },
+    [
+      [195, 220],
+      [200, 275],
+      [250, 260],
+      [165, 175],
+    ].map(([x, y]) => canEnterPlace(atlasField, entry, atlasPoint([x! + 1536, y! + 1024]))),
+    [true, true, true, true],
   );
+});
+
+test('area arrival ends before the center and charges the actual trimmed travel plan', () => {
+  const entry = mapProfiles.atlas.entries[0]!;
+  const start = atlasPoint([1936, 1249]);
+  const arrival = planPlaceArrival(atlasField, entry, start)!;
+  const center = compileMovementPlan({
+    field: atlasField,
+    path: findTravelPath(atlasField, start, entry.anchor)!,
+    startedAtMs: '0',
+    movementEpoch: '0',
+    planId: 'center-comparison',
+  });
+  assert.ok(BigInt(arrival.plan.totalDurationUs) < BigInt(center.totalDurationUs));
 });
 
 test('Brod arrival from the south crosses the bridge before allowing entry', () => {
@@ -190,34 +194,36 @@ test('Brod arrival from the south crosses the bridge before allowing entry', () 
     {
       southBankEntry: canEnterPlace(atlasField, entry, start),
       arrivalEntry: canEnterPlace(atlasField, entry, arrival.goal),
-      approach: arrival.approach.name,
       beforeBridge: mapProfiles.atlas.pixel(arrival.goal)[1] < 1478,
       water: arrival.plan.speedSpans
         .filter((s) => s.terrainId === 'deep_water')
         .map((s) => s.overlayId),
     },
-    {
-      southBankEntry: false,
-      arrivalEntry: true,
-      approach: 'У каменного моста',
-      beforeBridge: true,
-      water: ['bridge'],
-    },
+    { southBankEntry: false, arrivalEntry: true, beforeBridge: true, water: ['bridge'] },
   );
 });
 
-test('interior presence is visitable but an overlapping entrance radius cannot bypass open water', () => {
+test('an erroneous area across the river still cannot grant entry through open water', () => {
   const entry = mapProfiles.atlas.entries[1]!;
-  // Deliberately enlarge one zone across the river to exercise the barrier check.
-  const overlapping = { ...entry, approaches: [{ ...entry.approaches[2]!, radiusFp: 600 }] };
+  const overlapping = {
+    ...entry,
+    footprint: [
+      [1000, 270],
+      [1300, 270],
+      [1300, 600],
+      [1000, 600],
+    ].map(([x, y]) => atlasPoint([x! + 1536, y! + 1024])),
+  };
   assert.deepEqual(
     {
-      inside: canEnterPlace(atlasField, entry, atlasPoint([2661, 1389])),
+      inside: canEnterPlace(atlasField, entry, entry.anchor),
       acrossOpenWater: canEnterPlace(atlasField, overlapping, atlasPoint([2636, 1579])),
+      water: canEnterPlace(atlasField, overlapping, atlasPoint([2636, 1530])),
     },
-    { inside: true, acrossOpenWater: false },
+    { inside: true, acrossOpenWater: false, water: false },
   );
 });
+
 test('all 34 atlas destinations and every contract issuer can be reached from Bereznyak', () => {
   const names = new Set(atlasPlaces.map((p) => p.name));
   assert.deepEqual(

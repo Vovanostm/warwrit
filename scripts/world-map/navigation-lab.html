@@ -33,8 +33,12 @@
             <p id="place-description">
               Метки на карте выбирают цель. Следующий переход начинается там, где находится отряд.
             </p>
+            <div id="entry-controls" hidden>
+              <button id="visit-place" class="primary">Посетить</button>
+              <p id="entry-status"></p>
+            </div>
             <p class="fine">
-              Вход с окраины: Березняк и Каменный Брод. Остальные места пока — точки пути.
+              Зоны поселений: Березняк и Каменный Брод. Остальные места пока — точки пути.
             </p>
           </div>
           <details id="contracts-section" hidden>
@@ -67,10 +71,6 @@
           <div class="pair">
             <button id="play" class="primary" disabled>Идти</button
             ><button id="stop" disabled>Стоп</button>
-          </div>
-          <div id="entry-controls" hidden>
-            <p id="entry-status" role="status"></p>
-            <button id="enter-place" class="primary" disabled>Войти</button>
           </div>
           <dl>
             <div>
@@ -173,6 +173,11 @@
               </g>
             </g>
           </svg>
+          <div id="nearby-place" role="region" aria-label="Поселение рядом" hidden>
+            <strong id="nearby-title" aria-live="polite"></strong>
+            <span>Можно войти или продолжить путь</span>
+            <button id="nearby-enter" class="primary">Войти</button>
+          </div>
         </div>
         <footer>
           <span>Колесо — плавный масштаб · WASD / ЛКМ тянуть — обзор · ПКМ — цель</span

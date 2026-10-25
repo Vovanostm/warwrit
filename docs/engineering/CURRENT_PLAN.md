@@ -1,6 +1,21 @@
 # Warwrit current delivery plan
 
-## Place entrance zones — 2026-10-26, LOCAL COMPLETE
+## Settlement areas and visit intent — 2026-10-26, LOCAL IMPLEMENTATION
+
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `ae66fd71`.
+Owner: implement the proposed area UX and have a critic evaluate convenience.
+[Owning proposal](../wiki/world/map.md#общая-зона-поселения-вместо-трёх-подходов--ux-предложение-2026-10-26).
+Outcome: Bereznyak/Brod dry areas allow passive entry from any valid position;
+explicit Visit travels to the area and opens it; ground orders cancel intent.
+No automatic opening/stopping on ordinary pass-through; return preserves position.
+Scope: two-place stand on atlas/v2, existing artwork and public movement API.
+One writer; existing visual critic evaluates current images and actual journeys.
+Checks: focused map tests/types, native input, critic, lint/format, normal audit.
+No core/server/save/dependency or operational changes; results pending.
+
+## Dated history
+
+### Place entrance zones — 2026-10-26, LOCAL COMPLETE
 
 Sole writer: Codex parent; branch `codex/world-map-painted`, base `866ee389`.
 Owner: “Review, improve, implement” the outskirts/explicit-entry proposal.
@@ -23,8 +38,6 @@ Follow-up: owner asks whether one settlement area would be better UX.
 [Recommendation only](../wiki/world/map.md#общая-зона-поселения-вместо-трёх-подходов--ux-предложение-2026-10-26):
 dry footprint + passive entry availability + explicit Visit intent; no new code.
 User comparison/usability NOT_RUN/NOT_MEASURED; prior pilot remains current.
-
-## Dated history
 
 ### WASD map pan — 2026-10-26, LOCAL COMPLETE
 
