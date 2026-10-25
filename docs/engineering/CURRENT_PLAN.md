@@ -1,6 +1,31 @@
 # Warwrit current delivery plan
 
-## Authorized delivery of #321, then #319 — 2026-10-25
+## Integrate #319 / PR #324 — 2026-10-25
+
+Coordinator: local Codex parent; Orca coordinator remains stopped.
+Owner: «Ок, продолжай - merge, next worktree implement + merge».
+Mission: finish these two deliveries only; #321/workflow merged, now integrate #319.
+Branch `Vovanostm/wages-local-evidence-319`; published predecessor `4b776e19`.
+Base: main `e216b0e1f44fd91b899227f7135d00ba7903e14a` (PR #325 normal merge).
+Parent readback: #321 completed; #325 CI `40145187358` / scope `40145187326` SUCCESS.
+[Existing #319 source review](evidence/wages-local-evidence-319/review-2.md) / [producer evaluation](evidence/wages-local-evidence-319/eval-2.md): ACCEPT `42a4f583`, 30 tests.
+Three producer/test files preserved unchanged; no production defect or missing criterion found.
+Integration: main merged locally; CHANGELOG conflict preserves both histories and newest workflow.
+Focused producer tests (30), protocol build/server types and scoped lint-format/diff PASS.
+Normal merge audit PASS at `0308738d`, no bypass.
+[Fresh independent integrated ACCEPT](evidence/wages-local-evidence-319/review-integration.md) at `8c073ad9`, no material findings; records-only successor.
+Result is an unsaved lawful access/Observe draft; no endpoint, database write or UI.
+Parent owns push/PR/merge after review and exact-head CI; permission is this two-delivery mission.
+[PR #324](https://github.com/Vovanostm/warwrit/pull/324) is authority for current publication/CI/merge.
+No automatic successor after these two deliveries.
+[Integrated result and limits](evidence/wages-local-evidence-319/integration-2026-10-25.md).
+#320 and #167 payment/persistence/retry/day-night/browser acceptance remain outside scope.
+No runtime, automation, Orca restart, deployment or paid services authorized.
+Tokens/time savings NOT_MEASURED. Historical status below is retained, not reactivation.
+
+## Dated history
+
+### Historical authorization: delivery of #321, then #319 — 2026-10-25
 
 Coordinator: local Codex parent; Orca coordinator remains stopped.
 Owner: «Ок, продолжай - merge, next worktree implement + merge».
@@ -13,8 +38,6 @@ Local #321 checks and actual HTTP/PostgreSQL proof passed; publication CI and me
 Next worktree: `Vovanostm/wages-local-evidence-319`, PR #324; preserve existing work and recheck integrated head after #321.
 #320 depends on #319; not part of this two-delivery mission. Parent #167 remains open.
 Exact expected merge heads are read live at each merge; changed code invalidates affected acceptance.
-
-## Dated history
 
 ### Local completion of #321 — 2026-10-25
 
@@ -62,6 +85,38 @@ Next: owner-controlled integration decision; no automatic publication, merge or 
 Historical snapshots below are not active instructions or current live-main proof.
 
 ### Historical pipeline snapshot before owner cancellation — 2026-10-24
+
+Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
+Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
+Queue: epic #217 and its existing one-issue local slices.
+Main `1c793e16`: newest CI `40085288476` PASS; #318/PR #323 merged.
+#319 reviewer and evaluator round 2 ACCEPT at `42a4f583`.
+[Evaluation](evidence/wages-local-evidence-319/eval-2.md) and adjacent review preserve the boundary.
+Evaluator independently passed 30 real producer/core tests, including remote pool refusal.
+Coordinator validation exit 0, nine checks PASS; source scope 296/300.
+Try the bounded seam: `pnpm exec vitest run apps/server/src/company/payroll-access.test.ts`.
+This prepares an unsaved draft; authenticated payroll and browser acceptance remain #167.
+Evidence-only successor `b9990c86` adds the two reports; source unchanged.
+[PR #324](https://github.com/Vovanostm/warwrit/pull/324) published; final records-head CI pending.
+Next: merge only after exact-head CI/PR scope and all tier gates are green.
+Both gate workers settled, acknowledged and released; direct process check found no leftovers.
+#321 accepted contract allocated to task `task_c3c90d43c45e`; dispatch follows this records commit.
+Owns protocol company.ts, payroll-view.ts, holdings.ts and payroll-view.test.ts.
+Sole core builder and focused checks; no runtime/PostgreSQL/browser allocation.
+#321 authenticated GET/root/privacy evaluation follows implementation and validation.
+#320/#322 retain dependencies; #315 retains the visual-scope hold.
+#167 retains payment, persistence, lost-response/reload and day/night acceptance.
+#179/#209/#310 and #297/PR #298 retain inherited blocked labels and findings.
+Other snapshot PRs #129/#134 have failed checks; no transition.
+Daily metrics/scout/digest already complete; no duplicate daily work.
+This tick: 0 merged PRs; 0 merged PRs with playable proof.
+Full integrated gates NOT_RUN; no milestone or player acceptance inferred.
+No finance rule, replay, schema or dependency change in this records commit.
+Wrapper releases its lease when this single tick returns.
+
+## Dated history
+
+### Historical checkpoint — #318 premerge status — 2026-10-24
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
