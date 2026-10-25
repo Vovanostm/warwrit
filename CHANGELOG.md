@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Painted Porechye navigation stand
+
+- 2026-10-25, branch `codex/world-map-painted`, local: owner requested biome
+  zones and pathfinding on the generated map, then chose an interactive stand
+  before game integration. `scripts/world-map/` uses the existing public
+  game-core weighted navigation on first-pass Porechye v5 polygons and road
+  corridors. Toggleable layers, start/goal, travel time, moving token,
+  stop/resume/arrival, zoom/pan and a night preview are available via `pnpm dev:map`.
+  Existing V3 speeds remain authoritative; no new runtime dependency, canonical
+  map edition, migration or game-save change. [Owning map page](docs/wiki/world/map.md#стенд-проходимости-поречья--2026-10-25)
+  records GitHub alternatives, checks, corrections and acceptance limits.
+  Five focused scenarios and Chrome interaction PASS; third independent
+  diagnostic-stand visual pass ACCEPT (all applicable scores≥2), change audit
+  PASS with attribution/CSS advisories retained. Geometry is coarse and time
+  uses an experimental scale; this does not accept integrated MMO movement.
+- Owner follow-up: river must be impassable. Re-annotated its banks after
+  the critic found painted water classified as dry ground; water wins over
+  settlement clearings. Six source-water probes and real Brod→Mill movement
+  sampling PASS. Owner then approved a more spacious layout with clearer roads,
+  river, fields and villages: `assets/art/world/porechye-v2/` contains the
+  scheme and two built-in imagegen drafts with exact prompts/provenance.
+  V1 failed guide/lore critique; V2 standalone review ACCEPT (seven scores2,
+  motionN/A), with25–55px drift from guide requiring tracing actual art.
+  Both returned1536×1024, not the requested3072×2048; no upscale or new-map
+  navigation integration is claimed. The running stand retains corrected v5.
+
 ### Integrate accepted #319 after #325 — 2026-10-25, LOCAL
 
 - Branch `Vovanostm/wages-local-evidence-319`; owner authorized these two

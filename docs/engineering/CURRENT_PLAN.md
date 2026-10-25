@@ -1,6 +1,33 @@
 # Warwrit current delivery plan
 
-## Integrate #319 / PR #324 — 2026-10-25
+## Painted-map navigation stand — 2026-10-25, LOCAL
+
+Coordinator and sole writer: local Codex parent; no Orca activation.
+Owner: «наложи зону дорог, зону лесов, болот … попробуем поиск пути»;
+first result chosen: «Да, сначала интерактивный стенд».
+Branch `codex/world-map-painted`, base main `7389e822`.
+Contract/result: [world map](../wiki/world/map.md#стенд-проходимости-поречья--2026-10-25).
+Outcome: Porechye v5 with toggleable road/forest/marsh/hill/water annotations,
+start/goal, time-weighted route, pause/resume/arrival, zoom/pan and night preview.
+Reuse: public game-core navigation and existing V3 speeds; no new runtime library.
+Run `pnpm dev:map`; open `/scripts/world-map/navigation-lab.html` on port 5326.
+Local map scenarios, strict types, lint, architecture and real Chrome journey PASS.
+River banks corrected after an image-grounding defect; five scenarios and actual
+Brod→Mill journey (264 samples, exact arrival) PASS. Water wins over dry courtyards.
+Owner additionally chose «Да, просторнее и яснее»: scheme and two generated
+concepts in `assets/art/world/porechye-v2/`; V2 kept separate from navigation.
+Returned native1536×1024, requested3072×2048 not achieved; no upscale.
+Third independent v5 visual pass ACCEPT (2/2/2/2/3/2/2/2); no material findings.
+V2 standalone concept ACCEPT (seven applicable scores2, motionN/A); actual
+bridge ends drift25–55px from guide. Trace actual art before any integration.
+Local-only result; full evidence and remaining limits in owning page.
+Source annotations are a first pass;
+time uses an experimental scale. No game-edition/save migration or MMO acceptance.
+Allowed scope is this local stand; no publication, merge, deployment or automation.
+
+## Dated history
+
+### Integrate #319 / PR #324 — 2026-10-25
 
 Coordinator: local Codex parent; Orca coordinator remains stopped.
 Owner: «Ок, продолжай - merge, next worktree implement + merge».
@@ -23,7 +50,7 @@ No automatic successor after these two deliveries.
 No runtime, automation, Orca restart, deployment or paid services authorized.
 Tokens/time savings NOT_MEASURED. Historical status below is retained, not reactivation.
 
-## Dated history
+### Earlier history
 
 ### Historical authorization: delivery of #321, then #319 — 2026-10-25
 

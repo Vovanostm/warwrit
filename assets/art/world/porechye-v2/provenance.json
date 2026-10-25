@@ -1,0 +1,37 @@
+{
+  "created": "2026-10-25",
+  "asset": "porechye-spacious-v2.png",
+  "status": "standalone proposal, not integrated navigation art",
+  "ownerDecision": "Да, просторнее и яснее",
+  "tool": "image_gen.imagegen (built-in)",
+  "model": "not exposed by the built-in tool",
+  "prompt": "prompt-v2.txt",
+  "layoutSource": "layout-guide.svg",
+  "layoutRaster": "layout-guide.png (browser-rendered SVG, not AI-generated)",
+  "referenceInputsInOrder": [
+    "assets/art/world/porechye-v2/layout-guide.png",
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/settlements-v2/kamenny-brod-painting.png",
+    "assets/art/m1/places/staraya-melnitsa.png"
+  ],
+  "requestedSize": [3072, 2048],
+  "returnedNativeSize": [1536, 1024],
+  "upscaled": false,
+  "iterations": [
+    {
+      "asset": "porechye-spacious-v1.png",
+      "prompt": "prompt.txt",
+      "operation": "new generation, five image references including v5",
+      "review": "REJECT versus mandatory guide: stone-bridge axis and mill wheel; suitable only as a direction draft"
+    },
+    {
+      "asset": "porechye-spacious-v2.png",
+      "prompt": "prompt-v2.txt",
+      "operation": "new generation, guide and three material/style references; v5 image omitted to avoid importing its layout",
+      "review": "ACCEPT as review-ready standalone concept: seven applicable scores 2; motion N/A. Bridge ends drift roughly 25-55 source pixels from guide; trace the actual image before runtime use."
+    }
+  ],
+  "layoutLimit": "Guide coordinates are composition targets, not accepted canonical world coordinates. V2 has not been traced or integrated. Existing navigation polygons must not be laid over this image unchanged.",
+  "visualReview": "Standalone concept ACCEPT; integrated game visual acceptance BLOCKED/NOT_RUN (not integrated). Owner art verdict not recorded.",
+  "gameIntegration": "NOT_RUN"
+}

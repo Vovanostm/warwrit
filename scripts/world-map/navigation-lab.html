@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Поречье — поиск пути · Warwrit</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./navigation-lab.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <span class="eyebrow">WARWRIT · МАСТЕРСКАЯ КАРТЫ</span>
+        <h1>Дороги Серого Поречья</h1>
+      </div>
+      <p>Нарисованный мир. Проходимость, которую можно проверить.</p>
+    </header>
+    <main>
+      <aside>
+        <section>
+          <h2>Выберите путь</h2>
+          <p>Укажите старт и цель на карте. Путь учитывает скорость местности.</p>
+          <div class="pair">
+            <button id="start" aria-pressed="false">Поставить старт</button
+            ><button id="goal" aria-pressed="true">Выбрать цель</button>
+          </div>
+          <label for="preset">Проверить маршрут</label>
+          <select id="preset">
+            <option value="">Свой маршрут</option>
+          </select>
+          <div id="status" role="status" aria-live="polite">Подготовка карты…</div>
+          <dl>
+            <div>
+              <dt>Время пути*</dt>
+              <dd id="duration">—</dd>
+            </div>
+            <div>
+              <dt>Сейчас под отрядом</dt>
+              <dd id="surface">—</dd>
+            </div>
+          </dl>
+          <div class="pair">
+            <button id="play" class="primary" disabled>Идти</button
+            ><button id="stop" disabled>Стоп</button>
+          </div>
+          <label for="rate">Скорость просмотра</label>
+          <select id="rate">
+            <option value="1">×1 · исходное время</option>
+            <option value="8" selected>×8</option>
+            <option value="32">×32</option>
+          </select>
+          <p class="fine">
+            * Время при тестовом масштабе, не утверждённая длительность перехода в игре.
+          </p>
+        </section>
+        <section>
+          <h2>Слои проходимости</h2>
+          <div id="layers"></div>
+          <label class="switch"><input id="night" type="checkbox" /> Ночной просмотр</label>
+          <p class="fine">
+            Цвета показывают рабочую разметку. Её границы можно уточнять, не меняя рисунок.
+          </p>
+        </section>
+        <p class="fine footnote">
+          Поречье v5 · локальный опыт<br />Вода закрыта. Два целых моста открыты, разрушенный —
+          закрыт.
+        </p>
+      </aside>
+      <div class="map-column">
+        <div class="map-toolbar">
+          <span id="mode">Нажмите на карту, чтобы выбрать цель</span
+          ><button id="fit">Вся карта</button>
+        </div>
+        <div id="map-wrap">
+          <svg
+            id="map"
+            viewBox="0 0 1536 1024"
+            role="img"
+            aria-label="Карта Поречья с выбором точек пути"
+            tabindex="0"
+          >
+            <title>
+              Поречье: щелчок выбирает точку, колесо приближает, перетаскивание двигает карту
+            </title>
+            <image
+              id="sheet"
+              width="1536"
+              height="1024"
+              href="../../assets/art/world/porechye-v1/porechye-detail-v5.png"
+            />
+            <g id="biomes" aria-hidden="true"></g>
+            <g id="road-layer" aria-hidden="true"></g>
+            <g id="route-layer" aria-hidden="true">
+              <path id="route-edge" />
+              <path id="route" />
+            </g>
+            <g id="markers" aria-hidden="true">
+              <g id="from-marker">
+                <circle r="11" />
+                <text y="-18" text-anchor="middle">СТАРТ</text>
+              </g>
+              <g id="to-marker" visibility="hidden">
+                <path d="M0 12V-18L20 -12L0 -6" />
+                <circle r="4" />
+              </g>
+              <g id="party">
+                <circle r="14" />
+                <path id="party-heading" d="M0 -10L7 7L0 3L-7 7Z" />
+              </g>
+            </g>
+          </svg>
+        </div>
+        <footer>
+          <span>Колесо — масштаб · тянуть — обзор · щелчок — точка</span
+          ><span id="coordinates">Север ↑</span>
+        </footer>
+      </div>
+    </main>
+    <script type="module" src="./navigation-lab.ts"></script>
+  </body>
+</html>
