@@ -14,8 +14,11 @@ this bounded delivery and preserves previous authorization/status in history.
 The existing three #319 producer/test files are unchanged from accepted
 `42a4f583` (direct scoped diff empty). No missing criterion or production defect
 identified. Existing source review/evaluation remain historical evidence:
-[review](review-2.md), [evaluation](eval-2.md). Fresh integrated independent
-readback is pending; historical ACCEPT is not automatically transferred.
+[review](review-2.md), [evaluation](eval-2.md). Fresh independent integrated
+review ACCEPT at `8c073ad9550664ae0eb3f7f0d574bc1f7eef4a23`, no material findings;
+[retained report](review-integration.md). Reviewer inspected source/integration
+and reported checks; it ran no tests/runtime. This records-only successor
+changes no accepted production/test code; hosted exact-head CI remains pending.
 
 ## Boundary and checks
 

@@ -18,7 +18,10 @@ requests.
   names this bounded #319 completion. Existing three payroll producer/test files
   remain unchanged from accepted `42a4f583`; no missing criterion or production
   defect identified. Focused real-core producer tests (30), protocol build,
-  server types and scoped lint/format/diff PASS. Fresh integrated review pending;
+  server types and scoped lint/format/diff PASS. Fresh integrated reviewer ACCEPT
+  at `8c073ad9550664ae0eb3f7f0d574bc1f7eef4a23`, no material findings;
+  [retained report](docs/engineering/evidence/wages-local-evidence-319/review-integration.md).
+  This final records-only successor changes no accepted code;
   normal merge commit `0308738d` audit PASS without bypass (zero new findings;
   syntactic-attribution warning retained). [Integration result](docs/engineering/evidence/wages-local-evidence-319/integration-2026-10-25.md).
 - Dated correction to prior #321/workflow LOCAL/PENDING entries: PR #325 merged

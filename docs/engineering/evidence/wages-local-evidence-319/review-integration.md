@@ -1,0 +1,15 @@
+# Independent integrated #319 review — 2026-10-25
+
+Verdict: ACCEPT at `8c073ad9550664ae0eb3f7f0d574bc1f7eef4a23` against main `e216b0e1f44fd91b899227f7135d00ba7903e14a`. No material findings.
+
+Reviewed ordinary scoped diff, clean checkout/HEAD, both producer implementations, focused adversarial test sections, retained review-2/eval-2, current status, integration record, wiki amendment and CHANGELOG resolution. Direct diff confirms all three #319 production/test files are unchanged from accepted `42a4f583aa60162b0e3f5d107e6b161f16d901fd`. Prior independent source/evaluator results therefore remain applicable; integrated author 30-test/type/lint results are reported evidence, not checks executed by this reviewer. No runtime, DB, tests or agents launched.
+
+Access still checks carried purse and requested pool wallet separately at exact site/area, validates company ownership, picks a deterministic active local unbound operator, and refuses ambiguous recipient wallets. Observation subjects derive from actual local contacts and service memberships, including historical memberships. Each real Observe consumes the preceding draft; canonical/public revision and access evidence are rebuilt afterward. Source-bound command IDs and rejected/replayed/residual-requirement paths fail closed. The only successful return contains the complete unsaved draft with retained events/allocations; a late failure returns no earlier draft and never mutates the input.
+
+Tests preserve the separate-remote-pool regression, sequential observations, existing held-to-cash allocations, paired undisclosed remote-pause/payment equality, deterministic preparation, stale/source mismatch and successful-first/failed-later nonmutation. Their observable expectations use real public core preparation, with finite direct expectations for amounts/channels/refusals.
+
+Incoming #321 is preserved: scoped diff versus current main contains no holdings, payroll-view, protocol or route change. #319 adds unsaved producers with no production caller here; #321 reads the same existing safe core projection and adds no canonical state or payment policy. There is no competing allocator or shared DTO edit. The producers do not modify projection semantics or GET behavior.
+
+CHANGELOG retains the #319 dated progression and incoming #321/workflow history, adds an explicit #325 merged-status correction and distinguishes its successful CI from pending #319 CI. CURRENT_PLAN bounds authorization to these two deliveries and leaves Orca stopped. Integration/wiki pending-review statements should now be updated by their owner to this exact-head ACCEPT before closeout. Those pending statements accurately describe the pre-review candidate and are not a source defect.
+
+Applicable exact-head hosted CI and merge readback remain the parent's delivery responsibility. #320/API persistence, authenticated payment, durable retry/lost response/reload, parent #167 browser/day-night journey and full integrated acceptance are not proven or waived by this review. Original ZIP concordance remains inherited NOT_RUN; efficiency/time/token savings NOT_MEASURED.

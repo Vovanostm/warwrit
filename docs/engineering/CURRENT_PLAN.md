@@ -12,7 +12,8 @@ Parent readback: #321 completed; #325 CI `40145187358` / scope `40145187326` SUC
 Three producer/test files preserved unchanged; no production defect or missing criterion found.
 Integration: main merged locally; CHANGELOG conflict preserves both histories and newest workflow.
 Focused producer tests (30), protocol build/server types and scoped lint-format/diff PASS.
-Normal merge audit PASS at `0308738d`, no bypass; fresh integrated independent review pending.
+Normal merge audit PASS at `0308738d`, no bypass.
+[Fresh independent integrated ACCEPT](evidence/wages-local-evidence-319/review-integration.md) at `8c073ad9`, no material findings; records-only successor.
 Result is an unsaved lawful access/Observe draft; no endpoint, database write or UI.
 Parent owns push/PR/merge after review and exact-head CI; permission is this two-delivery mission.
 [PR #324](https://github.com/Vovanostm/warwrit/pull/324) is authority for current publication/CI/merge.
