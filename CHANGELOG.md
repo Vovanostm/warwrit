@@ -22,8 +22,10 @@ requests.
   Nineteen focused scenarios/types and scoped lint/format PASS; native browser
   journeys and remaining acceptance limits are in the
   [owning result](docs/wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
-  Independent critique and normal commit audit pending. No core/server/save,
-  dependencies or art changed; no external operations.
+  Independent visual ACCEPT (six applicable criteria2); source `88114965`,
+  normal commit hook/audit PASS after shared-entry-eligibility cleanup. Existing
+  attribution/CSS advisories retained. No core/server/save, dependencies or art
+  changed; no external operations.
 
 ### Settlement outskirts and entrance research
 

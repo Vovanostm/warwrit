@@ -1,18 +1,23 @@
 # Warwrit current delivery plan
 
-## Place entrance zones — 2026-10-26, LOCAL IMPLEMENTATION
+## Place entrance zones — 2026-10-26, LOCAL COMPLETE
 
 Sole writer: Codex parent; branch `codex/world-map-painted`, base `866ee389`.
 Owner: “Review, improve, implement” the outskirts/explicit-entry proposal.
-[Owning contract](../wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26).
+[Owning result](../wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
 Outcome: select Bereznyak/Brod, walk to a reachable authored approach, Enter,
 return at the same position; walking past never opens a place.
 Pilot: two settlements on v2/atlas; other destinations retain point behavior.
 Compare weighted travel times among authored approaches; reject barrier bypass.
 Existing initial interior presence remains visitable without an outward walk.
 Boundary: local stand geometry/controller/view/tests; no core/server/save rules.
-Verification: focused map types/tests, real browser journey, independent critic,
-scoped lint/format and ordinary commit audit. Results pending.
+19 focused scenarios/types, scoped lint/format PASS.
+Native west/east Bereznyak, north/south Brod, pause/resume, explicit visit,
+position-preserving return/Escape, ground pass-through and modal/WASD PASS.
+v2 visit/v5 navigation PASS; independent visual ACCEPT, six applicable scores2.
+Source `88114965`; normal commit hook/audit PASS after consolidating duplicated
+entry eligibility. Existing attribution/CSS advisories retained.
+Full game/DB gate NOT_RUN; final owner usability/balance NOT_MEASURED.
 No external writes, operational activation or new dependencies.
 
 ## Dated history
