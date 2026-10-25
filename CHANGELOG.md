@@ -21,6 +21,7 @@ requests.
   lint/format PASS; native mouse-wheel/RMB/pan/reset/water/paused-start checks
   and independent visual ACCEPT in the
   [owning record](docs/wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
+  Source saved locally as `b9353990`; normal commit hook/audit PASS.
 
 ### Porechye: nine-tile atlas and 24 contract proposals
 

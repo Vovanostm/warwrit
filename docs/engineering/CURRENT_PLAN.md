@@ -16,6 +16,7 @@ Native browser wheel:43 intermediate widths/65frames, cursor drift<0.001px;
 RMB menu suppressed, goal overrides start-tool, paused position retained;
 water refusal, pan and interrupted-zoom fit reset PASS.
 Independent visual ACCEPT: six applicable criteria2, characters N/A.
+Source `b9353990`; normal commit hook/audit PASS, tree clean before records closeout.
 No new art, domain rules, dependencies, save/server or external writes.
 
 ## Dated history
