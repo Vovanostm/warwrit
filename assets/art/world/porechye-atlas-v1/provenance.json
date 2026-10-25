@@ -1,0 +1,332 @@
+{
+  "date": "2026-10-25",
+  "branch": "codex/world-map-painted",
+  "status": "local proposal, independent text and final integrated visual ACCEPT",
+  "tool": "built-in image_gen.imagegen",
+  "model": "tool configured model (not returned explicitly)",
+  "scale": {
+    "nativeTile": [1536, 1024],
+    "extentTileMetres": [2400, 1600],
+    "nativeAtlas": [4608, 3072],
+    "extentAtlasMetres": [7200, 4800],
+    "metresPerPixel": 1.5625
+  },
+  "inputs": [
+    {
+      "path": "../porechye-v2/porechye-regional-v4.png",
+      "role": "central identity and scale reference, retained center; initial reference copied topology and was rejected for new tiles"
+    },
+    {
+      "path": "style-land.png",
+      "role": "land-only material/ink crop for replacement tiles"
+    },
+    {
+      "path": "../../m1/style/unit-c-ink.png",
+      "role": "approved ink/rendering family"
+    },
+    {
+      "path": "../../m1/places/settlements-v2/kamenny-brod-painting.png",
+      "role": "approved materials and scene identity, review reference"
+    },
+    {
+      "path": "../../../../scripts/world-map/porechye-atlas-layout.ts",
+      "role": "local layout proposal; source-image geometry corrected where art differs"
+    }
+  ],
+  "iterations": [
+    {
+      "tile": "nw",
+      "revision": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-9fde625f-6888-4993-a8db-7d4740d9bb6a.png",
+      "prompt": "prompt-nw.txt",
+      "operation": "native tile generation",
+      "verdict": "REJECT: full-center reference copied river topology or failed edge geometry"
+    },
+    {
+      "tile": "nw",
+      "revision": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-f2b585f6-d0aa-43b8-b758-a4e6c1774a8f.png",
+      "prompt": "prompt-nw-v2.txt",
+      "operation": "native tile generation",
+      "verdict": "local candidate; finite retouch and seam integration follows"
+    },
+    {
+      "tile": "n",
+      "revision": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-1651a132-527e-48d9-a0f3-81de49e6c680.png",
+      "prompt": "prompt-n.txt",
+      "operation": "native tile generation",
+      "verdict": "REJECT: full-center reference copied river topology or failed edge geometry"
+    },
+    {
+      "tile": "n",
+      "revision": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-cd91fe1e-aa1a-4257-82dc-938efab2b375.png",
+      "prompt": "prompt-n-v2.txt",
+      "operation": "native tile generation",
+      "verdict": "local candidate; finite retouch and seam integration follows"
+    },
+    {
+      "tile": "ne",
+      "revision": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-a7c9d24f-2009-4cad-b1a8-8b4e14055960.png",
+      "prompt": "prompt-ne.txt",
+      "operation": "native tile generation",
+      "verdict": "REJECT: full-center reference copied river topology or failed edge geometry"
+    },
+    {
+      "tile": "ne",
+      "revision": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-e0c49d85-b2a5-485f-8ebe-a4359df99393.png",
+      "prompt": "prompt-ne-v2.txt",
+      "operation": "native tile generation",
+      "verdict": "local candidate; finite retouch and seam integration follows"
+    },
+    {
+      "tile": "w",
+      "revision": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-754cba76-d765-4ffa-9908-aecfe88a8152.png",
+      "prompt": "prompt-w.txt",
+      "operation": "native tile generation",
+      "verdict": "REJECT: full-center reference copied river topology or failed edge geometry"
+    },
+    {
+      "tile": "w",
+      "revision": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-44f2a2f8-30a5-49b0-a95a-8d7cd0babb99.png",
+      "prompt": "prompt-w-v2.txt",
+      "operation": "native tile generation",
+      "verdict": "local candidate; finite retouch and seam integration follows"
+    },
+    {
+      "tile": "e",
+      "revision": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-7f1b1f17-a440-437d-8e39-a84a94b2e951.png",
+      "prompt": "prompt-e.txt",
+      "operation": "native tile generation",
+      "verdict": "REJECT: full-center reference copied river topology or failed edge geometry"
+    },
+    {
+      "tile": "e",
+      "revision": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-5c13b9c4-0822-4082-aa3f-17e0326bc7a3.png",
+      "prompt": "prompt-e-v2.txt",
+      "operation": "native tile generation",
+      "verdict": "local candidate; finite retouch and seam integration follows"
+    },
+    {
+      "tile": "sw",
+      "revision": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-bb4a93d4-6c63-47b5-b5c4-ed6fdf86e7c0.png",
+      "prompt": "prompt-sw.txt",
+      "operation": "native tile generation",
+      "verdict": "REJECT: full-center reference copied river topology or failed edge geometry"
+    },
+    {
+      "tile": "sw",
+      "revision": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-d6fdc2cd-b1de-4cea-8b5b-8a270f059e5a.png",
+      "prompt": "prompt-sw-v2.txt",
+      "operation": "native tile generation",
+      "verdict": "local candidate; finite retouch and seam integration follows"
+    },
+    {
+      "tile": "s",
+      "revision": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-c1b66e48-8b85-4270-a4fe-e11499ba94af.png",
+      "prompt": "prompt-s.txt",
+      "operation": "native tile generation",
+      "verdict": "REJECT: full-center reference copied river topology or failed edge geometry"
+    },
+    {
+      "tile": "s",
+      "revision": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-b68ad179-141a-4f96-ad49-3a7133d12d27.png",
+      "prompt": "prompt-s-v2.txt",
+      "operation": "native tile generation",
+      "verdict": "local candidate; finite retouch and seam integration follows"
+    },
+    {
+      "tile": "se",
+      "revision": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-c471b52e-5a27-487e-8851-09a57473a78b.png",
+      "prompt": "prompt-se.txt",
+      "operation": "native tile generation",
+      "verdict": "REJECT: full-center reference copied river topology or failed edge geometry"
+    },
+    {
+      "tile": "se",
+      "revision": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-7696ab33-b0b5-4b69-ac90-a0e6bdf92415.png",
+      "prompt": "prompt-se-v2.txt",
+      "operation": "native tile generation",
+      "verdict": "local candidate; finite retouch and seam integration follows"
+    },
+    {
+      "repair": 0,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-003f34fc-b441-4386-b293-184b62afd50e.png",
+      "operation": "96px crop enlarged4x, imagegen removes guide rectangle, 40px center pasted with4px feather",
+      "prompt": "repair-prompt.txt"
+    },
+    {
+      "repair": 1,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-fad15156-6f94-410e-b620-d51c7ffd287a.png",
+      "operation": "96px crop enlarged4x, imagegen removes guide rectangle, 40px center pasted with4px feather",
+      "prompt": "repair-prompt.txt"
+    },
+    {
+      "repair": 2,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-3ad276de-1801-42f3-a1bb-d4d910bf78c6.png",
+      "operation": "96px crop enlarged4x, imagegen removes guide rectangle, 40px center pasted with4px feather",
+      "prompt": "repair-prompt.txt"
+    },
+    {
+      "repair": 3,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-b59abbac-195b-4c96-8a18-14b8dcf53e1b.png",
+      "operation": "96px crop enlarged4x, imagegen removes guide rectangle, 40px center pasted with4px feather",
+      "prompt": "repair-prompt.txt"
+    },
+    {
+      "repair": 4,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-5c58c04e-09c2-4b45-b82a-078a64f9054d.png",
+      "operation": "96px crop enlarged4x, imagegen removes guide rectangle, 40px center pasted with4px feather",
+      "prompt": "repair-prompt.txt"
+    },
+    {
+      "repair": 5,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-5b76ad7f-2873-45de-b2f1-025eda0cd8bf.png",
+      "operation": "96px crop enlarged4x, imagegen removes guide rectangle, 40px center pasted with4px feather",
+      "prompt": "repair-prompt.txt"
+    },
+    {
+      "seam": "h-1024-0",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-949c6a3c-9f21-400a-90aa-64d7fe5ba17b.png",
+      "prompt": "seam-h-1024-0-prompt.txt",
+      "operation": "center128 source-pixel band,18px feather, only generated patch composited; tile interiors retained"
+    },
+    {
+      "seam": "h-1024-1",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-cffa2bbc-d8d0-49e6-a169-319752d0df13.png",
+      "prompt": "seam-h-1024-1-prompt.txt",
+      "operation": "center128 source-pixel band,18px feather, only generated patch composited; tile interiors retained"
+    },
+    {
+      "seam": "h-1024-2",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-c041751b-8ed9-4fb7-9091-be312e33ce08.png",
+      "prompt": "seam-h-1024-2-prompt.txt",
+      "operation": "center128 source-pixel band,18px feather, only generated patch composited; tile interiors retained"
+    },
+    {
+      "seam": "h-2048-0",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-ea2a182e-388b-471b-b947-daa968900cf4.png",
+      "prompt": "seam-h-2048-0-prompt.txt",
+      "operation": "center128 source-pixel band,18px feather, only generated patch composited; tile interiors retained"
+    },
+    {
+      "seam": "h-2048-1",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-459ffed7-c27c-477e-a106-571a083313ab.png",
+      "prompt": "seam-h-2048-1-prompt.txt",
+      "operation": "center128 source-pixel band,18px feather, only generated patch composited; tile interiors retained"
+    },
+    {
+      "seam": "h-2048-2",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-e36fefa6-d7e5-4f54-bc13-76bc90337910.png",
+      "prompt": "seam-h-2048-2-prompt.txt",
+      "operation": "center128 source-pixel band,18px feather, only generated patch composited; tile interiors retained"
+    },
+    {
+      "seam": "v-1536-0",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-e161c1da-2fb9-4124-88b3-120a9d7071e7.png",
+      "prompt": "seam-v-1536-0-prompt.txt",
+      "operation": "center128 source-pixel band,18px feather, only generated patch composited; tile interiors retained"
+    },
+    {
+      "operation": "five other requested vertical seam generations NOT_COMPLETED; author terminated pending optional batch after prolonged tool wait; no output used",
+      "remaining": ["v-1536-1", "v-1536-2", "v-3072-0", "v-3072-1", "v-3072-2"]
+    },
+    {
+      "seam": "v-1536-1",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-463d7744-4c19-4123-bd62-b55b72f123b1.png",
+      "prompt": "v4-v-1536-1-prompt.txt",
+      "operation": "Retry in bounded five-image batch. Local generated region compositing; v4 narrow128px paste rejected by author before external review; v5 uses384px band with96px feather, brightness0.94/saturation0.82 for material matching."
+    },
+    {
+      "seam": "v-1536-2",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-eaa14d5a-0751-4913-b5b1-6baf11575864.png",
+      "prompt": "v4-v-1536-2-prompt.txt",
+      "operation": "Retry in bounded five-image batch. Local generated region compositing; v4 narrow128px paste rejected by author before external review; v5 uses384px band with96px feather, brightness0.94/saturation0.82 for material matching."
+    },
+    {
+      "seam": "v-3072-0",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-ec4f5503-2d6e-4e00-b0ba-7e5a7864803b.png",
+      "prompt": "v4-v-3072-0-prompt.txt",
+      "operation": "Retry in bounded five-image batch. Local generated region compositing; v4 narrow128px paste rejected by author before external review; v5 uses384px band with96px feather, brightness0.94/saturation0.82 for material matching."
+    },
+    {
+      "seam": "v-3072-1",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-f9e82f43-dac3-4c9c-886c-ebee70f5b167.png",
+      "prompt": "v4-v-3072-1-prompt.txt",
+      "operation": "Retry in bounded five-image batch. Local generated region compositing; v4 narrow128px paste rejected by author before external review; v5 uses384px band with96px feather, brightness0.94/saturation0.82 for material matching."
+    },
+    {
+      "seam": "v-3072-2",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-823dfb9a-af45-4b65-8e0e-96d899481778.png",
+      "prompt": "v4-v-3072-2-prompt.txt",
+      "operation": "Retry in bounded five-image batch. Local generated region compositing; v4 narrow128px paste rejected by author before external review; v5 uses384px band with96px feather, brightness0.94/saturation0.82 for material matching."
+    }
+  ],
+  "limits": [
+    "New geography, people, sites and contracts are authored proposals; accepted M1 rules unchanged.",
+    "No quests, rewards, game server or persistence integration.",
+    "Native tiles are generated raster; no claimed whole-atlas resolution upscale.",
+    "Intermediate generated versions retained in persistent output/map-atlas/archive; tool originals retained at toolOutput paths."
+  ],
+  "activeImage": "atlas-v5.png",
+  "integratedReview": {
+    "v3": "REJECT by independent critic: visible vertical tile joins, scene integration1; remaining applicable criteria2",
+    "v5": "ACCEPT independent full absolute review: rendering2, value/palette2, materials2, props/lore2, integration2, motion2; character silhouette/pose N/A. Overview and close reference pairs, day/night and actual journey inspected. Owner interest/balance NOT_MEASURED."
+  },
+  "centerEdits": "Vertical seam margins up to192px, horizontal up to64px; interior place arrival coordinates and both bridge interiors retained.",
+  "nativeReadback": {
+    "atlas-v5.png": {
+      "width": 4608,
+      "height": 3072
+    },
+    "tile-nw.png": {
+      "width": 1536,
+      "height": 1024
+    },
+    "tile-n.png": {
+      "width": 1536,
+      "height": 1024
+    },
+    "tile-ne.png": {
+      "width": 1536,
+      "height": 1024
+    },
+    "tile-w.png": {
+      "width": 1536,
+      "height": 1024
+    },
+    "tile-center.png": {
+      "width": 1536,
+      "height": 1024
+    },
+    "tile-e.png": {
+      "width": 1536,
+      "height": 1024
+    },
+    "tile-sw.png": {
+      "width": 1536,
+      "height": 1024
+    },
+    "tile-s.png": {
+      "width": 1536,
+      "height": 1024
+    },
+    "tile-se.png": {
+      "width": 1536,
+      "height": 1024
+    }
+  }
+}

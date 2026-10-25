@@ -1,6 +1,34 @@
 # Warwrit current delivery plan
 
-## Porechye v2 district, movement and places — 2026-10-25, LOCAL
+## Porechye 3×3 atlas and 24 proposals — 2026-10-25, LOCAL COMPLETE
+
+Sole writer: Codex parent. Branch `codex/world-map-painted`; resumed `8c520d33`.
+Owner requested ~9× territory, 20+ varied contracts and possible POIs.
+[Owning map record](../wiki/world/map.md#атлас-33-и-24-проекта-контрактов--2026-10-25).
+Result: 4608×3072 atlas, nine native tiles, draft extent 7.2×4.8km;
+34 reachable destinations, 24 new RU/EN contract proposals and physical POIs.
+Run `pnpm dev:map`; `/scripts/world-map/navigation-lab.html?map=atlas`, port5326.
+Select a destination or contract, travel to issuer/site; v2/v5 retained.
+Center identities and two bridges retained; impassable river/pond, weighted
+biomes, sequential travel, adaptive labels, 500m ruler and ×128/×512 viewing.
+Contracts are previews, not executable quests/rewards or replacement M1 canon.
+Twelve focused scenarios/types, lint/format, architecture and change audit PASS.
+Browser: 7921m/80m59s far trip, stable pause/resume, exact4222,2398 arrival;
+onward2699m/25m starts there, pointer/Enter and English selector/card PASS.
+Selecting the current site clears a stale planned route; browser checked.
+Text critic ACCEPT: seven criteria2, lore3. Visual v3 REJECT for tile joins;
+final v5 full absolute ACCEPT: six applicable criteria2, characters N/A.
+Art prompts/provenance and native tiles accompany the local implementation.
+Only scripts/world-map, atlas art, owning wiki/checkpoint/changelog changed.
+Owner enjoyment, content sufficiency and physical game balance NOT_MEASURED.
+Full game/DB gate NOT_RUN; no game/server/save/dependency contract changed.
+No PR/push/merge/deploy/automation/Orca restart performed or authorized.
+
+## Dated history
+
+### Completed predecessor: district stand
+
+See owning map record for `defbe8da` code/art and `8c520d33` closeout.
 
 Sole writer: local Codex parent; no Orca activation.
 Owner: interactive stand first; larger/clearer map; real medieval plans for
@@ -28,8 +56,6 @@ Code/art committed locally as `defbe8da`; normal hook/change audit PASS.
 Coarse woodland/shoreline annotations, selectable landmarks, no individual collision
 for roofs/trees; physical travel/game balance, all world routes and MMO NOT_ACCEPTED.
 This local stand only. No PR, publication, merge, deployment or automation authorized.
-
-## Dated history
 
 ### Integrate #319 / PR #324 — 2026-10-25
 

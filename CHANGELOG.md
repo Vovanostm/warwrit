@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Porechye: nine-tile atlas and 24 contract proposals
+
+- 2026-10-25, branch `codex/world-map-painted`, local: owner requested roughly
+  9× more territory and 20+ varied contracts/POIs. Eight generated native tiles
+  surround the existing district at unchanged metres-per-pixel, producing a
+  4608×3072, 7.2×4.8km proposal atlas with 34 selectable destinations. The stand
+  defaults to the atlas and retains v2/v5; core navigation, save/server and
+  dependencies are unchanged. Two center bridges remain the only main crossings.
+- `scripts/world-map/porechye-atlas-contracts.ts` owns 24 RU/EN proposal previews,
+  distinct work types, named speakers and designer-only conditional outcomes.
+  Travel to issuer/site is available; quest acceptance, rewards and execution
+  are not implemented. Text critic ACCEPT; owner canon approval is not inferred.
+- Twelve focused scenarios/types, scoped lint/format and architecture PASS;
+  far route, localization and water checks are recorded with their actual limits
+  in the [owning map record](docs/wiki/world/map.md#атлас-33-и-24-проекта-контрактов--2026-10-25).
+  Initial river-copying artwork was rejected and regenerated from layout plus a
+  land-texture crop. Vertical joins rejected in v3 were repainted locally; final
+  v5 visual critic ACCEPT (six applicable scores2), far browser trip and onward
+  start/pause/selection checks PASS. Change audit PASS; details in owning record.
+  No publication, merge, deployment, automation or Orca restart.
+
 ### Porechye v2: credible district scale and places
 
 - 2026-10-25, branch `codex/world-map-painted`, local: owner rejected the

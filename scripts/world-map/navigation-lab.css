@@ -355,3 +355,37 @@ footer {
   font-size: 10px;
   color: #a7b0a3;
 }
+
+#contracts-section {
+  margin: 18px 0;
+  padding: 12px 0;
+  border-block: 1px solid var(--line);
+}
+#contracts-section summary {
+  color: var(--gold);
+  cursor: pointer;
+}
+#contract-preview h3 {
+  font:
+    21px Georgia,
+    serif;
+  color: #eed9a8;
+  margin-bottom: 8px;
+}
+#contract-preview .contract-turn {
+  color: #d7d4c7;
+  border-left: 2px solid #5b604f;
+  padding-left: 9px;
+}
+#contract-preview strong {
+  color: #d9c99e;
+  font-weight: 550;
+}
+#contract-preview button {
+  width: 100%;
+  margin: 4px 0;
+}
+#map.atlas #route,
+#map.atlas #route-edge {
+  vector-effect: non-scaling-stroke;
+}

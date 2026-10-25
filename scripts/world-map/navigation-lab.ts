@@ -10,24 +10,17 @@ import {
   type NavigationRegion,
   type PointFp,
 } from '@warwrit/game-core';
-import { pixel, point, SHEET, type Pixel } from './porechye-navigation.js';
-import * as previous from './porechye-navigation.js';
+import { type Pixel } from './porechye-navigation.js';
 import * as regional from './porechye-regional.js';
+import { mapProfiles } from './navigation-maps.js';
+import { mountContractPreview } from './navigation-contracts.js';
 
-const legacy = new URLSearchParams(location.search).get('map') === 'v5';
-const region = legacy ? previous.region : regional.regionalRegion;
-const presets = legacy ? previous.presets : regional.regionalPresets;
-const editionId = legacy ? 'v5' : 'v2';
-const mapInfo = {
-  v5: {
-    image: 'porechye-v1/porechye-detail-v5.png',
-    note: 'Поречье v5 · прежний опыт, масштаб в километрах не задан.',
-  },
-  v2: {
-    image: 'porechye-v2/porechye-regional-v4.png',
-    note: 'Поречье v2 · эскиз округа 2,4 × 1,6 км. Время движения пока тестовое.',
-  },
-}[editionId];
+const requested = new URLSearchParams(location.search).get('map');
+const editionId = requested === 'v5' || requested === 'v2' ? requested : 'atlas';
+const legacy = editionId === 'v5';
+const expanded = editionId === 'atlas';
+const mapInfo = mapProfiles[editionId];
+const { region, presets, sheet: SHEET, point, pixel, places } = mapInfo;
 // Only playback/display time is calibrated. Core plans and biome ratios stay intact.
 const walkingTimeScale = legacy
   ? 1
@@ -110,6 +103,10 @@ function drawLayers() {
 }
 
 function drawGeography() {
+  map.classList.toggle('atlas', expanded);
+  map.setAttribute('viewBox', `0 0 ${SHEET.width} ${SHEET.height}`);
+  element('sheet').setAttribute('width', String(SHEET.width));
+  element('sheet').setAttribute('height', String(SHEET.height));
   element('sheet').setAttribute('href', `../../assets/art/world/${mapInfo.image}`);
   element('edition-note').textContent = mapInfo.note;
   const edition = element<HTMLSelectElement>('edition');
@@ -119,12 +116,16 @@ function drawGeography() {
   });
   if (legacy) return;
   element('time-note').textContent =
-    'Пробный пеший темп: поле 1 м/с, местность меняет скорость. Это ещё не баланс игры. ×8 и ×32 ускоряют просмотр.';
-  for (const place of regional.places) {
+    'Пробный пеший темп: поле 1 м/с, местность меняет скорость. Ускорение меняет только просмотр.';
+  element('scale').textContent = expanded
+    ? 'Атлас 7,2 × 4,8 км · 9 участков'
+    : 'Округ 2,4 × 1,6 км · масштаб эскиза';
+  for (const place of places) {
     const label = document.createElementNS(svgNS, 'text');
     label.textContent = place.name;
-    label.setAttribute('x', String(place.label[0]));
-    label.setAttribute('y', String(place.label[1]));
+    label.dataset['x'] = String(place.label[0]);
+    label.dataset['y'] = String(place.label[1]);
+    label.dataset['major'] = String(place.major);
     element('place-labels').append(label);
   }
   element('scale').removeAttribute('hidden');
@@ -132,17 +133,34 @@ function drawGeography() {
 }
 
 function choosePlace(index: number) {
-  const place = regional.places[index]!;
+  const place = places[index]!;
   const target = point(place.at);
   if (Math.hypot(target.xFp - markerPosition.xFp, target.zFp - markerPosition.zFp) < 1) {
+    clearRouteHere(target);
     status.textContent = `Отряд уже здесь: ${place.name}.`;
   } else {
     setMode('goal');
     selectPoint(target);
     destinationName = place.name;
   }
+  if (expanded) focusPlace(place.at);
   element<HTMLSelectElement>('place').value = String(index);
   element('place-description').textContent = place.description;
+}
+
+function clearRouteHere(target: PointFp) {
+  running = false;
+  elapsed = 0;
+  plan = undefined;
+  start = target;
+  goal = target;
+  play.disabled = true;
+  stop.disabled = true;
+  element<HTMLSelectElement>('preset').value = '';
+  showRouteMetrics();
+  drawRoute();
+  element('to-marker').setAttribute('visibility', 'hidden');
+  updateProgress();
 }
 
 function clearDestination() {
@@ -156,14 +174,16 @@ function drawPlaces() {
   if (legacy) return;
   element('places-section').removeAttribute('hidden');
   const select = element<HTMLSelectElement>('place');
-  regional.places.forEach((place, index) => {
+  select.options[0]!.textContent = `Выберите одно из ${places.length} мест`;
+  places.forEach((place, index) => {
     select.add(new Option(place.name, String(index)));
     const marker = document.createElementNS(svgNS, 'g');
     marker.setAttribute('transform', `translate(${place.at.join(' ')})`);
     marker.setAttribute('role', 'button');
     marker.setAttribute('aria-label', `Путь к месту: ${place.name}`);
     marker.setAttribute('tabindex', '0');
-    marker.innerHTML = '<circle class="hit" r="18"/><circle r="7"/><path d="M-3 0H3M0 -3V3"/>';
+    marker.innerHTML =
+      '<g class="poi-symbol"><circle class="hit" r="18"/><circle r="7"/><path d="M-3 0H3M0 -3V3"/></g>';
     marker.addEventListener('pointerdown', (event) => event.stopPropagation());
     marker.addEventListener('click', () => choosePlace(index));
     marker.addEventListener('keydown', (event) => {
@@ -206,7 +226,8 @@ function addLayerToggle(
   label.className = 'switch';
   const input = document.createElement('input');
   input.type = 'checkbox';
-  input.checked = true;
+  input.checked = !expanded;
+  if (expanded) toggle(false);
   input.id = `layer-${id}`;
   const swatch = document.createElement('span');
   swatch.className = 'swatch';
@@ -226,7 +247,7 @@ function showSurface(p: PointFp) {
 
 function moveMarker(id: string, p: PointFp) {
   const [x, y] = pixel(p);
-  element(id).setAttribute('transform', `translate(${x} ${y})`);
+  element(id).setAttribute('transform', `translate(${x} ${y}) scale(${symbolScale()})`);
 }
 
 function updateParty(p: PointFp) {
@@ -398,6 +419,42 @@ function setView(x: number, y: number, width: number, height: number) {
     height,
   };
   map.setAttribute('viewBox', `${view.x} ${view.y} ${width} ${height}`);
+  updateViewportDetails();
+}
+function symbolScale() {
+  return expanded ? view.width / 1536 : 1;
+}
+function focusPlace(at: Pixel) {
+  const width = Math.min(view.width, 2304),
+    height = (width * 2) / 3;
+  setView(at[0] - width / 2, at[1] - height / 2, width, height);
+}
+function updateViewportDetails() {
+  const scale = symbolScale();
+  map.querySelectorAll<SVGElement>('#place-labels text').forEach((label) => {
+    label.setAttribute(
+      'transform',
+      `translate(${label.dataset['x']} ${label.dataset['y']}) scale(${scale})`,
+    );
+    label.style.display =
+      expanded && view.width > 2304 && label.dataset['major'] !== 'true' ? 'none' : '';
+  });
+  map
+    .querySelectorAll<SVGElement>('.poi-symbol')
+    .forEach((mark) => mark.setAttribute('transform', `scale(${scale})`));
+  moveMarker('from-marker', start);
+  moveMarker('to-marker', goal);
+  moveMarker('party', markerPosition);
+  drawRuler(scale);
+}
+function drawRuler(scale: number) {
+  // The line stays 500m in source coordinates; only glyphs adapt to the view.
+  const x = view.x + 55 * scale,
+    y = view.y + view.height - 65 * scale;
+  const end = x + 500 / regional.metresPerPixel;
+  element('map-scale').setAttribute('transform', `translate(${x} ${y})`);
+  element('map-scale').innerHTML =
+    `<path d="M0 0V${12 * scale}H${end - x}V0"/><text transform="translate(0 ${35 * scale}) scale(${scale})">0</text><text text-anchor="end" transform="translate(${end - x} ${35 * scale}) scale(${scale})">500 м</text>`;
 }
 map.addEventListener(
   'wheel',
@@ -478,14 +535,13 @@ async function initialize() {
   await new Promise<void>((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
   field = buildNavigationField(region);
   drawPlaces();
-  const samples: Record<string, Pixel> = legacy
-    ? {
-        forest: [100, 500],
-        marsh: [1480, 580],
-        hills: [1200, 270],
-        deep_water: [540, 340],
-      }
-    : regional.samples;
+  if (expanded)
+    mountContractPreview((name) => {
+      choosePlace(places.findIndex((p) => p.name === name));
+      element<HTMLDetailsElement>('contracts-section').open = false;
+    });
+  setView(0, 0, SHEET.width, SHEET.height);
+  const samples = mapInfo.samples;
   for (const terrain of Object.keys(samples)) {
     const speed = continuousSurfaceAt(field, point(samples[terrain]!)).speedPermille;
     addLayerToggle(

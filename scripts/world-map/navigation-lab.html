@@ -20,6 +20,7 @@
         <section>
           <label for="edition">Карта</label>
           <select id="edition">
+            <option value="atlas">Атлас · 9 участков · 34 места</option>
             <option value="v2">v2 · округ и сельские земли</option>
             <option value="v5">v5 · прежний рисунок</option>
           </select>
@@ -33,6 +34,22 @@
               Метки на карте выбирают цель. Следующий переход начинается там, где находится отряд.
             </p>
           </div>
+          <details id="contracts-section" hidden>
+            <summary>24 проекта контрактов</summary>
+            <p class="fine">
+              Предложения для карты. Квесты, награды и выполнение здесь ещё не подключены.
+            </p>
+            <label for="contract">Посмотреть контракт</label
+            ><select id="contract">
+              <option value="">Выберите предложение</option>
+            </select>
+            <label for="contract-language">Язык карточки</label
+            ><select id="contract-language">
+              <option value="ru">Русский</option>
+              <option value="en">English</option>
+            </select>
+            <article id="contract-preview" hidden></article>
+          </details>
           <h2>Выберите путь</h2>
           <p>Укажите старт и цель на карте. Путь учитывает скорость местности.</p>
           <div class="pair">
@@ -77,6 +94,8 @@
             <option value="1">×1 · исходное время</option>
             <option value="8" selected>×8</option>
             <option value="32">×32</option>
+            <option value="128">×128 · дальние переходы</option>
+            <option value="512">×512 · быстрый просмотр</option>
           </select>
           <p class="fine" id="time-note">
             * Время при тестовом масштабе, не утверждённая длительность перехода в игре.

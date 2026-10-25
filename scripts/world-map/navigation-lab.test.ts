@@ -1,5 +1,7 @@
+// @vitest-environment jsdom
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
+import { mountContractPreview } from './navigation-contracts.js';
 import {
   buildNavigationField,
   compileMovementPlan,
@@ -8,6 +10,8 @@ import {
 } from '@warwrit/game-core';
 import { pixel, point, presets, region } from './porechye-navigation.js';
 import * as regional from './porechye-regional.js';
+import { atlasRegion, atlasPoint, atlasPlaces, atlasPresets } from './porechye-atlas.js';
+import { atlasContracts } from './porechye-atlas-contracts.js';
 
 const field = buildNavigationField(region);
 const compile = (path: Parameters<typeof compileMovementPlan>[0]['path']) =>
@@ -118,5 +122,102 @@ test('every selectable place has a reachable arrival point, including the bank o
       .filter((place) => !findTravelPath(regionalField, point([1160, 400]), point(place.at)))
       .map((place) => place.name),
     [],
+  );
+});
+
+// The atlas is one continuous region; tile edges are not artificial barriers.
+const atlasField = buildNavigationField(atlasRegion);
+test('all 34 atlas destinations and every contract issuer can be reached from Bereznyak', () => {
+  const names = new Set(atlasPlaces.map((p) => p.name));
+  assert.deepEqual(
+    {
+      unreachable: atlasPlaces
+        .filter((p) => !findTravelPath(atlasField, atlasPoint([1731, 1244]), atlasPoint(p.at)))
+        .map((p) => p.name),
+      missingIssuers: atlasContracts.filter((c) => !names.has(c.issuerAt)).map((c) => c.id),
+    },
+    { unreachable: [], missingIssuers: [] },
+  );
+});
+
+test('a far atlas journey crosses the main river only over an existing bridge', () => {
+  const trip = atlasPresets[1]!;
+  const plan = compileMovementPlan({
+    field: atlasField,
+    path: findTravelPath(atlasField, atlasPoint(trip.from), atlasPoint(trip.to))!,
+    startedAtMs: '0',
+    movementEpoch: '0',
+    planId: 'atlas-far',
+  });
+  assert.deepEqual(
+    [
+      ...new Set(
+        plan.speedSpans.filter((s) => s.terrainId === 'deep_water').map((s) => s.overlayId),
+      ),
+    ],
+    ['bridge'],
+  );
+});
+
+test('English contract selection localizes the list and preview while keeping design truth private', () => {
+  document.body.innerHTML =
+    '<details id="contracts-section" hidden></details><select id="contract"><option value="">Выберите предложение</option></select><select id="contract-language"><option value="ru">RU</option><option value="en">EN</option></select><article id="contract-preview" hidden></article>';
+  const destinations: string[] = [];
+  try {
+    mountContractPreview((name) => destinations.push(name));
+    const doc = document;
+    const language = doc.getElementById('contract-language') as HTMLSelectElement;
+    const select = doc.getElementById('contract') as HTMLSelectElement;
+    // Switch locale before selecting: this used to leave every title Russian.
+    language.value = 'en';
+    language.dispatchEvent(new Event('change'));
+    select.value = '0';
+    select.dispatchEvent(new Event('change'));
+    const card = doc.getElementById('contract-preview')!;
+    card.querySelector<HTMLButtonElement>('button')!.click();
+    assert.deepEqual(
+      {
+        list: select.options[1]!.textContent,
+        title: card.querySelector('h3')!.textContent,
+        issuerLocalized: card.textContent!.includes('Bereznyak'),
+        revealsDesign: card.textContent!.includes(atlasContracts[0]!.authorTruth),
+        destinations,
+      },
+      {
+        list: '1. Tar on the Axle',
+        title: 'Tar on the Axle',
+        issuerLocalized: true,
+        revealsDesign: false,
+        destinations: ['Березняк'],
+      },
+    );
+  } finally {
+    document.body.replaceChildren();
+  }
+});
+
+test('visible water in all new river tiles and the retting pond stays blocked', () => {
+  const probes: readonly (readonly [number, number])[] = [
+    [80, 1620],
+    [300, 1670],
+    [800, 1560],
+    [1450, 1400],
+    [3150, 1670],
+    [3456, 1625],
+    [3922, 1780],
+    [4540, 1740],
+    [1510, 1394],
+    [1536, 1394],
+    [1568, 1394],
+    [3016, 1674],
+    [3072, 1674],
+    [3116, 1674],
+    [4100, 2800],
+    [4070, 2790],
+    [4145, 2825],
+  ];
+  assert.deepEqual(
+    probes.map((p) => continuousSurfaceAt(atlasField, atlasPoint(p)).speedPermille),
+    probes.map(() => 0),
   );
 });
