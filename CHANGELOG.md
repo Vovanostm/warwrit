@@ -28,6 +28,7 @@ requests.
   land-texture crop. Vertical joins rejected in v3 were repainted locally; final
   v5 visual critic ACCEPT (six applicable scores2), far browser trip and onward
   start/pause/selection checks PASS. Change audit PASS; details in owning record.
+  Source/art saved locally as `1eac2e8d`; normal commit hook PASS without bypass.
   No publication, merge, deployment, automation or Orca restart.
 
 ### Porechye v2: credible district scale and places

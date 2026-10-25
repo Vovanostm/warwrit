@@ -18,6 +18,7 @@ onward2699m/25m starts there, pointer/Enter and English selector/card PASS.
 Selecting the current site clears a stale planned route; browser checked.
 Text critic ACCEPT: seven criteria2, lore3. Visual v3 REJECT for tile joins;
 final v5 full absolute ACCEPT: six applicable criteria2, characters N/A.
+Source/art saved as `1eac2e8d`; normal commit hook PASS without bypass.
 Art prompts/provenance and native tiles accompany the local implementation.
 Only scripts/world-map, atlas art, owning wiki/checkpoint/changelog changed.
 Owner enjoyment, content sufficiency and physical game balance NOT_MEASURED.

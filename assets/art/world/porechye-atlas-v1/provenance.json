@@ -328,5 +328,6 @@
       "width": 1536,
       "height": 1024
     }
-  }
+  },
+  "promptFormatting": "TXT trailing whitespace normalized for repository checks; exact five v4 tool strings, including original trailing spaces, retained in v4-prompts-exact.json."
 }
