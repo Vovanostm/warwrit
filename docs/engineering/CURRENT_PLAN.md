@@ -23,7 +23,8 @@ Browser: two sequential POI legs820m/7m43s and1187m/12m38s, exact arrivals,
 no reset to original start, pause stable, marker click and keyboard target PASS.
 Earlier v3 visual scores>=2; formal close-reference pair omission corrected.
 Final independent v4 critic ACCEPT (six applicable scores2; character N/A).
-Dry burial approach975,623 leaves mounds visible; normal commit hook PENDING.
+Dry burial approach975,623 leaves mounds visible.
+Code/art committed locally as `defbe8da`; normal hook/change audit PASS.
 Coarse woodland/shoreline annotations, selectable landmarks, no individual collision
 for roofs/trees; physical travel/game balance, all world routes and MMO NOT_ACCEPTED.
 This local stand only. No PR, publication, merge, deployment or automation authorized.

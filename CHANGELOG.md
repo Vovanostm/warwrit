@@ -27,7 +27,8 @@ requests.
 - Eight focused scenarios/types and scoped lint/architecture PASS; real browser
   consecutive 820 m and 1187 m legs arrived, pause/keyboard/pointer and water rejection
   checked. Change audit PASS after sharing road geometry and simplifying UI functions;
-  final integrated v4 critic ACCEPT (all applicable scores2), normal hook pending. Historical research,
+  final integrated v4 critic ACCEPT (all applicable scores2). Local code/art
+  commit `defbe8da` passed the normal hook/change audit without bypass. Historical research,
   iteration failures, checks and limits: [owning map page](docs/wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
 
 ### Painted Porechye navigation stand
