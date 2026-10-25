@@ -19,6 +19,10 @@ Source `88114965`; normal commit hook/audit PASS after consolidating duplicated
 entry eligibility. Existing attribution/CSS advisories retained.
 Full game/DB gate NOT_RUN; final owner usability/balance NOT_MEASURED.
 No external writes, operational activation or new dependencies.
+Follow-up: owner asks whether one settlement area would be better UX.
+[Recommendation only](../wiki/world/map.md#общая-зона-поселения-вместо-трёх-подходов--ux-предложение-2026-10-26):
+dry footprint + passive entry availability + explicit Visit intent; no new code.
+User comparison/usability NOT_RUN/NOT_MEASURED; prior pilot remains current.
 
 ## Dated history
 

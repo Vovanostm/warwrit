@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Settlement area UX recommendation
+
+- 2026-10-26, branch `codex/world-map-painted`, local documentation: owner
+  questioned three mandatory approach zones. The
+  [map proposal](docs/wiki/world/map.md#общая-зона-поселения-вместо-трёх-подходов--ux-предложение-2026-10-26)
+  recommends a coherent dry settlement area, passive entry availability and an
+  explicit Visit intent for travel/opening. Warband manual, Battle Brothers
+  developer response and Bannerlord API evidence are distinguished from UX
+  hypotheses. Current runtime remains the two-place pilot; no gameplay rules
+  approved or changed. Runtime checks NOT_RUN; usability NOT_MEASURED.
+
 ### Place arrival and explicit visits
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner approved the
