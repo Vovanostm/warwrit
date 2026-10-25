@@ -19,7 +19,8 @@ requests.
   remain unchanged from accepted `42a4f583`; no missing criterion or production
   defect identified. Focused real-core producer tests (30), protocol build,
   server types and scoped lint/format/diff PASS. Fresh integrated review pending;
-  normal merge commit audit runs without bypass. [Integration result](docs/engineering/evidence/wages-local-evidence-319/integration-2026-10-25.md).
+  normal merge commit `0308738d` audit PASS without bypass (zero new findings;
+  syntactic-attribution warning retained). [Integration result](docs/engineering/evidence/wages-local-evidence-319/integration-2026-10-25.md).
 - Dated correction to prior #321/workflow LOCAL/PENDING entries: PR #325 merged
   normally at `e216b0e1f44fd91b899227f7135d00ba7903e14a` on 2026-10-25;
   #321 closed completed. Parent readback: CI `40145187358` and scope

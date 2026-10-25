@@ -33,7 +33,11 @@ Sequential author checks in the integrated checkout:
   30 tests; real public-core AdvanceCampaign/Observe/PayClaims, no mocked core.
 - Server typecheck PASS; scoped ESLint and Prettier PASS; scoped source equality
   to accepted `42a4f583` and ordinary diff checks PASS.
-- Normal merge commit hook required without bypass; result recorded after commit.
+- Normal merge commit `0308738d` PASS without bypass. Hook refreshed related
+  coverage and audited 38 changed files against merge-base `1c793e16`: zero
+  new dead-code/complexity/duplication findings. Syntactic-attribution warning
+  retained because base/head semantic identities differ. No hook/threshold
+  weakening; the branch was integrated with merge parents `4b776e19` and `e216b0e1`.
 - No DB/server/browser runtime or full local suite run for this unsaved producer.
   Post-push applicable clean CI remains required for this integrated candidate.
 
