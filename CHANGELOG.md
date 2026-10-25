@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Art styles merged and local main updated — 2026-10-25
+
+- Origin branch `codex/novel-art-style-profiles`, merged: owner requested
+  «merge, update main». [PR #326](https://github.com/Vovanostm/warwrit/pull/326)
+  merged expected head `9d320aa9` as `06c2dda6`; local main fast-forwarded,
+  original combat/3D WIP preserved. CI `40220951284` and latest scope
+  `40222331013` SUCCESS; no blocking threads, merged tree equals checked head.
+  Updated CURRENT_PLAN and [owning delivery](docs/wiki/vision.md#слияние-художественного-комплекта--2026-10-25)
+  to supersede pending/not-authorized historical checkpoints. This local
+  documentation closeout changes no art/code; scoped format/plan/diff checks
+  run before commit. New prompt generation and game integration NOT_RUN.
+
 ### Isolated publication candidate for the selected art styles
 
 - 2026-10-25, branch `codex/novel-art-style-profiles`, published: owner requested

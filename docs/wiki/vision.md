@@ -506,3 +506,22 @@ fast-forward до `origin/main` `7389e822`; исходный WIP checkout не �
 их итоговый статус. Full game/DB checks локально NOT_RUN для этого комплекта. Новая генерация готовыми
 запросами, прозрачность/опоры и игровая интеграция NOT_RUN.
 Слияние PR отдельно не авторизовано этой записью.
+
+### Слияние художественного комплекта — 2026-10-25
+
+Дополняет исторический checkpoint публикации выше. Владелец запросил
+«merge, update main». [PR #326](https://github.com/Vovanostm/warwrit/pull/326)
+слит обычным merge с проверкой ожидаемого head `9d320aa9`; merge-коммит
+`06c2dda6`. CI [40220951284](https://github.com/Vovanostm/warwrit/actions/runs/40220951284)
+и последняя PR scope [40222331013](https://github.com/Vovanostm/warwrit/actions/runs/40222331013)
+SUCCESS; незакрытых review threads нет. Полный CI: 1173 unit checks PASS,
+75 skipped, 10000 stress battles, migration smoke, 65 DB checks, coverage и
+quality audit PASS. Дерево merge-коммита совпадает с проверенным head.
+Локальная `main` обновлена fast-forward и выбрана в изолированной рабочей
+папке; исходная папка с combat/3D WIP не переключалась и не очищалась.
+
+Комплект опубликован и слит; новые готовые промпты генерацией не проверены.
+Alpha/pivots, игровая интеграция и дневная/ночная читаемость остаются NOT_RUN.
+Документационное закрытие не меняет художественные файлы или игровой код;
+повторный локальный full game/DB gate NOT_RUN, результаты PR CI относятся
+к слитому художественному дереву. Дальнейшая генерация и deployment не запускались.

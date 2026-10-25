@@ -1,20 +1,21 @@
 # Warwrit current delivery plan
 
-## Novel art styles / JSON publication — 2026-10-25, BRANCH PUBLISHED
+## Novel art styles / JSON publication — 2026-10-25, MERGED
 
 Coordinator: local Codex parent; Orca and automation remain stopped.
-Owner requested commit, push, PR and local-main update. Isolated branch
-`codex/novel-art-style-profiles` from `origin/main` `7389e822`; original dirty
-`codex/sprite-combat-stage1` checkout and its staged/unstaged WIP preserved.
+Owner requested «merge, update main» for [PR #326](https://github.com/Vovanostm/warwrit/pull/326).
+Expected head `9d320aa9` merged normally as `06c2dda6`; local main updated.
 Scope: 70 selected illustrations, ten sheets/gallery, thirteen selected references,
 two style profiles, four direct generation requests and owning documentation.
-Historical iterations and the >100 MiB local ZIP are excluded. Main
-ART_LORE_POLICY/agent workflow retained; no combat/3D source or dependencies.
-Focused JSON/reference/gallery-file/format/content checks and normal commit
-audit PASS. Asset commit `10e8084c` pushed; PR creation/current-head CI pending.
-[Art decision and result](../wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25).
-Local main fast-forwarded to `7389e822`; original WIP checkout not switched.
-New prompt generation and game integration NOT_RUN; merge NOT_AUTHORIZED.
+Original dirty `codex/sprite-combat-stage1` checkout/WIP preserved; no combat/3D source.
+Focused JSON/reference/gallery-file/format/content checks and normal audit PASS.
+[CI 40220951284](https://github.com/Vovanostm/warwrit/actions/runs/40220951284) SUCCESS:
+1173 unit checks / 75 skipped, 10000 stress battles, migration smoke, 65 DB checks;
+coverage and unchanged quality audit PASS. Latest PR scope `40222331013` SUCCESS.
+No unresolved review threads. Merged tree equals the checked head tree.
+[Art decision and delivery](../wiki/vision.md#слияние-художественного-комплекта--2026-10-25).
+New prompt generation, alpha/pivots and game integration NOT_RUN.
+This documentation closeout records delivery; no new art, gameplay or deployment.
 
 ## Integrate #319 / PR #324 — 2026-10-25
 
