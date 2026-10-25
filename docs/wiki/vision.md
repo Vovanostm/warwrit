@@ -496,7 +496,13 @@ sources:
 70 PNG имеют 1536×1024, десять листов присутствуют. Prettier,
 `pnpm validate:content` (114 ассетов), `check-current-plan.sh` и
 `git diff --check` PASS. Frozen install выполнен без изменения lockfile.
-Обычный commit audit и публикация пока ожидаются; full game/DB checks
-локально NOT_RUN для художественного комплекта. Новая генерация готовыми
+Обычный commit audit PASS: ноль новых dead-code/complexity/duplication
+findings в 114 файлах; type-aware сравнение использовало синтаксическую
+атрибуцию с предупреждением инструмента. Новые 21 локальная Markdown-ссылка
+ведут в отслеживаемые файлы. Коммит ассетов `10e8084c` опубликован в
+`origin/codex/novel-art-style-profiles`. Локальная `main` обновлена только
+fast-forward до `origin/main` `7389e822`; исходный WIP checkout не переключён.
+Создание PR и его CI ожидаются на момент этой записи; live GitHub определяет
+их итоговый статус. Full game/DB checks локально NOT_RUN для этого комплекта. Новая генерация готовыми
 запросами, прозрачность/опоры и игровая интеграция NOT_RUN.
 Слияние PR отдельно не авторизовано этой записью.

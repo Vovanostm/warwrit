@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Novel art styles / JSON publication — 2026-10-25, LOCAL PREPARED
+## Novel art styles / JSON publication — 2026-10-25, BRANCH PUBLISHED
 
 Coordinator: local Codex parent; Orca and automation remain stopped.
 Owner requested commit, push, PR and local-main update. Isolated branch
@@ -10,10 +10,11 @@ Scope: 70 selected illustrations, ten sheets/gallery, thirteen selected referenc
 two style profiles, four direct generation requests and owning documentation.
 Historical iterations and the >100 MiB local ZIP are excluded. Main
 ART_LORE_POLICY/agent workflow retained; no combat/3D source or dependencies.
-Focused JSON/reference/gallery-file/format/content checks PASS; normal commit
-audit pending. Exact outcomes are recorded in the owning page.
+Focused JSON/reference/gallery-file/format/content checks and normal commit
+audit PASS. Asset commit `10e8084c` pushed; PR creation/current-head CI pending.
 [Art decision and result](../wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25).
-New prompt generation and game integration NOT_RUN; PR publication pending.
+Local main fast-forwarded to `7389e822`; original WIP checkout not switched.
+New prompt generation and game integration NOT_RUN; merge NOT_AUTHORIZED.
 
 ## Integrate #319 / PR #324 — 2026-10-25
 

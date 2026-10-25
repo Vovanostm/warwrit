@@ -11,13 +11,15 @@ requests.
 
 ### Isolated publication candidate for the selected art styles
 
-- 2026-10-25, branch `codex/novel-art-style-profiles`, local: owner requested
+- 2026-10-25, branch `codex/novel-art-style-profiles`, published: owner requested
   commit/push/PR and local-main update. Isolated this chat’s art, JSON and wiki
   changes from the dirty combat checkout onto current main `7389e822`.
   Preserved main’s ART_LORE_POLICY and agent workflow. Selected PNGs, boards
   and gallery are included; historical iterations and the large local ZIP are
   excluded. JSON/reference/gallery-file/format/content/short-plan checks PASS;
-  normal commit audit and publication pending. Generation with new requests
+  normal commit audit PASS. Asset commit `10e8084c` pushed; local main safely
+  fast-forwarded to `7389e822`, original checkout/WIP preserved. PR creation/CI
+  pending at this checkpoint; merge not authorized. Generation with new requests
   and game integration NOT_RUN. [Delivery record](docs/wiki/vision.md#публикация-художественного-комплекта--2026-10-25).
 
 ### Ready-to-submit image-generation JSON and researched prompts
