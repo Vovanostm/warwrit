@@ -21,7 +21,14 @@ requests.
 - Native browser testing found an old-frame timestamp preceding immediate Visit
   startup; the controller now clamps negative frame elapsed time and preserves
   monotonic frame time. Twenty focused scenarios/types and scoped lint PASS;
-  full native flow rerun PASS without page errors. Critic/commit audit pending.
+  full native flow rerun PASS without page errors. Source `09c4b592` passed the
+  normal hook/audit after contextual-label cleanup. First critic REJECT for
+  faint overview boundary; a continuous ochre/dark outline replaces the dashed
+  edge. Independent revision review pending.
+- The normal hook exposed a focused-coverage selection gap for this standalone
+  DOM entry. `scripts/git-hooks/pre-commit` now also selects its existing owning
+  map suite when that entry changes, preserving real collaborator coverage;
+  browser-only controller coverage, audit base and thresholds are unchanged.
   Core/server/save/dependencies/art unchanged; no external operations.
 
 ### Settlement area UX recommendation

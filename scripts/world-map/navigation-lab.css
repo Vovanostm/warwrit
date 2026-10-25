@@ -241,10 +241,15 @@ dd {
 #entry-zones polygon {
   fill: #b99c64;
   fill-opacity: 0.08;
-  stroke-dasharray: 6 4;
-  stroke-opacity: 0.95;
+  stroke-opacity: 1;
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
+}
+#entry-zones polygon.zone-edge {
+  fill: none;
+  stroke: #111b1c;
+  stroke-width: 5;
+  stroke-opacity: 0.9;
 }
 #entry-controls {
   border-block: 1px solid var(--line);

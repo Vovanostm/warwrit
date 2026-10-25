@@ -175,7 +175,9 @@ function alreadyAtPlace(target: PointFp) {
 function drawEntryZones() {
   element('entry-zones').replaceChildren();
   const entry = selectedEntry ?? nearbyEntry;
-  if (entry) polygon(entry.footprint, 'entry-zones');
+  if (!entry) return;
+  polygon(entry.footprint, 'entry-zones').classList.add('zone-edge');
+  polygon(entry.footprint, 'entry-zones');
 }
 
 function refreshNearby() {

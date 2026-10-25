@@ -30,6 +30,12 @@ fi
 # code so a missing or stale coverage file never fails or skews the commit
 # (Orca builders failed on a missing file; see docs/engineering/AGENT_TEAM.md).
 code="$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx|mjs|js)$' || true)"
+# This standalone DOM entry is exercised in the browser, not imported by unit
+# tests. Keep its collaborators' owning suite in the focused coverage run.
+if printf '%s\n' "$code" | grep -qx 'scripts/world-map/navigation-lab.ts'; then
+  code="$code
+scripts/world-map/navigation-lab.test.ts"
+fi
 if [ -n "$code" ] || [ ! -f coverage/coverage-final.json ]; then
   # shellcheck disable=SC2086
   pnpm --silent exec vitest related --run --coverage --mode coverage --passWithNoTests ${code:-package.json} >/dev/null 2>&1 ||
