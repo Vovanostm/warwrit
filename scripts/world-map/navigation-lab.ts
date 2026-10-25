@@ -12,6 +12,13 @@ import {
 } from '@warwrit/game-core';
 import { type Pixel } from './porechye-navigation.js';
 import * as regional from './porechye-regional.js';
+import {
+  advanceMapView,
+  boundedMapView,
+  wheelPixels,
+  zoomMapView,
+  type MapView,
+} from './map-camera.js';
 import { mapProfiles } from './navigation-maps.js';
 import { mountContractPreview } from './navigation-contracts.js';
 
@@ -336,7 +343,7 @@ function setMode(next: typeof mode) {
   element('mode').textContent =
     mode === 'start'
       ? 'Нажмите на карту, чтобы поставить старт'
-      : 'Нажмите на карту, чтобы выбрать цель';
+      : 'ПКМ — цель пути · ЛКМ — выбор или обзор';
 }
 
 function setEndpoint(p: PointFp) {
@@ -344,7 +351,7 @@ function setEndpoint(p: PointFp) {
     start = p;
     setMode('goal');
   } else {
-    if (!legacy) start = markerPosition;
+    start = markerPosition;
     goal = p;
   }
 }
@@ -378,6 +385,7 @@ function showCoordinates(p: Pixel) {
 let drag: { id: number; x: number; y: number; view: number[]; moved: boolean } | undefined;
 map.addEventListener('pointerdown', (event) => {
   if (event.button !== 0) return;
+  zoomTarget = undefined;
   drag = {
     id: event.pointerId,
     x: event.clientX,
@@ -410,16 +418,22 @@ map.addEventListener('pointerup', (event) => {
 map.addEventListener('pointercancel', () => {
   drag = undefined;
 });
-let view = { x: 0, y: 0, width: SHEET.width as number, height: SHEET.height as number };
+let view: MapView = { x: 0, y: 0, width: SHEET.width, height: SHEET.height };
+let zoomTarget: MapView | undefined;
 function setView(x: number, y: number, width: number, height: number) {
-  view = {
-    x: Math.max(0, Math.min(SHEET.width - width, x)),
-    y: Math.max(0, Math.min(SHEET.height - height, y)),
-    width,
-    height,
-  };
-  map.setAttribute('viewBox', `${view.x} ${view.y} ${width} ${height}`);
+  zoomTarget = undefined;
+  applyView(boundedMapView({ x, y, width, height }, SHEET));
+}
+function applyView(next: MapView) {
+  view = next;
+  map.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
   updateViewportDetails();
+}
+function animateZoom(elapsedMs: number) {
+  if (!zoomTarget) return;
+  const next = advanceMapView(view, zoomTarget, elapsedMs);
+  if (next === zoomTarget) zoomTarget = undefined;
+  applyView(next);
 }
 function symbolScale() {
   return expanded ? view.width / 1536 : 1;
@@ -460,22 +474,19 @@ map.addEventListener(
   'wheel',
   (event) => {
     event.preventDefault();
+    if (drag) return;
     const [x, y] = mapPoint(event);
-    const factor = Math.max(
-      0.18,
-      Math.min(1, (view.width / SHEET.width) * (event.deltaY > 0 ? 1.15 : 1 / 1.15)),
-    );
-    const width = SHEET.width * factor,
-      height = SHEET.height * factor;
-    setView(
-      x - ((x - view.x) * width) / view.width,
-      y - ((y - view.y) * height) / view.height,
-      width,
-      height,
-    );
+    const fraction: Pixel = [(x - view.x) / view.width, (y - view.y) / view.height];
+    const delta = wheelPixels(event.deltaY, event.deltaMode, map.clientHeight);
+    zoomTarget = zoomMapView(zoomTarget ?? view, fraction, delta, SHEET);
   },
   { passive: false },
 );
+map.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+  setMode('goal');
+  selectPoint(point(mapPoint(event)));
+});
 element('fit').addEventListener('click', () => setView(0, 0, SHEET.width, SHEET.height));
 element('start').addEventListener('click', () => setMode('start'));
 element('goal').addEventListener('click', () => setMode('goal'));
@@ -510,6 +521,7 @@ function arrive() {
 }
 
 function animate(now: number) {
+  animateZoom(now - lastFrame);
   if (running && plan) {
     elapsed = Math.min(
       Number(plan.arrivesAtMs),

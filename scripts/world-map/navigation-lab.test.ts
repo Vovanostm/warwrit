@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
+import { advanceMapView, wheelPixels, zoomMapView } from './map-camera.js';
 import { mountContractPreview } from './navigation-contracts.js';
 import {
   buildNavigationField,
@@ -219,5 +220,53 @@ test('visible water in all new river tiles and the retting pond stays blocked', 
   assert.deepEqual(
     probes.map((p) => continuousSurfaceAt(atlasField, atlasPoint(p)).speedPermille),
     probes.map(() => 0),
+  );
+});
+
+test('fine wheel deltas accumulate around the cursor and respect map bounds', () => {
+  const extent = { width: 4608, height: 3072 };
+  const initial = { x: 0, y: 0, ...extent };
+  const cursor = [0.3, 0.4] as const;
+  const fine = zoomMapView(initial, cursor, -1, extent);
+  const first = zoomMapView(initial, cursor, -100, extent);
+  const second = zoomMapView(first, cursor, -100, extent);
+  const combined = zoomMapView(initial, cursor, -200, extent);
+  const limit = zoomMapView(second, cursor, -10000, extent);
+  assert.deepEqual(
+    {
+      fineStep: initial.width - fine.width < 10,
+      accumulated: Math.abs(second.width - combined.width) < 0.001,
+      anchorX: Math.abs(second.x + cursor[0] * second.width - cursor[0] * extent.width) < 0.001,
+      anchorY: Math.abs(second.y + cursor[1] * second.height - cursor[1] * extent.height) < 0.001,
+      minimumWidth: Math.round(limit.width),
+      lineUnits: wheelPixels(-2, 1, 800),
+    },
+    {
+      fineStep: true,
+      accumulated: true,
+      anchorX: true,
+      anchorY: true,
+      minimumWidth: 829,
+      lineUnits: -32,
+    },
+  );
+});
+
+test('camera eases through intermediate frames and converges independently of refresh rate', () => {
+  const initial = { x: 0, y: 0, width: 4608, height: 3072 };
+  const target = { x: 600, y: 400, width: 2304, height: 1536 };
+  const half = advanceMapView(initial, target, 1000 / 60);
+  const settle = (frames: number) => {
+    let camera = initial;
+    for (let i = 0; i < frames; i++) camera = advanceMapView(camera, target, 1000 / frames);
+    return camera;
+  };
+  assert.deepEqual(
+    {
+      intermediate: half.width < initial.width && half.width > target.width,
+      converged60: settle(60),
+      converged120: settle(120),
+    },
+    { intermediate: true, converged60: target, converged120: target },
   );
 });

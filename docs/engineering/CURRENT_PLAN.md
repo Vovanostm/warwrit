@@ -1,6 +1,26 @@
 # Warwrit current delivery plan
 
-## Porechye 3×3 atlas and 24 proposals — 2026-10-25, LOCAL COMPLETE
+## Map camera and right-click target — 2026-10-26, LOCAL COMPLETE
+
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `89c746de`.
+Owner: smooth zoom and right mouse button for marking movement.
+Outcome: proportional cursor-anchored eased wheel zoom; RMB chooses the goal
+from the current party position, including when the start tool was selected.
+Left click/pan, existing water restrictions and explicit Walk button retained.
+Scope: scripts/world-map camera/controller/hints/tests and owning map records.
+Verification: camera anchor/bounds/refresh-rate scenarios; real browser wheel
+frame samples, RMB/default-menu suppression, pan/reset and independent critique.
+[Owning result](../wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
+Fourteen focused scenarios/types and scoped lint/format PASS.
+Native browser wheel:43 intermediate widths/65frames, cursor drift<0.001px;
+RMB menu suppressed, goal overrides start-tool, paused position retained;
+water refusal, pan and interrupted-zoom fit reset PASS.
+Independent visual ACCEPT: six applicable criteria2, characters N/A.
+No new art, domain rules, dependencies, save/server or external writes.
+
+## Dated history
+
+### Porechye 3×3 atlas and 24 proposals — 2026-10-25, LOCAL COMPLETE
 
 Sole writer: Codex parent. Branch `codex/world-map-painted`; resumed `8c520d33`.
 Owner requested ~9× territory, 20+ varied contracts and possible POIs.
@@ -24,8 +44,6 @@ Only scripts/world-map, atlas art, owning wiki/checkpoint/changelog changed.
 Owner enjoyment, content sufficiency and physical game balance NOT_MEASURED.
 Full game/DB gate NOT_RUN; no game/server/save/dependency contract changed.
 No PR/push/merge/deploy/automation/Orca restart performed or authorized.
-
-## Dated history
 
 ### Completed predecessor: district stand
 

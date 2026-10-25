@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Smooth map zoom and right-click movement target
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner requested smooth
+  zoom and RMB marking. The stand now eases proportional wheel deltas around
+  the cursor; pan, location focus and fit cancel pending zoom. RMB chooses the
+  goal from the current party and suppresses the browser menu; Walk remains
+  explicit. Continuation now also applies to the old v5 preview.
+- `scripts/world-map/map-camera.ts` owns finite camera math; no dependencies,
+  artwork or game rules changed. Fourteen focused scenarios/types and scoped
+  lint/format PASS; native mouse-wheel/RMB/pan/reset/water/paused-start checks
+  and independent visual ACCEPT in the
+  [owning record](docs/wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
+
 ### Porechye: nine-tile atlas and 24 contract proposals
 
 - 2026-10-25, branch `codex/world-map-painted`, local: owner requested roughly
