@@ -90,9 +90,52 @@ export interface CompanySummaryDto {
     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
   }[];
 }
+/** Safe, owner-private payroll observation; absent on historical responses means unavailable. */
+export interface CompanyPayrollDto {
+  readonly atTick: string;
+  readonly publicRevision: string;
+  readonly pools: readonly {
+    readonly poolId: string;
+    readonly walletId: string;
+    readonly location: {
+      readonly kind: 'AT' | 'TERRAIN' | 'MOVING' | 'TRANSIT';
+      readonly [key: string]: string;
+    };
+    readonly cashQ: string;
+    readonly reservedQ: string;
+    readonly spendableQ: string;
+  }[];
+  readonly services: readonly {
+    readonly membershipId: string;
+    readonly poolId: string;
+    readonly currentAgreedRateMilli: string;
+    readonly materialSupportOnly: boolean;
+  }[];
+  readonly claims: readonly {
+    readonly claimId: string;
+    readonly membershipId: string;
+    readonly poolId: string;
+    readonly payee: {
+      readonly kind: 'CHARACTER' | 'COMPANY' | 'ESTATE' | 'WORLD';
+      readonly id: string;
+    };
+    readonly dueAt: string;
+    readonly estimatedQ: string;
+    readonly cashPaidQ: string;
+    readonly currentMaintenanceQ: string;
+    readonly pendingQ: string;
+    readonly unsecuredQ: string;
+  }[];
+  readonly owedQ: string;
+  readonly dueQ: string;
+  readonly payableQ: string;
+  readonly duePayableQ: string;
+}
 /** Owner-private physical and money view; only the owning account receives it. */
 export interface CompanyHoldingsDto {
   readonly supplies?: { readonly rations: number; readonly people: number; readonly days: number };
+  /** Optional for old response compatibility; missing means no payroll snapshot is available. */
+  readonly payroll?: CompanyPayrollDto;
   /** Exact company-owned cash in q units (1 crown = 1,000,000 q); members' purses excluded. */
   readonly cashQ: string;
   readonly wallets: readonly {

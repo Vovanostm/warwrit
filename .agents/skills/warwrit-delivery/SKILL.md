@@ -26,10 +26,10 @@ writers or regenerate already approved source catalogues.
 
 Before merging read live head/base, reviews, unresolved threads and applicable
 CI evidence, including the `PR scope` check. Require no unresolved blocking
-defect and permission under AGENTS hard rule 1: the owner's words for this PR,
-or a quoted mission scope that names its issue, or the
-[warwrit-orca](../warwrit-orca/SKILL.md) merge-on-gates rule, which since 2026-10-21 covers every PR
-(infrastructure PRs also need an independent reviewer ACCEPT). Pass the expected head SHA to the merge operation. Do not dismiss a
+defect and current explicit permission under
+[AGENTS permission policy](../../../AGENTS.md#permission-policy--current-as-of-2026-10-25).
+Historical merge-on-gates permission never restarts a cancelled mission.
+Infrastructure requires independent reviewer ACCEPT for the affected head. Pass the expected head SHA to the merge operation. Do not dismiss a
 review or force a ref to bypass a failure. Read back merged status, actual merge
 SHA/tree, default-branch ref and linked issue state. A failed tool call is not a
 merge. Auto-merge, deployment and purchases are separate operations.
@@ -43,21 +43,24 @@ Task / contract / source edition / versions:
 Branch / base / reviewed head / tree / actual merge (or NOT_MERGED):
 Implemented effects / finite residual requirements:
 Postulate -> public specification -> actual result:
-Commands / exit result / run+job / logs / checked tree:
+Commands / environment / exit result / run+job / logs / checked revision:
 Author vs external review / limitations:
+Rework cause / first submitted result accepted / later regressions:
+Tokens (input/output/cache), elapsed to acceptance: actual values or NOT_MEASURED
 One next step:
 ```
 
-Write/read back the issue or PR; close the issue the PR delivered or relabel it
-with what is left. Update the canonical Airtable checkpoint and an Empirical
+When external writes are authorized, write/read back the issue or PR. Close
+only issues whose individual criteria passed; related issue links do not prove
+acceptance. Size is advisory; semantic review must assess cohesion and rollback. Update the canonical Airtable checkpoint and an Empirical
 `Warwrit` event at a milestone or when the owner asks, not for every slice.
 Preserve older dated evidence as history. Do not announce a milestone or M1
 complete because one slice passed.
 
-Before the session stops (not while waiting for CI), follow
-[AGENTS.md § Orchestration](../../../AGENTS.md#orchestration): push work in
-progress, leave the five-line handoff on the issue and release or transfer the
-coordinator lease.
+Before stopping preserve WIP and a short checkpoint under
+[AGENTS orchestration](../../../AGENTS.md#orchestration). A delegated editor
+returns its diff to the parent; a branch owner commits finished steps. Do not
+push or write external records without current permission, especially after stop.
 
 ## Next AI task
 

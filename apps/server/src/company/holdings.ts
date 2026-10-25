@@ -1,6 +1,7 @@
 import { COMPANY_CATALOGUE, COMPANY_RULES } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
+import { projectPayroll } from './payroll-view.js';
 
 /** Owner-private read model of money, carried items and bodily state; never sent to other accounts. */
 export function projectCompanyHoldings(
@@ -27,6 +28,8 @@ export function projectCompanyHoldings(
     .toString();
 
   const physical = state.economy.physical;
+  const payroll = projectPayroll(state.economy, companyId);
+  if (!payroll) throw new Error('Company payroll observation unavailable');
   const carriers = new Map(
     (physical?.containers ?? []).map((container) => [
       container.containerId,
@@ -76,14 +79,6 @@ export function projectCompanyHoldings(
   const fieldCamp = state.economy.finance.maintenance.some(
     (mode) => mode.kind === 'FIELD_CAMP' && mode.endedAt === null,
   );
-  const finance = state.economy.finance;
-  const owed = (claim: (typeof finance.claims)[number]) =>
-    BigInt(claim.reportedQ) - BigInt(claim.reportedCoveredQ) - BigInt(claim.paidQ);
-  const wagesOwedQ = finance.claims.reduce((sum, claim) => sum + owed(claim), 0n).toString();
-  const wagesDueQ = finance.claims
-    .filter((claim) => BigInt(claim.dueAt) <= BigInt(state.economy.lifecycle.campaignTick))
-    .reduce((sum, claim) => sum + owed(claim), 0n)
-    .toString();
   const party = state.economy.lifecycle.parties[0];
   const partyMembers = state.economy.lifecycle.characters.filter(
     (person) =>
@@ -130,5 +125,15 @@ export function projectCompanyHoldings(
     people: partyMembers.length,
     days: partyMembers.length ? (rations + openedFood) / partyMembers.length : 0,
   };
-  return { cashQ, wallets, items, people, fieldCamp, wagesOwedQ, wagesDueQ, supplies };
+  return {
+    cashQ,
+    wallets,
+    items,
+    people,
+    fieldCamp,
+    wagesOwedQ: payroll.owedQ,
+    wagesDueQ: payroll.dueQ,
+    payroll,
+    supplies,
+  };
 }

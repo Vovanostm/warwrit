@@ -1,6 +1,67 @@
 # Warwrit current delivery plan
 
-## Pipeline status — 2026-10-24
+## Authorized delivery of #321, then #319 — 2026-10-25
+
+Coordinator: local Codex parent; Orca coordinator remains stopped.
+Owner: «Ок, продолжай - merge, next worktree implement + merge».
+Mission: publish/merge this completed #321 + reviewed workflow branch, then complete/integrate existing #319 worktree and merge its PR #324.
+Permission covers these two deliveries after applicable CI/review; no Orca restart, automation, deployment or paid services.
+Current branch `Vovanostm/wages-projection-321`; live base `1c793e16`; source accepted at `b1194a94`.
+Workflow independently accepted at `a3ba1e8c`; records-only successor `d7e72847` inspected.
+Local #321 checks and actual HTTP/PostgreSQL proof passed; publication CI and merge pending.
+[Retained review](evidence/wages-projection-321/review.md); [HTTP result](evidence/wages-projection-321/http-readback.json).
+Next worktree: `Vovanostm/wages-local-evidence-319`, PR #324; preserve existing work and recheck integrated head after #321.
+#320 depends on #319; not part of this two-delivery mission. Parent #167 remains open.
+Exact expected merge heads are read live at each merge; changed code invalidates affected acceptance.
+
+## Dated history
+
+### Local completion of #321 — 2026-10-25
+
+Owner: «Теперь работа будет проходить эффективнее? Попробуй применить обновления в worktree и довести суб-агентом его до завершения».
+Scope: complete existing #321 safe payroll snapshot/history locally with a Codex subagent.
+Branch: `Vovanostm/wages-projection-321`; live main readback `1c793e16`.
+Reviewed workflow commits applied by fast-forward through `d7e72847`; four existing WIP files preserved.
+Contract: issue [#321](https://github.com/Vovanostm/warwrit/issues/321); local `.orca/wages-projection-321/contract.md` and cited parent contract.
+Updated AGENTS governs process; old contract budgets/coordinator allocations are historical.
+Author owns four source/test paths, necessary route integration tests and slice documentation.
+Parent owns isolated runtime resources and independent acceptance; no concurrent heavy checks.
+Done requires exact safe projection/history, focused checks and authenticated GET/PostgreSQL readback, then independent review.
+Parent #167 payment/UI journey is outside this slice and remains unaccepted here.
+Orca/automation remain STOPPED_BY_OWNER; this author is a bounded Codex subagent.
+Publication, merge, deployment and issue closure are not part of this local completion.
+State: LOCAL #321 complete; independent Sol 6.1 ACCEPT at `b1194a94`, no material findings.
+Owner GET now uses allowlisted `projectCompanyEconomy` payroll and safe legacy wage totals.
+Settled/ended-service claims, exact q, pending holds and old optional responses covered.
+Checks PASS: focused projector/economy/privacy (10); real-PG route integration (2, no skips).
+Protocol build; protocol/server/web types; scoped ESLint/Prettier/diff PASS.
+Normal commit hook PASS, no bypass; syntactic-attribution warning retained in local author report.
+[Owning wiki amendment](../wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка).
+Parent real loopback HTTP/PG PASS: exact q, owner200/anonymous401/other empty, repeat/root/revision coherence.
+One author + one reviewer; first submitted code ACCEPT, no material code rework.
+Inherited test fixture and parent probe setup fixes occurred; savings NOT_MEASURED.
+Private probe/app/PG/Compose resources disposed; filtered Docker listing empty.
+Local evidence: `.orca/wages-projection-321/{report,review}.md` and `http-readback.*`.
+Full game gate/browser/payment/UI/publication/merge NOT_RUN; tokens/elapsed NOT_MEASURED.
+
+### Workflow preparation status — 2026-10-25 (completed locally)
+
+Coordinator: none active; Orca mission/automation remain STOPPED_BY_OWNER.
+Owner stop (2026-10-24): «Отмени автозапуск и отмени работу в orca - токены съедаются, эффективность около нулевая.»
+Current scope: local workflow improvements A–D and first-correct-result guidance.
+Owner (2026-10-25): «Хорошо. Запусти Sol 6.1 subagent for implement improvements and another subagent after for review skils, agents.md and grade them with best practices».
+Branch: `codex/agent-workflow-improvements`; base `1c793e1676a463d8ea750a890ccb493065ffb04e`.
+[Owning preparation/results](AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25).
+Implementation: local; independent reviewer ACCEPT at `a3ba1e8c`, R1/R2 resolved.
+Bounded rubric: AGENTS.md 24/24; affected skills/prompts 24/24.
+Publication/merge NOT_RUN.
+No automation, Orca worker, game server/DB, deploy or GitHub mutation authorized here.
+Assigned local Codex implementation and independent review are authorized.
+Gameplay pilot E NOT_RUN; savings NOT_MEASURED. Existing WIP/blocked findings retained.
+Next: owner-controlled integration decision; no automatic publication, merge or restart.
+Historical snapshots below are not active instructions or current live-main proof.
+
+### Historical pipeline snapshot before owner cancellation — 2026-10-24
 
 Coordinator: Orca pipeline, run `run_bae7056fac91`; wrapper holds the lease.
 Owner scope (2026-10-21): «У тебя есть все полномочия по реализации - не спрашивай по мелочам».
@@ -32,8 +93,6 @@ This tick: 0 merged PRs; 0 merged PRs with playable proof.
 Full integrated gates NOT_RUN this tick; no milestone acceptance inferred.
 No source, finance rule, API/protocol, replay, schema or dependency changes this tick.
 Wrapper releases its lease when this single tick returns.
-
-## Dated history
 
 ### Historical checkpoint — #307 premerge status — 2026-10-24
 

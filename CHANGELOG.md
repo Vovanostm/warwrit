@@ -9,6 +9,95 @@ requests.
 
 ## Unreleased
 
+### Authorize two reviewed deliveries — 2026-10-25, LOCAL
+
+- Branch `Vovanostm/wages-projection-321`; owner explicitly requested merge,
+  then completion and merge of the next worktree. Current mission covers this
+  #321/workflow branch and existing #319 / PR #324 after independent acceptance
+  and applicable CI; no automation, deployment or wider backlog activation.
+- Retained local [#321 review](docs/engineering/evidence/wages-projection-321/review.md)
+  and [actual HTTP/PG result](docs/engineering/evidence/wages-projection-321/http-readback.json)
+  alongside the change. Source accepted at `b1194a94`; workflow at `a3ba1e8c`.
+  This documentation-only publication preparation changes no game behavior.
+  Status-block check initially rejected the missing coordinator label; corrected
+  to name the local parent, then PASS. Scoped formatting/diff and normal commit
+  audit PASS. PR CI and merges pending; source/browser/payment limits remain.
+
+### Expose safe owner payroll snapshot — 2026-10-25, LOCAL
+
+- Branch `Vovanostm/wages-projection-321`, owner-requested completion of
+  [#321](https://github.com/Vovanostm/warwrit/issues/321): optional protocol payroll
+  block maps the existing public finance observation; holdings wage totals now
+  exclude unknown claims and use its snapshot tick. Exact q, pending versus paid,
+  and retained settled/ended-service history are preserved. No allocation rules,
+  commands, canonical storage, migrations or UI changes.
+- Affected: `packages/protocol/src/company.ts`, server `company/holdings.ts`,
+  `payroll-view.ts` and focused projection/route tests.
+  [Owning wiki result](docs/wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка)
+  and [current status](docs/engineering/CURRENT_PLAN.md#local-completion-of-321--2026-10-25).
+  Projector/economy/privacy tests (10), authenticated real-PG route tests (2, no
+  skips), protocol build, protocol/server/web types and scoped lint/format/diff
+  PASS. Initial invalid synthetic test fixture corrected before passing aggregate
+  roundtrip. Author route evidence uses Fastify.inject. Independent Sol 6.1
+  ACCEPT at first submitted implementation `b1194a94`, no material findings/code
+  rework. Parent real loopback HTTP/PG PASS: exact 993-q owed, 7-q pending,
+  986-q duePayable, owner200/anonymous401/other-account empty, repeated GET,
+  public revision and unchanged root. Two parent probe setup/fixture failures
+  were repaired without production changes. Normal hook audit PASS with
+  syntactic-attribution warning; private runtime resources disposed.
+  Pilot used one author plus one reviewer; comparative savings, effort/tokens
+  NOT_MEASURED. Full game gates, browser/payment UI, publication and merge NOT_RUN.
+
+### Accept local workflow review — 2026-10-25, LOCAL
+
+- Branch `codex/agent-workflow-improvements`; independent reviewer ACCEPT for
+  `a3ba1e8c6c42d377b88bf974e46754f8e73db841`, R1/R2 resolved. Four instruction
+  counterexamples and reviewer diff check PASS; unchanged script evidence reused.
+  Bounded grades: AGENTS.md 24/24; affected skills/prompts 24/24. These are review
+  judgments, not measured savings or certification of untouched skills.
+- [Owning acceptance](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-acceptance--2026-10-25)
+  names the reviewer-owned local report and preserves first-pass history.
+  This docs-only successor changes no implementation. Scoped format/status/diff
+  checks PASS; normal documentation-only hook path, no bypass. Unpublished;
+  gameplay pilot/full game gate/publication/merge NOT_RUN, savings NOT_MEASURED.
+  Orca/automation remain stopped.
+
+### Align workflow acceptance consumers — 2026-10-25, LOCAL
+
+- Branch `codex/agent-workflow-improvements`; independent review R1/R2 on
+  `f3099e38` found stale required-contract/runtime and visual/missing-evidence
+  instructions. Review/evaluation now use assigned accepted criteria without a
+  mandatory slice file/heading; runtime commands require explicit owned resources.
+  Missing criteria/resources/proof yields non-passing BLOCKED_ENV.
+- Orca skill tier table and evaluator/visual prompts retain independent scored
+  critique for substantive visuals in U/T as well as V. Common rules apply to
+  every worker; CURRENT_PLAN distinguishes authorized local Codex work from
+  stopped Orca workers. [Owning corrections/checks](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-review-corrections--2026-10-25).
+- Counterexample read-through, scoped Markdown format/link/status/diff checks PASS.
+  Scripts unchanged; applicable fixture checks reused. Normal docs-only hook path,
+  no bypass. Independent re-review pending; game suites/pilot/publication/merge
+  NOT_RUN, savings NOT_MEASURED. No runtime/automation/GitHub mutation.
+
+### Bound agent workflow and preserve owner stop — 2026-10-25, LOCAL
+
+- Branch `codex/agent-workflow-improvements`; owner-approved A–D and first-result
+  guidance amend the former one-issue/300-line cap, contract/stub rituals,
+  unconditional scout/refill and historical merge-on-gates activation. Current
+  authority is centralized in AGENTS; editor/branch-owner modes are explicit.
+  [Owning preparation/results](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25)
+  retains sources, affected contracts and limits. Domain/visual acceptance stays.
+- Tick checks STOPPED_BY_OWNER before side effects and between iterations;
+  exit 20 stops looping without removing the marker. Scope reports advisory
+  size, retains task linkage and fails on missing base/diff/body. Validation
+  includes deletions/renames and shared-contract consumers; executable/config/
+  lock/unknown changes route conservatively. One owner runs relevant local checks.
+- Focused stubbed fixtures, shell syntax, status-block and TOML checks PASS;
+  scoped format/link/diff readback PASS. Normal commit audit PASS on `1346ea49`
+  (syntactic-attribution warning retained in owning results). Existing CI job identity, bootstrap, commit hooks, thresholds and
+  sandbox controls are preserved (guard comment corrected only).
+  Independent review pending; gameplay pilot/full game suites/publication/merge
+  NOT_RUN, savings NOT_MEASURED. No automation, runtime, DB or GitHub writes.
+
 ### Accept #318 ordinary-command gates — 2026-10-24, PUBLISHED
 
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):

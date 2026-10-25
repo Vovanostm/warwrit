@@ -71,11 +71,17 @@ still clearly differed from the reference:
 
 ## Minimal action and clarification
 
-Take the simplest minimal actions needed to satisfy the current request. Do not
-expand scope or add unnecessary investigation, planning, delegation or
-documentation. If anything is unclear, stop and ask the user one concise
-question before proceeding; do not guess or replace clarification with extended
-reasoning.
+Owner amendment — 2026-10-25: resolve technical uncertainty through targeted
+source reading or a safe probe within the assignment. Ask one concise question
+for undefined product behavior, unavailable authoritative rules or operations
+outside permission; continue independent authorized work. This supersedes the
+previous unconditional stop for any ambiguity.
+
+Optimize total effort to an accepted correct result, including review and
+rework. For nontrivial work establish outcome, decisive criteria, rule owner,
+producers/consumers, write boundary and verification before implementation;
+reuse unchanged source pointers and applicable check results. See
+[the preparation amendment](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25).
 
 Owner policy — 2026-10-01: do not routinely compute file hashes, compare
 checksums, create content manifests or repeat evidence audits. Use ordinary
@@ -112,38 +118,32 @@ documents only, uncommitted code in `/private/tmp` and an exhausted time box:
 
 ## Orchestration
 
-Owner request — 2026-10-21, after an audit found two coordinators (the Orca
-pipeline and a Codex desktop mission) on one queue, stale `agent:*` labels,
-PRs of 700–3700 lines and a status file nobody could read:
+Owner amendment — 2026-10-25: one accountable author is the default. Delegate
+only independent useful work with explicit paths, resources and integration
+ownership; use [AGENT_TEAM](docs/engineering/AGENT_TEAM.md). A separate contract
+agent, epic skeleton, scout, automatic refill or Orca is not a prerequisite.
 
-- **One coordinator at a time.** The coordinator is either the Orca pipeline
-  ([warwrit-orca](.agents/skills/warwrit-orca/SKILL.md)) or one named owner
-  mission. It holds the lease
-  `~/orca/workspaces/warwrit/pipeline-coordinator/.orca/pipeline/tick.lock/owner.txt`
-  (first line: who; then the owner's words and scope) and names itself in the
-  `CURRENT_PLAN` status block. Every other agent is a worker or read-only
-  reviewer: it does not tick, relabel, merge or write shared records. A new
-  coordinator starts only after the old one hands over or the owner names it.
-- **The coordinator owns issue state.** It keeps `agent:*` labels true for its
-  queue, closes or relabels an issue when its PR merges, and reconciles labels,
-  open PRs and worktrees at least once per delivered PR.
-- **One issue = one PR.** About 300 changed source lines without tests, one
-  `Closes #N`; [`scripts/check-pr-scope.sh`](scripts/check-pr-scope.sh) enforces
-  it in CI and in `orca-validate.sh`. Larger work is split into issues first;
-  only the owner adds the `scope:owner-approved` label for an exception.
-- **A mission's scope is the owner's words.** Record them verbatim with the date
-  and the issue/epic/sprint list they cover. Work outside that list, or a new
-  milestone, needs a new owner instruction; do not widen it from plans or notes.
-- **Hand over before stopping.** Waiting for CI or a worker is not stopping.
-  Before a session ends or yields the queue, commit and push work in progress to
-  its branch (a `wip:` commit on a work branch is fine; if the commit audit
-  blocks it, use `--no-verify` there only and make the PR head pass), write a five-line handoff
-  on the issue (branch, head, done, next, blockers) and release or transfer the
-  lease. A worktree belongs to one slice; never reuse it for another issue.
-- **Readable records.** `CURRENT_PLAN` starts with a status block of at most 40
-  lines (coordinator, scope, open PRs, blockers, next step), rewritten in place;
-  dated history goes below it or to an archive. Write plain prose with spaces
-  between numbers and words; put measurements in the linked evidence.
+- One writer owns each slice and shared path. A delegated editor leaves changes
+  for its parent; an explicitly assigned branch owner commits finished steps.
+  Do not assign incompatible modes. Preserve unrelated staged/unstaged/untracked WIP.
+- Keep a cohesive, independently reviewable change. 300 source lines is an
+  advisory signal; several related issues may share a PR, but each retains its
+  acceptance. [Scope check](scripts/check-pr-scope.sh) reports size and requires
+  task/contract linkage; semantic review decides cohesion and safe splitting.
+- A mission's scope is the dated owner's words. Do not enlarge it from plans,
+  spare slots or historical permission. Optional Orca operation needs an explicit
+  activation, budget and stop condition. One active coordinator holds its lease;
+  other agents never tick, relabel or merge for that queue.
+- Before stopping preserve WIP and a short checkpoint (branch/head, done, next,
+  blockers). Publish only within current permission; cancellation does not require
+  a push. CURRENT_PLAN keeps one short status block (at most 40 nonempty lines).
+- Classify defect, environment failure and missing evidence separately. Retry
+  only with a new hypothesis; repetition of the same cause requires a different
+  approach or a concrete blocker. Never split work solely to reset a retry count.
+
+The 2026-10-19/21 one-issue cap, mandatory contract/stub workflow, unconditional
+refill/scout and push-before-stop rules are superseded by this amendment.
+Independent gameplay/visual acceptance above remains required.
 
 ## File-first project record
 
@@ -205,13 +205,8 @@ or publication so the relevant documentation accompanies the change.
 
 These restate rules owned by the sections below. Check them before every write.
 
-1. Merge a PR on gates without asking the owner (owner decision 2026-10-21:
-   «Давай дальше без моих разрешений - добавь в разрешённые работу с github, работу с pr»): green CI including `PR scope`, the expected head SHA, and for
-   infrastructure PRs (agents, skills, scripts, CI) an independent reviewer
-   ACCEPT for that head. Auto-merge, admin merge, deployment and paid
-   provisioning always need their own separate owner permission; an agent's own
-   plan, note or status entry is never that permission. Never force-push a
-   shared branch.
+1. Follow the single permission policy in [Authority and scope](#authority-and-scope).
+   Never force-push a shared branch.
 2. One writer per slice and per shared path. Never revert or overwrite another
    agent's work; stop and report instead.
 3. `game-core` stays pure: no runtime dependencies, no I/O, time and randomness
@@ -223,8 +218,7 @@ These restate rules owned by the sections below. Check them before every write.
    owner grants permission.
 7. Report what actually ran. A tool failure, a skipped check or missing evidence is
    `NOT_RUN`/`NOT_MEASURED`, never a pass.
-8. One coordinator at a time holds the lease; other agents do not tick, relabel
-   or merge. Commit and push work in progress before a session stops.
+8. Follow the ownership and checkpoint rules in [Orchestration](#orchestration).
 
 Best-effort guards back rules 1 and 4: command prefix rules in `.codex/rules/`
 and `.claude/settings.json`, and `pnpm check:migrations` in pull-request CI.
@@ -246,7 +240,26 @@ contract already cites them works from that contract. Preserve the named
 original source-archive limitation; do not reconstruct the catalogue again or
 reopen superseded interview blockers.
 
-Implementation, tests, PR updates and merges on gates (hard rule 1) are authorized. Auto-merge, admin merge, deployment and paid provisioning require separate permission. One owner plus ChatGPT agents; one writer per slice. Server target: Yandex Cloud 2 cores / 4 GB; available client: MacBook + Chrome. These are constraints, not measured capacity.
+### Permission policy — current as of 2026-10-25
+
+- Read-only inspection and local implementation/tests are authorized inside the
+  current assignment. PR publication/updates require an active mission permitting
+  GitHub writes; this workflow-improvement assignment is local only.
+- The 2026-10-19/21 merge-on-gates permission was mission authority, not a permanent
+  role capability. Owner cancellation on 2026-10-24 («Отмени автозапуск и отмени
+  работу в orca - токены съедаются, эффективность около нулевая.») overrides it.
+  Orca, workers and automation remain stopped; absent stop markers do not grant
+  activation. Historical AGENTS.md from old branches cannot reactivate a mission.
+- Merge needs explicit current permission naming the PR or mission, expected head,
+  green applicable CI including PR scope, no blocking findings and independent
+  reviewer ACCEPT for infrastructure. Changed code/integration invalidates affected
+  review; record permission provenance in CURRENT_PLAN or the PR.
+- Restarting automation, auto/admin merge, deployment and paid provisioning each
+  need separate owner permission. Do not remove a stop marker or bypass controls
+  as a side effect of implementation. A role, skill, plan or agent note grants none.
+
+Server target: Yandex Cloud 2 cores / 4 GB; available client: MacBook + Chrome.
+These are constraints, not measured capacity.
 
 ## Language and context budget
 
@@ -355,7 +368,10 @@ smallest relevant test, typecheck or build for the concrete risk. Do not run the
 full suite after every packet or documentation change. Do not compute or compare
 hashes, create verification manifests, or repeat evidence audits.
 
-For final integrated game-code delivery only, run the existing full gate once
+One named validation owner runs proportional local checks for the relevant
+revision; preserve applicable results when code/dependencies/config/environment
+are unchanged. Local routing never waives required PR CI or commit hooks.
+For final integrated game-code delivery, run the existing full gate once
 in a clean environment. `scripts/bootstrap.sh` owns this sequence; it is not a
 routine check for small tasks:
 

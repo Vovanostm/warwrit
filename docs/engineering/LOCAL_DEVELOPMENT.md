@@ -181,6 +181,37 @@ pnpm exec fallow health --coverage coverage/coverage-final.json   # measured CRA
 Testkit and cross-package specs import built workspace exports; `typecheck` uses
 `--noEmit` and does not refresh `dist`.
 
+## Proportional local validation
+
+Owner amendment — 2026-10-25: one assigned check owner runs
+`bash scripts/orca-validate.sh <worktree> [base-ref]` per relevant revision.
+`--plan` as the third argument prints routing without network or mutation.
+The script uses local refs (no implicit fetch), requires a valid merge base and
+checks integration/clean tree before acceptance. Refresh live refs when integration
+requires it; the script does not claim its local origin/main is live.
+
+| Affected paths                                                                 | Local route                                                                      |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| Markdown docs/instructions only                                                | Scoped format; review affected local links/deleted targets                       |
+| Web source/public (including CSS)                                              | Workspace contract builds, web typecheck, code lint, web tests                   |
+| Server source                                                                  | Workspace contract builds, server typecheck, code lint, server tests             |
+| Core/protocol/testkit source                                                   | Contract builds, all consumer typechecks/tests, changed-code lint                |
+| Scripts, CI, package config, lockfile, migrations, assets elsewhere or unknown | Conservative existing `pnpm verify` route, plus the owning focused fixture/check |
+
+Deletion and rename classification includes both old and new paths. Format/lint
+receives only existing files. Package/consumer test selection avoids claiming
+zero related tests as sufficient; Vitest fails with zero tests. A routing fixture
+proves selected commands, not that those commands passed on real game code.
+Inspect compatibility and actual runtime consumers as well as this coarse routing.
+Database/schema changes retain their relevant real database checks and resource
+ownership; local routing never authorizes starting a shared DB.
+
+Do not repeat unchanged validation in builder and coordinator. Preserve applicable
+results until their code/dependencies/configuration/environment changes. Hooks and
+required PR CI still run the existing coverage-dependent audit and full bootstrap;
+local focused success does not waive them. For a tooling-only assignment run the
+owning fixtures/syntax/format directly and report broad game checks NOT_RUN.
+
 ## Combat implementation rules
 
 - `packages/game-core/src/combat/rules.ts` owns all provisional M0 numeric parameters.
