@@ -233,6 +233,67 @@ dd {
 #markers {
   pointer-events: none;
 }
+#entry-zones {
+  pointer-events: none;
+  stroke: #d9c28c;
+}
+#entry-zones polygon {
+  fill: #b99c64;
+  fill-opacity: 0.08;
+  stroke-dasharray: 5 5;
+  stroke-opacity: 0.65;
+  vector-effect: non-scaling-stroke;
+}
+#entry-zones circle {
+  fill: #d9c28c;
+  fill-opacity: 0.14;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+#entry-zones circle.chosen {
+  fill-opacity: 0.35;
+  stroke: #fff1c8;
+  stroke-width: 2.5;
+}
+#entry-controls {
+  border-block: 1px solid var(--line);
+  padding-block: 10px;
+}
+#entry-status {
+  color: #d9c99e;
+  font-size: 12px;
+}
+#enter-place {
+  width: 100%;
+}
+#place-visit {
+  width: min(940px, 86vw);
+  max-height: 90vh;
+  padding: 0;
+  border: 1px solid #6c6954;
+  background: #202627;
+  color: #d7d4c7;
+}
+#place-visit::backdrop {
+  background: #0a1014dd;
+}
+#visit-image {
+  display: block;
+  width: 100%;
+  max-height: 56vh;
+  object-fit: contain;
+  background: #131a1c;
+}
+.visit-content {
+  padding: 20px 28px;
+}
+#visit-title {
+  margin-top: 8px;
+  font-size: 26px;
+}
+.visit-content form {
+  margin-top: 16px;
+}
 #place-labels {
   pointer-events: none;
   fill: #eee2bf;

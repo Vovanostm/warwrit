@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Place arrival and explicit visits
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner approved the
+  outskirts proposal. Bereznyak and Kamenny Brod on atlas/v2 now have three
+  authored approach zones each; movement selects the fastest trimmed approach
+  plan. Entry requires local unobstructed reach; open water cannot be bypassed
+  by a radius. Other destinations retain point behavior with a visible notice.
+- Explicit Enter opens the existing settlement scene; return/Escape preserves
+  world position, passing through never opens it, and modal focus blocks WASD.
+  Selected-only contours/approaches and an arrival action accompany travel.
+  Nineteen focused scenarios/types and scoped lint/format PASS; native browser
+  journeys and remaining acceptance limits are in the
+  [owning result](docs/wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
+  Independent critique and normal commit audit pending. No core/server/save,
+  dependencies or art changed; no external operations.
+
 ### Settlement outskirts and entrance research
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner requested

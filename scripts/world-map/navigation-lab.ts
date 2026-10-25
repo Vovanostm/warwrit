@@ -22,6 +22,7 @@ import {
 } from './map-camera.js';
 import { mapProfiles } from './navigation-maps.js';
 import { mountContractPreview } from './navigation-contracts.js';
+import { canEnterPlace, planPlaceArrival, type PlaceEntry } from './place-entries.js';
 
 const requested = new URLSearchParams(location.search).get('map');
 const editionId = requested === 'v5' || requested === 'v2' ? requested : 'atlas';
@@ -68,6 +69,8 @@ let elapsed = 0;
 let running = false;
 let lastFrame = 0;
 let destinationName: string | undefined;
+let selectedEntry: PlaceEntry | undefined;
+let chosenApproach: string | undefined;
 
 function polygon(points: readonly PointFp[], group: string, colour?: string) {
   const shape = document.createElementNS(svgNS, 'polygon');
@@ -143,18 +146,73 @@ function drawGeography() {
 function choosePlace(index: number) {
   const place = places[index]!;
   const target = point(place.at);
-  if (Math.hypot(target.xFp - markerPosition.xFp, target.zFp - markerPosition.zFp) < 1) {
-    clearRouteHere(target);
+  clearDestination();
+  selectedEntry = mapInfo.entries.find((entry) => entry.name === place.name);
+  destinationName = place.name;
+  start = markerPosition;
+  goal = target;
+  setMode('goal');
+  if (alreadyAtPlace(target)) {
+    clearRouteHere(markerPosition);
     status.textContent = `Отряд уже здесь: ${place.name}.`;
   } else {
-    setMode('goal');
-    selectPoint(target);
-    destinationName = place.name;
+    calculateRoute();
   }
+  drawEntryZones();
+  updateEntryControls();
   if (expanded) focusPlace(place.at);
   element<HTMLSelectElement>('place').value = String(index);
   element('place-description').textContent = place.description;
 }
+
+function alreadyAtPlace(target: PointFp) {
+  return selectedEntry
+    ? canEnterPlace(field, selectedEntry, markerPosition)
+    : Math.hypot(target.xFp - markerPosition.xFp, target.zFp - markerPosition.zFp) < 1;
+}
+
+function drawEntryZones() {
+  element('entry-zones').replaceChildren();
+  if (!selectedEntry) return;
+  polygon(selectedEntry.footprint, 'entry-zones');
+  for (const approach of selectedEntry.approaches) {
+    const circle = document.createElementNS(svgNS, 'circle');
+    const [x, y] = pixel(approach.center);
+    circle.setAttribute('cx', String(x));
+    circle.setAttribute('cy', String(y));
+    circle.setAttribute('r', String(approach.radiusFp / SHEET.fpPerPixel));
+    circle.classList.toggle('chosen', approach.name === chosenApproach);
+    element('entry-zones').append(circle);
+  }
+}
+
+function visitableEntry() {
+  if (!selectedEntry || running) return undefined;
+  return canEnterPlace(field, selectedEntry, markerPosition) ? selectedEntry : undefined;
+}
+
+function updateEntryControls() {
+  element('entry-controls').toggleAttribute('hidden', !selectedEntry);
+  const available = !!visitableEntry();
+  element<HTMLButtonElement>('enter-place').disabled = !available;
+  element('entry-status').textContent = available
+    ? 'Отряд у поселения. Можно войти.'
+    : `Дойдите до подхода${chosenApproach ? `: ${chosenApproach}` : ' к поселению'}. Круги — зоны входа.`;
+}
+
+const visit = element<HTMLDialogElement>('place-visit');
+element('enter-place').addEventListener('click', () => {
+  const entry = visitableEntry();
+  if (!entry) return;
+  heldPanKeys.clear();
+  zoomTarget = undefined;
+  element('visit-title').textContent = entry.name;
+  element('visit-description').textContent = places.find((p) => p.name === entry.name)!.description;
+  element<HTMLImageElement>('visit-image').src =
+    `../../assets/art/m1/places/settlements-v2/${entry.image}`;
+  visit.showModal();
+});
+visit.addEventListener('close', () => map.focus({ preventScroll: true }));
 
 function clearRouteHere(target: PointFp) {
   running = false;
@@ -173,6 +231,10 @@ function clearRouteHere(target: PointFp) {
 
 function clearDestination() {
   destinationName = undefined;
+  selectedEntry = undefined;
+  chosenApproach = undefined;
+  element('entry-zones').replaceChildren();
+  updateEntryControls();
   element<HTMLSelectElement>('place').value = '';
   element('place-description').textContent =
     'Метки на карте выбирают цель. Следующий переход начинается там, где находится отряд.';
@@ -296,6 +358,14 @@ function createPlan(target: PointFp): ContinuousMovementPlan {
   });
 }
 
+function createArrivalPlan(entry: PlaceEntry) {
+  const arrival = planPlaceArrival(field, entry, start);
+  if (!arrival) throw new Error('Нет доступного подхода к поселению.');
+  goal = arrival.goal;
+  chosenApproach = arrival.approach.name;
+  return arrival.plan;
+}
+
 function showRouteMetrics() {
   element('duration').textContent = plan
     ? durationText((Number(plan.totalDurationUs) / 1000) * walkingTimeScale)
@@ -324,7 +394,7 @@ function calculateRoute() {
   stop.disabled = true;
   const before = performance.now();
   try {
-    plan = createPlan(goal);
+    plan = selectedEntry ? createArrivalPlan(selectedEntry) : createPlan(goal);
     status.textContent = `Путь найден · поиск ${Math.round(performance.now() - before)} мс. Можно идти или выбрать другую цель.`;
   } catch (error) {
     status.textContent = `Не удалось построить путь: ${error instanceof Error ? error.message : 'ошибка'}`;
@@ -442,7 +512,9 @@ const panKeyCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD']);
 function isTypingTarget(target: EventTarget | null) {
   return (
     target instanceof Element &&
-    !!target.closest('input, select, textarea, [contenteditable]:not([contenteditable="false"])')
+    !!target.closest(
+      'dialog[open], input, select, textarea, [contenteditable]:not([contenteditable="false"])',
+    )
   );
 }
 function isBrowserShortcut(event: KeyboardEvent) {
@@ -546,6 +618,7 @@ play.addEventListener('click', () => {
   if (!plan) return;
   if (elapsed >= Number(plan.arrivesAtMs)) elapsed = 0;
   running = true;
+  updateEntryControls();
   lastFrame = performance.now();
   stop.disabled = false;
   play.disabled = true;
@@ -557,16 +630,20 @@ stop.addEventListener('click', () => {
   stop.disabled = true;
   play.textContent = 'Продолжить';
   status.textContent = 'Отряд остановлен. Можно продолжить этот путь.';
+  updateEntryControls();
 });
 
 function arrive() {
   running = false;
-  play.disabled = false;
+  play.disabled = !!selectedEntry;
   stop.disabled = true;
-  play.textContent = 'Повторить';
-  status.textContent = destinationName
-    ? `Отряд прибыл: ${destinationName}.`
-    : 'Отряд прибыл в выбранную точку.';
+  play.textContent = selectedEntry ? 'Прибыли' : 'Повторить';
+  updateEntryControls();
+  status.textContent = selectedEntry
+    ? `У поселения: ${selectedEntry.name}. Нажмите «Войти», чтобы посетить его.`
+    : destinationName
+      ? `Отряд прибыл: ${destinationName}.`
+      : 'Отряд прибыл в выбранную точку.';
 }
 
 function animate(now: number) {

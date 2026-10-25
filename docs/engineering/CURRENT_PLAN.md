@@ -1,19 +1,19 @@
 # Warwrit current delivery plan
 
-## Place entrance zones — 2026-10-26, LOCAL RESEARCH COMPLETE
+## Place entrance zones — 2026-10-26, LOCAL IMPLEMENTATION
 
-Sole writer: Codex parent; branch `codex/world-map-painted`, base `909187c8`.
-Owner: visiting a place should reach its outskirts; asks how other games work.
-[Owning research and proposal](../wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26).
-Primary evidence: Heroes III manual front gates (search-index excerpt; full
-PDF exceeds tool limit), official Bannerlord GatePosition/PortPosition API,
-Battle Brothers developer's historical pass-through-entry fix.
-Proposal: artwork-sized outskirts plus reachable approach areas, weighted path
-to an approach, separate Enter intent, no river/wall bypass or exit teleport.
-No numeric radius approved, entry geometry traced, runtime or access rule changed.
-Native gameplay/radii NOT_MEASURED; game checks NOT_RUN for documentation only.
-Previous WASD and atlas deliveries remain the runnable stand.
-No external writes or operational activation.
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `866ee389`.
+Owner: “Review, improve, implement” the outskirts/explicit-entry proposal.
+[Owning contract](../wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26).
+Outcome: select Bereznyak/Brod, walk to a reachable authored approach, Enter,
+return at the same position; walking past never opens a place.
+Pilot: two settlements on v2/atlas; other destinations retain point behavior.
+Compare weighted travel times among authored approaches; reject barrier bypass.
+Existing initial interior presence remains visitable without an outward walk.
+Boundary: local stand geometry/controller/view/tests; no core/server/save rules.
+Verification: focused map types/tests, real browser journey, independent critic,
+scoped lint/format and ordinary commit audit. Results pending.
+No external writes, operational activation or new dependencies.
 
 ## Dated history
 

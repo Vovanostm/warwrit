@@ -33,6 +33,9 @@
             <p id="place-description">
               Метки на карте выбирают цель. Следующий переход начинается там, где находится отряд.
             </p>
+            <p class="fine">
+              Вход с окраины: Березняк и Каменный Брод. Остальные места пока — точки пути.
+            </p>
           </div>
           <details id="contracts-section" hidden>
             <summary>24 проекта контрактов</summary>
@@ -64,6 +67,10 @@
           <div class="pair">
             <button id="play" class="primary" disabled>Идти</button
             ><button id="stop" disabled>Стоп</button>
+          </div>
+          <div id="entry-controls" hidden>
+            <p id="entry-status" role="status"></p>
+            <button id="enter-place" class="primary" disabled>Войти</button>
           </div>
           <dl>
             <div>
@@ -139,6 +146,7 @@
             />
             <g id="biomes" aria-hidden="true"></g>
             <g id="road-layer" aria-hidden="true"></g>
+            <g id="entry-zones" aria-hidden="true"></g>
             <g id="place-labels" aria-hidden="true"></g>
             <g id="map-scale" visibility="hidden" aria-hidden="true">
               <path d="M60 945V957H380V945M220 950V957" />
@@ -173,6 +181,16 @@
         </footer>
       </div>
     </main>
+    <dialog id="place-visit" aria-labelledby="visit-title">
+      <img id="visit-image" alt="" />
+      <div class="visit-content">
+        <span class="eyebrow">ПОСЕЩЕНИЕ МЕСТА · СТЕНД</span>
+        <h2 id="visit-title"></h2>
+        <p id="visit-description"></p>
+        <p class="fine">Вид поселения. Торговля и задания пока не подключены.</p>
+        <form method="dialog"><button class="primary">Вернуться на карту</button></form>
+      </div>
+    </dialog>
     <script type="module" src="./navigation-lab.ts"></script>
   </body>
 </html>

@@ -13,6 +13,8 @@ import { pixel, point, presets, region } from './porechye-navigation.js';
 import * as regional from './porechye-regional.js';
 import { atlasRegion, atlasPoint, atlasPlaces, atlasPresets } from './porechye-atlas.js';
 import { atlasContracts } from './porechye-atlas-contracts.js';
+import { mapProfiles } from './navigation-maps.js';
+import { canEnterPlace, planPlaceArrival } from './place-entries.js';
 
 const field = buildNavigationField(region);
 const compile = (path: Parameters<typeof compileMovementPlan>[0]['path']) =>
@@ -128,6 +130,94 @@ test('every selectable place has a reachable arrival point, including the bank o
 
 // The atlas is one continuous region; tile edges are not artificial barriers.
 const atlasField = buildNavigationField(atlasRegion);
+
+test('both map scales stop west/east Bereznyak journeys at the corresponding outskirts', () => {
+  const journeys = ([mapProfiles.v2, mapProfiles.atlas] as const).map((map, i) => {
+    const field = i ? atlasField : regionalField;
+    const offset = i ? [1536, 1024] : [0, 0];
+    const entry = map.entries[0]!;
+    return (
+      [
+        [60, 190],
+        [400, 225],
+      ] as const
+    ).map((p) => {
+      const arrival = planPlaceArrival(
+        field,
+        entry,
+        map.point([p[0] + offset[0]!, p[1] + offset[1]!]),
+      )!;
+      const [x] = map.pixel(arrival.goal);
+      return {
+        approach: arrival.approach.name,
+        canVisit: canEnterPlace(field, entry, arrival.goal),
+        stopsOutsideYards: p[0] < 195 ? x < 135 + offset[0]! : x > 260 + offset[0]!,
+      };
+    });
+  });
+  const expected = [
+    { approach: 'Западная дорога', canVisit: true, stopsOutsideYards: true },
+    { approach: 'Восточная дорога', canVisit: true, stopsOutsideYards: true },
+  ];
+  assert.deepEqual(journeys, [expected, expected]);
+});
+
+test('weighted arrival prefers a farther road approach over the nearest forest approach', () => {
+  const entry = mapProfiles.atlas.entries[0]!;
+  const start = atlasPoint([1731, 1164]); // District [195,140], north of the yards.
+  const nearest = [...entry.approaches].sort(
+    (a, b) =>
+      Math.hypot(a.center.xFp - start.xFp, a.center.zFp - start.zFp) -
+      Math.hypot(b.center.xFp - start.xFp, b.center.zFp - start.zFp),
+  )[0]!;
+  const arrival = planPlaceArrival(atlasField, entry, start)!;
+  const west = planPlaceArrival(atlasField, { ...entry, approaches: [nearest] }, start)!;
+  assert.deepEqual(
+    {
+      nearest: nearest.name,
+      chosen: arrival.approach.name,
+      faster: BigInt(arrival.plan.totalDurationUs) < BigInt(west.plan.totalDurationUs),
+    },
+    { nearest: 'Западная дорога', chosen: 'Восточная дорога', faster: true },
+  );
+});
+
+test('Brod arrival from the south crosses the bridge before allowing entry', () => {
+  const entry = mapProfiles.atlas.entries[1]!;
+  const start = atlasPoint([2636, 1579]); // District [1100,555], southern bank.
+  const arrival = planPlaceArrival(atlasField, entry, start)!;
+  assert.deepEqual(
+    {
+      southBankEntry: canEnterPlace(atlasField, entry, start),
+      arrivalEntry: canEnterPlace(atlasField, entry, arrival.goal),
+      approach: arrival.approach.name,
+      beforeBridge: mapProfiles.atlas.pixel(arrival.goal)[1] < 1478,
+      water: arrival.plan.speedSpans
+        .filter((s) => s.terrainId === 'deep_water')
+        .map((s) => s.overlayId),
+    },
+    {
+      southBankEntry: false,
+      arrivalEntry: true,
+      approach: 'У каменного моста',
+      beforeBridge: true,
+      water: ['bridge'],
+    },
+  );
+});
+
+test('interior presence is visitable but an overlapping entrance radius cannot bypass open water', () => {
+  const entry = mapProfiles.atlas.entries[1]!;
+  // Deliberately enlarge one zone across the river to exercise the barrier check.
+  const overlapping = { ...entry, approaches: [{ ...entry.approaches[2]!, radiusFp: 600 }] };
+  assert.deepEqual(
+    {
+      inside: canEnterPlace(atlasField, entry, atlasPoint([2661, 1389])),
+      acrossOpenWater: canEnterPlace(atlasField, overlapping, atlasPoint([2636, 1579])),
+    },
+    { inside: true, acrossOpenWater: false },
+  );
+});
 test('all 34 atlas destinations and every contract issuer can be reached from Bereznyak', () => {
   const names = new Set(atlasPlaces.map((p) => p.name));
   assert.deepEqual(
