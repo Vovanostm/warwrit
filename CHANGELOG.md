@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Authorize two reviewed deliveries — 2026-10-25, LOCAL
+
+- Branch `Vovanostm/wages-projection-321`; owner explicitly requested merge,
+  then completion and merge of the next worktree. Current mission covers this
+  #321/workflow branch and existing #319 / PR #324 after independent acceptance
+  and applicable CI; no automation, deployment or wider backlog activation.
+- Retained local [#321 review](docs/engineering/evidence/wages-projection-321/review.md)
+  and [actual HTTP/PG result](docs/engineering/evidence/wages-projection-321/http-readback.json)
+  alongside the change. Source accepted at `b1194a94`; workflow at `a3ba1e8c`.
+  This documentation-only publication preparation changes no game behavior.
+  PR CI and merges pending; original source/browser/payment limits remain.
+
 ### Expose safe owner payroll snapshot — 2026-10-25, LOCAL
 
 - Branch `Vovanostm/wages-projection-321`, owner-requested completion of

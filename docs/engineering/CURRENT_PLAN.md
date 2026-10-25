@@ -1,6 +1,21 @@
 # Warwrit current delivery plan
 
-## Local completion of #321 — 2026-10-25
+## Authorized delivery of #321, then #319 — 2026-10-25
+
+Owner: «Ок, продолжай - merge, next worktree implement + merge».
+Mission: publish/merge this completed #321 + reviewed workflow branch, then complete/integrate existing #319 worktree and merge its PR #324.
+Permission covers these two deliveries after applicable CI/review; no Orca restart, automation, deployment or paid services.
+Current branch `Vovanostm/wages-projection-321`; live base `1c793e16`; source accepted at `b1194a94`.
+Workflow independently accepted at `a3ba1e8c`; records-only successor `d7e72847` inspected.
+Local #321 checks and actual HTTP/PostgreSQL proof passed; publication CI and merge pending.
+[Retained review](evidence/wages-projection-321/review.md); [HTTP result](evidence/wages-projection-321/http-readback.json).
+Next worktree: `Vovanostm/wages-local-evidence-319`, PR #324; preserve existing work and recheck integrated head after #321.
+#320 depends on #319; not part of this two-delivery mission. Parent #167 remains open.
+Exact expected merge heads are read live at each merge; changed code invalidates affected acceptance.
+
+## Dated history
+
+### Local completion of #321 — 2026-10-25
 
 Owner: «Теперь работа будет проходить эффективнее? Попробуй применить обновления в worktree и довести суб-агентом его до завершения».
 Scope: complete existing #321 safe payroll snapshot/history locally with a Codex subagent.
@@ -27,8 +42,6 @@ Inherited test fixture and parent probe setup fixes occurred; savings NOT_MEASUR
 Private probe/app/PG/Compose resources disposed; filtered Docker listing empty.
 Local evidence: `.orca/wages-projection-321/{report,review}.md` and `http-readback.*`.
 Full game gate/browser/payment/UI/publication/merge NOT_RUN; tokens/elapsed NOT_MEASURED.
-
-## Dated history
 
 ### Workflow preparation status — 2026-10-25 (completed locally)
 
