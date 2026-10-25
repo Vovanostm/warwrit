@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Settlement outskirts and entrance research
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner requested
+  outskirts-based visits and comparison with other games. The
+  [owning map record](docs/wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26)
+  distinguishes Heroes III gate visits, Bannerlord entrance coordinates and
+  Battle Brothers' historical pass-through entry bug from a proposed local
+  approach-area/explicit-entry flow. No runtime, access rule, radius or art
+  changed; game tests NOT_RUN for this research-only amendment.
+
 ### WASD map camera
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner requested WASD.

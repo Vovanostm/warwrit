@@ -1,6 +1,23 @@
 # Warwrit current delivery plan
 
-## WASD map pan — 2026-10-26, LOCAL COMPLETE
+## Place entrance zones — 2026-10-26, LOCAL RESEARCH COMPLETE
+
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `909187c8`.
+Owner: visiting a place should reach its outskirts; asks how other games work.
+[Owning research and proposal](../wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26).
+Primary evidence: Heroes III manual front gates (search-index excerpt; full
+PDF exceeds tool limit), official Bannerlord GatePosition/PortPosition API,
+Battle Brothers developer's historical pass-through-entry fix.
+Proposal: artwork-sized outskirts plus reachable approach areas, weighted path
+to an approach, separate Enter intent, no river/wall bypass or exit teleport.
+No numeric radius approved, entry geometry traced, runtime or access rule changed.
+Native gameplay/radii NOT_MEASURED; game checks NOT_RUN for documentation only.
+Previous WASD and atlas deliveries remain the runnable stand.
+No external writes or operational activation.
+
+## Dated history
+
+### WASD map pan — 2026-10-26, LOCAL COMPLETE
 
 Sole writer: Codex parent; branch `codex/world-map-painted`, base `3f47da64`.
 Owner asks to add WASD movement; interpreted as map-camera pan, not party travel.
@@ -17,8 +34,6 @@ because this runner does not emit it when switching pages.
 Independent visual ACCEPT: six applicable criteria2, characters N/A.
 Source `71f099df`; normal commit hook/audit PASS without bypass.
 No art, game rules, dependencies, server/save or external writes.
-
-## Dated history
 
 ### Map camera and right-click target — 2026-10-26, LOCAL COMPLETE
 
