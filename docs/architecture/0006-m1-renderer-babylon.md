@@ -80,3 +80,22 @@ This cycle uses only static full-body sprites; frame animation is later work.
 Twenty individual static asset tasks may proceed after this style agreement.
 Balance values, archived creature biographies and renderer changes are not approved.
 Concept generation is not integrated visual or gameplay acceptance.
+
+## 2D art direction amendment — 2026-10-25
+
+The owner selected **«Сдержанный графический роман»** as the main style and
+**«Туман и мокрый камень»** for some locations. For new 2D illustrations and
+sprites this supersedes style C as the primary rendering-density reference;
+irregular ink, flat/matte washes, grounded dark fantasy and credible materials
+remain. Use broad calm forms and selective focal contrast, not uniform fine
+texture or a global contrast filter. The
+[owning decision](../wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25)
+and `assets/art/styles/{graphic-novel,fog-wet-stone}.json` identify selected
+references and generation templates. The second profile is an explicit
+location/environment override, not an automatic biome rule.
+
+This selects art direction, not new lore, production-ready sprites or runtime
+acceptance. Opaque study images establish rendering language; sprite alpha,
+view projection, scale, pivots and integrated day/night readability still need
+verification. Existing renderer/camera decisions and the separately owned
+3D-character experiment are not changed by this amendment.

@@ -15,8 +15,15 @@ for code; it does not accept visuals.
 ## Author obligations
 
 - Give the critic image paths, not conclusions. Required every pass:
-  1. the approved references: `assets/art/m1/style/unit-c-ink.png` and the
-     relevant `assets/art/m1/places/` scene;
+  1. the current approved 2D references from
+     `assets/art/styles/graphic-novel.json`, or `fog-wet-stone.json` for an
+     explicitly assigned location/environment asset; inspect the referenced
+     PNGs under `assets/art/styles/references/`. The
+     [2026-10-25 selection](../wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25)
+     supersedes old style-C texture density for new 2D art. Historical
+     `assets/art/m1/style/unit-c-ink.png` and relevant `assets/art/m1/places/`
+     scenes remain additional proportion/material/geography sources. For a
+     separately scoped 3D-character task use its owning accepted references;
   2. a side-by-side sheet of the candidate and the reference at equal height, in
      close view and at game scale;
   3. in-scene views at game scale, by day and by night;
@@ -71,16 +78,16 @@ a remedy by shrinking characters or moving ground rings up to the body.
 Scores: 3 — reads as the same artist and family at that scale; 2 — only polish
 remains; 1 — a clear gap a player notices; 0 — a different style, or broken.
 
-| Criterion                  | What to compare with the reference                                                                                           |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Silhouette and proportions | Adult grounded body; head, hand and limb ratios; no hero, toy or cute shapes                                                 |
-| Pose and gesture           | Weight, guard and intent; compact readable attitude; no stumble or ape-like reach                                            |
-| Rendering language         | Interior ink contours, hatching and texture density, strong shadow masses; painted ink rather than smooth CG fills           |
-| Value and palette          | Day and night values relative to the scene; slate/soot/umber/ochre; no glowing or sticker-like figure at night               |
-| Materials and wear         | Credible cloth, leather, wood and metal with weathering; nothing pristine, toy-like or glossy                                |
-| Props and lore             | Weapon and shield scale in metres; no emblems or invented symbols; period-plausible gear                                     |
-| Scene integration          | Scale against doors, barrels and people in the place art; grounding and contact shadow; one light direction; readable target |
-| Motion (when in scope)     | Foot contact, arcs, grip through the clip, believable weight; no sliding or popping                                          |
+| Criterion                  | What to compare with the reference                                                                                                                              |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Silhouette and proportions | Adult grounded body; head, hand and limb ratios; no hero, toy or cute shapes                                                                                    |
+| Pose and gesture           | Weight, guard and intent; compact readable attitude; no stumble or ape-like reach                                                                               |
+| Rendering language         | Current selected reference: irregular major ink contours, broad matte washes, coherent shadows and selective detail; no uniform microtexture or smooth CG fills |
+| Value and palette          | Day and night values relative to the scene; slate/soot/umber/ochre; no glowing or sticker-like figure at night                                                  |
+| Materials and wear         | Credible cloth, leather, wood and metal with weathering; nothing pristine, toy-like or glossy                                                                   |
+| Props and lore             | Weapon and shield scale in metres; no emblems or invented symbols; period-plausible gear                                                                        |
+| Scene integration          | Scale against doors, barrels and people in the place art; grounding and contact shadow; one light direction; readable target                                    |
+| Motion (when in scope)     | Foot contact, arcs, grip through the clip, believable weight; no sliding or popping                                                                             |
 
 ## Finding format
 

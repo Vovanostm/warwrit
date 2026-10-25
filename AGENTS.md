@@ -4,6 +4,12 @@ Applies repository-wide; read stricter directory instructions before editing.
 
 ## Dark fantasy, shared visual style and lore
 
+Owner selection — 2026-10-25: new 2D art uses «Сдержанный графический роман»;
+«Туман и мокрый камень» is an explicit location/environment override. Current
+selected references and generation JSON are under `assets/art/styles/`; the
+[owning selection](docs/wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25)
+and the policy below define scope. Existing renderer/camera/3D workflows remain.
+
 Owner policy — 2026-10-04, amended 2026-10-07: Warwrit is serious, grounded dark
 fantasy in an MMO world of warring duchies. Before any art, scene, UI-art, lore
 or player-text work read the full policy in
