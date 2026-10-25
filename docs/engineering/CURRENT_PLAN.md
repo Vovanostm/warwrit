@@ -1,17 +1,25 @@
 # Warwrit current delivery plan
 
-## Settlement areas and visit intent — 2026-10-26, LOCAL IMPLEMENTATION
+## Settlement areas and visit intent — 2026-10-26, LOCAL COMPLETE
 
 Sole writer: Codex parent; branch `codex/world-map-painted`, base `ae66fd71`.
 Owner: implement the proposed area UX and have a critic evaluate convenience.
-[Owning proposal](../wiki/world/map.md#общая-зона-поселения-вместо-трёх-подходов--ux-предложение-2026-10-26).
+[Owning result](../wiki/world/map.md#общие-зоны-и-намерение-посетить--реализация-2026-10-26).
 Outcome: Bereznyak/Brod dry areas allow passive entry from any valid position;
 explicit Visit travels to the area and opens it; ground orders cancel intent.
 No automatic opening/stopping on ordinary pass-through; return preserves position.
 Scope: two-place stand on atlas/v2, existing artwork and public movement API.
 One writer; existing visual critic evaluates current images and actual journeys.
-Checks: focused map tests/types, native input, critic, lint/format, normal audit.
-No core/server/save/dependency or operational changes; results pending.
+20 map scenarios/types, scoped lint/format and author native journeys PASS.
+Pass-through, field-side Enter, Visit auto-arrival, intent cancellation, pause,
+return position, modal WASD, v2/v5 compatibility checked in browser.
+Critic first REJECT for faint border; continuous dark/ochre edge now ACCEPT,
+six applicable criteria2. Expert labels/actions understandable; independent full
+native journey NOT_RUN (critic CLI syntax failure); author journeys are separate.
+Source `09c4b592`/`77a6adae`; normal hook/audit PASS without bypass.
+Map DOM-entry hook now includes its existing owning suite; base/thresholds intact.
+No core/server/save/dependency/art or operational changes.
+Full game/DB gate NOT_RUN; human usability preference/balance NOT_MEASURED.
 
 ## Dated history
 

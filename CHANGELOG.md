@@ -24,11 +24,15 @@ requests.
   full native flow rerun PASS without page errors. Source `09c4b592` passed the
   normal hook/audit after contextual-label cleanup. First critic REJECT for
   faint overview boundary; a continuous ochre/dark outline replaces the dashed
-  edge. Independent revision review pending.
+  edge. Revision `77a6adae` received absolute visual ACCEPT (six applicable scores2).
+  Expert usability assessment finds Visit/Walk and nearby Enter understandable;
+  independent full native flow remains NOT_RUN, separate from author PASS.
 - The normal hook exposed a focused-coverage selection gap for this standalone
   DOM entry. `scripts/git-hooks/pre-commit` now also selects its existing owning
   map suite when that entry changes, preserving real collaborator coverage;
   browser-only controller coverage, audit base and thresholds are unchanged.
+  Shell syntax, normal hook/audit and generated coverage readback PASS; existing
+  attribution/CSS advisories retained.
   Core/server/save/dependencies/art unchanged; no external operations.
 
 ### Settlement area UX recommendation
