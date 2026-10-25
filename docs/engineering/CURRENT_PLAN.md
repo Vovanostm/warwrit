@@ -15,6 +15,7 @@ Native four directions/release, input focus stop, wheel focus and combined
 wheel/pan PASS. Blur-signal clearing checked; native tab blur NOT_MEASURED
 because this runner does not emit it when switching pages.
 Independent visual ACCEPT: six applicable criteria2, characters N/A.
+Source `71f099df`; normal commit hook/audit PASS without bypass.
 No art, game rules, dependencies, server/save or external writes.
 
 ## Dated history

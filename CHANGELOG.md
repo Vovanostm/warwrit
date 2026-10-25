@@ -20,6 +20,7 @@ requests.
   input-focus/wheel checks PASS; independent visual ACCEPT. Real tab/window
   blur NOT_MEASURED in this runner; explicit blur-handler exercise is separate.
   [Owning result and evidence](docs/wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
+  Source saved locally as `71f099df`; normal commit hook/audit PASS.
   No art, domain rules, dependencies, server/save or external operations changed.
 
 ### Smooth map zoom and right-click movement target
