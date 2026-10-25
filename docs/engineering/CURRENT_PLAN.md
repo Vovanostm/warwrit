@@ -2,6 +2,7 @@
 
 ## Authorized delivery of #321, then #319 — 2026-10-25
 
+Coordinator: local Codex parent; Orca coordinator remains stopped.
 Owner: «Ок, продолжай - merge, next worktree implement + merge».
 Mission: publish/merge this completed #321 + reviewed workflow branch, then complete/integrate existing #319 worktree and merge its PR #324.
 Permission covers these two deliveries after applicable CI/review; no Orca restart, automation, deployment or paid services.

@@ -19,7 +19,9 @@ requests.
   and [actual HTTP/PG result](docs/engineering/evidence/wages-projection-321/http-readback.json)
   alongside the change. Source accepted at `b1194a94`; workflow at `a3ba1e8c`.
   This documentation-only publication preparation changes no game behavior.
-  PR CI and merges pending; original source/browser/payment limits remain.
+  Status-block check initially rejected the missing coordinator label; corrected
+  to name the local parent, then PASS. Scoped formatting/diff and normal commit
+  audit PASS. PR CI and merges pending; source/browser/payment limits remain.
 
 ### Expose safe owner payroll snapshot — 2026-10-25, LOCAL
 
