@@ -7,6 +7,7 @@ import {
   findTravelPath,
 } from '@warwrit/game-core';
 import { pixel, point, presets, region } from './porechye-navigation.js';
+import * as regional from './porechye-regional.js';
 
 const field = buildNavigationField(region);
 const compile = (path: Parameters<typeof compileMovementPlan>[0]['path']) =>
@@ -63,4 +64,59 @@ test('the road detour takes less time than the walkable straight line', () => {
   const plan = compile(findTravelPath(field, point(from), point(to))!);
   const direct = compile([point(from), point(to)]);
   assert.ok(BigInt(plan.totalDurationUs) < BigInt(direct.totalDurationUs));
+});
+
+const regionalField = buildNavigationField(regional.regionalRegion);
+
+test('independently selected visible water stays blocked on the regional painting', () => {
+  assert.deepEqual(
+    [
+      [100, 400],
+      [285, 440],
+      [430, 460],
+      [600, 550],
+      [740, 590],
+      [1010, 525],
+      [1250, 550],
+      [1440, 635],
+      [880, 690],
+      [900, 680],
+      [925, 670],
+      [950, 660],
+    ].map(([x, y]) => continuousSurfaceAt(regionalField, point([x!, y!])).speedPermille),
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  );
+});
+
+test('regional journeys use the stone bridge and the timber bypass, never the broken crossing', () => {
+  const waterCrossings = regional.regionalPresets.slice(0, 2).map(({ from, to }) => {
+    const plan = compileMovementPlan({
+      field: regionalField,
+      path: findTravelPath(regionalField, point(from), point(to))!,
+      startedAtMs: '0',
+      movementEpoch: '0',
+      planId: 'regional-journey',
+    });
+    return plan.speedSpans
+      .filter((s) => s.terrainId === 'deep_water')
+      .map((s) => ({
+        overlay: s.overlayId,
+        x: Math.round(
+          pixel({ xFp: Number(s.from.xMicroFp) / 65536, zFp: Number(s.from.zMicroFp) / 65536 })[0],
+        ),
+      }));
+  });
+  assert.deepEqual(waterCrossings, [
+    [{ overlay: 'bridge', x: 1156 }],
+    [{ overlay: 'bridge', x: 315 }],
+  ]);
+});
+
+test('every selectable place has a reachable arrival point, including the bank of the ruined bridge', () => {
+  assert.deepEqual(
+    regional.places
+      .filter((place) => !findTravelPath(regionalField, point([1160, 400]), point(place.at)))
+      .map((place) => place.name),
+    [],
+  );
 });

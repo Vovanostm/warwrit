@@ -326,7 +326,7 @@ const zones: readonly Zone[] = [
   },
 ];
 
-interface Road {
+export interface Road {
   readonly id: string;
   readonly kind: Exclude<OverlayId, null>;
   readonly width: number;
@@ -566,6 +566,17 @@ function corridor(a: Pixel, b: Pixel, width: number): readonly PointFp[] {
   ];
 }
 
+export function roadOverlays(roads: readonly Road[]): NavigationRegion['overlayShapes'] {
+  return roads.flatMap((road) =>
+    road.line.slice(1).map((b, i) => ({
+      shapeId: `${road.id}-${i}`,
+      overlayId: road.kind,
+      polygon: corridor(road.line[i]!, b, road.width),
+      stations: [point(road.line[i]!), point(b)],
+    })),
+  );
+}
+
 export const region: NavigationRegion = {
   mapEdition: 'porechye-v5-navigation-lab',
   navigationVersion: 'polygon-v1',
@@ -598,14 +609,7 @@ export const region: NavigationRegion = {
       polygon: z.outline.map(point),
     })),
   ],
-  overlayShapes: roads.flatMap((road) =>
-    road.line.slice(1).map((b, i) => ({
-      shapeId: `${road.id}-${i}`,
-      overlayId: road.kind,
-      polygon: corridor(road.line[i]!, b, road.width),
-      stations: [point(road.line[i]!), point(b)],
-    })),
-  ),
+  overlayShapes: roadOverlays(roads),
   blockingShapes: [],
   dangerAreaShapes: [],
   sites: [],

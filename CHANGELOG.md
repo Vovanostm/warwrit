@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Porechye v2: credible district scale and places
+
+- 2026-10-25, branch `codex/world-map-painted`, local: owner rejected the
+  diorama scale and requested real medieval map references, perceptible distances
+  and enough places of interest. Wharram Percy archaeological plan, Laxton (1635)
+  estate map and York reconstruction inform a new top-down land-use composition.
+  `assets/art/world/porechye-v2/porechye-regional-v4.png` uses local bridge and terrain-landmark
+  edits after scale/visibility rejections. Draft 2.4×1.6km extent; native 1536×1024,
+  no canonical map edition or claimed resolution increase.
+- `scripts/world-map/porechye-regional.ts` owns new image-grounded water/woodland,
+  road/bridge corridors and 10 selectable source-backed places. The stand defaults
+  to v2, retains v5 selection, shows metres/500m ruler, POI descriptions and
+  continuous onward journeys. Local 1 m/s field playback calibration makes 820 m
+  display 7m43s; speed-profile ratios and core plans stay unchanged. No quests,
+  loot, save/server integration or new runtime dependency.
+- Eight focused scenarios/types and scoped lint/architecture PASS; real browser
+  consecutive 820 m and 1187 m legs arrived, pause/keyboard/pointer and water rejection
+  checked. Change audit PASS after sharing road geometry and simplifying UI functions;
+  final integrated v4 critic ACCEPT (all applicable scores2), normal hook pending. Historical research,
+  iteration failures, checks and limits: [owning map page](docs/wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
+
 ### Painted Porechye navigation stand
 
 - 2026-10-25, branch `codex/world-map-painted`, local: owner requested biome

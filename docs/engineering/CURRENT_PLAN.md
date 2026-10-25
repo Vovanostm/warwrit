@@ -1,29 +1,32 @@
 # Warwrit current delivery plan
 
-## Painted-map navigation stand — 2026-10-25, LOCAL
+## Porechye v2 district, movement and places — 2026-10-25, LOCAL
 
-Coordinator and sole writer: local Codex parent; no Orca activation.
-Owner: «наложи зону дорог, зону лесов, болот … попробуем поиск пути»;
-first result chosen: «Да, сначала интерактивный стенд».
-Branch `codex/world-map-painted`, base main `7389e822`.
-Contract/result: [world map](../wiki/world/map.md#стенд-проходимости-поречья--2026-10-25).
-Outcome: Porechye v5 with toggleable road/forest/marsh/hill/water annotations,
-start/goal, time-weighted route, pause/resume/arrival, zoom/pan and night preview.
-Reuse: public game-core navigation and existing V3 speeds; no new runtime library.
-Run `pnpm dev:map`; open `/scripts/world-map/navigation-lab.html` on port 5326.
-Local map scenarios, strict types, lint, architecture and real Chrome journey PASS.
-River banks corrected after an image-grounding defect; five scenarios and actual
-Brod→Mill journey (264 samples, exact arrival) PASS. Water wins over dry courtyards.
-Owner additionally chose «Да, просторнее и яснее»: scheme and two generated
-concepts in `assets/art/world/porechye-v2/`; V2 kept separate from navigation.
-Returned native1536×1024, requested3072×2048 not achieved; no upscale.
-Third independent v5 visual pass ACCEPT (2/2/2/2/3/2/2/2); no material findings.
-V2 standalone concept ACCEPT (seven applicable scores2, motionN/A); actual
-bridge ends drift25–55px from guide. Trace actual art before any integration.
-Local-only result; full evidence and remaining limits in owning page.
-Source annotations are a first pass;
-time uses an experimental scale. No game-edition/save migration or MMO acceptance.
-Allowed scope is this local stand; no publication, merge, deployment or automation.
+Sole writer: local Codex parent; no Orca activation.
+Owner: interactive stand first; larger/clearer map; real medieval plans for
+credible scale; latest «расстояние должно ощущаться … достаточно мест интереса».
+Branch `codex/world-map-painted`, resumed head `32fe8b1f`, base main `7389e822`.
+[Owning map record](../wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
+Outcome: planimetric generated district, first-pass biome/river/road annotations,
+10 selectable places, sequential travel, distances,500m ruler, walking estimate,
+progress/pause/resume, day/night, pan/zoom; v5 retained in map selector.
+Run `pnpm dev:map`; `/scripts/world-map/navigation-lab.html?map=v2`, port5326.
+Research: Wharram Percy measured plan2015, Laxton estate1635, York afterRaine1955
+in report1998. Dates/types and direct sources in owning page, not medieval facsimiles.
+Art: v1/v2 rejected for scale; v3 fixes bridges; active v4 paints redoubts/burials.
+Native 1536×1024; no claimed3072px. Draft extent2.4×1.6km, not canonical geography.
+Five place identities plus crossings and3 existing atlas proposals; no new quests.
+Core navigation/speeds unchanged. Local playback calibrates field pace1m/s;
+820m now7m43s, not old49.4s; acceleration is a separate viewing control.
+Eight focused scenarios/types, scoped lint/architecture and change audit PASS.
+Browser: two sequential POI legs820m/7m43s and1187m/12m38s, exact arrivals,
+no reset to original start, pause stable, marker click and keyboard target PASS.
+Earlier v3 visual scores>=2; formal close-reference pair omission corrected.
+Final independent v4 critic ACCEPT (six applicable scores2; character N/A).
+Dry burial approach975,623 leaves mounds visible; normal commit hook PENDING.
+Coarse woodland/shoreline annotations, selectable landmarks, no individual collision
+for roofs/trees; physical travel/game balance, all world routes and MMO NOT_ACCEPTED.
+This local stand only. No PR, publication, merge, deployment or automation authorized.
 
 ## Dated history
 

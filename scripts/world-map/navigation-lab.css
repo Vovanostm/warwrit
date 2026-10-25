@@ -233,6 +233,59 @@ dd {
 #markers {
   pointer-events: none;
 }
+#place-labels {
+  pointer-events: none;
+  fill: #eee2bf;
+  font:
+    17px Georgia,
+    serif;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: #222921;
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+#map.night #place-labels {
+  fill: #c4bea9;
+}
+#edition {
+  margin-bottom: 18px;
+}
+#map-scale {
+  pointer-events: none;
+  fill: #eee2bf;
+  font: 15px system-ui;
+  paint-order: stroke;
+  stroke: #202822;
+  stroke-width: 4;
+}
+#map-scale path {
+  fill: none;
+  stroke: #eee2bf;
+  stroke-width: 3;
+}
+#interest-sites g {
+  cursor: pointer;
+  fill: #383d31;
+  stroke: #ddc38a;
+  stroke-width: 2;
+}
+#interest-sites .hit {
+  fill: transparent;
+  stroke: none;
+}
+#interest-sites g:hover,
+#interest-sites g:focus-visible {
+  fill: #a58950;
+  stroke: #fff1c8;
+  outline: none;
+}
+#journey-progress {
+  width: 100%;
+  height: 5px;
+  accent-color: var(--gold);
+  margin-bottom: 12px;
+}
 #biomes polygon {
   fill-opacity: 0.18;
   stroke-width: 1.3;

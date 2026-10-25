@@ -1,4 +1,5 @@
 import {
+  BASE_SPEED_FP_PER_SECOND,
   buildNavigationField,
   compileMovementPlan,
   continuousSurfaceAt,
@@ -9,7 +10,29 @@ import {
   type NavigationRegion,
   type PointFp,
 } from '@warwrit/game-core';
-import { pixel, point, presets, region, SHEET, type Pixel } from './porechye-navigation.js';
+import { pixel, point, SHEET, type Pixel } from './porechye-navigation.js';
+import * as previous from './porechye-navigation.js';
+import * as regional from './porechye-regional.js';
+
+const legacy = new URLSearchParams(location.search).get('map') === 'v5';
+const region = legacy ? previous.region : regional.regionalRegion;
+const presets = legacy ? previous.presets : regional.regionalPresets;
+const editionId = legacy ? 'v5' : 'v2';
+const mapInfo = {
+  v5: {
+    image: 'porechye-v1/porechye-detail-v5.png',
+    note: 'Поречье v5 · прежний опыт, масштаб в километрах не задан.',
+  },
+  v2: {
+    image: 'porechye-v2/porechye-regional-v4.png',
+    note: 'Поречье v2 · эскиз округа 2,4 × 1,6 км. Время движения пока тестовое.',
+  },
+}[editionId];
+// Only playback/display time is calibrated. Core plans and biome ratios stay intact.
+const walkingTimeScale = legacy
+  ? 1
+  : ((BASE_SPEED_FP_PER_SECOND / SHEET.fpPerPixel) * regional.metresPerPixel) /
+    regional.walkingMetresPerSecond;
 
 const element = <T extends Element>(id: string) => document.getElementById(id)! as unknown as T;
 const map = element<SVGSVGElement>('map');
@@ -43,6 +66,7 @@ let plan: ContinuousMovementPlan | undefined;
 let elapsed = 0;
 let running = false;
 let lastFrame = 0;
+let destinationName: string | undefined;
 
 function polygon(points: readonly PointFp[], group: string, colour?: string) {
   const shape = document.createElementNS(svgNS, 'polygon');
@@ -83,6 +107,92 @@ function drawLayers() {
     const shape = polygon(road.polygon, 'road-layer');
     shape.dataset['kind'] = road.overlayId;
   }
+}
+
+function drawGeography() {
+  element('sheet').setAttribute('href', `../../assets/art/world/${mapInfo.image}`);
+  element('edition-note').textContent = mapInfo.note;
+  const edition = element<HTMLSelectElement>('edition');
+  edition.value = editionId;
+  edition.addEventListener('change', () => {
+    location.search = `?map=${edition.value}`;
+  });
+  if (legacy) return;
+  element('time-note').textContent =
+    'Пробный пеший темп: поле 1 м/с, местность меняет скорость. Это ещё не баланс игры. ×8 и ×32 ускоряют просмотр.';
+  for (const place of regional.places) {
+    const label = document.createElementNS(svgNS, 'text');
+    label.textContent = place.name;
+    label.setAttribute('x', String(place.label[0]));
+    label.setAttribute('y', String(place.label[1]));
+    element('place-labels').append(label);
+  }
+  element('scale').removeAttribute('hidden');
+  element('map-scale').removeAttribute('visibility');
+}
+
+function choosePlace(index: number) {
+  const place = regional.places[index]!;
+  const target = point(place.at);
+  if (Math.hypot(target.xFp - markerPosition.xFp, target.zFp - markerPosition.zFp) < 1) {
+    status.textContent = `Отряд уже здесь: ${place.name}.`;
+  } else {
+    setMode('goal');
+    selectPoint(target);
+    destinationName = place.name;
+  }
+  element<HTMLSelectElement>('place').value = String(index);
+  element('place-description').textContent = place.description;
+}
+
+function clearDestination() {
+  destinationName = undefined;
+  element<HTMLSelectElement>('place').value = '';
+  element('place-description').textContent =
+    'Метки на карте выбирают цель. Следующий переход начинается там, где находится отряд.';
+}
+
+function drawPlaces() {
+  if (legacy) return;
+  element('places-section').removeAttribute('hidden');
+  const select = element<HTMLSelectElement>('place');
+  regional.places.forEach((place, index) => {
+    select.add(new Option(place.name, String(index)));
+    const marker = document.createElementNS(svgNS, 'g');
+    marker.setAttribute('transform', `translate(${place.at.join(' ')})`);
+    marker.setAttribute('role', 'button');
+    marker.setAttribute('aria-label', `Путь к месту: ${place.name}`);
+    marker.setAttribute('tabindex', '0');
+    marker.innerHTML = '<circle class="hit" r="18"/><circle r="7"/><path d="M-3 0H3M0 -3V3"/>';
+    marker.addEventListener('pointerdown', (event) => event.stopPropagation());
+    marker.addEventListener('click', () => choosePlace(index));
+    marker.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        choosePlace(index);
+      }
+    });
+    element('interest-sites').append(marker);
+  });
+  select.addEventListener('change', () => {
+    if (select.value !== '') choosePlace(Number(select.value));
+  });
+}
+
+function durationText(milliseconds: number) {
+  if (legacy) return `${(milliseconds / 1000).toFixed(1)} с`;
+  const seconds = Math.ceil(milliseconds / 1000),
+    minutes = Math.floor(seconds / 60);
+  return minutes ? `${minutes} мин ${seconds % 60} с` : `${seconds} с`;
+}
+
+function updateProgress() {
+  element<HTMLProgressElement>('journey-progress').value = plan
+    ? elapsed / Number(plan.arrivesAtMs)
+    : 0;
+  element('remaining').textContent = plan
+    ? durationText((Number(plan.arrivesAtMs) - elapsed) * walkingTimeScale)
+    : '—';
 }
 
 function addLayerToggle(
@@ -157,6 +267,27 @@ function createPlan(target: PointFp): ContinuousMovementPlan {
   });
 }
 
+function showRouteMetrics() {
+  element('duration').textContent = plan
+    ? durationText((Number(plan.totalDurationUs) / 1000) * walkingTimeScale)
+    : '—';
+  element('distance').textContent = '—';
+  if (!plan || legacy) return;
+  const length = plan.path.slice(1).reduce((sum, p, i) => {
+    const before = plan!.path[i]!;
+    return (
+      sum +
+      Math.hypot(
+        Number(p.xMicroFp) - Number(before.xMicroFp),
+        Number(p.zMicroFp) - Number(before.zMicroFp),
+      ) /
+        65536 /
+        SHEET.fpPerPixel
+    );
+  }, 0);
+  element('distance').textContent = `${Math.round(length * regional.metresPerPixel)} м`;
+}
+
 function calculateRoute() {
   running = false;
   elapsed = 0;
@@ -169,13 +300,12 @@ function calculateRoute() {
   } catch (error) {
     status.textContent = `Не удалось построить путь: ${error instanceof Error ? error.message : 'ошибка'}`;
   }
-  element('duration').textContent = plan
-    ? `${(Number(plan.totalDurationUs) / 1e6).toFixed(1)} с`
-    : '—';
+  showRouteMetrics();
   play.disabled = !plan;
   play.textContent = 'Идти';
   drawRoute();
   showSurface(start);
+  updateProgress();
 }
 
 function setMode(next: typeof mode) {
@@ -188,6 +318,16 @@ function setMode(next: typeof mode) {
       : 'Нажмите на карту, чтобы выбрать цель';
 }
 
+function setEndpoint(p: PointFp) {
+  if (mode === 'start') {
+    start = p;
+    setMode('goal');
+  } else {
+    if (!legacy) start = markerPosition;
+    goal = p;
+  }
+}
+
 function selectPoint(p: PointFp) {
   if (!field) return;
   if (!isContinuousPointWalkable(field, p)) {
@@ -195,10 +335,8 @@ function selectPoint(p: PointFp) {
       'Эта точка непроходима или слишком близка к воде. Выберите сухую землю или середину целого моста.';
     return;
   }
-  if (mode === 'start') {
-    start = p;
-    setMode('goal');
-  } else goal = p;
+  setEndpoint(p);
+  clearDestination();
   element<HTMLSelectElement>('preset').value = '';
   calculateRoute();
 }
@@ -208,6 +346,12 @@ function mapPoint(event: MouseEvent): Pixel {
     map.getScreenCTM()!.inverse(),
   );
   return [p.x, p.y];
+}
+
+function showCoordinates(p: Pixel) {
+  element('coordinates').textContent = legacy
+    ? `${Math.round(p[0])}, ${Math.round(p[1])} px · Север ↑`
+    : `${Math.round(p[0] * regional.metresPerPixel)} м В · ${Math.round(p[1] * regional.metresPerPixel)} м Ю · Север ↑`;
 }
 
 let drag: { id: number; x: number; y: number; view: number[]; moved: boolean } | undefined;
@@ -224,7 +368,7 @@ map.addEventListener('pointerdown', (event) => {
 });
 map.addEventListener('pointermove', (event) => {
   const p = mapPoint(event);
-  element('coordinates').textContent = `${Math.round(p[0])}, ${Math.round(p[1])} px · Север ↑`;
+  showCoordinates(p);
   if (!drag) return;
   if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 4) drag.moved = true;
   if (!drag.moved) return;
@@ -298,19 +442,29 @@ stop.addEventListener('click', () => {
   status.textContent = 'Отряд остановлен. Можно продолжить этот путь.';
 });
 
+function arrive() {
+  running = false;
+  play.disabled = false;
+  stop.disabled = true;
+  play.textContent = 'Повторить';
+  status.textContent = destinationName
+    ? `Отряд прибыл: ${destinationName}.`
+    : 'Отряд прибыл в выбранную точку.';
+}
+
 function animate(now: number) {
   if (running && plan) {
-    elapsed = Math.min(Number(plan.arrivesAtMs), elapsed + (now - lastFrame) * Number(rate.value));
+    elapsed = Math.min(
+      Number(plan.arrivesAtMs),
+      elapsed + ((now - lastFrame) * Number(rate.value)) / walkingTimeScale,
+    );
     const p = positionAt(plan, String(Math.floor(elapsed)));
     const current = { xFp: Number(p.xMicroFp) / 65536, zFp: Number(p.zMicroFp) / 65536 };
     updateParty(current);
     showSurface(current);
+    updateProgress();
     if (elapsed >= Number(plan.arrivesAtMs)) {
-      running = false;
-      play.disabled = false;
-      stop.disabled = true;
-      play.textContent = 'Повторить';
-      status.textContent = 'Отряд прибыл в выбранную точку.';
+      arrive();
     }
   }
   lastFrame = now;
@@ -318,17 +472,21 @@ function animate(now: number) {
 }
 
 async function initialize() {
+  drawGeography();
   drawLayers();
   // Yield once so the image and loading message paint before compiling geometry.
   await new Promise<void>((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
   field = buildNavigationField(region);
-  const samples: Record<string, Pixel> = {
-    forest: [100, 500],
-    marsh: [1480, 580],
-    hills: [1200, 270],
-    deep_water: [540, 340],
-  };
-  for (const terrain of ['forest', 'marsh', 'hills', 'deep_water']) {
+  drawPlaces();
+  const samples: Record<string, Pixel> = legacy
+    ? {
+        forest: [100, 500],
+        marsh: [1480, 580],
+        hills: [1200, 270],
+        deep_water: [540, 340],
+      }
+    : regional.samples;
+  for (const terrain of Object.keys(samples)) {
     const speed = continuousSurfaceAt(field, point(samples[terrain]!)).speedPermille;
     addLayerToggle(
       terrain,
@@ -355,6 +513,7 @@ async function initialize() {
     if (select.value === '' || !preset) return;
     start = point(preset.from);
     goal = point(preset.to);
+    clearDestination();
     setMode('goal');
     calculateRoute();
   });
