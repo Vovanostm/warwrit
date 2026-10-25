@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
-import { advanceMapView, wheelPixels, zoomMapView } from './map-camera.js';
+import { advanceMapView, panMapView, wheelPixels, zoomMapView } from './map-camera.js';
 import { mountContractPreview } from './navigation-contracts.js';
 import {
   buildNavigationField,
@@ -268,5 +268,33 @@ test('camera eases through intermediate frames and converges independently of re
       converged120: settle(120),
     },
     { intermediate: true, converged60: target, converged120: target },
+  );
+});
+
+test('keyboard camera travel has equal diagonal speed, frame-rate independence and closed bounds', () => {
+  const extent = { width: 4608, height: 3072 };
+  const initial = { x: 600, y: 400, width: 2304, height: 1536 };
+  const move = (direction: readonly [number, number], frames: number) => {
+    let camera = initial;
+    for (let i = 0; i < frames; i++) camera = panMapView(camera, direction, 1000 / frames, extent);
+    return camera;
+  };
+  const right = move([1, 0], 60),
+    diagonal = move([1, 1], 60);
+  const distance = (v: typeof initial) => Math.hypot(v.x - initial.x, v.y - initial.y);
+  const edge = panMapView({ ...initial, x: 2304, y: 1536 }, [1, 1], 64, extent);
+  assert.deepEqual(
+    {
+      moved: right.x > initial.x,
+      sameDiagonalSpeed: Math.abs(distance(right) - distance(diagonal)) < 0.001,
+      sameAt120Hz: Math.abs(right.x - move([1, 0], 120).x) < 0.001,
+      staysInside: edge,
+    },
+    {
+      moved: true,
+      sameDiagonalSpeed: true,
+      sameAt120Hz: true,
+      staysInside: { ...initial, x: 2304, y: 1536 },
+    },
   );
 });

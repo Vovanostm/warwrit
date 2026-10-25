@@ -15,6 +15,7 @@ import * as regional from './porechye-regional.js';
 import {
   advanceMapView,
   boundedMapView,
+  panMapView,
   wheelPixels,
   zoomMapView,
   type MapView,
@@ -385,6 +386,7 @@ function showCoordinates(p: Pixel) {
 let drag: { id: number; x: number; y: number; view: number[]; moved: boolean } | undefined;
 map.addEventListener('pointerdown', (event) => {
   if (event.button !== 0) return;
+  map.focus({ preventScroll: true });
   zoomTarget = undefined;
   drag = {
     id: event.pointerId,
@@ -435,6 +437,51 @@ function animateZoom(elapsedMs: number) {
   if (next === zoomTarget) zoomTarget = undefined;
   applyView(next);
 }
+const heldPanKeys = new Set<string>();
+const panKeyCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD']);
+function isTypingTarget(target: EventTarget | null) {
+  return (
+    target instanceof Element &&
+    !!target.closest('input, select, textarea, [contenteditable]:not([contenteditable="false"])')
+  );
+}
+function isBrowserShortcut(event: KeyboardEvent) {
+  return event.ctrlKey || event.altKey || event.metaKey;
+}
+window.addEventListener('keydown', (event) => {
+  if (!panKeyCodes.has(event.code)) return;
+  if (isTypingTarget(event.target)) return;
+  if (isBrowserShortcut(event)) return;
+  event.preventDefault();
+  heldPanKeys.add(event.code);
+});
+window.addEventListener('keyup', (event) => heldPanKeys.delete(event.code));
+window.addEventListener('blur', () => heldPanKeys.clear());
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) heldPanKeys.clear();
+});
+document.addEventListener('focusin', (event) => {
+  if (isTypingTarget(event.target)) heldPanKeys.clear();
+});
+function animateKeyboardPan(elapsedMs: number) {
+  if (!heldPanKeys.size) return;
+  if (drag) return;
+  const direction: Pixel = [
+    Number(heldPanKeys.has('KeyD')) - Number(heldPanKeys.has('KeyA')),
+    Number(heldPanKeys.has('KeyS')) - Number(heldPanKeys.has('KeyW')),
+  ];
+  const next = panMapView(view, direction, elapsedMs, SHEET);
+  if (zoomTarget)
+    zoomTarget = boundedMapView(
+      {
+        ...zoomTarget,
+        x: zoomTarget.x + next.x - view.x,
+        y: zoomTarget.y + next.y - view.y,
+      },
+      SHEET,
+    );
+  applyView(next);
+}
 function symbolScale() {
   return expanded ? view.width / 1536 : 1;
 }
@@ -475,6 +522,7 @@ map.addEventListener(
   (event) => {
     event.preventDefault();
     if (drag) return;
+    map.focus({ preventScroll: true });
     const [x, y] = mapPoint(event);
     const fraction: Pixel = [(x - view.x) / view.width, (y - view.y) / view.height];
     const delta = wheelPixels(event.deltaY, event.deltaMode, map.clientHeight);
@@ -484,6 +532,7 @@ map.addEventListener(
 );
 map.addEventListener('contextmenu', (event) => {
   event.preventDefault();
+  map.focus({ preventScroll: true });
   setMode('goal');
   selectPoint(point(mapPoint(event)));
 });
@@ -522,6 +571,7 @@ function arrive() {
 
 function animate(now: number) {
   animateZoom(now - lastFrame);
+  animateKeyboardPan(now - lastFrame);
   if (running && plan) {
     elapsed = Math.min(
       Number(plan.arrivesAtMs),

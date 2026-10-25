@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### WASD map camera
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner requested WASD.
+  Held physical keys now pan the zoomed map continuously, with normalized
+  diagonals and existing bounds; release stops. Editable/select focus and
+  browser shortcuts keep their keyboard input; explicit map gestures focus
+  the camera. Wheel zoom and keyboard pan can run together.
+- Fifteen focused scenarios/types, scoped lint/format and native key/release/
+  input-focus/wheel checks PASS; independent visual ACCEPT. Real tab/window
+  blur NOT_MEASURED in this runner; explicit blur-handler exercise is separate.
+  [Owning result and evidence](docs/wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
+  No art, domain rules, dependencies, server/save or external operations changed.
+
 ### Smooth map zoom and right-click movement target
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner requested smooth

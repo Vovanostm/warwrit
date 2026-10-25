@@ -1,6 +1,25 @@
 # Warwrit current delivery plan
 
-## Map camera and right-click target — 2026-10-26, LOCAL COMPLETE
+## WASD map pan — 2026-10-26, LOCAL COMPLETE
+
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `3f47da64`.
+Owner asks to add WASD movement; interpreted as map-camera pan, not party travel.
+Outcome: held physical WASD keys pan the zoomed map smoothly; release stops;
+constant screen-relative speed, normalized diagonal, existing world bounds.
+Form/editable focus and browser shortcuts retain their own keyboard input.
+Explicit map mouse gestures focus the map so keyboard pan works after zoom.
+Scope: existing camera/controller/hints/test plus owning map records.
+[Owning result](../wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
+15 focused scenarios/types and scoped lint/format PASS.
+Native four directions/release, input focus stop, wheel focus and combined
+wheel/pan PASS. Blur-signal clearing checked; native tab blur NOT_MEASURED
+because this runner does not emit it when switching pages.
+Independent visual ACCEPT: six applicable criteria2, characters N/A.
+No art, game rules, dependencies, server/save or external writes.
+
+## Dated history
+
+### Map camera and right-click target — 2026-10-26, LOCAL COMPLETE
 
 Sole writer: Codex parent; branch `codex/world-map-painted`, base `89c746de`.
 Owner: smooth zoom and right mouse button for marking movement.
@@ -18,8 +37,6 @@ water refusal, pan and interrupted-zoom fit reset PASS.
 Independent visual ACCEPT: six applicable criteria2, characters N/A.
 Source `b9353990`; normal commit hook/audit PASS, tree clean before records closeout.
 No new art, domain rules, dependencies, save/server or external writes.
-
-## Dated history
 
 ### Porechye 3×3 atlas and 24 proposals — 2026-10-25, LOCAL COMPLETE
 

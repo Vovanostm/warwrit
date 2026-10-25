@@ -63,3 +63,22 @@ export function advanceMapView(current: MapView, target: MapView, elapsedMs: num
     height: current.height + (target.height - current.height) * blend,
   };
 }
+
+// Move by a constant fraction of the visible width per second, at every zoom.
+export function panMapView(
+  current: MapView,
+  direction: Pixel,
+  elapsedMs: number,
+  extent: MapExtent,
+): MapView {
+  const length = Math.max(1, Math.hypot(...direction));
+  const distance = (current.width * 0.55 * Math.min(elapsedMs, 64)) / 1000;
+  return boundedMapView(
+    {
+      ...current,
+      x: current.x + (direction[0] / length) * distance,
+      y: current.y + (direction[1] / length) * distance,
+    },
+    extent,
+  );
+}
