@@ -9,6 +9,72 @@ requests.
 
 ## Unreleased
 
+### Isolated publication candidate for the selected art styles
+
+- 2026-10-25, branch `codex/novel-art-style-profiles`, published: owner requested
+  commit/push/PR and local-main update. Isolated this chat’s art, JSON and wiki
+  changes from the dirty combat checkout onto current main `7389e822`.
+  Preserved main’s ART_LORE_POLICY and agent workflow. Selected PNGs, boards
+  and gallery are included; historical iterations and the large local ZIP are
+  excluded. JSON/reference/gallery-file/format/content/short-plan checks PASS;
+  normal commit audit PASS. Asset commit `10e8084c` pushed; local main safely
+  fast-forwarded to `7389e822`, original checkout/WIP preserved. PR creation/CI
+  pending at this checkpoint; merge not authorized. Generation with new requests
+  and game integration NOT_RUN. [Delivery record](docs/wiki/vision.md#публикация-художественного-комплекта--2026-10-25).
+
+### Ready-to-submit image-generation JSON and researched prompts
+
+- 2026-10-25, branch `codex/sprite-combat-stage1`, local prompts/docs:
+  owner clarified that direct JSON generation requests are needed. Added four
+  standalone files under `assets/art/styles/requests/` for both selected styles,
+  each with separate opaque-scene/transparent-sprite prompts. Applied current
+  official OpenAI image-prompting/generation guidance; linked sources and
+  explained direct use in the style README and
+  [owning wiki section](docs/wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25).
+  Requests contain only supported built-in-tool arguments and no placeholders;
+  JSON/arguments/scoped formatting checked. Generation and quality comparison
+  NOT_RUN; no API invocation, new assets, runtime change or publication.
+
+### Main 2D style selected and reusable generation profiles
+
+- 2026-10-25, branch `codex/sprite-combat-stage1`, local documentation/config:
+  owner selected «Сдержанный графический роман» as the main 2D direction and
+  «Туман и мокрый камень» for selected locations. Added
+  `assets/art/styles/{graphic-novel,fog-wet-stone}.json`, thirteen permanent
+  selected reference PNGs and profile usage instructions; preserved the ten-style
+  study and existing art. Updated AGENTS, ADR-0006, visual-critique/terrain
+  reference guidance, wiki navigation/log and current plan around the
+  [owning decision](docs/wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25).
+  Two JSON profiles, all reference paths, six template input sets and four
+  assembled example requests validated; formatting PASS. No location assignment
+  list invented. New image generation, alpha/pivot and runtime acceptance
+  NOT_RUN; no renderer/camera/3D-workflow change or publication.
+
+### Ten visual-novel directions across seven subjects
+
+- 2026-10-25, branch `codex/sprite-combat-stage1`, local art proposals:
+  per owner request, produced a 70-image comparison study (character, ruined
+  watermill, town, village, field, marsh, forest × ten treatments) in
+  `assets/art/novel/style-study-2026-10-25/`, with exact prompts, local gallery
+  and superseded iterations. First source-preserving batch failed independent
+  static critique; rebuilt broad shapes/medium directions and focal framing.
+  Gallery filters/zoom/grayscale/reset and 70/70 final image loading checked;
+  HTML/JSON formatting passed. Independent static concept critique ACCEPT after
+  correcting six silhouette scenes and four focal-light scenes. Ten comparison
+  sheets and a selected-assets archive are saved locally. Updated the
+  [owning result](docs/wiki/vision.md#сравнительный-комплект--2026-10-25)
+  and current plan. Game integration/acceptance NOT_RUN; no new canon or release.
+
+### Readable dark-fantasy illustrations for visual novels
+
+- 2026-10-25, branch `codex/sprite-combat-stage1`, local documentation:
+  per owner request, inspected existing ink/place illustrations, researched
+  composition and lighting references, and proposed ten treatments with less
+  visual noise and selective contrast in the
+  [owning vision section](docs/wiki/vision.md#иллюстрации-новелл-меньше-пестроты--предложение-2026-10-25).
+  Updated `docs/engineering/CURRENT_PLAN.md`; preserves ADR-0006 and quest/lore
+  authority. New art, runtime checks and visual acceptance NOT_RUN; no game code.
+
 ### Integrate accepted #319 after #325 — 2026-10-25, LOCAL
 
 - Branch `Vovanostm/wages-local-evidence-319`; owner authorized these two
