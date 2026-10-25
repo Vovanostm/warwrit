@@ -4,6 +4,46 @@ Project setup, 2026-09-27. [AGENTS.md](../../AGENTS.md) and the active contract
 remain authoritative. Profiles reuse existing skills; they do not activate
 gameplay cards or introduce another workflow engine.
 
+## Current operating model — 2026-10-25
+
+Owner accepted the workflow improvement and requested one GPT-6.1 Sol author,
+then a separate reviewer for this assignment. [AGENTS permission policy](../../AGENTS.md#permission-policy--current-as-of-2026-10-25)
+is the sole current authority; the 2026-10-24 cancellation remains in force.
+Historical Orca/merge-on-gates, studio rule-making, scout/refill and one-issue
+policies below record their original decisions, not current activation or defaults.
+A fresh session must compare current scope/base with old-branch instructions.
+
+Use one accountable author by default. Delegate only a useful independent result
+with source pointers, base/worktree, write/resource ownership, acceptance and a
+bounded stopping condition. No separate contract agent or shared skeleton is
+required. Existing issues can supply the complete contract. Resolve decisive
+uncertainties by targeted source reading/probes before generating code; see
+[preparation](AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25).
+
+Every writing assignment names exactly one mode:
+
+- **Delegated editor:** leaves its scoped diff to the parent; no commit/publication.
+- **Branch owner:** commits finished steps in its named worktree; publication is
+  separately governed by current permission. Parent still owns integration.
+
+The parent assigns one validation owner per relevant revision. Do not run the
+same validate/audit chain in both builder and coordinator. Commit hooks and PR CI
+remain required. Metrics are pointers, not a mandate to refactor or create tests.
+300 lines is advisory; semantic review checks cohesion, comprehensibility,
+verification and rollback. Related issues may share a PR; each keeps its criteria.
+
+Review is independent at required risk/result boundaries. Infrastructure requires
+reviewer ACCEPT; substantive gameplay/visual cycles retain AGENTS' playable and
+visual acceptance. Author self-review never substitutes for it. Rework identifies
+defect/environment/evidence causes and changes hypothesis before retry; a repeated
+cause requires another approach or a concrete blocker. No automatic two-round
+reset/split ritual. Unattended work needs explicit scope, budget and stop condition.
+
+This amends the conflicting 2026-10-18/19/21 rules below, retaining their dated
+history and measured results. Optional Orca operation uses the updated skill only
+after new activation; no worker, automation, scout, GitHub write or merge is
+started by this amendment. Pilot NOT_RUN; savings NOT_MEASURED.
+
 ## Responsibilities
 
 | Owner                 | Responsibility                                                                             | Write boundary                                |
@@ -32,9 +72,9 @@ See [the current packet queue](PARALLEL_WAVES.md) for dependencies and exact own
 ## Assignment and scheduling
 
 Use the four-field brief in [the preparation plan](AGENT_DEVELOPMENT_PREPARATION.md#parallel-work-without-a-new-control-plane).
-Include a time limit and exact focused checks/resource ownership in that brief.
-If a time limit is missing, the parent sets it before dispatch. Reaching it means
-reporting partial evidence, never inventing completion.
+Include exact focused checks/resource ownership and a finite scope/stop condition.
+For unattended operation set an explicit budget before dispatch. Reaching a limit
+means reporting partial evidence, never inventing completion.
 
 1. Restore actual cwd, HEAD/tree, dirty changes, live dependencies and source edition.
    Read mandatory contracts in full; give children pointers and relevant context.
@@ -47,7 +87,7 @@ reporting partial evidence, never inventing completion.
    explicitly owned disposable resources are the alternative.
 5. Review the frozen diff independently. Compare the reviewed revision and dirty
    delta before applying findings. A changed tree invalidates affected evidence.
-6. Parent inspects the union and performs delivery under the existing skill/gate.
+6. Parent inspects the union and performs delivery under current permission and the existing skill/gate.
    Reuse unchanged-code evidence; successful branches do not prove their union.
 
 Prefer a scoped brief over copying the full conversation when it contains enough

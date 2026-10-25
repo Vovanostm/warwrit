@@ -13,10 +13,12 @@ remembered PR, old attachment or cache as the current head.
 
 ## Procedure
 
-1. Run `pnpm agent:status` for live main/CI/PRs/active branches, then read the
-   active issue body/comments and exact PR base/head/tree/merged state. Check
-   who holds the coordinator lease (AGENTS.md § Orchestration); if it is not
-   you, act only as a worker or reviewer.
+1. Confirm checkout/base/branch/dirty state and current owner scope/stop status.
+   Use `pnpm agent:status` when live integration/PR state matters; a small local
+   documentation task does not need a broad inventory. Read the active issue and
+   applicable comments. An old branch's instructions or old merge permission
+   cannot reactivate a cancelled mission. Inspect a coordinator lease only for
+   an explicitly activated queue; otherwise work within the local assignment.
    Inspect existing work before creating a branch; keep unrelated work intact.
 2. When the task sets or interprets game rules or a milestone contract, read
    full Notes and Purpose of the active canonical Airtable contract and its
@@ -27,13 +29,17 @@ remembered PR, old attachment or cache as the current head.
 3. Identify source edition, accepted rules, provisional parameters, current
    implementation and unexecuted evidence separately. Missing old ZIP bytes remain
    a source-concordance limitation, not an invitation to regenerate definitions.
-4. Read nested instructions and actual common types/guards/definitions/preparers
-   used by the task. Trace one command from authorization to receipt and projection.
+4. Read nested instructions and actual affected definitions and consumers.
+   For command changes trace authorization through receipt and projection.
    Check the installed lockfile and type declarations before changing library APIs.
-5. Write a compact boundary note: required existing inputs; IN/OUT; one next action;
-   owner-authorized writes; unresolved dependencies. Raise only a concrete new
-   product conflict. Storage shapes or finite adapter contracts are engineering
-   choices within the approved rules, not a reason for a new general interview.
+5. Extract a short working note from the existing issue/contract: player outcome,
+   decisive criteria/regressions, source and code owner of the rule, producers and
+   consumers, base/write boundary and verification. Do not create another document
+   or agent if these are already clear. Resolve only uncertainties that could
+   change the solution with targeted reading or a safe probe before generating
+   code. Ask for undefined product rules/authority; technical choices inside the
+   accepted contract belong to the author. Reuse unchanged sources and applicable
+   check results; recheck changing heads, permission, config and environment.
 
 ## Expected output
 

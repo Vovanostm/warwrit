@@ -1,53 +1,48 @@
 #!/usr/bin/env bash
-# One issue = one PR (AGENTS.md "Orchestration"): reject a branch whose source
-# change exceeds the slice limit, and a PR body that closes several issues or
-# names none. Tests, Markdown, docs, assets, agent skills and the lockfile do not
-# count toward the limit.
+# Size is advisory; semantic review decides cohesive, verifiable boundaries.
 # Usage: scripts/check-pr-scope.sh [base-ref] [pr-body-file]
-# Owner exception: the PR label `scope:owner-approved`, which CI passes as
-# SCOPE_EXCEPTION=1. Only the owner adds that label.
+# With a body, require an issue or tracked contract and a checkable description.
 set -euo pipefail
-limit=300
-base="$(git merge-base "${1:-origin/main}" HEAD)"
+base="$(git merge-base "${1:-origin/main}" HEAD)" || { echo 'FAIL scope: invalid base'; exit 1; }
 body="${2:-}"
-
+# Capture first: process-substitution failure must not become an empty PASS.
+stat="$(git diff --numstat --no-renames "$base"...HEAD)" || { echo 'FAIL scope: diff unavailable'; exit 1; }
 total=0
 top=""
 while IFS=$'\t' read -r added deleted path; do
-  [[ "$added" == "-" ]] && continue # binary file
+  [[ -z "$added" || "$added" == "-" ]] && continue
   case "$path" in
     *.test.* | *.spec.* | */test/* | */tests/* | */__tests__/* | *.md | docs/* | assets/* | .agents/* | pnpm-lock.yaml) continue ;;
   esac
   lines=$((added + deleted))
   total=$((total + lines))
   top+="$lines $path"$'\n'
-done < <(git diff --numstat "$base"...HEAD)
-
-status=0
-if ((total > limit)); then
-  if [[ "${SCOPE_EXCEPTION:-}" == 1 ]]; then
-    echo "PASS scope: $total source lines > $limit, owner exception label present"
-  else
-    echo "FAIL scope: $total changed source lines without tests exceed $limit."
-    echo "Split the work into one-issue PRs, or ask the owner for scope:owner-approved."
-    printf '%s' "$top" | sort -rn | head -5 | sed 's/^/  /'
-    status=1
-  fi
-else
-  echo "PASS scope: $total changed source lines (limit $limit)"
+done <<< "$stat"
+echo "PASS scope report: $total changed source lines (300 is advisory)"
+if ((total > 300)); then
+  echo 'ADVISORY: reviewer must assess cohesion, clarity, verification and rollback; split independent work.'
 fi
+printf '%s' "$top" | sort -rn | sed -n '1,5p'
 
 if [[ -n "$body" ]]; then
-  closes="$({ grep -oiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) #[0-9]+' "$body" || true; } | grep -oE '[0-9]+' | sort -u | wc -l | tr -d ' ' || true)"
-  refs="$({ grep -oiE '(refs?|part of) #[0-9]+' "$body" || true; } | wc -l | tr -d ' ' || true)"
-  if ((closes > 1)) && [[ "${SCOPE_EXCEPTION:-}" != 1 ]]; then
-    echo "FAIL issues: the PR closes $closes issues; one issue per PR."
-    status=1
-  elif ((closes + refs == 0)); then
-    echo "FAIL issues: the PR body names no issue (Closes #N or Refs #N)."
-    status=1
+  [[ -f "$body" && -r "$body" ]] || { echo 'FAIL issues: PR body unavailable'; exit 1; }
+  content="$(cat "$body")" || { echo 'FAIL issues: PR body unreadable'; exit 1; }
+  linked=0
+  if grep -qiE '(close[sd]?|fix(e[sd])?|resolve[sd]?|refs?|part of) #[0-9]+' <<< "$content"; then
+    linked=1
   else
-    echo "PASS issues: closes $closes, refs $refs"
+    contracts="$(grep -oE 'docs/(engineering/(work-packages|epics)/|work-packages/)[A-Za-z0-9_./-]+\.md' <<< "$content" || true)"
+    while IFS= read -r contract; do
+      [[ -n "$contract" && -f "$contract" ]] || continue
+      if git ls-files --error-unmatch -- "$contract" >/dev/null 2>&1; then linked=1; fi
+    done <<< "$contracts"
   fi
+  if ((linked == 0)); then
+    echo 'FAIL issues: link an issue (Closes/Refs #N) or an owning tracked contract.'
+    exit 1
+  fi
+  # A link or a Markdown heading alone is not a description of the result.
+  description="$(printf '%s\n' "$content" | grep -viE '^([[:space:]]*#|[[:space:]]*$|[[:space:]]*(close[sd]?|fix(e[sd])?|resolve[sd]?|refs?|part of) #[0-9]+[[:space:].,]*)' || true)"
+  [[ "$description" =~ [[:alpha:]] ]] || { echo 'FAIL issues: describe the behavior and its verification'; exit 1; }
+  echo 'PASS linkage: review each linked issue acceptance separately; linkage does not prove cohesion.'
 fi
-exit "$status"
