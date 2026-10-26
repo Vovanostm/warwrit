@@ -133,12 +133,9 @@
             viewBox="0 0 1536 1024"
             role="group"
             aria-label="Карта Поречья с выбором точек пути"
+            aria-describedby="map-controls-hint"
             tabindex="0"
           >
-            <title>
-              Поречье: колесо плавно приближает, ПКМ задаёт цель пути, перетаскивание ЛКМ двигает
-              карту
-            </title>
             <image
               id="sheet"
               width="1536"
@@ -181,9 +178,11 @@
           </div>
         </div>
         <footer>
-          <span>Колесо — плавный масштаб · WASD / ЛКМ тянуть — обзор · ПКМ — цель</span
-          ><span id="scale" hidden>Лист 2,4 × 1,6 км · масштаб эскиза</span
-          ><span id="coordinates">Север ↑</span>
+          <span id="map-controls-hint">
+            Колесо — масштаб · WASD / ЛКМ тянуть — обзор · ПКМ — цель · «Идти» — движение
+          </span>
+          <span id="scale" hidden>Лист 2,4 × 1,6 км · масштаб эскиза</span>
+          <span id="coordinates">Север ↑</span>
         </footer>
       </div>
     </main>

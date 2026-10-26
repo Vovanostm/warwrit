@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Map controls hint outside the canvas
+
+- 2026-10-26, branch `codex/map-controls-hint`, local: owner reported a large
+  hover tooltip obscuring the map. Removed the SVG title that generated it;
+  the concise footer hint now also explains Walk and supplies the map's ARIA
+  description. Browser hover/DOM, hint placement and wheel/WASD/RMB checks PASS;
+  handlers unchanged, game tests NOT_RUN for this HTML-only fix.
+  [Owning result](docs/wiki/world/map.md#подсказка-управления-вне-карты--2026-10-26).
+
 ### World-map stand merged
 
 - 2026-10-26, originating branch `codex/world-map-painted`, merged:

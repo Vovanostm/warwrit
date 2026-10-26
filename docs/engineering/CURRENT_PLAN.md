@@ -1,6 +1,18 @@
 # Warwrit current delivery plan
 
-## World map stand PR delivery — 2026-10-26, MERGED
+## Map controls hint — 2026-10-26, LOCAL COMPLETE
+
+Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `4428fa74`.
+Owner: remove the intrusive map tooltip or move the hint outside the canvas.
+SVG title removed; footer supplies concise controls and ARIA description.
+[Owning result](../wiki/world/map.md#подсказка-управления-вне-карты--2026-10-26).
+Browser hover/DOM/placement and wheel/WASD/RMB checks PASS; scoped format/diff PASS.
+No handler/art changes; game suites NOT_RUN for this HTML-only fix.
+Local only; no new PR/merge or operational activation requested.
+
+## Dated history
+
+### World map stand PR delivery — 2026-10-26, MERGED
 
 Coordinator/sole writer: Codex parent; branch `codex/world-map-painted`.
 Owner: “Review, prepare pr, merge”; only this delivery, no operational restart.
@@ -18,8 +30,6 @@ Stand only: 34 POIs/24 proposals, two visit areas; no MMO/server/save integratio
 Independent full native critic flow NOT_RUN; human usability/balance NOT_MEASURED.
 This post-merge documentation closeout is local; code/art are merged in main.
 No deployment, paid services, successor task or automation/Orca activation.
-
-## Dated history
 
 ### Settlement areas and visit intent — 2026-10-26, LOCAL COMPLETE
 
