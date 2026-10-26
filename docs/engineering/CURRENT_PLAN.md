@@ -1,23 +1,51 @@
 # Warwrit current delivery plan
 
-## World map stand PR delivery — 2026-10-26, READY FOR CI
+## Map controls UX delivery — 2026-10-26, LOCAL VALIDATED
 
-Coordinator/sole writer: Codex parent; branch `codex/world-map-painted`.
-Owner: “Review, prepare pr, merge” authorizes this branch's PR and normal merge.
-[Delivery contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md).
-Source before integration `8c789e03`; current main `f5fe0052` merged locally.
-Only CHANGELOG/CURRENT_PLAN conflicted; both dated histories retained.
-Atlas/navigation source, approved older art and current visit behavior preserved.
-Parent owns validation/publication/expected-head merge; independent code reviewer
-must accept the changed stand/tooling; hosted CI and PR scope must be green.
-Integrated 20 map/types, native preset continuity, scoped lint/format and whole
-repository format PASS. Independent source/tooling/cohesion ACCEPT at `e2eb5135`
-after fixing preset teleport; later publication records only, source unchanged.
-Normal commit hook/audit PASS; existing visual/text acceptance and limits in wiki.
-Hosted clean-checkout CI and PR scope pending; do not merge before green checks.
-No full game integration, deployment, paid services or automation/Orca restart.
+Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `c4e3f27e`.
+Owner: continue analysis/improvements, then PR, merge to main and update local main.
+Scope: familiar controls and unobstructed map; no art/core/server changes.
+RMB walks immediately, LMB previews, map-focused Space pauses/resumes.
+No initial route or arrival replay; nearby Enter is in the toolbar.
+[Owning result](../wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
+20 map scenarios/types, scoped lint/format and 23 native browser checks PASS.
+Independent source/tooling/cohesion review ACCEPT at `3d854e93`.
+Independent visual critic ACCEPT, six applicable criteria2; human preference NOT_MEASURED.
+Native journeys executed by author; independent native replay NOT_RUN.
+Normal commit hook/audit PASS at `3d854e93`; hosted clean-checkout CI pending.
+Current owner permission covers this PR/normal merge/local-main fast-forward only.
+Primary checkout/WIP preserved; no deploy/Orca/automation activation.
 
 ## Dated history
+
+### Map controls hint — 2026-10-26, LOCAL COMPLETE
+
+Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `4428fa74`.
+Owner: remove the intrusive map tooltip or move the hint outside the canvas.
+SVG title removed; footer supplies concise controls and ARIA description.
+[Owning result](../wiki/world/map.md#подсказка-управления-вне-карты--2026-10-26).
+Browser hover/DOM/placement and wheel/WASD/RMB checks PASS; scoped format/diff PASS.
+No handler/art changes; game suites NOT_RUN for this HTML-only fix.
+Local only; no new PR/merge or operational activation requested.
+
+### World map stand PR delivery — 2026-10-26, MERGED
+
+Coordinator/sole writer: Codex parent; branch `codex/world-map-painted`.
+Owner: “Review, prepare pr, merge”; only this delivery, no operational restart.
+[PR #327](https://github.com/Vovanostm/warwrit/pull/327) merged normally as `c4e3f27e`.
+Expected head `70ec192f`; independent source/tooling/cohesion ACCEPT at `e2eb5135`,
+followed only by delivery records. Preset teleport fixed and browser checked.
+[CI 40249250063](https://github.com/Vovanostm/warwrit/actions/runs/40249250063) SUCCESS:
+bootstrap/verify/stress/real-PG migrations, coverage and changed-code audit.
+[Latest scope 40250278331](https://github.com/Vovanostm/warwrit/actions/runs/40250278331) SUCCESS;
+no unresolved review threads. Merged tree equals the checked head tree.
+Remote main read back at `c4e3f27e`; this worktree fast-forwarded to it.
+20 map/types, native preset continuity, local format/lint/audit PASS.
+[Owning closeout](../wiki/world/map.md#слияние-стенда-карты--2026-10-26).
+Stand only: 34 POIs/24 proposals, two visit areas; no MMO/server/save integration.
+Independent full native critic flow NOT_RUN; human usability/balance NOT_MEASURED.
+This post-merge documentation closeout is local; code/art are merged in main.
+No deployment, paid services, successor task or automation/Orca activation.
 
 ### Settlement areas and visit intent — 2026-10-26, LOCAL COMPLETE
 

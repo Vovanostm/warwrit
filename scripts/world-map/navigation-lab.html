@@ -58,7 +58,7 @@
             <article id="contract-preview" hidden></article>
           </details>
           <h2>Выберите путь</h2>
-          <p>Укажите старт и цель на карте. Путь учитывает скорость местности.</p>
+          <p>ПКМ по карте — идти. ЛКМ — посмотреть путь. Скорость зависит от местности.</p>
           <div class="pair">
             <button id="start" aria-pressed="false">Поставить старт</button
             ><button id="goal" aria-pressed="true">Выбрать цель</button>
@@ -71,7 +71,7 @@
           <div id="status" role="status" aria-live="polite">Подготовка карты…</div>
           <div class="pair">
             <button id="play" class="primary" disabled>Идти</button
-            ><button id="stop" disabled>Стоп</button>
+            ><button id="stop" disabled>Пауза</button>
           </div>
           <dl>
             <div>
@@ -124,8 +124,14 @@
       </aside>
       <div class="map-column">
         <div class="map-toolbar">
-          <span id="mode">Нажмите на карту, чтобы выбрать цель</span
-          ><button id="fit">Вся карта</button>
+          <span id="mode">ПКМ — идти</span>
+          <div class="map-toolbar-actions">
+            <div id="nearby-place" role="region" aria-label="Поселение рядом" hidden>
+              <strong id="nearby-title" aria-live="polite"></strong>
+              <button id="nearby-enter" class="primary">Войти</button>
+            </div>
+            <button id="fit">Вся карта</button>
+          </div>
         </div>
         <div id="map-wrap">
           <svg
@@ -133,12 +139,9 @@
             viewBox="0 0 1536 1024"
             role="group"
             aria-label="Карта Поречья с выбором точек пути"
+            aria-describedby="map-controls-hint"
             tabindex="0"
           >
-            <title>
-              Поречье: колесо плавно приближает, ПКМ задаёт цель пути, перетаскивание ЛКМ двигает
-              карту
-            </title>
             <image
               id="sheet"
               width="1536"
@@ -162,7 +165,6 @@
             <g id="markers" aria-hidden="true">
               <g id="from-marker">
                 <circle r="11" />
-                <text y="-18" text-anchor="middle">СТАРТ</text>
               </g>
               <g id="to-marker" visibility="hidden">
                 <path d="M0 12V-18L20 -12L0 -6" />
@@ -174,16 +176,13 @@
               </g>
             </g>
           </svg>
-          <div id="nearby-place" role="region" aria-label="Поселение рядом" hidden>
-            <strong id="nearby-title" aria-live="polite"></strong>
-            <span>Можно войти или продолжить путь</span>
-            <button id="nearby-enter" class="primary">Войти</button>
-          </div>
         </div>
         <footer>
-          <span>Колесо — плавный масштаб · WASD / ЛКМ тянуть — обзор · ПКМ — цель</span
-          ><span id="scale" hidden>Лист 2,4 × 1,6 км · масштаб эскиза</span
-          ><span id="coordinates">Север ↑</span>
+          <span id="map-controls-hint">
+            Колесо — масштаб · WASD / ЛКМ тянуть — обзор · ПКМ — идти · Пробел — пауза
+          </span>
+          <span id="scale" hidden>Лист 2,4 × 1,6 км · масштаб эскиза</span>
+          <span id="coordinates">Север ↑</span>
         </footer>
       </div>
     </main>

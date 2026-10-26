@@ -9,6 +9,41 @@ requests.
 
 ## Unreleased
 
+### Familiar map movement controls
+
+- 2026-10-26, branch `codex/map-controls-hint`, local: owner requested further
+  UX review/improvement, PR, merge and local-main update. RMB now starts travel;
+  LMB previews and map-focused Space pauses/resumes without taking form/POI keys.
+  Water rejection preserves the paused route. Initial map has no example route;
+  arrival cannot replay/teleport. Nearby Enter moves into the toolbar and the
+  overlapping START label is removed. No new art, core rules or migrations.
+  Twenty map/types and 23 native browser checks PASS; scoped lint/format PASS.
+  Source review ACCEPT at `3d854e93`; visual critic ACCEPT (six criteria2),
+  author native journeys; independent native replay NOT_RUN. Normal hook/audit PASS;
+  hosted CI pending.
+  [Owning result](docs/wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
+
+### Map controls hint outside the canvas
+
+- 2026-10-26, branch `codex/map-controls-hint`, local: owner reported a large
+  hover tooltip obscuring the map. Removed the SVG title that generated it;
+  the concise footer hint now also explains Walk and supplies the map's ARIA
+  description. Browser hover/DOM, hint placement and wheel/WASD/RMB checks PASS;
+  handlers unchanged, game tests NOT_RUN for this HTML-only fix.
+  [Owning result](docs/wiki/world/map.md#подсказка-управления-вне-карты--2026-10-26).
+
+### World-map stand merged
+
+- 2026-10-26, originating branch `codex/world-map-painted`, merged:
+  [PR #327](https://github.com/Vovanostm/warwrit/pull/327), expected head
+  `70ec192f`, normal merge `c4e3f27e`. Independent source/tooling review ACCEPT,
+  preset continuity fix checked in browser; CI40249250063 (full clean-checkout
+  bootstrap, coverage/audit) and latest scope40250278331 SUCCESS. Checked/merged
+  trees matched; remote main read back, this worktree fast-forwarded.
+  [Owning result and limits](docs/wiki/world/map.md#слияние-стенда-карты--2026-10-26).
+  Earlier local entries retain their dated context. This closeout amendment is
+  local metadata after merge; it adds no gameplay, deployment or operations.
+
 ### Route-example continuity before PR
 
 - 2026-10-26, branch `codex/world-map-painted`, local: independent pre-merge
