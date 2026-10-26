@@ -66,3 +66,12 @@ scope40296349349 SUCCESS; source/visual ACCEPT, focused checks and author native
 journeys PASS. Local main and origin/main read back at the merge; primary WIP
 preserved. [Detailed readback](../wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
 This post-merge documentation update is local; runtime is merged.
+
+## Proposed networked successor — 2026-10-26
+
+Owner asks to study and design own/other-player, patrol, bandit and wildlife
+movement. The [owning proposal](../wiki/world/map.md#общая-карта-mmo-движущиеся-отряды--проработка-2026-10-26)
+records the inspected server seams, atlas edition mismatch, server/lab ownership,
+visibility and finite first-playable journey. This is local design, not a newly
+implemented network mode or approval of all NPC/contact/offline parameters.
+The delivered single-player stand remains available unchanged.

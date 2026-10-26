@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### MMO map movement architecture proposal
+
+- 2026-10-26, branch `codex/world-map-mmo-design`, local: owner requested a
+  concept-backed design for own/other players, patrols, bandits and wildlife.
+  Source inspection found server-owned player routes but stationary-only
+  surroundings, plus an atlas/server map-edition mismatch. Proposed the existing
+  world module with a separate instance/database for the lab, shared rules,
+  lawful realtime visibility, persistent NPC goals and a six-group first cycle.
+  [Owning design](docs/wiki/world/map.md#общая-карта-mmo-движущиеся-отряды--проработка-2026-10-26).
+  Planning only; no runtime or new accepted gameplay policy. Full live canonical
+  Notes/Purpose read; new links/anchors, format/status/diff PASS;
+  game/SQL/browser/load NOT_RUN.
+
 ### Map controls PR merged and local main updated
 
 - 2026-10-26, originating branch `codex/map-controls-hint`, merged:

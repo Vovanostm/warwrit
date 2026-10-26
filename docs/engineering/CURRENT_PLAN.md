@@ -1,6 +1,24 @@
 # Warwrit current delivery plan
 
-## Map controls UX delivery — 2026-10-26, MERGED
+## MMO map movement design — 2026-10-26, LOCAL PROPOSAL
+
+Coordinator/sole writer: Codex parent; branch `codex/world-map-mmo-design`, base `7ffac342`.
+Owner: study the game concept and plan player/other-player/patrol/bandit/beast movement.
+[Owning architecture and first cycle](../wiki/world/map.md#общая-карта-mmo-движущиеся-отряды--проработка-2026-10-26).
+Read live full WORLD/RC approval/lore Notes+Purpose, later owner concept and source.
+Found own-company durable routes; surroundings is stationary same-site only.
+Painted atlas edition/coordinates differ from the current server region.
+Recommendation: existing server world module; separate lab process/database using it.
+Server owns time/AI/visibility/contact; Colyseus only delivers lawful projections.
+First proposed cycle: two real clients plus patrol/bandits/wolves/night creature.
+Runtime not implemented; new AI/contact/visibility tuning remains a proposal.
+Documentation/new links+anchors/format/status/diff checks PASS; game/browser/SQL/load NOT_RUN.
+No new PR/merge/deployment/service/automation or independent playable claim.
+Previous PR328 runtime remains merged; local main stays at `6dbdc00f`.
+
+## Dated history
+
+### Map controls UX delivery — 2026-10-26, MERGED
 
 Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `c4e3f27e`.
 Owner: continue analysis/improvements, then PR, merge to main and update local main.
@@ -21,8 +39,6 @@ Local main = origin/main = `6dbdc00f`; checked/merged trees match.
 Current worktree fast-forwarded; this post-merge documentation closeout is local.
 Current owner permission covers this PR/normal merge/local-main fast-forward only.
 Primary checkout/WIP preserved; no deploy/Orca/automation activation.
-
-## Dated history
 
 ### Map controls hint — 2026-10-26, LOCAL COMPLETE
 
