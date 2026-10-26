@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ru">
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Warwrit — 10 стилей × 7 сюжетов</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #17191a;
+      color: #e6dfd2;
+      font:
+        16px/1.45 system-ui,
+        sans-serif;
+    }
+    header {
+      padding: 18px 32px 12px;
+      max-width: 1700px;
+      margin: auto;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      font-weight: 650;
+    }
+    p {
+      margin: 0;
+      color: #aaa99f;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      gap: 18px;
+      align-items: end;
+      flex-wrap: wrap;
+      background: #202324f5;
+      padding: 16px 32px;
+      border-block: 1px solid #3c3d39;
+    }
+    label {
+      display: grid;
+      gap: 5px;
+      color: #c6c1b6;
+      font-size: 13px;
+    }
+    select,
+    button {
+      font: inherit;
+      color: #e6dfd2;
+      background: #303534;
+      border: 1px solid #62665b;
+      border-radius: 4px;
+      padding: 9px 12px;
+    }
+    button {
+      cursor: pointer;
+    }
+    button:focus-visible,
+    a:focus-visible,
+    select:focus-visible {
+      outline: 3px solid #c8ac77;
+      outline-offset: 3px;
+    }
+    .check {
+      display: flex;
+      align-items: center;
+      padding-bottom: 10px;
+    }
+    input {
+      accent-color: #bba275;
+    }
+    main {
+      padding: 8px 32px 40px;
+      max-width: 1900px;
+      margin: auto;
+    }
+    section {
+      margin: 24px 0 44px;
+    }
+    h2 {
+      font-size: 22px;
+      margin: 0 0 12px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      border: 1px solid #454841;
+      border-radius: 5px;
+      overflow: hidden;
+      background: #222626;
+    }
+    figure a {
+      display: block;
+      background: #242827;
+    }
+    img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3/2;
+      object-fit: contain;
+    }
+    figcaption {
+      padding: 9px 12px;
+      color: #d1c9ba;
+      font-size: 14px;
+    }
+    .mono img {
+      filter: grayscale(1);
+    }
+    .only-subject .grid {
+      grid-template-columns: minmax(0, 1000px);
+    }
+    .only-subject section {
+      display: inline-block;
+      width: calc(50% - 12px);
+      vertical-align: top;
+      margin-right: 10px;
+    }
+    footer {
+      padding: 0 32px 30px;
+      color: #aaa99f;
+      font-size: 13px;
+    }
+    a {
+      color: #dbc499;
+    }
+    dialog {
+      width: 94vw;
+      height: 94vh;
+      max-width: none;
+      max-height: none;
+      padding: 8px;
+      background: #141718;
+      border: 1px solid #62665b;
+      color: #eee;
+    }
+    dialog::backdrop {
+      background: #000c;
+    }
+    dialog img {
+      width: 100%;
+      height: calc(100% - 54px);
+      aspect-ratio: auto;
+      object-fit: contain;
+    }
+    dialog .line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      height: 48px;
+      padding: 4px 8px;
+    }
+    dialog a {
+      font-size: 14px;
+    }
+  </style>
+  <header>
+    <h1>Warwrit — 10 стилей × 7 сюжетов</h1>
+    <p>
+      70 отдельных иллюстраций. Выберите стиль или один сюжет для сравнения всех вариантов. Нажмите
+      изображение для увеличения.
+    </p>
+  </header>
+  <div class="toolbar">
+    <label
+      >Стиль<select id="style">
+        <option value="all">Все 10 стилей</option>
+      </select></label
+    ><label
+      >Сюжет<select id="subject">
+        <option value="all">Все 7 сюжетов</option>
+      </select></label
+    ><label class="check"><input id="mono" type="checkbox" /> Проверить без цвета</label
+    ><button id="reset">Сбросить</button>
+  </div>
+  <main id="gallery"></main>
+  <footer>
+    Концепты для выбора художественного направления. Это сравнение иллюстраций; в игру они пока не
+    подключены. <a href="prompts.json">Промпты и исходные ссылки</a>
+  </footer>
+  <dialog id="zoom">
+    <div class="line">
+      <span id="caption"></span><a id="original" target="_blank" rel="noopener">Открыть оригинал</a
+      ><button id="close">Закрыть ×</button>
+    </div>
+    <img id="large" alt="" />
+  </dialog>
+  <script>
+    const data = {
+      styles: [
+        { id: '01-three-tones', title: 'Чернила и три тона' },
+        { id: '02-graphic-novel', title: 'Сдержанный графический роман' },
+        { id: '03-northern-landscape', title: 'Северный пейзаж' },
+        { id: '04-directed-light', title: 'Один источник света' },
+        { id: '05-fog-wet-stone', title: 'Туман и мокрый камень' },
+        { id: '06-dark-print', title: 'Тёмная печатная иллюстрация' },
+        { id: '07-living-face', title: 'Живое лицо и спокойное окружение' },
+        { id: '08-focal-detail', title: 'Предмет и ясный центр' },
+        { id: '09-silhouette', title: 'Силуэт на светлом фоне' },
+        { id: '10-earth-daylight', title: 'Пасмурный земной день' },
+      ],
+      subjects: [
+        { id: 'character', title: 'Персонаж' },
+        { id: 'mill', title: 'Мельница' },
+        { id: 'town', title: 'Город' },
+        { id: 'village', title: 'Деревня' },
+        { id: 'field', title: 'Поле' },
+        { id: 'marsh', title: 'Болота' },
+        { id: 'forest', title: 'Лес' },
+      ],
+    };
+    const style = document.querySelector('#style'),
+      subject = document.querySelector('#subject'),
+      gallery = document.querySelector('#gallery'),
+      mono = document.querySelector('#mono'),
+      zoom = document.querySelector('#zoom');
+    for (const s of data.styles) style.add(new Option(s.id.slice(0, 2) + ' · ' + s.title, s.id));
+    for (const s of data.subjects) subject.add(new Option(s.title, s.id));
+    function render() {
+      gallery.replaceChildren();
+      gallery.classList.toggle('only-subject', subject.value !== 'all');
+      for (const s of data.styles) {
+        if (style.value !== 'all' && style.value !== s.id) continue;
+        const section = document.createElement('section');
+        section.id = s.id;
+        const h = document.createElement('h2');
+        h.textContent = s.id.slice(0, 2) + ' · ' + s.title;
+        section.append(h);
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        for (const t of data.subjects) {
+          if (subject.value !== 'all' && subject.value !== t.id) continue;
+          const path = s.id + '/' + t.id + '.png';
+          const f = document.createElement('figure'),
+            a = document.createElement('a'),
+            img = document.createElement('img'),
+            caption = document.createElement('figcaption');
+          a.href = path;
+          img.src = path;
+          img.alt = s.title + ' — ' + t.title;
+          img.loading = 'eager';
+          caption.textContent = t.title;
+          a.append(img);
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelector('#large').src = path;
+            document.querySelector('#large').alt = img.alt;
+            document.querySelector('#caption').textContent = img.alt;
+            document.querySelector('#original').href = path;
+            zoom.showModal();
+          });
+          f.append(a, caption);
+          grid.append(f);
+        }
+        section.append(grid);
+        gallery.append(section);
+      }
+    }
+    style.addEventListener('change', render);
+    subject.addEventListener('change', render);
+    mono.addEventListener('change', () => document.body.classList.toggle('mono', mono.checked));
+    document.querySelector('#reset').onclick = () => {
+      style.value = 'all';
+      subject.value = 'all';
+      mono.checked = false;
+      document.body.classList.remove('mono');
+      render();
+    };
+    document.querySelector('#close').onclick = () => zoom.close();
+    render();
+  </script>
+</html>

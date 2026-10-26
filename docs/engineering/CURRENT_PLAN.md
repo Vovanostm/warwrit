@@ -1,6 +1,22 @@
 # Warwrit current delivery plan
 
-## Settlement areas and visit intent — 2026-10-26, LOCAL COMPLETE
+## World map stand PR delivery — 2026-10-26, IN REVIEW
+
+Coordinator/sole writer: Codex parent; branch `codex/world-map-painted`.
+Owner: “Review, prepare pr, merge” authorizes this branch's PR and normal merge.
+[Delivery contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md).
+Source before integration `8c789e03`; current main `f5fe0052` merged locally.
+Only CHANGELOG/CURRENT_PLAN conflicted; both dated histories retained.
+Atlas/navigation source, approved older art and current visit behavior preserved.
+Parent owns validation/publication/expected-head merge; independent code reviewer
+must accept the changed stand/tooling; hosted CI and PR scope must be green.
+Existing 20 map checks and author native flows precede this integration;
+integrated checks/review/CI pending. Visual acceptance and its limits remain in wiki.
+No full game integration, deployment, paid services or automation/Orca restart.
+
+## Dated history
+
+### Settlement areas and visit intent — 2026-10-26, LOCAL COMPLETE
 
 Sole writer: Codex parent; branch `codex/world-map-painted`, base `ae66fd71`.
 Owner: implement the proposed area UX and have a critic evaluate convenience.
@@ -21,7 +37,22 @@ Map DOM-entry hook now includes its existing owning suite; base/thresholds intac
 No core/server/save/dependency/art or operational changes.
 Full game/DB gate NOT_RUN; human usability preference/balance NOT_MEASURED.
 
-## Dated history
+### Novel art styles / JSON publication — 2026-10-25, MERGED
+
+Coordinator: local Codex parent; Orca and automation remain stopped.
+Owner requested «merge, update main» for [PR #326](https://github.com/Vovanostm/warwrit/pull/326).
+Expected head `9d320aa9` merged normally as `06c2dda6`; local main updated.
+Scope: 70 selected illustrations, ten sheets/gallery, thirteen selected references,
+two style profiles, four direct generation requests and owning documentation.
+Original dirty `codex/sprite-combat-stage1` checkout/WIP preserved; no combat/3D source.
+Focused JSON/reference/gallery-file/format/content checks and normal audit PASS.
+[CI 40220951284](https://github.com/Vovanostm/warwrit/actions/runs/40220951284) SUCCESS:
+1173 unit checks / 75 skipped, 10000 stress battles, migration smoke, 65 DB checks;
+coverage and unchanged quality audit PASS. Latest PR scope `40222331013` SUCCESS.
+No unresolved review threads. Merged tree equals the checked head tree.
+[Art decision and delivery](../wiki/vision.md#слияние-художественного-комплекта--2026-10-25).
+New prompt generation, alpha/pivots and game integration NOT_RUN.
+This documentation closeout records delivery; no new art, gameplay or deployment.
 
 ### Place entrance zones — 2026-10-26, LOCAL COMPLETE
 
