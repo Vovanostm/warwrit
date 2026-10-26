@@ -75,3 +75,50 @@ records the inspected server seams, atlas edition mismatch, server/lab ownership
 visibility and finite first-playable journey. This is local design, not a newly
 implemented network mode or approval of all NPC/contact/offline parameters.
 The delivered single-player stand remains available unchanged.
+
+## Networked first cycle activation — 2026-10-26
+
+Owner: “Implement - delegate subagents.” This authorizes local implementation
+and bounded delegation of the proposed first cycle, not new PR/merge/deploy.
+Outcome: two authenticated fixture companies and patrol/bandits/wolves/night
+creature on one server-owned painted atlas, durable PostgreSQL state and lawful
+realtime observations. The separate lab process/database uses the existing
+company movement executor with explicit map context. Main game defaults and
+retained editions remain compatible. No PvP, dynamic battle admission, rewards,
+full offline combat, ecology or population/load acceptance in this cycle.
+Map inputs, camera and Enter remain usable; the server validates entry proximity.
+Space stops only the player's company. Playback/time/night controls do not alter
+one client's world independently. Test-only identity selection is local guarded.
+Parent owns integration, DTO/barrel exports, launch/DB resources, shared docs and
+validation. Delegated editors own disjoint worktrees/path sets; no publication,
+commit, service launch, full checks or child delegation. Existing implementer,
+reviewer and visual-critic roles are suitable; no new agent definitions needed.
+Frozen seam: packages/protocol/src/world-lab.ts; HTTP /world-lab/session,
+/state, /movement and /room-ticket; WS world-lab emits per-client 'world' DTO.
+Acceptance: actual two-context MOVE_TO/STOP/reroute; no cross-company command;
+water blocked, common map/version; NPC routes persist without viewers/restart;
+visibility has no hidden group/path payload; existing local stand preserved.
+Parent runs focused types/tests, real isolated-PostgreSQL checks and native
+journeys, then independent source and playable/visual critique; no full-MMO claim.
+
+### Integrated result — 2026-10-26
+
+The three delegated slices are integrated; parent owns all source and validation.
+Run `pnpm dev:world`, UI5338; API3038/WS3039, separate PostgreSQL65438.
+Shared immutable atlas geometry/profile and two visit polygons live in game-core;
+old stand artwork/timing and legacy server region defaults remain compatible.
+NPC plans/identity/decision deadlines persist in migration0015 tables; no Room
+owns simulation. Per-client observations contain visible samples, never AI plans.
+The lab has a separate cookie and validates real account/company ownership.
+Native two-context commands, water/foreign rejection, exact STOP/visit-return,
+35s without viewers, real API restart retaining an active plan, and night-only
+creature at the mill PASS. Four real-PG cases PASS from scripts/world-map;
+test placement respects the server rootDir without runtime testkit imports.
+Focused map20 and core/client9 cases, script/server types PASS. Clean
+verify1200/stress10000 PASS; migration smoke + all69 SQL cases PASS across the
+full run and affected rerun. Independent source/visual ACCEPT; normal audit pending.
+Post-refactor related coverage996 PASS/61 skipped, four real-PG cases PASS;
+final script/server types and scoped lint/format PASS. Native network18/legacy18
+and actual SDK reconnect PASS. Optional source-matched engine coverage preserves
+the normal audit thresholds; final audit remains pending.
+Detailed results and limits belong to the [map page](../wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).

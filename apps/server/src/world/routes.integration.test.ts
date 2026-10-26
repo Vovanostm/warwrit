@@ -2910,6 +2910,7 @@ async function assertClockMigrationRoundTrip(rollback: Client): Promise<void> {
       '0012_ordinary_contracts',
       '0013_world_hunt_states',
       '0014_settlement_supplies',
+      '0015_world_lab_npc_groups',
     ] as const;
     const beforeDown = await runMigrations(rollback, 'status');
     expect(beforeDown.applied.slice(-migrationSuffix.length)).toEqual(migrationSuffix);

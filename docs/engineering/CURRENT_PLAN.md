@@ -1,6 +1,28 @@
 # Warwrit current delivery plan
 
-## MMO map movement design — 2026-10-26, LOCAL PROPOSAL
+## Networked atlas first cycle — 2026-10-26, VALIDATING
+
+Coordinator/integrator/shared writer: Codex parent; branch `codex/world-map-mmo-design`.
+Owner: “Implement - delegate subagents”; local implementation and bounded delegation.
+[Active contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#networked-first-cycle-activation--2026-10-26).
+Outcome: two authenticated companies + four persistent NPC groups on painted atlas.
+Atlas/server/client delegated slices integrated; editors stopped, parent owns source.
+Parent owns DTO/barrels, launch/isolated DB, integration, docs and all validation.
+Frozen protocol: `packages/protocol/src/world-lab.ts`; per-client Colyseus world messages.
+Private resources: API3038, WS3039, UI5338, PostgreSQL65438 (`warwrit-world-lab`).
+Existing user stand5326 and primary checkout/WIP preserved.
+No PvP, dynamic battle admission, production map migration, ecology or full offline combat.
+No new PR/merge/deploy/Orca/automation permission; roles are delegated editors only.
+Map20/core+client9 and script/server types PASS; four real-PG cases PASS.
+Native two-player18, no-viewer/restart/creature/recovery/contact cleanup PASS.
+Independent source/visual ACCEPT (applicable visual scores2); human fun NOT_MEASURED.
+Clean verify1200/stress10000 PASS; smoke + all69 SQL cases PASS across affected rerun.
+Next: normal commit audit and local code/documentation closeout; no publication.
+Runtime evidence is bounded to six groups; load/fun/full MMO NOT_MEASURED.
+
+## Dated history
+
+### MMO map movement design — 2026-10-26, LOCAL PROPOSAL
 
 Coordinator/sole writer: Codex parent; branch `codex/world-map-mmo-design`, base `7ffac342`.
 Owner: study the game concept and plan player/other-player/patrol/bandit/beast movement.
@@ -15,8 +37,6 @@ Runtime not implemented; new AI/contact/visibility tuning remains a proposal.
 Documentation/new links+anchors/format/status/diff checks PASS; game/browser/SQL/load NOT_RUN.
 No new PR/merge/deployment/service/automation or independent playable claim.
 Previous PR328 runtime remains merged; local main stays at `6dbdc00f`.
-
-## Dated history
 
 ### Map controls UX delivery — 2026-10-26, MERGED
 

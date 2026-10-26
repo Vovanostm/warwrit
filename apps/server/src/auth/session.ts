@@ -25,17 +25,20 @@ function digest(value: string): Buffer {
 export async function resolveSessionAccount(
   request: FastifyRequest,
   database: Kysely<DatabaseSchema>,
+  cookieName = sessionCookie,
 ): Promise<string | undefined> {
-  return (await resolveSessionPrincipalFromCookieHeader(request.headers.cookie, database))
-    ?.accountId;
+  return (
+    await resolveSessionPrincipalFromCookieHeader(request.headers.cookie, database, cookieName)
+  )?.accountId;
 }
 
 export async function resolveSessionPrincipalFromCookieHeader(
   cookieHeader: string | undefined,
   database: Kysely<DatabaseSchema>,
+  cookieName = sessionCookie,
 ): Promise<ActiveSessionPrincipal | undefined> {
   if (cookieHeader === undefined) return undefined;
-  const token = fastifyCookie.parse(cookieHeader)[sessionCookie];
+  const token = fastifyCookie.parse(cookieHeader)[cookieName];
   if (token === undefined) return undefined;
   const result = await sql<SessionAccountRow>`
     select account_id, token_digest

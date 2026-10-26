@@ -15,3 +15,6 @@ artifacts/
 
 # Personal Claude Code settings; git-ignored per user, not repository content.
 .claude/settings.local.json
+
+# Isolated delegated checkouts are not part of this source tree.
+.claude/worktrees/

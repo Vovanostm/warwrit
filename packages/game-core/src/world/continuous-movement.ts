@@ -19,13 +19,15 @@ export const MICRO_FP_PER_FP = 65_536;
 export const BASE_SPEED_FP_PER_SECOND = 24;
 export const FREE_MOVEMENT_V2_PROFILE = 'free-terrain-continuous-v2' as const;
 export const FREE_MOVEMENT_V3_PROFILE = 'free-terrain-continuous-v3' as const;
-type SpeedProfileId = typeof FREE_MOVEMENT_V2_PROFILE | typeof FREE_MOVEMENT_V3_PROFILE;
+export const FREE_MOVEMENT_ATLAS_LAB_PROFILE = 'free-atlas-walk-v1' as const;
+type SpeedProfileId = ContinuousMovementSpeedProfileId;
 export const MAX_NAV_CELLS = 49_152;
 export const MAX_PATH_POINTS = 4_096;
 export const MAX_SPEED_SPANS = 4_096;
 const CLEARANCE_RADIUS_FP = 24;
 
 export type {
+  ContinuousMovementSpeedProfileId,
   TerrainId,
   OverlayId,
   PointFp,
@@ -33,6 +35,7 @@ export type {
   NavigationRegion,
 } from './continuous-types.js';
 import type {
+  ContinuousMovementSpeedProfileId,
   TerrainId,
   OverlayId,
   PointFp,
@@ -129,6 +132,26 @@ const SPEED_PROFILES: Readonly<Record<SpeedProfileId, SpeedProfile>> = Object.fr
       paved_road: 2000,
       bridge: 1800,
       ford: 550,
+    }),
+  }),
+  // 93 permille calibrates the painted atlas to about 1 m/s over grass.
+  [FREE_MOVEMENT_ATLAS_LAB_PROFILE]: Object.freeze({
+    terrain: Object.freeze({
+      grassland: 93,
+      forest: 56,
+      hills: 74,
+      marsh: 28,
+      riverbank: 74,
+      rock: 47,
+      deep_water: 0,
+      cliff: 0,
+    }),
+    overlays: Object.freeze({
+      trail: 130,
+      dirt_road: 167,
+      paved_road: 186,
+      bridge: 167,
+      ford: 51,
     }),
   }),
 });
@@ -1166,7 +1189,8 @@ export function readContinuousMovementPlan(value: unknown): ContinuousMovementPl
   if (
     !supportedPlanVersion(p) ||
     (p.speedProfileId !== FREE_MOVEMENT_V2_PROFILE &&
-      p.speedProfileId !== FREE_MOVEMENT_V3_PROFILE) ||
+      p.speedProfileId !== FREE_MOVEMENT_V3_PROFILE &&
+      p.speedProfileId !== FREE_MOVEMENT_ATLAS_LAB_PROFILE) ||
     typeof p.mapEdition !== 'string' ||
     !p.mapEdition ||
     !decimal(p.movementEpoch) ||

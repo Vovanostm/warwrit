@@ -61,6 +61,53 @@ Local overrides live in one root `.env` file, normally created from `.env.exampl
 
 ## Development processes
 
+For the separate networked painted-atlas laboratory:
+
+```bash
+pnpm dev:world
+```
+
+Open `http://127.0.0.1:5338/scripts/world-map/world-lab.html`. Choose player A
+and player B in separate browser profiles/contexts: ordinary tabs share a cookie.
+Right-click orders movement; left-drag/WASD pans, the wheel zooms, Space stops
+only your company. The nearby-place button opens a server-validated scene.
+Both clients use the same eightfold test clock; there are no private time controls.
+
+This launcher owns loopback API3038, realtime3039 and UI5338, plus the persistent
+`warwrit-world-lab` Compose project/PostgreSQL65438. It uses `compose.world-lab.yaml`
+and its own database and cookie; it never uses the campaign `DATABASE_URL`.
+Stopping the launcher stops its children and keeps the database. Restarting
+retains the companies, accepted routes and NPC identities. The single-player
+stand remains at5326. Ports are fixed and fail on conflict; stop the owning
+launcher before starting another copy. Never delete the volume to fix a route.
+The development fixture login is loopback-only and unavailable in production.
+See the [current implementation boundaries](../wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
+
+For optional measured Node coverage, stop the owning launcher first and choose
+an unused absolute JSON path:
+
+```bash
+WORLD_LAB_RUNTIME_COVERAGE="$PWD/output/world-lab-engine.json" pnpm dev:world
+```
+
+This opt-in builds inline source maps and uses a process-local inspector session;
+no debugger port is exposed. Send SIGUSR2 to this launcher's API child after the
+journey to save one capture, or allow graceful process exit. An existing destination
+fails startup; an empty file or capture error is not evidence. Browser coverage must
+be collected for each document before navigation discards it. Combine the measured
+entries in `{ "entries": [...], "reports": [...] }`; `reports` may name real SQL
+Istanbul reports. Each entry carries its captured script text, functions and map.
+If a map omits original content, `frozenBeforeMs` must record the actual capture
+process start boundary, before any affected source edit. Prefer inline originals.
+
+`WARWRIT_RUNTIME_COVERAGE=/absolute/input.json git commit ...` adds this measured
+coverage after the hook's ordinary related tests and before the unchanged Fallow
+thresholds. The merger rejects changed mapped sources before writing the target,
+and resolves mapper end-of-line sentinels to verified line lengths without changing
+hit counts. Reusing a matching capture proves coverage of unchanged source; it does
+not prove a newly executed journey. This is optional local evidence tooling, not a
+replacement for required CI or tests.
+
 One local start for the playable alpha (company, world, contracts, encounters):
 
 ```bash

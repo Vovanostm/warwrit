@@ -8,6 +8,7 @@ import {
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   CONTINUOUS_WORLD_REGION,
+  PAINTED_ATLAS_REGION_VERSION,
   TRAVEL_RULES,
   WORLD_REGION_VERSION,
   buildNavigationField,
@@ -20,7 +21,6 @@ import {
   continuousLocationPoint,
   continuousSurfaceAt,
   isContinuousPointWalkable,
-  continuousSite,
   isContinuousRegionVersion,
   createCampaignClock,
   findTravelPath,
@@ -37,6 +37,8 @@ import type {
   CompanyCombatAggregateState,
   ContinuousCompanyExecution,
   FreeMovementExecution,
+  NavigationField,
+  NavigationRegion,
   TrustedTransitSegment,
 } from '@warwrit/game-core';
 import type {
@@ -48,6 +50,7 @@ import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { resolveSessionAccount } from '../auth/session.js';
 import {
   findOwnedCompanyId,
+  loadCompanyAggregate,
   lockCompanyAggregate,
   readCompanyCommandReceipt,
   updateCompanyAggregateWithReceipt,
@@ -61,8 +64,16 @@ import { readPartyRoute, readWorldRouteReceipt, type StoredPartyRoute } from './
 interface ContinuousMovementOptions {
   readonly database: Kysely<DatabaseSchema>;
   readonly worldId: string;
+  readonly region?: NavigationRegion;
+  readonly now?: () => Date;
+  readonly sessionCookieName?: string;
 }
 type RejectionCode = WorldFreeMovementV2RejectionDto['code'];
+type TrustedMovementTime = Date | (() => Date);
+function movementNow(time: TrustedMovementTime): Date {
+  return typeof time === 'function' ? time() : time;
+}
+
 class MovementRejection extends Error {
   constructor(readonly code: RejectionCode) {
     super(code);
@@ -76,6 +87,17 @@ interface StoredContinuousMovement {
   readonly lastBoundaryMs?: string;
 }
 const field = buildNavigationField(CONTINUOUS_WORLD_REGION);
+const fieldCache = new WeakMap<NavigationRegion, NavigationField>([
+  [CONTINUOUS_WORLD_REGION, field],
+]);
+function navigationField(region: NavigationRegion): NavigationField {
+  let cached = fieldCache.get(region);
+  if (!cached) {
+    cached = buildNavigationField(region);
+    fieldCache.set(region, cached);
+  }
+  return cached;
+}
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
 const exact = (value: Record<string, unknown>, keys: readonly string[]) =>
@@ -135,7 +157,8 @@ function readContinuous(row: StoredPartyRoute | undefined): StoredContinuousMove
     s.execution.plan.planId !== row.segment_id ||
     !isContinuousRegionVersion(s.execution.plan.mapEdition) ||
     (s.execution.plan.planVersion === 3) !==
-      (s.execution.plan.mapEdition === 'seroe-porechye-continuous-v5') ||
+      (s.execution.plan.mapEdition === 'seroe-porechye-continuous-v5' ||
+        s.execution.plan.mapEdition === PAINTED_ATLAS_REGION_VERSION) ||
     s.execution.plan.speedProfileId !== row.profile_id ||
     s.execution.regionVersion !== row.region_version ||
     !['MOVING', 'STOPPED', 'ARRIVED'].includes(s.status)
@@ -170,10 +193,38 @@ function applyContinuousMove(
   state: CompanyCombatAggregateState,
   input: Parameters<typeof prepareContinuousCompanyMovement>[0],
   events: Readonly<object>[],
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
 ) {
-  const prepared = prepareContinuousCompanyMovement(input);
+  const prepared = prepareContinuousCompanyMovement({ ...input, region });
   events.push(...prepared.observationEvents);
   return withRoot(state, prepared.root);
+}
+
+function stopContinuousMovement(
+  state: CompanyCombatAggregateState,
+  stored: StoredContinuousMovement,
+  partyId: string,
+  prior: ContinuousCompanyExecution,
+  nowMs: string,
+  events: Readonly<object>[],
+  region: NavigationRegion,
+) {
+  return {
+    state: applyContinuousMove(
+      state,
+      {
+        root: root(state),
+        partyId,
+        segmentId: prior.plan.planId,
+        prior,
+        next: null,
+        nowMs,
+      },
+      events,
+      region,
+    ),
+    stored: { ...stored, status: 'STOPPED' as const, lastBoundaryMs: nowMs },
+  };
 }
 
 function segment(
@@ -288,6 +339,7 @@ export function prepareDueContinuousMovement(
   row: StoredPartyRoute | undefined,
   clock: WorldClockReading,
   commandId: string,
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
 ) {
   if (BigInt(clock.tick) < BigInt(state.economy.lifecycle.campaignTick))
     throw new MovementRejection('TRUSTED_TIME_UNAVAILABLE');
@@ -321,6 +373,7 @@ export function prepareDueContinuousMovement(
         nowMs: stored.execution.plan.arrivesAtMs,
       },
       events,
+      region,
     );
     next = advanceStationaryRemainder(next, clock.tick, `${commandId}.rest`, events);
     return {
@@ -391,12 +444,14 @@ function responseFor(
   epoch: string,
   clock: WorldClockReading,
   commandId?: string,
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
 ): WorldFreeMovementV2ResponseDto {
+  const field = navigationField(region);
   const party = state.economy.lifecycle.parties[0];
   const moving = stored?.status === 'MOVING';
   const point = moving
     ? positionAt(stored.execution.plan, clock.nowMs)
-    : party && continuousLocationPoint(party.location);
+    : party && continuousLocationPoint(party.location, region);
   if (!point) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
   return {
     schemaVersion: 2,
@@ -419,6 +474,31 @@ function responseFor(
     plan: moving ? stored.execution.plan : null,
   };
 }
+async function persistWorldRouteReceipt(
+  transaction: Transaction<DatabaseSchema>,
+  input: {
+    readonly worldId: string;
+    readonly companyId: string;
+    readonly accountId: string;
+    readonly commandId: string;
+    readonly requestKey: string;
+    readonly response: WorldFreeMovementV2ResponseDto;
+  },
+) {
+  await transaction
+    .insertInto('world_route_receipts')
+    .values({
+      world_id: input.worldId,
+      company_id: input.companyId,
+      account_id: input.accountId,
+      command_id: input.commandId,
+      request_key: input.requestKey,
+      response: { ...input.response },
+      resulting_public_revision: input.response.publicRevision,
+    })
+    .execute();
+}
+
 async function persistCandidate(
   transaction: Transaction<DatabaseSchema>,
   prior: CompanyCombatAggregateState,
@@ -472,18 +552,14 @@ async function persistCandidate(
       ],
     },
   );
-  await transaction
-    .insertInto('world_route_receipts')
-    .values({
-      world_id: l.worldId,
-      company_id: l.companyId,
-      account_id: accountId,
-      command_id: commandId,
-      request_key: requestKey,
-      response: { ...response },
-      resulting_public_revision: response.publicRevision,
-    })
-    .execute();
+  await persistWorldRouteReceipt(transaction, {
+    worldId: l.worldId,
+    companyId: l.companyId,
+    accountId,
+    commandId,
+    requestKey,
+    response,
+  });
 }
 async function storeRoute(
   transaction: Transaction<DatabaseSchema>,
@@ -584,62 +660,116 @@ async function lockOwnedMovementCompany(
   if (!state) throw new MovementRejection('NOT_AUTHORIZED');
   return { companyId, state };
 }
+// Snapshot reads have a narrower RangeError policy than movement commands.
+function snapshotFailureCode(error: unknown): RejectionCode {
+  if (error instanceof MovementRejection) return error.code;
+  if (!(error instanceof RangeError)) throw error;
+  return error.message === 'TRUSTED_TIME_UNAVAILABLE'
+    ? 'TRUSTED_TIME_UNAVAILABLE'
+    : 'MOVEMENT_NOT_ALLOWED';
+}
+
 export async function handleContinuousMovementRead(
   request: FastifyRequest,
   reply: FastifyReply,
-  { database, worldId }: ContinuousMovementOptions,
+  {
+    database,
+    worldId,
+    region = CONTINUOUS_WORLD_REGION,
+    now = () => new Date(),
+    sessionCookieName,
+  }: ContinuousMovementOptions,
 ) {
-  const accountId = await resolveSessionAccount(request, database);
+  const accountId = await resolveSessionAccount(request, database, sessionCookieName);
   if (!accountId)
     return reply
       .code(401)
       .send({ schemaVersion: 2, result: 'REJECTED', commandId: null, code: 'AUTH_REQUIRED' });
   try {
-    const result = await database.transaction().execute(async (tx) => {
-      await tx
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      const { companyId, state } = await lockOwnedMovementCompany(tx, worldId, accountId);
-      const party = state.economy.lifecycle.parties[0];
-      if (!party) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
-      const row = await readPartyRoute(tx, worldId, companyId, party.partyId, true);
-      const clock = await readWorldClock(tx, worldId, new Date(), true);
-      const commandId = randomUUID(),
-        settled = prepareDueContinuousMovement(state, row, clock, commandId);
-      const response = responseFor(settled.state, settled.stored, settled.epoch, clock);
-      if (settled.changed) {
-        await persistCandidate(
-          tx,
-          state,
-          settled.state,
-          accountId,
-          commandId,
-          canonicalJson({ kind: 'SYSTEM_ARRIVAL', segmentId: row!.segment_id }),
-          { ...response, commandId },
-          settled.events,
-        );
-        await persistDueContinuousMovementRoute(tx, settled);
-      }
-      return response;
-    });
+    const result = await readContinuousMovementSnapshot(database, worldId, accountId, region, now);
     return reply.header('Cache-Control', 'no-store').send(result);
   } catch (error) {
-    if (error instanceof MovementRejection || error instanceof RangeError) {
-      const code =
-        error instanceof MovementRejection
-          ? error.code
-          : error.message === 'TRUSTED_TIME_UNAVAILABLE'
-            ? 'TRUSTED_TIME_UNAVAILABLE'
-            : 'MOVEMENT_NOT_ALLOWED';
-      return reply
-        .code(code === 'NOT_AUTHORIZED' ? 403 : code === 'TRUSTED_TIME_UNAVAILABLE' ? 503 : 422)
-        .send({ schemaVersion: 2, result: 'REJECTED', commandId: null, code });
-    }
-    throw error;
+    const code = snapshotFailureCode(error);
+    return reply
+      .code(code === 'NOT_AUTHORIZED' ? 403 : code === 'TRUSTED_TIME_UNAVAILABLE' ? 503 : 422)
+      .send({ schemaVersion: 2, result: 'REJECTED', commandId: null, code });
   }
+}
+
+export async function readContinuousMovementSnapshot(
+  database: Kysely<DatabaseSchema>,
+  worldId: string,
+  accountId: string,
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
+  now: TrustedMovementTime = () => new Date(),
+  expectedCompanyId?: string,
+): Promise<WorldFreeMovementV2ResponseDto> {
+  return database.transaction().execute(async (tx) => {
+    await tx
+      .selectFrom('identity_accounts')
+      .select('id')
+      .where('id', '=', accountId)
+      .forUpdate()
+      .executeTakeFirst();
+    const { companyId, state } = await lockOwnedMovementCompany(tx, worldId, accountId);
+    if (expectedCompanyId !== undefined && companyId !== expectedCompanyId)
+      throw new MovementRejection('NOT_AUTHORIZED');
+    const party = state.economy.lifecycle.parties[0];
+    if (!party) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
+    const row = await readPartyRoute(tx, worldId, companyId, party.partyId, true);
+    const clock = await readWorldClock(tx, worldId, movementNow(now), true);
+    const commandId = randomUUID();
+    const settled = prepareDueContinuousMovement(state, row, clock, commandId, region);
+    const response = responseFor(
+      settled.state,
+      settled.stored,
+      settled.epoch,
+      clock,
+      undefined,
+      region,
+    );
+    if (settled.changed) {
+      await persistCandidate(
+        tx,
+        state,
+        settled.state,
+        accountId,
+        commandId,
+        canonicalJson({ kind: 'SYSTEM_ARRIVAL', segmentId: row!.segment_id }),
+        { ...response, commandId },
+        settled.events,
+      );
+      await persistDueContinuousMovementRoute(tx, settled);
+    }
+    return response;
+  });
+}
+
+/** Server-only location projection for another already-authorized world observer. */
+export async function readContinuousMovementProjection(
+  database: Kysely<DatabaseSchema>,
+  worldId: string,
+  companyId: string,
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
+  now: TrustedMovementTime = () => new Date(),
+): Promise<{
+  readonly partyId: string;
+  readonly movement: WorldFreeMovementV2ResponseDto;
+}> {
+  return database.transaction().execute(async (transaction) => {
+    const state = await loadCompanyAggregate(transaction, worldId, companyId);
+    const party = state?.economy.lifecycle.parties[0];
+    if (!state || !party) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
+    const row = await readPartyRoute(transaction, worldId, companyId, party.partyId);
+    const clock = await readWorldClock(transaction, worldId, movementNow(now));
+    const stored = readContinuous(row);
+    if (stored && stored.execution.plan.mapEdition !== region.mapEdition)
+      throw new MovementRejection('MAP_EDITION_MISMATCH');
+    return {
+      partyId: party.partyId,
+      movement: responseFor(state, stored, row?.route_epoch ?? '0', clock, undefined, region),
+    };
+  });
 }
 
 export async function executeContinuousMovement(
@@ -648,6 +778,8 @@ export async function executeContinuousMovement(
   accountId: string,
   expectedCompanyId: unknown,
   input: WorldFreeMovementV2RequestDto,
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
+  now: TrustedMovementTime = () => new Date(),
 ) {
   return database.transaction().execute(async (tx) => {
     const account = await tx
@@ -684,15 +816,15 @@ export async function executeContinuousMovement(
     const row = await readPartyRoute(tx, worldId, companyId, party.partyId, true);
     if (input.expectedMovementEpoch !== (row?.route_epoch ?? '0'))
       throw new MovementRejection('STALE_MOVEMENT_EPOCH');
-    const clock = await readWorldClock(tx, worldId, new Date(), true),
-      settled = prepareDueContinuousMovement(state, row, clock, input.commandId);
+    const clock = await readWorldClock(tx, worldId, movementNow(now), true),
+      settled = prepareDueContinuousMovement(state, row, clock, input.commandId, region);
     let current = settled.state,
       stored = settled.stored,
       epoch = settled.epoch;
     const events = [...settled.events];
     const prior = stored?.status === 'MOVING' ? stored.execution : null;
     if (input.action.kind === 'STOP' && !prior) {
-      const response = responseFor(current, stored, epoch, clock, input.commandId);
+      const response = responseFor(current, stored, epoch, clock, input.commandId, region);
       if (settled.changed) {
         await persistCandidate(
           tx,
@@ -707,18 +839,14 @@ export async function executeContinuousMovement(
         await persistDueContinuousMovementRoute(tx, settled);
         return response;
       }
-      await tx
-        .insertInto('world_route_receipts')
-        .values({
-          world_id: worldId,
-          company_id: companyId,
-          account_id: accountId,
-          command_id: input.commandId,
-          request_key: key,
-          response: { ...response },
-          resulting_public_revision: response.publicRevision,
-        })
-        .execute();
+      await persistWorldRouteReceipt(tx, {
+        worldId,
+        companyId,
+        accountId,
+        commandId: input.commandId,
+        requestKey: key,
+        response,
+      });
       return response;
     }
     current = advance(
@@ -731,45 +859,51 @@ export async function executeContinuousMovement(
     );
     epoch = (BigInt(epoch) + 1n).toString();
     if (input.action.kind === 'MOVE_TO') {
-      if (input.action.mapEdition !== CONTINUOUS_WORLD_REGION.mapEdition)
+      if (input.action.mapEdition !== region.mapEdition)
         throw new MovementRejection('MAP_EDITION_MISMATCH');
       const from = prior
         ? positionAt(prior.plan, clock.nowMs)
-        : continuousLocationPoint(current.economy.lifecycle.parties[0]!.location);
+        : continuousLocationPoint(current.economy.lifecycle.parties[0]!.location, region);
       if (!from) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
       const target = input.action.target,
-        site = target.kind === 'SITE' ? continuousSite(target.siteId) : undefined;
+        site =
+          target.kind === 'SITE'
+            ? region.sites.find((entry) => entry.siteId === target.siteId)
+            : undefined;
       if (target.kind === 'SITE' && !site) throw new MovementRejection('TARGET_BLOCKED');
       const goal =
         site?.anchorFp ??
         (target.kind === 'TERRAIN' ? { xFp: target.xFp, zFp: target.zFp } : undefined);
       if (!goal) throw new MovementRejection('TARGET_BLOCKED');
-      if (goal.xFp < -8192 || goal.xFp >= 8192 || goal.zFp < -6144 || goal.zFp >= 6144)
+      if (
+        goal.xFp < region.origin.xFp ||
+        goal.xFp >= region.origin.xFp + region.columns * region.cellSizeFp ||
+        goal.zFp < region.origin.zFp ||
+        goal.zFp >= region.origin.zFp + region.rows * region.cellSizeFp
+      )
         throw new MovementRejection('OUT_OF_BOUNDS');
       if (
         from.xMicroFp === String(goal.xFp * 65536) &&
         from.zMicroFp === String(goal.zFp * 65536)
       ) {
         if (prior) {
-          current = applyContinuousMove(
+          const stopped = stopContinuousMovement(
             current,
-            {
-              root: root(current),
-              partyId: party.partyId,
-              segmentId: prior.plan.planId,
-              prior,
-              next: null,
-              nowMs: clock.nowMs,
-            },
+            stored!,
+            party.partyId,
+            prior,
+            clock.nowMs,
             events,
+            region,
           );
-          stored = { ...stored!, status: 'STOPPED', lastBoundaryMs: clock.nowMs };
+          current = stopped.state;
+          stored = stopped.stored;
         } else {
           epoch = settled.epoch;
           current = settled.state;
         }
         const response = {
-          ...responseFor(current, stored, epoch, clock, input.commandId),
+          ...responseFor(current, stored, epoch, clock, input.commandId, region),
           result: prior ? ('ACCEPTED' as const) : ('ALREADY_AT_TARGET' as const),
         };
         if (prior || settled.changed) {
@@ -786,20 +920,17 @@ export async function executeContinuousMovement(
           if (stored) await storeRoute(tx, current, stored, epoch);
           else await persistDueContinuousMovementRoute(tx, settled);
         } else
-          await tx
-            .insertInto('world_route_receipts')
-            .values({
-              world_id: worldId,
-              company_id: companyId,
-              account_id: accountId,
-              command_id: input.commandId,
-              request_key: key,
-              response: { ...response },
-              resulting_public_revision: response.publicRevision,
-            })
-            .execute();
+          await persistWorldRouteReceipt(tx, {
+            worldId,
+            companyId,
+            accountId,
+            commandId: input.commandId,
+            requestKey: key,
+            response,
+          });
         return response;
       }
+      const field = navigationField(region);
       if (!isContinuousPointWalkable(field, goal)) throw new MovementRejection('TARGET_BLOCKED');
       const path = findTravelPath(
         field,
@@ -876,6 +1007,7 @@ export async function executeContinuousMovement(
           nowMs: clock.nowMs,
         },
         events,
+        region,
       );
       {
         // Forecast the actual accepted schedule; unavailable stock must not strand a saved trip.
@@ -900,21 +1032,19 @@ export async function executeContinuousMovement(
         lastBoundaryMs: clock.nowMs,
       };
     } else if (prior) {
-      current = applyContinuousMove(
+      const stopped = stopContinuousMovement(
         current,
-        {
-          root: root(current),
-          partyId: party.partyId,
-          segmentId: prior.plan.planId,
-          prior,
-          next: null,
-          nowMs: clock.nowMs,
-        },
+        stored!,
+        party.partyId,
+        prior,
+        clock.nowMs,
         events,
+        region,
       );
-      stored = { ...stored!, status: 'STOPPED', lastBoundaryMs: clock.nowMs };
+      current = stopped.state;
+      stored = stopped.stored;
     }
-    const response = responseFor(current, stored, epoch, clock, input.commandId);
+    const response = responseFor(current, stored, epoch, clock, input.commandId, region);
     await persistCandidate(tx, state, current, accountId, input.commandId, key, response, events);
     if (stored) await storeRoute(tx, current, stored, epoch);
     return response;
@@ -930,7 +1060,11 @@ export async function handleContinuousMovementPost(
     return reply
       .code(400)
       .send({ schemaVersion: 2, result: 'REJECTED', commandId: null, code: 'INVALID_COMMAND' });
-  const accountId = await resolveSessionAccount(request, options.database);
+  const accountId = await resolveSessionAccount(
+    request,
+    options.database,
+    options.sessionCookieName,
+  );
   if (!accountId)
     return reply.code(401).send({
       schemaVersion: 2,
@@ -948,6 +1082,8 @@ export async function handleContinuousMovementPost(
           accountId,
           request.headers[WORLD_EXPECTED_COMPANY_ID_HEADER],
           input,
+          options.region,
+          options.now,
         ),
       );
   } catch (error) {
@@ -987,7 +1123,8 @@ export async function processContinuousMovementCandidate(
   database: ContinuousMovementOptions['database'],
   worldId: string,
   candidate: { companyId: string; partyId: string; acceptedByAccountId: string },
-  now: Date = new Date(),
+  now: TrustedMovementTime = () => new Date(),
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
 ) {
   return database.transaction().execute(async (tx) => {
     const account = await tx
@@ -1012,16 +1149,23 @@ export async function processContinuousMovementCandidate(
       !['FREE_MOVEMENT', 'CONTINUOUS_MOVEMENT'].includes(String(row.accepted_route['kind']))
     )
       return;
-    const clock = await readWorldClock(tx, worldId, now, true),
+    const clock = await readWorldClock(tx, worldId, movementNow(now), true),
       commandId = randomUUID();
     if (row.accepted_route['kind'] === 'FREE_MOVEMENT') {
       const e = row.accepted_route['execution'] as FreeMovementExecution;
       if (BigInt(clock.tick) < BigInt(e.arrivesAt)) return;
     } else if (BigInt(clock.nowMs) < BigInt(readContinuous(row)!.execution.plan.arrivesAtMs))
       return;
-    const settled = prepareDueContinuousMovement(state, row, clock, commandId);
+    const settled = prepareDueContinuousMovement(state, row, clock, commandId, region);
     if (!settled.changed) return;
-    const response = responseFor(settled.state, settled.stored, settled.epoch, clock, commandId);
+    const response = responseFor(
+      settled.state,
+      settled.stored,
+      settled.epoch,
+      clock,
+      commandId,
+      region,
+    );
     await persistCandidate(
       tx,
       state,

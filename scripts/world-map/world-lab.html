@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Сетевая карта — Warwrit</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./world-lab.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <span class="eyebrow">WARWRIT · СЕТЕВАЯ ЛАБОРАТОРИЯ</span>
+        <h1>Дороги Серого Поречья</h1>
+      </div>
+      <a href="http://127.0.0.1:5326/scripts/world-map/navigation-lab.html?map=atlas"
+        >К одиночному стенду</a
+      >
+    </header>
+    <main>
+      <aside>
+        <section>
+          <div class="connection-row">
+            <span id="connection-dot" aria-hidden="true"></span>
+            <strong id="connection-status" role="status" aria-live="polite">Подключение…</strong>
+          </div>
+          <p id="session-label" class="fine">Сеанс выбирается сервером лаборатории.</p>
+          <div id="fixture-login" hidden>
+            <p>Выберите тестового игрока. Каждый браузер получает отдельную серверную сессию.</p>
+            <button type="button" data-slot="company-a">Игрок А · своя компания</button>
+            <button type="button" data-slot="company-b">Игрок Б · своя компания</button>
+          </div>
+          <button id="switch-slot" type="button" class="quiet" hidden>
+            Сменить тестового игрока
+          </button>
+        </section>
+        <section>
+          <h2>Ваш отряд</h2>
+          <strong id="own-name">—</strong>
+          <p id="own-state">Ожидаем состояние мира…</p>
+          <button id="stop" type="button" class="primary" disabled>Остановить отряд</button>
+          <p class="fine">
+            Пробел на карте останавливает ваш отряд. Чтобы возобновить путь, задайте цель правой
+            кнопкой мыши.
+          </p>
+        </section>
+        <section>
+          <h2>Рядом</h2>
+          <div id="nearby-groups" class="group-list">
+            <p class="fine">Ожидаем серверные наблюдения…</p>
+          </div>
+          <p id="contact-focus" class="fine" role="status"></p>
+          <div id="nearby-site" hidden>
+            <strong id="nearby-site-name"></strong>
+            <p class="fine">Поселение доступно рядом по наблюдению сервера.</p>
+            <button id="enter-site" type="button">Открыть место</button>
+          </div>
+          <p class="fine">Показываются только группы, которые сервер разрешил наблюдать.</p>
+        </section>
+        <section>
+          <h2>Мир</h2>
+          <dl>
+            <div>
+              <dt>Серверное время</dt>
+              <dd id="server-time">—</dd>
+            </div>
+            <div>
+              <dt>Свет</dt>
+              <dd id="world-light">—</dd>
+            </div>
+            <div>
+              <dt>Обновление</dt>
+              <dd id="world-sequence">—</dd>
+            </div>
+          </dl>
+          <p class="fine">Мир продолжает идти, даже если этот экран закрыт.</p>
+        </section>
+        <p id="client-message" role="status" aria-live="polite"></p>
+      </aside>
+      <div class="map-column">
+        <div class="map-toolbar">
+          <span>ПКМ — приказ движения · ЛКМ перетаскивает карту · колесо — масштаб</span>
+          <div class="toolbar-actions">
+            <button id="center-own" type="button" disabled>К своему отряду</button>
+            <button id="fit" type="button">Вся карта</button>
+          </div>
+        </div>
+        <div id="map-wrap">
+          <svg
+            id="map"
+            viewBox="0 0 4608 3072"
+            role="group"
+            aria-label="Общая карта с разрешёнными сервером наблюдениями"
+            tabindex="0"
+          >
+            <image
+              width="4608"
+              height="3072"
+              href="../../assets/art/world/porechye-atlas-v1/atlas-v5.png"
+            />
+            <g id="site-markers" aria-label="Поселения и места интереса"></g>
+            <path id="own-route" aria-hidden="true" />
+            <g id="observed-groups" aria-hidden="true"></g>
+            <g id="own-marker" class="group own" aria-label="Ваш отряд">
+              <circle class="marker-halo" r="17" />
+              <path class="marker-glyph" d="M0 -12L9 9L0 5L-9 9Z" />
+            </g>
+          </svg>
+        </div>
+        <footer>
+          <span id="map-note">Общее пробное время ×8 · позиции и видимость задаёт сервер</span>
+          <span id="map-coordinate">Север ↑</span>
+        </footer>
+      </div>
+    </main>
+    <dialog id="site-dialog" aria-labelledby="site-dialog-title">
+      <img id="site-dialog-image" alt="" />
+      <h2 id="site-dialog-title"></h2>
+      <p id="site-dialog-body">Сервер подтвердил, что отряд находится в зоне поселения.</p>
+      <form method="dialog"><button type="submit" class="primary">Вернуться на карту</button></form>
+    </dialog>
+    <script type="module" src="./world-lab.ts"></script>
+  </body>
+</html>

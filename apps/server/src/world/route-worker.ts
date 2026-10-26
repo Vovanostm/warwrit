@@ -1,6 +1,8 @@
 import { sql } from 'kysely';
 import type { Kysely } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
+import type { NavigationRegion } from '@warwrit/game-core';
+import { CONTINUOUS_WORLD_REGION } from '@warwrit/game-core';
 import { processContinuousMovementCandidate } from './continuous-movement.js';
 import { processWorldRouteCandidate } from './routes.js';
 
@@ -16,6 +18,8 @@ export function startWorldRouteWorker(
   worldId: string,
   onError: (error: unknown) => void,
   intervalMs = 1_000,
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
+  now: () => Date = () => new Date(),
 ): () => Promise<void> {
   let stopped = false;
   let active: Promise<void> | undefined;
@@ -28,6 +32,7 @@ export function startWorldRouteWorker(
          and (accepted_route->'execution'->>'phase' in ('IN_TRANSIT', 'AT_BOUNDARY') or (status='IN_TRANSIT' and accepted_route->>'kind' in ('FREE_MOVEMENT','CONTINUOUS_MOVEMENT')))
        order by company_id, party_id
     `.execute(database);
+    const currentTime = now();
     for (const row of rows) {
       if (stopped) return;
       if (typeof row.accepted_by_account_id !== 'string' || row.accepted_by_account_id.length === 0)
@@ -38,8 +43,8 @@ export function startWorldRouteWorker(
           partyId: row.party_id,
           acceptedByAccountId: row.accepted_by_account_id,
         };
-        await processContinuousMovementCandidate(database, worldId, candidate);
-        await processWorldRouteCandidate(database, worldId, candidate);
+        await processContinuousMovementCandidate(database, worldId, candidate, now, region);
+        await processWorldRouteCandidate(database, worldId, candidate, currentTime);
       } catch (error) {
         onError(error);
       }

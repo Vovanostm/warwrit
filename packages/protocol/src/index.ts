@@ -68,3 +68,13 @@ export type {
   WorldPointMicroFpDto,
 } from './world.js';
 export type { WorldContinuousMapDto } from './world.js';
+
+export type {
+  WorldLabVisitDto,
+  WorldLabSlot,
+  WorldLabGroupKind,
+  WorldLabObservedGroupDto,
+  WorldLabStateDto,
+  WorldLabSessionDto,
+  WorldLabRoomTicketDto,
+} from './world-lab.js';

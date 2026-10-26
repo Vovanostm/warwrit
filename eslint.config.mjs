@@ -49,7 +49,14 @@ const deterministicCoreGlobals = [
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/coverage/**', '**/node_modules/**', '**/*.d.ts', 'artifacts/**'],
+    ignores: [
+      '**/dist/**',
+      '**/coverage/**',
+      '**/node_modules/**',
+      '**/*.d.ts',
+      'artifacts/**',
+      '.claude/worktrees/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

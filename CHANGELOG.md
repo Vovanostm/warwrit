@@ -9,6 +9,33 @@ requests.
 
 ## Unreleased
 
+### Networked painted-atlas laboratory
+
+- 2026-10-26, branch `codex/world-map-mmo-design`, local: owner requested
+  implementation with delegated agents. Added a runnable two-player laboratory
+  using the existing server movement executor, shared atlas geometry, persistent
+  patrol/bandits/wildlife/night creature, isolated PostgreSQL and personalized
+  Colyseus observations. New `pnpm dev:world` serves UI5338/API3038/WS3039;
+  migration0015 adds lab slots/NPCs. Existing stand5326 and campaign defaults
+  remain usable. Fixed atlas plan readback, exact outskirts STOP, trusted clock
+  sampling, stale-response ordering and independent lab cookies during real
+  integration. [Owning implementation and checks](docs/wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
+  Two-context/native, no-viewer, server restart and night-creature probes PASS;
+  four real-PostgreSQL cases PASS. Independent source/visual ACCEPT; clean
+  verify1200/stress10000 PASS; migration smoke and all69 SQL scenarios PASS
+  across the full run and affected rerun. Migration rollback lists include0015;
+  a type-only SupplyShop child-prop split removes an existing whole-tree gate
+  blocker. Coverage now retains failed-run evidence without changing test exit
+  or thresholds. Shared camera/style/geometry/STOP/ticket helpers remove introduced
+  duplication; the legacy wheel regression found during extraction is fixed.
+  Native network18/legacy18, session/entry rejection and actual SDK reconnect PASS.
+  Optional source-matched engine coverage augments ordinary unit/SQL evidence;
+  stale-source rejection leaves its target unchanged. Source review ACCEPT.
+  Added a public-boundary regression rejecting a retained trip for a stationary
+  company; targeted check PASS. Source-declaration reconciliation preserves real
+  hit totals; the combined audit now reports zero introduced code findings.
+  Final normal commit hook pending; load/fun NOT_MEASURED.
+
 ### MMO map movement architecture proposal
 
 - 2026-10-26, branch `codex/world-map-mmo-design`, local: owner requested a
