@@ -25,6 +25,8 @@ clause; current style references from main are preserved without regeneration.
 - Public core navigation drives routes/speeds; no copied domain movement rule.
 - Visible water remains blocked; crossings use the two intact bridges.
 - New journeys start at the current party; stopping/rerouting/visiting do not teleport.
+  Route examples choose a destination only. Initial spawn and explicit diagnostic
+  Place Start remain deliberate setup controls.
 - Passive area availability does not force a visit; a new valid order cancels Visit.
 - Current terrain/camera/area scenarios and types pass `pnpm test:map`.
 - Independent review accepts source cohesion, correctness and tooling changes.

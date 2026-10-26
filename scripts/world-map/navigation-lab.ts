@@ -727,7 +727,7 @@ async function initialize() {
   select.addEventListener('change', () => {
     const preset = presets[Number(select.value)];
     if (select.value === '' || !preset) return;
-    start = point(preset.from);
+    start = markerPosition;
     goal = point(preset.to);
     clearDestination();
     setMode('goal');

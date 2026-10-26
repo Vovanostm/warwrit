@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Route-example continuity before PR
+
+- 2026-10-26, branch `codex/world-map-painted`, local: independent pre-merge
+  review found that selecting a route example while moving/paused reset the
+  party to its authored origin. Examples now choose only the destination and
+  route from the current party; UI explains this distinction. Twenty map
+  checks/types, scoped lint/format and native pause/rest/moving reroute PASS.
+  [Owning review record](docs/wiki/world/map.md#подготовка-pr-и-ревью-ветки--2026-10-26).
+  Initial spawn/manual start placement remain diagnostic setup. Re-review/CI pending.
+
 ### World-map PR integration
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner requested review,
