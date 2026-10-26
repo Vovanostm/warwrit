@@ -1409,3 +1409,29 @@ SVG, действия и подписи читаются; плотность1050
 это приёмка ограниченного изменения управления, не новая приёмка всего арта.
 Hosted CI пока ожидается. Последующий коммит меняет только записи поставки.
 Людское предпочтение/удовольствие NOT_MEASURED; это не приёмка всей игры.
+
+### Слияние улучшений управления — 2026-10-26
+
+[PR #328](https://github.com/Vovanostm/warwrit/pull/328) MERGED по текущему
+явному запросу владельца: PR, merge в main, обновить локальный main.
+Проверенный expected head `b24016f79713c8828bc580a8bb48474755abcc41`;
+фактический normal merge `6dbdc00fccf4f85ed45d9a03a613307efede0756`,
+GitHub mergedAt `2026-10-26T09:01:47Z`. Последний коммит кандидата менял
+только документы после source/visual ACCEPT для неизменённого runtime.
+
+[CI40294682426](https://github.com/Vovanostm/warwrit/actions/runs/40294682426)
+SUCCESS: Bootstrap and verify, coverage, changed-code audit. Логи подтверждают
+verify, combat stress, реальные PostgreSQL migration/integration проверки;
+полный gate не дублировался локально. Аудит не нашёл новых проблем в семи
+изменённых файлах. Последняя [scope40296349349](https://github.com/Vovanostm/warwrit/actions/runs/40296349349)
+SUCCESS после обновления описания PR; блокирующих reviews/неразрешённых threads нет.
+Деревья локального кандидата, CI merge ref и фактического merge совпали.
+
+Remote main, локальный `refs/heads/main` и текущий worktree после fast-forward
+прочитаны на `6dbdc00f`. Локальный main не был открыт другим worktree;
+его ссылка обновлена только после проверки ancestry с ожидаемым старым значением.
+Основной checkout на `codex/sprite-combat-stage1` и его WIP сохранены.
+Эта запись и статус/CHANGELOG после merge — локальный документальный closeout;
+управление и предшествующие записи уже слиты. Нативные сценарии выполнял автор,
+независимый критик оценивал снимки и receipt; independent native replay NOT_RUN.
+Людское предпочтение/баланс NOT_MEASURED. Миграций и изменений core/server нет.

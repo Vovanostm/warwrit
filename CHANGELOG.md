@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Map controls PR merged and local main updated
+
+- 2026-10-26, originating branch `codex/map-controls-hint`, merged:
+  [PR #328](https://github.com/Vovanostm/warwrit/pull/328), expected head
+  `b24016f7`, normal merge `6dbdc00f`. Source and visual reviews ACCEPT;
+  20 map/types, 23 native browser checks, normal hook/audit PASS.
+  CI40294682426 full bootstrap/verify/stress/real-PG checks, coverage/audit and
+  latest scope40296349349 SUCCESS. Checked/merged trees match; remote main,
+  local main and this worktree read back at the merge. Primary checkout WIP
+  preserved. Earlier local/pending entries retain their dated context;
+  this post-merge documentation amendment is local.
+  [Owning closeout](docs/wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
+
 ### Familiar map movement controls
 
 - 2026-10-26, branch `codex/map-controls-hint`, local: owner requested further

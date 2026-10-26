@@ -59,3 +59,10 @@ it. The initial map has no preselected example route. Nearby Enter and the short
 controls hint sit outside the canvas. Existing Visit/preset continuity remains.
 The [dated result](../wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26)
 owns current checks/review/publication status. No core rules or migration impact.
+
+Controls UX delivered in [PR #328](https://github.com/Vovanostm/warwrit/pull/328),
+MERGED as `6dbdc00f` from expected head `b24016f7`. CI40294682426 and latest
+scope40296349349 SUCCESS; source/visual ACCEPT, focused checks and author native
+journeys PASS. Local main and origin/main read back at the merge; primary WIP
+preserved. [Detailed readback](../wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
+This post-merge documentation update is local; runtime is merged.

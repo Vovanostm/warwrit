@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Map controls UX delivery — 2026-10-26, LOCAL VALIDATED
+## Map controls UX delivery — 2026-10-26, MERGED
 
 Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `c4e3f27e`.
 Owner: continue analysis/improvements, then PR, merge to main and update local main.
@@ -12,7 +12,13 @@ No initial route or arrival replay; nearby Enter is in the toolbar.
 Independent source/tooling/cohesion review ACCEPT at `3d854e93`.
 Independent visual critic ACCEPT, six applicable criteria2; human preference NOT_MEASURED.
 Native journeys executed by author; independent native replay NOT_RUN.
-Normal commit hook/audit PASS at `3d854e93`; hosted clean-checkout CI pending.
+Normal commit hook/audit PASS at `3d854e93`.
+[PR #328](https://github.com/Vovanostm/warwrit/pull/328) merged as `6dbdc00f`, expected head `b24016f7`.
+[CI40294682426](https://github.com/Vovanostm/warwrit/actions/runs/40294682426) SUCCESS:
+clean bootstrap/verify/stress/real-PG checks, coverage and changed-code audit.
+Latest scope40296349349 SUCCESS; no unresolved threads or blocking reviews.
+Local main = origin/main = `6dbdc00f`; checked/merged trees match.
+Current worktree fast-forwarded; this post-merge documentation closeout is local.
 Current owner permission covers this PR/normal merge/local-main fast-forward only.
 Primary checkout/WIP preserved; no deploy/Orca/automation activation.
 
