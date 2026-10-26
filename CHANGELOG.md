@@ -17,8 +17,10 @@ requests.
   Water rejection preserves the paused route. Initial map has no example route;
   arrival cannot replay/teleport. Nearby Enter moves into the toolbar and the
   overlapping START label is removed. No new art, core rules or migrations.
-  Twenty map/types and 18 native browser checks PASS; scoped lint/format PASS.
-  Source review ACCEPT; independent visual critique and hosted CI pending.
+  Twenty map/types and 23 native browser checks PASS; scoped lint/format PASS.
+  Source review ACCEPT at `3d854e93`; visual critic ACCEPT (six criteria2),
+  author native journeys; independent native replay NOT_RUN. Normal hook/audit PASS;
+  hosted CI pending.
   [Owning result](docs/wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
 
 ### Map controls hint outside the canvas

@@ -8,10 +8,11 @@ Scope: familiar controls and unobstructed map; no art/core/server changes.
 RMB walks immediately, LMB previews, map-focused Space pauses/resumes.
 No initial route or arrival replay; nearby Enter is in the toolbar.
 [Owning result](../wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
-20 map scenarios/types, scoped lint/format and 18 native browser checks PASS.
-Independent source review ACCEPT for the three-file runtime delta on `52069b9d`.
-Visual/playable critic pending; human preference NOT_MEASURED.
-Normal commit audit and hosted clean-checkout CI pending before merge.
+20 map scenarios/types, scoped lint/format and 23 native browser checks PASS.
+Independent source/tooling/cohesion review ACCEPT at `3d854e93`.
+Independent visual critic ACCEPT, six applicable criteria2; human preference NOT_MEASURED.
+Native journeys executed by author; independent native replay NOT_RUN.
+Normal commit hook/audit PASS at `3d854e93`; hosted clean-checkout CI pending.
 Current owner permission covers this PR/normal merge/local-main fast-forward only.
 Primary checkout/WIP preserved; no deploy/Orca/automation activation.
 
