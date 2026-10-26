@@ -1,0 +1,99 @@
+{
+  "created": "2026-10-25",
+  "asset": "porechye-regional-v4.png",
+  "status": "local navigation stand; geographic-scale proposal, not canonical owner-approved world edition",
+  "ownerDecision": "Да, просторнее и яснее",
+  "tool": "image_gen.imagegen (built-in)",
+  "model": "not exposed by the built-in tool",
+  "prompt": "prompt-regional-v2.txt",
+  "layoutSource": "regional-guide.svg",
+  "layoutRaster": "regional-guide.png (SVG rasterized with Sharp, not generated art)",
+  "referenceInputsInOrder": [
+    "assets/art/world/porechye-v2/regional-guide.png",
+    "assets/art/m1/style/unit-c-ink.png"
+  ],
+  "requestedSize": [3072, 2048],
+  "returnedNativeSize": [1536, 1024],
+  "upscaled": false,
+  "iterations": [
+    {
+      "asset": "porechye-spacious-v1.png",
+      "prompt": "prompt.txt",
+      "operation": "new generation, five image references including v5",
+      "review": "REJECT versus mandatory guide: stone-bridge axis and mill wheel; suitable only as a direction draft"
+    },
+    {
+      "asset": "porechye-spacious-v2.png",
+      "prompt": "prompt-v2.txt",
+      "operation": "new generation, guide and three material/style references; v5 image omitted to avoid importing its layout",
+      "review": "ACCEPT as review-ready standalone concept: seven applicable scores 2; motion N/A. Bridge ends drift roughly 25-55 source pixels from guide; trace the actual image before runtime use."
+    },
+    {
+      "asset": "porechye-regional-v1.png",
+      "prompt": "prompt-regional.txt",
+      "operation": "new regional generation, guide + unit ink + town material reference",
+      "review": "REJECT for physical scale: oversized houses, river and bridges"
+    },
+    {
+      "asset": "porechye-regional-v2.png",
+      "prompt": "prompt-regional-v2.txt",
+      "operation": "new vertical planimetric generation, guide + unit ink",
+      "review": "REJECT as finished metric stand: proposed6x4km contradicted by roofs; at2.4x1.6km houses/trees/river plausible but decks oversized"
+    },
+    {
+      "asset": "porechye-regional-v3.png",
+      "prompt": "prompt-bridge-edits.txt",
+      "operation": "two region edits, reduced and composited over v2 with feathered alpha; no whole-sheet regeneration",
+      "regions": [
+        {
+          "name": "timber",
+          "box": [275, 375, 80, 120],
+          "input": "timber-bridge-crop.png",
+          "generated": "timber-bridge-edit.png"
+        },
+        {
+          "name": "stone",
+          "box": [1116, 430, 80, 120],
+          "input": "stone-bridge-crop.png",
+          "generated": "stone-bridge-edit.png"
+        }
+      ],
+      "cropSize": [1024, 1536],
+      "composite": "resize each edit to80x120; alpha mask: white rect12,12,56,96,r3; Gaussian2px; composite at original crop coordinates",
+      "review": "final integrated critique pending"
+    },
+    {
+      "asset": "porechye-regional-v4.png",
+      "operation": "two local generated terrain edits composited over v3; no whole-sheet regeneration",
+      "regions": [
+        {
+          "name": "redoubts",
+          "box": [390, 70, 150, 100],
+          "input": "redoubts-crop.png",
+          "generated": "redoubts-edit.png",
+          "prompt": "prompt-redoubts.txt"
+        },
+        {
+          "name": "burials",
+          "box": [860, 600, 150, 100],
+          "input": "burials-crop.png",
+          "generated": "burials-edit.png",
+          "prompt": "prompt-burials.txt"
+        }
+      ],
+      "cropSize": [1536, 1024],
+      "composite": "resize edits to150x100; alpha white rect22,15,106,70,r3; Gaussian2.5px; original positions",
+      "review": "ACCEPT for local integrated stand after moving burial road approach to975,623; rendering/value/materials/props/integration/motion2, character N/A"
+    }
+  ],
+  "layoutLimit": "Main v2 banks traced anew; v3 replaces two bridge crops; v4 adds two physical landmarks. Small open mill floodplain pool additionally blocked, including4independent visible-water probes. Coordinates/scale are local proposals.",
+  "visualReview": "Independent final v4 local-stand ACCEPT, all6applicable criteria2, no close-view0. Owner scale/balance/POI sufficiency and MMO acceptance not claimed.",
+  "gameIntegration": "Standalone navigation only;10 selectable source-backed POIs and consecutive journeys observed. MMO/save/server integration NOT_RUN.",
+  "physicalScaleProposal": {
+    "extentMetres": [2400, 1600],
+    "metresPerSourcePixel": 1.5625,
+    "status": "local author proposal for stand; not accepted canon",
+    "rejectedExtentMetres": [6000, 4000],
+    "time": "Local stand field pace1m/s; biome ratios/core plans unchanged; playback/display time scale9.375, not approved game balance"
+  }
+}

@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">
+  <rect width="1536" height="1024" fill="#cbc2a1" />
+  <g fill="#405344" stroke="#283e32" stroke-width="3">
+    <path d="M0 0H650L680 60L620 170L490 205L360 135L180 120L0 95Z" />
+    <path d="M890 0H1536V170L1370 210L1200 165L1120 225L1030 185L920 80Z" />
+    <path d="M0 420L160 425L270 485L300 660L220 760L80 790L0 730Z" />
+    <path d="M470 920L610 830L740 860L820 1024H430Z" />
+    <path d="M1170 890L1270 860L1360 925L1430 1024H1130Z" />
+  </g>
+  <g fill="#837390" stroke="#5a485f" stroke-width="3">
+    <path d="M1260 275L1420 230L1536 270V455L1430 440L1370 380L1280 370Z" />
+    <path d="M1350 790L1460 760L1536 780V1024H1440L1400 940Z" />
+  </g>
+  <g fill="#b49d66" stroke="#8c7e51" stroke-width="2">
+    <path d="M510 90L680 90L700 155L610 205L510 170Z" />
+    <path d="M740 110L860 100L900 180L800 220L750 190Z" />
+    <path d="M310 720L500 650L610 715L570 795L350 820Z" />
+    <path d="M600 540L760 580L790 690L680 750L590 700Z" />
+  </g>
+  <path
+    id="river"
+    fill="#6e909f"
+    stroke="#2f5665"
+    stroke-width="4"
+    d="M0 120L240 180L420 245L590 300L720 380L850 410L1040 440L1240 530L1536 590V725L1240 665L1040 580L850 550L720 520L590 435L420 380L240 315L0 255Z"
+  />
+  <path
+    fill="none"
+    stroke="#6e909f"
+    stroke-width="18"
+    d="M1080 580L1100 700L1120 810L1100 860L1060 1024"
+  />
+  <g fill="none" stroke="#8a5c31" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 80L200 80L400 160L600 160L760 230L940 240L1070 380L970 400" />
+    <path d="M760 230L850 170L980 150" />
+    <path d="M400 160L400 220M400 410L400 600L540 780L720 830L850 820L920 720L970 640" />
+    <path d="M970 640L1080 670L1100 700L1180 700L1320 710" />
+    <path d="M1100 700L1090 780L1100 860" />
+    <path d="M540 780L320 880L200 920" />
+  </g>
+  <g fill="none" stroke="#ede3bb" stroke-width="30">
+    <path d="M400 220V410" />
+    <path d="M970 400V640" />
+    <path d="M1077 695L1123 705" />
+  </g>
+  <g stroke="#403c35" stroke-width="15"><path d="M150 130V200M150 282V350" /></g>
+  <g fill="#76604a" stroke="#3d3329" stroke-width="4">
+    <rect x="990" y="305" width="150" height="95" rx="9" />
+    <rect x="930" y="120" width="105" height="75" rx="6" />
+    <rect x="715" y="195" width="95" height="66" rx="5" />
+    <rect x="1270" y="695" width="108" height="70" rx="5" />
+    <path d="M1060 830H1135V892H1060Z" />
+    <rect x="60" y="355" width="110" height="64" rx="5" />
+  </g>
+  <g
+    fill="#211f1a"
+    font-family="sans-serif"
+    font-size="21"
+    font-weight="bold"
+    paint-order="stroke"
+    stroke="#e2d9b6"
+    stroke-width="4"
+  >
+    <text x="997" y="292">Kamenny Brod</text>
+    <text x="935" y="110">Bereznyak</text>
+    <text x="690" y="285">Severny Dvor</text>
+    <text x="1260" y="795">Tikhaya Gat</text>
+    <text x="1030" y="920">Old Mill (burned ruin)</text>
+    <text x="330" y="445">Karaulny Bridge</text>
+    <text x="40" y="455">Vyazov / ruined bridge</text>
+  </g>
+</svg>

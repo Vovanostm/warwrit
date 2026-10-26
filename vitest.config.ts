@@ -32,14 +32,22 @@ export default defineConfig(({ mode }) => ({
     ...integrationHooks(mode),
     // Bound concurrent CPU-heavy geometry/combat suites on the two-core target.
     maxWorkers: 2,
-    include: ['apps/**/*.{test,spec}.{ts,tsx}', 'packages/**/*.{test,spec}.{ts,tsx}'],
+    include: [
+      'apps/**/*.{test,spec}.{ts,tsx}',
+      'packages/**/*.{test,spec}.{ts,tsx}',
+      'scripts/world-map/*.test.ts',
+    ],
     passWithNoTests: false,
     restoreMocks: true,
     coverage: {
       // `pnpm test:coverage` evidence for `fallow health --coverage`.
       // No percentage threshold: AGENTS.md sets no coverage targets.
       provider: 'v8',
-      include: ['apps/*/src/**/*.{ts,tsx}', 'packages/*/src/**/*.{ts,tsx}'],
+      include: [
+        'apps/*/src/**/*.{ts,tsx}',
+        'packages/*/src/**/*.{ts,tsx}',
+        'scripts/world-map/*.ts',
+      ],
       exclude: ['**/*.test.{ts,tsx}', 'apps/renderer-spike/**'],
       reporter: ['json', 'text-summary'],
       reportsDirectory: 'coverage',

@@ -9,6 +9,190 @@ requests.
 
 ## Unreleased
 
+### Route-example continuity before PR
+
+- 2026-10-26, branch `codex/world-map-painted`, local: independent pre-merge
+  review found that selecting a route example while moving/paused reset the
+  party to its authored origin. Examples now choose only the destination and
+  route from the current party; UI explains this distinction. Twenty map
+  checks/types, scoped lint/format and native pause/rest/moving reroute PASS.
+  [Owning review record](docs/wiki/world/map.md#подготовка-pr-и-ревью-ветки--2026-10-26).
+  Initial spawn/manual start placement remain diagnostic setup. Independent
+  source/tooling/cohesion re-review ACCEPT at `e2eb5135`; normal audit PASS.
+  Hosted CI pending.
+
+### World-map PR integration
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner requested review,
+  PR publication and merge of the map stand. Integrated main `f5fe0052`, retaining
+  both map and art-kit histories and the current art policy. Added the finite
+  [delivery contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md) linking the
+  owning wiki. Only checkpoint/changelog required conflict resolution; runtime
+  source unchanged. Integrated review/checks and hosted CI pending; no merge yet.
+
+### Settlement areas and intentional visits
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner approved the
+  [area UX proposal](docs/wiki/world/map.md#общие-зоны-и-намерение-посетить--реализация-2026-10-26).
+  Bereznyak/Brod now use one dry outskirts polygon each instead of three road
+  circles. Boundary candidate plans are trimmed and compared by travel time;
+  passive nearby Enter works without prior selection and never interrupts
+  ordinary travel. Explicit Visit starts travel and opens the scene on arrival;
+  a new ground/place order cancels intent. Return preserves world position.
+- Native browser testing found an old-frame timestamp preceding immediate Visit
+  startup; the controller now clamps negative frame elapsed time and preserves
+  monotonic frame time. Twenty focused scenarios/types and scoped lint PASS;
+  full native flow rerun PASS without page errors. Source `09c4b592` passed the
+  normal hook/audit after contextual-label cleanup. First critic REJECT for
+  faint overview boundary; a continuous ochre/dark outline replaces the dashed
+  edge. Revision `77a6adae` received absolute visual ACCEPT (six applicable scores2).
+  Expert usability assessment finds Visit/Walk and nearby Enter understandable;
+  independent full native flow remains NOT_RUN, separate from author PASS.
+- The normal hook exposed a focused-coverage selection gap for this standalone
+  DOM entry. `scripts/git-hooks/pre-commit` now also selects its existing owning
+  map suite when that entry changes, preserving real collaborator coverage;
+  browser-only controller coverage, audit base and thresholds are unchanged.
+  Shell syntax, normal hook/audit and generated coverage readback PASS; existing
+  attribution/CSS advisories retained.
+  Core/server/save/dependencies/art unchanged; no external operations.
+
+### Settlement area UX recommendation
+
+- 2026-10-26, branch `codex/world-map-painted`, local documentation: owner
+  questioned three mandatory approach zones. The
+  [map proposal](docs/wiki/world/map.md#общая-зона-поселения-вместо-трёх-подходов--ux-предложение-2026-10-26)
+  recommends a coherent dry settlement area, passive entry availability and an
+  explicit Visit intent for travel/opening. Warband manual, Battle Brothers
+  developer response and Bannerlord API evidence are distinguished from UX
+  hypotheses. Current runtime remains the two-place pilot; no gameplay rules
+  approved or changed. Runtime checks NOT_RUN; usability NOT_MEASURED.
+
+### Place arrival and explicit visits
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner approved the
+  outskirts proposal. Bereznyak and Kamenny Brod on atlas/v2 now have three
+  authored approach zones each; movement selects the fastest trimmed approach
+  plan. Entry requires local unobstructed reach; open water cannot be bypassed
+  by a radius. Other destinations retain point behavior with a visible notice.
+- Explicit Enter opens the existing settlement scene; return/Escape preserves
+  world position, passing through never opens it, and modal focus blocks WASD.
+  Selected-only contours/approaches and an arrival action accompany travel.
+  Nineteen focused scenarios/types and scoped lint/format PASS; native browser
+  journeys and remaining acceptance limits are in the
+  [owning result](docs/wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
+  Independent visual ACCEPT (six applicable criteria2); source `88114965`,
+  normal commit hook/audit PASS after shared-entry-eligibility cleanup. Existing
+  attribution/CSS advisories retained. No core/server/save, dependencies or art
+  changed; no external operations.
+
+### Settlement outskirts and entrance research
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner requested
+  outskirts-based visits and comparison with other games. The
+  [owning map record](docs/wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26)
+  distinguishes Heroes III gate visits, Bannerlord entrance coordinates and
+  Battle Brothers' historical pass-through entry bug from a proposed local
+  approach-area/explicit-entry flow. No runtime, access rule, radius or art
+  changed; game tests NOT_RUN for this research-only amendment.
+
+### WASD map camera
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner requested WASD.
+  Held physical keys now pan the zoomed map continuously, with normalized
+  diagonals and existing bounds; release stops. Editable/select focus and
+  browser shortcuts keep their keyboard input; explicit map gestures focus
+  the camera. Wheel zoom and keyboard pan can run together.
+- Fifteen focused scenarios/types, scoped lint/format and native key/release/
+  input-focus/wheel checks PASS; independent visual ACCEPT. Real tab/window
+  blur NOT_MEASURED in this runner; explicit blur-handler exercise is separate.
+  [Owning result and evidence](docs/wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
+  Source saved locally as `71f099df`; normal commit hook/audit PASS.
+  No art, domain rules, dependencies, server/save or external operations changed.
+
+### Smooth map zoom and right-click movement target
+
+- 2026-10-26, branch `codex/world-map-painted`, local: owner requested smooth
+  zoom and RMB marking. The stand now eases proportional wheel deltas around
+  the cursor; pan, location focus and fit cancel pending zoom. RMB chooses the
+  goal from the current party and suppresses the browser menu; Walk remains
+  explicit. Continuation now also applies to the old v5 preview.
+- `scripts/world-map/map-camera.ts` owns finite camera math; no dependencies,
+  artwork or game rules changed. Fourteen focused scenarios/types and scoped
+  lint/format PASS; native mouse-wheel/RMB/pan/reset/water/paused-start checks
+  and independent visual ACCEPT in the
+  [owning record](docs/wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
+  Source saved locally as `b9353990`; normal commit hook/audit PASS.
+
+### Porechye: nine-tile atlas and 24 contract proposals
+
+- 2026-10-25, branch `codex/world-map-painted`, local: owner requested roughly
+  9× more territory and 20+ varied contracts/POIs. Eight generated native tiles
+  surround the existing district at unchanged metres-per-pixel, producing a
+  4608×3072, 7.2×4.8km proposal atlas with 34 selectable destinations. The stand
+  defaults to the atlas and retains v2/v5; core navigation, save/server and
+  dependencies are unchanged. Two center bridges remain the only main crossings.
+- `scripts/world-map/porechye-atlas-contracts.ts` owns 24 RU/EN proposal previews,
+  distinct work types, named speakers and designer-only conditional outcomes.
+  Travel to issuer/site is available; quest acceptance, rewards and execution
+  are not implemented. Text critic ACCEPT; owner canon approval is not inferred.
+- Twelve focused scenarios/types, scoped lint/format and architecture PASS;
+  far route, localization and water checks are recorded with their actual limits
+  in the [owning map record](docs/wiki/world/map.md#атлас-33-и-24-проекта-контрактов--2026-10-25).
+  Initial river-copying artwork was rejected and regenerated from layout plus a
+  land-texture crop. Vertical joins rejected in v3 were repainted locally; final
+  v5 visual critic ACCEPT (six applicable scores2), far browser trip and onward
+  start/pause/selection checks PASS. Change audit PASS; details in owning record.
+  Source/art saved locally as `1eac2e8d`; normal commit hook PASS without bypass.
+  No publication, merge, deployment, automation or Orca restart.
+
+### Porechye v2: credible district scale and places
+
+- 2026-10-25, branch `codex/world-map-painted`, local: owner rejected the
+  diorama scale and requested real medieval map references, perceptible distances
+  and enough places of interest. Wharram Percy archaeological plan, Laxton (1635)
+  estate map and York reconstruction inform a new top-down land-use composition.
+  `assets/art/world/porechye-v2/porechye-regional-v4.png` uses local bridge and terrain-landmark
+  edits after scale/visibility rejections. Draft 2.4×1.6km extent; native 1536×1024,
+  no canonical map edition or claimed resolution increase.
+- `scripts/world-map/porechye-regional.ts` owns new image-grounded water/woodland,
+  road/bridge corridors and 10 selectable source-backed places. The stand defaults
+  to v2, retains v5 selection, shows metres/500m ruler, POI descriptions and
+  continuous onward journeys. Local 1 m/s field playback calibration makes 820 m
+  display 7m43s; speed-profile ratios and core plans stay unchanged. No quests,
+  loot, save/server integration or new runtime dependency.
+- Eight focused scenarios/types and scoped lint/architecture PASS; real browser
+  consecutive 820 m and 1187 m legs arrived, pause/keyboard/pointer and water rejection
+  checked. Change audit PASS after sharing road geometry and simplifying UI functions;
+  final integrated v4 critic ACCEPT (all applicable scores2). Local code/art
+  commit `defbe8da` passed the normal hook/change audit without bypass. Historical research,
+  iteration failures, checks and limits: [owning map page](docs/wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
+
+### Painted Porechye navigation stand
+
+- 2026-10-25, branch `codex/world-map-painted`, local: owner requested biome
+  zones and pathfinding on the generated map, then chose an interactive stand
+  before game integration. `scripts/world-map/` uses the existing public
+  game-core weighted navigation on first-pass Porechye v5 polygons and road
+  corridors. Toggleable layers, start/goal, travel time, moving token,
+  stop/resume/arrival, zoom/pan and a night preview are available via `pnpm dev:map`.
+  Existing V3 speeds remain authoritative; no new runtime dependency, canonical
+  map edition, migration or game-save change. [Owning map page](docs/wiki/world/map.md#стенд-проходимости-поречья--2026-10-25)
+  records GitHub alternatives, checks, corrections and acceptance limits.
+  Five focused scenarios and Chrome interaction PASS; third independent
+  diagnostic-stand visual pass ACCEPT (all applicable scores≥2), change audit
+  PASS with attribution/CSS advisories retained. Geometry is coarse and time
+  uses an experimental scale; this does not accept integrated MMO movement.
+- Owner follow-up: river must be impassable. Re-annotated its banks after
+  the critic found painted water classified as dry ground; water wins over
+  settlement clearings. Six source-water probes and real Brod→Mill movement
+  sampling PASS. Owner then approved a more spacious layout with clearer roads,
+  river, fields and villages: `assets/art/world/porechye-v2/` contains the
+  scheme and two built-in imagegen drafts with exact prompts/provenance.
+  V1 failed guide/lore critique; V2 standalone review ACCEPT (seven scores2,
+  motionN/A), with25–55px drift from guide requiring tracing actual art.
+  Both returned1536×1024, not the requested3072×2048; no upscale or new-map
+  navigation integration is claimed. The running stand retains corrected v5.
+
 ### Art styles merged and local main updated — 2026-10-25
 
 - Origin branch `codex/novel-art-style-profiles`, merged: owner requested

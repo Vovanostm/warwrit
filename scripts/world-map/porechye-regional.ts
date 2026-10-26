@@ -1,0 +1,430 @@
+import { type NavigationRegion } from '@warwrit/game-core';
+import {
+  roadOverlays,
+  point,
+  region as previousRegion,
+  type Pixel,
+  type Road,
+} from './porechye-navigation.js';
+
+// A local geography proposal, not a canonical world edition. Physical distances
+// describe the drawing only. Walking pace is a local stand parameter, not balance.
+export const metresPerPixel = 2400 / 1536;
+export const walkingMetresPerSecond = 1;
+// Five place identities: places.csv/porechye.md. Additional atlas proposals:
+// war-13, war-14, nature-08 in stozhar-v3/places.json. All positions are new drafts.
+export const places = [
+  {
+    name: 'Березняк',
+    at: [195, 220],
+    label: [195, 166],
+    description:
+      'Лесная деревня с травницей. Дворы выходят к дороге, за ними — огороды и лесные тропы.',
+  },
+  {
+    name: 'Северный Двор',
+    at: [700, 185],
+    label: [700, 139],
+    description:
+      'Хлебный хутор среди полос пашни на северном берегу. Дорога связывает его с лесной деревней и Бродом.',
+  },
+  {
+    name: 'Каменный Брод',
+    at: [1125, 365],
+    label: [1100, 278],
+    description:
+      'Рынок, караульня и единственная каменная переправа для телег. Здесь сходятся дороги обоих берегов.',
+  },
+  {
+    name: 'Тихая Гать',
+    at: [1390, 800],
+    label: [1385, 865],
+    description:
+      'Жилое речное село на сухом южном берегу. Настилы ведут к воде; местные перевозчики знают Мутню.',
+  },
+  {
+    name: 'Старая мельница',
+    at: [810, 620],
+    label: [810, 688],
+    description:
+      'Сгоревшая мельница у реки. Опасная руина: она не работает и не восстанавливается.',
+  },
+  {
+    name: 'Караульный мост',
+    at: [315, 441],
+    label: [380, 385],
+    description:
+      'Деревянный настил на старых опорах. Действующий обход разрушенной Вязовской переправы.',
+  },
+  {
+    name: 'Вязов · разрушен',
+    at: [210, 475],
+    label: [150, 494],
+    description:
+      'Средний пролёт обрушен. Подойти можно с сухого южного берега; перейти здесь нельзя.',
+  },
+  {
+    name: 'Земляные редуты',
+    at: [440, 120],
+    label: [510, 95],
+    description: 'Низкие старые земляные укрепления у речного подхода.',
+  },
+  {
+    name: 'Братские ямы',
+    at: [975, 623],
+    label: [995, 690],
+    description:
+      'Неглубокие погребения у сгоревшей мельницы и вдоль берега. Память о Бродской сече.',
+  },
+  {
+    name: 'Глинистый берег',
+    at: [510, 430],
+    label: [550, 398],
+    description:
+      'Серый берег Мутни со следами подходов к переправе. Река здесь остаётся непроходимой.',
+  },
+] as const;
+
+const forests: readonly (readonly Pixel[])[] = [
+  [
+    [0, 0],
+    [425, 0],
+    [435, 90],
+    [405, 145],
+    [325, 175],
+    [220, 158],
+    [128, 228],
+    [0, 250],
+  ],
+  [
+    [720, 0],
+    [1536, 0],
+    [1536, 375],
+    [1450, 345],
+    [1390, 300],
+    [1340, 340],
+    [1300, 275],
+    [1210, 260],
+    [1230, 180],
+    [1120, 150],
+    [1080, 125],
+    [1000, 146],
+    [880, 108],
+    [790, 115],
+    [750, 68],
+  ],
+  [
+    [0, 545],
+    [95, 575],
+    [170, 650],
+    [290, 690],
+    [410, 770],
+    [345, 900],
+    [450, 1024],
+    [0, 1024],
+  ],
+  [
+    [510, 750],
+    [600, 730],
+    [630, 695],
+    [720, 730],
+    [810, 790],
+    [875, 780],
+    [925, 860],
+    [1030, 890],
+    [1090, 1024],
+    [430, 1024],
+    [440, 900],
+  ],
+  [
+    [1100, 950],
+    [1240, 910],
+    [1340, 950],
+    [1440, 930],
+    [1536, 980],
+    [1536, 1024],
+    [1090, 1024],
+  ],
+];
+
+// Banks traced against porechye-regional-v4.png. The small buffer closes
+// shoreline antialiasing; marsh pools remain slower ground, not river crossings.
+const river: readonly Pixel[] = [
+  [0, 334],
+  [32, 343],
+  [64, 360],
+  [96, 365],
+  [128, 377],
+  [160, 383],
+  [192, 396],
+  [224, 400],
+  [256, 407],
+  [288, 411],
+  [320, 410],
+  [352, 412],
+  [384, 417],
+  [416, 421],
+  [448, 425],
+  [480, 444],
+  [512, 460],
+  [544, 485],
+  [576, 497],
+  [608, 518],
+  [640, 533],
+  [672, 546],
+  [704, 549],
+  [736, 565],
+  [768, 559],
+  [800, 557],
+  [832, 542],
+  [864, 530],
+  [896, 518],
+  [928, 507],
+  [960, 496],
+  [992, 494],
+  [1024, 488],
+  [1056, 483],
+  [1088, 465],
+  [1120, 463],
+  [1152, 462],
+  [1184, 473],
+  [1216, 478],
+  [1248, 505],
+  [1280, 518],
+  [1312, 530],
+  [1344, 567],
+  [1376, 582],
+  [1408, 590],
+  [1440, 601],
+  [1472, 606],
+  [1504, 619],
+  [1536, 622],
+  [1536, 681],
+  [1504, 671],
+  [1472, 662],
+  [1440, 662],
+  [1408, 653],
+  [1376, 643],
+  [1344, 635],
+  [1312, 621],
+  [1280, 597],
+  [1248, 575],
+  [1216, 553],
+  [1184, 531],
+  [1152, 524],
+  [1120, 530],
+  [1088, 531],
+  [1056, 542],
+  [1024, 550],
+  [992, 554],
+  [960, 559],
+  [928, 563],
+  [896, 576],
+  [864, 587],
+  [832, 598],
+  [800, 603],
+  [768, 610],
+  [736, 617],
+  [704, 612],
+  [672, 600],
+  [640, 593],
+  [608, 582],
+  [576, 575],
+  [544, 551],
+  [512, 535],
+  [480, 503],
+  [448, 489],
+  [416, 478],
+  [384, 478],
+  [352, 473],
+  [320, 471],
+  [288, 467],
+  [256, 463],
+  [224, 452],
+  [192, 441],
+  [160, 435],
+  [128, 431],
+  [96, 425],
+  [64, 420],
+  [32, 412],
+  [0, 400],
+];
+
+const roads: readonly Road[] = [
+  {
+    id: 'trunk-north',
+    kind: 'dirt_road',
+    width: 3,
+    line: [
+      [1160, 25],
+      [1150, 145],
+      [1120, 260],
+      [1155, 355],
+      [1156, 454],
+    ],
+  },
+  {
+    id: 'brod-bridge',
+    kind: 'bridge',
+    width: 3,
+    line: [
+      [1156, 454],
+      [1156, 536],
+    ],
+  },
+  {
+    id: 'trunk-south',
+    kind: 'dirt_road',
+    width: 3,
+    line: [
+      [1156, 536],
+      [1185, 620],
+      [1250, 735],
+      [1370, 800],
+      [1450, 840],
+      [1520, 900],
+    ],
+  },
+  {
+    id: 'north-villages',
+    kind: 'dirt_road',
+    width: 3,
+    line: [
+      [40, 190],
+      [195, 220],
+      [380, 240],
+      [530, 205],
+      [700, 185],
+      [900, 220],
+      [1120, 260],
+    ],
+  },
+  {
+    id: 'karaulny-north',
+    kind: 'dirt_road',
+    width: 3,
+    line: [
+      [195, 220],
+      [310, 310],
+      [315, 403],
+    ],
+  },
+  {
+    id: 'karaulny-bridge',
+    kind: 'bridge',
+    width: 3,
+    line: [
+      [315, 403],
+      [315, 480],
+    ],
+  },
+  {
+    id: 'karaulny-south',
+    kind: 'trail',
+    width: 2,
+    line: [
+      [315, 480],
+      [320, 560],
+      [460, 630],
+      [650, 655],
+      [810, 620],
+    ],
+  },
+  {
+    id: 'mill-path',
+    kind: 'trail',
+    width: 2,
+    line: [
+      [1156, 536],
+      [1010, 610],
+      [900, 650],
+      [810, 620],
+    ],
+  },
+  {
+    id: 'south-west',
+    kind: 'trail',
+    width: 2,
+    line: [
+      [320, 560],
+      [225, 650],
+      [120, 760],
+      [30, 825],
+    ],
+  },
+  {
+    id: 'field-access',
+    kind: 'trail',
+    width: 2,
+    line: [
+      [700, 185],
+      [690, 360],
+      [600, 435],
+      [535, 470],
+    ],
+  },
+];
+
+const marsh: readonly Pixel[] = [
+  [1250, 610],
+  [1350, 610],
+  [1536, 680],
+  [1536, 800],
+  [1430, 765],
+  [1320, 720],
+];
+// Open water in the small floodplain pool below the mill path, independently
+// traced from the burial crop; the dry arrival point stays on its north bank.
+const millPool: readonly Pixel[] = [
+  [872, 689],
+  [886, 681],
+  [902, 670],
+  [917, 663],
+  [936, 655],
+  [954, 648],
+  [970, 644],
+  [980, 637],
+  [986, 643],
+  [974, 651],
+  [960, 658],
+  [942, 665],
+  [923, 675],
+  [908, 684],
+  [890, 695],
+  [879, 703],
+];
+
+export const regionalRegion: NavigationRegion = {
+  ...previousRegion,
+  mapEdition: 'porechye-v2-regional-proposal',
+  terrainShapes: [
+    previousRegion.terrainShapes[0]!,
+    ...forests.map((outline, i) => ({
+      shapeId: `wood-${i}`,
+      terrainId: 'forest' as const,
+      paintPriority: 20,
+      polygon: outline.map(point),
+    })),
+    { shapeId: 'wet-floodplain', terrainId: 'marsh', paintPriority: 30, polygon: marsh.map(point) },
+    { shapeId: 'mutnya', terrainId: 'deep_water', paintPriority: 100, polygon: river.map(point) },
+    {
+      shapeId: 'mill-pool',
+      terrainId: 'deep_water',
+      paintPriority: 100,
+      polygon: millPool.map(point),
+    },
+  ],
+  overlayShapes: roadOverlays(roads),
+};
+
+export const samples: Record<string, Pixel> = {
+  forest: [80, 850],
+  marsh: [1450, 730],
+  deep_water: [740, 594],
+};
+export const regionalPresets: readonly { name: string; from: Pixel; to: Pixel }[] = [
+  { name: 'Брод → Тихая Гать', from: [1160, 400], to: [1390, 800] },
+  { name: 'Обход Вязова через Караульный', from: [190, 370], to: [190, 475] },
+  { name: 'Березняк → Северный Двор', from: [195, 220], to: [700, 185] },
+  { name: 'Брод → сгоревшая мельница', from: [1160, 400], to: [810, 620] },
+];

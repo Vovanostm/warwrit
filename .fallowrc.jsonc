@@ -7,6 +7,8 @@
   "minimumVersion": "3.30.0",
   // Manual browser probes are run by hand with Playwright, not imported.
   "entry": [
+    "scripts/world-map/navigation-lab.ts",
+    "scripts/world-map/navigation-lab.css",
     "apps/web/src/*.browser.mjs",
     // Approved static galleries are served through their HTML entry pages.
     "assets/art/combat/**/concepts.js",

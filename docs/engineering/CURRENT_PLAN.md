@@ -1,6 +1,46 @@
 # Warwrit current delivery plan
 
-## Novel art styles / JSON publication — 2026-10-25, MERGED
+## World map stand PR delivery — 2026-10-26, READY FOR CI
+
+Coordinator/sole writer: Codex parent; branch `codex/world-map-painted`.
+Owner: “Review, prepare pr, merge” authorizes this branch's PR and normal merge.
+[Delivery contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md).
+Source before integration `8c789e03`; current main `f5fe0052` merged locally.
+Only CHANGELOG/CURRENT_PLAN conflicted; both dated histories retained.
+Atlas/navigation source, approved older art and current visit behavior preserved.
+Parent owns validation/publication/expected-head merge; independent code reviewer
+must accept the changed stand/tooling; hosted CI and PR scope must be green.
+Integrated 20 map/types, native preset continuity, scoped lint/format and whole
+repository format PASS. Independent source/tooling/cohesion ACCEPT at `e2eb5135`
+after fixing preset teleport; later publication records only, source unchanged.
+Normal commit hook/audit PASS; existing visual/text acceptance and limits in wiki.
+Hosted clean-checkout CI and PR scope pending; do not merge before green checks.
+No full game integration, deployment, paid services or automation/Orca restart.
+
+## Dated history
+
+### Settlement areas and visit intent — 2026-10-26, LOCAL COMPLETE
+
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `ae66fd71`.
+Owner: implement the proposed area UX and have a critic evaluate convenience.
+[Owning result](../wiki/world/map.md#общие-зоны-и-намерение-посетить--реализация-2026-10-26).
+Outcome: Bereznyak/Brod dry areas allow passive entry from any valid position;
+explicit Visit travels to the area and opens it; ground orders cancel intent.
+No automatic opening/stopping on ordinary pass-through; return preserves position.
+Scope: two-place stand on atlas/v2, existing artwork and public movement API.
+One writer; existing visual critic evaluates current images and actual journeys.
+20 map scenarios/types, scoped lint/format and author native journeys PASS.
+Pass-through, field-side Enter, Visit auto-arrival, intent cancellation, pause,
+return position, modal WASD, v2/v5 compatibility checked in browser.
+Critic first REJECT for faint border; continuous dark/ochre edge now ACCEPT,
+six applicable criteria2. Expert labels/actions understandable; independent full
+native journey NOT_RUN (critic CLI syntax failure); author journeys are separate.
+Source `09c4b592`/`77a6adae`; normal hook/audit PASS without bypass.
+Map DOM-entry hook now includes its existing owning suite; base/thresholds intact.
+No core/server/save/dependency/art or operational changes.
+Full game/DB gate NOT_RUN; human usability preference/balance NOT_MEASURED.
+
+### Novel art styles / JSON publication — 2026-10-25, MERGED
 
 Coordinator: local Codex parent; Orca and automation remain stopped.
 Owner requested «merge, update main» for [PR #326](https://github.com/Vovanostm/warwrit/pull/326).
@@ -17,7 +57,124 @@ No unresolved review threads. Merged tree equals the checked head tree.
 New prompt generation, alpha/pivots and game integration NOT_RUN.
 This documentation closeout records delivery; no new art, gameplay or deployment.
 
-## Integrate #319 / PR #324 — 2026-10-25
+### Place entrance zones — 2026-10-26, LOCAL COMPLETE
+
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `866ee389`.
+Owner: “Review, improve, implement” the outskirts/explicit-entry proposal.
+[Owning result](../wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
+Outcome: select Bereznyak/Brod, walk to a reachable authored approach, Enter,
+return at the same position; walking past never opens a place.
+Pilot: two settlements on v2/atlas; other destinations retain point behavior.
+Compare weighted travel times among authored approaches; reject barrier bypass.
+Existing initial interior presence remains visitable without an outward walk.
+Boundary: local stand geometry/controller/view/tests; no core/server/save rules.
+19 focused scenarios/types, scoped lint/format PASS.
+Native west/east Bereznyak, north/south Brod, pause/resume, explicit visit,
+position-preserving return/Escape, ground pass-through and modal/WASD PASS.
+v2 visit/v5 navigation PASS; independent visual ACCEPT, six applicable scores2.
+Source `88114965`; normal commit hook/audit PASS after consolidating duplicated
+entry eligibility. Existing attribution/CSS advisories retained.
+Full game/DB gate NOT_RUN; final owner usability/balance NOT_MEASURED.
+No external writes, operational activation or new dependencies.
+Follow-up: owner asks whether one settlement area would be better UX.
+[Recommendation only](../wiki/world/map.md#общая-зона-поселения-вместо-трёх-подходов--ux-предложение-2026-10-26):
+dry footprint + passive entry availability + explicit Visit intent; no new code.
+User comparison/usability NOT_RUN/NOT_MEASURED; prior pilot remains current.
+
+### WASD map pan — 2026-10-26, LOCAL COMPLETE
+
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `3f47da64`.
+Owner asks to add WASD movement; interpreted as map-camera pan, not party travel.
+Outcome: held physical WASD keys pan the zoomed map smoothly; release stops;
+constant screen-relative speed, normalized diagonal, existing world bounds.
+Form/editable focus and browser shortcuts retain their own keyboard input.
+Explicit map mouse gestures focus the map so keyboard pan works after zoom.
+Scope: existing camera/controller/hints/test plus owning map records.
+[Owning result](../wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
+15 focused scenarios/types and scoped lint/format PASS.
+Native four directions/release, input focus stop, wheel focus and combined
+wheel/pan PASS. Blur-signal clearing checked; native tab blur NOT_MEASURED
+because this runner does not emit it when switching pages.
+Independent visual ACCEPT: six applicable criteria2, characters N/A.
+Source `71f099df`; normal commit hook/audit PASS without bypass.
+No art, game rules, dependencies, server/save or external writes.
+
+### Map camera and right-click target — 2026-10-26, LOCAL COMPLETE
+
+Sole writer: Codex parent; branch `codex/world-map-painted`, base `89c746de`.
+Owner: smooth zoom and right mouse button for marking movement.
+Outcome: proportional cursor-anchored eased wheel zoom; RMB chooses the goal
+from the current party position, including when the start tool was selected.
+Left click/pan, existing water restrictions and explicit Walk button retained.
+Scope: scripts/world-map camera/controller/hints/tests and owning map records.
+Verification: camera anchor/bounds/refresh-rate scenarios; real browser wheel
+frame samples, RMB/default-menu suppression, pan/reset and independent critique.
+[Owning result](../wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
+Fourteen focused scenarios/types and scoped lint/format PASS.
+Native browser wheel:43 intermediate widths/65frames, cursor drift<0.001px;
+RMB menu suppressed, goal overrides start-tool, paused position retained;
+water refusal, pan and interrupted-zoom fit reset PASS.
+Independent visual ACCEPT: six applicable criteria2, characters N/A.
+Source `b9353990`; normal commit hook/audit PASS, tree clean before records closeout.
+No new art, domain rules, dependencies, save/server or external writes.
+
+### Porechye 3×3 atlas and 24 proposals — 2026-10-25, LOCAL COMPLETE
+
+Sole writer: Codex parent. Branch `codex/world-map-painted`; resumed `8c520d33`.
+Owner requested ~9× territory, 20+ varied contracts and possible POIs.
+[Owning map record](../wiki/world/map.md#атлас-33-и-24-проекта-контрактов--2026-10-25).
+Result: 4608×3072 atlas, nine native tiles, draft extent 7.2×4.8km;
+34 reachable destinations, 24 new RU/EN contract proposals and physical POIs.
+Run `pnpm dev:map`; `/scripts/world-map/navigation-lab.html?map=atlas`, port5326.
+Select a destination or contract, travel to issuer/site; v2/v5 retained.
+Center identities and two bridges retained; impassable river/pond, weighted
+biomes, sequential travel, adaptive labels, 500m ruler and ×128/×512 viewing.
+Contracts are previews, not executable quests/rewards or replacement M1 canon.
+Twelve focused scenarios/types, lint/format, architecture and change audit PASS.
+Browser: 7921m/80m59s far trip, stable pause/resume, exact4222,2398 arrival;
+onward2699m/25m starts there, pointer/Enter and English selector/card PASS.
+Selecting the current site clears a stale planned route; browser checked.
+Text critic ACCEPT: seven criteria2, lore3. Visual v3 REJECT for tile joins;
+final v5 full absolute ACCEPT: six applicable criteria2, characters N/A.
+Source/art saved as `1eac2e8d`; normal commit hook PASS without bypass.
+Art prompts/provenance and native tiles accompany the local implementation.
+Only scripts/world-map, atlas art, owning wiki/checkpoint/changelog changed.
+Owner enjoyment, content sufficiency and physical game balance NOT_MEASURED.
+Full game/DB gate NOT_RUN; no game/server/save/dependency contract changed.
+No PR/push/merge/deploy/automation/Orca restart performed or authorized.
+
+### Completed predecessor: district stand
+
+See owning map record for `defbe8da` code/art and `8c520d33` closeout.
+
+Sole writer: local Codex parent; no Orca activation.
+Owner: interactive stand first; larger/clearer map; real medieval plans for
+credible scale; latest «расстояние должно ощущаться … достаточно мест интереса».
+Branch `codex/world-map-painted`, resumed head `32fe8b1f`, base main `7389e822`.
+[Owning map record](../wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
+Outcome: planimetric generated district, first-pass biome/river/road annotations,
+10 selectable places, sequential travel, distances,500m ruler, walking estimate,
+progress/pause/resume, day/night, pan/zoom; v5 retained in map selector.
+Run `pnpm dev:map`; `/scripts/world-map/navigation-lab.html?map=v2`, port5326.
+Research: Wharram Percy measured plan2015, Laxton estate1635, York afterRaine1955
+in report1998. Dates/types and direct sources in owning page, not medieval facsimiles.
+Art: v1/v2 rejected for scale; v3 fixes bridges; active v4 paints redoubts/burials.
+Native 1536×1024; no claimed3072px. Draft extent2.4×1.6km, not canonical geography.
+Five place identities plus crossings and3 existing atlas proposals; no new quests.
+Core navigation/speeds unchanged. Local playback calibrates field pace1m/s;
+820m now7m43s, not old49.4s; acceleration is a separate viewing control.
+Eight focused scenarios/types, scoped lint/architecture and change audit PASS.
+Browser: two sequential POI legs820m/7m43s and1187m/12m38s, exact arrivals,
+no reset to original start, pause stable, marker click and keyboard target PASS.
+Earlier v3 visual scores>=2; formal close-reference pair omission corrected.
+Final independent v4 critic ACCEPT (six applicable scores2; character N/A).
+Dry burial approach975,623 leaves mounds visible.
+Code/art committed locally as `defbe8da`; normal hook/change audit PASS.
+Coarse woodland/shoreline annotations, selectable landmarks, no individual collision
+for roofs/trees; physical travel/game balance, all world routes and MMO NOT_ACCEPTED.
+This local stand only. No PR, publication, merge, deployment or automation authorized.
+
+### Integrate #319 / PR #324 — 2026-10-25
 
 Coordinator: local Codex parent; Orca coordinator remains stopped.
 Owner: «Ок, продолжай - merge, next worktree implement + merge».
@@ -40,7 +197,7 @@ No automatic successor after these two deliveries.
 No runtime, automation, Orca restart, deployment or paid services authorized.
 Tokens/time savings NOT_MEASURED. Historical status below is retained, not reactivation.
 
-## Dated history
+### Earlier history
 
 ### Historical authorization: delivery of #321, then #319 — 2026-10-25
 
