@@ -1,6 +1,23 @@
 # Warwrit current delivery plan
 
-## Map controls hint — 2026-10-26, LOCAL COMPLETE
+## Map controls UX delivery — 2026-10-26, LOCAL VALIDATED
+
+Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `c4e3f27e`.
+Owner: continue analysis/improvements, then PR, merge to main and update local main.
+Scope: familiar controls and unobstructed map; no art/core/server changes.
+RMB walks immediately, LMB previews, map-focused Space pauses/resumes.
+No initial route or arrival replay; nearby Enter is in the toolbar.
+[Owning result](../wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
+20 map scenarios/types, scoped lint/format and 18 native browser checks PASS.
+Independent source review ACCEPT for the three-file runtime delta on `52069b9d`.
+Visual/playable critic pending; human preference NOT_MEASURED.
+Normal commit audit and hosted clean-checkout CI pending before merge.
+Current owner permission covers this PR/normal merge/local-main fast-forward only.
+Primary checkout/WIP preserved; no deploy/Orca/automation activation.
+
+## Dated history
+
+### Map controls hint — 2026-10-26, LOCAL COMPLETE
 
 Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `4428fa74`.
 Owner: remove the intrusive map tooltip or move the hint outside the canvas.
@@ -9,8 +26,6 @@ SVG title removed; footer supplies concise controls and ARIA description.
 Browser hover/DOM/placement and wheel/WASD/RMB checks PASS; scoped format/diff PASS.
 No handler/art changes; game suites NOT_RUN for this HTML-only fix.
 Local only; no new PR/merge or operational activation requested.
-
-## Dated history
 
 ### World map stand PR delivery — 2026-10-26, MERGED
 

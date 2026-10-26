@@ -185,7 +185,7 @@ function refreshNearby() {
   if (next === nearbyEntry) return;
   nearbyEntry = next;
   element('nearby-place').toggleAttribute('hidden', !next);
-  element('nearby-title').textContent = next ? `Вы у поселения: ${next.name}` : '';
+  element('nearby-title').textContent = next?.name ?? '';
   drawEntryZones();
 }
 
@@ -240,6 +240,7 @@ function clearRouteHere(target: PointFp) {
   showRouteMetrics();
   drawRoute();
   element('to-marker').setAttribute('visibility', 'hidden');
+  showSurface(target);
   updateProgress();
 }
 
@@ -353,6 +354,7 @@ function drawRoute() {
   const d = path?.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${y}`).join(' ') ?? '';
   element('route').setAttribute('d', d);
   element('route-edge').setAttribute('d', d);
+  element('from-marker').setAttribute('visibility', plan ? 'visible' : 'hidden');
   moveMarker('from-marker', start);
   moveMarker('party', start);
   markerPosition = start;
@@ -429,7 +431,7 @@ function setMode(next: typeof mode) {
   element('mode').textContent =
     mode === 'start'
       ? 'Нажмите на карту, чтобы поставить старт'
-      : 'ПКМ — цель пути · ЛКМ — выбор или обзор';
+      : 'ПКМ — идти · ЛКМ — выбрать путь или тянуть карту';
 }
 
 function setEndpoint(p: PointFp) {
@@ -443,16 +445,17 @@ function setEndpoint(p: PointFp) {
 }
 
 function selectPoint(p: PointFp) {
-  if (!field) return;
+  if (!field) return false;
   if (!isContinuousPointWalkable(field, p)) {
     status.textContent =
       'Эта точка непроходима или слишком близка к воде. Выберите сухую землю или середину целого моста.';
-    return;
+    return false;
   }
   setEndpoint(p);
   clearDestination();
   element<HTMLSelectElement>('preset').value = '';
   calculateRoute();
+  return !!plan;
 }
 
 function mapPoint(event: MouseEvent): Pixel {
@@ -535,6 +538,16 @@ function isTypingTarget(target: EventTarget | null) {
 function isBrowserShortcut(event: KeyboardEvent) {
   return event.ctrlKey || event.altKey || event.metaKey;
 }
+function isMapPauseKey(event: KeyboardEvent) {
+  return (
+    event.code === 'Space' && event.target === map && !event.repeat && !isBrowserShortcut(event)
+  );
+}
+map.addEventListener('keydown', (event) => {
+  if (!isMapPauseKey(event)) return;
+  event.preventDefault();
+  toggleJourney();
+});
 window.addEventListener('keydown', (event) => {
   if (!panKeyCodes.has(event.code)) return;
   if (isTypingTarget(event.target)) return;
@@ -621,7 +634,7 @@ map.addEventListener('contextmenu', (event) => {
   event.preventDefault();
   map.focus({ preventScroll: true });
   setMode('goal');
-  selectPoint(point(mapPoint(event)));
+  if (selectPoint(point(mapPoint(event)))) startJourney();
 });
 element('fit').addEventListener('click', () => setView(0, 0, SHEET.width, SHEET.height));
 element('start').addEventListener('click', () => setMode('start'));
@@ -630,8 +643,7 @@ element<HTMLInputElement>('night').addEventListener('change', (event) =>
   map.classList.toggle('night', (event.target as HTMLInputElement).checked),
 );
 function startJourney() {
-  if (!plan) return;
-  if (elapsed >= Number(plan.arrivesAtMs)) elapsed = 0;
+  if (!plan || elapsed >= Number(plan.arrivesAtMs)) return;
   running = true;
   lastFrame = performance.now();
   stop.disabled = false;
@@ -639,6 +651,10 @@ function startJourney() {
   status.textContent = visitIntent
     ? `Отряд идёт посетить ${visitIntent.name}. Поселение откроется по прибытии.`
     : 'Отряд в пути. Скорость меняется при переходе границ зон.';
+}
+function toggleJourney() {
+  if (running) pauseJourney();
+  else startJourney();
 }
 play.addEventListener('click', startJourney);
 function pauseJourney() {
@@ -654,9 +670,9 @@ stop.addEventListener('click', pauseJourney);
 
 function arrive() {
   running = false;
-  play.disabled = !!selectedEntry;
+  play.disabled = true;
   stop.disabled = true;
-  play.textContent = selectedEntry ? 'Прибыли' : 'Повторить';
+  play.textContent = 'Прибыли';
   status.textContent = destinationName
     ? `Отряд прибыл: ${destinationName}.`
     : 'Отряд прибыл в выбранную точку.';
@@ -735,9 +751,9 @@ async function initialize() {
   });
   const initial = presets[0]!;
   start = point(initial.from);
-  goal = point(initial.to);
-  select.value = '0';
-  calculateRoute();
+  clearRouteHere(start);
+  setMode('goal');
+  status.textContent = 'ПКМ по сухой земле — идти. ЛКМ — предварительный выбор пути.';
   requestAnimationFrame(animate);
 }
 void initialize().catch((error) => {

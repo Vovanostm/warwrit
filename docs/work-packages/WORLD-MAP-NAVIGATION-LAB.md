@@ -48,3 +48,14 @@ scoped lint/format and repository format PASS. CI40249250063 and latest
 scope40250278331 SUCCESS; full clean-checkout bootstrap/coverage/audit passed.
 Migration impact: none. Detailed links/limits are in the owning map page.
 This post-merge documentation readback is local; the stand source/art are in main.
+
+## Controls UX amendment — 2026-10-26
+
+Owner requests continued UX improvements, then PR, normal merge and local-main
+update. Branch `codex/map-controls-hint` retains the existing stand boundary.
+RMB orders immediate travel; LMB previews/pans; Space pauses/resumes only with
+map focus. Invalid water orders preserve a paused journey; arrival cannot replay
+it. The initial map has no preselected example route. Nearby Enter and the short
+controls hint sit outside the canvas. Existing Visit/preset continuity remains.
+The [dated result](../wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26)
+owns current checks/review/publication status. No core rules or migration impact.

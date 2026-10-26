@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Familiar map movement controls
+
+- 2026-10-26, branch `codex/map-controls-hint`, local: owner requested further
+  UX review/improvement, PR, merge and local-main update. RMB now starts travel;
+  LMB previews and map-focused Space pauses/resumes without taking form/POI keys.
+  Water rejection preserves the paused route. Initial map has no example route;
+  arrival cannot replay/teleport. Nearby Enter moves into the toolbar and the
+  overlapping START label is removed. No new art, core rules or migrations.
+  Twenty map/types and 18 native browser checks PASS; scoped lint/format PASS.
+  Source review ACCEPT; independent visual critique and hosted CI pending.
+  [Owning result](docs/wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
+
 ### Map controls hint outside the canvas
 
 - 2026-10-26, branch `codex/map-controls-hint`, local: owner reported a large

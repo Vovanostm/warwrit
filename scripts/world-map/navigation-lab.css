@@ -262,31 +262,22 @@ dd {
 #visit-place {
   width: 100%;
 }
-#nearby-place {
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  width: 260px;
-  padding: 14px;
-  background: #202627f5;
-  border: 1px solid #b99c64;
-  box-shadow: 0 4px 16px #10171980;
+.map-toolbar-actions,
+#nearby-place:not([hidden]) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.map-toolbar-actions {
+  flex-shrink: 0;
+}
+#nearby-place:not([hidden]) {
+  padding-right: 10px;
+  border-right: 1px solid var(--line);
 }
 #nearby-title {
-  display: block;
   color: #ead6a6;
-  font:
-    18px Georgia,
-    serif;
-}
-#nearby-place span {
-  display: block;
-  margin: 7px 0 12px;
-  font-size: 12px;
-  color: #b0b5aa;
-}
-#nearby-enter {
-  width: 100%;
+  font-weight: 500;
 }
 #place-visit {
   width: min(940px, 86vw);
@@ -408,13 +399,6 @@ dd {
   fill: #33483e;
   stroke: #f2e2b4;
   stroke-width: 3;
-}
-#from-marker text {
-  fill: #f4e5c4;
-  font: 13px system-ui;
-  paint-order: stroke;
-  stroke: #152121;
-  stroke-width: 4;
 }
 #to-marker {
   fill: #e3b76b;
