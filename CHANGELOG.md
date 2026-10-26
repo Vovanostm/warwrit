@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### World-map stand merged
+
+- 2026-10-26, originating branch `codex/world-map-painted`, merged:
+  [PR #327](https://github.com/Vovanostm/warwrit/pull/327), expected head
+  `70ec192f`, normal merge `c4e3f27e`. Independent source/tooling review ACCEPT,
+  preset continuity fix checked in browser; CI40249250063 (full clean-checkout
+  bootstrap, coverage/audit) and latest scope40250278331 SUCCESS. Checked/merged
+  trees matched; remote main read back, this worktree fast-forwarded.
+  [Owning result and limits](docs/wiki/world/map.md#слияние-стенда-карты--2026-10-26).
+  Earlier local entries retain their dated context. This closeout amendment is
+  local metadata after merge; it adds no gameplay, deployment or operations.
+
 ### Route-example continuity before PR
 
 - 2026-10-26, branch `codex/world-map-painted`, local: independent pre-merge

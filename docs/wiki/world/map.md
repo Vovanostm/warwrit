@@ -1319,3 +1319,34 @@ ACCEPT для `e2eb5135244ddd2c8c5cbed6bb8d5d273bbc2bcb` против `f5fe0052`
 Обычный commit hook/audit PASS; hosted CI ожидается.
 Полный clean-checkout gate выполняется один раз в PR CI через bootstrap; его
 результат не подменяется локальными map-проверками. Migration impact: none.
+
+### Слияние стенда карты — 2026-10-26
+
+[PR #327](https://github.com/Vovanostm/warwrit/pull/327) опубликован из
+`codex/world-map-painted` и слит обычным merge по текущему запросу владельца.
+Проверенный expected head `70ec192f49de7ac35847ba41870f8879df104d97`;
+source/tooling/cohesion ACCEPT — `e2eb5135`, после него изменялись только
+записи поставки. Исправленный при ревью перенос отряда через выбор примера
+проверен в браузере в покое/на паузе/на ходу. Других блокирующих замечаний нет.
+
+[CI 40249250063](https://github.com/Vovanostm/warwrit/actions/runs/40249250063)
+SUCCESS: Bootstrap and verify, покрытие и аудит изменённых файлов. Bootstrap
+реально выполнял verify, combat stress и migration/integration проверки с
+одноразовым PostgreSQL. Полный прогон не дублировался локально. Актуальная
+[проверка scope 40250278331](https://github.com/Vovanostm/warwrit/actions/runs/40250278331)
+SUCCESS после окончательного редактирования PR; неразрешённых review threads нет.
+Локальные 20 map/types, lint/format, normal hook/audit и CURRENT_PLAN PASS.
+
+Фактический merge `c4e3f27eea7dd81d8bf0c83b4385ed5c45a1cf39`, время GitHub
+`2026-10-26T00:39:07Z`; PR readback — MERGED. Деревья кандидата, проверенного
+merge ref и фактического merge совпали. Remote main прочитан на этом коммите;
+текущий worktree обновлён fast-forward без изменения другого checkout/WIP.
+Эта запись closeout остаётся локальной документацией после merge; исходники,
+рисунки и первоначальные записи поставки уже в main.
+
+Сохранён статус самостоятельного опыта: нет канонической версии географии,
+серверного доступа к поселениям, сохранений, выполнения/наград контрактов или
+принятия всей MMO/M1. Две зоны посещения, остальные точки пути; людские
+предпочтения/баланс не измерены. Визуальный/текстовый ACCEPT и границы их
+самостоятельного runtime-прогона записаны выше. Deploy/Orca/автоматизация и
+следующий срез этим слиянием не запускались.

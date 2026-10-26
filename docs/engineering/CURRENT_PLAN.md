@@ -1,21 +1,23 @@
 # Warwrit current delivery plan
 
-## World map stand PR delivery — 2026-10-26, READY FOR CI
+## World map stand PR delivery — 2026-10-26, MERGED
 
 Coordinator/sole writer: Codex parent; branch `codex/world-map-painted`.
-Owner: “Review, prepare pr, merge” authorizes this branch's PR and normal merge.
-[Delivery contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md).
-Source before integration `8c789e03`; current main `f5fe0052` merged locally.
-Only CHANGELOG/CURRENT_PLAN conflicted; both dated histories retained.
-Atlas/navigation source, approved older art and current visit behavior preserved.
-Parent owns validation/publication/expected-head merge; independent code reviewer
-must accept the changed stand/tooling; hosted CI and PR scope must be green.
-Integrated 20 map/types, native preset continuity, scoped lint/format and whole
-repository format PASS. Independent source/tooling/cohesion ACCEPT at `e2eb5135`
-after fixing preset teleport; later publication records only, source unchanged.
-Normal commit hook/audit PASS; existing visual/text acceptance and limits in wiki.
-Hosted clean-checkout CI and PR scope pending; do not merge before green checks.
-No full game integration, deployment, paid services or automation/Orca restart.
+Owner: “Review, prepare pr, merge”; only this delivery, no operational restart.
+[PR #327](https://github.com/Vovanostm/warwrit/pull/327) merged normally as `c4e3f27e`.
+Expected head `70ec192f`; independent source/tooling/cohesion ACCEPT at `e2eb5135`,
+followed only by delivery records. Preset teleport fixed and browser checked.
+[CI 40249250063](https://github.com/Vovanostm/warwrit/actions/runs/40249250063) SUCCESS:
+bootstrap/verify/stress/real-PG migrations, coverage and changed-code audit.
+[Latest scope 40250278331](https://github.com/Vovanostm/warwrit/actions/runs/40250278331) SUCCESS;
+no unresolved review threads. Merged tree equals the checked head tree.
+Remote main read back at `c4e3f27e`; this worktree fast-forwarded to it.
+20 map/types, native preset continuity, local format/lint/audit PASS.
+[Owning closeout](../wiki/world/map.md#слияние-стенда-карты--2026-10-26).
+Stand only: 34 POIs/24 proposals, two visit areas; no MMO/server/save integration.
+Independent full native critic flow NOT_RUN; human usability/balance NOT_MEASURED.
+This post-merge documentation closeout is local; code/art are merged in main.
+No deployment, paid services, successor task or automation/Orca activation.
 
 ## Dated history
 
