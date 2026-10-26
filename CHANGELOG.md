@@ -17,7 +17,9 @@ requests.
   route from the current party; UI explains this distinction. Twenty map
   checks/types, scoped lint/format and native pause/rest/moving reroute PASS.
   [Owning review record](docs/wiki/world/map.md#подготовка-pr-и-ревью-ветки--2026-10-26).
-  Initial spawn/manual start placement remain diagnostic setup. Re-review/CI pending.
+  Initial spawn/manual start placement remain diagnostic setup. Independent
+  source/tooling/cohesion re-review ACCEPT at `e2eb5135`; normal audit PASS.
+  Hosted CI pending.
 
 ### World-map PR integration
 

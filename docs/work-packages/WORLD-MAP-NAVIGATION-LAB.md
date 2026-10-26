@@ -40,6 +40,8 @@ and full M1 acceptance are outside this prototype.
 
 ## Delivery status
 
-Local integrated review and hosted CI pending. Migration impact: none.
+Independent integrated source/tooling/cohesion review ACCEPT at `e2eb5135` after
+fixing preset continuity; 20 map/types, author native reroute, scoped lint/format
+and repository format PASS. Hosted CI pending. Migration impact: none.
 The workflow's clean-checkout bootstrap owns full verification; do not run duplicate
 full gates locally and remotely. Focused local checks remain proportional.

@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## World map stand PR delivery — 2026-10-26, IN REVIEW
+## World map stand PR delivery — 2026-10-26, READY FOR CI
 
 Coordinator/sole writer: Codex parent; branch `codex/world-map-painted`.
 Owner: “Review, prepare pr, merge” authorizes this branch's PR and normal merge.
@@ -10,8 +10,11 @@ Only CHANGELOG/CURRENT_PLAN conflicted; both dated histories retained.
 Atlas/navigation source, approved older art and current visit behavior preserved.
 Parent owns validation/publication/expected-head merge; independent code reviewer
 must accept the changed stand/tooling; hosted CI and PR scope must be green.
-Existing 20 map checks and author native flows precede this integration;
-integrated checks/review/CI pending. Visual acceptance and its limits remain in wiki.
+Integrated 20 map/types, native preset continuity, scoped lint/format and whole
+repository format PASS. Independent source/tooling/cohesion ACCEPT at `e2eb5135`
+after fixing preset teleport; later publication records only, source unchanged.
+Normal commit hook/audit PASS; existing visual/text acceptance and limits in wiki.
+Hosted clean-checkout CI and PR scope pending; do not merge before green checks.
 No full game integration, deployment, paid services or automation/Orca restart.
 
 ## Dated history
