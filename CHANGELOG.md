@@ -34,7 +34,8 @@ requests.
   Added a public-boundary regression rejecting a retained trip for a stationary
   company; targeted check PASS. Source-declaration reconciliation preserves real
   hit totals; the combined audit now reports zero introduced code findings.
-  Final normal commit hook pending; load/fun NOT_MEASURED.
+  Normal related-test hook/audit PASS at `114028e3`, without bypass. Ordinary
+  runtime restart and final native7 PASS; local only, load/fun NOT_MEASURED.
 
 ### MMO map movement architecture proposal
 

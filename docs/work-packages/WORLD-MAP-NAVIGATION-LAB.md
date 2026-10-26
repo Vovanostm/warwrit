@@ -116,9 +116,12 @@ creature at the mill PASS. Four real-PG cases PASS from scripts/world-map;
 test placement respects the server rootDir without runtime testkit imports.
 Focused map20 and core/client9 cases, script/server types PASS. Clean
 verify1200/stress10000 PASS; migration smoke + all69 SQL cases PASS across the
-full run and affected rerun. Independent source/visual ACCEPT; normal audit pending.
+full run and affected rerun. Independent source/visual ACCEPT; normal hook/audit PASS at `114028e3`.
 Post-refactor related coverage996 PASS/61 skipped, four real-PG cases PASS;
 final script/server types and scoped lint/format PASS. Native network18/legacy18
 and actual SDK reconnect PASS. Optional source-matched engine coverage preserves
-the normal audit thresholds; final audit remains pending.
+the normal audit thresholds; final normal hook/audit PASS without bypass.
+Additional stationary-company/retained-trip regression PASS; latest ordinary-runtime
+restart and seven native smoke checks PASS. Code committed locally as `114028e3`;
+no publication, merge or production acceptance.
 Detailed results and limits belong to the [map page](../wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).

@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Networked atlas first cycle — 2026-10-26, VALIDATING
+## Networked atlas first cycle — 2026-10-26, LOCAL COMPLETE
 
 Coordinator/integrator/shared writer: Codex parent; branch `codex/world-map-mmo-design`.
 Owner: “Implement - delegate subagents”; local implementation and bounded delegation.
@@ -17,7 +17,9 @@ Map20/core+client9 and script/server types PASS; four real-PG cases PASS.
 Native two-player18, no-viewer/restart/creature/recovery/contact cleanup PASS.
 Independent source/visual ACCEPT (applicable visual scores2); human fun NOT_MEASURED.
 Clean verify1200/stress10000 PASS; smoke + all69 SQL cases PASS across affected rerun.
-Next: normal commit audit and local code/documentation closeout; no publication.
+Code `114028e3`: normal related-test hook + audit PASS, no bypass.
+Latest plain-runtime native MOVE/STOP/water/persistence/error checks7 PASS.
+Next: owner trial of this six-group lab; production integration is a separate slice.
 Runtime evidence is bounded to six groups; load/fun/full MMO NOT_MEASURED.
 
 ## Dated history
