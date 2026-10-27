@@ -1,6 +1,23 @@
 # Warwrit current delivery plan
 
-## Map controls UX delivery — 2026-10-26, LOCAL VALIDATED
+## Mill inspection and refinement skill — 2026-10-27, LOCAL / DELIVERY
+
+Coordinator/sole writer: Codex parent; branch `codex/mill-scene-delivery`, base `6dbdc00f`.
+Owner permission: “ok, fix, pr, merge” on 2026-10-27 authorizes this PR and normal merge.
+[Contract](../work-packages/MILL-3D-INSPECTION.md) · [Owning result](../wiki/mill-3d-scene.md).
+Scope: standalone mill inspection, retained source/paint, reusable refinement skill.
+Transferred only this slice from `codex/mill-3d-scene`; unrelated ancestor work stays local.
+Original worktree and all its staged/unstaged work preserved.
+Source geometry is now tracked so the golden path works without local-only Git history.
+Prior real 1K recovery/roundtrip and scoped script checks PASS; delivery checks pending.
+Historical material clarity 2/2; whole-scene visual REJECT remains explicitly experimental.
+No battle integration, collision/navigation, new art generation or visual acceptance claim.
+No deployment, auto/admin merge, automation or Orca activation.
+Next: normal commit/audit, independent review, PR CI and expected-head merge.
+
+## Dated history
+
+### Map controls UX delivery — 2026-10-26, LOCAL VALIDATED
 
 Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `c4e3f27e`.
 Owner: continue analysis/improvements, then PR, merge to main and update local main.
@@ -15,8 +32,6 @@ Native journeys executed by author; independent native replay NOT_RUN.
 Normal commit hook/audit PASS at `3d854e93`; hosted clean-checkout CI pending.
 Current owner permission covers this PR/normal merge/local-main fast-forward only.
 Primary checkout/WIP preserved; no deploy/Orca/automation activation.
-
-## Dated history
 
 ### Map controls hint — 2026-10-26, LOCAL COMPLETE
 

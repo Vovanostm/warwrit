@@ -1,0 +1,8 @@
+{
+  "tool": "imagegen",
+  "prompt": "Use case: precise-object-edit. Image 1 is a registered texture view: DO NOT change camera, framing, geometry or any object placement. Correct ONE painting mistake: in the UPPER RIGHT part of the ruined mill, white foamy blue stream water is incorrectly painted across the tall rear chimney/gable and outside edge of the sloping roof/wall. At image coordinates approximately x=980..1060, y=270..510 (on this 1254 square image), the water starts at the top of the chimney and runs down the mill. THAT SURFACE IS STONE MASONRY AND WEATHERED TIMBER, NOT A WATERFALL. Paint this building surface as dry dark irregular gray masonry with dark mortar, soot and muted ochre weathering, and wood where roof/beams are. Image 2 supplies stone/wood material appearance only. Keep the REAL stream on the far right along the rocks and ground UNCHANGED. Remove only water/foam from the chimney, sloping wall/roof rim and elevated building surfaces. Preserve every silhouette, roof edge, beam, aperture and pixel position; do not extend stone into the real river. Keep the rest of image1 unchanged, including ground, background and colors. This is an albedo correction for geometry projection, not a new scene.",
+  "input": "back-paint.png",
+  "styleReference": "left-paint.png",
+  "output": "back-wall-repair.png",
+  "reason": "Independent critique identified stream painted onto the tall gable; world-space region limits this correction to the masonry."
+}
