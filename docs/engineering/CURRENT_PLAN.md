@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Observed hostile pursuit — 2026-10-27, VALIDATING
+## Observed hostile pursuit — 2026-10-27, LOCAL COMPLETE
 
 Sole writer/integrator: Codex parent, branch `codex/world-map-mmo-design`, base `060dddd3`.
 Owner: RMB on enemy follows the group rather than its clicked position.
@@ -18,7 +18,9 @@ Focused7/types/lint and real-PG23 + migration smoke PASS.
 Native moving target/STOP/ground, stale retry and two-window ordering confirmed.
 Independent source ACCEPT; clean verify1204/stress10000/migration smoke+SQL74 PASS.
 Client helper/ring refinements: types/lint/native repeated; visual ACCEPT, six scores2.
-Navigation42 PASS; normal commit audit pending, no bypass.
+Navigation42 PASS; normal commit hook/audit PASS at `9b2c41a5`, no bypass.
+Plain Node24.20 restart retained orderId; current RMB/STOP/network recovery PASS.
+Both stands live5338/5326; next: owner trial of pursuit (hostile NPCs only).
 [Current result and limits](../wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
 No PR/push/merge/deploy/Orca/automation activation authorized.
 

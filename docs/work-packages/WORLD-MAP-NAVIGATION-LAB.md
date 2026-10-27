@@ -158,5 +158,7 @@ found no material defect. Clean bootstrap verify1204/stress10000/smoke+SQL74 PAS
 After client-only helper/ring edits: focused types/lint and native orders rerun;
 server/core gate results remain applicable. Independent visual ACCEPT, six scores2;
 critic native replay NOT_RUN, author native checks separate. Source helper readback
-ACCEPT; navigation42 PASS; normal commit audit pending, no bypass.
+ACCEPT; navigation42 PASS; normal hook/audit PASS at `9b2c41a5`, no bypass.
+Plain-server restart retained orderId; current native RMB/STOP and visit network
+recovery PASS. Local complete; production/full MMO/player enjoyment not accepted.
 [Owning result and honest probe limits](../wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).

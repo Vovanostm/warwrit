@@ -24,7 +24,9 @@ requests.
   Independent source review: no material findings. Clean verify1204/stress10000
   and all74 SQL scenarios PASS; scoped client checks repeated after target-ring
   readability fixes. Independent visual ACCEPT, six applicable scores2; native input replay
-  belongs to the author. Normal local commit audit is still being completed. [Behavior, checks and limits](docs/wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
+  belongs to the author. Normal hook/audit PASS at `9b2c41a5`, without bypass. A real plain-server
+  restart retained the pursuit order; native RMB/STOP and visit network recovery
+  passed. [Behavior, checks and limits](docs/wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
 
 ### Networked painted-atlas laboratory
 
