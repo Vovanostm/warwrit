@@ -264,3 +264,16 @@ SDK resumption verifies the same room/session, not a new room admission. Unique
 runtime folders retain past failures; owned launcher/API/web cleanup waits and
 removes only its PID file. Source concerns closed, provisional infrastructure
 ACCEPT. Normal commit/exact-head review and hosted CI still pending.
+
+### Networked delivery readback — 2026-10-27
+
+[PR330](https://github.com/Vovanostm/warwrit/pull/330) MERGED as `5ecb4eb3`,
+expected head `74e4a584`, base `e4876962`. Independent infrastructure/integration
+ACCEPT on clean expected head. CI40557403570 SUCCESS (full bootstrap/stress/SQL,
+unit coverage, installed browser, six real native journeys, source-checked merge
+and unchanged audit); latest scope40560485057 SUCCESS. No blocking reviews/threads.
+Actual merged tree equals checked head; local main/origin main both `5ecb4eb3`.
+Earlier source/pending statuses above are historical and superseded by delivery.
+Post-merge main CI40560746226 was still running at readback; no duplicate gate.
+This documentation closeout is local; source changes are merged. Primary WIP and
+persistent lab data preserved; no deployment, automation or full-MMO acceptance.

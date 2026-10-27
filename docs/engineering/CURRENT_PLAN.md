@@ -1,25 +1,24 @@
 # Warwrit current delivery plan
 
-## Networked atlas PR delivery — 2026-10-27, CI CORRECTION
+## Networked atlas PR delivery — 2026-10-27, MERGED
 
 Coordinator/sole writer/integrator/validation owner: parent; branch `codex/world-map-mmo-design`.
 Current owner permission: “pr, merge” authorizes this branch PR and normal merge.
 Scope: networked painted atlas, observed pursuit, icons/labels and optional own camera.
 [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md) · [Result](../wiki/world/map.md).
 Includes additive migrations0015–0017 and isolated lab runtime; no deployment/PvP.
-Integrated current main `e4876962` (mill PR329); retain both branches' records/config.
-Prior source/playable review and native/SQL/full-gate results retained for unchanged sources.
-Parent owns merge conflict resolution, source review integration, PR/CI and local-main update.
-Independent exact-head integration review and green applicable PR CI required before merge.
+Integrated main `e4876962` (mill PR329); both branches' records/config retained.
+[PR330](https://github.com/Vovanostm/warwrit/pull/330) merged as `5ecb4eb3` from expected head `74e4a584`.
+Independent infrastructure/integration ACCEPT on clean `74e4a584`; prior visual acceptance retained.
+CI40557403570 SUCCESS: bootstrap/stress/SQL, unit coverage, real browser journey, unchanged audit.
+Latest scope40560485057 SUCCESS; no review threads/blocking reviews; merged tree equals checked head.
+Local main = origin/main = `5ecb4eb3`; primary checkout/WIP preserved.
+First CI40549906440 audit failed: missing SQL/browser measurements; same-run collection fixed it.
+Local correction smoke/SQL74, unit1204, six native journeys and normal hook/audit PASS.
+Post-merge main CI40560746226 was in progress at readback; no duplicate full local gate.
+This documentation readback is local; source delivery is merged.
+Next: owner trial on5338; full MMO/load/fun NOT_MEASURED, reviewer input replay NOT_RUN.
 No deployment, auto/admin merge, automation or Orca activation.
-[PR330](https://github.com/Vovanostm/warwrit/pull/330) published at `0be69678`; source/infrastructure ACCEPT.
-CI40549906440: bootstrap/stress/SQL and unit coverage PASS; audit rejected missing SQL/browser measurements.
-Correction retains gates/thresholds: same-run SQL, browser/server and source-checked coverage merge.
-Playwright1.64.1 is pinned dev-only tooling; no new game/runtime technology or behavior.
-Local instrumented smoke/SQL74, unit1204, native six-phase journey and source-checked audit PASS.
-Source findings in the CI journey fixed; provisional infrastructure ACCEPT, exact-head readback pending.
-Browser proof now checks specific visit error and retained SDK room/session on reconnect.
-Next: complete real CI journey, review correction and rerun PR CI before expected-head merge.
 
 ## Dated history
 

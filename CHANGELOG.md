@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Networked atlas merged
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, merged in
+  [PR330](https://github.com/Vovanostm/warwrit/pull/330) as `5ecb4eb3` from
+  expected head `74e4a584`. Includes the networked lab, observed pursuit,
+  icons/labels, own camera and migrations0015–0017. Independent exact-head
+  integration/infrastructure ACCEPT; CI40557403570 and latest scope40560485057
+  SUCCESS, no blocking reviews/threads. Merged/checked trees match; local main
+  and origin/main read back at `5ecb4eb3`, primary WIP preserved. CI fixed missing
+  SQL/browser measurements without changing thresholds; first failed run retained
+  below. Earlier local/pending source statuses are superseded by this delivery.
+  This documentation readback is local; no deployment/automation.
+  [Owning result](docs/wiki/world/map.md#слияние-сетевого-атласа--2026-10-27).
+
 ### Networked atlas CI measurements
 
 - 2026-10-27, branch `codex/world-map-mmo-design`, local correction to

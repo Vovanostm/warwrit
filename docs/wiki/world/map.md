@@ -2092,3 +2092,33 @@ driver/migration/SQL измерения объединены с unit-отчёт�
 пороги не ослаблены. Предыдущая запись изменённого browser driver удалена как
 устаревшая перед новым фактическим измерением. Source reviewer закрыл две находки
 инструмента и дал provisional infrastructure ACCEPT; exact-head/hosted CI ожидаются.
+
+## Слияние сетевого атласа — 2026-10-27
+
+[PR330](https://github.com/Vovanostm/warwrit/pull/330) MERGED на GitHub как
+`5ecb4eb3d2ef92139b8e984da9649209d4d8c825`; ожидаемая вершина
+`74e4a58439ba1646fe6fcc98df96fdc7deeb81dd`, интегрированный base `e4876962`.
+Точный чистый head получил independent infrastructure/integration ACCEPT;
+неразрешённых обсуждений и блокирующих reviews нет. Нынешний merge tree совпадает
+с проверенным source tree; локальный `main` и `origin/main` прочитаны на `5ecb4eb3`.
+Основной checkout с посторонней работой не переключался и не очищался.
+
+[CI40557403570](https://github.com/Vovanostm/warwrit/actions/runs/40557403570)
+SUCCESS за18м12с: полный bootstrap/verify, stress и реальные SQL/миграции,
+unit coverage, Chromium и фактический browser/server journey, проверка исходников
+измерений и обычный audit. В native логе подтверждены все шесть этапов, включая
+SDK resumption с прежними room/session и STOP409→retry200. Последний
+[scope40560485057](https://github.com/Vovanostm/warwrit/actions/runs/40560485057)
+SUCCESS. Первый CI40549906440 остаётся неуспешным; его причина и исправление
+описаны выше, проверки и пороги не ослаблялись. Локальный normal hook/audit PASS
+в `74e4a584`, без обхода; исходники игры при CI-исправлении не менялись.
+
+Сетевой стенд, преследование, иконки/подписи, камера и миграции0015–0017 теперь
+доставлены в main; предыдущие local/pending статусы исходников — история.
+Текущий документационный readback остаётся локальным. Автоматический
+[main CI40560746226](https://github.com/Vovanostm/warwrit/actions/runs/40560746226)
+ещё выполнялся при readback; повторять тот же полный gate локально не требовалось.
+Обычный стенд5338 снова запущен, persistent данные сохранены; это не deploy.
+Прежние source/visual результаты сохраняют свой ограниченный scope; полная MMO,
+нагрузка и удовольствие — NOT_MEASURED, независимый reviewer replay ввода — NOT_RUN.
+Orca, автоматизация, auto/admin merge и paid provisioning не активировались.
