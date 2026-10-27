@@ -9,7 +9,9 @@ Scope: standalone mill inspection, retained source/paint, reusable refinement sk
 Transferred only this slice from `codex/mill-3d-scene`; unrelated ancestor work stays local.
 Original worktree and all its staged/unstaged work preserved.
 Source geometry is now tracked so the golden path works without local-only Git history.
-Prior real 1K recovery/roundtrip and scoped script checks PASS; delivery checks pending.
+Normal commit hook/audit PASS without bypass; web types/lint and native viewer checks PASS.
+1K recovery/roundtrip and atomic JSON interruption checks PASS.
+Source review c4a53afd found a missing Claude skill link; fixed, final readback pending.
 Historical material clarity 2/2; whole-scene visual REJECT remains explicitly experimental.
 No battle integration, collision/navigation, new art generation or visual acceptance claim.
 No deployment, auto/admin merge, automation or Orca activation.

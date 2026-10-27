@@ -16,7 +16,9 @@ requests.
   skill from the original branch; preserved unrelated ancestor work. Tracked the
   original one-material source so fresh clones can replay the positive golden
   path. Retained the material improvements and interrupted-projection guards.
-  Prior scoped checks PASS; integrated checks/review/hosted CI pending. Historical
+  Normal hook/audit, web types/lint, native viewer controls and 1K recovery PASS.
+  Review added the Claude discovery link; marker/report JSON now replace atomically,
+  verified with interrupted writes and recovery. Final review/hosted CI pending. Historical
   full-scene art REJECT remains explicit; no combat integration or deployment.
   [Contract](docs/work-packages/MILL-3D-INSPECTION.md) ·
   [Owning result](docs/wiki/mill-3d-scene.md#поставка-отдельной-пробы--2026-10-27).

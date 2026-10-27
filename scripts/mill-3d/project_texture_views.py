@@ -10,6 +10,14 @@ import numpy as np
 from image_to_3dlab import photo_paint as pp
 from PIL import Image
 
+
+def write_json(path, value):
+    """Keep the previous complete state readable if the process is interrupted."""
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, indent=2) + "\n")
+    temporary.replace(path)
+
+
 parser = argparse.ArgumentParser(
     description="Project registered texture views onto repacked mill atlases."
 )
@@ -124,7 +132,7 @@ for name in parts:
     if not (root / (name + "-base.glb")).is_file():
         parser.error(f"Missing prepared atlas: {name}-base.glb; run prepare first")
 # Keep this marker after failure so pack cannot accept a mixture of revisions.
-pending_path.write_text(json.dumps(parts) + "\n")
+write_json(pending_path, parts)
 for name in parts:
     started = time.monotonic()
     source = root / (name + "-base.glb")
@@ -208,11 +216,8 @@ for name in parts:
     }
     print(reports[name], flush=True)
     del face, bary, corners, b, points, n, normals, color, result, wm, t
-report_path.write_text(
-    json.dumps(
-        [reports[name] for name in ["mill", "yard", "underside"] if name in reports],
-        indent=2,
-    )
-    + "\n"
+write_json(
+    report_path,
+    [reports[name] for name in ["mill", "yard", "underside"] if name in reports],
 )
 pending_path.unlink()
