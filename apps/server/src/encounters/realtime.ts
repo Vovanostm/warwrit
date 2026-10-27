@@ -5,6 +5,7 @@ import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
+import { roomTicketFromReservation } from '../room-ticket.js';
 import { createEncounterRoomClass, refreshEncounterRoomProjections } from './room.js';
 import { startEncounterAiWorker, type EncounterAiWorker } from './ai-worker.js';
 
@@ -60,19 +61,7 @@ export function registerEncounterRealtime(
         { encounterId },
         { headers, ip },
       );
-      return {
-        name: reservation.name,
-        sessionId: reservation.sessionId,
-        roomId: reservation.roomId,
-        ...(reservation.processId === undefined ? {} : { processId: reservation.processId }),
-        ...(reservation.publicAddress === undefined
-          ? {}
-          : { publicAddress: reservation.publicAddress }),
-        ...(reservation.reconnectionToken === undefined
-          ? {}
-          : { reconnectionToken: reservation.reconnectionToken }),
-        ...(reservation.devMode === undefined ? {} : { devMode: reservation.devMode }),
-      };
+      return roomTicketFromReservation(reservation);
     },
   };
 }

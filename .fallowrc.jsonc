@@ -5,10 +5,27 @@
   // `pnpm report:quality`, not failed, until a refactor owns them.
   "$schema": "./node_modules/fallow/schema.json",
   "minimumVersion": "3.30.0",
+  "framework": [
+    {
+      "name": "world-lab-coverage-tools",
+      "enablers": ["ast-v8-to-istanbul"],
+      "entryPoints": ["scripts/world-map/runtime-coverage-*.mjs"],
+      "entryPointRole": "support",
+      "toolingDependencies": ["ast-v8-to-istanbul", "istanbul-lib-coverage", "vite"],
+    },
+  ],
   // Manual browser probes are run by hand with Playwright, not imported.
   "entry": [
     "scripts/world-map/navigation-lab.ts",
     "scripts/world-map/navigation-lab.css",
+    "scripts/world-map/world-lab.ts",
+    "scripts/world-map/world-lab.css",
+    "scripts/world-map/world-lab-server.ts",
+    "scripts/world-map/world-lab-vite.config.ts",
+    "scripts/world-map/world-lab.browser.mjs",
+    // Spawned through the migration shell runner.
+    "scripts/run-migration-smoke.ts",
+    "scripts/migration-smoke.ts",
     "apps/web/src/*.browser.mjs",
     // Standalone inspection page: apps/web/mill.html.
     "apps/web/src/mill-preview/main.ts",

@@ -9,6 +9,147 @@ requests.
 
 ## Unreleased
 
+### Networked atlas CI measurements
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local correction to
+  [PR330](https://github.com/Vovanostm/warwrit/pull/330): CI40549906440 passed
+  bootstrap/stress/SQL and unit coverage but its audit had no SQL/browser evidence.
+  Add same-run coverage to the existing SQL execution, real Chromium/server
+  journeys and guarded source-matched report merging. Pin Playwright1.64.1 as
+  development tooling; preserve all thresholds and default migration behavior.
+  Instrumented migration smoke/SQL74, unit1204, real six-phase browser journey,
+  source-checked merge and unchanged audit PASS locally. Driver waits for the
+  accepted order's rendered snapshot, specific visit interruption and retained SDK
+  session on reconnect. Unique runtime directories and waited child cleanup retain
+  prior evidence without reusing it. Source concerns closed; provisional independent
+  infrastructure ACCEPT, exact-head/hosted CI pending.
+  [Owning delivery](docs/wiki/world/map.md#поставка-сетевого-атласа--2026-10-27).
+
+### Networked atlas PR integration
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local: owner authorized
+  “pr, merge” for the current map branch. Integrated main `e4876962` (mill PR329),
+  preserving both changelogs, the mill entry points and map tooling. Resolved
+  only documentation conflicts; frozen-lockfile installation PASS. Scope includes
+  the networked lab, pursuit, icons/labels and own-party camera, migrations0015–0017.
+  Existing local source/visual/native/SQL results remain bounded to their records;
+  final integration review and hosted CI pending. No deployment/automation.
+  [Delivery contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md).
+
+### Own-party follow camera
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local: owner requested
+  continued map improvements after icons. Added optional own-party camera follow,
+  preserving zoom on follow/Center-own. Drag, WASD and overview release follow;
+  wheel zoom retains it. Camera samples the same bounded rendered position as
+  the marker; sessions reset the toggle. Fixed focused-checkbox WASD suppression
+  in the shared input guard while retaining native Space and text/dialog guards.
+  Map20/types, scoped lint/format and24 native + seven supplemental checks PASS.
+  The initial legacy pan probe was at a fully fitted map; corrected zoomed probe
+  confirms pan, checkbox Space and text-input isolation. Day/night and60 actual
+  moving frames captured. Source review closed its finding; independent visual
+  ACCEPT and normal hook/audit PASS at `5dac02c7`. First audit required fresh measurements for two
+  retained UI branches; actual STOP409→retry200 and visit network recovery now
+  PASS (four checks), without threshold/source changes for the audit.
+  Independent native replay NOT_RUN; human preference NOT_MEASURED.
+  Server/core/protocol and game rules unchanged.
+  [Owning result](docs/wiki/world/map.md#камера-за-своим-отрядом--2026-10-27).
+
+### Readable world-map icons
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local: owner requested
+  professional map icons. Replaced geometric party/place marks with24 SVG
+  silhouettes for player companies, patrols, threats and34 existing POIs; nearby
+  keys use the same mapping. Reused the established Game Icons family with pinned
+  provenance, CC BY3.0 credits and three local neutral symbols. Corrected pasture,
+  burnt-wagon and domestic-ruin identities during independent source review.
+  Party icons retain screen size through zoom/resize; own badge does not intercept enemy
+  input. Actual macOS Bash3.2 startup failed on an empty optional argument array;
+  guarded expansion restores normal `pnpm dev:world` without changing its ports/data.
+  Script types/lint/format and sprite/site references PASS. Initial visual
+  critique rejected label collisions and overview hierarchy; added anchored label
+  placement/priority with hover names, muted overview POIs and immediate camera
+  relayout. Current native23, day/night probes,100 pan frames, two-tab and stale-order
+  checks PASS; source review has no remaining material defect. Repeat absolute
+  visual ACCEPT (seven applicable scores2), normal hook/audit PASS at `9dd85bd8`.
+  Corrected a mislabeled night capture with rendered NIGHT checked before/after
+  the1050×800 screenshot. Server/core/protocol unchanged; no new
+  raster art, battle/PvP rules, dependencies or production delivery.
+  [Owning result and limits](docs/wiki/world/map.md#иконки-отрядов-и-мест--2026-10-27).
+
+### Observed hostile pursuit
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local: owner requested RMB
+  pursuit of enemy groups and accepted travel to the last observed position on
+  sight loss. Added server-persisted lab pursuit, observed-target replanning,
+  atomic STOP/ground cancellation, own target ring/status and guarded stale-order
+  retry. Stable order IDs prevent an old tab cancelling a newer pursuit.
+  Migrations0016/0017 preserve existing local data and refuse destructive rollback
+  while pursuits exist. Shared mover joins a caller transaction and retains its
+  default behavior for the main API. Hostile lab NPCs only; no battle or PvP.
+  Seven focused cases,23 real-PG scenarios, migration smoke, types/lint and native
+  moving-target/STOP/ground/two-tab probes passed within their recorded scope.
+  Independent source review: no material findings. Clean verify1204/stress10000
+  and all74 SQL scenarios PASS; scoped client checks repeated after target-ring
+  readability fixes. Independent visual ACCEPT, six applicable scores2; native input replay
+  belongs to the author. Normal hook/audit PASS at `9b2c41a5`, without bypass. A real plain-server
+  restart retained the pursuit order; native RMB/STOP and visit network recovery
+  passed. [Behavior, checks and limits](docs/wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
+
+### Networked painted-atlas laboratory
+
+- 2026-10-26, branch `codex/world-map-mmo-design`, local: owner requested
+  implementation with delegated agents. Added a runnable two-player laboratory
+  using the existing server movement executor, shared atlas geometry, persistent
+  patrol/bandits/wildlife/night creature, isolated PostgreSQL and personalized
+  Colyseus observations. New `pnpm dev:world` serves UI5338/API3038/WS3039;
+  migration0015 adds lab slots/NPCs. Existing stand5326 and campaign defaults
+  remain usable. Fixed atlas plan readback, exact outskirts STOP, trusted clock
+  sampling, stale-response ordering and independent lab cookies during real
+  integration. [Owning implementation and checks](docs/wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
+  Two-context/native, no-viewer, server restart and night-creature probes PASS;
+  four real-PostgreSQL cases PASS. Independent source/visual ACCEPT; clean
+  verify1200/stress10000 PASS; migration smoke and all69 SQL scenarios PASS
+  across the full run and affected rerun. Migration rollback lists include0015;
+  a type-only SupplyShop child-prop split removes an existing whole-tree gate
+  blocker. Coverage now retains failed-run evidence without changing test exit
+  or thresholds. Shared camera/style/geometry/STOP/ticket helpers remove introduced
+  duplication; the legacy wheel regression found during extraction is fixed.
+  Native network18/legacy18, session/entry rejection and actual SDK reconnect PASS.
+  Optional source-matched engine coverage augments ordinary unit/SQL evidence;
+  stale-source rejection leaves its target unchanged. Source review ACCEPT.
+  Added a public-boundary regression rejecting a retained trip for a stationary
+  company; targeted check PASS. Source-declaration reconciliation preserves real
+  hit totals; the combined audit now reports zero introduced code findings.
+  Normal related-test hook/audit PASS at `114028e3`, without bypass. Ordinary
+  runtime restart and final native7 PASS; local only, load/fun NOT_MEASURED.
+
+### MMO map movement architecture proposal
+
+- 2026-10-26, branch `codex/world-map-mmo-design`, local: owner requested a
+  concept-backed design for own/other players, patrols, bandits and wildlife.
+  Source inspection found server-owned player routes but stationary-only
+  surroundings, plus an atlas/server map-edition mismatch. Proposed the existing
+  world module with a separate instance/database for the lab, shared rules,
+  lawful realtime visibility, persistent NPC goals and a six-group first cycle.
+  [Owning design](docs/wiki/world/map.md#общая-карта-mmo-движущиеся-отряды--проработка-2026-10-26).
+  Planning only; no runtime or new accepted gameplay policy. Full live canonical
+  Notes/Purpose read; new links/anchors, format/status/diff PASS;
+  game/SQL/browser/load NOT_RUN.
+
+### Map controls PR merged and local main updated
+
+- 2026-10-26, originating branch `codex/map-controls-hint`, merged:
+  [PR #328](https://github.com/Vovanostm/warwrit/pull/328), expected head
+  `b24016f7`, normal merge `6dbdc00f`. Source and visual reviews ACCEPT;
+  20 map/types, 23 native browser checks, normal hook/audit PASS.
+  CI40294682426 full bootstrap/verify/stress/real-PG checks, coverage/audit and
+  latest scope40296349349 SUCCESS. Checked/merged trees match; remote main,
+  local main and this worktree read back at the merge. Primary checkout WIP
+  preserved. Earlier local/pending entries retain their dated context;
+  this post-merge documentation amendment is local.
+  [Owning closeout](docs/wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
+
 ### Mill delivery: asset URL compatibility
 
 - 2026-10-27, branch `codex/mill-scene-delivery`, published in

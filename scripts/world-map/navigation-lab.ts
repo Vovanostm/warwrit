@@ -20,6 +20,7 @@ import {
   zoomMapView,
   type MapView,
 } from './map-camera.js';
+import { bindMapPanDrag, bindMapPanKeys } from './map-camera-input.js';
 import { mapProfiles } from './navigation-maps.js';
 import { mountContractPreview } from './navigation-contracts.js';
 import { canEnterPlace, planPlaceArrival, type PlaceEntry } from './place-entries.js';
@@ -202,7 +203,7 @@ function openVisit(entry: PlaceEntry) {
   if (!canEnterPlace(field, entry, markerPosition)) return;
   visitIntent = undefined;
   if (running) pauseJourney();
-  heldPanKeys.clear();
+  panKeys.clear();
   zoomTarget = undefined;
   element('visit-title').textContent = entry.name;
   element('visit-description').textContent = places.find((p) => p.name === entry.name)!.description;
@@ -471,48 +472,15 @@ function showCoordinates(p: Pixel) {
     : `${Math.round(p[0] * regional.metresPerPixel)} м В · ${Math.round(p[1] * regional.metresPerPixel)} м Ю · Север ↑`;
 }
 
-let drag: { id: number; x: number; y: number; view: number[]; moved: boolean } | undefined;
-map.addEventListener('pointerdown', (event) => {
-  if (event.button !== 0) return;
-  map.focus({ preventScroll: true });
-  zoomTarget = undefined;
-  drag = {
-    id: event.pointerId,
-    x: event.clientX,
-    y: event.clientY,
-    view: [view.x, view.y, view.width, view.height],
-    moved: false,
-  };
-  map.setPointerCapture(event.pointerId);
-});
 map.addEventListener('pointermove', (event) => {
   const p = mapPoint(event);
   showCoordinates(p);
-  if (!drag) return;
-  if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 4) drag.moved = true;
-  if (!drag.moved) return;
-  const scale = map.getScreenCTM()!.a;
-  setView(
-    drag.view[0]! - (event.clientX - drag.x) / scale,
-    drag.view[1]! - (event.clientY - drag.y) / scale,
-    drag.view[2]!,
-    drag.view[3]!,
-  );
-});
-map.addEventListener('pointerup', (event) => {
-  if (!drag || drag.id !== event.pointerId) return;
-  const moved = drag.moved;
-  drag = undefined;
-  if (!moved) selectPoint(point(mapPoint(event)));
-});
-map.addEventListener('pointercancel', () => {
-  drag = undefined;
 });
 let view: MapView = { x: 0, y: 0, width: SHEET.width, height: SHEET.height };
 let zoomTarget: MapView | undefined;
-function setView(x: number, y: number, width: number, height: number) {
+function setView(next: MapView) {
   zoomTarget = undefined;
-  applyView(boundedMapView({ x, y, width, height }, SHEET));
+  applyView(boundedMapView(next, SHEET));
 }
 function applyView(next: MapView) {
   view = next;
@@ -525,51 +493,17 @@ function animateZoom(elapsedMs: number) {
   if (next === zoomTarget) zoomTarget = undefined;
   applyView(next);
 }
-const heldPanKeys = new Set<string>();
-const panKeyCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD']);
-function isTypingTarget(target: EventTarget | null) {
-  return (
-    target instanceof Element &&
-    !!target.closest(
-      'dialog[open], input, select, textarea, [contenteditable]:not([contenteditable="false"])',
-    )
-  );
-}
-function isBrowserShortcut(event: KeyboardEvent) {
-  return event.ctrlKey || event.altKey || event.metaKey;
-}
-function isMapPauseKey(event: KeyboardEvent) {
-  return (
-    event.code === 'Space' && event.target === map && !event.repeat && !isBrowserShortcut(event)
-  );
-}
-map.addEventListener('keydown', (event) => {
-  if (!isMapPauseKey(event)) return;
-  event.preventDefault();
-  toggleJourney();
+const drag = bindMapPanDrag(map, {
+  getView: () => view,
+  setView,
+  cancelZoom: () => (zoomTarget = undefined),
+  onClick: (event) => selectPoint(point(mapPoint(event))),
 });
-window.addEventListener('keydown', (event) => {
-  if (!panKeyCodes.has(event.code)) return;
-  if (isTypingTarget(event.target)) return;
-  if (isBrowserShortcut(event)) return;
-  event.preventDefault();
-  heldPanKeys.add(event.code);
-});
-window.addEventListener('keyup', (event) => heldPanKeys.delete(event.code));
-window.addEventListener('blur', () => heldPanKeys.clear());
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) heldPanKeys.clear();
-});
-document.addEventListener('focusin', (event) => {
-  if (isTypingTarget(event.target)) heldPanKeys.clear();
-});
+const panKeys = bindMapPanKeys(map, toggleJourney);
 function animateKeyboardPan(elapsedMs: number) {
-  if (!heldPanKeys.size) return;
-  if (drag) return;
-  const direction: Pixel = [
-    Number(heldPanKeys.has('KeyD')) - Number(heldPanKeys.has('KeyA')),
-    Number(heldPanKeys.has('KeyS')) - Number(heldPanKeys.has('KeyW')),
-  ];
+  if (!panKeys.held.size) return;
+  if (drag.isDragging()) return;
+  const direction: Pixel = panKeys.direction();
   const next = panMapView(view, direction, elapsedMs, SHEET);
   if (zoomTarget)
     zoomTarget = boundedMapView(
@@ -588,7 +522,7 @@ function symbolScale() {
 function focusPlace(at: Pixel) {
   const width = Math.min(view.width, 2304),
     height = (width * 2) / 3;
-  setView(at[0] - width / 2, at[1] - height / 2, width, height);
+  setView({ x: at[0] - width / 2, y: at[1] - height / 2, width, height });
 }
 function updateViewportDetails() {
   const scale = symbolScale();
@@ -621,7 +555,7 @@ map.addEventListener(
   'wheel',
   (event) => {
     event.preventDefault();
-    if (drag) return;
+    if (drag.isDragging()) return;
     map.focus({ preventScroll: true });
     const [x, y] = mapPoint(event);
     const fraction: Pixel = [(x - view.x) / view.width, (y - view.y) / view.height];
@@ -636,7 +570,9 @@ map.addEventListener('contextmenu', (event) => {
   setMode('goal');
   if (selectPoint(point(mapPoint(event)))) startJourney();
 });
-element('fit').addEventListener('click', () => setView(0, 0, SHEET.width, SHEET.height));
+element('fit').addEventListener('click', () =>
+  setView({ x: 0, y: 0, width: SHEET.width, height: SHEET.height }),
+);
 element('start').addEventListener('click', () => setMode('start'));
 element('goal').addEventListener('click', () => setMode('goal'));
 element<HTMLInputElement>('night').addEventListener('change', (event) =>
@@ -716,7 +652,7 @@ async function initialize() {
       choosePlace(places.findIndex((p) => p.name === name));
       element<HTMLDetailsElement>('contracts-section').open = false;
     });
-  setView(0, 0, SHEET.width, SHEET.height);
+  setView({ x: 0, y: 0, width: SHEET.width, height: SHEET.height });
   const samples = mapInfo.samples;
   for (const terrain of Object.keys(samples)) {
     const speed = continuousSurfaceAt(field, point(samples[terrain]!)).speedPermille;

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "source": "https://github.com/game-icons/icons",
+  "revision": "82d948812bfe3f269ef8f731dcdb07b08160edc4",
+  "license": "CC BY 3.0",
+  "authors": ["Lorc", "Delapouite", "Sbed"],
+  "adaptation": "Removed opaque square background; set foreground fill to currentColor; packaged source symbols without changing path geometry. Burial, domestic ruins and rowing boat are local code-native UI symbols without religious emblems or heraldry. Mill uses a generic wheel, never a windmill or a repaired building.",
+  "symbols": {
+    "company": "lorc/tattered-banner.svg",
+    "patrol": "sbed/shield.svg",
+    "bandits": "lorc/crossed-swords.svg",
+    "wildlife": "lorc/wolf-head.svg",
+    "creature": "lorc/monster-grasp.svg",
+    "village": "delapouite/village.svg",
+    "house": "delapouite/house.svg",
+    "town": "delapouite/medieval-gate.svg",
+    "bridge": "delapouite/stone-bridge.svg",
+    "mill": "lorc/cartwheel.svg",
+    "watchtower": "delapouite/watchtower.svg",
+    "camp": "lorc/campfire.svg",
+    "barn": "delapouite/barn.svg",
+    "marsh": "delapouite/swamp.svg",
+    "wood": "delapouite/axe-in-log.svg",
+    "quarry": "delapouite/stone-pile.svg",
+    "pottery": "delapouite/jug.svg",
+    "livestock": "delapouite/cow.svg",
+    "forge": "lorc/anvil.svg",
+    "water": "lorc/water-splash.svg",
+    "wagon": "delapouite/old-wagon.svg"
+  },
+  "localSymbols": ["burial", "ruins", "boat"]
+}

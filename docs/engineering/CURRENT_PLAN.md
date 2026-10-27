@@ -1,6 +1,130 @@
 # Warwrit current delivery plan
 
-## Mill inspection and refinement skill — 2026-10-27, PUBLISHED / CI FIX
+## Networked atlas PR delivery — 2026-10-27, CI CORRECTION
+
+Coordinator/sole writer/integrator/validation owner: parent; branch `codex/world-map-mmo-design`.
+Current owner permission: “pr, merge” authorizes this branch PR and normal merge.
+Scope: networked painted atlas, observed pursuit, icons/labels and optional own camera.
+[Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md) · [Result](../wiki/world/map.md).
+Includes additive migrations0015–0017 and isolated lab runtime; no deployment/PvP.
+Integrated current main `e4876962` (mill PR329); retain both branches' records/config.
+Prior source/playable review and native/SQL/full-gate results retained for unchanged sources.
+Parent owns merge conflict resolution, source review integration, PR/CI and local-main update.
+Independent exact-head integration review and green applicable PR CI required before merge.
+No deployment, auto/admin merge, automation or Orca activation.
+[PR330](https://github.com/Vovanostm/warwrit/pull/330) published at `0be69678`; source/infrastructure ACCEPT.
+CI40549906440: bootstrap/stress/SQL and unit coverage PASS; audit rejected missing SQL/browser measurements.
+Correction retains gates/thresholds: same-run SQL, browser/server and source-checked coverage merge.
+Playwright1.64.1 is pinned dev-only tooling; no new game/runtime technology or behavior.
+Local instrumented smoke/SQL74, unit1204, native six-phase journey and source-checked audit PASS.
+Source findings in the CI journey fixed; provisional infrastructure ACCEPT, exact-head readback pending.
+Browser proof now checks specific visit error and retained SDK room/session on reconnect.
+Next: complete real CI journey, review correction and rerun PR CI before expected-head merge.
+
+## Dated history
+
+### Own-party camera — 2026-10-27, LOCAL COMPLETE
+
+Sole writer/validation owner: parent; branch `codex/world-map-mmo-design`, base `c960c64a`.
+Owner: continue professionalizing the playable map after the accepted icon cycle.
+Outcome: optional follow camera keeps the moving own party visible at the chosen zoom.
+Scope: world-lab UI only; server/core/protocol/rules/assets stay unchanged.
+Follow is explicit/off initially; drag/WASD/overview release it; wheel retains it.
+Center-own preserves zoom; session changes reset follow; stale samples stop extrapolating.
+Parent owns edits/runtime/checks/docs; independent read-only visual critique required.
+Map20/types/lint/format PASS;24 native + seven supplemental checks PASS.
+Source finding on focused-checkbox WASD reproduced/fixed; independent readback closed it.
+Initial fully-fitted legacy pan probe corrected at zoom; native input/type guards PASS.
+DAY/NIGHT,1050×800 and60 moving frames captured; independent visual ACCEPT.
+First audit needed retained UI branches; actual stale retry/visit recovery4 PASS.
+Code `5dac02c7`; normal commit hook/audit PASS without bypass or lowered thresholds.
+Independent native replay NOT_RUN; human preference/fun NOT_MEASURED.
+Next: owner trial of sidebar follow toggle; drag/WASD/overview restore free camera.
+No publication/merge/deploy/Orca/automation activation.
+
+### Map icons — 2026-10-27, LOCAL COMPLETE
+
+Sole writer/integrator: parent; branch `codex/world-map-mmo-design`, base `e3a39c10`.
+Owner: replace map marks with professional readable icons.
+[Active scope](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-icon-amendment--2026-10-27).
+Scope: own/other parties, hostile NPCs,34 existing POIs and nearby list in UI5338.
+Reuse the existing licensed Game Icons family; no new raster art or game rules.
+Preserve exact marker anchors, RMB pursuit/ground orders, Space and camera input.
+Use silhouettes plus relation colours; readable day/night and at1050×800.
+Parent owns source/assets/docs/runtime; independent read-only visual critic required.
+Graph indexes another checkout/HEAD; current local source is proof.
+Script types/lint/format/assets PASS; current native23, DAY/NIGHT,100 pan frames PASS.
+Initial visual REJECT: label collisions/hierarchy; new placement and camera timing applied.
+Source concerns closed; full repeated visual ACCEPT, seven applicable scores2.
+Two-tab/stale retry checks repeated; normal hook/audit PASS at `9dd85bd8`.
+macOS Bash3.2 launcher blocker fixed; ordinary startup/argument/syntax probes PASS.
+Server/core/protocol unchanged; retain prior gates. Code committed locally as `9dd85bd8`.
+True1050×800 NIGHT confirmed before/after screenshot; independent native replay NOT_RUN.
+Next: owner trial of the icon/label map; no PR/merge/deploy/Orca activation.
+
+### Observed hostile pursuit — 2026-10-27, LOCAL COMPLETE
+
+Sole writer/integrator: Codex parent, branch `codex/world-map-mmo-design`, base `060dddd3`.
+Owner: RMB on enemy follows the group rather than its clicked position.
+[Active contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#pursuit-amendment--2026-10-27).
+Scope: lab hostile NPC pursuit, persisted intent, existing authoritative mover.
+Visible threats only; neutral players/patrols stay neutral; no battle/PvP.
+STOP/new valid ground/site order cancels atomically; rejected/replayed orders do not.
+Loss of sight accepted by owner: last observed destination, then stop; no hidden tracking.
+Own UI labels/target indicator and existing camera controls; no new art.
+Parent owns source/resources/docs/validation; independent source and visual ACCEPT.
+Lab ports3038/3039/5338, persistent PostgreSQL65438; old5326/other WIP preserved.
+Source graph points to a different checkout; use current source as proof.
+Full current WORLD/RC Notes+Purpose read; original archive limitation retained.
+Focused7/types/lint and real-PG23 + migration smoke PASS.
+Native moving target/STOP/ground, stale retry and two-window ordering confirmed.
+Independent source ACCEPT; clean verify1204/stress10000/migration smoke+SQL74 PASS.
+Client helper/ring refinements: types/lint/native repeated; visual ACCEPT, six scores2.
+Navigation42 PASS; normal commit hook/audit PASS at `9b2c41a5`, no bypass.
+Plain Node24.20 restart retained orderId; current RMB/STOP/network recovery PASS.
+Both stands live5338/5326; next: owner trial of pursuit (hostile NPCs only).
+[Current result and limits](../wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
+No PR/push/merge/deploy/Orca/automation activation authorized.
+
+### Networked atlas first cycle — 2026-10-26, LOCAL COMPLETE
+
+Coordinator/integrator/shared writer: Codex parent; branch `codex/world-map-mmo-design`.
+Owner: “Implement - delegate subagents”; local implementation and bounded delegation.
+[Active contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#networked-first-cycle-activation--2026-10-26).
+Outcome: two authenticated companies + four persistent NPC groups on painted atlas.
+Atlas/server/client delegated slices integrated; editors stopped, parent owns source.
+Parent owns DTO/barrels, launch/isolated DB, integration, docs and all validation.
+Frozen protocol: `packages/protocol/src/world-lab.ts`; per-client Colyseus world messages.
+Private resources: API3038, WS3039, UI5338, PostgreSQL65438 (`warwrit-world-lab`).
+Existing user stand5326 and primary checkout/WIP preserved.
+No PvP, dynamic battle admission, production map migration, ecology or full offline combat.
+No new PR/merge/deploy/Orca/automation permission; roles are delegated editors only.
+Map20/core+client9 and script/server types PASS; four real-PG cases PASS.
+Native two-player18, no-viewer/restart/creature/recovery/contact cleanup PASS.
+Independent source/visual ACCEPT (applicable visual scores2); human fun NOT_MEASURED.
+Clean verify1200/stress10000 PASS; smoke + all69 SQL cases PASS across affected rerun.
+Code `114028e3`: normal related-test hook + audit PASS, no bypass.
+Latest plain-runtime native MOVE/STOP/water/persistence/error checks7 PASS.
+Next: owner trial of this six-group lab; production integration is a separate slice.
+Runtime evidence is bounded to six groups; load/fun/full MMO NOT_MEASURED.
+
+### MMO map movement design — 2026-10-26, LOCAL PROPOSAL
+
+Coordinator/sole writer: Codex parent; branch `codex/world-map-mmo-design`, base `7ffac342`.
+Owner: study the game concept and plan player/other-player/patrol/bandit/beast movement.
+[Owning architecture and first cycle](../wiki/world/map.md#общая-карта-mmo-движущиеся-отряды--проработка-2026-10-26).
+Read live full WORLD/RC approval/lore Notes+Purpose, later owner concept and source.
+Found own-company durable routes; surroundings is stationary same-site only.
+Painted atlas edition/coordinates differ from the current server region.
+Recommendation: existing server world module; separate lab process/database using it.
+Server owns time/AI/visibility/contact; Colyseus only delivers lawful projections.
+First proposed cycle: two real clients plus patrol/bandits/wolves/night creature.
+Runtime not implemented; new AI/contact/visibility tuning remains a proposal.
+Documentation/new links+anchors/format/status/diff checks PASS; game/browser/SQL/load NOT_RUN.
+No new PR/merge/deployment/service/automation or independent playable claim.
+Previous PR328 runtime remains merged; local main stays at `6dbdc00f`.
+
+### Mill inspection and refinement skill — 2026-10-27, PUBLISHED / CI FIX
 
 Coordinator/sole writer: Codex parent; branch `codex/mill-scene-delivery`, base `6dbdc00f`.
 Owner permission: “ok, fix, pr, merge” on 2026-10-27 authorizes this PR and normal merge.
@@ -19,9 +143,10 @@ No battle integration, collision/navigation, new art generation or visual accept
 No deployment, auto/admin merge, automation or Orca activation.
 Next: affected-source review, green PR CI and expected-head normal merge.
 
-## Dated history
+Delivery correction — 2026-10-27: PR #329 is merged as `e4876962`;
+main CI40542210194 SUCCESS. This supersedes the pending merge above.
 
-### Map controls UX delivery — 2026-10-26, LOCAL VALIDATED
+### Map controls UX delivery — 2026-10-26, MERGED
 
 Coordinator/sole writer: Codex parent; branch `codex/map-controls-hint`, base `c4e3f27e`.
 Owner: continue analysis/improvements, then PR, merge to main and update local main.
@@ -33,7 +158,13 @@ No initial route or arrival replay; nearby Enter is in the toolbar.
 Independent source/tooling/cohesion review ACCEPT at `3d854e93`.
 Independent visual critic ACCEPT, six applicable criteria2; human preference NOT_MEASURED.
 Native journeys executed by author; independent native replay NOT_RUN.
-Normal commit hook/audit PASS at `3d854e93`; hosted clean-checkout CI pending.
+Normal commit hook/audit PASS at `3d854e93`.
+[PR #328](https://github.com/Vovanostm/warwrit/pull/328) merged as `6dbdc00f`, expected head `b24016f7`.
+[CI40294682426](https://github.com/Vovanostm/warwrit/actions/runs/40294682426) SUCCESS:
+clean bootstrap/verify/stress/real-PG checks, coverage and changed-code audit.
+Latest scope40296349349 SUCCESS; no unresolved threads or blocking reviews.
+Local main = origin/main = `6dbdc00f`; checked/merged trees match.
+Current worktree fast-forwarded; this post-merge documentation closeout is local.
 Current owner permission covers this PR/normal merge/local-main fast-forward only.
 Primary checkout/WIP preserved; no deploy/Orca/automation activation.
 

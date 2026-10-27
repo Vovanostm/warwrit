@@ -1,23 +1,5 @@
-:root {
-  color-scheme: dark;
-  font:
-    14px/1.5 system-ui,
-    sans-serif;
-  color: #d9d4c6;
-  background: #171c1e;
-  --gold: #cfb275;
-  --line: #3d423f;
-}
-* {
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-  min-width: 1050px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+@import './map-lab-shared.css';
+
 header {
   padding: 19px 28px 17px;
   border-bottom: 1px solid var(--line);
@@ -201,25 +183,6 @@ dd {
   font-size: 12px;
   background: #252b2b;
   border-bottom: 1px solid var(--line);
-}
-.map-toolbar button {
-  font-size: 11px;
-  min-height: 28px;
-}
-#map-wrap {
-  position: relative;
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  background: #101719;
-}
-#map {
-  display: block;
-  width: 100%;
-  height: 100%;
-  touch-action: none;
-  cursor: crosshair;
 }
 #map.night #sheet {
   filter: saturate(0.5) brightness(0.55);

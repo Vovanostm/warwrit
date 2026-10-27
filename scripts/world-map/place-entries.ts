@@ -1,4 +1,7 @@
 import {
+  PAINTED_ATLAS_ENTRY_ZONES,
+  isPointInsideConvexPolygon,
+  polygonCrossProduct,
   compileMovementPlan,
   findTravelPath,
   isContinuousPointWalkable,
@@ -22,44 +25,21 @@ export function placeEntries(
   offset: Pixel = [0, 0],
 ): readonly PlaceEntry[] {
   const at = (p: Pixel) => point([p[0] + offset[0], p[1] + offset[1]]);
-  const outline = (points: readonly Pixel[]) => points.map(at);
-  return [
-    {
-      name: 'Березняк',
-      footprint: outline([
-        [120, 170],
-        [240, 160],
-        [280, 205],
-        [280, 265],
-        [230, 285],
-        [150, 275],
-        [118, 230],
-      ]),
-      anchor: at([195, 220]),
-      image: 'bereznyak-painting.png',
-    },
-    {
-      name: 'Каменный Брод',
-      footprint: outline([
-        [1040, 275],
-        [1195, 270],
-        [1270, 330],
-        [1260, 435],
-        [1160, 450],
-        [1080, 435],
-        [1020, 365],
-      ]),
-      anchor: at([1125, 365]),
-      image: 'kamenny-brod-painting.png',
-    },
-  ];
+  const images: Readonly<Record<string, string>> = {
+    bereznyak: 'bereznyak-painting.png',
+    'kamenny-brod': 'kamenny-brod-painting.png',
+  };
+  return PAINTED_ATLAS_ENTRY_ZONES.map((zone) => ({
+    name: zone.name,
+    footprint: zone.footprintPixels.map(at),
+    anchor: at(zone.anchorPixel),
+    image: images[zone.siteId]!,
+  }));
 }
 
 const compile = (field: NavigationField, path: readonly PointFp[]) =>
   compileMovementPlan({ field, path, startedAtMs: '0', movementEpoch: '0', planId: 'place-entry' });
 const distance = (a: PointFp, b: PointFp) => Math.hypot(a.xFp - b.xFp, a.zFp - b.zFp);
-const cross = (a: PointFp, b: PointFp, p: PointFp) =>
-  (b.xFp - a.xFp) * (p.zFp - a.zFp) - (b.zFp - a.zFp) * (p.xFp - a.xFp);
 const interpolate = (a: PointFp, b: PointFp, t: number): PointFp => ({
   xFp: a.xFp + (b.xFp - a.xFp) * t,
   zFp: a.zFp + (b.zFp - a.zFp) * t,
@@ -77,11 +57,7 @@ function clearSegment(field: NavigationField, from: PointFp, to: PointFp): boole
 }
 
 function insideFootprint(entry: PlaceEntry, p: PointFp): boolean {
-  const outline = entry.footprint;
-  const orientation = Math.sign(cross(outline[0]!, outline[1]!, entry.anchor));
-  return outline.every(
-    (a, i) => orientation * cross(a, outline[(i + 1) % outline.length]!, p) >= 0,
-  );
+  return isPointInsideConvexPolygon(p, entry.footprint, entry.anchor);
 }
 
 export function canEnterPlace(field: NavigationField, entry: PlaceEntry, p: PointFp): boolean {
@@ -118,14 +94,14 @@ function arrivalTargets(entry: PlaceEntry, start: PointFp): readonly PointFp[] {
 
 function segmentEntry(entry: PlaceEntry, from: PointFp, to: PointFp): PointFp | undefined {
   const outline = entry.footprint;
-  const orientation = Math.sign(cross(outline[0]!, outline[1]!, entry.anchor));
+  const orientation = Math.sign(polygonCrossProduct(outline[0]!, outline[1]!, entry.anchor));
   let enter = 0,
     exit = 1;
   for (let i = 0; i < outline.length; i++) {
     const a = outline[i]!,
       b = outline[(i + 1) % outline.length]!;
-    const before = orientation * cross(a, b, from),
-      after = orientation * cross(a, b, to);
+    const before = orientation * polygonCrossProduct(a, b, from),
+      after = orientation * polygonCrossProduct(a, b, to);
     if (before < 0 && after < 0) return undefined;
     if (before < 0) enter = Math.max(enter, before / (before - after));
     if (after < 0) exit = Math.min(exit, before / (before - after));

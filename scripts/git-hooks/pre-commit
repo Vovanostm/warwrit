@@ -42,4 +42,11 @@ if [ -n "$code" ] || [ ! -f coverage/coverage-final.json ]; then
     echo "pre-commit: focused tests failed; the audit uses the coverage they produced." >&2
 fi
 
+# Native lab journeys can add measured browser/server engine coverage. The
+# merger rejects stale mapped sources; this does not waive tests or thresholds.
+if [ -n "${WARWRIT_RUNTIME_COVERAGE:-}" ]; then
+  node scripts/world-map/runtime-coverage-merge.mjs \
+    "$WARWRIT_RUNTIME_COVERAGE" coverage/coverage-final.json
+fi
+
 exec pnpm --silent check:changes

@@ -17,7 +17,7 @@ jobs:
   verify:
     name: Verify clean checkout
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       FORCE_COLOR: '1'
     steps:
@@ -38,11 +38,24 @@ jobs:
         run: node scripts/check-migrations.mjs
 
       - name: Bootstrap and verify
-        run: ./scripts/bootstrap.sh
+        env:
+          WARWRIT_INTEGRATION_COVERAGE: ${{ github.event_name == 'pull_request' && 'output/world-lab-ci/sql' || '' }}
+          WARWRIT_MIGRATION_RUNTIME_COVERAGE: ${{ github.event_name == 'pull_request' && 'output/world-lab-ci/migration.json' || '' }}
+        run: |
+          mkdir -p output/world-lab-ci
+          ./scripts/bootstrap.sh
 
       - name: Measure unit-test coverage for the audit
         if: github.event_name == 'pull_request'
         run: pnpm test:coverage --maxWorkers=1
+
+      - name: Install pinned browser
+        if: github.event_name == 'pull_request'
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Measure real world-map journeys
+        if: github.event_name == 'pull_request'
+        run: bash scripts/world-map/check-world-lab-ci.sh
 
       - name: Reject quality regressions in changed files
         if: github.event_name == 'pull_request'

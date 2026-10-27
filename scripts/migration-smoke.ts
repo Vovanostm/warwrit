@@ -20,6 +20,9 @@ const client = new Client({ connectionString });
 /** Roll back the migrations after 0010 so the older rollback checks start from 0010. */
 async function downToFirstHunt(): Promise<void> {
   for (const name of [
+    '0017_world_lab_pursuit_order_ids',
+    '0016_world_lab_pursuits',
+    '0015_world_lab_npc_groups',
     '0014_settlement_supplies',
     '0013_world_hunt_states',
     '0012_ordinary_contracts',
@@ -49,6 +52,9 @@ try {
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
     '0014_settlement_supplies',
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -67,7 +73,26 @@ try {
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
     '0014_settlement_supplies',
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
   ]);
+
+  assert.deepEqual((await runMigrations(client, 'down')).applied, [
+    '0017_world_lab_pursuit_order_ids',
+  ]);
+  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0016_world_lab_pursuits']);
+
+  await client.query(`insert into world_lab_npc_groups
+    (world_id, group_id, kind, profile_id, map_edition, home, state, revision, next_decision_ms)
+    values ('migration-smoke-lab', 'patrol', 'PATROL', 'lab-v1', 'atlas-v1', '{}', '{}', 0, 0)`);
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /refusing to delete persisted world lab NPC groups/u,
+  );
+  await client.query("delete from world_lab_npc_groups where world_id = 'migration-smoke-lab'");
+  const labDown = await runMigrations(client, 'down');
+  assert.deepEqual(labDown.applied, ['0015_world_lab_npc_groups']);
 
   await client.query(
     "insert into settlement_supplies (world_id, site_id, revision, rations, cash_q) values ('migration-smoke-supplies', 'severny-dvor', 1, 290, 40000000)",
@@ -79,7 +104,12 @@ try {
   await client.query("delete from settlement_supplies where world_id = 'migration-smoke-supplies'");
 
   const secondUp = await runMigrations(client, 'up');
-  assert.deepEqual(secondUp.applied, []);
+  assert.deepEqual(secondUp.applied, [
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
+  ]);
+  assert.deepEqual((await runMigrations(client, 'up')).applied, []);
 
   const afterUp = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.engineering_schema_probe')::text as table_name",
@@ -174,6 +204,9 @@ try {
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
     '0014_settlement_supplies',
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
   ]);
 
   const company = createCompanyStorageFixture();
@@ -491,6 +524,9 @@ try {
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
     '0014_settlement_supplies',
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;

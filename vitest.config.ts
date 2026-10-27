@@ -11,10 +11,10 @@ function integrationHooks(mode: string) {
 
 export default defineConfig(({ mode }) => ({
   resolve: {
-    // Coverage mode only: resolve each library's public entry to its source so
+    // Coverage runs: resolve each library's public entry to its source so
     // one instrumented copy exists. Normal runs keep testing built exports.
     alias:
-      mode === 'coverage'
+      mode === 'coverage' || process.argv.includes('--coverage')
         ? [
             {
               find: /^@warwrit\/(game-core|protocol|testkit)$/u,
@@ -40,6 +40,9 @@ export default defineConfig(({ mode }) => ({
     passWithNoTests: false,
     restoreMocks: true,
     coverage: {
+      // The commit audit consumes measured coverage even when a related test
+      // fails; keep that evidence instead of deleting it on a timeout.
+      reportOnFailure: true,
       // `pnpm test:coverage` evidence for `fallow health --coverage`.
       // No percentage threshold: AGENTS.md sets no coverage targets.
       provider: 'v8',
