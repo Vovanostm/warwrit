@@ -277,3 +277,24 @@ Earlier source/pending statuses above are historical and superseded by delivery.
 Post-merge main CI40560746226 was still running at readback; no duplicate gate.
 This documentation closeout is local; source changes are merged. Primary WIP and
 persistent lab data preserved; no deployment, automation or full-MMO acceptance.
+
+## Fog design amendment — 2026-10-27
+
+Owner asks for server-authoritative visibility shaped by terrain/weather/light, a public
+strategic chart and progressive company exploration. This cycle's DoD is specification
+and ten paired visual/executable-code examples. [Owning proposal](../wiki/world/fog-of-war.md).
+Branch `codex/world-map-fog-design`; parent owns all source/docs/resources/validation.
+Write scope: dedicated `scripts/world-map/fog-design/`, focused model tests, discovery
+configuration and owning records. No production core/server/protocol/SQL or map controls.
+Synthetic public fixtures cannot demonstrate protected production transport; the spec
+requires private asset delivery as well as entity filtering. Preserve persistent lab DB.
+Try on5338 at `/scripts/world-map/fog-design/index.html`; both phases of all ten scenes
+must match their named rule, with actual browser evidence and independent visual critique.
+No new art, paid services, publication/merge, deployment, Orca or automation activation.
+
+Design checkpoint: ten pairs/20 native states and six model cases PASS; types/lint,
+architecture/format and source-checked changed-code audit PASS. First visual pass
+rejected missing provenance/age and unclear terrain cues; full repeated critique
+ACCEPT after fixes (four applicable scores2). Independent input replay NOT_RUN.
+DoD complete for local specification/examples only; server fog, private chunks,
+SQL/offline/reconnect integration and performance remain NOT_RUN/NOT_MEASURED.

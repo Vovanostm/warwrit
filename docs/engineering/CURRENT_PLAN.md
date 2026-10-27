@@ -1,6 +1,26 @@
 # Warwrit current delivery plan
 
-## Networked atlas PR delivery — 2026-10-27, MERGED
+## Fog of war design — 2026-10-27, LOCAL COMPLETE
+
+Sole author/integrator/validation owner: parent; branch `codex/world-map-fog-design`.
+Owner: server visibility, terrain/weather/light, public atlas and progressive exploration.
+DoD: specification and ten paired visual/executable-code examples, not full server rollout.
+[Owning specification](../wiki/world/fog-of-war.md) · [Existing map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md).
+Outcome: compare ten before/after scenarios in `/scripts/world-map/fog-design/index.html` on5338.
+Public strategic knowledge, explored terrain and current observation stay distinct.
+Private NPCs/POIs/assets must be filtered before delivery; a client overlay cannot protect them.
+Read live full WORLD/RC/lore Notes+Purpose and current source; graph indexes another checkout.
+Code-native synthetic schematic only; no new raster art or game/core/server/protocol/SQL changes.
+Six model cases/types/lint/architecture/format PASS;20 native states, metadata/keyboard/1050 PASS.
+First critic REJECT fixed source/age and terrain cues; full repeat ACCEPT, four criteria2.
+Actual source-checked browser/unit coverage and unchanged audit PASS; CSS advisories retained.
+Browser fixture differs from production; server/privacy/load/fun NOT_RUN/NOT_MEASURED.
+Persistent lab DB preserved; no GitHub publication/merge/deploy/Orca/automation permission.
+DoD complete for specification/examples; next separate slice: authoritative server observation/chunks.
+
+## Dated history
+
+### Networked atlas PR delivery — 2026-10-27, MERGED
 
 Coordinator/sole writer/integrator/validation owner: parent; branch `codex/world-map-mmo-design`.
 Current owner permission: “pr, merge” authorizes this branch PR and normal merge.
@@ -19,8 +39,6 @@ Post-merge main CI40560746226 was in progress at readback; no duplicate full loc
 This documentation readback is local; source delivery is merged.
 Next: owner trial on5338; full MMO/load/fun NOT_MEASURED, reviewer input replay NOT_RUN.
 No deployment, auto/admin merge, automation or Orca activation.
-
-## Dated history
 
 ### Own-party camera — 2026-10-27, LOCAL COMPLETE
 

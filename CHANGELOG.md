@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Fog of war design and examples
+
+- 2026-10-27, branch `codex/world-map-fog-design`, local: owner requested a
+  specification and ten visual/code examples for authoritative sight, public map
+  knowledge and gradual exploration. Added an isolated synthetic before/after
+  gallery with real optical examples, remembered terrain, last-seen pursuit,
+  approximate rumours, overview and paired-hidden-world projection. The
+  [owning specification](docs/wiki/world/fog-of-war.md) records game references,
+  current source seams, authenticated map assets, transport/route privacy and
+  server implementation acceptance. Six model cases, types/lint/architecture,20
+  native states, metadata/keyboard/1050 and source-checked audit PASS. First visual
+  REJECT fixed source/age and terrain cues; full repeat ACCEPT, four criteria2.
+  No production server/core/SQL or
+  public-map behavior changes; server fog/load/fun NOT_RUN/NOT_MEASURED.
+
 ### Networked atlas merged
 
 - 2026-10-27, branch `codex/world-map-mmo-design`, merged in
