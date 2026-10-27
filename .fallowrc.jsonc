@@ -23,6 +23,8 @@
     "scripts/world-map/world-lab-server.ts",
     "scripts/world-map/world-lab-vite.config.ts",
     "apps/web/src/*.browser.mjs",
+    // Standalone inspection page: apps/web/mill.html.
+    "apps/web/src/mill-preview/main.ts",
     // Approved static galleries are served through their HTML entry pages.
     "assets/art/combat/**/concepts.js",
     "assets/art/combat/**/concepts.css",

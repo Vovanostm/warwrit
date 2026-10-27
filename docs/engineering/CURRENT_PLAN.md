@@ -1,6 +1,22 @@
 # Warwrit current delivery plan
 
-## Own-party camera — 2026-10-27, LOCAL COMPLETE
+## Networked atlas PR delivery — 2026-10-27, IN PROGRESS
+
+Coordinator/sole writer/integrator/validation owner: parent; branch `codex/world-map-mmo-design`.
+Current owner permission: “pr, merge” authorizes this branch PR and normal merge.
+Scope: networked painted atlas, observed pursuit, icons/labels and optional own camera.
+[Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md) · [Result](../wiki/world/map.md).
+Includes additive migrations0015–0017 and isolated lab runtime; no deployment/PvP.
+Integrated current main `e4876962` (mill PR329); retain both branches' records/config.
+Prior source/playable review and native/SQL/full-gate results retained for unchanged sources.
+Parent owns merge conflict resolution, source review integration, PR/CI and local-main update.
+Independent exact-head integration review and green applicable PR CI required before merge.
+No deployment, auto/admin merge, automation or Orca activation.
+Next: final independent source/infrastructure review, publish and verify CI.
+
+## Dated history
+
+### Own-party camera — 2026-10-27, LOCAL COMPLETE
 
 Sole writer/validation owner: parent; branch `codex/world-map-mmo-design`, base `c960c64a`.
 Owner: continue professionalizing the playable map after the accepted icon cycle.
@@ -18,8 +34,6 @@ Code `5dac02c7`; normal commit hook/audit PASS without bypass or lowered thresho
 Independent native replay NOT_RUN; human preference/fun NOT_MEASURED.
 Next: owner trial of sidebar follow toggle; drag/WASD/overview restore free camera.
 No publication/merge/deploy/Orca/automation activation.
-
-## Dated history
 
 ### Map icons — 2026-10-27, LOCAL COMPLETE
 
@@ -102,6 +116,28 @@ Runtime not implemented; new AI/contact/visibility tuning remains a proposal.
 Documentation/new links+anchors/format/status/diff checks PASS; game/browser/SQL/load NOT_RUN.
 No new PR/merge/deployment/service/automation or independent playable claim.
 Previous PR328 runtime remains merged; local main stays at `6dbdc00f`.
+
+### Mill inspection and refinement skill — 2026-10-27, PUBLISHED / CI FIX
+
+Coordinator/sole writer: Codex parent; branch `codex/mill-scene-delivery`, base `6dbdc00f`.
+Owner permission: “ok, fix, pr, merge” on 2026-10-27 authorizes this PR and normal merge.
+[Contract](../work-packages/MILL-3D-INSPECTION.md) · [Owning result](../wiki/mill-3d-scene.md).
+Scope: standalone mill inspection, retained source/paint, reusable refinement skill.
+Transferred only this slice from `codex/mill-3d-scene`; unrelated ancestor work stays local.
+Original worktree and all its staged/unstaged work preserved.
+Source geometry is now tracked so the golden path works without local-only Git history.
+Normal commit hook/audit PASS without bypass; web types/lint and native viewer checks PASS.
+1K recovery/roundtrip and atomic JSON interruption checks PASS.
+Independent source review ACCEPT at e61fc807; Claude discovery and atomic recovery fixed.
+[PR #329](https://github.com/Vovanostm/warwrit/pull/329): scope PASS; first CI rejected asset ?url imports.
+Changed the two asset links to standard URL resolution; browser/architecture/types/lint PASS.
+Historical material clarity 2/2; whole-scene visual REJECT remains explicitly experimental.
+No battle integration, collision/navigation, new art generation or visual acceptance claim.
+No deployment, auto/admin merge, automation or Orca activation.
+Next: affected-source review, green PR CI and expected-head normal merge.
+
+Delivery correction — 2026-10-27: PR #329 is merged as `e4876962`;
+main CI40542210194 SUCCESS. This supersedes the pending merge above.
 
 ### Map controls UX delivery — 2026-10-26, MERGED
 

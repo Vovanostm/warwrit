@@ -170,6 +170,9 @@ importers:
       '@babylonjs/core':
         specifier: 9.28.0
         version: 9.28.0
+      '@babylonjs/loaders':
+        specifier: 9.28.0
+        version: 9.28.0(@babylonjs/core@9.28.0)(babylonjs-gltf2interface@9.28.0)
       '@colyseus/sdk':
         specifier: 0.18.4
         version: 0.18.4(@colyseus/core@0.18.17)(typescript@5.9.3)(zod@4.6.5)

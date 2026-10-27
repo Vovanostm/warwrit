@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Networked atlas PR integration
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local: owner authorized
+  “pr, merge” for the current map branch. Integrated main `e4876962` (mill PR329),
+  preserving both changelogs, the mill entry points and map tooling. Resolved
+  only documentation conflicts; frozen-lockfile installation PASS. Scope includes
+  the networked lab, pursuit, icons/labels and own-party camera, migrations0015–0017.
+  Existing local source/visual/native/SQL results remain bounded to their records;
+  final integration review and hosted CI pending. No deployment/automation.
+  [Delivery contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md).
+
 ### Own-party follow camera
 
 - 2026-10-27, branch `codex/world-map-mmo-design`, local: owner requested
@@ -122,6 +133,117 @@ requests.
   preserved. Earlier local/pending entries retain their dated context;
   this post-merge documentation amendment is local.
   [Owning closeout](docs/wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
+
+### Mill delivery: asset URL compatibility
+
+- 2026-10-27, branch `codex/mill-scene-delivery`, published in
+  [PR #329](https://github.com/Vovanostm/warwrit/pull/329): first hosted CI stopped
+  because architecture resolution does not support Vite `?url` import suffixes.
+  Replaced the two viewer asset imports with static `new URL(..., import.meta.url)`;
+  retained the checker. Architecture, lint/types and native GLB/reference loading
+  PASS; source image decoded at 1254 square, console errors empty. Scope CI PASS;
+  full clean-checkout CI rerun pending. Prior source review ACCEPT at e61fc807.
+  [Owning result](docs/wiki/mill-3d-scene.md#поставка-отдельной-пробы--2026-10-27).
+
+### Mill inspection and refinement delivery
+
+- 2026-10-27, branch `codex/mill-scene-delivery`, local: owner authorized fix,
+  PR and normal merge. Selected only mill viewer/assets/scripts and the refinement
+  skill from the original branch; preserved unrelated ancestor work. Tracked the
+  original one-material source so fresh clones can replay the positive golden
+  path. Retained the material improvements and interrupted-projection guards.
+  Normal hook/audit, web types/lint, native viewer controls and 1K recovery PASS.
+  Review added the Claude discovery link; marker/report JSON now replace atomically,
+  verified with interrupted writes and recovery. Final review/hosted CI pending. Historical
+  full-scene art REJECT remains explicit; no combat integration or deployment.
+  [Contract](docs/work-packages/MILL-3D-INSPECTION.md) ·
+  [Owning result](docs/wiki/mill-3d-scene.md#поставка-отдельной-пробы--2026-10-27).
+
+### Scene refinement skill: review fixes
+
+- 2026-10-27, branch `codex/mill-3d-scene`, local: owner requested review and
+  improvement. Reproduced successful packing after an interrupted projection
+  had updated one atlas while retaining the old report. Projection now retains
+  pending-part state until completion; packing refuses unfinished batches and
+  incomplete projection inputs. Fixed the README recipe's source/output directory
+  collision and clarified `prepare` reuse versus mandatory `pack` after painting.
+  Real interruption/refusal/recovery, GLB roundtrip, selective-update preservation,
+  corrected 1K preparation, syntax, scoped Ruff and skill validation PASS.
+  One Blender startup crashed during verification; the separate retry passed.
+  Runtime scene unchanged, art acceptance NOT_RUN; existing coverage/commit
+  blocker remains. [Review details](docs/wiki/mill-3d-scene.md#review-skill--2026-10-27).
+
+### Generated locations: verified refinement skill
+
+- 2026-10-27, branch `codex/mill-3d-scene`, local: owner requested a reusable,
+  verified workflow with scripts, a golden path and correct examples only.
+  Added `.agents/skills/scene-3d-refinement/`: registered seven-view clay/albedo
+  inspection, scoped diagnosis and staged material refinement. Extended
+  `scripts/mill-3d/` with configurable probe budgets, preflight, reduced view
+  inputs and atlas-only updates. Real 1K preparation/projection/GLB roundtrip,
+  camera registration, preservation guards, scoped Ruff and skill validation PASS;
+  an independent agent followed the instructions and inspected captures.
+  Projection measured 14.62 s for three atlases and 5.09 s for the mill alone;
+  these are texture-processing timings, not location-generation timings.
+  Neural generation, new 4K export and live viewer acceptance NOT_RUN in this
+  skill task. Runtime assets were preserved; full-scene REJECT is unchanged.
+  Local commit remains blocked by the existing missing-coverage audit; no new
+  bypass authorized. [Owning result](docs/wiki/mill-3d-scene.md#skill-для-быстрой-доработки-локаций--2026-10-27).
+
+### Old mill: registered texture repaint and display resolution
+
+- 2026-10-26, branch `codex/mill-3d-scene`, local: owner requested clearer
+  textures and a more usable game asset. Repainted five registered model views,
+  repacked mill/yard/downward atlases, welded coincident vertices and exported
+  JPEG color while retaining a lossless Blender master. Added repeatable Blender
+  and AssetFurnace projection scripts and exact input/prompt provenance. Fixed
+  reversed Retina scaling in `apps/web/src/mill-preview/main.ts` and set 8×
+  anisotropy. Geometry bounds are unchanged; collision/navigation are NOT_RUN.
+  Source textures require more decoded memory despite the smaller download.
+  Blender roundtrip, web lint/types and browser controls/error recovery PASS.
+  Independent review confirms clearer materials (2/2); whole scene remains
+  REJECT for rendering, night hierarchy and close wheel/bank integration.
+  Coverage audit NOT_RUN (missing report); local checkpoint awaits permission.
+  Full result and local commit status are recorded in the
+  [owning result](docs/wiki/mill-3d-scene.md#3d-мельница-и-двор--отдельная-сцена-2026-10-26).
+  No publication, merge or deployment.
+
+### Old mill: second-view refinement
+
+- 2026-10-26, branch `codex/mill-3d-scene`, local: per owner approval installed
+  5.9 GB multiview flows, generated the complete rear reference and rebuilt the
+  entire field. Added rear prompts, elevated generation cameras and photo-camera
+  calibration in `scripts/mill-3d/`. Calibration fixes observed false bridge and
+  rear-wall projections; whole-mesh orientation now uses the courtyard surface.
+  Current GLB: 115,726 triangles, 29.62 MiB; no authored scenery. Updated framing,
+  night lighting and explicit shadow-shader imports in the standalone viewer.
+  Camera reproduction, Blender roundtrip, Python syntax, web lint/types and
+  desktop controls/error recovery PASS. Independent visual REJECT remains:
+  softened materials, wheel/bridge readability and weak night hierarchy.
+  Checkpoint `79c8f564` used the first audit bypass; on 2026-10-26 the owner
+  explicitly authorized a second local checkpoint without the coverage audit.
+  Audit NOT_RUN (file absent). No publication,
+  merge, deploy or combat/navigation acceptance.
+  [Owning record](docs/wiki/mill-3d-scene.md#3d-мельница-и-двор--отдельная-сцена-2026-10-26).
+
+### Old mill: complete battlefield generated from one image
+
+- 2026-10-26, branch `codex/mill-3d-scene`, local: owner requested image-to-3dlab
+  and a separate inspection scene, then rejected the mixed generated building
+  and authored yard. Superseding direction: generate the entire battlefield
+  from one image. Added that source, exact prompt, one generated 112,772-triangle
+  GLB/Blender master and `scripts/mill-3d/prepare_battlefield.py`; the latter
+  normalizes/exports and adds no scenery. `apps/web/mill.html` and its viewer
+  provide orbit, day/night, close/reset and source comparison. Added matching
+  `@babylonjs/loaders` 9.28.0 via pnpm. Existing AssetFurnace installation reused.
+  Generation/Finish, Blender roundtrip, web types/scoped lint and desktop browser
+  controls/error recovery PASS; independent visual REJECT for blurred detail,
+  rear geometry and night hierarchy. Technical prototype only. Commit audit NOT_RUN:
+  coverage file absent. Owner authorized one local checkpoint commit without that
+  audit and the second-view/5.9 GB refinement on 2026-10-26. No combat/domain/
+  migration changes, publishing or deploy.
+  [Owning record](docs/wiki/mill-3d-scene.md#3d-мельница-и-двор--отдельная-сцена-2026-10-26)
+  preserves the rejected first approach, actual checks and inferred geometry.
 
 ### Familiar map movement controls
 

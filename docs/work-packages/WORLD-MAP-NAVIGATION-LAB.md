@@ -234,3 +234,15 @@ overview/desktop views against the references. No material visual finding.
 Four retained-branch checks (real stale retry and visit network recovery) PASS.
 Independent native replay NOT_RUN; player preference/fun NOT_MEASURED.
 Locally complete; no publication, merge, deployment or automation activation.
+
+## Networked atlas PR activation — 2026-10-27
+
+Owner: “pr, merge”. Authorizes one cohesive PR for the current networked-map
+branch and normal expected-head merge after independent review and applicable CI.
+Includes networked lab, pursuit, icons/labels, follow camera and migrations0015–0017;
+the single-player stand and main runtime defaults remain compatible. Main `e4876962`
+(mill PR329) is integrated with both documentation histories/config entries retained.
+Parent is the sole writer/integrator/validation owner. Independent infrastructure
+and integration review required; prior unchanged-code visual/playable evidence is
+retained. Publish once to run the existing full clean-checkout PR gates; no duplicate
+local bootstrap. No deploy, auto/admin merge, automation or Orca activation.
