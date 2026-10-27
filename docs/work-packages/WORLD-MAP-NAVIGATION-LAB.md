@@ -200,3 +200,9 @@ viewBox changes bypass the layout throttle; resize forces it after marker update
 Current native23 and100 WASD frames PASS, day/night and two-window/stale retry
 checks repeated. Source concern closed; second absolute visual pass and normal
 commit pending. No thresholds, marker anchors or input/routing rules changed.
+
+Final icon result: local code `9dd85bd8`, normal hook/audit PASS without bypass.
+Full repeated visual ACCEPT: all seven applicable criteria2/3. True1050×800
+NIGHT capture checked rendered light before/after, correcting two mislabeled
+intermediate files. Material label/hierarchy/source findings closed. Independent
+native input NOT_RUN; human preference/fun NOT_MEASURED. No publication/merge.

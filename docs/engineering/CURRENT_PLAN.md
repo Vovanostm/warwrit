@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Map icons — 2026-10-27, VALIDATING
+## Map icons — 2026-10-27, LOCAL COMPLETE
 
 Sole writer/integrator: parent; branch `codex/world-map-mmo-design`, base `e3a39c10`.
 Owner: replace map marks with professional readable icons.
@@ -13,11 +13,12 @@ Parent owns source/assets/docs/runtime; independent read-only visual critic requ
 Graph indexes another checkout/HEAD; current local source is proof.
 Script types/lint/format/assets PASS; current native23, DAY/NIGHT,100 pan frames PASS.
 Initial visual REJECT: label collisions/hierarchy; new placement and camera timing applied.
-Source concerns closed; second full absolute visual critique pending.
-Two-tab/stale retry checks repeated; measured ordinary audit PASS, commit pending.
+Source concerns closed; full repeated visual ACCEPT, seven applicable scores2.
+Two-tab/stale retry checks repeated; normal hook/audit PASS at `9dd85bd8`.
 macOS Bash3.2 launcher blocker fixed; ordinary startup/argument/syntax probes PASS.
-Server/core/protocol unchanged; retain their prior gates. Normal commit audit pending.
-Local implementation/normal commit only; no PR/merge/deploy/Orca activation.
+Server/core/protocol unchanged; retain prior gates. Code committed locally as `9dd85bd8`.
+True1050×800 NIGHT confirmed before/after screenshot; independent native replay NOT_RUN.
+Next: owner trial of the icon/label map; no PR/merge/deploy/Orca activation.
 
 ## Dated history
 

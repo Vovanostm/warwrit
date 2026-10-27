@@ -17,7 +17,7 @@ requests.
   keys use the same mapping. Reused the established Game Icons family with pinned
   provenance, CC BY3.0 credits and three local neutral symbols. Corrected pasture,
   burnt-wagon and domestic-ruin identities during independent source review.
-  Icons retain screen size through zoom/resize; own badge does not intercept enemy
+  Party icons retain screen size through zoom/resize; own badge does not intercept enemy
   input. Actual macOS Bash3.2 startup failed on an empty optional argument array;
   guarded expansion restores normal `pnpm dev:world` without changing its ports/data.
   Script types/lint/format and sprite/site references PASS. Initial visual
@@ -25,7 +25,9 @@ requests.
   placement/priority with hover names, muted overview POIs and immediate camera
   relayout. Current native23, day/night probes,100 pan frames, two-tab and stale-order
   checks PASS; source review has no remaining material defect. Repeat absolute
-  visual critique/normal commit audit pending. Server/core/protocol unchanged; no new
+  visual ACCEPT (seven applicable scores2), normal hook/audit PASS at `9dd85bd8`.
+  Corrected a mislabeled night capture with rendered NIGHT checked before/after
+  the1050×800 screenshot. Server/core/protocol unchanged; no new
   raster art, battle/PvP rules, dependencies or production delivery.
   [Owning result and limits](docs/wiki/world/map.md#иконки-отрядов-и-мест--2026-10-27).
 
