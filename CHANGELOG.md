@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Own-party follow camera
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local: owner requested
+  continued map improvements after icons. Added optional own-party camera follow,
+  preserving zoom on follow/Center-own. Drag, WASD and overview release follow;
+  wheel zoom retains it. Camera samples the same bounded rendered position as
+  the marker; sessions reset the toggle. Fixed focused-checkbox WASD suppression
+  in the shared input guard while retaining native Space and text/dialog guards.
+  Map20/types, scoped lint/format and24 native + seven supplemental checks PASS.
+  The initial legacy pan probe was at a fully fitted map; corrected zoomed probe
+  confirms pan, checkbox Space and text-input isolation. Day/night and60 actual
+  moving frames captured. Source review closed its finding; visual critique and
+  normal commit audit pending. First audit required fresh measurements for two
+  retained UI branches; actual STOP409→retry200 and visit network recovery now
+  PASS (four checks), without threshold/source changes for the audit.
+  Server/core/protocol and game rules unchanged.
+  [Owning result](docs/wiki/world/map.md#камера-за-своим-отрядом--2026-10-27).
+
 ### Readable world-map icons
 
 - 2026-10-27, branch `codex/world-map-mmo-design`, local: owner requested

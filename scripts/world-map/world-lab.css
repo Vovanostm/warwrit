@@ -118,6 +118,20 @@ body[data-connection='stale'] #connection-dot {
   display: grid;
   gap: 7px;
 }
+.follow-control {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.follow-control input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--gold);
+}
 .group-row {
   display: flex;
   align-items: center;

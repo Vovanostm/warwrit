@@ -46,6 +46,7 @@ const map = $<SVGSVGElement>('map');
 const groupLayer = $<SVGGElement>('observed-groups');
 const stateText = $<HTMLElement>('connection-status');
 const message = $<HTMLElement>('client-message');
+const followOwn = $<HTMLInputElement>('follow-own');
 const requestHeaders = { 'content-type': 'application/json' };
 
 let snapshot: WorldLabStateDto | undefined;
@@ -134,7 +135,10 @@ function maybeNewer(next: WorldLabStateDto) {
   snapshotServerTimeMs = Number(next.serverTimeMs);
   lastSnapshotReceivedAt = performance.now();
   render(next);
-  if (newSession) centerOnOwn();
+  if (newSession) {
+    followOwn.checked = false;
+    centerOnOwn(true);
+  }
   updateFreshness();
 }
 
@@ -301,13 +305,19 @@ function pursuitMessage(state: WorldLabStateDto): string | undefined {
   }
 }
 
-function centerOnOwn() {
+function centerOnOwn(initial = false) {
   if (!snapshot) return;
-  const [x, y] = pointOnMap(snapshot.own.movement.point);
-  const width = Math.min(SHEET.width, 1536);
+  const width = initial ? Math.min(SHEET.width, 1536) : view.width;
   const aspect = map.clientWidth && map.clientHeight ? map.clientWidth / map.clientHeight : 1.5;
-  const height = Math.min(SHEET.height, width / aspect);
-  setView({ x: x - width / 2, y: y - height / 2, width, height });
+  const height = initial ? Math.min(SHEET.height, width / aspect) : view.height;
+  setView(viewOnOwn(performance.now(), { ...view, width, height }));
+}
+
+function viewOnOwn(now: number, current: MapView): MapView {
+  const point = ownPositionNow(now);
+  if (!point) return current;
+  const [x, y] = pointOnMap(point);
+  return boundedMapView({ ...current, x: x - current.width / 2, y: y - current.height / 2 }, SHEET);
 }
 
 function markerScale() {
@@ -344,6 +354,7 @@ function updateFreshness() {
   $('stop').toggleAttribute('disabled', !fresh || !hasMovementOrder());
   $('enter-site').toggleAttribute('disabled', !fresh || !snapshot?.nearbySite);
   $('center-own').toggleAttribute('disabled', !snapshot);
+  followOwn.disabled = !snapshot;
   if (!snapshot) return;
   if (!fresh) {
     showConnection('stale', 'Состояние устарело · приказы временно заблокированы');
@@ -494,6 +505,8 @@ function closeRoom() {
 }
 
 function clearSnapshotView() {
+  followOwn.checked = false;
+  followOwn.disabled = true;
   groupElements.clear();
   showContactIdentity();
   groupLayer.replaceChildren();
@@ -740,7 +753,10 @@ function issueMove(target: Pixel, siteId?: string) {
 
 const drag = bindMapPanDrag(map, {
   getView: () => view,
-  setView,
+  setView: (next) => {
+    followOwn.checked = false;
+    setView(next);
+  },
   cancelZoom: () => (zoomTarget = undefined),
 });
 map.addEventListener('contextmenu', (event) => {
@@ -781,6 +797,10 @@ const panKeys = bindMapPanKeys(map, () => {
 function animate(now: number) {
   const delta = Math.min(50, now - lastFrame);
   if (zoomTarget) {
+    if (followOwn.checked) {
+      view = viewOnOwn(now, view);
+      zoomTarget = viewOnOwn(now, zoomTarget);
+    }
     const next = advanceMapView(view, zoomTarget, delta);
     if (next === zoomTarget) zoomTarget = undefined;
     view = next;
@@ -788,7 +808,13 @@ function animate(now: number) {
     syncStaticMarkerScale();
   }
   if (panKeys.held.size && !drag.isDragging()) {
+    followOwn.checked = false;
+    zoomTarget = undefined;
     view = panMapView(view, panKeys.direction(), delta, SHEET);
+    map.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
+  }
+  if (followOwn.checked) {
+    view = viewOnOwn(now, view);
     map.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
   }
   updateAnimatedMarkers(now);
@@ -797,10 +823,14 @@ function animate(now: number) {
 }
 let lastFrame = performance.now();
 
-$('fit').addEventListener('click', () =>
-  setView({ x: 0, y: 0, width: SHEET.width, height: SHEET.height }),
-);
-$('center-own').addEventListener('click', centerOnOwn);
+$('fit').addEventListener('click', () => {
+  followOwn.checked = false;
+  setView({ x: 0, y: 0, width: SHEET.width, height: SHEET.height });
+});
+$('center-own').addEventListener('click', () => centerOnOwn());
+followOwn.addEventListener('change', () => {
+  if (followOwn.checked) centerOnOwn();
+});
 $('stop').addEventListener('click', () => {
   if (hasMovementOrder()) void commandMovement({ kind: 'STOP' });
 });

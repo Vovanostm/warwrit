@@ -206,3 +206,24 @@ Full repeated visual ACCEPT: all seven applicable criteria2/3. True1050×800
 NIGHT capture checked rendered light before/after, correcting two mislabeled
 intermediate files. Material label/hierarchy/source findings closed. Independent
 native input NOT_RUN; human preference/fun NOT_MEASURED. No publication/merge.
+
+## Own-party camera amendment — 2026-10-27
+
+Owner: continue the professional map cycle after icons. One local UI improvement:
+optional explicit camera following of the own company using the same rendered
+position and bounded map extent. Preserve zoom on center/follow; drag, WASD and
+overview release follow. Wheel changes scale while following; a simple map click
+does not release it. Follow starts off and resets on session change. Existing
+snapshot freshness/interpolation limits apply; no server or movement-rule change.
+Parent owns all edits/resources/checks; independent visual critic receives real
+day/night, overview/close and moving/start/STOP captures plus native input evidence.
+Focused script types/lint/native camera regressions; retain unaffected core gates.
+No publication, merge, deployment, automation or new art.
+
+Camera checkpoint: map20/types/scoped lint/format PASS;24 native + seven supplemental
+checks PASS. Focused-checkbox WASD source finding reproduced, fixed in shared input
+guard and closed on independent readback. Corrected legacy pan probe uses a zoomed
+map; native checkbox Space and text-input isolation also PASS. Day/night/desktop
+captures verify light before/after;60 moving frames keep own marker centered.
+Visual critique/normal commit audit pending; core/server unchanged, retained gates
+remain applicable. [Owning result and limits](../wiki/world/map.md#камера-за-своим-отрядом--2026-10-27).

@@ -7,7 +7,7 @@ function isTypingTarget(target: EventTarget | null) {
   return (
     target instanceof Element &&
     !!target.closest(
-      'dialog[open], input, button, select, textarea, [contenteditable]:not([contenteditable="false"])',
+      'dialog[open], input:not([type="checkbox"]), button, select, textarea, [contenteditable]:not([contenteditable="false"])',
     )
   );
 }

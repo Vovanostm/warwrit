@@ -1,6 +1,24 @@
 # Warwrit current delivery plan
 
-## Map icons — 2026-10-27, LOCAL COMPLETE
+## Own-party camera — 2026-10-27, IN PROGRESS
+
+Sole writer/validation owner: parent; branch `codex/world-map-mmo-design`, base `c960c64a`.
+Owner: continue professionalizing the playable map after the accepted icon cycle.
+Outcome: optional follow camera keeps the moving own party visible at the chosen zoom.
+Scope: world-lab UI only; server/core/protocol/rules/assets stay unchanged.
+Follow is explicit/off initially; drag/WASD/overview release it; wheel retains it.
+Center-own preserves zoom; session changes reset follow; stale samples stop extrapolating.
+Parent owns edits/runtime/checks/docs; independent read-only visual critique required.
+Map20/types/lint/format PASS;24 native + seven supplemental checks PASS.
+Source finding on focused-checkbox WASD reproduced/fixed; independent readback closed it.
+Initial fully-fitted legacy pan probe corrected at zoom; native input/type guards PASS.
+DAY/NIGHT,1050×800 and60 moving frames captured; visual critique/normal audit pending.
+First audit needed retained UI branches; actual stale retry/visit recovery4 PASS.
+No publication/merge/deploy/Orca/automation activation.
+
+## Dated history
+
+### Map icons — 2026-10-27, LOCAL COMPLETE
 
 Sole writer/integrator: parent; branch `codex/world-map-mmo-design`, base `e3a39c10`.
 Owner: replace map marks with professional readable icons.
@@ -19,8 +37,6 @@ macOS Bash3.2 launcher blocker fixed; ordinary startup/argument/syntax probes PA
 Server/core/protocol unchanged; retain prior gates. Code committed locally as `9dd85bd8`.
 True1050×800 NIGHT confirmed before/after screenshot; independent native replay NOT_RUN.
 Next: owner trial of the icon/label map; no PR/merge/deploy/Orca activation.
-
-## Dated history
 
 ### Observed hostile pursuit — 2026-10-27, LOCAL COMPLETE
 
