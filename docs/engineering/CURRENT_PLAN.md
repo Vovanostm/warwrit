@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Own-party camera — 2026-10-27, IN PROGRESS
+## Own-party camera — 2026-10-27, LOCAL COMPLETE
 
 Sole writer/validation owner: parent; branch `codex/world-map-mmo-design`, base `c960c64a`.
 Owner: continue professionalizing the playable map after the accepted icon cycle.
@@ -12,8 +12,11 @@ Parent owns edits/runtime/checks/docs; independent read-only visual critique req
 Map20/types/lint/format PASS;24 native + seven supplemental checks PASS.
 Source finding on focused-checkbox WASD reproduced/fixed; independent readback closed it.
 Initial fully-fitted legacy pan probe corrected at zoom; native input/type guards PASS.
-DAY/NIGHT,1050×800 and60 moving frames captured; visual critique/normal audit pending.
+DAY/NIGHT,1050×800 and60 moving frames captured; independent visual ACCEPT.
 First audit needed retained UI branches; actual stale retry/visit recovery4 PASS.
+Code `5dac02c7`; normal commit hook/audit PASS without bypass or lowered thresholds.
+Independent native replay NOT_RUN; human preference/fun NOT_MEASURED.
+Next: owner trial of sidebar follow toggle; drag/WASD/overview restore free camera.
 No publication/merge/deploy/Orca/automation activation.
 
 ## Dated history

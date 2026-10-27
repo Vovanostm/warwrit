@@ -20,10 +20,11 @@ requests.
   Map20/types, scoped lint/format and24 native + seven supplemental checks PASS.
   The initial legacy pan probe was at a fully fitted map; corrected zoomed probe
   confirms pan, checkbox Space and text-input isolation. Day/night and60 actual
-  moving frames captured. Source review closed its finding; visual critique and
-  normal commit audit pending. First audit required fresh measurements for two
+  moving frames captured. Source review closed its finding; independent visual
+  ACCEPT and normal hook/audit PASS at `5dac02c7`. First audit required fresh measurements for two
   retained UI branches; actual STOP409→retry200 and visit network recovery now
   PASS (four checks), without threshold/source changes for the audit.
+  Independent native replay NOT_RUN; human preference NOT_MEASURED.
   Server/core/protocol and game rules unchanged.
   [Owning result](docs/wiki/world/map.md#камера-за-своим-отрядом--2026-10-27).
 

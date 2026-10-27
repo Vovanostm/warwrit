@@ -227,3 +227,10 @@ map; native checkbox Space and text-input isolation also PASS. Day/night/desktop
 captures verify light before/after;60 moving frames keep own marker centered.
 Visual critique/normal commit audit pending; core/server unchanged, retained gates
 remain applicable. [Owning result and limits](../wiki/world/map.md#камера-за-своим-отрядом--2026-10-27).
+
+Final camera result: code `5dac02c7`, normal hook/audit PASS without bypass;
+independent full visual ACCEPT after inspecting current day/night movement and
+overview/desktop views against the references. No material visual finding.
+Four retained-branch checks (real stale retry and visit network recovery) PASS.
+Independent native replay NOT_RUN; player preference/fun NOT_MEASURED.
+Locally complete; no publication, merge, deployment or automation activation.
