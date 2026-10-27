@@ -125,27 +125,10 @@ body[data-connection='stale'] #connection-dot {
   min-height: 25px;
   font-size: 11px;
 }
-.group-dot {
-  width: 10px;
-  height: 10px;
-  border: 2px solid #d9d4c6;
-  border-radius: 50%;
+.group-key {
+  width: 24px;
+  height: 24px;
   flex: 0 0 auto;
-}
-.group-dot[data-kind='PATROL'] {
-  border-radius: 2px;
-  border-color: #d6bf7a;
-}
-.group-dot[data-kind='BANDITS'] {
-  border-color: #c76650;
-}
-.group-dot[data-kind='WILDLIFE'] {
-  border-color: #8db387;
-}
-.group-dot[data-kind='CREATURE'] {
-  border-color: #b58ab5;
-  border-radius: 1px;
-  transform: rotate(45deg);
 }
 dl {
   margin: 0;
@@ -220,9 +203,6 @@ dd {
 #map.night image {
   filter: saturate(0.5) brightness(0.55);
 }
-#map.night .group {
-  opacity: 0.85;
-}
 .site-label {
   fill: #eee2bf;
   font:
@@ -244,19 +224,34 @@ body[data-connection='stale'] .observed {
 .group path {
   vector-effect: non-scaling-stroke;
 }
+.group {
+  color: #ded5bf;
+}
+.own {
+  color: #f0d780;
+  pointer-events: none;
+}
 .marker-halo {
   fill: #202627;
-  stroke: #f0d780;
-  stroke-width: 3;
+  stroke: currentColor;
+  stroke-width: 2.5;
 }
-.marker-glyph {
-  fill: #f0d780;
-  stroke: #181d1e;
+.marker-inner {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.55;
+}
+.group-disc {
+  fill: #202627;
+  stroke: currentColor;
   stroke-width: 1.5;
 }
-.group-symbol {
-  fill: #202627;
-  stroke-width: 3;
+.map-icon {
+  color: inherit;
+  fill: currentColor;
+  stroke: none;
+  pointer-events: none;
 }
 .site-marker circle {
   fill: #282d2a;
@@ -270,21 +265,31 @@ body[data-connection='stale'] .observed {
 }
 .site-marker {
   cursor: crosshair;
+  color: #e0cfa1;
 }
-.observed[data-kind='PLAYER'] .group-symbol {
-  stroke: #d9d4c6;
+.site-marker:hover .site-disc {
+  stroke: #f4e3bc;
+  fill: #414638;
 }
-.observed[data-kind='PATROL'] .group-symbol {
-  stroke: #d6bf7a;
+.icon-credit a {
+  font: inherit;
 }
-.observed[data-kind='BANDITS'] .group-symbol {
-  stroke: #c76650;
+
+.observed[data-kind='PATROL'],
+.group-key[data-kind='PATROL'] {
+  color: #d6bf7a;
 }
-.observed[data-kind='WILDLIFE'] .group-symbol {
-  stroke: #8db387;
+.observed[data-kind='BANDITS'],
+.group-key[data-kind='BANDITS'] {
+  color: #d58b72;
 }
-.observed[data-kind='CREATURE'] .group-symbol {
-  stroke: #b58ab5;
+.observed[data-kind='WILDLIFE'],
+.group-key[data-kind='WILDLIFE'] {
+  color: #b1c39a;
+}
+.observed[data-kind='CREATURE'],
+.group-key[data-kind='CREATURE'] {
+  color: #c1a5bd;
 }
 .group text {
   fill: #f0ead9;
@@ -348,4 +353,27 @@ dialog h2 {
 }
 .observed[role='button'] {
   cursor: crosshair;
+}
+
+/* Minor POIs recede on the atlas overview; settlements retain priority. */
+.map-overview .site-minor {
+  color: #c0b793;
+}
+.map-overview .site-minor .site-disc {
+  r: 10px;
+  fill: #272e29;
+  stroke: #8d8266;
+  stroke-width: 1px;
+}
+.map-overview .site-minor .map-icon {
+  transform: scale(0.76);
+}
+.map-overview .site-minor:hover .site-disc {
+  stroke: #eed9a8;
+}
+.site-leader {
+  stroke: #b9aa82;
+  stroke-width: 1px;
+  opacity: 0.65;
+  pointer-events: none;
 }

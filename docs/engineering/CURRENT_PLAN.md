@@ -1,6 +1,27 @@
 # Warwrit current delivery plan
 
-## Observed hostile pursuit — 2026-10-27, LOCAL COMPLETE
+## Map icons — 2026-10-27, VALIDATING
+
+Sole writer/integrator: parent; branch `codex/world-map-mmo-design`, base `e3a39c10`.
+Owner: replace map marks with professional readable icons.
+[Active scope](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-icon-amendment--2026-10-27).
+Scope: own/other parties, hostile NPCs,34 existing POIs and nearby list in UI5338.
+Reuse the existing licensed Game Icons family; no new raster art or game rules.
+Preserve exact marker anchors, RMB pursuit/ground orders, Space and camera input.
+Use silhouettes plus relation colours; readable day/night and at1050×800.
+Parent owns source/assets/docs/runtime; independent read-only visual critic required.
+Graph indexes another checkout/HEAD; current local source is proof.
+Script types/lint/format/assets PASS; current native23, DAY/NIGHT,100 pan frames PASS.
+Initial visual REJECT: label collisions/hierarchy; new placement and camera timing applied.
+Source concerns closed; second full absolute visual critique pending.
+Two-tab/stale retry checks repeated; measured ordinary audit PASS, commit pending.
+macOS Bash3.2 launcher blocker fixed; ordinary startup/argument/syntax probes PASS.
+Server/core/protocol unchanged; retain their prior gates. Normal commit audit pending.
+Local implementation/normal commit only; no PR/merge/deploy/Orca activation.
+
+## Dated history
+
+### Observed hostile pursuit — 2026-10-27, LOCAL COMPLETE
 
 Sole writer/integrator: Codex parent, branch `codex/world-map-mmo-design`, base `060dddd3`.
 Owner: RMB on enemy follows the group rather than its clicked position.
@@ -23,8 +44,6 @@ Plain Node24.20 restart retained orderId; current RMB/STOP/network recovery PASS
 Both stands live5338/5326; next: owner trial of pursuit (hostile NPCs only).
 [Current result and limits](../wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
 No PR/push/merge/deploy/Orca/automation activation authorized.
-
-## Dated history
 
 ### Networked atlas first cycle — 2026-10-26, LOCAL COMPLETE
 

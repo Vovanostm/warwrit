@@ -29,6 +29,8 @@ import {
 } from './map-camera.js';
 import { bindMapPanDrag, bindMapPanKeys } from './map-camera-input.js';
 import type { Pixel } from './porechye-navigation.js';
+import { createMapIcon, createPartyKey, partyIconName, siteIconName } from './map-icons.js';
+import { layoutMapLabels } from './map-labels.js';
 import {
   isWorldLabStateNotOlder,
   preserveNewerWorldLabGroups,
@@ -61,6 +63,9 @@ let view: MapView = { x: 0, y: 0, width: SHEET.width, height: SHEET.height };
 let zoomTarget: MapView | undefined;
 const groupElements = new Map<string, SVGGElement>();
 let focusedGroupId: string | undefined;
+let focusedSiteId: string | undefined;
+let lastLabelLayoutAt = 0;
+let lastLabelViewBox: string | null = null;
 interface GroupSamples {
   previous?: { readonly x: number; readonly z: number; readonly timeMs: number };
   current: {
@@ -145,12 +150,12 @@ function setMarker(
   point: { readonly xMicroFp: string; readonly zMicroFp: string },
 ) {
   const [x, y] = pointOnMap(point);
-  group.setAttribute('transform', `translate(${x} ${y}) scale(${view.width / 1536})`);
+  group.setAttribute('transform', `translate(${x} ${y}) scale(${markerScale()})`);
 }
 
 function setMarkerAtMicroFp(group: SVGGElement, xMicroFp: number, zMicroFp: number) {
   const [x, y] = paintedAtlasPixel({ xFp: xMicroFp / 65536, zFp: zMicroFp / 65536 });
-  group.setAttribute('transform', `translate(${x} ${y}) scale(${view.width / 1536})`);
+  group.setAttribute('transform', `translate(${x} ${y}) scale(${markerScale()})`);
 }
 
 function groupGlyph(group: WorldLabObservedGroupDto): SVGGElement {
@@ -162,35 +167,20 @@ function groupGlyph(group: WorldLabObservedGroupDto): SVGGElement {
   marker.dataset['groupId'] = group.id;
   marker.setAttribute('tabindex', '0');
   marker.setAttribute('role', 'img');
-  const symbol = document.createElementNS(
-    SVG_NS,
-    group.kind === 'PATROL'
-      ? 'rect'
-      : group.kind === 'BANDITS' || group.kind === 'CREATURE' || group.kind === 'WILDLIFE'
-        ? 'path'
-        : 'circle',
-  );
-  symbol.classList.add('group-symbol');
-  if (group.kind === 'PATROL') {
-    symbol.setAttribute('x', '-8');
-    symbol.setAttribute('y', '-8');
-    symbol.setAttribute('width', '16');
-    symbol.setAttribute('height', '16');
-  } else if (group.kind === 'BANDITS')
-    symbol.setAttribute('d', 'M-10 -5L0 -11L10 -5L10 5L0 11L-10 5Z');
-  else if (group.kind === 'CREATURE') symbol.setAttribute('d', 'M0 -12L11 0L0 12L-11 0Z');
-  else if (group.kind === 'WILDLIFE') symbol.setAttribute('d', 'M0 -11L11 9H-11Z');
-  else symbol.setAttribute('r', '10');
+  const symbol = createMapIcon(partyIconName(group.kind), 28);
+  const disc = document.createElementNS(SVG_NS, 'circle');
+  disc.classList.add('group-disc');
+  disc.setAttribute('r', '19');
   const label = document.createElementNS(SVG_NS, 'text');
-  label.setAttribute('y', '27');
+  label.setAttribute('y', '37');
   const hit = document.createElementNS(SVG_NS, 'circle');
-  hit.setAttribute('r', '17');
+  hit.setAttribute('r', '28');
   hit.classList.add('group-hit');
   const ring = document.createElementNS(SVG_NS, 'circle');
-  // Keep the selected threat visible even when the own 17px marker overlaps it.
-  ring.setAttribute('r', '25');
+  // Keep the selected threat visible even when the own 20px marker overlaps it.
+  ring.setAttribute('r', '27');
   ring.classList.add('pursuit-ring');
-  marker.append(hit, ring, symbol, label);
+  marker.append(hit, disc, ring, symbol, label);
   marker.addEventListener('keydown', (event) => {
     if (
       event.key === 'Enter' &&
@@ -216,7 +206,11 @@ function groupGlyph(group: WorldLabObservedGroupDto): SVGGElement {
 function showContactIdentity(id?: string) {
   const marker = id ? groupElements.get(id) : undefined;
   focusedGroupId = marker ? id : undefined;
-  $('contact-focus').textContent = marker?.getAttribute('aria-label') ?? '';
+  $('contact-focus').textContent =
+    marker?.getAttribute('aria-label') ??
+    PAINTED_ATLAS_SITES.find((site) => site.siteId === focusedSiteId)?.name ??
+    '';
+  updateSiteLabels(true);
 }
 
 function renderGroups(groups: readonly WorldLabObservedGroupDto[]) {
@@ -257,9 +251,7 @@ function renderGroups(groups: readonly WorldLabObservedGroupDto[]) {
   for (const group of observed) {
     const row = document.createElement('div');
     row.className = 'group-row';
-    const dot = document.createElement('span');
-    dot.className = 'group-dot';
-    dot.dataset['kind'] = group.kind;
+    const dot = createPartyKey(group.kind);
     const label = document.createElement('span');
     label.textContent = `${group.name} · ${group.state === 'MOVING' ? 'в пути' : 'стоит'}`;
     row.append(dot, label);
@@ -318,11 +310,23 @@ function centerOnOwn() {
   setView({ x: x - width / 2, y: y - height / 2, width, height });
 }
 
+function markerScale() {
+  // SVG units per screen pixel: symbols stay readable through zoom and resize.
+  return 1 / (map.getScreenCTM()?.a ?? 1);
+}
+
+function updateSiteLabels(force = false) {
+  const now = performance.now();
+  const viewBox = map.getAttribute('viewBox');
+  if (!force && viewBox === lastLabelViewBox && now - lastLabelLayoutAt < 180) return;
+  lastLabelLayoutAt = now;
+  lastLabelViewBox = viewBox;
+  layoutMapLabels(map, view.width > 2304, focusedSiteId);
+}
+
 function syncStaticMarkerScale() {
-  const scale = view.width / 1536;
-  map.querySelectorAll<SVGElement>('.site-label').forEach((label) => {
-    label.style.display = view.width > 2304 && label.dataset['major'] !== 'true' ? 'none' : '';
-  });
+  const scale = markerScale();
+  map.classList.toggle('map-overview', view.width > 2304);
   map.querySelectorAll<SVGGElement>('#site-markers [data-site-id]').forEach((marker) => {
     marker.setAttribute(
       'transform',
@@ -403,6 +407,7 @@ function updateAnimatedMarkers(now: number) {
     if (point) setMarkerAtMicroFp(marker, point.x, point.z);
   }
   syncStaticMarkerScale();
+  updateSiteLabels();
 }
 
 function render(state: WorldLabStateDto) {
@@ -426,24 +431,37 @@ function drawSites() {
   for (const site of PAINTED_ATLAS_SITES) {
     const marker = document.createElementNS(SVG_NS, 'g');
     marker.classList.add('site-marker');
+    const major = PAINTED_ATLAS_SITES.indexOf(site) < 5;
+    marker.classList.toggle('site-minor', !major);
     marker.dataset['siteId'] = site.siteId;
     marker.setAttribute('role', 'img');
     marker.setAttribute('aria-label', site.name);
     const [x, y] = paintedAtlasPixel(site.anchorFp);
     marker.dataset['x'] = String(x);
     marker.dataset['y'] = String(y);
-    marker.setAttribute('transform', `translate(${x} ${y}) scale(${view.width / 1536})`);
+    marker.setAttribute('transform', `translate(${x} ${y}) scale(${markerScale()})`);
     const circle = document.createElementNS(SVG_NS, 'circle');
-    circle.setAttribute('r', '5');
+    circle.setAttribute('r', '14');
+    circle.classList.add('site-disc');
     const hit = document.createElementNS(SVG_NS, 'circle');
-    hit.setAttribute('r', '14');
+    hit.setAttribute('r', '18');
     hit.classList.add('site-hit');
     const label = document.createElementNS(SVG_NS, 'text');
     label.textContent = site.name;
-    label.setAttribute('y', '-20');
+    label.setAttribute('y', '-24');
     label.classList.add('site-label');
-    label.dataset['major'] = String(PAINTED_ATLAS_SITES.indexOf(site) < 5);
-    marker.append(hit, circle, label);
+    label.dataset['major'] = String(major);
+    const leader = document.createElementNS(SVG_NS, 'line');
+    leader.classList.add('site-leader');
+    marker.append(hit, leader, circle, createMapIcon(siteIconName(site.siteId), 21), label);
+    marker.addEventListener('mouseenter', () => {
+      focusedSiteId = site.siteId;
+      showContactIdentity();
+    });
+    marker.addEventListener('mouseleave', () => {
+      focusedSiteId = undefined;
+      showContactIdentity(focusedGroupId);
+    });
     layer.append(marker);
   }
 }
@@ -703,7 +721,7 @@ function setView(next: MapView) {
   zoomTarget = undefined;
   view = boundedMapView(next, SHEET);
   map.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
-  syncStaticMarkerScale();
+  updateAnimatedMarkers(performance.now());
 }
 
 function issueMove(target: Pixel, siteId?: string) {
@@ -870,7 +888,12 @@ map.addEventListener('pointermove', (event) => {
 });
 
 async function initialize() {
+  $('own-marker').append(createMapIcon('company', 30));
   drawSites();
+  new ResizeObserver(() => {
+    updateAnimatedMarkers(performance.now());
+    updateSiteLabels(true);
+  }).observe(map);
   await loadState();
   if (snapshot) await connectRoom();
   requestAnimationFrame(animate);

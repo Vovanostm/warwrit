@@ -12,9 +12,10 @@ if [[ -n "${WORLD_LAB_RUNTIME_COVERAGE:-}" ]]; then
   build_args+=(--inlineSources)
   api_imports+=(--import ./scripts/world-map/runtime-coverage-node.mjs)
 fi
-pnpm --filter @warwrit/protocol build "${build_args[@]}"
-pnpm --filter @warwrit/game-core build "${build_args[@]}"
-pnpm --filter @warwrit/testkit build "${build_args[@]}"
+# macOS Bash 3.2 treats an empty array as unset under `set -u`.
+pnpm --filter @warwrit/protocol build ${build_args[@]+"${build_args[@]}"}
+pnpm --filter @warwrit/game-core build ${build_args[@]+"${build_args[@]}"}
+pnpm --filter @warwrit/testkit build ${build_args[@]+"${build_args[@]}"}
 
 api_pid=''
 web_pid=''

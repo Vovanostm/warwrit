@@ -162,3 +162,41 @@ ACCEPT; navigation42 PASS; normal hook/audit PASS at `9b2c41a5`, no bypass.
 Plain-server restart retained orderId; current native RMB/STOP and visit network
 recovery PASS. Local complete; production/full MMO/player enjoyment not accepted.
 [Owning result and honest probe limits](../wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
+
+## Map icon amendment — 2026-10-27
+
+Owner asks to replace marks with icons and continue professionalizing the map.
+One local visual slice: own/other parties, patrol/bandits/wildlife/creature,
+34 existing POIs and nearby-list keys in the networked laboratory. Reuse the
+existing licensed Game Icons silhouette family. No new raster generation,
+lore, world categories, protocol or movement rules. Icons describe established
+subjects; no new heraldry, religious symbols or change of place condition.
+Keep authoritative coordinates, click targets and pursuit/camera controls.
+Readable silhouettes, target selection and own-party distinction on overview,
+close view, day/night and1050×800. Parent owns all edits/assets/resources/docs;
+independent visual critic gets actual screenshots/input journey. Focused script
+types/lint and native input/readability checks; retain unaffected server/core gates.
+Local commit only; no publication, deployment, automation or main changes.
+
+### Map icon implementation checkpoint — 2026-10-27
+
+24 local SVG symbols (21 pinned Game Icons, three local neutral shapes) drive
+party markers, nearby keys and34 stable POIs. Icons keep screen size through
+zoom/resize; own noninteractive badge lets enemy input through. No public/private
+state, coordinate, navigation, game rule or dependency changes. Source review
+corrected pasture and burnt-wagon mismatches and closed its findings.
+Focused script types/lint/format/assets and18 native + five night checks PASS.
+The normal launcher hit macOS Bash3.2 empty-array/set-u failure; protected optional
+argument expansion was syntax/empty/nonempty/actual-start checked. No DB reset.
+Independent visual critique and normal commit audit pending. Existing server/core
+checks remain applicable; no new full game/SQL gate for this UI-only slice.
+[Owning result and actual probe limits](../wiki/world/map.md#иконки-отрядов-и-мест--2026-10-27).
+
+Label acceptance correction: first visual pass REJECT for collisions and excessive
+uniform overview emphasis. Added finite anchored placements with marker/label/edge
+avoidance, hover/major priority and short leaders; minor overview icons recede.
+A camera/resize timing regression from the intermediate native pass is fixed:
+viewBox changes bypass the layout throttle; resize forces it after marker updates.
+Current native23 and100 WASD frames PASS, day/night and two-window/stale retry
+checks repeated. Source concern closed; second absolute visual pass and normal
+commit pending. No thresholds, marker anchors or input/routing rules changed.
