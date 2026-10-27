@@ -1,0 +1,36 @@
+{
+  "technique": "Pixal3D complete scene; welded seams; five-view material repaint",
+  "dimensions_metres": [25.0, 32.967, 11.411],
+  "triangles": 115383,
+  "width_inferred_metres": 25,
+  "origin": "ground centre",
+  "runtime_mib": 16.13,
+  "materials": 3,
+  "textures": [
+    {
+      "part": "mill",
+      "triangles": 42368,
+      "size": 4096,
+      "uv_coverage": 0.4054285902522127,
+      "median_px_m": 73.71791192715688,
+      "painted_share": 0.3391485701683452
+    },
+    {
+      "part": "yard",
+      "triangles": 51827,
+      "size": 4096,
+      "uv_coverage": 0.40295945456599175,
+      "median_px_m": 68.48791400601475,
+      "painted_share": 0.39369075961714556
+    },
+    {
+      "part": "underside",
+      "triangles": 21272,
+      "size": 1024,
+      "uv_coverage": 0.4537114551526149,
+      "median_px_m": 25.372965098770187,
+      "painted_share": 0.0034722295202564237
+    }
+  ],
+  "collision_navigation": "NOT_RUN"
+}

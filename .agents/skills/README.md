@@ -31,6 +31,13 @@ Adobe-maintained. Skills provide instructions, not applications, accounts,
 credits or accepted character assets. Check current tools before production.
 See the [combat record](../../docs/wiki/combat.md#3d-production-skills--2026-10-04).
 
+## Generated location refinement
+
+[scene-3d-refinement](scene-3d-refinement/SKILL.md) owns registered environment
+captures, cheap texture probes and selective projection recovery. Its scripts and
+golden path preserve the whole generated scene and separate tooling checks from
+visual/game acceptance.
+
 ## Host discovery
 
 Codex discovers `.agents/skills/`. Claude Code discovers `.claude/skills/`, where

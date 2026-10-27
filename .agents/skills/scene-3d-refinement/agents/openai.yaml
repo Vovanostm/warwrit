@@ -1,0 +1,4 @@
+interface:
+  display_name: '3D Scene Refinement'
+  short_description: 'Refine generated locations with fast texture probes'
+  default_prompt: 'Use $scene-3d-refinement to inspect this generated location, improve its materials with a low-resolution probe, and verify the result in the viewer.'
