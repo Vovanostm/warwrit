@@ -1,16 +1,28 @@
 /** Executable design examples only. Synthetic public fixtures, no game authority. */
 export type Point = { readonly x: number; readonly y: number };
 type Terrain = 'FIELD' | 'FOREST' | 'MARSH' | 'RIDGE' | 'RIVER' | 'ROAD';
-type Place = Point & { readonly id: string; readonly name: string; readonly public: boolean };
+type Place = Point & {
+  readonly id: string;
+  readonly name: string;
+  readonly regionId: string;
+  readonly onChart: boolean;
+};
 type Group = Point & { readonly id: string; readonly name: string };
 export const WIDTH = 72;
 export const HEIGHT = 48;
 const key = (p: Point) => Math.floor(p.y) * WIDTH + Math.floor(p.x);
 const PLACES: readonly Place[] = [
-  { id: 'brod', name: 'Каменный Брод', x: 12.5, y: 34.5, public: true },
-  { id: 'bereznyak', name: 'Березняк', x: 29.5, y: 34.5, public: true },
-  { id: 'north', name: 'Северный Двор', x: 59.5, y: 10.5, public: true },
-  { id: 'mill', name: 'Старая мельница', x: 42.5, y: 25.5, public: false },
+  { id: 'brod', name: 'Каменный Брод', x: 12.5, y: 34.5, regionId: 'home-region', onChart: true },
+  { id: 'bereznyak', name: 'Березняк', x: 29.5, y: 34.5, regionId: 'home-region', onChart: true },
+  { id: 'north', name: 'Северный Двор', x: 59.5, y: 10.5, regionId: 'home-region', onChart: true },
+  {
+    id: 'mill',
+    name: 'Старая мельница',
+    x: 42.5,
+    y: 25.5,
+    regionId: 'home-region',
+    onChart: false,
+  },
 ];
 export const GROUPS: readonly Group[] = [
   { id: 'bandits', name: 'Разбойники', x: 22.5, y: 30.5 },
@@ -100,17 +112,23 @@ function rumourArea(): {
 } {
   return { area: { x: 36, y: 20, radius: 6 }, source: 'Учебное сообщение', receivedAtMs: 40_000 };
 }
-export function overviewPlaces(): readonly {
+export function overviewPlaces(
+  knownRegionIds: ReadonlySet<string> = new Set(['home-region']),
+  places: readonly Place[] = PLACES,
+): readonly {
   readonly name: string;
   readonly x: number;
   readonly y: number;
 }[] {
-  // Coarse public anchors deliberately contain no current settlement condition.
-  return PLACES.filter((p) => p.public).map((p) => ({
-    name: p.name,
-    x: Math.round(p.x / 4) * 4,
-    y: Math.round(p.y / 4) * 4,
-  }));
+  // Fixture starts with its home chart; real grants come from the authenticated company.
+  // Chart knowledge reveals static anchors, never current settlement conditions.
+  return places
+    .filter((p) => p.onChart && knownRegionIds.has(p.regionId))
+    .map((p) => ({
+      name: p.name,
+      x: Math.round(p.x / 4) * 4,
+      y: Math.round(p.y / 4) * 4,
+    }));
 }
 export function projectGroups(
   groups: readonly Group[],
@@ -179,10 +197,10 @@ export const EXAMPLES = [
     code: rumourArea,
   },
   {
-    title: 'Общая карта и местность',
-    text: 'Обзорная карта показывает только общеизвестные опорные места. При приближении видны сведения компании, а не весь каталог мира.',
-    before: 'Общая карта',
-    after: 'Карта компании',
+    title: 'Атлас компании',
+    text: 'Сначала есть карта только домашнего региона. Карты других регионов нужно покупать или открывать землю своим отрядом. Карта даёт сведения о местности, но не наблюдение за отрядами.',
+    before: 'Домашний регион',
+    after: 'Лично исследовано',
     code: overviewPlaces,
   },
   {

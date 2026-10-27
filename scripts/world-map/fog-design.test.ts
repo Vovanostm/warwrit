@@ -4,6 +4,7 @@ import {
   GROUPS,
   canObserve,
   exampleView,
+  overviewPlaces,
   projectGroups,
   pursuitOnLoss,
   sightBudget,
@@ -70,7 +71,35 @@ describe('fog design examples — illustrative, not server protection', () => {
     );
     expect(projectGroups(hidden, base.own, base.conditions)).toEqual(base.groups);
   });
-  it('distinguishes a public overview and approximate rumour from live vision', () => {
+  it('requires regional map knowledge before charting another region and keeps secret POIs hidden', () => {
+    const places = [
+      { id: 'home-town', name: 'Home town', regionId: 'home-region', onChart: true, x: 12, y: 34 },
+      {
+        id: 'foreign-town',
+        name: 'Foreign town',
+        regionId: 'other-region',
+        onChart: true,
+        x: 60,
+        y: 10,
+      },
+      {
+        id: 'secret-site',
+        name: 'Secret site',
+        regionId: 'other-region',
+        onChart: false,
+        x: 61,
+        y: 11,
+      },
+    ];
+    expect({
+      start: overviewPlaces(new Set(['home-region']), places).map((place) => place.name),
+      acquired: overviewPlaces(new Set(['home-region', 'other-region']), places).map(
+        (place) => place.name,
+      ),
+      noKnowledge: overviewPlaces(new Set(), places),
+    }).toEqual({ start: ['Home town'], acquired: ['Home town', 'Foreign town'], noKnowledge: [] });
+  });
+  it('distinguishes a company chart and approximate rumour from live vision', () => {
     const overview = exampleView(8, false);
     const rumour = exampleView(7, true);
     expect({

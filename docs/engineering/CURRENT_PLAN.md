@@ -1,6 +1,24 @@
 # Warwrit current delivery plan
 
-## Fog of war design — 2026-10-27, LOCAL COMPLETE
+## Company regional atlas — 2026-10-28, LOCAL COMPLETE
+
+Sole author/integrator/validation owner: parent; branch `codex/world-map-fog-design`, base `7b6387a1`.
+Owner: initially only the company's home-region chart; other regions require maps or exploration.
+[Owning specification](../wiki/world/fog-of-war.md#уточнение-владельца--2026-10-28).
+Outcome: example09 names the home region and excludes unacquired regional towns.
+Scope: specification, illustrative region filter/labels, one regression and owning records.
+Chart knowledge, personal exploration and live sightings remain separate.
+No full-region reveal on border entry; purchased charts do not grant live vision.
+Current rules supersede the globally public atlas proposal; prices/trade details stay open.
+Seven model cases/types/lint/format,20 native states and source-checked audit PASS.
+Affected example09 independent visual ACCEPT, four criteria2; input replay NOT_RUN.
+No server/core/SQL or actual purchasing implementation.
+Persistent lab data preserved; no publication/merge/deploy/Orca/automation activation.
+Next separate slice: server observation and company regional knowledge/grants.
+
+## Dated history
+
+### Fog of war design — 2026-10-27, LOCAL COMPLETE
 
 Sole author/integrator/validation owner: parent; branch `codex/world-map-fog-design`.
 Owner: server visibility, terrain/weather/light, public atlas and progressive exploration.
@@ -17,8 +35,6 @@ Actual source-checked browser/unit coverage and unchanged audit PASS; CSS adviso
 Browser fixture differs from production; server/privacy/load/fun NOT_RUN/NOT_MEASURED.
 Persistent lab DB preserved; no GitHub publication/merge/deploy/Orca/automation permission.
 DoD complete for specification/examples; next separate slice: authoritative server observation/chunks.
-
-## Dated history
 
 ### Networked atlas PR delivery — 2026-10-27, MERGED
 

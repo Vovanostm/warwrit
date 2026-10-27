@@ -125,7 +125,7 @@ function drawObstacle(view: ExampleView): void {
   text({ x: at.x + 2, y: at.y - 1.8 }, forest ? 'Лес' : 'Гряда', '#e5d8ba', 17);
 }
 function drawOverview(): void {
-  // Deliberately coarse public chart; no detailed basemap, hidden POIs or groups.
+  // Company-authorized home chart; no unacquired region catalogue or live groups.
   svg('path', {
     d: 'M100 450Q350 480 770 140',
     fill: 'none',
@@ -138,7 +138,8 @@ function drawOverview(): void {
     text({ x: site.x + 2, y: site.y - 2 }, site.name, '#e5d8ba', 17);
   }
   text({ x: 33, y: 8 }, 'СЕРОЕ ПОРЕЧЬЕ', '#b8ad94', 20);
-  text({ x: 35, y: 42 }, 'Дорога нанесена схематично', '#aaa994', 13);
+  text({ x: 33, y: 10.5 }, 'Домашний регион компании', '#aaa994', 13);
+  text({ x: 35, y: 42 }, 'Другие регионы: покупка карты или разведка', '#aaa994', 13);
 }
 function renderIntel(view: ExampleView): void {
   const intel = element('intel');
@@ -201,7 +202,7 @@ function render(): void {
   const message = view.lastSeen
     ? 'Цель потеряна. Дойти до последнего места → остановиться.'
     : view.overview
-      ? 'Общая карта: известные города; текущих отрядов здесь нет.'
+      ? 'Начальный атлас: только домашний регион. Приближение не открывает другие земли.'
       : `Наблюдаемые отряды: ${view.groups.length}. Неизученная земля остаётся закрытой.`;
   element('result').textContent = message;
   map.setAttribute('aria-label', `${example.title}. ${message}`);

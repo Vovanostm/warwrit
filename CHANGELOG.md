@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Company home-region atlas
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local: owner clarified that
+  a company starts with its home-region chart only. Further regional maps must
+  be acquired or land explored personally. Updated the [owning specification](docs/wiki/world/fog-of-war.md),
+  example09 labels and chart projection, excluding towns of unacquired regions.
+  Map ownership, personal exploration and live observation stay separate;
+  economic/server implementation and prices remain outside this design correction.
+  Seven model cases/types/lint/format,20 native states and source-checked audit
+  PASS; affected example09 visual ACCEPT (four criteria2). Independent input
+  replay and production regional-map purchasing/privacy NOT_RUN.
+
 ### Fog of war design and examples
 
 - 2026-10-27, branch `codex/world-map-fog-design`, local: owner requested a

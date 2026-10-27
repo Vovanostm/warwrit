@@ -298,3 +298,21 @@ rejected missing provenance/age and unclear terrain cues; full repeated critique
 ACCEPT after fixes (four applicable scores2). Independent input replay NOT_RUN.
 DoD complete for local specification/examples only; server fog, private chunks,
 SQL/offline/reconnect integration and performance remain NOT_RUN/NOT_MEASURED.
+
+## Company home-region amendment — 2026-10-28
+
+Owner: the company starts with a chart of its home region only; many regions
+exist, and further charts must be purchased or the land explored personally.
+This supersedes the globally public strategic-chart proposal above. Acquired
+chart coverage, personal exploration and live observation remain separate.
+Scope: update the owning fog specification and example09, plus one meaningful
+regional-projection regression; no economic/server/world-content implementation.
+Parent remains sole writer/validator, current branch `codex/world-map-fog-design`.
+Unacquired regions must not reveal towns via the atlas, search, routes or assets;
+border crossing only reveals observed terrain. Prices/trade details remain open.
+No publication/merge/deploy or automation activation.
+
+Home-region correction: seven model cases, both script typechecks, scoped lint/format,
+20 native states and source-checked audit PASS. Affected example09 visual ACCEPT,
+four applicable scores2; independent input replay and actual server purchases NOT_RUN.
+Local requirement/example correction complete; production integration remains separate.
