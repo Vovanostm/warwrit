@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Mill inspection and refinement skill — 2026-10-27, LOCAL / DELIVERY
+## Mill inspection and refinement skill — 2026-10-27, PUBLISHED / CI FIX
 
 Coordinator/sole writer: Codex parent; branch `codex/mill-scene-delivery`, base `6dbdc00f`.
 Owner permission: “ok, fix, pr, merge” on 2026-10-27 authorizes this PR and normal merge.
@@ -11,11 +11,13 @@ Original worktree and all its staged/unstaged work preserved.
 Source geometry is now tracked so the golden path works without local-only Git history.
 Normal commit hook/audit PASS without bypass; web types/lint and native viewer checks PASS.
 1K recovery/roundtrip and atomic JSON interruption checks PASS.
-Source review c4a53afd found a missing Claude skill link; fixed, final readback pending.
+Independent source review ACCEPT at e61fc807; Claude discovery and atomic recovery fixed.
+[PR #329](https://github.com/Vovanostm/warwrit/pull/329): scope PASS; first CI rejected asset ?url imports.
+Changed the two asset links to standard URL resolution; browser/architecture/types/lint PASS.
 Historical material clarity 2/2; whole-scene visual REJECT remains explicitly experimental.
 No battle integration, collision/navigation, new art generation or visual acceptance claim.
 No deployment, auto/admin merge, automation or Orca activation.
-Next: normal commit/audit, independent review, PR CI and expected-head merge.
+Next: affected-source review, green PR CI and expected-head normal merge.
 
 ## Dated history
 

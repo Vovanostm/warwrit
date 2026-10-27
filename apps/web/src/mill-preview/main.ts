@@ -18,9 +18,16 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import type { Material } from '@babylonjs/core/Materials/material';
 import { Scene } from '@babylonjs/core/scene';
-import battlefieldUrl from '../../../../assets/art/combat/mill-3d-2026-10-26/battlefield.glb?url';
-import sourceUrl from '../../../../assets/art/combat/mill-3d-2026-10-26/source-battlefield.png?url';
 import './style.css';
+
+const battlefieldUrl = new URL(
+  '../../../../assets/art/combat/mill-3d-2026-10-26/battlefield.glb',
+  import.meta.url,
+).href;
+const sourceUrl = new URL(
+  '../../../../assets/art/combat/mill-3d-2026-10-26/source-battlefield.png',
+  import.meta.url,
+).href;
 
 function element<T extends HTMLElement>(id: string): T {
   const found = document.getElementById(id);

@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Mill delivery: asset URL compatibility
+
+- 2026-10-27, branch `codex/mill-scene-delivery`, published in
+  [PR #329](https://github.com/Vovanostm/warwrit/pull/329): first hosted CI stopped
+  because architecture resolution does not support Vite `?url` import suffixes.
+  Replaced the two viewer asset imports with static `new URL(..., import.meta.url)`;
+  retained the checker. Architecture, lint/types and native GLB/reference loading
+  PASS; source image decoded at 1254 square, console errors empty. Scope CI PASS;
+  full clean-checkout CI rerun pending. Prior source review ACCEPT at e61fc807.
+  [Owning result](docs/wiki/mill-3d-scene.md#поставка-отдельной-пробы--2026-10-27).
+
 ### Mill inspection and refinement delivery
 
 - 2026-10-27, branch `codex/mill-scene-delivery`, local: owner authorized fix,
