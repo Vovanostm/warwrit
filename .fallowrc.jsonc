@@ -22,6 +22,10 @@
     "scripts/world-map/world-lab.css",
     "scripts/world-map/world-lab-server.ts",
     "scripts/world-map/world-lab-vite.config.ts",
+    "scripts/world-map/world-lab.browser.mjs",
+    // Spawned through the migration shell runner.
+    "scripts/run-migration-smoke.ts",
+    "scripts/migration-smoke.ts",
     "apps/web/src/*.browser.mjs",
     // Standalone inspection page: apps/web/mill.html.
     "apps/web/src/mill-preview/main.ts",

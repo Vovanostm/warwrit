@@ -73,6 +73,24 @@ Right-click orders movement; left-drag/WASD pans, the wheel zooms, Space stops
 only your company. The nearby-place button opens a server-validated scene.
 Both clients use the same eightfold test clock; there are no private time controls.
 
+The PR audit also runs a real Chromium journey with pinned development-only
+Playwright1.64.1. `pnpm test:world:browser` uses the running isolated lab, creates
+two browser contexts and exercises fixture sessions, visits/recovery, movement,
+camera, pursuit/stale retry, transport resumption and legacy controls. Install
+Chromium with `pnpm exec playwright install chromium`; an explicit local Chrome
+executable can be supplied through `WORLD_LAB_CHROMIUM`.
+
+CI collects existing SQL execution with `WARWRIT_INTEGRATION_COVERAGE` and actual
+migration child execution with `WARWRIT_MIGRATION_RUNTIME_COVERAGE`. Defaults keep
+the normal migration command unchanged. The CI-only helper
+`scripts/world-map/check-world-lab-ci.sh` starts its owned launcher and uses a
+fresh runtime subdirectory in `output/world-lab-ci/`; it stops/waits its children
+and removes only its owned PID file. It never resets the persistent database.
+Its same-run browser/server/SQL reports supplement unit coverage through the
+source-checking merger before the unchanged audit. Missing/stale reports fail;
+previous local evidence is not uploaded as CI proof. The job budget is30 minutes
+for the existing15m28s gate plus measured SQL/browser phases.
+
 This launcher owns loopback API3038, realtime3039 and UI5338, plus the persistent
 `warwrit-world-lab` Compose project/PostgreSQL65438. It uses `compose.world-lab.yaml`
 and its own database and cookie; it never uses the campaign `DATABASE_URL`.

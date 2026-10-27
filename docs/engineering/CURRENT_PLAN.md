@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Networked atlas PR delivery — 2026-10-27, IN PROGRESS
+## Networked atlas PR delivery — 2026-10-27, CI CORRECTION
 
 Coordinator/sole writer/integrator/validation owner: parent; branch `codex/world-map-mmo-design`.
 Current owner permission: “pr, merge” authorizes this branch PR and normal merge.
@@ -12,7 +12,14 @@ Prior source/playable review and native/SQL/full-gate results retained for uncha
 Parent owns merge conflict resolution, source review integration, PR/CI and local-main update.
 Independent exact-head integration review and green applicable PR CI required before merge.
 No deployment, auto/admin merge, automation or Orca activation.
-Next: final independent source/infrastructure review, publish and verify CI.
+[PR330](https://github.com/Vovanostm/warwrit/pull/330) published at `0be69678`; source/infrastructure ACCEPT.
+CI40549906440: bootstrap/stress/SQL and unit coverage PASS; audit rejected missing SQL/browser measurements.
+Correction retains gates/thresholds: same-run SQL, browser/server and source-checked coverage merge.
+Playwright1.64.1 is pinned dev-only tooling; no new game/runtime technology or behavior.
+Local instrumented smoke/SQL74, unit1204, native six-phase journey and source-checked audit PASS.
+Source findings in the CI journey fixed; provisional infrastructure ACCEPT, exact-head readback pending.
+Browser proof now checks specific visit error and retained SDK room/session on reconnect.
+Next: complete real CI journey, review correction and rerun PR CI before expected-head merge.
 
 ## Dated history
 

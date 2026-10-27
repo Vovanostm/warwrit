@@ -7,6 +7,7 @@ const destination = process.env.WORLD_LAB_RUNTIME_COVERAGE;
 if (!destination || process.env.WORLD_LAB !== '1' || process.env.NODE_ENV === 'production')
   throw Error('Explicit development lab coverage required');
 const root = pathToFileURL(`${process.cwd()}/`).href;
+const frozenBeforeMs = Date.now();
 // An existing report must never stand in for a failed new capture.
 await writeFile(destination, '', { flag: 'wx' });
 const session = new Session();
@@ -24,7 +25,7 @@ async function sourceFor(coverage) {
   const { scriptSource } = await session.post('Debugger.getScriptSource', {
     scriptId: coverage.scriptId,
   });
-  return { ...coverage, text: scriptSource, sourceMapURL: metadata?.sourceMapURL };
+  return { ...coverage, text: scriptSource, sourceMapURL: metadata?.sourceMapURL, frozenBeforeMs };
 }
 async function captureOnce() {
   const { result } = await session.post('Profiler.takePreciseCoverage');

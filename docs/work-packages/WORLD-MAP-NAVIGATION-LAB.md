@@ -246,3 +246,21 @@ Parent is the sole writer/integrator/validation owner. Independent infrastructur
 and integration review required; prior unchanged-code visual/playable evidence is
 retained. Publish once to run the existing full clean-checkout PR gates; no duplicate
 local bootstrap. No deploy, auto/admin merge, automation or Orca activation.
+
+### Hosted CI correction
+
+PR330 at `0be69678` received independent integration/infrastructure ACCEPT.
+CI40549906440 passed the full bootstrap and unit coverage; the audit rejected
+unmeasured SQL/browser paths. Retain the same gate and thresholds. Measure the
+existing migration/SQL run, execute the existing real-browser journey with
+pinned development-only Playwright1.64.1, and merge actual same-run source-checked
+browser/server/SQL measurements before the audit. No imported local evidence or
+production behavior change. Native repro/review/green CI required for the correction.
+
+Local correction readback: instrumented migration smoke/SQL74, unit1204, real
+six-phase Chromium journey and source-checked audit PASS. Visit probe now waits
+for the accepted command's later rendered snapshot and a specific network error;
+SDK resumption verifies the same room/session, not a new room admission. Unique
+runtime folders retain past failures; owned launcher/API/web cleanup waits and
+removes only its PID file. Source concerns closed, provisional infrastructure
+ACCEPT. Normal commit/exact-head review and hosted CI still pending.

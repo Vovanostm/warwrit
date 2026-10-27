@@ -66,6 +66,9 @@ importers:
       kysely:
         specifier: ^0.28.17
         version: 0.28.17
+      playwright:
+        specifier: 1.64.1
+        version: 1.64.1
       prettier:
         specifier: ^3.0.0
         version: 3.9.6
@@ -2140,6 +2143,16 @@ packages:
   playcanvas@2.22.4:
     resolution: {integrity: sha512-mcL+1Bl1q/apzU0CLMHMQ3eYrvr3kzPtXtJe8rOYbu7xVPA47fvpL73oCzx6dtCyOxj6bldKIA0GC8maJRtYgA==}
     engines: {node: '>=18.3.0'}
+
+  playwright-core@1.64.1:
+    resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.64.1:
+    resolution: {integrity: sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCfVURu7UA==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   postcss@8.5.26:
     resolution: {integrity: sha512-u82N74LFzG8ca+dD8puPnplTXoGH4fTPpVGuIbt36G3qvNlkvfD0lEAZSxaly3KX8TS/L1A1gsCEmvKmBcVbkQ==}
@@ -4553,6 +4566,12 @@ snapshots:
     dependencies:
       '@types/webxr': 0.5.24
       '@webgpu/types': 0.1.74
+
+  playwright-core@1.64.1: {}
+
+  playwright@1.64.1:
+    dependencies:
+      playwright-core: 1.64.1
 
   postcss@8.5.26:
     dependencies:

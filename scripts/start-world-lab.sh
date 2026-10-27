@@ -22,12 +22,17 @@ web_pid=''
 cleanup() {
   [[ -z "$api_pid" ]] || kill "$api_pid" 2>/dev/null || true
   [[ -z "$web_pid" ]] || kill "$web_pid" 2>/dev/null || true
+  [[ -z "$api_pid" ]] || wait "$api_pid" 2>/dev/null || true
+  [[ -z "$web_pid" ]] || wait "$web_pid" 2>/dev/null || true
 }
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 node "${api_imports[@]}" scripts/world-map/world-lab-server.ts &
 api_pid=$!
+if [[ -n "${WORLD_LAB_RUNTIME_PID_FILE:-}" ]]; then
+  (set -o noclobber; printf '%s\n' "$api_pid" > "$WORLD_LAB_RUNTIME_PID_FILE")
+fi
 node apps/web/node_modules/vite/bin/vite.js --config scripts/world-map/world-lab-vite.config.ts &
 web_pid=$!
 printf '\nShared world laboratory: http://127.0.0.1:5338/scripts/world-map/world-lab.html\n'

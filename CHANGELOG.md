@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Networked atlas CI measurements
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local correction to
+  [PR330](https://github.com/Vovanostm/warwrit/pull/330): CI40549906440 passed
+  bootstrap/stress/SQL and unit coverage but its audit had no SQL/browser evidence.
+  Add same-run coverage to the existing SQL execution, real Chromium/server
+  journeys and guarded source-matched report merging. Pin Playwright1.64.1 as
+  development tooling; preserve all thresholds and default migration behavior.
+  Instrumented migration smoke/SQL74, unit1204, real six-phase browser journey,
+  source-checked merge and unchanged audit PASS locally. Driver waits for the
+  accepted order's rendered snapshot, specific visit interruption and retained SDK
+  session on reconnect. Unique runtime directories and waited child cleanup retain
+  prior evidence without reusing it. Source concerns closed; provisional independent
+  infrastructure ACCEPT, exact-head/hosted CI pending.
+  [Owning delivery](docs/wiki/world/map.md#поставка-сетевого-атласа--2026-10-27).
+
 ### Networked atlas PR integration
 
 - 2026-10-27, branch `codex/world-map-mmo-design`, local: owner authorized
