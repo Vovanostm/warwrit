@@ -12,7 +12,30 @@ export interface WorldLabObservedGroupDto {
   readonly state: 'MOVING' | 'IDLE';
   readonly observedAtMs: string;
   readonly movementEpoch: string;
+  readonly pursuable?: boolean;
 }
+export const WORLD_LAB_PURSUIT_ORDER_HEADER = 'x-warwrit-pursuit-order';
+/** A conditional order token, never authentication or company ownership. */
+export const worldLabPursuitToken = (orderId?: string | null): string =>
+  orderId ? `pursuit:${orderId}` : 'none';
+
+export interface WorldLabPursuitDto {
+  readonly orderId: string;
+  readonly targetId: string;
+  readonly targetName: string;
+  readonly lastPoint: WorldPointMicroFpDto;
+  readonly status: 'CHASING' | 'LAST_SEEN' | 'REACHED' | 'BLOCKED';
+  readonly movementEpoch: string;
+}
+
+export interface WorldLabPursuitRequestDto {
+  readonly schemaVersion: 1;
+  readonly commandId: string;
+  readonly expectedPublicRevision: string;
+  readonly expectedMovementEpoch: string;
+  readonly targetGroupId: string;
+}
+
 export interface WorldLabStateDto {
   readonly schemaVersion: 1;
   readonly worldId: string;
@@ -31,6 +54,8 @@ export interface WorldLabStateDto {
   };
   /** Only currently observed groups; no private plans or AI goals. */
   readonly groups: readonly WorldLabObservedGroupDto[];
+  /** Own accepted pursuit only; never another company's target. */
+  readonly pursuit?: WorldLabPursuitDto | null;
   readonly nearbySite: { readonly siteId: string; readonly name: string } | null;
 }
 export interface WorldLabSessionDto {

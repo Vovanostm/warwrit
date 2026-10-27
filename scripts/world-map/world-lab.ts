@@ -1,8 +1,11 @@
 import { Client, type Room, type SeatReservation } from '@colyseus/sdk';
 import {
   WORLD_EXPECTED_COMPANY_ID_HEADER,
+  WORLD_LAB_PURSUIT_ORDER_HEADER,
+  worldLabPursuitToken,
   type WorldFreeMovementV2RequestDto,
   type WorldLabObservedGroupDto,
+  type WorldLabPursuitRequestDto,
   type WorldLabRoomTicketDto,
   type WorldLabSlot,
   type WorldLabStateDto,
@@ -47,6 +50,7 @@ let snapshot: WorldLabStateDto | undefined;
 let room: Room | undefined;
 let connectionAttempt = 0;
 let sessionGeneration = 0;
+let movementOrderGeneration = 0;
 let reconnectTimer = 0;
 let lastSnapshotReceivedAt = 0;
 let snapshotServerTimeMs = 0;
@@ -155,6 +159,7 @@ function groupGlyph(group: WorldLabObservedGroupDto): SVGGElement {
   marker = document.createElementNS(SVG_NS, 'g');
   marker.classList.add('group', 'observed');
   marker.dataset['kind'] = group.kind;
+  marker.dataset['groupId'] = group.id;
   marker.setAttribute('tabindex', '0');
   marker.setAttribute('role', 'img');
   const symbol = document.createElementNS(
@@ -178,7 +183,23 @@ function groupGlyph(group: WorldLabObservedGroupDto): SVGGElement {
   else symbol.setAttribute('r', '10');
   const label = document.createElementNS(SVG_NS, 'text');
   label.setAttribute('y', '27');
-  marker.append(symbol, label);
+  const hit = document.createElementNS(SVG_NS, 'circle');
+  hit.setAttribute('r', '17');
+  hit.classList.add('group-hit');
+  const ring = document.createElementNS(SVG_NS, 'circle');
+  // Keep the selected threat visible even when the own 17px marker overlaps it.
+  ring.setAttribute('r', '25');
+  ring.classList.add('pursuit-ring');
+  marker.append(hit, ring, symbol, label);
+  marker.addEventListener('keydown', (event) => {
+    if (
+      event.key === 'Enter' &&
+      snapshot?.groups.some((entry) => entry.id === group.id && entry.pursuable)
+    ) {
+      event.preventDefault();
+      void commandMovement({ kind: 'PURSUE', targetGroupId: group.id });
+    }
+  });
   const showIdentity = () => showContactIdentity(group.id);
   const clearIdentity = () => {
     if (focusedGroupId === group.id) showContactIdentity();
@@ -205,9 +226,14 @@ function renderGroups(groups: readonly WorldLabObservedGroupDto[]) {
     present.add(group.id);
     const marker = groupGlyph(group);
     marker.dataset['kind'] = group.kind;
+    marker.setAttribute('role', group.pursuable ? 'button' : 'img');
+    marker.toggleAttribute(
+      'data-pursuit-target',
+      snapshot?.pursuit?.status === 'CHASING' && snapshot.pursuit.targetId === group.id,
+    );
     marker.setAttribute(
       'aria-label',
-      `${group.name} · ${group.state === 'MOVING' ? 'движется' : 'стоит'}`,
+      `${group.name} · ${group.state === 'MOVING' ? 'движется' : 'стоит'}${group.pursuable ? ' · ПКМ — преследовать' : ''}`,
     );
     marker.querySelector('text')!.textContent = group.name;
     setMarker(marker, group.point);
@@ -251,12 +277,36 @@ function renderRoute(state: WorldLabStateDto) {
   setMarker($<SVGGElement>('own-marker'), movement.point);
   $('stop').toggleAttribute(
     'disabled',
-    movement.mode !== 'MOVING' || performance.now() - lastSnapshotReceivedAt > MAX_SNAPSHOT_AGE_MS,
+    !hasMovementOrder() || performance.now() - lastSnapshotReceivedAt > MAX_SNAPSHOT_AGE_MS,
   );
   $('own-state').textContent =
-    movement.mode === 'MOVING'
+    pursuitMessage(state) ??
+    (movement.mode === 'MOVING'
       ? 'Идёт по принятому сервером маршруту.'
-      : 'Стоит. Можно задать новый путь правой кнопкой мыши.';
+      : 'Стоит. Можно задать новый путь правой кнопкой мыши.');
+}
+
+function hasMovementOrder() {
+  return Boolean(
+    snapshot?.pursuit?.status === 'CHASING' || snapshot?.own.movement.mode === 'MOVING',
+  );
+}
+
+function pursuitMessage(state: WorldLabStateDto): string | undefined {
+  const pursuit = state.pursuit;
+  if (!pursuit) return undefined;
+  switch (pursuit.status) {
+    case 'CHASING':
+      return `Преследует: ${pursuit.targetName}.`;
+    case 'LAST_SEEN':
+      return state.own.movement.mode === 'MOVING'
+        ? 'Цель скрылась. Идёт к последнему замеченному месту.'
+        : 'След потерян. Отряд у последнего замеченного места.';
+    case 'REACHED':
+      return 'Цель рядом. Отряд остановился.';
+    case 'BLOCKED':
+      return 'Преследование прекращено: путь недоступен.';
+  }
 }
 
 function centerOnOwn() {
@@ -287,7 +337,7 @@ function snapshotIsFresh() {
 
 function updateFreshness() {
   const fresh = snapshotIsFresh();
-  $('stop').toggleAttribute('disabled', !fresh || snapshot?.own.movement.mode !== 'MOVING');
+  $('stop').toggleAttribute('disabled', !fresh || !hasMovementOrder());
   $('enter-site').toggleAttribute('disabled', !fresh || !snapshot?.nearbySite);
   $('center-own').toggleAttribute('disabled', !snapshot);
   if (!snapshot) return;
@@ -554,44 +604,92 @@ async function selectFixture(slot: WorldLabSlot) {
   }
 }
 
-async function commandMovement(action: WorldFreeMovementV2RequestDto['action']): Promise<boolean> {
+async function commandMovement(
+  action:
+    | WorldFreeMovementV2RequestDto['action']
+    | { readonly kind: 'PURSUE'; readonly targetGroupId: string },
+  retryStale = true,
+  expectedPursuitOrderId?: string,
+): Promise<boolean> {
   if (!snapshot || !snapshotIsFresh()) {
     message.textContent = 'Состояние карты устарело. Дождитесь обновления перед приказом.';
     updateFreshness();
     return false;
   }
   const generation = sessionGeneration;
+  const order = ++movementOrderGeneration;
   const companyId = snapshot.own.companyId;
+  const pursuitOrderId = expectedPursuitOrderId ?? snapshot.pursuit?.orderId;
   const movement = snapshot.own.movement;
-  const request: WorldFreeMovementV2RequestDto = {
-    schemaVersion: 2,
+  const base = {
     commandId: crypto.randomUUID(),
     expectedPublicRevision: movement.publicRevision,
     expectedMovementEpoch: movement.movementEpoch,
-    action,
   };
+  const pursuing = action.kind === 'PURSUE';
+  const request: WorldFreeMovementV2RequestDto | WorldLabPursuitRequestDto = pursuing
+    ? { schemaVersion: 1, ...base, targetGroupId: action.targetGroupId }
+    : { schemaVersion: 2, ...base, action };
   try {
-    const { response, body } = await jsonRequest(`${API}/movement`, {
+    const { response, body } = await jsonRequest(`${API}/${pursuing ? 'pursuit' : 'movement'}`, {
       method: 'POST',
-      headers: { ...requestHeaders, [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId },
+      headers: {
+        ...requestHeaders,
+        [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId,
+        [WORLD_LAB_PURSUIT_ORDER_HEADER]: worldLabPursuitToken(pursuitOrderId),
+      },
       body: JSON.stringify(request),
     });
-    if (generation !== sessionGeneration) return false;
-    if (!response.ok)
-      throw new Error(
-        record(body) && typeof body['code'] === 'string'
-          ? `Приказ отклонён: ${body['code']}`
-          : 'Приказ не принят сервером.',
-      );
-    message.textContent = 'Приказ принят сервером.';
+    if (!isCurrentMovementOrder(generation, order)) return false;
+    if (retryStale && isStaleMovementResponse(response, body)) {
+      return await retryCurrentPursuitOrder(action, generation, order, pursuitOrderId);
+    }
+    if (!response.ok) throw new Error(movementFailureMessage(body));
+    message.textContent = pursuing
+      ? 'Преследование принято. Пробел — остановиться.'
+      : 'Приказ принят сервером.';
     await loadState(generation);
     return true;
   } catch (error) {
-    if (generation !== sessionGeneration) return false;
+    if (!isCurrentMovementOrder(generation, order)) return false;
     reportError(error);
     await loadState(generation).catch(() => undefined);
     return false;
   }
+}
+
+async function retryCurrentPursuitOrder(
+  action: Parameters<typeof commandMovement>[0],
+  generation: number,
+  order: number,
+  pursuitOrderId: string | undefined,
+): Promise<boolean> {
+  await loadState(generation);
+  if (!isCurrentMovementOrder(generation, order)) return false;
+  if (!pursuitOrderId || snapshot?.pursuit?.orderId !== pursuitOrderId)
+    throw new Error('Положение изменилось. Проверьте карту и повторите приказ.');
+  return commandMovement(action, false, pursuitOrderId);
+}
+
+function isCurrentMovementOrder(generation: number, order: number) {
+  return generation === sessionGeneration && order === movementOrderGeneration;
+}
+
+function isStaleMovementResponse(response: Response, body: unknown) {
+  return (
+    response.status === 409 &&
+    record(body) &&
+    ['STALE_REVISION', 'STALE_MOVEMENT_EPOCH'].includes(String(body['code']))
+  );
+}
+
+function movementFailureMessage(body: unknown): string {
+  if (!record(body)) return 'Приказ не принят сервером.';
+  if (body['code'] === 'TARGET_NOT_VISIBLE')
+    return 'Цель недоступна для преследования. Дождитесь нового наблюдения.';
+  return typeof body['code'] === 'string'
+    ? `Приказ отклонён: ${body['code']}`
+    : 'Приказ не принят сервером.';
 }
 
 function mapPoint(event: MouseEvent): Pixel {
@@ -630,6 +728,13 @@ const drag = bindMapPanDrag(map, {
 map.addEventListener('contextmenu', (event) => {
   event.preventDefault();
   map.focus({ preventScroll: true });
+  const groupMarker =
+    event.target instanceof Element ? event.target.closest<SVGGElement>('[data-group-id]') : null;
+  const group = snapshot?.groups.find((entry) => entry.id === groupMarker?.dataset['groupId']);
+  if (group?.pursuable) {
+    void commandMovement({ kind: 'PURSUE', targetGroupId: group.id });
+    return;
+  }
   const site =
     event.target instanceof Element ? event.target.closest<SVGGElement>('[data-site-id]') : null;
   issueMove(mapPoint(event), site?.dataset['siteId']);
@@ -652,7 +757,7 @@ map.addEventListener(
 );
 
 const panKeys = bindMapPanKeys(map, () => {
-  if (snapshot?.own.movement.mode === 'MOVING') void commandMovement({ kind: 'STOP' });
+  if (hasMovementOrder()) void commandMovement({ kind: 'STOP' });
 });
 
 function animate(now: number) {
@@ -679,7 +784,7 @@ $('fit').addEventListener('click', () =>
 );
 $('center-own').addEventListener('click', centerOnOwn);
 $('stop').addEventListener('click', () => {
-  if (snapshot?.own.movement.mode === 'MOVING') void commandMovement({ kind: 'STOP' });
+  if (hasMovementOrder()) void commandMovement({ kind: 'STOP' });
 });
 $('fixture-login')
   .querySelectorAll<HTMLButtonElement>('[data-slot]')
@@ -707,7 +812,7 @@ async function visitNearbySite() {
     return;
   }
   const generation = sessionGeneration;
-  if (snapshot.own.movement.mode === 'MOVING' && !(await commandMovement({ kind: 'STOP' }))) return;
+  if (hasMovementOrder() && !(await commandMovement({ kind: 'STOP' }))) return;
   try {
     const { response, body } = await jsonRequest(`${API}/visit`, {
       method: 'POST',

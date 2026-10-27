@@ -111,3 +111,20 @@ test('overlapping reads retain newer visible NPC epochs without retaining lost c
     [current.groups, [], newer.groups],
   );
 });
+
+test('pursuit metadata is own-only and unknown pursuit modes cannot enter the UI', () => {
+  const pursuit = {
+    orderId: 'pursuit-1',
+    targetId: 'wolf',
+    targetName: 'Стая',
+    lastPoint: snapshot.groups[0]!.point,
+    status: 'CHASING',
+    movementEpoch: '1',
+  };
+  const valid = { ...snapshot, pursuit };
+  assert.equal(readWorldLabState(valid), valid);
+  assert.equal(
+    readWorldLabState({ ...valid, pursuit: { ...pursuit, status: 'HIDDEN_TRACKING' } }),
+    undefined,
+  );
+});

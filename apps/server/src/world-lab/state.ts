@@ -5,7 +5,7 @@ import {
 } from '@warwrit/game-core';
 import type { PointFp } from '@warwrit/game-core';
 import type { WorldLabObservedGroupDto, WorldLabSlot, WorldLabStateDto } from '@warwrit/protocol';
-import { sql, type Kysely } from 'kysely';
+import { sql, type Kysely, type Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 import { readWorldClock, readWorldLight } from '../world/clock.js';
@@ -16,6 +16,7 @@ import {
 import { readWorldLabNpcGroups } from './npc-store.js';
 import { worldLabNpcObservation } from './npc-worker.js';
 import type { WorldLabFixture } from './model.js';
+import { readWorldLabPursuit } from './pursuit-store.js';
 
 // Explicitly oversized for the six-group mechanics lab; this is not an MMO sight rule.
 const LAB_SIGHT_RADIUS_FP = 1_024;
@@ -78,6 +79,7 @@ async function observeNearbyPlayers(
       groups.push({
         id: other.companyId,
         kind: 'PLAYER',
+        pursuable: false,
         name: other.name,
         point: movement.point,
         state: movement.mode === 'MOVING' ? 'MOVING' : 'IDLE',
@@ -96,6 +98,12 @@ export async function readWorldLabState(
   now: Date | (() => Date) = () => new Date(),
   timeScale = 1,
 ): Promise<WorldLabStateDto | undefined> {
+  if (!database.isTransaction)
+    return database
+      .transaction()
+      .execute((transaction) =>
+        readWorldLabState(transaction, worldId, fixtures, accountId, now, timeScale),
+      );
   const ownFixture = fixtures.find((fixture) => fixture.accountId === accountId);
   if (!ownFixture) return undefined;
   const ownMovement = await readContinuousMovementSnapshot(
@@ -115,9 +123,7 @@ export async function readWorldLabState(
   // a new plan after the observation request began.
   const npcGroups = await readWorldLabNpcGroups(database, worldId);
   const observedNow = typeof now === 'function' ? now() : now;
-  const clock = await database
-    .transaction()
-    .execute((transaction) => readWorldClock(transaction, worldId, observedNow));
+  const clock = await readWorldClock(database as Transaction<DatabaseSchema>, worldId, observedNow);
   const light = readWorldLight(clock).phase;
   for (const group of npcGroups) {
     if (group.mapEdition !== PAINTED_ATLAS_REGION.mapEdition)
@@ -130,7 +136,7 @@ export async function readWorldLabState(
         Number(observed.point.zMicroFp) / 65_536 - ownPoint.zFp,
       ) <= LAB_SIGHT_RADIUS_FP
     )
-      groups.push(observed);
+      groups.push({ ...observed, pursuable: group.kind !== 'PATROL' });
   }
   groups.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   const nearby = paintedAtlasNearbySite(navigationField, ownMovement.point);
@@ -153,6 +159,7 @@ export async function readWorldLabState(
       movement: ownMovement,
     },
     groups,
+    pursuit: await readWorldLabPursuit(database, worldId, ownFixture.companyId),
     nearbySite: nearby ? { siteId: nearby.siteId, name: nearby.name } : null,
   };
 }

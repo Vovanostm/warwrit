@@ -327,3 +327,25 @@ dialog::backdrop {
 dialog h2 {
   font-family: Georgia, serif;
 }
+
+.observed .group-hit {
+  fill: transparent;
+  stroke: none;
+}
+.observed .pursuit-ring {
+  display: none;
+  fill: none;
+  stroke: #d98c72;
+  stroke-width: 3;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+.observed[data-pursuit-target] .pursuit-ring {
+  display: block;
+}
+.observed[data-pursuit-target] text {
+  transform: translateY(10px);
+}
+.observed[role='button'] {
+  cursor: crosshair;
+}

@@ -67,6 +67,12 @@ interface ContinuousMovementOptions {
   readonly region?: NavigationRegion;
   readonly now?: () => Date;
   readonly sessionCookieName?: string;
+  /** Adapter-owned atomic composition with another persisted world intent. */
+  readonly execute?: (
+    input: WorldFreeMovementV2RequestDto,
+    accountId: string,
+    expectedCompanyId: unknown,
+  ) => Promise<WorldFreeMovementV2ResponseDto>;
 }
 type RejectionCode = WorldFreeMovementV2RejectionDto['code'];
 type TrustedMovementTime = Date | (() => Date);
@@ -74,7 +80,7 @@ function movementNow(time: TrustedMovementTime): Date {
   return typeof time === 'function' ? time() : time;
 }
 
-class MovementRejection extends Error {
+export class MovementRejection extends Error {
   constructor(readonly code: RejectionCode) {
     super(code);
   }
@@ -102,8 +108,9 @@ const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
 const exact = (value: Record<string, unknown>, keys: readonly string[]) =>
   Object.keys(value).length === keys.length && keys.every((key) => Object.hasOwn(value, key));
-const decimal = (v: unknown): v is string => typeof v === 'string' && /^(0|[1-9]\d{0,18})$/.test(v);
-const id = (v: unknown): v is string =>
+export const isWorldMovementRevision = (v: unknown): v is string =>
+  typeof v === 'string' && /^(0|[1-9]\d{0,18})$/.test(v);
+export const isWorldMovementId = (v: unknown): v is string =>
   typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(v);
 
 function parseContinuousMovementRequest(value: unknown): WorldFreeMovementV2RequestDto | undefined {
@@ -117,9 +124,9 @@ function parseContinuousMovementRequest(value: unknown): WorldFreeMovementV2Requ
       'action',
     ]) ||
     value['schemaVersion'] !== 2 ||
-    !id(value['commandId']) ||
-    !decimal(value['expectedPublicRevision']) ||
-    !decimal(value['expectedMovementEpoch']) ||
+    !isWorldMovementId(value['commandId']) ||
+    !isWorldMovementRevision(value['expectedPublicRevision']) ||
+    !isWorldMovementRevision(value['expectedMovementEpoch']) ||
     !object(value['action'])
   )
     return undefined;
@@ -129,14 +136,14 @@ function parseContinuousMovementRequest(value: unknown): WorldFreeMovementV2Requ
   if (
     a['kind'] !== 'MOVE_TO' ||
     !exact(a, ['kind', 'mapEdition', 'target']) ||
-    !id(a['mapEdition']) ||
+    !isWorldMovementId(a['mapEdition']) ||
     !object(a['target'])
   )
     return undefined;
   const t = a['target'];
   const valid =
     t['kind'] === 'SITE'
-      ? exact(t, ['kind', 'siteId']) && id(t['siteId'])
+      ? exact(t, ['kind', 'siteId']) && isWorldMovementId(t['siteId'])
       : t['kind'] === 'TERRAIN' &&
         exact(t, ['kind', 'xFp', 'zFp']) &&
         Number.isSafeInteger(t['xFp']) &&
@@ -149,7 +156,7 @@ function readContinuous(row: StoredPartyRoute | undefined): StoredContinuousMove
     return undefined;
   const s = row.accepted_route as unknown as StoredContinuousMovement;
   if (
-    !id(s.acceptedByAccountId) ||
+    !isWorldMovementId(s.acceptedByAccountId) ||
     s.execution?.schemaVersion !== 2 ||
     s.execution.partyId !== row.party_id ||
     s.execution.routeEpoch !== row.route_epoch ||
@@ -167,10 +174,10 @@ function readContinuous(row: StoredPartyRoute | undefined): StoredContinuousMove
   // Projection also validates the frozen time origin; no current map rebake of accepted plans.
   readContinuousMovementPlan(s.execution.plan);
   if (
-    !decimal(s.execution.startedAt) ||
-    !decimal(s.execution.arrivesAt) ||
+    !isWorldMovementRevision(s.execution.startedAt) ||
+    !isWorldMovementRevision(s.execution.arrivesAt) ||
     BigInt(s.execution.arrivesAt) < BigInt(s.execution.startedAt) ||
-    (s.lastBoundaryMs !== undefined && !decimal(s.lastBoundaryMs)) ||
+    (s.lastBoundaryMs !== undefined && !isWorldMovementRevision(s.lastBoundaryMs)) ||
     (s.execution.plan.movementEpoch !== s.execution.routeEpoch && s.status === 'MOVING') ||
     (row.status === 'IN_TRANSIT') !== (s.status === 'MOVING')
   )
@@ -396,7 +403,7 @@ export function prepareDueContinuousMovement(
       execution?.schemaVersion !== 1 ||
       execution.regionVersion !== WORLD_REGION_VERSION ||
       execution.partyId !== row.party_id ||
-      !decimal(execution.arrivesAt)
+      !isWorldMovementRevision(execution.arrivesAt)
     )
       throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
     if (BigInt(clock.tick) >= BigInt(execution.arrivesAt)) {
@@ -696,6 +703,15 @@ export async function handleContinuousMovementRead(
   }
 }
 
+function movementTransaction<T>(
+  database: Kysely<DatabaseSchema>,
+  action: (transaction: Transaction<DatabaseSchema>) => Promise<T>,
+): Promise<T> {
+  return database.isTransaction
+    ? action(database as Transaction<DatabaseSchema>)
+    : database.transaction().execute(action);
+}
+
 export async function readContinuousMovementSnapshot(
   database: Kysely<DatabaseSchema>,
   worldId: string,
@@ -704,7 +720,7 @@ export async function readContinuousMovementSnapshot(
   now: TrustedMovementTime = () => new Date(),
   expectedCompanyId?: string,
 ): Promise<WorldFreeMovementV2ResponseDto> {
-  return database.transaction().execute(async (tx) => {
+  return movementTransaction(database, async (tx) => {
     await tx
       .selectFrom('identity_accounts')
       .select('id')
@@ -756,7 +772,7 @@ export async function readContinuousMovementProjection(
   readonly partyId: string;
   readonly movement: WorldFreeMovementV2ResponseDto;
 }> {
-  return database.transaction().execute(async (transaction) => {
+  return movementTransaction(database, async (transaction) => {
     const state = await loadCompanyAggregate(transaction, worldId, companyId);
     const party = state?.economy.lifecycle.parties[0];
     if (!state || !party) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
@@ -780,8 +796,9 @@ export async function executeContinuousMovement(
   input: WorldFreeMovementV2RequestDto,
   region: NavigationRegion = CONTINUOUS_WORLD_REGION,
   now: TrustedMovementTime = () => new Date(),
+  requestIdentity: unknown = input,
 ) {
-  return database.transaction().execute(async (tx) => {
+  return movementTransaction(database, async (tx) => {
     const account = await tx
       .selectFrom('identity_accounts')
       .select('id')
@@ -794,7 +811,7 @@ export async function executeContinuousMovement(
       throw new MovementRejection('NOT_AUTHORIZED');
     const state = await lockCompanyAggregate(tx, worldId, companyId);
     if (!state) throw new MovementRejection('NOT_AUTHORIZED');
-    const key = canonicalJson(input),
+    const key = canonicalJson(requestIdentity),
       replay = await readWorldRouteReceipt(tx, worldId, companyId, input.commandId);
     if (replay) {
       if (replay.account_id !== accountId) throw new MovementRejection('NOT_AUTHORIZED');
@@ -1076,15 +1093,21 @@ export async function handleContinuousMovementPost(
     return reply
       .header('Cache-Control', 'no-store')
       .send(
-        await executeContinuousMovement(
-          options.database,
-          options.worldId,
-          accountId,
-          request.headers[WORLD_EXPECTED_COMPANY_ID_HEADER],
-          input,
-          options.region,
-          options.now,
-        ),
+        options.execute
+          ? await options.execute(
+              input,
+              accountId,
+              request.headers[WORLD_EXPECTED_COMPANY_ID_HEADER],
+            )
+          : await executeContinuousMovement(
+              options.database,
+              options.worldId,
+              accountId,
+              request.headers[WORLD_EXPECTED_COMPANY_ID_HEADER],
+              input,
+              options.region,
+              options.now,
+            ),
       );
   } catch (error) {
     if (error instanceof MovementRejection || error instanceof RangeError) {

@@ -125,3 +125,38 @@ Additional stationary-company/retained-trip regression PASS; latest ordinary-run
 restart and seven native smoke checks PASS. Code committed locally as `114028e3`;
 no publication, merge or production acceptance.
 Detailed results and limits belong to the [map page](../wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
+
+## Pursuit amendment — 2026-10-27
+
+Owner: RMB on an enemy must pursue the moving group, not its clicked point.
+Local scope: BANDITS/WILDLIFE/CREATURE observed by the existing lab sight policy;
+players/patrols stay neutral. Server retains intent and replans only while observed,
+using the existing authenticated movement executor and costs/barriers. Space and
+successful terrain/site orders cancel intent atomically; rejected/replayed old
+orders cannot resurrect/cancel a newer intent. No automatic battle or PvP.
+Shared server worker runs independently of rooms. A small explicit lab proximity
+threshold ends pursuit at a reachable nearby point; no contact/battle claim.
+Owner accepted loss of sight: last observed point, then stop;
+no position updates from a hidden target. Parent owns code/docs/resources/checks.
+Acceptance: actual moving bandit pursuit changes goal without repeated clicks,
+STOP/new ground order wins, hidden/neutral/foreign targets rejected, no terrain
+bypass, persistence/restart and old point navigation preserved. Focused real SQL,
+client types/native journeys plus independent source/playable critique required.
+No new publication/merge/deploy or automation activation.
+
+### Pursuit implementation checkpoint — 2026-10-27
+
+Stable server orderId survives worker replans; the current client sends an
+expected pursuit token. Under the owner lock, a new order with a different token
+is rejected; exact old receipts remain replayable without changing intent.
+A stale revision can be retried once only while the same pursuit order remains.
+Optional header preserves original laboratory request compatibility.
+Migrations0016/0017 are additive and guard rollback with retained pursuit data.
+Seven focused cases,23 actual SQL cases, migration smoke, types/lint and bounded
+native pursuit/cancellation/two-window probes PASS. Independent source reviewer
+found no material defect. Clean bootstrap verify1204/stress10000/smoke+SQL74 PASS.
+After client-only helper/ring edits: focused types/lint and native orders rerun;
+server/core gate results remain applicable. Independent visual ACCEPT, six scores2;
+critic native replay NOT_RUN, author native checks separate. Source helper readback
+ACCEPT; navigation42 PASS; normal commit audit pending, no bypass.
+[Owning result and honest probe limits](../wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).

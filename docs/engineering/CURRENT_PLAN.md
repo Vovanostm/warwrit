@@ -1,6 +1,30 @@
 # Warwrit current delivery plan
 
-## Networked atlas first cycle — 2026-10-26, LOCAL COMPLETE
+## Observed hostile pursuit — 2026-10-27, VALIDATING
+
+Sole writer/integrator: Codex parent, branch `codex/world-map-mmo-design`, base `060dddd3`.
+Owner: RMB on enemy follows the group rather than its clicked position.
+[Active contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#pursuit-amendment--2026-10-27).
+Scope: lab hostile NPC pursuit, persisted intent, existing authoritative mover.
+Visible threats only; neutral players/patrols stay neutral; no battle/PvP.
+STOP/new valid ground/site order cancels atomically; rejected/replayed orders do not.
+Loss of sight accepted by owner: last observed destination, then stop; no hidden tracking.
+Own UI labels/target indicator and existing camera controls; no new art.
+Parent owns source/resources/docs/validation; independent source and visual ACCEPT.
+Lab ports3038/3039/5338, persistent PostgreSQL65438; old5326/other WIP preserved.
+Source graph points to a different checkout; use current source as proof.
+Full current WORLD/RC Notes+Purpose read; original archive limitation retained.
+Focused7/types/lint and real-PG23 + migration smoke PASS.
+Native moving target/STOP/ground, stale retry and two-window ordering confirmed.
+Independent source ACCEPT; clean verify1204/stress10000/migration smoke+SQL74 PASS.
+Client helper/ring refinements: types/lint/native repeated; visual ACCEPT, six scores2.
+Navigation42 PASS; normal commit audit pending, no bypass.
+[Current result and limits](../wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
+No PR/push/merge/deploy/Orca/automation activation authorized.
+
+## Dated history
+
+### Networked atlas first cycle — 2026-10-26, LOCAL COMPLETE
 
 Coordinator/integrator/shared writer: Codex parent; branch `codex/world-map-mmo-design`.
 Owner: “Implement - delegate subagents”; local implementation and bounded delegation.
@@ -21,8 +45,6 @@ Code `114028e3`: normal related-test hook + audit PASS, no bypass.
 Latest plain-runtime native MOVE/STOP/water/persistence/error checks7 PASS.
 Next: owner trial of this six-group lab; production integration is a separate slice.
 Runtime evidence is bounded to six groups; load/fun/full MMO NOT_MEASURED.
-
-## Dated history
 
 ### MMO map movement design — 2026-10-26, LOCAL PROPOSAL
 

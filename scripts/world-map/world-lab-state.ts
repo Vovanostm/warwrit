@@ -51,7 +51,8 @@ function isObservedGroup(value: unknown): value is WorldLabObservedGroupDto {
     ['MOVING', 'IDLE'].includes(String(value['state'])) &&
     isPoint(value['point']) &&
     isDecimal(value['observedAtMs']) &&
-    isDecimal(value['movementEpoch'])
+    isDecimal(value['movementEpoch']) &&
+    (value['pursuable'] === undefined || typeof value['pursuable'] === 'boolean')
   );
 }
 
@@ -82,10 +83,25 @@ function isOwnCompany(value: unknown): boolean {
   );
 }
 
+function isPursuit(value: unknown): boolean {
+  return (
+    value === undefined ||
+    value === null ||
+    (isRecord(value) &&
+      typeof value['orderId'] === 'string' &&
+      typeof value['targetId'] === 'string' &&
+      typeof value['targetName'] === 'string' &&
+      isPoint(value['lastPoint']) &&
+      isDecimal(value['movementEpoch']) &&
+      ['CHASING', 'LAST_SEEN', 'REACHED', 'BLOCKED'].includes(String(value['status'])))
+  );
+}
+
 function isWorldProjection(value: Record<string, unknown>): boolean {
   return (
     Array.isArray(value['groups']) &&
     value['groups'].every(isObservedGroup) &&
+    isPursuit(value['pursuit']) &&
     (value['nearbySite'] === null ||
       (isRecord(value['nearbySite']) &&
         typeof value['nearbySite']['siteId'] === 'string' &&

@@ -71,6 +71,8 @@ export type { WorldContinuousMapDto } from './world.js';
 
 export type {
   WorldLabVisitDto,
+  WorldLabPursuitDto,
+  WorldLabPursuitRequestDto,
   WorldLabSlot,
   WorldLabGroupKind,
   WorldLabObservedGroupDto,
@@ -78,3 +80,5 @@ export type {
   WorldLabSessionDto,
   WorldLabRoomTicketDto,
 } from './world-lab.js';
+
+export { WORLD_LAB_PURSUIT_ORDER_HEADER, worldLabPursuitToken } from './world-lab.js';

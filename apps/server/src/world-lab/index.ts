@@ -1,3 +1,4 @@
+import { WORLD_LAB_PURSUIT_ORDER_HEADER } from '@warwrit/protocol';
 import { createHash, randomBytes } from 'node:crypto';
 import { matchMaker, Server } from '@colyseus/core';
 import { WebSocketTransport } from '@colyseus/ws-transport';
@@ -14,6 +15,7 @@ import { isSessionTokenActive, resolveSessionPrincipalFromCookieHeader } from '.
 import type { DatabaseSchema } from '../db/database.js';
 import {
   handleContinuousMovementPost,
+  MovementRejection,
   readContinuousMovementSnapshot,
 } from '../world/continuous-movement.js';
 import { startWorldRouteWorker } from '../world/route-worker.js';
@@ -27,6 +29,13 @@ import { startWorldLabNpcWorker } from './npc-worker.js';
 import { readWorldLabSlotByAccount, readWorldLabState } from './state.js';
 import { createWorldLabRoomClass } from './room.js';
 import { WORLD_LAB_SESSION_COOKIE, type WorldLabFixture } from './model.js';
+
+import {
+  executeWorldLabGroundOrder,
+  executeWorldLabPursuit,
+  parseWorldLabPursuit,
+  startWorldLabPursuitWorker,
+} from './pursuit.js';
 
 const SESSION_LIFETIME_MS = 24 * 60 * 60 * 1000;
 const navigationField = buildNavigationField(PAINTED_ATLAS_REGION);
@@ -173,6 +182,7 @@ export function registerWorldLab(app: FastifyInstance, options: WorldLabOptions)
     )
     .filterBy(['worldId']);
   let stopRoutes: (() => Promise<void>) | undefined;
+  let stopPursuit: (() => Promise<void>) | undefined;
   let stopNpc: (() => Promise<void>) | undefined;
 
   app.addHook('onReady', async () => {
@@ -190,9 +200,13 @@ export function registerWorldLab(app: FastifyInstance, options: WorldLabOptions)
       (error) => app.log.error({ err: error, event: 'world_lab.npc_worker.failed' }),
       options.now,
     );
+    stopPursuit = startWorldLabPursuitWorker(options, (error) =>
+      app.log.error({ err: error, event: 'world_lab.pursuit.failed' }),
+    );
     await realtime.listen(options.realtimePort, options.host);
   });
   app.addHook('onClose', async () => {
+    await stopPursuit?.();
     await stopRoutes?.();
     await stopNpc?.();
     await realtime.gracefullyShutdown(false);
@@ -264,14 +278,45 @@ export function registerWorldLab(app: FastifyInstance, options: WorldLabOptions)
   });
 
   app.post('/world-lab/movement', { bodyLimit: 2_048 }, async (request, reply) => {
-    if (!requestAllowed(request, options.publicOrigin, true)) return reply.code(404).send();
+    const auth = await requireAuthenticatedFixture(request, reply, options);
+    if (!auth) return;
     return handleContinuousMovementPost(request, reply, {
       database: options.database,
       worldId: options.worldId,
       region: PAINTED_ATLAS_REGION,
       sessionCookieName: WORLD_LAB_SESSION_COOKIE,
       now: options.now ?? (() => new Date()),
+      execute: (input, _accountId, expectedCompanyId) =>
+        executeWorldLabGroundOrder(
+          options,
+          auth.fixture,
+          input,
+          expectedCompanyId,
+          request.headers[WORLD_LAB_PURSUIT_ORDER_HEADER],
+        ),
     });
+  });
+
+  app.post('/world-lab/pursuit', { bodyLimit: 2_048 }, async (request, reply) => {
+    const auth = await requireAuthenticatedFixture(request, reply, options);
+    if (!auth) return;
+    if (request.headers['x-warwrit-expected-company-id'] !== auth.fixture.companyId)
+      return reply.code(403).send({ code: 'NOT_AUTHORIZED' });
+    const input = parseWorldLabPursuit(request.body);
+    if (!input) return reply.code(400).send({ code: 'INVALID_COMMAND' });
+    try {
+      const response = await executeWorldLabPursuit(
+        options,
+        auth.fixture,
+        input,
+        request.headers[WORLD_LAB_PURSUIT_ORDER_HEADER],
+      );
+      return reply.header('Cache-Control', 'no-store').send(response);
+    } catch (error) {
+      if (error instanceof RangeError) return reply.code(422).send({ code: error.message });
+      if (error instanceof MovementRejection) return reply.code(409).send({ code: error.code });
+      throw error;
+    }
   });
 
   app.post('/world-lab/visit', { bodyLimit: 512 }, async (request, reply) => {

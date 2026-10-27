@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Observed hostile pursuit
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, local: owner requested RMB
+  pursuit of enemy groups and accepted travel to the last observed position on
+  sight loss. Added server-persisted lab pursuit, observed-target replanning,
+  atomic STOP/ground cancellation, own target ring/status and guarded stale-order
+  retry. Stable order IDs prevent an old tab cancelling a newer pursuit.
+  Migrations0016/0017 preserve existing local data and refuse destructive rollback
+  while pursuits exist. Shared mover joins a caller transaction and retains its
+  default behavior for the main API. Hostile lab NPCs only; no battle or PvP.
+  Seven focused cases,23 real-PG scenarios, migration smoke, types/lint and native
+  moving-target/STOP/ground/two-tab probes passed within their recorded scope.
+  Independent source review: no material findings. Clean verify1204/stress10000
+  and all74 SQL scenarios PASS; scoped client checks repeated after target-ring
+  readability fixes. Independent visual ACCEPT, six applicable scores2; native input replay
+  belongs to the author. Normal local commit audit is still being completed. [Behavior, checks and limits](docs/wiki/world/map.md#преследование-видимой-угрозы--2026-10-27).
+
 ### Networked painted-atlas laboratory
 
 - 2026-10-26, branch `codex/world-map-mmo-design`, local: owner requested
