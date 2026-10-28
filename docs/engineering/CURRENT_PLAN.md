@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+## Bereznyak field shortcut — 2026-10-28, LOCAL DIAGNOSIS
+
+Coordinator/sole writer: parent; branch `codex/map-road-navigation`.
+Owner questions the field shortcut in the supplied screenshot.
+Approximate landmark reconstruction reproduces its three-point path at `09bf9166`.
+Actual planner comparison:929m/797s chosen vs1264m/830s road/trail detour.
+[Result and limits](../wiki/world/map.md#срез-через-поле-от-березняка--проверка-2026-10-28).
+Current road/trail/grass speeds1.8/1.4/1; no separate cropland terrain.
+No algorithm, balance or runtime change; full/game/browser/SQL tests NOT_RUN.
+Retain worktree; no publication/deployment.
+
 ## Road connectivity diagnostics — 2026-10-28, LOCAL COMPLETE
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.

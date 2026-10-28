@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Explain the Bereznyak field shortcut
+
+- 2026-10-28, branch `codex/map-road-navigation`, local diagnostic: reproduce
+  the owner's screenshot route using approximate landmark coordinates. Actual
+  plan comparison gives929m/797s vs1264m/830s via the northern road/trail.
+  Record current speed/classification assumptions and coordinate limits in the
+  [owning map result](docs/wiki/world/map.md#срез-через-поле-от-березняка--проверка-2026-10-28).
+  No pathfinding/balance change or new runtime acceptance; game/browser/SQL NOT_RUN.
+
 ### Inspect declared road continuity on the atlas
 
 - 2026-10-28, branch `codex/map-road-navigation`, local: owner activates the
