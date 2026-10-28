@@ -27,8 +27,9 @@ requests.
   PASS; CI40676883813 verify1206/stress PASS but SQL73/74 failed one bow/terminal
   scenario. Its test now handles the same required successor choice as adjacent
   cases via real leadership API, retaining non-null terminal/idempotency assertions.
-  Actual isolated PG1 PASS/23 skipped; independent correction review and new CI
-  pending. Combat production rules and gate thresholds remain unchanged.
+  Actual isolated PG1 PASS/23 skipped; independent correction SOURCE ACCEPT,
+  optional branch execution unproven, new CI pending. Combat production rules
+  and gate thresholds remain unchanged.
   [Owning contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
 
 ### Painted atlas road continuity

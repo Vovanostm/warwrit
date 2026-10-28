@@ -19,7 +19,8 @@ Normal audit PASS; no bypass or lowered thresholds.
 Scope40676883890 PASS; CI40676883813 verify1206/stress PASS, SQL73/74.
 Failed SQL bow/terminal case omitted a legitimate successor-choice step.
 Test-only real leadership API handling added; isolated actual PG1 PASS/23 skipped.
-Independent CI-correction source review pending; no gate/assertion weakening.
+Independent CI-correction SOURCE ACCEPT; optional branch execution not proven.
+No gate/assertion weakening; new hosted CI remains required.
 This publication-status checkpoint is local; reviewed code is unchanged.
 Next: accepted correction, green applicable CI and expected-head merge.
 Initial road-repair mission permits PR/normal merge after checks; retain this worktree.
