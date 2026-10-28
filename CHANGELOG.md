@@ -9,9 +9,33 @@ requests.
 
 ## Unreleased
 
+### Atlas road nodes follow the repaired painting
+
+- 2026-10-28, branch `codex/map-road-navigation`, published in
+  [PR332](https://github.com/Vovanostm/warwrit/pull/332): owner asks whether
+  road nodes and pathfinding were rebuilt and requests retaining the worktree.
+  Reproduced missing road surfaces at both repaired links and the old eastern
+  shortcut across a field. Trace corrected polygons and graph stations in the
+  shared atlas source; both labs and the server rebuild their compiled field
+  from it. Existing algorithms/profiles and accepted-plan timing remain.
+  Two public regressions FAIL before correction; atlas5/exact-free22/map20,
+  types/build/lint/format and author native two-road journeys now PASS.
+  Accepted plans retain timing; only new plans use rebuilt geometry. Independent
+  absolute playable ACCEPT at `a7bc171f`, six applicable scores2. The commit hook
+  reported a suppressed related-test failure; exact standalone rerun/coverage
+  PASS739/66 skipped without code changes. Normal audit PASS; scope40676883890
+  PASS; CI40676883813 verify1206/stress PASS but SQL73/74 failed one bow/terminal
+  scenario. Its test now handles the same required successor choice as adjacent
+  cases via real leadership API, retaining non-null terminal/idempotency assertions.
+  Actual isolated PG1 PASS/23 skipped; independent correction SOURCE ACCEPT,
+  optional branch execution unproven, new CI pending. Combat production rules
+  and gate thresholds remain unchanged.
+  [Owning contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
+
 ### Painted atlas road continuity
 
-- 2026-10-28, branch `codex/map-road-continuity`, published in
+- 2026-10-28, branch `codex/map-road-continuity`, merged2026-10-28 as
+  `2ef8bfef` in
   [PR331](https://github.com/Vovanostm/warwrit/pull/331): owner reported two
   roads terminating against ploughed fields. Add `atlas-v6.png` with local
   imagegen repairs connecting the southern forest road to Tikhaya's junction
@@ -23,7 +47,10 @@ requests.
   at `27b989bc`, six applicable scores2; normal commit hook/audit PASS with a
   syntactic attribution warning. PNG4608×3072; no changed pixel outside the two
   repair bounds. Initial scope check required the coordinator label and tracked
-  contract link; corrected without changing art/code. PR CI/merge pending.
+  contract link; corrected without changing art/code. Final CI40665712843 and
+  scope40665746964 PASS; expected-head merge/main readback confirmed. This
+  post-merge status correction is local in the clean worktree; the app blocks
+  primary-checkout archival. Test server stopped and evidence preserved.
   [Result](docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
 
 ### Networked atlas CI measurements

@@ -1,6 +1,32 @@
 # Warwrit current delivery plan
 
-## Painted road continuity — 2026-10-28, PUBLISHED
+## Atlas road nodes and routing — 2026-10-28, PR332 / LOCAL CHECKPOINT
+
+Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
+Owner follow-up: retain worktree; make road nodes/pathfinding match repaired art.
+Outcome: both repaired links carry road speed and routes follow their field-edge bends.
+Owning source: shared `game-core/world/painted-atlas/region.ts`, consumed by both labs/server.
+Scope: traced road polygons/stations, removed old field shortcut, focused regressions.
+Existing pathfinder/profile/coordinate frame stay; accepted plans retain frozen timing.
+Two public regressions fail before correction; atlas5/exact-free22/map20 now PASS.
+Core build/types, script types, scoped lint/format and current-plan check PASS.
+Author native previews/day/night and both completed route journeys PASS.
+Independent absolute playable ACCEPT at `a7bc171f`: six applicable scores2.
+Broader related rerun/coverage739 PASS,66 skipped; first hook test failure unexplained.
+Normal audit PASS; no bypass or lowered thresholds.
+[Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
+[PR332](https://github.com/Vovanostm/warwrit/pull/332), published head `a4fa3879`.
+Scope40676883890 PASS; CI40676883813 verify1206/stress PASS, SQL73/74.
+Failed SQL bow/terminal case omitted a legitimate successor-choice step.
+Test-only real leadership API handling added; isolated actual PG1 PASS/23 skipped.
+Independent CI-correction SOURCE ACCEPT; optional branch execution not proven.
+No gate/assertion weakening; new hosted CI remains required.
+This publication-status checkpoint is local; reviewed code is unchanged.
+Next: accepted correction, green applicable CI and expected-head merge.
+Initial road-repair mission permits PR/normal merge after checks; retain this worktree.
+No deployment authorized.
+
+## Painted road continuity — 2026-10-28, MERGED / LOCAL READBACK
 
 Owner requests image repair, worktree, tests, PR, normal merge and worktree cleanup.
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-continuity`, base `5ecb4eb3`.
@@ -12,8 +38,11 @@ Focused map20/types and author browser
 day/night, overview/zoom, selection and Bereznyak→Brod arrival PASS.
 Initial types failed on unbuilt protocol/testkit; package builds and rerun PASS.
 [Owning result and limits](../wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
-[PR331](https://github.com/Vovanostm/warwrit/pull/331) published; applicable CI pending.
-Next: green PR CI, expected-head merge and cleanup.
+[PR331](https://github.com/Vovanostm/warwrit/pull/331) MERGED as `2ef8bfef`; expected head `5cc2d2a5`.
+CI40665712843 and scope40665746964 PASS; merge/main tree matches tested head.
+This post-merge documentation checkpoint is local in the clean task worktree.
+Cleanup: server stopped, evidence saved, tree clean. App blocks primary-checkout
+archival; the chat directory must change before removal. No remaining code work.
 No deployment authorized.
 
 ## Networked atlas PR delivery — 2026-10-27, CI CORRECTION

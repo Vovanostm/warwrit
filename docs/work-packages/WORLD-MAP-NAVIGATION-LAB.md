@@ -277,3 +277,34 @@ join at native/game scale, overview/close, day/night. Fields and hedges must end
 at the shoulders; no unexplained road stub. Independent visual critique required.
 No movement cost/terrain/server/schema change or deployment authorization.
 [Current results and delivery](../wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
+
+## Road navigation amendment — 2026-10-28
+
+Owner follow-up: retain the worktree; road nodes and pathfinding must work on the
+repaired road links. This supersedes the image-only boundary for this correction.
+One shared atlas region owns road polygons and authored stations. Both labs and
+the server compile their fields from it; no separate client road map or new
+pathfinding algorithm. Replace the eastern shortcut through crops, connect the
+southern forest approach and use one shared junction with Tikhaya's road.
+Use existing dirt-road/trail profiles. Keep map coordinates, water/bridges and
+accepted plans' frozen path/speed spans/timing; only new plans/replans use the
+corrected field. Geometry is rebuilt on module/process load; old live processes
+are not silently updated. No database reset, migrations or deployment.
+Acceptance: sampled painted road points resolve to the road overlay; the former
+field shortcut loses its road bonus; actual planned routes take the drawn bends
+and beat the straight off-road cut. Existing bridge/water/frame tests continue.
+Author verifies the two paths in the browser with current captures and an
+independent read-only playable/visual critic. Retain the original mission's
+PR/normal-merge permission and proportional gates; do not remove the worktree.
+
+### Navigation PR CI correction
+
+CI40676883813 passed verify1206/stress but SQL73/74 failed the bridge-v5 bow
+terminal scenario. That test omitted a legitimate successor-selection step,
+which adjacent cases already exercise via the real leadership API. Correct only
+that test's orchestration; retain terminal/replay/idempotency assertions and all
+existing gates. No combat production-policy change. The observed null marker does
+not by itself prove the leader's fate; source establishes the unsupported test
+assumption. Focused actual isolated PostgreSQL case and independent source review
+are required, then current-head hosted CI. Existing map visual evidence remains
+applicable because navigation code/art are unchanged by this correction.

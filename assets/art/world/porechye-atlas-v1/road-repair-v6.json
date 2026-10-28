@@ -1,7 +1,7 @@
 {
   "date": "2026-10-28",
   "branch": "codex/map-road-continuity",
-  "status": "published in PR331; independent visual ACCEPT at 27b989bc; merge awaits CI",
+  "status": "MERGED2026-10-28 as2ef8bfef in PR331; local post-merge readback in clean worktree; app blocks primary-checkout archival",
   "tool": "built-in image_gen.imagegen",
   "sourceImage": "atlas-v5.png",
   "activeImage": "atlas-v6.png",
@@ -89,5 +89,19 @@
     "notApplicable": ["pose", "motion"],
     "limits": "Independent input replay NOT_RUN; broader atlas has no further clear through-road stubs in visual inspection. Edge/rut texture polish remains at score2; no blocking defect."
   },
-  "pullRequest": "https://github.com/Vovanostm/warwrit/pull/331"
+  "pullRequest": "https://github.com/Vovanostm/warwrit/pull/331",
+  "ci": {
+    "run": 40665712843,
+    "head": "5cc2d2a529ffdfcee6ad24a86c45a80728fb5bd1",
+    "conclusion": "SUCCESS"
+  },
+  "cleanup": "Owned Vite5346 stopped; screenshots/production evidence preserved in primary repository output/map-road-continuity. App archive rejected primary checkout; directory switch required before removal.",
+  "navigationFollowUp": {
+    "date": "2026-10-28",
+    "branch": "codex/map-road-navigation",
+    "source": "packages/game-core/src/world/painted-atlas/region.ts",
+    "status": "local complete: polygons/stations and graph corrected; visual/playable ACCEPT at a7bc171f; hosted CI/publication pending",
+    "compatibility": "Existing accepted path/speedSpans/timing remain frozen; new plans use rebuilt field. Coordinate frame and profiles unchanged.",
+    "worktree": "Retained by explicit owner follow-up on2026-10-28."
+  }
 }

@@ -2,6 +2,8 @@ import { expect, it } from 'vitest';
 
 import {
   buildNavigationField,
+  compileMovementPlan,
+  continuousSurfaceAt,
   findTravelPath,
   isContinuousPointWalkable,
 } from '../continuous-movement.js';
@@ -17,6 +19,56 @@ import {
 
 // Match the server's one immutable compiled field per edition.
 const field = buildNavigationField(PAINTED_ATLAS_REGION);
+
+it('matches the repaired atlas roads and removes the former shortcut through the field', () => {
+  expect(
+    [
+      [2960, 1410],
+      [2998, 1447],
+      [2547, 1925],
+      [2572, 1858],
+      [2640, 1831],
+    ].map(([x, y]) => continuousSurfaceAt(field, paintedAtlasPoint([x!, y!])).overlayId),
+  ).toEqual(Array(5).fill('dirt_road'));
+  expect(continuousSurfaceAt(field, paintedAtlasPoint([2950, 1433])).overlayId).toBeNull();
+});
+
+it('uses the drawn field-edge bends instead of cutting across the repaired road connections', () => {
+  for (const [from, to, bend] of [
+    [
+      [2691, 1379],
+      [3072, 1454],
+      [2970, 1413],
+    ],
+    [
+      [2636, 2048],
+      [2800, 1775],
+      [2547, 1925],
+    ],
+  ] as const) {
+    const start = paintedAtlasPoint(from);
+    const goal = paintedAtlasPoint(to);
+    const path = findTravelPath(field, start, goal)!;
+    const plan = compileMovementPlan({
+      field,
+      path,
+      startedAtMs: '0',
+      movementEpoch: '0',
+      planId: 'repaired-road',
+    });
+    const direct = compileMovementPlan({
+      field,
+      path: [start, goal],
+      startedAtMs: '0',
+      movementEpoch: '0',
+      planId: 'field-shortcut',
+    });
+    expect(
+      path.map(paintedAtlasPixel).some(([x, y]) => Math.hypot(x - bend[0], y - bend[1]) < 20),
+    ).toBe(true);
+    expect(BigInt(plan.totalDurationUs)).toBeLessThan(BigInt(direct.totalDurationUs));
+  }
+});
 
 it('uses the rendered atlas frame and resolves its authored settlement zone', () => {
   const bereznyak = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'bereznyak')!;
