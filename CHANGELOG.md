@@ -19,9 +19,12 @@ requests.
   dead ends remain allowed. `pnpm test:map` includes the negative continuity
   regression and DOM toggle; art skill replaces its fixed recipe with a concise
   synchronized-result requirement. No movement/server/plan/dependency changes.
-  Map23/types/lint and author native toggle/day-night/zoom/arrival PASS; independent
-  critique and commit audit pending. Initial test exposed an alternate-road bypass
+  Map23/types/lint and author native toggle/Space/day-night/zoom/arrival PASS;
+  code `dea28641`, normal commit hook/audit PASS; independent visual ACCEPT,
+  five applicable scores2 after supplying missing paired comparisons/references.
+  Initial test exposed an alternate-road bypass
   and led to corridor-scoped checks; detached DOM fixture corrected before PASS.
+  Independent native replay/full game/SQL gates NOT_RUN; local lab-only delivery.
   [Owning result](docs/wiki/world/map.md#диагностика-дорожных-соединений--2026-10-28).
 
 ### Map improvement source research

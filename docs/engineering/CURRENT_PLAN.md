@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Road connectivity diagnostics — 2026-10-28, LOCAL IMPLEMENTATION
+## Road connectivity diagnostics — 2026-10-28, LOCAL COMPLETE
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
 Owner: implement the recommended first cycle; preserve agent freedom and avoid waste.
@@ -9,7 +9,12 @@ even when free movement can bypass them over a field; ordinary dead ends are all
 Scope: map-lab diagnostics, two repaired-link expectations/tests and concise art skill.
 [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-amendment--2026-10-28).
 Keep pathfinding/game rules/server/plans unchanged; no new dependencies.
-Focused map/type/lint checks, native toggle/route/day-night and independent critique.
+Map23/types/scoped lint/format and skill/plan checks PASS; code `dea28641`.
+Native default-off/toggle/Space/day-night/zoom and overlay-on arrival PASS.
+Normal commit hook/audit PASS; independent visual ACCEPT, five applicable scores2.
+Initial visual input block closed with same-scale paired comparisons/references.
+Independent native replay NOT_RUN; full game/SQL gates NOT_RUN (lab-only change).
+Next: optional owner trial of the existing lab's «Проверка дорог» section.
 Graph indexes another checkout/HEAD; current source is used instead.
 No PR/merge/deployment authorized for this cycle; retain worktree and other stands.
 

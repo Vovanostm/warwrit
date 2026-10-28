@@ -329,3 +329,11 @@ off; map input, day/night and journeys stay usable. No runtime/game-rule change,
 new dependency, external publication or deployment. Shorten the art skill to the
 required synchronized result and leave implementation/check selection to the author.
 Use focused checks and a native journey; independent visual critique remains.
+
+Local result: code `dea28641`; map23/types/scoped lint/format, skill schema and
+normal commit audit PASS. Initial broad connectivity accepted an alternate-road
+bypass; checking the declared corridor now detects a shifted station despite a
+valid free-movement route. Native overlay toggle/Space/day-night/zoom/arrival PASS.
+Independent absolute visual ACCEPT, five applicable scores2, after paired evidence
+closed the initial missing-input block; independent replay NOT_RUN. Full game/SQL
+gates NOT_RUN for this lab-only slice. No publication/deployment; retain worktree.
