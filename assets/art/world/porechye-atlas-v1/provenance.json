@@ -281,7 +281,7 @@
     "Native tiles are generated raster; no claimed whole-atlas resolution upscale.",
     "Intermediate generated versions retained in persistent output/map-atlas/archive; tool originals retained at toolOutput paths."
   ],
-  "activeImage": "atlas-v5.png",
+  "activeImage": "atlas-v6.png",
   "integratedReview": {
     "v3": "REJECT by independent critic: visible vertical tile joins, scene integration1; remaining applicable criteria2",
     "v5": "ACCEPT independent full absolute review: rendering2, value/palette2, materials2, props/lore2, integration2, motion2; character silhouette/pose N/A. Overview and close reference pairs, day/night and actual journey inspected. Owner interest/balance NOT_MEASURED."
@@ -329,5 +329,6 @@
       "height": 1024
     }
   },
-  "promptFormatting": "TXT trailing whitespace normalized for repository checks; exact five v4 tool strings, including original trailing spaces, retained in v4-prompts-exact.json."
+  "promptFormatting": "TXT trailing whitespace normalized for repository checks; exact five v4 tool strings, including original trailing spaces, retained in v4-prompts-exact.json.",
+  "roadRepair": "road-repair-v6.json"
 }

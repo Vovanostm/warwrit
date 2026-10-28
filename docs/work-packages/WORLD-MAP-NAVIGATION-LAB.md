@@ -264,3 +264,16 @@ SDK resumption verifies the same room/session, not a new room admission. Unique
 runtime folders retain past failures; owned launcher/API/web cleanup waits and
 removes only its PID file. Source concerns closed, provisional infrastructure
 ACCEPT. Normal commit/exact-head review and hosted CI still pending.
+
+## Raster road continuity amendment — 2026-10-28
+
+Owner requests the two pictured road breaks fixed, tested, published and normally
+merged, then cleanup of this task's worktree. Branch `codex/map-road-continuity`.
+Retain historical atlas art; repair only the Brod eastern field approach and
+Tikhaya southern forest approach. Both lab image consumers use version6; old v5
+remains historical. Exact prompts/blend bounds and the road-tracing rule live
+beside the asset. Trace through-roads across the whole affected field/forest/tile
+join at native/game scale, overview/close, day/night. Fields and hedges must end
+at the shoulders; no unexplained road stub. Independent visual critique required.
+No movement cost/terrain/server/schema change or deployment authorization.
+[Current results and delivery](../wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).

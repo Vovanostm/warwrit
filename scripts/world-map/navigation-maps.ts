@@ -41,7 +41,7 @@ export const mapProfiles = {
     places: atlas.atlasPlaces,
     entries: placeEntries(atlas.atlasPoint, [1536, 1024]),
     samples: atlas.atlasSamples,
-    image: 'porechye-atlas-v1/atlas-v5.png',
+    image: 'porechye-atlas-v1/atlas-v6.png',
     note: 'Атлас · 7,2 × 4,8 км · 34 места. 24 новых места и контракта — предложения.',
   },
 };
