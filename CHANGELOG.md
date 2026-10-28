@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Authoritative company cartography in the shared-world lab
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local implementation:
+  owner requested implementation with subagents. Added migration0018 for frozen
+  chart editions/grants, company exploration chunks, place observations and
+  progression cursors. Server sight uses authored terrain and a provisional
+  immutable light/weather profile. HTTP/realtime omit hidden groups; movement
+  rejects unknown routes uniformly and explicit reachable entry records visits.
+  The world client loads authenticated, byte-masked PNG tiles and lawful sites;
+  its Vite origin denies private source/raw artwork. Unknown terrain has an
+  opaque non-geographic surface; chart knowledge, exploration and live sight
+  remain distinct. [Owning result](docs/wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
+  Clean verify1222/stress10000/migration smoke PASS; full SQL78 PASS and the
+  one outdated migration-list case fixed and separately PASS. Native privacy,
+  movement/visit/input/session and real API recovery PASS. Third full visual
+  ACCEPT (eight criteria2); initial source/privacy review ACCEPT. Final quality
+  refactor: isolated SQL10/native9 + actual restart, related1007/71 skipped,
+  types/lint/format and unchanged source-matched audit PASS. Bounded source
+  readback found no concrete defect; no thresholds or suppressions changed.
+  Existing persistent lab data retained. No merchant pricing/payment UI,
+  production rollout, PR/merge, Orca or automation activation; load/fun NOT_MEASURED.
+
 ### Personal cartographic persistence proposal
 
 - 2026-10-28, branch `codex/world-map-fog-design`, local documentation:

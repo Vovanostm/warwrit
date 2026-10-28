@@ -1,6 +1,28 @@
 # Warwrit current delivery plan
 
-## Company cartographic storage — 2026-10-28, LOCAL PROPOSAL
+## Authoritative cartography implementation — 2026-10-28, LOCAL COMPLETE
+
+Parent author/integrator/sole validator; branch `codex/world-map-fog-design`, base `aa2ab35d`.
+Owner: “Implement with subagents”; separate approval refilled only test rations once.
+[Owning result](../wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28) · [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#cartography-implementation-activation--2026-10-28).
+Outcome: company charts/exploration/visits persist; server sight filters groups and masked map assets.
+Three isolated delegated slices integrated; parent owns final source/resources/docs/verification.
+Protocol world state v2/cartography v1; migration0018 retains sparse knowledge and immutable grants.
+Day/night/weather/terrain sight parameters are provisional lab rules, not accepted balance.
+Home chart and finite trusted grants work; merchant prices/payment UI and multi-region travel separate.
+Native movement/STOP/visit, privacy, camera, company isolation and actual API recovery PASS.
+Clean verify1222/stress10000/migration smoke PASS; SQL78 PASS + one fixed migration-list case rerun PASS.
+Third full visual ACCEPT (eight applicable criteria2); independent input replay NOT_RUN.
+Initial source/privacy review ACCEPT; final bounded refactor readback found no concrete defect.
+Final isolated SQL10/native9 + actual restart, related1007/71 skipped, types/lint/format and audit PASS.
+Persistent PostgreSQL65438/positions/discoveries retained; stand ports3038/3039/5338, legacy5326.
+No PR/merge/deploy/Orca/automation activation; production/MMO load/fun NOT_MEASURED.
+Normal local commit follows this documentation closeout; no hook bypass.
+Next: owner trial on5338; separately define merchant purchase flow and additional regions.
+
+## Dated history
+
+### Company cartographic storage — 2026-10-28, LOCAL PROPOSAL
 
 Sole author: parent; branch `codex/world-map-fog-design`, base `21041651`.
 Owner: visited places enter the atlas; asks how personal map/fog/zones persist.
@@ -13,8 +35,6 @@ Documentation format/local links/new anchor/scoped diff PASS.
 SQL/runtime/load NOT_RUN/NOT_MEASURED; storage remains a proposal.
 No new migrations/services, publication/merge/deploy/Orca/automation activation.
 Next: owner review of storage proposal, then one bounded server implementation slice.
-
-## Dated history
 
 ### Merchant chart meaning correction — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
 

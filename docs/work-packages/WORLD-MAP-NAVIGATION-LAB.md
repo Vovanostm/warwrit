@@ -316,3 +316,45 @@ Home-region correction: seven model cases, both script typechecks, scoped lint/f
 20 native states and source-checked audit PASS. Affected example09 visual ACCEPT,
 four applicable scores2; independent input replay and actual server purchases NOT_RUN.
 Local requirement/example correction complete; production integration remains separate.
+
+## Cartography implementation activation — 2026-10-28
+
+Owner: “Implement with subagents”. Local implementation of company cartographic
+knowledge and authoritative fog. Source/owner rules: current fog specification,
+home-region starting chart, purchased information subsets, personal visit discovery,
+quest MARK/TEXT separation, observed-hostile last-place pursuit. No new prices,
+merchant transaction UI or external services are invented; durable trusted grants
+are the producer seam for a separately priced merchant implementation.
+
+Done: server terrain/light/weather sight, personalized visible groups and known
+places, durable sparse exploration/visit records, restart/reconnect retention,
+masked authenticated map imagery and closed private source/asset paths on the
+world-lab origin. Preserve movement/STOP/pursuit/input controls and existing saves.
+No client full atlas/POI catalogue; no hidden target data through movement errors,
+nearby, static files, bitmap gutters or stale-session state. Existing authored
+terrain owns sight inputs; no inferred geometry from image pixels.
+
+Three delegated editors in separate persistent worktrees: new pure sight module,
+new cartography store/migration0018, client rendering/state. Parent owns protocol,
+server integration/producers, raster/Vite access, shared docs and all execution.
+Frozen state v2/cartography DTO: packages/protocol/src/world-cartography.ts.
+Parent runs focused types/core/real SQL/native, one full existing final game gate,
+independent diff and visual/playable critique before declaring locally complete.
+Persistent lab database must be preserved; no PR/merge/deploy/Orca activation.
+
+### Cartography local result — 2026-10-28
+
+Server-authoritative observation, company chart/explored chunks and explicit visit
+records are integrated. The client receives lawful sites and authenticated,
+byte-masked PNG tiles, with no private source/raw atlas on the world-lab origin.
+Known-area fit, soft paper reveal, preserved map controls and session/stale cleanup
+are usable on5338. Three delegated slices and the final quality refactor retain
+one parent integration/validation owner. [Detailed result and checks](../wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
+Clean verify1222/stress10000/migration smoke PASS; full SQL78 PASS, old migration-list
+case corrected and separately PASS. Third absolute visual ACCEPT, eight criteria2;
+independent input replay NOT_RUN. Final refactor: isolated SQL10, native9 plus
+actual API restart, related1007/71 skipped, types/lint/format and source-matched
+normal audit PASS. Bounded source readback found no concrete defect; no gate
+thresholds or suppressions changed. Normal local commit follows this closeout.
+One-time owner-approved fixture ration top-up retained positions/discoveries/money.
+No merchant economy UI, multi-region travel, production rollout or new PR/merge.

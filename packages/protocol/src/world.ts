@@ -272,6 +272,7 @@ export interface WorldFreeMovementV2RejectionDto {
     | 'TARGET_BLOCKED'
     | 'OUT_OF_BOUNDS'
     | 'NO_PATH'
+    | 'MAP_INFORMATION_REQUIRED'
     | 'ROUTE_TOO_COMPLEX'
     | 'MOVEMENT_NOT_ALLOWED'
     | 'ROUTE_FORBIDDEN'

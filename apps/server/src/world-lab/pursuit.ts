@@ -30,6 +30,8 @@ import {
   storeWorldLabPursuit,
 } from './pursuit-store.js';
 import type { WorldLabFixture } from './model.js';
+import { cartographyKnowsPoint, cartographyKnowsSegment } from './cartography.js';
+import type { WorldLabCartographyDto } from '@warwrit/protocol';
 
 interface PursuitContext {
   readonly database: Kysely<DatabaseSchema>;
@@ -108,16 +110,67 @@ function move(
   input: WorldFreeMovementV2RequestDto,
   identity: unknown = input,
 ) {
-  return executeContinuousMovement(
+  return guardedMove(database, context, fixture, input, identity);
+}
+
+function assertKnownPlan(
+  cartography: WorldLabCartographyDto,
+  response: WorldFreeMovementV2ResponseDto,
+) {
+  for (const span of response.plan?.speedSpans ?? []) {
+    if (!cartographyKnowsSegment(cartography, span.from, span.to))
+      throw new MovementRejection('MAP_INFORMATION_REQUIRED');
+  }
+}
+
+async function guardedMove(
+  database: Kysely<DatabaseSchema>,
+  context: PursuitContext,
+  fixture: WorldLabFixture,
+  input: WorldFreeMovementV2RequestDto,
+  identity: unknown = input,
+) {
+  // The outer order transaction owns authorization, receipts and all rollback.
+  const state = await readWorldLabState(
     database,
     context.worldId,
+    context.fixtures,
     fixture.accountId,
-    fixture.companyId,
-    input,
-    PAINTED_ATLAS_REGION,
     context.now,
-    identity,
   );
+  if (!state) throw new MovementRejection('NOT_AUTHORIZED');
+  if (input.action.kind === 'MOVE_TO') {
+    const target = input.action.target;
+    const known =
+      target.kind === 'SITE'
+        ? state.cartography.sites.some((site) => site.siteId === target.siteId)
+        : cartographyKnowsPoint(state.cartography, target);
+    if (!known) throw new MovementRejection('MAP_INFORMATION_REQUIRED');
+  }
+  try {
+    const response = await executeContinuousMovement(
+      database,
+      context.worldId,
+      fixture.accountId,
+      fixture.companyId,
+      input,
+      PAINTED_ATLAS_REGION,
+      context.now,
+      identity,
+    );
+    if (input.action.kind === 'MOVE_TO') assertKnownPlan(state.cartography, response);
+    return response;
+  } catch (error) {
+    // A private detour/barrier must not distinguish a guessed destination from an unknown route.
+    if (
+      input.action.kind === 'MOVE_TO' &&
+      ((error instanceof MovementRejection &&
+        ['NO_PATH', 'TARGET_BLOCKED', 'OUT_OF_BOUNDS', 'ROUTE_TOO_COMPLEX'].includes(error.code)) ||
+        (error instanceof RangeError && error.message !== 'TRUSTED_TIME_UNAVAILABLE'))
+    )
+      throw new MovementRejection('MAP_INFORMATION_REQUIRED');
+    throw error;
+  }
 }
 
 async function assertPursuitToken(
@@ -149,15 +202,8 @@ export async function executeWorldLabGroundOrder(
       input.commandId,
     );
     if (!replay) await assertPursuitToken(transaction, context, fixture, expectedPursuitToken);
-    const response = await executeContinuousMovement(
-      transaction,
-      context.worldId,
-      fixture.accountId,
-      expectedCompanyId,
-      input,
-      PAINTED_ATLAS_REGION,
-      context.now,
-    );
+    if (expectedCompanyId !== fixture.companyId) throw new MovementRejection('NOT_AUTHORIZED');
+    const response = await guardedMove(transaction, context, fixture, input);
     if (!replay) await clearWorldLabPursuit(transaction, context.worldId, fixture.companyId);
     return response;
   });
