@@ -1,5 +1,34 @@
 # Warwrit current delivery plan
 
+## Player item transfer — 2026-10-28, LOCAL / ready for PR
+
+Coordinator/integration/validation owner: parent; branch `codex/game-item-transfer`, base `48d8a2ae`.
+Owner autonomous game mission permits implementations/worktrees/PRs; no merge/deployment/Orca permission.
+Contract [#171](https://github.com/Vovanostm/warwrit/issues/171): existing item/quantity between accessible co-located containers, same owner.
+Observable outcome: Company → item/quantity/container → transfer → exact retry/reload with conserved property.
+[Owning result](evidence/item-transfer-20261028/README.md); parent owns docs/runtime/checks/commit/PR.
+Delegated editor owns protocol/server/UI and the explicitly added core split-ID compatibility correction.
+Account/company checks, actual local available operator/containers and existing core capacity/ownership rules retained.
+Exact request stored before send; unknown/auth outcomes retained; stale-read/error generations fenced.
+Independent server/client source ACCEPT; repeated-split compatibility/collision/replay source ACCEPT.
+Final core/testkit builds, server/web types, scoped lint/format/diff PASS.
+Public physical2 PASS, mounted3 PASS, isolated actual PG transfer1 PASS; filtered skips recorded separately.
+Normal Dex/new company, split2 rations and full sword: real successful-response loss/reload/retry PASS.
+Actual native readbacks entirely equal after retries at revisions2 and3; one receipt per command.
+Initial food settlement opens2 rations; subsequent live total28 is conserved, no transfer audit event invented.
+Repeated nested-ID limit fixed with optional explicit splitItemId; legacy omission retains exact old derivation.
+Final-source split6 loss/reload/night retry PASS at revision4; subsequent fourth split PASS at revision7, child IDs36 characters.
+Dedicated QA API3198/realtime3199/UI5198/proxy3200/Dex5588; payroll/lab/original data preserved.
+No stationary stash, ownership transfer or aggregate-load offloading claim; no payroll/recovery source copied.
+Payroll [PR338](https://github.com/Vovanostm/warwrit/pull/338), heade90f7a47: live CI40757922162/current scope SUCCESS; logs read,1224 coverage/74 PG PASS.
+Initial hook FAILED four introduced web findings; finite panel/terminal correction and real-panel/parser18 PASS, web types/lint/source ACCEPT.
+Final-source medical1 loss/reload/night retry PASS at revision8 with equal entire native readback and one receipt.
+Same critic final12–14 absolute UI ACCEPT (six applicable scores2); whole-scene rendering/materials/night REJECT.
+Second hook retained only cognitive17; final failure-message extraction/types/focused18/lint/source ACCEPT.
+Final normal hook/related checks/audit PASS without suppressed failures or bypass; source committed9dc7717e, final docs follow.
+Care remains separate pending owner rule choice; writing chat active with its own owner.
+Next: finish independent visual acceptance and normal hook, publish transfer PR, inspect current-head CI.
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.

@@ -7,6 +7,7 @@ import { readPartyRoute } from '../world/repository.js';
 import { randomUUID } from 'node:crypto';
 import { readCarriedSupplyPurse } from './supplies.js';
 import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-command.js';
+import { itemTransferAccess } from './item-transfer.js';
 import {
   prepareSupplyPurchase,
   SUPPLY_INITIAL_RATIONS,
@@ -236,6 +237,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     input.request.type !== 'RenameCompany' &&
     input.request.type !== 'ChoosePerk' &&
     input.request.type !== 'EquipItem' &&
+    input.request.type !== 'TransferItem' &&
     input.request.type !== 'BeginFieldCamp' &&
     input.request.type !== 'EndFieldCamp'
   )
@@ -269,8 +271,13 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   const equipAccess =
     input.request.type === 'EquipItem'
       ? equipAccessFact(state, input.worldId, companyId, input.request.payload, clock.tick)
-      : undefined;
-  if (input.request.type === 'EquipItem' && equipAccess === undefined)
+      : input.request.type === 'TransferItem'
+        ? itemTransferAccess(state, input.request.payload, clock.tick)
+        : undefined;
+  if (
+    (input.request.type === 'EquipItem' || input.request.type === 'TransferItem') &&
+    equipAccess === undefined
+  )
     return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
 
   // A field camp needs a server-attested site: the party stands still where no living

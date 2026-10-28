@@ -409,6 +409,17 @@ function parseOrdinaryCompanyCommandV2(
       !['HEAD', 'BODY', 'MAIN_HAND', 'OFF_HAND', 'BELT'].includes(String(payload['slotId']))
     )
       return undefined;
+  } else if (value['type'] === 'TransferItem') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !==
+        canonicalJson(['fromContainerId', 'itemId', 'quantity', 'toContainerId']) ||
+      !isEntityId(payload['itemId']) ||
+      !isEntityId(payload['fromContainerId']) ||
+      !isEntityId(payload['toContainerId']) ||
+      !Number.isSafeInteger(payload['quantity']) ||
+      Number(payload['quantity']) < 1
+    )
+      return undefined;
   }
 
   return value as unknown as OrdinaryPlayerCompanyCommandV2Dto;

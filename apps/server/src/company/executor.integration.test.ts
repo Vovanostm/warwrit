@@ -532,6 +532,70 @@ describe('trusted company command executor (PostgreSQL)', () => {
 // These are real executor/transaction scenarios: no prepared draft or persistence is mocked.
 describe('ordinary company command executor (PostgreSQL)', () => {
   it.skipIf(database === undefined)(
+    'moves existing property once between local containers and rejects inaccessible transfers',
+    async () => {
+      await withOrdinaryScenario(async (scenario) => {
+        const physical = scenario.priorState.economy.physical!;
+        const item = physical.items.find((entry) => entry.itemId === 'a-leader-sword')!;
+        const destination = physical.containers.find(
+          (entry) => entry.containerId === 'fixture-supply',
+        )!;
+        const request = ordinaryRequest(scenario, {
+          type: 'TransferItem',
+          payload: {
+            itemId: item.itemId,
+            quantity: item.quantity,
+            fromContainerId: item.containerId!,
+            toContainerId: destination.containerId,
+          },
+        });
+        await rejectOrdinaryUnchanged(
+          scenario,
+          {
+            ...request,
+            commandId: randomUUID(),
+            payload: { ...request.payload, toContainerId: 'foreign-container' },
+          },
+          'CONTACT_OR_ACCESS_REQUIRED',
+        );
+        await rejectOrdinaryUnchanged(
+          scenario,
+          request,
+          'NOT_AUTHORIZED',
+          scenario.foreignAccountId,
+          403,
+        );
+        const results = await Promise.all([
+          executeOrdinary(scenario, request),
+          executeOrdinary(scenario, request),
+        ]);
+        expect(results[0]).toEqual(results[1]);
+        expect(results[0]?.kind).toBe('COMMITTED');
+        const stored = await readOrdinaryPersistence(scenario);
+        expect(
+          stored.state.economy.physical!.items.find((entry) => entry.itemId === item.itemId),
+        ).toMatchObject({
+          owner: item.owner,
+          quantity: item.quantity,
+          containerId: destination.containerId,
+          equipped: null,
+        });
+        expect(
+          stored.state.economy.physical!.items.filter((entry) => entry.itemId === item.itemId),
+        ).toHaveLength(1);
+        expect(
+          stored.receipts.filter((entry) => entry.command_id === request.commandId),
+        ).toHaveLength(1);
+        await rejectOrdinaryUnchanged(
+          scenario,
+          { ...request, payload: { ...request.payload, quantity: item.quantity + 1 } },
+          'IDEMPOTENCY_CONFLICT',
+        );
+        expect(await readOrdinaryPersistence(scenario)).toEqual(stored);
+      });
+    },
+  );
+  it.skipIf(database === undefined)(
     'persists rename and perk effects with their receipts and audit',
     async () => {
       await withOrdinaryScenario(async (scenario) => {

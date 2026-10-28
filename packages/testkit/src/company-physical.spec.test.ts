@@ -142,6 +142,7 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
       ]),
     );
     const child = live.find((entry) => entry.containerId === 'destination')!;
+    expect(child.itemId).toBe(JSON.stringify([movedCommand.commandId, 'ration-stack', 'split']));
     expect(child.quantity).toBe(1);
     expect(child.owner).toEqual({ kind: 'CHARACTER', id: 'leader' });
     const reloaded: CompanyEconomyState = JSON.parse(JSON.stringify(moved.next));
@@ -167,6 +168,113 @@ describe('WP-02.4 — real items, care and physical outcomes', () => {
     const beforeEvidenceMutation = JSON.stringify(moved.next);
     (movedAccess.itemIds as string[]).length = 0;
     expect(JSON.stringify(moved.next)).toBe(beforeEvidenceMutation);
+  });
+
+  it('repeated explicit partial splits survive canonical reload with conserved ownership and reject item-ID collisions atomically', () => {
+    let state = economy([1n], 1000n, 0);
+    const owner = { kind: 'COMPANY' as const, id: 'company' };
+    state = addContainer(state, container('split-a', owner, 30000));
+    state = addContainer(state, container('split-b', owner, 30000));
+    let parentId = 'opening-01234567-89ab-cdef-0123-456789abcdef-ration-stack';
+    let source = 'split-a';
+    state = addItem(state, item(parentId, 'ration', owner, source, 10));
+    const beforeCollision = canonicalJson(state);
+    const collision = command(
+      state,
+      'TransferItem',
+      {
+        itemId: parentId,
+        quantity: 9,
+        fromContainerId: source,
+        toContainerId: 'split-b',
+        accessEvidenceId: 'collision-access',
+        splitItemId: 'fixture-rations-0',
+      },
+      'collision',
+    );
+    const collisionAccess = itemAccess(
+      state,
+      'collision-access',
+      'TRANSFER',
+      ['split-a', 'split-b'],
+      [parentId],
+    );
+    const rejected = prepareCompanyEconomy(
+      state,
+      collision,
+      context(state, collision, [], [], [collisionAccess]),
+    );
+    expect(rejected).toMatchObject({ kind: 'REJECTED', error: 'IDEMPOTENCY_CONFLICT' });
+    expect(rejected.state).toBe(state);
+    expect(canonicalJson(state)).toBe(beforeCollision);
+
+    for (let index = 0; index < 6; index++) {
+      const destination = source === 'split-a' ? 'split-b' : 'split-a';
+      const childId = `transfer-${index}`;
+      const accessId = `split-access-${index}`;
+      const cmd = command(
+        state,
+        'TransferItem',
+        {
+          itemId: parentId,
+          quantity: 9 - index,
+          fromContainerId: source,
+          toContainerId: destination,
+          accessEvidenceId: accessId,
+          splitItemId: childId,
+        },
+        childId,
+      );
+      const fact = itemAccess(state, accessId, 'TRANSFER', [source, destination], [parentId]);
+      const result = prepared(
+        prepareCompanyEconomy(state, cmd, context(state, cmd, [], [], [fact])),
+      );
+      state = JSON.parse(canonicalJson(result.next)) as CompanyEconomyState;
+      const child = state.physical!.items.find((entry) => entry.itemId === childId)!;
+      expect(child).toMatchObject({
+        quantity: 9 - index,
+        owner,
+        containerId: destination,
+        provenance: { parentItemId: parentId },
+      });
+      expect(
+        state.physical!.knowledge.itemSnapshots.find((entry) => entry.itemId === childId),
+      ).toEqual(child);
+      const descendants = state.physical!.items.filter(
+        (entry) => entry.provenance.sourceId === 'fixture-item-source',
+      );
+      expect(descendants.reduce((sum, entry) => sum + entry.quantity, 0)).toBe(10);
+      expect(
+        descendants.every((entry) => canonicalJson(entry.owner) === canonicalJson(owner)),
+      ).toBe(true);
+      expect(new Set(descendants.map((entry) => entry.itemId)).size).toBe(index + 2);
+      parentId = childId;
+      source = destination;
+    }
+    const back = command(
+      state,
+      'TransferItem',
+      {
+        itemId: parentId,
+        quantity: 4,
+        fromContainerId: source,
+        toContainerId: source === 'split-a' ? 'split-b' : 'split-a',
+        accessEvidenceId: 'reload-final-access',
+      },
+      'reload-final',
+    );
+    const finalAccess = itemAccess(
+      state,
+      'reload-final-access',
+      'TRANSFER',
+      ['split-a', 'split-b'],
+      [parentId],
+    );
+    expect(
+      prepared(
+        prepareCompanyEconomy(state, back, context(state, back, [], [], [finalAccess])),
+      ).next.physical!.items.find((entry) => entry.itemId === parentId)?.quantity,
+    ).toBe(4);
   });
 
   it('P2: equip and repair require local physical authority, respect encounter/slot constraints, and never heal the character', () => {

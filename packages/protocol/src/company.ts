@@ -133,6 +133,19 @@ export interface CompanyPayrollDto {
 }
 /** Owner-private physical and money view; only the owning account receives it. */
 export interface CompanyHoldingsDto {
+  /** Accessible owner-private containers; absent on older servers. Moving items preserves ownership. */
+  readonly transfer?: {
+    readonly containers: readonly {
+      readonly containerId: string;
+      readonly carrierCharacterId: string | null;
+      readonly kind: string;
+    }[];
+    readonly items: readonly {
+      readonly itemId: string;
+      readonly containerId: string;
+      readonly quantity: number;
+    }[];
+  };
   readonly supplies?: { readonly rations: number; readonly people: number; readonly days: number };
   /** Optional for old response compatibility; missing means no payroll snapshot is available. */
   readonly payroll?: CompanyPayrollDto;
@@ -263,6 +276,13 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly characterId: string;
     readonly itemId: string;
     readonly slotId: 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT';
+  };
+  /** Relocate existing property between accessible containers; the server supplies access evidence. */
+  readonly TransferItem: {
+    readonly itemId: string;
+    readonly quantity: number;
+    readonly fromContainerId: string;
+    readonly toContainerId: string;
   };
 }
 
